@@ -113,6 +113,16 @@ namespace MudBlazor
         }
         #endregion
         /// <summary>
+        /// Defines the table body content when there are no matching records found
+        /// </summary>
+        [Parameter] public RenderFragment NoRecordsContent { get; set; }
+
+        /// <summary>
+        /// Defines the table body content  the table has no rows and is loading
+        /// </summary>
+        [Parameter] public RenderFragment LoadingContent { get; set; }
+
+        /// <summary>
         /// Defines if the table has a horizontal scrollbar.
         /// </summary>
         [Parameter] public bool HorizontalScrollbar { get; set; }
@@ -234,6 +244,52 @@ namespace MudBlazor
         /// Callback is called whenever items are selected or deselected in multi selection mode.
         /// </summary>
         [Parameter] public EventCallback<HashSet<T>> SelectedItemsChanged { get; set; }
+
+        private TableGroupDefinition<T> _groupBy;
+        /// <summary>
+        /// Defines data grouping parameters. It can has N hierarchical levels
+        /// </summary>
+        [Parameter]
+        public TableGroupDefinition<T> GroupBy
+        {
+            get => _groupBy;
+            set
+            {
+                _groupBy = value;
+                if (_groupBy != null)
+                    _groupBy.Context = Context;
+            }
+        }
+
+        /// <summary>
+        /// Defines how a table grouping row header looks like. It works only when GroupBy is not null. Use MudTd to define the table cells and their content.
+        /// </summary>
+        [Parameter] public RenderFragment<TableGroupData<object, T>> GroupHeaderTemplate { get; set; }
+
+        /// <summary>
+        /// Defines custom CSS classes for using on Group Header's MudTr.
+        /// </summary>
+        [Parameter] public string GroupHeaderClass { get; set; }
+
+        /// <summary>
+        /// Defines custom styles for using on Group Header's MudTr.
+        /// </summary>
+        [Parameter] public string GroupHeaderStyle { get; set; }
+
+        /// <summary>
+        /// Defines custom CSS classes for using on Group Footer's MudTr.
+        /// </summary>
+        [Parameter] public string GroupFooterClass { get; set; }
+
+        /// <summary>
+        /// Defines custom styles for using on Group Footer's MudTr.
+        /// </summary>
+        [Parameter] public string GroupFooterStyle { get; set; }
+
+        /// <summary>
+        /// Defines how a table grouping row footer looks like. It works only when GroupBy is not null. Use MudTd to define the table cells and their content.
+        /// </summary>
+        [Parameter] public RenderFragment<TableGroupData<object, T>> GroupFooterTemplate { get; set; }
 
         public IEnumerable<T> FilteredItems
         {
@@ -372,6 +428,7 @@ namespace MudBlazor
             if (ServerData == null)
                 return;
 
+            Loading = true;
             var label = Context.CurrentSortLabel;
 
             var state = new TableState
@@ -383,6 +440,11 @@ namespace MudBlazor
             };
 
             _server_data = await ServerData(state);
+
+            if (CurrentPage * RowsPerPage > _server_data.TotalItems)
+                CurrentPage = 0;
+
+            Loading = false;
             StateHasChanged();
             Context?.PagerStateHasChanged?.Invoke();
         }
@@ -403,5 +465,39 @@ namespace MudBlazor
         }
 
         internal override bool IsEditable { get => (RowEditingTemplate != null) || (Columns != null); }
+
+        //GROUPING:
+        private IEnumerable<IGrouping<object, T>> GroupItemsPage
+        {
+            get
+            {
+                return GetItemsOfGroup(GroupBy, CurrentPageItems);
+            }
+        }
+
+        internal IEnumerable<IGrouping<object, T>> GetItemsOfGroup(TableGroupDefinition<T> parent, IEnumerable<T> sourceList)
+        {
+            if (parent == null || sourceList == null)
+                return new List<IGrouping<object, T>>();
+
+            return sourceList.GroupBy(parent.Selector).ToList();
+        }
+
+        internal void OnGroupHeaderCheckboxClicked(bool value, IEnumerable<T> items)
+        {
+            if (value)
+            {
+                foreach (var item in items)
+                    Context.Selection.Add(item);
+            }
+            else
+            {
+                foreach (var item in items)
+                    Context.Selection.Remove(item);
+            }
+
+            Context.UpdateRowCheckBoxes(false);
+            SelectedItemsChanged.InvokeAsync(SelectedItems);
+        }
     }
 }

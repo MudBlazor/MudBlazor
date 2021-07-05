@@ -17,6 +17,10 @@
             color: var(--mud-palette-text-disabled);
         }
     }
+
+    & .mud-checkbox-dense {
+        padding: 4px;
+    }
 }
 
 .mud-checkbox-input {

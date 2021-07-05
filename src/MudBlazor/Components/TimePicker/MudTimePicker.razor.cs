@@ -64,14 +64,20 @@ namespace MudBlazor
         [Parameter] public OpenTo OpenTo { get; set; } = OpenTo.Hours;
 
         /// <summary>
-        /// Choose the edition mode. By default you can edit hours and minutes.
+        /// Choose the edition mode. By default, you can edit hours and minutes.
         /// </summary>
         [Parameter] public TimeEditMode TimeEditMode { get; set; } = TimeEditMode.Normal;
 
         /// <summary>
+        /// If AutoClose is set to true and PickerActions are defined, the hour and the minutes can be defined without any action.
+        /// </summary>
+        [Parameter] public bool AutoClose { get; set; }
+
+        /// <summary>
         /// If true, sets 12 hour selection clock.
         /// </summary>
-        [Parameter] public bool AmPm
+        [Parameter]
+        public bool AmPm
         {
             get => _amPm;
             set
@@ -162,6 +168,8 @@ namespace MudBlazor
 
         protected override void Submit()
         {
+            if (ReadOnly)
+                return;
             Time = TimeIntermediate;
         }
 
@@ -190,7 +198,7 @@ namespace MudBlazor
         private void UpdateTime()
         {
             TimeIntermediate = new TimeSpan(_timeSet.Hour, _timeSet.Minute, 0);
-            if (PickerVariant == PickerVariant.Static && PickerActions == null)
+            if ((PickerVariant == PickerVariant.Static && PickerActions == null) || (PickerActions != null && AutoClose))
             {
                 Submit();
             }

@@ -1,7 +1,8 @@
 ﻿@namespace MudBlazor.Docs.Examples
 <MudGrid>
     <MudItem xs="12" sm="6" md="4">
-        <MudTimePicker Label="12 hours" AmPm="true" @bind-Time="time" />
+        <MudTimePicker Label="12 hours" AmPm="true" @bind-Time="time" ReadOnly="@readOnly" />
+        <MudSwitch @bind-Checked="@readOnly" Color="Color.Tertiary">ReadOnly</MudSwitch>
     </MudItem>
     <MudItem xs="12" sm="6" md="4">
         <MudTimePicker Label="12 hours custom format" AmPm="true" TimeFormat="h:mm tt" @bind-Time="time" />
@@ -13,17 +14,21 @@
         <MudTimePicker Label="24 hours (editable)" Editable="true" />
     </MudItem>
     <MudItem xs="12" sm="6" md="4">
-        <MudTimePicker @ref="_picker" Label="With action buttons">
+        <MudTimePicker @ref="_picker" Label="With action buttons" AutoClose="@autoClose">
             <PickerActions>
                 <MudButton Class="mr-auto align-self-start" OnClick="@(() => _picker.Clear())">Clear</MudButton>
                 <MudButton OnClick="@(() => _picker.Close(false))">Cancel</MudButton>
                 <MudButton Color="Color.Primary" OnClick="@(() => _picker.Close())">Ok</MudButton>
             </PickerActions>
         </MudTimePicker>
+        <MudSwitch @bind-Checked="@autoClose" Color="Color.Secondary">AutoClose</MudSwitch>
     </MudItem>
 </MudGrid>
 
 @code{
     MudTimePicker _picker;
     TimeSpan? time = new TimeSpan(00, 45, 00);
+    private bool autoClose;
+    private bool readOnly;
+
 }

@@ -111,7 +111,7 @@ namespace MudBlazor.UnitTests.Mocks
 
         public void Dispose()
         {
-           
+
         }
     }
 }

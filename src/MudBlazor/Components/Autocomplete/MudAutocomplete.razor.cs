@@ -12,7 +12,7 @@ namespace MudBlazor
     public partial class MudAutocomplete<T> : MudBaseInput<T>, IDisposable
     {
         [Inject] IScrollManager ScrollManager { get; set; }
-        
+
         private bool _dense;
 
         protected string Classname =>
@@ -49,9 +49,9 @@ namespace MudBlazor
         /// <summary>
         /// If true, compact vertical padding will be applied to all Autocomplete items.
         /// </summary>
-        [Parameter] 
-        public bool Dense 
-        { 
+        [Parameter]
+        public bool Dense
+        {
             get { return _dense; }
             set
             {
@@ -113,7 +113,7 @@ namespace MudBlazor
         public int? MaxItems { get; set; } = 10;
 
         /// <summary>
-        /// Minimum characters to initiate a search, defaults to 2
+        /// Minimum characters to initiate a search
         /// </summary>
         [Parameter]
         public int MinCharacters { get; set; } = 0;
@@ -165,7 +165,6 @@ namespace MudBlazor
             {
                 if (value == _isOpen)
                     return;
-
                 _isOpen = value;
                 UpdateIcon();
                 IsOpenChanged.InvokeAsync(_isOpen).AndForget();
@@ -176,6 +175,12 @@ namespace MudBlazor
         /// An event triggered when the state of IsOpen has changed
         /// </summary>
         [Parameter] public EventCallback<bool> IsOpenChanged { get; set; }
+
+        /// <summary>
+        /// Set to true to select the currently selected item from the drop-down (if it is open) 
+        /// </summary>
+        [Parameter] public bool SelectValueOnTab { get; set; } = false;
+
 
         private string _currentIcon;
 
@@ -299,8 +304,22 @@ namespace MudBlazor
             return "null";
         }
 
-        //[Obsolete("Use OnInputKeyUp instead")]
-        protected virtual async Task OnInputKeyDown(KeyboardEventArgs args) => await OnInputKeyUp(args);
+        protected virtual async Task OnInputKeyDown(KeyboardEventArgs args)
+        {
+            switch (args.Key)
+            {
+                case "Tab":
+                    // NOTE: We need to catch Tab in Keydown because a tab will move focus to the next element and thus
+                    // in OnInputKeyUp we'd never get the tab key
+                    if (!IsOpen)
+                        return;
+                    if (SelectValueOnTab)
+                        await OnEnterKey();
+                    else
+                        IsOpen = false;
+                    break;
+            }
+        }
 
         protected virtual async Task OnInputKeyUp(KeyboardEventArgs args)
         {
@@ -317,6 +336,15 @@ namespace MudBlazor
                     break;
                 case "Escape":
                     IsOpen = false;
+                    break;
+                case "Tab":
+                    await Task.Delay(1);
+                    if (!IsOpen)
+                        return;
+                    if (SelectValueOnTab)
+                        await OnEnterKey();
+                    else
+                        await ToggleMenu();
                     break;
             }
             base.InvokeKeyUp(args);
@@ -372,7 +400,6 @@ namespace MudBlazor
 
         private Task OnInputBlurred(FocusEventArgs args)
         {
-            //return !IsOpen ? CoerceTextToValue() : Task.CompletedTask;
             OnBlur.InvokeAsync(args);
             return Task.CompletedTask;
             // we should not validate on blur in autocomplete, because the user needs to click out of the input to select a value,
@@ -434,5 +461,6 @@ namespace MudBlazor
                 return;
             _ = SetTextAsync(text, true);
         }
+
     }
 }

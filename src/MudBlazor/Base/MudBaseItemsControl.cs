@@ -57,7 +57,7 @@ namespace MudBlazor
         /// </summary>
         public TChildComponent SelectedContainer
         {
-            get => SelectedIndex >= 0 ? Items[SelectedIndex] : null;
+            get => SelectedIndex >= 0 && Items.Count > SelectedIndex ? Items[SelectedIndex] : null;
         }
 
         protected override Task OnAfterRenderAsync(bool firstRender)

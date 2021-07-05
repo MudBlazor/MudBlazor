@@ -1,12 +1,14 @@
 ﻿#pragma warning disable BL0005 // Set parameter outside component
 
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Bunit;
-using MudBlazor.UnitTests.TestComponents;
-using NUnit.Framework;
 using FluentAssertions;
 using Microsoft.AspNetCore.Components.Web;
+using MudBlazor.UnitTests.TestComponents;
+using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Components
 {
@@ -39,7 +41,7 @@ namespace MudBlazor.UnitTests.Components
             var carousel = comp.FindComponent<MudCarousel<object>>().Instance;
             //// validating some renders
             carousel.Should().NotBeNull();
-            comp.WaitForAssertion(()=>comp.FindAll("div.mud-carousel-item").Count.Should().Be(1));
+            comp.WaitForAssertion(() => comp.FindAll("div.mud-carousel-item").Count.Should().Be(1));
             comp.FindAll("div.fake-class-item1").Count.Should().Be(1);
             comp.FindAll("div.fake-class-item2").Count.Should().Be(0);
             comp.FindAll("div.fake-class-item3").Count.Should().Be(0);
@@ -158,12 +160,12 @@ namespace MudBlazor.UnitTests.Components
             // print the generated html
             Console.WriteLine(comp.Markup);
             comp.FindAll("button.mud-icon-button").Count.Should().Be(2); //left + right
-            /// adding some pages
+            // adding some pages
             comp.Instance.Items.Add(new());
             comp.Instance.Items.Add(new());
             comp.Instance.Items.Add(new());
             comp.Render();
-            //// playing with params
+            // playing with params
             comp.FindAll("button.mud-icon-button").Count.Should().Be(5); //left + right + 3 items
             comp.SetParam(p => p.ShowArrows, false);
             comp.FindAll("button.mud-icon-button").Count.Should().Be(3);
@@ -173,6 +175,15 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("button.mud-icon-button").Count.Should().Be(2);
             comp.SetParam(p => p.ShowDelimiters, true);
             comp.FindAll("button.mud-icon-button").Count.Should().Be(5);
+            // Custom classes for navigation elements
+            comp.SetParam(p => p.DelimitersClass, "fake-delimiter-class");
+            comp.SetParam(p => p.NavigationButtonsClass, "fake-navigation-class");
+            comp.FindAll("button.fake-delimiter-class").Count.Should().Be(3);
+            comp.FindAll("button.fake-navigation-class").Count.Should().Be(2);
+            comp.SetParam(p => p.DelimitersClass, null);
+            comp.SetParam(p => p.NavigationButtonsClass, null);
+            comp.FindAll("button.fake-delimiter-class").Count.Should().Be(0);
+            comp.FindAll("button.fake-navigation-class").Count.Should().Be(0);
         }
 
         /// <summary>
@@ -218,6 +229,39 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.SelectedContainer.Should().Be(comp.Instance.Items[0]);
         }
 
+        /// <summary>
+        /// Testing DataBinding with Add and Remove from data source (MVVM, MVC and another patterns)
+        /// </summary>
+        /// <returns></returns>
+        [Test]
+        public void CarouselTest_DataBinding()
+        {
+            var comp = ctx.RenderComponent<CarouselBindingTest>();
+            // print the generated html
+            Console.WriteLine(comp.Markup);
+            //// select elements needed for the test
+            var carousel = comp.FindComponent<MudCarousel<string>>().Instance;
+            //// validating some renders
+            carousel.Should().NotBeNull();
+            carousel.MoveTo(0);
+            //// working with ItemsSource
+            var source = carousel.ItemsSource;
+            source.Count().Should().Be(5);
+            carousel.Items.Count.Should().Be(5);
+            carousel.SelectedIndex.Should().Be(0);
+            //// adding item
+            ((IList<string>)source).Add("Item added by hand");
+            source.Count().Should().Be(6);
+            carousel.Items.Count.Should().Be(5); // should call StateHasChanged() or Task.Delay(1)
+            comp.Render();
+            carousel.Items.Count.Should().Be(6);
+            //// removing item
+            ((IList<string>)source).RemoveAt(source.Count() - 1);
+            source.Count().Should().Be(5);
+            carousel.Items.Count.Should().Be(6); // should call StateHasChanged() or Task.Delay(1)
+            comp.Render();
+            carousel.Items.Count.Should().Be(5);
+        }
 
     }
 }

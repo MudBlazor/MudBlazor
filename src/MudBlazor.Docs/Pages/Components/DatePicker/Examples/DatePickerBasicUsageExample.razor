@@ -1,10 +1,11 @@
 ﻿@namespace MudBlazor.Docs.Examples
 <MudGrid>
     <MudItem xs="12" sm="6" md="4">
-        <MudDatePicker Label="Basic example" @bind-Date="date" />
+        <MudDatePicker Label="Basic example" @bind-Date="date" ReadOnly="@readOnly"/>
+        <MudSwitch @bind-Checked="@readOnly" Color="Color.Tertiary">ReadOnly</MudSwitch>
     </MudItem>
     <MudItem xs="12" sm="6" md="4">
-        <MudDatePicker Label="Basic example (editable)" Editable="true" />
+        <MudDatePicker Label="Basic example (editable)" Editable="true" @bind-Date="date" />
     </MudItem>
     <MudItem xs="12" sm="6" md="4">
         <MudDatePicker Label="Only Calendar" @bind-Date="date" DisableToolbar="true" HelperText="No header" />
@@ -38,4 +39,5 @@
     MudDatePicker _picker;
     DateTime? date = DateTime.Today;
     private bool autoClose;
+    private bool readOnly;
 }

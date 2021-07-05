@@ -228,7 +228,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = OpenPicker();
             // should show months
-            comp.FindAll("div.mud-picker-calendar-header-transition")[0].Click();
+            comp.FindAll("button.mud-picker-calendar-header-transition")[0].Click();
             comp.FindAll("div.mud-picker-month-container").Count.Should().Be(1);
         }
 
@@ -237,7 +237,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = OpenPicker(Parameter("OpenTo", OpenTo.Month));
             // should show years
-            comp.FindAll("div.mud-picker-calendar-header-transition")[0].Click();
+            comp.FindAll("button.mud-picker-calendar-header-transition")[0].Click();
             comp.FindAll("div.mud-picker-year-container").Count.Should().Be(1);
         }
 
@@ -248,7 +248,7 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.DateRange.Should().BeNull();
             // should show months
             comp.FindAll("div.mud-picker-month-container").Count.Should().Be(1);
-            comp.FindAll("div.mud-picker-calendar-container > div.mud-picker-month-container > div.mud-picker-month")[2].Click();
+            comp.FindAll("div.mud-picker-calendar-container > div.mud-picker-month-container > button.mud-picker-month")[2].Click();
             comp.FindAll("button.mud-picker-calendar-day")
                 .Where(x => x.TrimmedText().Equals("2")).First().Click();
             comp.FindAll("button.mud-picker-calendar-day")
@@ -268,10 +268,10 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = OpenPicker();
             var picker = comp.Instance;
-            comp.Find("div.mud-picker-calendar-header-transition").Click();
+            comp.Find("button.mud-picker-calendar-header-transition").Click();
             // should show months
             comp.FindAll("div.mud-picker-month-container").Count.Should().Be(1);
-            comp.FindAll("div.mud-picker-calendar-container > div.mud-picker-month-container > div.mud-picker-month")
+            comp.FindAll("div.mud-picker-calendar-container > div.mud-picker-month-container > button.mud-picker-month")
                 [3].Click();
             comp.FindAll("button.mud-picker-calendar-day")
                 .Where(x => x.TrimmedText().Equals("10")).First().Click();
@@ -309,7 +309,7 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("div.mud-picker-calendar-container > div.mud-picker-year-container > div.mud-picker-year")
                 .Where(x => x.TrimmedText().Contains("2022")).First().Click();
             comp.FindAll("div.mud-picker-month-container").Count.Should().Be(1);
-            comp.FindAll("div.mud-picker-calendar-container > div.mud-picker-month-container > div.mud-picker-month")[1].Click();
+            comp.FindAll("div.mud-picker-calendar-container > div.mud-picker-month-container > button.mud-picker-month")[1].Click();
             comp.FindAll("div.mud-picker-calendar-container > div.mud-picker-calendar-header").Count.Should().Be(2);
             comp.FindAll("button.mud-picker-calendar-day")
                 .Where(x => x.TrimmedText().Equals("1")).First().Click();
@@ -417,6 +417,34 @@ namespace MudBlazor.UnitTests.Components
             var comp = OpenPicker();
             comp.FindAll("button.mud-picker-calendar-day").Select(button => (button as IHtmlButtonElement).IsDisabled)
                 .Should().OnlyContain(disabled => disabled == false);
+        }
+
+        [Test]
+        public void InitializeDateRange_DefaultConstructor()
+        {
+            var range = new DateRange();
+
+            var comp = OpenPicker(Parameter(nameof(MudDateRangePicker.DateRange), range));
+
+            comp.Instance.DateRange.Should().NotBeNull();
+            comp.Instance.DateRange.Start.Should().NotBe(default);
+            comp.Instance.DateRange.End.Should().NotBe(default);
+            comp.Instance.DateRange.Start.Should().BeNull();
+            comp.Instance.DateRange.End.Should().BeNull();
+        }
+
+        [Test]
+        public void InitializeDateRange_AllNullValues()
+        {
+            var range = new DateRange(null, null);
+
+            var comp = OpenPicker(Parameter(nameof(MudDateRangePicker.DateRange), range));
+
+            comp.Instance.DateRange.Should().NotBeNull();
+            comp.Instance.DateRange.Start.Should().NotBe(default);
+            comp.Instance.DateRange.End.Should().NotBe(default);
+            comp.Instance.DateRange.Start.Should().BeNull();
+            comp.Instance.DateRange.End.Should().BeNull();
         }
     }
 }

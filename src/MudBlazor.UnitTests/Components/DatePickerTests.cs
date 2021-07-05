@@ -245,7 +245,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = OpenPicker();
             // should show months
-            comp.FindAll("div.mud-picker-calendar-header-transition")[0].Click();
+            comp.FindAll("button.mud-picker-calendar-header-transition")[0].Click();
             comp.FindAll("div.mud-picker-month-container").Count.Should().Be(1);
         }
 
@@ -254,7 +254,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = OpenPicker(Parameter("OpenTo", OpenTo.Month));
             // should show years
-            comp.FindAll("div.mud-picker-calendar-header-transition")[0].Click();
+            comp.FindAll("button.mud-picker-calendar-header-transition")[0].Click();
             comp.FindAll("div.mud-picker-year-container").Count.Should().Be(1);
         }
 
@@ -265,7 +265,7 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.Date.Should().BeNull();
             // should show months
             comp.FindAll("div.mud-picker-month-container").Count.Should().Be(1);
-            comp.FindAll("div.mud-picker-calendar-container > div.mud-picker-month-container > div.mud-picker-month")
+            comp.FindAll("div.mud-picker-calendar-container > div.mud-picker-month-container > button.mud-picker-month")
                 [2].Click();
             comp.FindAll("button.mud-picker-calendar-day")
                 .Where(x => x.TrimmedText().Equals("2")).First().Click();
@@ -284,10 +284,10 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = OpenPicker();
             var picker = comp.Instance;
-            comp.Find("div.mud-picker-calendar-header-transition").Click();
+            comp.Find("button.mud-picker-calendar-header-transition").Click();
             // should show months
             comp.FindAll("div.mud-picker-month-container").Count.Should().Be(1);
-            comp.FindAll("div.mud-picker-calendar-container > div.mud-picker-month-container > div.mud-picker-month")
+            comp.FindAll("div.mud-picker-calendar-container > div.mud-picker-month-container > button.mud-picker-month")
                 [3].Click();
             comp.FindAll("button.mud-picker-calendar-day")
                 .Where(x => x.TrimmedText().Equals("23")).First().Click();
@@ -323,7 +323,7 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("div.mud-picker-calendar-container > div.mud-picker-year-container > div.mud-picker-year")
                 .Where(x => x.TrimmedText().Contains("2022")).First().Click();
             comp.FindAll("div.mud-picker-month-container").Count.Should().Be(1);
-            comp.FindAll("div.mud-picker-calendar-container > div.mud-picker-month-container > div.mud-picker-month")[1].Click();
+            comp.FindAll("div.mud-picker-calendar-container > div.mud-picker-month-container > button.mud-picker-month")[1].Click();
             comp.FindAll("div.mud-picker-calendar-container > div.mud-picker-calendar-header").Count.Should().Be(1);
             comp.FindAll("button.mud-picker-calendar-day")
                 .Where(x => x.TrimmedText().Equals("1")).First().Click();
@@ -430,7 +430,7 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("button.mud-picker-calendar-day").Select(button => (button as IHtmlButtonElement).IsDisabled)
                 .Should().OnlyContain(disabled => disabled == false);
         }
-      
+
         public async Task CheckAutoCloseDatePickerTest()
         {
             // Define a date for comparison
@@ -467,7 +467,7 @@ namespace MudBlazor.UnitTests.Components
 
             // Change the value of autoclose
             datePicker.Instance.AutoClose = true;
-            
+
             // Open the datepicker
             await comp.InvokeAsync(() => datePicker.Instance.Open());
 
@@ -492,6 +492,72 @@ namespace MudBlazor.UnitTests.Components
             {
                 datePicker.Instance.Date.Should().Be(new DateTime(now.Year, now.Month, 19));
             }
+        }
+
+        [Test]
+        public async Task CheckReadOnlyTest()
+        {
+            // Define a date for comparison
+            DateTime now = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day);
+
+            // Get access to the datepicker of the instance
+            var comp = ctx.RenderComponent<MudDatePicker>();
+            var picker = comp.Instance;
+
+            // Open the datepicker
+            await comp.InvokeAsync(() => picker.Open());
+
+            // Clicking a day button to select a date
+            // It must be a different day than the day of now!
+            // So the test is working when the day is 20
+            if (now.Day != 20)
+            {
+                comp.FindAll("button.mud-picker-calendar-day")
+                    .Where(x => x.TrimmedText().Equals("20")).First().Click();
+            }
+            else
+            {
+                comp.FindAll("button.mud-picker-calendar-day")
+                    .Where(x => x.TrimmedText().Equals("19")).First().Click();
+            }
+
+            // Close the datepicker
+            await comp.InvokeAsync(() => picker.Close());
+
+            // Check that the date should be equal to the new date 19 or 20
+            if (now.Day != 20)
+            {
+                picker.Date.Should().Be(new DateTime(now.Year, now.Month, 20));
+            }
+            else
+            {
+                picker.Date.Should().Be(new DateTime(now.Year, now.Month, 19));
+            }
+
+            // Change the value of readonly and update the value of now
+            now = picker.Date.Value;
+            picker.ReadOnly = true;
+
+            // Open the datepicker
+            await comp.InvokeAsync(() => picker.Open());
+
+            // Clicking a day button to select a date
+            if (now.Day != 21)
+            {
+                comp.FindAll("button.mud-picker-calendar-day")
+                    .Where(x => x.TrimmedText().Equals("22")).First().Click();
+            }
+            else
+            {
+                comp.FindAll("button.mud-picker-calendar-day")
+                    .Where(x => x.TrimmedText().Equals("21")).First().Click();
+            }
+
+            // Close the datepicker
+            await comp.InvokeAsync(() => picker.Close());
+
+            // Check that the date should remain the same because readonly is true
+            picker.Date.Should().Be(now);
         }
     }
 }

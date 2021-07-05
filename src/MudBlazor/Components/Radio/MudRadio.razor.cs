@@ -12,10 +12,12 @@ namespace MudBlazor
 
         [CascadingParameter] protected MudRadioGroup<T> RadioGroup { get; set; }
 
+        [CascadingParameter] public bool RightToLeft { get; set; }
+        
         protected string Classname =>
         new CssBuilder("mud-radio")
             .AddClass($"mud-disabled", Disabled)
-            .AddClass($"mud-radio-content-placement-{Placement.ToDescriptionString()}", when: () => Placement != Placement.End)
+            .AddClass($"mud-radio-content-placement-{ConvertPlacement(Placement).ToDescriptionString()}")
             .AddClass(Class)
             .Build();
 
@@ -23,6 +25,7 @@ namespace MudBlazor
         new CssBuilder("mud-button-root mud-icon-button")
             .AddClass($"mud-ripple mud-ripple-radio", !DisableRipple)
             .AddClass($"mud-radio-color-{Color.ToDescriptionString()}")
+            .AddClass($"mud-radio-dense", Dense)
             .AddClass($"mud-disabled", Disabled)
             .AddClass($"mud-checked", Checked)
             .Build();
@@ -32,6 +35,26 @@ namespace MudBlazor
             .AddClass($"mud-checked", Checked)
             .Build();
 
+        protected string IconClassName =>
+        new CssBuilder("mud-icon-root mud-svg-icon")
+            .AddClass($"mud-icon-size-{Size.ToDescriptionString()}")
+            .Build();
+
+        protected string CheckedIconClassName =>
+        new CssBuilder("mud-icon-root mud-svg-icon mud-radio-icon-checked")
+            .AddClass($"mud-icon-size-{Size.ToDescriptionString()}")
+            .Build();
+
+        private Placement ConvertPlacement(Placement placement)
+        {
+            return placement switch
+            {
+                Placement.Left => RightToLeft ? Placement.End : Placement.Start,
+                Placement.Right => RightToLeft ? Placement.Start : Placement.End,
+                _ => placement
+            };
+        }
+        
         /// <summary>
         /// The color of the component. It supports the theme colors.
         /// </summary>
@@ -46,6 +69,16 @@ namespace MudBlazor
         /// The value to associate to the button.
         /// </summary>
         [Parameter] public T Option { get; set; }
+
+        /// <summary>
+        /// If true, compact padding will be applied.
+        /// </summary>
+        [Parameter] public bool Dense { get; set; }
+
+        /// <summary>
+        /// The Size of the component.
+        /// </summary>
+        [Parameter] public Size Size { get; set; } = Size.Medium;
 
         /// <summary>
         /// If true, disables ripple effect.

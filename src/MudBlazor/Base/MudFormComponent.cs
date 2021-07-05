@@ -251,13 +251,10 @@ namespace MudBlazor
                 }
 
                 // required error (must be last, because it is least important!)
-                var hasValue = HasValue(_value);
                 if (Required)
                 {
-                    if (!hasValue && Touched)
-                    {
+                    if (Touched && !HasValue(_value))
                         errors.Add(RequiredError);
-                    }
                 }
             }
             finally
@@ -279,7 +276,7 @@ namespace MudBlazor
         protected virtual bool HasValue(T value)
         {
             if (typeof(T) == typeof(string))
-                return !string.IsNullOrWhiteSpace((string)(object)value);
+                return !string.IsNullOrWhiteSpace(value as string);
 
             return value != null;
         }

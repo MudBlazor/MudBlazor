@@ -46,6 +46,11 @@ else
     [Parameter] public object BadgeData { get; set; }
 
     /// <summary>
+    /// Optional information to show the badge as a dot.
+    /// </summary>
+    [Parameter] public bool BadgeDot { get; set; }
+
+    /// <summary>
     /// The color of the badge.
     /// </summary>
     [Parameter] public Color BadgeColor { get; set; } = Color.Primary;

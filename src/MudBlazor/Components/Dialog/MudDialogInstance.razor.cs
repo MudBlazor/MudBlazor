@@ -189,7 +189,7 @@ namespace MudBlazor
 
         private void HandleBackgroundClick()
         {
-            if (DisableBackdropClick) 
+            if (DisableBackdropClick)
                 return;
             Cancel();
         }

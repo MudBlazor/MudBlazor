@@ -2,9 +2,11 @@
 #pragma warning disable IDE1006 // leading underscore
 
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Bunit;
 using FluentAssertions;
+using Microsoft.Extensions.DependencyInjection;
 using MudBlazor.UnitTests.TestComponents;
 using MudBlazor.UnitTests.TestComponents.Dialog;
 using NUnit.Framework;
@@ -110,13 +112,13 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("div.mud-dialog-container").Should().NotBe(null);
             // close by click outside
             comp.Find("div.mud-overlay").Click();
-            comp.Markup.Trim().Should().BeEmpty();
+            comp.WaitForAssertion(() => comp.Markup.Trim().Should().BeEmpty(), TimeSpan.FromSeconds(5));
             // open again
             comp1.Find("button").Click();
-            comp.WaitForAssertion(() => comp.Find("div.mud-dialog-container").Should().NotBe(null), TimeSpan.FromSeconds(2));
+            comp.WaitForAssertion(() => comp.Find("div.mud-dialog-container").Should().NotBe(null), TimeSpan.FromSeconds(5));
             // close again by click outside
             comp.Find("div.mud-overlay").Click();
-            comp.WaitForAssertion(() => comp.Markup.Trim().Should().BeEmpty(), TimeSpan.FromSeconds(2));
+            comp.WaitForAssertion(() => comp.Markup.Trim().Should().BeEmpty(), TimeSpan.FromSeconds(5));
         }
 
         /// <summary>
@@ -147,6 +149,43 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// A test that ensures parameters are not overwritten when dialog is updated
+        /// </summary>
+        [Test]
+        public async Task DialogShouldNotOverwriteParameters()
+        {
+            var comp = ctx.RenderComponent<MudDialogProvider>();
+            comp.Markup.Trim().Should().BeEmpty();
+            var service = ctx.Services.GetService<IDialogService>() as DialogService;
+            service.Should().NotBe(null);
+            IDialogReference dialogReference = null;
+
+            var parameters = new DialogParameters();
+            parameters.Add("TestValue", "test");
+            parameters.Add("Color_Test", Color.Error); // !! comment me !!
+
+            await comp.InvokeAsync(() => dialogReference = service?.Show<DialogWithParameters>(string.Empty, parameters));
+            dialogReference.Should().NotBe(null);
+
+            Console.WriteLine("----------------------------------------");
+            Console.WriteLine(comp.Markup);
+
+            var textField = comp.FindComponent<MudInput<string>>().Instance;
+            textField.Text.Should().Be("test");
+
+            comp.Find("input").Change("new_test");
+            comp.Find("input").Blur();
+            textField.Text.Should().Be("new_test");
+
+            comp.FindAll("button")[0].Click();
+            Console.WriteLine("----------------------------------------");
+            Console.WriteLine(comp.Markup);
+
+            (dialogReference.Dialog as DialogWithParameters).TestValue.Should().Be("new_test");
+            textField.Text.Should().Be("new_test");
+        }
+
+        /// <summary>
         /// Based on bug report #1385
         /// Dialog Class and Style parameters should be honored
         /// </summary>
@@ -167,6 +206,86 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("div.mud-dialog-content").Attributes["style"].Value.Should().Be("color: blue;");
             comp.Find("div.mud-dialog-content").ClassList.Should().NotContain("test-class");
             comp.Find("div.mud-dialog-content").ClassList.Should().Contain("content-class");
+        }
+
+        [Test]
+        public async Task PassingEventCallbackToDialogViaParameters()
+        {
+            var comp = ctx.RenderComponent<MudDialogProvider>();
+            comp.Markup.Trim().Should().BeEmpty();
+            var service = ctx.Services.GetService<IDialogService>() as DialogService;
+            service.Should().NotBe(null);
+
+            var testComp = ctx.RenderComponent<DialogWithEventCallbackTest>();
+            // open dialog
+            testComp.Find("button").Click();
+            // in the opened dialog find the text field
+            Console.WriteLine(comp.Markup);
+            var tf = comp.FindComponent<MudTextField<string>>();
+            tf.Find("input").Input("User input ...");
+            // the user input should be passed out of the dialog into the outer component and displayed there.
+            testComp.WaitForAssertion(()=>
+                testComp.Find("p").TextContent.Trim().Should().Be("Search Text:  User input ...")
+            );
+        }
+
+        [Test]
+        public async Task CustomDialogService()
+        {
+            //Remove default IDialogService so we can provide our custom implementation
+            //This is not necessary in normal cases, you would rather just not register all services in the beginning, but the test environment requires here to do so.
+            ctx.Services.Remove(ctx.Services.FirstOrDefault(descriptor => descriptor.ServiceType == typeof(IDialogService)));
+            //Register our custom dialog service implementation as the new service instance behind IDialogService
+            ctx.Services.AddScoped<IDialogService>(sp => new CustomDialogService());
+
+            //Render our dialog provider and make sure everything is fine
+            var comp = ctx.RenderComponent<MudDialogProvider>();
+            comp.Markup.Trim().Should().BeEmpty();
+
+            //Try to get the current service instance for the type IDialogService and make sure it is our custom implementation
+            var service = ctx.Services.GetService<IDialogService>();
+            service.Should().NotBe(null);
+            service.Should().BeAssignableTo(typeof(CustomDialogService));
+
+            //Show the dialog, create reference and make sure it is our custom dialog reference implementation
+            IDialogReference dialogReference = null;
+            //The type of the dialog does not really matter, for the sake of laziness I will re-use this existing one
+            await comp.InvokeAsync(() => dialogReference = service?.Show<DialogThatUpdatesItsTitle>());
+            dialogReference.Should().NotBe(null);
+            dialogReference.Should().BeAssignableTo(typeof(CustomDialogReference));
+
+            //After above checks have passed, we can safely cast the generic reference into our specific implementation  
+            var customDialogReference = (CustomDialogReference)dialogReference;
+            //The custom property should be false by default otherwise the rest of the test logic would be incorrect
+            customDialogReference.AllowDismiss.Should().BeFalse();
+
+            //Dialog should not be closable through backdrop click
+            comp.Find("div.mud-overlay").Click();
+            comp.WaitForAssertion(() => comp.Markup.Trim().Should().NotBeEmpty(), TimeSpan.FromSeconds(5));
+
+            //Allow dismission
+            customDialogReference.AllowDismiss = true;
+
+            //Dialog should now be closable through backdrop click
+            comp.Find("div.mud-overlay").Click();
+            comp.WaitForAssertion(() => comp.Markup.Trim().Should().BeEmpty(), TimeSpan.FromSeconds(5));
+        }
+    }
+
+    internal class CustomDialogService : DialogService
+    {
+        public override IDialogReference CreateReference() => new CustomDialogReference(Guid.NewGuid(), this);
+    }
+
+    internal class CustomDialogReference : DialogReference
+    {
+        public bool AllowDismiss { get; set; }
+
+        public CustomDialogReference(Guid dialogInstanceId, IDialogService dialogService) : base(dialogInstanceId, dialogService) { }
+
+        public override bool Dismiss(DialogResult result)
+        {
+            return AllowDismiss;
         }
     }
 }

@@ -1,23 +1,21 @@
 ﻿@page "/components/paper"
 
 <DocsPage>
-    <DocsPageHeader Title="Paper" SubTitle="Paper is a useful flexible to shape other components without needing css or style">
+    <DocsPageHeader Title="Paper" SubTitle="Paper is a useful and flexible way to shape other components without needing css or style">
         <Description>
-            It is generally used for foregrounds however can also be combined with <MudLink Href="/features/flex">Flex</MudLink> for layout.
+            It is generally used for foregrounds but can also be combined with <MudLink Href="/features/flex">Flex</MudLink> for layout.
         </Description>
     </DocsPageHeader>
     <DocsPageContent>
         <DocsPageSection>
-            <SectionHeader>
-                <Title>Material Design</Title>
+            <SectionHeader Title="Material Design">
                 <Description>
                     Paper can represent a surface from the <MudLink Href="https://material.io/design/environment/surfaces.html#material-environment">Material Foundation</MudLink>. Even if you are not designing something "material", the foundations of Material Design are a pillar of MudBlazor and provide useful insight into how many components operate.
                 </Description>
             </SectionHeader>
         </DocsPageSection>
         <DocsPageSection>
-            <SectionHeader>
-                <Title>Component</Title>
+            <SectionHeader Title="Component">
                 <Description></Description>
             </SectionHeader>
             <SectionContent DarkenBackground="true" DisplayFlex="true">
@@ -26,9 +24,8 @@
             <SectionSource Code="PaperComponentExample" GitHubFolderName="Paper" />
         </DocsPageSection>
         <DocsPageSection>
-            <SectionHeader>
-                <Title>Variants</Title>
-                <Description>If you need an outlined surface or a square, use the variant property.</Description>
+            <SectionHeader Title="Variants">
+                <Description>If you need an outlined surface or a square, use the <CodeInline>Outlined</CodeInline> and <CodeInline>Square</CodeInline> properties.</Description>
             </SectionHeader>
             <SectionContent DarkenBackground="true" DisplayFlex="true">
                 <PaperVariantsExample />

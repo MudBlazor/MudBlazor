@@ -1,36 +1,38 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
+using MudBlazor;
 using MudBlazor.Extensions;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    public partial class MudCarouselItem : MudComponentBase
+    public partial class MudCarouselItem : MudComponentBase, IDisposable
     {
         protected string Classname =>
                     new CssBuilder("mud-carousel-item")
                          .AddClass($"mud-carousel-item-{Color.ToDescriptionString()}")
-                         .AddClass("mud-carousel-item-exit", Parent.LastContainer == this)
+                         .AddClass("mud-carousel-item-exit", !_disposed && Parent.LastContainer == this)
 
-                         .AddClass("mud-carousel-transition-fade-in", Transition == Transition.Fade && Parent.SelectedContainer == this)
-                         .AddClass("mud-carousel-transition-fade-out", Transition == Transition.Fade && Parent.LastContainer == this)
+                         .AddClass("mud-carousel-transition-fade-in", !_disposed && Transition == Transition.Fade && Parent.SelectedContainer == this)
+                         .AddClass("mud-carousel-transition-fade-out", !_disposed && Transition == Transition.Fade && Parent.LastContainer == this)
 
-                         .AddClass("mud-carousel-transition-slide-next-enter", Transition == Transition.Slide && RightToLeft == false && Parent.SelectedContainer == this && Parent._moveNext)
-                         .AddClass("mud-carousel-transition-slide-next-exit", Transition == Transition.Slide && RightToLeft == false && Parent.LastContainer == this && Parent._moveNext)
+                         .AddClass("mud-carousel-transition-slide-next-enter", !_disposed && Transition == Transition.Slide && RightToLeft == false && Parent.SelectedContainer == this && Parent._moveNext)
+                         .AddClass("mud-carousel-transition-slide-next-exit", !_disposed && Transition == Transition.Slide && RightToLeft == false && Parent.LastContainer == this && Parent._moveNext)
 
-                         .AddClass("mud-carousel-transition-slide-prev-enter", Transition == Transition.Slide && RightToLeft == false && Parent.SelectedContainer == this && !Parent._moveNext)
-                         .AddClass("mud-carousel-transition-slide-prev-exit", Transition == Transition.Slide && RightToLeft == false && Parent.LastContainer == this && !Parent._moveNext)
+                         .AddClass("mud-carousel-transition-slide-prev-enter", !_disposed && Transition == Transition.Slide && RightToLeft == false && Parent.SelectedContainer == this && !Parent._moveNext)
+                         .AddClass("mud-carousel-transition-slide-prev-exit", !_disposed && Transition == Transition.Slide && RightToLeft == false && Parent.LastContainer == this && !Parent._moveNext)
 
-                         .AddClass("mud-carousel-transition-slide-next-rtl-enter", Transition == Transition.Slide && RightToLeft == true && Parent.SelectedContainer == this && Parent._moveNext)
-                         .AddClass("mud-carousel-transition-slide-next-rtl-exit", Transition == Transition.Slide && RightToLeft == true && Parent.LastContainer == this && Parent._moveNext)
+                         .AddClass("mud-carousel-transition-slide-next-rtl-enter", !_disposed && Transition == Transition.Slide && RightToLeft == true && Parent.SelectedContainer == this && Parent._moveNext)
+                         .AddClass("mud-carousel-transition-slide-next-rtl-exit", !_disposed && Transition == Transition.Slide && RightToLeft == true && Parent.LastContainer == this && Parent._moveNext)
 
-                         .AddClass("mud-carousel-transition-slide-prev-rtl-enter", Transition == Transition.Slide && RightToLeft == true && Parent.SelectedContainer == this && !Parent._moveNext)
-                         .AddClass("mud-carousel-transition-slide-prev-rtl-exit", Transition == Transition.Slide && RightToLeft == true && Parent.LastContainer == this && !Parent._moveNext)
+                         .AddClass("mud-carousel-transition-slide-prev-rtl-enter", !_disposed && Transition == Transition.Slide && RightToLeft == true && Parent.SelectedContainer == this && !Parent._moveNext)
+                         .AddClass("mud-carousel-transition-slide-prev-rtl-exit", !_disposed && Transition == Transition.Slide && RightToLeft == true && Parent.LastContainer == this && !Parent._moveNext)
 
-                         .AddClass("mud-carousel-transition-none", Transition == Transition.None && Parent.SelectedContainer != this)
+                         .AddClass("mud-carousel-transition-none", !_disposed && Transition == Transition.None && Parent.SelectedContainer != this)
 
-                         .AddClass(CustomTransitionEnter, Transition == Transition.Custom && Parent.SelectedContainer == this && Parent.SelectedContainer == this)
-                         .AddClass(CustomTransitionExit, Transition == Transition.Custom && Parent.LastContainer == this && Parent.LastContainer == this)
+                         .AddClass(CustomTransitionEnter, !_disposed && Transition == Transition.Custom && Parent.SelectedContainer == this && Parent.SelectedContainer == this)
+                         .AddClass(CustomTransitionExit, !_disposed && Transition == Transition.Custom && Parent.LastContainer == this && Parent.LastContainer == this)
 
                          .AddClass(Class)
                          .Build();
@@ -45,7 +47,7 @@ namespace MudBlazor
         /// <summary>
         /// The color of the component. It supports the theme colors.
         /// </summary>
-        [Parameter]  public Color Color { get; set; } = Color.Default;
+        [Parameter] public Color Color { get; set; } = Color.Default;
 
         /// <summary>
         /// The transition effect of the component.
@@ -63,14 +65,21 @@ namespace MudBlazor
         [Parameter] public string CustomTransitionExit { get; set; }
 
 
-        public bool IsVisible => Parent == null ? false : Parent.LastContainer == this || Parent.SelectedIndex == Parent.Items.IndexOf(this);
+        public bool IsVisible => Parent != null && (Parent.LastContainer == this || Parent.SelectedIndex == Parent.Items.IndexOf(this));
 
 
         protected override async Task OnInitializedAsync()
         {
             await Task.CompletedTask;
-
             Parent?.Items.Add(this);
         }
+
+        private bool _disposed = false;
+        public void Dispose()
+        {
+            _disposed = true;
+            Parent?.Items.Remove(this);
+        }
+
     }
 }

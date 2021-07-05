@@ -80,6 +80,11 @@
     border: 1px solid var(--mud-palette-text-primary);
     padding: 5px 15px;
 
+    &.mud-button-outlined-inherit {
+        color: inherit;
+        border-color: currentColor;
+    }
+
     &.mud-icon-button {
         padding: 5px;
     }

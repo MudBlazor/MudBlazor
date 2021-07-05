@@ -16,6 +16,7 @@ namespace MudBlazor
         protected string CheckBoxClassname =>
         new CssBuilder("mud-button-root mud-icon-button")
             .AddClass($"mud-checkbox-{Color.ToDescriptionString()}")
+            .AddClass($"mud-checkbox-dense", Dense)
             .AddClass($"mud-ripple mud-ripple-checkbox", !DisableRipple)
             .AddClass($"mud-disabled", Disabled)
         .Build();
@@ -34,6 +35,16 @@ namespace MudBlazor
         /// If true, disables ripple effect.
         /// </summary>
         [Parameter] public bool DisableRipple { get; set; }
+
+        /// <summary>
+        /// If true, compact padding will be applied.
+        /// </summary>
+        [Parameter] public bool Dense { get; set; }
+
+        /// <summary>
+        /// The Size of the component.
+        /// </summary>
+        [Parameter] public Size Size { get; set; } = Size.Medium;
 
         /// <summary>
         /// Child content of component.

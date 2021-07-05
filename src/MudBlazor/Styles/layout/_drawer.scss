@@ -29,7 +29,12 @@
     }
 
     @each $breakpoint in map-keys($breakpoints) {
-        &.mud-drawer-mini.mud-drawer-#{$breakpoint},
+        &.mud-drawer-mini.mud-drawer-#{$breakpoint} {
+            @media (max-width: map-get($breakpoints, $breakpoint) - 1px) {
+                z-index: calc(var(--mud-zindex-appbar) + 2);
+            }
+        }
+
         &.mud-drawer-responsive.mud-drawer-#{$breakpoint} {
             @media (max-width: map-get($breakpoints, $breakpoint) - 1px) {
                 z-index: calc(var(--mud-zindex-appbar) + 2);
@@ -315,7 +320,6 @@
 
     &.mud-drawer-overlay--open {
         @each $breakpoint in map-keys($breakpoints) {
-            &.mud-drawer-overlay-mini.mud-drawer-overlay-#{$breakpoint},
             &.mud-drawer-overlay-responsive.mud-drawer-overlay-#{$breakpoint} {
                 @media (max-width: map-get($breakpoints, $breakpoint) - 1px) {
                     display: block;
@@ -323,6 +327,12 @@
                     &.mud-drawer--initial {
                         display: none;
                     }
+                }
+            }
+
+            &.mud-drawer-overlay-mini.mud-drawer-overlay-#{$breakpoint} {
+                @media (max-width: map-get($breakpoints, $breakpoint) - 1px) {
+                    display: block;
                 }
             }
         }
