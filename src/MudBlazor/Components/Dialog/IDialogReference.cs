@@ -12,10 +12,10 @@ namespace MudBlazor
 {
     public interface IDialogReference
     {
-        public Guid Id { get; }
-        public RenderFragment RenderFragment { get; set; }
+        Guid Id { get; }
+        RenderFragment RenderFragment { get; set; }
 
-        public bool AreParametersRendered { get; set; }
+        bool AreParametersRendered { get; set; }
 
         Task<DialogResult> Result { get; }
 
