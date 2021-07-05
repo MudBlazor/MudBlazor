@@ -12,10 +12,12 @@ namespace MudBlazor
 
         [CascadingParameter] protected MudRadioGroup<T> RadioGroup { get; set; }
 
+        [CascadingParameter] public bool RightToLeft { get; set; }
+        
         protected string Classname =>
         new CssBuilder("mud-radio")
             .AddClass($"mud-disabled", Disabled)
-            .AddClass($"mud-radio-content-placement-{Placement.ToDescriptionString()}", when: () => Placement != Placement.End)
+            .AddClass($"mud-radio-content-placement-{ConvertPlacement(Placement).ToDescriptionString()}")
             .AddClass(Class)
             .Build();
 
@@ -43,6 +45,16 @@ namespace MudBlazor
             .AddClass($"mud-icon-size-{Size.ToDescriptionString()}")
             .Build();
 
+        private Placement ConvertPlacement(Placement placement)
+        {
+            return placement switch
+            {
+                Placement.Left => RightToLeft ? Placement.End : Placement.Start,
+                Placement.Right => RightToLeft ? Placement.Start : Placement.End,
+                _ => placement
+            };
+        }
+        
         /// <summary>
         /// The color of the component. It supports the theme colors.
         /// </summary>

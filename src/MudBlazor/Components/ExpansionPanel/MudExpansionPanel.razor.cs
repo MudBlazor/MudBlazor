@@ -83,6 +83,12 @@ namespace MudBlazor
         }
 
         /// <summary>
+        /// Sets the initial expansion state. Do not use in combination with IsExpanded.
+        /// Combine with MultiExpansion to have more than one panel start open.
+        /// </summary>
+        [Parameter] public bool IsInitiallyExpanded { get; set; }
+
+        /// <summary>
         /// If true, the component will be disabled.
         /// </summary>
         [Parameter] public bool Disabled { get; set; }
@@ -146,6 +152,7 @@ namespace MudBlazor
             //if (Parent == null)
             //    throw new ArgumentNullException(nameof(Parent), "ExpansionPanel must exist within a ExpansionPanels component");
             base.OnInitialized();
+            IsExpanded = IsInitiallyExpanded;
             Parent?.AddPanel(this);
         }
 
@@ -153,6 +160,5 @@ namespace MudBlazor
         {
             Parent?.RemovePanel(this);
         }
-
     }
 }

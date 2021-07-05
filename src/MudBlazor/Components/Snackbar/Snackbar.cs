@@ -83,12 +83,13 @@ namespace MudBlazor
 
         private void StartTimer(int duration)
         {
-            State.TransitionStartTime = DateTime.Now;
+            State.Stopwatch.Restart();
             Timer?.Change(duration, Timeout.Infinite);
         }
 
         private void StopTimer()
         {
+            State.Stopwatch.Stop();
             Timer?.Change(Timeout.Infinite, Timeout.Infinite);
         }
 

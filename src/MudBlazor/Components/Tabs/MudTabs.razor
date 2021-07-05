@@ -42,9 +42,9 @@
                                         <MudIcon Icon="@panel.Icon" Color="@IconColor" Class="mud-tab-icon-text" />
                                         @((MarkupString)panel.Text)
                                     }
-                                    @if (panel.BadgeData != null)
+                                    @if (panel.BadgeData != null || panel.BadgeDot)
                                     {
-                                        <MudBadge Content="@panel.BadgeData" Color="@panel.BadgeColor" Class="mud-tab-badge" />
+                                        <MudBadge Dot="@panel.BadgeDot" Content="@panel.BadgeData" Color="@panel.BadgeColor" Class="mud-tab-badge" />
                                     }
                                     @if(TabPanelHeaderPosition == TabHeaderPosition.After && TabPanelHeader != null)
                                     {

@@ -59,6 +59,6 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public string CloseIconToolTip { get; set; } = string.Empty;
 
-        protected override string InternalClassName { get; set; } = "mud-dynamic-tabs";
+        protected override string InternalClassName { get; } = "mud-dynamic-tabs";
     }
 }
