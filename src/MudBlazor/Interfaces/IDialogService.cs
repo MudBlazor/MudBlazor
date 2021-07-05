@@ -37,5 +37,9 @@ namespace MudBlazor
             string noText = null, string cancelText = null, DialogOptions options = null);
 
         Task<bool?> ShowMessageBox(MessageBoxOptions mboxOptions, DialogOptions options = null);
+
+        void Close(DialogReference dialog);
+
+        void Close(DialogReference dialog, DialogResult result);
     }
 }
