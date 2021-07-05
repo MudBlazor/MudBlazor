@@ -26,7 +26,7 @@ namespace MudBlazor
         [Parameter] public DialogPosition? Position { get; set; }
         [Parameter] public MaxWidth? MaxWidth { get; set; }
 
-        private readonly Collection<DialogReference> _dialogs = new Collection<DialogReference>();
+        private readonly Collection<IDialogReference> _dialogs = new Collection<IDialogReference>();
         private readonly DialogOptions _globalDialogOptions = new DialogOptions();
 
         protected override void OnInitialized()
@@ -62,7 +62,7 @@ namespace MudBlazor
             StateHasChanged();
         }
 
-        private void DismissInstance(DialogReference dialog, DialogResult result)
+        private void DismissInstance(IDialogReference dialog, DialogResult result)
         {
             if (!dialog.Dismiss(result)) return;
 
@@ -70,7 +70,7 @@ namespace MudBlazor
             StateHasChanged();
         }
 
-        private DialogReference GetDialogReference(Guid id)
+        private IDialogReference GetDialogReference(Guid id)
         {
             return _dialogs.SingleOrDefault(x => x.Id == id);
         }

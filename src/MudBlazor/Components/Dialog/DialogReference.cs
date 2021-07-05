@@ -37,10 +37,10 @@ namespace MudBlazor
             return _resultCompletion.TrySetResult(result);
         }
 
-        internal Guid Id { get; }
+        public Guid Id { get; }
 
         public object Dialog { get; private set; }
-        internal RenderFragment RenderFragment { get; private set; }
+        public RenderFragment RenderFragment { get; set; }
 
         public Task<DialogResult> Result => _resultCompletion.Task;
 

@@ -4,12 +4,17 @@
 // See https://github.com/Blazored
 // License: MIT
 
+using System;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Components;
 
 namespace MudBlazor
 {
     public interface IDialogReference
     {
+        public Guid Id { get; }
+        public RenderFragment RenderFragment { get; set; }
+
         public bool AreParametersRendered { get; }
 
         Task<DialogResult> Result { get; }
