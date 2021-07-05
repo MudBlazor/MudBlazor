@@ -12,6 +12,7 @@ namespace MudBlazor
             .AddClass("hidden", !Visible && string.IsNullOrWhiteSpace(HiddenCssClass))
             .AddClass(VisibleCssClass, Visible && !string.IsNullOrWhiteSpace(VisibleCssClass))
             .AddClass(HiddenCssClass, !Visible && !string.IsNullOrWhiteSpace(HiddenCssClass))
+            .AddClass(Class)
             .Build();
 
         [Inject] IScrollListener ScrollListener { get; set; }

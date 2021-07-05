@@ -10,11 +10,13 @@ namespace MudBlazor
 {
     public interface IDialogReference
     {
+        public bool AreParametersRendered { get; }
+
         Task<DialogResult> Result { get; }
 
         void Close();
         void Close(DialogResult result);
 
-        MudDialog Dialog { get; }
+        object Dialog { get; }
     }
 }

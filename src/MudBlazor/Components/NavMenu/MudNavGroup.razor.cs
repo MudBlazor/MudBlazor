@@ -6,10 +6,14 @@ namespace MudBlazor
     public partial class MudNavGroup : MudComponentBase
     {
         protected string Classname =>
+        new CssBuilder("mud-nav-group")
+          .AddClass(Class)
+        .Build();
+
+        protected string ButtonClassname =>
         new CssBuilder("mud-nav-link")
           .AddClass($"mud-ripple", !DisableRipple)
           .AddClass("mud-expanded", Expanded)
-          .AddClass(Class)
         .Build();
 
         protected string IconClassname =>

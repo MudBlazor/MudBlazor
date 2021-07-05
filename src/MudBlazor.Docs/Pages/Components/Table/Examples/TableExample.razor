@@ -6,7 +6,7 @@
 <MudTable Items="@Elements" Dense="@dense" Hover="@hover" Bordered="@bordered" Striped="@striped" Filter="new Func<Element,bool>(FilterFunc)" @bind-SelectedItem="selectedItem">
     <ToolBarContent>
         <MudText Typo="Typo.h6">Periodic Elements</MudText>
-        <MudToolBarSpacer />
+        <MudSpacer />
         <MudTextField @bind-Value="searchString" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
     </ToolBarContent>
     <HeaderContent>
@@ -32,7 +32,7 @@
     <MudSwitch @bind-Checked="@dense" Color="Color.Secondary">Dense</MudSwitch>
     <MudSwitch @bind-Checked="@striped" Color="Color.Tertiary">Striped</MudSwitch>
     <MudSwitch @bind-Checked="@bordered" Color="Color.Warning">Bordered</MudSwitch>
-    <MudToolBarSpacer />
+    <MudSpacer />
     <MudText Inline="true" Class="align-self-center" Style="min-width:200px;">Selected: @selectedItem?.Name</MudText>
 </div>
 

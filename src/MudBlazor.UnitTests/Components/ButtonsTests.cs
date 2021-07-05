@@ -1,6 +1,7 @@
 ﻿#pragma warning disable CS1998 // async without await
 #pragma warning disable IDE1006 // leading underscore
 
+using Bunit;
 using FluentAssertions;
 using NUnit.Framework;
 using static Bunit.ComponentParameterFactory;
@@ -174,6 +175,25 @@ namespace MudBlazor.UnitTests.Components
             comp.Markup
                 .Should()
                 .NotContainAny("mud-icon-root");
+        }
+
+        /// <summary>
+        /// MudIconButton should have a title tag/attribute if specified
+        /// </summary>
+        [Test]
+        public void ShouldRenderTitle()
+        {
+            var title = "Title and tooltip";
+            var icon = Parameter(nameof(MudIconButton.Icon), Icons.Filled.Add);
+            var titleParam = Parameter(nameof(MudIconButton.Title), title);
+            var comp = ctx.RenderComponent<MudIconButton>(icon, titleParam);
+            comp.Find("svg Title").TextContent.Should().Be(title);
+
+            icon = Parameter(nameof(MudIconButton.Icon), "customicon");
+            comp.SetParametersAndRender(icon, titleParam);
+            comp.Find("button span.mud-icon-button-label").InnerHtml.Trim().Should().StartWith("<span")
+                .And.Contain("customicon")
+                .And.Contain($"title=\"{title}\"");
         }
     }
 }

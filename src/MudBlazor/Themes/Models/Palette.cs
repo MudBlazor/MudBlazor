@@ -1,10 +1,26 @@
 ﻿using MudBlazor.Utilities;
 
 namespace MudBlazor
-
 {
     public class Palette
     {
+        private string _primaryDarken = null;
+        private string _primaryLighten = null;
+        private string _secondaryDarken = null;
+        private string _secondaryLighten = null;
+        private string _tertiaryDarken = null;
+        private string _tertiaryLighten = null;
+        private string _infoDarken = null;
+        private string _infoLighten = null;
+        private string _successDarken = null;
+        private string _successLighten = null;
+        private string _warningDarken = null;
+        private string _warningLighten = null;
+        private string _errorDarken = null;
+        private string _errorLighten = null;
+        private string _darkDarken = null;
+        private string _darkLighten = null;
+
         public string Black { get; set; } = Colors.Shades.Black;
         public string White { get; set; } = Colors.Shades.White;
         public string Primary { get; set; } = "#594AE2";
@@ -44,6 +60,87 @@ namespace MudBlazor
         public string TableHover { get; set; } = ColorManager.ToRgbaFromHex(Colors.Shades.Black, 0.04);
         public string Divider { get; set; } = Colors.Grey.Lighten2;
         public string DividerLight { get; set; } = ColorManager.ToRgbaFromHex(Colors.Shades.Black, 0.8);
+
+        public string PrimaryDarken
+        {
+            get => _primaryDarken ??= ColorManager.ColorRgbDarken(Primary);
+            set => _primaryDarken = value;
+        }
+        public string PrimaryLighten
+        {
+            get => _primaryLighten ??= ColorManager.ColorRgbLighten(Primary);
+            set => _primaryLighten = value;
+        }
+        public string SecondaryDarken
+        {
+            get => _secondaryDarken ??= ColorManager.ColorRgbDarken(Secondary);
+            set => _secondaryDarken = value;
+        }
+        public string SecondaryLighten
+        {
+            get => _secondaryLighten ??= ColorManager.ColorRgbLighten(Secondary);
+            set => _secondaryLighten = value;
+        }
+        public string TertiaryDarken
+        {
+            get => _tertiaryDarken ??= ColorManager.ColorRgbDarken(Tertiary);
+            set => _tertiaryDarken = value;
+        }
+        public string TertiaryLighten
+        {
+            get => _tertiaryLighten ??= ColorManager.ColorRgbLighten(Tertiary);
+            set => _tertiaryLighten = value;
+        }
+        public string InfoDarken
+        {
+            get => _infoDarken ??= ColorManager.ColorRgbDarken(Info);
+            set => _infoDarken = value;
+        }
+        public string InfoLighten
+        {
+            get => _infoLighten ??= ColorManager.ColorRgbLighten(Info);
+            set => _infoLighten = value;
+        }
+        public string SuccessDarken
+        {
+            get => _successDarken ??= ColorManager.ColorRgbDarken(Success);
+            set => _successDarken = value;
+        }
+        public string SuccessLighten
+        {
+            get => _successLighten ??= ColorManager.ColorRgbLighten(Success);
+            set => _successLighten = value;
+        }
+        public string WarningDarken
+        {
+            get => _warningDarken ??= ColorManager.ColorRgbDarken(Warning);
+            set => _warningDarken = value;
+        }
+        public string WarningLighten
+        {
+            get => _warningLighten ??= ColorManager.ColorRgbLighten(Warning);
+            set => _warningLighten = value;
+        }
+        public string ErrorDarken
+        {
+            get => _errorDarken ??= ColorManager.ColorRgbDarken(Error);
+            set => _errorDarken = value;
+        }
+        public string ErrorLighten
+        {
+            get => _errorLighten ??= ColorManager.ColorRgbLighten(Error);
+            set => _errorLighten = value;
+        }
+        public string DarkDarken
+        {
+            get => _darkDarken ??= ColorManager.ColorRgbDarken(Dark);
+            set => _darkDarken = value;
+        }
+        public string DarkLighten
+        {
+            get => _darkLighten ??= ColorManager.ColorRgbLighten(Dark);
+            set => _darkLighten = value;
+        }
 
         public double HoverOpacity { get; set; } = 0.06;
 

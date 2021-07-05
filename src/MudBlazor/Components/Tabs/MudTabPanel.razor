@@ -1,12 +1,10 @@
 ﻿@namespace MudBlazor
 @inherits MudComponentBase
 @implements IAsyncDisposable
-@implements IDisposable
 
-
-@if (Parent?.KeepPanelsAlive==true)
+@if (Parent?.KeepPanelsAlive == true)
 {
-    <div style="display:@(Parent?.ActivePanel == this ? "contents" : "none")">
+    <div @attributes="UserAttributes" class="@Class" style="display:@(Parent?.ActivePanel == this ? "contents" : "none");@Style">
         @ChildContent
     </div>
 }
@@ -19,6 +17,8 @@ else
 }
 
 @code {
+
+    private Boolean _disposed;
 
     [CascadingParameter] private MudTabs Parent { get; set; }
 
@@ -44,6 +44,11 @@ else
     /// Optional information to be showed into a badge
     /// </summary>
     [Parameter] public object BadgeData { get; set; }
+
+    /// <summary>
+    /// Optional information to show the badge as a dot.
+    /// </summary>
+    [Parameter] public bool BadgeDot { get; set; }
 
     /// <summary>
     /// The color of the badge.
@@ -92,26 +97,12 @@ else
         }
     }
 
-    protected virtual void Dispose(bool disposing)
-    {
-    }
-
-    public void Dispose()
-    {
-        Dispose(true);
-        GC.SuppressFinalize(this);
-    }
-
-    protected virtual async ValueTask DisposeAsyncCore()
-    {
-        await Parent?.RemovePanel(this);
-    }
-
     public async ValueTask DisposeAsync()
     {
-        await DisposeAsyncCore();
+        if(_disposed == true) { return;  }
 
-        Dispose(false);
-        GC.SuppressFinalize(this);
+        _disposed = true;
+        await Parent?.RemovePanel(this);
+
     }
 }

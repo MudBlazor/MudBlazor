@@ -39,14 +39,16 @@ namespace MudBlazor
 
         internal Guid Id { get; }
 
-        public MudDialog Dialog { get; private set; }
+        public object Dialog { get; private set; }
         internal RenderFragment RenderFragment { get; private set; }
 
         public Task<DialogResult> Result => _resultCompletion.Task;
 
+        public bool AreParametersRendered { get; set; }
+
         internal void InjectDialog(object inst)
         {
-            Dialog = inst as MudDialog;
+            Dialog = inst;
         }
 
         internal void InjectRenderFragment(RenderFragment rf)

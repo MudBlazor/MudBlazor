@@ -1,11 +1,25 @@
-﻿
-<MudContainer MaxWidth="@MaxWidth">
-    <div class="docs-page">
-        @ChildContent
+﻿<MudContainer MaxWidth="@MaxWidth">
+    <div id="docspage" class="docs-page">
+        <CascadingValue Value="this" IsFixed="true">
+            @ChildContent
+        </CascadingValue>
     </div>
+    @if(_sections != null)
+        {
+            <div class="docs-contents">
+                <MudDrawer Open="true" Anchor="Anchor.End" Variant="DrawerVariant.Temporary" DisableOverlay="true" ClipMode="DrawerClipMode.Always" Elevation="0" Color="Color.Transparent" Class="pt-6" Width="220px">
+                    <MudText Typo="Typo.h6" GutterBottom="true">
+                        Contents
+                    </MudText>
+                    <MudNavMenu Class="pl-4">
+                        @foreach(var section in _sections)
+                        {
+                            <MudNavLink Match="NavLinkMatch.All" Class="@GetNavLinkClass(section.Active)" @onclick="@(e => OnNavLinkClick(section.Id))">
+                                @section.Title
+                            </MudNavLink>
+                        }
+                    </MudNavMenu>
+                </MudDrawer>
+            </div>
+        }
 </MudContainer>
-@code {
-    [Parameter] public RenderFragment ChildContent { get; set; }
-
-    [Parameter] public MaxWidth MaxWidth { get; set; } = MaxWidth.Medium;
-}

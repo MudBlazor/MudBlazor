@@ -3,7 +3,7 @@
 
 @if (Visible)
 {
-    <div class="@Classname" style="@Styles" @onclick="OnClickHandler" @onclick:stopPropagation="true">
+    <div @attributes="UserAttributes" class="@Classname" style="@Styles" @onclick="OnClickHandler" @onclick:stopPropagation="true">
         <div class="@ScrimClassname">
 
         </div>
@@ -12,7 +12,3 @@
         </div>
     </div>
 }
-
-
-
-

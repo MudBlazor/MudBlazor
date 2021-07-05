@@ -21,24 +21,6 @@ internal static class TimeSpanExtensions
         return self.Value.ToIsoString(seconds, ms);
     }
 
-    public static string ToAmPmString(this TimeSpan time, bool seconds = false)
-    {
-        var pm = time.Hours >= 12;
-        var h = time.Hours % 12;
-        if (h == 0)
-            h = 12;
-        if (!seconds)
-            return $"{h:D2}:{time.Minutes:D2} {(pm ? "PM" : "AM")}";
-        return $"{h:D2}:{time.Minutes:D2}{time.Seconds:D2} {(pm ? "PM" : "AM")}";
-    }
-
-    public static string ToAmPmString(this TimeSpan? self, bool seconds = false)
-    {
-        if (self == null)
-            return null;
-        return self.Value.ToAmPmString(seconds);
-    }
-
     public static int ToAmPmHour(this TimeSpan time)
     {
         var h = time.Hours % 12;

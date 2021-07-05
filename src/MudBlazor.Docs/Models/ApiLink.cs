@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using MudBlazor.Charts;
 
 namespace MudBlazor.Docs.Models
 {
@@ -66,6 +67,10 @@ namespace MudBlazor.Docs.Models
                 [typeof(MudProgressCircular)] = "progress",
                 [typeof(MudText)] = "typography",
                 [typeof(MudSnackbarProvider)] = "snackbar",
+                [typeof(Bar)] = "barchart",
+                [typeof(Donut)] = "donutchart",
+                [typeof(Line)] = "linechart",
+                [typeof(Pie)] = "piechart",
             };
 
         // this is the inversion of above lookup

@@ -23,6 +23,8 @@
 
 .mud-breadcrumb-item > a > svg.mud-svg-icon-root {
     margin-right: 4px;
+    margin-inline-end: 4px;
+    margin-inline-start: unset;
 }
 
 .mud-breadcrumb-item.mud-disabled > a {

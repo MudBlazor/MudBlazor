@@ -80,5 +80,41 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("button").Click();
             comp.WaitForAssertion(() => comp.Find("#mud-snackbar-container").InnerHtml.Trim().Should().BeEmpty(), TimeSpan.FromMilliseconds(100));
         }
+
+        [Test]
+        public async Task IconTest()
+        {
+            var comp = ctx.RenderComponent<MudSnackbarProvider>();
+            Console.WriteLine(comp.Markup);
+            comp.Find("#mud-snackbar-container").InnerHtml.Trim().Should().BeEmpty();
+            var service = ctx.Services.GetService<ISnackbar>() as SnackbarService;
+            // shoot out a snackbar
+            await comp.InvokeAsync(() => service?.Add("Boom, big reveal. Im a pickle!"));
+            Console.WriteLine(comp.Markup);
+            // Test that the snackbar has an icon.
+            comp.Find("#mud-snackbar-container .mud-snackbar .mud-snackbar-icon").InnerHtml.Trim().Should().NotBeEmpty();
+            // close by click on the snackbar
+            comp.Find("button").Click();
+            comp.WaitForAssertion(() => comp.Find("#mud-snackbar-container").InnerHtml.Trim().Should().BeEmpty(), TimeSpan.FromMilliseconds(100));
+        }
+
+        [Test]
+        public async Task HideIconTest()
+        {
+            var comp = ctx.RenderComponent<MudSnackbarProvider>();
+            Console.WriteLine(comp.Markup);
+            comp.Find("#mud-snackbar-container").InnerHtml.Trim().Should().BeEmpty();
+            var service = ctx.Services.GetService<ISnackbar>() as SnackbarService;
+            // shoot out a snackbar
+            await comp.InvokeAsync(() => service?.Add("Boom, big reveal. Im a pickle!", Severity.Success, config => { config.HideIcon = true; }));
+            Console.WriteLine(comp.Markup);
+            // Test that the snackbar does NOT have an icon.
+            var hasIcon = comp.Find("#mud-snackbar-container .mud-snackbar").FirstElementChild.ClassName.Contains("mud-snackbar-icon");
+            Assert.IsFalse(hasIcon);
+            // close by click on the snackbar
+            comp.Find("button").Click();
+            comp.WaitForAssertion(() => comp.Find("#mud-snackbar-container").InnerHtml.Trim().Should().BeEmpty(), TimeSpan.FromMilliseconds(100));
+        }
+
     }
 }

@@ -14,15 +14,22 @@
             cursor: pointer;
         }
     }
-}
 
-.mud-select-input {
-    cursor: pointer;
+    .mud-select-input {
+        cursor: pointer;
 
-    &:disabled {
-        cursor: default;
+        &:disabled {
+            cursor: default;
+        }
+    }
+
+    .mud-disabled {
+        .mud-select-input {
+            cursor: default;
+        }
     }
 }
+
 
 .mud-select > .mud-form-helpertext {
     margin-top: -21px;

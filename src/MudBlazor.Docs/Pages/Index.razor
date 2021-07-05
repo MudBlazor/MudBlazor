@@ -21,8 +21,10 @@
             <MudItem xs="12" sm="12" md="12">
                 <div class="d-flex justify-center mt-4">
                     <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Large" Link="/getting-started/installation" Class="docs-mud-button get-started">Get Started</MudButton>
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Large" Link="https://opencollective.com/mudblazor" Class="docs-mud-button sponsor d-none d-sm-flex">Sponsor</MudButton>
                     <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Large" Link="https://github.com/Garderoben/MudBlazor" Target="_blank" Class="docs-mud-button github">GitHub</MudButton>
                 </div>
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Large" Link="https://opencollective.com/mudblazor" Class="docs-mud-button sponsor d-flex d-sm-none mt-4 mx-auto">Sponsor</MudButton>
             </MudItem>
         </MudGrid>
     </div>
@@ -30,7 +32,7 @@
     <div for="Section Sponsors" class="docs-sections mt-16">
         <MudText Typo="Typo.h4" Align="Align.Center" GutterBottom="true" Class="mudblazor-section-titles">Project Sponsors</MudText>
         <MudText Align="Align.Center" Typo="Typo.body1" Class="mb-4">
-            Mudblazor is thankful for its <MudLink Href="https://opencollective.com/mudblazor">Open Collective sponsors</MudLink> and the companys that supplied us with their software.
+            MudBlazor is thankful for its <MudLink Href="https://opencollective.com/mudblazor">Open Collective sponsors</MudLink> and the companys that supplied us with their software.
         </MudText>
         <div class="mudblazor-sponsor-list mb-8">
             <Sponsor Website="https://timestatement.com/" NameAndImage="TimeStatement" />
@@ -86,21 +88,19 @@
                             </g>
                         </svg>
                     </MudButton>
-                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Large" Link="https://gitter.im/MudBlazor/community" Class="docs-mud-button discord-gitter">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 509.12 122.25" width="80%" height="80%">
-                            <g fill="#fb0062">
-                                <rect width="9.78" height="78.24" />
-                                <rect x="24.45" y="21.19" width="9.78" height="101.06" />
-                                <rect x="48.9" y="21.19" width="9.78" height="101.06" />
-                                <rect x="73.35" y="21.19" width="9.78" height="55.42" />
-                                <path d="M137.42,57.52c0-16.89,12.82-30.95,31-30.95,10.32,0,16.88,2.81,23.13,8.12l-6.56,7.82c-4.69-4.06-9.07-6.57-16.88-6.57-10.94,0-19.38,9.7-19.38,21.26,0,12.19,8.12,21.57,20.32,21.57a23.27,23.27,0,0,0,14.38-4.69V62.83H168.06V54.08h25.63V79.4a38.57,38.57,0,0,1-25,9.38C149.61,88.46,137.42,75,137.42,57.52Z" />
-                                <path d="M218.7,27.5h10v60h-10Z" />
-                                <path d="M268.72,37.51h-15v-10h45v10h-20v50h-10Z" />
-                                <path d="M333.75,37.51h-15v-10h45v10h-20v50h-10Z" />
-                                <path d="M388.77,27.5h45v10h-35v15h30v10h-30v15h35v10h-45Z" />
-                                <path d="M509.12,87.53,493.18,65a19.16,19.16,0,0,0,10.94-17.51c0-11.88-9.69-20-21.57-20H459.1v60h10v-20h13.44l14.38,20Zm-40.32-30v-20h13.44c6.25,0,11.56,3.75,11.56,10s-5.31,10-11.56,10Z" />
-                            </g>
-                        </svg>
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Large" Link="https://github.com/Garderoben/MudBlazor/discussions" Class="docs-mud-button discord-gitter">
+                    <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 273.19 80.86" width="80%" height="80%">
+                        <g fill="#24292e">
+                            <path d="M135.14,37.1H120.78a.67.67,0,0,0-.68.67v7a.67.67,0,0,0,.68.67h5.6V54.2a17,17,0,0,1-4.74.43c-4.1,0-9.84-1.5-9.84-14.11s6-14.27,11.58-14.27a22.8,22.8,0,0,1,8.27,1.26.68.68,0,0,0,.81-.66l1.6-6.78a.62.62,0,0,0-.26-.53c-.54-.38-3.83-2.23-12.16-2.23-9.59,0-19.43,4.08-19.43,23.7S113.48,63.55,123,63.55a23.38,23.38,0,0,0,12.63-3.36.58.58,0,0,0,.21-.51V37.77a.67.67,0,0,0-.67-.67"/>
+                            <path d="M209.19,19.66a.67.67,0,0,0-.67-.67h-8.09a.67.67,0,0,0-.67.67V35.3H187.15V19.66a.66.66,0,0,0-.66-.67H178.4a.67.67,0,0,0-.67.67V62a.67.67,0,0,0,.67.68h8.09a.66.66,0,0,0,.66-.68V43.89h12.61l0,18.1a.67.67,0,0,0,.67.68h8.11a.67.67,0,0,0,.67-.68V19.66"/>
+                            <path d="M150.41,25.22a5.22,5.22,0,1,0-5.22,5.27,5.24,5.24,0,0,0,5.22-5.27"/>
+                            <path d="M149.83,53.07V33.52a.67.67,0,0,0-.67-.67H141.1a.77.77,0,0,0-.7.75v28c0,.82.51,1.07,1.17,1.07h7.27c.79,0,1-.4,1-1.08V53.07"/>
+                            <path d="M239.93,32.91h-8a.68.68,0,0,0-.67.68V54.35a9.09,9.09,0,0,1-4.94,1.49c-2.89,0-3.66-1.31-3.66-4.15V33.59a.68.68,0,0,0-.67-.68h-8.14a.68.68,0,0,0-.67.68V53.06c0,8.42,4.69,10.48,11.14,10.48a18.85,18.85,0,0,0,9.57-2.92,17.13,17.13,0,0,0,.29,1.72.71.71,0,0,0,.59.37l5.19,0a.68.68,0,0,0,.67-.67V33.59a.68.68,0,0,0-.67-.68"/>
+                            <path d="M258.71,55.81A9.63,9.63,0,0,1,254,54.47V41.06a10.83,10.83,0,0,1,4.15-1.35c2.9-.26,5.68.62,5.68,7.51C263.86,54.5,262.6,55.93,258.71,55.81ZM261.87,32a15.06,15.06,0,0,0-7.66,2V19.66a.67.67,0,0,0-.66-.67h-8.12a.67.67,0,0,0-.67.67V62a.67.67,0,0,0,.67.68h5.63a.66.66,0,0,0,.59-.36,13,13,0,0,0,.34-2s3.32,3.14,9.6,3.14c7.37,0,11.6-3.73,11.6-16.78S266.44,32,261.87,32"/>
+                            <path d="M173.08,32.85H167v-8c0-.3-.15-.46-.5-.46h-8.27c-.32,0-.5.15-.5.45v8.29s-4.14,1-4.42,1.08a.68.68,0,0,0-.49.65V40a.67.67,0,0,0,.67.68h4.24V53.24c0,9.3,6.53,10.22,10.93,10.22a18.88,18.88,0,0,0,4.82-.79.63.63,0,0,0,.38-.61V56.33a.68.68,0,0,0-.67-.67c-.35,0-1.26.14-2.19.14-3,0-4-1.39-4-3.18V40.72h6.07a.67.67,0,0,0,.67-.68V33.52a.67.67,0,0,0-.67-.67"/>
+                            <path d="M41.45,0A41.45,41.45,0,0,0,28.34,80.78c2.08.37,2.85-.88,2.85-2s-.05-4.24-.05-7.72C20.73,73,18,68.55,17.2,66.22,16.74,65,14.72,61.35,13,60.37c-1.45-.78-3.52-2.7,0-2.75,3.27,0,5.6,3,6.38,4.25C23,68.14,29,66.38,31.35,65.29A8.7,8.7,0,0,1,34,59.75c-9.22-1-18.86-4.62-18.86-20.47a16.14,16.14,0,0,1,4.25-11.14,14.93,14.93,0,0,1,.41-11s3.48-1.09,11.4,4.25a39.07,39.07,0,0,1,20.73,0c7.93-5.39,11.4-4.25,11.4-4.25a15,15,0,0,1,.42,11A16,16,0,0,1,68,39.28c0,15.91-9.69,19.43-18.91,20.47,1.5,1.29,2.8,3.78,2.8,7.66,0,5.55,0,10,0,11.4,0,1.09.77,2.39,2.85,2A41.47,41.47,0,0,0,41.45,0Z"/>
+                        </g>
+                    </svg>
                     </MudButton>
                 </div>
             </MudItem>

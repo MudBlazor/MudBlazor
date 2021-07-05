@@ -179,6 +179,25 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("p")[0].TrimmedText().Should().Be("Corn flakes, Salad");
             string.Join(", ", chipset.Instance.SelectedChips.Select(x => x.Text).OrderBy(x => x)).Should().Be("Corn flakes, Salad");
         }
+
+
+        [Test]
+        public async Task ChipSet_MultiSelection_LateDefaultChipsShouldBeInitiallySelected()
+        {
+            var comp = ctx.RenderComponent<ChipSetLateDefaultTest>();
+            // print the generated html
+            Console.WriteLine(comp.Markup);
+            // check that only one item is present
+            var chipset = comp.FindComponent<MudChipSet>();
+            comp.FindAll("div.mud-chip").Count.Should().Be(1);
+            chipset.Instance.SelectedChips.Length.Should().Be(1);
+            string.Join(", ", chipset.Instance.SelectedChips.Select(x => x.Text).OrderBy(x => x)).Should().Be("Primary");
+            // select extra item
+            comp.FindAll("button")[0].Click();
+            // check that extra item is selected
+            comp.FindAll("div.mud-chip").Count.Should().Be(2);
+            string.Join(", ", chipset.Instance.SelectedChips.Select(x => x.Text).OrderBy(x => x)).Should().Be("Extra Chip, Primary");
+        }
     }
 
 }

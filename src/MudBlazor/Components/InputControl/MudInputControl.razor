@@ -5,29 +5,29 @@
 
 
 <div @attributes="UserAttributes" class="@Classname" style="@Style">
-    @InputContent
-    @if (!String.IsNullOrEmpty(Label))
+    <div class="mud-input-control-input-container">
+        @InputContent
+        @if (!String.IsNullOrEmpty(Label))
+        {
+            <MudInputLabel Class="mud-input-label-inputcontrol" Variant="@Variant" Disabled=@Disabled Error="@Error" Margin="@Margin">
+                @Label
+            </MudInputLabel>
+        }
+    </div>
+    @if (Error || !String.IsNullOrEmpty(HelperText))
     {
-        <MudInputLabel Class="mud-input-label-inputcontrol" Variant="@Variant" Disabled=@Disabled Error="@Error" Margin="@Margin">
-            @Label
-        </MudInputLabel>
-    }
-    @if (!String.IsNullOrEmpty(HelperText))
-    {
-        <p class="@HelperClass">
-            @if (Error)
-            {
-                @ErrorText
-            }
-            else
-            {
-                @HelperText
-            }
-        </p>
-    }
-    else if (String.IsNullOrEmpty(HelperText) && Error)
-    {
-        <p class="@HelperClass">@ErrorText</p>
+        <div class="mud-input-control-helper-container">
+            <p class="@HelperClass">
+                @if (Error)
+                {
+                    @ErrorText
+                }
+                else if (!String.IsNullOrEmpty(HelperText))
+                {
+                    @HelperText
+                }
+            </p>
+        </div>
     }
     @ChildContent
 </div>

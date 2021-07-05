@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Bunit;
 using FluentAssertions;
 using MudBlazor.UnitTests.TestComponents;
+using MudBlazor.UnitTests.TestComponents.Dialog;
 using NUnit.Framework;
 using NUnit.Framework.Internal;
 
@@ -109,7 +110,7 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("div.mud-dialog-container").Should().NotBe(null);
             // close by click outside
             comp.Find("div.mud-overlay").Click();
-            comp.Markup.Trim().Should().BeEmpty();
+            comp.WaitForAssertion(() => comp.Markup.Trim().Should().BeEmpty(), TimeSpan.FromSeconds(2));
             // open again
             comp1.Find("button").Click();
             comp.WaitForAssertion(() => comp.Find("div.mud-dialog-container").Should().NotBe(null), TimeSpan.FromSeconds(2));
@@ -118,5 +119,112 @@ namespace MudBlazor.UnitTests.Components
             comp.WaitForAssertion(() => comp.Markup.Trim().Should().BeEmpty(), TimeSpan.FromSeconds(2));
         }
 
+        /// <summary>
+        /// Based on bug report by Porkopek:
+        /// Updating values that are referenced in TitleContent render fragment won't result in an update of the dialog title
+        /// when they change. This is solved by allowing the user to call ForceRender() on DialogInstance
+        /// </summary>
+        /// <returns></returns>
+        [Test]
+        public async Task DialogShouldUpdateTitleContent()
+        {
+            var comp = ctx.RenderComponent<MudDialogProvider>();
+            comp.Markup.Trim().Should().BeEmpty();
+            var service = ctx.Services.GetService<IDialogService>() as DialogService;
+            service.Should().NotBe(null);
+            IDialogReference dialogReference = null;
+            // open simple test dialog
+            await comp.InvokeAsync(() => dialogReference = service?.Show<DialogThatUpdatesItsTitle>());
+            dialogReference.Should().NotBe(null);
+            Console.WriteLine(comp.Markup);
+            //comp.Find("div.mud-dialog-container").Should().NotBe(null);
+            comp.Find("div.mud-dialog-content").TrimmedText().Should().Be("Body:");
+            comp.Find("div.mud-dialog-title").TrimmedText().Should().Be("Title:");
+            // click on ok button should set title and content
+            comp.FindAll("button")[1].Click();
+            comp.Find("div.mud-dialog-content").TrimmedText().Should().Be("Body: Test123");
+            comp.Find("div.mud-dialog-title").TrimmedText().Should().Be("Title: Test123");
+        }
+
+        /// <summary>
+        /// A test that ensures parameters are not overwritten when dialog is updated
+        /// </summary>
+        [Test]
+        public async Task DialogShouldNotOverwriteParameters()
+        {
+            var comp = ctx.RenderComponent<MudDialogProvider>();
+            comp.Markup.Trim().Should().BeEmpty();
+            var service = ctx.Services.GetService<IDialogService>() as DialogService;
+            service.Should().NotBe(null);
+            IDialogReference dialogReference = null;
+
+            var parameters = new DialogParameters();
+            parameters.Add("TestValue", "test");
+            parameters.Add("Color_Test", Color.Error); // !! comment me !!
+
+            await comp.InvokeAsync(() => dialogReference = service?.Show<DialogWithParameters>(string.Empty, parameters));
+            dialogReference.Should().NotBe(null);
+
+            Console.WriteLine("----------------------------------------");
+            Console.WriteLine(comp.Markup);
+
+            var textField = comp.FindComponent<MudInput<string>>().Instance;
+            textField.Text.Should().Be("test");
+
+            comp.Find("input").Change("new_test");
+            comp.Find("input").Blur();
+            textField.Text.Should().Be("new_test");
+
+            comp.FindAll("button")[0].Click();
+            Console.WriteLine("----------------------------------------");
+            Console.WriteLine(comp.Markup);
+
+            (dialogReference.Dialog as DialogWithParameters).TestValue.Should().Be("new_test");
+            textField.Text.Should().Be("new_test");
+        }
+
+        /// <summary>
+        /// Based on bug report #1385
+        /// Dialog Class and Style parameters should be honored
+        /// </summary>
+        [Test]
+        public async Task DialogShouldHonorClassAndStyle()
+        {
+            var comp = ctx.RenderComponent<MudDialogProvider>();
+            comp.Markup.Trim().Should().BeEmpty();
+            var service = ctx.Services.GetService<IDialogService>() as DialogService;
+            service.Should().NotBe(null);
+            IDialogReference dialogReference = null;
+            // open simple test dialog
+            await comp.InvokeAsync(() => dialogReference = service?.Show<DialogOkCancel>());
+            dialogReference.Should().NotBe(null);
+            Console.WriteLine(comp.Markup);
+            comp.Find("div.mud-dialog").ClassList.Should().Contain("test-class");
+            comp.Find("div.mud-dialog").Attributes["style"].Value.Should().Be("color: red;");
+            comp.Find("div.mud-dialog-content").Attributes["style"].Value.Should().Be("color: blue;");
+            comp.Find("div.mud-dialog-content").ClassList.Should().NotContain("test-class");
+            comp.Find("div.mud-dialog-content").ClassList.Should().Contain("content-class");
+        }
+
+        [Test]
+        public async Task PassingEventCallbackToDialogViaParameters()
+        {
+            var comp = ctx.RenderComponent<MudDialogProvider>();
+            comp.Markup.Trim().Should().BeEmpty();
+            var service = ctx.Services.GetService<IDialogService>() as DialogService;
+            service.Should().NotBe(null);
+
+            var testComp = ctx.RenderComponent<DialogWithEventCallbackTest>();
+            // open dialog
+            testComp.Find("button").Click();
+            // in the opened dialog find the text field
+            Console.WriteLine(comp.Markup);
+            var tf = comp.FindComponent<MudTextField<string>>();
+            tf.Find("input").Input("User input ...");
+            // the user input should be passed out of the dialog into the outer component and displayed there.
+            testComp.WaitForAssertion(()=>
+                testComp.Find("p").TextContent.Trim().Should().Be("Search Text:  User input ...")
+            );
+        }
     }
 }

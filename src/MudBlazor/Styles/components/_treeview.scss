@@ -17,6 +17,8 @@
     margin: 0px;
     padding: 0px;
     margin-left: 17px;
+    margin-inline-start: 17px;
+    margin-inline-end: unset;
     list-style: none;
 }
 
@@ -62,6 +64,10 @@
             fill: var(--mud-palette-primary);
         }
     }
+
+    .mud-treeview-item-arrow-load {
+        animation: rotation 1s infinite linear;
+    }
 }
 
 .mud-treeview-item-icon {
@@ -69,12 +75,16 @@
     display: flex;
     flex-shrink: 0;
     margin-right: 4px;
+    margin-inline-end: 4px;
+    margin-inline-start: unset;
     justify-content: center;
 }
 
 .mud-treeview-item-label {
     flex-grow: 1;
     padding-left: 4px;
+    padding-inline-start: 4px;
+    padding-inline-end: unset;
 }
 
 .mud-treeview-canhover .mud-treeview-item-activated .mud-treeview-item-content:hover {
@@ -100,5 +110,21 @@
 
     .mud-icon-button {
         padding: 0;
+    }
+}
+
+@keyframes rotation {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(359deg);
+    }
+}
+
+.mud-application-layout-rtl {
+    .mud-treeview-item-arrow {
+        transform: scaleX(-1);
     }
 }

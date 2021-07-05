@@ -1,9 +1,7 @@
 ﻿@namespace MudBlazor
-@inherits ComponentBaseMudMenuItem
+@inherits MudComponentBase
 
-
-
-<MudListItem @onclick="OnClickHandler" Disabled="@Disabled" Class="@Class" Style="@Style">
+<MudListItem @attributes="UserAttributes" @onclick="OnClickHandler" Disabled="@Disabled" Class="@Class" Style="@Style">
     @ChildContent
 </MudListItem>
 

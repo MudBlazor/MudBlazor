@@ -1,8 +1,6 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
-using MudBlazor.Extensions;
-using MudBlazor.Interfaces;
-using MudBlazor.Services;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
@@ -78,7 +76,23 @@ namespace MudBlazor
         /// <summary>
         /// Sets the icon of the input text field
         /// </summary>
-        [Parameter] public string InputIcon { get; set; } = Icons.Filled.Event;
+        [Parameter]
+        [Obsolete("Obsolete, use AdornmentIcon")]
+        public string InputIcon
+        {
+            get { return AdornmentIcon; }
+            set { AdornmentIcon = value; }
+        }
+
+        /// <summary>
+        /// The color of the adornment if used. It supports the theme colors.
+        /// </summary>
+        [Parameter] public Color AdornmentColor { get; set; } = Color.Default;
+
+        /// <summary>
+        /// Sets the icon of the input text field
+        /// </summary>
+        [Parameter] public string AdornmentIcon { get; set; } = Icons.Material.Filled.Event;
 
         /// <summary>
         /// Fired when the dropdown / dialog opens
@@ -99,6 +113,11 @@ namespace MudBlazor
         /// If true, border-radius is set to 0 this is set to true automaticly in static mode but can be overridden with Rounded bool.
         /// </summary>
         [Parameter] public bool Square { get; set; }
+
+        /// <summary>
+        /// If true, no date or time can be defined.
+        /// </summary>
+        [Parameter] public bool ReadOnly { get; set; }
 
         /// <summary>
         /// If true, border-radius is set to theme default when in Static Mode.
@@ -141,9 +160,20 @@ namespace MudBlazor
         [Parameter] public PickerVariant PickerVariant { get; set; } = PickerVariant.Inline;
 
         /// <summary>
+        ///  Variant of the text input
+        /// </summary>
+        [Parameter]
+        [Obsolete("Obsolete, use Variant")]
+        public Variant InputVariant
+        {
+            get { return Variant; }
+            set { Variant = value; }
+        }
+
+        /// <summary>
         /// Variant of the text input
         /// </summary>
-        [Parameter] public Variant InputVariant { get; set; } = Variant.Text;
+        [Parameter] public Variant Variant { get; set; } = Variant.Text;
 
         /// <summary>
         /// Sets if the icon will be att start or end, set to false to disable.
@@ -260,6 +290,14 @@ namespace MudBlazor
                 Close(false);
             }
         }
+
+        private MudTextField<string> _inputReference;
+
+        public virtual ValueTask FocusAsync() => _inputReference?.FocusAsync() ?? ValueTask.CompletedTask;
+
+        public virtual ValueTask SelectAsync() => _inputReference?.SelectAsync() ?? ValueTask.CompletedTask;
+
+        public virtual ValueTask SelectRangeAsync(int pos1, int pos2) => _inputReference?.SelectRangeAsync(pos1, pos2) ?? ValueTask.CompletedTask;
 
         private bool _pickerSquare;
         private int _pickerElevation;

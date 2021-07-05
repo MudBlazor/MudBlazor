@@ -15,12 +15,23 @@
     }
 
     disconnect(id, element) {
-        this._maps[id].disconnect(element);
+        //I can't think about a case, where this can be called, without observe has been called before
+        //however, a check is not harmful either		
+        var existingEntry = this._maps[id];
+        if (existingEntry) {
+            existingEntry.disconnect(element);
+        }
     }
 
     cancelListener(id) {
-        this._maps[id].cancelListener();
-        delete this._maps[id];
+        //cancelListener is called during dispose of .net instance
+        //in rare cases it could be possible, that no object has been connect so far
+        //and no entry exists. Therefore, a little check to prevent an error in this case		
+        var existingEntry = this._maps[id];
+        if (existingEntry) {
+            existingEntry.cancelListener();
+            delete this._maps[id];
+        }
     }
 }
 

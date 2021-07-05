@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Extensions;
 using MudBlazor.Utilities;
 
@@ -20,10 +22,12 @@ namespace MudBlazor
             .AddClass("mud-theme-" + Color.ToDescriptionString())
             .AddClass("mud-badge-top", !Bottom)
             .AddClass("mud-badge-bottom", Bottom)
-            .AddClass("mud-badge-right", !Left)
-            .AddClass("mud-badge-left", Left)
+            .AddClass("mud-badge-right", Start == RightToLeft)
+            .AddClass("mud-badge-left", Start != RightToLeft)
             .AddClass("mud-badge-overlap", Overlap)
         .Build();
+
+        [CascadingParameter] public bool RightToLeft { get; set; }
 
         /// <summary>
         /// The color of the badge.
@@ -38,7 +42,13 @@ namespace MudBlazor
         /// <summary>
         /// Aligns the badge to left.
         /// </summary>
-        [Parameter] public bool Left { get; set; }
+        [ObsoleteAttribute("Left is obsolete. Use Start instead!", false)]
+        [Parameter] public bool Left { get => Start; set { Start = value; } }
+
+        /// <summary>
+        /// Aligns the badge to the start (Left in LTR and right in RTL).
+        /// </summary>
+        [Parameter] public bool Start { get; set; }
 
         /// <summary>
         /// Reduces the size of the badge and hide any of its content.
@@ -75,7 +85,18 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public RenderFragment ChildContent { get; set; }
 
+        /// <summary>
+        /// Button click event if set.
+        /// </summary>
+        [Parameter] public EventCallback<MouseEventArgs> OnClick { get; set; }
+
         private string _content;
+
+        private async Task HandleBadgeClick(MouseEventArgs e)
+        {
+            if (OnClick.HasDelegate)
+                await OnClick.InvokeAsync(e);
+        }
 
         protected override void OnParametersSet()
         {

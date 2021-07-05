@@ -112,7 +112,7 @@ namespace MudBlazor
         [Parameter] public bool ForceLoad { get; set; }
 
         /// <summary>
-        /// If true, this chip is selected per default if used in a ChipSet. 
+        /// If true, this chip is selected by default if used in a ChipSet. 
         /// </summary>
         [Parameter] public bool Default { get; set; }
 
@@ -143,6 +143,11 @@ namespace MudBlazor
         {
             get => _isSelected && ChipSet?.Filter == true;
         }
+
+        /// <summary>
+        /// If false, this chip has not been seen before
+        /// </summary>
+        public bool DefaultProcessed { get; set; }
 
         /// <summary>
         /// Set by MudChipSet

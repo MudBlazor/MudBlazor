@@ -1,0 +1,134 @@
+﻿@namespace MudBlazor.UnitTests.TestComponents
+
+<MudTabs Elevation="1" @ref="_tabElement" PanelClass="test-active-panel" TabPanelClass="test-panel-selector" Position="Position.Top">
+    @for (int i = 0; i < Tabs.Count; i++)
+    {
+        int tempIndex = i;
+
+        <MudTabPanel @key="@Tabs[tempIndex].Name" @ref="Tabs[tempIndex].Panel" Text="@Tabs[tempIndex].Name" ID="@Tabs[tempIndex].Tag" @bind-Disabled="@Tabs[tempIndex].IsDisabled">
+            <MudText>@Tabs[tempIndex].Content</MudText>
+        </MudTabPanel>
+    }
+
+</MudTabs>
+
+@code
+{
+    public class TabBindingHelper
+    {
+        public string Name { get; set; }
+        public bool IsDisabled { get; set; }
+        public DummyPlaceHolder Tag { get; set; }
+        public MudTabPanel Panel { get; set; }
+        public int Index { get; set; }
+        public String Content { get; set; }
+    }
+
+    public class DummyPlaceHolder
+    {
+        public Guid Id { get; set; }
+    }
+
+    [Parameter] public Int32 InitialStartIndex { get; set; } = 0;
+
+    private MudTabs _tabElement;
+
+    public static string __description__ = "activating tabs should work";
+
+    public List<TabBindingHelper> Tabs { get; private set; }
+
+    public ActivateDisabledTabsTest()
+    {
+        Tabs = new();
+        for (int i = 0; i < 5; i++)
+        {
+            Tabs.Add(new TabBindingHelper { Name = (i + 1).ToString(), IsDisabled = true, Tag = new DummyPlaceHolder { Id = Guid.NewGuid() }, Index = i, Content = $"Tab Content {i + 1}" });
+        }
+    }
+
+    public void ActivateAll()
+    {
+        InvokeAsync(() =>
+        {
+            foreach (var item in Tabs)
+            {
+                item.IsDisabled = false;
+            }
+
+            StateHasChanged();
+        });
+    }
+
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+
+        Tabs[InitialStartIndex].IsDisabled = false;
+    }
+
+    public void EnableTab(int index)
+    {
+        InvokeAsync(() =>
+        {
+            Tabs[index].IsDisabled = false;
+            StateHasChanged();
+        });
+    }
+
+    public void ActivateTab(int index, bool ignoreState)
+    {
+        InvokeAsync(() =>
+        {
+            _tabElement.ActivatePanel(index, ignoreState);
+        });
+    }
+
+    public void ActivateTab(int index)
+    {
+        InvokeAsync(() =>
+        {
+            _tabElement.ActivatePanel(index);
+        });
+    }
+
+    public void DisableTab(int index)
+    {
+        InvokeAsync(() =>
+        {
+            Tabs[index].IsDisabled = true;
+            StateHasChanged();
+        });
+    }
+
+    public void ActivateTab(MudTabPanel panel, bool ignoreState)
+    {
+        InvokeAsync(() =>
+        {
+            _tabElement.ActivatePanel(panel, ignoreState);
+        });
+    }
+
+    public void ActivateTab(MudTabPanel panel)
+    {
+        InvokeAsync(() =>
+        {
+            _tabElement.ActivatePanel(panel);
+        });
+    }
+
+    public void ActivateTab(DummyPlaceHolder id, bool ignoreState)
+    {
+        InvokeAsync(() =>
+        {
+            _tabElement.ActivatePanel(id, ignoreState);
+        });
+    }
+
+    public void ActivateTab(DummyPlaceHolder id)
+    {
+        InvokeAsync(() =>
+        {
+            _tabElement.ActivatePanel(id);
+        });
+    }
+}

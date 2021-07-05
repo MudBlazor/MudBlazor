@@ -10,6 +10,8 @@
     <MudSelectItem T="Position" Value="Position.Left">Left</MudSelectItem>
     <MudSelectItem T="Position" Value="Position.Right">Right</MudSelectItem>
     <MudSelectItem T="Position" Value="Position.Bottom">Bottom</MudSelectItem>
+    <MudSelectItem T="Position" Value="Position.Start">Start</MudSelectItem>
+    <MudSelectItem T="Position" Value="Position.End">End</MudSelectItem>
 </MudSelect>
 
 @code {
@@ -33,6 +35,12 @@
                 break;
             case Position.Bottom:
                 LegendPosition = Position.Bottom;
+                break;
+            case Position.Start:
+                LegendPosition = Position.Start;
+                break;
+            case Position.End:
+                LegendPosition = Position.End;
                 break;
         }
     }

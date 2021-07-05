@@ -1,7 +1,10 @@
 ﻿
 .mud-tooltip-root {
     position: relative;
-    display: inline-block;
+
+    &.mud-tooltip-inline {
+        display: inline-block;
+    }
 
     & .mud-tooltip {
         color: var(--mud-palette-dark-text);
@@ -31,13 +34,13 @@
             transform: translate(-50%, calc(100% + 10px));
         }
 
-        &.mud-tooltip-placement-start {
+        &.mud-tooltip-placement-left {
             top: 0;
             left: 0;
             transform: translateX(calc(-100% - 10px));
         }
 
-        &.mud-tooltip-placement-end {
+        &.mud-tooltip-placement-right {
             top: 0;
             right: 0;
             transform: translateX(calc(100% + 10px));

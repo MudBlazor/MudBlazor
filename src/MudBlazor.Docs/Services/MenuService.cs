@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using MudBlazor.Charts;
 using MudBlazor.Docs.Models;
 
 namespace MudBlazor.Docs.Services
@@ -69,6 +70,7 @@ namespace MudBlazor.Docs.Services
             .AddItem("Popover", typeof(MudPopover))
             .AddItem("SwipeArea", typeof(MudSwipeArea))
             .AddItem("ToolBar", typeof(MudToolBar))
+            .AddItem("Carousel", typeof(MudCarousel<object>))
 
             //GROUPS
 
@@ -95,6 +97,7 @@ namespace MudBlazor.Docs.Services
             //Buttons
             .AddNavGroup("Buttons", false, new DocsComponents()
                 .AddItem("Button", typeof(MudButton))
+                .AddItem("Button Group", typeof(MudButtonGroup))
                 .AddItem("IconButton", typeof(MudIconButton))
                 .AddItem("ToggleIconButton", typeof(MudToggleIconButton))
                 .AddItem("Button FAB", typeof(MudFab))
@@ -102,10 +105,10 @@ namespace MudBlazor.Docs.Services
 
             //Charts
             .AddNavGroup("Charts", false, new DocsComponents()
-                .AddItem("Donut chart", typeof(MudChart))
-                .AddItem("Line chart", typeof(MudChart))
-                .AddItem("Pie chart", typeof(MudChart))
-                .AddItem("Bar chart", typeof(MudChart))
+                .AddItem("Donut chart", typeof(Donut))
+                .AddItem("Line chart", typeof(Line))
+                .AddItem("Pie chart", typeof(Pie))
+                .AddItem("Bar chart", typeof(Bar))
             );
         public IEnumerable<MudComponent> Components => _docsComponents.Elements;
 
@@ -150,6 +153,7 @@ namespace MudBlazor.Docs.Services
         public IEnumerable<DocsLink> GettingStarted => _gettingStarted ??= new List<DocsLink>
             {
                 new DocsLink {Title = "Installation", Href = "getting-started/installation"},
+                new DocsLink {Title = "Layouts", Href = "getting-started/layouts"},
                 new DocsLink {Title = "Usage", Href = "getting-started/usage"},
                 new DocsLink {Title = "Wireframes", Href = "getting-started/wireframes"},
             }.OrderBy(x => x.Title);
@@ -170,6 +174,7 @@ namespace MudBlazor.Docs.Services
                 new DocsLink {Title = "Flex", Href = "features/flex"},
                 new DocsLink {Title = "Icons", Href = "features/icons"},
                 new DocsLink {Title = "Spacing", Href = "features/spacing"},
+                new DocsLink {Title = "RTL Languages", Href = "features/rtl-languages"},
             }.OrderBy(x => x.Title);
 
 

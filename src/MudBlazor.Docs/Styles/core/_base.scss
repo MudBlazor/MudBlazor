@@ -50,8 +50,8 @@
 
 .docs-nav-fader {
     display: block;
-    position: fixed;
-    width: 232px;
+    position: sticky;
+    top: 0;
     height: 40px;
     background-image: linear-gradient(to top,rgba(255,255,255,0),var(--mud-palette-drawer-background));
     z-index: 100;

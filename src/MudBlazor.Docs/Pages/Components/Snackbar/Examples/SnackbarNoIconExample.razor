@@ -1,0 +1,7 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+@inject ISnackbar Snackbar
+
+<MudButton Variant="Variant.Filled" Color="Color.Primary" @onclick="@(() => Snackbar.Add("Snackbar with no icon.", Severity.Success, config => { config.HideIcon = true; }))">
+    Open Snackbar
+</MudButton>

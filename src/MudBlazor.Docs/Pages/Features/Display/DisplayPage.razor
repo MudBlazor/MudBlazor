@@ -1,15 +1,18 @@
 ﻿@page "/features/display"
 
 <DocsPage>
-    <DocsPageHeader Title="Display" SubTitle="The display classes helps you set display type or change it upon viewport." />
+    <DocsPageHeader Title="Display" SubTitle="The display classes help you set the display type or change it upon viewport." />
     <DocsPageContent>
         <DocsPageSection>
-            <MudText Typo="Typo.h4" GutterBottom="true">How it works</MudText>
-            <MudText>Specify the elements <CodeInline>display</CodeInline> property, the classes can be used with all breakpoints from <CodeInline>xs</CodeInline> to <CodeInline>xl</CodeInline></MudText>
+            <SectionHeader Title="How it works">
+                <Description>
+                    <MudText>Specify the element's <CodeInline>display</CodeInline> property, the classes can be used with all breakpoints from <CodeInline>xs</CodeInline> to <CodeInline>xl</CodeInline>.</MudText>
+                </Description>
+            </SectionHeader>
             <div class="d-flex">
 
             </div>
-            <MudText Class="pt-6 pb-2">The <b>propertys</b></MudText>
+            <MudText Class="pt-6 pb-2">The <b>properties</b></MudText>
             <ul class="mud-typography-body1">
                 <li><CodeInline>.d-{value}</CodeInline> - for <CodeInline>xs</CodeInline></li>
                 <li><CodeInline>.d-{breakpoint}-{value}</CodeInline> - for <CodeInline>sm</CodeInline>, <CodeInline>md</CodeInline>, <CodeInline>lg</CodeInline> and <CodeInline>xl</CodeInline></li>
@@ -55,9 +58,8 @@
             </MudTabs>
         </DocsPageSection>
         <DocsPageSection>
-            <SectionHeader>
-                <Title>Visibility</Title>
-                <Description>Display a element based on the current viewport. The same brakepoint classes apply from the bottom up. That means <CodeInline>.d-none</CodeInline> apply to all breakpoints, but <CodeInline>.d-md-none</CodeInline> will only apply to <CodeInline>md</CodeInline> and up.</Description>
+            <SectionHeader Title="Visibility">
+                <Description>Display an element based on the current viewport. The same breakpoint classes apply from the bottom up. That means <CodeInline>.d-none</CodeInline> applies to all breakpoints, but <CodeInline>.d-md-none</CodeInline> will only apply to <CodeInline>md</CodeInline> and up.</Description>
             </SectionHeader>
             <MudSimpleTable Outlined="true" Hover="true">
                 <thead>

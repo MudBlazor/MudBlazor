@@ -15,6 +15,11 @@ namespace MudBlazor
                 .AddClass(Class)
                 .Build();
 
+        protected string ToolBarClassname =>
+            new CssBuilder("mud-toolbar-appbar")
+                .AddClass(ToolBarClass)
+                .Build();
+
         /// <summary>
         /// The higher the number, the heavier the drop-shadow. 0 for no shadow.
         /// </summary>
@@ -34,6 +39,11 @@ namespace MudBlazor
         /// If true, appbar will be Fixed.
         /// </summary>
         [Parameter] public bool Fixed { get; set; } = true;
+
+        /// <summary>
+        /// User class names, separated by spaces for the nested toolbar.
+        /// </summary>
+        [Parameter] public string ToolBarClass { get; set; }
 
         /// <summary>
         /// Child content of the component.

@@ -3,7 +3,7 @@
 <MudButton OnClick="AddTab">Add Tab</MudButton>
 <MudButton OnClick="RemoveLast">Remove Last</MudButton>
 
-<MudTabs Elevation="1">
+<MudTabs Elevation="1" @ref="Tabs">
     @foreach (var tab in _tabs)
     {
         <MudTabPanel @key="tab" Text="@tab">
@@ -18,6 +18,8 @@
 
     private List<string> _tabs = new List<string>();
     private int i = 0;
+
+    public MudTabs Tabs { get; set; }
 
     private async Task AddTab()
     {

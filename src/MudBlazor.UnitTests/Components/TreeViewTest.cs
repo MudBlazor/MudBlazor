@@ -110,5 +110,17 @@ namespace MudBlazor.UnitTests.Components
             Console.WriteLine(comp.Markup);
             comp.FindAll("li.mud-treeview-item").Count.Should().Be(8);
         }
+
+        [Test]
+        public void TreeViewServerTest()
+        {
+            var comp = ctx.RenderComponent<TreeViewServerTest>();
+            Console.WriteLine(comp.Markup);
+            comp.FindAll("li.mud-treeview-item").Count.Should().Be(4);
+            comp.FindAll("div.mud-treeview-item-content")[0].Click();
+            comp.FindAll("li.mud-treeview-item").Count.Should().Be(4);
+            comp.FindAll("div.mud-treeview-item-content")[2].Click();
+            comp.FindAll("li.mud-treeview-item").Count.Should().Be(8);
+        }
     }
 }

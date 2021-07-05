@@ -1,6 +1,5 @@
 ﻿@namespace MudBlazor
 @inherits MudTableBase
-@using MudBlazor.Extensions
 @using MudBlazor.Utilities
 @typeparam T
 
@@ -24,7 +23,7 @@
             </div>
 
         }
-        <div class="mud-table-container" style="@TableStyle">
+        <div class="mud-table-container" style="@TableStyle @(GetHorizontalScrollbarStyle())">
             <table class="mud-table-root">
                 @if (ColGroup != null)
                 {
@@ -34,41 +33,101 @@
                 }
                 @if (HeaderContent != null)
                 {
-                    <thead class="mud-table-head">
-                        <MudTr IsHeader="true" IsCheckable="MultiSelection" IsEditable="RowEditingTemplate != null" IsCheckedChanged="@OnHeaderCheckboxClicked" @ref="TableContext.HeaderRow">
+                    <thead class="@HeadClassname">
+                        @if (CustomHeader)
+                        {
                             @HeaderContent
-                        </MudTr>
+                        }
+                        else
+                        {
+                            <MudTHeadRow IsCheckable="MultiSelection" IsExpandable="@(GroupBy?.Expandable ?? false)">
+                                @HeaderContent
+                            </MudTHeadRow>
+                        }
                     </thead>
                 }
                 <tbody class="mud-table-body">
-                    @if (CurrentPageItems != null)
+                    @if (Loading)
                     {
-                        var rowIndex = 0;
-                        @foreach (var item in CurrentPageItems)
+                        <tr>
+                            <td colspan="1000" class="mud-table-loading">
+                                <MudProgressLinear Color="@LoadingProgressColor" Class="mud-table-loading-progress" Indeterminate="true" />
+                            </td>
+                        </tr>
+                    }
+                    @if(GroupBy != null)
+                    {
+                        @foreach (var group in GroupItemsPage)
                         {
-                            var rowClass = new CssBuilder(RowClass).AddClass(RowClassFunc?.Invoke(item, rowIndex)).Build();
-                            var rowStyle = new StyleBuilder().AddStyle(RowStyle).AddStyle(RowStyleFunc?.Invoke(item, rowIndex)).Build();
-                            <MudTr Class="@rowClass" Style="@rowStyle" Item="item" @key="item" IsCheckable="MultiSelection" IsEditable="RowEditingTemplate != null" 
-                                   IsCheckedChanged="@((value) => { var x = item; OnRowCheckboxChanged(value, x); })">
-                                @if ((!ReadOnly) && RowEditingTemplate != null && object.Equals(_editingItem, item))
-                                { 
-                                    <CascadingValue Value="@Validator" IsFixed="true">
-                                        @RowEditingTemplate(item)
-                                    </CascadingValue>
-                                }
-                                else
-                                {
-                                    @RowTemplate(item)
-                                }
-                            </MudTr>
-                            @if (ChildRowContent != null)
-                            {
-                                @ChildRowContent(item)
-                            }
-                            rowIndex++;
+                            <MudTableGroupRow GroupDefinition="GroupBy" Items="group" IsCheckable="MultiSelection" 
+                                              HeaderClass="@GroupHeaderClass" HeaderStyle="@GroupHeaderStyle" 
+                                              FooterClass="@GroupFooterClass" FooterStyle="@GroupFooterStyle"
+                                              HeaderTemplate="@GroupHeaderTemplate" FooterTemplate="@GroupFooterTemplate" T="T"  />
+                        }
+                    }
+                    else
+                    {
+                        @if (CurrentPageItems != null && CurrentPageItems.Count() > 0)
+                        {
+                            var rowIndex = 0;
+                            <MudVirtualize IsEnabled="@Virtualize" Items="@CurrentPageItems?.ToList()" Context="item">
+                               @{ var rowClass = new CssBuilder(RowClass).AddClass(RowClassFunc?.Invoke(item, rowIndex)).Build(); }
+                               @{ var rowStyle = new StyleBuilder().AddStyle(RowStyle).AddStyle(RowStyleFunc?.Invoke(item, rowIndex)).Build(); }
+                               <MudTr Class="@rowClass" Style="@rowStyle" Item="item" @key="item" IsCheckable="MultiSelection" IsEditable="RowEditingTemplate != null" 
+                                      IsCheckedChanged="((value) => { var x = item; OnRowCheckboxChanged(value, x); })">
+
+                                   @if ((!ReadOnly) && RowEditingTemplate != null && object.Equals(_editingItem, item))
+                                   {
+                                       <CascadingValue Value="Validator" IsFixed="true">
+                                           @RowEditingTemplate(item)
+                                       </CascadingValue>
+                                   }
+                                   else
+                                   {
+                                       @RowTemplate(item)
+                                   }
+                               </MudTr>
+                               @if (ChildRowContent != null)
+                               {
+                                   @ChildRowContent(item)
+                               }   
+                               @{ rowIndex++; }
+                            </MudVirtualize>
+                        }
+                        else if(Loading ? LoadingContent != null : NoRecordsContent != null)
+                        {
+                            <tr>
+                                <th colspan="1000" class="mud-table-empty-row">
+                                    <div Class="my-3">
+                                        @if(Loading)
+                                        {
+                                            @LoadingContent
+                                        }
+                                        else
+                                        {
+                                            @NoRecordsContent
+                                        }
+                                    </div>
+                                </th>
+                            </tr>
                         }
                     }
                 </tbody>
+                @if (FooterContent != null)
+                {
+                    <tfoot class="@FootClassname">
+                        @if (CustomFooter)
+                        {
+                            @FooterContent
+                        }
+                        else
+                        {
+                            <MudTFootRow IsCheckable="MultiSelection" IsExpandable="@(GroupBy?.Expandable ?? false)">
+                                @FooterContent
+                            </MudTFootRow>
+                        }
+                    </tfoot>
+                }
             </table>
         </div>
         @if (PagerContent != null)
@@ -79,5 +138,38 @@
         }
     </CascadingValue>
 </div>
+@code
+{
+    // moved to code to avoid repeatidelly code on markup block
+    internal RenderFragment RenderRows(IEnumerable<T> source, string customClass = null, bool isExpandable = false)
+    {
+        var rowIndex = 0;
+        return
+        @<text>
+            @foreach (T item in source)
+            {
+                var rowClass = new CssBuilder(RowClass).AddClass(RowClassFunc?.Invoke(item, rowIndex)).AddClass(customClass, ! string.IsNullOrEmpty("mud-table-row-group-indented-1")).Build();
+                var rowStyle = new StyleBuilder().AddStyle(RowStyle).AddStyle(RowStyleFunc?.Invoke(item, rowIndex)).Build();
+                <MudTr Class="@rowClass" Style="@rowStyle" Item="item" @key="item" IsCheckable="MultiSelection" IsEditable="RowEditingTemplate != null" IsExpandable="isExpandable"
+                        IsCheckedChanged="((value) => { var x = item; OnRowCheckboxChanged(value, x); })">
 
-
+                    @if ((!ReadOnly) && RowEditingTemplate != null && object.Equals(_editingItem, item))
+                    {
+                        <CascadingValue Value="Validator" IsFixed="true">
+                            @RowEditingTemplate(item)
+                        </CascadingValue>
+                    }
+                    else
+                    {
+                        @RowTemplate(item)
+                    }
+                </MudTr>
+                @if (ChildRowContent != null)
+                {
+                    @ChildRowContent(item)
+                }
+                rowIndex++;
+            }
+        </text>;
+     }
+}

@@ -68,17 +68,27 @@ namespace MudBlazor
                 throw new ArgumentException($"{contentComponent.FullName} must be a Blazor Component");
             }
             var dialogInstanceId = Guid.NewGuid();
-            DialogReference dialogReference = null;
-            dialogReference = new DialogReference(dialogInstanceId, this);
+            var dialogReference = new DialogReference(dialogInstanceId, this);
             var dialogContent = new RenderFragment(builder =>
             {
                 var i = 0;
                 builder.OpenComponent(i++, contentComponent);
-                foreach (var parameter in parameters._parameters)
+
+                if (!dialogReference.AreParametersRendered)
                 {
-                    builder.AddAttribute(i++, parameter.Key, parameter.Value);
+                    foreach (var parameter in parameters)
+                    {
+                        builder.AddAttribute(i++, parameter.Key, parameter.Value);
+                    }
+
+                    dialogReference.AreParametersRendered = true;
                 }
-                builder.AddComponentReferenceCapture(1, inst => { dialogReference.InjectDialog(inst); });
+                else
+                {
+                    i += parameters.Count;
+                }
+
+                builder.AddComponentReferenceCapture(i++, inst => { dialogReference.InjectDialog(inst); });
                 builder.CloseComponent();
             });
             var dialogInstance = new RenderFragment(builder =>

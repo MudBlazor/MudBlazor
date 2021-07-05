@@ -2,6 +2,7 @@
 #pragma warning disable IDE1006 // leading underscore
 
 using System;
+using System.Linq;
 using Bunit;
 using FluentAssertions;
 using MudBlazor.UnitTests.TestComponents;
@@ -96,6 +97,61 @@ namespace MudBlazor.UnitTests.Components
             inputs[1].Change(true);
             boxes[0].Instance.Checked.Should().Be(true);
             boxes[1].Instance.Checked.Should().Be(true);
+        }
+
+        /// <summary>
+        /// Check the correct css classes are applied.
+        /// </summary>
+
+        [Test]
+        public void CheckBoxTest4()
+        {
+            var comp = ctx.RenderComponent<CheckBoxTest4>();
+            Console.WriteLine(comp.Markup);
+            // select elements needed for the test
+            var spans = comp.FindAll("span").ToArray();
+            var svgs = comp.FindAll("svg").ToArray();
+            // check dense
+            spans[0].ClassList.Should().Contain("mud-checkbox-dense");
+            spans[1].ClassList.Should().NotContain("mud-checkbox-dense");
+            spans[2].ClassList.Should().NotContain("mud-checkbox-dense");
+            spans[3].ClassList.Should().NotContain("mud-checkbox-dense");
+            // check size
+            svgs[0].ClassList.Should().Contain("mud-icon-size-medium");
+            svgs[1].ClassList.Should().Contain("mud-icon-size-small");
+            svgs[2].ClassList.Should().Contain("mud-icon-size-medium");
+            svgs[3].ClassList.Should().Contain("mud-icon-size-large");
+        }
+
+        /// <summary>
+        /// Check the implementation of the TriState parameter
+        /// </summary>
+        [Test]
+        public void CheckBoxTriStateTest()
+        {
+            var comp = ctx.RenderComponent<MudCheckBox<bool?>>(new[] { ComponentParameter.CreateParameter("TriState", true) });
+            // print the generated html
+            Console.WriteLine(comp.Markup);
+            // select elements needed for the test
+            var box = comp.Instance;
+            var input = comp.Find("input");
+            // check initial state
+            box.Checked.Should().Be(default);
+            // click and check if it has toggled
+            input.Change(true);
+            box.Checked.Should().Be(true);
+            Console.WriteLine(comp.Markup);
+            input.Change(false);
+            box.Checked.Should().Be(false);
+            Console.WriteLine(comp.Markup);
+            // click and check if this is the indeterminate value
+            input.Change(false);
+            box.Checked.Should().Be(default);
+            Console.WriteLine(comp.Markup);
+            // click and check if this is the true value
+            input.Change(true);
+            box.Checked.Should().Be(true);
+            Console.WriteLine(comp.Markup);
         }
 
         /// <summary>

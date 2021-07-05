@@ -3,6 +3,10 @@
     position: relative;
 }
 
+.mud-menu * {
+    cursor: pointer;
+}
+
 .mud-menu-container {
     max-width: max-content;
     width: max-content !important;
@@ -11,4 +15,9 @@
         width: 100% !important;
         max-width: none;
     }
+}
+
+.mud-menu-openonhover:hover .mud-popover {
+    display: block;
+    animation: mud-animation-fadein 251ms;
 }
