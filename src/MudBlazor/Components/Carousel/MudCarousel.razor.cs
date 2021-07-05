@@ -17,7 +17,7 @@ namespace MudBlazor
 
         protected string NavigationButtonsClassName =>
                     new CssBuilder()
-                        .AddClass($"align-self-{ArrowsPosition.ToDescriptionString()}", !(NavigationButtonsClass ?? "").Contains("align-self-"))
+                        .AddClass($"align-self-{ConvertArrowsPosition(ArrowsPosition).ToDescriptionString()}", !(NavigationButtonsClass ?? "").Contains("align-self-"))
                         .AddClass("mud-carousel-elements-rtl", RightToLeft)
                         .AddClass(NavigationButtonsClass)
                         .Build();
@@ -34,6 +34,17 @@ namespace MudBlazor
         private TimeSpan _cycleTimeout = TimeSpan.FromSeconds(5);
         private void _timerElapsed(object stateInfo) => InvokeAsync(async () => await TimerTickAsync());
 
+        private Position ConvertArrowsPosition(Position position)
+        {
+            return position switch
+            {
+                Position.Top => Position.Start,
+                Position.Start => Position.Start,
+                Position.Bottom => Position.End,
+                Position.End => Position.End,
+                _ => position
+            };
+        }
 
         [CascadingParameter] public bool RightToLeft { get; set; }
 
@@ -46,7 +57,7 @@ namespace MudBlazor
         /// <summary>
         /// Sets the position of the arrows. By default, the position is the Center position
         /// </summary>
-        [Parameter] public ArrowsPosition ArrowsPosition { get; set; } = ArrowsPosition.Center;
+        [Parameter] public Position ArrowsPosition { get; set; } = Position.Center;
 
         /// <summary>
         /// Gets or Sets if bottom bar with Delimiters musb be visible
