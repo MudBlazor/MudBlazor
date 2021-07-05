@@ -96,14 +96,14 @@
                             {
                                 foreach (var parameterInfo in context.Parameters)
                                 {
-                                    <div style="display: flex; flex-direction: row; align-items: center; white-space: nowrap;">@($"{GetGenericTypeName(parameterInfo.ParameterType.ConvertToCSharpSource())} {parameterInfo.Name}{AnalyseMethodDocumentation(context.Documentation, "param", parameterInfo.Name)}")</div>
+                                    <div style="display: flex; flex-direction: row; align-items: center; white-space: nowrap;">@($"{GetAliases(parameterInfo.ParameterType.ConvertToCSharpSource())} {parameterInfo.Name}{AnalyseMethodDocumentation(context.Documentation, "param", parameterInfo.Name)}")</div>
                                 }
                             }
                             </MudTd>
                             <MudTd Class="docs-content-api-cell" DataLabel="Return">
                             @if (@context.Return != null && context.Return.ParameterType.ConvertToCSharpSource() != "Void")
                             {
-                                <div style="display: flex; flex-direction: row; align-items: center; white-space: nowrap;">@($"{GetGenericTypeName(context.Return.ParameterType.ConvertToCSharpSource())}{AnalyseMethodDocumentation(context.Documentation, "returns")}")</div>
+                                <div style="display: flex; flex-direction: row; align-items: center; white-space: nowrap;">@($"{GetAliases(context.Return.ParameterType.ConvertToCSharpSource())}{AnalyseMethodDocumentation(context.Documentation, "returns")}")</div>
                             }
                             </MudTd>
                             <MudTd Class="docs-content-api-cell docs-content-api-description" DataLabel="Description">@(HttpUtility.HtmlDecode(AnalyseMethodDocumentation(context.Documentation, "summary")))</MudTd>
@@ -129,15 +129,30 @@
 </div>
 
 @code {
-        private string GetGenericTypeName(string value)
+    private string GetAliases(string value)
+    {
+        switch (value.ToUpperInvariant())
         {
-            switch (value)
-            {
-                case "Int32": return "Int";
-                case "Int16": return "Int";
-                default: return value;
-            }
+            case "STRING": return "String";
+            case "INT16": return "Short";
+            case "INT32": return "Int";
+            case "INT64": return "Long";
+            case "INTPTR": return "Nint";
+            case "UINT16": return "Ushort";
+            case "UINT32": return "Uint";
+            case "UINT64": return "Ulong";
+            case "UINTPTR": return "Nuint";
+            case "DOUBLE": return "Double";
+            case "DECIMAL": return "Decimal";
+            case "OBJECT": return "Object";
+            case "VOID": return string.Empty;
+            case "BOOLEAN": return "Bool";
+            case "SBYTE": return "Sbyte";
+            case "CHAR": return "Char";
+            case "FLOAT": return "Float";
+            default: return value;
         }
+    }
     private List<string> hiddenMethods = new List<string>()
     {
         "ToString",
