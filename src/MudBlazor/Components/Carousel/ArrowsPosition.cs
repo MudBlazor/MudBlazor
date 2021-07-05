@@ -6,19 +6,19 @@ namespace MudBlazor
     public enum ArrowsPosition
     {
         /// <summary>
-        /// Arrows are placed at the start of the carousel
+        /// Arrows are placed at the top of the carousel
         /// </summary>
-        [Description("start")]
-        Start,
+        [Description("top")]
+        Top,
         /// <summary>
         /// Arrows are placed at the center of the carousel. This is the default position
         /// </summary>
         [Description("center")]
         Center,
         /// <summary>
-        /// Arrows are placed at the end of the carousel
+        /// Arrows are placed at the bottom of the carousel
         /// </summary>
-        [Description("end")]
-        End
+        [Description("bottom")]
+        Bottom
     }
 }

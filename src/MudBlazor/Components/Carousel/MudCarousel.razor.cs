@@ -17,9 +17,9 @@ namespace MudBlazor
 
         protected string NavigationButtonsClassName =>
                     new CssBuilder()
-                        .AddClass("align-self-start", !(NavigationButtonsClass ?? "").Contains("align-self-") && ArrowsPosition == ArrowsPosition.Start)
+                        .AddClass("align-self-start", !(NavigationButtonsClass ?? "").Contains("align-self-") && ArrowsPosition == ArrowsPosition.Top)
                         .AddClass("align-self-center", !(NavigationButtonsClass ?? "").Contains("align-self-") && ArrowsPosition == ArrowsPosition.Center)
-                        .AddClass("align-self-end", !(NavigationButtonsClass ?? "").Contains("align-self-") && ArrowsPosition == ArrowsPosition.End)
+                        .AddClass("align-self-end", !(NavigationButtonsClass ?? "").Contains("align-self-") && ArrowsPosition == ArrowsPosition.Bottom)
                         .AddClass("mud-carousel-elements-rtl", RightToLeft)
                         .AddClass(NavigationButtonsClass)
                         .Build();
