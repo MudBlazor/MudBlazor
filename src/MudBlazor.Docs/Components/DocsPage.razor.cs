@@ -77,6 +77,7 @@ namespace MudBlazor.Docs.Components
 
         public async ValueTask DisposeAsync()
         {
+            ScrollSpy.ScrollSectionSectionCentered -= ScrollSpy_ScrollSectionSectionCentered;
             await ScrollSpy.DisposeAsync();
         }
 

@@ -108,7 +108,8 @@ namespace MudBlazor
         {
             try
             {
-                await _js.InvokeVoidAsync("mudScrollSpy.unspy", _dotNetRef);
+                _dotNetRef?.Dispose();
+                await _js.InvokeVoidAsync("mudScrollSpy.unspy");
             }
             catch (Exception)
             {

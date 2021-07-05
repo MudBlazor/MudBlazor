@@ -1,34 +1,95 @@
-﻿//////Functions related to scroll events
-////class MudScrollSpy {
+﻿//Functions related to the scroll spy  
+class MudScrollSpy {
 
-////    constructor() {
-////    }
+    constructor() {
+        this.scrollToSectionRequested = null;
+        this.lastKnowElement = null;
+        //needed as variable to remove the event listeners
+        this.handlerRef = null;
+    }
 
-////    // subscribe to scroll event of the document
-////    spying(dotnetReference) {
-////        // add the event listener
-////        document.addEventListener(
-////            'scroll',
-////            this.handleScroll.bind(this, dotnetReference),
-////            false
-////        );
-////    }
+    // subscribe to relevant events 
+    spying(dotnetReference, selector) {
+        this.scrollToSectionRequested = null;
+        this.lastKnowElement = null;
 
-////    // handle the document scroll event and if needed, fires the .NET event
-////    handleScroll(dotnetReference, event) {
-////        console.log(event);
+        this.handlerRef = this.handleScroll.bind(this, selector, dotnetReference);
 
-////        dotnetReference.invokeMethodAsync('SectionChangeOccured', 'blub');
-////    }
+        // add the event for scroll. In case of zooming this event is also fired 
+        document.addEventListener('scroll', this.handlerRef, true);
 
-////    scrollToSection(sectionId) {
-////        console.log("scroll to position " + sectionId + " requested 23");
-////    }
+        // a window resize could change the size of the relevant viewport
+        window.addEventListener('resize', this.handlerRef, true);
+    }
 
-////    //remove event listener
-////    unspy() {
-////        document.removeEventListener('scroll', this.handleScroll);
-////    }
-////};
+    // handle the document scroll event and if needed, fires the .NET event
+    handleScroll(dotnetReference, selector, event) {
 
-////window.mudScrollSpy = new MudScrollSpy();
+        const elements = document.getElementsByClassName(selector);
+        if (elements.length === 0) {
+            return;
+        }
+
+        const center = window.innerHeight / 2.0;
+
+        let minDifference = Number.MAX_SAFE_INTEGER;
+        let elementId = '';
+        for (let i = 0; i < elements.length; i++) {
+            const element = elements[i];
+
+            const rect = element.getBoundingClientRect();
+
+            const diff = Math.abs(rect.top - center);
+
+            if (diff < minDifference) {
+                minDifference = diff;
+                elementId = element.id;
+            }
+
+        }
+
+        if (this.scrollToSectionRequested != null) {
+            if (this.scrollToSectionRequested == ' ' && window.scrollY == 0) {
+                this.scrollToSectionRequested = null;
+            }
+            else {
+                if (elementId === this.scrollToSectionRequested) {
+                    this.scrollToSectionRequested = null;
+                }
+            }
+
+            return;
+        }
+
+        if (elementId != this.lastKnowElement) {
+
+            this.lastKnowElement = elementId;
+            history.replaceState(null, '', window.location.pathname + "#" + elementId);
+            dotnetReference.invokeMethodAsync('SectionChangeOccured', elementId);
+        }
+    }
+
+    scrollToSection(sectionId) {
+        if (sectionId) {
+            let element = document.getElementById(sectionId);
+            if (element) {
+
+                this.scrollToSectionRequested = sectionId;
+
+                element.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'start' });
+            }
+        }
+        else {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            this.scrollToSectionRequested = ' ';
+        }
+    }
+
+    //remove event listeners
+    unspy() {
+        document.removeEventListener('scroll', this.handlerRef, true);
+        window.removeEventListener('resize', this.handlerRef, true);
+    }
+};
+
+window.mudScrollSpy = new MudScrollSpy();
