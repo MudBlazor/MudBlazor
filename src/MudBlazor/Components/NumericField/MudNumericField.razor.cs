@@ -358,6 +358,7 @@ namespace MudBlazor
                     case "ArrowRight":
                     case "Tab":
                     case "Backspace":
+                    case "Delete":
                         break;
 
                     //copy/paste
