@@ -8,7 +8,7 @@ namespace MudBlazor
         /// <summary>
         /// Arrows are placed at the top of the carousel
         /// </summary>
-        [Description("top")]
+        [Description("start")]
         Top,
         /// <summary>
         /// Arrows are placed at the center of the carousel. This is the default position
@@ -18,7 +18,7 @@ namespace MudBlazor
         /// <summary>
         /// Arrows are placed at the bottom of the carousel
         /// </summary>
-        [Description("bottom")]
+        [Description("end")]
         Bottom
     }
 }
