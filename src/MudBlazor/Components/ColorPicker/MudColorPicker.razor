@@ -11,7 +11,9 @@
             <div class="mud-picker-color-picker" style="background-color: rgb(255, 0, 0);"> @*Update the Style's background-color here' here with the selected color from the picker with NO alpha.*@
                 <div class="mud-picker-color-overlay mud-picker-color-overlay-white">
                     <div class="mud-picker-color-overlay mud-picker-color-overlay-black">
-                        <div class="mud-picker-color-selector" style="transform: translate(222.344px, 34px);"></div> @*Update the position of the selector here on mouse drag?.*@
+                        <div class="mud-picker-color-overlay" @onclick="OnMouseClick" @onmousedown="OnMouseDown" @onmouseup="OnMouseUp" draggable="true" @ondrag="OnDrag" @ondragend="OnDragEnd" ondragstart="event.dataTransfer.setDragImage('', 0, 0);">
+                            <div class="mud-picker-color-selector" style="transform: @GetSelectorLocation()"></div> @*Update the position of the selector here on mouse drag?.*@
+                        </div>
                     </div>
                 </div>
             </div>
@@ -53,6 +55,10 @@
                     <div class="mud-picker-control-switch">
                         <MudIconButton OnClick="ChangeMode" Icon="@Icons.Material.Filled.ImportExport" Class="pa-1 mr-n1"></MudIconButton>
                     </div>
+                </div>
+                @*DEBUGG*@
+                <div class="mud-picker-color-controls-row mt-0">
+                    <MudText Typo="Typo.caption">X: @_selectorX.ToString() - Y: @_selectorY.ToString() - Mouse is down: @MouseDown.ToString()</MudText>
                 </div>
             </div>
         </MudPickerContent>

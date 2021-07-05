@@ -63,5 +63,60 @@ namespace MudBlazor
                     break;
             }
         }
+
+        public bool MouseDown { get; set; }
+        private double _selectorX { get; set; }
+        private double _selectorY { get; set; }
+
+        /// <summary>
+        /// Sets Mouse Down bool to true if mouse is inside the color area.
+        /// </summary>
+        private void OnMouseDown(MouseEventArgs e)
+        {
+            MouseDown = true;
+        }
+
+        /// <summary>
+        /// Sets Mouse Down bool to false if mouse is inside the color area.
+        /// </summary>
+        private void OnMouseUp(MouseEventArgs e)
+        {
+            MouseDown = false;
+        }
+
+        private void OnMouseClick(MouseEventArgs e)
+        {
+            _selectorX = e.OffsetX;
+            _selectorY = e.OffsetY;
+        }
+
+        private void OnMouseMove(MouseEventArgs e)
+        {
+            if (MouseDown)
+            {
+                _selectorX = e.OffsetX;
+                _selectorY = e.OffsetY;
+            }
+        }
+
+        private void OnDrag(DragEventArgs e)
+        {
+            if (MouseDown)
+            {
+                _selectorX = e.OffsetX;
+                _selectorY = e.OffsetY;
+            }
+        }
+
+        private void OnDragEnd(DragEventArgs e)
+        {
+            _selectorX = e.OffsetX;
+            _selectorY = e.OffsetY;
+        }
+
+        private string GetSelectorLocation()
+        {
+            return $"translate({_selectorX}px, {_selectorY}px);";
+        }
     }
 }
