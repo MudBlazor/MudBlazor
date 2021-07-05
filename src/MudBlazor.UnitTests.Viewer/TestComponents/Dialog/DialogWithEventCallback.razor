@@ -2,6 +2,9 @@
     <DialogContent>
         Dialog Content
         <MudTextField T="string" Immediate TextChanged="@(text=>OnTextChanged(text))"/>
+        <div @onclick="OnClick">
+            Click here!
+        </div>
     </DialogContent>
     <DialogActions>
         <MudButton OnClick="Cancel">Cancel</MudButton>
@@ -14,6 +17,7 @@
     [CascadingParameter] MudDialogInstance MudDialog { get; set; }
 
     [Parameter] public EventCallback<string> OnSearch { get; set; }
+    [Parameter] public EventCallback OnClick { get; set; }
 
     void Submit() => MudDialog.Close(DialogResult.Ok(true));
     void Cancel() => MudDialog.Cancel();
