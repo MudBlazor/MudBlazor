@@ -32,9 +32,9 @@ namespace MudBlazor
             _dialogService.Close(this, result);
         }
 
-        internal void Dismiss(DialogResult result)
+        public bool Dismiss(DialogResult result)
         {
-            _resultCompletion.TrySetResult(result);
+            return _resultCompletion.TrySetResult(result);
         }
 
         internal Guid Id { get; }
