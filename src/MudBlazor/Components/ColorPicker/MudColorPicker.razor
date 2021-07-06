@@ -8,7 +8,7 @@
     protected override RenderFragment PickerContent=> 
     @<CascadingValue Value="@this" IsFixed="true">
         <MudPickerContent Class="mud-picker-color-content">
-            <div class="mud-picker-color-picker" style="background-color: rgb(255, 0, 0);">
+            <div class="mud-picker-color-picker" style="@($"background-color: rgb({_baseColor.R}, {_baseColor.G}, {_baseColor.B});")">
                 @*Update the Style's background-color here' here with the selected color from the picker with NO alpha.*@
                 <div class="mud-picker-color-overlay mud-picker-color-overlay-white">
                     <div class="mud-picker-color-overlay mud-picker-color-overlay-black">
@@ -20,10 +20,10 @@
             </div>
             <div class="mud-picker-color-controls">
                 <div class="mud-picker-color-controls-row">
-                    <div class="mud-picker-color-dot" style="background-color:red;"></div> @*Update the Style's background-color here' here with the selected color from the picker and the selected alpha.*@
+                    <div class="mud-picker-color-dot" style="@($"background-color: rgba({_r}, {_g}, {_b}, {_pickerAlpha});")"></div> @*Update the Style's background-color here' here with the selected color from the picker and the selected alpha.*@
                     <div class="mud-picker-color-sliders">
-                        <MudSlider Class="mud-picker-color-slider hue" @bind-Value="@_pickerHue" />
-                        <MudSlider Class="mud-picker-color-slider alpha" @bind-Value="@_pickerAlpha" Min="0" Max="1" Step="0.01" Style="background-image: linear-gradient(to right, transparent, rgb(255, 0, 0));" /> @*Update the Style's background-image rgb color here' here with the selected color from the picker.*@
+                        <MudSlider Class="mud-picker-color-slider hue" T="int" Value="@_pickerBaseColorValue" ValueChanged="UpdateBaseColor" Step="1" Min="0" Max="@(6*256)" />
+                        <MudSlider Class="mud-picker-color-slider alpha" @bind-Value="@_pickerAlpha" Min="0" Max="1" Step="0.01" Style="@($"background-image: linear-gradient(to right, transparent, rgb({_baseColor.R}, {_baseColor.G}, {_baseColor.B}));")" /> @*Update the Style's background-image rgb color here' here with the selected color from the picker.*@
                     </div>
 
                 </div>
@@ -32,9 +32,9 @@
                         @switch(ColorPickerMode)
                         {
                             case ColorPickerMode.RGB:
-                                <MudNumericField @bind-Value="ColorPickerRgb.R" Class="mud-picker-color-inputfield" HelperText="R" Min="0" Max="255" Variant="Variant.Outlined" HideSpinButtons="true" />
-                                <MudNumericField @bind-Value="ColorPickerRgb.G" Class="mud-picker-color-inputfield" HelperText="G" Min="0" Max="255" Variant="Variant.Outlined" HideSpinButtons="true" />
-                                <MudNumericField @bind-Value="ColorPickerRgb.B" Class="mud-picker-color-inputfield" HelperText="B" Min="0" Max="255" Variant="Variant.Outlined" HideSpinButtons="true" />
+                                <MudNumericField Value="_r" Class="mud-picker-color-inputfield" HelperText="R" Min="0" Max="255" Variant="Variant.Outlined" HideSpinButtons="true" />
+                                <MudNumericField Value="_g" Class="mud-picker-color-inputfield" HelperText="G" Min="0" Max="255" Variant="Variant.Outlined" HideSpinButtons="true" />
+                                <MudNumericField Value="_b" Class="mud-picker-color-inputfield" HelperText="B" Min="0" Max="255" Variant="Variant.Outlined" HideSpinButtons="true" />
                             break;
                             case ColorPickerMode.HSL:
                                 <MudNumericField @bind-Value="ColorPickerHsl.H" Class="mud-picker-color-inputfield" HelperText="H" Min="0" Max="360" Variant="Variant.Outlined" HideSpinButtons="true" />
@@ -59,7 +59,7 @@
                 </div>
                 @*DEBUGG*@
                 <div class="mud-picker-color-controls-row mt-0">
-                    <MudText Typo="Typo.caption">X: @_selectorX.ToString() - Y: @_selectorY.ToString() - Mouse is down: @MouseDown.ToString()</MudText>
+                    <MudText Typo="Typo.caption">X: @_selectorX.ToString() - Y: @_selectorY.ToString() - Mouse is down: @_isMouseDown.ToString()</MudText>
                 </div>
             </div>
         </MudPickerContent>

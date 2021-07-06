@@ -8,6 +8,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using System.Collections.Generic;
 using MudBlazor.Extensions;
 using MudBlazor.Utilities;
 
@@ -15,13 +16,37 @@ namespace MudBlazor
 {
     public partial class MudColorPicker : MudPicker<System.Drawing.Color?>
     {
+        private record RGBColor(int R, int G, int B);
+
+        #region Fields
+
+        private const double _maxY = 250;
+        private const double _maxX = 300;
+
+        private bool _isMouseDown;
+        private double _selectorX;
+        private double _selectorY;
+
+        private int _pickerBaseColorValue;
+        private double _pickerAlpha = 1;
+
+        private RGBColor _baseColor = new(255, 0, 0);
+
+        private Int32 _r = 255;
+        private Int32 _g = 0;
+        private Int32 _b = 0;
+
+        #endregion
+
+        #region Parameters
+
+        #endregion
+
+
         /// <summary>
         /// If true, Alpha options will not be displayed.
         /// </summary>
         [Parameter] public bool DisableAlpha { get; set; }
-
-        private double _pickerHue { get; set; }
-        private double _pickerAlpha { get; set; } = 1;
 
         [Parameter] public ColorPickerMode ColorPickerMode { get; set; } = ColorPickerMode.RGB;
 
@@ -42,38 +67,73 @@ namespace MudBlazor
             public int H { get; set; }
             public int S { get; set; } = 100; //Remove default here only used for fake content.
             public int L { get; set; } = 50; //Remove default here only used for fake content.
-            public double A { get; set; } 
+            public double A { get; set; }
         }
 
-        public void ChangeMode()
-        {
-            switch(ColorPickerMode)
+        public void ChangeMode() =>
+            ColorPickerMode = ColorPickerMode switch
             {
-                case ColorPickerMode.RGB:
-                    ColorPickerMode = ColorPickerMode.HSL;
-                break;
-                case ColorPickerMode.HSL:
-                    ColorPickerMode = ColorPickerMode.HEX;
-                    break;
-                case ColorPickerMode.HEX:
-                    ColorPickerMode = ColorPickerMode.RGB;
-                    break;
-                default:
-                    ColorPickerMode = ColorPickerMode.RGB;
-                    break;
+                ColorPickerMode.RGB => ColorPickerMode.HSL,
+                ColorPickerMode.HSL => ColorPickerMode.HEX,
+                ColorPickerMode.HEX => ColorPickerMode.RGB,
+                _ => ColorPickerMode.RGB,
+            };
+
+        private void UpdateColor(Boolean fireStateHasChanged) => UpdateColor(_selectorX, _selectorY, fireStateHasChanged);
+
+        private void UpdateBaseColor(int input)
+        {
+            _pickerBaseColorValue = input;
+
+            Int32 index = input / 255;
+            Int32 value = input - (index * 255);
+
+            Dictionary<Int32, (Func<int, int> r, Func<int, int> g, Func<int, int> b)> rgbMapper = new()
+            {
+                { 0, ((x) => 255, x => x, x => 0) },
+                { 1, ((x) => 255 - x, x => 255, x => 0) },
+                { 2, ((x) => 0, x => 255, x => x) },
+                { 3, ((x) => 0, x => 255 - x, x => 255) },
+                { 4, ((x) => x, x => 0, x => 255) },
+                { 5, ((x) => 255, x => 0, x => 255 - x) },
+            };
+
+            var section = rgbMapper[index];
+
+            _baseColor = new RGBColor(section.r(value), section.g(value), section.b(value));
+            UpdateColor(false);
+        }
+
+        private void UpdateColor(Double selectedX, Double selectedY, Boolean fireStateHasChanged)
+        {
+            double x = selectedX / _maxX;
+
+            double r_x = 255 - (255.0 - _baseColor.R) * x;
+            double g_x = 255 - (255.0 - _baseColor.G) * x;
+            double b_x = 255 - (255.0 - _baseColor.B) * x;
+
+            double y = 1.0 - selectedY / _maxY;
+
+            double r = r_x * y;
+            double g = g_x * y;
+            double b = b_x * y;
+
+            _r = (int)r;
+            _g = (int)g;
+            _b = (int)b;
+
+            if (fireStateHasChanged == true)
+            {
+                StateHasChanged();
             }
         }
-
-        public bool MouseDown { get; set; }
-        private double _selectorX { get; set; }
-        private double _selectorY { get; set; }
 
         /// <summary>
         /// Sets Mouse Down bool to true if mouse is inside the color area.
         /// </summary>
         private void OnMouseDown(MouseEventArgs e)
         {
-            MouseDown = true;
+            _isMouseDown = true;
         }
 
         /// <summary>
@@ -81,36 +141,36 @@ namespace MudBlazor
         /// </summary>
         private void OnMouseUp(MouseEventArgs e)
         {
-            MouseDown = false;
+            _isMouseDown = false;
         }
 
         private void OnMouseClick(MouseEventArgs e)
         {
             _selectorX = e.OffsetX;
             _selectorY = e.OffsetY;
+            UpdateColor(false);
         }
 
         private void OnMouseOver(MouseEventArgs e)
         {
-            if (MouseDown)
+            if (_isMouseDown)
             {
                 _selectorX = e.OffsetX;
                 _selectorY = e.OffsetY;
+                UpdateColor(false);
             }
         }
 
         private void OnMouseMove(MouseEventArgs e)
         {
-            if (MouseDown)
+            if (_isMouseDown)
             {
                 _selectorX = e.OffsetX;
                 _selectorY = e.OffsetY;
+                UpdateColor(false);
             }
         }
 
-        private string GetSelectorLocation()
-        {
-            return $"translate({_selectorX}px, {_selectorY}px);";
-        }
+        private string GetSelectorLocation() => $"translate({_selectorX}px, {_selectorY}px);";
     }
 }
