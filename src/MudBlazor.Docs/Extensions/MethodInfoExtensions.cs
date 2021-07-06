@@ -134,7 +134,7 @@ namespace MudBlazor.Docs.Extensions
                         }
                         else
                         {
-                            return value.Replace("System.Threading.Tasks.", "").Replace("System.", "").Replace("MudBlazor.", "").ToLowerInvariant();
+                            return value.Replace("System.Threading.Tasks.", "").Replace("System.", "").Replace("MudBlazor.", "");
                         }
                     }
             }
@@ -180,7 +180,7 @@ namespace MudBlazor.Docs.Extensions
 
         private static string Cleaning(string value)
         {
-            return value.Replace("System.Threading.Tasks.", "").Replace("System.", "").Replace("MudBlazor.", "").ToLowerInvariant();
+            return value.Replace("System.Threading.Tasks.", "").Replace("System.", "").Replace("MudBlazor.", "");
         }
     }
 }
