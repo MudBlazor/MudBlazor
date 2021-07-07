@@ -11,10 +11,11 @@ using Microsoft.AspNetCore.Components.Web;
 using System.Collections.Generic;
 using MudBlazor.Extensions;
 using MudBlazor.Utilities;
+using MudColor = System.Drawing.Color;
 
 namespace MudBlazor
 {
-    public partial class MudColorPicker : MudPicker<System.Drawing.Color?>
+    public partial class MudColorPicker : MudPicker<MudColor>
     {
         private record RGBColor(int R, int G, int B);
 
@@ -32,9 +33,14 @@ namespace MudBlazor
 
         private RGBColor _baseColor = new(255, 0, 0);
 
-        private Int32 _r = 255;
-        private Int32 _g = 0;
-        private Int32 _b = 0;
+        private int _r = 255;
+        private int _g = 0;
+        private int _b = 0;
+        private string _rgbAHex = "#ffffffff";
+
+        private double _h = 0;
+        private double _s = 0;
+        private double _l = 0;
 
         #endregion
 
@@ -81,27 +87,32 @@ namespace MudBlazor
 
         private void UpdateColor(Boolean fireStateHasChanged) => UpdateColor(_selectorX, _selectorY, fireStateHasChanged);
 
-        private void UpdateBaseColor(int input)
+        private void UpdateBaseColor(int input) => UpdateBaseColor(input, true);
+
+        private static Dictionary<Int32, (Func<int, int> r, Func<int, int> g, Func<int, int> b, char dominantColorPart)> rgbMapper = new()
+        {
+            { 0, ((x) => 255, x => x, x => 0, 'r') },
+            { 1, ((x) => 255 - x, x => 255, x => 0, 'g') },
+            { 2, ((x) => 0, x => 255, x => x, 'g') },
+            { 3, ((x) => 0, x => 255 - x, x => 255, 'b') },
+            { 4, ((x) => x, x => 0, x => 255, 'b') },
+            { 5, ((x) => 255, x => 0, x => 255 - x, 'r') },
+        };
+
+        private void UpdateBaseColor(int input, bool withColorSelector)
         {
             _pickerBaseColorValue = input;
 
             Int32 index = input / 255;
             Int32 value = input - (index * 255);
 
-            Dictionary<Int32, (Func<int, int> r, Func<int, int> g, Func<int, int> b)> rgbMapper = new()
-            {
-                { 0, ((x) => 255, x => x, x => 0) },
-                { 1, ((x) => 255 - x, x => 255, x => 0) },
-                { 2, ((x) => 0, x => 255, x => x) },
-                { 3, ((x) => 0, x => 255 - x, x => 255) },
-                { 4, ((x) => x, x => 0, x => 255) },
-                { 5, ((x) => 255, x => 0, x => 255 - x) },
-            };
-
             var section = rgbMapper[index];
 
             _baseColor = new RGBColor(section.r(value), section.g(value), section.b(value));
-            UpdateColor(false);
+            if (withColorSelector == true)
+            {
+                UpdateColor(false);
+            }
         }
 
         private void UpdateColor(Double selectedX, Double selectedY, Boolean fireStateHasChanged)
@@ -122,10 +133,74 @@ namespace MudBlazor
             _g = (int)g;
             _b = (int)b;
 
+            UpdateColorHexString();
+            UpdateHLsValues();
+            SetTextAsync(_rgbAHex, true).AndForget();
+
             if (fireStateHasChanged == true)
             {
                 StateHasChanged();
             }
+        }
+
+        private void UpdateColorSelectorBasedOnRgb(Int32 hueValue)
+        {
+            Int32 index = hueValue / 255;
+            var section = rgbMapper[index];
+
+            var colorValues = section.dominantColorPart switch
+            {
+                'r' => (_r, _g),
+                'g' => (_g, _r),
+                'b' => (_b, _r),
+                _ => (255, 255)
+            };
+
+            var primaryDiff = 255 - colorValues.Item1;
+            var primaryDiffDelta = colorValues.Item1 / 255.0;
+
+            _selectorY = MathExtensions.Map(0, 255, 0, _maxY, primaryDiff);
+
+            double secondaryColorX = colorValues.Item2 * (1.0 / primaryDiffDelta);
+            double relation = (255 - secondaryColorX) / (255 - colorValues.Item2);
+
+            _selectorX = relation * _maxX;
+        }
+
+        private void UpdateHLsValues()
+        {
+            var hlsColor = ColorTransformation.RgBtoHsl(MudColor.FromArgb((int)MathExtensions.Map(0.0, 1.0, 0, 255, _pickerAlpha), _r, _g, _b));
+            _h = hlsColor.H;
+            _l = hlsColor.L;
+            _s = hlsColor.S;
+        }
+
+        private void UpdateColorPanel(bool updateHLS)
+        {
+            var hsl = ColorTransformation.RgBtoHsl(MudColor.FromArgb(_r, _g, _b));
+
+            var numericValue = MathExtensions.Map(0, 360, 0, 6 * 255, hsl.H);
+
+            UpdateBaseColor((int)numericValue, false);
+            UpdateColorSelectorBasedOnRgb((int)numericValue);
+            UpdateColorHexString();
+
+            if (updateHLS == true)
+            {
+                UpdateHLsValues();
+            }
+
+            SetTextAsync(_rgbAHex, true).AndForget();
+        }
+
+        private void UpdateColorHexString() => _rgbAHex = $"#{_r:X2}{_g:X2}{_b:X2}{ (int)MathExtensions.Map(0.0, 1.0, 0, 255, _pickerAlpha):X2}";
+
+        private void UpdateRGBValueFromHLS()
+        {
+            var rgbColor = ColorTransformation.HsLtoRgb(new ColorTransformation.HSLColor { H = _h, L = _l, S = _s }, (int)MathExtensions.Map(0.0, 1.0, 0, 255, _pickerAlpha));
+            _r = rgbColor.R;
+            _b = rgbColor.B;
+            _g = rgbColor.G;
         }
 
         /// <summary>
@@ -169,6 +244,91 @@ namespace MudBlazor
                 _selectorY = e.OffsetY;
                 UpdateColor(false);
             }
+        }
+
+        private void RChangedManuell(int value)
+        {
+            _r = value;
+            UpdateColorPanel(true);
+        }
+
+        private void GChangedManuell(int value)
+        {
+            _g = value;
+            UpdateColorPanel(true);
+        }
+
+        private void BChangedManuell(int value)
+        {
+            _b = value;
+            UpdateColorPanel(true);
+        }
+
+        private void HChangedManuell(double value)
+        {
+            _h = value;
+            UpdateRGBValueFromHLS();
+            UpdateColorPanel(false);
+        }
+
+        private void SChangedManuell(double value)
+        {
+            _s = value;
+            UpdateRGBValueFromHLS();
+            UpdateColorPanel(false);
+        }
+
+        private void LChangedManuell(double value)
+        {
+            _l = value;
+            UpdateRGBValueFromHLS();
+            UpdateColorPanel(false);
+        }
+
+        private void RgbaHexChanged(string input)
+        {
+            try
+            {
+                if (input.StartsWith("#"))
+                {
+                    input = input.Substring(1);
+                }
+
+                string parsedValue = input;
+                switch (input.Length)
+                {
+                    case 3:
+                        parsedValue = new string(new Char[8] { input[0], input[0], input[1], input[1], input[2], input[2], 'F', 'F' });
+                        break;
+                    case 4:
+                        parsedValue = new string(new Char[8] { input[0], input[0], input[1], input[1], input[2], input[2], input[3], input[3] });
+                        break;
+                    case 6:
+                        parsedValue += "FF";
+                        break;
+                    case 8:
+                        break;
+                    default:
+                        return;
+                }
+
+                _r = parsedValue.GetByteValue(0);
+                _g = parsedValue.GetByteValue(2);
+                _b = parsedValue.GetByteValue(4);
+                _pickerAlpha = MathExtensions.Map(0, 255, 0.0, 1.0, parsedValue.GetByteValue(6));
+            }
+            catch (Exception)
+            {
+                return;
+            }
+
+            UpdateColorPanel(true);
+        }
+
+        private void AlphaChanged(double input)
+        {
+            _pickerAlpha = input;
+            UpdateColorHexString();
         }
 
         private string GetSelectorLocation() => $"translate({_selectorX}px, {_selectorY}px);";
