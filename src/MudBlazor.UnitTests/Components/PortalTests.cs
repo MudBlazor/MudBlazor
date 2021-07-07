@@ -104,10 +104,10 @@ namespace MudBlazor.UnitTests.Components
 
             //now, the select is closed, but if we set IsPreRendered to true, then
             //the portaled item is already present
-            var isPrerrender = Parameter(nameof(MudSelect<string>.IsPrerrendered), true);
-            comp.SetParametersAndRender(isPrerrender);
+            var isPreRendered = Parameter(nameof(MudSelect<string>.IsPreRendered), true);
+            comp.SetParametersAndRender(isPreRendered);
 
-            //The portal provider now has 1 select inside, because is prerrendered
+            //The portal provider now has 1 select inside, because is prerendered
             itemsNumber = portalprovider.GetAttribute("data-items");
             itemsNumber.Should().Be("1");
 

@@ -78,7 +78,7 @@ namespace MudBlazor
         [Parameter] public RenderFragment ChildContent { get; set; }
 
         /// <summary>
-        /// If true, the Portal is prerrendered. 
+        /// If true, the Portal is pre-rendered. 
         /// </summary>
         [Parameter] public bool IsPreRendered { get; set; }
     }
