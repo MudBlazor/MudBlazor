@@ -6,6 +6,8 @@ namespace MudBlazor
     {
         [Description("bottom")]
         Bottom,
+        [Description("center")]
+        Center,
         [Description("top")]
         Top,
         [Description("left")]
