@@ -18,7 +18,7 @@ namespace MudBlazor.Services
         /// <summary>
         /// Suppress the first OnResized that is invoked when a new event handler is added.
         /// </summary>
-        public bool SuppressInitEvent { get; set; } = false;
+        public bool SuppressInitEvent { get; set; } = true;
 
         /// <summary>
         /// If true, RaiseOnResized is called only when breakpoint has changed.

@@ -13,6 +13,7 @@ namespace MudBlazor
             .Build();
         protected string Classname => new CssBuilder("mud-tooltip")
             .AddClass($"mud-tooltip-placement-{ConvertPlacement(Placement).ToDescriptionString()}")
+             .AddClass("mud-tooltip-visible", _isVisible)
             .AddClass(Class)
             .Build();
 
@@ -70,6 +71,12 @@ namespace MudBlazor
         /// Determines if this component should be inline with it's surrounding (default) or if it should behave like a block element.
         /// </summary>
         [Parameter] public Boolean Inline { get; set; } = true;
+
+        private bool _isVisible;
+        public void HandleMouseOver()=> _isVisible = true;
+        private void HandleMouseOut() => _isVisible = false;
+
+
 
         protected string GetTimeDelay()
         {
