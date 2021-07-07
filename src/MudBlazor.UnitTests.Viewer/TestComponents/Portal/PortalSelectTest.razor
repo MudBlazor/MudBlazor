@@ -2,7 +2,7 @@
  
 <MudPortalProvider />
 
-<MudSelect IsPrerrendered="@IsPrerrendered" T="string" Label="Coffee">
+<MudSelect IsPreRendered="@IsPreRendered" T="string" Label="Coffee">
             <MudSelectItem Value="@("Cappuccino")" />
             <MudSelectItem Value="@("Cafe Latte")" />
             <MudSelectItem Value="@("Espresso")" />
@@ -12,5 +12,5 @@
 
 @code{
     public static string __description__ = "basic example of a portaled select";
-    [Parameter] public bool IsPrerrendered { get; set; }
+    [Parameter] public bool IsPreRendered { get; set; }
 }
