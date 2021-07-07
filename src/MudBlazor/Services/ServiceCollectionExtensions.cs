@@ -166,6 +166,20 @@ namespace MudBlazor.Services
         }
 
         /// <summary>
+        ///     Adds a portal
+        /// </summary>
+        /// <param name="services">IServiceCollection</param>
+        public static IServiceCollection AddMudBlazorPortal(this IServiceCollection services)
+        {
+            services.TryAddScoped<IPortal, Portal>();
+            return services;
+        }
+
+
+
+
+
+        /// <summary>
         /// Adds common services required by MudBlazor components
         /// </summary>
         /// <param name="services">IServiceCollection</param>
@@ -183,8 +197,9 @@ namespace MudBlazor.Services
                 .AddMudBlazorResizeObserverFactory()
                 .AddMudBlazorScrollManager()
                 .AddMudBlazorScrollListener()
-                .AddMudBlazorScrollSpy()
-                .AddMudBlazorJsApi();
+                .AddMudBlazorJsApi()
+                .AddMudBlazorPortal()
+                .AddMudBlazorScrollSpy();
         }
 
         /// <summary>
@@ -207,8 +222,9 @@ namespace MudBlazor.Services
                 .AddMudBlazorResizeObserverFactory()
                 .AddMudBlazorScrollManager()
                 .AddMudBlazorScrollListener()
-                .AddMudBlazorScrollSpy()
-                .AddMudBlazorJsApi();
+                .AddMudBlazorJsApi()
+                .AddMudBlazorPortal()
+                .AddMudBlazorScrollSpy();
         }
     }
 }
