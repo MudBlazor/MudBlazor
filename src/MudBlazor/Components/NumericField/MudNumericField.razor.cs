@@ -120,35 +120,39 @@ namespace MudBlazor
 
         public override ValueTask FocusAsync()
         {
-            Console.WriteLine("FocusAsync");
             return _elementReference.FocusAsync();
         }
 
         public override ValueTask SelectAsync()
         {
-            Console.WriteLine("SelectAsync");
             return _elementReference.SelectAsync();
         }
 
         public override ValueTask SelectRangeAsync(int pos1, int pos2)
         {
-            Console.WriteLine("SelectRangeAsync");
             return _elementReference.SelectRangeAsync(pos1, pos2);
+        }
+
+        private async Task SetValueFromStringAsync(string value)
+        {
+            await SetValueAsync(Converter.Get(value), false);
+        }
+
+        private void OnTextChanged(string text)
+        {
+            Console.WriteLine("OnTextChanged num " + text);
+            TextChanged.InvokeAsync(text).AndForget();
         }
 
         protected override async Task SetValueAsync(T value, bool updateText = true)
         {
-            Console.WriteLine("SetValueAsync");
-            Console.WriteLine(value);
-            Console.WriteLine(_value);
             bool valueChanged;
             (value, valueChanged) = ConstrainBoundaries(value);
-            await base.SetValueAsync(value, valueChanged || updateText);
+            await base.SetValueAsync(value, valueChanged && updateText);
         }
 
         protected async Task<bool> ValidateInput(T value)
         {
-            Console.WriteLine("ValidateInput");
             bool valueChanged;
             (value, valueChanged) = ConstrainBoundaries(value);
             if (valueChanged)
@@ -325,6 +329,8 @@ namespace MudBlazor
         /// <remarks>https://try.mudblazor.com/snippet/QamlkdvmBtrsuEtb</remarks>
         protected async Task InterceptKeydown(KeyboardEventArgs obj)
         {
+            if (_elementReference.SkipRefresh is false)
+                _elementReference.SkipRefresh = true;
             if (Disabled || ReadOnly)
                 return;
 
@@ -376,8 +382,6 @@ namespace MudBlazor
 
                         var isMatch = acceptableKeyTypes.Match(obj.Key).Success;
 
-                        Console.WriteLine(obj.Key + " did match " + isMatch);
-
                         if (isMatch is false)
                         {
                             _keyDownPreventDefault = true;
@@ -390,6 +394,16 @@ namespace MudBlazor
             _keyDownPreventDefault = KeyDownPreventDefault;
             OnKeyDown.InvokeAsync(obj).AndForget();
         }
+
+        //protected override async Task OnBlurred(FocusEventArgs obj)
+        //{
+        //    Console.WriteLine($"OnBlurred num {Value} {Text}");
+        //    await UpdateTextPropertyAsync(false);
+        //    Console.WriteLine($"OnBlurred2 num {Value} {Text}");
+        //    _isFocused = false;
+        //    Touched = true;
+        //    BeginValidateAfter(OnBlur.InvokeAsync(obj));
+        //}
 
         /// <summary>
         /// Overrides KeyUp event, if needed reset <see cref="_keyDownPreventDefault"/> set by <see cref="InterceptKeydown(KeyboardEventArgs)"/>.

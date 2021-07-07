@@ -21,17 +21,37 @@ namespace MudBlazor
         {
             //when it keeps the focus, it doesn't render to avoid unnecessary trips to the server
             //except the user presses key enter, so the result must be displayed
-            if (_shouldRenderBeForced) { return true; }
-            if (Immediate && _isFocused && !_showClearableRenderUpdate) { return false; }
-            _showClearableRenderUpdate = false;
-            return true;
+            bool result;
+
+            if (_shouldRenderBeForced) { result = true; }
+            //else if (KeyPressPreventDefault) result = true;
+            //else if (false && Immediate && _isFocused && !_showClearableRenderUpdate)
+            //{
+            //    Console.WriteLine($"Hit false case {Immediate} {_isFocused} {!_shouldRenderBeForced}");
+            //    result = false;
+            //}
+            else
+            {
+                //_showClearableRenderUpdate = false;
+                result = true;
+            }
+            //Console.WriteLine($"ShouldRender Keypress {KeyPressPreventDefault} Result {result}");
+            return result;
         }
 
         protected Task OnInput(ChangeEventArgs args)
         {
-            Console.WriteLine("OnInput");
             _isFocused = true;
-            return Immediate ? SetTextAsync(args?.Value as string) : Task.CompletedTask;
+            var value = args?.Value as string;
+            // Only set the value such that the caret is not unexpectedly moved to the end of input
+            // But stil fire textchanged with the unformatted text
+            if (Immediate)
+            {
+                TextChanged.InvokeAsync(value).AndForget();
+                return SetValueAsync(Converter.Get(value), false);
+            }
+            else return Task.CompletedTask;
+            //return Immediate ? SetTextAsync(args?.Value as string) : Task.CompletedTask;
         }
 
         protected async Task OnChange(ChangeEventArgs args)
@@ -105,7 +125,7 @@ namespace MudBlazor
 
         private bool _showClearable;
 
-        private bool _showClearableRenderUpdate;
+        //private bool _showClearableRenderUpdate;
 
         private void UpdateClearable(object value)
         {
@@ -113,7 +133,7 @@ namespace MudBlazor
             if (_showClearable != showClearable)
             {
                 _showClearable = showClearable;
-                _showClearableRenderUpdate = true;
+                //_showClearableRenderUpdate = true;
             }
         }
 

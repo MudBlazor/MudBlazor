@@ -1,0 +1,13 @@
+﻿
+<MudText>@_value.ToString()</MudText>
+<MudText>@_value2.ToString()</MudText>
+
+<MudNumericField T="double?" @bind-Value="_value" Immediate Label="Immediate" Format="N2" TextChanged="Test" />
+<MudNumericField @bind-Value="_value2" Label="Default" Format="N2" TextChanged="Test" />
+
+@code {
+    public double? _value { get; set; }
+    public double? _value2 { get; set; }
+
+    void Test(object x) => Console.WriteLine("AA " + x.ToString());
+}
