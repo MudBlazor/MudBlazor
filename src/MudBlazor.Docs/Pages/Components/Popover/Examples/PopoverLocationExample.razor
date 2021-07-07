@@ -4,6 +4,8 @@
     <MudItem xs="12" md="2">
         <MudSwitch @bind-Checked="@OffsetX" Label="Offset X" Color="Color.Primary" />
         <MudRadioGroup @bind-SelectedOption="@Direction">
+            <MudRadio Color="Color.Primary" Option="@(Direction.Start)" Disabled="!OffsetX">Start</MudRadio>
+            <MudRadio Color="Color.Primary" Option="@(Direction.End)" Disabled="!OffsetX">End</MudRadio>
             <MudRadio Color="Color.Primary" Option="@(Direction.Left)" Disabled="!OffsetX">Left</MudRadio>
             <MudRadio Color="Color.Primary" Option="@(Direction.Right)" Disabled="!OffsetX">Right</MudRadio>
         </MudRadioGroup>
