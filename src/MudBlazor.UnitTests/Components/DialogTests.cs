@@ -205,5 +205,26 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("div.mud-dialog-content").ClassList.Should().NotContain("test-class");
             comp.Find("div.mud-dialog-content").ClassList.Should().Contain("content-class");
         }
+
+        [Test]
+        public async Task PassingEventCallbackToDialogViaParameters()
+        {
+            var comp = ctx.RenderComponent<MudDialogProvider>();
+            comp.Markup.Trim().Should().BeEmpty();
+            var service = ctx.Services.GetService<IDialogService>() as DialogService;
+            service.Should().NotBe(null);
+
+            var testComp = ctx.RenderComponent<DialogWithEventCallbackTest>();
+            // open dialog
+            testComp.Find("button").Click();
+            // in the opened dialog find the text field
+            Console.WriteLine(comp.Markup);
+            var tf = comp.FindComponent<MudTextField<string>>();
+            tf.Find("input").Input("User input ...");
+            // the user input should be passed out of the dialog into the outer component and displayed there.
+            testComp.WaitForAssertion(()=>
+                testComp.Find("p").TextContent.Trim().Should().Be("Search Text:  User input ...")
+            );
+        }
     }
 }
