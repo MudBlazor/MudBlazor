@@ -89,16 +89,18 @@
 
                                    @if ((!ReadOnly) && IsEditable && object.Equals(_editingItem, item))
                                    {
-                                       @if(RowEditingTemplate != null)
-											{
-												@RowEditingTemplate(item)
-											}
-											@if (Columns != null)
-											{
-												<CascadingValue Value="MudBaseColumn.Rendermode.Edit" Name="Mode">
-													@Columns(item)
-												</CascadingValue>
-											}
+                                        <CascadingValue Value="@Validator" IsFixed="true">
+                                           @if(RowEditingTemplate != null)
+										    {
+											    @RowEditingTemplate(item)
+										    }
+										    @if (Columns != null)
+										    {
+											    <CascadingValue Value="MudBaseColumn.Rendermode.Edit" Name="Mode">
+												    @Columns(item)
+											    </CascadingValue>
+										    }
+                                        </CascadingValue>
                                    }
                                    else
                                    {
@@ -192,7 +194,7 @@
 
                     @if ((!ReadOnly) && IsEditable && object.Equals(_editingItem, item))
                     {
-                        <CascadingValue Value="Validator" IsFixed="true">
+                        <CascadingValue Value="@Validator" IsFixed="true">
                             @if(RowEditingTemplate != null)
 							{
 								@RowEditingTemplate(item)
