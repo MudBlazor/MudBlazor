@@ -1,7 +1,6 @@
 ﻿using System;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Services;
-using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
@@ -11,7 +10,7 @@ namespace MudBlazor
 
         [Inject] internal IPortal Portal { get; set; }
 
-        protected override void OnInitialized() => Portal.OnChange +=  HandleChange ;
+        protected override void OnInitialized() => Portal.OnChange += HandleChange;
 
         /// <summary>
         /// This is called when the portal adds or removes an item
@@ -25,12 +24,13 @@ namespace MudBlazor
 
         protected virtual void Dispose(bool disposing)
         {
+            if (!disposing) return;
             Portal.OnChange -= HandleChange;
         }
 
         void IDisposable.Dispose()
         {
-          
+
             Dispose(disposing: true);
             GC.SuppressFinalize(this);
         }

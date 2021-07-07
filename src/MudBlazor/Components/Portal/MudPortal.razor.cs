@@ -1,10 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
-using Microsoft.JSInterop;
-using MudBlazor.Extensions;
 using MudBlazor.Services;
-using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
@@ -15,7 +12,7 @@ namespace MudBlazor
         private ElementReference _portalRef;
         private ElementReference _fragmentRef;
 
-        [Inject] internal IPortal Portal { get; set; }
+        [Inject] private IPortal Portal { get; set; }
 
         [Inject] public IResizeListenerService WindowResizeListener { get; set; }
 
@@ -36,7 +33,6 @@ namespace MudBlazor
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
-           
             if (IsRendered)
             {
                 //if is rendered, set the properties of the PortalItem and add it to the PortalService
@@ -72,9 +68,8 @@ namespace MudBlazor
             _portalItem.Id = _id;
             _portalItem.Fragment = ChildContent;
             _portalItem.Type = Type;
-
         }
-      
+
         /// <summary>
         /// If the window is resized, calculate the new coordinates of the PortalItem
         /// </summary>
@@ -90,6 +85,7 @@ namespace MudBlazor
 
         protected virtual void Dispose(bool disposing)
         {
+            if (!disposing) return;
             Portal.Remove(_portalItem);
         }
 

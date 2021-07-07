@@ -31,7 +31,6 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void Basic_Example_of_a_Portaled_Menu()
         {
-
             var comp = ctx.RenderComponent<PortalMenuTest>();
             var portalprovider = comp.Find("#mud-portal-container");
             //the portal provider is empty;
@@ -48,7 +47,7 @@ namespace MudBlazor.UnitTests.Components
             comp.Find(".portal");
 
             //it has 2 popovers, one is what you see, the other is used to make the calculations to
-            //know if it fits the viewport or it needs to be moved inside 
+            //know if it fits the viewport or it needs to be moved inside
             comp.FindAll(".mud-popover").Should().HaveCount(2);
 
             //The portal provider now has 1 menu inside
@@ -61,7 +60,6 @@ namespace MudBlazor.UnitTests.Components
             //clicking in one of them, the popover dissapears
             comp.FindAll(".portal-anchor .mud-list-item")[0].Click();
             comp.FindAll(".mud-popover").Should().HaveCount(0);
-
         }
 
         /// <summary>
@@ -70,7 +68,6 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void Basic_Example_of_a_Portaled_Select()
         {
-
             var comp = ctx.RenderComponent<PortalSelectTest>();
             var portalprovider = comp.Find("#mud-portal-container");
             //the portal provider is empty;
@@ -87,13 +84,12 @@ namespace MudBlazor.UnitTests.Components
             comp.Find(".portal");
 
             //it has 2 popovers, one is what you see, the other is used to make the calculations to
-            //know if it fits the viewport or it needs to be moved inside 
+            //know if it fits the viewport or it needs to be moved inside
             comp.FindAll(".mud-popover").Should().HaveCount(2);
 
             //The portal provider now has 1 menu inside
             itemsNumber = portalprovider.GetAttribute("data-items");
             itemsNumber.Should().Be("1");
-
 
             //should have 3 items
             comp.FindAll(".portal-anchor .mud-list-item").Should().HaveCount(4);
@@ -105,7 +101,6 @@ namespace MudBlazor.UnitTests.Components
             //The portal provider now has 0 items
             itemsNumber = portalprovider.GetAttribute("data-items");
             itemsNumber.Should().Be("0");
-
 
             //now, the select is closed, but if we set IsPrerrendered to true, then
             //the portaled item is already present
@@ -121,10 +116,7 @@ namespace MudBlazor.UnitTests.Components
 
             //and the list items
             comp.FindAll(".portal-anchor .mud-list-item").Should().HaveCount(4);
-
         }
-
-
 
         /// <summary>
         /// MudElement renders first an anchor and then a button
@@ -132,7 +124,6 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void Basic_Example_of_a_Portaled_Autocomplete()
         {
-
             var comp = ctx.RenderComponent<PortalAutocompleteTest>();
             var portalprovider = comp.Find("#mud-portal-container");
             //the portal provider is empty;
@@ -150,13 +141,12 @@ namespace MudBlazor.UnitTests.Components
             comp.Find(".portal");
 
             //it has 2 popovers, one is what you see, the other is used to make the calculations to
-            //know if it fits the viewport or it needs to be moved inside 
+            //know if it fits the viewport or it needs to be moved inside
             comp.FindAll(".mud-popover").Should().HaveCount(2);
 
             //The portal provider now has 1 menu inside
             itemsNumber = portalprovider.GetAttribute("data-items");
             itemsNumber.Should().Be("1");
-
 
             //should have 3 items
             comp.FindAll(".portal-anchor .mud-list-item").Should().HaveCount(3);
@@ -168,12 +158,7 @@ namespace MudBlazor.UnitTests.Components
             //The portal provider now has 0 items
             itemsNumber = portalprovider.GetAttribute("data-items");
             itemsNumber.Should().Be("0");
-
-
-            
-
         }
-
 
         /// <summary>
         /// MudElement renders first an anchor and then a button
@@ -181,7 +166,6 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task Basic_Example_of_a_Portaled_Tooltip()
         {
-
             var comp = ctx.RenderComponent<PortalTooltipTest>();
             var portalprovider = comp.Find("#mud-portal-container");
             //the portal provider is empty;
@@ -192,27 +176,17 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll(".portal-anchor").Should().HaveCount(0);
             comp.FindAll(".portal").Should().HaveCount(0);
 
-            //after click the button of the menu, the portal is created
-            
-
-            await  Task.Delay(200);
-
-          //can't continue testing because Bunit doesn't implement onmouseenter or onmouseleave
-          //and onmouseover doesn't trigger onmouseenter
-          //TODO when Bunit implements custom events
-
-
+            //can't continue testing because Bunit doesn't implement onmouseenter or onmouseleave
+            //and onmouseover doesn't trigger onmouseenter
+            //TODO when Bunit implements custom events
         }
 
-
         private BoundingClientRect _anchorRect = new BoundingClientRect();
-
         private BoundingClientRect _fragmentRect = new BoundingClientRect();
         public BoundingClientRect FragmentRect
         {
             get
             {
-
                 _fragmentRect.Left = _anchorRect.Left;
                 _fragmentRect.Top = _anchorRect.Top;
                 _fragmentRect.Width = _anchorRect.Width;
@@ -223,7 +197,6 @@ namespace MudBlazor.UnitTests.Components
             }
         }
 
-
         /// <summary>
         /// In the repositioning of outside of the viewport portal items,
         /// we only correct the anchor, that is the element the fragment is anchored
@@ -231,10 +204,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void Portal_Repositioning_Correct_Boundaries()
         {
-
-
             //configure objects
-
 
             var portalItem = new PortalItem();
             portalItem.AnchorRect = _anchorRect;
@@ -257,7 +227,6 @@ namespace MudBlazor.UnitTests.Components
 
             //IS OUTSIDE BOTTOM
             FragmentRect.IsOutsideBottom.Should().BeTrue();
-
 
             //correct the position
             Repositioning.CorrectAnchorBoundaries(portalItem);
@@ -290,7 +259,6 @@ namespace MudBlazor.UnitTests.Components
             _anchorRect.Left = _anchorRect.WindowWidth - 1;
             portalItem.FragmentRect = FragmentRect;
 
-
             _anchorRect.IsOutsideRight.Should().BeTrue();
             oldLeft = _anchorRect.Left;
 
@@ -301,7 +269,6 @@ namespace MudBlazor.UnitTests.Components
             (oldLeft > _anchorRect.Left).Should().BeTrue();
             (_anchorRect.Left + FragmentRect.Width).Should().BeLessOrEqualTo(_anchorRect.WindowWidth);
             FragmentRect.IsOutsideRight.Should().BeFalse();
-
 
             //IS OUTSIDE TOP
             _anchorRect.Top = -10;
@@ -316,8 +283,6 @@ namespace MudBlazor.UnitTests.Components
             //was pulled down
             (oldTop < _anchorRect.Top).Should().BeTrue();
             FragmentRect.IsOutsideTop.Should().BeFalse();
-
-
         }
     }
 }

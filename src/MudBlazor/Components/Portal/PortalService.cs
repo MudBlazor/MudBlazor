@@ -16,7 +16,7 @@ namespace MudBlazor.Services
     {
         private readonly Dictionary<Guid, PortalItem> _items = new();
         private readonly object _lockObj = new();
-        private bool _disposedValue;
+        private bool _disposed;
 
         /// <summary>
         /// Invoked when the Portal adds or removes an item
@@ -81,16 +81,15 @@ namespace MudBlazor.Services
                 }
             }
         }
-                
+
         protected virtual void Dispose(bool disposing)
         {
-            if (!_disposedValue)
+            if (!disposing) return;
+            if (_disposed) return;
+            _disposed = true;
+            lock (_lockObj)
             {
-                if (disposing)
-                {
-                    _items.Clear();
-                }
-                _disposedValue = true;
+                _items.Clear();
             }
         }
 

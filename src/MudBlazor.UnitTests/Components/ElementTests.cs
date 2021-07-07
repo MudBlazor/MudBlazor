@@ -38,11 +38,10 @@ namespace MudBlazor.UnitTests.Components
             comp.MarkupMatches("<button class=\"mud-button-root\"></button>");
         }
 
-
         /// <summary>
         /// In this example, there is a mouseover event conditionally attached
         /// if the property Attached is set to true is attached
-        /// if not, there shouldn't have any event present 
+        /// if not, there shouldn't have any event present
         /// </summary>
         [Test]
         public void MudElement_Should_Not_Attach_A_Null_Event()
@@ -53,7 +52,7 @@ namespace MudBlazor.UnitTests.Components
             comp.MarkupMatches("<span></span>");
 
             //we set AttachEvent to true, so it has to attach the mouseover event
-            var attached =  Parameter(nameof(ElementTestEventNull.AttachEvent), true);
+            var attached = Parameter(nameof(ElementTestEventNull.AttachEvent), true);
             var comp2 = ctx.RenderComponent<ElementTestEventNull>(attached);
 
             //because we didn't hovered yet the element, the WasHovered property is false
