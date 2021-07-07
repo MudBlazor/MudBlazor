@@ -28,7 +28,7 @@ namespace MudBlazor
         .Build();
 
         [CascadingParameter]
-        public bool Rtl { get; set; }
+        public bool RightToLeft { get; set; }
 
         [Parameter]
         public RenderFragment ChildContent { get; set; }
@@ -81,25 +81,25 @@ namespace MudBlazor
 
         private MudDrawer FindLeftDrawer()
         {
-            Anchor anchor = Rtl ? Anchor.End : Anchor.Start;
+            Anchor anchor = RightToLeft ? Anchor.End : Anchor.Start;
             return _drawers.FirstOrDefault(d => d.Anchor == anchor || d.Anchor == Anchor.Left);
         }
 
         private MudDrawer FindRightDrawer()
         {
-            Anchor anchor = Rtl ? Anchor.Start : Anchor.End;
+            Anchor anchor = RightToLeft ? Anchor.Start : Anchor.End;
             return _drawers.FirstOrDefault(d => d.Anchor == anchor || d.Anchor == Anchor.Right);
         }
 
         private MudDrawer FindLeftMiniDrawer()
         {
-            Anchor anchor = Rtl ? Anchor.End : Anchor.Start;
+            Anchor anchor = RightToLeft ? Anchor.End : Anchor.Start;
             return _drawers.FirstOrDefault(d => d.Variant == DrawerVariant.Mini && (d.Anchor == anchor || d.Anchor == Anchor.Left));
         }
 
         private MudDrawer FindRightMiniDrawer()
         {
-            Anchor anchor = Rtl ? Anchor.Start : Anchor.End;
+            Anchor anchor = RightToLeft ? Anchor.Start : Anchor.End;
             return _drawers.FirstOrDefault(d => d.Variant == DrawerVariant.Mini && (d.Anchor == anchor || d.Anchor == Anchor.Right));
         }
     }
