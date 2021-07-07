@@ -790,7 +790,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task TableInlineEdit_CheckMemoryUsage()
+        public async Task TableInlineEdit_TableRowValidator()
         {
             var comp = ctx.RenderComponent<TableInlineEditTest>();
             var validator = new TableRowValidatorTest();
