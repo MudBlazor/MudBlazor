@@ -1,7 +1,7 @@
 ﻿@namespace MudBlazor
 @inherits MudComponentBase
 
-<MudPortal IsRendered=@(IsPrerrendered || Open)>
+<MudPortal IsRendered=@(IsPreRendered || Open)>
     <div @attributes="UserAttributes" class="@PopoverClass" style="@PopoverStyles">
         @ChildContent
     </div>

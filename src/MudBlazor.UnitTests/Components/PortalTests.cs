@@ -102,7 +102,7 @@ namespace MudBlazor.UnitTests.Components
             itemsNumber = portalprovider.GetAttribute("data-items");
             itemsNumber.Should().Be("0");
 
-            //now, the select is closed, but if we set IsPrerrendered to true, then
+            //now, the select is closed, but if we set IsPreRendered to true, then
             //the portaled item is already present
             var isPrerrender = Parameter(nameof(MudSelect<string>.IsPrerrendered), true);
             comp.SetParametersAndRender(isPrerrender);

@@ -80,6 +80,6 @@ namespace MudBlazor
         /// <summary>
         /// If true, the Portal is prerrendered. 
         /// </summary>
-        [Parameter] public bool IsPrerrendered { get; set; }
+        [Parameter] public bool IsPreRendered { get; set; }
     }
 }
