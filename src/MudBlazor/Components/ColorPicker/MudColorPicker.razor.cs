@@ -55,14 +55,24 @@ namespace MudBlazor
 
 
         /// <summary>
-        /// If true, Alpha options will not be displayed.
+        /// If true, Alpha options will not be displayed and color output will be RGB, HSL or HEX and not RGBA, HSLA or HEXA.
         /// </summary>
         [Parameter] public bool DisableAlpha { get; set; }
 
         /// <summary>
         /// If true, the switch to change color mode will not be displayed.
         /// </summary>
-        [Parameter] public bool DisableColorModeSwitch { get; set; }
+        [Parameter] public bool HideColorModeSwitch { get; set; }
+
+        /// <summary>
+        /// If true, textfield inputs will not be displayed.
+        /// </summary>
+        [Parameter] public bool HideInputs { get; set; }
+
+        /// <summary>
+        /// If true, hue and alpha sliders will not be displayed.
+        /// </summary>
+        [Parameter] public bool HideSliders { get; set; }
 
         [Parameter] public ColorPickerMode ColorPickerMode { get; set; } = ColorPickerMode.RGB;
 
