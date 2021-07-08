@@ -17,6 +17,11 @@ namespace MudBlazor
 {
     public partial class MudColorPicker : MudPicker<MudColor>
     {
+        public MudColorPicker() : base(new DefaultConverter<MudColor>())
+        {
+            AdornmentIcon = Icons.Material.Outlined.Palette;
+        }
+
         private record RGBColor(int R, int G, int B);
 
         #region Fields
@@ -53,6 +58,11 @@ namespace MudBlazor
         /// If true, Alpha options will not be displayed.
         /// </summary>
         [Parameter] public bool DisableAlpha { get; set; }
+
+        /// <summary>
+        /// If true, the switch to change color mode will not be displayed.
+        /// </summary>
+        [Parameter] public bool DisableColorModeSwitch { get; set; }
 
         [Parameter] public ColorPickerMode ColorPickerMode { get; set; } = ColorPickerMode.RGB;
 
