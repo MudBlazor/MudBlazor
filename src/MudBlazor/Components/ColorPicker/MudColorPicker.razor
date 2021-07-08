@@ -1,5 +1,6 @@
 ﻿@namespace MudBlazor
 @using MudColor = System.Drawing.Color;
+@using System.Globalization;
 @inherits MudPicker<MudColor>
 
 @Render
@@ -21,12 +22,16 @@
             </div>
             <div class="mud-picker-color-controls">
                 <div class="mud-picker-color-controls-row">
-                    <div class="mud-picker-color-dot" style="@($"background-color: rgba({_r}, {_g}, {_b}, {_pickerAlpha});")"></div> @*Update the Style's background-color here' here with the selected color from the picker and the selected alpha.*@
+                    <div class="mud-picker-color-dot">
+                        <div class="mud-picker-color-fill" style="@($"background: rgba({_r}, {_g}, {_b}, {_pickerAlpha.ToString(CultureInfo.InvariantCulture)});")"></div>
+                    </div>
                     <div class="mud-picker-color-sliders">
                         <MudSlider Class="mud-picker-color-slider hue" T="int" Value="@_pickerBaseColorValue" ValueChanged="UpdateBaseColor" Step="1" Min="0" Max="@(6*256)" />
-                        <MudSlider Class="mud-picker-color-slider alpha" Value="_pickerAlpha" ValueChanged="AlphaChanged" T="double"  Min="0" Max="1" Step="0.01" Style="@($"background-image: linear-gradient(to right, transparent, rgb({_baseColor.R}, {_baseColor.G}, {_baseColor.B}));")" /> @*Update the Style's background-image rgb color here' here with the selected color from the picker.*@
+                        @if(!DisableAlpha)
+                        {
+                            <MudSlider Class="mud-picker-color-slider alpha" Value="_pickerAlpha" ValueChanged="AlphaChanged" T="double"  Min="0" Max="1" Step="0.01" Style="@($"background-image: linear-gradient(to right, transparent, rgb({_baseColor.R}, {_baseColor.G}, {_baseColor.B}));")" />
+                        }
                     </div>
-
                 </div>
                 <div class="mud-picker-color-controls-row">
                     <div class="mud-picker-color-inputs">
@@ -54,14 +59,17 @@
                             <MudNumericField @bind-Value="@_pickerAlpha" Class="mud-picker-color-inputfield" HelperText="A" Min="0" Max="1" Variant="Variant.Outlined" HideSpinButtons="true" />
                         }
                     </div>
-                    <div class="mud-picker-control-switch">
-                        <MudIconButton OnClick="ChangeMode" Icon="@Icons.Material.Filled.ImportExport" Class="pa-1 mr-n1"></MudIconButton>
-                    </div>
+                    @if(!DisableColorModeSwitch)
+                    {
+                        <div class="mud-picker-control-switch">
+                            <MudIconButton OnClick="ChangeMode" Icon="@Icons.Material.Filled.ImportExport" Class="pa-1 mr-n1"></MudIconButton>
+                        </div>
+                    }
                 </div>
                 @*DEBUGG*@
-                <div class="mud-picker-color-controls-row mt-0">
+                @*<div class="mud-picker-color-controls-row mt-0">
                     <MudText Typo="Typo.caption">X: @_selectorX.ToString() - Y: @_selectorY.ToString() - Mouse is down: @_isMouseDown.ToString()</MudText>
-                </div>
+                </div>*@
             </div>
         </MudPickerContent>
     </CascadingValue>;
