@@ -48,7 +48,7 @@
         display: flex;
         align-items: center;
 
-        & + .mud-picker-color-controls-row{
+        & + .mud-picker-color-controls-row {
             margin-top: 24px;
         }
 
@@ -56,7 +56,14 @@
             height: 38px;
             width: 38px;
             border-radius: var(--mud-default-borderradius);
+            background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAGElEQVQYlWNgYGCQwoKxgqGgcJA5h3yFAAs8BRWVSwooAAAAAElFTkSuQmCC) repeat;
             margin-right: 16px;
+
+            .mud-picker-color-fill {
+                width: 100%;
+                height: 100%;
+                border-radius: inherit;
+            }
         }
 
         .mud-picker-color-sliders {
@@ -66,10 +73,6 @@
 
             .mud-picker-color-slider {
                 border-radius: var(--mud-default-borderradius);
-
-                &:first-child {
-                    margin-bottom: 18px;
-                }
 
                 & > input {
                     height: 10px;
@@ -97,6 +100,10 @@
                     }
                 }
 
+                &.hue + .alpha {
+                    margin-top: 18px;
+                }
+
                 &.hue > input {
                     background: linear-gradient( 90deg, #FF0000, #ff0 16.66%, #0f0 33.33%,#0ff 50%, #00f 66.66%, #f0f 83.33%, #FF0000);
                 }
@@ -111,24 +118,26 @@
             display: flex;
             flex: 1 1 auto;
 
-            .mud-picker-color-inputfield{
+            .mud-picker-color-inputfield {
                 width: 100%;
                 margin-right: 8px;
+
                 .mud-input {
-                    input{
+                    input {
                         padding: 6px;
                         height: 1em;
                         text-align: center;
                         font-size: 14px;
                     }
                 }
-                .mud-input-helper-text{
+
+                .mud-input-helper-text {
                     text-align: center;
                 }
             }
         }
 
-        .mud-picker-control-switch{
+        .mud-picker-control-switch {
             padding-bottom: 16px;
         }
     }
