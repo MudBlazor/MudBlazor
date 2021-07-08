@@ -189,11 +189,9 @@ namespace MudBlazor.UnitTests.Components
         /// <summary>
         /// Testing autoCycle
         /// </summary>
-        [Ignore("This test will not reliably run on the build server")]
         [Test]
         public async Task CarouselTest_AutoCycle()
         {
-            int interval = 250;
             var comp = ctx.RenderComponent<MudCarousel<object>>();
             // print the generated html
             Console.WriteLine(comp.Markup);
@@ -201,32 +199,24 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.Items.Add(new());
             comp.Instance.Items.Add(new());
             comp.Instance.Items.Add(new());
-            comp.SetParam(p => p.AutoCycleTime, TimeSpan.FromMilliseconds(interval));
+
             comp.SetParam(p => p.AutoCycle, true);
             await comp.InvokeAsync(() => comp.Instance.MoveTo(0));
             comp.Render();
             //// playing with autoCycle
-            await Task.Delay(interval + 50); // 15ms just to ensure that transition runs before of Task.Delay() ends
-            comp.Instance.SelectedIndex.Should().Be(1);
-            comp.Instance.SelectedContainer.Should().Be(comp.Instance.Items[1]);
-            await Task.Delay(interval + 50);
-            comp.Instance.SelectedIndex.Should().Be(2);
-            comp.Instance.SelectedContainer.Should().Be(comp.Instance.Items[2]);
-            await Task.Delay(interval + 50);
-            comp.Instance.SelectedIndex.Should().Be(0);
-            comp.Instance.SelectedContainer.Should().Be(comp.Instance.Items[0]);
-            ///changing internal
-            interval = 150;
-            comp.SetParam(p => p.AutoCycleTime, TimeSpan.FromMilliseconds(interval));
-            await Task.Delay(interval + 50);
-            comp.Instance.SelectedIndex.Should().Be(1);
-            comp.Instance.SelectedContainer.Should().Be(comp.Instance.Items[1]);
-            await Task.Delay(interval + 40);
-            comp.Instance.SelectedIndex.Should().Be(2);
-            comp.Instance.SelectedContainer.Should().Be(comp.Instance.Items[2]);
-            await Task.Delay(interval + 40);
-            comp.Instance.SelectedIndex.Should().Be(0);
-            comp.Instance.SelectedContainer.Should().Be(comp.Instance.Items[0]);
+            for (var interval = 150; interval <= 300; interval += 150)
+            {
+                comp.SetParam(p => p.AutoCycleTime, TimeSpan.FromMilliseconds(interval));
+                await Task.Delay(interval);
+                comp.WaitForAssertion(() => comp.Instance.SelectedIndex.Should().Be(1), TimeSpan.FromMilliseconds(100));
+                comp.Instance.SelectedContainer.Should().Be(comp.Instance.Items[1]);
+                await Task.Delay(interval);
+                comp.WaitForAssertion(() => comp.Instance.SelectedIndex.Should().Be(2), TimeSpan.FromMilliseconds(100));
+                comp.Instance.SelectedContainer.Should().Be(comp.Instance.Items[2]);
+                await Task.Delay(interval);
+                comp.WaitForAssertion(() => comp.Instance.SelectedIndex.Should().Be(0), TimeSpan.FromMilliseconds(100));
+                comp.Instance.SelectedContainer.Should().Be(comp.Instance.Items[0]);
+            }
         }
 
         /// <summary>
