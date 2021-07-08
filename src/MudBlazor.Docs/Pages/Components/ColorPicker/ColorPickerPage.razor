@@ -4,13 +4,31 @@
     <DocsPageHeader Title="Color Picker" SubTitle="A short description of the component." />
     <DocsPageContent>
         <DocsPageSection>
-            <SectionHeader Title="Basic">
+            <SectionHeader Title="Basic Usage">
                 <Description></Description>
             </SectionHeader>
             <SectionContent Outlined="true">
                 <ColorPickerBasicExample />
             </SectionContent>
             <SectionSource Code="ColorPickerBasicExample" GitHubFolderName="ColorPicker" />
+        </DocsPageSection>
+        <DocsPageSection>
+            <SectionHeader Title="Color Picker Mode">
+                <Description>You can set the default mode of the colorpicker by changing <CodeInline>ColorPickerMode</CodeInline>, if you dont want the users to be able to switch mode you can disable the switch with <CodeInline>DisableColorModeSwitch</CodeInline> prop.</Description>
+            </SectionHeader>
+            <SectionContent Outlined="true">
+                <ColorPickerColorModeExample />
+            </SectionContent>
+            <SectionSource Code="ColorPickerColorModeExample" GitHubFolderName="ColorPicker" />
+        </DocsPageSection>
+        <DocsPageSection>
+            <SectionHeader Title="Alpha">
+                <Description>You can disable the alpha slider and its textfield counterpart by setting <CodeInline>DisableAlpha</CodeInline> to true, doing so will remove any transparency from the color and output RGB, HSL, HEX instead of RGBA, HSLA and HEXA.</Description>
+            </SectionHeader>
+            <SectionContent Outlined="true">
+                <ColorPickerAlphaExample />
+            </SectionContent>
+            <SectionSource Code="ColorPickerAlphaExample" GitHubFolderName="ColorPicker" />
         </DocsPageSection>
     </DocsPageContent>
 </DocsPage>

@@ -1,0 +1,18 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+
+<MudGrid>
+    <MudItem xs="12" sm="6" md="4">
+        <MudColorPicker Label="RGB" ColorPickerMode="ColorPickerMode.RGB" DisableColorModeSwitch="true" @bind-Text="_colorValue"/>
+    </MudItem>
+    <MudItem xs="12" sm="6" md="4">
+        <MudColorPicker Label="HSL" ColorPickerMode="ColorPickerMode.HSL" DisableColorModeSwitch="true" @bind-Text="_colorValue" />
+    </MudItem>
+    <MudItem xs="12" sm="6" md="4">
+        <MudColorPicker Label="HEX" ColorPickerMode="ColorPickerMode.HEX" DisableColorModeSwitch="true" @bind-Text="_colorValue" />
+    </MudItem>
+</MudGrid>
+
+@code {
+    private String _colorValue;
+}
