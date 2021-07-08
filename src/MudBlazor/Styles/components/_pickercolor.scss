@@ -122,6 +122,10 @@
                 width: 100%;
                 margin-right: 8px;
 
+                &:last-of-type {
+                    margin-right: 0px;
+                }
+
                 .mud-input {
                     input {
                         padding: 6px;
@@ -138,6 +142,7 @@
         }
 
         .mud-picker-control-switch {
+            margin-left: 8px;
             padding-bottom: 16px;
         }
     }
