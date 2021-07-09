@@ -45,7 +45,10 @@ class MudScrollSpy {
                 minDifference = diff;
                 elementId = element.id;
             }
+        }
 
+        if (document.getElementById(elementId).getBoundingClientRect().top < window.innerHeight * 0.8 === false) {
+            return;
         }
 
         if (this.scrollToSectionRequested != null) {
@@ -62,7 +65,6 @@ class MudScrollSpy {
         }
 
         if (elementId != this.lastKnowElement) {
-
             this.lastKnowElement = elementId;
             history.replaceState(null, '', window.location.pathname + "#" + elementId);
             dotnetReference.invokeMethodAsync('SectionChangeOccured', elementId);
