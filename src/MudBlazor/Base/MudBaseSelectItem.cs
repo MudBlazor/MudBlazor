@@ -23,6 +23,11 @@ namespace MudBlazor
         [Parameter] public string Href { get; set; }
 
         /// <summary>
+        /// If true, force browser to redirect outside component router-space.
+        /// </summary>
+        [Parameter] public bool ForceLoad { get; set; }
+
+        /// <summary>
         /// Child content of component.
         /// </summary>
         [Parameter] public RenderFragment ChildContent { get; set; }
@@ -48,7 +53,7 @@ namespace MudBlazor
                 return;
             if (Href != null)
             {
-                UriHelper.NavigateTo(Href);
+                UriHelper.NavigateTo(Href, ForceLoad);
             }
             else
             {
