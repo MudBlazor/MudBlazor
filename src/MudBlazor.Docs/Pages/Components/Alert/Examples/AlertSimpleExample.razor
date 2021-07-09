@@ -1,7 +1,35 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
-<MudAlert Severity="Severity.Normal">The reactor type is RBMK-1000</MudAlert>
-<MudAlert Severity="Severity.Info">The reactor was fired up successfully</MudAlert>
-<MudAlert Severity="Severity.Success">The reactor is running at optimum temperature</MudAlert>
-<MudAlert Severity="Severity.Warning">The reactor temperature exceeds the optimal range</MudAlert>
-<MudAlert Severity="Severity.Error">Meltdown is imminent</MudAlert>
+<MudAlert Severity="Severity.Normal" TextPosition="Position.Left">The reactor type is RBMK-1000</MudAlert>
+<MudAlert Severity="Severity.Info" TextPosition="Position.Center">The reactor was fired up successfully</MudAlert>
+<MudAlert Severity="Severity.Success" TextPosition="Position.Right">The reactor is running at optimum temperature</MudAlert>
+
+@foreach (var alert in Alerts)
+{
+    <MudAlert Severity="@alert.Severity" TextPosition="@alert.TextPosition" CanClose="@alert.CanClose" Close="@alert.DoSomething" Tag="@alert.Tag">@alert.Text</MudAlert>
+}
+
+@code { 
+    private List<Alert> Alerts = new();
+
+    private void SaveHumanity(MudAlert mudAlert)
+    {
+        Alerts.RemoveAll(x => x.Tag == Convert.ToInt32(mudAlert.Tag));
+    }
+
+    protected override void OnInitialized()
+    {
+        Alerts.Add(new Alert { Severity = Severity.Warning, TextPosition = Position.Center, Text = "The reactor temperature exceeds the optimal range", Tag=1 });
+        Alerts.Add(new Alert { Severity = Severity.Error, TextPosition = Position.Left, Text = "Meltdown is imminent", CanClose = true, DoSomething = SaveHumanity, Tag=2 });
+    }
+
+    class Alert
+    {
+        public int Tag { get; set; }
+        public string Text { get; set; }
+        public bool CanClose { get; set; }
+        public Severity Severity { get; set; }
+        public Position TextPosition { get; set; }
+        public Action<MudAlert> DoSomething {get; set; }
+    }
+}

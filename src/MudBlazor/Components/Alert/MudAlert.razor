@@ -2,14 +2,22 @@
 
 @inherits MudComponentBase
 
-<div @attributes="UserAttributes" role="alert" class="@Classname" Style="@Style" @onclick="OnClick" >
-    @if (!NoIcon)
+<div @attributes="UserAttributes" role="alert" class="@Classname" Style="@Style" @onclick="OnClick">
+    <div class="@ClassPosition">
+        @if (!NoIcon)
+        {
+            <div class="mud-alert-icon">
+                <MudIcon Icon="@_icon" />
+            </div>
+        }
+        <div class="mud-alert-message">
+            @ChildContent
+        </div>
+    </div>
+    @if (CanClose)
     {
-        <div class="mud-alert-icon">
-            <MudIcon Icon="@_icon" />
+        <div class="mud-alert-close">
+            <MudIcon Icon="@CloseIcon" @onclick="EventCallback.Factory.Create<MouseEventArgs>(this, () => Close.InvokeAsync(this))" />
         </div>
     }
-    <div class="mud-alert-message">
-        @ChildContent
-    </div>
 </div>

@@ -17,6 +17,43 @@ namespace MudBlazor
           .AddClass(Class)
         .Build();
 
+        protected string ClassPosition =>
+        new CssBuilder("mud-alert-position")
+            .AddClass($"justify-sm-{ConvertTextPosition(TextPosition).ToDescriptionString()}")
+        .Build();
+
+        private Position ConvertTextPosition(Position position)
+        {
+            return position switch
+            {
+                Position.Bottom => Position.End,
+                Position.Left => Position.Start,
+                Position.Top => Position.Start,
+                Position.Right => Position.End,
+                _ => position
+            };
+        }
+
+        /// <summary>
+        /// Sets the position of the text. By default, the position is the Left/Start position.
+        /// </summary>
+        [Parameter] public Position TextPosition { get; set; } = Position.Start;
+
+        /// <summary>
+        /// The callback, when the close button has been clicked.
+        /// </summary>
+        [Parameter] public EventCallback<MudAlert> Close { get; set; }
+
+        /// <summary>
+        /// Define the icon used for the close button.
+        /// </summary>
+        [Parameter] public string CloseIcon { get; set; } = Icons.Material.Filled.Close;
+
+        /// <summary>
+        /// Sets if the alert has a close icon.
+        /// </summary>
+        [Parameter] public bool CanClose { get; set; }
+
         /// <summary>
         /// The higher the number, the heavier the drop-shadow. 0 for no shadow.
         /// </summary>
