@@ -23,6 +23,8 @@ namespace MudBlazor.Docs.Shared
 
         [Inject] private IApiLinkService ApiLinkService { get; set; }
 
+        MudAutocomplete<ApiLinkServiceEntry> _searchAutocomplete;
+
         private void DrawerToggle()
         {
             _drawerOpen = !_drawerOpen;
@@ -81,7 +83,8 @@ namespace MudBlazor.Docs.Shared
         private async void OnSearchResult(ApiLinkServiceEntry entry)
         {
             NavigationManager.NavigateTo(entry.Link);
-            await Task.Delay(1);
+            await Task.Delay(1000);
+            await _searchAutocomplete.Clear();
         }
 
         private void OnSwipe(SwipeDirection direction)
