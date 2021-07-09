@@ -50,7 +50,8 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.Headline.Should().Be("Contents");
             comp.Instance.SectionClassSelector.Should().BeNullOrEmpty();
 
-            comp.Nodes.Should().BeEmpty();
+            comp.Nodes.Should().ContainSingle();
+            comp.Nodes[0].ChildNodes.Should().BeEmpty();
         }
 
         [Test]

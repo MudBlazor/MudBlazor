@@ -2,9 +2,10 @@
 @inherits MudComponentBase
 @using Microsoft.AspNetCore.Components.Routing
 
-@if (_sections.Any())
-{
-    <div class="@GetPanelClass()">
+<div class="@GetPanelClass()" @attributes="UserAttributes">
+
+    @if (_sections.Any())
+    {
         <MudText Typo="Typo.h6" GutterBottom="true">
             @Headline
         </MudText>
@@ -13,11 +14,9 @@
             {
                 <MudNavLink Match="NavLinkMatch.All" Class="@GetNavLinkClass(section.IsActive)" @onclick="@(e => OnNavLinkClick(section.Id))">
                     @section.Title
-                </MudNavLink>
-            }
+                </MudNavLink>}
         </MudNavMenu>
+    }
+</div>
 
-    </div>
-}
-
-@code { }
+    @code { }
