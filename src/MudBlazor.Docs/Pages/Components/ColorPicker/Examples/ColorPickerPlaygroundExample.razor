@@ -1,0 +1,34 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+
+
+<MudGrid>
+    <MudItem md="8" Class="d-flex justify-center">
+        <MudColorPicker DisableAlpha="DisableAlpha" DisableColorField="DisableColorField" DisableSliders="DisableSliders" DisableInputs="DisableInputs" DisableModeSwitch="DisableModeSwitch" ColorPickerMode="ColorPickerMode" PickerVariant="PickerVariant.Static" />
+    </MudItem>
+    <MudItem md="4">
+        <MudPaper Height="400px" Class="pa-4">
+            <MudText Typo="Typo.h6" GutterBottom="true">Options</MudText>
+            <MudCheckBox @bind-Checked="@DisableAlpha" Label="Disable Alpha" Color="Color.Primary" />
+            <MudCheckBox @bind-Checked="@DisableColorField" Label="Disable Color Field" Color="Color.Primary" />
+            <MudCheckBox @bind-Checked="@DisableSliders" Label="Disable Sliders" Color="Color.Primary" />
+            <MudCheckBox @bind-Checked="@DisableInputs" Label="Disable Inputs" Color="Color.Primary" />
+            <MudCheckBox @bind-Checked="@DisableModeSwitch" Label="Disable Mode Switch" Color="Color.Primary" />
+            <MudSelect Label="Color Picker Mode" Variant="Variant.Outlined" OffsetY="true" Dense="true" @bind-Value="ColorPickerMode" Class="mt-4">
+                <MudSelectItem T="ColorPickerMode" Value="ColorPickerMode.RGB">RGB</MudSelectItem>
+                <MudSelectItem T="ColorPickerMode" Value="ColorPickerMode.HSL">HSL</MudSelectItem>
+                <MudSelectItem T="ColorPickerMode" Value="ColorPickerMode.HEX">HEX</MudSelectItem>
+            </MudSelect>
+        </MudPaper>
+    </MudItem>
+</MudGrid>
+
+@code {
+    public bool DisableAlpha { get; set; }
+    public bool DisableColorField { get; set; }
+    public bool DisableSliders { get; set; }
+    public bool DisableInputs { get; set; }
+    public bool DisableModeSwitch { get; set; }
+
+    public ColorPickerMode ColorPickerMode { get; set; }
+}
