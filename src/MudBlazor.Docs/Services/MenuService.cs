@@ -71,6 +71,7 @@ namespace MudBlazor.Docs.Services
             .AddItem("SwipeArea", typeof(MudSwipeArea))
             .AddItem("ToolBar", typeof(MudToolBar))
             .AddItem("Carousel", typeof(MudCarousel<object>))
+            .AddItem("Timeline", typeof(MudTimeline))
 
             //GROUPS
 
