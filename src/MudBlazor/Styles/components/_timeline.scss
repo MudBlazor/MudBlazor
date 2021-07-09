@@ -1,3 +1,30 @@
 ﻿.mud-timeline {
+    padding-top: 24px;
+    position: relative;
 
+    &::before {
+        top: 0;
+        bottom: 0;
+        left: auto;
+        right: calc(50% - 1px);
+        content: "";
+        height: 100%;
+        position: absolute;
+        width: 2px;
+        background: var(--mud-palette-divider);
+    }
+
+
+    .mud-timeline-item {
+        display: flex;
+        padding-bottom: 24px;
+
+        &:nth-child(odd) {
+            flex-direction: row-reverse;
+        }
+
+        &:nth-child(2n) {
+            flex-direction: row;
+        }
+    }
 }
