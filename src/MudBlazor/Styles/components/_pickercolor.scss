@@ -2,12 +2,11 @@
 .mud-picker-color-content {
     border-top-left-radius: inherit;
     border-top-right-radius: inherit;
-    max-width: 300px;
-    min-width: 300px;
+    min-height: unset;
 }
 
 .mud-picker-color-picker {
-    width: 300px;
+    width: 310px;
     height: 250px;
     position: relative;
     overflow: hidden;
@@ -38,8 +37,7 @@
 }
 
 .mud-picker-color-controls {
-    width: 300px;
-    height: 155px;
+    width: 310px;
     padding: 16px;
     display: flex;
     flex-direction: column;
