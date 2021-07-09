@@ -27,7 +27,7 @@ namespace MudBlazor
         #region Fields
 
         private const double _maxY = 250;
-        private const double _maxX = 300;
+        private const double _maxX = 310;
 
         private bool _isMouseDown;
         private double _selectorX;
@@ -60,19 +60,24 @@ namespace MudBlazor
         [Parameter] public bool DisableAlpha { get; set; }
 
         /// <summary>
-        /// If true, the switch to change color mode will not be displayed.
+        /// If true, the color field will not be displayed.
         /// </summary>
-        [Parameter] public bool HideColorModeSwitch { get; set; }
+        [Parameter] public bool DisableColorField { get; set; }
 
         /// <summary>
-        /// If true, textfield inputs will not be displayed.
+        /// If true, the switch to change color mode will not be displayed.
         /// </summary>
-        [Parameter] public bool HideInputs { get; set; }
+        [Parameter] public bool DisableModeSwitch { get; set; }
+
+        /// <summary>
+        /// If true, textfield inputs and color mode switch will not be displayed.
+        /// </summary>
+        [Parameter] public bool DisableInputs { get; set; }
 
         /// <summary>
         /// If true, hue and alpha sliders will not be displayed.
         /// </summary>
-        [Parameter] public bool HideSliders { get; set; }
+        [Parameter] public bool DisableSliders { get; set; }
 
         [Parameter] public ColorPickerMode ColorPickerMode { get; set; } = ColorPickerMode.RGB;
 
