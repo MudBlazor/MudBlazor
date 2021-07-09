@@ -12,10 +12,6 @@ namespace MudBlazor
     {
         public MudNumericField() : base()
         {
-            //With input[type=number] the browser reads and sets the value using dot as decimal separator, while showing and parsing the text in the user Locale setting.
-            //Since this is completely transparent to us, we need to use a Converter using an InvariantCulture.
-            SetConverter(new DefaultConverter<T> { Culture = CultureInfo.InvariantCulture });
-
             _validateInstance = new Func<T, Task<bool>>(ValidateInput);
             _inputConverter = new NumericBoundariesConverter<T>((val) => ConstrainBoundaries(val).value) { Culture = CultureInfo.InvariantCulture };
 
@@ -102,8 +98,15 @@ namespace MudBlazor
             #endregion parameters default depending on T
         }
 
+        protected override bool SetCulture(CultureInfo value)
+        {
+            var changed = base.SetCulture(value);
+            _inputConverter.Culture = value;
+            return changed;
+        }
+
         /// <summary>
-        /// TODO: What to write here..?
+        /// The input type of NumericField should be InputType.Text. Setting it to any other value might result in incorrect behavior
         /// </summary>
         [Parameter] public override InputType InputType { get; set; } = InputType.Text;
 
