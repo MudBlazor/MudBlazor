@@ -297,7 +297,8 @@ namespace MudBlazor
         /// </summary>
         public async Task Clear()
         {
-            await SetTextAsync(string.Empty, updateValue: true);
+            await SetTextAsync(string.Empty, updateValue: false);
+            await CoerceValueToText();
             IsOpen = false;
             _timer?.Dispose();
             StateHasChanged();
