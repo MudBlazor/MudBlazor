@@ -16,7 +16,7 @@
             "type": "blazorwasm",
             "request": "launch",
             "hosted": true,
-            "program": "${workspaceFolder}/src/MudBlazor.Docs.Server/bin/Debug/net5.0/MudBlazor.Docs.Server.dll",
+            "program": "${workspaceFolder}/src/MudBlazor.Docs.Server/bin/Debug/net6.0/MudBlazor.Docs.Server.dll",
             "cwd": "${workspaceFolder}/src/MudBlazor.Docs.Server",
             "browser": "chrome",
             "env": {
