@@ -12,7 +12,6 @@ using System.Threading.Tasks;
 using AngleSharp.Html.Dom;
 using Bunit;
 using FluentAssertions;
-using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.UnitTests.TestComponents;
 using NUnit.Framework;
@@ -54,12 +53,9 @@ namespace MudBlazor.UnitTests.Components
             // check initial state
             autocomplete.Value.Should().Be("Alabama");
             autocomplete.Text.Should().Be("Alabama");
-            await Task.Delay(100);
-
 
             // now let's type a different state to see the popup open
             autocompletecomp.Find("input").Input("Calif");
-            await Task.Delay(100);
             comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open"));
             Console.WriteLine(comp.Markup);
             var items = comp.FindComponents<MudListItem>().ToArray();
@@ -70,9 +66,6 @@ namespace MudBlazor.UnitTests.Components
             // check state
             autocomplete.Value.Should().Be("California");
             autocomplete.Text.Should().Be("California");
-            comp.Find("div.mud-popover").ClassList.Should().NotContain("mud-popover-open");
-            await Task.Delay(100);
-            comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().NotContain("mud-popover-open"));
         }
 
         /// <summary>
@@ -97,12 +90,11 @@ namespace MudBlazor.UnitTests.Components
 
             // type 3 characters and check if it has toggled the menu
             select.Find("input").Input("ala");
-            await Task.Delay(200);
             comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open"));
 
             // type 2 characters and check if it has toggled the menu
             select.Find("input").Input("al");
-            comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().NotContain("mud-popover-open"));
+            comp.WaitForAssertion(() => comp.Markup.Should().NotContain("mud-popover"));
         }
 
         /// <summary>
@@ -398,7 +390,6 @@ namespace MudBlazor.UnitTests.Components
 
             // Lets type something to cause it to open
             autocompletecomp.Find("input").Input("Calif");
-            await Task.Delay(100);
             comp.WaitForAssertion(() => autocomplete.IsOpen.Should().BeTrue());
 
             // Lets call blur on the input and confirm that it closed
@@ -425,7 +416,6 @@ namespace MudBlazor.UnitTests.Components
 
             // Lets type something to cause it to open
             autocompletecomp.Find("input").Input("Calif");
-            await Task.Delay(100);
             comp.WaitForAssertion(() => autocomplete.IsOpen.Should().BeTrue());
 
             // Lets call blur on the input and confirm that it closed
@@ -460,12 +450,9 @@ namespace MudBlazor.UnitTests.Components
             // check initial state
             autocomplete.Value.Should().Be("Alabama");
             autocomplete.Text.Should().Be("Alabama");
-            await Task.Delay(100);
-
 
             // now let's type a different state to see the popup open
             autocompletecomp.Find("input").Input("Calif");
-            await Task.Delay(100);
             comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open"));
             var items = comp.FindComponents<MudListItem>().ToArray();
             items.Length.Should().Be(1);
@@ -473,7 +460,6 @@ namespace MudBlazor.UnitTests.Components
 
             // now, we blur the input and assert that the popover is still open.
             autocompletecomp.Find("input").Blur();
-            await Task.Delay(100);
             comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open"));
         }
     }

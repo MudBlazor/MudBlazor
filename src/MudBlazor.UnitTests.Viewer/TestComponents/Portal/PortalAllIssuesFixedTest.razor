@@ -1,0 +1,143 @@
+﻿<style>
+    .mud-main-content > p.mud-typography.mud-typography-body1.mud-inherit-text {
+        background: #b9e8cd;
+        color: black;
+        font-size: 20px;
+        padding: 20px;
+    }
+</style>
+<div style="background-color:#efefef;padding:20px">
+
+    <MudTabs Elevation="1" Rounded="true">
+        <MudTabPanel Text="Item One" ToolTip="Very big tooltip that is inside the viewportVery big tooltip that is inside the viewportVery big tooltip that is inside the viewportVery big tooltip that is inside the viewportVery big tooltip that is inside the viewport">
+            <MudText>Hover over the tabs to see the tooltips</MudText>
+        </MudTabPanel>
+        <MudTabPanel Text="Item Two" ToolTip="ToolTip Two">
+            <MudText>Item Two</MudText>
+        </MudTabPanel>
+        <MudTabPanel Text="Item Three" ToolTip="ToolTip Three">
+            <MudText>Item Three</MudText>
+        </MudTabPanel>
+    </MudTabs>
+    <br /><br /><br />
+    <br />
+
+
+
+
+    <MudPaper Width="500px">
+        <MudList Clickable="true">
+            <MudListItem>
+                <div class="d-flex flex-row py-1">
+                    <div class="d-flex flex-column">
+                        <MudAvatar Image="https://via.placeholder.com/70" Style="width:70px;height:70px;" Square="true" />
+                    </div>
+                    <div class="d-flex flex-column flex-grow-1 px-4">
+                        <MudText>Some text</MudText>
+                    </div>
+                    <div class="d-flex flex-column">
+                        <MudMenu IconColor="@Color.Primary" Icon="@Icons.Material.Outlined.MoreVert" OffsetX="true" Direction="Direction.Left">
+                            <MudMenuItem>Enlist</MudMenuItem>
+                            <MudMenuItem>Barracks</MudMenuItem>
+                            <MudMenuItem>Armory</MudMenuItem>
+                        </MudMenu>
+                    </div>
+                </div>
+            </MudListItem>
+        </MudList>
+        <MudText Typo="Typo.caption">Popover displays but clipped</MudText>
+    </MudPaper>
+
+    <br />
+    <MudDrawer @bind-Open="@open" Anchor="@anchor" Elevation="1" Variant="@DrawerVariant.Temporary" Color="Color.Primary" DisableOverlay="true">
+        <MudItem Class="d-flex justify-center align-center pa-4 ma-2">
+            <MudMenu OffsetY="true" FullWidth="true" Style="z-index:1500 !important" Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Filled.Flight" EndIcon="@Icons.Filled.KeyboardArrowDown" Label="Menu" Class="rounded-lg">
+                <MudMenuItem>Item 1</MudMenuItem>
+                <MudMenuItem>Item 2</MudMenuItem>
+                <MudMenuItem>Item 3</MudMenuItem>
+            </MudMenu>
+
+            <MudMenu OffsetY="true" FullWidth="true" Style="z-index:1500 !important" Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Filled.Flight" EndIcon="@Icons.Filled.KeyboardArrowUp" Label="Menu" Class="rounded-lg" Direction="Direction.Top">
+                <MudMenuItem>Item 1</MudMenuItem>
+                <MudMenuItem>Item 2</MudMenuItem>
+                <MudMenuItem>Item 3</MudMenuItem>
+            </MudMenu>
+        </MudItem>
+    </MudDrawer>
+
+    <br />
+    <MudDrawer @bind-Open="@open" Anchor="@anchor" Elevation="1" Variant="@DrawerVariant.Temporary" Color="Color.Primary" DisableOverlay="true">
+        <MudItem Class="d-flex justify-center align-center pa-4 ma-2">
+            <MudMenu OffsetY="true" FullWidth="true" Style="z-index:1500 !important" Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Filled.Flight" EndIcon="@Icons.Filled.KeyboardArrowDown" Label="Menu" Class="rounded-lg">
+                <MudMenuItem>Item 1</MudMenuItem>
+                <MudMenuItem>Item 2</MudMenuItem>
+                <MudMenuItem>Item 3</MudMenuItem>
+            </MudMenu>
+
+            <MudMenu OffsetY="true" FullWidth="true" Style="z-index:1500 !important" Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Filled.Flight" EndIcon="@Icons.Filled.KeyboardArrowUp" Label="Menu" Class="rounded-lg" Direction="Direction.Top">
+                <MudMenuItem>Item 1</MudMenuItem>
+                <MudMenuItem>Item 2</MudMenuItem>
+                <MudMenuItem>Item 3</MudMenuItem>
+            </MudMenu>
+        </MudItem>
+    </MudDrawer>
+
+    <br />
+    <MudItem class="d-flex align-center justify-center">
+        <MudButton Variant="@Variant.Filled" OnClick="@(() => OpenDrawer(MudBlazor.Anchor.Bottom))">Drawer Bottom</MudButton>
+        <MudButton Variant="@Variant.Filled" OnClick="@(() => OpenDrawer(MudBlazor.Anchor.Top))">Drawer Top</MudButton>
+    </MudItem>
+    @code
+    {
+        bool open;
+        MudBlazor.Anchor anchor;
+
+        void OpenDrawer(MudBlazor.Anchor anchor)
+        {
+            open = true;
+            this.anchor = anchor;
+        }
+    }
+
+
+    <br />
+    <MudList Clickable="true">
+        <MudListItem>
+            <MudSelect T="string" Label="Coffee">
+                <MudSelectItem Value="@("Cappuccino")" />
+                <MudSelectItem Value="@("Cafe Latte")" />
+                <MudSelectItem Value="@("Espresso")" />
+                <MudSelectItem Value="@("Irish Coffee")" />
+            </MudSelect>
+        </MudListItem>
+        <MudListItem>
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="() => visible = true">Dialog</MudButton>
+        </MudListItem>
+    </MudList>
+
+    <br />
+    <MudDialog @bind-IsVisible="visible">
+        <DialogContent>
+            <MudContainer style="overflow-y: auto">
+                <MudSelect T="string" Label="Coffee">
+                    <MudSelectItem Value="@("Cappuccino")" />
+                    <MudSelectItem Value="@("Cafe Latte")" />
+                    <MudSelectItem Value="@("Espresso")" />
+                    <MudSelectItem Value="@("Irish Coffee")" />
+                </MudSelect>
+            </MudContainer>
+        </DialogContent>
+        <DialogActions>
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="() => visible = false" Class="px-10">Close</MudButton>
+        </DialogActions>
+    </MudDialog>
+</div>
+
+@code 
+{
+    bool visible = false;
+    public static string __description__ = @"Several examples compiled from issues where there were previously clipping issues, but  are fixed now with Portal.
+    Hover over the tabs to see the tooltips and click everything else to see menus, selects and the rest of popovers
+    displaying on top. Also the popovers are always inside the viewport. Check the menus with the button with an icon of a plane. The arrow indicates the direction, but they change the direction if doesn't fit in the viewport.
+    ";
+}

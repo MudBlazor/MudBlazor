@@ -144,6 +144,17 @@ namespace MudBlazor.Services
             return services;
         }
 
+
+        /// <summary>
+        /// Adds ScrollSpy as a transient instance.
+        /// </summary>
+        /// <param name="services">IServiceCollection</param>
+        public static IServiceCollection AddMudBlazorScrollSpy(this IServiceCollection services)
+        {
+            services.TryAddTransient<IScrollSpy, ScrollSpy>();
+            return services;
+        }
+
         /// <summary>
         /// Adds JsApi as a transient instance.
         /// </summary>
@@ -153,6 +164,20 @@ namespace MudBlazor.Services
             services.TryAddTransient<IJsApiService, JsApiService>();
             return services;
         }
+
+        /// <summary>
+        ///     Adds a portal
+        /// </summary>
+        /// <param name="services">IServiceCollection</param>
+        public static IServiceCollection AddMudBlazorPortal(this IServiceCollection services)
+        {
+            services.TryAddScoped<IPortal, Portal>();
+            return services;
+        }
+
+
+
+
 
         /// <summary>
         /// Adds common services required by MudBlazor components
@@ -172,7 +197,9 @@ namespace MudBlazor.Services
                 .AddMudBlazorResizeObserverFactory()
                 .AddMudBlazorScrollManager()
                 .AddMudBlazorScrollListener()
-                .AddMudBlazorJsApi();
+                .AddMudBlazorJsApi()
+                .AddMudBlazorPortal()
+                .AddMudBlazorScrollSpy();
         }
 
         /// <summary>
@@ -195,7 +222,9 @@ namespace MudBlazor.Services
                 .AddMudBlazorResizeObserverFactory()
                 .AddMudBlazorScrollManager()
                 .AddMudBlazorScrollListener()
-                .AddMudBlazorJsApi();
+                .AddMudBlazorJsApi()
+                .AddMudBlazorPortal()
+                .AddMudBlazorScrollSpy();
         }
     }
 }

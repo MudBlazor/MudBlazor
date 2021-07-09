@@ -10,8 +10,8 @@
                 <MudInput @ref="_elementReference" InputType="@(CanRenderValue || (Strict && !IsValueInList) ? InputType.Hidden : InputType.Text)"
                           Class="mud-select-input" Margin="@Margin" 
                           Variant="@Variant" Value="@(Strict && !IsValueInList ? null : Text)" DisableUnderLine="@DisableUnderLine"
-                          Disabled="@Disabled" ReadOnly="true" Error="@Error"
-                          AdornmentIcon="@_currentIcon" Adornment="@Adornment" AdornmentColor="@AdornmentColor" IconSize="@IconSize" AdornmentText="@AdornmentText"
+                          Disabled="@Disabled" ReadOnly="true" Error="@Error" IconSize="@IconSize"
+                          OnAdornmentClick="@OnAdornmentClick" AdornmentIcon="@_currentIcon" Adornment="@Adornment" AdornmentColor="@AdornmentColor" AdornmentText="@AdornmentText"
                           Clearable="@Clearable" OnClearButtonClick="(async (e) => await SelectClearButtonClickHandlerAsync(e))" AriaLabel="@AriaLabel"
                           @attributes="UserAttributes" 
                           >
@@ -22,13 +22,13 @@
                 </MudInput>
             </InputContent>
         </MudInputControl>
-        <CascadingValue Value="@((IMudSelect)this)" IsFixed="true">
-            <MudPopover Open="@_isOpen" MaxHeight="@MaxHeight" Direction="@Direction" OffsetX="@OffsetX" OffsetY="@OffsetY">
+        <MudPopover IsPreRendered="@IsPreRendered" Open=@(_isOpen) MaxHeight="@MaxHeight" Direction="@Direction" OffsetX="@OffsetX" OffsetY="@OffsetY">
+            <CascadingValue Value="@((IMudSelect)this)" IsFixed="true">
                 <MudList Clickable="true" Dense="@Dense">
                     @ChildContent
                 </MudList>
-            </MudPopover>
-        </CascadingValue>
+            </CascadingValue>
+        </MudPopover>
     </div>
 </CascadingValue>
 
