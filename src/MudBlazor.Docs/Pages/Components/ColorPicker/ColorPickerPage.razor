@@ -31,8 +31,17 @@
             <SectionSource Code="ColorPickerAlphaExample" GitHubFolderName="ColorPicker" />
         </DocsPageSection>
         <DocsPageSection>
+            <SectionHeader Title="Switch Mode">
+                <Description>Switch Mode lets the user switch betwen RGB, HSL and HEX the button can be disabled with <CodeInline>DisableModeSwitch</CodeInline> set to true, this can be useful if you want to control what type of input/output should be used.</Description>
+            </SectionHeader>
+            <SectionContent Outlined="true">
+                <ColorPickerSwitchModeExample />
+            </SectionContent>
+            <SectionSource Code="ColorPickerSwitchModeExample" GitHubFolderName="ColorPicker" />
+        </DocsPageSection>
+        <DocsPageSection>
             <SectionHeader Title="Color Picker Mode">
-                <Description>You can set the default mode of the colorpicker by changing <CodeInline>ColorPickerMode</CodeInline>.</Description>
+                <Description>You can set the default mode of the colorpicker with the <CodeInline>ColorPickerMode</CodeInline> prop. This can be useful combined with <CodeInline>DisableModeSwitch</CodeInline> to force the usage of a specific color mode.</Description>
             </SectionHeader>
             <SectionContent Outlined="true">
                 <ColorPickerColorModeExample />
