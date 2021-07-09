@@ -1,6 +1,22 @@
 ﻿@namespace MudBlazor
-@inherits MudComponentBase
+@inherits MudBaseBindableItemsControl<MudTimelineItem, TData>
+@implements IAsyncDisposable
+@typeparam TData
 
-<div @attributes="UserAttributes" class="@Classnames" style="@Style">
-    @ChildContent
+<div class="@Classnames" style="@Style">
+    <CascadingValue Value="this">
+        @if (ItemsSource == null)
+        {
+            @ChildContent
+        }
+        else
+        {
+            foreach (TData item in ItemsSource)
+            {
+                <MudTimelineItem>
+                    @ItemTemplate(item)
+                </MudTimelineItem>
+            }
+        }
+    </CascadingValue>
 </div>
