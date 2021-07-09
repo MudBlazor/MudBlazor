@@ -241,11 +241,11 @@ namespace MudBlazor
 
         public async ValueTask DisposeAsync()
         {
-            if (_isDisposed == true) { return; }
-
+            if (_isDisposed == true)
+                return;
             _isDisposed = true;
-            await _resizeObserver.DisposeAsync();
             _resizeObserver.OnResized -= OnResized;
+            await _resizeObserver.DisposeAsync();
         }
 
         #endregion

@@ -1,6 +1,6 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
-<MudLayout RightToLeft="@_rightToLeft">
+<MudRTLProvider RightToLeft="@_rightToLeft">
     <MudCard Class="mb-2" Style="width: 400px">
         <MudCardHeader>
             <CardHeaderAvatar>
@@ -23,8 +23,8 @@
             <MudIconButton Icon="@Icons.Material.Filled.Share" Color="Color.Default" />
         </MudCardActions>
     </MudCard>
-</MudLayout>
-<MudSwitch @bind-Checked="@_rightToLeft" Label="Toggle Right to Left" Color="Color.Primary" Class="mud-float-left mt-n5"/>
+</MudRTLProvider>
+<MudSwitch @bind-Checked="@_rightToLeft" Label="Toggle Right to Left" Color="Color.Primary" Class="mud-float-left"/>
 
 @code {
     private bool _rightToLeft = true;

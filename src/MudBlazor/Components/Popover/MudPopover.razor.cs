@@ -10,7 +10,7 @@ namespace MudBlazor
         protected string PopoverClass =>
            new CssBuilder("mud-popover")
             .AddClass("mud-popover-open", Open)
-            .AddClass($"mud-popover-{Direction.ToDescriptionString()}")
+            .AddClass($"mud-popover-{ConvertDirection(Direction).ToDescriptionString()}")
             .AddClass("mud-popover-offset-y", OffsetY)
             .AddClass("mud-popover-offset-x", OffsetX)
             .AddClass("mud-paper")
@@ -25,6 +25,18 @@ namespace MudBlazor
             .AddStyle(Style)
             .Build();
 
+        private Direction ConvertDirection(Direction direction)
+        {
+            return direction switch
+            {
+                Direction.Start => RightToLeft ? Direction.Right : Direction.Left,
+                Direction.End => RightToLeft ? Direction.Left : Direction.Right,
+                _ => direction
+            };
+        }
+        
+        [CascadingParameter] public  bool RightToLeft { get; set; }
+        
         /// <summary>
         /// The higher the number, the heavier the drop-shadow. 0 for no shadow set to 8 by default.
         /// </summary>
@@ -64,5 +76,10 @@ namespace MudBlazor
         /// Child content of the component.
         /// </summary>
         [Parameter] public RenderFragment ChildContent { get; set; }
+
+        /// <summary>
+        /// If true, the Portal is pre-rendered. 
+        /// </summary>
+        [Parameter] public bool IsPreRendered { get; set; }
     }
 }

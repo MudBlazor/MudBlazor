@@ -2,6 +2,7 @@
 
 <div>
     <MudSelect Variant="Variant.Text"
+               IsPreRendered="true"
                @bind-Value="fruit"
                Direction="Direction.Bottom" Dense="true" OffsetY="true"
                SelectedValuesChanged="@((HashSet<string> f) => FruitChanged(f))">
