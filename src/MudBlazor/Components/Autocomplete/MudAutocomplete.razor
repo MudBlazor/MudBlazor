@@ -3,30 +3,28 @@
 @typeparam T
 
 <CascadingValue Name="Standalone" Value="false" IsFixed="true">
-    <div class="mud-select mud-autocomplete" >
+    <div class="mud-select mud-autocomplete">
         <MudInputControl Label="@Label" Variant="@Variant" HelperText="@HelperText" FullWidth="@FullWidth" Margin="@Margin" Class="@Classname" Style="@Style"
                          Error="@Error" ErrorText="@ErrorText" Disabled="@Disabled" @onclick="@ToggleMenu" Required="@Required">
             <InputContent>
                 <MudInput @ref="_elementReference" InputType="InputType.Text"
-                          Class="mud-select-input" Margin="@Margin" 
+                          Class="mud-select-input" Margin="@Margin"
                           Variant="@Variant" Value="@Text" DisableUnderLine="@DisableUnderLine"
                           Disabled="@Disabled" ReadOnly="@ReadOnly" Error="@Error"
                           AdornmentIcon="@_currentIcon" Adornment="@Adornment" AdornmentColor="@AdornmentColor" IconSize="@IconSize" AdornmentText="@AdornmentText"
                           Clearable="@Clearable" OnClearButtonClick="@OnClearButtonClick"
-                          @attributes="UserAttributes" 
-
+                          @attributes="UserAttributes"
                           TextChanged="OnTextChanged" OnBlur="OnInputBlurred"
                           OnKeyDown="@this.OnInputKeyDown"
                           OnKeyUp="@this.OnInputKeyUp" autocomplete=@("mud-disabled-"+Guid.NewGuid()) KeyUpPreventDefault="KeyUpPreventDefault"
                           Placeholder="@Placeholder" Immediate="true"
-                          T="string"
-                          />
-                @if (_items!=null && _items.Length!=0)
-                {
-                    <MudPopover Open="@IsOpen" MaxHeight="@MaxHeight" Direction="@Direction" OffsetX="@OffsetX" OffsetY="@OffsetY">
-                            @*this must be the real scroll container, not the Popover, hence the maxheight*@
+                          T="string" />
+                <MudPopover Open="@IsOpen" MaxHeight="@MaxHeight" Direction="@Direction" OffsetX="@OffsetX" OffsetY="@OffsetY">
+                    @if (_items != null && _items.Length != 0)
+                    {
+                        @*this must be the real scroll container, not the Popover, hence the maxheight*@
                         <MudList Clickable="true" Dense="@Dense" Style=@($"max-height: {MaxHeight}px; overflow-y:auto;")>
-                            @for (var index= 0; index < _items.Length;index++ )
+                            @for (var index = 0; index < _items.Length; index++)
                             {
                                 var item = _items[index];
                                 bool is_selected = index == _selectedListItemIndex;
@@ -49,10 +47,10 @@
                                 </MudListItem>
                             }
                         </MudList>
-                  </MudPopover>
-               }
+                    }
+                </MudPopover>
             </InputContent>
-        </MudInputControl>       
+        </MudInputControl>
     </div>
 </CascadingValue>
 
