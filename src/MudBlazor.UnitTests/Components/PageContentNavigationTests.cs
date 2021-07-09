@@ -122,6 +122,35 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task AddSection_ActivateDefault()
+        {
+            var mockedScrollSpy = new MockScrollSpy();
+
+            ctx.Services.Add(new ServiceDescriptor(typeof(IScrollSpy), mockedScrollSpy));
+
+            var comp = ctx.RenderComponent<MudPageContentNavigation>(p => p.Add(x => x.ActivateFirstSectionAsDefault, true));
+
+            var section = new MudPageContenSection("my section", "my-id");
+
+            await comp.InvokeAsync(() => comp.Instance.AddSection(section, true));
+
+            comp.RenderCount.Should().Be(2);
+
+            comp.Instance.ActiveSection.Should().Be(section);
+            comp.Instance.Sections.Should().BeEquivalentTo(new[] { section });
+            comp.Nodes.Should().ContainSingle();
+
+            var navLinks = comp.FindComponents<MudNavLink>();
+            navLinks.Should().ContainSingle();
+            navLinks[0].Instance.Class.Should().Be("page-content-navigation-navlink active");
+            var linkText = navLinks[0].Find(".mud-nav-link-text");
+
+            linkText.TextContent.Should().Be("my section");
+
+            mockedScrollSpy.ScrollHistory.Should().BeEquivalentTo(new[] { "my-id" });
+        }
+
+        [Test]
         public void NavigateBySections()
         {
             var spyMock = new MockScrollSpy();

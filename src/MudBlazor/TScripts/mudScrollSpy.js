@@ -71,11 +71,18 @@ class MudScrollSpy {
         }
     }
 
+    activateSection(sectionId) {
+        const element = document.getElementById(sectionId);
+        if (element) {
+            this.lastKnowElement = sectionId;
+            history.replaceState(null, '', window.location.pathname + "#" + sectionId);
+        }
+    }
+
     scrollToSection(sectionId) {
         if (sectionId) {
             let element = document.getElementById(sectionId);
             if (element) {
-
                 this.scrollToSectionRequested = sectionId;
 
                 element.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'start' });
@@ -83,6 +90,7 @@ class MudScrollSpy {
         }
         else {
             window.scrollTo({ top: 0, behavior: 'smooth' });
+
             this.scrollToSectionRequested = ' ';
         }
     }

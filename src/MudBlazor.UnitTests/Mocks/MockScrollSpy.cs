@@ -25,6 +25,13 @@ namespace MudBlazor.UnitTests.Mocks
             _scrollHistory.Add(id);
             return Task.FromResult(true);
         }
+
+        public Task SetSectionAsActive(string id)
+        {
+            _scrollHistory.Add(id);
+            return Task.FromResult(true);
+        }
+
         public Task ScrollToSection(Uri uri) => Task.FromResult(false);
         public Task StartSpying(string elementsSelector)
         {

@@ -11,19 +11,38 @@ using Microsoft.AspNetCore.Components;
 
 namespace MudBlazor
 {
+    /// <summary>
+    /// A section (nav link) inside the MudPageContentNavigation
+    /// </summary>
     public class MudPageContenSection
     {
+        /// <summary>
+        /// create a new instance with a title and and id
+        /// </summary>
+        /// <param name="title">name of the section will be displayed in the navigation</param>
+        /// <param name="id">id of the section. It will be appending to the current url, if the section becomes active</param>
         public MudPageContenSection(string title, string id)
         {
             Title = title;
             Id = id;
         }
 
+        /// <summary>
+        /// The Title of the section. This will be displayed in the navigation
+        /// </summary>
         public string Title { get; set; }
+
+        /// <summary>
+        /// Id of the section. It will be appending to the current url, if the section becomes active
+        /// </summary>
         public string Id { get; set; }
+
+        /// <summary>
+        /// Indicating if the section is currently in the middle of the viewport
+        /// </summary>
         public bool IsActive { get; private set; }
 
-        public void Activate() => IsActive = true;
-        public void Deactive() => IsActive = false;
+        protected internal void Activate() => IsActive = true;
+        protected internal void Deactive() => IsActive = false;
     }
 }
