@@ -30,10 +30,10 @@ namespace MudBlazor.UnitTests.Components
             var htmlTag = Parameter(nameof(MudElement.HtmlTag), "a");
             var className = Parameter(nameof(MudElement.Class), "mud-button-root");
             var comp = ctx.RenderComponent<MudElement>(htmlTag, className);
-            comp.MarkupMatches("<a class=\"mud-button-root\"></a>");
+            comp.MarkupMatches("<a class=\"mud-button-root\" aria-label=\"\"></a>");
             htmlTag = Parameter(nameof(MudElement.HtmlTag), "button");
             comp.SetParametersAndRender(htmlTag, className);
-            comp.MarkupMatches("<button class=\"mud-button-root\"></button>");
+            comp.MarkupMatches("<button class=\"mud-button-root\" aria-label=\"\"></button>");
         }
     }
 }
