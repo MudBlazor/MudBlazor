@@ -20,6 +20,7 @@
                           OnKeyUp="@this.OnInputKeyUp" autocomplete=@("mud-disabled-"+Guid.NewGuid()) KeyUpPreventDefault="KeyUpPreventDefault"
                           Placeholder="@Placeholder" Immediate="true"
                           T="string"
+                          AriaLabel="@AriaLabel"
                           />
                 @if (_items!=null && _items.Length!=0)
                 {

@@ -16,6 +16,11 @@ namespace MudBlazor
         [Parameter] public string Style { get; set; }
 
         /// <summary>
+        /// Pass string to be rendered as Aria-Label for Accessibility
+        /// </summary>
+        [Parameter] public string AriaLabel { get; set; } = "";
+
+        /// <summary>
         /// Use Tag to attach any user data object to the component for your convenience.
         /// </summary>
         [Parameter] public object Tag { get; set; }

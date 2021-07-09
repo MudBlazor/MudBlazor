@@ -16,6 +16,6 @@ namespace MudBlazor.Interfaces
         public void Reset();
         public void ResetValidation();
 
-
+        public string AriaLabel { get; set; }
     }
 }

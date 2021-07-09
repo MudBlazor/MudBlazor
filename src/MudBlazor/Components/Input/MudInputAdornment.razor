@@ -11,7 +11,7 @@
     {
         @if (AdornmentClick.HasDelegate)
         {
-            <MudIconButton Icon="@Icon" OnClick="@AdornmentClick" Edge="@Edge" Size="@Size" Color="@Color" />
+            <MudIconButton Icon="@Icon" OnClick="@AdornmentClick" Edge="@Edge" Size="@Size" Color="@Color" AriaLabel="@AriaLabel" />
         }
         else
         {
@@ -28,6 +28,6 @@
     [Parameter] public Edge Edge { get; set; }
     [Parameter] public Size Size { get; set; } = Size.Medium;
     [Parameter] public Color Color { get; set; } = Color.Default;
-
+    [Parameter] public string AriaLabel { get; set; }
     [Parameter] public EventCallback<MouseEventArgs> AdornmentClick { get; set; }
 }

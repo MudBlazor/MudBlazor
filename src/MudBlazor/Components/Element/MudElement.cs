@@ -43,6 +43,7 @@ namespace MudBlazor
             //Style
             builder.AddAttribute(3, "style", Style);
 
+            builder.AddAttribute(4, "aria-label", AriaLabel);
             // StopPropagation
             //the order matters. This has to be before content is added
             if (HtmlTag == "button")
@@ -60,6 +61,8 @@ namespace MudBlazor
 
             //Content
             builder.AddContent(10, ChildContent);
+
+            
 
             //Close
             builder.CloseElement();
