@@ -19,7 +19,7 @@ namespace MudBlazor
     {
         public MudColorPicker() : base(new DefaultConverter<MudColor>())
         {
-            AdornmentIcon = Icons.Material.Outlined.Palette;
+            AdornmentIcon = Icons.Custom.Uncategorized.ColorPalette;
         }
 
         private record RGBColor(int R, int G, int B);
