@@ -49,7 +49,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = ctx.RenderComponent<ElementTestEventNull>();
 
             //initially, renders just an empty span, because AttachEvent is false;
-            comp.MarkupMatches("<span></span>");
+            comp.MarkupMatches("<span  aria-label=\"\"></span>");
 
             //we set AttachEvent to true, so it has to attach the mouseover event
             var attached = Parameter(nameof(ElementTestEventNull.AttachEvent), true);
