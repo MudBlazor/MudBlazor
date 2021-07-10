@@ -4,6 +4,7 @@
 
 using System;
 using Microsoft.AspNetCore.Components;
+using MudBlazor.Extensions;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
@@ -12,33 +13,53 @@ namespace MudBlazor
 
     {
         protected string Classnames =>
-            new CssBuilder("mud-timeline")
-                .AddClass($"mud-elevation-{Elevation}", Elevation != 0)
+            new CssBuilder("mud-timeline-item")
                 .AddClass(Class)
                 .Build();
 
+        protected string DotClassnames =>
+        new CssBuilder("mud-timeline-item-dot")
+          .AddClass($"mud-timeline-dot-size-{Size.ToDescriptionString()}")
+          .AddClass($"mud-elevation-{Elevation.ToString()}")
+        .Build();
+
+        protected string DotInnerClassnames =>
+        new CssBuilder("mud-timeline-item-dot-inner")
+          .AddClass($"mud-timeline-dot-fill", FillDot)
+          .AddClass($"mud-{Color.ToDescriptionString()}")
+        .Build();
+
         [CascadingParameter] protected internal MudBaseItemsControl<MudTimelineItem> Parent { get; set; }
-        [CascadingParameter] public bool RightToLeft { get; set; }
 
         /// <summary>
-        /// Child content of component.
-        /// </summary>
-        [Parameter] public int Elevation { set; get; } = 0;
-
-        /// <summary>
-        /// TimeLineItem's Alignment on main TimeLine component
-        /// </summary>
-        [Parameter] public Align Align { get; set; } = Align.Left;
-
-        /// <summary>
-        /// Icon for the TimeLineItem
+        /// Dot Icon
         /// </summary>
         [Parameter] public string Icon { get; set; }
 
         /// <summary>
-        /// Color for the TimeLineItem symbol
+        /// Color of the dot.
         /// </summary>
         [Parameter] public Color Color { get; set; } = Color.Primary;
+
+        /// <summary>
+        /// Size of the dot.
+        /// </summary>
+        [Parameter] public Size Size { get; set; } = Size.Medium;
+
+        /// <summary>
+        /// Elevation of the dot. The higher the number, the heavier the drop-shadow.
+        /// </summary>
+        [Parameter] public int Elevation { set; get; } = 1;
+
+        /// <summary>
+        /// If true, dot will be filled with one color.
+        /// </summary>
+        [Parameter] public bool FillDot { get; set; }
+
+        /// <summary>
+        /// If true, dot will not be displayed.
+        /// </summary>
+        [Parameter] public bool HideDot { get; set; }
 
         /// <summary>
         /// Child content of component.
