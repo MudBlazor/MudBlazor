@@ -6,7 +6,7 @@
 
 @foreach (var alert in Alerts)
 {
-    <MudAlert Severity="@alert.Severity" TextPosition="@alert.TextPosition" CanClose="@alert.CanClose" Close="@alert.DoSomething" Tag="@alert.Tag">@alert.Text</MudAlert>
+    <MudAlert Severity="@alert.Severity" TextPosition="@alert.TextPosition" ShowCloseIcon="@alert.ShowCloseIcon" CloseIconClicked="@alert.DoSomething" Tag="@alert.Tag">@alert.Text</MudAlert>
 }
 
 @code { 
@@ -20,15 +20,15 @@
     protected override void OnInitialized()
     {
         Alerts.Add(new Alert { Severity = Severity.Warning, TextPosition = Position.Center, Text = "The reactor temperature exceeds the optimal range", Tag=1 });
-        Alerts.Add(new Alert { Severity = Severity.Error, TextPosition = Position.Left, Text = "Meltdown is imminent", CanClose = true, DoSomething = SaveHumanity, Tag=2 });
+        Alerts.Add(new Alert { Severity = Severity.Error, TextPosition = Position.Left, Text = "Meltdown is imminent", ShowCloseIcon = true, DoSomething = SaveHumanity, Tag=2 });
     }
 
     class Alert
     {
         public int Tag { get; set; }
         public string Text { get; set; }
-        public bool CanClose { get; set; }
         public Severity Severity { get; set; }
+        public bool ShowCloseIcon { get; set; }
         public Position TextPosition { get; set; }
         public Action<MudAlert> DoSomething {get; set; }
     }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Extensions;
@@ -42,7 +43,7 @@ namespace MudBlazor
         /// <summary>
         /// The callback, when the close button has been clicked.
         /// </summary>
-        [Parameter] public EventCallback<MudAlert> Close { get; set; }
+        [Parameter] public EventCallback<MudAlert> CloseIconClicked { get; set; }
 
         /// <summary>
         /// Define the icon used for the close button.
@@ -50,9 +51,9 @@ namespace MudBlazor
         [Parameter] public string CloseIcon { get; set; } = Icons.Material.Filled.Close;
 
         /// <summary>
-        /// Sets if the alert has a close icon.
+        /// Sets if the alert shows a close icon.
         /// </summary>
-        [Parameter] public bool CanClose { get; set; }
+        [Parameter] public bool ShowCloseIcon { get; set; }
 
         /// <summary>
         /// The higher the number, the heavier the drop-shadow. 0 for no shadow.
@@ -95,6 +96,14 @@ namespace MudBlazor
         [Parameter] public string Icon { get; set; }
 
         protected string _icon;
+
+        private async Task OnCloseIconClickAsync()
+        {
+            if (CloseIconClicked.HasDelegate)
+            {
+                await CloseIconClicked.InvokeAsync(this);
+            }
+        }
 
         protected override void OnParametersSet()
         {

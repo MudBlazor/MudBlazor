@@ -14,10 +14,10 @@
             @ChildContent
         </div>
     </div>
-    @if (CanClose)
+    @if (ShowCloseIcon)
     {
         <div class="mud-alert-close">
-            <MudIcon Icon="@CloseIcon" @onclick="EventCallback.Factory.Create<MouseEventArgs>(this, () => Close.InvokeAsync(this))" />
+            <MudIcon Icon="@CloseIcon" @onclick="OnCloseIconClickAsync" Size="Size.Small" />
         </div>
     }
 </div>
