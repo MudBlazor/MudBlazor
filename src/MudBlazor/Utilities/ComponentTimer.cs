@@ -3,6 +3,7 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Components;
 
 namespace MudBlazor.Utilities
 {
@@ -281,7 +282,7 @@ namespace MudBlazor.Utilities
     /// <summary>
     /// Provides a mechanism for executing a method on a thread pool thread at specified intervals. This class cannot be inherited.
     /// </summary>
-    public sealed class ComponentTimer : IComponentTimer
+    public sealed partial class ComponentTimer : IComponentTimer
     {
         private enum TimerAction { Start, Stop, Restart }
         private Timer _timer;
@@ -293,7 +294,7 @@ namespace MudBlazor.Utilities
         private ComponentTimer(TimeSpan? dueTime = null, TimeSpan? period = null)
         {
             DueTime = HasStartDelay(dueTime) ? (TimeSpan) dueTime : TimeSpan.Zero;
-            Period = HasInterval(period) ? (TimeSpan)period : TimeSpan.Zero;
+            Period = HasInterval(period) ? (TimeSpan) period : TimeSpan.Zero;
         }
 
         /// <summary>
@@ -321,6 +322,23 @@ namespace MudBlazor.Utilities
         /// <param name="period">The time interval between invocations of callback. The default is <see cref="TimeSpan.Zero"/>.</param>
         /// <param name="state">An object containing information to be used by the callback method, or <c>null</c>.</param>
         public ComponentTimer(Func<object, ValueTask> callback, bool enabled = false, TimeSpan? dueTime = null, TimeSpan? period = null, object state = null) : this(dueTime, period)
+        {
+            _timer = new Timer(async (_state) => { await TimerCallbackAsync(callback, _state); }, state, Timeout.InfiniteTimeSpan, Timeout.InfiniteTimeSpan);
+
+            if (enabled)
+                Enabled = true;
+        }
+
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ComponentTimer"/> class.
+        /// </summary>
+        /// <param name="callback">An <see cref="EventCallback"/> representing a method to be executed.</param>
+        /// <param name="enabled">When <c>true</c>, starts the timer.</param>
+        /// <param name="dueTime">The amount of time to delay before the callback is invoked. The default is <see cref="TimeSpan.Zero"/>).</param>
+        /// <param name="period">The time interval between invocations of callback. The default is <see cref="TimeSpan.Zero"/>.</param>
+        /// <param name="state">An object containing information to be used by the callback method, or <c>null</c>.</param>
+        public ComponentTimer(EventCallback callback, bool enabled = false, TimeSpan? dueTime = null, TimeSpan? period = null, object state = null) : this(dueTime, period)
         {
             _timer = new Timer(async (_state) => { await TimerCallbackAsync(callback, _state); }, state, Timeout.InfiniteTimeSpan, Timeout.InfiniteTimeSpan);
 
@@ -411,23 +429,11 @@ namespace MudBlazor.Utilities
 
         public DateTimeOffset? Start(TimeSpan dueTime, bool update = false) { Change(TimerAction.Start, dueTime, update: update); return GetStartUtcTime(); }
 
-        public async ValueTask<DateTimeOffset?> StartAsync()
-        {
-            await ValueTask.CompletedTask;
-            return Start();
-        }
+        public async ValueTask<DateTimeOffset?> StartAsync() { await ValueTask.CompletedTask; return Start(); }
 
-        public async ValueTask<DateTimeOffset?> StartAsync(int dueTime, bool update = false)
-        {
-            await ValueTask.CompletedTask;
-            return Start(dueTime, update);
-        }
+        public async ValueTask<DateTimeOffset?> StartAsync(int dueTime, bool update = false) { await ValueTask.CompletedTask; return Start(dueTime, update); }
 
-        public async ValueTask<DateTimeOffset?> StartAsync(TimeSpan dueTime, bool update = false)
-        {
-            await ValueTask.CompletedTask;
-            return Start(dueTime, update);
-        }
+        public async ValueTask<DateTimeOffset?> StartAsync(TimeSpan dueTime, bool update = false) { await ValueTask.CompletedTask; return Start(dueTime, update); }
 
 
         public DateTimeOffset? Restart() { Change(TimerAction.Restart); return GetStartUtcTime(); }
@@ -480,6 +486,8 @@ namespace MudBlazor.Utilities
         private static async ValueTask TimerCallbackAsync<T>(Action<T> callback, T state) { await ValueTask.CompletedTask; callback.Invoke(state); }
 
         private static async ValueTask TimerCallbackAsync<T>(Func<T, ValueTask> callback, T state) { await callback.Invoke(state); }
+
+        private static async ValueTask TimerCallbackAsync<T>(EventCallback callback, T state) { using var task = callback.InvokeAsync(state); await task; }
 
 
         public void Dispose()
