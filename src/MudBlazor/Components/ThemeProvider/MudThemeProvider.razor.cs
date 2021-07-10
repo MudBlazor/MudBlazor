@@ -44,7 +44,7 @@ namespace MudBlazor
             scrollbar.AppendLine("::-webkit-scrollbar-thumb {background: #c4c4c4;border-radius: 1px;}");
             scrollbar.AppendLine("::-webkit-scrollbar-thumb:hover {background: #a6a6a6;}");
             //Firefox
-            scrollbar.AppendLine("html{scrollbar-color: #c4c4c4 transparent;scrollbar-width: thin;}");
+            scrollbar.AppendLine("html, body * {scrollbar-color: #c4c4c4 transparent;scrollbar-width: thin;}");
             scrollbar.AppendLine("</style>");
             return scrollbar.ToString();
         }
