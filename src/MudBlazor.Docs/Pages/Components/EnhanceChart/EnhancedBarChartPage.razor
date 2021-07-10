@@ -1,18 +1,90 @@
 ﻿@page "/components/enhancedbarchart"
 
 <DocsPage>
-    <DocsPageHeader Title="Enchanced Bar Chart" SubTitle="">
+    <DocsPageHeader Title="Enhanced Bar Chart" SubTitle="The Enhanced Charts are a series of powerful yet easy-to-configure charts for MudBlazor. The bar chart displays numeric values as rectangle bars. Optional, the bars can be stacked. The chart can show positive and negative values or a mix. ">
     </DocsPageHeader>
     <DocsPageContent>
         <DocsPageSection>
             <SectionHeader>
-                <Title></Title>
-                <Description></Description>
+                <Title>Dataset and Series</Title>
+                <Description>Nearly each part of the charts like tool tips, datasets and axes are components. The example shows the basic skelleton </Description>
             </SectionHeader>
             <SectionContent Outlined="true" FullWidth="true">
-                <EnhancedBarExample1 />
+                <EnhancedBarSimpleExample />
             </SectionContent>
-            <SectionSource ShowCode="false" Code="BarExample1" GitHubFolderName="EnchancedChart" />
+            <SectionSource ShowCode="true" Code="EnhancedBarSimpleExample" GitHubFolderName="EnhanceChart" />
         </DocsPageSection>
+        <DocsPageSection>
+            <SectionHeader>
+                <Title>Multiple Series</Title>
+                <Description> The bar chart can display multiple series in a single chart. All series use the same labels (x-axis). The values can be only positive, only negative, or both. The y axis scales automatically.    </Description>
+            </SectionHeader>
+            <SectionContent Outlined="true" FullWidth="true">
+                <EnhancedBarTwoSeriesExample />
+            </SectionContent>
+            <SectionSource ShowCode="false" Code="EnhancedBarTwoSeriesExample" GitHubFolderName="EnhanceChart" />
+        </DocsPageSection>
+        <DocsPageSection>
+            <SectionHeader>
+                <Title>Multiple Datasets and series</Title>
+                <Description> Datasets can be used for grouping series together. Dataset information like name can be displayed in the legend and tooltip as well. There has to be at least one dataset for a chart to render.     </Description>
+            </SectionHeader>
+            <SectionContent Outlined="true" FullWidth="true">
+                <EnhancedBarTwoDatasetExample />
+            </SectionContent>
+            <SectionSource ShowCode="false" Code="EnhancedBarTwoDatasetExample" GitHubFolderName="EnhanceChart" />
+        </DocsPageSection>
+        <DocsPageSection>
+            <SectionHeader>
+                <Title>Stacked Series</Title>
+                <Description>Series within a dataset can be stacked, meaning the series are stacked vertically. Stacked data series and non-stacked series can be both displayed in the same chart. While the chart doesn't enforce it, all data points within a stack should be positive or negative.  Otherwise, a bar will be displayed within another.    </Description>
+            </SectionHeader>
+            <SectionContent Outlined="true" FullWidth="true">
+                <EnhancedBarStackedDatasetExample />
+            </SectionContent>
+            <SectionSource ShowCode="false" Code="EnhancedBarStackedDatasetExample" GitHubFolderName="EnhanceChart" />
+        </DocsPageSection>
+        <DocsPageSection>
+            <SectionHeader>
+                <Title>Layout</Title>
+                <Description>
+                    <MudText>To control the spacing between bars and between different labels, you can set Margin and Padding on the bar chart.</MudText>
+                    <MudText>Margin describes the inner distance between bars for the same data point (label), while padding marks the distance between the last bar of the data point towards the first at the following data point. This includes the borders as well. A margin of zero means there is no distance between bars. Padding of zero means there is no distance between bars and the edges (left and right) and no space between different data points.</MudText>
+                    <MudText>The values (like with all margin at the axis to) are relative values and not "pixels." A margin of 5 would mean that each space between two bars would consume 5 percent of the entire width of the diagram. This behavior gives you the control to decide how the available space should be used. Even responsive features like less distance on a smaller screen are possible. You can resize the window to see the effect</MudText>
+                </Description>
+            </SectionHeader>
+            <SectionContent Outlined="true" FullWidth="true">
+                <EnhancedBarLayoutExample />
+            </SectionContent>
+            <SectionSource ShowCode="false" Code="EnhancedBarLayoutExample" GitHubFolderName="EnhanceChart" />
+        </DocsPageSection>
+        @*<DocsPageSection>
+            <SectionHeader>
+                <Title>Autoscaling and Ticks</Title>
+                <Description>
+                    <MudText>The axis of the bar chart scales automatically based on the minimum and maximum values provided.</MudText>
+                    <MudText>The scaling is based on the concept of ticks. The algorithm scale the axis until a tick is either 1,2, or 5 (or a multiple of it, like 10,20 and 50 or 0.01, 0.02 and 0.05). You can set the number of ticks. Assume the maximum value inside the dataset is 120. If the number of ticks is 3, a tick will be 50. (120/50 ~ 3) while if the tick amount is 10, a tick will be 10 (120/ 10 ~ 10).</MudText>
+                    <MudText>Once the major ticks are calculated, the minor ticks are set by the same algorithm. If a major tick is 50 and there should be ten minor ticks, a minor tick will have a value of 5.</MudText>
+                    <MudText>If major ticks are not enabled, the chart will set its maximum height to the max value inside the dataset.</MudText>
+                    <MudText>Gridline can be enabled separately, as you can see in the following example</MudText>
+                </Description>
+            </SectionHeader>
+            <SectionContent Outlined="true" FullWidth="true">
+                <EnhancedBarAutoscaleExample />
+            </SectionContent>
+            <SectionSource ShowCode="false" Code="EnhancedBarAutoscaleExample" GitHubFolderName="EnhanceChart" />
+        </DocsPageSection>*@
     </DocsPageContent>
+    <DocsPageSection>
+        <SectionHeader>
+            <Title>All together</Title>
+            <Description>
+                <MudText>Here, you can try every configuration aspect of the chart</MudText>
+            </Description>
+        </SectionHeader>
+        <SectionContent Outlined="true" FullWidth="true">
+            <EnhancedBarExample1 />
+        </SectionContent>
+        <SectionSource ShowCode="false" Code="EnhancedBarExample1" GitHubFolderName="EnhanceChart" />
+    </DocsPageSection>
 </DocsPage>

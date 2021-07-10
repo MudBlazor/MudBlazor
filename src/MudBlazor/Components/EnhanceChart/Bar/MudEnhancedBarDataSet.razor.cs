@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Utilities;
 
@@ -9,7 +10,7 @@ namespace MudBlazor.EnhanceChart
     public record BarDataSetSnapShot(String name, Boolean IsStacked, Guid? axisId);
 
     [DoNotGenerateAutomaticTest]
-    public partial class MudEnhancedBarDataSet : ComponentBase, ICollection<MudEnhancedBarChartSeries>, IDisposable, ISnapshot<BarDataSetSnapShot>
+    public partial class MudEnhancedBarDataSet : ComponentBase, IDataSet, ICollection<MudEnhancedBarChartSeries>, IDisposable, ISnapshot<BarDataSetSnapShot>
     {
         private List<MudEnhancedBarChartSeries> _series = new();
 
@@ -42,7 +43,7 @@ namespace MudBlazor.EnhanceChart
 
         public int Count => _series.Count;
         public bool IsReadOnly => throw new NotImplementedException();
-       
+
 
         public void Add(MudEnhancedBarChartSeries item)
         {
@@ -114,5 +115,62 @@ namespace MudBlazor.EnhanceChart
         BarDataSetSnapShot ISnapshot<BarDataSetSnapShot>.OldSnapshotValue { get; set; }
         BarDataSetSnapShot ISnapshot<BarDataSetSnapShot>.CreateSnapShot() => new BarDataSetSnapShot(Name, IsStacked, Axis != null ? Axis.Id : null);
 
+        public (Double Max, Double Min) GetMinimumAndMaximumValues()
+        {
+            Double min = 0;
+            Double max = 0;
+
+            if (IsStacked == false)
+            {
+                foreach (var item in _series)
+                {
+                    if (item.IsEnabled == false) { continue; }
+
+                    foreach (var yValue in item.Points)
+                    {
+                        if (yValue > max)
+                        {
+                            max = yValue;
+                        }
+
+                        if (yValue < min)
+                        {
+                            min = yValue;
+                        }
+                    }
+                }
+            }
+            else
+            {
+                Int32 maxIndex = _series.Max(x => x.Points.Count);
+
+                for (int i = 0; i < maxIndex; i++)
+                {
+                    Double sliceSum = 0;
+
+                    foreach (var item in _series)
+                    {
+                        if (item.IsEnabled == false) { continue; }
+
+                        if (item.Points.Count > i)
+                        {
+                            sliceSum += item.Points[i];
+                        }
+                    }
+
+                    if(sliceSum > max)
+                    {
+                        max = sliceSum;
+                    }
+
+                    if(sliceSum < min)
+                    {
+                        min = sliceSum;
+                    }
+                }
+            }
+
+            return (max, min);
+        }
     }
 }

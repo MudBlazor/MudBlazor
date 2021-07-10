@@ -155,7 +155,7 @@ namespace MudBlazor.UnitTests.Components.EnhancedChart
                 });
             });
 
-            var yAxesComponent = comp.FindComponent<MudEnhancedNumericLinearAxis>();
+            var yAxesComponent = comp.FindComponent<MudEnhancedNumericLinearAutoScaleAxis>();
             called = 0;
 
             Int32 expectedCalledCounter = 0;
@@ -202,7 +202,7 @@ namespace MudBlazor.UnitTests.Components.EnhancedChart
                 });
             });
 
-            var yAxesComponent = comp.FindComponent<MudEnhancedNumericLinearAxis>();
+            var yAxesComponent = comp.FindComponent<MudEnhancedNumericLinearAutoScaleAxis>();
             called = 0;
 
             yAxesComponent.SetParametersAndRender(p => p.Add(x => x.ShowMajorTicks, false));
@@ -215,41 +215,26 @@ namespace MudBlazor.UnitTests.Components.EnhancedChart
 
             called.Should().Be(4);
 
-            yAxesComponent.SetParametersAndRender(p => p.Add(x => x.ScalingType, ScalingType.Manuel));
-            yAxesComponent.SetParametersAndRender(p => p.Add(x => x.ScalingType, ScalingType.Auto));
-
-            called.Should().Be(6);
-
-            yAxesComponent.SetParametersAndRender(p => p.Add(x => x.Min, 10.5));
-            yAxesComponent.SetParametersAndRender(p => p.Add(x => x.Min, 20.3));
-
-            called.Should().Be(8);
-
-            yAxesComponent.SetParametersAndRender(p => p.Add(x => x.Max, 10.5));
-            yAxesComponent.SetParametersAndRender(p => p.Add(x => x.Max, 20.3));
-
-            called.Should().Be(10);
-
             yAxesComponent.SetParametersAndRender(p => p.Add(x => x.LabelSize, 10.5));
             yAxesComponent.SetParametersAndRender(p => p.Add(x => x.LabelSize, 20.3));
 
-            called.Should().Be(12);
+            called.Should().Be(6);
 
             yAxesComponent.SetParametersAndRender(p => p.Add(x => x.Margin, 12.5));
             yAxesComponent.SetParametersAndRender(p => p.Add(x => x.Margin, 13.44));
 
-            called.Should().Be(14);
+            called.Should().Be(8);
 
             yAxesComponent.SetParametersAndRender(p => p.Add(x => x.LabelCssClass, "my-awesome-label"));
             yAxesComponent.SetParametersAndRender(p => p.Add(x => x.LabelCssClass, "my-awesomer-label"));
 
-            called.Should().Be(16);
+            called.Should().Be(10);
 
             yAxesComponent.SetParametersAndRender(p => p.Add(x => x.Placement, YAxisPlacement.Rigth));
             yAxesComponent.SetParametersAndRender(p => p.Add(x => x.Placement, YAxisPlacement.Left));
             yAxesComponent.SetParametersAndRender(p => p.Add(x => x.Placement, YAxisPlacement.None));
 
-            called.Should().Be(19);
+            called.Should().Be(13);
         }
 
         [Test]
@@ -365,7 +350,7 @@ namespace MudBlazor.UnitTests.Components.EnhancedChart
                     setP.Add(y => y.Placement, XAxisPlacement.None);
                     setP.Add(y => y.ShowGridLines, false);
                 });
-                p.Add<MudEnhancedNumericLinearAxis>(x => x.YAxes, (setP) =>
+                p.Add<MudEnhancedNumericLinearAutoScaleAxis>(x => x.YAxes, (setP) =>
                 {
                     setP.Add(y => y.Placement, YAxisPlacement.None);
                     setP.Add(y => y.ShowMajorTicks, false);
@@ -408,7 +393,7 @@ namespace MudBlazor.UnitTests.Components.EnhancedChart
                     setP.Add(y => y.ShowGridLines, false);
 
                 });
-                p.Add<MudEnhancedNumericLinearAxis>(x => x.YAxes, (setP) =>
+                p.Add<MudEnhancedNumericLinearAutoScaleAxis>(x => x.YAxes, (setP) =>
                 {
                     setP.Add(y => y.Placement, YAxisPlacement.None);
                     setP.Add(y => y.ShowMajorTicks, false);
@@ -442,7 +427,7 @@ namespace MudBlazor.UnitTests.Components.EnhancedChart
                 new XAttribute("x", secondLabelPoint.X),
                 new XAttribute("y", secondLabelPoint.Y),
                 new XAttribute("font-size", 15.0),
-                new XAttribute("class", "mud-enhanced-chart-x-axis-label " +  classLabel),
+                new XAttribute("class", "mud-enhanced-chart-x-axis-label " + classLabel),
                 new XAttribute("dominant-baseline", "middle"),
                 new XAttribute("text-anchor", "middle"),
                 "Tu"
@@ -481,7 +466,7 @@ namespace MudBlazor.UnitTests.Components.EnhancedChart
                     setP.Add(y => y.Margin, 5.0);
                     setP.Add(y => y.ShowGridLines, false);
                 });
-                p.Add<MudEnhancedNumericLinearAxis>(x => x.YAxes, (setP) =>
+                p.Add<MudEnhancedNumericLinearAutoScaleAxis>(x => x.YAxes, (setP) =>
                 {
                     setP.Add(y => y.Placement, YAxisPlacement.None);
                     setP.Add(y => y.ShowMajorTicks, false);
@@ -516,7 +501,7 @@ namespace MudBlazor.UnitTests.Components.EnhancedChart
                 new XAttribute("x", secondLabelPoint.X),
                 new XAttribute("y", secondLabelPoint.Y),
                 new XAttribute("font-size", 15.0),
-                new XAttribute("class", "mud-enhanced-chart-x-axis-label " +  classLabel),
+                new XAttribute("class", "mud-enhanced-chart-x-axis-label " + classLabel),
                 new XAttribute("dominant-baseline", "middle"),
                 new XAttribute("text-anchor", "middle"),
                 "Tu"
@@ -552,7 +537,7 @@ namespace MudBlazor.UnitTests.Components.EnhancedChart
                     setP.Add(y => y.Placement, XAxisPlacement.None);
                     setP.Add(y => y.ShowGridLines, false);
                 });
-                p.Add<MudEnhancedNumericLinearAxis>(x => x.YAxes, (setP) =>
+                p.Add<MudEnhancedNumericLinearAutoScaleAxis>(x => x.YAxes, (setP) =>
                 {
                     setP.Add(y => y.Placement, YAxisPlacement.Left);
                     setP.Add(y => y.LabelSize, 15.0);
@@ -640,7 +625,7 @@ namespace MudBlazor.UnitTests.Components.EnhancedChart
                     setP.Add(y => y.Placement, XAxisPlacement.None);
                     setP.Add(y => y.ShowGridLines, false);
                 });
-                p.Add<MudEnhancedNumericLinearAxis>(x => x.YAxes, (setP) =>
+                p.Add<MudEnhancedNumericLinearAutoScaleAxis>(x => x.YAxes, (setP) =>
                 {
                     setP.Add(y => y.Placement, YAxisPlacement.Rigth);
                     setP.Add(y => y.LabelSize, 15.0);
@@ -733,7 +718,7 @@ namespace MudBlazor.UnitTests.Components.EnhancedChart
                     setP.Add(y => y.Placement, XAxisPlacement.None);
                     setP.Add(y => y.ShowGridLines, false);
                 });
-                p.Add<MudEnhancedNumericLinearAxis>(x => x.YAxes, (setP) =>
+                p.Add<MudEnhancedNumericLinearAutoScaleAxis>(x => x.YAxes, (setP) =>
                 {
                     setP.Add(y => y.Placement, YAxisPlacement.Rigth);
                     setP.Add(y => y.LabelSize, 15.0);
@@ -854,7 +839,7 @@ namespace MudBlazor.UnitTests.Components.EnhancedChart
                     setP.Add(y => y.ShowGridLines, false);
 
                 });
-                p.Add<MudEnhancedNumericLinearAxis>(x => x.YAxes, (setP) =>
+                p.Add<MudEnhancedNumericLinearAutoScaleAxis>(x => x.YAxes, (setP) =>
                 {
                     setP.Add(y => y.Placement, YAxisPlacement.Rigth);
                     setP.Add(y => y.LabelSize, 15.0);
@@ -1047,7 +1032,7 @@ namespace MudBlazor.UnitTests.Components.EnhancedChart
                     setP.Add(y => y.GridLineThickness, xGridLineThickness);
                     setP.Add(y => y.GridLineColor, xGridLineColor);
                 });
-                p.Add<MudEnhancedNumericLinearAxis>(x => x.YAxes, (setP) =>
+                p.Add<MudEnhancedNumericLinearAutoScaleAxis>(x => x.YAxes, (setP) =>
                 {
                     setP.Add(y => y.Placement, yAxisPlacement);
                     setP.Add(y => y.LabelSize, 15.0);
@@ -1326,9 +1311,25 @@ namespace MudBlazor.UnitTests.Components.EnhancedChart
         [TestCase(0.183, 13, 0.2)]
         [TestCase(0.183, 14, 0.19)]
         [TestCase(0.183, 15, 0.19)]
-        public void DrawSimpleDataSet_OnlyPostiveValues_AutoScaleValues_BarHeigth(Double maxDataSeries, Double majorTickCount, Double expectedMax)
+
+        [TestCase(-18.3, 5, -20)]
+        [TestCase(-18.3, 6, -20)]
+        [TestCase(-18.3, 7, -20)]
+        [TestCase(-18.3, 13, -20)]
+        [TestCase(-18.3, 14, -19)]
+        [TestCase(-18.3, 15, -19)]
+
+        [TestCase(-0.183, 5, -0.2)]
+        [TestCase(-0.183, 6, -0.2)]
+        [TestCase(-0.183, 7, -0.2)]
+        [TestCase(-0.183, 13, -0.2)]
+        [TestCase(-0.183, 14, -0.19)]
+        [TestCase(-0.183, 15, -0.19)]
+        public void DrawSimpleDataSet_OnlyValuesInOnRange_AutoScaleValues_BarHeigth(Double maxDataSeries, Double majorTickCount, Double expectedMax)
         {
             CultureInfo.CurrentCulture = new CultureInfo("en-us");
+
+            Boolean isnegative = maxDataSeries < 0;
 
             Random random = new Random();
             String color = (Colors.Red.Darken1 + "ff").ToLower();
@@ -1358,7 +1359,7 @@ namespace MudBlazor.UnitTests.Components.EnhancedChart
                     setP.Add(y => y.Labels, new List<String> { "Mo" });
                     setP.Add(y => y.Placement, XAxisPlacement.None);
                 });
-                p.Add<MudEnhancedNumericLinearAxis>(x => x.YAxes, (setP) =>
+                p.Add<MudEnhancedNumericLinearAutoScaleAxis>(x => x.YAxes, (setP) =>
                 {
                     setP.Add(y => y.Placement, YAxisPlacement.None);
                     setP.Add<MudEnhancedTick>(y => y.MajorTick, (setT) =>
@@ -1376,7 +1377,10 @@ namespace MudBlazor.UnitTests.Components.EnhancedChart
                 new XAttribute("fill", color),
                 new XAttribute("data-chartid", chartId.ToString()),
                 new XAttribute("class", "mud-enhanced-chart-series bar active"),
-                new XAttribute("points", $"0,100 0,{height.ToString(CultureInfo.InvariantCulture)} 100,{height.ToString(CultureInfo.InvariantCulture)} 100,100")
+                (isnegative == false ?
+                 new XAttribute("points", $"0,100 0,{height.ToString(CultureInfo.InvariantCulture)} 100,{height.ToString(CultureInfo.InvariantCulture)} 100,100") :
+                 new XAttribute("points", $"0,0 0,{ (100 - height).ToString(CultureInfo.InvariantCulture)} 100,{ (100 - height).ToString(CultureInfo.InvariantCulture)} 100,0")
+                 )
                 )));
 
             var root = GetElementAsXmlDocument(comp);
@@ -1384,7 +1388,741 @@ namespace MudBlazor.UnitTests.Components.EnhancedChart
             root.Should().BeEquivalentTo(expectedRoot);
         }
 
-        
+        [Test]
+        public void DrawSimpleDataSet_PostiveAndNegativesValues()
+        {
+            CultureInfo.CurrentCulture = new CultureInfo("en-us");
+
+            Random random = new Random();
+            String firstSeriesColor = (Colors.Red.Darken1 + "ff").ToLower();
+            String secondSeriesColor = (Colors.Green.Darken1 + "ff").ToLower();
+
+            var firstData = new List<Double> { 40, -30 };
+            var secondData = new List<Double> { 20, -50 };
+
+            Guid chartId = Guid.Parse("ed8a9a45-f109-41b9-9ff6-074ad168b932");
+
+            var comp = ctx.RenderComponent<MudEnhancedBarChart>(p =>
+            {
+                p.Add(x => x.Margin, 0.0);
+                p.Add(x => x.Padding, 0.0);
+                p.Add(x => x.AnimationIsEnabled, false);
+                p.Add(x => x.Id, chartId);
+
+                p.Add<MudEnhancedBarDataSet>(x => x.DataSets, (setP) =>
+                {
+                    setP.Add<MudEnhancedBarChartSeries>(y => y.ChildContent, (seriesP) =>
+                    {
+                        seriesP.Add(z => z.Name, "my first series");
+                        seriesP.Add(z => z.Points, firstData);
+                        seriesP.Add(z => z.Color, firstSeriesColor);
+                    });
+                    setP.Add<MudEnhancedBarChartSeries>(y => y.ChildContent, (seriesP) =>
+                    {
+                        seriesP.Add(z => z.Name, "my second series");
+                        seriesP.Add(z => z.Points, secondData);
+                        seriesP.Add(z => z.Color, secondSeriesColor);
+                    });
+                });
+                p.Add<MudEnhancedBarChartXAxis>(x => x.XAxis, (setP) =>
+                {
+                    setP.Add(y => y.Labels, new List<String> { "Mo", "Tu" });
+                    setP.Add(y => y.Placement, XAxisPlacement.Bottom);
+                    setP.Add(y => y.ShowGridLines, false);
+                    setP.Add(y => y.Margin, 0.0);
+                    setP.Add(y => y.Height, 10.0);
+                });
+                p.Add<MudEnhancedNumericLinearAutoScaleAxis>(x => x.YAxes, (setP) =>
+                {
+                    setP.Add(y => y.Placement, YAxisPlacement.Left);
+                    setP.Add(y => y.ShowMajorTicks, false);
+                    setP.Add(y => y.ShowMinorTicks, false);
+                    setP.Add(y => y.LabelSize, 5.0);
+                    setP.Add(y => y.Margin, 15.0);
+
+                    setP.Add<MudEnhancedTick>(y => y.MajorTick, (setT) =>
+                    {
+                        setT.Add(z => z.Value, 10);
+
+                    });
+                });
+            });
+
+            XElement expectedRoot = new XElement("svg",
+              TransformRectToSvgElements(new[] {
+                new Rectangle(new Point(20,40),new Point(20,0),new Point(40,0),new Point(40,40),firstSeriesColor),
+                new Rectangle(new Point(40,40),new Point(40,20),new Point(60,20),new Point(60,40),secondSeriesColor),
+                new Rectangle(new Point(60,40),new Point(60,70),new Point(80,70),new Point(80,40),firstSeriesColor),
+                new Rectangle(new Point(80,40),new Point(80,90),new Point(100,90),new Point(100,40),secondSeriesColor),
+              }));
+
+
+            expectedRoot.Add(new XElement("text",
+              new XAttribute("x", "40"),
+              new XAttribute("y", "95"),
+              new XAttribute("font-size", "10"),
+              new XAttribute("class", "mud-enhanced-chart-x-axis-label"),
+              new XAttribute("dominant-baseline", "middle"),
+              new XAttribute("text-anchor", "middle"),
+              "Mo"
+              ),
+              new XElement("text",
+              new XAttribute("x", "80"),
+              new XAttribute("y", "95"),
+              new XAttribute("font-size", "10"),
+              new XAttribute("class", "mud-enhanced-chart-x-axis-label"),
+              new XAttribute("dominant-baseline", "middle"),
+              new XAttribute("text-anchor", "middle"),
+              "Tu"
+              ));
+
+            Dictionary<Double, String> expectedYAxisLabels = new Dictionary<Double, String>
+            {
+                { 90, "-50" },
+                { 80, "-40" },
+                { 70, "-30" },
+                { 60, "-20" },
+                { 50, "-10" },
+                { 40, "0" },
+                { 30, "10" },
+                { 20, "20" },
+                { 10, "30" },
+                { 0.0, "40" },
+
+            };
+
+            foreach (var item in expectedYAxisLabels)
+            {
+                String dominantBaseline = "middle";
+                if (item.Key == expectedYAxisLabels.First().Key)
+                {
+                    dominantBaseline = "text-after-edge";
+                }
+                else if (item.Key == expectedYAxisLabels.Last().Key)
+                {
+                    dominantBaseline = "text-before-edge";
+                }
+
+                expectedRoot.Add(new XElement("text",
+                    new XAttribute("x", "5"),
+                    new XAttribute("y", item.Key.ToString(CultureInfo.InvariantCulture)),
+                    new XAttribute("class", "mud-enhanced-chart-y-axis-major-label"),
+                    new XAttribute("font-size", 3),
+                    new XAttribute("dominant-baseline", dominantBaseline),
+                    new XAttribute("text-anchor", "end"),
+                    item.Value
+                    ));
+            }
+
+            XElement root = new XElement("svg");
+
+            foreach (var item in comp.Nodes.OfType<IHtmlUnknownElement>())
+            {
+                var preParsedHtml = _removeBlazorColonRegex.Replace(item.OuterHtml, String.Empty);
+                var element = XElement.Parse(preParsedHtml);
+                RoundElementValues(item, element);
+                root.Add(element);
+            }
+
+            root.Should().BeEquivalentTo(expectedRoot);
+        }
+
+        [Test]
+        public void DrawSimpleDataSet_OnlyNegativesValues()
+        {
+            CultureInfo.CurrentCulture = new CultureInfo("en-us");
+
+            Random random = new Random();
+            String firstSeriesColor = (Colors.Red.Darken1 + "ff").ToLower();
+            String secondSeriesColor = (Colors.Green.Darken1 + "ff").ToLower();
+
+            var firstData = new List<Double> { -30, -60 };
+            var secondData = new List<Double> { -30, -90 };
+
+            Guid chartId = Guid.Parse("ed8a9a45-f109-41b9-9ff6-074ad168b932");
+
+            var comp = ctx.RenderComponent<MudEnhancedBarChart>(p =>
+            {
+                p.Add(x => x.Margin, 0.0);
+                p.Add(x => x.Padding, 0.0);
+                p.Add(x => x.AnimationIsEnabled, false);
+                p.Add(x => x.Id, chartId);
+
+                p.Add<MudEnhancedBarDataSet>(x => x.DataSets, (setP) =>
+                {
+                    setP.Add<MudEnhancedBarChartSeries>(y => y.ChildContent, (seriesP) =>
+                    {
+                        seriesP.Add(z => z.Name, "my first series");
+                        seriesP.Add(z => z.Points, firstData);
+                        seriesP.Add(z => z.Color, firstSeriesColor);
+                    });
+                    setP.Add<MudEnhancedBarChartSeries>(y => y.ChildContent, (seriesP) =>
+                    {
+                        seriesP.Add(z => z.Name, "my second series");
+                        seriesP.Add(z => z.Points, secondData);
+                        seriesP.Add(z => z.Color, secondSeriesColor);
+                    });
+                });
+                p.Add<MudEnhancedBarChartXAxis>(x => x.XAxis, (setP) =>
+                {
+                    setP.Add(y => y.Labels, new List<String> { "Mo", "Tu" });
+                    setP.Add(y => y.Placement, XAxisPlacement.Bottom);
+                    setP.Add(y => y.ShowGridLines, false);
+                    setP.Add(y => y.Margin, 0.0);
+                    setP.Add(y => y.Height, 10.0);
+                });
+                p.Add<MudEnhancedNumericLinearAutoScaleAxis>(x => x.YAxes, (setP) =>
+                {
+                    setP.Add(y => y.Placement, YAxisPlacement.Left);
+                    setP.Add(y => y.ShowMajorTicks, false);
+                    setP.Add(y => y.ShowMinorTicks, false);
+                    setP.Add(y => y.LabelSize, 5.0);
+                    setP.Add(y => y.Margin, 15.0);
+
+                    setP.Add<MudEnhancedTick>(y => y.MajorTick, (setT) =>
+                    {
+                        setT.Add(z => z.Value, 10);
+
+                    });
+                });
+            });
+
+            XElement expectedRoot = new XElement("svg",
+              TransformRectToSvgElements(new[] {
+                new Rectangle(new Point(20,0),new Point(20,30),new Point(40,30),new Point(40,0),firstSeriesColor),
+                new Rectangle(new Point(40,0),new Point(40,30),new Point(60,30),new Point(60,0),secondSeriesColor),
+                new Rectangle(new Point(60,0),new Point(60,60),new Point(80,60),new Point(80,0),firstSeriesColor),
+                new Rectangle(new Point(80,0),new Point(80,90),new Point(100,90),new Point(100,0),secondSeriesColor),
+              }));
+
+            expectedRoot.Add(new XElement("text",
+              new XAttribute("x", "40"),
+              new XAttribute("y", "95"),
+              new XAttribute("font-size", "10"),
+              new XAttribute("class", "mud-enhanced-chart-x-axis-label"),
+              new XAttribute("dominant-baseline", "middle"),
+              new XAttribute("text-anchor", "middle"),
+              "Mo"
+              ),
+              new XElement("text",
+              new XAttribute("x", "80"),
+              new XAttribute("y", "95"),
+              new XAttribute("font-size", "10"),
+              new XAttribute("class", "mud-enhanced-chart-x-axis-label"),
+              new XAttribute("dominant-baseline", "middle"),
+              new XAttribute("text-anchor", "middle"),
+              "Tu"
+              ));
+
+            Dictionary<Double, String> expectedYAxisLabels = new Dictionary<Double, String>
+            {
+                { 90, "-90" },
+                { 80, "-80" },
+                { 70, "-70" },
+                { 60, "-60" },
+                { 50, "-50" },
+                { 40, "-40" },
+                { 30, "-30" },
+                { 20, "-20" },
+                { 10, "-10" },
+                { 0.0, "0" },
+            };
+
+            foreach (var item in expectedYAxisLabels)
+            {
+                String dominantBaseline = "middle";
+                if (item.Key == expectedYAxisLabels.First().Key)
+                {
+                    dominantBaseline = "text-after-edge";
+                }
+                else if (item.Key == expectedYAxisLabels.Last().Key)
+                {
+                    dominantBaseline = "text-before-edge";
+                }
+
+                expectedRoot.Add(new XElement("text",
+                    new XAttribute("x", "5"),
+                    new XAttribute("y", item.Key.ToString(CultureInfo.InvariantCulture)),
+                    new XAttribute("class", "mud-enhanced-chart-y-axis-major-label"),
+                    new XAttribute("font-size", 3),
+                    new XAttribute("dominant-baseline", dominantBaseline),
+                    new XAttribute("text-anchor", "end"),
+                    item.Value
+                    ));
+            }
+
+            XElement root = new XElement("svg");
+
+            foreach (var item in comp.Nodes.OfType<IHtmlUnknownElement>())
+            {
+                var preParsedHtml = _removeBlazorColonRegex.Replace(item.OuterHtml, String.Empty);
+                var element = XElement.Parse(preParsedHtml);
+                RoundElementValues(item, element);
+                root.Add(element);
+            }
+
+            root.Should().BeEquivalentTo(expectedRoot);
+        }
+
+        [Test]
+        public void DrawStackedAndNotStackedCharts_OnlyPositiveValues()
+        {
+            CultureInfo.CurrentCulture = new CultureInfo("en-us");
+
+            Random random = new Random();
+            String firstSeriesColor = (Colors.BlueGrey.Darken1 + "ff").ToLower();
+            String secondSeriesColor = (Colors.DeepPurple.Darken1 + "ff").ToLower();
+            String thirdSeriesColor = (Colors.Orange.Darken1 + "ff").ToLower();
+
+            String firstSeriesInSecondDatasetSeriesColor = (Colors.Green.Darken1 + "ff").ToLower();
+
+            var firstDataStacked = new List<Double> { 20, 30 };
+            var secondDataStacked = new List<Double> { 30, 50 };
+            var thirdDataStacked = new List<Double> { 20, 10 };
+
+
+            var firstSeriesSecondDataset = new List<Double> { 40, 70 };
+
+            Guid chartId = Guid.Parse("ed8a9a45-f109-41b9-9ff6-074ad168b932");
+
+            var comp = ctx.RenderComponent<MudEnhancedBarChart>(p =>
+            {
+                p.Add(x => x.Margin, 0.0);
+                p.Add(x => x.Padding, 0.0);
+                p.Add(x => x.AnimationIsEnabled, false);
+                p.Add(x => x.Id, chartId);
+
+                p.Add<MudEnhancedBarDataSet>(x => x.DataSets, (setP) =>
+                {
+                    setP.Add(x => x.IsStacked, true);
+                    setP.Add<MudEnhancedBarChartSeries>(y => y.ChildContent, (seriesP) =>
+                    {
+                        seriesP.Add(z => z.Name, "my first stacked series");
+                        seriesP.Add(z => z.Points, firstDataStacked);
+                        seriesP.Add(z => z.Color, firstSeriesColor);
+                    });
+                    setP.Add<MudEnhancedBarChartSeries>(y => y.ChildContent, (seriesP) =>
+                    {
+                        seriesP.Add(z => z.Name, "my second stacked series");
+                        seriesP.Add(z => z.Points, secondDataStacked);
+                        seriesP.Add(z => z.Color, secondSeriesColor);
+                    });
+                    setP.Add<MudEnhancedBarChartSeries>(y => y.ChildContent, (seriesP) =>
+                    {
+                        seriesP.Add(z => z.Name, "my third stacked series");
+                        seriesP.Add(z => z.Points, thirdDataStacked);
+                        seriesP.Add(z => z.Color, thirdSeriesColor);
+                    });
+                });
+                p.Add<MudEnhancedBarDataSet>(x => x.DataSets, (setP) =>
+                {
+                    setP.Add<MudEnhancedBarChartSeries>(y => y.ChildContent, (seriesP) =>
+                    {
+                        seriesP.Add(z => z.Name, "my second series");
+                        seriesP.Add(z => z.Points, firstSeriesSecondDataset);
+                        seriesP.Add(z => z.Color, firstSeriesInSecondDatasetSeriesColor);
+                    });
+                });
+                p.Add<MudEnhancedBarChartXAxis>(x => x.XAxis, (setP) =>
+                {
+                    setP.Add(y => y.Labels, new List<String> { "Mo", "Tu" });
+                    setP.Add(y => y.Placement, XAxisPlacement.Bottom);
+                    setP.Add(y => y.ShowGridLines, false);
+                    setP.Add(y => y.Margin, 0.0);
+                    setP.Add(y => y.Height, 10.0);
+                });
+                p.Add<MudEnhancedNumericLinearAutoScaleAxis>(x => x.YAxes, (setP) =>
+                {
+                    setP.Add(y => y.Placement, YAxisPlacement.Left);
+                    setP.Add(y => y.ShowMajorTicks, false);
+                    setP.Add(y => y.ShowMinorTicks, false);
+                    setP.Add(y => y.LabelSize, 5.0);
+                    setP.Add(y => y.Margin, 15.0);
+
+                    setP.Add<MudEnhancedTick>(y => y.MajorTick, (setT) =>
+                    {
+                        setT.Add(z => z.Value, 10);
+
+                    });
+                });
+            });
+
+            XElement expectedRoot = new XElement("svg",
+              TransformRectToSvgElements(new[] {
+                new Rectangle(new Point(20,90),new Point(20,70),new Point(40,70),new Point(40,90),firstSeriesColor),
+                new Rectangle(new Point(20,70),new Point(20,40),new Point(40,40),new Point(40,70),secondSeriesColor),
+                new Rectangle(new Point(20,40),new Point(20,20),new Point(40,20),new Point(40,40),thirdSeriesColor),
+
+                new Rectangle(new Point(40,90),new Point(40,50),new Point(60,50),new Point(60,90),firstSeriesInSecondDatasetSeriesColor),
+
+                new Rectangle(new Point(60,90),new Point(60,60),new Point(80,60),new Point(80,90),firstSeriesColor),
+                new Rectangle(new Point(60,60),new Point(60,10),new Point(80,10),new Point(80,60),secondSeriesColor),
+                new Rectangle(new Point(60,10),new Point(60,0),new Point(80,0),new Point(80,10),thirdSeriesColor),
+
+                new Rectangle(new Point(80,90),new Point(80,20),new Point(100,20),new Point(100,90),firstSeriesInSecondDatasetSeriesColor),
+              }));
+
+            expectedRoot.Add(new XElement("text",
+              new XAttribute("x", "40"),
+              new XAttribute("y", "95"),
+              new XAttribute("font-size", "10"),
+              new XAttribute("class", "mud-enhanced-chart-x-axis-label"),
+              new XAttribute("dominant-baseline", "middle"),
+              new XAttribute("text-anchor", "middle"),
+              "Mo"
+              ),
+              new XElement("text",
+              new XAttribute("x", "80"),
+              new XAttribute("y", "95"),
+              new XAttribute("font-size", "10"),
+              new XAttribute("class", "mud-enhanced-chart-x-axis-label"),
+              new XAttribute("dominant-baseline", "middle"),
+              new XAttribute("text-anchor", "middle"),
+              "Tu"
+              ));
+
+            Dictionary<Double, String> expectedYAxisLabels = new Dictionary<Double, String>
+            {
+                { 90, "0" },
+                { 80, "10" },
+                { 70, "20" },
+                { 60, "30" },
+                { 50, "40" },
+                { 40, "50" },
+                { 30, "60" },
+                { 20, "70" },
+                { 10, "80" },
+                { 0.0, "90" },
+            };
+
+            foreach (var item in expectedYAxisLabels)
+            {
+                String dominantBaseline = "middle";
+                if (item.Key == expectedYAxisLabels.First().Key)
+                {
+                    dominantBaseline = "text-after-edge";
+                }
+                else if (item.Key == expectedYAxisLabels.Last().Key)
+                {
+                    dominantBaseline = "text-before-edge";
+                }
+
+                expectedRoot.Add(new XElement("text",
+                    new XAttribute("x", "5"),
+                    new XAttribute("y", item.Key.ToString(CultureInfo.InvariantCulture)),
+                    new XAttribute("class", "mud-enhanced-chart-y-axis-major-label"),
+                    new XAttribute("font-size", 3),
+                    new XAttribute("dominant-baseline", dominantBaseline),
+                    new XAttribute("text-anchor", "end"),
+                    item.Value
+                    ));
+            }
+
+            XElement root = new XElement("svg");
+
+            foreach (var item in comp.Nodes.OfType<IHtmlUnknownElement>())
+            {
+                var preParsedHtml = _removeBlazorColonRegex.Replace(item.OuterHtml, String.Empty);
+                var element = XElement.Parse(preParsedHtml);
+                RoundElementValues(item, element);
+                root.Add(element);
+            }
+
+            root.Should().BeEquivalentTo(expectedRoot);
+        }
+
+        [Test]
+        public void DrawStackedAndNotStackedCharts_OnlyNegativeValues()
+        {
+            CultureInfo.CurrentCulture = new CultureInfo("en-us");
+
+            Random random = new Random();
+            String firstSeriesColor = (Colors.BlueGrey.Darken1 + "ff").ToLower();
+            String secondSeriesColor = (Colors.DeepPurple.Darken1 + "ff").ToLower();
+            String thirdSeriesColor = (Colors.Orange.Darken1 + "ff").ToLower();
+
+            String firstSeriesInSecondDatasetSeriesColor = (Colors.Green.Darken1 + "ff").ToLower();
+
+            var firstDataStacked = new List<Double> { -20, -30 };
+            var secondDataStacked = new List<Double> { -30, -50 };
+            var thirdDataStacked = new List<Double> { -20, -10 };
+
+
+            var firstSeriesSecondDataset = new List<Double> { -40, -70 };
+
+            Guid chartId = Guid.Parse("ed8a9a45-f109-41b9-9ff6-074ad168b932");
+
+            var comp = ctx.RenderComponent<MudEnhancedBarChart>(p =>
+            {
+                p.Add(x => x.Margin, 0.0);
+                p.Add(x => x.Padding, 0.0);
+                p.Add(x => x.AnimationIsEnabled, false);
+                p.Add(x => x.Id, chartId);
+
+                p.Add<MudEnhancedBarDataSet>(x => x.DataSets, (setP) =>
+                {
+                    setP.Add(x => x.IsStacked, true);
+                    setP.Add<MudEnhancedBarChartSeries>(y => y.ChildContent, (seriesP) =>
+                    {
+                        seriesP.Add(z => z.Name, "my first stacked series");
+                        seriesP.Add(z => z.Points, firstDataStacked);
+                        seriesP.Add(z => z.Color, firstSeriesColor);
+                    });
+                    setP.Add<MudEnhancedBarChartSeries>(y => y.ChildContent, (seriesP) =>
+                    {
+                        seriesP.Add(z => z.Name, "my second stacked series");
+                        seriesP.Add(z => z.Points, secondDataStacked);
+                        seriesP.Add(z => z.Color, secondSeriesColor);
+                    });
+                    setP.Add<MudEnhancedBarChartSeries>(y => y.ChildContent, (seriesP) =>
+                    {
+                        seriesP.Add(z => z.Name, "my third stacked series");
+                        seriesP.Add(z => z.Points, thirdDataStacked);
+                        seriesP.Add(z => z.Color, thirdSeriesColor);
+                    });
+                });
+                p.Add<MudEnhancedBarDataSet>(x => x.DataSets, (setP) =>
+                {
+                    setP.Add<MudEnhancedBarChartSeries>(y => y.ChildContent, (seriesP) =>
+                    {
+                        seriesP.Add(z => z.Name, "my second series");
+                        seriesP.Add(z => z.Points, firstSeriesSecondDataset);
+                        seriesP.Add(z => z.Color, firstSeriesInSecondDatasetSeriesColor);
+                    });
+                });
+                p.Add<MudEnhancedBarChartXAxis>(x => x.XAxis, (setP) =>
+                {
+                    setP.Add(y => y.Labels, new List<String> { "Mo", "Tu" });
+                    setP.Add(y => y.Placement, XAxisPlacement.Bottom);
+                    setP.Add(y => y.ShowGridLines, false);
+                    setP.Add(y => y.Margin, 0.0);
+                    setP.Add(y => y.Height, 10.0);
+                });
+                p.Add<MudEnhancedNumericLinearAutoScaleAxis>(x => x.YAxes, (setP) =>
+                {
+                    setP.Add(y => y.Placement, YAxisPlacement.Left);
+                    setP.Add(y => y.ShowMajorTicks, false);
+                    setP.Add(y => y.ShowMinorTicks, false);
+                    setP.Add(y => y.LabelSize, 5.0);
+                    setP.Add(y => y.Margin, 15.0);
+
+                    setP.Add<MudEnhancedTick>(y => y.MajorTick, (setT) =>
+                    {
+                        setT.Add(z => z.Value, 10);
+
+                    });
+                });
+            });
+
+            XElement expectedRoot = new XElement("svg",
+              TransformRectToSvgElements(new[] {
+                new Rectangle(new Point(20,0),new Point(20,20),new Point(40,20),new Point(40,0),firstSeriesColor),
+                new Rectangle(new Point(20,20),new Point(20,50),new Point(40,50),new Point(40,20),secondSeriesColor),
+                new Rectangle(new Point(20,50),new Point(20,70),new Point(40,70),new Point(40,50),thirdSeriesColor),
+
+                new Rectangle(new Point(40,0),new Point(40,40),new Point(60,40),new Point(60,0),firstSeriesInSecondDatasetSeriesColor),
+
+                new Rectangle(new Point(60,0),new Point(60,30),new Point(80,30),new Point(80,0),firstSeriesColor),
+                new Rectangle(new Point(60,30),new Point(60,80),new Point(80,80),new Point(80,30),secondSeriesColor),
+                new Rectangle(new Point(60,80),new Point(60,90),new Point(80,90),new Point(80,80),thirdSeriesColor),
+
+                new Rectangle(new Point(80,0),new Point(80,70),new Point(100,70),new Point(100,0),firstSeriesInSecondDatasetSeriesColor),
+              }));
+
+            expectedRoot.Add(new XElement("text",
+              new XAttribute("x", "40"),
+              new XAttribute("y", "95"),
+              new XAttribute("font-size", "10"),
+              new XAttribute("class", "mud-enhanced-chart-x-axis-label"),
+              new XAttribute("dominant-baseline", "middle"),
+              new XAttribute("text-anchor", "middle"),
+              "Mo"
+              ),
+              new XElement("text",
+              new XAttribute("x", "80"),
+              new XAttribute("y", "95"),
+              new XAttribute("font-size", "10"),
+              new XAttribute("class", "mud-enhanced-chart-x-axis-label"),
+              new XAttribute("dominant-baseline", "middle"),
+              new XAttribute("text-anchor", "middle"),
+              "Tu"
+              ));
+
+            Dictionary<Double, String> expectedYAxisLabels = new Dictionary<Double, String>
+            {
+                { 90, "-90" },
+                { 80, "-80" },
+                { 70, "-70" },
+                { 60, "-60" },
+                { 50, "-50" },
+                { 40, "-40" },
+                { 30, "-30" },
+                { 20, "-20" },
+                { 10, "-10" },
+                { 0.0, "0" },
+            };
+
+            foreach (var item in expectedYAxisLabels)
+            {
+                String dominantBaseline = "middle";
+                if (item.Key == expectedYAxisLabels.First().Key)
+                {
+                    dominantBaseline = "text-after-edge";
+                }
+                else if (item.Key == expectedYAxisLabels.Last().Key)
+                {
+                    dominantBaseline = "text-before-edge";
+                }
+
+                expectedRoot.Add(new XElement("text",
+                    new XAttribute("x", "5"),
+                    new XAttribute("y", item.Key.ToString(CultureInfo.InvariantCulture)),
+                    new XAttribute("class", "mud-enhanced-chart-y-axis-major-label"),
+                    new XAttribute("font-size", 3),
+                    new XAttribute("dominant-baseline", dominantBaseline),
+                    new XAttribute("text-anchor", "end"),
+                    item.Value
+                    ));
+            }
+
+            XElement root = new XElement("svg");
+
+            foreach (var item in comp.Nodes.OfType<IHtmlUnknownElement>())
+            {
+                var preParsedHtml = _removeBlazorColonRegex.Replace(item.OuterHtml, String.Empty);
+                var element = XElement.Parse(preParsedHtml);
+                RoundElementValues(item, element);
+                root.Add(element);
+            }
+
+            root.Should().BeEquivalentTo(expectedRoot);
+        }
+
+        [TestCase(183, -30, 5, 50, 200, -50)]
+        [TestCase(18, -3, 5, 5, 20, -5)]
+        [TestCase(1.8, -0.3, 5, 0.5, 2, -0.5)]
+        [TestCase(0.18, -0.03, 5, 0.05, 0.2, -0.05)]
+        public void DrawSimpleDataSet_PositiveAndNegativeValues_AutoScaleValues_BarHeigth(Double positiveValue, Double negativeValue, Double majorTickCount, Double majorTickValue, Double expectedMax, Double expectedMin)
+        {
+            CultureInfo.CurrentCulture = new CultureInfo("en-us");
+
+            Random random = new Random();
+            String color = (Colors.Red.Darken1 + "ff").ToLower();
+            String gridColor = (Colors.Amber.Darken1 + "ff").ToLower();
+            String xAxisGridColor = (Colors.DeepOrange.Darken1 + "ff").ToLower();
+
+            var firstData = new List<Double> { positiveValue, negativeValue };
+
+            Guid chartId = Guid.Parse("ed8a9a45-f109-41b9-9ff6-074ad168b932");
+
+            var comp = ctx.RenderComponent<MudEnhancedBarChart>(p =>
+            {
+                p.Add(x => x.Margin, 0.0);
+                p.Add(x => x.Padding, 0.0);
+                p.Add(x => x.AnimationIsEnabled, false);
+                p.Add(x => x.Id, chartId);
+
+                p.Add<MudEnhancedBarDataSet>(x => x.DataSets, (setP) =>
+                {
+                    setP.Add<MudEnhancedBarChartSeries>(y => y.ChildContent, (seriesP) =>
+                    {
+                        seriesP.Add(z => z.Name, "my first series");
+                        seriesP.Add(z => z.Points, firstData);
+                        seriesP.Add(z => z.Color, color);
+                    });
+                });
+                p.Add<MudEnhancedBarChartXAxis>(x => x.XAxis, (setP) =>
+                {
+                    setP.Add(y => y.Labels, new List<String> { "Mo", "Tu" });
+                    setP.Add(y => y.Placement, XAxisPlacement.None);
+                    setP.Add(y => y.ShowGridLines, true);
+                    setP.Add(y => y.GridLineColor, xAxisGridColor);
+                    setP.Add(y => y.GridLineThickness, 1.2);
+                });
+                p.Add<MudEnhancedNumericLinearAutoScaleAxis>(x => x.YAxes, (setP) =>
+                {
+                    setP.Add(y => y.Placement, YAxisPlacement.None);
+                    setP.Add(y => y.ShowMajorTicks, true);
+                    setP.Add<MudEnhancedTick>(y => y.MajorTick, (setT) =>
+                    {
+                        setT.Add(z => z.Color, gridColor);
+                        setT.Add(z => z.Thickness, 1.0);
+                        setT.Add(z => z.Value, majorTickCount);
+                    });
+                });
+            });
+
+            Double distance = expectedMax - expectedMin;
+
+            Double maxHeigth = Math.Round(100 - (((positiveValue - expectedMin) / distance) * 100), 4);
+            Double nullLevel = Math.Round(100 - (((0 - expectedMin) / distance) * 100), 4);
+            Double minHeigth = Math.Round(100 - (((negativeValue - expectedMin) / distance) * 100), 4);
+
+            XElement expectedRoot = new XElement("svg", new XElement(
+               new XElement("polygon",
+                new XAttribute("fill", color),
+                new XAttribute("data-chartid", chartId.ToString()),
+                new XAttribute("class", "mud-enhanced-chart-series bar active"),
+                new XAttribute("points", $"0,{nullLevel.ToString(CultureInfo.InvariantCulture)} 0,{maxHeigth.ToString(CultureInfo.InvariantCulture)} 50,{maxHeigth.ToString(CultureInfo.InvariantCulture)} 50,{nullLevel.ToString(CultureInfo.InvariantCulture)}")
+                )),
+                new XElement("polygon",
+                new XAttribute("fill", color),
+                new XAttribute("data-chartid", chartId.ToString()),
+                new XAttribute("class", "mud-enhanced-chart-series bar active"),
+                new XAttribute("points", $"50,{nullLevel.ToString(CultureInfo.InvariantCulture)} 50,{minHeigth.ToString(CultureInfo.InvariantCulture)} 100,{minHeigth.ToString(CultureInfo.InvariantCulture)} 100,{nullLevel.ToString(CultureInfo.InvariantCulture)}")
+                ),
+                new XElement("line",
+                new XAttribute("stroke", xAxisGridColor),
+                new XAttribute("class", $"mud-enhanced-chart-x-axis-grid-line"),
+                new XAttribute("stroke-width", "1.2"),
+                new XAttribute("x1", "0"),
+                new XAttribute("y1", "100"),
+                new XAttribute("x2", "0"),
+                new XAttribute("y2", "0")
+              ),
+                new XElement("line",
+                new XAttribute("stroke", xAxisGridColor),
+                new XAttribute("class", $"mud-enhanced-chart-x-axis-grid-line"),
+                new XAttribute("stroke-width", "1.2"),
+                new XAttribute("x1", "50"),
+                new XAttribute("y1", "100"),
+                new XAttribute("x2", "50"),
+                new XAttribute("y2", "0")
+              ),
+                new XElement("line",
+                new XAttribute("stroke", xAxisGridColor),
+                new XAttribute("class", $"mud-enhanced-chart-x-axis-grid-line"),
+                new XAttribute("stroke-width", "1.2"),
+                new XAttribute("x1", "100"),
+                new XAttribute("y1", "100"),
+                new XAttribute("x2", "100"),
+                new XAttribute("y2", "0")
+              ));
+
+            Double tick = expectedMin;
+            Double tickAmount = (distance / majorTickValue);
+            Double deltaPerTick = 100 / tickAmount;
+
+            Double yTick = 100.0;
+            for (int i = 0; i <= tickAmount; i++)
+            {
+                expectedRoot.Add(new XElement("line",
+                  new XAttribute("stroke", gridColor),
+                  new XAttribute("class", $"mud-enhanced-chart-y-axis-major-grid-line"),
+                  new XAttribute("stroke-width", "1"),
+                  new XAttribute("x1", Math.Round(0.0, 6).ToString(CultureInfo.InvariantCulture)),
+                  new XAttribute("y1", Math.Round(yTick, 6).ToString(CultureInfo.InvariantCulture)),
+                  new XAttribute("x2", Math.Round(100.0, 6).ToString(CultureInfo.InvariantCulture)),
+                  new XAttribute("y2", Math.Round(yTick, 6).ToString(CultureInfo.InvariantCulture))
+                ));
+
+                yTick -= deltaPerTick;
+            }
+
+            var root = GetElementAsXmlDocument(comp, true);
+
+            root.Should().BeEquivalentTo(expectedRoot);
+        }
 
         private IEnumerable<Rectangle> TransformToSvgCoordinates(IEnumerable<Rectangle> input)
             => input.Select((Func<Rectangle, Rectangle>)(x => new Rectangle(

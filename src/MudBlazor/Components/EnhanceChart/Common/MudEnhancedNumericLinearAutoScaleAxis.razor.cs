@@ -8,10 +8,10 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor.EnhanceChart
 {
-    record NumericLinearAxisSnapshot(Double Min, Double Max, Boolean ShowMinorTick, Boolean ShowMajorTick, Double LabelSize, Double Margin, String LabelCssClass, YAxisPlacement Placement, ScalingType ScalingType);
+    record NumericLinearAutoScaleAxisSnapshot(Boolean ShowMinorTick, Boolean ShowMajorTick, Double LabelSize, Double Margin, String LabelCssClass, YAxisPlacement Placement);
 
     [DoNotGenerateAutomaticTest]
-    public partial class MudEnhancedNumericLinearAxis : ComponentBase, IYAxis, IDisposable, ISnapshot<NumericLinearAxisSnapshot>
+    public partial class MudEnhancedNumericLinearAutoScaleAxis : ComponentBase, IYAxis, IDisposable, ISnapshot<NumericLinearAutoScaleAxisSnapshot>
     {
         private Guid _id = new Guid();
         private TickOverview _tickInfo = new();
@@ -27,9 +27,6 @@ namespace MudBlazor.EnhanceChart
 
         [Parameter] public RenderFragment MinorTick { get; set; } = DefaultMinorTickFragment;
 
-        [Parameter] public Double Min { get; set; }
-        [Parameter] public Double Max { get; set; }
-
         [Parameter] public Boolean ShowMinorTicks { get; set; } = false;
         [Parameter] public Boolean ShowMajorTicks { get; set; } = true;
 
@@ -40,9 +37,7 @@ namespace MudBlazor.EnhanceChart
 
         [Parameter] public YAxisPlacement Placement { get; set; } = YAxisPlacement.Left;
 
-        [Parameter] public ScalingType ScalingType { get; set; } = ScalingType.Auto;
-
-        public Boolean ScalesAutomatically => ScalingType == ScalingType.Auto;
+        public Boolean ScalesAutomatically => true;
 
         public Double MajorTickValue => _majorTick?.Value ?? 0.0;
         public Double MinorTickValue => _minorTick?.Value ?? 0.0;
@@ -97,12 +92,12 @@ namespace MudBlazor.EnhanceChart
             if (Chart.Contains(this) == false)
             {
                 Chart.Add(this);
-                ISnapshot<NumericLinearAxisSnapshot> _this = this;
+                ISnapshot<NumericLinearAutoScaleAxisSnapshot> _this = this;
                 _this.CreateSnapshot();
             }
             else
             {
-                ISnapshot<NumericLinearAxisSnapshot> _this = this;
+                ISnapshot<NumericLinearAutoScaleAxisSnapshot> _this = this;
                 if (_this.SnapshotHasChanged(true) == true)
                 {
                     Chart.AxesUpdated(this);
@@ -115,12 +110,12 @@ namespace MudBlazor.EnhanceChart
             Chart?.Remove(this);
         }
 
-        NumericLinearAxisSnapshot ISnapshot<NumericLinearAxisSnapshot>.OldSnapshotValue { get; set; }
+        NumericLinearAutoScaleAxisSnapshot ISnapshot<NumericLinearAutoScaleAxisSnapshot>.OldSnapshotValue { get; set; }
 
         public ITick MajorTickInfo => _majorTick?.GetTickInfo(ShowMajorTicks);
         public ITick MinorTickInfo => _minorTick?.GetTickInfo(ShowMinorTicks);
 
-        NumericLinearAxisSnapshot ISnapshot<NumericLinearAxisSnapshot>.CreateSnapShot() => new NumericLinearAxisSnapshot(Min, Max, ShowMinorTicks, ShowMajorTicks, LabelSize, Margin, LabelCssClass, Placement, ScalingType);
+        NumericLinearAutoScaleAxisSnapshot ISnapshot<NumericLinearAutoScaleAxisSnapshot>.CreateSnapShot() => new NumericLinearAutoScaleAxisSnapshot(ShowMinorTicks, ShowMajorTicks, LabelSize, Margin, LabelCssClass, Placement);
 
         public void RemoveTick(bool isMajorTick)
         {
@@ -136,28 +131,22 @@ namespace MudBlazor.EnhanceChart
             }
         }
 
-        public void ProcessDataSet(IEnumerable<IDataSeries> set)
+        public void ProcessDataSet(IDataSet  set)
         {
             if (ScalesAutomatically == false) { return; }
 
             _tickInfo.HasValues = true;
 
-            foreach (var series in set)
+            var maxAndMin = set.GetMinimumAndMaximumValues();
+
+            if (maxAndMin.Max > _tickInfo.Max)
             {
-                if (series.IsEnabled == false) { continue; }
+                _tickInfo.Max = maxAndMin.Max;
+            }
 
-                foreach (var yValue in series.Points)
-                {
-                    if (yValue > _tickInfo.Max)
-                    {
-                        _tickInfo.Max = yValue;
-                    }
-
-                    if (yValue < _tickInfo.Min)
-                    {
-                        _tickInfo.Min = yValue;
-                    }
-                }
+            if (maxAndMin.Min < _tickInfo.Min)
+            {
+                _tickInfo.Min = maxAndMin.Min;
             }
         }
 
@@ -176,7 +165,26 @@ namespace MudBlazor.EnhanceChart
                 _tickInfo.MajorTickNumericValue = GetNearestTickValue(initialDelta, firstStep);
                 Int32 steps = (Int32)Math.Ceiling((_tickInfo.Max - _tickInfo.Min) / _tickInfo.MajorTickNumericValue);
                 _tickInfo.MajorTickAmount = 1 + steps;
-                _tickInfo.Max = steps * _tickInfo.MajorTickNumericValue;
+
+                for (int i = 0; i <= _tickInfo.MajorTickAmount; i++)
+                {
+                    Double value = i * _tickInfo.MajorTickNumericValue;
+                    if (value >= _tickInfo.Max)
+                    {
+                        _tickInfo.Max = value;
+                        break;
+                    }
+                }
+
+                for (int i = 0; i < _tickInfo.MajorTickAmount; i++)
+                {
+                    Double value = -i * _tickInfo.MajorTickNumericValue;
+                    if (value <= _tickInfo.Min)
+                    {
+                        _tickInfo.Min = value;
+                        break;
+                    }
+                }
             }
             else
             {
@@ -189,6 +197,8 @@ namespace MudBlazor.EnhanceChart
                 _tickInfo.MinorTickNumericValue = GetNearestTickValue(_tickInfo.MajorTickNumericValue, _tickInfo.MajorTickNumericValue / ((Int32)MinorTickValue - 1));
                 _tickInfo.MinorTickAmount = (Int32)((_tickInfo.MajorTickNumericValue / _tickInfo.MinorTickNumericValue) - 1.0);
             }
+
+            _tickInfo.StartTickValue = _tickInfo.Min;
         }
 
         private static Double GetNearestTickValue(double initialDelta, Double firstStep)
@@ -198,7 +208,7 @@ namespace MudBlazor.EnhanceChart
 
             if (initialDelta > 1)
             {
-                while (valuePerTick > 1)
+                while (valuePerTick >= 1)
                 {
                     valuePerTick /= 10;
                     scalingFactor++;
@@ -206,7 +216,7 @@ namespace MudBlazor.EnhanceChart
             }
             else
             {
-                while (valuePerTick < 0.1)
+                while (valuePerTick <= 0.1)
                 {
                     valuePerTick *= 10;
                     scalingFactor++;
@@ -245,5 +255,7 @@ namespace MudBlazor.EnhanceChart
         }
 
         public TickOverview GetTickInfo() => _tickInfo;
+
+        public void ClearTickInfo() => _tickInfo = new();
     }
 }

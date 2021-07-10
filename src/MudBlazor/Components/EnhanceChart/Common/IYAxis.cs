@@ -6,7 +6,8 @@ namespace MudBlazor.EnhanceChart
     public class TickOverview
     {
         public Double Min { get; set; } = 0.0;
-        public Double Max { get; set; } = Double.MinValue;
+        public Double Max { get; set; } = 0.0;
+        public Double Distance => Max - Min;
         public Double StartTickValue { get; set; } = 0.0;
         public Double MajorTickNumericValue { get; set; } = 0.0;
         public Double MinorTickNumericValue { get; set; } = 0.0;
@@ -28,8 +29,6 @@ namespace MudBlazor.EnhanceChart
     public interface IYAxis
     {
         void TickUpdated(MudEnhancedTick tick);
-        Double Min { get; }
-        Double Max { get; }
         Boolean ScalesAutomatically { get; }
 
         Double LabelSize { get; }
@@ -49,6 +48,7 @@ namespace MudBlazor.EnhanceChart
         void RemoveTick(bool isMajorTick);
         void CalculateTicks();
         TickOverview GetTickInfo();
-        void ProcessDataSet(IEnumerable<IDataSeries> set);
+        void ProcessDataSet(IDataSet set);
+        void ClearTickInfo();
     }
 }

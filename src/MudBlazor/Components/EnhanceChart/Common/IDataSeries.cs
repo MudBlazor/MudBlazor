@@ -22,7 +22,7 @@ namespace MudBlazor.EnhanceChart
         /// If this value is false, the series is not rendered on the chart
         /// </summary>
         Boolean IsEnabled { get; }
-        
+
         /// <summary>
         /// Mark the series as active
         /// </summary>
@@ -46,11 +46,11 @@ namespace MudBlazor.EnhanceChart
         /// <summary>
         /// The values of this series
         /// </summary>
-        public IList<Double> Points { get; }
+        IList<Double> Points { get; }
 
         /// <summary>
         /// The uniquq id of the series
         /// </summary>
-        public Guid Id { get; }
+        Guid Id { get; }
     }
 }

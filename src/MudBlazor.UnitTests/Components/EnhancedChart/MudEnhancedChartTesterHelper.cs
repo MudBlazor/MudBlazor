@@ -18,7 +18,7 @@ namespace MudBlazor.UnitTests.Components.EnhancedChart
     {
         public static Regex _removeBlazorColonRegex = new Regex(@"(blazor:)([^>]*?)("".*?"")", RegexOptions.Multiline);
 
-        public static XElement GetElementAsXmlDocument(IRenderedComponent<MudEnhancedBarChart> comp)
+        public static XElement GetElementAsXmlDocument(IRenderedComponent<MudEnhancedBarChart> comp, Boolean addYLines = false)
         {
             XElement root = new XElement("svg");
 
@@ -30,7 +30,7 @@ namespace MudBlazor.UnitTests.Components.EnhancedChart
                     var element = XElement.Parse(preParsedHtml);
                     RoundElementValues(item, element);
 
-                    if(item.FirstChild != null && item.FirstChild is IHtmlUnknownElement childElement && item.FirstChild.NodeName == "ANIMATE")
+                    if (item.FirstChild != null && item.FirstChild is IHtmlUnknownElement childElement && item.FirstChild.NodeName == "ANIMATE")
                     {
                         element.RemoveNodes();
 
@@ -39,7 +39,15 @@ namespace MudBlazor.UnitTests.Components.EnhancedChart
                         element.Add(animateNode);
                     }
 
-                  
+
+                    root.Add(element);
+                }
+                if(item.NodeName == "LINE" && addYLines == true)
+                {
+                    var preParsedHtml = _removeBlazorColonRegex.Replace(item.OuterHtml, String.Empty);
+                    var element = XElement.Parse(preParsedHtml);
+                    RoundElementValues(item, element);
+
                     root.Add(element);
                 }
             }
@@ -53,7 +61,7 @@ namespace MudBlazor.UnitTests.Components.EnhancedChart
             {
                 RoundPointArrayValues(element, "points");
             }
-            else if(item.NodeName == "ANIMATE")
+            else if (item.NodeName == "ANIMATE")
             {
                 RoundPointArrayValues(element, "from");
                 RoundPointArrayValues(element, "to");
