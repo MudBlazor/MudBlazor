@@ -1,13 +1,108 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
 <MudTimeline TData="object">
-    <MudTimelineItem Align="Align.Left">
-        A
+    <MudTimelineItem>
+        <MudText>Item A</MudText>
     </MudTimelineItem>
-    <MudTimelineItem Align="Align.Right">
-        B
+    <MudTimelineItem>
+        <MudText Align="Align.End">Item B</MudText>
     </MudTimelineItem>
-    <MudTimelineItem Align="Align.Left">
-        C
+    <MudTimelineItem>
+        <MudText>Item C</MudText>
+    </MudTimelineItem>
+</MudTimeline>
+
+<MudDivider />
+
+<MudTimeline TData="object">
+    <MudTimelineItem Size="Size.Medium">
+        <MudText>Medium Size</MudText>
+    </MudTimelineItem>
+    <MudTimelineItem Size="Size.Small">
+        <MudText Align="Align.End">Small Size</MudText>
+    </MudTimelineItem>
+    <MudTimelineItem Size="Size.Large">
+        <MudText>Large size</MudText>
+    </MudTimelineItem>
+</MudTimeline>
+
+<MudDivider />
+
+<MudTimeline TData="object">
+    <MudTimelineItem Size="Size.Medium" FillDot="true" Color="Color.Info">
+        <MudText>Filled Info Dot</MudText>
+    </MudTimelineItem>
+    <MudTimelineItem Size="Size.Small" FillDot="true" Color="Color.Success">
+        <MudText Align="Align.End">Filled Success Dot</MudText>
+    </MudTimelineItem>
+    <MudTimelineItem Size="Size.Large" FillDot="true" Color="Color.Dark">
+        <MudText>Filled Dark Dot</MudText>
+    </MudTimelineItem>
+</MudTimeline>
+
+<MudDivider />
+
+<MudTimeline TData="object">
+    <MudTimelineItem>
+        <MudText>Item A</MudText>
+    </MudTimelineItem>
+    <MudTimelineItem HideDot="true">
+        <MudText Align="Align.End">Hidden Dot</MudText>
+    </MudTimelineItem>
+    <MudTimelineItem>
+        <MudText>Item C</MudText>
+    </MudTimelineItem>
+</MudTimeline>
+
+<MudDivider />
+
+<MudTimeline TData="object">
+    <MudTimelineItem Color="Color.Primary">
+        <MudCard>
+            <MudCardHeader Class="mud-theme-primary">
+                <CardHeaderContent>
+                    <MudText Typo="Typo.h6">The Story Book</MudText>
+                </CardHeaderContent>
+            </MudCardHeader>
+            <MudCardContent>
+                <MudText>This day everything happend.</MudText>
+                <MudText Typo="Typo.body2">The quick, brown fox jumps over a lazy dog.</MudText>
+            </MudCardContent>
+            <MudCardActions>
+                <MudButton Variant="Variant.Text" Color="Color.Primary">Read More</MudButton>
+            </MudCardActions>
+        </MudCard>
+    </MudTimelineItem>
+    <MudTimelineItem Color="Color.Secondary">
+        <MudCard>
+            <MudCardHeader Class="mud-theme-secondary">
+                <CardHeaderContent>
+                    <MudText Typo="Typo.h6">The Story Book</MudText>
+                </CardHeaderContent>
+            </MudCardHeader>
+            <MudCardContent>
+                <MudText>This day everything happend.</MudText>
+                <MudText Typo="Typo.body2">The quick, brown fox jumps over a lazy dog.</MudText>
+            </MudCardContent>
+            <MudCardActions>
+                <MudButton Variant="Variant.Text" Color="Color.Secondary">Read More</MudButton>
+            </MudCardActions>
+        </MudCard>
+    </MudTimelineItem>
+    <MudTimelineItem Color="Color.Tertiary">
+        <MudCard>
+            <MudCardHeader Class="mud-theme-tertiary">
+                <CardHeaderContent>
+                    <MudText Typo="Typo.h6">The Story Book</MudText>
+                </CardHeaderContent>
+            </MudCardHeader>
+            <MudCardContent>
+                <MudText>This day everything happend.</MudText>
+                <MudText Typo="Typo.body2">The quick, brown fox jumps over a lazy dog.</MudText>
+            </MudCardContent>
+            <MudCardActions>
+                <MudButton Variant="Variant.Text" Color="Color.Tertiary">Read More</MudButton>
+            </MudCardActions>
+        </MudCard>
     </MudTimelineItem>
 </MudTimeline>
