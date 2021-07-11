@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Components;
@@ -114,7 +114,7 @@ namespace MudBlazor.Charts
                     Index = i,
                     Data = $"M {ToS(x)} {ToS((BoundHeight - VerticalStartSpace))} L {ToS(x)} {ToS(VerticalEndSpace)}"
                 };
-                _verticalLines.Append(line);
+                _verticalLines.Add(line);
 
                 var xLabels = i < XAxisLabels.Length ? XAxisLabels[i] : "";
                 var lineValue = new SvgText()
@@ -123,7 +123,7 @@ namespace MudBlazor.Charts
                     Y = BoundHeight - 2, 
                     Value = xLabels
                 };
-                _verticalValues.Append(lineValue);
+                _verticalValues.Add(lineValue);
             }
         }
 

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -118,7 +118,7 @@ namespace MudBlazor.Charts
                     Index = i,
                     Data = $"M {ToS(x)} {ToS((BoundHeight - VerticalStartSpace))} L {ToS(x)} {ToS(VerticalEndSpace)}"
                 };
-                _verticalLines.Append(line);
+                _verticalLines.Add(line);
 
                 var xLabels = i < XAxisLabels.Length ? XAxisLabels[i] : "";
                 var lineValue = new SvgText()
@@ -127,7 +127,7 @@ namespace MudBlazor.Charts
                     Y = BoundHeight - 2, 
                     Value = xLabels
                 };
-                _verticalValues.Append(lineValue);
+                _verticalValues.Add(lineValue);
             }
         }
 
@@ -202,14 +202,14 @@ namespace MudBlazor.Charts
                     Index = i,
                     Data = chartLine.ToString()
                 };
-                _chartLines.Append(line);
+                _chartLines.Add(line);
 
                 var legend = new SvgLegend()
                 {
                     Index = i,
                     Labels = _series[i].Name
                 };
-                _legends.Append(legend);
+                _legends.Add(legend);
             }
         }
     }
