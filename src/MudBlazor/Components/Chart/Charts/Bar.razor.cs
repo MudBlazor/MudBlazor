@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Components;
@@ -93,8 +93,8 @@ namespace MudBlazor.Charts
                 var startGridY = i * gridYUnits;
                 var lineValue = new SvgText() 
                 { 
-                    X = (HorizontalStartSpace - 10), 
-                    Y = (BoundHeight - y + 5), 
+                    X = HorizontalStartSpace - 10, 
+                    Y = BoundHeight - y + 5, 
                     Value = ToS(startGridY, MudChartParent?.ChartOptions.YAxisFormat) 
                 };
                 _horizontalValues.Add(lineValue);
