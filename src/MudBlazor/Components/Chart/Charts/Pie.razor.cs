@@ -16,17 +16,17 @@ namespace MudBlazor.Charts
         {
             _paths.Clear();
             _legends.Clear();
-            double startx, starty, endx, endy;
+
             var ndata = GetNormalizedData();
             double cumulativeRadians = 0;
             for (var i = 0; i < ndata.Length; i++)
             {
                 var data = ndata[i];
-                startx = Math.Cos(cumulativeRadians);
-                starty = Math.Sin(cumulativeRadians);
+                var startx = Math.Cos(cumulativeRadians);
+                var starty = Math.Sin(cumulativeRadians);
                 cumulativeRadians += 2 * Math.PI * data;
-                endx = Math.Cos(cumulativeRadians);
-                endy = Math.Sin(cumulativeRadians);
+                var endx = Math.Cos(cumulativeRadians);
+                var endy = Math.Sin(cumulativeRadians);
                 var largeArcFlag = data > 0.5 ? 1 : 0;
                 var path = new SvgPath()
                 {
@@ -36,23 +36,17 @@ namespace MudBlazor.Charts
                 _paths.Add(path);
             }
 
-            var counter = 0;
-            foreach (var data in ndata)
+            for (var i = 0; i < ndata.Length; i++)
             {
-                var percent = data * 100;
-                var labels = "";
-                if (counter < InputLabels.Length)
-                {
-                    labels = InputLabels[counter];
-                }
+                var percent = ndata[i] * 100;
+                var labels = i < InputLabels.Length ? InputLabels[i] : "";
                 var legend = new SvgLegend()
                 {
-                    Index = counter,
+                    Index = i,
                     Labels = labels,
                     Data = ToS(Math.Round(percent, 1))
                 };
                 _legends.Add(legend);
-                counter += 1;
             }
         }
     }

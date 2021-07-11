@@ -12,7 +12,5 @@ namespace MudBlazor.Components.Chart.Interpolation
         public double[] GivenXs { get; set; }
         public double[] InterpolatedXs { get; set; }
         public double[] InterpolatedYs { get; set; }
-        public bool InterpolationRequired { get; set; }
-
     }
 }

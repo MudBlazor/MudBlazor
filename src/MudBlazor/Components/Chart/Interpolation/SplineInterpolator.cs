@@ -15,7 +15,6 @@ namespace MudBlazor.Components.Chart
         public double[] GivenXs { get; set; }
         public double[] InterpolatedXs { get; set; }
         public double[] InterpolatedYs { get; set; }
-        public bool InterpolationRequired { get; set; } = true;
 
         public SplineInterpolator(double[] xs, double[] ys, int resolution = 10)
         {
