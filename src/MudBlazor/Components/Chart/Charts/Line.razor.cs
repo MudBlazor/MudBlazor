@@ -51,24 +51,32 @@ namespace MudBlazor.Charts
 
         private void ComputeUnitsAndNumberOfLines(out double gridXUnits, out double gridYUnits, out int numHorizontalLines, out int numVerticalLines)
         {
-            gridXUnits = 30;                  
+            gridXUnits = 30;
 
             gridYUnits = MudChartParent?.ChartOptions.YAxisTicks ?? 20;
             if (gridYUnits <= 0)
                 gridYUnits = 20;
                 
-            var maxY = _series.SelectMany(series => series.Data).Max();
-            numHorizontalLines = (int)Math.Ceiling(maxY / gridYUnits);
-
-            // this is a safeguard against millions of gridlines which might arise with very high values
-            int maxYTicks = MudChartParent?.ChartOptions.MaxNumYAxisTicks ?? 100;
-            while (numHorizontalLines > maxYTicks)
+            if (_series.SelectMany(series => series.Data).Any())
             {
-                gridYUnits *= 2;
+                var maxY = _series.SelectMany(series => series.Data).Max();
                 numHorizontalLines = (int)Math.Ceiling(maxY / gridYUnits);
-            }    
 
-            numVerticalLines = _series.Max(series => series.Data.Length);  
+                // this is a safeguard against millions of gridlines which might arise with very high values
+                int maxYTicks = MudChartParent?.ChartOptions.MaxNumYAxisTicks ?? 100;
+                while (numHorizontalLines > maxYTicks)
+                {
+                    gridYUnits *= 2;
+                    numHorizontalLines = (int)Math.Ceiling(maxY / gridYUnits);
+                }    
+
+                numVerticalLines = _series.Max(series => series.Data.Length);  
+            }
+            else
+            {
+                numHorizontalLines = 0;
+                numVerticalLines = 0;
+            }
         }
 
         private void GenerateHorizontalGridLines(int numHorizontalLines, double gridYUnits, double verticalSpace)
