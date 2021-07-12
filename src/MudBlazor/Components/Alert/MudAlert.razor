@@ -3,21 +3,44 @@
 @inherits MudComponentBase
 
 <div @attributes="UserAttributes" role="alert" class="@Classname" Style="@Style" @onclick="OnClick">
-    <div class="@ClassPosition">
-        @if (!NoIcon)
+    @if (!RightToLeft)
+    {
+        <div class="@ClassPosition">
+            @if (!NoIcon)
+            {
+                <div class="mud-alert-icon">
+                    <MudIcon Icon="@_icon" />
+                </div>
+            }
+            <div class="mud-alert-message">
+                @ChildContent
+            </div>
+        </div>
+        @if (ShowCloseIcon)
         {
-            <div class="mud-alert-icon">
-                <MudIcon Icon="@_icon" />
+            <div class="mud-alert-close">
+                <MudIcon Icon="@CloseIcon" @onclick="OnCloseIconClickAsync" Size="Size.Small" />
             </div>
         }
-        <div class="mud-alert-message">
-            @ChildContent
-        </div>
-    </div>
-    @if (ShowCloseIcon)
-    {
-        <div class="mud-alert-close">
-            <MudIcon Icon="@CloseIcon" @onclick="OnCloseIconClickAsync" Size="Size.Small" />
+    }
+    else
+    { 
+        @if (ShowCloseIcon)
+        {
+            <div class="mud-alert-close">
+                <MudIcon Icon="@CloseIcon" @onclick="OnCloseIconClickAsync" Size="Size.Small" />
+            </div>
+        }
+        <div class="@ClassPosition">
+            <div class="mud-alert-message">
+                @ChildContent
+            </div>
+            @if (!NoIcon)
+            {
+                <div class="mud-alert-icon">
+                    <MudIcon Icon="@_icon" />
+                </div>
+            }
         </div>
     }
 </div>

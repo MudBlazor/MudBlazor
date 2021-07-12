@@ -27,17 +27,22 @@ namespace MudBlazor
         {
             return position switch
             {
-                Position.Bottom => Position.End,
-                Position.Left => Position.Start,
-                Position.Top => Position.Start,
-                Position.Right => Position.End,
+                Position.Right => RightToLeft ? Position.Start : Position.End,
+                Position.Bottom => RightToLeft ? Position.Start : Position.End,
+                Position.End => RightToLeft ? Position.Start : Position.End,
+                Position.Left => RightToLeft ? Position.End : Position.Start,
+                Position.Top => RightToLeft ? Position.End : Position.Start,
+                Position.Start => RightToLeft ? Position.End : Position.Start,
                 _ => position
             };
         }
 
+        [CascadingParameter] public bool RightToLeft { get; set; }
+
         /// <summary>
-        /// Sets the position of the text. By default, the position is the Left/Start position.
+        /// Sets the position of the text to the start (Left in LTR and right in RTL).
         /// </summary>
+        [Parameter] public bool Start { get; set; }
         [Parameter] public Position TextPosition { get; set; } = Position.Start;
 
         /// <summary>
