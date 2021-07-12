@@ -1,6 +1,6 @@
 ﻿@namespace MudBlazor
-@using MudColor = System.Drawing.Color;
 @using System.Globalization;
+@using MudBlazor.Utilities
 @inherits MudPicker<MudColor>
 
 @Render
@@ -12,7 +12,7 @@
         <MudPickerContent Class="mud-picker-color-content">
             @if(!DisableColorField)
             {
-                <div class="mud-picker-color-picker" style="@($"background-color: rgb({_baseColor.R}, {_baseColor.G}, {_baseColor.B});")">
+                <div class="mud-picker-color-picker" style="@($"background-color: {_baseColor.ToRGB()}")">
                     <div class="mud-picker-color-overlay mud-picker-color-overlay-white">
                         <div class="mud-picker-color-overlay mud-picker-color-overlay-black">
                             <div class="mud-picker-color-overlay" @onclick="OnMouseClick" @onmousedown="OnMouseDown" @onmouseup="OnMouseUp" @onmouseover="OnMouseOver">
@@ -29,13 +29,13 @@
                     {
                         <div class="mud-picker-color-controls-row">
                             <div class="mud-picker-color-dot">
-                                <div class="mud-picker-color-fill" style="@($"background: rgba({_r}, {_g}, {_b}, {_pickerAlpha.ToString(CultureInfo.InvariantCulture)});")"></div>
+                                <div class="mud-picker-color-fill" style="@($"background: {_color.ToRGBA()};")"></div>
                             </div>
                             <div class="mud-picker-color-sliders">
-                                <MudSlider Class="mud-picker-color-slider hue" T="int" Value="@_pickerBaseColorValue" ValueChanged="UpdateBaseColor" Step="1" Min="0" Max="@(6*256)" />
+                                <MudSlider Class="mud-picker-color-slider hue" T="int" Value="@GetSliderHueValue()" ValueChanged="UpdateBaseColorSlider" Step="1" Min="0" Max="@(6*255)" />
                                 @if(!DisableAlpha)
                                 {
-                                    <MudSlider Class="mud-picker-color-slider alpha" Value="_pickerAlpha" ValueChanged="AlphaChanged" T="double"  Min="0" Max="1" Step="0.01" Style="@($"background-image: linear-gradient(to right, transparent, rgb({_baseColor.R}, {_baseColor.G}, {_baseColor.B}));")" />
+                                    <MudSlider Class="mud-picker-color-slider alpha" Value="_color.A" ValueChanged="SetAlpha" T="int"  Min="0" Max="255" Step="1" Style="@($"background-image: linear-gradient(to right, transparent, {_baseColor.ToRGB()}));")" />
                                 }
                             </div>
                         </div>
@@ -47,17 +47,17 @@
                                 @switch(ColorPickerMode)
                                 {
                                     case ColorPickerMode.RGB:
-                                        <MudNumericField Value="_r" T="int" ValueChanged="RChangedManuell" Class="mud-picker-color-inputfield" HelperText="R" Min="0" Max="255" Variant="Variant.Outlined" HideSpinButtons="true" />
-                                        <MudNumericField Value="_g" T="int" ValueChanged="GChangedManuell" Class="mud-picker-color-inputfield" HelperText="G" Min="0" Max="255" Variant="Variant.Outlined" HideSpinButtons="true" />
-                                        <MudNumericField Value="_b" T="int" ValueChanged="BChangedManuell" Class="mud-picker-color-inputfield" HelperText="B" Min="0" Max="255" Variant="Variant.Outlined" HideSpinButtons="true" />
+                                        <MudNumericField Value="_color.R" T="int" ValueChanged="SetR" Class="mud-picker-color-inputfield" HelperText="R" Min="0" Max="255" Variant="Variant.Outlined" HideSpinButtons="true" />
+                                        <MudNumericField Value="_color.G" T="int" ValueChanged="SetG" Class="mud-picker-color-inputfield" HelperText="G" Min="0" Max="255" Variant="Variant.Outlined" HideSpinButtons="true" />
+                                        <MudNumericField Value="_color.B" T="int" ValueChanged="SetB" Class="mud-picker-color-inputfield" HelperText="B" Min="0" Max="255" Variant="Variant.Outlined" HideSpinButtons="true" />
                                     break;
                                     case ColorPickerMode.HSL:
-                                        <MudNumericField Value="_h" T="double" ValueChanged="HChangedManuell" Class="mud-picker-color-inputfield" HelperText="H" Min="0" Max="360" Variant="Variant.Outlined" HideSpinButtons="true" />
-                                        <MudNumericField Value="_s" T="double" ValueChanged="SChangedManuell" Class="mud-picker-color-inputfield" HelperText="S" Min="0" Max="100" Variant="Variant.Outlined" HideSpinButtons="true" />
-                                        <MudNumericField Value="_l" T="double"  ValueChanged="LChangedManuell" Class="mud-picker-color-inputfield" HelperText="L" Min="0" Max="100" Variant="Variant.Outlined" HideSpinButtons="true" />
+                                        <MudNumericField Value="@Math.Round(_color.H,0)" T="double" ValueChanged="SetH" Class="mud-picker-color-inputfield" HelperText="H" Min="0" Max="360" Variant="Variant.Outlined" HideSpinButtons="true" />
+                                        <MudNumericField Value="@Math.Round(_color.S,2)" T="double" ValueChanged="SetS" Class="mud-picker-color-inputfield" HelperText="S" Min="0" Max="100" Variant="Variant.Outlined" HideSpinButtons="true" />
+                                        <MudNumericField Value="@Math.Round(_color.L,2)" T="double"  ValueChanged="SetL" Class="mud-picker-color-inputfield" HelperText="L" Min="0" Max="100" Variant="Variant.Outlined" HideSpinButtons="true" />
                                     break;
                                     case ColorPickerMode.HEX:
-                                        <MudTextField Value="_rgbAHex" ValueChanged="RgbaHexChanged" T="string" Class="mud-picker-color-inputfield" Variant="Variant.Outlined" HelperText="HEX" />
+                                        <MudTextField Value="_color.Value" ValueChanged="SetInputString" T="string" Class="mud-picker-color-inputfield" Variant="Variant.Outlined" HelperText="HEX" />
                                     break;
                                     default:
                                     break;
@@ -65,7 +65,7 @@
                         
                                 @if(!DisableAlpha && ColorPickerMode != ColorPickerMode.HEX)
                                 {
-                                    <MudNumericField @bind-Value="@_pickerAlpha" Class="mud-picker-color-inputfield" HelperText="A" Min="0" Max="1" Variant="Variant.Outlined" HideSpinButtons="true" />
+                                    <MudNumericField Value="@(Math.Round(  _color.A / 255.0,2))" T="double" ValueChanged="SetAlpha" Class="mud-picker-color-inputfield" HelperText="A" Min="0" Max="1" Variant="Variant.Outlined" HideSpinButtons="true" />
                                 }
                             </div>
                             @if(!DisableModeSwitch)
@@ -76,10 +76,6 @@
                             }
                         </div>
                     }
-                    @*DEBUGG*@
-                    @*<div class="mud-picker-color-controls-row mt-0">
-                        <MudText Typo="Typo.caption">X: @_selectorX.ToString() - Y: @_selectorY.ToString() - Mouse is down: @_isMouseDown.ToString()</MudText>
-                    </div>*@
                 </div>
             }
         </MudPickerContent>

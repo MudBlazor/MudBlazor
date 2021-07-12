@@ -11,7 +11,6 @@ using Microsoft.AspNetCore.Components.Web;
 using System.Collections.Generic;
 using MudBlazor.Extensions;
 using MudBlazor.Utilities;
-using MudColor = System.Drawing.Color;
 
 namespace MudBlazor
 {
@@ -20,11 +19,20 @@ namespace MudBlazor
         public MudColorPicker() : base(new DefaultConverter<MudColor>())
         {
             AdornmentIcon = Icons.Custom.Uncategorized.ColorPalette;
+            Value = "#7467ef"; //MudBlazor blue
         }
 
-        private record RGBColor(int R, int G, int B);
-
         #region Fields
+
+        private static Dictionary<int, (Func<int, int> r, Func<int, int> g, Func<int, int> b, string dominantColorPart)> _rgbToHueMapper = new()
+        {
+            { 0, ((x) => 255, x => x, x => 0, "rb") },
+            { 1, ((x) => 255 - x, x => 255, x => 0, "gb") },
+            { 2, ((x) => 0, x => 255, x => x, "gr") },
+            { 3, ((x) => 0, x => 255 - x, x => 255, "br") },
+            { 4, ((x) => x, x => 0, x => 255, "bg") },
+            { 5, ((x) => 255, x => 0, x => 255 - x, "rg") },
+        };
 
         private const double _maxY = 250;
         private const double _maxX = 310;
@@ -33,26 +41,12 @@ namespace MudBlazor
         private double _selectorX;
         private double _selectorY;
 
-        private int _pickerBaseColorValue;
-        private double _pickerAlpha = 1;
-
-        private RGBColor _baseColor = new(255, 0, 0);
-
-        private int _r = 255;
-        private int _g = 0;
-        private int _b = 0;
-        private string _rgbAHex = "#ffffffff";
-
-        private double _h = 0;
-        private double _s = 0;
-        private double _l = 0;
+        private MudColor _baseColor;
+        private MudColor _color; 
 
         #endregion
 
         #region Parameters
-
-        #endregion
-
 
         /// <summary>
         /// If true, Alpha options will not be displayed and color output will be RGB, HSL or HEX and not RGBA, HSLA or HEXA.
@@ -79,27 +73,46 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public bool DisableSliders { get; set; }
 
+        /// <summary>
+        /// The inital mode (RGB, HSL or HEX) the picker should open. Defaults to RGB 
+        /// </summary>
         [Parameter] public ColorPickerMode ColorPickerMode { get; set; } = ColorPickerMode.RGB;
 
-        public ColorPickerRgbA ColorPickerRgb = new ColorPickerRgbA();
-        public ColorPickerHslA ColorPickerHsl = new ColorPickerHslA();
-        public string ColorPickerHex { get; set; } = "#ff0000"; //Remove default here only used for fake content.
+        /// <summary>
+        /// If true, binding changes occure also when HSL values changed without a corresponding RGB change 
+        /// </summary>
+        [Parameter] public bool AlwaysUpdateBinding { get; set; } = false;
 
-        public class ColorPickerRgbA
+        /// <summary>
+        /// A two-way bindable property representing the selected value. MudColor is a utility class that can be used to get the value as RGB, HSL, hex or other value
+        /// </summary>
+        [Parameter]
+        public MudColor Value
         {
-            public int R { get; set; } = 211; //Remove default here only used for fake content.
-            public int G { get; set; }
-            public int B { get; set; }
-            public double A { get; set; }
+            get => _color;
+            set
+            {
+                bool changed = value != _color;
+                _color = value;
+
+                if (changed)
+                {
+                    UpdateBaseColor();
+                    UpdateColorSelectorBasedOnRgb();
+
+                    SetTextAsync(_color.Value, true).AndForget();
+                }
+
+                if (changed == false && AlwaysUpdateBinding)
+                {
+                    ColorChanged.InvokeAsync(value).AndForget();
+                }
+            }
         }
 
-        public class ColorPickerHslA
-        {
-            public int H { get; set; }
-            public int S { get; set; } = 100; //Remove default here only used for fake content.
-            public int L { get; set; } = 50; //Remove default here only used for fake content.
-            public double A { get; set; }
-        }
+        [Parameter] public EventCallback<MudColor> ColorChanged { get; set; }
+
+        #endregion
 
         public void ChangeMode() =>
             ColorPickerMode = ColorPickerMode switch
@@ -110,74 +123,53 @@ namespace MudBlazor
                 _ => ColorPickerMode.RGB,
             };
 
-        private void UpdateColor(Boolean fireStateHasChanged) => UpdateColor(_selectorX, _selectorY, fireStateHasChanged);
+        private void UpdateBaseColorSlider(int value) => Value = Value.SetH(MathExtensions.Map(0, 6 * 255, 0, 360, value));
 
-        private void UpdateBaseColor(int input) => UpdateBaseColor(input, true);
-
-        private static Dictionary<Int32, (Func<int, int> r, Func<int, int> g, Func<int, int> b, char dominantColorPart)> rgbMapper = new()
+        private void UpdateBaseColor()
         {
-            { 0, ((x) => 255, x => x, x => 0, 'r') },
-            { 1, ((x) => 255 - x, x => 255, x => 0, 'g') },
-            { 2, ((x) => 0, x => 255, x => x, 'g') },
-            { 3, ((x) => 0, x => 255 - x, x => 255, 'b') },
-            { 4, ((x) => x, x => 0, x => 255, 'b') },
-            { 5, ((x) => 255, x => 0, x => 255 - x, 'r') },
-        };
+            var hueValue = GetSliderHueValue();
 
-        private void UpdateBaseColor(int input, bool withColorSelector)
-        {
-            _pickerBaseColorValue = input;
+            int index = hueValue / 255;
+            int value = hueValue - (index * 255);
 
-            Int32 index = input / 255;
-            Int32 value = input - (index * 255);
+            var section = _rgbToHueMapper[index];
 
-            var section = rgbMapper[index];
-
-            _baseColor = new RGBColor(section.r(value), section.g(value), section.b(value));
-            if (withColorSelector == true)
-            {
-                UpdateColor(false);
-            }
+            _baseColor = new(section.r(value), section.g(value), section.b(value), 255);
         }
 
-        private void UpdateColor(Double selectedX, Double selectedY, Boolean fireStateHasChanged)
+        private int GetSliderHueValue() => (int)MathExtensions.Map(0, 360, 0, 6 * 255, _color.H);
+
+        private void UpdateColorBaseOnSelection()
         {
-            double x = selectedX / _maxX;
+            double x = _selectorX / _maxX;
 
             double r_x = 255 - (255.0 - _baseColor.R) * x;
             double g_x = 255 - (255.0 - _baseColor.G) * x;
             double b_x = 255 - (255.0 - _baseColor.B) * x;
 
-            double y = 1.0 - selectedY / _maxY;
+            double y = 1.0 - _selectorY / _maxY;
 
             double r = r_x * y;
             double g = g_x * y;
             double b = b_x * y;
 
-            _r = (int)r;
-            _g = (int)g;
-            _b = (int)b;
-
-            UpdateColorHexString();
-            UpdateHLsValues();
-            SetTextAsync(_rgbAHex, true).AndForget();
-
-            if (fireStateHasChanged == true)
-            {
-                StateHasChanged();
-            }
+            Value = new MudColor((byte)r, (byte)g, (byte)b, _color.A);
         }
 
-        private void UpdateColorSelectorBasedOnRgb(Int32 hueValue)
+        private void UpdateColorSelectorBasedOnRgb()
         {
-            Int32 index = hueValue / 255;
-            var section = rgbMapper[index];
+            var hueValue = (int)MathExtensions.Map(0, 360, 0, 6 * 255, _color.H);
+            int index = hueValue / 255;
+            var section = _rgbToHueMapper[index];
 
             var colorValues = section.dominantColorPart switch
             {
-                'r' => (_r, _g),
-                'g' => (_g, _r),
-                'b' => (_b, _r),
+                "rb" => (_color.R, _color.B),
+                "rg" => (_color.R, _color.G),
+                "gb" => (_color.G, _color.B),
+                "gr" => (_color.G, _color.R),
+                "br" => (_color.B, _color.R),
+                "bg" => (_color.B, _color.G),
                 _ => (255, 255)
             };
 
@@ -187,58 +179,16 @@ namespace MudBlazor
             _selectorY = MathExtensions.Map(0, 255, 0, _maxY, primaryDiff);
 
             double secondaryColorX = colorValues.Item2 * (1.0 / primaryDiffDelta);
-            double relation = (255 - secondaryColorX) / (255 - colorValues.Item2);
+            double relation = (255 - secondaryColorX) / 255.0;
 
             _selectorX = relation * _maxX;
         }
 
-        private void UpdateHLsValues()
-        {
-            var hlsColor = ColorTransformation.RgBtoHsl(MudColor.FromArgb((int)MathExtensions.Map(0.0, 1.0, 0, 255, _pickerAlpha), _r, _g, _b));
-            _h = hlsColor.H;
-            _l = hlsColor.L;
-            _s = hlsColor.S;
-        }
-
-        private void UpdateColorPanel(bool updateHLS)
-        {
-            var hsl = ColorTransformation.RgBtoHsl(MudColor.FromArgb(_r, _g, _b));
-
-            var numericValue = MathExtensions.Map(0, 360, 0, 6 * 255, hsl.H);
-
-            UpdateBaseColor((int)numericValue, false);
-            UpdateColorSelectorBasedOnRgb((int)numericValue);
-            UpdateColorHexString();
-
-            if (updateHLS == true)
-            {
-                UpdateHLsValues();
-            }
-
-            SetTextAsync(_rgbAHex, true).AndForget();
-        }
-
-        private void UpdateColorHexString() => _rgbAHex = $"#{_r:X2}{_g:X2}{_b:X2}{ (int)MathExtensions.Map(0.0, 1.0, 0, 255, _pickerAlpha):X2}";
-
-        private void UpdateRGBValueFromHLS()
-        {
-            var rgbColor = ColorTransformation.HsLtoRgb(new ColorTransformation.HSLColor { H = _h, L = _l, S = _s }, (int)MathExtensions.Map(0.0, 1.0, 0, 255, _pickerAlpha));
-            _r = rgbColor.R;
-            _b = rgbColor.B;
-            _g = rgbColor.G;
-        }
-
-        /// <summary>
-        /// Sets Mouse Down bool to true if mouse is inside the color area.
-        /// </summary>
         private void OnMouseDown(MouseEventArgs e)
         {
             _isMouseDown = true;
         }
 
-        /// <summary>
-        /// Sets Mouse Down bool to false if mouse is inside the color area.
-        /// </summary>
         private void OnMouseUp(MouseEventArgs e)
         {
             _isMouseDown = false;
@@ -248,7 +198,7 @@ namespace MudBlazor
         {
             _selectorX = e.OffsetX;
             _selectorY = e.OffsetY;
-            UpdateColor(false);
+            UpdateColorBaseOnSelection();
         }
 
         private void OnMouseOver(MouseEventArgs e)
@@ -257,7 +207,7 @@ namespace MudBlazor
             {
                 _selectorX = e.OffsetX;
                 _selectorY = e.OffsetY;
-                UpdateColor(false);
+                UpdateColorBaseOnSelection();
             }
         }
 
@@ -267,93 +217,75 @@ namespace MudBlazor
             {
                 _selectorX = e.OffsetX;
                 _selectorY = e.OffsetY;
-                UpdateColor(false);
+                UpdateColorBaseOnSelection();
             }
         }
 
-        private void RChangedManuell(int value)
-        {
-            _r = value;
-            UpdateColorPanel(true);
-        }
+        /// <summary>
+        /// Set the R (red) component of the color picker
+        /// </summary>
+        /// <param name="value">A value between 0 (no red) or 255 (max red)</param>
+        public void SetR(int value) => Value = Value.SetR(value);
 
-        private void GChangedManuell(int value)
-        {
-            _g = value;
-            UpdateColorPanel(true);
-        }
+        /// <summary>
+        /// Set the G (green) component of the color picker
+        /// </summary>
+        /// <param name="value">A value between 0 (no green) or 255 (max green)</param>
+        public void SetG(int value) => Value = Value.SetG(value);
 
-        private void BChangedManuell(int value)
-        {
-            _b = value;
-            UpdateColorPanel(true);
-        }
+        /// <summary>
+        /// Set the B (green) component of the color picker
+        /// </summary>
+        /// <param name="value">A value between 0 (no blue) or 255 (max blue)</param>
+        public void SetB(int value) => Value = Value.SetB(value);
 
-        private void HChangedManuell(double value)
-        {
-            _h = value;
-            UpdateRGBValueFromHLS();
-            UpdateColorPanel(false);
-        }
+        /// <summary>
+        /// Set the H (hue) component of the color picker
+        /// </summary>
+        /// <param name="value">A value between 0 and 360 (degrees)</param>
+        public void SetH(double value) => Value = Value.SetH(value);
 
-        private void SChangedManuell(double value)
-        {
-            _s = value;
-            UpdateRGBValueFromHLS();
-            UpdateColorPanel(false);
-        }
+        /// <summary>
+        /// Set the S (saturation) component of the color picker
+        /// </summary>
+        /// <param name="value">A value between 0.0 (no saturation) and 1.0 (max saturation)</param>
+        public void SetS(double value) => Value = Value.SetS(value);
 
-        private void LChangedManuell(double value)
-        {
-            _l = value;
-            UpdateRGBValueFromHLS();
-            UpdateColorPanel(false);
-        }
+        /// <summary>
+        /// Set the L (Lightness) component of the color picker
+        /// </summary>
+        /// <param name="value">A value between 0.0 (no light, black) and 1.0 (max ligt, white)</param>
+        public void SetL(double value) => Value = Value.SetL(value);
 
-        private void RgbaHexChanged(string input)
+        /// <summary>
+        /// Set the Alpha (transparency) component of the color picker
+        /// </summary>
+        /// <param name="value">A value between 0.0 (full transparent) and 1.0 (solid) </param>
+        public void SetAlpha(double value) => Value = Value.SetAlpha(value);
+
+        /// <summary>
+        /// Set the Alpha (transparency) component of the color picker
+        /// </summary>
+        /// <param name="value">A value between 0 (full transparent) and 255 (solid) </param>
+        public void SetAlpha(int value) => Value = Value.SetAlpha(value);
+
+        /// <summary>
+        /// Set the color of the picker based on the string input
+        /// </summary>
+        /// <param name="input">Accepting different formats for a color representation such as rbg, rgba, #</param>
+        public void SetInputString(string input)
         {
+            MudColor color;
             try
             {
-                if (input.StartsWith("#"))
-                {
-                    input = input.Substring(1);
-                }
-
-                string parsedValue = input;
-                switch (input.Length)
-                {
-                    case 3:
-                        parsedValue = new string(new Char[8] { input[0], input[0], input[1], input[1], input[2], input[2], 'F', 'F' });
-                        break;
-                    case 4:
-                        parsedValue = new string(new Char[8] { input[0], input[0], input[1], input[1], input[2], input[2], input[3], input[3] });
-                        break;
-                    case 6:
-                        parsedValue += "FF";
-                        break;
-                    case 8:
-                        break;
-                    default:
-                        return;
-                }
-
-                _r = parsedValue.GetByteValue(0);
-                _g = parsedValue.GetByteValue(2);
-                _b = parsedValue.GetByteValue(4);
-                _pickerAlpha = MathExtensions.Map(0, 255, 0.0, 1.0, parsedValue.GetByteValue(6));
+                color = new MudColor(input);
             }
             catch (Exception)
             {
                 return;
             }
 
-            UpdateColorPanel(true);
-        }
-
-        private void AlphaChanged(double input)
-        {
-            _pickerAlpha = input;
-            UpdateColorHexString();
+            Value = color;
         }
 
         private string GetSelectorLocation() => $"translate({_selectorX}px, {_selectorY}px);";

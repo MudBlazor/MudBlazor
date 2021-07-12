@@ -4,141 +4,141 @@ namespace MudBlazor
 {
     public class Palette
     {
-        private string _primaryDarken = null;
-        private string _primaryLighten = null;
-        private string _secondaryDarken = null;
-        private string _secondaryLighten = null;
-        private string _tertiaryDarken = null;
-        private string _tertiaryLighten = null;
-        private string _infoDarken = null;
-        private string _infoLighten = null;
-        private string _successDarken = null;
-        private string _successLighten = null;
-        private string _warningDarken = null;
-        private string _warningLighten = null;
-        private string _errorDarken = null;
-        private string _errorLighten = null;
-        private string _darkDarken = null;
-        private string _darkLighten = null;
+        private MudColor _primaryDarken = null;
+        private MudColor _primaryLighten = null;
+        private MudColor _secondaryDarken = null;
+        private MudColor _secondaryLighten = null;
+        private MudColor _tertiaryDarken = null;
+        private MudColor _tertiaryLighten = null;
+        private MudColor _infoDarken = null;
+        private MudColor _infoLighten = null;
+        private MudColor _successDarken = null;
+        private MudColor _successLighten = null;
+        private MudColor _warningDarken = null;
+        private MudColor _warningLighten = null;
+        private MudColor _errorDarken = null;
+        private MudColor _errorLighten = null;
+        private MudColor _darkDarken = null;
+        private MudColor _darkLighten = null;
 
-        public string Black { get; set; } = Colors.Shades.Black;
-        public string White { get; set; } = Colors.Shades.White;
-        public string Primary { get; set; } = "#594AE2";
-        public string PrimaryContrastText { get; set; } = Colors.Shades.White;
-        public string Secondary { get; set; } = Colors.Pink.Accent2;
-        public string SecondaryContrastText { get; set; } = Colors.Shades.White;
-        public string Tertiary { get; set; } = "#1EC8A5";
-        public string TertiaryContrastText { get; set; } = Colors.Shades.White;
-        public string Info { get; set; } = Colors.Blue.Default;
-        public string InfoContrastText { get; set; } = Colors.Shades.White;
-        public string Success { get; set; } = Colors.Green.Accent4;
-        public string SuccessContrastText { get; set; } = Colors.Shades.White;
-        public string Warning { get; set; } = Colors.Orange.Default;
-        public string WarningContrastText { get; set; } = Colors.Shades.White;
-        public string Error { get; set; } = Colors.Red.Default;
-        public string ErrorContrastText { get; set; } = Colors.Shades.White;
-        public string Dark { get; set; } = Colors.Grey.Darken3;
-        public string DarkContrastText { get; set; } = Colors.Shades.White;
-        public string TextPrimary { get; set; } = Colors.Grey.Darken3;
-        public string TextSecondary { get; set; } = ColorManager.ToRgbaFromHex(Colors.Shades.Black, 0.54);
-        public string TextDisabled { get; set; } = ColorManager.ToRgbaFromHex(Colors.Shades.Black, 0.38);
-        public string ActionDefault { get; set; } = ColorManager.ToRgbaFromHex(Colors.Shades.Black, 0.54);
-        public string ActionDisabled { get; set; } = ColorManager.ToRgbaFromHex(Colors.Shades.Black, 0.26);
-        public string ActionDisabledBackground { get; set; } = ColorManager.ToRgbaFromHex(Colors.Shades.Black, 0.12);
-        public string Background { get; set; } = Colors.Shades.White;
-        public string BackgroundGrey { get; set; } = Colors.Grey.Lighten4;
-        public string Surface { get; set; } = Colors.Shades.White;
-        public string DrawerBackground { get; set; } = Colors.Shades.White;
-        public string DrawerText { get; set; } = Colors.Grey.Darken3;
-        public string DrawerIcon { get; set; } = Colors.Grey.Darken2;
-        public string AppbarBackground { get; set; } = "#594AE2";
-        public string AppbarText { get; set; } = Colors.Shades.White;
-        public string LinesDefault { get; set; } = ColorManager.ToRgbaFromHex(Colors.Shades.Black, 0.12);
-        public string LinesInputs { get; set; } = Colors.Grey.Lighten1;
-        public string TableLines { get; set; } = ColorManager.ToRgbaFromHex(Colors.Grey.Lighten2, 1);
-        public string TableStriped { get; set; } = ColorManager.ToRgbaFromHex(Colors.Shades.Black, 0.02);
-        public string TableHover { get; set; } = ColorManager.ToRgbaFromHex(Colors.Shades.Black, 0.04);
-        public string Divider { get; set; } = Colors.Grey.Lighten2;
-        public string DividerLight { get; set; } = ColorManager.ToRgbaFromHex(Colors.Shades.Black, 0.8);
+        public MudColor Black { get; set; } = Colors.Shades.Black;
+        public MudColor White { get; set; } = Colors.Shades.White;
+        public MudColor Primary { get; set; } = "#594AE2";
+        public MudColor PrimaryContrastText { get; set; } = Colors.Shades.White;
+        public MudColor Secondary { get; set; } = Colors.Pink.Accent2;
+        public MudColor SecondaryContrastText { get; set; } = Colors.Shades.White;
+        public MudColor Tertiary { get; set; } = "#1EC8A5";
+        public MudColor TertiaryContrastText { get; set; } = Colors.Shades.White;
+        public MudColor Info { get; set; } = Colors.Blue.Default;
+        public MudColor InfoContrastText { get; set; } = Colors.Shades.White;
+        public MudColor Success { get; set; } = Colors.Green.Accent4;
+        public MudColor SuccessContrastText { get; set; } = Colors.Shades.White;
+        public MudColor Warning { get; set; } = Colors.Orange.Default;
+        public MudColor WarningContrastText { get; set; } = Colors.Shades.White;
+        public MudColor Error { get; set; } = Colors.Red.Default;
+        public MudColor ErrorContrastText { get; set; } = Colors.Shades.White;
+        public MudColor Dark { get; set; } = Colors.Grey.Darken3;
+        public MudColor DarkContrastText { get; set; } = Colors.Shades.White;
+        public MudColor TextPrimary { get; set; } = Colors.Grey.Darken3;
+        public MudColor TextSecondary { get; set; } = new MudColor(Colors.Shades.Black, 0.54).ToRGBA();
+        public MudColor TextDisabled { get; set; } = new MudColor(Colors.Shades.Black, 0.38).ToRGBA();
+        public MudColor ActionDefault { get; set; } = new MudColor(Colors.Shades.Black, 0.54).ToRGBA();
+        public MudColor ActionDisabled { get; set; } = new MudColor(Colors.Shades.Black, 0.26).ToRGBA();
+        public MudColor ActionDisabledBackground { get; set; } = new MudColor(Colors.Shades.Black, 0.12).ToRGBA();
+        public MudColor Background { get; set; } = Colors.Shades.White;
+        public MudColor BackgroundGrey { get; set; } = Colors.Grey.Lighten4;
+        public MudColor Surface { get; set; } = Colors.Shades.White;
+        public MudColor DrawerBackground { get; set; } = Colors.Shades.White;
+        public MudColor DrawerText { get; set; } = Colors.Grey.Darken3;
+        public MudColor DrawerIcon { get; set; } = Colors.Grey.Darken2;
+        public MudColor AppbarBackground { get; set; } = "#594AE2";
+        public MudColor AppbarText { get; set; } = Colors.Shades.White;
+        public MudColor LinesDefault { get; set; } = new MudColor(Colors.Shades.Black, 0.12).ToRGBA();
+        public MudColor LinesInputs { get; set; } = Colors.Grey.Lighten1;
+        public MudColor TableLines { get; set; } = new MudColor(Colors.Grey.Lighten2, 1).ToRGBA();
+        public MudColor TableStriped { get; set; } = new MudColor(Colors.Shades.Black, 0.02).ToRGBA();
+        public MudColor TableHover { get; set; } = new MudColor(Colors.Shades.Black, 0.04).ToRGBA();
+        public MudColor Divider { get; set; } = Colors.Grey.Lighten2;
+        public MudColor DividerLight { get; set; } = new MudColor(Colors.Shades.Black, 0.8).ToRGBA();
 
         public string PrimaryDarken
         {
-            get => _primaryDarken ??= ColorManager.ColorRgbDarken(Primary);
+            get => (_primaryDarken ??= Primary.ColorRgbDarken()).ToRGB();
             set => _primaryDarken = value;
         }
         public string PrimaryLighten
         {
-            get => _primaryLighten ??= ColorManager.ColorRgbLighten(Primary);
+            get => (_primaryLighten ??= Primary.ColorRgbLighten()).ToRGB();
             set => _primaryLighten = value;
         }
         public string SecondaryDarken
         {
-            get => _secondaryDarken ??= ColorManager.ColorRgbDarken(Secondary);
+            get => (_secondaryDarken ??= Secondary.ColorRgbDarken()).ToRGB();
             set => _secondaryDarken = value;
         }
         public string SecondaryLighten
         {
-            get => _secondaryLighten ??= ColorManager.ColorRgbLighten(Secondary);
+            get => (_secondaryLighten ??= Secondary.ColorRgbLighten()).ToRGB();
             set => _secondaryLighten = value;
         }
         public string TertiaryDarken
         {
-            get => _tertiaryDarken ??= ColorManager.ColorRgbDarken(Tertiary);
+            get => (_tertiaryDarken ??= Tertiary.ColorRgbDarken()).ToRGB();
             set => _tertiaryDarken = value;
         }
         public string TertiaryLighten
         {
-            get => _tertiaryLighten ??= ColorManager.ColorRgbLighten(Tertiary);
+            get => (_tertiaryLighten ??= Tertiary.ColorRgbLighten()).ToRGB();
             set => _tertiaryLighten = value;
         }
         public string InfoDarken
         {
-            get => _infoDarken ??= ColorManager.ColorRgbDarken(Info);
+            get => (_infoDarken ??= Info.ColorRgbDarken()).ToRGB();
             set => _infoDarken = value;
         }
         public string InfoLighten
         {
-            get => _infoLighten ??= ColorManager.ColorRgbLighten(Info);
+            get => (_infoLighten ??= Info.ColorRgbLighten()).ToRGB();
             set => _infoLighten = value;
         }
         public string SuccessDarken
         {
-            get => _successDarken ??= ColorManager.ColorRgbDarken(Success);
+            get => (_successDarken ??= Success.ColorRgbDarken()).ToRGB();
             set => _successDarken = value;
         }
         public string SuccessLighten
         {
-            get => _successLighten ??= ColorManager.ColorRgbLighten(Success);
+            get => (_successLighten ??= Success.ColorRgbLighten()).ToRGB();
             set => _successLighten = value;
         }
         public string WarningDarken
         {
-            get => _warningDarken ??= ColorManager.ColorRgbDarken(Warning);
+            get => (_warningDarken ??= Warning.ColorRgbDarken()).ToRGB();
             set => _warningDarken = value;
         }
         public string WarningLighten
         {
-            get => _warningLighten ??= ColorManager.ColorRgbLighten(Warning);
+            get => (_warningLighten ??= Warning.ColorRgbLighten()).ToRGB();
             set => _warningLighten = value;
         }
         public string ErrorDarken
         {
-            get => _errorDarken ??= ColorManager.ColorRgbDarken(Error);
+            get => (_errorDarken ??= Error.ColorRgbDarken()).ToRGB();
             set => _errorDarken = value;
         }
         public string ErrorLighten
         {
-            get => _errorLighten ??= ColorManager.ColorRgbLighten(Error);
+            get => (_errorLighten ??= Error.ColorRgbLighten()).ToRGB();
             set => _errorLighten = value;
         }
         public string DarkDarken
         {
-            get => _darkDarken ??= ColorManager.ColorRgbDarken(Dark);
+            get => (_darkDarken ??= Dark.ColorRgbDarken()).ToRGB();
             set => _darkDarken = value;
         }
         public string DarkLighten
         {
-            get => _darkLighten ??= ColorManager.ColorRgbLighten(Dark);
+            get => (_darkLighten ??= Dark.ColorRgbLighten()).ToRGB();
             set => _darkLighten = value;
         }
 
@@ -150,7 +150,7 @@ namespace MudBlazor
         public string GrayDark { get; set; } = Colors.Grey.Darken1;
         public string GrayDarker { get; set; } = Colors.Grey.Darken2;
 
-        public string OverlayDark { get; set; } = ColorManager.ToRgbaFromHex("#212121", 0.5);
-        public string OverlayLight { get; set; } = ColorManager.ToRgbaFromHex(Colors.Shades.White, 0.5);
+        public string OverlayDark { get; set; } = new MudColor("#212121", 0.5).ToRGBA();
+        public string OverlayLight { get; set; } = new MudColor(Colors.Shades.White, 0.5).ToRGBA();
     }
 }
