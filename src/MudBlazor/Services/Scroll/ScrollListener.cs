@@ -50,7 +50,7 @@ namespace MudBlazor
         {
             if (_onScroll == null)
             {
-                Task.Run(async () => await Start());
+                await Start();
             }
             _onScroll += value;
         }
