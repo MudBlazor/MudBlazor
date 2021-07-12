@@ -73,14 +73,11 @@ namespace MudBlazor
         /// <summary>
         /// If the window is resized, calculate the new coordinates of the PortalItem
         /// </summary>
-        private void OnWindowResize(object sender, BrowserWindowSize e)
+        private async void OnWindowResize(object sender, BrowserWindowSize e)
         {
             if (!IsRendered) return;
-            Task.Run(async () =>
-            {
-                await ConfigurePortalItem();
-                Portal.AddOrUpdate(_portalItem);
-            });
+            await ConfigurePortalItem();
+            Portal.AddOrUpdate(_portalItem);
         }
 
         protected virtual void Dispose(bool disposing)
