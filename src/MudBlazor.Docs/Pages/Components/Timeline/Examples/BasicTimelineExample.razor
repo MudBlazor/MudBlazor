@@ -14,6 +14,21 @@
 
 <MudDivider />
 
+<MudTimeline TimelineMode="TimelineMode.Reverse" TData="object">
+    <MudTimelineItem>
+        <MudText Align="Align.End">Item A</MudText>
+    </MudTimelineItem>
+    <MudTimelineItem>
+        <MudText>Item B</MudText>
+    </MudTimelineItem>
+    <MudTimelineItem>
+        <MudText Align="Align.End">Item C</MudText>
+    </MudTimelineItem>
+</MudTimeline>
+
+<MudDivider />
+
+
 <MudTimeline TData="object">
     <MudTimelineItem Size="Size.Medium">
         <MudText>Medium Size</MudText>
@@ -29,13 +44,13 @@
 <MudDivider />
 
 <MudTimeline TData="object">
-    <MudTimelineItem Size="Size.Medium" FillDot="true" Color="Color.Info">
+    <MudTimelineItem Variant="Variant.Filled" Size="Size.Medium" Color="Color.Info">
         <MudText>Filled Info Dot</MudText>
     </MudTimelineItem>
-    <MudTimelineItem Size="Size.Small" FillDot="true" Color="Color.Success">
+    <MudTimelineItem Variant="Variant.Filled" Size="Size.Small" Color="Color.Success">
         <MudText Align="Align.End">Filled Success Dot</MudText>
     </MudTimelineItem>
-    <MudTimelineItem Size="Size.Large" FillDot="true" Color="Color.Dark">
+    <MudTimelineItem Variant="Variant.Filled" Size="Size.Large" Color="Color.Dark">
         <MudText>Filled Dark Dot</MudText>
     </MudTimelineItem>
 </MudTimeline>
@@ -51,6 +66,42 @@
     </MudTimelineItem>
     <MudTimelineItem>
         <MudText>Item C</MudText>
+    </MudTimelineItem>
+</MudTimeline>
+
+<MudDivider />
+
+<MudTimeline TimelineMode="TimelineMode.Left" TData="object">
+    <MudTimelineItem>
+        <MudText>Item A</MudText>
+    </MudTimelineItem>
+    <MudTimelineItem>
+        <TimelineItemContent>
+            <MudText>Item B</MudText>
+        </TimelineItemContent>
+        <TimelineOppositeContent>
+            <MudText>Opposite B</MudText>
+        </TimelineOppositeContent>
+    </MudTimelineItem>
+    <MudTimelineItem>
+        <MudText>Item C</MudText>
+    </MudTimelineItem>
+</MudTimeline>
+
+<MudTimeline TimelineMode="TimelineMode.Right" TData="object">
+    <MudTimelineItem>
+        <MudText Align="Align.End">Item A</MudText>
+    </MudTimelineItem>
+    <MudTimelineItem>
+        <TimelineItemContent>
+            <MudText Align="Align.End">Item B</MudText>
+        </TimelineItemContent>
+        <TimelineOppositeContent>
+            <MudText>Opposite B</MudText>
+        </TimelineOppositeContent>
+    </MudTimelineItem>
+    <MudTimelineItem>
+        <MudText Align="Align.End">Item C</MudText>
     </MudTimelineItem>
 </MudTimeline>
 
@@ -104,5 +155,37 @@
                 <MudButton Variant="Variant.Text" Color="Color.Tertiary">Read More</MudButton>
             </MudCardActions>
         </MudCard>
+    </MudTimelineItem>
+</MudTimeline>
+
+<MudDivider />
+
+<MudTimeline TData="object">
+    <MudTimelineItem Color="Color.Info" Size="Size.Small">
+        <TimelineOppositeContent>
+            <MudText Color="Color.Info" Typo="Typo.h5">1970</MudText>
+        </TimelineOppositeContent>
+        <TimelineItemContent>
+            <MudText Color="Color.Info" Typo="Typo.h6" GutterBottom="true">Atom Towns</MudText>
+            <MudText>Construction of the town of Pripyat, one of 9 “atom towns” begins, to be inhabited by future employees of the nuclear power plants.</MudText>
+        </TimelineItemContent>
+    </MudTimelineItem>
+    <MudTimelineItem Color="Color.Success" Size="Size.Small">
+        <TimelineOppositeContent>
+            <MudText Color="Color.Success" Typo="Typo.h5">1977</MudText>
+        </TimelineOppositeContent>
+        <TimelineItemContent>
+            <MudText Color="Color.Success" Typo="Typo.h6" GutterBottom="true">Operational</MudText>
+            <MudText>The first of the Chernobyl Nuclear Power Plants four reactors is ready to operate followed by number 2 in 1978.</MudText>
+        </TimelineItemContent>
+    </MudTimelineItem>
+    <MudTimelineItem Color="Color.Error" Size="Size.Small">
+        <TimelineOppositeContent>
+            <MudText Color="Color.Error" Typo="Typo.h5">1979</MudText>
+        </TimelineOppositeContent>
+        <TimelineItemContent>
+            <MudText Color="Color.Error" Typo="Typo.h6" GutterBottom="true">Pripyat</MudText>
+            <MudText>Pripyat officially proclaimed as a city.<br />The Chernobyl Atomic Power Station reaches its first 10 billion kilowatt-hours of electical output.</MudText>
+        </TimelineItemContent>
     </MudTimelineItem>
 </MudTimeline>
