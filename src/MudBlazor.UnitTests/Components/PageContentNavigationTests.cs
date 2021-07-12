@@ -63,32 +63,37 @@ namespace MudBlazor.UnitTests.Components
 
             var comp = ctx.RenderComponent<MudPageContentNavigation>();
 
-            var section = new MudPageContenSection("my section", "my-id");
+            var section1 = new MudPageContenSection("my section", "my-id");
+            var section2 = new MudPageContenSection("my section 2", "my-id-2");
 
             if (withUpdate == true)
             {
-                await comp.InvokeAsync(() => comp.Instance.AddSection(section, true));
+                await comp.InvokeAsync(() => comp.Instance.AddSection(section1, true));
+                await comp.InvokeAsync(() => comp.Instance.AddSection(section2, true));
             }
             else
             {
-                comp.Instance.AddSection(section, false);
+                comp.Instance.AddSection(section1, false);
+                comp.Instance.AddSection(section2, false);
                 await comp.InvokeAsync(() => comp.Instance.Update());
             }
 
-            comp.RenderCount.Should().Be(2);
+            comp.RenderCount.Should().Be(withUpdate == true ? 3 : 2);
 
             comp.Instance.ActiveSection.Should().BeNull();
-            comp.Instance.Sections.Should().BeEquivalentTo(new[] { section });
+            comp.Instance.Sections.Should().BeEquivalentTo(new[] { section1, section2 });
 
             comp.Nodes.Should().ContainSingle();
 
             var navLinks = comp.FindComponents<MudNavLink>();
-            navLinks.Should().ContainSingle();
+            navLinks.Should().HaveCount(2);
             navLinks[0].Instance.Class.Should().Be("page-content-navigation-navlink");
 
-            var linkText = navLinks[0].Find(".mud-nav-link-text");
-            linkText.TextContent.Should().Be("my section");
+            var firstLinkText = navLinks[0].Find(".mud-nav-link-text");
+            firstLinkText.TextContent.Should().Be("my section");
 
+            var secondLinkText = navLinks[1].Find(".mud-nav-link-text");
+            secondLinkText.TextContent.Should().Be("my section 2");
         }
 
         [Test]
@@ -103,22 +108,27 @@ namespace MudBlazor.UnitTests.Components
 
             var comp = ctx.RenderComponent<MudPageContentNavigation>();
 
-            var section = new MudPageContenSection("my section", "my-id");
+            var section1 = new MudPageContenSection("my section", "my-id");
+            var section2 = new MudPageContenSection("different section", "my-id-2");
 
-            await comp.InvokeAsync(() => comp.Instance.AddSection(section, true));
+            comp.Instance.AddSection(section1, false);
+            comp.Instance.AddSection(section2, false);
+
+            await comp.InvokeAsync(() => comp.Instance.Update());
 
             comp.RenderCount.Should().Be(2);
 
-            comp.Instance.ActiveSection.Should().Be(section);
-            comp.Instance.Sections.Should().BeEquivalentTo(new[] { section });
+            comp.Instance.ActiveSection.Should().Be(section1);
+            comp.Instance.Sections.Should().BeEquivalentTo(new[] { section1, section2 });
             comp.Nodes.Should().ContainSingle();
 
             var navLinks = comp.FindComponents<MudNavLink>();
-            navLinks.Should().ContainSingle();
+            navLinks.Should().HaveCount(2);
             navLinks[0].Instance.Class.Should().Be("page-content-navigation-navlink active");
             var linkText = navLinks[0].Find(".mud-nav-link-text");
-
             linkText.TextContent.Should().Be("my section");
+
+            navLinks[1].Instance.Class.Should().NotContain("active");
         }
 
         [Test]
@@ -130,22 +140,26 @@ namespace MudBlazor.UnitTests.Components
 
             var comp = ctx.RenderComponent<MudPageContentNavigation>(p => p.Add(x => x.ActivateFirstSectionAsDefault, true));
 
-            var section = new MudPageContenSection("my section", "my-id");
+            var section1 = new MudPageContenSection("my section", "my-id");
+            var section2 = new MudPageContenSection("my section 2", "my-id-2");
 
-            await comp.InvokeAsync(() => comp.Instance.AddSection(section, true));
+            await comp.InvokeAsync(() => comp.Instance.AddSection(section1, true));
+            await comp.InvokeAsync(() => comp.Instance.AddSection(section2, true));
 
-            comp.RenderCount.Should().Be(2);
+            comp.RenderCount.Should().Be(3);
 
-            comp.Instance.ActiveSection.Should().Be(section);
-            comp.Instance.Sections.Should().BeEquivalentTo(new[] { section });
+            comp.Instance.ActiveSection.Should().Be(section1);
+            comp.Instance.Sections.Should().BeEquivalentTo(new[] { section1, section2 });
             comp.Nodes.Should().ContainSingle();
 
             var navLinks = comp.FindComponents<MudNavLink>();
-            navLinks.Should().ContainSingle();
+            navLinks.Should().HaveCount(2);
             navLinks[0].Instance.Class.Should().Be("page-content-navigation-navlink active");
             var linkText = navLinks[0].Find(".mud-nav-link-text");
 
             linkText.TextContent.Should().Be("my section");
+
+            navLinks[1].Instance.Class.Should().NotContain("active");
 
             mockedScrollSpy.ScrollHistory.Should().BeEquivalentTo(new[] { "my-id" });
         }
@@ -230,6 +244,28 @@ namespace MudBlazor.UnitTests.Components
             //active empty section
             await comp.InvokeAsync(() => spyMock.FireScrollSectionSectionCenteredEvent(null));
             comp.Instance.ActiveSection.Should().Be(section1);
+        }
+
+        [Test]
+        public async Task HideContentIfOnlyOneSectionIsAdded()
+        {
+            var mockedScrollSpy = new MockScrollSpy();
+
+            ctx.Services.Add(new ServiceDescriptor(typeof(IScrollSpy), mockedScrollSpy));
+
+            var comp = ctx.RenderComponent<MudPageContentNavigation>();
+
+            var section = new MudPageContenSection("my section", "my-id");
+
+            await comp.InvokeAsync(() => comp.Instance.AddSection(section, true));
+
+            comp.RenderCount.Should().Be(2);
+
+            comp.Instance.Sections.Should().BeEquivalentTo(new[] { section });
+            comp.Nodes.Should().ContainSingle();
+
+            var navLinks = comp.FindComponents<MudNavLink>();
+            navLinks.Should().BeEmpty();
         }
     }
 }

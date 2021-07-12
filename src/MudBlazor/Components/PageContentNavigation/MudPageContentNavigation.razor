@@ -4,7 +4,7 @@
 
 <div class="@GetPanelClass()" @attributes="UserAttributes">
 
-    @if (_sections.Any())
+    @if (_sections.Any() && _sections.Count() > 1)
     {
         <MudText Typo="Typo.h6" GutterBottom="true">
             @Headline
