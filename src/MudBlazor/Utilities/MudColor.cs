@@ -280,6 +280,10 @@ namespace MudBlazor.Utilities
             int lastIndex = value.LastIndexOf(')');
             string subString = value[(startIndex + 1)..lastIndex];
             string[] parts = subString.Split(',', StringSplitOptions.RemoveEmptyEntries);
+            for (int i = 0; i < parts.Length; i++)
+            {
+                parts[i] = parts[i].Trim();
+            }
             return parts;
         }
 
