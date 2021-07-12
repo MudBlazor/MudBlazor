@@ -101,46 +101,46 @@ namespace MudBlazor.Utilities
             // achromatic argb (gray scale)
             if (Math.Abs(s) < EPSILON)
             {
-                _valuesAsByte[0] = (byte)Math.Max(0, Math.Min(255, Convert.ToInt32(double.Parse($"{l * 255D:0.00}"))));
-                _valuesAsByte[1] = (byte)Math.Max(0, Math.Min(255, Convert.ToInt32(double.Parse($"{l * 255D:0.00}"))));
-                _valuesAsByte[2] = (byte)Math.Max(0, Math.Min(255, Convert.ToInt32(double.Parse($"{l * 255D:0.00}"))));
+                _valuesAsByte[0] = (byte)Math.Max(0, Math.Min(255, Convert.ToInt32(double.Parse($"{l * 255D:0.00}", CultureInfo.InvariantCulture))));
+                _valuesAsByte[1] = (byte)Math.Max(0, Math.Min(255, Convert.ToInt32(double.Parse($"{l * 255D:0.00}", CultureInfo.InvariantCulture))));
+                _valuesAsByte[2] = (byte)Math.Max(0, Math.Min(255, Convert.ToInt32(double.Parse($"{l * 255D:0.00}", CultureInfo.InvariantCulture))));
                 _valuesAsByte[3] = (byte)a;
             }
             else
-            { 
-
-            var q = l < .5D
-                    ? l * (1D + s)
-                    : (l + s) - (l * s);
-            var p = (2D * l) - q;
-
-            var hk = h / 360D;
-            var T = new double[3];
-            T[0] = hk + (1D / 3D); // Tr
-            T[1] = hk; // Tb
-            T[2] = hk - (1D / 3D); // Tg
-
-            for (var i = 0; i < 3; i++)
             {
-                if (T[i] < 0D)
-                    T[i] += 1D;
-                if (T[i] > 1D)
-                    T[i] -= 1D;
 
-                if ((T[i] * 6D) < 1D)
-                    T[i] = p + ((q - p) * 6D * T[i]);
-                else if ((T[i] * 2D) < 1)
-                    T[i] = q;
-                else if ((T[i] * 3D) < 2)
-                    T[i] = p + ((q - p) * ((2D / 3D) - T[i]) * 6D);
-                else
-                    T[i] = p;
-            }
+                var q = l < .5D
+                        ? l * (1D + s)
+                        : (l + s) - (l * s);
+                var p = (2D * l) - q;
 
-            _valuesAsByte[0] = (byte)Math.Max(0, Math.Min(255, (int)Math.Round(T[0] * 255D)));
-            _valuesAsByte[1] = (byte)Math.Max(0, Math.Min(255, (int)Math.Round(T[1] * 255D)));
-            _valuesAsByte[2] = (byte)Math.Max(0, Math.Min(255, (int)Math.Round(T[2] * 255D)));
-            _valuesAsByte[3] = (byte)a;
+                var hk = h / 360D;
+                var T = new double[3];
+                T[0] = hk + (1D / 3D); // Tr
+                T[1] = hk; // Tb
+                T[2] = hk - (1D / 3D); // Tg
+
+                for (var i = 0; i < 3; i++)
+                {
+                    if (T[i] < 0D)
+                        T[i] += 1D;
+                    if (T[i] > 1D)
+                        T[i] -= 1D;
+
+                    if ((T[i] * 6D) < 1D)
+                        T[i] = p + ((q - p) * 6D * T[i]);
+                    else if ((T[i] * 2D) < 1)
+                        T[i] = q;
+                    else if ((T[i] * 3D) < 2)
+                        T[i] = p + ((q - p) * ((2D / 3D) - T[i]) * 6D);
+                    else
+                        T[i] = p;
+                }
+
+                _valuesAsByte[0] = (byte)Math.Max(0, Math.Min(255, (int)Math.Round(T[0] * 255D)));
+                _valuesAsByte[1] = (byte)Math.Max(0, Math.Min(255, (int)Math.Round(T[1] * 255D)));
+                _valuesAsByte[2] = (byte)Math.Max(0, Math.Min(255, (int)Math.Round(T[2] * 255D)));
+                _valuesAsByte[3] = (byte)a;
             }
 
             H = h;
@@ -150,7 +150,7 @@ namespace MudBlazor.Utilities
             Value = $"#{R:x2}{G:x2}{B:x2}{A:x2}";
         }
 
-        public MudColor SetH(double h) => new (h, S, L, A);
+        public MudColor SetH(double h) => new(h, S, L, A);
         public MudColor SetS(double s) => new(H, s, L, A);
         public MudColor SetL(double l) => new(H, S, l, A);
 
@@ -209,10 +209,10 @@ namespace MudBlazor.Utilities
 
                 _valuesAsByte = new byte[]
                 {
-                    byte.Parse(parts[0]),
-                    byte.Parse(parts[1]),
-                    byte.Parse(parts[2]),
-                    (byte)Math.Max(0, Math.Min(255, 255 * double.Parse(parts[3]))),
+                    byte.Parse(parts[0],CultureInfo.InvariantCulture),
+                    byte.Parse(parts[1],CultureInfo.InvariantCulture),
+                    byte.Parse(parts[2],CultureInfo.InvariantCulture),
+                    (byte)Math.Max(0, Math.Min(255, 255 * double.Parse(parts[3],CultureInfo.InvariantCulture))),
                 };
 
                 Value = $"#{R:x2}{G:x2}{B:x2}{A:x2}";
@@ -226,9 +226,9 @@ namespace MudBlazor.Utilities
                 }
                 _valuesAsByte = new byte[]
                 {
-                    byte.Parse(parts[0]),
-                    byte.Parse(parts[1]),
-                    byte.Parse(parts[2]),
+                    byte.Parse(parts[0],CultureInfo.InvariantCulture),
+                    byte.Parse(parts[1],CultureInfo.InvariantCulture),
+                    byte.Parse(parts[2],CultureInfo.InvariantCulture),
                     255
                 };
 
@@ -287,7 +287,7 @@ namespace MudBlazor.Utilities
             return parts;
         }
 
-        private byte GetByteFromValuePart(int index) => byte.Parse(new string(new char[] { Value[index], Value[index + 1] }), System.Globalization.NumberStyles.HexNumber);
+        private byte GetByteFromValuePart(int index) => byte.Parse(new string(new char[] { Value[index], Value[index + 1] }), NumberStyles.HexNumber);
 
         public static implicit operator MudColor(string input) => new MudColor(input);
         public static explicit operator string(MudColor color) => color == null ? string.Empty : color.Value;
@@ -309,7 +309,7 @@ namespace MudBlazor.Utilities
 
         public bool Equals(MudColor other)
         {
-            if(object.ReferenceEquals(other,null) == true) { return false; }
+            if (object.ReferenceEquals(other, null) == true) { return false; }
 
             return
                 _valuesAsByte[0] == other._valuesAsByte[0] &&
@@ -320,7 +320,7 @@ namespace MudBlazor.Utilities
 
         public override int GetHashCode() => _valuesAsByte[1] + _valuesAsByte[2] + _valuesAsByte[3] + _valuesAsByte[4];
 
-        public static bool operator ==(MudColor lhs, MudColor rhs) => (!object.ReferenceEquals(null,lhs) && lhs.Equals(rhs));
+        public static bool operator ==(MudColor lhs, MudColor rhs) => (!object.ReferenceEquals(null, lhs) && lhs.Equals(rhs));
         public static bool operator !=(MudColor lhs, MudColor rhs) => !(lhs == rhs);
     }
 }
