@@ -3,7 +3,14 @@
 
 <div @attributes="UserAttributes" class="@Classnames" style="@Style">
     <div class="mud-timeline-item-content">
-        @ChildContent
+        @if (ChildContent != null)
+        {
+            @ChildContent
+        }
+        else if (TimelineItemContent != null)
+        {
+            @TimelineItemContent
+        }
     </div>
     <div class="mud-timeline-item-divider">
         @if(!HideDot)
@@ -13,4 +20,10 @@
             </div>
         }
     </div>
+    @if (TimelineOppositeContent != null)
+    {
+        <div class="mud-timeline-item-opposite">
+            @TimelineOppositeContent
+        </div>
+    }
 </div>
