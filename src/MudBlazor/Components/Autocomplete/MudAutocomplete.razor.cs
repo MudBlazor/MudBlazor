@@ -292,6 +292,18 @@ namespace MudBlazor
             StateHasChanged();
         }
 
+        /// <summary>
+        /// Clears the autocomplete's text
+        /// </summary>
+        public async Task Clear()
+        {
+            await SetTextAsync(string.Empty, updateValue: false);
+            await CoerceValueToText();
+            IsOpen = false;
+            _timer?.Dispose();
+            StateHasChanged();
+        }
+
         private string GetItemString(T item)
         {
             if (item == null)

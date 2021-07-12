@@ -1,6 +1,11 @@
 ﻿@namespace MudBlazor
 @inherits BaseMudThemeProvider
 
+@if(MudBlazorScrollbar)
+{
+    @((MarkupString)BuildMudBlazorScrollbar())
+}
+
 @*Needed for charts, maybe put in bool, IncludeCharts="true"??*@
 <style>
     .mud-chart-serie:hover {
