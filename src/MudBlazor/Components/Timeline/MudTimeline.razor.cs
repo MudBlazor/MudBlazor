@@ -5,6 +5,7 @@
 using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
+using MudBlazor.Extensions;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
@@ -14,8 +15,14 @@ namespace MudBlazor
     {
         protected string Classnames =>
             new CssBuilder("mud-timeline")
+                .AddClass($"mud-timeline-mode-{TimelineMode.ToDescriptionString()}")
                 .AddClass(Class)
                 .Build();
+
+        /// <summary>
+        /// Sets the position of all timelineitems, left and right on every second or all left or right.
+        /// </summary>
+        [Parameter] public TimelineMode TimelineMode { get; set; } = TimelineMode.Default;
 
         public async ValueTask DisposeAsync()
         {
