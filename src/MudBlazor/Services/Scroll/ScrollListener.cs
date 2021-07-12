@@ -46,7 +46,7 @@ namespace MudBlazor
         }
 
 
-        private void Subscribe(EventHandler<ScrollEventArgs> value)
+        private async void Subscribe(EventHandler<ScrollEventArgs> value)
         {
             if (_onScroll == null)
             {
