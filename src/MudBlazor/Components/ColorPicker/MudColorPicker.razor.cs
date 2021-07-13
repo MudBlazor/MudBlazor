@@ -40,9 +40,10 @@ namespace MudBlazor
         private bool _isMouseDown;
         private double _selectorX;
         private double _selectorY;
+        private bool _skipFeedback = false;
 
         private MudColor _baseColor;
-        private MudColor _color; 
+        private MudColor _color;
 
         #endregion
 
@@ -97,8 +98,11 @@ namespace MudBlazor
 
                 if (changed)
                 {
-                    UpdateBaseColor();
-                    UpdateColorSelectorBasedOnRgb();
+                    if (_skipFeedback == false)
+                    {
+                        UpdateBaseColor();
+                        UpdateColorSelectorBasedOnRgb();
+                    }
 
                     SetTextAsync(_color.Value, true).AndForget();
                 }
@@ -143,9 +147,9 @@ namespace MudBlazor
         {
             double x = _selectorX / _maxX;
 
-            double r_x = 255 - (255.0 - _baseColor.R) * x;
-            double g_x = 255 - (255.0 - _baseColor.G) * x;
-            double b_x = 255 - (255.0 - _baseColor.B) * x;
+            int r_x = 255 - (int)((255 - _baseColor.R) * x);
+            int g_x = 255 - (int)((255 - _baseColor.G) * x);
+            int b_x = 255 - (int)((255 - _baseColor.B) * x);
 
             double y = 1.0 - _selectorY / _maxY;
 
@@ -153,7 +157,9 @@ namespace MudBlazor
             double g = g_x * y;
             double b = b_x * y;
 
+            _skipFeedback = true;
             Value = new MudColor((byte)r, (byte)g, (byte)b, _color.A);
+            _skipFeedback = false;
         }
 
         private void UpdateColorSelectorBasedOnRgb()
