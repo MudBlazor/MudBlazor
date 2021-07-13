@@ -19,7 +19,7 @@ namespace MudBlazor
         public MudColorPicker() : base(new DefaultConverter<MudColor>())
         {
             AdornmentIcon = Icons.Custom.Uncategorized.ColorPalette;
-            Value = "#7467ef"; //MudBlazor blue
+            Value = "#594ae2"; //MudBlazor blue
         }
 
         #region Fields
