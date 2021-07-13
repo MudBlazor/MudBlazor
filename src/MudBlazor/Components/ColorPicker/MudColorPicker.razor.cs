@@ -294,6 +294,6 @@ namespace MudBlazor
             Value = color;
         }
 
-        private string GetSelectorLocation() => $"translate({_selectorX}px, {_selectorY}px);";
+        private string GetSelectorLocation() => $"translate({_selectorX.ToString(CultureInfo.InvariantCulture)}px, {_selectorY.ToString(CultureInfo.InvariantCulture)}px);";
     }
 }
