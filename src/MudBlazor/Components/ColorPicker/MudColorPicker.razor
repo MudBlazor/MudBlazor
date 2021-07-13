@@ -16,7 +16,7 @@
                     <div class="mud-picker-color-overlay mud-picker-color-overlay-white">
                         <div class="mud-picker-color-overlay mud-picker-color-overlay-black">
                             <div class="mud-picker-color-overlay" @onclick="OnMouseClick" @onmousedown="OnMouseDown" @onmouseup="OnMouseUp" @onmouseover="OnMouseOver">
-                                <div class="mud-picker-color-selector" style="transform: @GetSelectorLocation()"></div> @*Update the position of the selector here on mouse drag?.*@
+                                <div class="mud-picker-color-selector" style="transform: @GetSelectorLocation()" @onclick:stopPropagation="true"></div>
                             </div>
                         </div>
                     </div>
@@ -71,7 +71,7 @@
                             @if(!DisableModeSwitch)
                             {
                                 <div class="mud-picker-control-switch">
-                                    <MudIconButton OnClick="ChangeMode" Icon="@Icons.Material.Filled.ImportExport" Class="pa-1 mr-n1"></MudIconButton>
+                                    <MudIconButton OnClick="ChangeMode" Icon="@Icons.Material.Filled.ImportExport" Class="pa-1 me-n1"></MudIconButton>
                                 </div>
                             }
                         </div>
