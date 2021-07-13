@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using System;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Extensions;
 using MudBlazor.Utilities;
@@ -75,6 +76,18 @@ namespace MudBlazor
         /// Optional child content
         /// </summary>
         [Parameter] public RenderFragment ChildContent { get; set; }
+
+        protected override async Task OnInitializedAsync()
+        {
+            await Task.CompletedTask;
+            Parent?.Items.Add(this);
+        }
+
+        private void Select()
+        {
+            var myIndex = Parent?.Items.IndexOf(this);
+            Parent?.MoveTo(myIndex ?? 0);
+        }
 
         public void Dispose()
         {

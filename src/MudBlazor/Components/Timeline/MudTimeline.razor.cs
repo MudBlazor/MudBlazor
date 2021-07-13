@@ -10,7 +10,7 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    public partial class MudTimeline<TData> : MudBaseBindableItemsControl<MudTimelineItem, TData>, IAsyncDisposable
+    public partial class MudTimeline : MudBaseItemsControl<MudTimelineItem>, IAsyncDisposable
 
     {
         protected string Classnames =>
