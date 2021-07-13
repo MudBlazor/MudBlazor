@@ -29,25 +29,25 @@ namespace MudBlazor.UnitTests.Utilities
         [TestCase("1abd", 17, 170, 187, 221)]
         public void FromString_Hex(string input, byte r, byte g, byte b, byte alpha)
         {
-            CultureInfo.CurrentCulture = new CultureInfo("en");
+            var cultures = new[] { new CultureInfo("en"), new CultureInfo("se") };
 
+            foreach (var item in cultures)
             {
+                CultureInfo.CurrentCulture = item;
+
                 MudColor color = new(input);
 
                 color.R.Should().Be(r);
                 color.G.Should().Be(g);
                 color.B.Should().Be(b);
                 color.A.Should().Be(alpha);
-            }
 
-            CultureInfo.CurrentCulture = new CultureInfo("se");
-            {
-                MudColor color = new(input);
+                MudColor implicitCasted = input;
 
-                color.R.Should().Be(r);
-                color.G.Should().Be(g);
-                color.B.Should().Be(b);
-                color.A.Should().Be(alpha);
+                implicitCasted.R.Should().Be(r);
+                implicitCasted.G.Should().Be(g);
+                implicitCasted.B.Should().Be(b);
+                implicitCasted.A.Should().Be(alpha);
             }
         }
 
@@ -57,25 +57,25 @@ namespace MudBlazor.UnitTests.Utilities
         [TestCase("rgb(255,255,255)", 255, 255, 255, 255)]
         public void FromString_RGB(string input, byte r, byte g, byte b, byte alpha)
         {
-            CultureInfo.CurrentCulture = new CultureInfo("en");
+            var cultures = new[] { new CultureInfo("en"), new CultureInfo("se") };
 
+            foreach (var item in cultures)
             {
+                CultureInfo.CurrentCulture = item;
+
                 MudColor color = new(input);
 
                 color.R.Should().Be(r);
                 color.G.Should().Be(g);
                 color.B.Should().Be(b);
                 color.A.Should().Be(alpha);
-            }
 
-            CultureInfo.CurrentCulture = new CultureInfo("se");
-            {
-                MudColor color = new(input);
+                MudColor implicitCasted = input;
 
-                color.R.Should().Be(r);
-                color.G.Should().Be(g);
-                color.B.Should().Be(b);
-                color.A.Should().Be(alpha);
+                implicitCasted.R.Should().Be(r);
+                implicitCasted.G.Should().Be(g);
+                implicitCasted.B.Should().Be(b);
+                implicitCasted.A.Should().Be(alpha);
             }
         }
 
@@ -85,26 +85,466 @@ namespace MudBlazor.UnitTests.Utilities
         [TestCase("rgba(255,255,255,1)", 255, 255, 255, 255)]
         public void FromString_RGBA(string input, byte r, byte g, byte b, byte alpha)
         {
-            CultureInfo.CurrentCulture = new CultureInfo("en");
+            var cultures = new[] { new CultureInfo("en"), new CultureInfo("se") };
 
+            foreach (var item in cultures)
             {
+                CultureInfo.CurrentCulture = item;
+
                 MudColor color = new(input);
 
                 color.R.Should().Be(r);
                 color.G.Should().Be(g);
                 color.B.Should().Be(b);
                 color.A.Should().Be(alpha);
-            }
 
-            CultureInfo.CurrentCulture = new CultureInfo("se");
+                MudColor implicitCasted = input;
+
+                implicitCasted.R.Should().Be(r);
+                implicitCasted.G.Should().Be(g);
+                implicitCasted.B.Should().Be(b);
+                implicitCasted.A.Should().Be(alpha);
+            }
+        }
+
+        [Test]
+        public void FromRGB_Byte()
+        {
+            MudColor color = new((byte)123, (byte)240, (byte)130, (byte)76);
+
+            color.R.Should().Be(123);
+            color.G.Should().Be(240);
+            color.B.Should().Be(130);
+            color.A.Should().Be(76);
+        }
+
+        [Test]
+        public void FromRGB_Byte_AndAlphaDouble()
+        {
+            MudColor color = new((byte)123, (byte)240, (byte)130, 0.8);
+
+            color.R.Should().Be(123);
+            color.G.Should().Be(240);
+            color.B.Should().Be(130);
+            color.A.Should().Be(204);
+        }
+
+        [Test]
+        public void FromRGB_Int()
+        {
+            MudColor color = new((int)123, (int)240, (int)130, (int)76);
+
+            color.R.Should().Be(123);
+            color.G.Should().Be(240);
+            color.B.Should().Be(130);
+            color.A.Should().Be(76);
+        }
+
+        [Test]
+        public void FromRGB_Int_CapsToMaximum()
+        {
+            MudColor color = new((int)300, (int)2152525, (int)266, (int)25555);
+
+            color.R.Should().Be(255);
+            color.G.Should().Be(255);
+            color.B.Should().Be(255);
+            color.A.Should().Be(255);
+        }
+
+        [Test]
+        public void FromRGB_Int_EnsureMinimum()
+        {
+            MudColor color = new((int)-300, (int)-2152525, (int)-266, (int)-25555);
+
+            color.R.Should().Be(0);
+            color.G.Should().Be(0);
+            color.B.Should().Be(0);
+            color.A.Should().Be(0);
+        }
+
+        [Test]
+        public void FromRGB_Int_WithDoubleAlpha()
+        {
+            MudColor color = new((int)123, (int)240, (int)130, 0.8);
+
+            color.R.Should().Be(123);
+            color.G.Should().Be(240);
+            color.B.Should().Be(130);
+            color.A.Should().Be(204);
+        }
+
+        [Test]
+        public void FromRGB_Int_WithDoubleAlpha_CapsToMaximum()
+        {
+            MudColor color = new((int)300, (int)2152525, (int)266, 2.4);
+
+            color.R.Should().Be(255);
+            color.G.Should().Be(255);
+            color.B.Should().Be(255);
+            color.A.Should().Be(255);
+        }
+
+        [Test]
+        public void FromRGB_Int_WithDoubleAlpha_EnsureMinimum()
+        {
+            MudColor color = new((int)-300, (int)-2152525, (int)-266, -0.8);
+
+            color.R.Should().Be(0);
+            color.G.Should().Be(0);
+            color.B.Should().Be(0);
+            color.A.Should().Be(0);
+        }
+
+        [Test]
+        public void FromHLS_AlphaAsInt()
+        {
+            MudColor color = new(113.0, 0.6, 0.29, 115);
+
+            color.H.Should().Be(113.0);
+            color.S.Should().Be(0.6);
+            color.L.Should().Be(0.29);
+
+            color.R.Should().Be(40);
+            color.G.Should().Be(118);
+            color.B.Should().Be(30);
+
+            color.A.Should().Be(115);
+        }
+
+        [Test]
+        public void FromHLS_AlphaAsInt_CapsToMaximum()
+        {
+            MudColor color = new(450.0, 1.4, 1.2, 266);
+
+            color.H.Should().Be(360);
+            color.S.Should().Be(1);
+            color.L.Should().Be(1);
+
+            color.A.Should().Be(255);
+        }
+
+        [Test]
+        public void FromHLS_AlphaAsInt_EnsureMinimum()
+        {
+            MudColor color = new(-450.0, -1.4, -1.2, -266);
+
+            color.H.Should().Be(0);
+            color.S.Should().Be(0);
+            color.L.Should().Be(0);
+
+            color.A.Should().Be(0);
+        }
+
+        [Test]
+        public void FromHLS_AlphaAsDouble_CapsToMaximum()
+        {
+            MudColor color = new(450.0, 1.4, 1.2, 1.2);
+
+            color.H.Should().Be(360);
+            color.S.Should().Be(1);
+            color.L.Should().Be(1);
+
+            color.A.Should().Be(255);
+        }
+
+        [Test]
+        public void FromHLS_AlphaAsDouble_EnsureMinimum()
+        {
+            MudColor color = new(-450.0, -1.4, -1.2, -1.2);
+
+            color.H.Should().Be(0);
+            color.S.Should().Be(0);
+            color.L.Should().Be(0);
+
+            color.A.Should().Be(0);
+        }
+
+        [Test]
+        [TestCase(130, 150, 240, 130, 229, 0.79, 0.73)]
+        [TestCase(71, 88, 99, 222, 204, 0.16, 0.33)]
+        public void TransformHLSFromRGB(byte r, byte g, byte b, byte a, double expectedH, double expectedS, double expectedL)
+        {
+            MudColor color = new(r, g, b, a);
+
+            color.R.Should().Be(r);
+            color.G.Should().Be(g);
+            color.B.Should().Be(b);
+            color.A.Should().Be(a);
+
+            Math.Round(color.H, 0).Should().Be(expectedH);
+            Math.Round(color.S, 2).Should().Be(expectedS);
+            Math.Round(color.L, 2).Should().Be(expectedL);
+        }
+
+        [Test]
+        public void SetH()
+        {
+            MudColor color = new(120, 0.15, 0.25, 255);
+
+            color.SetH(-12).H.Should().Be(0);
+            color.SetH(0).H.Should().Be(0);
+            color.SetH(120).H.Should().Be(120);
+            color.SetH(350).H.Should().Be(350);
+            color.SetH(370).H.Should().Be(360);
+        }
+
+        [Test]
+        public void SetS()
+        {
+            MudColor color = new(120, 0.15, 0.25, 255);
+
+            color.SetS(-0.1).S.Should().Be(0);
+            color.SetS(0).S.Should().Be(0);
+            color.SetS(0.37).S.Should().Be(0.37);
+            color.SetS(0.67).S.Should().Be(0.67);
+            color.SetS(1.2).S.Should().Be(1);
+        }
+
+        [Test]
+        public void SetL()
+        {
+            MudColor color = new(120, 0.15, 0.25, 255);
+
+            color.SetL(-0.1).L.Should().Be(0);
+            color.SetL(0).L.Should().Be(0);
+            color.SetL(0.37).L.Should().Be(0.37);
+            color.SetL(0.67).L.Should().Be(0.67);
+            color.SetL(1.2).L.Should().Be(1);
+        }
+
+        [Test]
+        public void SetR()
+        {
+            MudColor color = new((byte)25, (byte)50, (byte)70, (byte)255);
+
+            color.SetR(-4).R.Should().Be(0);
+            color.SetR(0).R.Should().Be(0);
+            color.SetR(20).R.Should().Be(20);
+            color.SetR(250).R.Should().Be(250);
+            color.SetR(256).R.Should().Be(255);
+        }
+
+        [Test]
+        public void SetG()
+        {
+            MudColor color = new((byte)25, (byte)50, (byte)70, (byte)255);
+
+            color.SetG(-4).G.Should().Be(0);
+            color.SetG(0).G.Should().Be(0);
+            color.SetG(20).G.Should().Be(20);
+            color.SetG(250).G.Should().Be(250);
+            color.SetG(256).G.Should().Be(255);
+        }
+
+        [Test]
+        public void SetB()
+        {
+            MudColor color = new((byte)25, (byte)50, (byte)70, (byte)255);
+
+            color.SetB(-4).B.Should().Be(0);
+            color.SetB(0).B.Should().Be(0);
+            color.SetB(20).B.Should().Be(20);
+            color.SetB(250).B.Should().Be(250);
+            color.SetB(256).B.Should().Be(255);
+        }
+
+        [Test]
+        public void SetAlpha_Byte()
+        {
+            MudColor color = new((byte)25, (byte)50, (byte)70, (byte)170);
+
+            color.SetAlpha(-4).A.Should().Be(0);
+            color.SetAlpha(0).A.Should().Be(0);
+            color.SetAlpha(20).A.Should().Be(20);
+            color.SetAlpha(250).A.Should().Be(250);
+            color.SetAlpha(256).A.Should().Be(255);
+        }
+
+        [Test]
+        public void SetAlpha_Double()
+        {
+            MudColor color = new((byte)25, (byte)50, (byte)70, (byte)170);
+
+            color.SetAlpha(-0.4).A.Should().Be(0);
+            color.SetAlpha(0.0).A.Should().Be(0);
+            color.SetAlpha(0.4).A.Should().Be(102);
+            color.SetAlpha(0.8).A.Should().Be(204);
+            color.SetAlpha(1.2).A.Should().Be(255);
+        }
+
+        [Test]
+        public void ChangeLightness()
+        {
+            MudColor color = new(140.0, 0.2, 0.4, (byte)170);
+
+            color.ChangeLightness(-0.4).L.Should().Be(0.0);
+            color.ChangeLightness(-0.5).L.Should().Be(0.0);
+            color.ChangeLightness(+0.5).L.Should().Be(0.9);
+            color.ChangeLightness(+0.6).L.Should().Be(1.0);
+            color.ChangeLightness(+0.7).L.Should().Be(1.0);
+            color.ChangeLightness(+2.7).L.Should().Be(1.0);
+        }
+
+        [Test]
+        public void ColorLighten()
+        {
+            MudColor color = new(140.0, 0.2, 0.4, (byte)170);
+
+            color.ChangeLightness(0.4).L.Should().Be(0.8);
+            color.ChangeLightness(0.5).L.Should().Be(0.9);
+            color.ChangeLightness(0.6).L.Should().Be(1.0);
+            color.ChangeLightness(0.7).L.Should().Be(1.0);
+            color.ChangeLightness(-0.4).L.Should().Be(0.0);
+            color.ChangeLightness(-0.5).L.Should().Be(0.0);
+        }
+
+        [Test]
+        public void ColorDarken()
+        {
+            MudColor color = new(140.0, 0.2, 0.4, (byte)170);
+
+            color.ColorDarken(0.4).L.Should().Be(0.0);
+            color.ColorDarken(0.5).L.Should().Be(0.0);
+            color.ColorDarken(0.2).L.Should().Be(0.2);
+            color.ColorDarken(-0.6).L.Should().Be(1.0);
+            color.ColorDarken(-0.7).L.Should().Be(1.0);
+        }
+
+        [Test]
+        public void ColorRgbLighten()
+        {
+            MudColor color = new(140.0, 0.2, 0.5, (byte)170);
+            color.ColorRgbLighten().L.Should().Be(0.5 + 0.075);
+        }
+
+        [Test]
+        public void ColorRgbDarken()
+        {
+            MudColor color = new(140.0, 0.2, 0.5, (byte)170);
+            color.ColorRgbDarken().L.Should().Be(0.5 - 0.075);
+        }
+
+        [Test]
+        [TestCase(130, 150, 240, 170, "#8296f0aa")]
+        [TestCase(71, 88, 99, 204, "#475863cc")]
+        public void ValueAndExplicitCast(byte r, byte g, byte b, byte a, string expectedValue)
+        {
+            MudColor color = new(r, g, b, a);
+
+            color.Value.ToLowerInvariant().Should().Be(expectedValue);
+            color.ToString().ToLowerInvariant().Should().Be(expectedValue);
+            ((string)color).ToLowerInvariant().Should().Be(expectedValue);
+        }
+
+        [Test]
+        [TestCase(130, 150, 240, 255, "rgb(130,150,240)")]
+        [TestCase(71, 88, 99, 255, "rgb(71,88,99)")]
+        public void ToRGB(byte r, byte g, byte b, byte a, string expectedValue)
+        {
+            var cultures = new[] { new CultureInfo("en"), new CultureInfo("se") };
+
+            foreach (var item in cultures)
             {
-                MudColor color = new(input);
+                CultureInfo.CurrentCulture = item;
 
-                color.R.Should().Be(r);
-                color.G.Should().Be(g);
-                color.B.Should().Be(b);
-                color.A.Should().Be(alpha);
+                MudColor color = new(r, g, b, a);
+
+                color.ToRGB().Should().Be(expectedValue);
             }
+        }
+
+        [Test]
+        [TestCase(130, 150, 240, 255, "rgba(130,150,240,1)")]
+        [TestCase(71, 88, 99, 0, "rgba(71,88,99,0)")]
+        [TestCase(71, 88, 99, 204, "rgba(71,88,99,0.8)")]
+        public void ToRGBA(byte r, byte g, byte b, byte a, string expectedValue)
+        {
+            var cultures = new[] { new CultureInfo("en"), new CultureInfo("se") };
+
+            foreach (var item in cultures)
+            {
+                CultureInfo.CurrentCulture = item;
+
+                MudColor color = new(r, g, b, a);
+
+                color.ToRGBA().Should().Be(expectedValue);
+            }
+        }
+
+        [Test]
+        [TestCase(130, 150, 240, 255, "130,150,240")]
+        [TestCase(71, 88, 99, 255, "71,88,99")]
+        public void ToColorRgbElements(byte r, byte g, byte b, byte a, string expectedValue)
+        {
+            var cultures = new[] { new CultureInfo("en"), new CultureInfo("se") };
+
+            foreach (var item in cultures)
+            {
+                CultureInfo.CurrentCulture = item;
+
+                MudColor color = new(r, g, b, a);
+
+                color.ToColorRgbElements().Should().Be(expectedValue);
+            }
+        }
+
+#pragma warning disable CS1718 // Comparison made to same variable
+
+        [Test]
+        public void Equals_SameType()
+        {
+            MudColor color1 = new(10, 20, 50, 255);
+            MudColor color2 = new(10, 20, 50, 255);
+
+            (color1 == color1).Should().BeTrue();
+            (color2 == color2).Should().BeTrue();
+            (color1 == color2).Should().BeTrue();
+            (color2 == color1).Should().BeTrue();
+
+            color1.Equals(color1).Should().BeTrue();
+            color2.Equals(color2).Should().BeTrue();
+            color1.Equals(color2).Should().BeTrue();
+            color2.Equals(color1).Should().BeTrue();
+        }
+
+        [Test]
+        public void NotEquals_SameType()
+        {
+            MudColor color1 = new(10, 20, 50, 255);
+            MudColor color2 = new(10, 20, 50, 10);
+
+            (color1 != color2).Should().BeTrue();
+            (color2 != color1).Should().BeTrue();
+
+            color1.Equals(color2).Should().BeFalse();
+            color2.Equals(color1).Should().BeFalse();
+        }
+
+#pragma warning restore CS1718 // Comparison made to same variable
+
+        [Test]
+        public void Equals_null()
+        {
+            MudColor color1 = new(10, 20, 50, 255);
+            (color1 == null).Should().BeFalse();
+            color1.Equals(null as MudColor).Should().BeFalse();
+        }
+
+        [Test]
+        public void Equals_DifferntObjectType()
+        {
+            MudColor color1 = new(10, 20, 50, 255);
+            color1.Equals(124).Should().BeFalse();
+        }
+
+        [Test]
+        [TestCase(130, 150, 240, 255, 775)]
+        [TestCase(71, 88, 99, 100, 358)]
+        public void GetHashCode(byte r, byte g, byte b, byte a, int expectedValue)
+        {
+            MudColor color = new(r, g, b, a);
+
+            color.GetHashCode().Should().Be(expectedValue);
         }
     }
 }

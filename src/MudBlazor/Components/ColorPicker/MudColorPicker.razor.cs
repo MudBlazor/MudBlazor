@@ -240,7 +240,7 @@ namespace MudBlazor
         public void SetG(int value) => Value = Value.SetG(value);
 
         /// <summary>
-        /// Set the B (green) component of the color picker
+        /// Set the B (blue) component of the color picker
         /// </summary>
         /// <param name="value">A value between 0 (no blue) or 255 (max blue)</param>
         public void SetB(int value) => Value = Value.SetB(value);
@@ -294,6 +294,6 @@ namespace MudBlazor
             Value = color;
         }
 
-        private string GetSelectorLocation() => $"translate({_selectorX}px, {_selectorY}px);";
+        private string GetSelectorLocation() => $"translate({_selectorX.ToString(CultureInfo.InvariantCulture)}px, {_selectorY.ToString(CultureInfo.InvariantCulture)}px);";
     }
 }
