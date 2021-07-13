@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Extensions;
 using MudBlazor.Utilities;
 
+
 namespace MudBlazor
 {
     public partial class MudAlert : MudComponentBase
@@ -20,20 +21,16 @@ namespace MudBlazor
 
         protected string ClassPosition =>
         new CssBuilder("mud-alert-position")
-            .AddClass($"justify-sm-{ConvertTextPosition(TextPosition).ToDescriptionString()}")
+            .AddClass($"justify-sm-{ConvertAlertTextPosition(AlertTextPosition).ToDescriptionString()}")
         .Build();
 
-        private Position ConvertTextPosition(Position position)
+        private AlertTextPosition ConvertAlertTextPosition(AlertTextPosition alertTextPosition)
         {
-            return position switch
+            return alertTextPosition switch
             {
-                Position.Right => RightToLeft ? Position.Start : Position.End,
-                Position.Bottom => RightToLeft ? Position.Start : Position.End,
-                Position.End => RightToLeft ? Position.Start : Position.End,
-                Position.Left => RightToLeft ? Position.End : Position.Start,
-                Position.Top => RightToLeft ? Position.End : Position.Start,
-                Position.Start => RightToLeft ? Position.End : Position.Start,
-                _ => position
+                AlertTextPosition.Right => RightToLeft ? AlertTextPosition.Start : AlertTextPosition.End,
+                AlertTextPosition.Left => RightToLeft ? AlertTextPosition.End : AlertTextPosition.Start,
+                _ => alertTextPosition
             };
         }
 
@@ -42,8 +39,7 @@ namespace MudBlazor
         /// <summary>
         /// Sets the position of the text to the start (Left in LTR and right in RTL).
         /// </summary>
-        [Parameter] public bool Start { get; set; }
-        [Parameter] public Position TextPosition { get; set; } = Position.Start;
+        [Parameter] public AlertTextPosition AlertTextPosition { get; set; } = AlertTextPosition.Left;
 
         /// <summary>
         /// The callback, when the close button has been clicked.
