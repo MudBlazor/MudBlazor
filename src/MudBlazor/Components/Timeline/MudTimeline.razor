@@ -1,7 +1,7 @@
 ﻿@namespace MudBlazor
 @inherits MudBaseItemsControl<MudTimelineItem>
 
-<div class="@Classnames" style="@Style">
+<div @attributes="UserAttributes" class="@Classnames" style="@Style">
     <CascadingValue Value="this">
         @ChildContent
     </CascadingValue>
