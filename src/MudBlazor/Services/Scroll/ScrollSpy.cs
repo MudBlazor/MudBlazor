@@ -46,6 +46,13 @@ namespace MudBlazor
         event EventHandler<ScrollSectionCenteredEventArgs> ScrollSectionSectionCentered;
 
         /// <summary>
+        /// Does the same as ScrollToSection but without the scrolling. This can be used to initily set an value
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        Task SetSectionAsActive(String id);
+
+        /// <summary>
         /// Get the current position of the centered section
         /// </summary>
         string CenteredSection { get; }
@@ -80,6 +87,13 @@ namespace MudBlazor
             CenteredSection = id;
             await _js.InvokeVoidAsync
             ("mudScrollSpy.scrollToSection", id.Trim('#'));
+        }
+
+        public async Task SetSectionAsActive(string id)
+        {
+            CenteredSection = id;
+            await _js.InvokeVoidAsync
+            ("mudScrollSpy.activateSection", id.Trim('#'));
         }
 
         public async Task ScrollToSection(Uri uri) => await ScrollToSection(uri.Fragment);

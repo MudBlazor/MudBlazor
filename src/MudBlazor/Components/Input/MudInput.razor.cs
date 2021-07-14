@@ -117,7 +117,7 @@ namespace MudBlazor
 
         protected virtual async Task ClearButtonClickHandlerAsync(MouseEventArgs e)
         {
-            await SetTextAsync(string.Empty, true);
+            await SetTextAsync(string.Empty, updateValue: true);
             await OnClearButtonClick.InvokeAsync(e);
         }
     }
