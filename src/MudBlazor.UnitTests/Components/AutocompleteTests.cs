@@ -469,8 +469,8 @@ namespace MudBlazor.UnitTests.Components
             autocompletecomp.SetParam(x => x.CoerceValue, true);
             var autocomplete = autocompletecomp.Instance;
 
-            //No popover, due it's closed
-            comp.Markup.Should().NotContain("mud-popover");
+            //No popover-open, due it's closed
+            comp.Markup.Should().NotContain("mud-popover-open");
 
             // check initial state
             autocomplete.Value.Should().Be("Alabama");
@@ -479,7 +479,7 @@ namespace MudBlazor.UnitTests.Components
             // Clearing it
             await comp.InvokeAsync(() => autocomplete.Clear().Wait());
 
-            comp.WaitForAssertion(() => comp.Markup.Should().NotContain("mud-popover"));
+            comp.WaitForAssertion(() => comp.Markup.Should().NotContain("mud-popover-open"));
             autocomplete.Value.Should().Be("");
             autocomplete.Text.Should().Be("");
 
@@ -494,10 +494,9 @@ namespace MudBlazor.UnitTests.Components
             // Clearing it should close the popup
             await comp.InvokeAsync(() => autocomplete.Clear().Wait());
 
-            comp.WaitForAssertion(() => comp.Markup.Should().NotContain("mud-popover"));
+            comp.WaitForAssertion(() => comp.Markup.Should().NotContain("mud-popover-open"));
             autocomplete.Value.Should().Be("");
             autocomplete.Text.Should().Be("");
-
         }
     }
 }
