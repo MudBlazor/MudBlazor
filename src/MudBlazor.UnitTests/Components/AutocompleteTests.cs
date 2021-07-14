@@ -51,10 +51,11 @@ namespace MudBlazor.UnitTests.Components
 
             // check initial state
             autocomplete.Value.Should().Be("Alabama");
-            autocomplete.Text.Should().Be("Alabama");
+            autocomplete.Text.Should().Be("Alabama"); 
 
             // now let's type a different state to see the popup open
             autocompletecomp.Find("input").Input("Calif");
+
             comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open"));
             Console.WriteLine(comp.Markup);
             var items = comp.FindComponents<MudListItem>().ToArray();
@@ -443,6 +444,7 @@ namespace MudBlazor.UnitTests.Components
             // check initial state
             autocomplete.Value.Should().Be("Alabama");
             autocomplete.Text.Should().Be("Alabama");
+
 
             // now let's type a different state to see the popup open
             autocompletecomp.Find("input").Input("Calif");
