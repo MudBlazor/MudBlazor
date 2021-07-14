@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace MudBlazor.Interop
+﻿namespace MudBlazor.Interop
 {
     public class BoundingClientRect
     {
@@ -11,13 +7,6 @@ namespace MudBlazor.Interop
 
         public double Width { get; set; }
         public double Height { get; set; }
-
-        // computed properties, read only
-        public double X => Left;
-        public double Y => Top;
-        public double Bottom => Top + Height;
-        public double Right => Left + Width;
-
 
         /// <summary>
         /// height of the viewport
@@ -39,6 +28,11 @@ namespace MudBlazor.Interop
         /// </summary>
         public double ScrollY { get; set; }
 
+        // computed properties, read only
+        public double X => Left;
+        public double Y => Top;
+        public double Bottom => Top + Height;
+        public double Right => Left + Width;
 
         public double AbsoluteLeft => Left + ScrollX;
 
@@ -57,7 +51,34 @@ namespace MudBlazor.Interop
 
         public bool IsOutsideRight => Right > WindowWidth;
 
+        public BoundingClientRect Clone()
+        {
+            return new BoundingClientRect
+            {
+                Left = Left,
+                Top = Top,
+                Width = Width,
+                Height = Height,
+                WindowHeight = WindowHeight,
+                WindowWidth = WindowWidth,
+                ScrollX = ScrollX,
+                ScrollY = ScrollY
+            };
+        }
     }
-
+    public static class BoundingClientRectExtensions
+    {
+        public static bool IsEqualTo(this BoundingClientRect sourceRect, BoundingClientRect targetRect)
+        {
+            if (sourceRect is null || targetRect is null) return false;
+            return sourceRect.Top == targetRect.Top
+                && sourceRect.Left == targetRect.Left
+                && sourceRect.Width == targetRect.Width
+                && sourceRect.Height == targetRect.Height
+                && sourceRect.WindowHeight == targetRect.WindowHeight
+                && sourceRect.WindowWidth == targetRect.WindowWidth
+                && sourceRect.ScrollX == targetRect.ScrollX
+                && sourceRect.ScrollY == targetRect.ScrollY;
+        }
+    }
 }
-

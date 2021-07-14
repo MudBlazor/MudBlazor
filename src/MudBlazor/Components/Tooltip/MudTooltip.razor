@@ -7,19 +7,18 @@
     </div>
     @if (!String.IsNullOrEmpty(Text) || TooltipContent != null)
     {
-        <MudPortal Type=@this.GetType() IsRendered=_isVisible >
+        <MudPortal Type=@this.GetType() HasToRender=_isVisible>
 
-            <div class=@Classname >
+            <div class=@Classname>
                 @if (TooltipContent != null)
                 {
-                    @TooltipContent 
+                    @TooltipContent
                 }
                 else
                 {
                     @Text
                 }
             </div>
-
         </MudPortal>
     }
 </div>

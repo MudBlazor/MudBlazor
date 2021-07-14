@@ -7,11 +7,11 @@ namespace MudBlazor
 {
     public partial class MudPortal : MudComponentBase, IDisposable
     {
-        private Guid _id = Guid.NewGuid();
-        private PortalItem _portalItem = new();
+        private readonly Guid _id = Guid.NewGuid();
         private ElementReference _portalRef;
-        private ElementReference _fragmentRef;
+        private bool _isDisposed;
 
+        [CascadingParameter] private bool Fixed { get; set; }
         [Inject] private IPortal Portal { get; set; }
 
         [Inject] public IResizeListenerService WindowResizeListener { get; set; }
@@ -24,74 +24,84 @@ namespace MudBlazor
         /// <summary>
         /// True when the Portal is going to be rendered
         /// </summary>
-        [Parameter] public bool IsRendered { get; set; }
+        [Parameter] public bool HasToRender { get; set; }
 
         /// <summary>
         /// The type of the component to be teleported
         /// </summary>
         [Parameter] public Type Type { get; set; }
 
+        protected override void OnInitialized()
+        {
+            var item = new PortalItem
+            {
+                Id = _id,
+                Fragment = ChildContent,
+                Type = Type,
+                CssPosition = Fixed ? "fixed" : "absolute"
+            };
+            Portal.Add(item);
+            WindowResizeListener.OnResized += OnWindowResize;
+        }
+
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
-            if (IsRendered)
+            var item = Portal.GetItem(_id).Clone();
+
+            if (HasToRender)
             {
-                //if is rendered, set the properties of the PortalItem and add it to the PortalService
-                await ConfigurePortalItem();
-                if (_portalItem.CssPosition != "fixed") WindowResizeListener.OnResized += OnWindowResize;
-                Portal.AddOrUpdate(_portalItem);
+                item.IsRendered = true;
+                //re-render the portal provider
+                Portal.Update(item);
             }
             else
             {
-                //if it's not rendered, detach the listener and remove the element from the PortalService
-                WindowResizeListener.OnResized -= OnWindowResize;
-                Portal.Remove(_portalItem);
+                item.IsRendered = false;
             }
+
+            await ConfigureRects(item);
+            //re-render the portal provider.
+            //If the item has the same properties as before, is not re-rendered
+            Portal.Update(item);
         }
 
-        private async Task ConfigurePortalItem()
+        private async Task ConfigureRects(PortalItem item)
         {
             //get the rects of the anchor and the fragment
-            _portalItem.AnchorRect = await _portalRef.MudGetClientRectFromParentAsync();
-            _portalItem.FragmentRect = await _fragmentRef.MudGetClientRectFromFirstChildAsync();
+            item.AnchorRect = await _portalRef.MudGetClientRectFromParentAsync();
+            item.FragmentRect = await _portalRef.MudGetClientRectFromFirstChildAsync();
 
             //correct the position if it's out of the viewport
-            Repositioning.CorrectAnchorBoundaries(_portalItem);
-
-            //if has an ancestor with position==fixed, then set the position of the element to fixed
-            if (Type != typeof(MudTooltip))
-            {
-                var isFixed = await _portalRef.MudHasFixedAncestorsAsync();
-                if (isFixed) _portalItem.CssPosition = "fixed";
-            }
+            Repositioning.CorrectAnchorBoundaries(item);
 
             //rest
-            _portalItem.Id = _id;
-            _portalItem.Fragment = ChildContent;
-            _portalItem.Type = Type;
         }
 
         /// <summary>
         /// If the window is resized, calculate the new coordinates of the PortalItem
         /// </summary>
-        private void OnWindowResize(object sender, BrowserWindowSize e)
+        private async void OnWindowResize(object sender, BrowserWindowSize e)
         {
-            if (!IsRendered) return;
-            Task.Run(async () =>
-            {
-                await ConfigurePortalItem();
-                Portal.AddOrUpdate(_portalItem);
-            });
+            if (!HasToRender) return;
+            var item = Portal.GetItem(_id).Clone();
+            await ConfigureRects(item);
+            Portal.Update(item);
         }
 
         protected virtual void Dispose(bool disposing)
         {
-            if (!disposing) return;
-            Portal.Remove(_portalItem);
+            if (_isDisposed) return;
+            if (disposing)
+            {
+                WindowResizeListener.OnResized -= OnWindowResize;
+                Portal.Remove(_id);
+            }
+            _isDisposed = true;
         }
 
         public void Dispose()
         {
-            Dispose(true);
+            Dispose(disposing: true);
             GC.SuppressFinalize(this);
         }
     }

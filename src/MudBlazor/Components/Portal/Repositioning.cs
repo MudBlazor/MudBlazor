@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using MudBlazor.Services;
 
 namespace MudBlazor
@@ -17,16 +13,46 @@ namespace MudBlazor
         public static void CorrectAnchorBoundaries(PortalItem portalItem)
         {
             if (portalItem.FragmentRect is null || portalItem.AnchorRect is null) return;
-            
+
+            var rectified = portalItem.AnchorRect.Clone();
+            if (rectified.IsOutsideBottom)
+            {
+                rectified.Top =
+                    portalItem.AnchorRect.WindowHeight - portalItem.AnchorRect.Height;
+                if (portalItem.FragmentRect.Top > portalItem.AnchorRect.Top) rectified.Top -= portalItem.FragmentRect.Height;
+            }
+
+            if (rectified.IsOutsideTop)
+            {
+                rectified.Top = 0;
+                if (portalItem.FragmentRect.Top < portalItem.AnchorRect.Top) rectified.Top += portalItem.FragmentRect.Height + portalItem.AnchorRect.Height;
+            }
+
+            if (rectified.IsOutsideLeft)
+            {
+                rectified.Left = 0;
+            }
+
+            if (rectified.IsOutsideRight)
+            {
+                rectified.Left =
+                    portalItem.AnchorRect.WindowWidth
+                    - portalItem.AnchorRect.Width - portalItem.FragmentRect.Width;
+            }
+            if (portalItem.AnchorRect.IsOutsideBottom || portalItem.AnchorRect.IsOutsideTop || portalItem.AnchorRect.IsOutsideLeft || portalItem.AnchorRect.IsOutsideRight)
+            {
+                portalItem.AnchorRect = rectified;
+                return;
+            }
+
             var FragmentIsAboveorBelowAnchor
                 = portalItem.FragmentRect.Top > portalItem.AnchorRect.Bottom
                 || portalItem.FragmentRect.Bottom < portalItem.AnchorRect.Top;
 
-
-            // comes out at the bottom 
+            // comes out at the bottom
             if (portalItem.FragmentRect.IsOutsideBottom)
             {
-                portalItem.AnchorRect.Top -=
+                rectified.Top -=
                    2 * (portalItem.FragmentRect.Top - portalItem.AnchorRect.Bottom)
                     + portalItem.AnchorRect.Height
                     + portalItem.FragmentRect.Height;
@@ -35,7 +61,7 @@ namespace MudBlazor
             // comes out at the top
             if (portalItem.FragmentRect.IsOutsideTop)
             {
-                portalItem.AnchorRect.Top +=
+                rectified.Top +=
                     2 * (Math.Abs(portalItem.AnchorRect.Top - portalItem.FragmentRect.Bottom))
                   + portalItem.AnchorRect.Height
                   + portalItem.FragmentRect.Height;
@@ -44,7 +70,7 @@ namespace MudBlazor
             // comes out at the left
             if (portalItem.FragmentRect.IsOutsideLeft)
             {
-                portalItem.AnchorRect.Left +=
+                rectified.Left +=
                      FragmentIsAboveorBelowAnchor
                         ? portalItem.AnchorRect.Left - portalItem.FragmentRect.Left
                         : 2 * (Math.Abs(portalItem.AnchorRect.Left - portalItem.FragmentRect.Right))
@@ -55,14 +81,17 @@ namespace MudBlazor
             // comes out at the right
             if (portalItem.FragmentRect.IsOutsideRight)
             {
-                portalItem.AnchorRect.Left -=
+                rectified.Left -=
                     FragmentIsAboveorBelowAnchor
                     ? portalItem.FragmentRect.Right - portalItem.AnchorRect.Right
                     : 2 * (Math.Abs(portalItem.FragmentRect.Left - portalItem.AnchorRect.Right))
                         + portalItem.FragmentRect.Width
                         + portalItem.AnchorRect.Width;
             }
-        }
 
+            //in case that due the screen is so small that the menu can be outside from both sides
+            // so the correction didn't work. We just put the fragment inside the screen
+            portalItem.AnchorRect = rectified;
+        }
     }
 }

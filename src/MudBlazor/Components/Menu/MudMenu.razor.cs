@@ -20,7 +20,7 @@ namespace MudBlazor
        .Build();
 
         private bool _isOpen;
-       
+
         [Parameter] public string Label { get; set; }
 
         /// <summary>
@@ -57,7 +57,6 @@ namespace MudBlazor
         /// The button variant to use.
         /// </summary>
         [Parameter] public Variant Variant { get; set; } = Variant.Text;
-
 
         /// <summary>
         /// If true, compact vertical padding will be applied to all menu items.
@@ -124,7 +123,7 @@ namespace MudBlazor
             PopoverStyle = null;
             StateHasChanged();
         }
-        
+
         public void OpenMenu(EventArgs args)
         {
             if (Disabled)
@@ -164,6 +163,5 @@ namespace MudBlazor
         {
             ToggleMenu(args);
         }
-
     }
 }

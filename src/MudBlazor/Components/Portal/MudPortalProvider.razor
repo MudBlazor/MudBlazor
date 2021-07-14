@@ -1,9 +1,14 @@
 ﻿@namespace MudBlazor
-<div id="mud-portal-container" data-items=@(Portal.Items.Count()) >
-
-    @foreach (var (key, item) in Portal.Items)
+<div id="mud-portal-container"  data-items=@(Portal.Items.Count)>
+    @foreach (var  item in Portal.Items)
     {
-        <MudPortalItem NeedsToBeRendered="@(_itemToRender == item)"  @key=@key Item="@item" />
+      <div style=@AnchorStyle(item) 
+           class=@AnchorClass
+           @key=@item.Id 
+           id="@item.Id">
+
+          @item.Fragment
+
+      </div>
     }
 </div>
-

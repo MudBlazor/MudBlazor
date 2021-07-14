@@ -6,7 +6,7 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    public partial class MudTooltip : MudComponentBase
+    public partial class MudTooltip : MudComponentBase, IDisposable
     {
         protected string ContainerClass => new CssBuilder("mud-tooltip-root")
             .AddClass("mud-tooltip-inline", Inline)
@@ -17,10 +17,9 @@ namespace MudBlazor
             .AddClass(Class)
             .Build();
 
-        
         [CascadingParameter]
         public bool RightToLeft { get; set; }
-        
+
         /// <summary>
         /// Sets the text to be displayed inside the tooltip.
         /// </summary>
@@ -73,14 +72,27 @@ namespace MudBlazor
         [Parameter] public Boolean Inline { get; set; } = true;
 
         private bool _isVisible;
-        public void HandleMouseOver()=> _isVisible = true;
+        private bool _disposed;
+
+        public void HandleMouseOver() => _isVisible = true;
         private void HandleMouseOut() => _isVisible = false;
-
-
 
         protected string GetTimeDelay()
         {
             return $"transition-delay: {Delay.ToString(CultureInfo.InvariantCulture)}ms;{Style}";
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (_disposed) return;
+            if (disposing) _isVisible = false;
+            _disposed = true;
+        }
+
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
         }
     }
 }
