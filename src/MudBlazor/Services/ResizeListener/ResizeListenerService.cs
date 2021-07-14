@@ -72,11 +72,11 @@ namespace MudBlazor.Services
         }
 #nullable disable
 
-        private void Start()
+        private async void Start()
         {
             if (_onResized == null || _onBreakpointChanged == null)
             {
-                _ = Task.Run(async () => await _jsRuntime.InvokeVoidAsync($"mudResizeListener.listenForResize", _dotNetRef, _options));
+                await _jsRuntime.InvokeVoidAsync($"mudResizeListener.listenForResize", _dotNetRef, _options);
             }
         }
 

@@ -52,12 +52,9 @@ namespace MudBlazor.UnitTests.Components
             // check initial state
             autocomplete.Value.Should().Be("Alabama");
             autocomplete.Text.Should().Be("Alabama");
-            await Task.Delay(100);
 
             // now let's type a different state to see the popup open
             autocompletecomp.Find("input").Input("Calif");
-            await Task.Delay(100);
-
             comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open"));
             Console.WriteLine(comp.Markup);
             var items = comp.FindComponents<MudListItem>().ToArray();
@@ -387,7 +384,6 @@ namespace MudBlazor.UnitTests.Components
 
             // Lets type something to cause it to open
             autocompletecomp.Find("input").Input("Calif");
-            await Task.Delay(100);
             comp.WaitForAssertion(() => autocomplete.IsOpen.Should().BeTrue());
 
             // Lets call blur on the input and confirm that it closed
@@ -414,7 +410,6 @@ namespace MudBlazor.UnitTests.Components
 
             // Lets type something to cause it to open
             autocompletecomp.Find("input").Input("Calif");
-            await Task.Delay(100);
             comp.WaitForAssertion(() => autocomplete.IsOpen.Should().BeTrue());
 
             // Lets call blur on the input and confirm that it closed
@@ -448,11 +443,9 @@ namespace MudBlazor.UnitTests.Components
             // check initial state
             autocomplete.Value.Should().Be("Alabama");
             autocomplete.Text.Should().Be("Alabama");
-            await Task.Delay(100);
 
             // now let's type a different state to see the popup open
             autocompletecomp.Find("input").Input("Calif");
-            await Task.Delay(100);
             comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open"));
             var items = comp.FindComponents<MudListItem>().ToArray();
             items.Length.Should().Be(1);
@@ -460,8 +453,51 @@ namespace MudBlazor.UnitTests.Components
 
             // now, we blur the input and assert that the popover is still open.
             autocompletecomp.Find("input").Blur();
-            await Task.Delay(100);
             comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open"));
+        }
+
+        /// <summary>
+        /// When calling Clear() the popup should not open and Value and Text should be cleared.
+        /// </summary>
+        [Test]
+        public async Task Autocomplete_Should_CloseOnClear()
+        {
+            var comp = ctx.RenderComponent<AutocompleteTest1>();
+            Console.WriteLine(comp.Markup);
+            // select elements needed for the test
+            var autocompletecomp = comp.FindComponent<MudAutocomplete<string>>();
+            autocompletecomp.SetParam(x => x.CoerceValue, true);
+            var autocomplete = autocompletecomp.Instance;
+
+            //No popover, due it's closed
+            comp.Markup.Should().NotContain("mud-popover");
+
+            // check initial state
+            autocomplete.Value.Should().Be("Alabama");
+            autocomplete.Text.Should().Be("Alabama");
+
+            // Clearing it
+            await comp.InvokeAsync(() => autocomplete.Clear().Wait());
+
+            comp.WaitForAssertion(() => comp.Markup.Should().NotContain("mud-popover"));
+            autocomplete.Value.Should().Be("");
+            autocomplete.Text.Should().Be("");
+
+            // now let's type a different state to see the popup open
+            autocompletecomp.Find("input").Input("Calif");
+            comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open"));
+            Console.WriteLine(comp.Markup);
+            var items = comp.FindComponents<MudListItem>().ToArray();
+            items.Length.Should().Be(1);
+            items.First().Markup.Should().Contain("California");
+
+            // Clearing it should close the popup
+            await comp.InvokeAsync(() => autocomplete.Clear().Wait());
+
+            comp.WaitForAssertion(() => comp.Markup.Should().NotContain("mud-popover"));
+            autocomplete.Value.Should().Be("");
+            autocomplete.Text.Should().Be("");
+
         }
     }
 }
