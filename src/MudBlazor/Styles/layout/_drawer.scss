@@ -62,6 +62,7 @@
             }
 
             &.mud-drawer--closed {
+                box-shadow: none;
                 left: calc(-1 * var(--mud-drawer-width, var(--mud-drawer-width-left)));
 
                 &:not(.mud-drawer--initial) {
@@ -83,6 +84,7 @@
             }
 
             &.mud-drawer--closed {
+                box-shadow: none;
                 right: calc(-1 * var(--mud-drawer-width, var(--mud-drawer-width-right)));
 
                 &:not(.mud-drawer--initial) {
