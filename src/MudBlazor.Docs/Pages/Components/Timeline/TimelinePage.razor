@@ -1,16 +1,25 @@
 ﻿@page "/components/timeline"
 
 <DocsPage>
-    <DocsPageHeader Title="Timeline" SubTitle="A short description of the component." />
+    <DocsPageHeader Title="Timeline" SubTitle="The timeline displays items in chronological order." />
     <DocsPageContent>
         <DocsPageSection>
-            <SectionHeader Title="">
+            <SectionHeader Title="Basic">
                 <Description></Description>
             </SectionHeader>
             <SectionContent Outlined="true" FullWidth="true">
-                <BasicTimelineExample />
+                <TimelineBasicExample />
             </SectionContent>
-            <SectionSource Code="BasicTimelineExample" GitHubFolderName="timeline" />
+            <SectionSource Code="TimelineBasicExample" GitHubFolderName="timeline" />
+        </DocsPageSection>
+        <DocsPageSection>
+            <SectionHeader Title="Mode">
+                <Description></Description>
+            </SectionHeader>
+            <SectionContent Outlined="true" FullWidth="true">
+                <TimelineModeExample />
+            </SectionContent>
+            <SectionSource Code="TimelineBasicExample" GitHubFolderName="timeline" />
         </DocsPageSection>
     </DocsPageContent>
 </DocsPage>
