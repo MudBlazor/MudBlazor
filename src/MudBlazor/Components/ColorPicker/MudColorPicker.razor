@@ -37,7 +37,7 @@
                         <div class="mud-picker-color-controls-row">
                             @if (!DisablePreview)
                             {
-                                <div class="mud-picker-color-dot mud-ripple" @onclick="ToggleCollection">
+                                <div class="mud-picker-color-dot mud-picker-color-dot-current mud-ripple" @onclick="ToggleCollection">
                                     <div class="mud-picker-color-fill" style="@($"background: {_color.ToRGBA()};")"></div>
                                 </div>
                             }
@@ -54,11 +54,11 @@
                             @if (_collectionOpen)
                             {
                                 <div class="mud-picker-color-collection">
-                                    <div class="mud-pricker-color-collection-color mud-secondary" @onclick="ToggleCollection"></div>
-                                    <div class="mud-pricker-color-collection-color mud-info" @onclick="ToggleCollection"></div>
-                                    <div class="mud-pricker-color-collection-color mud-success" @onclick="ToggleCollection"></div>
-                                    <div class="mud-pricker-color-collection-color mud-warning" @onclick="ToggleCollection"></div>
-                                    <div class="mud-pricker-color-collection-color mud-error" @onclick="ToggleCollection"></div>
+                                    <div class="mud-picker-color-dot mud-secondary" @onclick="ToggleCollection"></div>
+                                    <div class="mud-picker-color-dot mud-info" @onclick="ToggleCollection"></div>
+                                    <div class="mud-picker-color-dot mud-success" @onclick="ToggleCollection"></div>
+                                    <div class="mud-picker-color-dot mud-warning" @onclick="ToggleCollection"></div>
+                                    <div class="mud-picker-color-dot mud-error" @onclick="ToggleCollection"></div>
                                 </div>
                             }
                         </div>
