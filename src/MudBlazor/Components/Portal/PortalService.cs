@@ -1,15 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace MudBlazor.Services
 {
     internal interface IPortal
     {
-        Dictionary<Guid, PortalItem> Items { get; }
+        IList<PortalItem> Items { get; }
         PortalItem GetItem(Guid id);
-        void AddOrUpdate(PortalItem item);
-        void Remove(PortalItem item);
-
+        void Add(PortalItem item);
+        void Update(PortalItem item);
+        void Remove(Guid id);
         event EventHandler<PortalEventsArg> OnChange;
     }
     internal class Portal : IPortal, IDisposable
@@ -24,37 +25,62 @@ namespace MudBlazor.Services
         public event EventHandler<PortalEventsArg> OnChange;
 
         /// <summary>
-        /// Adds a PortalItem. If the item already exists, then updates it
+        /// Adds a PortalItem in case it doesn't exist
         /// </summary>
         /// <param name="newItem"></param>
-        public void AddOrUpdate(PortalItem newItem)
+        public void Add(PortalItem newItem)
         {
             lock (_lockObj)
             {
                 _items.TryGetValue(newItem.Id, out var item);
 
                 if (item == null)
+                {
                     _items.Add(newItem.Id, newItem);
-                else
-                    item.AnchorRect = newItem.AnchorRect;
+                    OnChange?.Invoke(this, new PortalEventsArg(newItem));
+                }
             }
+        }
 
-            OnChange?.Invoke(this, new PortalEventsArg(newItem));
+        /// <summary>
+        /// Updates the PortalItem
+        /// </summary>
+        /// <param name="newItem"></param>
+        public void Update(PortalItem newItem)
+        {
+            lock (_lockObj)
+            {
+                _items.TryGetValue(newItem.Id, out var item);
+
+                if (item == null)
+                {
+                    throw new Exception("Portal: You can't update a non existing item");
+                }
+                else
+                {
+                    item = newItem.Clone();
+                    _items[item.Id] = item;
+                    OnChange?.Invoke(this, new PortalEventsArg(item));
+                }
+            }
         }
 
         /// <summary>
         /// Removes a PortalItem
         /// </summary>
-        /// <param name="item"></param>
-        public void Remove(PortalItem item)
+        /// <param name="id"></param>
+        public void Remove(Guid id)
         {
             if (_items.Count == 0) return;
+
             lock (_lockObj)
             {
-                _items.Remove(item.Id);
+                if (_items.TryGetValue(id, out var item))
+                {
+                    _items.Remove(id);
+                    OnChange?.Invoke(this, new PortalEventsArg(item));
+                }
             }
-
-            OnChange?.Invoke(this, new PortalEventsArg(item));
         }
 
         /// <summary>
@@ -64,20 +90,21 @@ namespace MudBlazor.Services
         {
             lock (_lockObj)
             {
-                return _items[id];
+                _items.TryGetValue(id, out var item);
+                return item;
             }
         }
 
         /// <summary>
-        /// The dictionary of PortalItems that the Portal contains
+        /// The List of PortalItems that the Portal contains
         /// </summary>
-        public Dictionary<Guid, PortalItem> Items
+        public IList<PortalItem> Items
         {
             get
             {
                 lock (_lockObj)
                 {
-                    return _items;
+                    return _items.Values.ToList();
                 }
             }
         }

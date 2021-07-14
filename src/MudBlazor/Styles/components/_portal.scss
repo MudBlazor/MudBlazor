@@ -2,26 +2,17 @@
     pointer-events: none;
     width: 100%;
     height: 100%;
-    top: 0;
-    left: 0;
     position: absolute;
-    visibility:hidden;
-    opacity:0;
-    overflow:hidden;
+    visibility: hidden;
+    opacity: 0;
+    overflow: hidden;
 }
 
 .portal-anchor {
     position: absolute;
-    pointer-events:none;
+    pointer-events: none;
 
     & * {
         pointer-events: all;
     }
-}
-.portal-anchor-hoverable:hover>.mud-popover{
-    visibility:visible;
-    opacity:1;
-    z-index: var(--mud-zindex-popover);
-    pointer-events:all;
-   
 }

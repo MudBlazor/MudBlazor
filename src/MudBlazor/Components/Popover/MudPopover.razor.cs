@@ -2,7 +2,6 @@
 using MudBlazor.Extensions;
 using MudBlazor.Utilities;
 
-
 namespace MudBlazor
 {
     public partial class MudPopover : MudComponentBase
@@ -34,9 +33,9 @@ namespace MudBlazor
                 _ => direction
             };
         }
-        
-        [CascadingParameter] public  bool RightToLeft { get; set; }
-        
+
+        [CascadingParameter] public bool RightToLeft { get; set; }
+
         /// <summary>
         /// The higher the number, the heavier the drop-shadow. 0 for no shadow set to 8 by default.
         /// </summary>
@@ -76,10 +75,5 @@ namespace MudBlazor
         /// Child content of the component.
         /// </summary>
         [Parameter] public RenderFragment ChildContent { get; set; }
-
-        /// <summary>
-        /// If true, the Portal is pre-rendered. 
-        /// </summary>
-        [Parameter] public bool IsPreRendered { get; set; }
     }
 }
