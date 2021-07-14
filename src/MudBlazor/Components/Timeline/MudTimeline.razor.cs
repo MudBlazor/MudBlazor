@@ -10,7 +10,7 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    public partial class MudTimeline : MudBaseItemsControl<MudTimelineItem>, IAsyncDisposable
+    public partial class MudTimeline : MudBaseItemsControl<MudTimelineItem>
 
     {
         protected string Classnames =>
@@ -24,20 +24,6 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public TimelineMode TimelineMode { get; set; } = TimelineMode.Default;
 
-        public async ValueTask DisposeAsync()
-        {
-            await DisposeAsync(true);
-            GC.SuppressFinalize(this);
-        }
-
-        protected virtual async ValueTask DisposeAsync(bool disposing)
-        {
-            if (disposing)
-            {
-                //TODO
-                await Task.Delay(1);
-            }
-        }
 
     }
 }
