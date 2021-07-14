@@ -1,3 +1,191 @@
 ﻿.mud-timeline {
+    padding-top: 24px;
+    position: relative;
 
+    &::before {
+        top: 0;
+        bottom: 0;
+        content: "";
+        height: 100%;
+        position: absolute;
+        width: 2px;
+        background: var(--mud-palette-divider);
+    }
+
+    .mud-timeline-item {
+        display: flex;
+        padding-bottom: 24px;
+
+        .mud-timeline-item-content {
+            position: relative;
+            height: 100%;
+            flex: 1 1 auto;
+            max-width: calc(50% - 48px);
+        }
+
+        .mud-timeline-item-divider {
+            position: relative;
+            min-width: 96px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            .mud-timeline-item-dot {
+                background: var(--mud-palette-surface);
+                border-radius: 50%;
+                left: calc(50% - 19px);
+
+
+                &.mud-timeline-dot-size-small {
+                    width: 24px;
+                    height: 24px;
+
+                    .mud-timeline-item-dot-inner {
+                        height: 18px;
+                        width: 18px;
+                        margin: 3px;
+                    }
+                }
+
+                &.mud-timeline-dot-size-medium {
+                    width: 38px;
+                    height: 38px;
+
+                    .mud-timeline-item-dot-inner {
+                        height: 30px;
+                        width: 30px;
+                        margin: 4px;
+                    }
+                }
+
+                &.mud-timeline-dot-size-large {
+                    width: 52px;
+                    height: 52px;
+
+                    .mud-timeline-item-dot-inner {
+                        height: 42px;
+                        width: 42px;
+                        margin: 5px;
+                    }
+                }
+
+                .mud-timeline-item-dot-inner {
+                    border-radius: 50%;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+
+                    &.mud-timeline-dot-fill {
+                        height: inherit;
+                        width: inherit;
+                        margin: 0px;
+                    }
+                }
+            }
+        }
+
+        .mud-timeline-item-opposite {
+            flex: 1 1 auto;
+            align-self: center;
+            max-width: calc(50% - 48px);
+        }
+    }
+
+    &.mud-timeline-mode {
+        &-default {
+            &::before {
+                left: auto;
+                right: calc(50% - 1px);
+            }
+
+            .mud-timeline-item {
+                &:nth-child(odd) {
+                    flex-direction: row-reverse;
+
+                    .mud-timeline-item-opposite {
+                        text-align: end;
+                    }
+                }
+
+                &:nth-child(2n) {
+                    flex-direction: row;
+
+                    .mud-timeline-item-opposite {
+                        text-align: start;
+                    }
+                }
+
+                .mud-timeline-item-content {
+                    max-width: calc(50% - 48px);
+                }
+            }
+        }
+
+        &-reverse {
+            &::before {
+                left: auto;
+                right: calc(50% - 1px);
+            }
+
+            .mud-timeline-item {
+                &:nth-child(odd) {
+                    flex-direction: row;
+
+                    .mud-timeline-item-opposite {
+                        text-align: start;
+                    }
+                }
+
+                &:nth-child(2n) {
+                    flex-direction: row-reverse;
+
+                    .mud-timeline-item-opposite {
+                        text-align: end;
+                    }
+                }
+
+                .mud-timeline-item-content {
+                    max-width: calc(50% - 48px);
+                }
+            }
+        }
+    }
+
+    &.mud-timeline-mode-left {
+        &::before {
+            right: auto;
+            left: 47px;
+        }
+
+        .mud-timeline-item {
+            flex-direction: row-reverse;
+
+            .mud-timeline-item-content {
+                max-width: calc(100% - 96px);
+            }
+
+            .mud-timeline-item-opposite {
+                display: none;
+            }
+        }
+    }
+
+    &.mud-timeline-mode-right {
+        &::before {
+            right: 47px;
+            left: auto;
+        }
+
+        .mud-timeline-item {
+            flex-direction: row;
+
+            .mud-timeline-item-content {
+                max-width: calc(100% - 96px);
+            }
+
+            .mud-timeline-item-opposite {
+                display: none;
+            }
+        }
+    }
 }
