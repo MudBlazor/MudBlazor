@@ -1,14 +1,25 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
+<MudSelect T="TimelineMode" @bind-Value="@mode" HelperText="TimelineMode">
+    <MudSelectItem T="TimelineMode" Value="TimelineMode.Default">Default</MudSelectItem>
+    <MudSelectItem T="TimelineMode" Value="TimelineMode.Left">Left</MudSelectItem>
+    <MudSelectItem T="TimelineMode" Value="TimelineMode.Reverse">Reverse</MudSelectItem>
+    <MudSelectItem T="TimelineMode" Value="TimelineMode.Right">Right</MudSelectItem>
+</MudSelect>
 
-<MudTimeline TimelineMode="TimelineMode.Left">
-    <MudTimelineItem>
-        <MudText>Timeline Mode Left</MudText>
+<MudTimeline TimelineMode="@mode">
+    <MudTimelineItem Color="Color.Success" Size="Size.Small" Variant="Variant.Filled">
+        <MudAlert Severity="Severity.Success">The reactor is running at optimum temperature</MudAlert>
+    </MudTimelineItem>
+    <MudTimelineItem Color="Color.Warning" Size="Size.Small" Variant="Variant.Filled">
+        <MudAlert Severity="Severity.Warning">The reactor temperature exceeds the optimal range</MudAlert>
+    </MudTimelineItem>
+    <MudTimelineItem Color="Color.Error" Size="Size.Small" Variant="Variant.Filled">
+        <MudAlert Severity="Severity.Error">Meltdown is imminent</MudAlert>
     </MudTimelineItem>
 </MudTimeline>
 
-<MudTimeline TimelineMode="TimelineMode.Right">
-    <MudTimelineItem>
-        <MudText Align="Align.End">Timeline Mode Right</MudText>
-    </MudTimelineItem>
-</MudTimeline>
+
+@code {
+    private TimelineMode mode { get; set; } = TimelineMode.Left;
+}
