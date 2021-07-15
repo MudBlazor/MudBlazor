@@ -127,15 +127,19 @@ namespace MudBlazor
                 _ => ColorPickerMode.RGB,
             };
 
-        private void UpdateBaseColorSlider(int value) => Value = Value.SetH(MathExtensions.Map(0, 6 * 255, 0, 360, value));
+        private void UpdateBaseColorSlider(int value)
+        {
+            var diff = Math.Abs(value - (int)Value.H);
+            if(diff == 0) { return; }
+
+            Value = Value.SetH(value);
+        }
 
         private void UpdateBaseColor()
         {
-            var hueValue = GetSliderHueValue();
-
-            int index = hueValue / 255;
-            int value = hueValue - (index * 255);
-
+            var index = (int)_color.H / 60;
+            int valueInDeg = (int)_color.H - (index * 60);
+            int value = (int)(MathExtensions.Map(0, 60, 0, 255, valueInDeg)); 
             var section = _rgbToHueMapper[index];
 
             _baseColor = new(section.r(value), section.g(value), section.b(value), 255);
@@ -193,6 +197,7 @@ namespace MudBlazor
         private void OnMouseDown(MouseEventArgs e)
         {
             _isMouseDown = true;
+            Console.WriteLine("MouseDown");
         }
 
         private void OnMouseUp(MouseEventArgs e)
@@ -202,8 +207,7 @@ namespace MudBlazor
 
         private void OnMouseClick(MouseEventArgs e)
         {
-            _selectorX = e.OffsetX;
-            _selectorY = e.OffsetY;
+            SetSelectorBasedOnMouseEvents(e);
             UpdateColorBaseOnSelection();
         }
 
@@ -211,8 +215,7 @@ namespace MudBlazor
         {
             if (_isMouseDown)
             {
-                _selectorX = e.OffsetX;
-                _selectorY = e.OffsetY;
+                SetSelectorBasedOnMouseEvents(e);
                 UpdateColorBaseOnSelection();
             }
         }
@@ -221,10 +224,15 @@ namespace MudBlazor
         {
             if (_isMouseDown)
             {
-                _selectorX = e.OffsetX;
-                _selectorY = e.OffsetY;
+                SetSelectorBasedOnMouseEvents(e);
                 UpdateColorBaseOnSelection();
             }
+        }
+
+        private void SetSelectorBasedOnMouseEvents(MouseEventArgs e)
+        {
+            _selectorX = e.OffsetX.EnsureRange(_maxX);
+            _selectorY = e.OffsetY.EnsureRange(_maxY);
         }
 
         /// <summary>

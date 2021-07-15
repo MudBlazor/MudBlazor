@@ -4,6 +4,7 @@
 
 using System;
 using System.Globalization;
+using MudBlazor.Extensions;
 
 namespace MudBlazor.Utilities
 {
@@ -31,7 +32,7 @@ namespace MudBlazor.Utilities
         #region Constructor
 
         public MudColor(double h, double s, double l, double a)
-         : this(h, s, l, (byte)Math.Max(0, Math.Min(255, a * 255.0)))
+         : this(h, s, l, (int)((a * 255.0).EnsureRange(255)))
         {
 
         }
@@ -40,10 +41,10 @@ namespace MudBlazor.Utilities
         {
             _valuesAsByte = new byte[4];
 
-            h = Math.Max(0D, Math.Min(360D, h));
-            s = Math.Max(0D, Math.Min(1D, s));
-            l = Math.Max(0D, Math.Min(1D, l));
-            a = Math.Max(0, Math.Min(255, a));
+            h = Math.Round(h.EnsureRange(360), 0);
+            s = Math.Round(s.EnsureRange(1), 2);
+            l = Math.Round(l.EnsureRange(1), 2);
+            a = a.EnsureRange(255);
 
             // achromatic argb (gray scale)
             if (Math.Abs(s) < EPSILON)
@@ -84,15 +85,15 @@ namespace MudBlazor.Utilities
                         T[i] = p;
                 }
 
-                _valuesAsByte[0] = (byte)Math.Max(0, Math.Min(255, (int)Math.Round(T[0] * 255D)));
-                _valuesAsByte[1] = (byte)Math.Max(0, Math.Min(255, (int)Math.Round(T[1] * 255D)));
-                _valuesAsByte[2] = (byte)Math.Max(0, Math.Min(255, (int)Math.Round(T[2] * 255D)));
+                _valuesAsByte[0] = ((int)Math.Round(T[0] * 255D)).EnsureRangeToByte();
+                _valuesAsByte[1] = ((int)Math.Round(T[1] * 255D)).EnsureRangeToByte();
+                _valuesAsByte[2] = ((int)Math.Round(T[2] * 255D)).EnsureRangeToByte();
                 _valuesAsByte[3] = (byte)a;
             }
 
-            H = h;
-            S = s;
-            L = l;
+            H = Math.Round(h, 0);
+            S = Math.Round(s, 2);
+            L = Math.Round(l, 2);
         }
 
         public MudColor(byte r, byte g, byte b, byte a)
@@ -108,13 +109,13 @@ namespace MudBlazor.Utilities
         }
 
         public MudColor(int r, int g, int b, double alpha) :
-         this(r, g, b, (byte)Math.Max(0, Math.Min(255, alpha * 255.0)))
+         this(r, g, b, (byte)((alpha * 255.0).EnsureRange(255)))
         {
 
         }
 
         public MudColor(int r, int g, int b, int alpha) :
-            this((byte)Math.Max(0, Math.Min(255, r)), (byte)Math.Max(0, Math.Min(255, g)), (byte)Math.Max(0, Math.Min(255, b)), (byte)Math.Max(0, Math.Min(255, alpha)))
+            this((byte)r.EnsureRange(255), (byte)g.EnsureRange(255), (byte)b.EnsureRange(255), (byte)alpha.EnsureRange(255))
         {
 
         }
@@ -236,9 +237,9 @@ namespace MudBlazor.Utilities
             else if (l > .5D)
                 s = (max - min) / (2D - (max + min)); //(max-min > 0)?
 
-            H = Math.Max(0D, Math.Min(360D, h));
-            S = Math.Max(0D, Math.Min(1D, s));
-            L = Math.Max(0D, Math.Min(1D, l));
+            H = Math.Round(h.EnsureRange(360), 0);
+            S = Math.Round(s.EnsureRange(1), 2);
+            L = Math.Round(l.EnsureRange(1), 2);
         }
 
         public MudColor SetH(double h) => new(h, S, L, A);

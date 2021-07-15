@@ -198,15 +198,15 @@ namespace MudBlazor.UnitTests.Utilities
         [Test]
         public void FromHLS_AlphaAsInt()
         {
-            MudColor color = new(113.0, 0.6, 0.29, 115);
+            MudColor color = new(113.2424, 0.624, 0.2922525, 115);
 
             color.H.Should().Be(113.0);
-            color.S.Should().Be(0.6);
+            color.S.Should().Be(0.62);
             color.L.Should().Be(0.29);
 
-            color.R.Should().Be(40);
-            color.G.Should().Be(118);
-            color.B.Should().Be(30);
+            color.R.Should().Be(39);
+            color.G.Should().Be(120);
+            color.B.Should().Be(28);
 
             color.A.Should().Be(115);
         }
@@ -271,9 +271,9 @@ namespace MudBlazor.UnitTests.Utilities
             color.B.Should().Be(b);
             color.A.Should().Be(a);
 
-            Math.Round(color.H, 0).Should().Be(expectedH);
-            Math.Round(color.S, 2).Should().Be(expectedS);
-            Math.Round(color.L, 2).Should().Be(expectedL);
+            color.H.Should().Be(expectedH);
+            color.S.Should().Be(expectedS);
+            color.L.Should().Be(expectedL);
         }
 
         [Test]
@@ -414,14 +414,14 @@ namespace MudBlazor.UnitTests.Utilities
         public void ColorRgbLighten()
         {
             MudColor color = new(140.0, 0.2, 0.5, (byte)170);
-            color.ColorRgbLighten().L.Should().Be(0.5 + 0.075);
+            color.ColorRgbLighten().L.Should().Be(0.57);
         }
 
         [Test]
         public void ColorRgbDarken()
         {
             MudColor color = new(140.0, 0.2, 0.5, (byte)170);
-            color.ColorRgbDarken().L.Should().Be(0.5 - 0.075);
+            color.ColorRgbDarken().L.Should().Be(0.42);
         }
 
         [Test]
