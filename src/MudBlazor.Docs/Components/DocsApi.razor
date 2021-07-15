@@ -10,7 +10,8 @@
 
 
 <DocsPage MaxWidth="MaxWidth.Large">
-    <DocsPageHeader ComponentLink="@ApiLink.GetComponentLinkFor(Type)" Title="@($"{Type.ConvertToCSharpSource()} API")" />
+    <DocsPageHeader ComponentLink="@ApiLink.GetComponentLinkFor(Type)" Title="@($"{Type.ConvertToCSharpSource()} API")">
+    </DocsPageHeader>
     <DocsPageContent>
 
         @if (Properties != null && Properties.Count() > 0)

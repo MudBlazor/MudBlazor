@@ -27,10 +27,6 @@
 <div class="docs-page-header mb-12">
     <MudText Typo="@Typo.h3">@Title</MudText>
     <MudText>@GetSubTitle() @Description</MudText>
-    @if (IsApiPage && !string.IsNullOrEmpty(ComponentLink))
-    {
-        <MudText Typo="@Typo.body2">Check out the <MudLink Href="@ComponentLink">Examples</MudLink> for this component.</MudText>
-    }
 </div>
 <div id="mudads">
     @if (RenderAds)
@@ -60,6 +56,21 @@
                         </li>
                     }
                 }
+            </ul>
+        </div>
+    </DocsPageSection>
+}
+@if (IsApiPage && !string.IsNullOrEmpty(ComponentLink))
+{
+    <DocsPageSection api-link-section>
+        <SectionHeader Title="Pages" />
+        <div class="docs-page-apilinks">
+            <ul class="my-2">
+                <li>
+                    <MudLink Href="@ComponentLink">
+                        <CodeInline>@($"<ComponentName or if child component Parents component name + link>")</CodeInline>
+                    </MudLink>
+                </li>
             </ul>
         </div>
     </DocsPageSection>
