@@ -125,10 +125,10 @@
         var currentComp = ApiLink.GetTypeFromComponentLink(GetComponentName());
         IEnumerable<MudComponent> comps = MenuService.Components;
         var currentStringComp = currentComp;
-        var parentCheck = comps.FirstOrDefault(c => c.Component.FullName == currentStringComp.FullName && c.Component.FullName != null);
+        var parentCheck = comps.FirstOrDefault(c => c?.Component?.FullName == currentStringComp.FullName && c?.Component?.FullName != null);
         if(parentCheck != null)
         {
-            var test = MenuService.Components.FirstOrDefault(p => p.ChildComponents.Any(c => c.Name == currentComp.Name) == true);
+            var test = MenuService.Components.FirstOrDefault(p => p.ChildComponents?.Any(c => c.Name == currentComp.Name) == true);
             var tes2 = test;
         }
 
