@@ -1,4 +1,4 @@
-﻿.mud-overlay {
+.mud-overlay {
     top: 0;
     left: 0;
     right: 0;
@@ -40,6 +40,9 @@
         &.mud-overlay-light {
             border-color: var(--mud-palette-overlay-light);
             background-color: var(--mud-palette-overlay-light);
+        }
+        &:hover {
+            cursor: default;
         }
     }
 
