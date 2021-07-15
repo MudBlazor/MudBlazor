@@ -952,6 +952,38 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// This test validates that when the CanCancel option is set to true and no SelectedItem has been defined, 
+        /// by clicking on another row, the previous row is no longer editable. Meaning there are always only 2 buttons
+        /// </summary>
+        [Test]
+        public async Task TableInlineEditCancel4Test()
+        {
+            // Get access to the test table
+            var comp = ctx.RenderComponent<TableInlineEditCancel2Test>();
+
+            // List all the rows
+            var trs = comp.FindAll("tr");
+
+            // Click on the third row
+            trs[3].Click();
+
+            // How many buttons? Should be 2
+            comp.FindAll("button").Count.Should().Be(2);
+
+            // Click on the second row
+            trs[2].Click();
+
+            // How many buttons? Should be 2
+            comp.FindAll("button").Count.Should().Be(2);
+
+            // Click on the first row
+            trs[1].Click();
+
+            // How many buttons? Should be 2
+            comp.FindAll("button").Count.Should().Be(2);
+        }
+
+        /// <summary>
         /// Tests the grouping behavior and ensure that it won't break anything else.
         /// </summary>
         /// <returns></returns>

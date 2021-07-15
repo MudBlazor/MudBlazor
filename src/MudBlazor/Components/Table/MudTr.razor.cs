@@ -158,6 +158,8 @@ namespace MudBlazor
             if (!hasBeenCanceled && !hasBeenCommitted)
             {
                 // Trigger the row edit cancel event
+                Context?.Table.SetEditingItem(null);
+                StateHasChanged();
                 Context.Table.RowEditCancel?.Invoke(Item);
             }
 
