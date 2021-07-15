@@ -10,7 +10,7 @@ namespace MudBlazor.Utilities
     /// <summary>
     /// Provides a mechanism for executing a method on a thread pool thread at specified intervals.
     /// </summary>
-    public interface IComponentTimer : IAsyncDisposable, IDisposable
+    internal interface IComponentTimer : IAsyncDisposable, IDisposable
     {
         /// <summary>
         /// Gets or sets a value indicating whether the timer is enabled.
@@ -20,7 +20,7 @@ namespace MudBlazor.Utilities
         /// Setting the value to <c>false</c> is the same as calling the <see cref="Stop()"/> method.
         /// </remarks>
         /// <returns>
-        /// <c>true</c> if the timer is enabled; otherwise, <c>false</c>.
+        /// A value indicating whether the timer is enabled.
         /// </returns>
         bool Enabled { get; set; }
 
@@ -34,6 +34,17 @@ namespace MudBlazor.Utilities
         /// A value indicating whether the timer is running.
         /// </returns>
         bool IsTicking { get; }
+
+        /// <summary>
+        /// Gets the number of times that the callback method has executed.
+        /// </summary>
+        /// <remarks>
+        /// This information is available even when the timer is already disposed.
+        /// </remarks>
+        /// <returns>
+        /// The number of times that the callback method has executed.
+        /// </returns>
+        int Iterations { get; }
 
         /// <summary>
         /// Gets the number of times that the timer was restarted.
@@ -75,7 +86,6 @@ namespace MudBlazor.Utilities
         /// The total elapsed time since the timer was last started.
         /// </returns>
         TimeSpan Elapsed { get; }
-
 
         /// <summary>
         /// Starts the timer.
@@ -282,19 +292,24 @@ namespace MudBlazor.Utilities
     /// <summary>
     /// Provides a mechanism for executing a method on a thread pool thread at specified intervals. This class cannot be inherited.
     /// </summary>
-    public sealed partial class ComponentTimer : IComponentTimer
+    internal sealed partial class ComponentTimer : IComponentTimer
     {
+        private static readonly object _locker = new();
+        private bool? _callbackBusy;
         private enum TimerAction { Start, Stop, Restart }
         private Timer _timer;
         private long _startUtcTicks;
         private bool? _enabled;
         private int _restarts;
+        private int _iterations;
 
+
+        #region Constructors
 
         private ComponentTimer(TimeSpan? dueTime = null, TimeSpan? period = null)
         {
-            DueTime = HasStartDelay(dueTime) ? (TimeSpan)dueTime : TimeSpan.Zero;
-            Period = HasInterval(period) ? (TimeSpan)period : TimeSpan.Zero;
+            DueTime = HasStartDelay(dueTime) ? (TimeSpan) dueTime : TimeSpan.Zero;
+            Period = HasInterval(period) ? (TimeSpan) period : TimeSpan.Zero;
         }
 
         /// <summary>
@@ -304,10 +319,21 @@ namespace MudBlazor.Utilities
         /// <param name="enabled">When <c>true</c>, starts the timer.</param>
         /// <param name="dueTime">The amount of time to delay before the callback is invoked. The default is <see cref="TimeSpan.Zero"/>).</param>
         /// <param name="period">The time interval between invocations of callback. The default is <see cref="TimeSpan.Zero"/>.</param>
+        /// <param name="iterations">The maximum number of times that the callback method is allowed to run. <c>0</c> is unlimited.</param>
         /// <param name="state">An object containing information to be used by the callback method, or <c>null</c>.</param>
-        public ComponentTimer(Action<object> callback, bool enabled = false, TimeSpan? dueTime = null, TimeSpan? period = null, object state = null) : this(dueTime, period)
+        /// <param name="token">A <see cref="CancellationTokenSource"/> token to cancel the timer. An <see cref="OperationCanceledException"/> is thrown.</param>
+        public ComponentTimer(Action<object> callback, bool enabled = false, TimeSpan? dueTime = null, TimeSpan? period = null, object state = null, int iterations = 0, CancellationToken token = default) : this(dueTime, period)
         {
-            _timer = new Timer(async (_state) => { await TimerCallbackAsync(callback, _state); }, state, Timeout.InfiniteTimeSpan, Timeout.InfiniteTimeSpan);
+            if (callback == null)
+                throw new ArgumentNullException(nameof(callback));
+
+            _timer = new Timer(async (_state) =>
+            {
+
+                token.ThrowIfCancellationRequested();
+                await TimerCallbackAsync(callback, _state, iterations);
+
+            }, state, Timeout.InfiniteTimeSpan, Timeout.InfiniteTimeSpan);
 
             if (enabled)
                 Enabled = true;
@@ -321,14 +347,25 @@ namespace MudBlazor.Utilities
         /// <param name="dueTime">The amount of time to delay before the callback is invoked. The default is <see cref="TimeSpan.Zero"/>).</param>
         /// <param name="period">The time interval between invocations of callback. The default is <see cref="TimeSpan.Zero"/>.</param>
         /// <param name="state">An object containing information to be used by the callback method, or <c>null</c>.</param>
-        public ComponentTimer(Func<object, ValueTask> callback, bool enabled = false, TimeSpan? dueTime = null, TimeSpan? period = null, object state = null) : this(dueTime, period)
+        /// <param name="iterations">The maximum number of times that the callback method is allowed to run. <c>0</c> is unlimited.</param>
+        /// <param name="configureAwait"><c>true</c> to attempt to marshal the continuation back to the original context captured.</param>
+        /// <param name="token">A <see cref="CancellationTokenSource"/> token to cancel the timer. An <see cref="OperationCanceledException"/> is thrown.</param>
+        public ComponentTimer(Func<object, ValueTask> callback, bool enabled = false, TimeSpan? dueTime = null, TimeSpan? period = null, object state = null, int iterations = 0, bool configureAwait = false, CancellationToken token = default) : this(dueTime, period)
         {
-            _timer = new Timer(async (_state) => { await TimerCallbackAsync(callback, _state); }, state, Timeout.InfiniteTimeSpan, Timeout.InfiniteTimeSpan);
+            if (callback == null)
+                throw new ArgumentNullException(nameof(callback));
+
+            _timer = new Timer(async (_state) =>
+            {
+
+                token.ThrowIfCancellationRequested();
+                await TimerCallbackAsync(callback, _state, iterations, configureAwait);
+
+            }, state, Timeout.InfiniteTimeSpan, Timeout.InfiniteTimeSpan);
 
             if (enabled)
                 Enabled = true;
         }
-
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ComponentTimer"/> class.
@@ -338,20 +375,66 @@ namespace MudBlazor.Utilities
         /// <param name="dueTime">The amount of time to delay before the callback is invoked. The default is <see cref="TimeSpan.Zero"/>).</param>
         /// <param name="period">The time interval between invocations of callback. The default is <see cref="TimeSpan.Zero"/>.</param>
         /// <param name="state">An object containing information to be used by the callback method, or <c>null</c>.</param>
-        public ComponentTimer(EventCallback callback, bool enabled = false, TimeSpan? dueTime = null, TimeSpan? period = null, object state = null) : this(dueTime, period)
+        /// <param name="iterations">The maximum number of times that the callback method is allowed to run. <c>0</c> is unlimited.</param>
+        /// <param name="configureAwait"><c>true</c> to attempt to marshal the continuation back to the original context captured.</param>
+        /// <param name="token">A <see cref="CancellationTokenSource"/> token to cancel the timer. An <see cref="OperationCanceledException"/> is thrown.</param>
+        public ComponentTimer(EventCallback callback, bool enabled = false, TimeSpan? dueTime = null, TimeSpan? period = null, object state = null, int iterations = 0, bool configureAwait = false, CancellationToken token = default) : this(dueTime, period)
         {
-            _timer = new Timer(async (_state) => { await TimerCallbackAsync(callback, _state); }, state, Timeout.InfiniteTimeSpan, Timeout.InfiniteTimeSpan);
+            if (!callback.HasDelegate)
+                throw new ArgumentNullException(nameof(callback));
+
+            _timer = new Timer(async (_state) =>
+            {
+
+                token.ThrowIfCancellationRequested();
+                await TimerCallbackAsync(callback, _state, iterations, configureAwait);
+
+            }, state, Timeout.InfiniteTimeSpan, Timeout.InfiniteTimeSpan);
 
             if (enabled)
                 Enabled = true;
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ComponentTimer"/> class.
+        /// </summary>
+        /// <param name="callback">An <see cref="EventCallback"/> object representing a method to be executed.</param>
+        /// <param name="enabled">When <c>true</c>, starts the timer.</param>
+        /// <param name="dueTime">The amount of time to delay before the callback is invoked. The default is <see cref="TimeSpan.Zero"/>).</param>
+        /// <param name="period">The time interval between invocations of callback. The default is <see cref="TimeSpan.Zero"/>.</param>
+        /// <param name="state">An object containing information to be used by the callback method, or <c>null</c>.</param>
+        /// <param name="iterations">The maximum number of times that the callback method is allowed to run. <c>0</c> is unlimited.</param>
+        /// <param name="configureAwait"><c>true</c> to attempt to marshal the continuation back to the original context captured.</param>
+        /// <param name="token">A <see cref="CancellationTokenSource"/> token to cancel the timer. An <see cref="OperationCanceledException"/> is thrown.</param>
+        public ComponentTimer(EventCallback<object> callback, bool enabled = false, TimeSpan? dueTime = null, TimeSpan? period = null, object state = null, int iterations = 0, bool configureAwait = false, CancellationToken token = default) : this(dueTime, period)
+        {
+            if (!callback.HasDelegate)
+                throw new ArgumentNullException(nameof(callback));
+
+            _timer = new Timer(async (_state) =>
+            {
+
+                token.ThrowIfCancellationRequested();
+                await TimerCallbackAsync(callback, _state, iterations, configureAwait);
+
+            }, state, Timeout.InfiniteTimeSpan, Timeout.InfiniteTimeSpan);
+
+            if (enabled)
+                Enabled = true;
+        }
+
+        #endregion Constructors
+
+
+        #region Properties
 
         public bool Enabled
         {
-            get => _enabled != null ? _enabled.Value : false;
+            get => _enabled != null && _enabled.Value;
             set => _enabled = value ? Start() != null : Stop() == null;
         }
+
+        public int Iterations => _iterations;
 
         public int Restarts => _restarts;
 
@@ -363,84 +446,69 @@ namespace MudBlazor.Utilities
 
         public bool IsTicking => _timer != null && Enabled && HasStartDelay(DueTime) && HasInterval(Period);
 
+        #endregion Properties
 
-        private bool Change(TimerAction timerAction, TimeSpan? dueTime = null, TimeSpan? period = null, bool update = false)
+
+        #region Start
+
+        public DateTimeOffset? Start()
         {
-            var success = false;
-
-            switch (timerAction)
-            {
-                case TimerAction.Start:
-                    if (!Enabled)
-                    {
-                        dueTime = null != dueTime && HasStartDelay(dueTime) ? dueTime : DueTime;
-
-                        success = HasStartDelay(dueTime) && HasInterval(Period) && _timer != null && _timer.Change(DueTime, Period);
-                        if (success)
-                        {
-                            if (update)
-                                DueTime = (TimeSpan)dueTime;
-
-                            _enabled = true;
-                            _startUtcTicks = GetNowUtcTicks();
-                        }
-                        else
-                            _enabled = null;
-                    }
-                    break;
-
-                case TimerAction.Restart:
-                    _enabled = false;
-
-                    if (null == dueTime)
-                        dueTime = TimeSpan.Zero;
-
-                    success = HasStartDelay(dueTime) && _timer != null && _timer.Change((TimeSpan)dueTime, Timeout.InfiniteTimeSpan);
-                    if (success)
-                    {
-                        if (update)
-                            DueTime = (TimeSpan)dueTime;
-
-                        Interlocked.Increment(ref _restarts);
-
-                        _enabled = true;
-                        _startUtcTicks = GetNowUtcTicks();
-                    }
-                    else
-                        _enabled = null;
-                    break;
-
-                case TimerAction.Stop:
-                    if (Enabled)
-                    {
-                        success = _timer != null && _timer.Change(Timeout.InfiniteTimeSpan, Timeout.InfiniteTimeSpan);
-                        _enabled = success ? false : null;
-                    }
-                    break;
-            }
-
-            return success;
+            Change(TimerAction.Start);
+            return GetStartUtcTime();
         }
 
+        public DateTimeOffset? Start(int dueTime, bool update = false)
+        {
+            Change(TimerAction.Start, TimeSpan.FromMilliseconds(dueTime), update: update);
+            return GetStartUtcTime();
+        }
 
-        public DateTimeOffset? Start() { Change(TimerAction.Start); return GetStartUtcTime(); }
+        public DateTimeOffset? Start(TimeSpan dueTime, bool update = false)
+        {
+            Change(TimerAction.Start, dueTime, update: update);
+            return GetStartUtcTime();
+        }
 
-        public DateTimeOffset? Start(int dueTime, bool update = false) { Change(TimerAction.Start, TimeSpan.FromMilliseconds(dueTime), update: update); return GetStartUtcTime(); }
+        public async ValueTask<DateTimeOffset?> StartAsync()
+        {
+            await ValueTask.CompletedTask;
+            return Start();
+        }
 
-        public DateTimeOffset? Start(TimeSpan dueTime, bool update = false) { Change(TimerAction.Start, dueTime, update: update); return GetStartUtcTime(); }
+        public async ValueTask<DateTimeOffset?> StartAsync(int dueTime, bool update = false)
+        {
+            await ValueTask.CompletedTask;
+            return Start(dueTime, update);
+        }
 
-        public async ValueTask<DateTimeOffset?> StartAsync() { await ValueTask.CompletedTask; return Start(); }
+        public async ValueTask<DateTimeOffset?> StartAsync(TimeSpan dueTime, bool update = false)
+        {
+            await ValueTask.CompletedTask;
+            return Start(dueTime, update);
+        }
 
-        public async ValueTask<DateTimeOffset?> StartAsync(int dueTime, bool update = false) { await ValueTask.CompletedTask; return Start(dueTime, update); }
-
-        public async ValueTask<DateTimeOffset?> StartAsync(TimeSpan dueTime, bool update = false) { await ValueTask.CompletedTask; return Start(dueTime, update); }
+        #endregion Start
 
 
-        public DateTimeOffset? Restart() { Change(TimerAction.Restart); return GetStartUtcTime(); }
+        #region Restart
 
-        public DateTimeOffset? Restart(int dueTime, bool update = false) { Change(TimerAction.Restart, TimeSpan.FromMilliseconds(dueTime), update: update); return GetStartUtcTime(); }
+        public DateTimeOffset? Restart()
+        {
+            Change(TimerAction.Restart);
+            return GetStartUtcTime();
+        }
 
-        public DateTimeOffset? Restart(TimeSpan dueTime, bool update = false) { Change(TimerAction.Restart, dueTime, update: update); return GetStartUtcTime(); }
+        public DateTimeOffset? Restart(int dueTime, bool update = false)
+        {
+            Change(TimerAction.Restart, TimeSpan.FromMilliseconds(dueTime), update: update);
+            return GetStartUtcTime();
+        }
+
+        public DateTimeOffset? Restart(TimeSpan dueTime, bool update = false)
+        {
+            Change(TimerAction.Restart, dueTime, update: update);
+            return GetStartUtcTime();
+        }
 
         public async ValueTask<DateTimeOffset?> RestartAsync()
         {
@@ -460,6 +528,10 @@ namespace MudBlazor.Utilities
             return Restart(dueTime, update);
         }
 
+        #endregion Restart
+
+
+        #region Stop
 
         public DateTimeOffset? Stop()
         {
@@ -482,13 +554,121 @@ namespace MudBlazor.Utilities
             return Stop();
         }
 
+        #endregion Stop
 
-        private static async ValueTask TimerCallbackAsync<T>(Action<T> callback, T state) { await ValueTask.CompletedTask; callback.Invoke(state); }
 
-        private static async ValueTask TimerCallbackAsync<T>(Func<T, ValueTask> callback, T state) { await callback.Invoke(state); }
+        #region TimerCallback
 
-        private static async ValueTask TimerCallbackAsync<T>(EventCallback callback, T state) { using var task = callback.InvokeAsync(state); await task; }
+        private async ValueTask TimerCallbackAsync<T>(Action<T> callback, T state, int iterations = 0)
+        {
+            await ValueTask.CompletedTask;
 
+            lock (_locker)
+            {
+                if (_callbackBusy == null)
+                    _callbackBusy = true;
+
+                else if (_callbackBusy.Value)
+                    return;
+            }
+
+            if (_iterations <= iterations)
+            {
+                callback.Invoke(state);
+                Interlocked.Increment(ref _iterations);
+            }
+
+            lock (_locker)
+            {
+                if (_iterations == iterations)
+                    Enabled = false;
+
+                _callbackBusy = false;
+            }
+        }
+
+        private async ValueTask TimerCallbackAsync<T>(Func<T, ValueTask> callback, T state, int iterations = 0, bool configureAwait = false)
+        {
+            lock (_locker)
+            {
+                if (_callbackBusy == null)
+                    _callbackBusy = true;
+
+                else if (_callbackBusy.Value)
+                    return;
+            }
+
+            if (_iterations <= iterations)
+            {
+                await callback.Invoke(state).ConfigureAwait(configureAwait);
+                Interlocked.Increment(ref _iterations);
+            }
+
+            lock (_locker)
+            {
+                if (_iterations == iterations)
+                    Enabled = false;
+
+                _callbackBusy = false;
+            }
+        }
+
+        private async ValueTask TimerCallbackAsync<T>(EventCallback callback, T state, int iterations = 0, bool configureAwait = false)
+        {
+            lock (_locker)
+            {
+                if (_callbackBusy == null)
+                    _callbackBusy = true;
+
+                else if (_callbackBusy.Value)
+                    return;
+            }
+
+            if (_iterations <= iterations)
+            {
+                await callback.InvokeAsync(state).ConfigureAwait(configureAwait);
+                Interlocked.Increment(ref _iterations);
+            }
+
+            lock (_locker)
+            {
+                if (_iterations == iterations)
+                    Enabled = false;
+
+                _callbackBusy = false;
+            }
+        }
+
+        private async ValueTask TimerCallbackAsync<T>(EventCallback<T> callback, T state, int iterations = 0, bool configureAwait = false)
+        {
+            lock (_locker)
+            {
+                if (_callbackBusy == null)
+                    _callbackBusy = true;
+
+                else if (_callbackBusy.Value)
+                    return;
+            }
+
+            if (_iterations <= iterations)
+            {
+                await callback.InvokeAsync(state).ConfigureAwait(configureAwait);
+                Interlocked.Increment(ref _iterations);
+            }
+
+            lock (_locker)
+            {
+                if (_iterations == iterations)
+                    Enabled = false;
+
+                _callbackBusy = false;
+            }
+        }
+
+        #endregion TimerCallback
+
+
+        #region Dispose
 
         public void Dispose()
         {
@@ -528,13 +708,20 @@ namespace MudBlazor.Utilities
 
         private void DisposeCleanup()
         {
-            _enabled = null;
-            _timer = null;
+            lock (_locker)
+            {
+                _enabled = null;
+                _timer = null;
 
-            DueTime = Timeout.InfiniteTimeSpan;
-            Period = Timeout.InfiniteTimeSpan;
+                DueTime = Timeout.InfiniteTimeSpan;
+                Period = Timeout.InfiniteTimeSpan;
+            }
         }
 
+        #endregion Dispose
+
+
+        #region Helpers
 
         private static bool HasDueTime(TimeSpan? dueTime = null) => dueTime != null && dueTime.Value != Timeout.InfiniteTimeSpan;
 
@@ -552,5 +739,65 @@ namespace MudBlazor.Utilities
         private DateTimeOffset? GetStartUtcTime() => _startUtcTicks > 0 ? new DateTime(_startUtcTicks, DateTimeKind.Utc) : null;
 
         private static DateTimeOffset? GetStopUtcTime() => new DateTime(GetNowUtcTicks(), DateTimeKind.Utc);
+
+
+        private bool Change(TimerAction timerAction, TimeSpan? dueTime = null, bool update = false)
+        {
+            var success = false;
+
+            switch (timerAction)
+            {
+                case TimerAction.Start:
+                    if (!Enabled)
+                    {
+                        dueTime = null != dueTime && HasStartDelay(dueTime) ? dueTime : DueTime;
+
+                        success = HasStartDelay(dueTime) && HasInterval(Period) && _timer != null && _timer.Change(DueTime, Period);
+                        if (success)
+                        {
+                            if (update)
+                                DueTime = (TimeSpan) dueTime;
+
+                            _enabled = true;
+                            _startUtcTicks = GetNowUtcTicks();
+                        }
+                        else
+                            _enabled = null;
+                    }
+                    break;
+
+                case TimerAction.Restart:
+                    _enabled = false;
+
+                    if (null == dueTime)
+                        dueTime = TimeSpan.Zero;
+
+                    success = HasStartDelay(dueTime) && _timer != null && _timer.Change((TimeSpan) dueTime, Timeout.InfiniteTimeSpan);
+                    if (success)
+                    {
+                        if (update)
+                            DueTime = (TimeSpan) dueTime;
+
+                        _restarts++;
+                        _enabled = true;
+                        _startUtcTicks = GetNowUtcTicks();
+                    }
+                    else
+                        _enabled = null;
+                    break;
+
+                case TimerAction.Stop:
+                    if (Enabled)
+                    {
+                        success = _timer != null && _timer.Change(Timeout.InfiniteTimeSpan, Timeout.InfiniteTimeSpan);
+                        _enabled = success ? false : null;
+                    }
+                    break;
+            }
+
+            return success;
+        }
+
+        #endregion Helpers
     }
 }
