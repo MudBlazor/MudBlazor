@@ -10,13 +10,43 @@ namespace MudBlazor.Services
 
         public RenderFragment Fragment { get; set; }
 
-        public BoundingClientRect AnchorRect { get; set; }
+        public BoundingClientRect AnchorRect { get; set; } = new();
 
-        public BoundingClientRect FragmentRect { get; set; }
+        public BoundingClientRect FragmentRect { get; set; } = new();
 
         public string CssPosition { get; set; } = "absolute";
 
-        public Type Type { get; set; }
+        public bool IsVisible { get; set; }
 
+        public PortalItemJsModel JavaScriptModel =>
+            new PortalItemJsModel
+            {
+                Id = Id,
+                IsVisible = IsVisible,
+                CssPosition = CssPosition
+            };
+
+
+        public PortalItem Clone()
+        {
+            return new PortalItem
+            {
+                Id = Id,
+                IsVisible = IsVisible,
+                AnchorRect = AnchorRect?.Clone(),
+                FragmentRect = FragmentRect?.Clone(),
+                CssPosition = CssPosition,
+                Fragment = Fragment,
+            };
+        }
+    }
+
+
+
+    public class PortalItemJsModel
+    {
+        public Guid Id { get; set; }
+        public bool IsVisible { get; set; }
+        public string CssPosition { get; set; }
     }
 }
