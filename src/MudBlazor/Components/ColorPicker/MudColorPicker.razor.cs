@@ -19,6 +19,7 @@ namespace MudBlazor
         public MudColorPicker() : base(new DefaultConverter<MudColor>())
         {
             AdornmentIcon = Icons.Material.Outlined.Palette;
+            DisableToolbar = true;
             Value = "#594ae2"; //MudBlazor Blue
         }
 
@@ -44,6 +45,8 @@ namespace MudBlazor
 
         private MudColor _baseColor;
         private MudColor _color;
+
+        private bool _collectionOpen;
 
         #endregion
 
@@ -73,6 +76,11 @@ namespace MudBlazor
         /// If true, hue and alpha sliders will not be displayed.
         /// </summary>
         [Parameter] public bool DisableSliders { get; set; }
+
+        /// <summary>
+        /// If true, the preview color box will not be displayed, note that the preview color functions as a button as well for collection colors.
+        /// </summary>
+        [Parameter] public bool DisablePreview { get; set; }
 
         /// <summary>
         /// The inital mode (RGB, HSL or HEX) the picker should open. Defaults to RGB 
@@ -117,6 +125,13 @@ namespace MudBlazor
         [Parameter] public EventCallback<MudColor> ColorChanged { get; set; }
 
         #endregion
+
+        private EventCallback<MouseEventArgs> GetEventCallback() => EventCallback.Factory.Create<MouseEventArgs>(this, () => Close());
+
+        void ToggleCollection()
+        {
+            _collectionOpen = !_collectionOpen;
+        }
 
         public void ChangeMode() =>
             ColorPickerMode = ColorPickerMode switch
