@@ -64,7 +64,7 @@ namespace MudBlazor.UnitTests.Components
             // click on California!
             comp.Find("div.mud-list-item").Click();
             // check state
-            autocomplete.Value.Should().Be("California");
+            comp.WaitForAssertion(()=> autocomplete.Value.Should().Be("California"));
             autocomplete.Text.Should().Be("California");
         }
 
@@ -215,7 +215,7 @@ namespace MudBlazor.UnitTests.Components
             Console.WriteLine(comp.Markup);
             comp.FindAll("div.mud-input-adornment")[0].Click();
             Console.WriteLine(comp.Markup);
-            comp.FindAll("div.mud-popover-open").Count.Should().Be(0);
+            comp.WaitForAssertion(() => comp.FindAll("div.mud-popover-open").Count.Should().Be(0));
         }
 
         /// <summary>
