@@ -68,7 +68,7 @@
             <ul class="my-2">
                 <li>
                     <MudLink Href="@ComponentLink">
-                        <CodeInline>@($"<ComponentName or if child component Parents component name + link>")</CodeInline>
+                        <CodeInline>@($"<{GetParentComponentPage()}>")</CodeInline>
                     </MudLink>
                 </li>
             </ul>
@@ -118,6 +118,21 @@
     private List<Type> GetChildComponents()
     {
         return MenuService.Components.Where(c => c.Component == ApiLink.GetTypeFromComponentLink(GetComponentName()) && c.ChildComponents != null).SelectMany(l => l.ChildComponents).ToList();
+    }
+
+    private string GetParentComponentPage()
+    {
+        var currentComp = ApiLink.GetTypeFromComponentLink(GetComponentName());
+        IEnumerable<MudComponent> comps = MenuService.Components;
+        var currentStringComp = currentComp;
+        var parentCheck = comps.FirstOrDefault(c => c.Component.FullName == currentStringComp.FullName && c.Component.FullName != null);
+        if(parentCheck != null)
+        {
+            var test = MenuService.Components.FirstOrDefault(p => p.ChildComponents.Any(c => c.Name == currentComp.Name) == true);
+            var tes2 = test;
+        }
+
+        return "skit test";
     }
 
     string GetTitle() => $"{Title} - MudBlazor";
