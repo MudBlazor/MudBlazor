@@ -210,13 +210,13 @@ namespace MudBlazor.UnitTests.Components
             {
                 comp.SetParam(p => p.AutoCycleTime, TimeSpan.FromMilliseconds(interval));
                 await Task.Delay(interval);
-                comp.WaitForAssertion(() => comp.Instance.SelectedIndex.Should().Be(1), TimeSpan.FromMilliseconds(100));
+                comp.WaitForAssertion(() => comp.Instance.SelectedIndex.Should().Be(1), TimeSpan.FromMilliseconds(3000));
                 comp.Instance.SelectedContainer.Should().Be(comp.Instance.Items[1]);
                 await Task.Delay(interval);
-                comp.WaitForAssertion(() => comp.Instance.SelectedIndex.Should().Be(2), TimeSpan.FromMilliseconds(100));
+                comp.WaitForAssertion(() => comp.Instance.SelectedIndex.Should().Be(2), TimeSpan.FromMilliseconds(3000));
                 comp.Instance.SelectedContainer.Should().Be(comp.Instance.Items[2]);
                 await Task.Delay(interval);
-                comp.WaitForAssertion(() => comp.Instance.SelectedIndex.Should().Be(0), TimeSpan.FromMilliseconds(100));
+                comp.WaitForAssertion(() => comp.Instance.SelectedIndex.Should().Be(0), TimeSpan.FromMilliseconds(3000));
                 comp.Instance.SelectedContainer.Should().Be(comp.Instance.Items[0]);
             }
         }
