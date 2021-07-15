@@ -45,8 +45,8 @@ namespace MudBlazor
             var item = Portal.GetItem(_id).Clone();
 
             item.IsVisible = IsVisible;
-            Portal.Update(item);
             await Js.InvokeVoidAsync("mudHandlePortal", item.JavaScriptModel, _portalRef);
+            Portal.Update(item);
         }
 
         /// <summary>
