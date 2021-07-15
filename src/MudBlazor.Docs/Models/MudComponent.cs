@@ -11,7 +11,7 @@ namespace MudBlazor.Docs.Models
         public bool NavGroupExpanded { get; set; }
         public DocsComponents GroupItems { get; set; }
         public Type Component { get; set; }
-        public List<Type> ChildComponents { get; set; }
+        public Type[] ChildComponents { get; set; }
 
         public string ComponentName
         {

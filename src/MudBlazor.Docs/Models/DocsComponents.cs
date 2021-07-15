@@ -13,7 +13,7 @@ namespace MudBlazor.Docs.Models
         /// </summary>
         internal IEnumerable<MudComponent> Elements => _mudComponents.OrderBy(e => e.Name);
 
-        public DocsComponents AddItem(string name, Type component, List<Type> childcomponents = null)
+        public DocsComponents AddItem(string name, Type component, params Type[] childcomponents)
         {
             var componentItem = new MudComponent
             {
