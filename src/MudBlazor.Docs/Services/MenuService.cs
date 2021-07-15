@@ -36,7 +36,7 @@ namespace MudBlazor.Docs.Services
             .AddItem("Chips", typeof(MudChip))
             .AddItem("ChipSet", typeof(MudChipSet))
             .AddItem("Badge", typeof(MudBadge))
-            .AddItem("AppBar", typeof(MudAppBar))
+            .AddItem("AppBar", typeof(MudAppBar), typeof(MudSpacer))
             .AddItem("Drawer", typeof(MudDrawer), typeof(MudDrawerHeader), typeof(MudDrawerContainer))
             .AddItem("Link", typeof(MudLink))
             .AddItem("Menu", typeof(MudMenu), typeof(MudMenuItem))
@@ -70,7 +70,7 @@ namespace MudBlazor.Docs.Services
             .AddItem("ScrollToTop", typeof(MudScrollToTop))
             .AddItem("Popover", typeof(MudPopover))
             .AddItem("SwipeArea", typeof(MudSwipeArea))
-            .AddItem("ToolBar", typeof(MudToolBar), typeof(MudToolBarSpacer))
+            .AddItem("ToolBar", typeof(MudToolBar), typeof(MudSpacer))
             .AddItem("Carousel", typeof(MudCarousel<object>), typeof(MudCarouselItem))
 
             //GROUPS
