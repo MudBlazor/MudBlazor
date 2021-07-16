@@ -1,0 +1,60 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudTabs Invisible="invisibleTabs" PanelClass="pa-6" @ref="tabs" Style="@TabsStyle">
+    <MudTabPanel Text="Tab 1" OnClick="() => Activate(0)">
+        <div style="display: flex; align-items: center; justify-content: space-around; height: 80px;">
+            <div style="min-width: 400px;">
+                <MudTextField T="string" @bind-Text="@text" Variant="Variant.Text"
+                 Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.BeachAccess" AdornmentColor="Color.Surface"/>
+            </div>
+            <MudAvatar Variant="Variant.Filled">1</MudAvatar>
+        </div>
+    </MudTabPanel>
+    <MudTabPanel Text="Tab 2" OnClick="() => Activate(1)">
+        <div style="display: flex; align-items: center; justify-content: space-around; height: 80px;">
+            <MudCheckBox T="bool" Label="I am on TabPanel 2 and I am a Checkbox!" Color="Color.Info" Style="color: #467FE2;" Checked="true"/>
+            <MudAvatar Variant="Variant.Filled" Color="Color.Info">2</MudAvatar>
+        </div>
+    </MudTabPanel>
+    <MudTabPanel Text="Tab 3" OnClick="() => Activate(2)">
+        <div style="display: flex; align-items: center; justify-content: space-around; height: 80px;">
+            <MudSwitch T="bool" Label="I am on TabPanel  3 and I am a Switch!" Color="Color.Success" Style="color: #51A288;" Checked="true"/>
+            <MudAvatar Variant="Variant.Filled" Color="Color.Success">3</MudAvatar>
+        </div>
+    </MudTabPanel>
+</MudTabs>
+
+<div class="mt-2 mb-2">
+    <MudSwitch @bind-Checked="@invisibleTabs" Label="Invisible Tabs and TabPanels" Color="Color.Info" />
+</div>
+
+<MudText GutterBottom="true" Align="Align.Center" Class="mt-4"><b>Select the tab</b></MudText>
+<div class="d-flex justify-center">
+    <MudButton Variant="@Variant.Filled" Color="Color.Default" OnClick="() => Activate(0)">Tab 1</MudButton>
+    <MudButton Variant="@Variant.Filled" Color="Color.Info" OnClick="() => Activate(1)" Class="mx-2">Tab 2</MudButton>
+    <MudButton Variant="@Variant.Filled" Color="Color.Success" OnClick="() => Activate(2)">Tab 3</MudButton>
+</div>
+
+@code { 
+    private MudTabs tabs;
+    private bool invisibleTabs = true;
+    private string TabsStyle = "background-color: #F4F4F4;";
+    private string text = "I am on TabPanel 1 and I am a TextField!";
+
+    void Activate(int index)
+    {
+        switch (index)
+        {
+            case 0:
+                TabsStyle = "background-color: #F4F4F4;";
+                break;
+            case 1:
+                TabsStyle = "background-color: #F3F9FE;";
+                break;
+            case 2:
+                TabsStyle = "background-color: #F0FCF5;";
+                break;
+        };
+        tabs.ActivatePanel(index);
+    }
+}

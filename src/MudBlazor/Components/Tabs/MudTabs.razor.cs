@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -41,6 +41,11 @@ namespace MudBlazor
         /// If true, sets the border-radius to theme default.
         /// </summary>
         [Parameter] public bool Rounded { get; set; }
+
+        /// <summary>
+        /// Show or hide the tabs and the tabPanels. They are shown by default.
+        /// </summary>
+        [Parameter] public bool Invisible { get; set; }
 
         /// <summary>
         /// If true, sets a border betwen the content and the toolbar depending on the position.
@@ -343,9 +348,9 @@ namespace MudBlazor
 
         protected string TabsClassnames =>
             new CssBuilder("mud-tabs")
-            .AddClass($"mud-tabs-rounded", ApplyEffectsToContainer && Rounded)
-            .AddClass($"mud-paper-outlined", ApplyEffectsToContainer && Outlined)
-            .AddClass($"mud-elevation-{Elevation}", ApplyEffectsToContainer && Elevation != 0)
+            .AddClass($"mud-tabs-rounded", ApplyEffectsToContainer && Rounded & !Invisible)
+            .AddClass($"mud-paper-outlined", ApplyEffectsToContainer && Outlined & !Invisible)
+            .AddClass($"mud-elevation-{Elevation}", ApplyEffectsToContainer && Elevation != 0 & !Invisible)
             .AddClass($"mud-tabs-reverse", Position == Position.Bottom)
             .AddClass($"mud-tabs-vertical", IsVerticalTabs())
             .AddClass($"mud-tabs-vertical-reverse", Position == Position.Right && !RightToLeft || (Position == Position.Left) && RightToLeft || Position == Position.End)
@@ -355,12 +360,12 @@ namespace MudBlazor
 
         protected string ToolbarClassnames =>
             new CssBuilder("mud-tabs-toolbar")
-            .AddClass($"mud-tabs-rounded", !ApplyEffectsToContainer && Rounded)
+            .AddClass($"mud-tabs-rounded", !ApplyEffectsToContainer && Rounded & !Invisible)
             .AddClass($"mud-tabs-vertical", IsVerticalTabs())
-            .AddClass($"mud-tabs-toolbar-{Color.ToDescriptionString()}", Color != Color.Default)
-            .AddClass($"mud-tabs-border-{ConvertPosition(Position).ToDescriptionString()}", Border)
-            .AddClass($"mud-paper-outlined", !ApplyEffectsToContainer && Outlined)
-            .AddClass($"mud-elevation-{Elevation}", !ApplyEffectsToContainer && Elevation != 0)
+            .AddClass($"mud-tabs-toolbar-{Color.ToDescriptionString()}", Color != Color.Default & !Invisible)
+            .AddClass($"mud-tabs-border-{ConvertPosition(Position).ToDescriptionString()}", Border & !Invisible)
+            .AddClass($"mud-paper-outlined", !ApplyEffectsToContainer && Outlined & !Invisible)
+            .AddClass($"mud-elevation-{Elevation}", !ApplyEffectsToContainer && Elevation != 0 & !Invisible)
             .Build();
 
         protected string WrapperClassnames =>
@@ -427,9 +432,10 @@ namespace MudBlazor
         string GetTabClass(MudTabPanel panel)
         {
             var tabClass = new CssBuilder("mud-tab")
-              .AddClass($"mud-tab-active", when: () => panel == ActivePanel)
-              .AddClass($"mud-disabled", panel.Disabled)
-              .AddClass($"mud-ripple", !DisableRipple)
+              .AddClass($"mud-tab-hover", !Invisible)
+              .AddClass($"mud-tab-active", when: () => panel == ActivePanel && !Invisible)
+              .AddClass($"mud-disabled", panel.Disabled && !Invisible)
+              .AddClass($"mud-ripple", !DisableRipple && !Invisible)
               .AddClass(TabPanelClass)
               .AddClass(panel.Class)
               .Build();

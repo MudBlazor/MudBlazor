@@ -75,6 +75,17 @@
             <SectionSource Code="TabsToolTipExample" GitHubFolderName="Tabs" />
         </DocsPageSection>
         <DocsPageSection>
+            <SectionHeader Title="Invisible Tabs">
+                <Description>
+                    Sstting the <CodeInline>Invisible</CodeInline> property to <CodeInline>true</CodeInline> will hide the Tabs and the TabPanels.
+                </Description>
+            </SectionHeader>
+            <SectionContent Outlined="true" FullWidth="true">
+                <TabsInvisibleExample />
+            </SectionContent>
+            <SectionSource Code="TabsInvisibleExample" GitHubFolderName="Tabs" />
+        </DocsPageSection>
+        <DocsPageSection>
             <SectionHeader Title="Set Active Panel">
             </SectionHeader>
             <SectionContent Outlined="true" FullWidth="true">
@@ -99,17 +110,17 @@
             </SectionContent>
             <SectionSource Code="DynamicTabsSimpleExample" GitHubFolderName="Tabs" ShowCode="false" />
         </DocsPageSection>
-		 <DocsPageSection>
+        <DocsPageSection>
             <SectionHeader Title="Advanced Dynamic Tabs">
                 <Description>
-					<MudText Typo="Typo.body2">
-						Allthough MudDynamicTabs allows a basic browser like tab experience, the way the style can be influenced is limited 
-					</MudText>
-					<MudText Typo="Typo.body2">
-						 The Property Header and TabPanelHeader allows you to add any RenderFragement to the tab (Header) 
-						 and to each tab panel (TabPanelHeader). The placement can be influenced by setting values to HeaderPosition or TabPanelHeaderPosition
-					</MudText>
-				</Description>
+                    <MudText Typo="Typo.body2">
+                        Allthough MudDynamicTabs allows a basic browser like tab experience, the way the style can be influenced is limited
+                    </MudText>
+                    <MudText Typo="Typo.body2">
+                        The Property Header and TabPanelHeader allows you to add any RenderFragement to the tab (Header)
+                        and to each tab panel (TabPanelHeader). The placement can be influenced by setting values to HeaderPosition or TabPanelHeaderPosition
+                    </MudText>
+                </Description>
             </SectionHeader>
             <SectionContent Outlined="true" FullWidth="true" Class="demo-tabs">
                 <CustomDynamicTabsExample />
