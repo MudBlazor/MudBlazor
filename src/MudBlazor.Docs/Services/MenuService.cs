@@ -13,6 +13,7 @@ namespace MudBlazor.Docs.Services
         IEnumerable<DocsLink> GettingStarted { get; }
         IEnumerable<MudComponent> Components { get; }
         IEnumerable<MudComponent> Api { get; }
+        MudComponent GetParent(Type type);
         IEnumerable<DocsLink> Features { get; }
         IEnumerable<DocsLink> Customization { get; }
         IEnumerable<DocsLink> About { get; }
@@ -36,7 +37,7 @@ namespace MudBlazor.Docs.Services
             .AddItem("Chips", typeof(MudChip))
             .AddItem("ChipSet", typeof(MudChipSet))
             .AddItem("Badge", typeof(MudBadge))
-            .AddItem("AppBar", typeof(MudAppBar), typeof(MudSpacer))
+            .AddItem("AppBar", typeof(MudAppBar))
             .AddItem("Drawer", typeof(MudDrawer), typeof(MudDrawerHeader), typeof(MudDrawerContainer))
             .AddItem("Link", typeof(MudLink))
             .AddItem("Menu", typeof(MudMenu), typeof(MudMenuItem))
@@ -70,7 +71,7 @@ namespace MudBlazor.Docs.Services
             .AddItem("ScrollToTop", typeof(MudScrollToTop))
             .AddItem("Popover", typeof(MudPopover))
             .AddItem("SwipeArea", typeof(MudSwipeArea))
-            .AddItem("ToolBar", typeof(MudToolBar), typeof(MudSpacer))
+            .AddItem("ToolBar", typeof(MudToolBar))
             .AddItem("Carousel", typeof(MudCarousel<object>), typeof(MudCarouselItem))
 
             //GROUPS
@@ -111,7 +112,38 @@ namespace MudBlazor.Docs.Services
                 .AddItem("Pie chart", typeof(Pie))
                 .AddItem("Bar chart", typeof(Bar))
             );
+
         public IEnumerable<MudComponent> Components => _docsComponents.Elements;
+
+        private Dictionary<Type, MudComponent> _parents = new();
+
+        public MudComponent GetParent(Type child) => _parents[child];
+
+        public MenuService()
+        {
+            foreach(var item in Components)
+            {
+                if(item.IsNavGroup)
+                {
+                    foreach (var apiItem in item.GroupItems.Elements)
+                    {
+                        _parents.Add(apiItem.Component, item);
+                    }
+                }
+                else
+                {
+                    _parents.Add(item.Component, item);
+
+                    if (item.ChildComponents != null)
+                    {
+                        foreach(var childComponent in item.ChildComponents)
+                        {
+                            _parents.Add(childComponent, item);
+                        }
+                    }
+                }
+            }
+        }
 
         private DocsComponents _docsComponentsApi;
         //cached property
