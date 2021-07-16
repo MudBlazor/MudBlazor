@@ -46,7 +46,7 @@
 	 <div class="mud-input-outlined-border"></div>
 	}
 
-	@if (InputType == InputType.Number && !HideSpinButtons)
+	@if (!HideSpinButtons)
 	{
 	 <div class="mud-input-numeric-spin">
 	  <MudButton Variant="Variant.Text" @onclick="OnIncrement" Disabled="@(Disabled || ReadOnly)" tabindex="-1"><MudIcon Icon="@Icons.Material.Filled.KeyboardArrowUp" Size="@GetButtonSize()" /></MudButton>
