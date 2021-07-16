@@ -99,7 +99,7 @@ namespace MudBlazor
         /// <summary>
         /// Hides the spin buttons for <see cref="MudNumericField{T}"/>
         /// </summary>
-        [Parameter] public bool HideSpinButtons { get; set; }
+        [Parameter] public bool HideSpinButtons { get; set; } = true;
 
         private Size GetButtonSize() => Margin == Margin.Dense ? Size.Small : Size.Medium;
 
