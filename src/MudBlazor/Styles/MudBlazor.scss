@@ -13,7 +13,6 @@
 @import 'core/_animations';
 @import 'core/_reset';
 @import 'core/_elevation';
-@import 'core/_scrollbar';
 
 @import 'components/_alert';
 @import 'components/_badge';
@@ -44,10 +43,12 @@
 @import 'components/_menu';
 @import 'components/_link';
 @import 'components/_navmenu';
+@import 'components/_pagecontentnavigation';
 @import 'components/_picker';
 @import 'components/_pickerdate';
 @import 'components/_pickertime';
 @import 'components/_popover';
+@import 'components/_portal';
 @import 'components/_simpletable';
 @import 'components/_skeleton';
 @import 'components/_slider';

@@ -250,7 +250,6 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public bool OffsetY { get; set; }
 
-
         /// <summary>
         /// If true, the Select's input will not show any values that are not defined in the dropdown.
         /// This can be useful if Value is bound to a variable which is initialized to a value which is not in the list

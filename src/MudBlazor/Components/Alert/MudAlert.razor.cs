@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Extensions;
 using MudBlazor.Utilities;
+
 
 namespace MudBlazor
 {
@@ -16,6 +18,43 @@ namespace MudBlazor
           .AddClass($"mud-elevation-{Elevation}")
           .AddClass(Class)
         .Build();
+
+        protected string ClassPosition =>
+        new CssBuilder("mud-alert-position")
+            .AddClass($"justify-sm-{ConvertAlertTextPosition(AlertTextPosition).ToDescriptionString()}")
+        .Build();
+
+        private AlertTextPosition ConvertAlertTextPosition(AlertTextPosition alertTextPosition)
+        {
+            return alertTextPosition switch
+            {
+                AlertTextPosition.Right => RightToLeft ? AlertTextPosition.Start : AlertTextPosition.End,
+                AlertTextPosition.Left => RightToLeft ? AlertTextPosition.End : AlertTextPosition.Start,
+                _ => alertTextPosition
+            };
+        }
+
+        [CascadingParameter] public bool RightToLeft { get; set; }
+
+        /// <summary>
+        /// Sets the position of the text to the start (Left in LTR and right in RTL).
+        /// </summary>
+        [Parameter] public AlertTextPosition AlertTextPosition { get; set; } = AlertTextPosition.Left;
+
+        /// <summary>
+        /// The callback, when the close button has been clicked.
+        /// </summary>
+        [Parameter] public EventCallback<MudAlert> CloseIconClicked { get; set; }
+
+        /// <summary>
+        /// Define the icon used for the close button.
+        /// </summary>
+        [Parameter] public string CloseIcon { get; set; } = Icons.Material.Filled.Close;
+
+        /// <summary>
+        /// Sets if the alert shows a close icon.
+        /// </summary>
+        [Parameter] public bool ShowCloseIcon { get; set; }
 
         /// <summary>
         /// The higher the number, the heavier the drop-shadow. 0 for no shadow.
@@ -58,6 +97,14 @@ namespace MudBlazor
         [Parameter] public string Icon { get; set; }
 
         protected string _icon;
+
+        private async Task OnCloseIconClickAsync()
+        {
+            if (CloseIconClicked.HasDelegate)
+            {
+                await CloseIconClicked.InvokeAsync(this);
+            }
+        }
 
         protected override void OnParametersSet()
         {

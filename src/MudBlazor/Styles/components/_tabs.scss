@@ -259,14 +259,20 @@
             .mud-icon-button {
                 padding: 4px;
                 margin-right: -4px;
+                margin-inline-end: -4px;
+                margin-inline-start: unset;
             }
 
             .mud-tabs-panel-header-before {
                 padding-right: 8px;
+                padding-inline-end: 8px;
+                padding-inline-start: unset;
             }
 
             .mud-tabs-panel-header-after {
                 padding-left: 8px;
+                padding-inline-start: 8px;
+                padding-inline-end: unset;
             }
         }
     }
