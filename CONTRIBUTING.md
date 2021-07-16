@@ -1,11 +1,60 @@
-# ![MudBlazor](content/MudBlazor-GitHub.png)
+# ![MudBlazor](content/MudBlazor-GitHub-NoBg.png)
 
 # Information and Guidelines for Contributors
+Thank you for contributing to MudBlazor and making it even better. We are happy about every contribution! Issues, bug-fixes, new components...
+
+## Code of Conduct
+Please make sure that you follow our [code of conduct](/CODE_OF_CONDUCT.md)
 
 ## Prerequisites to Compile from Source
 
-- .NET Core 3.1
-- Visual Studio 2019 with the ASP.NET and Web development.
+- .NET Core 5.1
+- Visual Studio 2019 with the ASP.NET and Web development
+
+## Pull Requests
+- Your Pull Request must only consist of one topic. It is better to split Pull Requests with more than one feature or bug fix in seperate Pull Requests
+- You must choose `dev` as the target branch
+- All tests must pass
+- You should work on a seperate branch with a descriptive name. The following naming convention can be used: `feature/my-new-feature` for new features and enhancements, `fix/my-bug-fix` for bug fixes. For example `fix/button-hover-color` if your PR is about a bug involving the hover color of buttons
+- Small changes should only contain one commit. If you have several commits, squash them into one commit ([Rebase guide](https://docs.github.com/en/github/getting-started-with-github/about-git-rebase))
+- You should rebase your branch onto dev
+- Before working on a large change, it is recommended to first open an issue to discuss it with others
+- If your Pull Request is still in progress, convert it to a draft Pull Request
+- Your commit messages should follow the following format: 
+```
+<component name>: <short description of changes in imperative> (<linked issue>)
+```
+For example:
+```
+ DateRangePicker: Fix initializing DateRange with null values (#1997)
+```
+
+- Your Pull Request should not include any unnecessary refactoring
+- If there are visual changes, you should include a screenshot, gif or video
+- If there are any coresponding issues, link them to the Pull Request ([Link issues guide](https://docs.github.com/en/github/managing-your-work-on-github/linking-a-pull-request-to-an-issue#linking-a-pull-request-to-an-issue-using-a-keyword)) 
+- Your code should be formatted correctly ([Format documentation](https://docs.microsoft.com/en-us/dotnet/fundamentals/code-analysis/style-rules/formatting-rules))
+
+
+
+### Pull Requests which introduce new components
+- MudBlazor supports RTL. It basically mirrors the ui horizontally for languages which are read right-to-left. See [RTL guide](https://rtlstyling.com/posts/rtl-styling)  for more information. Therefore every component should implement this functionality.
+If necessary include
+```csharp
+[CascadingParameter] public bool RightToLeft {get; set;}
+```
+in your component and apply styles at component level.
+- Use our `css variables` if possible. For instance you should not hard code any colors etc.
+- Include a summary comment for every public property ([Summary documentation](https://docs.microsoft.com/de-de/dotnet/csharp/programming-guide/xmldoc/summary))
+- Use the `CssBuilder` for classes and styles
+- Add a doc page and examples which should be ordered from easy to more complex
+
+
+## Where to find the most important files
+- Component `.razor` and `.razor.cs` classes ([Link](https://github.com/Garderoben/MudBlazor/tree/dev/src/MudBlazor/Components))
+- Component `.scss` style classes ([Link](https://github.com/Garderoben/MudBlazor/tree/dev/src/MudBlazor/Styles/components))
+- Enums ([Link](https://github.com/Garderoben/MudBlazor/tree/dev/src/MudBlazor/Enums))
+- Component doc pages ([Link](https://github.com/Garderoben/MudBlazor/tree/dev/src/MudBlazor.Docs/Pages/Components))
+- Component tests ([Link](https://github.com/Garderoben/MudBlazor/tree/dev/src/MudBlazor.UnitTests/Components))
 
 ## Unit Testing and Continuous Integration
 
