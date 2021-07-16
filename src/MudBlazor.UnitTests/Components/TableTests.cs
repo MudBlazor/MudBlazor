@@ -959,7 +959,7 @@ namespace MudBlazor.UnitTests.Components
         public async Task TableInlineEditCancel4Test()
         {
             // Get access to the test table
-            var comp = ctx.RenderComponent<TableInlineEditCancel2Test>();
+            var comp = ctx.RenderComponent<TableInlineEditCancelNoSelectedItemTest>();
 
             // List all the rows
             var trs = comp.FindAll("tr");
@@ -967,19 +967,19 @@ namespace MudBlazor.UnitTests.Components
             // Click on the third row
             trs[3].Click();
 
-            // How many buttons? Should be 2
+            // How many buttons? It should be equal to 2. One for commit and one for cancel
             comp.FindAll("button").Count.Should().Be(2);
 
             // Click on the second row
             trs[2].Click();
 
-            // How many buttons? Should be 2
+            // How many buttons? It should always be equal to 2
             comp.FindAll("button").Count.Should().Be(2);
 
             // Click on the first row
             trs[1].Click();
 
-            // How many buttons? Should be 2
+            // How many buttons? It should always be equal to 2
             comp.FindAll("button").Count.Should().Be(2);
         }
 
