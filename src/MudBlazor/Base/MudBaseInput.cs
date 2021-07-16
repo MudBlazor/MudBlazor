@@ -112,7 +112,6 @@ namespace MudBlazor
 
         protected async Task SetTextAsync(string text, bool updateValue = true)
         {
-            Console.WriteLine("SetTextAsync " + Text + " " + text);
             if (Text != text)
             {
                 Text = text;
@@ -120,8 +119,7 @@ namespace MudBlazor
                     Touched = true;
                 if (updateValue)
                     await UpdateValuePropertyAsync(false);
-                if (!Immediate)
-                    await TextChanged.InvokeAsync(Text);
+                await TextChanged.InvokeAsync(Text);
             }
         }
 
@@ -130,7 +128,6 @@ namespace MudBlazor
         /// </summary>
         protected virtual Task UpdateTextPropertyAsync(bool updateValue)
         {
-            Console.WriteLine("UpdateTextPropertyAsync " + updateValue);
             return SetTextAsync(Converter.Set(Value), updateValue);
         }
 
@@ -162,9 +159,9 @@ namespace MudBlazor
                                                              || key == "ArrowUp"
                                                              || key == "Tab";
 
-        protected virtual async Task OnBlurred(FocusEventArgs obj)
+        protected virtual void OnBlurred(FocusEventArgs obj)
         {
-            await UpdateTextPropertyAsync(false);
+            Console.WriteLine("OnBlurred");
             _isFocused = false;
             Touched = true;
             BeginValidateAfter(OnBlur.InvokeAsync(obj));
@@ -174,6 +171,7 @@ namespace MudBlazor
 
         protected virtual void InvokeKeyDown(KeyboardEventArgs obj)
         {
+            Console.WriteLine("InvokeKeyDown");
             _isFocused = true;
             _shouldRenderBeForced = ShouldRenderBeForced(obj.Key);
             OnKeyDown.InvokeAsync(obj).AndForget();
@@ -185,6 +183,7 @@ namespace MudBlazor
 
         protected virtual void InvokeKeyPress(KeyboardEventArgs obj)
         {
+            Console.WriteLine("InvokeKeyPress base");
             OnKeyPress.InvokeAsync(obj).AndForget();
         }
 
@@ -194,6 +193,7 @@ namespace MudBlazor
 
         protected virtual void InvokeKeyUp(KeyboardEventArgs obj)
         {
+            Console.WriteLine("InvokeKeyUp");
             _isFocused = true;
             _shouldRenderBeForced = ShouldRenderBeForced(obj.Key);
             OnKeyUp.InvokeAsync(obj).AndForget();
@@ -234,6 +234,7 @@ namespace MudBlazor
         /// </summary>
         protected virtual Task UpdateValuePropertyAsync(bool updateText)
         {
+            Console.WriteLine("UpdateValuePropertyAsync " + Text);
             return SetValueAsync(Converter.Get(Text), updateText);
         }
 
@@ -292,8 +293,6 @@ namespace MudBlazor
                 await UpdateTextPropertyAsync(false);
         }
 
-        public bool SkipRefresh { get; set; }
-
         public override async Task SetParametersAsync(ParameterView parameters)
         {
             await base.SetParametersAsync(parameters);
@@ -304,9 +303,6 @@ namespace MudBlazor
             // Refresh Value from Text
             if (hasText && !hasValue)
                 await UpdateValuePropertyAsync(false);
-
-            if (SkipRefresh && _isFocused)
-                return;
 
             // Refresh Text from Value
             if (hasValue && !hasText)
