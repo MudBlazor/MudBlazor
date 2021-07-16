@@ -1,0 +1,12 @@
+﻿@namespace MudBlazor.UnitTests.TestComponents
+
+@using MudBlazor.Utilities
+
+<MudColorPicker @bind-Value="ColorValue" ColorPickerMode="ColorPickerMode" PickerVariant="PickerVariant.Static" />
+
+@code {
+    public MudColor ColorValue { get; set; } = "#594ae2";
+
+    [Parameter]
+    public ColorPickerMode ColorPickerMode { get; set; } = ColorPickerMode.RGB;
+}

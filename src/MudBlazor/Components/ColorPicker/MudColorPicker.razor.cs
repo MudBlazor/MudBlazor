@@ -113,16 +113,18 @@ namespace MudBlazor
                     }
 
                     SetTextAsync(_color.Value, true).AndForget();
+                    ValueChanged.InvokeAsync(value).AndForget();
                 }
 
                 if (changed == false && AlwaysUpdateBinding)
                 {
-                    ColorChanged.InvokeAsync(value).AndForget();
+                    SetTextAsync(_color.Value, true).AndForget();
+                    ValueChanged.InvokeAsync(value).AndForget();
                 }
             }
         }
 
-        [Parameter] public EventCallback<MudColor> ColorChanged { get; set; }
+        [Parameter] public EventCallback<MudColor> ValueChanged { get; set; }
 
         #endregion
 
@@ -145,7 +147,7 @@ namespace MudBlazor
         private void UpdateBaseColorSlider(int value)
         {
             var diff = Math.Abs(value - (int)Value.H);
-            if(diff == 0) { return; }
+            if (diff == 0) { return; }
 
             Value = Value.SetH(value);
         }
@@ -153,14 +155,13 @@ namespace MudBlazor
         private void UpdateBaseColor()
         {
             var index = (int)_color.H / 60;
+
             int valueInDeg = (int)_color.H - (index * 60);
-            int value = (int)(MathExtensions.Map(0, 60, 0, 255, valueInDeg)); 
+            int value = (int)(MathExtensions.Map(0, 60, 0, 255, valueInDeg));
             var section = _rgbToHueMapper[index];
 
             _baseColor = new(section.r(value), section.g(value), section.b(value), 255);
         }
-
-        private int GetSliderHueValue() => (int)MathExtensions.Map(0, 360, 0, 6 * 255, _color.H);
 
         private void UpdateColorBaseOnSelection()
         {
@@ -295,8 +296,14 @@ namespace MudBlazor
         /// <summary>
         /// Set the Alpha (transparency) component of the color picker
         /// </summary>
-        /// <param name="value">A value between 0 (full transparent) and 255 (solid) </param>
+        /// <param name="value">A value between 0 (full transparent) and 1 (solid) </param>
         public void SetAlpha(int value) => Value = Value.SetAlpha(value);
+
+        /// <summary>
+        /// Set the Alpha (transparency) component of the color picker
+        /// </summary>
+        /// <param name="value">A value between 0 (full transparent) and 255 (solid) </param>
+        public void SetAlpha(byte value) => Value = Value.SetAlpha(value);
 
         /// <summary>
         /// Set the color of the picker based on the string input
@@ -317,6 +324,6 @@ namespace MudBlazor
             Value = color;
         }
 
-        private string GetSelectorLocation() => $"translate({_selectorX.ToString(CultureInfo.InvariantCulture)}px, {_selectorY.ToString(CultureInfo.InvariantCulture)}px);";
+        private string GetSelectorLocation() => $"translate({Math.Round(_selectorX, 2).ToString(CultureInfo.InvariantCulture)}px, {Math.Round(_selectorY, 2).ToString(CultureInfo.InvariantCulture)}px);";
     }
 }

@@ -23,7 +23,25 @@ namespace MudBlazor.Utilities
         public byte B => _valuesAsByte[2];
         public byte A => _valuesAsByte[3];
 
-        public double H { get; private set; }
+        private double _h;
+
+        public double H
+        {
+            get => _h;
+            set
+            {
+                //hue of 360 is the same as hue of 0
+
+                if (value == 360)
+                {
+                    _h = 0;
+                }
+                else
+                {
+                    _h = value;
+                }
+            }
+        }
         public double L { get; private set; }
         public double S { get; private set; }
 
