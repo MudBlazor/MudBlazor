@@ -308,6 +308,12 @@ namespace MudBlazor
             StateHasChanged();
         }
 
+        private void ActivatePanelClick(MudTabPanel panel, MouseEventArgs ev, bool ignoreDisabledState = false)
+        {
+            if (!Invisible)
+                ActivatePanel(panel, ev, ignoreDisabledState);
+        }
+
         public void ActivatePanel(MudTabPanel panel, bool ignoreDisabledState = false)
         {
             ActivatePanel(panel, null, ignoreDisabledState);
