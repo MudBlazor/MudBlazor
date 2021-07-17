@@ -19,7 +19,7 @@
         <MudPickerContent Class="mud-picker-color-content">
             @if(!DisableColorField)
             {
-                <div class="mud-picker-color-picker" style="@($"background-color: {_baseColor.ToRGB()}")">
+                <div class="mud-picker-color-picker" style="@($"background-color: {_baseColor.ToString(MudColorOutputFormats.RGB)}")">
                     <div class="mud-picker-color-overlay mud-picker-color-overlay-white">
                         <div class="mud-picker-color-overlay mud-picker-color-overlay-black">
                             <div class="mud-picker-color-overlay" @onclick="OnMouseClick" @onmousedown="OnMouseDown" @onmouseup="OnMouseUp" @onmouseover="OnMouseOver">
@@ -38,7 +38,7 @@
                             @if (!DisablePreview)
                             {
                                 <div class="mud-picker-color-dot mud-picker-color-dot-current mud-ripple" @onclick="ToggleCollection">
-                                    <div class="mud-picker-color-fill" style="@($"background: {_color.ToRGBA()};")"></div>
+                                    <div class="mud-picker-color-fill" style="@($"background: {_color.ToString(MudColorOutputFormats.RGBA)};")"></div>
                                 </div>
                             }
                             @if (!DisableSliders && !_collectionOpen)
@@ -47,18 +47,17 @@
                                 <MudSlider Class="mud-picker-color-slider hue" T="int" Value="(int)_color.H" ValueChanged="UpdateBaseColorSlider" Step="1" Min="0" Max="359"  />
                                 @if (!DisableAlpha)
                                 {
-                                    <MudSlider Class="mud-picker-color-slider alpha" Value="_color.A" ValueChanged="SetAlpha" T="int"  Min="0" Max="255" Step="1" Style="@($"background-image: linear-gradient(to right, transparent, {_color.ToRGB()});")"  />
+                                    <MudSlider Class="mud-picker-color-slider alpha" Value="_color.A" ValueChanged="SetAlpha" T="int"  Min="0" Max="255" Step="1" Style="@($"background-image: linear-gradient(to right, transparent, {_color.ToString(MudColorOutputFormats.RGB)});")"  />
                                 }
                             </div>
                             }
                             @if (_collectionOpen)
                             {
                                 <div class="mud-picker-color-collection">
-                                    <div class="mud-picker-color-dot mud-secondary" @onclick="ToggleCollection"></div>
-                                    <div class="mud-picker-color-dot mud-info" @onclick="ToggleCollection"></div>
-                                    <div class="mud-picker-color-dot mud-success" @onclick="ToggleCollection"></div>
-                                    <div class="mud-picker-color-dot mud-warning" @onclick="ToggleCollection"></div>
-                                    <div class="mud-picker-color-dot mud-error" @onclick="ToggleCollection"></div>
+                                    @foreach (var item in Palette)
+                                    {
+                                        <div class="mud-picker-color-dot" style="@($"background: {item.ToString(MudColorOutputFormats.RGBA)};")" @onclick="@GetSelectPaletteColorCallback(item)"></div>
+                                    }
                                 </div>
                             }
                         </div>
@@ -80,7 +79,7 @@
                                         <MudNumericField Value="@_color.L" T="double"  ValueChanged="SetL" Class="mud-picker-color-inputfield" HelperText="L"Step="0.01"  Min="0" Max="100" Variant="Variant.Outlined" HideSpinButtons="true" />
                                     break;
                                     case ColorPickerMode.HEX:
-                                        <MudTextField Value="_color.Value" ValueChanged="SetInputString" T="string" Class="mud-picker-color-inputfield" Variant="Variant.Outlined" HelperText="HEX" />
+                                        <MudTextField Value="@(DisableAlpha == false ? _color.ToString(MudColorOutputFormats.HexA) : _color.ToString(MudColorOutputFormats.Hex))" ValueChanged="SetInputString" T="string" Class="mud-picker-color-inputfield" Variant="Variant.Outlined" HelperText="HEX" />
                                         break;
                                     default:
                                         break;
@@ -90,11 +89,11 @@
                                 {
                                     if(ColorPickerMode == ColorPickerMode.RGB)
                                     {
-                                        <MudNumericField Value="@_color.A" T="byte" ValueChanged="SetAlpha" Class="mud-picker-color-inputfield" HelperText="A" Min="0" Max="255" Step="1" Variant="Variant.Outlined" HideSpinButtons="true" />
+                                        <MudNumericField Value="@_color.A" T="byte" ValueChanged="SetAlpha" Class="mud-picker-color-inputfield input-field-alpha" HelperText="A" Min="0" Max="255" Step="1" Variant="Variant.Outlined" HideSpinButtons="true" />
                                     }
                                     else
                                     {
-                                        <MudNumericField Value="@(  Math.Round(_color.A / 255.0, 2))" T="double" ValueChanged="SetAlpha" Class="mud-picker-color-inputfield" HelperText="A" Min="0" Max="1" Step="0.01" Variant="Variant.Outlined" HideSpinButtons="true" />
+                                        <MudNumericField Value="@(  Math.Round(_color.A / 255.0, 2))" T="double" ValueChanged="SetAlpha" Class="mud-picker-color-inputfield input-field-alpha" HelperText="A" Min="0" Max="1" Step="0.01" Variant="Variant.Outlined" HideSpinButtons="true" />
                                     }
                                 }
                             </div>

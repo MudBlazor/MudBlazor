@@ -52,10 +52,29 @@ namespace MudBlazor
 
         #region Parameters
 
+        private bool _disableAlpha;
+
         /// <summary>
         /// If true, Alpha options will not be displayed and color output will be RGB, HSL or HEX and not RGBA, HSLA or HEXA.
         /// </summary>
-        [Parameter] public bool DisableAlpha { get; set; }
+        [Parameter]
+        public bool DisableAlpha
+        {
+            get => _disableAlpha;
+            set
+            {
+                if (value != _disableAlpha)
+                {
+                    _disableAlpha = value;
+
+                    if (value == true)
+                    {
+                        Value = Value.SetAlpha(1.0);
+                    }
+                }
+
+            }
+        }
 
         /// <summary>
         /// If true, the color field will not be displayed.
@@ -126,6 +145,8 @@ namespace MudBlazor
 
         [Parameter] public EventCallback<MudColor> ValueChanged { get; set; }
 
+        [Parameter] public IEnumerable<MudColor> Palette { get; set; } = new MudColor[] { "#ff4081ff", "#2196f3ff", "#00c853ff", "#ff9800ff", "#f44336ff" };
+
         #endregion
 
         private EventCallback<MouseEventArgs> GetEventCallback() => EventCallback.Factory.Create<MouseEventArgs>(this, () => Close());
@@ -134,6 +155,19 @@ namespace MudBlazor
         {
             _collectionOpen = !_collectionOpen;
         }
+
+        private EventCallback<MouseEventArgs> GetSelectPaletteColorCallback(MudColor color)
+        {
+            return new EventCallbackFactory().Create<MouseEventArgs>(this, (MouseEventArgs e) => SelectPaletteColor(color));
+        }
+
+        private Task SelectPaletteColor(MudColor color)
+        {
+            Value = color;
+            _collectionOpen = false;
+            return Task.CompletedTask;
+        }
+
 
         public void ChangeMode() =>
             ColorPickerMode = ColorPickerMode switch

@@ -26,6 +26,13 @@ namespace MudBlazor.UnitTests.Components.Components
         private const double _defaultYForColorPanel = 28.43;
         private const string _hueSliderCssSelector = ".mud-slider.mud-picker-color-slider.hue input";
         private const string _alphaSliderCssSelector = ".mud-picker-color-slider.alpha input";
+        private const string _colorDotCssSelector = ".mud-picker-color-fill";
+        private const string _toolbarCssSelector = ".mud-toolbar";
+        private const string _mudColorPickerCssSelector = ".mud-picker-color-picker";
+        private const string _slidersControlCssSelector = ".mud-picker-color-sliders";
+        private const string _colorInputCssSelector = ".mud-picker-color-inputs";
+        private const string _colorInputModeSwitchCssSelector = ".mud-picker-control-switch";
+        private const string _alphaInputCssSelector = ".input-field-alpha";
         private Bunit.TestContext ctx;
 
         [SetUp]
@@ -93,7 +100,7 @@ namespace MudBlazor.UnitTests.Components.Components
 
             var alphaSliderStyleAttritbute = (alphaSlider[0].Parent as IHtmlElement).GetAttribute("style");
 
-            alphaSliderStyleAttritbute.Should().Be($"background-image: linear-gradient(to right, transparent, {expectedColor.ToRGB()});");
+            alphaSliderStyleAttritbute.Should().Be($"background-image: linear-gradient(to right, transparent, {expectedColor.ToString(MudColorOutputFormats.RGB)});");
         }
 
         private IHtmlInputElement[] GetColorInputs(IRenderedComponent<SimpleColorPickerTest> comp, int expectedCount = 4)
@@ -335,8 +342,253 @@ namespace MudBlazor.UnitTests.Components.Components
             CheckColorRelatedValues(comp, _defaultXForColorPanel, _defaultYForColorPanel, color, ColorPickerMode.RGB);
         }
 
+        [Test]
+        public void ColorPalette_Interaction()
+        {
+            var comp = ctx.RenderComponent<SimpleColorPickerTest>();
+            Console.WriteLine(comp.Markup);
+
+            var colorDot = comp.Find(_colorDotCssSelector);
+            // no collection
+            Assert.Throws<ElementNotFoundException>(() => comp.Find(".mud-picker-color-collection"));
+            colorDot.Click();
+
+            // collection found
+            var colorsToSelectPanel = comp.Find(".mud-picker-color-collection");
+            colorsToSelectPanel.Children.Should().HaveCount(5);
+
+            var expectedColors = new MudColor[] { "#ff4081ff", "#2196f3ff", "#00c853ff", "#ff9800ff", "#f44336ff" };
+
+            for (int i = 0; i < 5; i++)
+            {
+                var styleAtribute = colorsToSelectPanel.Children[i].GetAttribute("style");
+                styleAtribute.Should().Be($"background: {expectedColors[i].ToString(MudColorOutputFormats.RGBA)};");
+            }
+
+            colorDot.Click();
+
+            // again no collection visible
+            Assert.Throws<ElementNotFoundException>(() => comp.Find(".mud-picker-color-collection"));
+        }
+
+        [Test]
+        public void ColorPalette_CustomColors()
+        {
+            var expectedColors = new MudColor[] { "#23af3daa", "#56a23dff", "#56a85dff"};
+
+            var comp = ctx.RenderComponent<SimpleColorPickerTest>(p => p.Add(x => x.Palette, expectedColors));
+            Console.WriteLine(comp.Markup);
+
+            var colorDot = comp.Find(_colorDotCssSelector);
+            colorDot.Click();
+
+            // collection found
+            var colorsToSelectPanel = comp.Find(".mud-picker-color-collection");
+            colorsToSelectPanel.Children.Should().HaveCount(expectedColors.Length);
+
+            for (int i = 0; i < expectedColors.Length; i++)
+            {
+                var styleAtribute = colorsToSelectPanel.Children[i].GetAttribute("style");
+                styleAtribute.Should().Be($"background: {expectedColors[i].ToString(MudColorOutputFormats.RGBA)};");
+            }
+        }
+
+        [Test]
+        public void ColorPalette_SelectColor()
+        {
+            var comp = ctx.RenderComponent<SimpleColorPickerTest>();
+            Console.WriteLine(comp.Markup);
+
+            var colorDot = comp.Find(_colorDotCssSelector);
+            // no collection
+            Assert.Throws<ElementNotFoundException>(() => comp.Find(".mud-picker-color-collection"));
+            colorDot.Click();
+
+            var expectedColors = new MudColor[] { "#ff4081ff", "#2196f3ff", "#00c853ff", "#ff9800ff", "#f44336ff" };
+            
+            for (int i = 0; i < 5; i++)
+            {
+                var colorsToSelectPanel = comp.Find(".mud-picker-color-collection");
+
+                colorsToSelectPanel.Children[i].Click();
+                colorDot = comp.Find(_colorDotCssSelector);
+
+                var styleAtribute = colorDot.GetAttribute("style");
+                styleAtribute.Should().Be($"background: {expectedColors[i].ToString(MudColorOutputFormats.RGBA)};");
+                comp.Instance.ColorValue.Should().Be(expectedColors[i]);
+
+                colorDot.Click();
+            }
+        }
+
+        [Test]
+        public void Toogle_Toolbar()
+        {
+            var comp = ctx.RenderComponent<SimpleColorPickerTest>(p => p.Add(x => x.DisableToolbar, false));
+            Console.WriteLine(comp.Markup);
+
+            _  = comp.Find(_toolbarCssSelector);
+
+            comp.SetParametersAndRender(p => p.Add(x => x.DisableToolbar, true));
+
+            Assert.Throws<ElementNotFoundException>(() => comp.Find(_toolbarCssSelector));
+
+            comp.SetParametersAndRender(p => p.Add(x => x.DisableToolbar, false));
+
+            _ = comp.Find(_toolbarCssSelector);
+        }
+
+        [Test]
+        public void Toogle_ColorField()
+        {
+            var comp = ctx.RenderComponent<SimpleColorPickerTest>(p => p.Add(x => x.DisableColorField, false));
+            Console.WriteLine(comp.Markup);
+
+            _ = comp.Find(_mudColorPickerCssSelector);
+
+            comp.SetParametersAndRender(p => p.Add(x => x.DisableColorField, true));
+
+            Assert.Throws<ElementNotFoundException>(() => comp.Find(_mudColorPickerCssSelector));
+
+            comp.SetParametersAndRender(p => p.Add(x => x.DisableColorField, false));
+
+            _ = comp.Find(_mudColorPickerCssSelector);
+        }
+
+        [Test]
+        public void Toogle_Preview()
+        {
+            var comp = ctx.RenderComponent<SimpleColorPickerTest>(p => p.Add(x => x.DisablePreview, false));
+            Console.WriteLine(comp.Markup);
+
+            _ = comp.Find(_colorDotCssSelector);
+
+            comp.SetParametersAndRender(p => p.Add(x => x.DisablePreview, true));
+
+            Assert.Throws<ElementNotFoundException>(() => comp.Find(_colorDotCssSelector));
+
+            comp.SetParametersAndRender(p => p.Add(x => x.DisablePreview, false));
+
+            _ = comp.Find(_colorDotCssSelector);
+        }
+
+        [Test]
+        public void Toogle_Sliders()
+        {
+            var comp = ctx.RenderComponent<SimpleColorPickerTest>(p => p.Add(x => x.DisableSliders, false));
+            Console.WriteLine(comp.Markup);
+
+            _ = comp.Find(_slidersControlCssSelector);
+
+            comp.SetParametersAndRender(p => p.Add(x => x.DisableSliders, true));
+
+            Assert.Throws<ElementNotFoundException>(() => comp.Find(_slidersControlCssSelector));
+
+            comp.SetParametersAndRender(p => p.Add(x => x.DisableSliders, false));
+
+            _ = comp.Find(_slidersControlCssSelector);
+        }
+
+        [Test]
+        [TestCase(ColorPickerMode.HEX)]
+        [TestCase(ColorPickerMode.HSL)]
+        [TestCase(ColorPickerMode.RGB)]
+        public void Toogle_Input(ColorPickerMode mode)
+        {
+            var comp = ctx.RenderComponent<SimpleColorPickerTest>(p => {
+                p.Add(x => x.ColorPickerMode, mode);
+                p.Add(x => x.DisableInput, false); 
+            
+            });
+            Console.WriteLine(comp.Markup);
+
+            _ = comp.Find(_colorInputCssSelector);
+
+            comp.SetParametersAndRender(p => p.Add(x => x.DisableInput, true));
+
+            Assert.Throws<ElementNotFoundException>(() => comp.Find(_colorInputCssSelector));
+
+            comp.SetParametersAndRender(p => p.Add(x => x.DisableInput, false));
+
+            _ = comp.Find(_colorInputCssSelector);
+        }
 
 
+        [Test]
+        public void Toogle_ModeSwitch()
+        {
+            var comp = ctx.RenderComponent<SimpleColorPickerTest>(p => p.Add(x => x.DisableModeSwitch, false));
+            Console.WriteLine(comp.Markup);
 
+            _ = comp.Find(_colorInputModeSwitchCssSelector);
+
+            comp.SetParametersAndRender(p => p.Add(x => x.DisableModeSwitch, true));
+
+            Assert.Throws<ElementNotFoundException>(() => comp.Find(_colorInputModeSwitchCssSelector));
+
+            comp.SetParametersAndRender(p => p.Add(x => x.DisableModeSwitch, false));
+
+            _ = comp.Find(_colorInputModeSwitchCssSelector);
+        }
+
+        [Test]
+        [TestCase(ColorPickerMode.HSL)]
+        [TestCase(ColorPickerMode.RGB)]
+        public void Toogle_Alpha(ColorPickerMode mode)
+        {
+            var color = new MudColor(12, 220, 124, 120);
+            var expectedColor = new MudColor(12, 220, 124, 120);
+
+            var comp = ctx.RenderComponent<SimpleColorPickerTest>(p => {
+                p.Add(x => x.ColorPickerMode, mode);
+                p.Add(x => x.DisableAlpha, false);
+                p.Add(x => x.ColorValue, color);
+            });
+            Console.WriteLine(comp.Markup);
+
+            _ = comp.Find(_alphaInputCssSelector);
+
+            comp.SetParametersAndRender(p => p.Add(x => x.DisableAlpha, true));
+
+            Assert.Throws<ElementNotFoundException>(() => comp.Find(_alphaInputCssSelector));
+            comp.Instance.ColorValue.Should().Be(expectedColor);
+
+            comp.SetParametersAndRender(p => p.Add(x => x.DisableAlpha, false));
+
+            _ = comp.Find(_alphaInputCssSelector);
+            comp.Instance.ColorValue.Should().Be(expectedColor);
+        }
+
+        [Test]
+        public void Toogle_Alpha_HexInputMode()
+        {
+            var color = new MudColor(12, 220, 124, 120);
+            var expectedColor = new MudColor(12, 220, 124, 120);
+
+            var comp = ctx.RenderComponent<SimpleColorPickerTest>(p => {
+                p.Add(x => x.ColorPickerMode, ColorPickerMode.HEX);
+                p.Add(x => x.DisableAlpha, false);
+                p.Add(x => x.ColorValue, color);
+            });
+            Console.WriteLine(comp.Markup);
+
+            Assert.Throws<ElementNotFoundException>(() => comp.Find(_alphaInputCssSelector));
+
+            comp.SetParametersAndRender(p => p.Add(x => x.DisableAlpha, true));
+
+            comp.Instance.ColorValue.Should().Be(expectedColor);
+
+            var inputs = comp.FindAll(".mud-picker-color-inputfield input");
+            inputs.Should().ContainSingle();
+            inputs.Should().AllBeAssignableTo<IHtmlInputElement>();
+            (inputs[0] as IHtmlInputElement).Value.Should().Be("#0cdc7c");
+
+            comp.SetParametersAndRender(p => p.Add(x => x.DisableAlpha, false));
+            comp.Instance.ColorValue.Should().Be(expectedColor);
+            inputs = comp.FindAll(".mud-picker-color-inputfield input");
+            inputs.Should().ContainSingle();
+            inputs.Should().AllBeAssignableTo<IHtmlInputElement>();
+            (inputs[0] as IHtmlInputElement).Value.Should().Be("#0cdc7c78");
+        }
     }
 }

@@ -8,6 +8,30 @@ using MudBlazor.Extensions;
 
 namespace MudBlazor.Utilities
 {
+    public enum MudColorOutputFormats
+    {
+        /// <summary>
+        /// Output will be starting with a # and include r,g and b but no alpha values. Example #ab2a3d
+        /// </summary>
+        Hex,
+        /// <summary>
+        /// Output will be starting with a # and include r,g and b and alpha values. Example #ab2a3dff
+        /// </summary>
+        HexA,
+        /// <summary>
+        /// Will output css like output for value. Example rgb(12,15,40)
+        /// </summary>
+        RGB,
+        /// <summary>
+        /// Will output css like output for value with alpha. Example rgba(12,15,40,0.42)
+        /// </summary>
+        RGBA,
+        /// <summary>
+        /// Will output the color elements without any decorator and without alpha. Example 12,15,26
+        /// </summary>
+        ColorElements   
+    }
+
     public class MudColor : IEquatable<MudColor>
     {
         #region Fields and Properties
@@ -23,25 +47,7 @@ namespace MudBlazor.Utilities
         public byte B => _valuesAsByte[2];
         public byte A => _valuesAsByte[3];
 
-        private double _h;
-
-        public double H
-        {
-            get => _h;
-            set
-            {
-                //hue of 360 is the same as hue of 0
-
-                if (value == 360)
-                {
-                    _h = 0;
-                }
-                else
-                {
-                    _h = value;
-                }
-            }
-        }
+        public double H { get; private set; }
         public double L { get; private set; }
         public double S { get; private set; }
 
@@ -303,10 +309,17 @@ namespace MudBlazor.Utilities
         public static implicit operator MudColor(string input) => new MudColor(input);
         public static explicit operator string(MudColor color) => color == null ? string.Empty : color.Value;
 
-        public override string ToString() => Value;
-        public string ToRGB() => $"rgb({R},{G},{B})";
-        public string ToRGBA() => $"rgba({R},{G},{B},{(A / 255.0).ToString(CultureInfo.InvariantCulture)})";
-        public string ToColorRgbElements() => $"{R},{G},{B}";
+        public override string ToString() => ToString(MudColorOutputFormats.HexA);
+
+        public string ToString(MudColorOutputFormats format) => format switch
+        {
+            MudColorOutputFormats.Hex => Value.Substring(0, 7),
+            MudColorOutputFormats.HexA => Value,
+            MudColorOutputFormats.RGB => $"rgb({R},{G},{B})",
+            MudColorOutputFormats.RGBA => $"rgba({R},{G},{B},{(A / 255.0).ToString(CultureInfo.InvariantCulture)})",
+            MudColorOutputFormats.ColorElements => $"{R},{G},{B}",
+            _ => Value,
+        };
 
         public override bool Equals(object obj) => obj is MudColor color && Equals(color);
 

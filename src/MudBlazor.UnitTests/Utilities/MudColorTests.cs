@@ -449,7 +449,7 @@ namespace MudBlazor.UnitTests.Utilities
 
                 MudColor color = new(r, g, b, a);
 
-                color.ToRGB().Should().Be(expectedValue);
+                color.ToString(MudColorOutputFormats.RGB).Should().Be(expectedValue);
             }
         }
 
@@ -467,7 +467,7 @@ namespace MudBlazor.UnitTests.Utilities
 
                 MudColor color = new(r, g, b, a);
 
-                color.ToRGBA().Should().Be(expectedValue);
+                color.ToString(MudColorOutputFormats.RGBA).Should().Be(expectedValue);
             }
         }
 
@@ -484,7 +484,24 @@ namespace MudBlazor.UnitTests.Utilities
 
                 MudColor color = new(r, g, b, a);
 
-                color.ToColorRgbElements().Should().Be(expectedValue);
+                color.ToString(MudColorOutputFormats.ColorElements).Should().Be(expectedValue);
+            }
+        }
+
+        [Test]
+        [TestCase(130, 150, 240, 170, "#8296f0")]
+        [TestCase(71, 88, 99, 204, "#475863")]
+        public void ToHex(byte r, byte g, byte b, byte a, string expectedValue)
+        {
+            var cultures = new[] { new CultureInfo("en"), new CultureInfo("se") };
+
+            foreach (var item in cultures)
+            {
+                CultureInfo.CurrentCulture = item;
+
+                MudColor color = new(r, g, b, a);
+
+                color.ToString(MudColorOutputFormats.Hex).Should().Be(expectedValue);
             }
         }
 
