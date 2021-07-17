@@ -12,12 +12,7 @@ namespace MudBlazor.Docs.Shared
     {
         private bool _drawerOpen = false;
         private bool _rightToLeft = false;
-        private NavigationFooterLink _previous;
-        private NavigationFooterLink _next;
-        private NavigationSection? _section = null;
         private NavMenu _navMenuRef;
-
-        [Inject] private IDocsNavigationService DocsService { get; set; }
 
         [Inject] private NavigationManager NavigationManager { get; set; }
 
@@ -43,13 +38,6 @@ namespace MudBlazor.Docs.Shared
             {
                 _drawerOpen = true;
             }
-        }
-
-        protected override void OnParametersSet()
-        {
-            _previous = DocsService.Previous;
-            _next = DocsService.Next;
-            _section = DocsService.Section;
         }
 
         protected override void OnAfterRender(bool firstRender)
