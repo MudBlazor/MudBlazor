@@ -5,13 +5,13 @@
     <CascadingValue Value="this" IsFixed="true">
         <div class="@ToolbarClassnames">
             <div class="mud-tabs-toolbar-inner" style="@MaxHeightStyles">
-                @if(HeaderPosition == TabHeaderPosition.Before && Header != null && !Invisible)
+                @if(HeaderPosition == TabHeaderPosition.Before && Header != null && !HiddenLayout)
                 {
                     <div class="mud-tabs-header mud-tabs-header-before">
                        @Header(this)
                     </div>
                 }
-                @if(_showScrollButtons && !Invisible)
+                @if(_showScrollButtons && !HiddenLayout)
                 {
                     <div class="mud-tabs-scroll-button">
                         <MudIconButton Icon="@_prevIcon" Color="@ScrollIconColor" OnClick="@((e) => ScrollPrev())" Disabled="@_prevButtonDisabled" />
@@ -29,7 +29,7 @@
                                             @TabPanelHeader(panel)
                                         </div>
                                     }
-                                    @if (!Invisible)
+                                    @if (!HiddenLayout)
                                     {
                                         @if (!String.IsNullOrEmpty(panel.Text) && String.IsNullOrEmpty(panel.Icon))
                                         {
@@ -58,19 +58,19 @@
                                 </div>
                             </MudTooltip>
                         }
-                        @if (!HideSlider && !Invisible)
+                        @if (!HideSlider && !HiddenLayout)
                         {
                             <div class="@SliderClass" style="@SliderStyle"></div>
                         }
                     </div>
                 </div>
-                @if(_showScrollButtons && !Invisible)
+                @if(_showScrollButtons && !HiddenLayout)
                 {
                     <div class="mud-tabs-scroll-button">
                         <MudIconButton Icon="@_nextIcon" Color="@ScrollIconColor" OnClick="@((e) => ScrollNext())" Disabled="@_nextButtonDisabled" />
                     </div>
                 }
-                @if(HeaderPosition == TabHeaderPosition.After && Header != null && !Invisible)
+                @if(HeaderPosition == TabHeaderPosition.After && Header != null && !HiddenLayout)
                 {
                     <div class="mud-tabs-header mud-tabs-header-after">
                         @Header(this)

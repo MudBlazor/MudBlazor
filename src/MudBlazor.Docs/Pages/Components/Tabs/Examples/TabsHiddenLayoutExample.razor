@@ -1,6 +1,6 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
-<MudTabs Invisible="invisibleTabs" PanelClass="pa-6" @ref="tabs" Style="@TabsStyle" Elevation="2" Rounded="true" ApplyEffectsToContainer="true">
+<MudTabs HiddenLayout="hiddenLayout" PanelClass="pa-6" @ref="tabs" Style="@TabsStyle" Elevation="2" Rounded="true" ApplyEffectsToContainer="true">
     <MudTabPanel Text="Tab 1" OnClick="() => Activate(0)">
         <div style="display: flex; align-items: center; justify-content: space-around; height: 80px;">
             <div style="min-width: 400px;">
@@ -25,7 +25,7 @@
 </MudTabs>
 
 <div class="mt-2 mb-2">
-    <MudSwitch @bind-Checked="@invisibleTabs" Label="Invisible Tabs and TabPanels" Color="Color.Info" />
+    <MudSwitch @bind-Checked="@hiddenLayout" Label="Hide the layout of the Tabs and the Tab Panels" Color="Color.Info" />
 </div>
 
 <MudText GutterBottom="true" Align="Align.Center" Class="mt-4"><b>Select the tab</b></MudText>
@@ -37,7 +37,7 @@
 
 @code { 
     private MudTabs tabs;
-    private bool invisibleTabs = true;
+    private bool hiddenLayout = true;
     private string TabsStyle = "background-color: #F4F4F4;";
     private string text = "I am on TabPanel 1 and I am a TextField!";
 

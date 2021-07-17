@@ -43,9 +43,9 @@ namespace MudBlazor
         [Parameter] public bool Rounded { get; set; }
 
         /// <summary>
-        /// Show or hide the tabs and the tabPanels. They are shown by default.
+        /// Show or hide the layouts of the tabs and the tabPanels. They are shown by default.
         /// </summary>
-        [Parameter] public bool Invisible { get; set; }
+        [Parameter] public bool HiddenLayout { get; set; }
 
         /// <summary>
         /// If true, sets a border betwen the content and the toolbar depending on the position.
@@ -310,7 +310,7 @@ namespace MudBlazor
 
         private void ActivatePanelClick(MudTabPanel panel, MouseEventArgs ev, bool ignoreDisabledState = false)
         {
-            if (!Invisible)
+            if (!HiddenLayout)
                 ActivatePanel(panel, ev, ignoreDisabledState);
         }
 
@@ -354,9 +354,9 @@ namespace MudBlazor
 
         protected string TabsClassnames =>
             new CssBuilder("mud-tabs")
-            .AddClass($"mud-tabs-rounded", ApplyEffectsToContainer && Rounded & !Invisible)
-            .AddClass($"mud-paper-outlined", ApplyEffectsToContainer && Outlined & !Invisible)
-            .AddClass($"mud-elevation-{Elevation}", ApplyEffectsToContainer && Elevation != 0 & !Invisible)
+            .AddClass($"mud-tabs-rounded", ApplyEffectsToContainer && Rounded & !HiddenLayout)
+            .AddClass($"mud-paper-outlined", ApplyEffectsToContainer && Outlined & !HiddenLayout)
+            .AddClass($"mud-elevation-{Elevation}", ApplyEffectsToContainer && Elevation != 0 & !HiddenLayout)
             .AddClass($"mud-tabs-reverse", Position == Position.Bottom)
             .AddClass($"mud-tabs-vertical", IsVerticalTabs())
             .AddClass($"mud-tabs-vertical-reverse", Position == Position.Right && !RightToLeft || (Position == Position.Left) && RightToLeft || Position == Position.End)
@@ -366,12 +366,12 @@ namespace MudBlazor
 
         protected string ToolbarClassnames =>
             new CssBuilder("mud-tabs-toolbar")
-            .AddClass($"mud-tabs-rounded", !ApplyEffectsToContainer && Rounded & !Invisible)
+            .AddClass($"mud-tabs-rounded", !ApplyEffectsToContainer && Rounded & !HiddenLayout)
             .AddClass($"mud-tabs-vertical", IsVerticalTabs())
-            .AddClass($"mud-tabs-toolbar-{Color.ToDescriptionString()}", Color != Color.Default & !Invisible)
-            .AddClass($"mud-tabs-border-{ConvertPosition(Position).ToDescriptionString()}", Border & !Invisible)
-            .AddClass($"mud-paper-outlined", !ApplyEffectsToContainer && Outlined & !Invisible)
-            .AddClass($"mud-elevation-{Elevation}", !ApplyEffectsToContainer && Elevation != 0 & !Invisible)
+            .AddClass($"mud-tabs-toolbar-{Color.ToDescriptionString()}", Color != Color.Default & !HiddenLayout)
+            .AddClass($"mud-tabs-border-{ConvertPosition(Position).ToDescriptionString()}", Border & !HiddenLayout)
+            .AddClass($"mud-paper-outlined", !ApplyEffectsToContainer && Outlined & !HiddenLayout)
+            .AddClass($"mud-elevation-{Elevation}", !ApplyEffectsToContainer && Elevation != 0 & !HiddenLayout)
             .Build();
 
         protected string WrapperClassnames =>
@@ -438,10 +438,10 @@ namespace MudBlazor
         string GetTabClass(MudTabPanel panel)
         {
             var tabClass = new CssBuilder("mud-tab")
-              .AddClass($"mud-tab-hover", !Invisible)
-              .AddClass($"mud-tab-active", when: () => panel == ActivePanel && !Invisible)
-              .AddClass($"mud-disabled", panel.Disabled && !Invisible)
-              .AddClass($"mud-ripple", !DisableRipple && !Invisible)
+              .AddClass($"mud-tab-hover", !HiddenLayout)
+              .AddClass($"mud-tab-active", when: () => panel == ActivePanel && !HiddenLayout)
+              .AddClass($"mud-disabled", panel.Disabled && !HiddenLayout)
+              .AddClass($"mud-ripple", !DisableRipple && !HiddenLayout)
               .AddClass(TabPanelClass)
               .AddClass(panel.Class)
               .Build();
