@@ -37,11 +37,15 @@ namespace MudBlazor
                 CssPosition = Fixed ? "fixed" : "absolute"
             };
             Portal.Add(item);
-            WindowResizeListener.OnResized += OnWindowResize;
         }
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
+            if (firstRender)
+            {
+                WindowResizeListener.OnResized += OnWindowResize;
+            }
+
             var item = Portal.GetItem(_id).Clone();
 
             item.IsVisible = IsVisible;
