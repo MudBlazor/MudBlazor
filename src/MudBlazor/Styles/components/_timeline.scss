@@ -151,10 +151,16 @@
         }
     }
 
-    &.mud-timeline-mode-left {
+    &.mud-timeline-mode-start {
         &::before {
             right: auto;
             left: 47px;
+        }
+        &.mud-timeline-rtl {
+            &::before {
+                right: 47px;
+                left: auto;
+            }
         }
 
         .mud-timeline-item {
@@ -170,10 +176,16 @@
         }
     }
 
-    &.mud-timeline-mode-right {
+    &.mud-timeline-mode-end {
         &::before {
             right: 47px;
             left: auto;
+        }
+        &.mud-timeline-rtl {
+            &::before {
+                left: 47px;
+                right: auto;
+            }
         }
 
         .mud-timeline-item {
