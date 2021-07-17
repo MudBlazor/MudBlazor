@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Components;
 using MudBlazor.Docs.Models;
 using System.Threading.Tasks;
 using System.Linq;
+using MudBlazor.Docs.Services;
 
 namespace MudBlazor.Docs.Components
 {
@@ -15,11 +16,23 @@ namespace MudBlazor.Docs.Components
     {
         private Queue<DocsSectionLink> _bufferedSections = new();
         private MudPageContentNavigation _contentNavigation;
+        private NavigationFooterLink _previous;
+        private NavigationFooterLink _next;
+        private NavigationSection? _section = null;
 
         [Inject] NavigationManager NavigationManager { get; set; }
 
+        [Inject] private IDocsNavigationService DocsService { get; set; }
+
         [Parameter] public MaxWidth MaxWidth { get; set; } = MaxWidth.Medium;
         [Parameter] public RenderFragment ChildContent { get; set; }
+
+        protected override void OnParametersSet()
+        {
+            _previous = DocsService.Previous;
+            _next = DocsService.Next;
+            _section = DocsService.Section;
+        }
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
