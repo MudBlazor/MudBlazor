@@ -344,10 +344,28 @@ namespace MudBlazor
                 switch (obj.Key)
                 {
                     case "ArrowUp":
-                        await Increment();
+                        _key++;
+                        if (!Immediate)
+                        {
+                            await Task.Delay(1);
+                            await Increment();
+                            await Task.Delay(1);
+                            _ = FocusAsync();
+                        }
+                        else
+                            await Increment();
                         return;
                     case "ArrowDown":
-                        await Decrement();
+                        _key++;
+                        if (!Immediate)
+                        {
+                            await Task.Delay(1);
+                            await Decrement();
+                            await Task.Delay(1);
+                            _ = FocusAsync();
+                        }
+                        else
+                            await Decrement();
                         return;
                     // various navigation keys
                     case "ArrowLeft":
