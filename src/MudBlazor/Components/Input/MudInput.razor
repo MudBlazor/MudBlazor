@@ -12,7 +12,7 @@
 	@if (Lines > 1)
 	{
 		@*note: the value="@Text" is absolutely essential here. the inner html @Text is kept only for compatibility*@
-	 <textarea @ref="_elementReference" rows="@Lines" @attributes="UserAttributes" type="@InputTypeString" class="@InputClassname" placeholder="@Placeholder" disabled=@Disabled readonly="@ReadOnly"
+	 <textarea @ref="_elementReference" rows="@Lines" @attributes="UserAttributes" type="@InputTypeString" class="@InputClassname" placeholder="@Placeholder" disabled=@Disabled readonly="@ReadOnly" inputmode="@InputMode.ToString()"
 			  @oninput="OnInput" @onchange="OnChange" @onblur="@OnBlurred" @onkeydown="@InvokeKeyDown" @onkeypress="@InvokeKeyPress" @onkeyup="@InvokeKeyUp" @onpaste="@OnPaste" value="@Text"
 			  @onkeydown:preventDefault="@KeyDownPreventDefault" @onkeypress:preventDefault="@KeyPressPreventDefault" @onkeyup:preventDefault="@KeyUpPreventDefault">@Text</textarea>
 	}
@@ -26,7 +26,7 @@
 		}
 
 	 <input @ref="_elementReference" @attributes="UserAttributes" type="@InputTypeString" class="@InputClassname" value="@Text" @oninput="OnInput" @onchange="OnChange"
-		   placeholder="@Placeholder" disabled=@Disabled readonly="@ReadOnly" @onblur="@OnBlurred"
+		   placeholder="@Placeholder" disabled=@Disabled readonly="@ReadOnly" @onblur="@OnBlurred" inputmode="@InputMode.ToString()" pattern="@Pattern"
 		   @onkeydown="@InvokeKeyDown" @onkeypress="@InvokeKeyPress" @onkeyup="@InvokeKeyUp"
 		   @onkeydown:preventDefault="KeyDownPreventDefault" @onkeypress:preventDefault="@KeyPressPreventDefault" @onkeyup:preventDefault="@KeyUpPreventDefault" />
 	}

@@ -110,6 +110,17 @@ namespace MudBlazor
         [Parameter]
         public string Text { get; set; }
 
+        /// <summary>
+        ///  Hints at the type of data that might be entered by the user while editing the input
+        /// </summary>
+        [Parameter] public virtual InputMode InputMode { get; set; } = InputMode.text;
+
+        /// <summary>
+        /// The pattern attribute, when specified, is a regular expression which the input's value must match in order for the value to pass constraint validation. It must be a valid JavaScript regular expression
+        /// Not Supported in multline input
+        /// </summary>
+        [Parameter] public virtual string Pattern { get; set; }
+
         protected async Task SetTextAsync(string text, bool updateValue = true)
         {
             if (Text != text)

@@ -18,7 +18,9 @@
                       OnIncrement="Increment" OnDecrement="Decrement" HideSpinButtons="@HideSpinButtons" Validation="_validateInstance"
 					  min="@(_minHasValue ? FormatParam(_min) : null)"
 					  max="@(_maxHasValue ? FormatParam(_max): null)"
-					  step="@(_stepHasValue ? FormatParam(_step) : null)" />
+					  step="@(_stepHasValue ? FormatParam(_step) : null)"
+					  InputMode="InputMode"
+					  Pattern="@Pattern"/>
 		</InputContent>
 	</MudInputControl>
 </CascadingValue>
