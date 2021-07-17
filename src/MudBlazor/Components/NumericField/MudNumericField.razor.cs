@@ -13,7 +13,10 @@ namespace MudBlazor
         public MudNumericField() : base()
         {
             _validateInstance = new Func<T, Task<bool>>(ValidateInput);
-            _inputConverter = new NumericBoundariesConverter<T>((val) => ConstrainBoundaries(val).value) { Culture = CultureInfo.InvariantCulture };
+            _inputConverter = new NumericBoundariesConverter<T>((val) => ConstrainBoundaries(val).value) { 
+                FilterFunc = CleanText,
+                Culture = CultureInfo.InvariantCulture 
+            };
 
             #region parameters default depending on T
 
@@ -144,6 +147,13 @@ namespace MudBlazor
             bool valueChanged;
             (value, valueChanged) = ConstrainBoundaries(value);
             await base.SetValueAsync(value, valueChanged || updateText);
+        }
+
+        protected override void OnBlurred(FocusEventArgs obj)
+        {
+            base.OnBlurred(obj);
+            Console.WriteLine("NumericField.Blurred " + Text);
+            _key++; // this forces a re-render on the inner input to display the value correctly
         }
 
         protected async Task<bool> ValidateInput(T value)
@@ -356,6 +366,16 @@ namespace MudBlazor
                             return;
                         }
                         break;
+                    default:
+                        var acceptableKeyTypes = new Regex("^[0-9,.]$");
+                        var isMatch = acceptableKeyTypes.Match(obj.Key).Success;
+                        Console.WriteLine(obj.Key + " did match " + isMatch);
+                        if (isMatch is false)
+                        {
+                            _keyDownPreventDefault = true;
+                            return;
+                        }
+                        break;
                 }
             }
             OnKeyDown.InvokeAsync(obj).AndForget();
@@ -466,8 +486,23 @@ namespace MudBlazor
 
         /// <summary>
         /// The pattern attribute, when specified, is a regular expression which the input's value must match in order for the value to pass constraint validation. It must be a valid JavaScript regular expression
-        /// Defaults to [0-9,.]
+        /// Defaults to [0-9,\.\-+]
         /// </summary>
-        [Parameter] public override string Pattern { get; set; } = "[0-9,.]";
+        [Parameter] public override string Pattern { get; set; } = @"[0-9,\.\-+]";
+
+        protected string CleanText(string text)
+        {
+            if (string.IsNullOrEmpty(text))
+                return text;
+            var pattern = Pattern;
+            var cleanedText = "";
+            foreach (Match m in Regex.Matches(text, pattern))
+            {
+                cleanedText += m.Captures[0].Value;
+            }
+            if (cleanedText != text)
+                Console.WriteLine("Cleaned text: " + text + " => " + cleanedText);
+            return cleanedText;
+        }
     }
 }

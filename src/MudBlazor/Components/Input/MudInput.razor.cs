@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
@@ -20,9 +21,11 @@ namespace MudBlazor
 
         protected Task OnInput(ChangeEventArgs args)
         {
+            if (!Immediate)
+                return Task.CompletedTask;
             Console.WriteLine("OnInput");
             _isFocused = true;
-            return Immediate ? SetTextAsync(args?.Value as string) : Task.CompletedTask;
+            return SetTextAsync(args?.Value as string);
         }
 
         protected async Task OnChange(ChangeEventArgs args)
