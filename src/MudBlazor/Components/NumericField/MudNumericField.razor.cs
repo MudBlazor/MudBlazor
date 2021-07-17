@@ -141,9 +141,6 @@ namespace MudBlazor
 
         protected override async Task SetValueAsync(T value, bool updateText = true)
         {
-            Console.WriteLine("SetValueAsync");
-            Console.WriteLine(value);
-            Console.WriteLine(_value);
             bool valueChanged;
             (value, valueChanged) = ConstrainBoundaries(value);
             await base.SetValueAsync(value, valueChanged || updateText);
@@ -318,6 +315,7 @@ namespace MudBlazor
 
         #endregion Numeric range
 
+        private long _key = 0;
         private bool _keyDownPreventDefault;
 
         /// <summary>
@@ -331,29 +329,14 @@ namespace MudBlazor
             if (Disabled || ReadOnly)
                 return;
 
-            if (obj.Type == "keydown")//KeyDown or repeat, blazor never fires InvokeKeyPress
+            if (obj.Type == "keydown") //KeyDown or repeat, blazor never fires InvokeKeyPress
             {
                 switch (obj.Key)
                 {
                     case "ArrowUp":
-                        _keyDownPreventDefault = true;
-                        if (RuntimeLocation.IsServerSide)
-                        {
-                            var value = Value;
-                            await Task.Delay(1);
-                            Value = value;
-                        }
                         await Increment();
                         return;
-
                     case "ArrowDown":
-                        _keyDownPreventDefault = true;
-                        if (RuntimeLocation.IsServerSide)
-                        {
-                            var value = Value;
-                            await Task.Delay(1);
-                            Value = value;
-                        }
                         await Decrement();
                         return;
                     // various navigation keys
@@ -373,38 +356,26 @@ namespace MudBlazor
                             return;
                         }
                         break;
-
-                    default:
-                        var acceptableKeyTypes = new Regex("^[0-9,.]$");
-
-                        var isMatch = acceptableKeyTypes.Match(obj.Key).Success;
-
-                        Console.WriteLine(obj.Key + " did match " + isMatch);
-
-                        if (isMatch is false)
-                        {
-                            _keyDownPreventDefault = true;
-                            return;
-                        }
-                        break;
                 }
             }
-
-            _keyDownPreventDefault = KeyDownPreventDefault;
             OnKeyDown.InvokeAsync(obj).AndForget();
         }
 
-        /// <summary>
-        /// Overrides KeyUp event, if needed reset <see cref="_keyDownPreventDefault"/> set by <see cref="InterceptKeydown(KeyboardEventArgs)"/>.
-        /// </summary>
         protected void InterceptKeyUp(KeyboardEventArgs obj)
         {
             if (Disabled || ReadOnly)
                 return;
-
+            switch (obj.Key)
+            {
+                case "ArrowUp":
+                    _elementReference?.ForceRender(forceTextUpdate: true);
+                    break;
+                case "ArrowDown":
+                    _elementReference?.ForceRender(forceTextUpdate: true);
+                    break;
+            }
             _keyDownPreventDefault = false;
             StateHasChanged();
-
             OnKeyUp.InvokeAsync(obj).AndForget();
         }
 

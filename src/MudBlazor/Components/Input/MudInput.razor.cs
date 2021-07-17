@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Extensions;
+using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
@@ -19,12 +20,15 @@ namespace MudBlazor
 
         protected override bool ShouldRender()
         {
-            //when it keeps the focus, it doesn't render to avoid unnecessary trips to the server
-            //except the user presses key enter, so the result must be displayed
-            if (_shouldRenderBeForced) { return true; }
-            if (Immediate && _isFocused && !_showClearableRenderUpdate) { return false; }
-            _showClearableRenderUpdate = false;
             return true;
+            //if (RuntimeLocation.IsClientSide)
+            //    return true;
+            ////when it keeps the focus, it doesn't render to avoid unnecessary trips to the server
+            ////except the user presses key enter, so the result must be displayed
+            //if (_shouldRenderBeForced) { return true; }
+            //if (Immediate && _isFocused && !_showClearableRenderUpdate) { return false; }
+            //_showClearableRenderUpdate = false;
+            //return true;
         }
 
         protected Task OnInput(ChangeEventArgs args)
@@ -105,7 +109,7 @@ namespace MudBlazor
 
         private bool _showClearable;
 
-        private bool _showClearableRenderUpdate;
+        //private bool _showClearableRenderUpdate;
 
         private void UpdateClearable(object value)
         {
@@ -113,7 +117,7 @@ namespace MudBlazor
             if (_showClearable != showClearable)
             {
                 _showClearable = showClearable;
-                _showClearableRenderUpdate = true;
+                //_showClearableRenderUpdate = true;
             }
         }
 

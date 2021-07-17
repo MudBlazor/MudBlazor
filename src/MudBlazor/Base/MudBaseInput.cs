@@ -125,6 +125,7 @@ namespace MudBlazor
         {
             if (Text != text)
             {
+                Console.WriteLine("SetTextAsync: " + text + " updateValue=" + updateValue);
                 Text = text;
                 if (!string.IsNullOrWhiteSpace(Text))
                     Touched = true;
@@ -232,6 +233,8 @@ namespace MudBlazor
         {
             if (!EqualityComparer<T>.Default.Equals(Value, value))
             {
+                Console.WriteLine("SetValueAsync: " + value + " updateText=" + updateText);
+
                 Value = value;
                 if (updateText)
                     await UpdateTextPropertyAsync(false);
@@ -304,6 +307,13 @@ namespace MudBlazor
                 await UpdateTextPropertyAsync(false);
         }
 
+        public void ForceRender(bool forceTextUpdate)
+        {
+            _forceTextUpdate = true;
+            StateHasChanged();
+        }
+        protected bool _forceTextUpdate;
+
         public override async Task SetParametersAsync(ParameterView parameters)
         {
             await base.SetParametersAsync(parameters);
@@ -314,6 +324,13 @@ namespace MudBlazor
             // Refresh Value from Text
             if (hasText && !hasValue)
                 await UpdateValuePropertyAsync(false);
+
+            if (_isFocused && !_forceTextUpdate)
+            {
+                Console.WriteLine("Preventing text update!");
+                return;
+            }
+            _forceTextUpdate = false;
 
             // Refresh Text from Value
             if (hasValue && !hasText)
