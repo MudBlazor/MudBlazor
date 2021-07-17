@@ -10,9 +10,9 @@ namespace MudBlazor
         [Parameter] public MudTheme Theme { get; set; }
 
         /// <summary>
-        ///  If true, will style the scrollbar to MudBlazor one on browsers that support it. 
+        ///  If true, will not apply MudBlazor styled scrollbar and use browser default. 
         /// </summary>
-        [Parameter] public bool MudBlazorScrollbar { get; set; } = true;
+        [Parameter] public bool DefaultScrollbar { get; set; }
 
         protected override void OnInitialized()
         {
