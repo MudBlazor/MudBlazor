@@ -73,16 +73,6 @@ namespace MudBlazor
         [Parameter] public EventCallback<MouseEventArgs> OnAdornmentClick { get; set; }
 
         /// <summary>
-        /// Show clear button.
-        /// </summary>
-        [Parameter] public bool Clearable { get; set; } = false;
-
-        /// <summary>
-        /// Button click event for clear button. Called after text and value has been cleared.
-        /// </summary>
-        [Parameter] public EventCallback<MouseEventArgs> OnClearButtonClick { get; set; }
-
-        /// <summary>
         /// Variant to use.
         /// </summary>
         [Parameter] public Variant Variant { get; set; } = Variant.Text;

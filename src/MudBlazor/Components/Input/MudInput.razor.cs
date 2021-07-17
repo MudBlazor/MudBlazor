@@ -102,6 +102,16 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public bool HideSpinButtons { get; set; } = true;
 
+        /// <summary>
+        /// Show clear button.
+        /// </summary>
+        [Parameter] public bool Clearable { get; set; } = false;
+
+        /// <summary>
+        /// Button click event for clear button. Called after text and value has been cleared.
+        /// </summary>
+        [Parameter] public EventCallback<MouseEventArgs> OnClearButtonClick { get; set; }
+        
         private Size GetButtonSize() => Margin == Margin.Dense ? Size.Small : Size.Medium;
 
         private bool _showClearable;

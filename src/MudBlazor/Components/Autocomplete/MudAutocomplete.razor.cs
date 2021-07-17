@@ -181,6 +181,15 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public bool SelectValueOnTab { get; set; } = false;
 
+        /// <summary>
+        /// Show clear button.
+        /// </summary>
+        [Parameter] public bool Clearable { get; set; } = false;
+
+        /// <summary>
+        /// Button click event for clear button. Called after text and value has been cleared.
+        /// </summary>
+        [Parameter] public EventCallback<MouseEventArgs> OnClearButtonClick { get; set; }
 
         private string _currentIcon;
 
