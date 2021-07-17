@@ -201,6 +201,7 @@ namespace MudBlazor
             _timer?.Dispose();
             IsOpen = false;
             BeginValidate();
+            _elementReference?.ForceRender(forceTextUpdate: true);
             StateHasChanged();
         }
 

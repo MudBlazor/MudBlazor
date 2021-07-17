@@ -162,15 +162,6 @@ namespace MudBlazor
 
         protected bool _isFocused;
 
-        protected bool _shouldRenderBeForced;
-
-        //if you press Enter or Arrows, the input should re-render, because
-        //the user is accepting a value
-        private static bool ShouldRenderBeForced(string key) => key == "Enter"
-                                                             || key == "ArrowDown"
-                                                             || key == "ArrowUp"
-                                                             || key == "Tab";
-
         protected virtual void OnBlurred(FocusEventArgs obj)
         {
             Console.WriteLine("OnBlurred");
@@ -185,7 +176,6 @@ namespace MudBlazor
         {
             Console.WriteLine("InvokeKeyDown");
             _isFocused = true;
-            _shouldRenderBeForced = ShouldRenderBeForced(obj.Key);
             OnKeyDown.InvokeAsync(obj).AndForget();
         }
 
@@ -207,7 +197,6 @@ namespace MudBlazor
         {
             Console.WriteLine("InvokeKeyUp");
             _isFocused = true;
-            _shouldRenderBeForced = ShouldRenderBeForced(obj.Key);
             OnKeyUp.InvokeAsync(obj).AndForget();
         }
 

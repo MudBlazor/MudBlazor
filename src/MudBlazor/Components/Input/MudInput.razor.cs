@@ -21,6 +21,9 @@ namespace MudBlazor
         protected override bool ShouldRender()
         {
             return true;
+
+            // NOTE: temporarily deactivated fix for #1012, problem yet to be solved??
+
             //if (RuntimeLocation.IsClientSide)
             //    return true;
             ////when it keeps the focus, it doesn't render to avoid unnecessary trips to the server
