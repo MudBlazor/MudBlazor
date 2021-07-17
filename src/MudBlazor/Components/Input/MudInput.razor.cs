@@ -18,22 +18,6 @@ namespace MudBlazor
 
         protected string InputTypeString => InputType.ToDescriptionString();
 
-        protected override bool ShouldRender()
-        {
-            return true;
-
-            // NOTE: temporarily deactivated fix for #1012, problem yet to be solved??
-
-            //if (RuntimeLocation.IsClientSide)
-            //    return true;
-            ////when it keeps the focus, it doesn't render to avoid unnecessary trips to the server
-            ////except the user presses key enter, so the result must be displayed
-            //if (_shouldRenderBeForced) { return true; }
-            //if (Immediate && _isFocused && !_showClearableRenderUpdate) { return false; }
-            //_showClearableRenderUpdate = false;
-            //return true;
-        }
-
         protected Task OnInput(ChangeEventArgs args)
         {
             Console.WriteLine("OnInput");
@@ -112,16 +96,11 @@ namespace MudBlazor
 
         private bool _showClearable;
 
-        //private bool _showClearableRenderUpdate;
-
         private void UpdateClearable(object value)
         {
             var showClearable = Clearable && ((value is string stringValue && !string.IsNullOrWhiteSpace(stringValue)) || (value is not string && value is not null));
             if (_showClearable != showClearable)
-            {
                 _showClearable = showClearable;
-                //_showClearableRenderUpdate = true;
-            }
         }
 
         protected override async Task UpdateTextPropertyAsync(bool updateValue)
