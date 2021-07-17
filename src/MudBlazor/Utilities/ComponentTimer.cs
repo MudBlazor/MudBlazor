@@ -292,7 +292,7 @@ namespace MudBlazor.Utilities
     /// <summary>
     /// Provides a mechanism for executing a method on a thread pool thread at specified intervals. This class cannot be inherited.
     /// </summary>
-    internal sealed partial class ComponentTimer : IComponentTimer
+    internal sealed class ComponentTimer : IComponentTimer
     {
         private static readonly object _locker = new();
         private bool? _callbackBusy;
