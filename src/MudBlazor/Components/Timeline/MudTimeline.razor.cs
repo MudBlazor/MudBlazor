@@ -15,10 +15,23 @@ namespace MudBlazor
     {
         protected string Classnames =>
             new CssBuilder("mud-timeline")
-                .AddClass($"mud-timeline-mode-{TimelineMode.ToDescriptionString()}")
+                .AddClass($"mud-timeline-mode-{ConvertTimelineMode(TimelineMode).ToDescriptionString()}")
+                .AddClass("mud-timeline-rtl", RightToLeft)
                 .AddClass(Class)
                 .Build();
-
+        
+        private TimelineMode ConvertTimelineMode(TimelineMode timelineMode)
+        {
+            return timelineMode switch
+            {
+                TimelineMode.Left => RightToLeft ? TimelineMode.End : TimelineMode.Start,
+                TimelineMode.Right => RightToLeft ? TimelineMode.Start : TimelineMode.End,
+                _ => timelineMode
+            };
+        }
+        
+        [CascadingParameter] public bool RightToLeft { get; set; }
+        
         /// <summary>
         /// Sets the position of all timelineitems, left and right on every second or all left or right.
         /// </summary>

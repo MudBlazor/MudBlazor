@@ -1,10 +1,12 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
 <MudSelect T="TimelineMode" @bind-Value="@mode" Label="TimelineMode" Dense="true" Variant="Variant.Outlined" Class="mb-4">
+    <MudSelectItem T="TimelineMode" Value="TimelineMode.Start">Start</MudSelectItem>
     <MudSelectItem T="TimelineMode" Value="TimelineMode.Left">Left</MudSelectItem>
     <MudSelectItem T="TimelineMode" Value="TimelineMode.Default">Default</MudSelectItem>
     <MudSelectItem T="TimelineMode" Value="TimelineMode.Reverse">Reverse</MudSelectItem>
     <MudSelectItem T="TimelineMode" Value="TimelineMode.Right">Right</MudSelectItem>
+    <MudSelectItem T="TimelineMode" Value="TimelineMode.End">End</MudSelectItem>
 </MudSelect>
 
 <MudTimeline TimelineMode="@mode">
@@ -21,5 +23,5 @@
 
 
 @code {
-    private TimelineMode mode { get; set; } = TimelineMode.Left;
+    private TimelineMode mode { get; set; } = TimelineMode.Start;
 }
