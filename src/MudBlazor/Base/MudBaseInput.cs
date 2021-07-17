@@ -115,7 +115,6 @@ namespace MudBlazor
         {
             if (Text != text)
             {
-                Console.WriteLine("SetTextAsync: " + text + " updateValue=" + updateValue);
                 Text = text;
                 if (!string.IsNullOrWhiteSpace(Text))
                     Touched = true;
@@ -154,7 +153,6 @@ namespace MudBlazor
 
         protected virtual void OnBlurred(FocusEventArgs obj)
         {
-            Console.WriteLine("OnBlurred");
             _isFocused = false;
             Touched = true;
             BeginValidateAfter(OnBlur.InvokeAsync(obj));
@@ -164,7 +162,6 @@ namespace MudBlazor
 
         protected virtual void InvokeKeyDown(KeyboardEventArgs obj)
         {
-            Console.WriteLine("InvokeKeyDown");
             _isFocused = true;
             OnKeyDown.InvokeAsync(obj).AndForget();
         }
@@ -175,7 +172,6 @@ namespace MudBlazor
 
         protected virtual void InvokeKeyPress(KeyboardEventArgs obj)
         {
-            Console.WriteLine("InvokeKeyPress base");
             OnKeyPress.InvokeAsync(obj).AndForget();
         }
 
@@ -185,7 +181,6 @@ namespace MudBlazor
 
         protected virtual void InvokeKeyUp(KeyboardEventArgs obj)
         {
-            Console.WriteLine("InvokeKeyUp");
             _isFocused = true;
             OnKeyUp.InvokeAsync(obj).AndForget();
         }
@@ -212,8 +207,6 @@ namespace MudBlazor
         {
             if (!EqualityComparer<T>.Default.Equals(Value, value))
             {
-                Console.WriteLine("SetValueAsync: " + value + " updateText=" + updateText);
-
                 Value = value;
                 if (updateText)
                     await UpdateTextPropertyAsync(false);
@@ -227,7 +220,6 @@ namespace MudBlazor
         /// </summary>
         protected virtual Task UpdateValuePropertyAsync(bool updateText)
         {
-            Console.WriteLine("UpdateValuePropertyAsync " + Text);
             return SetValueAsync(Converter.Get(Text), updateText);
         }
 
@@ -291,6 +283,7 @@ namespace MudBlazor
             _forceTextUpdate = true;
             StateHasChanged();
         }
+
         protected bool _forceTextUpdate;
 
         public override async Task SetParametersAsync(ParameterView parameters)
@@ -306,7 +299,6 @@ namespace MudBlazor
 
             if (_isFocused && !_forceTextUpdate)
             {
-                Console.WriteLine("Preventing text update!");
                 return;
             }
             _forceTextUpdate = false;

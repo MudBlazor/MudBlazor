@@ -13,9 +13,10 @@ namespace MudBlazor
         public MudNumericField() : base()
         {
             _validateInstance = new Func<T, Task<bool>>(ValidateInput);
-            _inputConverter = new NumericBoundariesConverter<T>((val) => ConstrainBoundaries(val).value) { 
+            _inputConverter = new NumericBoundariesConverter<T>((val) => ConstrainBoundaries(val).value)
+            {
                 FilterFunc = CleanText,
-                Culture = CultureInfo.InvariantCulture 
+                Culture = CultureInfo.InvariantCulture
             };
 
             #region parameters default depending on T
@@ -121,19 +122,16 @@ namespace MudBlazor
 
         public override ValueTask FocusAsync()
         {
-            Console.WriteLine("FocusAsync");
             return _elementReference.FocusAsync();
         }
 
         public override ValueTask SelectAsync()
         {
-            Console.WriteLine("SelectAsync");
             return _elementReference.SelectAsync();
         }
 
         public override ValueTask SelectRangeAsync(int pos1, int pos2)
         {
-            Console.WriteLine("SelectRangeAsync");
             return _elementReference.SelectRangeAsync(pos1, pos2);
         }
 
@@ -147,13 +145,11 @@ namespace MudBlazor
         protected override void OnBlurred(FocusEventArgs obj)
         {
             base.OnBlurred(obj);
-            Console.WriteLine("NumericField.Blurred " + Text);
             _key++; // this forces a re-render on the inner input to display the value correctly
         }
 
         protected async Task<bool> ValidateInput(T value)
         {
-            Console.WriteLine("ValidateInput");
             bool valueChanged;
             (value, valueChanged) = ConstrainBoundaries(value);
             if (valueChanged)
@@ -350,6 +346,7 @@ namespace MudBlazor
                         else
                             await Increment();
                         return;
+
                     case "ArrowDown":
                         _key++;
                         if (!Immediate)
@@ -379,10 +376,10 @@ namespace MudBlazor
                             return;
                         }
                         break;
+
                     default:
                         var acceptableKeyTypes = new Regex("^[0-9,.]$");
                         var isMatch = acceptableKeyTypes.Match(obj.Key).Success;
-                        Console.WriteLine(obj.Key + " did match " + isMatch);
                         if (isMatch is false)
                         {
                             _keyDownPreventDefault = true;
@@ -403,6 +400,7 @@ namespace MudBlazor
                 case "ArrowUp":
                     _elementReference?.ForceRender(forceTextUpdate: true);
                     break;
+
                 case "ArrowDown":
                     _elementReference?.ForceRender(forceTextUpdate: true);
                     break;
@@ -499,9 +497,10 @@ namespace MudBlazor
 
         /// <summary>
         /// The pattern attribute, when specified, is a regular expression which the input's value must match in order for the value to pass constraint validation. It must be a valid JavaScript regular expression
-        /// Defaults to [0-9,\.\-+]
+        /// Defaults to [0-9,\.\-+]*
+        /// To get a numerical keyboard on safari, use the pattern. The default pattern should achieve numerical keyboard.
         /// </summary>
-        [Parameter] public override string Pattern { get; set; } = @"[0-9,\.\-+]";
+        [Parameter] public override string Pattern { get; set; } = @"[0-9,\.\-+]*";
 
         protected string CleanText(string text)
         {
@@ -513,8 +512,7 @@ namespace MudBlazor
             {
                 cleanedText += m.Captures[0].Value;
             }
-            if (cleanedText != text)
-                Console.WriteLine("Cleaned text: " + text + " => " + cleanedText);
+
             return cleanedText;
         }
     }

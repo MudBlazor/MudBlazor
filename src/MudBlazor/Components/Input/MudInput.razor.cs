@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Extensions;
-using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
@@ -22,7 +20,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public InputType InputType { get; set; } = InputType.Text;
 
-        internal override InputType GetInputType() => InputType;        
+        internal override InputType GetInputType() => InputType;
 
         protected string InputTypeString => InputType.ToDescriptionString();
 
@@ -30,14 +28,12 @@ namespace MudBlazor
         {
             if (!Immediate)
                 return Task.CompletedTask;
-            Console.WriteLine("OnInput");
             _isFocused = true;
             return SetTextAsync(args?.Value as string);
         }
 
         protected async Task OnChange(ChangeEventArgs args)
         {
-            Console.WriteLine("OnChange");
             await OnInternalInputChanged.InvokeAsync(args);
             if (!Immediate)
             {
@@ -53,7 +49,6 @@ namespace MudBlazor
         protected virtual async Task OnPaste(ClipboardEventArgs args)
 #pragma warning restore CS1998 // Async method lacks 'await' operators and will run synchronously
         {
-            Console.WriteLine("OnPaste");
             // do nothing
             return;
         }
@@ -111,7 +106,7 @@ namespace MudBlazor
         /// Button click event for clear button. Called after text and value has been cleared.
         /// </summary>
         [Parameter] public EventCallback<MouseEventArgs> OnClearButtonClick { get; set; }
-        
+
         private Size GetButtonSize() => Margin == Margin.Dense ? Size.Small : Size.Medium;
 
         private bool _showClearable;
