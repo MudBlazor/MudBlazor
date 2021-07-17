@@ -322,7 +322,7 @@ namespace MudBlazor.Utilities
         /// <param name="iterations">The maximum number of times that the callback method is allowed to run. <c>0</c> is unlimited.</param>
         /// <param name="state">An object containing information to be used by the callback method, or <c>null</c>.</param>
         /// <param name="token">A <see cref="CancellationTokenSource"/> token to cancel the timer. An <see cref="OperationCanceledException"/> is thrown.</param>
-        public ComponentTimer(Action<object> callback, bool enabled = false, TimeSpan? dueTime = null, TimeSpan? period = null, object state = null, int iterations = 0, CancellationToken token = default) : this(dueTime, period)
+        internal ComponentTimer(Action<object> callback, bool enabled = false, TimeSpan? dueTime = null, TimeSpan? period = null, object state = null, int iterations = 0, CancellationToken token = default) : this(dueTime, period)
         {
             if (callback == null)
                 throw new ArgumentNullException(nameof(callback));
@@ -350,7 +350,7 @@ namespace MudBlazor.Utilities
         /// <param name="iterations">The maximum number of times that the callback method is allowed to run. <c>0</c> is unlimited.</param>
         /// <param name="configureAwait"><c>true</c> to attempt to marshal the continuation back to the original context captured.</param>
         /// <param name="token">A <see cref="CancellationTokenSource"/> token to cancel the timer. An <see cref="OperationCanceledException"/> is thrown.</param>
-        public ComponentTimer(Func<object, ValueTask> callback, bool enabled = false, TimeSpan? dueTime = null, TimeSpan? period = null, object state = null, int iterations = 0, bool configureAwait = false, CancellationToken token = default) : this(dueTime, period)
+        internal ComponentTimer(Func<object, ValueTask> callback, bool enabled = false, TimeSpan? dueTime = null, TimeSpan? period = null, object state = null, int iterations = 0, bool configureAwait = false, CancellationToken token = default) : this(dueTime, period)
         {
             if (callback == null)
                 throw new ArgumentNullException(nameof(callback));
@@ -378,7 +378,7 @@ namespace MudBlazor.Utilities
         /// <param name="iterations">The maximum number of times that the callback method is allowed to run. <c>0</c> is unlimited.</param>
         /// <param name="configureAwait"><c>true</c> to attempt to marshal the continuation back to the original context captured.</param>
         /// <param name="token">A <see cref="CancellationTokenSource"/> token to cancel the timer. An <see cref="OperationCanceledException"/> is thrown.</param>
-        public ComponentTimer(EventCallback callback, bool enabled = false, TimeSpan? dueTime = null, TimeSpan? period = null, object state = null, int iterations = 0, bool configureAwait = false, CancellationToken token = default) : this(dueTime, period)
+        internal ComponentTimer(EventCallback callback, bool enabled = false, TimeSpan? dueTime = null, TimeSpan? period = null, object state = null, int iterations = 0, bool configureAwait = false, CancellationToken token = default) : this(dueTime, period)
         {
             if (!callback.HasDelegate)
                 throw new ArgumentNullException(nameof(callback));
@@ -406,7 +406,7 @@ namespace MudBlazor.Utilities
         /// <param name="iterations">The maximum number of times that the callback method is allowed to run. <c>0</c> is unlimited.</param>
         /// <param name="configureAwait"><c>true</c> to attempt to marshal the continuation back to the original context captured.</param>
         /// <param name="token">A <see cref="CancellationTokenSource"/> token to cancel the timer. An <see cref="OperationCanceledException"/> is thrown.</param>
-        public ComponentTimer(EventCallback<object> callback, bool enabled = false, TimeSpan? dueTime = null, TimeSpan? period = null, object state = null, int iterations = 0, bool configureAwait = false, CancellationToken token = default) : this(dueTime, period)
+        internal ComponentTimer(EventCallback<object> callback, bool enabled = false, TimeSpan? dueTime = null, TimeSpan? period = null, object state = null, int iterations = 0, bool configureAwait = false, CancellationToken token = default) : this(dueTime, period)
         {
             if (!callback.HasDelegate)
                 throw new ArgumentNullException(nameof(callback));
