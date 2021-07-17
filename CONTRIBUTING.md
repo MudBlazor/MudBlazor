@@ -6,15 +6,15 @@ Thank you for contributing to MudBlazor and making it even better. We are happy 
 ## Code of Conduct
 Please make sure that you follow our [code of conduct](/CODE_OF_CONDUCT.md)
 
-## Prerequisites to Compile from Source
+## Minimal Prerequisites to Compile from Source
 
-- .NET Core 5.1
-- Visual Studio 2019 with the ASP.NET and Web development
+- [.NET 5.0 SDK](https://dotnet.microsoft.com/download/dotnet/5.0)
 
 ## Pull Requests
 - Your Pull Request must only consist of one topic. It is better to split Pull Requests with more than one feature or bug fix in seperate Pull Requests
 - You must choose `dev` as the target branch
 - All tests must pass
+- You must include tests when your Pull Requests alters any logic. This also ensures that your feature will not break in the future. For more information on testing, see one of the following sections
 - You should work on a seperate branch with a descriptive name. The following naming convention can be used: `feature/my-new-feature` for new features and enhancements, `fix/my-bug-fix` for bug fixes. For example `fix/button-hover-color` if your PR is about a bug involving the hover color of buttons
 - Small changes should only contain one commit. If you have several commits, squash them into one commit ([Rebase guide](https://docs.github.com/en/github/getting-started-with-github/about-git-rebase))
 - You should rebase your branch onto dev
@@ -31,7 +31,7 @@ For example:
 
 - Your Pull Request should not include any unnecessary refactoring
 - If there are visual changes, you should include a screenshot, gif or video
-- If there are any coresponding issues, link them to the Pull Request ([Link issues guide](https://docs.github.com/en/github/managing-your-work-on-github/linking-a-pull-request-to-an-issue#linking-a-pull-request-to-an-issue-using-a-keyword)) 
+- If there are any coresponding issues, link them to the Pull Request. Include `Fixes #<issue nr>` for bug fixes and `Closes #<issue nr>` for other issues in the description ([Link issues guide](https://docs.github.com/en/github/managing-your-work-on-github/linking-a-pull-request-to-an-issue#linking-a-pull-request-to-an-issue-using-a-keyword)) 
 - Your code should be formatted correctly ([Format documentation](https://docs.microsoft.com/en-us/dotnet/fundamentals/code-analysis/style-rules/formatting-rules))
 
 
@@ -43,18 +43,27 @@ If necessary include
 [CascadingParameter] public bool RightToLeft {get; set;}
 ```
 in your component and apply styles at component level.
+- You must add tests if your component contains any logic (CSS styling requires no testing)
 - Use our `css variables` if possible. For instance you should not hard code any colors etc.
 - Include a summary comment for every public property ([Summary documentation](https://docs.microsoft.com/de-de/dotnet/csharp/programming-guide/xmldoc/summary))
 - Use the `CssBuilder` for classes and styles
 - Add a doc page and examples which should be ordered from easy to more complex
 
 
-## Where to find the most important files
+## Project structure and where to find the most important files
+MudBlazor is divided in different projects. The most important ones are:
+- [MudBlazor](https://github.com/Garderoben/MudBlazor/tree/dev/src/MudBlazor): contains all components
+- [MudBlazor.Docs](https://github.com/Garderoben/MudBlazor/tree/dev/src/MudBlazor.Docs): contains the [docs](https://mudblazor.com/)
+- [MudBlazor.UnitTests](https://github.com/Garderoben/MudBlazor/tree/dev/src/MudBlazor.Docs): contains bUnit tests for all components
+- [MudBlazor.UnitTests.Viewer](https://github.com/Garderoben/MudBlazor/tree/dev/src/MudBlazor.Docs): a visual representation of the unit tests. When you launch the project, you can test whether the components look and behave correctly
+
+Most important files:
 - Component `.razor` and `.razor.cs` classes ([Link](https://github.com/Garderoben/MudBlazor/tree/dev/src/MudBlazor/Components))
 - Component `.scss` style classes ([Link](https://github.com/Garderoben/MudBlazor/tree/dev/src/MudBlazor/Styles/components))
 - Enums ([Link](https://github.com/Garderoben/MudBlazor/tree/dev/src/MudBlazor/Enums))
 - Component doc pages ([Link](https://github.com/Garderoben/MudBlazor/tree/dev/src/MudBlazor.Docs/Pages/Components))
 - Component tests ([Link](https://github.com/Garderoben/MudBlazor/tree/dev/src/MudBlazor.UnitTests/Components))
+- Test components ([Link](https://github.com/Garderoben/MudBlazor/tree/dev/src/MudBlazor.UnitTests.Viewer/TestComponents))
 
 ## Unit Testing and Continuous Integration
 
