@@ -15,6 +15,13 @@ namespace MudBlazor
 
         private MudInput<string> _elementReference;
 
+        /// <summary>
+        /// Type of the input element. It should be a valid HTML5 input type.
+        /// </summary>
+        [Parameter] public InputType InputType { get; set; } = InputType.Text;
+
+        internal override InputType GetInputType() => InputType;
+
         public override ValueTask FocusAsync()
         {
             return _elementReference.FocusAsync();

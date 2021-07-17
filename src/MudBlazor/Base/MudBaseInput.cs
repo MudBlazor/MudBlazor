@@ -83,11 +83,6 @@ namespace MudBlazor
         [Parameter] public EventCallback<MouseEventArgs> OnClearButtonClick { get; set; }
 
         /// <summary>
-        /// Type of the input element. It should be a valid HTML5 input type.
-        /// </summary>
-        [Parameter] public virtual InputType InputType { get; set; } = InputType.Text;
-
-        /// <summary>
         /// Variant to use.
         /// </summary>
         [Parameter] public Variant Variant { get; set; } = Variant.Text;
@@ -120,6 +115,11 @@ namespace MudBlazor
         /// Not Supported in multline input
         /// </summary>
         [Parameter] public virtual string Pattern { get; set; }
+
+        /// <summary>
+        /// Derived classes need to override this if they can be something other than text
+        /// </summary>
+        internal virtual InputType GetInputType() { return InputType.Text; }
 
         protected async Task SetTextAsync(string text, bool updateValue = true)
         {

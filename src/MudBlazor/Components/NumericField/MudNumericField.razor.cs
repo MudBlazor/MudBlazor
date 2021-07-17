@@ -108,11 +108,6 @@ namespace MudBlazor
             return changed;
         }
 
-        /// <summary>
-        /// The input type of NumericField should be InputType.Text. Setting it to any other value might result in incorrect behavior
-        /// </summary>
-        [Parameter] public override InputType InputType { get; set; } = InputType.Text;
-
         protected string Classname =>
            new CssBuilder("mud-input-input-control mud-input-number-control " + (HideSpinButtons ? "mud-input-nospin" : "mud-input-showspin"))
            .AddClass(Class)
