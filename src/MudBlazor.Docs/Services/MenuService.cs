@@ -72,7 +72,7 @@ namespace MudBlazor.Docs.Services
             .AddItem("Popover", typeof(MudPopover))
             .AddItem("SwipeArea", typeof(MudSwipeArea))
             .AddItem("ToolBar", typeof(MudToolBar))
-            .AddItem("Carousel", typeof(MudCarousel<object>), typeof(MudCarouselItem))
+            .AddItem("Carousel", typeof(MudCarousel<T>), typeof(MudCarouselItem))
 
             //GROUPS
 
