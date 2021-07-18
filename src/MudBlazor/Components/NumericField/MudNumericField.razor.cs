@@ -15,8 +15,7 @@ namespace MudBlazor
             _validateInstance = new Func<T, Task<bool>>(ValidateInput);
             _inputConverter = new NumericBoundariesConverter<T>((val) => ConstrainBoundaries(val).value)
             {
-                FilterFunc = CleanText,
-                Culture = CultureInfo.InvariantCulture
+                FilterFunc = CleanText, Culture = CultureInfo.InvariantCulture
             };
 
             #region parameters default depending on T
@@ -110,9 +109,10 @@ namespace MudBlazor
         }
 
         protected string Classname =>
-           new CssBuilder("mud-input-input-control mud-input-number-control " + (HideSpinButtons ? "mud-input-nospin" : "mud-input-showspin"))
-           .AddClass(Class)
-           .Build();
+            new CssBuilder("mud-input-input-control mud-input-number-control " +
+                           (HideSpinButtons ? "mud-input-nospin" : "mud-input-showspin"))
+                .AddClass(Class)
+                .Build();
 
         private Func<T, Task<bool>> _validateInstance;
 
@@ -154,7 +154,7 @@ namespace MudBlazor
             (value, valueChanged) = ConstrainBoundaries(value);
             if (valueChanged)
                 await SetValueAsync(value, true);
-            return true;//Don't show errors
+            return true; //Don't show errors
         }
 
         #region Numeric range
@@ -309,7 +309,9 @@ namespace MudBlazor
                     else if (d < (decimal)(object)Min)
                         return (Min, true);
                     break;
-            };
+            }
+
+            ;
 
             return (value, false);
         }
@@ -335,29 +337,34 @@ namespace MudBlazor
                 switch (obj.Key)
                 {
                     case "ArrowUp":
-                        _key++;
-                        if (!Immediate)
+                        if (RuntimeLocation.IsServerSide)
                         {
-                            await Task.Delay(1);
-                            await Increment();
-                            await Task.Delay(1);
-                            _ = FocusAsync();
+                            if (!Immediate)
+                            {
+                                _key++;
+                                await Task.Delay(1);
+                                await Increment();
+                                await Task.Delay(1);
+                                _ = FocusAsync();
+                            }
+                            else
+                                await Increment();
                         }
-                        else
-                            await Increment();
                         return;
-
                     case "ArrowDown":
-                        _key++;
-                        if (!Immediate)
+                        if (RuntimeLocation.IsServerSide)
                         {
-                            await Task.Delay(1);
-                            await Decrement();
-                            await Task.Delay(1);
-                            _ = FocusAsync();
+                            if (!Immediate)
+                            {
+                                _key++;
+                                await Task.Delay(1);
+                                await Decrement();
+                                await Task.Delay(1);
+                                _ = FocusAsync();
+                            }
+                            else
+                                await Decrement();
                         }
-                        else
-                            await Decrement();
                         return;
                     // various navigation keys
                     case "ArrowLeft":
@@ -375,6 +382,7 @@ namespace MudBlazor
                             _keyDownPreventDefault = true;
                             return;
                         }
+
                         break;
 
                     default:
@@ -388,6 +396,7 @@ namespace MudBlazor
                         break;
                 }
             }
+
             OnKeyDown.InvokeAsync(obj).AndForget();
         }
 
@@ -398,13 +407,16 @@ namespace MudBlazor
             switch (obj.Key)
             {
                 case "ArrowUp":
-                    _elementReference?.ForceRender(forceTextUpdate: true);
+                    if (RuntimeLocation.IsServerSide)
+                        _elementReference?.ForceRender(forceTextUpdate: true);
                     break;
 
                 case "ArrowDown":
-                    _elementReference?.ForceRender(forceTextUpdate: true);
+                    if (RuntimeLocation.IsServerSide)
+                        _elementReference?.ForceRender(forceTextUpdate: true);
                     break;
             }
+
             _keyDownPreventDefault = false;
             StateHasChanged();
             OnKeyUp.InvokeAsync(obj).AndForget();
@@ -413,12 +425,14 @@ namespace MudBlazor
         /// <summary>
         /// The short hint displayed in the input before the user enters a value.
         /// </summary>
-        [Parameter] public string Placeholder { get; set; }
+        [Parameter]
+        public string Placeholder { get; set; }
 
         /// <summary>
         /// If string has value the label text will be displayed in the input, and scaled down at the top if the input has value.
         /// </summary>
-        [Parameter] public string Label { get; set; }
+        [Parameter]
+        public string Label { get; set; }
 
         //Tracks if Min has a value.
         private bool _minHasValue = false;
@@ -427,6 +441,7 @@ namespace MudBlazor
         private T _minDefault;
 
         private T _min;
+
         /// <summary>
         /// The minimum value for the input.
         /// </summary>
@@ -448,6 +463,7 @@ namespace MudBlazor
         private T _maxDefault;
 
         private T _max;
+
         /// <summary>
         /// The maximum value for the input.
         /// </summary>
@@ -487,20 +503,23 @@ namespace MudBlazor
         /// <summary>
         /// Hides the spin buttons, the user can still change value with keyboard arrows and manual update.
         /// </summary>
-        [Parameter] public bool HideSpinButtons { get; set; }
+        [Parameter]
+        public bool HideSpinButtons { get; set; }
 
         /// <summary>
         ///  Hints at the type of data that might be entered by the user while editing the input.
         ///  Defaults to numeric
         /// </summary>
-        [Parameter] public override InputMode InputMode { get; set; } = InputMode.numeric;
+        [Parameter]
+        public override InputMode InputMode { get; set; } = InputMode.numeric;
 
         /// <summary>
         /// The pattern attribute, when specified, is a regular expression which the input's value must match in order for the value to pass constraint validation. It must be a valid JavaScript regular expression
         /// Defaults to [0-9,\.\-+]*
         /// To get a numerical keyboard on safari, use the pattern. The default pattern should achieve numerical keyboard.
         /// </summary>
-        [Parameter] public override string Pattern { get; set; } = @"[0-9,\.\-+]*";
+        [Parameter]
+        public override string Pattern { get; set; } = @"[0-9,\.\-+]*";
 
         protected string CleanText(string text)
         {
