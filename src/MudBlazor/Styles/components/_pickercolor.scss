@@ -19,6 +19,7 @@
 
 .mud-picker-color-content {
     min-height: unset;
+    position: relative;
 }
 
 .mud-picker-color-picker {
@@ -64,38 +65,6 @@
 
         & + .mud-picker-color-controls-row {
             margin-top: 24px;
-        }
-
-        .mud-picker-color-dot {
-            height: 38px;
-            min-width: 38px;
-            width: 100%;
-            transition: background-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,box-shadow 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,border 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
-            border-radius: var(--mud-default-borderradius);
-            box-shadow: 0 0 6px rgba(127, 130, 134, 0.18);
-
-            &:hover {
-                cursor: pointer;
-                box-shadow: 0px 3px 1px -2px rgba(0,0,0,0.2),0px 2px 2px 0px rgba(0,0,0,0.14),0px 1px 5px 0px rgba(0,0,0,0.12);
-            }
-
-            &.mud-picker-color-dot-current {
-                background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAGElEQVQYlWNgYGCQwoKxgqGgcJA5h3yFAAs8BRWVSwooAAAAAElFTkSuQmCC) repeat;
-            }
-
-            .mud-picker-color-fill {
-                width: 100%;
-                height: 100%;
-                border-radius: inherit;
-            }
-
-            & + .mud-picker-color-sliders {
-                margin-inline-start: 16px;
-            }
-
-            & + .mud-picker-color-collection {
-                margin-inline-start: 10px;
-            }
         }
 
         .mud-picker-color-sliders {
@@ -187,6 +156,75 @@
             .mud-picker-color-dot {
                 max-width: 38px;
             }
+        }
+    }
+}
+
+.mud-picker-color-dot {
+    height: 38px;
+    min-width: 38px;
+    width: 100%;
+    transition: background-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,box-shadow 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,border 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+    border-radius: var(--mud-default-borderradius);
+    box-shadow: 0 0 6px rgba(127, 130, 134, 0.18);
+
+    &:hover {
+        cursor: pointer;
+        box-shadow: 0px 3px 1px -2px rgba(0,0,0,0.2),0px 2px 2px 0px rgba(0,0,0,0.14),0px 1px 5px 0px rgba(0,0,0,0.12);
+    }
+
+    &.mud-picker-color-dot-current {
+        background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAGElEQVQYlWNgYGCQwoKxgqGgcJA5h3yFAAs8BRWVSwooAAAAAElFTkSuQmCC) repeat;
+    }
+
+    .mud-picker-color-fill {
+        width: 100%;
+        height: 100%;
+        border-radius: inherit;
+    }
+
+    & + .mud-picker-color-sliders {
+        margin-inline-start: 16px;
+    }
+
+    & + .mud-picker-color-collection {
+        margin-inline-start: 10px;
+    }
+}
+
+.mud-picker-color-view {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    padding: 6px;
+    background-color: var(--mud-palette-surface);
+
+    &.compact {
+        padding: 0px;
+    }
+
+    .mud-picker-color-view-collection {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-evenly;
+
+        .mud-picker-color-dot {
+            max-width: 38px;
+            margin: 8px;
+        }
+    }
+
+    .mud-picker-color-view-compact {
+        display: flex;
+        flex-wrap: wrap;
+
+        .mud-picker-color-dot {
+            height: 25.83px;
+            min-width: 25.83px;
+            max-width: 25.83px;
+            border-radius: 0px;
+            box-shadow: none;
         }
     }
 }

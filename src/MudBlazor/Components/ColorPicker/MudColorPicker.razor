@@ -12,9 +12,9 @@
          <MudPickerToolbar DisableToolbar="@DisableToolbar" Class="mud-picker-color-toolbar">
              <MudIconButton Class="pa-1" Size="Size.Small" Color="Color.Inherit" Icon="@Icons.Material.Filled.Close" OnClick="@GetEventCallback()" />
              <MudSpacer />
-             <MudIconButton Class="pa-1" Size="Size.Small" Color="Color.Inherit" Icon="@Icons.Material.Filled.Tune" />
-             <MudIconButton Class="pa-1 mx-1" Size="Size.Small" Color="Color.Inherit" Icon="@Icons.Material.Filled.Palette" />
-             <MudIconButton Class="pa-1" Size="Size.Small" Color="Color.Inherit" Icon="@Icons.Custom.Uncategorized.ColorPalette" />
+             <MudIconButton Class="pa-1" Size="Size.Small" Color="Color.Inherit" Icon="@Icons.Material.Filled.Tune" OnClick="(() => ChangeView(ColorPickerView.Default))" />
+             <MudIconButton Class="pa-1 mx-1" Size="Size.Small" Color="Color.Inherit" Icon="@Icons.Material.Filled.Palette" OnClick="(() => ChangeView(ColorPickerView.Palette))" />
+             <MudIconButton Class="pa-1" Size="Size.Small" Color="Color.Inherit" Icon="@Icons.Custom.Uncategorized.ColorPalette" OnClick="(() => ChangeView(ColorPickerView.Compact))" />
          </MudPickerToolbar>
         <MudPickerContent Class="mud-picker-color-content">
             @if(!DisableColorField)
@@ -54,7 +54,7 @@
                             @if (_collectionOpen)
                             {
                                 <div class="mud-picker-color-collection">
-                                    @foreach (var item in Palette)
+                                    @foreach (var item in Palette.Take(5))
                                     {
                                         <div class="mud-picker-color-dot" style="@($"background: {item.ToString(MudColorOutputFormats.RGBA)};")" @onclick="@GetSelectPaletteColorCallback(item)"></div>
                                     }
@@ -105,6 +105,29 @@
                             }
                         </div>
                     }
+                </div>
+            }
+            @if(ColorPickerView == ColorPickerView.Palette)
+            {
+                <div class="mud-picker-color-view">
+                    <div class="mud-picker-color-view-collection">
+                        @foreach (var item in Palette)
+                        {
+                            <div class="mud-picker-color-dot" style="@($"background: {item.ToString(MudColorOutputFormats.RGBA)};")" @onclick="@GetSelectPaletteColorCallback(item)"></div>
+                        }
+                    </div>
+                </div>
+            }
+            @if(ColorPickerView == ColorPickerView.Compact)
+            {
+                <div class="mud-picker-color-view compact">
+                    <div class="mud-picker-color-view-compact">
+                        @foreach (var item in CompactList)
+                        {
+                            <div class="mud-picker-color-dot" style="@($"background: {item.ToString(MudColorOutputFormats.RGBA)};")" @onclick="@GetSelectPaletteColorCallback(item)"></div>
+                        }
+                    </div>
+                    
                 </div>
             }
         </MudPickerContent>
