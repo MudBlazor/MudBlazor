@@ -145,7 +145,8 @@ namespace MudBlazor
         protected override void OnBlurred(FocusEventArgs obj)
         {
             base.OnBlurred(obj);
-            _key++; // this forces a re-render on the inner input to display the value correctly
+            if (RuntimeLocation.IsServerSide)
+                _key++; // this forces a re-render on the inner input to display the value correctly
         }
 
         protected async Task<bool> ValidateInput(T value)
