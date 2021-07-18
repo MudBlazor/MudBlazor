@@ -150,60 +150,60 @@ namespace MudBlazor.Utilities
 
         #region Properties
 
-        public bool Enabled
+        internal bool Enabled
         {
             get => _enabled != null && _enabled.Value;
             set => _enabled = value ? Start() != null : Stop() == null;
         }
 
-        public int Iterations => _iterations;
+        internal int Iterations => _iterations;
 
-        public int Restarts => _restarts;
+        internal int Restarts => _restarts;
 
-        public TimeSpan DueTime { get; set; }
+        internal TimeSpan DueTime { get; set; }
 
-        public TimeSpan Period { get; set; }
+        internal TimeSpan Period { get; set; }
 
-        public TimeSpan Elapsed => _timer == null ? Timeout.InfiniteTimeSpan : GetElapsedUtcTime();
+        internal TimeSpan Elapsed => _timer == null ? Timeout.InfiniteTimeSpan : GetElapsedUtcTime();
 
-        public bool IsTicking => _timer != null && Enabled && HasStartDelay(DueTime) && HasInterval(Period);
+        internal bool IsTicking => _timer != null && Enabled && HasStartDelay(DueTime) && HasInterval(Period);
 
         #endregion Properties
 
 
         #region Start
 
-        public DateTimeOffset? Start()
+        internal DateTimeOffset? Start()
         {
             Change(TimerAction.Start);
             return GetStartUtcTime();
         }
 
-        public DateTimeOffset? Start(int dueTime, bool update = false)
+        internal DateTimeOffset? Start(int dueTime, bool update = false)
         {
             Change(TimerAction.Start, TimeSpan.FromMilliseconds(dueTime), update: update);
             return GetStartUtcTime();
         }
 
-        public DateTimeOffset? Start(TimeSpan dueTime, bool update = false)
+        internal DateTimeOffset? Start(TimeSpan dueTime, bool update = false)
         {
             Change(TimerAction.Start, dueTime, update: update);
             return GetStartUtcTime();
         }
 
-        public async ValueTask<DateTimeOffset?> StartAsync()
+        internal async ValueTask<DateTimeOffset?> StartAsync()
         {
             await ValueTask.CompletedTask;
             return Start();
         }
 
-        public async ValueTask<DateTimeOffset?> StartAsync(int dueTime, bool update = false)
+        internal async ValueTask<DateTimeOffset?> StartAsync(int dueTime, bool update = false)
         {
             await ValueTask.CompletedTask;
             return Start(dueTime, update);
         }
 
-        public async ValueTask<DateTimeOffset?> StartAsync(TimeSpan dueTime, bool update = false)
+        internal async ValueTask<DateTimeOffset?> StartAsync(TimeSpan dueTime, bool update = false)
         {
             await ValueTask.CompletedTask;
             return Start(dueTime, update);
@@ -214,37 +214,37 @@ namespace MudBlazor.Utilities
 
         #region Restart
 
-        public DateTimeOffset? Restart()
+        internal DateTimeOffset? Restart()
         {
             Change(TimerAction.Restart);
             return GetStartUtcTime();
         }
 
-        public DateTimeOffset? Restart(int dueTime, bool update = false)
+        internal DateTimeOffset? Restart(int dueTime, bool update = false)
         {
             Change(TimerAction.Restart, TimeSpan.FromMilliseconds(dueTime), update: update);
             return GetStartUtcTime();
         }
 
-        public DateTimeOffset? Restart(TimeSpan dueTime, bool update = false)
+        internal DateTimeOffset? Restart(TimeSpan dueTime, bool update = false)
         {
             Change(TimerAction.Restart, dueTime, update: update);
             return GetStartUtcTime();
         }
 
-        public async ValueTask<DateTimeOffset?> RestartAsync()
+        internal async ValueTask<DateTimeOffset?> RestartAsync()
         {
             await ValueTask.CompletedTask;
             return Restart();
         }
 
-        public async ValueTask<DateTimeOffset?> RestartAsync(int dueTime, bool update = false)
+        internal async ValueTask<DateTimeOffset?> RestartAsync(int dueTime, bool update = false)
         {
             await ValueTask.CompletedTask;
             return Restart(dueTime, update);
         }
 
-        public async ValueTask<DateTimeOffset?> RestartAsync(TimeSpan dueTime, bool update = false)
+        internal async ValueTask<DateTimeOffset?> RestartAsync(TimeSpan dueTime, bool update = false)
         {
             await ValueTask.CompletedTask;
             return Restart(dueTime, update);
@@ -255,7 +255,7 @@ namespace MudBlazor.Utilities
 
         #region Stop
 
-        public DateTimeOffset? Stop()
+        internal DateTimeOffset? Stop()
         {
             var success = Change(TimerAction.Stop);
 
@@ -270,7 +270,7 @@ namespace MudBlazor.Utilities
             }
         }
 
-        public async ValueTask<DateTimeOffset?> StopAsync()
+        internal async ValueTask<DateTimeOffset?> StopAsync()
         {
             await ValueTask.CompletedTask;
             return Stop();
