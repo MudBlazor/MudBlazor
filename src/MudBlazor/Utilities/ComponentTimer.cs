@@ -306,12 +306,6 @@ namespace MudBlazor.Utilities
 
         #region Constructors
 
-        private ComponentTimer(TimeSpan? dueTime = null, TimeSpan? period = null)
-        {
-            DueTime = HasStartDelay(dueTime) ? (TimeSpan) dueTime : TimeSpan.Zero;
-            Period = HasInterval(period) ? (TimeSpan) period : TimeSpan.Zero;
-        }
-
         /// <summary>
         /// Initializes a new instance of the <see cref="ComponentTimer"/> class.
         /// </summary>
@@ -329,12 +323,13 @@ namespace MudBlazor.Utilities
 
             _timer = new Timer(async (_state) =>
             {
-
-                token.ThrowIfCancellationRequested();
-                await TimerCallbackAsync(callback, _state, iterations);
+                if (token.IsCancellationRequested)
+                    Enabled = false;
+                else
+                    await TimerCallbackAsync(callback, _state, iterations);
 
             }, state, Timeout.InfiniteTimeSpan, Timeout.InfiniteTimeSpan);
-
+            
             if (enabled)
                 Enabled = true;
         }
@@ -357,9 +352,10 @@ namespace MudBlazor.Utilities
 
             _timer = new Timer(async (_state) =>
             {
-
-                token.ThrowIfCancellationRequested();
-                await TimerCallbackAsync(callback, _state, iterations, configureAwait);
+                if (token.IsCancellationRequested)
+                    Enabled = false;
+                else
+                    await TimerCallbackAsync(callback, _state, iterations, configureAwait);
 
             }, state, Timeout.InfiniteTimeSpan, Timeout.InfiniteTimeSpan);
 
@@ -385,9 +381,10 @@ namespace MudBlazor.Utilities
 
             _timer = new Timer(async (_state) =>
             {
-
-                token.ThrowIfCancellationRequested();
-                await TimerCallbackAsync(callback, _state, iterations, configureAwait);
+                if (token.IsCancellationRequested)
+                    Enabled = false;
+                else
+                    await TimerCallbackAsync(callback, _state, iterations, configureAwait);
 
             }, state, Timeout.InfiniteTimeSpan, Timeout.InfiniteTimeSpan);
 
@@ -413,14 +410,21 @@ namespace MudBlazor.Utilities
 
             _timer = new Timer(async (_state) =>
             {
-
-                token.ThrowIfCancellationRequested();
-                await TimerCallbackAsync(callback, _state, iterations, configureAwait);
+                if (token.IsCancellationRequested)
+                    Enabled = false;
+                else
+                    await TimerCallbackAsync(callback, _state, iterations, configureAwait);
 
             }, state, Timeout.InfiniteTimeSpan, Timeout.InfiniteTimeSpan);
 
             if (enabled)
                 Enabled = true;
+        }
+
+        private ComponentTimer(TimeSpan? dueTime = null, TimeSpan? period = null)
+        {
+            DueTime = HasStartDelay(dueTime) ? (TimeSpan)dueTime : TimeSpan.Zero;
+            Period = HasInterval(period) ? (TimeSpan)period : TimeSpan.Zero;
         }
 
         #endregion Constructors
@@ -574,8 +578,11 @@ namespace MudBlazor.Utilities
 
             if (_iterations <= iterations)
             {
-                callback.Invoke(state);
-                Interlocked.Increment(ref _iterations);
+                if (Enabled)
+                {
+                    callback.Invoke(state);
+                    Interlocked.Increment(ref _iterations);
+                }
             }
 
             lock (_locker)
@@ -600,8 +607,11 @@ namespace MudBlazor.Utilities
 
             if (_iterations <= iterations)
             {
-                await callback.Invoke(state).ConfigureAwait(configureAwait);
-                Interlocked.Increment(ref _iterations);
+                if (Enabled)
+                {
+                    await callback.Invoke(state).ConfigureAwait(configureAwait);
+                    Interlocked.Increment(ref _iterations);
+                }
             }
 
             lock (_locker)
@@ -626,8 +636,11 @@ namespace MudBlazor.Utilities
 
             if (_iterations <= iterations)
             {
-                await callback.InvokeAsync(state).ConfigureAwait(configureAwait);
-                Interlocked.Increment(ref _iterations);
+                if (Enabled)
+                {
+                    await callback.InvokeAsync(state).ConfigureAwait(configureAwait);
+                    Interlocked.Increment(ref _iterations);
+                }
             }
 
             lock (_locker)
@@ -652,8 +665,11 @@ namespace MudBlazor.Utilities
 
             if (_iterations <= iterations)
             {
-                await callback.InvokeAsync(state).ConfigureAwait(configureAwait);
-                Interlocked.Increment(ref _iterations);
+                if (Enabled)
+                {
+                    await callback.InvokeAsync(state).ConfigureAwait(configureAwait);
+                    Interlocked.Increment(ref _iterations);
+                }
             }
 
             lock (_locker)

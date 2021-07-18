@@ -44,18 +44,16 @@ namespace UtilityTests
             else
                 Console.WriteLine($"{methodName}: {nameof(state)} = {state}");
         }
-        private static async ValueTask LongRunningCallbackMethodAsync<T>(T state)
+        private static async ValueTask LongRunningCallbackMethod_2Async<T>(T state)
         {
             CallbackMethodCore(state);
-
             var sw = Stopwatch.StartNew();
             await Task.Delay(TimeSpan.FromSeconds(10));
             Console.WriteLine($"Delay duration: {sw.Elapsed}");
         }
-        private static async Task LongRunningEventCallbackMethodAsync<T>(T state)
+        private static async Task LongRunningEventCallbackMethod_4Async<T>(T state)
         {
             CallbackMethodCore(state);
-
             var sw = Stopwatch.StartNew();
             await Task.Delay(TimeSpan.FromSeconds(10));
             Console.WriteLine($"Delay duration: {sw.Elapsed}");
@@ -1111,15 +1109,14 @@ namespace UtilityTests
         [Test]
         public async ValueTask Timer_NoReentrancy()
         {
-            using IComponentTimer timer_2 = new ComponentTimer(LongRunningCallbackMethodAsync, true, period: _1msTimeSpan, state: _testCallback_2);
+            using IComponentTimer timer_2 = new ComponentTimer(LongRunningCallbackMethod_2Async, true, period: _1msTimeSpan, state: _testCallback_2);
             await Task.Delay(TimeSpan.FromSeconds(1));
             timer_2.Stop();
             _testCallback_2.HasExecuted.Should().BeTrue();
             _testCallback_2.ExecuteCount.Should().Be(1);
 
 
-            var longRunningCallbackEvent = EventCallback.Factory.Create(this, LongRunningEventCallbackMethodAsync);
-
+            var longRunningCallbackEvent = EventCallback.Factory.Create(this, LongRunningEventCallbackMethod_4Async);
             using IComponentTimer timer_4 = new ComponentTimer(longRunningCallbackEvent, true, period: _1msTimeSpan, state: _testCallback_4);
             await Task.Delay(TimeSpan.FromSeconds(1));
             timer_4.Stop();
