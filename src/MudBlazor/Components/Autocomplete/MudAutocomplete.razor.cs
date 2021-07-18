@@ -386,10 +386,10 @@ namespace MudBlazor
         public async Task ScrollToListItem(int index, int increment)
         {
             var id = GetListItemId(index);
-            //id of the scrolled element
-            //increment 1 down; -1 up
-            //onEdges, last param, boolean. If true, only scrolls when elements reaches top or bottom of container.
-            //If false, scrolls always
+            // id of the scrolled element
+            // increment 1 down; -1 up
+            // onEdges, last param, boolean. If true, only scrolls when elements reaches top or bottom of container.
+            // If false, scrolls always
             await ScrollManager.ScrollToListItemAsync(id, increment, true);
             StateHasChanged();
         }
