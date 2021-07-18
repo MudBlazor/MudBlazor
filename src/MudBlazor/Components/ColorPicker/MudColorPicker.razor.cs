@@ -11,10 +11,11 @@ using Microsoft.AspNetCore.Components.Web;
 using System.Collections.Generic;
 using MudBlazor.Extensions;
 using MudBlazor.Utilities;
+using System.Text.Json;
 
 namespace MudBlazor
 {
-    public partial class MudColorPicker : MudPicker<MudColor>
+    public partial class MudColorPicker : MudPicker<MudColor>, IAsyncDisposable
     {
         public MudColorPicker() : base(new DefaultConverter<MudColor>())
         {
@@ -38,7 +39,6 @@ namespace MudBlazor
         private const double _maxY = 250;
         private const double _maxX = 310;
 
-        private bool _isMouseDown;
         private double _selectorX;
         private double _selectorY;
         private bool _skipFeedback = false;
@@ -47,6 +47,11 @@ namespace MudBlazor
         private MudColor _color;
 
         private bool _collectionOpen;
+
+        private readonly Guid _id = Guid.NewGuid();
+        private Guid _throttledMouseOverEventId;
+
+        [Inject] IThrottledEventManager ThrottledEventManager { get; set; }
 
         #endregion
 
@@ -244,16 +249,6 @@ namespace MudBlazor
             _selectorX = relation * _maxX;
         }
 
-        private void OnMouseDown(MouseEventArgs e)
-        {
-            _isMouseDown = true;
-            Console.WriteLine("MouseDown");
-        }
-
-        private void OnMouseUp(MouseEventArgs e)
-        {
-            _isMouseDown = false;
-        }
 
         private void OnMouseClick(MouseEventArgs e)
         {
@@ -263,16 +258,7 @@ namespace MudBlazor
 
         private void OnMouseOver(MouseEventArgs e)
         {
-            if (_isMouseDown)
-            {
-                SetSelectorBasedOnMouseEvents(e);
-                UpdateColorBaseOnSelection();
-            }
-        }
-
-        private void OnMouseMove(MouseEventArgs e)
-        {
-            if (_isMouseDown)
+            if (e.Buttons == 1)
             {
                 SetSelectorBasedOnMouseEvents(e);
                 UpdateColorBaseOnSelection();
@@ -359,5 +345,27 @@ namespace MudBlazor
         }
 
         private string GetSelectorLocation() => $"translate({Math.Round(_selectorX, 2).ToString(CultureInfo.InvariantCulture)}px, {Math.Round(_selectorY, 2).ToString(CultureInfo.InvariantCulture)}px);";
+
+        protected override async Task OnAfterRenderAsync(bool firstRender)
+        {
+            await base.OnAfterRenderAsync(firstRender);
+
+            if (firstRender == true)
+            {
+                _throttledMouseOverEventId = await
+                    ThrottledEventManager.Subscribe<MouseEventArgs>("mousemove", _id.ToString(), 10, async (x) =>
+                    {
+                        var e = x as MouseEventArgs;
+                        Console.WriteLine($"X: {e.OffsetX} | Y: {e.OffsetY}");
+                        await InvokeAsync(() => OnMouseOver(e));
+                        StateHasChanged();
+                    });
+            }
+        }
+
+        public async ValueTask DisposeAsync()
+        {
+            await ThrottledEventManager.Unsubscribe(_throttledMouseOverEventId);
+        }
     }
 }

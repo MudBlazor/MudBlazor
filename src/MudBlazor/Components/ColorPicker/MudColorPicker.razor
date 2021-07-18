@@ -22,7 +22,7 @@
                 <div class="mud-picker-color-picker" style="@($"background-color: {_baseColor.ToString(MudColorOutputFormats.RGB)}")">
                     <div class="mud-picker-color-overlay mud-picker-color-overlay-white">
                         <div class="mud-picker-color-overlay mud-picker-color-overlay-black">
-                            <div class="mud-picker-color-overlay" @onclick="OnMouseClick" @onmousedown="OnMouseDown" @onmouseup="OnMouseUp" @onmouseover="OnMouseOver">
+                            <div class="mud-picker-color-overlay" id="@_id" @onclick="OnMouseClick">
                                 <div class="mud-picker-color-selector" style="transform: @GetSelectorLocation()" @onclick:stopPropagation="true"></div>
                             </div>
                         </div>
