@@ -400,7 +400,7 @@ namespace MudBlazor
                         break;
 
                     default:
-                        var acceptableKeyTypes = new Regex("^[0-9,.]$");
+                        var acceptableKeyTypes = new Regex("^[0-9,.-]$");
                         var isMatch = acceptableKeyTypes.Match(obj.Key).Success;
                         if (isMatch is false)
                         {
@@ -545,6 +545,8 @@ namespace MudBlazor
             {
                 cleanedText += m.Captures[0].Value;
             }
+
+            cleanedText = cleanedText[0] + cleanedText.Substring(1).Replace("-", string.Empty);
 
             return cleanedText;
         }
