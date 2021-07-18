@@ -52,6 +52,9 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public bool Error { get; set; }
 
+        /// <summary>
+        /// Set the generic converter of the component.
+        /// </summary>
         [Parameter]
         public Converter<T, U> Converter
         {
@@ -70,6 +73,9 @@ namespace MudBlazor
             return changed;
         }
 
+        /// <summary>
+        /// Set the culture of the component.
+        /// </summary>
         [Parameter]
         public CultureInfo Culture
         {
@@ -117,6 +123,9 @@ namespace MudBlazor
         /// </summary>
         public bool HasErrors => Error || ConversionError || ValidationErrors.Count > 0;
 
+        /// <summary>
+        /// Get the validation error text or the conversion error message
+        /// </summary>
         public string GetErrorText()
         {
             // ErrorText is either set from outside or the first validation error
@@ -198,7 +207,7 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Causes this component to validate its value
+        /// Cause this component to validate its value
         /// </summary>
         public Task Validate()
         {
@@ -381,6 +390,9 @@ namespace MudBlazor
             }
         }
 
+        /// <summary>
+        /// Reset the value and the validation
+        /// </summary>
         public void Reset()
         {
             ResetValue();
@@ -395,6 +407,9 @@ namespace MudBlazor
             StateHasChanged();
         }
 
+        /// <summary>
+        /// Reset the validation
+        /// </summary>
         public void ResetValidation()
         {
             Error = false;

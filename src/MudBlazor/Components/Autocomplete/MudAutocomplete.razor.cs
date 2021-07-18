@@ -30,7 +30,6 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public string Placeholder { get; set; }
 
-
         /// <summary>
         /// Sets the direction the Autocomplete menu should open.
         /// </summary>
@@ -181,7 +180,6 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public bool SelectValueOnTab { get; set; } = false;
 
-
         private string _currentIcon;
 
         private MudInput<string> _elementReference;
@@ -192,6 +190,9 @@ namespace MudBlazor
             IconSize = Size.Medium;
         }
 
+        /// <summary>
+        /// Select the items from the items list
+        /// </summary>
         public async Task SelectOption(T value)
         {
             await SetValueAsync(value);
@@ -204,6 +205,9 @@ namespace MudBlazor
             StateHasChanged();
         }
 
+        /// <summary>
+        /// Toggle the menu (if not disabled or not readonly, and is opened)
+        /// </summary>
         public async Task ToggleMenu()
         {
             if ((Disabled || ReadOnly) && !IsOpen)
@@ -293,7 +297,7 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Clears the autocomplete's text
+        /// Clear the autocomplete's text
         /// </summary>
         public async Task Clear()
         {
@@ -376,6 +380,9 @@ namespace MudBlazor
         /// </summary>
         private readonly string _componentId = Guid.NewGuid().ToString();
 
+        /// <summary>
+        /// Scroll to a specific item in the items autocomplete list 
+        /// </summary>
         public async Task ScrollToListItem(int index, int increment)
         {
             var id = GetListItemId(index);
@@ -452,16 +459,25 @@ namespace MudBlazor
             base.Dispose(disposing);
         }
 
+        /// <summary>
+        /// Focus the autocomplete component
+        /// </summary>
         public override ValueTask FocusAsync()
         {
             return _elementReference.FocusAsync();
         }
 
+        /// <summary>
+        /// Select the autocomplete element
+        /// </summary>
         public override ValueTask SelectAsync()
         {
             return _elementReference.SelectAsync();
         }
 
+        /// <summary>
+        /// Select the autocomplete element in a range
+        /// </summary>
         public override ValueTask SelectRangeAsync(int pos1, int pos2)
         {
             return _elementReference.SelectRangeAsync(pos1, pos2);

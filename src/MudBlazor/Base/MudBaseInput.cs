@@ -106,6 +106,9 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public int Lines { get; set; } = 1;
 
+        /// <summary>
+        /// The text to be displayed.
+        /// </summary>
         [Parameter]
         public string Text { get; set; }
 
@@ -131,7 +134,7 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Focuses the element
+        /// Focus the element
         /// </summary>
         /// <returns>The ValueTask</returns>
         public virtual ValueTask FocusAsync() { return new ValueTask(); }
@@ -140,10 +143,19 @@ namespace MudBlazor
 
         public virtual ValueTask SelectRangeAsync(int pos1, int pos2) { return new ValueTask(); }
 
+        /// <summary>
+        /// Fired when the text value changes.
+        /// </summary>
         [Parameter] public EventCallback<string> TextChanged { get; set; }
 
+        /// <summary>
+        /// Fired when the element loses focus.
+        /// </summary>
         [Parameter] public EventCallback<FocusEventArgs> OnBlur { get; set; }
 
+        /// <summary>
+        /// Fired when the element changes internally its text value.
+        /// </summary>
         [Parameter]
         public EventCallback<ChangeEventArgs> OnInternalInputChanged { get; set; }
 
@@ -164,6 +176,9 @@ namespace MudBlazor
             BeginValidateAfter(OnBlur.InvokeAsync(obj));
         }
 
+        /// <summary>
+        /// Fired on the KeyDown event.
+        /// </summary>
         [Parameter] public EventCallback<KeyboardEventArgs> OnKeyDown { get; set; }
 
         protected virtual void InvokeKeyDown(KeyboardEventArgs obj)
@@ -173,8 +188,14 @@ namespace MudBlazor
             OnKeyDown.InvokeAsync(obj).AndForget();
         }
 
+        /// <summary>
+        /// Prevent the default action for the KeyDown event
+        /// </summary>
         [Parameter] public bool KeyDownPreventDefault { get; set; }
 
+        /// <summary>
+        /// Fired on the KeyPress event.
+        /// </summary>
         [Parameter] public EventCallback<KeyboardEventArgs> OnKeyPress { get; set; }
 
         protected virtual void InvokeKeyPress(KeyboardEventArgs obj)
@@ -182,8 +203,14 @@ namespace MudBlazor
             OnKeyPress.InvokeAsync(obj).AndForget();
         }
 
+        /// <summary>
+        /// Prevent the default action for the KeyPress event
+        /// </summary>
         [Parameter] public bool KeyPressPreventDefault { get; set; }
 
+        /// <summary>
+        /// Fired on the KeyUp event.
+        /// </summary>
         [Parameter] public EventCallback<KeyboardEventArgs> OnKeyUp { get; set; }
 
         protected virtual void InvokeKeyUp(KeyboardEventArgs obj)
@@ -193,6 +220,9 @@ namespace MudBlazor
             OnKeyUp.InvokeAsync(obj).AndForget();
         }
 
+        /// <summary>
+        /// Prevent the default action for the KeyUp event
+        /// </summary>
         [Parameter] public bool KeyUpPreventDefault { get; set; }
 
         /// <summary>
