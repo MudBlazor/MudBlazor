@@ -38,12 +38,12 @@ namespace MudBlazor
         [Parameter] public bool Required { get; set; }
 
         /// <summary>
-        /// Set an error text that will be displayed if the input is not filled out but required!
+        /// Set an error text that will be displayed if the input is not filled out but required.
         /// </summary>
         [Parameter] public string RequiredError { get; set; } = "Required";
 
         /// <summary>
-        /// The ErrorText that will be displayed if Error true
+        /// The ErrorText that will be displayed if Error true.
         /// </summary>
         [Parameter] public string ErrorText { get; set; }
 
@@ -124,7 +124,7 @@ namespace MudBlazor
         public bool HasErrors => Error || ConversionError || ValidationErrors.Count > 0;
 
         /// <summary>
-        /// Get the validation error text or the conversion error message
+        /// Get the validation error text or the conversion error message.
         /// </summary>
         public string GetErrorText()
         {
@@ -207,7 +207,7 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Cause this component to validate its value
+        /// Cause this component to validate its value.
         /// </summary>
         public Task Validate()
         {
@@ -408,7 +408,7 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Reset the validation
+        /// Reset the validation.
         /// </summary>
         public void ResetValidation()
         {

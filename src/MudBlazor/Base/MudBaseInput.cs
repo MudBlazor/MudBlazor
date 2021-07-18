@@ -97,7 +97,7 @@ namespace MudBlazor
         [Parameter] public Margin Margin { get; set; } = Margin.None;
 
         /// <summary>
-        /// If true the input will focus automatically
+        /// If true the input will focus automatically.
         /// </summary>
         [Parameter] public bool AutoFocus { get; set; }
 
@@ -134,7 +134,7 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Focus the element
+        /// Focus the element.
         /// </summary>
         /// <returns>The ValueTask</returns>
         public virtual ValueTask FocusAsync() { return new ValueTask(); }
@@ -189,7 +189,7 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Prevent the default action for the KeyDown event
+        /// Prevent the default action for the KeyDown event.
         /// </summary>
         [Parameter] public bool KeyDownPreventDefault { get; set; }
 
@@ -204,7 +204,7 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Prevent the default action for the KeyPress event
+        /// Prevent the default action for the KeyPress event.
         /// </summary>
         [Parameter] public bool KeyPressPreventDefault { get; set; }
 
@@ -221,7 +221,7 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Prevent the default action for the KeyUp event
+        /// Prevent the default action for the KeyUp event.
         /// </summary>
         [Parameter] public bool KeyUpPreventDefault { get; set; }
 
@@ -280,7 +280,7 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Conversion format parameter for ToString(), can be used for formatting primitive types, DateTimes and TimeSpans
+        /// Conversion format parameter for ToString(), can be used for formatting primitive types, DateTimes and TimeSpans.
         /// </summary>
         [Parameter]
         public string Format
