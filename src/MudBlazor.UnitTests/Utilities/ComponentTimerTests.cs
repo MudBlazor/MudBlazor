@@ -103,33 +103,6 @@ namespace UtilityTests
             _testCallback_4.ExecuteCount.Should().Be(0);
         }
 
-        [Test]
-        public void Constructor_Interface()
-        {
-            using IComponentTimer timer_1 = new ComponentTimer(CallbackMethod_1, state: _testCallback_1);
-            timer_1.Should().As<IComponentTimer>();
-            _testCallback_1.HasExecuted.Should().BeFalse();
-            _testCallback_1.ExecuteCount.Should().Be(0);
-
-
-            using IComponentTimer timer_2 = new ComponentTimer(CallbackMethod_2, state: _testCallback_2);
-            timer_2.Should().As<IComponentTimer>();
-            _testCallback_2.HasExecuted.Should().BeFalse();
-            _testCallback_2.ExecuteCount.Should().Be(0);
-
-
-            using IComponentTimer timer_3 = new ComponentTimer(CallbackEvent_3, state: _testCallback_3);
-            timer_3.Should().As<IComponentTimer>();
-            _testCallback_3.HasExecuted.Should().BeFalse();
-            _testCallback_3.ExecuteCount.Should().Be(0);
-
-
-            using IComponentTimer timer_4 = new ComponentTimer(CallbackEvent_4, state: _testCallback_4);
-            timer_4.Should().As<IComponentTimer>();
-            _testCallback_4.HasExecuted.Should().BeFalse();
-            _testCallback_4.ExecuteCount.Should().Be(0);
-        }
-
         #endregion Constructors
 
 
@@ -138,7 +111,7 @@ namespace UtilityTests
         [Test]
         public async ValueTask Property_Enabled()
         {
-            using IComponentTimer timer_1 = new ComponentTimer(CallbackMethod_1, period: _1msTimeSpan, state: _testCallback_1);
+            using var timer_1 = new ComponentTimer(CallbackMethod_1, period: _1msTimeSpan, state: _testCallback_1);
             timer_1.Enabled.Should().BeFalse();
             timer_1.Enabled = true;
             timer_1.Enabled.Should().BeTrue();
@@ -149,7 +122,7 @@ namespace UtilityTests
             _testCallback_1.ExecuteCount.Should().BeGreaterThan(0);
 
 
-            using IComponentTimer timer_2 = new ComponentTimer(CallbackMethod_2, period: _1msTimeSpan, state: _testCallback_2);
+            using var timer_2 = new ComponentTimer(CallbackMethod_2, period: _1msTimeSpan, state: _testCallback_2);
             timer_2.Enabled.Should().BeFalse();
             timer_2.Enabled = true;
             timer_2.Enabled.Should().BeTrue();
@@ -160,7 +133,7 @@ namespace UtilityTests
             _testCallback_2.ExecuteCount.Should().BeGreaterThan(0);
 
 
-            using IComponentTimer timer_3 = new ComponentTimer(CallbackEvent_3, period: _1msTimeSpan, state: _testCallback_3);
+            using var timer_3 = new ComponentTimer(CallbackEvent_3, period: _1msTimeSpan, state: _testCallback_3);
             timer_3.Enabled.Should().BeFalse();
             timer_3.Enabled = true;
             timer_3.Enabled.Should().BeTrue();
@@ -171,7 +144,7 @@ namespace UtilityTests
             _testCallback_3.ExecuteCount.Should().BeGreaterThan(0);
 
 
-            using IComponentTimer timer_4 = new ComponentTimer(CallbackEvent_4, period: _1msTimeSpan, state: _testCallback_4);
+            using var timer_4 = new ComponentTimer(CallbackEvent_4, period: _1msTimeSpan, state: _testCallback_4);
             timer_4.Enabled.Should().BeFalse();
             timer_4.Enabled = true;
             timer_4.Enabled.Should().BeTrue();
@@ -185,7 +158,7 @@ namespace UtilityTests
         [Test]
         public async ValueTask Property_IsTicking()
         {
-            using IComponentTimer timer_1 = new ComponentTimer(CallbackMethod_1, true, period: _1msTimeSpan, state: _testCallback_1);
+            using var timer_1 = new ComponentTimer(CallbackMethod_1, true, period: _1msTimeSpan, state: _testCallback_1);
             timer_1.IsTicking.Should().BeTrue();
             await Task.Delay(_delayMs);
             timer_1.Stop();
@@ -194,7 +167,7 @@ namespace UtilityTests
             _testCallback_1.ExecuteCount.Should().BeGreaterThan(0);
 
 
-            using IComponentTimer timer_2 = new ComponentTimer(CallbackMethod_2, true, period: _1msTimeSpan, state: _testCallback_2);
+            using var timer_2 = new ComponentTimer(CallbackMethod_2, true, period: _1msTimeSpan, state: _testCallback_2);
             timer_2.IsTicking.Should().BeTrue();
             await Task.Delay(_delayMs);
             await timer_2.StopAsync();
@@ -203,7 +176,7 @@ namespace UtilityTests
             _testCallback_2.ExecuteCount.Should().BeGreaterThan(0);
 
 
-            using IComponentTimer timer_3 = new ComponentTimer(CallbackEvent_3, true, period: _1msTimeSpan, state: _testCallback_3);
+            using var timer_3 = new ComponentTimer(CallbackEvent_3, true, period: _1msTimeSpan, state: _testCallback_3);
             timer_3.IsTicking.Should().BeTrue();
             await Task.Delay(_delayMs);
             await timer_3.StopAsync();
@@ -212,7 +185,7 @@ namespace UtilityTests
             _testCallback_3.ExecuteCount.Should().BeGreaterThan(0);
 
 
-            using IComponentTimer timer_4 = new ComponentTimer(CallbackEvent_4, true, period: _1msTimeSpan, state: _testCallback_4);
+            using var timer_4 = new ComponentTimer(CallbackEvent_4, true, period: _1msTimeSpan, state: _testCallback_4);
             timer_4.IsTicking.Should().BeTrue();
             await Task.Delay(_delayMs);
             await timer_4.StopAsync();
@@ -226,25 +199,25 @@ namespace UtilityTests
         {
             var interval = Timeout.InfiniteTimeSpan;
 
-            using IComponentTimer timer_1 = new ComponentTimer(CallbackMethod_1, true, period: interval, state: _testCallback_1);
+            using var timer_1 = new ComponentTimer(CallbackMethod_1, true, period: interval, state: _testCallback_1);
             timer_1.IsTicking.Should().BeFalse();
             _testCallback_1.HasExecuted.Should().BeFalse();
             _testCallback_1.ExecuteCount.Should().Be(0);
 
 
-            using IComponentTimer timer_2 = new ComponentTimer(CallbackMethod_2, true, period: interval, state: _testCallback_2);
+            using var timer_2 = new ComponentTimer(CallbackMethod_2, true, period: interval, state: _testCallback_2);
             timer_2.IsTicking.Should().BeFalse();
             _testCallback_2.HasExecuted.Should().BeFalse();
             _testCallback_2.ExecuteCount.Should().Be(0);
 
 
-            using IComponentTimer timer_3 = new ComponentTimer(CallbackEvent_3, true, period: interval, state: _testCallback_3);
+            using var timer_3 = new ComponentTimer(CallbackEvent_3, true, period: interval, state: _testCallback_3);
             timer_3.IsTicking.Should().BeFalse();
             _testCallback_3.HasExecuted.Should().BeFalse();
             _testCallback_3.ExecuteCount.Should().Be(0);
 
 
-            using IComponentTimer timer_4 = new ComponentTimer(CallbackEvent_4, true, period: interval, state: _testCallback_4);
+            using var timer_4 = new ComponentTimer(CallbackEvent_4, true, period: interval, state: _testCallback_4);
             timer_4.IsTicking.Should().BeFalse();
             _testCallback_4.HasExecuted.Should().BeFalse();
             _testCallback_4.ExecuteCount.Should().Be(0);
@@ -255,25 +228,25 @@ namespace UtilityTests
         {
             var interval = TimeSpan.Zero;
 
-            using IComponentTimer timer_1 = new ComponentTimer(CallbackMethod_1, true, period: interval, state: _testCallback_1);
+            using var timer_1 = new ComponentTimer(CallbackMethod_1, true, period: interval, state: _testCallback_1);
             timer_1.IsTicking.Should().BeFalse();
             _testCallback_1.HasExecuted.Should().BeFalse();
             _testCallback_1.ExecuteCount.Should().Be(0);
 
 
-            using IComponentTimer timer_2 = new ComponentTimer(CallbackMethod_2, true, period: interval, state: _testCallback_2);
+            using var timer_2 = new ComponentTimer(CallbackMethod_2, true, period: interval, state: _testCallback_2);
             timer_2.IsTicking.Should().BeFalse();
             _testCallback_2.HasExecuted.Should().BeFalse();
             _testCallback_2.ExecuteCount.Should().Be(0);
 
 
-            using IComponentTimer timer_3 = new ComponentTimer(CallbackEvent_3, true, period: interval, state: _testCallback_3);
+            using var timer_3 = new ComponentTimer(CallbackEvent_3, true, period: interval, state: _testCallback_3);
             timer_3.IsTicking.Should().BeFalse();
             _testCallback_3.HasExecuted.Should().BeFalse();
             _testCallback_3.ExecuteCount.Should().Be(0);
 
 
-            using IComponentTimer timer_4 = new ComponentTimer(CallbackEvent_4, true, period: interval, state: _testCallback_4);
+            using var timer_4 = new ComponentTimer(CallbackEvent_4, true, period: interval, state: _testCallback_4);
             timer_4.IsTicking.Should().BeFalse();
             _testCallback_4.HasExecuted.Should().BeFalse();
             _testCallback_4.ExecuteCount.Should().Be(0);
@@ -282,7 +255,7 @@ namespace UtilityTests
         [Test]
         public void Property_DueTime()
         {
-            using IComponentTimer timer_1 = new ComponentTimer(CallbackMethod_1, dueTime: _1msTimeSpan, state: _testCallback_1);
+            using var timer_1 = new ComponentTimer(CallbackMethod_1, dueTime: _1msTimeSpan, state: _testCallback_1);
             timer_1.DueTime.Should().NotBe(TimeSpan.Zero);
             timer_1.DueTime.Should().NotBe(Timeout.InfiniteTimeSpan);
             timer_1.DueTime.TotalMilliseconds.Should().Be(1);
@@ -290,7 +263,7 @@ namespace UtilityTests
             _testCallback_1.ExecuteCount.Should().Be(0);
 
 
-            using IComponentTimer timer_2 = new ComponentTimer(CallbackMethod_2, dueTime: _1msTimeSpan, state: _testCallback_2);
+            using var timer_2 = new ComponentTimer(CallbackMethod_2, dueTime: _1msTimeSpan, state: _testCallback_2);
             timer_2.DueTime.Should().NotBe(TimeSpan.Zero);
             timer_2.DueTime.Should().NotBe(Timeout.InfiniteTimeSpan);
             timer_2.DueTime.TotalMilliseconds.Should().Be(1);
@@ -298,7 +271,7 @@ namespace UtilityTests
             _testCallback_2.ExecuteCount.Should().Be(0);
 
 
-            using IComponentTimer timer_3 = new ComponentTimer(CallbackEvent_3, dueTime: _1msTimeSpan, state: _testCallback_3);
+            using var timer_3 = new ComponentTimer(CallbackEvent_3, dueTime: _1msTimeSpan, state: _testCallback_3);
             timer_3.DueTime.Should().NotBe(TimeSpan.Zero);
             timer_3.DueTime.Should().NotBe(Timeout.InfiniteTimeSpan);
             timer_3.DueTime.TotalMilliseconds.Should().Be(1);
@@ -306,7 +279,7 @@ namespace UtilityTests
             _testCallback_3.ExecuteCount.Should().Be(0);
 
 
-            using IComponentTimer timer_4 = new ComponentTimer(CallbackEvent_4, dueTime: _1msTimeSpan, state: _testCallback_4);
+            using var timer_4 = new ComponentTimer(CallbackEvent_4, dueTime: _1msTimeSpan, state: _testCallback_4);
             timer_4.DueTime.Should().NotBe(TimeSpan.Zero);
             timer_4.DueTime.Should().NotBe(Timeout.InfiniteTimeSpan);
             timer_4.DueTime.TotalMilliseconds.Should().Be(1);
@@ -319,28 +292,28 @@ namespace UtilityTests
         {
             var startDelay = Timeout.InfiniteTimeSpan;
 
-            using IComponentTimer timer_1 = new ComponentTimer(CallbackMethod_1, dueTime: startDelay, state: _testCallback_1);
+            using var timer_1 = new ComponentTimer(CallbackMethod_1, dueTime: startDelay, state: _testCallback_1);
             timer_1.DueTime.Should().Be(TimeSpan.Zero);
             timer_1.DueTime.TotalMilliseconds.Should().Be(0);
             _testCallback_1.HasExecuted.Should().BeFalse();
             _testCallback_1.ExecuteCount.Should().Be(0);
 
 
-            using IComponentTimer timer_2 = new ComponentTimer(CallbackMethod_2, dueTime: startDelay, state: _testCallback_2);
+            using var timer_2 = new ComponentTimer(CallbackMethod_2, dueTime: startDelay, state: _testCallback_2);
             timer_2.DueTime.Should().Be(TimeSpan.Zero);
             timer_2.DueTime.TotalMilliseconds.Should().Be(0);
             _testCallback_2.HasExecuted.Should().BeFalse();
             _testCallback_2.ExecuteCount.Should().Be(0);
 
 
-            using IComponentTimer timer_3 = new ComponentTimer(CallbackEvent_3, dueTime: startDelay, state: _testCallback_3);
+            using var timer_3 = new ComponentTimer(CallbackEvent_3, dueTime: startDelay, state: _testCallback_3);
             timer_3.DueTime.Should().Be(TimeSpan.Zero);
             timer_3.DueTime.TotalMilliseconds.Should().Be(0);
             _testCallback_3.HasExecuted.Should().BeFalse();
             _testCallback_3.ExecuteCount.Should().Be(0);
 
 
-            using IComponentTimer timer_4 = new ComponentTimer(CallbackEvent_4, dueTime: startDelay, state: _testCallback_4);
+            using var timer_4 = new ComponentTimer(CallbackEvent_4, dueTime: startDelay, state: _testCallback_4);
             timer_4.DueTime.Should().Be(TimeSpan.Zero);
             timer_4.DueTime.TotalMilliseconds.Should().Be(0);
             _testCallback_4.HasExecuted.Should().BeFalse();
@@ -352,28 +325,28 @@ namespace UtilityTests
         {
             var startDelay = TimeSpan.Zero;
 
-            using IComponentTimer timer_1 = new ComponentTimer(CallbackMethod_1, dueTime: startDelay, state: _testCallback_1);
+            using var timer_1 = new ComponentTimer(CallbackMethod_1, dueTime: startDelay, state: _testCallback_1);
             timer_1.DueTime.Should().Be(TimeSpan.Zero);
             timer_1.DueTime.TotalMilliseconds.Should().Be(0);
             _testCallback_1.HasExecuted.Should().BeFalse();
             _testCallback_1.ExecuteCount.Should().Be(0);
 
 
-            using IComponentTimer timer_2 = new ComponentTimer(CallbackMethod_2, dueTime: startDelay, state: _testCallback_2);
+            using var timer_2 = new ComponentTimer(CallbackMethod_2, dueTime: startDelay, state: _testCallback_2);
             timer_2.DueTime.Should().Be(TimeSpan.Zero);
             timer_2.DueTime.TotalMilliseconds.Should().Be(0);
             _testCallback_2.HasExecuted.Should().BeFalse();
             _testCallback_2.ExecuteCount.Should().Be(0);
 
 
-            using IComponentTimer timer_3 = new ComponentTimer(CallbackEvent_3, dueTime: startDelay, state: _testCallback_3);
+            using var timer_3 = new ComponentTimer(CallbackEvent_3, dueTime: startDelay, state: _testCallback_3);
             timer_3.DueTime.Should().Be(TimeSpan.Zero);
             timer_3.DueTime.TotalMilliseconds.Should().Be(0);
             _testCallback_3.HasExecuted.Should().BeFalse();
             _testCallback_3.ExecuteCount.Should().Be(0);
 
 
-            using IComponentTimer timer_4 = new ComponentTimer(CallbackEvent_4, dueTime: startDelay, state: _testCallback_4);
+            using var timer_4 = new ComponentTimer(CallbackEvent_4, dueTime: startDelay, state: _testCallback_4);
             timer_4.DueTime.Should().Be(TimeSpan.Zero);
             timer_4.DueTime.TotalMilliseconds.Should().Be(0);
             _testCallback_4.HasExecuted.Should().BeFalse();
@@ -383,7 +356,7 @@ namespace UtilityTests
         [Test]
         public void Property_Period()
         {
-            using IComponentTimer timer_1 = new ComponentTimer(CallbackMethod_1, period: _1msTimeSpan, state: _testCallback_1);
+            using var timer_1 = new ComponentTimer(CallbackMethod_1, period: _1msTimeSpan, state: _testCallback_1);
             timer_1.Period.Should().NotBe(TimeSpan.Zero);
             timer_1.Period.Should().NotBe(Timeout.InfiniteTimeSpan);
             timer_1.Period.TotalMilliseconds.Should().Be(1);
@@ -391,7 +364,7 @@ namespace UtilityTests
             _testCallback_1.ExecuteCount.Should().Be(0);
 
 
-            using IComponentTimer timer_2 = new ComponentTimer(CallbackMethod_2, period: _1msTimeSpan, state: _testCallback_2);
+            using var timer_2 = new ComponentTimer(CallbackMethod_2, period: _1msTimeSpan, state: _testCallback_2);
             timer_2.Period.Should().NotBe(TimeSpan.Zero);
             timer_2.Period.Should().NotBe(Timeout.InfiniteTimeSpan);
             timer_2.Period.TotalMilliseconds.Should().Be(1);
@@ -399,7 +372,7 @@ namespace UtilityTests
             _testCallback_2.ExecuteCount.Should().Be(0);
 
 
-            using IComponentTimer timer_3 = new ComponentTimer(CallbackEvent_3, period: _1msTimeSpan, state: _testCallback_3);
+            using var timer_3 = new ComponentTimer(CallbackEvent_3, period: _1msTimeSpan, state: _testCallback_3);
             timer_3.Period.Should().NotBe(TimeSpan.Zero);
             timer_3.Period.Should().NotBe(Timeout.InfiniteTimeSpan);
             timer_3.Period.TotalMilliseconds.Should().Be(1);
@@ -407,7 +380,7 @@ namespace UtilityTests
             _testCallback_3.ExecuteCount.Should().Be(0);
 
 
-            using IComponentTimer timer_4 = new ComponentTimer(CallbackEvent_4, period: _1msTimeSpan, state: _testCallback_4);
+            using var timer_4 = new ComponentTimer(CallbackEvent_4, period: _1msTimeSpan, state: _testCallback_4);
             timer_4.Period.Should().NotBe(TimeSpan.Zero);
             timer_4.Period.Should().NotBe(Timeout.InfiniteTimeSpan);
             timer_4.Period.TotalMilliseconds.Should().Be(1);
@@ -418,28 +391,28 @@ namespace UtilityTests
         [Test]
         public void Property_Period_With_InfiniteTimeSpan()
         {
-            using IComponentTimer timer_1 = new ComponentTimer(CallbackMethod_1, period: _1msTimeSpan, state: _testCallback_1);
+            using var timer_1 = new ComponentTimer(CallbackMethod_1, period: _1msTimeSpan, state: _testCallback_1);
             timer_1.Period.Should().NotBe(TimeSpan.Zero);
             timer_1.Period.TotalMilliseconds.Should().Be(1);
             _testCallback_1.HasExecuted.Should().BeFalse();
             _testCallback_1.ExecuteCount.Should().Be(0);
 
 
-            using IComponentTimer timer_2 = new ComponentTimer(CallbackMethod_2, period: _1msTimeSpan, state: _testCallback_2);
+            using var timer_2 = new ComponentTimer(CallbackMethod_2, period: _1msTimeSpan, state: _testCallback_2);
             timer_2.Period.Should().NotBe(TimeSpan.Zero);
             timer_2.Period.TotalMilliseconds.Should().Be(1);
             _testCallback_2.HasExecuted.Should().BeFalse();
             _testCallback_2.ExecuteCount.Should().Be(0);
 
 
-            using IComponentTimer timer_3 = new ComponentTimer(CallbackEvent_3, period: _1msTimeSpan, state: _testCallback_3);
+            using var timer_3 = new ComponentTimer(CallbackEvent_3, period: _1msTimeSpan, state: _testCallback_3);
             timer_3.Period.Should().NotBe(TimeSpan.Zero);
             timer_3.Period.TotalMilliseconds.Should().Be(1);
             _testCallback_3.HasExecuted.Should().BeFalse();
             _testCallback_3.ExecuteCount.Should().Be(0);
 
 
-            using IComponentTimer timer_4 = new ComponentTimer(CallbackEvent_4, period: _1msTimeSpan, state: _testCallback_4);
+            using var timer_4 = new ComponentTimer(CallbackEvent_4, period: _1msTimeSpan, state: _testCallback_4);
             timer_4.Period.Should().NotBe(TimeSpan.Zero);
             timer_4.Period.TotalMilliseconds.Should().Be(1);
             _testCallback_4.HasExecuted.Should().BeFalse();
@@ -451,28 +424,28 @@ namespace UtilityTests
         {
             var interval = TimeSpan.Zero;
 
-            using IComponentTimer timer_1 = new ComponentTimer(CallbackMethod_1, period: interval, state: _testCallback_1);
+            using var timer_1 = new ComponentTimer(CallbackMethod_1, period: interval, state: _testCallback_1);
             timer_1.Period.Should().Be(TimeSpan.Zero);
             timer_1.Period.TotalMilliseconds.Should().Be(0);
             _testCallback_1.HasExecuted.Should().BeFalse();
             _testCallback_1.ExecuteCount.Should().Be(0);
 
 
-            using IComponentTimer timer_2 = new ComponentTimer(CallbackMethod_2, period: interval, state: _testCallback_2);
+            using var timer_2 = new ComponentTimer(CallbackMethod_2, period: interval, state: _testCallback_2);
             timer_2.Period.Should().Be(TimeSpan.Zero);
             timer_2.Period.TotalMilliseconds.Should().Be(0);
             _testCallback_2.HasExecuted.Should().BeFalse();
             _testCallback_2.ExecuteCount.Should().Be(0);
 
 
-            using IComponentTimer timer_3 = new ComponentTimer(CallbackEvent_3, period: interval, state: _testCallback_3);
+            using var timer_3 = new ComponentTimer(CallbackEvent_3, period: interval, state: _testCallback_3);
             timer_3.Period.Should().Be(TimeSpan.Zero);
             timer_3.Period.TotalMilliseconds.Should().Be(0);
             _testCallback_3.HasExecuted.Should().BeFalse();
             _testCallback_3.ExecuteCount.Should().Be(0);
 
 
-            using IComponentTimer timer_4 = new ComponentTimer(CallbackEvent_4, period: interval, state: _testCallback_4);
+            using var timer_4 = new ComponentTimer(CallbackEvent_4, period: interval, state: _testCallback_4);
             timer_4.Period.Should().Be(TimeSpan.Zero);
             timer_4.Period.TotalMilliseconds.Should().Be(0);
             _testCallback_4.HasExecuted.Should().BeFalse();
@@ -482,7 +455,7 @@ namespace UtilityTests
         [Test]
         public async ValueTask Property_Elapsed()
         {
-            using IComponentTimer timer_1 = new ComponentTimer(CallbackMethod_1, period: _1msTimeSpan, state: _testCallback_1);
+            using var timer_1 = new ComponentTimer(CallbackMethod_1, period: _1msTimeSpan, state: _testCallback_1);
             timer_1.Elapsed.Should().Be(TimeSpan.Zero);
             timer_1.Start();
             await Task.Delay(_delayMs);
@@ -492,7 +465,7 @@ namespace UtilityTests
             _testCallback_1.ExecuteCount.Should().BeGreaterThan(0);
 
 
-            using IComponentTimer timer_2 = new ComponentTimer(CallbackMethod_2, period: _1msTimeSpan, state: _testCallback_2);
+            using var timer_2 = new ComponentTimer(CallbackMethod_2, period: _1msTimeSpan, state: _testCallback_2);
             timer_2.Elapsed.Should().Be(TimeSpan.Zero);
             await timer_2.StartAsync();
             await Task.Delay(_delayMs);
@@ -502,7 +475,7 @@ namespace UtilityTests
             _testCallback_2.ExecuteCount.Should().BeGreaterThan(0);
 
 
-            using IComponentTimer timer_3 = new ComponentTimer(CallbackEvent_3, period: _1msTimeSpan, state: _testCallback_3);
+            using var timer_3 = new ComponentTimer(CallbackEvent_3, period: _1msTimeSpan, state: _testCallback_3);
             timer_3.Elapsed.Should().Be(TimeSpan.Zero);
             await timer_3.StartAsync();
             await Task.Delay(_delayMs);
@@ -512,7 +485,7 @@ namespace UtilityTests
             _testCallback_3.ExecuteCount.Should().BeGreaterThan(0);
 
 
-            using IComponentTimer timer_4 = new ComponentTimer(CallbackEvent_4, period: _1msTimeSpan, state: _testCallback_4);
+            using var timer_4 = new ComponentTimer(CallbackEvent_4, period: _1msTimeSpan, state: _testCallback_4);
             timer_4.Elapsed.Should().Be(TimeSpan.Zero);
             await timer_4.StartAsync();
             await Task.Delay(_delayMs);
@@ -530,7 +503,7 @@ namespace UtilityTests
         [Test]
         public async ValueTask Method_Start_MultipleCalls_Return_Initial_DateTimeOffset()
         {
-            using IComponentTimer timer_1 = new ComponentTimer(CallbackMethod_1, period: _1msTimeSpan, state: _testCallback_1);
+            using var timer_1 = new ComponentTimer(CallbackMethod_1, period: _1msTimeSpan, state: _testCallback_1);
             var initialTimestamp_1 = timer_1.Start();
             Console.WriteLine($"{nameof(initialTimestamp_1)}: {initialTimestamp_1}");
             await Task.Delay(_delayMs);
@@ -542,7 +515,7 @@ namespace UtilityTests
             _testCallback_1.ExecuteCount.Should().BeGreaterThan(0);
 
 
-            using IComponentTimer timer_2 = new ComponentTimer(CallbackMethod_2, period: _1msTimeSpan, state: _testCallback_2);
+            using var timer_2 = new ComponentTimer(CallbackMethod_2, period: _1msTimeSpan, state: _testCallback_2);
             var initialTimestamp_2 = await timer_2.StartAsync();
             Console.WriteLine($"{nameof(initialTimestamp_2)}: {initialTimestamp_2}");
             await Task.Delay(_delayMs);
@@ -554,7 +527,7 @@ namespace UtilityTests
             _testCallback_2.ExecuteCount.Should().BeGreaterThan(0);
 
 
-            using IComponentTimer timer_3 = new ComponentTimer(CallbackEvent_3, period: _1msTimeSpan, state: _testCallback_3);
+            using var timer_3 = new ComponentTimer(CallbackEvent_3, period: _1msTimeSpan, state: _testCallback_3);
             var initialTimestamp_3 = await timer_3.StartAsync();
             Console.WriteLine($"{nameof(initialTimestamp_3)}: {initialTimestamp_3}");
             await Task.Delay(_delayMs);
@@ -566,7 +539,7 @@ namespace UtilityTests
             _testCallback_3.ExecuteCount.Should().BeGreaterThan(0);
 
 
-            using IComponentTimer timer_4 = new ComponentTimer(CallbackEvent_4, period: _1msTimeSpan, state: _testCallback_4);
+            using var timer_4 = new ComponentTimer(CallbackEvent_4, period: _1msTimeSpan, state: _testCallback_4);
             var initialTimestamp_4 = await timer_4.StartAsync();
             Console.WriteLine($"{nameof(initialTimestamp_4)}: {initialTimestamp_4}");
             await Task.Delay(_delayMs);
@@ -581,7 +554,7 @@ namespace UtilityTests
         [Test]
         public async ValueTask Method_Start_Sets_Enabled_True()
         {
-            using IComponentTimer timer_1 = new ComponentTimer(CallbackMethod_1, period: _1msTimeSpan, state: _testCallback_1);
+            using var timer_1 = new ComponentTimer(CallbackMethod_1, period: _1msTimeSpan, state: _testCallback_1);
             timer_1.Start();
             timer_1.Enabled.Should().BeTrue();
             await Task.Delay(_delayMs);
@@ -590,7 +563,7 @@ namespace UtilityTests
             _testCallback_1.ExecuteCount.Should().BeGreaterThan(0);
 
 
-            using IComponentTimer timer_2 = new ComponentTimer(CallbackMethod_2, period: _1msTimeSpan, state: _testCallback_2);
+            using var timer_2 = new ComponentTimer(CallbackMethod_2, period: _1msTimeSpan, state: _testCallback_2);
             await timer_2.StartAsync();
             timer_2.Enabled.Should().BeTrue();
             await Task.Delay(_delayMs);
@@ -599,7 +572,7 @@ namespace UtilityTests
             _testCallback_2.ExecuteCount.Should().BeGreaterThan(0);
 
 
-            using IComponentTimer timer_3 = new ComponentTimer(CallbackEvent_3, period: _1msTimeSpan, state: _testCallback_3);
+            using var timer_3 = new ComponentTimer(CallbackEvent_3, period: _1msTimeSpan, state: _testCallback_3);
             await timer_3.StartAsync();
             timer_3.Enabled.Should().BeTrue();
             await Task.Delay(_delayMs);
@@ -608,7 +581,7 @@ namespace UtilityTests
             _testCallback_3.ExecuteCount.Should().BeGreaterThan(0);
 
 
-            using IComponentTimer timer_4 = new ComponentTimer(CallbackEvent_4, period: _1msTimeSpan, state: _testCallback_4);
+            using var timer_4 = new ComponentTimer(CallbackEvent_4, period: _1msTimeSpan, state: _testCallback_4);
             await timer_4.StartAsync();
             timer_4.Enabled.Should().BeTrue();
             await Task.Delay(_delayMs);
@@ -620,7 +593,7 @@ namespace UtilityTests
         [Test]
         public async ValueTask Method_Start_Updates_DueTime()
         {
-            using IComponentTimer timer_1 = new ComponentTimer(CallbackMethod_1, dueTime: _1msTimeSpan, period: _1msTimeSpan, state: _testCallback_1);
+            using var timer_1 = new ComponentTimer(CallbackMethod_1, dueTime: _1msTimeSpan, period: _1msTimeSpan, state: _testCallback_1);
             timer_1.DueTime.TotalMilliseconds.Should().Be(1);
             timer_1.Start(_3msTimeSpan);
             timer_1.DueTime.TotalMilliseconds.Should().Be(1);
@@ -631,7 +604,7 @@ namespace UtilityTests
             _testCallback_1.ExecuteCount.Should().Be(0);
 
 
-            using IComponentTimer timer_2 = new ComponentTimer(CallbackMethod_2, dueTime: _1msTimeSpan, period: _1msTimeSpan, state: _testCallback_2);
+            using var timer_2 = new ComponentTimer(CallbackMethod_2, dueTime: _1msTimeSpan, period: _1msTimeSpan, state: _testCallback_2);
             timer_2.DueTime.TotalMilliseconds.Should().Be(1);
             await timer_2.StartAsync(_3msTimeSpan);
             timer_2.DueTime.TotalMilliseconds.Should().Be(1);
@@ -642,7 +615,7 @@ namespace UtilityTests
             _testCallback_2.ExecuteCount.Should().Be(0);
 
 
-            using IComponentTimer timer_3 = new ComponentTimer(CallbackEvent_3, dueTime: _1msTimeSpan, period: _1msTimeSpan, state: _testCallback_3);
+            using var timer_3 = new ComponentTimer(CallbackEvent_3, dueTime: _1msTimeSpan, period: _1msTimeSpan, state: _testCallback_3);
             timer_3.DueTime.TotalMilliseconds.Should().Be(1);
             await timer_3.StartAsync(_3msTimeSpan);
             timer_3.DueTime.TotalMilliseconds.Should().Be(1);
@@ -653,7 +626,7 @@ namespace UtilityTests
             _testCallback_3.ExecuteCount.Should().Be(0);
 
 
-            using IComponentTimer timer_4 = new ComponentTimer(CallbackEvent_4, dueTime: _1msTimeSpan, period: _1msTimeSpan, state: _testCallback_4);
+            using var timer_4 = new ComponentTimer(CallbackEvent_4, dueTime: _1msTimeSpan, period: _1msTimeSpan, state: _testCallback_4);
             timer_4.DueTime.TotalMilliseconds.Should().Be(1);
             await timer_4.StartAsync(_3msTimeSpan);
             timer_4.DueTime.TotalMilliseconds.Should().Be(1);
@@ -668,7 +641,7 @@ namespace UtilityTests
         [Test]
         public async ValueTask Method_Stop_MultipleCalls_Return_Last_DateTimeOffset()
         {
-            using IComponentTimer timer_1 = new ComponentTimer(CallbackMethod_1, true, period: _1msTimeSpan, state: _testCallback_1);
+            using var timer_1 = new ComponentTimer(CallbackMethod_1, true, period: _1msTimeSpan, state: _testCallback_1);
             await Task.Delay(_delayMs);
             var initialTimestamp_1 = timer_1.Stop();
             Console.WriteLine($"{nameof(initialTimestamp_1)}: {initialTimestamp_1}");
@@ -680,7 +653,7 @@ namespace UtilityTests
             _testCallback_1.ExecuteCount.Should().BeGreaterThan(0);
 
 
-            using IComponentTimer timer_2 = new ComponentTimer(CallbackMethod_2, true, period: _1msTimeSpan, state: _testCallback_2);
+            using var timer_2 = new ComponentTimer(CallbackMethod_2, true, period: _1msTimeSpan, state: _testCallback_2);
             await Task.Delay(_delayMs);
             var initialTimestamp_2 = await timer_2.StopAsync();
             Console.WriteLine($"{nameof(initialTimestamp_2)}: {initialTimestamp_2}");
@@ -692,7 +665,7 @@ namespace UtilityTests
             _testCallback_2.ExecuteCount.Should().BeGreaterThan(0);
 
 
-            using IComponentTimer timer_3 = new ComponentTimer(CallbackEvent_3, true, period: _1msTimeSpan, state: _testCallback_3);
+            using var timer_3 = new ComponentTimer(CallbackEvent_3, true, period: _1msTimeSpan, state: _testCallback_3);
             await Task.Delay(_delayMs);
             var initialTimestamp_3 = await timer_3.StopAsync();
             Console.WriteLine($"{nameof(initialTimestamp_3)}: {initialTimestamp_3}");
@@ -704,7 +677,7 @@ namespace UtilityTests
             _testCallback_3.ExecuteCount.Should().BeGreaterThan(0);
 
 
-            using IComponentTimer timer_4 = new ComponentTimer(CallbackEvent_4, true, period: _1msTimeSpan, state: _testCallback_4);
+            using var timer_4 = new ComponentTimer(CallbackEvent_4, true, period: _1msTimeSpan, state: _testCallback_4);
             await Task.Delay(_delayMs);
             var initialTimestamp_4 = await timer_4.StopAsync();
             Console.WriteLine($"{nameof(initialTimestamp_4)}: {initialTimestamp_4}");
@@ -719,7 +692,7 @@ namespace UtilityTests
         [Test]
         public async ValueTask Method_Stop_Sets_Enabled_False()
         {
-            using IComponentTimer timer_1 = new ComponentTimer(CallbackMethod_1, true, period: _1msTimeSpan, state: _testCallback_1);
+            using var timer_1 = new ComponentTimer(CallbackMethod_1, true, period: _1msTimeSpan, state: _testCallback_1);
             await Task.Delay(_delayMs);
             timer_1.Stop();
             timer_1.Enabled.Should().BeFalse();
@@ -727,7 +700,7 @@ namespace UtilityTests
             _testCallback_1.ExecuteCount.Should().BeGreaterThan(0);
 
 
-            using IComponentTimer timer_2 = new ComponentTimer(CallbackMethod_2, true, period: _1msTimeSpan, state: _testCallback_2);
+            using var timer_2 = new ComponentTimer(CallbackMethod_2, true, period: _1msTimeSpan, state: _testCallback_2);
             await Task.Delay(_delayMs);
             await timer_2.StopAsync();
             timer_2.Enabled.Should().BeFalse();
@@ -735,7 +708,7 @@ namespace UtilityTests
             _testCallback_2.ExecuteCount.Should().BeGreaterThan(0);
 
 
-            using IComponentTimer timer_3 = new ComponentTimer(CallbackEvent_3, true, period: _1msTimeSpan, state: _testCallback_3);
+            using var timer_3 = new ComponentTimer(CallbackEvent_3, true, period: _1msTimeSpan, state: _testCallback_3);
             await Task.Delay(_delayMs);
             await timer_3.StopAsync();
             timer_3.Enabled.Should().BeFalse();
@@ -743,7 +716,7 @@ namespace UtilityTests
             _testCallback_3.ExecuteCount.Should().BeGreaterThan(0);
 
 
-            using IComponentTimer timer_4 = new ComponentTimer(CallbackEvent_4, true, period: _1msTimeSpan, state: _testCallback_4);
+            using var timer_4 = new ComponentTimer(CallbackEvent_4, true, period: _1msTimeSpan, state: _testCallback_4);
             await Task.Delay(_delayMs);
             await timer_4.StopAsync();
             timer_4.Enabled.Should().BeFalse();
@@ -754,25 +727,25 @@ namespace UtilityTests
         [Test]
         public async ValueTask Method_Stop_TimerNeverRan_Returns_DefaultDateTimeOffset()
         {
-            using IComponentTimer timer_1 = new ComponentTimer(CallbackMethod_1, period: _1msTimeSpan, state: _testCallback_1);
+            using var timer_1 = new ComponentTimer(CallbackMethod_1, period: _1msTimeSpan, state: _testCallback_1);
             timer_1.Stop().Should().Be(default(DateTimeOffset));
             _testCallback_1.HasExecuted.Should().BeFalse();
             _testCallback_1.ExecuteCount.Should().Be(0);
 
 
-            using IComponentTimer timer_2 = new ComponentTimer(CallbackMethod_2, period: _1msTimeSpan, state: _testCallback_2);
+            using var timer_2 = new ComponentTimer(CallbackMethod_2, period: _1msTimeSpan, state: _testCallback_2);
             (await timer_2.StopAsync()).Should().Be(default(DateTimeOffset));
             _testCallback_2.HasExecuted.Should().BeFalse();
             _testCallback_2.ExecuteCount.Should().Be(0);
 
 
-            using IComponentTimer timer_3 = new ComponentTimer(CallbackEvent_3, period: _1msTimeSpan, state: _testCallback_3);
+            using var timer_3 = new ComponentTimer(CallbackEvent_3, period: _1msTimeSpan, state: _testCallback_3);
             (await timer_3.StopAsync()).Should().Be(default(DateTimeOffset));
             _testCallback_3.HasExecuted.Should().BeFalse();
             _testCallback_3.ExecuteCount.Should().Be(0);
 
 
-            using IComponentTimer timer_4 = new ComponentTimer(CallbackEvent_4, period: _1msTimeSpan, state: _testCallback_4);
+            using var timer_4 = new ComponentTimer(CallbackEvent_4, period: _1msTimeSpan, state: _testCallback_4);
             (await timer_4.StopAsync()).Should().Be(default(DateTimeOffset));
             _testCallback_4.HasExecuted.Should().BeFalse();
             _testCallback_4.ExecuteCount.Should().Be(0);
@@ -781,7 +754,7 @@ namespace UtilityTests
         [Test]
         public async ValueTask Method_Stop_With_Enabled_True()
         {
-            using IComponentTimer timer_1 = new ComponentTimer(CallbackMethod_1, true, period: _1msTimeSpan, state: _testCallback_1);
+            using var timer_1 = new ComponentTimer(CallbackMethod_1, true, period: _1msTimeSpan, state: _testCallback_1);
             timer_1.Enabled.Should().BeTrue();
             await Task.Delay(_delayMs);
             timer_1.Stop();
@@ -790,7 +763,7 @@ namespace UtilityTests
             _testCallback_1.ExecuteCount.Should().BeGreaterThan(0);
 
 
-            using IComponentTimer timer_2 = new ComponentTimer(CallbackMethod_2, true, period: _1msTimeSpan, state: _testCallback_2);
+            using var timer_2 = new ComponentTimer(CallbackMethod_2, true, period: _1msTimeSpan, state: _testCallback_2);
             timer_2.Enabled.Should().BeTrue();
             await Task.Delay(_delayMs);
             await timer_2.StopAsync();
@@ -799,7 +772,7 @@ namespace UtilityTests
             _testCallback_2.ExecuteCount.Should().BeGreaterThan(0);
 
 
-            using IComponentTimer timer_3 = new ComponentTimer(CallbackEvent_3, true, period: _1msTimeSpan, state: _testCallback_3);
+            using var timer_3 = new ComponentTimer(CallbackEvent_3, true, period: _1msTimeSpan, state: _testCallback_3);
             timer_3.Enabled.Should().BeTrue();
             await Task.Delay(_delayMs);
             await timer_3.StopAsync();
@@ -808,7 +781,7 @@ namespace UtilityTests
             _testCallback_3.ExecuteCount.Should().BeGreaterThan(0);
 
 
-            using IComponentTimer timer_4 = new ComponentTimer(CallbackEvent_4, true, period: _1msTimeSpan, state: _testCallback_4);
+            using var timer_4 = new ComponentTimer(CallbackEvent_4, true, period: _1msTimeSpan, state: _testCallback_4);
             timer_4.Enabled.Should().BeTrue();
             await Task.Delay(_delayMs);
             await timer_4.StopAsync();
@@ -821,7 +794,7 @@ namespace UtilityTests
         [Test]
         public async ValueTask Method_Restart_Sets_Restarts()
         {
-            using IComponentTimer timer_1 = new ComponentTimer(CallbackMethod_1, period: _1msTimeSpan, state: _testCallback_1);
+            using var timer_1 = new ComponentTimer(CallbackMethod_1, period: _1msTimeSpan, state: _testCallback_1);
             timer_1.Restarts.Should().Be(0);
             timer_1.Restart();
             timer_1.Restart();
@@ -835,7 +808,7 @@ namespace UtilityTests
             _testCallback_1.ExecuteCount.Should().BeGreaterThan(0);
 
 
-            using IComponentTimer timer_2 = new ComponentTimer(CallbackMethod_2, period: _1msTimeSpan, state: _testCallback_2);
+            using var timer_2 = new ComponentTimer(CallbackMethod_2, period: _1msTimeSpan, state: _testCallback_2);
             timer_2.Restarts.Should().Be(0);
             await timer_2.RestartAsync();
             await timer_2.RestartAsync();
@@ -849,7 +822,7 @@ namespace UtilityTests
             _testCallback_2.ExecuteCount.Should().BeGreaterThan(0);
 
 
-            using IComponentTimer timer_3 = new ComponentTimer(CallbackEvent_3, period: _1msTimeSpan, state: _testCallback_3);
+            using var timer_3 = new ComponentTimer(CallbackEvent_3, period: _1msTimeSpan, state: _testCallback_3);
             timer_3.Restarts.Should().Be(0);
             await timer_3.RestartAsync();
             await timer_3.RestartAsync();
@@ -863,7 +836,7 @@ namespace UtilityTests
             _testCallback_3.ExecuteCount.Should().BeGreaterThan(0);
 
 
-            using IComponentTimer timer_4 = new ComponentTimer(CallbackEvent_4, period: _1msTimeSpan, state: _testCallback_4);
+            using var timer_4 = new ComponentTimer(CallbackEvent_4, period: _1msTimeSpan, state: _testCallback_4);
             timer_4.Restarts.Should().Be(0);
             await timer_4.RestartAsync();
             await timer_4.RestartAsync();
@@ -880,7 +853,7 @@ namespace UtilityTests
         [Test]
         public async ValueTask Method_Restart_With_Enabled_False()
         {
-            using IComponentTimer timer_1 = new ComponentTimer(CallbackMethod_1, period: _1msTimeSpan, state: _testCallback_1);
+            using var timer_1 = new ComponentTimer(CallbackMethod_1, period: _1msTimeSpan, state: _testCallback_1);
             timer_1.Restart();
             timer_1.Enabled.Should().BeTrue();
             await Task.Delay(_delayMs);
@@ -888,7 +861,7 @@ namespace UtilityTests
             _testCallback_1.ExecuteCount.Should().BeGreaterThan(0);
 
 
-            using IComponentTimer timer_2 = new ComponentTimer(CallbackMethod_2, period: _1msTimeSpan, state: _testCallback_2);
+            using var timer_2 = new ComponentTimer(CallbackMethod_2, period: _1msTimeSpan, state: _testCallback_2);
             await timer_2.RestartAsync();
             timer_2.Enabled.Should().BeTrue();
             await Task.Delay(_delayMs);
@@ -896,7 +869,7 @@ namespace UtilityTests
             _testCallback_2.ExecuteCount.Should().BeGreaterThan(0);
 
 
-            using IComponentTimer timer_3 = new ComponentTimer(CallbackEvent_3, period: _1msTimeSpan, state: _testCallback_3);
+            using var timer_3 = new ComponentTimer(CallbackEvent_3, period: _1msTimeSpan, state: _testCallback_3);
             await timer_3.RestartAsync();
             timer_3.Enabled.Should().BeTrue();
             await Task.Delay(_delayMs);
@@ -904,7 +877,7 @@ namespace UtilityTests
             _testCallback_3.ExecuteCount.Should().BeGreaterThan(0);
 
 
-            using IComponentTimer timer_4 = new ComponentTimer(CallbackEvent_4, period: _1msTimeSpan, state: _testCallback_4);
+            using var timer_4 = new ComponentTimer(CallbackEvent_4, period: _1msTimeSpan, state: _testCallback_4);
             await timer_4.RestartAsync();
             timer_4.Enabled.Should().BeTrue();
             await Task.Delay(_delayMs);
@@ -915,7 +888,7 @@ namespace UtilityTests
         [Test]
         public async ValueTask Method_Restart_Updates_DueTime()
         {
-            using IComponentTimer timer_1 = new ComponentTimer(CallbackMethod_2, dueTime: _1msTimeSpan, state: _testCallback_1);
+            using var timer_1 = new ComponentTimer(CallbackMethod_2, dueTime: _1msTimeSpan, state: _testCallback_1);
             timer_1.DueTime.TotalMilliseconds.Should().Be(1);
             timer_1.Restart(_3msTimeSpan);
             timer_1.DueTime.TotalMilliseconds.Should().Be(1);
@@ -925,7 +898,7 @@ namespace UtilityTests
             _testCallback_1.ExecuteCount.Should().Be(0);
 
 
-            using IComponentTimer timer_2 = new ComponentTimer(CallbackMethod_2, dueTime: _1msTimeSpan, state: _testCallback_2);
+            using var timer_2 = new ComponentTimer(CallbackMethod_2, dueTime: _1msTimeSpan, state: _testCallback_2);
             timer_2.DueTime.TotalMilliseconds.Should().Be(1);
             await timer_2.RestartAsync(_3msTimeSpan);
             timer_2.DueTime.TotalMilliseconds.Should().Be(1);
@@ -935,7 +908,7 @@ namespace UtilityTests
             _testCallback_2.ExecuteCount.Should().Be(0);
 
 
-            using IComponentTimer timer_3 = new ComponentTimer(CallbackEvent_3, dueTime: _1msTimeSpan, state: _testCallback_3);
+            using var timer_3 = new ComponentTimer(CallbackEvent_3, dueTime: _1msTimeSpan, state: _testCallback_3);
             timer_3.DueTime.TotalMilliseconds.Should().Be(1);
             await timer_3.RestartAsync(_3msTimeSpan);
             timer_3.DueTime.TotalMilliseconds.Should().Be(1);
@@ -945,7 +918,7 @@ namespace UtilityTests
             _testCallback_3.ExecuteCount.Should().Be(0);
 
 
-            using IComponentTimer timer_4 = new ComponentTimer(CallbackEvent_4, dueTime: _1msTimeSpan, state: _testCallback_4);
+            using var timer_4 = new ComponentTimer(CallbackEvent_4, dueTime: _1msTimeSpan, state: _testCallback_4);
             timer_4.DueTime.TotalMilliseconds.Should().Be(1);
             await timer_4.RestartAsync(_3msTimeSpan);
             timer_4.DueTime.TotalMilliseconds.Should().Be(1);
@@ -959,7 +932,7 @@ namespace UtilityTests
         [Test]
         public async ValueTask Method_Dispose()
         {
-            using IComponentTimer timer_1 = new ComponentTimer(CallbackMethod_1, state: _testCallback_1);
+            using var timer_1 = new ComponentTimer(CallbackMethod_1, state: _testCallback_1);
             timer_1.Dispose();
             timer_1.DueTime.Should().Be(Timeout.InfiniteTimeSpan);
             timer_1.Period.Should().Be(Timeout.InfiniteTimeSpan);
@@ -969,7 +942,7 @@ namespace UtilityTests
             _testCallback_1.HasExecuted.Should().BeFalse();
             _testCallback_1.ExecuteCount.Should().Be(0);
 
-            using IComponentTimer timer_2 = new ComponentTimer(CallbackMethod_2, state: _testCallback_2);
+            using var timer_2 = new ComponentTimer(CallbackMethod_2, state: _testCallback_2);
             await timer_2.DisposeAsync();
             timer_2.DueTime.Should().Be(Timeout.InfiniteTimeSpan);
             timer_2.Period.Should().Be(Timeout.InfiniteTimeSpan);
@@ -980,7 +953,7 @@ namespace UtilityTests
             _testCallback_2.ExecuteCount.Should().Be(0);
 
 
-            using IComponentTimer timer_3 = new ComponentTimer(CallbackEvent_3, state: _testCallback_3);
+            using var timer_3 = new ComponentTimer(CallbackEvent_3, state: _testCallback_3);
             await timer_3.DisposeAsync();
             timer_3.DueTime.Should().Be(Timeout.InfiniteTimeSpan);
             timer_3.Period.Should().Be(Timeout.InfiniteTimeSpan);
@@ -991,7 +964,7 @@ namespace UtilityTests
             _testCallback_3.ExecuteCount.Should().Be(0);
 
 
-            using IComponentTimer timer_4 = new ComponentTimer(CallbackEvent_4, state: _testCallback_4);
+            using var timer_4 = new ComponentTimer(CallbackEvent_4, state: _testCallback_4);
             await timer_4.DisposeAsync();
             timer_4.DueTime.Should().Be(Timeout.InfiniteTimeSpan);
             timer_4.Period.Should().Be(Timeout.InfiniteTimeSpan);
@@ -1007,7 +980,7 @@ namespace UtilityTests
         {
             var startTimer = true;
 
-            using IComponentTimer timer_1 = new ComponentTimer(CallbackMethod_1, startTimer, state: _testCallback_1);
+            using var timer_1 = new ComponentTimer(CallbackMethod_1, startTimer, state: _testCallback_1);
             timer_1.Dispose();
             timer_1.DueTime.Should().Be(Timeout.InfiniteTimeSpan);
             timer_1.Period.Should().Be(Timeout.InfiniteTimeSpan);
@@ -1020,7 +993,7 @@ namespace UtilityTests
             _testCallback_1.ExecuteCount.Should().Be(0);
 
 
-            using IComponentTimer timer_2 = new ComponentTimer(CallbackMethod_2, startTimer, state: _testCallback_2);
+            using var timer_2 = new ComponentTimer(CallbackMethod_2, startTimer, state: _testCallback_2);
             await timer_2.DisposeAsync();
             timer_2.DueTime.Should().Be(Timeout.InfiniteTimeSpan);
             timer_2.Period.Should().Be(Timeout.InfiniteTimeSpan);
@@ -1033,7 +1006,7 @@ namespace UtilityTests
             _testCallback_2.ExecuteCount.Should().Be(0);
 
 
-            using IComponentTimer timer_3 = new ComponentTimer(CallbackEvent_3, startTimer, state: _testCallback_3);
+            using var timer_3 = new ComponentTimer(CallbackEvent_3, startTimer, state: _testCallback_3);
             await timer_3.DisposeAsync();
             timer_3.DueTime.Should().Be(Timeout.InfiniteTimeSpan);
             timer_3.Period.Should().Be(Timeout.InfiniteTimeSpan);
@@ -1046,7 +1019,7 @@ namespace UtilityTests
             _testCallback_3.ExecuteCount.Should().Be(0);
 
 
-            using IComponentTimer timer_4 = new ComponentTimer(CallbackEvent_4, startTimer, state: _testCallback_4);
+            using var timer_4 = new ComponentTimer(CallbackEvent_4, startTimer, state: _testCallback_4);
             await timer_4.DisposeAsync();
             timer_4.DueTime.Should().Be(Timeout.InfiniteTimeSpan);
             timer_4.Period.Should().Be(Timeout.InfiniteTimeSpan);
@@ -1069,7 +1042,7 @@ namespace UtilityTests
         {
             var repeat = 3;
 
-            using IComponentTimer timer_1 = new ComponentTimer(CallbackMethod_1, true, iterations: repeat, period: _1msTimeSpan, state: _testCallback_1);
+            using var timer_1 = new ComponentTimer(CallbackMethod_1, true, iterations: repeat, period: _1msTimeSpan, state: _testCallback_1);
             await Task.Delay(TimeSpan.FromSeconds(1));
             timer_1.Enabled.Should().BeFalse();
             timer_1.Iterations.Should().Be(3);
@@ -1077,7 +1050,7 @@ namespace UtilityTests
             _testCallback_1.ExecuteCount.Should().Be(3);
 
 
-            using IComponentTimer timer_2 = new ComponentTimer(CallbackMethod_2, true, iterations: repeat, period: _1msTimeSpan, state: _testCallback_2);
+            using var timer_2 = new ComponentTimer(CallbackMethod_2, true, iterations: repeat, period: _1msTimeSpan, state: _testCallback_2);
             await Task.Delay(TimeSpan.FromSeconds(1));
             timer_2.Enabled.Should().BeFalse();
             timer_2.Iterations.Should().Be(3);
@@ -1085,7 +1058,7 @@ namespace UtilityTests
             _testCallback_2.ExecuteCount.Should().Be(3);
 
 
-            using IComponentTimer timer_3 = new ComponentTimer(CallbackEvent_3, true, iterations: repeat, period: _1msTimeSpan, state: _testCallback_3);
+            using var timer_3 = new ComponentTimer(CallbackEvent_3, true, iterations: repeat, period: _1msTimeSpan, state: _testCallback_3);
             await Task.Delay(TimeSpan.FromSeconds(1));
             timer_3.Enabled.Should().BeFalse();
             timer_3.Iterations.Should().Be(3);
@@ -1093,7 +1066,7 @@ namespace UtilityTests
             _testCallback_3.ExecuteCount.Should().Be(3);
 
 
-            using IComponentTimer timer_4 = new ComponentTimer(CallbackEvent_4, true, iterations: repeat, period: _1msTimeSpan, state: _testCallback_4);
+            using var timer_4 = new ComponentTimer(CallbackEvent_4, true, iterations: repeat, period: _1msTimeSpan, state: _testCallback_4);
             await Task.Delay(TimeSpan.FromSeconds(1));
             timer_4.Enabled.Should().BeFalse();
             timer_4.Iterations.Should().Be(3);
@@ -1109,7 +1082,7 @@ namespace UtilityTests
         [Test]
         public async ValueTask Timer_NoReentrancy()
         {
-            using IComponentTimer timer_2 = new ComponentTimer(LongRunningCallbackMethod_2Async, true, period: _1msTimeSpan, state: _testCallback_2);
+            using var timer_2 = new ComponentTimer(LongRunningCallbackMethod_2Async, true, period: _1msTimeSpan, state: _testCallback_2);
             await Task.Delay(TimeSpan.FromSeconds(1));
             timer_2.Stop();
             _testCallback_2.HasExecuted.Should().BeTrue();
@@ -1117,7 +1090,7 @@ namespace UtilityTests
 
 
             var longRunningCallbackEvent = EventCallback.Factory.Create(this, LongRunningEventCallbackMethod_4Async);
-            using IComponentTimer timer_4 = new ComponentTimer(longRunningCallbackEvent, true, period: _1msTimeSpan, state: _testCallback_4);
+            using var timer_4 = new ComponentTimer(longRunningCallbackEvent, true, period: _1msTimeSpan, state: _testCallback_4);
             await Task.Delay(TimeSpan.FromSeconds(1));
             timer_4.Stop();
             _testCallback_4.HasExecuted.Should().BeTrue();
