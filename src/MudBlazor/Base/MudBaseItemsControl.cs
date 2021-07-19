@@ -23,7 +23,7 @@ namespace MudBlazor
         private TChildComponent _lastContainer = null;
         private int _selectedIndexField = -1;
         /// <summary>
-        /// Selected MudCarouselItem's index
+        /// Selected Item's index
         /// </summary>
         [Parameter]
         public int SelectedIndex
