@@ -2,7 +2,7 @@
 
 @using MudBlazor.Utilities
 
-<MudColorPicker @bind-Value="ColorValue" Palette="Palette" 
+<MudColorPicker @ref="_picker" @bind-Value="ColorValue" TextChanged="@((x) => TextValue = x)" Palette="Palette" 
                 DisableToolbar="DisableToolbar" 
                 DisableColorField="DisableColorField" 
                 DisablePreview="DisablePreview" 
@@ -10,10 +10,13 @@
                 DisableInputs="DisableInput"
                 DisableModeSwitch="DisableModeSwitch"
                 DisableAlpha="DisableAlpha"
-                ColorPickerMode="ColorPickerMode" PickerVariant="PickerVariant.Static" />
+                ColorPickerMode="ColorPickerMode" PickerVariant="Variant" />
 
 @code {
+    private MudColorPicker _picker;
+
     [Parameter] public MudColor ColorValue { get; set; } = "#594ae2";
+    [Parameter] public string TextValue { get; set; } = "#594ae2";
 
     [Parameter] public IEnumerable<MudColor> Palette { get; set; } = new MudColor[] { "#ff4081ff", "#2196f3ff", "#00c853ff", "#ff9800ff", "#f44336ff" };
 
@@ -27,6 +30,24 @@
     [Parameter] public bool DisableInput { get; set; } = false;
     [Parameter] public bool DisableModeSwitch { get; set; } = false;
     [Parameter] public bool DisableAlpha { get; set; } = false;
+
+    [Parameter] public PickerVariant Variant { get; set; } = PickerVariant.Static;
+
+    public async Task OpenPicker()
+    {
+        await InvokeAsync(() =>
+        {
+            _picker.Open();
+        });
+    }
+
+    public async Task ClosePicker()
+    {
+        await InvokeAsync(() =>
+        {
+            _picker.Close();
+        });
+    }
 
 }
 

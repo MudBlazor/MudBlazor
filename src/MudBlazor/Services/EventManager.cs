@@ -12,21 +12,36 @@ using Microsoft.JSInterop;
 
 namespace MudBlazor
 {
-    public interface IThrottledEventManager
+    public interface IEventListener
     {
-        Task<Guid> Subscribe<T>(string eventName, string id, int throotleInterval, Func<object, Task> callback);
+        /// <summary>
+        /// Listing to a javascript event
+        /// </summary>
+        /// <typeparam name="T">The type of the event args for instance MouseEventArgs for mousemove</typeparam>
+        /// <param name="eventName">Name of the DOM event without "on"</param>
+        /// <param name="elementId">The value of the id field of the DOM element</param>
+        /// <param name="throotleInterval">The delay between the last time the event occured and the callback is fired. Set to zero, if no delay is requested</param>
+        /// <param name="callback">The method that is invoked, if the DOM element is fired. Object will be of type T</param>
+        /// <returns>A unique identifier for the event subscription. Should be used to cancel the subscription</returns>
+        Task<Guid> Subscribe<T>(string eventName, string elementId, int throotleInterval, Func<object, Task> callback);
+
+        /// <summary>
+        /// Cancel (unsubscribe) the listining to a DOM event, previous connected by Subscribe
+        /// </summary>
+        /// <param name="key">The unique event identifier</param>
+        /// <returns>true for if the event listener was detached, false if not</returns>
         Task<bool> Unsubscribe(Guid key);
     }
 
-    public class ThrottledEventManager : IThrottledEventManager, IAsyncDisposable, IDisposable
+    public class EventListener : IEventListener, IAsyncDisposable, IDisposable
     {
         private readonly IJSRuntime _jsRuntime;
-        private readonly DotNetObjectReference<ThrottledEventManager> _dotNetRef;
+        private readonly DotNetObjectReference<EventListener> _dotNetRef;
         private bool _disposed = false;
 
-        private Dictionary<Guid, (Type, Func<object, Task>)> _callbackResolver = new();
+        private Dictionary<Guid, (Type eventType, Func<object, Task> callback)> _callbackResolver = new();
 
-        public ThrottledEventManager(IJSRuntime runtime)
+        public EventListener(IJSRuntime runtime)
         {
             _jsRuntime = runtime;
             _dotNetRef = DotNetObjectReference.Create(this);
@@ -37,23 +52,23 @@ namespace MudBlazor
         {
             if (_callbackResolver.ContainsKey(key) == false) { return; }
 
-            var callback = _callbackResolver[key];
+            var element = _callbackResolver[key];
 
-            var @event = JsonSerializer.Deserialize(eventData, callback.Item1,new JsonSerializerOptions
+            var @event = JsonSerializer.Deserialize(eventData, element.eventType, new JsonSerializerOptions
             {
                 PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
                 PropertyNameCaseInsensitive = true,
             });
 
-            await callback.Item2?.Invoke(@event);
+            await element.callback?.Invoke(@event);
         }
 
-        public async Task<Guid> Subscribe<T>(string eventName, string elementId, int throotleInterval, Func<object, Task> callback) 
+        public async Task<Guid> Subscribe<T>(string eventName, string elementId, int throotleInterval, Func<object, Task> callback)
         {
             Guid key = Guid.NewGuid();
             var type = typeof(T);
 
-            _callbackResolver.Add(key, (type,callback));
+            _callbackResolver.Add(key, (type, callback));
 
             var properties = type.GetProperties().Select(x => char.ToLower(x.Name[0]) + x.Name.Substring(1)).ToArray();
 
@@ -81,6 +96,8 @@ namespace MudBlazor
 
         public async ValueTask DisposeAsync()
         {
+            if(_disposed == true) { return; }
+
             foreach (var item in _callbackResolver)
             {
                 try

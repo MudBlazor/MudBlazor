@@ -51,7 +51,7 @@ namespace MudBlazor
         private readonly Guid _id = Guid.NewGuid();
         private Guid _throttledMouseOverEventId;
 
-        [Inject] IThrottledEventManager ThrottledEventManager { get; set; }
+        [Inject] IEventListener ThrottledEventManager { get; set; }
 
         #endregion
 
@@ -136,17 +136,19 @@ namespace MudBlazor
                         UpdateColorSelectorBasedOnRgb();
                     }
 
-                    SetTextAsync(_color.Value, true).AndForget();
+                    SetTextAsync(GetColorTextValue(), true).AndForget();
                     ValueChanged.InvokeAsync(value).AndForget();
                 }
 
                 if (changed == false && AlwaysUpdateBinding)
                 {
-                    SetTextAsync(_color.Value, true).AndForget();
+                    SetTextAsync(GetColorTextValue(), true).AndForget();
                     ValueChanged.InvokeAsync(value).AndForget();
                 }
             }
         }
+
+        private string GetColorTextValue() => DisableAlpha == false ? _color.ToString(MudColorOutputFormats.HexA) : _color.ToString(MudColorOutputFormats.Hex);
 
         [Parameter] public EventCallback<MudColor> ValueChanged { get; set; }
 
@@ -344,6 +346,21 @@ namespace MudBlazor
             Value = color;
         }
 
+        private bool _attachedMouseEvent = false;
+
+        protected override void OnPickerOpened()
+        {
+            base.OnPickerOpened();
+            _attachedMouseEvent = true;
+            StateHasChanged();
+        }
+
+        protected override void OnPickerClosed()
+        {
+            base.OnPickerClosed();
+            RemoveMouseOverEvent().AndForget();
+        }
+
         private string GetSelectorLocation() => $"translate({Math.Round(_selectorX, 2).ToString(CultureInfo.InvariantCulture)}px, {Math.Round(_selectorY, 2).ToString(CultureInfo.InvariantCulture)}px);";
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -352,15 +369,36 @@ namespace MudBlazor
 
             if (firstRender == true)
             {
-                _throttledMouseOverEventId = await
-                    ThrottledEventManager.Subscribe<MouseEventArgs>("mousemove", _id.ToString(), 10, async (x) =>
-                    {
-                        var e = x as MouseEventArgs;
-                        Console.WriteLine($"X: {e.OffsetX} | Y: {e.OffsetY}");
-                        await InvokeAsync(() => OnMouseOver(e));
-                        StateHasChanged();
-                    });
+                if (PickerVariant == PickerVariant.Static)
+                {
+                    await AddMouseOverEvent();
+                }
             }
+
+            if(_attachedMouseEvent == true)
+            {
+                _attachedMouseEvent = false;
+                await AddMouseOverEvent();
+            }
+        }
+
+        private async Task AddMouseOverEvent()
+        {
+            _throttledMouseOverEventId = await
+                ThrottledEventManager.Subscribe<MouseEventArgs>("mousemove", _id.ToString(), 10, async (x) =>
+                {
+                    var e = x as MouseEventArgs;
+                    Console.WriteLine($"X: {e.OffsetX} | Y: {e.OffsetY}");
+                    await InvokeAsync(() => OnMouseOver(e));
+                    StateHasChanged();
+                });
+        }
+
+        private async Task RemoveMouseOverEvent()
+        {
+            if(_throttledMouseOverEventId == default) { return; }
+
+            await ThrottledEventManager.Unsubscribe(_throttledMouseOverEventId);
         }
 
         public async ValueTask DisposeAsync()

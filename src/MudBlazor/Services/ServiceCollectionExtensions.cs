@@ -166,12 +166,12 @@ namespace MudBlazor.Services
         }
 
         /// <summary>
-        /// Adds JsApi as a transient instance.
+        /// Adds IEventListener as a transient instance.
         /// </summary>
         /// <param name="services">IServiceCollection</param>
-        public static IServiceCollection AddMudThrottledEventManager(this IServiceCollection services)
+        public static IServiceCollection AddMudEventManager(this IServiceCollection services)
         {
-            services.TryAddTransient<IThrottledEventManager, ThrottledEventManager>();
+            services.TryAddTransient<IEventListener, EventListener>();
             return services;
         }
 
@@ -195,7 +195,7 @@ namespace MudBlazor.Services
                 .AddMudBlazorScrollListener()
                 .AddMudBlazorScrollSpy()
                 .AddMudBlazorJsApi()
-                .AddMudThrottledEventManager();
+                .AddMudEventManager();
         }
 
         /// <summary>
@@ -220,7 +220,7 @@ namespace MudBlazor.Services
                 .AddMudBlazorScrollListener()
                 .AddMudBlazorScrollSpy()
                 .AddMudBlazorJsApi()
-                .AddMudThrottledEventManager();
+                .AddMudEventManager();
         }
     }
 }
