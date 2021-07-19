@@ -25,13 +25,23 @@
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader Title="Mode">
-                <Description></Description>
+            <SectionHeader Title="Timeline Mode">
+                <Description>With <CodeInline>TimelineMode</CodeInline> you can determine on what side the line should be but also reverse the default order of items.<br />Note that Start and End will change side in RTL mode while Left and Right doesn't.</Description>
             </SectionHeader>
             <SectionContent Outlined="true" FullWidth="true">
                 <TimelineModeExample />
             </SectionContent>
             <SectionSource Code="TimelineModeExample" GitHubFolderName="timeline" ShowCode="false" />
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="TimelineItem Mode">
+                <Description>By setting the <CodeInline>TimelineMode</CodeInline> on individual <CodeInline>TimelineItems</CodeInline> you can overide the item order from the parent timeline component.<br /> This can be useful for placing a few items on the same side but not changing the mode for the whole timeline.</Description>
+            </SectionHeader>
+            <SectionContent Outlined="true" FullWidth="true">
+                <TimelineItemModeExample />
+            </SectionContent>
+            <SectionSource Code="TimelineItemModeExample" GitHubFolderName="timeline" ShowCode="false" />
         </DocsPageSection>
 
         <DocsPageSection>

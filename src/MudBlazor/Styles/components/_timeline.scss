@@ -108,15 +108,18 @@
             }
 
             .mud-timeline-item {
-                &:nth-child(odd) {
+                &:nth-child(odd), &:nth-child(2n).mud-timeline-item-skip-order {
                     flex-direction: row-reverse;
 
                     .mud-timeline-item-opposite {
                         text-align: end;
                     }
+
+                    .mud-timeline-item-skip-order {
+                    }
                 }
 
-                &:nth-child(2n) {
+                &:nth-child(2n), &:nth-child(odd).mud-timeline-item-skip-order {
                     flex-direction: row;
 
                     .mud-timeline-item-opposite {
