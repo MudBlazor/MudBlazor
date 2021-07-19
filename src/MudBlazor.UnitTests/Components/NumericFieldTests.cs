@@ -17,7 +17,6 @@ using static Bunit.ComponentParameterFactory;
 
 namespace MudBlazor.UnitTests
 {
-
     [TestFixture]
     public class NumericFieldTests
     {
@@ -126,7 +125,6 @@ namespace MudBlazor.UnitTests
             numericField.Text.Should().Be("100");
         }
 
-
         /// <summary>
         /// Value should not change immediately. Should respect the Debounce Interval
         /// </summary>
@@ -220,7 +218,6 @@ namespace MudBlazor.UnitTests
             numericField.ErrorText.Should().BeNullOrEmpty();
         }
 
-
         /// <summary>
         /// An unstable converter should not cause an infinite update loop. This test must complete in under 1 sec!
         /// </summary>
@@ -272,7 +269,6 @@ namespace MudBlazor.UnitTests
             changed_value.Should().Be(4);
             changed_text.Should().Be("4");
         }
-
 
         //This doesn't make any sense because you cannot set anything that's not a number
         ///// <summary>
@@ -338,6 +334,35 @@ namespace MudBlazor.UnitTests
         public async Task NumericField_OfDecimal_Should_Render()
         {
             Assert.DoesNotThrow(() => ctx.RenderComponent<MudNumericField<decimal>>(), $"{typeof(MudNumericField<>)}<{typeof(decimal)}> render failed.");
+        }
+
+        /// <summary>
+        /// NumericalField Formats input according to culture
+        /// </summary>
+        [Test]
+        public async Task NumericFieldTestCultureFormat()
+        {
+            var comp = ctx.RenderComponent<NumericFieldCultureTest>();
+            // print the generated html
+            Console.WriteLine(comp.Markup);
+            // select elements needed for the test
+
+            var inputs = comp.FindAll("input");
+            var immediate = inputs.First();
+            var notImmediate = inputs.Last();
+
+            //german
+            notImmediate.Change("1234");
+            notImmediate.Blur();
+
+            // English
+            immediate.Change("1234");
+            immediate.Blur();
+
+            comp.Instance.FieldImmediate.Text.Should().Be("1,234.00");
+            comp.Instance.FieldImmediate.Value.Should().Be(1234.0);
+            comp.Instance.FieldNotImmediate.Text.Should().Be("1.234,00");
+            comp.Instance.FieldNotImmediate.Value.Should().Be(1234.0);
         }
     }
 }
