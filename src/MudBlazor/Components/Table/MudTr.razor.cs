@@ -118,8 +118,10 @@ namespace MudBlazor
             // Check the validity of the item
             if (!Context?.Table.Validator.IsValid ?? true) return;
 
-            // Set item value and trigger the commit event
+            // Set the item value to cancel edit mode
             Context?.Table.SetEditingItem(null);
+
+            // Trigger the commit event
             Context?.Table.OnCommitEditHandler(ev, Item);
 
             // Trigger the row edit commit event
@@ -136,8 +138,10 @@ namespace MudBlazor
 
         private void CancelEdit(MouseEventArgs ev)
         {
-            // The edit mode is canceled and trigger the cancel event
+            // Set the item value to cancel edit mode
             Context?.Table.SetEditingItem(null);
+
+            // Trigger the cancel event
             Context?.Table.OnCancelEditHandler(ev);
 
             // Trigger the row edit cancel event
@@ -157,6 +161,12 @@ namespace MudBlazor
             // Reset the item to its original value if no cancellation and no commit has been done
             if (!hasBeenCanceled && !hasBeenCommitted)
             {
+                // Set the item value to cancel edit mode
+                Context?.Table.SetEditingItem(null);
+
+                // Force/indicate a refresh on the component to remove the edition mode for the row
+                StateHasChanged();
+
                 // Trigger the row edit cancel event
                 Context.Table.RowEditCancel?.Invoke(Item);
             }
