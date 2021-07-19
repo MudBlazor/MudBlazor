@@ -431,7 +431,6 @@ namespace MudBlazor
                 ThrottledEventManager.Subscribe<MouseEventArgs>("mousemove", _id.ToString(), 10, async (x) =>
                 {
                     var e = x as MouseEventArgs;
-                    Console.WriteLine($"X: {e.OffsetX} | Y: {e.OffsetY}");
                     await InvokeAsync(() => OnMouseOver(e));
                     StateHasChanged();
                 });

@@ -23,8 +23,9 @@ namespace MudBlazor.UnitTests.Components.Components
     [TestFixture]
     public class ColorPickerTests
     {
-        private const double _defaultXForColorPanel = 208.5;
+        private const double _defaultXForColorPanel = 209.84;
         private const double _defaultYForColorPanel = 28.43;
+
         private static MudColor _defaultColor = "#594ae2";
         private const string _hueSliderCssSelector = ".mud-slider.mud-picker-color-slider.hue input";
         private const string _alphaSliderCssSelector = ".mud-picker-color-slider.alpha input";
@@ -125,7 +126,7 @@ namespace MudBlazor.UnitTests.Components.Components
         private IHtmlInputElement GetColorInput(IRenderedComponent<SimpleColorPickerTest> comp, int index, int expectedCount = 4) => GetColorInputs(comp, expectedCount)[index];
 
         [Test]
-        [TestCase(40, 255.13, _defaultYForColorPanel)]
+        [TestCase(40, 256.78, _defaultYForColorPanel)]
         public void SetR(byte r, double selectorXPosition, double selectorYPosition)
         {
             var comp = ctx.RenderComponent<SimpleColorPickerTest>();
@@ -140,7 +141,7 @@ namespace MudBlazor.UnitTests.Components.Components
         }
 
         [Test]
-        [TestCase(240, 195.04, 14.71)]
+        [TestCase(240, 196.3, 14.71)]
         public void SetG(byte g, double selectorXPosition, double selectorYPosition)
         {
             var comp = ctx.RenderComponent<SimpleColorPickerTest>();
@@ -156,7 +157,7 @@ namespace MudBlazor.UnitTests.Components.Components
         }
 
         [Test]
-        [TestCase(90, 55.11, 161.76)]
+        [TestCase(90, 55.47, 161.76)]
         public void SetB(byte b, double selectorXPosition, double selectorYPosition)
         {
             var comp = ctx.RenderComponent<SimpleColorPickerTest>();
@@ -188,7 +189,7 @@ namespace MudBlazor.UnitTests.Components.Components
         }
 
         [Test]
-        [TestCase(90, 207.12, _defaultYForColorPanel)]
+        [TestCase(90, 208.46, _defaultYForColorPanel)]
         public void SetH(int h, double selectorXPosition, double selectorYPosition)
         {
             var comp = ctx.RenderComponent<SimpleColorPickerTest>(p => p.Add(x => x.ColorPickerMode, ColorPickerMode.HSL));
@@ -204,7 +205,7 @@ namespace MudBlazor.UnitTests.Components.Components
         }
 
         [Test]
-        [TestCase(0.4, 134.01, 61.76)]
+        [TestCase(0.4, 134.88, 61.76)]
         public void SetS(double s, double selectorXPosition, double selectorYPosition)
         {
             var comp = ctx.RenderComponent<SimpleColorPickerTest>(p => p.Add(x => x.ColorPickerMode, ColorPickerMode.HSL));
@@ -220,7 +221,7 @@ namespace MudBlazor.UnitTests.Components.Components
         }
 
         [Test]
-        [TestCase(0.67, 162.38, 23.53)]
+        [TestCase(0.67, 163.43, 23.53)]
         public void SetL(double l, double selectorXPosition, double selectorYPosition)
         {
             var comp = ctx.RenderComponent<SimpleColorPickerTest>(p => p.Add(x => x.ColorPickerMode, ColorPickerMode.HSL));
@@ -250,7 +251,7 @@ namespace MudBlazor.UnitTests.Components.Components
         }
 
         [Test]
-        [TestCase("#8cb829ff", 240.92, 69.61)]
+        [TestCase("#8cb829ff", 242.48, 69.61)]
         public void SetColorInput(string colorHexString, double selectorXPosition, double selectorYPosition)
         {
             var comp = ctx.RenderComponent<SimpleColorPickerTest>(p => p.Add(x => x.ColorPickerMode, ColorPickerMode.HEX));
@@ -295,20 +296,20 @@ namespace MudBlazor.UnitTests.Components.Components
             MouseEventArgs args = new MouseEventArgs
             {
                 OffsetX = 117.0,
-                OffsetY = 123.0,
+                OffsetY = 140.0,
                 Buttons = 1,
             };
 
             _eventListener.FireEvent(args);
 
-            var expectedColor = new MudColor(85, 80, 129, 255);
+            var expectedColor = new MudColor(74, 70, 112, 255);
 
             CheckColorRelatedValues(comp, args.OffsetX, args.OffsetY, expectedColor, ColorPickerMode.RGB);
 
             MouseEventArgs argsWihtoutLeftButtonPushed = new MouseEventArgs
             {
                 OffsetX = 117.0,
-                OffsetY = 123.0,
+                OffsetY = 140.0,
                 Buttons = 0,
             };
 
@@ -329,7 +330,7 @@ namespace MudBlazor.UnitTests.Components.Components
             MouseEventArgs args = new MouseEventArgs
             {
                 OffsetX = 117.0,
-                OffsetY = 123.0,
+                OffsetY = 140.0,
                 Buttons = 1,
             };
 
@@ -340,14 +341,14 @@ namespace MudBlazor.UnitTests.Components.Components
 
             _eventListener.FireEvent(args);
 
-            var expectedColor = new MudColor(85, 80, 129, 255);
+            var expectedColor = new MudColor(74, 70, 112, 255);
 
             CheckColorRelatedValues(comp, args.OffsetX, args.OffsetY, expectedColor, ColorPickerMode.RGB);
 
             MouseEventArgs argsWihtoutLeftButtonPushed = new MouseEventArgs
             {
                 OffsetX = 117.0,
-                OffsetY = 123.0,
+                OffsetY = 140.0,
                 Buttons = 0,
             };
 
@@ -369,13 +370,13 @@ namespace MudBlazor.UnitTests.Components.Components
             {
                 var expectedColor = comp.Instance.ColorValue.SetH(i);
 
-                var alphaColerSlider = comp.FindAll(_hueSliderCssSelector);
-                alphaColerSlider.Should().ContainSingle();
-                alphaColerSlider[0].Should().BeAssignableTo<IHtmlInputElement>();
+                var hueColerSlider = comp.FindAll(_hueSliderCssSelector);
+                hueColerSlider.Should().ContainSingle();
+                hueColerSlider[0].Should().BeAssignableTo<IHtmlInputElement>();
 
-                InputEventDispatchExtensions.Input(alphaColerSlider[0], i.ToString());
+                InputEventDispatchExtensions.Input(hueColerSlider[0], i.ToString());
 
-                CheckColorRelatedValues(comp, 207.12, 28.43, expectedColor, ColorPickerMode.RGB);
+                CheckColorRelatedValues(comp, 208.46, _defaultYForColorPanel, expectedColor, ColorPickerMode.RGB);
             }
         }
 
