@@ -82,6 +82,36 @@
     display: none;
 }
 
+.docs-page-section[api-link-section] {
+    margin: 0px;
+
+    .docs-section-header {
+        margin: 0px;
+
+        .mud-typography {
+            margin: 0px;
+        }
+    }
+}
+
+.docs-page-apilinks {
+    ul li a {
+
+        &:hover {
+            text-decoration: none !important;
+        }
+
+        .docs-code {
+            transition: background-color 150ms cubic-bezier(.4,0,.2,1) 0ms;
+
+            &:hover {
+                text-decoration: none !important;
+                background-color: rgba(var(--mud-palette-primary-rgb), 0.20);
+            }
+        }
+    }
+}
+
 @media only screen and (min-width: 1640px) {
     .mud-container-maxwidth-md {
         .docs-contents {

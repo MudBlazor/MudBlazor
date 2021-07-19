@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace MudBlazor.Docs.Models
 {
@@ -10,6 +11,7 @@ namespace MudBlazor.Docs.Models
         public bool NavGroupExpanded { get; set; }
         public DocsComponents GroupItems { get; set; }
         public Type Component { get; set; }
+        public Type[] ChildComponents { get; set; }
 
         public string ComponentName
         {

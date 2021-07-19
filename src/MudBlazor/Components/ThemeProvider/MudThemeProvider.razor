@@ -1,7 +1,7 @@
 ﻿@namespace MudBlazor
 @inherits BaseMudThemeProvider
 
-@if(MudBlazorScrollbar)
+@if(!DefaultScrollbar)
 {
     @((MarkupString)BuildMudBlazorScrollbar())
 }

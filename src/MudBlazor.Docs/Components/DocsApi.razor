@@ -10,8 +10,7 @@
 
 
 <DocsPage MaxWidth="MaxWidth.Large">
-    <DocsPageHeader ComponentLink="@ApiLink.GetComponentLinkFor(Type)"
-                    Title="@Type.ConvertToCSharpSource()" SubTitle="API documentation">
+    <DocsPageHeader ComponentLink="@ApiLink.GetComponentLinkFor(Type)" Title="@($"{Type.ConvertToCSharpSource()} API")">
     </DocsPageHeader>
     <DocsPageContent>
 
@@ -37,15 +36,6 @@
                 </SectionContent>
             </DocsPageSection>
         }
-        else
-        {
-            <DocsPageSection>
-                <SectionHeader Title="Properties" />
-                <SectionContent Class="docs-content-api" FullWidth="true">
-                    There are no properties.
-                </SectionContent>
-            </DocsPageSection>
-        }
 
         @if (EventCallbacks != null && EventCallbacks.Count() > 0)
         {
@@ -64,15 +54,6 @@
                             <MudTd Class="docs-content-api-cell docs-content-api-description" DataLabel="Description">@(HttpUtility.HtmlDecode(context.Description))</MudTd>
                         </RowTemplate>
                     </MudTable>
-                </SectionContent>
-            </DocsPageSection>
-        }
-        else
-        {
-            <DocsPageSection>
-                <SectionHeader Title="EventCallbacks" />
-                <SectionContent Class="docs-content-api" FullWidth="true">
-                    There are no EventCallbacks.
                 </SectionContent>
             </DocsPageSection>
         }
@@ -109,15 +90,6 @@
                             <MudTd Class="docs-content-api-cell docs-content-api-description" DataLabel="Description">@(HttpUtility.HtmlDecode(AnalyseMethodDocumentation(context.Documentation, "summary")))</MudTd>
                         </RowTemplate>
                     </MudTable>
-                </SectionContent>
-            </DocsPageSection>
-        }
-        else
-        {
-            <DocsPageSection>
-                <SectionHeader Title="Methods" />
-                <SectionContent Class="docs-content-api" FullWidth="true">
-                    There are no public methods.
                 </SectionContent>
             </DocsPageSection>
         }

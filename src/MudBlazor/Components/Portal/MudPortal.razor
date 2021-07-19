@@ -1,11 +1,6 @@
 ﻿@namespace MudBlazor
 @inherits MudComponentBase
 
-@if (IsRendered )
-{
     <div class="portal" @ref=@_portalRef>
-        <div @ref="@_fragmentRef">
-            @ChildContent
-        </div>
+        @ChildContent
     </div>
-}
