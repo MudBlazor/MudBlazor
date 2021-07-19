@@ -27,7 +27,7 @@ namespace MudBlazor
         protected string DotInnerClassnames =>
         new CssBuilder("mud-timeline-item-dot-inner")
           .AddClass($"mud-timeline-dot-fill", Variant == Variant.Filled)
-          .AddClass($"mud-{Color.ToDescriptionString()}")
+          .AddClass($"mud-timeline-dot-{Color.ToDescriptionString()}")
         .Build();
 
         [CascadingParameter] protected internal MudBaseItemsControl<MudTimelineItem> Parent { get; set; }
@@ -45,12 +45,12 @@ namespace MudBlazor
         /// <summary>
         /// Color of the dot.
         /// </summary>
-        [Parameter] public Color Color { get; set; } = Color.Primary;
+        [Parameter] public Color Color { get; set; } = Color.Default;
 
         /// <summary>
         /// Size of the dot.
         /// </summary>
-        [Parameter] public Size Size { get; set; } = Size.Medium;
+        [Parameter] public Size Size { get; set; } = Size.Small;
 
         /// <summary>
         /// Elevation of the dot. The higher the number, the heavier the drop-shadow.

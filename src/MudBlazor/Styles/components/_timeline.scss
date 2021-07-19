@@ -35,7 +35,6 @@
                 border-radius: 50%;
                 left: calc(50% - 19px);
 
-
                 &.mud-timeline-dot-size-small {
                     width: 24px;
                     height: 24px;
@@ -79,6 +78,16 @@
                         height: inherit;
                         width: inherit;
                         margin: 0px;
+                    }
+
+                    &.mud-timeline-dot-default {
+                        background-color: var(--mud-palette-grey-light);
+                    }
+
+                    @each $color in $mud-palette-colors {
+                        &.mud-timeline-dot-#{$color} {
+                            background-color: var(--mud-palette-#{$color});
+                        }
                     }
                 }
             }
@@ -156,6 +165,7 @@
             right: auto;
             left: 47px;
         }
+
         &.mud-timeline-rtl {
             &::before {
                 right: 47px;
@@ -181,6 +191,7 @@
             right: 47px;
             left: auto;
         }
+
         &.mud-timeline-rtl {
             &::before {
                 left: 47px;
