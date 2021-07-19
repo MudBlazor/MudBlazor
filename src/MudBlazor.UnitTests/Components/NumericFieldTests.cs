@@ -11,6 +11,7 @@ using Bunit;
 using FluentAssertions;
 using FluentValidation;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.UnitTests.TestComponents.NumericField;
 using NUnit.Framework;
 using static Bunit.ComponentParameterFactory;
@@ -335,6 +336,31 @@ namespace MudBlazor.UnitTests
         {
             Assert.DoesNotThrow(() => ctx.RenderComponent<MudNumericField<decimal>>(), $"{typeof(MudNumericField<>)}<{typeof(decimal)}> render failed.");
         }
+
+        /// <summary>
+        /// Increment / Decrement via up / down keys should work 
+        /// </summary>
+        [Test]
+        public async Task NumericFieldTest_ArrowKeys()
+        {
+            var comp = ctx.RenderComponent<MudNumericField<double>>();
+            comp.SetParam(x => x.Culture, CultureInfo.InvariantCulture);
+            comp.SetParam(x => x.Format, "F2");
+            comp.SetParam(x => x.Value, 1234.56);
+            // print the generated html
+            Console.WriteLine(comp.Markup);
+            // select elements needed for the test
+            var numericField = comp.Instance;
+            numericField.Value.Should().Be(1234.56);
+            numericField.Text.Should().Be("1234.56");
+            comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = "ArrowUp", Type="keydown", });
+            comp.Find("input").KeyUp(new KeyboardEventArgs() { Key = "ArrowUp", Type = "keydown", });
+            comp.WaitForAssertion(()=> numericField.Value.Should().Be(1235.56));
+            comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = "ArrowDown", Type = "keydown", });
+            comp.Find("input").KeyUp(new KeyboardEventArgs() { Key = "ArrowDown", Type = "keydown", });
+            comp.WaitForAssertion(() => numericField.Value.Should().Be(1234.56));
+        }
+
 
         /// <summary>
         /// NumericalField Formats input according to culture
