@@ -356,7 +356,7 @@ namespace MudBlazor.UnitTests
             notImmediate.Blur();
 
             // English
-            immediate.Change("1234");
+            immediate.Input("1234");
             immediate.Blur();
 
             comp.Instance.FieldImmediate.Text.Should().Be("1,234.00");
