@@ -6,6 +6,7 @@ using System;
 using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
+using AngleSharp.Dom;
 using AngleSharp.Html.Dom;
 using Bunit;
 using FluentAssertions;
@@ -36,7 +37,33 @@ namespace MudBlazor.UnitTests.Components.Components
         private const string _colorInputCssSelector = ".mud-picker-color-inputs";
         private const string _colorInputModeSwitchCssSelector = ".mud-picker-control-switch";
         private const string _alphaInputCssSelector = ".input-field-alpha";
+        private const string CssSelector = ".mud-picker-color-overlay-black .mud-picker-color-overlay";
         private Bunit.TestContext ctx;
+
+        private static MudColor[] _mudGridDefaultColors = new MudColor[]
+                        {
+                "#FFFFFF","#ebebeb","#d6d6d6","#c2c2c2","#adadad","#999999","#858586","#707070","#5c5c5c","#474747","#333333","#000000",
+                "#133648","#071d53","#0f0638","#2a093b","#370c1b","#541107","#532009","#53350d","#523e0f","#65611b","#505518","#2b3d16",
+                "#1e4c63","#0f2e76","#180b4e","#3f1256","#4e1629","#781e0e","#722f10","#734c16","#73591a","#8c8629","#707625","#3f5623",
+                "#2e6c8c","#1841a3","#280c72","#591e77","#6f223d","#a62c17","#a0451a","#a06b23","#9f7d28","#c3bc3c","#9da436","#587934",
+                "#3c8ab0","#2155ce","#331c8e","#702898","#8d2e4f","#d03a20","#ca5a24","#c8862e","#c99f35","#f3ec4e","#c6d047","#729b44",
+                "#479fd3","#2660f5","#4725ab","#8c33b5","#aa395d","#eb512e","#ed732e","#f3ae3d","#f5c944","#fefb67","#ddeb5c","#86b953",
+                "#59c4f7","#4e85f6","#5733e2","#af43eb","#d44a7a","#ed6c59","#ef8c56","#f3b757","#f6cd5b","#fef881","#e6ee7a","#a3d16e",
+                "#78d3f8","#7fa6f8","#7e52f5","#c45ff6","#de789d","#f09286","#f2a984","#f6c983","#f9da85","#fef9a1","#ebf29b","#badc94",
+                "#a5e1fa","#adc5fa","#ab8df7","#d696f8","#e8a7bf","#f4b8b1","#f6c7af","#f9daae","#fae5af","#fefbc0","#f3f7be","#d2e7ba",
+                "#d2effd","#d6e1fc","#d6c9fa","#e9cbfb","#f3d4df","#f9dcd9","#fae3d8","#fcecd7","#fdf2d8","#fefce0","#f7fade","#e3edd6"
+                        };
+
+        private static MudColor[] _mudGridPaletteDefaultClors = new MudColor[]
+                {
+                   "#424242", "#2196f3", "#00c853", "#ff9800", "#f44336",
+                  "#f6f9fb", "#9df1fa", "#bdffcf", "#fff0a3", "#ffd254",
+                  "#e6e9eb", "#27dbf5", "#7ef7a0", "#ffe273", "#ffb31f",
+                  "#c9cccf", "#13b8e8", "#14dc71", "#fdd22f", "#ff9102",
+                  "#858791", "#0989c2", "#1bbd66", "#ebb323", "#fe6800",
+                  "#585b62", "#17698e", "#17a258", "#d9980d", "#dc3f11",
+                  "#353940", "#113b53", "#127942", "#bf7d11", "#aa0000"
+                };
 
         private MockEventListener _eventListener;
 
@@ -53,12 +80,6 @@ namespace MudBlazor.UnitTests.Components.Components
         [TearDown]
         public void TearDown() => ctx.Dispose();
 
-        [Test]
-        public async Task Default()
-        {
-            throw new NotImplementedException();
-        }
-
         private void CheckColorRelatedValues(IRenderedComponent<SimpleColorPickerTest> comp, double expectedX, double expectedY, MudColor expectedColor, ColorPickerMode mode)
         {
             comp.Instance.ColorValue.Should().Be(expectedColor);
@@ -72,7 +93,7 @@ namespace MudBlazor.UnitTests.Components.Components
                     castedInputs[0].Value.Should().Be(expectedColor.R.ToString());
                     castedInputs[1].Value.Should().Be(expectedColor.G.ToString());
                     castedInputs[2].Value.Should().Be(expectedColor.B.ToString());
-                    castedInputs[3].Value.Should().Be(expectedColor.A.ToString());
+                    castedInputs[3].Value.Should().Be(expectedColor.APercentage.ToString(CultureInfo.InvariantCulture));
                 }
                 else
                 {
@@ -126,6 +147,24 @@ namespace MudBlazor.UnitTests.Components.Components
         private IHtmlInputElement GetColorInput(IRenderedComponent<SimpleColorPickerTest> comp, int index, int expectedCount = 4) => GetColorInputs(comp, expectedCount)[index];
 
         [Test]
+        public async Task Default()
+        {
+            var comp = ctx.RenderComponent<MudColorPicker>();
+
+            comp.Instance.DisableAlpha.Should().BeFalse();
+            comp.Instance.DisableColorField.Should().BeFalse();
+            comp.Instance.DisableModeSwitch.Should().BeFalse();
+            comp.Instance.DisableInputs.Should().BeFalse();
+            comp.Instance.DisableSliders.Should().BeFalse();
+            comp.Instance.DisablePreview.Should().BeFalse();
+            comp.Instance.ColorPickerMode.Should().Be(ColorPickerMode.RGB);
+            comp.Instance.ColorPickerView.Should().Be(ColorPickerView.Spectrum);
+            comp.Instance.AlwaysUpdateBinding.Should().BeFalse();
+            comp.Instance.Value.Should().Be(_defaultColor);
+            comp.Instance.Palette.Should().BeEquivalentTo(_mudGridPaletteDefaultClors);
+        }
+
+        [Test]
         [TestCase(40, 256.78, _defaultYForColorPanel)]
         public void SetR(byte r, double selectorXPosition, double selectorYPosition)
         {
@@ -173,8 +212,8 @@ namespace MudBlazor.UnitTests.Components.Components
         }
 
         [Test]
-        [TestCase(90, _defaultXForColorPanel, _defaultYForColorPanel)]
-        public void SetA_InRGBMode(byte a, double selectorXPosition, double selectorYPosition)
+        [TestCase(0.9, _defaultXForColorPanel, _defaultYForColorPanel)]
+        public void SetA_InRGBMode(double a, double selectorXPosition, double selectorYPosition)
         {
             var comp = ctx.RenderComponent<SimpleColorPickerTest>();
             Console.WriteLine(comp.Markup);
@@ -183,7 +222,7 @@ namespace MudBlazor.UnitTests.Components.Components
 
             var expectedColor = comp.Instance.ColorValue.SetAlpha(a);
 
-            aInput.Change(expectedColor.A.ToString());
+            aInput.Change(a.ToString(CultureInfo.InvariantCulture));
 
             CheckColorRelatedValues(comp, selectorXPosition, selectorYPosition, expectedColor, ColorPickerMode.RGB);
         }
@@ -386,12 +425,12 @@ namespace MudBlazor.UnitTests.Components.Components
             var comp = ctx.RenderComponent<SimpleColorPickerTest>();
             Console.WriteLine(comp.Markup);
 
-            var overlay = comp.Find(".mud-picker-color-overlay-black .mud-picker-color-overlay");
+            var overlay = comp.Find(CssSelector);
 
             double x = 99.2;
             double y = 200.98;
 
-            overlay.Click(new Microsoft.AspNetCore.Components.Web.MouseEventArgs { OffsetX = x, OffsetY = y });
+            overlay.Click(new MouseEventArgs { OffsetX = x, OffsetY = y });
 
             MudColor expectedColor = "#232232ff";
 
@@ -635,11 +674,14 @@ namespace MudBlazor.UnitTests.Components.Components
 
             Assert.Throws<ElementNotFoundException>(() => comp.Find(_alphaInputCssSelector));
             comp.Instance.ColorValue.Should().Be(expectedColor);
+            comp.Instance.TextValue.Should().Be(expectedColor.ToString(MudColorOutputFormats.Hex));
 
             comp.SetParametersAndRender(p => p.Add(x => x.DisableAlpha, false));
 
             _ = comp.Find(_alphaInputCssSelector);
             comp.Instance.ColorValue.Should().Be(expectedColor);
+            comp.Instance.TextValue.Should().Be(expectedColor.ToString(MudColorOutputFormats.HexA));
+
         }
 
         [Test]
@@ -676,8 +718,338 @@ namespace MudBlazor.UnitTests.Components.Components
             inputs.Should().AllBeAssignableTo<IHtmlInputElement>();
             (inputs[0] as IHtmlInputElement).Value.Should().Be("#0cdc7c78");
 
-            comp.Instance.TextValue.Should().Be("#0cdc7c");
+            comp.Instance.TextValue.Should().Be("#0cdc7c78");
 
+        }
+
+        [Test]
+        [TestCase(PickerVariant.Static, false)]
+        [TestCase(PickerVariant.Inline, true)]
+        [TestCase(PickerVariant.Dialog, true)]
+        public async Task CloseButtonInToolbarVisible(PickerVariant variant, bool expectedVisibility)
+        {
+            var comp = ctx.RenderComponent<SimpleColorPickerTest>(p =>
+            {
+                p.Add(x => x.Variant, variant);
+                p.Add(x => x.DisableToolbar, false);
+            });
+
+            Console.WriteLine(comp.Markup);
+
+            if (variant == PickerVariant.Dialog || variant == PickerVariant.Inline)
+            {
+                await comp.Instance.OpenPicker();
+            }
+
+            if (expectedVisibility == false)
+            {
+                Assert.Throws<ElementNotFoundException>(() => comp.Find(".mud-close-picker-button"));
+            }
+            else
+            {
+                _ = comp.Find(".mud-close-picker-button");
+            }
+        }
+
+        [Test]
+        [TestCase(ColorPickerView.Spectrum, 0)]
+        [TestCase(ColorPickerView.Grid, 1)]
+        [TestCase(ColorPickerView.Palette, 2)]
+        public void ColorPickerView_Selection(ColorPickerView view, int index)
+        {
+            var comp = ctx.RenderComponent<SimpleColorPickerTest>(p =>
+            {
+                p.Add(x => x.ViewMode, view);
+                p.Add(x => x.DisableToolbar, false);
+            });
+
+            Console.WriteLine(comp.Markup);
+
+            var toolbarButtons = comp.FindAll(".mud-toolbar .mud-icon-button button");
+            for (int i = 0; i < toolbarButtons.Count; i++)
+            {
+                if (i == index)
+                {
+                    toolbarButtons[i].ClassList.Should().Contain(".mud-icon-button-color-primary");
+                }
+                else
+                {
+                    toolbarButtons[i].ClassList.Should().NotContain(".mud-icon-button-color-primary");
+                }
+            }
+        }
+
+        [Test]
+        public void PaletteView()
+        {
+            var comp = ctx.RenderComponent<SimpleColorPickerTest>(p =>
+            {
+                p.Add(x => x.ViewMode, ColorPickerView.Palette);
+                p.Add(x => x.Palette, _mudGridPaletteDefaultClors);
+            });
+
+            Console.WriteLine(comp.Markup);
+
+            var expectedColors = _mudGridPaletteDefaultClors;
+
+            var collectionView = comp.Find(".mud-picker-color-view-collection");
+
+            collectionView.Children.Should().HaveCount(expectedColors.Length);
+
+            for (int i = 0; i < collectionView.Children.Length; i++)
+            {
+                var expectedColor = expectedColors[i];
+                var colorElement = collectionView.Children[i];
+                colorElement.ClassList.Should().Contain("mud-picker-color-dot");
+
+                var style = colorElement.GetAttribute("style");
+                style.Should().Be($"background: {expectedColor.ToString(MudColorOutputFormats.RGBA)};");
+            }
+        }
+
+        [Test]
+        public void PaletteView_ChooseColor()
+        {
+            var comp = ctx.RenderComponent<SimpleColorPickerTest>(p =>
+            {
+                p.Add(x => x.ViewMode, ColorPickerView.Palette);
+                p.Add(x => x.Palette, _mudGridPaletteDefaultClors);
+            });
+
+            Console.WriteLine(comp.Markup);
+
+            var expectedColors = _mudGridPaletteDefaultClors;
+            var collectionView = comp.Find(".mud-picker-color-view-collection");
+
+            for (int i = 0; i < collectionView.Children.Length; i++)
+            {
+                var expectedColor = expectedColors[i];
+                var colorElement = collectionView.Children[i];
+                colorElement.Click();
+
+                comp.Instance.ColorValue.Should().Be(expectedColor);
+            }
+        }
+
+        [Test]
+        public void GridView()
+        {
+            var comp = ctx.RenderComponent<SimpleColorPickerTest>(p =>
+            {
+                p.Add(x => x.ViewMode, ColorPickerView.Grid);
+            });
+
+            Console.WriteLine(comp.Markup);
+
+            var expectedColors = _mudGridDefaultColors;
+
+            var collectionView = comp.Find(".mud-picker-color-grid");
+
+            collectionView.Children.Should().HaveCount(expectedColors.Length);
+
+            for (int i = 0; i < collectionView.Children.Length; i++)
+            {
+                var expectedColor = expectedColors[i];
+                var colorElement = collectionView.Children[i];
+                colorElement.ClassList.Should().Contain("mud-picker-color-dot");
+
+                var style = colorElement.GetAttribute("style");
+                style.Should().Be($"background: {expectedColor.ToString(MudColorOutputFormats.RGBA)};");
+            }
+        }
+
+        [Test]
+        public void GridView_ChooseColor()
+        {
+            var comp = ctx.RenderComponent<SimpleColorPickerTest>(p =>
+            {
+                p.Add(x => x.ViewMode, ColorPickerView.Grid);
+            });
+
+            Console.WriteLine(comp.Markup);
+
+            var expectedColors = _mudGridDefaultColors;
+
+            var collectionView = comp.Find(".mud-picker-color-grid");
+
+            for (int i = 0; i < collectionView.Children.Length; i++)
+            {
+                var expectedColor = expectedColors[i];
+                var colorElement = collectionView.Children[i];
+                colorElement.ClassList.Should().Contain("mud-picker-color-dot");
+
+                colorElement.Click();
+                comp.Instance.ColorValue.Should().Be(expectedColor);
+            }
+        }
+
+        [Test]
+        public void GridCompactView()
+        {
+            var comp = ctx.RenderComponent<SimpleColorPickerTest>(p =>
+            {
+                p.Add(x => x.ViewMode, ColorPickerView.GridCompact);
+            });
+
+            Console.WriteLine(comp.Markup);
+
+            var expectedColors = _mudGridDefaultColors;
+
+            var content = comp.Find(".mud-picker-content.mud-picker-color-content");
+            content.Children.Should().ContainSingle();
+
+            var gridView = comp.Find(".mud-picker-color-grid");
+
+            gridView.Children.Should().HaveCount(expectedColors.Length);
+
+            for (int i = 0; i < gridView.Children.Length; i++)
+            {
+                var expectedColor = expectedColors[i];
+                var colorElement = gridView.Children[i];
+                colorElement.ClassList.Should().Contain("mud-picker-color-dot");
+
+                var style = colorElement.GetAttribute("style");
+                style.Should().Be($"background: {expectedColor.ToString(MudColorOutputFormats.RGBA)};");
+            }
+        }
+
+        [Test]
+        public void GridCompactView_ChooseColor()
+        {
+            var comp = ctx.RenderComponent<SimpleColorPickerTest>(p =>
+            {
+                p.Add(x => x.ViewMode, ColorPickerView.GridCompact);
+            });
+
+            Console.WriteLine(comp.Markup);
+
+            var expectedColors = _mudGridDefaultColors;
+
+            var gridView = comp.Find(".mud-picker-color-grid");
+
+            gridView.Children.Should().HaveCount(expectedColors.Length);
+
+            for (int i = 0; i < gridView.Children.Length; i++)
+            {
+                var expectedColor = expectedColors[i];
+                var colorElement = gridView.Children[i];
+                colorElement.ClassList.Should().Contain("mud-picker-color-dot");
+
+                colorElement.Click();
+                comp.Instance.ColorValue.Should().Be(expectedColor);
+            }
+        }
+
+        [Test]
+        [TestCase(PickerVariant.Inline)]
+        [TestCase(PickerVariant.Dialog)]
+        public async Task GridCompact_CloseOnSelect(PickerVariant variant)
+        {
+            var comp = ctx.RenderComponent<SimpleColorPickerTest>(p =>
+            {
+                p.Add(x => x.ViewMode, ColorPickerView.GridCompact);
+                p.Add(x => x.Variant, variant);
+            });
+
+            Console.WriteLine(comp.Markup);
+
+            await comp.Instance.OpenPicker();
+
+            var expectedColors = _mudGridDefaultColors;
+
+            var gridView = comp.Find(".mud-picker-color-grid");
+            gridView.Children[0].Click();
+
+            comp.Instance.ColorValue.Should().Be(expectedColors[0]);
+
+            Assert.Throws<ElementNotFoundException>(() => comp.Find(".mud-picker-container"));
+        }
+
+        [Test]
+        [TestCase(PickerVariant.Inline)]
+        [TestCase(PickerVariant.Dialog)]
+        public async Task Palette_CloseOnSelect(PickerVariant variant)
+        {
+            var comp = ctx.RenderComponent<SimpleColorPickerTest>(p =>
+            {
+                p.Add(x => x.ViewMode, ColorPickerView.Palette);
+                p.Add(x => x.Variant, variant);
+                p.Add(x => x.Palette, _mudGridPaletteDefaultClors);
+            });
+
+            await comp.Instance.OpenPicker();
+
+            Console.WriteLine(comp.Markup);
+
+            var expectedColors = _mudGridPaletteDefaultClors;
+
+            var gridView = comp.Find(".mud-picker-color-view-collection");
+            gridView.Children[0].Click();
+
+            comp.Instance.ColorValue.Should().Be(expectedColors[0]);
+
+            Assert.Throws<ElementNotFoundException>(() => comp.Find(".mud-picker-container"));
+        }
+
+        [Test]
+        [TestCase(PickerVariant.Inline, ColorPickerView.Grid)]
+        [TestCase(PickerVariant.Dialog, ColorPickerView.Grid)]
+        [TestCase(PickerVariant.Inline, ColorPickerView.Spectrum)]
+        [TestCase(PickerVariant.Dialog, ColorPickerView.Spectrum)]
+        public async Task NoControls_CloseOnSelect(PickerVariant variant, ColorPickerView view)
+        {
+            var comp = ctx.RenderComponent<SimpleColorPickerTest>(p =>
+            {
+                p.Add(x => x.ViewMode, view);
+                p.Add(x => x.Variant, variant);
+                p.Add(x => x.DisablePreview, true);
+                p.Add(x => x.DisableSliders, true);
+                p.Add(x => x.DisableInput, true);
+            });
+
+            await comp.Instance.OpenPicker();
+
+            Console.WriteLine(comp.Markup);
+
+            var expectedColors = view == ColorPickerView.Grid ? _mudGridDefaultColors : _mudGridPaletteDefaultClors;
+
+            IElement item;
+            if (view == ColorPickerView.Grid)
+            {
+                item = comp.Find(".mud-picker-color-grid").Children[0];
+            }
+            else
+            {
+                item = comp.Find("[class=\"mud-picker-color-overlay\"][id]");
+            }
+
+            item.Click();
+
+
+            comp.Instance.ColorValue.Should().NotBe(_defaultColor);
+
+            Assert.Throws<ElementNotFoundException>(() => comp.Find(".mud-picker-container"));
+        }
+
+        [Test]
+        [TestCase(ColorPickerView.Spectrum, false, "#78797aff")]
+        [TestCase(ColorPickerView.Grid, false, "#78797aff")]
+        [TestCase(ColorPickerView.Palette, false, "#78797a")]
+        [TestCase(ColorPickerView.GridCompact, false, "#78797a")]
+        [TestCase(ColorPickerView.Spectrum, true, "#78797a")]
+        [TestCase(ColorPickerView.Grid, true, "#78797a")]
+        [TestCase(ColorPickerView.Palette, true, "#78797a")]
+        [TestCase(ColorPickerView.GridCompact, true, "#78797a")]
+        public void TextOutput_Alpha(ColorPickerView view, bool disableAlpha, string expectedOutput)
+        {
+            var comp = ctx.RenderComponent<SimpleColorPickerTest>(p =>
+            {
+                p.Add(x => x.ViewMode, view);
+                p.Add(x => x.DisableAlpha, disableAlpha);
+                p.Add(x => x.ColorValue, new MudColor(120, 121, 122, 1.0));
+            });
+
+            comp.Instance.TextValue.Should().Be(expectedOutput);
         }
     }
 }

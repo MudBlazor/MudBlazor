@@ -22,6 +22,7 @@ namespace MudBlazor
             AdornmentIcon = Icons.Material.Outlined.Palette;
             DisableToolbar = true;
             Value = "#594ae2"; //MudBlazor Blue
+            Text = GetColorTextValue();
         }
 
         #region Fields
@@ -57,7 +58,7 @@ namespace MudBlazor
 
         #region Parameters
 
-        private bool _disableAlpha;
+        private bool _disableAlpha = false;
 
         /// <summary>
         /// If true, Alpha options will not be displayed and color output will be RGB, HSL or HEX and not RGBA, HSLA or HEXA.
@@ -76,6 +77,8 @@ namespace MudBlazor
                     {
                         Value = Value.SetAlpha(1.0);
                     }
+
+                    Text = GetColorTextValue();
                 }
 
             }
@@ -84,37 +87,50 @@ namespace MudBlazor
         /// <summary>
         /// If true, the color field will not be displayed.
         /// </summary>
-        [Parameter] public bool DisableColorField { get; set; }
+        [Parameter] public bool DisableColorField { get; set; } = false;
 
         /// <summary>
         /// If true, the switch to change color mode will not be displayed.
         /// </summary>
-        [Parameter] public bool DisableModeSwitch { get; set; }
+        [Parameter] public bool DisableModeSwitch { get; set; } = false;
 
         /// <summary>
         /// If true, textfield inputs and color mode switch will not be displayed.
         /// </summary>
-        [Parameter] public bool DisableInputs { get; set; }
+        [Parameter] public bool DisableInputs { get; set; } = false;
 
         /// <summary>
         /// If true, hue and alpha sliders will not be displayed.
         /// </summary>
-        [Parameter] public bool DisableSliders { get; set; }
+        [Parameter] public bool DisableSliders { get; set; } = false;
 
         /// <summary>
         /// If true, the preview color box will not be displayed, note that the preview color functions as a button as well for collection colors.
         /// </summary>
-        [Parameter] public bool DisablePreview { get; set; }
+        [Parameter] public bool DisablePreview { get; set; } = false;
 
         /// <summary>
         /// The inital mode (RGB, HSL or HEX) the picker should open. Defaults to RGB 
         /// </summary>
         [Parameter] public ColorPickerMode ColorPickerMode { get; set; } = ColorPickerMode.RGB;
 
+        private ColorPickerView _colorPickerView = ColorPickerView.Spectrum;
+
         /// <summary>
         /// The inital view of the picker. Views can be changed if toolbar is enabled. 
         /// </summary>
-        [Parameter] public ColorPickerView ColorPickerView { get; set; } = ColorPickerView.Spectrum;
+        [Parameter] public ColorPickerView ColorPickerView
+        {
+            get => _colorPickerView;
+            set
+            {
+                if(value != _colorPickerView)
+                {
+                    _colorPickerView = value;
+                    Text = GetColorTextValue();
+                }
+            }
+        }
 
         /// <summary>
         /// If true, binding changes occure also when HSL values changed without a corresponding RGB change 
@@ -153,8 +169,6 @@ namespace MudBlazor
             }
         }
 
-        private string GetColorTextValue() => DisableAlpha == false ? _color.ToString(MudColorOutputFormats.HexA) : _color.ToString(MudColorOutputFormats.Hex);
-
         [Parameter] public EventCallback<MudColor> ValueChanged { get; set; }
 
         /// <summary>
@@ -184,31 +198,26 @@ namespace MudBlazor
             "#d2effd","#d6e1fc","#d6c9fa","#e9cbfb","#f3d4df","#f9dcd9","#fae3d8","#fcecd7","#fdf2d8","#fefce0","#f7fade","#e3edd6"
         };
 
+
         #endregion
 
-        private EventCallback<MouseEventArgs> GetEventCallback() => EventCallback.Factory.Create<MouseEventArgs>(this, () => Close());
-
-        void ToggleCollection()
+        private void ToggleCollection()
         {
             _collectionOpen = !_collectionOpen;
         }
 
-        private EventCallback<MouseEventArgs> GetSelectPaletteColorCallback(MudColor color)
-        {
-            return new EventCallbackFactory().Create<MouseEventArgs>(this, (MouseEventArgs e) => SelectPaletteColor(color)); 
-        }
-
-        private Task SelectPaletteColor(MudColor color)
+        private void SelectPaletteColor(MudColor color)
         {
             Value = color;
             _collectionOpen = false;
-            if(ColorPickerView == ColorPickerView.GridCompact || ColorPickerView == ColorPickerView.Palette)
+
+            if (
+                IsAnyControlVisible() == false ||
+                (ColorPickerView == ColorPickerView.GridCompact || ColorPickerView == ColorPickerView.Palette))
             {
                 Close();
             }
-            return Task.CompletedTask;
         }
-
 
         public void ChangeMode() =>
             ColorPickerMode = ColorPickerMode switch
@@ -219,10 +228,7 @@ namespace MudBlazor
                 _ => ColorPickerMode.RGB,
             };
 
-        public void ChangeView(ColorPickerView view)
-        {
-            ColorPickerView = view;
-        }
+        public void ChangeView(ColorPickerView view) => ColorPickerView = view;
 
         private void UpdateBaseColorSlider(int value)
         {
@@ -290,11 +296,17 @@ namespace MudBlazor
             _selectorX = relation * _maxX;
         }
 
+        #region mouse interactions
 
         private void OnMouseClick(MouseEventArgs e)
         {
             SetSelectorBasedOnMouseEvents(e);
             UpdateColorBaseOnSelection();
+
+            if(IsAnyControlVisible() == false)
+            {
+                Close();
+            }
         }
 
         private void OnMouseOver(MouseEventArgs e)
@@ -311,6 +323,10 @@ namespace MudBlazor
             _selectorX = e.OffsetX.EnsureRange(_maxX);
             _selectorY = e.OffsetY.EnsureRange(_maxY);
         }
+
+        #endregion
+
+        #region updating inputs
 
         /// <summary>
         /// Set the R (red) component of the color picker
@@ -400,15 +416,22 @@ namespace MudBlazor
             RemoveMouseOverEvent().AndForget();
         }
 
-        private string GetSelectorLocation() => $"translate({Math.Round(_selectorX, 2).ToString(CultureInfo.InvariantCulture)}px, {Math.Round(_selectorY, 2).ToString(CultureInfo.InvariantCulture)}px);";
+        #endregion
 
-        private Color GetButtonColor(ColorPickerView view)
-        {
-            if (ColorPickerView == view)
-                return Color.Primary;
-            else
-                return Color.Inherit;
-        }
+        #region helper
+
+        private string GetSelectorLocation() => $"translate({Math.Round(_selectorX, 2).ToString(CultureInfo.InvariantCulture)}px, {Math.Round(_selectorY, 2).ToString(CultureInfo.InvariantCulture)}px);";
+        private string GetColorTextValue() => (DisableAlpha == true || ColorPickerView == ColorPickerView.Palette || ColorPickerView == ColorPickerView.GridCompact) ? _color.ToString(MudColorOutputFormats.Hex) : _color.ToString(MudColorOutputFormats.HexA);
+        
+        private EventCallback<MouseEventArgs> GetEventCallback() => EventCallback.Factory.Create<MouseEventArgs>(this, () => Close());
+        private bool IsAnyControlVisible() => !(DisablePreview && DisableSliders && DisableInputs);
+        private EventCallback<MouseEventArgs> GetSelectPaletteColorCallback(MudColor color) => new EventCallbackFactory().Create(this, (MouseEventArgs e) => SelectPaletteColor(color));
+
+        private Color GetButtonColor(ColorPickerView view) => ColorPickerView == view ? Color.Primary : Color.Inherit;
+
+        #endregion
+
+        #region life cycle hooks
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
@@ -451,5 +474,7 @@ namespace MudBlazor
         {
             await ThrottledEventManager.Unsubscribe(_throttledMouseOverEventId);
         }
+
+        #endregion
     }
 }
