@@ -37,7 +37,7 @@ namespace MudBlazor
         };
 
         private const double _maxY = 250;
-        private const double _maxX = 310;
+        private const double _maxX = 312;
 
         private double _selectorX;
         private double _selectorY;
@@ -114,7 +114,7 @@ namespace MudBlazor
         /// <summary>
         /// The inital view of the picker. Views can be changed if toolbar is enabled. 
         /// </summary>
-        [Parameter] public ColorPickerView ColorPickerView { get; set; } = ColorPickerView.Default;
+        [Parameter] public ColorPickerView ColorPickerView { get; set; } = ColorPickerView.Spectrum;
 
         /// <summary>
         /// If true, binding changes occure also when HSL values changed without a corresponding RGB change 
@@ -156,7 +156,7 @@ namespace MudBlazor
         [Parameter] public EventCallback<MudColor> ValueChanged { get; set; }
 
         /// <summary>
-        /// MudColor list of predefined colors. The first 
+        /// MudColor list of predefined colors. The first five colors will show up as the quick colors on preview dot click.
         /// </summary>
         [Parameter] public IEnumerable<MudColor> Palette { get; set; } = new MudColor[]
         { "#424242", "#2196f3", "#00c853", "#ff9800", "#f44336",
@@ -168,7 +168,7 @@ namespace MudBlazor
           "#353940", "#113b53", "#127942", "#bf7d11", "#aa0000"
         };
 
-        private IEnumerable<MudColor> CompactList { get; set; } = new MudColor[]
+        private IEnumerable<MudColor> GridList { get; set; } = new MudColor[]
         {
             "#FFFFFF","#ebebeb","#d6d6d6","#c2c2c2","#adadad","#999999","#858586","#707070","#5c5c5c","#474747","#333333","#000000",
             "#133648","#071d53","#0f0638","#2a093b","#370c1b","#541107","#532009","#53350d","#523e0f","#65611b","#505518","#2b3d16",
@@ -193,7 +193,7 @@ namespace MudBlazor
 
         private EventCallback<MouseEventArgs> GetSelectPaletteColorCallback(MudColor color)
         {
-            return new EventCallbackFactory().Create<MouseEventArgs>(this, (MouseEventArgs e) => SelectPaletteColor(color));
+            return new EventCallbackFactory().Create<MouseEventArgs>(this, (MouseEventArgs e) => SelectPaletteColor(color)); 
         }
 
         private Task SelectPaletteColor(MudColor color)
@@ -380,6 +380,14 @@ namespace MudBlazor
         }
 
         private string GetSelectorLocation() => $"translate({Math.Round(_selectorX, 2).ToString(CultureInfo.InvariantCulture)}px, {Math.Round(_selectorY, 2).ToString(CultureInfo.InvariantCulture)}px);";
+
+        private Color GetButtonColor(ColorPickerView view)
+        {
+            if (ColorPickerView == view)
+                return Color.Primary;
+            else
+                return Color.Inherit;
+        }
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {

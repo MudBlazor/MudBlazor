@@ -23,7 +23,7 @@
 }
 
 .mud-picker-color-picker {
-    width: 310px;
+    width: 312px;
     height: 250px;
     position: relative;
     overflow: hidden;
@@ -54,7 +54,7 @@
 }
 
 .mud-picker-color-controls {
-    width: 310px;
+    width: 312px;
     padding: 16px;
     display: flex;
     flex-direction: column;
@@ -200,10 +200,6 @@
     padding: 6px;
     background-color: var(--mud-palette-surface);
 
-    &.compact {
-        padding: 0px;
-    }
-
     .mud-picker-color-view-collection {
         display: flex;
         flex-wrap: wrap;
@@ -214,15 +210,17 @@
             margin: 8px;
         }
     }
+}
 
-    .mud-picker-color-view-compact {
+.mud-picker-color-picker {
+    .mud-picker-color-grid {
         display: flex;
         flex-wrap: wrap;
 
         .mud-picker-color-dot {
-            height: 25.83px;
-            min-width: 25.83px;
-            max-width: 25.83px;
+            height: 25px;
+            min-width: 26px;
+            max-width: 26px;
             border-radius: 0px;
             box-shadow: none;
         }
