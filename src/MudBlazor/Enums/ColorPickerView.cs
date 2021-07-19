@@ -6,8 +6,9 @@ namespace MudBlazor
 {
     public enum ColorPickerView
     {
-        Default,
+        Spectrum,
         Palette,
-        Compact
+        Grid,
+        GridCompact
     }
 }
