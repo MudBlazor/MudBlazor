@@ -37,7 +37,7 @@ namespace MudBlazor
         };
 
         private const double _maxY = 250;
-        private const double _maxX = 310;
+        private const double _maxX = 312;
 
         private double _selectorX;
         private double _selectorY;
@@ -112,6 +112,11 @@ namespace MudBlazor
         [Parameter] public ColorPickerMode ColorPickerMode { get; set; } = ColorPickerMode.RGB;
 
         /// <summary>
+        /// The inital view of the picker. Views can be changed if toolbar is enabled. 
+        /// </summary>
+        [Parameter] public ColorPickerView ColorPickerView { get; set; } = ColorPickerView.Spectrum;
+
+        /// <summary>
         /// If true, binding changes occure also when HSL values changed without a corresponding RGB change 
         /// </summary>
         [Parameter] public bool AlwaysUpdateBinding { get; set; } = false;
@@ -152,7 +157,32 @@ namespace MudBlazor
 
         [Parameter] public EventCallback<MudColor> ValueChanged { get; set; }
 
-        [Parameter] public IEnumerable<MudColor> Palette { get; set; } = new MudColor[] { "#ff4081ff", "#2196f3ff", "#00c853ff", "#ff9800ff", "#f44336ff" };
+        /// <summary>
+        /// MudColor list of predefined colors. The first five colors will show up as the quick colors on preview dot click.
+        /// </summary>
+        [Parameter] public IEnumerable<MudColor> Palette { get; set; } = new MudColor[]
+        { "#424242", "#2196f3", "#00c853", "#ff9800", "#f44336",
+          "#f6f9fb", "#9df1fa", "#bdffcf", "#fff0a3", "#ffd254",
+          "#e6e9eb", "#27dbf5", "#7ef7a0", "#ffe273", "#ffb31f",
+          "#c9cccf", "#13b8e8", "#14dc71", "#fdd22f", "#ff9102",
+          "#858791", "#0989c2", "#1bbd66", "#ebb323", "#fe6800",
+          "#585b62", "#17698e", "#17a258", "#d9980d", "#dc3f11",
+          "#353940", "#113b53", "#127942", "#bf7d11", "#aa0000"
+        };
+
+        private IEnumerable<MudColor> GridList { get; set; } = new MudColor[]
+        {
+            "#FFFFFF","#ebebeb","#d6d6d6","#c2c2c2","#adadad","#999999","#858586","#707070","#5c5c5c","#474747","#333333","#000000",
+            "#133648","#071d53","#0f0638","#2a093b","#370c1b","#541107","#532009","#53350d","#523e0f","#65611b","#505518","#2b3d16",
+            "#1e4c63","#0f2e76","#180b4e","#3f1256","#4e1629","#781e0e","#722f10","#734c16","#73591a","#8c8629","#707625","#3f5623",
+            "#2e6c8c","#1841a3","#280c72","#591e77","#6f223d","#a62c17","#a0451a","#a06b23","#9f7d28","#c3bc3c","#9da436","#587934",
+            "#3c8ab0","#2155ce","#331c8e","#702898","#8d2e4f","#d03a20","#ca5a24","#c8862e","#c99f35","#f3ec4e","#c6d047","#729b44",
+            "#479fd3","#2660f5","#4725ab","#8c33b5","#aa395d","#eb512e","#ed732e","#f3ae3d","#f5c944","#fefb67","#ddeb5c","#86b953",
+            "#59c4f7","#4e85f6","#5733e2","#af43eb","#d44a7a","#ed6c59","#ef8c56","#f3b757","#f6cd5b","#fef881","#e6ee7a","#a3d16e",
+            "#78d3f8","#7fa6f8","#7e52f5","#c45ff6","#de789d","#f09286","#f2a984","#f6c983","#f9da85","#fef9a1","#ebf29b","#badc94",
+            "#a5e1fa","#adc5fa","#ab8df7","#d696f8","#e8a7bf","#f4b8b1","#f6c7af","#f9daae","#fae5af","#fefbc0","#f3f7be","#d2e7ba",
+            "#d2effd","#d6e1fc","#d6c9fa","#e9cbfb","#f3d4df","#f9dcd9","#fae3d8","#fcecd7","#fdf2d8","#fefce0","#f7fade","#e3edd6"
+        };
 
         #endregion
 
@@ -165,7 +195,7 @@ namespace MudBlazor
 
         private EventCallback<MouseEventArgs> GetSelectPaletteColorCallback(MudColor color)
         {
-            return new EventCallbackFactory().Create<MouseEventArgs>(this, (MouseEventArgs e) => SelectPaletteColor(color));
+            return new EventCallbackFactory().Create<MouseEventArgs>(this, (MouseEventArgs e) => SelectPaletteColor(color)); 
         }
 
         private Task SelectPaletteColor(MudColor color)
@@ -184,6 +214,11 @@ namespace MudBlazor
                 ColorPickerMode.HEX => ColorPickerMode.RGB,
                 _ => ColorPickerMode.RGB,
             };
+
+        public void ChangeView(ColorPickerView view)
+        {
+            ColorPickerView = view;
+        }
 
         private void UpdateBaseColorSlider(int value)
         {
@@ -362,6 +397,14 @@ namespace MudBlazor
         }
 
         private string GetSelectorLocation() => $"translate({Math.Round(_selectorX, 2).ToString(CultureInfo.InvariantCulture)}px, {Math.Round(_selectorY, 2).ToString(CultureInfo.InvariantCulture)}px);";
+
+        private Color GetButtonColor(ColorPickerView view)
+        {
+            if (ColorPickerView == view)
+                return Color.Primary;
+            else
+                return Color.Inherit;
+        }
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
