@@ -15,7 +15,7 @@ namespace MudBlazor
     {
         protected string Classnames =>
             new CssBuilder("mud-timeline-item")
-                .AddClass($"mud-timeline-item-skip-order", SkipOrder)
+                .AddClass($"mud-timeline-item-{TimelineAlign.ToDescriptionString()}")
                 .AddClass(Class)
                 .Build();
 
@@ -59,14 +59,14 @@ namespace MudBlazor
         [Parameter] public int Elevation { set; get; } = 1;
 
         /// <summary>
+        /// Overrides Timeline Parents default sorting method in Default and Reverse mode.
+        /// </summary>
+        [Parameter] public TimelineAlign TimelineAlign { get; set; }
+
+        /// <summary>
         /// If true, dot will not be displayed.
         /// </summary>
         [Parameter] public bool HideDot { get; set; }
-
-        /// <summary>
-        /// If true, TimelineItem skips the sorting order from MudTimeline and is positioned on same side as the item before and after this item.
-        /// </summary>
-        [Parameter] public bool SkipOrder { get; set; }
 
         /// <summary>
         /// If used renders child content of the TimelineOppositeContent.

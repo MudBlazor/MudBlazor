@@ -108,19 +108,32 @@
             }
 
             .mud-timeline-item {
-                &:nth-child(odd), &:nth-child(2n).mud-timeline-item-skip-order {
+                &:nth-child(odd) {
                     flex-direction: row-reverse;
 
                     .mud-timeline-item-opposite {
                         text-align: end;
                     }
+                }
 
-                    .mud-timeline-item-skip-order {
+                &:nth-child(2n) {
+                    flex-direction: row;
+
+                    .mud-timeline-item-opposite {
+                        text-align: start;
                     }
                 }
 
-                &:nth-child(2n), &:nth-child(odd).mud-timeline-item-skip-order {
+                &.mud-timeline-item-start {
                     flex-direction: row;
+
+                    .mud-timeline-item-opposite {
+                        text-align: end;
+                    }
+                }
+
+                &.mud-timeline-item-end {
+                    flex-direction: row-reverse;
 
                     .mud-timeline-item-opposite {
                         text-align: start;
@@ -150,6 +163,22 @@
 
                 &:nth-child(2n) {
                     flex-direction: row-reverse;
+
+                    .mud-timeline-item-opposite {
+                        text-align: end;
+                    }
+                }
+
+                &.mud-timeline-item-start {
+                    flex-direction: row-reverse;
+
+                    .mud-timeline-item-opposite {
+                        text-align: start;
+                    }
+                }
+
+                &.mud-timeline-item-end {
+                    flex-direction: row;
 
                     .mud-timeline-item-opposite {
                         text-align: end;
