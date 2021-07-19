@@ -202,6 +202,10 @@ namespace MudBlazor
         {
             Value = color;
             _collectionOpen = false;
+            if(ColorPickerView == ColorPickerView.GridCompact || ColorPickerView == ColorPickerView.Palette)
+            {
+                Close();
+            }
             return Task.CompletedTask;
         }
 
