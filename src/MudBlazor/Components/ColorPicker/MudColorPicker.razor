@@ -106,14 +106,7 @@
                         
                                     @if (!DisableAlpha && ColorPickerMode != ColorPickerMode.HEX)
                                     {
-                                        if (ColorPickerMode == ColorPickerMode.RGB)
-                                        {
-                                            <MudNumericField Value="@_color.A" T="byte" ValueChanged="SetAlpha" Class="mud-picker-color-inputfield input-field-alpha" HelperText="A" Min="0" Max="255" Step="1" Variant="Variant.Outlined" HideSpinButtons="true" />
-                                        }
-                                        else
-                                        {
-                                            <MudNumericField Value="@(  Math.Round(_color.A / 255.0, 2))" T="double" ValueChanged="SetAlpha" Class="mud-picker-color-inputfield input-field-alpha" HelperText="A" Min="0" Max="1" Step="0.01" Variant="Variant.Outlined" HideSpinButtons="true" />
-                                        }
+                                        <MudNumericField Value="@(  Math.Round(_color.A / 255.0, 2))" T="double" ValueChanged="SetAlpha" Class="mud-picker-color-inputfield input-field-alpha" HelperText="A" Min="0" Max="1" Step="0.01" Variant="Variant.Outlined" HideSpinButtons="true" />
                                     }
                                 </div>
                                 @if (!DisableModeSwitch)
