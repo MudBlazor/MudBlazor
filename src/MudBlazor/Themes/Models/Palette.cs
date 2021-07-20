@@ -40,11 +40,11 @@ namespace MudBlazor
         public MudColor Dark { get; set; } = Colors.Grey.Darken3;
         public MudColor DarkContrastText { get; set; } = Colors.Shades.White;
         public MudColor TextPrimary { get; set; } = Colors.Grey.Darken3;
-        public MudColor TextSecondary { get; set; } = Colors.Shades.Black.SetAlpha(0.54).ToString(MudColorOutputFormats.RGBA);
-        public MudColor TextDisabled { get; set; } = Colors.Shades.Black.SetAlpha(0.38).ToString(MudColorOutputFormats.RGBA);
-        public MudColor ActionDefault { get; set; } = Colors.Shades.Black.SetAlpha(0.54).ToString(MudColorOutputFormats.RGBA);
-        public MudColor ActionDisabled { get; set; } = Colors.Shades.Black.SetAlpha(0.26).ToString(MudColorOutputFormats.RGBA);
-        public MudColor ActionDisabledBackground { get; set; } = Colors.Shades.Black.SetAlpha(0.12).ToString(MudColorOutputFormats.RGBA);
+        public MudColor TextSecondary { get; set; } = new MudColor(Colors.Shades.Black).SetAlpha(0.54).ToString(MudColorOutputFormats.RGBA);
+        public MudColor TextDisabled { get; set; } = new MudColor(Colors.Shades.Black).SetAlpha(0.38).ToString(MudColorOutputFormats.RGBA);
+        public MudColor ActionDefault { get; set; } = new MudColor(Colors.Shades.Black).SetAlpha(0.54).ToString(MudColorOutputFormats.RGBA);
+        public MudColor ActionDisabled { get; set; } = new MudColor(Colors.Shades.Black).SetAlpha(0.26).ToString(MudColorOutputFormats.RGBA);
+        public MudColor ActionDisabledBackground { get; set; } = new MudColor(Colors.Shades.Black).SetAlpha(0.12).ToString(MudColorOutputFormats.RGBA);
         public MudColor Background { get; set; } = Colors.Shades.White;
         public MudColor BackgroundGrey { get; set; } = Colors.Grey.Lighten4;
         public MudColor Surface { get; set; } = Colors.Shades.White;
@@ -53,13 +53,13 @@ namespace MudBlazor
         public MudColor DrawerIcon { get; set; } = Colors.Grey.Darken2;
         public MudColor AppbarBackground { get; set; } = "#594AE2";
         public MudColor AppbarText { get; set; } = Colors.Shades.White;
-        public MudColor LinesDefault { get; set; } = Colors.Shades.Black.SetAlpha(0.12).ToString(MudColorOutputFormats.RGBA);
+        public MudColor LinesDefault { get; set; } = new MudColor(Colors.Shades.Black).SetAlpha(0.12).ToString(MudColorOutputFormats.RGBA);
         public MudColor LinesInputs { get; set; } = Colors.Grey.Lighten1;
-        public MudColor TableLines { get; set; } = Colors.Grey.Lighten2.SetAlpha(1).ToString(MudColorOutputFormats.RGBA);
-        public MudColor TableStriped { get; set; } = Colors.Shades.Black.SetAlpha(0.02).ToString(MudColorOutputFormats.RGBA);
-        public MudColor TableHover { get; set; } = Colors.Shades.Black.SetAlpha(0.04).ToString(MudColorOutputFormats.RGBA);
+        public MudColor TableLines { get; set; } = new MudColor(Colors.Grey.Lighten2).SetAlpha(1).ToString(MudColorOutputFormats.RGBA);
+        public MudColor TableStriped { get; set; } = new MudColor(Colors.Shades.Black).SetAlpha(0.02).ToString(MudColorOutputFormats.RGBA);
+        public MudColor TableHover { get; set; } = new MudColor(Colors.Shades.Black).SetAlpha(0.04).ToString(MudColorOutputFormats.RGBA);
         public MudColor Divider { get; set; } = Colors.Grey.Lighten2;
-        public MudColor DividerLight { get; set; } = Colors.Shades.Black.SetAlpha(0.8).ToString(MudColorOutputFormats.RGBA);
+        public MudColor DividerLight { get; set; } = new MudColor(Colors.Shades.Black).SetAlpha(0.8).ToString(MudColorOutputFormats.RGBA);
 
         public string PrimaryDarken
         {
@@ -144,13 +144,13 @@ namespace MudBlazor
 
         public double HoverOpacity { get; set; } = 0.06;
 
-        public MudColor GrayDefault { get; set; } = Colors.Grey.Default;
-        public MudColor GrayLight { get; set; } = Colors.Grey.Lighten1;
-        public MudColor GrayLighter { get; set; } = Colors.Grey.Lighten2;
-        public MudColor GrayDark { get; set; } = Colors.Grey.Darken1;
-        public MudColor GrayDarker { get; set; } = Colors.Grey.Darken2;
+        public string GrayDefault { get; set; } = Colors.Grey.Default;
+        public string GrayLight { get; set; } = Colors.Grey.Lighten1;
+        public string GrayLighter { get; set; } = Colors.Grey.Lighten2;
+        public string GrayDark { get; set; } = Colors.Grey.Darken1;
+        public string GrayDarker { get; set; } = Colors.Grey.Darken2;
 
-        public MudColor OverlayDark { get; set; } = new MudColor("#212121").SetAlpha(0.5).ToString(MudColorOutputFormats.RGBA);
-        public MudColor OverlayLight { get; set; } = Colors.Shades.White.SetAlpha(0.5).ToString(MudColorOutputFormats.RGBA);
+        public string OverlayDark { get; set; } = new MudColor("#212121").SetAlpha(0.5).ToString(MudColorOutputFormats.RGBA);
+        public string OverlayLight { get; set; } = new MudColor(Colors.Shades.White).SetAlpha(0.5).ToString(MudColorOutputFormats.RGBA);
     }
 }
