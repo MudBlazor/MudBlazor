@@ -2,12 +2,10 @@
 
 namespace MudBlazor
 {
-    public enum TimelineMode
+    public enum TimelinePosition
     {
-        [Description("vertical")]
-        Vertical,
-        [Description("horizontal")]
-        Horizontal,
+        [Description("alternate")]
+        Alternate,
         [Description("top")]
         Top,
         [Description("bottom")]
