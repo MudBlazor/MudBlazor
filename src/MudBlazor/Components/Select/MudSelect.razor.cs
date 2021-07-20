@@ -272,6 +272,8 @@ namespace MudBlazor
                 else
                     SelectedValues.Remove(value);
 
+                await SelectedValuesChanged.InvokeAsync(SelectedValues);
+
                 if (MultiSelectionTextFunc != null)
                 {
                     await SetCustomizedTextAsync(string.Join(", ", SelectedValues.Select(x => Converter.Set(x))),
@@ -302,7 +304,6 @@ namespace MudBlazor
             }
 
             StateHasChanged();
-            await SelectedValuesChanged.InvokeAsync(SelectedValues);
         }
 
         public void ToggleMenu()
