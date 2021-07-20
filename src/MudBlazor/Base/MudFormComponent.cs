@@ -38,7 +38,7 @@ namespace MudBlazor
         [Parameter] public bool Required { get; set; }
 
         /// <summary>
-        /// Set an error text that will be displayed if the input is not filled out but required.
+        /// The error text that will be displayed if the input is not filled out but required.
         /// </summary>
         [Parameter] public string RequiredError { get; set; } = "Required";
 
@@ -53,7 +53,7 @@ namespace MudBlazor
         [Parameter] public bool Error { get; set; }
 
         /// <summary>
-        /// Set the generic converter of the component.
+        /// The generic converter of the component.
         /// </summary>
         [Parameter]
         public Converter<T, U> Converter
@@ -74,7 +74,7 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Set the culture of the component.
+        /// The culture of the component.
         /// </summary>
         [Parameter]
         public CultureInfo Culture
@@ -124,8 +124,9 @@ namespace MudBlazor
         public bool HasErrors => Error || ConversionError || ValidationErrors.Count > 0;
 
         /// <summary>
-        /// Get the validation error text or the conversion error message.
+        /// Return the validation error text or the conversion error message.
         /// </summary>
+        /// <returns>Error text/message</returns>
         public string GetErrorText()
         {
             // ErrorText is either set from outside or the first validation error
@@ -209,6 +210,7 @@ namespace MudBlazor
         /// <summary>
         /// Cause this component to validate its value.
         /// </summary>
+        /// <returns>The Task</returns>
         public Task Validate()
         {
             // when a validation is forced, we must set Touched to true, because for untouched fields with
@@ -391,7 +393,7 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Reset the value and the validation
+        /// Reset the value and the validation.
         /// </summary>
         public void Reset()
         {

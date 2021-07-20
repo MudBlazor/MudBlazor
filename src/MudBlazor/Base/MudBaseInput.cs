@@ -52,7 +52,7 @@ namespace MudBlazor
         [Parameter] public string AdornmentText { get; set; }
 
         /// <summary>
-        /// Sets Start or End Adornment if not set to None.
+        /// The Adornment if used. By default, it is set to None.
         /// </summary>
         [Parameter] public Adornment Adornment { get; set; } = Adornment.None;
 
@@ -62,7 +62,7 @@ namespace MudBlazor
         [Parameter] public Color AdornmentColor { get; set; } = Color.Default;
 
         /// <summary>
-        /// Sets the Icon Size.
+        /// The Icon Size.
         /// </summary>
         [Parameter] public Size IconSize { get; set; } = Size.Small;
 
@@ -128,13 +128,14 @@ namespace MudBlazor
         /// <summary>
         /// Text change hook for descendants. Called when Text needs to be refreshed from current Value property.
         /// </summary>
+        /// <param name="updateValue">If true, refresh the value</param>
         protected virtual Task UpdateTextPropertyAsync(bool updateValue)
         {
             return SetTextAsync(Converter.Set(Value), updateValue);
         }
 
         /// <summary>
-        /// Focus the element.
+        /// Focus the input.
         /// </summary>
         /// <returns>The ValueTask</returns>
         public virtual ValueTask FocusAsync() { return new ValueTask(); }
@@ -232,7 +233,7 @@ namespace MudBlazor
         public EventCallback<T> ValueChanged { get; set; }
 
         /// <summary>
-        /// The value of this input element. This property is two-way bindable.
+        /// The value of this input element.
         /// </summary>
         [Parameter]
         public T Value
