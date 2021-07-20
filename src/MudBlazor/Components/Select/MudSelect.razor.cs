@@ -298,6 +298,8 @@ namespace MudBlazor
                     return;
                 }
 
+                await SelectedValuesChanged.InvokeAsync(SelectedValues);
+
                 await SetValueAsync(value);
                 SelectedValues.Clear();
                 SelectedValues.Add(value);
