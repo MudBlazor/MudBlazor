@@ -1,16 +1,37 @@
 ﻿.mud-timeline {
     padding-top: 24px;
     position: relative;
+    display: flex;
 
-    &::before {
-        top: 0;
-        bottom: 0;
-        content: "";
-        height: 100%;
-        position: absolute;
-        width: 2px;
-        background: var(--mud-palette-divider);
+    &.mud-timeline-vertical {
+        flex-direction: column;
+
+        &::before {
+            top: 0;
+            bottom: 0;
+            content: "";
+            height: 100%;
+            position: absolute;
+            width: 2px;
+            background: var(--mud-palette-divider);
+        }
     }
+
+    &.mud-timeline-horizontal {
+        flex-direction: row;
+
+        &::before {
+            top: 0;
+            bottom: 0;
+            content: "";
+            height: 2px;
+            position: absolute;
+            width: 100%;
+            background: var(--mud-palette-divider);
+        }
+    }
+
+
 
     .mud-timeline-item {
         display: flex;
@@ -29,68 +50,6 @@
             display: flex;
             align-items: center;
             justify-content: center;
-
-            .mud-timeline-item-dot {
-                background: var(--mud-palette-surface);
-                border-radius: 50%;
-                left: calc(50% - 19px);
-
-                &.mud-timeline-dot-size-small {
-                    width: 24px;
-                    height: 24px;
-
-                    .mud-timeline-item-dot-inner {
-                        height: 18px;
-                        width: 18px;
-                        margin: 3px;
-                    }
-                }
-
-                &.mud-timeline-dot-size-medium {
-                    width: 38px;
-                    height: 38px;
-
-                    .mud-timeline-item-dot-inner {
-                        height: 30px;
-                        width: 30px;
-                        margin: 4px;
-                    }
-                }
-
-                &.mud-timeline-dot-size-large {
-                    width: 52px;
-                    height: 52px;
-
-                    .mud-timeline-item-dot-inner {
-                        height: 42px;
-                        width: 42px;
-                        margin: 5px;
-                    }
-                }
-
-                .mud-timeline-item-dot-inner {
-                    border-radius: 50%;
-                    display: flex;
-                    justify-content: center;
-                    align-items: center;
-
-                    &.mud-timeline-dot-fill {
-                        height: inherit;
-                        width: inherit;
-                        margin: 0px;
-                    }
-
-                    &.mud-timeline-dot-default {
-                        background-color: var(--mud-palette-grey-light);
-                    }
-
-                    @each $color in $mud-palette-colors {
-                        &.mud-timeline-dot-#{$color} {
-                            background-color: var(--mud-palette-#{$color});
-                        }
-                    }
-                }
-            }
         }
 
         .mud-timeline-item-opposite {
@@ -100,13 +59,38 @@
         }
     }
 
-    &.mud-timeline-mode {
-        &-default {
-            &::before {
-                left: auto;
-                right: calc(50% - 1px);
-            }
+    &.mud-timeline-mode-horizontal {
+        &::before {
+            top: auto;
+            bottom: calc(50% - 1px);
+        }
+    }
 
+    &.mud-timeline-mode-top {
+        &::before {
+            top: 47px;
+            bottom: auto;
+        }
+    }
+
+    &.mud-timeline-mode-bottom {
+        &::before {
+            top: auto;
+            bottom: 47px;
+        }
+    }
+
+    &.mud-timeline-mode-vertical {
+        &::before {
+            left: auto;
+            right: calc(50% - 1px);
+        }
+
+        .mud-timeline-item-content {
+            max-width: calc(50% - 48px);
+        }
+
+        &.mud-timeline-alternate {
             .mud-timeline-item {
                 &:nth-child(odd) {
                     flex-direction: row-reverse;
@@ -124,6 +108,7 @@
                     }
                 }
 
+
                 &.mud-timeline-item-start {
                     flex-direction: row;
 
@@ -138,20 +123,11 @@
                     .mud-timeline-item-opposite {
                         text-align: start;
                     }
-                }
-
-                .mud-timeline-item-content {
-                    max-width: calc(50% - 48px);
                 }
             }
         }
 
-        &-reverse {
-            &::before {
-                left: auto;
-                right: calc(50% - 1px);
-            }
-
+        &.mud-timeline-reverse {
             .mud-timeline-item {
                 &:nth-child(odd) {
                     flex-direction: row;
@@ -183,10 +159,6 @@
                     .mud-timeline-item-opposite {
                         text-align: end;
                     }
-                }
-
-                .mud-timeline-item-content {
-                    max-width: calc(50% - 48px);
                 }
             }
         }
@@ -240,6 +212,69 @@
 
             .mud-timeline-item-opposite {
                 display: none;
+            }
+        }
+    }
+}
+
+
+.mud-timeline-item-dot {
+    background: var(--mud-palette-surface);
+    border-radius: 50%;
+    left: calc(50% - 19px);
+
+    &.mud-timeline-dot-size-small {
+        width: 24px;
+        height: 24px;
+
+        .mud-timeline-item-dot-inner {
+            height: 18px;
+            width: 18px;
+            margin: 3px;
+        }
+    }
+
+    &.mud-timeline-dot-size-medium {
+        width: 38px;
+        height: 38px;
+
+        .mud-timeline-item-dot-inner {
+            height: 30px;
+            width: 30px;
+            margin: 4px;
+        }
+    }
+
+    &.mud-timeline-dot-size-large {
+        width: 52px;
+        height: 52px;
+
+        .mud-timeline-item-dot-inner {
+            height: 42px;
+            width: 42px;
+            margin: 5px;
+        }
+    }
+
+    .mud-timeline-item-dot-inner {
+        border-radius: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        &.mud-timeline-dot-fill {
+            height: inherit;
+            width: inherit;
+            margin: 0px;
+        }
+
+        &.mud-timeline-dot-default {
+            background-color: var(--mud-palette-grey-light);
+        }
+
+        @each $color in $mud-palette-colors {
+            &.mud-timeline-dot-#{$color} {
+                background-color: var(--mud-palette-#{$color});
             }
         }
     }

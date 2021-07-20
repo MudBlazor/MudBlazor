@@ -4,10 +4,14 @@ namespace MudBlazor
 {
     public enum TimelineMode
     {
-        [Description("default")]
-        Default,
-        [Description("reverse")]
-        Reverse,
+        [Description("vertical")]
+        Vertical,
+        [Description("horizontal")]
+        Horizontal,
+        [Description("top")]
+        Top,
+        [Description("bottom")]
+        Bottom,
         [Description("left")]
         Left,
         [Description("right")]
