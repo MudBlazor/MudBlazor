@@ -40,7 +40,7 @@
                         <div class="mud-picker-color-grid">
                             @foreach (var item in GridList)
                             {
-                                <div class="mud-picker-color-dot" style="@($"background: {item.ToString(MudColorOutputFormats.RGBA)};")" @onclick="@GetSelectPaletteColorCallback(item)"></div>
+                                <div class="@GetColorDotClass(item)" style="@($"background: {item.ToString(MudColorOutputFormats.RGBA)};")" @onclick="@GetSelectPaletteColorCallback(item)"></div>
                             }
                         </div>
                     }
@@ -78,7 +78,7 @@
                                     <div class="mud-picker-color-collection">
                                         @foreach (var item in Palette.Take(5))
                                         {
-                                            <div class="mud-picker-color-dot" style="@($"background: {item.ToString(MudColorOutputFormats.RGBA)};")" @onclick="@GetSelectPaletteColorCallback(item)"></div>
+                                            <div class="@GetColorDotClass(item)" style="@($"background: {item.ToString(MudColorOutputFormats.RGBA)};")" @onclick="@GetSelectPaletteColorCallback(item)"></div>
                                         }
                                     </div>
                                 }
@@ -128,7 +128,7 @@
                         <div class="mud-picker-color-view-collection">
                             @foreach (var item in Palette)
                             {
-                                <div class="mud-picker-color-dot" style="@($"background: {item.ToString(MudColorOutputFormats.RGBA)};")" @onclick="@GetSelectPaletteColorCallback(item)"></div>
+                                <div class="@GetColorDotClass(item)" style="@($"background: {item.ToString(MudColorOutputFormats.RGBA)};")" @onclick="@GetSelectPaletteColorCallback(item)"></div>
                             }
                         </div>
                     </div>
