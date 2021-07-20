@@ -338,7 +338,7 @@ namespace MudBlazor.UnitTests
         }
 
         /// <summary>
-        /// Increment / Decrement via up / down keys should work 
+        /// Increment / Decrement via up / down keys should work
         /// </summary>
         [Test]
         public async Task NumericFieldTest_ArrowKeys()
@@ -353,14 +353,13 @@ namespace MudBlazor.UnitTests
             var numericField = comp.Instance;
             numericField.Value.Should().Be(1234.56);
             numericField.Text.Should().Be("1234.56");
-            comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = "ArrowUp", Type="keydown", });
+            comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = "ArrowUp", Type = "keydown", });
             comp.Find("input").KeyUp(new KeyboardEventArgs() { Key = "ArrowUp", Type = "keydown", });
-            comp.WaitForAssertion(()=> numericField.Value.Should().Be(1235.56));
+            comp.WaitForAssertion(() => numericField.Value.Should().Be(1235.56));
             comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = "ArrowDown", Type = "keydown", });
             comp.Find("input").KeyUp(new KeyboardEventArgs() { Key = "ArrowDown", Type = "keydown", });
             comp.WaitForAssertion(() => numericField.Value.Should().Be(1234.56));
         }
-
 
         /// <summary>
         /// NumericalField Formats input according to culture
@@ -380,15 +379,44 @@ namespace MudBlazor.UnitTests
             //german
             notImmediate.Change("1234");
             notImmediate.Blur();
+            comp.WaitForAssertion(() => comp.Instance.FieldNotImmediate.Text.Should().Be("1.234,00"));
+            comp.WaitForAssertion(() => comp.Instance.FieldNotImmediate.Value.Should().Be(1234.0));
 
             // English
             immediate.Input("1234");
             immediate.Blur();
 
-            comp.Instance.FieldImmediate.Text.Should().Be("1,234.00");
-            comp.Instance.FieldImmediate.Value.Should().Be(1234.0);
-            comp.Instance.FieldNotImmediate.Text.Should().Be("1.234,00");
-            comp.Instance.FieldNotImmediate.Value.Should().Be(1234.0);
+            comp.WaitForAssertion(() => comp.Instance.FieldImmediate.Text.Should().Be("1,234.00"));
+            comp.WaitForAssertion(() => comp.Instance.FieldImmediate.Value.Should().Be(1234.0));
+        }
+
+        /// <summary>
+        /// NumericalField removes illegal chars
+        /// </summary>
+        [Test]
+        public async Task NumericFieldTestIllegalCharacters()
+        {
+            var comp = ctx.RenderComponent<NumericFieldCultureTest>();
+            // print the generated html
+            Console.WriteLine(comp.Markup);
+            // select elements needed for the test
+
+            var inputs = comp.FindAll("input");
+            var immediate = inputs.First();
+            var notImmediate = inputs.Last();
+
+            //german
+            notImmediate.Change("abcd");
+            notImmediate.Blur();
+            comp.WaitForAssertion(() => comp.Instance.FieldNotImmediate.Text.Should().Be(null));
+            comp.WaitForAssertion(() => comp.Instance.FieldNotImmediate.Value.Should().Be(null));
+
+            // English
+            immediate.Input("abcd");
+            immediate.Blur();
+
+            comp.WaitForAssertion(() => comp.Instance.FieldImmediate.Text.Should().Be(null));
+            comp.WaitForAssertion(() => comp.Instance.FieldImmediate.Value.Should().Be(null));
         }
     }
 }
