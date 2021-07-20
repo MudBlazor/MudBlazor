@@ -1,15 +1,27 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
-<MudSelect T="TimelineMode" @bind-Value="@mode" Label="TimelineMode" Dense="true" Variant="Variant.Outlined" Class="mb-4">
-    <MudSelectItem T="TimelineMode" Value="TimelineMode.Start">Start</MudSelectItem>
-    <MudSelectItem T="TimelineMode" Value="TimelineMode.Left">Left</MudSelectItem>
-    <MudSelectItem T="TimelineMode" Value="TimelineMode.Default">Default</MudSelectItem>
-    <MudSelectItem T="TimelineMode" Value="TimelineMode.Reverse">Reverse</MudSelectItem>
-    <MudSelectItem T="TimelineMode" Value="TimelineMode.Right">Right</MudSelectItem>
-    <MudSelectItem T="TimelineMode" Value="TimelineMode.End">End</MudSelectItem>
-</MudSelect>
+<MudGrid>
+    <MudItem xs="12" sm="8">
+        <MudSelect T="TimelineMode" @bind-Value="@mode" Label="TimelineMode" Dense="true" Variant="Variant.Outlined">
+            <MudSelectItem T="TimelineMode" Value="TimelineMode.Start">Start</MudSelectItem>
+            <MudSelectItem T="TimelineMode" Value="TimelineMode.Left">Left</MudSelectItem>
+            <MudSelectItem T="TimelineMode" Value="TimelineMode.Top">Top</MudSelectItem>
+            <MudSelectItem T="TimelineMode" Value="TimelineMode.Vertical">Vertical</MudSelectItem>
+            <MudSelectItem T="TimelineMode" Value="TimelineMode.Horizontal">Horizontal</MudSelectItem>
+            <MudSelectItem T="TimelineMode" Value="TimelineMode.Bottom">Bottom</MudSelectItem>
+            <MudSelectItem T="TimelineMode" Value="TimelineMode.Right">Right</MudSelectItem>
+            <MudSelectItem T="TimelineMode" Value="TimelineMode.End">End</MudSelectItem>
+        </MudSelect>
+    </MudItem>
+    <MudItem xs="12" sm="4">
+        <MudSwitch Label="Alternate" @bind-Checked="@alternate" Disabled="IsDisabled()" Color="Color.Primary" />
+        <MudSwitch Label="Reverse" @bind-Checked="@reverse" Disabled="IsDisabled()" Color="Color.Primary" />
+    </MudItem>
+</MudGrid>
 
-<MudTimeline TimelineMode="@mode">
+
+
+<MudTimeline TimelineMode="@mode" Alternate="@alternate" Reverse="@reverse">
     <MudTimelineItem Color="Color.Success" Variant="Variant.Filled">
         <MudAlert Severity="Severity.Success">The reactor is running at optimum temperature</MudAlert>
     </MudTimelineItem>
@@ -24,4 +36,14 @@
 
 @code {
     private TimelineMode mode { get; set; } = TimelineMode.Start;
+    private bool reverse { get; set; }
+    private bool alternate { get; set; } = true;
+
+    bool IsDisabled()
+    {
+        if (mode == TimelineMode.Vertical || mode == TimelineMode.Horizontal)
+            return false;
+        else
+            return true;
+    }
 }
