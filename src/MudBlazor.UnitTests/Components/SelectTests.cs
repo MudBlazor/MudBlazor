@@ -535,6 +535,24 @@ namespace MudBlazor.UnitTests.Components
             items[1].Click();
         }
 
+        [Test]
+        public void SelectEventOrder()
+        {
+            var comp = ctx.RenderComponent<SelectTestEventOrder>();
+            var select = comp.FindComponent<MudSelect<string>>();
+            select.Instance.Value.Should().Be("All");
+            select.Instance.Text.Should().Be("All");
+            var items = comp.FindAll("div.mud-list-item").ToArray();
+
+            items[1].Click();
+            select.Instance.Value.Should().Be("Alabama");
+            select.Instance.Text.Should().Be("Alabama");
+            items[2].Click();
+            select.Instance.Value.Should().Be("Alaska, Alabama");
+            select.Instance.Text.Should().Be("Alaska, Alabama");
+        }
+
+
         #region DataAttribute validation
         [Test]
         public async Task TextField_Should_Validate_Data_Attribute_Fail()
