@@ -84,7 +84,6 @@ namespace MudBlazor
                     return;
                 _selectedValues = new HashSet<T>(set);
                 SelectionChangedFromOutside?.Invoke(_selectedValues);
-                SelectedValuesChanged.InvokeAsync(new HashSet<T>(SelectedValues));
                 if (!MultiSelection)
                     SetValueAsync(_selectedValues.FirstOrDefault()).AndForget();
                 else
@@ -101,6 +100,7 @@ namespace MudBlazor
                         SetTextAsync(string.Join(", ", SelectedValues.Select(x => Converter.Set(x)))).AndForget();
                     }
                 }
+                SelectedValuesChanged.InvokeAsync(new HashSet<T>(SelectedValues));
             }
         }
 
