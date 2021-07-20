@@ -337,7 +337,7 @@ namespace MudBlazor.Docs.Models
                 string.Empty;
             var parametersString =
                 parameterInfos.Length > 0 ?
-                "(" + string.Join(",", methodInfo.GetParameters().Select(x => GetXmlDocumenationFormattedString(x.ParameterType, true, typeGenericMap, methodGenericMap))) + ")" :
+                "(" + string.Join(",", methodInfo.GetParameters().Select(x => GetXmlDocumenationFormattedString(x.ParameterType, true, typeGenericMap, methodGenericMap))).Replace("MudBlazor.Docs.Models.T", "`0") + ")" :
                 string.Empty;
 
             var key =
