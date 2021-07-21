@@ -1,0 +1,10 @@
+﻿$value: 0;
+
+@while $value <= 100 {
+
+    .z-#{$value} {
+        z-index: #{$value};
+    }
+
+    $value: $value + 1;
+}
