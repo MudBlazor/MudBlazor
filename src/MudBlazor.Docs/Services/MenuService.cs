@@ -51,7 +51,7 @@ namespace MudBlazor.Docs.Services
             .AddItem("Alert", typeof(MudAlert))
             .AddItem("Card", typeof(MudCard), typeof(MudCardActions), typeof(MudCardContent), typeof(MudCardHeader), typeof(MudCardMedia))
             .AddItem("Divider", typeof(MudDivider))
-            .AddItem("Expansion Panel", typeof(MudExpansionPanels), typeof(MudExpansionPanel))
+            .AddItem("Expansion Panels", typeof(MudExpansionPanels), typeof(MudExpansionPanel))
             .AddItem("Icons", typeof(MudIcon))
             .AddItem("List", typeof(MudList), typeof(MudListItem), typeof(MudListSubheader))
             .AddItem("Paper", typeof(MudPaper))
