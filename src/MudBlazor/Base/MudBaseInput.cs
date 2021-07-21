@@ -163,7 +163,10 @@ namespace MudBlazor
             Touched = true;
             BeginValidateAfter(OnBlur.InvokeAsync(obj));
         }
-
+        [Parameter] public EventCallback<FocusEventArgs> OnFocus { get; set; }
+        
+        protected virtual void OnFocussed(FocusEventArgs obj) => OnFocus.InvokeAsync(obj).AndForget();
+        
         [Parameter] public EventCallback<KeyboardEventArgs> OnKeyDown { get; set; }
 
         protected virtual void InvokeKeyDown(KeyboardEventArgs obj)
