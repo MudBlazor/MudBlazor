@@ -65,25 +65,13 @@ namespace MudBlazor
         private int _groupSpacing;
         private int _groupPosition;
 
-        private int GetGroupSpacing()
-        {
-            if(AvatarGroup != null)
-            {
-                return AvatarGroup.Spacing;
-            }
-            else
-            {
-                return 0;
-            }
-        }
-
         protected override void OnInitialized()
         {
             base.OnInitialized();
 
             if (AvatarGroup != null)
             {
-                _groupPosition = 99 - AvatarGroup._avatars.Count + 1;
+                _groupPosition = 98 - AvatarGroup._avatars.Count + 1;
                 _groupSpacing = AvatarGroup.Spacing;
                 AvatarGroup.AddAvatar(this);
             }
