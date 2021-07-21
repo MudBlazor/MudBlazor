@@ -253,8 +253,8 @@ namespace MudBlazor.UnitTests.Components.Components
             IHtmlInputElement sColor = GetColorInput(comp, 1);
 
             var expectedColor = comp.Instance.ColorValue.SetS(s);
-
-            sColor.Change(expectedColor.S.ToString());
+            
+            sColor.Change(expectedColor.S.ToString(CultureInfo.InvariantCulture));
 
             CheckColorRelatedValues(comp, selectorXPosition, selectorYPosition, expectedColor, ColorPickerMode.HSL);
         }
@@ -269,7 +269,7 @@ namespace MudBlazor.UnitTests.Components.Components
             IHtmlInputElement lColor = GetColorInput(comp, 2);
 
             var expectedColor = comp.Instance.ColorValue.SetL(l);
-            lColor.Change(expectedColor.L.ToString());
+            lColor.Change(expectedColor.L.ToString(CultureInfo.InvariantCulture));
 
             CheckColorRelatedValues(comp, selectorXPosition, selectorYPosition, expectedColor, ColorPickerMode.HSL);
         }
@@ -284,7 +284,7 @@ namespace MudBlazor.UnitTests.Components.Components
             IHtmlInputElement lColor = GetColorInput(comp, 3);
 
             var expectedColor = comp.Instance.ColorValue.SetAlpha(a);
-            lColor.Change(a.ToString());
+            lColor.Change(a.ToString(CultureInfo.InvariantCulture));
 
             CheckColorRelatedValues(comp, selectorXPosition, selectorYPosition, expectedColor, ColorPickerMode.HSL);
         }
