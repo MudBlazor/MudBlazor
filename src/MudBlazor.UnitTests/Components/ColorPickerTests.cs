@@ -97,10 +97,10 @@ namespace MudBlazor.UnitTests.Components.Components
                 }
                 else
                 {
-                    castedInputs[0].Value.Should().Be(expectedColor.H.ToString());
-                    castedInputs[1].Value.Should().Be(expectedColor.S.ToString());
-                    castedInputs[2].Value.Should().Be(expectedColor.L.ToString());
-                    castedInputs[3].Value.Should().Match(x => double.Parse(x) == Math.Round((expectedColor.A / 255.0), 2));
+                    castedInputs[0].Value.Should().Be(expectedColor.H.ToString(CultureInfo.InvariantCulture));
+                    castedInputs[1].Value.Should().Be(expectedColor.S.ToString(CultureInfo.InvariantCulture));
+                    castedInputs[2].Value.Should().Be(expectedColor.L.ToString(CultureInfo.InvariantCulture));
+                    castedInputs[3].Value.Should().Match(x => double.Parse(x, CultureInfo.InvariantCulture) == Math.Round((expectedColor.A / 255.0), 2));
                 }
             }
             else if (mode == ColorPickerMode.HEX)
