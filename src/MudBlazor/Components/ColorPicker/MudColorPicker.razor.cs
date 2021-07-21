@@ -1,4 +1,4 @@
-﻿// Copyright (c) MudBlazor 2021
+// Copyright (c) MudBlazor 2021
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
@@ -57,7 +57,9 @@ namespace MudBlazor
         #endregion
 
         #region Parameters
-
+        
+        [CascadingParameter] public bool RightToLeft { get; set; }
+        
         private bool _disableAlpha = false;
 
         /// <summary>
@@ -429,7 +431,8 @@ namespace MudBlazor
 
         private Color GetButtonColor(ColorPickerView view) => ColorPickerView == view ? Color.Primary : Color.Inherit;
         private string GetColorDotClass(MudColor color) => new CssBuilder("mud-picker-color-dot").AddClass("selected", color == Value).ToString();
-
+        private string AlphaSliderStyle => new StyleBuilder().AddStyle($"background-image: linear-gradient(to {(RightToLeft ? "left" : "right")}, transparent, {_color.ToString(MudColorOutputFormats.RGB)})").Build();
+        
         #endregion
 
         #region life cycle hooks
