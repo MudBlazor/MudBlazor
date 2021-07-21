@@ -20,10 +20,11 @@ namespace MudBlazor
         /// <typeparam name="T">The type of the event args for instance MouseEventArgs for mousemove</typeparam>
         /// <param name="eventName">Name of the DOM event without "on"</param>
         /// <param name="elementId">The value of the id field of the DOM element</param>
+        /// <param name="projectionName">The name of a JS function (relativ to window) that used to project the event before it is send back to .NET. Can be null, if no projection is needed </param>
         /// <param name="throotleInterval">The delay between the last time the event occured and the callback is fired. Set to zero, if no delay is requested</param>
         /// <param name="callback">The method that is invoked, if the DOM element is fired. Object will be of type T</param>
         /// <returns>A unique identifier for the event subscription. Should be used to cancel the subscription</returns>
-        Task<Guid> Subscribe<T>(string eventName, string elementId, int throotleInterval, Func<object, Task> callback);
+        Task<Guid> Subscribe<T>(string eventName, string elementId, string projectionName, int throotleInterval, Func<object, Task> callback);
 
         /// <summary>
         /// Cancel (unsubscribe) the listining to a DOM event, previous connected by Subscribe
@@ -63,7 +64,7 @@ namespace MudBlazor
             await element.callback?.Invoke(@event);
         }
 
-        public async Task<Guid> Subscribe<T>(string eventName, string elementId, int throotleInterval, Func<object, Task> callback)
+        public async Task<Guid> Subscribe<T>(string eventName, string elementId, string projectionName, int throotleInterval, Func<object, Task> callback)
         {
             Guid key = Guid.NewGuid();
             var type = typeof(T);
@@ -72,7 +73,7 @@ namespace MudBlazor
 
             var properties = type.GetProperties().Select(x => char.ToLower(x.Name[0]) + x.Name.Substring(1)).ToArray();
 
-            await _jsRuntime.InvokeVoidAsync("mudThrottledEventManager.subscribe", eventName, elementId, throotleInterval, key, properties, _dotNetRef);
+            await _jsRuntime.InvokeVoidAsync("mudThrottledEventManager.subscribe", eventName, elementId, projectionName, throotleInterval, key, properties, _dotNetRef);
 
             return key;
         }
@@ -96,7 +97,7 @@ namespace MudBlazor
 
         public async ValueTask DisposeAsync()
         {
-            if(_disposed == true) { return; }
+            if (_disposed == true) { return; }
 
             foreach (var item in _callbackResolver)
             {

@@ -456,7 +456,7 @@ namespace MudBlazor
         private async Task AddMouseOverEvent()
         {
             _throttledMouseOverEventId = await
-                ThrottledEventManager.Subscribe<MouseEventArgs>("mousemove", _id.ToString(), 10, async (x) =>
+                ThrottledEventManager.Subscribe<MouseEventArgs>("mousemove", _id.ToString(), "mudEventProjections.correctOffset", 10, async (x) =>
                 {
                     var e = x as MouseEventArgs;
                     await InvokeAsync(() => OnMouseOver(e));
