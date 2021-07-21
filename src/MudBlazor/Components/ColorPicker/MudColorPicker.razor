@@ -29,7 +29,18 @@
                             <div class="mud-picker-color-overlay mud-picker-color-overlay-white">
                                 <div class="mud-picker-color-overlay mud-picker-color-overlay-black">
                                     <div class="mud-picker-color-overlay" id="@_id" @onclick="OnMouseClick">
-                                        <div class="mud-picker-color-selector" style="transform: @GetSelectorLocation()" @onclick:stopPropagation="true"></div>
+                                        <svg class="mud-picker-color-selector" height="26" width="26" style="transform: @GetSelectorLocation()" @onclick:stopPropagation="true">
+                                            <defs>
+                                                <filter id="mud-picker-color-selector-shadow" x="-50%" y="-50%" width="200%" height="200%">
+                                                    <feGaussianBlur in="SourceAlpha" stdDeviation="1" />
+                                                    <feOffset dx="0" dy="5" result="offsetblur" />
+                                                    <feOffset dx="0" dy="-5" result="offsetblur" />
+                                                    <feMerge><feMergeNode /><feMergeNode in="SourceGraphic" /></feMerge>
+                                                </filter>
+                                            </defs>
+                                            <circle r="10" cx="13" cy="13" stroke="white" stroke-width="1" fill="transparent" style="filter: url(#mud-picker-color-selector-shadow)" />
+                                            <circle r="11" cx="13" cy="13" stroke="white" stroke-width="1.5" fill="transparent" />
+                                        </svg>
                                     </div>
                                 </div>
                             </div>
