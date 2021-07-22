@@ -7,7 +7,16 @@
                 <MudText Align="Align.End">Static dot</MudText>
             </MudTimelineItem>
             <MudTimelineItem Color="@DotColor" Size="@DotSize" Variant="@DotVariant" Elevation="@DotElevation" HideDot="@HideDot">
-                <MudText>Changeable dot</MudText>
+                <ItemDot>
+                    @if(DotConfig == 1)
+                    {
+                        <MudIcon Icon="@Icons.Custom.Brands.MudBlazor"/>
+                    }
+                    else if(DotConfig == 2)
+                    {
+                        <MudAvatar Image="_content/MudBlazor.Docs/images/mony.png" />
+                    }
+                </ItemDot>
             </MudTimelineItem>
             <MudTimelineItem>
                 <MudText Align="Align.End">Static dot</MudText>
@@ -38,7 +47,12 @@
                 <MudSelectItem T="Variant" Value="Variant.Filled">Filled</MudSelectItem>
             </MudSelect>
             <MudSlider @bind-Value="@DotElevation" Step="1" Min="0" Max="25" Class="mt-2">Dot Elevation</MudSlider>
-            <MudCheckBox @bind-Checked="@HideDot" Label="Hide Dot" Class="mt-2" Color="Color.Primary" Dense="true" />
+            <MudRadioGroup T="int" SelectedOptionChanged="DotConfigChanged">
+                <MudRadio Option="0" Color="Color.Primary">Default</MudRadio>
+                <MudRadio Option="1" Color="Color.Secondary">Icon dot</MudRadio>
+                <MudRadio Option="2" Color="Color.Tertiary">Avatar dot</MudRadio>
+                <MudRadio Option="3" Color="Color.Default">Hide dot</MudRadio>
+            </MudRadioGroup>
         </MudPaper>
     </MudItem>
 </MudGrid>
@@ -50,4 +64,20 @@
     public Variant DotVariant { get; set; } = Variant.Outlined;
     public int DotElevation { get; set; } = 1;
     public bool HideDot { get; set; }
+    public int DotConfig;
+
+    void DotConfigChanged(int value)
+    {
+        switch(value)
+        {
+            case 3:
+                DotConfig = value;
+                HideDot = true;
+                break;
+            default:
+                DotConfig = value;
+                HideDot = false;
+                break;
+        }
+    }
 }
