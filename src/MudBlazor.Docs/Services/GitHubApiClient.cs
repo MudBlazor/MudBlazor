@@ -24,7 +24,7 @@ namespace MudBlazor.Docs.Services
         {
             try
             {
-                var result = await _http.GetFromJsonAsync<GithubContributors[]>("https://api.github.com:443/repos/Garderoben/MudBlazor/contributors");
+                var result = await _http.GetFromJsonAsync<GithubContributors[]>("https://api.github.com:443/repos/Garderoben/MudBlazor/contributors?per_page=100");
                 return result;
             }
             catch (Exception e)
