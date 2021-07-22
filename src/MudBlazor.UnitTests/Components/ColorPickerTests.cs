@@ -3,6 +3,7 @@
 #pragma warning disable BL0005 // Set parameter outside component
 
 using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
@@ -80,9 +81,12 @@ namespace MudBlazor.UnitTests.Components.Components
         [TearDown]
         public void TearDown() => ctx.Dispose();
 
-        private void CheckColorRelatedValues(IRenderedComponent<SimpleColorPickerTest> comp, double expectedX, double expectedY, MudColor expectedColor, ColorPickerMode mode)
+        private void CheckColorRelatedValues(IRenderedComponent<SimpleColorPickerTest> comp, double expectedX, double expectedY, MudColor expectedColor, ColorPickerMode mode, bool checkInstanceValue = true)
         {
-            comp.Instance.ColorValue.Should().Be(expectedColor);
+            if (checkInstanceValue == true)
+            {
+                comp.Instance.ColorValue.Should().Be(expectedColor);
+            }
 
             if (mode == ColorPickerMode.RGB || mode == ColorPickerMode.HSL)
             {
@@ -159,7 +163,7 @@ namespace MudBlazor.UnitTests.Components.Components
             comp.Instance.DisablePreview.Should().BeFalse();
             comp.Instance.ColorPickerMode.Should().Be(ColorPickerMode.RGB);
             comp.Instance.ColorPickerView.Should().Be(ColorPickerView.Spectrum);
-            comp.Instance.AlwaysUpdateBinding.Should().BeFalse();
+            comp.Instance.UpdateBindingIfOnlyHSLChanged.Should().BeFalse();
             comp.Instance.Value.Should().Be(_defaultColor);
             comp.Instance.Palette.Should().BeEquivalentTo(_mudGridPaletteDefaultClors);
         }
@@ -253,7 +257,7 @@ namespace MudBlazor.UnitTests.Components.Components
             IHtmlInputElement sColor = GetColorInput(comp, 1);
 
             var expectedColor = comp.Instance.ColorValue.SetS(s);
-            
+
             sColor.Change(expectedColor.S.ToString(CultureInfo.InvariantCulture));
 
             CheckColorRelatedValues(comp, selectorXPosition, selectorYPosition, expectedColor, ColorPickerMode.HSL);
@@ -304,6 +308,23 @@ namespace MudBlazor.UnitTests.Components.Components
             lColor.Change(colorHexString);
 
             CheckColorRelatedValues(comp, selectorXPosition, selectorYPosition, expectedColor, ColorPickerMode.HEX);
+        }
+
+        [Test]
+        [TestCase("#8qb829ff")]
+        public void SetColorInput_InvailidNoChange(string colorHexString)
+        {
+            var comp = ctx.RenderComponent<SimpleColorPickerTest>(p => p.Add(x => x.ColorPickerMode, ColorPickerMode.HEX));
+            Console.WriteLine(comp.Markup);
+
+            var inputs = comp.FindAll(".mud-picker-color-inputs input");
+
+            IHtmlInputElement hexInput = GetColorInput(comp, 0, 1);
+
+            var expectedColor = _defaultColor;
+            hexInput.Change(colorHexString);
+
+            CheckColorRelatedValues(comp, _defaultXForColorPanel, _defaultYForColorPanel, expectedColor, ColorPickerMode.HEX);
         }
 
         [Test]
@@ -719,7 +740,35 @@ namespace MudBlazor.UnitTests.Components.Components
             (inputs[0] as IHtmlInputElement).Value.Should().Be("#0cdc7c78");
 
             comp.Instance.TextValue.Should().Be("#0cdc7c78");
+        }
 
+        [Test]
+        public void ToogleViewMode()
+        {
+            var comp = ctx.RenderComponent<MudColorPicker>(p =>
+            {
+                p.Add(x => x.DisableToolbar, false);
+                p.Add(x => x.PickerVariant, PickerVariant.Static);
+            });
+
+            Console.WriteLine(comp.Markup);
+
+            var buttons = comp.FindAll(".mud-toolbar button");
+
+            Dictionary<int, (ColorPickerView, string)> buttonMapper = new()
+            {
+                { 2, (ColorPickerView.Palette, ".mud-picker-color-view-collection") },
+                { 1, (ColorPickerView.Grid, ".mud-picker-color-grid") },
+                { 0, (ColorPickerView.Spectrum, ".mud-picker-color-overlay") },
+            };
+
+            foreach (var item in buttonMapper)
+            {
+                buttons[item.Key].Click();
+
+                comp.Instance.ColorPickerView.Should().Be(item.Value.Item1);
+                _ = comp.Find(item.Value.Item2);
+            }
         }
 
         [Test]
@@ -1056,6 +1105,52 @@ namespace MudBlazor.UnitTests.Components.Components
             });
 
             comp.Instance.TextValue.Should().Be(expectedOutput);
+        }
+
+        [Test]
+        public void SetNullColor_NothingChanged()
+        {
+            var comp = ctx.RenderComponent<SimpleColorPickerTest>(p =>
+            {
+                p.Add(x => x.ColorPickerMode, ColorPickerMode.HSL);
+            });
+
+            Console.WriteLine(comp.Markup);
+
+            comp.SetParametersAndRender(p => p.Add(x => x.ColorValue, null));
+
+            IHtmlInputElement lColor = GetColorInput(comp, 2);
+            var expectedColor = _defaultColor;
+
+            CheckColorRelatedValues(comp, _defaultXForColorPanel, _defaultYForColorPanel, expectedColor, ColorPickerMode.HSL, false);
+            comp.FindComponent<MudColorPicker>().Instance.Value.Should().Be(_defaultColor);
+        }
+
+        [Test]
+        public void SetHLS_NotChangeRBG_ButCallbackFired()
+        {
+            var comp = ctx.RenderComponent<SimpleColorPickerTest>(p =>
+            {
+                p.Add(x => x.ColorPickerMode, ColorPickerMode.HSL);
+                p.Add(x => x.AlwaysUpdateBinding, true);
+                p.Add(x => x.ColorValue, new MudColor(245, 0.35, 0.95, 1.0));
+            });
+
+            Console.WriteLine(comp.Markup);
+
+            IHtmlInputElement sColor = GetColorInput(comp, 1);
+
+            string colorValue = comp.Instance.ColorValue.ToString(MudColorOutputFormats.HexA);
+            CheckColorRelatedValues(comp, 11.37, 7.84, comp.Instance.ColorValue, ColorPickerMode.HSL);
+
+            var expectedColor = comp.Instance.ColorValue.SetS(comp.Instance.ColorValue.S - 0.01);
+            sColor.Change(expectedColor.S.ToString(CultureInfo.InvariantCulture));
+
+            CheckColorRelatedValues(comp, 11.37, 7.84, expectedColor, ColorPickerMode.HSL);
+            string colorValueAfterChange = comp.Instance.ColorValue.ToString(MudColorOutputFormats.HexA);
+
+            colorValue.Should().Be(colorValueAfterChange);
+            comp.Instance.ValueChangeCallbackCounter.Should().Be(1);
         }
     }
 }

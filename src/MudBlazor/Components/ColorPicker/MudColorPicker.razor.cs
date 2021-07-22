@@ -135,7 +135,7 @@ namespace MudBlazor
         /// <summary>
         /// If true, binding changes occure also when HSL values changed without a corresponding RGB change 
         /// </summary>
-        [Parameter] public bool AlwaysUpdateBinding { get; set; } = false;
+        [Parameter] public bool UpdateBindingIfOnlyHSLChanged { get; set; } = false;
 
         /// <summary>
         /// A two-way bindable property representing the selected value. MudColor is a utility class that can be used to get the value as RGB, HSL, hex or other value
@@ -146,10 +146,13 @@ namespace MudBlazor
             get => _color;
             set
             {
-                bool changed = value != _color;
+                if(value == null) { return; }
+
+                bool rgbChanged = value != _color;
+                bool hslChanged = _color == null ? false : value.HslChanged(_color);
                 _color = value;
 
-                if (changed)
+                if (rgbChanged)
                 {
                     if (_skipFeedback == false)
                     {
@@ -161,7 +164,7 @@ namespace MudBlazor
                     ValueChanged.InvokeAsync(value).AndForget();
                 }
 
-                if (changed == false && AlwaysUpdateBinding)
+                if (rgbChanged == false && UpdateBindingIfOnlyHSLChanged && hslChanged == true)
                 {
                     SetTextAsync(GetColorTextValue(), true).AndForget();
                     ValueChanged.InvokeAsync(value).AndForget();
@@ -375,12 +378,6 @@ namespace MudBlazor
         /// </summary>
         /// <param name="value">A value between 0 (full transparent) and 1 (solid) </param>
         public void SetAlpha(int value) => Value = Value.SetAlpha(value);
-
-        /// <summary>
-        /// Set the Alpha (transparency) component of the color picker
-        /// </summary>
-        /// <param name="value">A value between 0 (full transparent) and 255 (solid) </param>
-        public void SetAlpha(byte value) => Value = Value.SetAlpha(value);
 
         /// <summary>
         /// Set the color of the picker based on the string input

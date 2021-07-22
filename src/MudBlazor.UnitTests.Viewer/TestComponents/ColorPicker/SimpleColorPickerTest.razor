@@ -2,7 +2,7 @@
 
 @using MudBlazor.Utilities
 
-<MudColorPicker @ref="_picker" @bind-Value="ColorValue" TextChanged="@((x) => TextValue = x)" Palette="Palette" 
+<MudColorPicker @ref="_picker" @bind-Value="ColorValue" TextChanged="@((x) => { TextValue = x; ValueChangeCallbackCounter++;  })" Palette="Palette" 
                 DisableToolbar="DisableToolbar" 
                 DisableColorField="DisableColorField" 
                 DisablePreview="DisablePreview" 
@@ -11,10 +11,13 @@
                 DisableModeSwitch="DisableModeSwitch"
                 DisableAlpha="DisableAlpha"
                 ColorPickerView="@ViewMode"
+                AlwaysUpdateBinding="AlwaysUpdateBinding"
                 ColorPickerMode="ColorPickerMode" PickerVariant="Variant" />
 
 @code {
     private MudColorPicker _picker;
+
+    public Int32 ValueChangeCallbackCounter { get; private set; } = 0;
 
     [Parameter] public MudColor ColorValue { get; set; } = "#594ae2";
     [Parameter] public string TextValue { get; set; } = "#594ae2";
@@ -31,6 +34,7 @@
     [Parameter] public bool DisableAlpha { get; set; } = false;
     [Parameter] public ColorPickerView ViewMode { get; set; } = ColorPickerView.Spectrum;
     [Parameter] public PickerVariant Variant { get; set; } = PickerVariant.Static;
+    [Parameter] public bool AlwaysUpdateBinding { get; set; } = false;
 
     public async Task OpenPicker()
     {

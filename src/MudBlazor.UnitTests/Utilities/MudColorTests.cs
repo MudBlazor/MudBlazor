@@ -545,6 +545,11 @@ namespace MudBlazor.UnitTests.Utilities
             MudColor color1 = new(10, 20, 50, 255);
             (color1 == null).Should().BeFalse();
             color1.Equals(null as MudColor).Should().BeFalse();
+
+            MudColor color2 = null;
+
+            (color2 == null).Should().BeTrue();
+            (null == color2).Should().BeTrue();
         }
 
         [Test]
@@ -562,6 +567,45 @@ namespace MudBlazor.UnitTests.Utilities
             MudColor color = new(r, g, b, a);
 
             color.GetHashCode().Should().Be(expectedValue);
+        }
+
+        [Test]
+        public void HLSChanged_HChanged()
+        {
+            MudColor first = new(120, 0.5, 0.4, 1);
+            MudColor second = new(121, 0.5, 0.4, 1);
+
+            first.HslChanged(second).Should().BeTrue();
+            second.HslChanged(first).Should().BeTrue();
+
+            first.HslChanged(first).Should().BeFalse();
+            second.HslChanged(second).Should().BeFalse();
+        }
+
+        [Test]
+        public void HLSChanged_SChanged()
+        {
+            MudColor first = new(120, 0.5, 0.4, 1);
+            MudColor second = new(120, 0.51, 0.4, 1);
+
+            first.HslChanged(second).Should().BeTrue();
+            second.HslChanged(first).Should().BeTrue();
+
+            first.HslChanged(first).Should().BeFalse();
+            second.HslChanged(second).Should().BeFalse();
+        }
+
+        [Test]
+        public void HLSChanged_LChanged()
+        {
+            MudColor first = new(120, 0.5, 0.4, 1);
+            MudColor second = new(120, 0.5, 0.41, 1);
+
+            first.HslChanged(second).Should().BeTrue();
+            second.HslChanged(first).Should().BeTrue();
+
+            first.HslChanged(first).Should().BeFalse();
+            second.HslChanged(second).Should().BeFalse();
         }
     }
 }

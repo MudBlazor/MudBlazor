@@ -217,6 +217,8 @@ namespace MudBlazor.Utilities
             }
         }
 
+
+
         #endregion
 
         #region Methods
@@ -303,6 +305,8 @@ namespace MudBlazor.Utilities
 
         private byte GetByteFromValuePart(string input, int index) => byte.Parse(new string(new char[] { input[index], input[index + 1] }), NumberStyles.HexNumber);
 
+        public bool HslChanged(MudColor value) => this.H != value.H || this.S != value.S || this.L != value.L;
+
         #endregion
 
         #region operators and object members
@@ -339,7 +343,27 @@ namespace MudBlazor.Utilities
 
         public override int GetHashCode() => _valuesAsByte[0] + _valuesAsByte[1] + _valuesAsByte[2] + _valuesAsByte[3];
 
-        public static bool operator ==(MudColor lhs, MudColor rhs) => (!object.ReferenceEquals(null, lhs) && lhs.Equals(rhs));
+        public static bool operator ==(MudColor lhs, MudColor rhs)
+        {
+            bool lhsIsNull = object.ReferenceEquals(null, lhs);
+            bool rhsIsNull = object.ReferenceEquals(null, rhs);
+            if (lhsIsNull == true && rhsIsNull == true)
+            {
+                return true;
+            }
+            else
+            {
+                if ( (lhsIsNull || rhsIsNull) == true)
+                {
+                    return false;
+                }
+                else
+                {
+                    return lhs.Equals(rhs);
+                }
+            }
+        }
+
         public static bool operator !=(MudColor lhs, MudColor rhs) => !(lhs == rhs);
 
         #endregion
