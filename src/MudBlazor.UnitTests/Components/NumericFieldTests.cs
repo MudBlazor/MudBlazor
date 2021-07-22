@@ -394,29 +394,38 @@ namespace MudBlazor.UnitTests
         /// NumericalField removes illegal chars
         /// </summary>
         [Test]
-        public async Task NumericFieldTestIllegalCharacters()
+        public async Task NumericField_should_RemoveIllegalCharacters()
         {
             var comp = ctx.RenderComponent<NumericFieldCultureTest>();
             // print the generated html
             Console.WriteLine(comp.Markup);
-            // select elements needed for the test
-
-            var inputs = comp.FindAll("input");
-            var immediate = inputs.First();
-            var notImmediate = inputs.Last();
+            // select elements needed for the test            
 
             //german
-            notImmediate.Change("abcd");
-            notImmediate.Blur();
+            comp.FindAll("input").Last().Change("abcd");
+            comp.FindAll("input").Last().Blur();
             comp.WaitForAssertion(() => comp.Instance.FieldNotImmediate.Text.Should().Be(null));
             comp.WaitForAssertion(() => comp.Instance.FieldNotImmediate.Value.Should().Be(null));
 
             // English
-            immediate.Input("abcd");
-            immediate.Blur();
+            comp.FindAll("input").First().Input("abcd");
+            comp.FindAll("input").First().Blur();
 
             comp.WaitForAssertion(() => comp.Instance.FieldImmediate.Text.Should().Be(null));
             comp.WaitForAssertion(() => comp.Instance.FieldImmediate.Value.Should().Be(null));
+
+            // English
+            comp.FindAll("input").First().Input("-12-34abc.56");
+            comp.FindAll("input").First().Blur();
+
+            comp.WaitForAssertion(() => comp.Instance.FieldImmediate.Text.Should().Be("-1,234.56"));
+            comp.WaitForAssertion(() => comp.Instance.FieldImmediate.Value.Should().Be(-1234.56));
+
+            comp.FindAll("input").Last().Change("x+17,9y9z");
+            comp.FindAll("input").Last().Blur();
+            comp.WaitForAssertion(() => comp.Instance.FieldNotImmediate.Text.Should().Be("17,99"));
+            comp.WaitForAssertion(() => comp.Instance.FieldNotImmediate.Value.Should().Be(17.99));
+
         }
     }
 }
