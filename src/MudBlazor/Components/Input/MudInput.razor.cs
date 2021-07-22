@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Extensions;
@@ -14,22 +15,21 @@ namespace MudBlazor
 
         protected string AdornmentClassname => MudInputCssHelper.GetAdornmentClassname(this);
 
-        protected string InputTypeString => InputType.ToDescriptionString();
+        /// <summary>
+        /// Type of the input element. It should be a valid HTML5 input type.
+        /// </summary>
+        [Parameter] public InputType InputType { get; set; } = InputType.Text;
 
-        protected override bool ShouldRender()
-        {
-            //when it keeps the focus, it doesn't render to avoid unnecessary trips to the server
-            //except the user presses key enter, so the result must be displayed
-            if (_shouldRenderBeForced) { return true; }
-            if (Immediate && _isFocused && !_showClearableRenderUpdate) { return false; }
-            _showClearableRenderUpdate = false;
-            return true;
-        }
+        internal override InputType GetInputType() => InputType;
+
+        protected string InputTypeString => InputType.ToDescriptionString();
 
         protected Task OnInput(ChangeEventArgs args)
         {
+            if (!Immediate)
+                return Task.CompletedTask;
             _isFocused = true;
-            return Immediate ? SetTextAsync(args?.Value as string) : Task.CompletedTask;
+            return SetTextAsync(args?.Value as string);
         }
 
         protected async Task OnChange(ChangeEventArgs args)
@@ -39,6 +39,18 @@ namespace MudBlazor
             {
                 await SetTextAsync(args?.Value as string);
             }
+        }
+
+        /// <summary>
+        /// Paste hook for descendants.
+        /// </summary>
+#pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
+
+        protected virtual async Task OnPaste(ClipboardEventArgs args)
+#pragma warning restore CS1998 // Async method lacks 'await' operators and will run synchronously
+        {
+            // do nothing
+            return;
         }
 
         /// <summary>
@@ -68,7 +80,6 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public string Placeholder { get; set; }
 
-
         /// <summary>
         /// Invokes the callback when the Up arrow button is clicked when the input is set to <see cref="InputType.Number"/>.
         /// Note: use the optimized control <see cref="MudNumericField{T}"/> if you need to deal with numbers.
@@ -84,23 +95,27 @@ namespace MudBlazor
         /// <summary>
         /// Hides the spin buttons for <see cref="MudNumericField{T}"/>
         /// </summary>
-        [Parameter] public bool HideSpinButtons { get; set; }
+        [Parameter] public bool HideSpinButtons { get; set; } = true;
+
+        /// <summary>
+        /// Show clear button.
+        /// </summary>
+        [Parameter] public bool Clearable { get; set; } = false;
+
+        /// <summary>
+        /// Button click event for clear button. Called after text and value has been cleared.
+        /// </summary>
+        [Parameter] public EventCallback<MouseEventArgs> OnClearButtonClick { get; set; }
 
         private Size GetButtonSize() => Margin == Margin.Dense ? Size.Small : Size.Medium;
 
-
         private bool _showClearable;
-
-        private bool _showClearableRenderUpdate;
 
         private void UpdateClearable(object value)
         {
             var showClearable = Clearable && ((value is string stringValue && !string.IsNullOrWhiteSpace(stringValue)) || (value is not string && value is not null));
             if (_showClearable != showClearable)
-            {
                 _showClearable = showClearable;
-                _showClearableRenderUpdate = true;
-            }
         }
 
         protected override async Task UpdateTextPropertyAsync(bool updateValue)
@@ -117,7 +132,7 @@ namespace MudBlazor
 
         protected virtual async Task ClearButtonClickHandlerAsync(MouseEventArgs e)
         {
-            await SetTextAsync(string.Empty, true);
+            await SetTextAsync(string.Empty, updateValue: true);
             await OnClearButtonClick.InvokeAsync(e);
         }
     }

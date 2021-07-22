@@ -18,9 +18,25 @@
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader Title="Enabling RightToLeft">
+            <SectionHeader Title="MudRTLProvider">
                 <Description>
-                    <MudText>Note that you should use <CodeInline>MudLayout</CodeInline> only once in your application.</MudText>
+                    <MudText>
+                        Wrap your code inside a <CodeInline>MudRTLProvider</CodeInline>.
+                        Note that <CodeInline>MudThemeProvider</CodeInline>, <CodeInline>MudDialogProvider</CodeInline> and <CodeInline>MudSnackbarProvider</CodeInline> must be children of
+                        <CodeInline>MudRTLProvider</CodeInline> in order to support RTL. Your <CodeInline>MainLayout.razor</CodeInline>
+                        can look something like this:
+                    </MudText>
+                </Description>
+            </SectionHeader>
+            <RTLLanguagesMarkdownRtlProvider/>
+        </DocsPageSection>
+        
+        <DocsPageSection>
+            <SectionHeader Title="Example">
+                <Description>
+                    <MudText>
+                        By setting <CodeInline>RightToLeft="true"</CodeInline> you can change the layout to RTL.
+                    </MudText>
                 </Description>
             </SectionHeader>
             <SectionContent DarkenBackground="true" AutoMarginContent="false">

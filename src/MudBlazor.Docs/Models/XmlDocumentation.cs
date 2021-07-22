@@ -241,12 +241,23 @@ namespace MudBlazor.Docs.Models
 
         public static void LoadXmlDocumentation(Assembly assembly)
         {
+            string xmlFilePath;
+
             if (LoadedAssemblies.Contains(assembly))
             {
                 return;
             }
+
             var directoryPath = assembly.GetDirectoryPath();
-            var xmlFilePath = Path.Combine(directoryPath, assembly.GetName().Name + ".xml");
+            if (!string.IsNullOrEmpty(directoryPath))
+            {
+                xmlFilePath = Path.Combine(directoryPath, assembly.GetName().Name + ".xml");
+            }
+            else
+            {
+                xmlFilePath = assembly.GetName().Name + ".xml";
+            }
+
             if (File.Exists(xmlFilePath))
             {
                 using var streamReader = new StreamReader(xmlFilePath);
@@ -326,7 +337,7 @@ namespace MudBlazor.Docs.Models
                 string.Empty;
             var parametersString =
                 parameterInfos.Length > 0 ?
-                "(" + string.Join(",", methodInfo.GetParameters().Select(x => GetXmlDocumenationFormattedString(x.ParameterType, true, typeGenericMap, methodGenericMap))) + ")" :
+                "(" + string.Join(",", methodInfo.GetParameters().Select(x => GetXmlDocumenationFormattedString(x.ParameterType, true, typeGenericMap, methodGenericMap))).Replace("MudBlazor.Docs.Models.T", "`0") + ")" :
                 string.Empty;
 
             var key =

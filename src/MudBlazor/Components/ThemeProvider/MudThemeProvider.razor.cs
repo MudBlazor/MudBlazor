@@ -9,6 +9,11 @@ namespace MudBlazor
     {
         [Parameter] public MudTheme Theme { get; set; }
 
+        /// <summary>
+        ///  If true, will not apply MudBlazor styled scrollbar and use browser default. 
+        /// </summary>
+        [Parameter] public bool DefaultScrollbar { get; set; }
+
         protected override void OnInitialized()
         {
             if (Theme == null)
@@ -28,6 +33,20 @@ namespace MudBlazor
             theme.AppendLine("}");
             theme.AppendLine("</style>");
             return theme.ToString();
+        }
+
+        public string BuildMudBlazorScrollbar()
+        {
+            var scrollbar = new StringBuilder();
+            scrollbar.AppendLine("<style>");
+            scrollbar.AppendLine("::-webkit-scrollbar {width: 8px;height: 8px;z-index: 1;}");
+            scrollbar.AppendLine("::-webkit-scrollbar-track {background: transparent;}");
+            scrollbar.AppendLine("::-webkit-scrollbar-thumb {background: #c4c4c4;border-radius: 1px;}");
+            scrollbar.AppendLine("::-webkit-scrollbar-thumb:hover {background: #a6a6a6;}");
+            //Firefox
+            scrollbar.AppendLine("html, body * {scrollbar-color: #c4c4c4 transparent;scrollbar-width: thin;}");
+            scrollbar.AppendLine("</style>");
+            return scrollbar.ToString();
         }
 
         // private const string Breakpoint = "mud-breakpoint";

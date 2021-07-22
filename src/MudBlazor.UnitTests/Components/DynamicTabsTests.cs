@@ -129,11 +129,12 @@ namespace MudBlazor.UnitTests.Components
                 actual.Should().BeEquivalentTo(expected);
 
                 var parent = (IHtmlElement)item.Parent;
-                parent.Children.Should().HaveCount(2);
+                parent.Children.Should().HaveCount(1);
 
-                var toolTip = parent.Children[1];
-                toolTip.ClassList.Should().StartWith(new string[] { "mud-tooltip" });
-                toolTip.TextContent.Should().Be("close here");
+                //the tooltips are now portaled
+                //var toolTip = parent.Children[1];
+                //toolTip.ClassList.Should().StartWith(new string[] { "mud-tooltip" });
+                //toolTip.TextContent.Should().Be("close here");
             }
 
             var addButtons = comp.FindAll(".my-add-icon-class");
@@ -150,11 +151,11 @@ namespace MudBlazor.UnitTests.Components
                 actual.Should().BeEquivalentTo(expected);
 
                 var parent = (IHtmlElement)item.Parent;
-                parent.Children.Should().HaveCount(2);
+                parent.Children.Should().HaveCount(1);
 
-                var toolTip = parent.Children[1];
-                toolTip.ClassList.Should().StartWith(new string[] { "mud-tooltip" });
-                toolTip.TextContent.Should().Be("add here");
+                //var toolTip = parent.Children[1];
+                //toolTip.ClassList.Should().StartWith(new string[] { "mud-tooltip" });
+                //toolTip.TextContent.Should().Be("add here");
             }
         }
 

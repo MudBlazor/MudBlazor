@@ -15,7 +15,7 @@
   <PropertyGroup>
     <Title>MudBlazor</Title>
     <PackageId>MudBlazor</PackageId>
-    <Version>5.0.15</Version>
+    <Version>5.1.0-dev.1</Version>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <PackageIcon>Nuget.png</PackageIcon>
     <Company>MudBlazor</Company>
@@ -36,8 +36,6 @@
   <ItemGroup>
     <None Include="..\..\LICENSE" Pack="true" Visible="false" PackagePath="" />
     <None Include="..\..\content\Nuget.png" Pack="true" Visible="false" PackagePath="" />
-    <None Include="Components\Carousel\MudCarousel.razor" />
-    <None Include="Components\Carousel\MudCarouselItem.razor" />
   </ItemGroup>
 
   <!--Is this a rebuild - Dont clean generated files as this breaks rebuild behaviour-->
@@ -107,6 +105,14 @@
     <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
       <_Parameter1>MudBlazor.UnitTests</_Parameter1>
     </AssemblyAttribute>
+  </ItemGroup>
+
+  <ItemGroup>
+    <!--For automatic compile on save of the scss use
+    cd ./src/MudBlazor
+    dotnet watch webcompiler ./Styles/MudBlazor.scss -c excubowebcompiler.json
+    -->
+    <Watch Include="**/*.scss" />
   </ItemGroup>
 
 </Project>

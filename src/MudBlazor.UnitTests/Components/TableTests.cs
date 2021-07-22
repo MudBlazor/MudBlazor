@@ -738,12 +738,33 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// The server-side loaded table should reload when mobile sort if performed.
+        /// The server-side loaded table should reload when mobile sort if performed
+        /// (IEnumerable variation).
         /// </summary>
         [Test]
         public async Task TableServerSideDataTest4()
         {
             var comp = ctx.RenderComponent<TableServerSideDataTest4>();
+            Console.WriteLine(comp.Markup);
+            comp.FindAll("tr").Count.Should().Be(4); // three rows + header row
+            comp.FindAll("td")[0].TextContent.Trim().Should().Be("1");
+            comp.FindAll("td")[2].TextContent.Trim().Should().Be("2");
+            comp.FindAll("td")[4].TextContent.Trim().Should().Be("3");
+            comp.FindAll("div.mud-select-input")[0].Click(); // mobile sort drop down
+            comp.FindAll("div.mud-list-item-clickable")[1].Click(); // sort b column
+            comp.FindAll("td")[0].TextContent.Trim().Should().Be("3");
+            comp.FindAll("td")[2].TextContent.Trim().Should().Be("2");
+            comp.FindAll("td")[4].TextContent.Trim().Should().Be("1");
+        }
+
+        /// <summary>
+        /// The server-side loaded table should reload when mobile sort if performed
+        /// (IQueryable variation).
+        /// </summary>
+        [Test]
+        public async Task TableServerSideDataTest4b()
+        {
+            var comp = ctx.RenderComponent<TableServerSideDataTest4b>();
             Console.WriteLine(comp.Markup);
             comp.FindAll("tr").Count.Should().Be(4); // three rows + header row
             comp.FindAll("td")[0].TextContent.Trim().Should().Be("1");
@@ -790,7 +811,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task TableInlineEdit_CheckMemoryUsage()
+        public async Task TableInlineEdit_TableRowValidator()
         {
             var comp = ctx.RenderComponent<TableInlineEditTest>();
             var validator = new TableRowValidatorTest();
@@ -928,6 +949,38 @@ namespace MudBlazor.UnitTests.Components
 
             // Check that the result should be true
             result.Should().Be(true);
+        }
+
+        /// <summary>
+        /// This test validates that when the CanCancel option is set to true and no SelectedItem has been defined, 
+        /// by clicking on another row, the previous row is no longer editable. Meaning there are always only 2 buttons
+        /// </summary>
+        [Test]
+        public async Task TableInlineEditCancel4Test()
+        {
+            // Get access to the test table
+            var comp = ctx.RenderComponent<TableInlineEditCancelNoSelectedItemTest>();
+
+            // List all the rows
+            var trs = comp.FindAll("tr");
+
+            // Click on the third row
+            trs[3].Click();
+
+            // How many buttons? It should be equal to 2. One for commit and one for cancel
+            comp.FindAll("button").Count.Should().Be(2);
+
+            // Click on the second row
+            trs[2].Click();
+
+            // How many buttons? It should always be equal to 2
+            comp.FindAll("button").Count.Should().Be(2);
+
+            // Click on the first row
+            trs[1].Click();
+
+            // How many buttons? It should always be equal to 2
+            comp.FindAll("button").Count.Should().Be(2);
         }
 
         /// <summary>
