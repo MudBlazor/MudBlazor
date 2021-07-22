@@ -18,6 +18,7 @@
                           OnKeyDown="@this.OnInputKeyDown"
                           OnKeyUp="@this.OnInputKeyUp" autocomplete=@("mud-disabled-"+Guid.NewGuid()) KeyUpPreventDefault="KeyUpPreventDefault"
                           Placeholder="@Placeholder" Immediate="true"
+                          InputMode="@InputMode" Pattern="@Pattern"
                           T="string" />
                 <MudPopover Open="@IsOpen" MaxHeight="@MaxHeight" Direction="@Direction" OffsetX="@OffsetX" OffsetY="@OffsetY">
                     @if (_items != null && _items.Length != 0)
