@@ -69,17 +69,22 @@ namespace MudBlazor
         [Parameter] public bool HideDot { get; set; }
 
         /// <summary>
-        /// If used renders child content of the TimelineOppositeContent.
+        /// If used renders child content of the ItemOpposite.
         /// </summary>
-        [Parameter] public RenderFragment TimelineOppositeContent { get; set; }
+        [Parameter] public RenderFragment ItemOpposite { get; set; }
 
         /// <summary>
-        /// If used renders child content of the TimelineItemContent.
+        /// If used renders child content of the ItemContent.
         /// </summary>
-        [Parameter] public RenderFragment TimelineItemContent { get; set; }
+        [Parameter] public RenderFragment ItemContent { get; set; }
 
         /// <summary>
-        /// Optional child content
+        /// If used renders child content of the ItemDot.
+        /// </summary>
+        [Parameter] public RenderFragment ItemDot { get; set; }
+
+        /// <summary>
+        /// Optional child content if no other RenderFragments is used.
         /// </summary>
         [Parameter] public RenderFragment ChildContent { get; set; }
 

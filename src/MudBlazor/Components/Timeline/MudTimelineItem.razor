@@ -7,23 +7,28 @@
         {
             @ChildContent
         }
-        else if (TimelineItemContent != null)
+        else if (ItemContent != null)
         {
-            @TimelineItemContent
+            @ItemContent
         }
     </div>
     <div class="mud-timeline-item-divider">
         @if(!HideDot)
         {
             <div class="@DotClassnames">
-                <div class="@DotInnerClassnames"></div>
+                <div class="@DotInnerClassnames">
+                    @if(ItemDot != null)
+                    {
+                        @ItemDot
+                    }
+                </div>
             </div>
         }
     </div>
-    @if (TimelineOppositeContent != null)
+    @if (ItemOpposite != null)
     {
         <div class="mud-timeline-item-opposite">
-            @TimelineOppositeContent
+            @ItemOpposite
         </div>
     }
 </div>

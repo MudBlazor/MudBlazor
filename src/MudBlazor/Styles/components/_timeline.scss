@@ -303,6 +303,7 @@
 
         @each $color in $mud-palette-colors {
             &.mud-timeline-dot-#{$color} {
+                color: var(--mud-palette-#{$color}-text);
                 background-color: var(--mud-palette-#{$color});
             }
         }
