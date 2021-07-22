@@ -207,8 +207,10 @@ namespace MudBlazor.Services
                 .AddMudBlazorResizeObserverFactory()
                 .AddMudBlazorScrollManager()
                 .AddMudBlazorScrollListener()
+                .AddMudBlazorJsApi()
+                .AddMudBlazorPortal()
                 .AddMudBlazorScrollSpy()
-                .AddMudBlazorJsApi();
+                .AddMudEventManager();
         }
 
         /// <summary>
@@ -231,8 +233,10 @@ namespace MudBlazor.Services
                 .AddMudBlazorResizeObserverFactory()
                 .AddMudBlazorScrollManager()
                 .AddMudBlazorScrollListener()
+                .AddMudBlazorJsApi()
+                .AddMudBlazorPortal()
                 .AddMudBlazorScrollSpy()
-                .AddMudBlazorJsApi();
+                .AddMudEventManager();
         }
     }
 }
