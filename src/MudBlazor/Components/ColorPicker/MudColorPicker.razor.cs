@@ -246,6 +246,10 @@ namespace MudBlazor
         private void UpdateBaseColor()
         {
             var index = (int)_color.H / 60;
+            if(index == 6)
+            {
+                index = 5;
+            }
 
             int valueInDeg = (int)_color.H - (index * 60);
             int value = (int)(MathExtensions.Map(0, 60, 0, 255, valueInDeg));
@@ -277,6 +281,11 @@ namespace MudBlazor
         {
             var hueValue = (int)MathExtensions.Map(0, 360, 0, 6 * 255, _color.H);
             int index = hueValue / 255;
+            if(index == 6)
+            {
+                index = 5;
+            }
+
             var section = _rgbToHueMapper[index];
 
             var colorValues = section.dominantColorPart switch

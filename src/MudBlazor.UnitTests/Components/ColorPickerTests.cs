@@ -81,7 +81,7 @@ namespace MudBlazor.UnitTests.Components.Components
         [TearDown]
         public void TearDown() => ctx.Dispose();
 
-        private void CheckColorRelatedValues(IRenderedComponent<SimpleColorPickerTest> comp, double expectedX, double expectedY, MudColor expectedColor, ColorPickerMode mode, bool checkInstanceValue = true)
+        private void CheckColorRelatedValues(IRenderedComponent<SimpleColorPickerTest> comp, double expectedX, double expectedY, MudColor expectedColor, ColorPickerMode mode, bool checkInstanceValue = true, bool isRtl = false)
         {
             if (checkInstanceValue == true)
             {
@@ -133,7 +133,14 @@ namespace MudBlazor.UnitTests.Components.Components
 
             var alphaSliderStyleAttritbute = (alphaSlider[0].Parent as IHtmlElement).GetAttribute("style");
 
-            alphaSliderStyleAttritbute.Should().Be($"background-image: linear-gradient(to right, transparent, {expectedColor.ToString(MudColorOutputFormats.RGB)});");
+            if (isRtl == false)
+            {
+                alphaSliderStyleAttritbute.Should().Be($"background-image: linear-gradient(to right, transparent, {expectedColor.ToString(MudColorOutputFormats.RGB)});");
+            }
+            else
+            {
+                alphaSliderStyleAttritbute.Should().Be($"background-image: linear-gradient(to left, transparent, {expectedColor.ToString(MudColorOutputFormats.RGB)});");
+            }
         }
 
         private IHtmlInputElement[] GetColorInputs(IRenderedComponent<SimpleColorPickerTest> comp, int expectedCount = 4)
@@ -426,7 +433,7 @@ namespace MudBlazor.UnitTests.Components.Components
             var comp = ctx.RenderComponent<SimpleColorPickerTest>();
             Console.WriteLine(comp.Markup);
 
-            for (int i = 0; i < 360; i++)
+            for (int i = 0; i <= 360; i++)
             {
                 var expectedColor = comp.Instance.ColorValue.SetH(i);
 
@@ -1151,6 +1158,19 @@ namespace MudBlazor.UnitTests.Components.Components
 
             colorValue.Should().Be(colorValueAfterChange);
             comp.Instance.ValueChangeCallbackCounter.Should().Be(1);
+        }
+
+        [Test]
+        public void RTL_AlphaSliderInverseStyle()
+        {
+            var comp = ctx.RenderComponent<SimpleColorPickerTest>(p =>
+            {
+                p.AddCascadingValue(true);
+            });
+
+            Console.WriteLine(comp.Markup);
+
+            CheckColorRelatedValues(comp, _defaultXForColorPanel, _defaultYForColorPanel, comp.Instance.ColorValue, ColorPickerMode.RGB, true, true);
         }
     }
 }

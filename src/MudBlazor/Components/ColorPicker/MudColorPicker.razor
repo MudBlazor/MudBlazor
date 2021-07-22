@@ -76,7 +76,7 @@
                                     <div class="mud-picker-color-sliders">
                                         @if (ColorPickerView != ColorPickerView.Grid)
                                         {
-                                            <MudSlider Class="mud-picker-color-slider hue" dir="ltr" T="int" Value="(int)_color.H" ValueChanged="UpdateBaseColorSlider" Step="1" Min="0" Max="359" />
+                                            <MudSlider Class="mud-picker-color-slider hue" dir="ltr" T="int" Value="(int)_color.H" ValueChanged="UpdateBaseColorSlider" Step="1" Min="0" Max="360" />
                                         }
                                         @if (!DisableAlpha)
                                         {
