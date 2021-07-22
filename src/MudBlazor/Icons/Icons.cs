@@ -17,12 +17,14 @@ namespace MudBlazor
             public static readonly Outlined Outlined = new Outlined();
             public static readonly Rounded Rounded = new Rounded();
             public static readonly Sharp Sharp = new Sharp();
+            public static readonly TwoTone TwoTone = new TwoTone();
         }
 
         public static readonly Filled Filled = new Filled();
         public static readonly Outlined Outlined = new Outlined();
         public static readonly Rounded Rounded = new Rounded();
         public static readonly Sharp Sharp = new Sharp();
+        public static readonly TwoTone TwoTone = new TwoTone();
     }
 }
 
