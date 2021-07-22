@@ -2,56 +2,60 @@
 @using MudBlazor.Utilities
 
 
-<MudPaper Elevation="0" Class="mud-width-full mud-height-full d-flex justify-center align-end pb-8" MinHeight="600px" Style="@($"background-image:linear-gradient({degrees}deg, rgb({_gradientPrimary.R}, {_gradientPrimary.G}, {_gradientPrimary.B}) 0%, rgb({_gradientSecondary.R}, {_gradientSecondary.G}, {_gradientSecondary.B}) 100%);")">
+<MudPaper Elevation="0" Class="mud-width-full mud-height-full d-flex justify-center align-end pb-8" MinHeight="600px" Style="@($"background-image:linear-gradient({degrees}deg, {_gradientPrimary.ToString(MudColorOutputFormats.RGBA)} 0%, {_gradientSecondary.ToString(MudColorOutputFormats.RGBA)} 100%);")">
     <MudPaper Class="d-flex">
-        <MudColorPicker Rounded="true" Class="rounded-tr-0" PickerVariant="PickerVariant.Static" DisableModeSwitch="true" ValueChanged="UpdateSelectedColor" />
+        <MudColorPicker Rounded="true" Class="rounded-tr-0" PickerVariant="PickerVariant.Static" DisableModeSwitch="true" Value="_pickerColor" ValueChanged="UpdateSelectedColor" />
         <div class="pa-2">
             <MudText Typo="Typo.h6" Class="mx-1">Gradient Colors</MudText>
-            <div class="d-flex flex-row pa-2 rounded" @onclick="(() => SwapColor(0))" style="cursor:pointer;">
-                <MudPaper Height="56px" Width="56px" Class="rounded" Style="@($"background-color:{_gradientPrimary};")"></MudPaper>
-                <MudTextField Class="ms-2 mt-0" @bind-Value="_gradientPrimary" Variant="Variant.Outlined" ReadOnly="true"></MudTextField>
-            </div>
-            <div class="d-flex flex-row pa-2 rounded mt-4" @onclick="(() => SwapColor(1))" style="cursor:pointer;">
-                <MudPaper Height="56px" Width="56px" Class="rounded" Style="@($"background-color:{_gradientSecondary};")"></MudPaper>
-                <MudTextField Class="ms-2 mt-0" @bind-Value="_gradientSecondary" Variant="Variant.Outlined" ReadOnly="true"></MudTextField>
-            </div>
+
+            <MudList Clickable="true" SelectedItemChanged="ChangeSelectedColor">
+                <MudListItem Text="1">
+                    <div class="mud-width-full rounded py-4" style="@($"background-color:{_gradientPrimary};")"></div>
+                </MudListItem>
+                <MudListItem Text="2">
+                    <div class="mud-width-full rounded py-4" style="@($"background-color:{_gradientSecondary};")"></div>
+                </MudListItem>
+            </MudList>
             <MudSlider Min="0" Max="360" Step="1" @bind-Value="@degrees" Class="px-2">Degrees</MudSlider>
         </div>
     </MudPaper>
 </MudPaper>
 
 
-
-
 @code {
     public MudColor _gradientPrimary = "#594AE2";
     public MudColor _gradientSecondary = "#FF4081";
+    public MudColor _pickerColor = "#594AE2";
 
     int degrees = 90;
-    int currentColor = 0;
 
-    void SwapColor(int value)
+    bool _isFirstColor = true;
+
+    public void ChangeSelectedColor(MudListItem item)
     {
-        switch(value)
+        if (item.Text == "1")
         {
-            case 0:
-                currentColor = 0;
-                UpdateSelectedColor(_gradientPrimary);
-                break;
-            case 1:
-                currentColor = 1;
-                UpdateSelectedColor(_gradientSecondary);
-                break;
+            _isFirstColor = true;
+            _pickerColor = _gradientPrimary;
+            UpdateSelectedColor(_gradientPrimary);
+        }
+        else if (item.Text == "2")
+        {
+            _isFirstColor = false;
+            _pickerColor = _gradientSecondary;
+            UpdateSelectedColor(_gradientSecondary);
         }
     }
 
     public void UpdateSelectedColor(MudColor value)
     {
-        if(currentColor == 0)
+        _pickerColor = value;
+
+        if (_isFirstColor)
         {
             _gradientPrimary = value;
         }
-        else if(currentColor == 1)
+        else
         {
             _gradientSecondary = value;
         }
