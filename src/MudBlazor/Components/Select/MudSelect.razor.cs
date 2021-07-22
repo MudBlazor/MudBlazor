@@ -257,6 +257,16 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public bool Strict { get; set; }
 
+        /// <summary>
+        /// Show clear button.
+        /// </summary>
+        [Parameter] public bool Clearable { get; set; } = false;
+
+        /// <summary>
+        /// Button click event for clear button. Called after text and value has been cleared.
+        /// </summary>
+        [Parameter] public EventCallback<MouseEventArgs> OnClearButtonClick { get; set; }
+
         internal bool _isOpen;
 
         public string _currentIcon { get; set; }
