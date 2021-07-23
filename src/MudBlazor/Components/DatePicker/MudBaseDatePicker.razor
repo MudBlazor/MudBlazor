@@ -17,6 +17,10 @@
         <div class="mud-picker-calendar-content @($"mud-picker-calendar-content-{MaxMonthColumns ?? DisplayMonths}")">
             @{
                 int dayId = 0;
+                @if (_picker_month.HasValue && _picker_month.Value.Year == 1 && _picker_month.Value.Month == 1)
+                {
+                    dayId = -1;
+                }
             }
             @for (int displayMonth = 0; displayMonth < DisplayMonths; ++displayMonth)
             {
@@ -100,15 +104,42 @@
                                     @foreach (var day in GetWeek(tempMonth, tempWeek))
                                     {
                                         var tempId = ++dayId;
-                                        <button @key="day" type="button" style="--day-id: @tempId;"
-                                                class="mud-button-root mud-icon-button mud-ripple mud-ripple-icon mud-picker-calendar-day @GetDayClasses(tempMonth, day)"
-                                                @onclick="(() => { var d = day; OnDayClicked(d); })"
-                                                @onclick:stopPropagation="true"
-                                                aria-label='@day.ToString("dddd, dd MMMM yyyy")'
-                                                onmouseover="this.closest('.mud-picker-calendar-content').style.setProperty('--selected-day', @tempId);"
-                                                disabled="@((day < MinDate) || (day > MaxDate) || IsDateDisabledFunc(day))">
-                                            <p class="mud-typography mud-typography-body2 mud-inherit-text">@GetCalendarDayOfMonth(day)</p>
-                                        </button>
+                                        @if (_picker_month.HasValue && _picker_month.Value.Year == 1 && _picker_month.Value.Month == 1)
+                                        {
+                                            @if (tempId != 0)
+                                            { 
+                                                var yesterday = day.AddDays(-1);
+                                                <button @key="tempId" type="button" style="--day-id: @(tempId + 1);"
+                                                        class="mud-button-root mud-icon-button mud-ripple mud-ripple-icon mud-picker-calendar-day @(day.Day == _picker_month.Value.Day? GetDayClasses(tempMonth, day) : GetDayClasses(tempMonth, yesterday))"
+                                                        @onclick="(() => { var d = yesterday; OnDayClicked(d); })"
+                                                        @onclick:stopPropagation="true"
+                                                        aria-label='@yesterday.ToString("dddd, dd MMMM yyyy")'
+                                                        onmouseover="this.closest('.mud-picker-calendar-content').style.setProperty('--selected-day', @(tempId + 1));"
+                                                        disabled="@((yesterday < MinDate) || (yesterday > MaxDate) || IsDateDisabledFunc(yesterday))">
+                                                    <p class="mud-typography mud-typography-body2 mud-inherit-text">@GetCalendarDayOfMonth(yesterday)</p>
+                                                </button>
+                                            }
+                                            else
+                                            {
+                                                <button @key="tempId" type="button" style="--day-id: 1;"
+                                                        class="mud-button-root mud-icon-button mud-ripple mud-ripple-icon mud-picker-calendar-day mud-day"
+                                                        aria-label='' disabled>
+                                                    <p class="mud-typography mud-typography-body2 mud-inherit-text"></p>
+                                                </button>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <button @key="day" type="button" style="--day-id: @tempId;"
+                                                    class="mud-button-root mud-icon-button mud-ripple mud-ripple-icon mud-picker-calendar-day @GetDayClasses(tempMonth, day)"
+                                                    @onclick="(() => { var d = day; OnDayClicked(d); })"
+                                                    @onclick:stopPropagation="true"
+                                                    aria-label='@day.ToString("dddd, dd MMMM yyyy")'
+                                                    onmouseover="this.closest('.mud-picker-calendar-content').style.setProperty('--selected-day', @tempId);"
+                                                    disabled="@((day < MinDate) || (day > MaxDate) || IsDateDisabledFunc(day))">
+                                                <p class="mud-typography mud-typography-body2 mud-inherit-text">@GetCalendarDayOfMonth(day)</p>
+                                            </button>
+                                        }
                                     }
                                 }
                             </div>
