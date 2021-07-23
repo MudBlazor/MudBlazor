@@ -4,8 +4,8 @@ namespace MudBlazor
 {
     public enum TimelineAlign
     {
-        [Description("auto")]
-        Auto,
+        [Description("default")]
+        Default,
         [Description("start")]
         Start,
         [Description("end")]

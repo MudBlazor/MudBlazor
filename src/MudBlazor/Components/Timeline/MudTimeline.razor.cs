@@ -16,8 +16,10 @@ namespace MudBlazor
             new CssBuilder("mud-timeline")
                 .AddClass($"mud-timeline-{TimelineOrientation.ToDescriptionString()}")
                 .AddClass($"mud-timeline-position-{ConvertTimelinePosition(TimelinePosition).ToDescriptionString()}")
-                .AddClass("mud-timeline-reverse", Reverse && TimelinePosition == TimelinePosition.Alternate)
-                .AddClass("mud-timeline-rtl", RightToLeft)
+                .AddClass($"mud-timeline-reverse", Reverse && TimelinePosition == TimelinePosition.Alternate)
+                .AddClass($"mud-timeline-align-{TimelineAlign.ToDescriptionString()}")
+                .AddClass($"mud-timeline-modifiers", !DisableModifiers)
+                .AddClass($"mud-timeline-rtl", RightToLeft)
                 .AddClass(Class)
                 .Build();
 
@@ -60,8 +62,18 @@ namespace MudBlazor
         [Parameter] public TimelinePosition TimelinePosition { get; set; } = TimelinePosition.Alternate;
 
         /// <summary>
+        /// Aligns the dot and any item modifiers is changed, in default mode they are centered to the item.
+        /// </summary>
+        [Parameter] public TimelineAlign TimelineAlign { get; set; } = TimelineAlign.Default;
+
+        /// <summary>
         /// Reverse the order of TimelineItems when TimelinePosition is set to Alternate.
         /// </summary>
         [Parameter] public bool Reverse { get; set; }
+
+        /// <summary>
+        /// If true, disabels all TimelineItem modifiers, like adding a caret to a MudCard.
+        /// </summary>
+        [Parameter] public bool DisableModifiers { get; set; }
     }
 }
