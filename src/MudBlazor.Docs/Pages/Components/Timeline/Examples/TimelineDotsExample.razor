@@ -10,11 +10,11 @@
                 <ItemDot>
                     @if(DotConfig == 1)
                     {
-                        <MudIcon Icon="@Icons.Custom.Brands.MudBlazor"/>
+                        <MudIcon Size="@DotSize" Icon="@Icons.Custom.Brands.MudBlazor"/>
                     }
                     else if(DotConfig == 2)
                     {
-                        <MudAvatar Image="_content/MudBlazor.Docs/images/mony.png" />
+                        <MudAvatar Size="@DotSize" Image="_content/MudBlazor.Docs/images/mony.png" />
                     }
                 </ItemDot>
             </MudTimelineItem>
@@ -49,9 +49,9 @@
             <MudSlider @bind-Value="@DotElevation" Step="1" Min="0" Max="25" Class="mt-2">Dot Elevation</MudSlider>
             <MudRadioGroup T="int" SelectedOptionChanged="DotConfigChanged">
                 <MudRadio Option="0" Color="Color.Primary">Default</MudRadio>
-                <MudRadio Option="1" Color="Color.Secondary">Icon dot</MudRadio>
-                <MudRadio Option="2" Color="Color.Tertiary">Avatar dot</MudRadio>
-                <MudRadio Option="3" Color="Color.Default">Hide dot</MudRadio>
+                <MudRadio Option="1" Color="Color.Secondary">Icon</MudRadio>
+                <MudRadio Option="2" Color="Color.Tertiary">Avatar</MudRadio>
+                <MudRadio Option="3" Color="Color.Default">Hide</MudRadio>
             </MudRadioGroup>
         </MudPaper>
     </MudItem>

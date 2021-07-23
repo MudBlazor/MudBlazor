@@ -16,7 +16,7 @@
 
         <DocsPageSection>
             <SectionHeader Title="Item Dots">
-                <Description>The dot of eatch <CodeInline>TimelineItem</CodeInline> can be changed individually.</Description>
+                <Description>The dot of eatch <CodeInline>TimelineItem</CodeInline> can be changed individually. And can contain conent, like icons and avatars.</Description>
             </SectionHeader>
             <SectionContent Outlined="true" FullWidth="true" Class="pa-0">
                 <TimelineDotsExample />
@@ -26,27 +26,17 @@
 
         <DocsPageSection>
             <SectionHeader Title="Orientation and Position">
-                <Description>With <CodeInline>TimelineOrientation</CodeInline> you can determine which direction the timeline should go, and with <CodeInline>TimelinePosition</CodeInline> you can set a specific side the line and its items should follow.<br />Note that timelineitems that have content on both sides only display that in <CodeInline>Alternate</CodeInline> position. Start and End will change side in RTL mode while Left and Right doesn't.</Description>
+                <Description><CodeInline>TimelineOrientation</CodeInline> can determine which direction the timeline should go, and <CodeInline>TimelinePosition</CodeInline> sets the lines position.</Description>
             </SectionHeader>
             <SectionContent Outlined="true" FullWidth="true">
-                <TimelineModeExample />
+                <TimelineOrientationPositionExample />
             </SectionContent>
-            <SectionSource Code="TimelineModeExample" GitHubFolderName="timeline" ShowCode="false" />
-        </DocsPageSection>
-
-        <DocsPageSection>
-            <SectionHeader Title="TimelineItem Align">
-                <Description>By setting the <CodeInline>TimelineAlign</CodeInline> on individual <CodeInline>TimelineItems</CodeInline> you can overide the item order from <CodeInline>TimelineMode</CodeInline>. This can be useful when creating dynamic timelines to have better control over the order and when you want to force several items after eatch other but not change the <CodeInline>TimelineMode</CodeInline>.</Description>
-            </SectionHeader>
-            <SectionContent Outlined="true" FullWidth="true">
-                <TimelineItemAlignExample />
-            </SectionContent>
-            <SectionSource Code="TimelineItemAlignExample" GitHubFolderName="timeline" ShowCode="false" />
+            <SectionSource Code="TimelineOrientationPositionExample" GitHubFolderName="timeline" ShowCode="false" />
         </DocsPageSection>
 
         <DocsPageSection>
             <SectionHeader Title="Opposite">
-                <Description>Using <CodeInline>TimelineOppositeContent</CodeInline> allows for content to be displayed on both sides. Note that opposite content only is displayed in default and reverse <CodeInline>TimelineMode </CodeInline></Description>
+                <Description>Using <CodeInline>ItemOpposite</CodeInline> renderfragment allows for content to be displayed on both sides. Note that opposite content only is displayed in alternate mode for both vertical and horizontal timelines.</Description>
             </SectionHeader>
             <SectionContent Outlined="true" FullWidth="true">
                 <TimelineOppositeExample />
@@ -55,8 +45,28 @@
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader Title="Horizontal">
-                <Description></Description>
+            <SectionHeader Title="Item Modifiers">
+                <Description>Timeline items have item modifiers that appends to its content. Modifiers can be turned off with <CodeInline>DisableModifiers</CodeInline> property.<br />If you place a <CodeInline>MudCard</CodeInline> inside the <CodeInline>TimelineItem</CodeInline> a caret will be added to the side of the card.</Description>
+            </SectionHeader>
+            <SectionContent Outlined="true" FullWidth="true">
+                <TimelineItemModifiersExample />
+            </SectionContent>
+            <SectionSource Code="TimelineItemModifiersExample" GitHubFolderName="timeline" ShowCode="false" />
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Item Align">
+                <Description>By setting the <CodeInline>TimelineAlign</CodeInline> on individual <CodeInline>TimelineItems</CodeInline> you can specify what side the item should be on when <CodeInline>Alternate</CodeInline> position is being used.</Description>
+            </SectionHeader>
+            <SectionContent Outlined="true" FullWidth="true">
+                <TimelineItemAlignExample />
+            </SectionContent>
+            <SectionSource Code="TimelineItemAlignExample" GitHubFolderName="timeline" ShowCode="false" />
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Timeline Align">
+                <Description>Every item can </Description>
             </SectionHeader>
             <SectionContent Outlined="true" FullWidth="true">
                 <TimelineHorizontalExample />
