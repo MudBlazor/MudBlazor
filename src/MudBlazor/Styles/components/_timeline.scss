@@ -87,6 +87,26 @@
 
 
 .mud-timeline-vertical {
+    &.mud-timeline-align-start {
+        .mud-timeline-item-divider {
+            align-items: flex-start;
+        }
+
+        .mud-timeline-item-opposite {
+            align-self: flex-start;
+        }
+    }
+
+    &.mud-timeline-align-end {
+        .mud-timeline-item-divider {
+            align-items: flex-end;
+        }
+
+        .mud-timeline-item-opposite {
+            align-self: flex-end;
+        }
+    }
+
     &.mud-timeline-position-alternate {
         &::before {
             left: auto;
@@ -182,6 +202,26 @@
 }
 
 .mud-timeline-horizontal {
+    &.mud-timeline-align-start {
+        .mud-timeline-item-divider {
+            justify-content: flex-start;
+        }
+
+        .mud-timeline-item-opposite {
+            align-self: flex-start;
+        }
+    }
+
+    &.mud-timeline-align-end {
+        .mud-timeline-item-divider {
+            justify-content: flex-end;
+        }
+
+        .mud-timeline-item-opposite {
+            align-self: flex-end;
+        }
+    }
+
     &.mud-timeline-position-alternate {
         &::before {
             top: auto;
@@ -262,6 +302,8 @@
         }
     }
 }
+
+/*Dot*/
 
 .mud-timeline-item-dot {
     display: flex;
