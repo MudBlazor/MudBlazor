@@ -338,8 +338,7 @@
     }
 
     &.mud-timeline-vertical {
-        &.mud-timeline-position-start {
-
+        &.mud-timeline-position-start:not(.mud-timeline-rtl), &.mud-timeline-position-end.mud-timeline-rtl {
             .mud-timeline-item-content {
                 .mud-card {
                     &::before, &::after {
@@ -357,7 +356,7 @@
             }
         }
 
-        &.mud-timeline-position-end {
+        &.mud-timeline-position-end:not(.mud-timeline-rtl), &.mud-timeline-position-start.mud-timeline-rtl {
             .mud-timeline-item-content {
                 .mud-card {
                     &::before, &::after {
@@ -413,39 +412,163 @@
                     }
                 }
             }
+        }
+
+        &.mud-timeline-reverse:not(.mud-timeline-rtl), &.mud-timeline-position-alternate.mud-timeline-rtl:not(.mud-timeline-reverse) {
+            .mud-timeline-item {
+                &:nth-child(odd):not(.mud-timeline-item-end), &.mud-timeline-item-start {
+                    .mud-timeline-item-content {
+                        .mud-card {
+                            &::before, &::after {
+                                transform: rotate(180deg);
+                                right: -16px;
+                                left: auto;
+                            }
+
+                            &.mud-paper-outlined {
+                                &::after {
+                                    right: -15px;
+                                }
+                            }
+                        }
+                    }
+                }
+
+                &:nth-child(2n):not(.mud-timeline-item-start) {
+                    .mud-timeline-item-content {
+                        .mud-card {
+                            &::before, &::after {
+                                transform: rotate(0);
+                                left: -16px;
+                                right: auto;
+                            }
+
+                            &.mud-paper-outlined {
+                                &::after {
+                                    left: -15px;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    &.mud-timeline-horizontal {
+        &.mud-timeline-position-top {
+            .mud-timeline-item-content {
+                .mud-card {
+                    &::before, &::after {
+                        transform: rotate(90deg);
+                        top: -24px;
+                        bottom: auto;
+                        left: calc(50% - 8px);
+                    }
+
+                    &.mud-paper-outlined {
+                        &::after {
+                            top: -23px;
+                        }
+                    }
+                }
+            }
+        }
+
+        &.mud-timeline-position-bottom {
+            .mud-timeline-item-content {
+                .mud-card {
+                    &::before, &::after {
+                        transform: rotate(270deg);
+                        bottom: -24px;
+                        top: auto;
+                        left: calc(50% - 8px);
+                    }
+
+                    &.mud-paper-outlined {
+                        &::after {
+                            bottom: -23px;
+                        }
+                    }
+                }
+            }
+        }
+
+        &.mud-timeline-position-alternate {
+            .mud-timeline-item {
+                &:nth-child(odd):not(.mud-timeline-item-start), &.mud-timeline-item-end {
+                    .mud-timeline-item-content {
+                        .mud-card {
+                            &::before, &::after {
+                                transform: rotate(90deg);
+                                top: -24px;
+                                bottom: auto;
+                                left: calc(50% - 8px);
+                            }
+
+                            &.mud-paper-outlined {
+                                &::after {
+                                    top: -23px;
+                                }
+                            }
+                        }
+                    }
+                }
+
+                &:nth-child(2n):not(.mud-timeline-item-end) {
+                    .mud-timeline-item-content {
+                        .mud-card {
+                            &::before, &::after {
+                                transform: rotate(270deg);
+                                bottom: -24px;
+                                top: auto;
+                                left: calc(50% - 8px);
+                            }
+
+                            &.mud-paper-outlined {
+                                &::after {
+                                    bottom: -23px;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
 
             &.mud-timeline-reverse {
                 .mud-timeline-item {
-                    &:nth-child(odd):not(.mud-timeline-item-end), &.mud-timeline-item-start {
+                    &:nth-child(odd):not(.mud-timeline-item-start), &.mud-timeline-item-end {
                         .mud-timeline-item-content {
                             .mud-card {
                                 &::before, &::after {
-                                    transform: rotate(180deg);
-                                    right: -16px;
-                                    left: auto;
+                                    transform: rotate(270deg);
+                                    bottom: -24px;
+                                    top: auto;
+                                    left: calc(50% - 8px);
                                 }
 
                                 &.mud-paper-outlined {
                                     &::after {
-                                        right: -15px;
+                                        bottom: -23px;
                                     }
                                 }
                             }
                         }
                     }
 
-                    &:nth-child(2n):not(.mud-timeline-item-start) {
+                    &:nth-child(2n):not(.mud-timeline-item-end) {
                         .mud-timeline-item-content {
                             .mud-card {
                                 &::before, &::after {
-                                    transform: rotate(0);
-                                    left: -16px;
-                                    right: auto;
+                                    transform: rotate(90deg);
+                                    top: -24px;
+                                    bottom: auto;
+                                    left: calc(50% - 8px);
                                 }
 
                                 &.mud-paper-outlined {
                                     &::after {
-                                        left: -15px;
+                                        top: -23px;
                                     }
                                 }
                             }

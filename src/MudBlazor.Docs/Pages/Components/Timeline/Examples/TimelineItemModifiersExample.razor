@@ -1,48 +1,9 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
-<MudGrid>
-    <MudItem xs="12" sm="5">
-        <MudSelect T="TimelineOrientation" ValueChanged="OnOrientationChange" Label="TimelineOrientation" Dense="true" Variant="Variant.Outlined">
-            <MudSelectItem T="TimelineOrientation" Value="TimelineOrientation.Vertical">Vertical</MudSelectItem>
-            <MudSelectItem T="TimelineOrientation" Value="TimelineOrientation.Horizontal">Horizontal</MudSelectItem>
-        </MudSelect>
-    </MudItem>
-    <MudItem xs="12" sm="5">
-        <MudSelect T="TimelinePosition" @bind-Value="@_postion" Label="TimelinePosition" Dense="true" Variant="Variant.Outlined">
-            @if(_orientation == TimelineOrientation.Vertical)
-            {
-                <MudSelectItem T="TimelinePosition" Value="TimelinePosition.Start">Start</MudSelectItem>
-                <MudSelectItem T="TimelinePosition" Value="TimelinePosition.Left">Left</MudSelectItem>
-                <MudSelectItem T="TimelinePosition" Value="TimelinePosition.Alternate">Alternate</MudSelectItem>
-                <MudSelectItem T="TimelinePosition" Value="TimelinePosition.Right">Right</MudSelectItem>
-                <MudSelectItem T="TimelinePosition" Value="TimelinePosition.End">End</MudSelectItem>
-            }
-            else if(_orientation == TimelineOrientation.Horizontal)
-            {
-                <MudSelectItem T="TimelinePosition" Value="TimelinePosition.Top">Top</MudSelectItem>
-                <MudSelectItem T="TimelinePosition" Value="TimelinePosition.Alternate">Alternate</MudSelectItem>
-                <MudSelectItem T="TimelinePosition" Value="TimelinePosition.Bottom">Bottom</MudSelectItem>
-            }
-        </MudSelect>
-    </MudItem>
-    <MudItem xs="12" sm="2">
-        <MudSwitch Label="Reverse" @bind-Checked="@_reverse" Disabled="IsSwitchDisabled()" Color="Color.Primary" />
-    </MudItem>
-</MudGrid>
-
-<MudSwitch @bind-Checked="@_outlined" Label="Card Outlined" Color="Color.Primary" />
+<MudSwitch @bind-Checked="@_outlined" Label="Outlined Card" Color="Color.Primary" />
 <MudSwitch @bind-Checked="@_modifiers" Label="Disable Modifiers" Color="Color.Secondary" />
 
-<MudTimeline TimelineOrientation="_orientation" TimelinePosition="_postion" DisableModifiers="@_modifiers" Reverse="_reverse">
-    <MudTimelineItem Size="Size.Medium" Color="Color.Info" Elevation="@(_outlined ? 0 : 25)">
-        <MudCard Outlined="@_outlined" Elevation="25">
-            <MudCardContent>
-                <MudText Typo="Typo.h6">Kopparberg</MudText>
-                <MudText Typo="Typo.body2">Kopparberg is a locality and the seat of Ljusnarsberg, Örebro County, Sweden, with 4,200 inhabitants in 2015.</MudText>
-                <MudText Typo="Typo.body2">It is famous for Kopparberg Cider, now one of the best selling ciders in the UK and worldwide.</MudText>
-            </MudCardContent>
-        </MudCard>
-    </MudTimelineItem>
+<MudTimeline TimelinePosition="TimelinePosition.Start" DisableModifiers="@_modifiers">
     <MudTimelineItem Size="Size.Medium" Color="Color.Info" Elevation="@(_outlined ? 0 : 25)">
         <MudCard Outlined="@_outlined" Elevation="25">
             <MudCardContent>
@@ -57,34 +18,4 @@
 @code{
     public bool _modifiers { get; set; }
     public bool _outlined { get; set; }
-
-
-    private TimelinePosition _postion { get; set; } = TimelinePosition.Start;
-    private TimelineOrientation _orientation { get; set; } = TimelineOrientation.Vertical;
-    private bool _reverse { get; set; }
-
-    private void OnOrientationChange(TimelineOrientation value)
-    {
-        _orientation = value;
-        switch (value)
-        {
-            case TimelineOrientation.Vertical:
-                if (_postion == TimelinePosition.Top || _postion == TimelinePosition.Bottom)
-                    _postion = TimelinePosition.Start;
-                break;
-            case TimelineOrientation.Horizontal:
-                if (_postion == TimelinePosition.Start || _postion == TimelinePosition.Left || _postion == TimelinePosition.Right || _postion == TimelinePosition.End)
-                    _postion = TimelinePosition.Top;
-                break;
-        }
-    }
-
-    bool IsSwitchDisabled()
-    {
-        if (_postion == TimelinePosition.Alternate)
-            return false;
-        else
-            _reverse = false;
-        return true;
-    }
 }
