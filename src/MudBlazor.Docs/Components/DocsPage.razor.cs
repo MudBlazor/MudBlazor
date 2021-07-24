@@ -27,6 +27,8 @@ namespace MudBlazor.Docs.Components
         [Parameter] public MaxWidth MaxWidth { get; set; } = MaxWidth.Medium;
         [Parameter] public RenderFragment ChildContent { get; set; }
 
+        private bool _contentDrawerOpen = true;
+
         protected override void OnParametersSet()
         {
             _previous = DocsService.Previous;
