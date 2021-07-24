@@ -1,15 +1,15 @@
-﻿<MudContainer MaxWidth="@MaxWidth">
-    <div id="docspage" class="docs-page">
-        <CascadingValue Value="this" IsFixed="true">
-            @ChildContent
-        </CascadingValue>
-    </div>
-    <div class="docs-navigation-footer">
-        <NavigationFooter Section=_section Previous="@_previous" Next="@_next" />
-    </div>
-    <div class="docs-contents">
-        <MudDrawer Open="true" Anchor="Anchor.End" Variant="DrawerVariant.Temporary" DisableOverlay="true" ClipMode="DrawerClipMode.Always" Elevation="0" Color="Color.Transparent" Class="pt-6" Width="220px">
-            <MudPageContentNavigation SectionClassSelector="docs-section-header" @ref="_contentNavigation" ActivateFirstSectionAsDefault="true" />
-        </MudDrawer>
-    </div>
-</MudContainer>
+﻿<MudMainContent Class="mudblazor-main-content">
+    <MudContainer MaxWidth="@MaxWidth">
+        <div id="docspage" class="docs-page">
+            <CascadingValue Value="this" IsFixed="true">
+                @ChildContent
+            </CascadingValue>
+        </div>
+        <div class="docs-navigation-footer">
+            <NavigationFooter Section=_section Previous="@_previous" Next="@_next" />
+        </div>
+    </MudContainer>
+    <MudDrawer @bind-Open="_contentDrawerOpen" Breakpoint="Breakpoint.Lg" Anchor="Anchor.End" ClipMode="DrawerClipMode.Always" Elevation="0" Color="Color.Transparent" Class="pt-6">
+        <MudPageContentNavigation SectionClassSelector="docs-section-header" @ref="_contentNavigation" ActivateFirstSectionAsDefault="true" />
+    </MudDrawer>
+</MudMainContent>
