@@ -23,7 +23,7 @@ namespace MudBlazor
           .AddClass(MaxAvatarClass)
         .Build();
 
-        private int _spacing = 2;
+        private int _spacing = 3;
 
         /// <summary>
         /// Spacing between avatars where 0 is none and 16 max.
