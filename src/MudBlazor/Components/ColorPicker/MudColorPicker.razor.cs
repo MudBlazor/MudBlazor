@@ -1,4 +1,4 @@
-// Copyright (c) MudBlazor 2021
+﻿// Copyright (c) MudBlazor 2021
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
@@ -128,8 +128,20 @@ namespace MudBlazor
             {
                 if(value != _colorPickerView)
                 {
+                    var oldValue = _colorPickerView;
+
                     _colorPickerView = value;
                     Text = GetColorTextValue();
+
+                    if(oldValue == ColorPickerView.Spectrum)
+                    {
+                        RemoveMouseOverEvent().AndForget();
+                    }
+
+                    if(value == ColorPickerView.Spectrum)
+                    {
+                        _attachedMouseEvent = true;
+                    }
                 }
             }
         }
