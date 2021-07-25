@@ -8,6 +8,8 @@ namespace MudBlazor
 {
     partial class MudAvatarGroup : MudComponentBase
     {
+        private bool _childrenNeedUpdates = false;
+
         protected string Classname =>
         new CssBuilder("mud-avatar-group")
             .AddClass($"mud-avatar-group-outlined", Outlined)
@@ -21,10 +23,24 @@ namespace MudBlazor
           .AddClass(MaxAvatarClass)
         .Build();
 
+        private int _spacing = 2;
+
         /// <summary>
         /// Spacing between avatars where 0 is none and 16 max.
         /// </summary>
-        [Parameter] public int Spacing { get; set; } = 2;
+        [Parameter]
+        public int Spacing
+        {
+            get => _spacing;
+            set
+            {
+                if (value != _spacing)
+                {
+                    _spacing = value;
+                    _childrenNeedUpdates = true;
+                }
+            }
+        }
 
         /// <summary>
         /// Outlines the grouped avatars to distinguish them, useful when avatars are the same color or uses images.
@@ -66,11 +82,23 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public Variant MaxVariant { get; set; } = Variant.Filled;
 
+        private int _max = 3;
 
         /// <summary>
         /// Max avatars to show before showing +x avatar, default value 0 has no max.
         /// </summary>
-        [Parameter] public int Max { get; set; }
+        [Parameter] public int Max
+        {
+            get => _max;
+            set
+            {
+                if(value != _max)
+                {
+                    _max = value;
+                    _childrenNeedUpdates = true;
+                }
+            }
+        }
 
         /// <summary>
         /// Custom class/classes for MaxAvatar
@@ -83,23 +111,45 @@ namespace MudBlazor
         [Parameter] public RenderFragment ChildContent { get; set; }
 
         internal List<MudAvatar> _avatars = new List<MudAvatar>();
-        internal bool _groupMaxReached;
 
         internal void AddAvatar(MudAvatar avatar)
         {
             _avatars.Add(avatar);
-            if(Max > 0 && _avatars.Count > Max)
-            {
-                _groupMaxReached = true;
-                avatar.GroupMaxReached = true;
-            }
-
             StateHasChanged();
         }
 
         internal void RemoveAvatar(MudAvatar avatar)
         {
             _avatars.Remove(avatar);
+        }
+
+        internal CssBuilder GetAvatarSpacing() => new CssBuilder()
+          .AddClass($"ms-n{Spacing}");
+
+        internal StyleBuilder GetAvatarZindex(MudAvatar avatar) => new StyleBuilder()
+            .AddStyle("z-index", $"{_avatars.Count - _avatars.IndexOf(avatar)}");
+
+        internal bool MaxGroupReached(MudAvatar avatar)
+        {
+            if (_avatars.IndexOf(avatar) < Max)
+                return true;
+            else
+                return false;
+        }
+
+        protected override void OnParametersSet()
+        {
+            base.OnParametersSet();
+
+            if(_childrenNeedUpdates == true)
+            {
+                foreach(var avatar in _avatars)
+                {
+                    avatar.ForceRedraw();
+                }
+
+                _childrenNeedUpdates = false;
+            }
         }
     }
 }

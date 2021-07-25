@@ -5,7 +5,7 @@
     <CascadingValue Value="this" IsFixed="true">
         @ChildContent
     </CascadingValue>
-    @if(_groupMaxReached)
+    @if(_avatars.Count > Max)
     {
         <MudAvatar Class="@MaxAvatarClassname" Color="@MaxColor" Size="@MaxSize" Variant="@MaxVariant" Rounded="@MaxRounded" Square="@MaxSquare" Elevation="@MaxElevation">
             @($"+{_avatars.Count - Max}")

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿using System;
+using Microsoft.AspNetCore.Components;
 using MudBlazor.Extensions;
 using MudBlazor.Utilities;
 
@@ -6,7 +7,7 @@ namespace MudBlazor
 {
     partial class MudAvatar : MudComponentBase
     {
-        [CascadingParameter] private MudAvatarGroup AvatarGroup { get; set; }
+        [CascadingParameter] protected MudAvatarGroup AvatarGroup { get; set; }
         protected string Classname =>
         new CssBuilder("mud-avatar")
           .AddClass($"mud-avatar-{Size.ToDescriptionString()}")
@@ -14,11 +15,16 @@ namespace MudBlazor
           .AddClass($"mud-avatar-square", Square)
           .AddClass($"mud-avatar-{Variant.ToDescriptionString()}")
           .AddClass($"mud-avatar-{Variant.ToDescriptionString()}-{Color.ToDescriptionString()}")
-          .AddClass($"ms-n{_groupSpacing}", AvatarGroup != null)
-          .AddClass($"z-{_groupPosition}", AvatarGroup != null)
           .AddClass($"mud-elevation-{Elevation.ToString()}")
+          .AddClass(AvatarGroup?.GetAvatarSpacing() ?? new CssBuilder(), AvatarGroup != null)
           .AddClass(Class)
         .Build();
+
+        protected string Stylesname =>
+            new StyleBuilder()
+            .AddStyle(AvatarGroup?.GetAvatarZindex(this) ?? new StyleBuilder(), AvatarGroup != null)
+            .AddStyle(Style)
+            .Build();
 
         /// <summary>
         /// The higher the number, the heavier the drop-shadow.
@@ -60,19 +66,12 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public RenderFragment ChildContent { get; set; }
 
-        internal bool GroupMaxReached { get; set; }
-
-        private int _groupSpacing;
-        private int _groupPosition;
-
         protected override void OnInitialized()
         {
             base.OnInitialized();
 
             if (AvatarGroup != null)
             {
-                _groupPosition = 98 - AvatarGroup._avatars.Count + 1;
-                _groupSpacing = AvatarGroup.Spacing;
                 AvatarGroup.AddAvatar(this);
             }
         }
@@ -83,6 +82,11 @@ namespace MudBlazor
             {
                 AvatarGroup.RemoveAvatar(this);
             }
+        }
+
+        internal void ForceRedraw()
+        {
+            StateHasChanged();
         }
     }
 }
