@@ -47,7 +47,7 @@ namespace MudBlazor.Docs.Services
             .AddItem("Progress", typeof(MudProgressCircular), typeof(MudProgressLinear))
             .AddItem("Dialog", typeof(MudDialog), typeof(MudDialogInstance), typeof(MudDialogProvider))
             .AddItem("Snackbar", typeof(MudSnackbarProvider))
-            .AddItem("Avatar", typeof(MudAvatar))
+            .AddItem("Avatar", typeof(MudAvatar), typeof(MudAvatarGroup))
             .AddItem("Alert", typeof(MudAlert))
             .AddItem("Card", typeof(MudCard), typeof(MudCardActions), typeof(MudCardContent), typeof(MudCardHeader), typeof(MudCardMedia))
             .AddItem("Divider", typeof(MudDivider))
