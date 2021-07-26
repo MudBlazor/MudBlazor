@@ -30,22 +30,6 @@
     </PagerContent>
 </MudTable>
 
-
-
-<MudTable Items="@Elements" FixedHeader="@fixed_header" FixedFooter="@fixed_footer" Height="@(fixed_header || fixed_footer ?"400px":"")">
-    <Columns>
-        <MudColumn Value="@context.Number" HeaderText="Nr" FooterText="Nr"></MudColumn>
-        <MudColumn Value="@context.Sign" HeaderText="Sign" FooterText="Sign"></MudColumn>
-        <MudColumn Value="@context.Name" HeaderText="Name" FooterText="Name"></MudColumn>
-        <MudColumn Value="@context.Position" HeaderText="Position"  FooterText="Position"></MudColumn>
-        <MudColumn Value="@context.Molar" HeaderText="Molar mass"  FooterText="Molar mass"></MudColumn>
-    </Columns>
-    <PagerContent>
-        <MudTablePager PageSizeOptions="new int[]{50, 100}" />
-    </PagerContent>
-</MudTable>
-
-
 <MudSwitch @bind-Checked="@fixed_header">Fixed Header</MudSwitch>
 <MudSwitch @bind-Checked="@fixed_footer">Fixed Footer</MudSwitch>
 
