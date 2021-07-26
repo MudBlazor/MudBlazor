@@ -34,6 +34,7 @@ namespace MudBlazor
 
         protected async Task OnChange(ChangeEventArgs args)
         {
+            _internalText = args?.Value as string;
             await OnInternalInputChanged.InvokeAsync(args);
             if (!Immediate)
             {
@@ -121,19 +122,41 @@ namespace MudBlazor
         protected override async Task UpdateTextPropertyAsync(bool updateValue)
         {
             await base.UpdateTextPropertyAsync(updateValue);
-            UpdateClearable(Text);
+            if (Clearable)
+                UpdateClearable(Text);
         }
 
         protected override async Task UpdateValuePropertyAsync(bool updateText)
         {
             await base.UpdateValuePropertyAsync(updateText);
-            UpdateClearable(Value);
+            if (Clearable)
+                UpdateClearable(Value);
         }
 
         protected virtual async Task ClearButtonClickHandlerAsync(MouseEventArgs e)
         {
             await SetTextAsync(string.Empty, updateValue: true);
             await OnClearButtonClick.InvokeAsync(e);
+        }
+
+        private string _internalText;
+
+        public override async Task SetParametersAsync(ParameterView parameters)
+        {
+            await base.SetParametersAsync(parameters);
+            if (!_isFocused  || _forceTextUpdate)
+                _internalText = Text;
+        }
+
+        /// <summary>
+        /// Sets the input text from outside programmatically
+        /// </summary>
+        /// <param name="text"></param>
+        /// <returns></returns>
+        public async Task SetText(string text)
+        {
+            _internalText = text;
+            await SetTextAsync(text);
         }
     }
 

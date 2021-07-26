@@ -230,22 +230,17 @@ namespace MudBlazor.UnitTests.Components
             var autocompletecomp = comp.FindComponent<MudAutocomplete<string>>();
             var autocomplete = autocompletecomp.Instance;
 
-            var input = autocompletecomp.Find("input");
-
             //insert "Calif"
-            input.Input("Calif");
+            autocompletecomp.Find("input").Input("Calif");
             await Task.Delay(100);
             var args = new KeyboardEventArgs();
             args.Key = "Enter";
 
             //press Enter key
-            input.KeyUp(args);
-            input = autocompletecomp.Find("input");
-            var wrappedElement = ((dynamic)input).WrappedElement;
-            var value = ((IHtmlInputElement)wrappedElement).Value;
+            autocompletecomp.Find("input").KeyUp(args);
 
             //The value of the input should be California
-            value.Should().Be("California");
+            comp.WaitForAssertion(()=> autocompletecomp.Find("input").GetAttribute("value").Should().Be("California"));
 
             //and the autocomplete it's closed
             autocomplete.IsOpen.Should().BeFalse();

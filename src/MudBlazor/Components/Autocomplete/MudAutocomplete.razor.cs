@@ -206,11 +206,12 @@ namespace MudBlazor
             await SetValueAsync(value);
             if (_items != null)
                 _selectedListItemIndex = Array.IndexOf(_items, value);
-            await SetTextAsync(GetItemString(value), false);
+            var optionText = GetItemString(value);
+            await SetTextAsync(optionText, false);
             _timer?.Dispose();
             IsOpen = false;
             BeginValidate();
-            _elementReference?.ForceRender(forceTextUpdate: true);
+            _elementReference?.SetText(optionText);
             StateHasChanged();
         }
 

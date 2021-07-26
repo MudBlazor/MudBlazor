@@ -278,7 +278,7 @@ namespace MudBlazor
                 await UpdateTextPropertyAsync(false);
         }
 
-        public void ForceRender(bool forceTextUpdate)
+        public virtual void ForceRender(bool forceTextUpdate)
         {
             _forceTextUpdate = true;
             StateHasChanged();
