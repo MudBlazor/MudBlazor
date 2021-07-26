@@ -13,7 +13,7 @@ namespace MudBlazor
         private string _text;
         private bool _isSelected, _isActivated, _isServerLoaded;
         private Converter<T> _converter = new DefaultConverter<T>();
-        private readonly List<MudTreeViewItem<T>> _childItems = new List<MudTreeViewItem<T>>();
+        private readonly List<MudTreeViewItem<T>> _childItems = new();
 
         protected string Classname =>
         new CssBuilder("mud-treeview-item")

@@ -214,8 +214,8 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public bool MultiSelection { get; set; }
 
-        protected List<MudSelectItem<T>> _items = new List<MudSelectItem<T>>();
-        protected Dictionary<T, MudSelectItem<T>> _value_lookup = new Dictionary<T, MudSelectItem<T>>();
+        protected List<MudSelectItem<T>> _items = new();
+        protected Dictionary<T, MudSelectItem<T>> _value_lookup = new();
         internal void Add(MudSelectItem<T> item)
         {
             _items.Add(item);

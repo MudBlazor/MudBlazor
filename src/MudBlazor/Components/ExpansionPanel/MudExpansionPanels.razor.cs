@@ -48,7 +48,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public RenderFragment ChildContent { get; set; }
 
-        private List<MudExpansionPanel> _panels = new List<MudExpansionPanel>();
+        private List<MudExpansionPanel> _panels = new();
 
         internal void AddPanel(MudExpansionPanel panel)
         {

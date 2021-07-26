@@ -19,7 +19,7 @@ namespace MudBlazor.Services
         public bool IsVisible { get; set; }
 
         public PortalItemJsModel JavaScriptModel =>
-            new PortalItemJsModel
+            new()
             {
                 Id = Id,
                 IsVisible = IsVisible,
