@@ -24,12 +24,12 @@
     <ColGroup>
         @if (_multiSelect)
         {
-<col style="width: 60px;" />
-}
+            <col style="width: 60px;" />
+        }
         @if (_groupDefinition.Expandable)
         {
-<col style="width: 60px;" />
-}
+            <col style="width: 60px;" />
+        }
         <col />
         <col />
         <col />
@@ -58,42 +58,6 @@
     </GroupFooterTemplate>
 </MudTable>
 
-<MudTable Hover="true" Breakpoint="Breakpoint.Sm" Height="500px" FixedHeader="true"
-          Items="@Elements"
-          GroupBy="@_groupDefinition"
-          GroupHeaderStyle="background-color:var(--mud-palette-background-grey)"
-          GroupFooterClass="mb-4"
-          Dense="_dense"
-          MultiSelection="_multiSelect">
-    <ColGroup>
-        @if (_multiSelect)
-        {
-<col style="width: 60px;" />
-}
-        @if (_groupDefinition.Expandable)
-        {
-<col style="width: 60px;" />
-}
-        <col />
-        <col />
-        <col />
-        <col />
-        <col />
-    </ColGroup>
-    <GroupHeaderTemplate>
-        <MudTh Class="mud-table-cell-custom-group" colspan="5">@($"{context.GroupName}: {context.Key}")</MudTh>
-    </GroupHeaderTemplate>
-   <Columns>
-        <MudColumn Value="@context.Number" HeaderText="Nr"></MudColumn>
-        <MudColumn Value="@context.Sign" HeaderText="Sign"></MudColumn>
-        <MudColumn Value="@context.Name" HeaderText="Name"></MudColumn>
-        <MudColumn Value="@context.Position" HeaderText="Position"></MudColumn>
-        <MudColumn Value="@context.Molar" HeaderText="Molar mass"></MudColumn>
-    </Columns>
-    <GroupFooterTemplate>
-        <MudTh Class="mud-table-cell-custom-group mud-table-cell-custom-group-footer" colspan="5">Total Mass: @context.Items.Sum((e) => e.Molar)</MudTh>
-    </GroupFooterTemplate>
-</MudTable>
 <MudSwitch @bind-Checked="_dense" Color="Color.Primary">Dense</MudSwitch>
 <MudSwitch @bind-Checked="_multiSelect" Color="Color.Primary">MultiSelect</MudSwitch>
 <MudSwitch @bind-Checked="_groupDefinition.Indentation" Color="Color.Primary">Indentation</MudSwitch>

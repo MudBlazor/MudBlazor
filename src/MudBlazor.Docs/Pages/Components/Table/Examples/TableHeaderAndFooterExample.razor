@@ -52,45 +52,6 @@
         </MudTFootRow>
     </FooterContent>
 </MudTable>
-
-<MudTable Items="@Elements.Take(10)" MultiSelection="true" @bind-SelectedItems="selectedItems" Hover="true" Breakpoint="Breakpoint.Sm" Striped="true" Bordered="true"
-          CustomHeader="true" CustomFooter="true" HeaderClass="table-head-bordered" FooterClass="table-foot-bordered">
-    <HeaderContent>
-        <MudTHeadRow IgnoreCheckbox="true" Class="header-centered">
-            <MudTh colspan="6">Periodic Elements Info</MudTh>
-        </MudTHeadRow>
-        <MudTHeadRow Class="header-centered">
-            <MudTh colspan="2">Basic</MudTh>
-            <MudTh colspan="3">Extended</MudTh>
-        </MudTHeadRow>
-        <MudTHeadRow IsCheckable="true">
-            <MudTh>Nr</MudTh> 
-            <MudTh>Sign</MudTh>
-            <MudTh>Name</MudTh>
-            <MudTh>Position</MudTh>
-            <MudTh>Molar mass</MudTh>
-        </MudTHeadRow>
-    </HeaderContent>
-    <Columns>
-        <MudColumn Value="@context.Number" HeaderText="Nr" FooterText="Nr"></MudColumn>
-        <MudColumn Value="@context.Sign" HeaderText="Sign" FooterText="Sign"></MudColumn>
-        <MudColumn Value="@context.Name" HeaderText="Name" FooterText="Name"></MudColumn>
-        <MudColumn Value="@context.Position" HeaderText="Position"  FooterText="Position"></MudColumn>
-        <MudColumn Value="@context.Molar" HeaderText="Molar mass"  FooterText="Molar mass"></MudColumn>
-    </Columns>
-    <FooterContent>
-        <MudTFootRow Class="bold-text">
-            <MudTd>Nr</MudTd>
-            <MudTd>Sign</MudTd>
-            <MudTd>Name</MudTd>
-            <MudTd>Position</MudTd>
-            <MudTd>Molar mass</MudTd>
-        </MudTFootRow>
-        <MudTFootRow IsCheckable="true">
-            <MudTd colspan="5">Selected: @selectedItems.Count</MudTd>
-        </MudTFootRow>
-    </FooterContent>
-</MudTable>
 <MudSwitch @bind-Checked="_hidePosition">Hide <b>position</b> when Breakpoint=Xs</MudSwitch>
 
 @code {

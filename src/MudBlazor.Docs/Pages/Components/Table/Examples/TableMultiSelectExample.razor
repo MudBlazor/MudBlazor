@@ -25,21 +25,7 @@
         <MudTd colspan="5">Select All</MudTd>
     </FooterContent>
 </MudTable>
-<MudTable Items="@Elements" MultiSelection="true" @bind-SelectedItems="selectedItems2" Hover="@hover">
-    <Columns>
-        <MudColumn Value="@context.Number" HeaderText="Nr"></MudColumn>
-        <MudColumn Value="@context.Sign" HeaderText="Sign"></MudColumn>
-        <MudColumn Value="@context.Name" HeaderText="Name"></MudColumn>
-        <MudColumn Value="@context.Position" HeaderText="Position"> </MudColumn>
-        <MudColumn Value="@context.Molar" HeaderText="Molar mass"> </MudColumn>
-    </Columns>
-    <PagerContent>
-        <MudTablePager PageSizeOptions="new int[]{50, 100}" />
-    </PagerContent>
-    <FooterContent>
-        <MudTd colspan="5">Select All</MudTd>
-    </FooterContent>
-</MudTable>
+
 <MudText Inline="true">Selected items: @(selectedItems1==null ? "" : string.Join(", ", selectedItems1.OrderBy(x=>x.Sign).Select(x=>x.Sign)))</MudText>
 <MudText Inline="true">Selected items: @(selectedItems2==null ? "" : string.Join(", ", selectedItems2.OrderBy(x=>x.Sign).Select(x=>x.Sign)))</MudText>
 

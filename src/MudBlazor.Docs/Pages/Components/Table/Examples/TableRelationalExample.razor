@@ -56,60 +56,6 @@
 	</ChildRowContent>
 </MudTable>
 
-
-<MudTable Items="@People" Hover="true" Breakpoint="Breakpoint.Sm">
-	<ColGroup>
-		<col style="width:300px;" />
-		<col style="width:100px;" />
-		<col />
-		<col style="width:100px;" />
-	</ColGroup>
-	<Columns>
-		<MudTemplateColumn  DataContext="context" Context="dc">
-            <Header><MudTh></MudTh></Header>
-            <Row><MudTd><MudButton Variant="Variant.Outlined" Size="Size.Small" OnClick="@(() => ShowBtnPress(context.Number))">@((context.ShowDetails == true)? "Hide" : "Show") Address Details</MudButton></MudTd></Row>
-		</MudTemplateColumn>
-		<MudColumn Value="@context.Number" HeaderText="Nr"></MudColumn>
-		<MudColumn Value="@context.Name" HeaderText="Name"></MudColumn>
-		<MudColumn Value="@context.Age" HeaderText="Age"></MudColumn>
-	</Columns>
-	<ChildRowContent>
-		@if (context.ShowDetails)
-				{
-  <MudTr>
-   <td colspan="4">
-	<MudCard Elevation="0">
-	 <MudCardHeader>
-	  <CardHeaderContent>
-	   <MudText Typo="Typo.body1">Address Details for <strong>@context.Name</strong></MudText>
-	  </CardHeaderContent>
-	 </MudCardHeader>
-	 <MudCardContent Class="pa-0">
-	  <MudTable Items="@context.Addresses" Context="AddressContext" Hover="true" Breakpoint="Breakpoint.Sm" Elevation="0">
-	   <ColGroup>
-		<col />
-		<col />
-		<col style="width:200px;" />
-	   </ColGroup>
-	   <HeaderContent>
-		<MudTh>Address Line 1</MudTh>
-		<MudTh>Address Line 2</MudTh>
-		<MudTh>Postal Code</MudTh>
-	   </HeaderContent>
-	   <RowTemplate>
-		<MudTd DataLabel="Address Line 1">@AddressContext.Address_Line_1</MudTd>
-		<MudTd DataLabel="Address Line 2">@AddressContext.Address_Line_2</MudTd>
-		<MudTd DataLabel="Postal Code">@AddressContext.Postal_Code</MudTd>
-	   </RowTemplate>
-	  </MudTable>
-	 </MudCardContent>
-	</MudCard>
-   </td>
-  </MudTr>
-		}
-	</ChildRowContent>
-</MudTable>
-
 @code
 {
 	protected override void OnInitialized()

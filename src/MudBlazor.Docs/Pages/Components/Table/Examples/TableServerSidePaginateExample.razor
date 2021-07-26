@@ -36,27 +36,6 @@
     </PagerContent>
 </MudTable>
 
-
-<MudTable ServerData="@(new Func<TableState, Task<TableData<Element>>>(ServerReload))"  
-                        Dense="true" Hover="true" @ref="table">
-    <ToolBarContent>
-        <MudText Typo="Typo.h6">Periodic Elements</MudText>
-        <MudSpacer />
-        <MudTextField T="string" ValueChanged="@(s=>OnSearch(s))" Placeholder="Search" Adornment="Adornment.Start" 
-                        AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
-    </ToolBarContent>
-    <Columns>
-        <MudSortableColumn Value="@context.Number" HeaderText="Nr" SortLabel="nr_field" SortBy="(Element X) => default"></MudSortableColumn>
-        <MudSortableColumn Value="@context.Sign" HeaderText="Sign" SortLabel="sign_field" SortBy="(Element X) => default"></MudSortableColumn>
-        <MudSortableColumn Value="@context.Name" HeaderText="Name" SortLabel="name_field" SortBy="(Element X) => default"></MudSortableColumn>
-        <MudSortableColumn Value="@context.Position" HeaderText="Position" SortLabel="position_field" SortBy="(Element X) => default"></MudSortableColumn>
-        <MudSortableColumn Value="@context.Molar" HeaderText="Molar mass" SortLabel="mass_field" SortBy="(Element X) => default"></MudSortableColumn>
-    </Columns>
-    <PagerContent>
-        <MudTablePager />
-    </PagerContent>
-</MudTable>
-
 @code {
     private IEnumerable<Element> pagedData;
     private MudTable<Element> table;
