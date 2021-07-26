@@ -39,6 +39,8 @@ namespace MudBlazor.UnitTests.Components.Components
         private const string _colorInputModeSwitchCssSelector = ".mud-picker-control-switch";
         private const string _alphaInputCssSelector = ".input-field-alpha";
         private const string CssSelector = ".mud-picker-color-overlay-black .mud-picker-color-overlay";
+        private const string _mudToolbarButtonsCssSelector = ".mud-toolbar button";
+
         private Bunit.TestContext ctx;
 
         private static MudColor[] _mudGridDefaultColors = new MudColor[]
@@ -760,7 +762,7 @@ namespace MudBlazor.UnitTests.Components.Components
 
             Console.WriteLine(comp.Markup);
 
-            var buttons = comp.FindAll(".mud-toolbar button");
+            var buttons = comp.FindAll(_mudToolbarButtonsCssSelector);
 
             Dictionary<int, (ColorPickerView, string)> buttonMapper = new()
             {
@@ -1171,6 +1173,33 @@ namespace MudBlazor.UnitTests.Components.Components
             Console.WriteLine(comp.Markup);
 
             CheckColorRelatedValues(comp, _defaultXForColorPanel, _defaultYForColorPanel, comp.Instance.ColorValue, ColorPickerMode.RGB, true, true);
+        }
+
+        [Test]
+        public void AddAndRemoveEventListenerWhenChaningColorPickerView()
+        {
+            var comp = ctx.RenderComponent<MudColorPicker>(p =>
+            {
+                p.Add(x => x.DisableToolbar, false);
+                p.Add(x => x.PickerVariant, PickerVariant.Static);
+                p.Add(x => x.ColorPickerView, ColorPickerView.Spectrum);
+            });
+
+            var buttons = comp.FindAll(_mudToolbarButtonsCssSelector);
+
+            _eventListener.ElementIdMapper.Keys.Should().ContainSingle();
+            var value = _eventListener.ElementIdMapper.Values.First();
+
+            buttons[2].Click();
+            _eventListener.ElementIdMapper.Keys.Should().BeEmpty();
+
+            buttons[1].Click();
+            _eventListener.ElementIdMapper.Keys.Should().BeEmpty();
+
+            buttons[0].Click();
+
+            _eventListener.ElementIdMapper.Keys.Should().ContainSingle();
+            _eventListener.ElementIdMapper.Values.First().Should().Be(value);
         }
     }
 }
