@@ -180,6 +180,16 @@ namespace MudBlazor.Services
 
 
         /// <summary>
+        /// Adds IEventListener as a transient instance.
+        /// </summary>
+        /// <param name="services">IServiceCollection</param>
+        public static IServiceCollection AddMudEventManager(this IServiceCollection services)
+        {
+            services.TryAddTransient<IEventListener, EventListener>();
+            return services;
+        }
+
+        /// <summary>
         /// Adds common services required by MudBlazor components
         /// </summary>
         /// <param name="services">IServiceCollection</param>
@@ -199,7 +209,8 @@ namespace MudBlazor.Services
                 .AddMudBlazorScrollListener()
                 .AddMudBlazorJsApi()
                 .AddMudBlazorPortal()
-                .AddMudBlazorScrollSpy();
+                .AddMudBlazorScrollSpy()
+                .AddMudEventManager();
         }
 
         /// <summary>
@@ -224,7 +235,8 @@ namespace MudBlazor.Services
                 .AddMudBlazorScrollListener()
                 .AddMudBlazorJsApi()
                 .AddMudBlazorPortal()
-                .AddMudBlazorScrollSpy();
+                .AddMudBlazorScrollSpy()
+                .AddMudEventManager();
         }
     }
 }
