@@ -99,15 +99,17 @@
             <SectionContent FullWidth="true" Class="px-0 pt-0">
                 <ColorPickerExampleUsageExample />
             </SectionContent>
-            <SectionSource Code="ColorPickerExampleUsageExample" GitHubFolderName="ColorPicker" />
+            <SectionSource Code="ColorPickerExampleUsageExample" ShowCode="false" GitHubFolderName="ColorPicker" />
         </DocsPageSection>
         <DocsPageSection>
             <SectionHeader Title="Disable Drag effect">
+                <Description>
+                    <MudAlert Severity="Severity.Warning">
+                        In Spectrum mode, the color selector (circle) will follow the mouse. This is implemented by listening to the mouse move DOM event with an in-built throttle mechanism to prevent flooding events. However, there are occasions like long latency in Blazor Server-Side where this implementation hasn't the expected visual assistance. If DisableDragEffect is set to true, no events will be fired. Per default, the effect is enabled.
+                    </MudAlert>
+                </Description>
             </SectionHeader>
-            <SectionContent FullWidth="true" Class="px-0 pt-0">
-                <MudAlert Severity="Severity.Info">
-                    In Spectrum mode, the color selector (circle) will follow the mouse. This is implemented by listening to the mouse move DOM event with an in-built throttle mechanism to prevent flooding events. However, there are occasions like long latency in Blazor Server-Side where this implementation hasn't the expected visual assistance. If DisableDragEffect is set to true, no events will be fired. Per default, the effect is enabled.
-                </MudAlert>
+            <SectionContent DarkenBackground="true" DisplayFlex="true">
                 <ColorPickerDragEffectDisabledExample />
             </SectionContent>
             <SectionSource Code="ColorPickerDragEffectDisabledExample" GitHubFolderName="ColorPicker" />
