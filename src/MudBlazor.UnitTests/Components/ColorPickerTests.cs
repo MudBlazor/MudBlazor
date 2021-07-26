@@ -175,6 +175,7 @@ namespace MudBlazor.UnitTests.Components.Components
             comp.Instance.UpdateBindingIfOnlyHSLChanged.Should().BeFalse();
             comp.Instance.Value.Should().Be(_defaultColor);
             comp.Instance.Palette.Should().BeEquivalentTo(_mudGridPaletteDefaultClors);
+            comp.Instance.DisableDragEffect.Should().BeFalse();
         }
 
         [Test]
@@ -1200,6 +1201,28 @@ namespace MudBlazor.UnitTests.Components.Components
 
             _eventListener.ElementIdMapper.Keys.Should().ContainSingle();
             _eventListener.ElementIdMapper.Values.First().Should().Be(value);
+        }
+
+        [Test]
+        public void EventListenerNotAttachedWhenEnableDragEffectIsDisabled()
+        {
+            var comp = ctx.RenderComponent<MudColorPicker>(p =>
+            {
+                p.Add(x => x.DisableToolbar, false);
+                p.Add(x => x.PickerVariant, PickerVariant.Static);
+                p.Add(x => x.ColorPickerView, ColorPickerView.Spectrum);
+                p.Add(x => x.DisableDragEffect, true);
+            });
+
+            var buttons = comp.FindAll(_mudToolbarButtonsCssSelector);
+
+            _eventListener.ElementIdMapper.Keys.Should().BeEmpty();
+
+            for (int i = 3 - 1; i >= 0; i--)
+            {
+                buttons[i].Click();
+                _eventListener.ElementIdMapper.Keys.Should().BeEmpty();
+            }
         }
     }
 }

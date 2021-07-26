@@ -49,7 +49,7 @@
                     @if(ColorPickerView == ColorPickerView.Grid || ColorPickerView == ColorPickerView.GridCompact)
                     {
                         <div class="mud-picker-color-grid">
-                            @foreach (var item in GridList)
+                            @foreach (var item in _gridList)
                             {
                                 <div class="@GetColorDotClass(item)" style="@($"background: {item.ToString(MudColorOutputFormats.RGBA)};")" @onclick="@GetSelectPaletteColorCallback(item)"></div>
                             }
