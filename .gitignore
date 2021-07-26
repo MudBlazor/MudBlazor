@@ -381,3 +381,9 @@ src/MudBlazor.UnitTests/Generated/_AllApiPages.cs
 src/MudBlazor.UnitTests/Generated/_AllComponents.cs
 src/MudBlazor.Docs/NewFilesToBuild.txt
 /src/MudBlazor.Docs.Server/Properties/ServiceDependencies/mudblazortest - Web Deploy/profile.arm.json
+
+src/MudBlazor/Styles/MudBlazor.css.map
+
+src/MudBlazor/Styles/.vscode/settings.json
+
+src/MudBlazor/wwwroot/MudBlazor.min.css.map
