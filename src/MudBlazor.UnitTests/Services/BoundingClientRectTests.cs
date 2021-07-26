@@ -1,5 +1,4 @@
-﻿#pragma warning disable CS1998 // async without await
-
+﻿
 using Bunit;
 using FluentAssertions;
 using MudBlazor.Interop;

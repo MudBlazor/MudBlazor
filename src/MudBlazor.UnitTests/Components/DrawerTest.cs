@@ -1,6 +1,6 @@
-﻿#pragma warning disable CS1998 // async without await
+﻿
+#pragma warning disable CS1998 // async without await
 #pragma warning disable IDE1006 // leading underscore
-#pragma warning disable BL0005 // Set parameter outside component
 
 using System;
 using System.Threading.Tasks;
