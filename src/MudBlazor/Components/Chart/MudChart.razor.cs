@@ -29,10 +29,10 @@ namespace MudBlazor
            .AddClass($"mud-chart-legend-{ConvertLegendPosition(LegendPosition).ToDescriptionString()}")
           .AddClass(Class)
         .Build();
-        
+
         [CascadingParameter]
         public bool RightToLeft { get; set; }
-        
+
         /// <summary>
         /// The Type of the chart.
         /// </summary>
@@ -62,7 +62,7 @@ namespace MudBlazor
                 _ => position
             };
         }
-        
+
         private int _selectedIndex;
 
         /// <summary>

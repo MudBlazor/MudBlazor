@@ -122,7 +122,7 @@ namespace MudBlazor
             return null;
         }
 
-        
+
         private T CheckBoundaries(T value) => EvaluationFunc.Invoke(value);
     }
 }

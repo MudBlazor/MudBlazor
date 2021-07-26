@@ -12,7 +12,7 @@ namespace MudBlazor
     public partial class MudDialogInstance : MudComponentBase
     {
         private DialogOptions _options = new DialogOptions();
-        
+
         [CascadingParameter] public bool RightToLeft { get; set; }
         [CascadingParameter] private MudDialogProvider Parent { get; set; }
         [CascadingParameter] private DialogOptions GlobalDialogOptions { get; set; } = new DialogOptions();

@@ -63,8 +63,8 @@ namespace MudBlazor
         /// Gets or Sets if First Column cell must have Indentation.
         /// It must be set on First grouping level and works recursivelly.
         /// </summary>
-        public bool Indentation 
-        { 
+        public bool Indentation
+        {
             get => _indentation;
             set
             {
@@ -86,7 +86,7 @@ namespace MudBlazor
             {
                 _expandable = value;
                 if (_expandable == false)
-                    Context?.GroupRows.Where(gr => gr.GroupDefinition == this).ToList().ForEach(gr => gr.IsExpanded =  true);
+                    Context?.GroupRows.Where(gr => gr.GroupDefinition == this).ToList().ForEach(gr => gr.IsExpanded = true);
             }
         }
 

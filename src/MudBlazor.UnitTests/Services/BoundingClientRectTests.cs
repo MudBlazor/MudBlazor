@@ -21,7 +21,7 @@ namespace MudBlazor.UnitTests.Components
         [TearDown]
         public void TearDown() => ctx.Dispose();
 
-      
+
 
 
         /// <summary>

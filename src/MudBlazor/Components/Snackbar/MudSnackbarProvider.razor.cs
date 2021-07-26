@@ -37,7 +37,7 @@ namespace MudBlazor
                 _ => positionClass
             };
         }
-        
+
         protected override void OnInitialized()
         {
             base.OnInitialized();

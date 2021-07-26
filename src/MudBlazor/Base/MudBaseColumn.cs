@@ -7,7 +7,7 @@ namespace MudBlazor
     {
         public enum Rendermode
         {
-            Header,Item,Edit,Footer
+            Header, Item, Edit, Footer
         }
 
         [CascadingParameter(Name = "Mode")]

@@ -20,7 +20,7 @@ namespace MudBlazor
        .Build();
 
         private bool _isOpen;
-       
+
         [Parameter] public string Label { get; set; }
 
         /// <summary>
@@ -124,7 +124,7 @@ namespace MudBlazor
             PopoverStyle = null;
             StateHasChanged();
         }
-        
+
         public void OpenMenu(EventArgs args)
         {
             if (Disabled)
