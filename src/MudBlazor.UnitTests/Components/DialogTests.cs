@@ -226,7 +226,7 @@ namespace MudBlazor.UnitTests.Components
             var tf = comp.FindComponent<MudTextField<string>>();
             tf.Find("input").Input("User input ...");
             // the user input should be passed out of the dialog into the outer component and displayed there.
-            testComp.WaitForAssertion(()=>
+            testComp.WaitForAssertion(() =>
                 testComp.Find("p").TextContent.Trim().Should().Be("Search Text:  User input ...")
             );
         }

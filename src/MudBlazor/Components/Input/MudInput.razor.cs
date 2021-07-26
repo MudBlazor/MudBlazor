@@ -144,7 +144,7 @@ namespace MudBlazor
         public override async Task SetParametersAsync(ParameterView parameters)
         {
             await base.SetParametersAsync(parameters);
-            if (!_isFocused  || _forceTextUpdate)
+            if (!_isFocused || _forceTextUpdate)
                 _internalText = Text;
         }
 

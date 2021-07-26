@@ -123,9 +123,9 @@ namespace MudBlazor.Docs.Services
 
         public MenuService()
         {
-            foreach(var item in Components)
+            foreach (var item in Components)
             {
-                if(item.IsNavGroup)
+                if (item.IsNavGroup)
                 {
                     foreach (var apiItem in item.GroupItems.Elements)
                     {
@@ -138,7 +138,7 @@ namespace MudBlazor.Docs.Services
 
                     if (item.ChildComponents != null)
                     {
-                        foreach(var childComponent in item.ChildComponents)
+                        foreach (var childComponent in item.ChildComponents)
                         {
                             _parents.Add(childComponent, item);
                         }

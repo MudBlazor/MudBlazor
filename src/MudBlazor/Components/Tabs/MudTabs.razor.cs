@@ -423,7 +423,7 @@ namespace MudBlazor
                 _ => position
             };
         }
-        
+
         string GetTabClass(MudTabPanel panel)
         {
             var tabClass = new CssBuilder("mud-tab")

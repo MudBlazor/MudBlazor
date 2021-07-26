@@ -13,7 +13,7 @@ namespace MudBlazor
         [CascadingParameter] protected MudRadioGroup<T> RadioGroup { get; set; }
 
         [CascadingParameter] public bool RightToLeft { get; set; }
-        
+
         protected string Classname =>
         new CssBuilder("mud-radio")
             .AddClass($"mud-disabled", Disabled)
@@ -54,7 +54,7 @@ namespace MudBlazor
                 _ => placement
             };
         }
-        
+
         /// <summary>
         /// The color of the component. It supports the theme colors.
         /// </summary>

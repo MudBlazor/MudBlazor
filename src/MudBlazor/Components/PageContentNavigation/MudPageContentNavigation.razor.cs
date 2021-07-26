@@ -32,7 +32,7 @@ namespace MudBlazor
         /// The text displayed about the section links. Defaults to "Conents"
         /// </summary>
         [Parameter] public string Headline { get; set; } = "Contents";
-        
+
         /// <summary>
         /// The css selector used to identifify the HTML elements that should be observed for viewport changes
         /// </summary>
@@ -102,7 +102,7 @@ namespace MudBlazor
             {
                 section.Activate();
             }
-            else if(_sections.Count == 1 && ActivateFirstSectionAsDefault == true)
+            else if (_sections.Count == 1 && ActivateFirstSectionAsDefault == true)
             {
                 section.Activate();
                 ScrollSpy.SetSectionAsActive(section.Id).AndForget();

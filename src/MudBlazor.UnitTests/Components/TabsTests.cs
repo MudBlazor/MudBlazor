@@ -902,7 +902,7 @@ namespace MudBlazor.UnitTests.Components
             var tabInnerHeader = comp.Find(".mud-tabs-toolbar-inner");
 
             tabInnerHeader.Children.Should().Contain(headerPanel);
-            if(position == TabHeaderPosition.After)
+            if (position == TabHeaderPosition.After)
             {
                 tabInnerHeader.Children.Last().Should().Be(headerPanel);
             }
@@ -951,12 +951,12 @@ namespace MudBlazor.UnitTests.Components
             {
                 var headerPanel = item.ParentElement;
                 string addtionalClass = position == TabHeaderPosition.After ? "mud-tabs-panel-header-after" : "mud-tabs-panel-header-before";
-          
+
                 headerPanel.ClassList.Should().BeEquivalentTo(new string[] { "mud-tabs-panel-header", addtionalClass });
 
                 var parent = headerPanel.ParentElement;
 
-                if(position == TabHeaderPosition.After)
+                if (position == TabHeaderPosition.After)
                 {
                     parent.Children.Last().Should().Be(headerPanel);
                 }

@@ -64,7 +64,7 @@ namespace MudBlazor.UnitTests.Components
             // click on California!
             comp.Find("div.mud-list-item").Click();
             // check state
-            comp.WaitForAssertion(()=> autocomplete.Value.Should().Be("California"));
+            comp.WaitForAssertion(() => autocomplete.Value.Should().Be("California"));
             autocomplete.Text.Should().Be("California");
         }
 
@@ -240,7 +240,7 @@ namespace MudBlazor.UnitTests.Components
             autocompletecomp.Find("input").KeyUp(args);
 
             //The value of the input should be California
-            comp.WaitForAssertion(()=> autocompletecomp.Find("input").GetAttribute("value").Should().Be("California"));
+            comp.WaitForAssertion(() => autocompletecomp.Find("input").GetAttribute("value").Should().Be("California"));
 
             //and the autocomplete it's closed
             autocomplete.IsOpen.Should().BeFalse();

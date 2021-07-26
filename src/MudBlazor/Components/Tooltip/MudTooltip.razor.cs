@@ -17,10 +17,10 @@ namespace MudBlazor
             .AddClass(Class)
             .Build();
 
-        
+
         [CascadingParameter]
         public bool RightToLeft { get; set; }
-        
+
         /// <summary>
         /// Sets the text to be displayed inside the tooltip.
         /// </summary>
@@ -73,7 +73,7 @@ namespace MudBlazor
         [Parameter] public Boolean Inline { get; set; } = true;
 
         private bool _isVisible;
-        public void HandleMouseOver()=> _isVisible = true;
+        public void HandleMouseOver() => _isVisible = true;
         private void HandleMouseOut() => _isVisible = false;
 
 

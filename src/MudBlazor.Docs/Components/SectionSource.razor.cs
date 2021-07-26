@@ -141,12 +141,12 @@ namespace MudBlazor.Docs.Components
         {
             CurrentCode = code;
 
-            if(CurrentCode == Code)
+            if (CurrentCode == Code)
             {
                 Button1Color = Color.Primary;
                 Button2Color = Color.Default;
             }
-            else if(CurrentCode == Code2)
+            else if (CurrentCode == Code2)
             {
                 Button1Color = Color.Default;
                 Button2Color = Color.Primary;

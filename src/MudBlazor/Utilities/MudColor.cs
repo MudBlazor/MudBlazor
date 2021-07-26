@@ -29,7 +29,7 @@ namespace MudBlazor.Utilities
         /// <summary>
         /// Will output the color elements without any decorator and without alpha. Example 12,15,26
         /// </summary>
-        ColorElements   
+        ColorElements
     }
 
     public class MudColor : IEquatable<MudColor>
@@ -353,7 +353,7 @@ namespace MudBlazor.Utilities
             }
             else
             {
-                if ( (lhsIsNull || rhsIsNull) == true)
+                if ((lhsIsNull || rhsIsNull) == true)
                 {
                     return false;
                 }

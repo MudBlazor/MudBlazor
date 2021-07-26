@@ -25,7 +25,7 @@ namespace MudBlazor
 
         private TimelinePosition ConvertTimelinePosition(TimelinePosition timelineMode)
         {
-            if(TimelineOrientation == TimelineOrientation.Vertical)
+            if (TimelineOrientation == TimelineOrientation.Vertical)
             {
                 return timelineMode switch
                 {
@@ -48,7 +48,7 @@ namespace MudBlazor
                 };
             }
         }
-        
+
         [CascadingParameter] public bool RightToLeft { get; set; }
 
         /// <summary>

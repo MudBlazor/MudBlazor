@@ -28,7 +28,7 @@ namespace MudBlazor.UnitTests.Mocks
         public Task<bool> Unsubscribe(Guid key)
         {
             var result = Callbacks.ContainsKey(key);
-            if(result == true)
+            if (result == true)
             {
                 Callbacks.Remove(key);
                 ElementIdMapper.Remove(key);

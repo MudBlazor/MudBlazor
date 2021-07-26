@@ -148,7 +148,7 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("tr")[1].TextContent.Should().Be("No matching records found");
 
             // It should be equal to 3 = empty row string + header row + loading row
-            switchElement.Change(true); 
+            switchElement.Change(true);
             comp.FindAll("tr").Count.Should().Be(3);
             comp.FindAll("tr")[2].TextContent.Should().Be("Loading...");
         }
@@ -1044,7 +1044,7 @@ namespace MudBlazor.UnitTests.Components
                 InnerGroup = new TableGroupDefinition<TableGroupingTest.RacingCar>()
                 {
                     GroupName = "Brand",
-                    Selector = rc => rc.Brand 
+                    Selector = rc => rc.Brand
                 }
             };
             comp.Render();
@@ -1088,7 +1088,7 @@ namespace MudBlazor.UnitTests.Components
             tr.Length.Should().Be(29); // 1 table header + 8 category group rows (h + f) - LMP1 footer + 18 brands group rows (see line 915) - 2 brands LMP2 Header - 2 brands LMP1 footer + 9 car rows - 2 LMP1 car rows
             buttons[0].Click();
             tr = comp.FindAll("tr").ToArray();
-            tr.Length.Should().Be(36); 
+            tr.Length.Should().Be(36);
         }
     }
 }
