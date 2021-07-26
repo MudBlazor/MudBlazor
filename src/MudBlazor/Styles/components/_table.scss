@@ -137,7 +137,7 @@
 .mud-table-bordered {
     & .mud-table-container .mud-table-root .mud-table-body {
         & .mud-table-row {
-            .mud-table-cell {
+            .mud-table-cell:not(:last-child) {
                 border-right: 1px solid var(--mud-palette-table-lines);
             }
         }
@@ -145,7 +145,7 @@
 
     & .mud-table-container .mud-table-root .mud-table-head.table-head-bordered {
         & .mud-table-row {
-            .mud-table-cell {
+            .mud-table-cell:not(:last-child) {
                 border-right: 1px solid var(--mud-palette-table-lines);
             }
         }
@@ -153,7 +153,7 @@
 
     & .mud-table-container .mud-table-root .mud-table-foot.table-foot-bordered {
         & .mud-table-row {
-            .mud-table-cell {
+            .mud-table-cell:not(:last-child) {
                 border-right: 1px solid var(--mud-palette-table-lines);
             }
         }
