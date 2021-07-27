@@ -341,6 +341,14 @@ namespace MudBlazor
                     break;
             }
         }
+        /// <summary>
+        /// Navigate to page with specified index.
+        /// </summary>
+        /// <param name="pageIndex"> The index of the page number.</param>
+        public void NavigateTo(int pageIndex)
+        {
+            CurrentPage = Math.Min(Math.Max(0, pageIndex), NumPages - 1);
+        }
 
         public void SetRowsPerPage(int size)
         {

@@ -1,4 +1,4 @@
-﻿#pragma warning disable CS1998 // async without await
+#pragma warning disable CS1998 // async without await
 #pragma warning disable IDE1006 // leading underscore
 #pragma warning disable BL0005 // Set parameter outside component
 
@@ -261,6 +261,27 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("button")[1].IsDisabled().Should().Be(true);
             comp.FindAll("button")[2].IsDisabled().Should().Be(false);
             comp.FindAll("button")[3].IsDisabled().Should().Be(false);
+        }
+        
+        /// <summary>
+        /// navigate to page test
+        /// </summary>
+        [TestCase(0, "Alabama")]
+        [TestCase(-1, "Alabama")]
+        [TestCase(2, "Kentucky")]
+        [TestCase(5, "Texas")]
+        [TestCase(6, "Texas")]
+        [Test]
+        public async Task TableNavigateToPage(int pageIndex, string expectedFirstItem)
+        {
+            var comp = ctx.RenderComponent<TablePagingTest1>();
+            // print the generated html      
+            Console.WriteLine(comp.Markup);
+            // select elements needed for the test
+            var table = comp.FindComponent<MudTable<string>>();
+            //navigate to specified page
+            await table.InvokeAsync(() => table.Instance.NavigateTo(pageIndex));
+            comp.FindAll("tr.mud-table-row")[0].TextContent.Should().Be(expectedFirstItem);
         }
 
         /// <summary>
