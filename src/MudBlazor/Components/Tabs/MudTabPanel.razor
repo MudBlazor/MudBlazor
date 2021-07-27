@@ -24,7 +24,6 @@ else
 
     public ElementReference PanelRef;
 
-
     /// <summary>
     /// Text will be displayed in the TabPanel as TabTitle.
     /// </summary>
@@ -74,6 +73,8 @@ else
     /// TabPanel Tooltip
     /// </summary>
     [Parameter] public string ToolTip { get; set; }
+
+    public int Index { get; set; }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {

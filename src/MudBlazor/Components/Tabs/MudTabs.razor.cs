@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -27,6 +27,13 @@ namespace MudBlazor
         private double _allTabsSize;
         private double _scrollPosition;
 
+        MudTabPanel _draggedPanel;
+        MudTabPanel _dragOverPanel;
+        private double _dragStartPos;
+        private bool _isDragging = false;
+        private int _dragSrc = 0;
+        private int _dragDst = 0;
+        private int _dragSide = 0;
 
         [CascadingParameter] public bool RightToLeft { get; set; }
 
@@ -136,6 +143,11 @@ namespace MudBlazor
         /// Custom class/classes for Selected Content Panel
         /// </summary>
         [Parameter] public string PanelClass { get; set; }
+
+        /// <summary>
+        /// Enable tab repositioning.
+        /// </summary>
+        [Parameter] public bool EnableRepositioning { get; set; } = false;
 
         public MudTabPanel ActivePanel { get; private set; }
 
@@ -254,6 +266,7 @@ namespace MudBlazor
 
         internal void AddPanel(MudTabPanel tabPanel)
         {
+            tabPanel.Index = _panels.Count;
             _panels.Add(tabPanel);
             if (_panels.Count == 1)
                 ActivePanel = tabPanel;
@@ -299,6 +312,12 @@ namespace MudBlazor
 
             _panels.Remove(tabPanel);
             await _resizeObserver.Unobserve(tabPanel.PanelRef);
+
+            for (int i = 0; i != _panels.Count; i++)
+            {
+                _panels[i].Index = i;
+            }
+
             Rerender();
             StateHasChanged();
         }
@@ -313,7 +332,6 @@ namespace MudBlazor
             var panel = _panels[index];
             ActivatePanel(panel, null, ignoreDisabledState);
         }
-
         public void ActivatePanel(object id, bool ignoreDisabledState = false)
         {
             var panel = _panels.Where((p) => Equals(p.ID, id)).FirstOrDefault();
@@ -336,6 +354,110 @@ namespace MudBlazor
                 StateHasChanged();
             }
         }
+
+        #endregion
+
+        #region Panel repositioning
+
+        private void MovePanel(int src, int dst, int side)
+        {
+            if (src == dst)
+                return;
+
+            List<ElementReference> refs = new List<ElementReference>();
+            foreach (var p in _panels)
+            {
+                refs.Add(p.PanelRef);
+            }
+
+            MudTabPanel tmp = _panels[src];
+
+            if (src < dst)
+            {
+                if (side < 0)
+                    dst = Math.Max(dst - 1, 0);
+
+                for (int i = src; i != dst; i++)
+                {
+                    _panels[i] = _panels[i + 1];
+                }
+                _panels[dst] = tmp;
+            }
+            else if (src > dst)
+            {
+                if (side > 0)
+                    dst = Math.Max(dst + 1, 0);
+
+                for (int i = src; i != dst; i--)
+                {
+                    _panels[i] = _panels[i - 1];
+                }
+                _panels[dst] = tmp;
+            }
+
+            for (int i = 0; i != refs.Count; i++)
+            {
+                _panels[i].PanelRef = refs[i];
+                _panels[i].Index = i;
+            }
+        }
+
+        private void OnDragStart(MudTabPanel panel, MouseEventArgs ev)
+        {
+            if (!EnableRepositioning)
+                return;
+
+            _draggedPanel = panel;
+            _dragStartPos = GetRelevantPosition(ev.ClientX, ev.ClientY);
+            _dragSrc = panel.Index;
+            _dragDst = panel.Index;
+            _isDragging = true;
+        }
+
+        private void OnDragEnterPanel(MudTabPanel panel, MouseEventArgs ev)
+        {
+            if (!EnableRepositioning || panel.Equals(_draggedPanel)) return;
+
+            _dragDst = panel.Index;
+
+            _dragOverPanel = _panels[_dragDst];
+            _dragSide = _dragDst > _dragSrc ? +1 : -1;
+        }
+
+        private void OnDragEnd(MudTabPanel panel, MouseEventArgs ev)
+        {
+            if (!EnableRepositioning || !panel.Equals(_dragOverPanel) || panel.Equals(_draggedPanel)) return;
+
+            _isDragging = false;
+            _dragOverPanel = null;
+
+            MovePanel(_dragSrc, _dragDst, _dragSide);
+
+            ActivePanelIndex = _dragDst;
+
+            _dragSrc = 0;
+            _dragDst = 0;
+
+            Rerender();
+            StateHasChanged();
+        }
+
+        private void OnCancelDrag(EventArgs ev)
+        {
+            if (_isDragging) _isDragging = false;
+        }
+
+        private bool IsDragging { get => _isDragging && _dragSide != 0; }
+
+        private bool DragToLeft { get => _dragSide < 0; }
+
+        private bool DragToRight { get => _dragSide > 0; }
+
+        private bool IsDragOverPanel(MudTabPanel panel) =>
+            IsDragging && _dragOverPanel != null && (panel == _dragOverPanel);
+
+        private bool IsDraggedPanel(MudTabPanel panel) =>
+            IsDragging && (panel == _draggedPanel);
 
         #endregion
 
@@ -453,6 +575,11 @@ namespace MudBlazor
         {
             var tabStyle = new StyleBuilder()
             .AddStyle(panel.Style)
+            .AddStyle("border", "1px dashed blue", () => IsDraggedPanel(panel))
+            .AddStyle("border-left", "2px solid blue", () => !IsVerticalTabs() && IsDragOverPanel(panel) && DragToLeft)
+            .AddStyle("border-right", "2px solid blue", () => !IsVerticalTabs() && IsDragOverPanel(panel) && DragToRight)
+            .AddStyle("border-top", "2px solid blue", () => IsVerticalTabs() && IsDragOverPanel(panel) && DragToLeft)
+            .AddStyle("border-bottom", "2px solid blue", () => IsVerticalTabs() && IsDragOverPanel(panel) && DragToRight)
             .Build();
 
             return tabStyle;
@@ -510,6 +637,22 @@ namespace MudBlazor
             _ => _resizeObserver.GetHeight(reference)
         };
 
+        private double GetRelevantPosition(double x, double y) => Position switch
+        {
+            Position.Top or Position.Bottom or Position.Center => x,
+            _ => y
+        };
+
+        private double GetRelevantPosition(ElementReference reference)
+        {
+            BoundingClientRect rect = _resizeObserver.GetSizeInfo(reference);
+            return GetRelevantPosition(rect.X, rect.Y);
+        }
+
+        private BoundingClientRect GetClientBoundingRect(ElementReference reference)
+        {
+            return _resizeObserver.GetSizeInfo(reference);
+        }
         private double GetLengthOfPanelItems(MudTabPanel panel)
         {
             var value = 0.0;

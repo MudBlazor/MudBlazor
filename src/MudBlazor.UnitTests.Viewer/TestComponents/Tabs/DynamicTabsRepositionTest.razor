@@ -18,23 +18,28 @@
 		AddIconClass="my-add-icon-class" AddTab="OnAddClicked"
 		Centered="@_isCentered"
 		Position="@_position"
+		EnableRepositioning="true"
 >
 	@foreach(var panel in _panels)
 	{
 		<MudTabPanel Text="@panel">
-			Content A
+			Content of panel: @panel
 		</MudTabPanel>
 	}
 </MudDynamicTabs>
 
 @code {
 
+	public static string __description__ = @"Should be able to reposition tabs
+										 	after adding/deleting tabs and
+										 	changing positions (centered, top,
+										 	left, etc).";
+
 	bool _isCentered = false;
-	Position _position { get; set; } = Position.Center;
+	Position _position { get; set; } = Position.Top;
 	List<string> _panels = new List<string>() { "Untitled" };
 
 	public Int32 AddClickCounter { get; private set; }
-	public HashSet<MudTabPanel> CloseClicked { get; private set; } = new();
 
 	private void OnAddClicked()
 	{
