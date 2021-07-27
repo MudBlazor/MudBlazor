@@ -1,0 +1,16 @@
+﻿@namespace MudBlazor.UnitTests.Components
+ 
+<MudPortalProvider />
+
+<MudSelect IsPreRendered="@IsPreRendered" T="string" Label="Coffee">
+            <MudSelectItem Value="@("Cappuccino")" />
+            <MudSelectItem Value="@("Cafe Latte")" />
+            <MudSelectItem Value="@("Espresso")" />
+            <MudSelectItem Value="@("Irish Coffee")" />
+
+</MudSelect>
+
+@code{
+    public static string __description__ = "basic example of a portaled select";
+    [Parameter] public bool IsPreRendered { get; set; }
+}

@@ -113,7 +113,7 @@ namespace MudBlazor
         public int? MaxItems { get; set; } = 10;
 
         /// <summary>
-        /// Minimum characters to initiate a search, defaults to 2
+        /// Minimum characters to initiate a search
         /// </summary>
         [Parameter]
         public int MinCharacters { get; set; } = 0;
@@ -181,6 +181,15 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public bool SelectValueOnTab { get; set; } = false;
 
+        /// <summary>
+        /// Show clear button.
+        /// </summary>
+        [Parameter] public bool Clearable { get; set; } = false;
+
+        /// <summary>
+        /// Button click event for clear button. Called after text and value has been cleared.
+        /// </summary>
+        [Parameter] public EventCallback<MouseEventArgs> OnClearButtonClick { get; set; }
 
         private string _currentIcon;
 
@@ -197,10 +206,12 @@ namespace MudBlazor
             await SetValueAsync(value);
             if (_items != null)
                 _selectedListItemIndex = Array.IndexOf(_items, value);
-            await SetTextAsync(GetItemString(value), false);
+            var optionText = GetItemString(value);
+            await SetTextAsync(optionText, false);
             _timer?.Dispose();
             IsOpen = false;
             BeginValidate();
+            _elementReference?.SetText(optionText);
             StateHasChanged();
         }
 
@@ -289,6 +300,18 @@ namespace MudBlazor
             }
 
             IsOpen = true;
+            StateHasChanged();
+        }
+
+        /// <summary>
+        /// Clears the autocomplete's text
+        /// </summary>
+        public async Task Clear()
+        {
+            await SetTextAsync(string.Empty, updateValue: false);
+            await CoerceValueToText();
+            IsOpen = false;
+            _timer?.Dispose();
             StateHasChanged();
         }
 

@@ -2,6 +2,7 @@
 using Bunit;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.DependencyInjection;
+using MudBlazor.Docs.Services;
 using MudBlazor.Services;
 using MudBlazor.UnitTests.Mocks;
 using NUnit.Framework;
@@ -27,8 +28,13 @@ namespace MudBlazor.UnitTests.Components
             ctx.Services.AddTransient<IScrollListener, MockScrollListener>();
             ctx.Services.AddTransient<IJsApiService, MockJsApiServices>();
             ctx.Services.AddTransient<IResizeObserver, MockResizeObserver>();
+            ctx.Services.AddTransient<IPortal, Portal>();
+            ctx.Services.AddTransient<IScrollSpy, MockScrollSpy>();
+            ctx.Services.AddTransient<IEventListener, MockEventListener>();
             ctx.Services.AddSingleton<IHeadElementHelper>(new MockHeadElementHelper());
             ctx.Services.AddSingleton<IBrowserWindowSizeProvider>(new MockBrowserWindowSizeProvider());
+            ctx.Services.AddSingleton<IDocsNavigationService, DocsNavigationService>();
+            ctx.Services.AddSingleton<IMenuService, MenuService>();
             ctx.Services.AddScoped(sp => new HttpClient());
         }
 

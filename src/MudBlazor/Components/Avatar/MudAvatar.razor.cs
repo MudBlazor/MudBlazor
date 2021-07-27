@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿using System;
+using Microsoft.AspNetCore.Components;
 using MudBlazor.Extensions;
 using MudBlazor.Utilities;
 
@@ -6,6 +7,7 @@ namespace MudBlazor
 {
     partial class MudAvatar : MudComponentBase
     {
+        [CascadingParameter] protected MudAvatarGroup AvatarGroup { get; set; }
         protected string Classname =>
         new CssBuilder("mud-avatar")
           .AddClass($"mud-avatar-{Size.ToDescriptionString()}")
@@ -13,8 +15,21 @@ namespace MudBlazor
           .AddClass($"mud-avatar-square", Square)
           .AddClass($"mud-avatar-{Variant.ToDescriptionString()}")
           .AddClass($"mud-avatar-{Variant.ToDescriptionString()}-{Color.ToDescriptionString()}")
+          .AddClass($"mud-elevation-{Elevation.ToString()}")
+          .AddClass(AvatarGroup?.GetAvatarSpacing() ?? new CssBuilder(), AvatarGroup != null)
           .AddClass(Class)
         .Build();
+
+        protected string Stylesname =>
+            new StyleBuilder()
+            .AddStyle(AvatarGroup?.GetAvatarZindex(this) ?? new StyleBuilder(), AvatarGroup != null)
+            .AddStyle(Style)
+            .Build();
+
+        /// <summary>
+        /// The higher the number, the heavier the drop-shadow.
+        /// </summary>
+        [Parameter] public int Elevation { set; get; } = 0;
 
         /// <summary>
         /// If true, border-radius is set to 0.
@@ -50,5 +65,28 @@ namespace MudBlazor
         /// Child content of the component.
         /// </summary>
         [Parameter] public RenderFragment ChildContent { get; set; }
+
+        protected override void OnInitialized()
+        {
+            base.OnInitialized();
+
+            if (AvatarGroup != null)
+            {
+                AvatarGroup.AddAvatar(this);
+            }
+        }
+
+        protected void Dispose()
+        {
+            if (AvatarGroup != null)
+            {
+                AvatarGroup.RemoveAvatar(this);
+            }
+        }
+
+        internal void ForceRedraw()
+        {
+            StateHasChanged();
+        }
     }
 }

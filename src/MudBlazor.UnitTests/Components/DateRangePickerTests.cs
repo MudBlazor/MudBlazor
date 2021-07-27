@@ -418,5 +418,33 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("button.mud-picker-calendar-day").Select(button => (button as IHtmlButtonElement).IsDisabled)
                 .Should().OnlyContain(disabled => disabled == false);
         }
+
+        [Test]
+        public void InitializeDateRange_DefaultConstructor()
+        {
+            var range = new DateRange();
+
+            var comp = OpenPicker(Parameter(nameof(MudDateRangePicker.DateRange), range));
+
+            comp.Instance.DateRange.Should().NotBeNull();
+            comp.Instance.DateRange.Start.Should().NotBe(default);
+            comp.Instance.DateRange.End.Should().NotBe(default);
+            comp.Instance.DateRange.Start.Should().BeNull();
+            comp.Instance.DateRange.End.Should().BeNull();
+        }
+
+        [Test]
+        public void InitializeDateRange_AllNullValues()
+        {
+            var range = new DateRange(null, null);
+
+            var comp = OpenPicker(Parameter(nameof(MudDateRangePicker.DateRange), range));
+
+            comp.Instance.DateRange.Should().NotBeNull();
+            comp.Instance.DateRange.Start.Should().NotBe(default);
+            comp.Instance.DateRange.End.Should().NotBe(default);
+            comp.Instance.DateRange.Start.Should().BeNull();
+            comp.Instance.DateRange.End.Should().BeNull();
+        }
     }
 }

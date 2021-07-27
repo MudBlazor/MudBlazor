@@ -39,6 +39,11 @@ namespace MudBlazor
         [Parameter] public string Href { get; set; }
 
         /// <summary>
+        /// If true, force browser to redirect outside component router-space.
+        /// </summary>
+        [Parameter] public bool ForceLoad { get; set; }
+
+        /// <summary>
         /// Avatar CSS Class to applie if Avtar is set.
         /// </summary>
         [Parameter] public string AvatarClass { get; set; }
@@ -161,7 +166,7 @@ namespace MudBlazor
             {
                 MudList?.SetSelectedItem(this);
                 OnClick.InvokeAsync(ev);
-                UriHelper.NavigateTo(Href);
+                UriHelper.NavigateTo(Href, ForceLoad);
             }
             else
             {

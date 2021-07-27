@@ -1,5 +1,4 @@
-﻿#pragma warning disable CS1998 // async without await
-#pragma warning disable IDE1006 // leading underscore
+﻿#pragma warning disable IDE1006 // leading underscore
 
 using System;
 using System.Linq;
@@ -185,6 +184,31 @@ namespace MudBlazor.UnitTests.Components
             spans[0].ClassList.Should().NotContain("mud-checked");
             spans[1].ClassList.Should().NotContain("mud-checked");
             spans[2].ClassList.Should().NotContain("mud-checked");
+        }
+
+        [Test]
+        public void RadioGroupTest6()
+        {
+            var comp = ctx.RenderComponent<RadioGroupTest6>();
+            Console.WriteLine(comp.Markup);
+            // select elements needed for the test
+            var group = comp.FindComponent<MudRadioGroup<string>>();
+            var buttons = comp.FindAll("label > span").ToArray();
+            var svgs = comp.FindAll("svg").ToArray();
+            // check dense
+            buttons[0].ClassList.Should().Contain("mud-radio-dense");
+            buttons[1].ClassList.Should().NotContain("mud-radio-dense");
+            buttons[2].ClassList.Should().NotContain("mud-radio-dense");
+            buttons[3].ClassList.Should().NotContain("mud-radio-dense");
+            // check size (two svgs per radio)
+            svgs[0].ClassList.Should().Contain("mud-icon-size-medium");
+            svgs[1].ClassList.Should().Contain("mud-icon-size-medium");
+            svgs[2].ClassList.Should().Contain("mud-icon-size-small");
+            svgs[3].ClassList.Should().Contain("mud-icon-size-small");
+            svgs[4].ClassList.Should().Contain("mud-icon-size-medium");
+            svgs[5].ClassList.Should().Contain("mud-icon-size-medium");
+            svgs[6].ClassList.Should().Contain("mud-icon-size-large");
+            svgs[7].ClassList.Should().Contain("mud-icon-size-large");
         }
     }
 }

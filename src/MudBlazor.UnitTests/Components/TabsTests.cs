@@ -837,7 +837,6 @@ namespace MudBlazor.UnitTests.Components
         {
             ctx.Services.Add(new ServiceDescriptor(typeof(IResizeObserver), new MockResizeObserver()));
 
-
             //starting with index 1:
             var comp = ctx.RenderComponent<SelectedIndexTabsTest>();
             comp.Instance.Tabs.ActivePanelIndex.Should().Be(1);
@@ -864,6 +863,124 @@ namespace MudBlazor.UnitTests.Components
             activePanels.Should().HaveCount(1);
             panels[0].ClassList.Contains("mud-tab-active").Should().BeTrue();
 
+        }
+
+        [Test]
+        public void DefaultValuesForHeaders()
+        {
+            MudTabs tabs = new MudTabs();
+
+            tabs.HeaderPosition.Should().Be(TabHeaderPosition.After);
+            tabs.Header.Should().BeNull();
+
+            tabs.TabPanelHeaderPosition.Should().Be(TabHeaderPosition.After);
+            tabs.TabPanelHeader.Should().BeNull();
+
+        }
+
+        /// <summary>
+        /// The header should be rendered based on the value of header position.
+        /// </summary>
+        [Test]
+        [TestCase(TabHeaderPosition.After)]
+        [TestCase(TabHeaderPosition.Before)]
+        public async Task RenderHeaderBasedOnPosition(TabHeaderPosition position)
+        {
+            ctx.Services.Add(new ServiceDescriptor(typeof(IResizeObserver), new MockResizeObserver()));
+
+            var comp = ctx.RenderComponent<TabsWithHeaderTest>();
+            comp.SetParametersAndRender(x => x.Add(y => y.TabHeaderPosition, position));
+            comp.SetParametersAndRender(x => x.Add(y => y.TabPanelHeaderPosition, TabHeaderPosition.None));
+
+            var headerContent = comp.Find(".test-header-content");
+            headerContent.TextContent.Should().Be($"Count: {3}");
+
+            var headerPanel = headerContent.ParentElement;
+            String addtionalClass = position == TabHeaderPosition.After ? "mud-tabs-header-after" : "mud-tabs-header-before";
+            headerPanel.ClassList.Should().BeEquivalentTo(new string[] { "mud-tabs-header", addtionalClass });
+
+            var tabInnerHeader = comp.Find(".mud-tabs-toolbar-inner");
+
+            tabInnerHeader.Children.Should().Contain(headerPanel);
+            if (position == TabHeaderPosition.After)
+            {
+                tabInnerHeader.Children.Last().Should().Be(headerPanel);
+            }
+            else
+            {
+                tabInnerHeader.Children.First().Should().Be(headerPanel);
+            }
+        }
+
+        /// <summary>
+        /// If the header template is set, but the position is none, no header should be rendered
+        /// </summary>
+        [Test]
+        public async Task RenderHeaderBasedOnPosition_None()
+        {
+            ctx.Services.Add(new ServiceDescriptor(typeof(IResizeObserver), new MockResizeObserver()));
+
+            var comp = ctx.RenderComponent<TabsWithHeaderTest>();
+            comp.SetParametersAndRender(x => x.Add(y => y.TabHeaderPosition, TabHeaderPosition.None));
+            comp.SetParametersAndRender(x => x.Add(y => y.TabPanelHeaderPosition, TabHeaderPosition.None));
+
+            var headerContent = comp.FindAll(".test-header-content");
+            headerContent.Should().BeEmpty();
+        }
+
+        /// <summary>
+        /// The panel header header should be rendered based on the value of header position.
+        /// </summary>
+        [Test]
+        [TestCase(TabHeaderPosition.After)]
+        [TestCase(TabHeaderPosition.Before)]
+        public async Task RenderHeaderPanelBasedOnPosition(TabHeaderPosition position)
+        {
+            ctx.Services.Add(new ServiceDescriptor(typeof(IResizeObserver), new MockResizeObserver()));
+
+            var comp = ctx.RenderComponent<TabsWithHeaderTest>();
+            comp.SetParametersAndRender(x => x.Add(y => y.TabHeaderPosition, TabHeaderPosition.None));
+            comp.SetParametersAndRender(x => x.Add(y => y.TabPanelHeaderPosition, position));
+
+            var headerContent = comp.FindAll(".test-panel-header-content");
+            headerContent.Should().HaveCount(3);
+
+            headerContent.Select(x => x.TextContent).ToList().Should().BeEquivalentTo(new string[] { "Index: 0", "Index: 1", "Index: 2" });
+
+            foreach (var item in headerContent)
+            {
+                var headerPanel = item.ParentElement;
+                string addtionalClass = position == TabHeaderPosition.After ? "mud-tabs-panel-header-after" : "mud-tabs-panel-header-before";
+
+                headerPanel.ClassList.Should().BeEquivalentTo(new string[] { "mud-tabs-panel-header", addtionalClass });
+
+                var parent = headerPanel.ParentElement;
+
+                if (position == TabHeaderPosition.After)
+                {
+                    parent.Children.Last().Should().Be(headerPanel);
+                }
+                else
+                {
+                    parent.Children.First().Should().Be(headerPanel);
+                }
+            }
+        }
+
+        /// <summary>
+        /// If the header template is set, but the position is none, no header should be rendered
+        /// </summary>
+        [Test]
+        public async Task RenderHeaderPanelBasedOnPosition_None()
+        {
+            ctx.Services.Add(new ServiceDescriptor(typeof(IResizeObserver), new MockResizeObserver()));
+
+            var comp = ctx.RenderComponent<TabsWithHeaderTest>();
+            comp.SetParametersAndRender(x => x.Add(y => y.TabHeaderPosition, TabHeaderPosition.None));
+            comp.SetParametersAndRender(x => x.Add(y => y.TabPanelHeaderPosition, TabHeaderPosition.None));
+
+            var headerContent = comp.FindAll(".test-panel-header-content");
+            headerContent.Should().BeEmpty();
         }
 
         [Test]

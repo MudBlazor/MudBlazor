@@ -1,0 +1,9 @@
+﻿@namespace MudBlazor
+<div id="mud-portal-container"  data-items=@(Portal.Items.Count)>
+    @foreach (var  item in Portal.Items)
+    {
+      <div class="portal-anchor" @key=@item.Id id="@item.Id">
+          @item.Fragment
+      </div>
+    }
+</div>

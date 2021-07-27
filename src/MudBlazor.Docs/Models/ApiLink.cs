@@ -35,6 +35,11 @@ namespace MudBlazor.Docs.Models
         /// </summary>
         public static Type GetTypeFromComponentLink(string component)
         {
+            if (component.Contains('#') == true)
+            {
+                component = component.Substring(0, component.IndexOf('#'));
+            }
+
             if (string.IsNullOrEmpty(component))
                 return null;
             if (s_inverseSpecialCase.TryGetValue(component, out var type))

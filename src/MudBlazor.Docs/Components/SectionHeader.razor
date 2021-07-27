@@ -1,12 +1,23 @@
 ﻿@using MudBlazor.Utilities
 
-<div class="@Classname">
-    <MudText Typo="Typo.h4">@Title</MudText>
-    <MudText Typo="Typo.h6">@SubTitle</MudText>
-    <MudText>@Description</MudText>
+<div @ref="@SectionReference" id="@GetSectionId()" class="@Classname">
+    @if(!String.IsNullOrWhiteSpace(Title))
+    {
+        <MudText Typo="Typo.h4">@Title</MudText>
+    }
+    @if(SubTitle != null)
+    {
+        <MudText Typo="Typo.h6">@SubTitle</MudText>
+    }
+    @if(Description != null)
+    {
+        <MudText>@Description</MudText>
+    }
 </div>
 
 @code {
+
+    [CascadingParameter] private DocsPage DocsPage { get; set; }
 
     protected string Classname =>
     new CssBuilder("docs-section-header")
@@ -15,8 +26,46 @@
 
     [Parameter] public string Class { get; set; }
 
-    [Parameter] public RenderFragment Title { get; set; }
+    [Parameter] public string Title { get; set; }
     [Parameter] public RenderFragment SubTitle { get; set; }
     [Parameter] public RenderFragment Description { get; set; }
 
+    public DocsSectionLink Section { get; set; }
+
+    public ElementReference SectionReference;
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+
+        if (DocsPage != null && !String.IsNullOrWhiteSpace(Title))
+        {
+            Section = new DocsSectionLink
+            {
+                Id = Title.Replace(" ", "-").ToLower(),
+                Title = Title,
+            };
+        }
+    }
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        base.OnAfterRender(firstRender);
+        if (firstRender == true && DocsPage != null && !String.IsNullOrWhiteSpace(Title))
+        {
+            DocsPage.AddSection(Section);
+        }
+    }
+
+    private string GetSectionId()
+    {
+        if(Section != null)
+        {
+            return Section.Id;
+        }
+        else
+        {
+            return Guid.NewGuid().ToString();
+        }
+    }
 }

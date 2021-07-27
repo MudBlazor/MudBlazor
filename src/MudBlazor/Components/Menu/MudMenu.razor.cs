@@ -1,6 +1,7 @@
 ﻿using System;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using MudBlazor.Extensions;
 using MudBlazor.Interfaces;
 using MudBlazor.Utilities;
 
@@ -10,7 +11,6 @@ namespace MudBlazor
     {
         protected string Classname =>
         new CssBuilder("mud-menu")
-            .AddClass("mud-menu-openonhover", ActivationEvent == MouseEvent.MouseOver)
         .AddClass(Class)
        .Build();
 
@@ -107,6 +107,11 @@ namespace MudBlazor
         [Parameter] public bool OffsetX { get; set; }
 
         /// <summary>
+        /// Set to true if you want to prevent page from scrolling when the menu is open
+        /// </summary>
+        [Parameter] public bool LockScroll { get; set; }
+
+        /// <summary>
         /// Add menu items here
         /// </summary>
         [Parameter] public RenderFragment ChildContent { get; set; }
@@ -120,13 +125,20 @@ namespace MudBlazor
             StateHasChanged();
         }
 
-        public void OpenMenu(MouseEventArgs args)
+        public void OpenMenu(EventArgs args)
         {
             if (Disabled)
                 return;
-            PopoverStyle = PositionAtCurser ? $"position:fixed; left:{args?.ClientX}px; top:{args?.ClientY}px;" : null;
+            if (PositionAtCurser) SetPopoverStyle((MouseEventArgs)args);
             _isOpen = true;
             StateHasChanged();
+        }
+
+        // Sets the popover style ONLY when there is an activator
+        private void SetPopoverStyle(MouseEventArgs args)
+        {
+            //use the offset with a relative position to the container
+            PopoverStyle = $"left:{args?.OffsetX.ToPixels()};top:{args?.OffsetY.ToPixels()};";
         }
 
         public void ToggleMenu(MouseEventArgs args)
@@ -152,8 +164,6 @@ namespace MudBlazor
         {
             ToggleMenu(args);
         }
-
-
 
     }
 }

@@ -1,0 +1,26 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudGrid>
+    <MudItem xs="12" sm="6" md="4">
+        <MudTextField @bind-Value="@_searchString"
+                              Immediate="true" 
+                              Placeholder="Clearable"
+                              Clearable="true"
+                              Class="mt-0" />
+    </MudItem>
+    <MudItem xs="12" sm="6" md="4">
+        <MudTextField @bind-Value="@_telephone"
+                      Label="InputType.Telephone"
+                      Immediate="true" />
+    </MudItem>
+</MudGrid>
+<div class="mt-3">
+    <MudText>Clearable textfield: @_searchString</MudText>
+    <MudText>InputType telephone: @_telephone</MudText>
+</div>
+
+
+@code {
+    string _searchString;
+    string _telephone;
+}

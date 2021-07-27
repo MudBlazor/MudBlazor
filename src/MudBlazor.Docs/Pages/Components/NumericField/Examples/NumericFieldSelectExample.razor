@@ -1,11 +1,15 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
 <MudGrid>
-    <MudItem xs="12">
-        <MudNumericField @ref="doubleReference" Label="Select" Variant="Variant.Filled" @bind-Value="@value" />
+    <MudItem xs="12" sm="6">
+        <MudNumericField @ref="doubleReference1" Label="Manual focus" Variant="Variant.Filled" @bind-Value="@value1" />
+        <MudButton @onclick="() => doubleReference1.FocusAsync()">
+            Focus
+        </MudButton>
     </MudItem>
-    <MudItem xs="12" Class="d-flex justify-end">
-        <MudButton @onclick="() => doubleReference.SelectAsync()">
+    <MudItem xs="12" sm="6">
+        <MudNumericField @ref="doubleReference2" Label="Select" Variant="Variant.Filled" @bind-Value="@value2" />
+        <MudButton @onclick="() => doubleReference2.SelectAsync()">
             Select
         </MudButton>
     </MudItem>
@@ -13,7 +17,9 @@
 
 @code
 {
-    private MudNumericField<double> doubleReference;
+    private MudNumericField<double> doubleReference1;
+    private MudNumericField<double> doubleReference2;
 
-    double value = Math.PI;
+    double value1 = Math.PI;
+    double value2 = Math.E;
 }

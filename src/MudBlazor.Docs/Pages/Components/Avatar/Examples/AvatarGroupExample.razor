@@ -1,0 +1,24 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudAvatarGroup Max="@max" Spacing="@spacing" MaxColor="Color.Primary">
+    <MudAvatar Image="_content/MudBlazor.Docs/images/avatar_jonny.jpg" />
+    <MudAvatar Image="_content/MudBlazor.Docs/images/mony.png" />
+    <MudAvatar Image="_content/MudBlazor.Docs/images/toiletvisit.png" />
+    <MudAvatar Image="_content/MudBlazor.Docs/images/avatar_jonny.jpg" />
+    <MudAvatar Image="_content/MudBlazor.Docs/images/mony.png" />
+    <MudAvatar Image="_content/MudBlazor.Docs/images/toiletvisit.png" />
+</MudAvatarGroup>
+
+<MudGrid>
+    <MudItem xs="12" sm="6">
+        <MudSlider Min="0" Max="6" Step="0" @bind-Value="@max" Color="Color.Info">Max Avatars</MudSlider>
+    </MudItem>
+    <MudItem xs="12" sm="6">
+        <MudSlider Min="0" Max="16" Step="0" @bind-Value="@spacing" Color="Color.Error">Spacing</MudSlider>
+    </MudItem>
+</MudGrid>
+
+@code {
+    int max = 3;
+    int spacing = 3;
+}
