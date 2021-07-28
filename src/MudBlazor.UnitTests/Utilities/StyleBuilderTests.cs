@@ -66,10 +66,10 @@ namespace UtilityTests
 
             var styleToRenderFromDefaultConstructor = StyleBuilder.Default(styleToRender).Build();
 
-            /// Double ;; is valid HTML.
-            /// The CSS syntax allows for empty declarations, which means that you can add leading and trailing semicolons as you like. For instance, this is valid CSS
-            /// .foo { ;;;display:none;;;color:black;;; }
-            /// Trimming is possible, but is it worth the operations for a non-issue?
+            // Double ;; is valid HTML.
+            // The CSS syntax allows for empty declarations, which means that you can add leading and trailing semicolons as you like. For instance, this is valid CSS
+            // .foo { ;;;display:none;;;color:black;;; }
+            // Trimming is possible, but is it worth the operations for a non-issue?
             styleToRender.Should().Be("background-color:DodgerBlue;;padding:35px;");
             styleToRenderFromDefaultConstructor.Should().Be("background-color:DodgerBlue;;padding:35px;;");
 
@@ -98,10 +98,10 @@ namespace UtilityTests
                 .AddStyle("z-index", "-1")
                 .Build();
 
-            /// Double ;; is valid HTML.
-            /// The CSS syntax allows for empty declarations, which means that you can add leading and trailing semicolons as you like. For instance, this is valid CSS
-            /// .foo { ;;;display:none;;;color:black;;; }
-            /// Trimming is possible, but is it worth the operations for a non-issue?
+            // Double ;; is valid HTML.
+            // The CSS syntax allows for empty declarations, which means that you can add leading and trailing semicolons as you like. For instance, this is valid CSS
+            // .foo { ;;;display:none;;;color:black;;; }
+            // Trimming is possible, but is it worth the operations for a non-issue?
             styleToRender.Should().Be("background-color:DodgerBlue;padding:35px;z-index:-1;");
 
         }
@@ -127,10 +127,10 @@ namespace UtilityTests
                 .AddStyle("z-index", "-1")
                 .Build();
 
-            /// Double ;; is valid HTML.
-            /// The CSS syntax allows for empty declarations, which means that you can add leading and trailing semicolons as you like. For instance, this is valid CSS
-            /// .foo { ;;;display:none;;;color:black;;; }
-            /// Trimming is possible, but is it worth the operations for a non-issue?
+            // Double ;; is valid HTML.
+            // The CSS syntax allows for empty declarations, which means that you can add leading and trailing semicolons as you like. For instance, this is valid CSS
+            // .foo { ;;;display:none;;;color:black;;; }
+            // Trimming is possible, but is it worth the operations for a non-issue?
             styleToRender.Should().Be("text-decoration:underline line-through;z-index:-1;");
 
         }
