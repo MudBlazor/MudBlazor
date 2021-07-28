@@ -30,7 +30,7 @@ namespace PrimitiveCalculator
 {
     public class Expression
     {
-        private List<Operation> _operations = new List<Operation>();
+        private List<Operation> _operations = new();
         private SimpleParser _parser;
         private bool _mustConsumeClosingBracket;
         public double? Value { get; set; }

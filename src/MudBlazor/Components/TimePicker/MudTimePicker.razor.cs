@@ -357,7 +357,7 @@ namespace MudBlazor
             return $"{height}%;";
         }
 
-        private readonly SetTime _timeSet = new SetTime();
+        private readonly SetTime _timeSet = new();
         private int _initialHour;
 
         protected override void OnInitialized()

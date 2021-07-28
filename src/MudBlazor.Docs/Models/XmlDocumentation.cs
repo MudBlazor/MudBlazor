@@ -236,8 +236,8 @@ namespace MudBlazor.Docs.Models
 
         #region XML Code Documentation
 
-        public static System.Collections.Generic.HashSet<Assembly> LoadedAssemblies = new System.Collections.Generic.HashSet<Assembly>();
-        public static System.Collections.Generic.Dictionary<string, string> LoadedXmlDocumentation = new System.Collections.Generic.Dictionary<string, string>();
+        public static System.Collections.Generic.HashSet<Assembly> LoadedAssemblies = new();
+        public static System.Collections.Generic.Dictionary<string, string> LoadedXmlDocumentation = new();
 
         public static void LoadXmlDocumentation(Assembly assembly)
         {

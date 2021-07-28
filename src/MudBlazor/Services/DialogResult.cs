@@ -25,8 +25,8 @@ namespace MudBlazor
 
         public static DialogResult Ok<T>(T result) => Ok(result, default);
 
-        public static DialogResult Ok<T>(T result, Type dialogType) => new DialogResult(result, dialogType, false);
+        public static DialogResult Ok<T>(T result, Type dialogType) => new(result, dialogType, false);
 
-        public static DialogResult Cancel() => new DialogResult(default, typeof(object), true);
+        public static DialogResult Cancel() => new(default, typeof(object), true);
     }
 }

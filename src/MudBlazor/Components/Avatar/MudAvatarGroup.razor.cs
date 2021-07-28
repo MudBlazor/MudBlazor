@@ -111,7 +111,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public RenderFragment ChildContent { get; set; }
 
-        internal List<MudAvatar> _avatars = new List<MudAvatar>();
+        internal List<MudAvatar> _avatars = new();
 
         internal void AddAvatar(MudAvatar avatar)
         {
