@@ -66,7 +66,7 @@ namespace MudBlazor
 
         public async Task<Guid> Subscribe<T>(string eventName, string elementId, string projectionName, int throotleInterval, Func<object, Task> callback)
         {
-            Guid key = Guid.NewGuid();
+            var key = Guid.NewGuid();
             var type = typeof(T);
 
             _callbackResolver.Add(key, (type, callback));

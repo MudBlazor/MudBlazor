@@ -81,25 +81,25 @@ namespace MudBlazor
 
         private MudDrawer FindLeftDrawer()
         {
-            Anchor anchor = RightToLeft ? Anchor.End : Anchor.Start;
+            var anchor = RightToLeft ? Anchor.End : Anchor.Start;
             return _drawers.FirstOrDefault(d => d.Anchor == anchor || d.Anchor == Anchor.Left);
         }
 
         private MudDrawer FindRightDrawer()
         {
-            Anchor anchor = RightToLeft ? Anchor.Start : Anchor.End;
+            var anchor = RightToLeft ? Anchor.Start : Anchor.End;
             return _drawers.FirstOrDefault(d => d.Anchor == anchor || d.Anchor == Anchor.Right);
         }
 
         private MudDrawer FindLeftMiniDrawer()
         {
-            Anchor anchor = RightToLeft ? Anchor.End : Anchor.Start;
+            var anchor = RightToLeft ? Anchor.End : Anchor.Start;
             return _drawers.FirstOrDefault(d => d.Variant == DrawerVariant.Mini && (d.Anchor == anchor || d.Anchor == Anchor.Left));
         }
 
         private MudDrawer FindRightMiniDrawer()
         {
-            Anchor anchor = RightToLeft ? Anchor.Start : Anchor.End;
+            var anchor = RightToLeft ? Anchor.Start : Anchor.End;
             return _drawers.FirstOrDefault(d => d.Variant == DrawerVariant.Mini && (d.Anchor == anchor || d.Anchor == Anchor.Right));
         }
     }

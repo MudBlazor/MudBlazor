@@ -434,7 +434,7 @@ namespace MudBlazor.UnitTests.Components
         public async Task CheckAutoCloseDatePickerTest()
         {
             // Define a date for comparison
-            DateTime now = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day);
+            var now = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day);
 
             // Get access to the datepicker of the instance
             var comp = ctx.RenderComponent<AutoCompleteDatePickerTest>();
@@ -498,7 +498,7 @@ namespace MudBlazor.UnitTests.Components
         public async Task CheckReadOnlyTest()
         {
             // Define a date for comparison
-            DateTime now = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day);
+            var now = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day);
 
             // Get access to the datepicker of the instance
             var comp = ctx.RenderComponent<MudDatePicker>();

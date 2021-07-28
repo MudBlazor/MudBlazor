@@ -48,7 +48,7 @@ namespace MudBlazor.Services
 
             foreach (var item in filteredElements)
             {
-                Guid id = Guid.NewGuid();
+                var id = Guid.NewGuid();
                 elementIds.Add(id);
                 _cachedValueIds.Add(id, item);
             }
@@ -66,7 +66,7 @@ namespace MudBlazor.Services
 
         public async Task Unobserve(ElementReference element)
         {
-            Guid elementId = _cachedValueIds.FirstOrDefault(x => x.Value.Id == element.Id).Key;
+            var elementId = _cachedValueIds.FirstOrDefault(x => x.Value.Id == element.Id).Key;
             if (elementId == default) { return; }
 
             //if the ubobserve happen during a component teardown, the try-catch is a safe guard to prevent a "pseudo" exception

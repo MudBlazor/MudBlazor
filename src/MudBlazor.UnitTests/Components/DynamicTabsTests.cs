@@ -84,8 +84,8 @@ namespace MudBlazor.UnitTests.Components
                 item.GetAttribute("style").Should().Be("propertyA: 4px");
                 item.ClassList.Should().StartWith(new string[] { "mud-button-root" });
 
-                XElement actual = XElement.Parse($"<test>{item.Children[0].Children[0].InnerHtml}</test>");
-                XElement expected = XElement.Parse($"<test>{Icons.Material.Filled.RestoreFromTrash}</test>");
+                var actual = XElement.Parse($"<test>{item.Children[0].Children[0].InnerHtml}</test>");
+                var expected = XElement.Parse($"<test>{Icons.Material.Filled.RestoreFromTrash}</test>");
 
                 actual.Should().BeEquivalentTo(expected);
             }
@@ -98,8 +98,8 @@ namespace MudBlazor.UnitTests.Components
                 item.GetAttribute("style").Should().Be("propertyB: 6px");
                 item.ClassList.Should().StartWith(new string[] { "mud-button-root" });
 
-                XElement actual = XElement.Parse($"<test>{item.Children[0].Children[0].InnerHtml}</test>");
-                XElement expected = XElement.Parse($"<test>{Icons.Material.Filled.AddAlarm}</test>");
+                var actual = XElement.Parse($"<test>{item.Children[0].Children[0].InnerHtml}</test>");
+                var expected = XElement.Parse($"<test>{Icons.Material.Filled.AddAlarm}</test>");
 
                 actual.Should().BeEquivalentTo(expected);
 
@@ -123,8 +123,8 @@ namespace MudBlazor.UnitTests.Components
                 item.GetAttribute("style").Should().Be("propertyA: 4px");
                 item.ClassList.Should().StartWith(new string[] { "mud-button-root" });
 
-                XElement actual = XElement.Parse($"<test>{item.Children[0].Children[0].InnerHtml}</test>");
-                XElement expected = XElement.Parse($"<test>{Icons.Material.Filled.RestoreFromTrash}</test>");
+                var actual = XElement.Parse($"<test>{item.Children[0].Children[0].InnerHtml}</test>");
+                var expected = XElement.Parse($"<test>{Icons.Material.Filled.RestoreFromTrash}</test>");
 
                 actual.Should().BeEquivalentTo(expected);
 
@@ -145,8 +145,8 @@ namespace MudBlazor.UnitTests.Components
                 item.GetAttribute("style").Should().Be("propertyB: 6px");
                 item.ClassList.Should().StartWith(new string[] { "mud-button-root" });
 
-                XElement actual = XElement.Parse($"<test>{item.Children[0].Children[0].InnerHtml}</test>");
-                XElement expected = XElement.Parse($"<test>{Icons.Material.Filled.AddAlarm}</test>");
+                var actual = XElement.Parse($"<test>{item.Children[0].Children[0].InnerHtml}</test>");
+                var expected = XElement.Parse($"<test>{Icons.Material.Filled.AddAlarm}</test>");
 
                 actual.Should().BeEquivalentTo(expected);
 
@@ -182,7 +182,7 @@ namespace MudBlazor.UnitTests.Components
 
             Console.WriteLine(comp.Markup);
 
-            for (int i = 0; i < 3; i++)
+            for (var i = 0; i < 3; i++)
             {
                 var closeButton = comp.FindAll(".my-close-icon-class")[i];
                 closeButton.Click();

@@ -162,8 +162,8 @@ namespace MudBlazor
             {
                 if (value == null) { return; }
 
-                bool rgbChanged = value != _color;
-                bool hslChanged = _color == null ? false : value.HslChanged(_color);
+                var rgbChanged = value != _color;
+                var hslChanged = _color == null ? false : value.HslChanged(_color);
                 _color = value;
 
                 if (rgbChanged)
@@ -270,8 +270,8 @@ namespace MudBlazor
                 index = 5;
             }
 
-            int valueInDeg = (int)_color.H - (index * 60);
-            int value = (int)(MathExtensions.Map(0, 60, 0, 255, valueInDeg));
+            var valueInDeg = (int)_color.H - (index * 60);
+            var value = (int)(MathExtensions.Map(0, 60, 0, 255, valueInDeg));
             var section = _rgbToHueMapper[index];
 
             _baseColor = new(section.r(value), section.g(value), section.b(value), 255);
@@ -279,17 +279,17 @@ namespace MudBlazor
 
         private void UpdateColorBaseOnSelection()
         {
-            double x = _selectorX / _maxX;
+            var x = _selectorX / _maxX;
 
-            int r_x = 255 - (int)((255 - _baseColor.R) * x);
-            int g_x = 255 - (int)((255 - _baseColor.G) * x);
-            int b_x = 255 - (int)((255 - _baseColor.B) * x);
+            var r_x = 255 - (int)((255 - _baseColor.R) * x);
+            var g_x = 255 - (int)((255 - _baseColor.G) * x);
+            var b_x = 255 - (int)((255 - _baseColor.B) * x);
 
-            double y = 1.0 - _selectorY / _maxY;
+            var y = 1.0 - _selectorY / _maxY;
 
-            double r = r_x * y;
-            double g = g_x * y;
-            double b = b_x * y;
+            var r = r_x * y;
+            var g = g_x * y;
+            var b = b_x * y;
 
             _skipFeedback = true;
             Value = new MudColor((byte)r, (byte)g, (byte)b, _color.A);
@@ -299,7 +299,7 @@ namespace MudBlazor
         private void UpdateColorSelectorBasedOnRgb()
         {
             var hueValue = (int)MathExtensions.Map(0, 360, 0, 6 * 255, _color.H);
-            int index = hueValue / 255;
+            var index = hueValue / 255;
             if (index == 6)
             {
                 index = 5;
@@ -323,8 +323,8 @@ namespace MudBlazor
 
             _selectorY = MathExtensions.Map(0, 255, 0, _maxY, primaryDiff);
 
-            double secondaryColorX = colorValues.Item2 * (1.0 / primaryDiffDelta);
-            double relation = (255 - secondaryColorX) / 255.0;
+            var secondaryColorX = colorValues.Item2 * (1.0 / primaryDiffDelta);
+            var relation = (255 - secondaryColorX) / 255.0;
 
             _selectorX = relation * _maxX;
         }

@@ -183,7 +183,7 @@ namespace MudBlazor.UnitTests.Components
 
             comp.InvokeAsync(() => comp.Instance.Update());
 
-            for (int i = 0; i < 3; i++)
+            for (var i = 0; i < 3; i++)
             {
                 var navLinks = comp.FindComponents<MudNavLink>();
                 navLinks[i].Find(".mud-nav-link").Click();
@@ -191,7 +191,7 @@ namespace MudBlazor.UnitTests.Components
                 comp.Instance.ActiveSection.Should().Be(sections[i]);
                 navLinks = comp.FindComponents<MudNavLink>();
 
-                for (int j = 0; j < 3; j++)
+                for (var j = 0; j < 3; j++)
                 {
                     navLinks[j].Instance.Class.Should().Be(i == j ? "page-content-navigation-navlink active" : "page-content-navigation-navlink");
                 }

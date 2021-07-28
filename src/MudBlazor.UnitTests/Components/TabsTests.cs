@@ -201,7 +201,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = ctx.RenderComponent<ScrollableTabsTest>();
             Console.WriteLine(comp.Markup);
 
-            for (int i = 0; i < 6; i++)
+            for (var i = 0; i < 6; i++)
             {
                 comp.Instance.SetPanelActive(i);
 
@@ -296,7 +296,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = ctx.RenderComponent<ScrollableTabsTest>();
             Console.WriteLine(comp.Markup);
 
-            Dictionary<int, double> expectedTranslations = new Dictionary<int, double>
+            var expectedTranslations = new Dictionary<int, double>
             {
                 { 0, 0 },
                 { 1, 100 },
@@ -306,7 +306,7 @@ namespace MudBlazor.UnitTests.Components
                 { 5, 400 },
             };
 
-            for (int i = 0; i < 6; i++)
+            for (var i = 0; i < 6; i++)
             {
                 comp.Instance.SetPanelActive(i);
 
@@ -356,7 +356,7 @@ namespace MudBlazor.UnitTests.Components
             var scrollButtons = comp.FindComponents<MudIconButton>();
             scrollButtons.Should().HaveCount(2);
 
-            for (int i = 0; i < 6; i++)
+            for (var i = 0; i < 6; i++)
             {
                 comp.Instance.SetPanelActive(i);
 
@@ -382,7 +382,7 @@ namespace MudBlazor.UnitTests.Components
             var scrollButtons = comp.FindComponents<MudIconButton>();
             scrollButtons.Should().HaveCount(2);
 
-            for (int i = 5; i <= 0; i--)
+            for (var i = 5; i <= 0; i--)
             {
                 comp.Instance.SetPanelActive(i);
 
@@ -407,9 +407,9 @@ namespace MudBlazor.UnitTests.Components
             var scrollButtons = comp.FindComponents<MudIconButton>();
             scrollButtons.Should().HaveCount(2);
 
-            double expectedTranslation = 0.0;
+            var expectedTranslation = 0.0;
 
-            for (int i = 0; i < 2; i++)
+            for (var i = 0; i < 2; i++)
             {
                 scrollButtons.Last().Find("button").Click();
                 expectedTranslation += 200;
@@ -424,7 +424,7 @@ namespace MudBlazor.UnitTests.Components
             }
 
             // clicking the button more often should change something
-            for (int i = 0; i < 3; i++)
+            for (var i = 0; i < 3; i++)
             {
                 scrollButtons.Last().Find("button").Click();
 
@@ -456,9 +456,9 @@ namespace MudBlazor.UnitTests.Components
 
             comp.Instance.SetPanelActive(5);
 
-            double expectedTranslation = 400.0;
+            var expectedTranslation = 400.0;
 
-            for (int i = 0; i < 2; i++)
+            for (var i = 0; i < 2; i++)
             {
                 scrollButtons.First().Find("button").Click();
                 expectedTranslation -= 200;
@@ -473,7 +473,7 @@ namespace MudBlazor.UnitTests.Components
             }
 
             // clicking the button more often should change something
-            for (int i = 0; i < 3; i++)
+            for (var i = 0; i < 3; i++)
             {
                 scrollButtons.First().Find("button").Click();
 
@@ -610,7 +610,7 @@ namespace MudBlazor.UnitTests.Components
             var styleAttr = toolbarWrappter.GetAttribute("style");
             styleAttr.Should().Be($"transform:translateX(-0px);");
 
-            double sliderValue = GetSliderValue(comp);
+            var sliderValue = GetSliderValue(comp);
             GetSliderValue(comp).Should().Be(1 * 100.0);
         }
 
@@ -747,7 +747,7 @@ namespace MudBlazor.UnitTests.Components
 
             foreach (var invoker in activator)
             {
-                for (int k = 0; k < 2; k++)
+                for (var k = 0; k < 2; k++)
                 {
                     var comp = ctx.RenderComponent<ActivateDisabledTabsTest>();
 
@@ -770,7 +770,7 @@ namespace MudBlazor.UnitTests.Components
                     activePanels.Should().HaveCount(1);
                     panels[0].ClassList.Contains("mud-tab-active").Should().BeTrue();
 
-                    for (int i = 1; i < comp.Instance.Tabs.Count; i++)
+                    for (var i = 1; i < comp.Instance.Tabs.Count; i++)
                     {
                         invoker(comp, comp.Instance.Tabs[i]);
 
@@ -815,7 +815,7 @@ namespace MudBlazor.UnitTests.Components
                 panels.Should().HaveCount(5);
                 panels[0].ClassList.Contains("mud-tab-active").Should().BeTrue();
 
-                for (int i = 1; i < comp.Instance.Tabs.Count; i++)
+                for (var i = 1; i < comp.Instance.Tabs.Count; i++)
                 {
                     invoker(comp, comp.Instance.Tabs[i]);
 
@@ -868,7 +868,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void DefaultValuesForHeaders()
         {
-            MudTabs tabs = new MudTabs();
+            var tabs = new MudTabs();
 
             tabs.HeaderPosition.Should().Be(TabHeaderPosition.After);
             tabs.Header.Should().BeNull();
@@ -896,7 +896,7 @@ namespace MudBlazor.UnitTests.Components
             headerContent.TextContent.Should().Be($"Count: {3}");
 
             var headerPanel = headerContent.ParentElement;
-            String addtionalClass = position == TabHeaderPosition.After ? "mud-tabs-header-after" : "mud-tabs-header-before";
+            var addtionalClass = position == TabHeaderPosition.After ? "mud-tabs-header-after" : "mud-tabs-header-before";
             headerPanel.ClassList.Should().BeEquivalentTo(new string[] { "mud-tabs-header", addtionalClass });
 
             var tabInnerHeader = comp.Find(".mud-tabs-toolbar-inner");
@@ -950,7 +950,7 @@ namespace MudBlazor.UnitTests.Components
             foreach (var item in headerContent)
             {
                 var headerPanel = item.ParentElement;
-                string addtionalClass = position == TabHeaderPosition.After ? "mud-tabs-panel-header-after" : "mud-tabs-panel-header-before";
+                var addtionalClass = position == TabHeaderPosition.After ? "mud-tabs-panel-header-after" : "mud-tabs-panel-header-before";
 
                 headerPanel.ClassList.Should().BeEquivalentTo(new string[] { "mud-tabs-panel-header", addtionalClass });
 

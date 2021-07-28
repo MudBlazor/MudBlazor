@@ -151,7 +151,7 @@ namespace MudBlazor.Utilities
 
             if (value.StartsWith("rgba") == true)
             {
-                string[] parts = SplitInputIntoParts(value);
+                var parts = SplitInputIntoParts(value);
                 if (parts.Length != 4)
                 {
                     throw new ArgumentException("invalid color format");
@@ -167,7 +167,7 @@ namespace MudBlazor.Utilities
             }
             else if (value.StartsWith("rgb") == true)
             {
-                string[] parts = SplitInputIntoParts(value);
+                var parts = SplitInputIntoParts(value);
                 if (parts.Length != 3)
                 {
                     throw new ArgumentException("invalid color format");
@@ -292,11 +292,11 @@ namespace MudBlazor.Utilities
 
         private static string[] SplitInputIntoParts(string value)
         {
-            int startIndex = value.IndexOf('(');
-            int lastIndex = value.LastIndexOf(')');
-            string subString = value[(startIndex + 1)..lastIndex];
-            string[] parts = subString.Split(',', StringSplitOptions.RemoveEmptyEntries);
-            for (int i = 0; i < parts.Length; i++)
+            var startIndex = value.IndexOf('(');
+            var lastIndex = value.LastIndexOf(')');
+            var subString = value[(startIndex + 1)..lastIndex];
+            var parts = subString.Split(',', StringSplitOptions.RemoveEmptyEntries);
+            for (var i = 0; i < parts.Length; i++)
             {
                 parts[i] = parts[i].Trim();
             }
@@ -345,8 +345,8 @@ namespace MudBlazor.Utilities
 
         public static bool operator ==(MudColor lhs, MudColor rhs)
         {
-            bool lhsIsNull = object.ReferenceEquals(null, lhs);
-            bool rhsIsNull = object.ReferenceEquals(null, rhs);
+            var lhsIsNull = object.ReferenceEquals(null, lhs);
+            var rhsIsNull = object.ReferenceEquals(null, rhs);
             if (lhsIsNull == true && rhsIsNull == true)
             {
                 return true;
