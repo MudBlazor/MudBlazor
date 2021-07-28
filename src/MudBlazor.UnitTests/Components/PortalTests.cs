@@ -113,7 +113,7 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll(".mud-popover-open").Should().HaveCount(2);
             //clicking in one of them, the popover closes
             comp.FindAll(".portal-anchor .mud-list-item")[0].Click();
-            comp.FindAll(".mud-popover-open").Should().HaveCount(0);
+            comp.WaitForAssertion(() => comp.FindAll(".mud-popover-open").Should().HaveCount(0));
 
             //still, the portal remains
             itemsNumber = portalprovider.GetAttribute("data-items");
