@@ -12,7 +12,7 @@ namespace MudBlazor
 
         private MudRadio<T> _selectedRadio;
 
-        private HashSet<MudRadio<T>> _radios = new HashSet<MudRadio<T>>();
+        private HashSet<MudRadio<T>> _radios = new();
 
         [Parameter] public RenderFragment ChildContent { get; set; }
 

@@ -65,7 +65,7 @@ namespace MudBlazor.Docs.Models
         }
 
         private static Dictionary<Type, string> s_specialCaseComponents =
-            new Dictionary<Type, string>()
+            new()
             {
                 [typeof(MudFab)] = "buttonfab",
                 [typeof(MudIcon)] = "icons",
@@ -83,7 +83,7 @@ namespace MudBlazor.Docs.Models
             s_specialCaseComponents.ToDictionary(pair => pair.Value, pair => pair.Key);
 
         private static Dictionary<string, string> s_componentLinkTranslation =
-            new Dictionary<string, string>()
+            new()
             {
                 ["icon"] = "icons",
                 ["chip"] = "chips",

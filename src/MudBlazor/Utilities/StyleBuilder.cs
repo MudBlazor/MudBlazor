@@ -16,7 +16,7 @@ namespace MudBlazor.Utilities
         /// </summary>
         /// <param name="prop"></param>
         /// <param name="value"></param>
-        public static StyleBuilder Default(string prop, string value) => new StyleBuilder(prop, value);
+        public static StyleBuilder Default(string prop, string value) => new(prop, value);
 
         /// <summary>
         /// Creates a StyleBuilder used to define conditional in-line style used in a component. Call Build() to return the completed style as a string.
@@ -27,7 +27,7 @@ namespace MudBlazor.Utilities
         /// <summary>
         /// Creates a StyleBuilder used to define conditional in-line style used in a component. Call Build() to return the completed style as a string.
         /// </summary>
-        public static StyleBuilder Empty() => new StyleBuilder();
+        public static StyleBuilder Empty() => new();
 
         /// <summary>
         /// Creates a StyleBuilder used to define conditional in-line style used in a component. Call Build() to return the completed style as a string.

@@ -89,8 +89,8 @@ namespace MudBlazor
         [Parameter] public EventCallback<bool> IsTouchedChanged { get; set; }
 
         // keeps track of validation. if the input was validated at least once the value will be true
-        protected HashSet<IFormComponent> _formControls = new HashSet<IFormComponent>();
-        protected HashSet<string> _errors = new HashSet<string>();
+        protected HashSet<IFormComponent> _formControls = new();
+        protected HashSet<string> _errors = new();
 
         /// <summary>
         /// Validation error messages

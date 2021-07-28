@@ -9,7 +9,7 @@ namespace MudBlazor
     public partial class MudDrawerContainer : MudComponentBase
     {
         protected bool Fixed { get; set; } = false;
-        private List<MudDrawer> _drawers = new List<MudDrawer>();
+        private List<MudDrawer> _drawers = new();
 
         protected virtual string Classname =>
         new CssBuilder()

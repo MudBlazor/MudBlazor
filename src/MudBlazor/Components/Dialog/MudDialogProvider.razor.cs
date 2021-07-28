@@ -26,8 +26,8 @@ namespace MudBlazor
         [Parameter] public DialogPosition? Position { get; set; }
         [Parameter] public MaxWidth? MaxWidth { get; set; }
 
-        private readonly Collection<IDialogReference> _dialogs = new Collection<IDialogReference>();
-        private readonly DialogOptions _globalDialogOptions = new DialogOptions();
+        private readonly Collection<IDialogReference> _dialogs = new();
+        private readonly DialogOptions _globalDialogOptions = new();
 
         protected override void OnInitialized()
         {

@@ -311,7 +311,7 @@ namespace MudBlazor.Utilities
 
         #region operators and object members
 
-        public static implicit operator MudColor(string input) => new MudColor(input);
+        public static implicit operator MudColor(string input) => new(input);
         //public static implicit operator string(MudColor input) => input == null ? string.Empty : input.Value;
 
         public static explicit operator string(MudColor color) => color == null ? string.Empty : color.Value;
