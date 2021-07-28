@@ -118,9 +118,9 @@ namespace MudBlazor.Docs.Shared
             }
         }
 
-        private MudTheme _currentTheme = new MudTheme();
+        private MudTheme _currentTheme = new();
         private readonly MudTheme _defaultTheme =
-            new MudTheme()
+            new()
             {
                 Palette = new Palette()
                 {
@@ -128,7 +128,7 @@ namespace MudBlazor.Docs.Shared
                 }
             };
         private readonly MudTheme _darkTheme =
-            new MudTheme()
+            new()
             {
                 Palette = new Palette()
                 {

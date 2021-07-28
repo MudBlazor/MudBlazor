@@ -15,7 +15,7 @@ namespace MudBlazor.Docs.Services
 
     public class ApiLinkService : IApiLinkService
     {
-        private Dictionary<string, ApiLinkServiceEntry> _lookup = new Dictionary<string, ApiLinkServiceEntry>();
+        private Dictionary<string, ApiLinkServiceEntry> _lookup = new();
 
         //constructor with DI
         public ApiLinkService(IMenuService menuService)

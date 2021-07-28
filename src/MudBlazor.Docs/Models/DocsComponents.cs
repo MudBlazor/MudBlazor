@@ -6,7 +6,7 @@ namespace MudBlazor.Docs.Models
 {
     public class DocsComponents
     {
-        private List<MudComponent> _mudComponents = new List<MudComponent>();
+        private List<MudComponent> _mudComponents = new();
 
         /// <summary>
         /// The elements of the list of mudcomponents
