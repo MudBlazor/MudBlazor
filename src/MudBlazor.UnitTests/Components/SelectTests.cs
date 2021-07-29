@@ -43,6 +43,8 @@ namespace MudBlazor.UnitTests.Components
             var select = comp.FindComponent<MudSelect<string>>();
             var menu = comp.Find("div.mud-popover");
             var input = comp.Find("div.mud-input-control");
+            // check popover class
+            menu.ClassList.Should().Contain("select-popover-class");
             // check initial state
             select.Instance.Value.Should().BeNullOrEmpty();
             menu.ClassList.Should().NotContain("mud-popover-open");
