@@ -316,11 +316,9 @@ namespace MudBlazor.UnitTests.Components
         public async Task TextFieldMultiline_CheckRenderedText()
         {
             var text = "Hello world!";
-            var comp = ctx.RenderComponent<MudTextField<string>>(new[]
-            {
+            var comp = ctx.RenderComponent<MudTextField<string>>(
                 Parameter(nameof(MudTextField<string>.Text), text),
-                Parameter(nameof(MudTextField<string>.Lines), 2)
-            });
+                Parameter(nameof(MudTextField<string>.Lines), 2));
             // print the generated html
             Console.WriteLine(comp.Markup);
             // select elements needed for the test
