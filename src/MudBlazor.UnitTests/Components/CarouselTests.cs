@@ -197,7 +197,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = ctx.RenderComponent<MudCarousel<object>>();
             // print the generated html
             Console.WriteLine(comp.Markup);
-            /// adding some pages
+            // adding some pages
             comp.Instance.Items.Add(new());
             comp.Instance.Items.Add(new());
             comp.Instance.Items.Add(new());
