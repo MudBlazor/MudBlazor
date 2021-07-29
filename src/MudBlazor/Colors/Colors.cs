@@ -1,5 +1,4 @@
 ﻿using System.Diagnostics.CodeAnalysis;
-using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
