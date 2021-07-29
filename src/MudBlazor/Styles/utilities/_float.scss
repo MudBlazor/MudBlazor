@@ -1,4 +1,6 @@
-﻿.mud-float-left {
+﻿@import '../abstracts/mixins';
+
+.mud-float-left {
     float: left;
 }
 
@@ -9,18 +11,16 @@
 //--------------------------- rtl styles ---------------------------
 .mud-float-start {
     float: left;
+    
+    @include rtl {
+        float: right;
+    }
 }
 
 .mud-float-end {
     float: right;
-}
-
-.mud-application-layout-rtl {
-    .mud-float-start {
-        float: right;
-    }
-
-    .mud-float-end {
+    
+    @include rtl {
         float: left;
     }
 }
