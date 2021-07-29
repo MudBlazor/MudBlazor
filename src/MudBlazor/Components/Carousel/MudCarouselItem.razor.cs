@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
-using MudBlazor;
 using MudBlazor.Extensions;
 using MudBlazor.Utilities;
 
