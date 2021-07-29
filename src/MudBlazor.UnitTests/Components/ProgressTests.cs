@@ -28,7 +28,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void Progress_Should_ConvertValueRangeToPercent()
         {
-            var comp = ctx.RenderComponent<MudProgressLinear>(x =>
+            using var comp = ctx.RenderComponent<MudProgressLinear>(x =>
                 {
                     x.Add(y => y.Min, -500);
                     x.Add(y => y.Max, 500);

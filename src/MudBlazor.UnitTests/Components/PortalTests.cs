@@ -29,7 +29,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void Basic_Example_of_a_Portaled_Menu()
         {
-            var comp = ctx.RenderComponent<PortalMenuTest>();
+            using var comp = ctx.RenderComponent<PortalMenuTest>();
             var portalprovider = comp.Find("#mud-portal-container");
             //there is already 1 portal;
             var itemsNumber = portalprovider.GetAttribute("data-items");
@@ -58,7 +58,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void Basic_Example_of_a_Portaled_Select()
         {
-            var comp = ctx.RenderComponent<PortalSelectTest>();
+            using var comp = ctx.RenderComponent<PortalSelectTest>();
             var portalprovider = comp.Find("#mud-portal-container");
             //the portal provider has already 1 element;
             var itemsNumber = portalprovider.GetAttribute("data-items");
@@ -91,7 +91,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void Basic_Example_of_a_Portaled_Autocomplete()
         {
-            var comp = ctx.RenderComponent<PortalAutocompleteTest>();
+            using var comp = ctx.RenderComponent<PortalAutocompleteTest>();
             var portalprovider = comp.Find("#mud-portal-container");
 
             //The portal provider now has 1 menu inside
@@ -126,7 +126,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task Basic_Example_of_a_Portaled_Tooltip()
         {
-            var comp = ctx.RenderComponent<PortalTooltipTest>();
+            using var comp = ctx.RenderComponent<PortalTooltipTest>();
             var portalprovider = comp.Find("#mud-portal-container");
             //the portal provider has 1 item;
             var itemsNumber = portalprovider.GetAttribute("data-items");

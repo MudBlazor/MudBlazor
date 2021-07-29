@@ -33,7 +33,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void PieChartSelectionTest()
         {
-            var comp = ctx.RenderComponent<PieExample1>();
+            using var comp = ctx.RenderComponent<PieExample1>();
             // print the generated html
             Console.WriteLine(comp.Markup);
             comp.Find("h6").InnerHtml.Trim().Should().Be("Selected portion of the chart: -1");
@@ -47,7 +47,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void DonutChartSelectionTest()
         {
-            var comp = ctx.RenderComponent<DonutExample1>();
+            using var comp = ctx.RenderComponent<DonutExample1>();
             // print the generated html
             Console.WriteLine(comp.Markup);
             comp.Find("h6").InnerHtml.Trim().Should().Be("Selected portion of the chart: -1");
@@ -61,7 +61,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void LineChartSelectionTest()
         {
-            var comp = ctx.RenderComponent<LineExample1>();
+            using var comp = ctx.RenderComponent<LineExample1>();
             // print the generated html
             Console.WriteLine(comp.Markup);
             comp.Find("h6").InnerHtml.Trim().Should().Be("Selected portion of the chart: -1");
@@ -75,7 +75,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void BarChartSelectionTest()
         {
-            var comp = ctx.RenderComponent<BarExample1>();
+            using var comp = ctx.RenderComponent<BarExample1>();
             // print the generated html
             Console.WriteLine(comp.Markup);
             comp.Find("h6").InnerHtml.Trim().Should().Be("Selected portion of the chart: -1");
@@ -99,7 +99,7 @@ namespace MudBlazor.UnitTests.Components
             string width = "100%";
             string height = "350px";
 
-            var comp = ctx.RenderComponent<MudChart>(parameters => parameters
+            using var comp = ctx.RenderComponent<MudChart>(parameters => parameters
               .Add(p => p.ChartType, ChartType.Line)
               .Add(p => p.ChartSeries, series)
               .Add(p => p.XAxisLabels, xAxis)
@@ -152,7 +152,7 @@ namespace MudBlazor.UnitTests.Components
         {
             // the test should run through instantly (max 5s for a slow build server). 
             // without the fix it took minutes on a fast computer
-            var comp = ctx.RenderComponent<LineChartWithBigValuesTest>();
+            using var comp = ctx.RenderComponent<LineChartWithBigValuesTest>();
         }
     }
 }

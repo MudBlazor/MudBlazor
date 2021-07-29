@@ -27,7 +27,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void DefaultValueTest()
         {
-            var comp = ctx.RenderComponent<MudToggleIconButton>();
+            using var comp = ctx.RenderComponent<MudToggleIconButton>();
             comp.Instance.Toggled.Should().BeFalse();
         }
 
@@ -35,7 +35,7 @@ namespace MudBlazor.UnitTests.Components
         public void ToggleTest()
         {
             var boundValue = false;
-            var comp = ctx.RenderComponent<MudToggleIconButton>(parameters => parameters
+            using var comp = ctx.RenderComponent<MudToggleIconButton>(parameters => parameters
                 .Add(p => p.Toggled, boundValue)
                 .Add(p => p.ToggledChanged, (toggleValue) => boundValue = toggleValue)
                 );
@@ -49,7 +49,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void ShouldSynchronizeStateWithOtherComponent()
         {
-            var comp = ctx.RenderComponent<ToggleIconButtonTest1>();
+            using var comp = ctx.RenderComponent<ToggleIconButtonTest1>();
             Console.WriteLine(comp.Markup);
             // select elements needed for the test
             var group = comp.FindComponents<MudToggleIconButton>();
@@ -77,7 +77,7 @@ namespace MudBlazor.UnitTests.Components
             var toggledIcon = Parameter(nameof(MudToggleIconButton.ToggledIcon), Icons.Filled.Remove);
             var titleParam = Parameter(nameof(MudToggleIconButton.Title), title);
             var toggledTitleParam = Parameter(nameof(MudToggleIconButton.ToggledTitle), toggledTitle);
-            var comp = ctx.RenderComponent<MudToggleIconButton>(icon, toggledIcon, titleParam, toggledTitleParam);
+            using var comp = ctx.RenderComponent<MudToggleIconButton>(icon, toggledIcon, titleParam, toggledTitleParam);
             comp.Find("svg Title").TextContent.Should().Be(title);
             comp.Find("button").Click();
             comp.Find("svg Title").TextContent.Should().Be(toggledTitle);

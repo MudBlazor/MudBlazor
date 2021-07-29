@@ -32,7 +32,7 @@ namespace MudBlazor.UnitTests.Components
         [TestCase(2, true)]
         public async Task MessageBox_Should_ReturnTrue(int clickButtonIndex, bool? expectedResult)
         {
-            var comp = ctx.RenderComponent<MudDialogProvider>();
+            using var comp = ctx.RenderComponent<MudDialogProvider>();
             comp.Markup.Trim().Should().BeEmpty();
             var service = ctx.Services.GetService<IDialogService>() as DialogService;
             service.Should().NotBe(null);

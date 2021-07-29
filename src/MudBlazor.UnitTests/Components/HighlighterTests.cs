@@ -79,7 +79,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var text = Parameter(nameof(MudHighlighter.Text), TEXT);
             var highlightedText = Parameter(nameof(MudHighlighter.HighlightedText), "item");
-            var comp = ctx.RenderComponent<MudHighlighter>(text, highlightedText);
+            using var comp = ctx.RenderComponent<MudHighlighter>(text, highlightedText);
             comp.MarkupMatches("This is the first <mark>item</mark>");
         }
 
@@ -92,7 +92,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var text = Parameter(nameof(MudHighlighter.Text), null);
             var highlightedText = Parameter(nameof(MudHighlighter.HighlightedText), null);
-            var comp = ctx.RenderComponent<MudHighlighter>(text, highlightedText);
+            using var comp = ctx.RenderComponent<MudHighlighter>(text, highlightedText);
             comp.MarkupMatches(string.Empty);
         }
 
@@ -105,7 +105,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var text = Parameter(nameof(MudHighlighter.Text), TEXT);
             var highlightedText = Parameter(nameof(MudHighlighter.HighlightedText), "[");
-            var comp = ctx.RenderComponent<MudHighlighter>(text, highlightedText);
+            using var comp = ctx.RenderComponent<MudHighlighter>(text, highlightedText);
             comp.MarkupMatches("This is the first item");
         }
 

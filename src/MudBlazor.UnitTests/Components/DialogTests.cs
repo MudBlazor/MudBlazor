@@ -36,7 +36,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task SimpleTest()
         {
-            var comp = ctx.RenderComponent<MudDialogProvider>();
+            using var comp = ctx.RenderComponent<MudDialogProvider>();
             comp.Markup.Trim().Should().BeEmpty();
             var service = ctx.Services.GetService<IDialogService>() as DialogService;
             service.Should().NotBe(null);
@@ -75,7 +75,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task InlineDialogTest()
         {
-            var comp = ctx.RenderComponent<MudDialogProvider>();
+            using var comp = ctx.RenderComponent<MudDialogProvider>();
             comp.Markup.Trim().Should().BeEmpty();
             var service = ctx.Services.GetService<IDialogService>() as DialogService;
             service.Should().NotBe(null);
@@ -101,7 +101,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task InlineDialog_Should_UpdateIsVisibleOnClose()
         {
-            var comp = ctx.RenderComponent<MudDialogProvider>();
+            using var comp = ctx.RenderComponent<MudDialogProvider>();
             comp.Markup.Trim().Should().BeEmpty();
             var service = ctx.Services.GetService<IDialogService>() as DialogService;
             service.Should().NotBe(null);
@@ -132,7 +132,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task DialogShouldUpdateTitleContent()
         {
-            var comp = ctx.RenderComponent<MudDialogProvider>();
+            using var comp = ctx.RenderComponent<MudDialogProvider>();
             comp.Markup.Trim().Should().BeEmpty();
             var service = ctx.Services.GetService<IDialogService>() as DialogService;
             service.Should().NotBe(null);
@@ -156,7 +156,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task DialogShouldNotOverwriteParameters()
         {
-            var comp = ctx.RenderComponent<MudDialogProvider>();
+            using var comp = ctx.RenderComponent<MudDialogProvider>();
             comp.Markup.Trim().Should().BeEmpty();
             var service = ctx.Services.GetService<IDialogService>() as DialogService;
             service.Should().NotBe(null);
@@ -194,7 +194,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task DialogShouldHonorClassAndStyle()
         {
-            var comp = ctx.RenderComponent<MudDialogProvider>();
+            using var comp = ctx.RenderComponent<MudDialogProvider>();
             comp.Markup.Trim().Should().BeEmpty();
             var service = ctx.Services.GetService<IDialogService>() as DialogService;
             service.Should().NotBe(null);
@@ -213,7 +213,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task PassingEventCallbackToDialogViaParameters()
         {
-            var comp = ctx.RenderComponent<MudDialogProvider>();
+            using var comp = ctx.RenderComponent<MudDialogProvider>();
             comp.Markup.Trim().Should().BeEmpty();
             var service = ctx.Services.GetService<IDialogService>() as DialogService;
             service.Should().NotBe(null);
@@ -241,7 +241,7 @@ namespace MudBlazor.UnitTests.Components
             ctx.Services.AddScoped<IDialogService>(sp => new CustomDialogService());
 
             //Render our dialog provider and make sure everything is fine
-            var comp = ctx.RenderComponent<MudDialogProvider>();
+            using var comp = ctx.RenderComponent<MudDialogProvider>();
             comp.Markup.Trim().Should().BeEmpty();
 
             //Try to get the current service instance for the type IDialogService and make sure it is our custom implementation

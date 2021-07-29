@@ -36,7 +36,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void SelectTest1()
         {
-            var comp = ctx.RenderComponent<SelectTest1>();
+            using var comp = ctx.RenderComponent<SelectTest1>();
             // print the generated html
             Console.WriteLine(comp.Markup);
             // select elements needed for the test
@@ -66,7 +66,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task MultiSelectTest1()
         {
-            var comp = ctx.RenderComponent<MultiSelectTest1>();
+            using var comp = ctx.RenderComponent<MultiSelectTest1>();
             // print the generated html
             Console.WriteLine(comp.Markup);
             // select elements needed for the test
@@ -124,7 +124,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task SelectWithEnumTest()
         {
-            var comp = ctx.RenderComponent<SelectWithEnumTest>();
+            using var comp = ctx.RenderComponent<SelectWithEnumTest>();
             Console.WriteLine(comp.Markup);
             // select elements needed for the test
             var select = comp.FindComponent<MudSelect<MyEnum>>();
@@ -146,7 +146,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void SelectUnrepresentableValueTest()
         {
-            var comp = ctx.RenderComponent<SelectUnrepresentableValueTest>();
+            using var comp = ctx.RenderComponent<SelectUnrepresentableValueTest>();
             Console.WriteLine(comp.Markup);
             // select elements needed for the test
             var select = comp.FindComponent<MudSelect<int>>();
@@ -167,7 +167,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task SelectUnrepresentableValueTest2()
         {
-            var comp = ctx.RenderComponent<SelectUnrepresentableValueTest2>();
+            using var comp = ctx.RenderComponent<SelectUnrepresentableValueTest2>();
             Console.WriteLine(comp.Markup);
             // select elements needed for the test
             var select = comp.FindComponent<MudSelect<int>>();
@@ -191,7 +191,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void SelectWithoutItemPresentersTest()
         {
-            var comp = ctx.RenderComponent<SelectWithoutItemPresentersTest>();
+            using var comp = ctx.RenderComponent<SelectWithoutItemPresentersTest>();
             Console.WriteLine(comp.Markup);
             // select elements needed for the test
             var select = comp.FindComponent<MudSelect<int>>();
@@ -211,7 +211,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void Select_Should_FireTextChangedWithNewValue()
         {
-            var comp = ctx.RenderComponent<SelectTest1>();
+            using var comp = ctx.RenderComponent<SelectTest1>();
             Console.WriteLine(comp.Markup);
             var select = comp.FindComponent<MudSelect<string>>();
             string text = null;
@@ -247,7 +247,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void SingleSelect_Should_FireSelectedValuesChangedBeforeTextChanged()
         {
-            var comp = ctx.RenderComponent<SelectTest1>();
+            using var comp = ctx.RenderComponent<SelectTest1>();
             Console.WriteLine(comp.Markup);
             var select = comp.FindComponent<MudSelect<string>>();
             string text = null;
@@ -304,7 +304,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void MulitSelect_Should_FireSelectedValuesChangedBeforeTextChanged()
         {
-            var comp = ctx.RenderComponent<SelectTest1>();
+            using var comp = ctx.RenderComponent<SelectTest1>();
             Console.WriteLine(comp.Markup);
             var select = comp.FindComponent<MudSelect<string>>();
             string text = null;
@@ -346,7 +346,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void Select_Should_FireOnBlur()
         {
-            var comp = ctx.RenderComponent<SelectTest1>();
+            using var comp = ctx.RenderComponent<SelectTest1>();
             Console.WriteLine(comp.Markup);
             var select = comp.FindComponent<MudSelect<string>>();
             var eventCounter = 0;
@@ -362,7 +362,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void Disabled_SelectItem_Should_Be_Respected()
         {
-            var comp = ctx.RenderComponent<SelectTest1>();
+            using var comp = ctx.RenderComponent<SelectTest1>();
             var select = comp.FindComponent<MudSelect<string>>();
             Console.WriteLine(comp.Markup);
             comp.FindAll("div.mud-list-item-disabled").Count.Should().Be(1);
@@ -373,7 +373,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task MultiSelect_ShouldCallValidationFunc()
         {
-            var comp = ctx.RenderComponent<MultiSelectTest1>();
+            using var comp = ctx.RenderComponent<MultiSelectTest1>();
             // print the generated html
             Console.WriteLine(comp.Markup);
             // select elements needed for the test
@@ -413,7 +413,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void SingleSelect_Should_CallValidatonFunc()
         {
-            var comp = ctx.RenderComponent<SelectTest1>();
+            using var comp = ctx.RenderComponent<SelectTest1>();
             Console.WriteLine(comp.Markup);
             var select = comp.FindComponent<MudSelect<string>>();
             string validatedValue = null;
@@ -453,7 +453,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task MultiSelect_Initial_Values()
         {
-            var comp = ctx.RenderComponent<MultiSelectWithInitialValues>();
+            using var comp = ctx.RenderComponent<MultiSelectWithInitialValues>();
             // print the generated html
             Console.WriteLine(comp.Markup);
 
@@ -472,7 +472,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task MultiSelectCustomizedTextTest()
         {
-            var comp = ctx.RenderComponent<MultiSelectCustomizedTextTest>();
+            using var comp = ctx.RenderComponent<MultiSelectCustomizedTextTest>();
 
             // Select the input of the select
             var input = comp.Find("input");
@@ -487,7 +487,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task SelectClearableTest()
         {
-            var comp = ctx.RenderComponent<SelectClearableTest>();
+            using var comp = ctx.RenderComponent<SelectClearableTest>();
             var select = comp.FindComponent<MudSelect<string>>();
             // No button when initialized
             comp.FindAll("button").Should().BeEmpty();
@@ -510,7 +510,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void SelectReselectTest()
         {
-            var comp = ctx.RenderComponent<ReselectValueTest>();
+            using var comp = ctx.RenderComponent<ReselectValueTest>();
             // print the generated html
             Console.WriteLine(comp.Markup);
             // select elements needed for the test
@@ -540,7 +540,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void SelectEventOrder()
         {
-            var comp = ctx.RenderComponent<SelectTestEventOrder>();
+            using var comp = ctx.RenderComponent<SelectTestEventOrder>();
             var select = comp.FindComponent<MudSelect<string>>();
             select.Instance.Value.Should().Be("All");
             select.Instance.Text.Should().Be("All");
@@ -559,7 +559,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task TextField_Should_Validate_Data_Attribute_Fail()
         {
-            var comp = ctx.RenderComponent<SelectValidationDataAttrTest>();
+            using var comp = ctx.RenderComponent<SelectValidationDataAttrTest>();
             Console.WriteLine(comp.Markup);
             var selectcomp = comp.FindComponent<MudSelect<string>>();
             var select = selectcomp.Instance;
@@ -578,7 +578,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task TextField_Should_Validate_Data_Attribute_Success()
         {
-            var comp = ctx.RenderComponent<SelectValidationDataAttrTest>();
+            using var comp = ctx.RenderComponent<SelectValidationDataAttrTest>();
             Console.WriteLine(comp.Markup);
             var selectcomp = comp.FindComponent<MudSelect<string>>();
             var select = selectcomp.Instance;
@@ -600,7 +600,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task Select_Should_SetRequiredTrue()
         {
-            var comp = ctx.RenderComponent<SelectRequiredTest>();
+            using var comp = ctx.RenderComponent<SelectRequiredTest>();
 
             var select = comp.FindComponent<MudSelect<string>>().Instance;
 

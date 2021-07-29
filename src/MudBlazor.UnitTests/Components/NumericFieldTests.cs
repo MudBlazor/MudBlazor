@@ -39,7 +39,7 @@ namespace MudBlazor.UnitTests
         [Test]
         public async Task NumericFieldTest1()
         {
-            var comp = ctx.RenderComponent<MudNumericField<double>>();
+            using var comp = ctx.RenderComponent<MudNumericField<double>>();
             // print the generated html
             Console.WriteLine(comp.Markup);
             // select elements needed for the test
@@ -62,7 +62,7 @@ namespace MudBlazor.UnitTests
         [Test]
         public void NumericFieldTest2()
         {
-            var comp = ctx.RenderComponent<MudNumericField<double?>>();
+            using var comp = ctx.RenderComponent<MudNumericField<double?>>();
             // print the generated html
             Console.WriteLine(comp.Markup);
             // select elements needed for the test
@@ -78,7 +78,7 @@ namespace MudBlazor.UnitTests
         [Test]
         public async Task NumericFieldWithNullableTypes()
         {
-            var comp = ctx.RenderComponent<MudNumericField<int?>>(ComponentParameter.CreateParameter("Value", 17));
+            using var comp = ctx.RenderComponent<MudNumericField<int?>>(ComponentParameter.CreateParameter("Value", 17));
             // print the generated html
             Console.WriteLine(comp.Markup);
             comp.SetParametersAndRender(ComponentParameter.CreateParameter("Value", null));
@@ -96,7 +96,7 @@ namespace MudBlazor.UnitTests
         //[Test]
         //public async Task NumericFieldConversionError()
         //{
-        //    var comp = ctx.RenderComponent<MudNumericField<int?>>();
+        //    using var comp = ctx.RenderComponent<MudNumericField<int?>>();
         //    // print the generated html
         //    //Console.WriteLine(comp.Markup);
         //    comp.Find("input").Change("seventeen");
@@ -115,7 +115,7 @@ namespace MudBlazor.UnitTests
             //no interval passed, so, by default is 0
             // We pass the Immediate parameter set to true, in order to bind to oninput
             var immediate = Parameter(nameof(MudNumericField<int?>.Immediate), true);
-            var comp = ctx.RenderComponent<MudNumericField<int?>>(immediate);
+            using var comp = ctx.RenderComponent<MudNumericField<int?>>(immediate);
             var numericField = comp.Instance;
             var input = comp.Find("input");
             //Act
@@ -133,7 +133,7 @@ namespace MudBlazor.UnitTests
         public async Task ShouldRespectDebounceIntervalPropertyInNumericFieldTest()
         {
             var interval = Parameter(nameof(MudNumericField<int?>.DebounceInterval), 200d);
-            var comp = ctx.RenderComponent<MudNumericField<int?>>(interval);
+            using var comp = ctx.RenderComponent<MudNumericField<int?>>(interval);
             var numericField = comp.Instance;
             var input = comp.Find("input");
             //Act
@@ -166,7 +166,7 @@ namespace MudBlazor.UnitTests
             var label = Parameter(nameof(MudNumericField<int?>.Label), "label");
             var placeholder = Parameter(nameof(MudNumericField<int?>.Placeholder), "placeholder");
             //with no placeholder, label is not shrinked
-            var comp = ctx.RenderComponent<MudNumericField<int?>>(label);
+            using var comp = ctx.RenderComponent<MudNumericField<int?>>(label);
             comp.Markup.Should().NotContain("shrink");
             //with placeholder label is shrinked
             comp.SetParametersAndRender(placeholder);
@@ -204,7 +204,7 @@ namespace MudBlazor.UnitTests
             var validator = new FluentValueValidator<string>(x => x.Cascade(CascadeMode.Stop)
                 .NotEmpty()
                 .Length(1, 100));
-            var comp = ctx.RenderComponent<MudNumericField<decimal>>(Parameter(nameof(MudNumericField<decimal>.Validation), validator.Validation), Parameter(nameof(MudNumericField<decimal>.Max), 100M));
+            using var comp = ctx.RenderComponent<MudNumericField<decimal>>(Parameter(nameof(MudNumericField<decimal>.Validation), validator.Validation), Parameter(nameof(MudNumericField<decimal>.Max), 100M));
             var numericField = comp.Instance;
             Console.WriteLine(comp.Markup);
             // first try a valid value
@@ -225,7 +225,7 @@ namespace MudBlazor.UnitTests
         [Test, Timeout(1000)]
         public async Task NumericFieldUpdateLoopProtectionTest()
         {
-            var comp = ctx.RenderComponent<MudNumericField<int>>();
+            using var comp = ctx.RenderComponent<MudNumericField<int>>();
             // these conversion funcs are nonsense of course, but they are designed this way to
             // test against an infinite update loop that numericFields and other inputs are now protected against.
             var numericField = comp.Instance;
@@ -243,7 +243,7 @@ namespace MudBlazor.UnitTests
         public async Task NumericField_Should_FireValueChangedOnTextParameterChange()
         {
             int changed_value = 4;
-            var comp = ctx.RenderComponent<MudNumericField<int>>(EventCallback<int>("ValueChanged", x => changed_value = x));
+            using var comp = ctx.RenderComponent<MudNumericField<int>>(EventCallback<int>("ValueChanged", x => changed_value = x));
             comp.SetParametersAndRender(ComponentParameter.CreateParameter("Text", "4"));
             changed_value.Should().Be(4);
         }
@@ -252,7 +252,7 @@ namespace MudBlazor.UnitTests
         public async Task NumericField_Should_FireTextChangedOnValueParameterChange()
         {
             string changed_text = "4";
-            var comp = ctx.RenderComponent<MudNumericField<int>>(EventCallback<string>("TextChanged", x => changed_text = x));
+            using var comp = ctx.RenderComponent<MudNumericField<int>>(EventCallback<string>("TextChanged", x => changed_text = x));
             comp.SetParametersAndRender(ComponentParameter.CreateParameter("Value", 4));
             changed_text.Should().Be("4");
         }
@@ -262,7 +262,7 @@ namespace MudBlazor.UnitTests
         {
             int changed_value = 4;
             string changed_text = null;
-            var comp = ctx.RenderComponent<MudNumericField<int>>(
+            using var comp = ctx.RenderComponent<MudNumericField<int>>(
                 EventCallback<int>("ValueChanged", x => changed_value = x),
                 EventCallback<string>("TextChanged", x => changed_text = x)
             );
@@ -280,7 +280,7 @@ namespace MudBlazor.UnitTests
         //[Test]
         //public async Task NumericField_ShouldNot_ShowRequiredErrorWhenThereIsAConversionError()
         //{
-        //    var comp = ctx.RenderComponent<MudNumericField<int?>>(ComponentParameter.CreateParameter("Required", true));
+        //    using var comp = ctx.RenderComponent<MudNumericField<int?>>(ComponentParameter.CreateParameter("Required", true));
         //    var numericField = comp.Instance;
         //    comp.Find("input").Change("A");
         //    comp.Find("input").Blur();
@@ -297,7 +297,7 @@ namespace MudBlazor.UnitTests
         [Test]
         public async Task NumericField_ShouldNot_ShowRequiredErrorWhenInitialTextIsEmpty()
         {
-            var comp = ctx.RenderComponent<NumericFieldRequiredTest>();
+            using var comp = ctx.RenderComponent<NumericFieldRequiredTest>();
             var numericField = comp.FindComponent<MudNumericField<int?>>().Instance;
             numericField.Touched.Should().BeFalse();
             numericField.ErrorText.Should().BeNullOrEmpty();
@@ -343,7 +343,7 @@ namespace MudBlazor.UnitTests
         [Test]
         public async Task NumericFieldTest_ArrowKeys()
         {
-            var comp = ctx.RenderComponent<MudNumericField<double>>();
+            using var comp = ctx.RenderComponent<MudNumericField<double>>();
             comp.SetParam(x => x.Culture, CultureInfo.InvariantCulture);
             comp.SetParam(x => x.Format, "F2");
             comp.SetParam(x => x.Value, 1234.56);
@@ -367,7 +367,7 @@ namespace MudBlazor.UnitTests
         [Test]
         public async Task NumericFieldTestCultureFormat()
         {
-            var comp = ctx.RenderComponent<NumericFieldCultureTest>();
+            using var comp = ctx.RenderComponent<NumericFieldCultureTest>();
             // print the generated html
             Console.WriteLine(comp.Markup);
             // select elements needed for the test
@@ -396,7 +396,7 @@ namespace MudBlazor.UnitTests
         [Test]
         public async Task NumericField_should_RemoveIllegalCharacters()
         {
-            var comp = ctx.RenderComponent<NumericFieldCultureTest>();
+            using var comp = ctx.RenderComponent<NumericFieldCultureTest>();
             // print the generated html
             Console.WriteLine(comp.Markup);
             // select elements needed for the test            

@@ -271,7 +271,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void InputStringValues_CheckParsing()
         {
-            var comp = ctx.RenderComponent<MudTimePicker>();
+            using var comp = ctx.RenderComponent<MudTimePicker>();
             var picker = comp.Instance;
             // valid time
             comp.Find("input").Change("23:02");
@@ -362,7 +362,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task Open_Programmatically_CheckOpen_Close_Programmatically_CheckClosed()
         {
-            var comp = ctx.RenderComponent<MudTimePicker>();
+            using var comp = ctx.RenderComponent<MudTimePicker>();
             Console.WriteLine(comp.Markup + "\n");
             comp.FindAll("div.mud-picker-content").Count.Should().Be(0);
             // clicking the button should open the picker
@@ -390,7 +390,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void SelectTimeStatic_UsingClicks_CheckTime()
         {
-            var comp = ctx.RenderComponent<MudTimePicker>(Parameter(nameof(MudTimePicker.PickerVariant), PickerVariant.Static));
+            using var comp = ctx.RenderComponent<MudTimePicker>(Parameter(nameof(MudTimePicker.PickerVariant), PickerVariant.Static));
             var picker = comp.Instance;
             // select 16 hours on outer dial and 30 mins
             comp.FindAll("div.mud-picker-stick-outer.mud-hour")[3].Click();
@@ -407,7 +407,7 @@ namespace MudBlazor.UnitTests.Components
         public async Task CheckAutoCloseTimePickerTest()
         {
             // Get access to the timepicker of the instance
-            var comp = ctx.RenderComponent<AutoCompleteTimePickerTest>();
+            using var comp = ctx.RenderComponent<AutoCompleteTimePickerTest>();
             var timePicker = comp.FindComponent<MudTimePicker>();
 
             // Open the timepicker
@@ -454,7 +454,7 @@ namespace MudBlazor.UnitTests.Components
         public async Task CheckReadOnlyTest()
         {
             // Get access to the timepicker of the instance
-            var comp = ctx.RenderComponent<MudTimePicker>();
+            using var comp = ctx.RenderComponent<MudTimePicker>();
             var picker = comp.Instance;
 
             // Open the timepicker

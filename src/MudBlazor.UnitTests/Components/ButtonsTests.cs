@@ -28,7 +28,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void MudButtonShouldRenderAButtonByDefault()
         {
-            var comp = ctx.RenderComponent<MudButton>();
+            using var comp = ctx.RenderComponent<MudButton>();
             //no HtmlTag nor Link properties are set, so HtmlTag is button by default
             comp.Instance
                 .HtmlTag
@@ -52,26 +52,26 @@ namespace MudBlazor.UnitTests.Components
             var link = Parameter(nameof(MudButton.Link), "https://www.google.com");
             var target = Parameter(nameof(MudButton.Target), "_blank");
             var disabled = Parameter(nameof(MudButton.Disabled), true);
-            var comp = ctx.RenderComponent<MudButton>(link, target);
+            using var comp1 = ctx.RenderComponent<MudButton>(link, target);
             //Link property is set, so it has to render an anchor element
-            comp.Instance
+            comp1.Instance
                 .HtmlTag
                 .Should()
                 .Be("a");
             //Target property is set, so it must have the rel attribute set to noopener
-            comp.Markup
+            comp1.Markup
                 .Should()
                 .Contain("rel=\"noopener\"");
             //it is an anchor and not contains stopPropagation 
-            comp.Markup
+            comp1.Markup
                 .Replace(" ", string.Empty)
                 .Should()
                 .StartWith("<a")
                 .And
                 .NotContain("__internal_stopPropagation_onclick");
 
-            comp = ctx.RenderComponent<MudButton>(link, target, disabled);
-            comp.Instance.HtmlTag.Should().Be("button");
+            using var comp2 = ctx.RenderComponent<MudButton>(link, target, disabled);
+            comp2.Instance.HtmlTag.Should().Be("button");
 
         }
 
@@ -81,7 +81,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void MudIconButtonShouldRenderAButtonByDefault()
         {
-            var comp = ctx.RenderComponent<MudIconButton>();
+            using var comp = ctx.RenderComponent<MudIconButton>();
             //no HtmlTag nor Link properties are set, so HtmlTag is button by default
             comp.Instance
                 .HtmlTag
@@ -103,7 +103,7 @@ namespace MudBlazor.UnitTests.Components
             using var ctx = new Bunit.TestContext();
             var link = Parameter(nameof(MudIconButton.Link), "https://www.google.com");
             var target = Parameter(nameof(MudIconButton.Target), "_blank");
-            var comp = ctx.RenderComponent<MudIconButton>(link, target);
+            using var comp = ctx.RenderComponent<MudIconButton>(link, target);
             //Link property is set, so it has to render an anchor element
             comp.Instance
                 .HtmlTag
@@ -126,7 +126,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void MudFabShouldRenderAButtonByDefault()
         {
-            var comp = ctx.RenderComponent<MudFab>();
+            using var comp = ctx.RenderComponent<MudFab>();
             //no HtmlTag nor Link properties are set, so HtmlTag is button by default
             comp.Instance
                 .HtmlTag
@@ -147,7 +147,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var link = Parameter(nameof(MudFab.Link), "https://www.google.com");
             var target = Parameter(nameof(MudFab.Target), "_blank");
-            var comp = ctx.RenderComponent<MudFab>(link, target);
+            using var comp = ctx.RenderComponent<MudFab>(link, target);
             //Link property is set, so it has to render an anchor element
             comp.Instance
                 .HtmlTag
@@ -170,7 +170,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void MudFabShouldNotRenderIconIfNoneSpecified()
         {
-            var comp = ctx.RenderComponent<MudFab>();
+            using var comp = ctx.RenderComponent<MudFab>();
             comp.Markup
                 .Should()
                 .NotContainAny("mud-icon-root");
@@ -185,7 +185,7 @@ namespace MudBlazor.UnitTests.Components
             var title = "Title and tooltip";
             var icon = Parameter(nameof(MudIconButton.Icon), Icons.Filled.Add);
             var titleParam = Parameter(nameof(MudIconButton.Title), title);
-            var comp = ctx.RenderComponent<MudIconButton>(icon, titleParam);
+            using var comp = ctx.RenderComponent<MudIconButton>(icon, titleParam);
             comp.Find("svg Title").TextContent.Should().Be(title);
 
             icon = Parameter(nameof(MudIconButton.Icon), "customicon");

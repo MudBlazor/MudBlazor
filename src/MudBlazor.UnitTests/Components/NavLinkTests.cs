@@ -36,7 +36,7 @@ namespace MudBlazor.UnitTests.Components
         [TestCase("myFrameName", "noopener noreferrer")]
         public async Task NavLink_CheckRelAttribute(string target, string expectedRel)
         {
-            var comp = ctx.RenderComponent<MudNavLink>(new[]
+            using var comp = ctx.RenderComponent<MudNavLink>(new[]
             {
                Parameter(nameof(MudNavLink.Target), target),
             });
@@ -50,7 +50,7 @@ namespace MudBlazor.UnitTests.Components
         public async Task NavLink_CheckOnClickEvent()
         {
             var clicked = false;
-            var comp = ctx.RenderComponent<MudNavLink>(new[]
+            using var comp = ctx.RenderComponent<MudNavLink>(new[]
             {
                EventCallback(nameof(MudNavLink.OnClick), (MouseEventArgs args) => { clicked = true; }),
             });
@@ -64,7 +64,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task NavLink_Enabled_CheckNavigation()
         {
-            var comp = ctx.RenderComponent<NavLinkDisabledTest>(new[]
+            using var comp = ctx.RenderComponent<NavLinkDisabledTest>(new[]
             {
                 Parameter(nameof(NavLinkDisabledTest.Disabled), false)
             });
@@ -76,7 +76,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task NavLink_Disabled_CheckNoNavigation()
         {
-            var comp = ctx.RenderComponent<NavLinkDisabledTest>(new[]
+            using var comp = ctx.RenderComponent<NavLinkDisabledTest>(new[]
             {
                 Parameter(nameof(NavLinkDisabledTest.Disabled), true)
             });

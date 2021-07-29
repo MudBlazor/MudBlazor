@@ -37,7 +37,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task FormIsValidTest()
         {
-            var comp = ctx.RenderComponent<FormIsValidTest>();
+            using var comp = ctx.RenderComponent<FormIsValidTest>();
             Console.WriteLine(comp.Markup);
             var form = comp.FindComponent<MudForm>().Instance;
             var textFieldcomp = comp.FindComponent<MudTextField<string>>();
@@ -80,7 +80,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task FormIsValidTest2()
         {
-            var comp = ctx.RenderComponent<FormIsValidTest2>();
+            using var comp = ctx.RenderComponent<FormIsValidTest2>();
             Console.WriteLine(comp.Markup);
             var form = comp.FindComponent<MudForm>().Instance;
             var textFieldcomp = comp.FindComponent<MudTextField<string>>();
@@ -96,7 +96,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task FormIsValidTest3()
         {
-            var comp = ctx.RenderComponent<FormIsValidTest3>();
+            using var comp = ctx.RenderComponent<FormIsValidTest3>();
             Console.WriteLine(comp.Markup);
             var form = comp.FindComponent<MudForm>().Instance;
             var textFields = comp.FindComponents<MudTextField<string>>();
@@ -118,7 +118,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task FormIsValidTest4()
         {
-            var comp = ctx.RenderComponent<FormIsValidTest4>();
+            using var comp = ctx.RenderComponent<FormIsValidTest4>();
             Console.WriteLine(comp.Markup);
             var form = comp.FindComponent<MudForm>().Instance;
             // check initial state: form should be valid due to having no required field, but the user's two-way binding did override that value to false
@@ -132,7 +132,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task FormIsTouchedTest()
         {
-            var comp = ctx.RenderComponent<FormIsTouchedTest>();
+            using var comp = ctx.RenderComponent<FormIsTouchedTest>();
             Console.WriteLine(comp.Markup);
             var form = comp.FindComponent<MudForm>().Instance;
             var textFieldcomp = comp.FindComponent<MudTextField<string>>();
@@ -165,7 +165,7 @@ namespace MudBlazor.UnitTests.Components
         public async Task FormValidationTest1()
         {
             var validationFunc = new Func<string, bool>(x => x?.StartsWith("Marilyn") == true);
-            var comp = ctx.RenderComponent<FormValidationTest>(ComponentParameter.CreateParameter("validation", validationFunc));
+            using var comp = ctx.RenderComponent<FormValidationTest>(ComponentParameter.CreateParameter("validation", validationFunc));
             Console.WriteLine(comp.Markup);
             var form = comp.FindComponent<MudForm>().Instance;
             var textFieldcomp = comp.FindComponent<MudTextField<string>>();
@@ -217,7 +217,7 @@ namespace MudBlazor.UnitTests.Components
                     return "Not a star!";
                 return null;
             });
-            var comp = ctx.RenderComponent<FormValidationTest>(ComponentParameter.CreateParameter("validation", validationFunc));
+            using var comp = ctx.RenderComponent<FormValidationTest>(ComponentParameter.CreateParameter("validation", validationFunc));
             Console.WriteLine(comp.Markup);
             var form = comp.FindComponent<MudForm>().Instance;
             var textFieldcomp = comp.FindComponent<MudTextField<string>>();
@@ -249,7 +249,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task FormValidationTest3()
         {
-            var comp = ctx.RenderComponent<FormValidationTest>();
+            using var comp = ctx.RenderComponent<FormValidationTest>();
             Console.WriteLine(comp.Markup);
             var form = comp.FindComponent<MudForm>().Instance;
             var textFieldcomp = comp.FindComponent<MudTextField<string>>();
@@ -280,7 +280,7 @@ namespace MudBlazor.UnitTests.Components
                 await Task.Delay(valid ? ValidDelay : InvalidDelay);
                 return valid ? null : "invalid";
             });
-            var comp = ctx.RenderComponent<FormValidationTest>(ComponentParameter.CreateParameter("validation", validationFunc));
+            using var comp = ctx.RenderComponent<FormValidationTest>(ComponentParameter.CreateParameter("validation", validationFunc));
             Console.WriteLine(comp.Markup);
             var textFieldComp = comp.FindComponent<MudTextField<string>>();
             var textField = textFieldComp.Instance;
@@ -306,7 +306,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task EditFormOnFieldChangedTest()
         {
-            var comp = ctx.RenderComponent<EditFormOnFieldChangedTest>();
+            using var comp = ctx.RenderComponent<EditFormOnFieldChangedTest>();
             Console.WriteLine(comp.Markup);
             var textFields = comp.FindAll("input");
             textFields.Count.Should().Be(3);
@@ -340,7 +340,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task FormWithCheckboxTest()
         {
-            var comp = ctx.RenderComponent<FormWithCheckboxTest>();
+            using var comp = ctx.RenderComponent<FormWithCheckboxTest>();
             Console.WriteLine(comp.Markup);
             var textFields = comp.FindAll("input");
             textFields.Count.Should().Be(4); // three textfields, one checkbox
@@ -371,7 +371,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task FormWithCheckboxTest2()
         {
-            var comp = ctx.RenderComponent<FormWithCheckboxTest>();
+            using var comp = ctx.RenderComponent<FormWithCheckboxTest>();
             Console.WriteLine(comp.Markup);
             var form = comp.FindComponent<MudForm>().Instance;
             form.IsValid.Should().BeTrue(because: "none of the fields are required");
@@ -383,7 +383,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task Form_Should_BecomeValidIfUntouchedFieldsAreNotRequired()
         {
-            var comp = ctx.RenderComponent<FormValidationTest2>();
+            using var comp = ctx.RenderComponent<FormValidationTest2>();
             Console.WriteLine(comp.Markup);
             var form = comp.FindComponent<MudForm>().Instance;
             form.IsValid.Should().BeFalse(because: "textfield is required");
@@ -398,7 +398,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task Form_Should_BecomeInValidWhenAConversionErrorOccurs()
         {
-            var comp = ctx.RenderComponent<FormConversionErrorTest>();
+            using var comp = ctx.RenderComponent<FormConversionErrorTest>();
             Console.WriteLine(comp.Markup);
             var form = comp.FindComponent<MudForm>().Instance;
             form.IsValid.Should().BeTrue();
@@ -415,7 +415,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task MudFormExampleTest()
         {
-            var comp = ctx.RenderComponent<MudFormExample>();
+            using var comp = ctx.RenderComponent<MudFormExample>();
             Console.WriteLine(comp.Markup);
             var form = comp.FindComponent<MudForm>().Instance;
             comp.FindComponent<MudForm>().SetParam(x => x.ValidationDelay, 0);
@@ -480,7 +480,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task FormWithRadioGroupIsValidTest()
         {
-            var comp = ctx.RenderComponent<FormWithRadioGroupTest>();
+            using var comp = ctx.RenderComponent<FormWithRadioGroupTest>();
             Console.WriteLine(comp.Markup);
             var form = comp.FindComponent<MudForm>().Instance;
             var radioGroupcomp = comp.FindComponent<MudRadioGroup<string>>();
@@ -510,7 +510,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task FormWithDatePickerTest()
         {
-            var comp = ctx.RenderComponent<FormWithDatePickerTest>();
+            using var comp = ctx.RenderComponent<FormWithDatePickerTest>();
             Console.WriteLine(comp.Markup);
             var form = comp.FindComponent<MudForm>().Instance;
             var dateComp = comp.FindComponent<MudDatePicker>();
@@ -540,7 +540,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task Form_Should_ValidateDatePickerTest()
         {
-            var comp = ctx.RenderComponent<FormWithDatePickerTest>();
+            using var comp = ctx.RenderComponent<FormWithDatePickerTest>();
             Console.WriteLine(comp.Markup);
             var form = comp.FindComponent<MudForm>().Instance;
             var dateComp = comp.FindComponent<MudDatePicker>();
@@ -566,7 +566,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task FormWithTimePickerTest()
         {
-            var comp = ctx.RenderComponent<FormWithTimePickerTest>();
+            using var comp = ctx.RenderComponent<FormWithTimePickerTest>();
             Console.WriteLine(comp.Markup);
             var form = comp.FindComponent<MudForm>().Instance;
             var dateComp = comp.FindComponent<MudTimePicker>();
@@ -596,7 +596,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task Form_Should_ValidateTimePickerTest()
         {
-            var comp = ctx.RenderComponent<FormWithTimePickerTest>();
+            using var comp = ctx.RenderComponent<FormWithTimePickerTest>();
             Console.WriteLine(comp.Markup);
             var form = comp.FindComponent<MudForm>().Instance;
             var dateComp = comp.FindComponent<MudTimePicker>();
@@ -624,7 +624,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task EditFormExample_EmptyValidation()
         {
-            var comp = ctx.RenderComponent<EditFormExample>();
+            using var comp = ctx.RenderComponent<EditFormExample>();
             Console.WriteLine(comp.Markup);
             // same effect as clicking the validate button
             comp.Find("form").Submit();
@@ -645,7 +645,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task EditFormExample_FillInValues()
         {
-            var comp = ctx.RenderComponent<EditFormExample>();
+            using var comp = ctx.RenderComponent<EditFormExample>();
             //Console.WriteLine(comp.Markup);
             comp.FindAll("input")[0].Change("Rick Sanchez");
             comp.FindAll("input")[0].Blur();
@@ -675,7 +675,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task EditForm_Validation_NullContext()
         {
-            var comp = ctx.RenderComponent<EditFormIssue1229>();
+            using var comp = ctx.RenderComponent<EditFormIssue1229>();
             // Check first run attribute
             EditFormIssue1229.TestAttribute.ValidationContextOnCall.Should().BeEmpty();
             // Trigger change
@@ -696,7 +696,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task MudForm_MustNot_ValidateOnInitialRender()
         {
-            var comp = ctx.RenderComponent<MudFormExample>();
+            using var comp = ctx.RenderComponent<MudFormExample>();
             await Task.Delay(100);
             var form = comp.FindComponent<MudForm>().Instance;
             form.Errors.Should().BeEmpty();

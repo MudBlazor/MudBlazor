@@ -31,7 +31,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task ListSelectionTest()
         {
-            var comp = ctx.RenderComponent<ListSelectionTest>();
+            using var comp = ctx.RenderComponent<ListSelectionTest>();
             Console.WriteLine(comp.Markup);
             var list = comp.FindComponent<MudList>().Instance;
             list.SelectedItem.Should().Be(null);

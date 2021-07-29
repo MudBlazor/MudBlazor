@@ -41,7 +41,7 @@ namespace MudBlazor.UnitTests.Components
         {
             ctx.Services.Add(new ServiceDescriptor(typeof(IResizeObserver), new MockResizeObserver()));
 
-            var comp = ctx.RenderComponent<MudDynamicTabs>();
+            using var comp = ctx.RenderComponent<MudDynamicTabs>();
             var tabs = comp.Instance;
 
             tabs.Header.Should().NotBeNull();
@@ -72,7 +72,7 @@ namespace MudBlazor.UnitTests.Components
         {
             ctx.Services.Add(new ServiceDescriptor(typeof(IResizeObserver), new MockResizeObserver()));
 
-            var comp = ctx.RenderComponent<SimpleDynamicTabsTest>();
+            using var comp = ctx.RenderComponent<SimpleDynamicTabsTest>();
             Console.WriteLine(comp.Markup);
 
             // three panels three close icons;
@@ -111,7 +111,7 @@ namespace MudBlazor.UnitTests.Components
         {
             ctx.Services.Add(new ServiceDescriptor(typeof(IResizeObserver), new MockResizeObserver()));
 
-            var comp = ctx.RenderComponent<SimpleDynamicTabsTestWithToolTips>();
+            using var comp = ctx.RenderComponent<SimpleDynamicTabsTestWithToolTips>();
             Console.WriteLine(comp.Markup);
 
             // three panels three close icons;
@@ -163,7 +163,7 @@ namespace MudBlazor.UnitTests.Components
         public async Task TestInteractions_AddTab()
         {
             ctx.Services.Add(new ServiceDescriptor(typeof(IResizeObserver), new MockResizeObserver()));
-            var comp = ctx.RenderComponent<SimpleDynamicTabsInteractionTest>();
+            using var comp = ctx.RenderComponent<SimpleDynamicTabsInteractionTest>();
 
             Console.WriteLine(comp.Markup);
 
@@ -178,7 +178,7 @@ namespace MudBlazor.UnitTests.Components
         public async Task TestInteractions_RemoveTab()
         {
             ctx.Services.Add(new ServiceDescriptor(typeof(IResizeObserver), new MockResizeObserver()));
-            var comp = ctx.RenderComponent<SimpleDynamicTabsInteractionTest>();
+            using var comp = ctx.RenderComponent<SimpleDynamicTabsInteractionTest>();
 
             Console.WriteLine(comp.Markup);
 

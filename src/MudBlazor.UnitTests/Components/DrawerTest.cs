@@ -34,7 +34,7 @@ namespace MudBlazor.UnitTests.Components.Components
         [Test]
         public async Task TemporaryClosed_Open_CheckOpened_Close_CheckClosed()
         {
-            var comp = ctx.RenderComponent<DrawerTest1>(new[]
+            using var comp = ctx.RenderComponent<DrawerTest1>(new[]
             {
                 Parameter(nameof(DrawerTest1.Variant), DrawerVariant.Temporary)
             });
@@ -53,7 +53,7 @@ namespace MudBlazor.UnitTests.Components.Components
         [Test]
         public async Task TemporaryClosedWithoutOverlay_Open_CheckOverlay()
         {
-            var comp = ctx.RenderComponent<DrawerTest1>(new[]
+            using var comp = ctx.RenderComponent<DrawerTest1>(new[]
             {
                 Parameter(nameof(DrawerTest1.Variant), DrawerVariant.Temporary),
                 Parameter(nameof(DrawerTest1.DisableOverlay), true)
@@ -72,7 +72,7 @@ namespace MudBlazor.UnitTests.Components.Components
         [Test]
         public async Task TemporaryClosedClipped_Open_CheckState()
         {
-            var comp = ctx.RenderComponent<DrawerTest1>(new[]
+            using var comp = ctx.RenderComponent<DrawerTest1>(new[]
             {
                 Parameter(nameof(DrawerTest1.Variant), DrawerVariant.Temporary),
                 Parameter(nameof(DrawerTest1.ClipMode), DrawerClipMode.Always)
@@ -91,7 +91,7 @@ namespace MudBlazor.UnitTests.Components.Components
         [Test]
         public async Task PersistentClosed_Open_CheckOpened_Close_CheckClosed()
         {
-            var comp = ctx.RenderComponent<DrawerTest1>(new[]
+            using var comp = ctx.RenderComponent<DrawerTest1>(new[]
             {
                 Parameter(nameof(DrawerTest1.Variant), DrawerVariant.Persistent)
             });
@@ -110,7 +110,7 @@ namespace MudBlazor.UnitTests.Components.Components
         [Test]
         public async Task PersistentClosedClipped_Open_CheckState()
         {
-            var comp = ctx.RenderComponent<DrawerTest1>(new[]
+            using var comp = ctx.RenderComponent<DrawerTest1>(new[]
             {
                 Parameter(nameof(DrawerTest1.Variant), DrawerVariant.Persistent),
                 Parameter(nameof(DrawerTest1.ClipMode), DrawerClipMode.Always)
@@ -129,7 +129,7 @@ namespace MudBlazor.UnitTests.Components.Components
         [Test]
         public async Task MiniClosed_Open_CheckOpened_Close_CheckClosed()
         {
-            var comp = ctx.RenderComponent<DrawerTest1>(new[]
+            using var comp = ctx.RenderComponent<DrawerTest1>(new[]
             {
                 Parameter(nameof(DrawerTest1.Variant), DrawerVariant.Mini)
             });
@@ -148,7 +148,7 @@ namespace MudBlazor.UnitTests.Components.Components
         [Test]
         public async Task MiniClosedClipped_Open_CheckState()
         {
-            var comp = ctx.RenderComponent<DrawerTest1>(new[]
+            using var comp = ctx.RenderComponent<DrawerTest1>(new[]
             {
                 Parameter(nameof(DrawerTest1.Variant), DrawerVariant.Mini),
                 Parameter(nameof(DrawerTest1.ClipMode), DrawerClipMode.Always)
@@ -167,7 +167,7 @@ namespace MudBlazor.UnitTests.Components.Components
         [Test]
         public async Task ResponsiveClosed_Open_CheckOpened_Close_CheckClosed()
         {
-            var comp = ctx.RenderComponent<DrawerResponsiveTest>();
+            using var comp = ctx.RenderComponent<DrawerResponsiveTest>();
 
             Console.WriteLine(comp.Markup);
 
@@ -185,7 +185,7 @@ namespace MudBlazor.UnitTests.Components.Components
         {
             (ctx.Services.GetService<IResizeListenerService>() as MockResizeListenerService)?.ApplyScreenSize(500, 768);
 
-            var comp = ctx.RenderComponent<DrawerResponsiveTest>();
+            using var comp = ctx.RenderComponent<DrawerResponsiveTest>();
 
             Console.WriteLine(comp.Markup);
 
@@ -207,7 +207,7 @@ namespace MudBlazor.UnitTests.Components.Components
         {
             (ctx.Services.GetService<IResizeListenerService>() as MockResizeListenerService)?.ApplyScreenSize(1920, 1080);
 
-            var comp = ctx.RenderComponent<DrawerResponsiveTest>(new[]
+            using var comp = ctx.RenderComponent<DrawerResponsiveTest>(new[]
             {
                 Parameter(nameof(DrawerResponsiveTest.Breakpoint), breakpoint)
             });
@@ -232,7 +232,7 @@ namespace MudBlazor.UnitTests.Components.Components
         {
             (ctx.Services.GetService<IResizeListenerService>() as MockResizeListenerService)?.ApplyScreenSize(400, 300);
 
-            var comp = ctx.RenderComponent<DrawerResponsiveTest>(new[]
+            using var comp = ctx.RenderComponent<DrawerResponsiveTest>(new[]
             {
                 Parameter(nameof(DrawerResponsiveTest.Breakpoint), breakpoint)
             });
@@ -254,7 +254,7 @@ namespace MudBlazor.UnitTests.Components.Components
             var srv = ctx.Services.GetService<IResizeListenerService>() as MockResizeListenerService;
             srv?.ApplyScreenSize(1280, 768);
 
-            var comp = ctx.RenderComponent<DrawerResponsiveTest>(new[]
+            using var comp = ctx.RenderComponent<DrawerResponsiveTest>(new[]
             {
                 Parameter(nameof(DrawerResponsiveTest.PreserveOpenState), true)
             });
@@ -308,7 +308,7 @@ namespace MudBlazor.UnitTests.Components.Components
             var srv = ctx.Services.GetService<IResizeListenerService>() as MockResizeListenerService;
             srv?.ApplyScreenSize(1280, 768);
 
-            var comp = ctx.RenderComponent<DrawerResponsiveTest>(new[]
+            using var comp = ctx.RenderComponent<DrawerResponsiveTest>(new[]
             {
                 Parameter(nameof(DrawerResponsiveTest.PreserveOpenState), true)
             });

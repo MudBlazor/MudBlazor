@@ -36,7 +36,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task TimelineTest()
         {
-            var comp = ctx.RenderComponent<TimelineTest>();
+            using var comp = ctx.RenderComponent<TimelineTest>();
             // print the generated html
             Console.WriteLine(comp.Markup);
             //// select elements needed for the test

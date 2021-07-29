@@ -28,7 +28,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void AvatarGroupTest()
         {
-            var comp = ctx.RenderComponent<AvatarGroupTest>();
+            using var comp = ctx.RenderComponent<AvatarGroupTest>();
             Console.WriteLine(comp.Markup);
             // select elements needed for the test
             var group = comp.FindComponent<MudAvatarGroup>();
@@ -51,7 +51,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void AvatarGroupChangeMaxTest()
         {
-            var comp = ctx.RenderComponent<AvatarGroupChangeMaxTest>();
+            using var comp = ctx.RenderComponent<AvatarGroupChangeMaxTest>();
             Console.WriteLine(comp.Markup);
             // select elements needed for the test
             var group = comp.FindComponent<MudAvatarGroup>();

@@ -28,7 +28,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task SimpleTest()
         {
-            var comp = ctx.RenderComponent<MudSnackbarProvider>();
+            using var comp = ctx.RenderComponent<MudSnackbarProvider>();
             Console.WriteLine(comp.Markup);
             comp.Find("#mud-snackbar-container").InnerHtml.Trim().Should().BeEmpty();
             var service = ctx.Services.GetService<ISnackbar>() as SnackbarService;
@@ -46,7 +46,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task HtmlInMessages()
         {
-            var comp = ctx.RenderComponent<MudSnackbarProvider>();
+            using var comp = ctx.RenderComponent<MudSnackbarProvider>();
             Console.WriteLine(comp.Markup);
             comp.Find("#mud-snackbar-container").InnerHtml.Trim().Should().BeEmpty();
             var service = ctx.Services.GetService<ISnackbar>() as SnackbarService;
@@ -60,7 +60,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task DisposeTest()
         {
-            var comp = ctx.RenderComponent<MudSnackbarProvider>();
+            using var comp = ctx.RenderComponent<MudSnackbarProvider>();
             Console.WriteLine(comp.Markup);
             comp.Find("#mud-snackbar-container").InnerHtml.Trim().Should().BeEmpty();
             var service = ctx.Services.GetService<ISnackbar>() as SnackbarService;
@@ -83,7 +83,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task IconTest()
         {
-            var comp = ctx.RenderComponent<MudSnackbarProvider>();
+            using var comp = ctx.RenderComponent<MudSnackbarProvider>();
             Console.WriteLine(comp.Markup);
             comp.Find("#mud-snackbar-container").InnerHtml.Trim().Should().BeEmpty();
             var service = ctx.Services.GetService<ISnackbar>() as SnackbarService;
@@ -100,7 +100,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task HideIconTest()
         {
-            var comp = ctx.RenderComponent<MudSnackbarProvider>();
+            using var comp = ctx.RenderComponent<MudSnackbarProvider>();
             Console.WriteLine(comp.Markup);
             comp.Find("#mud-snackbar-container").InnerHtml.Trim().Should().BeEmpty();
             var service = ctx.Services.GetService<ISnackbar>() as SnackbarService;

@@ -39,7 +39,7 @@ namespace MudBlazor.UnitTests.Components
         {
             ctx.Services.Add(new ServiceDescriptor(typeof(IResizeObserver), new MockResizeObserver()));
 
-            var comp = ctx.RenderComponent<TabsAddingRemovingTabsTest>();
+            using var comp = ctx.RenderComponent<TabsAddingRemovingTabsTest>();
             Console.WriteLine(comp.Markup);
             comp.Find("div.mud-tabs-panels").InnerHtml.Trim().Should().BeEmpty();
             comp.FindAll("div.mud-tab").Should().BeEmpty();
@@ -97,7 +97,7 @@ namespace MudBlazor.UnitTests.Components
         {
             ctx.Services.Add(new ServiceDescriptor(typeof(IResizeObserver), new MockResizeObserver()));
 
-            var comp = ctx.RenderComponent<TabsKeepAliveTest>();
+            using var comp = ctx.RenderComponent<TabsKeepAliveTest>();
             Console.WriteLine(comp.Markup);
             // all panels should be evident in the markup:
             comp.FindAll("button").Count.Should().Be(3);
@@ -157,7 +157,7 @@ namespace MudBlazor.UnitTests.Components
         {
             ctx.Services.Add(new ServiceDescriptor(typeof(IResizeObserver), new MockResizeObserver()));
 
-            var comp = ctx.RenderComponent<TabsKeepAliveTest>(ComponentParameter.CreateParameter("KeepPanelsAlive", false));
+            using var comp = ctx.RenderComponent<TabsKeepAliveTest>(ComponentParameter.CreateParameter("KeepPanelsAlive", false));
             Console.WriteLine(comp.Markup);
             // only one panel should be evident in the markup:
             comp.FindAll("button").Count.Should().Be(1);
@@ -198,7 +198,7 @@ namespace MudBlazor.UnitTests.Components
         {
             ctx.Services.Add(new ServiceDescriptor(typeof(IResizeObserver), new MockResizeObserver()));
 
-            var comp = ctx.RenderComponent<ScrollableTabsTest>();
+            using var comp = ctx.RenderComponent<ScrollableTabsTest>();
             Console.WriteLine(comp.Markup);
 
             for (int i = 0; i < 6; i++)
@@ -233,7 +233,7 @@ namespace MudBlazor.UnitTests.Components
 
             ctx.Services.Add(new ServiceDescriptor(typeof(IResizeObserver), observer));
 
-            var comp = ctx.RenderComponent<ScrollableTabsTest>();
+            using var comp = ctx.RenderComponent<ScrollableTabsTest>();
             Console.WriteLine(comp.Markup);
 
             comp.Instance.SetPanelActive(2);
@@ -265,7 +265,7 @@ namespace MudBlazor.UnitTests.Components
 
             ctx.Services.Add(new ServiceDescriptor(typeof(IResizeObserver), observer));
 
-            var comp = ctx.RenderComponent<ScrollableTabsTest>();
+            using var comp = ctx.RenderComponent<ScrollableTabsTest>();
             comp.SetParametersAndRender(p => p.Add(x => x.Position, Position.Left));
             Console.WriteLine(comp.Markup);
 
@@ -293,7 +293,7 @@ namespace MudBlazor.UnitTests.Components
 
             ctx.Services.Add(new ServiceDescriptor(typeof(IResizeObserver), observer));
 
-            var comp = ctx.RenderComponent<ScrollableTabsTest>();
+            using var comp = ctx.RenderComponent<ScrollableTabsTest>();
             Console.WriteLine(comp.Markup);
 
             Dictionary<int, double> expectedTranslations = new Dictionary<int, double>
@@ -327,7 +327,7 @@ namespace MudBlazor.UnitTests.Components
         {
             ctx.Services.Add(new ServiceDescriptor(typeof(IResizeObserver), new MockResizeObserver()));
 
-            var comp = ctx.RenderComponent<ScrollableTabsTest>();
+            using var comp = ctx.RenderComponent<ScrollableTabsTest>();
             Console.WriteLine(comp.Markup);
 
             var scrollButtons = comp.FindComponents<MudIconButton>();
@@ -351,7 +351,7 @@ namespace MudBlazor.UnitTests.Components
 
             ctx.Services.Add(new ServiceDescriptor(typeof(IResizeObserver), observer));
 
-            var comp = ctx.RenderComponent<ScrollableTabsTest>();
+            using var comp = ctx.RenderComponent<ScrollableTabsTest>();
 
             var scrollButtons = comp.FindComponents<MudIconButton>();
             scrollButtons.Should().HaveCount(2);
@@ -377,7 +377,7 @@ namespace MudBlazor.UnitTests.Components
 
             ctx.Services.Add(new ServiceDescriptor(typeof(IResizeObserver), observer));
 
-            var comp = ctx.RenderComponent<ScrollableTabsTest>();
+            using var comp = ctx.RenderComponent<ScrollableTabsTest>();
 
             var scrollButtons = comp.FindComponents<MudIconButton>();
             scrollButtons.Should().HaveCount(2);
@@ -402,7 +402,7 @@ namespace MudBlazor.UnitTests.Components
 
             ctx.Services.Add(new ServiceDescriptor(typeof(IResizeObserver), observer));
 
-            var comp = ctx.RenderComponent<ScrollableTabsTest>();
+            using var comp = ctx.RenderComponent<ScrollableTabsTest>();
 
             var scrollButtons = comp.FindComponents<MudIconButton>();
             scrollButtons.Should().HaveCount(2);
@@ -449,7 +449,7 @@ namespace MudBlazor.UnitTests.Components
 
             ctx.Services.Add(new ServiceDescriptor(typeof(IResizeObserver), observer));
 
-            var comp = ctx.RenderComponent<ScrollableTabsTest>();
+            using var comp = ctx.RenderComponent<ScrollableTabsTest>();
 
             var scrollButtons = comp.FindComponents<MudIconButton>();
             scrollButtons.Should().HaveCount(2);
@@ -498,7 +498,7 @@ namespace MudBlazor.UnitTests.Components
 
             ctx.Services.Add(new ServiceDescriptor(typeof(IResizeObserver), observer));
 
-            var comp = ctx.RenderComponent<ScrollableTabsTest>();
+            using var comp = ctx.RenderComponent<ScrollableTabsTest>();
             Console.WriteLine(comp.Markup);
 
             comp.Instance.SetPanelActive(1);
@@ -525,7 +525,7 @@ namespace MudBlazor.UnitTests.Components
 
             ctx.Services.Add(new ServiceDescriptor(typeof(IResizeObserver), observer));
 
-            var comp = ctx.RenderComponent<ScrollableTabsTest>();
+            using var comp = ctx.RenderComponent<ScrollableTabsTest>();
             Console.WriteLine(comp.Markup);
 
             comp.Instance.SetPanelActive(1);
@@ -551,7 +551,7 @@ namespace MudBlazor.UnitTests.Components
 
             ctx.Services.Add(new ServiceDescriptor(typeof(IResizeObserver), observer));
 
-            var comp = ctx.RenderComponent<ScrollableTabsTest>();
+            using var comp = ctx.RenderComponent<ScrollableTabsTest>();
             Console.WriteLine(comp.Markup);
 
             comp.Instance.SetPanelActive(4);
@@ -589,7 +589,7 @@ namespace MudBlazor.UnitTests.Components
 
             ctx.Services.Add(new ServiceDescriptor(typeof(IResizeObserver), observer));
 
-            var comp = ctx.RenderComponent<ScrollableTabsTest>();
+            using var comp = ctx.RenderComponent<ScrollableTabsTest>();
             Console.WriteLine(comp.Markup);
 
             comp.Instance.SetPanelActive(2);
@@ -625,7 +625,7 @@ namespace MudBlazor.UnitTests.Components
 
             ctx.Services.Add(new ServiceDescriptor(typeof(IResizeObserver), observer));
 
-            var comp = ctx.RenderComponent<ScrollableTabsTest>();
+            using var comp = ctx.RenderComponent<ScrollableTabsTest>();
             Console.WriteLine(comp.Markup);
 
             comp.Instance.SetPanelActive(2);
@@ -667,7 +667,7 @@ namespace MudBlazor.UnitTests.Components
 
             ctx.Services.Add(new ServiceDescriptor(typeof(IResizeObserver), observer));
 
-            var comp = ctx.RenderComponent<SimplifiedScrollableTabsTest>();
+            using var comp = ctx.RenderComponent<SimplifiedScrollableTabsTest>();
 
             Console.WriteLine(comp.Markup);
 
@@ -704,7 +704,7 @@ namespace MudBlazor.UnitTests.Components
 
             ctx.Services.Add(new ServiceDescriptor(typeof(IResizeObserver), observer));
 
-            var comp = ctx.RenderComponent<SimplifiedScrollableTabsTest>(p => p.Add(x => x.StartAmount, 5));
+            using var comp = ctx.RenderComponent<SimplifiedScrollableTabsTest>(p => p.Add(x => x.StartAmount, 5));
 
             Console.WriteLine(comp.Markup);
 
@@ -749,7 +749,7 @@ namespace MudBlazor.UnitTests.Components
             {
                 for (int k = 0; k < 2; k++)
                 {
-                    var comp = ctx.RenderComponent<ActivateDisabledTabsTest>();
+                    using var comp = ctx.RenderComponent<ActivateDisabledTabsTest>();
 
                     if (k == 0)
                     {
@@ -805,7 +805,7 @@ namespace MudBlazor.UnitTests.Components
 
             foreach (var invoker in activator)
             {
-                var comp = ctx.RenderComponent<ActivateDisabledTabsTest>();
+                using var comp = ctx.RenderComponent<ActivateDisabledTabsTest>();
 
                 Console.WriteLine(comp.Markup);
 
@@ -838,28 +838,28 @@ namespace MudBlazor.UnitTests.Components
             ctx.Services.Add(new ServiceDescriptor(typeof(IResizeObserver), new MockResizeObserver()));
 
             //starting with index 1:
-            var comp = ctx.RenderComponent<SelectedIndexTabsTest>();
-            comp.Instance.Tabs.ActivePanelIndex.Should().Be(1);
-            var panels = comp.FindAll(".mud-tab");
-            var activePanels = comp.FindAll(".mud-tab-active");
+            using var comp1 = ctx.RenderComponent<SelectedIndexTabsTest>();
+            comp1.Instance.Tabs.ActivePanelIndex.Should().Be(1);
+            var panels = comp1.FindAll(".mud-tab");
+            var activePanels = comp1.FindAll(".mud-tab-active");
             activePanels.Should().HaveCount(1);
             panels[1].ClassList.Contains("mud-tab-active").Should().BeTrue();
 
             //starting with index 2:
             SelectedIndexTabsTest.SelectedTab = 2;
-            comp = ctx.RenderComponent<SelectedIndexTabsTest>();
-            comp.Instance.Tabs.ActivePanelIndex.Should().Be(2);
-            panels = comp.FindAll(".mud-tab");
-            activePanels = comp.FindAll(".mud-tab-active");
+            using var comp2 = ctx.RenderComponent<SelectedIndexTabsTest>();
+            comp2.Instance.Tabs.ActivePanelIndex.Should().Be(2);
+            panels = comp2.FindAll(".mud-tab");
+            activePanels = comp2.FindAll(".mud-tab-active");
             activePanels.Should().HaveCount(1);
             panels[2].ClassList.Contains("mud-tab-active").Should().BeTrue();
 
             //starting with index 0:
             SelectedIndexTabsTest.SelectedTab = 0;
-            comp = ctx.RenderComponent<SelectedIndexTabsTest>();
-            comp.Instance.Tabs.ActivePanelIndex.Should().Be(0);
-            panels = comp.FindAll(".mud-tab");
-            activePanels = comp.FindAll(".mud-tab-active");
+            using var comp3 = ctx.RenderComponent<SelectedIndexTabsTest>();
+            comp3.Instance.Tabs.ActivePanelIndex.Should().Be(0);
+            panels = comp3.FindAll(".mud-tab");
+            activePanels = comp3.FindAll(".mud-tab-active");
             activePanels.Should().HaveCount(1);
             panels[0].ClassList.Contains("mud-tab-active").Should().BeTrue();
 
@@ -888,7 +888,7 @@ namespace MudBlazor.UnitTests.Components
         {
             ctx.Services.Add(new ServiceDescriptor(typeof(IResizeObserver), new MockResizeObserver()));
 
-            var comp = ctx.RenderComponent<TabsWithHeaderTest>();
+            using var comp = ctx.RenderComponent<TabsWithHeaderTest>();
             comp.SetParametersAndRender(x => x.Add(y => y.TabHeaderPosition, position));
             comp.SetParametersAndRender(x => x.Add(y => y.TabPanelHeaderPosition, TabHeaderPosition.None));
 
@@ -920,7 +920,7 @@ namespace MudBlazor.UnitTests.Components
         {
             ctx.Services.Add(new ServiceDescriptor(typeof(IResizeObserver), new MockResizeObserver()));
 
-            var comp = ctx.RenderComponent<TabsWithHeaderTest>();
+            using var comp = ctx.RenderComponent<TabsWithHeaderTest>();
             comp.SetParametersAndRender(x => x.Add(y => y.TabHeaderPosition, TabHeaderPosition.None));
             comp.SetParametersAndRender(x => x.Add(y => y.TabPanelHeaderPosition, TabHeaderPosition.None));
 
@@ -938,7 +938,7 @@ namespace MudBlazor.UnitTests.Components
         {
             ctx.Services.Add(new ServiceDescriptor(typeof(IResizeObserver), new MockResizeObserver()));
 
-            var comp = ctx.RenderComponent<TabsWithHeaderTest>();
+            using var comp = ctx.RenderComponent<TabsWithHeaderTest>();
             comp.SetParametersAndRender(x => x.Add(y => y.TabHeaderPosition, TabHeaderPosition.None));
             comp.SetParametersAndRender(x => x.Add(y => y.TabPanelHeaderPosition, position));
 
@@ -975,7 +975,7 @@ namespace MudBlazor.UnitTests.Components
         {
             ctx.Services.Add(new ServiceDescriptor(typeof(IResizeObserver), new MockResizeObserver()));
 
-            var comp = ctx.RenderComponent<TabsWithHeaderTest>();
+            using var comp = ctx.RenderComponent<TabsWithHeaderTest>();
             comp.SetParametersAndRender(x => x.Add(y => y.TabHeaderPosition, TabHeaderPosition.None));
             comp.SetParametersAndRender(x => x.Add(y => y.TabPanelHeaderPosition, TabHeaderPosition.None));
 
@@ -989,7 +989,7 @@ namespace MudBlazor.UnitTests.Components
             ctx.Services.Add(new ServiceDescriptor(typeof(IResizeObserver), new MockResizeObserver()));
 
             // get the tab panels, we must have 2 tabs, one with html text and one without
-            var comp = ctx.RenderComponent<HtmlTextTabsTest>();
+            using var comp = ctx.RenderComponent<HtmlTextTabsTest>();
             Console.WriteLine(comp.Markup);
             var panels = comp.FindAll(".mud-tab");
             panels.Should().HaveCount(2);

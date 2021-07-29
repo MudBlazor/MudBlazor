@@ -52,7 +52,7 @@ namespace MudBlazor.UnitTests.Components
         public async Task Open_Close_DateRangePicker_10000_Times_CheckPerformance()
         {
             // warmup
-            var comp = ctx.RenderComponent<MudDateRangePicker>();
+            using var comp = ctx.RenderComponent<MudDateRangePicker>();
             var datepicker = comp.Instance;
             // measure
             var watch = Stopwatch.StartNew();
@@ -69,7 +69,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task SetPickerValue_CheckDateRange_SetPickerDate_CheckValue()
         {
-            var comp = ctx.RenderComponent<MudDateRangePicker>();
+            using var comp = ctx.RenderComponent<MudDateRangePicker>();
             // select elements needed for the test
             var picker = comp.Instance;
             picker.Text.Should().BeNullOrEmpty();
@@ -321,7 +321,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task Open_Programmatically_CheckOpen_Close_Programmatically_CheckClosed()
         {
-            var comp = ctx.RenderComponent<MudDateRangePicker>();
+            using var comp = ctx.RenderComponent<MudDateRangePicker>();
             Console.WriteLine(comp.Markup + "\n");
             comp.FindAll("div.mud-picker-content").Count.Should().Be(0);
             // open programmatically
@@ -337,7 +337,7 @@ namespace MudBlazor.UnitTests.Components
         public void SetPickerValue_CheckText()
         {
             var date = DateTime.Now;
-            var comp = ctx.RenderComponent<MudDateRangePicker>(
+            using var comp = ctx.RenderComponent<MudDateRangePicker>(
                 Parameter(nameof(MudDateRangePicker.DateRange), new DateRange(date, date.AddDays(5))));
             // select elements needed for the test
             var picker = comp.Instance;
@@ -379,7 +379,7 @@ namespace MudBlazor.UnitTests.Components
             var wasEventCallbackCalled = false;
 
             Func<DateTime, bool> isDisabledFunc = date => date == yesterday;
-            var comp = ctx.RenderComponent<MudDateRangePicker>(
+            using var comp = ctx.RenderComponent<MudDateRangePicker>(
                 Parameter(nameof(MudDateRangePicker.IsDateDisabledFunc), isDisabledFunc),
                 EventCallback("DateRangeChanged", (DateRange _) => wasEventCallbackCalled = true)
             );
@@ -400,7 +400,7 @@ namespace MudBlazor.UnitTests.Components
 
             Func<DateTime, bool> isDisabledFunc = date => date == twoDaysAgo;
             var range = new DateRange(yesterday, today);
-            var comp = ctx.RenderComponent<MudDateRangePicker>(
+            using var comp = ctx.RenderComponent<MudDateRangePicker>(
                 Parameter(nameof(MudDateRangePicker.IsDateDisabledFunc), isDisabledFunc),
                 EventCallback("DateRangeChanged", (DateRange _) => wasEventCallbackCalled = true)
             );

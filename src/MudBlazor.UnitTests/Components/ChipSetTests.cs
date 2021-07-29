@@ -34,7 +34,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task ChipSet_SingleSelection()
         {
-            var comp = ctx.RenderComponent<ChipSetTest>();
+            using var comp = ctx.RenderComponent<ChipSetTest>();
             // print the generated html
             Console.WriteLine(comp.Markup);
             // select elements needed for the test
@@ -66,7 +66,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task ChipSet_SingleSelection_Mandatory()
         {
-            var comp = ctx.RenderComponent<ChipSetTest>();
+            using var comp = ctx.RenderComponent<ChipSetTest>();
             // print the generated html
             Console.WriteLine(comp.Markup);
             // select elements needed for the test
@@ -96,7 +96,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task ChipSet_MultiSelection()
         {
-            var comp = ctx.RenderComponent<ChipSetTest>();
+            using var comp = ctx.RenderComponent<ChipSetTest>();
             // print the generated html
             Console.WriteLine(comp.Markup);
             // select elements needed for the test
@@ -133,7 +133,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task ChipSet_SingleSelection_WithMultipleDefaultChips()
         {
-            var comp = ctx.RenderComponent<ChipSetDefaultChipsTest>();
+            using var comp = ctx.RenderComponent<ChipSetDefaultChipsTest>();
             // print the generated html
             Console.WriteLine(comp.Markup);
             // select elements needed for the test
@@ -162,7 +162,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task ChipSet_MultiSelection_DefaultChipsShouldBeInitiallySelected()
         {
-            var comp = ctx.RenderComponent<ChipSetDefaultChipsTest>(ComponentParameter.CreateParameter("MultiSelection", true));
+            using var comp = ctx.RenderComponent<ChipSetDefaultChipsTest>(ComponentParameter.CreateParameter("MultiSelection", true));
             // print the generated html
             Console.WriteLine(comp.Markup);
             // select elements needed for the test
@@ -184,7 +184,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task ChipSet_MultiSelection_LateDefaultChipsShouldBeInitiallySelected()
         {
-            var comp = ctx.RenderComponent<ChipSetLateDefaultTest>();
+            using var comp = ctx.RenderComponent<ChipSetLateDefaultTest>();
             // print the generated html
             Console.WriteLine(comp.Markup);
             // check that only one item is present

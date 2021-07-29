@@ -54,7 +54,7 @@ namespace MudBlazor.UnitTests.Components
         public async Task DatePicker_OpenClose_Performance()
         {
             // warmup
-            var comp = ctx.RenderComponent<MudDatePicker>();
+            using var comp = ctx.RenderComponent<MudDatePicker>();
             var datepicker = comp.Instance;
             // measure
             var watch = Stopwatch.StartNew();
@@ -71,7 +71,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task SetPickerValue_CheckDate_SetPickerDate_CheckValue()
         {
-            var comp = ctx.RenderComponent<MudDatePicker>();
+            using var comp = ctx.RenderComponent<MudDatePicker>();
             // select elements needed for the test
             var picker = comp.Instance;
             picker.Text.Should().Be(null);
@@ -85,7 +85,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task DatePicker_Should_ApplyDateFormat()
         {
-            var comp = ctx.RenderComponent<MudDatePicker>();
+            using var comp = ctx.RenderComponent<MudDatePicker>();
             // select elements needed for the test
             var picker = comp.Instance;
             picker.Text.Should().Be(null);
@@ -101,7 +101,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task DatePicker_Should_ApplyDateFormatAfterDate()
         {
-            var comp = ctx.RenderComponent<MudDatePicker>();
+            using var comp = ctx.RenderComponent<MudDatePicker>();
             // select elements needed for the test
             var picker = comp.Instance;
             picker.Text.Should().Be(null);
@@ -117,7 +117,7 @@ namespace MudBlazor.UnitTests.Components
         public void Check_Intial_Date_Format()
         {
             DateTime? date = new DateTime(2021, 1, 13);
-            var comp = ctx.RenderComponent<MudDatePicker>(parameters => parameters
+            using var comp = ctx.RenderComponent<MudDatePicker>(parameters => parameters
                 .Add(p => p.Culture, CultureInfo.InvariantCulture)
                 .Add(p => p.DateFormat, "dd/MM/yyyy")
                 .Add(p => p.Date, date)
@@ -333,7 +333,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task Open_Programmatically_CheckOpen_Close_Programmatically_CheckClosed()
         {
-            var comp = ctx.RenderComponent<MudDatePicker>();
+            using var comp = ctx.RenderComponent<MudDatePicker>();
             Console.WriteLine(comp.Markup + "\n");
             comp.FindAll("div.mud-picker-content").Count.Should().Be(0);
             // open programmatically
@@ -354,7 +354,7 @@ namespace MudBlazor.UnitTests.Components
             cal.GetMonth(date).Should().Be(11);
             cal.GetDayOfMonth(date).Should().Be(26);
             // ---------------------------------------------------------------
-            var comp = ctx.RenderComponent<PersianDatePickerTest>();
+            using var comp = ctx.RenderComponent<PersianDatePickerTest>();
             var datePicker = comp.FindComponent<MudDatePicker>();
             await comp.InvokeAsync(() => datePicker.Instance.Open());
             Console.WriteLine(comp.Markup);
@@ -368,7 +368,7 @@ namespace MudBlazor.UnitTests.Components
         public void SetPickerValue_CheckText()
         {
             var date = DateTime.Now;
-            var comp = ctx.RenderComponent<MudDatePicker>(
+            using var comp = ctx.RenderComponent<MudDatePicker>(
                 Parameter(nameof(MudDatePicker.Date), date));
             // select elements needed for the test
             var picker = comp.Instance;
@@ -395,7 +395,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var wasEventCallbackCalled = false;
             Func<DateTime, bool> isDisabledFunc = date => true;
-            var comp = ctx.RenderComponent<MudDatePicker>(
+            using var comp = ctx.RenderComponent<MudDatePicker>(
                 Parameter(nameof(MudDatePicker.IsDateDisabledFunc), isDisabledFunc),
                 EventCallback("DateChanged", (DateTime? _) => wasEventCallbackCalled = true)
             );
@@ -412,7 +412,7 @@ namespace MudBlazor.UnitTests.Components
             var wasEventCallbackCalled = false;
             var today = DateTime.Today;
             Func<DateTime, bool> isDisabledFunc = date => date < today;
-            var comp = ctx.RenderComponent<MudDatePicker>(
+            using var comp = ctx.RenderComponent<MudDatePicker>(
                 Parameter(nameof(MudDatePicker.IsDateDisabledFunc), isDisabledFunc),
                 EventCallback("DateChanged", (DateTime? _) => wasEventCallbackCalled = true)
             );
@@ -437,7 +437,7 @@ namespace MudBlazor.UnitTests.Components
             DateTime now = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day);
 
             // Get access to the datepicker of the instance
-            var comp = ctx.RenderComponent<AutoCompleteDatePickerTest>();
+            using var comp = ctx.RenderComponent<AutoCompleteDatePickerTest>();
             var datePicker = comp.FindComponent<MudDatePicker>();
 
             // Open the datepicker
@@ -501,7 +501,7 @@ namespace MudBlazor.UnitTests.Components
             DateTime now = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day);
 
             // Get access to the datepicker of the instance
-            var comp = ctx.RenderComponent<MudDatePicker>();
+            using var comp = ctx.RenderComponent<MudDatePicker>();
             var picker = comp.Instance;
 
             // Open the datepicker

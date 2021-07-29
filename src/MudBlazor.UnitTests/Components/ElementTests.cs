@@ -30,7 +30,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var htmlTag = Parameter(nameof(MudElement.HtmlTag), "a");
             var className = Parameter(nameof(MudElement.Class), "mud-button-root");
-            var comp = ctx.RenderComponent<MudElement>(htmlTag, className);
+            using var comp = ctx.RenderComponent<MudElement>(htmlTag, className);
             comp.MarkupMatches("<a class=\"mud-button-root\"></a>");
             htmlTag = Parameter(nameof(MudElement.HtmlTag), "button");
             comp.SetParametersAndRender(htmlTag, className);
@@ -45,7 +45,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void MudElement_Should_Not_Attach_A_Null_Event()
         {
-            var comp = ctx.RenderComponent<ElementTestEventNull>();
+            using var comp = ctx.RenderComponent<ElementTestEventNull>();
 
             //initially, renders just an empty span, because AttachEvent is false;
             comp.MarkupMatches("<span></span>");

@@ -42,7 +42,7 @@ namespace MudBlazor.UnitTests.Components
         {
             ctx.Services.Add(new ServiceDescriptor(typeof(IScrollSpy), new MockScrollSpy()));
 
-            var comp = ctx.RenderComponent<MudPageContentNavigation>();
+            using var comp = ctx.RenderComponent<MudPageContentNavigation>();
 
             comp.Instance.ActiveSection.Should().BeNull();
             comp.Instance.Sections.Should().BeEmpty();
@@ -60,7 +60,7 @@ namespace MudBlazor.UnitTests.Components
         {
             ctx.Services.Add(new ServiceDescriptor(typeof(IScrollSpy), new MockScrollSpy()));
 
-            var comp = ctx.RenderComponent<MudPageContentNavigation>();
+            using var comp = ctx.RenderComponent<MudPageContentNavigation>();
 
             var section1 = new MudPageContenSection("my section", "my-id");
             var section2 = new MudPageContenSection("my section 2", "my-id-2");
@@ -105,7 +105,7 @@ namespace MudBlazor.UnitTests.Components
 
             ctx.Services.Add(new ServiceDescriptor(typeof(IScrollSpy), mockedScrollSpy));
 
-            var comp = ctx.RenderComponent<MudPageContentNavigation>();
+            using var comp = ctx.RenderComponent<MudPageContentNavigation>();
 
             var section1 = new MudPageContenSection("my section", "my-id");
             var section2 = new MudPageContenSection("different section", "my-id-2");
@@ -137,7 +137,7 @@ namespace MudBlazor.UnitTests.Components
 
             ctx.Services.Add(new ServiceDescriptor(typeof(IScrollSpy), mockedScrollSpy));
 
-            var comp = ctx.RenderComponent<MudPageContentNavigation>(p => p.Add(x => x.ActivateFirstSectionAsDefault, true));
+            using var comp = ctx.RenderComponent<MudPageContentNavigation>(p => p.Add(x => x.ActivateFirstSectionAsDefault, true));
 
             var section1 = new MudPageContenSection("my section", "my-id");
             var section2 = new MudPageContenSection("my section 2", "my-id-2");
@@ -170,7 +170,7 @@ namespace MudBlazor.UnitTests.Components
 
             ctx.Services.Add(new ServiceDescriptor(typeof(IScrollSpy), spyMock));
 
-            var comp = ctx.RenderComponent<MudPageContentNavigation>();
+            using var comp = ctx.RenderComponent<MudPageContentNavigation>();
 
             var section1 = new MudPageContenSection("my first section", "my-id1");
             var section2 = new MudPageContenSection("my second section", "my-id2");
@@ -207,7 +207,7 @@ namespace MudBlazor.UnitTests.Components
 
             ctx.Services.Add(new ServiceDescriptor(typeof(IScrollSpy), spyMock));
 
-            var comp = ctx.RenderComponent<MudPageContentNavigation>(x => x.Add(y => y.SectionClassSelector, "my-section-class"));
+            using var comp = ctx.RenderComponent<MudPageContentNavigation>(x => x.Add(y => y.SectionClassSelector, "my-section-class"));
 
             spyMock.SpyingInitiated.Should().BeTrue();
             spyMock.SpyingClassSelector.Should().Be("my-section-class");
@@ -252,7 +252,7 @@ namespace MudBlazor.UnitTests.Components
 
             ctx.Services.Add(new ServiceDescriptor(typeof(IScrollSpy), mockedScrollSpy));
 
-            var comp = ctx.RenderComponent<MudPageContentNavigation>();
+            using var comp = ctx.RenderComponent<MudPageContentNavigation>();
 
             var section = new MudPageContenSection("my section", "my-id");
 

@@ -29,7 +29,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void One_Way_Bindable()
         {
-            var comp = ctx.RenderComponent<NavMenuOneWay>();
+            using var comp = ctx.RenderComponent<NavMenuOneWay>();
             comp.Markup.Should().Contain("expanded");
 
             var navgroup = comp.Find(".mud-nav-group>button");
@@ -48,7 +48,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void Two_Way_Bindable()
         {
-            var comp = ctx.RenderComponent<NavMenuTwoWay>();
+            using var comp = ctx.RenderComponent<NavMenuTwoWay>();
             comp.Markup.Should().NotContain("expanded");
             var isExpanded = comp.Instance._isExpanded;
             isExpanded.Should().BeFalse();
