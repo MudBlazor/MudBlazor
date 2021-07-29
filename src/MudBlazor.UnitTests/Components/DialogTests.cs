@@ -10,7 +10,6 @@ using Microsoft.Extensions.DependencyInjection;
 using MudBlazor.UnitTests.TestComponents;
 using MudBlazor.UnitTests.TestComponents.Dialog;
 using NUnit.Framework;
-using NUnit.Framework.Internal;
 
 namespace MudBlazor.UnitTests.Components
 {
