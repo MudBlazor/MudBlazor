@@ -9,19 +9,25 @@ namespace MudBlazor
     public partial class MudMenu : MudBaseButton, IActivatable
     {
         protected string Classname =>
-        new CssBuilder("mud-menu")
+            new CssBuilder("mud-menu")
             .AddClass("mud-menu-openonhover", ActivationEvent == MouseEvent.MouseOver)
-        .AddClass(Class)
-       .Build();
+            .AddClass(Class)
+            .Build();
 
         protected string MenuClassname =>
-        new CssBuilder("mud-menu-container")
-        .AddClass("mud-menu-fullwidth", FullWidth)
-       .Build();
+            new CssBuilder("mud-menu-container")
+            .AddClass("mud-menu-fullwidth", FullWidth)
+            .AddClass(PopoverClass)
+           .Build();
 
         private bool _isOpen;
 
         [Parameter] public string Label { get; set; }
+
+        /// <summary>
+        /// User class names for the popover, separated by space
+        /// </summary>
+        [Parameter] public string PopoverClass { get; set; }
 
         /// <summary>
         /// Icon to use if set will turn the button into a MudIconButton.
