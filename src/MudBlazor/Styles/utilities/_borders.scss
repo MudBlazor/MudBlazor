@@ -1,4 +1,6 @@
-﻿$border-radiuses: ( "0": 0, "sm": 2px, "lg": 8px, "xl": 24px, "xxl": 24px );
+@import '../abstracts/mixins';
+
+$border-radiuses: ( "0": 0, "sm": 2px, "lg": 8px, "xl": 24px, "xxl": 24px );
 
 @each $size, $value in $border-radiuses {
     .rounded-#{$size} {
@@ -42,19 +44,13 @@
     }
 
     //--------------------------- rtl styles ---------------------------
-    .mud-application-layout-rtl {
+    @include rtl {
         .rounded-s-#{$size} {
-            border-top-right-radius: $value !important;
-            border-bottom-right-radius: $value !important;
-            border-top-left-radius: 0 !important;
-            border-bottom-left-radius: 0 !important;
+            border-radius: 0 $value $value 0 !important;
         }
 
         .rounded-e-#{$size} {
-            border-top-left-radius: $value !important;
-            border-bottom-left-radius: $value !important;
-            border-top-right-radius: 0 !important;
-            border-bottom-right-radius: 0 !important;
+            border-radius: $value 0 0 $value !important;
         }
 
         .rounded-ts-#{$size} {
@@ -121,19 +117,13 @@
 }
 
 //--------------------------- rtl styles ---------------------------
-.mud-application-layout-rtl {
+@include rtl {
     .rounded-s {
-        border-top-right-radius: var(--mud-default-borderradius) !important;
-        border-bottom-right-radius: var(--mud-default-borderradius) !important;
-        border-top-left-radius: 0 !important;
-        border-bottom-left-radius: 0 !important;
+        border-radius: 0 var(--mud-default-borderradius) var(--mud-default-borderradius) 0 !important;
     }
 
     .rounded-e {
-        border-top-left-radius: var(--mud-default-borderradius) !important;
-        border-bottom-left-radius: var(--mud-default-borderradius) !important;
-        border-top-right-radius: 0 !important;
-        border-bottom-right-radius: 0 !important;
+        border-radius: var(--mud-default-borderradius) 0 0 var(--mud-default-borderradius) !important;
     }
 
     .rounded-ts {
