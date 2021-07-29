@@ -45,8 +45,6 @@ namespace MudBlazor.UnitTests.Components
             watch.Elapsed.Should().BeLessThan(TimeSpan.FromSeconds(10));
         }
 
-        /// <summary>
-
         [Test]
         [Ignore("Unignore for performance measurements, not needed for code coverage")]
         public async Task Open_Close_DateRangePicker_10000_Times_CheckPerformance()

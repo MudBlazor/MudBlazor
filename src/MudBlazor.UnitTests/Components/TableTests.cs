@@ -1,4 +1,4 @@
-#pragma warning disable CS1998 // async without await
+﻿#pragma warning disable CS1998 // async without await
 #pragma warning disable IDE1006 // leading underscore
 #pragma warning disable BL0005 // Set parameter outside component
 
@@ -102,6 +102,7 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("td")[2].TextContent.Trim().Should().Be("A");
         }
 
+        /// <summary>
         /// Check if the loading parameter is adding a supplementary row.
         /// </summary>
         [Test]
@@ -128,6 +129,7 @@ namespace MudBlazor.UnitTests.Components
             trs.Count.Should().Be(4);
         }
 
+        /// <summary>
         /// Check if if empty row text is correct
         /// </summary>
         [Test]

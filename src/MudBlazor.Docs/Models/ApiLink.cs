@@ -29,9 +29,9 @@ namespace MudBlazor.Docs.Models
         /// <summary>
         /// Converts a lowercase component name from an URL into the C# Type name.
         /// Examples: 
-        ///   table --> MudTable<T>
-        ///   button  MudButton
-        ///   appbar  AppBar
+        ///   table --> <see cref="MudTable{T}"/>
+        ///   button  <see cref="MudButton"/>
+        ///   appbar  <see cref="MudAppBar"/>
         /// </summary>
         public static Type GetTypeFromComponentLink(string component)
         {
