@@ -74,6 +74,7 @@ namespace MudBlazor.Docs.Services
             .AddItem("ToolBar", typeof(MudToolBar))
             .AddItem("Carousel", typeof(MudCarousel<T>), typeof(MudCarouselItem))
             .AddItem("Timeline", typeof(MudTimeline), typeof(MudTimelineItem))
+            .AddItem("Pagination", typeof(MudPagination))
 
             //GROUPS
 
