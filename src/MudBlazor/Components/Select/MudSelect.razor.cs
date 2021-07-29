@@ -219,8 +219,8 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public bool MultiSelection { get; set; }
 
-        protected List<MudSelectItem<T>> _items = new List<MudSelectItem<T>>();
-        protected Dictionary<T, MudSelectItem<T>> _value_lookup = new Dictionary<T, MudSelectItem<T>>();
+        protected List<MudSelectItem<T>> _items = new();
+        protected Dictionary<T, MudSelectItem<T>> _value_lookup = new();
         internal void Add(MudSelectItem<T> item)
         {
             _items.Add(item);
@@ -255,13 +255,22 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public bool OffsetY { get; set; }
 
-
         /// <summary>
         /// If true, the Select's input will not show any values that are not defined in the dropdown.
         /// This can be useful if Value is bound to a variable which is initialized to a value which is not in the list
         /// and you want the Select to show the label / placeholder instead.
         /// </summary>
         [Parameter] public bool Strict { get; set; }
+
+        /// <summary>
+        /// Show clear button.
+        /// </summary>
+        [Parameter] public bool Clearable { get; set; } = false;
+
+        /// <summary>
+        /// Button click event for clear button. Called after text and value has been cleared.
+        /// </summary>
+        [Parameter] public EventCallback<MouseEventArgs> OnClearButtonClick { get; set; }
 
         internal bool _isOpen;
 
@@ -277,6 +286,8 @@ namespace MudBlazor
                     SelectedValues.Add(value);
                 else
                     SelectedValues.Remove(value);
+
+                await SelectedValuesChanged.InvokeAsync(SelectedValues);
 
                 if (MultiSelectionTextFunc != null)
                 {
@@ -302,13 +313,14 @@ namespace MudBlazor
                     return;
                 }
 
+                await SelectedValuesChanged.InvokeAsync(SelectedValues);
+
                 await SetValueAsync(value);
                 SelectedValues.Clear();
                 SelectedValues.Add(value);
             }
 
             StateHasChanged();
-            await SelectedValuesChanged.InvokeAsync(SelectedValues);
         }
 
         public void ToggleMenu()

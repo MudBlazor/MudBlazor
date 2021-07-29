@@ -1,0 +1,78 @@
+﻿@page "/components/timeline"
+
+<DocsPage>
+    <DocsPageHeader Title="Timeline" SubTitle="The timeline displays items in chronological order." />
+    <DocsPageContent>
+
+        <DocsPageSection>
+            <SectionHeader Title="Basic">
+                <Description>Basic timeline, displaying its <CodeInline>TimelineItem</CodeInline> vertically.</Description>
+            </SectionHeader>
+            <SectionContent Outlined="true" FullWidth="true">
+                <TimelineBasicExample />
+            </SectionContent>
+            <SectionSource Code="TimelineBasicExample" GitHubFolderName="timeline" />
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Item Dots">
+                <Description>The dot of eatch <CodeInline>TimelineItem</CodeInline> can be changed individually. And can contain conent, like icons and avatars.</Description>
+            </SectionHeader>
+            <SectionContent Outlined="true" FullWidth="true" Class="pa-0">
+                <TimelineDotsExample />
+            </SectionContent>
+            <SectionSource Code="TimelineDotsExample" GitHubFolderName="timeline" ShowCode="false" />
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Orientation and Position">
+                <Description><CodeInline>TimelineOrientation</CodeInline> can determine which direction the timeline should go, and <CodeInline>TimelinePosition</CodeInline> sets the lines position.</Description>
+            </SectionHeader>
+            <SectionContent Outlined="true" FullWidth="true">
+                <TimelineOrientationPositionExample />
+            </SectionContent>
+            <SectionSource Code="TimelineOrientationPositionExample" GitHubFolderName="timeline" ShowCode="false" />
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Opposite">
+                <Description>Using <CodeInline>ItemOpposite</CodeInline> renderfragment allows for content to be displayed on both sides. Note that opposite content only is displayed in alternate mode for both vertical and horizontal timelines.</Description>
+            </SectionHeader>
+            <SectionContent Outlined="true" FullWidth="true">
+                <TimelineOppositeExample />
+            </SectionContent>
+            <SectionSource Code="TimelineOppositeExample" GitHubFolderName="timeline" ShowCode="false" />
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Item Modifiers">
+                <Description>Timeline items have item modifiers that appends to its content. Modifiers can be turned off with <CodeInline>DisableModifiers</CodeInline> property.<br />If you place a <CodeInline>MudCard</CodeInline> inside the <CodeInline>TimelineItem</CodeInline> a caret will be added to the side of the card.</Description>
+            </SectionHeader>
+            <SectionContent Outlined="true" FullWidth="true">
+                <TimelineItemModifiersExample />
+            </SectionContent>
+            <SectionSource Code="TimelineItemModifiersExample" GitHubFolderName="timeline" ShowCode="false" />
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Item Align">
+                <Description>By setting the <CodeInline>TimelineAlign</CodeInline> on individual <CodeInline>TimelineItems</CodeInline> you can specify what side the item should be on when <CodeInline>Alternate</CodeInline> position is being used.</Description>
+            </SectionHeader>
+            <SectionContent Outlined="true" FullWidth="true">
+                <TimelineItemAlignExample />
+            </SectionContent>
+            <SectionSource Code="TimelineItemAlignExample" GitHubFolderName="timeline" ShowCode="false" />
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Timeline Align">
+                <Description>You can set from which direction the dots should start from by changing the <CodeInline>TimelineAlign</CodeInline> on the <CodeInline>Timeline</CodeInline> component itself.</Description>
+            </SectionHeader>
+            <SectionContent Outlined="true">
+                <TimelineAlignExample />
+            </SectionContent>
+            <SectionSource Code="TimelineAlignExample" GitHubFolderName="timeline" ShowCode="false" />
+        </DocsPageSection>
+
+    </DocsPageContent>
+</DocsPage>

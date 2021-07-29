@@ -11,7 +11,7 @@ namespace MudBlazor
     {
         private MudTreeViewItem<T> _activatedValue;
         private HashSet<MudTreeViewItem<T>> _selectedValues;
-        private List<MudTreeViewItem<T>> _childItems = new List<MudTreeViewItem<T>>();
+        private List<MudTreeViewItem<T>> _childItems = new();
 
         protected string Classname =>
         new CssBuilder("mud-treeview")

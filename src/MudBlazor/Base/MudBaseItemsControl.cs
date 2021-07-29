@@ -23,7 +23,7 @@ namespace MudBlazor
         private TChildComponent _lastContainer = null;
         private int _selectedIndexField = -1;
         /// <summary>
-        /// Selected MudCarouselItem's index
+        /// Selected Item's index
         /// </summary>
         [Parameter]
         public int SelectedIndex
@@ -57,7 +57,7 @@ namespace MudBlazor
         /// </summary>
         public TChildComponent SelectedContainer
         {
-            get => SelectedIndex >= 0 ? Items[SelectedIndex] : null;
+            get => SelectedIndex >= 0 && Items.Count > SelectedIndex ? Items[SelectedIndex] : null;
         }
 
         protected override Task OnAfterRenderAsync(bool firstRender)

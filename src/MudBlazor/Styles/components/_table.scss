@@ -17,6 +17,7 @@
 
 .mud-table-container {
     width: 100%;
+    overflow-y: auto;
 }
 
 .mud-table-root {
@@ -136,7 +137,7 @@
 .mud-table-bordered {
     & .mud-table-container .mud-table-root .mud-table-body {
         & .mud-table-row {
-            .mud-table-cell {
+            .mud-table-cell:not(:last-child) {
                 border-right: 1px solid var(--mud-palette-table-lines);
             }
         }
@@ -144,7 +145,7 @@
 
     & .mud-table-container .mud-table-root .mud-table-head.table-head-bordered {
         & .mud-table-row {
-            .mud-table-cell {
+            .mud-table-cell:not(:last-child) {
                 border-right: 1px solid var(--mud-palette-table-lines);
             }
         }
@@ -152,7 +153,7 @@
 
     & .mud-table-container .mud-table-root .mud-table-foot.table-foot-bordered {
         & .mud-table-row {
-            .mud-table-cell {
+            .mud-table-cell:not(:last-child) {
                 border-right: 1px solid var(--mud-palette-table-lines);
             }
         }
@@ -350,6 +351,17 @@
 .mud-table-empty-row {
     vertical-align: middle;
     text-align: center;
+}
+
+
+@for $i from 1 through 5 {
+    tr.mud-table-row-group-indented-#{$i} td:first-child {
+        padding-left: #{$i * 48}px !important;
+    }
+}
+
+.mud-table-row-expander {
+    margin: -12px -2px -12px -12px;
 }
 
 @mixin table-display-smalldevices ($breakpoint) {

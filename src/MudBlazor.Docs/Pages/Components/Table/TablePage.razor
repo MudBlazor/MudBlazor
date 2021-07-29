@@ -4,8 +4,7 @@
     <DocsPageHeader Title="Table" SubTitle="A sortable, filterable table with multiselection and pagination" />
     <DocsPageContent>
         <DocsPageSection>
-            <SectionHeader>
-                <Title>Default Table</Title>
+            <SectionHeader Title="Default Table">
                 <Description>
                     The default table displays your data in simple rows and is responsive, it breaks into mobile layout on <CodeInline>Breakpoint.Xs</CodeInline> unless changed.<br />
                     Add the <CodeInline>DataLabel</CodeInline> property to your <CodeInline>MudTd</CodeInline> cells to properly display the column label when the table has changed to mobile layout.<br />
@@ -19,8 +18,7 @@
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader>
-                <Title>Table with pagination and filtering</Title>
+            <SectionHeader Title="Table with pagination and filtering">
                 <Description>
                     The <CodeInline>&lt;MudTable></CodeInline> component supports pagination, sorting and filtering of rows, as well as single and multiple row selection. To tell the table how to render your data, define a <CodeInline>&lt;RowTemplate></CodeInline>
                     containing a <CodeInline>&lt;MudTableCell></CodeInline> or a <CodeInline>&lt;td></CodeInline> for every column.
@@ -36,8 +34,7 @@
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader>
-                <Title>Sorting</Title>
+            <SectionHeader Title="Sorting">
                 <Description>
                     To enable sorting, add <CodeInline>&lt;MudTableSortLabel></CodeInline> to the header cells and define a function that simply returns the value which should be sorted by when sorting by the specific column.
                     Click on a header to sort the table by that column, then click to cycle through sorting directions.
@@ -47,12 +44,11 @@
             <SectionContent DarkenBackground="true" FullWidth="true">
                 <TableSortingExample />
             </SectionContent>
-            <SectionSource Code="TableSortingExample" ShowCode="true" GitHubFolderName="Table" />
+            <SectionSource Code="TableSortingExample" ShowCode="false" GitHubFolderName="Table" />
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader>
-                <Title>Multi-Selection</Title>
+            <SectionHeader Title="Multi-Selection">
                 <Description>
                     Setting <CodeInline>MultiSelection="true"</CodeInline> will enable selection check boxes for selecting multiple lines.
                 </Description>
@@ -60,12 +56,11 @@
             <SectionContent DarkenBackground="true" FullWidth="true">
                 <TableMultiSelectExample />
             </SectionContent>
-            <SectionSource Code="TableMultiSelectExample" ShowCode="true" GitHubFolderName="Table" />
+            <SectionSource Code="TableMultiSelectExample" ShowCode="false" GitHubFolderName="Table" />
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader>
-                <Title>Fixed header and footer</Title>
+            <SectionHeader Title="Fixed header and footer">
                 <Description>
                     Set <CodeInline>FixedHeader="true"</CodeInline> to make the header sticky when scrolling the table.<br />
                     The same for <CodeInline>FixedFooter="true"</CodeInline> to show the footer even when the table is not scrolled all the way down.<br />
@@ -79,8 +74,7 @@
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader>
-                <Title>With Column Group and Text Alignment</Title>
+            <SectionHeader Title="Column Group and Text Alignment">
                 <Description>
                     Specifies a group of one or more columns in a table for formatting.
                 </Description>
@@ -92,8 +86,7 @@
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader>
-                <Title>Inline Edit Mode</Title>
+            <SectionHeader Title="Inline Edit Mode">
                 <Description>
                     Provides input elements for Selected Row. A click on a row makes the row editable.
                     A Cancel button appears and can be used if <CodeInline>CanCancelEdit="true"</CodeInline>. In this case, the <CodeInline>RowEditPreview</CodeInline> and <CodeInline>RowEditCancel</CodeInline> methods must be defined to save and retrieve the initial values of the edited item. <CodeInline>RowEditCommit</CodeInline> method can be used to handle the commit of the item.
@@ -106,8 +99,7 @@
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader>
-                <Title>Server Side Filtering, Sorting and Pagination</Title>
+            <SectionHeader Title="Server Side Filtering, Sorting and Pagination">
                 <Description>
                     Set <CodeInline>ServerData</CodeInline> to load data from the backend that is filtered, sorted and paginated. Table will call this async function whenever the user navigates
                     the pager or changes sorting by clicking on the sort header icons. In this example, we also show how to force the table to update when the search textfield blurs, so that the table reloads server-filtered data.
@@ -123,8 +115,7 @@
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader>
-                <Title>Header and Footer</Title>
+            <SectionHeader Title="Header and Footer">
                 <Description>
                     By default, you can put a list of <CodeInline>&lt;MudTh></CodeInline> inside <CodeInline>&lt;HeaderContent></CodeInline> and <CodeInline>&lt;MudTd></CodeInline> inside <CodeInline>&lt;FooterContent></CodeInline>, MudTable will automatically manage the table row for you, including the select-all column and adding an empty column for editable tables.<br />
                     If you need to customize the behavior, as well as rendering multiple header or footer rows, you can set the <CodeInline>CustomHeader</CodeInline> and <CodeInline>CustomFooter</CodeInline> attributes to true.<br />
@@ -142,8 +133,7 @@
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader>
-                <Title>Table With related data</Title>
+            <SectionHeader Title="Table With related data">
                 <Description>
                     Making use of the <CodeInline>&lt;ChildRowContent&gt;</CodeInline> allows more control over the layout for scenarios such as showing the related address data for each person below.
                 </Description>
@@ -155,8 +145,7 @@
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader>
-                <Title>Table with horizontal Scrolling</Title>
+            <SectionHeader Title="Horizontal Scrolling">
                 <Description>
                     If too many columns are displayed, setting <CodeInline>HorizontalScrollbar="true"</CodeInline> will allow the user to scroll the content horizontally.
                 </Description>
@@ -168,8 +157,7 @@
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader>
-                <Title>Table Virtualization</Title>
+            <SectionHeader Title="Table Virtualization">
                 <Description>
                     You can virtualize the results of a table to increase rendering speed.
                 </Description>
@@ -178,6 +166,31 @@
                 <TableVirtualizationExample />
             </SectionContent>
             <SectionSource Code="TableVirtualizationExample" ShowCode="false" GitHubFolderName="Table" />
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Grouping (Basic)">
+                <Description>
+                    Displays items in a grouped way, with Header and Footer by every group, allowing summaries on both.<br />
+                    NOTE: Grouping and Virtualization should not work together.
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" FullWidth="true">
+                <TableBasicGroupingExample />
+            </SectionContent>
+            <SectionSource Code="TableBasicGroupingExample" ShowCode="false" GitHubFolderName="Table" />
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Grouping (Multi Levels)">
+                <Description>
+                    Displays items recursively grouped.
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" FullWidth="true">
+                <TableMultiGroupingExample />
+            </SectionContent>
+            <SectionSource Code="TableMultiGroupingExample" ShowCode="false" GitHubFolderName="Table" />
         </DocsPageSection>
 
     </DocsPageContent>

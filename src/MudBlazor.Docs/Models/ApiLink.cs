@@ -35,6 +35,11 @@ namespace MudBlazor.Docs.Models
         /// </summary>
         public static Type GetTypeFromComponentLink(string component)
         {
+            if (component.Contains('#') == true)
+            {
+                component = component.Substring(0, component.IndexOf('#'));
+            }
+
             if (string.IsNullOrEmpty(component))
                 return null;
             if (s_inverseSpecialCase.TryGetValue(component, out var type))
@@ -60,7 +65,7 @@ namespace MudBlazor.Docs.Models
         }
 
         private static Dictionary<Type, string> s_specialCaseComponents =
-            new Dictionary<Type, string>()
+            new()
             {
                 [typeof(MudFab)] = "buttonfab",
                 [typeof(MudIcon)] = "icons",
@@ -78,7 +83,7 @@ namespace MudBlazor.Docs.Models
             s_specialCaseComponents.ToDictionary(pair => pair.Value, pair => pair.Key);
 
         private static Dictionary<string, string> s_componentLinkTranslation =
-            new Dictionary<string, string>()
+            new()
             {
                 ["icon"] = "icons",
                 ["chip"] = "chips",

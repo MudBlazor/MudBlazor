@@ -17,7 +17,7 @@ namespace MudBlazor
 
         protected string NavigationButtonsClassName =>
                     new CssBuilder()
-                        .AddClass("align-self-center", !(NavigationButtonsClass ?? "").Contains("align-self-"))
+                        .AddClass($"align-self-{ConvertArrowsPosition(ArrowsPosition).ToDescriptionString()}", !(NavigationButtonsClass ?? "").Contains("align-self-"))
                         .AddClass("mud-carousel-elements-rtl", RightToLeft)
                         .AddClass(NavigationButtonsClass)
                         .Build();
@@ -34,6 +34,17 @@ namespace MudBlazor
         private TimeSpan _cycleTimeout = TimeSpan.FromSeconds(5);
         private void _timerElapsed(object stateInfo) => InvokeAsync(async () => await TimerTickAsync());
 
+        private Position ConvertArrowsPosition(Position position)
+        {
+            return position switch
+            {
+                Position.Top => Position.Start,
+                Position.Start => Position.Start,
+                Position.Bottom => Position.End,
+                Position.End => Position.End,
+                _ => position
+            };
+        }
 
         [CascadingParameter] public bool RightToLeft { get; set; }
 
@@ -43,6 +54,10 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public bool ShowArrows { get; set; } = true;
 
+        /// <summary>
+        /// Sets the position of the arrows. By default, the position is the Center position
+        /// </summary>
+        [Parameter] public Position ArrowsPosition { get; set; } = Position.Center;
 
         /// <summary>
         /// Gets or Sets if bottom bar with Delimiters musb be visible
@@ -62,7 +77,7 @@ namespace MudBlazor
                 _autoCycle = value;
 
                 if (_autoCycle)
-                    InvokeAsync(async () => await StartTimerAsync());
+                    InvokeAsync(async () => await ResetTimerAsync());
 
                 else
                     InvokeAsync(async () => await StopTimerAsync());
@@ -153,8 +168,8 @@ namespace MudBlazor
         {
             await Task.CompletedTask;
 
-            if (null != _timer && AutoCycle)
-                _timer.Change(AutoCycleTime, TimeSpan.Zero);
+            if (AutoCycle)
+                _timer?.Change(AutoCycleTime, TimeSpan.Zero);
         }
 
         /// <summary>
@@ -164,7 +179,7 @@ namespace MudBlazor
         {
             await Task.CompletedTask;
 
-            _timer?.Change(Timeout.Infinite, 0);
+            _timer?.Change(Timeout.Infinite, Timeout.Infinite);
         }
 
         /// <summary>
@@ -185,19 +200,17 @@ namespace MudBlazor
             await InvokeAsync(Next);
         }
 
-
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
-            await Task.CompletedTask;
+            await base.OnAfterRenderAsync(firstRender);
 
             if (firstRender)
             {
                 SelectedIndexChanged = new EventCallback<int>(this, (Action)SelectionChanged);
 
-                _timer = new Timer(_timerElapsed, null, TimeSpan.Zero, AutoCycleTime);
+                _timer = new Timer(_timerElapsed, null, AutoCycle ? AutoCycleTime : Timeout.InfiniteTimeSpan, AutoCycleTime);
             }
         }
-
 
         public async ValueTask DisposeAsync()
         {
@@ -209,7 +222,16 @@ namespace MudBlazor
         protected virtual async ValueTask DisposeAsync(bool disposing)
         {
             if (disposing)
+            {
                 await StopTimerAsync();
+
+                var timer = _timer;
+                if (timer != null)
+                {
+                    _timer = null;
+                    await timer.DisposeAsync();
+                }
+            }
         }
     }
 }

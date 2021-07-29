@@ -1,5 +1,5 @@
-﻿#pragma warning disable 8632
-#pragma warning disable 693
+﻿
+#pragma warning disable 8632
 
 using System;
 using System.Collections.Generic;

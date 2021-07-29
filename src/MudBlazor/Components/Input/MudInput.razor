@@ -12,8 +12,8 @@
 	@if (Lines > 1)
 	{
 		@*note: the value="@Text" is absolutely essential here. the inner html @Text is kept only for compatibility*@
-	 <textarea @ref="_elementReference" rows="@Lines" @attributes="UserAttributes" type="@InputTypeString" class="@InputClassname" placeholder="@Placeholder" disabled=@Disabled readonly="@ReadOnly"
-			  @oninput="OnInput" @onchange="OnChange" @onblur="@OnBlurred" @onkeydown="@InvokeKeyDown" @onkeypress="@InvokeKeyPress" @onkeyup="@InvokeKeyUp" value="@Text"
+	 <textarea @ref="_elementReference" rows="@Lines" @attributes="UserAttributes" type="@InputTypeString" class="@InputClassname" placeholder="@Placeholder" disabled=@Disabled readonly="@ReadOnly" inputmode="@InputMode.ToString()"
+			  @oninput="OnInput" @onchange="OnChange" @onblur="@OnBlurred" @onkeydown="@InvokeKeyDown" @onkeypress="@InvokeKeyPress" @onkeyup="@InvokeKeyUp" @onpaste="@OnPaste" value="@Text"
 			  @onkeydown:preventDefault="@KeyDownPreventDefault" @onkeypress:preventDefault="@KeyPressPreventDefault" @onkeyup:preventDefault="@KeyUpPreventDefault">@Text</textarea>
 	}
 	else
@@ -25,8 +25,8 @@
 		 </div>
 		}
 
-	 <input @ref="_elementReference" @attributes="UserAttributes" type="@InputTypeString" class="@InputClassname" value="@Text" @oninput="OnInput" @onchange="OnChange"
-		   placeholder="@Placeholder" disabled=@Disabled readonly="@ReadOnly" @onblur="@OnBlurred"
+	 <input @ref="_elementReference" @attributes="UserAttributes" type="@InputTypeString" class="@InputClassname" value="@_internalText" @oninput="OnInput" @onchange="OnChange"
+		   placeholder="@Placeholder" disabled=@Disabled readonly="@ReadOnly" @onblur="@OnBlurred" inputmode="@InputMode.ToString()" pattern="@Pattern"
 		   @onkeydown="@InvokeKeyDown" @onkeypress="@InvokeKeyPress" @onkeyup="@InvokeKeyUp"
 		   @onkeydown:preventDefault="KeyDownPreventDefault" @onkeypress:preventDefault="@KeyPressPreventDefault" @onkeyup:preventDefault="@KeyUpPreventDefault" />
 	}
@@ -46,7 +46,7 @@
 	 <div class="mud-input-outlined-border"></div>
 	}
 
-	@if (InputType == InputType.Number && !HideSpinButtons)
+	@if (!HideSpinButtons)
 	{
 	 <div class="mud-input-numeric-spin">
 	  <MudButton Variant="Variant.Text" @onclick="OnIncrement" Disabled="@(Disabled || ReadOnly)" tabindex="-1"><MudIcon Icon="@Icons.Material.Filled.KeyboardArrowUp" Size="@GetButtonSize()" /></MudButton>

@@ -20,7 +20,7 @@ namespace MudBlazor
         {
             get => _errors.ToArray();
         }
-        protected HashSet<string> _errors = new HashSet<string>();
+        protected HashSet<string> _errors = new();
 
         void IForm.Add(IFormComponent formControl)
         {
@@ -37,7 +37,7 @@ namespace MudBlazor
             //Validate(formControl);
         }
 
-        protected HashSet<IFormComponent> _formControls = new HashSet<IFormComponent>();
+        protected HashSet<IFormComponent> _formControls = new();
 
         public void Validate()
         {

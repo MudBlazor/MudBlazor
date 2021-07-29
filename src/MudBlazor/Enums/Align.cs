@@ -13,6 +13,10 @@ namespace MudBlazor
         [Description("right")]
         Right,
         [Description("justify")]
-        Justify
+        Justify,
+        [Description("start")]
+        Start,
+        [Description("end")]
+        End,
     }
 }

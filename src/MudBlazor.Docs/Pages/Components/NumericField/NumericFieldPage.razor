@@ -5,8 +5,7 @@
 	<DocsPageHeader Title="Numeric Field" SubTitle="Numeric field components are used for receiving user provided numbers." />
 	<DocsPageContent>
 		<DocsPageSection>
-			<SectionHeader>
-				<Title>Basic Numeric Field's</Title>
+			<SectionHeader Title="Basic Numeric Field's">
 				<Description>
 					Numeric fields are just like text fields but work well with numeric values of any type. The input is automatically restricted to numeric values and it works regardless of the browser locale settings for decimal types.<br />
 					<CodeInline>Min</CodeInline> and <CodeInline>Max</CodeInline> attributes allow to restrict the value within the limits. If they are not specified, the full value range for the type (i.e <CodeInline>@int.MinValue</CodeInline> and <CodeInline>@int.MaxValue</CodeInline> for <CodeInline>int</CodeInline>) is permitted.
@@ -21,8 +20,7 @@
 			<SectionSource Code="NumericFieldBasicExample" ShowCode="false" GitHubFolderName="NumericField" />
 		</DocsPageSection>
 		<DocsPageSection>
-			<SectionHeader>
-				<Title>Dense</Title>
+			<SectionHeader Title="Dense">
 				<Description>With the <CodeInline>margin</CodeInline> prop you can reduce the field height.</Description>
 			</SectionHeader>
 			<SectionContent Outlined="true">
@@ -31,8 +29,7 @@
 			<SectionSource Code="NumericFieldDenseExample" ShowCode="false" GitHubFolderName="NumericField" />
 		</DocsPageSection>
 		<DocsPageSection>
-			<SectionHeader>
-				<Title>Form Props</Title>
+			<SectionHeader Title="Form Props">
 				<Description>Required, Disabled, Type, HelperText</Description>
 			</SectionHeader>
 			<SectionContent Outlined="true">
@@ -42,8 +39,7 @@
 		</DocsPageSection>
 
 		<DocsPageSection>
-			<SectionHeader>
-				<Title>Adornments</Title>
+			<SectionHeader Title="Adornments">
 				<Description>This can be used to add a prefix or a suffix. Text, Icon or Icon Button.</Description>
 			</SectionHeader>
 			<SectionContent Outlined="true" Class="demo-numericfield">
@@ -53,8 +49,7 @@
 		</DocsPageSection>
 
 		<DocsPageSection>
-			<SectionHeader>
-				<Title>Hide Spin Buttons</Title>
+			<SectionHeader Title="Hide Spin Buttons">
 				<Description>
 					This property can be set to hide the spinner buttons, preventing the user to increase and decrease the value by mouse or touch input.<br>
 					It can still be changed with the keyboard up/down keys, or manually.
@@ -67,8 +62,7 @@
 		</DocsPageSection>
 
 		<DocsPageSection>
-			<SectionHeader>
-				<Title>Adornment Color</Title>
+			<SectionHeader Title="Adornment Color">
 				<Description>The color of the adornment can be changed separately from the NumericField.</Description>
 			</SectionHeader>
 			<SectionContent Outlined="true" Class="demo-numericfield">
@@ -78,8 +72,19 @@
 		</DocsPageSection>
 
 		<DocsPageSection>
-			<SectionHeader>
-				<Title>Binding Properties of a POCO</Title>
+			<SectionHeader Title="Setting culture and format">
+				<Description>
+					You can set a custom culture and format which will be used for parsing the numeric value from the input string as well as for presentation. 
+				</Description>
+			</SectionHeader>
+			<SectionContent Outlined="true">
+				<NumericFieldCultureExample />
+			</SectionContent>
+			<SectionSource Code="NumericFieldCultureExample" ShowCode="false" GitHubFolderName="NumericField" />
+		</DocsPageSection>
+
+		<DocsPageSection>
+			<SectionHeader Title="Binding Properties of a POCO">
 				<Description>
 					The following text fields are bound against the properties of a POCO (Plain old C-Sharp Object). Edit them to see the model change. Reset the model and see the NumericFields change.
 					<MudAlert Severity="Severity.Info" Dense="true" Class="mt-3">Note: always use two-way bindings (<CodeInline>@("@bind-Value")</CodeInline>) with number fields.</MudAlert>
@@ -92,8 +97,7 @@
 		</DocsPageSection>
 
 		<DocsPageSection>
-			<SectionHeader>
-				<Title>Binding Value Types vs Nullables</Title>
+			<SectionHeader Title="Binding Value Types vs Nullables">
 				<Description>
 					When you bind value types, the numeric field will not be empty even if the user hasn't entered a value yet because a value type always has a value, even when unassigned.
 					The two-way-bindable <CodeInline>Value</CodeInline> property will automatically assume the default value of that type  (i.e. <CodeInline>0</CodeInline> for <CodeInline>int</CodeInline>).<br />
@@ -108,8 +112,7 @@
 		</DocsPageSection>
 
 		<DocsPageSection>
-			<SectionHeader>
-				<Title>Normal vs Immediate vs Debounced</Title>
+			<SectionHeader Title="Normal vs Immediate vs Debounced">
 				<Description>
 					By default, <CodeInline>MudNumericField</CodeInline> updates the bound value on Enter or when it looses focus. Set <CodeInline>Immediate="true"</CodeInline> to update the value whenever the user types.<br />
                     You can also set the <CodeInline>DebounceInterval</CodeInline> parameter to the number of milliseconds you want to wait before updating the bound value. If you need to know when the interval elapses, you can pass an <CodeInline>OnDebounceIntervalElapsed</CodeInline> EventCallback.
@@ -122,19 +125,9 @@
 			</SectionContent>
 			<SectionSource Code="DebouncedNumericFieldExample" ShowCode="false" GitHubFolderName="NumericField" />
 		</DocsPageSection>
+
 		<DocsPageSection>
-			<SectionHeader>
-				<Title>Focus</Title>
-				<Description></Description>
-			</SectionHeader>
-			<SectionContent Outlined="true">
-				<NumericFieldFocusExample />
-			</SectionContent>
-			<SectionSource Code="NumericFieldFocusExample" ShowCode="false" GitHubFolderName="NumericField" />
-		</DocsPageSection>
-		<DocsPageSection>
-			<SectionHeader>
-				<Title>Select</Title>
+			<SectionHeader Title="Focus and Select">
 				<Description></Description>
 			</SectionHeader>
 			<SectionContent Outlined="true">
@@ -143,15 +136,5 @@
 			<SectionSource Code="NumericFieldSelectExample" ShowCode="false" GitHubFolderName="NumericField" />
 		</DocsPageSection>
 
-		<DocsPageSection>
-			<SectionHeader>
-				<Title>Inputs</Title>
-				<Description></Description>
-			</SectionHeader>
-			<SectionContent Outlined="true">
-				<NumericFieldInputsExample />
-			</SectionContent>
-			<SectionSource Code="NumericFieldInputsExample" ShowCode="false" GitHubFolderName="NumericField" />
-		</DocsPageSection>
 	</DocsPageContent>
 </DocsPage>

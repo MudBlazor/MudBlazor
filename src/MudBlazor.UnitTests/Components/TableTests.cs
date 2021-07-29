@@ -1,4 +1,4 @@
-﻿#pragma warning disable CS1998 // async without await
+#pragma warning disable CS1998 // async without await
 #pragma warning disable IDE1006 // leading underscore
 #pragma warning disable BL0005 // Set parameter outside component
 
@@ -148,7 +148,7 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("tr")[1].TextContent.Should().Be("No matching records found");
 
             // It should be equal to 3 = empty row string + header row + loading row
-            switchElement.Change(true); 
+            switchElement.Change(true);
             comp.FindAll("tr").Count.Should().Be(3);
             comp.FindAll("tr")[2].TextContent.Should().Be("Loading...");
         }
@@ -261,6 +261,27 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("button")[1].IsDisabled().Should().Be(true);
             comp.FindAll("button")[2].IsDisabled().Should().Be(false);
             comp.FindAll("button")[3].IsDisabled().Should().Be(false);
+        }
+        
+        /// <summary>
+        /// navigate to page test
+        /// </summary>
+        [TestCase(0, "Alabama")]
+        [TestCase(-1, "Alabama")]
+        [TestCase(2, "Kentucky")]
+        [TestCase(5, "Texas")]
+        [TestCase(6, "Texas")]
+        [Test]
+        public async Task TableNavigateToPage(int pageIndex, string expectedFirstItem)
+        {
+            var comp = ctx.RenderComponent<TablePagingTest1>();
+            // print the generated html      
+            Console.WriteLine(comp.Markup);
+            // select elements needed for the test
+            var table = comp.FindComponent<MudTable<string>>();
+            //navigate to specified page
+            await table.InvokeAsync(() => table.Instance.NavigateTo(pageIndex));
+            comp.FindAll("tr.mud-table-row")[0].TextContent.Should().Be(expectedFirstItem);
         }
 
         /// <summary>
@@ -738,12 +759,33 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// The server-side loaded table should reload when mobile sort if performed.
+        /// The server-side loaded table should reload when mobile sort if performed
+        /// (IEnumerable variation).
         /// </summary>
         [Test]
         public async Task TableServerSideDataTest4()
         {
             var comp = ctx.RenderComponent<TableServerSideDataTest4>();
+            Console.WriteLine(comp.Markup);
+            comp.FindAll("tr").Count.Should().Be(4); // three rows + header row
+            comp.FindAll("td")[0].TextContent.Trim().Should().Be("1");
+            comp.FindAll("td")[2].TextContent.Trim().Should().Be("2");
+            comp.FindAll("td")[4].TextContent.Trim().Should().Be("3");
+            comp.FindAll("div.mud-select-input")[0].Click(); // mobile sort drop down
+            comp.FindAll("div.mud-list-item-clickable")[1].Click(); // sort b column
+            comp.FindAll("td")[0].TextContent.Trim().Should().Be("3");
+            comp.FindAll("td")[2].TextContent.Trim().Should().Be("2");
+            comp.FindAll("td")[4].TextContent.Trim().Should().Be("1");
+        }
+
+        /// <summary>
+        /// The server-side loaded table should reload when mobile sort if performed
+        /// (IQueryable variation).
+        /// </summary>
+        [Test]
+        public async Task TableServerSideDataTest4b()
+        {
+            var comp = ctx.RenderComponent<TableServerSideDataTest4b>();
             Console.WriteLine(comp.Markup);
             comp.FindAll("tr").Count.Should().Be(4); // three rows + header row
             comp.FindAll("td")[0].TextContent.Trim().Should().Be("1");
@@ -790,7 +832,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task TableInlineEdit_CheckMemoryUsage()
+        public async Task TableInlineEdit_TableRowValidator()
         {
             var comp = ctx.RenderComponent<TableInlineEditTest>();
             var validator = new TableRowValidatorTest();
@@ -928,6 +970,146 @@ namespace MudBlazor.UnitTests.Components
 
             // Check that the result should be true
             result.Should().Be(true);
+        }
+
+        /// <summary>
+        /// This test validates that when the CanCancel option is set to true and no SelectedItem has been defined, 
+        /// by clicking on another row, the previous row is no longer editable. Meaning there are always only 2 buttons
+        /// </summary>
+        [Test]
+        public async Task TableInlineEditCancel4Test()
+        {
+            // Get access to the test table
+            var comp = ctx.RenderComponent<TableInlineEditCancelNoSelectedItemTest>();
+
+            // List all the rows
+            var trs = comp.FindAll("tr");
+
+            // Click on the third row
+            trs[3].Click();
+
+            // How many buttons? It should be equal to 2. One for commit and one for cancel
+            comp.FindAll("button").Count.Should().Be(2);
+
+            // Click on the second row
+            trs[2].Click();
+
+            // How many buttons? It should always be equal to 2
+            comp.FindAll("button").Count.Should().Be(2);
+
+            // Click on the first row
+            trs[1].Click();
+
+            // How many buttons? It should always be equal to 2
+            comp.FindAll("button").Count.Should().Be(2);
+        }
+
+        /// <summary>
+        /// Tests the grouping behavior and ensure that it won't break anything else.
+        /// </summary>
+        /// <returns></returns>
+        [Test]
+        public async Task TableGroupingTest()
+        {
+            // without grouping, to ensure that anything was broken:
+            var comp = ctx.RenderComponent<TableGroupingTest>();
+            var table = comp.Instance.tableInstance;
+            table.Context.HeaderRows.Count.Should().Be(1);
+            table.Context.GroupRows.Count.Should().Be(0);
+            table.Context.Rows.Count.Should().Be(9);
+
+            // now, with multi selection:
+            table.MultiSelection = true;
+            var inputs = comp.FindAll("input").ToArray();
+            inputs.Length.Should().Be(10);
+            inputs[0].Change(true);
+            table.SelectedItems.Count.Should().Be(9);
+            inputs[0].Change(false);
+            table.SelectedItems.Count.Should().Be(0);
+
+            //group by Racing Category:
+            comp = ctx.RenderComponent<TableGroupingTest>();
+            table = comp.Instance.tableInstance;
+            table.GroupBy = new TableGroupDefinition<TableGroupingTest.RacingCar>(rc => rc.Category, null) { GroupName = "Category" };
+            comp.Render();
+            table.Context.GroupRows.Count.Should().Be(4);
+            var tr = comp.FindAll("tr").ToArray();
+            tr.Length.Should().Be(18); // 1 table header + 4 group headers + 9 item rows + 4 group footers
+
+            // multi selection:
+            table.MultiSelection = true;
+            inputs = comp.FindAll("input").ToArray();
+
+            inputs[1].Change(true); // selecting only LMP1 category
+            table.SelectedItems.Count.Should().Be(2); // only one porsche and one audi
+            inputs[1].Change(false);
+            table.SelectedItems.Count.Should().Be(0);
+
+            inputs[4].Change(true); // selecting only GTE category
+            table.SelectedItems.Count.Should().Be(3);
+            inputs[4].Change(false);
+            table.SelectedItems.Count.Should().Be(0);
+
+            inputs[0].Change(true); // all
+            table.SelectedItems.Count.Should().Be(9);
+            inputs[0].Change(false);
+            table.SelectedItems.Count.Should().Be(0);
+
+            //group by Racing Category and Brand:
+            comp = ctx.RenderComponent<TableGroupingTest>();
+            table = comp.Instance.tableInstance;
+            table.GroupBy = new TableGroupDefinition<TableGroupingTest.RacingCar>()
+            {
+                GroupName = "Category",
+                Selector = rc => rc.Category,
+                InnerGroup = new TableGroupDefinition<TableGroupingTest.RacingCar>()
+                {
+                    GroupName = "Brand",
+                    Selector = rc => rc.Brand
+                }
+            };
+            comp.Render();
+            table.Context.GroupRows.Count.Should().Be(13); // 4 categories and 9 cars (can repeat on different categories)
+            tr = comp.FindAll("tr").ToArray();
+            tr.Length.Should().Be(36); // 1 table header + 13 group headers + 9 item rows + 13 group footers
+
+            // multi selection:
+            table.MultiSelection = true;
+            inputs = comp.FindAll("input").ToArray();
+            inputs[0].Change(true); // all
+            table.SelectedItems.Count.Should().Be(9);
+            inputs[0].Change(false);
+            table.SelectedItems.Count.Should().Be(0);
+
+            inputs[1].Change(true); // selecting only LMP1 category
+            table.SelectedItems.Count.Should().Be(2);
+
+            // indentation:
+            table.GroupBy.Indentation = true;
+            comp.Render();
+            tr = comp.FindAll("tr.mud-table-row-group-indented-1").ToArray();
+            tr.Length.Should().Be(27); // (4 LMP1 group (h / f) + 6 GTE + 4 GTE + 4 Formula 1) brands groups per category + 9 data rows
+            tr = comp.FindAll("tr.mud-table-row-group-indented-2").ToArray();
+            tr.Length.Should().Be(0); // indentation works with Level - 1 class. (level 1 doens't need to be indented)
+
+            // expand and collpase groups:
+            table.GroupBy.Indentation = false;
+            table.GroupBy.Expandable = true;
+            table.GroupBy.InnerGroup.Expandable = true;
+            comp.Render();
+
+            var buttons = comp.FindAll("button").ToArray();
+            buttons.Length.Should().Be(13);// 4 categories and 9 cars (can repeat on different categories)
+            tr = comp.FindAll("tr").ToArray();
+            tr.Length.Should().Be(36); // 1 table header + 8 category group rows (h + f)  + 18 brands group rows (see line 915) + 9 car rows
+
+            // collapsing category LMP1:
+            buttons[0].Click();
+            tr = comp.FindAll("tr").ToArray();
+            tr.Length.Should().Be(29); // 1 table header + 8 category group rows (h + f) - LMP1 footer + 18 brands group rows (see line 915) - 2 brands LMP2 Header - 2 brands LMP1 footer + 9 car rows - 2 LMP1 car rows
+            buttons[0].Click();
+            tr = comp.FindAll("tr").ToArray();
+            tr.Length.Should().Be(36);
         }
     }
 }

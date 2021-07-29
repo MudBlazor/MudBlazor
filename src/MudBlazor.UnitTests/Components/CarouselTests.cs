@@ -1,6 +1,8 @@
 ﻿#pragma warning disable BL0005 // Set parameter outside component
 
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Bunit;
 using FluentAssertions;
@@ -187,11 +189,9 @@ namespace MudBlazor.UnitTests.Components
         /// <summary>
         /// Testing autoCycle
         /// </summary>
-        [Ignore("This test will not reliably run on the build server")]
         [Test]
         public async Task CarouselTest_AutoCycle()
         {
-            int interval = 250;
             var comp = ctx.RenderComponent<MudCarousel<object>>();
             // print the generated html
             Console.WriteLine(comp.Markup);
@@ -199,34 +199,59 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.Items.Add(new());
             comp.Instance.Items.Add(new());
             comp.Instance.Items.Add(new());
-            comp.SetParam(p => p.AutoCycleTime, TimeSpan.FromMilliseconds(interval));
+
             comp.SetParam(p => p.AutoCycle, true);
             await comp.InvokeAsync(() => comp.Instance.MoveTo(0));
             comp.Render();
             //// playing with autoCycle
-            await Task.Delay(interval + 50); // 15ms just to ensure that transition runs before of Task.Delay() ends
-            comp.Instance.SelectedIndex.Should().Be(1);
-            comp.Instance.SelectedContainer.Should().Be(comp.Instance.Items[1]);
-            await Task.Delay(interval + 50);
-            comp.Instance.SelectedIndex.Should().Be(2);
-            comp.Instance.SelectedContainer.Should().Be(comp.Instance.Items[2]);
-            await Task.Delay(interval + 50);
-            comp.Instance.SelectedIndex.Should().Be(0);
-            comp.Instance.SelectedContainer.Should().Be(comp.Instance.Items[0]);
-            ///changing internal
-            interval = 150;
-            comp.SetParam(p => p.AutoCycleTime, TimeSpan.FromMilliseconds(interval));
-            await Task.Delay(interval + 50);
-            comp.Instance.SelectedIndex.Should().Be(1);
-            comp.Instance.SelectedContainer.Should().Be(comp.Instance.Items[1]);
-            await Task.Delay(interval + 40);
-            comp.Instance.SelectedIndex.Should().Be(2);
-            comp.Instance.SelectedContainer.Should().Be(comp.Instance.Items[2]);
-            await Task.Delay(interval + 40);
-            comp.Instance.SelectedIndex.Should().Be(0);
-            comp.Instance.SelectedContainer.Should().Be(comp.Instance.Items[0]);
+            for (var interval = 150; interval <= 300; interval += 150)
+            {
+                comp.SetParam(p => p.AutoCycleTime, TimeSpan.FromMilliseconds(interval));
+                await Task.Delay(interval);
+                comp.WaitForAssertion(() => comp.Instance.SelectedIndex.Should().Be(1), TimeSpan.FromMilliseconds(3000));
+                comp.Instance.SelectedContainer.Should().Be(comp.Instance.Items[1]);
+                await Task.Delay(interval);
+                comp.WaitForAssertion(() => comp.Instance.SelectedIndex.Should().Be(2), TimeSpan.FromMilliseconds(3000));
+                comp.Instance.SelectedContainer.Should().Be(comp.Instance.Items[2]);
+                await Task.Delay(interval);
+                comp.WaitForAssertion(() => comp.Instance.SelectedIndex.Should().Be(0), TimeSpan.FromMilliseconds(3000));
+                comp.Instance.SelectedContainer.Should().Be(comp.Instance.Items[0]);
+            }
         }
 
+        /// <summary>
+        /// Testing DataBinding with Add and Remove from data source (MVVM, MVC and another patterns)
+        /// </summary>
+        /// <returns></returns>
+        [Test]
+        public void CarouselTest_DataBinding()
+        {
+            var comp = ctx.RenderComponent<CarouselBindingTest>();
+            // print the generated html
+            Console.WriteLine(comp.Markup);
+            //// select elements needed for the test
+            var carousel = comp.FindComponent<MudCarousel<string>>().Instance;
+            //// validating some renders
+            carousel.Should().NotBeNull();
+            carousel.MoveTo(0);
+            //// working with ItemsSource
+            var source = carousel.ItemsSource;
+            source.Count().Should().Be(5);
+            carousel.Items.Count.Should().Be(5);
+            carousel.SelectedIndex.Should().Be(0);
+            //// adding item
+            ((IList<string>)source).Add("Item added by hand");
+            source.Count().Should().Be(6);
+            carousel.Items.Count.Should().Be(5); // should call StateHasChanged() or Task.Delay(1)
+            comp.Render();
+            carousel.Items.Count.Should().Be(6);
+            //// removing item
+            ((IList<string>)source).RemoveAt(source.Count() - 1);
+            source.Count().Should().Be(5);
+            carousel.Items.Count.Should().Be(6); // should call StateHasChanged() or Task.Delay(1)
+            comp.Render();
+            carousel.Items.Count.Should().Be(5);
+        }
 
     }
 }

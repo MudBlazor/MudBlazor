@@ -70,18 +70,7 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("div.mud-popover").ClassList.Should().Contain("menu-popover-class");
         }
 
-        //This menu is activatable on CSS hover
-        [Test]
-        public void Menu_HasClass_To_Activate_OnHover()
-        {
-            var comp = ctx.RenderComponent<MenuTestMouseOver>();
-            var button = comp.Find(".mud-menu");
-
-            //This menu is activatable on mouse over, so it should have the class 
-            //that activates the hover CSS effect
-            button.ClassList.Should().Contain("mud-menu-openonhover");
-
-
-        }
+        //TODO
+        //Create test to check menu on hover
     }
 }

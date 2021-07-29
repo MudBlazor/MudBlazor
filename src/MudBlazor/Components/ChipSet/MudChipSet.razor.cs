@@ -154,7 +154,7 @@ namespace MudBlazor
             }
         }
 
-        private HashSet<MudChip> _chips = new HashSet<MudChip>();
+        private HashSet<MudChip> _chips = new();
         private bool _filter;
 
         internal async Task OnChipClicked(MudChip chip)

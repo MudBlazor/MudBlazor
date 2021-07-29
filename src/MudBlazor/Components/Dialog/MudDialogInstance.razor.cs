@@ -11,7 +11,9 @@ namespace MudBlazor
 {
     public partial class MudDialogInstance : MudComponentBase
     {
-        private DialogOptions _options = new DialogOptions();
+        private DialogOptions _options = new();
+
+        [CascadingParameter] public bool RightToLeft { get; set; }
         [CascadingParameter] private MudDialogProvider Parent { get; set; }
         [CascadingParameter] private DialogOptions GlobalDialogOptions { get; set; } = new DialogOptions();
 
@@ -151,6 +153,7 @@ namespace MudBlazor
             .AddClass(DialogMaxWidth, !FullScreen)
             .AddClass("mud-dialog-width-full", FullWidth && !FullScreen)
             .AddClass("mud-dialog-fullscreen", FullScreen)
+            .AddClass("mud-dialog-rtl", RightToLeft)
             .AddClass(Class)
         .Build();
 

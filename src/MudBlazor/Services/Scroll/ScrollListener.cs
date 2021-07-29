@@ -46,11 +46,11 @@ namespace MudBlazor
         }
 
 
-        private void Subscribe(EventHandler<ScrollEventArgs> value)
+        private async void Subscribe(EventHandler<ScrollEventArgs> value)
         {
             if (_onScroll == null)
             {
-                Task.Run(async () => await Start());
+                await Start();
             }
             _onScroll += value;
         }

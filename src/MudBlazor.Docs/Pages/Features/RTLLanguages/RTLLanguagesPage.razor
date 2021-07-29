@@ -18,10 +18,25 @@
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader>
-                <Title>Setting the RightToLeft property in MudLayout</Title>
+            <SectionHeader Title="MudRTLProvider">
                 <Description>
-                    <MudText> Note that you should use <CodeInline>MudLayout</CodeInline> only once in your application.</MudText>
+                    <MudText>
+                        Wrap your code inside a <CodeInline>MudRTLProvider</CodeInline>.
+                        Note that <CodeInline>MudThemeProvider</CodeInline>, <CodeInline>MudDialogProvider</CodeInline> and <CodeInline>MudSnackbarProvider</CodeInline> must be children of
+                        <CodeInline>MudRTLProvider</CodeInline> in order to support RTL. Your <CodeInline>MainLayout.razor</CodeInline>
+                        can look something like this:
+                    </MudText>
+                </Description>
+            </SectionHeader>
+            <RTLLanguagesMarkdownRtlProvider/>
+        </DocsPageSection>
+        
+        <DocsPageSection>
+            <SectionHeader Title="Example">
+                <Description>
+                    <MudText>
+                        By setting <CodeInline>RightToLeft="true"</CodeInline> you can change the layout to RTL.
+                    </MudText>
                 </Description>
             </SectionHeader>
             <SectionContent DarkenBackground="true" AutoMarginContent="false">
@@ -31,8 +46,7 @@
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader>
-                <Title>Text Fields</Title>
+            <SectionHeader Title="Text Fields">
                 <Description>
                     <MudText>
                         Text Fields with <CodeInline>InputType.Email</CodeInline> or <CodeInline>InputType.Telephone</CodeInline> remain left-aligned, with the label remaining right-aligned.
@@ -46,8 +60,7 @@
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader>
-                <Title>Border Radius</Title>
+            <SectionHeader Title="Border Radius">
                 <Description>
                     <MudText>
                         If your application needs to support both left-to-right and right-to-left languages, make use of
@@ -63,8 +76,7 @@
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader>
-                <Title>Other useful css classes</Title>
+            <SectionHeader Title="Other useful css classes">
             </SectionHeader>
             <ul class="mud-typography-body1">
                 <li><CodeInline>.mud-flip-x-rtl</CodeInline> - Flips the element horizontally when in <b>rtl mode</b> (Can be used for icons which should be flipped in <b>rtl mode</b>)</li>

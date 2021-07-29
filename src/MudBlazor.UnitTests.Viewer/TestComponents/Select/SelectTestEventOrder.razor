@@ -1,0 +1,56 @@
+﻿@namespace MudBlazor.UnitTests.TestComponents
+
+@using System.Linq
+
+<MudSelect T="string" Label="US States" HelperText="Pick your favorite states"
+           MultiSelection="true" OffsetY="true"
+           SelectedValues="options"
+           SelectedValuesChanged="SetValues"
+           AdornmentIcon="@Icons.Material.Filled.Search"
+           MultiSelectionTextFunc="@(new Func<List<string>, string>(GetMultiSelectionText))">
+    <MudSelectItem T="string" Value="@("All")">All</MudSelectItem>
+    @foreach (var state in states)
+    {
+        <MudSelectItem T="string" Value="@state">@state</MudSelectItem>
+    }
+</MudSelect>
+
+@code 
+{ 
+    public static string __description__ = "SelectedValuesChanged should be called before MultiSelectionTextFunc and SetTextAsync";
+
+    private HashSet<string> options { get; set; } = new HashSet<string>() { "All" };
+
+    private string[] states =
+    {
+        "Alabama", "Alaska", "American Samoa", "Arizona",
+        "Arkansas", "California", "Colorado", "Connecticut",
+        "Delaware", "District of Columbia", "Federated States of Micronesia",
+        "Florida", "Georgia", "Guam", "Hawaii", "Idaho",
+        "Illinois", "Indiana", "Iowa", "Kansas", "Kentucky",
+        "Louisiana", "Maine", "Marshall Islands", "Maryland",
+        "Massachusetts", "Michigan", "Minnesota", "Mississippi",
+        "Missouri", "Montana", "Nebraska", "Nevada",
+        "New Hampshire", "New Jersey", "New Mexico", "New York",
+        "North Carolina", "North Dakota", "Northern Mariana Islands", "Ohio",
+        "Oklahoma", "Oregon", "Palau", "Pennsylvania", "Puerto Rico",
+        "Rhode Island", "South Carolina", "South Dakota", "Tennessee",
+        "Texas", "Utah", "Vermont", "Virgin Island", "Virginia",
+        "Washington", "West Virginia", "Wisconsin", "Wyoming",
+    };
+
+    void SetValues(HashSet<string> list)
+    {
+        if (list.Contains("All"))
+            list.Remove("All");
+        if (list.Count == 0)
+            list.Add("All");
+        options = list;
+    }
+
+    private string GetMultiSelectionText(List<string> selectedValues)
+    {
+        return string.Join(", ", selectedValues.Select(x => x));
+    } 
+}
+

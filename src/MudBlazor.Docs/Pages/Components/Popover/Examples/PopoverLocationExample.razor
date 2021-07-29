@@ -4,13 +4,15 @@
     <MudItem xs="12" md="2">
         <MudSwitch @bind-Checked="@OffsetX" Label="Offset X" Color="Color.Primary" />
         <MudRadioGroup @bind-SelectedOption="@Direction">
+            <MudRadio Color="Color.Primary" Option="@(Direction.Start)" Disabled="!OffsetX">Start</MudRadio>
+            <MudRadio Color="Color.Primary" Option="@(Direction.End)" Disabled="!OffsetX">End</MudRadio>
             <MudRadio Color="Color.Primary" Option="@(Direction.Left)" Disabled="!OffsetX">Left</MudRadio>
             <MudRadio Color="Color.Primary" Option="@(Direction.Right)" Disabled="!OffsetX">Right</MudRadio>
         </MudRadioGroup>
     </MudItem>
     <MudItem xs="12" md="8">
-        <MudPaper Elevation="0" Outlined="true" Class="ma-auto" Style="width:100px; height:100px;">
-            <MudPopover Open="true" OffsetX="@OffsetX" OffsetY="@OffsetY" Direction="@Direction" Class="pa-4" Style="width:170px; position:relative;">
+        <MudPaper Elevation="0" Outlined="true" Class="ma-auto" Style="width:100px; height:100px; position:relative">
+            <MudPopover Open="true" OffsetX="@OffsetX" OffsetY="@OffsetY" Direction="@Direction" Class="pa-4" Style="width:170px;">
                 <MudText>Popover Content</MudText>
             </MudPopover>
         </MudPaper>
