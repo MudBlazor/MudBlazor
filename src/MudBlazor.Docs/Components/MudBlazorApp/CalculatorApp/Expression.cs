@@ -37,7 +37,7 @@ namespace PrimitiveCalculator
 
         public Expression(string expression)
         {
-            _parser = new SimpleParser(expression.Trim());
+            _parser = new(expression.Trim());
         }
 
         public Expression(SimpleParser parser)
@@ -82,12 +82,12 @@ namespace PrimitiveCalculator
                         exp.Eval();
                     }
                     else
-                        op.Expression = new Expression(ReadNumber(_parser));
+                        op.Expression = new(ReadNumber(_parser));
                     _operations.Add(op);
                 }
                 else if (_parser.NextIs("0.123456789".ToCharArray()))
                 {
-                    _operations.Add(new Operation { Operator = "+", Expression = new Expression(ReadNumber(_parser)) });
+                    _operations.Add(new() { Operator = "+", Expression = new(ReadNumber(_parser)) });
                 }
                 else if (_parser.NextIs(')') && _mustConsumeClosingBracket)
                 {

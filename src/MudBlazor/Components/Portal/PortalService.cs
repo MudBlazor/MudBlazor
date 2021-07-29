@@ -54,7 +54,7 @@ namespace MudBlazor.Services
 
                 if (item == null)
                 {
-                    throw new Exception("Portal: You can't update a non existing item");
+                    throw new("Portal: You can't update a non existing item");
                 }
                 else
                 {

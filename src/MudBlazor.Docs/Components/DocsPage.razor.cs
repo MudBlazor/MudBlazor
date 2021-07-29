@@ -40,7 +40,7 @@ namespace MudBlazor.Docs.Components
         {
             if (firstRender)
             {
-                await _contentNavigation.ScrollToSection(new Uri(NavigationManager.Uri));
+                await _contentNavigation.ScrollToSection(new(NavigationManager.Uri));
             }
         }
 

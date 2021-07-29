@@ -37,7 +37,7 @@ namespace MudBlazor.UnitTests.UserAttributes
 
             var componentFactory = new MudComponentFactory
             {
-                UserAttributes = new Dictionary<string, object> { { "data-testid", "test-123" } },
+                UserAttributes = new() { { "data-testid", "test-123" } },
             };
 
             // Act & Assert

@@ -136,11 +136,11 @@ namespace MudBlazor
         /// Focuses the element
         /// </summary>
         /// <returns>The ValueTask</returns>
-        public virtual ValueTask FocusAsync() { return new ValueTask(); }
+        public virtual ValueTask FocusAsync() { return new(); }
 
-        public virtual ValueTask SelectAsync() { return new ValueTask(); }
+        public virtual ValueTask SelectAsync() { return new(); }
 
-        public virtual ValueTask SelectRangeAsync(int pos1, int pos2) { return new ValueTask(); }
+        public virtual ValueTask SelectRangeAsync(int pos1, int pos2) { return new(); }
 
         [Parameter] public EventCallback<string> TextChanged { get; set; }
 

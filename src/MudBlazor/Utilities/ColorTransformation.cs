@@ -68,7 +68,7 @@ namespace MudBlazor.Utilities
             else if (l > .5D)
                 s = (max - min) / (2D - (max + min)); //(max-min > 0)?
 
-            return new HSLColor
+            return new()
             {
                 H = SystemMath.Max(0D, SystemMath.Min(360D, h)),
                 S = SystemMath.Max(0D, SystemMath.Min(1D, s)),

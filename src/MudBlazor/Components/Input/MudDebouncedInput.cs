@@ -82,7 +82,7 @@ namespace MudBlazor
         {
             if (_timer == null)
             {
-                _timer = new Timer();
+                _timer = new();
                 _timer.Elapsed += OnTimerTick;
                 _timer.AutoReset = false;
             }

@@ -45,12 +45,12 @@ namespace MudBlazor
         {
             if (format == null)
                 format = "yyyy-MM-dd";
-            return new DateConverter(format);
+            return new(format);
         }
 
         public static DateConverter DateFormat(string format, CultureInfo culture)
         {
-            return new DateConverter(format) { Culture = culture };
+            return new(format) { Culture = culture };
         }
 
         #endregion

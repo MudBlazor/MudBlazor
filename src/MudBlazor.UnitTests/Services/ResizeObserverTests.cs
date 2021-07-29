@@ -284,15 +284,13 @@ namespace MudBlazor.UnitTests.Services
 
         private static BoundingClientRect GetRandomRect(Random random)
         {
-            return new BoundingClientRect
+            return new()
             {
-
                 Height = random.Next(10, 200) + random.NextDouble(),
                 Left = random.Next(10, 200) + random.NextDouble(),
 
                 Top = random.Next(10, 200) + random.NextDouble(),
                 Width = random.Next(10, 200) + random.NextDouble(),
-
             };
         }
 

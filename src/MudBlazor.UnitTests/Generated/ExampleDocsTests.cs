@@ -19,7 +19,7 @@ namespace MudBlazor.UnitTests.Components
         [SetUp]
         public void Setup()
         {
-            ctx = new Bunit.TestContext();
+            ctx = new();
             ctx.JSInterop.Mode = JSRuntimeMode.Loose;
             ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
             ctx.Services.AddSingleton<IDialogService>(new DialogService());
@@ -36,7 +36,7 @@ namespace MudBlazor.UnitTests.Components
 
             ctx.Services.AddOptions();
             ctx.Services.AddScoped(sp =>
-                new HttpClient(new MockDocsMessageHandler()) { BaseAddress = new Uri("https://localhost/") });
+                new HttpClient(new MockDocsMessageHandler()) { BaseAddress = new("https://localhost/") });
         }
 
         [TearDown]

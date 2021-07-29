@@ -19,7 +19,7 @@ namespace MudBlazor
         {
             Message = message;
             State = new SnackBarMessageState(options);
-            Timer = new Timer(TimerElapsed, null, Timeout.Infinite, Timeout.Infinite);
+            Timer = new(TimerElapsed, null, Timeout.Infinite, Timeout.Infinite);
         }
 
         internal void Init() => TransitionTo(SnackbarState.Showing);

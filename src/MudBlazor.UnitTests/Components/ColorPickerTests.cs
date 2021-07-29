@@ -73,9 +73,9 @@ namespace MudBlazor.UnitTests.Components.Components
         [SetUp]
         public void Setup()
         {
-            _eventListener = new MockEventListener();
+            _eventListener = new();
 
-            ctx = new Bunit.TestContext();
+            ctx = new();
             ctx.AddTestServices();
             ctx.Services.AddSingleton<IEventListener>(_eventListener);
         }
@@ -461,7 +461,7 @@ namespace MudBlazor.UnitTests.Components.Components
             double x = 99.2;
             double y = 200.98;
 
-            overlay.Click(new MouseEventArgs { OffsetX = x, OffsetY = y });
+            overlay.Click(new() { OffsetX = x, OffsetY = y });
 
             MudColor expectedColor = "#232232ff";
 
@@ -1111,7 +1111,7 @@ namespace MudBlazor.UnitTests.Components.Components
             {
                 p.Add(x => x.ViewMode, view);
                 p.Add(x => x.DisableAlpha, disableAlpha);
-                p.Add(x => x.ColorValue, new MudColor(120, 121, 122, 1.0));
+                p.Add(x => x.ColorValue, new(120, 121, 122, 1.0));
             });
 
             comp.Instance.TextValue.Should().Be(expectedOutput);
@@ -1143,7 +1143,7 @@ namespace MudBlazor.UnitTests.Components.Components
             {
                 p.Add(x => x.ColorPickerMode, ColorPickerMode.HSL);
                 p.Add(x => x.AlwaysUpdateBinding, true);
-                p.Add(x => x.ColorValue, new MudColor(245, 0.35, 0.95, 1.0));
+                p.Add(x => x.ColorValue, new(245, 0.35, 0.95, 1.0));
             });
 
             Console.WriteLine(comp.Markup);

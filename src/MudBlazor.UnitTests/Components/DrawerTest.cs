@@ -23,7 +23,7 @@ namespace MudBlazor.UnitTests.Components.Components
         [SetUp]
         public void Setup()
         {
-            ctx = new Bunit.TestContext();
+            ctx = new();
             ctx.AddTestServices();
             ctx.Services.AddScoped<IResizeListenerService, MockResizeListenerService>();
         }

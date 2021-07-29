@@ -11,11 +11,11 @@
 
         public MudTheme()
         {
-            Palette = new Palette();
-            Shadows = new Shadow();
-            Typography = new Typography();
-            LayoutProperties = new LayoutProperties();
-            ZIndex = new ZIndex();
+            Palette = new();
+            Shadows = new();
+            Typography = new();
+            LayoutProperties = new();
+            ZIndex = new();
         }
     }
 }

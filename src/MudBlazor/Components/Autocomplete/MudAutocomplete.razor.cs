@@ -264,7 +264,7 @@ namespace MudBlazor
             if (DebounceInterval <= 0)
                 OnSearch();
             else
-                _timer = new Timer(OnTimerComplete, null, DebounceInterval, Timeout.Infinite);
+                _timer = new(OnTimerComplete, null, DebounceInterval, Timeout.Infinite);
         }
 
         private void OnTimerComplete(object stateInfo) => InvokeAsync(OnSearch);

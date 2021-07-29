@@ -424,10 +424,10 @@ namespace MudBlazor.Docs.Compiler
                     // Hopefully this will never hit. At the time of writing
                     // this code, type.HasElementType is only true if the type
                     // is a pointer, array, or by reference.
-                    throw new Exception(nameof(GetXmlDocumenationFormattedString) +
-                        " encountered an unhandled element type. " +
-                        "Please submit this issue to the Towel GitHub repository. " +
-                        "https://github.com/ZacharyPatten/Towel/issues/new/choose");
+                    throw new(nameof(GetXmlDocumenationFormattedString) +
+                              " encountered an unhandled element type. " +
+                              "Please submit this issue to the Towel GitHub repository. " +
+                              "https://github.com/ZacharyPatten/Towel/issues/new/choose");
                 }
             }
             else
@@ -550,10 +550,10 @@ namespace MudBlazor.Docs.Compiler
                 // this code, I am only aware of the following Member types:
                 // FieldInfo, PropertyInfo, EventInfo, ConstructorInfo,
                 // MethodInfo, and Type.
-                throw new Exception(nameof(GetDocumentation) +
-                    " encountered an unhandled type [" + memberInfo.GetType().FullName + "]. " +
-                    "Please submit this issue to the Towel GitHub repository. " +
-                    "https://github.com/ZacharyPatten/Towel/issues/new/choose");
+                throw new(nameof(GetDocumentation) +
+                          " encountered an unhandled type [" + memberInfo.GetType().FullName + "]. " +
+                          "Please submit this issue to the Towel GitHub repository. " +
+                          "https://github.com/ZacharyPatten/Towel/issues/new/choose");
             }
         }
 

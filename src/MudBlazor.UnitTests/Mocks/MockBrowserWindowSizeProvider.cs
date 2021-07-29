@@ -11,7 +11,7 @@ namespace MudBlazor.UnitTests.Mocks
     {
         public ValueTask<BrowserWindowSize> GetBrowserWindowSize()
         {
-            return new ValueTask<BrowserWindowSize>(new BrowserWindowSize());
+            return new(new BrowserWindowSize());
         }
     }
 }

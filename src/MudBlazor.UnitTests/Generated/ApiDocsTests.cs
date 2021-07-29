@@ -18,7 +18,7 @@ namespace MudBlazor.UnitTests.Components
         [SetUp]
         public void Setup()
         {
-            ctx = new Bunit.TestContext();
+            ctx = new();
             ctx.JSInterop.Mode = JSRuntimeMode.Loose;
             ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
             ctx.Services.AddSingleton<IDialogService>(new DialogService());

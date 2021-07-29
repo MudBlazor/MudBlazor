@@ -27,7 +27,7 @@ namespace MudBlazor.UnitTests.Components
         [SetUp]
         public void Setup()
         {
-            ctx = new Bunit.TestContext();
+            ctx = new();
             ctx.AddTestServices();
         }
 
@@ -269,7 +269,7 @@ namespace MudBlazor.UnitTests.Components
                 [2].Click();
             comp.FindAll("button.mud-picker-calendar-day")
                 .Where(x => x.TrimmedText().Equals("2")).First().Click();
-            comp.Instance.Date.Value.Date.Should().Be(new DateTime(DateTime.Now.Year, 3, 2));
+            comp.Instance.Date.Value.Date.Should().Be(new(DateTime.Now.Year, 3, 2));
         }
 
         public IRenderedComponent<MudDatePicker> OpenTo12thMonth()
@@ -291,7 +291,7 @@ namespace MudBlazor.UnitTests.Components
                 [3].Click();
             comp.FindAll("button.mud-picker-calendar-day")
                 .Where(x => x.TrimmedText().Equals("23")).First().Click();
-            comp.Instance.Date.Value.Date.Should().Be(new DateTime(DateTime.Now.Year, 4, 23));
+            comp.Instance.Date.Value.Date.Should().Be(new(DateTime.Now.Year, 4, 23));
         }
 
         [Test]
@@ -327,7 +327,7 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("div.mud-picker-calendar-container > div.mud-picker-calendar-header").Count.Should().Be(1);
             comp.FindAll("button.mud-picker-calendar-day")
                 .Where(x => x.TrimmedText().Equals("1")).First().Click();
-            comp.Instance.Date.Value.Date.Should().Be(new DateTime(2022, 2, 1));
+            comp.Instance.Date.Value.Date.Should().Be(new(2022, 2, 1));
         }
 
         [Test]

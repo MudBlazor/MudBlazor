@@ -206,9 +206,9 @@ namespace MudBlazor
 
             if (firstRender)
             {
-                SelectedIndexChanged = new EventCallback<int>(this, (Action)SelectionChanged);
+                SelectedIndexChanged = new(this, (Action)SelectionChanged);
 
-                _timer = new Timer(_timerElapsed, null, AutoCycle ? AutoCycleTime : Timeout.InfiniteTimeSpan, AutoCycleTime);
+                _timer = new(_timerElapsed, null, AutoCycle ? AutoCycleTime : Timeout.InfiniteTimeSpan, AutoCycleTime);
             }
         }
 

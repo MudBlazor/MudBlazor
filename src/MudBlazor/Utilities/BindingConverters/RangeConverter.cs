@@ -4,12 +4,10 @@ namespace MudBlazor
 {
     public class RangeConverter<T> : Converter<Range<T>>
     {
-        readonly DefaultConverter<T> _converter;
+        readonly DefaultConverter<T> _converter = new();
 
         public RangeConverter()
         {
-            _converter = new DefaultConverter<T>();
-
             SetFunc = OnSet;
             GetFunc = OnGet;
         }
@@ -19,7 +17,7 @@ namespace MudBlazor
             if (!Split(value, out string valueStart, out string valueEnd))
                 return null;
 
-            return new Range<T>(_converter.Get(valueStart), _converter.Get(valueEnd));
+            return new(_converter.Get(valueStart), _converter.Get(valueEnd));
         }
 
         private string OnSet(Range<T> arg)

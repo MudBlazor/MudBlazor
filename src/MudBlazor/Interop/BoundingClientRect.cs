@@ -53,7 +53,7 @@
 
         public BoundingClientRect Clone()
         {
-            return new BoundingClientRect
+            return new()
             {
                 Left = Left,
                 Top = Top,

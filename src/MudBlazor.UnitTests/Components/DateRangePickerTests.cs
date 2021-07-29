@@ -23,7 +23,7 @@ namespace MudBlazor.UnitTests.Components
         [SetUp]
         public void Setup()
         {
-            ctx = new Bunit.TestContext();
+            ctx = new();
             ctx.AddTestServices();
         }
 
@@ -77,7 +77,7 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(() => picker.Text = RangeConverter<DateTime>.Join(new DateTime(2021, 01, 01).ToShortDateString(), new DateTime(2021, 01, 10).ToShortDateString()));
             picker.DateRange.Start.Should().Be(new DateTime(2021, 01, 01));
             picker.DateRange.End.Should().Be(new DateTime(2021, 01, 10));
-            await comp.InvokeAsync(() => picker.DateRange = new DateRange(new DateTime(2020, 12, 26), new DateTime(2021, 02, 01)));
+            await comp.InvokeAsync(() => picker.DateRange = new(new DateTime(2020, 12, 26), new DateTime(2021, 02, 01)));
             picker.Text.Should().Be(RangeConverter<DateTime>.Join(new DateTime(2020, 12, 26).ToShortDateString(), new DateTime(2021, 02, 01).ToShortDateString()));
         }
 

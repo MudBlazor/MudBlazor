@@ -159,7 +159,7 @@ namespace MudBlazor.Docs.Services
                 //caching property
                 if (_docsComponentsApi != null) return _docsComponentsApi;
 
-                _docsComponentsApi = new DocsComponents();
+                _docsComponentsApi = new();
                 foreach (var item in Components)
                 {
                     if (item.IsNavGroup)

@@ -418,7 +418,7 @@ namespace MudBlazor
             MudColor color;
             try
             {
-                color = new MudColor(input);
+                color = new(input);
             }
             catch (Exception)
             {

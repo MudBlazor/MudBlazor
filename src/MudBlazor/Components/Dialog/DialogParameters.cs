@@ -12,7 +12,7 @@ namespace MudBlazor
 
         public DialogParameters()
         {
-            _parameters = new Dictionary<string, object>();
+            _parameters = new();
         }
 
         public void Add(string parameterName, object value)
