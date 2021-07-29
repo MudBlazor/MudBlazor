@@ -81,7 +81,7 @@ namespace MudBlazor.UnitTests.Components
             var panels = comp.FindAll(".mud-panel-expanded").ToList();
             panels.Count.Should().Be(1);
 
-            var header = comp.FindAll(".panel-two > .mud-expand-panel-header").First(); ;
+            var header = comp.FindAll(".panel-two > .mud-expand-panel-header").First();
             header.Click();
 
             //we could close the panel
