@@ -1,3 +1,5 @@
+@import '../abstracts/mixins';
+
 .mud-input-control {
     border: 0;
     margin: 0;
@@ -131,6 +133,11 @@
                 min-width: unset;
                 min-height: unset;
             }
+            
+            @include rtl {
+                left: 0;
+                right: unset;
+            }
         }
 
         .mud-input-numeric-spin button {
@@ -166,11 +173,4 @@
 .mud-input-helper-text-contained {
     margin-left: 14px;
     margin-right: 14px;
-}
-
-.mud-application-layout-rtl {
-    .mud-input-control.mud-input-number-control .mud-input-numeric-spin {
-        left: 0;
-        right: unset;
-    }
 }
