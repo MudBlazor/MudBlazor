@@ -36,10 +36,7 @@ namespace MudBlazor.UnitTests.Components
         [TestCase("myFrameName", "noopener noreferrer")]
         public async Task NavLink_CheckRelAttribute(string target, string expectedRel)
         {
-            var comp = ctx.RenderComponent<MudNavLink>(new[]
-            {
-               Parameter(nameof(MudNavLink.Target), target),
-            });
+            var comp = ctx.RenderComponent<MudNavLink>(Parameter(nameof(MudNavLink.Target), target));
             // print the generated html
             Console.WriteLine(comp.Markup);
             // select elements needed for the test
@@ -50,10 +47,7 @@ namespace MudBlazor.UnitTests.Components
         public async Task NavLink_CheckOnClickEvent()
         {
             var clicked = false;
-            var comp = ctx.RenderComponent<MudNavLink>(new[]
-            {
-               EventCallback(nameof(MudNavLink.OnClick), (MouseEventArgs args) => { clicked = true; }),
-            });
+            var comp = ctx.RenderComponent<MudNavLink>(EventCallback(nameof(MudNavLink.OnClick), (MouseEventArgs args) => { clicked = true; }));
             // print the generated html
             Console.WriteLine(comp.Markup);
             comp.FindAll("a").Should().BeEmpty();
@@ -64,10 +58,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task NavLink_Enabled_CheckNavigation()
         {
-            var comp = ctx.RenderComponent<NavLinkDisabledTest>(new[]
-            {
-                Parameter(nameof(NavLinkDisabledTest.Disabled), false)
-            });
+            var comp = ctx.RenderComponent<NavLinkDisabledTest>(Parameter(nameof(NavLinkDisabledTest.Disabled), false));
             Console.WriteLine(comp.Markup);
             comp.Find("a").Click();
             comp.Instance.IsNavigated.Should().BeTrue();
@@ -76,10 +67,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task NavLink_Disabled_CheckNoNavigation()
         {
-            var comp = ctx.RenderComponent<NavLinkDisabledTest>(new[]
-            {
-                Parameter(nameof(NavLinkDisabledTest.Disabled), true)
-            });
+            var comp = ctx.RenderComponent<NavLinkDisabledTest>(Parameter(nameof(NavLinkDisabledTest.Disabled), true));
             Console.WriteLine(comp.Markup);
             comp.Find("a").Click();
             comp.Instance.IsNavigated.Should().BeFalse();

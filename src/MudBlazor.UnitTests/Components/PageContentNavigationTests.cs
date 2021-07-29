@@ -68,7 +68,7 @@ namespace MudBlazor.UnitTests.Components
             comp.RenderCount.Should().Be(withUpdate == true ? 3 : 2);
 
             comp.Instance.ActiveSection.Should().BeNull();
-            comp.Instance.Sections.Should().BeEquivalentTo(new[] { section1, section2 });
+            comp.Instance.Sections.Should().BeEquivalentTo(section1, section2);
 
             comp.Nodes.Should().ContainSingle();
 
@@ -106,7 +106,7 @@ namespace MudBlazor.UnitTests.Components
             comp.RenderCount.Should().Be(2);
 
             comp.Instance.ActiveSection.Should().Be(section1);
-            comp.Instance.Sections.Should().BeEquivalentTo(new[] { section1, section2 });
+            comp.Instance.Sections.Should().BeEquivalentTo(section1, section2);
             comp.Nodes.Should().ContainSingle();
 
             var navLinks = comp.FindComponents<MudNavLink>();
@@ -136,7 +136,7 @@ namespace MudBlazor.UnitTests.Components
             comp.RenderCount.Should().Be(3);
 
             comp.Instance.ActiveSection.Should().Be(section1);
-            comp.Instance.Sections.Should().BeEquivalentTo(new[] { section1, section2 });
+            comp.Instance.Sections.Should().BeEquivalentTo(section1, section2);
             comp.Nodes.Should().ContainSingle();
 
             var navLinks = comp.FindComponents<MudNavLink>();
@@ -148,7 +148,7 @@ namespace MudBlazor.UnitTests.Components
 
             navLinks[1].Instance.Class.Should().NotContain("active");
 
-            mockedScrollSpy.ScrollHistory.Should().BeEquivalentTo(new[] { "my-id" });
+            mockedScrollSpy.ScrollHistory.Should().BeEquivalentTo("my-id");
         }
 
         [Test]
@@ -185,7 +185,7 @@ namespace MudBlazor.UnitTests.Components
                 }
             }
 
-            spyMock.ScrollHistory.Should().BeEquivalentTo(new[] { "my-id1", "my-id2", "my-id3" });
+            spyMock.ScrollHistory.Should().BeEquivalentTo("my-id1", "my-id2", "my-id3");
         }
 
         [Test]
@@ -248,7 +248,7 @@ namespace MudBlazor.UnitTests.Components
 
             comp.RenderCount.Should().Be(2);
 
-            comp.Instance.Sections.Should().BeEquivalentTo(new[] { section });
+            comp.Instance.Sections.Should().BeEquivalentTo(section);
             comp.Nodes.Should().ContainSingle();
 
             var navLinks = comp.FindComponents<MudNavLink>();

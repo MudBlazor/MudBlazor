@@ -895,7 +895,7 @@ namespace MudBlazor.UnitTests.Components
 
             var headerPanel = headerContent.ParentElement;
             String addtionalClass = position == TabHeaderPosition.After ? "mud-tabs-header-after" : "mud-tabs-header-before";
-            headerPanel.ClassList.Should().BeEquivalentTo(new string[] { "mud-tabs-header", addtionalClass });
+            headerPanel.ClassList.Should().BeEquivalentTo("mud-tabs-header", addtionalClass);
 
             var tabInnerHeader = comp.Find(".mud-tabs-toolbar-inner");
 
@@ -943,14 +943,14 @@ namespace MudBlazor.UnitTests.Components
             var headerContent = comp.FindAll(".test-panel-header-content");
             headerContent.Should().HaveCount(3);
 
-            headerContent.Select(x => x.TextContent).ToList().Should().BeEquivalentTo(new string[] { "Index: 0", "Index: 1", "Index: 2" });
+            headerContent.Select(x => x.TextContent).ToList().Should().BeEquivalentTo("Index: 0", "Index: 1", "Index: 2");
 
             foreach (var item in headerContent)
             {
                 var headerPanel = item.ParentElement;
                 string addtionalClass = position == TabHeaderPosition.After ? "mud-tabs-panel-header-after" : "mud-tabs-panel-header-before";
 
-                headerPanel.ClassList.Should().BeEquivalentTo(new string[] { "mud-tabs-panel-header", addtionalClass });
+                headerPanel.ClassList.Should().BeEquivalentTo("mud-tabs-panel-header", addtionalClass);
 
                 var parent = headerPanel.ParentElement;
 
