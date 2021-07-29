@@ -885,7 +885,7 @@ namespace MudBlazor.UnitTests.Components.Components
                 colorElement.Click();
 
                 comp.Instance.ColorValue.Should().Be(expectedColor);
-                comp.Find(".mud-picker-color-view-collection").Children[i].ClassList.Should().BeEquivalentTo(new[] { "mud-picker-color-dot", "selected" });
+                comp.Find(".mud-picker-color-view-collection").Children[i].ClassList.Should().BeEquivalentTo("mud-picker-color-dot", "selected");
 
             }
         }
@@ -940,7 +940,7 @@ namespace MudBlazor.UnitTests.Components.Components
                 colorElement.Click();
                 comp.Instance.ColorValue.Should().Be(expectedColor);
 
-                comp.Find(".mud-picker-color-grid").Children[i].ClassList.Should().BeEquivalentTo(new[] { "mud-picker-color-dot", "selected" });
+                comp.Find(".mud-picker-color-grid").Children[i].ClassList.Should().BeEquivalentTo("mud-picker-color-dot", "selected");
             }
         }
 
@@ -999,7 +999,7 @@ namespace MudBlazor.UnitTests.Components.Components
                 colorElement.Click();
                 comp.Instance.ColorValue.Should().Be(expectedColor);
 
-                comp.Find(".mud-picker-color-grid").Children[i].ClassList.Should().BeEquivalentTo(new[] { "mud-picker-color-dot", "selected" });
+                comp.Find(".mud-picker-color-grid").Children[i].ClassList.Should().BeEquivalentTo("mud-picker-color-dot", "selected");
             }
         }
 

@@ -25,11 +25,9 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task NavLink_CheckDisabled()
         {
-            var comp = ctx.RenderComponent<MudLink>(new[]
-            {
-                Parameter(nameof(MudLink.Href), "#"),
-                Parameter(nameof(MudLink.Disabled), true)
-            });
+            var comp = ctx.RenderComponent<MudLink>(
+                Parameter(nameof(MudLink.Href), "#"), 
+                Parameter(nameof(MudLink.Disabled), true));
             Console.WriteLine(comp.Markup);
             comp.Find("a").GetAttribute("href").Should().BeNullOrEmpty();
         }
