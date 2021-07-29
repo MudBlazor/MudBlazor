@@ -16,9 +16,8 @@ namespace MudBlazor
                                  .Build();
 
         protected string NavigationButtonsClassName =>
-                    new CssBuilder()
+                    new CssBuilder("mud-carousel-navigation-button")
                         .AddClass($"align-self-{ConvertArrowsPosition(ArrowsPosition).ToDescriptionString()}", !(NavigationButtonsClass ?? "").Contains("align-self-"))
-                        .AddClass("mud-carousel-elements-rtl", RightToLeft)
                         .AddClass(NavigationButtonsClass)
                         .Build();
 
@@ -45,9 +44,6 @@ namespace MudBlazor
                 _ => position
             };
         }
-
-        [CascadingParameter] public bool RightToLeft { get; set; }
-
 
         /// <summary>
         /// Gets or Sets if 'Next' and 'Previous' arrows must be visible
