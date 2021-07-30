@@ -553,7 +553,7 @@ namespace MudBlazor.UnitTests.Components
             var date = DateTime.MinValue;
 
             // Get access to the datepicker of the instance
-            var comp = ctx.RenderComponent<DateTimeMinValueDatePickerTest>();
+            var comp = Context.RenderComponent<DateTimeMinValueDatePickerTest>();
             var datePicker = comp.FindComponent<MudDatePicker>();
             
             // Get the instance of the datepicker
