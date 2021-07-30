@@ -425,7 +425,21 @@ namespace MudBlazor.UnitTests
             comp.FindAll("input").Last().Blur();
             comp.WaitForAssertion(() => comp.Instance.FieldNotImmediate.Text.Should().Be("17,99"));
             comp.WaitForAssertion(() => comp.Instance.FieldNotImmediate.Value.Should().Be(17.99));
+        }
 
+        [Test]
+        public async Task NumericField_default_validation()
+        {
+            var comp = ctx.RenderComponent<MudNumericField<int>>();
+            comp.SetParam(x => x.Max, 10);
+            comp.SetParam(x => x.Min, -10);
+            comp.SetParam(x => x.Value, 12345);
+            var numericField = comp.Instance;
+            numericField.Value.Should().Be(12345);
+            await comp.InvokeAsync(() => {
+                numericField.Validate().Wait();
+            });
+            numericField.Value.Should().Be(10);
         }
     }
 }
