@@ -154,6 +154,11 @@ namespace MudBlazor
         protected DateTime GetMonthStart(int month)
         {
             var monthStartDate = _picker_month ?? DateTime.Today.StartOfMonth(Culture);
+            // Return the min supported datetime of the calendar when this is year 1 and first month!
+            if (_picker_month.HasValue && _picker_month.Value.Year == 1 && _picker_month.Value.Month == 1)
+            {
+                return Culture.Calendar.MinSupportedDateTime;
+            }
             return Culture.Calendar.AddMonths(monthStartDate, month);
         }
 
@@ -262,6 +267,11 @@ namespace MudBlazor
 
         private void OnPreviousMonthClick()
         {
+            // It is impossible to go further into the past after the first year and the first month!
+            if (PickerMonth.HasValue && PickerMonth.Value.Year == 1 && PickerMonth.Value.Month == 1)
+            {
+                return;
+            }
             PickerMonth = GetMonthStart(0).AddDays(-1).StartOfMonth(Culture);
         }
 
