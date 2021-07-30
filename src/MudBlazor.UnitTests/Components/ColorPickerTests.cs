@@ -71,10 +71,6 @@ namespace MudBlazor.UnitTests.Components
         [SetUp]
         public void Setup()
         {
-            // note, since this test suite is comparing stringified double values we need to force the UI culture here ...
-            // ... or else it will fail on all computers with a locale that uses comma as separator.
-            CultureInfo.CurrentUICulture = CultureInfo.InvariantCulture;
-
             _eventListener = new MockEventListener();
 
             ctx = new Bunit.TestContext();
@@ -101,14 +97,14 @@ namespace MudBlazor.UnitTests.Components
                     castedInputs[0].Value.Should().Be(expectedColor.R.ToString());
                     castedInputs[1].Value.Should().Be(expectedColor.G.ToString());
                     castedInputs[2].Value.Should().Be(expectedColor.B.ToString());
-                    castedInputs[3].Value.Should().Be(expectedColor.APercentage.ToString(CultureInfo.InvariantCulture));
+                    castedInputs[3].Value.Should().Be(expectedColor.APercentage.ToString(CultureInfo.CurrentUICulture));
                 }
                 else
                 {
-                    castedInputs[0].Value.Should().Be(expectedColor.H.ToString(CultureInfo.InvariantCulture));
-                    castedInputs[1].Value.Should().Be(expectedColor.S.ToString(CultureInfo.InvariantCulture));
-                    castedInputs[2].Value.Should().Be(expectedColor.L.ToString(CultureInfo.InvariantCulture));
-                    castedInputs[3].Value.Should().Match(x => double.Parse(x, CultureInfo.InvariantCulture) == Math.Round((expectedColor.A / 255.0), 2));
+                    castedInputs[0].Value.Should().Be(expectedColor.H.ToString(CultureInfo.CurrentUICulture));
+                    castedInputs[1].Value.Should().Be(expectedColor.S.ToString(CultureInfo.CurrentUICulture));
+                    castedInputs[2].Value.Should().Be(expectedColor.L.ToString(CultureInfo.CurrentUICulture));
+                    castedInputs[3].Value.Should().Match(x => double.Parse(x, CultureInfo.CurrentUICulture) == Math.Round((expectedColor.A / 255.0), 2));
                 }
             }
             else if (mode == ColorPickerMode.HEX)
@@ -238,7 +234,7 @@ namespace MudBlazor.UnitTests.Components
 
             var expectedColor = comp.Instance.ColorValue.SetAlpha(a);
 
-            aInput.Change(a.ToString(CultureInfo.InvariantCulture));
+            aInput.Change(a.ToString(CultureInfo.CurrentUICulture));
 
             CheckColorRelatedValues(comp, selectorXPosition, selectorYPosition, expectedColor, ColorPickerMode.RGB);
         }
@@ -270,7 +266,7 @@ namespace MudBlazor.UnitTests.Components
 
             var expectedColor = comp.Instance.ColorValue.SetS(s);
 
-            sColor.Change(expectedColor.S.ToString(CultureInfo.InvariantCulture));
+            sColor.Change(expectedColor.S.ToString(CultureInfo.CurrentUICulture));
 
             CheckColorRelatedValues(comp, selectorXPosition, selectorYPosition, expectedColor, ColorPickerMode.HSL);
         }
@@ -285,7 +281,7 @@ namespace MudBlazor.UnitTests.Components
             IHtmlInputElement lColor = GetColorInput(comp, 2);
 
             var expectedColor = comp.Instance.ColorValue.SetL(l);
-            lColor.Change(expectedColor.L.ToString(CultureInfo.InvariantCulture));
+            lColor.Change(expectedColor.L.ToString(CultureInfo.CurrentUICulture));
 
             CheckColorRelatedValues(comp, selectorXPosition, selectorYPosition, expectedColor, ColorPickerMode.HSL);
         }
@@ -300,7 +296,7 @@ namespace MudBlazor.UnitTests.Components
             IHtmlInputElement lColor = GetColorInput(comp, 3);
 
             var expectedColor = comp.Instance.ColorValue.SetAlpha(a);
-            lColor.Change(a.ToString(CultureInfo.InvariantCulture));
+            lColor.Change(a.ToString(CultureInfo.CurrentUICulture));
 
             CheckColorRelatedValues(comp, selectorXPosition, selectorYPosition, expectedColor, ColorPickerMode.HSL);
         }
@@ -1156,7 +1152,7 @@ namespace MudBlazor.UnitTests.Components
             CheckColorRelatedValues(comp, 11.37, 7.84, comp.Instance.ColorValue, ColorPickerMode.HSL);
 
             var expectedColor = comp.Instance.ColorValue.SetS(comp.Instance.ColorValue.S - 0.01);
-            sColor.Change(expectedColor.S.ToString(CultureInfo.InvariantCulture));
+            sColor.Change(expectedColor.S.ToString(CultureInfo.CurrentUICulture));
 
             CheckColorRelatedValues(comp, 11.37, 7.84, expectedColor, ColorPickerMode.HSL);
             string colorValueAfterChange = comp.Instance.ColorValue.ToString(MudColorOutputFormats.HexA);
