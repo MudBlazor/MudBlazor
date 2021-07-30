@@ -1,0 +1,20 @@
+﻿<MudPagination ControlButtonClicked="@ControlButtonClicked" ShowFirstButton="true" ShowLastButton="true" @bind-Selected="@_selected" Count="11"/>
+<p id="mud-pagination-test-selected">Selected: @_selected</p>
+<p id="mud-pagination-test-button-clicked">Button clicked: @_buttonClicked</p>
+
+@code {
+    public static string __description__ = "The selected value should change when clicking on buttons. Button clicked values: -1=None, 0=First, 1=Previous, 2=Next, 3=Last button";
+
+    private int _selected = 6;
+    private int _buttonClicked = -1;
+
+    private void ControlButtonClicked(Page page) {
+        _buttonClicked = page switch {
+            Page.First => 0,
+            Page.Previous => 1,
+            Page.Next => 2,
+            Page.Last => 3,
+            _ => -1
+            };
+    }
+}
