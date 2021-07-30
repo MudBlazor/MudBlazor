@@ -341,7 +341,7 @@ namespace MudBlazor.UnitTests
         /// Increment / Decrement via up / down keys should work
         /// </summary>
         [Test]
-        public async Task NumericFieldTest_ArrowKeys()
+        public async Task NumericFieldTest_KeyboardInput()
         {
             var comp = ctx.RenderComponent<MudNumericField<double>>();
             comp.SetParam(x => x.Culture, CultureInfo.InvariantCulture);
@@ -354,12 +354,22 @@ namespace MudBlazor.UnitTests
             numericField.Value.Should().Be(1234.56);
             numericField.Text.Should().Be("1234.56");
             comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = "ArrowUp", Type = "keydown", });
-            comp.Find("input").KeyUp(new KeyboardEventArgs() { Key = "ArrowUp", Type = "keydown", });
+            comp.Find("input").KeyUp(new KeyboardEventArgs() { Key = "ArrowUp", Type = "keyup", });
             comp.WaitForAssertion(() => numericField.Value.Should().Be(1235.56));
             comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = "ArrowDown", Type = "keydown", });
-            comp.Find("input").KeyUp(new KeyboardEventArgs() { Key = "ArrowDown", Type = "keydown", });
+            comp.Find("input").KeyUp(new KeyboardEventArgs() { Key = "ArrowDown", Type = "keyup", });
+            comp.WaitForAssertion(() => numericField.Value.Should().Be(1234.56));
+            comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = "c", Type = "keydown", CtrlKey =false});
+            comp.Find("input").KeyUp(new KeyboardEventArgs() { Key = "c", Type = "keyup", CtrlKey = false });
+            comp.WaitForAssertion(() => numericField.Value.Should().Be(1234.56));
+            comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = "a", Type = "keydown",  });
+            comp.Find("input").KeyUp(new KeyboardEventArgs() { Key = "a", Type = "keyup",  });
+            comp.WaitForAssertion(() => numericField.Value.Should().Be(1234.56));
+            comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = "9", Type = "keydown", });
+            comp.Find("input").KeyUp(new KeyboardEventArgs() { Key = "9", Type = "keyup", });
             comp.WaitForAssertion(() => numericField.Value.Should().Be(1234.56));
         }
+
 
         /// <summary>
         /// NumericalField Formats input according to culture
@@ -427,19 +437,129 @@ namespace MudBlazor.UnitTests
             comp.WaitForAssertion(() => comp.Instance.FieldNotImmediate.Value.Should().Be(17.99));
         }
 
-        [Test]
-        public async Task NumericField_default_validation()
+        [TestCase((byte)5)]
+        [TestCase((sbyte)5)]
+        [TestCase((short)5)]
+        [TestCase((ushort)5)]
+        [TestCase((int)5)]
+        [TestCase((uint)5)]
+        [TestCase(5L)]
+        [TestCase(5UL)]
+        [TestCase(5.0f)]
+        [TestCase(5.0)]
+        [TestCase(5.0)]
+        public async Task NumericField_Validation<T>(T value)
         {
-            var comp = ctx.RenderComponent<MudNumericField<int>>();
-            comp.SetParam(x => x.Max, 10);
-            comp.SetParam(x => x.Min, -10);
-            comp.SetParam(x => x.Value, 12345);
+            var comp = ctx.RenderComponent<MudNumericField<T>>();
+            comp.SetParam(x => x.Max, value);
+            comp.SetParam(x => x.Min, value);
+            comp.SetParam(x => x.Value, value);
             var numericField = comp.Instance;
-            numericField.Value.Should().Be(12345);
+            numericField.Value.Should().Be(value);
             await comp.InvokeAsync(() => {
                 numericField.Validate().Wait();
             });
-            numericField.Value.Should().Be(10);
+            numericField.Value.Should().Be(value);
+        }
+
+        [Test]
+        public async Task NumericField_Validation_Decimal()
+        {
+            var value = 5M;
+            var comp = ctx.RenderComponent<MudNumericField<decimal>>();
+            comp.SetParam(x => x.Max, value);
+            comp.SetParam(x => x.Min, value);
+            comp.SetParam(x => x.Value, value);
+            var numericField = comp.Instance;
+            numericField.Value.Should().Be(value);
+            await comp.InvokeAsync(() => {
+                numericField.Validate().Wait();
+            });
+            numericField.Value.Should().Be(value);
+        }
+
+        [Test]
+        public async Task NumericField_Validation_NullableInt()
+        {
+            int? value = 5;
+            var comp = ctx.RenderComponent<MudNumericField<int?>>();
+            comp.SetParam(x => x.Max, value);
+            comp.SetParam(x => x.Min, value);
+            comp.SetParam(x => x.Value, value);
+            var numericField = comp.Instance;
+            numericField.Value.Should().Be(value);
+            await comp.InvokeAsync(() => {
+                numericField.Validate().Wait();
+            });
+            numericField.Value.Should().Be(value);
+        }
+
+        [TestCase((byte)5)]
+        [TestCase((sbyte)5)]
+        [TestCase((short)5)]
+        [TestCase((ushort)5)]
+        [TestCase((int)5)]
+        [TestCase((uint)5)]
+        [TestCase(5L)]
+        [TestCase(5UL)]
+        [TestCase(5.0f)]
+        [TestCase(5.0)]
+        public async Task NumericField_Increment_Decrement<T>(T value)
+        {
+                var comp = ctx.RenderComponent<MudNumericField<T>>();
+                comp.SetParam(x => x.Max, 10);
+                comp.SetParam(x => x.Min, -10);
+                comp.SetParam(x=>x.Step, value);
+                comp.SetParam(x => x.Value, value);
+                await comp.InvokeAsync(() => comp.Instance.Increment().Wait());
+                await comp.InvokeAsync(() => comp.Instance.Decrement().Wait());
+                comp.Instance.Value.Should().Be(value);
+                // setting min and max to value will cover the boundary checking code
+                comp.SetParam(x => x.Max, value);
+                comp.SetParam(x => x.Min, value);
+                await comp.InvokeAsync(() => comp.Instance.Increment().Wait());
+                await comp.InvokeAsync(() => comp.Instance.Decrement().Wait());
+                comp.Instance.Value.Should().Be(value);
+        }
+
+        [Test]
+        public async Task NumericField_Increment_Decrement_Decimal()
+        {
+            var value = 5M;
+            var comp = ctx.RenderComponent<MudNumericField<decimal>>();
+            comp.SetParam(x => x.Max, 10);
+            comp.SetParam(x => x.Min, -10);
+            comp.SetParam(x => x.Step, value);
+            comp.SetParam(x => x.Value, value);
+            await comp.InvokeAsync(() => comp.Instance.Increment().Wait());
+            await comp.InvokeAsync(() => comp.Instance.Decrement().Wait());
+            comp.Instance.Value.Should().Be(value);
+            // setting min and max to value will cover the boundary checking code
+            comp.SetParam(x => x.Max, value);
+            comp.SetParam(x => x.Min, value);
+            await comp.InvokeAsync(() => comp.Instance.Increment().Wait());
+            await comp.InvokeAsync(() => comp.Instance.Decrement().Wait());
+            comp.Instance.Value.Should().Be(value);
+        }
+
+        [Test]
+        public async Task NumericField_Increment_Decrement_NullableInt()
+        {
+            int? value = 5;
+            var comp = ctx.RenderComponent<MudNumericField<int?>>();
+            comp.SetParam(x => x.Max, 10);
+            comp.SetParam(x => x.Min, -10);
+            comp.SetParam(x => x.Step, value);
+            comp.SetParam(x => x.Value, value);
+            await comp.InvokeAsync(() => comp.Instance.Increment().Wait());
+            await comp.InvokeAsync(() => comp.Instance.Decrement().Wait());
+            comp.Instance.Value.Should().Be(value);
+            // setting min and max to value will cover the boundary checking code
+            comp.SetParam(x => x.Max, value);
+            comp.SetParam(x => x.Min, value);
+            await comp.InvokeAsync(() => comp.Instance.Increment().Wait());
+            await comp.InvokeAsync(() => comp.Instance.Decrement().Wait());
+            comp.Instance.Value.Should().Be(value);
         }
     }
 }
