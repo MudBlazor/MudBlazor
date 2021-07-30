@@ -1,4 +1,5 @@
-﻿
+﻿@import '../abstracts/mixins';
+
 .mud-progress-circular {
     display: inline-block;
     color: var(--mud-palette-text-secondary);
@@ -88,6 +89,10 @@
     height: 4px;
     overflow: hidden;
     position: relative;
+    
+    @include rtl {
+        transform: scaleX(-1);
+    }
 }
 
 @each $color in $mud-palette-colors {

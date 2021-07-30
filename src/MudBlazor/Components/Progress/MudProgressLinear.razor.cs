@@ -10,7 +10,6 @@ namespace MudBlazor
         protected string DivClassname =>
             new CssBuilder("mud-progress-linear")
                 .AddClass($"mud-progress-linear-color-{Color.ToDescriptionString()}", !Buffer)
-                .AddClass("mud-flip-x-rtl")
                 .AddClass(Class)
                 .Build();
 
