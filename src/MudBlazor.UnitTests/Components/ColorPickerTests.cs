@@ -18,7 +18,7 @@ using MudBlazor.UnitTests.TestComponents;
 using MudBlazor.Utilities;
 using NUnit.Framework;
 
-namespace MudBlazor.UnitTests.Components.Components
+namespace MudBlazor.UnitTests.Components
 {
     [TestFixture]
     public class ColorPickerTests
