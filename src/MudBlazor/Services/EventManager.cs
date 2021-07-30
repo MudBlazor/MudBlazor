@@ -60,7 +60,10 @@ namespace MudBlazor
                 PropertyNameCaseInsensitive = true,
             });
 
-            await element.callback?.Invoke(@event);
+            if (element.callback != null)
+            {
+                await element.callback.Invoke(@event);
+            }
         }
 
         public async Task<Guid> Subscribe<T>(string eventName, string elementId, string projectionName, int throotleInterval, Func<object, Task> callback)
