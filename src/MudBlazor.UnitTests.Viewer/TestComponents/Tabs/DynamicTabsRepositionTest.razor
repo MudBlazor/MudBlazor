@@ -1,8 +1,24 @@
 ﻿@namespace MudBlazor.UnitTests.TestComponents
 
+<MudForm>
+	<MudSwitch T="bool" @bind-Checked="@_isCentered" Label="Centered Tabs"/>
+	<MudRadioGroup @bind-SelectedOption="@Position">
+		<MudRadio Option="@(Position.Bottom)">Bottom</MudRadio>
+		<MudRadio Option="@(Position.Center)">Center</MudRadio>
+		<MudRadio Option="@(Position.Top)">Top</MudRadio>
+		<MudRadio Option="@(Position.Left)">Left</MudRadio>
+		<MudRadio Option="@(Position.Right)">Right</MudRadio>
+		<MudRadio Option="@(Position.Start)">Start</MudRadio>
+		<MudRadio Option="@(Position.End)">End</MudRadio>
+	</MudRadioGroup>
+</MudForm>
+
 <MudDynamicTabs
 		CloseIconClass="my-close-icon-class" CloseTab="OnCloseClicked"
-		AddIconClass="my-add-icon-class" AddTab="OnAddClicked"  >
+		AddIconClass="my-add-icon-class" AddTab="OnAddClicked"
+		Centered="@_isCentered"
+		Position="@Position"
+>
 	@foreach(var panel in _panels)
 	{
 		<MudTabPanel Text="@panel">
@@ -13,6 +29,8 @@
 
 @code {
 
+	bool _isCentered = false;
+	public Position Position { get; set; } = Position.Top;
 	List<string> _panels = new List<string>() { "Untitled" };
 
 	public Int32 AddClickCounter { get; private set; }
