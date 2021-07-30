@@ -34,7 +34,7 @@ namespace MudBlazor.UnitTests.Components
 
             var pagination = comp.FindComponent<MudPagination>().Instance;
             //navigate to the specified page
-            await comp.InvokeAsync(() => { pagination.NavigateTo(initiallySelectedPage - 1);});
+            await comp.InvokeAsync(() => { pagination.NavigateTo(initiallySelectedPage - 1); });
 
             var button = FindControlButton(comp, controlButton);
 
@@ -119,7 +119,7 @@ namespace MudBlazor.UnitTests.Components
             };
             return button;
         }
-        
+
         /// <summary>
         /// Tests the NavigateTo(Page) method
         /// </summary>
@@ -193,7 +193,7 @@ namespace MudBlazor.UnitTests.Components
             var pagination = comp.FindComponent<MudPagination>().Instance;
             comp.Find(".mud-pagination-test-middle-count input").Change(middleCount.ToString());
             comp.Find(".mud-pagination-test-boundary-count input").Change(boundaryCount.ToString());
-            
+
             //Expected values
             pagination.MiddleCount.Should().Be(Math.Max(1, middleCount));
             pagination.BoundaryCount.Should().Be(Math.Max(1, boundaryCount));
@@ -218,17 +218,17 @@ namespace MudBlazor.UnitTests.Components
         /// <param name="middleCount">The number of items between the ellipsis.</param>
         /// <param name="boundaryCount">The number of items at the start and end of the pagination.</param>
         /// <param name="expectedValues">The expected content of the items.</param>
-        [TestCase(6, 11, 3, 2, new[] {"1", "2", "...", "5", "6", "7", "...", "10", "11"})]
-        [TestCase(7, 11, 3, 2, new[] {"1", "2", "...", "6", "7", "8", "9", "10", "11"})]
-        [TestCase(11, 11, 3, 2, new[] {"1", "2", "...", "6", "7", "8", "9", "10", "11"})]
-        [TestCase(5, 11, 3, 2, new[] {"1", "2", "3", "4", "5", "6", "...", "10", "11"})]
-        [TestCase(3, 11, 3, 2, new[] {"1", "2", "3", "4", "5", "6", "...", "10", "11"})]
-        [TestCase(11, 22, 1, 1, new[] {"1", "...", "11", "...", "22"})]
-        [TestCase(1, 22, 1, 1, new[] {"1", "2", "3", "...", "22"})]
-        [TestCase(8, 22, 5, 3, new[] {"1", "2", "3", "...", "6", "7", "8", "9", "10", "...", "20", "21", "22"})]
-        [TestCase(7, 22, 5, 3, new[] {"1", "2", "3", "4", "5", "6", "7", "8", "9", "...", "20", "21", "22"})]
-        [TestCase(16, 22, 5, 3, new[] {"1", "2", "3", "...", "14", "15", "16", "17", "18", "19", "20", "21", "22"})]
-        [TestCase(22, 22, 5, 3, new[] {"1", "2", "3", "...", "14", "15", "16", "17", "18", "19", "20", "21", "22"})]
+        [TestCase(6, 11, 3, 2, new[] { "1", "2", "...", "5", "6", "7", "...", "10", "11" })]
+        [TestCase(7, 11, 3, 2, new[] { "1", "2", "...", "6", "7", "8", "9", "10", "11" })]
+        [TestCase(11, 11, 3, 2, new[] { "1", "2", "...", "6", "7", "8", "9", "10", "11" })]
+        [TestCase(5, 11, 3, 2, new[] { "1", "2", "3", "4", "5", "6", "...", "10", "11" })]
+        [TestCase(3, 11, 3, 2, new[] { "1", "2", "3", "4", "5", "6", "...", "10", "11" })]
+        [TestCase(11, 22, 1, 1, new[] { "1", "...", "11", "...", "22" })]
+        [TestCase(1, 22, 1, 1, new[] { "1", "2", "3", "...", "22" })]
+        [TestCase(8, 22, 5, 3, new[] { "1", "2", "3", "...", "6", "7", "8", "9", "10", "...", "20", "21", "22" })]
+        [TestCase(7, 22, 5, 3, new[] { "1", "2", "3", "4", "5", "6", "7", "8", "9", "...", "20", "21", "22" })]
+        [TestCase(16, 22, 5, 3, new[] { "1", "2", "3", "...", "14", "15", "16", "17", "18", "19", "20", "21", "22" })]
+        [TestCase(22, 22, 5, 3, new[] { "1", "2", "3", "...", "14", "15", "16", "17", "18", "19", "20", "21", "22" })]
         [Test]
         public async Task PaginationCountWithEllipsisTest(int selectedPage, int count, int middleCount,
             int boundaryCount, string[] expectedValues)
@@ -253,7 +253,7 @@ namespace MudBlazor.UnitTests.Components
                 items[j].TextContent.Should().Be(expectedValues[j]);
             }
         }
-        
+
         /// <summary>
         /// Tests if styles/visual parameters are applied correctly
         /// </summary>
@@ -262,7 +262,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<PaginationStylesTest>();
             Console.WriteLine(comp.Markup);
-            
+
             var buttons = comp.FindAll(".mud-pagination-item button");
             var pagination = comp.Find("ul.mud-pagination");
             var paginationItems = comp.FindAll("mud-pagination-item");
