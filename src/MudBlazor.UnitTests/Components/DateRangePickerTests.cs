@@ -8,9 +8,7 @@ using System.Threading.Tasks;
 using AngleSharp.Html.Dom;
 using Bunit;
 using FluentAssertions;
-using MudBlazor.Extensions;
 using NUnit.Framework;
-using NUnit.Framework.Internal;
 using static Bunit.ComponentParameterFactory;
 
 namespace MudBlazor.UnitTests.Components
@@ -44,8 +42,6 @@ namespace MudBlazor.UnitTests.Components
             Console.WriteLine("Elapsed: " + watch.Elapsed);
             watch.Elapsed.Should().BeLessThan(TimeSpan.FromSeconds(10));
         }
-
-        /// <summary>
 
         [Test]
         [Ignore("Unignore for performance measurements, not needed for code coverage")]

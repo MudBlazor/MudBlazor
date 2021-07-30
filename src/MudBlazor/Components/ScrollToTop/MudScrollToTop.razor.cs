@@ -66,11 +66,9 @@ namespace MudBlazor
                 ScrollListener.Selector = selector;
 
                 //suscribe to event
-                ScrollListener.OnScroll += ScrollListener_OnScroll; ;
+                ScrollListener.OnScroll += ScrollListener_OnScroll;
             }
         }
-
-
 
         /// <summary>
         /// event received when scroll in the selected element happens
