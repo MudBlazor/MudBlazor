@@ -347,11 +347,11 @@ namespace MudBlazor.UnitTests
             comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = "ArrowDown", Type = "keydown", });
             comp.Find("input").KeyUp(new KeyboardEventArgs() { Key = "ArrowDown", Type = "keyup", });
             comp.WaitForAssertion(() => numericField.Value.Should().Be(1234.56));
-            comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = "c", Type = "keydown", CtrlKey =false});
+            comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = "c", Type = "keydown", CtrlKey = false });
             comp.Find("input").KeyUp(new KeyboardEventArgs() { Key = "c", Type = "keyup", CtrlKey = false });
             comp.WaitForAssertion(() => numericField.Value.Should().Be(1234.56));
-            comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = "a", Type = "keydown",  });
-            comp.Find("input").KeyUp(new KeyboardEventArgs() { Key = "a", Type = "keyup",  });
+            comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = "a", Type = "keydown", });
+            comp.Find("input").KeyUp(new KeyboardEventArgs() { Key = "a", Type = "keyup", });
             comp.WaitForAssertion(() => numericField.Value.Should().Be(1234.56));
             comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = "9", Type = "keydown", });
             comp.Find("input").KeyUp(new KeyboardEventArgs() { Key = "9", Type = "keyup", });
@@ -444,7 +444,8 @@ namespace MudBlazor.UnitTests
             comp.SetParam(x => x.Value, value);
             var numericField = comp.Instance;
             numericField.Value.Should().Be(value);
-            await comp.InvokeAsync(() => {
+            await comp.InvokeAsync(() =>
+            {
                 numericField.Validate().Wait();
             });
             numericField.Value.Should().Be(value);
@@ -460,7 +461,8 @@ namespace MudBlazor.UnitTests
             comp.SetParam(x => x.Value, value);
             var numericField = comp.Instance;
             numericField.Value.Should().Be(value);
-            await comp.InvokeAsync(() => {
+            await comp.InvokeAsync(() =>
+            {
                 numericField.Validate().Wait();
             });
             numericField.Value.Should().Be(value);
@@ -476,7 +478,8 @@ namespace MudBlazor.UnitTests
             comp.SetParam(x => x.Value, value);
             var numericField = comp.Instance;
             numericField.Value.Should().Be(value);
-            await comp.InvokeAsync(() => {
+            await comp.InvokeAsync(() =>
+            {
                 numericField.Validate().Wait();
             });
             numericField.Value.Should().Be(value);
@@ -494,20 +497,20 @@ namespace MudBlazor.UnitTests
         [TestCase(5.0)]
         public async Task NumericField_Increment_Decrement<T>(T value)
         {
-                var comp = Context.RenderComponent<MudNumericField<T>>();
-                comp.SetParam(x => x.Max, 10);
-                comp.SetParam(x => x.Min, -10);
-                comp.SetParam(x=>x.Step, value);
-                comp.SetParam(x => x.Value, value);
-                await comp.InvokeAsync(() => comp.Instance.Increment().Wait());
-                await comp.InvokeAsync(() => comp.Instance.Decrement().Wait());
-                comp.Instance.Value.Should().Be(value);
-                // setting min and max to value will cover the boundary checking code
-                comp.SetParam(x => x.Max, value);
-                comp.SetParam(x => x.Min, value);
-                await comp.InvokeAsync(() => comp.Instance.Increment().Wait());
-                await comp.InvokeAsync(() => comp.Instance.Decrement().Wait());
-                comp.Instance.Value.Should().Be(value);
+            var comp = Context.RenderComponent<MudNumericField<T>>();
+            comp.SetParam(x => x.Max, 10);
+            comp.SetParam(x => x.Min, -10);
+            comp.SetParam(x => x.Step, value);
+            comp.SetParam(x => x.Value, value);
+            await comp.InvokeAsync(() => comp.Instance.Increment().Wait());
+            await comp.InvokeAsync(() => comp.Instance.Decrement().Wait());
+            comp.Instance.Value.Should().Be(value);
+            // setting min and max to value will cover the boundary checking code
+            comp.SetParam(x => x.Max, value);
+            comp.SetParam(x => x.Min, value);
+            await comp.InvokeAsync(() => comp.Instance.Increment().Wait());
+            await comp.InvokeAsync(() => comp.Instance.Decrement().Wait());
+            comp.Instance.Value.Should().Be(value);
         }
 
         [Test]

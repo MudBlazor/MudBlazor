@@ -250,7 +250,7 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("button")[2].IsDisabled().Should().Be(false);
             comp.FindAll("button")[3].IsDisabled().Should().Be(false);
         }
-        
+
         /// <summary>
         /// navigate to page test
         /// </summary>
