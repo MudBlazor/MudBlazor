@@ -11,21 +11,12 @@ using static Bunit.ComponentParameterFactory;
 namespace MudBlazor.UnitTests.Components
 {
     [TestFixture]
-    public class LinkTests
+    public class LinkTests : BunitTest
     {
-        private Bunit.TestContext ctx;
-
-        [SetUp]
-        public void Setup()
-        {
-            ctx = new Bunit.TestContext();
-            ctx.AddTestServices();
-        }
-
         [Test]
         public async Task NavLink_CheckDisabled()
         {
-            var comp = ctx.RenderComponent<MudLink>(
+            var comp = Context.RenderComponent<MudLink>(
                 Parameter(nameof(MudLink.Href), "#"), 
                 Parameter(nameof(MudLink.Disabled), true));
             Console.WriteLine(comp.Markup);
