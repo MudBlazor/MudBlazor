@@ -176,9 +176,19 @@ namespace MudBlazor
         [Parameter] public EventCallback<bool> IsOpenChanged { get; set; }
 
         /// <summary>
-        /// If true, the currently selected item from the drop-down (if it is open) is selected.
+        /// Set to true to select the currently selected item from the drop-down (if it is open) 
         /// </summary>
         [Parameter] public bool SelectValueOnTab { get; set; } = false;
+
+        /// <summary>
+        /// Show clear button.
+        /// </summary>
+        [Parameter] public bool Clearable { get; set; } = false;
+
+        /// <summary>
+        /// Button click event for clear button. Called after text and value has been cleared.
+        /// </summary>
+        [Parameter] public EventCallback<MouseEventArgs> OnClearButtonClick { get; set; }
 
         private string _currentIcon;
 
