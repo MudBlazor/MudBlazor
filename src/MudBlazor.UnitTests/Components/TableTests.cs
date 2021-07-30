@@ -8,7 +8,6 @@ using System.Threading.Tasks;
 using AngleSharp.Dom;
 using Bunit;
 using FluentAssertions;
-using FluentAssertions;
 using MudBlazor.UnitTests.TestComponents;
 using NUnit.Framework;
 
