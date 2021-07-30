@@ -557,5 +557,26 @@ namespace MudBlazor.UnitTests.Components
             // Check that the date should remain the same because readonly is true
             picker.Date.Should().Be(now);
         }
+
+        [Test]
+        public async Task CheckDateTimeMinValueTest()
+        {
+            // Define the datetime minvalue for the date
+            var date = DateTime.MinValue;
+
+            // Get access to the datepicker of the instance
+            var comp = ctx.RenderComponent<DateTimeMinValueDatePickerTest>();
+            var datePicker = comp.FindComponent<MudDatePicker>();
+            
+            // Get the instance of the datepicker
+            var picker = comp.Instance;
+
+            // Open the datepicker
+            await comp.InvokeAsync(() => datePicker.Instance.Open());
+
+            // An error should be raised if the datepicker could not be not opened and the days could not generated
+            // It means that there would be an exception!
+            comp.FindAll("button.mud-picker-calendar-day").Where(x => x.TrimmedText().Equals("1")).First().Click();
+        }
     }
 }
