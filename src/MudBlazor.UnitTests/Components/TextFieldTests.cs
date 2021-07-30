@@ -19,29 +19,16 @@ using static Bunit.ComponentParameterFactory;
 
 namespace MudBlazor.UnitTests.Components
 {
-
     [TestFixture]
-    public class TextFieldTests
+    public class TextFieldTests : BunitTest
     {
-        private Bunit.TestContext ctx;
-
-        [SetUp]
-        public void Setup()
-        {
-            ctx = new Bunit.TestContext();
-            ctx.AddTestServices();
-        }
-
-        [TearDown]
-        public void TearDown() => ctx.Dispose();
-
         /// <summary>
         /// Initial Text for double should be 0, with F1 format it should be 0.0
         /// </summary>
         [Test]
         public async Task TextFieldTest1()
         {
-            var comp = ctx.RenderComponent<MudTextField<double>>();
+            var comp = Context.RenderComponent<MudTextField<double>>();
             // print the generated html
             Console.WriteLine(comp.Markup);
             // select elements needed for the test
@@ -64,7 +51,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void TextFieldTest2()
         {
-            var comp = ctx.RenderComponent<MudTextField<double?>>();
+            var comp = Context.RenderComponent<MudTextField<double?>>();
             // print the generated html
             Console.WriteLine(comp.Markup);
             // select elements needed for the test
@@ -80,7 +67,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task TextFieldWithNullableTypes()
         {
-            var comp = ctx.RenderComponent<MudTextField<int?>>(ComponentParameter.CreateParameter("Value", 17));
+            var comp = Context.RenderComponent<MudTextField<int?>>(ComponentParameter.CreateParameter("Value", 17));
             // print the generated html
             Console.WriteLine(comp.Markup);
             comp.SetParametersAndRender(ComponentParameter.CreateParameter("Value", null));
@@ -97,7 +84,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task TextFieldConversionError()
         {
-            var comp = ctx.RenderComponent<MudTextField<int?>>();
+            var comp = Context.RenderComponent<MudTextField<int?>>();
             // print the generated html
             //Console.WriteLine(comp.Markup);
             comp.Find("input").Change("seventeen");
@@ -116,7 +103,7 @@ namespace MudBlazor.UnitTests.Components
             //no interval passed, so, by default is 0
             // We pass the Immediate parameter set to true, in order to bind to oninput
             var immediate = Parameter(nameof(MudTextField<string>.Immediate), true);
-            var comp = ctx.RenderComponent<MudTextField<string>>(immediate);
+            var comp = Context.RenderComponent<MudTextField<string>>(immediate);
             var textField = comp.Instance;
             var input = comp.Find("input");
             //Act
@@ -134,7 +121,7 @@ namespace MudBlazor.UnitTests.Components
         public async Task ShouldRespectDebounceIntervalPropertyInTextFieldTest()
         {
             var interval = Parameter(nameof(MudTextField<string>.DebounceInterval), 200d);
-            var comp = ctx.RenderComponent<MudTextField<string>>(interval);
+            var comp = Context.RenderComponent<MudTextField<string>>(interval);
             var textField = comp.Instance;
             var input = comp.Find("input");
             //Act
@@ -203,7 +190,7 @@ namespace MudBlazor.UnitTests.Components
                 .NotEmpty()
                 .Length(1, 100)
                 .CreditCard());
-            var comp = ctx.RenderComponent<MudTextField<string>>(Parameter(nameof(MudTextField<string>.Validation), validator.Validation));
+            var comp = Context.RenderComponent<MudTextField<string>>(Parameter(nameof(MudTextField<string>.Validation), validator.Validation));
             var textfield = comp.Instance;
             Console.WriteLine(comp.Markup);
             // first try a valid credit card number
@@ -224,7 +211,7 @@ namespace MudBlazor.UnitTests.Components
         [Test, Timeout(1000)]
         public async Task TextFieldUpdateLoopProtectionTest()
         {
-            var comp = ctx.RenderComponent<MudTextField<string>>();
+            var comp = Context.RenderComponent<MudTextField<string>>();
             // these conversion funcs are nonsense of course, but they are designed this way to
             // test against an infinite update loop that textfields and other inputs are now protected against.
             var textfield = comp.Instance;
@@ -242,7 +229,7 @@ namespace MudBlazor.UnitTests.Components
         public async Task TextField_Should_FireValueChangedOnTextParameterChange()
         {
             string changed_value = null;
-            var comp = ctx.RenderComponent<MudTextField<string>>(EventCallback<string>("ValueChanged", x => changed_value = x));
+            var comp = Context.RenderComponent<MudTextField<string>>(EventCallback<string>("ValueChanged", x => changed_value = x));
             comp.SetParametersAndRender(ComponentParameter.CreateParameter("Text", "A"));
             changed_value.Should().Be("A");
         }
@@ -251,7 +238,7 @@ namespace MudBlazor.UnitTests.Components
         public async Task TextField_Should_FireTextChangedOnValueParameterChange()
         {
             string changed_text = null;
-            var comp = ctx.RenderComponent<MudTextField<string>>(EventCallback<string>("TextChanged", x => changed_text = x));
+            var comp = Context.RenderComponent<MudTextField<string>>(EventCallback<string>("TextChanged", x => changed_text = x));
             comp.SetParametersAndRender(ComponentParameter.CreateParameter("Value", "A"));
             changed_text.Should().Be("A");
         }
@@ -261,7 +248,7 @@ namespace MudBlazor.UnitTests.Components
         {
             string changed_value = null;
             string changed_text = null;
-            var comp = ctx.RenderComponent<MudTextField<string>>(
+            var comp = Context.RenderComponent<MudTextField<string>>(
                 EventCallback<string>("ValueChanged", x => changed_value = x),
                 EventCallback<string>("TextChanged", x => changed_text = x)
             );
@@ -278,7 +265,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task TextField_ShouldNot_ShowRequiredErrorWhenThereIsAConversionError()
         {
-            var comp = ctx.RenderComponent<MudTextField<int?>>(ComponentParameter.CreateParameter("Required", true));
+            var comp = Context.RenderComponent<MudTextField<int?>>(ComponentParameter.CreateParameter("Required", true));
             var textfield = comp.Instance;
             comp.Find("input").Change("A");
             comp.Find("input").Blur();
@@ -295,7 +282,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task TextField_ShouldNot_ShowRequiredErrorWhenInitialTextIsEmpty()
         {
-            var comp = ctx.RenderComponent<TextFieldRequiredTest>();
+            var comp = Context.RenderComponent<TextFieldRequiredTest>();
             var textfield = comp.FindComponent<MudTextField<string>>().Instance;
             textfield.Touched.Should().BeFalse();
             textfield.ErrorText.Should().BeNullOrEmpty();
@@ -308,14 +295,14 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task DebouncedTextField_ShouldNot_ThrowException()
         {
-            ctx.RenderComponent<DebouncedTextFieldTest>();
+            Context.RenderComponent<DebouncedTextFieldTest>();
         }
 
         [Test]
         public async Task TextFieldMultiline_CheckRenderedText()
         {
             var text = "Hello world!";
-            var comp = ctx.RenderComponent<MudTextField<string>>(
+            var comp = Context.RenderComponent<MudTextField<string>>(
                 Parameter(nameof(MudTextField<string>.Text), text),
                 Parameter(nameof(MudTextField<string>.Lines), 2));
             // print the generated html
@@ -328,7 +315,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task MultilineTextField_Should_UpdateTextOnInput()
         {
-            var comp = ctx.RenderComponent<MudTextField<string>>();
+            var comp = Context.RenderComponent<MudTextField<string>>();
             var textfield = comp.Instance;
             comp.Find("input").Change("A");
             comp.Find("input").Blur();
@@ -349,7 +336,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task MultiLineTextField_ShouldBe_TwoWayBindable()
         {
-            var comp = ctx.RenderComponent<MultilineTextfieldBindingTest>();
+            var comp = Context.RenderComponent<MultilineTextfieldBindingTest>();
             // print the generated html
             Console.WriteLine(comp.Markup);
             var tf1 = comp.FindComponents<MudTextField<string>>()[0].Instance;
@@ -375,7 +362,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task TextFieldClearableTest()
         {
-            var comp = ctx.RenderComponent<TextFieldClearableTest>();
+            var comp = Context.RenderComponent<TextFieldClearableTest>();
             var textField = comp.FindComponent<MudTextField<string>>();
             // No button when initialized
             comp.FindAll("button").Should().BeEmpty();
@@ -404,7 +391,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task TextField_Should_Validate_Data_Attribute_Fail()
         {
-            var comp = ctx.RenderComponent<TextFieldValidationDataAttrTest>();
+            var comp = Context.RenderComponent<TextFieldValidationDataAttrTest>();
             Console.WriteLine(comp.Markup);
             var textfieldcomp = comp.FindComponent<MudTextField<string>>();
             var textfield = textfieldcomp.Instance;
@@ -424,7 +411,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task TextField_Should_Validate_Data_Attribute_Success()
         {
-            var comp = ctx.RenderComponent<TextFieldValidationDataAttrTest>();
+            var comp = Context.RenderComponent<TextFieldValidationDataAttrTest>();
             Console.WriteLine(comp.Markup);
             var textfieldcomp = comp.FindComponent<MudTextField<string>>();
             var textfield = textfieldcomp.Instance;
@@ -457,7 +444,7 @@ namespace MudBlazor.UnitTests.Components
         public async Task TextField_Should_HaveCorrectMessageWithCustomAttr_Failing()
         {
             var model = new TestFailingModel();
-            var comp = ctx.RenderComponent<MudTextField<string>>(ComponentParameter.CreateParameter("For", (Expression<Func<string>>)(() => model.Foo)));
+            var comp = Context.RenderComponent<MudTextField<string>>(ComponentParameter.CreateParameter("For", (Expression<Func<string>>)(() => model.Foo)));
             await comp.InvokeAsync(() => comp.Instance.Validate());
             comp.Instance.Error.Should().BeTrue();
             comp.Instance.ValidationErrors.Should().HaveCount(1);
@@ -483,7 +470,7 @@ namespace MudBlazor.UnitTests.Components
         public async Task TextField_Should_HaveCorrectMessageWithCustomAttr_Throwing()
         {
             var model = new TestThrowingModel();
-            var comp = ctx.RenderComponent<MudTextField<string>>(ComponentParameter.CreateParameter("For", (Expression<Func<string>>)(() => model.Foo)));
+            var comp = Context.RenderComponent<MudTextField<string>>(ComponentParameter.CreateParameter("For", (Expression<Func<string>>)(() => model.Foo)));
             await comp.InvokeAsync(() => comp.Instance.Validate());
             comp.Instance.Error.Should().BeTrue();
             comp.Instance.ValidationErrors.Should().HaveCount(1);

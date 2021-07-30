@@ -13,31 +13,18 @@ using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Components
 {
-
     [TestFixture]
-    public class DialogTests
+    public class DialogTests : BunitTest
     {
-        private Bunit.TestContext ctx;
-
-        [SetUp]
-        public void Setup()
-        {
-            ctx = new Bunit.TestContext();
-            ctx.AddTestServices();
-        }
-
-        [TearDown]
-        public void TearDown() => ctx.Dispose();
-
         /// <summary>
         /// Opening and closing a simple dialog
         /// </summary>
         [Test]
         public async Task SimpleTest()
         {
-            var comp = ctx.RenderComponent<MudDialogProvider>();
+            var comp = Context.RenderComponent<MudDialogProvider>();
             comp.Markup.Trim().Should().BeEmpty();
-            var service = ctx.Services.GetService<IDialogService>() as DialogService;
+            var service = Context.Services.GetService<IDialogService>() as DialogService;
             service.Should().NotBe(null);
             IDialogReference dialogReference = null;
             // open simple test dialog
@@ -74,12 +61,12 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task InlineDialogTest()
         {
-            var comp = ctx.RenderComponent<MudDialogProvider>();
+            var comp = Context.RenderComponent<MudDialogProvider>();
             comp.Markup.Trim().Should().BeEmpty();
-            var service = ctx.Services.GetService<IDialogService>() as DialogService;
+            var service = Context.Services.GetService<IDialogService>() as DialogService;
             service.Should().NotBe(null);
             // displaying the component with the inline dialog only renders the open button
-            var comp1 = ctx.RenderComponent<TestInlineDialog>();
+            var comp1 = Context.RenderComponent<TestInlineDialog>();
             comp1.FindComponents<MudButton>().Count.Should().Be(1);
             Console.WriteLine("Open button: " + comp1.Markup);
             // open the dialog
@@ -100,12 +87,12 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task InlineDialog_Should_UpdateIsVisibleOnClose()
         {
-            var comp = ctx.RenderComponent<MudDialogProvider>();
+            var comp = Context.RenderComponent<MudDialogProvider>();
             comp.Markup.Trim().Should().BeEmpty();
-            var service = ctx.Services.GetService<IDialogService>() as DialogService;
+            var service = Context.Services.GetService<IDialogService>() as DialogService;
             service.Should().NotBe(null);
             // displaying the component with the inline dialog only renders the open button
-            var comp1 = ctx.RenderComponent<InlineDialogIsVisibleStateTest>();
+            var comp1 = Context.RenderComponent<InlineDialogIsVisibleStateTest>();
             // open the dialog
             comp1.Find("button").Click();
             Console.WriteLine("\nOpened dialog: " + comp.Markup);
@@ -131,9 +118,9 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task DialogShouldUpdateTitleContent()
         {
-            var comp = ctx.RenderComponent<MudDialogProvider>();
+            var comp = Context.RenderComponent<MudDialogProvider>();
             comp.Markup.Trim().Should().BeEmpty();
-            var service = ctx.Services.GetService<IDialogService>() as DialogService;
+            var service = Context.Services.GetService<IDialogService>() as DialogService;
             service.Should().NotBe(null);
             IDialogReference dialogReference = null;
             // open simple test dialog
@@ -155,9 +142,9 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task DialogShouldNotOverwriteParameters()
         {
-            var comp = ctx.RenderComponent<MudDialogProvider>();
+            var comp = Context.RenderComponent<MudDialogProvider>();
             comp.Markup.Trim().Should().BeEmpty();
-            var service = ctx.Services.GetService<IDialogService>() as DialogService;
+            var service = Context.Services.GetService<IDialogService>() as DialogService;
             service.Should().NotBe(null);
             IDialogReference dialogReference = null;
 
@@ -193,9 +180,9 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task DialogShouldHonorClassAndStyle()
         {
-            var comp = ctx.RenderComponent<MudDialogProvider>();
+            var comp = Context.RenderComponent<MudDialogProvider>();
             comp.Markup.Trim().Should().BeEmpty();
-            var service = ctx.Services.GetService<IDialogService>() as DialogService;
+            var service = Context.Services.GetService<IDialogService>() as DialogService;
             service.Should().NotBe(null);
             IDialogReference dialogReference = null;
             // open simple test dialog
@@ -212,12 +199,12 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task PassingEventCallbackToDialogViaParameters()
         {
-            var comp = ctx.RenderComponent<MudDialogProvider>();
+            var comp = Context.RenderComponent<MudDialogProvider>();
             comp.Markup.Trim().Should().BeEmpty();
-            var service = ctx.Services.GetService<IDialogService>() as DialogService;
+            var service = Context.Services.GetService<IDialogService>() as DialogService;
             service.Should().NotBe(null);
 
-            var testComp = ctx.RenderComponent<DialogWithEventCallbackTest>();
+            var testComp = Context.RenderComponent<DialogWithEventCallbackTest>();
             // open dialog
             testComp.Find("button").Click();
             // in the opened dialog find the text field
@@ -235,16 +222,16 @@ namespace MudBlazor.UnitTests.Components
         {
             //Remove default IDialogService so we can provide our custom implementation
             //This is not necessary in normal cases, you would rather just not register all services in the beginning, but the test environment requires here to do so.
-            ctx.Services.Remove(ctx.Services.FirstOrDefault(descriptor => descriptor.ServiceType == typeof(IDialogService)));
+            Context.Services.Remove(Context.Services.FirstOrDefault(descriptor => descriptor.ServiceType == typeof(IDialogService)));
             //Register our custom dialog service implementation as the new service instance behind IDialogService
-            ctx.Services.AddScoped<IDialogService>(sp => new CustomDialogService());
+            Context.Services.AddScoped<IDialogService>(sp => new CustomDialogService());
 
             //Render our dialog provider and make sure everything is fine
-            var comp = ctx.RenderComponent<MudDialogProvider>();
+            var comp = Context.RenderComponent<MudDialogProvider>();
             comp.Markup.Trim().Should().BeEmpty();
 
             //Try to get the current service instance for the type IDialogService and make sure it is our custom implementation
-            var service = ctx.Services.GetService<IDialogService>();
+            var service = Context.Services.GetService<IDialogService>();
             service.Should().NotBe(null);
             service.Should().BeAssignableTo(typeof(CustomDialogService));
 

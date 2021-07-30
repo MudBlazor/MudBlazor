@@ -11,23 +11,9 @@ using static Bunit.ComponentParameterFactory;
 
 namespace MudBlazor.UnitTests.Components
 {
-
     [TestFixture]
-    public class TimePickerTests
+    public class TimePickerTests : BunitTest
     {
-        private Bunit.TestContext ctx;
-
-        [SetUp]
-        public void Setup()
-        {
-            ctx = new Bunit.TestContext();
-            ctx.AddTestServices();
-        }
-
-        [TearDown]
-        public void TearDown() => ctx.Dispose();
-
-
         public IRenderedComponent<MudTimePicker> OpenPicker(ComponentParameter parameter)
         {
             return OpenPicker(new ComponentParameter[] { parameter });
@@ -38,11 +24,11 @@ namespace MudBlazor.UnitTests.Components
             IRenderedComponent<MudTimePicker> comp;
             if (parameters is null)
             {
-                comp = ctx.RenderComponent<MudTimePicker>();
+                comp = Context.RenderComponent<MudTimePicker>();
             }
             else
             {
-                comp = ctx.RenderComponent<MudTimePicker>(parameters);
+                comp = Context.RenderComponent<MudTimePicker>(parameters);
             }
 
             // should not be open
@@ -270,7 +256,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void InputStringValues_CheckParsing()
         {
-            var comp = ctx.RenderComponent<MudTimePicker>();
+            var comp = Context.RenderComponent<MudTimePicker>();
             var picker = comp.Instance;
             // valid time
             comp.Find("input").Change("23:02");
@@ -361,7 +347,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task Open_Programmatically_CheckOpen_Close_Programmatically_CheckClosed()
         {
-            var comp = ctx.RenderComponent<MudTimePicker>();
+            var comp = Context.RenderComponent<MudTimePicker>();
             Console.WriteLine(comp.Markup + "\n");
             comp.FindAll("div.mud-picker-content").Count.Should().Be(0);
             // clicking the button should open the picker

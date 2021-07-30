@@ -12,20 +12,8 @@ using NUnit.Framework;
 namespace MudBlazor.UnitTests.Components
 {
     [TestFixture]
-    public class TimelineTests
+    public class TimelineTests : BunitTest
     {
-        private Bunit.TestContext ctx;
-
-        [SetUp]
-        public void Setup()
-        {
-            ctx = new Bunit.TestContext();
-            ctx.AddTestServices();
-        }
-
-        [TearDown]
-        public void TearDown() => ctx.Dispose();
-
         /// <summary>
         /// Default Timeline, with five items.
         /// Testing if selection is sync with move commands.
@@ -33,7 +21,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task TimelineTest()
         {
-            var comp = ctx.RenderComponent<TimelineTest>();
+            var comp = Context.RenderComponent<TimelineTest>();
             // print the generated html
             Console.WriteLine(comp.Markup);
             //// select elements needed for the test

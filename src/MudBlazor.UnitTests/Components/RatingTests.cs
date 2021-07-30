@@ -8,29 +8,16 @@ using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Components
 {
-
     [TestFixture]
-    public class RatingTests
+    public class RatingTests : BunitTest
     {
-        private Bunit.TestContext ctx;
-
-        [SetUp]
-        public void Setup()
-        {
-            ctx = new Bunit.TestContext();
-            ctx.AddTestServices();
-        }
-
-        [TearDown]
-        public void TearDown() => ctx.Dispose();
-
         /// <summary>
         /// click should change selected value
         /// </summary>
         [Test]
         public void RatingTest1()
         {
-            var comp = ctx.RenderComponent<MudRating>();
+            var comp = Context.RenderComponent<MudRating>();
             Console.WriteLine(comp.Markup);
             // select elements needed for the test
             var ratingItemsSpans = comp.FindAll("span.mud-rating-item").ToArray();
@@ -70,7 +57,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void RatingTest2()
         {
-            var comp = ctx.RenderComponent<MudRating>();
+            var comp = Context.RenderComponent<MudRating>();
             Console.WriteLine(comp.Markup);
             // select elements needed for the test
             var ratingItemsSpans = comp.FindAll("span.mud-rating-item").ToArray();
@@ -109,7 +96,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void RatingTest3()
         {
-            var comp = ctx.RenderComponent<MudRating>(("SelectedValue", 3));
+            var comp = Context.RenderComponent<MudRating>(("SelectedValue", 3));
             // print the generated html
             Console.WriteLine(comp.Markup);
             // check initial state
@@ -122,7 +109,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void RatingTest4()
         {
-            var comp = ctx.RenderComponent<MudRating>(("Disabled", true), ("SelectedValue", 2));
+            var comp = Context.RenderComponent<MudRating>(("Disabled", true), ("SelectedValue", 2));
             // print the generated html
             Console.WriteLine(comp.Markup);
             // select elements needed for the test
@@ -158,7 +145,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void RatingTest5()
         {
-            var comp = ctx.RenderComponent<MudRating>(("MaxValue", 12));
+            var comp = Context.RenderComponent<MudRating>(("MaxValue", 12));
             // print the generated html
             Console.WriteLine(comp.Markup);
             // select elements needed for the test
@@ -171,7 +158,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void ReadOnlyRating_ShouldNotRenderInputs()
         {
-            var comp = ctx.RenderComponent<MudRating>(("ReadOnly", true));
+            var comp = Context.RenderComponent<MudRating>(("ReadOnly", true));
             comp.FindAll("input").Should().BeEmpty();
         }
     }
