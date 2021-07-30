@@ -109,7 +109,7 @@
                                         @if (tempId != 0 || !firstMonthFirstYear)
                                         {
                                             var selectedDay = !firstMonthFirstYear ? day : day.AddDays(-1);
-                                            <button @key="selectedDay" type="button" style="--day-id: @(!firstMonthFirstYear ? tempId: tempId + 1);"
+                                            <button @key="@(!firstMonthFirstYear ? selectedDay : tempId)" type="button" style="--day-id: @(!firstMonthFirstYear ? tempId: tempId + 1);"
                                                     class="mud-button-root mud-icon-button mud-ripple mud-ripple-icon mud-picker-calendar-day @(!firstMonthFirstYear || day.Day == _picker_month.Value.Day? GetDayClasses(tempMonth, day) : GetDayClasses(tempMonth, selectedDay))"
                                                     @onclick="(() => { var d = selectedDay; OnDayClicked(d); })"
                                                     @onclick:stopPropagation="true"
