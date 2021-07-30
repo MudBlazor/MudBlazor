@@ -343,8 +343,8 @@ namespace MudBlazor.UnitTests.Components
 
             picker.Text.Should().Be(RangeConverter<DateTime>.Join(textStart, textEnd));
             var inputs = comp.FindAll("input");
-            (inputs[0] as IHtmlInputElement).Value.Should().Be(textStart);
-            (inputs[1] as IHtmlInputElement).Value.Should().Be(textEnd);
+            ((IHtmlInputElement)inputs[0]).Value.Should().Be(textStart);
+            ((IHtmlInputElement)inputs[1]).Value.Should().Be(textEnd);
         }
 
         [Test]
@@ -362,7 +362,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = OpenPicker(Parameter(nameof(MudDateRangePicker.IsDateDisabledFunc), isDisabledFunc));
 
             comp.Instance.IsDateDisabledFunc.Should().Be(isDisabledFunc);
-            comp.FindAll("button.mud-picker-calendar-day").Select(button => (button as IHtmlButtonElement).IsDisabled)
+            comp.FindAll("button.mud-picker-calendar-day").Select(button => ((IHtmlButtonElement)button).IsDisabled)
                 .Should().OnlyContain(disabled => disabled == true);
         }
 
@@ -411,7 +411,7 @@ namespace MudBlazor.UnitTests.Components
         public void IsDateDisabledFunc_NoDisabledDatesByDefault()
         {
             var comp = OpenPicker();
-            comp.FindAll("button.mud-picker-calendar-day").Select(button => (button as IHtmlButtonElement).IsDisabled)
+            comp.FindAll("button.mud-picker-calendar-day").Select(button => ((IHtmlButtonElement)button).IsDisabled)
                 .Should().OnlyContain(disabled => disabled == false);
         }
 

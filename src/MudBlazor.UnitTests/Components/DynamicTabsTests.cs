@@ -59,7 +59,7 @@ namespace MudBlazor.UnitTests.Components
             comp.Nodes.Should().ContainSingle();
             comp.Nodes[0].Should().BeAssignableTo<IHtmlDivElement>();
 
-            (comp.Nodes[0] as IHtmlDivElement).ClassList.Should().BeEquivalentTo("mud-tabs", "mud-dynamic-tabs");
+            ((IHtmlDivElement)comp.Nodes[0]).ClassList.Should().BeEquivalentTo("mud-tabs", "mud-dynamic-tabs");
         }
 
         [Test]
