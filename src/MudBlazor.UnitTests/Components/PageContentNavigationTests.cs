@@ -1,5 +1,4 @@
 ﻿
-#pragma warning disable IDE1006 // leading underscore
 
 using System.Threading.Tasks;
 using Bunit;
