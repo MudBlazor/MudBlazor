@@ -16,7 +16,7 @@ namespace MudBlazor
             _inputConverter = new NumericBoundariesConverter<T>((val) => ConstrainBoundaries(val).value)
             {
                 FilterFunc = CleanText,
-                Culture = CultureInfo.InvariantCulture
+                Culture = CultureInfo.CurrentUICulture,
             };
 
             #region parameters default depending on T
