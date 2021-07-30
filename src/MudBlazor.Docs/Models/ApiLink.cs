@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using MudBlazor.Charts;
 
 namespace MudBlazor.Docs.Models
@@ -29,9 +28,9 @@ namespace MudBlazor.Docs.Models
         /// <summary>
         /// Converts a lowercase component name from an URL into the C# Type name.
         /// Examples: 
-        ///   table --> MudTable<T>
-        ///   button  MudButton
-        ///   appbar  AppBar
+        ///   table --> <see cref="MudTable{T}"/>
+        ///   button  <see cref="MudButton"/>
+        ///   appbar  <see cref="MudAppBar"/>
         /// </summary>
         public static Type GetTypeFromComponentLink(string component)
         {

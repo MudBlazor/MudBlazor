@@ -1,5 +1,5 @@
-﻿#pragma warning disable CS1998 // async without await
-#pragma warning disable IDE1006 // leading underscore
+﻿
+#pragma warning disable CS1998 // async without await
 
 using System.Threading.Tasks;
 using Bunit;
@@ -9,27 +9,15 @@ using NUnit.Framework;
 namespace MudBlazor.UnitTests.Components
 {
     [TestFixture]
-    public class PortalTests
+    public class PortalTests : BunitTest
     {
-        private Bunit.TestContext ctx;
-
-        [SetUp]
-        public void Setup()
-        {
-            ctx = new();
-            ctx.AddTestServices();
-        }
-
-        [TearDown]
-        public void TearDown() => ctx.Dispose();
-
         /// <summary>
         /// MudElement renders first an anchor and then a button
         /// </summary>
         [Test]
         public void Basic_Example_of_a_Portaled_Menu()
         {
-            var comp = ctx.RenderComponent<PortalMenuTest>();
+            var comp = Context.RenderComponent<PortalMenuTest>();
             var portalprovider = comp.Find("#mud-portal-container");
             //there is already 1 portal;
             var itemsNumber = portalprovider.GetAttribute("data-items");
@@ -58,7 +46,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void Basic_Example_of_a_Portaled_Select()
         {
-            var comp = ctx.RenderComponent<PortalSelectTest>();
+            var comp = Context.RenderComponent<PortalSelectTest>();
             var portalprovider = comp.Find("#mud-portal-container");
             //the portal provider has already 1 element;
             var itemsNumber = portalprovider.GetAttribute("data-items");
@@ -91,7 +79,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void Basic_Example_of_a_Portaled_Autocomplete()
         {
-            var comp = ctx.RenderComponent<PortalAutocompleteTest>();
+            var comp = Context.RenderComponent<PortalAutocompleteTest>();
             var portalprovider = comp.Find("#mud-portal-container");
 
             //The portal provider now has 1 menu inside
@@ -126,7 +114,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task Basic_Example_of_a_Portaled_Tooltip()
         {
-            var comp = ctx.RenderComponent<PortalTooltipTest>();
+            var comp = Context.RenderComponent<PortalTooltipTest>();
             var portalprovider = comp.Find("#mud-portal-container");
             //the portal provider has 1 item;
             var itemsNumber = portalprovider.GetAttribute("data-items");

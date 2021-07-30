@@ -3,32 +3,17 @@
 // See the LICENSE file in the project root for more information.
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Bunit;
 using FluentAssertions;
-using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.UnitTests.TestComponents;
 using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Components
 {
     [TestFixture]
-    public class TimelineTests
+    public class TimelineTests : BunitTest
     {
-        private Bunit.TestContext ctx;
-
-        [SetUp]
-        public void Setup()
-        {
-            ctx = new();
-            ctx.AddTestServices();
-        }
-
-        [TearDown]
-        public void TearDown() => ctx.Dispose();
-
         /// <summary>
         /// Default Timeline, with five items.
         /// Testing if selection is sync with move commands.
@@ -36,7 +21,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task TimelineTest()
         {
-            var comp = ctx.RenderComponent<TimelineTest>();
+            var comp = Context.RenderComponent<TimelineTest>();
             // print the generated html
             Console.WriteLine(comp.Markup);
             //// select elements needed for the test

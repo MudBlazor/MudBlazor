@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
-
-namespace MudBlazor.Interfaces
+﻿namespace MudBlazor.Interfaces
 {
     public interface IForm
     {

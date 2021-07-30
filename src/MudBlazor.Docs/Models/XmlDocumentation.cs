@@ -22,7 +22,7 @@ namespace MudBlazor.Docs.Models
         /// <typeparam name="AttributeType">The type of the custom attribute.</typeparam>
         /// <param name="assembly">The assembly to iterate through the events of.</param>
         /// <returns>The IEnumerable of the events with the provided attribute type.</returns>
-        public static System.Collections.Generic.IEnumerable<EventInfo> GetEventInfosWithAttribute<AttributeType>(this Assembly assembly)
+        public static IEnumerable<EventInfo> GetEventInfosWithAttribute<AttributeType>(this Assembly assembly)
             where AttributeType : Attribute
         {
             foreach (var type in assembly.GetTypes())
@@ -45,7 +45,7 @@ namespace MudBlazor.Docs.Models
         /// <typeparam name="AttributeType">The type of the custom attribute.</typeparam>
         /// <param name="assembly">The assembly to iterate through the constructors of.</param>
         /// <returns>The IEnumerable of the constructors with the provided attribute type.</returns>
-        public static System.Collections.Generic.IEnumerable<ConstructorInfo> GetConstructorInfosWithAttribute<AttributeType>(this Assembly assembly)
+        public static IEnumerable<ConstructorInfo> GetConstructorInfosWithAttribute<AttributeType>(this Assembly assembly)
             where AttributeType : Attribute
         {
             foreach (var type in assembly.GetTypes())
@@ -67,7 +67,7 @@ namespace MudBlazor.Docs.Models
         /// <typeparam name="AttributeType">The type of the custom attribute.</typeparam>
         /// <param name="assembly">The assembly to iterate through the properties of.</param>
         /// <returns>The IEnumerable of the properties with the provided attribute type.</returns>
-        public static System.Collections.Generic.IEnumerable<PropertyInfo> GetPropertyInfosWithAttribute<AttributeType>(this Assembly assembly)
+        public static IEnumerable<PropertyInfo> GetPropertyInfosWithAttribute<AttributeType>(this Assembly assembly)
             where AttributeType : Attribute
         {
             foreach (var type in assembly.GetTypes())
@@ -86,7 +86,7 @@ namespace MudBlazor.Docs.Models
             }
         }
 
-        public static System.Collections.Generic.IEnumerable<PropertyInfo> GetPropertyInfosWithAttribute<AttributeType>(this Type type)
+        public static IEnumerable<PropertyInfo> GetPropertyInfosWithAttribute<AttributeType>(this Type type)
             where AttributeType : Attribute
         {
             foreach (var propertyInfo in type.GetProperties(
@@ -106,7 +106,7 @@ namespace MudBlazor.Docs.Models
         /// <typeparam name="AttributeType">The type of the custom attribute.</typeparam>
         /// <param name="assembly">The assembly to iterate through the fields of.</param>
         /// <returns>The IEnumerable of the fields with the provided attribute type.</returns>
-        public static System.Collections.Generic.IEnumerable<FieldInfo> GetFieldInfosWithAttribute<AttributeType>(this Assembly assembly)
+        public static IEnumerable<FieldInfo> GetFieldInfosWithAttribute<AttributeType>(this Assembly assembly)
             where AttributeType : Attribute
         {
             foreach (var type in assembly.GetTypes())
@@ -129,7 +129,7 @@ namespace MudBlazor.Docs.Models
         /// <typeparam name="AttributeType">The type of the custom attribute.</typeparam>
         /// <param name="assembly">The assembly to iterate through the methods of.</param>
         /// <returns>The IEnumerable of the methods with the provided attribute type.</returns>
-        public static System.Collections.Generic.IEnumerable<MethodInfo> GetMethodInfosWithAttribute<AttributeType>(this Assembly assembly)
+        public static IEnumerable<MethodInfo> GetMethodInfosWithAttribute<AttributeType>(this Assembly assembly)
             where AttributeType : Attribute
         {
             foreach (var type in assembly.GetTypes())
@@ -152,7 +152,7 @@ namespace MudBlazor.Docs.Models
         /// <typeparam name="AttributeType">The type of the custom attribute.</typeparam>
         /// <param name="assembly">The assembly to iterate through the types of.</param>
         /// <returns>The IEnumerable of the types with the provided attribute type.</returns>
-        public static System.Collections.Generic.IEnumerable<Type> GetTypesWithAttribute<AttributeType>(this Assembly assembly)
+        public static IEnumerable<Type> GetTypesWithAttribute<AttributeType>(this Assembly assembly)
             where AttributeType : Attribute
         {
             foreach (var type in assembly.GetTypes())
@@ -168,7 +168,7 @@ namespace MudBlazor.Docs.Models
         /// <typeparam name="Base">The base type to get the deriving types of.</typeparam>
         /// <param name="assembly">The assmebly to perform the search on.</param>
         /// <returns>The IEnumerable of the types that derive from the provided base.</returns>
-        public static System.Collections.Generic.IEnumerable<Type> GetDerivedTypes<Base>(this Assembly assembly)
+        public static IEnumerable<Type> GetDerivedTypes<Base>(this Assembly assembly)
         {
             var @base = typeof(Base);
             return assembly.GetTypes().Where(type =>
@@ -236,8 +236,8 @@ namespace MudBlazor.Docs.Models
 
         #region XML Code Documentation
 
-        public static System.Collections.Generic.HashSet<Assembly> LoadedAssemblies = new();
-        public static System.Collections.Generic.Dictionary<string, string> LoadedXmlDocumentation = new();
+        public static HashSet<Assembly> LoadedAssemblies = new();
+        public static Dictionary<string, string> LoadedXmlDocumentation = new();
 
         public static void LoadXmlDocumentation(Assembly assembly)
         {
@@ -318,11 +318,11 @@ namespace MudBlazor.Docs.Models
         {
             LoadXmlDocumentation(methodInfo.DeclaringType.Assembly);
 
-            var typeGenericMap = new System.Collections.Generic.Dictionary<string, int>();
+            var typeGenericMap = new Dictionary<string, int>();
             var tempTypeGeneric = 0;
             Array.ForEach(methodInfo.DeclaringType.GetGenericArguments(), x => typeGenericMap[x.Name] = tempTypeGeneric++);
 
-            var methodGenericMap = new System.Collections.Generic.Dictionary<string, int>();
+            var methodGenericMap = new Dictionary<string, int>();
             var tempMethodGeneric = 0;
             Array.ForEach(methodInfo.GetGenericArguments(), x => methodGenericMap.Add(x.Name, tempMethodGeneric++));
 
@@ -366,12 +366,12 @@ namespace MudBlazor.Docs.Models
         {
             LoadXmlDocumentation(constructorInfo.DeclaringType.Assembly);
 
-            var typeGenericMap = new System.Collections.Generic.Dictionary<string, int>();
+            var typeGenericMap = new Dictionary<string, int>();
             var tempTypeGeneric = 0;
             Array.ForEach(constructorInfo.DeclaringType.GetGenericArguments(), x => typeGenericMap[x.Name] = tempTypeGeneric++);
 
             // constructors don't support generic types so this will always be empty
-            var methodGenericMap = new System.Collections.Generic.Dictionary<string, int>();
+            var methodGenericMap = new Dictionary<string, int>();
 
             var parameterInfos = constructorInfo.GetParameters();
 
@@ -397,8 +397,8 @@ namespace MudBlazor.Docs.Models
         public static string GetXmlDocumenationFormattedString(
             Type type,
             bool isMethodParameter,
-            System.Collections.Generic.Dictionary<string, int> typeGenericMap,
-            System.Collections.Generic.Dictionary<string, int> methodGenericMap)
+            Dictionary<string, int> typeGenericMap,
+            Dictionary<string, int> methodGenericMap)
         {
             if (type.IsGenericParameter)
             {

@@ -1,5 +1,4 @@
 ﻿#pragma warning disable CS1998 // async without await
-#pragma warning disable IDE1006 // leading underscore
 
 using System;
 using System.Threading.Tasks;
@@ -11,27 +10,15 @@ using NUnit.Framework;
 namespace MudBlazor.UnitTests.Components
 {
     [TestFixture]
-    public class ListTests
+    public class ListTests : BunitTest
     {
-        private Bunit.TestContext ctx;
-
-        [SetUp]
-        public void Setup()
-        {
-            ctx = new();
-            ctx.AddTestServices();
-        }
-
-        [TearDown]
-        public void TearDown() => ctx.Dispose();
-
         /// <summary>
         /// Clicking the drinks selects them. The child lists are updated accordingly, meaning, only ever 1 list item can have the active class.
         /// </summary>
         [Test]
         public async Task ListSelectionTest()
         {
-            var comp = ctx.RenderComponent<ListSelectionTest>();
+            var comp = Context.RenderComponent<ListSelectionTest>();
             Console.WriteLine(comp.Markup);
             var list = comp.FindComponent<MudList>().Instance;
             list.SelectedItem.Should().Be(null);

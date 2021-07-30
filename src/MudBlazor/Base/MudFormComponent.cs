@@ -276,7 +276,7 @@ namespace MudBlazor
         protected virtual bool HasValue(T value)
         {
             if (typeof(T) == typeof(string))
-                return !string.IsNullOrWhiteSpace(value as string);
+                return !IsNullOrWhiteSpace(value as string);
 
             return value != null;
         }

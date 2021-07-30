@@ -441,7 +441,7 @@ namespace MudBlazor
                 return;
             }
             var actualvalueStr = GetItemString(Value);
-            if (!object.Equals(actualvalueStr, Text))
+            if (!Equals(actualvalueStr, Text))
             {
                 _timer?.Dispose();
                 await SetTextAsync(actualvalueStr);

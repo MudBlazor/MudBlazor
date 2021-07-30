@@ -3,12 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
-using System.Windows.Input;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Rendering;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Extensions;
-using MudBlazor.Utilities;
 
 
 namespace MudBlazor
@@ -361,7 +359,7 @@ namespace MudBlazor
 
         public override void SetEditingItem(object item)
         {
-            if (!Object.ReferenceEquals(_editingItem, item))
+            if (!ReferenceEquals(_editingItem, item))
                 _editingItem = item;
         }
 
