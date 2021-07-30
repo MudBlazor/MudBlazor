@@ -125,8 +125,7 @@ namespace MudBlazor
 
         internal async Task UpdateSelectedItems()
         {
-            if (_selectedValues == null)
-                _selectedValues = new HashSet<MudTreeViewItem<T>>();
+            _selectedValues ??= new HashSet<MudTreeViewItem<T>>();
 
             //collect selected items
             _selectedValues.Clear();

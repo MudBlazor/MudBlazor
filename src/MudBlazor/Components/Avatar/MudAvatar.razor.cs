@@ -69,18 +69,12 @@ namespace MudBlazor
         {
             base.OnInitialized();
 
-            if (AvatarGroup != null)
-            {
-                AvatarGroup.AddAvatar(this);
-            }
+            AvatarGroup?.AddAvatar(this);
         }
 
         protected void Dispose()
         {
-            if (AvatarGroup != null)
-            {
-                AvatarGroup.RemoveAvatar(this);
-            }
+            AvatarGroup?.RemoveAvatar(this);
         }
 
         internal void ForceRedraw()
