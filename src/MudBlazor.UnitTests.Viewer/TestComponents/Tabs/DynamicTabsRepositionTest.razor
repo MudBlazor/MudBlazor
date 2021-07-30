@@ -2,7 +2,7 @@
 
 <MudForm>
 	<MudSwitch T="bool" @bind-Checked="@_isCentered" Label="Centered Tabs"/>
-	<MudRadioGroup @bind-SelectedOption="@Position">
+	<MudRadioGroup @bind-SelectedOption="@_position">
 		<MudRadio Option="@(Position.Bottom)">Bottom</MudRadio>
 		<MudRadio Option="@(Position.Center)">Center</MudRadio>
 		<MudRadio Option="@(Position.Top)">Top</MudRadio>
@@ -17,7 +17,7 @@
 		CloseIconClass="my-close-icon-class" CloseTab="OnCloseClicked"
 		AddIconClass="my-add-icon-class" AddTab="OnAddClicked"
 		Centered="@_isCentered"
-		Position="@Position"
+		Position="@_position"
 >
 	@foreach(var panel in _panels)
 	{
@@ -30,7 +30,7 @@
 @code {
 
 	bool _isCentered = false;
-	public Position Position { get; set; } = Position.Top;
+	Position _position { get; set; } = Position.Center;
 	List<string> _panels = new List<string>() { "Untitled" };
 
 	public Int32 AddClickCounter { get; private set; }
