@@ -71,6 +71,10 @@ namespace MudBlazor.UnitTests.Components
         [SetUp]
         public void Setup()
         {
+            // note, since this test suite is comparing stringified double values we need to force the UI culture here ...
+            // ... or else it will fail on all computers with a locale that uses comma as separator.
+            CultureInfo.CurrentUICulture = CultureInfo.InvariantCulture;
+
             _eventListener = new MockEventListener();
 
             ctx = new Bunit.TestContext();
