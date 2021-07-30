@@ -11,7 +11,7 @@ namespace MudBlazor
     public partial class MudChip : MudComponentBase, IDisposable
     {
         private bool _isSelected;
-        [Inject] public Microsoft.AspNetCore.Components.NavigationManager UriHelper { get; set; }
+        [Inject] public NavigationManager UriHelper { get; set; }
 
         [Inject] public IJsApiService JsApiService { get; set; }
 
