@@ -11,29 +11,16 @@ using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Components
 {
-
     [TestFixture]
-    public class ChartTests
+    public class ChartTests : BunitTest
     {
-        private Bunit.TestContext ctx;
-
-        [SetUp]
-        public void Setup()
-        {
-            ctx = new Bunit.TestContext();
-            ctx.AddTestServices();
-        }
-
-        [TearDown]
-        public void TearDown() => ctx.Dispose();
-
         /// <summary>
         /// single checkbox, initialized false, check -  uncheck
         /// </summary>
         [Test]
         public void PieChartSelectionTest()
         {
-            var comp = ctx.RenderComponent<PieExample1>();
+            var comp = Context.RenderComponent<PieExample1>();
             // print the generated html
             Console.WriteLine(comp.Markup);
             comp.Find("h6").InnerHtml.Trim().Should().Be("Selected portion of the chart: -1");
@@ -47,7 +34,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void DonutChartSelectionTest()
         {
-            var comp = ctx.RenderComponent<DonutExample1>();
+            var comp = Context.RenderComponent<DonutExample1>();
             // print the generated html
             Console.WriteLine(comp.Markup);
             comp.Find("h6").InnerHtml.Trim().Should().Be("Selected portion of the chart: -1");
@@ -61,7 +48,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void LineChartSelectionTest()
         {
-            var comp = ctx.RenderComponent<LineExample1>();
+            var comp = Context.RenderComponent<LineExample1>();
             // print the generated html
             Console.WriteLine(comp.Markup);
             comp.Find("h6").InnerHtml.Trim().Should().Be("Selected portion of the chart: -1");
@@ -75,7 +62,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void BarChartSelectionTest()
         {
-            var comp = ctx.RenderComponent<BarExample1>();
+            var comp = Context.RenderComponent<BarExample1>();
             // print the generated html
             Console.WriteLine(comp.Markup);
             comp.Find("h6").InnerHtml.Trim().Should().Be("Selected portion of the chart: -1");
@@ -99,7 +86,7 @@ namespace MudBlazor.UnitTests.Components
             string width = "100%";
             string height = "350px";
 
-            var comp = ctx.RenderComponent<MudChart>(parameters => parameters
+            var comp = Context.RenderComponent<MudChart>(parameters => parameters
               .Add(p => p.ChartType, ChartType.Line)
               .Add(p => p.ChartSeries, series)
               .Add(p => p.XAxisLabels, xAxis)
@@ -152,7 +139,7 @@ namespace MudBlazor.UnitTests.Components
         {
             // the test should run through instantly (max 5s for a slow build server). 
             // without the fix it took minutes on a fast computer
-            var comp = ctx.RenderComponent<LineChartWithBigValuesTest>();
+            var comp = Context.RenderComponent<LineChartWithBigValuesTest>();
         }
     }
 }
