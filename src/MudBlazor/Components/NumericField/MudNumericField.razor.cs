@@ -12,7 +12,7 @@ namespace MudBlazor
     {
         public MudNumericField() : base()
         {
-            _validateInstance = new Func<T, Task<bool>>(ValidateInput);
+            Validation = new Func<T, Task<bool>>(ValidateInput);
             _inputConverter = new NumericBoundariesConverter<T>((val) => ConstrainBoundaries(val).value)
             {
                 FilterFunc = CleanText,
@@ -114,8 +114,6 @@ namespace MudBlazor
                            (HideSpinButtons ? "mud-input-nospin" : "mud-input-showspin"))
                 .AddClass(Class)
                 .Build();
-
-        private Func<T, Task<bool>> _validateInstance;
 
         private MudInput<string> _elementReference;
 
