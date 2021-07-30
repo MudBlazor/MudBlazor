@@ -1,4 +1,6 @@
-﻿.mud-input {
+﻿@import '../abstracts/mixins';
+
+.mud-input {
     position: relative;
     color: var(--mud-palette-text-primary);
     cursor: text;
@@ -485,6 +487,10 @@
 .mud-range-input-separator {
     visibility: hidden;
     margin: 0 4px;
+    
+    @include rtl {
+        transform: scaleX(-1);
+    }
 }
 
 .mud-input:focus-within .mud-range-input-separator {
