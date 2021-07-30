@@ -1,0 +1,11 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudPagination Color="Color.Primary" Count="11" @bind-Selected="@_selected"/>
+<MudPagination Color="Color.Default" Count="11" @bind-Selected="@_selected"/>
+<MudPagination Color="Color.Secondary" Count="11" @bind-Selected="@_selected"/>
+<MudPagination Disabled="true" Count="11" @bind-Selected="@_selected"/>
+<MudText>Selected page: @_selected</MudText>
+
+@code {
+    private int _selected = 1;
+}
