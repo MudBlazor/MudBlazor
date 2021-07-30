@@ -12,11 +12,11 @@ namespace MudBlazor
     {
         public MudNumericField() : base()
         {
-            _validateInstance = new Func<T, Task<bool>>(ValidateInput);
+            Validation = new Func<T, Task<bool>>(ValidateInput);
             _inputConverter = new NumericBoundariesConverter<T>((val) => ConstrainBoundaries(val).value)
             {
                 FilterFunc = CleanText,
-                Culture = CultureInfo.InvariantCulture
+                Culture = CultureInfo.CurrentUICulture,
             };
 
             #region parameters default depending on T
@@ -115,8 +115,6 @@ namespace MudBlazor
                 .AddClass(Class)
                 .Build();
 
-        private Func<T, Task<bool>> _validateInstance;
-
         private MudInput<string> _elementReference;
 
         private Converter<string> _inputConverter;
@@ -159,166 +157,45 @@ namespace MudBlazor
             return true; //Don't show errors
         }
 
-        #region Numeric range
-
-        public async Task Increment()
+        /// <summary>
+        /// Decrements or increments depending on factor
+        /// </summary>
+        /// <param name="factor">Multiplication factor (1 or -1) will be applied to the step</param>
+        private async Task Change(double factor = 1)
         {
-            dynamic val;
-            try
-            {
-                checked
-                {
-                    val = Value switch
-                    {
-                        sbyte b => b + (sbyte)(object)Step,
-                        byte b => b + (byte)(object)Step,
-                        short i => i + (short)(object)Step,
-                        ushort i => i + (ushort)(object)Step,
-                        int i => i + (int)(object)Step,
-                        uint i => i + (uint)(object)Step,
-                        long i => i + (long)(object)Step,
-                        ulong i => i + (ulong)(object)Step,
-                        float f => f + (float)(object)Step,
-                        double d => d + (double)(object)Step,
-                        decimal d => d + (decimal)(object)Step,
-                        _ => Value
-                    };
-                }
-            }
-            catch (OverflowException)
-            {
-                val = Max;
-            }
-
-            await SetValueAsync(ConstrainBoundaries((T)val).value);
+            var value = Num.To<T>(Num.From(Value) + Num.From(Step) * factor);
+            await SetValueAsync(ConstrainBoundaries(value).value);
         }
 
-        public async Task Decrement()
-        {
-            dynamic val;
-            try
-            {
-                checked
-                {
-                    val = Value switch
-                    {
-                        sbyte b => b - (sbyte)(object)Step,
-                        byte b => b - (byte)(object)Step,
-                        short i => i - (short)(object)Step,
-                        ushort i => i - (ushort)(object)Step,
-                        int i => i - (int)(object)Step,
-                        uint i => i - (uint)(object)Step,
-                        long i => i - (long)(object)Step,
-                        ulong i => i - (ulong)(object)Step,
-                        float f => f - (float)(object)Step,
-                        double d => d - (double)(object)Step,
-                        decimal d => d - (decimal)(object)Step,
-                        _ => Value,
-                    };
-                }
-            }
-            catch (OverflowException)
-            {
-                val = Min;
-            }
+        /// <summary>
+        /// Adds a Step to the Value
+        /// </summary>
+        public Task Increment() => Change(factor: 1);
 
-            await SetValueAsync(ConstrainBoundaries((T)val).value);
-        }
+
+        /// <summary>
+        /// Substracts a Step from the Value
+        /// </summary>
+        public Task Decrement() => Change(factor: -1);
 
         /// <summary>
         /// Checks if the value respects the boundaries set for this instance.
         /// </summary>
-        /// <param name="value">Value to check.</param>
+        /// <param name="v">Value to check.</param>
         /// <returns>Returns a valid value and if it has been changed.</returns>
-        protected (T value, bool changed) ConstrainBoundaries(T value)
+        protected (T value, bool changed) ConstrainBoundaries(T v)
         {
+            var value = Num.From(v);
+            var max = Num.From(Max);
+            var min = Num.From(Min);
             //check if Max/Min has value, if not use MaxValue/MinValue for that data type
-            switch (value)
-            {
-                case sbyte b:
-                    if (b > (sbyte)(object)Max)
-                        return (Max, true);
-                    else if (b < (sbyte)(object)Min)
-                        return (Min, true);
-                    break;
-
-                case byte b:
-                    if (b > (byte)(object)Max)
-                        return (Max, true);
-                    else if (b < (byte)(object)Min)
-                        return (Min, true);
-                    break;
-
-                case short i:
-                    if (i > (short)(object)Max)
-                        return (Max, true);
-                    else if (i < (short)(object)Min)
-                        return (Min, true);
-                    break;
-
-                case ushort i:
-                    if (i > (ushort)(object)Max)
-                        return (Max, true);
-                    else if (i < (ushort)(object)Min)
-                        return (Min, true);
-                    break;
-
-                case int i:
-                    if (i > (int)(object)Max)
-                        return (Max, true);
-                    else if (i < (int)(object)Min)
-                        return (Min, true);
-                    break;
-
-                case uint i:
-                    if (i > (uint)(object)Max)
-                        return (Max, true);
-                    else if (i < (uint)(object)Min)
-                        return (Min, true);
-                    break;
-
-                case long i:
-                    if (i > (long)(object)Max)
-                        return (Max, true);
-                    else if (i < (long)(object)Min)
-                        return (Min, true);
-                    break;
-
-                case ulong i:
-                    if (i > (ulong)(object)Max)
-                        return (Max, true);
-                    else if (i < (ulong)(object)Min)
-                        return (Min, true);
-                    break;
-
-                case float f:
-                    if (f > (float)(object)Max)
-                        return (Max, true);
-                    else if (f < (float)(object)Min)
-                        return (Min, true);
-                    break;
-
-                case double d:
-                    if (d > (double)(object)Max)
-                        return (Max, true);
-                    else if (d < (double)(object)Min)
-                        return (Min, true);
-                    break;
-
-                case decimal d:
-                    if (d > (decimal)(object)Max)
-                        return (Max, true);
-                    else if (d < (decimal)(object)Min)
-                        return (Min, true);
-                    break;
-            }
-
-            ;
-
-            return (value, false);
+            if (value > max)
+                return (Max, true);
+            else if (value < min)
+                return (Min, true);
+            return (Num.To<T>(value), false);
         }
 
-        #endregion Numeric range
 
         private long _key = 0;
         private bool _keyDownPreventDefault;
@@ -550,5 +427,6 @@ namespace MudBlazor
 
             return cleanedText;
         }
+
     }
 }

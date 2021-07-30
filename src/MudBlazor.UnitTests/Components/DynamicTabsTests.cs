@@ -1,5 +1,5 @@
-﻿#pragma warning disable CS1998 // async without await
-#pragma warning disable IDE1006 // leading underscore
+﻿
+#pragma warning disable CS1998 // async without await
 
 using System;
 using System.Threading.Tasks;
@@ -15,28 +15,15 @@ using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Components
 {
-
     [TestFixture]
-    public class DynamicTabsTests
+    public class DynamicTabsTests : BunitTest
     {
-        private Bunit.TestContext ctx;
-
-        [SetUp]
-        public void Setup()
-        {
-            ctx = new Bunit.TestContext();
-            ctx.AddTestServices();
-        }
-
-        [TearDown]
-        public void TearDown() => ctx.Dispose();
-
         [Test]
         public async Task DefaultValues()
         {
-            ctx.Services.Add(new ServiceDescriptor(typeof(IResizeObserver), new MockResizeObserver()));
+            Context.Services.Add(new ServiceDescriptor(typeof(IResizeObserver), new MockResizeObserver()));
 
-            var comp = ctx.RenderComponent<MudDynamicTabs>();
+            var comp = Context.RenderComponent<MudDynamicTabs>();
             var tabs = comp.Instance;
 
             tabs.Header.Should().NotBeNull();
@@ -65,9 +52,9 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task BasicParameters()
         {
-            ctx.Services.Add(new ServiceDescriptor(typeof(IResizeObserver), new MockResizeObserver()));
+            Context.Services.Add(new ServiceDescriptor(typeof(IResizeObserver), new MockResizeObserver()));
 
-            var comp = ctx.RenderComponent<SimpleDynamicTabsTest>();
+            var comp = Context.RenderComponent<SimpleDynamicTabsTest>();
             Console.WriteLine(comp.Markup);
 
             // three panels three close icons;
@@ -104,9 +91,9 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task BasicParameters_WithToolTips()
         {
-            ctx.Services.Add(new ServiceDescriptor(typeof(IResizeObserver), new MockResizeObserver()));
+            Context.Services.Add(new ServiceDescriptor(typeof(IResizeObserver), new MockResizeObserver()));
 
-            var comp = ctx.RenderComponent<SimpleDynamicTabsTestWithToolTips>();
+            var comp = Context.RenderComponent<SimpleDynamicTabsTestWithToolTips>();
             Console.WriteLine(comp.Markup);
 
             // three panels three close icons;
@@ -157,8 +144,8 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task TestInteractions_AddTab()
         {
-            ctx.Services.Add(new ServiceDescriptor(typeof(IResizeObserver), new MockResizeObserver()));
-            var comp = ctx.RenderComponent<SimpleDynamicTabsInteractionTest>();
+            Context.Services.Add(new ServiceDescriptor(typeof(IResizeObserver), new MockResizeObserver()));
+            var comp = Context.RenderComponent<SimpleDynamicTabsInteractionTest>();
 
             Console.WriteLine(comp.Markup);
 
@@ -172,8 +159,8 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task TestInteractions_RemoveTab()
         {
-            ctx.Services.Add(new ServiceDescriptor(typeof(IResizeObserver), new MockResizeObserver()));
-            var comp = ctx.RenderComponent<SimpleDynamicTabsInteractionTest>();
+            Context.Services.Add(new ServiceDescriptor(typeof(IResizeObserver), new MockResizeObserver()));
+            var comp = Context.RenderComponent<SimpleDynamicTabsInteractionTest>();
 
             Console.WriteLine(comp.Markup);
 

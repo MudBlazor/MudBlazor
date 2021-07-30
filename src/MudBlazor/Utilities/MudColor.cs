@@ -332,7 +332,7 @@ namespace MudBlazor.Utilities
 
         public bool Equals(MudColor other)
         {
-            if (object.ReferenceEquals(other, null) == true) { return false; }
+            if (ReferenceEquals(other, null) == true) { return false; }
 
             return
                 _valuesAsByte[0] == other._valuesAsByte[0] &&
@@ -345,8 +345,8 @@ namespace MudBlazor.Utilities
 
         public static bool operator ==(MudColor lhs, MudColor rhs)
         {
-            var lhsIsNull = object.ReferenceEquals(null, lhs);
-            var rhsIsNull = object.ReferenceEquals(null, rhs);
+            var lhsIsNull = ReferenceEquals(null, lhs);
+            var rhsIsNull = ReferenceEquals(null, rhs);
             if (lhsIsNull == true && rhsIsNull == true)
             {
                 return true;
