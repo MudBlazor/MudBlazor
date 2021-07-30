@@ -366,7 +366,7 @@ namespace MudBlazor
 
         public override void SetEditingItem(object item)
         {
-            if (!Object.ReferenceEquals(_editingItem, item))
+            if (!ReferenceEquals(_editingItem, item))
                 _editingItem = item;
         }
 
