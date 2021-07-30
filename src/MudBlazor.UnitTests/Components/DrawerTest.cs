@@ -13,7 +13,7 @@ using MudBlazor.UnitTests.TestComponents;
 using NUnit.Framework;
 using static Bunit.ComponentParameterFactory;
 
-namespace MudBlazor.UnitTests.Components.Components
+namespace MudBlazor.UnitTests.Components
 {
     [TestFixture]
     public class DrawerTest
