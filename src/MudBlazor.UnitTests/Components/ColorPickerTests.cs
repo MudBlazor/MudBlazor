@@ -13,12 +13,10 @@ using Bunit;
 using FluentAssertions;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.Extensions.DependencyInjection;
-using MudBlazor.Services;
 using MudBlazor.UnitTests.Mocks;
 using MudBlazor.UnitTests.TestComponents;
 using MudBlazor.Utilities;
 using NUnit.Framework;
-using static Bunit.ComponentParameterFactory;
 
 namespace MudBlazor.UnitTests.Components.Components
 {
@@ -887,7 +885,7 @@ namespace MudBlazor.UnitTests.Components.Components
                 colorElement.Click();
 
                 comp.Instance.ColorValue.Should().Be(expectedColor);
-                comp.Find(".mud-picker-color-view-collection").Children[i].ClassList.Should().BeEquivalentTo(new[] { "mud-picker-color-dot", "selected" });
+                comp.Find(".mud-picker-color-view-collection").Children[i].ClassList.Should().BeEquivalentTo("mud-picker-color-dot", "selected");
 
             }
         }
@@ -942,7 +940,7 @@ namespace MudBlazor.UnitTests.Components.Components
                 colorElement.Click();
                 comp.Instance.ColorValue.Should().Be(expectedColor);
 
-                comp.Find(".mud-picker-color-grid").Children[i].ClassList.Should().BeEquivalentTo(new[] { "mud-picker-color-dot", "selected" });
+                comp.Find(".mud-picker-color-grid").Children[i].ClassList.Should().BeEquivalentTo("mud-picker-color-dot", "selected");
             }
         }
 
@@ -1001,7 +999,7 @@ namespace MudBlazor.UnitTests.Components.Components
                 colorElement.Click();
                 comp.Instance.ColorValue.Should().Be(expectedColor);
 
-                comp.Find(".mud-picker-color-grid").Children[i].ClassList.Should().BeEquivalentTo(new[] { "mud-picker-color-dot", "selected" });
+                comp.Find(".mud-picker-color-grid").Children[i].ClassList.Should().BeEquivalentTo("mud-picker-color-dot", "selected");
             }
         }
 

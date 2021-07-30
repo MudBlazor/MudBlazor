@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Microsoft.AspNetCore.Components;
-using MudBlazor;
 using MudBlazor.Charts.SVG.Models;
 using MudBlazor.Components.Chart;
 using MudBlazor.Components.Chart.Interpolation;
-using static MudBlazor.ChartOptions;
 
 namespace MudBlazor.Charts
 {

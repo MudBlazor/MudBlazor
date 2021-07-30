@@ -4,7 +4,6 @@ using Bunit;
 using FluentAssertions;
 using MudBlazor.UnitTests.TestComponents;
 using NUnit.Framework;
-using NUnit.Framework.Internal;
 
 namespace MudBlazor.UnitTests.Components
 {

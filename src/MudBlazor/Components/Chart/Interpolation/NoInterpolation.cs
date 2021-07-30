@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace MudBlazor.Components.Chart.Interpolation
+﻿namespace MudBlazor.Components.Chart.Interpolation
 {
     public class NoInterpolation : ILineInterpolator
     {

@@ -7,7 +7,6 @@ using System.Linq;
 using System.Threading;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Routing;
-using Microsoft.Extensions.Options;
 
 namespace MudBlazor
 {

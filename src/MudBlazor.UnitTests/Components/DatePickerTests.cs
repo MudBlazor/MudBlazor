@@ -10,11 +10,9 @@ using System.Threading.Tasks;
 using AngleSharp.Html.Dom;
 using Bunit;
 using FluentAssertions;
-using MudBlazor.Extensions;
 using MudBlazor.UnitTests.TestComponents;
 using MudBlazor.UnitTests.TestComponents.DatePicker;
 using NUnit.Framework;
-using NUnit.Framework.Internal;
 using static Bunit.ComponentParameterFactory;
 
 namespace MudBlazor.UnitTests.Components

@@ -30,10 +30,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void AppBarWithModifiedToolBarClass()
         {
-            var comp = ctx.RenderComponent<MudAppBar>(new[]
-            {
-                Parameter(nameof(MudAppBar.ToolBarClass), "test-class")
-            });
+            var comp = ctx.RenderComponent<MudAppBar>(Parameter(nameof(MudAppBar.ToolBarClass), "test-class"));
 
             // Find the Toolbar inside the AppBar
             comp.Find("div").ToMarkup()
