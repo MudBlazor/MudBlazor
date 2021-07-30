@@ -439,7 +439,7 @@ namespace MudBlazor.UnitTests
         [TestCase(5.0)]
         public async Task NumericField_Validation<T>(T value)
         {
-            var comp = ctx.RenderComponent<MudNumericField<T>>();
+            var comp = Context.RenderComponent<MudNumericField<T>>();
             comp.SetParam(x => x.Max, value);
             comp.SetParam(x => x.Min, value);
             comp.SetParam(x => x.Value, value);
@@ -455,7 +455,7 @@ namespace MudBlazor.UnitTests
         public async Task NumericField_Validation_Decimal()
         {
             var value = 5M;
-            var comp = ctx.RenderComponent<MudNumericField<decimal>>();
+            var comp = Context.RenderComponent<MudNumericField<decimal>>();
             comp.SetParam(x => x.Max, value);
             comp.SetParam(x => x.Min, value);
             comp.SetParam(x => x.Value, value);
@@ -471,7 +471,7 @@ namespace MudBlazor.UnitTests
         public async Task NumericField_Validation_NullableInt()
         {
             int? value = 5;
-            var comp = ctx.RenderComponent<MudNumericField<int?>>();
+            var comp = Context.RenderComponent<MudNumericField<int?>>();
             comp.SetParam(x => x.Max, value);
             comp.SetParam(x => x.Min, value);
             comp.SetParam(x => x.Value, value);
@@ -495,7 +495,7 @@ namespace MudBlazor.UnitTests
         [TestCase(5.0)]
         public async Task NumericField_Increment_Decrement<T>(T value)
         {
-                var comp = ctx.RenderComponent<MudNumericField<T>>();
+                var comp = Context.RenderComponent<MudNumericField<T>>();
                 comp.SetParam(x => x.Max, 10);
                 comp.SetParam(x => x.Min, -10);
                 comp.SetParam(x=>x.Step, value);
@@ -515,7 +515,7 @@ namespace MudBlazor.UnitTests
         public async Task NumericField_Increment_Decrement_Decimal()
         {
             var value = 5M;
-            var comp = ctx.RenderComponent<MudNumericField<decimal>>();
+            var comp = Context.RenderComponent<MudNumericField<decimal>>();
             comp.SetParam(x => x.Max, 10);
             comp.SetParam(x => x.Min, -10);
             comp.SetParam(x => x.Step, value);
@@ -535,7 +535,7 @@ namespace MudBlazor.UnitTests
         public async Task NumericField_Increment_Decrement_NullableInt()
         {
             int? value = 5;
-            var comp = ctx.RenderComponent<MudNumericField<int?>>();
+            var comp = Context.RenderComponent<MudNumericField<int?>>();
             comp.SetParam(x => x.Max, 10);
             comp.SetParam(x => x.Min, -10);
             comp.SetParam(x => x.Step, value);
