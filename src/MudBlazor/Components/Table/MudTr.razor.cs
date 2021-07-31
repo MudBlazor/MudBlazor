@@ -9,7 +9,7 @@ namespace MudBlazor
     {
         private bool hasBeenCanceled;
         private bool hasBeenCommitted;
-        private bool hasBeenClikedFirstTime;
+        private bool hasBeenClickedFirstTime;
 
         internal object _itemCopy;
 
@@ -65,10 +65,10 @@ namespace MudBlazor
             Context?.Table.SetSelectedItem(Item);
 
             // Manage edition the first time the row is clicked and if the table is editable
-            if (!hasBeenClikedFirstTime && IsEditable)
+            if (!hasBeenClickedFirstTime && IsEditable)
             {
                 // Sets hasBeenClickedFirstTime to true
-                hasBeenClikedFirstTime = true;
+                hasBeenClickedFirstTime = true;
 
                 // Set to false that the item has been committed
                 // Set to false that the item has been cancelled
@@ -133,7 +133,7 @@ namespace MudBlazor
             hasBeenCanceled = false;
 
             // Set hasBeenClickedFirstTime to false 
-            hasBeenClikedFirstTime = false;
+            hasBeenClickedFirstTime = false;
         }
 
         private void CancelEdit(MouseEventArgs ev)
@@ -153,7 +153,7 @@ namespace MudBlazor
             hasBeenCommitted = false;
 
             // Set hasBeenClickedFirstTime to false 
-            hasBeenClikedFirstTime = false;
+            hasBeenClickedFirstTime = false;
         }
 
         public void ManagePreviousEdition()
@@ -174,7 +174,7 @@ namespace MudBlazor
             // Reset the variables
             hasBeenCanceled = false;
             hasBeenCommitted = false;
-            hasBeenClikedFirstTime = false;
+            hasBeenClickedFirstTime = false;
         }
     }
 }
