@@ -1,0 +1,48 @@
+﻿@using System.Net.Http.Json
+@using MudBlazor.Examples.Data.Models
+@namespace MudBlazor.Docs.Examples
+@inject HttpClient httpClient
+
+<MudTable Items="@Elements">
+    <ToolBarContent>
+        <MudText Typo="Typo.h6">Periodic Elements</MudText>
+    </ToolBarContent>
+    <HeaderContent>
+        <MudTh>Nr</MudTh>
+        <MudTh>Sign</MudTh>
+        <MudTh>Name</MudTh>
+        <MudTh>Position</MudTh>
+        <MudTh>Molar mass</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="Nr">@context.Number</MudTd>
+        <MudTd DataLabel="Sign">@context.Sign</MudTd>
+        <MudTd DataLabel="Name">@context.Name</MudTd>
+        <MudTd DataLabel="Position">@context.Position</MudTd>
+        <MudTd DataLabel="Molar mass">@context.Molar</MudTd>
+    </RowTemplate>
+    <PagerContent>
+        <MudTablePager TextAlignment="TablePagerTextPosition.Left" DisablePageNumber="@disablePageNumber" DisablePagination="@disablePagination" DisableRowsPerPage="@disableRowsPerPage" />
+        <MudTablePager TextAlignment="TablePagerTextPosition.Center" DisablePageNumber="@disablePageNumber" DisablePagination="@disablePagination" DisableRowsPerPage="@disableRowsPerPage" />
+        <MudTablePager TextAlignment="TablePagerTextPosition.Right" DisablePageNumber="@disablePageNumber" DisablePagination="@disablePagination" DisableRowsPerPage="@disableRowsPerPage" />
+    </PagerContent>
+</MudTable>
+
+<div class="d-flex flex-wrap mt-4">
+    <MudSwitch @bind-Checked="@disableRowsPerPage" Color="Color.Tertiary">Rows Per Page</MudSwitch>
+    <MudSwitch @bind-Checked="@disablePageNumber" Color="Color.Primary">Page Number</MudSwitch>
+    <MudSwitch @bind-Checked="@disablePagination" Color="Color.Secondary">Pagination</MudSwitch>
+</div>
+
+@code {
+    private bool disablePageNumber;
+    private bool disablePagination;
+    private bool disableRowsPerPage;
+
+    private IEnumerable<Element> Elements = new List<Element>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        Elements = await httpClient.GetFromJsonAsync<List<Element>>("webapi/periodictable");
+    }
+}

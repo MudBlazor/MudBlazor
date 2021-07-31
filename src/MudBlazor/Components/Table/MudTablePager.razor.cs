@@ -19,6 +19,21 @@ namespace MudBlazor
         [Parameter] public bool DisableRowsPerPage { get; set; }
 
         /// <summary>
+        /// Set true to hide the number of pages.
+        /// </summary>
+        [Parameter] public bool DisablePageNumber { get; set; }
+
+        /// <summary>
+        /// Set true to hide the pagination.
+        /// </summary>
+        [Parameter] public bool DisablePagination { get; set; }
+
+        /// <summary>
+        /// Set the text position.
+        /// </summary>
+        [Parameter] public TablePagerTextPosition TextAlignment { get; set; } = TablePagerTextPosition.Right;
+
+        /// <summary>
         /// Define a list of available page size options for the user to choose from
         /// </summary>
         [Parameter] public int[] PageSizeOptions { get; set; } = new int[] { 10, 25, 50, 100 };

@@ -2,7 +2,10 @@
 @inherits MudComponentBase
 
 <MudToolBar @attributes="UserAttributes" Class="@Classname" Style="@Style">
-    <div class="mud-table-pagination-spacer"></div>
+    @if (TextAlignment == TablePagerTextPosition.Right || TextAlignment == TablePagerTextPosition.Center)
+    {
+        <div class="mud-table-pagination-spacer"></div>
+    }
     @if (!DisableRowsPerPage)
     {
         <MudText Typo="Typo.body2" Class="mud-table-pagination-caption">
@@ -15,14 +18,24 @@
             }
         </MudSelect>
     }
-    <MudText Typo="Typo.body2" Class="mud-table-pagination-caption">
-        @Info
-    </MudText>
-    <div class="mud-table-pagination-actions">
-        <MudIconButton Class="mud-flip-x-rtl" Icon="@Icons.Material.Filled.FirstPage" Disabled="@BackButtonsDisabled" @onclick="@(() => Table.NavigateTo(Page.First))"/>
-        <MudIconButton Class="mud-flip-x-rtl" Icon="@Icons.Material.Filled.NavigateBefore" Disabled="@BackButtonsDisabled" @onclick="@(() => Table.NavigateTo(Page.Previous))"/>
-        <MudIconButton Class="mud-flip-x-rtl" Icon="@Icons.Material.Filled.NavigateNext" Disabled="@ForwardButtonsDisabled" @onclick="@(() => Table.NavigateTo(Page.Next))"/>
-        <MudIconButton Class="mud-flip-x-rtl" Icon="@Icons.Material.Filled.LastPage" Disabled="@ForwardButtonsDisabled" @onclick="@(() => Table.NavigateTo(Page.Last))"/>
-    </div>
+    @if (!DisablePageNumber)
+    {
+        <MudText Typo="Typo.body2" Class="mud-table-pagination-caption">
+            @Info
+        </MudText>
+    }
+    @if (!DisablePagination)
+    {
+        <div class="mud-table-pagination-actions">
+            <MudIconButton Class="mud-flip-x-rtl" Icon="@Icons.Material.Filled.FirstPage" Disabled="@BackButtonsDisabled" @onclick="@(() => Table.NavigateTo(Page.First))"/>
+            <MudIconButton Class="mud-flip-x-rtl" Icon="@Icons.Material.Filled.NavigateBefore" Disabled="@BackButtonsDisabled" @onclick="@(() => Table.NavigateTo(Page.Previous))"/>
+            <MudIconButton Class="mud-flip-x-rtl" Icon="@Icons.Material.Filled.NavigateNext" Disabled="@ForwardButtonsDisabled" @onclick="@(() => Table.NavigateTo(Page.Next))"/>
+            <MudIconButton Class="mud-flip-x-rtl" Icon="@Icons.Material.Filled.LastPage" Disabled="@ForwardButtonsDisabled" @onclick="@(() => Table.NavigateTo(Page.Last))"/>
+        </div>
+    }
+    @if (TextAlignment == TablePagerTextPosition.Left || TextAlignment == TablePagerTextPosition.Center)
+    {
+        <div class="mud-table-pagination-spacer"></div>
+    }
 </MudToolBar>
 
