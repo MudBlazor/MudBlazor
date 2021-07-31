@@ -115,15 +115,15 @@ namespace MudBlazor.UnitTests.Components
             hueSlideValue.Should().ContainSingle();
             hueSlideValue[0].Should().BeAssignableTo<IHtmlInputElement>();
 
-            (hueSlideValue[0] as IHtmlInputElement).Value.Should().Be(((int)expectedColor.H).ToString());
+            ((IHtmlInputElement)hueSlideValue[0]).Value.Should().Be(((int)expectedColor.H).ToString());
 
             var alphaSlider = comp.FindAll(_alphaSliderCssSelector);
             alphaSlider.Should().ContainSingle();
             alphaSlider[0].Should().BeAssignableTo<IHtmlInputElement>();
 
-            (alphaSlider[0] as IHtmlInputElement).Value.Should().Be(((int)expectedColor.A).ToString());
+            ((IHtmlInputElement)alphaSlider[0]).Value.Should().Be(((int)expectedColor.A).ToString());
 
-            var alphaSliderStyleAttritbute = (alphaSlider[0].Parent as IHtmlElement).GetAttribute("style");
+            var alphaSliderStyleAttritbute = ((IHtmlElement)alphaSlider[0].Parent).GetAttribute("style");
 
             if (isRtl == false)
             {
@@ -728,7 +728,7 @@ namespace MudBlazor.UnitTests.Components
             var inputs = comp.FindAll(".mud-picker-color-inputfield input");
             inputs.Should().ContainSingle();
             inputs.Should().AllBeAssignableTo<IHtmlInputElement>();
-            (inputs[0] as IHtmlInputElement).Value.Should().Be("#0cdc7c");
+            ((IHtmlInputElement)inputs[0]).Value.Should().Be("#0cdc7c");
 
             comp.Instance.TextValue.Should().Be("#0cdc7c");
 
@@ -737,7 +737,7 @@ namespace MudBlazor.UnitTests.Components
             inputs = comp.FindAll(".mud-picker-color-inputfield input");
             inputs.Should().ContainSingle();
             inputs.Should().AllBeAssignableTo<IHtmlInputElement>();
-            (inputs[0] as IHtmlInputElement).Value.Should().Be("#0cdc7c78");
+            ((IHtmlInputElement)inputs[0]).Value.Should().Be("#0cdc7c78");
 
             comp.Instance.TextValue.Should().Be("#0cdc7c78");
         }
