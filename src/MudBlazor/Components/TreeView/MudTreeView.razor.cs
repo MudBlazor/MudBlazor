@@ -76,7 +76,7 @@ namespace MudBlazor
         [Parameter] public RenderFragment ChildContent { get; set; }
 
         /// <summary>
-        /// ItemTemplate for rendering childre.
+        /// ItemTemplate for rendering children.
         /// </summary>
         [Parameter] public RenderFragment<T> ItemTemplate { get; set; }
 

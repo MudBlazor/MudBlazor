@@ -10,7 +10,7 @@ namespace MudBlazor.UnitTests.Components
     public class ButtonsTests : BunitTest
     {
         /// <summary>
-        /// MudButton whithout specifying HtmlTag, renders a button
+        /// MudButton without specifying HtmlTag, renders a button
         /// </summary>
         [Test]
         public void MudButtonShouldRenderAButtonByDefault()

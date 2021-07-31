@@ -404,7 +404,7 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// If MouseDown is true enabels "dragging" effect on the clock pin/stick.
+        /// If MouseDown is true enables "dragging" effect on the clock pin/stick.
         /// </summary>
         private void OnMouseOverHour(int value)
         {
@@ -416,7 +416,7 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// On click for the hour "sticks", sets the houre.
+        /// On click for the hour "sticks", sets the hour.
         /// </summary>
         private void OnMouseClickHour(int value)
         {

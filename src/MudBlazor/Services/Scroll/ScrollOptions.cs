@@ -10,7 +10,7 @@ namespace MudBlazor.Services.Scroll
         public ElementReference Element { get; set; }
 
         /// <summary>
-        ///the ammount of milliseconds that the event is throttled 
+        ///the amount of milliseconds that the event is throttled 
         /// </summary>        
         public int ReportRate { get; set; } = 300;
 

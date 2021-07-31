@@ -212,7 +212,7 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.ActiveSection.Should().Be(section1);
 
             //active non existing section
-            await comp.InvokeAsync(() => spyMock.FireScrollSectionSectionCenteredEvent("non-exisiting-section"));
+            await comp.InvokeAsync(() => spyMock.FireScrollSectionSectionCenteredEvent("non-existing-section"));
             comp.Instance.ActiveSection.Should().Be(section1);
 
             //active empty section

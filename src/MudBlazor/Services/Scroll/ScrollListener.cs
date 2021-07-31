@@ -82,7 +82,7 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Unsuscribe to scroll event in 
+        /// Unsubscribe to scroll event in 
         /// </summary>
         private async ValueTask Cancel()
         {
