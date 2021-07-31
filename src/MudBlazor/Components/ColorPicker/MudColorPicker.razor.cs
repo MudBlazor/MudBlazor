@@ -145,7 +145,7 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// If true, binding changes occured also when HSL values changed without a corresponding RGB change 
+        /// If true, binding changes occurred also when HSL values changed without a corresponding RGB change 
         /// </summary>
         [Parameter] public bool UpdateBindingIfOnlyHSLChanged { get; set; } = false;
 

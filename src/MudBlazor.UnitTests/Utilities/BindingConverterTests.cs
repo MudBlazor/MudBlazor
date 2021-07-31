@@ -356,7 +356,7 @@ namespace MudBlazor.UnitTests.Utilities
             c5.Get(false).Should().Be(0);
             c5.Get(true).Should().Be(1);
 
-            // non-convertable types will be handled without exceptions
+            // non-convertible types will be handled without exceptions
             var c6 = new BoolConverter<DateTime>();
             c6.Set(DateTime.Now).Should().Be(null);
             c6.Get(true).Should().Be(default(DateTime));

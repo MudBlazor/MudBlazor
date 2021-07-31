@@ -251,7 +251,7 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("div.mud-overlay").Click();
             comp.WaitForAssertion(() => comp.Markup.Trim().Should().NotBeEmpty(), TimeSpan.FromSeconds(5));
 
-            //Allow dismission
+            //Allow dismiss
             customDialogReference.AllowDismiss = true;
 
             //Dialog should now be closable through backdrop click
