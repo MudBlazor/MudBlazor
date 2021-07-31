@@ -147,7 +147,7 @@ namespace MudBlazor.UnitTests
         /// When placeholder is set, label should shrink
         /// </summary>
         [Test]
-        public void LableShouldShrinkWhenPlaceholderIsSet()
+        public void LabelShouldShrinkWhenPlaceholderIsSet()
         {
             //Arrange
             using var ctx = new Bunit.TestContext();

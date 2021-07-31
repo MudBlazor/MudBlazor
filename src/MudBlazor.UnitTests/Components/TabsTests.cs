@@ -179,7 +179,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void ScrollToItem_NoScrollingNeedded()
+        public void ScrollToItem_NoScrollingNeeded()
         {
             Context.Services.Add(new ServiceDescriptor(typeof(IResizeObserver), new MockResizeObserver()));
 
@@ -190,12 +190,12 @@ namespace MudBlazor.UnitTests.Components
             {
                 comp.Instance.SetPanelActive(i);
 
-                var toolbarWrappter = comp.Find(".mud-tabs-toolbar-wrapper");
+                var toolbarWrapper = comp.Find(".mud-tabs-toolbar-wrapper");
 
-                toolbarWrappter.Should().NotBeNull();
+                toolbarWrapper.Should().NotBeNull();
 
-                toolbarWrappter.HasAttribute("style").Should().Be(true);
-                var styleAttr = toolbarWrappter.GetAttribute("style");
+                toolbarWrapper.HasAttribute("style").Should().Be(true);
+                var styleAttr = toolbarWrapper.GetAttribute("style");
 
                 styleAttr.Should().Be("transform:translateX(-0px);");
 
@@ -223,12 +223,12 @@ namespace MudBlazor.UnitTests.Components
 
             comp.Instance.SetPanelActive(2);
 
-            var toolbarWrappter = comp.Find(".mud-tabs-toolbar-wrapper");
+            var toolbarWrapper = comp.Find(".mud-tabs-toolbar-wrapper");
 
-            toolbarWrappter.Should().NotBeNull();
+            toolbarWrapper.Should().NotBeNull();
 
-            toolbarWrappter.HasAttribute("style").Should().Be(true);
-            var styleAttr = toolbarWrappter.GetAttribute("style");
+            toolbarWrapper.HasAttribute("style").Should().Be(true);
+            var styleAttr = toolbarWrapper.GetAttribute("style");
 
             styleAttr.Should().Be($"transform:translateX(-{expectedTranslation.ToString(CultureInfo.InvariantCulture)}px);");
             GetSliderValue(comp).Should().Be(2 * 100.0);
@@ -399,10 +399,10 @@ namespace MudBlazor.UnitTests.Components
                 scrollButtons.Last().Find("button").Click();
                 expectedTranslation += 200;
 
-                var toolbarWrappter = comp.Find(".mud-tabs-toolbar-wrapper");
-                toolbarWrappter.Should().NotBeNull();
-                toolbarWrappter.HasAttribute("style").Should().Be(true);
-                var styleAttr = toolbarWrappter.GetAttribute("style");
+                var toolbarWrapper = comp.Find(".mud-tabs-toolbar-wrapper");
+                toolbarWrapper.Should().NotBeNull();
+                toolbarWrapper.HasAttribute("style").Should().Be(true);
+                var styleAttr = toolbarWrapper.GetAttribute("style");
 
                 styleAttr.Should().Be($"transform:translateX(-{expectedTranslation.ToString(CultureInfo.InvariantCulture)}px);");
                 GetSliderValue(comp).Should().Be(0);
@@ -448,10 +448,10 @@ namespace MudBlazor.UnitTests.Components
                 scrollButtons.First().Find("button").Click();
                 expectedTranslation -= 200;
 
-                var toolbarWrappter = comp.Find(".mud-tabs-toolbar-wrapper");
-                toolbarWrappter.Should().NotBeNull();
-                toolbarWrappter.HasAttribute("style").Should().Be(true);
-                var styleAttr = toolbarWrappter.GetAttribute("style");
+                var toolbarWrapper = comp.Find(".mud-tabs-toolbar-wrapper");
+                toolbarWrapper.Should().NotBeNull();
+                toolbarWrapper.HasAttribute("style").Should().Be(true);
+                var styleAttr = toolbarWrapper.GetAttribute("style");
 
                 styleAttr.Should().Be($"transform:translateX(-{expectedTranslation.ToString(CultureInfo.InvariantCulture)}px);");
                 GetSliderValue(comp).Should().Be(5 * 100.0);
@@ -555,10 +555,10 @@ namespace MudBlazor.UnitTests.Components
             scrollButtons.Last().Instance.Disabled.Should().BeTrue();
             comp.Instance.SetPanelActive(6);
 
-            var toolbarWrappter = comp.Find(".mud-tabs-toolbar-wrapper");
-            toolbarWrappter.Should().NotBeNull();
-            toolbarWrappter.HasAttribute("style").Should().Be(true);
-            var styleAttr = toolbarWrappter.GetAttribute("style");
+            var toolbarWrapper = comp.Find(".mud-tabs-toolbar-wrapper");
+            toolbarWrapper.Should().NotBeNull();
+            toolbarWrapper.HasAttribute("style").Should().Be(true);
+            var styleAttr = toolbarWrapper.GetAttribute("style");
 
             styleAttr.Should().Be($"transform:translateX(-400px);");
         }
@@ -881,8 +881,8 @@ namespace MudBlazor.UnitTests.Components
             headerContent.TextContent.Should().Be($"Count: {3}");
 
             var headerPanel = headerContent.ParentElement;
-            String addtionalClass = position == TabHeaderPosition.After ? "mud-tabs-header-after" : "mud-tabs-header-before";
-            headerPanel.ClassList.Should().BeEquivalentTo("mud-tabs-header", addtionalClass);
+            string additionalClass = position == TabHeaderPosition.After ? "mud-tabs-header-after" : "mud-tabs-header-before";
+            headerPanel.ClassList.Should().BeEquivalentTo("mud-tabs-header", additionalClass);
 
             var tabInnerHeader = comp.Find(".mud-tabs-toolbar-inner");
 

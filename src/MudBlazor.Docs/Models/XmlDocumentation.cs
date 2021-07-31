@@ -329,7 +329,7 @@ namespace MudBlazor.Docs.Models
             var parameterInfos = methodInfo.GetParameters();
 
             var memberTypePrefix = "M:";
-            var declarationTypeString = GetXmlDocumenationFormattedString(methodInfo.DeclaringType, false, typeGenericMap, methodGenericMap);
+            var declarationTypeString = GetXmlDocumentationFormattedString(methodInfo.DeclaringType, false, typeGenericMap, methodGenericMap);
             var memberNameString = methodInfo.Name;
             var methodGenericArgumentsString =
                 methodGenericMap.Count > 0 ?
@@ -337,7 +337,7 @@ namespace MudBlazor.Docs.Models
                 string.Empty;
             var parametersString =
                 parameterInfos.Length > 0 ?
-                "(" + string.Join(",", methodInfo.GetParameters().Select(x => GetXmlDocumenationFormattedString(x.ParameterType, true, typeGenericMap, methodGenericMap))).Replace("MudBlazor.Docs.Models.T", "`0") + ")" :
+                "(" + string.Join(",", methodInfo.GetParameters().Select(x => GetXmlDocumentationFormattedString(x.ParameterType, true, typeGenericMap, methodGenericMap))).Replace("MudBlazor.Docs.Models.T", "`0") + ")" :
                 string.Empty;
 
             var key =
@@ -351,7 +351,7 @@ namespace MudBlazor.Docs.Models
             if (methodInfo.Name == "op_Implicit" ||
                 methodInfo.Name == "op_Explicit")
             {
-                key += "~" + GetXmlDocumenationFormattedString(methodInfo.ReturnType, true, typeGenericMap, methodGenericMap);
+                key += "~" + GetXmlDocumentationFormattedString(methodInfo.ReturnType, true, typeGenericMap, methodGenericMap);
             }
 
             LoadedXmlDocumentation.TryGetValue(key, out var documentation);
@@ -376,11 +376,11 @@ namespace MudBlazor.Docs.Models
             var parameterInfos = constructorInfo.GetParameters();
 
             var memberTypePrefix = "M:";
-            var declarationTypeString = GetXmlDocumenationFormattedString(constructorInfo.DeclaringType, false, typeGenericMap, methodGenericMap);
+            var declarationTypeString = GetXmlDocumentationFormattedString(constructorInfo.DeclaringType, false, typeGenericMap, methodGenericMap);
             var memberNameString = "#ctor";
             var parametersString =
                 parameterInfos.Length > 0 ?
-                "(" + string.Join(",", constructorInfo.GetParameters().Select(x => GetXmlDocumenationFormattedString(x.ParameterType, true, typeGenericMap, methodGenericMap))) + ")" :
+                "(" + string.Join(",", constructorInfo.GetParameters().Select(x => GetXmlDocumentationFormattedString(x.ParameterType, true, typeGenericMap, methodGenericMap))) + ")" :
                 string.Empty;
 
             var key =
@@ -394,7 +394,7 @@ namespace MudBlazor.Docs.Models
             return documentation;
         }
 
-        public static string GetXmlDocumenationFormattedString(
+        public static string GetXmlDocumentationFormattedString(
             Type type,
             bool isMethodParameter,
             Dictionary<string, int> typeGenericMap,
@@ -408,7 +408,7 @@ namespace MudBlazor.Docs.Models
             }
             else if (type.HasElementType)
             {
-                var elementTypeString = GetXmlDocumenationFormattedString(
+                var elementTypeString = GetXmlDocumentationFormattedString(
                     type.GetElementType(),
                     isMethodParameter,
                     typeGenericMap,
@@ -435,7 +435,7 @@ namespace MudBlazor.Docs.Models
                     // Hopefully this will never hit. At the time of writing
                     // this code, type.HasElementType is only true if the type
                     // is a pointer, array, or by reference.
-                    throw new Exception(nameof(GetXmlDocumenationFormattedString) +
+                    throw new Exception(nameof(GetXmlDocumentationFormattedString) +
                         " encountered an unhandled element type. " +
                         "Please submit this issue to the Towel GitHub repository. " +
                         "https://github.com/ZacharyPatten/Towel/issues/new/choose");
@@ -444,7 +444,7 @@ namespace MudBlazor.Docs.Models
             else
             {
                 var prefaceString = type.IsNested
-                    ? GetXmlDocumenationFormattedString(
+                    ? GetXmlDocumentationFormattedString(
                         type.DeclaringType,
                         isMethodParameter,
                         typeGenericMap,
@@ -458,7 +458,7 @@ namespace MudBlazor.Docs.Models
                 var genericArgumentsString = type.IsGenericType && isMethodParameter
                     ? "{" + string.Join(",",
                         type.GetGenericArguments().Select(argument =>
-                            GetXmlDocumenationFormattedString(
+                            GetXmlDocumentationFormattedString(
                                 argument,
                                 isMethodParameter,
                                 typeGenericMap,
