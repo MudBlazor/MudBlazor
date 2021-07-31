@@ -952,7 +952,7 @@ namespace MudBlazor.UnitTests.Components
             }
 
             // Wait for the result during one second maximum
-            // It should be true meaning that SelecteItem had  the correct value before RowEditPreview has finished to complete
+            // It should be true meaning that SelectedItem had  the correct value before RowEditPreview has finished to complete
             // Also the object in RowEditPreview and the SelectedItem should be equal
             var result = taskCompletionSource.Task.Wait(1000);
 
@@ -1078,9 +1078,9 @@ namespace MudBlazor.UnitTests.Components
             tr = comp.FindAll("tr.mud-table-row-group-indented-1").ToArray();
             tr.Length.Should().Be(27); // (4 LMP1 group (h / f) + 6 GTE + 4 GTE + 4 Formula 1) brands groups per category + 9 data rows
             tr = comp.FindAll("tr.mud-table-row-group-indented-2").ToArray();
-            tr.Length.Should().Be(0); // indentation works with Level - 1 class. (level 1 doens't need to be indented)
+            tr.Length.Should().Be(0); // indentation works with Level - 1 class. (level 1 doesn't need to be indented)
 
-            // expand and collpase groups:
+            // expand and collapse groups:
             table.GroupBy.Indentation = false;
             table.GroupBy.Expandable = true;
             table.GroupBy.InnerGroup.Expandable = true;

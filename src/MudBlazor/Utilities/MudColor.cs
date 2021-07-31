@@ -130,7 +130,7 @@ namespace MudBlazor.Utilities
             _valuesAsByte[2] = b;
             _valuesAsByte[3] = a;
 
-            CalcualteHSL();
+            CalculateHSL();
         }
 
         public MudColor(int r, int g, int b, double alpha) :
@@ -213,7 +213,7 @@ namespace MudBlazor.Utilities
                     GetByteFromValuePart(value,6),
                 };
 
-                CalcualteHSL();
+                CalculateHSL();
             }
         }
 
@@ -223,7 +223,7 @@ namespace MudBlazor.Utilities
 
         #region Methods
 
-        private void CalcualteHSL()
+        private void CalculateHSL()
         {
             var h = 0D;
             var s = 0D;

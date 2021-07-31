@@ -119,7 +119,7 @@ namespace MudBlazor.Services
                 _cachedValueIds.Clear();
                 _cachedValues.Clear();
 
-                //in a fire and forget manner, we just "trying" to cancel the listener. So, we are not intrested in an potential error 
+                //in a fire and forget manner, we just "trying" to cancel the listener. So, we are not interested in an potential error 
                 try { _ = _jsRuntime.InvokeVoidAsync($"mudResizeObserver.cancelListener", _id); } catch (Exception) { }
             }
         }
@@ -140,7 +140,7 @@ namespace MudBlazor.Services
             _cachedValueIds.Clear();
             _cachedValues.Clear();
 
-            //in a fire and forget manner, we just "trying" to cancel the listener. So, we are not intrested in an potential error 
+            //in a fire and forget manner, we just "trying" to cancel the listener. So, we are not interested in an potential error 
             try { await _jsRuntime.InvokeVoidAsync($"mudResizeObserver.cancelListener", _id); } catch (Exception) { }
         }
     }

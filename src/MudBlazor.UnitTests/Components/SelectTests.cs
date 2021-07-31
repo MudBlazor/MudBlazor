@@ -105,7 +105,7 @@ namespace MudBlazor.UnitTests.Components
 
         /// <summary>
         /// Initial Text should be enums default value
-        /// Initial render fragement in input should be the pre-selected value's items's render fragment.
+        /// Initial render fragment in input should be the pre-selected value's items's render fragment.
         /// After clicking the second item, the render fragment should update
         /// </summary>
         [Test]
@@ -398,7 +398,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void SingleSelect_Should_CallValidatonFunc()
+        public void SingleSelect_Should_CallValidationFunc()
         {
             var comp = Context.RenderComponent<SelectTest1>();
             Console.WriteLine(comp.Markup);

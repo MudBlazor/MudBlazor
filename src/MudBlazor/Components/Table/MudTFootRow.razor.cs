@@ -20,12 +20,12 @@ namespace MudBlazor
         [Parameter] public bool IsCheckable { get; set; }
 
         /// <summary>
-        /// Specify behavior in case the table is multi-select mode. If set to <code>true</code>, it won't render an edditional empty column.
+        /// Specify behavior in case the table is multi-select mode. If set to <code>true</code>, it won't render an additional empty column.
         /// </summary>
         [Parameter] public bool IgnoreCheckbox { get; set; }
 
         /// <summary>
-        /// Specify behavior in case the table is editable. If set to <code>true</code>, it won't render an edditional empty column.
+        /// Specify behavior in case the table is editable. If set to <code>true</code>, it won't render an additional empty column.
         /// </summary>
         [Parameter] public bool IgnoreEditable { get; set; }
 
