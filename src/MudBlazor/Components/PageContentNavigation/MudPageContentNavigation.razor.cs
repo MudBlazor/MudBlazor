@@ -13,19 +13,19 @@ namespace MudBlazor
 {
     public partial class MudPageContentNavigation : IAsyncDisposable
     {
-        private List<MudPageContenSection> _sections = new();
+        private List<MudPageContentSection> _sections = new();
 
         [Inject] IScrollSpy ScrollSpy { get; set; }
 
         /// <summary>
         /// The displayed section within the MudPageContentNavigation
         /// </summary>
-        public IEnumerable<MudPageContenSection> Sections => _sections.AsEnumerable();
+        public IEnumerable<MudPageContentSection> Sections => _sections.AsEnumerable();
 
         /// <summary>
         /// The currently active session. null if there is no section selected
         /// </summary>
-        public MudPageContenSection ActiveSection => _sections.FirstOrDefault(x => x.IsActive == true);
+        public MudPageContentSection ActiveSection => _sections.FirstOrDefault(x => x.IsActive == true);
 
         /// <summary>
         /// The text displayed about the section links. Defaults to "Conents"
@@ -93,7 +93,7 @@ namespace MudBlazor
         /// </summary>
         /// <param name="section">The section that needs to be added</param>
         /// <param name="forceUpdate">If true, StateHasChanged is called, forcing a rerender of the component</param>
-        public void AddSection(MudPageContenSection section, bool forceUpdate)
+        public void AddSection(MudPageContentSection section, bool forceUpdate)
         {
             _sections.Add(section);
 
