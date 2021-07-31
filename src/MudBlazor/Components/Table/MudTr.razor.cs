@@ -67,7 +67,7 @@ namespace MudBlazor
             // Manage edition the first time the row is clicked and if the table is editable
             if (!hasBeenClikedFirstTime && IsEditable)
             {
-                // Sets hasBeenClikedFirstTime to true
+                // Sets hasBeenClickedFirstTime to true
                 hasBeenClikedFirstTime = true;
 
                 // Set to false that the item has been committed
@@ -132,7 +132,7 @@ namespace MudBlazor
             hasBeenCommitted = true;
             hasBeenCanceled = false;
 
-            // Set hasBeenClikedFirstTime to false 
+            // Set hasBeenClickedFirstTime to false 
             hasBeenClikedFirstTime = false;
         }
 
@@ -152,7 +152,7 @@ namespace MudBlazor
             hasBeenCanceled = true;
             hasBeenCommitted = false;
 
-            // Set hasBeenClikedFirstTime to false 
+            // Set hasBeenClickedFirstTime to false 
             hasBeenClikedFirstTime = false;
         }
 

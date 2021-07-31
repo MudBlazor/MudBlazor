@@ -109,14 +109,14 @@ namespace MudBlazor
         [Parameter] public bool DisablePreview { get; set; } = false;
 
         /// <summary>
-        /// The inital mode (RGB, HSL or HEX) the picker should open. Defaults to RGB 
+        /// The initial mode (RGB, HSL or HEX) the picker should open. Defaults to RGB 
         /// </summary>
         [Parameter] public ColorPickerMode ColorPickerMode { get; set; } = ColorPickerMode.RGB;
 
         private ColorPickerView _colorPickerView = ColorPickerView.Spectrum;
 
         /// <summary>
-        /// The inital view of the picker. Views can be changed if toolbar is enabled. 
+        /// The initial view of the picker. Views can be changed if toolbar is enabled. 
         /// </summary>
         [Parameter]
         public ColorPickerView ColorPickerView
@@ -145,7 +145,7 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// If true, binding changes occure also when HSL values changed without a corresponding RGB change 
+        /// If true, binding changes occured also when HSL values changed without a corresponding RGB change 
         /// </summary>
         [Parameter] public bool UpdateBindingIfOnlyHSLChanged { get; set; } = false;
 
@@ -216,7 +216,7 @@ namespace MudBlazor
 
         /// <summary>
         /// When set to true, no mouse move events in the spectrum mode will be captured, so the selector circle won't fellow the mouse. 
-        /// Under some conditions like long latency the visiual representation might not reflect the user behaviour anymore. So, it can be disabled 
+        /// Under some conditions like long latency the visual representation might not reflect the user behaviour anymore. So, it can be disabled 
         /// Enabled by default
         /// </summary>
         [Parameter] public bool DisableDragEffect { get; set; } = false;
@@ -392,7 +392,7 @@ namespace MudBlazor
         /// <summary>
         /// Set the L (Lightness) component of the color picker
         /// </summary>
-        /// <param name="value">A value between 0.0 (no light, black) and 1.0 (max ligt, white)</param>
+        /// <param name="value">A value between 0.0 (no light, black) and 1.0 (max light, white)</param>
         public void SetL(double value) => Value = Value.SetL(value);
 
         /// <summary>

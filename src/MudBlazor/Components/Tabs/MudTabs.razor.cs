@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -43,7 +43,7 @@ namespace MudBlazor
         [Parameter] public bool Rounded { get; set; }
 
         /// <summary>
-        /// If true, sets a border betwen the content and the toolbar depending on the position.
+        /// If true, sets a border between the content and the toolbar depending on the position.
         /// </summary>
         [Parameter] public bool Border { get; set; }
 
@@ -172,31 +172,31 @@ namespace MudBlazor
         private List<MudTabPanel> _panels;
 
         /// <summary>
-        /// A render fragement that is added before or after (based on the value of HeaderPosition) the tabs inside the header panel of the tab control
+        /// A render fragment that is added before or after (based on the value of HeaderPosition) the tabs inside the header panel of the tab control
         /// </summary>
         [Parameter]
         public RenderFragment<MudTabs> Header { get; set; }
 
         /// <summary>
-        /// Addional content specified by Header is placed either before the tabs, after or not at all
+        /// Additional content specified by Header is placed either before the tabs, after or not at all
         /// </summary>
         [Parameter]
         public TabHeaderPosition HeaderPosition { get; set; } = TabHeaderPosition.After;
 
         /// <summary>
-        /// A render fragement that is added before or after (based on the value of HeaderPosition) inside each tab panel
+        /// A render fragment that is added before or after (based on the value of HeaderPosition) inside each tab panel
         /// </summary>
         [Parameter]
         public RenderFragment<MudTabPanel> TabPanelHeader { get; set; }
 
         /// <summary>
-        /// Addional content specified by Header is placed either before the tabs, after or not at all
+        /// Additional content specified by Header is placed either before the tabs, after or not at all
         /// </summary>
         [Parameter]
         public TabHeaderPosition TabPanelHeaderPosition { get; set; } = TabHeaderPosition.After;
 
         /// <summary>
-        /// Can be used in derivate class to add a class to the main container. If not overwritten return an empty string
+        /// Can be used in derived class to add a class to the main container. If not overwritten return an empty string
         /// </summary>
         protected virtual string InternalClassName { get; } = string.Empty;
 

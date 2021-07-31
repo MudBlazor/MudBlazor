@@ -174,7 +174,7 @@ namespace MudBlazor.UnitTests.Components
             textField.Error.Should().BeTrue();
             textField.ErrorText.Should().Be("Invalid");
 
-            // note: this logic is invalid, so it was removed. Validaton funcs are always called
+            // note: this logic is invalid, so it was removed. Validation funcs are always called
             // the validation func must validate non-required empty fields as valid.
             //
             //// value is not required, so don't call the validation func on empty text
@@ -215,7 +215,7 @@ namespace MudBlazor.UnitTests.Components
             textFieldcomp.Find("input").Change("Charles Manson");
             form.IsValid.Should().Be(true);
 
-            // note: this logic is invalid, so it was removed. Validaton funcs are always called
+            // note: this logic is invalid, so it was removed. Validation funcs are always called
             // the validation func must validate non-required empty fields as valid.
             //
             //// value is not required, so don't call the validation func on empty text

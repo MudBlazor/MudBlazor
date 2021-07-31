@@ -70,7 +70,7 @@ namespace MudBlazor
         [Parameter] public bool Reverse { get; set; }
 
         /// <summary>
-        /// If true, disabels all TimelineItem modifiers, like adding a caret to a MudCard.
+        /// If true, disables all TimelineItem modifiers, like adding a caret to a MudCard.
         /// </summary>
         [Parameter] public bool DisableModifiers { get; set; }
     }

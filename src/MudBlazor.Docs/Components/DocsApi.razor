@@ -202,7 +202,7 @@
             // Check if the documentation is valid and contains the start tag
             if (documentation != null && documentation.Contains(startTag))
             {
-                // Remove the beginnig of the documentation until the start tag
+                // Remove the beginning of the documentation until the start tag
                 documentation = documentation.Substring(documentation.IndexOf(startTag), documentation.Length - documentation.IndexOf(startTag));
 
                 // Check if the documentation contains the end tag

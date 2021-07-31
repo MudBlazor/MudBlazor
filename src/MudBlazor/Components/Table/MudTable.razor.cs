@@ -41,7 +41,7 @@ namespace MudBlazor
         [Parameter] public string QuickColumns { get; set; }
 
         // Workaround because "where T : new()" didn't work with Blazor components
-        // T must have a default constructor, otherwise we caanot show headers when Items collection
+        // T must have a default constructor, otherwise we cannot show headers when Items collection
         // is empty
         protected T Def
         {

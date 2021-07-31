@@ -57,7 +57,7 @@ namespace MudBlazor.UnitTests.Components
         private const string TEXT = "This is the first item";
 
         /// <summary>
-        /// Check markup whith regular text, no regex
+        /// Check markup with regular text, no regex
         /// </summary>
         [Test]
         public void MudHighlighterMarkupTest()
@@ -81,7 +81,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// Check markup whith regex text, no regex
+        /// Check markup with regex text, no regex
         /// </summary>
         [Test]
         public void MudHighlighterMarkupWithRegexTextTest()
@@ -93,7 +93,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// Check markup whith property 
+        /// Check markup with property 
         /// </summary>
         [Test]
         public void MudHighlighterMarkupUntilNextBoundaryTest()
@@ -107,7 +107,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// Check markup whith property 
+        /// Check markup with property 
         /// </summary>
         [Test]
         public void MudHighlighterMarkupCaseSensitiveTest()

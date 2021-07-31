@@ -297,7 +297,7 @@ namespace MudBlazor
             {
                 // Maybe conditionally add full error message if `IWebAssemblyHostEnvironment.IsDevelopment()`
                 // Or log using proper logger.
-                errors.Add($"An unhandled exception occured: {e.Message}");
+                errors.Add($"An unhandled exception occurred: {e.Message}");
             }
         }
 

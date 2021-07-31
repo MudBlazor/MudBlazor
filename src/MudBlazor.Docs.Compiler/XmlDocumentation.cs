@@ -166,7 +166,7 @@ namespace MudBlazor.Docs.Compiler
 
         /// <summary>Gets all the types in an assembly that derive from a base.</summary>
         /// <typeparam name="Base">The base type to get the deriving types of.</typeparam>
-        /// <param name="assembly">The assmebly to perform the search on.</param>
+        /// <param name="assembly">The assembly to perform the search on.</param>
         /// <returns>The IEnumerable of the types that derive from the provided base.</returns>
         public static IEnumerable<Type> GetDerivedTypes<Base>(this Assembly assembly)
         {
@@ -539,7 +539,7 @@ namespace MudBlazor.Docs.Compiler
             }
             else if (memberInfo.MemberType.HasFlag(MemberTypes.Custom))
             {
-                // This represents a cutom type that is not part of
+                // This represents a custom type that is not part of
                 // the standard .NET languages as far as I'm aware.
                 // This will never be supported so return null.
                 return null;
@@ -559,7 +559,7 @@ namespace MudBlazor.Docs.Compiler
 
         /// <summary>Gets the XML documentation for a parameter.</summary>
         /// <param name="parameterInfo">The parameter to get the XML documentation for.</param>
-        /// <returns>The XML documenation of the parameter.</returns>
+        /// <returns>The XML documentation of the parameter.</returns>
         public static string GetDocumentation(this ParameterInfo parameterInfo)
         {
             var memberDocumentation = parameterInfo.Member.GetDocumentation();

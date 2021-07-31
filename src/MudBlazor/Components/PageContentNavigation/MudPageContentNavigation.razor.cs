@@ -74,7 +74,7 @@ namespace MudBlazor
         private string GetPanelClass() => new CssBuilder("page-content-navigation").AddClass(Class).Build();
 
         /// <summary>
-        /// Scrolls to a section based on the fragement of the uri. If there is no fragement, no scroll will occure
+        /// Scrolls to a section based on the fragment of the uri. If there is no fragment, no scroll will occured
         /// </summary>
         /// <param name="uri">The uri containing the fragment to scroll</param>
         /// <returns>A task that completes when the viewport has scrolled</returns>
