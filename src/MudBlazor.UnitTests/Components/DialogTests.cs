@@ -169,7 +169,7 @@ namespace MudBlazor.UnitTests.Components
             Console.WriteLine("----------------------------------------");
             Console.WriteLine(comp.Markup);
 
-            (dialogReference.Dialog as DialogWithParameters).TestValue.Should().Be("new_test");
+            ((DialogWithParameters)dialogReference.Dialog).TestValue.Should().Be("new_test");
             textField.Text.Should().Be("new_test");
         }
 

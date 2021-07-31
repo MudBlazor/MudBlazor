@@ -18,7 +18,7 @@ namespace MudBlazor
         {
             Converter.GetFunc = OnGet;
             Converter.SetFunc = OnSet;
-            (Converter as DefaultConverter<TimeSpan?>).Format = format24Hours;
+            ((DefaultConverter<TimeSpan?>)Converter).Format = format24Hours;
             AdornmentIcon = Icons.Material.Filled.AccessTime;
         }
 
@@ -29,12 +29,12 @@ namespace MudBlazor
 
             var time = DateTime.Today.Add(timespan.Value);
 
-            return time.ToString((Converter as DefaultConverter<TimeSpan?>).Format, Culture);
+            return time.ToString(((DefaultConverter<TimeSpan?>)Converter).Format, Culture);
         }
 
         private TimeSpan? OnGet(string value)
         {
-            if (DateTime.TryParseExact(value, (Converter as DefaultConverter<TimeSpan?>).Format, Culture, DateTimeStyles.None, out DateTime time))
+            if (DateTime.TryParseExact(value, ((DefaultConverter<TimeSpan?>)Converter).Format, Culture, DateTimeStyles.None, out DateTime time))
             {
                 return time.TimeOfDay;
             }
