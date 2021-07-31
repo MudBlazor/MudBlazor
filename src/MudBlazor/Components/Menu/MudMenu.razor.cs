@@ -78,7 +78,7 @@ namespace MudBlazor
         /// If true, instead of positioning the menu at the left upper corner, position at the exact cursor location.
         /// This makes sense for larger activators
         /// </summary>
-        [Parameter] public bool PositionAtCurser { get; set; }
+        [Parameter] public bool PositionAtCursor { get; set; }
 
         /// <summary>
         /// Place a MudButton, a MudIconButton or any other component capable of acting as an activator. This will
@@ -129,7 +129,7 @@ namespace MudBlazor
         {
             if (Disabled)
                 return;
-            if (PositionAtCurser) SetPopoverStyle((MouseEventArgs)args);
+            if (PositionAtCursor) SetPopoverStyle((MouseEventArgs)args);
             _isOpen = true;
             StateHasChanged();
         }
