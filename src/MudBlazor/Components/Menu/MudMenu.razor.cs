@@ -81,6 +81,18 @@ namespace MudBlazor
         [Parameter] public bool PositionAtCursor { get; set; }
 
         /// <summary>
+        /// If true, instead of positioning the menu at the left upper corner, position at the exact cursor location.
+        /// This makes sense for larger activators
+        /// </summary>
+        [Obsolete("Obsolete.  Replace with `PositionAtCursor` icon.")]
+        [Parameter]
+        public bool PositionAtCurser
+        {
+            get => PositionAtCursor;
+            set => PositionAtCursor = value;
+        }
+
+        /// <summary>
         /// Place a MudButton, a MudIconButton or any other component capable of acting as an activator. This will
         /// override the standard button and all parameters which concern it.
         /// </summary>
