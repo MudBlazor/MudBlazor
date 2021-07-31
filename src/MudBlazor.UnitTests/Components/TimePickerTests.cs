@@ -140,7 +140,7 @@ namespace MudBlazor.UnitTests.Components
             // add 12 hours in pm mode
             comp.FindAll("div.mud-hour")[10].Click();
             picker.TimeIntermediate.Value.Hours.Should().Be(23);
-            // click am button shoulkd subtract 12 hours
+            // click am button should subtract 12 hours
             comp.FindAll("button.mud-timepicker-button")[2].Click();
             picker.TimeIntermediate.Value.Hours.Should().Be(11);
             picker.TimeIntermediate.Value.Minutes.Should().Be(30);

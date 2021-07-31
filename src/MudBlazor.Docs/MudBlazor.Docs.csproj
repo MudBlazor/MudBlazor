@@ -12,8 +12,6 @@
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
-    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    <IsPackable>false</IsPackable>
   </PropertyGroup>
 
   <!--Outside Visual Studio SolutionDir is not available-->  
