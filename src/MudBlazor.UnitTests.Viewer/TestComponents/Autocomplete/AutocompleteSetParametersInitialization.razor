@@ -12,11 +12,7 @@
 
     public string ToString(ExternalList el)
     {
-        if (el == null)
-        {
-            return null;
-        }
-        return el.Name;
+        return el?.Name;
     }
 
     protected override async Task OnInitializedAsync()

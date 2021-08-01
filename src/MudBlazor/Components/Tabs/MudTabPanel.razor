@@ -91,10 +91,7 @@ else
         //    throw new ArgumentNullException(nameof(Parent), "TabPanel must exist within a Tabs component");
         base.OnInitialized();
 
-        if (Parent != null)
-        {
-            Parent.AddPanel(this);
-        }
+        Parent?.AddPanel(this);
     }
 
     public async ValueTask DisposeAsync()
