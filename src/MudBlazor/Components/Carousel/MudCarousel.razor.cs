@@ -140,7 +140,7 @@ namespace MudBlazor
         {
             InvokeAsync(async () => await ResetTimerAsync());
 
-            _currentColor = SelectedContainer != null ? SelectedContainer.Color : Color.Inherit;
+            _currentColor = SelectedContainer?.Color ?? Color.Inherit;
         }
 
 

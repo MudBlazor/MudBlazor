@@ -108,8 +108,7 @@ namespace MudBlazor
 
         public void Select()
         {
-            if (RadioGroup != null)
-                RadioGroup.SetSelectedRadioAsync(this).AndForget();
+            RadioGroup?.SetSelectedRadioAsync(this).AndForget();
         }
 
         private Task OnClick()
@@ -130,8 +129,7 @@ namespace MudBlazor
 
         public void Dispose()
         {
-            if (RadioGroup != null)
-                RadioGroup.UnregisterRadio(this);
+            RadioGroup?.UnregisterRadio(this);
         }
     }
 }

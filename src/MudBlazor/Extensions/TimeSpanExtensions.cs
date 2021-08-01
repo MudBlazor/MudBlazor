@@ -16,9 +16,7 @@ internal static class TimeSpanExtensions
 
     public static string ToIsoString(this TimeSpan? self, bool seconds = false, bool ms = false)
     {
-        if (self == null)
-            return null;
-        return self.Value.ToIsoString(seconds, ms);
+        return self?.ToIsoString(seconds, ms);
     }
 
     public static int ToAmPmHour(this TimeSpan time)
