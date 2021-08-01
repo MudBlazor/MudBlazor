@@ -84,7 +84,7 @@ namespace MudBlazor
         /// If true, instead of positioning the menu at the left upper corner, position at the exact cursor location.
         /// This makes sense for larger activators
         /// </summary>
-        [Obsolete("Obsolete.  Replace with `PositionAtCursor` icon.")]
+        [Obsolete("Obsolete.  Replace with `PositionAtCursor`.")]
         [Parameter]
         public bool PositionAtCurser
         {
