@@ -80,7 +80,7 @@ namespace MudBlazor.UnitTests.Components
                 comp.Instance.ColorValue.Should().Be(expectedColor);
             }
 
-            if (mode == ColorPickerMode.RGB || mode == ColorPickerMode.HSL)
+            if (mode is ColorPickerMode.RGB or ColorPickerMode.HSL)
             {
                 var castedInputs = GetColorInputs(comp);
 
@@ -785,7 +785,7 @@ namespace MudBlazor.UnitTests.Components
 
             Console.WriteLine(comp.Markup);
 
-            if (variant == PickerVariant.Dialog || variant == PickerVariant.Inline)
+            if (variant is PickerVariant.Dialog or PickerVariant.Inline)
             {
                 await comp.Instance.OpenPicker();
             }
