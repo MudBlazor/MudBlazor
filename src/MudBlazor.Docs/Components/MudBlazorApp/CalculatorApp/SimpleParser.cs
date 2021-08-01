@@ -36,20 +36,19 @@ namespace PrimitiveCalculator
             _data = s;
         }
         protected string _data;
-        private int _i = 0;
-        public int Position { get { return _i; } set { _i = value; } }
+        public int Position { get; set; } = 0;
 
         // returns true if the next char is one of the given chars. does not consume
         public bool NextIs(params char[] chars)
         {
-            if (_i >= _data.Length)
+            if (Position >= _data.Length)
                 return false;
-            return chars.Contains(_data[_i]);
+            return chars.Contains(_data[Position]);
         }
 
         public bool NextIs(string s)
         {
-            var current_i = _i;
+            var current_i = Position;
             try
             {
                 foreach (var ch in s)
@@ -62,19 +61,19 @@ namespace PrimitiveCalculator
             }
             finally
             {
-                _i = current_i;
+                Position = current_i;
             }
         }
 
         public string ConsumeAny(params char[] chars)
         {
             var sb = new StringBuilder();
-            while (_i < _data.Length)
+            while (Position < _data.Length)
             {
-                if (chars.Contains(_data[_i]))
+                if (chars.Contains(_data[Position]))
                 {
-                    sb.Append(_data[_i]);
-                    _i += 1;
+                    sb.Append(_data[Position]);
+                    Position += 1;
                 }
                 else
                     break;
@@ -90,11 +89,11 @@ namespace PrimitiveCalculator
         public string ReadUntil(params char[] stop_chars)
         {
             var s = new StringBuilder();
-            while (_i < _data.Length)
+            while (Position < _data.Length)
             {
-                var c1 = _data[_i];
+                var c1 = _data[Position];
                 LastChar = c1;
-                _i += 1;
+                Position += 1;
                 if (stop_chars.Any(stop_char => stop_char == c1))
                     break;
                 s.Append(c1);
@@ -110,7 +109,7 @@ namespace PrimitiveCalculator
         public string ReadUntil(string expected)
         {
             var s = new StringBuilder();
-            while (_i < _data.Length)
+            while (Position < _data.Length)
             {
                 s.Append(ReadUntil(expected[0]));
                 var pos = Position;
@@ -137,29 +136,29 @@ namespace PrimitiveCalculator
         {
             get
             {
-                if (_i < _data.Length)
-                    return _data[_i];
+                if (Position < _data.Length)
+                    return _data[Position];
                 return null;
             }
         }
 
-        public bool HasNext { get { return _i < _data.Length; } }
+        public bool HasNext { get { return Position < _data.Length; } }
 
         public void Skip(int n)
         {
-            _i += n;
+            Position += n;
         }
 
         public void Unskip(int n)
         {
-            _i = Math.Max(0, _i - n);
+            Position = Math.Max(0, Position - n);
         }
 
         public bool SkipUntil(string expected)
         {
             if (_data.Length < expected.Length)
                 return false;
-            while (_i < _data.Length)
+            while (Position < _data.Length)
             {
                 SkipUntil(expected[0]);
                 var pos = Position;
@@ -176,11 +175,11 @@ namespace PrimitiveCalculator
 
         public bool SkipUntil(params char[] stop_chars)
         {
-            while (_i < _data.Length)
+            while (Position < _data.Length)
             {
-                var c1 = _data[_i];
+                var c1 = _data[Position];
                 LastChar = c1;
-                _i += 1;
+                Position += 1;
                 if (stop_chars.Any(stop_char => stop_char == c1))
                     return true;
             }
