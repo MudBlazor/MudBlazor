@@ -443,7 +443,7 @@ namespace MudBlazor
 
         private void OnValidationStateChanged(object sender, ValidationStateChangedEventArgs e)
         {
-            if (EditContext != null && !_fieldIdentifier.Equals(default(FieldIdentifier)))
+            if (EditContext != null && !_fieldIdentifier.Equals(default))
             {
                 var error_msgs = EditContext.GetValidationMessages(_fieldIdentifier).ToArray();
                 Error = error_msgs.Length > 0;

@@ -142,8 +142,8 @@ namespace MudBlazor.UnitTests.Utilities
             var c1 = new DefaultConverter<char>();
             c1.Set('x').Should().Be("x");
             c1.Get("a").Should().Be('a');
-            c1.Get("").Should().Be(default(char));
-            c1.Get(null).Should().Be(default(char));
+            c1.Get("").Should().Be(default);
+            c1.Get(null).Should().Be(default);
             var c2 = new DefaultConverter<char?>();
             c2.Set('x').Should().Be("x");
             c2.Get("a").Should().Be('a');
@@ -359,9 +359,9 @@ namespace MudBlazor.UnitTests.Utilities
             // non-convertible types will be handled without exceptions
             var c6 = new BoolConverter<DateTime>();
             c6.Set(DateTime.Now).Should().Be(null);
-            c6.Get(true).Should().Be(default(DateTime));
-            c6.Get(false).Should().Be(default(DateTime));
-            c6.Get(null).Should().Be(default(DateTime));
+            c6.Get(true).Should().Be(default);
+            c6.Get(false).Should().Be(default);
+            c6.Get(null).Should().Be(default);
         }
 
         [Test]

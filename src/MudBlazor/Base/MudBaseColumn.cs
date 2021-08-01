@@ -18,7 +18,7 @@ namespace MudBlazor
 
         protected bool IsDefault<T>(T value)
         {
-            return EqualityComparer<T>.Default.Equals(value, default(T));
+            return EqualityComparer<T>.Default.Equals(value, default);
         }
     }
 }

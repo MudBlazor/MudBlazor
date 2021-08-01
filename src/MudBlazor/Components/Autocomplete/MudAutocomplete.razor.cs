@@ -260,7 +260,7 @@ namespace MudBlazor
         {
             _timer?.Dispose();
             if (ResetValueOnEmptyText && string.IsNullOrWhiteSpace(Text))
-                await SetValueAsync(default(T), updateText);
+                await SetValueAsync(default, updateText);
             if (DebounceInterval <= 0)
                 OnSearch();
             else
