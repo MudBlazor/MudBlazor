@@ -325,7 +325,7 @@ namespace MudBlazor
 
         private async void UpdateBreakpointState(Breakpoint breakpoint)
         {
-            bool isStateChanged = false;
+            var isStateChanged = false;
             if (breakpoint == Breakpoint.None)
             {
                 breakpoint = await ResizeListener.GetBreakpoint();

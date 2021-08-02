@@ -73,12 +73,12 @@ namespace MudBlazor
                 // Create template from T
                 Columns = context => builder =>
                 {
-                    Type myType = context.GetType();
+                    var myType = context.GetType();
                     IList<PropertyInfo> propertylist = new List<PropertyInfo>(myType.GetProperties().Where(p => p.PropertyType.IsPublic));
 
                     if (quickcolumnslist == null)
                     {
-                        foreach (PropertyInfo propinfo in propertylist)
+                        foreach (var propinfo in propertylist)
                         {
                             BuildMudColumnTemplateItem(context, builder, propinfo);
                         }

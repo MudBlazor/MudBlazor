@@ -75,15 +75,15 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void BarChartYAxisFormat()
         {
-            ChartOptions options = new ChartOptions();
-            List<ChartSeries> series = new List<ChartSeries>()
+            var options = new ChartOptions();
+            var series = new List<ChartSeries>()
             {
                 new ChartSeries() { Name = "Series 1", Data = new double[] { 90, 79, 72, 69, 62, 62, 55, 65, 70 } },
                 new ChartSeries() { Name = "Series 2", Data = new double[] { 10, 41, 35, 51, 49, 62, 69, 91, 148 } },
             };
-            string[] xAxis = new string[] { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep" };
-            string width = "100%";
-            string height = "350px";
+            var xAxis = new string[] { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep" };
+            var width = "100%";
+            var height = "350px";
 
             var comp = Context.RenderComponent<MudChart>(parameters => parameters
               .Add(p => p.ChartType, ChartType.Line)

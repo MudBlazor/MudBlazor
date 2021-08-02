@@ -583,10 +583,10 @@ namespace MudBlazor
                 return;
             }
 
-            int indexCorrection = 1;
+            var indexCorrection = 1;
             while (true)
             {
-                int panelAfterIndex = _activePanelIndex + indexCorrection;
+                var panelAfterIndex = _activePanelIndex + indexCorrection;
                 if (IsAfterLastPanelIndex(panelAfterIndex) == false)
                 {
                     length += GetPanelLength(_panels[panelAfterIndex]);
