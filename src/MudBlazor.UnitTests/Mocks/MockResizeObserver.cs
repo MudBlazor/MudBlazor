@@ -62,11 +62,11 @@ namespace MudBlazor.UnitTests.Mocks
 
         public Task<IEnumerable<BoundingClientRect>> Observe(IEnumerable<ElementReference> elements)
         {
-            List<BoundingClientRect> result = new List<BoundingClientRect>();
+            var result = new List<BoundingClientRect>();
             foreach (var item in elements)
             {
                 var size = PanelSize;
-                // last element is alaways TabsContentSize
+                // last element is always TabsContentSize
                 if (item.Id == elements.Last().Id && _firstBatchProcessed == false)
                 {
                     size = PanelTotalSize;

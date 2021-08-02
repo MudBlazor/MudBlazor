@@ -105,7 +105,7 @@ namespace MudBlazor.UnitTests.Components
 
         /// <summary>
         /// Initial Text should be enums default value
-        /// Initial render fragement in input should be the pre-selected value's items's render fragment.
+        /// Initial render fragment in input should be the pre-selected value's items's render fragment.
         /// After clicking the second item, the render fragment should update
         /// </summary>
         [Test]
@@ -366,7 +366,7 @@ namespace MudBlazor.UnitTests.Components
             // select elements needed for the test
             var select = comp.FindComponent<MudSelect<string>>();
             string validatedValue = null;
-            select.SetParam(x => x.Validation, (object)new Func<string, bool>(value =>
+            select.SetParam(x => x.Validation, new Func<string, bool>(value =>
               {
                   validatedValue = value; // NOTE: select does only update the value for T string
                   return true;
@@ -398,7 +398,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void SingleSelect_Should_CallValidatonFunc()
+        public void SingleSelect_Should_CallValidationFunc()
         {
             var comp = Context.RenderComponent<SelectTest1>();
             Console.WriteLine(comp.Markup);

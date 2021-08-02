@@ -76,7 +76,7 @@ namespace MudBlazor
         [Parameter] public RenderFragment ChildContent { get; set; }
 
         /// <summary>
-        /// ItemTemplate for rendering childre.
+        /// ItemTemplate for rendering children.
         /// </summary>
         [Parameter] public RenderFragment<T> ItemTemplate { get; set; }
 
@@ -125,8 +125,7 @@ namespace MudBlazor
 
         internal async Task UpdateSelectedItems()
         {
-            if (_selectedValues == null)
-                _selectedValues = new HashSet<MudTreeViewItem<T>>();
+            _selectedValues ??= new HashSet<MudTreeViewItem<T>>();
 
             //collect selected items
             _selectedValues.Clear();

@@ -147,16 +147,16 @@ namespace MudBlazor.UnitTests
         /// When placeholder is set, label should shrink
         /// </summary>
         [Test]
-        public void LableShouldShrinkWhenPlaceholderIsSet()
+        public void LabelShouldShrinkWhenPlaceholderIsSet()
         {
             //Arrange
             using var ctx = new Bunit.TestContext();
             var label = Parameter(nameof(MudNumericField<int?>.Label), "label");
             var placeholder = Parameter(nameof(MudNumericField<int?>.Placeholder), "placeholder");
-            //with no placeholder, label is not shrinked
+            //with no placeholder, label is not shrunk
             var comp = ctx.RenderComponent<MudNumericField<int?>>(label);
             comp.Markup.Should().NotContain("shrink");
-            //with placeholder label is shrinked
+            //with placeholder label is shrunk
             comp.SetParametersAndRender(placeholder);
             comp.Markup.Should().Contain("shrink");
         }
@@ -230,7 +230,7 @@ namespace MudBlazor.UnitTests
         [Test]
         public async Task NumericField_Should_FireValueChangedOnTextParameterChange()
         {
-            int changed_value = 4;
+            var changed_value = 4;
             var comp = Context.RenderComponent<MudNumericField<int>>(EventCallback<int>("ValueChanged", x => changed_value = x));
             comp.SetParametersAndRender(ComponentParameter.CreateParameter("Text", "4"));
             changed_value.Should().Be(4);
@@ -239,7 +239,7 @@ namespace MudBlazor.UnitTests
         [Test]
         public async Task NumericField_Should_FireTextChangedOnValueParameterChange()
         {
-            string changed_text = "4";
+            var changed_text = "4";
             var comp = Context.RenderComponent<MudNumericField<int>>(EventCallback<string>("TextChanged", x => changed_text = x));
             comp.SetParametersAndRender(ComponentParameter.CreateParameter("Value", 4));
             changed_text.Should().Be("4");
@@ -248,7 +248,7 @@ namespace MudBlazor.UnitTests
         [Test]
         public async Task NumericField_Should_FireTextAndValueChangedOnTextInput()
         {
-            int changed_value = 4;
+            var changed_value = 4;
             string changed_text = null;
             var comp = Context.RenderComponent<MudNumericField<int>>(
                 EventCallback<int>("ValueChanged", x => changed_value = x),

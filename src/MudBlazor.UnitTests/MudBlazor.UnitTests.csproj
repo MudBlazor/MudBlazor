@@ -9,8 +9,6 @@
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
-    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    <IsPackable>false</IsPackable>
   </PropertyGroup>
 
   <!--Is this a rebuild - Dont clean generated files as this breaks rebuild behaviour-->

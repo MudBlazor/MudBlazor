@@ -166,7 +166,7 @@ namespace MudBlazor.Docs.Compiler
 
         /// <summary>Gets all the types in an assembly that derive from a base.</summary>
         /// <typeparam name="Base">The base type to get the deriving types of.</typeparam>
-        /// <param name="assembly">The assmebly to perform the search on.</param>
+        /// <param name="assembly">The assembly to perform the search on.</param>
         /// <returns>The IEnumerable of the types that derive from the provided base.</returns>
         public static IEnumerable<Type> GetDerivedTypes<Base>(this Assembly assembly)
         {
@@ -318,7 +318,7 @@ namespace MudBlazor.Docs.Compiler
             var parameterInfos = methodInfo.GetParameters();
 
             var memberTypePrefix = "M:";
-            var declarationTypeString = GetXmlDocumenationFormattedString(methodInfo.DeclaringType, false, typeGenericMap, methodGenericMap);
+            var declarationTypeString = GetXmlDocumentationFormattedString(methodInfo.DeclaringType, false, typeGenericMap, methodGenericMap);
             var memberNameString = methodInfo.Name;
             var methodGenericArgumentsString =
                 methodGenericMap.Count > 0 ?
@@ -326,7 +326,7 @@ namespace MudBlazor.Docs.Compiler
                 string.Empty;
             var parametersString =
                 parameterInfos.Length > 0 ?
-                "(" + string.Join(",", methodInfo.GetParameters().Select(x => GetXmlDocumenationFormattedString(x.ParameterType, true, typeGenericMap, methodGenericMap))) + ")" :
+                "(" + string.Join(",", methodInfo.GetParameters().Select(x => GetXmlDocumentationFormattedString(x.ParameterType, true, typeGenericMap, methodGenericMap))) + ")" :
                 string.Empty;
 
             var key =
@@ -340,7 +340,7 @@ namespace MudBlazor.Docs.Compiler
             if (methodInfo.Name == "op_Implicit" ||
                 methodInfo.Name == "op_Explicit")
             {
-                key += "~" + GetXmlDocumenationFormattedString(methodInfo.ReturnType, true, typeGenericMap, methodGenericMap);
+                key += "~" + GetXmlDocumentationFormattedString(methodInfo.ReturnType, true, typeGenericMap, methodGenericMap);
             }
 
             LoadedXmlDocumentation.TryGetValue(key, out var documentation);
@@ -365,11 +365,11 @@ namespace MudBlazor.Docs.Compiler
             var parameterInfos = constructorInfo.GetParameters();
 
             var memberTypePrefix = "M:";
-            var declarationTypeString = GetXmlDocumenationFormattedString(constructorInfo.DeclaringType, false, typeGenericMap, methodGenericMap);
+            var declarationTypeString = GetXmlDocumentationFormattedString(constructorInfo.DeclaringType, false, typeGenericMap, methodGenericMap);
             var memberNameString = "#ctor";
             var parametersString =
                 parameterInfos.Length > 0 ?
-                "(" + string.Join(",", constructorInfo.GetParameters().Select(x => GetXmlDocumenationFormattedString(x.ParameterType, true, typeGenericMap, methodGenericMap))) + ")" :
+                "(" + string.Join(",", constructorInfo.GetParameters().Select(x => GetXmlDocumentationFormattedString(x.ParameterType, true, typeGenericMap, methodGenericMap))) + ")" :
                 string.Empty;
 
             var key =
@@ -383,7 +383,7 @@ namespace MudBlazor.Docs.Compiler
             return documentation;
         }
 
-        public static string GetXmlDocumenationFormattedString(
+        public static string GetXmlDocumentationFormattedString(
             Type type,
             bool isMethodParameter,
             Dictionary<string, int> typeGenericMap,
@@ -397,7 +397,7 @@ namespace MudBlazor.Docs.Compiler
             }
             else if (type.HasElementType)
             {
-                var elementTypeString = GetXmlDocumenationFormattedString(
+                var elementTypeString = GetXmlDocumentationFormattedString(
                     type.GetElementType(),
                     isMethodParameter,
                     typeGenericMap,
@@ -424,16 +424,16 @@ namespace MudBlazor.Docs.Compiler
                     // Hopefully this will never hit. At the time of writing
                     // this code, type.HasElementType is only true if the type
                     // is a pointer, array, or by reference.
-                    throw new(nameof(GetXmlDocumenationFormattedString) +
-                              " encountered an unhandled element type. " +
-                              "Please submit this issue to the Towel GitHub repository. " +
-                              "https://github.com/ZacharyPatten/Towel/issues/new/choose");
+                    throw new(nameof(GetXmlDocumentationFormattedString) +
+                        " encountered an unhandled element type. " +
+                        "Please submit this issue to the Towel GitHub repository. " +
+                        "https://github.com/ZacharyPatten/Towel/issues/new/choose");
                 }
             }
             else
             {
                 var prefaceString = type.IsNested
-                    ? GetXmlDocumenationFormattedString(
+                    ? GetXmlDocumentationFormattedString(
                         type.DeclaringType,
                         isMethodParameter,
                         typeGenericMap,
@@ -447,7 +447,7 @@ namespace MudBlazor.Docs.Compiler
                 var genericArgumentsString = type.IsGenericType && isMethodParameter
                     ? "{" + string.Join(",",
                         type.GetGenericArguments().Select(argument =>
-                            GetXmlDocumenationFormattedString(
+                            GetXmlDocumentationFormattedString(
                                 argument,
                                 isMethodParameter,
                                 typeGenericMap,
@@ -539,7 +539,7 @@ namespace MudBlazor.Docs.Compiler
             }
             else if (memberInfo.MemberType.HasFlag(MemberTypes.Custom))
             {
-                // This represents a cutom type that is not part of
+                // This represents a custom type that is not part of
                 // the standard .NET languages as far as I'm aware.
                 // This will never be supported so return null.
                 return null;
@@ -559,7 +559,7 @@ namespace MudBlazor.Docs.Compiler
 
         /// <summary>Gets the XML documentation for a parameter.</summary>
         /// <param name="parameterInfo">The parameter to get the XML documentation for.</param>
-        /// <returns>The XML documenation of the parameter.</returns>
+        /// <returns>The XML documentation of the parameter.</returns>
         public static string GetDocumentation(this ParameterInfo parameterInfo)
         {
             var memberDocumentation = parameterInfo.Member.GetDocumentation();

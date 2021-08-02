@@ -8,7 +8,7 @@ namespace UtilityTests
     public class StyleBuilderTests
     {
         [Test]
-        public void ShouldBulidConditionalInlineStyles()
+        public void ShouldBuildConditionalInlineStyles()
         {
             //arrange
             var hasBorder = true;
@@ -30,7 +30,7 @@ namespace UtilityTests
         }
 
         [Test]
-        public void ShouldBulidConditionalInlineStylesFromAttributes()
+        public void ShouldBuildConditionalInlineStylesFromAttributes()
         {
 
             //arrange

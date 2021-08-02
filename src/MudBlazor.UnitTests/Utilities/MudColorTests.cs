@@ -548,7 +548,7 @@ namespace MudBlazor.UnitTests.Utilities
         }
 
         [Test]
-        public void Equals_DifferntObjectType()
+        public void Equals_DifferentObjectType()
         {
             MudColor color1 = new(10, 20, 50, 255);
             color1.Equals(124).Should().BeFalse();

@@ -361,7 +361,7 @@ namespace MudBlazor.UnitTests.Components
             var text = date.ToShortDateString();
 
             picker.Text.Should().Be(text);
-            (comp.FindAll("input")[0] as IHtmlInputElement).Value.Should().Be(text);
+            ((IHtmlInputElement)comp.FindAll("input")[0]).Value.Should().Be(text);
         }
 
         [Test]
@@ -371,7 +371,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = OpenPicker(Parameter(nameof(MudDatePicker.IsDateDisabledFunc), isDisabledFunc));
 
             comp.Instance.IsDateDisabledFunc.Should().Be(isDisabledFunc);
-            comp.FindAll("button.mud-picker-calendar-day").Select(button => (button as IHtmlButtonElement).IsDisabled)
+            comp.FindAll("button.mud-picker-calendar-day").Select(button => ((IHtmlButtonElement)button).IsDisabled)
                 .Should().OnlyContain(disabled => disabled == true);
         }
 
@@ -412,14 +412,14 @@ namespace MudBlazor.UnitTests.Components
         public void IsDateDisabledFunc_NoDisabledDatesByDefault()
         {
             var comp = OpenPicker();
-            comp.FindAll("button.mud-picker-calendar-day").Select(button => (button as IHtmlButtonElement).IsDisabled)
+            comp.FindAll("button.mud-picker-calendar-day").Select(button => ((IHtmlButtonElement)button).IsDisabled)
                 .Should().OnlyContain(disabled => disabled == false);
         }
 
         public async Task CheckAutoCloseDatePickerTest()
         {
             // Define a date for comparison
-            DateTime now = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day);
+            var now = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day);
 
             // Get access to the datepicker of the instance
             var comp = Context.RenderComponent<AutoCompleteDatePickerTest>();
@@ -483,7 +483,7 @@ namespace MudBlazor.UnitTests.Components
         public async Task CheckReadOnlyTest()
         {
             // Define a date for comparison
-            DateTime now = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day);
+            var now = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day);
 
             // Get access to the datepicker of the instance
             var comp = Context.RenderComponent<MudDatePicker>();

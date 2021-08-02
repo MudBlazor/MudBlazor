@@ -275,7 +275,7 @@ namespace MudBlazor
         [Parameter] public Action<object> RowEditPreview { get; set; }
 
         /// <summary>
-        /// The method is called when the edition of the item has been commited in inline editing.
+        /// The method is called when the edition of the item has been committed in inline editing.
         /// </summary>
         [Parameter] public Action<object> RowEditCommit { get; set; }
 
@@ -308,7 +308,7 @@ namespace MudBlazor
         /// <summary>
         /// Alignment of the table cell text when breakpoint is smaller than <see cref="Breakpoint" />
         /// </summary>
-        [Obsolete("This property is obsolete. And not needed anymore, the cells width/alignment is done automaticly.")] [Parameter] public bool RightAlignSmall { get; set; } = true;
+        [Obsolete("This property is obsolete. And not needed anymore, the cells width/alignment is done automatically.")] [Parameter] public bool RightAlignSmall { get; set; } = true;
         #endregion
 
         public abstract TableContext TableContext { get; }

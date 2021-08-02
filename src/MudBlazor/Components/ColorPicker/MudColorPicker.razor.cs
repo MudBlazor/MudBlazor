@@ -109,14 +109,14 @@ namespace MudBlazor
         [Parameter] public bool DisablePreview { get; set; } = false;
 
         /// <summary>
-        /// The inital mode (RGB, HSL or HEX) the picker should open. Defaults to RGB 
+        /// The initial mode (RGB, HSL or HEX) the picker should open. Defaults to RGB 
         /// </summary>
         [Parameter] public ColorPickerMode ColorPickerMode { get; set; } = ColorPickerMode.RGB;
 
         private ColorPickerView _colorPickerView = ColorPickerView.Spectrum;
 
         /// <summary>
-        /// The inital view of the picker. Views can be changed if toolbar is enabled. 
+        /// The initial view of the picker. Views can be changed if toolbar is enabled. 
         /// </summary>
         [Parameter]
         public ColorPickerView ColorPickerView
@@ -145,7 +145,7 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// If true, binding changes occure also when HSL values changed without a corresponding RGB change 
+        /// If true, binding changes occurred also when HSL values changed without a corresponding RGB change 
         /// </summary>
         [Parameter] public bool UpdateBindingIfOnlyHSLChanged { get; set; } = false;
 
@@ -160,8 +160,8 @@ namespace MudBlazor
             {
                 if (value == null) { return; }
 
-                bool rgbChanged = value != _color;
-                bool hslChanged = _color == null ? false : value.HslChanged(_color);
+                var rgbChanged = value != _color;
+                var hslChanged = _color == null ? false : value.HslChanged(_color);
                 _color = value;
 
                 if (rgbChanged)
@@ -216,7 +216,7 @@ namespace MudBlazor
 
         /// <summary>
         /// When set to true, no mouse move events in the spectrum mode will be captured, so the selector circle won't fellow the mouse. 
-        /// Under some conditions like long latency the visiual representation might not reflect the user behaviour anymore. So, it can be disabled 
+        /// Under some conditions like long latency the visual representation might not reflect the user behaviour anymore. So, it can be disabled 
         /// Enabled by default
         /// </summary>
         [Parameter] public bool DisableDragEffect { get; set; } = false;
@@ -268,8 +268,8 @@ namespace MudBlazor
                 index = 5;
             }
 
-            int valueInDeg = (int)_color.H - (index * 60);
-            int value = (int)(MathExtensions.Map(0, 60, 0, 255, valueInDeg));
+            var valueInDeg = (int)_color.H - (index * 60);
+            var value = (int)(MathExtensions.Map(0, 60, 0, 255, valueInDeg));
             var section = _rgbToHueMapper[index];
 
             _baseColor = new(section.r(value), section.g(value), section.b(value), 255);
@@ -277,17 +277,17 @@ namespace MudBlazor
 
         private void UpdateColorBaseOnSelection()
         {
-            double x = _selectorX / _maxX;
+            var x = _selectorX / _maxX;
 
-            int r_x = 255 - (int)((255 - _baseColor.R) * x);
-            int g_x = 255 - (int)((255 - _baseColor.G) * x);
-            int b_x = 255 - (int)((255 - _baseColor.B) * x);
+            var r_x = 255 - (int)((255 - _baseColor.R) * x);
+            var g_x = 255 - (int)((255 - _baseColor.G) * x);
+            var b_x = 255 - (int)((255 - _baseColor.B) * x);
 
-            double y = 1.0 - _selectorY / _maxY;
+            var y = 1.0 - _selectorY / _maxY;
 
-            double r = r_x * y;
-            double g = g_x * y;
-            double b = b_x * y;
+            var r = r_x * y;
+            var g = g_x * y;
+            var b = b_x * y;
 
             _skipFeedback = true;
             Value = new MudColor((byte)r, (byte)g, (byte)b, _color.A);
@@ -297,7 +297,7 @@ namespace MudBlazor
         private void UpdateColorSelectorBasedOnRgb()
         {
             var hueValue = (int)MathExtensions.Map(0, 360, 0, 6 * 255, _color.H);
-            int index = hueValue / 255;
+            var index = hueValue / 255;
             if (index == 6)
             {
                 index = 5;
@@ -321,8 +321,8 @@ namespace MudBlazor
 
             _selectorY = MathExtensions.Map(0, 255, 0, _maxY, primaryDiff);
 
-            double secondaryColorX = colorValues.Item2 * (1.0 / primaryDiffDelta);
-            double relation = (255 - secondaryColorX) / 255.0;
+            var secondaryColorX = colorValues.Item2 * (1.0 / primaryDiffDelta);
+            var relation = (255 - secondaryColorX) / 255.0;
 
             _selectorX = relation * _maxX;
         }
@@ -392,7 +392,7 @@ namespace MudBlazor
         /// <summary>
         /// Set the L (Lightness) component of the color picker
         /// </summary>
-        /// <param name="value">A value between 0.0 (no light, black) and 1.0 (max ligt, white)</param>
+        /// <param name="value">A value between 0.0 (no light, black) and 1.0 (max light, white)</param>
         public void SetL(double value) => Value = Value.SetL(value);
 
         /// <summary>

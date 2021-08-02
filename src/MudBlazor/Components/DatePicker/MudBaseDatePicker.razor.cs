@@ -416,8 +416,7 @@ namespace MudBlazor
         {
             if (firstRender)
             {
-                if (_picker_month == null)
-                    _picker_month = GetCalendarStartOfMonth();
+                _picker_month ??= GetCalendarStartOfMonth();
             }
 
             if (firstRender && _currentView == OpenTo.Year)
