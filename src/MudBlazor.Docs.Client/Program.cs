@@ -12,7 +12,7 @@ namespace MudBlazor.Docs.Client
 {
     public class Program
     {
-        public static async Task Main(string[] args)
+        public static Task Main(string[] args)
         {
             var builder = WebAssemblyHostBuilder.CreateDefault(args);
             builder.RootComponents.Add<App>("app");
@@ -23,7 +23,7 @@ namespace MudBlazor.Docs.Client
             builder.Services.AddHeadElementHelper();
             builder.Services.AddGoogleAnalytics("G-PRYNCB61NV");
 
-            await builder.Build().RunAsync();
+            return builder.Build().RunAsync();
         }
     }
 }

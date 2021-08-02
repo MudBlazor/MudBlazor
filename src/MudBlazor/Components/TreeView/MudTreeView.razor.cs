@@ -123,7 +123,7 @@ namespace MudBlazor
             await ActivatedValueChanged.InvokeAsync(item.Value);
         }
 
-        internal async Task UpdateSelectedItems()
+        internal Task UpdateSelectedItems()
         {
             _selectedValues ??= new HashSet<MudTreeViewItem<T>>();
 
@@ -137,7 +137,7 @@ namespace MudBlazor
                 }
             }
 
-            await SelectedValuesChanged.InvokeAsync(new HashSet<T>(_selectedValues.Select(i => i.Value)));
+            return SelectedValuesChanged.InvokeAsync(new HashSet<T>(_selectedValues.Select(i => i.Value)));
         }
 
         internal void AddChild(MudTreeViewItem<T> item) => _childItems.Add(item);

@@ -78,7 +78,7 @@ namespace MudBlazor
         /// </summary>
         /// <param name="uri">The uri containing the fragment to scroll</param>
         /// <returns>A task that completes when the viewport has scrolled</returns>
-        public async Task ScrollToSection(Uri uri) => await ScrollSpy.ScrollToSection(uri);
+        public Task ScrollToSection(Uri uri) => ScrollSpy.ScrollToSection(uri);
 
         /// <summary>
         /// Add a section to the content navigation
