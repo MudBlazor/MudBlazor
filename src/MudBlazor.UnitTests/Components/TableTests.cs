@@ -834,7 +834,7 @@ namespace MudBlazor.UnitTests.Components
             trs[1].Click();
             //every item will be add twice - see MudTextField.razor
             validator.ControlCount.Should().Be(2);
-            for (int i = 0; i < 10; ++i)
+            for (var i = 0; i < 10; ++i)
             {
                 trs[i % 3 + 1].Click();
             }
@@ -933,7 +933,7 @@ namespace MudBlazor.UnitTests.Components
             void RowEditPreview(object item)
             {
                 // Get the value of the SelectedItem
-                string selectedItemValue = table.SelectedItem.Value;
+                var selectedItemValue = table.SelectedItem.Value;
 
                 // Get the value of the object from the RowEditPreview method
                 var rowEditPreviewValue = item.GetType().GetProperty("Value").GetValue(item, null).ToString();
