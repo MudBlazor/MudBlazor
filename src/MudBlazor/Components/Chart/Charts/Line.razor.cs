@@ -60,7 +60,7 @@ namespace MudBlazor.Charts
             double gridYUnits = MudChartParent?.ChartOptions.YAxisTicks ?? 20;
             if (gridYUnits <= 0)
                 gridYUnits = 20;
-            var maxYTicks = MudChartParent?.ChartOptions.MaxNumYAxisTicks ?? 100;
+            int maxYTicks = MudChartParent?.ChartOptions.MaxNumYAxisTicks ?? 100;
             double gridXUnits = 30;
 
             var numVerticalLines = numValues - 1;
@@ -137,8 +137,8 @@ namespace MudBlazor.Charts
                 double gridValueX = 0;
                 double gridValueY = 0;
                 var firstTime = true;
-                var XValues = new double[item.Data.Length];
-                var YValues = new double[item.Data.Length];
+                double[] XValues = new double[item.Data.Length];
+                double[] YValues = new double[item.Data.Length];
                 ILineInterpolator interpolator;
                 for (var i = 0; i <= item.Data.Length - 1; i++)
                 {

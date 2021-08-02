@@ -119,8 +119,8 @@ namespace MudBlazor.Charts
             double barsPerSeries = 0;
             foreach (var item in _series)
             {
-                var gridValueX = horizontalStartSpace + barsPerSeries;
-                var gridValueY = boundHeight - verticalStartSpace;
+                double gridValueX = horizontalStartSpace + barsPerSeries;
+                double gridValueY = boundHeight - verticalStartSpace;
 
                 foreach (var dataLine in item.Data)
                 {
