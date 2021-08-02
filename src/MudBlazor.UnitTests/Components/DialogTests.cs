@@ -169,7 +169,7 @@ namespace MudBlazor.UnitTests.Components
             Console.WriteLine("----------------------------------------");
             Console.WriteLine(comp.Markup);
 
-            (dialogReference.Dialog as DialogWithParameters).TestValue.Should().Be("new_test");
+            ((DialogWithParameters)dialogReference.Dialog).TestValue.Should().Be("new_test");
             textField.Text.Should().Be("new_test");
         }
 
@@ -251,7 +251,7 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("div.mud-overlay").Click();
             comp.WaitForAssertion(() => comp.Markup.Trim().Should().NotBeEmpty(), TimeSpan.FromSeconds(5));
 
-            //Allow dismission
+            //Allow dismiss
             customDialogReference.AllowDismiss = true;
 
             //Dialog should now be closable through backdrop click

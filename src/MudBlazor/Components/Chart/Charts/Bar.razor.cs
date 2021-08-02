@@ -124,7 +124,7 @@ namespace MudBlazor.Charts
 
                 foreach (var dataLine in item.Data)
                 {
-                    var dataValue = ((double)dataLine) * verticalSpace / gridYUnits;
+                    var dataValue = dataLine * verticalSpace / gridYUnits;
                     var gridValue = gridValueY - dataValue;
                     var bar = $"M {ToS(gridValueX)} {ToS(gridValueY)} L {ToS(gridValueX)} {ToS(gridValue)}";
 

@@ -56,7 +56,7 @@ namespace MudBlazor
         [Parameter] public string AvatarClass { get; set; }
 
         /// <summary>
-        /// Removes circle edges and applys theme default.
+        /// Removes circle edges and applies theme default.
         /// </summary>
         [Parameter] public bool Label { get; set; }
 

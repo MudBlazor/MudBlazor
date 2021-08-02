@@ -13,7 +13,7 @@
             </MudNavMenu>
         </MudDrawer>
         <div class="d-flex justify-center align-center mud-height-full">
-            <MudButton Variant="Variant.Filled" Color="Color.Secondary" OnClick="@TogglDrawer">Persistent drawer</MudButton>
+            <MudButton Variant="Variant.Filled" Color="Color.Secondary" OnClick="@ToggleDrawer">Persistent drawer</MudButton>
         </div>
     </MudDrawerContainer>
 </MudPaper>
@@ -22,7 +22,7 @@
 {
     bool open = false;
 
-    void TogglDrawer()
+    void ToggleDrawer()
     {
         open = !open;
     }

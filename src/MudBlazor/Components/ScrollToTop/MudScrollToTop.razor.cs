@@ -65,7 +65,7 @@ namespace MudBlazor
                     : null;// null is defaulted to document element in JS function
                 ScrollListener.Selector = selector;
 
-                //suscribe to event
+                //subscribe to event
                 ScrollListener.OnScroll += ScrollListener_OnScroll;
             }
         }

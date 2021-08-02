@@ -13,9 +13,9 @@ namespace MudBlazor.UnitTests.Mocks
     {
         public Dictionary<Guid, Func<object, Task>> Callbacks { get; private set; } = new();
 
-        public Dictionary<Guid, String> ElementIdMapper { get; private set; } = new();
+        public Dictionary<Guid, string> ElementIdMapper { get; private set; } = new();
 
-        public Task<Guid> Subscribe<T>(string eventName, string elementId, string projection, int throotleInterval, Func<object, Task> callback)
+        public Task<Guid> Subscribe<T>(string eventName, string elementId, string projection, int throttleInterval, Func<object, Task> callback)
         {
             var id = Guid.NewGuid();
             ElementIdMapper.Add(id, elementId);

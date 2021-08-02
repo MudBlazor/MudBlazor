@@ -143,7 +143,7 @@ namespace MudBlazor.UnitTests.Components
         /// When placeholder is set, label should shrink
         /// </summary>
         [Test]
-        public void LableShouldShrinkWhenPlaceholderIsSet()
+        public void LabelShouldShrinkWhenPlaceholderIsSet()
         {
             //Arrange
             using var ctx = new Bunit.TestContext();
@@ -473,8 +473,8 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(() => comp.Instance.Validate());
             comp.Instance.Error.Should().BeTrue();
             comp.Instance.ValidationErrors.Should().HaveCount(1);
-            comp.Instance.ValidationErrors[0].Should().Be("An unhandled exception occured: This is a test exception");
-            comp.Instance.GetErrorText().Should().Be("An unhandled exception occured: This is a test exception");
+            comp.Instance.ValidationErrors[0].Should().Be("An unhandled exception occurred: This is a test exception");
+            comp.Instance.GetErrorText().Should().Be("An unhandled exception occurred: This is a test exception");
         }
         #endregion
         #endregion

@@ -356,7 +356,7 @@ namespace MudBlazor.UnitTests.Utilities
             c5.Get(false).Should().Be(0);
             c5.Get(true).Should().Be(1);
 
-            // non-convertable types will be handled without exceptions
+            // non-convertible types will be handled without exceptions
             var c6 = new BoolConverter<DateTime>();
             c6.Set(DateTime.Now).Should().Be(null);
             c6.Get(true).Should().Be(default(DateTime));
@@ -448,11 +448,11 @@ namespace MudBlazor.UnitTests.Utilities
         [Test]
         public void NumericBoundariesConverterTest()
         {
-            Func<int, int> functInt = (int i) => i;//Not testing test the function, return the parameter
-            Func<double?, double?> functDbl = (double? d) => d;//Not testing test the function, return the parameter
+            Func<int, int> funcInt = (int i) => i;//Not testing test the function, return the parameter
+            Func<double?, double?> funcDbl = (double? d) => d;//Not testing test the function, return the parameter
 
             //Note: Set doesn't do anything. The Get can change the value
-            var c1 = new NumericBoundariesConverter<int>(functInt);
+            var c1 = new NumericBoundariesConverter<int>(funcInt);
             c1.Set("hello").Should().Be("hello");
             c1.Get("hello").Should().Be(null);
             c1.GetError.Should().Be(true);
@@ -479,7 +479,7 @@ namespace MudBlazor.UnitTests.Utilities
             c1.Get("1.5").Should().Be(null);
             c1.GetError.Should().Be(true);
             c1.GetErrorMessage.Should().Be("Not a valid number");
-            var c3 = new NumericBoundariesConverter<double?>(functDbl) { Culture = CultureInfo.InvariantCulture };
+            var c3 = new NumericBoundariesConverter<double?>(funcDbl) { Culture = CultureInfo.InvariantCulture };
             c3.Set("1.7").Should().Be("1.7");
             c3.Get("1.7").Should().Be("1.7");
             c3.GetError.Should().Be(false);

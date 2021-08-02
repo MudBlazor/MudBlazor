@@ -66,7 +66,7 @@ namespace MudBlazor.UnitTests.Mocks
             foreach (var item in elements)
             {
                 var size = PanelSize;
-                // last element is alaways TabsContentSize
+                // last element is always TabsContentSize
                 if (item.Id == elements.Last().Id && _firstBatchProcessed == false)
                 {
                     size = PanelTotalSize;
