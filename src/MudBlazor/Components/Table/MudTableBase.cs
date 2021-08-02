@@ -379,14 +379,14 @@ namespace MudBlazor
             }
         }
 
-        internal async Task OnPreviewEditHandler(object item)
+        internal Task OnPreviewEditHandler(object item)
         {
-            await OnPreviewEditClick.InvokeAsync(item);
+            return OnPreviewEditClick.InvokeAsync(item);
         }
 
-        internal async Task OnCancelEditHandler(MouseEventArgs ev)
+        internal Task OnCancelEditHandler(MouseEventArgs ev)
         {
-            await OnCancelEditClick.InvokeAsync(ev);
+            return OnCancelEditClick.InvokeAsync(ev);
         }
 
         protected string TableStyle

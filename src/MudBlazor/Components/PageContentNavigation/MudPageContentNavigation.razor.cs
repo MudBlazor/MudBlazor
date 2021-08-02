@@ -42,10 +42,10 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public bool ActivateFirstSectionAsDefault { get; set; } = false;
 
-        private async Task OnNavLinkClick(string id)
+        private Task OnNavLinkClick(string id)
         {
             SelectActiveSection(id);
-            await ScrollSpy.ScrollToSection(id);
+            return ScrollSpy.ScrollToSection(id);
         }
 
         private void ScrollSpy_ScrollSectionSectionCentered(object sender, ScrollSectionCenteredEventArgs e) =>
@@ -133,10 +133,10 @@ namespace MudBlazor
             }
         }
 
-        public async ValueTask DisposeAsync()
+        public ValueTask DisposeAsync()
         {
             ScrollSpy.ScrollSectionSectionCentered -= ScrollSpy_ScrollSectionSectionCentered;
-            await ScrollSpy.DisposeAsync();
+            return ScrollSpy.DisposeAsync();
         }
     }
 }

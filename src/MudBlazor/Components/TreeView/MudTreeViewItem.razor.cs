@@ -199,16 +199,16 @@ namespace MudBlazor
             return ExpandedChanged.InvokeAsync(expanded);
         }
 
-        internal async Task Activate(bool value)
+        internal Task Activate(bool value)
         {
             if (_isActivated == value)
-                return;
+                return Task.CompletedTask;
 
             _isActivated = value;
 
             StateHasChanged();
 
-            await ActivatedChanged.InvokeAsync(_isActivated);
+            return ActivatedChanged.InvokeAsync(_isActivated);
         }
 
         internal async Task Select(bool value, MudTreeViewItem<T> source = null)
