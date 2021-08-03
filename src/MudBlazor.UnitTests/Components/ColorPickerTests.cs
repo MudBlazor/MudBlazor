@@ -1214,5 +1214,31 @@ namespace MudBlazor.UnitTests.Components
                 _eventListener.ElementIdMapper.Keys.Should().BeEmpty();
             }
         }
+
+        [Test]
+        public void StableHue_WhenColorSpectrumClicked()
+        {
+            var comp = Context.RenderComponent<MudColorPicker>(p =>
+            {
+                p.Add(x => x.PickerVariant, PickerVariant.Static);
+                p.Add(x => x.ColorPickerView, ColorPickerView.Spectrum);
+            });
+
+            Console.WriteLine(comp.Markup);
+
+            var overlay = comp.Find(CssSelector);
+
+            double expectedHue = _defaultColor.H;
+
+            for (int x = 0; x < 312; x += 5)
+            {
+                for (int y = 0; y < 250; y += 5)
+                {
+                    overlay.Click(new MouseEventArgs { OffsetX = x, OffsetY = y });
+
+                    comp.Instance.Value.H.Should().Be(expectedHue);
+                }
+            }
+        }
     }
 }

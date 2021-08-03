@@ -290,7 +290,8 @@ namespace MudBlazor
             var b = b_x * y;
 
             _skipFeedback = true;
-            Value = new MudColor((byte)r, (byte)g, (byte)b, _color.A);
+            //in this mode, H is expected to be stable, so copy H value
+            Value = new MudColor((byte)r, (byte)g, (byte)b, _color);
             _skipFeedback = false;
         }
 
