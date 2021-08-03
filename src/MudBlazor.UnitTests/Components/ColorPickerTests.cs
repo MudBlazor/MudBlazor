@@ -453,7 +453,8 @@ namespace MudBlazor.UnitTests.Components
 
             overlay.Click(new MouseEventArgs { OffsetX = x, OffsetY = y });
 
-            MudColor expectedColor = "#232232ff";
+            MudColor color = "#232232ff";
+            MudColor expectedColor = new MudColor(color.R, color.G, color.B, _defaultColor);
 
             CheckColorRelatedValues(comp, x, y, expectedColor, ColorPickerMode.RGB);
         }
