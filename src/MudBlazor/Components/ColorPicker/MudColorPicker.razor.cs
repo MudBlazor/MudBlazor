@@ -37,6 +37,7 @@ namespace MudBlazor
 
         private const double _maxY = 250;
         private const double _maxX = 312;
+        private const double _selctorSize = 26.0;
 
         private double _selectorX;
         private double _selectorY;
@@ -330,9 +331,8 @@ namespace MudBlazor
 
         #region mouse interactions
 
-        private void OnMouseClick(MouseEventArgs e)
+        private void HandleColorOverlayClicked()
         {
-            SetSelectorBasedOnMouseEvents(e);
             UpdateColorBaseOnSelection();
 
             if (IsAnyControlVisible() == false)
@@ -341,19 +341,31 @@ namespace MudBlazor
             }
         }
 
+        private void OnSelectorClicked(MouseEventArgs e)
+        {
+            SetSelectorBasedOnMouseEvents(e, false);
+            HandleColorOverlayClicked();
+        }
+
+        private void OnColorOverlayClick(MouseEventArgs e)
+        {
+            SetSelectorBasedOnMouseEvents(e, true);
+            HandleColorOverlayClicked();
+        }
+
         private void OnMouseOver(MouseEventArgs e)
         {
             if (e.Buttons == 1)
             {
-                SetSelectorBasedOnMouseEvents(e);
+                SetSelectorBasedOnMouseEvents(e, true);
                 UpdateColorBaseOnSelection();
             }
         }
 
-        private void SetSelectorBasedOnMouseEvents(MouseEventArgs e)
+        private void SetSelectorBasedOnMouseEvents(MouseEventArgs e, bool offsetIsAbsolute)
         {
-            _selectorX = e.OffsetX.EnsureRange(_maxX);
-            _selectorY = e.OffsetY.EnsureRange(_maxY);
+            _selectorX = (offsetIsAbsolute == true ? e.OffsetX : (e.OffsetX - _selctorSize / 2.0) + _selectorX).EnsureRange(_maxX);
+            _selectorY = (offsetIsAbsolute == true ? e.OffsetY : (e.OffsetY - _selctorSize / 2.0) + _selectorY).EnsureRange(_maxY);
         }
 
         #endregion

@@ -1241,5 +1241,37 @@ namespace MudBlazor.UnitTests.Components
                 }
             }
         }
+
+        [Test]
+        public void Click_Selector_ColorPanel()
+        {
+            var comp = Context.RenderComponent<SimpleColorPickerTest>();
+            Console.WriteLine(comp.Markup);
+
+            var overlay = comp.Find(CssSelector);
+
+            var x = 99.2;
+            var y = 200.98;
+
+            overlay.Click(new MouseEventArgs { OffsetX = x, OffsetY = y });
+
+            MudColor color = "#232232ff";
+            MudColor expectedColor = new MudColor(color.R, color.G, color.B, _defaultColor);
+
+            CheckColorRelatedValues(comp, x, y, expectedColor, ColorPickerMode.RGB);
+
+            var selector = comp.Find(".mud-picker-color-selector");
+
+            //a click in the center of the selector shouldn't change something
+            selector.Click(new MouseEventArgs { OffsetX = 13, OffsetY = 13 });
+
+            CheckColorRelatedValues(comp, x, y, expectedColor, ColorPickerMode.RGB);
+
+            selector.Click(new MouseEventArgs { OffsetX = 5, OffsetY = 20 });
+
+            MudColor secondExpectedColor = new MudColor(31, 30, 42, _defaultColor);
+            CheckColorRelatedValues(comp, x - 8, y + 7, secondExpectedColor, ColorPickerMode.RGB);
+
+        }
     }
 }
