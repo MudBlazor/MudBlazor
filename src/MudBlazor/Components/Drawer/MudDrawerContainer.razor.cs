@@ -52,7 +52,7 @@ namespace MudBlazor
                 return string.Empty;
 
             var className = $"mud-drawer-{(drawer.Open ? "open" : "close")}-{drawer.Variant.ToDescriptionString()}";
-            if (drawer.Variant == DrawerVariant.Responsive || drawer.Variant == DrawerVariant.Mini)
+            if (drawer.Variant is DrawerVariant.Responsive or DrawerVariant.Mini)
             {
                 className += $"-{drawer.Breakpoint.ToDescriptionString()}";
             }

@@ -46,7 +46,7 @@
                             </div>
                         </div>
                     }
-                    @if(ColorPickerView == ColorPickerView.Grid || ColorPickerView == ColorPickerView.GridCompact)
+                    @if(ColorPickerView is ColorPickerView.Grid or ColorPickerView.GridCompact)
                     {
                         <div class="mud-picker-color-grid">
                             @foreach (var item in _gridList)

@@ -187,7 +187,7 @@ namespace MudBlazor
         /// <returns></returns>
         protected IEnumerable<DateTime> GetWeek(int month, int index)
         {
-            if (index < 0 || index > 5)
+            if (index is < 0 or > 5)
                 throw new ArgumentException("Index must be between 0 and 5");
             var month_first = GetMonthStart(month);
             var week_first = month_first.AddDays(index * 7).StartOfWeek(GetFirstDayOfWeek());
@@ -197,7 +197,7 @@ namespace MudBlazor
 
         private string GetWeekNumber(int month, int index)
         {
-            if (index < 0 || index > 5)
+            if (index is < 0 or > 5)
                 throw new ArgumentException("Index must be between 0 and 5");
             var month_first = GetMonthStart(month);
             var week_first = month_first.AddDays(index * 7).StartOfWeek(GetFirstDayOfWeek());

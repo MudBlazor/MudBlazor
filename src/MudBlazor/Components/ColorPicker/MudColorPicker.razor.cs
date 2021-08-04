@@ -234,8 +234,7 @@ namespace MudBlazor
             _collectionOpen = false;
 
             if (
-                IsAnyControlVisible() == false ||
-                (ColorPickerView == ColorPickerView.GridCompact || ColorPickerView == ColorPickerView.Palette))
+                IsAnyControlVisible() == false || ColorPickerView is ColorPickerView.GridCompact or ColorPickerView.Palette)
             {
                 Close();
             }
@@ -446,7 +445,7 @@ namespace MudBlazor
         #region helper
 
         private string GetSelectorLocation() => $"translate({Math.Round(_selectorX, 2).ToString(CultureInfo.InvariantCulture)}px, {Math.Round(_selectorY, 2).ToString(CultureInfo.InvariantCulture)}px);";
-        private string GetColorTextValue() => (DisableAlpha == true || ColorPickerView == ColorPickerView.Palette || ColorPickerView == ColorPickerView.GridCompact) ? _color.ToString(MudColorOutputFormats.Hex) : _color.ToString(MudColorOutputFormats.HexA);
+        private string GetColorTextValue() => (DisableAlpha == true || ColorPickerView is ColorPickerView.Palette or ColorPickerView.GridCompact) ? _color.ToString(MudColorOutputFormats.Hex) : _color.ToString(MudColorOutputFormats.HexA);
 
         private EventCallback<MouseEventArgs> GetEventCallback() => EventCallback.Factory.Create<MouseEventArgs>(this, () => Close());
         private bool IsAnyControlVisible() => !(DisablePreview && DisableSliders && DisableInputs);
