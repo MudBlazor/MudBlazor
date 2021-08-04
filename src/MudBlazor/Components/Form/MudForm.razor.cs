@@ -104,6 +104,13 @@ namespace MudBlazor
 
         [Parameter] public EventCallback<string[]> ErrorsChanged { get; set; }
 
+        /// <summary>
+        /// Specifies the top-level model object for the form. Used with Fluent Validation
+        /// </summary>
+#nullable enable
+        [Parameter] public object? Model { get; set; }
+#nullable disable
+
         void IForm.Add(IFormComponent formControl)
         {
             if (formControl.Required)

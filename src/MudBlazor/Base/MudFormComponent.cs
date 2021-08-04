@@ -227,6 +227,8 @@ namespace MudBlazor
                     ValidateWithFunc(Validation as Func<T, string>, _value, errors);
                 else if (Validation is Func<T, IEnumerable<string>>)
                     ValidateWithFunc(Validation as Func<T, IEnumerable<string>>, _value, errors);
+                else if (Validation is Func<object, string, IEnumerable<string>>)
+                    ValidateModelWithPathOfProperty(Validation as Func<object, string, IEnumerable<string>>, errors);
                 else
                 {
                     var value = _value;
@@ -237,6 +239,8 @@ namespace MudBlazor
                         await ValidateWithFunc(Validation as Func<T, Task<string>>, _value, errors);
                     else if (Validation is Func<T, Task<IEnumerable<string>>>)
                         await ValidateWithFunc(Validation as Func<T, Task<IEnumerable<string>>>, _value, errors);
+                    else if (Validation is Func<object, string, Task<IEnumerable<string>>>)
+                        await ValidateModelWithPathOfProperty(Validation as Func<object, string, Task<IEnumerable<string>>>, errors);
 
                     changed = !EqualityComparer<T>.Default.Equals(value, _value);
                 }
@@ -341,6 +345,19 @@ namespace MudBlazor
             }
         }
 
+        protected virtual void ValidateModelWithPathOfProperty(Func<object, string, IEnumerable<string>> func, List<string> errors)
+        {
+            try
+            {
+                foreach (var error in func(Form.Model, GetPathOfProperty(For)))
+                    errors.Add(error);
+            }
+            catch (Exception e)
+            {
+                errors.Add("Error in validation func: " + e.Message);
+            }
+        }
+
         protected virtual async Task ValidateWithFunc(Func<T, Task<bool>> func, T value, List<string> errors)
         {
             try
@@ -379,6 +396,35 @@ namespace MudBlazor
             {
                 errors.Add("Error in validation func: " + e.Message);
             }
+        }
+
+        protected virtual async Task ValidateModelWithPathOfProperty(Func<object, string, Task<IEnumerable<string>>> func, List<string> errors)
+        {
+            try
+            {
+                foreach (var error in await func(Form.Model, GetPathOfProperty(For)))
+                    errors.Add(error);
+            }
+            catch (Exception e)
+            {
+                errors.Add("Error in validation func: " + e.Message);
+            }
+        }
+
+        private static string GetPathOfProperty(Expression<Func<T>> property)
+        {
+            string resultingString = Empty;
+            var p = property.Body as MemberExpression;
+
+            while (p != null)
+            {
+                if (p.Expression is MemberExpression)
+                {
+                    resultingString = p.Member.Name + (resultingString != Empty ? "." : Empty) + resultingString;
+                }
+                p = p.Expression as MemberExpression;
+            }
+            return resultingString;
         }
 
         public void Reset()
