@@ -453,7 +453,8 @@ namespace MudBlazor.UnitTests.Components
 
             overlay.Click(new MouseEventArgs { OffsetX = x, OffsetY = y });
 
-            MudColor expectedColor = "#232232ff";
+            MudColor color = "#232232ff";
+            MudColor expectedColor = new MudColor(color.R, color.G, color.B, _defaultColor);
 
             CheckColorRelatedValues(comp, x, y, expectedColor, ColorPickerMode.RGB);
         }
@@ -1213,6 +1214,64 @@ namespace MudBlazor.UnitTests.Components
                 buttons[i].Click();
                 _eventListener.ElementIdMapper.Keys.Should().BeEmpty();
             }
+        }
+
+        [Test]
+        public void StableHue_WhenColorSpectrumClicked()
+        {
+            var comp = Context.RenderComponent<MudColorPicker>(p =>
+            {
+                p.Add(x => x.PickerVariant, PickerVariant.Static);
+                p.Add(x => x.ColorPickerView, ColorPickerView.Spectrum);
+            });
+
+            Console.WriteLine(comp.Markup);
+
+            var overlay = comp.Find(CssSelector);
+
+            double expectedHue = _defaultColor.H;
+
+            for (int x = 0; x < 312; x += 5)
+            {
+                for (int y = 0; y < 250; y += 5)
+                {
+                    overlay.Click(new MouseEventArgs { OffsetX = x, OffsetY = y });
+
+                    comp.Instance.Value.H.Should().Be(expectedHue);
+                }
+            }
+        }
+
+        [Test]
+        public void Click_Selector_ColorPanel()
+        {
+            var comp = Context.RenderComponent<SimpleColorPickerTest>();
+            Console.WriteLine(comp.Markup);
+
+            var overlay = comp.Find(CssSelector);
+
+            var x = 99.2;
+            var y = 200.98;
+
+            overlay.Click(new MouseEventArgs { OffsetX = x, OffsetY = y });
+
+            MudColor color = "#232232ff";
+            MudColor expectedColor = new MudColor(color.R, color.G, color.B, _defaultColor);
+
+            CheckColorRelatedValues(comp, x, y, expectedColor, ColorPickerMode.RGB);
+
+            var selector = comp.Find(".mud-picker-color-selector");
+
+            //a click in the center of the selector shouldn't change something
+            selector.Click(new MouseEventArgs { OffsetX = 13, OffsetY = 13 });
+
+            CheckColorRelatedValues(comp, x, y, expectedColor, ColorPickerMode.RGB);
+
+            selector.Click(new MouseEventArgs { OffsetX = 5, OffsetY = 20 });
+
+            MudColor secondExpectedColor = new MudColor(31, 30, 42, _defaultColor);
+            CheckColorRelatedValues(comp, x - 8, y + 7, secondExpectedColor, ColorPickerMode.RGB);
+
         }
     }
 }

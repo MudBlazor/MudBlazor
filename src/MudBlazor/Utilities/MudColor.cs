@@ -133,6 +133,18 @@ namespace MudBlazor.Utilities
             CalculateHSL();
         }
 
+        /// <summary>
+        /// initilize a new MudColor with new RGB values but keeps the hue value from the color
+        /// </summary>
+        /// <param name="r">R</param>
+        /// <param name="g">G</param>
+        /// <param name="b">B</param>
+        /// <param name="color">Existing color to copy hue value from </param>
+        public MudColor(byte r, byte g, byte b, MudColor color) : this(r,g,b,color.A)
+        {
+            H = color.H;
+        }
+
         public MudColor(int r, int g, int b, double alpha) :
          this(r, g, b, (byte)((alpha * 255.0).EnsureRange(255)))
         {
