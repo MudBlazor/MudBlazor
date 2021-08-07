@@ -4,76 +4,46 @@
 <div style="max-width: 400px;">
     <MudCard>
         <MudCardContent>
-            <MudForm Model="@model">
-                <MudTextField @bind-Value="model.Name"
-                              Validation="@(ccValidator.ValidateValue)"
-                              For="@(() => model.Name)"
-                              Immediate="true"
-                              Label="Name" />
-
-                <MudTextField @bind-Value="model.CCNumber"
-                              Validation="@(ccValidator.ValidateValue)"
-                              For="@(() => model.CCNumber)"
+            <MudForm>
+                <MudTextField @bind-Value="creditCardNr"
+                              Validation="@ccValidator.Validation"
                               Immediate="true"
                               Label="Credit card nr" />
-
-                <MudTextField @bind-Value="model.MyModel2.Address"
-                              Validation="@(ccValidator.ValidateValue)"
-                              For="@(() => model.MyModel2.Address)"
-                              Immediate="true"
-                              Label="Address" />
             </MudForm>
         </MudCardContent>
     </MudCard>
 </div>
 
-@code {
-    MyModelFluentValidator ccValidator = new MyModelFluentValidator();
+@code { 
+    // This is a valid Visa test card number
+    string creditCardNr = "4012 8888 8888 1881";
 
-    MyModel model = new MyModel();
-
-    public class MyModel
-    {
-        public string Name { get; set; }
-
-        public string CCNumber { get; set; } = "4012 8888 8888 1881";
-
-        public MyModel2 MyModel2 { get; set; } = new MyModel2();
-    }
-
-    public class MyModel2
-    {
-        public string Address { get; set; }
-    }
+    // The validation rules (overkill, I know, but very fluent):
+    FluentValueValidator<string> ccValidator = new FluentValueValidator<string>(x => x
+        .NotEmpty()
+        .Length(1,100)
+        .CreditCard());
 
     /// <summary>
-    /// A standard AbstractValidator which contains multiple rules and can be shared with the back end API
+    /// A glue class to make it easy to define validation rules for single values using FluentValidation
+    /// You can reuse this class for all your fields, like for the credit card rules above.
     /// </summary>
-    /// <typeparam name="MyModel"></typeparam>
-    public class MyModelFluentValidator : AbstractValidator<MyModel>
+    /// <typeparam name="T"></typeparam>
+    public class FluentValueValidator<T> : AbstractValidator<T>
     {
-        public MyModelFluentValidator()
+        public FluentValueValidator(Action<IRuleBuilderInitial<T, T>> rule)
         {
-            RuleFor(x => x.Name)
-                .NotEmpty()
-                .Length(1,100);
-
-            RuleFor(x => x.CCNumber)
-                .NotEmpty()
-                .Length(1,100)
-                .CreditCard();
-
-            RuleFor(x => x.MyModel2.Address)
-                .NotEmpty()
-                .Length(1,100);
+            rule(RuleFor(x => x));
         }
 
-        public Func<object, string, Task<IEnumerable<string>>> ValidateValue => async (model, propertyName) =>
+        private IEnumerable<string> ValidateValue(T arg)
         {
-            var result = await ValidateAsync(ValidationContext<MyModel>.CreateWithOptions(model as MyModel, x => x.IncludeProperties(propertyName)));
+            var result = Validate(arg);
             if (result.IsValid)
                 return new string[0];
             return result.Errors.Select(e => e.ErrorMessage);
-        };
+        }
+
+        public Func<T, IEnumerable<string>> Validation => ValidateValue;
     }
 }
