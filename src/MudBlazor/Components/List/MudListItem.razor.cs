@@ -29,6 +29,22 @@ namespace MudBlazor
         [Parameter] public string Text { get; set; }
 
         /// <summary>
+        /// The color of the text.
+        /// </summary>
+        [Parameter] public Color TextColor { get; set; } = Color.Inherit;
+
+        /// <summary>
+        /// The typography of the text.
+        /// </summary>
+        [Parameter]
+        public Typo? TextTypo { get; set; }
+
+        /// <summary>
+        /// The alignment of the text.
+        /// </summary>
+        [Parameter] public Align TextAlign { get; set; } = Align.Inherit;
+
+        /// <summary>
         /// Avatar to use if set.
         /// </summary>
         [Parameter] public string Avatar { get; set; }
@@ -193,7 +209,11 @@ namespace MudBlazor
         private Typo _textTypo;
         private void OnListParametersChanged()
         {
-            if (Dense || MudList?.Dense == true)
+            if(TextTypo != null)
+            {
+                _textTypo = (Typo)TextTypo;
+            }
+            else if (Dense || MudList?.Dense == true)
             {
                 _textTypo = Typo.body2;
             }

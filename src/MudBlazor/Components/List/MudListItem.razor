@@ -17,7 +17,7 @@
         </div>
     }
     <div class="mud-list-item-text @(Inset? "mud-list-item-text-inset" : "")">
-        <MudText Typo="@_textTypo">
+        <MudText Typo="@_textTypo" Color="TextColor" Align="TextAlign">
             @if (ChildContent != null)
             {
                 @ChildContent
