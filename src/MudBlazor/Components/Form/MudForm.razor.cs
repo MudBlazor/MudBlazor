@@ -185,11 +185,11 @@ namespace MudBlazor
         /// <summary>
         /// Force a validation of all form controls, even if they haven't been touched by the user yet
         /// </summary>
-        public void Validate()
+        public async Task Validate()
         {
             foreach (var control in _formControls.ToArray())
             {
-                control.Validate();
+                await control.Validate();
             }
             EvaluateForm(debounce: false);
         }
@@ -237,6 +237,5 @@ namespace MudBlazor
         {
             _timer?.Dispose();
         }
-
     }
 }
