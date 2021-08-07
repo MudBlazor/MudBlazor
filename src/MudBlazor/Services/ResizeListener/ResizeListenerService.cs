@@ -105,8 +105,8 @@ namespace MudBlazor.Services
         /// </summary>
         /// <param name="mediaQuery"></param>
         /// <returns>Returns true if matched.</returns>
-        public async ValueTask<bool> MatchMedia(string mediaQuery) =>
-            await _jsRuntime.InvokeAsync<bool>($"mudResizeListener.matchMedia", mediaQuery);
+        public ValueTask<bool> MatchMedia(string mediaQuery) =>
+_jsRuntime.InvokeAsync<bool>($"mudResizeListener.matchMedia", mediaQuery);
 
         /// <summary>
         /// Get the current BrowserWindowSize, this includes the Height and Width of the document.

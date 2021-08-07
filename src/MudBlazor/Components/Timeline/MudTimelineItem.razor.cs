@@ -88,10 +88,10 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public RenderFragment ChildContent { get; set; }
 
-        protected override async Task OnInitializedAsync()
+        protected override Task OnInitializedAsync()
         {
-            await Task.CompletedTask;
             Parent?.Items.Add(this);
+            return Task.CompletedTask;
         }
 
         private void Select()

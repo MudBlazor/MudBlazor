@@ -98,12 +98,14 @@ namespace MudBlazor
 
         protected string _icon;
 
-        private async Task OnCloseIconClickAsync()
+        private Task OnCloseIconClickAsync()
         {
             if (CloseIconClicked.HasDelegate)
             {
-                await CloseIconClicked.InvokeAsync(this);
+                return CloseIconClicked.InvokeAsync(this);
             }
+
+            return Task.CompletedTask;
         }
 
         protected override void OnParametersSet()

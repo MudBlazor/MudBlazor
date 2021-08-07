@@ -491,11 +491,11 @@ namespace MudBlazor
                 });
         }
 
-        private async Task RemoveMouseOverEvent()
+        private Task RemoveMouseOverEvent()
         {
-            if (_throttledMouseOverEventId == default) { return; }
+            if (_throttledMouseOverEventId == default) { return Task.CompletedTask; }
 
-            await ThrottledEventManager.Unsubscribe(_throttledMouseOverEventId);
+            return ThrottledEventManager.Unsubscribe(_throttledMouseOverEventId);
         }
 
         public async ValueTask DisposeAsync()

@@ -29,7 +29,7 @@ namespace MudBlazor
         /// Get the current BrowserWindowSize, this includes the Height and Width of the document.
         /// </summary>
         /// <returns></returns>
-        public async ValueTask<BrowserWindowSize> GetBrowserWindowSize() =>
-            await _jsRuntime.InvokeAsync<BrowserWindowSize>($"mudResizeListener.getBrowserWindowSize");
+        public ValueTask<BrowserWindowSize> GetBrowserWindowSize() =>
+_jsRuntime.InvokeAsync<BrowserWindowSize>($"mudResizeListener.getBrowserWindowSize");
     }
 }
