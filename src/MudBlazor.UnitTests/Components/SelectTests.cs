@@ -250,7 +250,7 @@ namespace MudBlazor.UnitTests.Components
             select.SetCallback(s => s.SelectedValuesChanged, x =>
             {
                 selectedValuesChangedCount = eventCounter++;
-                selectedValues = x;
+                selectedValues = new(x);
             });
             var menu = comp.Find("div.mud-popover");
             var input = comp.Find("div.mud-input-control");
@@ -263,6 +263,9 @@ namespace MudBlazor.UnitTests.Components
             // now click an item and see the value change
             var items = comp.FindAll("div.mud-list-item").ToArray();
             items[1].Click();
+            // check selectedValues
+            selectedValues.Should().NotBeNull().And.ContainSingle();
+            selectedValues.First().Should().Be("2");
             // menu should be closed now
             menu.ClassList.Should().NotContain("mud-popover-open");
             select.Instance.Value.Should().Be("2");

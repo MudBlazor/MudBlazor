@@ -308,11 +308,12 @@ namespace MudBlazor
                     return;
                 }
 
+                SelectedValues.Clear();
+                SelectedValues.Add(value);
+
                 await SelectedValuesChanged.InvokeAsync(SelectedValues);
 
                 await SetValueAsync(value);
-                SelectedValues.Clear();
-                SelectedValues.Add(value);
             }
 
             StateHasChanged();
