@@ -1,10 +1,11 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿using System;
+using Microsoft.AspNetCore.Components;
 using MudBlazor.Extensions;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    partial class MudAvatar : MudComponentBase
+    partial class MudAvatar : MudComponentBase, IDisposable
     {
         [CascadingParameter] protected MudAvatarGroup AvatarGroup { get; set; }
         protected string Classname =>
@@ -72,7 +73,7 @@ namespace MudBlazor
             AvatarGroup?.AddAvatar(this);
         }
 
-        protected void Dispose()
+        public void Dispose()
         {
             AvatarGroup?.RemoveAvatar(this);
         }
