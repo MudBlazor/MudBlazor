@@ -2,7 +2,7 @@
 @inherits MudComponentBase
 
 <MudToolBar @attributes="UserAttributes" Class="@Classname" Style="@Style">
-    @if (TextAlignment == TablePagerTextPosition.Right || TextAlignment == TablePagerTextPosition.Center)
+    @if (HorizontalAlignment == HorizontalAlignment.Right || HorizontalAlignment == HorizontalAlignment.Center)
     {
         <div class="mud-table-pagination-spacer"></div>
     }
@@ -33,7 +33,7 @@
             <MudIconButton Class="mud-flip-x-rtl" Icon="@Icons.Material.Filled.LastPage" Disabled="@ForwardButtonsDisabled" @onclick="@(() => Table.NavigateTo(Page.Last))"/>
         </div>
     }
-    @if (TextAlignment == TablePagerTextPosition.Left || TextAlignment == TablePagerTextPosition.Center)
+    @if (HorizontalAlignment == HorizontalAlignment.Left || HorizontalAlignment == HorizontalAlignment.Center)
     {
         <div class="mud-table-pagination-spacer"></div>
     }

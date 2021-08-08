@@ -35,9 +35,9 @@ namespace MudBlazor
         [Parameter] public bool HidePagination { get; set; }
 
         /// <summary>
-        /// Set the text position.
+        /// Set the horizontal alignment position.
         /// </summary>
-        [Parameter] public TablePagerTextPosition TextAlignment { get; set; } = TablePagerTextPosition.Right;
+        [Parameter] public HorizontalAlignment HorizontalAlignment { get; set; } = HorizontalAlignment.Right;
 
         /// <summary>
         /// Define a list of available page size options for the user to choose from
