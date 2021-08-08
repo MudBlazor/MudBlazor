@@ -9,7 +9,7 @@ using MudBlazor.Interop;
 
 namespace MudBlazor.Services
 {
-    public class ResizeObserver : IResizeObserver, IDisposable, IAsyncDisposable
+    public class ResizeObserver : IResizeObserver, IAsyncDisposable
     {
         private Boolean _isDisposed = false;
 
@@ -110,27 +110,13 @@ namespace MudBlazor.Services
         public double GetHeight(ElementReference reference) => GetSizeInfo(reference)?.Height ?? 0.0;
         public double GetWidth(ElementReference reference) => GetSizeInfo(reference)?.Width ?? 0.0;
 
-        protected virtual void Dispose(bool disposing)
+        public async ValueTask DisposeAsync()
         {
-            if (disposing && _isDisposed == false)
-            {
-                _isDisposed = true;
-                _dotNetRef.Dispose();
-                _cachedValueIds.Clear();
-                _cachedValues.Clear();
-
-                //in a fire and forget manner, we just "trying" to cancel the listener. So, we are not interested in an potential error 
-                try { _ = _jsRuntime.InvokeVoidAsync($"mudResizeObserver.cancelListener", _id); } catch (Exception) { }
-            }
-        }
-
-        public void Dispose()
-        {
-            Dispose(true);
+            await DisposeAsyncCore();
             GC.SuppressFinalize(this);
         }
 
-        public async ValueTask DisposeAsync()
+        protected virtual async ValueTask DisposeAsyncCore()
         {
             if (_isDisposed == true) { return; }
 
@@ -140,8 +126,8 @@ namespace MudBlazor.Services
             _cachedValueIds.Clear();
             _cachedValues.Clear();
 
-            //in a fire and forget manner, we just "trying" to cancel the listener. So, we are not interested in an potential error 
-            try { await _jsRuntime.InvokeVoidAsync($"mudResizeObserver.cancelListener", _id); } catch (Exception) { }
+            // The JS call may timeout if the underlyinh JSRuntime is gone.
+            try { await _jsRuntime.InvokeVoidAsync($"mudResizeObserver.cancelListener", _id); } catch (TaskCanceledException) { }
         }
     }
 }
