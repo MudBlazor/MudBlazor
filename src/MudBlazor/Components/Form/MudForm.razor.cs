@@ -187,12 +187,7 @@ namespace MudBlazor
         /// </summary>
         public async Task Validate()
         {
-            var tasks = new List<Task>();
-            foreach (var control in _formControls.ToArray())
-            {
-                tasks.Add(control.Validate());
-            }
-            await Task.WhenAll(tasks);
+            await Task.WhenAll(_formControls.Select(x => x.Validate()));
             EvaluateForm(debounce: false);
         }
 
