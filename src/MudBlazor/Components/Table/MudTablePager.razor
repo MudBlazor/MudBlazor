@@ -18,13 +18,13 @@
             }
         </MudSelect>
     }
-    @if (!DisablePageNumber)
+    @if (!HidePageNumber)
     {
         <MudText Typo="Typo.body2" Class="mud-table-pagination-caption">
             @Info
         </MudText>
     }
-    @if (!DisablePagination)
+    @if (!HidePagination)
     {
         <div class="mud-table-pagination-actions">
             <MudIconButton Class="mud-flip-x-rtl" Icon="@Icons.Material.Filled.FirstPage" Disabled="@BackButtonsDisabled" @onclick="@(() => Table.NavigateTo(Page.First))"/>

@@ -21,12 +21,12 @@ namespace MudBlazor
         /// <summary>
         /// Set true to hide the number of pages.
         /// </summary>
-        [Parameter] public bool DisablePageNumber { get; set; }
+        [Parameter] public bool HidePageNumber { get; set; }
 
         /// <summary>
         /// Set true to hide the pagination.
         /// </summary>
-        [Parameter] public bool DisablePagination { get; set; }
+        [Parameter] public bool HidePagination { get; set; }
 
         /// <summary>
         /// Set the text position.
