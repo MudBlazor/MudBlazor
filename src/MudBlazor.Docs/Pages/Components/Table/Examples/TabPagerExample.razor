@@ -22,14 +22,14 @@
         <MudTd DataLabel="Molar mass">@context.Molar</MudTd>
     </RowTemplate>
     <PagerContent>
-        <MudTablePager TextAlignment="TablePagerTextPosition.Left" HidePageNumber="@hidePageNumber" HidePagination="@hidePagination" DisableRowsPerPage="@disableRowsPerPage" />
-        <MudTablePager TextAlignment="TablePagerTextPosition.Center" HidePageNumber="@hidePageNumber" HidePagination="@hidePagination" DisableRowsPerPage="@disableRowsPerPage" />
-        <MudTablePager TextAlignment="TablePagerTextPosition.Right" HidePageNumber="@hidePageNumber" HidePagination="@hidePagination" DisableRowsPerPage="@disableRowsPerPage" />
+        <MudTablePager TextAlignment="TablePagerTextPosition.Left" HidePageNumber="@hidePageNumber" HidePagination="@hidePagination" HideRowsPerPage="@hideRowsPerPage" />
+        <MudTablePager TextAlignment="TablePagerTextPosition.Center" HidePageNumber="@hidePageNumber" HidePagination="@hidePagination" HideRowsPerPage="@hideRowsPerPage" />
+        <MudTablePager TextAlignment="TablePagerTextPosition.Right" HidePageNumber="@hidePageNumber" HidePagination="@hidePagination" HideRowsPerPage="@hideRowsPerPage" />
     </PagerContent>
 </MudTable>
 
 <div class="d-flex flex-wrap mt-4">
-    <MudSwitch @bind-Checked="@disableRowsPerPage" Color="Color.Tertiary">Hide/Show Rows Per Page</MudSwitch>
+    <MudSwitch @bind-Checked="@hideRowsPerPage" Color="Color.Tertiary">Hide/Show Rows per Page</MudSwitch>
     <MudSwitch @bind-Checked="@hidePageNumber" Color="Color.Primary">Hide/Show Page Number</MudSwitch>
     <MudSwitch @bind-Checked="@hidePagination" Color="Color.Secondary">Hide/Show Pagination</MudSwitch>
 </div>
@@ -37,7 +37,7 @@
 @code {
     private bool hidePageNumber;
     private bool hidePagination;
-    private bool disableRowsPerPage;
+    private bool hideRowsPerPage;
 
     private IEnumerable<Element> Elements = new List<Element>();
 

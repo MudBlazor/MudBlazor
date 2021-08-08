@@ -6,7 +6,7 @@
     {
         <div class="mud-table-pagination-spacer"></div>
     }
-    @if (!DisableRowsPerPage)
+    @if (!!HideRowsPerPage)
     {
         <MudText Typo="Typo.body2" Class="mud-table-pagination-caption">
             @RowsPerPageString
