@@ -676,7 +676,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void TableMultiSelection_Checkbox_Executes_Callback()
         {
-            var comp = ctx.RenderComponent<TableMultiSelectionCheckboxExecutesCallback>();
+            var comp = Context.RenderComponent<TableMultiSelectionCheckboxExecutesCallback>();
 
             var table = comp.FindComponent<MudTable<int>>().Instance;
             var inputs = comp.FindAll("input").ToArray();

@@ -51,7 +51,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void OpenMenu_CheckClass()
         {
-            var comp = ctx.RenderComponent<MenuTest1>();
+            var comp = Context.RenderComponent<MenuTest1>();
             comp.Find("div.mud-popover").ClassList.Should().Contain("menu-popover-class");
         }
 

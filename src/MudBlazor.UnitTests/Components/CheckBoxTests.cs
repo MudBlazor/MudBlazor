@@ -186,7 +186,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void CheckBox_StopClickPropagation_Default_Is_True()
         {
-            using var comp = ctx.RenderComponent<MudCheckBox<bool>>();
+            using var comp = Context.RenderComponent<MudCheckBox<bool>>();
             comp.Instance.StopClickPropagation.Should().BeTrue();
             comp.Markup.Contains("blazor:onclick:stopPropagation").Should().BeTrue();
         }
