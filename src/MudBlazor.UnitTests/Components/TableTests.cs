@@ -671,6 +671,21 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// Checkbox click must not bubble up.
+        /// </summary>
+        [Test]
+        public void TableMultiSelection_Checkbox_Executes_Callback()
+        {
+            var comp = ctx.RenderComponent<TableMultiSelectionCheckboxExecutesCallback>();
+
+            var table = comp.FindComponent<MudTable<int>>().Instance;
+            var inputs = comp.FindAll("input").ToArray();
+            table.SelectedItems.Count.Should().Be(0); // selected items should be empty
+            inputs[1].Click(); // A single checkbox click adds 5 items through the callback method
+            table.SelectedItems.Count.Should().Be(6);
+        }
+
+        /// <summary>
         /// Setting items delayed should work well and update pager also
         /// </summary>
         [Test]
