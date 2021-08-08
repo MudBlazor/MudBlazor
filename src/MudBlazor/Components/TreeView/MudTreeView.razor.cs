@@ -119,7 +119,7 @@ namespace MudBlazor
             }
 
             _activatedValue = item;
-            await item?.Activate(requestedValue);
+            await item.Activate(requestedValue);
             await ActivatedValueChanged.InvokeAsync(item.Value);
         }
 

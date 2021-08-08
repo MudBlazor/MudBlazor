@@ -225,7 +225,10 @@ namespace MudBlazor
 
             if (source == this)
             {
-                await MudTreeRoot?.UpdateSelectedItems();
+                if (MudTreeRoot != null)
+                {
+                    await MudTreeRoot.UpdateSelectedItems();
+                }
             }
         }
 
