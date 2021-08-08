@@ -234,7 +234,7 @@ namespace MudBlazor.UnitTests.Components
         /// find an even counter value, the second must always find an odd value.
         /// </summary>
         [Test]
-        public void SingleSelect_Should_FireSelectedValuesChangedBeforeTextChanged()
+        public void SingleSelect_Should_FireTextChangedBeforeSelectedValuesChanged()
         {
             var comp = Context.RenderComponent<SelectTest1>();
             Console.WriteLine(comp.Markup);
@@ -245,15 +245,15 @@ namespace MudBlazor.UnitTests.Components
             var textChangedCount = 0;
             var selectedValuesChangedCount = 0;
             select.SetCallback(s => s.TextChanged, x =>
-            {
-                textChangedCount = eventCounter++;
-                text = x;
-            });
+              {
+                  textChangedCount = eventCounter++;
+                  text = x;
+              });
             select.SetCallback(s => s.SelectedValuesChanged, x =>
-            {
-                selectedValuesChangedCount = eventCounter++;
-                selectedValues = x;
-            });
+              {
+                  selectedValuesChangedCount = eventCounter++;
+                  selectedValues = x;
+              });
             var menu = comp.Find("div.mud-popover");
             var input = comp.Find("div.mud-input-control");
             // check initial state
@@ -270,8 +270,8 @@ namespace MudBlazor.UnitTests.Components
             select.Instance.Value.Should().Be("2");
             select.Instance.Text.Should().Be("2");
             text.Should().Be("2");
-            selectedValuesChangedCount.Should().Be(0);
-            textChangedCount.Should().Be(1);
+            selectedValuesChangedCount.Should().Be(1);
+            textChangedCount.Should().Be(0);
             string.Join(",", selectedValues).Should().Be("2");
             // now we cheat and click the list without opening the menu ;)
             items[0].Click();
@@ -279,11 +279,9 @@ namespace MudBlazor.UnitTests.Components
             select.Instance.Text.Should().Be("1");
             text.Should().Be("1");
             string.Join(",", selectedValues).Should().Be("1");
-            selectedValuesChangedCount.Should().Be(2);
-            textChangedCount.Should().Be(3);
+            selectedValuesChangedCount.Should().Be(3);
+            textChangedCount.Should().Be(2);
         }
-
-
 
         /// <summary>
         /// MultiSelect: SelectedValuesChanged should be fired before TextChanged
@@ -291,7 +289,7 @@ namespace MudBlazor.UnitTests.Components
         /// find an even counter value, the second must always find an odd value.
         /// </summary>
         [Test]
-        public void MulitSelect_Should_FireSelectedValuesChangedBeforeTextChanged()
+        public void MulitSelect_Should_FireTextChangedBeforeSelectedValuesChanged()
         {
             var comp = Context.RenderComponent<SelectTest1>();
             Console.WriteLine(comp.Markup);
@@ -303,23 +301,23 @@ namespace MudBlazor.UnitTests.Components
             var selectedValuesChangedCount = 0;
             select.SetParam(s => s.MultiSelection, true);
             select.SetCallback(s => s.TextChanged, x =>
-            {
-                textChangedCount = eventCounter++;
-                text = x;
-            });
+              {
+                  textChangedCount = eventCounter++;
+                  text = x;
+              });
             select.SetCallback(s => s.SelectedValuesChanged, x =>
-            {
-                selectedValuesChangedCount = eventCounter++;
-                selectedValues = x;
-            });
+              {
+                  selectedValuesChangedCount = eventCounter++;
+                  selectedValues = x;
+              });
             var items = comp.FindAll("div.mud-list-item").ToArray();
             // click list item
             items[1].Click();
             select.Instance.Value.Should().Be("2");
             select.Instance.Text.Should().Be("2");
             text.Should().Be("2");
-            selectedValuesChangedCount.Should().Be(0);
-            textChangedCount.Should().Be(1);
+            selectedValuesChangedCount.Should().Be(1);
+            textChangedCount.Should().Be(0);
             string.Join(",", selectedValues).Should().Be("2");
             // click another list item
             items = comp.FindAll("div.mud-list-item").ToArray();
@@ -328,8 +326,8 @@ namespace MudBlazor.UnitTests.Components
             select.Instance.Text.Should().Be("2, 1");
             text.Should().Be("2, 1");
             string.Join(",", selectedValues).Should().Be("2,1");
-            selectedValuesChangedCount.Should().Be(2);
-            textChangedCount.Should().Be(3);
+            selectedValuesChangedCount.Should().Be(3);
+            textChangedCount.Should().Be(2);
         }
 
         [Test]
@@ -526,24 +524,6 @@ namespace MudBlazor.UnitTests.Components
             items[1].Click();
         }
 
-        [Test]
-        public void SelectEventOrder()
-        {
-            var comp = Context.RenderComponent<SelectTestEventOrder>();
-            var select = comp.FindComponent<MudSelect<string>>();
-            select.Instance.Value.Should().Be("All");
-            select.Instance.Text.Should().Be("All");
-            var items = comp.FindAll("div.mud-list-item").ToArray();
-
-            items[1].Click();
-            select.Instance.Value.Should().Be("Alabama");
-            select.Instance.Text.Should().Be("Alabama");
-            items[2].Click();
-            select.Instance.Value.Should().Be("Alaska, Alabama");
-            select.Instance.Text.Should().Be("Alaska, Alabama");
-        }
-
-
         #region DataAttribute validation
         [Test]
         public async Task TextField_Should_Validate_Data_Attribute_Fail()
@@ -582,7 +562,6 @@ namespace MudBlazor.UnitTests.Components
         }
         #endregion
 
-
         /// <summary>
         /// Tests the required property.
         /// </summary>
@@ -590,13 +569,9 @@ namespace MudBlazor.UnitTests.Components
         public async Task Select_Should_SetRequiredTrue()
         {
             var comp = Context.RenderComponent<SelectRequiredTest>();
-
             var select = comp.FindComponent<MudSelect<string>>().Instance;
-
             select.Required.Should().BeTrue();
-
             await comp.InvokeAsync(() => select.Validate());
-
             select.ValidationErrors.First().Should().Be("Required");
         }
     }
