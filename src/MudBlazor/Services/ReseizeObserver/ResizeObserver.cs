@@ -126,7 +126,7 @@ namespace MudBlazor.Services
             _cachedValueIds.Clear();
             _cachedValues.Clear();
 
-            // The JS call may timeout if the underlyinh JSRuntime is gone.
+            // The JS call may timeout if the underlying JSRuntime is gone.
             try { await _jsRuntime.InvokeVoidAsync($"mudResizeObserver.cancelListener", _id); } catch (TaskCanceledException) { }
         }
     }
