@@ -671,6 +671,21 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// Checkbox click must not bubble up.
+        /// </summary>
+        [Test]
+        public void TableMultiSelection_Checkbox_Executes_Callback()
+        {
+            var comp = Context.RenderComponent<TableMultiSelectionCheckboxExecutesCallback>();
+
+            var table = comp.FindComponent<MudTable<int>>().Instance;
+            var inputs = comp.FindAll("input").ToArray();
+            table.SelectedItems.Count.Should().Be(0); // selected items should be empty
+            inputs[1].Click(); // A single checkbox click adds 5 items through the callback method
+            table.SelectedItems.Count.Should().Be(6);
+        }
+
+        /// <summary>
         /// Setting items delayed should work well and update pager also
         /// </summary>
         [Test]
@@ -834,7 +849,7 @@ namespace MudBlazor.UnitTests.Components
             trs[1].Click();
             //every item will be add twice - see MudTextField.razor
             validator.ControlCount.Should().Be(2);
-            for (int i = 0; i < 10; ++i)
+            for (var i = 0; i < 10; ++i)
             {
                 trs[i % 3 + 1].Click();
             }
@@ -933,7 +948,7 @@ namespace MudBlazor.UnitTests.Components
             void RowEditPreview(object item)
             {
                 // Get the value of the SelectedItem
-                string selectedItemValue = table.SelectedItem.Value;
+                var selectedItemValue = table.SelectedItem.Value;
 
                 // Get the value of the object from the RowEditPreview method
                 var rowEditPreviewValue = item.GetType().GetProperty("Value").GetValue(item, null).ToString();

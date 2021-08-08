@@ -26,10 +26,14 @@ namespace MudBlazor
         [Parameter] public string Label { get; set; }
 
         /// <summary>
+        /// User class names for the popover, separated by space
+        /// </summary>
+        [Parameter] public string PopoverClass { get; set; }
+
+        /// <summary>
         /// The short hint displayed in the input before the user enters a value.
         /// </summary>
         [Parameter] public string Placeholder { get; set; }
-
 
         /// <summary>
         /// Sets the direction the Autocomplete menu should open.
@@ -430,31 +434,31 @@ namespace MudBlazor
             //base.OnBlurred(args);
         }
 
-        private async Task CoerceTextToValue()
+        private Task CoerceTextToValue()
         {
             if (CoerceText == false)
-                return;
+                return Task.CompletedTask;
             if (Value == null)
             {
                 _timer?.Dispose();
-                await SetTextAsync(null);
-                return;
+                return SetTextAsync(null);
             }
             var actualvalueStr = GetItemString(Value);
             if (!Equals(actualvalueStr, Text))
             {
                 _timer?.Dispose();
-                await SetTextAsync(actualvalueStr);
+                return SetTextAsync(actualvalueStr);
             }
+            return Task.CompletedTask;
         }
 
-        private async Task CoerceValueToText()
+        private Task CoerceValueToText()
         {
             if (CoerceValue == false)
-                return;
+                return Task.CompletedTask;
             _timer?.Dispose();
             var value = Converter.Get(Text);
-            await SetValueAsync(value, updateText: false);
+            return SetValueAsync(value, updateText: false);
         }
 
         protected override void Dispose(bool disposing)

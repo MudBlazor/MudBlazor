@@ -34,7 +34,7 @@ namespace MudBlazor
 
         private TimeSpan? OnGet(string value)
         {
-            if (DateTime.TryParseExact(value, ((DefaultConverter<TimeSpan?>)Converter).Format, Culture, DateTimeStyles.None, out DateTime time))
+            if (DateTime.TryParseExact(value, ((DefaultConverter<TimeSpan?>)Converter).Format, Culture, DateTimeStyles.None, out var time))
             {
                 return time.TimeOfDay;
             }

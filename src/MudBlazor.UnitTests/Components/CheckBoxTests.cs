@@ -182,5 +182,13 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("input")[1].Change(true);
             comp.FindAll("p")[^1].TrimmedText().Should().Be("A=False, B=True, C=True, D=False, E=True");
         }
+
+        [Test]
+        public void CheckBox_StopClickPropagation_Default_Is_True()
+        {
+            using var comp = Context.RenderComponent<MudCheckBox<bool>>();
+            comp.Instance.StopClickPropagation.Should().BeTrue();
+            comp.Markup.Contains("blazor:onclick:stopPropagation").Should().BeTrue();
+        }
     }
 }

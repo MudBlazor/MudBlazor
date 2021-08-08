@@ -348,8 +348,7 @@ namespace MudBlazor.Docs.Models
                 methodGenericArgumentsString +
                 parametersString;
 
-            if (methodInfo.Name == "op_Implicit" ||
-                methodInfo.Name == "op_Explicit")
+            if (methodInfo.Name is "op_Implicit" or "op_Explicit")
             {
                 key += "~" + GetXmlDocumentationFormattedString(methodInfo.ReturnType, true, typeGenericMap, methodGenericMap);
             }

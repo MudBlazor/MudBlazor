@@ -17,7 +17,7 @@ namespace MudBlazor.UnitTests.Mocks
 
         public Task<Guid> Subscribe<T>(string eventName, string elementId, string projection, int throttleInterval, Func<object, Task> callback)
         {
-            Guid id = Guid.NewGuid();
+            var id = Guid.NewGuid();
             ElementIdMapper.Add(id, elementId);
             Callbacks.Add(id, callback);
             return Task.FromResult(id);

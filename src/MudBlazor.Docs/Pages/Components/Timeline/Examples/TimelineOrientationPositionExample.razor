@@ -69,11 +69,11 @@
         switch (value)
         {
             case TimelineOrientation.Vertical:
-                if (_position == TimelinePosition.Top || _position == TimelinePosition.Bottom)
+                if (_position is TimelinePosition.Top or TimelinePosition.Bottom)
                     _position = TimelinePosition.Start;
                 break;
             case TimelineOrientation.Horizontal:
-                if (_position == TimelinePosition.Start || _position == TimelinePosition.Left || _position == TimelinePosition.Right || _position == TimelinePosition.End)
+                if (_position is TimelinePosition.Start or TimelinePosition.Left or TimelinePosition.Right or TimelinePosition.End)
                     _position = TimelinePosition.Top;
                 break;
         }

@@ -133,6 +133,18 @@ namespace MudBlazor.Utilities
             CalculateHSL();
         }
 
+        /// <summary>
+        /// initilize a new MudColor with new RGB values but keeps the hue value from the color
+        /// </summary>
+        /// <param name="r">R</param>
+        /// <param name="g">G</param>
+        /// <param name="b">B</param>
+        /// <param name="color">Existing color to copy hue value from </param>
+        public MudColor(byte r, byte g, byte b, MudColor color) : this(r,g,b,color.A)
+        {
+            H = color.H;
+        }
+
         public MudColor(int r, int g, int b, double alpha) :
          this(r, g, b, (byte)((alpha * 255.0).EnsureRange(255)))
         {
@@ -151,7 +163,7 @@ namespace MudBlazor.Utilities
 
             if (value.StartsWith("rgba") == true)
             {
-                string[] parts = SplitInputIntoParts(value);
+                var parts = SplitInputIntoParts(value);
                 if (parts.Length != 4)
                 {
                     throw new ArgumentException("invalid color format");
@@ -167,7 +179,7 @@ namespace MudBlazor.Utilities
             }
             else if (value.StartsWith("rgb") == true)
             {
-                string[] parts = SplitInputIntoParts(value);
+                var parts = SplitInputIntoParts(value);
                 if (parts.Length != 3)
                 {
                     throw new ArgumentException("invalid color format");
@@ -292,11 +304,11 @@ namespace MudBlazor.Utilities
 
         private static string[] SplitInputIntoParts(string value)
         {
-            int startIndex = value.IndexOf('(');
-            int lastIndex = value.LastIndexOf(')');
-            string subString = value[(startIndex + 1)..lastIndex];
-            string[] parts = subString.Split(',', StringSplitOptions.RemoveEmptyEntries);
-            for (int i = 0; i < parts.Length; i++)
+            var startIndex = value.IndexOf('(');
+            var lastIndex = value.LastIndexOf(')');
+            var subString = value[(startIndex + 1)..lastIndex];
+            var parts = subString.Split(',', StringSplitOptions.RemoveEmptyEntries);
+            for (var i = 0; i < parts.Length; i++)
             {
                 parts[i] = parts[i].Trim();
             }
@@ -345,8 +357,8 @@ namespace MudBlazor.Utilities
 
         public static bool operator ==(MudColor lhs, MudColor rhs)
         {
-            bool lhsIsNull = ReferenceEquals(null, lhs);
-            bool rhsIsNull = ReferenceEquals(null, rhs);
+            var lhsIsNull = ReferenceEquals(null, lhs);
+            var rhsIsNull = ReferenceEquals(null, rhs);
             if (lhsIsNull == true && rhsIsNull == true)
             {
                 return true;

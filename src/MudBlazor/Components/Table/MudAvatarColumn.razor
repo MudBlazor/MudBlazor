@@ -7,7 +7,7 @@
     {
         <MudTh>@HeaderText</MudTh>
     }
-    else if (Mode == Rendermode.Item || Mode == Rendermode.Edit)
+    else if (Mode is Rendermode.Item or Rendermode.Edit)
     {
         <MudTd><MudAvatar Size="Size.Small">@Value.ToString()</MudAvatar></MudTd>
     }

@@ -112,5 +112,16 @@ namespace MudBlazor.UnitTests.Components
             avatars[0].ClassList.Should().NotContain("mud-avatar-group-max-avatar");
             avatars[1].ClassList.Should().Contain("mud-avatar-group-max-avatar");
         }
+
+        [Test]
+        public void AvatarGroupRemoveTest()
+        {
+            var comp = Context.RenderComponent<AvatarGroupRemoveTest>();
+            Console.WriteLine(comp.Markup);
+
+            comp.FindAll("button")[0].Click();
+
+            comp.FindComponent<MudAvatarGroup>().Instance._avatars.Count.Should().Be(0);
+        }
     }
 }

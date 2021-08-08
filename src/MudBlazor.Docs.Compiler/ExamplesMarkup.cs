@@ -131,7 +131,7 @@ namespace MudBlazor.Docs.Compiler
         {
             if (string.IsNullOrWhiteSpace(value))
                 return value;
-            if (value == "true" || value == "false")
+            if (value is "true" or "false")
                 return $"<span class=\"keyword\">{value}</span>";
             if (Regex.IsMatch(value, "^[A-Z][A-Za-z0-9]+[.][A-Za-z][A-Za-z0-9]+$"))
             {

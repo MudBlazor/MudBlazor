@@ -87,7 +87,7 @@ namespace MudBlazor.Utilities
         /// <param name="value">Style to conditionally add.</param>
         /// <param name="when">Condition in which the style is added.</param>
         /// <returns>StyleBuilder</returns>
-        public StyleBuilder AddStyle(string prop, string value, Func<bool> when = null) => this.AddStyle(prop, value, when());
+        public StyleBuilder AddStyle(string prop, string value, Func<bool> when = null) => this.AddStyle(prop, value, when != null && when());
 
         /// <summary>
         /// Adds a conditional in-line style to the builder with space separator and closing semicolon..
@@ -96,7 +96,7 @@ namespace MudBlazor.Utilities
         /// <param name="value">Style to conditionally add.</param>
         /// <param name="when">Condition in which the style is added.</param>
         /// <returns>StyleBuilder</returns>
-        public StyleBuilder AddStyle(string prop, Func<string> value, Func<bool> when = null) => this.AddStyle(prop, value(), when());
+        public StyleBuilder AddStyle(string prop, Func<string> value, Func<bool> when = null) => this.AddStyle(prop, value(), when != null && when());
 
         /// <summary>
         /// Adds a conditional nested StyleBuilder to the builder with separator and closing semicolon.
@@ -119,7 +119,7 @@ namespace MudBlazor.Utilities
         /// <param name="builder">Style Builder to conditionally add.</param>
         /// <param name="when">Condition in which the styles are added.</param>
         /// <returns>StyleBuilder</returns>
-        public StyleBuilder AddStyle(StyleBuilder builder, Func<bool> when = null) => this.AddStyle(builder, when());
+        public StyleBuilder AddStyle(StyleBuilder builder, Func<bool> when = null) => this.AddStyle(builder, when != null && when());
 
         /// <summary>
         /// Adds a conditional in-line style to the builder with space separator and closing semicolon..

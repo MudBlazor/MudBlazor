@@ -416,8 +416,7 @@ namespace MudBlazor
                 _pickerVerticalPosition = PickerVerticalPosition.Below;
             }
             if (size.Width < clientRect.Right &&
-                (_pickerVerticalPosition == PickerVerticalPosition.Above ||
-                _pickerVerticalPosition == PickerVerticalPosition.Below))
+                _pickerVerticalPosition is PickerVerticalPosition.Above or PickerVerticalPosition.Below)
             {
                 if (clientRect.Left - clientRect.Width + 226 /*width of the input*/ > 0)
                 {

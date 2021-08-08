@@ -30,6 +30,8 @@ namespace MudBlazor.UnitTests.Components
             var select = comp.FindComponent<MudSelect<string>>();
             var menu = comp.Find("div.mud-popover");
             var input = comp.Find("div.mud-input-control");
+            // check popover class
+            menu.ClassList.Should().Contain("select-popover-class");
             // check initial state
             select.Instance.Value.Should().BeNullOrEmpty();
             menu.ClassList.Should().NotContain("mud-popover-open");
@@ -366,7 +368,7 @@ namespace MudBlazor.UnitTests.Components
             // select elements needed for the test
             var select = comp.FindComponent<MudSelect<string>>();
             string validatedValue = null;
-            select.SetParam(x => x.Validation, (object)new Func<string, bool>(value =>
+            select.SetParam(x => x.Validation, new Func<string, bool>(value =>
               {
                   validatedValue = value; // NOTE: select does only update the value for T string
                   return true;

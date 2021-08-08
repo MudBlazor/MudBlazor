@@ -128,10 +128,10 @@ namespace MudBlazor
         [Parameter]
         public EventCallback<MudChip> OnClose { get; set; }
 
-        internal async Task Add(MudChip chip)
+        internal Task Add(MudChip chip)
         {
             _chips.Add(chip);
-            await CheckDefault(chip);
+            return CheckDefault(chip);
         }
 
         internal void Remove(MudChip chip)
@@ -156,7 +156,7 @@ namespace MudBlazor
         private HashSet<MudChip> _chips = new();
         private bool _filter;
 
-        internal async Task OnChipClicked(MudChip chip)
+        internal Task OnChipClicked(MudChip chip)
         {
             var wasSelected = chip.IsSelected;
             if (MultiSelection)
@@ -172,7 +172,7 @@ namespace MudBlazor
                 if (!Mandatory)
                     chip.IsSelected = !wasSelected;
             }
-            await NotifySelection();
+            return NotifySelection();
         }
 
         private async Task NotifySelection()

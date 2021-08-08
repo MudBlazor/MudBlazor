@@ -42,10 +42,10 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public bool ActivateFirstSectionAsDefault { get; set; } = false;
 
-        private async Task OnNavLinkClick(string id)
+        private Task OnNavLinkClick(string id)
         {
             SelectActiveSection(id);
-            await ScrollSpy.ScrollToSection(id);
+            return ScrollSpy.ScrollToSection(id);
         }
 
         private void ScrollSpy_ScrollSectionSectionCentered(object sender, ScrollSectionCenteredEventArgs e) =>
@@ -78,7 +78,7 @@ namespace MudBlazor
         /// </summary>
         /// <param name="uri">The uri containing the fragment to scroll</param>
         /// <returns>A task that completes when the viewport has scrolled</returns>
-        public async Task ScrollToSection(Uri uri) => await ScrollSpy.ScrollToSection(uri);
+        public Task ScrollToSection(Uri uri) => ScrollSpy.ScrollToSection(uri);
 
         /// <summary>
         /// Add a section to the content navigation
@@ -133,10 +133,10 @@ namespace MudBlazor
             }
         }
 
-        public async ValueTask DisposeAsync()
+        public ValueTask DisposeAsync()
         {
             ScrollSpy.ScrollSectionSectionCentered -= ScrollSpy_ScrollSectionSectionCentered;
-            await ScrollSpy.DisposeAsync();
+            return ScrollSpy.DisposeAsync();
         }
     }
 }

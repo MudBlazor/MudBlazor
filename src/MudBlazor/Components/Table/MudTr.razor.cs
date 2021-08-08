@@ -145,7 +145,7 @@ namespace MudBlazor
             Context?.Table.OnCancelEditHandler(ev);
 
             // Trigger the row edit cancel event
-            Context.Table.RowEditCancel?.Invoke(Item);
+            Context?.Table.RowEditCancel?.Invoke(Item);
 
             // Set to true that the item has been canceled
             // Set to false that the items has been committed
