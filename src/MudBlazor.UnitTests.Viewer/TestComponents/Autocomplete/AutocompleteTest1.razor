@@ -1,6 +1,6 @@
 ﻿@namespace MudBlazor.UnitTests.TestComponents
 
-<MudAutocomplete T="string" Label="US States" @bind-Value="value1" SearchFunc="@Search1" DebounceInterval="10" />
+<MudAutocomplete T="string" Label="US States" @bind-Value="value1" SearchFunc="@Search1" DebounceInterval="10" PopoverClass="autocomplete-popover-class" />
 
 @code {
     public static string __description__ = "Initial value should be shown and popup should not open.";

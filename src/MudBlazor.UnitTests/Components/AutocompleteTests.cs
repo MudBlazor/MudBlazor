@@ -50,6 +50,8 @@ namespace MudBlazor.UnitTests.Components
             items.First().Markup.Should().Contain("California");
             // click on California!
             comp.Find("div.mud-list-item").Click();
+            // check popover class
+            comp.Find("div.mud-popover").ClassList.Should().Contain("autocomplete-popover-class");
             // check state
             comp.WaitForAssertion(() => autocomplete.Value.Should().Be("California"));
             autocomplete.Text.Should().Be("California");

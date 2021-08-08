@@ -48,6 +48,13 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("div.mud-list-item.test-class").Count.Should().Be(1);
         }
 
+        [Test]
+        public void OpenMenu_CheckClass()
+        {
+            var comp = ctx.RenderComponent<MenuTest1>();
+            comp.Find("div.mud-popover").ClassList.Should().Contain("menu-popover-class");
+        }
+
         //TODO
         //Create test to check menu on hover
     }

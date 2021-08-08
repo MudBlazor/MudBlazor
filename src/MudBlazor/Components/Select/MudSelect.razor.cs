@@ -31,6 +31,11 @@ namespace MudBlazor
         [Parameter] public string Label { get; set; }
 
         /// <summary>
+        /// User class names for the popover, separated by space
+        /// </summary>
+        [Parameter] public string PopoverClass { get; set; }
+
+        /// <summary>
         /// If true, compact vertical padding will be applied to all Select items.
         /// </summary>
         [Parameter]
