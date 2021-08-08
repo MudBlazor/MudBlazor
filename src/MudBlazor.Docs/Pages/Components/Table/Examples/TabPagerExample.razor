@@ -22,9 +22,11 @@
         <MudTd DataLabel="Molar mass">@context.Molar</MudTd>
     </RowTemplate>
     <PagerContent>
-        <MudTablePager HorizontalAlignment="HorizontalAlignment.Left" HidePageNumber="@hidePageNumber" HidePagination="@hidePagination" HideRowsPerPage="@hideRowsPerPage" />
-        <MudTablePager HorizontalAlignment="HorizontalAlignment.Center" HidePageNumber="@hidePageNumber" HidePagination="@hidePagination" HideRowsPerPage="@hideRowsPerPage" />
-        <MudTablePager HorizontalAlignment="HorizontalAlignment.Right" HidePageNumber="@hidePageNumber" HidePagination="@hidePagination" HideRowsPerPage="@hideRowsPerPage" />
+        <MudTablePager InfoFormat="@($"Left {infoFormat}")" HorizontalAlignment="HorizontalAlignment.Left" HidePageNumber="@hidePageNumber" HidePagination="@hidePagination" HideRowsPerPage="@hideRowsPerPage" />
+        <MudTablePager InfoFormat="@($"Start {infoFormat}")" HorizontalAlignment="HorizontalAlignment.Start" HidePageNumber="@hidePageNumber" HidePagination="@hidePagination" HideRowsPerPage="@hideRowsPerPage" />
+        <MudTablePager InfoFormat="@($"Center {infoFormat}")" HorizontalAlignment="HorizontalAlignment.Center" HidePageNumber="@hidePageNumber" HidePagination="@hidePagination" HideRowsPerPage="@hideRowsPerPage" />
+        <MudTablePager InfoFormat="@($"Right {infoFormat}")" HorizontalAlignment="HorizontalAlignment.Right" HidePageNumber="@hidePageNumber" HidePagination="@hidePagination" HideRowsPerPage="@hideRowsPerPage" />
+        <MudTablePager InfoFormat="@($"End {infoFormat}")" HorizontalAlignment="HorizontalAlignment.End" HidePageNumber="@hidePageNumber" HidePagination="@hidePagination" HideRowsPerPage="@hideRowsPerPage" />
     </PagerContent>
 </MudTable>
 
@@ -38,6 +40,7 @@
     private bool hidePageNumber;
     private bool hidePagination;
     private bool hideRowsPerPage;
+    private string infoFormat = "{first_item}-{last_item} of {all_items}";
 
     private IEnumerable<Element> Elements = new List<Element>();
 

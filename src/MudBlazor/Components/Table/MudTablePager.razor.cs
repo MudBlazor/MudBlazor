@@ -7,9 +7,20 @@ namespace MudBlazor
     public partial class MudTablePager : MudComponentBase
     {
         protected string Classname =>
-            new CssBuilder("mud-table-pagination-toolbar")
+                    new CssBuilder("mud-table-pagination-toolbar")
+                    .AddClass("mud-tablepager-left", !RightToLeft)
+                    .AddClass("mud-tablepager-right", RightToLeft)
+                    .AddClass(Class)
+                    .Build();
+
+        protected string PaginationClassname =>
+            new CssBuilder("mud-table-pagination-display")
+            .AddClass("mud-tablepager-left", !RightToLeft)
+            .AddClass("mud-tablepager-right", RightToLeft)
             .AddClass(Class)
             .Build();
+
+        [CascadingParameter] public bool RightToLeft { get; set; }
 
         [CascadingParameter] public TableContext Context { get; set; }
 

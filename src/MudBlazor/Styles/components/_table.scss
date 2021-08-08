@@ -277,6 +277,30 @@
     }
 }
 
+.mud-table-pagination-display {
+    display: flex;
+    flex-shrink: 0;
+
+    & .mud-tablepager-left {
+        flex-direction: row !important;
+    }
+
+    & .mud-tablepager-right {
+        flex-direction: row-reverse !important;
+    }
+}
+
+.mud-table-pagination-information {
+    white-space: nowrap;
+    direction: initial;
+    margin-top: 6px;
+}
+
+.mud-table-page-number-information {
+    white-space: nowrap;
+    direction: initial;
+}
+
 .mud-table-pagination {
     color: var(--mud-theme-on-surface);
     overflow: auto;
@@ -294,6 +318,14 @@
     padding-right: 2px;
     padding-inline-end: 2px;
     padding-inline-start: unset;
+
+    & .mud-tablepager-left {
+        flex-direction: row !important;
+    }
+
+    & .mud-tablepager-right {
+        flex-direction: row-reverse !important;
+    }
 }
 
 .mud-table-pagination-spacer {
