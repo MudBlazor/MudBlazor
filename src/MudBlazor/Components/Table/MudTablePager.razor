@@ -18,7 +18,7 @@
             <MudSelect T="string" ValueChanged="SetRowsPerPage" Value="@Table?.RowsPerPage.ToString()" Class="mud-table-pagination-select" DisableUnderLine="true" Dense="true">
             @foreach (int pageSize in PageSizeOptions)
             {
-            <MudSelectItem T="string" Value="@pageSize.ToString()">@pageSize.ToString().ToUpper()</MudSelectItem>
+                <MudSelectItem T="string" Value="@pageSize.ToString()">@pageSize.ToString().ToUpper()</MudSelectItem>
             }
             </MudSelect>
         </div>
