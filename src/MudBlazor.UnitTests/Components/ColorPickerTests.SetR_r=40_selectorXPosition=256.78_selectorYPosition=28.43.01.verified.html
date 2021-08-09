@@ -1,0 +1,107 @@
+﻿
+<div class="mud-picker mud-picker-static mud-elevation-0">
+  <div alwaysupdatebinding="AlwaysUpdateBinding" class="mud-paper mud-paper-square mud-elevation-0 mud-picker-paper" style="">
+    <div class="mud-picker-container mud-paper-square">
+      <div class="mud-picker-content mud-picker-color-content" blazor:onclick:stoppropagation="">
+        <div class="mud-picker-color-picker">
+          <div class="mud-picker-color-overlay" style="background-color: rgb(0,47,255)">
+            <div class="mud-picker-color-overlay mud-picker-color-overlay-white">
+              <div class="mud-picker-color-overlay mud-picker-color-overlay-black">
+                <div class="mud-picker-color-overlay" blazor:onclick="1">
+                  <svg class="mud-picker-color-selector" height="26" width="26" style="transform: translate(256.78px, 28.43px);" blazor:onclick:stoppropagation="">
+                    <defs>
+                      <filter id="mud-picker-color-selector-shadow" x="-50%" y="-50%" width="200%" height="200%">
+                        <feGaussianBlur in="SourceAlpha" stdDeviation="1"></feGaussianBlur>
+                        <feOffset dx="0" dy="5" result="offsetblur"></feOffset>
+                        <feOffset dx="0" dy="-5" result="offsetblur"></feOffset>
+                        <feMerge>
+                          <feMergeNode></feMergeNode>
+                          <feMergeNode in="SourceGraphic"></feMergeNode>
+                        </feMerge>
+                      </filter>
+                    </defs>
+                    <circle r="10" cx="13" cy="13" stroke="white" stroke-width="1" fill="transparent" style="filter: url(#mud-picker-color-selector-shadow)"></circle>
+                    <circle r="11" cx="13" cy="13" stroke="white" stroke-width="1.5" fill="transparent"></circle>
+                  </svg>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="mud-picker-color-controls">
+          <div class="mud-picker-color-controls-row">
+            <div class="mud-picker-color-dot mud-picker-color-dot-current mud-ripple" blazor:onclick="2">
+              <div class="mud-picker-color-fill" style="background: rgba(40,74,226,1);"></div>
+            </div>
+            <div class="mud-picker-color-sliders">
+              <div class="mud-slider mud-picker-color-slider hue">
+                <input class="mud-slider-primary" aria-valuenow="229" aria-valuemin="0" aria-valuemax="360" role="slider" dir="ltr" type="range" min="0" max="360" step="1" value="229" blazor:oninput="32">
+              </div>
+              <div class="mud-slider mud-picker-color-slider alpha" style="background-image: linear-gradient(to right, transparent, rgb(40,74,226));">
+                <input class="mud-slider-primary" aria-valuenow="255" aria-valuemin="0" aria-valuemax="255" role="slider" type="range" min="0" max="255" step="1" value="255" blazor:oninput="33">
+              </div>
+            </div>
+          </div>
+          <div class="mud-picker-color-controls-row">
+            <div class="mud-picker-color-inputs">
+              <div class="mud-input-control mud-input-input-control mud-input-number-control mud-input-nospin mud-picker-color-inputfield">
+                <div class="mud-input-control-input-container">
+                  <div class="mud-input mud-input-outlined mud-shrink">
+                    <input min="0" max="255" type="text" class="mud-input-slot mud-input-root mud-input-root-outlined" value="40" blazor:oninput="6" blazor:onchange="7" blazor:onblur="8" inputmode="numeric" pattern="[0-9,\.\-+]*" blazor:onkeydown="9" blazor:onkeypress="10" blazor:onkeyup="11" blazor:elementreference="">
+                    <div class="mud-input-outlined-border"></div>
+                  </div>
+                </div>
+                <div class="mud-input-control-helper-container">
+                  <p class="mud-input-helper-text">R</p>
+                </div>
+              </div>
+              <div class="mud-input-control mud-input-input-control mud-input-number-control mud-input-nospin mud-picker-color-inputfield">
+                <div class="mud-input-control-input-container">
+                  <div class="mud-input mud-input-outlined mud-shrink">
+                    <input min="0" max="255" type="text" class="mud-input-slot mud-input-root mud-input-root-outlined" value="74" blazor:oninput="12" blazor:onchange="13" blazor:onblur="14" inputmode="numeric" pattern="[0-9,\.\-+]*" blazor:onkeydown="15" blazor:onkeypress="16" blazor:onkeyup="17" blazor:elementreference="">
+                    <div class="mud-input-outlined-border"></div>
+                  </div>
+                </div>
+                <div class="mud-input-control-helper-container">
+                  <p class="mud-input-helper-text">G</p>
+                </div>
+              </div>
+              <div class="mud-input-control mud-input-input-control mud-input-number-control mud-input-nospin mud-picker-color-inputfield">
+                <div class="mud-input-control-input-container">
+                  <div class="mud-input mud-input-outlined mud-shrink">
+                    <input min="0" max="255" type="text" class="mud-input-slot mud-input-root mud-input-root-outlined" value="226" blazor:oninput="18" blazor:onchange="19" blazor:onblur="20" inputmode="numeric" pattern="[0-9,\.\-+]*" blazor:onkeydown="21" blazor:onkeypress="22" blazor:onkeyup="23" blazor:elementreference="">
+                    <div class="mud-input-outlined-border"></div>
+                  </div>
+                </div>
+                <div class="mud-input-control-helper-container">
+                  <p class="mud-input-helper-text">B</p>
+                </div>
+              </div>
+              <div class="mud-input-control mud-input-input-control mud-input-number-control mud-input-nospin mud-picker-color-inputfield input-field-alpha">
+                <div class="mud-input-control-input-container">
+                  <div class="mud-input mud-input-outlined mud-shrink">
+                    <input min="0" max="1" step="0.01" type="text" class="mud-input-slot mud-input-root mud-input-root-outlined" value="1" blazor:oninput="24" blazor:onchange="25" blazor:onblur="26" inputmode="numeric" pattern="[0-9,\.\-+]*" blazor:onkeydown="27" blazor:onkeypress="28" blazor:onkeyup="29" blazor:elementreference="">
+                    <div class="mud-input-outlined-border"></div>
+                  </div>
+                </div>
+                <div class="mud-input-control-helper-container">
+                  <p class="mud-input-helper-text">A</p>
+                </div>
+              </div>
+            </div>
+            <div class="mud-picker-control-switch">
+              <button blazor:onclick="5" type="button" class="mud-button-root mud-icon-button mud-ripple mud-ripple-icon pa-1 me-n1" blazor:onclick:stoppropagation="" blazor:elementreference="">
+                <span class="mud-icon-button-label">
+                  <svg class="mud-icon-root mud-svg-icon mud-inherit-text mud-icon-size-medium" focusable="false" viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M0 0h24v24H0z" fill="none"></path>
+                    <path d="M9 3L5 6.99h3V14h2V6.99h3L9 3zm7 14.01V10h-2v7.01h-3L15 21l4-3.99h-3z"></path>
+                  </svg>
+                </span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

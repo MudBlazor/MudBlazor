@@ -17,6 +17,7 @@ using MudBlazor.UnitTests.Mocks;
 using MudBlazor.UnitTests.TestComponents;
 using MudBlazor.Utilities;
 using NUnit.Framework;
+using VerifyNUnit;
 
 namespace MudBlazor.UnitTests.Components
 {
@@ -170,7 +171,7 @@ namespace MudBlazor.UnitTests.Components
 
         [Test]
         [TestCase(40, 256.78, _defaultYForColorPanel)]
-        public void SetR(byte r, double selectorXPosition, double selectorYPosition)
+        public Task SetR(byte r, double selectorXPosition, double selectorYPosition)
         {
             var comp = Context.RenderComponent<SimpleColorPickerTest>();
             Console.WriteLine(comp.Markup);
@@ -179,8 +180,8 @@ namespace MudBlazor.UnitTests.Components
 
             var expectedColor = comp.Instance.ColorValue.SetR(r);
             rInput.Change(expectedColor.R.ToString());
-
             CheckColorRelatedValues(comp, selectorXPosition, selectorYPosition, expectedColor, ColorPickerMode.RGB);
+            return Verifier.Verify(comp);
         }
 
         [Test]

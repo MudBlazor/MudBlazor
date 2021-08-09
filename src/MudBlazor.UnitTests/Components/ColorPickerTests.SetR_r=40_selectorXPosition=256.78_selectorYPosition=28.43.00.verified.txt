@@ -1,0 +1,19 @@
+﻿{
+  Instance: {
+    ValueChangeCallbackCounter: 1,
+    ColorValue: rgb(40,74,226),
+    TextValue: #284ae2ff,
+    Palette: [
+      rgb(255,64,129),
+      rgb(33,150,243),
+      rgb(0,200,83),
+      rgb(255,152,0),
+      rgb(244,67,54)
+    ],
+    DisableToolbar: true,
+    Variant: Static
+  },
+  RenderCount: 2,
+  NodeCount: 65,
+  Bytes: 6,173
+}
