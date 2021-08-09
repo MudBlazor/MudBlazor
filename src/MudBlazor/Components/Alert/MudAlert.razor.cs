@@ -21,16 +21,38 @@ namespace MudBlazor
 
         protected string ClassPosition =>
         new CssBuilder("mud-alert-position")
-            .AddClass($"justify-sm-{ConvertAlertTextPosition(AlertTextPosition).ToDescriptionString()}")
+            .AddClass($"justify-sm-{ConvertHorizontalAlignment(ContentAlignment).ToDescriptionString()}")
         .Build();
 
-        private AlertTextPosition ConvertAlertTextPosition(AlertTextPosition alertTextPosition)
+        private HorizontalAlignment ConvertHorizontalAlignment(HorizontalAlignment contentAlignment)
         {
-            return alertTextPosition switch
+            return contentAlignment switch
             {
-                AlertTextPosition.Right => RightToLeft ? AlertTextPosition.Start : AlertTextPosition.End,
-                AlertTextPosition.Left => RightToLeft ? AlertTextPosition.End : AlertTextPosition.Start,
-                _ => alertTextPosition
+                HorizontalAlignment.Right => RightToLeft ? HorizontalAlignment.Start : HorizontalAlignment.End,
+                HorizontalAlignment.Left => RightToLeft ? HorizontalAlignment.End : HorizontalAlignment.Start,
+                _ => contentAlignment
+            };
+        }
+
+        private void SetContentAlignment(AlertTextPosition alertTextPosition)
+        {
+            switch (alertTextPosition)
+            {
+                case AlertTextPosition.Right:
+                    ContentAlignment = HorizontalAlignment.Right;
+                    break;
+                case AlertTextPosition.Left:
+                    ContentAlignment = HorizontalAlignment.Left;
+                    break;
+                case AlertTextPosition.Start:
+                    ContentAlignment = HorizontalAlignment.Start;
+                    break;
+                case AlertTextPosition.End:
+                    ContentAlignment = HorizontalAlignment.End;
+                    break;
+                case AlertTextPosition.Center:
+                    ContentAlignment = HorizontalAlignment.Center;
+                    break;
             };
         }
 
@@ -39,7 +61,14 @@ namespace MudBlazor
         /// <summary>
         /// Sets the position of the text to the start (Left in LTR and right in RTL).
         /// </summary>
-        [Parameter] public AlertTextPosition AlertTextPosition { get; set; } = AlertTextPosition.Left;
+        [Parameter] public HorizontalAlignment ContentAlignment { get; set; } = HorizontalAlignment.Left;
+
+        /// <summary>
+        /// Sets the position of the text to the start (Left in LTR and right in RTL).
+        /// </summary>
+        private AlertTextPosition alertTextPosition = AlertTextPosition.Left;
+        [Obsolete("AlertTextPosition is obsolete. Use ContentAlignment instead!", false)]
+        [Parameter] public AlertTextPosition AlertTextPosition { get { return alertTextPosition; } set { SetContentAlignment(value); alertTextPosition = value; }}
 
         /// <summary>
         /// The callback, when the close button has been clicked.
