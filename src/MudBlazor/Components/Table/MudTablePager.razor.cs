@@ -7,16 +7,48 @@ namespace MudBlazor
     public partial class MudTablePager : MudComponentBase
     {
         protected string Classname =>
-            new CssBuilder("mud-table-pagination-toolbar")
+                    new CssBuilder("mud-table-pagination-toolbar")
+                    .AddClass("mud-tablepager-left", !RightToLeft)
+                    .AddClass("mud-tablepager-right", RightToLeft)
+                    .AddClass(Class)
+                    .Build();
+
+        protected string PaginationClassname =>
+            new CssBuilder("mud-table-pagination-display")
+            .AddClass("mud-tablepager-left", !RightToLeft)
+            .AddClass("mud-tablepager-right", RightToLeft)
             .AddClass(Class)
             .Build();
+
+        [CascadingParameter] public bool RightToLeft { get; set; }
 
         [CascadingParameter] public TableContext Context { get; set; }
 
         /// <summary>
         /// Set true to hide the part of the pager which allows to change the page size.
         /// </summary>
-        [Parameter] public bool DisableRowsPerPage { get; set; }
+        [Parameter] public bool HideRowsPerPage { get; set; }
+
+        /// <summary>
+        /// Set true to hide the part of the pager which allows to change the page size.
+        /// </summary>
+        [Obsolete("DisableRowsPerPage is obsolete. Use HideRowsPerPage instead!", false)]
+        [Parameter] public bool DisableRowsPerPage { get => HideRowsPerPage; set => HideRowsPerPage = value; }
+
+        /// <summary>
+        /// Set true to hide the number of pages.
+        /// </summary>
+        [Parameter] public bool HidePageNumber { get; set; }
+
+        /// <summary>
+        /// Set true to hide the pagination.
+        /// </summary>
+        [Parameter] public bool HidePagination { get; set; }
+
+        /// <summary>
+        /// Set the horizontal alignment position.
+        /// </summary>
+        [Parameter] public HorizontalAlignment HorizontalAlignment { get; set; } = HorizontalAlignment.Right;
 
         /// <summary>
         /// Define a list of available page size options for the user to choose from
