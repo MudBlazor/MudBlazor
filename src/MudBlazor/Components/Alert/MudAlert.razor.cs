@@ -34,28 +34,6 @@ namespace MudBlazor
             };
         }
 
-        private void SetContentAlignment(AlertTextPosition alertTextPosition)
-        {
-            switch (alertTextPosition)
-            {
-                case AlertTextPosition.Right:
-                    ContentAlignment = HorizontalAlignment.Right;
-                    break;
-                case AlertTextPosition.Left:
-                    ContentAlignment = HorizontalAlignment.Left;
-                    break;
-                case AlertTextPosition.Start:
-                    ContentAlignment = HorizontalAlignment.Start;
-                    break;
-                case AlertTextPosition.End:
-                    ContentAlignment = HorizontalAlignment.End;
-                    break;
-                case AlertTextPosition.Center:
-                    ContentAlignment = HorizontalAlignment.Center;
-                    break;
-            };
-        }
-
         [CascadingParameter] public bool RightToLeft { get; set; }
 
         /// <summary>
@@ -66,9 +44,13 @@ namespace MudBlazor
         /// <summary>
         /// Sets the position of the text to the start (Left in LTR and right in RTL).
         /// </summary>
-        private AlertTextPosition alertTextPosition = AlertTextPosition.Left;
         [Obsolete("AlertTextPosition is obsolete. Use ContentAlignment instead!", false)]
-        [Parameter] public AlertTextPosition AlertTextPosition { get { return alertTextPosition; } set { SetContentAlignment(value); alertTextPosition = value; }}
+        [Parameter]
+        public AlertTextPosition AlertTextPosition
+        {
+            get => (AlertTextPosition)ContentAlignment;
+            set => ContentAlignment = (HorizontalAlignment)value;
+        }
 
         /// <summary>
         /// The callback, when the close button has been clicked.
