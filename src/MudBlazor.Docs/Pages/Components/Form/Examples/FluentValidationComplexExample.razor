@@ -129,7 +129,7 @@
         {
             var result = await ValidateAsync(ValidationContext<OrderModel>.CreateWithOptions(model as OrderModel, x => x.IncludeProperties(propertyName)));
             if (result.IsValid)
-                return new string[0];
+                return Array.Empty<string>();
             return result.Errors.Select(e => e.ErrorMessage);
         };
     }
