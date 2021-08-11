@@ -58,6 +58,14 @@
         element.scrollTo({ left, top, behavior });
     }
 
+    scrollToBottom(selector, behavior) {
+        let element = document.querySelector(selector);
+        if (element)
+            element.scrollTop = element.scrollHeight;
+        else
+            window.scrollTo(0, document.body.scrollHeight);
+    }
+
     //locks the scroll of the selected element. Default is body
     lockScroll (selector, lockclass) {
         let element = document.querySelector(selector) || document.body;

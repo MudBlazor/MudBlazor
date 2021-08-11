@@ -26,6 +26,7 @@ namespace MudBlazor
         ValueTask ScrollToListItemAsync(string elementId, int increment, bool onEdges);
         ValueTask LockScrollAsync(string selector = "body", string cssClass = "scroll-locked");
         ValueTask UnlockScrollAsync(string selector = "body", string cssClass = "scroll-locked");
+        ValueTask ScrollToBottomAsync(string elementId, ScrollBehavior scrollBehavior = ScrollBehavior.Auto);
     }
 
     public class ScrollManager : IScrollManager
@@ -83,6 +84,15 @@ namespace MudBlazor
             await ScrollToAsync(Selector, 0, 0, scrollBehavior);
 #pragma warning restore CS0612 // Type or member is obsolete
         }
+
+        /// <summary>
+        /// Scroll to the bottom of the element (or if not found to the bottom of the page)
+        /// </summary>
+        /// <param name="id">id of element of null to scroll to page bottom</param>
+        /// <param name="behavior">smooth or auto</param>
+        /// <returns></returns>
+        public ValueTask ScrollToBottomAsync(string id, ScrollBehavior behavior) =>
+            _jSRuntime.InvokeVoidAsync("mudScrollManager.scrollToBottom", id, behavior.ToDescriptionString());
 
         public ValueTask ScrollToYearAsync(string elementId) =>
             _jSRuntime.InvokeVoidAsync("mudScrollManager.scrollToYear", elementId);
