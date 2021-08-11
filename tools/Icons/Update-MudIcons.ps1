@@ -105,12 +105,14 @@ $familyMap.GetEnumerator() | ForEach-Object -ThrottleLimit 5 -Parallel {
  * $([datetime]::Now.ToString('yyyy/MM/dd_hh:mm:ss'))
  */
 
+#pragma warning disable IDE1006 // Naming Styles
+
 using System.Diagnostics.CodeAnalysis;
 
 namespace MudBlazor.Icons.Material
 {
     [ExcludeFromCodeCoverage]
-    public static partial class $($famName)
+    public abstract partial class $($famName)
     {
 
 "@.Replace("`r`n", "`n") }
