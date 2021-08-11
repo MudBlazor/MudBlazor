@@ -2,7 +2,7 @@
 [CmdletBinding()]
 param (
    $DefaultOut="$PWD/_IGNORE",
-   $IconsOut="$PWD/../../src/MudBlazor/Icons/Material"
+   $IconsOut="$PWD/../../src/MudBlazor.Icons/Material"
 )
 
 $ErrorActionPreference = "Stop"

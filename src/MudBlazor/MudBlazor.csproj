@@ -9,8 +9,6 @@
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
-    <IsTrimmable>true</IsTrimmable>
-    <TrimMode>Link</TrimMode>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -112,6 +110,10 @@
     dotnet watch webcompiler ./Styles/MudBlazor.scss -c excubowebcompiler.json
     -->
     <Watch Include="**/*.scss" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\MudBlazor.Icons\MudBlazor.Icons.csproj" />
   </ItemGroup>
 
 </Project>

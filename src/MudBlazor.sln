@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.31424.327
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31606.5
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MudBlazor", "MudBlazor\MudBlazor.csproj", "{FE5531F3-55F6-403D-BF48-3C904089B91D}"
 EndProject
@@ -24,6 +24,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MudBlazor.Examples.Data", "MudBlazor.Examples.Data\MudBlazor.Examples.Data.csproj", "{D9290286-6DD8-478C-A902-23660C554A1C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MudBlazor.Icons", "MudBlazor.Icons\MudBlazor.Icons.csproj", "{25987E95-FBE2-41F1-A91C-E9E530E0D167}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -63,6 +65,10 @@ Global
 		{D9290286-6DD8-478C-A902-23660C554A1C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D9290286-6DD8-478C-A902-23660C554A1C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D9290286-6DD8-478C-A902-23660C554A1C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{25987E95-FBE2-41F1-A91C-E9E530E0D167}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{25987E95-FBE2-41F1-A91C-E9E530E0D167}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{25987E95-FBE2-41F1-A91C-E9E530E0D167}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{25987E95-FBE2-41F1-A91C-E9E530E0D167}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
