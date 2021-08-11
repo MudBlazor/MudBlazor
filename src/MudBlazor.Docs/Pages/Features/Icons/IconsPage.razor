@@ -1,0 +1,48 @@
+@page "/features/icons"
+
+<DocsPage MaxWidth="MaxWidth.Large">
+    <DocsPageHeader Title="MudBlazor Icons" SubTitle="Over 1800 Material Design icons and a few custom ones.">
+        <Description>To use these icons, or if you want to load your own icons, you can check out the <MudLink Href="/components/icons">component's Icon Page</MudLink>.</Description>
+    </DocsPageHeader>
+    <DocsPageContent>
+        <DocsPageSection>
+            <SectionHeader Title="Custom Icons">
+            </SectionHeader>
+            <MudDivider />
+            <SectionContent FullWidth="true">
+                @if (MudIconsMaterial != null)
+                {
+                    <DocsIcons List="@MudIconsCustom" />
+                }
+                else
+                {
+                    <MudText Typo="Typo.h5" Align="Align.Center">Loading...</MudText>
+                }
+            </SectionContent>
+        </DocsPageSection>
+        <DocsPageSection>
+            <SectionHeader Title="Material Icon">
+            </SectionHeader>
+            <SectionContent Class="docs-icon-material-container" FullWidth="true">
+                <MudRadioGroup T="string" SelectedOption="@SelectedIconType" SelectedOptionChanged="HandleSelectedOptionChanged">
+                    @foreach (var item in IconTypes)
+                    {
+                        <MudRadio Option="@item.Key" Color="Color.Primary">@item.Key</MudRadio>
+                    }
+                </MudRadioGroup>
+                <MudTextField Immediate="true" DebounceInterval="1000" @bind-Value="SearchText" Variant="Variant.Outlined" Placeholder="Search icons..." Adornment="Adornment.Start" AdornmentIcon="@MudBlazor.Icons.Material.Filled.Search" />
+                <MudText Class="mx-3" Typo="Typo.body1">@SelectedIcons.Count() matching results</MudText>
+                <MudDivider />
+                @if (MudIconsMaterial != null)
+                {
+                    <DocsIcons List="@SelectedIcons" />
+                }
+                else
+                {
+                    <MudText Typo="Typo.h5" Align="Align.Center">Loading...</MudText>
+                }
+            </SectionContent>
+        </DocsPageSection>
+    </DocsPageContent>
+</DocsPage>
+
