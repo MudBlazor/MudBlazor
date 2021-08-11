@@ -31,46 +31,46 @@ namespace MudBlazor.Icons.Material
         public const string LocationPin = "<rect fill=\"none\" height=\"24\" width=\"24\"/><path d=\"M12,2L12,2C8.13,2,5,5.13,5,9c0,1.74,0.5,3.37,1.41,4.84c0.95,1.54,2.2,2.86,3.16,4.4c0.47,0.75,0.81,1.45,1.17,2.26 C11,21.05,11.21,22,12,22h0c0.79,0,1-0.95,1.25-1.5c0.37-0.81,0.7-1.51,1.17-2.26c0.96-1.53,2.21-2.85,3.16-4.4 C18.5,12.37,19,10.74,19,9C19,5.13,15.87,2,12,2z M12,11.75c-1.38,0-2.5-1.12-2.5-2.5s1.12-2.5,2.5-2.5s2.5,1.12,2.5,2.5 S13.38,11.75,12,11.75z\"/>";
 
         [Obsolete("Obsolete, removed from Material Design Icons.  Replace with `Outbound` icon.")]
-        public string Outbond => Outbound;
+        public static string Outbond => Outbound;
 
         [Obsolete("Obsolete, removed from Material Design Icons.  Replace with `Workspaces` icon.")]
-        public string WorkspacesFilled => Workspaces;
+        public static string WorkspacesFilled => Workspaces;
 
         [Obsolete("Obsolete, removed from Material Design Icons.  Replace with `FilterAlt` icon.")]
-        public string FilterListAlt => FilterAlt;
+        public static string FilterListAlt => FilterAlt;
 
         [Obsolete("Obsolete, removed from Material Design Icons.  Replace with `AddIcCall` icon.")]
-        public string AddCall => AddIcCall;
+        public static string AddCall => AddIcCall;
 
         [Obsolete("Obsolete, removed from Material Design Icons.  Replace with `WbTwilight` icon.")]
-        public string WbTwighlight => WbTwilight;
+        public static string WbTwighlight => WbTwilight;
 
         [Obsolete("Obsolete, removed from Material Design Icons.  Replace with `PieChartOutline` icon.")]
-        public string PieChartOutlined => PieChartOutline;
+        public static string PieChartOutlined => PieChartOutline;
 
         [Obsolete("Obsolete, removed from Material Design Icons.  Replace with `Icons.Outlined.Lock` icon.")]
-        public string LockOutlined => Icons.Outlined.Lock;
+        public static string LockOutlined => Icons.Outlined.Lock;
 
         [Obsolete("Obsolete, removed from Material Design Icons.  Replace with `Icons.Outlined.Info` icon.")]
-        public string InfoOutlined => Icons.Outlined.Info;
+        public static string InfoOutlined => Icons.Outlined.Info;
 
         [Obsolete("Obsolete, removed from Material Design Icons.  Replace with `Icons.Outlined.Label` icon.")]
-        public string LabelOutline => Icons.Outlined.Label;
+        public static string LabelOutline => Icons.Outlined.Label;
 
         [Obsolete("Obsolete, removed from Material Design Icons.  Replace with `Icons.Outlined.LabelImportant` icon.")]
-        public string LabelImportantOutline => Icons.Outlined.LabelImportant;
+        public static string LabelImportantOutline => Icons.Outlined.LabelImportant;
 
         [Obsolete("Obsolete, removed from Material Design Icons.  Replace with `Icons.Outlined.Lightbulb` icon.")]
-        public string LightbulbOutline => Icons.Outlined.Lightbulb;
+        public static string LightbulbOutline => Icons.Outlined.Lightbulb;
 
         [Obsolete("Obsolete, removed from Material Design Icons.  Replace with `Icons.Outlined.Workspaces` icon.")]
-        public string WorkspacesOutline => Icons.Outlined.Workspaces;
+        public static string WorkspacesOutline => Icons.Outlined.Workspaces;
 
         [Obsolete("Obsolete, removed from Material Design Icons.  Replace with `Icons.Outlined.DriveFileMove` icon.")]
-        public string DriveFileMoveOutline => Icons.Outlined.DriveFileMove;
+        public static string DriveFileMoveOutline => Icons.Outlined.DriveFileMove;
 
         [Obsolete("Obsolete, removed from Material Design Icons.  Replace with `NoMeals` icon.")]
-        public string NoMealsOuline => NoMeals;
+        public static string NoMealsOuline => NoMeals;
     }
 
     public abstract partial class Outlined
@@ -82,25 +82,25 @@ namespace MudBlazor.Icons.Material
         public const string Eco = "<g><rect fill=\"none\" height=\"24\" width=\"24\"/></g><g><path d=\"M6.05,8.05c-2.73,2.73-2.73,7.17,0,9.9C7.42,19.32,9.21,20,11,20s3.58-0.68,4.95-2.05C19.43,14.47,20,4,20,4 S9.53,4.57,6.05,8.05z M14.54,16.54C13.59,17.48,12.34,18,11,18c-0.89,0-1.73-0.25-2.48-0.68c0.92-2.88,2.62-5.41,4.88-7.32 c-2.63,1.36-4.84,3.46-6.37,6c-1.48-1.96-1.35-4.75,0.44-6.54C9.21,7.72,14.04,6.65,17.8,6.2C17.35,9.96,16.28,14.79,14.54,16.54z\"/></g>";
 
         [Obsolete("Obsolete, removed from Material Design Icons.  Replace with `Face` icon.")]
-        public string FaceUnlock => Face;
+        public static string FaceUnlock => Face;
 
         [Obsolete("Obsolete, removed from Material Design Icons.  Replace with `Outbound` icon.")]
-        public string Outbond => Outbound;
+        public static string Outbond => Outbound;
 
         [Obsolete("Obsolete, removed from Material Design Icons.  Replace with `Icons.Outlined.Lock` icon.")]
-        public string LockOutlined => Icons.Outlined.Lock;
+        public static string LockOutlined => Icons.Outlined.Lock;
 
         [Obsolete("Obsolete, removed from Material Design Icons.  Replace with `Icons.Outlined.Info` icon.")]
-        public string InfoOutlined => Icons.Outlined.Info;
+        public static string InfoOutlined => Icons.Outlined.Info;
 
         [Obsolete("Obsolete, removed from Material Design Icons.  Replace with `Icons.Outlined.Label` icon.")]
-        public string LabelOutline => Icons.Outlined.Label;
+        public static string LabelOutline => Icons.Outlined.Label;
 
         [Obsolete("Obsolete, removed from Material Design Icons.  Replace with `Icons.Outlined.LabelImportant` icon.")]
-        public string LabelImportantOutline => Icons.Outlined.LabelImportant;
+        public static string LabelImportantOutline => Icons.Outlined.LabelImportant;
 
         [Obsolete("Obsolete, removed from Material Design Icons.  Replace with `Icons.Outlined.Lightbulb` icon.")]
-        public string LightbulbOutline => Icons.Outlined.Lightbulb;
+        public static string LightbulbOutline => Icons.Outlined.Lightbulb;
     }
 
     public abstract partial class Rounded
@@ -112,25 +112,25 @@ namespace MudBlazor.Icons.Material
         public const string Eco = "<g><rect fill=\"none\" height=\"24\" width=\"24\"/><rect fill=\"none\" height=\"24\" width=\"24\"/></g><g><g><path d=\"M6.05,8.05c-2.73,2.73-2.73,7.15-0.02,9.88c1.47-3.4,4.09-6.24,7.36-7.93c-2.77,2.34-4.71,5.61-5.39,9.32 c2.6,1.23,5.8,0.78,7.95-1.37c2.99-2.99,3.83-11.14,4.01-13.38c0.02-0.31-0.23-0.56-0.53-0.53C17.19,4.22,9.04,5.06,6.05,8.05z\"/></g></g>";
 
         [Obsolete("Obsolete, removed from Material Design Icons.  Replace with `Face` icon.")]
-        public string FaceUnlock => Face;
+        public static string FaceUnlock => Face;
 
         [Obsolete("Obsolete, removed from Material Design Icons.  Replace with `Outbound` icon.")]
-        public string Outbond => Outbound;
+        public static string Outbond => Outbound;
 
         [Obsolete("Obsolete, removed from Material Design Icons.  Replace with `Icons.Outlined.Lock` icon.")]
-        public string LockOutlined => Icons.Outlined.Lock;
+        public static string LockOutlined => Icons.Outlined.Lock;
 
         [Obsolete("Obsolete, removed from Material Design Icons.  Replace with `Icons.Outlined.Info` icon.")]
-        public string InfoOutlined => Icons.Outlined.Info;
+        public static string InfoOutlined => Icons.Outlined.Info;
 
         [Obsolete("Obsolete, removed from Material Design Icons.  Replace with `Icons.Outlined.Label` icon.")]
-        public string LabelOutline => Icons.Outlined.Label;
+        public static string LabelOutline => Icons.Outlined.Label;
 
         [Obsolete("Obsolete, removed from Material Design Icons.  Replace with `Icons.Outlined.LabelImportant` icon.")]
-        public string LabelImportantOutline => Icons.Outlined.LabelImportant;
+        public static string LabelImportantOutline => Icons.Outlined.LabelImportant;
 
         [Obsolete("Obsolete, removed from Material Design Icons.  Replace with `Icons.Outlined.Lightbulb` icon.")]
-        public string LightbulbOutline => Icons.Outlined.Lightbulb;
+        public static string LightbulbOutline => Icons.Outlined.Lightbulb;
     }
 
     public abstract partial class Sharp
@@ -142,24 +142,24 @@ namespace MudBlazor.Icons.Material
         public const string Eco = "<g><rect fill=\"none\" height=\"24\" width=\"24\"/></g><g><g><path d=\"M6.05,8.05c-2.73,2.73-2.73,7.15-0.02,9.88c1.47-3.4,4.09-6.24,7.36-7.93c-2.77,2.34-4.71,5.61-5.39,9.32 c2.6,1.23,5.8,0.78,7.95-1.37C19.43,14.47,20,4,20,4S9.53,4.57,6.05,8.05z\"/></g></g>";
 
         [Obsolete("Obsolete, removed from Material Design Icons.  Replace with `Face` icon.")]
-        public string FaceUnlock => Face;
+        public static string FaceUnlock => Face;
 
         [Obsolete("Obsolete, removed from Material Design Icons.  Replace with `Outbound` icon.")]
-        public string Outbond => Outbound;
+        public static string Outbond => Outbound;
 
         [Obsolete("Obsolete, removed from Material Design Icons.  Replace with `Icons.Outlined.Lock` icon.")]
-        public string LockOutlined => Icons.Outlined.Lock;
+        public static string LockOutlined => Icons.Outlined.Lock;
 
         [Obsolete("Obsolete, removed from Material Design Icons.  Replace with `Icons.Outlined.Info` icon.")]
-        public string InfoOutlined => Icons.Outlined.Info;
+        public static string InfoOutlined => Icons.Outlined.Info;
 
         [Obsolete("Obsolete, removed from Material Design Icons.  Replace with `Icons.Outlined.Label` icon.")]
-        public string LabelOutline => Icons.Outlined.Label;
+        public static string LabelOutline => Icons.Outlined.Label;
 
         [Obsolete("Obsolete, removed from Material Design Icons.  Replace with `Icons.Outlined.LabelImportant` icon.")]
-        public string LabelImportantOutline => Icons.Outlined.LabelImportant;
+        public static string LabelImportantOutline => Icons.Outlined.LabelImportant;
 
         [Obsolete("Obsolete, removed from Material Design Icons.  Replace with `Icons.Outlined.Lightbulb` icon.")]
-        public string LightbulbOutline => Icons.Outlined.Lightbulb;
+        public static string LightbulbOutline => Icons.Outlined.Lightbulb;
     }
 }
