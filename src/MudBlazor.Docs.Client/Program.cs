@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Net.Http;
 using System.Threading.Tasks;
-using Blazor.Analytics;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using MudBlazor.Docs.Extensions;
@@ -21,7 +20,6 @@ namespace MudBlazor.Docs.Client
             builder.Services.AddScoped<GitHubApiClient>();
             builder.Services.TryAddDocsViewServices();
             builder.Services.AddHeadElementHelper();
-            builder.Services.AddGoogleAnalytics("G-PRYNCB61NV");
 
             return builder.Build().RunAsync();
         }

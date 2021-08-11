@@ -7,13 +7,13 @@
     <!--Note trailing slash -->
     <StaticWebAssetBasePath Condition="'$(BuildType)' == 'publish'">wasm/</StaticWebAssetBasePath>
     <BlazorWebAssemblyLoadAllGlobalizationData>true</BlazorWebAssemblyLoadAllGlobalizationData>
+    <PublishTrimmed>true</PublishTrimmed>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Blazor-Analytics" Version="3.8.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="6.0.0-preview.*" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="6.0.0-preview.*" PrivateAssets="all" />
-    <PackageReference Include="System.Net.Http.Json" Version="6.0.0-preview.*" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="6.0.0-preview.7.*" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="6.0.0-preview.7.*" PrivateAssets="all" />
+    <PackageReference Include="System.Net.Http.Json" Version="6.0.0-preview.7.*" />
     <PackageReference Include="Toolbelt.Blazor.HeadElement" Version="5.4.3" />
   </ItemGroup>
 

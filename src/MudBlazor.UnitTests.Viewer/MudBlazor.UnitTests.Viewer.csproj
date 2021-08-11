@@ -3,13 +3,12 @@
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
     <RootNamespace>MudBlazor.UnitTests</RootNamespace>
-    <PublishTrimmed>true</PublishTrimmed>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="6.0.0-preview.*" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="6.0.0-preview.*" PrivateAssets="all" />
-    <PackageReference Include="System.Net.Http.Json" Version="6.0.0-preview.*" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="6.0.0-preview.7.*" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="6.0.0-preview.7.*" PrivateAssets="all" />
+    <PackageReference Include="System.Net.Http.Json" Version="6.0.0-preview.7.*" />
   </ItemGroup>
 
   <ItemGroup>
