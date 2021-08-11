@@ -9,6 +9,9 @@
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
+    <PublishTrimmed>true</PublishTrimmed>
+    <IsTrimmable>true</IsTrimmable>
+    <TrimMode>Link</TrimMode>
   </PropertyGroup>
 
   <PropertyGroup>

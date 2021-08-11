@@ -107,10 +107,10 @@ $familyMap.GetEnumerator() | ForEach-Object -ThrottleLimit 5 -Parallel {
 
 using System.Diagnostics.CodeAnalysis;
 
-namespace MudBlazor
+namespace MudBlazor.Icons.Material
 {
     [ExcludeFromCodeCoverage]
-    public partial class $($famName)
+    public static partial class $($famName)
     {
 
 "@.Replace("`r`n", "`n") }
@@ -160,7 +160,7 @@ namespace MudBlazor
         $nextIcons[$famName][$iconVar] = $iconSvg
 
         Add-Content -Encoding utf8BOM -NoNewline -Path $csFile -Value @"
-        public string $iconVar { get; } = "$($iconSvg)";
+        public const string $iconVar = "$($iconSvg)";
 
 "@.Replace("`r`n", "`n")
         $iconCount++

@@ -1,30 +1,29 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 
-namespace MudBlazor
+namespace MudBlazor.Icons
 {
     [ExcludeFromCodeCoverage]
-    public static partial class Icons
+    public abstract partial class Filled : MudBlazor.Icons.Material.Filled
     {
-        public static class Custom
-        {
-            public static readonly Brands Brands = new();
-            public static readonly FileFormats FileFormats = new();
-            public static readonly Uncategorized Uncategorized = new();
-        }
-        public static class Material
-        {
-            public static readonly Filled Filled = new();
-            public static readonly Outlined Outlined = new();
-            public static readonly Rounded Rounded = new();
-            public static readonly Sharp Sharp = new();
-            public static readonly TwoTone TwoTone = new();
-        }
+    }
 
-        public static readonly Filled Filled = new();
-        public static readonly Outlined Outlined = new();
-        public static readonly Rounded Rounded = new();
-        public static readonly Sharp Sharp = new();
-        public static readonly TwoTone TwoTone = new();
+    [ExcludeFromCodeCoverage]
+    public abstract partial class Outlined : MudBlazor.Icons.Material.Outlined
+    {
+    }
+
+    [ExcludeFromCodeCoverage]
+    public abstract partial class Rounded : MudBlazor.Icons.Material.Rounded
+    {
+    }
+
+    [ExcludeFromCodeCoverage]
+    public abstract partial class Sharp : MudBlazor.Icons.Material.Sharp
+    {
+    }
+
+    [ExcludeFromCodeCoverage]
+    public abstract partial class TwoTone : MudBlazor.Icons.Material.TwoTone
+    {
     }
 }
-

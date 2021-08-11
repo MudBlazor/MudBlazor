@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -48,6 +49,7 @@ namespace MudBlazor
         }
 
         [JSInvokable]
+        [UnconditionalSuppressMessage("Trimming", "IL2026:Methods annotated with 'RequiresUnreferencedCodeAttribute' require dynamic access otherwise can break functionality when trimming application code", Justification = "<Pending>")]
         public async Task OnEventOccur(Guid key, string @eventData)
         {
             if (_callbackResolver.ContainsKey(key) == false) { return; }

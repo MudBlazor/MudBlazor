@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
 using System.Linq.Expressions;
@@ -281,6 +282,7 @@ namespace MudBlazor
             return value != null;
         }
 
+        [UnconditionalSuppressMessage("Trimming", "IL2026:Methods annotated with 'RequiresUnreferencedCodeAttribute' require dynamic access otherwise can break functionality when trimming application code", Justification = "<Pending>")]
         protected virtual void ValidateWithAttribute(ValidationAttribute attr, T value, List<string> errors)
         {
             try
