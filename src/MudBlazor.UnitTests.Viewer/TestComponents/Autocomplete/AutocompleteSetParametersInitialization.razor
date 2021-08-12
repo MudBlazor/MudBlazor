@@ -1,0 +1,64 @@
+﻿@namespace MudBlazor.UnitTests.TestComponents
+
+ @* Based on this try https://try.mudblazor.com/snippet/GacPunvDUyjdUJAh
+  and this issue https://github.com/Garderoben/MudBlazor/issues/1235*@
+
+<MudAutocomplete T="ExternalList" SearchFunc="@Search2" @bind-Value="SelectedValue" ToStringFunc="@(e => e == null ? null : $"{e.Name}")" />
+
+@code {
+    public ExternalList SelectedValue;
+
+    private List<ExternalList> _externalList = new();
+
+    public string ToString(ExternalList el)
+    {
+        return el?.Name;
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await Task.Delay(15); // faking http call
+        _externalList = new List<ExternalList>()
+{
+            new ExternalList
+            {
+                Id="1",
+                Name="One"
+            },
+            new ExternalList
+            {
+                Id="2",
+                Name="Two"
+            },
+            new ExternalList
+            {
+                Id="3",
+                Name="Three"
+            }
+        };
+    }
+
+    protected override void OnParametersSet()
+    {
+        var matching = _externalList.SingleOrDefault(t => t.Id == "1");
+        if (matching != null)
+        {
+            SelectedValue = matching;
+        };
+    }
+
+    private async Task<IEnumerable<ExternalList>> Search2(string value)
+    {
+        await Task.Delay(0);
+        if (string.IsNullOrEmpty(value))
+            return _externalList;
+
+        return _externalList.Where(x => x.Name.Contains(value, StringComparison.InvariantCultureIgnoreCase));
+    }
+
+    public class ExternalList
+    {
+        public string Id { get; set; }
+        public string Name { get; set; }
+    }
+}

@@ -26,6 +26,8 @@
 
 .mud-picker-datepicker-date-landscape {
     margin-right: 16px;
+    margin-inline-end: 16px;
+    margin-inline-start: unset;
 }
 
 
@@ -360,5 +362,23 @@
         width: 15px;
         margin-top: 2px !important;
         color: var(--mud-palette-text-disabled);
+    }
+}
+
+.mud-application-layout-rtl {
+    .mud-picker-calendar .mud-day.mud-range {
+        &.mud-range-start-selected {
+            border-radius: 0% 50% 50% 0%;
+        }
+
+        &.mud-range-end-selected {
+            border-radius: 50% 0% 0% 50%;
+        }
+
+        &.mud-range-selection:hover {
+            &:not(.mud-range-start-selected) {
+                border-radius: 50% 0% 0% 50%;
+            }
+        }
     }
 }

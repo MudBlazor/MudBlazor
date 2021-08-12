@@ -5,66 +5,137 @@
     }
 
     focus (element) {
-        element.focus();
+        if (element)
+        {
+            element.focus();
+        }
     }
 
     focusFirst (element, skip = 0, min = 0) {
-        let tabbables = getTabbableElements(element);
-        if (tabbables.length <= min)
-            element.focus();
-        else
-            tabbables[skip].focus();
+        if (element)
+        {
+            let tabbables = getTabbableElements(element);
+            if (tabbables.length <= min)
+                element.focus();
+            else
+                tabbables[skip].focus();
+        }
     }
 
     focusLast (element, skip = 0, min = 0) {
-        let tabbables = getTabbableElements(element);
-        if (tabbables.length <= min)
-            element.focus();
-        else
-            tabbables[tabbables.length - skip - 1].focus();
+        if (element)
+        {
+            let tabbables = getTabbableElements(element);
+            if (tabbables.length <= min)
+                element.focus();
+            else
+                tabbables[tabbables.length - skip - 1].focus();
+        }
     }
 
     saveFocus (element) {
-        element['mudblazor_savedFocus'] = document.activeElement;
+        if (element)
+        {
+            element['mudblazor_savedFocus'] = document.activeElement;
+        }
     }
 
     restoreFocus (element) {
-        let previous = element['mudblazor_savedFocus'];
-        delete element['mudblazor_savedFocus']
-        if (previous)
-            previous.focus();
+        if (element)
+        {
+            let previous = element['mudblazor_savedFocus'];
+            delete element['mudblazor_savedFocus']
+            if (previous)
+                previous.focus();
+        }
     }
 
     selectRange(element, pos1, pos2) {
-        if (element.createTextRange) {
-            let selRange = element.createTextRange();
-            selRange.collapse(true);
-            selRange.moveStart('character', pos1);
-            selRange.moveEnd('character', pos2);
-            selRange.select();
-        } else if (element.setSelectionRange) {
-            element.setSelectionRange(pos1, pos2);
-        } else if (element.selectionStart) {
-            element.selectionStart = pos1;
-            element.selectionEnd = pos2;
+        if (element)
+        {
+            if (element.createTextRange) {
+                let selRange = element.createTextRange();
+                selRange.collapse(true);
+                selRange.moveStart('character', pos1);
+                selRange.moveEnd('character', pos2);
+                selRange.select();
+            } else if (element.setSelectionRange) {
+                element.setSelectionRange(pos1, pos2);
+            } else if (element.selectionStart) {
+                element.selectionStart = pos1;
+                element.selectionEnd = pos2;
+            }
+            element.focus();
         }
-        element.focus();
     }
 
     select(element) {
-        element.select();
+        if (element)
+        {
+            element.select();
+        }
+    }
+    /**
+     * gets the client rect of the parent of the element
+     * @param {HTMLElement} element
+     */
+    getClientRectFromParent(element) {
+        if (!element) return;
+        let parent = element.parentElement;
+        if (!parent) return;
+        return this.getBoundingClientRect(parent);
     }
 
-    getBoundingClientRect (element) {
-        return element?.getBoundingClientRect();
+    /**
+     * Gets the client rect of the first child of the element
+     * @param {any} element
+     */
+
+    getClientRectFromFirstChild(element) {
+        if (!element) return;
+        let child = element.children && element.children[0];
+        if (!child) return;
+        return this.getBoundingClientRect(child);
     }
+
+
+    getBoundingClientRect(element) {
+        if (!element) return;
+
+        var rect = JSON.parse(JSON.stringify(element.getBoundingClientRect()));
+
+        rect.scrollY = window.scrollY || document.documentElement.scrollTop;
+        rect.scrollX = window.scrollX || document.documentElement.scrollLeft;
+
+        rect.windowHeight = window.innerHeight;
+        rect.windowWidth = window.innerWidth;
+        return rect;
+    }
+
+    /**
+     * Returns true if the element has any ancestor with style position==="fixed"
+     * @param {Element} element
+     */
+    hasFixedAncestors(element) {
+        for (; element && element !== document; element = element.parentNode) {
+            if (window.getComputedStyle(element).getPropertyValue("position") === "fixed")
+                return true;
+        }
+        return false
+    };
 
     changeCss (element, css) {
-        element.className = css;
+        if (element)
+        {
+            element.className = css;
+        }
     }
 
     changeCssVariable (element, name, newValue) {
-        element.style.setProperty(name, newValue);
+        if (element)
+        {
+            element.style.setProperty(name, newValue);
+        }
     }
 
     addEventListener (element, dotnet, event, callback, spec, stopPropagation) {

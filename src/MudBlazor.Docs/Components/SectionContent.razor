@@ -16,6 +16,7 @@
     .AddClass($"docs-section-content-darken", DarkenBackground)
     .AddClass($"docs-display-flex", DisplayFlex)
     .AddClass($"docs-section-auto-margin-content", AutoMarginContent)
+    .AddClass($"docs-section-flex-column", FlexColumn)
     .AddClass(Class)
     .Build();
 
@@ -33,6 +34,8 @@
     [Parameter] public bool Outlined { get; set; }
 
     [Parameter] public bool AutoMarginContent { get; set; } = true;
+    
+    [Parameter] public bool FlexColumn { get; set; }
 
     [Parameter] public RenderFragment ChildContent { get; set; }
 

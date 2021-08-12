@@ -1,4 +1,4 @@
-﻿.mud-overlay {
+.mud-overlay {
     top: 0;
     left: 0;
     right: 0;
@@ -41,6 +41,9 @@
             border-color: var(--mud-palette-overlay-light);
             background-color: var(--mud-palette-overlay-light);
         }
+        &:hover {
+            cursor: default;
+        }
     }
 
     & .mud-overlay-content {
@@ -56,6 +59,6 @@
     }
 
     &.mud-overlay-drawer {
-        z-index: var(--mud-zindex-dialog); //<-- Yes this is correct we want to display it on top of the Appbar
+        z-index: calc(var(--mud-zindex-appbar) + 1); //<-- Yes this is correct we want to display it on top of the Appbar
     }
 }

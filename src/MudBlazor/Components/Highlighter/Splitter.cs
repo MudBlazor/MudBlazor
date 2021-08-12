@@ -22,6 +22,11 @@ namespace MudBlazor.Components.Highlighter
                                                        bool caseSensitive = false,
                                                        bool untilNextBoundary = false)
         {
+            if (string.IsNullOrWhiteSpace(text))
+            {
+                return new List<string>();
+            }
+
             if (string.IsNullOrWhiteSpace(highlightedText))
             {
                 return new List<string> { text };

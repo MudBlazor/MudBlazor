@@ -8,16 +8,16 @@ namespace MudBlazor.Charts
     {
         [CascadingParameter] public MudChart MudChartParent { get; set; }
 
-        private List<SvgPath> _horizontalLines = new List<SvgPath>();
-        private List<SvgText> _horizontalValues = new List<SvgText>();
+        private List<SvgPath> _horizontalLines = new();
+        private List<SvgText> _horizontalValues = new();
 
-        private List<SvgPath> _verticalLines = new List<SvgPath>();
-        private List<SvgText> _verticalValues = new List<SvgText>();
+        private List<SvgPath> _verticalLines = new();
+        private List<SvgText> _verticalValues = new();
 
-        private List<SvgLegend> _legends = new List<SvgLegend>();
-        private List<ChartSeries> _series = new List<ChartSeries>();
+        private List<SvgLegend> _legends = new();
+        private List<ChartSeries> _series = new();
 
-        private List<SvgPath> _bars = new List<SvgPath>();
+        private List<SvgPath> _bars = new();
 
         protected override void OnParametersSet()
         {
@@ -80,7 +80,7 @@ namespace MudBlazor.Charts
                 };
                 _horizontalLines.Add(line);
 
-                var lineValue = new SvgText() { X = (horizontalStartSpace - 10), Y = (boundHeight - y + 5), Value = ToS(startGridY) };
+                var lineValue = new SvgText() { X = (horizontalStartSpace - 10), Y = (boundHeight - y + 5), Value = ToS(startGridY, MudChartParent?.ChartOptions.YAxisFormat) };
                 _horizontalValues.Add(lineValue);
 
                 startGridY += gridYUnits;
@@ -116,15 +116,15 @@ namespace MudBlazor.Charts
 
             //Bars
             var colorcounter = 0;
-            double barsPerSerie = 0;
+            double barsPerSeries = 0;
             foreach (var item in _series)
             {
-                double gridValueX = horizontalStartSpace + barsPerSerie;
+                double gridValueX = horizontalStartSpace + barsPerSeries;
                 double gridValueY = boundHeight - verticalStartSpace;
 
                 foreach (var dataLine in item.Data)
                 {
-                    var dataValue = ((double)dataLine) * verticalSpace / gridYUnits;
+                    var dataValue = dataLine * verticalSpace / gridYUnits;
                     var gridValue = gridValueY - dataValue;
                     var bar = $"M {ToS(gridValueX)} {ToS(gridValueY)} L {ToS(gridValueX)} {ToS(gridValue)}";
 
@@ -138,7 +138,7 @@ namespace MudBlazor.Charts
                     _bars.Add(line);
                 }
 
-                barsPerSerie += 10;
+                barsPerSeries += 10;
 
                 var legend = new SvgLegend()
                 {

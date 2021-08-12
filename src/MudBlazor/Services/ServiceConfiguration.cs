@@ -9,5 +9,6 @@
     {
         public SnackbarConfiguration SnackbarConfiguration { get; set; } = new SnackbarConfiguration();
         public ResizeOptions ResizeOptions { get; set; } = new ResizeOptions();
+        public ResizeObserverOptions ResizeObserverOptions { get; set; } = new ResizeObserverOptions();
     }
 }

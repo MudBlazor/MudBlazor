@@ -2,13 +2,12 @@
 @using System.Reflection
 
 <DocsPage MaxWidth="MaxWidth.Large">
-    <DocsPageHeader Title="Mudblazor Icons" SubTitle="Over 1200 Material Design icons and a few custom ones.">
-        <Description>To use these icons, or if you want to load your own icons, you can check out how to on the <MudLink Href="/components/icons">component's Icon Page</MudLink></Description>
+    <DocsPageHeader Title="MudBlazor Icons" SubTitle="Over 1800 Material Design icons and a few custom ones.">
+        <Description>To use these icons, or if you want to load your own icons, you can check out the <MudLink Href="/components/icons">component's Icon Page</MudLink>.</Description>
     </DocsPageHeader>
     <DocsPageContent>
         <DocsPageSection>
-            <SectionHeader>
-                <Title>Custom Icons</Title>
+            <SectionHeader Title="Custom Icons">
             </SectionHeader>
             <MudDivider />
             <SectionContent FullWidth="true">
@@ -23,8 +22,7 @@
             </SectionContent>
         </DocsPageSection>
         <DocsPageSection>
-            <SectionHeader>
-                <Title>Material Icons</Title>
+            <SectionHeader Title="Material Icon">
             </SectionHeader>
             <SectionContent Class="docs-icon-material-container" FullWidth="true">
                 <MudRadioGroup T="string" SelectedOption="@SelectedIconType" SelectedOptionChanged="HandleSelectedOptionChanged">
@@ -65,6 +63,7 @@
         { IconType.Outlined, new Outlined()},
         { IconType.Rounded, new Rounded()},
         { IconType.Sharp, new Sharp()},
+        { IconType.TwoTone, new TwoTone()},
     };
 
     protected override async Task OnInitializedAsync()
@@ -112,6 +111,7 @@
         public const string Filled = "Filled",
                             Outlined = "Outlined",
                             Rounded = "Rounded",
-                            Sharp = "Sharp";
+                            Sharp = "Sharp",
+                            TwoTone = "TwoTone";
     }
 }

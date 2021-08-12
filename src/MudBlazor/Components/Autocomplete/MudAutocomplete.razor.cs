@@ -13,6 +13,8 @@ namespace MudBlazor
     {
         [Inject] IScrollManager ScrollManager { get; set; }
 
+        private bool _dense;
+
         protected string Classname =>
             new CssBuilder("mud-select")
             .AddClass(Class)
@@ -28,25 +30,51 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public string Placeholder { get; set; }
 
-        /// <summary>
-        /// If true, compact vertical padding will be applied to all select items.
-        /// </summary>
-        [Parameter] public bool Dense { get; set; }
 
         /// <summary>
-        /// The Open Select Icon
+        /// Sets the direction the Autocomplete menu should open.
         /// </summary>
-        [Parameter] public string OpenIcon { get; set; } = Icons.Material.Filled.ArrowDropUp;
+        [Parameter] public Direction Direction { get; set; } = Direction.Bottom;
 
         /// <summary>
-        /// The Open Select Icon
+        /// If true, the Autocomplete menu will open either before or after the input (left/right).
         /// </summary>
-        [Parameter] public string CloseIcon { get; set; } = Icons.Material.Filled.ArrowDropDown;
+        [Parameter] public bool OffsetX { get; set; }
+
+        /// <summary>
+        /// If true, the Autocomplete menu will open either before or after the input (top/bottom).
+        /// </summary>
+        [Parameter] public bool OffsetY { get; set; } = true;
+
+        /// <summary>
+        /// If true, compact vertical padding will be applied to all Autocomplete items.
+        /// </summary>
+        [Parameter]
+        public bool Dense
+        {
+            get { return _dense; }
+            set
+            {
+                // Ensure that when dense is applied we set the margin on the input controls
+                _dense = value;
+                Margin = _dense ? Margin.Dense : Margin.None;
+            }
+        }
+
+        /// <summary>
+        /// The Open Autocomplete Icon
+        /// </summary>
+        [Parameter] public string OpenIcon { get; set; } = Icons.Material.Filled.ArrowDropDown;
+
+        /// <summary>
+        /// The Close Autocomplete Icon
+        /// </summary>
+        [Parameter] public string CloseIcon { get; set; } = Icons.Material.Filled.ArrowDropUp;
 
         //internal event Action<HashSet<T>> SelectionChangedFromOutside;
 
         /// <summary>
-        /// Sets the maxheight the select can have when open.
+        /// Sets the maxheight the Autocomplete can have when open.
         /// </summary>
         [Parameter] public int MaxHeight { get; set; } = 300;
 
@@ -67,7 +95,6 @@ namespace MudBlazor
                 Converter = new Converter<T>
                 {
                     SetFunc = _toStringFunc ?? (x => x?.ToString()),
-                    //GetFunc = LookupValue,
                 };
             }
         }
@@ -86,7 +113,7 @@ namespace MudBlazor
         public int? MaxItems { get; set; } = 10;
 
         /// <summary>
-        /// Minimum characters to initiate a search, defaults to 2
+        /// Minimum characters to initiate a search
         /// </summary>
         [Parameter]
         public int MinCharacters { get; set; } = 0;
@@ -118,22 +145,73 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public bool CoerceText { get; set; } = true;
 
-        internal bool IsOpen { get; set; }
+        /// <summary>
+        /// If user input is not found by the search func and CoerceValue is set to true the user input
+        /// will be applied to the Value which allows to validate it and display an error message.
+        /// </summary>
+        [Parameter] public bool CoerceValue { get; set; }
 
-        public string CurrentIcon { get; set; }
+        private bool _isOpen;
+
+        /// <summary>
+        /// Returns the open state of the drop-down.
+        /// </summary>
+        public bool IsOpen
+        {
+            get => _isOpen;
+            // Note: the setter is protected because it was needed by a user who derived his own autocomplete from this class.
+            // Note: setting IsOpen will not open or close it. Use ToggleMenu() for that. 
+            protected set
+            {
+                if (value == _isOpen)
+                    return;
+                _isOpen = value;
+                UpdateIcon();
+                IsOpenChanged.InvokeAsync(_isOpen).AndForget();
+            }
+        }
+
+        /// <summary>
+        /// An event triggered when the state of IsOpen has changed
+        /// </summary>
+        [Parameter] public EventCallback<bool> IsOpenChanged { get; set; }
+
+        /// <summary>
+        /// Set to true to select the currently selected item from the drop-down (if it is open) 
+        /// </summary>
+        [Parameter] public bool SelectValueOnTab { get; set; } = false;
+
+        /// <summary>
+        /// Show clear button.
+        /// </summary>
+        [Parameter] public bool Clearable { get; set; } = false;
+
+        /// <summary>
+        /// Button click event for clear button. Called after text and value has been cleared.
+        /// </summary>
+        [Parameter] public EventCallback<MouseEventArgs> OnClearButtonClick { get; set; }
+
+        private string _currentIcon;
 
         private MudInput<string> _elementReference;
+
+        public MudAutocomplete()
+        {
+            Adornment = Adornment.End;
+            IconSize = Size.Medium;
+        }
 
         public async Task SelectOption(T value)
         {
             await SetValueAsync(value);
             if (_items != null)
                 _selectedListItemIndex = Array.IndexOf(_items, value);
-            await SetTextAsync(GetItemString(value), false);
+            var optionText = GetItemString(value);
+            await SetTextAsync(optionText, false);
             _timer?.Dispose();
             IsOpen = false;
-            UpdateIcon();
             BeginValidate();
+            _elementReference?.SetText(optionText);
             StateHasChanged();
         }
 
@@ -152,20 +230,12 @@ namespace MudBlazor
                 RestoreScrollPosition();
                 await CoerceTextToValue();
             }
-            UpdateIcon();
             StateHasChanged();
         }
 
-        public void UpdateIcon()
+        private void UpdateIcon()
         {
-            if (IsOpen)
-            {
-                CurrentIcon = OpenIcon;
-            }
-            else
-            {
-                CurrentIcon = CloseIcon;
-            }
+            _currentIcon = !string.IsNullOrWhiteSpace(AdornmentIcon) ? AdornmentIcon : _isOpen ? CloseIcon : OpenIcon;
         }
 
         protected override void OnInitialized()
@@ -182,9 +252,8 @@ namespace MudBlazor
 
         protected override Task UpdateTextPropertyAsync(bool updateValue)
         {
-            //_timer?.Dispose();
-            //return base.UpdateTextPropertyAsync(updateValue);
-            return Task.CompletedTask;
+            _timer?.Dispose();
+            return base.UpdateTextPropertyAsync(updateValue);
         }
 
         protected override async Task UpdateValuePropertyAsync(bool updateText)
@@ -224,14 +293,25 @@ namespace MudBlazor
 
             if (_items?.Length == 0)
             {
+                await CoerceValueToText();
                 IsOpen = false;
-                UpdateIcon();
                 StateHasChanged();
                 return;
             }
 
             IsOpen = true;
-            UpdateIcon();
+            StateHasChanged();
+        }
+
+        /// <summary>
+        /// Clears the autocomplete's text
+        /// </summary>
+        public async Task Clear()
+        {
+            await SetTextAsync(string.Empty, updateValue: false);
+            await CoerceValueToText();
+            IsOpen = false;
+            _timer?.Dispose();
             StateHasChanged();
         }
 
@@ -251,6 +331,23 @@ namespace MudBlazor
         {
             switch (args.Key)
             {
+                case "Tab":
+                    // NOTE: We need to catch Tab in Keydown because a tab will move focus to the next element and thus
+                    // in OnInputKeyUp we'd never get the tab key
+                    if (!IsOpen)
+                        return;
+                    if (SelectValueOnTab)
+                        await OnEnterKey();
+                    else
+                        IsOpen = false;
+                    break;
+            }
+        }
+
+        protected virtual async Task OnInputKeyUp(KeyboardEventArgs args)
+        {
+            switch (args.Key)
+            {
                 case "Enter":
                     await OnEnterKey();
                     break;
@@ -260,8 +357,20 @@ namespace MudBlazor
                 case "ArrowUp":
                     await SelectNextItem(-1);
                     break;
+                case "Escape":
+                    IsOpen = false;
+                    break;
+                case "Tab":
+                    await Task.Delay(1);
+                    if (!IsOpen)
+                        return;
+                    if (SelectValueOnTab)
+                        await OnEnterKey();
+                    else
+                        await ToggleMenu();
+                    break;
             }
-            base.InvokeKeyDown(args);
+            base.InvokeKeyUp(args);
         }
 
         private async Task SelectNextItem(int increment)
@@ -314,9 +423,9 @@ namespace MudBlazor
 
         private Task OnInputBlurred(FocusEventArgs args)
         {
-            //return !IsOpen ? CoerceTextToValue() : Task.CompletedTask;
+            OnBlur.InvokeAsync(args);
             return Task.CompletedTask;
-            // we should not validate on blur in autocomplete, because the user needs to click out of the input to select a value, 
+            // we should not validate on blur in autocomplete, because the user needs to click out of the input to select a value,
             // resulting in a premature validation. thus, don't call base
             //base.OnBlurred(args);
         }
@@ -332,11 +441,20 @@ namespace MudBlazor
                 return;
             }
             var actualvalueStr = GetItemString(Value);
-            if (!object.Equals(actualvalueStr, Text))
+            if (!Equals(actualvalueStr, Text))
             {
                 _timer?.Dispose();
                 await SetTextAsync(actualvalueStr);
             }
+        }
+
+        private async Task CoerceValueToText()
+        {
+            if (CoerceValue == false)
+                return;
+            _timer?.Dispose();
+            var value = Converter.Get(Text);
+            await SetValueAsync(value, updateText: false);
         }
 
         protected override void Dispose(bool disposing)
@@ -365,7 +483,7 @@ namespace MudBlazor
             if (text == null)
                 return;
             _ = SetTextAsync(text, true);
-
         }
+
     }
 }

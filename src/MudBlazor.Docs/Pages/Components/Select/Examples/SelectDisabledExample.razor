@@ -1,7 +1,8 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
 
-<MudSelect T="string" Label="Disabled" Disabled="true">
-    <MudSelectItem T="string" Value="@("foo")">Foo</MudSelectItem>
-    <MudSelectItem T="string" Value="@("bar")">Bar</MudSelectItem>
+<MudSelect T="string" Label="Disabled" Disabled="true"
+           AdornmentIcon="@Icons.Material.Filled.SearchOff" AdornmentColor="Color.Primary">
+    <MudSelectItem Value="@("foo")">Foo</MudSelectItem>
+    <MudSelectItem Value="@("bar")">Bar</MudSelectItem>
 </MudSelect>

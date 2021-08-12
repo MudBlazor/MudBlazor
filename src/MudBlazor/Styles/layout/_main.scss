@@ -43,4 +43,42 @@
             margin-left: var(--mud-drawer-width-left);
         }
     }
+
+    &-mini {
+        @each $breakpoint in map-keys($breakpoints) {
+            &-#{$breakpoint} {
+                @media (min-width: map-get($breakpoints, $breakpoint)) {
+                    &-left .mud-main-content {
+                        margin-left: var(--mud-drawer-width-left);
+                    }
+
+                    &-right .mud-main-content {
+                        margin-right: var(--mud-drawer-width-right);
+                    }
+
+                    &-left#{&}-right .mud-main-content {
+                        margin-right: var(--mud-drawer-width-right);
+                        margin-left: var(--mud-drawer-width-left);
+                    }
+                }
+            }
+        }
+    }
+}
+
+.mud-drawer-close {
+    &-mini {
+        &-left .mud-main-content {
+            margin-left: var(--mud-drawer-width-mini-left);
+        }
+
+        &-right .mud-main-content {
+            margin-right: var(--mud-drawer-width-mini-right);
+        }
+
+        &-left#{&}-right .mud-main-content {
+            margin-right: var(--mud-drawer-width-mini-right);
+            margin-left: var(--mud-drawer-width-mini-left);
+        }
+    }
 }

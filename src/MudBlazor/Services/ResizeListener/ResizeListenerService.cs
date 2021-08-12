@@ -10,7 +10,7 @@ namespace MudBlazor.Services
     /// <summary>
     /// This service listens to browser resize events and allows you to react to a changing window size in Blazor
     /// </summary>
-    public class ResizeListenerService : IResizeListenerService
+    public class ResizeListenerService : IResizeListenerService, IDisposable
     {
         /// <summary>
         /// 
@@ -72,11 +72,11 @@ namespace MudBlazor.Services
         }
 #nullable disable
 
-        private void Start()
+        private async void Start()
         {
             if (_onResized == null || _onBreakpointChanged == null)
             {
-                _ = Task.Run(async () => await _jsRuntime.InvokeVoidAsync($"mudResizeListener.listenForResize", _dotNetRef, _options));
+                await _jsRuntime.InvokeVoidAsync($"mudResizeListener.listenForResize", _dotNetRef, _options);
             }
         }
 
@@ -200,6 +200,7 @@ namespace MudBlazor.Services
                 {
                     _onResized = null;
                     _onBreakpointChanged = null;
+                    _dotNetRef?.Dispose();
                 }
                 _disposed = true;
             }

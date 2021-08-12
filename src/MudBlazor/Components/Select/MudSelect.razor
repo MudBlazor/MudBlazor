@@ -7,9 +7,14 @@
         <MudInputControl Label="@Label" Variant="@Variant" HelperText="@HelperText" FullWidth="@FullWidth" Margin="@Margin" Class="@Classname" Style="@Style"
                          Error="@Error" ErrorText="@ErrorText" Disabled="@Disabled" @onclick="@ToggleMenu" Required="@Required">
             <InputContent>
-                <MudInput @ref="_elementReference" Variant="@Variant" Value="@(Strict && !IsValueInList ? null : Text)" DisableUnderLine="@DisableUnderLine" Disabled=@Disabled ReadOnly="true"
-                          Class="mud-select-input" Error="@Error" AdornmentIcon="@CurrentIcon" Adornment="Adornment.End" IconSize="Size.Medium" Margin="@Margin"
-                          InputType="@(CanRenderValue || (Strict && !IsValueInList) ? InputType.Hidden : InputType.Text)">
+                <MudInput @ref="_elementReference" InputType="@(CanRenderValue || (Strict && !IsValueInList) ? InputType.Hidden : InputType.Text)"
+                          Class="mud-select-input" Margin="@Margin" 
+                          Variant="@Variant" Value="@(Strict && !IsValueInList ? null : Text)" DisableUnderLine="@DisableUnderLine"
+                          Disabled="@Disabled" ReadOnly="true" Error="@Error"
+                          OnAdornmentClick="@OnAdornmentClick" AdornmentIcon="@_currentIcon" Adornment="@Adornment" AdornmentColor="@AdornmentColor" IconSize="@IconSize" AdornmentText="@AdornmentText"
+                          Clearable="@Clearable" OnClearButtonClick="(async (e) => await SelectClearButtonClickHandlerAsync(e))"
+                          @attributes="UserAttributes" 
+                          >
                     @if (CanRenderValue)
                     {
                         @GetSelectedValuePresenter()
@@ -17,13 +22,13 @@
                 </MudInput>
             </InputContent>
         </MudInputControl>
-        <CascadingValue Value="@((IMudSelect)this)" IsFixed="true">
-            <MudPopover Open="@_isOpen" MaxHeight="@MaxHeight" Direction="@Direction" OffsetX="@OffsetX" OffsetY="@OffsetY">
+        <MudPopover Open=@(_isOpen) MaxHeight="@MaxHeight" Direction="@Direction" OffsetX="@OffsetX" OffsetY="@OffsetY">
+            <CascadingValue Value="@((IMudSelect)this)" IsFixed="true">
                 <MudList Clickable="true" Dense="@Dense">
                     @ChildContent
                 </MudList>
-            </MudPopover>
-        </CascadingValue>
+            </CascadingValue>
+        </MudPopover>
     </div>
 </CascadingValue>
 

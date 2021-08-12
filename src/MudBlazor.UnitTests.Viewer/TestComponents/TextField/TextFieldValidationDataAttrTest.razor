@@ -1,0 +1,24 @@
+﻿@using System.ComponentModel.DataAnnotations
+@using Microsoft.AspNetCore.Components.Forms
+@namespace MudBlazor.UnitTests.TestComponents
+
+<MudGrid>
+    <MudItem xs="12" sm="6" md="4">
+        <EditForm Model="Model">
+            <DataAnnotationsValidator />
+            <MudTextField For="@(() => Model.Value)" Label="Short string" @bind-Value="Model.Value" />
+        </EditForm>
+    </MudItem>
+</MudGrid>
+
+@code {
+    public static string __description__ = "Test use of data attributes accessible using `For` bound expression.";
+
+    class TestModel
+    {
+        [StringLength(3, ErrorMessage = "Should not be longer than 3")]
+        public string Value { get; set; }
+    }
+
+    private TestModel Model { get; set; } = new TestModel();
+}

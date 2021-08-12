@@ -8,6 +8,10 @@ namespace MudBlazor
         Left,
         [Description("right")]
         Right,
+        [Description("start")]
+        Start,
+        [Description("end")]
+        End,
         [Description("top")]
         Top,
         [Description("bottom")]

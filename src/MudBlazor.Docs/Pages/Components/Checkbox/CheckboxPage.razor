@@ -1,48 +1,82 @@
 ﻿@page "/components/checkbox"
 
 <DocsPage>
-    <DocsPageHeader Title="Checkbox" SubTitle="Checkboxes is a great way to allow the user to make a selection of choices from things like a list.">
+    <DocsPageHeader Title="Checkbox" SubTitle="Checkboxes are a great way to allow the user to make a selection of choices from things like a list.">
         <Description>
             If you want to let the user turn a setting on or off on demand, a Switch component is recommended instead.
         </Description>
     </DocsPageHeader>
     <DocsPageContent>
         <DocsPageSection>
-            <SectionHeader>
-                <Title>Basic checkboxes</Title>
+            <SectionHeader Title="Basic checkboxes">
                 <Description></Description>
             </SectionHeader>
             <SectionContent Outlined="true">
                 <CheckboxBasicExample />
             </SectionContent>
-            <SectionSource Code="CheckboxBasicExample" GitHubFolderName="Checkbox" ></SectionSource>
+            <SectionSource Code="CheckboxBasicExample" GitHubFolderName="Checkbox"></SectionSource>
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader>
-                <Title>Checkbox with label</Title>
+            <SectionHeader Title="Labels">
                 <Description></Description>
             </SectionHeader>
             <SectionContent Outlined="true">
                 <CheckboxLabelExample />
             </SectionContent>
-            <SectionSource Code="CheckboxLabelExample" GitHubFolderName="Checkbox" ></SectionSource>
+            <SectionSource Code="CheckboxLabelExample" GitHubFolderName="Checkbox"></SectionSource>
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader>
-                <Title>Indeterminate state</Title>
-                <Description>When you use <CodeInline>T="bool?"</CodeInline> or bind the checkbox against a nullable bool it can have an indeterminate state when the value is <CodeInline>null</CodeInline>.</Description>
+            <SectionHeader Title="Icons">
+                <Description></Description>
+            </SectionHeader>
+            <SectionContent Outlined="true">
+                <CheckboxIconExample />
+            </SectionContent>
+            <SectionSource Code="CheckboxIconExample" GitHubFolderName="Checkbox"></SectionSource>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Dense">
+                <Description></Description>
+            </SectionHeader>
+            <SectionContent Outlined="true">
+                <CheckboxDenseExample />
+            </SectionContent>
+            <SectionSource Code="CheckboxDenseExample" GitHubFolderName="Checkbox"></SectionSource>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Sizes">
+                <Description></Description>
+            </SectionHeader>
+            <SectionContent Outlined="true">
+                <CheckboxSizeExample />
+            </SectionContent>
+            <SectionSource Code="CheckboxSizeExample" GitHubFolderName="Checkbox"></SectionSource>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Indeterminate state">
+                <Description>
+                    When you use <CodeInline>T="bool?"</CodeInline> or bind the checkbox against a nullable bool it can have an indeterminate state when the value is <CodeInline>null</CodeInline>.
+                    <p></p>
+                    In addition, the different states when the checkbox is clicked are the following (with a starting <CodeInline>null</CodeInline> value):
+                    <p></p>
+                    Indeterminate, True, False, True, False...
+                    <p></p>
+                    It is not possible to obtain the Indeterminate state again. Except by resetting the value to <CodeInline>Null</CodeInline>. Or, by setting <CodeInline>TriState="true"</CodeInline>, you can get the Indeterminate state after the False state.
+                </Description>
             </SectionHeader>
             <SectionContent Outlined="true">
                 <CheckboxIndeterminateExample />
             </SectionContent>
-            <SectionSource Code="CheckboxIndeterminateExample" GitHubFolderName="Checkbox"></SectionSource>
+            <SectionSource Code="CheckboxIndeterminateExample" GitHubFolderName="Checkbox" ShowCode="false"></SectionSource>
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader>
-                <Title>Binding checkbox against different data types</Title>
+            <SectionHeader Title="Binding checkbox against different data types">
                 <Description></Description>
             </SectionHeader>
             <SectionContent Outlined="true">
@@ -52,12 +86,11 @@
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader>
-                <Title>ReadOnly mode</Title>
-                <Description>Set <CodeInline>ReadOnly="true"</CodeInline> will make the checkbox control stop listening to user inputs.</Description>
+            <SectionHeader Title="ReadOnly mode">
+                <Description>Setting <CodeInline>ReadOnly="true"</CodeInline> will make the checkbox control stop listening to user input.</Description>
             </SectionHeader>
             <SectionContent Outlined="true">
-                <CheckboxReadOnlyExample/>
+                <CheckboxReadOnlyExample />
             </SectionContent>
             <SectionSource Code="CheckboxReadOnlyExample" GitHubFolderName="Checkbox" />
         </DocsPageSection>

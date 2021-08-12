@@ -14,7 +14,7 @@
             </MudText>
             <br />
             <MudText Typo="@Typo.body1">
-                So, the styling part is solved. But to handle the files in Blazor without using javascript, we need an InputFile type component.
+                So, the styling part is solved. But to handle the files in Blazor without using JavaScript, we need an <CodeInline>InputFile</CodeInline> component.
             </MudText>
             <br />
             <MudText Typo="@Typo.body1">
@@ -40,13 +40,13 @@
             </MudText>
             <br />
             <MudText Typo="@Typo.body1">
-                After uploading the files, you will receive an <CodeInline>IFileListEntry[]</CodeInline> and then you will have to manage the upload or make the appropriate validations
+                After uploading the files, you will receive an <CodeInline>IFileListEntry[]</CodeInline> and then you will have to manage the upload or make the appropriate validations.
             </MudText>
             <br />
             <br />
 
             <MudText Typo="@Typo.body1">
-                If your project is .Net 5.0, InputFile is a native component and you don't need to install it.
+                If your project is .Net 5.0, <CodeInline>InputFile</CodeInline> is a native component and you don't need to install it.
                 See more info
                 <MudButton Variant="Variant.Text"
                            Color="Color.Primary"
@@ -60,9 +60,8 @@
     </DocsPageHeader>
     <DocsPageContent>
         <DocsPageSection>
-            <SectionHeader>
-                <Title>Use any type of MudButton</Title>
-                <Description>Use a MudButton, a MudIconButton or a MudFab with the <CodeInline>HtmlTag</CodeInline> property set to "label" in combination with a hidden InputFile. That way, the MudButton will render a label element</Description>
+            <SectionHeader Title="Use any type of MudButton">
+                <Description>Use a <CodeInline>MudButton</CodeInline>, a <CodeInline>MudIconButton</CodeInline> or a <CodeInline>MudFab</CodeInline> with the <CodeInline>HtmlTag</CodeInline> property set to "label" in combination with a hidden <CodeInline>InputFile</CodeInline>. That way, the <CodeInline>MudButton</CodeInline> will render a label element.</Description>
             </SectionHeader>
             <SectionContent DarkenBackground="true">
                 <FileUploadButtonExample />
@@ -71,9 +70,8 @@
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader>
-                <Title>Use a standard label</Title>
-                <Description>Use an html label styled to your liking in combination with a hidden InputFile</Description>
+            <SectionHeader Title="Use a standard label">
+                <Description>Use an html label styled to your liking in combination with a hidden <CodeInline>InputFile</CodeInline>.</Description>
             </SectionHeader>
             <SectionContent FullWidth="true" DarkenBackground="true">
                 <FileUploadIconButtonExample />
@@ -83,9 +81,8 @@
 
 
         <DocsPageSection>
-            <SectionHeader>
-                <Title>Validation</Title>
-                <Description>Use the <CodeInline>accept</CodeInline> attribute to limit the type of files you want</Description>
+            <SectionHeader Title="Validation">
+                <Description>Use the <CodeInline>accept</CodeInline> attribute to limit the type of files you want.</Description>
             </SectionHeader>            
             <SectionContent FullWidth="true" DarkenBackground="true">
                 <FileUploadValidationExample />
@@ -94,9 +91,8 @@
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader>
-                <Title>Drag and Drop Example</Title>
-                <Description>Using the example below, you can compose a drag and drop uploader</Description>
+            <SectionHeader Title="Drag and Drop Example">
+                <Description>Using the example below, you can compose a drag-and-drop uploader.</Description>
             </SectionHeader>            
             <SectionContent FullWidth="true" DarkenBackground="true">
                 <DragAndDropFileUploadExample />

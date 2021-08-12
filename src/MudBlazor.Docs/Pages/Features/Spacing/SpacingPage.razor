@@ -4,9 +4,12 @@
     <DocsPageHeader Title="Spacing" SubTitle="Spacing is a way to modify padding or margin without creating new classes." />
     <DocsPageContent>
         <DocsPageSection>
-            <MudText Typo="Typo.h4" GutterBottom="true">How it works</MudText>
-            <MudText>Use the <CodeInline>margin</CodeInline> or <CodeInline>padding</CodeInline> <b>property</b> and choose a <b>direction</b>. Then add <b>size</b>, ranging from 0 to 16.</MudText>
-            <MudText Class="pt-6 pb-2">The <b>propertys</b>:</MudText>
+            <SectionHeader Title="How it works">
+                <Description>
+                    Use the <CodeInline>margin</CodeInline> or <CodeInline>padding</CodeInline> <b>property</b> and choose a <b>direction</b>. Then add <b>size</b>, ranging from 0 to 16.
+                </Description>
+            </SectionHeader>
+            <MudText Class="pt-6 pb-2">The <b>properties</b>:</MudText>
             <ul class="mud-typography-body1">
                 <li><CodeInline>m</CodeInline> - for classes that set <CodeInline>margin</CodeInline></li>
                 <li><CodeInline>p</CodeInline> - for classes that set <CodeInline>padding</CodeInline></li>
@@ -17,6 +20,8 @@
                 <li><CodeInline>b</CodeInline> - for <CodeInline>margin-bottom</CodeInline> or <CodeInline>padding-bottom</CodeInline></li>
                 <li><CodeInline>l</CodeInline> - for <CodeInline>margin-left</CodeInline> or <CodeInline>padding-left</CodeInline></li>
                 <li><CodeInline>r</CodeInline> - for <CodeInline>margin-right</CodeInline> or <CodeInline>padding-right</CodeInline></li>
+                <li><CodeInline>s</CodeInline> - for <CodeInline>margin-left/padding-left</CodeInline> <i>(in LTR mode)</i> and <CodeInline>margin-right/padding-right</CodeInline> <i>(in RTL mode)</i></li>
+                <li><CodeInline>e</CodeInline> - for <CodeInline>margin-right/padding-right</CodeInline> <i>(in LTR mode)</i> and <CodeInline>margin-left/padding-left</CodeInline> <i>(in RTL mode)</i></li>
                 <li><CodeInline>x</CodeInline> - for <CodeInline>margin-left/padding-left</CodeInline> and <CodeInline>margin-right/padding-right</CodeInline></li>
                 <li><CodeInline>y</CodeInline> - for <CodeInline>margin-top/padding-top</CodeInline> and <CodeInline>margin-bottom/padding-bottom</CodeInline></li>
                 <li><CodeInline>a</CodeInline> - for all 4 sides.</li>
@@ -71,8 +76,7 @@
             </MudGrid>
         </DocsPageSection>
         <DocsPageSection>
-            <SectionHeader>
-                <Title>Examples</Title>
+            <SectionHeader Title="Examples">
             </SectionHeader>
             <SectionContent DarkenBackground="true" DisplayFlex="true">
                 <SpacingExample />
@@ -80,9 +84,8 @@
             <SectionSource Code="SpacingExample" />
         </DocsPageSection>
         <DocsPageSection>
-            <SectionHeader>
-                <Title>Breakpoints</Title>
-                <Description>You can combine the spacing system with <MudLink Href="/features/breakpoints">Mudblazors breakpoints</MudLink> to target specific screen sizes.</Description>
+            <SectionHeader Title="Breakpoints">
+                <Description>You can combine the spacing system with <MudLink Href="/features/breakpoints">MudBlazor's breakpoints</MudLink> to target specific screen sizes.</Description>
             </SectionHeader>
             <SectionContent DarkenBackground="true" DisplayFlex="true">
                 <SpacingBreakpointExample />
@@ -90,8 +93,7 @@
             <SectionSource Code="SpacingBreakpointExample" />
         </DocsPageSection>
         <DocsPageSection>
-            <SectionHeader>
-                <Title>Centering Horizontal</Title>
+            <SectionHeader Title="Centering Horizontal">
             </SectionHeader>
             <SectionContent DarkenBackground="true">
                 <SpacingCenteringExample />
@@ -99,8 +101,7 @@
             <SectionSource Code="SpacingCenteringExample" />
         </DocsPageSection>
         <DocsPageSection>
-            <SectionHeader>
-                <Title>Negative Margins</Title>
+            <SectionHeader Title="Negative Margins">
             </SectionHeader>
             <SectionContent DarkenBackground="true">
                 <SpacingNegativeExample />

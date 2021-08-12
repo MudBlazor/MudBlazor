@@ -2,7 +2,6 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
@@ -129,9 +128,10 @@ namespace MudBlazor
         [Parameter]
         public EventCallback<MudChip> OnClose { get; set; }
 
-        internal void Add(MudChip chip)
+        internal async Task Add(MudChip chip)
         {
             _chips.Add(chip);
+            await CheckDefault(chip);
         }
 
         internal void Remove(MudChip chip)
@@ -139,7 +139,21 @@ namespace MudBlazor
             _chips.Remove(chip);
         }
 
-        private HashSet<MudChip> _chips = new HashSet<MudChip>();
+
+        private async Task CheckDefault(MudChip chip)
+        {
+            if (MultiSelection)
+            {
+                if (chip.DefaultProcessed)
+                    return;
+                chip.IsSelected = chip.Default;
+                chip.DefaultProcessed = true;
+                if (chip.IsSelected)
+                    await NotifySelection();
+            }
+        }
+
+        private HashSet<MudChip> _chips = new();
         private bool _filter;
 
         internal async Task OnChipClicked(MudChip chip)
@@ -183,28 +197,18 @@ namespace MudBlazor
 
         private async Task SelectDefaultChips()
         {
-            var anySelected = false;
-            if (MultiSelection)
+            if (!MultiSelection)
             {
-                foreach (var chip in _chips)
-                {
-                    if (!chip.Default)
-                        continue;
-                    chip.IsSelected = chip.Default;
-                    anySelected = true;
-                }
-            }
-            else
-            {
+                var anySelected = false;
                 var defaultChip = _chips.LastOrDefault(chip => chip.Default);
                 if (defaultChip != null)
                 {
                     defaultChip.IsSelected = true;
                     anySelected = true;
                 }
+                if (anySelected)
+                    await NotifySelection();
             }
-            if (anySelected)
-                await NotifySelection();
         }
     }
 }

@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Globalization;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
-using MudBlazor.Extensions;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
@@ -17,9 +17,10 @@ namespace MudBlazor
 
         private double _height;
         private int _listenerId;
-        private bool _expanded, _isRendered;
+        private bool _expanded, _isRendered, _updateHeight;
         private ElementReference _container, _wrapper;
         private CollapseState _state = CollapseState.Exited;
+        private DotNetObjectReference<MudCollapse> _dotNetRef;
 
         protected string Stylename =>
             new StyleBuilder()
@@ -27,6 +28,7 @@ namespace MudBlazor
             .AddStyle("height", "auto", _state == CollapseState.Entered)
             .AddStyle("height", $"{_height.ToString("#.##", CultureInfo.InvariantCulture)}px", _state == CollapseState.Entering || _state == CollapseState.Exiting)
             .AddStyle("animation-duration", $"{CalculatedAnimationDuration.ToString("#.##", CultureInfo.InvariantCulture)}s", _state == CollapseState.Entering)
+            .AddStyle(Style)
             .Build();
 
         protected string Classname =>
@@ -54,6 +56,7 @@ namespace MudBlazor
                 {
                     _state = _expanded ? CollapseState.Entering : CollapseState.Exiting;
                     _ = UpdateHeight();
+                    _updateHeight = _height == 0;
                 }
                 else if (_expanded)
                 {
@@ -99,11 +102,24 @@ namespace MudBlazor
 
         private async Task UpdateHeight()
         {
-            _height = (await _wrapper.MudGetBoundingClientRectAsync())?.Height ?? 0;
+            if (_disposeCount > 0)
+            {
+                _height = 0;
+            }
+            else
+            {
+                _height = (await _wrapper.MudGetBoundingClientRectAsync())?.Height ?? 0;
+            }
+
             if (MaxHeight != null && _height > MaxHeight)
             {
                 _height = MaxHeight.Value;
             }
+        }
+
+        protected override void OnInitialized()
+        {
+            _dotNetRef = DotNetObjectReference.Create(this);
         }
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -112,14 +128,38 @@ namespace MudBlazor
             {
                 _isRendered = true;
                 await UpdateHeight();
-                _listenerId = await _container.MudAddEventListenerAsync(DotNetObjectReference.Create(this), "animationend", nameof(AnimationEnd));
+                _listenerId = await _container.MudAddEventListenerAsync(_dotNetRef, "animationend", nameof(AnimationEnd));
+            }
+            else if (_updateHeight && (_state == CollapseState.Entering || _state == CollapseState.Exiting))
+            {
+                _updateHeight = false;
+                await UpdateHeight();
+                StateHasChanged();
             }
             await base.OnAfterRenderAsync(firstRender);
         }
 
+        int _disposeCount;
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (Interlocked.Increment(ref _disposeCount) == 1)
+            {
+                if (disposing)
+                {
+                    if (_listenerId != 0)
+                        _ = _container.MudRemoveEventListenerAsync("animationend", _listenerId);
+                    var toDispose = _dotNetRef;
+                    _dotNetRef = null;
+                    toDispose?.Dispose();
+                }
+            }
+        }
+
         public void Dispose()
         {
-            _ = _container.MudRemoveEventListenerAsync("animationend", _listenerId);
+            Dispose(true);
+            GC.SuppressFinalize(this);
         }
 
         [JSInvokable]

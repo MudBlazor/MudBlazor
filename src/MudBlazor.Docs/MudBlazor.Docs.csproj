@@ -12,7 +12,6 @@
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
-    <IsPackable>false</IsPackable>
   </PropertyGroup>
 
   <!--Outside Visual Studio SolutionDir is not available-->  
@@ -40,7 +39,7 @@
     <!--Command-line for the code generator-->
     <Message Text="Generating Docs and Tests" Importance="high" />
     <Exec Command="dotnet &quot;$(BinDocsCompiler)&quot;" Condition="Exists('$(BinDocsCompiler)')" />
-    <Exec Command="dotnet run $(ProjectDocsCompiler)" Condition="!Exists('$(BinDocsCompiler)')" />
+    <Exec Command="$(ProjectDocsCompiler)" Condition="!Exists('$(BinDocsCompiler)')" />
   </Target>
 
   <!--This file contains any ExampleCode that is new and needs including in the build -->
@@ -89,11 +88,11 @@
 
   <!--Packages-->
   <ItemGroup>
-    <PackageReference Include="FluentValidation" Version="9.5.1" />
-    <PackageReference Include="Microsoft.AspNetCore.Components" Version="5.0.3" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="5.0.3" />
+    <PackageReference Include="FluentValidation" Version="10.2.3" />
+    <PackageReference Include="Microsoft.AspNetCore.Components" Version="5.0.7" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="5.0.7" />
     <PackageReference Include="Microsoft.AspNetCore.WebUtilities" Version="2.2.0" />
-    <PackageReference Include="Toolbelt.Blazor.HeadElement" Version="5.4.1" />
+    <PackageReference Include="Toolbelt.Blazor.HeadElement" Version="5.4.2" />
   </ItemGroup>
 
   <!--Project dependencies-->

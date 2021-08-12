@@ -1,0 +1,23 @@
+﻿@namespace MudBlazor.UnitTests.TestComponents
+
+<div>
+    <MudSelect Variant="Variant.Text"
+               IsPreRendered="true"
+               @bind-Value="fruit"
+               Direction="Direction.Bottom" Dense="true" OffsetY="true"
+               SelectedValuesChanged="@((HashSet<string> f) => FruitChanged(f))">
+
+        <MudSelectItem Value="@("Apple")">Apple</MudSelectItem>
+        <MudSelectItem Value="@("Orange")">Orange</MudSelectItem>
+    </MudSelect>
+</div>
+
+@code{
+    string fruit = "Apple";
+    public int ChangeCount { get; private set; }
+
+    void FruitChanged(HashSet<string> fruits)
+    {
+        ChangeCount++;
+    }
+}

@@ -1,33 +1,20 @@
-﻿#pragma warning disable CS1998 // async without await
-#pragma warning disable IDE1006 // leading underscore
-
+﻿
 using System;
 using Bunit;
 using FluentAssertions;
 using MudBlazor.UnitTests.TestComponents;
 using NUnit.Framework;
+using static Bunit.ComponentParameterFactory;
 
 namespace MudBlazor.UnitTests.Components
 {
     [TestFixture]
-    public class ToggleIconButtonTest
+    public class ToggleIconButtonTest : BunitTest
     {
-        private Bunit.TestContext ctx;
-
-        [SetUp]
-        public void Setup()
-        {
-            ctx = new Bunit.TestContext();
-            ctx.AddTestServices();
-        }
-
-        [TearDown]
-        public void TearDown() => ctx.Dispose();
-
         [Test]
         public void DefaultValueTest()
         {
-            var comp = ctx.RenderComponent<MudToggleIconButton>();
+            var comp = Context.RenderComponent<MudToggleIconButton>();
             comp.Instance.Toggled.Should().BeFalse();
         }
 
@@ -35,7 +22,7 @@ namespace MudBlazor.UnitTests.Components
         public void ToggleTest()
         {
             var boundValue = false;
-            var comp = ctx.RenderComponent<MudToggleIconButton>(parameters => parameters
+            var comp = Context.RenderComponent<MudToggleIconButton>(parameters => parameters
                 .Add(p => p.Toggled, boundValue)
                 .Add(p => p.ToggledChanged, (toggleValue) => boundValue = toggleValue)
                 );
@@ -49,7 +36,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void ShouldSynchronizeStateWithOtherComponent()
         {
-            var comp = ctx.RenderComponent<ToggleIconButtonTest1>();
+            var comp = Context.RenderComponent<ToggleIconButtonTest1>();
             Console.WriteLine(comp.Markup);
             // select elements needed for the test
             var group = comp.FindComponents<MudToggleIconButton>();
@@ -63,6 +50,26 @@ namespace MudBlazor.UnitTests.Components
             // make sure both buttons state changed
             comp1.Instance.Toggled.Should().BeTrue();
             comp2.Instance.Toggled.Should().BeTrue();
+        }
+
+        /// <summary>
+        /// MudToggledIconButton should change title if specified
+        /// </summary>
+        [Test]
+        public void ShouldRenderToggledTitle()
+        {
+            var title = "Title and tooltip";
+            var toggledTitle = "toggled!";
+            var icon = Parameter(nameof(MudToggleIconButton.Icon), Icons.Filled.Add);
+            var toggledIcon = Parameter(nameof(MudToggleIconButton.ToggledIcon), Icons.Filled.Remove);
+            var titleParam = Parameter(nameof(MudToggleIconButton.Title), title);
+            var toggledTitleParam = Parameter(nameof(MudToggleIconButton.ToggledTitle), toggledTitle);
+            var comp = Context.RenderComponent<MudToggleIconButton>(icon, toggledIcon, titleParam, toggledTitleParam);
+            comp.Find("svg Title").TextContent.Should().Be(title);
+            comp.Find("button").Click();
+            comp.Find("svg Title").TextContent.Should().Be(toggledTitle);
+            comp.Find("button").Click();
+            comp.Find("svg Title").TextContent.Should().Be(title);
         }
     }
 }

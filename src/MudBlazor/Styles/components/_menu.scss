@@ -3,6 +3,10 @@
     position: relative;
 }
 
+.mud-menu * {
+    cursor: pointer;
+}
+
 .mud-menu-container {
     max-width: max-content;
     width: max-content !important;
@@ -12,3 +16,5 @@
         max-width: none;
     }
 }
+
+

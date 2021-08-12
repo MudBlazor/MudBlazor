@@ -4,18 +4,18 @@
 @typeparam T
 
 
-@code 
+@code
 {
 
-    protected virtual RenderFragment InputContent => 
-        @<MudTextField Label="@Label" @bind-Text="@Text" HelperText="@HelperText" Variant="@InputVariant" ReadOnly="@(!Editable)" T="string" Style="@Style"
+    protected virtual RenderFragment InputContent =>
+        @<MudTextField @ref="_inputReference" @attributes="UserAttributes" Label="@Label" @bind-Text="@Text" HelperText="@HelperText" Variant="@Variant" ReadOnly="@(!Editable || ReadOnly)" T="string" Style="@Style"
                     @onclick="(() => { if (!Editable) ToggleState(); })" OnAdornmentClick="ToggleState" Disabled="@Disabled" Adornment="@Adornment"
-                    AdornmentIcon="@InputIcon" IconSize="@IconSize" 
+                    AdornmentIcon="@AdornmentIcon" AdornmentColor="@AdornmentColor" IconSize="@IconSize" Margin="@Margin"
                     Required="@Required" RequiredError="@RequiredError" Error="@Error" ErrorText="@ErrorText"/>;
 
     protected virtual RenderFragment PickerContent => null;
 
-    protected virtual RenderFragment Render => 
+    protected virtual RenderFragment Render =>
     @<CascadingValue Value="@this" IsFixed="true">
         <div class="@PickerClass">
             @if (PickerVariant != PickerVariant.Static)

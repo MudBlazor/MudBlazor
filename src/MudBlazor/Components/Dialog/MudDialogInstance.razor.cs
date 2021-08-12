@@ -2,16 +2,17 @@
 // Copyright (c) 2020 Adapted by Jonny Larsson, Meinrad Recheis and Contributors
 
 using System;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Extensions;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    public partial class MudDialogInstance
+    public partial class MudDialogInstance : MudComponentBase
     {
-        private DialogOptions _options = new DialogOptions();
+        private DialogOptions _options = new();
+
+        [CascadingParameter] public bool RightToLeft { get; set; }
         [CascadingParameter] private MudDialogProvider Parent { get; set; }
         [CascadingParameter] private DialogOptions GlobalDialogOptions { get; set; } = new DialogOptions();
 
@@ -34,7 +35,6 @@ namespace MudBlazor
 
         private string Position { get; set; }
         private string DialogMaxWidth { get; set; }
-        private string Class { get; set; }
         private bool DisableBackdropClick { get; set; }
         private bool NoHeader { get; set; }
         private bool CloseButton { get; set; }
@@ -152,6 +152,8 @@ namespace MudBlazor
             .AddClass(DialogMaxWidth, !FullScreen)
             .AddClass("mud-dialog-width-full", FullWidth && !FullScreen)
             .AddClass("mud-dialog-fullscreen", FullScreen)
+            .AddClass("mud-dialog-rtl", RightToLeft)
+            .AddClass(Class)
         .Build();
 
         private bool SetHideHeader()
@@ -189,8 +191,8 @@ namespace MudBlazor
 
         private void HandleBackgroundClick()
         {
-            if (DisableBackdropClick) return;
-
+            if (DisableBackdropClick)
+                return;
             Cancel();
         }
 
@@ -200,7 +202,14 @@ namespace MudBlazor
             if (dialog == null)
                 return;
             _dialog = dialog;
+            Class = dialog.Class;
+            Style = dialog.Style;
             TitleContent = dialog.TitleContent;
+            StateHasChanged();
+        }
+
+        public void ForceRender()
+        {
             StateHasChanged();
         }
     }

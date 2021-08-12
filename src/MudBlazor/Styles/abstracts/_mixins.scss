@@ -31,3 +31,23 @@
         @content
     }
 }
+
+@mixin slider-track {
+    &::-webkit-slider-runnable-track {
+        @content
+    }
+    // Firefox
+    &::-moz-range-track {
+        @content
+    }
+}
+
+@mixin slider-thumb {
+    &::-webkit-slider-thumb {
+        @content
+    }
+    // Firefox
+    &::-moz-range-thumb {
+        @content
+    }
+}

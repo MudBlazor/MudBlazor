@@ -6,15 +6,15 @@
     <StaticWebAssetBasePath Condition="'$(BuildType)' != 'publish'">wasm</StaticWebAssetBasePath>
     <!--Note trailing slash -->
     <StaticWebAssetBasePath Condition="'$(BuildType)' == 'publish'">wasm/</StaticWebAssetBasePath>
-    <IsPackable>false</IsPackable>
     <BlazorWebAssemblyLoadAllGlobalizationData>true</BlazorWebAssemblyLoadAllGlobalizationData>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="5.0.3" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="5.0.3" PrivateAssets="all" />
+    <PackageReference Include="Blazor-Analytics" Version="3.6.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="5.0.7" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="5.0.7" PrivateAssets="all" />
     <PackageReference Include="System.Net.Http.Json" Version="5.0.0" />
-    <PackageReference Include="Toolbelt.Blazor.HeadElement" Version="5.4.1" />
+    <PackageReference Include="Toolbelt.Blazor.HeadElement" Version="5.4.2" />
   </ItemGroup>
 
   <ItemGroup>

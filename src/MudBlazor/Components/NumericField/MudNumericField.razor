@@ -1,0 +1,40 @@
+﻿@namespace MudBlazor
+@typeparam T
+@inherits MudDebouncedInput<T>
+
+@using System.Globalization;
+
+<CascadingValue Name="Standalone" Value="@Standalone" IsFixed="true">
+	<MudInputControl Label="@Label" Variant="@Variant" HelperText="@HelperText" FullWidth="@FullWidth" Class="@Classname"
+					 Error="@HasErrors" ErrorText="@GetErrorText()" Disabled="@Disabled" Margin="@Margin" Required="@Required">
+		<InputContent>
+			<MudInput T="string" @ref="_elementReference" @key="_key" @attributes="UserAttributes" InputType="@InputType.Text" Style="@Style" Variant="@Variant"
+					  Value="@Text" ValueChanged="(v) => SetTextAsync(v)" Converter="_inputConverter" Placeholder="@Placeholder"
+					  Disabled=@Disabled DisableUnderLine="@DisableUnderLine" ReadOnly="@ReadOnly" Adornment="@Adornment"
+					  AdornmentText="@AdornmentText" AdornmentIcon="@AdornmentIcon" AdornmentColor="@AdornmentColor" IconSize="@IconSize"
+					  OnAdornmentClick="@OnAdornmentClick" Error="@Error" Immediate="@(Immediate)" Margin="@Margin"
+					  OnBlur="@OnBlurred" OnKeyDown="@InterceptKeydown" OnKeyUp="@InterceptKeyUp"
+					  KeyDownPreventDefault="@(_keyDownPreventDefault || KeyDownPreventDefault)" KeyPressPreventDefault="@KeyPressPreventDefault" KeyUpPreventDefault="KeyUpPreventDefault"
+                      OnIncrement="Increment" OnDecrement="Decrement" HideSpinButtons="@HideSpinButtons"
+					  min="@(_minHasValue ? FormatParam(_min) : null)"
+					  max="@(_maxHasValue ? FormatParam(_max): null)"
+					  step="@(_stepHasValue ? FormatParam(_step) : null)"
+					  InputMode="InputMode"
+					  Pattern="@Pattern"/>
+		</InputContent>
+	</MudInputControl>
+</CascadingValue>
+
+@code{
+	//avoids the format to use scientific notation for large or small number in floating points types, while covering all options
+	//https://stackoverflow.com/questions/1546113/double-to-string-conversion-without-scientific-notation
+	private const string TagFormat = "0.###################################################################################################################################################################################################################################################################################################################################################";
+
+	private string FormatParam(T value)
+	{
+		if (value is IFormattable f)
+			return f.ToString(TagFormat, CultureInfo.InvariantCulture.NumberFormat);
+		else
+			return null;
+	}
+}

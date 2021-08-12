@@ -90,8 +90,8 @@ namespace MudBlazor
             ParametersChanged?.Invoke();
         }
 
-        private HashSet<MudListItem> _items = new HashSet<MudListItem>();
-        private HashSet<MudList> _childLists = new HashSet<MudList>();
+        private HashSet<MudListItem> _items = new();
+        private HashSet<MudList> _childLists = new();
         private MudListItem _selectedItem;
 
         internal void Register(MudListItem item)

@@ -4,7 +4,7 @@
 
 <MudGrid>
     <MudItem md="8" Class="mud-text-align-center my-auto">
-        <MudBadge Content="@BadgeContent" Color="Color.Primary" Overlap="@Overlap" Bottom="@Bottom" Left="@Left" Dot="@Dot" Bordered="@Bordered" Icon="@BadgeIcon">
+        <MudBadge Content="@BadgeContent" Color="Color.Primary" Overlap="@Overlap" Bottom="@Bottom" Start="@Start" Dot="@Dot" Bordered="@Bordered" Icon="@BadgeIcon">
             @if (SelectedTestComponent == "MudIcon")
             {
                 <MudIcon Icon="@Icons.Custom.Brands.MudBlazor" Color="Color.Default" Size="Size.Large" />
@@ -35,7 +35,7 @@
                 <MudText Typo="Typo.subtitle2" GutterBottom="true">Badge Options</MudText>
                 <MudCheckBox @bind-Checked="@Bottom" Label="Bottom" Color="Color.Primary" Style="width:100%;" />
                 <MudCheckBox @bind-Checked="@Dot" Label="Dot" Color="Color.Primary" Style="width:100%;" />
-                <MudCheckBox @bind-Checked="@Left" Label="Left" Color="Color.Primary" Style="width:100%;" />
+                <MudCheckBox @bind-Checked="@Start" Label="Start" Color="Color.Primary" Style="width:100%;" />
                 <MudCheckBox @bind-Checked="@Overlap" Label="Overlap" Color="Color.Primary" Style="width:100%;" />
                 <MudCheckBox @bind-Checked="@Bordered" Label="Bordered" Color="Color.Primary" Style="width:100%;" />
                 <MudCheckBox T="bool" CheckedChanged="AddIcon" Label="Icon" Color="Color.Primary" Style="width:100%;" />
@@ -52,7 +52,7 @@
 @code {
     public bool Bottom { get; set; }
     public bool Dot { get; set; }
-    public bool Left { get; set; }
+    public bool Start { get; set; }
     public bool Overlap { get; set; }
     public bool Bordered { get; set; }
     public string BadgeIcon { get; set; }

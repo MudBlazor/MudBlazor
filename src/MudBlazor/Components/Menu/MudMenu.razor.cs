@@ -1,6 +1,7 @@
 ﻿using System;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using MudBlazor.Extensions;
 using MudBlazor.Interfaces;
 using MudBlazor.Utilities;
 
@@ -77,7 +78,19 @@ namespace MudBlazor
         /// If true, instead of positioning the menu at the left upper corner, position at the exact cursor location.
         /// This makes sense for larger activators
         /// </summary>
-        [Parameter] public bool PositionAtCurser { get; set; }
+        [Parameter] public bool PositionAtCursor { get; set; }
+
+        /// <summary>
+        /// If true, instead of positioning the menu at the left upper corner, position at the exact cursor location.
+        /// This makes sense for larger activators
+        /// </summary>
+        [Obsolete("Obsolete.  Replace with `PositionAtCursor`.")]
+        [Parameter]
+        public bool PositionAtCurser
+        {
+            get => PositionAtCursor;
+            set => PositionAtCursor = value;
+        }
 
         /// <summary>
         /// Place a MudButton, a MudIconButton or any other component capable of acting as an activator. This will
@@ -106,6 +119,11 @@ namespace MudBlazor
         [Parameter] public bool OffsetX { get; set; }
 
         /// <summary>
+        /// Set to true if you want to prevent page from scrolling when the menu is open
+        /// </summary>
+        [Parameter] public bool LockScroll { get; set; }
+
+        /// <summary>
         /// Add menu items here
         /// </summary>
         [Parameter] public RenderFragment ChildContent { get; set; }
@@ -119,29 +137,30 @@ namespace MudBlazor
             StateHasChanged();
         }
 
-        public void OpenMenu(MouseEventArgs args)
+        public void OpenMenu(EventArgs args)
         {
             if (Disabled)
                 return;
-            PopoverStyle = PositionAtCurser ? $"position:fixed; left:{args?.ClientX}px; top:{args?.ClientY}px;" : null;
+            if (PositionAtCursor) SetPopoverStyle((MouseEventArgs)args);
             _isOpen = true;
             StateHasChanged();
+        }
+
+        // Sets the popover style ONLY when there is an activator
+        private void SetPopoverStyle(MouseEventArgs args)
+        {
+            //use the offset with a relative position to the container
+            PopoverStyle = $"left:{args?.OffsetX.ToPixels()};top:{args?.OffsetY.ToPixels()};";
         }
 
         public void ToggleMenu(MouseEventArgs args)
         {
             if (Disabled)
                 return;
-
-            if (ActivationEvent == MouseEvent.MouseOver && !_isOpen)
-                return;
-
             if (ActivationEvent == MouseEvent.LeftClick && args.Button != 0 && !_isOpen)
                 return;
-
             if (ActivationEvent == MouseEvent.RightClick && args.Button != 2 && !_isOpen)
                 return;
-
             if (_isOpen)
                 CloseMenu();
             else
@@ -158,20 +177,5 @@ namespace MudBlazor
             ToggleMenu(args);
         }
 
-        public void OnMouseOver(MouseEventArgs args)
-        {
-            if (ActivationEvent == MouseEvent.MouseOver && ActivatorContent != null && !_isOpen)
-            {
-                OpenMenu(args);
-            }
-        }
-
-        public void OnMouseOut(EventArgs args)
-        {
-            if (ActivationEvent == MouseEvent.MouseOver && ActivatorContent != null && _isOpen)
-            {
-                CloseMenu();
-            }
-        }
     }
 }

@@ -1,11 +1,10 @@
 ﻿@namespace MudBlazor
 @inherits MudComponentBase
-@implements IDisposable
+@implements IAsyncDisposable
 
-
-@if (Parent?.KeepPanelsAlive==true)
+@if (Parent?.KeepPanelsAlive == true)
 {
-    <div style="display:@(Parent?.ActivePanel == this ? "contents" : "none")">
+    <div @attributes="UserAttributes" class="@Class" style="display:@(Parent?.ActivePanel == this ? "contents" : "none");@Style">
         @ChildContent
     </div>
 }
@@ -18,6 +17,8 @@ else
 }
 
 @code {
+
+    private Boolean _disposed;
 
     [CascadingParameter] private MudTabs Parent { get; set; }
 
@@ -45,12 +46,17 @@ else
     [Parameter] public object BadgeData { get; set; }
 
     /// <summary>
+    /// Optional information to show the badge as a dot.
+    /// </summary>
+    [Parameter] public bool BadgeDot { get; set; }
+
+    /// <summary>
     /// The color of the badge.
     /// </summary>
     [Parameter] public Color BadgeColor { get; set; } = Color.Primary;
 
     /// <summary>
-    /// Unique TabPanel ID. Usefull for actvation when Panels are dynamically generated.
+    /// Unique TabPanel ID. Useful for activation when Panels are dynamically generated.
     /// </summary>
     [Parameter] public object ID { get; set; }
 
@@ -69,21 +75,31 @@ else
     /// </summary>
     [Parameter] public string ToolTip { get; set; }
 
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await base.OnAfterRenderAsync(firstRender);
+        if(firstRender == true && Parent != null)
+        {
+            await Parent.SetPanelRef(PanelRef);
+        }
+    }
+
     protected override void OnInitialized()
     {
         // NOTE: we must not throw here because we need the component to be able to live for the API docs to be able to infer default values
         //if (Parent == null)
         //    throw new ArgumentNullException(nameof(Parent), "TabPanel must exist within a Tabs component");
         base.OnInitialized();
+
         Parent?.AddPanel(this);
     }
 
-    public void Dispose()
+    public async ValueTask DisposeAsync()
     {
-        try
-        {
-            Parent?.RemovePanel(this);
-        }
-        catch { }
+        if(_disposed == true) { return;  }
+
+        _disposed = true;
+        await Parent?.RemovePanel(this);
+
     }
 }

@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Globalization;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Reflection;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
@@ -239,14 +240,21 @@ namespace MudBlazor
 
                     changed = !EqualityComparer<T>.Default.Equals(value, _value);
                 }
+
+                // Run each validation attributes of the property targeted with `For`
+                if (_validationAttrsFor != null)
+                {
+                    foreach (var attr in _validationAttrsFor)
+                    {
+                        ValidateWithAttribute(attr, _value, errors);
+                    }
+                }
+
                 // required error (must be last, because it is least important!)
-                var hasValue = HasValue(_value);
                 if (Required)
                 {
-                    if (!hasValue && Touched)
-                    {
+                    if (Touched && !HasValue(_value))
                         errors.Add(RequiredError);
-                    }
                 }
             }
             finally
@@ -255,7 +263,7 @@ namespace MudBlazor
                 if (!changed)
                 {
                     // this must be called in any case, because even if Validation is null the user might have set Error and ErrorText manually
-                    // if Error and ErrorText are set by the user, setting them here will have no effect. 
+                    // if Error and ErrorText are set by the user, setting them here will have no effect.
                     ValidationErrors = errors;
                     Error = errors.Count > 0;
                     ErrorText = errors.FirstOrDefault();
@@ -268,15 +276,29 @@ namespace MudBlazor
         protected virtual bool HasValue(T value)
         {
             if (typeof(T) == typeof(string))
-                return !string.IsNullOrWhiteSpace((string)(object)value);
+                return !IsNullOrWhiteSpace(value as string);
 
             return value != null;
         }
 
         protected virtual void ValidateWithAttribute(ValidationAttribute attr, T value, List<string> errors)
         {
-            if (!attr.IsValid(value))
-                errors.Add(attr.ErrorMessage);
+            try
+            {
+                // The validation context is applied either on the `EditContext.Model`, or `this` as a stub subject.
+                // Complex validation with fields references (like `CompareAttribute`) should use an EditContext.
+                var validationContextSubject = EditContext?.Model ?? this;
+                var validationContext = new ValidationContext(validationContextSubject);
+                var validationResult = attr.GetValidationResult(value, validationContext);
+                if (validationResult != ValidationResult.Success)
+                    errors.Add(validationResult.ErrorMessage);
+            }
+            catch (Exception e)
+            {
+                // Maybe conditionally add full error message if `IWebAssemblyHostEnvironment.IsDevelopment()`
+                // Or log using proper logger.
+                errors.Add($"An unhandled exception occurred: {e.Message}");
+            }
         }
 
         protected virtual void ValidateWithFunc(Func<T, bool> func, T value, List<string> errors)
@@ -412,9 +434,16 @@ namespace MudBlazor
         public Expression<Func<T>>? For { get; set; }
 #nullable disable
 
+        /// <summary>
+        /// Stores the list of validation attributes attached to the property targeted by <seealso cref="For"/>. If <seealso cref="For"/> is null, this property is null too.
+        /// </summary>
+#nullable enable
+        private IEnumerable<ValidationAttribute>? _validationAttrsFor;
+#nullable disable
+
         private void OnValidationStateChanged(object sender, ValidationStateChangedEventArgs e)
         {
-            if (EditContext != null)
+            if (EditContext != null && !_fieldIdentifier.Equals(default(FieldIdentifier)))
             {
                 var error_msgs = EditContext.GetValidationMessages(_fieldIdentifier).ToArray();
                 Error = error_msgs.Length > 0;
@@ -444,20 +473,23 @@ namespace MudBlazor
 
         protected override void OnParametersSet()
         {
-            if (EditContext != null && For != null)
+            if (For != null && For != _currentFor)
             {
-                if (For != _currentFor)
-                {
-                    _fieldIdentifier = FieldIdentifier.Create(For);
-                    _currentFor = For;
-                }
+                // Extract validation attributes
+                // Sourced from https://stackoverflow.com/a/43076222/4839162
+                var expression = (MemberExpression)For.Body;
+                var propertyInfo = (PropertyInfo)expression.Member;
+                _validationAttrsFor = propertyInfo.GetCustomAttributes(typeof(ValidationAttribute), true).Cast<ValidationAttribute>();
 
-                if (EditContext != _currentEditContext)
-                {
-                    DetachValidationStateChangedListener();
-                    EditContext.OnValidationStateChanged += OnValidationStateChanged;
-                    _currentEditContext = EditContext;
-                }
+                _fieldIdentifier = FieldIdentifier.Create(For);
+                _currentFor = For;
+            }
+
+            if (EditContext != null && EditContext != _currentEditContext)
+            {
+                DetachValidationStateChangedListener();
+                EditContext.OnValidationStateChanged += OnValidationStateChanged;
+                _currentEditContext = EditContext;
             }
         }
 

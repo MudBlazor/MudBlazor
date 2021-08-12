@@ -1,153 +1,155 @@
 ﻿@page "/"
 @using MudBlazor.Docs.Components.MudBlazorApp
 
-<MudContainer Class="mudblazor-index">
-    <div for="Section One" class="docs-sections">
-        <MudGrid>
-            <MudItem xs="12" sm="12" md="12">
-                <div class="d-flex justify-center">
-                    <MudBlazorLogo />
-                </div>
-            </MudItem>
-            <MudItem xs="12" sm="12" md="12">
-                <MudText Align="Align.Center" Typo="Typo.h5" Class="mudblazor-text-h5 mt-4">Blazor components</MudText>
-                <MudText Align="Align.Center" Typo="Typo.h5" Class="mudblazor-text-h5 smaller">For faster and easier web development</MudText>
-            </MudItem>
-            <MudItem xs="12" sm="12" md="12">
-                <MudText Align="Align.Center" Class="mudblazor-description-text">
-                    MudBlazor is perfect for .NET developers who want to rapidly build amazing web applications without having to struggle with CSS and Javascript. Being written entirely in C#, it empowers you to adapt or extend the framework.
-                </MudText>
-            </MudItem>
-            <MudItem xs="12" sm="12" md="12">
-                <div class="d-flex justify-center mt-4">
-                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Large" Link="/getting-started/installation" Class="docs-mud-button get-started">Get Started</MudButton>
-                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Large" Link="https://github.com/Garderoben/MudBlazor" Target="_blank" Class="docs-mud-button github">GitHub</MudButton>
-                </div>
-            </MudItem>
-        </MudGrid>
-    </div>
-
-    <div for="Section Sponsors" class="docs-sections mt-16">
-        <MudText Typo="Typo.h4" Align="Align.Center" GutterBottom="true" Class="mudblazor-section-titles">Project Sponsors</MudText>
-        <MudText Align="Align.Center" Typo="Typo.body1" Class="mb-4">
-            Mudblazor is thankful for its <MudLink Href="https://opencollective.com/mudblazor">Open Collective sponsors</MudLink> and the companys that supplied us with their software.
-        </MudText>
-        <div class="mudblazor-sponsor-list mb-8">
-            <Sponsor Website="https://timestatement.com/" NameAndImage="TimeStatement" />
-            <Sponsor Website="https://www.adaris.ch/" NameAndImage="Adaris" />
-            <Sponsor Website="https://www.livesharp.net/" NameAndImage="LiveSharp" />
-            <Sponsor Website="https://www.jetbrains.com/?from=MudBlazor" NameAndImage="JetBrains" />
+<MudMainContent Class="mudblazor-main-content">
+    <MudContainer Class="mudblazor-index">
+        <div for="Section One" class="docs-sections">
+            <MudGrid>
+                <MudItem xs="12" sm="12" md="12">
+                    <div class="d-flex justify-center">
+                        <MudBlazorLogo />
+                    </div>
+                </MudItem>
+                <MudItem xs="12" sm="12" md="12">
+                    <MudText Align="Align.Center" Typo="Typo.h5" Class="mudblazor-text-h5 mt-4">Blazor components</MudText>
+                    <MudText Align="Align.Center" Typo="Typo.h5" Class="mudblazor-text-h5 smaller">For faster and easier web development</MudText>
+                </MudItem>
+                <MudItem xs="12" sm="12" md="12">
+                    <MudText Align="Align.Center" Class="mudblazor-description-text">
+                        MudBlazor is perfect for .NET developers who want to rapidly build amazing web applications without having to struggle with CSS and Javascript. Being written entirely in C#, it empowers you to adapt or extend the framework.
+                    </MudText>
+                </MudItem>
+                <MudItem xs="12" sm="12" md="12">
+                    <div class="d-flex justify-center mt-4">
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Large" Link="/getting-started/installation" Class="docs-mud-button get-started">Get Started</MudButton>
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Large" Link="https://opencollective.com/mudblazor" Class="docs-mud-button sponsor d-none d-sm-flex">Sponsor</MudButton>
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Large" Link="https://github.com/Garderoben/MudBlazor" Target="_blank" Class="docs-mud-button github">GitHub</MudButton>
+                    </div>
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Large" Link="https://opencollective.com/mudblazor" Class="docs-mud-button sponsor d-flex d-sm-none mt-4 mx-auto">Sponsor</MudButton>
+                </MudItem>
+            </MudGrid>
         </div>
-    </div>
 
-    <div for="Section Design Goals" class="docs-sections">
-        <MudGrid Spacing="4">
-            <MudItem xs="12" sm="12" md="12">
-                <MudText Typo="Typo.h4" Align="Align.Center" Class="mudblazor-section-titles design-goals" GutterBottom="true">Design goals</MudText>
-            </MudItem>
-            <MudItem xs="12" sm="6" md="4">
-                <MudPaper Elevation="25" Class="px-4 py-6 rounded-lg mudblazor-goal-paper material">
-                    <MudText Class="mudblazor-goal-title mb-3" Color="Color.Primary" Align="Align.Center">Material Design</MudText>
-                    <MudText Align="Align.Center">Clean and aesthetic graphic design based on Material Design</MudText>
-                </MudPaper>
-            </MudItem>
-            <MudItem xs="12" sm="6" md="4">
-                <MudPaper Elevation="25" Class="px-4 py-6 rounded-lg mudblazor-goal-paper in-c">
-                    <MudText Class="mudblazor-goal-title  mb-3" Color="Color.Secondary" Align="Align.Center">Entirely in C#</MudText>
-                    <MudText Align="Align.Center">All components are written entirely in C#</MudText>
-                    <MudText Align="Align.Center">No JavaScript allowed</MudText>
-                    <MudText Align="Align.Center">(except absolutely necessary)</MudText>
-                </MudPaper>
-            </MudItem>
-            <MudItem xs="12" sm="12" md="4">
-                <MudPaper Elevation="25" Class="px-4 py-6 rounded-lg mudblazor-goal-paper be-included">
-                    <MudText Class="mudblazor-goal-title  mb-3" Color="Color.Tertiary" Align="Align.Center">No Dependencies</MudText>
-                    <MudText Align="Align.Center">No dependencies on other component libraries, 100% control over components and features.</MudText>
-                </MudPaper>
-            </MudItem>
-        </MudGrid>
-    </div>
+        <div for="Section Sponsors" class="docs-sections mt-16">
+            <MudText Typo="Typo.h4" Align="Align.Center" GutterBottom="true" Class="mudblazor-section-titles">Project Sponsors</MudText>
+            <MudText Align="Align.Center" Typo="Typo.body1" Class="mb-4">
+                MudBlazor is thankful for its <MudLink Href="https://opencollective.com/mudblazor">Open Collective sponsors</MudLink> and the companys that supplied us with their software.
+            </MudText>
+            <div class="mudblazor-sponsor-list mb-8">
+                <Sponsor Website="https://timestatement.com/" NameAndImage="TimeStatement" />
+                <Sponsor Website="https://www.adaris.ch/" NameAndImage="Adaris" />
+                <Sponsor Website="https://www.livesharp.net/" NameAndImage="LiveSharp" />
+                <Sponsor Website="https://www.jetbrains.com/?from=MudBlazor" NameAndImage="JetBrains" />
+            </div>
+        </div>
 
-    <div for="Section Dependencies" class="docs-sections">
-        <MudGrid>
-            <MudItem xs="12">
-                <MudText Typo="Typo.h4" Align="Align.Center" Class="mudblazor-section-sub-title" GutterBottom="true">Be Included!</MudText>
-                <MudText Align="Align.Center">Each day the amount of people interested in MudBlazor grows and on multiple channels!</MudText>
-                <MudText Align="Align.Center">We aim at releasing often so developers can get their pull requests and fixes added in a timely fashion.</MudText>
-                <MudText Align="Align.Center">You can stop by if you need help, provide feedback, report bugs, or even if you just want to hang out!</MudText>
-            </MudItem>
-            <MudItem xs="12">
-                <div class="d-flex justify-center mt-6">
-                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Large" Link="https://discord.gg/mudblazor" Class="docs-mud-button discord-gitter">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 727 200" width="100%" height="100%">
-                            <g fill="#7289da">
-                                <path d="M106.8,84.1 C101.1,84.1 96.6,89 96.6,95.1 C96.6,101.2 101.2,106.1 106.8,106.1 C112.5,106.1 117,101.2 117,95.1 C117,89 112.4,84.1 106.8,84.1 Z M70.3,84.1 C64.6,84.1 60.1,89 60.1,95.1 C60.1,101.2 64.7,106.1 70.3,106.1 C76,106.1 80.5,101.2 80.5,95.1 C80.6,89 76,84.1 70.3,84.1 Z" />
-                                <path d="M155.4,0.9 L21.4,0.9 C10.1,0.9 0.9,10.1 0.9,21.4 L0.9,155.4 C0.9,166.7 10.1,175.9 21.4,175.9 L134.8,175.9 L129.5,157.6 L142.3,169.4 L154.4,180.5 L176,199.2 L176,21.4 C175.9,10.1 166.7,0.9 155.4,0.9 Z M116.8,130.4 C116.8,130.4 113.2,126.1 110.2,122.4 C123.3,118.7 128.3,110.6 128.3,110.6 C124.2,113.3 120.3,115.2 116.8,116.5 C111.8,118.6 107,119.9 102.3,120.8 C92.7,122.6 83.9,122.1 76.4,120.7 C70.7,119.6 65.8,118.1 61.7,116.4 C59.4,115.5 56.9,114.4 54.4,113 C54.1,112.8 53.8,112.7 53.5,112.5 C53.3,112.4 53.2,112.3 53.1,112.3 C51.3,111.3 50.3,110.6 50.3,110.6 C50.3,110.6 55.1,118.5 67.8,122.3 C64.8,126.1 61.1,130.5 61.1,130.5 C39,129.8 30.6,115.4 30.6,115.4 C30.6,83.5 45,57.6 45,57.6 C59.4,46.9 73,47.2 73,47.2 L74,48.4 C56,53.5 47.8,61.4 47.8,61.4 C47.8,61.4 50,60.2 53.7,58.6 C64.4,53.9 72.9,52.7 76.4,52.3 C77,52.2 77.5,52.1 78.1,52.1 C84.2,51.3 91.1,51.1 98.3,51.9 C107.8,53 118,55.8 128.4,61.4 C128.4,61.4 120.5,53.9 103.5,48.8 L104.9,47.2 C104.9,47.2 118.6,46.9 132.9,57.6 C132.9,57.6 147.3,83.5 147.3,115.4 C147.3,115.3 138.9,129.7 116.8,130.4 L116.8,130.4 Z M267.8,43.7 L234.6,43.7 L234.6,81 L256.7,100.9 L256.7,64.7 L268.5,64.7 C276,64.7 279.7,68.3 279.7,74.1 L279.7,101.8 C279.7,107.6 276.2,111.5 268.5,111.5 L234.5,111.5 L234.5,132.6 L267.7,132.6 C285.5,132.7 302.2,123.8 302.2,103.4 L302.2,73.6 C302.3,52.8 285.6,43.7 267.8,43.7 L267.8,43.7 Z M441.8,103.4 L441.8,72.8 C441.8,61.8 461.6,59.3 467.6,70.3 L485.9,62.9 C478.7,47.1 465.6,42.5 454.7,42.5 C436.9,42.5 419.3,52.8 419.3,72.8 L419.3,103.4 C419.3,123.6 436.9,133.7 454.3,133.7 C465.5,133.7 478.9,128.2 486.3,113.8 L466.7,104.8 C461.9,117.1 441.8,114.1 441.8,103.4 Z M381.3,77 C374.4,75.5 369.8,73 369.5,68.7 C369.9,58.4 385.8,58 395.1,67.9 L409.8,56.6 C400.6,45.4 390.2,42.4 379.5,42.4 C363.2,42.4 347.4,51.6 347.4,69 C347.4,85.9 360.4,95 374.7,97.2 C382,98.2 390.1,101.1 389.9,106.1 C389.3,115.6 369.7,115.1 360.8,104.3 L346.6,117.6 C354.9,128.3 366.2,133.7 376.8,133.7 C393.1,133.7 411.2,124.3 411.9,107.1 C412.9,85.4 397.1,79.9 381.3,77 Z M314.3,132.5 L336.7,132.5 L336.7,43.7 L314.3,43.7 L314.3,132.5 Z M692,43.7 L658.8,43.7 L658.8,81 L680.9,100.9 L680.9,64.7 L692.7,64.7 C700.2,64.7 703.9,68.3 703.9,74.1 L703.9,101.8 C703.9,107.6 700.4,111.5 692.7,111.5 L658.7,111.5 L658.7,132.6 L692,132.6 C709.8,132.7 726.5,123.8 726.5,103.4 L726.5,73.6 C726.5,52.8 709.8,43.7 692,43.7 Z M529.1,42.5 C510.7,42.5 492.4,52.5 492.4,73 L492.4,103.3 C492.4,123.6 510.8,133.8 529.3,133.8 C547.7,133.8 566,123.6 566,103.3 L566,73 C566,52.6 547.5,42.5 529.1,42.5 Z M543.5,103.3 C543.5,109.7 536.3,113 529.2,113 C522,113 514.8,109.9 514.8,103.3 L514.8,73 C514.8,66.5 521.8,63 528.8,63 C536.1,63 543.5,66.1 543.5,73 L543.5,103.3 L543.5,103.3 Z M646.4,73 C645.9,52.2 631.7,43.8 613.4,43.8 L577.9,43.8 L577.9,132.6 L600.6,132.6 L600.6,104.4 L604.6,104.4 L625.2,132.6 L653.2,132.6 L629,102.1 C639.7,98.7 646.4,89.4 646.4,73 Z M613.8,85 L600.6,85 L600.6,64.7 L613.8,64.7 C627.9,64.7 627.9,85 613.8,85 Z" />
-                            </g>
-                        </svg>
-                    </MudButton>
-                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Large" Link="https://gitter.im/MudBlazor/community" Class="docs-mud-button discord-gitter">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 509.12 122.25" width="80%" height="80%">
-                            <g fill="#fb0062">
-                                <rect width="9.78" height="78.24" />
-                                <rect x="24.45" y="21.19" width="9.78" height="101.06" />
-                                <rect x="48.9" y="21.19" width="9.78" height="101.06" />
-                                <rect x="73.35" y="21.19" width="9.78" height="55.42" />
-                                <path d="M137.42,57.52c0-16.89,12.82-30.95,31-30.95,10.32,0,16.88,2.81,23.13,8.12l-6.56,7.82c-4.69-4.06-9.07-6.57-16.88-6.57-10.94,0-19.38,9.7-19.38,21.26,0,12.19,8.12,21.57,20.32,21.57a23.27,23.27,0,0,0,14.38-4.69V62.83H168.06V54.08h25.63V79.4a38.57,38.57,0,0,1-25,9.38C149.61,88.46,137.42,75,137.42,57.52Z" />
-                                <path d="M218.7,27.5h10v60h-10Z" />
-                                <path d="M268.72,37.51h-15v-10h45v10h-20v50h-10Z" />
-                                <path d="M333.75,37.51h-15v-10h45v10h-20v50h-10Z" />
-                                <path d="M388.77,27.5h45v10h-35v15h30v10h-30v15h35v10h-45Z" />
-                                <path d="M509.12,87.53,493.18,65a19.16,19.16,0,0,0,10.94-17.51c0-11.88-9.69-20-21.57-20H459.1v60h10v-20h13.44l14.38,20Zm-40.32-30v-20h13.44c6.25,0,11.56,3.75,11.56,10s-5.31,10-11.56,10Z" />
-                            </g>
-                        </svg>
-                    </MudButton>
-                </div>
-            </MudItem>
-        </MudGrid>
-    </div>
+        <div for="Section Design Goals" class="docs-sections">
+            <MudGrid Spacing="4">
+                <MudItem xs="12" sm="12" md="12">
+                    <MudText Typo="Typo.h4" Align="Align.Center" Class="mudblazor-section-titles design-goals" GutterBottom="true">Design goals</MudText>
+                </MudItem>
+                <MudItem xs="12" sm="6" md="4">
+                    <MudPaper Elevation="25" Class="px-4 py-6 rounded-lg mudblazor-goal-paper material">
+                        <MudText Class="mudblazor-goal-title mb-3" Color="Color.Primary" Align="Align.Center">Material Design</MudText>
+                        <MudText Align="Align.Center">Clean and aesthetic graphic design based on Material Design</MudText>
+                    </MudPaper>
+                </MudItem>
+                <MudItem xs="12" sm="6" md="4">
+                    <MudPaper Elevation="25" Class="px-4 py-6 rounded-lg mudblazor-goal-paper in-c">
+                        <MudText Class="mudblazor-goal-title  mb-3" Color="Color.Secondary" Align="Align.Center">Entirely in C#</MudText>
+                        <MudText Align="Align.Center">All components are written entirely in C#</MudText>
+                        <MudText Align="Align.Center">No JavaScript allowed</MudText>
+                        <MudText Align="Align.Center">(except absolutely necessary)</MudText>
+                    </MudPaper>
+                </MudItem>
+                <MudItem xs="12" sm="12" md="4">
+                    <MudPaper Elevation="25" Class="px-4 py-6 rounded-lg mudblazor-goal-paper be-included">
+                        <MudText Class="mudblazor-goal-title  mb-3" Color="Color.Tertiary" Align="Align.Center">No Dependencies</MudText>
+                        <MudText Align="Align.Center">No dependencies on other component libraries, 100% control over components and features.</MudText>
+                    </MudPaper>
+                </MudItem>
+            </MudGrid>
+        </div>
 
-    <div for="Section App" class="docs-sections">
-        <MudGrid>
-            <MudItem xs="12" sm="12" md="4" lg="6">
-                <div class="d-flex justify-center flex-column" style="height:100%;">
-                    <MudText Typo="Typo.h4" Align="Align.Center" Class="mudblazor-section-sub-title" GutterBottom="true">Beautiful Apps</MudText>
-                    <MudText Align="Align.Center">Developers can make beautiful apps without previous knowledge of CSS or the need to even create custom css classes.</MudText>
-                    <div class="mt-4 mudblazor-app-text px-12">
-                        <MudText Inline="true" Color="Color.Secondary">Blazor</MudText>
-                        <MudText Inline="true">&#64;</MudText>
-                        <MudText Inline="true" Color="Color.Primary">MudBlazor</MudText>
-                        <MudText Inline="true" Class="ml-n1">:~$</MudText>
-                        <MudText Inline="true" Class="ml-2">dotnet mudblazor -activate ai-core</MudText>
-                        <MudText Class="mt-2">> Hi!</MudText>
-                        <MudText>> Did you notice the screen to the right?</MudText>
-                        <MudText>> Try it out, its a functional app built with MudBlazor</MudText>
+        <div for="Section Dependencies" class="docs-sections">
+            <MudGrid>
+                <MudItem xs="12">
+                    <MudText Typo="Typo.h4" Align="Align.Center" Class="mudblazor-section-sub-title" GutterBottom="true">Be Included!</MudText>
+                    <MudText Align="Align.Center">Each day the amount of people interested in MudBlazor grows and on multiple channels!</MudText>
+                    <MudText Align="Align.Center">We aim at releasing often so developers can get their pull requests and fixes added in a timely fashion.</MudText>
+                    <MudText Align="Align.Center">You can stop by if you need help, provide feedback, report bugs, or even if you just want to hang out!</MudText>
+                </MudItem>
+                <MudItem xs="12">
+                    <div class="d-flex justify-center mt-6">
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Large" Link="https://discord.gg/mudblazor" Class="docs-mud-button discord-gitter">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 727 200" width="100%" height="100%">
+                                <g fill="#7289da">
+                                    <path d="M106.8,84.1 C101.1,84.1 96.6,89 96.6,95.1 C96.6,101.2 101.2,106.1 106.8,106.1 C112.5,106.1 117,101.2 117,95.1 C117,89 112.4,84.1 106.8,84.1 Z M70.3,84.1 C64.6,84.1 60.1,89 60.1,95.1 C60.1,101.2 64.7,106.1 70.3,106.1 C76,106.1 80.5,101.2 80.5,95.1 C80.6,89 76,84.1 70.3,84.1 Z" />
+                                    <path d="M155.4,0.9 L21.4,0.9 C10.1,0.9 0.9,10.1 0.9,21.4 L0.9,155.4 C0.9,166.7 10.1,175.9 21.4,175.9 L134.8,175.9 L129.5,157.6 L142.3,169.4 L154.4,180.5 L176,199.2 L176,21.4 C175.9,10.1 166.7,0.9 155.4,0.9 Z M116.8,130.4 C116.8,130.4 113.2,126.1 110.2,122.4 C123.3,118.7 128.3,110.6 128.3,110.6 C124.2,113.3 120.3,115.2 116.8,116.5 C111.8,118.6 107,119.9 102.3,120.8 C92.7,122.6 83.9,122.1 76.4,120.7 C70.7,119.6 65.8,118.1 61.7,116.4 C59.4,115.5 56.9,114.4 54.4,113 C54.1,112.8 53.8,112.7 53.5,112.5 C53.3,112.4 53.2,112.3 53.1,112.3 C51.3,111.3 50.3,110.6 50.3,110.6 C50.3,110.6 55.1,118.5 67.8,122.3 C64.8,126.1 61.1,130.5 61.1,130.5 C39,129.8 30.6,115.4 30.6,115.4 C30.6,83.5 45,57.6 45,57.6 C59.4,46.9 73,47.2 73,47.2 L74,48.4 C56,53.5 47.8,61.4 47.8,61.4 C47.8,61.4 50,60.2 53.7,58.6 C64.4,53.9 72.9,52.7 76.4,52.3 C77,52.2 77.5,52.1 78.1,52.1 C84.2,51.3 91.1,51.1 98.3,51.9 C107.8,53 118,55.8 128.4,61.4 C128.4,61.4 120.5,53.9 103.5,48.8 L104.9,47.2 C104.9,47.2 118.6,46.9 132.9,57.6 C132.9,57.6 147.3,83.5 147.3,115.4 C147.3,115.3 138.9,129.7 116.8,130.4 L116.8,130.4 Z M267.8,43.7 L234.6,43.7 L234.6,81 L256.7,100.9 L256.7,64.7 L268.5,64.7 C276,64.7 279.7,68.3 279.7,74.1 L279.7,101.8 C279.7,107.6 276.2,111.5 268.5,111.5 L234.5,111.5 L234.5,132.6 L267.7,132.6 C285.5,132.7 302.2,123.8 302.2,103.4 L302.2,73.6 C302.3,52.8 285.6,43.7 267.8,43.7 L267.8,43.7 Z M441.8,103.4 L441.8,72.8 C441.8,61.8 461.6,59.3 467.6,70.3 L485.9,62.9 C478.7,47.1 465.6,42.5 454.7,42.5 C436.9,42.5 419.3,52.8 419.3,72.8 L419.3,103.4 C419.3,123.6 436.9,133.7 454.3,133.7 C465.5,133.7 478.9,128.2 486.3,113.8 L466.7,104.8 C461.9,117.1 441.8,114.1 441.8,103.4 Z M381.3,77 C374.4,75.5 369.8,73 369.5,68.7 C369.9,58.4 385.8,58 395.1,67.9 L409.8,56.6 C400.6,45.4 390.2,42.4 379.5,42.4 C363.2,42.4 347.4,51.6 347.4,69 C347.4,85.9 360.4,95 374.7,97.2 C382,98.2 390.1,101.1 389.9,106.1 C389.3,115.6 369.7,115.1 360.8,104.3 L346.6,117.6 C354.9,128.3 366.2,133.7 376.8,133.7 C393.1,133.7 411.2,124.3 411.9,107.1 C412.9,85.4 397.1,79.9 381.3,77 Z M314.3,132.5 L336.7,132.5 L336.7,43.7 L314.3,43.7 L314.3,132.5 Z M692,43.7 L658.8,43.7 L658.8,81 L680.9,100.9 L680.9,64.7 L692.7,64.7 C700.2,64.7 703.9,68.3 703.9,74.1 L703.9,101.8 C703.9,107.6 700.4,111.5 692.7,111.5 L658.7,111.5 L658.7,132.6 L692,132.6 C709.8,132.7 726.5,123.8 726.5,103.4 L726.5,73.6 C726.5,52.8 709.8,43.7 692,43.7 Z M529.1,42.5 C510.7,42.5 492.4,52.5 492.4,73 L492.4,103.3 C492.4,123.6 510.8,133.8 529.3,133.8 C547.7,133.8 566,123.6 566,103.3 L566,73 C566,52.6 547.5,42.5 529.1,42.5 Z M543.5,103.3 C543.5,109.7 536.3,113 529.2,113 C522,113 514.8,109.9 514.8,103.3 L514.8,73 C514.8,66.5 521.8,63 528.8,63 C536.1,63 543.5,66.1 543.5,73 L543.5,103.3 L543.5,103.3 Z M646.4,73 C645.9,52.2 631.7,43.8 613.4,43.8 L577.9,43.8 L577.9,132.6 L600.6,132.6 L600.6,104.4 L604.6,104.4 L625.2,132.6 L653.2,132.6 L629,102.1 C639.7,98.7 646.4,89.4 646.4,73 Z M613.8,85 L600.6,85 L600.6,64.7 L613.8,64.7 C627.9,64.7 627.9,85 613.8,85 Z" />
+                                </g>
+                            </svg>
+                        </MudButton>
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Large" Link="https://github.com/Garderoben/MudBlazor/discussions" Class="docs-mud-button discord-gitter">
+                            <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 273.19 80.86" width="80%" height="80%">
+                                <g fill="#24292e">
+                                    <path d="M135.14,37.1H120.78a.67.67,0,0,0-.68.67v7a.67.67,0,0,0,.68.67h5.6V54.2a17,17,0,0,1-4.74.43c-4.1,0-9.84-1.5-9.84-14.11s6-14.27,11.58-14.27a22.8,22.8,0,0,1,8.27,1.26.68.68,0,0,0,.81-.66l1.6-6.78a.62.62,0,0,0-.26-.53c-.54-.38-3.83-2.23-12.16-2.23-9.59,0-19.43,4.08-19.43,23.7S113.48,63.55,123,63.55a23.38,23.38,0,0,0,12.63-3.36.58.58,0,0,0,.21-.51V37.77a.67.67,0,0,0-.67-.67" />
+                                    <path d="M209.19,19.66a.67.67,0,0,0-.67-.67h-8.09a.67.67,0,0,0-.67.67V35.3H187.15V19.66a.66.66,0,0,0-.66-.67H178.4a.67.67,0,0,0-.67.67V62a.67.67,0,0,0,.67.68h8.09a.66.66,0,0,0,.66-.68V43.89h12.61l0,18.1a.67.67,0,0,0,.67.68h8.11a.67.67,0,0,0,.67-.68V19.66" />
+                                    <path d="M150.41,25.22a5.22,5.22,0,1,0-5.22,5.27,5.24,5.24,0,0,0,5.22-5.27" />
+                                    <path d="M149.83,53.07V33.52a.67.67,0,0,0-.67-.67H141.1a.77.77,0,0,0-.7.75v28c0,.82.51,1.07,1.17,1.07h7.27c.79,0,1-.4,1-1.08V53.07" />
+                                    <path d="M239.93,32.91h-8a.68.68,0,0,0-.67.68V54.35a9.09,9.09,0,0,1-4.94,1.49c-2.89,0-3.66-1.31-3.66-4.15V33.59a.68.68,0,0,0-.67-.68h-8.14a.68.68,0,0,0-.67.68V53.06c0,8.42,4.69,10.48,11.14,10.48a18.85,18.85,0,0,0,9.57-2.92,17.13,17.13,0,0,0,.29,1.72.71.71,0,0,0,.59.37l5.19,0a.68.68,0,0,0,.67-.67V33.59a.68.68,0,0,0-.67-.68" />
+                                    <path d="M258.71,55.81A9.63,9.63,0,0,1,254,54.47V41.06a10.83,10.83,0,0,1,4.15-1.35c2.9-.26,5.68.62,5.68,7.51C263.86,54.5,262.6,55.93,258.71,55.81ZM261.87,32a15.06,15.06,0,0,0-7.66,2V19.66a.67.67,0,0,0-.66-.67h-8.12a.67.67,0,0,0-.67.67V62a.67.67,0,0,0,.67.68h5.63a.66.66,0,0,0,.59-.36,13,13,0,0,0,.34-2s3.32,3.14,9.6,3.14c7.37,0,11.6-3.73,11.6-16.78S266.44,32,261.87,32" />
+                                    <path d="M173.08,32.85H167v-8c0-.3-.15-.46-.5-.46h-8.27c-.32,0-.5.15-.5.45v8.29s-4.14,1-4.42,1.08a.68.68,0,0,0-.49.65V40a.67.67,0,0,0,.67.68h4.24V53.24c0,9.3,6.53,10.22,10.93,10.22a18.88,18.88,0,0,0,4.82-.79.63.63,0,0,0,.38-.61V56.33a.68.68,0,0,0-.67-.67c-.35,0-1.26.14-2.19.14-3,0-4-1.39-4-3.18V40.72h6.07a.67.67,0,0,0,.67-.68V33.52a.67.67,0,0,0-.67-.67" />
+                                    <path d="M41.45,0A41.45,41.45,0,0,0,28.34,80.78c2.08.37,2.85-.88,2.85-2s-.05-4.24-.05-7.72C20.73,73,18,68.55,17.2,66.22,16.74,65,14.72,61.35,13,60.37c-1.45-.78-3.52-2.7,0-2.75,3.27,0,5.6,3,6.38,4.25C23,68.14,29,66.38,31.35,65.29A8.7,8.7,0,0,1,34,59.75c-9.22-1-18.86-4.62-18.86-20.47a16.14,16.14,0,0,1,4.25-11.14,14.93,14.93,0,0,1,.41-11s3.48-1.09,11.4,4.25a39.07,39.07,0,0,1,20.73,0c7.93-5.39,11.4-4.25,11.4-4.25a15,15,0,0,1,.42,11A16,16,0,0,1,68,39.28c0,15.91-9.69,19.43-18.91,20.47,1.5,1.29,2.8,3.78,2.8,7.66,0,5.55,0,10,0,11.4,0,1.09.77,2.39,2.85,2A41.47,41.47,0,0,0,41.45,0Z" />
+                                </g>
+                            </svg>
+                        </MudButton>
                     </div>
-                </div>
-            </MudItem>
-            <MudItem xs="12" sm="12" md="8" lg="6">
-                <MudBlazorApp />
-            </MudItem>
-        </MudGrid>
-    </div>
+                </MudItem>
+            </MudGrid>
+        </div>
 
-    <div class="docs-sections">
-        <MudDivider Class="mt-16" />
-    </div>
-
-    <div for="Section MudBlazor" class="docs-sections">
-        <MudGrid>
-            <MudItem xs="12" md="12">
-                <div class="d-flex justify-center flex-column">
-                    <div class="d-inline-flex align-self-center">
-                        <MudText Typo="Typo.h2" Color="Color.Surface" Inline="true">Try</MudText>
-                        <MudText Typo="Typo.h2" Color="Color.Primary" Inline="true">MudBlazor</MudText>
+        <div for="Section App" class="docs-sections">
+            <MudGrid>
+                <MudItem xs="12" sm="12" md="4" lg="6">
+                    <div class="d-flex justify-center flex-column" style="height:100%;">
+                        <MudText Typo="Typo.h4" Align="Align.Center" Class="mudblazor-section-sub-title" GutterBottom="true">Beautiful Apps</MudText>
+                        <MudText Align="Align.Center">Developers can make beautiful apps without previous knowledge of CSS or the need to even create custom css classes.</MudText>
+                        <div class="mt-4 mudblazor-app-text px-12">
+                            <MudText Inline="true" Color="Color.Secondary">Blazor</MudText>
+                            <MudText Inline="true">&#64;</MudText>
+                            <MudText Inline="true" Color="Color.Primary">MudBlazor</MudText>
+                            <MudText Inline="true" Class="ml-n1">:~$</MudText>
+                            <MudText Inline="true" Class="ml-2">dotnet mudblazor -activate ai-core</MudText>
+                            <MudText Class="mt-2">> Hi!</MudText>
+                            <MudText>> Did you notice the screen to the right?</MudText>
+                            <MudText>> Try it out, its a functional app built with MudBlazor</MudText>
+                        </div>
                     </div>
-                    <MudText Typo="Typo.h6" Color="Color.Surface" Class="align-self-center my-4">A playground for trying out MudBlazor components entirely in the browser.</MudText>
-                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Large" Link="https://try.mudblazor.com/" Class="align-self-center docs-mud-button try-mudblazor">Go to Website</MudButton>
-                </div>
-            </MudItem>
-        </MudGrid>
-    </div>
-</MudContainer>
-<Footer />
+                </MudItem>
+                <MudItem xs="12" sm="12" md="8" lg="6">
+                    <MudBlazorApp />
+                </MudItem>
+            </MudGrid>
+        </div>
+
+        <div class="docs-sections">
+            <MudDivider Class="mt-16" />
+        </div>
+
+        <div for="Section MudBlazor" class="docs-sections">
+            <MudGrid>
+                <MudItem xs="12" md="12">
+                    <div class="d-flex justify-center flex-column">
+                        <div class="d-inline-flex align-self-center">
+                            <MudText Typo="Typo.h2" Color="Color.Surface" Inline="true">Try</MudText>
+                            <MudText Typo="Typo.h2" Color="Color.Primary" Inline="true">MudBlazor</MudText>
+                        </div>
+                        <MudText Typo="Typo.h6" Color="Color.Surface" Class="align-self-center my-4">A playground for trying out MudBlazor components entirely in the browser.</MudText>
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Large" Link="https://try.mudblazor.com/" Class="align-self-center docs-mud-button try-mudblazor">Go to Website</MudButton>
+                    </div>
+                </MudItem>
+            </MudGrid>
+        </div>
+    </MudContainer>
+    <Footer />
+</MudMainContent>

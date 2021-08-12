@@ -12,11 +12,11 @@ namespace MudBlazor
 {
     public class DialogReference : IDialogReference
     {
-        private readonly TaskCompletionSource<DialogResult> _resultCompletion = new TaskCompletionSource<DialogResult>();
+        private readonly TaskCompletionSource<DialogResult> _resultCompletion = new();
 
-        private readonly DialogService _dialogService;
+        private readonly IDialogService _dialogService;
 
-        public DialogReference(Guid dialogInstanceId, DialogService dialogService)
+        public DialogReference(Guid dialogInstanceId, IDialogService dialogService)
         {
             Id = dialogInstanceId;
             _dialogService = dialogService;
@@ -32,24 +32,28 @@ namespace MudBlazor
             _dialogService.Close(this, result);
         }
 
-        internal void Dismiss(DialogResult result)
+        public virtual bool Dismiss(DialogResult result)
         {
             _resultCompletion.TrySetResult(result);
+
+            return true;
         }
 
-        internal Guid Id { get; }
+        public Guid Id { get; }
 
-        public MudDialog Dialog { get; private set; }
-        internal RenderFragment RenderFragment { get; private set; }
+        public object Dialog { get; private set; }
+        public RenderFragment RenderFragment { get; set; }
 
         public Task<DialogResult> Result => _resultCompletion.Task;
 
-        internal void InjectDialog(object inst)
+        public bool AreParametersRendered { get; set; }
+
+        public void InjectDialog(object inst)
         {
-            Dialog = inst as MudDialog;
+            Dialog = inst;
         }
 
-        internal void InjectRenderFragment(RenderFragment rf)
+        public void InjectRenderFragment(RenderFragment rf)
         {
             RenderFragment = rf;
         }

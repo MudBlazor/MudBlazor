@@ -1,7 +1,5 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
-
-
 <MudGrid>
     <MudItem xs="12" sm="12" md="12">
         <MudTextField @ref="multilineReference" T="string" Label="Multiline Select" Lines="3" Variant="Variant.Text" Text="@sampleText" />
@@ -22,7 +20,9 @@
 </MudGrid>
 
 @code
-{ private MudTextField<string> multilineReference;
-            private MudTextField<string> singleLineReference;
+{
+    private MudTextField<string> multilineReference;
+    private MudTextField<string> singleLineReference;
 
-            string sampleText = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."; }
+    string sampleText = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."; 
+}

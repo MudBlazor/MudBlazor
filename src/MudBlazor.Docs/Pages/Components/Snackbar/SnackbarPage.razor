@@ -13,8 +13,7 @@
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader>
-                <Title>Usage</Title>
+            <SectionHeader Title="Usage">
                 <Description>This is the simplest way of using the <CodeInline>Snackbar</CodeInline>. It provides the user with a temporary closable <CodeInline>Snackbar</CodeInline></Description>
             </SectionHeader>
             <SectionContent Outlined="true">
@@ -24,11 +23,10 @@
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader>
-                <Title>Html in messages</Title>
+            <SectionHeader Title="Html in messages">
                 <Description>
                     Snackbar messages are rendered as HTML using <CodeInline>MarkupString</CodeInline>.<br />
-                    Howerver, make sure not to use user-provided input, as that's not very secure.
+                    However, make sure not to use user-provided input, as that's not very secure.
                 </Description>
             </SectionHeader>
             <SectionContent Outlined="true">
@@ -38,10 +36,9 @@
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader>
-                <Title>Alerts and Severity</Title>
+            <SectionHeader Title="Alerts and Severity">
                 <Description>
-                    By default no <CodeInline>Severity</CodeInline> property has to be passed and the snackbar uses the normal level.<br />
+                    By default, no <CodeInline>Severity</CodeInline> property has to be passed and the snackbar uses the normal level.<br />
                     To change the snackbar into an alert snackbar, simply pass down the <CodeInline>Severity</CodeInline> enum after the message.
                 </Description>
             </SectionHeader>
@@ -52,20 +49,19 @@
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader>
-                <Title>Configuration</Title>
-                <Description>The Snackbars default behavior can be changed in two ways, either globaly when the service is registered or pass down the <CodeInline>SnackbarConfiguration</CodeInline> class with the changes you want to make.</Description>
+            <SectionHeader Title="Configuration">
+                <Description>The Snackbar's default behavior can be changed in two ways, either globally when the service is registered or by passing down the <CodeInline>SnackbarConfiguration</CodeInline> class with the changes you want to make.</Description>
             </SectionHeader>
             <SectionHeader>
                 <SubTitle>1. Global Service Settings</SubTitle>
-                <Description>In either <CodeInline>Program.Main</CodeInline> or <CodeInline>Startup.cs</CodeInline> depending on what kind of project you have. See <MudLink Href="/getting-started/installation">installation page</MudLink> for more information regarding this.</Description>
+                <Description>In either <CodeInline>Program.Main</CodeInline> or <CodeInline>Startup.cs</CodeInline>, depending on what kind of project you have. See <MudLink Href="/getting-started/installation">installation page</MudLink> for more information regarding this.</Description>
             </SectionHeader>
             <MarkdownSnackbarConfigurationService />
             <SectionHeader>
                 <SubTitle>2. Per Snackbar</SubTitle>
                 <Description>
-                    This can be done in many ways, below is one of them and we will continue to use it use it further down on this page.<br />
-                    Below we pass along a modified configuration that differs from our globally set <CodeInline>ShowCloseIcon</CodeInline> in this case it's also the Snackbar's default value.
+                    This can be done in many ways, below is one of them and we will continue to use it further down on this page.<br />
+                    Below, we pass along a modified configuration that differs from our globally-set <CodeInline>ShowCloseIcon</CodeInline>. In this case, it's also the Snackbar's default value.
                 </Description>
             </SectionHeader>
             <SectionContent Outlined="true">
@@ -77,8 +73,7 @@
         <MudDivider Class="my-16" Style="opacity:0;" />
 
         <DocsPageSection>
-            <SectionHeader>
-                <Title>Snackbar Position</Title>
+            <SectionHeader Title="Snackbar Position">
             </SectionHeader>
             <SectionContent Outlined="true">
                 <SnackbarPositionExample />
@@ -87,8 +82,7 @@
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader>
-                <Title>Snackbar Variants</Title>
+            <SectionHeader Title="Snackbar Variants">
             </SectionHeader>
             <SectionContent Outlined="true">
                 <SnackbarVariantsExample />
@@ -97,8 +91,7 @@
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader>
-                <Title>Close after navigation</Title>
+            <SectionHeader Title="Close after navigation">
             </SectionHeader>
             <SectionContent Outlined="true">
                 <SnackbarNavigationExample />
@@ -107,8 +100,7 @@
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader>
-                <Title>Custom Action Handling</Title>
+            <SectionHeader Title="Custom Action Handling">
             </SectionHeader>
             <SectionHeader>
                 <Description>
@@ -131,14 +123,31 @@
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader>
-                <Title>Require Interaction</Title>
-                <Description>With the <CodeInline>RequireInteraction</CodeInline> property set to true the snackbar will not dissapear until the user interacts with it.</Description>
+            <SectionHeader Title="Require Interaction">
+                <Description>With the <CodeInline>RequireInteraction</CodeInline> property set to true, the snackbar will not disappear until the user interacts with it.</Description>
             </SectionHeader>
             <SectionContent FullWidth="true" Class="pa-0" Outlined="true">
                 <SnackbarRequireInteractionExample />
             </SectionContent>
             <SectionSource Code="SnackbarRequireInteractionExample" GitHubFolderName="Snackbar" ShowCode="false" />
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="No Icon">
+            </SectionHeader>
+            <SectionContent Outlined="true">
+                <SnackbarNoIconExample />
+            </SectionContent>
+            <SectionSource Code="SnackbarNoIconExample" GitHubFolderName="Snackbar" ShowCode="false" />
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Custom Icon">
+            </SectionHeader>
+            <SectionContent Outlined="true">
+                <SnackbarCustomIconExample />
+            </SectionContent>
+            <SectionSource Code="SnackbarCustomIconExample" GitHubFolderName="Snackbar" ShowCode="false" />
         </DocsPageSection>
 
     </DocsPageContent>

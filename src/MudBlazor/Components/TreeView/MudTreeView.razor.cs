@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
@@ -10,7 +11,7 @@ namespace MudBlazor
     {
         private MudTreeViewItem<T> _activatedValue;
         private HashSet<MudTreeViewItem<T>> _selectedValues;
-        private List<MudTreeViewItem<T>> _childItems = new List<MudTreeViewItem<T>>();
+        private List<MudTreeViewItem<T>> _childItems = new();
 
         protected string Classname =>
         new CssBuilder("mud-treeview")
@@ -25,6 +26,7 @@ namespace MudBlazor
             .AddStyle($"width", Width, !string.IsNullOrWhiteSpace(Width))
             .AddStyle($"height", Height, !string.IsNullOrWhiteSpace(Height))
             .AddStyle($"max-height", MaxHeight, !string.IsNullOrWhiteSpace(MaxHeight))
+            .AddStyle(Style)
         .Build();
 
         [Parameter]
@@ -74,11 +76,14 @@ namespace MudBlazor
         [Parameter] public RenderFragment ChildContent { get; set; }
 
         /// <summary>
-        /// ItemTemplate for rendering childre.
+        /// ItemTemplate for rendering children.
         /// </summary>
         [Parameter] public RenderFragment<T> ItemTemplate { get; set; }
 
         [CascadingParameter] MudTreeView<T> MudTreeRoot { get; set; }
+
+        [Parameter]
+        public Func<T, Task<HashSet<T>>> ServerData { get; set; }
 
         public MudTreeView()
         {
@@ -120,8 +125,7 @@ namespace MudBlazor
 
         internal async Task UpdateSelectedItems()
         {
-            if (_selectedValues == null)
-                _selectedValues = new HashSet<MudTreeViewItem<T>>();
+            _selectedValues ??= new HashSet<MudTreeViewItem<T>>();
 
             //collect selected items
             _selectedValues.Clear();

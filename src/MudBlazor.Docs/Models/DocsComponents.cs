@@ -6,20 +6,21 @@ namespace MudBlazor.Docs.Models
 {
     public class DocsComponents
     {
-        private List<MudComponent> _mudComponents = new List<MudComponent>();
+        private List<MudComponent> _mudComponents = new();
 
         /// <summary>
         /// The elements of the list of mudcomponents
         /// </summary>
         internal IEnumerable<MudComponent> Elements => _mudComponents.OrderBy(e => e.Name);
 
-        public DocsComponents AddItem(string name, Type component)
+        public DocsComponents AddItem(string name, Type component, params Type[] childcomponents)
         {
             var componentItem = new MudComponent
             {
                 Name = name,
                 Link = name.ToLower().Replace(" ", ""),
                 Component = component,
+                ChildComponents = childcomponents,
                 IsNavGroup = false
             };
 
@@ -42,7 +43,5 @@ namespace MudBlazor.Docs.Models
 
             return this;
         }
-
-
     }
 }

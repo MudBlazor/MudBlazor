@@ -4,11 +4,10 @@
  */
 
 using System;
-using MudBlazor.Components.Chart.Interpolation;
 
 namespace MudBlazor.Components.Chart
 {
-    public class PeriodicSpline: SplineInterpolator
+    public class PeriodicSpline : SplineInterpolator
     {
         public PeriodicSpline(double[] xs, double[] ys, int resolution = 10) : base(xs, ys, resolution)
         {
@@ -29,12 +28,12 @@ namespace MudBlazor.Components.Chart
         public void CalcParameters()
         {
             for (int i = 0; i < n; i++)
-                a[i] = givenYs[i];
+                a[i] = GivenYs[i];
 
             for (int i = 0; i < n - 1; i++)
-                h[i] = givenXs[i + 1] - givenXs[i];
+                h[i] = GivenXs[i + 1] - GivenXs[i];
 
-            a[n] = givenYs[1];
+            a[n] = GivenYs[1];
             h[n - 1] = h[0];
 
             for (int i = 0; i < n - 1; i++)

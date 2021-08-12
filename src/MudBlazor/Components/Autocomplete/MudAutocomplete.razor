@@ -1,51 +1,58 @@
-﻿@namespace MudBlazor
+@namespace MudBlazor
 @inherits MudBaseInput<T>
 @typeparam T
 
 <CascadingValue Name="Standalone" Value="false" IsFixed="true">
-    <div class="mud-select mud-autocomplete" >
+    <div class="mud-select mud-autocomplete">
         <MudInputControl Label="@Label" Variant="@Variant" HelperText="@HelperText" FullWidth="@FullWidth" Margin="@Margin" Class="@Classname" Style="@Style"
-                         Error="@Error" ErrorText="@ErrorText" Disabled="@Disabled" @onclick="@ToggleMenu">
+                         Error="@Error" ErrorText="@ErrorText" Disabled="@Disabled" @onclick="@ToggleMenu" Required="@Required">
             <InputContent>
-                <MudInput T="string" @ref="_elementReference" InputType="InputType.Text" Variant="@Variant" @attributes="UserAttributes" Value="@Text" TextChanged="OnTextChanged" DisableUnderLine="@DisableUnderLine" Placeholder="@Placeholder" Disabled=@Disabled ReadOnly="@ReadOnly"
-                          Immediate="true" Margin="@Margin" Class="mud-select-input" Error="@Error" AdornmentIcon="@CurrentIcon" Adornment="Adornment.End" IconSize="Size.Medium" OnKeyDown="@this.OnInputKeyDown"
-                          OnBlur="@OnInputBlurred" OnKeyUp="@base.InvokeKeyUp" OnKeyPress="@base.InvokeKeyPress" autocomplete=@("mud-disabled-"+Guid.NewGuid()) />
+                <MudInput @ref="_elementReference" InputType="InputType.Text"
+                          Class="mud-select-input" Margin="@Margin"
+                          Variant="@Variant" Value="@Text" DisableUnderLine="@DisableUnderLine"
+                          Disabled="@Disabled" ReadOnly="@ReadOnly" Error="@Error"
+                          OnAdornmentClick="@OnAdornmentClick" AdornmentIcon="@_currentIcon" Adornment="@Adornment" AdornmentColor="@AdornmentColor" IconSize="@IconSize" AdornmentText="@AdornmentText"
+                          Clearable="@Clearable" OnClearButtonClick="@OnClearButtonClick"
+                          @attributes="UserAttributes"
+                          TextChanged="OnTextChanged" OnBlur="OnInputBlurred"
+                          OnKeyDown="@this.OnInputKeyDown"
+                          OnKeyUp="@this.OnInputKeyUp" autocomplete=@("mud-disabled-"+Guid.NewGuid()) KeyUpPreventDefault="KeyUpPreventDefault"
+                          Placeholder="@Placeholder" Immediate="true"
+                          InputMode="@InputMode" Pattern="@Pattern"
+                          T="string" />
+                <MudPopover Open="@IsOpen" MaxHeight="@MaxHeight" Direction="@Direction" OffsetX="@OffsetX" OffsetY="@OffsetY">
+                    @if (_items != null && _items.Length != 0)
+                    {
+                        @*this must be the real scroll container, not the Popover, hence the maxheight*@
+                        <MudList Clickable="true" Dense="@Dense" Style=@($"max-height: {MaxHeight}px; overflow-y:auto;")>
+                            @for (var index = 0; index < _items.Length; index++)
+                            {
+                                var item = _items[index];
+                                bool is_selected = index == _selectedListItemIndex;
+                                <MudListItem @key="@item" id="@GetListItemId(index)" OnClick="@(() => SelectOption(item))" Class="@(is_selected ? "mud-selected-item" : "")">
+                                    @if (ItemTemplate == null)
+                                    {
+                                        @GetItemString(item)
+                                    }
+                                    else if (is_selected)
+                                    {
+                                        @if (ItemSelectedTemplate == null)
+                                            @ItemTemplate(item)
+                                        else
+                                            @ItemSelectedTemplate(item)
+                                    }
+                                    else
+                                    {
+                                        @ItemTemplate(item)
+                                    }
+                                </MudListItem>
+                            }
+                        </MudList>
+                    }
+                </MudPopover>
             </InputContent>
         </MudInputControl>
-        <MudPopover Open="@IsOpen" MaxHeight="@MaxHeight" OffsetY="true">
-            @*this must be the real scroll container, not the Popover, hence the maxheight*@
-            <MudList Clickable="true" Dense="@Dense" Style=@($"max-height: {MaxHeight}px; overflow-y:auto;")>
-                @if (_items != null && _items.Any())
-                {
-                    int i = 0;
-                    @foreach (T item in _items)
-                    {
-                        bool is_selected = i == _selectedListItemIndex;
-                        <MudListItem @key="@item" id="@GetListItemId(i)" OnClick="@(() => SelectOption(item))" Class="@(is_selected ? "mud-selected-item" : "")">
-                            @if (ItemTemplate == null)
-                            {
-                                @GetItemString(item)
-                            }
-                            else if (is_selected)
-                            {
-                                @if (ItemSelectedTemplate == null)
-                                    @ItemTemplate(item)
-                                else
-                                    @ItemSelectedTemplate(item)
-                            }
-                            else
-                            {
-                                @ItemTemplate(item)
-                            }
-                        </MudListItem>
-                        i++;
-                    }
-                }
-            </MudList>
-        </MudPopover>
     </div>
 </CascadingValue>
 
 <MudOverlay Visible="IsOpen" OnClick="@ToggleMenu" LockScroll="false" />
-
-

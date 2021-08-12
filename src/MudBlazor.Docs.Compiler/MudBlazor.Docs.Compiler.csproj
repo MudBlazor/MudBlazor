@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
@@ -6,7 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="ColorCode.HTML" Version="2.0.6" />
+    <PackageReference Include="ColorCode.HTML" Version="2.0.8" />
   </ItemGroup>
 
   <ItemGroup>

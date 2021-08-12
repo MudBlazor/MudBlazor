@@ -3,5 +3,7 @@
 @inherits MudFormComponent<T, T>
 
 <CascadingValue Value="this" IsFixed="true">
-    @ChildContent
+    <div role="radiogroup" @attributes="UserAttributes" class=@Class style="@Style">
+        @ChildContent
+    </div>
 </CascadingValue>

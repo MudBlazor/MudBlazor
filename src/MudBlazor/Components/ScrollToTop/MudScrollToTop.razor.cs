@@ -12,6 +12,7 @@ namespace MudBlazor
             .AddClass("hidden", !Visible && string.IsNullOrWhiteSpace(HiddenCssClass))
             .AddClass(VisibleCssClass, Visible && !string.IsNullOrWhiteSpace(VisibleCssClass))
             .AddClass(HiddenCssClass, !Visible && !string.IsNullOrWhiteSpace(HiddenCssClass))
+            .AddClass(Class)
             .Build();
 
         [Inject] IScrollListener ScrollListener { get; set; }
@@ -64,12 +65,10 @@ namespace MudBlazor
                     : null;// null is defaulted to document element in JS function
                 ScrollListener.Selector = selector;
 
-                //suscribe to event
-                ScrollListener.OnScroll += ScrollListener_OnScroll; ;
+                //subscribe to event
+                ScrollListener.OnScroll += ScrollListener_OnScroll;
             }
         }
-
-
 
         /// <summary>
         /// event received when scroll in the selected element happens

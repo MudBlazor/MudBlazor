@@ -1,0 +1,20 @@
+﻿@namespace MudBlazor.UnitTests.TestComponents
+
+
+<MudTable Items="@Examples" T="string">
+    <HeaderContent>
+        <MudTh><MudTableSortLabel SortBy="new Func<string, object>(x=>x)">#</MudTableSortLabel></MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="Nr">@context</MudTd>
+    </RowTemplate>
+</MudTable>
+
+@code {
+    private IEnumerable<string> Examples = new List<string>();
+
+    protected override void OnInitialized()
+    {
+        Examples = new List<string>() { "B", "A", "C" };
+    }
+}

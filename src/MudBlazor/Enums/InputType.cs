@@ -14,7 +14,9 @@ namespace MudBlazor
         Hidden,
         [Description("number")]
         Number,
-        [Description("color")]
-        Color,
+        [Description("search")]
+        Search,
+        [Description("tel")]
+        Telephone
     }
 }

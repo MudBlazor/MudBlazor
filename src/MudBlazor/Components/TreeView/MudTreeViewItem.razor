@@ -10,7 +10,7 @@
         }
         else
         {
-            <MudTreeViewItemToggleButton Expanded="Expanded" ExpandedChanged="OnItemExpanded" Visible="@HasChild"></MudTreeViewItemToggleButton>
+            <MudTreeViewItemToggleButton Loading="Loading" Expanded="Expanded" ExpandedChanged="OnItemExpanded" Visible="@HasChild"></MudTreeViewItemToggleButton>
 
             @if (MudTreeRoot != null && MudTreeRoot.CanSelect)
             {

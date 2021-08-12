@@ -1,7 +1,7 @@
 ﻿@namespace MudBlazor
 @inherits MudComponentBase
 
-<MudDialog>
+<MudDialog @attributes="UserAttributes">
     <TitleContent>
         @if (TitleContent == null)
         {
@@ -22,15 +22,15 @@
         }
     </DialogContent>
     <DialogActions>
-        @if (YesButton != null)
+        @if (CancelButton != null)
         {
-            <CascadingValue Value="@_yesCallback">
-                @YesButton
+            <CascadingValue Value="@_cancelCallback">
+                @CancelButton
             </CascadingValue>
         }
-        else if(!string.IsNullOrWhiteSpace(YesText))
+        else if(!string.IsNullOrWhiteSpace(CancelText))
         {
-            <MudButton Color="Color.Primary" OnClick="OnYesClicked">@YesText</MudButton>
+            <MudButton OnClick="OnCancelClicked">@CancelText</MudButton>
         }
         @if (NoButton != null)
         {
@@ -42,15 +42,15 @@
         {
             <MudButton OnClick="OnNoClicked">@NoText</MudButton>
         }
-        @if (CancelButton != null)
+        @if (YesButton != null)
         {
-            <CascadingValue Value="@_cancelCallback">
-                @CancelButton
+            <CascadingValue Value="@_yesCallback">
+                @YesButton
             </CascadingValue>
         }
-        else if(!string.IsNullOrWhiteSpace(CancelText))
+        else if(!string.IsNullOrWhiteSpace(YesText))
         {
-            <MudButton OnClick="OnCancelClicked">@CancelText</MudButton>
+            <MudButton Color="Color.Primary" OnClick="OnYesClicked">@YesText</MudButton>
         }
     </DialogActions>
 </MudDialog>

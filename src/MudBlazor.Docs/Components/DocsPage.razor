@@ -1,11 +1,15 @@
-﻿
-<MudContainer MaxWidth="@MaxWidth">
-    <div class="docs-page">
-        @ChildContent
-    </div>
-</MudContainer>
-@code {
-    [Parameter] public RenderFragment ChildContent { get; set; }
-
-    [Parameter] public MaxWidth MaxWidth { get; set; } = MaxWidth.Medium;
-}
+﻿<MudMainContent Class="mudblazor-main-content">
+    <MudContainer MaxWidth="@MaxWidth">
+        <div id="docspage" class="docs-page">
+            <CascadingValue Value="this" IsFixed="true">
+                @ChildContent
+            </CascadingValue>
+        </div>
+        <div class="docs-navigation-footer">
+            <NavigationFooter Section=_section Previous="@_previous" Next="@_next" />
+        </div>
+    </MudContainer>
+    <MudDrawer @bind-Open="_contentDrawerOpen" Breakpoint="Breakpoint.Lg" Anchor="Anchor.End" ClipMode="DrawerClipMode.Always" Elevation="0" Color="Color.Transparent" Class="pt-6">
+        <MudPageContentNavigation SectionClassSelector="docs-section-header" @ref="_contentNavigation" ActivateFirstSectionAsDefault="true" />
+    </MudDrawer>
+</MudMainContent>

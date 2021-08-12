@@ -1,4 +1,4 @@
-﻿.mud-dialog-container {
+.mud-dialog-container {
     display: flex;
     position: fixed;
     top: 0;
@@ -9,6 +9,30 @@
     &.mud-dialog-center {
         align-items: center;
         justify-content: center;
+    }
+
+    &.mud-dialog-topcenter {
+        align-items: flex-start;
+        justify-content: center;
+        padding-top: 32px;
+    }
+
+    &.mud-dialog-bottomcenter {
+        align-items: flex-end;
+        justify-content: center;
+        padding-bottom: 32px;
+    }
+
+    &.mud-dialog-centerright {
+        align-items: center;
+        justify-content: flex-end;
+        padding-right: 32px;
+    }
+
+    &.mud-dialog-centerleft {
+        align-items: center;
+        justify-content: flex-start;
+        padding-left: 32px;
     }
 
     &.mud-dialog-topleft .mud-dialog {
@@ -46,12 +70,22 @@
     -webkit-animation: mud-open-dialog-center 0.1s cubic-bezier(0.390, 0.575, 0.565, 1.000) both;
     animation: mud-open-dialog-center 0.1s cubic-bezier(0.390, 0.575, 0.565, 1.000) both;
     box-shadow: 0px 11px 15px -7px rgba(0,0,0,0.2), 0px 24px 38px 3px rgba(0,0,0,0.14), 0px 9px 46px 8px rgba(0,0,0,0.12);
-
+    
+    &.mud-dialog-rtl .mud-dialog-title .mud-button-root {
+        right: unset;
+        left: 8px;
+    }
+    
     & .mud-dialog-title {
         flex: 0 0 auto;
         margin: 0;
-        padding: 16px 24px;
+        padding: 16px 24px;        
+        border-top-left-radius: var(--mud-default-borderradius);
+        border-top-right-radius: var(--mud-default-borderradius);
 
+        + * > .mud-dialog-content {
+            border-radius: 0
+        }
         & .mud-button-root {
             top: 8px;
             right: 8px;
@@ -64,7 +98,8 @@
         flex: 1 1 auto;
         padding: 8px 24px;
         -webkit-overflow-scrolling: touch;
-
+        border-top-left-radius: var(--mud-default-borderradius);
+        border-top-right-radius: var(--mud-default-borderradius);
 
         &.mud-dialog-no-side-padding {
             padding: 12px 0px;
@@ -77,9 +112,13 @@
         padding: 8px;
         align-items: center;
         justify-content: flex-end;
+        border-bottom-left-radius: var(--mud-default-borderradius);
+        border-bottom-right-radius: var(--mud-default-borderradius);
 
         & > :not(:first-child) {
             margin-left: 8px;
+            margin-inline-start: 8px;
+            margin-inline-end: unset;
         }
     }
 }

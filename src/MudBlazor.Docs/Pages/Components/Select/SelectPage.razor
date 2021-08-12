@@ -2,11 +2,10 @@
 
 
 <DocsPage>
-    <DocsPageHeader Title="Select" SubTitle="Select fields allows users to provide information from a list of options." />
+    <DocsPageHeader Title="Select" SubTitle="Select fields allow users to provide information from a list of options." />
     <DocsPageContent>
         <DocsPageSection>
-            <SectionHeader>
-                <Title>Variants</Title>
+            <SectionHeader Title="Variants">
                 <Description>Select comes in the variants Text, Filled and Outline. Also, Select is generic, meaning you can use values of any type with it. See the example code how that works.</Description>
             </SectionHeader>
             <SectionContent Outlined="true" DisplayFlex="true">
@@ -14,11 +13,10 @@
                     <SelectVariantsExample />
                 </MudContainer>
             </SectionContent>
-            <SectionSource ShowCode="true" Code="SelectVariantsExample" GitHubFolderName="Select" />
+            <SectionSource ShowCode="false" Code="SelectVariantsExample" GitHubFolderName="Select" />
         </DocsPageSection>
         <DocsPageSection>
-            <SectionHeader>
-                <Title>Usage</Title>
+            <SectionHeader Title="Usage">
                 <Description></Description>
             </SectionHeader>
             <SectionContent Outlined="true" DisplayFlex="true">
@@ -29,11 +27,11 @@
             <SectionSource ShowCode="false" Code="SelectUsageExample" GitHubFolderName="Select" />
         </DocsPageSection>
         <DocsPageSection>
-            <SectionHeader>
-                <Title>Multiselect</Title>
+            <SectionHeader Title="Multiselect">
+                <SubTitle>Default MultiSelection Text</SubTitle>
                 <Description>
-                    If you set <CodeInline>MultiSelection="true"</CodeInline> you can select multiple values. The selected options are returned as concatenated comma delimited
-                    string via <CodeInline>Value</CodeInline> and as a Hashset&lt;string> via <CodeInline>SelectedValues</CodeInline>
+                    If you set <CodeInline>MultiSelection="true"</CodeInline>, you can select multiple values. The selected options are returned as concatenated comma-delimited
+                    string via <CodeInline>Value</CodeInline> and as a <CodeInline>HashSet&lt;string></CodeInline> via <CodeInline>SelectedValues</CodeInline>.
                 </Description>
             </SectionHeader>
             <SectionContent Outlined="true" DisplayFlex="true">
@@ -42,10 +40,22 @@
                 </MudContainer>
             </SectionContent>
             <SectionSource ShowCode="false" Code="MultiSelectExample" GitHubFolderName="Select" />
+            <SectionHeader>
+                <SubTitle>Customized MultiSelection Text</SubTitle>
+                <Description>
+                    If you set <CodeInline>MultiSelection="true"</CodeInline>, you can select multiple values.
+                    By defining the <CodeInline>MultiSelectionTextFunc</CodeInline> method, the returned selection can be fully customized.
+                </Description>
+            </SectionHeader>
+            <SectionContent Outlined="true" DisplayFlex="true">
+                <MudContainer>
+                    <MultiSelectCustomizedExample />
+                </MudContainer>
+            </SectionContent>
+            <SectionSource ShowCode="false" Code="MultiSelectCustomizedExample" GitHubFolderName="Select" />
         </DocsPageSection>
         <DocsPageSection>
-            <SectionHeader>
-                <Title>Dense</Title>
+            <SectionHeader Title="Dense">
                 <Description></Description>
             </SectionHeader>
             <SectionContent Outlined="true">
@@ -54,8 +64,7 @@
             <SectionSource Code="SelectDenseExample" GitHubFolderName="Select" />
         </DocsPageSection>
         <DocsPageSection>
-            <SectionHeader>
-                <Title>Disabled</Title>
+            <SectionHeader Title="Disabled">
                 <Description></Description>
             </SectionHeader>
             <SectionContent Outlined="true">
@@ -65,8 +74,7 @@
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader>
-                <Title>Interactive</Title>
+            <SectionHeader Title="Interactive">
                 <Description></Description>
             </SectionHeader>
             <SectionContent Outlined="true" DisplayFlex="true">
@@ -78,10 +86,9 @@
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader>
-                <Title>Value presentation</Title>
+            <SectionHeader Title="Value presentation">
                 <Description>
-                    Select uses the render fragements you specify for the items to display the selected value (if any). If you don't specify render fragments the value will be displayed as text. Also, if you have render fragments
+                    Select uses the render fragments you specify for the items to display the selected value (if any). If you don't specify render fragments, the value will be displayed as text. Also, if you have render fragments
                     but the value that has been set is not in the list, it will also be displayed as text.
                 </Description>
             </SectionHeader>
@@ -94,23 +101,37 @@
         </DocsPageSection>
 
         <DocsPageSection>
-        <SectionHeader>
-            <Title>Select with custom converter</Title>
-            <Description>
-                Select has a built-in <CodeInline>DefaultConverter</CodeInline> which converts the values from any primitive type to string for presentation of the selected value. 
-                You can customize that converter as described under <MudLink Href="/features/converters">Converters</MudLink>. Here we use <CodeInline>ToStringFunc</CodeInline> to 
-                convert objects of type Pizza to their string representation. Note how the <CodeInline Tag="true">MudSelectItem</CodeInline> uses that string representation if you don't 
-                specify a render fragement.
-            </Description>
-        </SectionHeader>
-        <SectionContent Outlined="true" DisplayFlex="true">
-            <MudContainer Class="py-6">
-                <SelectCustomConverterExample />
-            </MudContainer>
-        </SectionContent>
-        <SectionSource ShowCode="false" Code="SelectCustomConverterExample" GitHubFolderName="Select" />
-    </DocsPageSection>
-        
+            <SectionHeader Title="Custom converter">
+                <Description>
+                    Select has a built-in <CodeInline>DefaultConverter</CodeInline> which converts the values from any primitive type to string for presentation of the selected value.
+                    You can customize that converter as described under <MudLink Href="/features/converters">Converters</MudLink>. Here, we use <CodeInline>ToStringFunc</CodeInline> to
+                    convert objects of type Pizza to their string representation. Note how the <CodeInline Tag="true">MudSelectItem</CodeInline> uses that string representation if you don't
+                    specify a render fragment.
+                </Description>
+            </SectionHeader>
+            <SectionContent Outlined="true" DisplayFlex="true">
+                <MudContainer Class="py-6">
+                    <SelectCustomConverterExample />
+                </MudContainer>
+            </SectionContent>
+            <SectionSource ShowCode="false" Code="SelectCustomConverterExample" GitHubFolderName="Select" />
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Numeric collection">
+                <Description>
+                    When using the properties <CodeInline>Required=true</CodeInline> and <CodeInline>Clearable=true</CodeInline> in combination with a numeric collection,
+                    it is required that the items of the collection are of a nullable numeric type such as <CodeInline>int?</CodeInline> or <CodeInline>double?</CodeInline> in order
+                    for the <CodeInline>Required</CodeInline> property to behave as expected.
+                </Description>
+            </SectionHeader>
+            <SectionContent Outlined="true" DisplayFlex="true">
+                <MudContainer>
+                    <SelectNumericCollectionExample />
+                </MudContainer>
+            </SectionContent>
+            <SectionSource ShowCode="false" Code="SelectNumericCollectionExample" GitHubFolderName="Select" />
+        </DocsPageSection>
 
     </DocsPageContent>
 </DocsPage>

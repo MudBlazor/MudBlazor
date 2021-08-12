@@ -1,33 +1,19 @@
-﻿#pragma warning disable IDE1006 // leading underscore
-
+﻿
 using System;
 using Bunit;
 using FluentAssertions;
 using MudBlazor.UnitTests.TestComponents;
 using NUnit.Framework;
-using NUnit.Framework.Internal;
 
 namespace MudBlazor.UnitTests.Components
 {
     [TestFixture]
-    public class TreeViewTest
+    public class TreeViewTest : BunitTest
     {
-        private Bunit.TestContext ctx;
-
-        [SetUp]
-        public void Setup()
-        {
-            ctx = new Bunit.TestContext();
-            ctx.AddTestServices();
-        }
-
-        [TearDown]
-        public void TearDown() => ctx.Dispose();
-
         [Test]
         public void Collapsed_ClickOnArrowButton_CheckClose()
         {
-            var comp = ctx.RenderComponent<TreeViewTest1>();
+            var comp = Context.RenderComponent<TreeViewTest1>();
             Console.WriteLine(comp.Markup);
             comp.FindAll("li.mud-treeview-item").Count.Should().Be(10);
             comp.Find("button").Click();
@@ -41,7 +27,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void Collapsed_ClickOnTreeItem_CheckClose()
         {
-            var comp = ctx.RenderComponent<TreeViewTest2>();
+            var comp = Context.RenderComponent<TreeViewTest2>();
             Console.WriteLine(comp.Markup);
             comp.FindAll("li.mud-treeview-item").Count.Should().Be(10);
             comp.Find("button").Click();
@@ -57,7 +43,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void Unselected_Select_CheckSelected_Deselect_CheckDeselected()
         {
-            var comp = ctx.RenderComponent<TreeViewTest1>();
+            var comp = Context.RenderComponent<TreeViewTest1>();
             Console.WriteLine(comp.Markup);
             comp.FindAll("li.mud-treeview-item").Count.Should().Be(10);
             comp.Find("button").Click();
@@ -74,7 +60,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void Normal_Activate_CheckActivated_ActivateAnother_CheckBoth()
         {
-            var comp = ctx.RenderComponent<TreeViewTest1>();
+            var comp = Context.RenderComponent<TreeViewTest1>();
             Console.WriteLine(comp.Markup);
             comp.FindAll("div.mud-treeview-item-content.mud-treeview-item-activated").Count.Should().Be(0);
             comp.Find("div.mud-treeview-item-content").Click();
@@ -90,7 +76,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void Normal_Activate_CheckActivated_Deactivate_Check()
         {
-            var comp = ctx.RenderComponent<TreeViewTest1>();
+            var comp = Context.RenderComponent<TreeViewTest1>();
             Console.WriteLine(comp.Markup);
             comp.FindAll("div.mud-treeview-item-content.mud-treeview-item-activated").Count.Should().Be(0);
             comp.Find("div.mud-treeview-item-content").Click();
@@ -106,8 +92,20 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void RenderWithTemplate_CheckResult()
         {
-            var comp = ctx.RenderComponent<TreeViewTemplateTest>();
+            var comp = Context.RenderComponent<TreeViewTemplateTest>();
             Console.WriteLine(comp.Markup);
+            comp.FindAll("li.mud-treeview-item").Count.Should().Be(8);
+        }
+
+        [Test]
+        public void TreeViewServerTest()
+        {
+            var comp = Context.RenderComponent<TreeViewServerTest>();
+            Console.WriteLine(comp.Markup);
+            comp.FindAll("li.mud-treeview-item").Count.Should().Be(4);
+            comp.FindAll("div.mud-treeview-item-content")[0].Click();
+            comp.FindAll("li.mud-treeview-item").Count.Should().Be(4);
+            comp.FindAll("div.mud-treeview-item-content")[2].Click();
             comp.FindAll("li.mud-treeview-item").Count.Should().Be(8);
         }
     }

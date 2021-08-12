@@ -14,7 +14,7 @@ namespace MudBlazor
         [Parameter] public bool Disabled { get; set; }
 
         /// <summary>
-        /// If true, the input will be read only.
+        /// If true, the input will be read-only.
         /// </summary>
         [Parameter] public bool ReadOnly { get; set; }
 
@@ -35,7 +35,7 @@ namespace MudBlazor
 
         protected bool? BoolValue => Converter.Set(Checked);
 
-        protected Task OnChange(ChangeEventArgs args)
+        protected virtual Task OnChange(ChangeEventArgs args)
         {
             Touched = true;
             return SetBoolValueAsync((bool?)args.Value);

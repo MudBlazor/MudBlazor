@@ -6,7 +6,7 @@
 <MudTable Items="@Elements" Hover="true" SortLabel="Sort By">
     <HeaderContent>
         <MudTh><MudTableSortLabel SortBy="new Func<Element, object>(x=>x.Number)">Nr</MudTableSortLabel></MudTh>
-        <MudTh><MudTableSortLabel SortBy="new Func<Element, object>(x=>x.Sign)">Sign</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel Enabled="@enabled" SortBy="new Func<Element, object>(x=>x.Sign)">Sign</MudTableSortLabel></MudTh>
         <MudTh><MudTableSortLabel InitialDirection="SortDirection.Ascending" SortBy="new Func<Element, object>(x=>x.Name)">Name</MudTableSortLabel></MudTh>
         <MudTh><MudTableSortLabel SortBy="new Func<Element, object>(x=>x.Position)">Position</MudTableSortLabel></MudTh>
         <MudTh><MudTableSortLabel SortBy="new Func<Element, object>(x=>x.Molar)">Mass</MudTableSortLabel></MudTh>
@@ -23,13 +23,16 @@
     </PagerContent>
 </MudTable>
 
+<MudSwitch @bind-Checked="enabled" Color="Color.Info">Enable sorting on the Sign Column</MudSwitch>
+
 @code {
+    private bool enabled = true;
     private IEnumerable<Element> Elements = new List<Element>();
 
     protected override async Task OnInitializedAsync()
     {
         Elements = await httpClient.GetFromJsonAsync<List<Element>>("webapi/periodictable");
-    } 
+    }
 }
 
 

@@ -8,14 +8,14 @@ namespace MudBlazor
 {
     public partial class MudRadio<T> : MudComponentBase, IDisposable
     {
-        private bool _checked;
-
         [CascadingParameter] protected MudRadioGroup<T> RadioGroup { get; set; }
+
+        [CascadingParameter] public bool RightToLeft { get; set; }
 
         protected string Classname =>
         new CssBuilder("mud-radio")
             .AddClass($"mud-disabled", Disabled)
-            .AddClass($"mud-radio-content-placement-{Placement.ToDescriptionString()}", when: () => Placement != Placement.End)
+            .AddClass($"mud-radio-content-placement-{ConvertPlacement(Placement).ToDescriptionString()}")
             .AddClass(Class)
             .Build();
 
@@ -23,15 +23,35 @@ namespace MudBlazor
         new CssBuilder("mud-button-root mud-icon-button")
             .AddClass($"mud-ripple mud-ripple-radio", !DisableRipple)
             .AddClass($"mud-radio-color-{Color.ToDescriptionString()}")
+            .AddClass($"mud-radio-dense", Dense)
             .AddClass($"mud-disabled", Disabled)
             .AddClass($"mud-checked", Checked)
-            .AddClass(Class)
             .Build();
 
         protected string RadioIconsClassNames =>
         new CssBuilder("mud-radio-icons")
             .AddClass($"mud-checked", Checked)
             .Build();
+
+        protected string IconClassName =>
+        new CssBuilder("mud-icon-root mud-svg-icon")
+            .AddClass($"mud-icon-size-{Size.ToDescriptionString()}")
+            .Build();
+
+        protected string CheckedIconClassName =>
+        new CssBuilder("mud-icon-root mud-svg-icon mud-radio-icon-checked")
+            .AddClass($"mud-icon-size-{Size.ToDescriptionString()}")
+            .Build();
+
+        private Placement ConvertPlacement(Placement placement)
+        {
+            return placement switch
+            {
+                Placement.Left => RightToLeft ? Placement.End : Placement.Start,
+                Placement.Right => RightToLeft ? Placement.Start : Placement.End,
+                _ => placement
+            };
+        }
 
         /// <summary>
         /// The color of the component. It supports the theme colors.
@@ -49,6 +69,16 @@ namespace MudBlazor
         [Parameter] public T Option { get; set; }
 
         /// <summary>
+        /// If true, compact padding will be applied.
+        /// </summary>
+        [Parameter] public bool Dense { get; set; }
+
+        /// <summary>
+        /// The Size of the component.
+        /// </summary>
+        [Parameter] public Size Size { get; set; } = Size.Medium;
+
+        /// <summary>
         /// If true, disables ripple effect.
         /// </summary>
         [Parameter] public bool DisableRipple { get; set; }
@@ -63,21 +93,20 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public RenderFragment ChildContent { get; set; }
 
-        internal bool Checked => _checked;
+        internal bool Checked { get; private set; }
 
         internal void SetChecked(bool value)
         {
-            if (_checked != value)
+            if (Checked != value)
             {
-                _checked = value;
+                Checked = value;
                 StateHasChanged();
             }
         }
 
         public void Select()
         {
-            if (RadioGroup != null)
-                RadioGroup.SetSelectedRadioAsync(this).AndForget();
+            RadioGroup?.SetSelectedRadioAsync(this).AndForget();
         }
 
         private Task OnClick()
@@ -98,8 +127,7 @@ namespace MudBlazor
 
         public void Dispose()
         {
-            if (RadioGroup != null)
-                RadioGroup.UnregisterRadio(this);
+            RadioGroup?.UnregisterRadio(this);
         }
     }
 }

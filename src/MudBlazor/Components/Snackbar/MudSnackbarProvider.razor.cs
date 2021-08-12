@@ -14,14 +14,29 @@ namespace MudBlazor
     {
         [Inject] private ISnackbar Snackbars { get; set; }
 
+        [CascadingParameter] public bool RightToLeft { get; set; }
+
         protected IEnumerable<Snackbar> Snackbar => Snackbars.Configuration.NewestOnTop
                 ? Snackbars.ShownSnackbars.Reverse()
                 : Snackbars.ShownSnackbars;
 
         protected string Classname =>
             new CssBuilder(Class)
-            .AddClass(Snackbars.Configuration.PositionClass)
+            .AddClass(GetPositionClass())
         .Build();
+
+        private string GetPositionClass()
+        {
+            var positionClass = Snackbars.Configuration.PositionClass;
+            return positionClass switch
+            {
+                Defaults.Classes.Position.BottomStart => RightToLeft ? Defaults.Classes.Position.BottomRight : Defaults.Classes.Position.BottomLeft,
+                Defaults.Classes.Position.BottomEnd => RightToLeft ? Defaults.Classes.Position.BottomLeft : Defaults.Classes.Position.BottomRight,
+                Defaults.Classes.Position.TopStart => RightToLeft ? Defaults.Classes.Position.TopRight : Defaults.Classes.Position.TopLeft,
+                Defaults.Classes.Position.TopEnd => RightToLeft ? Defaults.Classes.Position.TopLeft : Defaults.Classes.Position.TopRight,
+                _ => positionClass
+            };
+        }
 
         protected override void OnInitialized()
         {

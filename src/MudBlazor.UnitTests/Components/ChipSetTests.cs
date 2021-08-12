@@ -1,5 +1,4 @@
 ﻿#pragma warning disable CS1998 // async without await
-#pragma warning disable IDE1006 // leading underscore
 #pragma warning disable BL0005 // Set parameter outside component
 
 using System;
@@ -12,29 +11,16 @@ using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Components
 {
-
     [TestFixture]
-    public class ChipSetTests
+    public class ChipSetTests : BunitTest
     {
-        private Bunit.TestContext ctx;
-
-        [SetUp]
-        public void Setup()
-        {
-            ctx = new Bunit.TestContext();
-            ctx.AddTestServices();
-        }
-
-        [TearDown]
-        public void TearDown() => ctx.Dispose();
-
         /// <summary>
         /// Clicking a chip selects it, clicking again de-selects it. Clicking one chip de-selects the other
         /// </summary>
         [Test]
         public async Task ChipSet_SingleSelection()
         {
-            var comp = ctx.RenderComponent<ChipSetTest>();
+            var comp = Context.RenderComponent<ChipSetTest>();
             // print the generated html
             Console.WriteLine(comp.Markup);
             // select elements needed for the test
@@ -66,7 +52,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task ChipSet_SingleSelection_Mandatory()
         {
-            var comp = ctx.RenderComponent<ChipSetTest>();
+            var comp = Context.RenderComponent<ChipSetTest>();
             // print the generated html
             Console.WriteLine(comp.Markup);
             // select elements needed for the test
@@ -96,7 +82,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task ChipSet_MultiSelection()
         {
-            var comp = ctx.RenderComponent<ChipSetTest>();
+            var comp = Context.RenderComponent<ChipSetTest>();
             // print the generated html
             Console.WriteLine(comp.Markup);
             // select elements needed for the test
@@ -133,7 +119,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task ChipSet_SingleSelection_WithMultipleDefaultChips()
         {
-            var comp = ctx.RenderComponent<ChipSetDefaultChipsTest>();
+            var comp = Context.RenderComponent<ChipSetDefaultChipsTest>();
             // print the generated html
             Console.WriteLine(comp.Markup);
             // select elements needed for the test
@@ -162,7 +148,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task ChipSet_MultiSelection_DefaultChipsShouldBeInitiallySelected()
         {
-            var comp = ctx.RenderComponent<ChipSetDefaultChipsTest>(ComponentParameter.CreateParameter("MultiSelection", true));
+            var comp = Context.RenderComponent<ChipSetDefaultChipsTest>(ComponentParameter.CreateParameter("MultiSelection", true));
             // print the generated html
             Console.WriteLine(comp.Markup);
             // select elements needed for the test
@@ -178,6 +164,25 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("div.mud-chip")[1].Click();
             comp.FindAll("p")[0].TrimmedText().Should().Be("Corn flakes, Salad");
             string.Join(", ", chipset.Instance.SelectedChips.Select(x => x.Text).OrderBy(x => x)).Should().Be("Corn flakes, Salad");
+        }
+
+
+        [Test]
+        public async Task ChipSet_MultiSelection_LateDefaultChipsShouldBeInitiallySelected()
+        {
+            var comp = Context.RenderComponent<ChipSetLateDefaultTest>();
+            // print the generated html
+            Console.WriteLine(comp.Markup);
+            // check that only one item is present
+            var chipset = comp.FindComponent<MudChipSet>();
+            comp.FindAll("div.mud-chip").Count.Should().Be(1);
+            chipset.Instance.SelectedChips.Length.Should().Be(1);
+            string.Join(", ", chipset.Instance.SelectedChips.Select(x => x.Text).OrderBy(x => x)).Should().Be("Primary");
+            // select extra item
+            comp.FindAll("button")[0].Click();
+            // check that extra item is selected
+            comp.FindAll("div.mud-chip").Count.Should().Be(2);
+            string.Join(", ", chipset.Instance.SelectedChips.Select(x => x.Text).OrderBy(x => x)).Should().Be("Extra Chip, Primary");
         }
     }
 

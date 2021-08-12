@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Microsoft.AspNetCore.Components;
@@ -12,9 +11,9 @@ namespace MudBlazor
     public partial class MudTreeViewItem<T> : MudComponentBase
     {
         private string _text;
-        private bool _isSelected, _isActivated;
+        private bool _isSelected, _isActivated, _isServerLoaded;
         private Converter<T> _converter = new DefaultConverter<T>();
-        private readonly List<MudTreeViewItem<T>> _childItems = new List<MudTreeViewItem<T>>();
+        private readonly List<MudTreeViewItem<T>> _childItems = new();
 
         protected string Classname =>
         new CssBuilder("mud-treeview-item")
@@ -123,7 +122,11 @@ namespace MudBlazor
         [Parameter]
         public EventCallback<MouseEventArgs> OnClick { get; set; }
 
-        bool HasChild => ChildContent != null || (MudTreeRoot != null && Items != null && Items.Count != 0);
+        public bool Loading { get; set; }
+
+        bool HasChild => ChildContent != null ||
+            (MudTreeRoot != null && Items != null && Items.Count != 0) ||
+            (MudTreeRoot?.ServerData != null && !_isServerLoaded && (Items == null || Items.Count == 0));
 
         protected bool IsChecked
         {
@@ -175,6 +178,7 @@ namespace MudBlazor
             if (HasChild && (MudTreeRoot?.ExpandOnClick ?? false))
             {
                 Expanded = !Expanded;
+                TryInvokeServerLoadFunc();
                 await ExpandedChanged.InvokeAsync(Expanded);
             }
 
@@ -191,6 +195,7 @@ namespace MudBlazor
                 return Task.CompletedTask;
 
             Expanded = expanded;
+            TryInvokeServerLoadFunc();
             return ExpandedChanged.InvokeAsync(expanded);
         }
 
@@ -237,6 +242,22 @@ namespace MudBlazor
                 {
                     yield return selected;
                 }
+            }
+        }
+
+        internal async void TryInvokeServerLoadFunc()
+        {
+            if (Expanded && (Items == null || Items.Count == 0) && MudTreeRoot?.ServerData != null)
+            {
+                Loading = true;
+                StateHasChanged();
+
+                Items = await MudTreeRoot.ServerData(Value);
+
+                Loading = false;
+                _isServerLoaded = true;
+
+                StateHasChanged();
             }
         }
     }

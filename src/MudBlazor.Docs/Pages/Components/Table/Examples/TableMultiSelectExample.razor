@@ -3,7 +3,7 @@
 @namespace MudBlazor.Docs.Examples
 @inject HttpClient httpClient
 
-<MudTable Items="@Elements" MultiSelection="true" @bind-SelectedItems="selectedItems" Hover="@hover">
+<MudTable Items="@Elements" MultiSelection="true" @bind-SelectedItems="selectedItems1" Hover="@hover">
     <HeaderContent>
         <MudTh>Nr</MudTh>
         <MudTh>Sign</MudTh>
@@ -21,12 +21,18 @@
     <PagerContent>
         <MudTablePager PageSizeOptions="new int[]{50, 100}" />
     </PagerContent>
+    <FooterContent>
+        <MudTd colspan="5">Select All</MudTd>
+    </FooterContent>
 </MudTable>
-<MudText Inline="true">Selected items: @(selectedItems==null ? "" : string.Join(", ", selectedItems.OrderBy(x=>x.Sign).Select(x=>x.Sign)))</MudText>
+
+<MudText Inline="true">Selected items: @(selectedItems1==null ? "" : string.Join(", ", selectedItems1.OrderBy(x=>x.Sign).Select(x=>x.Sign)))</MudText>
+<MudText Inline="true">Selected items: @(selectedItems2==null ? "" : string.Join(", ", selectedItems2.OrderBy(x=>x.Sign).Select(x=>x.Sign)))</MudText>
 
 @code {
     private bool hover = true;
-    private HashSet<Element> selectedItems = new HashSet<Element>();
+    private HashSet<Element> selectedItems1 = new HashSet<Element>();
+    private HashSet<Element> selectedItems2 = new HashSet<Element>();
 
     private IEnumerable<Element> Elements = new List<Element>();
 

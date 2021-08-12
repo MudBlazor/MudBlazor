@@ -1,5 +1,4 @@
-﻿using System;
-using Microsoft.AspNetCore.Components;
+﻿using Microsoft.AspNetCore.Components;
 using MudBlazor.Extensions;
 using MudBlazor.Utilities;
 
@@ -20,6 +19,11 @@ namespace MudBlazor
         /// Icon to be used can either be svg paths for font icons.
         /// </summary>
         [Parameter] public string Icon { get; set; }
+
+        /// <summary>
+        /// Title of the icon used for accessibility.
+        /// </summary>
+        [Parameter] public string Title { get; set; }
 
         /// <summary>
         /// The Size of the icon.

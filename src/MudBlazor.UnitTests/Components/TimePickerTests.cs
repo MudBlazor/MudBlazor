@@ -1,33 +1,18 @@
-﻿#pragma warning disable IDE1006 // leading underscore
-#pragma warning disable BL0005 // Set parameter outside component
+﻿#pragma warning disable BL0005 // Set parameter outside component
 
 using System;
 using System.Threading.Tasks;
 using Bunit;
 using FluentAssertions;
+using MudBlazor.UnitTests.TestComponents.TimePicker;
 using NUnit.Framework;
-using NUnit.Framework.Internal;
 using static Bunit.ComponentParameterFactory;
 
 namespace MudBlazor.UnitTests.Components
 {
-
     [TestFixture]
-    public class TimePickerTests
+    public class TimePickerTests : BunitTest
     {
-        private Bunit.TestContext ctx;
-
-        [SetUp]
-        public void Setup()
-        {
-            ctx = new Bunit.TestContext();
-            ctx.AddTestServices();
-        }
-
-        [TearDown]
-        public void TearDown() => ctx.Dispose();
-
-
         public IRenderedComponent<MudTimePicker> OpenPicker(ComponentParameter parameter)
         {
             return OpenPicker(new ComponentParameter[] { parameter });
@@ -38,11 +23,11 @@ namespace MudBlazor.UnitTests.Components
             IRenderedComponent<MudTimePicker> comp;
             if (parameters is null)
             {
-                comp = ctx.RenderComponent<MudTimePicker>();
+                comp = Context.RenderComponent<MudTimePicker>();
             }
             else
             {
-                comp = ctx.RenderComponent<MudTimePicker>(parameters);
+                comp = Context.RenderComponent<MudTimePicker>(parameters);
             }
 
             // should not be open
@@ -155,7 +140,7 @@ namespace MudBlazor.UnitTests.Components
             // add 12 hours in pm mode
             comp.FindAll("div.mud-hour")[10].Click();
             picker.TimeIntermediate.Value.Hours.Should().Be(23);
-            // click am button shoulkd subtract 12 hours
+            // click am button should subtract 12 hours
             comp.FindAll("button.mud-timepicker-button")[2].Click();
             picker.TimeIntermediate.Value.Hours.Should().Be(11);
             picker.TimeIntermediate.Value.Minutes.Should().Be(30);
@@ -270,7 +255,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void InputStringValues_CheckParsing()
         {
-            var comp = ctx.RenderComponent<MudTimePicker>();
+            var comp = Context.RenderComponent<MudTimePicker>();
             var picker = comp.Instance;
             // valid time
             comp.Find("input").Change("23:02");
@@ -361,7 +346,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task Open_Programmatically_CheckOpen_Close_Programmatically_CheckClosed()
         {
-            var comp = ctx.RenderComponent<MudTimePicker>();
+            var comp = Context.RenderComponent<MudTimePicker>();
             Console.WriteLine(comp.Markup + "\n");
             comp.FindAll("div.mud-picker-content").Count.Should().Be(0);
             // clicking the button should open the picker
@@ -384,6 +369,114 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("div.mud-overlay").Click();
             picker.Time.Value.Hours.Should().Be(11);
             picker.Time.Value.Minutes.Should().Be(30);
+        }
+
+        [Test]
+        public void SelectTimeStatic_UsingClicks_CheckTime()
+        {
+            var comp = Context.RenderComponent<MudTimePicker>(Parameter(nameof(MudTimePicker.PickerVariant), PickerVariant.Static));
+            var picker = comp.Instance;
+            // select 16 hours on outer dial and 30 mins
+            comp.FindAll("div.mud-picker-stick-outer.mud-hour")[3].Click();
+            picker.Time.Value.Hours.Should().Be(16);
+            picker.Time.Value.Minutes.Should().Be(0);
+            // select 30 minutes
+            comp.FindAll("div.mud-minute")[30].Click();
+            picker.Time.Value.Hours.Should().Be(16);
+            picker.Time.Value.Minutes.Should().Be(30);
+            Console.Write(comp.Markup);
+        }
+
+        [Test]
+        public async Task CheckAutoCloseTimePickerTest()
+        {
+            // Get access to the timepicker of the instance
+            var comp = Context.RenderComponent<AutoCompleteTimePickerTest>();
+            var timePicker = comp.FindComponent<MudTimePicker>();
+
+            // Open the timepicker
+            await comp.InvokeAsync(() => timePicker.Instance.Open());
+            var picker = timePicker.Instance;
+
+            // Select 16 hours
+            comp.FindAll("div.mud-picker-stick-outer.mud-hour")[3].Click();
+            picker.TimeIntermediate.Value.Hours.Should().Be(16);
+
+            // Select 30 minutes
+            comp.FindAll("div.mud-minute")[30].Click();
+            picker.TimeIntermediate.Value.Minutes.Should().Be(30);
+
+            // Click outside of the timepicker
+            comp.Find("div.mud-overlay").Click();
+
+            // Check that the time should remain the same because autoclose is false
+            // and there are actions which are defined
+            picker.Time.Should().Be(new TimeSpan(00, 45, 00));
+
+            // Change the value of autoclose
+            timePicker.Instance.AutoClose = true;
+
+            // Open the timepicker
+            await comp.InvokeAsync(() => timePicker.Instance.Open());
+            picker = timePicker.Instance;
+
+            // Select 16 hours
+            comp.FindAll("div.mud-picker-stick-outer.mud-hour")[3].Click();
+            picker.TimeIntermediate.Value.Hours.Should().Be(16);
+
+            // Select 30 minutes
+            comp.FindAll("div.mud-minute")[30].Click();
+            picker.TimeIntermediate.Value.Minutes.Should().Be(30);
+
+            // Click outside of the timepicker
+            comp.Find("div.mud-overlay").Click();
+
+            // Check that the time should be equal to the selection this time!
+            picker.Time.Should().Be(new TimeSpan(16, 30, 00));
+        }
+
+        public async Task CheckReadOnlyTest()
+        {
+            // Get access to the timepicker of the instance
+            var comp = Context.RenderComponent<MudTimePicker>();
+            var picker = comp.Instance;
+
+            // Open the timepicker
+            await comp.InvokeAsync(() => picker.Open());
+
+            // Select 16 hours
+            comp.FindAll("div.mud-picker-stick-outer.mud-hour")[3].Click();
+            picker.TimeIntermediate.Value.Hours.Should().Be(16);
+
+            // Select 30 minutes
+            comp.FindAll("div.mud-minute")[30].Click();
+            picker.TimeIntermediate.Value.Minutes.Should().Be(30);
+
+            // Click outside of the timepicker
+            comp.Find("div.mud-overlay").Click();
+
+            // Check that the time have been changed
+            picker.Time.Should().Be(new TimeSpan(16, 30, 00));
+
+            // Changer the readonly to true
+            picker.ReadOnly = true;
+
+            // Open the timepicker
+            await comp.InvokeAsync(() => picker.Open());
+
+            // Select 17 hours
+            comp.FindAll("div.mud-picker-stick-outer.mud-hour")[4].Click();
+            picker.TimeIntermediate.Value.Hours.Should().Be(17);
+
+            // Select 31 minutes
+            comp.FindAll("div.mud-minute")[34].Click();
+            picker.TimeIntermediate.Value.Minutes.Should().Be(34);
+
+            // Click outside of the timepicker
+            comp.Find("div.mud-overlay").Click();
+
+            // Check that the time have not been changed
+            picker.Time.Should().Be(new TimeSpan(16, 30, 00));
         }
     }
 }

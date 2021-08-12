@@ -1,13 +1,17 @@
 ﻿using System;
 using Microsoft.AspNetCore.Components;
+using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
     public partial class MudTablePager : MudComponentBase
     {
-        [CascadingParameter] public TableContext Context { get; set; }
+        protected string Classname =>
+            new CssBuilder("mud-table-pagination-toolbar")
+            .AddClass(Class)
+            .Build();
 
-        [CascadingParameter] public bool RightToLeft { get; set; }
+        [CascadingParameter] public TableContext Context { get; set; }
 
         /// <summary>
         /// Set true to hide the part of the pager which allows to change the page size.
@@ -21,7 +25,7 @@ namespace MudBlazor
 
         /// <summary>
         /// Format string for the display of the current page, which you can localize to your language. Available variables are:
-        /// {first_item}, {last_item} and {all_items} which will replaced with the indices of the page's first and last item as well as the total number of items.
+        /// {first_item}, {last_item} and {all_items} which will replaced with the indices of the page's first and last item, as well as the total number of items.
         /// Default: "{first_item}-{last_item} of {all_items}" which is transformed into "0-25 of 77". 
         /// </summary>
         [Parameter] public string InfoFormat { get; set; } = "{first_item}-{last_item} of {all_items}";
@@ -40,6 +44,10 @@ namespace MudBlazor
         {
             Table?.SetRowsPerPage(int.Parse(size));
         }
+
+        private bool BackButtonsDisabled => Table == null ? false : Table.CurrentPage == 0;
+
+        private bool ForwardButtonsDisabled => Table == null ? false : (Table.CurrentPage + 1) * Table.RowsPerPage >= Table.GetFilteredItemsCount();
 
         public MudTableBase Table => Context?.Table;
 

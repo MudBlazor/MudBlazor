@@ -39,7 +39,7 @@ namespace MudBlazor
         [Parameter] public bool DisableGutters { get; set; }
 
         /// <summary>
-        /// If true, the borders around eatch panel will be removed.
+        /// If true, the borders around each panel will be removed.
         /// </summary>
         [Parameter] public bool DisableBorders { get; set; }
 
@@ -48,7 +48,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public RenderFragment ChildContent { get; set; }
 
-        private List<MudExpansionPanel> _panels = new List<MudExpansionPanel>();
+        private List<MudExpansionPanel> _panels = new();
 
         internal void AddPanel(MudExpansionPanel panel)
         {
@@ -75,6 +75,7 @@ namespace MudBlazor
                     last.NextPanelExpanded = panel.IsExpanded;
                 last = panel;
             }
+            StateHasChanged();
         }
 
         public void CloseAllExcept(MudExpansionPanel panel)

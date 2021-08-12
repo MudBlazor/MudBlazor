@@ -2,23 +2,23 @@
 @inherits MudComponentBase
 
 <div @attributes="UserAttributes" class="@Classname" @onclick="OnClickHandler" @onclick:stopPropagation="true" style="@Style">
-    @if (!String.IsNullOrEmpty(Avatar))
+    @if (!string.IsNullOrWhiteSpace(Avatar))
     {
         <div class="mud-list-item-avatar">
             <MudAvatar Class="@AvatarClass">
-                <MudIcon Icon="@Avatar" Color="@IconColor"></MudIcon>
+                <MudIcon Icon="@Avatar" Color="@IconColor" Size="@IconSize" />
             </MudAvatar>
         </div>
     }
-    else if (!String.IsNullOrEmpty(Icon))
+    else if (!string.IsNullOrWhiteSpace(Icon))
     {
         <div class="mud-list-item-icon">
-            <MudIcon Icon="@Icon" Color="@IconColor"></MudIcon>
+            <MudIcon Icon="@Icon" Color="@IconColor" Size="@IconSize" />
         </div>
     }
     <div class="mud-list-item-text @(Inset? "mud-list-item-text-inset" : "")">
         <MudText Typo="@_textTypo">
-            @if (ChildContent!=null)
+            @if (ChildContent != null)
             {
                 @ChildContent
             }
@@ -30,14 +30,7 @@
     </div>
     @if (NestedList != null)
     {
-        @if (_expanded)
-        {
-            <MudIcon Icon="@Icons.Material.Filled.ExpandLess"/>
-        }
-        else
-        {
-            <MudIcon Icon="@Icons.Material.Filled.ExpandMore"/>
-        }
+        <MudIcon Icon="@($"{(_expanded ? Icons.Material.Filled.ExpandLess : Icons.Material.Filled.ExpandMore)}")" Size="@IconSize" Color="@AdornmentColor" />
     }
 </div>
 @if (NestedList != null)

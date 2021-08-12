@@ -1,47 +1,55 @@
 ﻿
 .mud-tooltip-root {
     position: relative;
-    display: inline-block;
 
-    & .mud-tooltip {
-        color: var(--mud-palette-dark-text);
-        padding: 4px 8px;
-        text-align: center;
-        font-weight: 500;
-        font-size: 12px;
-        line-height: 1.4em;
-        width: max-content;
-        background-color: var(--mud-palette-grey-darker);
-        border-radius: var(--mud-default-borderradius);
-        position: absolute;
-        z-index: var(--mud-zindex-tooltip);
-        visibility: hidden;
-        opacity: 0;
-        transition: opacity .2s;
+    &.mud-tooltip-inline {
+        display: inline-block;
+    }
+}
+.mud-tooltip {
+    color: var(--mud-palette-dark-text);
+    padding: 4px 8px;
+    text-align: center;
+    font-weight: 500;
+    font-size: 12px;
+    line-height: 1.4em;
+    width: max-content;
+    background-color: var(--mud-palette-grey-darker);
+    border-radius: var(--mud-default-borderradius);
+    position: absolute;
+    z-index: var(--mud-zindex-tooltip);
+    visibility: hidden;
+    opacity: 0;
+    transition: opacity .2s;
 
-        &.mud-tooltip-placement-top {
-            top: 0;
-            left: 50%;
-            transform: translate(-50%, calc(-100% - 10px));
-        }
+    &.mud-tooltip-visible {
+        visibility: visible;
+        opacity: 1;
+    }
 
-        &.mud-tooltip-placement-bottom {
-            bottom: 0;
-            left: 50%;
-            transform: translate(-50%, calc(100% + 10px));
-        }
 
-        &.mud-tooltip-placement-start {
-            top: 0;
-            left: 0;
-            transform: translateX(calc(-100% - 10px));
-        }
+    &.mud-tooltip-placement-top {
+        top: 0;
+        left: 50%;
+        transform: translate(-50%, calc(-100% - 10px));
+    }
 
-        &.mud-tooltip-placement-end {
-            top: 0;
-            right: 0;
-            transform: translateX(calc(100% + 10px));
-        }
+    &.mud-tooltip-placement-bottom {
+        bottom: 0;
+        left: 50%;
+        transform: translate(-50%, calc(100% + 10px));
+    }
+
+    &.mud-tooltip-placement-left {
+        top: 0;
+        left: 0;
+        transform: translateX(calc(-100% - 10px));
+    }
+
+    &.mud-tooltip-placement-right {
+        top: 0;
+        right: 0;
+        transform: translateX(calc(100% + 10px));
     }
 
     &:hover .mud-tooltip {
@@ -49,3 +57,6 @@
         opacity: 1;
     }
 }
+
+    
+   

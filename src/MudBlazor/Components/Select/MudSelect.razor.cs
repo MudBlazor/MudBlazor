@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
-using Microsoft.JSInterop;
 using MudBlazor.Utilities;
 using MudBlazor.Utilities.Exceptions;
 
@@ -13,6 +12,8 @@ namespace MudBlazor
     public partial class MudSelect<T> : MudBaseInput<T>, IMudSelect
     {
         private HashSet<T> _selectedValues;
+        private bool _dense;
+        private string multiSelectionText;
 
         protected string Classname =>
             new CssBuilder("mud-select")
@@ -30,24 +31,39 @@ namespace MudBlazor
         [Parameter] public string Label { get; set; }
 
         /// <summary>
-        /// If true, compact vertical padding will be applied to all select items.
+        /// If true, compact vertical padding will be applied to all Select items.
         /// </summary>
-        [Parameter] public bool Dense { get; set; }
+        [Parameter]
+        public bool Dense
+        {
+            get { return _dense; }
+            set
+            {
+                // Ensure that when dense is applied we set the margin on the input controls
+                _dense = value;
+                Margin = _dense ? Margin.Dense : Margin.None;
+            }
+        }
 
         /// <summary>
         /// The Open Select Icon
         /// </summary>
-        [Parameter] public string OpenIcon { get; set; } = Icons.Material.Filled.ArrowDropUp;
+        [Parameter] public string OpenIcon { get; set; } = Icons.Material.Filled.ArrowDropDown;
 
         /// <summary>
-        /// The Open Select Icon
+        /// The Close Select Icon
         /// </summary>
-        [Parameter] public string CloseIcon { get; set; } = Icons.Material.Filled.ArrowDropDown;
+        [Parameter] public string CloseIcon { get; set; } = Icons.Material.Filled.ArrowDropUp;
 
         /// <summary>
         /// Fires when SelectedValues changes.
         /// </summary>
         [Parameter] public EventCallback<HashSet<T>> SelectedValuesChanged { get; set; }
+
+        /// <summary>
+        /// Function to define a customized multiselection text.
+        /// </summary>
+        [Parameter] public Func<List<string>, string> MultiSelectionTextFunc { get; set; }
 
         /// <summary>
         /// Set of selected values. If MultiSelection is false it will only ever contain a single value. This property is two-way bindable.
@@ -71,7 +87,19 @@ namespace MudBlazor
                 if (!MultiSelection)
                     SetValueAsync(_selectedValues.FirstOrDefault()).AndForget();
                 else
-                    SetTextAsync(string.Join(", ", SelectedValues.Select(x => Converter.Set(x)))).AndForget();
+                {
+                    //Warning. Here the Converter was not set yet
+                    if (MultiSelectionTextFunc != null)
+                    {
+                        SetCustomizedTextAsync(string.Join(", ", SelectedValues.Select(x => Converter.Set(x))),
+                            selectedConvertedValues: SelectedValues.Select(x => Converter.Set(x)).ToList(),
+                            multiSelectionTextFunc: MultiSelectionTextFunc).AndForget();
+                    }
+                    else
+                    {
+                        SetTextAsync(string.Join(", ", SelectedValues.Select(x => Converter.Set(x)))).AndForget();
+                    }
+                }
                 SelectedValuesChanged.InvokeAsync(new HashSet<T>(SelectedValues));
             }
         }
@@ -98,6 +126,12 @@ namespace MudBlazor
                     //GetFunc = LookupValue,
                 };
             }
+        }
+
+        public MudSelect()
+        {
+            Adornment = Adornment.End;
+            IconSize = Size.Medium;
         }
 
         protected override void OnAfterRender(bool firstRender)
@@ -155,9 +189,22 @@ namespace MudBlazor
 
         protected override Task UpdateTextPropertyAsync(bool updateValue)
         {
-            // when multiselection is true, we don't update the text when the value changes. 
-            // instead the Text will be set with a comma separated list of selected values
-            return MultiSelection ? Task.CompletedTask : base.UpdateTextPropertyAsync(updateValue);
+            // when multiselection is true, we return
+            // a comma separated list of selected values
+            if (MultiSelectionTextFunc != null)
+            {
+                return MultiSelection
+                    ? SetCustomizedTextAsync(string.Join(", ", SelectedValues.Select(x => Converter.Set(x))),
+                        selectedConvertedValues: SelectedValues.Select(x => Converter.Set(x)).ToList(),
+                        multiSelectionTextFunc: MultiSelectionTextFunc)
+                    : base.UpdateTextPropertyAsync(updateValue);
+            }
+            else
+            {
+                return MultiSelection
+                    ? SetTextAsync(string.Join(", ", SelectedValues.Select(x => Converter.Set(x))))
+                    : base.UpdateTextPropertyAsync(updateValue);
+            }
         }
 
         internal event Action<HashSet<T>> SelectionChangedFromOutside;
@@ -167,8 +214,8 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public bool MultiSelection { get; set; }
 
-        protected List<MudSelectItem<T>> _items = new List<MudSelectItem<T>>();
-        protected Dictionary<T, MudSelectItem<T>> _value_lookup = new Dictionary<T, MudSelectItem<T>>();
+        protected List<MudSelectItem<T>> _items = new();
+        protected Dictionary<T, MudSelectItem<T>> _value_lookup = new();
         internal void Add(MudSelectItem<T> item)
         {
             _items.Add(item);
@@ -184,32 +231,45 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Sets the maxheight the select can have when open.
+        /// Sets the maxheight the Select can have when open.
         /// </summary>
         [Parameter] public int MaxHeight { get; set; } = 300;
 
         /// <summary>
-        /// Sets the direction the select menu should be.
+        /// Sets the direction the Select menu should open.
         /// </summary>
         [Parameter] public Direction Direction { get; set; } = Direction.Bottom;
 
         /// <summary>
-        /// If true, the select menu will open either before or after the input.
+        /// If true, the Select menu will open either before or after the input (left/right).
         /// </summary>
-        [Parameter] public bool OffsetY { get; set; }
-
         [Parameter] public bool OffsetX { get; set; }
 
         /// <summary>
-        /// If true, the select's input will not show any values that are not defined in the dropdown.
+        /// If true, the Select menu will open either before or after the input (top/bottom).
+        /// </summary>
+        [Parameter] public bool OffsetY { get; set; }
+
+        /// <summary>
+        /// If true, the Select's input will not show any values that are not defined in the dropdown.
         /// This can be useful if Value is bound to a variable which is initialized to a value which is not in the list
-        /// and you want the select to show the label / placeholder instead.
+        /// and you want the Select to show the label / placeholder instead.
         /// </summary>
         [Parameter] public bool Strict { get; set; }
 
+        /// <summary>
+        /// Show clear button.
+        /// </summary>
+        [Parameter] public bool Clearable { get; set; } = false;
+
+        /// <summary>
+        /// Button click event for clear button. Called after text and value has been cleared.
+        /// </summary>
+        [Parameter] public EventCallback<MouseEventArgs> OnClearButtonClick { get; set; }
+
         internal bool _isOpen;
 
-        public string CurrentIcon { get; set; }
+        public string _currentIcon { get; set; }
 
         public async Task SelectOption(object obj)
         {
@@ -221,20 +281,41 @@ namespace MudBlazor
                     SelectedValues.Add(value);
                 else
                     SelectedValues.Remove(value);
-                await SetTextAsync(string.Join(", ", SelectedValues.Select(x => Converter.Set(x))));
+
+                await SelectedValuesChanged.InvokeAsync(SelectedValues);
+
+                if (MultiSelectionTextFunc != null)
+                {
+                    await SetCustomizedTextAsync(string.Join(", ", SelectedValues.Select(x => Converter.Set(x))),
+                        selectedConvertedValues: SelectedValues.Select(x => Converter.Set(x)).ToList(),
+                        multiSelectionTextFunc: MultiSelectionTextFunc);
+                }
+                else
+                {
+                    await SetTextAsync(string.Join(", ", SelectedValues.Select(x => Converter.Set(x))));
+                }
+                BeginValidate();
             }
             else
             {
                 // single selection
-                await SetValueAsync(value);
                 _isOpen = false;
                 UpdateIcon();
+
+                if (EqualityComparer<T>.Default.Equals(Value, value))
+                {
+                    StateHasChanged();
+                    return;
+                }
+
+                await SelectedValuesChanged.InvokeAsync(SelectedValues);
+
+                await SetValueAsync(value);
                 SelectedValues.Clear();
                 SelectedValues.Add(value);
             }
-            BeginValidate();
+
             StateHasChanged();
-            await SelectedValuesChanged.InvokeAsync(SelectedValues);
         }
 
         public void ToggleMenu()
@@ -264,21 +345,20 @@ namespace MudBlazor
             await OnBlur.InvokeAsync(new FocusEventArgs());
         }
 
-        public void UpdateIcon()
+        private void UpdateIcon()
         {
-            if (_isOpen)
-            {
-                CurrentIcon = OpenIcon;
-            }
-            else
-            {
-                CurrentIcon = CloseIcon;
-            }
+            _currentIcon = !string.IsNullOrWhiteSpace(AdornmentIcon) ? AdornmentIcon : _isOpen ? CloseIcon : OpenIcon;
         }
 
         protected override void OnInitialized()
         {
             base.OnInitialized();
+            UpdateIcon();
+        }
+
+        protected override void OnParametersSet()
+        {
+            base.OnParametersSet();
             UpdateIcon();
         }
 
@@ -303,6 +383,38 @@ namespace MudBlazor
         {
             return _elementReference.SelectRangeAsync(pos1, pos2);
         }
-    }
 
+        /// <summary>
+        /// Extra handler for clearing selection.
+        /// </summary>
+        protected async ValueTask SelectClearButtonClickHandlerAsync(MouseEventArgs e)
+        {
+            await SetValueAsync(default, false);
+            await SetTextAsync(default, false);
+            SelectedValues.Clear();
+            BeginValidate();
+            StateHasChanged();
+            await SelectedValuesChanged.InvokeAsync(SelectedValues);
+            await OnClearButtonClick.InvokeAsync(e);
+        }
+
+        protected async Task SetCustomizedTextAsync(string text, bool updateValue = true,
+            List<string> selectedConvertedValues = null,
+            Func<List<string>, string> multiSelectionTextFunc = null)
+        {
+            // The Text property of the control is updated
+            Text = multiSelectionTextFunc.Invoke(selectedConvertedValues);
+
+            // The comparison is made on the multiSelectionText variable
+            if (multiSelectionText != text)
+            {
+                multiSelectionText = text;
+                if (!string.IsNullOrWhiteSpace(multiSelectionText))
+                    Touched = true;
+                if (updateValue)
+                    await UpdateValuePropertyAsync(false);
+                await TextChanged.InvokeAsync(multiSelectionText);
+            }
+        }
+    }
 }

@@ -1,0 +1,27 @@
+﻿@namespace MudBlazor.UnitTests.TestComponents
+<MudTabs HeaderPosition="@TabHeaderPosition" TabPanelHeaderPosition="@TabPanelHeaderPosition">
+    <ChildContent>
+        <MudTabPanel Text="First Tab" Tag="0">
+            <MudText Typo="Typo.h1">  First Tab Content</MudText>
+        </MudTabPanel>
+        <MudTabPanel Text="Second Tab" Tag="1">
+            <MudText Typo="Typo.h1">Second Tab Content</MudText>
+        </MudTabPanel>
+        <MudTabPanel Text="Third Tab" Tag="2">
+            <MudText Typo="Typo.h1">Third Tab Content</MudText>
+        </MudTabPanel>
+    </ChildContent>
+    <Header>
+        <MudText Typo="Typo.caption" Class="test-header-content">Count: @context.Panels.Count</MudText>
+    </Header>
+    <TabPanelHeader>
+        <MudText Typo="Typo.caption" Class="test-panel-header-content">Index: @context.Tag</MudText>
+    </TabPanelHeader>
+</MudTabs>
+
+@code {
+
+    [Parameter] public TabHeaderPosition TabHeaderPosition { get; set; } = TabHeaderPosition.After;
+    [Parameter] public TabHeaderPosition TabPanelHeaderPosition { get; set; } = TabHeaderPosition.After;
+
+}
