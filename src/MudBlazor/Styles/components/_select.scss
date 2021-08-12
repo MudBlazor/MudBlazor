@@ -18,6 +18,16 @@
     .mud-select-input {
         cursor: pointer;
 
+        & .mud-input-slot {
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+        }
+
+        & .mud-input-adornment-end {
+            margin-left: 0;
+        }
+
         &:disabled {
             cursor: default;
         }
