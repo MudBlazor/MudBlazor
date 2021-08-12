@@ -1,4 +1,5 @@
 ﻿@namespace MudBlazor.Docs.Examples
+@using MudBlazor.Utilities
 
 <MudEnhancedChart TitlePosition="@config.TitlePosition" TitleAlignment="@config.TitleAlignment" ShowTitle="@config.ShowTitle" Title="@config.TitleCaption"
                   LegendPosition="@config.LegendPosition" LegendAlignment="@config.LegendAlignment" ShowLegend="config.ShowLegend">
@@ -149,7 +150,7 @@
     <MudSlider @bind-Value="@config.XAxis.GridlineWidth" Min="0" Step="0.2" Max="10">Gridline width</MudSlider>
 </MudItem>
                             <MudItem xs="12" sm="4">
-                                <MudTextField Immediate="true" InputType="InputType.Color" Label="Color 1" T="string" @bind-Value="@config.XAxis.GridlineColor" />
+                                <MudColorPicker  Label="Color 1" @bind-Value="@config.XAxis.GridlineColor" />
                             </MudItem>}
         </MudGrid>
     </MudExpansionPanel>
@@ -182,7 +183,7 @@
                                                                                             <MudSlider @bind-Value="@config.YAxis.MajorTickThickness" Min="0" Step="0.2" Max="10">Gridline width</MudSlider>
                                                                                         </MudItem>
                                                                                                                         <MudItem xs="12" sm="6">
-                                                                                                                            <MudTextField Immediate="true" InputType="InputType.Color" Label="Color 1" T="string" @bind-Value="@config.YAxis.MajorTickColor" />
+                                                                                                                            <MudColorPicker  Label="Color 1"  @bind-Value="@config.YAxis.MajorTickColor" />
                                                                                                                         </MudItem>
                                                                                                                                                         <MudItem xs="12">
                                                                                                                                                             <MudCheckBox @bind-Checked="@config.YAxis.ShowMinorTicks" Label="Show Minor Ticks" />
@@ -196,7 +197,7 @@
                                                                                                                                                                                                 <MudSlider @bind-Value="@config.YAxis.MinorTickThickness" Min="0" Step="0.2" Max="10">Gridline width</MudSlider>
                                                                                                                                                                                             </MudItem>
                                                                                                                                                                                                                                 <MudItem xs="12" sm="4">
-                                                                                                                                                                                                                                    <MudTextField Immediate="true" InputType="InputType.Color" Label="Color 1" T="string" @bind-Value="@config.YAxis.MinorTickColor" />
+                                                                                                                                                                                                                                    <MudColorPicker  Label="Color 1"  @bind-Value="@config.YAxis.MinorTickColor" />
                                                                                                                                                                                                                                 </MudItem>}}}
         </MudGrid>
     </MudExpansionPanel>
@@ -247,7 +248,7 @@
                 Int32 temp2 = j;
 <div class="d-flex flex-row">
     <MudTextField Immediate="true" Label="@($"Name of series number {j+1}")" T="string" @bind-Value="config.DataSets[temp].Series[temp2].Name" />
-    <MudTextField Immediate="true" InputType="InputType.Color" Label="Color 1" T="string" @bind-Value="config.DataSets[temp].Series[temp2].Color" />
+    <MudColorPicker Label="Color 1" @bind-Value="config.DataSets[temp].Series[temp2].Color" />
     <MudTooltip Text="Remove Series">
         <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Default" OnClick="@( () => RemoveSeries(config.DataSets[temp],config.DataSets[temp].Series[temp2]))" />
     </MudTooltip>
@@ -265,7 +266,7 @@
     {
         public Guid Id { get; set; }
         public String Name { get; set; } = "My new Series";
-        public String Color { get; set; } = MudBlazor.Utilities.RandomColorSelector.GetRandomColor();
+        public MudColor Color { get; set; } = MudBlazor.Utilities.RandomColorSelector.GetRandomColor();
         public List<Double> Values { get; set; } = new();
 
         public BarChartSeriesConig(IEnumerable<String> existingLabels)
@@ -297,7 +298,7 @@
         public XAxisPlacement Placement { get; set; } = XAxisPlacement.Bottom;
         public Boolean ShowGridlines { get; set; } = false;
         public Double GridlineWidth { get; set; } = 0.2;
-        public String GridlineColor { get; set; } = Colors.Grey.Default;
+        public MudColor GridlineColor { get; set; } = Colors.Grey.Default;
     }
 
     public class YAxisConfiguration
@@ -307,12 +308,12 @@
 
         public Boolean ShowMajorTicks { get; set; } = true;
         public Double MajorTickAmount { get; set; } = 5.0;
-        public String MajorTickColor { get; set; } = Colors.Grey.Default;
+        public MudColor MajorTickColor { get; set; } = Colors.Grey.Default;
         public Double MajorTickThickness { get; set; } = 0.5;
 
         public Boolean ShowMinorTicks { get; set; } = false;
         public Double MinorTickAmount { get; set; } = 5.0;
-        public String MinorTickColor { get; set; } = Colors.Grey.Lighten1;
+        public MudColor MinorTickColor { get; set; } = Colors.Grey.Lighten1;
         public Double MinorTickThickness { get; set; } = 0.2;
 
         public YAxisPlacement Placement { get; set; } = YAxisPlacement.Left;

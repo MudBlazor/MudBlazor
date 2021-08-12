@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using MudBlazor.Utilities;
 
 namespace MudBlazor.EnhanceChart
 {
@@ -22,7 +23,7 @@ namespace MudBlazor.EnhanceChart
     {
         Boolean ShowGridLines { get; }
         Double GridLineThickness { get; }
-        String GridLineColor { get; }
+        MudColor GridLineColor { get; }
         String GridLineCssClass { get; }
     }
 

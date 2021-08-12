@@ -85,9 +85,14 @@ namespace MudBlazor.EnhanceChart
         {
             base.OnParametersSet();
 
+            //if (Chart == null)
+            //{
+            //    throw new ArgumentException("A dataset need to be placed inside a char");
+            //}
+
             if (Chart == null)
             {
-                throw new ArgumentException("A dataset need to be placed inside a char");
+                return;
             }
 
             if (Chart.Contains(this) == false)

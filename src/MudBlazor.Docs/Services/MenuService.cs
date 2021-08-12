@@ -118,9 +118,9 @@ namespace MudBlazor.Docs.Services
 
             // Enhanced Chart
             .AddNavGroup("Enhanced Charts", false, new DocsComponents()
-                .AddItem("Enhanced Bar Chart", typeof(MudEnhancedChart))
-                .AddItem("Enhanced Pie Chart", typeof(MudEnhancedChart))
-                .AddItem("Enhanced Donut Chart", typeof(MudEnhancedChart))
+                .AddItem("Enhanced Bar Chart", typeof(MudEnhancedBarChart))
+                .AddItem("Enhanced Pie Chart", typeof(MudEnhancedPieChart))
+                .AddItem("Enhanced Donut Chart", typeof(MudEnhancedDonutChart))
             );
 
         public IEnumerable<MudComponent> Components => _docsComponents.Elements;
@@ -137,7 +137,10 @@ namespace MudBlazor.Docs.Services
                 {
                     foreach (var apiItem in item.GroupItems.Elements)
                     {
-                        _parents.Add(apiItem.Component, item);
+                        if(_parents.ContainsKey(apiItem.Component) == false)
+                        {
+                            _parents.Add(apiItem.Component, item);
+                        }
                     }
                 }
                 else

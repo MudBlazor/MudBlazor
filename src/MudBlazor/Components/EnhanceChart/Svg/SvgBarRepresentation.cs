@@ -10,7 +10,7 @@ namespace MudBlazor.EnhanceChart.Internal
         public Point2D P2 { get; set; }
         public Point2D P3 { get; set; }
         public Point2D P4 { get; set; }
-        public CssColor Fill { get; set; }
+        public MudColor Fill { get; set; }
         public String XLabel { get; set; }
         public Double YValue { get; set; }
         public String OldPath { get;  set; }

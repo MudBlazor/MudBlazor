@@ -12,7 +12,7 @@ namespace MudBlazor.EnhanceChart
     {
         protected override SegementChartToolTipInfo GenerateToolTip(SvgCircleSegmentRepresentation reprensentation) =>
          new PieChartToolTipInfo(
-                reprensentation.Point.Label, reprensentation.Point.Value, "#" + reprensentation.Fill,
+                reprensentation.Point.Label, reprensentation.Point.Value, reprensentation.Fill,
                 reprensentation.StartAngle, reprensentation.StartAngle - reprensentation.FillAngle, reprensentation.Radius);
 
        

@@ -12,7 +12,7 @@ namespace MudBlazor.EnhanceChart
     {
         protected override SegementChartToolTipInfo GenerateToolTip(SvgDonutSegmentRepresentation reprensentation) =>
          new DonutChartToolTipInfo(
-                reprensentation.Point.Label, reprensentation.Point.Value, "#" + reprensentation.Fill,
+                reprensentation.Point.Label, reprensentation.Point.Value, reprensentation.Fill,
                 reprensentation.StartAngle, reprensentation.StartAngle - reprensentation.FillAngle, reprensentation.Radius);
 
     }

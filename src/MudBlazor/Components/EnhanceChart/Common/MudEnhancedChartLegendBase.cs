@@ -15,7 +15,7 @@ namespace MudBlazor.EnhanceChart
             try
             {
                 //sometimes fires a render error, not sure why
-                //StateHasChanged();
+                StateHasChanged();
             }
             catch (Exception)
             {

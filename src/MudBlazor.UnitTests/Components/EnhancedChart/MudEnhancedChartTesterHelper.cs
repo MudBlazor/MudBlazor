@@ -17,8 +17,6 @@ namespace MudBlazor.UnitTests.Components.EnhancedChart
 {
     public static class MudEnhancedChartTesterHelper
     {
-        public static String ToCssColor(this String input) => ("#" + (String)new CssColor(input)).ToLower();
-
         public static Regex _removeBlazorColonRegex = new Regex(@"(blazor:)([^>]*?)("".*?"")", RegexOptions.Multiline);
 
         public static XElement GetElementAsXmlDocument(IRenderedComponent<MudEnhancedBarChart> comp, Boolean addYLines = false)

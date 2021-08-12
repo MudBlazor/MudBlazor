@@ -59,15 +59,20 @@ namespace MudBlazor.EnhanceChart
         /// <summary>
         /// The color that is applied to the a gridline. This property has only an effect if ShowGridLines is set to true.
         /// </summary>
-        [Parameter] public CssColor GridLineColor { get; set; } = "#808080";
+        [Parameter] public MudColor GridLineColor { get; set; } = "#808080";
 
         protected override void OnParametersSet()
         {
             base.OnParametersSet();
 
-            if (Chart == null)
+            //if (Chart == null)
+            //{
+            //    throw new ArgumentException("Axes needs to be placed inside a Chart");
+            //}
+
+            if(Chart == null)
             {
-                throw new ArgumentException("Axes needs to be placed inside a Chart");
+                return;
             }
 
             ISnapshot<BarChartXAxisSnapshot> _this = this;

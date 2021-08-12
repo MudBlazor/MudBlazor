@@ -234,7 +234,7 @@ namespace MudBlazor.UnitTests.Components.EnhancedChart
         }
 
         [Test]
-        public async Task Animation_Init()
+        public void Animation_Init()
         {
             String firstPointColor = (Colors.BlueGrey.Darken1 + "ff").ToLower();
             String secondPointColor = (Colors.Amber.Darken1 + "ff").ToLower();
@@ -300,7 +300,7 @@ namespace MudBlazor.UnitTests.Components.EnhancedChart
         }
 
         [Test]
-        public async Task Animation_ChangeValue()
+        public void Animation_ChangeValue()
         {
             String firstPointColor = (Colors.BlueGrey.Darken1 + "ff").ToLower();
             String secondPointColor = (Colors.Amber.Darken1 + "ff").ToLower();
@@ -327,8 +327,6 @@ namespace MudBlazor.UnitTests.Components.EnhancedChart
 
             var points = comp.FindComponents<MudEnhancedPieChartDataPoint>();
             points[0].SetParametersAndRender(x => x.Add(y => y.Value, 250.0));
-
-            comp.Render();
 
             XElement expectedRoot = new XElement("svg",
                 new XElement("path",

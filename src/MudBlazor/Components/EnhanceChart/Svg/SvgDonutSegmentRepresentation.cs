@@ -10,7 +10,7 @@ namespace MudBlazor.EnhanceChart.Internal
         public Double Radius { get; set; }
         public Double StartAngle { get; set; }
         public Double FillAngle { get; set; }
-        public CssColor Fill { get; set; }
+        public MudColor Fill { get; set; }
         public Double InnerRadius { get; set; }
 
         public static Double CenterY(Double y) => -y + 50;

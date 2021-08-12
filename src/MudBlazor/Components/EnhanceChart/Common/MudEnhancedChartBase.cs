@@ -39,7 +39,7 @@ namespace MudBlazor.EnhanceChart
         /// <summary>
         /// If this value is true, the bars will have a transition animation when the value changes
         /// </summary>
-        [Parameter] public Boolean AnimationIsEnabled { get; set; } = false;
+        [Parameter] public Boolean AnimationIsEnabled { get; set; } = true;
 
         /// <summary>
         /// Uniuque Id of a chart use to trigger animation and other internal functions.

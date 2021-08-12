@@ -67,7 +67,7 @@ namespace MudBlazor.EnhanceChart
                     _majorTick = tick;
                 }
 
-                Chart.MajorTickChanged(this, tick);
+                Chart?.MajorTickChanged(this, tick);
             }
             else
             {
@@ -76,7 +76,7 @@ namespace MudBlazor.EnhanceChart
                     _minorTick = tick;
                 }
 
-                Chart.MinorTickChanged(this, tick);
+                Chart?.MinorTickChanged(this, tick);
             }
         }
 
@@ -84,9 +84,14 @@ namespace MudBlazor.EnhanceChart
         {
             base.OnParametersSet();
 
+            //if (Chart == null)
+            //{
+            //    throw new ArgumentException("a axes needs to be placed inside a Chart");
+            //}
+
             if (Chart == null)
             {
-                throw new ArgumentException("a axes needs to be placed inside a Chart");
+                return;
             }
 
             if (Chart.Contains(this) == false)

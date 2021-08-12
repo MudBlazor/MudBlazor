@@ -1,7 +1,7 @@
 ﻿@namespace MudBlazor.EnhanceChart
 @inherits MudEnhancedChartLegendBase
 
-<MudPaper Width="200px">
+<MudPaper Width="200px"  @attributes="UserAttributes">
     <MudList Clickable="true">
         @if (LegendInfo != null && LegendInfo.Groups != null && LegendInfo.Groups.Any())
         {
@@ -13,7 +13,7 @@
                  OnClick="@(() => ToggleEnabledStateOfSeries(item))"
                  @onmouseover="@(() => DeactiveAllOtherSeries(item))"
                  @onmouseout="@(() => ActivedAllSeries(item))"
-                 Icon="@Icons.Material.Filled.PieChartOutlined" Style="@($"color:{item.Color};text-decoration: {(item.IsEnabled == false ? "line-through" : "inherit")}  ")"
+                 Icon="@Icons.Material.Filled.PieChartOutline" Style="@($"color:{item.Color};text-decoration: {(item.IsEnabled == false ? "line-through" : "inherit")}  ")"
                  Text="@item.Name" Tag="@item" />
             }
         }

@@ -31,7 +31,7 @@ namespace MudBlazor.EnhanceChart
         /// </summary>
         public override ChartLegendInfo LegendInfo =>
         new ChartLegendInfo(new[] { new DataPointBasedChartLegendInfoGroup(
-            _points.Select(y => new ChartLegendInfoPoint(y.Label, "#" + (String)y.FillColor, y.IsEnabled, y))) });
+            _points.Select(y => new ChartLegendInfoPoint(y.Label, y.FillColor, y.IsEnabled, y))) });
 
 
         [Parameter] public RenderFragment ChildContent { get; set; }
@@ -52,6 +52,11 @@ namespace MudBlazor.EnhanceChart
         }
 
         #endregion
+
+        public MudEnhancedSegmentChart()
+        {
+            base.AnimationIsEnabled = false;
+        }
 
         #region Methods
 

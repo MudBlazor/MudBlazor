@@ -40,11 +40,11 @@ namespace MudBlazor.UnitTests.Components.EnhancedChart
         {
             var series = new List<Double> { 100.0, 80.0, 20.0 };
 
-            List<(String Name, String Color)> expectedToolTips = new()
+            List<(String Name, MudColor Color)> expectedToolTips = new()
             {
-                ("my 1 series", Colors.Green.Accent1.ToCssColor()),
-                ("my 2 series", Colors.Green.Accent1.ToCssColor()),
-                ("my 3 series", Colors.Green.Accent1.ToCssColor()),
+                ("my 1 series", Colors.Green.Accent1),
+                ("my 2 series", Colors.Green.Accent1),
+                ("my 3 series", Colors.Green.Accent1),
             };
 
             var comp = ctx.RenderComponent<MudEnhancedChart>(pChart =>

@@ -1,4 +1,5 @@
 ﻿@namespace MudBlazor.Docs.Examples
+@using MudBlazor.Utilities
 
 <MudEnhancedChart TitlePosition="@config.TitlePosition" TitleAlignment="@config.TitleAlignment" ShowTitle="@config.ShowTitle" Title="@config.TitleCaption"
                   LegendPosition="@config.LegendPosition" LegendAlignment="@config.LegendAlignment" ShowLegend="config.ShowLegend">
@@ -12,18 +13,16 @@
         <MudEnhancedPieChart @key="config" Padding="@config.Padding" StartAngle="@config.StartAngleInDegree" @ref="_pieChart" AnimationIsEnabled="false">
             @foreach (var item in config.DataPoints)
             {
-				<MudEnhancedPieChartDataPoint Id="@item.Id" @key="@item.GetHashCode()" Value="@item.Value" Label="@item.Label" FillColor="@item.FillColor" @bind-IsEnabled="@item.IsEnabled" />
-            }
-		</MudEnhancedPieChart>
+<MudEnhancedPieChartDataPoint Id="@item.Id" @key="@item.GetHashCode()" Value="@item.Value" Label="@item.Label" FillColor="@item.FillColor" @bind-IsEnabled="@item.IsEnabled" />}
+        </MudEnhancedPieChart>
     </Chart>
     <TitleDrawer>
-        @if (config.UseCustomerTitleContainer == true) { 
-			<MudIcon Icon="@config.TitleIcon" /><MudText Typo="Typo.h3">@context</MudText>
-		} 
-		else 
-		{
-			<MudText Typo="Typo.h6">@context</MudText>
-		}
+        @if (config.UseCustomerTitleContainer == true)
+        {
+<MudIcon Icon="@config.TitleIcon" /><MudText Typo="Typo.h3">@context</MudText> }
+                else
+                {
+<MudText Typo="Typo.h6">@context</MudText>}
     </TitleDrawer>
 </MudEnhancedChart>
 
@@ -37,22 +36,21 @@
             </MudItem>
             @if (config.ShowLegend == true)
             {
-				<MudItem xs="12" sm="6" md="4">
-					<MudSelect T="Position" Label="Position" @bind-Value="config.LegendPosition">
-						<MudSelectItem Value="@(Position.Top)" />
-						<MudSelectItem Value="@(Position.Left)" />
-						<MudSelectItem Value="@(Position.Right)" />
-						<MudSelectItem Value="@(Position.Bottom)" />
-					</MudSelect>
-				</MudItem>
-                <MudItem xs="12" sm="6" md="4">
-                    <MudSelect T="Align" Label="Position" @bind-Value="config.LegendAlignment">
-                        <MudSelectItem Value="@(Align.Center)" />
-                        <MudSelectItem Value="@(Align.Left)" />
-                        <MudSelectItem Value="@(Align.Right)" />
-                    </MudSelect>
-                </MudItem>
-			}
+<MudItem xs="12" sm="6" md="4">
+    <MudSelect T="Position" Label="Position" @bind-Value="config.LegendPosition">
+        <MudSelectItem Value="@(Position.Top)" />
+        <MudSelectItem Value="@(Position.Left)" />
+        <MudSelectItem Value="@(Position.Right)" />
+        <MudSelectItem Value="@(Position.Bottom)" />
+    </MudSelect>
+</MudItem>
+                            <MudItem xs="12" sm="6" md="4">
+                                <MudSelect T="Align" Label="Position" @bind-Value="config.LegendAlignment">
+                                    <MudSelectItem Value="@(Align.Center)" />
+                                    <MudSelectItem Value="@(Align.Left)" />
+                                    <MudSelectItem Value="@(Align.Right)" />
+                                </MudSelect>
+                            </MudItem>}
         </MudGrid>
     </MudExpansionPanel>
     <MudExpansionPanel Text="Title">
@@ -62,35 +60,34 @@
             </MudItem>
             @if (config.ShowTitle == true)
             {
-				<MudItem xs="12" sm="6" md="4">
-					<MudSelect T="Position" Label="Position" @bind-Value="config.TitlePosition">
-						<MudSelectItem Value="@(Position.Top)" />
-						<MudSelectItem Value="@(Position.Left)" />
-						<MudSelectItem Value="@(Position.Right)" />
-						<MudSelectItem Value="@(Position.Bottom)" />
-					</MudSelect>
-				</MudItem>
-                <MudItem xs="12" sm="6" md="4">
-                    <MudSelect T="Align" Label="Position" @bind-Value="config.TitleAlignment">
-                        <MudSelectItem Value="@(Align.Center)" />
-                        <MudSelectItem Value="@(Align.Left)" />
-                        <MudSelectItem Value="@(Align.Right)" />
-                    </MudSelect>
-                </MudItem>
-                <MudItem xs="12">
-                    <MudCheckBox @bind-Checked="@config.UseCustomerTitleContainer" Label="Use Custom Container" />
-                </MudItem>
-				<MudItem xs="12" sm="6" md="4">
-					<MudTextField Immediate="true" @bind-Value="@config.TitleCaption" Label="Chart Title" Variant="Variant.Text" Placeholder="enter a name here" />
-				</MudItem>
-                <MudItem xs="12" sm="6" md="4">
-                    <MudSelect T="String" Label="Icon" @bind-Value="config.TitleIcon">
-                        <MudSelectItem Value="@Icons.Custom.Uncategorized.Radioactive">Radioactive</MudSelectItem>
-                        <MudSelectItem Value="@Icons.Custom.Brands.MudBlazor">MudBlazor</MudSelectItem>
-                        <MudSelectItem Value="@Icons.Material.Filled.Alarm">Alarm</MudSelectItem>
-                    </MudSelect>
-                </MudItem>
-			}
+<MudItem xs="12" sm="6" md="4">
+    <MudSelect T="Position" Label="Position" @bind-Value="config.TitlePosition">
+        <MudSelectItem Value="@(Position.Top)" />
+        <MudSelectItem Value="@(Position.Left)" />
+        <MudSelectItem Value="@(Position.Right)" />
+        <MudSelectItem Value="@(Position.Bottom)" />
+    </MudSelect>
+</MudItem>
+                            <MudItem xs="12" sm="6" md="4">
+                                <MudSelect T="Align" Label="Position" @bind-Value="config.TitleAlignment">
+                                    <MudSelectItem Value="@(Align.Center)" />
+                                    <MudSelectItem Value="@(Align.Left)" />
+                                    <MudSelectItem Value="@(Align.Right)" />
+                                </MudSelect>
+                            </MudItem>
+                                                        <MudItem xs="12">
+                                                            <MudCheckBox @bind-Checked="@config.UseCustomerTitleContainer" Label="Use Custom Container" />
+                                                        </MudItem>
+                                                                                    <MudItem xs="12" sm="6" md="4">
+                                                                                        <MudTextField Immediate="true" @bind-Value="@config.TitleCaption" Label="Chart Title" Variant="Variant.Text" Placeholder="enter a name here" />
+                                                                                    </MudItem>
+                                                                                                                <MudItem xs="12" sm="6" md="4">
+                                                                                                                    <MudSelect T="String" Label="Icon" @bind-Value="config.TitleIcon">
+                                                                                                                        <MudSelectItem Value="@Icons.Custom.Uncategorized.Radioactive">Radioactive</MudSelectItem>
+                                                                                                                        <MudSelectItem Value="@Icons.Custom.Brands.MudBlazor">MudBlazor</MudSelectItem>
+                                                                                                                        <MudSelectItem Value="@Icons.Material.Filled.Alarm">Alarm</MudSelectItem>
+                                                                                                                    </MudSelect>
+                                                                                                                </MudItem>}
         </MudGrid>
     </MudExpansionPanel>
     <MudExpansionPanel Text="Pie Chart Properties">
@@ -115,121 +112,116 @@
                     </MudTooltip>
                 </div>
             </MudItem>
-			<MudSimpleTable Style="overflow-x: auto;">
-				<thead>
-					<tr>
-						<th>#</th>
-						<th>Label</th>
-						<th>Value</th>
-						<th>Fill</th>
-						<th>Show</th>
-						<th></th>
-					</tr>
-				</thead>
-				<tbody>
-            @for (int i = 0; i < config.DataPoints.Count; i++)
-            {
-                Int32 temp = i;
-				<tr>
-					<td>@(i+1)</td>
-					<td>
-						 <MudTextField Immediate="true" @bind-Value="config.DataPoints[temp].Label" T="string" />
-					</td>
-					<td>
-						 <MudTextField InputType="InputType.Number" Immediate="true" @bind-Value="config.DataPoints[temp].Value" T="double" />
-					</td>
-					<td>
-						<MudTextField Immediate="true" InputType="InputType.Color"  T="string" @bind-Value="config.DataPoints[temp].FillColor" />
-					</td>
-					<td>
-						<MudCheckBox @bind-Checked="config.DataPoints[temp].IsEnabled" T="Boolean"  />
-					</td>
-					<td>
-						<MudIconButton Icon="@Icons.Material.Filled.Remove" Color="Color.Error" OnClick="@( () => RemovePoint(config.DataPoints[temp]))" />
-					</td>
-				</tr>
-
-			}
-				</tbody>
-			</MudSimpleTable>
+            <MudSimpleTable Style="overflow-x: auto;">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Label</th>
+                        <th>Value</th>
+                        <th>Fill</th>
+                        <th>Show</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (int i = 0; i < config.DataPoints.Count; i++)
+                    {
+                        Int32 temp = i;
+<tr>
+    <td>@(i+1)</td>
+    <td>
+        <MudTextField Immediate="true" @bind-Value="config.DataPoints[temp].Label" T="string" />
+    </td>
+    <td>
+        <MudTextField InputType="InputType.Number" Immediate="true" @bind-Value="config.DataPoints[temp].Value" T="double" />
+    </td>
+    <td>
+        <MudColorPicker @bind-Value="config.DataPoints[temp].FillColor" />
+    </td>
+    <td>
+        <MudCheckBox @bind-Checked="config.DataPoints[temp].IsEnabled" T="Boolean" />
+    </td>
+    <td>
+        <MudIconButton Icon="@Icons.Material.Filled.Remove" Color="Color.Error" OnClick="@( () => RemovePoint(config.DataPoints[temp]))" />
+    </td>
+</tr>}
+                </tbody>
+            </MudSimpleTable>
         </MudGrid>
     </MudExpansionPanel>
 </MudExpansionPanels>
 
 
-@code {
+@code { private Random _random = new();
 
-    private Random _random = new();
+            public class PieChartDataPointConig
+            {
+                public String Label { get; set; } = "My new Series";
+                public MudColor FillColor { get; set; } = MudBlazor.Utilities.RandomColorSelector.GetRandomColor();
+                public Double Value { get; set; } = new();
+                public Boolean IsEnabled { get; set; } = true;
 
-    public class PieChartDataPointConig
-    {
-        public String Label { get; set; } = "My new Series";
-        public String FillColor { get; set; } = MudBlazor.Utilities.RandomColorSelector.GetRandomColor();
-        public Double Value { get; set; } = new();
-        public Boolean IsEnabled { get; set; } = true;
+                public Guid Id { get; private set; }
 
-        public Guid Id { get; private set; }
+                public PieChartDataPointConig(String label, Double value)
+                {
+                    Id = Guid.NewGuid();
+                    Label = label;
+                    Value = value;
+                }
+            }
 
-        public  PieChartDataPointConig(String label, Double value)
-        {
-            Id = Guid.NewGuid();
-            Label = label;
-            Value = value;
-        }
-    }
+            public class PieChartConfiguration
+            {
+                public Position LegendPosition { get; set; } = Position.Right;
+                public Align LegendAlignment { get; set; } = Align.Center;
+                public Boolean ShowLegend { get; set; } = true;
 
-    public class PieChartConfiguration
-    {
-        public Position LegendPosition { get; set; } = Position.Right;
-        public Align LegendAlignment { get; set; } = Align.Center;
-        public Boolean ShowLegend { get; set; } = true;
+                public Position TitlePosition { get; set; } = Position.Top;
+                public Align TitleAlignment { get; set; } = Align.Center;
+                public Boolean ShowTitle { get; set; } = true;
+                public String TitleCaption { get; set; } = "Fancy MudBlazor Bar Chart";
+                public Boolean UseCustomerTitleContainer { get; set; } = false;
+                public String TitleIcon { get; set; } = Icons.Custom.Uncategorized.Radioactive;
 
-        public Position TitlePosition { get; set; } = Position.Top;
-        public Align TitleAlignment { get; set; } = Align.Center;
-        public Boolean ShowTitle { get; set; } = true;
-        public String TitleCaption { get; set; } = "Fancy MudBlazor Bar Chart";
-        public Boolean UseCustomerTitleContainer { get; set; } = false;
-        public String TitleIcon { get; set; } = Icons.Custom.Uncategorized.Radioactive;
+                public Double StartAngleInDegree { get; set; } = 90.0;
+                public Double Padding { get; set; } = 5.0;
 
-        public Double StartAngleInDegree { get; set; } = 90.0;
-        public Double Padding { get; set; } = 5.0;
+                public List<PieChartDataPointConig> DataPoints { get; set; } = new();
+            }
 
-        public List<PieChartDataPointConig> DataPoints { get; set; } = new();
-    }
+            private PieChartConfiguration config = new();
+            private MudEnhancedPieChart _pieChart;
 
-    private PieChartConfiguration config = new();
-    private MudEnhancedPieChart _pieChart;
+            protected override void OnInitialized()
+            {
+                base.OnInitialized();
+                for (int i = 0; i < 5; i++)
+                {
+                    AddDataPoint();
+                }
+            }
 
-    protected override void OnInitialized()
-    {
-        base.OnInitialized();
-        for(int i = 0; i < 5; i++)
-        {
-            AddDataPoint();
-        }
-    }
+            private void AddDataPoint()
+            {
+                config.DataPoints.Add(
+                    new PieChartDataPointConig(
+                        $"new point {config.DataPoints.Count + 1}",
+                        _random.Next(5, 25) + _random.NextDouble()));
+            }
 
-    private void AddDataPoint()
-    {
-        config.DataPoints.Add(
-            new PieChartDataPointConig(
-                $"new point {config.DataPoints.Count +1}",
-                _random.Next(5,25) + _random.NextDouble()));
-    }
+            private void Randomize()
+            {
+                foreach (var point in config.DataPoints)
+                {
+                    point.Value = _random.Next(5, 25) + _random.NextDouble();
+                }
 
-    private void Randomize()
-    {
-        foreach(var point in config.DataPoints)
-        {
-            point.Value = _random.Next(5,25) + _random.NextDouble();
-        }
+                _pieChart.ForceRedraw();
+            }
 
-        _pieChart.ForceRedraw();
-    }
-
-    private void RemovePoint(PieChartDataPointConig point)
-    {
-        config.DataPoints.Remove(point);
-    }
-}
+            private void RemovePoint(PieChartDataPointConig point)
+            {
+                config.DataPoints.Remove(point);
+            } }
 

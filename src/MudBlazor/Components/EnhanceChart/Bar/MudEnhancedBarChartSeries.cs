@@ -34,7 +34,7 @@ namespace MudBlazor.EnhanceChart
         /// <summary>
         /// Color used for displaying. If not set, a random color is choosen
         /// </summary>
-        [Parameter] public CssColor Color { get; set; } = RandomColorSelector.GetRandomColor();
+        [Parameter] public MudColor Color { get; set; } = RandomColorSelector.GetRandomColor();
 
         /// <summary>
         /// Setting a value indidacting that this series is active (highlighted) in the chart. Default is true
@@ -57,7 +57,7 @@ namespace MudBlazor.EnhanceChart
         {
             if (Chart == null) { return; }
 
-            Chart.AddTooltip(new BarChartToolTipInfo(svgBarRepresentation.XLabel, svgBarRepresentation.YValue,  Name, "#" + Color, Dataset.Name,
+            Chart.AddTooltip(new BarChartToolTipInfo(svgBarRepresentation.XLabel, svgBarRepresentation.YValue, Name, Color, Dataset.Name,
                 svgBarRepresentation.P1, svgBarRepresentation.P2, svgBarRepresentation.P3, svgBarRepresentation.P4), this);
         }
 
@@ -99,10 +99,12 @@ namespace MudBlazor.EnhanceChart
         {
             base.OnParametersSet();
 
-            if (Dataset == null)
-            {
-                throw new ArgumentException("A chart series need to be placed inside a dataset");
-            }
+            //if (Dataset == null)
+            //{
+            //    throw new ArgumentException("A chart series need to be placed inside a dataset");
+            //}
+
+            if (Dataset == null) { return; }
 
             if (Dataset.Contains(this) == false)
             {

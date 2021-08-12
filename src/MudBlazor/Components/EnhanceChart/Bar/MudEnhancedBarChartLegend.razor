@@ -1,7 +1,7 @@
 ﻿@namespace MudBlazor.EnhanceChart 
 @inherits MudEnhancedChartLegendBase
 
-<MudPaper Width="200px">
+<MudPaper Width="200px"  @attributes="UserAttributes">
     <MudList Clickable="true">
         @if(LegendInfo != null && LegendInfo.Groups != null && LegendInfo.Groups.Any())
         {

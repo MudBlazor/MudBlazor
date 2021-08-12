@@ -8,7 +8,7 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor.EnhanceChart
 {
-    record SegementChartDataPointSnapshot(Double Value, String Label, String FillColor, Boolean IsEnabled);
+    record SegementChartDataPointSnapshot(Double Value, String Label, MudColor FillColor, Boolean IsEnabled);
 
     public abstract class MudEnhancedSegementChartDataPoint<TChart, TPoint, TSegementRepresentation> : ComponentBase, IDataPoint, ISnapshot<SegementChartDataPointSnapshot>, IDisposable
         where TPoint : MudEnhancedSegementChartDataPoint<TChart,TPoint, TSegementRepresentation>
@@ -17,7 +17,7 @@ namespace MudBlazor.EnhanceChart
     {
         [Parameter] public Double Value { get; set; } = 0.0;
         [Parameter] public String Label { get; set; } = String.Empty;
-        [Parameter] public CssColor FillColor { get; set; } = RandomColorSelector.GetRandomColor();
+        [Parameter] public MudColor FillColor { get; set; } = RandomColorSelector.GetRandomColor();
         [Parameter] public Boolean IsEnabled { get; set; } = true;
         [Parameter] public String AddtionalClass { get; set; } = String.Empty;
 
@@ -75,9 +75,14 @@ namespace MudBlazor.EnhanceChart
         {
             base.OnParametersSet();
 
+            //if (Chart == null)
+            //{
+            //    throw new ArgumentException("A datapoint needs to be placed inside a dataset");
+            //}
+
             if (Chart == null)
             {
-                throw new ArgumentException("A datapoint needs to be placed inside a dataset");
+                return;
             }
 
             if (Chart.Contains((TPoint)this) == false)

@@ -68,7 +68,7 @@ namespace MudBlazor.EnhanceChart
         /// The data for the legend
         /// </summary>
         public override ChartLegendInfo LegendInfo => new ChartLegendInfo(_dataSets.Select(x => new DataSeriesBasedChartLegendInfoGroup(x.Name,
-            x.Select(y => new ChartLegendInfoSeries(y.Name, "#" + (String)y.Color, y.IsEnabled, y)),
+            x.Select(y => new ChartLegendInfoSeries(y.Name, y.Color, y.IsEnabled, y)),
             true)));
 
         #region Tooltips and legend

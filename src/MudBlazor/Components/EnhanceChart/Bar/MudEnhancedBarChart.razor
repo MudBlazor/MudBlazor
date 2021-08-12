@@ -1,10 +1,12 @@
 ﻿@namespace MudBlazor.EnhanceChart
+@using MudBlazor.Utilities
 @using System.Globalization
+
 @inherits MudEnhancedChartBase
 
 @foreach (var item in _bars)
 {
-<polygon data-chartid="@Id" @key="item.Id" @onmouseover="@item.Actived" @onmouseout="@item.Deactived" class="mud-enhanced-chart-series bar @item.GetActiveClass()" fill="#@item.Fill" points="@item.GetPathValue()">
+<polygon data-chartid="@Id" @key="item.Id" @onmouseover="@item.Actived" @onmouseout="@item.Deactived" class="mud-enhanced-chart-series bar @item.GetActiveClass()" fill="@item.Fill.ToString(MudColorOutputFormats.HexA)" points="@item.GetPathValue()">
     @if (String.IsNullOrEmpty(item.OldPath) == false)
     {
         <animate attributeName="points" dur="500ms" from="@item.OldPath" to="@item.GetPathValue()"></animate>
@@ -21,7 +23,7 @@
 
 @foreach (var item in _lines)
 {
-    <line stroke="#@item.Color" class="@item.CssClass" stroke-width="@item.Thickness.ToString(CultureInfo.InvariantCulture)" x1="@item.P1.X.ToString(CultureInfo.InvariantCulture)" y1="@item.P1.Y.ToString(CultureInfo.InvariantCulture)" x2="@item.P2.X.ToString(CultureInfo.InvariantCulture)" y2="@item.P2.Y.ToString(CultureInfo.InvariantCulture)" />
+    <line stroke="@item.Color.ToString(MudColorOutputFormats.HexA)" class="@item.CssClass" stroke-width="@item.Thickness.ToString(CultureInfo.InvariantCulture)" x1="@item.P1.X.ToString(CultureInfo.InvariantCulture)" y1="@item.P1.Y.ToString(CultureInfo.InvariantCulture)" x2="@item.P2.X.ToString(CultureInfo.InvariantCulture)" y2="@item.P2.Y.ToString(CultureInfo.InvariantCulture)" />
 }
 
 <CascadingValue IsFixed="true" Value="this">

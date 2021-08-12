@@ -17,6 +17,11 @@ namespace MudBlazor.EnhanceChart
 
         private String GetStyle()
         {
+            if (ToolTips == null || ToolTips.Any() == false)
+            {
+                return String.Empty;
+            }
+
             var first = ToolTips.First();
 
             var centerAngleInRad = ((first.StartAngle + first.EndAngle) / 2.0).ToRad();
