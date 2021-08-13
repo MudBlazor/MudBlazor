@@ -10,7 +10,7 @@ namespace MudBlazor.Services
     /// <summary>
     /// This service listens to browser resize events and allows you to react to a changing window size in Blazor
     /// </summary>
-    public class ResizeListenerService : IResizeListenerService, IDisposable
+    public class ResizeListenerService2 : IResizeListenerService2
     {
         /// <summary>
         /// 
@@ -18,22 +18,31 @@ namespace MudBlazor.Services
         /// <param name="jsRuntime"></param>
         /// <param name="browserWindowSizeProvider"></param>
         /// <param name="options"></param>
-        public ResizeListenerService(IJSRuntime jsRuntime, IBrowserWindowSizeProvider browserWindowSizeProvider, IOptions<ResizeOptions> options = null)
+        public ResizeListenerService2(IJSRuntime jsRuntime, IBrowserWindowSizeProvider browserWindowSizeProvider, IOptions<ResizeOptions> options = null)
         {
-            this._dotNetRef = DotNetObjectReference.Create(this);
-            this._options = options?.Value ?? new ResizeOptions();
+            this._options = options?.Value ?    ? new ResizeOptions();
             this._options.BreakpointDefinitions = BreakpointDefinitions.ToDictionary(x => x.Key.ToString(), x => x.Value);
             this._jsRuntime = jsRuntime;
             this._browserWindowSizeProvider = browserWindowSizeProvider;
         }
 
+        private Guid _listenerJsId;
         private readonly IJSRuntime _jsRuntime;
         private readonly IBrowserWindowSizeProvider _browserWindowSizeProvider;
         private readonly ResizeOptions _options;
-        private readonly DotNetObjectReference<ResizeListenerService> _dotNetRef;
+        private DotNetObjectReference<ResizeListenerService2> _dotNetRef;
 #nullable enable
         private EventHandler<BrowserWindowSize>? _onResized;
         private EventHandler<Breakpoint>? _onBreakpointChanged;
+
+        private bool IsAttached() => _dotNetRef != null;
+        private void ThrowExceptionIfNotAttached()
+        {
+            if (IsAttached() == false)
+            {
+                throw new InvalidOperationException("the listener needs to be attached before events can be used");
+            }
+        }
 
         /// <summary>
         /// Subscribe to the browsers resize() event.
@@ -42,14 +51,15 @@ namespace MudBlazor.Services
         {
             add
             {
+                // this is a proposal, we can remove it
+                ThrowExceptionIfNotAttached();
+
                 _options.NotifyOnBreakpointOnly = false;
-                Start();
                 _onResized += value;
             }
             remove
             {
                 _onResized -= value;
-                Cancel().ConfigureAwait(false);
             }
         }
 
@@ -60,45 +70,17 @@ namespace MudBlazor.Services
         {
             add
             {
+                // this is a proposal, we can remove it
+                ThrowExceptionIfNotAttached();
                 _options.NotifyOnBreakpointOnly = _onResized == null;
-                Start();
                 _onBreakpointChanged += value;
             }
             remove
             {
                 _onBreakpointChanged -= value;
-                Cancel().ConfigureAwait(false);
             }
         }
 #nullable disable
-
-        private async void Start()
-        {
-            if (_onResized == null || _onBreakpointChanged == null)
-            {
-                await _jsRuntime.InvokeVoidAsync($"mudResizeListener.listenForResize", _dotNetRef, _options);
-            }
-        }
-
-        private async ValueTask Cancel()
-        {
-            try
-            {
-                if (_onResized == null && _onBreakpointChanged == null)
-                {
-                    await _jsRuntime.InvokeVoidAsync($"mudResizeListener.cancelListener");
-                }
-                else if (_onResized == null && _onBreakpointChanged != null && !_options.NotifyOnBreakpointOnly)
-                {
-                    _options.NotifyOnBreakpointOnly = true;
-                    Start();
-                }
-            }
-            catch (Exception)
-            {
-                /* ignore */
-            }
-        }
 
         /// <summary>
         /// Determine if the Document matches the provided media query.
@@ -189,33 +171,47 @@ namespace MudBlazor.Services
             };
         }
 
-        bool _disposed;
-
-        protected virtual void Dispose(bool disposing)
+        public async Task Attach()
         {
-            if (!_disposed)
+            if (IsAttached() == false)
             {
-                _ = Cancel();
-                if (disposing)
+                _dotNetRef = DotNetObjectReference.Create(this);
+                _listenerJsId = Guid.NewGuid();
+                try
                 {
-                    _onResized = null;
-                    _onBreakpointChanged = null;
-                    _dotNetRef?.Dispose();
+                    await _jsRuntime.InvokeVoidAsync($"mudResizeListenerFactory.listenForResize", _dotNetRef, _options, _listenerJsId);
                 }
-                _disposed = true;
+                catch (TaskCanceledException)
+                {
+                    // no worries here
+                }
             }
         }
 
-        public void Dispose()
+        public async Task Detach()
         {
-            Dispose(true);
-            GC.SuppressFinalize(this);
+            if (IsAttached() == true)
+            {
+
+                try
+                {
+                    await _jsRuntime.InvokeVoidAsync($"mudResizeListenerFactory.cancelListener", _listenerJsId);
+                    _dotNetRef.Dispose();
+                }
+                catch (TaskCanceledException)
+                {
+                    // no worries here
+                }
+            }
         }
 
+        public async ValueTask DisposeAsync()
+        {
+            await Detach();
+        }
     }
 
-
-    public interface IResizeListenerService : IDisposable
+    public interface IResizeListenerService2 : IAsyncDisposable
     {
 #nullable enable
         event EventHandler<BrowserWindowSize>? OnResized;
@@ -225,5 +221,7 @@ namespace MudBlazor.Services
         Task<bool> IsMediaSize(Breakpoint breakpoint);
         bool IsMediaSize(Breakpoint breakpoint, Breakpoint reference);
         Task<Breakpoint> GetBreakpoint();
+        Task Attach();
+        Task Detach();
     }
 }
