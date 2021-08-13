@@ -20,7 +20,7 @@ namespace MudBlazor.Services
         /// <param name="options"></param>
         public ResizeListenerService2(IJSRuntime jsRuntime, IBrowserWindowSizeProvider browserWindowSizeProvider, IOptions<ResizeOptions> options = null)
         {
-            this._options = options?.Value ?    ? new ResizeOptions();
+            this._options = options?.Value ?? new ResizeOptions();
             this._options.BreakpointDefinitions = BreakpointDefinitions.ToDictionary(x => x.Key.ToString(), x => x.Value);
             this._jsRuntime = jsRuntime;
             this._browserWindowSizeProvider = browserWindowSizeProvider;
