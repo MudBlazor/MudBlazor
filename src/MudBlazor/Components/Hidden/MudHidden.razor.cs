@@ -1,14 +1,15 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Services;
 
 namespace MudBlazor
 {
 
-    public partial class MudHidden : MudComponentBase
+    public partial class MudHidden : MudComponentBase, IAsyncDisposable
     {
 
-        [Inject] IResizeListenerService ResizeListener { get; set; }
+        [Inject] IResizeListenerService2 ResizeListener { get; set; }
 
         /// <summary>
         /// The screen size(s) depending on which the ChildContent should not be rendered (or should be, if Invert is true)
@@ -52,6 +53,7 @@ namespace MudBlazor
         {
             if (firstRender)
             {
+                await ResizeListener.Attach();
                 ResizeListener.OnBreakpointChanged += OnBreakpointChanged;
                 var breakpoint = await ResizeListener.GetBreakpoint();
                 Update(breakpoint);
@@ -74,6 +76,11 @@ namespace MudBlazor
         private void OnBreakpointChanged(object sender, Breakpoint breakpoint)
         {
             Update(breakpoint);
+        }
+
+        public async ValueTask DisposeAsync()
+        {
+            await ResizeListener.DisposeAsync();
         }
     }
 }

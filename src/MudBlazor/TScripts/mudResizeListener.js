@@ -6,6 +6,7 @@
         this.throttleResizeHandlerId = -1;
         this.dotnet = undefined;
         this.breakpoint = -1;
+        console.log("MudResizeListener constructor");
     }
 
     listenForResize (dotnetRef, options) {
@@ -87,3 +88,28 @@
     }
 };
 window.mudResizeListener = new MudResizeListener();
+window.mudResizeListenerFactory = {
+    mapping: {},
+    listenForResize: (dotnetRef, options, id) => {
+        var map = window.mudResizeListenerFactory.mapping;
+        if (map[id]) {
+            return;
+        }
+
+        var listener = new MudResizeListener();
+        listener.listenForResize(dotnetRef, options);
+        map[id] = listener;
+    },
+
+    cancelListener: (id) => {
+        var map = window.mudResizeListenerFactory.mapping;
+
+        if (!map[id]) {
+            return;
+        }
+
+        var listener = map[id];
+        listener.cancelListener();
+        delete map[id];
+    }
+}
