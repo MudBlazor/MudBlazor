@@ -58,6 +58,7 @@ namespace MudBlazor
                 var breakpoint = await ResizeListener.GetBreakpoint();
                 Update(breakpoint);
             }
+
             await base.OnAfterRenderAsync(firstRender);
         }
 

@@ -24,6 +24,7 @@ namespace MudBlazor.UnitTests.Components
             ctx.Services.AddSingleton<IDialogService>(new DialogService());
             ctx.Services.AddSingleton<ISnackbar, SnackbarService>();
             ctx.Services.AddSingleton<IResizeListenerService>(new MockResizeListenerService());
+            ctx.Services.AddSingleton<IResizeListenerService2>(new MockResizeListenerService2());
             ctx.Services.AddTransient<IScrollManager, MockScrollManager>();
             ctx.Services.AddTransient<IScrollListener, MockScrollListener>();
             ctx.Services.AddTransient<IJsApiService, MockJsApiServices>();
