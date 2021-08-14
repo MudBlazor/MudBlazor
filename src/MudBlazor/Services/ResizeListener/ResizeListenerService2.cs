@@ -171,7 +171,7 @@ namespace MudBlazor.Services
             };
         }
 
-        public async Task Attach() => await Attach(new ResizeOptions());
+        public async Task Attach() => await Attach(_options);
 
         public async Task Attach(ResizeOptions options)
         {
