@@ -171,7 +171,9 @@ namespace MudBlazor.Services
             };
         }
 
-        public async Task Attach()
+        public async Task Attach() => await Attach(new ResizeOptions());
+
+        public async Task Attach(ResizeOptions options)
         {
             if (IsAttached() == false)
             {
@@ -179,7 +181,7 @@ namespace MudBlazor.Services
                 _listenerJsId = Guid.NewGuid();
                 try
                 {
-                    await _jsRuntime.InvokeVoidAsync($"mudResizeListenerFactory.listenForResize", _dotNetRef, _options, _listenerJsId);
+                    await _jsRuntime.InvokeVoidAsync($"mudResizeListenerFactory.listenForResize", _dotNetRef, options, _listenerJsId);
                 }
                 catch (TaskCanceledException)
                 {
@@ -222,6 +224,7 @@ namespace MudBlazor.Services
         bool IsMediaSize(Breakpoint breakpoint, Breakpoint reference);
         Task<Breakpoint> GetBreakpoint();
         Task Attach();
+        Task Attach(ResizeOptions options);
         Task Detach();
     }
 }
