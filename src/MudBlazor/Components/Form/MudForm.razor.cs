@@ -111,6 +111,10 @@ namespace MudBlazor
         [Parameter] public object? Model { get; set; }
 #nullable disable
 
+        private HashSet<MudForm> ChildForms { get; set; } = new HashSet<MudForm>();
+
+        [CascadingParameter] private MudForm ParentMudForm { get; set; }
+
         void IForm.Add(IFormComponent formControl)
         {
             if (formControl.Required)
@@ -188,6 +192,12 @@ namespace MudBlazor
         public async Task Validate()
         {
             await Task.WhenAll(_formControls.Select(x => x.Validate()));
+
+            if (ChildForms.Count > 0)
+            {
+                await Task.WhenAll(ChildForms.Select(x => x.Validate()));
+            }
+
             EvaluateForm(debounce: false);
         }
 
@@ -200,6 +210,12 @@ namespace MudBlazor
             {
                 control.Reset();
             }
+
+            foreach (var form in ChildForms)
+            {
+                form.Reset();
+            }
+
             EvaluateForm(debounce: false);
         }
 
@@ -212,6 +228,12 @@ namespace MudBlazor
             {
                 control.ResetValidation();
             }
+
+            foreach (var form in ChildForms)
+            {
+                form.ResetValidation();
+            }
+
             EvaluateForm(debounce: false);
         }
 
@@ -228,6 +250,16 @@ namespace MudBlazor
                 }
             }
             return base.OnAfterRenderAsync(firstRender);
+        }
+
+        protected override void OnInitialized()
+        {
+            if (ParentMudForm != null)
+            {
+                ParentMudForm.ChildForms.Add(this);
+            }
+
+            base.OnInitialized();
         }
 
         public void Dispose()
