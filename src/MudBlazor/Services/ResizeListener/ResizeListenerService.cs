@@ -131,6 +131,7 @@ _jsRuntime.InvokeAsync<bool>($"mudResizeListener.matchMedia", mediaQuery);
 
         public static Dictionary<Breakpoint, int> BreakpointDefinitions { get; set; } = new Dictionary<Breakpoint, int>()
         {
+            [Breakpoint.Xxl] = 2560,
             [Breakpoint.Xl] = 1920,
             [Breakpoint.Lg] = 1280,
             [Breakpoint.Md] = 960,
@@ -145,7 +146,9 @@ _jsRuntime.InvokeAsync<bool>($"mudResizeListener.matchMedia", mediaQuery);
                 _windowSize = await _browserWindowSizeProvider.GetBrowserWindowSize();
             if (_windowSize == null)
                 return Breakpoint.Xs;
-            if (_windowSize.Width >= BreakpointDefinitions[Breakpoint.Xl])
+            if (_windowSize.Width >= BreakpointDefinitions[Breakpoint.Xxl])
+                return Breakpoint.Xxl;
+            else if (_windowSize.Width >= BreakpointDefinitions[Breakpoint.Xl])
                 return Breakpoint.Xl;
             else if (_windowSize.Width >= BreakpointDefinitions[Breakpoint.Lg])
                 return Breakpoint.Lg;
@@ -177,14 +180,17 @@ _jsRuntime.InvokeAsync<bool>($"mudResizeListener.matchMedia", mediaQuery);
                 Breakpoint.Md => reference == Breakpoint.Md,
                 Breakpoint.Lg => reference == Breakpoint.Lg,
                 Breakpoint.Xl => reference == Breakpoint.Xl,
+                Breakpoint.Xxl => reference == Breakpoint.Xxl,
                 // * and down
                 Breakpoint.SmAndDown => reference <= Breakpoint.Sm,
                 Breakpoint.MdAndDown => reference <= Breakpoint.Md,
                 Breakpoint.LgAndDown => reference <= Breakpoint.Lg,
+                Breakpoint.XlAndDown => reference <= Breakpoint.Xl,
                 // * and up
                 Breakpoint.SmAndUp => reference >= Breakpoint.Sm,
                 Breakpoint.MdAndUp => reference >= Breakpoint.Md,
                 Breakpoint.LgAndUp => reference >= Breakpoint.Lg,
+                Breakpoint.XlAndUp => reference >= Breakpoint.Xl,
                 _ => false,
             };
         }
