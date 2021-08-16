@@ -26,6 +26,7 @@ namespace MudBlazor
            .AddClass("mud-md-table", Breakpoint == Breakpoint.Md)
            .AddClass("mud-lg-table", Breakpoint == Breakpoint.Lg || Breakpoint == Breakpoint.Always)
            .AddClass("mud-xl-table", Breakpoint == Breakpoint.Xl || Breakpoint == Breakpoint.Always)
+           .AddClass("mud-xxl-table", Breakpoint == Breakpoint.Xxl || Breakpoint == Breakpoint.Always)
            .AddClass("mud-table-dense", Dense)
            .AddClass("mud-table-hover", Hover)
            .AddClass("mud-table-bordered", Bordered)
