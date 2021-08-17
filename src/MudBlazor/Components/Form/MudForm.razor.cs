@@ -28,7 +28,7 @@ namespace MudBlazor
         [Parameter]
         public bool IsValid
         {
-            get => _valid;
+            get => _valid && ChildForms.All(x => x.IsValid);
             set
             {
                 _valid = value;
