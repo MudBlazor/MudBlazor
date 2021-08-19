@@ -58,17 +58,6 @@ namespace MudBlazor
             {
                 return NavigationEventReceiver.OnNavigation();
             }
-
-            return Task.CompletedTask;
-        }
-
-        private Task HandleClick(MouseEventArgs args)
-        {
-            if (!Disabled)
-            {
-                return OnClick.InvokeAsync(args);
-            }
-
             return Task.CompletedTask;
         }
     }
