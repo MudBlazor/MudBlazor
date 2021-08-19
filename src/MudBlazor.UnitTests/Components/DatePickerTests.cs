@@ -565,5 +565,34 @@ namespace MudBlazor.UnitTests.Components
             // It means that there would be an exception!
             comp.FindAll("button.mud-picker-calendar-day").Where(x => x.TrimmedText().Equals("1")).First().Click();
         }
+        
+        /// <summary>
+        /// Tests if all buttons have type="button" to prevent accidental form submits.
+        /// </summary>
+        /// <param name="navigateToMonthSelection">If true navigates to the month selection page.</param>
+        [TestCase(false)]
+        [TestCase(true)]
+        [Test]
+        public void CheckButtonTypeTest(bool navigateToMonthSelection)
+        {
+            var dateComp = Context.RenderComponent<MudDatePicker>();
+            Console.WriteLine(dateComp.Markup);
+
+            //open picker
+            dateComp.Find(".mud-picker input").Click();
+
+            //navigate to month selection
+            if (navigateToMonthSelection)
+            {
+                dateComp.Find(".mud-picker button.mud-picker-calendar-header-transition").Click();
+            }
+
+            var buttons = dateComp.FindAll(".mud-picker button");
+            //expected values
+            foreach (var button in buttons)
+            {
+                button.ToMarkup().Contains("type=\"button\"").Should().BeTrue();
+            }
+        }
     }
 }
