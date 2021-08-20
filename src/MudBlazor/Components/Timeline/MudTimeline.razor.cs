@@ -2,8 +2,6 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Extensions;
 using MudBlazor.Utilities;
@@ -12,43 +10,6 @@ namespace MudBlazor
 {
     public partial class MudTimeline : MudBaseItemsControl<MudTimelineItem>
     {
-        protected string Classnames =>
-            new CssBuilder("mud-timeline")
-                .AddClass($"mud-timeline-{TimelineOrientation.ToDescriptionString()}")
-                .AddClass($"mud-timeline-position-{ConvertTimelinePosition(TimelinePosition).ToDescriptionString()}")
-                .AddClass($"mud-timeline-reverse", Reverse && TimelinePosition == TimelinePosition.Alternate)
-                .AddClass($"mud-timeline-align-{TimelineAlign.ToDescriptionString()}")
-                .AddClass($"mud-timeline-modifiers", !DisableModifiers)
-                .AddClass($"mud-timeline-rtl", RightToLeft)
-                .AddClass(Class)
-                .Build();
-
-        private TimelinePosition ConvertTimelinePosition(TimelinePosition timelineMode)
-        {
-            if (TimelineOrientation == TimelineOrientation.Vertical)
-            {
-                return timelineMode switch
-                {
-                    TimelinePosition.Left => RightToLeft ? TimelinePosition.End : TimelinePosition.Start,
-                    TimelinePosition.Right => RightToLeft ? TimelinePosition.Start : TimelinePosition.End,
-                    TimelinePosition.Top => TimelinePosition.Alternate,
-                    TimelinePosition.Bottom => TimelinePosition.Alternate,
-                    _ => timelineMode
-                };
-            }
-            else
-            {
-                return timelineMode switch
-                {
-                    TimelinePosition.Start => TimelinePosition.Alternate,
-                    TimelinePosition.Left => TimelinePosition.Alternate,
-                    TimelinePosition.Right => TimelinePosition.Alternate,
-                    TimelinePosition.End => TimelinePosition.Alternate,
-                    _ => timelineMode
-                };
-            }
-        }
-
         [CascadingParameter] public bool RightToLeft { get; set; }
 
         /// <summary>
@@ -69,11 +30,48 @@ namespace MudBlazor
         /// <summary>
         /// Reverse the order of TimelineItems when TimelinePosition is set to Alternate.
         /// </summary>
-        [Parameter] public bool Reverse { get; set; }
+        [Parameter] public bool Reverse { get; set; } = false;
 
         /// <summary>
-        /// If true, disabels all TimelineItem modifiers, like adding a caret to a MudCard.
+        /// If true, disables all TimelineItem modifiers, like adding a caret to a MudCard.
         /// </summary>
-        [Parameter] public bool DisableModifiers { get; set; }
+        [Parameter] public bool DisableModifiers { get; set; } = false;
+
+        protected string Classnames =>
+            new CssBuilder("mud-timeline")
+                .AddClass($"mud-timeline-{TimelineOrientation.ToDescriptionString()}")
+                .AddClass($"mud-timeline-position-{ConvertTimelinePosition().ToDescriptionString()}")
+                .AddClass($"mud-timeline-reverse", Reverse && TimelinePosition == TimelinePosition.Alternate)
+                .AddClass($"mud-timeline-align-{TimelineAlign.ToDescriptionString()}")
+                .AddClass($"mud-timeline-modifiers", !DisableModifiers)
+                .AddClass($"mud-timeline-rtl", RightToLeft)
+                .AddClass(Class)
+                .Build();
+
+        private TimelinePosition ConvertTimelinePosition()
+        {
+            if (TimelineOrientation == TimelineOrientation.Vertical)
+            {
+                return TimelinePosition switch
+                {
+                    TimelinePosition.Left => RightToLeft ? TimelinePosition.End : TimelinePosition.Start,
+                    TimelinePosition.Right => RightToLeft ? TimelinePosition.Start : TimelinePosition.End,
+                    TimelinePosition.Top => TimelinePosition.Alternate,
+                    TimelinePosition.Bottom => TimelinePosition.Alternate,
+                    _ => TimelinePosition
+                };
+            }
+            else
+            {
+                return TimelinePosition switch
+                {
+                    TimelinePosition.Start => TimelinePosition.Alternate,
+                    TimelinePosition.Left => TimelinePosition.Alternate,
+                    TimelinePosition.Right => TimelinePosition.Alternate,
+                    TimelinePosition.End => TimelinePosition.Alternate,
+                    _ => TimelinePosition
+                };
+            }
+        }
     }
 }

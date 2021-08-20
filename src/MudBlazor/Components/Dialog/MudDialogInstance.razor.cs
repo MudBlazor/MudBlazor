@@ -2,7 +2,6 @@
 // Copyright (c) 2020 Adapted by Jonny Larsson, Meinrad Recheis and Contributors
 
 using System;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Extensions;
 using MudBlazor.Utilities;
@@ -11,7 +10,7 @@ namespace MudBlazor
 {
     public partial class MudDialogInstance : MudComponentBase
     {
-        private DialogOptions _options = new DialogOptions();
+        private DialogOptions _options = new();
 
         [CascadingParameter] public bool RightToLeft { get; set; }
         [CascadingParameter] private MudDialogProvider Parent { get; set; }

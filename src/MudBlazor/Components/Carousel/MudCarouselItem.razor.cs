@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
-using MudBlazor;
 using MudBlazor.Extensions;
 using MudBlazor.Utilities;
 
@@ -68,10 +67,10 @@ namespace MudBlazor
         public bool IsVisible => Parent != null && (Parent.LastContainer == this || Parent.SelectedIndex == Parent.Items.IndexOf(this));
 
 
-        protected override async Task OnInitializedAsync()
+        protected override Task OnInitializedAsync()
         {
-            await Task.CompletedTask;
             Parent?.Items.Add(this);
+            return Task.CompletedTask;
         }
 
         private bool _disposed = false;

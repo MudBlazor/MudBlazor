@@ -18,7 +18,7 @@ namespace MudBlazor
         {
             Converter.GetFunc = OnGet;
             Converter.SetFunc = OnSet;
-            (Converter as DefaultConverter<TimeSpan?>).Format = format24Hours;
+            ((DefaultConverter<TimeSpan?>)Converter).Format = format24Hours;
             AdornmentIcon = Icons.Material.Filled.AccessTime;
         }
 
@@ -29,12 +29,12 @@ namespace MudBlazor
 
             var time = DateTime.Today.Add(timespan.Value);
 
-            return time.ToString((Converter as DefaultConverter<TimeSpan?>).Format, Culture);
+            return time.ToString(((DefaultConverter<TimeSpan?>)Converter).Format, Culture);
         }
 
         private TimeSpan? OnGet(string value)
         {
-            if (DateTime.TryParseExact(value, (Converter as DefaultConverter<TimeSpan?>).Format, Culture, DateTimeStyles.None, out DateTime time))
+            if (DateTime.TryParseExact(value, ((DefaultConverter<TimeSpan?>)Converter).Format, Culture, DateTimeStyles.None, out var time))
             {
                 return time.TimeOfDay;
             }
@@ -357,7 +357,7 @@ namespace MudBlazor
             return $"{height}%;";
         }
 
-        private readonly SetTime _timeSet = new SetTime();
+        private readonly SetTime _timeSet = new();
         private int _initialHour;
 
         protected override void OnInitialized()
@@ -404,7 +404,7 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// If MouseDown is true enabels "dragging" effect on the clock pin/stick.
+        /// If MouseDown is true enables "dragging" effect on the clock pin/stick.
         /// </summary>
         private void OnMouseOverHour(int value)
         {
@@ -416,7 +416,7 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// On click for the hour "sticks", sets the houre.
+        /// On click for the hour "sticks", sets the hour.
         /// </summary>
         private void OnMouseClickHour(int value)
         {

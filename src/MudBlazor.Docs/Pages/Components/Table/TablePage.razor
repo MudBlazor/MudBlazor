@@ -34,6 +34,19 @@
         </DocsPageSection>
 
         <DocsPageSection>
+            <SectionHeader Title="TabPager Customization">
+                <Description>
+                    By setting <CodeInline>HideRowsPerPage</CodeInline> property or the <CodeInline>HidePageNumber</CodeInline> property or the <CodeInline>HidePagination</CodeInline> property to <CodeInline>true</CodeInline>, the corresponding information is hidden in the <CodeInline>MudTabPager</CodeInline>.
+                    The elements position can be defined with the <CodeInline>HorizontalAlignment</CodeInline> property.
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" FullWidth="true">
+                <TabPagerExample />
+            </SectionContent>
+            <SectionSource Code="TabPagerExample" ShowCode="false" GitHubFolderName="Table" />
+        </DocsPageSection>
+
+        <DocsPageSection>
             <SectionHeader Title="Sorting">
                 <Description>
                     To enable sorting, add <CodeInline>&lt;MudTableSortLabel></CodeInline> to the header cells and define a function that simply returns the value which should be sorted by when sorting by the specific column.

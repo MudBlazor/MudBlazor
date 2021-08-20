@@ -1,5 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Extensions;
@@ -153,10 +152,10 @@ namespace MudBlazor
         /// </summary>
         /// <param name="text"></param>
         /// <returns></returns>
-        public async Task SetText(string text)
+        public Task SetText(string text)
         {
             _internalText = text;
-            await SetTextAsync(text);
+            return SetTextAsync(text);
         }
     }
 

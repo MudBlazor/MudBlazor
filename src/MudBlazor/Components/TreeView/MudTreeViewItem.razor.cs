@@ -13,7 +13,7 @@ namespace MudBlazor
         private string _text;
         private bool _isSelected, _isActivated, _isServerLoaded;
         private Converter<T> _converter = new DefaultConverter<T>();
-        private readonly List<MudTreeViewItem<T>> _childItems = new List<MudTreeViewItem<T>>();
+        private readonly List<MudTreeViewItem<T>> _childItems = new();
 
         protected string Classname =>
         new CssBuilder("mud-treeview-item")
@@ -199,16 +199,16 @@ namespace MudBlazor
             return ExpandedChanged.InvokeAsync(expanded);
         }
 
-        internal async Task Activate(bool value)
+        internal Task Activate(bool value)
         {
             if (_isActivated == value)
-                return;
+                return Task.CompletedTask;
 
             _isActivated = value;
 
             StateHasChanged();
 
-            await ActivatedChanged.InvokeAsync(_isActivated);
+            return ActivatedChanged.InvokeAsync(_isActivated);
         }
 
         internal async Task Select(bool value, MudTreeViewItem<T> source = null)
@@ -225,7 +225,10 @@ namespace MudBlazor
 
             if (source == this)
             {
-                await MudTreeRoot?.UpdateSelectedItems();
+                if (MudTreeRoot != null)
+                {
+                    await MudTreeRoot.UpdateSelectedItems();
+                }
             }
         }
 

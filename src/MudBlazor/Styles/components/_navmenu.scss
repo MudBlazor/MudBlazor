@@ -111,10 +111,39 @@
     & .mud-nav-link {
         padding-left: 36px;
         padding-inline-start: 36px;
+        padding-inline-end: 16px;
     }
 
     & * .mud-navmenu .mud-nav-item .mud-nav-link {
         padding-left: 48px;
         padding-inline-start: 48px;
+    }
+
+    & * .mud-navmenu > .mud-nav-group {
+        & .mud-nav-link {
+            padding-left: 48px;
+            padding-inline-start: 48px;
+            padding-inline-end: 16px;
+        }
+
+        & * .mud-navmenu .mud-nav-item .mud-nav-link {
+            padding-left: 60px;
+            padding-inline-start: 60px;
+            padding-inline-end: 0;
+        }
+
+        & * .mud-navmenu > .mud-nav-group {
+            & .mud-nav-link {
+                padding-left: 60px;
+                padding-inline-start: 60px;
+                padding-inline-end: 16px;
+            }
+
+            & * .mud-navmenu .mud-nav-item .mud-nav-link {
+                padding-left: 72px;
+                padding-inline-start: 72px;
+                padding-inline-end: 0;
+            }
+        }
     }
 }

@@ -9,7 +9,7 @@ namespace MudBlazor
     {
         private bool hasBeenCanceled;
         private bool hasBeenCommitted;
-        private bool hasBeenClikedFirstTime;
+        private bool hasBeenClickedFirstTime;
 
         internal object _itemCopy;
 
@@ -65,10 +65,10 @@ namespace MudBlazor
             Context?.Table.SetSelectedItem(Item);
 
             // Manage edition the first time the row is clicked and if the table is editable
-            if (!hasBeenClikedFirstTime && IsEditable)
+            if (!hasBeenClickedFirstTime && IsEditable)
             {
-                // Sets hasBeenClikedFirstTime to true
-                hasBeenClikedFirstTime = true;
+                // Sets hasBeenClickedFirstTime to true
+                hasBeenClickedFirstTime = true;
 
                 // Set to false that the item has been committed
                 // Set to false that the item has been cancelled
@@ -132,8 +132,8 @@ namespace MudBlazor
             hasBeenCommitted = true;
             hasBeenCanceled = false;
 
-            // Set hasBeenClikedFirstTime to false 
-            hasBeenClikedFirstTime = false;
+            // Set hasBeenClickedFirstTime to false 
+            hasBeenClickedFirstTime = false;
         }
 
         private void CancelEdit(MouseEventArgs ev)
@@ -145,15 +145,15 @@ namespace MudBlazor
             Context?.Table.OnCancelEditHandler(ev);
 
             // Trigger the row edit cancel event
-            Context.Table.RowEditCancel?.Invoke(Item);
+            Context?.Table.RowEditCancel?.Invoke(Item);
 
             // Set to true that the item has been canceled
             // Set to false that the items has been committed
             hasBeenCanceled = true;
             hasBeenCommitted = false;
 
-            // Set hasBeenClikedFirstTime to false 
-            hasBeenClikedFirstTime = false;
+            // Set hasBeenClickedFirstTime to false 
+            hasBeenClickedFirstTime = false;
         }
 
         public void ManagePreviousEdition()
@@ -174,7 +174,7 @@ namespace MudBlazor
             // Reset the variables
             hasBeenCanceled = false;
             hasBeenCommitted = false;
-            hasBeenClikedFirstTime = false;
+            hasBeenClickedFirstTime = false;
         }
     }
 }

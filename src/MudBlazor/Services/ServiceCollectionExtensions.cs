@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
-using System.Reflection;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -29,8 +28,7 @@ namespace MudBlazor.Services
         /// <returns>Continues the IServiceCollection chain.</returns>
         public static IServiceCollection AddMudBlazorSnackbar(this IServiceCollection services, SnackbarConfiguration configuration = null)
         {
-            if (configuration == null)
-                configuration = new SnackbarConfiguration();
+            configuration ??= new SnackbarConfiguration();
 
             services.TryAddScoped<ISnackbar>(builder =>
                 new SnackbarService(builder.GetService<NavigationManager>(), configuration));
@@ -60,8 +58,7 @@ namespace MudBlazor.Services
         /// <returns>Continues the IServiceCollection chain.</returns>
         public static IServiceCollection AddMudBlazorResizeListener(this IServiceCollection services, ResizeOptions options = null)
         {
-            if (options == null)
-                options = new ResizeOptions();
+            options ??= new ResizeOptions();
             services.AddMudBlazorResizeListener(o =>
             {
                 o = options;
@@ -104,8 +101,7 @@ namespace MudBlazor.Services
         /// <returns>Continues the IServiceCollection chain.</returns>
         public static IServiceCollection AddMudBlazorResizeObserver(this IServiceCollection services, ResizeObserverOptions options = null)
         {
-            if (options == null)
-                options = new ResizeObserverOptions();
+            options ??= new ResizeObserverOptions();
             services.AddMudBlazorResizeObserver(o =>
             {
                 o = options;
@@ -197,8 +193,7 @@ namespace MudBlazor.Services
         /// <returns>Continues the IServiceCollection chain.</returns>
         public static IServiceCollection AddMudServices(this IServiceCollection services, MudServicesConfiguration configuration = null)
         {
-            if (configuration == null)
-                configuration = new MudServicesConfiguration();
+            configuration ??= new MudServicesConfiguration();
             return services
                 .AddMudBlazorDialog()
                 .AddMudBlazorSnackbar(configuration.SnackbarConfiguration)

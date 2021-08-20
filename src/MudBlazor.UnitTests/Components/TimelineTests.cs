@@ -3,31 +3,31 @@
 // See the LICENSE file in the project root for more information.
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
+using AngleSharp.Html.Dom;
 using Bunit;
 using FluentAssertions;
-using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.UnitTests.TestComponents;
 using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Components
 {
     [TestFixture]
-    public class TimelineTests
+    public class TimelineTests : BunitTest
     {
-        private Bunit.TestContext ctx;
-
-        [SetUp]
-        public void Setup()
+        [Test]
+        public void TimelineTest_DefaultValues()
         {
-            ctx = new Bunit.TestContext();
-            ctx.AddTestServices();
-        }
+            var comp = Context.RenderComponent<MudTimeline>();
+            Console.WriteLine(comp.Markup);
 
-        [TearDown]
-        public void TearDown() => ctx.Dispose();
+            comp.Instance.TimelineOrientation.Should().Be(TimelineOrientation.Vertical);
+            comp.Instance.TimelinePosition.Should().Be(TimelinePosition.Alternate);
+            comp.Instance.TimelineAlign.Should().Be(TimelineAlign.Default);
+            comp.Instance.Reverse.Should().Be(false);
+            comp.Instance.DisableModifiers.Should().Be(false);
+
+        }
 
         /// <summary>
         /// Default Timeline, with five items.
@@ -36,7 +36,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task TimelineTest()
         {
-            var comp = ctx.RenderComponent<TimelineTest>();
+            var comp = Context.RenderComponent<TimelineTest>();
             // print the generated html
             Console.WriteLine(comp.Markup);
             //// select elements needed for the test
@@ -59,5 +59,84 @@ namespace MudBlazor.UnitTests.Components
             timeline.SelectedContainer.Should().Be(items[0].Instance);
         }
 
+        [Test]
+
+        [TestCase(TimelineOrientation.Horizontal, TimelinePosition.Alternate, false, new[] { "mud-timeline-horizontal", "mud-timeline-position-alternate" })]
+        [TestCase(TimelineOrientation.Horizontal, TimelinePosition.Start, false, new[] { "mud-timeline-horizontal", "mud-timeline-position-alternate" })]
+        [TestCase(TimelineOrientation.Horizontal, TimelinePosition.Left, false, new[] { "mud-timeline-horizontal", "mud-timeline-position-alternate" })]
+        [TestCase(TimelineOrientation.Horizontal, TimelinePosition.Right, false, new[] { "mud-timeline-horizontal", "mud-timeline-position-alternate" })]
+        [TestCase(TimelineOrientation.Horizontal, TimelinePosition.End, false, new[] { "mud-timeline-horizontal", "mud-timeline-position-alternate" })]
+
+        [TestCase(TimelineOrientation.Horizontal, TimelinePosition.Top, false, new[] { "mud-timeline-horizontal", "mud-timeline-position-top" })]
+        [TestCase(TimelineOrientation.Horizontal, TimelinePosition.Bottom, false, new[] { "mud-timeline-horizontal", "mud-timeline-position-bottom" })]
+
+        [TestCase(TimelineOrientation.Vertical, TimelinePosition.Alternate, false, new[] { "mud-timeline-vertical", "mud-timeline-position-alternate" })]
+        [TestCase(TimelineOrientation.Vertical, TimelinePosition.Top, false, new[] { "mud-timeline-vertical", "mud-timeline-position-alternate" })]
+        [TestCase(TimelineOrientation.Vertical, TimelinePosition.Bottom, false, new[] { "mud-timeline-vertical", "mud-timeline-position-alternate" })]
+
+        [TestCase(TimelineOrientation.Vertical, TimelinePosition.Start, false, new[] { "mud-timeline-vertical", "mud-timeline-position-start" })]
+        [TestCase(TimelineOrientation.Vertical, TimelinePosition.End, false, new[] { "mud-timeline-vertical", "mud-timeline-position-end" })]
+
+        [TestCase(TimelineOrientation.Vertical, TimelinePosition.Left, false, new[] { "mud-timeline-vertical", "mud-timeline-position-start" })]
+        [TestCase(TimelineOrientation.Vertical, TimelinePosition.Right, false, new[] { "mud-timeline-vertical", "mud-timeline-position-end" })]
+
+        //RTL to true
+
+        [TestCase(TimelineOrientation.Horizontal, TimelinePosition.Alternate, true, new[] { "mud-timeline-horizontal", "mud-timeline-position-alternate" })]
+        [TestCase(TimelineOrientation.Horizontal, TimelinePosition.Start, true, new[] { "mud-timeline-horizontal", "mud-timeline-position-alternate" })]
+        [TestCase(TimelineOrientation.Horizontal, TimelinePosition.Left, true, new[] { "mud-timeline-horizontal", "mud-timeline-position-alternate" })]
+        [TestCase(TimelineOrientation.Horizontal, TimelinePosition.Right, true, new[] { "mud-timeline-horizontal", "mud-timeline-position-alternate" })]
+        [TestCase(TimelineOrientation.Horizontal, TimelinePosition.End, true, new[] { "mud-timeline-horizontal", "mud-timeline-position-alternate" })]
+
+        [TestCase(TimelineOrientation.Horizontal, TimelinePosition.Top, true, new[] { "mud-timeline-horizontal", "mud-timeline-position-top" })]
+        [TestCase(TimelineOrientation.Horizontal, TimelinePosition.Bottom, true, new[] { "mud-timeline-horizontal", "mud-timeline-position-bottom" })]
+
+        [TestCase(TimelineOrientation.Vertical, TimelinePosition.Alternate, true, new[] { "mud-timeline-vertical", "mud-timeline-position-alternate" })]
+        [TestCase(TimelineOrientation.Vertical, TimelinePosition.Top, true, new[] { "mud-timeline-vertical", "mud-timeline-position-alternate" })]
+        [TestCase(TimelineOrientation.Vertical, TimelinePosition.Bottom, true, new[] { "mud-timeline-vertical", "mud-timeline-position-alternate" })]
+
+        [TestCase(TimelineOrientation.Vertical, TimelinePosition.Start, true, new[] { "mud-timeline-vertical", "mud-timeline-position-start" })]
+        [TestCase(TimelineOrientation.Vertical, TimelinePosition.End, true, new[] { "mud-timeline-vertical", "mud-timeline-position-end" })]
+
+        [TestCase(TimelineOrientation.Vertical, TimelinePosition.Left, true, new[] { "mud-timeline-vertical", "mud-timeline-position-end" })]
+        [TestCase(TimelineOrientation.Vertical, TimelinePosition.Right, true, new[] { "mud-timeline-vertical", "mud-timeline-position-start" })]
+
+        public void TimelineTest_Position(TimelineOrientation orientation, TimelinePosition position, bool rtl, string[] expectedClass)
+        {
+            var comp = Context.RenderComponent<TimelineTest>(p => p.AddCascadingValue(rtl));
+            Console.WriteLine(comp.Markup);
+
+            var timeline = comp.FindComponent<MudTimeline>();
+
+            timeline.SetParametersAndRender(p =>
+            {
+                p.Add(x => x.TimelineOrientation, orientation);
+                p.Add(x => x.TimelinePosition, position);
+            });
+
+
+            timeline.Nodes.Should().ContainSingle();
+            timeline.Nodes[0].Should().BeAssignableTo<IHtmlDivElement>();
+
+            (timeline.Nodes[0] as IHtmlDivElement).ClassList.Should().Contain(expectedClass);
+        }
+
+        [Test]
+        public void TimelineTest_SelectItem()
+        {
+            var comp = Context.RenderComponent<TimelineTest>();
+            Console.WriteLine(comp.Markup);
+
+            var itemsDiv = comp.FindAll(".mud-timeline-item");
+
+            itemsDiv.Should().HaveCount(5);
+
+            for (int i = 0; i < 5; i++)
+            {
+                itemsDiv[i].Click();
+
+                comp.Instance.SelectedIndex.Should().Be(i);
+            }
+        }
     }
 }

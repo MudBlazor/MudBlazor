@@ -2,26 +2,19 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Components;
-
 namespace MudBlazor
 {
     /// <summary>
     /// A section (nav link) inside the MudPageContentNavigation
     /// </summary>
-    public class MudPageContenSection
+    public class MudPageContentSection
     {
         /// <summary>
         /// create a new instance with a title and and id
         /// </summary>
         /// <param name="title">name of the section will be displayed in the navigation</param>
         /// <param name="id">id of the section. It will be appending to the current url, if the section becomes active</param>
-        public MudPageContenSection(string title, string id)
+        public MudPageContentSection(string title, string id)
         {
             Title = title;
             Id = id;

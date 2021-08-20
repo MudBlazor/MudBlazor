@@ -29,6 +29,12 @@ namespace MudBlazor
         }
 
         /// <summary>
+        /// If true will prevent the click from bubbling up the event tree.
+        /// </summary>
+        [Parameter]
+        public bool StopClickPropagation { get; set; } = true;
+
+        /// <summary>
         /// Fired when Checked changes.
         /// </summary>
         [Parameter] public EventCallback<T> CheckedChanged { get; set; }

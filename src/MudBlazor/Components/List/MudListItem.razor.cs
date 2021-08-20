@@ -44,7 +44,7 @@ namespace MudBlazor
         [Parameter] public bool ForceLoad { get; set; }
 
         /// <summary>
-        /// Avatar CSS Class to applie if Avtar is set.
+        /// Avatar CSS Class to apply if Avatar is set.
         /// </summary>
         [Parameter] public string AvatarClass { get; set; }
 

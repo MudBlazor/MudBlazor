@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Globalization;
-using System.Drawing;
 
 
 namespace MudBlazor.Utilities
@@ -66,7 +65,7 @@ namespace MudBlazor.Utilities
                 return hex + "FF";
             }
 
-            if (hex.Length < 3 || hex.Length > 4)
+            if (hex.Length is < 3 or > 4)
             {
                 return null;
             }

@@ -31,6 +31,11 @@ namespace MudBlazor
         [Parameter] public string Label { get; set; }
 
         /// <summary>
+        /// User class names for the popover, separated by space
+        /// </summary>
+        [Parameter] public string PopoverClass { get; set; }
+
+        /// <summary>
         /// If true, compact vertical padding will be applied to all Select items.
         /// </summary>
         [Parameter]
@@ -39,7 +44,7 @@ namespace MudBlazor
             get { return _dense; }
             set
             {
-                // Ensure that when dense is appplied we set the margin on the input controls
+                // Ensure that when dense is applied we set the margin on the input controls
                 _dense = value;
                 Margin = _dense ? Margin.Dense : Margin.None;
             }
@@ -214,8 +219,8 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public bool MultiSelection { get; set; }
 
-        protected List<MudSelectItem<T>> _items = new List<MudSelectItem<T>>();
-        protected Dictionary<T, MudSelectItem<T>> _value_lookup = new Dictionary<T, MudSelectItem<T>>();
+        protected List<MudSelectItem<T>> _items = new();
+        protected Dictionary<T, MudSelectItem<T>> _value_lookup = new();
         internal void Add(MudSelectItem<T> item)
         {
             _items.Add(item);
@@ -403,7 +408,7 @@ namespace MudBlazor
             Func<List<string>, string> multiSelectionTextFunc = null)
         {
             // The Text property of the control is updated
-            Text = multiSelectionTextFunc.Invoke(selectedConvertedValues);
+            Text = multiSelectionTextFunc?.Invoke(selectedConvertedValues);
 
             // The comparison is made on the multiSelectionText variable
             if (multiSelectionText != text)
