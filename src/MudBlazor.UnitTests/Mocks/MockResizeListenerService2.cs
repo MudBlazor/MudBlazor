@@ -5,7 +5,7 @@ using MudBlazor.Services;
 namespace MudBlazor.UnitTests.Mocks
 {
 #pragma warning disable CS1998 // Justification - Implementing IResizeListenerService
-    public class MockResizeListenerService2 : IResizeListenerService2
+    public class MockResizeListenerService2 : IAttachedBasedResizeListenerService
     {
         private int _width, _height;
 

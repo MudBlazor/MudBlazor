@@ -8,8 +8,10 @@ namespace MudBlazor
 
     public partial class MudHidden : MudComponentBase, IAsyncDisposable
     {
+        private Breakpoint _currentBreakpoint = Breakpoint.None;
+        private bool _serviceIsReady = false;
 
-        [Inject] IResizeListenerService2 ResizeListener { get; set; }
+        [Inject] public IBreakpointListenerService BreakpointListenerService {  get; set; }
 
         /// <summary>
         /// The screen size(s) depending on which the ChildContent should not be rendered (or should be, if Invert is true)
@@ -27,13 +29,15 @@ namespace MudBlazor
         [Parameter]
         public bool IsHidden
         {
-            get => _is_hidden;
+            get => _isHidden;
             set
             {
-                if (_is_hidden == value)
-                    return;
-                _is_hidden = value;
-                StateHasChanged();
+                if (_isHidden != value)
+                {
+                    _isHidden = value;
+                    IsHiddenChanged.InvokeAsync(_isHidden);
+
+                }
             }
         }
 
@@ -47,41 +51,45 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public RenderFragment ChildContent { get; set; }
 
-        private bool _is_hidden = true;
+        private bool _isHidden = true;
+
+        protected void Update(Breakpoint currentBreakpoint)
+        {
+            if (_serviceIsReady == false) { return; }
+
+            _currentBreakpoint = currentBreakpoint;
+
+            var hidden = BreakpointListenerService.IsMediaSize(Breakpoint, currentBreakpoint);
+            if (Invert == true)
+            {
+                hidden = !hidden;
+            }
+
+            IsHidden = hidden;
+        }
+
+        protected override void OnParametersSet()
+        {
+            base.OnParametersSet();
+            Update(_currentBreakpoint);
+        }
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
-            if (firstRender)
-            {
-                await ResizeListener.Attach();
-                ResizeListener.OnBreakpointChanged += OnBreakpointChanged;
-                var breakpoint = await ResizeListener.GetBreakpoint();
-                Update(breakpoint);
-            }
-
             await base.OnAfterRenderAsync(firstRender);
+            if (firstRender == true)
+            {
+                var result = await BreakpointListenerService.Attach((x) => {
+                    Update(x);
+                    InvokeAsync(StateHasChanged);
+                    }, new ResizeOptions());
+                _serviceIsReady = true;
+                Update(result);
+                StateHasChanged();
+                
+            }
         }
 
-        protected void Update(Breakpoint breakpoint)
-        {
-            var hidden = ResizeListener.IsMediaSize(Breakpoint, breakpoint);
-            if (Invert)
-                hidden = !hidden;
-            if (hidden == _is_hidden)
-                return;
-            _is_hidden = hidden;
-            _ = InvokeAsync(StateHasChanged);
-            _ = IsHiddenChanged.InvokeAsync(_is_hidden);
-        }
-
-        private void OnBreakpointChanged(object sender, Breakpoint breakpoint)
-        {
-            Update(breakpoint);
-        }
-
-        public async ValueTask DisposeAsync()
-        {
-            await ResizeListener.DisposeAsync();
-        }
+        public async ValueTask DisposeAsync() => await BreakpointListenerService.DisposeAsync();
     }
 }

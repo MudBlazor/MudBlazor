@@ -22,7 +22,10 @@ namespace MudBlazor.Services
         {
             this._dotNetRef = DotNetObjectReference.Create(this);
             this._options = options?.Value ?? new ResizeOptions();
-            this._options.BreakpointDefinitions = BreakpointDefinitions.ToDictionary(x => x.Key.ToString(), x => x.Value);
+            if(this._options.BreakpointDefinitions == null)
+            {
+                this._options.BreakpointDefinitions = BreakpointDefinitions.ToDictionary(x => x.Key.ToString(), x => x.Value);
+            }
             this._jsRuntime = jsRuntime;
             this._browserWindowSizeProvider = browserWindowSizeProvider;
         }
