@@ -74,9 +74,9 @@ namespace MudBlazor.Utilities
             // achromatic argb (gray scale)
             if (Math.Abs(s) < EPSILON)
             {
-                _valuesAsByte[0] = (byte)Math.Max(0, Math.Min(255, Convert.ToInt32(double.Parse($"{l * 255D:0.00}", CultureInfo.InvariantCulture))));
-                _valuesAsByte[1] = (byte)Math.Max(0, Math.Min(255, Convert.ToInt32(double.Parse($"{l * 255D:0.00}", CultureInfo.InvariantCulture))));
-                _valuesAsByte[2] = (byte)Math.Max(0, Math.Min(255, Convert.ToInt32(double.Parse($"{l * 255D:0.00}", CultureInfo.InvariantCulture))));
+                _valuesAsByte[0] = (byte)Math.Max(0, Math.Min(255, (int)Math.Ceiling(l * 255D)));
+                _valuesAsByte[1] = (byte)Math.Max(0, Math.Min(255, (int)Math.Ceiling(l * 255D)));
+                _valuesAsByte[2] = (byte)Math.Max(0, Math.Min(255, (int)Math.Ceiling(l * 255D)));
                 _valuesAsByte[3] = (byte)a;
             }
             else
