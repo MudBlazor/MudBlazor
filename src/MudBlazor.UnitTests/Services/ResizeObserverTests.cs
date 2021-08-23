@@ -68,10 +68,10 @@ namespace MudBlazor.UnitTests.Services
                 "mudResizeObserver.connect",
                 It.Is<object[]>(z =>
                     (Guid)z[0] != default &&
-                    z[1] is DotNetObjectReference<ResizeObserver> == true &&
-                    z[2] is IEnumerable<ElementReference> == true &&
-                    z[3] is IEnumerable<Guid> == true &&
-                    z[4] is ResizeObserverOptions == true && ((ResizeObserverOptions)z[4]).EnableLogging == false && ((ResizeObserverOptions)z[4]).ReportRate == 200
+                    z[1] is DotNetObjectReference<ResizeObserver> &&
+                    z[2] is IEnumerable<ElementReference> &&
+                    z[3] is IEnumerable<Guid> &&
+                    z[4] is ResizeObserverOptions && ((ResizeObserverOptions)z[4]).EnableLogging == false && ((ResizeObserverOptions)z[4]).ReportRate == 200
                 )
             )).ReturnsAsync(resolvedElements.Values).Verifiable();
 
@@ -154,10 +154,10 @@ namespace MudBlazor.UnitTests.Services
                 "mudResizeObserver.connect",
                 It.Is<object[]>(z =>
                     (Guid)z[0] != default &&
-                    z[1] is DotNetObjectReference<ResizeObserver> == true &&
-                    z[2] is IEnumerable<ElementReference> == true &&
-                    z[3] is IEnumerable<Guid> == true &&
-                    z[4] is ResizeObserverOptions == true && ((ResizeObserverOptions)z[4]).EnableLogging == false && ((ResizeObserverOptions)z[4]).ReportRate == 200
+                    z[1] is DotNetObjectReference<ResizeObserver> &&
+                    z[2] is IEnumerable<ElementReference> &&
+                    z[3] is IEnumerable<Guid> &&
+                    z[4] is ResizeObserverOptions && ((ResizeObserverOptions)z[4]).EnableLogging == false && ((ResizeObserverOptions)z[4]).ReportRate == 200
                 )
             )).ReturnsAsync(resolvedElements.Values).Callback<String, object[]>((x, y) => { observerId = (Guid)y[0]; ids = new List<Guid>((IEnumerable<Guid>)y[3]); }).Verifiable();
 
@@ -168,7 +168,7 @@ namespace MudBlazor.UnitTests.Services
                 "mudResizeObserver.disconnect",
                 It.Is<object[]>(z =>
                     (Guid)z[0] == observerId &&
-                    ids.Contains((Guid)z[1]) == true
+                    ids.Contains((Guid)z[1])
                 )
             )).ReturnsAsync(new Object()).Callback<String, Object[]>((x, y) => { ids.Remove((Guid)y[1]); }).Verifiable();
             }
@@ -212,10 +212,10 @@ namespace MudBlazor.UnitTests.Services
                 "mudResizeObserver.connect",
                 It.Is<object[]>(z =>
                     (Guid)z[0] != default &&
-                    z[1] is DotNetObjectReference<ResizeObserver> == true &&
-                    z[2] is IEnumerable<ElementReference> == true &&
-                    z[3] is IEnumerable<Guid> == true &&
-                    z[4] is ResizeObserverOptions == true && ((ResizeObserverOptions)z[4]).EnableLogging == false && ((ResizeObserverOptions)z[4]).ReportRate == 200
+                    z[1] is DotNetObjectReference<ResizeObserver> &&
+                    z[2] is IEnumerable<ElementReference> &&
+                    z[3] is IEnumerable<Guid> &&
+                    z[4] is ResizeObserverOptions && ((ResizeObserverOptions)z[4]).EnableLogging == false && ((ResizeObserverOptions)z[4]).ReportRate == 200
                 )
             )).ReturnsAsync(resolvedElements.Values).Callback<String, object[]>((x, y) => { ids = new List<Guid>((IEnumerable<Guid>)y[3]); }).Verifiable();
 

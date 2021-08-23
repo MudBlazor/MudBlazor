@@ -22,11 +22,11 @@ namespace MudBlazor
                          .AddClass("mud-carousel-transition-slide-prev-enter", !_disposed && Transition == Transition.Slide && RightToLeft == false && Parent.SelectedContainer == this && !Parent._moveNext)
                          .AddClass("mud-carousel-transition-slide-prev-exit", !_disposed && Transition == Transition.Slide && RightToLeft == false && Parent.LastContainer == this && !Parent._moveNext)
 
-                         .AddClass("mud-carousel-transition-slide-next-rtl-enter", !_disposed && Transition == Transition.Slide && RightToLeft == true && Parent.SelectedContainer == this && Parent._moveNext)
-                         .AddClass("mud-carousel-transition-slide-next-rtl-exit", !_disposed && Transition == Transition.Slide && RightToLeft == true && Parent.LastContainer == this && Parent._moveNext)
+                         .AddClass("mud-carousel-transition-slide-next-rtl-enter", !_disposed && Transition == Transition.Slide && RightToLeft && Parent.SelectedContainer == this && Parent._moveNext)
+                         .AddClass("mud-carousel-transition-slide-next-rtl-exit", !_disposed && Transition == Transition.Slide && RightToLeft && Parent.LastContainer == this && Parent._moveNext)
 
-                         .AddClass("mud-carousel-transition-slide-prev-rtl-enter", !_disposed && Transition == Transition.Slide && RightToLeft == true && Parent.SelectedContainer == this && !Parent._moveNext)
-                         .AddClass("mud-carousel-transition-slide-prev-rtl-exit", !_disposed && Transition == Transition.Slide && RightToLeft == true && Parent.LastContainer == this && !Parent._moveNext)
+                         .AddClass("mud-carousel-transition-slide-prev-rtl-enter", !_disposed && Transition == Transition.Slide && RightToLeft && Parent.SelectedContainer == this && !Parent._moveNext)
+                         .AddClass("mud-carousel-transition-slide-prev-rtl-exit", !_disposed && Transition == Transition.Slide && RightToLeft && Parent.LastContainer == this && !Parent._moveNext)
 
                          .AddClass("mud-carousel-transition-none", !_disposed && Transition == Transition.None && Parent.SelectedContainer != this)
 

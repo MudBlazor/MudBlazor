@@ -25,7 +25,7 @@ namespace MudBlazor
         /// <summary>
         /// The currently active session. null if there is no section selected
         /// </summary>
-        public MudPageContentSection ActiveSection => _sections.FirstOrDefault(x => x.IsActive == true);
+        public MudPageContentSection ActiveSection => _sections.FirstOrDefault(x => x.IsActive);
 
         /// <summary>
         /// The text displayed about the section links. Defaults to "Conents"
@@ -101,13 +101,13 @@ namespace MudBlazor
             {
                 section.Activate();
             }
-            else if (_sections.Count == 1 && ActivateFirstSectionAsDefault == true)
+            else if (_sections.Count == 1 && ActivateFirstSectionAsDefault)
             {
                 section.Activate();
                 ScrollSpy.SetSectionAsActive(section.Id).AndForget();
             }
 
-            if (forceUpdate == true)
+            if (forceUpdate)
             {
                 StateHasChanged();
             }

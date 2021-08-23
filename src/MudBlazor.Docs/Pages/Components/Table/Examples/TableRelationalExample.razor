@@ -14,7 +14,7 @@
 		<MudTh>Age</MudTh>
 	</HeaderContent>
 	<RowTemplate>
-		<MudTd><MudButton Variant="Variant.Outlined" Size="Size.Small" OnClick="@(() => ShowBtnPress(context.Number))">@(context.ShowDetails == true? "Hide" : "Show") Address Details</MudButton></MudTd>
+		<MudTd><MudButton Variant="Variant.Outlined" Size="Size.Small" OnClick="@(() => ShowBtnPress(context.Number))">@(context.ShowDetails? "Hide" : "Show") Address Details</MudButton></MudTd>
 		<MudTd DataLabel="Nr">@context.Number</MudTd>
 		<MudTd DataLabel="Name">@context.Name</MudTd>
 		<MudTd DataLabel="Age">@context.Age</MudTd>

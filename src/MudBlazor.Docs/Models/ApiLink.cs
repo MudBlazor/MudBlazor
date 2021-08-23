@@ -34,7 +34,7 @@ namespace MudBlazor.Docs.Models
         /// </summary>
         public static Type GetTypeFromComponentLink(string component)
         {
-            if (component.Contains('#') == true)
+            if (component.Contains('#'))
             {
                 component = component.Substring(0, component.IndexOf('#'));
             }
