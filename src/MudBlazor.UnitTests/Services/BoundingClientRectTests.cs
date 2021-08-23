@@ -29,18 +29,20 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void Detect_Boundaries()
         {
-            var client = new BoundingClientRect();
-            client.Top = -10;
-            client.Left = -10;
+            var client = new BoundingClientRect
+            {
+                Top = -10,
+                Left = -10,
+                Height = 100,
+                Width = 100,
+                ScrollX = 100,
+                ScrollY = 100,
+                WindowHeight = 1000,
+                WindowWidth = 1000
+            };
 
-            client.Height = 100;
-            client.Width = 100;
 
-            client.ScrollX = 100;
-            client.ScrollY = 100;
 
-            client.WindowHeight = 1000;
-            client.WindowWidth = 1000;
 
             client.IsOutsideBottom.Should().BeFalse();
             client.IsOutsideTop.Should().BeTrue();

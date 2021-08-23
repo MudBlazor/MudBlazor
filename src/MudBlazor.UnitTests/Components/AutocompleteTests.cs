@@ -222,8 +222,7 @@ namespace MudBlazor.UnitTests.Components
             //insert "Calif"
             autocompletecomp.Find("input").Input("Calif");
             await Task.Delay(100);
-            var args = new KeyboardEventArgs();
-            args.Key = "Enter";
+            var args = new KeyboardEventArgs {Key = "Enter"};
 
             //press Enter key
             autocompletecomp.Find("input").KeyUp(args);

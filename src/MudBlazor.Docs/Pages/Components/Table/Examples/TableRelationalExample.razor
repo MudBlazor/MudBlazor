@@ -92,10 +92,12 @@
 			Addresses = addresses
 		});
 
-		addresses = new List<Address>();
-		addresses.Add(new Address { Address_Line_1 = "123 Pikachu Lane", Address_Line_2 = "Pallet Town", Postal_Code = 777 });
-		addresses.Add(new Address { Address_Line_1 = "456 Mew Street", Address_Line_2 = "Pallet Town", Postal_Code = 999 });
-		people.Add(new Person
+	    addresses = new List<Address>
+	    {
+	        new() {Address_Line_1 = "123 Pikachu Lane", Address_Line_2 = "Pallet Town", Postal_Code = 777}, 
+	        new() {Address_Line_1 = "456 Mew Street", Address_Line_2 = "Pallet Town", Postal_Code = 999}
+	    };
+	    people.Add(new Person
 		{
 			ShowDetails = false,
 			Number = 2,
@@ -105,11 +107,12 @@
 		});
 		People = people;
 
-		addresses = new List<Address>();
-		addresses.Add(new Address { Address_Line_1 = "123 Shire Lane", Address_Line_2 = "Bag End", Postal_Code = 223 });
-		addresses.Add(new Address { Address_Line_1 = "456 Shire Street", Address_Line_2 = "Bag End", Postal_Code = 445 });
-		addresses.Add(new Address { Address_Line_1 = "789 Shire Avenue", Address_Line_2 = "Bag End", Postal_Code = 667 });
-		people.Add(new Person
+	    addresses = new List<Address> {
+	        new() {Address_Line_1 = "123 Shire Lane", Address_Line_2 = "Bag End", Postal_Code = 223},
+	        new() {Address_Line_1 = "456 Shire Street", Address_Line_2 = "Bag End", Postal_Code = 445},
+	        new() {Address_Line_1 = "789 Shire Avenue", Address_Line_2 = "Bag End", Postal_Code = 667}
+	    };
+	    people.Add(new Person
 		{
 			ShowDetails = true,
 			Number = 3,

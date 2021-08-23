@@ -12,9 +12,11 @@
     protected override void OnInitialized()
     {
         LoadStates();
-        StateDetails = new State();
-        StateDetails.StateId = 6;
-        StateDetails.StateName = "Assam";
+        StateDetails = new State
+        {
+            StateId = 6,
+            StateName = "Assam"
+        };
         base.OnInitialized();
     }
 

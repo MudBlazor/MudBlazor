@@ -76,8 +76,7 @@ namespace PrimitiveCalculator
                     if (_parser.NextIs('('))
                     {
                         _parser.Skip(1);
-                        var exp = new Expression(_parser);
-                        exp._mustConsumeClosingBracket = true;
+                        var exp = new Expression(_parser) {_mustConsumeClosingBracket = true};
                         op.Expression = exp;
                         exp.Eval();
                     }
