@@ -205,7 +205,7 @@
         return string.Empty;
     }
 
-    private bool CheckIsTwoWayEventCallback(PropertyInfo propertyInfo) => propertyInfo.Name.EndsWith("Changed") ? true : false;
+    private bool CheckIsTwoWayEventCallback(PropertyInfo propertyInfo) => propertyInfo.Name.EndsWith("Changed");
 
     private bool CheckIsTwoWayProperty(PropertyInfo propertyInfo)
     {
