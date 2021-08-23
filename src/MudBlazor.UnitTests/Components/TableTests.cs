@@ -466,7 +466,7 @@ namespace MudBlazor.UnitTests.Components
             Console.WriteLine(comp.Markup);
             // select elements needed for the test
             var table = comp.FindComponent<MudTable<int>>().Instance;
-            var text = comp.FindComponent<MudText>();
+            comp.FindComponent<MudText>();
             var checkboxes = comp.FindComponents<MudCheckBox<bool>>().Select(x => x.Instance).ToArray();
             var tr = comp.FindAll("tr").ToArray();
             tr.Length.Should().Be(4); // <-- one header, three rows
@@ -500,7 +500,7 @@ namespace MudBlazor.UnitTests.Components
             Console.WriteLine(comp.Markup);
             // select elements needed for the test
             var table = comp.FindComponent<MudTable<int>>().Instance;
-            var text = comp.FindComponent<MudText>();
+            comp.FindComponent<MudText>();
             var checkboxes = comp.FindComponents<MudCheckBox<bool>>().Select(x => x.Instance).ToArray();
             var tr = comp.FindAll("tr").ToArray();
             tr.Length.Should().Be(4); // <-- one header, three rows
@@ -534,7 +534,7 @@ namespace MudBlazor.UnitTests.Components
             Console.WriteLine(comp.Markup);
             // select elements needed for the test
             var table = comp.FindComponent<MudTable<int>>().Instance;
-            var text = comp.FindComponent<MudText>();
+            comp.FindComponent<MudText>();
             var checkboxRendered = comp.FindComponents<MudCheckBox<bool>>().ToArray();
             var checkboxes = checkboxRendered.Select(x => x.Instance).ToArray();
             table.SelectedItems.Count.Should().Be(1); // selected items should be empty
@@ -561,7 +561,7 @@ namespace MudBlazor.UnitTests.Components
             Console.WriteLine(comp.Markup);
             // select elements needed for the test
             var table = comp.FindComponent<MudTable<int>>().Instance;
-            var text = comp.FindComponent<MudText>();
+            comp.FindComponent<MudText>();
             var checkboxRendered = comp.FindComponents<MudCheckBox<bool>>().ToArray();
             var checkboxes = checkboxRendered.Select(x => x.Instance).ToArray();
             table.SelectedItems.Count.Should().Be(3);
@@ -586,7 +586,7 @@ namespace MudBlazor.UnitTests.Components
             Console.WriteLine(comp.Markup);
             // select elements needed for the test
             var table = comp.FindComponent<MudTable<int>>().Instance;
-            var text = comp.FindComponent<MudText>();
+            comp.FindComponent<MudText>();
             var checkboxRendered = comp.FindComponents<MudCheckBox<bool>>().ToArray();
             var checkboxes = checkboxRendered.Select(x => x.Instance).ToArray();
             table.SelectedItems.Count.Should().Be(4);
@@ -613,7 +613,7 @@ namespace MudBlazor.UnitTests.Components
             Console.WriteLine(comp.Markup);
             // select elements needed for the test
             var table = comp.FindComponent<MudTable<int>>().Instance;
-            var text = comp.FindComponent<MudText>();
+            comp.FindComponent<MudText>();
             var checkboxes = comp.FindComponents<MudCheckBox<bool>>().Select(x => x.Instance).ToArray();
             var tr = comp.FindAll("tr").ToArray();
             tr.Length.Should().Be(5); // <-- one header, three rows, one footer
@@ -647,7 +647,7 @@ namespace MudBlazor.UnitTests.Components
             Console.WriteLine(comp.Markup);
             // select elements needed for the test
             var table = comp.FindComponent<MudTable<int>>().Instance;
-            var text = comp.FindComponent<MudText>();
+            comp.FindComponent<MudText>();
             var checkboxes = comp.FindComponents<MudCheckBox<bool>>().Select(x => x.Instance).ToArray();
             var tr = comp.FindAll("tr").ToArray();
             tr.Length.Should().Be(5); // <-- one header, three rows

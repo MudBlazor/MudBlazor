@@ -137,7 +137,7 @@ namespace MudBlazor.UnitTests.Components
         {
             // the test should run through instantly (max 5s for a slow build server). 
             // without the fix it took minutes on a fast computer
-            var comp = Context.RenderComponent<LineChartWithBigValuesTest>();
+            Context.RenderComponent<LineChartWithBigValuesTest>();
         }
     }
 }

@@ -298,7 +298,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<SimpleColorPickerTest>(p => p.Add(x => x.ColorPickerMode, ColorPickerMode.HEX));
             Console.WriteLine(comp.Markup);
 
-            var inputs = comp.FindAll(".mud-picker-color-inputs input");
+            comp.FindAll(".mud-picker-color-inputs input");
 
             var lColor = GetColorInput(comp, 0, 1);
 
@@ -315,7 +315,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<SimpleColorPickerTest>(p => p.Add(x => x.ColorPickerMode, ColorPickerMode.HEX));
             Console.WriteLine(comp.Markup);
 
-            var inputs = comp.FindAll(".mud-picker-color-inputs input");
+            comp.FindAll(".mud-picker-color-inputs input");
 
             var hexInput = GetColorInput(comp, 0, 1);
 
@@ -1065,8 +1065,6 @@ namespace MudBlazor.UnitTests.Components
 
             Console.WriteLine(comp.Markup);
 
-            var expectedColors = view == ColorPickerView.Grid ? _mudGridDefaultColors : _mudGridPaletteDefaultClors;
-
             IElement item;
             if (view == ColorPickerView.Grid)
             {
@@ -1118,7 +1116,7 @@ namespace MudBlazor.UnitTests.Components
 
             comp.SetParametersAndRender(p => p.Add(x => x.ColorValue, null));
 
-            var lColor = GetColorInput(comp, 2);
+            GetColorInput(comp, 2);
             var expectedColor = _defaultColor;
 
             CheckColorRelatedValues(comp, _defaultXForColorPanel, _defaultYForColorPanel, expectedColor, ColorPickerMode.HSL, false);

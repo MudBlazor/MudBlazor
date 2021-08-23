@@ -109,7 +109,6 @@ namespace MudBlazor.UnitTests.Components
             );
             Console.WriteLine(comp.Markup);
             var picker = comp.Instance;
-            var instance = comp.Instance;
             picker.Date.Should().Be(new DateTime(2021, 1, 13));
             picker.Text.Should().Be("13/01/2021");
         }
@@ -268,7 +267,6 @@ namespace MudBlazor.UnitTests.Components
         public void Open_ClickCalendarHeader_Click4thMonth_Click23rdDay_CheckDate()
         {
             var comp = OpenPicker();
-            var picker = comp.Instance;
             comp.Find("button.mud-picker-calendar-header-transition").Click();
             // should show months
             comp.FindAll("div.mud-picker-month-container").Count.Should().Be(1);
@@ -571,14 +569,12 @@ namespace MudBlazor.UnitTests.Components
         public async Task CheckDateTimeMinValueTest()
         {
             // Define the datetime minvalue for the date
-            var date = DateTime.MinValue;
 
             // Get access to the datepicker of the instance
             var comp = Context.RenderComponent<DateTimeMinValueDatePickerTest>();
             var datePicker = comp.FindComponent<MudDatePicker>();
 
             // Get the instance of the datepicker
-            var picker = comp.Instance;
 
             // Open the datepicker
             await comp.InvokeAsync(() => datePicker.Instance.Open());

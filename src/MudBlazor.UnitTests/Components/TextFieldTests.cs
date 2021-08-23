@@ -307,7 +307,6 @@ namespace MudBlazor.UnitTests.Components
             // print the generated html
             Console.WriteLine(comp.Markup);
             // select elements needed for the test
-            var textfield = comp.Instance;
             comp.Find("textarea").InnerHtml.Should().Be(text);
         }
 

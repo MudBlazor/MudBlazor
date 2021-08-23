@@ -595,7 +595,7 @@ namespace MudBlazor.UnitTests.Components
             var styleAttr = toolbarWrapper.GetAttribute("style");
             styleAttr.Should().Be("transform:translateX(-0px);");
 
-            var sliderValue = GetSliderValue(comp);
+            GetSliderValue(comp);
             GetSliderValue(comp).Should().Be(1 * 100.0);
         }
 

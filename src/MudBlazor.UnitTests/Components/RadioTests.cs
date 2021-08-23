@@ -178,7 +178,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<RadioGroupTest6>();
             Console.WriteLine(comp.Markup);
             // select elements needed for the test
-            var group = comp.FindComponent<MudRadioGroup<string>>();
+            comp.FindComponent<MudRadioGroup<string>>();
             var buttons = comp.FindAll("label > span").ToArray();
             var svgs = comp.FindAll("svg").ToArray();
             // check dense
