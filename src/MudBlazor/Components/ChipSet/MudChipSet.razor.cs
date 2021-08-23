@@ -192,7 +192,7 @@ namespace MudBlazor
         {
             if (firstRender)
                 await SelectDefaultChips();
-            base.OnAfterRender(firstRender);
+            await base.OnAfterRenderAsync(firstRender);
         }
 
         private async Task SelectDefaultChips()
