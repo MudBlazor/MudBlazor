@@ -148,9 +148,11 @@ namespace MudBlazor.UnitTests.Components
             service.Should().NotBe(null);
             IDialogReference dialogReference = null;
 
-            var parameters = new DialogParameters();
-            parameters.Add("TestValue", "test");
-            parameters.Add("Color_Test", Color.Error); // !! comment me !!
+            var parameters = new DialogParameters
+            {
+                {"TestValue", "test"},
+                {"Color_Test", Color.Error} // !! comment me !!
+            };
 
             await comp.InvokeAsync(() => dialogReference = service?.Show<DialogWithParameters>(string.Empty, parameters));
             dialogReference.Should().NotBe(null);

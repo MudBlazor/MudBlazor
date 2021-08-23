@@ -154,14 +154,16 @@
 
     string GetKeywords()
     {
-        var keywords = new HashSet<string>(Regex.Split(Keywords??"", @",\s"));
-        keywords.Add(Title);
-        keywords.Add(GetComponentTypeName());
-        keywords.Add(GetComponentTypeName()?.Replace("Mud", ""));
-        keywords.Add("mudblazor");
-        keywords.Add("blazor");
-        keywords.Add("component");
-        keywords.Add("material design");
+        var keywords = new HashSet<string>(Regex.Split(Keywords ?? "", @",\s"))
+        {
+            Title,
+            GetComponentTypeName(),
+            GetComponentTypeName()?.Replace("Mud", ""),
+            "mudblazor",
+            "blazor",
+            "component",
+            "material design"
+        };
         keywords.Remove("");
         keywords.Remove(null);
         return string.Join(", ", keywords);
