@@ -10,7 +10,7 @@
 
 	protected override void OnInitialized()
     {
-		base.Header = (context) => 
+		Header = (context) => 
 	@:@{
 			if (string.IsNullOrEmpty(AddIconToolTip) == false)
 			{
@@ -25,7 +25,7 @@
 		}
 		;
 
-        base.TabPanelHeader = (context) =>  
+        TabPanelHeader = (context) =>  
 	@:@{
 			if (string.IsNullOrEmpty(CloseIconToolTip) == false)
 			{

@@ -29,7 +29,7 @@
         {
             @* Add datalabel as a placeholder to avoid jumps on small viewports *@
             <MudTd DataLabel="&nbsp;">
-                @if (object.ReferenceEquals(Context?.Table._editingItem, Item) && (!Context?.Table.ReadOnly ?? false))
+                @if (ReferenceEquals(Context?.Table._editingItem, Item) && (!Context?.Table.ReadOnly ?? false))
                 {
                     <div style="display: flex;">
                         <MudTooltip Text="@Context.Table.CommitEditTooltip">

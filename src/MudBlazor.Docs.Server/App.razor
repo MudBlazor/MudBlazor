@@ -1,9 +1,9 @@
 ﻿<Router AppAssembly="@typeof(MudBlazor.Docs.Pages.Index).Assembly">
     <Found Context="routeData">
-        <RouteView RouteData="@routeData" DefaultLayout="@typeof(MudBlazor.Docs.Shared.MainLayout)" />
+        <RouteView RouteData="@routeData" DefaultLayout="@typeof(Shared.MainLayout)" />
     </Found>
     <NotFound>
-        <LayoutView Layout="@typeof(MudBlazor.Docs.Shared.MainLayout)">
+        <LayoutView Layout="@typeof(Shared.MainLayout)">
             <MudContainer MaxWidth="MaxWidth.Small">
                 <div class="d-flex flex-column">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 569 384.7" width="100%" height="100%" style="margin-top:25%; max-height:371.84px; max-width:550px;">

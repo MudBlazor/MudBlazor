@@ -84,15 +84,15 @@
 
     <br />
     <MudItem class="d-flex align-center justify-center">
-        <MudButton Variant="@Variant.Filled" OnClick="@(() => OpenDrawer(MudBlazor.Anchor.Bottom))">Drawer Bottom</MudButton>
-        <MudButton Variant="@Variant.Filled" OnClick="@(() => OpenDrawer(MudBlazor.Anchor.Top))">Drawer Top</MudButton>
+        <MudButton Variant="@Variant.Filled" OnClick="@(() => OpenDrawer(Anchor.Bottom))">Drawer Bottom</MudButton>
+        <MudButton Variant="@Variant.Filled" OnClick="@(() => OpenDrawer(Anchor.Top))">Drawer Top</MudButton>
     </MudItem>
     @code
     {
         bool open;
-        MudBlazor.Anchor anchor;
+        Anchor anchor;
 
-        void OpenDrawer(MudBlazor.Anchor anchor)
+        void OpenDrawer(Anchor anchor)
         {
             open = true;
             this.anchor = anchor;
