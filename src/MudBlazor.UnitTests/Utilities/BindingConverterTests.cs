@@ -482,8 +482,8 @@ namespace MudBlazor.UnitTests.Utilities
         [Test]
         public void NumericBoundariesConverterTest()
         {
-            Func<int, int> funcInt = (int i) => i;//Not testing test the function, return the parameter
-            Func<double?, double?> funcDbl = (double? d) => d;//Not testing test the function, return the parameter
+            Func<int, int> funcInt = i => i;//Not testing test the function, return the parameter
+            Func<double?, double?> funcDbl = d => d;//Not testing test the function, return the parameter
 
             //Note: Set doesn't do anything. The Get can change the value
             var c1 = new NumericBoundariesConverter<int>(funcInt);
