@@ -78,7 +78,7 @@
                     }
                     else
                     {
-                        @if (CurrentPageItems != null && CurrentPageItems.Count() > 0)
+                        @if (CurrentPageItems != null && CurrentPageItems.Any())
                         {
                             var rowIndex = 0;
                             <MudVirtualize IsEnabled="@Virtualize" Items="@CurrentPageItems?.ToList()" Context="item">

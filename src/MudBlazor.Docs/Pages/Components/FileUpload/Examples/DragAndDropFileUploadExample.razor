@@ -23,7 +23,7 @@
 
     <InputFile OnChange="OnInputFileChanged" multiple  class="drag-drop-input" />
 
-    @if (fileNames.Count() == 0)
+    @if (!fileNames.Any())
     {
         <MudText Typo="Typo.h3">Drag and drop files here or click</MudText> 
     }else

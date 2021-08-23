@@ -14,7 +14,7 @@
     </DocsPageHeader>
     <DocsPageContent>
 
-        @if (Properties != null && Properties.Count() > 0)
+        @if (Properties != null && Properties.Any())
         {
             <DocsPageSection>
                 <SectionHeader Title="Properties" />
@@ -37,7 +37,7 @@
             </DocsPageSection>
         }
 
-        @if (EventCallbacks != null && EventCallbacks.Count() > 0)
+        @if (EventCallbacks != null && EventCallbacks.Any())
         {
             <DocsPageSection>
                 <SectionHeader Title="EventCallbacks" />
@@ -58,7 +58,7 @@
             </DocsPageSection>
         }
 
-        @if (Methods != null && Methods.Count() > 0)
+        @if (Methods != null && Methods.Any())
         {
             <DocsPageSection>
                 <SectionHeader Title="Methods" />
