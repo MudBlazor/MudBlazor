@@ -19,13 +19,7 @@
 
     private MudTable<string> filteredTable;
 
-    private string FilteredItemCount
-    {
-        get
-        {
-            return filteredTable.GetFilteredItemsCount().ToString();
-        }
-    }
+    private string FilteredItemCount => filteredTable.GetFilteredItemsCount().ToString();
 
     private bool FilterFunc(string state)
     {

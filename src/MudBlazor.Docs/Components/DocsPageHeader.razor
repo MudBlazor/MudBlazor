@@ -108,13 +108,7 @@
         return NavigationManager.Uri.Split('/', StringSplitOptions.RemoveEmptyEntries).LastOrDefault();
     }
 
-    private bool IsApiPage
-    {
-        get
-        {
-            return NavigationManager.Uri.Contains("/api/");
-        }
-    }
+    private bool IsApiPage => NavigationManager.Uri.Contains("/api/");
 
     private string GetComponentTypeName() => ApiLink.GetTypeFromComponentLink(GetComponentName())?.Name.Replace("`1", "");
 
