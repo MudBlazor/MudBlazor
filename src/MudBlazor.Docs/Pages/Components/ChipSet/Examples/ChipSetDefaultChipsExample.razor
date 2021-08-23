@@ -10,7 +10,7 @@
 </MudChipSet>
 
 
-@if (selected != null && selected.Length>0)
+@if (selected is {Length: > 0 })
 {
     <MudText>You selected @string.Join(", ", selected.Select(chip=>chip.Text)).</MudText>
 }

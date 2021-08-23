@@ -11,7 +11,7 @@
 </MudChipSet>
 
 
-@if (selected != null && selected.Length>0)
+@if (selected is {Length: > 0 })
 {
     <MudText>@string.Join(", ", selected.Select(chip=>chip.Text).OrderBy(x => x))</MudText>
 }

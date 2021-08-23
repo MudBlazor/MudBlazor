@@ -12,7 +12,7 @@
         {
             <MudTreeViewItemToggleButton Loading="Loading" Expanded="Expanded" ExpandedChanged="OnItemExpanded" Visible="@HasChild"></MudTreeViewItemToggleButton>
 
-            @if (MudTreeRoot != null && MudTreeRoot.CanSelect)
+            @if (MudTreeRoot is {CanSelect: true })
             {
                 <MudCheckBox @bind-Checked="IsChecked"></MudCheckBox> 
             }

@@ -24,7 +24,7 @@
 
         public bool IsExpanded { get; set; } = true;
 
-        public bool HasChild => TreeItems != null && TreeItems.Count > 0;
+        public bool HasChild => TreeItems is {Count: > 0 };
 
         public HashSet<TreeItemData> TreeItems { get; set; } = new();
 

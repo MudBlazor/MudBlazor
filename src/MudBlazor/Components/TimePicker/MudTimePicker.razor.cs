@@ -268,8 +268,8 @@ namespace MudBlazor
           .AddClass($"mud-time-picker-dial-hidden", _currentView != OpenTo.Minutes)
         .Build();
 
-        private bool IsAm => _timeSet.Hour >= 00 && _timeSet.Hour < 12; // am is 00:00 to 11:59 
-        private bool IsPm => _timeSet.Hour >= 12 && _timeSet.Hour < 24; // pm is 12:00 to 23:59 
+        private bool IsAm => _timeSet.Hour is >= 00 and < 12; // am is 00:00 to 11:59 
+        private bool IsPm => _timeSet.Hour is >= 12 and < 24; // pm is 12:00 to 23:59 
 
         private string GetClockPinColor()
         {
@@ -349,7 +349,7 @@ namespace MudBlazor
                 height = 40;
             if (_currentView == OpenTo.Hours)
             {
-                if (!AmPm && _timeSet.Hour > 0 && _timeSet.Hour < 13)
+                if (!AmPm && _timeSet.Hour is > 0 and < 13)
                     height = 26;
                 else
                     height = 40;
