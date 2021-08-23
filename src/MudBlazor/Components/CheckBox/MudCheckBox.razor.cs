@@ -9,16 +9,16 @@ namespace MudBlazor
     {
         protected string Classname =>
         new CssBuilder("mud-checkbox")
-            .AddClass($"mud-disabled", Disabled)
+            .AddClass("mud-disabled", Disabled)
           .AddClass(Class)
         .Build();
 
         protected string CheckBoxClassname =>
         new CssBuilder("mud-button-root mud-icon-button")
             .AddClass($"mud-checkbox-{Color.ToDescriptionString()}")
-            .AddClass($"mud-checkbox-dense", Dense)
-            .AddClass($"mud-ripple mud-ripple-checkbox", !DisableRipple)
-            .AddClass($"mud-disabled", Disabled)
+            .AddClass("mud-checkbox-dense", Dense)
+            .AddClass("mud-ripple mud-ripple-checkbox", !DisableRipple)
+            .AddClass("mud-disabled", Disabled)
         .Build();
 
         /// <summary>

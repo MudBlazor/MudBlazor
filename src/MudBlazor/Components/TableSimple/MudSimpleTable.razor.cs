@@ -9,13 +9,13 @@ namespace MudBlazor
     {
         protected string Classname =>
         new CssBuilder("mud-table mud-simple-table")
-           .AddClass($"mud-table-dense", Dense)
-           .AddClass($"mud-table-hover", Hover)
-           .AddClass($"mud-table-bordered", Bordered)
-           .AddClass($"mud-table-outlined", Outlined)
-           .AddClass($"mud-table-striped", Striped)
-           .AddClass($"mud-table-square", Square)
-           .AddClass($"mud-table-sticky-header", FixedHeader)
+           .AddClass("mud-table-dense", Dense)
+           .AddClass("mud-table-hover", Hover)
+           .AddClass("mud-table-bordered", Bordered)
+           .AddClass("mud-table-outlined", Outlined)
+           .AddClass("mud-table-striped", Striped)
+           .AddClass("mud-table-square", Square)
+           .AddClass("mud-table-sticky-header", FixedHeader)
            .AddClass($"mud-elevation-{Elevation}", !Outlined)
           .AddClass(Class)
         .Build();

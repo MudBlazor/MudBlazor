@@ -14,23 +14,23 @@ namespace MudBlazor
 
         protected string Classname =>
         new CssBuilder("mud-radio")
-            .AddClass($"mud-disabled", Disabled)
+            .AddClass("mud-disabled", Disabled)
             .AddClass($"mud-radio-content-placement-{ConvertPlacement(Placement).ToDescriptionString()}")
             .AddClass(Class)
             .Build();
 
         protected string ButtonClassname =>
         new CssBuilder("mud-button-root mud-icon-button")
-            .AddClass($"mud-ripple mud-ripple-radio", !DisableRipple)
+            .AddClass("mud-ripple mud-ripple-radio", !DisableRipple)
             .AddClass($"mud-radio-color-{Color.ToDescriptionString()}")
-            .AddClass($"mud-radio-dense", Dense)
-            .AddClass($"mud-disabled", Disabled)
-            .AddClass($"mud-checked", Checked)
+            .AddClass("mud-radio-dense", Dense)
+            .AddClass("mud-disabled", Disabled)
+            .AddClass("mud-checked", Checked)
             .Build();
 
         protected string RadioIconsClassNames =>
         new CssBuilder("mud-radio-icons")
-            .AddClass($"mud-checked", Checked)
+            .AddClass("mud-checked", Checked)
             .Build();
 
         protected string IconClassName =>

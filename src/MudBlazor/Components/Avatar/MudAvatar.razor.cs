@@ -11,8 +11,8 @@ namespace MudBlazor
         protected string Classname =>
         new CssBuilder("mud-avatar")
           .AddClass($"mud-avatar-{Size.ToDescriptionString()}")
-          .AddClass($"mud-avatar-rounded", Rounded)
-          .AddClass($"mud-avatar-square", Square)
+          .AddClass("mud-avatar-rounded", Rounded)
+          .AddClass("mud-avatar-square", Square)
           .AddClass($"mud-avatar-{Variant.ToDescriptionString()}")
           .AddClass($"mud-avatar-{Variant.ToDescriptionString()}-{Color.ToDescriptionString()}")
           .AddClass($"mud-elevation-{Elevation.ToString()}")

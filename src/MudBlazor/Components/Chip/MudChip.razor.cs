@@ -21,7 +21,7 @@ namespace MudBlazor
           .AddClass($"mud-chip-size-{Size.ToDescriptionString()}")
           .AddClass($"mud-chip-color-{Color.ToDescriptionString()}")
           .AddClass("mud-clickable", OnClick.HasDelegate || ChipSet != null)
-          .AddClass($"mud-ripple", !DisableRipple && (OnClick.HasDelegate || ChipSet != null))
+          .AddClass("mud-ripple", !DisableRipple && (OnClick.HasDelegate || ChipSet != null))
           .AddClass("mud-chip-label", Label)
           .AddClass("mud-disabled", Disabled)
           .AddClass("mud-chip-selected", IsSelected)

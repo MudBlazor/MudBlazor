@@ -8,15 +8,15 @@ namespace MudBlazor
     {
         protected string Classname =>
         new CssBuilder("mud-switch")
-            .AddClass($"mud-disabled", Disabled)
+            .AddClass("mud-disabled", Disabled)
           .AddClass(Class)
         .Build();
         protected string SwitchClassname =>
         new CssBuilder("mud-button-root mud-icon-button mud-switch-base")
-            .AddClass($"mud-ripple mud-ripple-switch", !DisableRipple)
+            .AddClass("mud-ripple mud-ripple-switch", !DisableRipple)
             .AddClass($"mud-switch-{Color.ToDescriptionString()}")
-            .AddClass($"mud-switch-disabled", Disabled)
-            .AddClass($"mud-checked", BoolValue)
+            .AddClass("mud-switch-disabled", Disabled)
+            .AddClass("mud-checked", BoolValue)
         .Build();
 
         /// <summary>

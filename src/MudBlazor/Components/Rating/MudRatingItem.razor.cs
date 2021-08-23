@@ -13,13 +13,13 @@ namespace MudBlazor
         /// </summary>
         protected string ClassName =>
         new CssBuilder("")
-          .AddClass($"mud-rating-item")
-          .AddClass($"mud-ripple mud-ripple-icon", !DisableRipple)
-          .AddClass($"yellow-text.text-darken-3", Color == Color.Default)
+          .AddClass("mud-rating-item")
+          .AddClass("mud-ripple mud-ripple-icon", !DisableRipple)
+          .AddClass("yellow-text.text-darken-3", Color == Color.Default)
           .AddClass($"mud-{Color.ToDescriptionString()}-text", Color != Color.Default)
-          .AddClass($"mud-rating-item-active", IsActive)
-          .AddClass($"mud-disabled", Disabled)
-          .AddClass($"mud-readonly", ReadOnly)
+          .AddClass("mud-rating-item-active", IsActive)
+          .AddClass("mud-disabled", Disabled)
+          .AddClass("mud-readonly", ReadOnly)
           .AddClass(Class)
         .Build();
 

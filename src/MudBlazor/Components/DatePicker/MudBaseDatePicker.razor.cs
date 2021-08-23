@@ -335,7 +335,7 @@ namespace MudBlazor
         {
             return new CssBuilder("mud-picker-calendar-header")
                 .AddClass($"mud-picker-calendar-header-{month + 1}")
-                .AddClass($"mud-picker-calendar-header-last", month == DisplayMonths - 1)
+                .AddClass("mud-picker-calendar-header-last", month == DisplayMonths - 1)
                 .Build();
         }
 

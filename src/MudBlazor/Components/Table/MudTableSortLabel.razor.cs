@@ -115,14 +115,14 @@ namespace MudBlazor
         {
             if (_direction == SortDirection.Descending)
             {
-                return $"mud-table-sort-label-icon mud-direction-desc";
+                return "mud-table-sort-label-icon mud-direction-desc";
             }
 
             if (_direction == SortDirection.Ascending)
             {
-                return $"mud-table-sort-label-icon mud-direction-asc";
+                return "mud-table-sort-label-icon mud-direction-asc";
             }
-            return $"mud-table-sort-label-icon";
+            return "mud-table-sort-label-icon";
         }
     }
 }

@@ -8,8 +8,8 @@ namespace MudBlazor
     {
         protected string Classname =>
             new CssBuilder("mud-appbar")
-                .AddClass($"mud-appbar-dense", Dense)
-                .AddClass($"mud-appbar-fixed", Fixed)
+                .AddClass("mud-appbar-dense", Dense)
+                .AddClass("mud-appbar-fixed", Fixed)
                 .AddClass($"mud-elevation-{Elevation}")
                 .AddClass($"mud-theme-{Color.ToDescriptionString()}", Color != Color.Default)
                 .AddClass(Class)

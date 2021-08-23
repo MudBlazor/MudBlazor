@@ -11,7 +11,7 @@ namespace MudBlazor
         /// </summary>
         protected string ClassName =>
         new CssBuilder("")
-          .AddClass($"mud-rating-root")
+          .AddClass("mud-rating-root")
           .AddClass(Class)
         .Build();
 

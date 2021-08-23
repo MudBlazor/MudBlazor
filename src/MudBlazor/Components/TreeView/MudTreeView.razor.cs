@@ -23,9 +23,9 @@ namespace MudBlazor
         .Build();
         protected string Stylename =>
         new StyleBuilder()
-            .AddStyle($"width", Width, !string.IsNullOrWhiteSpace(Width))
-            .AddStyle($"height", Height, !string.IsNullOrWhiteSpace(Height))
-            .AddStyle($"max-height", MaxHeight, !string.IsNullOrWhiteSpace(MaxHeight))
+            .AddStyle("width", Width, !string.IsNullOrWhiteSpace(Width))
+            .AddStyle("height", Height, !string.IsNullOrWhiteSpace(Height))
+            .AddStyle("max-height", MaxHeight, !string.IsNullOrWhiteSpace(MaxHeight))
             .AddStyle(Style)
         .Build();
 

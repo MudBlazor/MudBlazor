@@ -12,13 +12,13 @@ namespace MudBlazor
 
         protected string ButtonClassname =>
         new CssBuilder("mud-nav-link")
-          .AddClass($"mud-ripple", !DisableRipple)
+          .AddClass("mud-ripple", !DisableRipple)
           .AddClass("mud-expanded", Expanded)
         .Build();
 
         protected string IconClassname =>
         new CssBuilder("mud-nav-link-icon")
-          .AddClass($"mud-nav-link-icon-default", IconColor == Color.Default)
+          .AddClass("mud-nav-link-icon-default", IconColor == Color.Default)
           .Build();
 
         [Parameter] public string Title { get; set; }
