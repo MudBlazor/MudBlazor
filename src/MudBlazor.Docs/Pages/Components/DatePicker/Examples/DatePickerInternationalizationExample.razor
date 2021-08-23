@@ -36,7 +36,7 @@
         formatInfo.ShortDatePattern = "yyyy/MM/dd";
         formatInfo.LongDatePattern = "dddd, dd MMMM,yyyy";
         formatInfo.FirstDayOfWeek = DayOfWeek.Saturday;
-        System.Globalization.Calendar cal = new PersianCalendar();
+        Calendar cal = new PersianCalendar();
         FieldInfo fieldInfo = culture.GetType().GetField("calendar", BindingFlags.NonPublic | BindingFlags.Instance);
         if (fieldInfo != null)
             fieldInfo.SetValue(culture, cal);
