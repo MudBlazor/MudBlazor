@@ -64,7 +64,7 @@ namespace MudBlazor.UnitTests.Components
             foreach (var item in closeButtons)
             {
                 item.GetAttribute("style").Should().Be("propertyA: 4px");
-                item.ClassList.Should().StartWith(new string[] { "mud-button-root" });
+                item.ClassList.Should().StartWith(new[] { "mud-button-root" });
 
                 var actual = XElement.Parse($"<test>{item.Children[0].Children[0].InnerHtml}</test>");
                 var expected = XElement.Parse($"<test>{Icons.Material.Filled.RestoreFromTrash}</test>");
@@ -78,7 +78,7 @@ namespace MudBlazor.UnitTests.Components
             foreach (var item in addButtons)
             {
                 item.GetAttribute("style").Should().Be("propertyB: 6px");
-                item.ClassList.Should().StartWith(new string[] { "mud-button-root" });
+                item.ClassList.Should().StartWith(new[] { "mud-button-root" });
 
                 var actual = XElement.Parse($"<test>{item.Children[0].Children[0].InnerHtml}</test>");
                 var expected = XElement.Parse($"<test>{Icons.Material.Filled.AddAlarm}</test>");
@@ -103,7 +103,7 @@ namespace MudBlazor.UnitTests.Components
             foreach (var item in closeButtons)
             {
                 item.GetAttribute("style").Should().Be("propertyA: 4px");
-                item.ClassList.Should().StartWith(new string[] { "mud-button-root" });
+                item.ClassList.Should().StartWith(new[] { "mud-button-root" });
 
                 var actual = XElement.Parse($"<test>{item.Children[0].Children[0].InnerHtml}</test>");
                 var expected = XElement.Parse($"<test>{Icons.Material.Filled.RestoreFromTrash}</test>");
@@ -125,7 +125,7 @@ namespace MudBlazor.UnitTests.Components
             foreach (var item in addButtons)
             {
                 item.GetAttribute("style").Should().Be("propertyB: 6px");
-                item.ClassList.Should().StartWith(new string[] { "mud-button-root" });
+                item.ClassList.Should().StartWith(new[] { "mud-button-root" });
 
                 var actual = XElement.Parse($"<test>{item.Children[0].Children[0].InnerHtml}</test>");
                 var expected = XElement.Parse($"<test>{Icons.Material.Filled.AddAlarm}</test>");

@@ -169,7 +169,7 @@ namespace MudBlazor.Utilities
                     throw new ArgumentException("invalid color format");
                 }
 
-                _valuesAsByte = new byte[]
+                _valuesAsByte = new[]
                 {
                     byte.Parse(parts[0],CultureInfo.InvariantCulture),
                     byte.Parse(parts[1],CultureInfo.InvariantCulture),
@@ -203,10 +203,10 @@ namespace MudBlazor.Utilities
                 switch (value.Length)
                 {
                     case 3:
-                        value = new string(new char[8] { value[0], value[0], value[1], value[1], value[2], value[2], 'F', 'F' });
+                        value = new string(new[] { value[0], value[0], value[1], value[1], value[2], value[2], 'F', 'F' });
                         break;
                     case 4:
-                        value = new string(new char[8] { value[0], value[0], value[1], value[1], value[2], value[2], value[3], value[3] });
+                        value = new string(new[] { value[0], value[0], value[1], value[1], value[2], value[2], value[3], value[3] });
                         break;
                     case 6:
                         value += "FF";
@@ -217,7 +217,7 @@ namespace MudBlazor.Utilities
                         throw new ArgumentException("not a valid color", nameof(value));
                 }
 
-                _valuesAsByte = new byte[]
+                _valuesAsByte = new[]
                 {
                     GetByteFromValuePart(value,0),
                     GetByteFromValuePart(value,2),
@@ -315,7 +315,7 @@ namespace MudBlazor.Utilities
             return parts;
         }
 
-        private byte GetByteFromValuePart(string input, int index) => byte.Parse(new string(new char[] { input[index], input[index + 1] }), NumberStyles.HexNumber);
+        private byte GetByteFromValuePart(string input, int index) => byte.Parse(new string(new[] { input[index], input[index + 1] }), NumberStyles.HexNumber);
 
         public bool HslChanged(MudColor value) => this.H != value.H || this.S != value.S || this.L != value.L;
 

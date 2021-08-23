@@ -215,7 +215,7 @@ namespace MudBlazor
                     if (_selectedItem is null)
                         return new HashSet<T>(Array.Empty<T>());
                     else
-                        return new HashSet<T>(new T[] { _selectedItem });
+                        return new HashSet<T>(new[] { _selectedItem });
                 return Context.Selection;
             }
             set

@@ -116,7 +116,7 @@ namespace MudBlazor.UnitTests.Components
 
         public IRenderedComponent<MudDatePicker> OpenPicker(ComponentParameter parameter)
         {
-            return OpenPicker(new ComponentParameter[] { parameter });
+            return OpenPicker(new[] { parameter });
         }
 
         public IRenderedComponent<MudDatePicker> OpenPicker(ComponentParameter[] parameters = null)
