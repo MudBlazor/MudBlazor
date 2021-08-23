@@ -119,7 +119,7 @@
             return Task.FromResult<IEnumerable<Type>>(new Type[0]);
         }
         var lowerText = text.ToLowerInvariant();
-        return Task.FromResult<IEnumerable<Type>>(
+        return Task.FromResult(
             availableComponentTypes.Where(type => type.Name.ToLowerInvariant().Contains(lowerText))
         );
     }
