@@ -113,7 +113,7 @@ namespace MudBlazor
                 [nameof(ClassActions)] = ClassActions,
             };
             _reference = DialogService.Show<MudDialog>(title, parameters, options);
-            _reference.Result.ContinueWith(t =>
+            _reference.Result.ContinueWith(_ =>
             {
                 _isVisible = false;
                 InvokeAsync(() => IsVisibleChanged.InvokeAsync(false));

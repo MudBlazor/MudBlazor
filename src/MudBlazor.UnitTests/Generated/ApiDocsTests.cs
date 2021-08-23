@@ -35,7 +35,7 @@ namespace MudBlazor.UnitTests.Components
             ctx.Services.AddSingleton<IBrowserWindowSizeProvider>(new MockBrowserWindowSizeProvider());
             ctx.Services.AddSingleton<IDocsNavigationService, DocsNavigationService>();
             ctx.Services.AddSingleton<IMenuService, MenuService>();
-            ctx.Services.AddScoped(sp => new HttpClient());
+            ctx.Services.AddScoped(_ => new HttpClient());
         }
 
         [TearDown]

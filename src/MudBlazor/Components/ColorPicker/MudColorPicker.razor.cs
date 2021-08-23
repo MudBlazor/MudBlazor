@@ -27,12 +27,12 @@ namespace MudBlazor
 
         private static Dictionary<int, (Func<int, int> r, Func<int, int> g, Func<int, int> b, string dominantColorPart)> _rgbToHueMapper = new()
         {
-            { 0, (x => 255, x => x, x => 0, "rb") },
-            { 1, (x => 255 - x, x => 255, x => 0, "gb") },
-            { 2, (x => 0, x => 255, x => x, "gr") },
-            { 3, (x => 0, x => 255 - x, x => 255, "br") },
-            { 4, (x => x, x => 0, x => 255, "bg") },
-            { 5, (x => 255, x => 0, x => 255 - x, "rg") },
+            { 0, (_ => 255, x => x, _ => 0, "rb") },
+            { 1, (x => 255 - x, _ => 255, _ => 0, "gb") },
+            { 2, (_ => 0, _ => 255, x => x, "gr") },
+            { 3, (_ => 0, x => 255 - x, _ => 255, "br") },
+            { 4, (x => x, _ => 0, _ => 255, "bg") },
+            { 5, (_ => 255, _ => 0, x => 255 - x, "rg") },
         };
 
         private const double _maxY = 250;
@@ -462,7 +462,7 @@ namespace MudBlazor
 
         private EventCallback<MouseEventArgs> GetEventCallback() => EventCallback.Factory.Create<MouseEventArgs>(this, () => Close());
         private bool IsAnyControlVisible() => !(DisablePreview && DisableSliders && DisableInputs);
-        private EventCallback<MouseEventArgs> GetSelectPaletteColorCallback(MudColor color) => new EventCallbackFactory().Create(this, (MouseEventArgs e) => SelectPaletteColor(color));
+        private EventCallback<MouseEventArgs> GetSelectPaletteColorCallback(MudColor color) => new EventCallbackFactory().Create(this, (MouseEventArgs _) => SelectPaletteColor(color));
 
         private Color GetButtonColor(ColorPickerView view) => ColorPickerView == view ? Color.Primary : Color.Inherit;
         private string GetColorDotClass(MudColor color) => new CssBuilder("mud-picker-color-dot").AddClass("selected", color == Value).ToString();
