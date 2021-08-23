@@ -29,7 +29,7 @@ namespace MudBlazor.Docs.Compiler
                 cb.IndentLevel++;
 
                 var assembly = typeof(MudText).Assembly;
-                foreach (var type in assembly.GetTypes().OrderBy(t => GetSaveTypename(t)))
+                foreach (var type in assembly.GetTypes().OrderBy(GetSaveTypename))
                 {
                     foreach (var info in type.GetPropertyInfosWithAttribute<ParameterAttribute>())
                     {

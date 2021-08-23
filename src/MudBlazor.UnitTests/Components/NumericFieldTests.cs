@@ -218,7 +218,7 @@ namespace MudBlazor.UnitTests
             // test against an infinite update loop that numericFields and other inputs are now protected against.
             var numericField = comp.Instance;
             numericField.Converter.SetFunc = s => s.ToString();
-            numericField.Converter.GetFunc = s => int.Parse(s);
+            numericField.Converter.GetFunc = int.Parse;
             comp.SetParametersAndRender(ComponentParameter.CreateParameter("Value", 1));
             numericField.Value.Should().Be(1);
             numericField.Text.Should().Be("1");

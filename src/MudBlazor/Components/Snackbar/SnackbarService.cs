@@ -139,7 +139,10 @@ namespace MudBlazor
             }
             else
             {
-                ShownSnackbars.Where(s => s.State.Options.CloseAfterNavigation).ToList().ForEach(s => Remove(s));
+                ShownSnackbars
+                    .Where(s => s.State.Options.CloseAfterNavigation)
+                    .ToList()
+                    .ForEach(Remove);
             }
         }
 
