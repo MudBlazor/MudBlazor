@@ -26,7 +26,6 @@
         protected override ValidationResult IsValid(object value, ValidationContext validationContext)
         {
             ValidationContextOnCall.Add(validationContext);
-            var propertyTestedInfo = validationContext.ObjectType.GetProperty(""); //error will show up here. The validationContext is null after the control loses focus
 
             return ValidationResult.Success;
         }

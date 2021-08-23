@@ -191,8 +191,6 @@ namespace MudBlazor.UnitTests.Components
             var section2 = new MudPageContentSection("my second section", "my-id2");
             var section3 = new MudPageContentSection("my third section", "my-id3");
 
-            var sections = new[] { section1, section2, section3 };
-
             comp.Instance.AddSection(section1, false);
             comp.Instance.AddSection(section2, false);
             comp.Instance.AddSection(section3, false);

@@ -267,7 +267,6 @@ namespace MudBlazor.UnitTests.Components
         public void Open_ClickCalendarHeader_Click4thMonth_Click23rdDay_CheckDateRange()
         {
             var comp = OpenPicker();
-            var picker = comp.Instance;
             comp.Find("button.mud-picker-calendar-header-transition").Click();
             // should show months
             comp.FindAll("div.mud-picker-month-container").Count.Should().Be(1);

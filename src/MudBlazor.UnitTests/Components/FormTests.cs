@@ -122,9 +122,7 @@ namespace MudBlazor.UnitTests.Components
             Console.WriteLine(comp.Markup);
             var form = comp.FindComponent<MudForm>().Instance;
             var textFieldcomp = comp.FindComponent<MudTextField<string>>();
-            var textField = textFieldcomp.Instance;
             var dateComp = comp.FindComponent<MudDatePicker>();
-            var dateField = dateComp.Instance;
             // check initial state: form should not be touched 
             form.IsTouched.Should().Be(false);
             // input a date, istouched should be true
