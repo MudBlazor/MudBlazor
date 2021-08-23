@@ -53,7 +53,7 @@
 
 	protected override void OnAfterRender(bool firstRender)
 	{
-		if(_updateIndex == true)
+		if(_updateIndex)
 		{
 			_index = _tabs.Count - 1;
 			StateHasChanged();

@@ -51,7 +51,7 @@
     protected override void OnAfterRender(bool firstRender)
     {
         base.OnAfterRender(firstRender);
-        if (firstRender == true && DocsPage != null && !String.IsNullOrWhiteSpace(Title))
+        if (firstRender && DocsPage != null && !String.IsNullOrWhiteSpace(Title))
         {
             DocsPage.AddSection(Section);
         }

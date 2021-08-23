@@ -96,7 +96,7 @@ namespace MudBlazor
             {
                 _cycleTimeout = value;
 
-                if (_autoCycle == true)
+                if (_autoCycle)
                     InvokeAsync(async () => await ResetTimerAsync());
 
                 else

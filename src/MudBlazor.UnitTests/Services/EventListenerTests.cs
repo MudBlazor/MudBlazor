@@ -60,7 +60,7 @@ namespace MudBlazor.UnitTests.Services
                     (string)z[2] == projectionName &&
                     (int)z[3] == throttleInterval &&
                     (Guid)z[4] != Guid.Empty &&
-                    ContainsEqual((IEnumerable<string>)z[5], expectedProperties) == true &&
+                    ContainsEqual((IEnumerable<string>)z[5], expectedProperties) &&
                     z[6] is DotNetObjectReference<EventListener>
                 ))).ReturnsAsync(true);
 
@@ -117,7 +117,7 @@ namespace MudBlazor.UnitTests.Services
                     (string)z[2] == projectionName &&
                     (int)z[3] == throttleInterval &&
                     (Guid)z[4] != Guid.Empty &&
-                    ContainsEqual((IEnumerable<string>)z[5], expectedProperties) == true &&
+                    ContainsEqual((IEnumerable<string>)z[5], expectedProperties) &&
                     z[6] is DotNetObjectReference<EventListener>
                 ))).ReturnsAsync(true);
 
@@ -203,7 +203,7 @@ namespace MudBlazor.UnitTests.Services
                     (string)z[2] == projectionName &&
                     (int)z[3] == throttleInterval &&
                     (Guid)z[4] != Guid.Empty &&
-                    ContainsEqual((IEnumerable<string>)z[5], expectedProperties) == true &&
+                    ContainsEqual((IEnumerable<string>)z[5], expectedProperties) &&
                     z[6] is DotNetObjectReference<EventListener>
                 ))).ReturnsAsync(true);
 
@@ -247,7 +247,7 @@ namespace MudBlazor.UnitTests.Services
                         (string)z[2] == projectionName &&
                         (int)z[3] == throttleInterval &&
                         (Guid)z[4] != Guid.Empty &&
-                        ContainsEqual((IEnumerable<string>)z[5], expectedProperties) == true &&
+                        ContainsEqual((IEnumerable<string>)z[5], expectedProperties) &&
                         z[6] is DotNetObjectReference<EventListener>
                     ))).ReturnsAsync(true);
 
@@ -307,7 +307,7 @@ namespace MudBlazor.UnitTests.Services
                         (string)z[2] == projectionName &&
                         (int)z[3] == throttleInterval &&
                         (Guid)z[4] != Guid.Empty &&
-                        ContainsEqual((IEnumerable<string>)z[5], expectedProperties) == true &&
+                        ContainsEqual((IEnumerable<string>)z[5], expectedProperties) &&
                         z[6] is DotNetObjectReference<EventListener>
                     ))).ReturnsAsync(true);
 

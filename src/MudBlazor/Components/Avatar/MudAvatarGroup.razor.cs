@@ -141,7 +141,7 @@ namespace MudBlazor
         {
             base.OnParametersSet();
 
-            if (_childrenNeedUpdates == true)
+            if (_childrenNeedUpdates)
             {
                 foreach (var avatar in _avatars)
                 {

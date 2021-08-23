@@ -168,7 +168,7 @@ namespace MudBlazor.Charts
                         break;
                 }
 
-                if (interpolator.InterpolationRequired == true)
+                if (interpolator.InterpolationRequired)
                 {
                     horizontalSpace = (boundWidth - horizontalStartSpace - horizontalEndSpace) / interpolator.InterpolatedXs.Length;
                     foreach (var yValue in interpolator.InterpolatedYs)

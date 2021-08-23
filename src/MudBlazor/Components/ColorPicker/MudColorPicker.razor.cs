@@ -74,7 +74,7 @@ namespace MudBlazor
                 {
                     _disableAlpha = value;
 
-                    if (value == true)
+                    if (value)
                     {
                         Value = Value.SetAlpha(1.0);
                     }
@@ -177,7 +177,7 @@ namespace MudBlazor
                     ValueChanged.InvokeAsync(value).AndForget();
                 }
 
-                if (rgbChanged == false && UpdateBindingIfOnlyHSLChanged && hslChanged == true)
+                if (rgbChanged == false && UpdateBindingIfOnlyHSLChanged && hslChanged)
                 {
                     SetTextAsync(GetColorTextValue(), true).AndForget();
                     ValueChanged.InvokeAsync(value).AndForget();
@@ -363,8 +363,8 @@ namespace MudBlazor
 
         private void SetSelectorBasedOnMouseEvents(MouseEventArgs e, bool offsetIsAbsolute)
         {
-            _selectorX = (offsetIsAbsolute == true ? e.OffsetX : e.OffsetX - _selctorSize / 2.0 + _selectorX).EnsureRange(_maxX);
-            _selectorY = (offsetIsAbsolute == true ? e.OffsetY : e.OffsetY - _selctorSize / 2.0 + _selectorY).EnsureRange(_maxY);
+            _selectorX = (offsetIsAbsolute ? e.OffsetX : e.OffsetX - _selctorSize / 2.0 + _selectorX).EnsureRange(_maxX);
+            _selectorY = (offsetIsAbsolute ? e.OffsetY : e.OffsetY - _selctorSize / 2.0 + _selectorY).EnsureRange(_maxY);
         }
 
         #endregion
@@ -458,7 +458,7 @@ namespace MudBlazor
         #region helper
 
         private string GetSelectorLocation() => $"translate({Math.Round(_selectorX, 2).ToString(CultureInfo.InvariantCulture)}px, {Math.Round(_selectorY, 2).ToString(CultureInfo.InvariantCulture)}px);";
-        private string GetColorTextValue() => DisableAlpha == true || ColorPickerView is ColorPickerView.Palette or ColorPickerView.GridCompact ? _color.ToString(MudColorOutputFormats.Hex) : _color.ToString(MudColorOutputFormats.HexA);
+        private string GetColorTextValue() => DisableAlpha || ColorPickerView is ColorPickerView.Palette or ColorPickerView.GridCompact ? _color.ToString(MudColorOutputFormats.Hex) : _color.ToString(MudColorOutputFormats.HexA);
 
         private EventCallback<MouseEventArgs> GetEventCallback() => EventCallback.Factory.Create<MouseEventArgs>(this, () => Close());
         private bool IsAnyControlVisible() => !(DisablePreview && DisableSliders && DisableInputs);
@@ -476,7 +476,7 @@ namespace MudBlazor
         {
             await base.OnAfterRenderAsync(firstRender);
 
-            if (firstRender == true)
+            if (firstRender)
             {
                 if (PickerVariant == PickerVariant.Static)
                 {
@@ -484,7 +484,7 @@ namespace MudBlazor
                 }
             }
 
-            if (_attachedMouseEvent == true)
+            if (_attachedMouseEvent)
             {
                 _attachedMouseEvent = false;
                 await AddMouseOverEvent();
@@ -493,7 +493,7 @@ namespace MudBlazor
 
         private async Task AddMouseOverEvent()
         {
-            if (DisableDragEffect == true) { return; }
+            if (DisableDragEffect) { return; }
 
             _throttledMouseOverEventId = await
                 ThrottledEventManager.Subscribe<MouseEventArgs>("mousemove", _id.ToString(), "mudEventProjections.correctOffset", 10, async x =>
