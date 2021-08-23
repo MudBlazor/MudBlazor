@@ -43,8 +43,6 @@
             case "b":
                 data = data.OrderByDirection(state.SortDirection, x => x.b);
                 break;
-            default:
-                break;
         }
         return new TableData<TestModel> { TotalItems = totalItems, Items = data };
     }

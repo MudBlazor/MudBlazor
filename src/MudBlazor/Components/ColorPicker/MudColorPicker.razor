@@ -114,8 +114,6 @@
                                         case ColorPickerMode.HEX:
                                             <MudTextField Value="@GetColorTextValue()" ValueChanged="SetInputString" T="string" Class="mud-picker-color-inputfield" Variant="Variant.Outlined" HelperText="HEX" />
                                             break;
-                                        default:
-                                            break;
                                     }
                         
                                     @if (!DisableAlpha && ColorPickerMode != ColorPickerMode.HEX)
