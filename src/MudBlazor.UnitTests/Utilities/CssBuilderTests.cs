@@ -39,14 +39,14 @@ namespace UtilityTests
             //arrange
             var hasTwo = false;
             var hasThree = true;
-            Func<bool> hasFive = () => false;
+            bool HasFive() => false;
 
             //act
             var classToRender = new CssBuilder("item-one")
                             .AddClass("item-two", when: hasTwo)
                             .AddClass("item-three", when: hasThree)
                             .AddClass("item-four")
-                            .AddClass("item-five", when: hasFive)
+                            .AddClass("item-five", when: HasFive)
                             .Build();
             //assert
             classToRender.Should().Be("item-one item-three item-four");
@@ -57,7 +57,7 @@ namespace UtilityTests
             //arrange
             var hasTwo = false;
             var hasThree = true;
-            Func<bool> hasFive = () => false;
+            bool HasFive() => false;
 
             //act
             var classToRender = new CssBuilder("item-one")
@@ -67,7 +67,7 @@ namespace UtilityTests
                                             .AddClass("item-sub-three"),
                                             when: hasThree)
                             .AddClass("item-four")
-                            .AddClass("item-five", when: hasFive)
+                            .AddClass("item-five", when: HasFive)
                             .Build();
             //assert
             classToRender.Should().Be("item-one item-three item-sub-three item-four");

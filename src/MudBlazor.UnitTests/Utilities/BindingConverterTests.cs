@@ -482,11 +482,9 @@ namespace MudBlazor.UnitTests.Utilities
         [Test]
         public void NumericBoundariesConverterTest()
         {
-            Func<int, int> funcInt = i => i;//Not testing test the function, return the parameter
-            Func<double?, double?> funcDbl = d => d;//Not testing test the function, return the parameter
-
-            //Note: Set doesn't do anything. The Get can change the value
-            var c1 = new NumericBoundariesConverter<int>(funcInt);
+            static int FuncInt(int i) => i;
+            static double? FuncDbl(double? d) => d; //Note: Set doesn't do anything. The Get can change the value
+            var c1 = new NumericBoundariesConverter<int>(FuncInt);
             c1.Set("hello").Should().Be("hello");
             c1.Get("hello").Should().Be(null);
             c1.GetError.Should().Be(true);
@@ -513,7 +511,7 @@ namespace MudBlazor.UnitTests.Utilities
             c1.Get("1.5").Should().Be(null);
             c1.GetError.Should().Be(true);
             c1.GetErrorMessage.Should().Be("Not a valid number");
-            var c3 = new NumericBoundariesConverter<double?>(funcDbl) { Culture = CultureInfo.InvariantCulture };
+            var c3 = new NumericBoundariesConverter<double?>(FuncDbl) { Culture = CultureInfo.InvariantCulture };
             c3.Set("1.7").Should().Be("1.7");
             c3.Get("1.7").Should().Be("1.7");
             c3.GetError.Should().Be(false);

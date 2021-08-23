@@ -372,10 +372,10 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void IsDateDisabledFunc_DisablesCalendarDateButtons()
         {
-            Func<DateTime, bool> isDisabledFunc = date => true;
-            var comp = OpenPicker(Parameter(nameof(MudDateRangePicker.IsDateDisabledFunc), isDisabledFunc));
+            static bool IsDisabledFunc(DateTime date) => true;
+            var comp = OpenPicker(Parameter(nameof(MudDateRangePicker.IsDateDisabledFunc), (Func<DateTime, bool>)IsDisabledFunc));
 
-            comp.Instance.IsDateDisabledFunc.Should().Be(isDisabledFunc);
+            comp.Instance.IsDateDisabledFunc.Should().Be((Func<DateTime, bool>)IsDisabledFunc);
             comp.FindAll("button.mud-picker-calendar-day").Select(button => ((IHtmlButtonElement)button).IsDisabled)
                 .Should().OnlyContain(disabled => disabled);
         }
@@ -388,9 +388,9 @@ namespace MudBlazor.UnitTests.Components
             var twoDaysAgo = DateTime.Today.Subtract(TimeSpan.FromDays(2));
             var wasEventCallbackCalled = false;
 
-            Func<DateTime, bool> isDisabledFunc = date => date == yesterday;
+            bool IsDisabledFunc(DateTime date) => date == yesterday;
             var comp = Context.RenderComponent<MudDateRangePicker>(
-                Parameter(nameof(MudDateRangePicker.IsDateDisabledFunc), isDisabledFunc),
+                Parameter(nameof(MudDateRangePicker.IsDateDisabledFunc), (Func<DateTime, bool>)IsDisabledFunc),
                 EventCallback("DateRangeChanged", (DateRange _) => wasEventCallbackCalled = true)
             );
 
@@ -408,10 +408,10 @@ namespace MudBlazor.UnitTests.Components
             var twoDaysAgo = DateTime.Today.Subtract(TimeSpan.FromDays(2));
             var wasEventCallbackCalled = false;
 
-            Func<DateTime, bool> isDisabledFunc = date => date == twoDaysAgo;
+            bool IsDisabledFunc(DateTime date) => date == twoDaysAgo;
             var range = new DateRange(yesterday, today);
             var comp = Context.RenderComponent<MudDateRangePicker>(
-                Parameter(nameof(MudDateRangePicker.IsDateDisabledFunc), isDisabledFunc),
+                Parameter(nameof(MudDateRangePicker.IsDateDisabledFunc), (Func<DateTime, bool>)IsDisabledFunc),
                 EventCallback("DateRangeChanged", (DateRange _) => wasEventCallbackCalled = true)
             );
 

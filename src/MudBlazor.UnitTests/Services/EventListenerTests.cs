@@ -47,7 +47,7 @@ namespace MudBlazor.UnitTests.Services
             var throttleInterval = 20;
             var projectionName = "mynamespace.myfunction";
 
-            Func<Object, Task> callback = x => Task.Delay(10);
+            static Task Callback(object x) => Task.Delay(10);
 
             var expectedProperties = new[] {
              "detail", "screenX", "screenY", "clientX", "clientY", "offsetX", "offsetY",
@@ -64,7 +64,7 @@ namespace MudBlazor.UnitTests.Services
                     z[6] is DotNetObjectReference<EventListener>
                 ))).ReturnsAsync(true);
 
-            var result = await _service.Subscribe<MouseEventArgs>(eventName, elementId, projectionName, throttleInterval, callback);
+            var result = await _service.Subscribe<MouseEventArgs>(eventName, elementId, projectionName, throttleInterval, Callback);
 
             result.Should().NotBe(Guid.Empty);
 
@@ -87,7 +87,7 @@ namespace MudBlazor.UnitTests.Services
             var offsetX = 200.24;
             var offsetY = 12425.2;
 
-            Func<Object, Task> callback = x =>
+            Task Callback(object x)
             {
                 try
                 {
@@ -104,7 +104,7 @@ namespace MudBlazor.UnitTests.Services
                 }
 
                 return Task.CompletedTask;
-            };
+            }
 
             var expectedProperties = new[] {
              "detail", "screenX", "screenY", "clientX", "clientY", "offsetX", "offsetY",
@@ -121,7 +121,7 @@ namespace MudBlazor.UnitTests.Services
                     z[6] is DotNetObjectReference<EventListener>
                 ))).ReturnsAsync(true);
 
-            var result = await _service.Subscribe<MouseEventArgs>(eventName, elementId, projectionName, throttleInterval, callback);
+            var result = await _service.Subscribe<MouseEventArgs>(eventName, elementId, projectionName, throttleInterval, Callback);
 
             result.Should().NotBe(Guid.Empty);
 
@@ -149,7 +149,7 @@ namespace MudBlazor.UnitTests.Services
             var throttleInterval = 20;
             string projectionName = null;
 
-            Func<Object, Task> callback = x => Task.Delay(10);
+            Task Callback(object x) => Task.Delay(10);
 
             var expectedProperties = new[] {
              "detail", "screenX", "screenY", "clientX", "clientY", "offsetX", "offsetY",
@@ -168,7 +168,7 @@ namespace MudBlazor.UnitTests.Services
                 ))).ReturnsAsync(true);
 
 
-            var result = await _service.Subscribe<MouseEventArgs>(eventName, elementId, null, throttleInterval, callback);
+            var result = await _service.Subscribe<MouseEventArgs>(eventName, elementId, null, throttleInterval, Callback);
 
             _runtimeMock.Setup(x => x.InvokeAsync<Object>("mudThrottledEventManager.unsubscribe", It.Is<object[]>(z =>
                 z.Length == 1 &&
@@ -189,7 +189,7 @@ namespace MudBlazor.UnitTests.Services
             var throttleInterval = 20;
             var projectionName = "mynamspace.something.somethingelse";
 
-            Func<Object, Task> callback = x => Task.Delay(10);
+            Task Callback(object x) => Task.Delay(10);
 
             var expectedProperties = new[] {
              "detail", "screenX", "screenY", "clientX", "clientY", "offsetX", "offsetY",
@@ -208,7 +208,7 @@ namespace MudBlazor.UnitTests.Services
                 ))).ReturnsAsync(true);
 
 
-            var result = await _service.Subscribe<MouseEventArgs>(eventName, elementId, projectionName, throttleInterval, callback);
+            var result = await _service.Subscribe<MouseEventArgs>(eventName, elementId, projectionName, throttleInterval, Callback);
 
             _runtimeMock.Setup(x => x.InvokeAsync<Object>("mudThrottledEventManager.unsubscribe", It.Is<object[]>(z =>
                 z.Length == 1 &&
@@ -229,7 +229,7 @@ namespace MudBlazor.UnitTests.Services
             var throttleInterval = 20;
             var projectionName = "mynamspace.something.somethingelse";
 
-            Func<Object, Task> callback = x => Task.Delay(10);
+            Task Callback(object x) => Task.Delay(10);
 
             var expectedProperties = new[] {
              "detail", "screenX", "screenY", "clientX", "clientY", "offsetX", "offsetY",
@@ -252,7 +252,7 @@ namespace MudBlazor.UnitTests.Services
                     ))).ReturnsAsync(true);
 
 
-                var result = await _service.Subscribe<MouseEventArgs>(eventName, elementId, projectionName, throttleInterval, callback);
+                var result = await _service.Subscribe<MouseEventArgs>(eventName, elementId, projectionName, throttleInterval, Callback);
 
                 var flow = _runtimeMock.Setup(x => x.InvokeAsync<Object>("mudThrottledEventManager.unsubscribe", It.Is<object[]>(z =>
                         z.Length == 1 &&
@@ -289,7 +289,7 @@ namespace MudBlazor.UnitTests.Services
             var throttleInterval = 20;
             var projectionName = "mynamspace.something.somethingelse";
 
-            Func<Object, Task> callback = x => Task.Delay(10);
+            Task Callback(object x) => Task.Delay(10);
 
             var expectedProperties = new[] {
              "detail", "screenX", "screenY", "clientX", "clientY", "offsetX", "offsetY",
@@ -312,7 +312,7 @@ namespace MudBlazor.UnitTests.Services
                     ))).ReturnsAsync(true);
 
 
-                var result = await _service.Subscribe<MouseEventArgs>(eventName, elementId, projectionName, throttleInterval, callback);
+                var result = await _service.Subscribe<MouseEventArgs>(eventName, elementId, projectionName, throttleInterval, Callback);
 
                 var flow = _runtimeMock.Setup(x => x.InvokeAsync<Object>("mudThrottledEventManager.unsubscribe", It.Is<object[]>(z =>
                         z.Length == 1 &&

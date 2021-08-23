@@ -165,7 +165,7 @@ namespace MudBlazor
         // async code was executed to avoid race condition which could lead to incorrect validation results.
         protected void BeginValidateAfter(Task task)
         {
-            Func<Task> execute = async () =>
+            async Task Execute()
             {
                 var value = _value;
 
@@ -177,13 +177,14 @@ namespace MudBlazor
                 {
                     BeginValidate();
                 }
-            };
-            execute().AndForget();
+            }
+
+            Execute().AndForget();
         }
 
         protected void BeginValidate()
         {
-            Func<Task> execute = async () =>
+            async Task Execute()
             {
                 var value = _value;
 
@@ -193,8 +194,9 @@ namespace MudBlazor
                 {
                     EditFormValidate();
                 }
-            };
-            execute().AndForget();
+            }
+
+            Execute().AndForget();
         }
 
         /// <summary>
