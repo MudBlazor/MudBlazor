@@ -43,10 +43,9 @@
                 return null;
             try
             {
-                if (arg is bool)
-                    return (bool)arg;
-                if (arg is bool?)
-                    return (bool?)arg;
+                if (arg is bool b)
+                    return b;
+              
                 UpdateSetError("Unable to convert to bool? from type object");
                 return null;
             }
