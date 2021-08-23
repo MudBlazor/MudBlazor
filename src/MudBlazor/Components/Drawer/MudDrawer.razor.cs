@@ -368,7 +368,6 @@ namespace MudBlazor
                     return RightToLeft ? "right" : "left";
                 case Anchor.End:
                     return RightToLeft ? "left" : "right";
-                default: break;
             }
 
             return Anchor.ToDescriptionString();
