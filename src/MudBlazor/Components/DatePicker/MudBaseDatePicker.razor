@@ -17,7 +17,7 @@
         <div class="mud-picker-calendar-content @($"mud-picker-calendar-content-{MaxMonthColumns ?? DisplayMonths}")">
             @{
                 int dayId = 0;
-                @if (_picker_month.HasValue && _picker_month.Value.Year == 1 && _picker_month.Value.Month == 1)
+                @if (_picker_month is {Year: 1,Month: 1 })
                 {
                     dayId = -1;
                 }
@@ -94,7 +94,7 @@
                                 @for (int week = 0; week < 6; week++)
                                 {
                                     int tempWeek = week;
-                                    var firstMonthFirstYear = _picker_month.HasValue && _picker_month.Value.Year == 1 && _picker_month.Value.Month == 1;
+                                    var firstMonthFirstYear = _picker_month is {Year: 1,Month: 1 };
 
                                     @if (ShowWeekNumbers)
                                     {

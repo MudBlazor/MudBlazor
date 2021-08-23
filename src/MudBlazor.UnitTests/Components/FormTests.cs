@@ -532,7 +532,7 @@ namespace MudBlazor.UnitTests.Components
             var form = comp.FindComponent<MudForm>().Instance;
             var dateComp = comp.FindComponent<MudDatePicker>();
             var datepicker = comp.FindComponent<MudDatePicker>().Instance;
-            dateComp.SetParam(x => x.Validation, new Func<DateTime?, string>(date => date != null && date.Value.Year >= 2000 ? null : "Year must be >= 2000"));
+            dateComp.SetParam(x => x.Validation, new Func<DateTime?, string>(date => date is {Year: >= 2000} ? null : "Year must be >= 2000"));
             dateComp.Find("input").Change(new DateTime(2001, 01, 31).ToShortDateString());
             form.IsValid.Should().Be(true);
             form.Errors.Length.Should().Be(0);
@@ -588,7 +588,7 @@ namespace MudBlazor.UnitTests.Components
             var form = comp.FindComponent<MudForm>().Instance;
             var dateComp = comp.FindComponent<MudTimePicker>();
             var datepicker = comp.FindComponent<MudTimePicker>().Instance;
-            dateComp.SetParam(x => x.Validation, new Func<TimeSpan?, string>(time => time != null && time.Value.Minutes == 0 ? null : "Only full hours allowed"));
+            dateComp.SetParam(x => x.Validation, new Func<TimeSpan?, string>(time => time is {Minutes: 0} ? null : "Only full hours allowed"));
             dateComp.Find("input").Change("09:00");
             form.IsValid.Should().Be(true);
             form.Errors.Length.Should().Be(0);

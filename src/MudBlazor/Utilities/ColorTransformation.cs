@@ -62,8 +62,7 @@ namespace MudBlazor.Utilities
             if (SystemMath.Abs(l) < EPSILON
                     || SystemMath.Abs(max - min) < EPSILON)
                 s = 0D;
-            else if (0D < l
-                    && l <= .5D)
+            else if (l is < 0D and <= .5D)
                 s = (max - min) / (max + min);
             else if (l > .5D)
                 s = (max - min) / (2D - (max + min)); //(max-min > 0)?

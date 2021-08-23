@@ -147,7 +147,7 @@ namespace MudBlazor
 
         protected override bool HasValue(DateTime? value)
         {
-            return null != value && value.HasValue;
+            return value is { };
         }
 
         private DateRange ParseDateRangeValue(string value)
