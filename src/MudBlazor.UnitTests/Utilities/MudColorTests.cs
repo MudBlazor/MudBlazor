@@ -539,7 +539,7 @@ namespace MudBlazor.UnitTests.Utilities
         {
             MudColor color1 = new(10, 20, 50, 255);
             (color1 == null).Should().BeFalse();
-            color1.Equals(null as MudColor).Should().BeFalse();
+            color1.Equals(null).Should().BeFalse();
 
             MudColor color2 = null;
 
