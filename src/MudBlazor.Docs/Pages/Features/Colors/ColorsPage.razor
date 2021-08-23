@@ -67,11 +67,9 @@
                             </div>
                             @foreach (var shade in MaterialColorShades.Where(i => i.Color == color.Color))
                             {
-                                IsLightColor = false;
-                                if (shade.Name.Contains("Lighten5") || shade.Name.Contains("Lighten4") || shade.Name.Contains("Lighten3") || shade.Name.Contains("White") || shade.Name.Contains("Transparent"))
-                                {
-                                    IsLightColor = true;
-                                }
+                                IsLightColor = new[] {"Lighten5", "Lighten4", "Lighten3", "White", "Transparent"}
+                                    .Any(x => shade.Name.Contains(x));
+
                                 <div class="mud-paper mud-paper-square docs-color-card py-6" style="background-color:@shade.Value;@(IsLightColor? "color:#444" : "color:#fff")">
                                     <MudText Align="Align.Left">@shade.Name</MudText>
                                     <MudText Align="Align.Right">@shade.Value</MudText>
