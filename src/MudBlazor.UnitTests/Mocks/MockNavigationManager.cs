@@ -5,7 +5,7 @@ namespace MudBlazor.UnitTests.Mocks
     public class MockNavigationManager
         : NavigationManager
     {
-        public MockNavigationManager() : base() =>
+        public MockNavigationManager() =>
             this.Initialize("http://localhost:2112/", "http://localhost:2112/test");
 
         protected override void NavigateToCore(string uri, bool forceLoad) =>
