@@ -168,7 +168,7 @@ namespace MudBlazor.UnitTests.Services
                 ))).ReturnsAsync(true);
 
 
-            var result = await _service.Subscribe<MouseEventArgs>(eventName, elementId, projectionName, throttleInterval, callback);
+            var result = await _service.Subscribe<MouseEventArgs>(eventName, elementId, null, throttleInterval, callback);
 
             _runtimeMock.Setup(x => x.InvokeAsync<Object>("mudThrottledEventManager.unsubscribe", It.Is<object[]>(z =>
                 z.Length == 1 &&
