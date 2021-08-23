@@ -22,10 +22,10 @@
     /// </summary>
     private async Task<TableData<int>> ServerReload(TableState state)
     {
-        IEnumerable<int> data = new List<int>() { 1,2,3 };
+        IEnumerable<int> data = new List<int> { 1,2,3 };
         totalItems = data.Count();
         pagedData = data.ToArray();
-        return new TableData<int>() { TotalItems = totalItems, Items = pagedData };
+        return new TableData<int> { TotalItems = totalItems, Items = pagedData };
     }
 
 }

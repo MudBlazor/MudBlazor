@@ -20,7 +20,7 @@ namespace MudBlazor.UnitTests.Mocks
             _width = width;
             _height = height;
 
-            OnResized?.Invoke(this, new BrowserWindowSize()
+            OnResized?.Invoke(this, new BrowserWindowSize
             {
                 Width = _width,
                 Height = _height

@@ -103,7 +103,7 @@ namespace MudBlazor
                 throw new InvalidOperationException("You can only show an inlined dialog.");
             if (_reference != null)
                 Close();
-            var parameters = new DialogParameters()
+            var parameters = new DialogParameters
             {
                 [nameof(TitleContent)] = TitleContent,
                 [nameof(DialogContent)] = DialogContent,

@@ -372,7 +372,7 @@ namespace MudBlazor.UnitTests.Components
             comp.WaitForAssertion(() => autocomplete.IsOpen.Should().BeTrue());
 
             // Lets call blur on the input and confirm that it closed
-            autocompletecomp.Find("input").KeyDown(new KeyboardEventArgs() { Key = "Tab" });
+            autocompletecomp.Find("input").KeyDown(new KeyboardEventArgs { Key = "Tab" });
             comp.WaitForAssertion(() => autocomplete.IsOpen.Should().BeFalse());
 
             // Tab closes the drop-down and does not select the selected value (California)
@@ -398,7 +398,7 @@ namespace MudBlazor.UnitTests.Components
             comp.WaitForAssertion(() => autocomplete.IsOpen.Should().BeTrue());
 
             // Lets call blur on the input and confirm that it closed
-            autocompletecomp.Find("input").KeyDown(new KeyboardEventArgs() { Key = "Tab" });
+            autocompletecomp.Find("input").KeyDown(new KeyboardEventArgs { Key = "Tab" });
             comp.WaitForAssertion(() => autocomplete.IsOpen.Should().BeFalse());
 
             // Tab closes the drop-down and selects the selected value (California)

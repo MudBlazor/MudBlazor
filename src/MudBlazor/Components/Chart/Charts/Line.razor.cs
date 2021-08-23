@@ -88,14 +88,14 @@ namespace MudBlazor.Charts
             double startGridY = 0;
             for (var counter = 0; counter <= numHorizontalLines; counter++)
             {
-                var line = new SvgPath()
+                var line = new SvgPath
                 {
                     Index = counter,
                     Data = $"M {ToS(horizontalStartSpace)} {ToS(boundHeight - y)} L {ToS(boundWidth - horizontalEndSpace)} {ToS(boundHeight - y)}"
                 };
                 _horizontalLines.Add(line);
 
-                var lineValue = new SvgText() { X = horizontalStartSpace - 10, Y = boundHeight - y + 5, Value = ToS(startGridY, MudChartParent?.ChartOptions.YAxisFormat) };
+                var lineValue = new SvgText { X = horizontalStartSpace - 10, Y = boundHeight - y + 5, Value = ToS(startGridY, MudChartParent?.ChartOptions.YAxisFormat) };
                 _horizontalValues.Add(lineValue);
 
                 startGridY += gridYUnits;
@@ -108,7 +108,7 @@ namespace MudBlazor.Charts
             for (var counter = 0; counter <= numVerticalLines; counter++)
             {
 
-                var line = new SvgPath()
+                var line = new SvgPath
                 {
                     Index = counter,
                     Data = $"M {ToS(x)} {ToS(boundHeight - verticalStartSpace)} L {ToS(x)} {ToS(verticalEndSpace)}"
@@ -121,7 +121,7 @@ namespace MudBlazor.Charts
                     xLabels = XAxisLabels[counter];
                 }
 
-                var lineValue = new SvgText() { X = x, Y = boundHeight - 2, Value = xLabels };
+                var lineValue = new SvgText { X = x, Y = boundHeight - 2, Value = xLabels };
                 _verticalValues.Add(lineValue);
 
                 startGridX += gridXUnits;
@@ -216,13 +216,13 @@ namespace MudBlazor.Charts
                     }
                 }
 
-                var line = new SvgPath()
+                var line = new SvgPath
                 {
                     Index = colorcounter,
                     Data = chartLine
                 };
 
-                var legend = new SvgLegend()
+                var legend = new SvgLegend
                 {
                     Index = colorcounter,
                     Labels = item.Name

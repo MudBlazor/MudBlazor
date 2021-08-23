@@ -28,7 +28,7 @@ namespace MudBlazor
 
         private Dictionary<string, object> Attributes
         {
-            get => Disabled ? null : new Dictionary<string, object>()
+            get => Disabled ? null : new Dictionary<string, object>
             {
                 { "href", Href },
                 { "target", Target },

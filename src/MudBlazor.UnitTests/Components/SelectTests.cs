@@ -96,7 +96,7 @@ namespace MudBlazor.UnitTests.Components
             // now check how setting the SelectedValues makes items checked or unchecked
             await comp.InvokeAsync(() =>
             {
-                select.Instance.SelectedValues = new HashSet<string>() { "1", "2" };
+                select.Instance.SelectedValues = new HashSet<string> { "1", "2" };
             });
             icons = comp.FindAll("div.mud-list-item path").ToArray();
             icons[1].Attributes["d"].Value.Should().Be(@checked);

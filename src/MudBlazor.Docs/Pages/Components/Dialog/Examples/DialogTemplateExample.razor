@@ -16,7 +16,7 @@
         parameters.Add("ButtonText", "Delete");
         parameters.Add("Color", Color.Error);
 
-        var options = new DialogOptions() { CloseButton = true, MaxWidth = MaxWidth.ExtraSmall };
+        var options = new DialogOptions { CloseButton = true, MaxWidth = MaxWidth.ExtraSmall };
 
         DialogService.Show<DialogTemplateExample_Dialog>("Delete", parameters, options);
     }

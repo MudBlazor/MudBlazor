@@ -301,19 +301,19 @@ namespace MudBlazor.UnitTests.Components
             chips.Count.Should().Be(3);
             foreach (var chip in chips)
                 chip.TextContent.Trim().Should().EndWith("not changed");
-            comp.FindAll("input")[0].Change(new ChangeEventArgs() { Value = "asdf" });
+            comp.FindAll("input")[0].Change(new ChangeEventArgs { Value = "asdf" });
             comp.FindAll("input")[0].Blur();
             comp.FindComponents<MudTextField<string>>()[0].Instance.Text.Should().Be("asdf");
             comp.FindAll("span.mud-chip-content")[0].TextContent.Trim().Should().Be("Field1 changed");
             comp.FindAll("span.mud-chip-content")[1].TextContent.Trim().Should().EndWith("not changed");
             comp.FindAll("span.mud-chip-content")[2].TextContent.Trim().Should().EndWith("not changed");
-            comp.FindAll("input")[1].Change(new ChangeEventArgs() { Value = "yxcv" });
+            comp.FindAll("input")[1].Change(new ChangeEventArgs { Value = "yxcv" });
             comp.FindAll("input")[1].Blur();
             comp.FindComponents<MudTextField<string>>()[1].Instance.Text.Should().Be("yxcv");
             comp.FindAll("span.mud-chip-content")[0].TextContent.Trim().Should().Be("Field1 changed");
             comp.FindAll("span.mud-chip-content")[1].TextContent.Trim().Should().EndWith("not changed", "Because it has no For, so the change can not be forwarded to the edit context for lack of a FieldIdentifier");
             comp.FindAll("span.mud-chip-content")[2].TextContent.Trim().Should().EndWith("not changed");
-            comp.FindAll("input")[2].Change(new ChangeEventArgs() { Value = "qwer" });
+            comp.FindAll("input")[2].Change(new ChangeEventArgs { Value = "qwer" });
             comp.FindAll("input")[2].Blur();
             comp.FindComponents<MudTextField<string>>()[2].Instance.Text.Should().Be("qwer");
             comp.FindAll("span.mud-chip-content")[0].TextContent.Trim().Should().Be("Field1 changed");

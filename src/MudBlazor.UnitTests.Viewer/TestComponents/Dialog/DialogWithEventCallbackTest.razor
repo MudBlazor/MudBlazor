@@ -18,7 +18,8 @@ Clicked: @(clicked ? "Yes" : "No")
     private void OpenDialog()
     {
         DialogService.Show<DialogWithEventCallback>("Simple Dialog", 
-            new DialogParameters(){
+            new DialogParameters
+            {
                  {"OnSearch",  new EventCallbackFactory().Create(this, new Action<string>(OnSearch)) },
                  {"OnClick",  new EventCallbackFactory().Create(this, OnClick) },
             });

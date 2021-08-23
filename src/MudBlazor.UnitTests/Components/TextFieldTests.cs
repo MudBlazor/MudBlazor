@@ -106,7 +106,7 @@ namespace MudBlazor.UnitTests.Components
             var textField = comp.Instance;
             var input = comp.Find("input");
             //Act
-            input.Input(new ChangeEventArgs() { Value = "Some Value" });
+            input.Input(new ChangeEventArgs { Value = "Some Value" });
             //Assert
             //input value has changed, DebounceInterval is 0, so Value should change in TextField immediately
             textField.Value.Should().Be("Some Value");
@@ -124,7 +124,7 @@ namespace MudBlazor.UnitTests.Components
             var textField = comp.Instance;
             var input = comp.Find("input");
             //Act
-            input.Input(new ChangeEventArgs() { Value = "Some Value" });
+            input.Input(new ChangeEventArgs { Value = "Some Value" });
             //Assert
             //if DebounceInterval is set, Immediate should be true by default
             textField.Immediate.Should().BeTrue();
