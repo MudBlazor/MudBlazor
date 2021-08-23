@@ -9,8 +9,8 @@ namespace MudBlazor.Docs.Shared
 {
     public partial class MainLayout : LayoutComponentBase
     {
-        private bool _drawerOpen = false;
-        private bool _rightToLeft = false;
+        private bool _drawerOpen;
+        private bool _rightToLeft;
         private NavMenu _navMenuRef;
 
         [Inject] private NavigationManager NavigationManager { get; set; }

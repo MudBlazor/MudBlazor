@@ -4,22 +4,22 @@ namespace MudBlazor
 {
     public class Palette
     {
-        private MudColor _primaryDarken = null;
-        private MudColor _primaryLighten = null;
-        private MudColor _secondaryDarken = null;
-        private MudColor _secondaryLighten = null;
-        private MudColor _tertiaryDarken = null;
-        private MudColor _tertiaryLighten = null;
-        private MudColor _infoDarken = null;
-        private MudColor _infoLighten = null;
-        private MudColor _successDarken = null;
-        private MudColor _successLighten = null;
-        private MudColor _warningDarken = null;
-        private MudColor _warningLighten = null;
-        private MudColor _errorDarken = null;
-        private MudColor _errorLighten = null;
-        private MudColor _darkDarken = null;
-        private MudColor _darkLighten = null;
+        private MudColor _primaryDarken;
+        private MudColor _primaryLighten;
+        private MudColor _secondaryDarken;
+        private MudColor _secondaryLighten;
+        private MudColor _tertiaryDarken;
+        private MudColor _tertiaryLighten;
+        private MudColor _infoDarken;
+        private MudColor _infoLighten;
+        private MudColor _successDarken;
+        private MudColor _successLighten;
+        private MudColor _warningDarken;
+        private MudColor _warningLighten;
+        private MudColor _errorDarken;
+        private MudColor _errorLighten;
+        private MudColor _darkDarken;
+        private MudColor _darkLighten;
 
         public MudColor Black { get; set; } = Colors.Shades.Black;
         public MudColor White { get; set; } = Colors.Shades.White;

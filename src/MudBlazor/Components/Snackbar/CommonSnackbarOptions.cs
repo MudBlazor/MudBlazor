@@ -15,9 +15,9 @@ namespace MudBlazor
 
         public bool ShowCloseIcon { get; set; } = true;
 
-        public bool RequireInteraction { get; set; } = false;
+        public bool RequireInteraction { get; set; }
 
-        public bool BackgroundBlurred { get; set; } = false;
+        public bool BackgroundBlurred { get; set; }
 
         public Variant SnackbarVariant { get; set; } = Variant.Filled;
 

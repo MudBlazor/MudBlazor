@@ -33,7 +33,7 @@ namespace MudBlazor
             set { _footerValue = value; _footerValueAvailable = true; }
         }
         private T _footerValue;
-        private bool _footerValueAvailable = false;
+        private bool _footerValueAvailable;
 
         /// <summary>
         /// Used if no FooterValue is available

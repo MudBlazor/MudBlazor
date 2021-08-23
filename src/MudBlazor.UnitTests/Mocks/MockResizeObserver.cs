@@ -58,7 +58,7 @@ namespace MudBlazor.UnitTests.Mocks
 
         public async Task<BoundingClientRect> Observe(ElementReference element) => (await Observe(new[] { element })).FirstOrDefault();
 
-        private Boolean _firstBatchProcessed = false;
+        private Boolean _firstBatchProcessed;
 
         public Task<IEnumerable<BoundingClientRect>> Observe(IEnumerable<ElementReference> elements)
         {
