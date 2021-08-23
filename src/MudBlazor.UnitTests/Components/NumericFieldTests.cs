@@ -304,12 +304,12 @@ namespace MudBlazor.UnitTests
         [TestCase((sbyte)5)]
         [TestCase((short)5)]
         [TestCase((ushort)5)]
-        [TestCase((int)5)]
+        [TestCase(5)]
         [TestCase((uint)5)]
         [TestCase((long)5)]
         [TestCase((ulong)5)]
-        [TestCase((float)5.0f)]
-        [TestCase((double)5.0)]
+        [TestCase(5.0f)]
+        [TestCase(5.0)]
         public async Task NumericField_OfAnyType_Should_Render<T>(T value)
         {
             Assert.DoesNotThrow(() => Context.RenderComponent<MudNumericField<T>>(), $"{typeof(MudNumericField<>)}<{typeof(T)}> render failed.");
@@ -429,7 +429,7 @@ namespace MudBlazor.UnitTests
         [TestCase((sbyte)5)]
         [TestCase((short)5)]
         [TestCase((ushort)5)]
-        [TestCase((int)5)]
+        [TestCase(5)]
         [TestCase((uint)5)]
         [TestCase(5L)]
         [TestCase(5UL)]
@@ -489,7 +489,7 @@ namespace MudBlazor.UnitTests
         [TestCase((sbyte)5)]
         [TestCase((short)5)]
         [TestCase((ushort)5)]
-        [TestCase((int)5)]
+        [TestCase(5)]
         [TestCase((uint)5)]
         [TestCase(5L)]
         [TestCase(5UL)]

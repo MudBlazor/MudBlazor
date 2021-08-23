@@ -406,7 +406,7 @@ namespace MudBlazor.UnitTests.Components
             Console.WriteLine(comp.Markup);
             var select = comp.FindComponent<MudSelect<string>>();
             string validatedValue = null;
-            select.SetParam(x => x.Validation, (object)new Func<string, bool>(value =>
+            select.SetParam(x => x.Validation, new Func<string, bool>(value =>
             {
                 validatedValue = value; // NOTE: select does only update the value for T string
                 return true;

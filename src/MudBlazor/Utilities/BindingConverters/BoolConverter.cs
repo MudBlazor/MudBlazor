@@ -28,7 +28,7 @@ namespace MudBlazor
                 else if (typeof(T) == typeof(int))
                     return (T)(object)(value == true ? 1 : 0);
                 else if (typeof(T) == typeof(int?))
-                    return (T)(object)(value == true ? 1 : value == false ? (int?)0 : null);
+                    return (T)(object)(value == true ? 1 : value == false ? 0 : null);
                 else
                 {
                     UpdateGetError($"Conversion to type {typeof(T)} not implemented");
