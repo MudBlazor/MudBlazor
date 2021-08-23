@@ -63,7 +63,7 @@ namespace MudBlazor
         /// <summary>
         /// Defines on which day the week starts. Depends on the value of Culture. 
         /// </summary>
-        [Parameter] public DayOfWeek? FirstDayOfWeek { get; set; } = null;
+        [Parameter] public DayOfWeek? FirstDayOfWeek { get; set; }
 
         /// <summary>
         /// The current month of the date picker (two-way bindable). This changes when the user browses through the calender.
@@ -300,7 +300,7 @@ namespace MudBlazor
         /// <summary>
         /// Is set to true to scroll to the actual year after the next render
         /// </summary>
-        private bool _scrollToYearAfterRender = false;
+        private bool _scrollToYearAfterRender;
 
         public async void ScrollToYear()
         {

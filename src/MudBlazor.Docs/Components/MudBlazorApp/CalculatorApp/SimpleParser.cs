@@ -36,7 +36,7 @@ namespace PrimitiveCalculator
             _data = s;
         }
         protected string _data;
-        public int Position { get; set; } = 0;
+        public int Position { get; set; }
 
         // returns true if the next char is one of the given chars. does not consume
         public bool NextIs(params char[] chars)

@@ -38,7 +38,7 @@ namespace MudBlazor
             set { _footerValue = value; _footerValueAvailable = true; }
         }
         private T _footerValue;
-        private bool _footerValueAvailable = false;
+        private bool _footerValueAvailable;
 
         /// <summary>
         /// Used if no FooterValue is available
@@ -56,7 +56,7 @@ namespace MudBlazor
         [Parameter] public bool ReadOnly { get; set; }
         [Parameter] public string SortLabel { get; set; }
 
-        [Parameter] public Func<ModelType, object> SortBy { get; set; } = default;
+        [Parameter] public Func<ModelType, object> SortBy { get; set; }
 
         private string GetFormattedString(T item)
         {

@@ -17,7 +17,7 @@
 @code {
     private MudColorPicker _picker;
 
-    public Int32 ValueChangeCallbackCounter { get; private set; } = 0;
+    public Int32 ValueChangeCallbackCounter { get; private set; }
 
     [Parameter] public MudColor ColorValue { get; set; } = "#594ae2";
     [Parameter] public string TextValue { get; set; } = "#594ae2";
@@ -26,15 +26,15 @@
 
     [Parameter] public ColorPickerMode ColorPickerMode { get; set; } = ColorPickerMode.RGB;
     [Parameter] public bool DisableToolbar { get; set; } = true;
-    [Parameter] public bool DisableColorField { get; set; } = false;
-    [Parameter] public bool DisablePreview { get; set; } = false;
-    [Parameter] public bool DisableSliders { get; set; } = false;
-    [Parameter] public bool DisableInput { get; set; } = false;
-    [Parameter] public bool DisableModeSwitch { get; set; } = false;
-    [Parameter] public bool DisableAlpha { get; set; } = false;
+    [Parameter] public bool DisableColorField { get; set; }
+    [Parameter] public bool DisablePreview { get; set; }
+    [Parameter] public bool DisableSliders { get; set; }
+    [Parameter] public bool DisableInput { get; set; }
+    [Parameter] public bool DisableModeSwitch { get; set; }
+    [Parameter] public bool DisableAlpha { get; set; }
     [Parameter] public ColorPickerView ViewMode { get; set; } = ColorPickerView.Spectrum;
     [Parameter] public PickerVariant Variant { get; set; } = PickerVariant.Static;
-    [Parameter] public bool AlwaysUpdateBinding { get; set; } = false;
+    [Parameter] public bool AlwaysUpdateBinding { get; set; }
 
     public async Task OpenPicker()
     {

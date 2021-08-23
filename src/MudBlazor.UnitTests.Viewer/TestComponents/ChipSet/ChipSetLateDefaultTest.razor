@@ -13,7 +13,7 @@ Add chips <MudIconButton Icon="@Icons.Material.Filled.Add" OnClick="Enable">Enab
 
 @code
 { 
-    bool _extraItem = false;
+    bool _extraItem;
     public void Enable() => _extraItem = !_extraItem;
     MudChip[] SelectedChipArray;
 }
