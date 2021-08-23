@@ -10,7 +10,7 @@ namespace MudBlazor
 {
     public partial class MudNumericField<T> : MudDebouncedInput<T>
     {
-        public MudNumericField() : base()
+        public MudNumericField()
         {
             Validation = new Func<T, Task<bool>>(ValidateInput);
             _inputConverter = new NumericBoundariesConverter<T>(val => ConstrainBoundaries(val).value)
