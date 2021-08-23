@@ -38,7 +38,7 @@ namespace MudBlazor.UnitTests.Components
         public async Task NavLink_CheckOnClickEvent()
         {
             var clicked = false;
-            var comp = Context.RenderComponent<MudNavLink>(EventCallback(nameof(MudNavLink.OnClick), (MouseEventArgs args) => { clicked = true; }));
+            var comp = Context.RenderComponent<MudNavLink>(EventCallback(nameof(MudNavLink.OnClick), (MouseEventArgs _) => { clicked = true; }));
             // print the generated html
             Console.WriteLine(comp.Markup);
             comp.FindAll("a").Should().BeEmpty();

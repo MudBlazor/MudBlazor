@@ -339,7 +339,7 @@ namespace MudBlazor.UnitTests.Components
             Console.WriteLine(comp.Markup);
             var select = comp.FindComponent<MudSelect<string>>();
             var eventCounter = 0;
-            select.SetCallback(s => s.OnBlur, x => eventCounter++);
+            select.SetCallback(s => s.OnBlur, _ => eventCounter++);
             comp.InvokeAsync(() =>
             {
                 select.Instance.OpenMenu();

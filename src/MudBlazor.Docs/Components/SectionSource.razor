@@ -4,8 +4,8 @@
     <MudToolBar DisableGutters="true" Dense="true">
         @if (ShowCode && !String.IsNullOrEmpty(Code2))
         {
-            <MudButton Variant="Variant.Filled" Size="Size.Small" DisableElevation="true" Color="@Button1Color" OnClick="@(e => SwapCode(Code))">@ButtonTextCode1</MudButton>
-            <MudButton Variant="Variant.Filled" Size="Size.Small" DisableElevation="true" Color="Button2Color" Class="ml-2" OnClick="@(e => SwapCode(Code2))">@ButtonTextCode2</MudButton>
+            <MudButton Variant="Variant.Filled" Size="Size.Small" DisableElevation="true" Color="@Button1Color" OnClick="@(_ => SwapCode(Code))">@ButtonTextCode1</MudButton>
+            <MudButton Variant="Variant.Filled" Size="Size.Small" DisableElevation="true" Color="Button2Color" Class="ml-2" OnClick="@(_ => SwapCode(Code2))">@ButtonTextCode2</MudButton>
         }
         <MudSpacer/>
         <MudTooltip Text="@TooltipSourceCodeText" Placement="Placement.Top">

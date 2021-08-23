@@ -226,7 +226,7 @@ namespace MudBlazor.UnitTests.Components
             //This is not necessary in normal cases, you would rather just not register all services in the beginning, but the test environment requires here to do so.
             Context.Services.Remove(Context.Services.FirstOrDefault(descriptor => descriptor.ServiceType == typeof(IDialogService)));
             //Register our custom dialog service implementation as the new service instance behind IDialogService
-            Context.Services.AddScoped<IDialogService>(sp => new CustomDialogService());
+            Context.Services.AddScoped<IDialogService>(_ => new CustomDialogService());
 
             //Render our dialog provider and make sure everything is fine
             var comp = Context.RenderComponent<MudDialogProvider>();

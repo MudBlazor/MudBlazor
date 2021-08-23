@@ -34,7 +34,7 @@ namespace MudBlazor.UnitTests.Components
             ctx.Services.AddTransient<IEventListener, EventListener>();
 
             ctx.Services.AddOptions();
-            ctx.Services.AddScoped(sp =>
+            ctx.Services.AddScoped(_ =>
                 new HttpClient(new MockDocsMessageHandler()) { BaseAddress = new Uri("https://localhost/") });
         }
 

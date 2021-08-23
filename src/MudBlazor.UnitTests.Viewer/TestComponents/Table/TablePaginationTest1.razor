@@ -33,7 +33,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        viewModel.PropertyChanged += (sender, args) => InvokeAsync(StateHasChanged).ConfigureAwait(false);
+        viewModel.PropertyChanged += (_, _) => InvokeAsync(StateHasChanged).ConfigureAwait(false);
         await viewModel.LoadItemsAsync().ConfigureAwait(false);
         await base.OnInitializedAsync();
     }

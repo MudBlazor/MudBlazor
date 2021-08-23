@@ -21,13 +21,13 @@
             <div class="mudblazor-apps-list">
                 <MudButton Variant="Variant.Filled" OnClick="@ComposeNewEmail" DisableElevation="true" Color="Color.Primary" Size="Size.Small" Class="mx-3 mt-2 mb-1" Style="height: 24px; width:85%">Compose</MudButton>
                 <MudList Clickable="true" Dense="true" DisablePadding="true">
-                    <MudListItem Icon="@Icons.Material.Filled.Inbox" OnClick="@(e => ChangeMailbox(Inbox))">Inbox</MudListItem>
-                    <MudListItem Icon="@Icons.Material.Filled.Send" OnClick="@(e => ChangeMailbox(Sent))">Sent mail</MudListItem>
-                    <MudListItem Icon="@Icons.Material.Filled.Drafts" OnClick="@(e => ChangeMailbox(Drafts))">Drafts</MudListItem>
+                    <MudListItem Icon="@Icons.Material.Filled.Inbox" OnClick="@(_ => ChangeMailbox(Inbox))">Inbox</MudListItem>
+                    <MudListItem Icon="@Icons.Material.Filled.Send" OnClick="@(_ => ChangeMailbox(Sent))">Sent mail</MudListItem>
+                    <MudListItem Icon="@Icons.Material.Filled.Drafts" OnClick="@(_ => ChangeMailbox(Drafts))">Drafts</MudListItem>
                     <MudListItem Icon="@Icons.Material.Filled.Folder" Text="More">
                         <NestedList>
-                            <MudListItem Icon="@Icons.Material.Outlined.ReportProblem" Dense="true" OnClick="@(e => ChangeMailbox(Spam))">Spam</MudListItem>
-                            <MudListItem Icon="@Icons.Material.Outlined.Delete" Dense="true" OnClick="@(e => ChangeMailbox(Bin))">Bin</MudListItem>
+                            <MudListItem Icon="@Icons.Material.Outlined.ReportProblem" Dense="true" OnClick="@(_ => ChangeMailbox(Spam))">Spam</MudListItem>
+                            <MudListItem Icon="@Icons.Material.Outlined.Delete" Dense="true" OnClick="@(_ => ChangeMailbox(Bin))">Bin</MudListItem>
                         </NestedList>
                     </MudListItem>
                 </MudList>
