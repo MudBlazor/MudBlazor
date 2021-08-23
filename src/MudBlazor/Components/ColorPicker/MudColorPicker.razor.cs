@@ -162,7 +162,7 @@ namespace MudBlazor
                 if (value == null) { return; }
 
                 var rgbChanged = value != _color;
-                var hslChanged = _color == null ? false : value.HslChanged(_color);
+                var hslChanged = _color != null && value.HslChanged(_color);
                 _color = value;
 
                 if (rgbChanged)

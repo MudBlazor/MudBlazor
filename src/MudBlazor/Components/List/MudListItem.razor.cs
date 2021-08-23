@@ -11,7 +11,7 @@ namespace MudBlazor
         protected string Classname =>
         new CssBuilder("mud-list-item")
           .AddClass("mud-list-item-dense", Dense || MudList?.Dense == true)
-          .AddClass("mud-list-item-gutters", !DisableGutters && !(MudList?.DisableGutters == true))
+          .AddClass("mud-list-item-gutters", !DisableGutters && MudList?.DisableGutters != true)
           .AddClass("mud-list-item-clickable", MudList?.Clickable)
           .AddClass("mud-ripple", MudList?.Clickable == true && !DisableRipple && !Disabled)
           .AddClass("mud-selected-item", _selected && !Disabled)
