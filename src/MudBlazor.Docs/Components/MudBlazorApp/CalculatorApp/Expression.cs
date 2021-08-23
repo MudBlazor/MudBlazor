@@ -141,7 +141,7 @@ namespace PrimitiveCalculator
                     {
                         if (op.Operator == highest_op)
                         {
-                            var last_op = ops[ops.Count - 1];
+                            var last_op = ops[^1];
                             last_op.Expression.Value = op.Apply(last_op.Expression.Value ?? double.NaN);
                             i++;
                             continue;
