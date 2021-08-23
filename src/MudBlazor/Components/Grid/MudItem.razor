@@ -31,13 +31,5 @@
 
     [Parameter] public RenderFragment ChildContent { get; set; }
 
-    protected override void OnInitialized()
-    {
-        // NOTE: we can't throw here, the component must be able to live alone for the docs API to infer default parameters
-        //if (Parent == null)
-        //    throw new ArgumentNullException(nameof(Parent), "Item must exist within a Grid");
-        base.OnInitialized();
-    }
-
 }
 
