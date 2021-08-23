@@ -48,7 +48,7 @@ namespace MudBlazor
         }
 
         [JSInvokable]
-        public async Task OnEventOccur(Guid key, string @eventData)
+        public async Task OnEventOccur(Guid key, string eventData)
         {
             if (_callbackResolver.ContainsKey(key) == false) { return; }
 

@@ -82,7 +82,7 @@
                             }
                             </MudTd>
                             <MudTd Class="docs-content-api-cell" DataLabel="Return">
-                            @if (@context.Return != null && context.Return.ParameterType.ConvertToCSharpSource() != "Void")
+                            @if (context.Return != null && context.Return.ParameterType.ConvertToCSharpSource() != "Void")
                             {
                                 <div style="display: flex; flex-direction: row; align-items: center; white-space: nowrap;">@($"{Extensions.MethodInfoExtensions.GetAliases(context.Return.ParameterType.ConvertToCSharpSource())}{AnalyseMethodDocumentation(context.Documentation, "returns")}")</div>
                             }
