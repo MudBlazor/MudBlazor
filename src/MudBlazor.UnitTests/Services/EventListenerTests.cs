@@ -275,7 +275,7 @@ namespace MudBlazor.UnitTests.Services
             await _service.DisposeAsync();
 
             // a normal dispose shouldnt' change something
-            _service.Dispose();
+            await _service.DisposeAsync();
 
             _runtimeMock.Verify(x => x.InvokeAsync<Object>("mudThrottledEventManager.subscribe", It.Is<object[]>(z =>
                 true
@@ -329,10 +329,10 @@ namespace MudBlazor.UnitTests.Services
                 }
             }
 
-            _service.Dispose();
+            await _service.DisposeAsync();
 
             // a second time shouldn't change something
-            _service.Dispose();
+            await _service.DisposeAsync();
 
             _runtimeMock.Verify(x => x.InvokeAsync<Object>("mudThrottledEventManager.subscribe", It.Is<object[]>(z =>
                 true
