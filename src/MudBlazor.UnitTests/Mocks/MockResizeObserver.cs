@@ -11,7 +11,7 @@ namespace MudBlazor.UnitTests.Mocks
 {
     public class MockResizeObserver : IResizeObserver, IDisposable
     {
-        private Dictionary<ElementReference, BoundingClientRect> _cachedValues = new();
+        private readonly Dictionary<ElementReference, BoundingClientRect> _cachedValues = new();
 
         public bool IsVertical { get; set; } = false;
 

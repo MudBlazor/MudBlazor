@@ -117,7 +117,7 @@ namespace MudBlazor.Docs.Services
 
         public IEnumerable<MudComponent> Components => _docsComponents.Elements;
 
-        private Dictionary<Type, MudComponent> _parents = new();
+        private readonly Dictionary<Type, MudComponent> _parents = new();
 
         public MudComponent GetParent(Type child) => _parents[child];
 

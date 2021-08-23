@@ -127,8 +127,8 @@ namespace MudBlazor.UnitTests.Components
             //TODO when Bunit implements custom events
         }
 
-        private BoundingClientRect _anchorRect = new();
-        private BoundingClientRect _fragmentRect = new();
+        private readonly BoundingClientRect _anchorRect = new();
+        private readonly BoundingClientRect _fragmentRect = new();
         public BoundingClientRect FragmentRect
         {
             get
