@@ -69,14 +69,9 @@
 
     public void AddIcon()
     {
-        if (String.IsNullOrEmpty(BadgeIcon))
-        {
-            BadgeIcon = Icons.Custom.Uncategorized.Radioactive;
-        }
-        else
-        {
-            BadgeIcon = null;
-        }
+        BadgeIcon = string.IsNullOrEmpty(BadgeIcon) 
+            ? Icons.Custom.Uncategorized.Radioactive 
+            : null;
     }
 
     public void AddValue()

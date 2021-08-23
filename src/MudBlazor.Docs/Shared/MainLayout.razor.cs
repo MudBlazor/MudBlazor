@@ -107,14 +107,9 @@ namespace MudBlazor.Docs.Shared
 
         private void DarkMode()
         {
-            if (_currentTheme == _defaultTheme)
-            {
-                _currentTheme = _darkTheme;
-            }
-            else
-            {
-                _currentTheme = _defaultTheme;
-            }
+            _currentTheme = _currentTheme == _defaultTheme 
+                ? _darkTheme 
+                : _defaultTheme;
         }
 
         private MudTheme _currentTheme = new();

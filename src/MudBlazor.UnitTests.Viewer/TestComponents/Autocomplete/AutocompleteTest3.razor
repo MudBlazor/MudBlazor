@@ -71,10 +71,9 @@
         // In real life use an asynchronous function for fetching data from an api.
         await Task.Delay(5);
 
-        IEnumerable<State> list;
-        if (string.IsNullOrEmpty(value)) list = StateList;
-        else list = StateList.Where(e => e.StateName.Contains(value, StringComparison.InvariantCultureIgnoreCase));
-        return list;
+        return string.IsNullOrEmpty(value) 
+            ? StateList 
+            : StateList.Where(e => e.StateName.Contains(value, StringComparison.InvariantCultureIgnoreCase));
     }
 
     public class State

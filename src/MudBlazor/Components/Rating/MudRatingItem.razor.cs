@@ -130,14 +130,7 @@ namespace MudBlazor
         {
             if (Disabled) return;
             IsActive = false;
-            if (Rating?.SelectedValue == ItemValue)
-            {
-                ItemClicked.InvokeAsync(0);
-            }
-            else
-            {
-                ItemClicked.InvokeAsync(ItemValue);
-            }
+            ItemClicked.InvokeAsync(Rating?.SelectedValue == ItemValue ? 0 : ItemValue);
         }
     }
 }

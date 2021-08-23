@@ -117,16 +117,9 @@ namespace MudBlazor.UnitTests.Services
             var amount = 10;
             for (var i = 1; i <= amount; i++)
             {
-                var reference = new ElementReference(Guid.NewGuid().ToString(), new PseudoElementReferenceContext());
-
-                if (i % 2 == 0)
-                {
-                    reference = new ElementReference();
-                }
-                else
-                {
-                    reference = new ElementReference(Guid.NewGuid().ToString());
-                }
+                var reference = i % 2 == 0
+                    ? new ElementReference()
+                    : new ElementReference(Guid.NewGuid().ToString());
                 notObservedReferences.Add(reference);
             }
 

@@ -20,15 +20,9 @@ namespace MudBlazor.UnitTests.Components
 
         public IRenderedComponent<MudTimePicker> OpenPicker(ComponentParameter[] parameters = null)
         {
-            IRenderedComponent<MudTimePicker> comp;
-            if (parameters is null)
-            {
-                comp = Context.RenderComponent<MudTimePicker>();
-            }
-            else
-            {
-                comp = Context.RenderComponent<MudTimePicker>(parameters);
-            }
+            var comp = parameters is null 
+                ? Context.RenderComponent<MudTimePicker>() 
+                : Context.RenderComponent<MudTimePicker>(parameters);
 
             // should not be open
             comp.FindAll("div.mud-picker-open").Count.Should().Be(0);

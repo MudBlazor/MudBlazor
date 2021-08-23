@@ -49,14 +49,9 @@ namespace MudBlazor.Docs.Components
             if (!string.IsNullOrEmpty(Code))
             {
                 ShowCode = !ShowCode;
-                if (ShowCode)
-                {
-                    TooltipSourceCodeText = HideCodeExampleString;
-                }
-                else
-                {
-                    TooltipSourceCodeText = ShowCodeExampleString;
-                }
+                TooltipSourceCodeText = ShowCode 
+                    ? HideCodeExampleString 
+                    : ShowCodeExampleString;
             }
         }
 
@@ -127,14 +122,9 @@ namespace MudBlazor.Docs.Components
                 var gitHubLink = "https://github.com/";
                 GitHubSourceCode = $"{gitHubLink}Garderoben/MudBlazor/blob/master/src/MudBlazor.Docs/Pages/Components/{GitHubFolderName}/Examples/{Code}.razor";
             }
-            if (ShowCode)
-            {
-                TooltipSourceCodeText = HideCodeExampleString;
-            }
-            else
-            {
-                TooltipSourceCodeText = ShowCodeExampleString;
-            }
+            TooltipSourceCodeText = ShowCode 
+                ? HideCodeExampleString 
+                : ShowCodeExampleString;
         }
 
         private void SwapCode(string code)
