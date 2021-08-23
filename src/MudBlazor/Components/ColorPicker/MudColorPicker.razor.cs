@@ -27,12 +27,12 @@ namespace MudBlazor
 
         private static Dictionary<int, (Func<int, int> r, Func<int, int> g, Func<int, int> b, string dominantColorPart)> _rgbToHueMapper = new()
         {
-            { 0, ((x) => 255, x => x, x => 0, "rb") },
-            { 1, ((x) => 255 - x, x => 255, x => 0, "gb") },
-            { 2, ((x) => 0, x => 255, x => x, "gr") },
-            { 3, ((x) => 0, x => 255 - x, x => 255, "br") },
-            { 4, ((x) => x, x => 0, x => 255, "bg") },
-            { 5, ((x) => 255, x => 0, x => 255 - x, "rg") },
+            { 0, (x => 255, x => x, x => 0, "rb") },
+            { 1, (x => 255 - x, x => 255, x => 0, "gb") },
+            { 2, (x => 0, x => 255, x => x, "gr") },
+            { 3, (x => 0, x => 255 - x, x => 255, "br") },
+            { 4, (x => x, x => 0, x => 255, "bg") },
+            { 5, (x => 255, x => 0, x => 255 - x, "rg") },
         };
 
         private const double _maxY = 250;
@@ -496,7 +496,7 @@ namespace MudBlazor
             if (DisableDragEffect == true) { return; }
 
             _throttledMouseOverEventId = await
-                ThrottledEventManager.Subscribe<MouseEventArgs>("mousemove", _id.ToString(), "mudEventProjections.correctOffset", 10, async (x) =>
+                ThrottledEventManager.Subscribe<MouseEventArgs>("mousemove", _id.ToString(), "mudEventProjections.correctOffset", 10, async x =>
                 {
                     var e = x as MouseEventArgs;
                     await InvokeAsync(() => OnMouseOver(e));

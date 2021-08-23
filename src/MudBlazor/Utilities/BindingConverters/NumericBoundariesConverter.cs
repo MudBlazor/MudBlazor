@@ -22,7 +22,7 @@ namespace MudBlazor
         public NumericBoundariesConverter(Func<T, T> evaluationFunc)
         {
             EvaluationFunc = evaluationFunc;
-            SetFunc = (value) => value; //Set doesn't do anything, awaits the Get to commit changes (IE: typing the decimal separator shouldn't trigger changes)
+            SetFunc = value => value; //Set doesn't do anything, awaits the Get to commit changes (IE: typing the decimal separator shouldn't trigger changes)
             GetFunc = OnGet;
         }
 

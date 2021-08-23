@@ -2,13 +2,13 @@
 
 <MudTabs KeepPanelsAlive="@KeepPanelsAlive">
     <MudTabPanel Text="Item One">
-        <TabsKeepAlivePanel ComponentName="Panel 1" FirstRender="@((x)=>firstRenders.Add(x))"/>
+        <TabsKeepAlivePanel ComponentName="Panel 1" FirstRender="@(x=>firstRenders.Add(x))"/>
     </MudTabPanel>
     <MudTabPanel Text="Item Two">
-        <TabsKeepAlivePanel ComponentName="Panel 2" FirstRender="@((x)=>firstRenders.Add(x))" />
+        <TabsKeepAlivePanel ComponentName="Panel 2" FirstRender="@(x=>firstRenders.Add(x))" />
     </MudTabPanel>
     <MudTabPanel Text="Item Three">
-        <TabsKeepAlivePanel ComponentName="Panel 3" FirstRender="@((x)=>firstRenders.Add(x))" />
+        <TabsKeepAlivePanel ComponentName="Panel 3" FirstRender="@(x=>firstRenders.Add(x))" />
     </MudTabPanel>
 </MudTabs>
 

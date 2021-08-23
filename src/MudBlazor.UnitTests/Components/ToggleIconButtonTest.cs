@@ -24,7 +24,7 @@ namespace MudBlazor.UnitTests.Components
             var boundValue = false;
             var comp = Context.RenderComponent<MudToggleIconButton>(parameters => parameters
                 .Add(p => p.Toggled, boundValue)
-                .Add(p => p.ToggledChanged, (toggleValue) => boundValue = toggleValue)
+                .Add(p => p.ToggledChanged, toggleValue => boundValue = toggleValue)
                 );
             comp.Find("button").Click();
             boundValue.Should().BeTrue();

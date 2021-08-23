@@ -9,7 +9,7 @@
 @code{
     public void AddSnackbar()
     {
-        Snackbar.Add("Snackbar will close after navigation.", Severity.Normal, (options)=>
+        Snackbar.Add("Snackbar will close after navigation.", Severity.Normal, options=>
         {
             options.CloseAfterNavigation = true;
         });

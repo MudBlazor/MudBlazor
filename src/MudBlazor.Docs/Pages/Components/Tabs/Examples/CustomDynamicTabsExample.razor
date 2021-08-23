@@ -21,7 +21,7 @@
 		@if(context.Text.StartsWith("Tab") == false)
 		{
 			<MudTooltip Text="only dynamic tabs can be closed">
-				<MudIconButton Class="ml-2 pa-1" Color="Color.Error" Icon="@Icons.Material.Filled.Remove" OnClick="(_) => RemoveTab(context)" />
+				<MudIconButton Class="ml-2 pa-1" Color="Color.Error" Icon="@Icons.Material.Filled.Remove" OnClick="_ => RemoveTab(context)" />
 			</MudTooltip>
 		}
   </TabPanelHeader>

@@ -47,7 +47,7 @@ namespace MudBlazor.UnitTests.Services
             var throttleInterval = 20;
             var projectionName = "mynamespace.myfunction";
 
-            Func<Object, Task> callback = (x) => Task.Delay(10);
+            Func<Object, Task> callback = x => Task.Delay(10);
 
             var expectedProperties = new[] {
              "detail", "screenX", "screenY", "clientX", "clientY", "offsetX", "offsetY",
@@ -87,7 +87,7 @@ namespace MudBlazor.UnitTests.Services
             var offsetX = 200.24;
             var offsetY = 12425.2;
 
-            Func<Object, Task> callback = (x) =>
+            Func<Object, Task> callback = x =>
             {
                 try
                 {
@@ -149,7 +149,7 @@ namespace MudBlazor.UnitTests.Services
             var throttleInterval = 20;
             string projectionName = null;
 
-            Func<Object, Task> callback = (x) => Task.Delay(10);
+            Func<Object, Task> callback = x => Task.Delay(10);
 
             var expectedProperties = new[] {
              "detail", "screenX", "screenY", "clientX", "clientY", "offsetX", "offsetY",
@@ -189,7 +189,7 @@ namespace MudBlazor.UnitTests.Services
             var throttleInterval = 20;
             var projectionName = "mynamspace.something.somethingelse";
 
-            Func<Object, Task> callback = (x) => Task.Delay(10);
+            Func<Object, Task> callback = x => Task.Delay(10);
 
             var expectedProperties = new[] {
              "detail", "screenX", "screenY", "clientX", "clientY", "offsetX", "offsetY",
@@ -229,7 +229,7 @@ namespace MudBlazor.UnitTests.Services
             var throttleInterval = 20;
             var projectionName = "mynamspace.something.somethingelse";
 
-            Func<Object, Task> callback = (x) => Task.Delay(10);
+            Func<Object, Task> callback = x => Task.Delay(10);
 
             var expectedProperties = new[] {
              "detail", "screenX", "screenY", "clientX", "clientY", "offsetX", "offsetY",
@@ -289,7 +289,7 @@ namespace MudBlazor.UnitTests.Services
             var throttleInterval = 20;
             var projectionName = "mynamspace.something.somethingelse";
 
-            Func<Object, Task> callback = (x) => Task.Delay(10);
+            Func<Object, Task> callback = x => Task.Delay(10);
 
             var expectedProperties = new[] {
              "detail", "screenX", "screenY", "clientX", "clientY", "offsetX", "offsetY",
