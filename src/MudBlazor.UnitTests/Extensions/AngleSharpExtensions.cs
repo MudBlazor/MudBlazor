@@ -6,7 +6,7 @@ namespace MudBlazor.UnitTests
     {
         public static string TrimmedText(this IElement self)
         {
-            return self.TextContent?.Trim();
+            return self.TextContent.Trim();
         }
     }
 }
