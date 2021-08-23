@@ -126,11 +126,10 @@ namespace UtilityTests
             {
                 //arrange
                 // Simulates Razor Components attribute splatting feature
-                IReadOnlyDictionary<string, object> attributes = null;
 
                 //act
                 var classToRender = new CssBuilder("item-one")
-                                .AddClassFromAttributes(attributes)
+                                .AddClassFromAttributes(null)
                                 .Build();
                 //assert
                 classToRender.Should().Be("item-one");
@@ -143,11 +142,10 @@ namespace UtilityTests
             {
                 //arrange
                 // Simulates Razor Components attribute splatting feature
-                IReadOnlyDictionary<string, object> attributes = null;
 
                 //act
                 var classToRender = new CssBuilder()
-                                .AddClassFromAttributes(attributes)
+                                .AddClassFromAttributes(null)
                                 .NullIfEmpty();
                 //assert
                 classToRender.Should().BeNull();

@@ -127,13 +127,12 @@ namespace MudBlazor
         public IEnumerable<T> Sort(IEnumerable<T> items)
         {
             if (items == null)
-                return items;
+                return null;
             if (SortBy == null || SortDirection == SortDirection.None)
                 return items;
-            if (SortDirection == SortDirection.Ascending)
-                return items.OrderBy(item => SortBy(item));
-            else
-                return items.OrderByDescending(item => SortBy(item));
+            return SortDirection == SortDirection.Ascending 
+                ? items.OrderBy(item => SortBy(item)) 
+                : items.OrderByDescending(item => SortBy(item));
         }
 
         public override void InitializeSorting()
