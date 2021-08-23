@@ -53,7 +53,7 @@ namespace MudBlazor
         /// <summary>
         /// Define a list of available page size options for the user to choose from
         /// </summary>
-        [Parameter] public int[] PageSizeOptions { get; set; } = new int[] { 10, 25, 50, 100 };
+        [Parameter] public int[] PageSizeOptions { get; set; } = { 10, 25, 50, 100 };
 
         /// <summary>
         /// Format string for the display of the current page, which you can localize to your language. Available variables are:

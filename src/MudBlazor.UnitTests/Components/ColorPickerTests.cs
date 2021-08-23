@@ -39,8 +39,7 @@ namespace MudBlazor.UnitTests.Components
         private const string CssSelector = ".mud-picker-color-overlay-black .mud-picker-color-overlay";
         private const string _mudToolbarButtonsCssSelector = ".mud-toolbar button";
 
-        private static readonly MudColor[] _mudGridDefaultColors = new MudColor[]
-                        {
+        private static readonly MudColor[] _mudGridDefaultColors = {
                 "#FFFFFF","#ebebeb","#d6d6d6","#c2c2c2","#adadad","#999999","#858586","#707070","#5c5c5c","#474747","#333333","#000000",
                 "#133648","#071d53","#0f0638","#2a093b","#370c1b","#541107","#532009","#53350d","#523e0f","#65611b","#505518","#2b3d16",
                 "#1e4c63","#0f2e76","#180b4e","#3f1256","#4e1629","#781e0e","#722f10","#734c16","#73591a","#8c8629","#707625","#3f5623",
@@ -53,8 +52,7 @@ namespace MudBlazor.UnitTests.Components
                 "#d2effd","#d6e1fc","#d6c9fa","#e9cbfb","#f3d4df","#f9dcd9","#fae3d8","#fcecd7","#fdf2d8","#fefce0","#f7fade","#e3edd6"
                         };
 
-        private static readonly MudColor[] _mudGridPaletteDefaultClors = new MudColor[]
-                {
+        private static readonly MudColor[] _mudGridPaletteDefaultClors = {
                    "#424242", "#2196f3", "#00c853", "#ff9800", "#f44336",
                   "#f6f9fb", "#9df1fa", "#bdffcf", "#fff0a3", "#ffd254",
                   "#e6e9eb", "#27dbf5", "#7ef7a0", "#ffe273", "#ffb31f",
