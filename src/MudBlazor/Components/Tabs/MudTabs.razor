@@ -29,15 +29,15 @@
                                             @TabPanelHeader(panel)
                                         </div>
                                     }
-                                    @if (!String.IsNullOrEmpty(panel.Text) && String.IsNullOrEmpty(panel.Icon))
+                                    @if (!string.IsNullOrEmpty(panel.Text) && string.IsNullOrEmpty(panel.Icon))
                                     {
                                         @((MarkupString)panel.Text)
                                     }
-                                    else if (String.IsNullOrEmpty(panel.Text) && !String.IsNullOrEmpty(panel.Icon))
+                                    else if (string.IsNullOrEmpty(panel.Text) && !string.IsNullOrEmpty(panel.Icon))
                                     {
                                         <MudIcon Icon="@panel.Icon" Color="@IconColor" />
                                     }
-                                    else if (!String.IsNullOrEmpty(panel.Text) && !String.IsNullOrEmpty(panel.Icon))
+                                    else if (!string.IsNullOrEmpty(panel.Text) && !string.IsNullOrEmpty(panel.Icon))
                                     {
                                         <MudIcon Icon="@panel.Icon" Color="@IconColor" Class="mud-tab-icon-text" />
                                         @((MarkupString)panel.Text)

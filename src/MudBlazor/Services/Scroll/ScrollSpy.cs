@@ -47,7 +47,7 @@ namespace MudBlazor
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        Task SetSectionAsActive(String id);
+        Task SetSectionAsActive(string id);
 
         /// <summary>
         /// Get the current position of the centered section

@@ -28,7 +28,7 @@ namespace MudBlazor
 
         private string OnGet(string text)
         {
-            if (String.IsNullOrEmpty(text))
+            if (string.IsNullOrEmpty(text))
                 return null;
             var value = FilterFunc == null ? text : FilterFunc(text);
             try

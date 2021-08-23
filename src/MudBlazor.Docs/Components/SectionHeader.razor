@@ -1,7 +1,7 @@
 ﻿@using MudBlazor.Utilities
 
 <div @ref="@SectionReference" id="@GetSectionId()" class="@Classname">
-    @if(!String.IsNullOrWhiteSpace(Title))
+    @if(!string.IsNullOrWhiteSpace(Title))
     {
         <MudText Typo="Typo.h4">@Title</MudText>
     }
@@ -38,7 +38,7 @@
     {
         base.OnInitialized();
 
-        if (DocsPage != null && !String.IsNullOrWhiteSpace(Title))
+        if (DocsPage != null && !string.IsNullOrWhiteSpace(Title))
         {
             Section = new DocsSectionLink
             {
@@ -51,7 +51,7 @@
     protected override void OnAfterRender(bool firstRender)
     {
         base.OnAfterRender(firstRender);
-        if (firstRender && DocsPage != null && !String.IsNullOrWhiteSpace(Title))
+        if (firstRender && DocsPage != null && !string.IsNullOrWhiteSpace(Title))
         {
             DocsPage.AddSection(Section);
         }

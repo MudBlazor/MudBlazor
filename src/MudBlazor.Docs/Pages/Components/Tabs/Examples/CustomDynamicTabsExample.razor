@@ -31,8 +31,8 @@
 
 	private class TabView
 	{
-		public String Name { get; set; }
-		public String Content { get; set; }
+		public string Name { get; set; }
+		public string Content { get; set; }
 		public Guid Id { get; set; }
 	}
 
@@ -58,7 +58,7 @@
 		_tabs.Add(new TabView { Content = "Third tab content", Name = "Tab C", Id = Guid.NewGuid() });
 	}
 
-	private void AddTabCallback(Boolean append)
+	private void AddTabCallback(bool append)
 	{
 		var tabView = new TabView { Name = "Dynamic content", Content = "A new tab", Id = Guid.NewGuid() };
 		

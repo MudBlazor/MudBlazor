@@ -159,18 +159,18 @@ namespace MudBlazor.UnitTests.Services
                     z[3] is IEnumerable<Guid> &&
                     z[4] is ResizeObserverOptions && ((ResizeObserverOptions)z[4]).EnableLogging == false && ((ResizeObserverOptions)z[4]).ReportRate == 200
                 )
-            )).ReturnsAsync(resolvedElements.Values).Callback<String, object[]>((_, y) => { observerId = (Guid)y[0]; ids = new List<Guid>((IEnumerable<Guid>)y[3]); }).Verifiable();
+            )).ReturnsAsync(resolvedElements.Values).Callback<string, object[]>((_, y) => { observerId = (Guid)y[0]; ids = new List<Guid>((IEnumerable<Guid>)y[3]); }).Verifiable();
 
 
             foreach (var item in resolvedElements)
             {
-                _runtimeMock.Setup(x => x.InvokeAsync<Object>(
+                _runtimeMock.Setup(x => x.InvokeAsync<object>(
                 "mudResizeObserver.disconnect",
                 It.Is<object[]>(z =>
                     (Guid)z[0] == observerId &&
                     ids.Contains((Guid)z[1])
                 )
-            )).ReturnsAsync(new Object()).Callback<String, Object[]>((_, y) => { ids.Remove((Guid)y[1]); }).Verifiable();
+            )).ReturnsAsync(new object()).Callback<string, object[]>((_, y) => { ids.Remove((Guid)y[1]); }).Verifiable();
             }
 
             await _service.Observe(resolvedElements.Keys);
@@ -217,7 +217,7 @@ namespace MudBlazor.UnitTests.Services
                     z[3] is IEnumerable<Guid> &&
                     z[4] is ResizeObserverOptions && ((ResizeObserverOptions)z[4]).EnableLogging == false && ((ResizeObserverOptions)z[4]).ReportRate == 200
                 )
-            )).ReturnsAsync(resolvedElements.Values).Callback<String, object[]>((_, y) => { ids = new List<Guid>((IEnumerable<Guid>)y[3]); }).Verifiable();
+            )).ReturnsAsync(resolvedElements.Values).Callback<string, object[]>((_, y) => { ids = new List<Guid>((IEnumerable<Guid>)y[3]); }).Verifiable();
 
             await _service.Observe(resolvedElements.Keys);
 
