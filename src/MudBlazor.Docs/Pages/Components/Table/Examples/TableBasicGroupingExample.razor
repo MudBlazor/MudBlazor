@@ -54,7 +54,7 @@
         <MudTd Style="text-align: right" DataLabel="Molar mass">@context.Molar"</MudTd>
     </RowTemplate>
     <GroupFooterTemplate>
-        <MudTh Class="mud-table-cell-custom-group mud-table-cell-custom-group-footer" colspan="5">Total Mass: @context.Items.Sum((e) => e.Molar)</MudTh>
+        <MudTh Class="mud-table-cell-custom-group mud-table-cell-custom-group-footer" colspan="5">Total Mass: @context.Items.Sum(e => e.Molar)</MudTh>
     </GroupFooterTemplate>
 </MudTable>
 
@@ -72,7 +72,7 @@
         GroupName = "Group",
         Indentation = false,
         Expandable = false,
-        Selector = (e) => e.Group
+        Selector = e => e.Group
     };
 
     private IEnumerable<Element> Elements = new List<Element>();

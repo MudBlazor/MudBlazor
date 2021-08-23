@@ -256,7 +256,7 @@ namespace MudBlazor.UnitTests.Services
 
             var sizeChangesChecked = false;
 
-            _service.OnResized += (sizeChanges) =>
+            _service.OnResized += sizeChanges =>
             {
                 //Assertion of event content
                 sizeChanges.Should().NotBeEmpty().And.BeEquivalentTo(expectedRects);

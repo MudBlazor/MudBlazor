@@ -185,7 +185,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task Autocomplete_Should_TolerateNullFromSearchFunc()
         {
-            var comp = Context.RenderComponent<MudAutocomplete<string>>((a) =>
+            var comp = Context.RenderComponent<MudAutocomplete<string>>(a =>
             {
                 a.Add(x => x.DebounceInterval, 0);
                 a.Add(x => x.SearchFunc, async s => null); // <--- searchfunc returns null instead of sequence
@@ -263,8 +263,8 @@ namespace MudBlazor.UnitTests.Components
         public async Task Autocomplete_OnBlurShouldBeCalled()
         {
             var calls = 0;
-            Action<FocusEventArgs> fn = (args) => calls++;
-            var comp = Context.RenderComponent<MudAutocomplete<string>>((a) =>
+            Action<FocusEventArgs> fn = args => calls++;
+            var comp = Context.RenderComponent<MudAutocomplete<string>>(a =>
             {
                 a.Add(x => x.OnBlur, fn);
             });

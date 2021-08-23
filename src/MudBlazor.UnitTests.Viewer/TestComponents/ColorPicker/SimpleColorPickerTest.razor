@@ -2,7 +2,7 @@
 
 @using MudBlazor.Utilities
 
-<MudColorPicker @ref="_picker" @bind-Value="ColorValue" TextChanged="@((x) => { TextValue = x; ValueChangeCallbackCounter++;  })" Palette="Palette" 
+<MudColorPicker @ref="_picker" @bind-Value="ColorValue" TextChanged="@(x => { TextValue = x; ValueChangeCallbackCounter++;  })" Palette="Palette" 
                 DisableToolbar="DisableToolbar" 
                 DisableColorField="DisableColorField" 
                 DisablePreview="DisablePreview" 
