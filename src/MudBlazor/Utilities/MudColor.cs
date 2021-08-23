@@ -362,17 +362,13 @@ namespace MudBlazor.Utilities
             {
                 return true;
             }
-            else
+
+            if ((lhsIsNull || rhsIsNull))
             {
-                if ((lhsIsNull || rhsIsNull))
-                {
-                    return false;
-                }
-                else
-                {
-                    return lhs.Equals(rhs);
-                }
+                return false;
             }
+
+            return lhs.Equals(rhs);
         }
 
         public static bool operator !=(MudColor lhs, MudColor rhs) => !(lhs == rhs);

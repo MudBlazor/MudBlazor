@@ -202,12 +202,10 @@ namespace MudBlazor
                         multiSelectionTextFunc: MultiSelectionTextFunc)
                     : base.UpdateTextPropertyAsync(updateValue);
             }
-            else
-            {
-                return MultiSelection
-                    ? SetTextAsync(string.Join(", ", SelectedValues.Select(x => Converter.Set(x))))
-                    : base.UpdateTextPropertyAsync(updateValue);
-            }
+
+            return MultiSelection
+                ? SetTextAsync(string.Join(", ", SelectedValues.Select(x => Converter.Set(x))))
+                : base.UpdateTextPropertyAsync(updateValue);
         }
 
         internal event Action<HashSet<T>> SelectionChangedFromOutside;

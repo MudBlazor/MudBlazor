@@ -61,17 +61,15 @@ namespace MudBlazor
                     _ => TimelinePosition
                 };
             }
-            else
+
+            return TimelinePosition switch
             {
-                return TimelinePosition switch
-                {
-                    TimelinePosition.Start => TimelinePosition.Alternate,
-                    TimelinePosition.Left => TimelinePosition.Alternate,
-                    TimelinePosition.Right => TimelinePosition.Alternate,
-                    TimelinePosition.End => TimelinePosition.Alternate,
-                    _ => TimelinePosition
-                };
-            }
+                TimelinePosition.Start => TimelinePosition.Alternate,
+                TimelinePosition.Left => TimelinePosition.Alternate,
+                TimelinePosition.Right => TimelinePosition.Alternate,
+                TimelinePosition.End => TimelinePosition.Alternate,
+                _ => TimelinePosition
+            };
         }
     }
 }

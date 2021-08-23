@@ -394,7 +394,8 @@ namespace MudBlazor.Docs.Compiler
                     ? "``" + methodIndex
                     : "`" + typeGenericMap[type.Name];
             }
-            else if (type.HasElementType)
+
+            if (type.HasElementType)
             {
                 var elementTypeString = GetXmlDocumentationFormattedString(
                     type.GetElementType(),
@@ -406,7 +407,8 @@ namespace MudBlazor.Docs.Compiler
                 {
                     return elementTypeString + "*";
                 }
-                else if (type.IsArray)
+
+                if (type.IsArray)
                 {
                     var rank = type.GetArrayRank();
                     var arrayDimensionsString = rank > 1
@@ -414,48 +416,42 @@ namespace MudBlazor.Docs.Compiler
                         : "[]";
                     return elementTypeString + arrayDimensionsString;
                 }
-                else if (type.IsByRef)
+                if (type.IsByRef)
                 {
                     return elementTypeString + "@";
                 }
-                else
-                {
-                    // Hopefully this will never hit. At the time of writing
-                    // this code, type.HasElementType is only true if the type
-                    // is a pointer, array, or by reference.
-                    throw new Exception(nameof(GetXmlDocumentationFormattedString) +
-                        " encountered an unhandled element type. " +
-                        "Please submit this issue to the Towel GitHub repository. " +
-                        "https://github.com/ZacharyPatten/Towel/issues/new/choose");
-                }
+                // Hopefully this will never hit. At the time of writing
+                // this code, type.HasElementType is only true if the type
+                // is a pointer, array, or by reference.
+                throw new Exception(nameof(GetXmlDocumentationFormattedString) +
+                                    " encountered an unhandled element type. " +
+                                    "Please submit this issue to the Towel GitHub repository. " +
+                                    "https://github.com/ZacharyPatten/Towel/issues/new/choose");
             }
-            else
-            {
-                var prefaceString = type.IsNested
-                    ? GetXmlDocumentationFormattedString(
-                        type.DeclaringType,
-                        isMethodParameter,
-                        typeGenericMap,
-                        methodGenericMap) + "."
-                    : type.Namespace + ".";
+            var prefaceString = type.IsNested
+                ? GetXmlDocumentationFormattedString(
+                    type.DeclaringType,
+                    isMethodParameter,
+                    typeGenericMap,
+                    methodGenericMap) + "."
+                : type.Namespace + ".";
 
-                var typeNameString = isMethodParameter
-                    ? Regex.Replace(type.Name, @"`\d+", string.Empty)
-                    : type.Name;
+            var typeNameString = isMethodParameter
+                ? Regex.Replace(type.Name, @"`\d+", string.Empty)
+                : type.Name;
 
-                var genericArgumentsString = type.IsGenericType && isMethodParameter
-                    ? "{" + string.Join(",",
-                        type.GetGenericArguments().Select(argument =>
-                            GetXmlDocumentationFormattedString(
-                                argument,
-                                isMethodParameter,
-                                typeGenericMap,
-                                methodGenericMap))
-                        ) + "}"
-                    : string.Empty;
+            var genericArgumentsString = type.IsGenericType && isMethodParameter
+                ? "{" + string.Join(",",
+                    type.GetGenericArguments().Select(argument =>
+                        GetXmlDocumentationFormattedString(
+                            argument,
+                            isMethodParameter,
+                            typeGenericMap,
+                            methodGenericMap))
+                ) + "}"
+                : string.Empty;
 
-                return prefaceString + typeNameString + genericArgumentsString;
-            }
+            return prefaceString + typeNameString + genericArgumentsString;
         }
 
         /// <summary>Gets the XML documentation on a property.</summary>
@@ -516,44 +512,42 @@ namespace MudBlazor.Docs.Compiler
             {
                 return fieldInfo.GetDocumentation();
             }
-            else if (memberInfo is PropertyInfo propertyInfo)
+
+            if (memberInfo is PropertyInfo propertyInfo)
             {
                 return propertyInfo.GetDocumentation();
             }
-            else if (memberInfo is EventInfo eventInfo)
+            if (memberInfo is EventInfo eventInfo)
             {
                 return eventInfo.GetDocumentation();
             }
-            else if (memberInfo is ConstructorInfo constructorInfo)
+            if (memberInfo is ConstructorInfo constructorInfo)
             {
                 return constructorInfo.GetDocumentation();
             }
-            else if (memberInfo is MethodInfo methodInfo)
+            if (memberInfo is MethodInfo methodInfo)
             {
                 return methodInfo.GetDocumentation();
             }
-            else if (memberInfo is Type type) // + TypeInfo
+            if (memberInfo is Type type) // + TypeInfo
             {
                 return type.GetDocumentation();
             }
-            else if (memberInfo.MemberType.HasFlag(MemberTypes.Custom))
+            if (memberInfo.MemberType.HasFlag(MemberTypes.Custom))
             {
                 // This represents a custom type that is not part of
                 // the standard .NET languages as far as I'm aware.
                 // This will never be supported so return null.
                 return null;
             }
-            else
-            {
-                // Hopefully this will never hit. At the time of writing
-                // this code, I am only aware of the following Member types:
-                // FieldInfo, PropertyInfo, EventInfo, ConstructorInfo,
-                // MethodInfo, and Type.
-                throw new Exception(nameof(GetDocumentation) +
-                    " encountered an unhandled type [" + memberInfo.GetType().FullName + "]. " +
-                    "Please submit this issue to the Towel GitHub repository. " +
-                    "https://github.com/ZacharyPatten/Towel/issues/new/choose");
-            }
+            // Hopefully this will never hit. At the time of writing
+            // this code, I am only aware of the following Member types:
+            // FieldInfo, PropertyInfo, EventInfo, ConstructorInfo,
+            // MethodInfo, and Type.
+            throw new Exception(nameof(GetDocumentation) +
+                                " encountered an unhandled type [" + memberInfo.GetType().FullName + "]. " +
+                                "Please submit this issue to the Towel GitHub repository. " +
+                                "https://github.com/ZacharyPatten/Towel/issues/new/choose");
         }
 
         /// <summary>Gets the XML documentation for a parameter.</summary>

@@ -30,12 +30,12 @@ namespace MudBlazor
                 if (string.IsNullOrEmpty(value))
                     return default(T);
                 // char
-                else if (typeof(T) == typeof(char) || typeof(T) == typeof(char?))
+                if (typeof(T) == typeof(char) || typeof(T) == typeof(char?))
                 {
                     return (T)(object)value[0];
                 }
                 // bool
-                else if (typeof(T) == typeof(bool) || typeof(T) == typeof(bool?))
+                if (typeof(T) == typeof(bool) || typeof(T) == typeof(bool?))
                 {
                     var lowerValue = value.ToLowerInvariant();
                     if (lowerValue is "true" or "on")
@@ -219,84 +219,85 @@ namespace MudBlazor
                 if (typeof(T) == typeof(ushort?))
                     return ((ushort?)(object)arg).Value.ToString(Format, Culture);
                 // int
-                else if (typeof(T) == typeof(int))
+                if (typeof(T) == typeof(int))
                     return ((int)(object)arg).ToString(Format, Culture);
-                else if (typeof(T) == typeof(int?))
+                if (typeof(T) == typeof(int?))
                     return ((int?)(object)arg).Value.ToString(Format, Culture);
                 // uint
-                else if (typeof(T) == typeof(uint))
+                if (typeof(T) == typeof(uint))
                     return ((uint)(object)arg).ToString(Format, Culture);
-                else if (typeof(T) == typeof(uint?))
+                if (typeof(T) == typeof(uint?))
                     return ((uint?)(object)arg).Value.ToString(Format, Culture);
                 // long
-                else if (typeof(T) == typeof(long))
+                if (typeof(T) == typeof(long))
                     return ((long)(object)arg).ToString(Format, Culture);
-                else if (typeof(T) == typeof(long?))
+                if (typeof(T) == typeof(long?))
                     return ((long?)(object)arg).Value.ToString(Format, Culture);
                 // ulong
-                else if (typeof(T) == typeof(ulong))
+                if (typeof(T) == typeof(ulong))
                     return ((ulong)(object)arg).ToString(Format, Culture);
-                else if (typeof(T) == typeof(ulong?))
+                if (typeof(T) == typeof(ulong?))
                     return ((ulong?)(object)arg).Value.ToString(Format, Culture);
                 // float
-                else if (typeof(T) == typeof(float))
+                if (typeof(T) == typeof(float))
                     return ((float)(object)arg).ToString(Format, Culture);
-                else if (typeof(T) == typeof(float?))
+                if (typeof(T) == typeof(float?))
                     return ((float?)(object)arg).Value.ToString(Format, Culture);
                 // double
-                else if (typeof(T) == typeof(double))
+                if (typeof(T) == typeof(double))
                     return ((double)(object)arg).ToString(Format, Culture);
-                else if (typeof(T) == typeof(double?))
+                if (typeof(T) == typeof(double?))
                     return ((double?)(object)arg).Value.ToString(Format, Culture);
                 // decimal
-                else if (typeof(T) == typeof(decimal))
+                if (typeof(T) == typeof(decimal))
                     return ((decimal)(object)arg).ToString(Format, Culture);
-                else if (typeof(T) == typeof(decimal?))
+                if (typeof(T) == typeof(decimal?))
                     return ((decimal?)(object)arg).Value.ToString(Format, Culture);
                 // guid
-                else if (typeof(T) == typeof(Guid))
+                if (typeof(T) == typeof(Guid))
                 {
                     var value = (Guid)(object)arg;
                     return value.ToString();
                 }
-                else if (typeof(T) == typeof(Guid?))
+                if (typeof(T) == typeof(Guid?))
                 {
                     var value = (Guid?)(object)arg;
                     return value.Value.ToString();
                 }
                 // enum
-                else if (IsNullableEnum(typeof(T)))
+                if (IsNullableEnum(typeof(T)))
                 {
                     var value = (Enum)(object)arg;
                     return value.ToString();
                 }
-                else if (typeof(T).IsEnum)
+                if (typeof(T).IsEnum)
                 {
                     var value = (Enum)(object)arg;
                     return value.ToString();
                 }
                 // datetime
-                else if (typeof(T) == typeof(DateTime))
+                if (typeof(T) == typeof(DateTime))
                 {
                     var value = (DateTime)(object)arg;
                     return value.ToString(Format ?? Culture.DateTimeFormat.ShortDatePattern, Culture);
                 }
-                else if (typeof(T) == typeof(DateTime?))
+                if (typeof(T) == typeof(DateTime?))
                 {
                     var value = (DateTime?)(object)arg;
                     return value.Value.ToString(Format ?? Culture.DateTimeFormat.ShortDatePattern, Culture);
                 }
                 // timespan
-                else if (typeof(T) == typeof(TimeSpan))
+                if (typeof(T) == typeof(TimeSpan))
                 {
                     var value = (TimeSpan)(object)arg;
                     return value.ToString(Format ?? DefaultTimeSpanFormat, Culture);
                 }
-                else if (typeof(T) == typeof(TimeSpan?))
+                if (typeof(T) == typeof(TimeSpan?))
                 {
                     var value = (TimeSpan?)(object)arg;
                     return value.Value.ToString(Format ?? DefaultTimeSpanFormat, Culture);
                 }
+
                 return arg.ToString();
             }
             catch (FormatException e)

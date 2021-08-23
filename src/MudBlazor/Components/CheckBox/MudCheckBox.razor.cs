@@ -101,15 +101,11 @@ namespace MudBlazor
                 {
                     return SetBoolValueAsync(true);
                 }
-                else
-                {
-                    return ((bool?)(object)_value).Value ? SetBoolValueAsync(false) : SetBoolValueAsync(default);
-                }
+
+                return ((bool?)(object)_value).Value ? SetBoolValueAsync(false) : SetBoolValueAsync(default);
             }
-            else
-            {
-                return SetBoolValueAsync((bool?)args.Value);
-            }
+
+            return SetBoolValueAsync((bool?)args.Value);
         }
     }
 }

@@ -21,18 +21,15 @@ namespace MudBlazor
             {
                 if (typeof(T) == typeof(bool))
                     return (T)(object)(value == true);
-                else if (typeof(T) == typeof(bool?))
+                if (typeof(T) == typeof(bool?))
                     return (T)(object)value;
-                else if (typeof(T) == typeof(string))
+                if (typeof(T) == typeof(string))
                     return (T)(object)(value == true ? "on" : value == false ? "off" : null);
-                else if (typeof(T) == typeof(int))
+                if (typeof(T) == typeof(int))
                     return (T)(object)(value == true ? 1 : 0);
-                else if (typeof(T) == typeof(int?))
+                if (typeof(T) == typeof(int?))
                     return (T)(object)(value == true ? 1 : value == false ? 0 : null);
-                else
-                {
-                    UpdateGetError($"Conversion to type {typeof(T)} not implemented");
-                }
+                UpdateGetError($"Conversion to type {typeof(T)} not implemented");
             }
             catch (Exception e)
             {
@@ -50,11 +47,11 @@ namespace MudBlazor
             {
                 if (arg is bool)
                     return (bool)(object)arg;
-                else if (arg is bool?)
+                if (arg is bool?)
                     return (bool?)(object)arg;
-                else if (arg is int)
+                if (arg is int)
                     return (int)(object)arg > 0;
-                else if (arg is string)
+                if (arg is string)
                 {
                     var s = (string)(object)arg;
                     if (string.IsNullOrWhiteSpace(s))
@@ -67,11 +64,8 @@ namespace MudBlazor
                         return false;
                     return null;
                 }
-                else
-                {
-                    UpdateSetError("Unable to convert to bool? from type " + typeof(T).Name);
-                    return null;
-                }
+                UpdateSetError("Unable to convert to bool? from type " + typeof(T).Name);
+                return null;
             }
             catch (FormatException e)
             {

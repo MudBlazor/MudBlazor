@@ -270,10 +270,7 @@
             {
                 return "";
             }
-            else
-            {
-                return $"\"{@default}\"";
-            }
+            return $"\"{@default}\"";
         }
         if (@default.GetType().IsEnum)
             return $"{@default.GetType().Name}.{@default}";

@@ -33,13 +33,10 @@
             {
                 if (arg is bool)
                     return (bool)arg;
-                else if (arg is bool?)
+                if (arg is bool?)
                     return (bool?)arg;
-                else
-                {
-                    UpdateSetError("Unable to convert to bool? from type object");
-                    return null;
-                }
+                UpdateSetError("Unable to convert to bool? from type object");
+                return null;
             }
             catch (FormatException e)
             {

@@ -56,12 +56,10 @@ namespace MudBlazor.Services
                 {
                     throw new Exception("Portal: You can't update a non existing item");
                 }
-                else
-                {
-                    item = newItem.Clone();
-                    _items[item.Id] = item;
-                    OnChange?.Invoke(this, new PortalEventsArg(item));
-                }
+
+                item = newItem.Clone();
+                _items[item.Id] = item;
+                OnChange?.Invoke(this, new PortalEventsArg(item));
             }
         }
 

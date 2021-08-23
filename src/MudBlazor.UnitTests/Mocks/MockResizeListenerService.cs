@@ -81,14 +81,13 @@ namespace MudBlazor.UnitTests.Mocks
         {
             if (_width >= ResizeListenerService.BreakpointDefinitions[Breakpoint.Xl])
                 return Breakpoint.Xl;
-            else if (_width >= ResizeListenerService.BreakpointDefinitions[Breakpoint.Lg])
+            if (_width >= ResizeListenerService.BreakpointDefinitions[Breakpoint.Lg])
                 return Breakpoint.Lg;
-            else if (_width >= ResizeListenerService.BreakpointDefinitions[Breakpoint.Md])
+            if (_width >= ResizeListenerService.BreakpointDefinitions[Breakpoint.Md])
                 return Breakpoint.Md;
-            else if (_width >= ResizeListenerService.BreakpointDefinitions[Breakpoint.Sm])
+            if (_width >= ResizeListenerService.BreakpointDefinitions[Breakpoint.Sm])
                 return Breakpoint.Sm;
-            else
-                return Breakpoint.Xs;
+            return Breakpoint.Xs;
         }
     }
 #pragma warning restore CS1998

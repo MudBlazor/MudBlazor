@@ -191,7 +191,7 @@ namespace MudBlazor
             //check if Max/Min has value, if not use MaxValue/MinValue for that data type
             if (value > max)
                 return (Max, true);
-            else if (value < min)
+            if (value < min)
                 return (Min, true);
             return (Num.To<T>(value), false);
         }

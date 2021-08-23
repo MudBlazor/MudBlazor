@@ -132,10 +132,8 @@ namespace MudBlazor.Docs.Extensions
                         {
                             return string.IsNullOrWhiteSpace(type.FullName) ? RemoveNamespace(type.Name) : RemoveNamespace(type.FullName);
                         }
-                        else
-                        {
-                            return RemoveNamespace(value);
-                        }
+
+                        return RemoveNamespace(value);
                     }
             }
         }

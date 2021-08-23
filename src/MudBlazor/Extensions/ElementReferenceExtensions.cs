@@ -85,10 +85,8 @@ namespace MudBlazor
                 }
                 return elementReference.GetJSRuntime()?.InvokeAsync<int>("mudElementRef.addEventListener", elementReference, dotnet, @event, callback, parameterSpecs, stopPropagation) ?? ValueTask.FromResult(0);
             }
-            else
-            {
-                return new ValueTask<int>(0);
-            }
+
+            return new ValueTask<int>(0);
         }
 
         public static ValueTask MudRemoveEventListenerAsync(this ElementReference elementReference, string @event, int eventId) =>

@@ -88,24 +88,20 @@ namespace MudBlazor
                 // full icon when @RatingItem hovered
                 return Rating.FullIcon;
             }
-            else if (Rating.SelectedValue >= ItemValue)
+
+            if (Rating.SelectedValue >= ItemValue)
             {
                 if (Rating.HoveredValue.HasValue && Rating.HoveredValue.Value < ItemValue)
                 {
                     // empty icon when equal or higher RatingItem value clicked, but less value hovered 
                     return Rating.EmptyIcon;
                 }
-                else
-                {
-                    // full icon when equal or higher RatingItem value clicked
-                    return Rating.FullIcon;
-                }
+
+                // full icon when equal or higher RatingItem value clicked
+                return Rating.FullIcon;
             }
-            else
-            {
-                // empty icon when this or higher RatingItem is not clicked and not hovered
-                return Rating.EmptyIcon;
-            }
+            // empty icon when this or higher RatingItem is not clicked and not hovered
+            return Rating.EmptyIcon;
         }
 
         // rating item lose hover
