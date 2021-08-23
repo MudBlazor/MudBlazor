@@ -138,11 +138,6 @@
     {
         get
         {
-            if (Type.GetMethods(BindingFlags.Instance | BindingFlags.Public | BindingFlags.FlattenHierarchy | BindingFlags.Static) == null)
-            {
-                yield return null;
-            }
-            else
             {
                 foreach (var info in Type.GetMethods(BindingFlags.Instance | BindingFlags.Public | BindingFlags.FlattenHierarchy | BindingFlags.Static).OrderBy(x => x.Name))
                 {
