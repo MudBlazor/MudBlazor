@@ -38,7 +38,7 @@ namespace MudBlazor.Utilities
 
         private const double EPSILON = 0.000000000000001;
 
-        private byte[] _valuesAsByte;
+        private readonly byte[] _valuesAsByte;
 
         public string Value => $"#{R:x2}{G:x2}{B:x2}{A:x2}";
 

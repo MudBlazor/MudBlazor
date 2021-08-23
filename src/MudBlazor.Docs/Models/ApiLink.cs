@@ -63,7 +63,7 @@ namespace MudBlazor.Docs.Models
             return null;
         }
 
-        private static Dictionary<Type, string> s_specialCaseComponents =
+        private static readonly Dictionary<Type, string> s_specialCaseComponents =
             new()
             {
                 [typeof(MudFab)] = "buttonfab",
@@ -78,10 +78,10 @@ namespace MudBlazor.Docs.Models
             };
 
         // this is the inversion of above lookup
-        private static Dictionary<string, Type> s_inverseSpecialCase =
+        private static readonly Dictionary<string, Type> s_inverseSpecialCase =
             s_specialCaseComponents.ToDictionary(pair => pair.Value, pair => pair.Key);
 
-        private static Dictionary<string, string> s_componentLinkTranslation =
+        private static readonly Dictionary<string, string> s_componentLinkTranslation =
             new()
             {
                 ["icon"] = "icons",

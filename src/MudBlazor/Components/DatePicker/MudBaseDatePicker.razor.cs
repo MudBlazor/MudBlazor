@@ -295,7 +295,7 @@ namespace MudBlazor
         /// <summary>
         /// We need a random id for the year items in the year list so we can scroll to the item safely in every DatePicker.
         /// </summary>
-        private string _componentId = Guid.NewGuid().ToString();
+        private readonly string _componentId = Guid.NewGuid().ToString();
 
         /// <summary>
         /// Is set to true to scroll to the actual year after the next render

@@ -39,7 +39,7 @@ namespace MudBlazor
         private readonly DotNetObjectReference<EventListener> _dotNetRef;
         private bool _disposed = false;
 
-        private Dictionary<Guid, (Type eventType, Func<object, Task> callback)> _callbackResolver = new();
+        private readonly Dictionary<Guid, (Type eventType, Func<object, Task> callback)> _callbackResolver = new();
 
         public EventListener(IJSRuntime runtime)
         {

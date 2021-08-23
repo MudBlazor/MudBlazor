@@ -59,7 +59,7 @@ namespace MudBlazor
     {
         public string CenteredSection { get; private set; }
         private readonly IJSRuntime _js;
-        private DotNetObjectReference<ScrollSpy> _dotNetRef;
+        private readonly DotNetObjectReference<ScrollSpy> _dotNetRef;
 
         public ScrollSpy(IJSRuntime js)
         {

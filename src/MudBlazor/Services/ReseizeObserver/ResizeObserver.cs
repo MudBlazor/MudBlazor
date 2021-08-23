@@ -19,8 +19,8 @@ namespace MudBlazor.Services
         private readonly Dictionary<Guid, ElementReference> _cachedValueIds = new();
         private readonly Dictionary<ElementReference, BoundingClientRect> _cachedValues = new();
 
-        private Guid _id = Guid.NewGuid();
-        private ResizeObserverOptions _options;
+        private readonly Guid _id = Guid.NewGuid();
+        private readonly ResizeObserverOptions _options;
 
         public ResizeObserver(IJSRuntime jsRuntime, ResizeObserverOptions options)
         {
