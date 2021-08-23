@@ -4,7 +4,7 @@
 @if(AvatarGroup == null || AvatarGroup.MaxGroupReached(this))
 {
     <div @attributes="UserAttributes" class="@Classname" style="@Stylesname">
-        @if (!String.IsNullOrEmpty(Image))
+        @if (!string.IsNullOrEmpty(Image))
         {
             <img src="@Image" class="mud-avatar-img" />
         }

@@ -11,7 +11,7 @@ namespace MudBlazor.Services
 {
     public class ResizeObserver : IResizeObserver, IDisposable, IAsyncDisposable
     {
-        private Boolean _isDisposed;
+        private bool _isDisposed;
 
         private readonly DotNetObjectReference<ResizeObserver> _dotNetRef;
         private readonly IJSRuntime _jsRuntime;

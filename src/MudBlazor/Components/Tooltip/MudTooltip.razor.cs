@@ -70,7 +70,7 @@ namespace MudBlazor
         /// <summary>
         /// Determines if this component should be inline with it's surrounding (default) or if it should behave like a block element.
         /// </summary>
-        [Parameter] public Boolean Inline { get; set; } = true;
+        [Parameter] public bool Inline { get; set; } = true;
 
         private bool _isVisible;
         public void HandleMouseOver() => _isVisible = true;

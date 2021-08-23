@@ -2,7 +2,7 @@
     @if (!NoToolbar)
     {
     <MudToolBar DisableGutters="true" Dense="true">
-        @if (ShowCode && !String.IsNullOrEmpty(Code2))
+        @if (ShowCode && !string.IsNullOrEmpty(Code2))
         {
             <MudButton Variant="Variant.Filled" Size="Size.Small" DisableElevation="true" Color="@Button1Color" OnClick="@(_ => SwapCode(Code))">@ButtonTextCode1</MudButton>
             <MudButton Variant="Variant.Filled" Size="Size.Small" DisableElevation="true" Color="Button2Color" Class="ml-2" OnClick="@(_ => SwapCode(Code2))">@ButtonTextCode2</MudButton>
@@ -16,13 +16,13 @@
             <MudIconButton Icon="@Icons.Material.Filled.Create" Size="Size.Small" Class="pa-3" OnClick="EditOnTryMudBlazor" />
         </MudTooltip>
 
-        @if (!String.IsNullOrEmpty(CurrentCode))
+        @if (!string.IsNullOrEmpty(CurrentCode))
         {
             <MudTooltip Text="Copy Code" Placement="Placement.Top">
                 <MudIconButton Icon="@Icons.Material.Filled.FileCopy" Size="Size.Small" Class="pa-3" @onclick="CopyTextToClipboard" />
             </MudTooltip>
         }
-        @if (!String.IsNullOrEmpty(GitHubFolderName))
+        @if (!string.IsNullOrEmpty(GitHubFolderName))
         {
             <MudTooltip Text="View the source on GitHub" Placement="Placement.Top">
                 <MudIconButton Icon="@Icons.Custom.Brands.GitHub" Size="Size.Small" Class="pa-3" Link="@GitHubSourceCode" Target="_blank" />

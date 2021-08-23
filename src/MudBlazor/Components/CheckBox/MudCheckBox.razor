@@ -8,7 +8,7 @@
         <input @attributes="UserAttributes" type="checkbox" class="mud-checkbox-input" checked="@BoolValue" @onchange="@OnChange" disabled="@Disabled" @onclick:stopPropagation="@StopClickPropagation" @onclick:preventDefault="@ReadOnly"/>
         <MudIcon Icon="@GetIcon()" Size="@Size"/>
     </span>
-    @if (!String.IsNullOrEmpty(Label))
+    @if (!string.IsNullOrEmpty(Label))
     {
         <MudText>@Label</MudText>
     }

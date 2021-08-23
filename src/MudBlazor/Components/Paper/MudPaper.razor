@@ -18,12 +18,12 @@
 
     protected string Stylename =>
     new StyleBuilder()
-        .AddStyle("height", $"{Height}", !String.IsNullOrEmpty(Height))
-        .AddStyle("width", $"{Width}", !String.IsNullOrEmpty(Width))
-        .AddStyle("max-height", $"{MaxHeight}", !String.IsNullOrEmpty(MaxHeight))
-        .AddStyle("max-width", $"{MaxWidth}", !String.IsNullOrEmpty(MaxWidth))
-        .AddStyle("min-height", $"{MinHeight}", !String.IsNullOrEmpty(MinHeight))
-        .AddStyle("min-width", $"{MinWidth}", !String.IsNullOrEmpty(MinWidth))
+        .AddStyle("height", $"{Height}", !string.IsNullOrEmpty(Height))
+        .AddStyle("width", $"{Width}", !string.IsNullOrEmpty(Width))
+        .AddStyle("max-height", $"{MaxHeight}", !string.IsNullOrEmpty(MaxHeight))
+        .AddStyle("max-width", $"{MaxWidth}", !string.IsNullOrEmpty(MaxWidth))
+        .AddStyle("min-height", $"{MinHeight}", !string.IsNullOrEmpty(MinHeight))
+        .AddStyle("min-width", $"{MinWidth}", !string.IsNullOrEmpty(MinWidth))
         .AddStyle(Style)
     .Build();
 

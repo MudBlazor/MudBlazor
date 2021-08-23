@@ -5,7 +5,7 @@
     <div  @onmouseenter=@HandleMouseOver @onmouseleave=@HandleMouseOut>
         @ChildContent
     </div>
-    @if (!String.IsNullOrEmpty(Text) || TooltipContent != null)
+    @if (!string.IsNullOrEmpty(Text) || TooltipContent != null)
     {
         <MudPortal  IsVisible=_isVisible >
 
