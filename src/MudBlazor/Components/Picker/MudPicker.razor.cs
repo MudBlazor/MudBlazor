@@ -311,14 +311,9 @@ namespace MudBlazor
             if (PickerVariant == PickerVariant.Static)
             {
                 IsOpen = true;
-                if (Elevation == 8)
-                {
-                    _pickerElevation = 0;
-                }
-                else
-                {
-                    _pickerElevation = Elevation;
-                }
+                _pickerElevation = Elevation == 8 
+                    ? 0 
+                    : Elevation;
                 if (!Rounded)
                 {
                     _pickerSquare = true;

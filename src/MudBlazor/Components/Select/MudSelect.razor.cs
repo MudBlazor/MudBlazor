@@ -78,9 +78,7 @@ namespace MudBlazor
         {
             get
             {
-                if (_selectedValues == null)
-                    _selectedValues = new HashSet<T>();
-                return _selectedValues;
+                return _selectedValues ??= new HashSet<T>();
             }
             set
             {

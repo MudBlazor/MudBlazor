@@ -122,14 +122,9 @@ namespace MudBlazor.UnitTests.Components
         public IRenderedComponent<MudDatePicker> OpenPicker(ComponentParameter[] parameters = null)
         {
             IRenderedComponent<MudDatePicker> comp;
-            if (parameters is null)
-            {
-                comp = Context.RenderComponent<MudDatePicker>();
-            }
-            else
-            {
-                comp = Context.RenderComponent<MudDatePicker>(parameters);
-            }
+            comp = parameters is null
+                ? Context.RenderComponent<MudDatePicker>() 
+                : Context.RenderComponent<MudDatePicker>(parameters);
 
             // should not be open
             comp.FindAll("div.mud-picker-open").Count.Should().Be(0);

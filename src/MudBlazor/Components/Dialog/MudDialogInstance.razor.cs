@@ -21,9 +21,7 @@ namespace MudBlazor
         {
             get
             {
-                if (_options == null)
-                    _options = new DialogOptions();
-                return _options;
+                return _options ??= new DialogOptions();
             }
             set => _options = value;
         }

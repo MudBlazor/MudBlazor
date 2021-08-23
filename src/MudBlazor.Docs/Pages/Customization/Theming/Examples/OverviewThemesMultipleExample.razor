@@ -13,14 +13,9 @@
 
     void DarkMode()
     {
-        if (currentTheme == defaultTheme)
-        {
-            currentTheme = darkTheme;
-        }
-        else
-        {
-            currentTheme = defaultTheme;
-        }
+        currentTheme = currentTheme == defaultTheme 
+            ? darkTheme 
+            : defaultTheme;
     }
 
     MudTheme currentTheme = new();
