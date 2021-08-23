@@ -105,14 +105,14 @@
 
     private string GetComponentName()
     {
-        return NavigationManager.Uri.ToString().Split('/', StringSplitOptions.RemoveEmptyEntries).LastOrDefault();
+        return NavigationManager.Uri.Split('/', StringSplitOptions.RemoveEmptyEntries).LastOrDefault();
     }
 
     private bool IsApiPage
     {
         get
         {
-            return NavigationManager.Uri.ToString().Contains("/api/");
+            return NavigationManager.Uri.Contains("/api/");
         }
     }
 
