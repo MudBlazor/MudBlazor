@@ -450,9 +450,9 @@ namespace MudBlazor.Docs.Models
                         methodGenericMap) + "."
                     : type.Namespace + ".";
 
-                string typeNameString = isMethodParameter
-                    ? typeNameString = Regex.Replace(type.Name, @"`\d+", string.Empty)
-                    : typeNameString = type.Name;
+                var typeNameString = isMethodParameter
+                    ? Regex.Replace(type.Name, @"`\d+", string.Empty)
+                    : type.Name;
 
                 var genericArgumentsString = type.IsGenericType && isMethodParameter
                     ? "{" + string.Join(",",

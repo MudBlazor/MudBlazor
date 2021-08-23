@@ -218,7 +218,7 @@ namespace MudBlazor
             }
 
             //calculate start value for middle items
-            var startValue = 0;
+            int startValue;
             if (Selected <= BoundaryCount + MiddleCount / 2 + 1)
                 startValue = BoundaryCount + 2;
             else if (Selected >= Count - BoundaryCount - MiddleCount / 2)
