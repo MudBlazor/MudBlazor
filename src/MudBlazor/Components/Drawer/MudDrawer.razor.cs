@@ -28,11 +28,11 @@ namespace MudBlazor
 
         protected string Classname =>
         new CssBuilder("mud-drawer")
-          .AddClass($"mud-drawer-fixed", Fixed)
+          .AddClass("mud-drawer-fixed", Fixed)
           .AddClass($"mud-drawer-pos-{GetPosition()}")
-          .AddClass($"mud-drawer--open", Open)
-          .AddClass($"mud-drawer--closed", !Open)
-          .AddClass($"mud-drawer--initial", _initial)
+          .AddClass("mud-drawer--open", Open)
+          .AddClass("mud-drawer--closed", !Open)
+          .AddClass("mud-drawer--initial", _initial)
           .AddClass($"mud-drawer-{Breakpoint.ToDescriptionString()}")
           .AddClass($"mud-drawer-clipped-{_clipMode.ToDescriptionString()}")
           .AddClass($"mud-theme-{Color.ToDescriptionString()}", Color != Color.Default)
@@ -44,10 +44,10 @@ namespace MudBlazor
         protected string OverlayClass =>
         new CssBuilder("mud-drawer-overlay mud-overlay-drawer")
           .AddClass($"mud-drawer-pos-{GetPosition()}")
-          .AddClass($"mud-drawer-overlay--open", Open)
+          .AddClass("mud-drawer-overlay--open", Open)
           .AddClass($"mud-drawer-overlay-{Variant.ToDescriptionString()}")
           .AddClass($"mud-drawer-overlay-{Breakpoint.ToDescriptionString()}")
-          .AddClass($"mud-drawer-overlay--initial", _initial)
+          .AddClass("mud-drawer-overlay--initial", _initial)
         .Build();
 
         protected string Stylename =>

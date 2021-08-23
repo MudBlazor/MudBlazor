@@ -17,8 +17,8 @@ namespace MudBlazor
         protected string LinearClassname =>
             new CssBuilder("mud-progress-linear-bar")
                 .AddClass($"mud-{Color.ToDescriptionString()}")
-                .AddClass($"mud-progress-indeterminate", Indeterminate)
-                .AddClass($"mud-progress-linear-bar-1-determinate", !Indeterminate)
+                .AddClass("mud-progress-indeterminate", Indeterminate)
+                .AddClass("mud-progress-linear-bar-1-determinate", !Indeterminate)
                 .Build();
 
         protected string BufferClassname =>
