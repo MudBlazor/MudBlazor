@@ -30,7 +30,7 @@
         </MudTd>
     }
     @HeaderTemplate(new TableGroupData<object, T>(GroupDefinition.GroupName, Items.Key, Items.ToList()))
-    @if ((Context?.Table.IsEditable ?? false))
+    @if (Context?.Table.IsEditable ?? false)
     {
         <MudTd />
     }
@@ -56,7 +56,7 @@ else
     }
     else
     {
-        @Table?.RenderRows(Items, (GroupDefinition?.Indentation ?? false) ? $"mud-table-row-group-indented-{GroupDefinition?.Level - 1}" : null, GroupDefinition?.IsThisOrParentExpandable ?? false)
+        @Table?.RenderRows(Items, GroupDefinition?.Indentation ?? false ? $"mud-table-row-group-indented-{GroupDefinition?.Level - 1}" : null, GroupDefinition?.IsThisOrParentExpandable ?? false)
     }
 
     @*FOOTER:*@
@@ -68,7 +68,7 @@ else
                 <MudTd/>
             }
             @FooterTemplate(new TableGroupData<object, T>(GroupDefinition.GroupName, Items.Key, Items.ToList()))
-            @if ((Context?.Table.IsEditable ?? false))
+            @if (Context?.Table.IsEditable ?? false)
             {
                 <MudTd />
             }

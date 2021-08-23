@@ -19,7 +19,7 @@
             <MudTh>@HeaderText</MudTh>
         }
     }
-    else if (Mode == Rendermode.Item || (ReadOnly && Mode == Rendermode.Edit))
+    else if (Mode == Rendermode.Item || ReadOnly && Mode == Rendermode.Edit)
     {
         <MudTd DataLabel="@HeaderText">@GetFormattedString(Value)</MudTd>
     }

@@ -23,8 +23,8 @@ namespace MudBlazor
 
         private bool OverlayVisible => _open && !DisableOverlay &&
             (Variant == DrawerVariant.Temporary ||
-             (_screenBreakpoint < Breakpoint && Variant == DrawerVariant.Mini) ||
-             (_screenBreakpoint < Breakpoint && Variant == DrawerVariant.Responsive));
+             _screenBreakpoint < Breakpoint && Variant == DrawerVariant.Mini ||
+             _screenBreakpoint < Breakpoint && Variant == DrawerVariant.Responsive);
 
         protected string Classname =>
         new CssBuilder("mud-drawer")
@@ -304,7 +304,7 @@ namespace MudBlazor
         public async Task OnNavigation()
         {
             if (Variant == DrawerVariant.Temporary ||
-                (Variant == DrawerVariant.Responsive && await ResizeListener.GetBreakpoint() < Breakpoint))
+                Variant == DrawerVariant.Responsive && await ResizeListener.GetBreakpoint() < Breakpoint)
             {
                 await OpenChanged.InvokeAsync(false);
             }

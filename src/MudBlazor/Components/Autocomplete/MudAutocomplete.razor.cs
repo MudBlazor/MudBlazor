@@ -285,7 +285,7 @@ namespace MudBlazor
             IEnumerable<T> searched_items = Array.Empty<T>();
             try
             {
-                searched_items = (await SearchFunc(Text)) ?? Array.Empty<T>();
+                searched_items = await SearchFunc(Text) ?? Array.Empty<T>();
             }
             catch (Exception e)
             {

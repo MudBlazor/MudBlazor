@@ -161,7 +161,7 @@ namespace MudBlazor
                     return false;
                 if (!_value_lookup.TryGetValue(Value, out var item))
                     return false;
-                return (item.ChildContent != null);
+                return item.ChildContent != null;
             }
         }
 

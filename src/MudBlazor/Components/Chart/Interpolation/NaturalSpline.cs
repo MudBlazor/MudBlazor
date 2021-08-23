@@ -59,7 +59,7 @@ namespace MudBlazor.Components.Chart.Interpolation
                         m.a[i, i + 1] = h[i + 1];
                 }
 
-                if ((h[i] != 0.0) && (h[i + 1] != 0.0))
+                if (h[i] != 0.0 && h[i + 1] != 0.0)
                     m.y[i] = ((a[i + 2] - a[i + 1]) / h[i + 1] - (a[i + 1] - a[i]) / h[i]) * 3.0;
                 else
                     m.y[i] = 0.0;

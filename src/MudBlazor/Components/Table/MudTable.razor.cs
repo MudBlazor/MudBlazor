@@ -315,7 +315,7 @@ namespace MudBlazor
                     if (filteredItemCount == 0)
                         lastPageNo = 0;
                     else
-                        lastPageNo = (filteredItemCount / RowsPerPage) - (filteredItemCount % RowsPerPage == 0 ? 1 : 0);
+                        lastPageNo = filteredItemCount / RowsPerPage - (filteredItemCount % RowsPerPage == 0 ? 1 : 0);
                     CurrentPage = lastPageNo < CurrentPage ? lastPageNo : CurrentPage;
                 }
 
@@ -462,7 +462,7 @@ namespace MudBlazor
             return InvokeServerLoadFunc();
         }
 
-        internal override bool IsEditable { get => (RowEditingTemplate != null) || (Columns != null); }
+        internal override bool IsEditable { get => RowEditingTemplate != null || Columns != null; }
 
         //GROUPING:
         private IEnumerable<IGrouping<object, T>> GroupItemsPage

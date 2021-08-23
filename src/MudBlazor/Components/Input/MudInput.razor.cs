@@ -113,7 +113,7 @@ namespace MudBlazor
 
         private void UpdateClearable(object value)
         {
-            var showClearable = Clearable && ((value is string stringValue && !string.IsNullOrWhiteSpace(stringValue)) || (value is not string && value is not null));
+            var showClearable = Clearable && (value is string stringValue && !string.IsNullOrWhiteSpace(stringValue) || value is not string && value is not null);
             if (_showClearable != showClearable)
                 _showClearable = showClearable;
         }

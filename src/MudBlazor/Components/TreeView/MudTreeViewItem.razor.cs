@@ -125,8 +125,8 @@ namespace MudBlazor
         public bool Loading { get; set; }
 
         bool HasChild => ChildContent != null ||
-            (MudTreeRoot != null && Items != null && Items.Count != 0) ||
-            (MudTreeRoot?.ServerData != null && !_isServerLoaded && (Items == null || Items.Count == 0));
+            MudTreeRoot != null && Items != null && Items.Count != 0 ||
+            MudTreeRoot?.ServerData != null && !_isServerLoaded && (Items == null || Items.Count == 0);
 
         protected bool IsChecked
         {

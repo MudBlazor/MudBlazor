@@ -309,7 +309,7 @@ namespace MudBlazor
         public static bool IsNullableEnum(Type t)
         {
             var u = Nullable.GetUnderlyingType(t);
-            return (u != null) && u.IsEnum;
+            return u != null && u.IsEnum;
         }
     }
 }

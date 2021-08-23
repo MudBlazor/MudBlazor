@@ -61,7 +61,7 @@
         public const string FalseString = "No, thanks";
         public const string NullString = "I don't know";
 
-        private string OnGet(bool? value) => value == null ? NullString : (value == true ? TrueString : FalseString);
+        private string OnGet(bool? value) => value == null ? NullString : value == true ? TrueString : FalseString;
 
         private bool? OnSet(string arg)
         {

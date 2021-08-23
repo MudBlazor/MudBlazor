@@ -171,7 +171,7 @@ namespace MudBlazor
             {
                 // a or b is zero or both are extremely close to it
                 // relative error is less meaningful here
-                return diff < (epsilon * MinNormal);
+                return diff < epsilon * MinNormal;
             }
             else
             { // use relative error

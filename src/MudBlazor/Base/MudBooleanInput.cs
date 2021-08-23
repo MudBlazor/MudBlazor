@@ -78,7 +78,7 @@ namespace MudBlazor
         /// </summary>
         protected override bool HasValue(T value)
         {
-            return (BoolValue == true);
+            return BoolValue == true;
         }
     }
 }

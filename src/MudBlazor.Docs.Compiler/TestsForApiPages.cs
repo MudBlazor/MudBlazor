@@ -81,7 +81,7 @@ namespace MudBlazor.Docs.Compiler
         {
             var attributes = (ObsoleteAttribute[])
                 type.GetCustomAttributes(typeof(ObsoleteAttribute), false);
-            return (attributes != null && attributes.Length > 0);
+            return attributes != null && attributes.Length > 0;
         }
 
         private static string SafeTypeName(Type type, bool removeT = false)

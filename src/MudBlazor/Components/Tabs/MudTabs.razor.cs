@@ -348,7 +348,7 @@ namespace MudBlazor
             .AddClass($"mud-elevation-{Elevation}", ApplyEffectsToContainer && Elevation != 0)
             .AddClass($"mud-tabs-reverse", Position == Position.Bottom)
             .AddClass($"mud-tabs-vertical", IsVerticalTabs())
-            .AddClass($"mud-tabs-vertical-reverse", Position == Position.Right && !RightToLeft || (Position == Position.Left) && RightToLeft || Position == Position.End)
+            .AddClass($"mud-tabs-vertical-reverse", Position == Position.Right && !RightToLeft || Position == Position.Left && RightToLeft || Position == Position.End)
             .AddClass(InternalClassName)
             .AddClass(Class)
             .Build();
@@ -638,7 +638,7 @@ namespace MudBlazor
             }
             else
             {
-                _nextButtonDisabled = RightToLeft ? (_scrollPosition - _toolbarContentSize) <= -_allTabsSize : (_scrollPosition + _toolbarContentSize) >= _allTabsSize;
+                _nextButtonDisabled = RightToLeft ? _scrollPosition - _toolbarContentSize <= -_allTabsSize : _scrollPosition + _toolbarContentSize >= _allTabsSize;
                 _prevButtonDisabled = RightToLeft ? _scrollPosition >= 0 : _scrollPosition <= 0;
             }
         }

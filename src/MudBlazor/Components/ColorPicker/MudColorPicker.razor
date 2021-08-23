@@ -15,9 +15,9 @@
                 <MudIconButton Class="pa-1 mud-close-picker-button" Size="Size.Small" Color="Color.Inherit" Icon="@Icons.Material.Filled.Close" OnClick="@GetEventCallback()" />
              }
              <MudSpacer />
-             <MudIconButton Class="pa-1" Size="Size.Small" Color="GetButtonColor(ColorPickerView.Spectrum)" Icon="@Icons.Material.Filled.Tune" OnClick="(() => ChangeView(ColorPickerView.Spectrum))" />
-             <MudIconButton Class="pa-1 mx-1" Size="Size.Small" Color="GetButtonColor(ColorPickerView.Grid)" Icon="@Icons.Material.Filled.Apps" OnClick="(() => ChangeView(ColorPickerView.Grid))" />
-             <MudIconButton Class="pa-1" Size="Size.Small" Color="GetButtonColor(ColorPickerView.Palette)" Icon="@Icons.Material.Filled.Palette" OnClick="(() => ChangeView(ColorPickerView.Palette))" />
+             <MudIconButton Class="pa-1" Size="Size.Small" Color="GetButtonColor(ColorPickerView.Spectrum)" Icon="@Icons.Material.Filled.Tune" OnClick="() => ChangeView(ColorPickerView.Spectrum)" />
+             <MudIconButton Class="pa-1 mx-1" Size="Size.Small" Color="GetButtonColor(ColorPickerView.Grid)" Icon="@Icons.Material.Filled.Apps" OnClick="() => ChangeView(ColorPickerView.Grid)" />
+             <MudIconButton Class="pa-1" Size="Size.Small" Color="GetButtonColor(ColorPickerView.Palette)" Icon="@Icons.Material.Filled.Palette" OnClick="() => ChangeView(ColorPickerView.Palette)" />
          </MudPickerToolbar>
         <MudPickerContent Class="mud-picker-color-content">
             @if(!DisableColorField)

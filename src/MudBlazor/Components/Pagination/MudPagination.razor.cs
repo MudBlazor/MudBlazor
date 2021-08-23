@@ -233,10 +233,10 @@ namespace MudBlazor
             }
 
             //set start delimiter "..." when selected page is far enough to the end, dots are represented as -1
-            pages[BoundaryCount] = (BoundaryCount + MiddleCount / 2 + 1 < Selected) ? -1 : BoundaryCount + 1;
+            pages[BoundaryCount] = BoundaryCount + MiddleCount / 2 + 1 < Selected ? -1 : BoundaryCount + 1;
 
             //set end delimiter "..." when selected page is far enough to the start, dots are represented as -1
-            pages[length - BoundaryCount - 1] = (Count - BoundaryCount - MiddleCount / 2 > Selected) ? -1 : Count - BoundaryCount;
+            pages[length - BoundaryCount - 1] = Count - BoundaryCount - MiddleCount / 2 > Selected ? -1 : Count - BoundaryCount;
 
             //remove ellipsis if difference is small enough, e.g convert [..., 5 , -1 , 7, ...] to [..., 5, 6, 7, ...]
             for (var i = 0; i < length - 2; i++)

@@ -174,8 +174,8 @@ namespace MudBlazor
                 return b.AddClass("mud-hidden").Build();
             }
 
-            if ((_firstDate != null && _secondDate != null && _firstDate < day && _secondDate > day) ||
-                (_firstDate == null && _dateRange != null && _dateRange.Start < day && _dateRange.End > day))
+            if (_firstDate != null && _secondDate != null && _firstDate < day && _secondDate > day ||
+                _firstDate == null && _dateRange != null && _dateRange.Start < day && _dateRange.End > day)
             {
                 return b
                     .AddClass("mud-range")
@@ -183,8 +183,8 @@ namespace MudBlazor
                     .Build();
             }
 
-            if ((_firstDate != null && day == _firstDate) ||
-                (_firstDate == null && _dateRange != null && _dateRange.Start == day && DateRange.End != day))
+            if (_firstDate != null && day == _firstDate ||
+                _firstDate == null && _dateRange != null && _dateRange.Start == day && DateRange.End != day)
             {
                 return b.AddClass("mud-selected")
                     .AddClass("mud-range")
@@ -194,8 +194,8 @@ namespace MudBlazor
                     .Build();
             }
 
-            if ((_firstDate != null && _secondDate != null && day == _secondDate) ||
-                (_firstDate == null && _dateRange != null && _dateRange.Start != day && _dateRange.End == day))
+            if (_firstDate != null && _secondDate != null && day == _secondDate ||
+                _firstDate == null && _dateRange != null && _dateRange.Start != day && _dateRange.End == day)
             {
                 return b.AddClass("mud-selected")
                     .AddClass("mud-range")

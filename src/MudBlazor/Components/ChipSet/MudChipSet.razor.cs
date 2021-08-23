@@ -75,7 +75,7 @@ namespace MudBlazor
                 {
                     foreach (var chip in _chips)
                     {
-                        chip.IsSelected = (chip == value);
+                        chip.IsSelected = chip == value;
                     }
                 }
                 this.InvokeAsync(StateHasChanged);
@@ -167,7 +167,7 @@ namespace MudBlazor
             {
                 foreach (var ch in _chips)
                 {
-                    ch.IsSelected = (ch == chip); // <-- exclusively select the one chip only, thus all others must be deselected
+                    ch.IsSelected = ch == chip; // <-- exclusively select the one chip only, thus all others must be deselected
                 }
                 if (!Mandatory)
                     chip.IsSelected = !wasSelected;

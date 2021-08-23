@@ -23,7 +23,7 @@ namespace MudBlazor.Docs.Compiler
 
         public void Add(string codeString, int indentLevel)
         {
-            _code.Append(codeString.PadLeft(codeString.Length + (indentLevel * 4), ' '));
+            _code.Append(codeString.PadLeft(codeString.Length + indentLevel * 4, ' '));
         }
 
         public void AddLine()

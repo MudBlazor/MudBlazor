@@ -65,13 +65,13 @@ namespace MudBlazor.Charts
 
             var numVerticalLines = numValues - 1;
 
-            var numHorizontalLines = ((int)(maxY / gridYUnits)) + 1;
+            var numHorizontalLines = (int)(maxY / gridYUnits) + 1;
 
             // this is a safeguard against millions of gridlines which might arise with very high values
             while (numHorizontalLines > maxYTicks)
             {
                 gridYUnits *= 2;
-                numHorizontalLines = ((int)(maxY / gridYUnits)) + 1;
+                numHorizontalLines = (int)(maxY / gridYUnits) + 1;
             }
 
             var verticalStartSpace = 25.0;
@@ -79,8 +79,8 @@ namespace MudBlazor.Charts
             var verticalEndSpace = 25.0;
             var horizontalEndSpace = 30.0;
 
-            var verticalSpace = (boundHeight - verticalStartSpace - verticalEndSpace) / (numHorizontalLines);
-            var horizontalSpace = (boundWidth - horizontalStartSpace - horizontalEndSpace) / (numVerticalLines);
+            var verticalSpace = (boundHeight - verticalStartSpace - verticalEndSpace) / numHorizontalLines;
+            var horizontalSpace = (boundWidth - horizontalStartSpace - horizontalEndSpace) / numVerticalLines;
             var interpolationOption = MudChartParent?.ChartOptions.InterpolationOption ?? InterpolationOption.Straight;
 
             //Horizontal Grid Lines
@@ -91,11 +91,11 @@ namespace MudBlazor.Charts
                 var line = new SvgPath()
                 {
                     Index = counter,
-                    Data = $"M {ToS(horizontalStartSpace)} {ToS((boundHeight - y))} L {ToS((boundWidth - horizontalEndSpace))} {ToS((boundHeight - y))}"
+                    Data = $"M {ToS(horizontalStartSpace)} {ToS(boundHeight - y)} L {ToS(boundWidth - horizontalEndSpace)} {ToS(boundHeight - y)}"
                 };
                 _horizontalLines.Add(line);
 
-                var lineValue = new SvgText() { X = (horizontalStartSpace - 10), Y = (boundHeight - y + 5), Value = ToS(startGridY, MudChartParent?.ChartOptions.YAxisFormat) };
+                var lineValue = new SvgText() { X = horizontalStartSpace - 10, Y = boundHeight - y + 5, Value = ToS(startGridY, MudChartParent?.ChartOptions.YAxisFormat) };
                 _horizontalValues.Add(lineValue);
 
                 startGridY += gridYUnits;
@@ -111,7 +111,7 @@ namespace MudBlazor.Charts
                 var line = new SvgPath()
                 {
                     Index = counter,
-                    Data = $"M {ToS(x)} {ToS((boundHeight - verticalStartSpace))} L {ToS(x)} {ToS(verticalEndSpace)}"
+                    Data = $"M {ToS(x)} {ToS(boundHeight - verticalStartSpace)} L {ToS(x)} {ToS(verticalEndSpace)}"
                 };
                 _verticalLines.Add(line);
 
@@ -147,7 +147,7 @@ namespace MudBlazor.Charts
                     else
                         XValues[i] = XValues[i - 1] + horizontalSpace;
 
-                    var gridValue = (item.Data[i]) * verticalSpace / gridYUnits;
+                    var gridValue = item.Data[i] * verticalSpace / gridYUnits;
                     YValues[i] = boundHeight - (verticalStartSpace + gridValue);
 
                 }
@@ -210,7 +210,7 @@ namespace MudBlazor.Charts
                             gridValueY = verticalStartSpace;
                         }
 
-                        var gridValue = ((double)dataLine) * verticalSpace / gridYUnits;
+                        var gridValue = (double)dataLine * verticalSpace / gridYUnits;
                         gridValueY = boundHeight - (gridValueY + gridValue);
                         chartLine = chartLine + ToS(gridValueX) + " " + ToS(gridValueY);
                     }

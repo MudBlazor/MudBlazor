@@ -268,8 +268,8 @@ namespace MudBlazor
                 index = 5;
             }
 
-            var valueInDeg = (int)_color.H - (index * 60);
-            var value = (int)(MathExtensions.Map(0, 60, 0, 255, valueInDeg));
+            var valueInDeg = (int)_color.H - index * 60;
+            var value = (int)MathExtensions.Map(0, 60, 0, 255, valueInDeg);
             var section = _rgbToHueMapper[index];
 
             _baseColor = new(section.r(value), section.g(value), section.b(value), 255);
@@ -363,8 +363,8 @@ namespace MudBlazor
 
         private void SetSelectorBasedOnMouseEvents(MouseEventArgs e, bool offsetIsAbsolute)
         {
-            _selectorX = (offsetIsAbsolute == true ? e.OffsetX : (e.OffsetX - _selctorSize / 2.0) + _selectorX).EnsureRange(_maxX);
-            _selectorY = (offsetIsAbsolute == true ? e.OffsetY : (e.OffsetY - _selctorSize / 2.0) + _selectorY).EnsureRange(_maxY);
+            _selectorX = (offsetIsAbsolute == true ? e.OffsetX : e.OffsetX - _selctorSize / 2.0 + _selectorX).EnsureRange(_maxX);
+            _selectorY = (offsetIsAbsolute == true ? e.OffsetY : e.OffsetY - _selctorSize / 2.0 + _selectorY).EnsureRange(_maxY);
         }
 
         #endregion
@@ -458,7 +458,7 @@ namespace MudBlazor
         #region helper
 
         private string GetSelectorLocation() => $"translate({Math.Round(_selectorX, 2).ToString(CultureInfo.InvariantCulture)}px, {Math.Round(_selectorY, 2).ToString(CultureInfo.InvariantCulture)}px);";
-        private string GetColorTextValue() => (DisableAlpha == true || ColorPickerView is ColorPickerView.Palette or ColorPickerView.GridCompact) ? _color.ToString(MudColorOutputFormats.Hex) : _color.ToString(MudColorOutputFormats.HexA);
+        private string GetColorTextValue() => DisableAlpha == true || ColorPickerView is ColorPickerView.Palette or ColorPickerView.GridCompact ? _color.ToString(MudColorOutputFormats.Hex) : _color.ToString(MudColorOutputFormats.HexA);
 
         private EventCallback<MouseEventArgs> GetEventCallback() => EventCallback.Factory.Create<MouseEventArgs>(this, () => Close());
         private bool IsAnyControlVisible() => !(DisablePreview && DisableSliders && DisableInputs);

@@ -40,7 +40,7 @@ namespace MudBlazor.UnitTests.Components
             comp.SetParam(x => x.Min, -7.0);
             comp.SetParam(x => x.Max, 7.0);
             comp.SetParam(x => x.Buffer, false);
-            var percent = (-2 - (-7)) / 14.0 * 100;
+            var percent = (-2 - -7) / 14.0 * 100;
             comp.Instance.GetValuePercent().Should().Be(percent);
             comp.Find("div.mud-progress-linear-bar").MarkupMatches(
                 $"<div class=\"mud-progress-linear-bar mud-default mud-progress-linear-bar-1-determinate\" style=\"transform: translateX(-{Math.Round(100 - percent)}%);\"></div>");

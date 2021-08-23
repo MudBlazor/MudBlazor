@@ -101,8 +101,8 @@ namespace MudBlazor
 
         internal async Task UpdateActivatedItem(MudTreeViewItem<T> item, bool requestedValue)
         {
-            if ((_activatedValue == item && requestedValue) ||
-                (_activatedValue != item && !requestedValue))
+            if (_activatedValue == item && requestedValue ||
+                _activatedValue != item && !requestedValue)
                 return;
 
             if (_activatedValue == item && !requestedValue)

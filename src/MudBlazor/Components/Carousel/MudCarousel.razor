@@ -50,7 +50,7 @@
                             int current = i;
                             if (DelimiterTemplate == null)
                             {
-                                <MudIconButton tabindex="@(i+3)" aria-label="@(i+1)" Class="@DelimitersButtonsClassName" Style="z-index:3;opacity:0.75" Icon="@(current == SelectedIndex ? Icons.Material.Filled.RadioButtonChecked : Icons.Material.Filled.RadioButtonUnchecked)" OnClick="(() => MoveTo(current))" Color="Color.Inherit" />
+                                <MudIconButton tabindex="@(i+3)" aria-label="@(i+1)" Class="@DelimitersButtonsClassName" Style="z-index:3;opacity:0.75" Icon="@(current == SelectedIndex ? Icons.Material.Filled.RadioButtonChecked : Icons.Material.Filled.RadioButtonUnchecked)" OnClick="() => MoveTo(current)" Color="Color.Inherit" />
                             }
                             else
                             {

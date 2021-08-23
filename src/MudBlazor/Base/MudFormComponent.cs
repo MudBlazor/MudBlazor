@@ -61,7 +61,7 @@ namespace MudBlazor
 
         protected virtual bool SetConverter(Converter<T, U> value)
         {
-            var changed = (_converter != value);
+            var changed = _converter != value;
             if (changed)
             {
                 _converter = value ?? throw new ArgumentNullException(nameof(value));   // converter is mandatory at all times
@@ -79,7 +79,7 @@ namespace MudBlazor
 
         protected virtual bool SetCulture(CultureInfo value)
         {
-            var changed = (_converter.Culture != value);
+            var changed = _converter.Culture != value;
             if (changed)
             {
                 _converter.Culture = value;
@@ -447,7 +447,7 @@ namespace MudBlazor
             {
                 var error_msgs = EditContext.GetValidationMessages(_fieldIdentifier).ToArray();
                 Error = error_msgs.Length > 0;
-                ErrorText = (Error ? error_msgs[0] : null);
+                ErrorText = Error ? error_msgs[0] : null;
                 StateHasChanged();
             }
         }

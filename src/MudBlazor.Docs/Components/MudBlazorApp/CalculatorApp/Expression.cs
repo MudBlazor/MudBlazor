@@ -103,7 +103,7 @@ namespace PrimitiveCalculator
             else if (first_op.Operator == "-")
             {
                 first_op.Operator = "+";
-                first_op.Expression.Value = (first_op.Expression.Value ?? double.NaN) * (-1);
+                first_op.Expression.Value = (first_op.Expression.Value ?? double.NaN) * -1;
             }
             if (_operations.Count == 1)
             {
@@ -112,7 +112,7 @@ namespace PrimitiveCalculator
                 if (val == null)
                     return double.NaN;
                 if (op.Operator == "-")
-                    Value = (-1.0 * (val.Value));
+                    Value = -1.0 * val.Value;
                 else
                     Value = val;
             }

@@ -198,7 +198,7 @@ namespace MudBlazor
         private void UpdateTime()
         {
             TimeIntermediate = new TimeSpan(_timeSet.Hour, _timeSet.Minute, 0);
-            if ((PickerVariant == PickerVariant.Static && PickerActions == null) || (PickerActions != null && AutoClose))
+            if (PickerVariant == PickerVariant.Static && PickerActions == null || PickerActions != null && AutoClose)
             {
                 Submit();
             }
@@ -318,9 +318,9 @@ namespace MudBlazor
         {
             double deg = 0;
             if (_currentView == OpenTo.Hours)
-                deg = (_timeSet.Hour * 30) % 360;
+                deg = _timeSet.Hour * 30 % 360;
             if (_currentView == OpenTo.Minutes)
-                deg = (_timeSet.Minute * 6) % 360;
+                deg = _timeSet.Minute * 6 % 360;
             return deg;
         }
 
@@ -336,9 +336,9 @@ namespace MudBlazor
         {
             double deg = 0;
             if (_currentView == OpenTo.Hours)
-                deg = (_timeSet.Hour * 30) % 360;
+                deg = _timeSet.Hour * 30 % 360;
             if (_currentView == OpenTo.Minutes)
-                deg = (_timeSet.Minute * 6) % 360;
+                deg = _timeSet.Minute * 6 % 360;
             return $"rotateZ({deg}deg);";
         }
 

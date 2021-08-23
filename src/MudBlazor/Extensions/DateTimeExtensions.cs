@@ -38,7 +38,7 @@ namespace MudBlazor.Extensions
         public static DateTime StartOfWeek(this DateTime self, DayOfWeek firstDayOfWeek)
         {
             var diff = (7 + (self.DayOfWeek - firstDayOfWeek)) % 7;
-            if (self.Year == 1 && self.Month == 1 && (self.Day - diff) < 1)
+            if (self.Year == 1 && self.Month == 1 && self.Day - diff < 1)
             {
                 return self.Date;
             }
