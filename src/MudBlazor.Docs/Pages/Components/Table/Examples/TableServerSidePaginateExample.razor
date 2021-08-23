@@ -83,7 +83,7 @@
         }
 
         pagedData = data.Skip(state.Page * state.PageSize).Take(state.PageSize).ToArray();
-        return new TableData<Element>() {TotalItems = totalItems, Items = pagedData};
+        return new TableData<Element> {TotalItems = totalItems, Items = pagedData};
     }
 
     private void OnSearch(string text)

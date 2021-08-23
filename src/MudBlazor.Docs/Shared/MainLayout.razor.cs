@@ -121,7 +121,7 @@ namespace MudBlazor.Docs.Shared
         private readonly MudTheme _defaultTheme =
             new()
             {
-                Palette = new Palette()
+                Palette = new Palette
                 {
                     Black = "#272c34"
                 }
@@ -129,7 +129,7 @@ namespace MudBlazor.Docs.Shared
         private readonly MudTheme _darkTheme =
             new()
             {
-                Palette = new Palette()
+                Palette = new Palette
                 {
                     Primary = "#776be7",
                     Black = "#27272f",

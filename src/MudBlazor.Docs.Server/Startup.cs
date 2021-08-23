@@ -27,7 +27,7 @@ namespace MudBlazor.Docs.Server
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddScoped<IPeriodicTableService, PeriodicTableService>();
-            services.AddScoped(sp => new HttpClient() { BaseAddress = new Uri(Configuration["ApiBase"]) });
+            services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(Configuration["ApiBase"]) });
             services.AddScoped<GitHubApiClient>();
             services.AddHeadElementHelper();
             services.AddRazorPages();

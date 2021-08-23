@@ -70,7 +70,7 @@ namespace PrimitiveCalculator
                 }
                 else if (_parser.NextIs("+-*^/%".ToCharArray()))
                 {
-                    var op = new Operation() { Operator = _parser.NextChar.ToString() };
+                    var op = new Operation { Operator = _parser.NextChar.ToString() };
                     _parser.Skip(1);
                     _parser.ConsumeAny(' ');
                     if (_parser.NextIs('('))

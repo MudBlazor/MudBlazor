@@ -122,7 +122,7 @@ namespace MudBlazor
 
         public async Task<bool?> ShowMessageBox(MessageBoxOptions mboxOptions, DialogOptions options = null)
         {
-            var parameters = new DialogParameters()
+            var parameters = new DialogParameters
             {
                 [nameof(MessageBoxOptions.Title)] = mboxOptions.Title,
                 [nameof(MessageBoxOptions.Message)] = mboxOptions.Message,

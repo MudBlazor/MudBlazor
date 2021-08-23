@@ -57,7 +57,7 @@
     private List<MudIcons> SelectedIcons => string.IsNullOrWhiteSpace(SearchText)
         ? MudIconsMaterial
         : MudIconsMaterial.Where(m => m.Name.Contains(SearchText, StringComparison.OrdinalIgnoreCase)).ToList();
-    private readonly IDictionary<string, object> IconTypes = new Dictionary<string, object>()
+    private readonly IDictionary<string, object> IconTypes = new Dictionary<string, object>
     {
         { IconType.Filled,new Filled()},
         { IconType.Outlined, new Outlined()},

@@ -26,10 +26,10 @@
     private async Task<TableData<int>> ServerReload(TableState state)
     {
         var p = state.Page*3;
-        IEnumerable<int> data = new List<int>() { 1 + p, 2 + p, 3 + p };
+        IEnumerable<int> data = new List<int> { 1 + p, 2 + p, 3 + p };
         totalItems = 99;
         pagedData = data.ToArray();
-        return new TableData<int>() { TotalItems = totalItems, Items = pagedData };
+        return new TableData<int> { TotalItems = totalItems, Items = pagedData };
     }
 
 }

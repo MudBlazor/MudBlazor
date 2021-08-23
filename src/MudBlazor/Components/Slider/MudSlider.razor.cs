@@ -62,7 +62,7 @@ namespace MudBlazor
         [Parameter]
         public RenderFragment ChildContent { get; set; }
 
-        [Parameter] public Converter<T> Converter { get; set; } = new DefaultConverter<T>() { Culture = CultureInfo.InvariantCulture };
+        [Parameter] public Converter<T> Converter { get; set; } = new DefaultConverter<T> { Culture = CultureInfo.InvariantCulture };
 
         [Parameter] public EventCallback<T> ValueChanged { get; set; }
 

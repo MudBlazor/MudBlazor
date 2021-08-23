@@ -28,7 +28,7 @@ namespace MudBlazor.Charts
                 endx = Math.Cos(cumulativeRadians);
                 endy = Math.Sin(cumulativeRadians);
                 var largeArcFlag = data > 0.5 ? 1 : 0;
-                var path = new SvgPath()
+                var path = new SvgPath
                 {
                     Index = i,
                     Data = $"M {ToS(startx)} {ToS(starty)} A 1 1 0 {ToS(largeArcFlag)} 1 {ToS(endx)} {ToS(endy)} L 0 0"
@@ -45,7 +45,7 @@ namespace MudBlazor.Charts
                 {
                     labels = InputLabels[counter];
                 }
-                var legend = new SvgLegend()
+                var legend = new SvgLegend
                 {
                     Index = counter,
                     Labels = labels,

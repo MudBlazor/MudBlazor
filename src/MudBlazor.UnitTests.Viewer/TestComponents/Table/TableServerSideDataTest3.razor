@@ -27,10 +27,10 @@
         //    throw new ArgumentException("SortDirection is set but SortLabel is not");
 
         var p = state.Page*3;
-        IEnumerable<int> data = new List<int>() { 1 + p, 2 + p, 3 + p };
+        IEnumerable<int> data = new List<int> { 1 + p, 2 + p, 3 + p };
         totalItems = 99;
         var sortedData = state.SortDirection == SortDirection.Descending ? data.Reverse() : data;
-        return new TableData<int>() { TotalItems = totalItems, Items = sortedData };
+        return new TableData<int> { TotalItems = totalItems, Items = sortedData };
     }
 
 }

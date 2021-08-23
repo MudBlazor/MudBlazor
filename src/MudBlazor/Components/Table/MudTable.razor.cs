@@ -163,7 +163,7 @@ namespace MudBlazor
                 item = (T)o;
             }
             catch (Exception) { /*ignore*/}
-            OnRowClick.InvokeAsync(new TableRowClickEventArgs<T>()
+            OnRowClick.InvokeAsync(new TableRowClickEventArgs<T>
             {
                 MouseEventArgs = args,
                 Row = row,

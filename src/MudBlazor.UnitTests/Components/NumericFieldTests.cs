@@ -107,7 +107,7 @@ namespace MudBlazor.UnitTests
             var numericField = comp.Instance;
             var input = comp.Find("input");
             //Act
-            input.Input(new ChangeEventArgs() { Value = "100" });
+            input.Input(new ChangeEventArgs { Value = "100" });
             //Assert
             //input value has changed, DebounceInterval is 0, so Value should change in NumericField immediately
             numericField.Value.Should().Be(100);
@@ -125,7 +125,7 @@ namespace MudBlazor.UnitTests
             var numericField = comp.Instance;
             var input = comp.Find("input");
             //Act
-            input.Input(new ChangeEventArgs() { Value = "100" });
+            input.Input(new ChangeEventArgs { Value = "100" });
             //Assert
             //if DebounceInterval is set, Immediate should be true by default
             numericField.Immediate.Should().BeTrue();
@@ -341,20 +341,20 @@ namespace MudBlazor.UnitTests
             var numericField = comp.Instance;
             numericField.Value.Should().Be(1234.56);
             numericField.Text.Should().Be("1234.56");
-            comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = "ArrowUp", Type = "keydown", });
-            comp.Find("input").KeyUp(new KeyboardEventArgs() { Key = "ArrowUp", Type = "keyup", });
+            comp.Find("input").KeyDown(new KeyboardEventArgs { Key = "ArrowUp", Type = "keydown", });
+            comp.Find("input").KeyUp(new KeyboardEventArgs { Key = "ArrowUp", Type = "keyup", });
             comp.WaitForAssertion(() => numericField.Value.Should().Be(1235.56));
-            comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = "ArrowDown", Type = "keydown", });
-            comp.Find("input").KeyUp(new KeyboardEventArgs() { Key = "ArrowDown", Type = "keyup", });
+            comp.Find("input").KeyDown(new KeyboardEventArgs { Key = "ArrowDown", Type = "keydown", });
+            comp.Find("input").KeyUp(new KeyboardEventArgs { Key = "ArrowDown", Type = "keyup", });
             comp.WaitForAssertion(() => numericField.Value.Should().Be(1234.56));
-            comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = "c", Type = "keydown", CtrlKey = false });
-            comp.Find("input").KeyUp(new KeyboardEventArgs() { Key = "c", Type = "keyup", CtrlKey = false });
+            comp.Find("input").KeyDown(new KeyboardEventArgs { Key = "c", Type = "keydown", CtrlKey = false });
+            comp.Find("input").KeyUp(new KeyboardEventArgs { Key = "c", Type = "keyup", CtrlKey = false });
             comp.WaitForAssertion(() => numericField.Value.Should().Be(1234.56));
-            comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = "a", Type = "keydown", });
-            comp.Find("input").KeyUp(new KeyboardEventArgs() { Key = "a", Type = "keyup", });
+            comp.Find("input").KeyDown(new KeyboardEventArgs { Key = "a", Type = "keydown", });
+            comp.Find("input").KeyUp(new KeyboardEventArgs { Key = "a", Type = "keyup", });
             comp.WaitForAssertion(() => numericField.Value.Should().Be(1234.56));
-            comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = "9", Type = "keydown", });
-            comp.Find("input").KeyUp(new KeyboardEventArgs() { Key = "9", Type = "keyup", });
+            comp.Find("input").KeyDown(new KeyboardEventArgs { Key = "9", Type = "keydown", });
+            comp.Find("input").KeyUp(new KeyboardEventArgs { Key = "9", Type = "keyup", });
             comp.WaitForAssertion(() => numericField.Value.Should().Be(1234.56));
         }
 

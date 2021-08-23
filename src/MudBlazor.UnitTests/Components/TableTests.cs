@@ -1061,11 +1061,11 @@ namespace MudBlazor.UnitTests.Components
             //group by Racing Category and Brand:
             comp = Context.RenderComponent<TableGroupingTest>();
             table = comp.Instance.tableInstance;
-            table.GroupBy = new TableGroupDefinition<TableGroupingTest.RacingCar>()
+            table.GroupBy = new TableGroupDefinition<TableGroupingTest.RacingCar>
             {
                 GroupName = "Category",
                 Selector = rc => rc.Category,
-                InnerGroup = new TableGroupDefinition<TableGroupingTest.RacingCar>()
+                InnerGroup = new TableGroupDefinition<TableGroupingTest.RacingCar>
                 {
                     GroupName = "Brand",
                     Selector = rc => rc.Brand

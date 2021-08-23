@@ -30,7 +30,8 @@
     /// </summary>
     private async Task<TableData<TestModel>> ServerReload(TableState state)
     {
-        IEnumerable<TestModel> data = new List<TestModel>() { new() { a=1, b=3 },
+        IEnumerable<TestModel> data = new List<TestModel>
+        { new() { a=1, b=3 },
                                             new() { a=2, b=2 },
                                             new() { a=3, b=1 } };
         totalItems = 3;
@@ -45,7 +46,7 @@
             default:
                 break;
         }
-        return new TableData<TestModel>() { TotalItems = totalItems, Items = data };
+        return new TableData<TestModel> { TotalItems = totalItems, Items = data };
     }
 
 }

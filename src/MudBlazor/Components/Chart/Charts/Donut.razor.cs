@@ -30,7 +30,7 @@ namespace MudBlazor.Charts
                 offset = 100 - totalPercent + counterClockwiseOffset;
                 totalPercent += percent;
 
-                var circle = new SvgCircle()
+                var circle = new SvgCircle
                 {
                     Index = counter,
                     CX = 20,
@@ -47,7 +47,7 @@ namespace MudBlazor.Charts
                 {
                     labels = InputLabels[counter];
                 }
-                var legend = new SvgLegend()
+                var legend = new SvgLegend
                 {
                     Index = counter,
                     Labels = labels,

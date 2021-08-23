@@ -120,7 +120,7 @@
             {
                 if (info.GetCustomAttributes(typeof(ObsoleteAttribute), true).Length == 0 && info.PropertyType.Name.Contains("EventCallback"))
                 {
-                    yield return new ApiProperty()
+                    yield return new ApiProperty
                     {
                         Name = info.Name,
                         PropertyInfo = info,
@@ -150,7 +150,7 @@
                     {
                         if (info.GetCustomAttributes(typeof(ObsoleteAttribute), true).Length == 0)
                         {
-                            yield return new ApiMethod()
+                            yield return new ApiMethod
                             {
                                 MethodInfo = info,
                                 Return = info.ReturnParameter,
@@ -173,7 +173,7 @@
             {
                 if (info.GetCustomAttributes(typeof(ObsoleteAttribute), true).Length == 0 && !info.PropertyType.Name.Contains("EventCallback"))
                 {
-                    yield return new ApiProperty()
+                    yield return new ApiProperty
                     {
                         Name = info.Name,
                         PropertyInfo = info,
