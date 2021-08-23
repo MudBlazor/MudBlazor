@@ -149,9 +149,9 @@ namespace MudBlazor.UnitTests.Components
             Console.WriteLine(comp.Markup);
             comp.FindAll("button.mud-icon-button").Count.Should().Be(2); //left + right
             // adding some pages
-            comp.Instance.Items.Add(new());
-            comp.Instance.Items.Add(new());
-            comp.Instance.Items.Add(new());
+            comp.Instance.Items.Add(new MudCarouselItem());
+            comp.Instance.Items.Add(new MudCarouselItem());
+            comp.Instance.Items.Add(new MudCarouselItem());
             comp.Render();
             // playing with params
             comp.FindAll("button.mud-icon-button").Count.Should().Be(5); //left + right + 3 items
@@ -184,9 +184,9 @@ namespace MudBlazor.UnitTests.Components
             // print the generated html
             Console.WriteLine(comp.Markup);
             // adding some pages
-            comp.Instance.Items.Add(new());
-            comp.Instance.Items.Add(new());
-            comp.Instance.Items.Add(new());
+            comp.Instance.Items.Add(new MudCarouselItem());
+            comp.Instance.Items.Add(new MudCarouselItem());
+            comp.Instance.Items.Add(new MudCarouselItem());
 
             comp.SetParam(p => p.AutoCycle, true);
             await comp.InvokeAsync(() => comp.Instance.MoveTo(0));

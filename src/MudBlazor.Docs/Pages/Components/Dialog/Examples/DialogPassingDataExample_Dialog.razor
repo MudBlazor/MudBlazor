@@ -26,7 +26,7 @@
 @code {
     [CascadingParameter] MudDialogInstance MudDialog { get; set; }
 
-    [Parameter] public Server server { get; set; } = new Server();
+    [Parameter] public Server server { get; set; } = new();
 
     private void Cancel()
     {

@@ -272,7 +272,7 @@ namespace MudBlazor
             var value = (int)MathExtensions.Map(0, 60, 0, 255, valueInDeg);
             var section = _rgbToHueMapper[index];
 
-            _baseColor = new(section.r(value), section.g(value), section.b(value), 255);
+            _baseColor = new MudColor(section.r(value), section.g(value), section.b(value), 255);
         }
 
         private void UpdateColorBaseOnSelection()

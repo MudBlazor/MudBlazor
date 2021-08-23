@@ -11,15 +11,15 @@
 </div>
 
 @code {
-    private ChartOptions options = new ChartOptions();
-    public List<ChartSeries> Series = new List<ChartSeries>()
+    private ChartOptions options = new();
+    public List<ChartSeries> Series = new()
     {
         new ChartSeries() { Name = "Series 1", Data = new double[] { 90, 79, 72, 69, 62, 62, 55, 65, 70 } },
         new ChartSeries() { Name = "Series 2", Data = new double[] { 35, 41, 35, 51, 49, 62, 69, 91, 148 } },
     };
     public string[] XAxisLabels = { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep" };
 
-    Random random = new Random();
+    Random random = new();
     protected override void OnInitialized()
     {
         options.InterpolationOption = InterpolationOption.NaturalSpline;
@@ -30,8 +30,8 @@
     {
         var new_series = new List<ChartSeries>()
         {
-            new ChartSeries() { Name = "Series 1", Data = new double[9] },
-            new ChartSeries() { Name = "Series 2", Data = new double[9] },
+            new() { Name = "Series 1", Data = new double[9] },
+            new() { Name = "Series 2", Data = new double[9] },
         };
         for (int i = 0; i < 9; i++)
         {

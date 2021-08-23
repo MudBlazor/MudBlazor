@@ -187,10 +187,10 @@ namespace MudBlazor.Docs.Services
         /// </summary>
         public IEnumerable<DocsLink> GettingStarted => _gettingStarted ??= new List<DocsLink>
             {
-                new DocsLink {Title = "Installation", Href = "getting-started/installation"},
-                new DocsLink {Title = "Layouts", Href = "getting-started/layouts"},
-                new DocsLink {Title = "Usage", Href = "getting-started/usage"},
-                new DocsLink {Title = "Wireframes", Href = "getting-started/wireframes"},
+                new() {Title = "Installation", Href = "getting-started/installation"},
+                new() {Title = "Layouts", Href = "getting-started/layouts"},
+                new() {Title = "Usage", Href = "getting-started/usage"},
+                new() {Title = "Wireframes", Href = "getting-started/wireframes"},
             }.OrderBy(x => x.Title);
 
 
@@ -200,16 +200,16 @@ namespace MudBlazor.Docs.Services
         /// </summary>
         public IEnumerable<DocsLink> Features => _features ??= new List<DocsLink>
             {
-                new DocsLink {Title = "Breakpoints", Href = "features/breakpoints"},
-                new DocsLink {Title = "Border Radius", Href = "features/border-radius"},
-                new DocsLink {Title = "Colors", Href = "features/colors"},
-                new DocsLink {Title = "Converters", Href = "features/converters"},
-                new DocsLink {Title = "Display", Href = "features/display"},
-                new DocsLink {Title = "Elevation", Href = "features/elevation"},
-                new DocsLink {Title = "Flex", Href = "features/flex"},
-                new DocsLink {Title = "Icons", Href = "features/icons"},
-                new DocsLink {Title = "Spacing", Href = "features/spacing"},
-                new DocsLink {Title = "RTL Languages", Href = "features/rtl-languages"},
+                new() {Title = "Breakpoints", Href = "features/breakpoints"},
+                new() {Title = "Border Radius", Href = "features/border-radius"},
+                new() {Title = "Colors", Href = "features/colors"},
+                new() {Title = "Converters", Href = "features/converters"},
+                new() {Title = "Display", Href = "features/display"},
+                new() {Title = "Elevation", Href = "features/elevation"},
+                new() {Title = "Flex", Href = "features/flex"},
+                new() {Title = "Icons", Href = "features/icons"},
+                new() {Title = "Spacing", Href = "features/spacing"},
+                new() {Title = "RTL Languages", Href = "features/rtl-languages"},
             }.OrderBy(x => x.Title);
 
 
@@ -220,9 +220,9 @@ namespace MudBlazor.Docs.Services
         public IEnumerable<DocsLink> Customization => _customization ??= new List<DocsLink>()
         {
             //new DocsLink{Title="Default theme", Href="customization/default-theme"},
-            new DocsLink {Title = "Overview", Href = "customization/theming/overview"},
-            new DocsLink {Title = "Palette", Href = "customization/theming/palette"},
-            new DocsLink {Title = "z-index", Href = "customization/theming/z-index"},
+            new() {Title = "Overview", Href = "customization/theming/overview"},
+            new() {Title = "Palette", Href = "customization/theming/palette"},
+            new() {Title = "z-index", Href = "customization/theming/z-index"},
         }.OrderBy(x => x.Title);
 
 
@@ -232,10 +232,10 @@ namespace MudBlazor.Docs.Services
         /// </summary>
         public IEnumerable<DocsLink> About => _about ??= new List<DocsLink>
         {
-            new DocsLink{ Title="Credits" , Href="project/credit" },
-            new DocsLink{Href="project/about", Title="How it started" },
-            new DocsLink{Href="project/team", Title="Team & Contributors" },
-            new DocsLink{Href="project/versions", Title="Versions" },
+            new() { Title="Credits" , Href="project/credit" },
+            new() {Href="project/about", Title="How it started" },
+            new() {Href="project/team", Title="Team & Contributors" },
+            new() {Href="project/versions", Title="Versions" },
         }.OrderBy(x => x.Title);
     }
 }

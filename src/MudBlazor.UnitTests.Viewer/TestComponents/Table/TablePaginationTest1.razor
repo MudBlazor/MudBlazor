@@ -24,7 +24,7 @@
 @code
 {
     public static string __description__ = "Setting items delayed should work well and update pager also.";
-    private ViewModel viewModel = new ViewModel();
+    private ViewModel viewModel = new();
 
     private sealed class Item
     {
@@ -40,7 +40,7 @@
 
     private sealed class ViewModel : INotifyPropertyChanged
     {
-        private List<Item> _items = new List<Item>();
+        private List<Item> _items = new();
         public bool Filter(Item arg) { return true; }
 
         public List<Item> Items

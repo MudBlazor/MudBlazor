@@ -86,7 +86,7 @@ namespace MudBlazor
         /// <param name="sectionName">name of the section will be displayed in the navigation</param>
         /// <param name="sectionId">id of the section. It will be appending to the current url, if the section becomes active</param>
         /// <param name="forceUpdate">If true, StateHasChanged is called, forcing a rerender of the component</param>
-        public void AddSection(string sectionName, string sectionId, bool forceUpdate) => AddSection(new(sectionName, sectionId), forceUpdate);
+        public void AddSection(string sectionName, string sectionId, bool forceUpdate) => AddSection(new MudPageContentSection(sectionName, sectionId), forceUpdate);
 
         /// <summary>
         /// Add a section to the content navigation

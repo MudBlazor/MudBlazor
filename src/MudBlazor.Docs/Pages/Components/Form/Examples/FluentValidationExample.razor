@@ -19,7 +19,7 @@
     string creditCardNr = "4012 8888 8888 1881";
 
     // The validation rules (overkill, I know, but very fluent):
-    FluentValueValidator<string> ccValidator = new FluentValueValidator<string>(x => x
+    FluentValueValidator<string> ccValidator = new(x => x
         .NotEmpty()
         .Length(1,100)
         .CreditCard());

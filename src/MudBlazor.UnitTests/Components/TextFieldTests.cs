@@ -431,7 +431,7 @@ namespace MudBlazor.UnitTests.Components
             protected override ValidationResult IsValid(object value,
                 ValidationContext validationContext)
             {
-                return new ValidationResult("TEST ERROR");
+                return new("TEST ERROR");
             }
         }
         class TestFailingModel

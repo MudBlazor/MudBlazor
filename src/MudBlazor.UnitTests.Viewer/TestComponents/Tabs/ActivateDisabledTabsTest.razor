@@ -39,7 +39,7 @@
 
     public ActivateDisabledTabsTest()
     {
-        Tabs = new();
+        Tabs = new List<TabBindingHelper>();
         for (int i = 0; i < 5; i++)
         {
             Tabs.Add(new TabBindingHelper { Name = (i + 1).ToString(), IsDisabled = true, Tag = new DummyPlaceHolder { Id = Guid.NewGuid() }, Index = i, Content = $"Tab Content {i + 1}" });

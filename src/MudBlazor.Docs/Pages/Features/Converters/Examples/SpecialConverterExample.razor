@@ -15,7 +15,7 @@
 @code {
     bool state = true;
 
-    Converter<bool> converter = new Converter<bool>
+    Converter<bool> converter = new()
     {
         SetFunc = value => value ? "ON" : "OFF",
         GetFunc = text => (text ?? "").ToLowerInvariant() == "on",

@@ -31,9 +31,9 @@
     private async Task<TableData<TestModel>> ServerReload(TableState state)
     {
         // This creates an in-memory IQueryable variation of our IEnumerable test
-        IQueryable<TestModel> data = new List<TestModel>() { new TestModel() { a=1, b=3 },
-                                            new TestModel() { a=2, b=2 },
-                                            new TestModel() { a=3, b=1 } }.AsQueryable();
+        IQueryable<TestModel> data = new List<TestModel>() { new() { a=1, b=3 },
+                                            new() { a=2, b=2 },
+                                            new() { a=3, b=1 } }.AsQueryable();
         totalItems = 3;
         switch (state.SortLabel)
         {

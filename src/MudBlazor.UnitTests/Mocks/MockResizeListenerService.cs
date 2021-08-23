@@ -36,7 +36,7 @@ namespace MudBlazor.UnitTests.Mocks
 #nullable disable
         public async ValueTask<BrowserWindowSize> GetBrowserWindowSize()
         {
-            return new BrowserWindowSize()
+            return new()
             {
                 Width = _width,
                 Height = _height

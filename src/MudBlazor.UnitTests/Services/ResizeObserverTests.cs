@@ -284,7 +284,7 @@ namespace MudBlazor.UnitTests.Services
 
         private static BoundingClientRect GetRandomRect(Random random)
         {
-            return new BoundingClientRect
+            return new()
             {
 
                 Height = random.Next(10, 200) + random.NextDouble(),

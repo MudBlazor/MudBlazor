@@ -101,7 +101,7 @@
 </div>
 
 @code {
-    private List<string> hiddenMethods = new List<string>()
+    private List<string> hiddenMethods = new()
     {
         "ToString",
         "GetType",
@@ -253,7 +253,7 @@
 
     RenderFragment RenderTheType()
     {
-        return new RenderFragment(builder =>
+        return new(builder =>
         {
             builder.OpenComponent(0, Type);
             builder.AddComponentReferenceCapture(1, inst => { _comp_instance = inst; });
@@ -276,7 +276,7 @@
         return null;
     }
 
-    DefaultConverter<object> _converter = new DefaultConverter<object>() { Culture= CultureInfo.InvariantCulture };
+    DefaultConverter<object> _converter = new() { Culture= CultureInfo.InvariantCulture };
 
     private string PresentDefaultValue(object @default)
     {

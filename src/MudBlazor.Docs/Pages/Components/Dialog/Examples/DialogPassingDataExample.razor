@@ -31,7 +31,7 @@
     }
 
     //Pretend we are loading this data from a database or API
-    public List<Server> Servers { get; } = new List<Server>
+    public List<Server> Servers { get; } = new()
     {
         new Server{ Id = Guid.NewGuid(), Name = "Server1", Location = "Denmark", IpAddress = "193.254.123.1" },
         new Server{ Id = Guid.NewGuid(), Name = "Server2", Location = "Sweden", IpAddress = "127.0.0.1" },

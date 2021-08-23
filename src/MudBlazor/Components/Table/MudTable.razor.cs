@@ -374,7 +374,7 @@ namespace MudBlazor
         }
 
         // TableContext provides shared functionality between all table sub-components
-        public TableContext<T> Context { get; } = new TableContext<T>();
+        public TableContext<T> Context { get; } = new();
 
         private void OnRowCheckboxChanged(bool value, T item)
         {

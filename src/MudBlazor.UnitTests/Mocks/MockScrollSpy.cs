@@ -41,6 +41,6 @@ namespace MudBlazor.UnitTests.Mocks
             return Task.FromResult(false);
         }
 
-        public void FireScrollSectionSectionCenteredEvent(string centeredElementId) => ScrollSectionSectionCentered?.Invoke(this, new(centeredElementId));
+        public void FireScrollSectionSectionCenteredEvent(string centeredElementId) => ScrollSectionSectionCentered?.Invoke(this, new ScrollSectionCenteredEventArgs(centeredElementId));
     }
 }

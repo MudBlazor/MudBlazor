@@ -14,8 +14,8 @@ namespace MudBlazor
         public abstract void Add(MudTr row, object item);
         public abstract void Remove(MudTr row, object item);
         public abstract void UpdateRowCheckBoxes(bool notify = true);
-        public List<MudTHeadRow> HeaderRows { get; set; } = new List<MudTHeadRow>();
-        public List<MudTFootRow> FooterRows { get; set; } = new List<MudTFootRow>();
+        public List<MudTHeadRow> HeaderRows { get; set; } = new();
+        public List<MudTFootRow> FooterRows { get; set; } = new();
 
         public abstract void InitializeSorting();
 
@@ -30,12 +30,12 @@ namespace MudBlazor
     {
         private MudTr editedRow;
 
-        public HashSet<T> Selection { get; set; } = new HashSet<T>();
+        public HashSet<T> Selection { get; set; } = new();
 
-        public Dictionary<T, MudTr> Rows { get; set; } = new Dictionary<T, MudTr>();
-        public List<MudTableGroupRow<T>> GroupRows { get; set; } = new List<MudTableGroupRow<T>>();
+        public Dictionary<T, MudTr> Rows { get; set; } = new();
+        public List<MudTableGroupRow<T>> GroupRows { get; set; } = new();
 
-        public List<MudTableSortLabel<T>> SortLabels { get; set; } = new List<MudTableSortLabel<T>>();
+        public List<MudTableSortLabel<T>> SortLabels { get; set; } = new();
 
         public override void UpdateRowCheckBoxes(bool notify = true)
         {

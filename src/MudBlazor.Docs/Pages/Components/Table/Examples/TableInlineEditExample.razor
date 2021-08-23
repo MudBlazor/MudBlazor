@@ -85,8 +85,8 @@
     private Element selectedItem1 = null;
     private Element selectedItem2 = null;
     private Element elementBeforeEdit;
-    private HashSet<Element> selectedItems1 = new HashSet<Element>();
-    private HashSet<Element> selectedItems2 = new HashSet<Element>();
+    private HashSet<Element> selectedItems1 = new();
+    private HashSet<Element> selectedItems2 = new();
 
     private IEnumerable<Element> Elements = new List<Element>();
 
@@ -108,7 +108,7 @@
 
     private void BackupItem(object element)
     {
-        elementBeforeEdit = new()
+        elementBeforeEdit = new Element()
         {            
             Sign = ((Element)element).Sign,
             Name = ((Element)element).Name,

@@ -19,7 +19,7 @@
 { 
     public static string __description__ = "SelectedValuesChanged should be called before MultiSelectionTextFunc and SetTextAsync";
 
-    private HashSet<string> options { get; set; } = new HashSet<string>() { "All" };
+    private HashSet<string> options { get; set; } = new() { "All" };
 
     private string[] states =
     {

@@ -15,7 +15,7 @@ Add chips <MudIconButton Icon="@Icons.Material.Filled.Add" OnClick="Add"></MudIc
 @code
 {
     int i = 1;
-    List<string> values = new List<string>();
+    List<string> values = new();
     public void Add() => values.Add("Value " + i++);
     public void Closed(MudChip chip) => values.Remove(chip.Text);
 }

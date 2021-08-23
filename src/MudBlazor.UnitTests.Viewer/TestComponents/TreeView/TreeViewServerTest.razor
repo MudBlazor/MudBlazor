@@ -7,7 +7,7 @@
 </MudTreeView>
 
 @code{
-    private HashSet<TreeItemData> TreeItems { get; set; } = new HashSet<TreeItemData>();
+    private HashSet<TreeItemData> TreeItems { get; set; } = new();
 
     public class TreeItemData
     {
@@ -35,10 +35,10 @@
         {
             TreeItems = new HashSet<TreeItemData>()
             {
-                new TreeItemData("Social", Icons.Filled.Group, 90),
-                new TreeItemData("Updates", Icons.Filled.Info, 2294),
-                new TreeItemData("Forums", Icons.Filled.QuestionAnswer, 3566),
-                new TreeItemData("Promotions", Icons.Filled.LocalOffer, 733)
+                new("Social", Icons.Filled.Group, 90),
+                new("Updates", Icons.Filled.Info, 2294),
+                new("Forums", Icons.Filled.QuestionAnswer, 3566),
+                new("Promotions", Icons.Filled.LocalOffer, 733)
             }
         });
         TreeItems.Add(new TreeItemData("History", Icons.Filled.Label));

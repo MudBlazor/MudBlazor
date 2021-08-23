@@ -20,7 +20,7 @@
 
         public bool IsExpanded { get; set; }
 
-        public HashSet<TreeItemData> TreeItems { get; set; } = new HashSet<TreeItemData>();
+        public HashSet<TreeItemData> TreeItems { get; set; } = new();
 
         public TreeItemData(string title, string icon, int? number = null)
         {
@@ -30,7 +30,7 @@
         }
     }
 
-    HashSet<TreeItemData> TreeItems { get; set; } = new HashSet<TreeItemData>();
+    HashSet<TreeItemData> TreeItems { get; set; } = new();
 
     public TreeViewTemplateTest()
     {
@@ -41,10 +41,10 @@
             IsExpanded = true,
             TreeItems = new HashSet<TreeItemData>()
             {
-                new TreeItemData("Social", Icons.Filled.Group, 90),
-                new TreeItemData("Updates", Icons.Filled.Info, 2294),
-                new TreeItemData("Forums", Icons.Filled.QuestionAnswer, 3566),
-                new TreeItemData("Promotions", Icons.Filled.LocalOffer, 733)
+                new("Social", Icons.Filled.Group, 90),
+                new("Updates", Icons.Filled.Info, 2294),
+                new("Forums", Icons.Filled.QuestionAnswer, 3566),
+                new("Promotions", Icons.Filled.LocalOffer, 733)
             }
         });
         TreeItems.Add(new TreeItemData("History", Icons.Filled.Label));

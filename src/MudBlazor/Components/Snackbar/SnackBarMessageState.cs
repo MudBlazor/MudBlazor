@@ -13,7 +13,7 @@ namespace MudBlazor
         public bool UserHasInteracted { get; set; }
         public SnackbarOptions Options { get; }
         public SnackbarState SnackbarState { get; set; }
-        public Stopwatch Stopwatch { get; } = new Stopwatch();
+        public Stopwatch Stopwatch { get; } = new();
 
         public SnackBarMessageState(SnackbarOptions options)
         {

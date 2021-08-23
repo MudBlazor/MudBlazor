@@ -129,7 +129,7 @@ _jsRuntime.InvokeAsync<bool>($"mudResizeListener.matchMedia", mediaQuery);
 
         private BrowserWindowSize _windowSize;
 
-        public static Dictionary<Breakpoint, int> BreakpointDefinitions { get; set; } = new Dictionary<Breakpoint, int>()
+        public static Dictionary<Breakpoint, int> BreakpointDefinitions { get; set; } = new()
         {
             [Breakpoint.Xl] = 1920,
             [Breakpoint.Lg] = 1280,

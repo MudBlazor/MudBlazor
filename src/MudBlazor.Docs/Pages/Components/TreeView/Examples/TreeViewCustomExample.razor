@@ -14,7 +14,7 @@
 
 @code {
 
-    private HashSet<TreeItemData> TreeItems { get; set; } = new HashSet<TreeItemData>();
+    private HashSet<TreeItemData> TreeItems { get; set; } = new();
 
     public class TreeItemData
     {
@@ -26,7 +26,7 @@
 
         public bool HasChild => TreeItems != null && TreeItems.Count > 0;
 
-        public HashSet<TreeItemData> TreeItems { get; set; } = new HashSet<TreeItemData>();
+        public HashSet<TreeItemData> TreeItems { get; set; } = new();
 
         public TreeItemData(string text, string icon)
         {
@@ -45,24 +45,24 @@
         {
             TreeItems = new HashSet<TreeItemData>()
             {
-                new TreeItemData("MudBlazor", Icons.Custom.Brands.MudBlazor),
-                new TreeItemData("MudBlazor.Docs", Icons.Custom.FileFormats.FileDocument)
+                new("MudBlazor", Icons.Custom.Brands.MudBlazor),
+                new("MudBlazor.Docs", Icons.Custom.FileFormats.FileDocument)
                 {
                     TreeItems = new HashSet<TreeItemData>()
                     {
-                        new TreeItemData("_Imports.razor", Icons.Filled.AlternateEmail),
-                        new TreeItemData( "compilerconfig.json", Icons.Custom.FileFormats.FileImage),
-                        new TreeItemData( "MudBlazor.Docs.csproj", Icons.Custom.Brands.MicrosoftVisualStudio),
-                        new TreeItemData("NewFilesToBuild.txt" , Icons.Custom.FileFormats.FileDocument),
+                        new("_Imports.razor", Icons.Filled.AlternateEmail),
+                        new( "compilerconfig.json", Icons.Custom.FileFormats.FileImage),
+                        new( "MudBlazor.Docs.csproj", Icons.Custom.Brands.MicrosoftVisualStudio),
+                        new("NewFilesToBuild.txt" , Icons.Custom.FileFormats.FileDocument),
                     }
                 },
-                new TreeItemData("MudBlazor.Docs.Client", Icons.Filled.Folder),
-                new TreeItemData("MudBlazor.Docs.Compiler", Icons.Filled.Folder),
-                new TreeItemData("MudBlazor.Docs.Server", Icons.Filled.Folder),
-                new TreeItemData("MudBlazor.UnitTests", Icons.Filled.Folder),
-                new TreeItemData("MudBlazor.UnitTests.Viewer", Icons.Filled.Folder),
-                new TreeItemData(".editorconfig", Icons.Custom.FileFormats.FileCode),
-                new TreeItemData("MudBlazor.sln", Icons.Custom.Brands.MicrosoftVisualStudio)
+                new("MudBlazor.Docs.Client", Icons.Filled.Folder),
+                new("MudBlazor.Docs.Compiler", Icons.Filled.Folder),
+                new("MudBlazor.Docs.Server", Icons.Filled.Folder),
+                new("MudBlazor.UnitTests", Icons.Filled.Folder),
+                new("MudBlazor.UnitTests.Viewer", Icons.Filled.Folder),
+                new(".editorconfig", Icons.Custom.FileFormats.FileCode),
+                new("MudBlazor.sln", Icons.Custom.Brands.MicrosoftVisualStudio)
             }
         });
         TreeItems.Add(new TreeItemData("History", Icons.Filled.Folder));

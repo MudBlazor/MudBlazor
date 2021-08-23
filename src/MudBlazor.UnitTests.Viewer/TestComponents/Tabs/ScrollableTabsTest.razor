@@ -18,7 +18,7 @@
     [Parameter]
     public Position Position { get; set; } = Position.Top;
 
-    private List<string> _tabs = new List<string> { "1", "2", "3", "4", "5", "6" };
+    private List<string> _tabs = new() { "1", "2", "3", "4", "5", "6" };
 
     public void  SetPanelActive(int index)
     {

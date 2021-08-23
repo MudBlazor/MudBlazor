@@ -57,7 +57,7 @@
 @code {
     private bool _hidePosition;
     private IEnumerable<Element> Elements = new List<Element>();
-    private HashSet<Element> selectedItems = new HashSet<Element>();
+    private HashSet<Element> selectedItems = new();
 
     protected override async Task OnInitializedAsync()
     {

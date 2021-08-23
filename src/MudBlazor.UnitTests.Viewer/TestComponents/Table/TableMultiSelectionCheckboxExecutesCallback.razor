@@ -16,7 +16,7 @@
     public static string __description__ = "the selected items (check-box click or row click) should be represented in SelectedItems.";
 
     int[] items = new int[] { 1 };
-    HashSet<int> selectedItems = new HashSet<int>();
+    HashSet<int> selectedItems = new();
 
     private void GotClicked<T>(TableRowClickEventArgs<T> args)
     {

@@ -4,8 +4,8 @@
 <MudChart ChartType="ChartType.Line" ChartSeries="@Series" XAxisLabels="@XAxisLabels" Width="100%" Height="350px"></MudChart>
 
 @code {
-    public List<ChartSeries> Series = new List<ChartSeries>();
-    public ChartOptions Options = new ChartOptions();
+    public List<ChartSeries> Series = new();
+    public ChartOptions Options = new();
     public string[] XAxisLabels = { "1986-04-20", "1986-04-21", "1986-04-22", "1986-04-23", "1986-04-24", "1986-04-25", "1986-04-26" };
     protected override void OnInitialized()
     {

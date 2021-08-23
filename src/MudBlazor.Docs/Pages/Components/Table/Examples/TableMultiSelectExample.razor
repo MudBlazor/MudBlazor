@@ -31,8 +31,8 @@
 
 @code {
     private bool hover = true;
-    private HashSet<Element> selectedItems1 = new HashSet<Element>();
-    private HashSet<Element> selectedItems2 = new HashSet<Element>();
+    private HashSet<Element> selectedItems1 = new();
+    private HashSet<Element> selectedItems2 = new();
 
     private IEnumerable<Element> Elements = new List<Element>();
 

@@ -252,7 +252,7 @@ namespace MudBlazor
 
         protected virtual bool SetFormat(string value)
         {
-            var changed = Format != value;
+            var changed = (Format != value);
             if (changed)
             {
                 ((Converter<T>)Converter).Format = value;

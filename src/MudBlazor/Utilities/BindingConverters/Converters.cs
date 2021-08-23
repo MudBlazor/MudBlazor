@@ -49,7 +49,7 @@ namespace MudBlazor
 
         public static DateConverter DateFormat(string format, CultureInfo culture)
         {
-            return new DateConverter(format) { Culture = culture };
+            return new(format) { Culture = culture };
         }
 
         #endregion

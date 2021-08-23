@@ -123,13 +123,13 @@
     public bool CalculatorOpen { get; set; }
 
 
-    public List<Email> CurrentMailBox = new List<Email>();
+    public List<Email> CurrentMailBox = new();
 
-    public List<Email> Inbox = new List<Email>();
-    public List<Email> Sent = new List<Email>();
-    public List<Email> Drafts = new List<Email>();
-    public List<Email> Spam = new List<Email>();
-    public List<Email> Bin = new List<Email>();
+    public List<Email> Inbox = new();
+    public List<Email> Sent = new();
+    public List<Email> Drafts = new();
+    public List<Email> Spam = new();
+    public List<Email> Bin = new();
 
     public class Email
     {

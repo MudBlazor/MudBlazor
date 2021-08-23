@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using NUnit.Framework;
+using TestContext = Bunit.TestContext;
 
 namespace MudBlazor.UnitTests.Components
 {
@@ -13,7 +14,7 @@ namespace MudBlazor.UnitTests.Components
         [SetUp]
         public virtual void Setup()
         {
-            Context = new();
+            Context = new TestContext();
             Context.AddTestServices();
         }
 

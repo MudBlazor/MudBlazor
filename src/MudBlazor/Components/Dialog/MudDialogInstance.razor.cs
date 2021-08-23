@@ -14,7 +14,7 @@ namespace MudBlazor
 
         [CascadingParameter] public bool RightToLeft { get; set; }
         [CascadingParameter] private MudDialogProvider Parent { get; set; }
-        [CascadingParameter] private DialogOptions GlobalDialogOptions { get; set; } = new DialogOptions();
+        [CascadingParameter] private DialogOptions GlobalDialogOptions { get; set; } = new();
 
         [Parameter]
         public DialogOptions Options

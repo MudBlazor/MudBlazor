@@ -3,7 +3,7 @@ namespace MudBlazor
 {
     public class Typography
     {
-        public Default Default { get; set; } = new Default
+        public Default Default { get; set; } = new()
         {
             FontFamily = new[] { "Roboto", "Helvetica", "Arial", "sans-serif" },
             FontSize = ".875rem",
@@ -11,7 +11,7 @@ namespace MudBlazor
             LineHeight = 1.43,
             LetterSpacing = ".01071em"
         };
-        public H1 H1 { get; set; } = new H1
+        public H1 H1 { get; set; } = new()
         {
             FontFamily = new[] { "Roboto", "Helvetica", "Arial", "sans-serif" },
             FontSize = "6rem",
@@ -19,7 +19,7 @@ namespace MudBlazor
             LineHeight = 1.167,
             LetterSpacing = "-.01562em"
         };
-        public H2 H2 { get; set; } = new H2
+        public H2 H2 { get; set; } = new()
         {
             FontFamily = new[] { "Roboto", "Helvetica", "Arial", "sans-serif" },
             FontSize = "3.75rem",
@@ -27,7 +27,7 @@ namespace MudBlazor
             LineHeight = 1.2,
             LetterSpacing = "-.00833em"
         };
-        public H3 H3 { get; set; } = new H3
+        public H3 H3 { get; set; } = new()
         {
             FontFamily = new[] { "Roboto", "Helvetica", "Arial", "sans-serif" },
             FontSize = "3rem",
@@ -35,7 +35,7 @@ namespace MudBlazor
             LineHeight = 1.167,
             LetterSpacing = "0"
         };
-        public H4 H4 { get; set; } = new H4
+        public H4 H4 { get; set; } = new()
         {
             FontFamily = new[] { "Roboto", "Helvetica", "Arial", "sans-serif" },
             FontSize = "2.125rem",
@@ -43,7 +43,7 @@ namespace MudBlazor
             LineHeight = 1.235,
             LetterSpacing = ".00735em"
         };
-        public H5 H5 { get; set; } = new H5
+        public H5 H5 { get; set; } = new()
         {
             FontFamily = new[] { "Roboto", "Helvetica", "Arial", "sans-serif" },
             FontSize = "1.5rem",
@@ -51,7 +51,7 @@ namespace MudBlazor
             LineHeight = 1.334,
             LetterSpacing = "0"
         };
-        public H6 H6 { get; set; } = new H6
+        public H6 H6 { get; set; } = new()
         {
             FontFamily = new[] { "Roboto", "Helvetica", "Arial", "sans-serif" },
             FontSize = "1.25rem",
@@ -59,7 +59,7 @@ namespace MudBlazor
             LineHeight = 1.6,
             LetterSpacing = ".0075em"
         };
-        public Subtitle1 Subtitle1 { get; set; } = new Subtitle1
+        public Subtitle1 Subtitle1 { get; set; } = new()
         {
             FontFamily = new[] { "Roboto", "Helvetica", "Arial", "sans-serif" },
             FontSize = "1rem",
@@ -67,7 +67,7 @@ namespace MudBlazor
             LineHeight = 1.75,
             LetterSpacing = ".00938em"
         };
-        public Subtitle2 Subtitle2 { get; set; } = new Subtitle2
+        public Subtitle2 Subtitle2 { get; set; } = new()
         {
             FontFamily = new[] { "Roboto", "Helvetica", "Arial", "sans-serif" },
             FontSize = ".875rem",
@@ -75,7 +75,7 @@ namespace MudBlazor
             LineHeight = 1.57,
             LetterSpacing = ".00714em"
         };
-        public Body1 Body1 { get; set; } = new Body1
+        public Body1 Body1 { get; set; } = new()
         {
             FontFamily = new[] { "Roboto", "Helvetica", "Arial", "sans-serif" },
             FontSize = "1rem",
@@ -83,7 +83,7 @@ namespace MudBlazor
             LineHeight = 1.5,
             LetterSpacing = ".00938em"
         };
-        public Body2 Body2 { get; set; } = new Body2
+        public Body2 Body2 { get; set; } = new()
         {
             FontFamily = new[] { "Roboto", "Helvetica", "Arial", "sans-serif" },
             FontSize = ".875rem",
@@ -91,7 +91,7 @@ namespace MudBlazor
             LineHeight = 1.43,
             LetterSpacing = ".01071em"
         };
-        public Button Button { get; set; } = new Button
+        public Button Button { get; set; } = new()
         {
             FontFamily = new[] { "Roboto", "Helvetica", "Arial", "sans-serif" },
             FontSize = ".875rem",
@@ -99,7 +99,7 @@ namespace MudBlazor
             LineHeight = 1.75,
             LetterSpacing = ".02857em"
         };
-        public Caption Caption { get; set; } = new Caption
+        public Caption Caption { get; set; } = new()
         {
             FontFamily = new[] { "Roboto", "Helvetica", "Arial", "sans-serif" },
             FontSize = ".75rem",
@@ -107,7 +107,7 @@ namespace MudBlazor
             LineHeight = 1.66,
             LetterSpacing = ".03333em"
         };
-        public Overline Overline { get; set; } = new Overline
+        public Overline Overline { get; set; } = new()
         {
             FontFamily = new[] { "Roboto", "Helvetica", "Arial", "sans-serif" },
             FontSize = ".75rem",

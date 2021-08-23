@@ -89,7 +89,7 @@ namespace MudBlazor
         {
             _moveNext = true;
 
-            if (SelectedIndex < Items.Count - 1)
+            if (SelectedIndex < (Items.Count - 1))
                 SelectedIndex++;
             else
                 SelectedIndex = 0;

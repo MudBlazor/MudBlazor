@@ -8,7 +8,7 @@
 @code {
     private int Index = -1; //default value cannot be 0 -> first selectedindex is 0.
 
-    public List<ChartSeries> Series = new List<ChartSeries>()
+    public List<ChartSeries> Series = new()
     {
         new ChartSeries() { Name = "United States", Data = new double[] { 40, 20, 25, 27, 46, 60, 48, 80, 15 } },
         new ChartSeries() { Name = "Germany", Data = new double[] { 19, 24, 35, 13, 28, 15, 13, 16, 31 } },

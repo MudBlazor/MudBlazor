@@ -29,7 +29,7 @@ namespace MudBlazor.Services
 
         public PortalItem Clone()
         {
-            return new PortalItem
+            return new()
             {
                 Id = Id,
                 IsVisible = IsVisible,
