@@ -125,7 +125,8 @@ namespace MudBlazor.Docs.Services
                     links.AddRange(menuElement.GroupItems
                         .Elements
                         .Select(i => new NavigationFooterLink(i.Name, i.Link)).OrderBy(i => i.Link));
-            };
+            }
+
             return links;
         }
     }
