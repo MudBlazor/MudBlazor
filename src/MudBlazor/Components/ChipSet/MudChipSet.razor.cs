@@ -56,6 +56,12 @@ namespace MudBlazor
         }
 
         /// <summary>
+        ///  Will disable change in chip(s) selected if set to true.
+        /// </summary>
+        [Parameter]
+        public bool ReadOnly { get; set; } = false;
+
+        /// <summary>
         /// The currently selected chip in Choice mode
         /// </summary>
         [Parameter]
