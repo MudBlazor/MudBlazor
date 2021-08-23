@@ -1,7 +1,7 @@
 ﻿<MudDialog>
     <DialogContent>
         Dialog Content
-        <MudTextField T="string" Immediate TextChanged="@(text=>OnTextChanged(text))"/>
+        <MudTextField T="string" Immediate TextChanged="@(OnTextChanged)"/>
         <div @onclick="OnClick">
             Click here!
         </div>

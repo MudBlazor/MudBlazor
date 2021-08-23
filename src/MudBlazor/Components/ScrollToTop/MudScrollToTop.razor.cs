@@ -86,13 +86,13 @@ namespace MudBlazor
             if (topOffset >= TopOffset && Visible != true)
             {
                 Visible = true;
-                await InvokeAsync(() => StateHasChanged());
+                await InvokeAsync(StateHasChanged);
             }
 
             if (topOffset < TopOffset && Visible == true)
             {
                 Visible = false;
-                await InvokeAsync(() => StateHasChanged());
+                await InvokeAsync(StateHasChanged);
             }
         }
 

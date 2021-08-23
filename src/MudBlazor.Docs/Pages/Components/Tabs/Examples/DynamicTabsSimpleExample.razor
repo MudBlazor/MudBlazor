@@ -1,6 +1,6 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
-<MudDynamicTabs Elevation="4" Rounded="true" ApplyEffectsToContainer="true" PanelClass="px-4 py-6" AddTab="AddTabCallback" CloseTab="@(panel => CloseTabCallback(panel))" @bind-ActivePanelIndex="_index" AddIconToolTip="Click here to add a new tab" CloseIconToolTip="Close this tab. All data will be lost">
+<MudDynamicTabs Elevation="4" Rounded="true" ApplyEffectsToContainer="true" PanelClass="px-4 py-6" AddTab="AddTabCallback" CloseTab="@(CloseTabCallback)" @bind-ActivePanelIndex="_index" AddIconToolTip="Click here to add a new tab" CloseIconToolTip="Close this tab. All data will be lost">
 	@foreach (var item in _tabs)
 	{
 	 <MudTabPanel Text="@item.Name" Tag="@item.Id">@item.Content</MudTabPanel>
