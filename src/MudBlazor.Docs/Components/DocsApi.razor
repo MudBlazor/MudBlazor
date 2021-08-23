@@ -134,31 +134,18 @@
         }
     }
 
-    private IEnumerable<ApiMethod> Methods
-    {
-        get
+    private IEnumerable<ApiMethod> Methods => Type
+        .GetMethods(BindingFlags.Instance | BindingFlags.Public | BindingFlags.FlattenHierarchy | BindingFlags.Static).OrderBy(x => x.Name)
+        .Where(info => !hiddenMethods.Any(x => x.Contains(info.Name)) && !info.Name.StartsWith("get_") && !info.Name.StartsWith("set_"))
+        .Where(info => info.GetCustomAttributes(typeof(ObsoleteAttribute), true).Length == 0)
+        .Select(info => new ApiMethod
         {
-            {
-                foreach (var info in Type.GetMethods(BindingFlags.Instance | BindingFlags.Public | BindingFlags.FlattenHierarchy | BindingFlags.Static).OrderBy(x => x.Name))
-                {
-                    if (!hiddenMethods.Any(x => x.Contains(info.Name)) && !info.Name.StartsWith("get_") && !info.Name.StartsWith("set_"))
-                    {
-                        if (info.GetCustomAttributes(typeof(ObsoleteAttribute), true).Length == 0)
-                        {
-                            yield return new ApiMethod
-                            {
-                                MethodInfo = info,
-                                Return = info.ReturnParameter,
-                                Signature = info.GetSignature(),
-                                Parameters = info.GetParameters(),
-                                Documentation = info.GetDocumentation()
-                            };
-                        }
-                    }
-                }
-            }
-        }
-    }
+            MethodInfo = info,
+            Return = info.ReturnParameter,
+            Signature = info.GetSignature(),
+            Parameters = info.GetParameters(),
+            Documentation = info.GetDocumentation()
+        });
 
     private IEnumerable<ApiProperty> Properties
     {
