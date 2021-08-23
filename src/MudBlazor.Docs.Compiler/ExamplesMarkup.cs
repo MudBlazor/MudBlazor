@@ -119,12 +119,12 @@ namespace MudBlazor.Docs.Compiler
             return Regex.Replace(
                 html,
                 @"<span class=""htmlAttributeValue"">&quot;(?'value'.*?)&quot;</span>",
-                new MatchEvaluator(m =>
-                    {
-                        var value = m.Groups["value"].Value;
-                        return
-                            $@"<span class=""quot"">&quot;</span>{AttributeValuePostprocessing(value)}<span class=""quot"">&quot;</span>";
-                    }));
+                m =>
+                {
+                    var value = m.Groups["value"].Value;
+                    return
+                        $@"<span class=""quot"">&quot;</span>{AttributeValuePostprocessing(value)}<span class=""quot"">&quot;</span>";
+                });
         }
 
         private static string AttributeValuePostprocessing(string value)

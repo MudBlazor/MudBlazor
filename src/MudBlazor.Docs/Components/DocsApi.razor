@@ -253,12 +253,12 @@
 
     RenderFragment RenderTheType()
     {
-        return new(builder =>
+        return builder =>
         {
             builder.OpenComponent(0, Type);
             builder.AddComponentReferenceCapture(1, inst => { _comp_instance = inst; });
             builder.CloseComponent();
-        });
+        };
     }
 
     private object GetDefaultValue(PropertyInfo info)

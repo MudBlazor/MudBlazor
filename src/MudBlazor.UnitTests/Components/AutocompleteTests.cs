@@ -188,7 +188,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<MudAutocomplete<string>>((a) =>
             {
                 a.Add(x => x.DebounceInterval, 0);
-                a.Add(x => x.SearchFunc, new Func<string, Task<IEnumerable<string>>>(async s => null)); // <--- searchfunc returns null instead of sequence
+                a.Add(x => x.SearchFunc, async s => null); // <--- searchfunc returns null instead of sequence
             });
             // enter a text so the search func will return null, and it shouldn't throw an exception
             comp.SetParam(a => a.Text, "Do not throw");
