@@ -117,14 +117,12 @@ namespace MudBlazor
             {
                 return $"mud-table-sort-label-icon mud-direction-desc";
             }
-            else if (_direction == SortDirection.Ascending)
+
+            if (_direction == SortDirection.Ascending)
             {
                 return $"mud-table-sort-label-icon mud-direction-asc";
             }
-            else
-            {
-                return $"mud-table-sort-label-icon";
-            }
+            return $"mud-table-sort-label-icon";
         }
     }
 }

@@ -51,9 +51,6 @@
         {
             return $"Selected state{(selectedValues.Count > 1 ? "s" : "")}: {string.Join(", ", selectedValues.Select(x => x))}";
         }
-        else
-        {
-            return $"{selectedValues.Count} state{(selectedValues.Count > 1 ? "s have":" has")} been selected";
-        }
+        return $"{selectedValues.Count} state{(selectedValues.Count > 1 ? "s have":" has")} been selected";
     }
 }

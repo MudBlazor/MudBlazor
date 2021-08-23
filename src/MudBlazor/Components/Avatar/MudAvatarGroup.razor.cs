@@ -133,8 +133,7 @@ namespace MudBlazor
         {
             if (_avatars.IndexOf(avatar) < Max)
                 return true;
-            else
-                return false;
+            return false;
         }
 
         protected override void OnParametersSet()

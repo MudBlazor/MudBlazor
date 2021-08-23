@@ -208,7 +208,8 @@ namespace MudBlazor
             {
                 return b.AddClass("mud-selected").AddClass($"mud-theme-{Color.ToDescriptionString()}").Build();
             }
-            else if (_firstDate != null && day > _firstDate)
+
+            if (_firstDate != null && day > _firstDate)
             {
                 return b.AddClass("mud-range")
                     .AddClass("mud-range-selection", _secondDate == null)

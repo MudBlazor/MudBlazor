@@ -32,9 +32,8 @@
 
 	private string FormatParam(T value)
 	{
-		if (value is IFormattable f)
+	    if (value is IFormattable f)
 			return f.ToString(TagFormat, CultureInfo.InvariantCulture.NumberFormat);
-		else
-			return null;
+	    return null;
 	}
 }

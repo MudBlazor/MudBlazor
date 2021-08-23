@@ -64,10 +64,8 @@ namespace MudBlazor
             {
                 return string.Format(DataFormatString, item);
             }
-            else
-            {
-                return item?.ToString();
-            }
+
+            return item?.ToString();
         }
     }
 }

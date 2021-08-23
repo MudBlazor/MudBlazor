@@ -38,18 +38,14 @@ namespace MudBlazor
             {
                 return time.TimeOfDay;
             }
-            else
+
+            var m = Regex.Match(value, "AM|PM", RegexOptions.IgnoreCase);
+            if (m.Success)
             {
-                var m = Regex.Match(value, "AM|PM", RegexOptions.IgnoreCase);
-                if (m.Success)
-                {
-                    return DateTime.ParseExact(value, format12Hours, CultureInfo.InvariantCulture).TimeOfDay;
-                }
-                else
-                {
-                    return DateTime.ParseExact(value, format24Hours, CultureInfo.InvariantCulture).TimeOfDay;
-                }
+                return DateTime.ParseExact(value, format12Hours, CultureInfo.InvariantCulture).TimeOfDay;
             }
+
+            return DateTime.ParseExact(value, format24Hours, CultureInfo.InvariantCulture).TimeOfDay;
         }
 
         private bool _amPm = false;
@@ -280,8 +276,7 @@ namespace MudBlazor
         {
             if (MouseDown)
                 return $"mud-picker-time-clock-pointer mud-{Color.ToDescriptionString()}";
-            else
-                return $"mud-picker-time-clock-pointer mud-picker-time-clock-pointer-animation mud-{Color.ToDescriptionString()}";
+            return $"mud-picker-time-clock-pointer mud-picker-time-clock-pointer-animation mud-{Color.ToDescriptionString()}";
         }
 
         private string GetClockPointerThumbColor()
@@ -289,8 +284,7 @@ namespace MudBlazor
             var deg = GetDeg();
             if (deg % 30 == 0)
                 return $"mud-picker-time-clock-pointer-thumb mud-onclock-text mud-onclock-primary mud-{Color.ToDescriptionString()}";
-            else
-                return $"mud-picker-time-clock-pointer-thumb mud-onclock-minute mud-{Color.ToDescriptionString()}-text";
+            return $"mud-picker-time-clock-pointer-thumb mud-onclock-minute mud-{Color.ToDescriptionString()}-text";
         }
 
         private string GetNumberColor(int value)

@@ -52,10 +52,8 @@ namespace MudBlazor
                 {
                     return Activator.CreateInstance<T>();
                 }
-                else
-                {
-                    return default;
-                }
+
+                return default;
             }
         }
         /// <summary>
@@ -218,8 +216,7 @@ namespace MudBlazor
                         return new HashSet<T>(Array.Empty<T>());
                     else
                         return new HashSet<T>(new T[] { _selectedItem });
-                else
-                    return Context.Selection;
+                return Context.Selection;
             }
             set
             {

@@ -28,8 +28,7 @@ namespace MudBlazor.Examples.Data
 
             if (search == string.Empty)
                 return elements;
-            else
-                return elements.Where(elm => (elm.Sign + elm.Name).Contains(search, StringComparison.InvariantCultureIgnoreCase));
+            return elements.Where(elm => (elm.Sign + elm.Name).Contains(search, StringComparison.InvariantCultureIgnoreCase));
         }
 
         public static string GetResourceKey(Assembly assembly, string embeddedFile)

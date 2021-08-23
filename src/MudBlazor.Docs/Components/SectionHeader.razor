@@ -63,9 +63,6 @@
         {
             return Section.Id;
         }
-        else
-        {
-            return Guid.NewGuid().ToString();
-        }
+        return Guid.NewGuid().ToString();
     }
 }

@@ -31,24 +31,22 @@ namespace MudBlazor.Components.Highlighter
             {
                 return new List<string> { text };
             }
-            else
-            {
-                //escapes the text for regex             
-                highlightedText = Regex.Escape(highlightedText);
-                if (untilNextBoundary)
-                {
-                    highlightedText += NextBoundary;
-                }
 
-                //using braces in the pattern keeps the pattern when splitting
-                return Regex
-                     .Split(text,
-                            $"({highlightedText})",
-                            caseSensitive
-                              ? RegexOptions.None
-                              : RegexOptions.IgnoreCase)
-                     .Where(s => !string.IsNullOrEmpty(s));
+            //escapes the text for regex             
+            highlightedText = Regex.Escape(highlightedText);
+            if (untilNextBoundary)
+            {
+                highlightedText += NextBoundary;
             }
+
+            //using braces in the pattern keeps the pattern when splitting
+            return Regex
+                .Split(text,
+                    $"({highlightedText})",
+                    caseSensitive
+                        ? RegexOptions.None
+                        : RegexOptions.IgnoreCase)
+                .Where(s => !string.IsNullOrEmpty(s));
         }
     }
 }

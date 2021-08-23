@@ -147,14 +147,13 @@ _jsRuntime.InvokeAsync<bool>($"mudResizeListener.matchMedia", mediaQuery);
                 return Breakpoint.Xs;
             if (_windowSize.Width >= BreakpointDefinitions[Breakpoint.Xl])
                 return Breakpoint.Xl;
-            else if (_windowSize.Width >= BreakpointDefinitions[Breakpoint.Lg])
+            if (_windowSize.Width >= BreakpointDefinitions[Breakpoint.Lg])
                 return Breakpoint.Lg;
-            else if (_windowSize.Width >= BreakpointDefinitions[Breakpoint.Md])
+            if (_windowSize.Width >= BreakpointDefinitions[Breakpoint.Md])
                 return Breakpoint.Md;
-            else if (_windowSize.Width >= BreakpointDefinitions[Breakpoint.Sm])
+            if (_windowSize.Width >= BreakpointDefinitions[Breakpoint.Sm])
                 return Breakpoint.Sm;
-            else
-                return Breakpoint.Xs;
+            return Breakpoint.Xs;
         }
 
         public async Task<bool> IsMediaSize(Breakpoint breakpoint)

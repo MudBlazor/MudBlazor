@@ -35,11 +35,11 @@
         //This is just a google translation. If you have a better translation, feel free to share it with us  :)
         if (key.Equals("CardAvatarLetter"))
             return _rightToLeft ? "ا" : "I";
-        else if (key.Equals("CardHeader"))
+        if (key.Equals("CardHeader"))
             return _rightToLeft ? "استريا كرواتيا" : "Istra Croatia";
-        else if (key.Equals("CardSubHeader"))
+        if (key.Equals("CardSubHeader"))
             return _rightToLeft ? "شبه الجزيرة في أوروبا" : "Peninsula in Europe";
-        else if (key.Equals("CardDescription"))
+        if (key.Equals("CardDescription"))
             return _rightToLeft ? "التقطت هذه الصورة في قرية صغيرة في استرا كرواتيا" : "This photo was taken in a small village in Istra Croatia.";
         return "";
     }

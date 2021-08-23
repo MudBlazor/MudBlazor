@@ -92,8 +92,7 @@ namespace MudBlazor
             {
                 if (Parent?.Expandable ?? false)
                     return true;
-                else
-                    return Parent?.IsParentExpandable ?? false;
+                return Parent?.IsParentExpandable ?? false;
             }
         }
 
@@ -103,8 +102,7 @@ namespace MudBlazor
             {
                 if (Expandable)
                     return Expandable;
-                else
-                    return Parent?.IsThisOrParentExpandable ?? false;
+                return Parent?.IsThisOrParentExpandable ?? false;
             }
         }
 
@@ -114,8 +112,7 @@ namespace MudBlazor
             {
                 if (Parent == null)
                     return 1;
-                else
-                    return Parent.Level + 1;
+                return Parent.Level + 1;
             }
         }
 

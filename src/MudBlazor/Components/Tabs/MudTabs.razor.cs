@@ -441,12 +441,11 @@ namespace MudBlazor
         {
             if (Position == Position.Right)
                 return Placement.Start;
-            else if (Position == Position.Left)
+            if (Position == Position.Left)
                 return Placement.End;
-            else if (Position == Position.Bottom)
+            if (Position == Position.Bottom)
                 return Placement.Top;
-            else
-                return Placement.Bottom;
+            return Placement.Bottom;
         }
 
         string GetTabStyle(MudTabPanel panel)

@@ -91,8 +91,9 @@ namespace MudBlazor
                 if (MaxHeight != null)
                 {
                     if (MaxHeight <= 200) return 0.2;
-                    else if (MaxHeight <= 600) return 0.4;
-                    else if (MaxHeight <= 1400) return 0.6;
+                    if (MaxHeight <= 600) return 0.4;
+                    if (MaxHeight <= 1400) return 0.6;
+
                     return 1;
                 }
                 return Math.Min(_height / 800.0, 1);

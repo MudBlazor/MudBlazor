@@ -53,7 +53,8 @@ namespace MudBlazor.Docs.Models
                     {
                         return x.MakeGenericType(typeof(T));
                     }
-                    else if (x.Name.ToLowerInvariant() == $"mud{component}".ToLowerInvariant())
+
+                    if (x.Name.ToLowerInvariant() == $"mud{component}".ToLowerInvariant())
                     {
                         return x;
                     }
