@@ -303,7 +303,7 @@ namespace MudBlazor
         {
             get
             {
-                if (@PagerContent == null)
+                if (PagerContent == null)
                     return FilteredItems; // we have no pagination
                 if (ServerData == null)
                 {

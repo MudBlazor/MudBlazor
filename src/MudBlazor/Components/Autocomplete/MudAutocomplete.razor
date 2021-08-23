@@ -32,18 +32,18 @@
                                 <MudListItem @key="@item" id="@GetListItemId(index)" OnClick="@(() => SelectOption(item))" Class="@(is_selected ? "mud-selected-item" : "")">
                                     @if (ItemTemplate == null)
                                     {
-                                        @GetItemString(item)
+                                        GetItemString(item);
                                     }
                                     else if (is_selected)
                                     {
-                                        @if (ItemSelectedTemplate == null)
-                                            @ItemTemplate(item)
+                                        if (ItemSelectedTemplate == null)
+                                            ItemTemplate(item);
                                         else
-                                            @ItemSelectedTemplate(item)
+                                            ItemSelectedTemplate(item);
                                     }
                                     else
                                     {
-                                        @ItemTemplate(item)
+                                        ItemTemplate(item);
                                     }
                                 </MudListItem>
                             }

@@ -77,7 +77,7 @@ namespace MudBlazor
         /// <summary>
         /// If set, overrides the default expand icon.
         /// </summary>
-        [Parameter] public string ExpandIcon { get; set; } = @Icons.Filled.ArrowDropDown;
+        [Parameter] public string ExpandIcon { get; set; } = Icons.Filled.ArrowDropDown;
         [Parameter] public RenderFragment ChildContent { get; set; }
 
         protected void ExpandedToggle()

@@ -6,7 +6,7 @@
 @if (IsEnabled)
 {
     <Virtualize Items="@Items" Context="item">
-        @if (@ChildContent != null)
+        @if (ChildContent != null)
         {
             @ChildContent(item)
         }
