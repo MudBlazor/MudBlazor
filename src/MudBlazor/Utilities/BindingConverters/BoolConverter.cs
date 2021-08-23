@@ -47,8 +47,6 @@ namespace MudBlazor
             {
                 if (arg is bool)
                     return (bool)(object)arg;
-                if (arg is bool?)
-                    return (bool?)(object)arg;
                 if (arg is int)
                     return (int)(object)arg > 0;
                 if (arg is string)
