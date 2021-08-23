@@ -6,7 +6,7 @@
         public static T As<T>(this object self)
         {
             if (self == null || !(self is T))
-                return default(T);
+                return default;
             return (T)self;
         }
     }

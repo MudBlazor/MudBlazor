@@ -66,9 +66,9 @@ namespace MudBlazor
             catch (Exception e)
             {
                 UpdateGetError("Conversion error: " + e.Message);
-                return default(T);
+                return default;
             }
-            return default(T);
+            return default;
         }
 
         private double OnSet(T arg)

@@ -24,7 +24,7 @@ namespace MudBlazor
             SetError = false;
             SetErrorMessage = null;
             if (SetFunc == null)
-                return default(U);
+                return default;
             try
             {
                 return SetFunc(value);
@@ -34,7 +34,7 @@ namespace MudBlazor
                 SetError = true;
                 SetErrorMessage = $"Conversion from {typeof(T).Name} to {typeof(U).Name} failed: {e.Message}";
             }
-            return default(U);
+            return default;
         }
 
         public T Get(U value)
@@ -42,7 +42,7 @@ namespace MudBlazor
             GetError = false;
             GetErrorMessage = null;
             if (GetFunc == null)
-                return default(T);
+                return default;
             try
             {
                 return GetFunc(value);
@@ -52,7 +52,7 @@ namespace MudBlazor
                 GetError = true;
                 GetErrorMessage = $"Conversion from {typeof(U).Name} to {typeof(T).Name} failed: {e.Message}";
             }
-            return default(T);
+            return default;
         }
 
         protected void UpdateSetError(string msg)

@@ -28,7 +28,7 @@ namespace MudBlazor
 
                 // this is important, or otherwise all the TryParse down there might fail.
                 if (string.IsNullOrEmpty(value))
-                    return default(T);
+                    return default;
                 // char
                 if (typeof(T) == typeof(char) || typeof(T) == typeof(char?))
                 {
@@ -176,7 +176,7 @@ namespace MudBlazor
                 UpdateGetError("Conversion error: " + e.Message);
             }
 
-            return default(T);
+            return default;
         }
 
         private string OnSet(T arg)
