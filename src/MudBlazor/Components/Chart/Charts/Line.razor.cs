@@ -180,13 +180,11 @@ namespace MudBlazor.Charts
                             chartLine += "M ";
                             firstTime = false;
                             gridValueX = horizontalStartSpace;
-                            gridValueY = verticalStartSpace;
                         }
                         else
                         {
                             chartLine += " L ";
                             gridValueX += horizontalSpace;
-                            gridValueY = verticalStartSpace;
                         }
                         gridValueY = yValue;
                         chartLine = chartLine + ToS(gridValueX) + " " + ToS(gridValueY);
