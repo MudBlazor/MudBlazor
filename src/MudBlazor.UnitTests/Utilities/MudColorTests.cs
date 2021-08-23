@@ -116,7 +116,7 @@ namespace MudBlazor.UnitTests.Utilities
         [Test]
         public void FromRGB_Byte_AndAlphaDouble()
         {
-            MudColor color = new((byte)123, (byte)240, (byte)130, 0.8);
+            MudColor color = new(123, 240, 130, 0.8);
 
             color.R.Should().Be(123);
             color.G.Should().Be(240);
@@ -127,7 +127,7 @@ namespace MudBlazor.UnitTests.Utilities
         [Test]
         public void FromRGB_Int()
         {
-            MudColor color = new((int)123, (int)240, (int)130, (int)76);
+            MudColor color = new(123, 240, 130, 76);
 
             color.R.Should().Be(123);
             color.G.Should().Be(240);
@@ -138,7 +138,7 @@ namespace MudBlazor.UnitTests.Utilities
         [Test]
         public void FromRGB_Int_CapsToMaximum()
         {
-            MudColor color = new((int)300, (int)2152525, (int)266, (int)25555);
+            MudColor color = new(300, 2152525, 266, 25555);
 
             color.R.Should().Be(255);
             color.G.Should().Be(255);
@@ -149,7 +149,7 @@ namespace MudBlazor.UnitTests.Utilities
         [Test]
         public void FromRGB_Int_EnsureMinimum()
         {
-            MudColor color = new((int)-300, (int)-2152525, (int)-266, (int)-25555);
+            MudColor color = new(-300, -2152525, -266, -25555);
 
             color.R.Should().Be(0);
             color.G.Should().Be(0);
@@ -160,7 +160,7 @@ namespace MudBlazor.UnitTests.Utilities
         [Test]
         public void FromRGB_Int_WithDoubleAlpha()
         {
-            MudColor color = new((int)123, (int)240, (int)130, 0.8);
+            MudColor color = new(123, 240, 130, 0.8);
 
             color.R.Should().Be(123);
             color.G.Should().Be(240);
@@ -171,7 +171,7 @@ namespace MudBlazor.UnitTests.Utilities
         [Test]
         public void FromRGB_Int_WithDoubleAlpha_CapsToMaximum()
         {
-            MudColor color = new((int)300, (int)2152525, (int)266, 2.4);
+            MudColor color = new(300, 2152525, 266, 2.4);
 
             color.R.Should().Be(255);
             color.G.Should().Be(255);
@@ -182,7 +182,7 @@ namespace MudBlazor.UnitTests.Utilities
         [Test]
         public void FromRGB_Int_WithDoubleAlpha_EnsureMinimum()
         {
-            MudColor color = new((int)-300, (int)-2152525, (int)-266, -0.8);
+            MudColor color = new(-300, -2152525, -266, -0.8);
 
             color.R.Should().Be(0);
             color.G.Should().Be(0);
@@ -370,7 +370,7 @@ namespace MudBlazor.UnitTests.Utilities
         [Test]
         public void ChangeLightness()
         {
-            MudColor color = new(140.0, 0.2, 0.4, (byte)170);
+            MudColor color = new(140.0, 0.2, 0.4, 170);
 
             color.ChangeLightness(-0.4).L.Should().Be(0.0);
             color.ChangeLightness(-0.5).L.Should().Be(0.0);
@@ -383,7 +383,7 @@ namespace MudBlazor.UnitTests.Utilities
         [Test]
         public void ColorLighten()
         {
-            MudColor color = new(140.0, 0.2, 0.4, (byte)170);
+            MudColor color = new(140.0, 0.2, 0.4, 170);
 
             color.ChangeLightness(0.4).L.Should().Be(0.8);
             color.ChangeLightness(0.5).L.Should().Be(0.9);
@@ -396,7 +396,7 @@ namespace MudBlazor.UnitTests.Utilities
         [Test]
         public void ColorDarken()
         {
-            MudColor color = new(140.0, 0.2, 0.4, (byte)170);
+            MudColor color = new(140.0, 0.2, 0.4, 170);
 
             color.ColorDarken(0.4).L.Should().Be(0.0);
             color.ColorDarken(0.5).L.Should().Be(0.0);
@@ -408,14 +408,14 @@ namespace MudBlazor.UnitTests.Utilities
         [Test]
         public void ColorRgbLighten()
         {
-            MudColor color = new(140.0, 0.2, 0.5, (byte)170);
+            MudColor color = new(140.0, 0.2, 0.5, 170);
             color.ColorRgbLighten().L.Should().Be(0.57);
         }
 
         [Test]
         public void ColorRgbDarken()
         {
-            MudColor color = new(140.0, 0.2, 0.5, (byte)170);
+            MudColor color = new(140.0, 0.2, 0.5, 170);
             color.ColorRgbDarken().L.Should().Be(0.42);
         }
 
