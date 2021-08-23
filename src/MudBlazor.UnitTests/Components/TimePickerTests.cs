@@ -15,7 +15,7 @@ namespace MudBlazor.UnitTests.Components
     {
         public IRenderedComponent<MudTimePicker> OpenPicker(ComponentParameter parameter)
         {
-            return OpenPicker(new ComponentParameter[] { parameter });
+            return OpenPicker(new[] { parameter });
         }
 
         public IRenderedComponent<MudTimePicker> OpenPicker(ComponentParameter[] parameters = null)
@@ -265,7 +265,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void DragAndClick_AllHours12h_TestCoverage()
         {
-            var comp = OpenPicker(new ComponentParameter[] { Parameter("OpenTo", OpenTo.Hours), Parameter("AmPm", true) });
+            var comp = OpenPicker(new[] { Parameter("OpenTo", OpenTo.Hours), Parameter("AmPm", true) });
             var picker = comp.Instance;
             Console.Write(comp.Markup);
             // Any hours displayed
