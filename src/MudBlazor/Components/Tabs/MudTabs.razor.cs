@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -43,7 +43,7 @@ namespace MudBlazor
         [Parameter] public bool Rounded { get; set; }
 
         /// <summary>
-        /// If true, sets a border betwen the content and the toolbar depending on the position.
+        /// If true, sets a border between the content and the toolbar depending on the position.
         /// </summary>
         [Parameter] public bool Border { get; set; }
 
@@ -172,31 +172,31 @@ namespace MudBlazor
         private List<MudTabPanel> _panels;
 
         /// <summary>
-        /// A render fragement that is added before or after (based on the value of HeaderPosition) the tabs inside the header panel of the tab control
+        /// A render fragment that is added before or after (based on the value of HeaderPosition) the tabs inside the header panel of the tab control
         /// </summary>
         [Parameter]
         public RenderFragment<MudTabs> Header { get; set; }
 
         /// <summary>
-        /// Addional content specified by Header is placed either before the tabs, after or not at all
+        /// Additional content specified by Header is placed either before the tabs, after or not at all
         /// </summary>
         [Parameter]
         public TabHeaderPosition HeaderPosition { get; set; } = TabHeaderPosition.After;
 
         /// <summary>
-        /// A render fragement that is added before or after (based on the value of HeaderPosition) inside each tab panel
+        /// A render fragment that is added before or after (based on the value of HeaderPosition) inside each tab panel
         /// </summary>
         [Parameter]
         public RenderFragment<MudTabPanel> TabPanelHeader { get; set; }
 
         /// <summary>
-        /// Addional content specified by Header is placed either before the tabs, after or not at all
+        /// Additional content specified by Header is placed either before the tabs, after or not at all
         /// </summary>
         [Parameter]
         public TabHeaderPosition TabPanelHeaderPosition { get; set; } = TabHeaderPosition.After;
 
         /// <summary>
-        /// Can be used in derivate class to add a class to the main container. If not overwritten return an empty string
+        /// Can be used in derived class to add a class to the main container. If not overwritten return an empty string
         /// </summary>
         protected virtual string InternalClassName { get; } = string.Empty;
 
@@ -371,7 +371,7 @@ namespace MudBlazor
 
         protected string WrapperScrollStyle =>
         new StyleBuilder()
-            .AddStyle("transform", $"translateX({ (-1 * _scrollPosition).ToString(CultureInfo.InvariantCulture)}px)", Position == Position.Top || Position == Position.Bottom)
+            .AddStyle("transform", $"translateX({ (-1 * _scrollPosition).ToString(CultureInfo.InvariantCulture)}px)", Position is Position.Top or Position.Bottom)
             .AddStyle("transform", $"translateY({ (-1 * _scrollPosition).ToString(CultureInfo.InvariantCulture)}px)", IsVerticalTabs())
             .Build();
 
@@ -384,7 +384,7 @@ namespace MudBlazor
         protected string SliderClass =>
             new CssBuilder("mud-tab-slider")
             .AddClass($"mud-{SliderColor.ToDescriptionString()}", SliderColor != Color.Inherit)
-            .AddClass($"mud-tab-slider-horizontal", Position == Position.Top || Position == Position.Bottom)
+            .AddClass($"mud-tab-slider-horizontal", Position is Position.Top or Position.Bottom)
             .AddClass($"mud-tab-slider-vertical", IsVerticalTabs())
             .AddClass($"mud-tab-slider-horizontal-reverse", Position == Position.Bottom)
             .AddClass($"mud-tab-slider-vertical-reverse", Position == Position.Right || Position == Position.Start && RightToLeft || Position == Position.End && !RightToLeft)
@@ -397,14 +397,14 @@ namespace MudBlazor
 
         protected string SliderStyle => RightToLeft ?
             new StyleBuilder()
-            .AddStyle("width", $"{_size.ToString(CultureInfo.InvariantCulture)}px", Position == Position.Top || Position == Position.Bottom)
-            .AddStyle("right", $"{_position.ToString(CultureInfo.InvariantCulture)}px", Position == Position.Top || Position == Position.Bottom)
-            .AddStyle("transition", "right .3s cubic-bezier(.64,.09,.08,1);", Position == Position.Top || Position == Position.Bottom)
+            .AddStyle("width", $"{_size.ToString(CultureInfo.InvariantCulture)}px", Position is Position.Top or Position.Bottom)
+            .AddStyle("right", $"{_position.ToString(CultureInfo.InvariantCulture)}px", Position is Position.Top or Position.Bottom)
+            .AddStyle("transition", "right .3s cubic-bezier(.64,.09,.08,1);", Position is Position.Top or Position.Bottom)
             .AddStyle("height", $"{_size.ToString(CultureInfo.InvariantCulture)}px", IsVerticalTabs())
             .AddStyle("top", $"{_position.ToString(CultureInfo.InvariantCulture)}px", IsVerticalTabs())
             .Build() : new StyleBuilder()
-            .AddStyle("width", $"{_size.ToString(CultureInfo.InvariantCulture)}px", Position == Position.Top || Position == Position.Bottom)
-            .AddStyle("left", $"{_position.ToString(CultureInfo.InvariantCulture)}px", Position == Position.Top || Position == Position.Bottom)
+            .AddStyle("width", $"{_size.ToString(CultureInfo.InvariantCulture)}px", Position is Position.Top or Position.Bottom)
+            .AddStyle("left", $"{_position.ToString(CultureInfo.InvariantCulture)}px", Position is Position.Top or Position.Bottom)
             .AddStyle("height", $"{_size.ToString(CultureInfo.InvariantCulture)}px", IsVerticalTabs())
             .AddStyle("top", $"{_position.ToString(CultureInfo.InvariantCulture)}px", IsVerticalTabs())
             .Build();
@@ -583,10 +583,10 @@ namespace MudBlazor
                 return;
             }
 
-            int indexCorrection = 1;
+            var indexCorrection = 1;
             while (true)
             {
-                int panelAfterIndex = _activePanelIndex + indexCorrection;
+                var panelAfterIndex = _activePanelIndex + indexCorrection;
                 if (IsAfterLastPanelIndex(panelAfterIndex) == false)
                 {
                     length += GetPanelLength(_panels[panelAfterIndex]);

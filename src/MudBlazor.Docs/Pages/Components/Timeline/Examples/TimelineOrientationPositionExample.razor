@@ -8,7 +8,7 @@
         </MudSelect>
     </MudItem>
     <MudItem xs="12" sm="5">
-        <MudSelect T="TimelinePosition" @bind-Value="@_postion" Label="TimelinePosition" Dense="true" Variant="Variant.Outlined">
+        <MudSelect T="TimelinePosition" @bind-Value="@_position" Label="TimelinePosition" Dense="true" Variant="Variant.Outlined">
             @if(_orientation == TimelineOrientation.Vertical)
             {
                 <MudSelectItem T="TimelinePosition" Value="TimelinePosition.Start">Start</MudSelectItem>
@@ -30,7 +30,7 @@
     </MudItem>
 </MudGrid>
 
-<MudTimeline TimelineOrientation="_orientation" TimelinePosition="_postion" Reverse="_reverse">
+<MudTimeline TimelineOrientation="_orientation" TimelinePosition="_position" Reverse="_reverse">
     <MudTimelineItem Color="Color.Success" Variant="Variant.Filled">
         <ItemContent>
             <MudAlert Severity="Severity.Success">The reactor is running at optimum temperature</MudAlert>
@@ -59,7 +59,7 @@
 
 
 @code {
-    private TimelinePosition _postion { get; set; } = TimelinePosition.Start;
+    private TimelinePosition _position { get; set; } = TimelinePosition.Start;
     private TimelineOrientation _orientation { get; set; } = TimelineOrientation.Vertical;
     private bool _reverse { get; set; }
 
@@ -69,19 +69,19 @@
         switch (value)
         {
             case TimelineOrientation.Vertical:
-                if (_postion == TimelinePosition.Top || _postion == TimelinePosition.Bottom)
-                    _postion = TimelinePosition.Start;
+                if (_position is TimelinePosition.Top or TimelinePosition.Bottom)
+                    _position = TimelinePosition.Start;
                 break;
             case TimelineOrientation.Horizontal:
-                if (_postion == TimelinePosition.Start || _postion == TimelinePosition.Left || _postion == TimelinePosition.Right || _postion == TimelinePosition.End)
-                    _postion = TimelinePosition.Top;
+                if (_position is TimelinePosition.Start or TimelinePosition.Left or TimelinePosition.Right or TimelinePosition.End)
+                    _position = TimelinePosition.Top;
                 break;
         }
     }
 
     bool IsSwitchDisabled()
     {
-        if (_postion == TimelinePosition.Alternate)
+        if (_position == TimelinePosition.Alternate)
             return false;
         else
             _reverse = false;

@@ -92,10 +92,12 @@ namespace MudBlazor
 
         private string _content;
 
-        private async Task HandleBadgeClick(MouseEventArgs e)
+        private Task HandleBadgeClick(MouseEventArgs e)
         {
             if (OnClick.HasDelegate)
-                await OnClick.InvokeAsync(e);
+                return OnClick.InvokeAsync(e);
+
+            return Task.CompletedTask;
         }
 
         protected override void OnParametersSet()

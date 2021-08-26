@@ -33,7 +33,7 @@ namespace MudBlazor
         {
             date = null;
 
-            if (!RangeConverter<DateTime>.Split(value, out string start, out string end))
+            if (!RangeConverter<DateTime>.Split(value, out var start, out var end))
                 return false;
 
             return TryParse(start, end, converter, out date);

@@ -134,11 +134,11 @@ namespace MudBlazor
             return _elementReference.SelectRangeAsync(pos1, pos2);
         }
 
-        protected override async Task SetValueAsync(T value, bool updateText = true)
+        protected override Task SetValueAsync(T value, bool updateText = true)
         {
             bool valueChanged;
             (value, valueChanged) = ConstrainBoundaries(value);
-            await base.SetValueAsync(value, valueChanged || updateText);
+            return base.SetValueAsync(value, valueChanged || updateText);
         }
 
         protected override void OnBlurred(FocusEventArgs obj)
@@ -161,10 +161,10 @@ namespace MudBlazor
         /// Decrements or increments depending on factor
         /// </summary>
         /// <param name="factor">Multiplication factor (1 or -1) will be applied to the step</param>
-        private async Task Change(double factor = 1)
+        private Task Change(double factor = 1)
         {
             var value = Num.To<T>(Num.From(Value) + Num.From(Step) * factor);
-            await SetValueAsync(ConstrainBoundaries(value).value);
+            return SetValueAsync(ConstrainBoundaries(value).value);
         }
 
         /// <summary>

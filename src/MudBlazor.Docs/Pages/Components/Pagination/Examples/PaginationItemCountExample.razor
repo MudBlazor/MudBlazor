@@ -1,0 +1,8 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudPagination BoundaryCount="1" MiddleCount="1" Count="22" @bind-Selected="@_selected"/>
+<MudPagination BoundaryCount="2" MiddleCount="5" Count="22" @bind-Selected="@_selected"/>
+
+@code {
+    private int _selected = 11;
+}

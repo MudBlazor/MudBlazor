@@ -152,10 +152,10 @@ namespace MudBlazor
         /// </summary>
         /// <param name="text"></param>
         /// <returns></returns>
-        public async Task SetText(string text)
+        public Task SetText(string text)
         {
             _internalText = text;
-            await SetTextAsync(text);
+            return SetTextAsync(text);
         }
     }
 

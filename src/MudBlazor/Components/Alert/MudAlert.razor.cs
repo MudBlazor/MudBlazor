@@ -21,16 +21,16 @@ namespace MudBlazor
 
         protected string ClassPosition =>
         new CssBuilder("mud-alert-position")
-            .AddClass($"justify-sm-{ConvertAlertTextPosition(AlertTextPosition).ToDescriptionString()}")
+            .AddClass($"justify-sm-{ConvertHorizontalAlignment(ContentAlignment).ToDescriptionString()}")
         .Build();
 
-        private AlertTextPosition ConvertAlertTextPosition(AlertTextPosition alertTextPosition)
+        private HorizontalAlignment ConvertHorizontalAlignment(HorizontalAlignment contentAlignment)
         {
-            return alertTextPosition switch
+            return contentAlignment switch
             {
-                AlertTextPosition.Right => RightToLeft ? AlertTextPosition.Start : AlertTextPosition.End,
-                AlertTextPosition.Left => RightToLeft ? AlertTextPosition.End : AlertTextPosition.Start,
-                _ => alertTextPosition
+                HorizontalAlignment.Right => RightToLeft ? HorizontalAlignment.Start : HorizontalAlignment.End,
+                HorizontalAlignment.Left => RightToLeft ? HorizontalAlignment.End : HorizontalAlignment.Start,
+                _ => contentAlignment
             };
         }
 
@@ -39,7 +39,18 @@ namespace MudBlazor
         /// <summary>
         /// Sets the position of the text to the start (Left in LTR and right in RTL).
         /// </summary>
-        [Parameter] public AlertTextPosition AlertTextPosition { get; set; } = AlertTextPosition.Left;
+        [Parameter] public HorizontalAlignment ContentAlignment { get; set; } = HorizontalAlignment.Left;
+
+        /// <summary>
+        /// Sets the position of the text to the start (Left in LTR and right in RTL).
+        /// </summary>
+        [Obsolete("AlertTextPosition is obsolete. Use ContentAlignment instead!", false)]
+        [Parameter]
+        public AlertTextPosition AlertTextPosition
+        {
+            get => (AlertTextPosition)ContentAlignment;
+            set => ContentAlignment = (HorizontalAlignment)value;
+        }
 
         /// <summary>
         /// The callback, when the close button has been clicked.
@@ -98,12 +109,14 @@ namespace MudBlazor
 
         protected string _icon;
 
-        private async Task OnCloseIconClickAsync()
+        private Task OnCloseIconClickAsync()
         {
             if (CloseIconClicked.HasDelegate)
             {
-                await CloseIconClicked.InvokeAsync(this);
+                return CloseIconClicked.InvokeAsync(this);
             }
+
+            return Task.CompletedTask;
         }
 
         protected override void OnParametersSet()

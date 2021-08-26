@@ -548,7 +548,7 @@ namespace MudBlazor.UnitTests.Utilities
         }
 
         [Test]
-        public void Equals_DifferntObjectType()
+        public void Equals_DifferentObjectType()
         {
             MudColor color1 = new(10, 20, 50, 255);
             color1.Equals(124).Should().BeFalse();
@@ -601,6 +601,23 @@ namespace MudBlazor.UnitTests.Utilities
 
             first.HslChanged(first).Should().BeFalse();
             second.HslChanged(second).Should().BeFalse();
+        }
+
+        [Test]
+        [TestCase("en-us")]
+        [TestCase("de-DE")]
+        [TestCase("he-IL")]
+        [TestCase("ar-ER")]
+        public void CheckPaletteInDifferentCultures(string cultureString)
+        {
+            var culture = new CultureInfo(cultureString);
+
+            CultureInfo.CurrentCulture = culture;
+            CultureInfo.CurrentUICulture = culture;
+
+            Palette palette = new Palette();
+
+            palette.Should().NotBeNull();
         }
     }
 }

@@ -79,7 +79,7 @@ namespace MudBlazor.Docs.Components
 
         protected virtual async void EditOnTryMudBlazor()
         {
-            // We use a seperator that wont be in code so we can send 2 files later
+            // We use a separator that wont be in code so we can send 2 files later
             var codeFiles = "__Main.razor" + (char)31 + Snippets.GetCode(Code);
 
             // Add dialogs for dialog examples

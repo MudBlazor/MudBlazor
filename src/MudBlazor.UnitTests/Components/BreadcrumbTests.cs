@@ -1,5 +1,4 @@
-﻿#pragma warning disable IDE1006 // leading underscore
-
+﻿
 using System.Collections.Generic;
 using Bunit;
 using FluentAssertions;
@@ -9,24 +8,12 @@ using static Bunit.ComponentParameterFactory;
 namespace MudBlazor.UnitTests.Components
 {
     [TestFixture]
-    public class BreadcrumbTests
+    public class BreadcrumbTests : BunitTest
     {
-        private Bunit.TestContext ctx;
-
-        [SetUp]
-        public void Setup()
-        {
-            ctx = new Bunit.TestContext();
-            ctx.AddTestServices();
-        }
-
-        [TearDown]
-        public void TearDown() => ctx.Dispose();
-
         [Test]
         public void MudBreadcrumbs_ShouldRenderItemsWithSeparators()
         {
-            var comp = ctx.RenderComponent<MudBreadcrumbs>(Parameter("Items", new List<BreadcrumbItem>
+            var comp = Context.RenderComponent<MudBreadcrumbs>(Parameter("Items", new List<BreadcrumbItem>
             {
                 new BreadcrumbItem("Link 1", "link1"),
                 new BreadcrumbItem("Link 2", "link2"),
@@ -40,7 +27,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void MudBreadcrumbs_ShouldRenderItemsWithIcons()
         {
-            var comp = ctx.RenderComponent<MudBreadcrumbs>(Parameter("Items", new List<BreadcrumbItem>
+            var comp = Context.RenderComponent<MudBreadcrumbs>(Parameter("Items", new List<BreadcrumbItem>
             {
                 new BreadcrumbItem("Link 1", "link1", icon: Icons.Material.Filled.Home),
                 new BreadcrumbItem("Link 2", "link2", icon: Icons.Material.Filled.List),
@@ -53,7 +40,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void MudBreadcrumbs_ShouldCollapseWhenMaxItemsIsReached()
         {
-            var comp = ctx.RenderComponent<MudBreadcrumbs>(Parameter("MaxItems", (byte)5), Parameter("Items", new List<BreadcrumbItem>
+            var comp = Context.RenderComponent<MudBreadcrumbs>(Parameter("MaxItems", (byte)5), Parameter("Items", new List<BreadcrumbItem>
             {
                 new BreadcrumbItem("Link 1", "link1"),
                 new BreadcrumbItem("Link 2", "link2"),

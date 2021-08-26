@@ -16,7 +16,7 @@ namespace MudBlazor
 
         private Range<T> OnGet(string value)
         {
-            if (!Split(value, out string valueStart, out string valueEnd))
+            if (!Split(value, out var valueStart, out var valueEnd))
                 return null;
 
             return new Range<T>(_converter.Get(valueStart), _converter.Get(valueEnd));
