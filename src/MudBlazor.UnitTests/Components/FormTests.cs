@@ -696,7 +696,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task MudFormExample_FillInValuesRootForm()
         {
-            var comp = ctx.RenderComponent<FluentValidationComplexExample>();
+            var comp = Context.RenderComponent<FluentValidationComplexExample>();
             //Console.WriteLine(comp.Markup);
             comp.FindAll("input")[0].Input("Rick Sanchez");
             comp.FindAll("input")[0].Blur();
@@ -748,7 +748,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task MudFormExample_FillInValuesNestedForm()
         {
-            var comp = ctx.RenderComponent<FluentValidationComplexExample>();
+            var comp = Context.RenderComponent<FluentValidationComplexExample>();
             //Console.WriteLine(comp.Markup);
             comp.FindAll("input")[8].Change("SomeWork");
             comp.FindAll("input")[8].Blur();
@@ -794,7 +794,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task MudFormExample_FillInValues()
         {
-            var comp = ctx.RenderComponent<FluentValidationComplexExample>();
+            var comp = Context.RenderComponent<FluentValidationComplexExample>();
             //Console.WriteLine(comp.Markup);
             comp.FindAll("input")[0].Input("Rick Sanchez");
             comp.FindAll("input")[0].Blur();

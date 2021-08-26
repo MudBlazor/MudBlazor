@@ -35,6 +35,11 @@ namespace MudBlazor
             }
         }
 
+        // Note: w/o any children the form is automatically valid.
+        // It stays valid, as long as non-required fields are added or
+        // a required field is added or the user touches a field that fails validation.
+        private bool _valid = true;
+
         private void SetIsValid(bool value)
         {
             if (IsValid == value)
