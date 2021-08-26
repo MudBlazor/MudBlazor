@@ -39,7 +39,7 @@ namespace MudBlazor
         [Parameter] public bool DisableGutters { get; set; }
 
         /// <summary>
-        /// If true, the borders around eatch panel will be removed.
+        /// If true, the borders around each panel will be removed.
         /// </summary>
         [Parameter] public bool DisableBorders { get; set; }
 

@@ -188,7 +188,7 @@
     }
 
 
-    private string AnalyseMethodDocumentation(string documentation, string occurence, string parameter = "")
+    private string AnalyseMethodDocumentation(string documentation, string occurrence, string parameter = "")
     {
         try
         {
@@ -196,13 +196,13 @@
             string doublequotes = @"""";
 
             // Define the start tag and the end tag
-            string endTag = $"</{occurence}>";
-            string startTag = $"<{occurence}{(parameter == string.Empty ? "" : " name=" + doublequotes + parameter + doublequotes)}>";
+            string endTag = $"</{occurrence}>";
+            string startTag = $"<{occurrence}{(parameter == string.Empty ? "" : " name=" + doublequotes + parameter + doublequotes)}>";
 
             // Check if the documentation is valid and contains the start tag
             if (documentation != null && documentation.Contains(startTag))
             {
-                // Remove the beginnig of the documentation until the start tag
+                // Remove the beginning of the documentation until the start tag
                 documentation = documentation.Substring(documentation.IndexOf(startTag), documentation.Length - documentation.IndexOf(startTag));
 
                 // Check if the documentation contains the end tag
@@ -210,7 +210,7 @@
                 {
                     // Return the extracted information
                     // If the information is not for summary, ' : ' is only added if there is a non-empty information to be returned
-                    return (occurence != "summary" && documentation.Substring(startTag.Length, documentation.IndexOf(endTag) - startTag.Length).Trim() != "" ? " : " : "") +
+                    return (occurrence != "summary" && documentation.Substring(startTag.Length, documentation.IndexOf(endTag) - startTag.Length).Trim() != "" ? " : " : "") +
                         documentation.Substring(startTag.Length, documentation.IndexOf(endTag) - startTag.Length).Trim();
                 }
             }

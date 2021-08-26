@@ -1,5 +1,4 @@
-﻿#pragma warning disable IDE1006 // leading underscore
-
+﻿
 using System;
 using System.Threading.Tasks;
 using Bunit;
@@ -8,29 +7,16 @@ using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Components
 {
-
     [TestFixture]
-    public class SnackbarTests
+    public class SnackbarTests : BunitTest
     {
-        private Bunit.TestContext ctx;
-
-        [SetUp]
-        public void Setup()
-        {
-            ctx = new Bunit.TestContext();
-            ctx.AddTestServices();
-        }
-
-        [TearDown]
-        public void TearDown() => ctx.Dispose();
-
         [Test]
         public async Task SimpleTest()
         {
-            var comp = ctx.RenderComponent<MudSnackbarProvider>();
+            var comp = Context.RenderComponent<MudSnackbarProvider>();
             Console.WriteLine(comp.Markup);
             comp.Find("#mud-snackbar-container").InnerHtml.Trim().Should().BeEmpty();
-            var service = ctx.Services.GetService<ISnackbar>() as SnackbarService;
+            var service = Context.Services.GetService<ISnackbar>() as SnackbarService;
             service.Should().NotBe(null);
             // shoot out a snackbar
             await comp.InvokeAsync(() => service?.Add("Boom, big reveal. Im a pickle!"));
@@ -45,10 +31,10 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task HtmlInMessages()
         {
-            var comp = ctx.RenderComponent<MudSnackbarProvider>();
+            var comp = Context.RenderComponent<MudSnackbarProvider>();
             Console.WriteLine(comp.Markup);
             comp.Find("#mud-snackbar-container").InnerHtml.Trim().Should().BeEmpty();
-            var service = ctx.Services.GetService<ISnackbar>() as SnackbarService;
+            var service = Context.Services.GetService<ISnackbar>() as SnackbarService;
             service.Should().NotBe(null);
             // shoot out a snackbar
             await comp.InvokeAsync(() => service?.Add("Hello <span>World</span>"));
@@ -59,10 +45,10 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task DisposeTest()
         {
-            var comp = ctx.RenderComponent<MudSnackbarProvider>();
+            var comp = Context.RenderComponent<MudSnackbarProvider>();
             Console.WriteLine(comp.Markup);
             comp.Find("#mud-snackbar-container").InnerHtml.Trim().Should().BeEmpty();
-            var service = ctx.Services.GetService<ISnackbar>() as SnackbarService;
+            var service = Context.Services.GetService<ISnackbar>() as SnackbarService;
             service.Should().NotBe(null);
 
             // shoot out a snackbar
@@ -82,10 +68,10 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task IconTest()
         {
-            var comp = ctx.RenderComponent<MudSnackbarProvider>();
+            var comp = Context.RenderComponent<MudSnackbarProvider>();
             Console.WriteLine(comp.Markup);
             comp.Find("#mud-snackbar-container").InnerHtml.Trim().Should().BeEmpty();
-            var service = ctx.Services.GetService<ISnackbar>() as SnackbarService;
+            var service = Context.Services.GetService<ISnackbar>() as SnackbarService;
             // shoot out a snackbar
             await comp.InvokeAsync(() => service?.Add("Boom, big reveal. Im a pickle!"));
             Console.WriteLine(comp.Markup);
@@ -99,10 +85,10 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task HideIconTest()
         {
-            var comp = ctx.RenderComponent<MudSnackbarProvider>();
+            var comp = Context.RenderComponent<MudSnackbarProvider>();
             Console.WriteLine(comp.Markup);
             comp.Find("#mud-snackbar-container").InnerHtml.Trim().Should().BeEmpty();
-            var service = ctx.Services.GetService<ISnackbar>() as SnackbarService;
+            var service = Context.Services.GetService<ISnackbar>() as SnackbarService;
             // shoot out a snackbar
             await comp.InvokeAsync(() => service?.Add("Boom, big reveal. Im a pickle!", Severity.Success, config => { config.HideIcon = true; }));
             Console.WriteLine(comp.Markup);

@@ -38,9 +38,9 @@ namespace MudBlazor
                 else if (typeof(T) == typeof(bool) || typeof(T) == typeof(bool?))
                 {
                     var lowerValue = value.ToLowerInvariant();
-                    if (lowerValue == "true" || lowerValue == "on")
+                    if (lowerValue is "true" or "on")
                         return (T)(object)true;
-                    if (lowerValue == "false" || lowerValue == "off")
+                    if (lowerValue is "false" or "off")
                         return (T)(object)false;
                     UpdateGetError("Not a valid boolean");
                 }

@@ -23,8 +23,7 @@ namespace MudBlazor
         public SnackbarService(NavigationManager navigationManager, SnackbarConfiguration configuration = null)
         {
             _navigationManager = navigationManager;
-            if (configuration == null)
-                configuration = new SnackbarConfiguration();
+            configuration ??= new SnackbarConfiguration();
 
             Configuration = configuration;
             Configuration.OnUpdate += ConfigurationUpdated;

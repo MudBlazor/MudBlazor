@@ -1,5 +1,4 @@
-﻿#pragma warning disable IDE1006 // leading underscore
-
+﻿
 using System;
 using System.Linq;
 using Bunit;
@@ -9,26 +8,13 @@ using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Components
 {
-
     [TestFixture]
-    public class AvatarGroupTests
+    public class AvatarGroupTests : BunitTest
     {
-        private Bunit.TestContext ctx;
-
-        [SetUp]
-        public void Setup()
-        {
-            ctx = new Bunit.TestContext();
-            ctx.AddTestServices();
-        }
-
-        [TearDown]
-        public void TearDown() => ctx.Dispose();
-
         [Test]
         public void AvatarGroupTest()
         {
-            var comp = ctx.RenderComponent<AvatarGroupTest>();
+            var comp = Context.RenderComponent<AvatarGroupTest>();
             Console.WriteLine(comp.Markup);
             // select elements needed for the test
             var group = comp.FindComponent<MudAvatarGroup>();
@@ -51,7 +37,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void AvatarGroupChangeMaxTest()
         {
-            var comp = ctx.RenderComponent<AvatarGroupChangeMaxTest>();
+            var comp = Context.RenderComponent<AvatarGroupChangeMaxTest>();
             Console.WriteLine(comp.Markup);
             // select elements needed for the test
             var group = comp.FindComponent<MudAvatarGroup>();
@@ -125,6 +111,17 @@ namespace MudBlazor.UnitTests.Components
             avatars.Should().HaveCount(2);
             avatars[0].ClassList.Should().NotContain("mud-avatar-group-max-avatar");
             avatars[1].ClassList.Should().Contain("mud-avatar-group-max-avatar");
+        }
+
+        [Test]
+        public void AvatarGroupRemoveTest()
+        {
+            var comp = Context.RenderComponent<AvatarGroupRemoveTest>();
+            Console.WriteLine(comp.Markup);
+
+            comp.FindAll("button")[0].Click();
+
+            comp.FindComponent<MudAvatarGroup>().Instance._avatars.Count.Should().Be(0);
         }
     }
 }

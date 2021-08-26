@@ -43,8 +43,7 @@ namespace MudBlazor
 
         public static DateConverter DateFormat(string format)
         {
-            if (format == null)
-                format = "yyyy-MM-dd";
+            format ??= "yyyy-MM-dd";
             return new DateConverter(format);
         }
 

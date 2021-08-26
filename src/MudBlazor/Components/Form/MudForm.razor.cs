@@ -37,16 +37,15 @@ namespace MudBlazor
 
         private void SetIsValid(bool value)
         {
-            if (_valid == value)
+            if (IsValid == value)
                 return;
-            _valid = value;
-            IsValidChanged.InvokeAsync(_valid).AndForget();
+            IsValid = value;
+            IsValidChanged.InvokeAsync(IsValid).AndForget();
         }
 
         // Note: w/o any children the form is automatically valid.
         // It stays valid, as long as non-required fields are added or
         // a required field is added or the user touches a field that fails validation.
-        private bool _valid = true;
 
         /// <summary>
         /// True if any field of the field was touched. This parameter is readonly.
@@ -242,7 +241,7 @@ namespace MudBlazor
             if (firstRender)
             {
                 var valid = _formControls.All(x => x.Required == false);
-                if (valid != _valid)
+                if (valid != IsValid)
                 {
                     // the user probably bound a variable to IsValid and it conflicts with our state.
                     // let's set this right
