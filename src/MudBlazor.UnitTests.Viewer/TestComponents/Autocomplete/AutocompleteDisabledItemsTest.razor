@@ -1,6 +1,14 @@
 ﻿@namespace MudBlazor.UnitTests.TestComponents
 
-<MudAutocomplete @bind-Value="value" SearchFunc="@Search" ItemDisabledFunc="@(s => s?.ToLower().Contains("o") == true)" Label="DisabledItemsTest" MaxItems="25" />
+<MudAutocomplete @bind-Value="value" SearchFunc="@Search" ItemDisabledFunc="@(s => s?.ToLower().Contains("o") == true)" Label="DisabledItemsTest" MaxItems="25">
+    <ItemTemplate>
+        @context
+    </ItemTemplate>
+    <ItemDisabledTemplate>
+        @context
+        <MudText Typo="Typo.subtitle2">Disabled as the state contains the letter 'o'</MudText>
+    </ItemDisabledTemplate>
+</MudAutocomplete>
 
 @code
 {

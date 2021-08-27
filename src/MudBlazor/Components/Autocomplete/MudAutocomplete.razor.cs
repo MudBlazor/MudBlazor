@@ -144,6 +144,11 @@ namespace MudBlazor
         [Parameter] public RenderFragment<T> ItemSelectedTemplate { get; set; }
 
         /// <summary>
+        /// Optional presentation template for disabled item
+        /// </summary>
+        [Parameter] public RenderFragment<T> ItemDisabledTemplate { get; set; }
+
+        /// <summary>
         /// On drop-down close override Text with selected Value. This makes it clear to the user
         /// which list value is currently selected and disallows incomplete values in Text.
         /// </summary>
@@ -158,8 +163,7 @@ namespace MudBlazor
         /// <summary>
         /// Function to be invoked when checking whether an item should be disabled or not
         /// </summary>
-        [Parameter]
-        public Func<T, bool> ItemDisabledFunc { get; set; }
+        [Parameter] public Func<T, bool> ItemDisabledFunc { get; set; }
 
         private bool _isOpen;
 
