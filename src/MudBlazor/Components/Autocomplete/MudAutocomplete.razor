@@ -29,7 +29,7 @@
                             {
                                 var item = _items[index];
                                 bool is_selected = index == _selectedListItemIndex;
-                                <MudListItem @key="@item" id="@GetListItemId(index)" OnClick="@(() => SelectOption(item))" Class="@(is_selected ? "mud-selected-item" : "")">
+                                <MudListItem @key="@item" id="@GetListItemId(index)" Disabled="@(!_enabledItemIndices.Contains(index))" OnClick="@(() => SelectOption(item))" Class="@(is_selected ? "mud-selected-item" : "")">
                                     @if (ItemTemplate == null)
                                     {
                                         @GetItemString(item)
