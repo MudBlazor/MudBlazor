@@ -200,6 +200,7 @@ namespace MudBlazor
             //theme.AppendLine($"--{Breakpoint}-md: {Theme.Breakpoints.md};");
             //theme.AppendLine($"--{Breakpoint}-lg: {Theme.Breakpoints.lg};");
             //theme.AppendLine($"--{Breakpoint}-xl: {Theme.Breakpoints.xl};");
+            //theme.AppendLine($"--{Breakpoint}-xxl: {Theme.Breakpoints.xxl};");
 
             //Typography
             theme.AppendLine($"--{Typography}-default-family: '{string.Join("','", Theme.Typography.Default.FontFamily)}';");
