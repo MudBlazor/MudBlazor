@@ -225,3 +225,7 @@
 @media (min-width:$breakpoint-xl) {
     @include flex-mixin("xl-");
 }
+
+@media (min-width:$breakpoint-xxl) {
+    @include flex-mixin("xxl-");
+}
