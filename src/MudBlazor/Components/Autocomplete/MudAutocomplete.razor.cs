@@ -298,7 +298,6 @@ namespace MudBlazor
             if (_items?.Length == 0)
             {
                 await CoerceValueToText();
-                IsOpen = false;
                 StateHasChanged();
                 return;
             }
