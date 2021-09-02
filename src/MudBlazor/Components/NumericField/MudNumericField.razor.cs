@@ -422,6 +422,9 @@ namespace MudBlazor
         //Tracks if Min has a value.
         private bool _minHasValue = false;
 
+        /// <summary>
+        /// Reverts mouse wheel up and down events, if true.
+        /// </summary>
         [Parameter]
         public bool RevertMouseWheel { get; set; } = false;
 
