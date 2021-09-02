@@ -291,6 +291,100 @@ namespace MudBlazor
             OnKeyDown.InvokeAsync(obj).AndForget();
         }
 
+        protected async Task OnMouseWheel(WheelEventArgs obj)
+        {
+            if (obj.ShiftKey == true && obj.DeltaY < 0)
+            {
+                if (RevertMouseWheel == false)
+                {
+                    if (RuntimeLocation.IsServerSide)
+                    {
+                        if (!Immediate)
+                        {
+                            _key++;
+                            await Task.Delay(1);
+                            await Increment();
+                            await Task.Delay(1);
+                            _ = FocusAsync();
+                        }
+                        else
+                            await Increment();
+                    }
+                    else
+                    {
+                        await Increment();
+                        _elementReference.ForceRender(true);
+                    }
+                }
+                else
+                {
+                    if (RuntimeLocation.IsServerSide)
+                    {
+                        if (!Immediate)
+                        {
+                            _key++;
+                            await Task.Delay(1);
+                            await Decrement();
+                            await Task.Delay(1);
+                            _ = FocusAsync();
+                        }
+                        else
+                            await Decrement();
+                    }
+                    else
+                    {
+                        await Decrement();
+                        _elementReference.ForceRender(true);
+                    }
+                }      
+            }
+            else if (obj.ShiftKey == true && 0 < obj.DeltaY)
+            {
+                if (RevertMouseWheel == false)
+                {
+                    if (RuntimeLocation.IsServerSide)
+                    {
+                        if (!Immediate)
+                        {
+                            _key++;
+                            await Task.Delay(1);
+                            await Decrement();
+                            await Task.Delay(1);
+                            _ = FocusAsync();
+                        }
+                        else
+                            await Decrement();
+                    }
+                    else
+                    {
+                        await Decrement();
+                        _elementReference.ForceRender(true);
+                    }
+                }
+                else
+                {
+                    if (RuntimeLocation.IsServerSide)
+                    {
+                        if (!Immediate)
+                        {
+                            _key++;
+                            await Task.Delay(1);
+                            await Increment();
+                            await Task.Delay(1);
+                            _ = FocusAsync();
+                        }
+                        else
+                            await Increment();
+                    }
+                    else
+                    {
+                        await Increment();
+                        _elementReference.ForceRender(true);
+                    }
+                }
+            }
+        }
+
         protected void InterceptKeyUp(KeyboardEventArgs obj)
         {
             if (Disabled || ReadOnly)
@@ -327,6 +421,9 @@ namespace MudBlazor
 
         //Tracks if Min has a value.
         private bool _minHasValue = false;
+
+        [Parameter]
+        public bool RevertMouseWheel { get; set; } = false;
 
         //default value for the type
         private T _minDefault;
