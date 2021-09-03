@@ -1,7 +1,16 @@
 ﻿<div class="mudblazor-sponsor">
-    <a class="mudblazor-sponsor-item" href="@Website" target="_blank">
-        <img src="@($"_content/MudBlazor.Docs/images/sponsors/{NameAndImage}.png")" class="mudblazor-sponsor-image">
-    </a>
+    @if (String.IsNullOrWhiteSpace(Website))
+    {
+        <div class="mudblazor-sponsor-item">
+            <img src="@($"_content/MudBlazor.Docs/images/sponsors/{NameAndImage}.png")" class="mudblazor-sponsor-image">
+        </div>
+    }
+    else
+    {
+        <a class="mudblazor-sponsor-item" href="@Website" target="_blank">
+            <img src="@($"_content/MudBlazor.Docs/images/sponsors/{NameAndImage}.png")" class="mudblazor-sponsor-image">
+        </a>
+    }
 </div>
 
 @code {
