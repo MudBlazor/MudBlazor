@@ -24,6 +24,10 @@
         </MudInputControl>
         <MudPopover Open=@(_isOpen) MaxHeight="@MaxHeight" Direction="@Direction" OffsetX="@OffsetX" OffsetY="@OffsetY" Class="@PopoverClass">
             <CascadingValue Value="@((IMudSelect)this)" IsFixed="true">
+                @if (MultiSelection && SelectAll)
+                {
+                    <MudCheckBox T="bool" CheckedChanged="OnSelectAllCheckedChangedAsync" Class="mud-select-all-checkbox"><span class="mud-select-all-text">@SelectAllText</span></MudCheckBox>
+                }
                 <MudList Clickable="true" Dense="@Dense">
                     @ChildContent
                 </MudList>
