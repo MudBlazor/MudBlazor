@@ -38,6 +38,10 @@
                 <Description>
                     By setting <CodeInline>HideRowsPerPage</CodeInline> property or the <CodeInline>HidePageNumber</CodeInline> property or the <CodeInline>HidePagination</CodeInline> property to <CodeInline>true</CodeInline>, the corresponding information is hidden in the <CodeInline>MudTabPager</CodeInline>.
                     The elements position can be defined with the <CodeInline>HorizontalAlignment</CodeInline> property.
+                    <MudAlert Severity="Severity.Info" Dense="true" Class="mt-3">
+                        <CodeInline>@("RowsPerPage")</CodeInline> property of MudTable is independent of <CodeInline>@("PageSizeOptions")</CodeInline> of PagerContent. Therefore, the RowsPerPage value does not have
+                        to be one of the values ​​in the PageSizeOptions list. You can set the initial value yourself, but if it is not in the list, you cannot go back unless you refresh the page.
+                    </MudAlert>
                 </Description>
             </SectionHeader>
             <SectionContent DarkenBackground="true" FullWidth="true">
