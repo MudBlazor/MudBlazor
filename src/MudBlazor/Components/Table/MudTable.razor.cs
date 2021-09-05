@@ -239,6 +239,11 @@ namespace MudBlazor
         }
 
         /// <summary>
+        /// Defines if table row clicks should trigger selection (if MultiSelection is set to true).
+        /// </summary>
+        [Parameter] public bool ToggleSelectionOnRowClick { get; set; } = true;
+
+        /// <summary>
         /// Callback is called whenever items are selected or deselected in multi selection mode.
         /// </summary>
         [Parameter] public EventCallback<HashSet<T>> SelectedItemsChanged { get; set; }

@@ -3,7 +3,7 @@
 @namespace MudBlazor.Docs.Examples
 @inject HttpClient httpClient
 
-<MudTable Items="@Elements" MultiSelection="true" @bind-SelectedItems="selectedItems1" Hover="@hover">
+<MudTable Items="@Elements" MultiSelection="true" @bind-SelectedItems="selectedItems1" Hover="@hover" ToggleSelectionOnRowClick="@selectionOnRowClick">
     <HeaderContent>
         <MudTh>Nr</MudTh>
         <MudTh>Sign</MudTh>
@@ -28,9 +28,11 @@
 
 <MudText Inline="true">Selected items: @(selectedItems1==null ? "" : string.Join(", ", selectedItems1.OrderBy(x=>x.Sign).Select(x=>x.Sign)))</MudText>
 <MudText Inline="true">Selected items: @(selectedItems2==null ? "" : string.Join(", ", selectedItems2.OrderBy(x=>x.Sign).Select(x=>x.Sign)))</MudText>
+<MudSwitch @bind-Checked="selectionOnRowClick" Color="Color.Info">Enable selection on Row Click</MudSwitch>
 
 @code {
     private bool hover = true;
+    private bool selectionOnRowClick = true;
     private HashSet<Element> selectedItems1 = new HashSet<Element>();
     private HashSet<Element> selectedItems2 = new HashSet<Element>();
 

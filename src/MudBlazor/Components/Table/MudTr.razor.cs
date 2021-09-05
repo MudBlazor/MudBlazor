@@ -36,12 +36,12 @@ namespace MudBlazor
 
         [Parameter] public bool IsFooter { get; set; }
 
-        [Parameter]
-        public EventCallback<bool> IsCheckedChanged { get; set; }
+        [Parameter] public bool ToggleSelectionOnRowClick { get; set; }
+
+        [Parameter] public EventCallback<bool> IsCheckedChanged { get; set; }
 
         private bool _checked;
-        [Parameter]
-        public bool IsChecked
+        [Parameter] public bool IsChecked
         {
             get => _checked;
             set
@@ -84,7 +84,7 @@ namespace MudBlazor
 
             Context?.Table.SetEditingItem(Item);
 
-            if (Context?.Table.MultiSelection == true && !IsHeader)
+            if (Context?.Table.MultiSelection == true && ToggleSelectionOnRowClick && !IsHeader)
             {
                 IsChecked = !IsChecked;
             }
