@@ -157,8 +157,6 @@ namespace MudBlazor
         {
             get
             {
-                if (ChildContent == null)
-                    return false;
                 if (Value == null)
                     return false;
                 if (!_value_lookup.TryGetValue(Value, out var item))
@@ -179,8 +177,6 @@ namespace MudBlazor
 
         protected RenderFragment GetSelectedValuePresenter()
         {
-            if (ChildContent == null)
-                return null;
             if (Value == null)
                 return null;
             if (!_value_lookup.TryGetValue(Value, out var selected_item))
