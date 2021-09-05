@@ -100,7 +100,7 @@ namespace MudBlazor
         /// <summary>
         /// Revert up and down mouse wheel events.
         /// </summary>
-        [Parameter] public bool RevertMouseWheel { get; set; } = false;
+        [Parameter] public bool InvertMouseWheel { get; set; } = false;
 
         /// <summary>
         /// Show clear button.

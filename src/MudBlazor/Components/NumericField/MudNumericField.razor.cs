@@ -295,7 +295,7 @@ namespace MudBlazor
         {
             if (obj.ShiftKey == true && obj.DeltaY < 0)
             {
-                if (RevertMouseWheel == false)
+                if (InvertMouseWheel == false)
                 {
                     if (RuntimeLocation.IsServerSide)
                     {
@@ -312,8 +312,11 @@ namespace MudBlazor
                     }
                     else
                     {
+                        _key++;
+                        await Task.Delay(1);
                         await Increment();
-                        _elementReference.ForceRender(true);
+                        await Task.Delay(1);
+                        _ = FocusAsync();
                     }
                 }
                 else
@@ -333,14 +336,17 @@ namespace MudBlazor
                     }
                     else
                     {
+                        _key++;
+                        await Task.Delay(1);
                         await Decrement();
-                        _elementReference.ForceRender(true);
+                        await Task.Delay(1);
+                        _ = FocusAsync();
                     }
                 }      
             }
             else if (obj.ShiftKey == true && 0 < obj.DeltaY)
             {
-                if (RevertMouseWheel == false)
+                if (InvertMouseWheel == false)
                 {
                     if (RuntimeLocation.IsServerSide)
                     {
@@ -357,8 +363,11 @@ namespace MudBlazor
                     }
                     else
                     {
+                        _key++;
+                        await Task.Delay(1);
                         await Decrement();
-                        _elementReference.ForceRender(true);
+                        await Task.Delay(1);
+                        _ = FocusAsync();
                     }
                 }
                 else
@@ -378,8 +387,11 @@ namespace MudBlazor
                     }
                     else
                     {
+                        _key++;
+                        await Task.Delay(1);
                         await Increment();
-                        _elementReference.ForceRender(true);
+                        await Task.Delay(1);
+                        _ = FocusAsync();
                     }
                 }
             }
@@ -426,7 +438,7 @@ namespace MudBlazor
         /// Reverts mouse wheel up and down events, if true.
         /// </summary>
         [Parameter]
-        public bool RevertMouseWheel { get; set; } = false;
+        public bool InvertMouseWheel { get; set; } = false;
 
         //default value for the type
         private T _minDefault;

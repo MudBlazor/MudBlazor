@@ -15,7 +15,7 @@
 					  OnAdornmentClick="@OnAdornmentClick" Error="@Error" Immediate="@(Immediate)" Margin="@Margin"
 					  OnBlur="@OnBlurred" OnKeyDown="@InterceptKeydown" OnKeyUp="@InterceptKeyUp" OnMouseWheel="@OnMouseWheel"
 					  KeyDownPreventDefault="@(_keyDownPreventDefault || KeyDownPreventDefault)" KeyPressPreventDefault="@KeyPressPreventDefault" KeyUpPreventDefault="KeyUpPreventDefault"
-                      OnIncrement="Increment" OnDecrement="Decrement" HideSpinButtons="@HideSpinButtons" RevertMouseWheel="@RevertMouseWheel"
+                      OnIncrement="Increment" OnDecrement="Decrement" HideSpinButtons="@HideSpinButtons" InvertMouseWheel="@InvertMouseWheel"
 					  min="@(_minHasValue ? FormatParam(_min) : null)"
 					  max="@(_maxHasValue ? FormatParam(_max): null)"
 					  step="@(_stepHasValue ? FormatParam(_step) : null)"
