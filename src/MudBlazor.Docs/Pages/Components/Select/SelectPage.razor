@@ -31,7 +31,8 @@
                 <SubTitle>Default MultiSelection Text</SubTitle>
                 <Description>
                     If you set <CodeInline>MultiSelection="true"</CodeInline>, you can select multiple values. The selected options are returned as concatenated comma-delimited
-                    string via <CodeInline>Value</CodeInline> and as a <CodeInline>HashSet&lt;string></CodeInline> via <CodeInline>SelectedValues</CodeInline>.
+                    string via <CodeInline>Value</CodeInline> and as a <CodeInline>HashSet&lt;string></CodeInline> via <CodeInline>SelectedValues</CodeInline>. The delimited string
+                    can be modified with the <CodeInline>Delimiter</CodeInline> parameter.
                 </Description>
             </SectionHeader>
             <SectionContent Outlined="true" DisplayFlex="true">
@@ -53,6 +54,19 @@
                 </MudContainer>
             </SectionContent>
             <SectionSource ShowCode="false" Code="MultiSelectCustomizedExample" GitHubFolderName="Select" />
+            <SectionHeader>
+                <SubTitle>Select All</SubTitle>
+                <Description>
+                    If you set <CodeInline>SelectAll="true"</CodeInline>, you can display a 'Select all' option to select or deselect all items.
+                    It is added at the top of the list of items. The text for this option can be customized by the <CodeInline>SelectAllText</CodeInline> parameter.
+                </Description>
+            </SectionHeader>
+            <SectionContent Outlined="true" DisplayFlex="true">
+                <MudContainer>
+                    <MultiSelectSelectAllExample />
+                </MudContainer>
+            </SectionContent>
+            <SectionSource ShowCode="false" Code="MultiSelectSelectAllExample" GitHubFolderName="Select" />
         </DocsPageSection>
         <DocsPageSection>
             <SectionHeader Title="Dense">
@@ -72,7 +86,6 @@
             </SectionContent>
             <SectionSource Code="SelectDisabledExample" GitHubFolderName="Select" />
         </DocsPageSection>
-
         <DocsPageSection>
             <SectionHeader Title="Interactive">
                 <Description></Description>
