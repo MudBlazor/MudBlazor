@@ -14,7 +14,7 @@ namespace MudBlazor
         private HashSet<T> _selectedValues;
         private bool _dense;
         private string multiSelectionText;
-        private bool _selectAllChecked;
+        private bool? _selectAllChecked;
 
         protected string Classname =>
             new CssBuilder("mud-select")
@@ -323,6 +323,20 @@ namespace MudBlazor
                 {
                     await SetTextAsync(string.Join(Delimiter, SelectedValues.Select(x => Converter.Set(x))));
                 }
+
+                if (_items.Count == SelectedValues.Count)
+                {
+                    _selectAllChecked = true;
+                }
+                else if (SelectedValues.Count == 0)
+                {
+                    _selectAllChecked = false;
+                }
+                else
+                {
+                    _selectAllChecked = null;
+                }
+
                 BeginValidate();
             }
             else
@@ -416,7 +430,7 @@ namespace MudBlazor
         /// <summary>
         /// Extra handler for clearing selection.
         /// </summary>
-        protected async ValueTask SelectClearButtonClickHandlerAsync(MouseEventArgs e = default)
+        protected async ValueTask SelectClearButtonClickHandlerAsync(MouseEventArgs e)
         {
             await SetValueAsync(default, false);
             await SetTextAsync(default, false);
@@ -453,7 +467,7 @@ namespace MudBlazor
         {
             get
             {
-                return _selectAllChecked ? Icons.Material.Filled.CheckBox : Icons.Material.Filled.CheckBoxOutlineBlank;
+                return _selectAllChecked.HasValue ? _selectAllChecked.Value ? Icons.Material.Filled.CheckBox : Icons.Material.Filled.CheckBoxOutlineBlank : Icons.Material.Filled.IndeterminateCheckBox;
             }
         }
 
@@ -472,20 +486,37 @@ namespace MudBlazor
 
         private async Task SelectAllClickAsync()
         {
-            _selectAllChecked = !_selectAllChecked;
-            if (_selectAllChecked)
+            // Manage the fake tri-state of a checkbox
+            if (!_selectAllChecked.HasValue)
             {
-                foreach (var item in _items)
-                {
-                    if (item != null && !item.IsSelected)
-                    {
-                        await SelectOption(item.Value);
-                    }
-                }
+                _selectAllChecked = true;
+            }
+            else if (_selectAllChecked.Value)
+            {
+                _selectAllChecked = false;
             }
             else
             {
-                await ClearAsync();
+                _selectAllChecked = true;
+            }
+
+            // Define the items selection
+            if (_selectAllChecked.HasValue)
+            {
+                if (_selectAllChecked.Value)
+                {
+                    foreach (var item in _items)
+                    {
+                        if (item != null && !item.IsSelected)
+                        {
+                            await SelectOption(item.Value);
+                        }
+                    }
+                }
+                else
+                {
+                    await ClearAsync();
+                }
             }
         }
     }
