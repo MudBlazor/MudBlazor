@@ -179,6 +179,8 @@ namespace MudBlazor
 
         protected RenderFragment GetSelectedValuePresenter()
         {
+            if (ChildContent == null)
+                return null;
             if (Value == null)
                 return null;
             if (!_value_lookup.TryGetValue(Value, out var selected_item))
