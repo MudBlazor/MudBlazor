@@ -12,7 +12,7 @@ namespace MudBlazor
 {
     public class DialogReference : IDialogReference
     {
-        private readonly TaskCompletionSource<DialogResult> _resultCompletion = new TaskCompletionSource<DialogResult>();
+        private readonly TaskCompletionSource<DialogResult> _resultCompletion = new();
 
         private readonly IDialogService _dialogService;
 

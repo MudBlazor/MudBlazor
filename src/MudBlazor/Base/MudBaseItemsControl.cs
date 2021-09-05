@@ -20,10 +20,9 @@ namespace MudBlazor
         /// </summary>
         public List<TChildComponent> Items { get; } = new List<TChildComponent>();
 
-        private TChildComponent _lastContainer = null;
         private int _selectedIndexField = -1;
         /// <summary>
-        /// Selected MudCarouselItem's index
+        /// Selected Item's index
         /// </summary>
         [Parameter]
         public int SelectedIndex
@@ -34,7 +33,7 @@ namespace MudBlazor
                 if (SelectedIndex == value)
                     return;
 
-                _lastContainer = _selectedIndexField >= 0 ? SelectedContainer : null;
+                LastContainer = _selectedIndexField >= 0 ? SelectedContainer : null;
                 _selectedIndexField = value;
                 StateHasChanged();
                 SelectedIndexChanged.InvokeAsync(value);
@@ -47,10 +46,7 @@ namespace MudBlazor
         /// <summary>
         /// Gets the Selected TChildComponent
         /// </summary>
-        public TChildComponent LastContainer
-        {
-            get => _lastContainer;
-        }
+        public TChildComponent LastContainer { get; private set; } = null;
 
         /// <summary>
         /// Gets the Selected TChildComponent

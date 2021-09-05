@@ -9,7 +9,7 @@ namespace MudBlazor
     {
         private bool hasBeenCanceled;
         private bool hasBeenCommitted;
-        private bool hasBeenClikedFirstTime;
+        private bool hasBeenClickedFirstTime;
 
         internal object _itemCopy;
 
@@ -65,10 +65,10 @@ namespace MudBlazor
             Context?.Table.SetSelectedItem(Item);
 
             // Manage edition the first time the row is clicked and if the table is editable
-            if (!hasBeenClikedFirstTime && IsEditable)
+            if (!hasBeenClickedFirstTime && IsEditable)
             {
-                // Sets hasBeenClikedFirstTime to true
-                hasBeenClikedFirstTime = true;
+                // Sets hasBeenClickedFirstTime to true
+                hasBeenClickedFirstTime = true;
 
                 // Set to false that the item has been committed
                 // Set to false that the item has been cancelled
@@ -118,8 +118,10 @@ namespace MudBlazor
             // Check the validity of the item
             if (!Context?.Table.Validator.IsValid ?? true) return;
 
-            // Set item value and trigger the commit event
+            // Set the item value to cancel edit mode
             Context?.Table.SetEditingItem(null);
+
+            // Trigger the commit event
             Context?.Table.OnCommitEditHandler(ev, Item);
 
             // Trigger the row edit commit event
@@ -130,26 +132,28 @@ namespace MudBlazor
             hasBeenCommitted = true;
             hasBeenCanceled = false;
 
-            // Set hasBeenClikedFirstTime to false 
-            hasBeenClikedFirstTime = false;
+            // Set hasBeenClickedFirstTime to false 
+            hasBeenClickedFirstTime = false;
         }
 
         private void CancelEdit(MouseEventArgs ev)
         {
-            // The edit mode is canceled and trigger the cancel event
+            // Set the item value to cancel edit mode
             Context?.Table.SetEditingItem(null);
+
+            // Trigger the cancel event
             Context?.Table.OnCancelEditHandler(ev);
 
             // Trigger the row edit cancel event
-            Context.Table.RowEditCancel?.Invoke(Item);
+            Context?.Table.RowEditCancel?.Invoke(Item);
 
             // Set to true that the item has been canceled
             // Set to false that the items has been committed
             hasBeenCanceled = true;
             hasBeenCommitted = false;
 
-            // Set hasBeenClikedFirstTime to false 
-            hasBeenClikedFirstTime = false;
+            // Set hasBeenClickedFirstTime to false 
+            hasBeenClickedFirstTime = false;
         }
 
         public void ManagePreviousEdition()
@@ -157,6 +161,12 @@ namespace MudBlazor
             // Reset the item to its original value if no cancellation and no commit has been done
             if (!hasBeenCanceled && !hasBeenCommitted)
             {
+                // Set the item value to cancel edit mode
+                Context?.Table.SetEditingItem(null);
+
+                // Force/indicate a refresh on the component to remove the edition mode for the row
+                StateHasChanged();
+
                 // Trigger the row edit cancel event
                 Context.Table.RowEditCancel?.Invoke(Item);
             }
@@ -164,7 +174,7 @@ namespace MudBlazor
             // Reset the variables
             hasBeenCanceled = false;
             hasBeenCommitted = false;
-            hasBeenClikedFirstTime = false;
+            hasBeenClickedFirstTime = false;
         }
     }
 }

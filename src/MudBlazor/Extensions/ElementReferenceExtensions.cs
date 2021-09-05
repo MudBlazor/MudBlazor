@@ -79,7 +79,7 @@ namespace MudBlazor
             if (parameters != null)
             {
                 var parameterSpecs = new object[parameters.Count()];
-                for (int i = 0; i < parameters.Count(); ++i)
+                for (var i = 0; i < parameters.Count(); ++i)
                 {
                     parameterSpecs[i] = GetSerializationSpec(parameters.ElementAt(i));
                 }

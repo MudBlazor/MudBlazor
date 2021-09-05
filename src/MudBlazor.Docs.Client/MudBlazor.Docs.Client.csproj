@@ -2,21 +2,19 @@
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
-    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <!--Please see https://github.com/dotnet/aspnetcore/issues/27776 -->
     <StaticWebAssetBasePath Condition="'$(BuildType)' != 'publish'">wasm</StaticWebAssetBasePath>
     <!--Note trailing slash -->
     <StaticWebAssetBasePath Condition="'$(BuildType)' == 'publish'">wasm/</StaticWebAssetBasePath>
-    <IsPackable>false</IsPackable>
     <BlazorWebAssemblyLoadAllGlobalizationData>true</BlazorWebAssemblyLoadAllGlobalizationData>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Blazor-Analytics" Version="3.6.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="5.0.7" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="5.0.7" PrivateAssets="all" />
+    <PackageReference Include="Blazor-Analytics" Version="3.9.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="5.0.9" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="5.0.9" PrivateAssets="all" />
     <PackageReference Include="System.Net.Http.Json" Version="5.0.0" />
-    <PackageReference Include="Toolbelt.Blazor.HeadElement" Version="5.4.2" />
+    <PackageReference Include="Toolbelt.Blazor.HeadElement" Version="5.4.3" />
   </ItemGroup>
 
   <ItemGroup>

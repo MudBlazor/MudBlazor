@@ -1,5 +1,5 @@
 ﻿.docs-page {
-    .mud-typography-h4 {
+    & > .mud-container > .mud-typography-h4 {
         margin-top: 52px;
     }
 }
@@ -108,22 +108,6 @@
                 text-decoration: none !important;
                 background-color: rgba(var(--mud-palette-primary-rgb), 0.20);
             }
-        }
-    }
-}
-
-@media only screen and (min-width: 1640px) {
-    .mud-container-maxwidth-md {
-        .docs-contents {
-            display: block;
-        }
-    }
-}
-
-@media only screen and (min-width: 1940px) {
-    .mud-container-maxwidth-lg {
-        .docs-contents {
-            display: block;
         }
     }
 }

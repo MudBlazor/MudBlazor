@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using MudBlazor.Charts;
 
 namespace MudBlazor.Docs.Models
@@ -29,13 +28,13 @@ namespace MudBlazor.Docs.Models
         /// <summary>
         /// Converts a lowercase component name from an URL into the C# Type name.
         /// Examples: 
-        ///   table --> MudTable<T>
-        ///   button  MudButton
-        ///   appbar  AppBar
+        ///   table --> <see cref="MudTable{T}"/>
+        ///   button  <see cref="MudButton"/>
+        ///   appbar  <see cref="MudAppBar"/>
         /// </summary>
         public static Type GetTypeFromComponentLink(string component)
         {
-            if(component.Contains('#') == true)
+            if (component.Contains('#') == true)
             {
                 component = component.Substring(0, component.IndexOf('#'));
             }
@@ -65,7 +64,7 @@ namespace MudBlazor.Docs.Models
         }
 
         private static Dictionary<Type, string> s_specialCaseComponents =
-            new Dictionary<Type, string>()
+            new()
             {
                 [typeof(MudFab)] = "buttonfab",
                 [typeof(MudIcon)] = "icons",
@@ -83,7 +82,7 @@ namespace MudBlazor.Docs.Models
             s_specialCaseComponents.ToDictionary(pair => pair.Value, pair => pair.Key);
 
         private static Dictionary<string, string> s_componentLinkTranslation =
-            new Dictionary<string, string>()
+            new()
             {
                 ["icon"] = "icons",
                 ["chip"] = "chips",

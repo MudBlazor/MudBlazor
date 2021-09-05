@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Docs.Extensions;
@@ -118,9 +117,9 @@ namespace MudBlazor.Docs.Shared
             }
         }
 
-        private MudTheme _currentTheme = new MudTheme();
+        private MudTheme _currentTheme = new();
         private readonly MudTheme _defaultTheme =
-            new MudTheme()
+            new()
             {
                 Palette = new Palette()
                 {
@@ -128,10 +127,11 @@ namespace MudBlazor.Docs.Shared
                 }
             };
         private readonly MudTheme _darkTheme =
-            new MudTheme()
+            new()
             {
                 Palette = new Palette()
                 {
+                    Primary = "#776be7",
                     Black = "#27272f",
                     Background = "#32333d",
                     BackgroundGrey = "#27272f",
@@ -151,7 +151,12 @@ namespace MudBlazor.Docs.Shared
                     TableLines = "rgba(255,255,255, 0.12)",
                     LinesDefault = "rgba(255,255,255, 0.12)",
                     LinesInputs = "rgba(255,255,255, 0.3)",
-                    TextDisabled = "rgba(255,255,255, 0.2)"
+                    TextDisabled = "rgba(255,255,255, 0.2)",
+                    Info = "#3299ff",
+                    Success = "#0bba83",
+                    Warning = "#ffa800",
+                    Error = "#f64e62",
+                    Dark = "#27272f"
                 }
             };
 

@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace MudBlazor.Services
+﻿namespace MudBlazor.Services
 {
     public class ResizeObserverOptions
     {

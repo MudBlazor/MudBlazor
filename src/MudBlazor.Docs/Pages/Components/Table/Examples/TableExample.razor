@@ -28,25 +28,6 @@
     </PagerContent>
 </MudTable>
 
-
-<MudTable Items="@Elements" Dense="@dense" Hover="@hover" Bordered="@bordered" Striped="@striped" Filter="new Func<Element,bool>(FilterFunc2)" @bind-SelectedItem="selectedItem2">
-    <ToolBarContent>
-        <MudText Typo="Typo.h6">Periodic Elements</MudText>
-        <MudSpacer />
-        <MudTextField @bind-Value="searchString2" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
-    </ToolBarContent>
-    <Columns>
-        <MudColumn Value="@context.Number" HeaderText="Nr"></MudColumn>
-        <MudColumn Value="@context.Sign" HeaderText="Sign"></MudColumn>
-        <MudColumn Value="@context.Name" HeaderText="Name"></MudColumn>
-        <MudColumn Value="@context.Position" HeaderText="Position" FooterText="Sum:"></MudColumn>
-        <MudColumn Value="@context.Molar" HeaderText="Molar mass" FooterValue="@Elements.Sum(e => e.Molar)"></MudColumn>
-    </Columns>
-    <PagerContent>
-        <MudTablePager />
-    </PagerContent>
-</MudTable>
-
 <div class="d-flex flex-wrap mt-4">
     <MudSwitch @bind-Checked="@hover" Color="Color.Primary">Hover</MudSwitch>
     <MudSwitch @bind-Checked="@dense" Color="Color.Secondary">Dense</MudSwitch>
@@ -59,7 +40,8 @@
     </div>
 </div>
 
-@code { private bool dense = false;
+@code {
+    private bool dense = false;
     private bool hover = true;
     private bool striped = false;
     private bool bordered = false;
@@ -91,4 +73,4 @@
             return true;
         return false;
     }
-    }
+}

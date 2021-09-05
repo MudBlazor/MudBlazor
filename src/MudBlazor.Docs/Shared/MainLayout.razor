@@ -77,18 +77,16 @@
                 </MudMenu>
             </MudAppBar>
 
-            <MudDrawer @bind-Open=_drawerOpen Elevation="25" Class="mudblazor-appbar-band">
+            <MudDrawer @bind-Open=_drawerOpen Elevation="25" Breakpoint="Breakpoint.Lg" Class="mudblazor-appbar-band">
                 <MudDrawerHeader Class="mudblazor-brand" LinkToIndex="true">
                     <MudBlazorLogo />
                 </MudDrawerHeader>
                 <NavMenu @ref="@_navMenuRef" />
             </MudDrawer>
-            <MudMainContent Class="mudblazor-main-content">
                 @Body
-                <MudScrollToTop TopOffset="400" Style="z-index:2000;">
-                    <MudFab Icon="@Icons.Material.Filled.KeyboardArrowUp" Color="Color.Primary" />
-                </MudScrollToTop>
-            </MudMainContent>
+            <MudScrollToTop TopOffset="400" Style="z-index:2000;">
+                <MudFab Icon="@Icons.Material.Filled.KeyboardArrowUp" Color="Color.Primary" />
+            </MudScrollToTop>
         </MudLayout>
     </MudSwipeArea>
 </MudRTLProvider>

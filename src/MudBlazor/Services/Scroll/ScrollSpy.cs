@@ -3,9 +3,6 @@
 // See the LICENSE file in the project root for more information.
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Microsoft.JSInterop;
 
@@ -40,13 +37,13 @@ namespace MudBlazor
         /// <summary>
         /// Center the viewport to the DOM element represented by the fragment inside the uri
         /// </summary>
-        /// <param name="uri">The uri which contains the fragement. If no fragment it scrolls to the top of the page</param>
+        /// <param name="uri">The uri which contains the fragment. If no fragment it scrolls to the top of the page</param>
         /// <returns></returns>
         Task ScrollToSection(Uri uri);
         event EventHandler<ScrollSectionCenteredEventArgs> ScrollSectionSectionCentered;
 
         /// <summary>
-        /// Does the same as ScrollToSection but without the scrolling. This can be used to initily set an value
+        /// Does the same as ScrollToSection but without the scrolling. This can be used to initially set an value
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>

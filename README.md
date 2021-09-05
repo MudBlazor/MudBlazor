@@ -2,7 +2,7 @@
 # Material Design components for Blazor
 ![Azure DevOps builds (master)](https://img.shields.io/azure-devops/build/gardnet-nu/4cba3d30-858f-4653-a80d-736a8adc5daf/1/master?label=azure%20pipelines&logo=Azure%20DevOps&style=flat-square)
 ![Azure DevOps coverage (develop)](https://img.shields.io/azure-devops/coverage/gardnet-nu/MudBlazor/1/dev?style=flat-square&logo=Azure%20DevOps)
-[![GitHub](https://img.shields.io/github/license/garderoben/mudblazor?color=594ae2&style=flat-square&logo=github)](https://github.com/Garderoben/MudBlazor/blob/master/LICENSE)
+[![GitHub](https://img.shields.io/github/license/Garderoben/MudBlazor?color=594ae2&logo=github&style=flat-square)](https://github.com/Garderoben/MudBlazor/blob/master/LICENSE)
 [![GitHub Repo stars](https://img.shields.io/github/stars/garderoben/mudblazor?color=594ae2&style=flat-square&logo=github)](https://github.com/Garderoben/MudBlazor/stargazers)
 [![GitHub last commit](https://img.shields.io/github/last-commit/garderoben/mudblazor?color=594ae2&style=flat-square&logo=github)](https://github.com/Garderoben/MudBlazor)
 [![Contributors](https://img.shields.io/github/contributors/garderoben/mudblazor?color=594ae2&style=flat-square&logo=github)](https://github.com/Garderoben/MudBlazor/graphs/contributors)
@@ -27,6 +27,10 @@ MudBlazor is an ambitious Material Design component framework for Blazor with an
 - [Try.MudBlazor.com](https://try.mudblazor.com/)
 ## Prerequisites
 - [.NET 5.0](https://dotnet.microsoft.com/download/dotnet/5.0) for v5.x.x or [.NET Core 3.1](https://dotnet.microsoft.com/download/dotnet-core/3.1) for v2.x.x (legacy)
+
+## Contributing
+- Check out the [contribution guidelines](/CONTRIBUTING.md) if you want to help improve MudBlazor.
+
 ## Getting Started
 - Full installation instructions can be found at [mudblazor.com](https://mudblazor.com/getting-started/installation)  
 - Alternatively use one of our templates from the [MudBlazor.Templates](https://github.com/Garderoben/MudBlazor.Templates) repo.

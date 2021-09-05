@@ -34,6 +34,23 @@
         </DocsPageSection>
 
         <DocsPageSection>
+            <SectionHeader Title="TabPager Customization">
+                <Description>
+                    By setting <CodeInline>HideRowsPerPage</CodeInline> property or the <CodeInline>HidePageNumber</CodeInline> property or the <CodeInline>HidePagination</CodeInline> property to <CodeInline>true</CodeInline>, the corresponding information is hidden in the <CodeInline>MudTabPager</CodeInline>.
+                    The pager's position can be defined with the <CodeInline>HorizontalAlignment</CodeInline> property.
+                    <MudAlert Severity="Severity.Info" Dense="true" Class="mt-3">
+                        <CodeInline>@("RowsPerPage")</CodeInline> parameter of MudTable is independent of <CodeInline>@("PageSizeOptions")</CodeInline> parameter of PagerContent. Therefore, the RowsPerPage value does not have
+                        to be one of the values ​​in the PageSizeOptions list. If the table pager is shown you should make sure the value of RowsPerPage is also available in the PageSizeOptions list, otherwise the users can not go back to this RowsPerPage value once they have chosen another one.
+                    </MudAlert>
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" FullWidth="true">
+                <TabPagerExample />
+            </SectionContent>
+            <SectionSource Code="TabPagerExample" ShowCode="false" GitHubFolderName="Table" />
+        </DocsPageSection>
+
+        <DocsPageSection>
             <SectionHeader Title="Sorting">
                 <Description>
                     To enable sorting, add <CodeInline>&lt;MudTableSortLabel></CodeInline> to the header cells and define a function that simply returns the value which should be sorted by when sorting by the specific column.
@@ -44,7 +61,7 @@
             <SectionContent DarkenBackground="true" FullWidth="true">
                 <TableSortingExample />
             </SectionContent>
-            <SectionSource Code="TableSortingExample" ShowCode="true" GitHubFolderName="Table" />
+            <SectionSource Code="TableSortingExample" ShowCode="false" GitHubFolderName="Table" />
         </DocsPageSection>
 
         <DocsPageSection>
@@ -56,7 +73,7 @@
             <SectionContent DarkenBackground="true" FullWidth="true">
                 <TableMultiSelectExample />
             </SectionContent>
-            <SectionSource Code="TableMultiSelectExample" ShowCode="true" GitHubFolderName="Table" />
+            <SectionSource Code="TableMultiSelectExample" ShowCode="false" GitHubFolderName="Table" />
         </DocsPageSection>
 
         <DocsPageSection>

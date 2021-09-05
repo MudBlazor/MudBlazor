@@ -3,11 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MudBlazor
 {
@@ -24,7 +20,7 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Gets or Sets the Group Name. It's usefull for use on Header, for example.
+        /// Gets or Sets the Group Name. It's useful for use on Header, for example.
         /// </summary>
         public string GroupName { get; set; }
 
@@ -61,10 +57,10 @@ namespace MudBlazor
         private bool _indentation;
         /// <summary>
         /// Gets or Sets if First Column cell must have Indentation.
-        /// It must be set on First grouping level and works recursivelly.
+        /// It must be set on First grouping level and works recursively.
         /// </summary>
-        public bool Indentation 
-        { 
+        public bool Indentation
+        {
             get => _indentation;
             set
             {
@@ -86,7 +82,7 @@ namespace MudBlazor
             {
                 _expandable = value;
                 if (_expandable == false)
-                    Context?.GroupRows.Where(gr => gr.GroupDefinition == this).ToList().ForEach(gr => gr.IsExpanded =  true);
+                    Context?.GroupRows.Where(gr => gr.GroupDefinition == this).ToList().ForEach(gr => gr.IsExpanded = true);
             }
         }
 

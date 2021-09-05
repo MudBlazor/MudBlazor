@@ -1,11 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
-using MudBlazor.Services.Scroll;
 
 namespace MudBlazor
 {
@@ -77,17 +72,17 @@ namespace MudBlazor
         /// <summary>
         /// Subscribe to scroll event in JS
         /// </summary>        
-        private async ValueTask Start()
+        private ValueTask Start()
         {
             _dotNetRef = DotNetObjectReference.Create(this);
-            await _js.InvokeVoidAsync
+            return _js.InvokeVoidAsync
                 ("mudScrollListener.listenForScroll",
                            _dotNetRef,
                            Selector);
         }
 
         /// <summary>
-        /// Unsuscribe to scroll event in 
+        /// Unsubscribe to scroll event in 
         /// </summary>
         private async ValueTask Cancel()
         {

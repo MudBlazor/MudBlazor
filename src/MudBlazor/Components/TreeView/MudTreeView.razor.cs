@@ -11,7 +11,7 @@ namespace MudBlazor
     {
         private MudTreeViewItem<T> _activatedValue;
         private HashSet<MudTreeViewItem<T>> _selectedValues;
-        private List<MudTreeViewItem<T>> _childItems = new List<MudTreeViewItem<T>>();
+        private List<MudTreeViewItem<T>> _childItems = new();
 
         protected string Classname =>
         new CssBuilder("mud-treeview")
@@ -76,7 +76,7 @@ namespace MudBlazor
         [Parameter] public RenderFragment ChildContent { get; set; }
 
         /// <summary>
-        /// ItemTemplate for rendering childre.
+        /// ItemTemplate for rendering children.
         /// </summary>
         [Parameter] public RenderFragment<T> ItemTemplate { get; set; }
 
@@ -119,14 +119,13 @@ namespace MudBlazor
             }
 
             _activatedValue = item;
-            await item?.Activate(requestedValue);
+            await item.Activate(requestedValue);
             await ActivatedValueChanged.InvokeAsync(item.Value);
         }
 
-        internal async Task UpdateSelectedItems()
+        internal Task UpdateSelectedItems()
         {
-            if (_selectedValues == null)
-                _selectedValues = new HashSet<MudTreeViewItem<T>>();
+            _selectedValues ??= new HashSet<MudTreeViewItem<T>>();
 
             //collect selected items
             _selectedValues.Clear();
@@ -138,7 +137,7 @@ namespace MudBlazor
                 }
             }
 
-            await SelectedValuesChanged.InvokeAsync(new HashSet<T>(_selectedValues.Select(i => i.Value)));
+            return SelectedValuesChanged.InvokeAsync(new HashSet<T>(_selectedValues.Select(i => i.Value)));
         }
 
         internal void AddChild(MudTreeViewItem<T> item) => _childItems.Add(item);

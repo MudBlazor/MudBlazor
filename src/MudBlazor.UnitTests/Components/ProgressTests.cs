@@ -1,6 +1,4 @@
-﻿#pragma warning disable CS1998 // async without await
-#pragma warning disable IDE1006 // leading underscore
-
+﻿
 using System;
 using Bunit;
 using FluentAssertions;
@@ -9,27 +7,15 @@ using NUnit.Framework;
 namespace MudBlazor.UnitTests.Components
 {
     [TestFixture]
-    public class ProgressTests
+    public class ProgressTests : BunitTest
     {
-        private Bunit.TestContext ctx;
-
-        [SetUp]
-        public void Setup()
-        {
-            ctx = new Bunit.TestContext();
-            ctx.AddTestServices();
-        }
-
-        [TearDown]
-        public void TearDown() => ctx.Dispose();
-
         /// <summary>
         /// Value is converted from the min - max range into 0 - 100 percent range
         /// </summary>
         [Test]
         public void Progress_Should_ConvertValueRangeToPercent()
         {
-            var comp = ctx.RenderComponent<MudProgressLinear>(x =>
+            var comp = Context.RenderComponent<MudProgressLinear>(x =>
                 {
                     x.Add(y => y.Min, -500);
                     x.Add(y => y.Max, 500);

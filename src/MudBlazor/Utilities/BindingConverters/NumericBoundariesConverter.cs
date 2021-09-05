@@ -16,6 +16,7 @@ namespace MudBlazor
     {
 #nullable enable
         public Func<T, T> EvaluationFunc { get; set; }
+        public Func<string, string> FilterFunc { get; set; }
 #nullable disable
 
         public NumericBoundariesConverter(Func<T, T> evaluationFunc)
@@ -25,11 +26,11 @@ namespace MudBlazor
             GetFunc = OnGet;
         }
 
-        private string OnGet(string value)
+        private string OnGet(string text)
         {
-            if (String.IsNullOrEmpty(value))
+            if (String.IsNullOrEmpty(text))
                 return null;
-
+            var value = FilterFunc == null ? text : FilterFunc(text);
             try
             {
                 // sbyte
@@ -120,6 +121,7 @@ namespace MudBlazor
 
             return null;
         }
+
 
         private T CheckBoundaries(T value) => EvaluationFunc.Invoke(value);
     }

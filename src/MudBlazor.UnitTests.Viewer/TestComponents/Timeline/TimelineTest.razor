@@ -1,0 +1,25 @@
+﻿@namespace MudBlazor.UnitTests.TestComponents
+
+<MudTimeline @bind-SelectedIndex="SelectedIndex">
+    <MudTimelineItem>
+        <MudText>Item A</MudText>
+    </MudTimelineItem>
+    <MudTimelineItem>
+        <MudText Align="Align.End">Item B</MudText>
+    </MudTimelineItem>
+    <MudTimelineItem>
+        <MudText>Item C</MudText>
+    </MudTimelineItem>
+    <MudTimelineItem>
+        <MudText>Item D</MudText>
+    </MudTimelineItem>
+    <MudTimelineItem>
+        <MudText>Item E</MudText>
+    </MudTimelineItem>
+</MudTimeline>
+
+@code {
+
+    public int SelectedIndex { get; private set; } = 0;
+
+}

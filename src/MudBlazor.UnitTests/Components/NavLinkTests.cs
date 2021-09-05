@@ -1,5 +1,5 @@
-﻿#pragma warning disable CS1998 // async without await
-#pragma warning disable IDE1006 // leading underscore
+﻿
+#pragma warning disable CS1998 // async without await
 
 using System;
 using System.Threading.Tasks;
@@ -13,17 +13,8 @@ using static Bunit.ComponentParameterFactory;
 namespace MudBlazor.UnitTests.Components
 {
     [TestFixture]
-    public class NavLinkTests
+    public class NavLinkTests : BunitTest
     {
-        private Bunit.TestContext ctx;
-
-        [SetUp]
-        public void Setup()
-        {
-            ctx = new Bunit.TestContext();
-            ctx.AddTestServices();
-        }
-
         /// <summary>
         /// When Target is not empty, rel attribute should be equals to "noopener noreferrer" on the a element
         /// </summary>
@@ -36,10 +27,7 @@ namespace MudBlazor.UnitTests.Components
         [TestCase("myFrameName", "noopener noreferrer")]
         public async Task NavLink_CheckRelAttribute(string target, string expectedRel)
         {
-            var comp = ctx.RenderComponent<MudNavLink>(new[]
-            {
-               Parameter(nameof(MudNavLink.Target), target),
-            });
+            var comp = Context.RenderComponent<MudNavLink>(Parameter(nameof(MudNavLink.Target), target));
             // print the generated html
             Console.WriteLine(comp.Markup);
             // select elements needed for the test
@@ -50,10 +38,7 @@ namespace MudBlazor.UnitTests.Components
         public async Task NavLink_CheckOnClickEvent()
         {
             var clicked = false;
-            var comp = ctx.RenderComponent<MudNavLink>(new[]
-            {
-               EventCallback(nameof(MudNavLink.OnClick), (MouseEventArgs args) => { clicked = true; }),
-            });
+            var comp = Context.RenderComponent<MudNavLink>(EventCallback(nameof(MudNavLink.OnClick), (MouseEventArgs args) => { clicked = true; }));
             // print the generated html
             Console.WriteLine(comp.Markup);
             comp.FindAll("a").Should().BeEmpty();
@@ -64,10 +49,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task NavLink_Enabled_CheckNavigation()
         {
-            var comp = ctx.RenderComponent<NavLinkDisabledTest>(new[]
-            {
-                Parameter(nameof(NavLinkDisabledTest.Disabled), false)
-            });
+            var comp = Context.RenderComponent<NavLinkDisabledTest>(Parameter(nameof(NavLinkDisabledTest.Disabled), false));
             Console.WriteLine(comp.Markup);
             comp.Find("a").Click();
             comp.Instance.IsNavigated.Should().BeTrue();
@@ -76,10 +58,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task NavLink_Disabled_CheckNoNavigation()
         {
-            var comp = ctx.RenderComponent<NavLinkDisabledTest>(new[]
-            {
-                Parameter(nameof(NavLinkDisabledTest.Disabled), true)
-            });
+            var comp = Context.RenderComponent<NavLinkDisabledTest>(Parameter(nameof(NavLinkDisabledTest.Disabled), true));
             Console.WriteLine(comp.Markup);
             comp.Find("a").Click();
             comp.Instance.IsNavigated.Should().BeFalse();

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using MudBlazor.Charts;
@@ -47,11 +46,11 @@ namespace MudBlazor.Docs.Services
             .AddItem("Progress", typeof(MudProgressCircular), typeof(MudProgressLinear))
             .AddItem("Dialog", typeof(MudDialog), typeof(MudDialogInstance), typeof(MudDialogProvider))
             .AddItem("Snackbar", typeof(MudSnackbarProvider))
-            .AddItem("Avatar", typeof(MudAvatar))
+            .AddItem("Avatar", typeof(MudAvatar), typeof(MudAvatarGroup))
             .AddItem("Alert", typeof(MudAlert))
             .AddItem("Card", typeof(MudCard), typeof(MudCardActions), typeof(MudCardContent), typeof(MudCardHeader), typeof(MudCardMedia))
             .AddItem("Divider", typeof(MudDivider))
-            .AddItem("Expansion Panel", typeof(MudExpansionPanels), typeof(MudExpansionPanel))
+            .AddItem("Expansion Panels", typeof(MudExpansionPanels), typeof(MudExpansionPanel))
             .AddItem("Icons", typeof(MudIcon))
             .AddItem("List", typeof(MudList), typeof(MudListItem), typeof(MudListSubheader))
             .AddItem("Paper", typeof(MudPaper))
@@ -73,6 +72,8 @@ namespace MudBlazor.Docs.Services
             .AddItem("SwipeArea", typeof(MudSwipeArea))
             .AddItem("ToolBar", typeof(MudToolBar))
             .AddItem("Carousel", typeof(MudCarousel<T>), typeof(MudCarouselItem))
+            .AddItem("Timeline", typeof(MudTimeline), typeof(MudTimelineItem))
+            .AddItem("Pagination", typeof(MudPagination))
 
             //GROUPS
 
@@ -94,6 +95,7 @@ namespace MudBlazor.Docs.Services
             .AddNavGroup("Pickers", false, new DocsComponents()
                 .AddItem("Date Picker", typeof(MudDatePicker))
                 .AddItem("Time Picker", typeof(MudTimePicker))
+                .AddItem("Color Picker", typeof(MudColorPicker))
             )
 
             //Buttons
@@ -121,9 +123,9 @@ namespace MudBlazor.Docs.Services
 
         public MenuService()
         {
-            foreach(var item in Components)
+            foreach (var item in Components)
             {
-                if(item.IsNavGroup)
+                if (item.IsNavGroup)
                 {
                     foreach (var apiItem in item.GroupItems.Elements)
                     {
@@ -136,7 +138,7 @@ namespace MudBlazor.Docs.Services
 
                     if (item.ChildComponents != null)
                     {
-                        foreach(var childComponent in item.ChildComponents)
+                        foreach (var childComponent in item.ChildComponents)
                         {
                             _parents.Add(childComponent, item);
                         }

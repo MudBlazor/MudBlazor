@@ -20,36 +20,6 @@
     </RowTemplate>
 </MudTable>
 
-<MudTable Items="@Elements.Take(4)" Hover="true" Breakpoint="Breakpoint.Sm">
-    <Columns>
-        <MudColumn Value="@context.Number" HeaderText="Nr"></MudColumn>
-        <MudColumn Value="@context.Sign" HeaderText="Sign"></MudColumn>
-        <MudColumn Value="@context.Name" HeaderText="Name"></MudColumn>
-        <MudColumn Value="@context.Position" HeaderText="Position"></MudColumn>
-        <MudColumn Value="@context.Molar" HeaderText="Molar mass"></MudColumn>
-    </Columns>
-</MudTable>
-
-<MudTable Items="@Elements.Take(4)" Hover="true" Breakpoint="Breakpoint.Sm">
-</MudTable>
-
-<MudTable Items="@Elements.Take(4)" Hover="true" Breakpoint="Breakpoint.Sm" QuickColumns="Number,Sign,Name,Position,Molar">
-</MudTable>
-
-<MudTable Items="@Elements.Take(4)" Hover="true" Breakpoint="Breakpoint.Sm">
-    <Columns>
-        <MudAvatarColumn Value="context.Number" HeaderText="Nr"></MudAvatarColumn>
-        <MudColumn Value="context.Sign" HeaderText="Sign"></MudColumn>
-        <MudColumn Value="context.Name" HeaderText="Name"></MudColumn>
-        <MudColumn Value="context.Position" HeaderText="Position"></MudColumn>
-        <MudColumn Value="context.Molar" HeaderText="Molar mass" DataFormatString="{0:f2}"></MudColumn>
-        <MudTemplateColumn DataContext="context" Context="dc">
-            <Header><MudTh>Nr</MudTh></Header>
-            <Row><MudTd DataLabel="Date">@($"Element number: {dc.Number}")</MudTd></Row>
-        </MudTemplateColumn>
-    </Columns>
-</MudTable>
-
 <MudSwitch @bind-Checked="_hidePosition">Hide <b>position</b> when Breakpoint=Xs</MudSwitch>
 <MudSwitch @bind-Checked="_loading">Show Loading</MudSwitch>
 
@@ -61,4 +31,5 @@
     protected override async Task OnInitializedAsync()
     {
         Elements = await httpClient.GetFromJsonAsync<List<Element>>("webapi/periodictable");
-    } }
+    }
+}

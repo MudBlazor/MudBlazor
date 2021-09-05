@@ -3,7 +3,6 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
-using Microsoft.JSInterop;
 using MudBlazor.Extensions;
 using MudBlazor.Utilities;
 
@@ -12,7 +11,7 @@ namespace MudBlazor
     public partial class MudChip : MudComponentBase, IDisposable
     {
         private bool _isSelected;
-        [Inject] public Microsoft.AspNetCore.Components.NavigationManager UriHelper { get; set; }
+        [Inject] public NavigationManager UriHelper { get; set; }
 
         [Inject] public IJsApiService JsApiService { get; set; }
 
@@ -57,7 +56,7 @@ namespace MudBlazor
         [Parameter] public string AvatarClass { get; set; }
 
         /// <summary>
-        /// Removes circle edges and applys theme default.
+        /// Removes circle edges and applies theme default.
         /// </summary>
         [Parameter] public bool Label { get; set; }
 

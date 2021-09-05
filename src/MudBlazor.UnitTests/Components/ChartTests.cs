@@ -1,6 +1,4 @@
-﻿#pragma warning disable CS1998 // async without await
-#pragma warning disable IDE1006 // leading underscore
-
+﻿
 using System;
 using System.Collections.Generic;
 using Bunit;
@@ -12,29 +10,16 @@ using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Components
 {
-
     [TestFixture]
-    public class ChartTests
+    public class ChartTests : BunitTest
     {
-        private Bunit.TestContext ctx;
-
-        [SetUp]
-        public void Setup()
-        {
-            ctx = new Bunit.TestContext();
-            ctx.AddTestServices();
-        }
-
-        [TearDown]
-        public void TearDown() => ctx.Dispose();
-
         /// <summary>
         /// single checkbox, initialized false, check -  uncheck
         /// </summary>
         [Test]
         public void PieChartSelectionTest()
         {
-            var comp = ctx.RenderComponent<PieExample1>();
+            var comp = Context.RenderComponent<PieExample1>();
             // print the generated html
             Console.WriteLine(comp.Markup);
             comp.Find("h6").InnerHtml.Trim().Should().Be("Selected portion of the chart: -1");
@@ -48,7 +33,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void DonutChartSelectionTest()
         {
-            var comp = ctx.RenderComponent<DonutExample1>();
+            var comp = Context.RenderComponent<DonutExample1>();
             // print the generated html
             Console.WriteLine(comp.Markup);
             comp.Find("h6").InnerHtml.Trim().Should().Be("Selected portion of the chart: -1");
@@ -62,7 +47,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void LineChartSelectionTest()
         {
-            var comp = ctx.RenderComponent<LineExample1>();
+            var comp = Context.RenderComponent<LineExample1>();
             // print the generated html
             Console.WriteLine(comp.Markup);
             comp.Find("h6").InnerHtml.Trim().Should().Be("Selected portion of the chart: -1");
@@ -76,7 +61,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void BarChartSelectionTest()
         {
-            var comp = ctx.RenderComponent<BarExample1>();
+            var comp = Context.RenderComponent<BarExample1>();
             // print the generated html
             Console.WriteLine(comp.Markup);
             comp.Find("h6").InnerHtml.Trim().Should().Be("Selected portion of the chart: -1");
@@ -90,17 +75,17 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void BarChartYAxisFormat()
         {
-            ChartOptions options = new ChartOptions();
-            List<ChartSeries> series = new List<ChartSeries>()
+            var options = new ChartOptions();
+            var series = new List<ChartSeries>()
             {
                 new ChartSeries() { Name = "Series 1", Data = new double[] { 90, 79, 72, 69, 62, 62, 55, 65, 70 } },
                 new ChartSeries() { Name = "Series 2", Data = new double[] { 10, 41, 35, 51, 49, 62, 69, 91, 148 } },
             };
-            string[] xAxis = new string[] { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep" };
-            string width = "100%";
-            string height = "350px";
+            var xAxis = new string[] { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep" };
+            var width = "100%";
+            var height = "350px";
 
-            var comp = ctx.RenderComponent<MudChart>(parameters => parameters
+            var comp = Context.RenderComponent<MudChart>(parameters => parameters
               .Add(p => p.ChartType, ChartType.Line)
               .Add(p => p.ChartSeries, series)
               .Add(p => p.XAxisLabels, xAxis)
@@ -153,7 +138,7 @@ namespace MudBlazor.UnitTests.Components
         {
             // the test should run through instantly (max 5s for a slow build server). 
             // without the fix it took minutes on a fast computer
-            var comp = ctx.RenderComponent<LineChartWithBigValuesTest>();
+            var comp = Context.RenderComponent<LineChartWithBigValuesTest>();
         }
     }
 }

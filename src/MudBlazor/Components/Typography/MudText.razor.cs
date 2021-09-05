@@ -27,7 +27,7 @@ namespace MudBlazor
         }
 
         [CascadingParameter] public bool RightToLeft { get; set; }
-        
+
         /// <summary>
         /// Applies the theme typography styles.
         /// </summary>

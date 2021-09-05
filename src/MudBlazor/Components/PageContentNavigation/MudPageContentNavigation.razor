@@ -10,10 +10,10 @@
             @Headline
         </MudText>
         <MudNavMenu Class="pl-4">
-            @foreach (var section in _sections)
+            @foreach (var docSection in _sections)
             {
-                <MudNavLink Match="NavLinkMatch.All" Class="@GetNavLinkClass(section.IsActive)" @onclick="@(e => OnNavLinkClick(section.Id))">
-                    @section.Title
+                <MudNavLink Match="NavLinkMatch.All" Class="@GetNavLinkClass(docSection.IsActive)" @onclick="@(e => OnNavLinkClick(docSection.Id))">
+                    @docSection.Title
                 </MudNavLink>}
         </MudNavMenu>
     }

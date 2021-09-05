@@ -6,7 +6,6 @@ using Microsoft.Extensions.DependencyInjection;
 using MudBlazor.Services;
 using MudBlazor.UnitTests.Mocks;
 using NUnit.Framework;
-using RichardSzalay.MockHttp;
 using Toolbelt.Blazor.HeadElement;
 
 namespace MudBlazor.UnitTests.Components
@@ -32,6 +31,8 @@ namespace MudBlazor.UnitTests.Components
             ctx.Services.AddSingleton<IHeadElementHelper>(new MockHeadElementHelper());
             ctx.Services.AddTransient<IResizeObserver, MockResizeObserver>();
             ctx.Services.AddSingleton<IBrowserWindowSizeProvider>(new MockBrowserWindowSizeProvider());
+            ctx.Services.AddTransient<IEventListener, EventListener>();
+
             ctx.Services.AddOptions();
             ctx.Services.AddScoped(sp =>
                 new HttpClient(new MockDocsMessageHandler()) { BaseAddress = new Uri("https://localhost/") });

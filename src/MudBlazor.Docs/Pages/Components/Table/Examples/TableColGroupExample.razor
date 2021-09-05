@@ -30,26 +30,6 @@
     </PagerContent>
 </MudTable>
 
-<MudTable Items="@Elements">
-    <ColGroup>
-        <col style="width: 60px;" />
-        <col />
-        <col style="width: 60%;" />
-        <col style="width: 60px;" />
-        <col />
-    </ColGroup>
-    <Columns>
-        <MudColumn Value="@context.Number" HeaderText="Nr"></MudColumn>
-        <MudColumn Value="@context.Sign" HeaderText="Sign"></MudColumn>
-        <MudColumn Value="@context.Name" HeaderText="Name"></MudColumn>
-        <MudColumn Value="@context.Position" HeaderText="Position"></MudColumn>
-        <MudColumn Value="@context.Molar"  HeaderText="Molar mass"></MudColumn>
-    </Columns>
-    <PagerContent>
-        <MudTablePager />
-    </PagerContent>
-</MudTable>
-
 @code {
     private IEnumerable<Element> Elements = new List<Element>();
 

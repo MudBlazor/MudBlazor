@@ -56,7 +56,7 @@ else
     [Parameter] public Color BadgeColor { get; set; } = Color.Primary;
 
     /// <summary>
-    /// Unique TabPanel ID. Usefull for actvation when Panels are dynamically generated.
+    /// Unique TabPanel ID. Useful for activation when Panels are dynamically generated.
     /// </summary>
     [Parameter] public object ID { get; set; }
 
@@ -91,10 +91,7 @@ else
         //    throw new ArgumentNullException(nameof(Parent), "TabPanel must exist within a Tabs component");
         base.OnInitialized();
 
-        if (Parent != null)
-        {
-            Parent.AddPanel(this);
-        }
+        Parent?.AddPanel(this);
     }
 
     public async ValueTask DisposeAsync()

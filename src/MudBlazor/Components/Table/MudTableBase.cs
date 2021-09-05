@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Microsoft.AspNetCore.Components;
@@ -24,8 +22,9 @@ namespace MudBlazor
            .AddClass("mud-xs-table", Breakpoint == Breakpoint.Xs)
            .AddClass("mud-sm-table", Breakpoint == Breakpoint.Sm)
            .AddClass("mud-md-table", Breakpoint == Breakpoint.Md)
-           .AddClass("mud-lg-table", Breakpoint == Breakpoint.Lg || Breakpoint == Breakpoint.Always)
-           .AddClass("mud-xl-table", Breakpoint == Breakpoint.Xl || Breakpoint == Breakpoint.Always)
+           .AddClass("mud-lg-table", Breakpoint is Breakpoint.Lg or Breakpoint.Always)
+           .AddClass("mud-xl-table", Breakpoint is Breakpoint.Xl or Breakpoint.Always)
+           .AddClass("mud-xxl-table", Breakpoint is Breakpoint.Xxl or Breakpoint.Always)
            .AddClass("mud-table-dense", Dense)
            .AddClass("mud-table-hover", Hover)
            .AddClass("mud-table-bordered", Bordered)
@@ -277,7 +276,7 @@ namespace MudBlazor
         [Parameter] public Action<object> RowEditPreview { get; set; }
 
         /// <summary>
-        /// The method is called when the edition of the item has been commited in inline editing.
+        /// The method is called when the edition of the item has been committed in inline editing.
         /// </summary>
         [Parameter] public Action<object> RowEditCommit { get; set; }
 
@@ -310,7 +309,7 @@ namespace MudBlazor
         /// <summary>
         /// Alignment of the table cell text when breakpoint is smaller than <see cref="Breakpoint" />
         /// </summary>
-        [Obsolete("This property is obsolete. And not needed anymore, the cells width/alignment is done automaticly.")] [Parameter] public bool RightAlignSmall { get; set; } = true;
+        [Obsolete("This property is obsolete. And not needed anymore, the cells width/alignment is done automatically.")] [Parameter] public bool RightAlignSmall { get; set; } = true;
         #endregion
 
         public abstract TableContext TableContext { get; }
@@ -340,6 +339,14 @@ namespace MudBlazor
                     CurrentPage = Math.Max(0, CurrentPage - 1);
                     break;
             }
+        }
+        /// <summary>
+        /// Navigate to page with specified index.
+        /// </summary>
+        /// <param name="pageIndex"> The index of the page number.</param>
+        public void NavigateTo(int pageIndex)
+        {
+            CurrentPage = Math.Min(Math.Max(0, pageIndex), NumPages - 1);
         }
 
         public void SetRowsPerPage(int size)
@@ -373,14 +380,14 @@ namespace MudBlazor
             }
         }
 
-        internal async Task OnPreviewEditHandler(object item)
+        internal Task OnPreviewEditHandler(object item)
         {
-            await OnPreviewEditClick.InvokeAsync(item);
+            return OnPreviewEditClick.InvokeAsync(item);
         }
 
-        internal async Task OnCancelEditHandler(MouseEventArgs ev)
+        internal Task OnCancelEditHandler(MouseEventArgs ev)
         {
-            await OnCancelEditClick.InvokeAsync(ev);
+            return OnCancelEditClick.InvokeAsync(ev);
         }
 
         protected string TableStyle

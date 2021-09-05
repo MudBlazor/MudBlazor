@@ -64,27 +64,12 @@ namespace MudBlazor
         /// <summary>
         /// The Icon Size.
         /// </summary>
-        [Parameter] public Size IconSize { get; set; } = Size.Small;
+        [Parameter] public Size IconSize { get; set; } = Size.Medium;
 
         /// <summary>
         /// Button click event if set and Adornment used.
         /// </summary>
         [Parameter] public EventCallback<MouseEventArgs> OnAdornmentClick { get; set; }
-
-        /// <summary>
-        /// Show clear button.
-        /// </summary>
-        [Parameter] public bool Clearable { get; set; } = false;
-
-        /// <summary>
-        /// Button click event for clear button. Called after text and value has been cleared.
-        /// </summary>
-        [Parameter] public EventCallback<MouseEventArgs> OnClearButtonClick { get; set; }
-
-        /// <summary>
-        /// Type of the input element. It should be a valid HTML5 input type.
-        /// </summary>
-        [Parameter] public InputType InputType { get; set; } = InputType.Text;
 
         /// <summary>
         /// Variant to use.
@@ -111,6 +96,22 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         public string Text { get; set; }
+
+        /// <summary>
+        ///  Hints at the type of data that might be entered by the user while editing the input
+        /// </summary>
+        [Parameter] public virtual InputMode InputMode { get; set; } = InputMode.text;
+
+        /// <summary>
+        /// The pattern attribute, when specified, is a regular expression which the input's value must match in order for the value to pass constraint validation. It must be a valid JavaScript regular expression
+        /// Not Supported in multline input
+        /// </summary>
+        [Parameter] public virtual string Pattern { get; set; }
+
+        /// <summary>
+        /// Derived classes need to override this if they can be something other than text
+        /// </summary>
+        internal virtual InputType GetInputType() { return InputType.Text; }
 
         protected async Task SetTextAsync(string text, bool updateValue = true)
         {
@@ -162,14 +163,6 @@ namespace MudBlazor
 
         protected bool _isFocused;
 
-        protected bool _shouldRenderBeForced;
-        //if you press Enter or Arrows, the input should re-render, because
-        //the user is accepting a value
-        private static bool ShouldRenderBeForced(string key) => key == "Enter"
-                                                             || key == "ArrowDown"
-                                                             || key == "ArrowUp"
-                                                             || key == "Tab";
-
         protected virtual void OnBlurred(FocusEventArgs obj)
         {
             _isFocused = false;
@@ -185,7 +178,6 @@ namespace MudBlazor
         protected virtual void InvokeKeyDown(KeyboardEventArgs obj)
         {
             _isFocused = true;
-            _shouldRenderBeForced = ShouldRenderBeForced(obj.Key);
             OnKeyDown.InvokeAsync(obj).AndForget();
         }
 
@@ -217,7 +209,6 @@ namespace MudBlazor
         protected virtual void InvokeKeyUp(KeyboardEventArgs obj)
         {
             _isFocused = true;
-            _shouldRenderBeForced = ShouldRenderBeForced(obj.Key);
             OnKeyUp.InvokeAsync(obj).AndForget();
         }
 
@@ -301,10 +292,12 @@ namespace MudBlazor
             return changed;
         }
 
-        protected override async Task ValidateValue()
+        protected override Task ValidateValue()
         {
             if (Standalone)
-                await base.ValidateValue();
+                return base.ValidateValue();
+
+            return Task.CompletedTask;
         }
 
         protected override async Task OnInitializedAsync()
@@ -317,6 +310,14 @@ namespace MudBlazor
                 await UpdateTextPropertyAsync(false);
         }
 
+        public virtual void ForceRender(bool forceTextUpdate)
+        {
+            _forceTextUpdate = true;
+            StateHasChanged();
+        }
+
+        protected bool _forceTextUpdate;
+
         public override async Task SetParametersAsync(ParameterView parameters)
         {
             await base.SetParametersAsync(parameters);
@@ -327,6 +328,12 @@ namespace MudBlazor
             // Refresh Value from Text
             if (hasText && !hasValue)
                 await UpdateValuePropertyAsync(false);
+
+            if (_isFocused && !_forceTextUpdate)
+            {
+                return;
+            }
+            _forceTextUpdate = false;
 
             // Refresh Text from Value
             if (hasValue && !hasText)

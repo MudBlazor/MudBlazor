@@ -8,12 +8,10 @@ namespace MudBlazor
 {
     public partial class MudRadio<T> : MudComponentBase, IDisposable
     {
-        private bool _checked;
-
         [CascadingParameter] protected MudRadioGroup<T> RadioGroup { get; set; }
 
         [CascadingParameter] public bool RightToLeft { get; set; }
-        
+
         protected string Classname =>
         new CssBuilder("mud-radio")
             .AddClass($"mud-disabled", Disabled)
@@ -54,7 +52,7 @@ namespace MudBlazor
                 _ => placement
             };
         }
-        
+
         /// <summary>
         /// The color of the component. It supports the theme colors.
         /// </summary>
@@ -95,21 +93,20 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public RenderFragment ChildContent { get; set; }
 
-        internal bool Checked => _checked;
+        internal bool Checked { get; private set; }
 
         internal void SetChecked(bool value)
         {
-            if (_checked != value)
+            if (Checked != value)
             {
-                _checked = value;
+                Checked = value;
                 StateHasChanged();
             }
         }
 
         public void Select()
         {
-            if (RadioGroup != null)
-                RadioGroup.SetSelectedRadioAsync(this).AndForget();
+            RadioGroup?.SetSelectedRadioAsync(this).AndForget();
         }
 
         private Task OnClick()
@@ -130,8 +127,7 @@ namespace MudBlazor
 
         public void Dispose()
         {
-            if (RadioGroup != null)
-                RadioGroup.UnregisterRadio(this);
+            RadioGroup?.UnregisterRadio(this);
         }
     }
 }

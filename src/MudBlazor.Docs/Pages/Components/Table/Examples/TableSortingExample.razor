@@ -23,30 +23,16 @@
     </PagerContent>
 </MudTable>
 
-
-<MudTable Items="@Elements" Hover="true" SortLabel="Sort By">
-    <Columns>
-        <MudSortableColumn Value="context.Number" HeaderText="Nr" SortBy="(Element x)=>x.Number" />
-        <MudSortableColumn Value="context.Sign" HeaderText="Sign" SortBy="(Element x)=>x.Sign" />
-        <MudSortableColumn Value="context.Name" HeaderText="Name" SortBy="(Element x)=>x.Name" />
-        <MudSortableColumn Value="context.Position" HeaderText="Position" SortBy="(Element x)=>x.Position" />
-        <MudSortableColumn Value="context.Molar" HeaderText="Molar mass" SortBy="(Element x)=>x.Molar" />
-    </Columns>
-    <PagerContent>
-        <MudTablePager PageSizeOptions="new int[]{50, 100}" />
-    </PagerContent>
-</MudTable>
-
-
 <MudSwitch @bind-Checked="enabled" Color="Color.Info">Enable sorting on the Sign Column</MudSwitch>
 
 @code {
     private bool enabled = true;
     private IEnumerable<Element> Elements = new List<Element>();
 
-            protected override async Task OnInitializedAsync()
-            {
-                Elements = await httpClient.GetFromJsonAsync<List<Element>>("webapi/periodictable");
-            } }
+    protected override async Task OnInitializedAsync()
+    {
+        Elements = await httpClient.GetFromJsonAsync<List<Element>>("webapi/periodictable");
+    }
+}
 
 
