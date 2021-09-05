@@ -26,7 +26,8 @@
             <CascadingValue Value="@((IMudSelect)this)" IsFixed="true">
                 @if (MultiSelection && SelectAll)
                 {
-                    <MudCheckBox T="bool" CheckedChanged="OnSelectAllCheckedChangedAsync" Class="mud-select-all-checkbox"><span class="mud-select-all-text">@SelectAllText</span></MudCheckBox>
+                    <MudListItem Icon="@SelectAllCheckBoxIcon" Text="@SelectAllText" OnClick="SelectAllClickAsync"  
+                     Dense="@Dense" Class="mud-list-item-clickable mud-select-all" TextTypo="@(Dense ? Typo.body2 : Typo.body1)" />
                 }
                 <MudList Clickable="true" Dense="@Dense">
                     @ChildContent

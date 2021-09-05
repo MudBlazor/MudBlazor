@@ -417,8 +417,7 @@ namespace MudBlazor.UnitTests.Components
             input.Click();
             menu.ClassList.Should().Contain("mud-popover-open");
             // now click the first checkbox
-            var checkbox = comp.FindComponent<MudCheckBox<bool>>();
-            checkbox.Find("input").Change(true);
+            comp.FindAll("div.mud-list-item")[0].Click();
             // validate the result. all items should be selected
             select.Instance.Text.Should().Be("FirstA^SecondA^ThirdA");
             validatedValue.Should().Be("FirstA^SecondA^ThirdA");

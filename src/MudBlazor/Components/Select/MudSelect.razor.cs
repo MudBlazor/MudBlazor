@@ -447,7 +447,18 @@ namespace MudBlazor
             }
         }
 
-        private async Task OnSelectAllCheckedChangedAsync()
+        /// <summary>
+        /// The checkbox icon reflects the select all option's state
+        /// </summary>
+        protected string SelectAllCheckBoxIcon
+        {
+            get
+            {
+                return _selectAllChecked ? Icons.Material.Filled.CheckBox : Icons.Material.Filled.CheckBoxOutlineBlank;
+            }
+        }
+
+        private async Task SelectAllClickAsync()
         {
             _selectAllChecked = !_selectAllChecked;
             if (_selectAllChecked)
