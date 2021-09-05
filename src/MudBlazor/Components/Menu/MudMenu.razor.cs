@@ -155,6 +155,11 @@ namespace MudBlazor
             StateHasChanged();
         }
 
+        public void PopoverMouseEnter()
+        {
+            _isMouseOver = true;
+        }
+
         // Sets the popover style ONLY when there is an activator
         private void SetPopoverStyle(MouseEventArgs args)
         {

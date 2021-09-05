@@ -37,7 +37,7 @@
     <MudPopover Open="@_isOpen" Class="@MenuClassname" MaxHeight="@MaxHeight" Style="@PopoverStyle" Direction="@Direction" OffsetX="@OffsetX" OffsetY="@OffsetY">
         <CascadingValue Value="@this">
             <MudList Clickable="true" Dense="@Dense" 
-            @onmouseenter="@(() => _isMouseOver = true)"
+            @onmouseenter="@PopoverMouseEnter"
             @onmouseleave="@(ActivationEvent== MouseEvent.MouseOver ? CloseMenu : null)">
                 @ChildContent
             </MudList>
