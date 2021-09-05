@@ -29,11 +29,6 @@ namespace MudBlazor
         [Parameter] public string Text { get; set; }
 
         /// <summary>
-        /// The text typo
-        /// </summary>
-        [Parameter] public Typo TextTypo { get; set; }
-
-        /// <summary>
         /// Avatar to use if set.
         /// </summary>
         [Parameter] public string Avatar { get; set; }
@@ -195,15 +190,16 @@ namespace MudBlazor
             }
         }
 
+        private Typo _textTypo;
         private void OnListParametersChanged()
         {
             if (Dense || MudList?.Dense == true)
             {
-                TextTypo = Typo.body2;
+                _textTypo = Typo.body2;
             }
             else if (!Dense || !MudList?.Dense == true)
             {
-                TextTypo = Typo.body1;
+                _textTypo = Typo.body1;
             }
             StateHasChanged();
         }

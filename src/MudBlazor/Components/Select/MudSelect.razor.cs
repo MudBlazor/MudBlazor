@@ -84,7 +84,7 @@ namespace MudBlazor
         /// <summary>
         /// Parameter to define the delimited string separator.
         /// </summary>
-        [Parameter] public string DelimitedStringSeparator { get; set; } = ", ";
+        [Parameter] public string Delimiter { get; set; } = ", ";
 
         /// <summary>
         /// Set of selected values. If MultiSelection is false it will only ever contain a single value. This property is two-way bindable.
@@ -112,13 +112,13 @@ namespace MudBlazor
                     //Warning. Here the Converter was not set yet
                     if (MultiSelectionTextFunc != null)
                     {
-                        SetCustomizedTextAsync(string.Join(DelimitedStringSeparator, SelectedValues.Select(x => Converter.Set(x))),
+                        SetCustomizedTextAsync(string.Join(Delimiter, SelectedValues.Select(x => Converter.Set(x))),
                             selectedConvertedValues: SelectedValues.Select(x => Converter.Set(x)).ToList(),
                             multiSelectionTextFunc: MultiSelectionTextFunc).AndForget();
                     }
                     else
                     {
-                        SetTextAsync(string.Join(DelimitedStringSeparator, SelectedValues.Select(x => Converter.Set(x)))).AndForget();
+                        SetTextAsync(string.Join(Delimiter, SelectedValues.Select(x => Converter.Set(x)))).AndForget();
                     }
                 }
                 SelectedValuesChanged.InvokeAsync(new HashSet<T>(SelectedValues));
@@ -215,7 +215,7 @@ namespace MudBlazor
             if (MultiSelectionTextFunc != null)
             {
                 return MultiSelection
-                    ? SetCustomizedTextAsync(string.Join(DelimitedStringSeparator, SelectedValues.Select(x => Converter.Set(x))),
+                    ? SetCustomizedTextAsync(string.Join(Delimiter, SelectedValues.Select(x => Converter.Set(x))),
                         selectedConvertedValues: SelectedValues.Select(x => Converter.Set(x)).ToList(),
                         multiSelectionTextFunc: MultiSelectionTextFunc)
                     : base.UpdateTextPropertyAsync(updateValue);
@@ -223,7 +223,7 @@ namespace MudBlazor
             else
             {
                 return MultiSelection
-                    ? SetTextAsync(string.Join(DelimitedStringSeparator, SelectedValues.Select(x => Converter.Set(x))))
+                    ? SetTextAsync(string.Join(Delimiter, SelectedValues.Select(x => Converter.Set(x))))
                     : base.UpdateTextPropertyAsync(updateValue);
             }
         }
@@ -315,13 +315,13 @@ namespace MudBlazor
 
                 if (MultiSelectionTextFunc != null)
                 {
-                    await SetCustomizedTextAsync(string.Join(DelimitedStringSeparator, SelectedValues.Select(x => Converter.Set(x))),
+                    await SetCustomizedTextAsync(string.Join(Delimiter, SelectedValues.Select(x => Converter.Set(x))),
                         selectedConvertedValues: SelectedValues.Select(x => Converter.Set(x)).ToList(),
                         multiSelectionTextFunc: MultiSelectionTextFunc);
                 }
                 else
                 {
-                    await SetTextAsync(string.Join(DelimitedStringSeparator, SelectedValues.Select(x => Converter.Set(x))));
+                    await SetTextAsync(string.Join(Delimiter, SelectedValues.Select(x => Converter.Set(x))));
                 }
                 BeginValidate();
             }
@@ -424,8 +424,7 @@ namespace MudBlazor
             BeginValidate();
             StateHasChanged();
             await SelectedValuesChanged.InvokeAsync(SelectedValues);
-            if (e != default)
-                await OnClearButtonClick.InvokeAsync(e);
+            await OnClearButtonClick.InvokeAsync(e);
         }
 
         protected async Task SetCustomizedTextAsync(string text, bool updateValue = true,
@@ -458,6 +457,19 @@ namespace MudBlazor
             }
         }
 
+        /// <summary>
+        /// Clear the selection
+        /// </summary>
+        public async Task ClearAsync()
+        {
+            await SetValueAsync(default, false);
+            await SetTextAsync(default, false);
+            SelectedValues.Clear();
+            BeginValidate();
+            StateHasChanged();
+            await SelectedValuesChanged.InvokeAsync(SelectedValues);
+        }
+
         private async Task SelectAllClickAsync()
         {
             _selectAllChecked = !_selectAllChecked;
@@ -473,7 +485,7 @@ namespace MudBlazor
             }
             else
             {
-                await SelectClearButtonClickHandlerAsync();
+                await ClearAsync();
             }
         }
     }

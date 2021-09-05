@@ -27,7 +27,7 @@
                 @if (MultiSelection && SelectAll)
                 {
                     <MudListItem Icon="@SelectAllCheckBoxIcon" Text="@SelectAllText" OnClick="SelectAllClickAsync"  
-                     Dense="@Dense" Class="mud-list-item-clickable mud-select-all" TextTypo="@(Dense ? Typo.body2 : Typo.body1)" />
+                     Dense="@Dense" Class="mud-list-item-clickable mud-select-all mud-typography-body1"/>
                 }
                 <MudList Clickable="true" Dense="@Dense">
                     @ChildContent
