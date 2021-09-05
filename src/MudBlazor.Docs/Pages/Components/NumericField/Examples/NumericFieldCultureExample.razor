@@ -4,11 +4,11 @@
 
 <MudGrid>
     <MudItem xs="12" sm="6">
-        <MudNumericField T="double?" @bind-Value="_valueDe" Immediate Label="de-DE" Format="N2" Culture="@_de"/>
+        <MudNumericField T="double?" @bind-Value="_valueDe" Immediate="true" Label="de-DE" Format="N2" Culture="@_de"/>
         <MudText>Value: @_valueDe.ToString()</MudText>
     </MudItem>
     <MudItem xs="12" sm="6">
-        <MudNumericField T="double?" @bind-Value="_valueEn" Immediate Label="en-US" Format="N2" Culture="@_en"/>
+        <MudNumericField T="double?" @bind-Value="_valueEn" Immediate="true" Label="en-US" Format="N2" Culture="@_en"/>
         <MudText>Value: @_valueEn.ToString()</MudText>
     </MudItem>
 </MudGrid>

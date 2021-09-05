@@ -144,8 +144,6 @@ namespace MudBlazor
         protected override void OnBlurred(FocusEventArgs obj)
         {
             base.OnBlurred(obj);
-            if (RuntimeLocation.IsServerSide)
-                _key++; // this forces a re-render on the inner input to display the value correctly
         }
 
         protected async Task<bool> ValidateInput(T value)
@@ -196,8 +194,8 @@ namespace MudBlazor
             return (Num.To<T>(value), false);
         }
 
-
         private long _key = 0;
+
         private bool _keyDownPreventDefault;
 
         /// <summary>
@@ -218,16 +216,11 @@ namespace MudBlazor
                     case "ArrowUp":
                         if (RuntimeLocation.IsServerSide)
                         {
-                            if (!Immediate)
-                            {
-                                _key++;
-                                await Task.Delay(1);
-                                await Increment();
-                                await Task.Delay(1);
-                                _ = FocusAsync();
-                            }
-                            else
-                                await Increment();
+                            _key++;
+                            await Task.Delay(1);
+                            await Increment();
+                            await Task.Delay(1);
+                            _ = FocusAsync();
                         }
                         else
                         {
@@ -240,16 +233,11 @@ namespace MudBlazor
                     case "ArrowDown":
                         if (RuntimeLocation.IsServerSide)
                         {
-                            if (!Immediate)
-                            {
-                                _key++;
-                                await Task.Delay(1);
-                                await Decrement();
-                                await Task.Delay(1);
-                                _ = FocusAsync();
-                            }
-                            else
-                                await Decrement();
+                            _key++;
+                            await Task.Delay(1);
+                            await Decrement();
+                            await Task.Delay(1);
+                            _ = FocusAsync();
                         }
                         else
                         {
@@ -271,20 +259,36 @@ namespace MudBlazor
                         if (obj.CtrlKey is false)
                         {
                             _keyDownPreventDefault = true;
+                            _key++;
+                            StateHasChanged();
+                            await Task.Delay(1);
+                            await _elementReference.FocusAsync();
                             return;
                         }
 
                         break;
 
                     default:
-                        var acceptableKeyTypes = new Regex("^[0-9,.-]$");
-                        var isMatch = acceptableKeyTypes.Match(obj.Key).Success;
-                        if (isMatch is false)
+                        if (obj.Key != "Shift")
                         {
-                            _keyDownPreventDefault = true;
+                            var acceptableKeyTypes = new Regex("^[0-9,.-]$");
+                            var isMatch = acceptableKeyTypes.Match(obj.Key).Success;
+                            if (isMatch is false)
+                            {
+                                _keyDownPreventDefault = true;
+                                _key++;
+                                StateHasChanged();
+                                await Task.Delay(1);
+                                await _elementReference.FocusAsync();
+
+                                return;
+                            }
+                            break;
+                        }
+                        else
+                        {
                             return;
                         }
-                        break;
                 }
             }
 
@@ -295,21 +299,8 @@ namespace MudBlazor
         {
             if (Disabled || ReadOnly)
                 return;
-            switch (obj.Key)
-            {
-                case "ArrowUp":
-                    if (RuntimeLocation.IsServerSide)
-                        _elementReference?.ForceRender(forceTextUpdate: true);
-                    break;
-
-                case "ArrowDown":
-                    if (RuntimeLocation.IsServerSide)
-                        _elementReference?.ForceRender(forceTextUpdate: true);
-                    break;
-            }
 
             _keyDownPreventDefault = false;
-            StateHasChanged();
             OnKeyUp.InvokeAsync(obj).AndForget();
         }
 
