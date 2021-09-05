@@ -157,6 +157,8 @@ namespace MudBlazor
         {
             get
             {
+                if (ChildContent == null)
+                    return false;
                 if (Value == null)
                     return false;
                 if (!_value_lookup.TryGetValue(Value, out var item))
