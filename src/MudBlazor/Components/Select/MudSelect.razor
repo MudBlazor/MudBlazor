@@ -24,12 +24,12 @@
         </MudInputControl>
         <MudPopover Open=@(_isOpen) MaxHeight="@MaxHeight" Direction="@Direction" OffsetX="@OffsetX" OffsetY="@OffsetY" Class="@PopoverClass">
             <CascadingValue Value="@((IMudSelect)this)" IsFixed="true">
-                @if (_isOpen)
-                {
-                    <MudList Clickable="true" Dense="@Dense">
+                <MudList Clickable="true" Dense="@Dense">
+                    @if (_isOpen)
+                    {
                         @ChildContent
-                    </MudList>
-                }
+                    }
+                </MudList>
             </CascadingValue>
         </MudPopover>
     </div>
