@@ -179,9 +179,10 @@ namespace MudBlazor.UnitTests.Components
         [TestCase(Breakpoint.Md)]
         [TestCase(Breakpoint.Lg)]
         [TestCase(Breakpoint.Xl)]
+        [TestCase(Breakpoint.Xxl)]
         public async Task ResponsiveClosed_LargeScreen_SetBreakpoint_Open_CheckState(Breakpoint breakpoint)
         {
-            (Context.Services.GetService<IResizeListenerService>() as MockResizeListenerService)?.ApplyScreenSize(1920, 1080);
+            (Context.Services.GetService<IResizeListenerService>() as MockResizeListenerService)?.ApplyScreenSize(2560, 1080);
 
             var comp = Context.RenderComponent<DrawerResponsiveTest>(Parameter(nameof(DrawerResponsiveTest.Breakpoint), breakpoint));
 
@@ -201,6 +202,7 @@ namespace MudBlazor.UnitTests.Components
         [TestCase(Breakpoint.Md)]
         [TestCase(Breakpoint.Lg)]
         [TestCase(Breakpoint.Xl)]
+        [TestCase(Breakpoint.Xxl)]
         public async Task ResponsiveClosed_SmallScreen_SetBreakpoint_Open_CheckState(Breakpoint breakpoint)
         {
             (Context.Services.GetService<IResizeListenerService>() as MockResizeListenerService)?.ApplyScreenSize(400, 300);
