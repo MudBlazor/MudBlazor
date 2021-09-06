@@ -295,6 +295,112 @@ namespace MudBlazor
             OnKeyDown.InvokeAsync(obj).AndForget();
         }
 
+        protected async Task OnMouseWheel(WheelEventArgs obj)
+        {
+            if (obj.ShiftKey == true && obj.DeltaY < 0)
+            {
+                if (InvertMouseWheel == false)
+                {
+                    if (RuntimeLocation.IsServerSide)
+                    {
+                        if (!Immediate)
+                        {
+                            _key++;
+                            await Task.Delay(1);
+                            await Increment();
+                            await Task.Delay(1);
+                            _ = FocusAsync();
+                        }
+                        else
+                            await Increment();
+                    }
+                    else
+                    {
+                        _key++;
+                        await Task.Delay(1);
+                        await Increment();
+                        await Task.Delay(1);
+                        _ = FocusAsync();
+                    }
+                }
+                else
+                {
+                    if (RuntimeLocation.IsServerSide)
+                    {
+                        if (!Immediate)
+                        {
+                            _key++;
+                            await Task.Delay(1);
+                            await Decrement();
+                            await Task.Delay(1);
+                            _ = FocusAsync();
+                        }
+                        else
+                            await Decrement();
+                    }
+                    else
+                    {
+                        _key++;
+                        await Task.Delay(1);
+                        await Decrement();
+                        await Task.Delay(1);
+                        _ = FocusAsync();
+                    }
+                }      
+            }
+            else if (obj.ShiftKey == true && 0 < obj.DeltaY)
+            {
+                if (InvertMouseWheel == false)
+                {
+                    if (RuntimeLocation.IsServerSide)
+                    {
+                        if (!Immediate)
+                        {
+                            _key++;
+                            await Task.Delay(1);
+                            await Decrement();
+                            await Task.Delay(1);
+                            _ = FocusAsync();
+                        }
+                        else
+                            await Decrement();
+                    }
+                    else
+                    {
+                        _key++;
+                        await Task.Delay(1);
+                        await Decrement();
+                        await Task.Delay(1);
+                        _ = FocusAsync();
+                    }
+                }
+                else
+                {
+                    if (RuntimeLocation.IsServerSide)
+                    {
+                        if (!Immediate)
+                        {
+                            _key++;
+                            await Task.Delay(1);
+                            await Increment();
+                            await Task.Delay(1);
+                            _ = FocusAsync();
+                        }
+                        else
+                            await Increment();
+                    }
+                    else
+                    {
+                        _key++;
+                        await Task.Delay(1);
+                        await Increment();
+                        await Task.Delay(1);
+                        _ = FocusAsync();
+                    }
+                }
+            }
+        }
+
         protected void InterceptKeyUp(KeyboardEventArgs obj)
         {
             if (Disabled || ReadOnly)
@@ -326,6 +432,12 @@ namespace MudBlazor
 
         //Tracks if Min has a value.
         private bool _minHasValue = false;
+
+        /// <summary>
+        /// Reverts mouse wheel up and down events, if true.
+        /// </summary>
+        [Parameter]
+        public bool InvertMouseWheel { get; set; } = false;
 
         //default value for the type
         private T _minDefault;
