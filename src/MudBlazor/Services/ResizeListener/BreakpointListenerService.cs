@@ -6,22 +6,23 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
 using Microsoft.JSInterop;
 
 namespace MudBlazor.Services
 {
-    public class BreakpointListenerService : IBreakpointListenerService
+  
+    public class BreakpointListenerService :
+        ResizeListenerBasedService<BreakpointListenerService, BreakpointListenerSubscriptionInfo, Breakpoint, ResizeOptions>,
+        IBreakpointListenerService
     {
-        private Guid _listenerJsId;
         private readonly IJSRuntime _jsRuntime;
         private readonly ResizeOptions _options;
-        private DotNetObjectReference<BreakpointListenerService> _dotNetRef;
-        private Action<Breakpoint> _callback;
         private IBrowserWindowSizeProvider _browserWindowSizeProvider;
         private BrowserWindowSize _windowSize;
-        private Breakpoint _breakpoint;
+        private Breakpoint _breakpoint = Breakpoint.None;
 
         /// <summary>
         /// 
@@ -30,26 +31,29 @@ namespace MudBlazor.Services
         /// <param name="browserWindowSizeProvider"></param>
         /// <param name="options"></param>
         public BreakpointListenerService(IJSRuntime jsRuntime, IBrowserWindowSizeProvider browserWindowSizeProvider, IOptions<ResizeOptions> options = null)
+            : base(jsRuntime)
         {
             this._options = options?.Value ?? new ResizeOptions();
             this._jsRuntime = jsRuntime;
             this._browserWindowSizeProvider = browserWindowSizeProvider;
         }
 
-
-        private bool IsAttached() => _dotNetRef != null;
-
         /// <summary>
         /// Invoked by jsInterop, use the OnResized event handler to subscribe.
         /// </summary>
         /// <param name="browserWindowSize"></param>
         /// <param name="breakpoint"></param>
+        /// <param name="optionId"></param>
         [JSInvokable]
-        public void RaiseOnResized(BrowserWindowSize browserWindowSize, Breakpoint breakpoint)
+        public void RaiseOnResized(BrowserWindowSize browserWindowSize, Breakpoint breakpoint, Guid optionId)
         {
             _windowSize = browserWindowSize;
             _breakpoint = breakpoint;
-            _callback(breakpoint);
+
+            if (Listeners.ContainsKey(optionId) == false) { return; }
+
+            var listenerInfo = Listeners[optionId];
+            listenerInfo.InvokeCallbacks(breakpoint);
         }
 
         /// <summary>
@@ -60,7 +64,7 @@ namespace MudBlazor.Services
         public async ValueTask<bool> MatchMedia(string mediaQuery) =>
             await _jsRuntime.InvokeAsync<bool>($"mudResizeListener.matchMedia", mediaQuery);
 
-        public static Dictionary<Breakpoint, int> BreakpointDefinitions { get; set; } = new Dictionary<Breakpoint, int>()
+        public static Dictionary<Breakpoint, int> DefaultBreakpointDefinitions { get; set; } = new Dictionary<Breakpoint, int>()
         {
             [Breakpoint.Xl] = 1920,
             [Breakpoint.Lg] = 1280,
@@ -76,13 +80,13 @@ namespace MudBlazor.Services
                 _windowSize = await _browserWindowSizeProvider.GetBrowserWindowSize();
             if (_windowSize == null)
                 return Breakpoint.Xs;
-            if (_windowSize.Width >= BreakpointDefinitions[Breakpoint.Xl])
+            if (_windowSize.Width >= DefaultBreakpointDefinitions[Breakpoint.Xl])
                 return Breakpoint.Xl;
-            else if (_windowSize.Width >= BreakpointDefinitions[Breakpoint.Lg])
+            else if (_windowSize.Width >= DefaultBreakpointDefinitions[Breakpoint.Lg])
                 return Breakpoint.Lg;
-            else if (_windowSize.Width >= BreakpointDefinitions[Breakpoint.Md])
+            else if (_windowSize.Width >= DefaultBreakpointDefinitions[Breakpoint.Md])
                 return Breakpoint.Md;
-            else if (_windowSize.Width >= BreakpointDefinitions[Breakpoint.Sm])
+            else if (_windowSize.Width >= DefaultBreakpointDefinitions[Breakpoint.Sm])
                 return Breakpoint.Sm;
             else
                 return Breakpoint.Xs;
@@ -120,63 +124,112 @@ namespace MudBlazor.Services
             };
         }
 
-        public async Task<Breakpoint> Attach(Action<Breakpoint> callback) => await Attach(callback, _options);
+        public async Task<BreakpointListenerSubscribeResult> Subscribe(Action<Breakpoint> callback) => await Subscribe(callback, _options);
 
-        public async Task<Breakpoint> Attach(Action<Breakpoint> callback, ResizeOptions options)
+        public async Task<BreakpointListenerSubscribeResult> Subscribe(Action<Breakpoint> callback, ResizeOptions options)
         {
-            if (IsAttached() == false)
+            if (callback is null)
             {
-                _callback = callback ?? throw new ArgumentNullException(nameof(callback));
-                _dotNetRef = DotNetObjectReference.Create(this);
-                _listenerJsId = Guid.NewGuid();
+                throw new ArgumentNullException(nameof(callback));
+            }
 
-                if (options.BreakpointDefinitions == null)
-                {
-                    options.BreakpointDefinitions = BreakpointDefinitions.ToDictionary(x => x.Key.ToString(), x => x.Value);
-                }
+            options ??= _options;
+            if (options.BreakpointDefinitions == null || options.BreakpointDefinitions.Count == 0)
+            {
+                options.BreakpointDefinitions = DefaultBreakpointDefinitions.ToDictionary(x => x.Key.ToString(), x => x.Value);
+            }
+
+            if (DotNetRef == null)
+            {
+                DotNetRef = DotNetObjectReference.Create(this);
+            }
+
+            var existingOptionId = Listeners.Where(x => x.Value.Option == options).Select(x => x.Key).FirstOrDefault();
+
+            if (existingOptionId == default)
+            {
+                var subscriptionInfo = new BreakpointListenerSubscriptionInfo(options);
+                var subscriptionId = subscriptionInfo.AddSubscription(callback);
+                var listenerId = Guid.NewGuid();
+
+                Listeners.Add(listenerId, subscriptionInfo);
 
                 try
                 {
-                    await _jsRuntime.InvokeVoidAsync($"mudResizeListenerFactory.listenForResize", _dotNetRef, options, _listenerJsId);
-                    var currentBreakpoint = await GetBreakpoint();
-                    return currentBreakpoint;
+                    await JsRuntime.InvokeVoidAsync($"mudResizeListenerFactory.listenForResize", DotNetRef, options, listenerId);
+                    if (_breakpoint == Breakpoint.None)
+                    {
+                        _breakpoint = await GetBreakpoint();
+
+                    }
+                    return new BreakpointListenerSubscribeResult(subscriptionId, _breakpoint);
                 }
                 catch (TaskCanceledException)
                 {
+                    return new BreakpointListenerSubscribeResult(subscriptionId, _breakpoint);
                     // no worries here
-                    return Breakpoint.None;
                 }
             }
-
-            return _breakpoint;
-        }
-
-        public async Task Detach()
-        {
-            if (IsAttached() == true)
+            else
             {
+                var entry = Listeners[existingOptionId];
+                var subscriptionId = entry.AddSubscription(callback);
 
-                try
-                {
-                    await _jsRuntime.InvokeVoidAsync($"mudResizeListenerFactory.cancelListener", _listenerJsId);
-                    _dotNetRef.Dispose();
-                }
-                catch (TaskCanceledException)
-                {
-                    // no worries here
-                }
+                return new BreakpointListenerSubscribeResult(subscriptionId, _breakpoint);
             }
         }
-
-        public async ValueTask DisposeAsync() => await Detach();
     }
+
+    /// <summary>
+    /// The result of a subscription to the BreakpointListener
+    /// </summary>
+    /// <param name="SubscriptionId">The subscription id, can be used for cancel the subscription later</param>
+    /// <param name="Breakpoint">The current breakpoint of the window</param>
+    public record BreakpointListenerSubscribeResult(Guid SubscriptionId, Breakpoint Breakpoint);
 
     public interface IBreakpointListenerService : IAsyncDisposable
     {
+        /// <summary>
+        /// Check if the current breakpoint fits within the current window size
+        /// </summary>
+        /// <param name="breakpoint"></param>
+        /// <returns>True if the media size is meet, false otherwise. For instance if the current window size is sm and the breakpoint is SmAndSmaller, this method returns true</returns>
         Task<bool> IsMediaSize(Breakpoint breakpoint);
+
+        /// <summary>
+        /// Check if the current breakpoint fits within the reference size
+        /// </summary>
+        /// <param name="breakpoint">The breakpoint to check</param>
+        /// <param name="reference">The reference breakpoint (xs,sm,md,lg,xl)</param>
+        /// <returns>True if the media size is meet, false otherwise. For instance if the reference size is sm and the breakpoint is SmAndSmaller, this method returns true</returns>
         bool IsMediaSize(Breakpoint breakpoint, Breakpoint reference);
-        Task<Breakpoint> Attach(Action<Breakpoint> callback);
-        Task<Breakpoint> Attach(Action<Breakpoint> callback, ResizeOptions options);
-        Task Detach();
+        
+        /// <summary>
+        /// Get the current breakpoint
+        /// </summary>
+        /// <returns></returns>
+        Task<Breakpoint> GetBreakpoint();
+
+        /// <summary>
+        /// Subscribe to size changes of the browser window with default options
+        /// </summary>
+        /// <param name="callback">The method (callbacK) that is invoke as soon as the size of the window has changed</param>
+        /// <returns>Returning an object containing the current breakpoint and a subscription id, that should be used for unsubscribe</returns>
+        Task<BreakpointListenerSubscribeResult> Subscribe(Action<Breakpoint> callback);
+
+        /// <summary>
+        /// Subscribe to size changes of the browser window using the provided options
+        /// </summary>
+        /// <param name="callback">The method (callbacK) that is invoke as soon as the size of the window has changed</param>
+        /// <param name="options">The options used to subscribe to changes</param>
+        /// <returns>Returning an object containing the current breakpoint and a subscription id, that should be used for unsubscribe</returns>
+        Task<BreakpointListenerSubscribeResult> Subscribe(Action<Breakpoint> callback, ResizeOptions options);
+
+        /// <summary>
+        /// Used for cancel the subscription to the resize event.
+        /// </summary>
+        /// <param name="subscriptionId">The subscription id (return of subscribe) to cancel</param>
+        /// <returns>True if the subscription could be cancel, false otherwise</returns>
+        Task<bool> Unsubscribe(Guid subscriptionId);
     }
 }

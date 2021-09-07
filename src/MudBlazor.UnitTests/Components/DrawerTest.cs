@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Bunit;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
+using Moq;
 using MudBlazor.Services;
 using MudBlazor.UnitTests.Mocks;
 using MudBlazor.UnitTests.TestComponents;
@@ -18,10 +19,21 @@ namespace MudBlazor.UnitTests.Components
     [TestFixture]
     public class DrawerTest : BunitTest
     {
+        private Mock<IBreakpointListenerService> _breakpointListenerServiceMock;
+        private Action<Breakpoint> _breakpointUpdateCallback;
+
         public override void Setup()
         {
             base.Setup();
-            Context.Services.AddScoped<IResizeListenerService, MockResizeListenerService>();
+            _breakpointListenerServiceMock = new Mock<IBreakpointListenerService>();
+
+            _breakpointListenerServiceMock
+                .Setup(x => x.Subscribe(It.IsAny<Action<Breakpoint>>()))
+                .ReturnsAsync(new BreakpointListenerSubscribeResult(Guid.NewGuid(), Breakpoint.Md))
+                .Callback<Action<Breakpoint>>(x => _breakpointUpdateCallback = x)
+                .Verifiable();
+
+            Context.Services.AddScoped(sp => _breakpointListenerServiceMock.Object);
         }
 
         [Test]
@@ -157,11 +169,12 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task ResponsiveSmallClosed_Open_CheckOpenedAndOverlay()
+        [TestCase(Breakpoint.Xs)]
+        [TestCase(Breakpoint.Sm)]
+        public async Task ResponsiveSmallClosed_Open_CheckOpenedAndOverlay(Breakpoint point)
         {
-            (Context.Services.GetService<IResizeListenerService>() as MockResizeListenerService)?.ApplyScreenSize(500, 768);
-
             var comp = Context.RenderComponent<DrawerResponsiveTest>();
+            await comp.InvokeAsync(() => _breakpointUpdateCallback(point));
 
             Console.WriteLine(comp.Markup);
 
@@ -181,9 +194,8 @@ namespace MudBlazor.UnitTests.Components
         [TestCase(Breakpoint.Xl)]
         public async Task ResponsiveClosed_LargeScreen_SetBreakpoint_Open_CheckState(Breakpoint breakpoint)
         {
-            (Context.Services.GetService<IResizeListenerService>() as MockResizeListenerService)?.ApplyScreenSize(1920, 1080);
-
             var comp = Context.RenderComponent<DrawerResponsiveTest>(Parameter(nameof(DrawerResponsiveTest.Breakpoint), breakpoint));
+            await comp.InvokeAsync(() => _breakpointUpdateCallback(Breakpoint.Xl));
 
             Console.WriteLine(comp.Markup);
 
@@ -203,9 +215,8 @@ namespace MudBlazor.UnitTests.Components
         [TestCase(Breakpoint.Xl)]
         public async Task ResponsiveClosed_SmallScreen_SetBreakpoint_Open_CheckState(Breakpoint breakpoint)
         {
-            (Context.Services.GetService<IResizeListenerService>() as MockResizeListenerService)?.ApplyScreenSize(400, 300);
-
             var comp = Context.RenderComponent<DrawerResponsiveTest>(Parameter(nameof(DrawerResponsiveTest.Breakpoint), breakpoint));
+            await comp.InvokeAsync(() => _breakpointUpdateCallback(Breakpoint.Xs));
 
             Console.WriteLine(comp.Markup);
 
@@ -222,11 +233,11 @@ namespace MudBlazor.UnitTests.Components
         public async Task ResponsiveClosed_ResizeMultiple_CheckStates()
         {
             var srv = Context.Services.GetService<IResizeListenerService>() as MockResizeListenerService;
-            srv?.ApplyScreenSize(1280, 768);
 
             var comp = Context.RenderComponent<DrawerResponsiveTest>(Parameter(nameof(DrawerResponsiveTest.PreserveOpenState), true));
-
             Console.WriteLine(comp.Markup);
+
+            await comp.InvokeAsync(() => _breakpointUpdateCallback(Breakpoint.Lg));
 
             //open drawer
             comp.Find("button").Click();
@@ -235,13 +246,13 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.Drawer.Open.Should().BeTrue();
 
             //resize to small, drawer should close
-            srv?.ApplyScreenSize(600, 768);
+            await comp.InvokeAsync(() => _breakpointUpdateCallback(Breakpoint.Xs));
 
             comp.FindAll("aside.mud-drawer--closed.mud-drawer-responsive").Count.Should().Be(1);
             comp.Instance.Drawer.Open.Should().BeFalse();
 
             //resize to large, drawer should open automatically
-            srv?.ApplyScreenSize(1024, 768);
+            await comp.InvokeAsync(() => _breakpointUpdateCallback(Breakpoint.Lg));
 
             comp.FindAll("aside.mud-drawer--open.mud-drawer-responsive").Count.Should().Be(1);
             comp.Instance.Drawer.Open.Should().BeTrue();
@@ -252,14 +263,15 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("aside.mud-drawer--closed.mud-drawer-responsive").Count.Should().Be(1);
 
             //resize to small, then open drawer
-            srv?.ApplyScreenSize(600, 768);
+            await comp.InvokeAsync(() => _breakpointUpdateCallback(Breakpoint.Sm));
+
             comp.Find("button").Click();
 
             comp.FindAll("aside.mud-drawer--open.mud-drawer-responsive").Count.Should().Be(1);
             comp.FindAll("aside+.mud-drawer-overlay").Count.Should().Be(1);
 
             //resize to large, drawer should stays open
-            srv?.ApplyScreenSize(1024, 768);
+            await comp.InvokeAsync(() => _breakpointUpdateCallback(Breakpoint.Lg));
 
             comp.FindAll("aside.mud-drawer--open.mud-drawer-responsive").Count.Should().Be(1);
             comp.FindAll("aside+.mud-drawer-overlay").Count.Should().Be(0);
@@ -272,10 +284,8 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task Responsive_ResizeToSmall_RestoreToLarge_CheckStates()
         {
-            var srv = Context.Services.GetService<IResizeListenerService>() as MockResizeListenerService;
-            srv?.ApplyScreenSize(1280, 768);
-
             var comp = Context.RenderComponent<DrawerResponsiveTest>(Parameter(nameof(DrawerResponsiveTest.PreserveOpenState), true));
+            await comp.InvokeAsync(() => _breakpointUpdateCallback(Breakpoint.Lg));
 
             Console.WriteLine(comp.Markup);
 
@@ -286,19 +296,20 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.Drawer.Open.Should().BeTrue();
 
             //resize to small, drawer should close
-            srv?.ApplyScreenSize(800, 768);
+            await comp.InvokeAsync(() => _breakpointUpdateCallback(Breakpoint.Sm));
+
 
             comp.FindAll("aside.mud-drawer--closed.mud-drawer-responsive").Count.Should().Be(1);
             comp.Instance.Drawer.Open.Should().BeFalse();
 
             //resize to extra small, drawer should close
-            srv?.ApplyScreenSize(400, 768);
+            await comp.InvokeAsync(() => _breakpointUpdateCallback(Breakpoint.Xs));
 
             comp.FindAll("aside.mud-drawer--closed.mud-drawer-responsive").Count.Should().Be(1);
             comp.Instance.Drawer.Open.Should().BeFalse();
 
             //resize to large, drawer should open automatically
-            srv?.ApplyScreenSize(1024, 768);
+            await comp.InvokeAsync(() => _breakpointUpdateCallback(Breakpoint.Lg));
 
             comp.FindAll("aside.mud-drawer--open.mud-drawer-responsive").Count.Should().Be(1);
             comp.Instance.Drawer.Open.Should().BeTrue();

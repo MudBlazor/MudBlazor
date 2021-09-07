@@ -1,91 +1,62 @@
 ﻿@using MudBlazor.Services
 @namespace MudBlazor.Docs.Examples
 
-@inject NavigationManager NavManager 
-
-@for(int i = 0; i < _rows; i++)
-{ 
-    <MudHidden Breakpoint="Breakpoint.Xl" Invert="true">
-        <MudCard Class="pa-5">
-            <MudText>XL</MudText>
-        </MudCard>
-    </MudHidden>
-    <MudHidden Breakpoint="Breakpoint.Lg" Invert="true">
-        <MudCard Class="pa-5">
-            <MudText>LG</MudText>
-        </MudCard>
-    </MudHidden>
-    <MudHidden Breakpoint="Breakpoint.Md" Invert="true">
-        <MudCard Class="pa-5">
-            <MudText>MD</MudText>
-        </MudCard>
-    </MudHidden>
-    <MudHidden Breakpoint="Breakpoint.Sm" Invert="true">
-        <MudCard Class="pa-5">
-            <MudText>SM</MudText>
-        </MudCard>
-    </MudHidden>
-    <MudHidden Breakpoint="Breakpoint.Xs" Invert="true">
-        <MudCard Class="pa-5">
-            <MudText>XS</MudText>
-        </MudCard>
-    </MudHidden>
-    <MudHidden Breakpoint="Breakpoint.LgAndUp" Invert="true">
-        <MudCard Class="pa-5">
-            <MudText>LG and Up</MudText>
-        </MudCard>
-    </MudHidden>
-    <MudHidden Breakpoint="Breakpoint.MdAndUp" Invert="true">
-        <MudCard Class="pa-5">
-            <MudText>MD and Up</MudText>
-        </MudCard>
-    </MudHidden>
-    <MudHidden Breakpoint="Breakpoint.SmAndUp" Invert="true">
-        <MudCard Class="pa-5">
-            <MudText>SM and Up</MudText>
-        </MudCard>
-    </MudHidden>
-    <MudHidden Breakpoint="Breakpoint.LgAndDown" Invert="true">
-        <MudCard Class="pa-5">
-            <MudText>LG and Down</MudText>
-        </MudCard>
-    </MudHidden>
-    <MudHidden Breakpoint="Breakpoint.MdAndDown" Invert="true">
-        <MudCard Class="pa-5">
-            <MudText>MD and Down</MudText>
-        </MudCard>
-    </MudHidden>
-    <MudHidden Breakpoint="Breakpoint.SmAndDown" Invert="true">
-        <MudCard Class="pa-5">
-            <MudText>SM and Down</MudText>
-        </MudCard>
-    </MudHidden>
-}
+<MudHidden Breakpoint="Breakpoint.Xl" Invert="true">
+	<MudCard Class="pa-5">
+		<MudText>XL</MudText>
+	</MudCard>
+</MudHidden>
+<MudHidden Breakpoint="Breakpoint.Lg" Invert="true">
+	<MudCard Class="pa-5">
+		<MudText>LG</MudText>
+	</MudCard>
+</MudHidden>
+<MudHidden Breakpoint="Breakpoint.Md" Invert="true">
+	<MudCard Class="pa-5">
+		<MudText>MD</MudText>
+	</MudCard>
+</MudHidden>
+<MudHidden Breakpoint="Breakpoint.Sm" Invert="true">
+	<MudCard Class="pa-5">
+		<MudText>SM</MudText>
+	</MudCard>
+</MudHidden>
+<MudHidden Breakpoint="Breakpoint.Xs" Invert="true">
+	<MudCard Class="pa-5">
+		<MudText>XS</MudText>
+	</MudCard>
+</MudHidden>
+<MudHidden Breakpoint="Breakpoint.LgAndUp" Invert="true">
+	<MudCard Class="pa-5">
+		<MudText>LG and Up</MudText>
+	</MudCard>
+</MudHidden>
+<MudHidden Breakpoint="Breakpoint.MdAndUp" Invert="true">
+	<MudCard Class="pa-5">
+		<MudText>MD and Up</MudText>
+	</MudCard>
+</MudHidden>
+<MudHidden Breakpoint="Breakpoint.SmAndUp" Invert="true">
+	<MudCard Class="pa-5">
+		<MudText>SM and Up</MudText>
+	</MudCard>
+</MudHidden>
+<MudHidden Breakpoint="Breakpoint.LgAndDown" Invert="true">
+	<MudCard Class="pa-5">
+		<MudText>LG and Down</MudText>
+	</MudCard>
+</MudHidden>
+<MudHidden Breakpoint="Breakpoint.MdAndDown" Invert="true">
+	<MudCard Class="pa-5">
+		<MudText>MD and Down</MudText>
+	</MudCard>
+</MudHidden>
+<MudHidden Breakpoint="Breakpoint.SmAndDown" Invert="true">
+	<MudCard Class="pa-5">
+		<MudText>SM and Down</MudText>
+	</MudCard>
+</MudHidden>
 
 
 @code {
-
-    int _rows = 5;
-
-    protected override void OnInitialized()
-    {
-        base.OnInitialized();
-        var uri = new Uri(NavManager.Uri);
-
-        if (String.IsNullOrEmpty(uri.Query) == false)
-        {
-            var parts = uri.Query.Split('&', StringSplitOptions.RemoveEmptyEntries);
-            parts[0] = parts[0].Substring(1);
-
-            var rowPart = parts.FirstOrDefault(x => x.StartsWith("rows"));
-            if (string.IsNullOrEmpty(rowPart) == false)
-            {
-                var row = rowPart.Split('=', StringSplitOptions.RemoveEmptyEntries).Last();
-                if (int.TryParse(row, out int castedRows) == true) {
-                    _rows = castedRows;
-                }
-            }
-        }
-
-    }
 } 
