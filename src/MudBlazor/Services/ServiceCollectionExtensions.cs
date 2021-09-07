@@ -75,8 +75,8 @@ namespace MudBlazor.Services
         public static IServiceCollection AddMudBlazorResizeListener(this IServiceCollection services, Action<ResizeOptions> options)
         {
             services.TryAddScoped<IResizeListenerService, ResizeListenerService>();
-            services.TryAddTransient<IAttachedBasedResizeListenerService, AttachedBasedResizeListenerService>();
-            services.TryAddTransient<IBreakpointListenerService, BreakpointListenerService>();
+            services.TryAddScoped<ISubscriptionBasedResizeListenerService, SubscriptionBasedResizeListenerService>();
+            services.TryAddScoped<IBreakpointListenerService, BreakpointListenerService>();
 
             services.TryAddScoped<IBrowserWindowSizeProvider, BrowserWindowSizeProvider>();
             services.Configure(options);

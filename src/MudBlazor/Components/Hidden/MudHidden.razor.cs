@@ -10,8 +10,11 @@ namespace MudBlazor
     {
         private Breakpoint _currentBreakpoint = Breakpoint.None;
         private bool _serviceIsReady = false;
+        private Guid _breakpointListenerSubscriptionId;
 
-        [Inject] public IBreakpointListenerService BreakpointListenerService {  get; set; }
+        [Inject] public IBreakpointListenerService BreakpointListenerService { get; set; }
+
+        [CascadingParameter] public Breakpoint CurrentBreakpointFromProvider { get; set; } = Breakpoint.None;
 
         /// <summary>
         /// The screen size(s) depending on which the ChildContent should not be rendered (or should be, if Invert is true)
@@ -22,6 +25,8 @@ namespace MudBlazor
         /// Inverts the Breakpoint, so that the ChildContent is only rendered when the breakpoint matches the screen size.
         /// </summary>
         [Parameter] public bool Invert { get; set; }
+
+        private bool _isHidden = true;
 
         /// <summary>
         /// True if the component is not visible (two-way bindable)
@@ -51,11 +56,15 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public RenderFragment ChildContent { get; set; }
 
-        private bool _isHidden = true;
-
         protected void Update(Breakpoint currentBreakpoint)
         {
-            if (_serviceIsReady == false) { return; }
+            if(CurrentBreakpointFromProvider != Breakpoint.None)
+            {
+                currentBreakpoint = CurrentBreakpointFromProvider;
+            }
+            else if(_serviceIsReady == false) { return; }
+
+            if (currentBreakpoint == Breakpoint.None) { return; }
 
             _currentBreakpoint = currentBreakpoint;
 
@@ -79,17 +88,26 @@ namespace MudBlazor
             await base.OnAfterRenderAsync(firstRender);
             if (firstRender == true)
             {
-                var result = await BreakpointListenerService.Attach((x) => {
-                    Update(x);
-                    InvokeAsync(StateHasChanged);
-                    }, new ResizeOptions());
-                _serviceIsReady = true;
-                Update(result);
-                StateHasChanged();
-                
+                if (CurrentBreakpointFromProvider == Breakpoint.None)
+                {
+                    var attachResult = await BreakpointListenerService.Subscribe((x) =>
+                    {
+                        Update(x);
+                        InvokeAsync(StateHasChanged);
+                    });
+
+                    _serviceIsReady = true;
+                    _breakpointListenerSubscriptionId = attachResult.SubscriptionId;
+                    Update(attachResult.Breakpoint);
+                    StateHasChanged();
+                }
+                else
+                {
+                    _serviceIsReady = true;
+                }
             }
         }
 
-        public async ValueTask DisposeAsync() => await BreakpointListenerService.DisposeAsync();
+        public async ValueTask DisposeAsync() => await BreakpointListenerService.Unsubscribe(_breakpointListenerSubscriptionId);
     }
 }

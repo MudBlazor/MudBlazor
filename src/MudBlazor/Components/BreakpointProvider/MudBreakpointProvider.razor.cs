@@ -12,9 +12,11 @@ using MudBlazor.Services;
 
 namespace MudBlazor
 {
-    public partial class BreakpointProvider : IAsyncDisposable
+    public partial class MudBreakpointProvider : IAsyncDisposable
     {
-        public Breakpoint Breakpoint { get; private set; } = Breakpoint.None;
+        private Guid _breakPointListenerSubscriptionId;
+
+        public Breakpoint Breakpoint { get; private set; } = Breakpoint.Always;
 
         [Parameter] public EventCallback<Breakpoint> OnBreakpointChanged { get; set; }
 
@@ -26,25 +28,26 @@ namespace MudBlazor
         {
             await base.OnAfterRenderAsync(firstRender);
 
-            if(firstRender == true)
+            if (firstRender == true)
             {
-               Breakpoint =  await Service.Attach(SetBreakpointCallback, new ResizeOptions());
-               StateHasChanged();
+                var attachResult = await Service.Subscribe(SetBreakpointCallback);
+                _breakPointListenerSubscriptionId = attachResult.SubscriptionId;
+                Breakpoint = attachResult.Breakpoint;
+                await OnBreakpointChanged.InvokeAsync(Breakpoint);
+                StateHasChanged();
             }
         }
 
         private void SetBreakpointCallback(Breakpoint breakpoint)
         {
-           InvokeAsync(() =>
-           {
-               Breakpoint = breakpoint;
-               OnBreakpointChanged.InvokeAsync(breakpoint);
-               StateHasChanged();
-           }).AndForget();
+            InvokeAsync(() =>
+            {
+                Breakpoint = breakpoint;
+                OnBreakpointChanged.InvokeAsync(breakpoint);
+                StateHasChanged();
+            }).AndForget();
         }
 
-        public bool IsMediaSize(Breakpoint breakpoint) => Service.IsMediaSize(breakpoint, Breakpoint);
-
-        public async ValueTask DisposeAsync() => await Service.DisposeAsync();
+        public async ValueTask DisposeAsync() => await Service.Unsubscribe(_breakPointListenerSubscriptionId);
     }
 }

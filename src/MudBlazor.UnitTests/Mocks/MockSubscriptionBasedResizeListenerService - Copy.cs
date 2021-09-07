@@ -5,10 +5,9 @@ using MudBlazor.Services;
 namespace MudBlazor.UnitTests.Mocks
 {
 #pragma warning disable CS1998 // Justification - Implementing IResizeListenerService
-    public class MockResizeListenerService2 : IAttachedBasedResizeListenerService
+    public class MockBreakpointListenerService : IBreakpointListenerService
     {
         private int _width, _height;
-
 
         internal void ApplyScreenSize(int width, int height)
         {
@@ -72,6 +71,10 @@ namespace MudBlazor.UnitTests.Mocks
 
         public async Task<Breakpoint> GetBreakpoint() => GetBreakpointInternal();
 
+        public Task<BreakpointListenerSubscribeResult> Subscribe(Action<Breakpoint> callback) => Task.FromResult(new BreakpointListenerSubscribeResult(Guid.NewGuid(),Breakpoint.Sm));
+        public Task<BreakpointListenerSubscribeResult> Subscribe(Action<Breakpoint> callback, ResizeOptions options) => Task.FromResult(new BreakpointListenerSubscribeResult(Guid.NewGuid(), Breakpoint.Sm));
+        public Task<bool> Unsubscribe(Guid subscriptionId) => Task.FromResult(true);
+
         private Breakpoint GetBreakpointInternal()
         {
             if (_width >= ResizeListenerService.BreakpointDefinitions[Breakpoint.Xl])
@@ -85,9 +88,6 @@ namespace MudBlazor.UnitTests.Mocks
             else
                 return Breakpoint.Xs;
         }
-
-        public Task Attach() => Task.FromResult(true);
-        public Task Detach() => Task.FromResult(true);
 
         public ValueTask DisposeAsync()
         {
