@@ -159,11 +159,10 @@ namespace MudBlazor.UnitTests.Components
             autocomplete.Text.Should().Be("Austria");
         }
 
-
         [Test]
         public async Task AutocompleteCoerceValueTest()
         {
-            var comp = ctx.RenderComponent<AutocompleteTest1>();
+            var comp = Context.RenderComponent<AutocompleteTest1>();
             Console.WriteLine(comp.Markup);
             var autocompletecomp = comp.FindComponent<MudAutocomplete<string>>();
             var autocomplete = autocompletecomp.Instance;
