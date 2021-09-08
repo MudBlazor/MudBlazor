@@ -9,7 +9,8 @@ namespace MudBlazor
         protected string Classname =>
             new CssBuilder("mud-appbar")
                 .AddClass($"mud-appbar-dense", Dense)
-                .AddClass($"mud-appbar-fixed", Fixed)
+                .AddClass($"mud-appbar-fixed-top", Fixed && !Bottom)
+                .AddClass($"mud-appbar-fixed-bottom", Fixed && Bottom)
                 .AddClass($"mud-elevation-{Elevation}")
                 .AddClass($"mud-theme-{Color.ToDescriptionString()}", Color != Color.Default)
                 .AddClass(Class)
@@ -21,6 +22,11 @@ namespace MudBlazor
                 .Build();
 
         /// <summary>
+        /// If true, Appbar will be placed at the bottom of the screen.
+        /// </summary>
+        [Parameter] public bool Bottom { get; set; }
+
+        /// <summary>
         /// The higher the number, the heavier the drop-shadow. 0 for no shadow.
         /// </summary>
         [Parameter] public int Elevation { set; get; } = 4;
@@ -29,6 +35,11 @@ namespace MudBlazor
         /// If true, compact padding will be used.
         /// </summary>
         [Parameter] public bool Dense { get; set; }
+
+        /// <summary>
+        /// If true, the left and right padding is removed from from the appbar.
+        /// </summary>
+        [Parameter] public bool DisableGutters { get; set; }
 
         /// <summary>
         /// The color of the component. It supports the theme colors.
