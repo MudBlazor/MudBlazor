@@ -68,13 +68,26 @@
                     By default, <CodeInline>MudNumericField</CodeInline> updates the bound value on Enter or when it looses focus. Set <CodeInline>Immediate="true"</CodeInline> to update the value whenever the user types.<br/>
                     You can also set the <CodeInline>DebounceInterval</CodeInline> parameter to the number of milliseconds you want to wait before updating the bound value. If you need to know when the interval elapses, you can pass an <CodeInline>OnDebounceIntervalElapsed</CodeInline> EventCallback.
                     Notice how in this example the debounced text only updates 500 ms after you stop typing.
-                    <MudAlert Severity="Severity.Warning" Dense="true" Class="mt-3">Warning: when <CodeInline>Immediate="false"</CodeInline> (default), if the user types a value and then presses the arrow up/down on the keyboard, the step is calculated on the last accepted value.</MudAlert>
+                    <MudAlert Severity="Severity.Warning" Dense="true" Class="mt-3">Warning: Pressing Arrow Up/Down or Shift + MouseWheel are not debounced.</MudAlert>
                 </Description>
             </SectionHeader>
             <SectionContent Outlined="true" FullWidth="true">
                 <DebouncedNumericFieldExample/>
             </SectionContent>
             <SectionSource Code="DebouncedNumericFieldExample" ShowCode="false" GitHubFolderName="NumericField"/>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Change the Value with the Mouse Wheel">
+                <Description>
+                    You can change MudNumericField's value (by step) with Shift + MouseWheel.
+                    You can also set the <CodeInline>InvertMouseWheel</CodeInline> parameter to reverse the mouse wheel up and down event.
+                </Description>
+            </SectionHeader>
+            <SectionContent Outlined="true" FullWidth="true">
+                <ChangeTheValueWithTheMouseWheelExample/>
+            </SectionContent>
+            <SectionSource Code="ChangeTheValueWithTheMouseWheelExample" ShowCode="false" GitHubFolderName="NumericField"/>
         </DocsPageSection>
 
     </DocsPageContent>

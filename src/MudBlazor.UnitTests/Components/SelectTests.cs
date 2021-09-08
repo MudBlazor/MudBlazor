@@ -400,6 +400,30 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public void MultiSelect_SelectAll()
+        {
+            var comp = Context.RenderComponent<MultiSelectTest2>();
+            // select element needed for the test
+            var select = comp.FindComponent<MudSelect<string>>();
+            string validatedValue = null;
+            select.SetParam(x => x.Validation, (object)new Func<string, bool>(value =>
+            {
+                validatedValue = value; // NOTE: select does only update the value for T string
+                return true;
+            }));
+            var menu = comp.Find("div.mud-popover");
+            var input = comp.Find("div.mud-input-control");
+            // Open the menu
+            input.Click();
+            menu.ClassList.Should().Contain("mud-popover-open");
+            // now click the first checkbox
+            comp.FindAll("div.mud-list-item")[0].Click();
+            // validate the result. all items should be selected
+            select.Instance.Text.Should().Be("FirstA^SecondA^ThirdA");
+            validatedValue.Should().Be("FirstA^SecondA^ThirdA");
+        }
+
+        [Test]
         public void SingleSelect_Should_CallValidationFunc()
         {
             var comp = Context.RenderComponent<SelectTest1>();

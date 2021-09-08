@@ -4,7 +4,7 @@
 @inject HttpClient httpClient
 @using System.Net.Http.Json
 
-<MudTable @ref="@_table" Items="@_elements" RowsPerPage="4" Hover="true" Breakpoint="Breakpoint.Sm" LoadingProgressColor="Color.Info">
+<MudTable Class="mud-width-full" @ref="@_table" Items="@_elements" RowsPerPage="4" Hover="true" Breakpoint="Breakpoint.Sm" LoadingProgressColor="Color.Info">
     <HeaderContent>
         <MudTh>Nr</MudTh>
         <MudTh>Sign</MudTh>
@@ -20,7 +20,7 @@
         <MudTd DataLabel="Molar mass">@context.Molar</MudTd>
     </RowTemplate>
     <PagerContent>
-        <MudPagination SelectedChanged="PageChanged" Count="@(_table.GetFilteredItemsCount() / _table.RowsPerPage)" Class="pa-4"/>
+        <MudPagination SelectedChanged="PageChanged" BoundaryCount="1" MiddleCount="2" Count="@(_table.GetFilteredItemsCount() / _table.RowsPerPage)" Class="pa-4"/>
     </PagerContent>
 </MudTable>
 

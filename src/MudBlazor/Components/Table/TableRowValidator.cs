@@ -19,6 +19,11 @@ namespace MudBlazor
         {
             get => _errors.ToArray();
         }
+
+#nullable enable
+        public object? Model { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
+#nullable disable
+
         protected HashSet<string> _errors = new();
 
         void IForm.Add(IFormComponent formControl)

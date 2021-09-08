@@ -14,6 +14,7 @@ namespace MudBlazor
         private HashSet<T> _selectedValues;
         private bool _dense;
         private string multiSelectionText;
+        private bool? _selectAllChecked;
 
         protected string Classname =>
             new CssBuilder("mud-select")
@@ -61,6 +62,16 @@ namespace MudBlazor
         [Parameter] public string CloseIcon { get; set; } = Icons.Material.Filled.ArrowDropUp;
 
         /// <summary>
+        /// If set to true and the MultiSelection option is set to true, a "select all" checkbox is added at the top of the list of items.
+        /// </summary>
+        [Parameter] public bool SelectAll { get; set; }
+
+        /// <summary>
+        /// Define the text of the Select All option.
+        /// </summary>
+        [Parameter] public string SelectAllText { get; set; } = "Select all";
+
+        /// <summary>
         /// Fires when SelectedValues changes.
         /// </summary>
         [Parameter] public EventCallback<HashSet<T>> SelectedValuesChanged { get; set; }
@@ -69,6 +80,11 @@ namespace MudBlazor
         /// Function to define a customized multiselection text.
         /// </summary>
         [Parameter] public Func<List<string>, string> MultiSelectionTextFunc { get; set; }
+
+        /// <summary>
+        /// Parameter to define the delimited string separator.
+        /// </summary>
+        [Parameter] public string Delimiter { get; set; } = ", ";
 
         /// <summary>
         /// Set of selected values. If MultiSelection is false it will only ever contain a single value. This property is two-way bindable.
@@ -96,13 +112,13 @@ namespace MudBlazor
                     //Warning. Here the Converter was not set yet
                     if (MultiSelectionTextFunc != null)
                     {
-                        SetCustomizedTextAsync(string.Join(", ", SelectedValues.Select(x => Converter.Set(x))),
+                        SetCustomizedTextAsync(string.Join(Delimiter, SelectedValues.Select(x => Converter.Set(x))),
                             selectedConvertedValues: SelectedValues.Select(x => Converter.Set(x)).ToList(),
                             multiSelectionTextFunc: MultiSelectionTextFunc).AndForget();
                     }
                     else
                     {
-                        SetTextAsync(string.Join(", ", SelectedValues.Select(x => Converter.Set(x)))).AndForget();
+                        SetTextAsync(string.Join(Delimiter, SelectedValues.Select(x => Converter.Set(x)))).AndForget();
                     }
                 }
                 SelectedValuesChanged.InvokeAsync(new HashSet<T>(SelectedValues));
@@ -199,7 +215,7 @@ namespace MudBlazor
             if (MultiSelectionTextFunc != null)
             {
                 return MultiSelection
-                    ? SetCustomizedTextAsync(string.Join(", ", SelectedValues.Select(x => Converter.Set(x))),
+                    ? SetCustomizedTextAsync(string.Join(Delimiter, SelectedValues.Select(x => Converter.Set(x))),
                         selectedConvertedValues: SelectedValues.Select(x => Converter.Set(x)).ToList(),
                         multiSelectionTextFunc: MultiSelectionTextFunc)
                     : base.UpdateTextPropertyAsync(updateValue);
@@ -207,7 +223,7 @@ namespace MudBlazor
             else
             {
                 return MultiSelection
-                    ? SetTextAsync(string.Join(", ", SelectedValues.Select(x => Converter.Set(x))))
+                    ? SetTextAsync(string.Join(Delimiter, SelectedValues.Select(x => Converter.Set(x))))
                     : base.UpdateTextPropertyAsync(updateValue);
             }
         }
@@ -223,16 +239,24 @@ namespace MudBlazor
         protected Dictionary<T, MudSelectItem<T>> _value_lookup = new();
         internal void Add(MudSelectItem<T> item)
         {
-            _items.Add(item);
-            if (item.Value != null)
-                _value_lookup[item.Value] = item;
+            // Check to avoid duplicate items based on their value
+            // It fixes that the number of real items is correct in the items list
+            if (!_items.Select(x => x.Value).Contains(item.Value))
+            {
+                _items.Add(item);
+                if (item.Value != null)
+                    _value_lookup[item.Value] = item;
+            }
         }
 
         internal void Remove(MudSelectItem<T> item)
         {
-            _items.Remove(item);
-            if (item.Value != null)
-                _value_lookup.Remove(item.Value);
+            if (_items.Contains(item))
+            {
+                _items.Remove(item);
+                if (item.Value != null)
+                    _value_lookup.Remove(item.Value);
+            }
         }
 
         /// <summary>
@@ -291,14 +315,28 @@ namespace MudBlazor
 
                 if (MultiSelectionTextFunc != null)
                 {
-                    await SetCustomizedTextAsync(string.Join(", ", SelectedValues.Select(x => Converter.Set(x))),
+                    await SetCustomizedTextAsync(string.Join(Delimiter, SelectedValues.Select(x => Converter.Set(x))),
                         selectedConvertedValues: SelectedValues.Select(x => Converter.Set(x)).ToList(),
                         multiSelectionTextFunc: MultiSelectionTextFunc);
                 }
                 else
                 {
-                    await SetTextAsync(string.Join(", ", SelectedValues.Select(x => Converter.Set(x))));
+                    await SetTextAsync(string.Join(Delimiter, SelectedValues.Select(x => Converter.Set(x))));
                 }
+
+                if (_items.Count == SelectedValues.Count)
+                {
+                    _selectAllChecked = true;
+                }
+                else if (SelectedValues.Count == 0)
+                {
+                    _selectAllChecked = false;
+                }
+                else
+                {
+                    _selectAllChecked = null;
+                }
+
                 BeginValidate();
             }
             else
@@ -419,6 +457,66 @@ namespace MudBlazor
                 if (updateValue)
                     await UpdateValuePropertyAsync(false);
                 await TextChanged.InvokeAsync(multiSelectionText);
+            }
+        }
+
+        /// <summary>
+        /// The checkbox icon reflects the select all option's state
+        /// </summary>
+        protected string SelectAllCheckBoxIcon
+        {
+            get
+            {
+                return _selectAllChecked.HasValue ? _selectAllChecked.Value ? Icons.Material.Filled.CheckBox : Icons.Material.Filled.CheckBoxOutlineBlank : Icons.Material.Filled.IndeterminateCheckBox;
+            }
+        }
+
+        /// <summary>
+        /// Clear the selection
+        /// </summary>
+        public async Task ClearAsync()
+        {
+            await SetValueAsync(default, false);
+            await SetTextAsync(default, false);
+            SelectedValues.Clear();
+            BeginValidate();
+            StateHasChanged();
+            await SelectedValuesChanged.InvokeAsync(SelectedValues);
+        }
+
+        private async Task SelectAllClickAsync()
+        {
+            // Manage the fake tri-state of a checkbox
+            if (!_selectAllChecked.HasValue)
+            {
+                _selectAllChecked = true;
+            }
+            else if (_selectAllChecked.Value)
+            {
+                _selectAllChecked = false;
+            }
+            else
+            {
+                _selectAllChecked = true;
+            }
+
+            // Define the items selection
+            if (_selectAllChecked.HasValue)
+            {
+                if (_selectAllChecked.Value)
+                {
+                    foreach (var item in _items)
+                    {
+                        if (item != null && !item.IsSelected)
+                        {
+                            await SelectOption(item.Value);
+                        }
+                    }
+                }
+                else
+                {
+                    await ClearAsync();
+                }
             }
         }
     }

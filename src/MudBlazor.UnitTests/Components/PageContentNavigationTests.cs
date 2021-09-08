@@ -55,7 +55,7 @@ namespace MudBlazor.UnitTests.Components
             comp.RenderCount.Should().Be(withUpdate == true ? 3 : 2);
 
             comp.Instance.ActiveSection.Should().BeNull();
-            comp.Instance.Sections.Should().BeEquivalentTo(section1, section2);
+            comp.Instance.Sections.Should().BeEquivalentTo(new[] { section1, section2 });
 
             comp.Nodes.Should().ContainSingle();
 
@@ -93,7 +93,7 @@ namespace MudBlazor.UnitTests.Components
             comp.RenderCount.Should().Be(2);
 
             comp.Instance.ActiveSection.Should().Be(section1);
-            comp.Instance.Sections.Should().BeEquivalentTo(section1, section2);
+            comp.Instance.Sections.Should().BeEquivalentTo(new[] { section1, section2 });
             comp.Nodes.Should().ContainSingle();
 
             var navLinks = comp.FindComponents<MudNavLink>();
@@ -123,7 +123,7 @@ namespace MudBlazor.UnitTests.Components
             comp.RenderCount.Should().Be(3);
 
             comp.Instance.ActiveSection.Should().Be(section1);
-            comp.Instance.Sections.Should().BeEquivalentTo(section1, section2);
+            comp.Instance.Sections.Should().BeEquivalentTo(new[] { section1, section2 });
             comp.Nodes.Should().ContainSingle();
 
             var navLinks = comp.FindComponents<MudNavLink>();
@@ -235,7 +235,7 @@ namespace MudBlazor.UnitTests.Components
 
             comp.RenderCount.Should().Be(2);
 
-            comp.Instance.Sections.Should().BeEquivalentTo(section);
+            comp.Instance.Sections.Should().BeEquivalentTo(new[] { section });
             comp.Nodes.Should().ContainSingle();
 
             var navLinks = comp.FindComponents<MudNavLink>();
