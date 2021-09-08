@@ -95,18 +95,26 @@ namespace MudBlazor
             get
             {
                 if (_selectedValues == null)
+                {
                     _selectedValues = new HashSet<T>();
+                }
+
                 return _selectedValues;
             }
             set
             {
                 var set = value ?? new HashSet<T>();
                 if (SelectedValues.Count == set.Count && SelectedValues.All(x => set.Contains(x)))
+                {
                     return;
+                }
+
                 _selectedValues = new HashSet<T>(set);
                 SelectionChangedFromOutside?.Invoke(_selectedValues);
                 if (!MultiSelection)
+                {
                     SetValueAsync(_selectedValues.FirstOrDefault()).AndForget();
+                }
                 else
                 {
                     //Warning. Here the Converter was not set yet
@@ -139,7 +147,10 @@ namespace MudBlazor
             set
             {
                 if (_toStringFunc == value)
+                {
                     return;
+                }
+
                 _toStringFunc = value;
                 Converter = new Converter<T>
                 {
@@ -174,9 +185,15 @@ namespace MudBlazor
             get
             {
                 if (Value == null)
+                {
                     return false;
+                }
+
                 if (!_value_lookup.TryGetValue(Value, out var item))
+                {
                     return false;
+                }
+
                 return (item.ChildContent != null);
             }
         }
@@ -186,7 +203,10 @@ namespace MudBlazor
             get
             {
                 if (Value == null)
+                {
                     return false;
+                }
+
                 return _value_lookup.TryGetValue(Value, out var _);
             }
         }
@@ -194,9 +214,15 @@ namespace MudBlazor
         protected RenderFragment GetSelectedValuePresenter()
         {
             if (Value == null)
+            {
                 return null;
+            }
+
             if (!_value_lookup.TryGetValue(Value, out var selected_item))
+            {
                 return null; //<-- for now. we'll add a custom template to present values (set from outside) which are not on the list?
+            }
+
             return selected_item.ChildContent;
         }
 
@@ -204,7 +230,10 @@ namespace MudBlazor
         {
             // For MultiSelection of non-string T's we don't update the Value!!!
             if (typeof(T) == typeof(string) || !MultiSelection)
+            {
                 base.UpdateValuePropertyAsync(updateText);
+            }
+
             return Task.CompletedTask;
         }
 
@@ -245,7 +274,9 @@ namespace MudBlazor
             {
                 _items.Add(item);
                 if (item.Value != null)
+                {
                     _value_lookup[item.Value] = item;
+                }
             }
         }
 
@@ -255,7 +286,9 @@ namespace MudBlazor
             {
                 _items.Remove(item);
                 if (item.Value != null)
+                {
                     _value_lookup.Remove(item.Value);
+                }
             }
         }
 
@@ -307,9 +340,13 @@ namespace MudBlazor
             {
                 // multi-selection: menu stays open
                 if (!SelectedValues.Contains(value))
+                {
                     SelectedValues.Add(value);
+                }
                 else
+                {
                     SelectedValues.Remove(value);
+                }
 
                 await SelectedValuesChanged.InvokeAsync(SelectedValues);
 
@@ -364,17 +401,27 @@ namespace MudBlazor
         public void ToggleMenu()
         {
             if (Disabled || ReadOnly)
+            {
                 return;
+            }
+
             if (_isOpen)
+            {
                 CloseMenu();
+            }
             else
+            {
                 OpenMenu();
+            }
         }
 
         public void OpenMenu()
         {
             if (Disabled || ReadOnly)
+            {
                 return;
+            }
+
             _isOpen = true;
             UpdateIcon();
             StateHasChanged();
@@ -409,7 +456,9 @@ namespace MudBlazor
         {
             var itemT = select_item.GetType().GenericTypeArguments[0];
             if (itemT != typeof(T))
+            {
                 throw new GenericTypeMismatchException("MudSelect", "MudSelectItem", typeof(T), itemT);
+            }
         }
 
         public override ValueTask FocusAsync()
@@ -453,12 +502,33 @@ namespace MudBlazor
             {
                 multiSelectionText = text;
                 if (!string.IsNullOrWhiteSpace(multiSelectionText))
+                {
                     Touched = true;
+                }
+
                 if (updateValue)
+                {
                     await UpdateValuePropertyAsync(false);
+                }
+
                 await TextChanged.InvokeAsync(multiSelectionText);
             }
         }
+
+        /// <summary>
+        /// Custom checked icon, leave null for default.
+        /// </summary>
+        [Parameter] public string CheckedIcon { get; set; } = Icons.Material.Filled.CheckBox;
+
+        /// <summary>
+        /// Custom unchecked icon, leave null for default.
+        /// </summary>
+        [Parameter] public string UncheckedIcon { get; set; } = Icons.Material.Filled.CheckBoxOutlineBlank;
+
+        /// <summary>
+        /// Custom indeterminate icon, leave null for default.
+        /// </summary>
+        [Parameter] public string IndeterminateIcon { get; set; } = Icons.Material.Filled.IndeterminateCheckBox;
 
         /// <summary>
         /// The checkbox icon reflects the select all option's state
@@ -467,7 +537,7 @@ namespace MudBlazor
         {
             get
             {
-                return _selectAllChecked.HasValue ? _selectAllChecked.Value ? Icons.Material.Filled.CheckBox : Icons.Material.Filled.CheckBoxOutlineBlank : Icons.Material.Filled.IndeterminateCheckBox;
+                return _selectAllChecked.HasValue ? _selectAllChecked.Value ? CheckedIcon : UncheckedIcon : IndeterminateIcon;
             }
         }
 

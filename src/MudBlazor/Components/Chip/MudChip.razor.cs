@@ -28,7 +28,7 @@ namespace MudBlazor
           .AddClass(Class)
         .Build();
 
-        [CascadingParameter] MudChipSet ChipSet { get; set; }
+        [CascadingParameter] private MudChipSet ChipSet { get; set; }
 
         /// <summary>
         /// The color of the component.
@@ -69,6 +69,11 @@ namespace MudBlazor
         /// Sets the Icon to use.
         /// </summary>
         [Parameter] public string Icon { get; set; }
+
+        /// <summary>
+        /// Custom checked icon, leave null for default.
+        /// </summary>
+        [Parameter] public string CheckedIcon { get; set; } = Icons.Material.Filled.Check;
 
         /// <summary>
         /// The color of the icon.
@@ -157,7 +162,10 @@ namespace MudBlazor
             set
             {
                 if (_isSelected == value)
+                {
                     return;
+                }
+
                 _isSelected = value;
                 StateHasChanged();
             }
@@ -173,9 +181,13 @@ namespace MudBlazor
             {
                 // TODO: use MudElement to render <a> and this code can be removed. we know that it has potential problems on iOS
                 if (string.IsNullOrWhiteSpace(Target))
+                {
                     UriHelper.NavigateTo(Link, ForceLoad);
+                }
                 else
+                {
                     await JsApiService.Open(Link, Target);
+                }
             }
             else
             {

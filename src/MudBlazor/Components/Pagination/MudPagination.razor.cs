@@ -5,11 +5,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
-using Microsoft.VisualBasic;
 using MudBlazor.Extensions;
-using MudBlazor.Internal;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
@@ -100,7 +97,9 @@ namespace MudBlazor
             set
             {
                 if (_selected == value)
+                {
                     return;
+                }
 
                 //this is required because _selected will stay 1 when Count is not yet set
                 if (!_selectedFirstSet)
@@ -109,7 +108,9 @@ namespace MudBlazor
                     _selectedFirstSet = true;
                 }
                 else
+                {
                     _selected = Math.Max(1, Math.Min(value, Count));
+                }
 
                 SelectedChanged.InvokeAsync(_selected);
             }
@@ -187,6 +188,26 @@ namespace MudBlazor
         [Parameter]
         public EventCallback<int> SelectedChanged { get; set; }
 
+        /// <summary>
+        /// Custom first icon, leave null for default.
+        /// </summary>
+        [Parameter] public string FirstIcon { get; set; } = Icons.Material.Filled.FirstPage;
+
+        /// <summary>
+        /// Custom before icon, leave null for default.
+        /// </summary>
+        [Parameter] public string BeforeIcon { get; set; } = Icons.Material.Filled.NavigateBefore;
+
+        /// <summary>
+        /// Custom next icon, leave null for default.
+        /// </summary>
+        [Parameter] public string NextIcon { get; set; } = Icons.Material.Filled.NavigateNext;
+
+        /// <summary>
+        /// Custom last icon, leave null for default.
+        /// </summary>
+        [Parameter] public string LastIcon { get; set; } = Icons.Material.Filled.LastPage;
+
         [CascadingParameter] public bool RightToLeft { get; set; }
 
         #endregion
@@ -200,7 +221,9 @@ namespace MudBlazor
         {
             //return array {1, ..., Count} if Count is small 
             if (Count <= 4 || Count <= 2 * BoundaryCount + MiddleCount + 2)
+            {
                 return Enumerable.Range(1, Count).ToArray();
+            }
 
             var length = 2 * BoundaryCount + MiddleCount + 2;
             var pages = new int[length];
@@ -220,11 +243,17 @@ namespace MudBlazor
             //calculate start value for middle items
             var startValue = 0;
             if (Selected <= BoundaryCount + MiddleCount / 2 + 1)
+            {
                 startValue = BoundaryCount + 2;
+            }
             else if (Selected >= Count - BoundaryCount - MiddleCount / 2)
+            {
                 startValue = Count - BoundaryCount - MiddleCount;
+            }
             else
+            {
                 startValue = Selected - MiddleCount / 2;
+            }
 
             //set middle items, e.g. if MiddleCount == 3 and Selected == 5 and Count == 11 => [..., 4, 5, 6, ...] 
             for (var i = 0; i < MiddleCount; i++)
@@ -242,7 +271,9 @@ namespace MudBlazor
             for (var i = 0; i < length - 2; i++)
             {
                 if (pages[i] + 2 == pages[i + 2])
+                {
                     pages[i + 1] = pages[i] + 1;
+                }
             }
 
             return pages;

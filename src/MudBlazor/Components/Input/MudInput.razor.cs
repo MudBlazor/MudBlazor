@@ -26,7 +26,10 @@ namespace MudBlazor
         protected Task OnInput(ChangeEventArgs args)
         {
             if (!Immediate)
+            {
                 return Task.CompletedTask;
+            }
+
             _isFocused = true;
             return SetTextAsync(args?.Value as string);
         }
@@ -117,6 +120,21 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public EventCallback<WheelEventArgs> OnMouseWheel { get; set; }
 
+        /// <summary>
+        /// Custom clear icon, leave null for default.
+        /// </summary>
+        [Parameter] public string ClearIcon { get; set; } = Icons.Material.Filled.Clear;
+
+        /// <summary>
+        /// Custom numeric up icon, leave null for default.
+        /// </summary>
+        [Parameter] public string NumericUpIcon { get; set; } = Icons.Material.Filled.KeyboardArrowUp;
+
+        /// <summary>
+        /// Custom numeric down icon, leave null for default.
+        /// </summary>
+        [Parameter] public string NumericDownIcon { get; set; } = Icons.Material.Filled.KeyboardArrowDown;
+
         private Size GetButtonSize() => Margin == Margin.Dense ? Size.Small : Size.Medium;
 
         private bool _showClearable;
@@ -125,21 +143,27 @@ namespace MudBlazor
         {
             var showClearable = Clearable && ((value is string stringValue && !string.IsNullOrWhiteSpace(stringValue)) || (value is not string && value is not null));
             if (_showClearable != showClearable)
+            {
                 _showClearable = showClearable;
+            }
         }
 
         protected override async Task UpdateTextPropertyAsync(bool updateValue)
         {
             await base.UpdateTextPropertyAsync(updateValue);
             if (Clearable)
+            {
                 UpdateClearable(Text);
+            }
         }
 
         protected override async Task UpdateValuePropertyAsync(bool updateText)
         {
             await base.UpdateValuePropertyAsync(updateText);
             if (Clearable)
+            {
                 UpdateClearable(Value);
+            }
         }
 
         protected virtual async Task ClearButtonClickHandlerAsync(MouseEventArgs e)
@@ -154,7 +178,9 @@ namespace MudBlazor
         {
             await base.SetParametersAsync(parameters);
             if (!_isFocused || _forceTextUpdate)
+            {
                 _internalText = Text;
+            }
         }
 
         /// <summary>

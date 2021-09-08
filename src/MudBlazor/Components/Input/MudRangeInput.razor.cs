@@ -48,6 +48,11 @@ namespace MudBlazor
         private ElementReference _elementReferenceStart, _elementReferenceEnd;
 
         /// <summary>
+        /// Custom separator icon, leave null for default.
+        /// </summary>
+        [Parameter] public string SeparatorIcon { get; set; } = Icons.Material.Filled.ArrowRightAlt;
+
+        /// <summary>
         /// Focuses the start input of MudRangeInput
         /// </summary>
         /// <returns></returns>
@@ -93,7 +98,10 @@ namespace MudBlazor
             set
             {
                 if (_textStart == value)
+                {
                     return;
+                }
+
                 _textStart = value;
                 SetTextAsync(RangeConverter<T>.Join(_textStart, _textEnd)).AndForget();
             }
@@ -105,7 +113,10 @@ namespace MudBlazor
             set
             {
                 if (_textEnd == value)
+                {
                     return;
+                }
+
                 _textEnd = value;
                 SetTextAsync(RangeConverter<T>.Join(_textStart, _textEnd)).AndForget();
             }

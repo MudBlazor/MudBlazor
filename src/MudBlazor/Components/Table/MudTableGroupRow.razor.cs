@@ -55,6 +55,15 @@ namespace MudBlazor
         [Parameter] public string HeaderStyle { get; set; }
         [Parameter] public string FooterStyle { get; set; }
 
+        /// <summary>
+        /// Custom expand icon, leave null for default.
+        /// </summary>
+        [Parameter] public string ExpandIcon { get; set; } = Icons.Material.Filled.ExpandMore;
+
+        /// <summary>
+        /// Custom collapse icon, leave null for default.
+        /// </summary>
+        [Parameter] public string CollapseIcon { get; set; } = Icons.Material.Filled.ChevronRight;
 
         /// <summary>
         /// On click event
@@ -71,7 +80,9 @@ namespace MudBlazor
                 {
                     _checked = value;
                     if (IsCheckable)
+                    {
                         Table.OnGroupHeaderCheckboxClicked(value, Items.ToList());
+                    }
                 }
             }
         }
@@ -99,12 +110,16 @@ namespace MudBlazor
         public void SetChecked(bool b, bool notify)
         {
             if (notify)
+            {
                 IsChecked = b;
+            }
             else
             {
                 _checked = b;
                 if (IsCheckable)
+                {
                     InvokeAsync(StateHasChanged);
+                }
             }
         }
 

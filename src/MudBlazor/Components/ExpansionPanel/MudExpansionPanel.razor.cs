@@ -47,6 +47,11 @@ namespace MudBlazor
         [Parameter] public bool HideIcon { get; set; }
 
         /// <summary>
+        /// Custom hide icon, leave null for default.
+        /// </summary>
+        [Parameter] public string Icon { get; set; } = Icons.Material.Filled.ExpandMore;
+
+        /// <summary>
         /// If true, removes vertical padding from childcontent.
         /// </summary>
         [Parameter] public bool Dense { get; set; }
@@ -71,12 +76,19 @@ namespace MudBlazor
             set
             {
                 if (_isExpanded == value)
+                {
                     return;
+                }
+
                 _isExpanded = value;
                 if (Parent?.MultiExpansion == true)
+                {
                     Parent?.UpdateAll();
+                }
                 else
+                {
                     Parent?.CloseAllExcept(this);
+                }
                 //InvokeAsync(StateHasChanged);
                 IsExpandedChanged.InvokeAsync(_isExpanded);
             }
@@ -104,7 +116,10 @@ namespace MudBlazor
             set
             {
                 if (_nextPanelExpanded == value)
+                {
                     return;
+                }
+
                 _nextPanelExpanded = value;
                 InvokeAsync(StateHasChanged);
             }
@@ -113,7 +128,10 @@ namespace MudBlazor
         public void ToggleExpansion()
         {
             if (Disabled)
+            {
                 return;
+            }
+
             if (Parent?.MultiExpansion == true)
             {
                 IsExpanded = !IsExpanded;
@@ -127,7 +145,9 @@ namespace MudBlazor
         public void Expand(bool update_parent = true)
         {
             if (update_parent)
+            {
                 IsExpanded = true;
+            }
             else
             {
                 _isExpanded = true;
@@ -138,7 +158,9 @@ namespace MudBlazor
         public void Collapse(bool update_parent = true)
         {
             if (update_parent)
+            {
                 IsExpanded = false;
+            }
             else
             {
                 _isExpanded = false;

@@ -77,10 +77,13 @@ namespace MudBlazor
                 _autoCycle = value;
 
                 if (_autoCycle)
+                {
                     InvokeAsync(async () => await ResetTimerAsync());
-
+                }
                 else
+                {
                     InvokeAsync(async () => await StopTimerAsync());
+                }
             }
         }
 
@@ -97,10 +100,13 @@ namespace MudBlazor
                 _cycleTimeout = value;
 
                 if (_autoCycle == true)
+                {
                     InvokeAsync(async () => await ResetTimerAsync());
-
+                }
                 else
+                {
                     InvokeAsync(async () => await StopTimerAsync());
+                }
             }
         }
 
@@ -114,6 +120,26 @@ namespace MudBlazor
         /// Gets or Sets custom class(es) for Delimiters buttons
         /// </summary>
         [Parameter] public string DelimitersClass { get; set; }
+
+        /// <summary>
+        /// Custom previous navigation icon, leave null for default.
+        /// </summary>
+        [Parameter] public string PreviousIcon { get; set; } = Icons.Material.Filled.NavigateBefore;
+
+        /// <summary>
+        /// Custom selected delimiter icon, leave null for default.
+        /// </summary>
+        [Parameter] public string CheckedIcon { get; set; } = Icons.Material.Filled.RadioButtonChecked;
+
+        /// <summary>
+        /// Custom unselected delimiter icon, leave null for default.
+        /// </summary>
+        [Parameter] public string UncheckedIcon { get; set; } = Icons.Material.Filled.RadioButtonUnchecked;
+
+        /// <summary>
+        /// Custom next navigation icon, leave null for default.
+        /// </summary>
+        [Parameter] public string NextIcon { get; set; } = Icons.Material.Filled.NavigateNext;
 
         /// <summary>
         /// Gets or Sets the Template for the Left Arrow
@@ -167,7 +193,9 @@ namespace MudBlazor
         private ValueTask StartTimerAsync()
         {
             if (AutoCycle)
+            {
                 _timer?.Change(AutoCycleTime, TimeSpan.Zero);
+            }
 
             return ValueTask.CompletedTask;
         }
