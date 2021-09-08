@@ -11,6 +11,5 @@ namespace MudBlazor
         public string md { get; set; } = "960px";
         public string lg { get; set; } = "1280px";
         public string xl { get; set; } = "1920px";
-        public string xxl { get; set; } = "2560px";
     }
 }

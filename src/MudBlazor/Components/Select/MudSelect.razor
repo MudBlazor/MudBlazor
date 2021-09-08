@@ -24,12 +24,7 @@
         </MudInputControl>
         <MudPopover Open=@(_isOpen) MaxHeight="@MaxHeight" Direction="@Direction" OffsetX="@OffsetX" OffsetY="@OffsetY" Class="@PopoverClass">
             <CascadingValue Value="@((IMudSelect)this)" IsFixed="true">
-                @if (MultiSelection && SelectAll)
-                {
-                    <MudListItem Icon="@SelectAllCheckBoxIcon" Text="@SelectAllText" OnClick="SelectAllClickAsync"  
-                     Dense="@Dense" Class="mud-list-item-clickable mud-select-all mud-typography-body1"/>
-                }
-                <MudList Clickable="@(_isOpen==false?false:true)" Dense="@Dense">
+                <MudList Clickable="true" Dense="@Dense">
                     @ChildContent
                 </MudList>
             </CascadingValue>

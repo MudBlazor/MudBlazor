@@ -237,7 +237,7 @@ namespace MudBlazor
             if (IsOpen)
             {
                 await _elementReference.SelectAsync();
-                await OnSearchAsync();
+                OnSearch();
             }
             else
             {
@@ -277,18 +277,14 @@ namespace MudBlazor
             if (ResetValueOnEmptyText && string.IsNullOrWhiteSpace(Text))
                 await SetValueAsync(default(T), updateText);
             if (DebounceInterval <= 0)
-                await OnSearchAsync();
+                OnSearch();
             else
                 _timer = new Timer(OnTimerComplete, null, DebounceInterval, Timeout.Infinite);
         }
 
-        private void OnTimerComplete(object stateInfo) => InvokeAsync(OnSearchAsync);
+        private void OnTimerComplete(object stateInfo) => InvokeAsync(OnSearch);
 
-        /// <remarks>
-        /// This async method needs to return a task and be awaited in order for
-        /// unit tests that trigger this method to work correctly.
-        /// </remarks>
-        private async Task OnSearchAsync()
+        private async void OnSearch()
         {
             if (MinCharacters > 0 && (string.IsNullOrWhiteSpace(Text) || Text.Length < MinCharacters))
             {
@@ -316,6 +312,7 @@ namespace MudBlazor
             if (_items?.Length == 0)
             {
                 await CoerceValueToText();
+                IsOpen = false;
                 StateHasChanged();
                 return;
             }

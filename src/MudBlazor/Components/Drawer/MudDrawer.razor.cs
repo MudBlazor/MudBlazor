@@ -331,14 +331,14 @@ namespace MudBlazor
                 breakpoint = await ResizeListener.GetBreakpoint();
             }
 
-            if (breakpoint < Breakpoint && _screenBreakpoint >= Breakpoint && (Variant == DrawerVariant.Responsive || Variant == DrawerVariant.Mini))
+            if (breakpoint < Breakpoint && _screenBreakpoint >= Breakpoint && Variant == DrawerVariant.Responsive)
             {
                 _isOpenWhenLarge = Open;
 
                 await OpenChanged.InvokeAsync(false);
                 isStateChanged = true;
             }
-            else if (breakpoint >= Breakpoint && _screenBreakpoint < Breakpoint && (Variant == DrawerVariant.Responsive || Variant == DrawerVariant.Mini))
+            else if (breakpoint >= Breakpoint && _screenBreakpoint < Breakpoint && Variant == DrawerVariant.Responsive)
             {
                 if (Open && PreserveOpenState)
                 {

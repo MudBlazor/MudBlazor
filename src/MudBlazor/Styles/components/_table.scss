@@ -546,10 +546,6 @@
     @include table-display-smalldevices("lg-");
 }
 
-@media (max-width:$breakpoint-xxl) {
-  @include table-display-smalldevices("xl-");
-}
-
-@media (min-width:$breakpoint-xxl) {
-  @include table-display-smalldevices("xxl-");
+@media (min-width:$breakpoint-xl) {
+    @include table-display-smalldevices("xl-");
 }

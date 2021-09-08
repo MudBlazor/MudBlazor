@@ -74,8 +74,6 @@
     }
 
     getBreakpoint (width) {
-        if (width >= this.options.breakpointDefinitions["Xxl"])
-            return 5;
         if (width >= this.options.breakpointDefinitions["Xl"])
             return 4;
         else if (width >= this.options.breakpointDefinitions["Lg"])

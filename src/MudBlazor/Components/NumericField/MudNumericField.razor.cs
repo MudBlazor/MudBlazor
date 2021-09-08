@@ -19,11 +19,6 @@ namespace MudBlazor
                 Culture = CultureInfo.CurrentUICulture,
             };
 
-            if (RuntimeLocation.IsServerSide)
-            {
-                _keyDownPreventDefault = false;
-            }
-
             #region parameters default depending on T
 
             //sbyte
@@ -149,6 +144,8 @@ namespace MudBlazor
         protected override void OnBlurred(FocusEventArgs obj)
         {
             base.OnBlurred(obj);
+            if (RuntimeLocation.IsServerSide)
+                _key++; // this forces a re-render on the inner input to display the value correctly
         }
 
         protected async Task<bool> ValidateInput(T value)
@@ -199,9 +196,9 @@ namespace MudBlazor
             return (Num.To<T>(value), false);
         }
 
-        private long _key = 0;
 
-        private bool _keyDownPreventDefault = true;
+        private long _key = 0;
+        private bool _keyDownPreventDefault;
 
         /// <summary>
         /// Overrides KeyDown event, intercepts Arrow Up/Down and uses them to add/substract the value manually by the step value.
@@ -213,33 +210,52 @@ namespace MudBlazor
         {
             if (Disabled || ReadOnly)
                 return;
-            //Server side and WASM have different (opposite) behaviour. We need to set initial value false on BSS (line 24) and true on WASM (line 204).
-            //Changing _keyDownPreventDefault value didn't work with Increment or Decrement methods in this method, so it have to be determined false before the method starts.
-            if (RuntimeLocation.IsClientSide)
-            {
-                _keyDownPreventDefault = false;
-            }
+
             if (obj.Type == "keydown") //KeyDown or repeat, blazor never fires InvokeKeyPress
             {
-
                 switch (obj.Key)
                 {
                     case "ArrowUp":
-                        _key++;
-                        await Task.Delay(1);
-                        await Increment();
-                        await Task.Delay(1);
-                        await _elementReference.FocusAsync();
+                        if (RuntimeLocation.IsServerSide)
+                        {
+                            if (!Immediate)
+                            {
+                                _key++;
+                                await Task.Delay(1);
+                                await Increment();
+                                await Task.Delay(1);
+                                _ = FocusAsync();
+                            }
+                            else
+                                await Increment();
+                        }
+                        else
+                        {
+                            await Increment();
+                            _elementReference.ForceRender(true);
+                        }
 
                         return;
 
                     case "ArrowDown":
-                        _key++;
-                        await Task.Delay(1);
-                        await Decrement();
-                        await Task.Delay(1);
-                        await _elementReference.FocusAsync();
-
+                        if (RuntimeLocation.IsServerSide)
+                        {
+                            if (!Immediate)
+                            {
+                                _key++;
+                                await Task.Delay(1);
+                                await Decrement();
+                                await Task.Delay(1);
+                                _ = FocusAsync();
+                            }
+                            else
+                                await Decrement();
+                        }
+                        else
+                        {
+                            await Decrement();
+                            _elementReference.ForceRender(true);
+                        }
                         return;
                     // various navigation keys
                     case "ArrowLeft":
@@ -247,174 +263,53 @@ namespace MudBlazor
                     case "Tab":
                     case "Backspace":
                     case "Delete":
-                    case "Enter":
-                    case "NumpadEnter":
                         break;
 
                     //copy/paste
                     case "v":
                     case "c":
-                    case "a":
                         if (obj.CtrlKey is false)
                         {
                             _keyDownPreventDefault = true;
-                            _key++;
-                            StateHasChanged();
-                            await Task.Delay(1);
-                            await _elementReference.FocusAsync();
                             return;
                         }
 
                         break;
 
                     default:
-                        //Check the shift key for AZERTY keyboard support 'Shift' and copy, paste, select all execution for 'Ctrl'.
-                        if (obj.Key != "Shift" && obj.Key != "Control")
+                        var acceptableKeyTypes = new Regex("^[0-9,.-]$");
+                        var isMatch = acceptableKeyTypes.Match(obj.Key).Success;
+                        if (isMatch is false)
                         {
-                            var acceptableKeyTypes = new Regex("^[0-9,.-]$");
-                            var isMatch = acceptableKeyTypes.Match(obj.Key).Success;
-                            if (isMatch is false)
-                            {
-                                _keyDownPreventDefault = true;
-                                _key++;
-                                StateHasChanged();
-                                await Task.Delay(1);
-                                await _elementReference.FocusAsync();
-
-                                return;
-                            }
-                            break;
-                        }
-                        else
-                        {
+                            _keyDownPreventDefault = true;
                             return;
                         }
+                        break;
                 }
             }
-            //Component will work properly even we delete this line.
-            OnKeyDown.InvokeAsync(obj).AndForget();
-        }
 
-        protected async Task OnMouseWheel(WheelEventArgs obj)
-        {
-            if (obj.ShiftKey == true && obj.DeltaY < 0)
-            {
-                if (InvertMouseWheel == false)
-                {
-                    if (RuntimeLocation.IsServerSide)
-                    {
-                        if (!Immediate)
-                        {
-                            _key++;
-                            await Task.Delay(1);
-                            await Increment();
-                            await Task.Delay(1);
-                            _ = FocusAsync();
-                        }
-                        else
-                            await Increment();
-                    }
-                    else
-                    {
-                        _key++;
-                        await Task.Delay(1);
-                        await Increment();
-                        await Task.Delay(1);
-                        _ = FocusAsync();
-                    }
-                }
-                else
-                {
-                    if (RuntimeLocation.IsServerSide)
-                    {
-                        if (!Immediate)
-                        {
-                            _key++;
-                            await Task.Delay(1);
-                            await Decrement();
-                            await Task.Delay(1);
-                            _ = FocusAsync();
-                        }
-                        else
-                            await Decrement();
-                    }
-                    else
-                    {
-                        _key++;
-                        await Task.Delay(1);
-                        await Decrement();
-                        await Task.Delay(1);
-                        _ = FocusAsync();
-                    }
-                }      
-            }
-            else if (obj.ShiftKey == true && 0 < obj.DeltaY)
-            {
-                if (InvertMouseWheel == false)
-                {
-                    if (RuntimeLocation.IsServerSide)
-                    {
-                        if (!Immediate)
-                        {
-                            _key++;
-                            await Task.Delay(1);
-                            await Decrement();
-                            await Task.Delay(1);
-                            _ = FocusAsync();
-                        }
-                        else
-                            await Decrement();
-                    }
-                    else
-                    {
-                        _key++;
-                        await Task.Delay(1);
-                        await Decrement();
-                        await Task.Delay(1);
-                        _ = FocusAsync();
-                    }
-                }
-                else
-                {
-                    if (RuntimeLocation.IsServerSide)
-                    {
-                        if (!Immediate)
-                        {
-                            _key++;
-                            await Task.Delay(1);
-                            await Increment();
-                            await Task.Delay(1);
-                            _ = FocusAsync();
-                        }
-                        else
-                            await Increment();
-                    }
-                    else
-                    {
-                        _key++;
-                        await Task.Delay(1);
-                        await Increment();
-                        await Task.Delay(1);
-                        _ = FocusAsync();
-                    }
-                }
-            }
+            OnKeyDown.InvokeAsync(obj).AndForget();
         }
 
         protected void InterceptKeyUp(KeyboardEventArgs obj)
         {
             if (Disabled || ReadOnly)
                 return;
-            //Look at InterceptKeyDown method comment for details.
-            if (RuntimeLocation.IsClientSide)
+            switch (obj.Key)
             {
-                _keyDownPreventDefault = true;
+                case "ArrowUp":
+                    if (RuntimeLocation.IsServerSide)
+                        _elementReference?.ForceRender(forceTextUpdate: true);
+                    break;
+
+                case "ArrowDown":
+                    if (RuntimeLocation.IsServerSide)
+                        _elementReference?.ForceRender(forceTextUpdate: true);
+                    break;
             }
-            else
-            {
-                _keyDownPreventDefault = false;
-            }
-            
+
+            _keyDownPreventDefault = false;
+            StateHasChanged();
             OnKeyUp.InvokeAsync(obj).AndForget();
         }
 
@@ -432,12 +327,6 @@ namespace MudBlazor
 
         //Tracks if Min has a value.
         private bool _minHasValue = false;
-
-        /// <summary>
-        /// Reverts mouse wheel up and down events, if true.
-        /// </summary>
-        [Parameter]
-        public bool InvertMouseWheel { get; set; } = false;
 
         //default value for the type
         private T _minDefault;

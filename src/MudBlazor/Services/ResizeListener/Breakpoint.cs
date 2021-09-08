@@ -5,9 +5,9 @@
     /// </summary>
     public enum Breakpoint
     {
-        Xs, Sm, Md, Lg, Xl, Xxl,
-        SmAndDown, MdAndDown, LgAndDown, XlAndDown,
-        SmAndUp, MdAndUp, LgAndUp, XlAndUp,
+        Xs, Sm, Md, Lg, Xl,
+        SmAndDown, MdAndDown, LgAndDown,
+        SmAndUp, MdAndUp, LgAndUp,
         None,
         Always
     }
