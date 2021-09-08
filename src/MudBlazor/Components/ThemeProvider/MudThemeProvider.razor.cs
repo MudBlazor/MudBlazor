@@ -192,7 +192,16 @@ namespace MudBlazor
             }
             theme.AppendLine($"--{LayoutProperties}-drawer-width-mini-left: {Theme.LayoutProperties.DrawerMiniWidthLeft};");
             theme.AppendLine($"--{LayoutProperties}-drawer-width-mini-right: {Theme.LayoutProperties.DrawerMiniWidthRight};");
-            theme.AppendLine($"--{LayoutProperties}-appbar-min-height: {Theme.LayoutProperties.AppbarMinHeight};");
+#pragma warning disable CS0612 // Type or member is obsolete
+            if (!string.IsNullOrEmpty(Theme.LayoutProperties.AppbarMinHeight))
+            {
+                theme.AppendLine($"--{LayoutProperties}-appbar-height: {Theme.LayoutProperties.AppbarMinHeight};");
+            }
+#pragma warning restore CS0612 // Type or member is obsolete
+            else
+            {
+                theme.AppendLine($"--{LayoutProperties}-appbar-height: {Theme.LayoutProperties.AppbarHeight};");
+            }
 
             //Breakpoint
             //theme.AppendLine($"--{Breakpoint}-xs: {Theme.Breakpoints.xs};");

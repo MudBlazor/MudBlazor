@@ -14,6 +14,8 @@ namespace MudBlazor
         public string DrawerWidthRight { get; set; } = "240px";
         public string DrawerHeightTop { get; set; } = "320px";
         public string DrawerHeightBottom { get; set; } = "320px";
-        public string AppbarMinHeight { get; set; } = "64px";
+        [Obsolete]
+        public string AppbarMinHeight { get; set; } = null;
+        public string AppbarHeight { get; set; } = "64px";
     }
 }
