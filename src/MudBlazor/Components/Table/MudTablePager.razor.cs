@@ -67,7 +67,7 @@ namespace MudBlazor
             get
             {
                 // fetch number of filtered items (once only)
-                var filteredItemsCount = Table.GetFilteredItemsCount();
+                var filteredItemsCount = Table?.GetFilteredItemsCount() ?? 0;
 
                 return Table == null
                     ? "Table==null"
