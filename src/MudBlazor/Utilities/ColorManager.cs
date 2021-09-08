@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Globalization;
-
+using System.Diagnostics.CodeAnalysis;
 
 namespace MudBlazor.Utilities
 {
+    [ExcludeFromCodeCoverage]
     [Obsolete("ColorManager is now obsolete. Use MudColor instead", true)]
     public class ColorManager
     {
