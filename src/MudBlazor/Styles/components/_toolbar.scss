@@ -15,20 +15,12 @@
 @media (min-width:$breakpoint-xs) and (orientation: landscape) {
     .mud-toolbar {
         height: 48px;
-
-        &.mud-toolbar-appbar {
-            height: calc(var(--mud-appbar-min-height) - 16px);
-        }
     }
 }
 
 @media (min-width:$breakpoint-sm) {
     .mud-toolbar {
         height: 64px;
-
-        &.mud-toolbar-appbar {
-            height: var(--mud-appbar-min-height);
-        }
     }
 
     .mud-toolbar-gutters {
@@ -39,8 +31,4 @@
 
 .mud-toolbar-dense {
     height: 48px;
-
-    &.mud-toolbar-appbar {
-        height: calc(var(--mud-appbar-min-height) - 16px);
-    }
 }
