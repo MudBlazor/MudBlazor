@@ -41,9 +41,7 @@ namespace MudBlazor
         protected void SnackbarClicked()
         {
             if (!ShowActionButton)
-            {
                 Snackbar?.Clicked(false);
-            }
         }
 
         protected override void OnInitialized()
@@ -75,9 +73,7 @@ namespace MudBlazor
         public void Dispose()
         {
             if (Snackbar != null)
-            {
                 Snackbar.OnUpdate -= SnackbarUpdated;
-            }
         }
     }
 }
