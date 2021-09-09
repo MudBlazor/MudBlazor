@@ -196,6 +196,12 @@ namespace MudBlazor
                 return (Max, true);
             else if (value < min)
                 return (Min, true);
+            //return T default (null) when there is no value
+            else if (v == null)
+            {
+                return (default(T), true);
+            }
+
             return (Num.To<T>(value), false);
         }
 
@@ -414,7 +420,7 @@ namespace MudBlazor
             {
                 _keyDownPreventDefault = false;
             }
-            
+
             OnKeyUp.InvokeAsync(obj).AndForget();
         }
 
