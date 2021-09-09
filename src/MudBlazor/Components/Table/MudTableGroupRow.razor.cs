@@ -80,9 +80,7 @@ namespace MudBlazor
                 {
                     _checked = value;
                     if (IsCheckable)
-                    {
                         Table.OnGroupHeaderCheckboxClicked(value, Items.ToList());
-                    }
                 }
             }
         }
@@ -110,16 +108,12 @@ namespace MudBlazor
         public void SetChecked(bool b, bool notify)
         {
             if (notify)
-            {
                 IsChecked = b;
-            }
             else
             {
                 _checked = b;
                 if (IsCheckable)
-                {
                     InvokeAsync(StateHasChanged);
-                }
             }
         }
 
