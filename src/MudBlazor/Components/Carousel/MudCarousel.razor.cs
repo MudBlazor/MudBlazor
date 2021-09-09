@@ -77,13 +77,9 @@ namespace MudBlazor
                 _autoCycle = value;
 
                 if (_autoCycle)
-                {
                     InvokeAsync(async () => await ResetTimerAsync());
-                }
                 else
-                {
                     InvokeAsync(async () => await StopTimerAsync());
-                }
             }
         }
 
@@ -100,13 +96,9 @@ namespace MudBlazor
                 _cycleTimeout = value;
 
                 if (_autoCycle == true)
-                {
                     InvokeAsync(async () => await ResetTimerAsync());
-                }
                 else
-                {
                     InvokeAsync(async () => await StopTimerAsync());
-                }
             }
         }
 
@@ -193,9 +185,7 @@ namespace MudBlazor
         private ValueTask StartTimerAsync()
         {
             if (AutoCycle)
-            {
                 _timer?.Change(AutoCycleTime, TimeSpan.Zero);
-            }
 
             return ValueTask.CompletedTask;
         }
