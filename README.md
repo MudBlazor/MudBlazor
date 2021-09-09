@@ -46,9 +46,12 @@ Add the following to `_Imports.razor`
 ```
 Add the following to the `MainLayout.razor` or `App.razor`
 ```razor
-<MudThemeProvider/>
-<MudDialogProvider/>
-<MudSnackbarProvider/>
+@code
+{
+    <MudThemeProvider/>
+    <MudDialogProvider/>
+    <MudSnackbarProvider/>
+}
 ```
 Add the following to `index.html` (client-side) or `_Host.cshtml` (server-side) in the `head`
 ```razor
