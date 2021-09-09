@@ -108,9 +108,7 @@ namespace MudBlazor
                     _selectedFirstSet = true;
                 }
                 else
-                {
                     _selected = Math.Max(1, Math.Min(value, Count));
-                }
 
                 SelectedChanged.InvokeAsync(_selected);
             }
@@ -221,9 +219,7 @@ namespace MudBlazor
         {
             //return array {1, ..., Count} if Count is small 
             if (Count <= 4 || Count <= 2 * BoundaryCount + MiddleCount + 2)
-            {
                 return Enumerable.Range(1, Count).ToArray();
-            }
 
             var length = 2 * BoundaryCount + MiddleCount + 2;
             var pages = new int[length];
@@ -243,17 +239,11 @@ namespace MudBlazor
             //calculate start value for middle items
             var startValue = 0;
             if (Selected <= BoundaryCount + MiddleCount / 2 + 1)
-            {
                 startValue = BoundaryCount + 2;
-            }
             else if (Selected >= Count - BoundaryCount - MiddleCount / 2)
-            {
                 startValue = Count - BoundaryCount - MiddleCount;
-            }
             else
-            {
                 startValue = Selected - MiddleCount / 2;
-            }
 
             //set middle items, e.g. if MiddleCount == 3 and Selected == 5 and Count == 11 => [..., 4, 5, 6, ...] 
             for (var i = 0; i < MiddleCount; i++)
@@ -271,9 +261,7 @@ namespace MudBlazor
             for (var i = 0; i < length - 2; i++)
             {
                 if (pages[i] + 2 == pages[i + 2])
-                {
                     pages[i + 1] = pages[i] + 1;
-                }
             }
 
             return pages;
