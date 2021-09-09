@@ -121,9 +121,7 @@ namespace MudBlazor
             set
             {
                 if (_expanded == value)
-                {
                     return;
-                }
 
                 _expanded = value;
                 _ = ExpandedChanged.InvokeAsync(value);
@@ -169,9 +167,7 @@ namespace MudBlazor
         protected void OnClickHandler(MouseEventArgs ev)
         {
             if (Disabled)
-            {
                 return;
-            }
 
             if (NestedList != null)
             {
@@ -224,14 +220,10 @@ namespace MudBlazor
         internal void SetSelected(bool selected)
         {
             if (Disabled)
-            {
                 return;
-            }
 
             if (_selected == selected)
-            {
                 return;
-            }
 
             _selected = selected;
             StateHasChanged();
@@ -242,9 +234,7 @@ namespace MudBlazor
             try
             {
                 if (MudList == null)
-                {
                     return;
-                }
 
                 MudList.ParametersChanged -= OnListParametersChanged;
                 MudList.Unregister(this);
