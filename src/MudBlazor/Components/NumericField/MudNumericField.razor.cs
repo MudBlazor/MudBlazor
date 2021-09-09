@@ -196,6 +196,19 @@ namespace MudBlazor
                 return (Max, true);
             else if (value < min)
                 return (Min, true);
+            //return T default (null) when it has a nullable type and value to 0
+            //If needed specifying the variable type, we can change this if block as follows. It gives the same result.
+            //else if ((typeof(T) == typeof(int?) || typeof(T) == typeof(uint?) || typeof(T) == typeof(double?) || typeof(T) == typeof(sbyte?) ||
+            //    typeof(T) == typeof(byte?) || typeof(T) == typeof(short?) || typeof(T) == typeof(ushort?) || typeof(T) == typeof(decimal?) ||
+            //    typeof(T) == typeof(long?) || typeof(T) == typeof(ulong?) || typeof(T) == typeof(float?)) && (value == 0))
+            //{
+            //    return (default(T), true);
+            //}
+            else if (value == 0)
+            {
+                return (default(T), true);
+            }
+
             return (Num.To<T>(value), false);
         }
 
@@ -414,7 +427,7 @@ namespace MudBlazor
             {
                 _keyDownPreventDefault = false;
             }
-            
+
             OnKeyUp.InvokeAsync(obj).AndForget();
         }
 
