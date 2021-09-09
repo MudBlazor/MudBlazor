@@ -2,24 +2,20 @@
 @inherits MudComponentBase
 
 <div @attributes="UserAttributes" class="@ContainerClass">
-    <div  @onmouseenter=@HandleMouseOver @onmouseleave=@HandleMouseOut>
-        @ChildContent
-    </div>
-    @if (!String.IsNullOrEmpty(Text) || TooltipContent != null)
-    {
-        <MudPortal  IsVisible=_isVisible >
-
-            <div class=@Classname >
-                @if (TooltipContent != null)
-                {
-                    @TooltipContent 
-                }
-                else
-                {
-                    @Text
-                }
-            </div>
-
-        </MudPortal>
-    }
+	<div @onmouseenter=@HandleMouseOver @onmouseleave=@HandleMouseOut>
+		@ChildContent
+	</div>
+	@if (!String.IsNullOrEmpty(Text) || TooltipContent != null)
+	{
+		<MudPopover Open="_isVisible" Class="@Classname">
+			@if (TooltipContent != null)
+			{
+				@TooltipContent
+			}
+			else
+			{
+				@Text
+			}
+		</MudPopover>
+	}
 </div>

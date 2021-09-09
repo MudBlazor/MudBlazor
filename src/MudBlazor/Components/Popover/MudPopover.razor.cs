@@ -1,11 +1,20 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿using System;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Components;
+using Microsoft.JSInterop;
 using MudBlazor.Extensions;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    public partial class MudPopover : MudComponentBase
+    public partial class MudPopover : MudComponentBase, IAsyncDisposable
     {
+        [Inject] public IJSRuntime JsInterop { get; set; }
+
+        private Boolean _connected; 
+
+        private Guid _id = Guid.NewGuid();
+
         protected string PopoverClass =>
            new CssBuilder("mud-popover")
             .AddClass("mud-popover-open", Open)
@@ -75,5 +84,23 @@ namespace MudBlazor
         /// Child content of the component.
         /// </summary>
         [Parameter] public RenderFragment ChildContent { get; set; }
+
+        protected override async Task OnAfterRenderAsync(bool firstRender)
+        {
+            if(firstRender == true)
+            {
+                _connected = true;
+                await JsInterop.InvokeVoidAsync("mudPopover.connect", _id);
+            }
+
+            await base.OnAfterRenderAsync(firstRender);
+        }
+
+        public async ValueTask DisposeAsync()
+        {
+            if(_connected == false) { return; }
+
+            await JsInterop.InvokeVoidAsync("mudPopover.disconnect", _id);
+        }
     }
 }

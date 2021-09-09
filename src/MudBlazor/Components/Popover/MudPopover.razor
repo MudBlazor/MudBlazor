@@ -1,8 +1,7 @@
 ﻿@namespace MudBlazor
 @inherits MudComponentBase
 
-<MudPortal>
-    <div @attributes="UserAttributes" class="@PopoverClass" style="@PopoverStyles">
-        @ChildContent
-    </div>
-</MudPortal>
+
+<div id="@($"popover-{_id}")" @attributes="UserAttributes" class="@PopoverClass" style="@PopoverStyles">
+	@ChildContent
+</div>
