@@ -22,9 +22,7 @@ namespace MudBlazor
             get
             {
                 if (_options == null)
-                {
                     _options = new DialogOptions();
-                }
 
                 return _options;
             }
@@ -136,14 +134,10 @@ namespace MudBlazor
         private bool SetFullWidth()
         {
             if (Options.FullWidth.HasValue)
-            {
                 return Options.FullWidth.Value;
-            }
 
             if (GlobalDialogOptions.FullWidth.HasValue)
-            {
                 return GlobalDialogOptions.FullWidth.Value;
-            }
 
             return false;
         }
@@ -151,14 +145,10 @@ namespace MudBlazor
         private bool SetFulScreen()
         {
             if (Options.FullScreen.HasValue)
-            {
                 return Options.FullScreen.Value;
-            }
 
             if (GlobalDialogOptions.FullScreen.HasValue)
-            {
                 return GlobalDialogOptions.FullScreen.Value;
-            }
 
             return false;
         }
@@ -175,14 +165,10 @@ namespace MudBlazor
         private bool SetHideHeader()
         {
             if (Options.NoHeader.HasValue)
-            {
                 return Options.NoHeader.Value;
-            }
 
             if (GlobalDialogOptions.NoHeader.HasValue)
-            {
                 return GlobalDialogOptions.NoHeader.Value;
-            }
 
             return false;
         }
@@ -190,14 +176,10 @@ namespace MudBlazor
         private bool SetCloseButton()
         {
             if (Options.CloseButton.HasValue)
-            {
                 return Options.CloseButton.Value;
-            }
 
             if (GlobalDialogOptions.CloseButton.HasValue)
-            {
                 return GlobalDialogOptions.CloseButton.Value;
-            }
 
             return false;
         }
@@ -205,14 +187,10 @@ namespace MudBlazor
         private bool SetDisableBackdropClick()
         {
             if (Options.DisableBackdropClick.HasValue)
-            {
                 return Options.DisableBackdropClick.Value;
-            }
 
             if (GlobalDialogOptions.DisableBackdropClick.HasValue)
-            {
                 return GlobalDialogOptions.DisableBackdropClick.Value;
-            }
 
             return false;
         }
@@ -220,9 +198,7 @@ namespace MudBlazor
         private void HandleBackgroundClick()
         {
             if (DisableBackdropClick)
-            {
                 return;
-            }
 
             Cancel();
         }
@@ -231,9 +207,7 @@ namespace MudBlazor
         public void Register(MudDialog dialog)
         {
             if (dialog == null)
-            {
                 return;
-            }
 
             _dialog = dialog;
             Class = dialog.Class;
