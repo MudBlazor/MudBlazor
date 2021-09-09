@@ -76,19 +76,13 @@ namespace MudBlazor
             set
             {
                 if (_isExpanded == value)
-                {
                     return;
-                }
 
                 _isExpanded = value;
                 if (Parent?.MultiExpansion == true)
-                {
                     Parent?.UpdateAll();
-                }
                 else
-                {
                     Parent?.CloseAllExcept(this);
-                }
                 //InvokeAsync(StateHasChanged);
                 IsExpandedChanged.InvokeAsync(_isExpanded);
             }
@@ -116,9 +110,7 @@ namespace MudBlazor
             set
             {
                 if (_nextPanelExpanded == value)
-                {
                     return;
-                }
 
                 _nextPanelExpanded = value;
                 InvokeAsync(StateHasChanged);
@@ -128,9 +120,7 @@ namespace MudBlazor
         public void ToggleExpansion()
         {
             if (Disabled)
-            {
                 return;
-            }
 
             if (Parent?.MultiExpansion == true)
             {
@@ -145,9 +135,7 @@ namespace MudBlazor
         public void Expand(bool update_parent = true)
         {
             if (update_parent)
-            {
                 IsExpanded = true;
-            }
             else
             {
                 _isExpanded = true;
@@ -158,9 +146,7 @@ namespace MudBlazor
         public void Collapse(bool update_parent = true)
         {
             if (update_parent)
-            {
                 IsExpanded = false;
-            }
             else
             {
                 _isExpanded = false;
