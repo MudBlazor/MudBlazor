@@ -1,6 +1,6 @@
 ﻿@namespace MudBlazor
 @inherits MudComponentBase
 
-    <div class="portal" @ref=@_portalRef>
-        @ChildContent
-    </div>
+<div class="mud-portal" id="@($"mudportal-{_id}")">
+	@ChildContent
+</div>
