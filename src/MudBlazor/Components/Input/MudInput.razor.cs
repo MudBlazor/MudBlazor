@@ -26,9 +26,7 @@ namespace MudBlazor
         protected Task OnInput(ChangeEventArgs args)
         {
             if (!Immediate)
-            {
                 return Task.CompletedTask;
-            }
 
             _isFocused = true;
             return SetTextAsync(args?.Value as string);
@@ -143,27 +141,21 @@ namespace MudBlazor
         {
             var showClearable = Clearable && ((value is string stringValue && !string.IsNullOrWhiteSpace(stringValue)) || (value is not string && value is not null));
             if (_showClearable != showClearable)
-            {
                 _showClearable = showClearable;
-            }
         }
 
         protected override async Task UpdateTextPropertyAsync(bool updateValue)
         {
             await base.UpdateTextPropertyAsync(updateValue);
             if (Clearable)
-            {
                 UpdateClearable(Text);
-            }
         }
 
         protected override async Task UpdateValuePropertyAsync(bool updateText)
         {
             await base.UpdateValuePropertyAsync(updateText);
             if (Clearable)
-            {
                 UpdateClearable(Value);
-            }
         }
 
         protected virtual async Task ClearButtonClickHandlerAsync(MouseEventArgs e)
@@ -178,9 +170,7 @@ namespace MudBlazor
         {
             await base.SetParametersAsync(parameters);
             if (!_isFocused || _forceTextUpdate)
-            {
                 _internalText = Text;
-            }
         }
 
         /// <summary>
