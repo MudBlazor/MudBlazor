@@ -48,9 +48,7 @@ namespace MudBlazor
         private void Expand()
         {
             if (!Collapsed)
-            {
                 return;
-            }
 
             Collapsed = false;
             StateHasChanged();
