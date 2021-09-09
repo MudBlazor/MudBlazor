@@ -47,9 +47,7 @@ namespace MudBlazor
             set
             {
                 if (Converter is DefaultConverter<DateTime?> defaultConverter)
-                {
                     defaultConverter.Format = value;
-                }
 
                 DateFormatChanged(value);
             }
@@ -79,9 +77,7 @@ namespace MudBlazor
             set
             {
                 if (value == _picker_month)
-                {
                     return;
-                }
 
                 _picker_month = value;
                 InvokeAsync(StateHasChanged);
@@ -160,9 +156,7 @@ namespace MudBlazor
             base.OnPickerOpened();
             _currentView = OpenTo;
             if (_currentView == OpenTo.Year)
-            {
                 _scrollToYearAfterRender = true;
-            }
         }
 
         /// <summary>
@@ -193,9 +187,7 @@ namespace MudBlazor
         protected DayOfWeek GetFirstDayOfWeek()
         {
             if (FirstDayOfWeek.HasValue)
-            {
                 return FirstDayOfWeek.Value;
-            }
 
             return Culture.DateTimeFormat.FirstDayOfWeek;
         }
@@ -209,24 +201,18 @@ namespace MudBlazor
         protected IEnumerable<DateTime> GetWeek(int month, int index)
         {
             if (index is < 0 or > 5)
-            {
                 throw new ArgumentException("Index must be between 0 and 5");
-            }
 
             var month_first = GetMonthStart(month);
             var week_first = month_first.AddDays(index * 7).StartOfWeek(GetFirstDayOfWeek());
             for (var i = 0; i < 7; i++)
-            {
                 yield return week_first.AddDays(i);
-            }
         }
 
         private string GetWeekNumber(int month, int index)
         {
             if (index is < 0 or > 5)
-            {
                 throw new ArgumentException("Index must be between 0 and 5");
-            }
 
             var month_first = GetMonthStart(month);
             var week_first = month_first.AddDays(index * 7).StartOfWeek(GetFirstDayOfWeek());
@@ -237,9 +223,7 @@ namespace MudBlazor
             }
 
             if (week_first.Month != month_first.Month && week_first.AddDays(6).Month != month_first.Month)
-            {
                 return "";
-            }
 
             return Culture.Calendar.GetWeekOfYear(week_first,
                 Culture.DateTimeFormat.CalendarWeekRule, FirstDayOfWeek ?? Culture.DateTimeFormat.FirstDayOfWeek).ToString();
@@ -344,9 +328,7 @@ namespace MudBlazor
         private int GetMinYear()
         {
             if (MinDate.HasValue)
-            {
                 return MinDate.Value.Year;
-            }
 
             return DateTime.Today.Year - 100;
         }
@@ -354,9 +336,7 @@ namespace MudBlazor
         private int GetMaxYear()
         {
             if (MaxDate.HasValue)
-            {
                 return MaxDate.Value.Year;
-            }
 
             return DateTime.Today.Year + 100;
         }
@@ -364,9 +344,7 @@ namespace MudBlazor
         private string GetYearClasses(int year)
         {
             if (year == GetMonthStart(0).Year)
-            {
                 return $"mud-picker-year-selected mud-{Color.ToDescriptionString()}-text";
-            }
 
             return null;
         }
@@ -382,9 +360,7 @@ namespace MudBlazor
         private Typo GetYearTypo(int year)
         {
             if (year == GetMonthStart(0).Year)
-            {
                 return Typo.h5;
-            }
 
             return Typo.subtitle1;
         }
@@ -407,9 +383,7 @@ namespace MudBlazor
             var calendarYear = Culture.Calendar.GetYear(current);
             var firstOfCalendarYear = Culture.Calendar.ToDateTime(calendarYear, 1, 1, 0, 0, 0, 0);
             for (var i = 0; i < Culture.Calendar.GetMonthsInYear(calendarYear); i++)
-            {
                 yield return Culture.Calendar.AddMonths(firstOfCalendarYear, i);
-            }
         }
 
         private string GetAbbreviatedMonthName(DateTime month)
@@ -427,9 +401,7 @@ namespace MudBlazor
         private string GetMonthClasses(DateTime month)
         {
             if (GetMonthStart(0) == month)
-            {
                 return $"mud-picker-month-selected mud-color-text-{Color.ToDescriptionString()}";
-            }
 
             return null;
         }
@@ -437,9 +409,7 @@ namespace MudBlazor
         private Typo GetMonthTypo(DateTime month)
         {
             if (GetMonthStart(0) == month)
-            {
                 return Typo.h5;
-            }
 
             return Typo.subtitle1;
         }
@@ -477,9 +447,7 @@ namespace MudBlazor
             }
 
             if (_scrollToYearAfterRender)
-            {
                 ScrollToYear();
-            }
 
             await base.OnAfterRenderAsync(firstRender);
         }
