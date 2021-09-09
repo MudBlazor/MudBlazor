@@ -1114,5 +1114,26 @@ namespace MudBlazor.UnitTests.Components
             tr = comp.FindAll("tr").ToArray();
             tr.Length.Should().Be(36);
         }
+
+        /// <summary>
+        /// Tests the IsInitiallyExpanded grouping behavior.
+        /// </summary>
+        /// <returns></returns>
+        [Test]
+        public async Task TableGroupIsInitiallyExpandedTest()
+        {
+            // group by Racing Category and collapse groups as default:
+            var comp = Context.RenderComponent<TableGroupingTest>();
+            var table = comp.Instance.tableInstance;
+            table.GroupBy = new TableGroupDefinition<TableGroupingTest.RacingCar>(rc => rc.Category, null) { 
+                GroupName = "Category",
+                Expandable = true,
+                IsInitiallyExpanded = false 
+            };
+            comp.Render();
+            table.Context.GroupRows.Count.Should().Be(4); // 4 categories
+            var tr = comp.FindAll("tr").ToArray();
+            tr.Length.Should().Be(5); // 1 table header + 4 group headers
+        }
     }
 }
