@@ -162,9 +162,7 @@ namespace MudBlazor
             set
             {
                 if (_isSelected == value)
-                {
                     return;
-                }
 
                 _isSelected = value;
                 StateHasChanged();
@@ -181,13 +179,9 @@ namespace MudBlazor
             {
                 // TODO: use MudElement to render <a> and this code can be removed. we know that it has potential problems on iOS
                 if (string.IsNullOrWhiteSpace(Target))
-                {
                     UriHelper.NavigateTo(Link, ForceLoad);
-                }
                 else
-                {
                     await JsApiService.Open(Link, Target);
-                }
             }
             else
             {
