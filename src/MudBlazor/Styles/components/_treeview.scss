@@ -4,10 +4,6 @@
     list-style: none;
     overflow: auto;
 
-    &.mud-treeview-canactivate .mud-treeview-item-content {
-        cursor: pointer;
-    }
-
     &.mud-treeview-expand-on-click .mud-treeview-item-content {
         cursor: pointer;
     }
@@ -43,8 +39,13 @@
     padding: 4px;
     align-items: center;
 
-    &.mud-treeview-item-activated {
-        background-color: rgba(25, 118, 210, 0.08);
+    &.mud-treeview-item-select {
+        cursor: pointer;
+
+        &.selected {
+            color: var(--mud-palette-primary);
+            background-color: var(--mud-palette-primary-hover);
+        }
     }
 }
 
@@ -56,12 +57,10 @@
     justify-content: center;
 
     .mud-treeview-item-arrow-expand {
-        color: var(--mud-palette-drawer-icon);
         transition: .3s cubic-bezier(.25,.8,.5,1),visibility 0s;
 
         &.mud-transform {
             transform: rotate(90deg);
-            fill: var(--mud-palette-primary);
         }
     }
 
@@ -87,12 +86,10 @@
     padding-inline-end: unset;
 }
 
-.mud-treeview-canhover .mud-treeview-item-activated .mud-treeview-item-content:hover {
-    background-color: rgba(25, 118, 210, 0.12);
-}
 
-.mud-treeview-canhover .mud-treeview-item-content:hover {
-    background-color: rgba(0, 0, 0, 0.04);
+.mud-treeview-hover .mud-treeview-item-content:hover {
+    background-color: var(--mud-palette-action-default-hover);
+    transition: background-color 150ms cubic-bezier(.4,0,.2,1) 0ms;
 }
 
 .mud-treeview-dense {

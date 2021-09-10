@@ -10,11 +10,11 @@
         }
         else
         {
-            <MudTreeViewItemToggleButton Loading="Loading" Expanded="Expanded" ExpandedChanged="OnItemExpanded" Visible="@HasChild"></MudTreeViewItemToggleButton>
+            <MudTreeViewItemToggleButton Loading="Loading" Expanded="Expanded" ExpandedChanged="OnItemExpanded" Visible="@HasChild" ExpandedIcon="@ExpandedIcon" ExpandedIconColor="@ExpandedIconColor" LoadingIcon="@LoadingIcon" LoadingIconColor="LoadingIconColor"></MudTreeViewItemToggleButton>
 
-            @if (MudTreeRoot != null && MudTreeRoot.CanSelect)
+            @if (MudTreeRoot != null && MudTreeRoot.MultiSelection)
             {
-                <MudCheckBox @bind-Checked="IsChecked"></MudCheckBox> 
+                <MudCheckBox Color="@CheckBoxColor" CheckedIcon="@CheckedIcon" UncheckedIcon="@UncheckedIcon" @bind-Checked="IsChecked" Disabled="@Disabled"></MudCheckBox> 
             }
 
             @if (!string.IsNullOrEmpty(Icon))
