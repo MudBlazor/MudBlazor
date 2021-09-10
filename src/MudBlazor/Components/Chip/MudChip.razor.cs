@@ -28,7 +28,7 @@ namespace MudBlazor
           .AddClass(Class)
         .Build();
 
-        [CascadingParameter] private MudChipSet ChipSet { get; set; }
+        [CascadingParameter] MudChipSet ChipSet { get; set; }
 
         /// <summary>
         /// The color of the component.
@@ -163,7 +163,6 @@ namespace MudBlazor
             {
                 if (_isSelected == value)
                     return;
-
                 _isSelected = value;
                 StateHasChanged();
             }
