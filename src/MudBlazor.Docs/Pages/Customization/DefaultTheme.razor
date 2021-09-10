@@ -72,6 +72,41 @@
                             </div>
                         }
                     </MudExpansionPanel>
+                    <MudExpansionPanel Text="Typography">
+                        @foreach (var _typography in typeof(Typography).GetProperties())
+                        {
+                        <div class="mt-1">
+                            <MudText Inline="true">@_typography.Name</MudText>
+                            @foreach (var item in _typography.GetValue(typography, null).GetType().GetProperties())
+	                        {
+		                        <div>
+                                    <MudText Inline="true" Style="color:#d69d85;">@_typography.GetValue(typography, null).GetType().GetProperty(item.Name).Name :</MudText>
+                                    @if (item.Name == "FontFamily")
+                                    {
+                                        string unifiedText = "";
+                                        string[] fontFamilies = (string[])_typography.GetValue(typography, null).GetType().GetProperty("FontFamily").GetValue(_typography.GetValue(typography, null), null);
+                                        foreach (string a in fontFamilies)
+                                        {
+                                            if (unifiedText == "")
+                                            {
+                                                unifiedText += a;
+                                            }
+                                            else
+                                            {
+                                                unifiedText = unifiedText + ", " + a;
+                                            }
+                                        }
+                                        <MudText Inline="true" Style="color:#79cc41;">@unifiedText</MudText>
+                                    }
+                                    else
+                                    {
+                                        <MudText Inline="true" Style="color:#79cc41;">@_typography.GetValue(typography, null).GetType().GetProperty(item.Name).GetValue(_typography.GetValue(typography, null), null)</MudText>
+                                    }
+                                </div>
+	                        }
+                        </div>
+                        }
+                    </MudExpansionPanel>
                 </MudExpansionPanels>
             </MudPaper>
 
@@ -89,6 +124,7 @@
     Palette palette = new Palette();
     LayoutProperties layoutProperties = new LayoutProperties();
     ZIndex zIndex = new ZIndex();
+    Typography typography = new Typography();
 
     protected override void OnInitialized()
     {
