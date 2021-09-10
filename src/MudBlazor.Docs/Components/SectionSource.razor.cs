@@ -125,7 +125,7 @@ namespace MudBlazor.Docs.Components
             if (!string.IsNullOrEmpty(GitHubFolderName))
             {
                 var gitHubLink = "https://github.com/";
-                GitHubSourceCode = $"{gitHubLink}Garderoben/MudBlazor/blob/master/src/MudBlazor.Docs/Pages/Components/{GitHubFolderName}/Examples/{Code}.razor";
+                GitHubSourceCode = $"{gitHubLink}MudBlazor/MudBlazor/blob/master/src/MudBlazor.Docs/Pages/Components/{GitHubFolderName}/Examples/{Code}.razor";
             }
             if (ShowCode)
             {
