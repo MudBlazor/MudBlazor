@@ -77,7 +77,6 @@ namespace MudBlazor
             {
                 if (_isExpanded == value)
                     return;
-
                 _isExpanded = value;
                 if (Parent?.MultiExpansion == true)
                     Parent?.UpdateAll();
@@ -111,7 +110,6 @@ namespace MudBlazor
             {
                 if (_nextPanelExpanded == value)
                     return;
-
                 _nextPanelExpanded = value;
                 InvokeAsync(StateHasChanged);
             }
@@ -121,7 +119,6 @@ namespace MudBlazor
         {
             if (Disabled)
                 return;
-
             if (Parent?.MultiExpansion == true)
             {
                 IsExpanded = !IsExpanded;
