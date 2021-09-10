@@ -97,9 +97,7 @@ namespace MudBlazor
             set
             {
                 if (_selected == value)
-                {
                     return;
-                }
 
                 //this is required because _selected will stay 1 when Count is not yet set
                 if (!_selectedFirstSet)
