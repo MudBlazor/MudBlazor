@@ -164,6 +164,7 @@ namespace MudBlazor
                 // which supply the RenderFragment. So in this case, a second render is necessary
                 StateHasChanged();
             }
+            UpdateSelectAllChecked();
         }
 
         /// <summary>
@@ -324,19 +325,7 @@ namespace MudBlazor
                     await SetTextAsync(string.Join(Delimiter, SelectedValues.Select(x => Converter.Set(x))));
                 }
 
-                if (_items.Count == SelectedValues.Count)
-                {
-                    _selectAllChecked = true;
-                }
-                else if (SelectedValues.Count == 0)
-                {
-                    _selectAllChecked = false;
-                }
-                else
-                {
-                    _selectAllChecked = null;
-                }
-
+                UpdateSelectAllChecked();
                 BeginValidate();
             }
             else
@@ -359,6 +348,25 @@ namespace MudBlazor
             }
 
             StateHasChanged();
+        }
+
+        private void UpdateSelectAllChecked()
+        {
+            if (MultiSelection && SelectAll)
+            {
+                if (SelectedValues.Count == 0)
+                { 
+                    _selectAllChecked = false;
+                }
+                else if (_items.Count == SelectedValues.Count)
+                {
+                    _selectAllChecked = true;
+                }
+                else
+                {
+                    _selectAllChecked = null;
+                }
+            }
         }
 
         public void ToggleMenu()
