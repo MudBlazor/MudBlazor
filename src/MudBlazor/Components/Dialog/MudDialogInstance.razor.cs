@@ -23,7 +23,6 @@ namespace MudBlazor
             {
                 if (_options == null)
                     _options = new DialogOptions();
-
                 return _options;
             }
             set => _options = value;
@@ -199,7 +198,6 @@ namespace MudBlazor
         {
             if (DisableBackdropClick)
                 return;
-
             Cancel();
         }
 
@@ -208,7 +206,6 @@ namespace MudBlazor
         {
             if (dialog == null)
                 return;
-
             _dialog = dialog;
             Class = dialog.Class;
             Style = dialog.Style;
