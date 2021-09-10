@@ -48,7 +48,6 @@ namespace MudBlazor
             {
                 if (Converter is DefaultConverter<DateTime?> defaultConverter)
                     defaultConverter.Format = value;
-
                 DateFormatChanged(value);
             }
         }
@@ -78,7 +77,6 @@ namespace MudBlazor
             {
                 if (value == _picker_month)
                     return;
-
                 _picker_month = value;
                 InvokeAsync(StateHasChanged);
                 PickerMonthChanged.InvokeAsync(value);
@@ -188,7 +186,6 @@ namespace MudBlazor
         {
             if (FirstDayOfWeek.HasValue)
                 return FirstDayOfWeek.Value;
-
             return Culture.DateTimeFormat.FirstDayOfWeek;
         }
 
@@ -202,7 +199,6 @@ namespace MudBlazor
         {
             if (index is < 0 or > 5)
                 throw new ArgumentException("Index must be between 0 and 5");
-
             var month_first = GetMonthStart(month);
             var week_first = month_first.AddDays(index * 7).StartOfWeek(GetFirstDayOfWeek());
             for (var i = 0; i < 7; i++)
@@ -213,7 +209,6 @@ namespace MudBlazor
         {
             if (index is < 0 or > 5)
                 throw new ArgumentException("Index must be between 0 and 5");
-
             var month_first = GetMonthStart(month);
             var week_first = month_first.AddDays(index * 7).StartOfWeek(GetFirstDayOfWeek());
             //january 1st
@@ -329,7 +324,6 @@ namespace MudBlazor
         {
             if (MinDate.HasValue)
                 return MinDate.Value.Year;
-
             return DateTime.Today.Year - 100;
         }
 
@@ -337,7 +331,6 @@ namespace MudBlazor
         {
             if (MaxDate.HasValue)
                 return MaxDate.Value.Year;
-
             return DateTime.Today.Year + 100;
         }
 
@@ -345,7 +338,6 @@ namespace MudBlazor
         {
             if (year == GetMonthStart(0).Year)
                 return $"mud-picker-year-selected mud-{Color.ToDescriptionString()}-text";
-
             return null;
         }
 
@@ -361,7 +353,6 @@ namespace MudBlazor
         {
             if (year == GetMonthStart(0).Year)
                 return Typo.h5;
-
             return Typo.subtitle1;
         }
 
@@ -402,7 +393,6 @@ namespace MudBlazor
         {
             if (GetMonthStart(0) == month)
                 return $"mud-picker-month-selected mud-color-text-{Color.ToDescriptionString()}";
-
             return null;
         }
 
@@ -410,7 +400,6 @@ namespace MudBlazor
         {
             if (GetMonthStart(0) == month)
                 return Typo.h5;
-
             return Typo.subtitle1;
         }
 
@@ -448,7 +437,6 @@ namespace MudBlazor
 
             if (_scrollToYearAfterRender)
                 ScrollToYear();
-
             await base.OnAfterRenderAsync(firstRender);
         }
 
