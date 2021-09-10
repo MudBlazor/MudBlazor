@@ -658,7 +658,7 @@ namespace MudBlazor.UnitTests.Components
         /// <summary>
         /// Ensure validation attributes aren't incorrectly called with `null` context.
         /// </summary>
-        /// <see cref="https://github.com/Garderoben/MudBlazor/issues/1229"/>
+        /// <see cref="https://github.com/MudBlazor/MudBlazor/issues/1229"/>
         [Test]
         public async Task EditForm_Validation_NullContext()
         {
