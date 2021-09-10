@@ -78,6 +78,7 @@ namespace MudBlazor
 
                 if (_autoCycle)
                     InvokeAsync(async () => await ResetTimerAsync());
+                    
                 else
                     InvokeAsync(async () => await StopTimerAsync());
             }
@@ -97,6 +98,7 @@ namespace MudBlazor
 
                 if (_autoCycle == true)
                     InvokeAsync(async () => await ResetTimerAsync());
+                    
                 else
                     InvokeAsync(async () => await StopTimerAsync());
             }
