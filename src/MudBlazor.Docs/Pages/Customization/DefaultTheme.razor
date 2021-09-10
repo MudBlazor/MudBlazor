@@ -28,10 +28,9 @@
                                 int a = i;
                                 <div>
                                     <MudTooltip Text="@($"Elevation {a.ToString()}")">
-                                        <MudText inli Class="mt-1" Style="color:#d69d85;">@mudTheme.Shadows.Elevation.GetValue(a)</MudText>
+                                        <MudText Class="mt-1" Style="color:#d69d85;">@mudTheme.Shadows.Elevation.GetValue(a)</MudText>
                                     </MudTooltip>
-                                </div>
-                                 
+                                </div>   
                             }
                         </div>
                     </MudExpansionPanel>
@@ -53,7 +52,6 @@
                         @* List obsolete ones *@
                         @foreach (var _layout in typeof(LayoutProperties).GetProperties())
                         {
-
                             var attr = (ObsoleteAttribute)_layout.GetCustomAttribute(typeof(ObsoleteAttribute));
 
                             if (attr != null)
@@ -89,14 +87,12 @@
 @code {
     MudTheme mudTheme = new MudTheme();
     Palette palette = new Palette();
-    Shadow shadow = new Shadow();
     LayoutProperties layoutProperties = new LayoutProperties();
     ZIndex zIndex = new ZIndex();
 
     protected override void OnInitialized()
     {
         palette = mudTheme.Palette;
-        shadow = mudTheme.Shadows;
         layoutProperties = mudTheme.LayoutProperties;
         zIndex = mudTheme.ZIndex;
     }
