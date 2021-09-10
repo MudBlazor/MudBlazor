@@ -3,11 +3,11 @@
 // See the LICENSE file in the project root for more information.
 
 using System;
-using System.Collections.Generic;
 using System.Globalization;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using System.Collections.Generic;
 using MudBlazor.Extensions;
 using MudBlazor.Utilities;
 
@@ -51,7 +51,7 @@ namespace MudBlazor
         private readonly Guid _id = Guid.NewGuid();
         private Guid _throttledMouseOverEventId;
 
-        [Inject] private IEventListener ThrottledEventManager { get; set; }
+        [Inject] IEventListener ThrottledEventManager { get; set; }
 
         #endregion
 
