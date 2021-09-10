@@ -96,7 +96,6 @@ namespace MudBlazor
             {
                 if (_selectedValues == null)
                     _selectedValues = new HashSet<T>();
-
                 return _selectedValues;
             }
             set
@@ -104,7 +103,6 @@ namespace MudBlazor
                 var set = value ?? new HashSet<T>();
                 if (SelectedValues.Count == set.Count && SelectedValues.All(x => set.Contains(x)))
                     return;
-
                 _selectedValues = new HashSet<T>(set);
                 SelectionChangedFromOutside?.Invoke(_selectedValues);
                 if (!MultiSelection)
@@ -142,7 +140,6 @@ namespace MudBlazor
             {
                 if (_toStringFunc == value)
                     return;
-
                 _toStringFunc = value;
                 Converter = new Converter<T>
                 {
@@ -178,10 +175,8 @@ namespace MudBlazor
             {
                 if (Value == null)
                     return false;
-
                 if (!_value_lookup.TryGetValue(Value, out var item))
                     return false;
-
                 return (item.ChildContent != null);
             }
         }
@@ -192,7 +187,6 @@ namespace MudBlazor
             {
                 if (Value == null)
                     return false;
-
                 return _value_lookup.TryGetValue(Value, out var _);
             }
         }
@@ -201,10 +195,8 @@ namespace MudBlazor
         {
             if (Value == null)
                 return null;
-
             if (!_value_lookup.TryGetValue(Value, out var selected_item))
                 return null; //<-- for now. we'll add a custom template to present values (set from outside) which are not on the list?
-
             return selected_item.ChildContent;
         }
 
@@ -213,7 +205,6 @@ namespace MudBlazor
             // For MultiSelection of non-string T's we don't update the Value!!!
             if (typeof(T) == typeof(string) || !MultiSelection)
                 base.UpdateValuePropertyAsync(updateText);
-
             return Task.CompletedTask;
         }
 
@@ -374,7 +365,6 @@ namespace MudBlazor
         {
             if (Disabled || ReadOnly)
                 return;
-
             if (_isOpen)
                 CloseMenu();
             else
@@ -385,7 +375,6 @@ namespace MudBlazor
         {
             if (Disabled || ReadOnly)
                 return;
-
             _isOpen = true;
             UpdateIcon();
             StateHasChanged();
@@ -465,10 +454,8 @@ namespace MudBlazor
                 multiSelectionText = text;
                 if (!string.IsNullOrWhiteSpace(multiSelectionText))
                     Touched = true;
-
                 if (updateValue)
                     await UpdateValuePropertyAsync(false);
-
                 await TextChanged.InvokeAsync(multiSelectionText);
             }
         }
