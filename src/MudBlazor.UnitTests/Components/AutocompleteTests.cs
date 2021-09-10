@@ -239,7 +239,7 @@ namespace MudBlazor.UnitTests.Components
 
         /// <summary>
         /// Based on this try https://try.mudblazor.com/snippet/GacPunvDUyjdUJAh
-        /// and this issue https://github.com/Garderoben/MudBlazor/issues/1235
+        /// and this issue https://github.com/MudBlazor/MudBlazor/issues/1235
         /// </summary>
         [Test]
         public async Task Autocomplete_Initialize_Value_on_SetParametersAsync()
@@ -259,7 +259,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// Test for <seealso cref="https://github.com/Garderoben/MudBlazor/issues/1415"/>
+        /// Test for <seealso cref="https://github.com/MudBlazor/MudBlazor/issues/1415"/>
         /// </summary>
         [Test]
         public async Task Autocomplete_OnBlurShouldBeCalled()
@@ -355,7 +355,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// Test for <seealso cref="https://github.com/Garderoben/MudBlazor/issues/1761"/>
+        /// Test for <seealso cref="https://github.com/MudBlazor/MudBlazor/issues/1761"/>
         /// </summary>
         [Test]
         public async Task Autocomplete_Should_Close_OnTab()
