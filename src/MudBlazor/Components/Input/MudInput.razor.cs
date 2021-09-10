@@ -27,7 +27,6 @@ namespace MudBlazor
         {
             if (!Immediate)
                 return Task.CompletedTask;
-
             _isFocused = true;
             return SetTextAsync(args?.Value as string);
         }
