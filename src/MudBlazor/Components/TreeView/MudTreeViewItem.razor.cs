@@ -23,7 +23,7 @@ namespace MudBlazor
 
         protected string ContentClassname =>
         new CssBuilder("mud-treeview-item-content")
-           .AddClass("mud-treeview-item-select", MudTreeRoot.IsSelectable)
+           .AddClass("mud-treeview-item-select", Activated && MudTreeRoot.IsSelectable)
           .AddClass("selected", Activated && MudTreeRoot.IsSelectable)
         .Build();
 
