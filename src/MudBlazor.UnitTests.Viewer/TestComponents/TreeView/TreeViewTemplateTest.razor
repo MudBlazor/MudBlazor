@@ -1,6 +1,6 @@
 ﻿@namespace MudBlazor.UnitTests.TestComponents
 
-<MudTreeView MultiSelection="true" @bind-SelectedValue="SelectedValue" Items="TreeItems" Style="width: 500px;">
+<MudTreeView MultiSelection="true" Items="TreeItems" Style="width: 500px;">
     <ItemTemplate>
         <MudTreeViewItem @bind-Activated="@context.IsSelected" @bind-Expanded="@context.IsExpanded" Icon="@context.Icon"
                          Text="@context.Title" EndText="@context.Number?.ToString()" EndTextTypo="@Typo.caption" Items="@context.TreeItems" />
@@ -8,8 +8,6 @@
 </MudTreeView>
 
 @code { 
-
-    public string SelectedValue { get; set; }
 
     class TreeItemData
     {
