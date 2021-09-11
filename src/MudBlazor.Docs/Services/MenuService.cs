@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using MudBlazor.Charts;
@@ -74,6 +73,7 @@ namespace MudBlazor.Docs.Services
             .AddItem("ToolBar", typeof(MudToolBar))
             .AddItem("Carousel", typeof(MudCarousel<T>), typeof(MudCarouselItem))
             .AddItem("Timeline", typeof(MudTimeline), typeof(MudTimelineItem))
+            .AddItem("Pagination", typeof(MudPagination))
 
             //GROUPS
 

@@ -61,7 +61,7 @@
                     @if (Loading)
                     {
                         <tr>
-                            <td colspan="1000" class="mud-table-loading">
+                            <td colspan="1000" class="@(CurrentPageItems.Count() > 0 || LoadingContent != null ? "mud-table-loading" : "")">
                                 <MudProgressLinear Color="@LoadingProgressColor" Class="mud-table-loading-progress" Indeterminate="true" />
                             </td>
                         </tr>
@@ -179,7 +179,7 @@
 </div>
 @code
 {
-    // moved to code to avoid repeatidelly code on markup block
+    // moved to code to avoid repeatedly code on markup block
     internal RenderFragment RenderRows(IEnumerable<T> source, string customClass = null, bool isExpandable = false)
     {
         var rowIndex = 0;

@@ -74,9 +74,9 @@ namespace MudBlazor.Utilities
             // achromatic argb (gray scale)
             if (Math.Abs(s) < EPSILON)
             {
-                _valuesAsByte[0] = (byte)Math.Max(0, Math.Min(255, Convert.ToInt32(double.Parse($"{l * 255D:0.00}", CultureInfo.InvariantCulture))));
-                _valuesAsByte[1] = (byte)Math.Max(0, Math.Min(255, Convert.ToInt32(double.Parse($"{l * 255D:0.00}", CultureInfo.InvariantCulture))));
-                _valuesAsByte[2] = (byte)Math.Max(0, Math.Min(255, Convert.ToInt32(double.Parse($"{l * 255D:0.00}", CultureInfo.InvariantCulture))));
+                _valuesAsByte[0] = (byte)Math.Max(0, Math.Min(255, (int)Math.Ceiling(l * 255D)));
+                _valuesAsByte[1] = (byte)Math.Max(0, Math.Min(255, (int)Math.Ceiling(l * 255D)));
+                _valuesAsByte[2] = (byte)Math.Max(0, Math.Min(255, (int)Math.Ceiling(l * 255D)));
                 _valuesAsByte[3] = (byte)a;
             }
             else
@@ -130,7 +130,19 @@ namespace MudBlazor.Utilities
             _valuesAsByte[2] = b;
             _valuesAsByte[3] = a;
 
-            CalcualteHSL();
+            CalculateHSL();
+        }
+
+        /// <summary>
+        /// initilize a new MudColor with new RGB values but keeps the hue value from the color
+        /// </summary>
+        /// <param name="r">R</param>
+        /// <param name="g">G</param>
+        /// <param name="b">B</param>
+        /// <param name="color">Existing color to copy hue value from </param>
+        public MudColor(byte r, byte g, byte b, MudColor color) : this(r,g,b,color.A)
+        {
+            H = color.H;
         }
 
         public MudColor(int r, int g, int b, double alpha) :
@@ -151,7 +163,7 @@ namespace MudBlazor.Utilities
 
             if (value.StartsWith("rgba") == true)
             {
-                string[] parts = SplitInputIntoParts(value);
+                var parts = SplitInputIntoParts(value);
                 if (parts.Length != 4)
                 {
                     throw new ArgumentException("invalid color format");
@@ -167,7 +179,7 @@ namespace MudBlazor.Utilities
             }
             else if (value.StartsWith("rgb") == true)
             {
-                string[] parts = SplitInputIntoParts(value);
+                var parts = SplitInputIntoParts(value);
                 if (parts.Length != 3)
                 {
                     throw new ArgumentException("invalid color format");
@@ -213,7 +225,7 @@ namespace MudBlazor.Utilities
                     GetByteFromValuePart(value,6),
                 };
 
-                CalcualteHSL();
+                CalculateHSL();
             }
         }
 
@@ -223,7 +235,7 @@ namespace MudBlazor.Utilities
 
         #region Methods
 
-        private void CalcualteHSL()
+        private void CalculateHSL()
         {
             var h = 0D;
             var s = 0D;
@@ -292,11 +304,11 @@ namespace MudBlazor.Utilities
 
         private static string[] SplitInputIntoParts(string value)
         {
-            int startIndex = value.IndexOf('(');
-            int lastIndex = value.LastIndexOf(')');
-            string subString = value[(startIndex + 1)..lastIndex];
-            string[] parts = subString.Split(',', StringSplitOptions.RemoveEmptyEntries);
-            for (int i = 0; i < parts.Length; i++)
+            var startIndex = value.IndexOf('(');
+            var lastIndex = value.LastIndexOf(')');
+            var subString = value[(startIndex + 1)..lastIndex];
+            var parts = subString.Split(',', StringSplitOptions.RemoveEmptyEntries);
+            for (var i = 0; i < parts.Length; i++)
             {
                 parts[i] = parts[i].Trim();
             }
@@ -311,7 +323,7 @@ namespace MudBlazor.Utilities
 
         #region operators and object members
 
-        public static implicit operator MudColor(string input) => new MudColor(input);
+        public static implicit operator MudColor(string input) => new(input);
         //public static implicit operator string(MudColor input) => input == null ? string.Empty : input.Value;
 
         public static explicit operator string(MudColor color) => color == null ? string.Empty : color.Value;
@@ -332,7 +344,7 @@ namespace MudBlazor.Utilities
 
         public bool Equals(MudColor other)
         {
-            if (object.ReferenceEquals(other, null) == true) { return false; }
+            if (ReferenceEquals(other, null) == true) { return false; }
 
             return
                 _valuesAsByte[0] == other._valuesAsByte[0] &&
@@ -345,8 +357,8 @@ namespace MudBlazor.Utilities
 
         public static bool operator ==(MudColor lhs, MudColor rhs)
         {
-            bool lhsIsNull = object.ReferenceEquals(null, lhs);
-            bool rhsIsNull = object.ReferenceEquals(null, rhs);
+            var lhsIsNull = ReferenceEquals(null, lhs);
+            var rhsIsNull = ReferenceEquals(null, rhs);
             if (lhsIsNull == true && rhsIsNull == true)
             {
                 return true;

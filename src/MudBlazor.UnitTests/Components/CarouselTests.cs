@@ -13,20 +13,8 @@ using NUnit.Framework;
 namespace MudBlazor.UnitTests.Components
 {
     [TestFixture]
-    public class CarouselTests
+    public class CarouselTests : BunitTest
     {
-        private Bunit.TestContext ctx;
-
-        [SetUp]
-        public void Setup()
-        {
-            ctx = new Bunit.TestContext();
-            ctx.AddTestServices();
-        }
-
-        [TearDown]
-        public void TearDown() => ctx.Dispose();
-
         /// <summary>
         /// Default Carousel, with three pages.
         /// Testing if selection is sync with move commands.
@@ -34,7 +22,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task CarouselTest1()
         {
-            var comp = ctx.RenderComponent<CarouselTest>();
+            var comp = Context.RenderComponent<CarouselTest>();
             // print the generated html
             Console.WriteLine(comp.Markup);
             //// select elements needed for the test
@@ -156,7 +144,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void CarouselTest_RenderingOptions()
         {
-            var comp = ctx.RenderComponent<MudCarousel<object>>();
+            var comp = Context.RenderComponent<MudCarousel<object>>();
             // print the generated html
             Console.WriteLine(comp.Markup);
             comp.FindAll("button.mud-icon-button").Count.Should().Be(2); //left + right
@@ -192,10 +180,10 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task CarouselTest_AutoCycle()
         {
-            var comp = ctx.RenderComponent<MudCarousel<object>>();
+            var comp = Context.RenderComponent<MudCarousel<object>>();
             // print the generated html
             Console.WriteLine(comp.Markup);
-            /// adding some pages
+            // adding some pages
             comp.Instance.Items.Add(new());
             comp.Instance.Items.Add(new());
             comp.Instance.Items.Add(new());
@@ -226,7 +214,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void CarouselTest_DataBinding()
         {
-            var comp = ctx.RenderComponent<CarouselBindingTest>();
+            var comp = Context.RenderComponent<CarouselBindingTest>();
             // print the generated html
             Console.WriteLine(comp.Markup);
             //// select elements needed for the test

@@ -57,8 +57,8 @@ namespace MudBlazor
             .AddStyle("height", Height, !string.IsNullOrWhiteSpace(Height))
             .AddStyle("--mud-drawer-content-height",
                 string.IsNullOrWhiteSpace(Height) ? $"{_height}px" : Height,
-                Anchor == Anchor.Bottom || Anchor == Anchor.Top)
-            .AddStyle("visibility", "hidden", string.IsNullOrWhiteSpace(Height) && _height == 0 && (Anchor == Anchor.Bottom || Anchor == Anchor.Top))
+                Anchor is Anchor.Bottom or Anchor.Top)
+            .AddStyle("visibility", "hidden", string.IsNullOrWhiteSpace(Height) && _height == 0 && Anchor is Anchor.Bottom or Anchor.Top)
             .AddStyle(Style)
         .Build();
 
@@ -179,7 +179,7 @@ namespace MudBlazor
                 {
                     _keepInitialState = false;
                 }
-                if (_isRendered && value && (Anchor == Anchor.Top || Anchor == Anchor.Bottom))
+                if (_isRendered && value && Anchor is Anchor.Top or Anchor.Bottom)
                 {
                     _ = UpdateHeight();
                 }
@@ -253,7 +253,7 @@ namespace MudBlazor
                 }
 
                 _isRendered = true;
-                if (string.IsNullOrWhiteSpace(Height) && (Anchor == Anchor.Bottom || Anchor == Anchor.Top))
+                if (string.IsNullOrWhiteSpace(Height) && Anchor is Anchor.Bottom or Anchor.Top)
                 {
                     StateHasChanged();
                 }
@@ -325,20 +325,20 @@ namespace MudBlazor
 
         private async void UpdateBreakpointState(Breakpoint breakpoint)
         {
-            bool isStateChanged = false;
+            var isStateChanged = false;
             if (breakpoint == Breakpoint.None)
             {
                 breakpoint = await ResizeListener.GetBreakpoint();
             }
 
-            if (breakpoint < Breakpoint && _screenBreakpoint >= Breakpoint && Variant == DrawerVariant.Responsive)
+            if (breakpoint < Breakpoint && _screenBreakpoint >= Breakpoint && (Variant == DrawerVariant.Responsive || Variant == DrawerVariant.Mini))
             {
                 _isOpenWhenLarge = Open;
 
                 await OpenChanged.InvokeAsync(false);
                 isStateChanged = true;
             }
-            else if (breakpoint >= Breakpoint && _screenBreakpoint < Breakpoint && Variant == DrawerVariant.Responsive)
+            else if (breakpoint >= Breakpoint && _screenBreakpoint < Breakpoint && (Variant == DrawerVariant.Responsive || Variant == DrawerVariant.Mini))
             {
                 if (Open && PreserveOpenState)
                 {

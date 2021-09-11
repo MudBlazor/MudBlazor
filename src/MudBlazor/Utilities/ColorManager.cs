@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Globalization;
-using System.Drawing;
-
+using System.Diagnostics.CodeAnalysis;
 
 namespace MudBlazor.Utilities
 {
+    [ExcludeFromCodeCoverage]
     [Obsolete("ColorManager is now obsolete. Use MudColor instead", true)]
     public class ColorManager
     {
@@ -66,7 +66,7 @@ namespace MudBlazor.Utilities
                 return hex + "FF";
             }
 
-            if (hex.Length < 3 || hex.Length > 4)
+            if (hex.Length is < 3 or > 4)
             {
                 return null;
             }

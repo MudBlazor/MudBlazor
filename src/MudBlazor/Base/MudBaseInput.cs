@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Globalization;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
@@ -262,10 +261,12 @@ namespace MudBlazor
             return changed;
         }
 
-        protected override async Task ValidateValue()
+        protected override Task ValidateValue()
         {
             if (Standalone)
-                await base.ValidateValue();
+                return base.ValidateValue();
+
+            return Task.CompletedTask;
         }
 
         protected override async Task OnInitializedAsync()

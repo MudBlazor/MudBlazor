@@ -1,5 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Extensions;
@@ -99,6 +98,11 @@ namespace MudBlazor
         [Parameter] public bool HideSpinButtons { get; set; } = true;
 
         /// <summary>
+        /// Revert up and down mouse wheel events.
+        /// </summary>
+        [Parameter] public bool InvertMouseWheel { get; set; } = false;
+
+        /// <summary>
         /// Show clear button.
         /// </summary>
         [Parameter] public bool Clearable { get; set; } = false;
@@ -107,6 +111,11 @@ namespace MudBlazor
         /// Button click event for clear button. Called after text and value has been cleared.
         /// </summary>
         [Parameter] public EventCallback<MouseEventArgs> OnClearButtonClick { get; set; }
+
+        /// <summary>
+        /// Mouse wheel event for input.
+        /// </summary>
+        [Parameter] public EventCallback<WheelEventArgs> OnMouseWheel { get; set; }
 
         private Size GetButtonSize() => Margin == Margin.Dense ? Size.Small : Size.Medium;
 
@@ -153,10 +162,10 @@ namespace MudBlazor
         /// </summary>
         /// <param name="text"></param>
         /// <returns></returns>
-        public async Task SetText(string text)
+        public Task SetText(string text)
         {
             _internalText = text;
-            await SetTextAsync(text);
+            return SetTextAsync(text);
         }
     }
 

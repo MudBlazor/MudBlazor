@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 using MudBlazor.Interfaces;
+using MudBlazor.Utilities;
 using static System.String;
 
 namespace MudBlazor
@@ -147,9 +148,11 @@ namespace MudBlazor
         /// <para>Func&lt;T, bool&gt; ... will output the standard error message "Invalid" if false</para>
         /// <para>Func&lt;T, string&gt; ... outputs the result as error message, no error if null </para>
         /// <para>Func&lt;T, IEnumerable&lt; string &gt;&gt; ... outputs all the returned error messages, no error if empty</para>
+        /// <para>Func&lt;object, string, IEnumerable&lt; string &gt;&gt; input Form.Model, Full Path of Member ... outputs all the returned error messages, no error if empty</para>
         /// <para>Func&lt;T, Task&lt; bool &gt;&gt; ... will output the standard error message "Invalid" if false</para>
         /// <para>Func&lt;T, Task&lt; string &gt;&gt; ... outputs the result as error message, no error if null</para>
         /// <para>Func&lt;T, Task&lt;IEnumerable&lt; string &gt;&gt;&gt; ... outputs all the returned error messages, no error if empty</para>
+        /// <para>Func&lt;object, string, Task&lt;IEnumerable&lt; string &gt;&gt;&gt; input Form.Model, Full Path of Member ... outputs all the returned error messages, no error if empty</para>
         /// <para>System.ComponentModel.DataAnnotations.ValidationAttribute instances</para>
         /// </summary>
         [Parameter]
@@ -227,6 +230,8 @@ namespace MudBlazor
                     ValidateWithFunc(Validation as Func<T, string>, _value, errors);
                 else if (Validation is Func<T, IEnumerable<string>>)
                     ValidateWithFunc(Validation as Func<T, IEnumerable<string>>, _value, errors);
+                else if (Validation is Func<object, string, IEnumerable<string>>)
+                    ValidateModelWithFullPathOfMember(Validation as Func<object, string, IEnumerable<string>>, errors);
                 else
                 {
                     var value = _value;
@@ -237,6 +242,8 @@ namespace MudBlazor
                         await ValidateWithFunc(Validation as Func<T, Task<string>>, _value, errors);
                     else if (Validation is Func<T, Task<IEnumerable<string>>>)
                         await ValidateWithFunc(Validation as Func<T, Task<IEnumerable<string>>>, _value, errors);
+                    else if (Validation is Func<object, string, Task<IEnumerable<string>>>)
+                        await ValidateModelWithFullPathOfMember(Validation as Func<object, string, Task<IEnumerable<string>>>, errors);
 
                     changed = !EqualityComparer<T>.Default.Equals(value, _value);
                 }
@@ -276,7 +283,7 @@ namespace MudBlazor
         protected virtual bool HasValue(T value)
         {
             if (typeof(T) == typeof(string))
-                return !string.IsNullOrWhiteSpace(value as string);
+                return !IsNullOrWhiteSpace(value as string);
 
             return value != null;
         }
@@ -297,7 +304,7 @@ namespace MudBlazor
             {
                 // Maybe conditionally add full error message if `IWebAssemblyHostEnvironment.IsDevelopment()`
                 // Or log using proper logger.
-                errors.Add($"An unhandled exception occured: {e.Message}");
+                errors.Add($"An unhandled exception occurred: {e.Message}");
             }
         }
 
@@ -341,6 +348,19 @@ namespace MudBlazor
             }
         }
 
+        protected virtual void ValidateModelWithFullPathOfMember(Func<object, string, IEnumerable<string>> func, List<string> errors)
+        {
+            try
+            {
+                foreach (var error in func(Form.Model, For.GetFullPathOfMember()))
+                    errors.Add(error);
+            }
+            catch (Exception e)
+            {
+                errors.Add("Error in validation func: " + e.Message);
+            }
+        }
+
         protected virtual async Task ValidateWithFunc(Func<T, Task<bool>> func, T value, List<string> errors)
         {
             try
@@ -373,6 +393,19 @@ namespace MudBlazor
             try
             {
                 foreach (var error in await func(value))
+                    errors.Add(error);
+            }
+            catch (Exception e)
+            {
+                errors.Add("Error in validation func: " + e.Message);
+            }
+        }
+
+        protected virtual async Task ValidateModelWithFullPathOfMember(Func<object, string, Task<IEnumerable<string>>> func, List<string> errors)
+        {
+            try
+            {
+                foreach (var error in await func(Form.Model, For.GetFullPathOfMember()))
                     errors.Add(error);
             }
             catch (Exception e)

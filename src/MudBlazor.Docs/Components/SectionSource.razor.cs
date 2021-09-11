@@ -79,7 +79,7 @@ namespace MudBlazor.Docs.Components
 
         protected virtual async void EditOnTryMudBlazor()
         {
-            // We use a seperator that wont be in code so we can send 2 files later
+            // We use a separator that wont be in code so we can send 2 files later
             var codeFiles = "__Main.razor" + (char)31 + Snippets.GetCode(Code);
 
             // Add dialogs for dialog examples
@@ -125,7 +125,7 @@ namespace MudBlazor.Docs.Components
             if (!string.IsNullOrEmpty(GitHubFolderName))
             {
                 var gitHubLink = "https://github.com/";
-                GitHubSourceCode = $"{gitHubLink}Garderoben/MudBlazor/blob/master/src/MudBlazor.Docs/Pages/Components/{GitHubFolderName}/Examples/{Code}.razor";
+                GitHubSourceCode = $"{gitHubLink}MudBlazor/MudBlazor/blob/master/src/MudBlazor.Docs/Pages/Components/{GitHubFolderName}/Examples/{Code}.razor";
             }
             if (ShowCode)
             {

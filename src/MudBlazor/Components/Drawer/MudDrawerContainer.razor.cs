@@ -9,7 +9,7 @@ namespace MudBlazor
     public partial class MudDrawerContainer : MudComponentBase
     {
         protected bool Fixed { get; set; } = false;
-        private List<MudDrawer> _drawers = new List<MudDrawer>();
+        private List<MudDrawer> _drawers = new();
 
         protected virtual string Classname =>
         new CssBuilder()
@@ -52,7 +52,7 @@ namespace MudBlazor
                 return string.Empty;
 
             var className = $"mud-drawer-{(drawer.Open ? "open" : "close")}-{drawer.Variant.ToDescriptionString()}";
-            if (drawer.Variant == DrawerVariant.Responsive || drawer.Variant == DrawerVariant.Mini)
+            if (drawer.Variant is DrawerVariant.Responsive or DrawerVariant.Mini)
             {
                 className += $"-{drawer.Breakpoint.ToDescriptionString()}";
             }
@@ -81,25 +81,25 @@ namespace MudBlazor
 
         private MudDrawer FindLeftDrawer()
         {
-            Anchor anchor = RightToLeft ? Anchor.End : Anchor.Start;
+            var anchor = RightToLeft ? Anchor.End : Anchor.Start;
             return _drawers.FirstOrDefault(d => d.Anchor == anchor || d.Anchor == Anchor.Left);
         }
 
         private MudDrawer FindRightDrawer()
         {
-            Anchor anchor = RightToLeft ? Anchor.Start : Anchor.End;
+            var anchor = RightToLeft ? Anchor.Start : Anchor.End;
             return _drawers.FirstOrDefault(d => d.Anchor == anchor || d.Anchor == Anchor.Right);
         }
 
         private MudDrawer FindLeftMiniDrawer()
         {
-            Anchor anchor = RightToLeft ? Anchor.End : Anchor.Start;
+            var anchor = RightToLeft ? Anchor.End : Anchor.Start;
             return _drawers.FirstOrDefault(d => d.Variant == DrawerVariant.Mini && (d.Anchor == anchor || d.Anchor == Anchor.Left));
         }
 
         private MudDrawer FindRightMiniDrawer()
         {
-            Anchor anchor = RightToLeft ? Anchor.Start : Anchor.End;
+            var anchor = RightToLeft ? Anchor.Start : Anchor.End;
             return _drawers.FirstOrDefault(d => d.Variant == DrawerVariant.Mini && (d.Anchor == anchor || d.Anchor == Anchor.Right));
         }
     }

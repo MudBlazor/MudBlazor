@@ -1,6 +1,6 @@
 ﻿// Copyright (c) 2020 Jonny Larsson
 // License: MIT
-// See https://github.com/Garderoben/MudBlazor
+// See https://github.com/MudBlazor/MudBlazor
 // Modified version of Blazored Modal
 // Copyright (c) 2019 Blazored
 // License: MIT
@@ -25,8 +25,8 @@ namespace MudBlazor
 
         public static DialogResult Ok<T>(T result) => Ok(result, default);
 
-        public static DialogResult Ok<T>(T result, Type dialogType) => new DialogResult(result, dialogType, false);
+        public static DialogResult Ok<T>(T result, Type dialogType) => new(result, dialogType, false);
 
-        public static DialogResult Cancel() => new DialogResult(default, typeof(object), true);
+        public static DialogResult Cancel() => new(default, typeof(object), true);
     }
 }

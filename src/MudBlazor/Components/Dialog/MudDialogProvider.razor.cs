@@ -1,6 +1,6 @@
 ﻿// Copyright (c) 2020 Jonny Larsson
 // License: MIT
-// See https://github.com/Garderoben/MudBlazor
+// See https://github.com/MudBlazor/MudBlazor
 // Modified version of Blazored Modal
 // Copyright (c) 2019 Blazored
 // License: MIT
@@ -26,8 +26,8 @@ namespace MudBlazor
         [Parameter] public DialogPosition? Position { get; set; }
         [Parameter] public MaxWidth? MaxWidth { get; set; }
 
-        private readonly Collection<IDialogReference> _dialogs = new Collection<IDialogReference>();
-        private readonly DialogOptions _globalDialogOptions = new DialogOptions();
+        private readonly Collection<IDialogReference> _dialogs = new();
+        private readonly DialogOptions _globalDialogOptions = new();
 
         protected override void OnInitialized()
         {

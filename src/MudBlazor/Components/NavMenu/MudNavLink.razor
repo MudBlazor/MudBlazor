@@ -3,14 +3,14 @@
 @using Microsoft.AspNetCore.Components.Routing
 
 <div @attributes="UserAttributes" class="@Classname" disabled="@Disabled" style="@Style">
-    @if (!OnClick.HasDelegate) 
+    @if (!OnClick.HasDelegate && Command == null)
     { 
         <NavLink @onclick="@HandleNavigation" 
                  class="@LinkClassname" 
                  @attributes="@Attributes"
                  Match="@Match" 
                  ActiveClass="active">
-            @if (!String.IsNullOrEmpty(Icon))
+            @if (!string.IsNullOrEmpty(Icon))
             {
                 <MudIcon Icon="@Icon" Color="@IconColor" Class="@IconClassname"/>
             }
@@ -21,10 +21,10 @@
     }
     else
     {
-        <div @onclick="HandleClick"
+        <div @onclick="OnClickHandler"
              class="@LinkClassname"
              ActiveClass="active">
-            @if (!String.IsNullOrEmpty(Icon))
+            @if (!string.IsNullOrEmpty(Icon))
             {
                 <MudIcon Icon="@Icon" Color="@IconColor" Class="@IconClassname" />
             }

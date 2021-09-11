@@ -52,18 +52,18 @@ in your component and apply styles at component level.
 
 ## Project structure and where to find the most important files
 MudBlazor is divided in different projects. The most important ones are:
-- [MudBlazor](https://github.com/Garderoben/MudBlazor/tree/dev/src/MudBlazor): contains all components
-- [MudBlazor.Docs](https://github.com/Garderoben/MudBlazor/tree/dev/src/MudBlazor.Docs): contains the [docs](https://mudblazor.com/)
-- [MudBlazor.UnitTests](https://github.com/Garderoben/MudBlazor/tree/dev/src/MudBlazor.Docs): contains bUnit tests for all components
-- [MudBlazor.UnitTests.Viewer](https://github.com/Garderoben/MudBlazor/tree/dev/src/MudBlazor.Docs): a visual representation of the unit tests. When you launch the project, you can test whether the components look and behave correctly
+- [MudBlazor](https://github.com/MudBlazor/MudBlazor/tree/dev/src/MudBlazor): contains all components
+- [MudBlazor.Docs](https://github.com/MudBlazor/MudBlazor/tree/dev/src/MudBlazor.Docs): contains the [docs](https://mudblazor.com/)
+- [MudBlazor.UnitTests](https://github.com/MudBlazor/MudBlazor/tree/dev/src/MudBlazor.Docs): contains bUnit tests for all components
+- [MudBlazor.UnitTests.Viewer](https://github.com/MudBlazor/MudBlazor/tree/dev/src/MudBlazor.Docs): a visual representation of the unit tests. When you launch the project, you can test whether the components look and behave correctly
 
 Most important files:
-- Component `.razor` and `.razor.cs` classes ([Link](https://github.com/Garderoben/MudBlazor/tree/dev/src/MudBlazor/Components))
-- Component `.scss` style classes ([Link](https://github.com/Garderoben/MudBlazor/tree/dev/src/MudBlazor/Styles/components))
-- Enums ([Link](https://github.com/Garderoben/MudBlazor/tree/dev/src/MudBlazor/Enums))
-- Component doc pages ([Link](https://github.com/Garderoben/MudBlazor/tree/dev/src/MudBlazor.Docs/Pages/Components))
-- Component tests ([Link](https://github.com/Garderoben/MudBlazor/tree/dev/src/MudBlazor.UnitTests/Components))
-- Test components ([Link](https://github.com/Garderoben/MudBlazor/tree/dev/src/MudBlazor.UnitTests.Viewer/TestComponents))
+- Component `.razor` and `.razor.cs` classes ([Link](https://github.com/MudBlazor/MudBlazor/tree/dev/src/MudBlazor/Components))
+- Component `.scss` style classes ([Link](https://github.com/MudBlazor/MudBlazor/tree/dev/src/MudBlazor/Styles/components))
+- Enums ([Link](https://github.com/MudBlazor/MudBlazor/tree/dev/src/MudBlazor/Enums))
+- Component doc pages ([Link](https://github.com/MudBlazor/MudBlazor/tree/dev/src/MudBlazor.Docs/Pages/Components))
+- Component tests ([Link](https://github.com/MudBlazor/MudBlazor/tree/dev/src/MudBlazor.UnitTests/Components))
+- Test components ([Link](https://github.com/MudBlazor/MudBlazor/tree/dev/src/MudBlazor.UnitTests.Viewer/TestComponents))
 
 ## Unit Testing and Continuous Integration
 

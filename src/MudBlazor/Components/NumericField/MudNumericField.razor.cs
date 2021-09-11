@@ -12,12 +12,17 @@ namespace MudBlazor
     {
         public MudNumericField() : base()
         {
-            _validateInstance = new Func<T, Task<bool>>(ValidateInput);
+            Validation = new Func<T, Task<bool>>(ValidateInput);
             _inputConverter = new NumericBoundariesConverter<T>((val) => ConstrainBoundaries(val).value)
             {
                 FilterFunc = CleanText,
-                Culture = CultureInfo.InvariantCulture
+                Culture = CultureInfo.CurrentUICulture,
             };
+
+            if (RuntimeLocation.IsServerSide)
+            {
+                _keyDownPreventDefault = false;
+            }
 
             #region parameters default depending on T
 
@@ -115,8 +120,6 @@ namespace MudBlazor
                 .AddClass(Class)
                 .Build();
 
-        private Func<T, Task<bool>> _validateInstance;
-
         private MudInput<string> _elementReference;
 
         private Converter<string> _inputConverter;
@@ -136,18 +139,16 @@ namespace MudBlazor
             return _elementReference.SelectRangeAsync(pos1, pos2);
         }
 
-        protected override async Task SetValueAsync(T value, bool updateText = true)
+        protected override Task SetValueAsync(T value, bool updateText = true)
         {
             bool valueChanged;
             (value, valueChanged) = ConstrainBoundaries(value);
-            await base.SetValueAsync(value, valueChanged || updateText);
+            return base.SetValueAsync(value, valueChanged || updateText);
         }
 
         protected override void OnBlurred(FocusEventArgs obj)
         {
             base.OnBlurred(obj);
-            if (RuntimeLocation.IsServerSide)
-                _key++; // this forces a re-render on the inner input to display the value correctly
         }
 
         protected async Task<bool> ValidateInput(T value)
@@ -159,169 +160,54 @@ namespace MudBlazor
             return true; //Don't show errors
         }
 
-        #region Numeric range
-
-        public async Task Increment()
+        /// <summary>
+        /// Decrements or increments depending on factor
+        /// </summary>
+        /// <param name="factor">Multiplication factor (1 or -1) will be applied to the step</param>
+        private Task Change(double factor = 1)
         {
-            dynamic val;
-            try
-            {
-                checked
-                {
-                    val = Value switch
-                    {
-                        sbyte b => b + (sbyte)(object)Step,
-                        byte b => b + (byte)(object)Step,
-                        short i => i + (short)(object)Step,
-                        ushort i => i + (ushort)(object)Step,
-                        int i => i + (int)(object)Step,
-                        uint i => i + (uint)(object)Step,
-                        long i => i + (long)(object)Step,
-                        ulong i => i + (ulong)(object)Step,
-                        float f => f + (float)(object)Step,
-                        double d => d + (double)(object)Step,
-                        decimal d => d + (decimal)(object)Step,
-                        _ => Value
-                    };
-                }
-            }
-            catch (OverflowException)
-            {
-                val = Max;
-            }
-
-            await SetValueAsync(ConstrainBoundaries((T)val).value);
+            var value = Num.To<T>(Num.From(Value) + Num.From(Step) * factor);
+            return SetValueAsync(ConstrainBoundaries(value).value);
         }
 
-        public async Task Decrement()
-        {
-            dynamic val;
-            try
-            {
-                checked
-                {
-                    val = Value switch
-                    {
-                        sbyte b => b - (sbyte)(object)Step,
-                        byte b => b - (byte)(object)Step,
-                        short i => i - (short)(object)Step,
-                        ushort i => i - (ushort)(object)Step,
-                        int i => i - (int)(object)Step,
-                        uint i => i - (uint)(object)Step,
-                        long i => i - (long)(object)Step,
-                        ulong i => i - (ulong)(object)Step,
-                        float f => f - (float)(object)Step,
-                        double d => d - (double)(object)Step,
-                        decimal d => d - (decimal)(object)Step,
-                        _ => Value,
-                    };
-                }
-            }
-            catch (OverflowException)
-            {
-                val = Min;
-            }
+        /// <summary>
+        /// Adds a Step to the Value
+        /// </summary>
+        public Task Increment() => Change(factor: 1);
 
-            await SetValueAsync(ConstrainBoundaries((T)val).value);
-        }
+
+        /// <summary>
+        /// Substracts a Step from the Value
+        /// </summary>
+        public Task Decrement() => Change(factor: -1);
 
         /// <summary>
         /// Checks if the value respects the boundaries set for this instance.
         /// </summary>
-        /// <param name="value">Value to check.</param>
+        /// <param name="v">Value to check.</param>
         /// <returns>Returns a valid value and if it has been changed.</returns>
-        protected (T value, bool changed) ConstrainBoundaries(T value)
+        protected (T value, bool changed) ConstrainBoundaries(T v)
         {
+            var value = Num.From(v);
+            var max = Num.From(Max);
+            var min = Num.From(Min);
             //check if Max/Min has value, if not use MaxValue/MinValue for that data type
-            switch (value)
+            if (value > max)
+                return (Max, true);
+            else if (value < min)
+                return (Min, true);
+            //return T default (null) when there is no value
+            else if (v == null)
             {
-                case sbyte b:
-                    if (b > (sbyte)(object)Max)
-                        return (Max, true);
-                    else if (b < (sbyte)(object)Min)
-                        return (Min, true);
-                    break;
-
-                case byte b:
-                    if (b > (byte)(object)Max)
-                        return (Max, true);
-                    else if (b < (byte)(object)Min)
-                        return (Min, true);
-                    break;
-
-                case short i:
-                    if (i > (short)(object)Max)
-                        return (Max, true);
-                    else if (i < (short)(object)Min)
-                        return (Min, true);
-                    break;
-
-                case ushort i:
-                    if (i > (ushort)(object)Max)
-                        return (Max, true);
-                    else if (i < (ushort)(object)Min)
-                        return (Min, true);
-                    break;
-
-                case int i:
-                    if (i > (int)(object)Max)
-                        return (Max, true);
-                    else if (i < (int)(object)Min)
-                        return (Min, true);
-                    break;
-
-                case uint i:
-                    if (i > (uint)(object)Max)
-                        return (Max, true);
-                    else if (i < (uint)(object)Min)
-                        return (Min, true);
-                    break;
-
-                case long i:
-                    if (i > (long)(object)Max)
-                        return (Max, true);
-                    else if (i < (long)(object)Min)
-                        return (Min, true);
-                    break;
-
-                case ulong i:
-                    if (i > (ulong)(object)Max)
-                        return (Max, true);
-                    else if (i < (ulong)(object)Min)
-                        return (Min, true);
-                    break;
-
-                case float f:
-                    if (f > (float)(object)Max)
-                        return (Max, true);
-                    else if (f < (float)(object)Min)
-                        return (Min, true);
-                    break;
-
-                case double d:
-                    if (d > (double)(object)Max)
-                        return (Max, true);
-                    else if (d < (double)(object)Min)
-                        return (Min, true);
-                    break;
-
-                case decimal d:
-                    if (d > (decimal)(object)Max)
-                        return (Max, true);
-                    else if (d < (decimal)(object)Min)
-                        return (Min, true);
-                    break;
+                return (default(T), true);
             }
 
-            ;
-
-            return (value, false);
+            return (Num.To<T>(value), false);
         }
 
-        #endregion Numeric range
-
         private long _key = 0;
-        private bool _keyDownPreventDefault;
+
+        private bool _keyDownPreventDefault = true;
 
         /// <summary>
         /// Overrides KeyDown event, intercepts Arrow Up/Down and uses them to add/substract the value manually by the step value.
@@ -333,52 +219,33 @@ namespace MudBlazor
         {
             if (Disabled || ReadOnly)
                 return;
-
+            //Server side and WASM have different (opposite) behaviour. We need to set initial value false on BSS (line 24) and true on WASM (line 204).
+            //Changing _keyDownPreventDefault value didn't work with Increment or Decrement methods in this method, so it have to be determined false before the method starts.
+            if (RuntimeLocation.IsClientSide)
+            {
+                _keyDownPreventDefault = false;
+            }
             if (obj.Type == "keydown") //KeyDown or repeat, blazor never fires InvokeKeyPress
             {
+
                 switch (obj.Key)
                 {
                     case "ArrowUp":
-                        if (RuntimeLocation.IsServerSide)
-                        {
-                            if (!Immediate)
-                            {
-                                _key++;
-                                await Task.Delay(1);
-                                await Increment();
-                                await Task.Delay(1);
-                                _ = FocusAsync();
-                            }
-                            else
-                                await Increment();
-                        }
-                        else
-                        {
-                            await Increment();
-                            _elementReference.ForceRender(true);
-                        }
+                        _key++;
+                        await Task.Delay(1);
+                        await Increment();
+                        await Task.Delay(1);
+                        await _elementReference.FocusAsync();
 
                         return;
 
                     case "ArrowDown":
-                        if (RuntimeLocation.IsServerSide)
-                        {
-                            if (!Immediate)
-                            {
-                                _key++;
-                                await Task.Delay(1);
-                                await Decrement();
-                                await Task.Delay(1);
-                                _ = FocusAsync();
-                            }
-                            else
-                                await Decrement();
-                        }
-                        else
-                        {
-                            await Decrement();
-                            _elementReference.ForceRender(true);
-                        }
+                        _key++;
+                        await Task.Delay(1);
+                        await Decrement();
+                        await Task.Delay(1);
+                        await _elementReference.FocusAsync();
+
                         return;
                     // various navigation keys
                     case "ArrowLeft":
@@ -386,53 +253,174 @@ namespace MudBlazor
                     case "Tab":
                     case "Backspace":
                     case "Delete":
+                    case "Enter":
+                    case "NumpadEnter":
                         break;
 
                     //copy/paste
                     case "v":
                     case "c":
+                    case "a":
                         if (obj.CtrlKey is false)
                         {
                             _keyDownPreventDefault = true;
+                            _key++;
+                            StateHasChanged();
+                            await Task.Delay(1);
+                            await _elementReference.FocusAsync();
                             return;
                         }
 
                         break;
 
                     default:
-                        var acceptableKeyTypes = new Regex("^[0-9,.-]$");
-                        var isMatch = acceptableKeyTypes.Match(obj.Key).Success;
-                        if (isMatch is false)
+                        //Check the shift key for AZERTY keyboard support 'Shift' and copy, paste, select all execution for 'Ctrl'.
+                        if (obj.Key != "Shift" && obj.Key != "Control")
                         {
-                            _keyDownPreventDefault = true;
+                            var acceptableKeyTypes = new Regex("^[0-9,.-]$");
+                            var isMatch = acceptableKeyTypes.Match(obj.Key).Success;
+                            if (isMatch is false)
+                            {
+                                _keyDownPreventDefault = true;
+                                _key++;
+                                StateHasChanged();
+                                await Task.Delay(1);
+                                await _elementReference.FocusAsync();
+
+                                return;
+                            }
+                            break;
+                        }
+                        else
+                        {
                             return;
                         }
-                        break;
                 }
             }
-
+            //Component will work properly even we delete this line.
             OnKeyDown.InvokeAsync(obj).AndForget();
+        }
+
+        protected async Task OnMouseWheel(WheelEventArgs obj)
+        {
+            if (obj.ShiftKey == true && obj.DeltaY < 0)
+            {
+                if (InvertMouseWheel == false)
+                {
+                    if (RuntimeLocation.IsServerSide)
+                    {
+                        if (!Immediate)
+                        {
+                            _key++;
+                            await Task.Delay(1);
+                            await Increment();
+                            await Task.Delay(1);
+                            _ = FocusAsync();
+                        }
+                        else
+                            await Increment();
+                    }
+                    else
+                    {
+                        _key++;
+                        await Task.Delay(1);
+                        await Increment();
+                        await Task.Delay(1);
+                        _ = FocusAsync();
+                    }
+                }
+                else
+                {
+                    if (RuntimeLocation.IsServerSide)
+                    {
+                        if (!Immediate)
+                        {
+                            _key++;
+                            await Task.Delay(1);
+                            await Decrement();
+                            await Task.Delay(1);
+                            _ = FocusAsync();
+                        }
+                        else
+                            await Decrement();
+                    }
+                    else
+                    {
+                        _key++;
+                        await Task.Delay(1);
+                        await Decrement();
+                        await Task.Delay(1);
+                        _ = FocusAsync();
+                    }
+                }      
+            }
+            else if (obj.ShiftKey == true && 0 < obj.DeltaY)
+            {
+                if (InvertMouseWheel == false)
+                {
+                    if (RuntimeLocation.IsServerSide)
+                    {
+                        if (!Immediate)
+                        {
+                            _key++;
+                            await Task.Delay(1);
+                            await Decrement();
+                            await Task.Delay(1);
+                            _ = FocusAsync();
+                        }
+                        else
+                            await Decrement();
+                    }
+                    else
+                    {
+                        _key++;
+                        await Task.Delay(1);
+                        await Decrement();
+                        await Task.Delay(1);
+                        _ = FocusAsync();
+                    }
+                }
+                else
+                {
+                    if (RuntimeLocation.IsServerSide)
+                    {
+                        if (!Immediate)
+                        {
+                            _key++;
+                            await Task.Delay(1);
+                            await Increment();
+                            await Task.Delay(1);
+                            _ = FocusAsync();
+                        }
+                        else
+                            await Increment();
+                    }
+                    else
+                    {
+                        _key++;
+                        await Task.Delay(1);
+                        await Increment();
+                        await Task.Delay(1);
+                        _ = FocusAsync();
+                    }
+                }
+            }
         }
 
         protected void InterceptKeyUp(KeyboardEventArgs obj)
         {
             if (Disabled || ReadOnly)
                 return;
-            switch (obj.Key)
+            //Look at InterceptKeyDown method comment for details.
+            if (RuntimeLocation.IsClientSide)
             {
-                case "ArrowUp":
-                    if (RuntimeLocation.IsServerSide)
-                        _elementReference?.ForceRender(forceTextUpdate: true);
-                    break;
-
-                case "ArrowDown":
-                    if (RuntimeLocation.IsServerSide)
-                        _elementReference?.ForceRender(forceTextUpdate: true);
-                    break;
+                _keyDownPreventDefault = true;
+            }
+            else
+            {
+                _keyDownPreventDefault = false;
             }
 
-            _keyDownPreventDefault = false;
-            StateHasChanged();
             OnKeyUp.InvokeAsync(obj).AndForget();
         }
 
@@ -450,6 +438,12 @@ namespace MudBlazor
 
         //Tracks if Min has a value.
         private bool _minHasValue = false;
+
+        /// <summary>
+        /// Reverts mouse wheel up and down events, if true.
+        /// </summary>
+        [Parameter]
+        public bool InvertMouseWheel { get; set; } = false;
 
         //default value for the type
         private T _minDefault;
@@ -550,5 +544,6 @@ namespace MudBlazor
 
             return cleanedText;
         }
+
     }
 }

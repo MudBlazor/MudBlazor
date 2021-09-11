@@ -10,30 +10,15 @@ using static Bunit.ComponentParameterFactory;
 namespace MudBlazor.UnitTests.Components
 {
     [TestFixture]
-    public class AppBarTests
+    public class AppBarTests : BunitTest
     {
-        private Bunit.TestContext ctx;
-
-        [SetUp]
-        public void Setup()
-        {
-            ctx = new Bunit.TestContext();
-            ctx.AddTestServices();
-        }
-
-        [TearDown]
-        public void TearDown() => ctx.Dispose();
-
         /// <summary>
         /// AppBar with modified Toolbar class
         /// </summary>
         [Test]
         public void AppBarWithModifiedToolBarClass()
         {
-            var comp = ctx.RenderComponent<MudAppBar>(new[]
-            {
-                Parameter(nameof(MudAppBar.ToolBarClass), "test-class")
-            });
+            var comp = Context.RenderComponent<MudAppBar>(Parameter(nameof(MudAppBar.ToolBarClass), "test-class"));
 
             // Find the Toolbar inside the AppBar
             comp.Find("div").ToMarkup()

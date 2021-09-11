@@ -5,7 +5,7 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    partial class MudAvatar : MudComponentBase
+    partial class MudAvatar : MudComponentBase, IDisposable
     {
         [CascadingParameter] protected MudAvatarGroup AvatarGroup { get; set; }
         protected string Classname =>
@@ -70,18 +70,12 @@ namespace MudBlazor
         {
             base.OnInitialized();
 
-            if (AvatarGroup != null)
-            {
-                AvatarGroup.AddAvatar(this);
-            }
+            AvatarGroup?.AddAvatar(this);
         }
 
-        protected void Dispose()
+        public void Dispose()
         {
-            if (AvatarGroup != null)
-            {
-                AvatarGroup.RemoveAvatar(this);
-            }
+            AvatarGroup?.RemoveAvatar(this);
         }
 
         internal void ForceRedraw()

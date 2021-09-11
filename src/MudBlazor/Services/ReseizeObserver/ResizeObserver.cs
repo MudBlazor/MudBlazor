@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Options;
@@ -48,7 +47,7 @@ namespace MudBlazor.Services
 
             foreach (var item in filteredElements)
             {
-                Guid id = Guid.NewGuid();
+                var id = Guid.NewGuid();
                 elementIds.Add(id);
                 _cachedValueIds.Add(id, item);
             }
@@ -66,7 +65,7 @@ namespace MudBlazor.Services
 
         public async Task Unobserve(ElementReference element)
         {
-            Guid elementId = _cachedValueIds.FirstOrDefault(x => x.Value.Id == element.Id).Key;
+            var elementId = _cachedValueIds.FirstOrDefault(x => x.Value.Id == element.Id).Key;
             if (elementId == default) { return; }
 
             //if the ubobserve happen during a component teardown, the try-catch is a safe guard to prevent a "pseudo" exception
@@ -120,7 +119,7 @@ namespace MudBlazor.Services
                 _cachedValueIds.Clear();
                 _cachedValues.Clear();
 
-                //in a fire and forget manner, we just "trying" to cancel the listener. So, we are not intrested in an potential error 
+                //in a fire and forget manner, we just "trying" to cancel the listener. So, we are not interested in an potential error 
                 try { _ = _jsRuntime.InvokeVoidAsync($"mudResizeObserver.cancelListener", _id); } catch (Exception) { }
             }
         }
@@ -141,7 +140,7 @@ namespace MudBlazor.Services
             _cachedValueIds.Clear();
             _cachedValues.Clear();
 
-            //in a fire and forget manner, we just "trying" to cancel the listener. So, we are not intrested in an potential error 
+            //in a fire and forget manner, we just "trying" to cancel the listener. So, we are not interested in an potential error 
             try { await _jsRuntime.InvokeVoidAsync($"mudResizeObserver.cancelListener", _id); } catch (Exception) { }
         }
     }

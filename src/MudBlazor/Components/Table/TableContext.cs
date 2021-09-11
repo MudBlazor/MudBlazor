@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using MudBlazor.Extensions;
-using MudBlazor.Interfaces;
 
 namespace MudBlazor
 {

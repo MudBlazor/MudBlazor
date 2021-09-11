@@ -1,5 +1,5 @@
-﻿#pragma warning disable CS1998 // async without await
-#pragma warning disable IDE1006 // leading underscore
+﻿
+#pragma warning disable CS1998 // async without await
 
 using System;
 using System.Reflection;
@@ -14,22 +14,9 @@ using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Components
 {
-
     [TestFixture]
-    public class FormTests
+    public class FormTests : BunitTest
     {
-        private Bunit.TestContext ctx;
-
-        [SetUp]
-        public void Setup()
-        {
-            ctx = new Bunit.TestContext();
-            ctx.AddTestServices();
-        }
-
-        [TearDown]
-        public void TearDown() => ctx.Dispose();
-
         /// <summary>
         /// Setting the required textfield's value should set IsValid true
         /// Clearing the value of a required textfield should set form's IsValid to false.
@@ -37,7 +24,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task FormIsValidTest()
         {
-            var comp = ctx.RenderComponent<FormIsValidTest>();
+            var comp = Context.RenderComponent<FormIsValidTest>();
             Console.WriteLine(comp.Markup);
             var form = comp.FindComponent<MudForm>().Instance;
             var textFieldcomp = comp.FindComponent<MudTextField<string>>();
@@ -80,7 +67,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task FormIsValidTest2()
         {
-            var comp = ctx.RenderComponent<FormIsValidTest2>();
+            var comp = Context.RenderComponent<FormIsValidTest2>();
             Console.WriteLine(comp.Markup);
             var form = comp.FindComponent<MudForm>().Instance;
             var textFieldcomp = comp.FindComponent<MudTextField<string>>();
@@ -96,7 +83,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task FormIsValidTest3()
         {
-            var comp = ctx.RenderComponent<FormIsValidTest3>();
+            var comp = Context.RenderComponent<FormIsValidTest3>();
             Console.WriteLine(comp.Markup);
             var form = comp.FindComponent<MudForm>().Instance;
             var textFields = comp.FindComponents<MudTextField<string>>();
@@ -118,7 +105,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task FormIsValidTest4()
         {
-            var comp = ctx.RenderComponent<FormIsValidTest4>();
+            var comp = Context.RenderComponent<FormIsValidTest4>();
             Console.WriteLine(comp.Markup);
             var form = comp.FindComponent<MudForm>().Instance;
             // check initial state: form should be valid due to having no required field, but the user's two-way binding did override that value to false
@@ -132,7 +119,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task FormIsTouchedTest()
         {
-            var comp = ctx.RenderComponent<FormIsTouchedTest>();
+            var comp = Context.RenderComponent<FormIsTouchedTest>();
             Console.WriteLine(comp.Markup);
             var form = comp.FindComponent<MudForm>().Instance;
             var textFieldcomp = comp.FindComponent<MudTextField<string>>();
@@ -165,7 +152,7 @@ namespace MudBlazor.UnitTests.Components
         public async Task FormValidationTest1()
         {
             var validationFunc = new Func<string, bool>(x => x?.StartsWith("Marilyn") == true);
-            var comp = ctx.RenderComponent<FormValidationTest>(ComponentParameter.CreateParameter("validation", validationFunc));
+            var comp = Context.RenderComponent<FormValidationTest>(ComponentParameter.CreateParameter("validation", validationFunc));
             Console.WriteLine(comp.Markup);
             var form = comp.FindComponent<MudForm>().Instance;
             var textFieldcomp = comp.FindComponent<MudTextField<string>>();
@@ -187,7 +174,7 @@ namespace MudBlazor.UnitTests.Components
             textField.Error.Should().BeTrue();
             textField.ErrorText.Should().Be("Invalid");
 
-            // note: this logic is invalid, so it was removed. Validaton funcs are always called
+            // note: this logic is invalid, so it was removed. Validation funcs are always called
             // the validation func must validate non-required empty fields as valid.
             //
             //// value is not required, so don't call the validation func on empty text
@@ -217,7 +204,7 @@ namespace MudBlazor.UnitTests.Components
                     return "Not a star!";
                 return null;
             });
-            var comp = ctx.RenderComponent<FormValidationTest>(ComponentParameter.CreateParameter("validation", validationFunc));
+            var comp = Context.RenderComponent<FormValidationTest>(ComponentParameter.CreateParameter("validation", validationFunc));
             Console.WriteLine(comp.Markup);
             var form = comp.FindComponent<MudForm>().Instance;
             var textFieldcomp = comp.FindComponent<MudTextField<string>>();
@@ -228,7 +215,7 @@ namespace MudBlazor.UnitTests.Components
             textFieldcomp.Find("input").Change("Charles Manson");
             form.IsValid.Should().Be(true);
 
-            // note: this logic is invalid, so it was removed. Validaton funcs are always called
+            // note: this logic is invalid, so it was removed. Validation funcs are always called
             // the validation func must validate non-required empty fields as valid.
             //
             //// value is not required, so don't call the validation func on empty text
@@ -249,7 +236,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task FormValidationTest3()
         {
-            var comp = ctx.RenderComponent<FormValidationTest>();
+            var comp = Context.RenderComponent<FormValidationTest>();
             Console.WriteLine(comp.Markup);
             var form = comp.FindComponent<MudForm>().Instance;
             var textFieldcomp = comp.FindComponent<MudTextField<string>>();
@@ -280,7 +267,7 @@ namespace MudBlazor.UnitTests.Components
                 await Task.Delay(valid ? ValidDelay : InvalidDelay);
                 return valid ? null : "invalid";
             });
-            var comp = ctx.RenderComponent<FormValidationTest>(ComponentParameter.CreateParameter("validation", validationFunc));
+            var comp = Context.RenderComponent<FormValidationTest>(ComponentParameter.CreateParameter("validation", validationFunc));
             Console.WriteLine(comp.Markup);
             var textFieldComp = comp.FindComponent<MudTextField<string>>();
             var textField = textFieldComp.Instance;
@@ -306,7 +293,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task EditFormOnFieldChangedTest()
         {
-            var comp = ctx.RenderComponent<EditFormOnFieldChangedTest>();
+            var comp = Context.RenderComponent<EditFormOnFieldChangedTest>();
             Console.WriteLine(comp.Markup);
             var textFields = comp.FindAll("input");
             textFields.Count.Should().Be(3);
@@ -340,7 +327,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task FormWithCheckboxTest()
         {
-            var comp = ctx.RenderComponent<FormWithCheckboxTest>();
+            var comp = Context.RenderComponent<FormWithCheckboxTest>();
             Console.WriteLine(comp.Markup);
             var textFields = comp.FindAll("input");
             textFields.Count.Should().Be(4); // three textfields, one checkbox
@@ -371,7 +358,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task FormWithCheckboxTest2()
         {
-            var comp = ctx.RenderComponent<FormWithCheckboxTest>();
+            var comp = Context.RenderComponent<FormWithCheckboxTest>();
             Console.WriteLine(comp.Markup);
             var form = comp.FindComponent<MudForm>().Instance;
             form.IsValid.Should().BeTrue(because: "none of the fields are required");
@@ -383,7 +370,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task Form_Should_BecomeValidIfUntouchedFieldsAreNotRequired()
         {
-            var comp = ctx.RenderComponent<FormValidationTest2>();
+            var comp = Context.RenderComponent<FormValidationTest2>();
             Console.WriteLine(comp.Markup);
             var form = comp.FindComponent<MudForm>().Instance;
             form.IsValid.Should().BeFalse(because: "textfield is required");
@@ -398,7 +385,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task Form_Should_BecomeInValidWhenAConversionErrorOccurs()
         {
-            var comp = ctx.RenderComponent<FormConversionErrorTest>();
+            var comp = Context.RenderComponent<FormConversionErrorTest>();
             Console.WriteLine(comp.Markup);
             var form = comp.FindComponent<MudForm>().Instance;
             form.IsValid.Should().BeTrue();
@@ -415,7 +402,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task MudFormExampleTest()
         {
-            var comp = ctx.RenderComponent<MudFormExample>();
+            var comp = Context.RenderComponent<MudFormExample>();
             Console.WriteLine(comp.Markup);
             var form = comp.FindComponent<MudForm>().Instance;
             comp.FindComponent<MudForm>().SetParam(x => x.ValidationDelay, 0);
@@ -480,7 +467,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task FormWithRadioGroupIsValidTest()
         {
-            var comp = ctx.RenderComponent<FormWithRadioGroupTest>();
+            var comp = Context.RenderComponent<FormWithRadioGroupTest>();
             Console.WriteLine(comp.Markup);
             var form = comp.FindComponent<MudForm>().Instance;
             var radioGroupcomp = comp.FindComponent<MudRadioGroup<string>>();
@@ -510,7 +497,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task FormWithDatePickerTest()
         {
-            var comp = ctx.RenderComponent<FormWithDatePickerTest>();
+            var comp = Context.RenderComponent<FormWithDatePickerTest>();
             Console.WriteLine(comp.Markup);
             var form = comp.FindComponent<MudForm>().Instance;
             var dateComp = comp.FindComponent<MudDatePicker>();
@@ -540,7 +527,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task Form_Should_ValidateDatePickerTest()
         {
-            var comp = ctx.RenderComponent<FormWithDatePickerTest>();
+            var comp = Context.RenderComponent<FormWithDatePickerTest>();
             Console.WriteLine(comp.Markup);
             var form = comp.FindComponent<MudForm>().Instance;
             var dateComp = comp.FindComponent<MudDatePicker>();
@@ -566,7 +553,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task FormWithTimePickerTest()
         {
-            var comp = ctx.RenderComponent<FormWithTimePickerTest>();
+            var comp = Context.RenderComponent<FormWithTimePickerTest>();
             Console.WriteLine(comp.Markup);
             var form = comp.FindComponent<MudForm>().Instance;
             var dateComp = comp.FindComponent<MudTimePicker>();
@@ -596,7 +583,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task Form_Should_ValidateTimePickerTest()
         {
-            var comp = ctx.RenderComponent<FormWithTimePickerTest>();
+            var comp = Context.RenderComponent<FormWithTimePickerTest>();
             Console.WriteLine(comp.Markup);
             var form = comp.FindComponent<MudForm>().Instance;
             var dateComp = comp.FindComponent<MudTimePicker>();
@@ -624,7 +611,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task EditFormExample_EmptyValidation()
         {
-            var comp = ctx.RenderComponent<EditFormExample>();
+            var comp = Context.RenderComponent<EditFormExample>();
             Console.WriteLine(comp.Markup);
             // same effect as clicking the validate button
             comp.Find("form").Submit();
@@ -645,7 +632,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task EditFormExample_FillInValues()
         {
-            var comp = ctx.RenderComponent<EditFormExample>();
+            var comp = Context.RenderComponent<EditFormExample>();
             //Console.WriteLine(comp.Markup);
             comp.FindAll("input")[0].Change("Rick Sanchez");
             comp.FindAll("input")[0].Blur();
@@ -671,11 +658,11 @@ namespace MudBlazor.UnitTests.Components
         /// <summary>
         /// Ensure validation attributes aren't incorrectly called with `null` context.
         /// </summary>
-        /// <see cref="https://github.com/Garderoben/MudBlazor/issues/1229"/>
+        /// <see cref="https://github.com/MudBlazor/MudBlazor/issues/1229"/>
         [Test]
         public async Task EditForm_Validation_NullContext()
         {
-            var comp = ctx.RenderComponent<EditFormIssue1229>();
+            var comp = Context.RenderComponent<EditFormIssue1229>();
             // Check first run attribute
             EditFormIssue1229.TestAttribute.ValidationContextOnCall.Should().BeEmpty();
             // Trigger change
@@ -696,10 +683,164 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task MudForm_MustNot_ValidateOnInitialRender()
         {
-            var comp = ctx.RenderComponent<MudFormExample>();
+            var comp = Context.RenderComponent<MudFormExample>();
             await Task.Delay(100);
             var form = comp.FindComponent<MudForm>().Instance;
             form.Errors.Should().BeEmpty();
+        }
+
+        /// <summary>
+        /// Testing the functionality of the MudForm example from the docs.
+        /// Root MudForm is valid and nested MudForm is invalid
+        /// </summary>
+        [Test]
+        public async Task MudFormExample_FillInValuesRootForm()
+        {
+            var comp = Context.RenderComponent<FluentValidationComplexExample>();
+            //Console.WriteLine(comp.Markup);
+            comp.FindAll("input")[0].Input("Rick Sanchez");
+            comp.FindAll("input")[0].Blur();
+            comp.FindAll("input")[1].Input("rick.sanchez@citadel-of-ricks.com");
+            comp.FindAll("input")[1].Blur();
+            comp.FindAll("input")[3].Input("Wabalabadubdub1234!");
+            comp.FindAll("input")[3].Blur();
+            comp.FindAll("input")[4].Input("sdfsfsdf!");
+            comp.FindAll("input")[4].Blur();
+            comp.FindAll("input")[5].Input("adsadasad!");
+            comp.FindAll("input")[5].Blur();
+
+            var form = comp.FindComponent<MudForm>().Instance;
+            await comp.InvokeAsync(() => form.Validate());
+            form.IsValid.Should().BeFalse();
+
+            var textfields = comp.FindComponents<MudTextField<string>>();
+            var numericFields = comp.FindComponents<MudNumericField<decimal>>();
+
+            textfields[0].Instance.HasErrors.Should().BeFalse();
+            textfields[0].Instance.ErrorText.Should().BeNullOrEmpty();
+            textfields[1].Instance.HasErrors.Should().BeFalse();
+            textfields[1].Instance.ErrorText.Should().BeNullOrEmpty();
+            textfields[2].Instance.HasErrors.Should().BeFalse();
+            textfields[2].Instance.ErrorText.Should().BeNullOrEmpty();
+            textfields[3].Instance.HasErrors.Should().BeFalse();
+            textfields[3].Instance.ErrorText.Should().BeNullOrEmpty();
+            textfields[4].Instance.HasErrors.Should().BeFalse();
+            textfields[4].Instance.ErrorText.Should().BeNullOrEmpty();
+            textfields[5].Instance.HasErrors.Should().BeFalse();
+            textfields[5].Instance.ErrorText.Should().BeNullOrEmpty();
+
+            //Nested Forms
+            textfields[6].Instance.HasErrors.Should().BeFalse();
+            textfields[6].Instance.ErrorText.Should().BeNullOrEmpty();
+            numericFields[0].Instance.HasErrors.Should().BeFalse();
+            numericFields[0].Instance.ErrorText.Should().BeNullOrEmpty();
+
+            textfields[7].Instance.HasErrors.Should().BeTrue();
+            textfields[7].Instance.ErrorText.Should().NotBeNullOrEmpty();
+            numericFields[1].Instance.HasErrors.Should().BeTrue();
+            numericFields[1].Instance.ErrorText.Should().NotBeNullOrEmpty();
+        }
+
+        /// <summary>
+        /// Testing the functionality of the MudForm example from the docs.
+        /// Root MudForm is invalid and nested MudForm is valid
+        /// </summary>
+        [Test]
+        public async Task MudFormExample_FillInValuesNestedForm()
+        {
+            var comp = Context.RenderComponent<FluentValidationComplexExample>();
+            //Console.WriteLine(comp.Markup);
+            comp.FindAll("input")[8].Change("SomeWork");
+            comp.FindAll("input")[8].Blur();
+            comp.FindAll("input")[9].Change("99");
+            comp.FindAll("input")[9].Blur();
+
+            var form = comp.FindComponent<MudForm>().Instance;
+            await comp.InvokeAsync(() => form.Validate());
+            form.IsValid.Should().BeFalse();
+
+            var textfields = comp.FindComponents<MudTextField<string>>();
+            var numericFields = comp.FindComponents<MudNumericField<decimal>>();
+
+            textfields[0].Instance.HasErrors.Should().BeTrue();
+            textfields[0].Instance.ErrorText.Should().NotBeNullOrEmpty();
+            textfields[1].Instance.HasErrors.Should().BeTrue();
+            textfields[1].Instance.ErrorText.Should().NotBeNullOrEmpty();
+            textfields[2].Instance.HasErrors.Should().BeFalse();
+            textfields[2].Instance.ErrorText.Should().BeNullOrEmpty();
+            textfields[3].Instance.HasErrors.Should().BeTrue();
+            textfields[3].Instance.ErrorText.Should().NotBeNullOrEmpty();
+            textfields[4].Instance.HasErrors.Should().BeTrue();
+            textfields[4].Instance.ErrorText.Should().NotBeNullOrEmpty();
+            textfields[5].Instance.HasErrors.Should().BeTrue();
+            textfields[5].Instance.ErrorText.Should().NotBeNullOrEmpty();
+
+            //Nested Forms
+            textfields[6].Instance.HasErrors.Should().BeFalse();
+            textfields[6].Instance.ErrorText.Should().BeNullOrEmpty();
+            numericFields[0].Instance.HasErrors.Should().BeFalse();
+            numericFields[0].Instance.ErrorText.Should().BeNullOrEmpty();
+
+            textfields[7].Instance.HasErrors.Should().BeFalse();
+            textfields[7].Instance.ErrorText.Should().BeNullOrEmpty();
+            numericFields[1].Instance.HasErrors.Should().BeFalse();
+            numericFields[1].Instance.ErrorText.Should().BeNullOrEmpty();
+        }
+
+        /// <summary>
+        /// Testing the functionality of the MudForm example from the docs.
+        /// Both root MudForm and nested MudForm are valid
+        /// </summary>
+        [Test]
+        public async Task MudFormExample_FillInValues()
+        {
+            var comp = Context.RenderComponent<FluentValidationComplexExample>();
+            //Console.WriteLine(comp.Markup);
+            comp.FindAll("input")[0].Input("Rick Sanchez");
+            comp.FindAll("input")[0].Blur();
+            comp.FindAll("input")[1].Input("rick.sanchez@citadel-of-ricks.com");
+            comp.FindAll("input")[1].Blur();
+            comp.FindAll("input")[3].Input("Wabalabadubdub1234!");
+            comp.FindAll("input")[3].Blur();
+            comp.FindAll("input")[4].Input("sdfsfsdf!");
+            comp.FindAll("input")[4].Blur();
+            comp.FindAll("input")[5].Input("adsadasad!");
+            comp.FindAll("input")[5].Blur();
+            comp.FindAll("input")[8].Change("SomeWork");
+            comp.FindAll("input")[8].Blur();
+            comp.FindAll("input")[9].Change("99");
+            comp.FindAll("input")[9].Blur();
+
+            var form = comp.FindComponent<MudForm>().Instance;
+            await comp.InvokeAsync(() => form.Validate());
+            form.IsValid.Should().BeTrue();
+
+            var textfields = comp.FindComponents<MudTextField<string>>();
+            var numericFields = comp.FindComponents<MudNumericField<decimal>>();
+
+            textfields[0].Instance.HasErrors.Should().BeFalse();
+            textfields[0].Instance.ErrorText.Should().BeNullOrEmpty();
+            textfields[1].Instance.HasErrors.Should().BeFalse();
+            textfields[1].Instance.ErrorText.Should().BeNullOrEmpty();
+            textfields[2].Instance.HasErrors.Should().BeFalse();
+            textfields[2].Instance.ErrorText.Should().BeNullOrEmpty();
+            textfields[3].Instance.HasErrors.Should().BeFalse();
+            textfields[3].Instance.ErrorText.Should().BeNullOrEmpty();
+            textfields[4].Instance.HasErrors.Should().BeFalse();
+            textfields[4].Instance.ErrorText.Should().BeNullOrEmpty();
+            textfields[5].Instance.HasErrors.Should().BeFalse();
+            textfields[5].Instance.ErrorText.Should().BeNullOrEmpty();
+
+            //Nested Forms
+            textfields[6].Instance.HasErrors.Should().BeFalse();
+            textfields[6].Instance.ErrorText.Should().BeNullOrEmpty();
+            numericFields[0].Instance.HasErrors.Should().BeFalse();
+            numericFields[0].Instance.ErrorText.Should().BeNullOrEmpty();
+
+            textfields[7].Instance.HasErrors.Should().BeFalse();
+            textfields[7].Instance.ErrorText.Should().BeNullOrEmpty();
+            numericFields[1].Instance.HasErrors.Should().BeFalse();
+            numericFields[1].Instance.ErrorText.Should().BeNullOrEmpty();
         }
     }
 }

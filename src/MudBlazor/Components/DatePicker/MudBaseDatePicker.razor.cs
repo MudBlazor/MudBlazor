@@ -154,6 +154,11 @@ namespace MudBlazor
         protected DateTime GetMonthStart(int month)
         {
             var monthStartDate = _picker_month ?? DateTime.Today.StartOfMonth(Culture);
+            // Return the min supported datetime of the calendar when this is year 1 and first month!
+            if (_picker_month.HasValue && _picker_month.Value.Year == 1 && _picker_month.Value.Month == 1)
+            {
+                return Culture.Calendar.MinSupportedDateTime;
+            }
             return Culture.Calendar.AddMonths(monthStartDate, month);
         }
 
@@ -182,7 +187,7 @@ namespace MudBlazor
         /// <returns></returns>
         protected IEnumerable<DateTime> GetWeek(int month, int index)
         {
-            if (index < 0 || index > 5)
+            if (index is < 0 or > 5)
                 throw new ArgumentException("Index must be between 0 and 5");
             var month_first = GetMonthStart(month);
             var week_first = month_first.AddDays(index * 7).StartOfWeek(GetFirstDayOfWeek());
@@ -192,7 +197,7 @@ namespace MudBlazor
 
         private string GetWeekNumber(int month, int index)
         {
-            if (index < 0 || index > 5)
+            if (index is < 0 or > 5)
                 throw new ArgumentException("Index must be between 0 and 5");
             var month_first = GetMonthStart(month);
             var week_first = month_first.AddDays(index * 7).StartOfWeek(GetFirstDayOfWeek());
@@ -257,6 +262,11 @@ namespace MudBlazor
 
         private void OnPreviousMonthClick()
         {
+            // It is impossible to go further into the past after the first year and the first month!
+            if (PickerMonth.HasValue && PickerMonth.Value.Year == 1 && PickerMonth.Value.Month == 1)
+            {
+                return;
+            }
             PickerMonth = GetMonthStart(0).AddDays(-1).StartOfMonth(Culture);
         }
 
@@ -406,8 +416,7 @@ namespace MudBlazor
         {
             if (firstRender)
             {
-                if (_picker_month == null)
-                    _picker_month = GetCalendarStartOfMonth();
+                _picker_month ??= GetCalendarStartOfMonth();
             }
 
             if (firstRender && _currentView == OpenTo.Year)

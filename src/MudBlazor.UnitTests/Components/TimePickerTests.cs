@@ -1,5 +1,4 @@
-﻿#pragma warning disable IDE1006 // leading underscore
-#pragma warning disable BL0005 // Set parameter outside component
+﻿#pragma warning disable BL0005 // Set parameter outside component
 
 using System;
 using System.Threading.Tasks;
@@ -7,28 +6,13 @@ using Bunit;
 using FluentAssertions;
 using MudBlazor.UnitTests.TestComponents.TimePicker;
 using NUnit.Framework;
-using NUnit.Framework.Internal;
 using static Bunit.ComponentParameterFactory;
 
 namespace MudBlazor.UnitTests.Components
 {
-
     [TestFixture]
-    public class TimePickerTests
+    public class TimePickerTests : BunitTest
     {
-        private Bunit.TestContext ctx;
-
-        [SetUp]
-        public void Setup()
-        {
-            ctx = new Bunit.TestContext();
-            ctx.AddTestServices();
-        }
-
-        [TearDown]
-        public void TearDown() => ctx.Dispose();
-
-
         public IRenderedComponent<MudTimePicker> OpenPicker(ComponentParameter parameter)
         {
             return OpenPicker(new ComponentParameter[] { parameter });
@@ -39,11 +23,11 @@ namespace MudBlazor.UnitTests.Components
             IRenderedComponent<MudTimePicker> comp;
             if (parameters is null)
             {
-                comp = ctx.RenderComponent<MudTimePicker>();
+                comp = Context.RenderComponent<MudTimePicker>();
             }
             else
             {
-                comp = ctx.RenderComponent<MudTimePicker>(parameters);
+                comp = Context.RenderComponent<MudTimePicker>(parameters);
             }
 
             // should not be open
@@ -156,7 +140,7 @@ namespace MudBlazor.UnitTests.Components
             // add 12 hours in pm mode
             comp.FindAll("div.mud-hour")[10].Click();
             picker.TimeIntermediate.Value.Hours.Should().Be(23);
-            // click am button shoulkd subtract 12 hours
+            // click am button should subtract 12 hours
             comp.FindAll("button.mud-timepicker-button")[2].Click();
             picker.TimeIntermediate.Value.Hours.Should().Be(11);
             picker.TimeIntermediate.Value.Minutes.Should().Be(30);
@@ -271,7 +255,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void InputStringValues_CheckParsing()
         {
-            var comp = ctx.RenderComponent<MudTimePicker>();
+            var comp = Context.RenderComponent<MudTimePicker>();
             var picker = comp.Instance;
             // valid time
             comp.Find("input").Change("23:02");
@@ -362,7 +346,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task Open_Programmatically_CheckOpen_Close_Programmatically_CheckClosed()
         {
-            var comp = ctx.RenderComponent<MudTimePicker>();
+            var comp = Context.RenderComponent<MudTimePicker>();
             Console.WriteLine(comp.Markup + "\n");
             comp.FindAll("div.mud-picker-content").Count.Should().Be(0);
             // clicking the button should open the picker
@@ -390,7 +374,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void SelectTimeStatic_UsingClicks_CheckTime()
         {
-            var comp = ctx.RenderComponent<MudTimePicker>(Parameter(nameof(MudTimePicker.PickerVariant), PickerVariant.Static));
+            var comp = Context.RenderComponent<MudTimePicker>(Parameter(nameof(MudTimePicker.PickerVariant), PickerVariant.Static));
             var picker = comp.Instance;
             // select 16 hours on outer dial and 30 mins
             comp.FindAll("div.mud-picker-stick-outer.mud-hour")[3].Click();
@@ -407,7 +391,7 @@ namespace MudBlazor.UnitTests.Components
         public async Task CheckAutoCloseTimePickerTest()
         {
             // Get access to the timepicker of the instance
-            var comp = ctx.RenderComponent<AutoCompleteTimePickerTest>();
+            var comp = Context.RenderComponent<AutoCompleteTimePickerTest>();
             var timePicker = comp.FindComponent<MudTimePicker>();
 
             // Open the timepicker
@@ -454,7 +438,7 @@ namespace MudBlazor.UnitTests.Components
         public async Task CheckReadOnlyTest()
         {
             // Get access to the timepicker of the instance
-            var comp = ctx.RenderComponent<MudTimePicker>();
+            var comp = Context.RenderComponent<MudTimePicker>();
             var picker = comp.Instance;
 
             // Open the timepicker
