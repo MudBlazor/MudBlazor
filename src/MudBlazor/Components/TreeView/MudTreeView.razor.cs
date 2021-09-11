@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
+using MudBlazor.Extensions;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
@@ -17,7 +18,9 @@ namespace MudBlazor
         new CssBuilder("mud-treeview")
           .AddClass("mud-treeview-dense", Dense)
           .AddClass("mud-treeview-hover", Hover)
-          .AddClass("mud-treeview-expand-on-click", ExpandOnClick)
+          .AddClass("mud-treeview-expand", ExpandOnClick)
+          .AddClass($"mud-treeview-selected-{Color.ToDescriptionString()}")
+           .AddClass($"mud-treeview-checked-{CheckBoxColor.ToDescriptionString()}")
           .AddClass(Class)
         .Build();
         protected string Stylename =>
@@ -27,6 +30,16 @@ namespace MudBlazor
             .AddStyle($"max-height", MaxHeight, !string.IsNullOrWhiteSpace(MaxHeight))
             .AddStyle(Style)
         .Build();
+
+        /// <summary>
+        /// The color of the selected treeviewitem.
+        /// </summary>
+        [Parameter] public Color Color { get; set; } = Color.Primary;
+
+        /// <summary>
+        /// Check box color if multiselection is used.
+        /// </summary>
+        [Parameter] public Color CheckBoxColor { get; set; }
 
         /// <summary>
         /// if true, multiple values can be selected via checkboxes which are automatically shown in the tree view.

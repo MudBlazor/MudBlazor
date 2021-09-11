@@ -14,7 +14,7 @@
 
             @if (MudTreeRoot != null && MudTreeRoot.MultiSelection)
             {
-                <MudCheckBox Color="@CheckBoxColor" CheckedIcon="@CheckedIcon" UncheckedIcon="@UncheckedIcon" @bind-Checked="IsChecked" Disabled="@Disabled"></MudCheckBox> 
+                <MudCheckBox Class="mud-treeview-item-checkbox" Color="Color.Inherit" CheckedIcon="@CheckedIcon" UncheckedIcon="@UncheckedIcon" @bind-Checked="IsChecked" Disabled="@Disabled"></MudCheckBox> 
             }
 
             @if (!string.IsNullOrEmpty(Icon))
@@ -43,7 +43,6 @@
             }
         }
     </div>
-        
     @if (HasChild)
     {
         <MudCollapse Expanded="@Expanded">

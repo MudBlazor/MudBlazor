@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using MudBlazor.Extensions;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
@@ -23,8 +24,8 @@ namespace MudBlazor
 
         protected string ContentClassname =>
         new CssBuilder("mud-treeview-item-content")
-           .AddClass("mud-treeview-item-select", Activated && MudTreeRoot.IsSelectable)
-          .AddClass("selected", Activated && MudTreeRoot.IsSelectable)
+          .AddClass("cursor-pointer", MudTreeRoot?.IsSelectable == true)
+          .AddClass($"mud-treeview-item-selected", _isSelected)
         .Build();
 
         public string TextClassname =>
@@ -36,11 +37,6 @@ namespace MudBlazor
         [CascadingParameter] MudTreeView<T> MudTreeRoot { get; set; }
 
         [CascadingParameter] MudTreeViewItem<T> Parent { get; set; }
-
-        /// <summary>
-        /// The color of the checkbox. It supports the theme colors.
-        /// </summary>
-        [Parameter] public Color CheckBoxColor { get; set; } = Color.Default;
 
         /// <summary>
         /// Custom checked icon, leave null for default.
@@ -255,6 +251,7 @@ namespace MudBlazor
             {
                 await MudTreeRoot.UpdateSelected(this, _isSelected);
             }
+
             await base.OnAfterRenderAsync(firstRender);
         }
 

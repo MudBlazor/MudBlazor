@@ -1,11 +1,28 @@
-﻿.mud-treeview {
+﻿@import '../abstracts/variables';
+
+.mud-treeview {
     margin: 0px;
     padding: 0px;
     list-style: none;
     overflow: auto;
 
-    &.mud-treeview-expand-on-click .mud-treeview-item-content {
-        cursor: pointer;
+    @each $color in $mud-palette-colors {
+        &.mud-treeview-selected-#{$color} {
+            .mud-treeview-item-content.mud-treeview-item-selected {
+                color: var(--mud-palette-#{$color});
+                background-color: var(--mud-palette-#{$color}-hover);
+            }
+        }
+    }
+
+    @each $color in $mud-palette-colors {
+        &.mud-treeview-checked-#{$color} {
+            .mud-treeview-item-checkbox {
+                .mud-button-root.mud-icon-button {
+                    color: var(--mud-palette-#{$color});
+                }
+            }
+        }
     }
 }
 
@@ -38,16 +55,17 @@
     display: flex;
     padding: 4px;
     align-items: center;
-
-    &.mud-treeview-item-select {
-        cursor: pointer;
-
-        &.selected {
-            color: var(--mud-palette-primary);
-            background-color: var(--mud-palette-primary-hover);
-        }
-    }
+    transition: background-color 150ms cubic-bezier(.4,0,.2,1) 0ms;
 }
+
+.mud-treeview-hover .mud-treeview-item-content:hover {
+    background-color: var(--mud-palette-action-default-hover);
+}
+
+.mud-treeview-expand .mud-treeview-item-content:hover {
+    cursor: pointer;
+}
+
 
 .mud-treeview-item-arrow {
     width: 2rem;
@@ -84,12 +102,6 @@
     padding-left: 4px;
     padding-inline-start: 4px;
     padding-inline-end: unset;
-}
-
-
-.mud-treeview-hover .mud-treeview-item-content:hover {
-    background-color: var(--mud-palette-action-default-hover);
-    transition: background-color 150ms cubic-bezier(.4,0,.2,1) 0ms;
 }
 
 .mud-treeview-dense {
