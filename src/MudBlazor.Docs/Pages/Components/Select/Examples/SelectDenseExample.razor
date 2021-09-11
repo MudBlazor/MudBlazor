@@ -1,9 +1,34 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
+<MudGrid>
+    <MudItem xs="12" sm="6">
+        <div>
+            <MudCheckBox @bind-Checked="_dense" Color="Color.Primary" Label="@("Dense: " + _dense)" />
+        </div>
+        <div>
+            <MudCheckBox TriState="true" @bind-Checked="_denseInput" Color="Color.Primary" Label="@("DenseInput: " + _denseInput)" />
+        </div>
+        <div>
+            <MudCheckBox TriState="true" @bind-Checked="_denseDropdown" Color="Color.Primary" Label="@("DenseDropdown: " + _denseDropdown)" />
+        </div>
+    </MudItem>
 
-<MudSelect T="string" Label="Dense" Dense="true"
-           AdornmentIcon="@Icons.Material.Filled.Search">
-    <MudSelectItem Value="@("Tyrannosaur")"/>
-    <MudSelectItem Value="@("Triceratops")"/>
-    <MudSelectItem Value="@("Oviraptor")"/>
-</MudSelect>
+    <MudItem  xs="12" sm="6">
+        <MudText>Result</MudText>
+        <MudText>Input Dense: @(_denseInput==true?true: (_denseInput==false?false: (_dense==true?true: false)))</MudText>
+        <MudText>Dropdown Dense: @(_denseDropdown==true?true: (_denseDropdown==false?false: (_dense==true?true: false)))</MudText>
+        <MudSelect T="string" Label="Pies" OffsetY="true" Dense="@_dense" DenseDropdown="@_denseDropdown" DenseInput="@_denseInput" Variant="Variant.Outlined">
+            <MudSelectItem Value="@("Apple Pie")" />
+            <MudSelectItem Value="@("Blackberry Pie")" />
+            <MudSelectItem Value="@("Rhubarb Pie")" />
+            <MudSelectItem Value="@("Lemon Pie")" />
+        </MudSelect>
+
+    </MudItem>
+</MudGrid>
+
+@code{
+    bool _dense = false;
+    bool? _denseInput = null;
+    bool? _denseDropdown = null;
+}

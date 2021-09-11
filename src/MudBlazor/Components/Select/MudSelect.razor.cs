@@ -13,6 +13,8 @@ namespace MudBlazor
     {
         private HashSet<T> _selectedValues;
         private bool _dense;
+        private bool? _denseInput = null;
+        private bool? _denseDropdown = null;
         private string multiSelectionText;
         private bool? _selectAllChecked;
 
@@ -43,12 +45,27 @@ namespace MudBlazor
         public bool Dense
         {
             get { return _dense; }
-            set
-            {
-                // Ensure that when dense is applied we set the margin on the input controls
-                _dense = value;
-                Margin = _dense ? Margin.Dense : Margin.None;
-            }
+            set { _dense = value; }
+        }
+
+        /// <summary>
+        /// If true, dense only input on select. Overrides to dense if it is not null.
+        /// </summary>
+        [Parameter]
+        public bool? DenseInput
+        {
+            get { return _denseInput; }
+            set { _denseInput = value; }
+        }
+
+        /// <summary>
+        /// If true, dense only dropdown on select. Overrides to dense if it is not null
+        /// </summary>
+        [Parameter]
+        public bool? DenseDropdown
+        {
+            get { return _denseDropdown; }
+            set { _denseDropdown = value; }
         }
 
         /// <summary>

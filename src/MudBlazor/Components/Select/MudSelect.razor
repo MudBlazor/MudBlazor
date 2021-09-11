@@ -4,17 +4,17 @@
 
 <CascadingValue Name="Standalone" Value="false" IsFixed="true">
     <div class="mud-select">
-        <MudInputControl Label="@Label" Variant="@Variant" HelperText="@HelperText" FullWidth="@FullWidth" Margin="@Margin" Class="@Classname" Style="@Style"
-                         Error="@Error" ErrorText="@ErrorText" Disabled="@Disabled" @onclick="@ToggleMenu" Required="@Required">
+        <MudInputControl Label="@Label" Variant="@Variant" HelperText="@HelperText" FullWidth="@FullWidth" Class="@Classname" Style="@Style"
+                         Error="@Error" ErrorText="@ErrorText" Disabled="@Disabled" @onclick="@ToggleMenu" Required="@Required"
+                         Margin="@(DenseInput==true?Margin.Dense: (DenseInput==false?Margin.None: (Dense==true?Margin.Dense: Margin.None)))">
             <InputContent>
                 <MudInput @ref="_elementReference" InputType="@(CanRenderValue || (Strict && !IsValueInList) ? InputType.Hidden : InputType.Text)"
-                          Class="mud-select-input" Margin="@Margin" 
+                          Class="mud-select-input" Margin="@(DenseInput==true?Margin.Dense: (DenseInput==false?Margin.None: (Dense==true?Margin.Dense: Margin.None)))"
                           Variant="@Variant" Value="@(Strict && !IsValueInList ? null : Text)" DisableUnderLine="@DisableUnderLine"
                           Disabled="@Disabled" ReadOnly="true" Error="@Error"
                           OnAdornmentClick="@OnAdornmentClick" AdornmentIcon="@_currentIcon" Adornment="@Adornment" AdornmentColor="@AdornmentColor" IconSize="@IconSize" AdornmentText="@AdornmentText"
                           Clearable="@Clearable" OnClearButtonClick="(async (e) => await SelectClearButtonClickHandlerAsync(e))"
-                          @attributes="UserAttributes" 
-                          >
+                          @attributes="UserAttributes">
                     @if (CanRenderValue)
                     {
                         @GetSelectedValuePresenter()
@@ -27,9 +27,10 @@
                 @if (MultiSelection && SelectAll)
                 {
                     <MudListItem Icon="@SelectAllCheckBoxIcon" Text="@SelectAllText" OnClick="SelectAllClickAsync"  
-                     Dense="@Dense" Class="mud-list-item-clickable mud-select-all mud-typography-body1"/>
+                      Class="mud-list-item-clickable mud-select-all mud-typography-body1"
+                      Dense="@(DenseDropdown==true?true: (DenseDropdown==false?false: (Dense==true?true: false)))"/>
                 }
-                <MudList Clickable="@(_isOpen==false?false:true)" Dense="@Dense">
+                <MudList Clickable="@(_isOpen==false?false:true)" Dense="@(DenseDropdown==true?true: (DenseDropdown==false?false: (Dense==true?true: false)))">
                     @ChildContent
                 </MudList>
             </CascadingValue>
