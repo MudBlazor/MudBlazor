@@ -57,12 +57,7 @@ namespace MudBlazor
         public bool Dense
         {
             get { return _dense; }
-            set
-            {
-                // Ensure that when dense is applied we set the margin on the input controls
-                _dense = value;
-                Margin = _dense ? Margin.Dense : Margin.None;
-            }
+            set { _dense = value; }
         }
 
         /// <summary>

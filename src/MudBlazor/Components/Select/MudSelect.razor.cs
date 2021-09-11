@@ -13,8 +13,6 @@ namespace MudBlazor
     {
         private HashSet<T> _selectedValues;
         private bool _dense;
-        private bool? _denseInput = null;
-        private bool? _denseDropdown = null;
         private string multiSelectionText;
         private bool? _selectAllChecked;
 
@@ -46,26 +44,6 @@ namespace MudBlazor
         {
             get { return _dense; }
             set { _dense = value; }
-        }
-
-        /// <summary>
-        /// If true, dense only input on select. Overrides to dense if it is not null.
-        /// </summary>
-        [Parameter]
-        public bool? DenseInput
-        {
-            get { return _denseInput; }
-            set { _denseInput = value; }
-        }
-
-        /// <summary>
-        /// If true, dense only dropdown on select. Overrides to dense if it is not null
-        /// </summary>
-        [Parameter]
-        public bool? DenseDropdown
-        {
-            get { return _denseDropdown; }
-            set { _denseDropdown = value; }
         }
 
         /// <summary>
@@ -329,8 +307,6 @@ namespace MudBlazor
                 else
                     SelectedValues.Remove(value);
 
-                await SelectedValuesChanged.InvokeAsync(SelectedValues);
-
                 if (MultiSelectionTextFunc != null)
                 {
                     await SetCustomizedTextAsync(string.Join(Delimiter, SelectedValues.Select(x => Converter.Set(x))),
@@ -357,14 +333,13 @@ namespace MudBlazor
                     return;
                 }
 
-                await SelectedValuesChanged.InvokeAsync(SelectedValues);
-
                 await SetValueAsync(value);
                 SelectedValues.Clear();
                 SelectedValues.Add(value);
             }
 
             StateHasChanged();
+            await SelectedValuesChanged.InvokeAsync(SelectedValues);
         }
 
         private void UpdateSelectAllChecked()
@@ -372,7 +347,7 @@ namespace MudBlazor
             if (MultiSelection && SelectAll)
             {
                 if (SelectedValues.Count == 0)
-                { 
+                {
                     _selectAllChecked = false;
                 }
                 else if (_items.Count == SelectedValues.Count)

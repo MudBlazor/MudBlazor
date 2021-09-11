@@ -3,21 +3,15 @@
 <MudGrid>
     <MudItem xs="12" sm="6">
         <div>
+            <MudCheckBox T="bool" CheckedChanged="ChangeMargin" Color="Color.Primary" Label="@("Margin: " + _margin)" />
+        </div>
+        <div>
             <MudCheckBox @bind-Checked="_dense" Color="Color.Primary" Label="@("Dense: " + _dense)" />
-        </div>
-        <div>
-            <MudCheckBox TriState="true" @bind-Checked="_denseInput" Color="Color.Primary" Label="@("DenseInput: " + _denseInput)" />
-        </div>
-        <div>
-            <MudCheckBox TriState="true" @bind-Checked="_denseDropdown" Color="Color.Primary" Label="@("DenseDropdown: " + _denseDropdown)" />
         </div>
     </MudItem>
 
     <MudItem  xs="12" sm="6">
-        <MudText>Result</MudText>
-        <MudText>Input Dense: @(_denseInput==true?true: (_denseInput==false?false: (_dense==true?true: false)))</MudText>
-        <MudText>Dropdown Dense: @(_denseDropdown==true?true: (_denseDropdown==false?false: (_dense==true?true: false)))</MudText>
-        <MudSelect T="string" Label="Pies" OffsetY="true" Dense="@_dense" DenseDropdown="@_denseDropdown" DenseInput="@_denseInput" Variant="Variant.Outlined">
+        <MudSelect T="string" Label="Pies" OffsetY="true" Margin="@_margin" Dense="@_dense" Variant="Variant.Outlined">
             <MudSelectItem Value="@("Apple Pie")" />
             <MudSelectItem Value="@("Blackberry Pie")" />
             <MudSelectItem Value="@("Rhubarb Pie")" />
@@ -28,7 +22,18 @@
 </MudGrid>
 
 @code{
+    Margin _margin = Margin.None;
     bool _dense = false;
-    bool? _denseInput = null;
-    bool? _denseDropdown = null;
+
+    private void ChangeMargin()
+    {
+        if (_margin == Margin.None)
+        {
+            _margin = Margin.Dense;
+        }
+        else
+        {
+            _margin = Margin.None;
+        }
+    }
 }
