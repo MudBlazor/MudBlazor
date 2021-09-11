@@ -31,7 +31,6 @@ namespace MudBlazor
         private bool _isDragging = false;
         private int _dragSrc = 0;
         private int _dragDst = 0;
-        private int _dragSide = 0;
 
         [CascadingParameter] public bool RightToLeft { get; set; }
 
@@ -357,7 +356,7 @@ namespace MudBlazor
 
         #region Panel repositioning
 
-        private void MovePanel(int src, int dst, int side)
+        private void MovePanel(int src, int dst)
         {
             if (src == dst)
                 return;
@@ -372,20 +371,14 @@ namespace MudBlazor
 
             if (src < dst)
             {
-                if (side < 0)
-                    dst = Math.Max(dst - 1, 0);
-
                 for (int i = src; i != dst; i++)
                 {
                     _panels[i] = _panels[i + 1];
                 }
                 _panels[dst] = tmp;
             }
-            else if (src > dst)
+            else
             {
-                if (side > 0)
-                    dst = Math.Max(dst + 1, 0);
-
                 for (int i = src; i != dst; i--)
                 {
                     _panels[i] = _panels[i - 1];
@@ -417,11 +410,9 @@ namespace MudBlazor
 
             _dragDst = panel.Index;
 
-            _dragSide = _dragDst > _dragSrc ? +1 : -1;
-
-            if (IsDragging)
+            if (_dragDst != _dragSrc && _isDragging)
             {
-                MovePanel(_dragSrc, _dragDst, _dragSide);
+                MovePanel(_dragSrc, _dragDst);
 
                 ActivePanelIndex = _dragDst;
 
@@ -445,8 +436,6 @@ namespace MudBlazor
         {
             if (_isDragging) _isDragging = false;
         }
-
-        private bool IsDragging { get => _isDragging && _dragSide != 0; }
 
         #endregion
 
