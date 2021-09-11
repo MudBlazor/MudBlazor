@@ -27,11 +27,6 @@ namespace MudBlazor
         [Parameter] public RenderFragment ChildContent { get; set; }
 
         /// <summary>
-        /// If string has value the label text will be displayed in the input, and scaled down at the top if the input has value.
-        /// </summary>
-        [Parameter] public string Label { get; set; }
-
-        /// <summary>
         /// User class names for the popover, separated by space
         /// </summary>
         [Parameter] public string PopoverClass { get; set; }
