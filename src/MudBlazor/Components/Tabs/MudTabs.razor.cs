@@ -28,7 +28,6 @@ namespace MudBlazor
         private double _scrollPosition;
 
         MudTabPanel _draggedPanel;
-        private double _dragStartPos;
         private bool _isDragging = false;
         private int _dragSrc = 0;
         private int _dragDst = 0;
@@ -407,7 +406,6 @@ namespace MudBlazor
                 return;
 
             _draggedPanel = panel;
-            _dragStartPos = GetRelevantPosition(ev.ClientX, ev.ClientY);
             _dragSrc = panel.Index;
             _dragDst = panel.Index;
             _isDragging = true;
@@ -630,22 +628,6 @@ namespace MudBlazor
             _ => _resizeObserver.GetHeight(reference)
         };
 
-        private double GetRelevantPosition(double x, double y) => Position switch
-        {
-            Position.Top or Position.Bottom or Position.Center => x,
-            _ => y
-        };
-
-        private double GetRelevantPosition(ElementReference reference)
-        {
-            BoundingClientRect rect = _resizeObserver.GetSizeInfo(reference);
-            return GetRelevantPosition(rect.X, rect.Y);
-        }
-
-        private BoundingClientRect GetClientBoundingRect(ElementReference reference)
-        {
-            return _resizeObserver.GetSizeInfo(reference);
-        }
         private double GetLengthOfPanelItems(MudTabPanel panel)
         {
             var value = 0.0;
