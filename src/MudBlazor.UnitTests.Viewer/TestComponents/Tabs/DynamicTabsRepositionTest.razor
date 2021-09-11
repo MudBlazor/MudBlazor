@@ -2,6 +2,7 @@
 
 <MudForm>
 	<MudSwitch T="bool" @bind-Checked="@_isCentered" Label="Centered Tabs"/>
+	<MudSwitch T="bool" @bind-Checked="@_isEnableRepositioning" Label="Enable repositioning"/>
 	<MudRadioGroup @bind-SelectedOption="@_position">
 		<MudRadio Option="@(Position.Bottom)">Bottom</MudRadio>
 		<MudRadio Option="@(Position.Center)">Center</MudRadio>
@@ -18,7 +19,7 @@
 		AddIconClass="my-add-icon-class" AddTab="OnAddClicked"
 		Centered="@_isCentered"
 		Position="@_position"
-		EnableRepositioning="true"
+		EnableRepositioning="@_isEnableRepositioning"
 >
 	@foreach(var panel in _panels)
 	{
@@ -36,6 +37,7 @@
 										 	left, etc).";
 
 	bool _isCentered = false;
+	bool _isEnableRepositioning = true;
 	Position _position { get; set; } = Position.Top;
 	List<string> _panels = new List<string>() { "Untitled" };
 
