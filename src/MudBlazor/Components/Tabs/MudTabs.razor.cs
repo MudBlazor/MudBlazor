@@ -28,7 +28,6 @@ namespace MudBlazor
         private double _scrollPosition;
 
         MudTabPanel _draggedPanel;
-        MudTabPanel _dragOverPanel;
         private double _dragStartPos;
         private bool _isDragging = false;
         private int _dragSrc = 0;
@@ -420,26 +419,28 @@ namespace MudBlazor
 
             _dragDst = panel.Index;
 
-            _dragOverPanel = _panels[_dragDst];
             _dragSide = _dragDst > _dragSrc ? +1 : -1;
+
+            if (IsDragging)
+            {
+                MovePanel(_dragSrc, _dragDst, _dragSide);
+
+                ActivePanelIndex = _dragDst;
+
+                Rerender();
+                StateHasChanged();
+
+                _dragSrc = _dragDst;
+            }
         }
 
         private void OnDragEnd(MudTabPanel panel, MouseEventArgs ev)
         {
-            if (!EnableRepositioning || !panel.Equals(_dragOverPanel) || panel.Equals(_draggedPanel)) return;
+            if (!EnableRepositioning) return;
 
             _isDragging = false;
-            _dragOverPanel = null;
-
-            MovePanel(_dragSrc, _dragDst, _dragSide);
-
-            ActivePanelIndex = _dragDst;
-
             _dragSrc = 0;
             _dragDst = 0;
-
-            Rerender();
-            StateHasChanged();
         }
 
         private void OnCancelDrag(EventArgs ev)
@@ -452,9 +453,6 @@ namespace MudBlazor
         private bool DragToLeft { get => _dragSide < 0; }
 
         private bool DragToRight { get => _dragSide > 0; }
-
-        private bool IsDragOverPanel(MudTabPanel panel) =>
-            IsDragging && _dragOverPanel != null && (panel == _dragOverPanel);
 
         private bool IsDraggedPanel(MudTabPanel panel) =>
             IsDragging && (panel == _draggedPanel);
@@ -575,11 +573,6 @@ namespace MudBlazor
         {
             var tabStyle = new StyleBuilder()
             .AddStyle(panel.Style)
-            .AddStyle("border", "1px dashed blue", () => IsDraggedPanel(panel))
-            .AddStyle("border-left", "2px solid blue", () => !IsVerticalTabs() && IsDragOverPanel(panel) && DragToLeft)
-            .AddStyle("border-right", "2px solid blue", () => !IsVerticalTabs() && IsDragOverPanel(panel) && DragToRight)
-            .AddStyle("border-top", "2px solid blue", () => IsVerticalTabs() && IsDragOverPanel(panel) && DragToLeft)
-            .AddStyle("border-bottom", "2px solid blue", () => IsVerticalTabs() && IsDragOverPanel(panel) && DragToRight)
             .Build();
 
             return tabStyle;
