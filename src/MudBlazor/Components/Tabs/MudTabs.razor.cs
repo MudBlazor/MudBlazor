@@ -448,13 +448,6 @@ namespace MudBlazor
 
         private bool IsDragging { get => _isDragging && _dragSide != 0; }
 
-        private bool DragToLeft { get => _dragSide < 0; }
-
-        private bool DragToRight { get => _dragSide > 0; }
-
-        private bool IsDraggedPanel(MudTabPanel panel) =>
-            IsDragging && (panel == _draggedPanel);
-
         #endregion
 
         #region Style and classes
