@@ -988,6 +988,49 @@ namespace MudBlazor.UnitTests.Components
             panels[1].TextContent.Contains("Hello World!").Should().BeTrue();
         }
 
+        /// <summary>
+        /// Original tabs order <c>[0, 1, 2]</c> to be reordered to <c>[2, 1, 0]</c> by doing the
+        /// following transformation:
+        ///   1. Move first to last: <c>[0, 1, 2] -> [1, 2, 0]</c>
+        ///   2. Move middle to fist: <c>[1, 2, 0] -> [2, 1, 0]</c>
+        /// </summary>
+        /// <returns></returns>
+        [Test]
+        public async Task SimpleReorderTabs()
+        {
+            Context.Services.Add(new ServiceDescriptor(typeof(IResizeObserver), new MockResizeObserver()));
+            var comp = Context.RenderComponent<DynamicTabsRepositionTest>();
+
+            Console.WriteLine(comp.Markup);
+
+            var panels = comp.FindAll(".mud-tab");
+            panels.Should().HaveCount(3);
+
+            panels[0].MouseDown();
+            panels = comp.FindAll(".mud-tab");
+            panels[1].MouseOver();
+            panels = comp.FindAll(".mud-tab");
+            panels[2].MouseOver();
+            panels = comp.FindAll(".mud-tab");
+            panels[2].MouseUp();
+            panels = comp.FindAll(".mud-tab");
+
+            panels[0].TextContent.Should().Contain("Panel 1");
+            panels[1].TextContent.Should().Contain("Panel 2");
+            panels[2].TextContent.Should().Contain("Panel 0");
+
+            panels[1].MouseDown();
+            panels = comp.FindAll(".mud-tab");
+            panels[0].MouseOver();
+            panels = comp.FindAll(".mud-tab");
+            panels[0].MouseUp();
+            panels = comp.FindAll(".mud-tab");
+
+            panels[0].TextContent.Should().Contain("Panel 2");
+            panels[1].TextContent.Should().Contain("Panel 1");
+            panels[2].TextContent.Should().Contain("Panel 0");
+        }
+
         #region Helper
 
         private static double GetSliderValue(IRenderedComponent<ScrollableTabsTest> comp, string attribute = "left")

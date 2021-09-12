@@ -39,14 +39,20 @@
 	bool _isCentered = false;
 	bool _isEnableRepositioning = true;
 	Position _position { get; set; } = Position.Top;
-	List<string> _panels = new List<string>() { "Untitled" };
+	List<string> _panels = new List<string>();
 
 	public Int32 AddClickCounter { get; private set; }
 
+	protected override void OnInitialized()
+	{
+		_panels = new List<string>() { "Panel 0", "Panel 1", "Panel 2" };
+		AddClickCounter = _panels.Count;
+	}
+
 	private void OnAddClicked()
 	{
+		_panels.Add($"Panel {AddClickCounter}");
 		AddClickCounter++;
-		_panels.Add($"Untitled {AddClickCounter}");
 	}
 
 	private void OnCloseClicked(MudTabPanel panel)
