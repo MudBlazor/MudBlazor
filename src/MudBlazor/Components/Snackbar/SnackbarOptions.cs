@@ -29,27 +29,27 @@ namespace MudBlazor
         public string Icon { get; set; }
 
         /// <summary>
-        /// Custom normal icon, leave null for default.
+        /// Custom normal icon.
         /// </summary>
         [Parameter] public string NormalIcon { get; set; } = Icons.Material.Outlined.EventNote;
 
         /// <summary>
-        /// Custom info icon, leave null for default.
+        /// Custom info icon.
         /// </summary>
         [Parameter] public string InfoIcon { get; set; } = Icons.Material.Outlined.Info;
 
         /// <summary>
-        /// Custom success icon, leave null for default.
+        /// Custom success icon.
         /// </summary>
         [Parameter] public string SuccessIcon { get; set; } = Icons.Custom.Uncategorized.AlertSuccess;
 
         /// <summary>
-        /// Custom warning icon, leave null for default.
+        /// Custom warning icon.
         /// </summary>
         [Parameter] public string WarningIcon { get; set; } = Icons.Material.Outlined.ReportProblem;
 
         /// <summary>
-        /// Custom error icon, leave null for default.
+        /// Custom error icon.
         /// </summary>
         [Parameter] public string ErrorIcon { get; set; } = Icons.Material.Filled.ErrorOutline;
 
