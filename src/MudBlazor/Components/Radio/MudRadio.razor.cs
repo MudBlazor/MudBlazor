@@ -44,7 +44,7 @@ namespace MudBlazor
         private IMudRadioGroup _parent;
 
         /// <summary>
-        /// The parent select component
+        /// The parent Radio Group
         /// </summary>
         [CascadingParameter]
         internal IMudRadioGroup IMudRadioGroup
