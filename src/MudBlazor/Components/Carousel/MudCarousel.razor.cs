@@ -116,22 +116,22 @@ namespace MudBlazor
         [Parameter] public string DelimitersClass { get; set; }
 
         /// <summary>
-        /// Custom previous navigation icon, leave null for default.
+        /// Custom previous navigation icon.
         /// </summary>
         [Parameter] public string PreviousIcon { get; set; } = Icons.Material.Filled.NavigateBefore;
 
         /// <summary>
-        /// Custom selected delimiter icon, leave null for default.
+        /// Custom selected delimiter icon.
         /// </summary>
         [Parameter] public string CheckedIcon { get; set; } = Icons.Material.Filled.RadioButtonChecked;
 
         /// <summary>
-        /// Custom unselected delimiter icon, leave null for default.
+        /// Custom unselected delimiter icon.
         /// </summary>
         [Parameter] public string UncheckedIcon { get; set; } = Icons.Material.Filled.RadioButtonUnchecked;
 
         /// <summary>
-        /// Custom next navigation icon, leave null for default.
+        /// Custom next navigation icon.
         /// </summary>
         [Parameter] public string NextIcon { get; set; } = Icons.Material.Filled.NavigateNext;
 
