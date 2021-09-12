@@ -461,17 +461,17 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Custom checked icon, leave null for default.
+        /// Custom checked icon.
         /// </summary>
         [Parameter] public string CheckedIcon { get; set; } = Icons.Material.Filled.CheckBox;
 
         /// <summary>
-        /// Custom unchecked icon, leave null for default.
+        /// Custom unchecked icon.
         /// </summary>
         [Parameter] public string UncheckedIcon { get; set; } = Icons.Material.Filled.CheckBoxOutlineBlank;
 
         /// <summary>
-        /// Custom indeterminate icon, leave null for default.
+        /// Custom indeterminate icon.
         /// </summary>
         [Parameter] public string IndeterminateIcon { get; set; } = Icons.Material.Filled.IndeterminateCheckBox;
 
