@@ -34,7 +34,7 @@ namespace MudBlazor
         [Parameter] public Guid Id { get; set; }
 
         /// <summary>
-        /// Custom close icon, leave null for default.
+        /// Custom close icon.
         /// </summary>
         [Parameter] public string CloseIcon { get; set; } = Icons.Material.Filled.Close;
 
