@@ -136,12 +136,12 @@ namespace MudBlazor
         private Func<DateTime, bool> _isDateDisabledFunc = _ => false;
 
         /// <summary>
-        /// Custom previous icon, leave null for default.
+        /// Custom previous icon.
         /// </summary>
         [Parameter] public string PreviousIcon { get; set; } = Icons.Material.Filled.ChevronLeft;
 
         /// <summary>
-        /// Custom next icon, leave null for default.
+        /// Custom next icon.
         /// </summary>
         [Parameter] public string NextIcon { get; set; } = Icons.Material.Filled.ChevronRight;
 
