@@ -27,7 +27,6 @@ namespace MudBlazor
         private double _allTabsSize;
         private double _scrollPosition;
 
-        MudTabPanel _draggedPanel;
         private bool _isDragging = false;
         private int _dragSrc = 0;
         private int _dragDst = 0;
@@ -398,7 +397,6 @@ namespace MudBlazor
             if (!EnableRepositioning)
                 return;
 
-            _draggedPanel = panel;
             _dragSrc = panel.Index;
             _dragDst = panel.Index;
             _isDragging = true;
@@ -406,9 +404,14 @@ namespace MudBlazor
 
         private void OnDragEnterPanel(MudTabPanel panel, MouseEventArgs ev)
         {
-            if (!EnableRepositioning || panel.Equals(_draggedPanel)) return;
+            if (!EnableRepositioning || panel.Equals(_panels[_dragSrc])) return;
 
             _dragDst = panel.Index;
+        }
+
+        private void OnDragEnd(MudTabPanel panel, MouseEventArgs ev)
+        {
+            if (!EnableRepositioning) return;
 
             if (_dragDst != _dragSrc && _isDragging)
             {
@@ -421,11 +424,6 @@ namespace MudBlazor
 
                 _dragSrc = _dragDst;
             }
-        }
-
-        private void OnDragEnd(MudTabPanel panel, MouseEventArgs ev)
-        {
-            if (!EnableRepositioning) return;
 
             _isDragging = false;
             _dragSrc = 0;
