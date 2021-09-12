@@ -71,7 +71,7 @@ namespace MudBlazor
         [Parameter] public string Icon { get; set; }
 
         /// <summary>
-        /// Custom checked icon, leave null for default.
+        /// Custom checked icon.
         /// </summary>
         [Parameter] public string CheckedIcon { get; set; } = Icons.Material.Filled.Check;
 
