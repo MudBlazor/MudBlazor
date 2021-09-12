@@ -86,12 +86,12 @@ namespace MudBlazor
         [Parameter] public Color AdornmentColor { get; set; } = Color.Default;
 
         /// <summary>
-        /// Custom expand less icon, leave null for default.
+        /// Custom expand less icon.
         /// </summary>
         [Parameter] public string ExpandLessIcon { get; set; } = Icons.Material.Filled.ExpandLess;
 
         /// <summary>
-        /// Custom expand more icon, leave null for default.
+        /// Custom expand more icon.
         /// </summary>
         [Parameter] public string ExpandMoreIcon { get; set; } = Icons.Material.Filled.ExpandMore;
 
