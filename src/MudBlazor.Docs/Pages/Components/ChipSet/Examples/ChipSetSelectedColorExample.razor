@@ -1,0 +1,36 @@
+﻿@namespace MudBlazor.Docs.Examples
+<MudChipSet MultiSelection="true" Filter="filter">
+    <MudChip Text="Brunsås" Variant="Variant.Text" SelectedColor="Color.Primary"></MudChip>
+    <MudChip Text="Milk" Variant="Variant.Text" SelectedColor="Color.Secondary"></MudChip>
+    <MudChip Text="Eggs" Variant="Variant.Text" SelectedColor="Color.Info"></MudChip>
+    <MudChip Text="Soap" Variant="Variant.Text" SelectedColor="Color.Success"></MudChip>
+    <MudChip Text="Cornflakes" Variant="Variant.Text" SelectedColor="Color.Warning"></MudChip>
+    <MudChip Text="Salad" Variant="Variant.Text" SelectedColor="Color.Error"></MudChip>
+    <MudChip Text="Apples" Variant="Variant.Text" SelectedColor="Color.Dark"></MudChip>
+</MudChipSet>
+<MudChipSet MultiSelection="true" Filter="filter">
+    <MudChip Text="Brunsås" Variant="Variant.Outlined" SelectedColor="Color.Primary"></MudChip>
+    <MudChip Text="Milk" Variant="Variant.Outlined" SelectedColor="Color.Secondary"></MudChip>
+    <MudChip Text="Eggs" Variant="Variant.Outlined" SelectedColor="Color.Info"></MudChip>
+    <MudChip Text="Soap" Variant="Variant.Outlined" SelectedColor="Color.Success"></MudChip>
+    <MudChip Text="Cornflakes" Variant="Variant.Outlined" SelectedColor="Color.Warning"></MudChip>
+    <MudChip Text="Salad" Variant="Variant.Outlined" SelectedColor="Color.Error"></MudChip>
+    <MudChip Text="Apples" Variant="Variant.Outlined" SelectedColor="Color.Dark"></MudChip>
+</MudChipSet>
+<MudChipSet MultiSelection="true" Filter="filter">
+    <MudChip Text="Brunsås" Variant="Variant.Filled" SelectedColor="Color.Primary"></MudChip>
+    <MudChip Text="Milk" Variant="Variant.Filled" SelectedColor="Color.Secondary"></MudChip>
+    <MudChip Text="Eggs" Variant="Variant.Filled" SelectedColor="Color.Info"></MudChip>
+    <MudChip Text="Soap" Variant="Variant.Filled" SelectedColor="Color.Success"></MudChip>
+    <MudChip Text="Cornflakes" Variant="Variant.Filled" SelectedColor="Color.Warning"></MudChip>
+    <MudChip Text="Salad" Variant="Variant.Filled" SelectedColor="Color.Error"></MudChip>
+    <MudChip Text="Apples" Variant="Variant.Filled" SelectedColor="Color.Dark"></MudChip>
+</MudChipSet>
+<MudCheckBox @bind-Checked="filter">Filter</MudCheckBox>
+
+
+@code
+{
+    bool filter = true;
+}
+
