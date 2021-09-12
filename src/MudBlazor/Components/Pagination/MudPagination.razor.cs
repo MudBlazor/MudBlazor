@@ -188,22 +188,22 @@ namespace MudBlazor
         public EventCallback<int> SelectedChanged { get; set; }
 
         /// <summary>
-        /// Custom first icon, leave null for default.
+        /// Custom first icon.
         /// </summary>
         [Parameter] public string FirstIcon { get; set; } = Icons.Material.Filled.FirstPage;
 
         /// <summary>
-        /// Custom before icon, leave null for default.
+        /// Custom before icon.
         /// </summary>
         [Parameter] public string BeforeIcon { get; set; } = Icons.Material.Filled.NavigateBefore;
 
         /// <summary>
-        /// Custom next icon, leave null for default.
+        /// Custom next icon.
         /// </summary>
         [Parameter] public string NextIcon { get; set; } = Icons.Material.Filled.NavigateNext;
 
         /// <summary>
-        /// Custom last icon, leave null for default.
+        /// Custom last icon.
         /// </summary>
         [Parameter] public string LastIcon { get; set; } = Icons.Material.Filled.LastPage;
 
