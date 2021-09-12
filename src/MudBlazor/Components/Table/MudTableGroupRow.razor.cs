@@ -56,12 +56,12 @@ namespace MudBlazor
         [Parameter] public string FooterStyle { get; set; }
 
         /// <summary>
-        /// Custom expand icon, leave null for default.
+        /// Custom expand icon.
         /// </summary>
         [Parameter] public string ExpandIcon { get; set; } = Icons.Material.Filled.ExpandMore;
 
         /// <summary>
-        /// Custom collapse icon, leave null for default.
+        /// Custom collapse icon.
         /// </summary>
         [Parameter] public string CollapseIcon { get; set; } = Icons.Material.Filled.ChevronRight;
 
