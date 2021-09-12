@@ -17,9 +17,9 @@ namespace MudBlazor
 
         protected string Classname =>
         new CssBuilder("mud-chip")
-          .AddClass($"mud-chip-{Variant.ToDescriptionString()}")
+          .AddClass($"mud-chip-{GetVariant().ToDescriptionString()}")
           .AddClass($"mud-chip-size-{Size.ToDescriptionString()}")
-          .AddClass($"mud-chip-color-{Color.ToDescriptionString()}")
+          .AddClass($"mud-chip-color-{GetColor().ToDescriptionString()}")
           .AddClass("mud-clickable", (OnClick.HasDelegate || ChipSet != null))
           .AddClass($"mud-ripple", !DisableRipple && (OnClick.HasDelegate || ChipSet != null))
           .AddClass("mud-chip-label", Label)
@@ -27,6 +27,33 @@ namespace MudBlazor
           .AddClass("mud-chip-selected", IsSelected)
           .AddClass(Class)
         .Build();
+
+        private Variant GetVariant()
+        {
+            return Variant switch
+            {
+                Variant.Text => IsSelected ? Variant.Filled : Variant.Text,
+                Variant.Filled => IsSelected ? Variant.Text : Variant.Filled,
+                Variant.Outlined => Variant.Outlined,
+                _ => Variant
+            };
+        }
+
+        private Color GetColor()
+        {
+            if (IsSelected && SelectedColor != Color.Inherit)
+            {
+                return SelectedColor;
+            }
+            else if(IsSelected && SelectedColor == Color.Inherit)
+            {
+                return Color;
+            }
+            else
+            {
+                return Color;
+            }
+        }
 
         [CascadingParameter] MudChipSet ChipSet { get; set; }
 
@@ -44,6 +71,11 @@ namespace MudBlazor
         /// The variant to use.
         /// </summary>
         [Parameter] public Variant Variant { get; set; } = Variant.Filled;
+
+        /// <summary>
+        /// The selected color to use when selected, only works togheter with ChipSet, Color.Inherit for default value.
+        /// </summary>
+        [Parameter] public Color SelectedColor { get; set; } = Color.Inherit;
 
         /// <summary>
         /// Avatar Icon, Overrides the regular Icon if set.

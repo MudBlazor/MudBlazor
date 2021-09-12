@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using AngleSharp.Html.Dom;
 using Bunit;
 using FluentAssertions;
+using MudBlazor.UnitTests.TestComponents;
 using NUnit.Framework;
 using static Bunit.ComponentParameterFactory;
 
@@ -428,6 +429,48 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.DateRange.End.Should().NotBe(default);
             comp.Instance.DateRange.Start.Should().BeNull();
             comp.Instance.DateRange.End.Should().BeNull();
+        }
+
+        [Test]
+        public async Task DateRangePicker_RequiredValidation()
+        {
+            // define some "constant" values
+            var errorMessage = "A valid date has to be picked";
+            var startDate = DateTime.Now.Date;
+            var endDate = DateTime.Now.Date.AddDays(2);
+
+            // create the component
+            var dateRangePickerComponent = Context.RenderComponent<MudDateRangePicker>(Parameter(nameof(MudDateRangePicker.Required), true), Parameter(nameof(MudDateRangePicker.RequiredError), errorMessage));
+
+            // select the instance to work with
+            var dateRangePickerInstance = dateRangePickerComponent.Instance;
+
+            // assert default's
+            dateRangePickerInstance.Text.Should().BeNullOrEmpty();
+            dateRangePickerInstance.DateRange.Should().Be(null);
+
+            // validated the picker
+            await dateRangePickerComponent.InvokeAsync(()=> dateRangePickerInstance.Validate());
+            dateRangePickerInstance.Error.Should().BeTrue("Value is required and should be handled as invalid");
+            dateRangePickerInstance.ErrorText.Should().Be(errorMessage);
+
+            // set a value
+            await dateRangePickerComponent.InvokeAsync(() => dateRangePickerInstance.Text = RangeConverter<DateTime>.Join(startDate.ToShortDateString(), endDate.ToShortDateString()));
+            
+            // asert new values have been applied
+            dateRangePickerInstance.DateRange.Start.Should().Be(startDate);
+            dateRangePickerInstance.DateRange.End.Should().Be(endDate);
+            dateRangePickerInstance.Error.Should().BeFalse("Value has been set and should be handled as valid");
+            dateRangePickerInstance.ErrorText.Should().BeNullOrWhiteSpace();
+
+            // reset value
+            await dateRangePickerComponent.InvokeAsync(() => dateRangePickerInstance.Clear());
+
+            // assert values have benn nulled
+            dateRangePickerInstance.Text.Should().BeNullOrEmpty();
+            dateRangePickerInstance.DateRange.Should().Be(null);
+            dateRangePickerInstance.Error.Should().BeTrue("Value has been cleared and should be handled as invalid");
+            dateRangePickerInstance.ErrorText.Should().Be(errorMessage);
         }
     }
 }
