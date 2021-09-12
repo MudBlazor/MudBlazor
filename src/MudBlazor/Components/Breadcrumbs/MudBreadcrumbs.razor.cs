@@ -32,7 +32,7 @@ namespace MudBlazor
         [Parameter] public byte? MaxItems { get; set; }
 
         /// <summary>
-        /// Custom expander icon, leave null for default.
+        /// Custom expander icon.
         /// </summary>
         [Parameter] public string ExpanderIcon { get; set; } = Icons.Material.Filled.SettingsEthernet;
 
