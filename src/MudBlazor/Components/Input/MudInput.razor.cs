@@ -118,17 +118,17 @@ namespace MudBlazor
         [Parameter] public EventCallback<WheelEventArgs> OnMouseWheel { get; set; }
 
         /// <summary>
-        /// Custom clear icon, leave null for default.
+        /// Custom clear icon.
         /// </summary>
         [Parameter] public string ClearIcon { get; set; } = Icons.Material.Filled.Clear;
 
         /// <summary>
-        /// Custom numeric up icon, leave null for default.
+        /// Custom numeric up icon.
         /// </summary>
         [Parameter] public string NumericUpIcon { get; set; } = Icons.Material.Filled.KeyboardArrowUp;
 
         /// <summary>
-        /// Custom numeric down icon, leave null for default.
+        /// Custom numeric down icon.
         /// </summary>
         [Parameter] public string NumericDownIcon { get; set; } = Icons.Material.Filled.KeyboardArrowDown;
 
