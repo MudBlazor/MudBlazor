@@ -47,7 +47,7 @@ namespace MudBlazor
         [Parameter] public bool HideIcon { get; set; }
 
         /// <summary>
-        /// Custom hide icon, leave null for default.
+        /// Custom hide icon.
         /// </summary>
         [Parameter] public string Icon { get; set; } = Icons.Material.Filled.ExpandMore;
 
