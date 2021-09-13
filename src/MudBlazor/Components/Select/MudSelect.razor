@@ -22,7 +22,7 @@
                 </MudInput>
             </InputContent>
         </MudInputControl>
-        <MudPopover Open=@(_isOpen) MaxHeight="@MaxHeight" Direction="@Direction" OffsetX="@OffsetX" OffsetY="@OffsetY" Class="@PopoverClass">
+        <MudPopover Open=@(_isOpen) MaxHeight="@MaxHeight" Direction="@Direction" OffsetX="@OffsetX" OffsetY="@OffsetY" Class="@PopoverClass" RelativeWidth="true">
             <CascadingValue Value="@((IMudSelect)this)" IsFixed="true">
                 @if (MultiSelection && SelectAll)
                 {

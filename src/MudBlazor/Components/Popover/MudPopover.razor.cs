@@ -21,6 +21,7 @@ namespace MudBlazor
             .AddClass($"mud-popover-{ConvertDirection(Direction).ToDescriptionString()}")
             .AddClass("mud-popover-offset-y", OffsetY)
             .AddClass("mud-popover-offset-x", OffsetX)
+            .AddClass("mud-popover-relative-width ", RelativeWidth)
             .AddClass("mud-paper")
             .AddClass("mud-paper-square", Square)
             .AddClass($"mud-elevation-{Elevation}")
@@ -79,6 +80,11 @@ namespace MudBlazor
         /// If true, the select menu will open either before or after the input depending on the direction.
         /// </summary>
         [Parameter] public bool OffsetY { get; set; }
+
+        /// <summary>
+        /// If true, the popover will have the same width at its parent element, default to false
+        /// </summary>
+        [Parameter] public bool RelativeWidth { get; set; } = false;
 
         /// <summary>
         /// Child content of the component.

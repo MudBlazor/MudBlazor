@@ -168,7 +168,9 @@ blubSingle = function (popoverNode) {
 
         popoverNode.style['left'] = (left) + 'px';
         popoverNode.style['top'] = (top) + 'px';
-        popoverNode.style['max-width'] = (boundingRect.width) + 'px';
+        if (popoverNode.classList.contains('mud-popover-relative-width')) {
+            popoverNode.style['max-width'] = (boundingRect.width) + 'px';
+        }
     }
 }
 
