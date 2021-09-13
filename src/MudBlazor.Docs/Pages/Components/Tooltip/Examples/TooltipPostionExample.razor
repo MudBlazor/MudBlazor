@@ -1,21 +1,50 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
-
-<MudTooltip Text="Start" Placement="Placement.Start">
-    <MudButton>Start</MudButton>
-</MudTooltip>
-<MudTooltip Text="Left" Placement="Placement.Left">
-    <MudButton>Left</MudButton>
-</MudTooltip>
-<MudTooltip Text="Top" Placement="Placement.Top">
-    <MudButton>Top</MudButton>
-</MudTooltip>
-<MudTooltip Text="Bottom" Placement="Placement.Bottom">
-    <MudButton>Bottom</MudButton>
-</MudTooltip>
-<MudTooltip Text="Right" Placement="Placement.Right">
-    <MudButton>Right</MudButton>
-</MudTooltip>
-<MudTooltip Text="End" Placement="Placement.End">
-    <MudButton>End</MudButton>
-</MudTooltip>
+<div class="d-flex flex-column flex-grow-1">
+    <div class="d-flex flex-row justify-center">
+        <MudTooltip Text="Top Start" Placement="Placement.TopStart">
+            <MudButton Color="Color.Primary">Top-Start</MudButton>
+        </MudTooltip>
+        <MudTooltip Text="Top" Placement="Placement.Top">
+            <MudButton Color="Color.Primary">Top</MudButton>
+        </MudTooltip>
+        <MudTooltip Text="Top End" Placement="Placement.TopEnd">
+            <MudButton Color="Color.Primary">Top-End</MudButton>
+        </MudTooltip>
+    </div>
+    <div class="d-flex flex-row justify-space-between">
+        <MudTooltip Text="Left Start" Placement="Placement.LeftStart">
+            <MudButton Color="Color.Primary">Left-Start</MudButton>
+        </MudTooltip>
+        <MudTooltip Text="Right Start" Placement="Placement.RightStart">
+            <MudButton Color="Color.Primary">Right-Start</MudButton>
+        </MudTooltip>
+    </div>
+    <div class="d-flex flex-row justify-space-between">
+        <MudTooltip Text="Left" Placement="Placement.Left">
+            <MudButton Color="Color.Primary">Left</MudButton>
+        </MudTooltip>
+        <MudTooltip Text="Right" Placement="Placement.Right">
+            <MudButton Color="Color.Primary">Right</MudButton>
+        </MudTooltip>
+    </div>
+    <div class="d-flex flex-row justify-space-between">
+        <MudTooltip Text="Left End" Placement="Placement.LeftEnd">
+            <MudButton Color="Color.Primary">Left-End</MudButton>
+        </MudTooltip>
+        <MudTooltip Text="Right End" Placement="Placement.RightEnd">
+            <MudButton Color="Color.Primary">Left-End</MudButton>
+        </MudTooltip>
+    </div>
+    <div class="d-flex flex-row justify-center">
+        <MudTooltip Text="Bottom Start" Placement="Placement.BottomStart">
+            <MudButton Color="Color.Primary">Bottom-Start</MudButton>
+        </MudTooltip>
+        <MudTooltip Text="Bottom" Placement="Placement.Bottom">
+            <MudButton Color="Color.Primary">Bottom</MudButton>
+        </MudTooltip>
+        <MudTooltip Text="Bottom End" Placement="Placement.BottomEnd">
+            <MudButton Color="Color.Primary">Bottom-End</MudButton>
+        </MudTooltip>
+    </div>
+</div>
