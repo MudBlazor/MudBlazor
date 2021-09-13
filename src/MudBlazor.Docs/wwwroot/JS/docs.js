@@ -146,24 +146,18 @@ blubSingle = function (popoverNode) {
         let left = boundingRect.left;
         let top = boundingRect.top;
 
-        if (popoverNode.classList.contains('mud-popover-offset-y')) {
-
-            if (popoverNode.classList.contains('mud-popover-bottom')) {
-                top = boundingRect.top + boundingRect.height;
-            }
-            else if (popoverNode.classList.contains('mud-popover-top')) {
-                top = boundingRect.top - selfRect.height;
-            }
+        if (popoverNode.classList.contains('mud-popover-bottom')) {
+            top = boundingRect.top + boundingRect.height;
+        }
+        else if (popoverNode.classList.contains('mud-popover-top')) {
+            top = boundingRect.top - selfRect.height;
         }
 
-        if (popoverNode.classList.contains('mud-popover-offset-x')) {
-
-            if (popoverNode.classList.contains('mud-popover-left')) {
-                left = boundingRect.left - selfRect.width;
-            }
-            else if (popoverNode.classList.contains('mud-popover-right')) {
-                left = boundingRect.left + boundingRect.width;
-            }
+        if (popoverNode.classList.contains('mud-popover-left')) {
+            left = boundingRect.left - selfRect.width;
+        }
+        else if (popoverNode.classList.contains('mud-popover-right')) {
+            left = boundingRect.left + boundingRect.width;
         }
 
         popoverNode.style['left'] = (left) + 'px';
@@ -218,7 +212,6 @@ class MudPopover {
        
         if (popoverNode && popoverNode.parentNode) {
 
-            popoverNode.style['position'] = "fixed";
             blubSingle(popoverNode);
 
             const config = { attributeFilter: ['class'] };

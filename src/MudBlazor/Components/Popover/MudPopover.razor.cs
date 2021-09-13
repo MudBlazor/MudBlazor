@@ -18,13 +18,11 @@ namespace MudBlazor
         protected string PopoverClass =>
            new CssBuilder("mud-popover")
             .AddClass("mud-popover-open", Open)
-            .AddClass($"mud-popover-{ConvertDirection(Direction).ToDescriptionString()}")
-            .AddClass("mud-popover-offset-y", OffsetY)
-            .AddClass("mud-popover-offset-x", OffsetX)
-            .AddClass("mud-popover-relative-width ", RelativeWidth)
-            .AddClass("mud-paper")
-            .AddClass("mud-paper-square", Square)
-            .AddClass($"mud-elevation-{Elevation}")
+            .AddClass($"mud-popover-{Placement.ToDescriptionString()}")
+            .AddClass("mud-popover-relative-width", RelativeWidth)
+            .AddClass("mud-paper", Paper)
+            .AddClass("mud-paper-square", Paper && Square)
+            .AddClass($"mud-elevation-{Elevation}", Paper)
             .AddClass(Class)
            .Build();
 
@@ -47,7 +45,17 @@ namespace MudBlazor
         [CascadingParameter] public bool RightToLeft { get; set; }
 
         /// <summary>
-        /// The higher the number, the heavier the drop-shadow. 0 for no shadow set to 8 by default.
+        /// Sets the maxheight the popover can have when open.
+        /// </summary>
+        [Parameter] public int? MaxHeight { get; set; } = null;
+
+        /// <summary>
+        /// If true, will apply default MudPaper classes.
+        /// </summary>
+        [Parameter] public bool Paper { get; set; } = true;
+
+        /// <summary>
+        /// The higher the number, the heavier the drop-shadow.
         /// </summary>
         [Parameter] public int Elevation { set; get; } = 8;
 
@@ -57,11 +65,6 @@ namespace MudBlazor
         [Parameter] public bool Square { get; set; }
 
         /// <summary>
-        /// Sets the maxheight the popover can have when open.
-        /// </summary>
-        [Parameter] public int? MaxHeight { get; set; } = null;
-
-        /// <summary>
         /// If true, the popover is visible.
         /// </summary>
         [Parameter] public bool Open { get; set; }
@@ -69,16 +72,25 @@ namespace MudBlazor
         /// <summary>
         /// Sets the direction the popover will start from relative to its parent.
         /// </summary>
+        /// 
+        [Obsolete("Direction is obsolete. Use Placement instead!", false)]
         [Parameter] public Direction Direction { get; set; } = Direction.Bottom;
+
+        /// <summary>
+        /// Sets the anchor point the popover will start from relative to its parent.
+        /// </summary>
+        [Parameter] public Placement Placement { get; set; } = Placement.Bottom;
 
         /// <summary>
         /// If true, the select menu will open either above or bellow the input depending on the direction.
         /// </summary>
+        [Obsolete("OffsetX is obsolete. Use X instead!", false)]
         [Parameter] public bool OffsetX { get; set; }
 
         /// <summary>
         /// If true, the select menu will open either before or after the input depending on the direction.
         /// </summary>
+        [Obsolete("OffsetX is obsolete. Use X instead!", false)]
         [Parameter] public bool OffsetY { get; set; }
 
         /// <summary>
