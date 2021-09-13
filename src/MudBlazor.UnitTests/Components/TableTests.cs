@@ -116,6 +116,38 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// Check if the loading and no records functionnality is working in grouped table.
+        /// </summary>
+        [Test]
+        public void TableGroupLoadingAndNoRecordsTest()
+        {
+            var comp = Context.RenderComponent<TableGroupLoadingAndNoRecordsTest>();
+            var searchString = comp.Find("#searchString");
+            var switchElement = comp.Find("#switch");
+
+            // It should be equal to 5 = header row + group header row + 2 rows + footer row 
+            comp.FindAll("tr").Count.Should().Be(5);
+
+            // Add filter
+            searchString.Change("ZZZ");
+
+            // It should be equal to 2 = header row + no records row
+            comp.FindAll("tr").Count.Should().Be(2);
+            comp.FindAll("tr")[1].TextContent.Should().Be("No records"); 
+
+            // It should be equal to 3 = header row + loading progress row + loading text
+            switchElement.Change(true);
+            comp.FindAll("tr").Count.Should().Be(3);
+            comp.FindAll("tr")[2].TextContent.Should().Be("Loading..."); 
+
+            // Remove filter
+            searchString.Change("");
+
+            // It should be equal to 6 = header row + loading progress row + group header row + 2 rows + footer row
+            comp.FindAll("tr").Count.Should().Be(6);
+        }
+
+        /// <summary>
         /// Check if if empty row text is correct
         /// </summary>
         [Test]
