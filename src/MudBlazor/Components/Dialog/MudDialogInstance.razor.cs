@@ -33,6 +33,11 @@ namespace MudBlazor
         [Parameter] public RenderFragment Content { get; set; }
         [Parameter] public Guid Id { get; set; }
 
+        /// <summary>
+        /// Custom close icon.
+        /// </summary>
+        [Parameter] public string CloseIcon { get; set; } = Icons.Material.Filled.Close;
+
         private string Position { get; set; }
         private string DialogMaxWidth { get; set; }
         private bool DisableBackdropClick { get; set; }

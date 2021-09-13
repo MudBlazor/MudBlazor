@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
+using MudBlazor.Utilities.Exceptions;
 
 namespace MudBlazor
 {
-    public partial class MudRadioGroup<T> : MudFormComponent<T, T>
+    public partial class MudRadioGroup<T> : MudFormComponent<T, T>, IMudRadioGroup
     {
         public MudRadioGroup() : base(new Converter<T, T>()) { }
 
@@ -17,6 +18,13 @@ namespace MudBlazor
         [Parameter] public RenderFragment ChildContent { get; set; }
 
         [Parameter] public string Name { get; set; } = Guid.NewGuid().ToString();
+
+        public void CheckGenericTypeMatch(object select_item)
+        {
+            var itemT = select_item.GetType().GenericTypeArguments[0];
+            if (itemT != typeof(T))
+                throw new GenericTypeMismatchException("MudRadioGroup", "MudRadio", typeof(T), itemT);
+        }
 
         [Parameter]
         public T SelectedOption
