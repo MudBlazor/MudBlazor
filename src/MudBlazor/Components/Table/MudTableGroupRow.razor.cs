@@ -91,6 +91,7 @@ namespace MudBlazor
         {
             if (GroupDefinition != null)
             {
+                IsExpanded = GroupDefinition.IsInitiallyExpanded;
                 ((TableContext<T>)Context)?.GroupRows.Add(this);
                 if (GroupDefinition.InnerGroup != null)
                 {
