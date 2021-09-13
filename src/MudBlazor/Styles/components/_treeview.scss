@@ -53,7 +53,7 @@
 .mud-treeview-item-content {
     width: 100%;
     display: flex;
-    padding: 4px;
+    padding: 4px 8px;
     align-items: center;
     transition: background-color 150ms cubic-bezier(.4,0,.2,1) 0ms;
 }
@@ -62,16 +62,12 @@
     background-color: var(--mud-palette-action-default-hover);
 }
 
-.mud-treeview-expand .mud-treeview-item-content:hover {
-    cursor: pointer;
-}
-
-
 .mud-treeview-item-arrow {
     width: 2rem;
     display: flex;
     flex-shrink: 0;
     margin: 0 4px;
+    min-height: 32px;
     justify-content: center;
 
     .mud-treeview-item-arrow-expand {
@@ -100,8 +96,7 @@
 .mud-treeview-item-label {
     flex-grow: 1;
     padding-left: 4px;
-    padding-inline-start: 4px;
-    padding-inline-end: unset;
+    padding-right: 4px;
 }
 
 .mud-treeview-dense {
@@ -110,11 +105,11 @@
     }
 
     .mud-treeview-item-content {
-        padding: 1px;
+        padding: 1px 4px;
     }
 
-    .mud-treeview-item-arrow button {
-        padding: 0;
+    .mud-treeview-item-arrow {
+        min-height: unset;
     }
 
     .mud-icon-button {

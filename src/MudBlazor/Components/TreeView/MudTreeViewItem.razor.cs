@@ -24,7 +24,7 @@ namespace MudBlazor
 
         protected string ContentClassname =>
         new CssBuilder("mud-treeview-item-content")
-          .AddClass("cursor-pointer", MudTreeRoot?.IsSelectable == true)
+          .AddClass("cursor-pointer", MudTreeRoot?.IsSelectable == true || MudTreeRoot?.ExpandOnClick == true && HasChild)
           .AddClass($"mud-treeview-item-selected", _isSelected)
         .Build();
 
