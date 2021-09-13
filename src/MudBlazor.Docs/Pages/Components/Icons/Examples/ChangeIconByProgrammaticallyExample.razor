@@ -1,0 +1,24 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudGrid Class="d-flex justify-space-between mud-width-full">
+    <MudIcon Class="ma-4" Icon="@selectedIcon" Color="Color.Primary" />
+
+    <MudButton Class="ma-4" Variant="Variant.Filled" Color="Color.Primary" OnClick="ChangeIcon">Change Icon</MudButton>
+</MudGrid>
+
+@code{
+
+    private string selectedIcon = Icons.Custom.Brands.MudBlazor;
+
+    private void ChangeIcon()
+    {
+        if (selectedIcon == Icons.Custom.Brands.MudBlazor)
+        {
+            selectedIcon = Icons.Custom.Brands.GitHub;
+        }
+        else
+        {
+            selectedIcon = Icons.Custom.Brands.MudBlazor;
+        }
+    }
+}

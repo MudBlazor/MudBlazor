@@ -12,12 +12,12 @@
          <MudPickerToolbar DisableToolbar="@DisableToolbar" Class="mud-picker-color-toolbar">
              @if(PickerVariant != PickerVariant.Static)
              { 
-                <MudIconButton Class="pa-1 mud-close-picker-button" Size="Size.Small" Color="Color.Inherit" Icon="@Icons.Material.Filled.Close" OnClick="@GetEventCallback()" />
+                <MudIconButton Class="pa-1 mud-close-picker-button" Size="Size.Small" Color="Color.Inherit" Icon="@CloseIcon" OnClick="@GetEventCallback()" />
              }
              <MudSpacer />
-             <MudIconButton Class="pa-1" Size="Size.Small" Color="GetButtonColor(ColorPickerView.Spectrum)" Icon="@Icons.Material.Filled.Tune" OnClick="(() => ChangeView(ColorPickerView.Spectrum))" />
-             <MudIconButton Class="pa-1 mx-1" Size="Size.Small" Color="GetButtonColor(ColorPickerView.Grid)" Icon="@Icons.Material.Filled.Apps" OnClick="(() => ChangeView(ColorPickerView.Grid))" />
-             <MudIconButton Class="pa-1" Size="Size.Small" Color="GetButtonColor(ColorPickerView.Palette)" Icon="@Icons.Material.Filled.Palette" OnClick="(() => ChangeView(ColorPickerView.Palette))" />
+             <MudIconButton Class="pa-1" Size="Size.Small" Color="GetButtonColor(ColorPickerView.Spectrum)" Icon="@SpectrumIcon" OnClick="(() => ChangeView(ColorPickerView.Spectrum))" />
+             <MudIconButton Class="pa-1 mx-1" Size="Size.Small" Color="GetButtonColor(ColorPickerView.Grid)" Icon="@GridIcon" OnClick="(() => ChangeView(ColorPickerView.Grid))" />
+             <MudIconButton Class="pa-1" Size="Size.Small" Color="GetButtonColor(ColorPickerView.Palette)" Icon="@PaletteIcon" OnClick="(() => ChangeView(ColorPickerView.Palette))" />
          </MudPickerToolbar>
         <MudPickerContent Class="mud-picker-color-content">
             @if(!DisableColorField)
@@ -126,7 +126,7 @@
                                 @if (!DisableModeSwitch)
                                 {
                                     <div class="mud-picker-control-switch">
-                                        <MudIconButton OnClick="ChangeMode" Icon="@Icons.Material.Filled.ImportExport" Class="pa-1 me-n1"></MudIconButton>
+                                        <MudIconButton OnClick="ChangeMode" Icon="@ImportExportIcon" Class="pa-1 me-n1"></MudIconButton>
                                     </div>
                                 }
                             </div>

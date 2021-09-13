@@ -76,11 +76,6 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// The short hint displayed in the input before the user enters a value.
-        /// </summary>
-        [Parameter] public string Placeholder { get; set; }
-
-        /// <summary>
         /// Invokes the callback when the Up arrow button is clicked when the input is set to <see cref="InputType.Number"/>.
         /// Note: use the optimized control <see cref="MudNumericField{T}"/> if you need to deal with numbers.
         /// </summary>
@@ -116,6 +111,21 @@ namespace MudBlazor
         /// Mouse wheel event for input.
         /// </summary>
         [Parameter] public EventCallback<WheelEventArgs> OnMouseWheel { get; set; }
+
+        /// <summary>
+        /// Custom clear icon.
+        /// </summary>
+        [Parameter] public string ClearIcon { get; set; } = Icons.Material.Filled.Clear;
+
+        /// <summary>
+        /// Custom numeric up icon.
+        /// </summary>
+        [Parameter] public string NumericUpIcon { get; set; } = Icons.Material.Filled.KeyboardArrowUp;
+
+        /// <summary>
+        /// Custom numeric down icon.
+        /// </summary>
+        [Parameter] public string NumericDownIcon { get; set; } = Icons.Material.Filled.KeyboardArrowDown;
 
         private Size GetButtonSize() => Margin == Margin.Dense ? Size.Small : Size.Medium;
 

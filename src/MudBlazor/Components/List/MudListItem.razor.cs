@@ -85,6 +85,15 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public Color AdornmentColor { get; set; } = Color.Default;
 
+        /// <summary>
+        /// Custom expand less icon.
+        /// </summary>
+        [Parameter] public string ExpandLessIcon { get; set; } = Icons.Material.Filled.ExpandLess;
+
+        /// <summary>
+        /// Custom expand more icon.
+        /// </summary>
+        [Parameter] public string ExpandMoreIcon { get; set; } = Icons.Material.Filled.ExpandMore;
 
         /// <summary>
         /// If true, the List Subheader will be indented.

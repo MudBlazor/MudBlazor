@@ -1,16 +1,18 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
-<MudTreeView Items="@TreeItems" MaxHeight="500px" Width="350px">
-    <ItemTemplate>
-        <MudTreeViewItem @bind-Expanded="@context.IsExpanded" Items="@context.TreeItems">
-            <Content>
-                <MudTreeViewItemToggleButton @bind-Expanded="@context.IsExpanded" Visible="@context.HasChild" />
-                <MudIcon Icon="@context.Icon" Class="ml-0 mr-2" Color="@Color.Default" />
-                <MudText>@context.Text</MudText>
-            </Content>
-        </MudTreeViewItem>
-    </ItemTemplate>
-</MudTreeView>
+<MudPaper Width="350px" MaxHeight="500px" Class="overflow-y-auto" Elevation="0">
+    <MudTreeView Items="@TreeItems">
+        <ItemTemplate>
+            <MudTreeViewItem @bind-Expanded="@context.IsExpanded" Items="@context.TreeItems">
+                <Content>
+                    <MudTreeViewItemToggleButton @bind-Expanded="@context.IsExpanded" Visible="@context.HasChild" />
+                    <MudIcon Icon="@context.Icon" Class="ml-0 mr-2" Color="@Color.Default" />
+                    <MudText>@context.Text</MudText>
+                </Content>
+            </MudTreeViewItem>
+        </ItemTemplate>
+    </MudTreeView>
+</MudPaper>
 
 @code {
 

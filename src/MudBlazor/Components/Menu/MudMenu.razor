@@ -4,6 +4,7 @@
 
 <MudElement HtmlTag="div" @attributes="UserAttributes" Class="@Classname" Style="@Style" 
      @onmouseenter="@(ActivationEvent== MouseEvent.MouseOver ? OpenMenu : null)"
+     @onmouseleave="@MouseLeave"
      oncontextmenu="@(ActivationEvent == MouseEvent.RightClick ? "return false;" : null)">
     @if (ActivatorContent != null)
     {
@@ -35,8 +36,9 @@
     @* The portal has to include  the cascading values inside, because it's not able to teletransport the cascade *@
     <MudPopover Open="@_isOpen" Class="@MenuClassname" MaxHeight="@MaxHeight" Style="@PopoverStyle" Direction="@Direction" OffsetX="@OffsetX" OffsetY="@OffsetY">
         <CascadingValue Value="@this">
-            <MudList Clickable="true" Dense="@Dense" 
-            @onmouseleave="@(ActivationEvent== MouseEvent.MouseOver ? CloseMenu : null)">
+            <MudList Clickable="@(_isOpen==false?false:true)" Dense="@Dense"  
+              @onmouseenter="@PopoverMouseEnter"
+              @onmouseleave="@(ActivationEvent== MouseEvent.MouseOver ? CloseMenu : null)">
                 @ChildContent
             </MudList>
         </CascadingValue>
