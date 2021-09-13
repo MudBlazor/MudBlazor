@@ -278,27 +278,12 @@ class MudPopover {
 
 window.mudPopover = new MudPopover();
 
-
-
 window.addEventListener('scroll', () => {
-
     blub();
 });
 
-//window.addEventListener('resize', () => {
-
-//    var items = window.mudPopover.getAllObservedContainers();
-
-//    for (let i = 0; i < items.length; i++) {
-//        const popoverNode = document.getElementById('popover-' + items[i]);
-
-//        if (popoverNode && popoverNode.parentNode) {
-//            const boundingRect = popoverNode.parentNode.getBoundingClientRect();
-//            popoverNode.style['left'] = (boundingRect.left) + 'px';
-//            popoverNode.style['top'] = (boundingRect.top) + 'px';
-//        }
-//    }
-
-//});
+window.addEventListener('resize', () => {
+    blub();
+});
 
 
