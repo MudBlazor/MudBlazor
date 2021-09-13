@@ -134,6 +134,11 @@ namespace MudBlazor
         [Parameter] public RenderFragment<T> ItemSelectedTemplate { get; set; }
 
         /// <summary>
+        /// Optional presentation template for disabled item
+        /// </summary>
+        [Parameter] public RenderFragment<T> ItemDisabledTemplate { get; set; }
+
+        /// <summary>
         /// On drop-down close override Text with selected Value. This makes it clear to the user
         /// which list value is currently selected and disallows incomplete values in Text.
         /// </summary>
@@ -144,6 +149,11 @@ namespace MudBlazor
         /// will be applied to the Value which allows to validate it and display an error message.
         /// </summary>
         [Parameter] public bool CoerceValue { get; set; }
+
+        /// <summary>
+        /// Function to be invoked when checking whether an item should be disabled or not
+        /// </summary>
+        [Parameter] public Func<T, bool> ItemDisabledFunc { get; set; }
 
         private bool _isOpen;
 
@@ -243,6 +253,7 @@ namespace MudBlazor
         private Timer _timer;
         private T[] _items;
         private int _selectedListItemIndex = 0;
+        private IList<int> _enabledItemIndices = new List<int>();
 
         protected override Task UpdateTextPropertyAsync(bool updateValue)
         {
@@ -275,7 +286,7 @@ namespace MudBlazor
                 StateHasChanged();
                 return;
             }
-            _selectedListItemIndex = 0;
+
             IEnumerable<T> searched_items = Array.Empty<T>();
             try
             {
@@ -288,6 +299,9 @@ namespace MudBlazor
             if (MaxItems.HasValue)
                 searched_items = searched_items.Take(MaxItems.Value);
             _items = searched_items.ToArray();
+
+            _enabledItemIndices = _items.Select((item, idx) => (item, idx)).Where(tuple => ItemDisabledFunc?.Invoke(tuple.item) != true).Select(tuple => tuple.idx).ToList();
+            _selectedListItemIndex = _enabledItemIndices.Any() ? _enabledItemIndices.First() : -1;
 
             if (_items?.Length == 0)
             {
@@ -349,10 +363,12 @@ namespace MudBlazor
                     await OnEnterKey();
                     break;
                 case "ArrowDown":
-                    await SelectNextItem(+1);
+                    var increment = _enabledItemIndices.ElementAtOrDefault(_enabledItemIndices.IndexOf(_selectedListItemIndex) + 1) - _selectedListItemIndex;
+                    await SelectNextItem(increment < 0 ? 1 : increment);
                     break;
                 case "ArrowUp":
-                    await SelectNextItem(-1);
+                    var decrement = _selectedListItemIndex - _enabledItemIndices.ElementAtOrDefault(_enabledItemIndices.IndexOf(_selectedListItemIndex) - 1);
+                    await SelectNextItem(-(decrement < 0 ? 1 : decrement));
                     break;
                 case "Escape":
                     IsOpen = false;
@@ -372,7 +388,7 @@ namespace MudBlazor
 
         private async Task SelectNextItem(int increment)
         {
-            if (_items == null || _items.Length == 0)
+            if (_items == null || _items.Length == 0 || !_enabledItemIndices.Any())
                 return;
             _selectedListItemIndex = Math.Max(0, Math.Min(_items.Length - 1, _selectedListItemIndex + increment));
             await ScrollToListItem(_selectedListItemIndex, increment);

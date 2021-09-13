@@ -485,5 +485,72 @@ namespace MudBlazor.UnitTests.Components
             autocomplete.Value.Should().Be("");
             autocomplete.Text.Should().Be("");
         }
+
+        [Test]
+        public async Task Autocomplete_Should_Not_Select_Disabled_Item()
+        {
+            // define some constant values
+            var alabamaString = "Alabama";
+            var alaskaString = "Alaska";
+            var americanSamoaString = "American Samoa";
+            var arkansasString = "Arkansas";
+            var listItemQuerySelector = "div.mud-list-item";
+            var selectedItemClassName = "mud-selected-item";
+
+            // create the component
+            var component = Context.RenderComponent<AutocompleteDisabledItemsTest>();
+
+            // get the elements needed for the test
+            var autocompleteComponent = component.FindComponent<MudAutocomplete<string>>();
+
+            // get the instance
+            var autocompleteInstance = autocompleteComponent.Instance;
+
+            // set is-disabled function
+            await component.InvokeAsync(() => autocompleteInstance.ItemDisabledFunc = s => s?.ToLower().Contains("o") == true);
+
+            // click to open the popup
+            autocompleteComponent.Find("input").Click();
+
+            // ensure popup is open
+            component.WaitForAssertion(() => autocompleteInstance.IsOpen.Should().BeTrue("Input has been focussed and should open the popup"));
+
+            var matchingStates = component.FindComponents<MudListItem>().ToArray();
+
+            // try clicking 'American Samoa'
+            matchingStates.Single(s => s.Markup.Contains(americanSamoaString)).Find(listItemQuerySelector).Click();
+            component.WaitForAssertion(() => autocompleteInstance.Value.Should().BeNullOrEmpty($"{americanSamoaString} should not be clickable."));
+
+            // try clicking 'Alaska'
+            matchingStates.Single(s => s.Markup.Contains(alaskaString)).Find(listItemQuerySelector).Click();
+            component.WaitForAssertion(() => autocompleteInstance.Value.Should().Be(alaskaString));
+
+            // reset search-string
+            autocompleteComponent.Find("input").Input(string.Empty);
+
+            // wait till popup is visible
+            component.WaitForAssertion(() => autocompleteInstance.IsOpen.Should().BeTrue());
+
+            // update found elements
+            matchingStates = component.FindComponents<MudListItem>().ToArray();
+
+            // ensure alabama is selected
+            component.WaitForAssertion(() => matchingStates.Single(s => s.Markup.Contains(alabamaString)).Find(listItemQuerySelector).ClassList.Should().Contain(selectedItemClassName, $"{alabamaString} should be selected/highlighted"));
+
+            // define the event-args for arrow-down
+            var arrowDownKeyboardEventArgs = new KeyboardEventArgs { Key = Key.Down.Value, Type = "keyup" };
+
+            // press down-key twice
+            component.WaitForAssertion(() => autocompleteInstance.OnKeyUp.InvokeAsync(arrowDownKeyboardEventArgs));
+            component.WaitForAssertion(() => autocompleteInstance.OnKeyUp.InvokeAsync(arrowDownKeyboardEventArgs));
+
+            Console.Write(component.Markup);
+
+            // reset found elements
+            matchingStates = component.FindComponents<MudListItem>().ToArray();
+
+            // ensure 'Arkansas' has been selected
+            component.WaitForAssertion(() => matchingStates.Single(s => s.Markup.Contains(arkansasString)).Find(listItemQuerySelector).ClassList.Should().Contain(selectedItemClassName, $"{arkansasString} should be selected/highlighted"));
+        }
     }
 }
