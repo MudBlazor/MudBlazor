@@ -358,6 +358,47 @@ namespace MudBlazor.UnitTests
             comp.WaitForAssertion(() => numericField.Value.Should().Be(1234.56));
         }
 
+        /// <summary>
+        /// MouseWheel actions should work
+        /// </summary>
+        [Test]
+        public async Task NumericFieldTest_MouseWheel()
+        {
+            var comp = Context.RenderComponent<MudNumericField<double>>();
+            comp.SetParam(x => x.Value, 1234.56);
+            var numericField = comp.Instance;
+
+            //MouseWheel up
+            comp.Find("input").MouseWheel(new WheelEventArgs() { DeltaY = -1, ShiftKey = true });
+            comp.WaitForAssertion(() => numericField.Value.Should().Be(1235.56));
+
+            //MouseWheel down
+            comp.Find("input").MouseWheel(new WheelEventArgs() { DeltaY = 1, ShiftKey = true });
+            comp.WaitForAssertion(() => numericField.Value.Should().Be(1234.56));
+
+            //Invert MouseWheel
+            numericField.InvertMouseWheel = true;
+
+            //MouseWheel up
+            comp.Find("input").MouseWheel(new WheelEventArgs() { DeltaY = -1, ShiftKey = true });
+            comp.WaitForAssertion(() => numericField.Value.Should().Be(1233.56));
+
+            //MouseWheel down
+            comp.Find("input").MouseWheel(new WheelEventArgs() { DeltaY = 1, ShiftKey = true });
+            comp.WaitForAssertion(() => numericField.Value.Should().Be(1234.56));
+
+            //Try with different step
+            numericField.Step = 0.5;
+
+            //MouseWheel up
+            comp.Find("input").MouseWheel(new WheelEventArgs() { DeltaY = -1, ShiftKey = true });
+            comp.WaitForAssertion(() => numericField.Value.Should().Be(1234.06));
+
+            //MouseWheel down
+            comp.Find("input").MouseWheel(new WheelEventArgs() { DeltaY = 1, ShiftKey = true });
+            comp.WaitForAssertion(() => numericField.Value.Should().Be(1234.56));
+        }
+
 
         /// <summary>
         /// NumericalField Formats input according to culture
