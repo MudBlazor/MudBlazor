@@ -12,14 +12,19 @@ namespace MudBlazor
             .AddClass("mud-tooltip-inline", Inline)
             .Build();
         protected string Classname => new CssBuilder("mud-tooltip")
-            .AddClass($"mud-tooltip-placement-{ConvertPlacement(Placement).ToDescriptionString()}")
-             .AddClass("mud-tooltip-visible", _isVisible)
+            .AddClass($"mud-tooltip-default", Color == Color.Default)
+            .AddClass($"mud-theme-{Color.ToDescriptionString()}", Color != Color.Default)
             .AddClass(Class)
             .Build();
 
 
         [CascadingParameter]
         public bool RightToLeft { get; set; }
+
+        /// <summary>
+        /// The color of the component. It supports the theme colors.
+        /// </summary>
+        [Parameter] public Color Color { get; set; } = Color.Default;
 
         /// <summary>
         /// Sets the text to be displayed inside the tooltip.
@@ -47,16 +52,6 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public Placement Placement { get; set; } = Placement.Bottom;
 
-        private Placement ConvertPlacement(Placement placement)
-        {
-            return placement switch
-            {
-                Placement.Start => RightToLeft ? Placement.Right : Placement.Left,
-                Placement.End => RightToLeft ? Placement.Left : Placement.Right,
-                _ => placement
-            };
-        }
-
         /// <summary>
         /// Child content of component.
         /// </summary>
@@ -74,13 +69,27 @@ namespace MudBlazor
 
         private bool _isVisible;
         public void HandleMouseOver() => _isVisible = true;
-        private void HandleMouseOut() => _isVisible = false;
+        //private void HandleMouseOut() => _isVisible = false;
 
+        private void HandleMouseOut() => _isVisible = true;
 
+        private Direction Direction { get; set; } = Direction.Bottom;
 
         protected string GetTimeDelay()
         {
             return $"transition-delay: {Delay.ToString(CultureInfo.InvariantCulture)}ms;{Style}";
+        }
+
+        private Direction ConvertPlacement()
+        {
+            return Placement switch
+            {
+                Placement.Left => RightToLeft ? Direction.End : Direction.Start,
+                Placement.Right => RightToLeft ? Direction.Start : Direction.End,
+                Placement.Top => Direction.Top,
+                Placement.Bottom => Direction.Bottom,
+                _ => Direction
+            };
         }
     }
 }
