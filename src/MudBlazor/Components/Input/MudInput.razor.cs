@@ -112,6 +112,21 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public EventCallback<WheelEventArgs> OnMouseWheel { get; set; }
 
+        /// <summary>
+        /// Custom clear icon.
+        /// </summary>
+        [Parameter] public string ClearIcon { get; set; } = Icons.Material.Filled.Clear;
+
+        /// <summary>
+        /// Custom numeric up icon.
+        /// </summary>
+        [Parameter] public string NumericUpIcon { get; set; } = Icons.Material.Filled.KeyboardArrowUp;
+
+        /// <summary>
+        /// Custom numeric down icon.
+        /// </summary>
+        [Parameter] public string NumericDownIcon { get; set; } = Icons.Material.Filled.KeyboardArrowDown;
+
         private Size GetButtonSize() => Margin == Margin.Dense ? Size.Small : Size.Medium;
 
         private bool _showClearable;

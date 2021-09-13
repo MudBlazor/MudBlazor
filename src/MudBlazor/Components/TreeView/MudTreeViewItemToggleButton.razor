@@ -4,7 +4,7 @@
 <div class="mud-treeview-item-arrow">
     @if (Visible)
     {
-        <MudIconButton OnClick="@ToggleAsync" Icon="@(Loading ? Icons.Material.Filled.Loop : ExpandedIcon)" Class="@Classname"></MudIconButton>
+        <MudIconButton OnClick="@ToggleAsync" Icon="@(Loading ? LoadingIcon : ExpandedIcon)" Class="@Classname"></MudIconButton>
     }
 </div>
  
@@ -28,8 +28,16 @@
     [Parameter]
     public EventCallback<bool> ExpandedChanged { get; set; }
 
+    /// <summary>
+    /// Custom expanded icon.
+    /// </summary>
     [Parameter]
     public string ExpandedIcon { get; set; } = Icons.Material.Filled.ChevronRight;
+
+    /// <summary>
+    /// Custom loading icon.
+    /// </summary>
+    [Parameter] public string LoadingIcon { get; set; } = Icons.Material.Filled.Loop;
 
     private Task ToggleAsync()
     {

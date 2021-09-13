@@ -103,6 +103,11 @@ namespace MudBlazor
         [Parameter] public string Icon { get; set; }
 
         /// <summary>
+        /// Custom checked icon.
+        /// </summary>
+        [Parameter] public string CheckedIcon { get; set; } = Icons.Material.Filled.Check;
+
+        /// <summary>
         /// The color of the icon.
         /// </summary>
         [Parameter] public Color IconColor { get; set; } = Color.Inherit;
