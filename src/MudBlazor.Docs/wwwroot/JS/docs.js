@@ -146,22 +146,72 @@ blubSingle = function (popoverNode) {
         let left = boundingRect.left;
         let top = boundingRect.top;
 
-        if (popoverNode.classList.contains('mud-popover-bottom')) {
-            top = boundingRect.top + boundingRect.height;
-        }
-        else if (popoverNode.classList.contains('mud-popover-top')) {
-            top = boundingRect.top - selfRect.height;
+        //if (popoverNode.classList.contains('mud-popover-bottom')) {
+        //    top = boundingRect.top + boundingRect.height;
+        //}
+        //else if (popoverNode.classList.contains('mud-popover-top')) {
+        //    top = boundingRect.top - selfRect.height;
+        //}
+
+        //if (popoverNode.classList.contains('mud-popover-left')) {
+        //    left = boundingRect.left - selfRect.width;
+        //}
+        //else if (popoverNode.classList.contains('mud-popover-right')) {
+        //    left = boundingRect.left + boundingRect.width;
+        //}
+
+        if (popoverNode.classList.contains('mud-popover-left-end')) {
+            top = boundingRect.top + boundingRect.height - selfRect.height;
+            left = boundingRect.left - selfRect.width;
+        } else if (popoverNode.classList.contains('mud-popover-left-start')) {
+            top = boundingRect.top;
+            left = boundingRect.left - selfRect.width;
+        } else if (popoverNode.classList.contains('mud-popover-left')) {
+            top = (boundingRect.top + boundingRect.height / 2) - (selfRect.height / 2);
+            left = boundingRect.left - selfRect.width;
+
+
+        } else if (popoverNode.classList.contains('mud-popover-right-end')) {
+            top = boundingRect.top + boundingRect.height - selfRect.height;
+            left = boundingRect.left + boundingRect.width;
+        } else if (popoverNode.classList.contains('mud-popover-right-start')) {
+            top = boundingRect.top;
+            left = boundingRect.left + boundingRect.width;
+        } else if (popoverNode.classList.contains('mud-popover-right')) {
+            top = (boundingRect.top + boundingRect.height / 2) - (selfRect.height / 2);
+            left = boundingRect.left + boundingRect.width;
         }
 
-        if (popoverNode.classList.contains('mud-popover-left')) {
-            left = boundingRect.left - selfRect.width;
+        else if (popoverNode.classList.contains('mud-popover-top-end')) {
+            top = boundingRect.top - selfRect.height;
+            left = boundingRect.left + boundingRect.width - selfRect.width;
+        } else if (popoverNode.classList.contains('mud-popover-top-start')) {
+            top = boundingRect.top - selfRect.height;
+            left = boundingRect.left;
+        } else if (popoverNode.classList.contains('mud-popover-top')) {
+            top = boundingRect.top - selfRect.height;
+            left = boundingRect.left + boundingRect.width / 2 - selfRect.width / 2;
         }
-        else if (popoverNode.classList.contains('mud-popover-right')) {
-            left = boundingRect.left + boundingRect.width;
+
+        else if (popoverNode.classList.contains('mud-popover-bottom-end')) {
+            top = boundingRect.top + boundingRect.height;
+            left = boundingRect.left + boundingRect.width - selfRect.width;
+        } else if (popoverNode.classList.contains('mud-popover-bottom-start')) {
+            top = boundingRect.top + boundingRect.height;
+            left = boundingRect.left;
+        } else if (popoverNode.classList.contains('mud-popover-bottom')) {
+            top = boundingRect.top + boundingRect.height;
+            left = boundingRect.left + boundingRect.width / 2 - selfRect.width / 2;
+        }
+
+        else if (popoverNode.classList.contains('mud-popover-center')) {
+            top = boundingRect.top + boundingRect.height / 2 - selfRect.height / 2;
+            left = boundingRect.left + boundingRect.width / 2 - selfRect.width / 2;
         }
 
         popoverNode.style['left'] = (left) + 'px';
         popoverNode.style['top'] = (top) + 'px';
+
         if (popoverNode.classList.contains('mud-popover-relative-width')) {
             popoverNode.style['max-width'] = (boundingRect.width) + 'px';
         }
@@ -209,7 +259,7 @@ class MudPopover {
         }
 
         const popoverNode = document.getElementById('popover-' + id);
-       
+
         if (popoverNode && popoverNode.parentNode) {
 
             blubSingle(popoverNode);

@@ -27,6 +27,8 @@ namespace MudBlazor
         [Description("bottom")]
         Bottom,
         [Description("bottom-end")]
-        BottomEnd
+        BottomEnd,
+        [Description("center")]
+        Center
     }
 }
