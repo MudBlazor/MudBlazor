@@ -41,6 +41,11 @@ namespace MudBlazor
         [Parameter] public Direction Direction { get; set; } = Direction.Bottom;
 
         /// <summary>
+        /// 
+        /// </summary>
+        [Parameter] public bool Fixed { get; set; }
+
+        /// <summary>
         /// If true, the Autocomplete menu will open either before or after the input (left/right).
         /// </summary>
         [Parameter] public bool OffsetX { get; set; }

@@ -20,7 +20,7 @@
                           Placeholder="@Placeholder" Immediate="true"
                           InputMode="@InputMode" Pattern="@Pattern"
                           T="string" />
-                <MudPopover Open="@IsOpen" MaxHeight="@MaxHeight" Direction="@Direction" OffsetX="@OffsetX" OffsetY="@OffsetY" Class="@PopoverClass" RelativeWidth="true">
+                <MudPopover Open="@IsOpen" Fixed="@Fixed" MaxHeight="@MaxHeight" Direction="@Direction" OffsetX="@OffsetX" OffsetY="@OffsetY" Class="@PopoverClass" RelativeWidth="true">
                     @if (_items != null && _items.Length != 0)
                     {
                         @*this must be the real scroll container, not the Popover, hence the maxheight*@

@@ -13,6 +13,7 @@ namespace MudBlazor
 
         protected string PopoverClass =>
            new CssBuilder("mud-popover")
+            .AddClass("mud-popover-fixed", Fixed)
             .AddClass("mud-popover-open", Open)
             .AddClass($"mud-popover-{Placement.ToDescriptionString()}")
             .AddClass("mud-popover-relative-width", RelativeWidth)
@@ -64,6 +65,11 @@ namespace MudBlazor
         /// If true, the popover is visible.
         /// </summary>
         [Parameter] public bool Open { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        [Parameter] public bool Fixed { get; set; }
 
         /// <summary>
         /// Sets the direction the popover will start from relative to its parent.

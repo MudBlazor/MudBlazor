@@ -6,6 +6,10 @@
     position: absolute;
     transition: opacity .5s;
 
+    &.mud-popover-fixed {
+        position:fixed;
+    }
+
     &.mud-popover-relative-width {
         width: 100%;
     }
