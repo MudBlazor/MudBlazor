@@ -1,10 +1,7 @@
-﻿.mud-badge, .mud-badge-badge {
-    display: inline-block;
-    line-height: 1;
-}
-
+﻿
 .mud-badge {
     position: relative;
+    display: inline-block;
 
     .mud-badge-wrapper {
         flex: 0 1;
@@ -23,6 +20,7 @@
             min-width: 20px;
             padding: 4px 6px;
             pointer-events: auto;
+            line-height: 1;
             position: absolute;
             text-align: center;
             text-indent: 0;
