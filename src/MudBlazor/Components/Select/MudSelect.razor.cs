@@ -11,7 +11,7 @@ namespace MudBlazor
 {
     public partial class MudSelect<T> : MudBaseInput<T>, IMudSelect
     {
-        private HashSet<T> _selectedValues;
+        private ICollection<T> _selectedValues;
         private bool _dense;
         private string multiSelectionText;
         private bool? _selectAllChecked;
@@ -69,7 +69,7 @@ namespace MudBlazor
         /// <summary>
         /// Fires when SelectedValues changes.
         /// </summary>
-        [Parameter] public EventCallback<HashSet<T>> SelectedValuesChanged { get; set; }
+        [Parameter] public EventCallback<ICollection<T>> SelectedValuesChanged { get; set; }
 
         /// <summary>
         /// Function to define a customized multiselection text.
@@ -85,7 +85,7 @@ namespace MudBlazor
         /// Set of selected values. If MultiSelection is false it will only ever contain a single value. This property is two-way bindable.
         /// </summary>
         [Parameter]
-        public HashSet<T> SelectedValues
+        public ICollection<T> SelectedValues
         {
             get
             {
@@ -224,7 +224,7 @@ namespace MudBlazor
             }
         }
 
-        internal event Action<HashSet<T>> SelectionChangedFromOutside;
+        internal event Action<ICollection<T>> SelectionChangedFromOutside;
 
         /// <summary>
         /// If true, multiple values can be selected via checkboxes which are automatically shown in the dropdown

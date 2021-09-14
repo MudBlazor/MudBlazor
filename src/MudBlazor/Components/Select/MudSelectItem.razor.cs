@@ -35,7 +35,7 @@ namespace MudBlazor
 
         internal MudSelect<T> MudSelect => (MudSelect<T>)IMudSelect;
 
-        private void OnUpdateSelectionStateFromOutside(HashSet<T> selection)
+        private void OnUpdateSelectionStateFromOutside(ICollection<T> selection)
         {
             if (selection == null)
                 return;

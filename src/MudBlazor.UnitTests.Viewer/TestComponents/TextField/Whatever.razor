@@ -1,0 +1,86 @@
+﻿<MudTable Items="_models"
+          CanCancelEdit="@true"
+          @bind-SelectedItem="_selected"
+          RowEditPreview="Backup"
+          RowEditCancel="Reset"
+          RowEditCommit="Save">
+    <HeaderContent>
+        <MudTh>Number</MudTh>
+        <MudTh>Seasons</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="Number">@context.Number</MudTd>
+        <MudTd DataLabel="Seasons">@string.Join(", ", context.Seasons)</MudTd>
+    </RowTemplate>
+    <RowEditingTemplate>
+        <MudTd DataLabel="Number">@context.Number</MudTd>
+        <MudTd DataLabel="Seasons">
+            <MudSelect T="Season" MultiSelection="true" @bind-SelectedValues="@context.Seasons">
+                @foreach (Season season in Enum.GetValues(typeof(Season)))
+                {
+                    <MudSelectItem Value="@season">@season</MudSelectItem>
+                }
+            </MudSelect>
+        </MudTd>
+    </RowEditingTemplate>
+</MudTable>
+
+@code {
+
+    private enum Season
+    {
+        Any = 0,
+        Spring = 1,
+        Summer = 2,
+        Autumn = 3,
+        Winter = 4,
+    }
+
+    private class Model
+    {
+        public int Number { get; set; }
+        public ICollection<Season> Seasons { get; set; }
+    }
+
+    private ICollection<Model> _models;
+    private Model _selected;
+    private Model _backup;
+
+    protected override void OnInitialized()
+    {
+        _models = new List<Model>
+        {
+            new Model { Number = 1, Seasons = new HashSet<Season> { Season.Any } },
+            new Model { Number = 2, Seasons = new HashSet<Season> { Season.Spring, Season.Summer } },
+            new Model { Number = 3, Seasons = new HashSet<Season> { Season.Autumn, Season.Winter } }
+        };
+    }
+
+    private void Backup(object element)
+    {
+        var model = (Model)element;
+
+        _backup = new Model
+        {
+            Number = model.Number,
+            Seasons = model.Seasons
+        };
+    }
+
+    private void Save(object element)
+    {
+        var model = (Model)element;
+
+        var mdl = _models.SingleOrDefault(x => x.Number == model.Number);
+        mdl.Seasons = model.Seasons;
+    }
+
+    private void Reset(object element)
+    {
+        var model = (Model)element;
+
+        model.Number = _backup.Number;
+        model.Seasons = _backup.Seasons;
+    }
+
+}
