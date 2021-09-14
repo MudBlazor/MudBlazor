@@ -13,10 +13,12 @@ namespace MudBlazor
             .Build();
         protected string Classname => new CssBuilder("mud-tooltip")
             .AddClass($"mud-tooltip-default", Color == Color.Default)
+            .AddClass($"mud-tooltip-{Placement.ToDescriptionString()}")
+            .AddClass($"mud-tooltip-arrow", Arrow)
+            .AddClass($"mud-border-{Color.ToDescriptionString()}", Arrow && Color != Color.Default)
             .AddClass($"mud-theme-{Color.ToDescriptionString()}", Color != Color.Default)
             .AddClass(Class)
             .Build();
-
 
         [CascadingParameter]
         public bool RightToLeft { get; set; }
@@ -30,6 +32,11 @@ namespace MudBlazor
         /// Sets the text to be displayed inside the tooltip.
         /// </summary>
         [Parameter] public string Text { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        [Parameter] public bool Arrow { get; set; }
 
         /// <summary>
         /// Changes the default transition delay in milliseconds.
@@ -65,31 +72,17 @@ namespace MudBlazor
         /// <summary>
         /// Determines if this component should be inline with it's surrounding (default) or if it should behave like a block element.
         /// </summary>
-        [Parameter] public Boolean Inline { get; set; } = true;
+        [Parameter] public bool Inline { get; set; } = true;
 
         private bool _isVisible;
         public void HandleMouseOver() => _isVisible = true;
-        //private void HandleMouseOut() => _isVisible = false;
-
-        private void HandleMouseOut() => _isVisible = true;
+        private void HandleMouseOut() => _isVisible = false;
 
         private Direction Direction { get; set; } = Direction.Bottom;
 
         protected string GetTimeDelay()
         {
             return $"transition-delay: {Delay.ToString(CultureInfo.InvariantCulture)}ms;{Style}";
-        }
-
-        private Direction ConvertPlacement()
-        {
-            return Placement switch
-            {
-                Placement.Left => RightToLeft ? Direction.End : Direction.Start,
-                Placement.Right => RightToLeft ? Direction.Start : Direction.End,
-                Placement.Top => Direction.Top,
-                Placement.Bottom => Direction.Bottom,
-                _ => Direction
-            };
         }
     }
 }
