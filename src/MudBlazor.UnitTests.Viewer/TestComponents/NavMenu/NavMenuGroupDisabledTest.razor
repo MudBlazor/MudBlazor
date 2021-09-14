@@ -7,11 +7,9 @@
              <MudNavLink Href="/Admin/Upload" Icon="@Icons.Filled.Security" IconColor="Color.Info">Upload Template</MudNavLink>
              <MudNavLink Href="/MailTemplate" Icon="@Icons.Filled.Security" Disabled="true">Mail Template</MudNavLink>
         </MudNavGroup>
-   
 </MudNavMenu>
 
 <MudCheckBox  @bind-Checked="@IsGroupDisabled" >Disable Group</MudCheckBox>
-
 
 @code {
 	public bool IsGroupDisabled {get;set;} = false;
