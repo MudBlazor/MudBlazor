@@ -9,17 +9,23 @@ namespace MudBlazor
         new CssBuilder("mud-nav-group")
           .AddClass(Class)
           .AddClass($"mud-nav-group-disabled", Disabled)
-        .Build();
+          .Build();
 
         protected string ButtonClassname =>
         new CssBuilder("mud-nav-link")
           .AddClass($"mud-ripple", !DisableRipple)
           .AddClass("mud-expanded", Expanded)
-        .Build();
+          .Build();
 
         protected string IconClassname =>
         new CssBuilder("mud-nav-link-icon")
           .AddClass($"mud-nav-link-icon-default", IconColor == Color.Default)
+          .Build();
+
+        protected string ExpandIconClassname =>
+        new CssBuilder("mud-nav-link-expand-icon")
+          .AddClass($"mud-transform", Expanded && !Disabled)
+          .AddClass($"mud-transform-disabled", Expanded && Disabled)
           .Build();
 
         [Parameter] public string Title { get; set; }

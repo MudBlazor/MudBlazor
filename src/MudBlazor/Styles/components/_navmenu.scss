@@ -34,23 +34,7 @@
 }
 
 .mud-nav-group-disabled {
-    color: var(--mud-palette-text-disabled) !important;
-    cursor: default;
-    pointer-events: none;
-
-    & .mud-nav-link-text {
-        color: var(--mud-palette-text-disabled) !important;
-        cursor: default;
-        pointer-events: none;
-    }
-
-    & .mud-nav-link-expand-icon {
-        color: var(--mud-palette-text-disabled) !important;
-        cursor: default;
-        pointer-events: none;
-    }
-
-    & .mud-nav-link-icon {
+    &, .mud-nav-link-text, .mud-nav-link-expand-icon, .mud-nav-link-icon {
         color: var(--mud-palette-text-disabled) !important;
         cursor: default;
         pointer-events: none;
