@@ -261,6 +261,12 @@ blub = function (classSelector = null) {
     }
 }
 
+blubSingleWithId = function (target) {
+    const id = target.id.substr(15);
+    const popoverNode = document.getElementById('popover-' + id);
+    blubSingle(popoverNode);
+}
+
 
 class MudPopover {
 
@@ -273,9 +279,7 @@ class MudPopover {
         for (const mutation of mutationsList) {
             if (mutation.type === 'attributes') {
                 const target = mutation.target
-                const id = target.id.substr(15);
-                const popoverNode = document.getElementById('popover-' + id);
-                blubSingle(popoverNode);
+                blubSingleWithId(target);
             }
         }
     }
@@ -295,7 +299,7 @@ class MudPopover {
 
         const popoverNode = document.getElementById('popover-' + id);
         const popoverContentNode = document.getElementById('popovercontent-' + id);
-        if (popoverNode && popoverNode.parentNode) {
+        if (popoverNode && popoverNode.parentNode && popoverContentNode) {
 
             blubSingle(popoverNode);
 
@@ -321,9 +325,20 @@ class MudPopover {
 
             resizeObserver.observe(popoverNode.parentNode);
 
+            const contentNodeObserver = new ResizeObserver(entries => {
+                for (let entry of entries) {
+                    var target = entry.target;
+                    blubSingleWithId(target);
+                }
+            });
+
+
+            contentNodeObserver.observe(popoverContentNode);
+
             this.map[id] = {
                 mutationObserver: observer,
                 resizeObserver: resizeObserver,
+                contentNodeObserver: contentNodeObserver
             };
 
         }
