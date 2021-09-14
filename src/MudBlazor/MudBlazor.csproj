@@ -89,7 +89,6 @@
 
   <!--Dont Include in build output-->
   <ItemGroup>
-    <Content Remove="compilerconfig.json" />
     <Content Remove="excubowebcompiler.json" />
     <Content Remove="**/*/DoNotRemove.txt" />
   </ItemGroup>
