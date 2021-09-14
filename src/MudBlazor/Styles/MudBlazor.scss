@@ -1,7 +1,7 @@
 /*!
  * MudBlazor (https://mudblazor.com/)
  * Copyright (c) 2020-2021 Jonny Larsson
- * Licensed under MIT (https://github.com/Garderoben/MudBlazor/blob/master/LICENSE)
+ * Licensed under MIT (https://github.com/MudBlazor/MudBlazor/blob/master/LICENSE)
  */
 
 @import 'abstracts/_colors';
@@ -82,6 +82,8 @@
 @import 'utilities/_visibility';
 @import 'utilities/_rtl';
 @import 'utilities/_zindex';
+@import 'utilities/_cursor';
+@import 'utilities/_overflow';
 
 
 @import 'layout/_appbar';

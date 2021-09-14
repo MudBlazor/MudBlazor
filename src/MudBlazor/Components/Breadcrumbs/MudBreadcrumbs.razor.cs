@@ -31,6 +31,11 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public byte? MaxItems { get; set; }
 
+        /// <summary>
+        /// Custom expander icon.
+        /// </summary>
+        [Parameter] public string ExpanderIcon { get; set; } = Icons.Material.Filled.SettingsEthernet;
+
         public bool Collapsed { get; private set; } = true;
 
         private static string GetItemClassname(BreadcrumbItem item)

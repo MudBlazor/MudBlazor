@@ -82,6 +82,16 @@ namespace MudBlazor
         [Parameter] public Margin Margin { get; set; } = Margin.None;
 
         /// <summary>
+        /// The short hint displayed in the input before the user enters a value.
+        /// </summary>
+        [Parameter] public string Placeholder { get; set; }
+
+        /// <summary>
+        /// If string has value the label text will be displayed in the input, and scaled down at the top if the input has value.
+        /// </summary>
+        [Parameter] public string Label { get; set; }
+
+        /// <summary>
         /// If true the input will focus automatically
         /// </summary>
         [Parameter] public bool AutoFocus { get; set; }
