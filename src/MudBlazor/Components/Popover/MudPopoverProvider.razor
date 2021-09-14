@@ -3,7 +3,7 @@
 <div class="mud-popover-provider">
 	@foreach(var handler in Service.Handlers)
 	{
-		<div id="@($"popovercontent-{handler.Id}")" @attributes="@handler.UserAttributes" class="@handler.Class" style="@handler.Style">
+		<div @key="handler.Id" id="@($"popovercontent-{handler.Id}")" @attributes="@handler.UserAttributes" class="@handler.Class" style="@handler.Style">
 			@handler.Fragment
 		</div>
 	}

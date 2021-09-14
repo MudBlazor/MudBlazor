@@ -138,12 +138,22 @@ var mudBlazorDocs = {
 
 //window.mudportal2 = new MudPortal2();
 
-blubSingle = function (popoverNode) {
     
+blubSingle = function (popoverNode,classSelector) {
 
     if (popoverNode && popoverNode.parentNode) {
         const id = popoverNode.id.substr(8);
         const popoverContentNode = document.getElementById('popovercontent-' + id);
+        if (!popoverContentNode) {
+            console.error("something");
+            return;
+        }
+
+        if (classSelector) {
+            if (popoverContentNode.classList.contains(classSelector) == false) {
+                return;
+            }
+        }
         const boundingRect = popoverNode.parentNode.getBoundingClientRect();
         const selfRect = popoverContentNode.getBoundingClientRect();
 
@@ -213,21 +223,30 @@ blubSingle = function (popoverNode) {
             left = boundingRect.left + boundingRect.width / 2 - selfRect.width / 2;
         }
 
-        popoverContentNode.style['left'] = (left + window.scrollX ) + 'px';
-        popoverContentNode.style['top'] = (top + window.scrollY) + 'px';
+        let offsetX = window.scrollX;
+        let offsetY = window.scrollY;
+        if (popoverContentNode.classList.contains('mud-popover-fixed')) {
+            offsetX = offsetY = 0;
+        }
+
+        popoverContentNode.style['left'] = (left + offsetX) + 'px';
+        popoverContentNode.style['top'] = (top + offsetY) + 'px';
 
         if (popoverContentNode.classList.contains('mud-popover-relative-width')) {
             popoverContentNode.style['max-width'] = (boundingRect.width) + 'px';
         }
     }
+    else {
+        console.error('something else');
+    }
 }
 
-blub = function () {
+blub = function (classSelector = null) {
     var items = window.mudPopover.getAllObservedContainers();
 
     for (let i = 0; i < items.length; i++) {
         const popoverNode = document.getElementById('popover-' + items[i]);
-        blubSingle(popoverNode);
+        blubSingle(popoverNode, classSelector);
 
 
     }
@@ -264,9 +283,10 @@ class MudPopover {
             }
         }
 
+
         const popoverNode = document.getElementById('popover-' + id);
         const popoverContentNode = document.getElementById('popovercontent-' + id);
-        if (popoverNode && popoverNode.parentNode && popoverContentNode) {
+        if (popoverNode && popoverNode.parentNode) {
 
             blubSingle(popoverNode);
 
@@ -327,9 +347,9 @@ class MudPopover {
 
 window.mudPopover = new MudPopover();
 
-//window.addEventListener('scroll', () => {
-//    blub();
-//});
+window.addEventListener('scroll', () => {
+    blub('mud-popover-fixed');
+});
 
 window.addEventListener('resize', () => {
     blub();
