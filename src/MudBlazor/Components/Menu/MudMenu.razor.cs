@@ -15,12 +15,6 @@ namespace MudBlazor
         .AddClass(Class)
        .Build();
 
-        protected string MenuClassname =>
-            new CssBuilder("mud-menu-container")
-            .AddClass("mud-menu-fullwidth", FullWidth)
-            .AddClass(PopoverClass)
-           .Build();
-
         private bool _isOpen;
         private bool _isMouseOver = false;
 
