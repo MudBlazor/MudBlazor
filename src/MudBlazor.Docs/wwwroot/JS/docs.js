@@ -139,9 +139,13 @@ var mudBlazorDocs = {
 //window.mudportal2 = new MudPortal2();
 
 blubSingle = function (popoverNode) {
+    
+
     if (popoverNode && popoverNode.parentNode) {
+        const id = popoverNode.id.substr(8);
+        const popoverContentNode = document.getElementById('popovercontent-' + id);
         const boundingRect = popoverNode.parentNode.getBoundingClientRect();
-        const selfRect = popoverNode.getBoundingClientRect();
+        const selfRect = popoverContentNode.getBoundingClientRect();
 
         let left = boundingRect.left;
         let top = boundingRect.top;
@@ -160,60 +164,60 @@ blubSingle = function (popoverNode) {
         //    left = boundingRect.left + boundingRect.width;
         //}
 
-        if (popoverNode.classList.contains('mud-popover-left-end')) {
+        if (popoverContentNode.classList.contains('mud-popover-left-end')) {
             top = boundingRect.top + boundingRect.height - selfRect.height;
             left = boundingRect.left - selfRect.width;
-        } else if (popoverNode.classList.contains('mud-popover-left-start')) {
+        } else if (popoverContentNode.classList.contains('mud-popover-left-start')) {
             top = boundingRect.top;
             left = boundingRect.left - selfRect.width;
-        } else if (popoverNode.classList.contains('mud-popover-left')) {
+        } else if (popoverContentNode.classList.contains('mud-popover-left')) {
             top = (boundingRect.top + boundingRect.height / 2) - (selfRect.height / 2);
             left = boundingRect.left - selfRect.width;
 
 
-        } else if (popoverNode.classList.contains('mud-popover-right-end')) {
+        } else if (popoverContentNode.classList.contains('mud-popover-right-end')) {
             top = boundingRect.top + boundingRect.height - selfRect.height;
             left = boundingRect.left + boundingRect.width;
-        } else if (popoverNode.classList.contains('mud-popover-right-start')) {
+        } else if (popoverContentNode.classList.contains('mud-popover-right-start')) {
             top = boundingRect.top;
             left = boundingRect.left + boundingRect.width;
-        } else if (popoverNode.classList.contains('mud-popover-right')) {
+        } else if (popoverContentNode.classList.contains('mud-popover-right')) {
             top = (boundingRect.top + boundingRect.height / 2) - (selfRect.height / 2);
             left = boundingRect.left + boundingRect.width;
         }
 
-        else if (popoverNode.classList.contains('mud-popover-top-end')) {
+        else if (popoverContentNode.classList.contains('mud-popover-top-end')) {
             top = boundingRect.top - selfRect.height;
             left = boundingRect.left + boundingRect.width - selfRect.width;
-        } else if (popoverNode.classList.contains('mud-popover-top-start')) {
+        } else if (popoverContentNode.classList.contains('mud-popover-top-start')) {
             top = boundingRect.top - selfRect.height;
             left = boundingRect.left;
-        } else if (popoverNode.classList.contains('mud-popover-top')) {
+        } else if (popoverContentNode.classList.contains('mud-popover-top')) {
             top = boundingRect.top - selfRect.height;
             left = boundingRect.left + boundingRect.width / 2 - selfRect.width / 2;
         }
 
-        else if (popoverNode.classList.contains('mud-popover-bottom-end')) {
+        else if (popoverContentNode.classList.contains('mud-popover-bottom-end')) {
             top = boundingRect.top + boundingRect.height;
             left = boundingRect.left + boundingRect.width - selfRect.width;
-        } else if (popoverNode.classList.contains('mud-popover-bottom-start')) {
+        } else if (popoverContentNode.classList.contains('mud-popover-bottom-start')) {
             top = boundingRect.top + boundingRect.height;
             left = boundingRect.left;
-        } else if (popoverNode.classList.contains('mud-popover-bottom')) {
+        } else if (popoverContentNode.classList.contains('mud-popover-bottom')) {
             top = boundingRect.top + boundingRect.height;
             left = boundingRect.left + boundingRect.width / 2 - selfRect.width / 2;
         }
 
-        else if (popoverNode.classList.contains('mud-popover-center')) {
+        else if (popoverContentNode.classList.contains('mud-popover-center')) {
             top = boundingRect.top + boundingRect.height / 2 - selfRect.height / 2;
             left = boundingRect.left + boundingRect.width / 2 - selfRect.width / 2;
         }
 
-        popoverNode.style['left'] = (left) + 'px';
-        popoverNode.style['top'] = (top) + 'px';
+        popoverContentNode.style['left'] = (left + window.scrollX ) + 'px';
+        popoverContentNode.style['top'] = (top + window.scrollY) + 'px';
 
-        if (popoverNode.classList.contains('mud-popover-relative-width')) {
-            popoverNode.style['max-width'] = (boundingRect.width) + 'px';
+        if (popoverContentNode.classList.contains('mud-popover-relative-width')) {
+            popoverContentNode.style['max-width'] = (boundingRect.width) + 'px';
         }
     }
 }
@@ -241,7 +245,9 @@ class MudPopover {
         for (const mutation of mutationsList) {
             if (mutation.type === 'attributes') {
                 const target = mutation.target
-                blubSingle(target);
+                const id = target.id.substr(15);
+                const popoverNode = document.getElementById('popover-' + id);
+                blubSingle(popoverNode);
             }
         }
     }
@@ -259,8 +265,8 @@ class MudPopover {
         }
 
         const popoverNode = document.getElementById('popover-' + id);
-
-        if (popoverNode && popoverNode.parentNode) {
+        const popoverContentNode = document.getElementById('popovercontent-' + id);
+        if (popoverNode && popoverNode.parentNode && popoverContentNode) {
 
             blubSingle(popoverNode);
 
@@ -269,7 +275,7 @@ class MudPopover {
             const observer = new MutationObserver(this.callback.bind(this, id));
 
             // Start observing the target node for configured mutations
-            observer.observe(popoverNode, config);
+            observer.observe(popoverContentNode, config);
 
             const resizeObserver = new ResizeObserver(entries => {
                 for (let entry of entries) {
@@ -321,9 +327,9 @@ class MudPopover {
 
 window.mudPopover = new MudPopover();
 
-window.addEventListener('scroll', () => {
-    blub();
-});
+//window.addEventListener('scroll', () => {
+//    blub();
+//});
 
 window.addEventListener('resize', () => {
     blub();

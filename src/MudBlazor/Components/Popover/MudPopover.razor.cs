@@ -9,11 +9,7 @@ namespace MudBlazor
 {
     public partial class MudPopover : MudComponentBase, IAsyncDisposable
     {
-        [Inject] public IJSRuntime JsInterop { get; set; }
-
-        private Boolean _connected; 
-
-        private Guid _id = Guid.NewGuid();
+        [Inject] public IMudPopoverService Service { get; set; }
 
         protected string PopoverClass =>
            new CssBuilder("mud-popover")
@@ -103,22 +99,32 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public RenderFragment ChildContent { get; set; }
 
+        private MudPopoverHandler _handler;
+
+        protected override void OnInitialized()
+        {
+            _handler = Service.Register(ChildContent);
+            _handler.SetComponentBaseParameters(this, PopoverClass, PopoverStyles);
+            base.OnInitialized();
+        }
+
+        protected override void OnParametersSet()
+        {
+            _handler.UpdateFragment(ChildContent, this, PopoverClass, PopoverStyles);
+
+            base.OnParametersSet();
+        }
+
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
-            if(firstRender == true)
+            if (firstRender == true)
             {
-                _connected = true;
-                await JsInterop.InvokeVoidAsync("mudPopover.connect", _id);
+                await _handler.Initialized();
             }
 
             await base.OnAfterRenderAsync(firstRender);
         }
 
-        public async ValueTask DisposeAsync()
-        {
-            if(_connected == false) { return; }
-
-            await JsInterop.InvokeVoidAsync("mudPopover.disconnect", _id);
-        }
+        public async ValueTask DisposeAsync() => await Service.Unregister(_handler);
     }
 }
