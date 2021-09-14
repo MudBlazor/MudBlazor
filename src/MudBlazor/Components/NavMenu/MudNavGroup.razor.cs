@@ -7,7 +7,8 @@ namespace MudBlazor
     {
         protected string Classname =>
         new CssBuilder("mud-nav-group")
-          .AddClass(Class)
+          .AddClass(Class, !Disabled)
+            .AddClass($"mud-nav-group-disabled", Disabled)
         .Build();
 
         protected string ButtonClassname =>

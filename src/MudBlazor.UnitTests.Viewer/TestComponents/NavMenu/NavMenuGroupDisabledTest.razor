@@ -1,0 +1,21 @@
+﻿<MudNavMenu>
+    <MudText Typo="Typo.subtitle2" Color="Color.Inherit" Class="ml-4 my-3">Templates</MudText>
+    <MudNavLink Href="/" Icon="@Icons.Material.Outlined.SelectAll">Select Template</MudNavLink>
+    <MudNavLink Href="/Admin/Upload" Icon="@Icons.Material.Outlined.Upload">Upload Template</MudNavLink>
+    <MudNavGroup  Icon="@Icons.Material.Outlined.AdminPanelSettings" Title="Admin" Expanded="@IsGroupExpanded" Disabled="@IsGroupDisabled">
+            <MudNavLink Href="/users" Icon="@Icons.Filled.People" IconColor="Color.Success">User Management</MudNavLink>
+             <MudNavLink Href="/Admin/Upload" Icon="@Icons.Filled.Security" IconColor="Color.Info">Upload Template</MudNavLink>
+             <MudNavLink Href="/MailTemplate" Disabled="@IsMailDisabled">Mail Template</MudNavLink>
+        </MudNavGroup>
+   
+</MudNavMenu>
+
+<MudCheckBox  @bind-Checked="@IsGroupDisabled" >Disable Group</MudCheckBox>
+<MudCheckBox  @bind-Checked="@IsMailDisabled" >Disable Mail Template</MudCheckBox>
+<MudButton  @onclick="()=>IsGroupExpanded = !IsGroupExpanded" >Expand/Collapse Group</MudButton>
+
+@code {
+	public bool IsGroupDisabled {get;set;} = true;
+	public bool IsMailDisabled {get;set;} = true;
+	public bool IsGroupExpanded {get;set;} = true;
+}

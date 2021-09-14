@@ -33,6 +33,18 @@
     }
 }
 
+.mud-nav-group-disabled {
+    color: var(--mud-palette-text-disabled) !important;
+    cursor: default;
+    pointer-events: none;
+
+    & > .mud-nav-link > .mud-nav-link-text {
+        color: var(--mud-palette-text-disabled) !important;
+        cursor: default;
+        pointer-events: none;
+    }
+}
+
 .mud-nav-item {
     width: 100%;
     display: flex;
