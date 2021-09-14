@@ -27,10 +27,11 @@ namespace MudBlazor
 
         public Guid Id { get; init; }
         public RenderFragment Fragment { get; private set; }
-        public bool IsConnected { get; internal set; }
-        public string Class { get; set; }
-        public string Style { get; set; }
-        public object Tag { get; set; }
+        public bool IsConnected { get; private set; }
+        public string Class { get; private set; }
+        public string Style { get; private set; }
+        public object Tag { get; private set; }
+        public bool ShowContent { get; private set;  }
         public Dictionary<string, object> UserAttributes { get; set; } = new Dictionary<string, object>();
 
         public MudPopoverHandler(RenderFragment fragment, IJSRuntime jsInterop, Action updater)
@@ -41,19 +42,20 @@ namespace MudBlazor
             Id = Guid.NewGuid();
         }
 
-        public void SetComponentBaseParameters(MudComponentBase componentBase, string @class, string style)
+        public void SetComponentBaseParameters(MudComponentBase componentBase, string @class, string style, bool showContent)
         {
             Class = @class;
             Style = style;
             Tag = componentBase.Tag;
             UserAttributes = componentBase.UserAttributes;
+            ShowContent = showContent;
         }
 
         public void UpdateFragment(RenderFragment fragment,
-            MudComponentBase componentBase, string @class, string style)
+            MudComponentBase componentBase, string @class, string style, bool showContent)
         {
             Fragment = fragment;
-            SetComponentBaseParameters(componentBase, @class, @style);
+            SetComponentBaseParameters(componentBase, @class, @style, showContent);
             _updater?.Invoke();
         }
 

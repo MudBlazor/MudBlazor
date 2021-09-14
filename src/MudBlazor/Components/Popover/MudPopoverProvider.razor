@@ -1,10 +1,13 @@
 ﻿@namespace MudBlazor
 @inject IMudPopoverService Service
 <div class="mud-popover-provider">
-	@foreach(var handler in Service.Handlers)
+	@foreach (var handler in Service.Handlers)
 	{
 		<div @key="handler.Id" id="@($"popovercontent-{handler.Id}")" @attributes="@handler.UserAttributes" class="@handler.Class" style="@handler.Style">
-			@handler.Fragment
+			@if (handler.ShowContent == true)
+			{
+				@handler.Fragment
+			}
 		</div>
 	}
 </div>
@@ -12,6 +15,6 @@
 @code {
 
 
-	
+
 
 }

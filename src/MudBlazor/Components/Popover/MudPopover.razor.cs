@@ -110,13 +110,13 @@ namespace MudBlazor
         protected override void OnInitialized()
         {
             _handler = Service.Register(ChildContent);
-            _handler.SetComponentBaseParameters(this, PopoverClass, PopoverStyles);
+            _handler.SetComponentBaseParameters(this, PopoverClass, PopoverStyles, Open);
             base.OnInitialized();
         }
 
         protected override void OnParametersSet()
         {
-            _handler.UpdateFragment(ChildContent, this, PopoverClass, PopoverStyles);
+            _handler.UpdateFragment(ChildContent, this, PopoverClass, PopoverStyles, Open);
 
             base.OnParametersSet();
         }
