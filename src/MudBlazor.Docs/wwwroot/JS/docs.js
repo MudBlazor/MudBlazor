@@ -225,8 +225,17 @@ blubSingle = function (popoverNode,classSelector) {
 
         let offsetX = window.scrollX;
         let offsetY = window.scrollY;
+
         if (popoverContentNode.classList.contains('mud-popover-fixed')) {
             offsetX = offsetY = 0;
+        }
+
+        var popoverPosition = document.getElementById('popover-' + id);
+        var popoverContentPosition = window.getComputedStyle(popoverPosition).position;
+
+        if (popoverContentPosition == 'fixed') {
+            offsetX = offsetY = 0;
+            popoverContentNode.style['position'] = 'fixed';
         }
 
         popoverContentNode.style['left'] = (left + offsetX) + 'px';

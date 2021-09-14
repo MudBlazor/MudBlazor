@@ -8,7 +8,7 @@
                          Error="@Error" ErrorText="@ErrorText" Disabled="@Disabled" @onclick="@ToggleMenu" Required="@Required">
             <InputContent>
                 <MudInput @ref="_elementReference" InputType="@(CanRenderValue || (Strict && !IsValueInList) ? InputType.Hidden : InputType.Text)"
-                          Class="mud-select-input" Margin="@Margin" 
+                          Class="mud-select-input" Margin="@Margin" Placeholder="@Placeholder"
                           Variant="@Variant" Value="@(Strict && !IsValueInList ? null : Text)" DisableUnderLine="@DisableUnderLine"
                           Disabled="@Disabled" ReadOnly="true" Error="@Error"
                           OnAdornmentClick="@OnAdornmentClick" AdornmentIcon="@_currentIcon" Adornment="@Adornment" AdornmentColor="@AdornmentColor" IconSize="@IconSize" AdornmentText="@AdornmentText"
@@ -29,7 +29,7 @@
                     <MudListItem Icon="@SelectAllCheckBoxIcon" Text="@SelectAllText" OnClick="SelectAllClickAsync"  
                         Dense="@Dense" Class="mud-list-item-clickable mud-select-all mud-typography-body1"/>
                 }
-                <MudList Clickable="@(_isOpen==false?false:true)" Dense="@Dense">
+                <MudList Clickable="true" Dense="@Dense">
                     @ChildContent
                 </MudList>
             </CascadingValue>

@@ -21,29 +21,14 @@ namespace MudBlazor
             .Build();
 
         /// <summary>
-        /// If string has value the label text will be displayed in the input, and scaled down at the top if the input has value.
-        /// </summary>
-        [Parameter] public string Label { get; set; }
-
-        /// <summary>
         /// User class names for the popover, separated by space
         /// </summary>
         [Parameter] public string PopoverClass { get; set; }
 
         /// <summary>
-        /// The short hint displayed in the input before the user enters a value.
-        /// </summary>
-        [Parameter] public string Placeholder { get; set; }
-
-        /// <summary>
         /// Sets the direction the Autocomplete menu should open.
         /// </summary>
         [Parameter] public Direction Direction { get; set; } = Direction.Bottom;
-
-        /// <summary>
-        /// 
-        /// </summary>
-        [Parameter] public bool Fixed { get; set; }
 
         /// <summary>
         /// If true, the Autocomplete menu will open either before or after the input (left/right).

@@ -53,6 +53,7 @@ namespace MudBlazor
                 }
 
                 _dateRange = range;
+                _value = range?.End;
 
                 if (updateValue)
                 {

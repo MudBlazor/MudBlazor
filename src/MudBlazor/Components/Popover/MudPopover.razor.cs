@@ -13,13 +13,14 @@ namespace MudBlazor
 
         protected string PopoverClass =>
            new CssBuilder("mud-popover")
-            .AddClass("mud-popover-fixed", Fixed)
-            .AddClass("mud-popover-open", Open)
+            .AddClass($"mud-popover-fixed", Fixed)
+            .AddClass($"mud-popover-open", Open)
             .AddClass($"mud-popover-{Placement.ToDescriptionString()}")
-            .AddClass("mud-popover-relative-width", RelativeWidth)
-            .AddClass("mud-paper", Paper)
-            .AddClass("mud-paper-square", Paper && Square)
+            .AddClass($"mud-popover-relative-width", RelativeWidth)
+            .AddClass($"mud-paper", Paper)
+            .AddClass($"mud-paper-square", Paper && Square)
             .AddClass($"mud-elevation-{Elevation}", Paper)
+            .AddClass($"overflow-y-auto", MaxHeight != null)
             .AddClass(Class)
            .Build();
 

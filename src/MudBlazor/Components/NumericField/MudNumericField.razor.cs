@@ -196,6 +196,12 @@ namespace MudBlazor
                 return (Max, true);
             else if (value < min)
                 return (Min, true);
+            //return T default (null) when there is no value
+            else if (v == null)
+            {
+                return (default(T), true);
+            }
+
             return (Num.To<T>(value), false);
         }
 
@@ -414,21 +420,9 @@ namespace MudBlazor
             {
                 _keyDownPreventDefault = false;
             }
-            
+
             OnKeyUp.InvokeAsync(obj).AndForget();
         }
-
-        /// <summary>
-        /// The short hint displayed in the input before the user enters a value.
-        /// </summary>
-        [Parameter]
-        public string Placeholder { get; set; }
-
-        /// <summary>
-        /// If string has value the label text will be displayed in the input, and scaled down at the top if the input has value.
-        /// </summary>
-        [Parameter]
-        public string Label { get; set; }
 
         //Tracks if Min has a value.
         private bool _minHasValue = false;

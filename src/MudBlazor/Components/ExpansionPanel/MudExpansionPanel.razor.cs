@@ -47,6 +47,11 @@ namespace MudBlazor
         [Parameter] public bool HideIcon { get; set; }
 
         /// <summary>
+        /// Custom hide icon.
+        /// </summary>
+        [Parameter] public string Icon { get; set; } = Icons.Material.Filled.ExpandMore;
+
+        /// <summary>
         /// If true, removes vertical padding from childcontent.
         /// </summary>
         [Parameter] public bool Dense { get; set; }

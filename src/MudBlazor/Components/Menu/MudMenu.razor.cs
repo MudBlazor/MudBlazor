@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Extensions;
@@ -14,13 +15,8 @@ namespace MudBlazor
         .AddClass(Class)
        .Build();
 
-        protected string MenuClassname =>
-            new CssBuilder("mud-menu-container")
-            .AddClass("mud-menu-fullwidth", FullWidth)
-            .AddClass(PopoverClass)
-           .Build();
-
         private bool _isOpen;
+        private bool _isMouseOver = false;
 
         [Parameter] public string Label { get; set; }
 
@@ -139,6 +135,7 @@ namespace MudBlazor
         public void CloseMenu()
         {
             _isOpen = false;
+            _isMouseOver = false;
             PopoverStyle = null;
             StateHasChanged();
         }
@@ -150,6 +147,11 @@ namespace MudBlazor
             if (PositionAtCursor) SetPopoverStyle((MouseEventArgs)args);
             _isOpen = true;
             StateHasChanged();
+        }
+
+        public void PopoverMouseEnter()
+        {
+            _isMouseOver = true;
         }
 
         // Sets the popover style ONLY when there is an activator
@@ -181,6 +183,15 @@ namespace MudBlazor
         public void Activate(object activator, MouseEventArgs args)
         {
             ToggleMenu(args);
+        }
+
+        public async void MouseLeave()
+        {
+            await Task.Delay(100);
+            if (ActivationEvent == MouseEvent.MouseOver && _isMouseOver == false)
+            {
+                CloseMenu();
+            }
         }
 
     }
