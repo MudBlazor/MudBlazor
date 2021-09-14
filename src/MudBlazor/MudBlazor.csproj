@@ -89,6 +89,7 @@
 
   <!--Dont Include in build output-->
   <ItemGroup>
+    <Content Remove="compilerconfig.json" />
     <Content Remove="excubowebcompiler.json" />
     <Content Remove="**/*/DoNotRemove.txt" />
   </ItemGroup>
@@ -109,12 +110,6 @@
     dotnet watch webcompiler ./Styles/MudBlazor.scss -c excubowebcompiler.json
     -->
     <Watch Include="**/*.scss" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Content Update="wwwroot\MudBlazor.min.js">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
   </ItemGroup>
 
 </Project>
