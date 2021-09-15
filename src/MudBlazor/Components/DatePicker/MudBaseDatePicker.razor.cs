@@ -323,6 +323,16 @@ namespace MudBlazor
         }
 
         /// <summary>
+        /// user clicked on a month
+        /// </summary>
+        protected virtual void OnMonthClicked(int month)
+        {
+            CurrentView = OpenTo.Month;
+            _picker_month = _picker_month?.AddMonths(month);
+            StateHasChanged();
+        }
+
+        /// <summary>
         /// return Mo, Tu, We, Th, Fr, Sa, Su in the right culture
         /// </summary>
         /// <returns></returns>
@@ -488,12 +498,7 @@ namespace MudBlazor
             return Typo.subtitle1;
         }
 
-        private void OnMonthClicked(int month)
-        {
-            CurrentView = OpenTo.Month;
-            _picker_month = _picker_month?.AddMonths(month);
-            StateHasChanged();
-        }
+
 
         protected override void OnInitialized()
         {
