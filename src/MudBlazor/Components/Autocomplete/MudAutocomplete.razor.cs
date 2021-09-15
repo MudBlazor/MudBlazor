@@ -300,6 +300,7 @@ namespace MudBlazor
             StateHasChanged();
         }
 
+        int _elementKey = 0;
         /// <summary>
         /// Clears the autocomplete's text
         /// </summary>
@@ -308,9 +309,24 @@ namespace MudBlazor
             await SetTextAsync(string.Empty, updateValue: false);
             await CoerceValueToText();
             IsOpen = false;
+            _elementKey++;
+            await Task.Delay(1);
             _timer?.Dispose();
             StateHasChanged();
         }
+
+        //Same as Clear(), but we have to override the Reset method in MudFormComponent.cs, because we inherit it
+        protected override async void ResetValue()
+        {
+            await SetTextAsync(string.Empty, updateValue: false);
+            await CoerceValueToText();
+            IsOpen = false;
+            _elementKey++;
+            await Task.Delay(1);
+            _timer?.Dispose();
+            StateHasChanged();
+        }
+
 
         private string GetItemString(T item)
         {
@@ -475,11 +491,13 @@ namespace MudBlazor
             return _elementReference.SelectRangeAsync(pos1, pos2);
         }
 
-        private void OnTextChanged(string text)
+        //When user click an item with mouse, we lost focus. We implement because this prevent users who want to press enter or like after selecting the item.
+        private async Task OnTextChanged(string text)
         {
             if (text == null)
                 return;
-            _ = SetTextAsync(text, true);
+            await SetTextAsync(text, true);
+            await _elementReference.FocusAsync();
         }
 
     }
