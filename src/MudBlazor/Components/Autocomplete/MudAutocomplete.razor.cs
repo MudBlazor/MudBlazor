@@ -497,7 +497,11 @@ namespace MudBlazor
             if (text == null)
                 return;
             await SetTextAsync(text, true);
-            await _elementReference.FocusAsync();
+            if (_elementReference != null)
+            {
+                await _elementReference.FocusAsync();
+            }
+            
         }
 
     }
