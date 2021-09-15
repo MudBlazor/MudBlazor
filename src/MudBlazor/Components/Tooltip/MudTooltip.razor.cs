@@ -112,8 +112,6 @@ namespace MudBlazor
         public void HandleMouseOver() => _isVisible = true;
         private void HandleMouseOut() => _isVisible = false;
 
-        private Direction Direction { get; set; } = Direction.Bottom;
-
         protected string GetTimeDelay()
         {
             return $"transition-delay: {Delay.ToString(CultureInfo.InvariantCulture)}ms;{Style}";
