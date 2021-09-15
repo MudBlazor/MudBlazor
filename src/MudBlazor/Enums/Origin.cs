@@ -2,7 +2,7 @@
 
 namespace MudBlazor
 {
-    public enum PopoverPlacement
+    public enum Origin
     {
         [Description("top-left")]
         TopLeft,
