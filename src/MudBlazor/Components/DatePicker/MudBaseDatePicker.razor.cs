@@ -248,6 +248,23 @@ namespace MudBlazor
         protected abstract void OnDayClicked(DateTime dateTime);
 
         /// <summary>
+        /// user clicked on a month
+        /// </summary>
+        protected virtual void OnMonthClicked(int month)
+        {
+            _currentView = OpenTo.Month;
+            _picker_month = _picker_month?.AddMonths(month);
+            StateHasChanged();
+        }
+
+        protected virtual void OnYearClicked(int year)
+        {
+            _currentView = OpenTo.Month;
+            var current = GetMonthStart(0);
+            PickerMonth = new DateTime(year, current.Month, 1);
+        }
+
+        /// <summary>
         /// return Mo, Tu, We, Th, Fr, Sa, Su in the right culture
         /// </summary>
         /// <returns></returns>
@@ -377,12 +394,6 @@ namespace MudBlazor
             // todo: raise an event the user can handle
         }
 
-        private void OnYearClicked(int year)
-        {
-            _currentView = OpenTo.Month;
-            var current = GetMonthStart(0);
-            PickerMonth = new DateTime(year, current.Month, 1);
-        }
 
         private IEnumerable<DateTime> GetAllMonths()
         {
@@ -419,12 +430,7 @@ namespace MudBlazor
             return Typo.subtitle1;
         }
 
-        private void OnMonthClicked(int month)
-        {
-            _currentView = OpenTo.Month;
-            _picker_month = _picker_month?.AddMonths(month);
-            StateHasChanged();
-        }
+       
 
         private void OnMonthSelected(DateTime month)
         {
