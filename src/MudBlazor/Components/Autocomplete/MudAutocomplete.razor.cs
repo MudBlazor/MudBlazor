@@ -310,7 +310,6 @@ namespace MudBlazor
             await CoerceValueToText();
             IsOpen = false;
             _elementKey++;
-            await Task.Delay(1);
             _timer?.Dispose();
             StateHasChanged();
         }
@@ -322,7 +321,6 @@ namespace MudBlazor
             await CoerceValueToText();
             IsOpen = false;
             _elementKey++;
-            await Task.Delay(1);
             _timer?.Dispose();
             StateHasChanged();
         }
@@ -501,7 +499,6 @@ namespace MudBlazor
             {
                 await _elementReference.FocusAsync();
             }
-            
         }
 
     }
