@@ -3,7 +3,7 @@
 
 <span @attributes="UserAttributes" class="@Classname" style="@Style">
     @ChildContent
-    <span class="mud-badge-wrapper">
+    <span class="@WrapperClass">
         <span class="@BadgeClass" @onclick="HandleBadgeClick">
             @if (!Dot)
             {
