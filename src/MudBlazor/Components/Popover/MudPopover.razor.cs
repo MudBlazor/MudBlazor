@@ -15,8 +15,8 @@ namespace MudBlazor
            new CssBuilder("mud-popover")
             .AddClass($"mud-popover-fixed", Fixed)
             .AddClass($"mud-popover-open", Open)
-            .AddClass($"mud-popover-{Placement.ToDescriptionString()}")
-            .AddClass($"mud-popover-anchor-{AnchorPlacement.ToDescriptionString()}")
+            .AddClass($"mud-popover-{TransformOrigin.ToDescriptionString()}")
+            .AddClass($"mud-popover-anchor-{AnchorOrigin.ToDescriptionString()}")
             .AddClass($"mud-popover-relative-width", RelativeWidth)
             .AddClass($"mud-paper", Paper)
             .AddClass($"mud-paper-square", Paper && Square)
@@ -81,16 +81,16 @@ namespace MudBlazor
         [Parameter] public Direction Direction { get; set; } = Direction.Bottom;
 
         /// <summary>
+        /// Set the anchor point on the element of the popover.
+        /// The anchor point will determinate where the popover will be placed.
+        /// </summary>
+        [Parameter] public Origin AnchorOrigin { get; set; } = Origin.TopLeft;
+
+        /// <summary>
         /// Sets the intersection point if the anchor element. At this point the popover will lay above the popover. 
         /// This property in conjunction with AnchorPlacement determinate where the popover will be placed.
         /// </summary>
-        [Parameter] public PopoverPlacement Placement { get; set; } = PopoverPlacement.BottomLeft;
-
-        /// <summary>
-        /// Set the placement on the anchor element of the popover. At this point the anchor will lay under the popover.
-        /// This property in conjunction with AnchorPlacement determinate where the popover will be placed.
-        /// </summary>
-        [Parameter] public PopoverPlacement AnchorPlacement { get; set; } = PopoverPlacement.CenterCenter;
+        [Parameter] public Origin TransformOrigin { get; set; } = Origin.TopLeft;
 
         /// <summary>
         /// If true, the select menu will open either above or bellow the input depending on the direction.
