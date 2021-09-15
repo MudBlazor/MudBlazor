@@ -106,6 +106,16 @@ namespace MudBlazor
         [Parameter] public MouseEvent ActivationEvent { get; set; } = MouseEvent.LeftClick;
 
         /// <summary>
+        /// Set the anchor origin point to determen where the popover will open from.
+        /// </summary>
+        [Parameter] public Origin AnchorOrigin { get; set; } = Origin.TopCenter;
+
+        /// <summary>
+        /// Sets the transform origin point for the popover.
+        /// </summary>
+        [Parameter] public Origin TransformOrigin { get; set; } = Origin.TopCenter;
+
+        /// <summary>
         /// Sets the direction the select menu will start from relative to its parent.
         /// </summary>
         [Parameter] public Direction Direction { get; set; } = Direction.Bottom;
