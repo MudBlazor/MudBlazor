@@ -1,0 +1,29 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<div class="d-flex">
+	<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@ToggleOpen">
+		Open
+	</MudButton>
+	<MudPopover Open="@_isOpen" Placement="Placement.Right">
+		<div class="d-flex flex-column px-4 pt-4">
+			<PopoverDynamicContent />
+		</div>
+	</MudPopover>
+</div>
+
+
+
+@code {
+
+	public bool _isOpen;
+
+	public void ToggleOpen()
+	{
+		if (_isOpen)
+			_isOpen = false;
+		else
+			_isOpen = true;
+	}
+
+
+}
