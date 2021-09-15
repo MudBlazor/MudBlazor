@@ -50,7 +50,7 @@ namespace MudBlazor.UnitTests.Services
             Func<Object, Task> callback = (x) => Task.Delay(10);
 
             var expectedProperties = new[] {
-             "detail", "screenX", "screenY", "clientX", "clientY", "offsetX", "offsetY",
+             "detail", "screenX", "screenY", "clientX", "clientY", "offsetX", "offsetY", "pageX", "pageY",
              "button", "buttons", "ctrlKey", "shiftKey", "altKey", "metaKey", "type"
             };
 
@@ -107,7 +107,7 @@ namespace MudBlazor.UnitTests.Services
             };
 
             var expectedProperties = new[] {
-             "detail", "screenX", "screenY", "clientX", "clientY", "offsetX", "offsetY",
+             "detail", "screenX", "screenY", "clientX", "clientY", "offsetX", "offsetY", "pageX", "pageY",
              "button", "buttons", "ctrlKey", "shiftKey", "altKey", "metaKey", "type"
             };
 
@@ -152,7 +152,7 @@ namespace MudBlazor.UnitTests.Services
             Func<Object, Task> callback = (x) => Task.Delay(10);
 
             var expectedProperties = new[] {
-             "detail", "screenX", "screenY", "clientX", "clientY", "offsetX", "offsetY",
+             "detail", "screenX", "screenY", "clientX", "clientY", "offsetX", "offsetY", "pageX", "pageY",
              "button", "buttons", "ctrlKey", "shiftKey", "altKey", "metaKey", "type"
             };
 
@@ -192,7 +192,7 @@ namespace MudBlazor.UnitTests.Services
             Func<Object, Task> callback = (x) => Task.Delay(10);
 
             var expectedProperties = new[] {
-             "detail", "screenX", "screenY", "clientX", "clientY", "offsetX", "offsetY",
+             "detail", "screenX", "screenY", "clientX", "clientY", "offsetX", "offsetY", "pageX", "pageY",
              "button", "buttons", "ctrlKey", "shiftKey", "altKey", "metaKey", "type"
             };
 
@@ -232,7 +232,7 @@ namespace MudBlazor.UnitTests.Services
             Func<Object, Task> callback = (x) => Task.Delay(10);
 
             var expectedProperties = new[] {
-             "detail", "screenX", "screenY", "clientX", "clientY", "offsetX", "offsetY",
+             "detail", "screenX", "screenY", "clientX", "clientY", "offsetX", "offsetY", "pageX", "pageY",
              "button", "buttons", "ctrlKey", "shiftKey", "altKey", "metaKey", "type"
             };
 
@@ -292,7 +292,7 @@ namespace MudBlazor.UnitTests.Services
             Func<Object, Task> callback = (x) => Task.Delay(10);
 
             var expectedProperties = new[] {
-             "detail", "screenX", "screenY", "clientX", "clientY", "offsetX", "offsetY",
+             "detail", "screenX", "screenY", "clientX", "clientY", "offsetX", "offsetY", "pageX", "pageY",
              "button", "buttons", "ctrlKey", "shiftKey", "altKey", "metaKey", "type"
             };
 
