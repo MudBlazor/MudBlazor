@@ -13,7 +13,7 @@ namespace MudBlazor
             .Build();
         protected string Classname => new CssBuilder("mud-tooltip")
             .AddClass($"mud-tooltip-default", Color == Color.Default)
-            .AddClass($"mud-tooltip-{Placement.ToDescriptionString()}")
+            .AddClass($"mud-tooltip-{ConvertPlacement().ToDescriptionString()}")
             .AddClass($"mud-tooltip-arrow", Arrow)
             .AddClass($"mud-border-{Color.ToDescriptionString()}", Arrow && Color != Color.Default)
             .AddClass($"mud-theme-{Color.ToDescriptionString()}", Color != Color.Default)
@@ -58,6 +58,40 @@ namespace MudBlazor
         /// Tooltip placement.
         /// </summary>
         [Parameter] public Placement Placement { get; set; } = Placement.Bottom;
+
+        private Origin AnchorOrigin;
+        private Origin TransformOrigin;
+
+        private Origin ConvertPlacement()
+        {
+            if(Placement == Placement.Bottom)
+            {
+                AnchorOrigin = Origin.BottomCenter;
+                TransformOrigin = Origin.TopCenter;
+                return Origin.BottomCenter;
+            }
+            if(Placement == Placement.Top)
+            {
+                AnchorOrigin = Origin.TopCenter;
+                TransformOrigin = Origin.BottomCenter;
+                return Origin.TopCenter;
+            }
+            if(Placement == Placement.Left || Placement == Placement.Start && !RightToLeft || Placement == Placement.End && RightToLeft)
+            {
+                AnchorOrigin = Origin.CenterLeft;
+                TransformOrigin = Origin.CenterRight;
+                return Origin.CenterLeft;
+            }
+            if (Placement == Placement.Right || Placement == Placement.End && !RightToLeft || Placement == Placement.Start && RightToLeft)
+            {
+                AnchorOrigin = Origin.CenterRight;
+                TransformOrigin = Origin.CenterLeft;
+                return Origin.CenterRight;
+            }
+            else{
+                return Origin.BottomCenter;
+            }
+        }
 
         /// <summary>
         /// Child content of component.
