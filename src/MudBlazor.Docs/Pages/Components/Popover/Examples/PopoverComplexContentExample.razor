@@ -4,14 +4,12 @@
 	<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@ToggleOpen">
 		Open
 	</MudButton>
-	<MudPopover Open="@_isOpen" Placement="PopoverPlacement.CenterLeft" AnchorPlacement="PopoverPlacement.CenterRight" >
+	<MudPopover Open="@_isOpen" Placement="Placement.CenterLeft" AnchorPlacement="Placement.CenterRight" >
 		<div class="d-flex flex-column px-4 pt-4">
 			<PopoverDynamicContent />
 		</div>
 	</MudPopover>
 </div>
-
-
 
 @code {
 
@@ -24,6 +22,4 @@
 		else
 			_isOpen = true;
 	}
-
-
 }
