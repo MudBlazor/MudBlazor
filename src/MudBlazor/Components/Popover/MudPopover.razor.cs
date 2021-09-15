@@ -16,6 +16,7 @@ namespace MudBlazor
             .AddClass($"mud-popover-fixed", Fixed)
             .AddClass($"mud-popover-open", Open)
             .AddClass($"mud-popover-{Placement.ToDescriptionString()}")
+            .AddClass($"mud-popover-anchor-{AnchorPlacement.ToDescriptionString()}")
             .AddClass($"mud-popover-relative-width", RelativeWidth)
             .AddClass($"mud-paper", Paper)
             .AddClass($"mud-paper-square", Paper && Square)
@@ -80,9 +81,16 @@ namespace MudBlazor
         [Parameter] public Direction Direction { get; set; } = Direction.Bottom;
 
         /// <summary>
-        /// Sets the anchor point the popover will start from relative to its parent.
+        /// Sets the intersection point if the anchor element. At this point the popover will lay above the popover. 
+        /// This property in conjunction with AnchorPlacement determinate where the popover will be placed.
         /// </summary>
-        [Parameter] public Placement Placement { get; set; } = Placement.Bottom;
+        [Parameter] public PopoverPlacement Placement { get; set; } = PopoverPlacement.BottomLeft;
+
+        /// <summary>
+        /// Set the placement on the anchor element of the popover. At this point the anchor will lay under the popover.
+        /// This property in conjunction with AnchorPlacement determinate where the popover will be placed.
+        /// </summary>
+        [Parameter] public PopoverPlacement AnchorPlacement { get; set; } = PopoverPlacement.CenterCenter;
 
         /// <summary>
         /// If true, the select menu will open either above or bellow the input depending on the direction.

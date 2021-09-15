@@ -138,8 +138,8 @@ var mudBlazorDocs = {
 
 //window.mudportal2 = new MudPortal2();
 
-    
-blubSingle = function (popoverNode,classSelector) {
+
+blubSingle = function (popoverNode, classSelector) {
 
     if (popoverNode && popoverNode.parentNode) {
         const id = popoverNode.id.substr(8);
@@ -174,68 +174,87 @@ blubSingle = function (popoverNode,classSelector) {
         //    left = boundingRect.left + boundingRect.width;
         //}
 
-        if (popoverContentNode.classList.contains('mud-popover-left-end')) {
-            top = boundingRect.top + boundingRect.height - selfRect.height;
-            left = boundingRect.left - selfRect.width;
-        } else if (popoverContentNode.classList.contains('mud-popover-left-start')) {
-            top = boundingRect.top;
-            left = boundingRect.left - selfRect.width;
-        } else if (popoverContentNode.classList.contains('mud-popover-left')) {
-            top = (boundingRect.top + boundingRect.height / 2) - (selfRect.height / 2);
-            left = boundingRect.left - selfRect.width;
 
 
-        } else if (popoverContentNode.classList.contains('mud-popover-right-end')) {
-            top = boundingRect.top + boundingRect.height - selfRect.height;
-            left = boundingRect.left + boundingRect.width;
-        } else if (popoverContentNode.classList.contains('mud-popover-right-start')) {
-            top = boundingRect.top;
-            left = boundingRect.left + boundingRect.width;
-        } else if (popoverContentNode.classList.contains('mud-popover-right')) {
-            top = (boundingRect.top + boundingRect.height / 2) - (selfRect.height / 2);
-            left = boundingRect.left + boundingRect.width;
-        }
+        const list = popoverContentNode.classList;
 
-        else if (popoverContentNode.classList.contains('mud-popover-top-end')) {
-            top = boundingRect.top - selfRect.height;
-            left = boundingRect.left + boundingRect.width - selfRect.width;
-        } else if (popoverContentNode.classList.contains('mud-popover-top-start')) {
-            top = boundingRect.top - selfRect.height;
+        if (list.contains('mud-popover-anchor-top-left')) {
             left = boundingRect.left;
-        } else if (popoverContentNode.classList.contains('mud-popover-top')) {
-            top = boundingRect.top - selfRect.height;
-            left = boundingRect.left + boundingRect.width / 2 - selfRect.width / 2;
-        }
+            top = boundingRect.top;
+        } else if (list.contains('mud-popover-anchor-top-center')) {
+            left = boundingRect.left + boundingRect.width / 2;
+            top = boundingRect.top;
+        } else if (list.contains('mud-popover-anchor-top-right')) {
+            left = boundingRect.left + boundingRect.width;
+            top = boundingRect.top;
 
-        else if (popoverContentNode.classList.contains('mud-popover-bottom-end')) {
-            top = boundingRect.top + boundingRect.height;
-            left = boundingRect.left + boundingRect.width - selfRect.width;
-        } else if (popoverContentNode.classList.contains('mud-popover-bottom-start')) {
-            top = boundingRect.top + boundingRect.height;
+        } else if (list.contains('mud-popover-anchor-center-left')) {
             left = boundingRect.left;
-        } else if (popoverContentNode.classList.contains('mud-popover-bottom')) {
+            top = boundingRect.top + boundingRect.height / 2;
+        } else if (list.contains('mud-popover-anchor-center-center')) {
+            left = boundingRect.left + boundingRect.width / 2;
+            top = boundingRect.top + boundingRect.height / 2;
+        } else if (list.contains('mud-popover-anchor-center-right')) {
+            left = boundingRect.left + boundingRect.width;
+            top = boundingRect.top + boundingRect.height / 2;
+
+        } else if (list.contains('mud-popover-anchor-bottom-left')) {
+            left = boundingRect.left;
             top = boundingRect.top + boundingRect.height;
-            left = boundingRect.left + boundingRect.width / 2 - selfRect.width / 2;
+        } else if (list.contains('mud-popover-anchor-bottom-center')) {
+            left = boundingRect.left + boundingRect.width / 2;
+            top = boundingRect.top + boundingRect.height;
+        } else if (list.contains('mud-popover-anchor-bottom-right')) {
+            left = boundingRect.left + boundingRect.width;
+            top = boundingRect.top + boundingRect.height;
         }
 
-        else if (popoverContentNode.classList.contains('mud-popover-center')) {
-            top = boundingRect.top + boundingRect.height / 2 - selfRect.height / 2;
-            left = boundingRect.left + boundingRect.width / 2 - selfRect.width / 2;
+        let offsetX = 0;
+        let offsetY = 0;
+
+        if (list.contains('mud-popover-top-left')) {
+            offsetX = 0;
+            offsetY = 0;
+        } else if (list.contains('mud-popover-top-center')) {
+            offsetX = -selfRect.width / 2;
+            offsetY = 0;
+        } else if (list.contains('mud-popover-top-right')) {
+            offsetX = -selfRect.width;
+            offsetY = 0;
         }
 
-        let offsetX = window.scrollX;
-        let offsetY = window.scrollY;
+        else if (list.contains('mud-popover-center-left')) {
+            offsetX = 0;
+            offsetY = -selfRect.height / 2;
+        } else if (list.contains('mud-popover-center-center')) {
+            offsetX = -selfRect.width / 2;
+            offsetY = -selfRect.height / 2;
+        } else if (list.contains('mud-popover-center-right')) {
+            offsetX = -selfRect.width;
+            offsetY = -selfRect.height / 2;
+        }
+
+        else if (list.contains('mud-popover-bottom-left')) {
+            offsetX = 0;
+            offsetY = -selfRect.height;
+        } else if (list.contains('mud-popover-bottom-center')) {
+            offsetX = -selfRect.width / 2;
+            offsetY = -selfRect.height;
+        } else if (list.contains('mud-popover-bottom-right')) {
+            offsetX = -selfRect.width;
+            offsetY = -selfRect.height;
+        }
 
         if (popoverContentNode.classList.contains('mud-popover-fixed')) {
             offsetX = offsetY = 0;
         }
-
-        var popoverPosition = document.getElementById('popover-' + id);
-        var popoverContentPosition = window.getComputedStyle(popoverPosition).position;
-
-        if (popoverContentPosition == 'fixed') {
+        else if (window.getComputedStyle(popoverNode).position == 'fixed') {
             offsetX = offsetY = 0;
             popoverContentNode.style['position'] = 'fixed';
+        }
+        else {
+            offsetX += window.scrollX;
+            offsetY += window.scrollY
         }
 
         popoverContentNode.style['left'] = (left + offsetX) + 'px';

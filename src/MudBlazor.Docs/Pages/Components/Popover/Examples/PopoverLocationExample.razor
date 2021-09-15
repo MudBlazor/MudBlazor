@@ -2,31 +2,41 @@
  
 <MudGrid>
     <MudItem xs="3">
+		<MudText Typo="Typo.h6">Placement</MudText>
         <MudRadioGroup @bind-SelectedOption="@Placement" Class="d-flex flex-column">
-            <MudRadio Color="Color.Primary" Dense="true" Option="Placement.LeftStart">Left-Start</MudRadio>
-            <MudRadio Color="Color.Primary" Dense="true" Option="Placement.Left">Left</MudRadio>
-            <MudRadio Color="Color.Primary" Dense="true" Option="Placement.LeftEnd">Left-End</MudRadio>
-            <MudRadio Color="Color.Primary" Dense="true" Option="Placement.RightStart">Right-Start</MudRadio>
-            <MudRadio Color="Color.Primary" Dense="true" Option="Placement.Right">Right</MudRadio>
-            <MudRadio Color="Color.Primary" Dense="true" Option="Placement.RightEnd">Right-End</MudRadio>
-            <MudRadio Color="Color.Primary" Dense="true" Option="Placement.Center">Center</MudRadio>
-            <MudRadio Color="Color.Primary" Dense="true" Option="Placement.TopStart">Top-Start</MudRadio>
-            <MudRadio Color="Color.Primary" Dense="true" Option="Placement.Top">Top</MudRadio>
-            <MudRadio Color="Color.Primary" Dense="true" Option="Placement.TopEnd">Top-End</MudRadio>
-            <MudRadio Color="Color.Primary" Dense="true" Option="Placement.BottomStart">Bottom-Start</MudRadio>
-            <MudRadio Color="Color.Primary" Dense="true" Option="Placement.Bottom">Bottom</MudRadio>
-            <MudRadio Color="Color.Primary" Dense="true" Option="Placement.BottomEnd">Bottom-End</MudRadio>
+            <MudRadio Color="Color.Primary" Dense="true" Option="PopoverPlacement.TopLeft">Top-Left</MudRadio>
+            <MudRadio Color="Color.Primary" Dense="true" Option="PopoverPlacement.TopCenter">Top-Center</MudRadio>
+            <MudRadio Color="Color.Primary" Dense="true" Option="PopoverPlacement.TopRight">Top-Right</MudRadio>
+            <MudRadio Color="Color.Primary" Dense="true" Option="PopoverPlacement.CenterLeft">Center-Left</MudRadio>
+            <MudRadio Color="Color.Primary" Dense="true" Option="PopoverPlacement.CenterCenter">Center-Center</MudRadio>
+            <MudRadio Color="Color.Primary" Dense="true" Option="PopoverPlacement.CenterRight">Center-Right</MudRadio>
+            <MudRadio Color="Color.Primary" Dense="true" Option="PopoverPlacement.BottomLeft">Bottom-Left</MudRadio>
+            <MudRadio Color="Color.Primary" Dense="true" Option="PopoverPlacement.BottomCenter">Bottom-Center</MudRadio>
+            <MudRadio Color="Color.Primary" Dense="true" Option="PopoverPlacement.BottomRight">Bottom-Right</MudRadio>
         </MudRadioGroup>
-
     </MudItem>
-    <MudItem xs="9" Class="d-flex justify-center align-center">
+    <MudItem xs="6" Class="d-flex justify-center align-center">
         <MudBadge Color="Color.Primary" Dot="true">
             <MudPaper Elevation="0" Outlined="true" Class="pa-12">
-                <MudPopover Open="true" Placement="@Placement" Class="pa-4">
+                <MudPopover Open="true" Placement="@Placement" AnchorPlacement="@AnchorPlacement" Class="pa-4">
                     <MudText>The content of the Popover.</MudText>
                 </MudPopover>
             </MudPaper>
         </MudBadge>
+    </MudItem>
+	    <MudItem xs="3">
+		<MudText Typo="Typo.h6">Anchor Placement</MudText>
+        <MudRadioGroup @bind-SelectedOption="@AnchorPlacement" Class="d-flex flex-column">
+            <MudRadio Color="Color.Primary" Dense="true" Option="PopoverPlacement.TopLeft">Top-Left</MudRadio>
+            <MudRadio Color="Color.Primary" Dense="true" Option="PopoverPlacement.TopCenter">Top-Center</MudRadio>
+            <MudRadio Color="Color.Primary" Dense="true" Option="PopoverPlacement.TopRight">Top-Right</MudRadio>
+            <MudRadio Color="Color.Primary" Dense="true" Option="PopoverPlacement.CenterLeft">Center-Left</MudRadio>
+            <MudRadio Color="Color.Primary" Dense="true" Option="PopoverPlacement.CenterCenter">Center-Center</MudRadio>
+            <MudRadio Color="Color.Primary" Dense="true" Option="PopoverPlacement.CenterRight">Center-Right</MudRadio>
+            <MudRadio Color="Color.Primary" Dense="true" Option="PopoverPlacement.BottomLeft">Bottom-Left</MudRadio>
+            <MudRadio Color="Color.Primary" Dense="true" Option="PopoverPlacement.BottomCenter">Bottom-Center</MudRadio>
+            <MudRadio Color="Color.Primary" Dense="true" Option="PopoverPlacement.BottomRight">Bottom-Right</MudRadio>
+        </MudRadioGroup>
     </MudItem>
 </MudGrid>
 
@@ -38,5 +48,6 @@
         
 
 @code{
-    public Placement Placement { get; set; } = Placement.Left;
+    public PopoverPlacement Placement { get; set; } = PopoverPlacement.TopLeft;
+    public PopoverPlacement AnchorPlacement { get; set; } = PopoverPlacement.BottomLeft;
 }
