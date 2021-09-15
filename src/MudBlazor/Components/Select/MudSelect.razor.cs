@@ -261,6 +261,16 @@ namespace MudBlazor
         [Parameter] public int MaxHeight { get; set; } = 300;
 
         /// <summary>
+        /// Set the anchor origin point to determen where the popover will open from.
+        /// </summary>
+        [Parameter] public Origin AnchorOrigin { get; set; } = Origin.TopCenter;
+
+        /// <summary>
+        /// Sets the transform origin point for the popover.
+        /// </summary>
+        [Parameter] public Origin TransformOrigin { get; set; } = Origin.TopCenter;
+
+        /// <summary>
         /// Sets the direction the Select menu should open.
         /// </summary>
         [Parameter] public Direction Direction { get; set; } = Direction.Bottom;
