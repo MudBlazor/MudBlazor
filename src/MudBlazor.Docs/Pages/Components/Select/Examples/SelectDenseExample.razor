@@ -1,9 +1,25 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
-
-<MudSelect T="string" Label="Dense" Dense="true"
-           AdornmentIcon="@Icons.Material.Filled.Search">
-    <MudSelectItem Value="@("Tyrannosaur")"/>
-    <MudSelectItem Value="@("Triceratops")"/>
-    <MudSelectItem Value="@("Oviraptor")"/>
-</MudSelect>
+<MudGrid>
+    <MudItem xs="12" sm="6" md="4">
+        <MudSelect T="string" Label="Standard" Variant="Variant.Text" Margin="Margin.Dense" Dense="true">
+            <MudSelectItem Value="@("Tyrannosaur")" />
+            <MudSelectItem Value="@("Triceratops")" />
+            <MudSelectItem Value="@("Oviraptor")" />
+        </MudSelect>
+    </MudItem>
+    <MudItem xs="12" sm="6" md="4">
+        <MudSelect T="string" Label="Standard" Variant="Variant.Outlined" Margin="Margin.Dense" Dense="true">
+            <MudSelectItem Value="@("Tyrannosaur")" />
+            <MudSelectItem Value="@("Triceratops")" />
+            <MudSelectItem Value="@("Oviraptor")" />
+        </MudSelect>
+    </MudItem>
+    <MudItem xs="12" sm="6" md="4">
+        <MudSelect T="string" Label="Standard" Variant="Variant.Filled" Margin="Margin.Dense" Dense="true">
+            <MudSelectItem Value="@("Tyrannosaur")" />
+            <MudSelectItem Value="@("Triceratops")" />
+            <MudSelectItem Value="@("Oviraptor")" />
+        </MudSelect>
+    </MudItem>
+</MudGrid>

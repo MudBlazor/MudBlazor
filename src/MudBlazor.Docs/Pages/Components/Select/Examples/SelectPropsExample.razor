@@ -1,0 +1,21 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudGrid>
+    <MudItem xs="12" sm="6" md="4">
+        <MudSelect T="string" Label="With Helper" HelperText="Helper text">
+            <MudSelectItem Value="@("Cappuccino")" />
+            <MudSelectItem Value="@("Cafe Latte")" />
+        </MudSelect>
+    </MudItem>
+    <MudItem xs="12" sm="6" md="4">
+        <MudSelect T="double" Label="Disabled" Strict="true" Variant="Variant.Outlined" Disabled="true">
+            <MudSelectItem T="double" Value="4.50" />
+        </MudSelect>
+    </MudItem>
+    <MudItem xs="12" sm="6" md="4">
+        <MudSelect T="string" Label="Read Only" Variant="Variant.Filled" ReadOnly="true">
+            <MudSelectItem Value="@("Apple Pie")" />
+            <MudSelectItem Value="@("Blackberry Pie")" />
+        </MudSelect>
+    </MudItem>
+</MudGrid>

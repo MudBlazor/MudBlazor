@@ -2,7 +2,7 @@
 
 <MudGrid>
     <MudItem xs="12" sm="6" md="4">
-        <MudSelect @bind-Value="@country" IsPreRendered="true" Label="With render fragements" Variant="Variant.Outlined" OffsetY="true">
+        <MudSelect @bind-Value="@country" IsPreRendered="true" Label="With render fragements" Variant="Variant.Outlined" AnchorOrigin="Origin.BottomCenter">
             <MudSelectItem Value="@("Afghanistan")">
                 <img src="https://upload.wikimedia.org/wikipedia/commons/9/9a/Flag_of_Afghanistan.svg" height="14" class="mr-1"/> Afghanistan
             </MudSelectItem>
@@ -15,7 +15,7 @@
         </MudSelect>
     </MudItem>
     <MudItem xs="12" sm="6" md="4">
-        <MudSelect @bind-Value="@country" Label="Without render fragements" Variant="Variant.Outlined" OffsetY="true">
+        <MudSelect @bind-Value="@country" Label="Without render fragements" Variant="Variant.Outlined" AnchorOrigin="Origin.BottomCenter">
             <MudSelectItem Value="@("Afghanistan")" />
             <MudSelectItem Value="@("Andorra")" />
             <MudSelectItem Value="@("Australia")" />
@@ -23,7 +23,7 @@
         </MudSelect>
     </MudItem>
     <MudItem xs="12" sm="6" md="4">
-        <MudSelect @bind-Value="@country" Label="Austria not representable" Variant="Variant.Outlined" OffsetY="true">
+        <MudSelect @bind-Value="@country" Label="Austria not representable" Variant="Variant.Outlined" AnchorOrigin="Origin.BottomCenter">
             <MudSelectItem Value="@("Afghanistan")">
                 <img src="https://upload.wikimedia.org/wikipedia/commons/9/9a/Flag_of_Afghanistan.svg" height="14" class="mr-1" /> Afghanistan
             </MudSelectItem>
