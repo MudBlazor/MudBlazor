@@ -35,10 +35,11 @@
 			}
 			else
 			{
-				<MudIconButton Icon="@CloseTabIcon" Class="@CloseIconClass" Style="@CloseIconStyle"  OnClick="EventCallback.Factory.Create<MouseEventArgs>(this, () => CloseTab.InvokeAsync(context))" />
+				<MudIconButton Icon="@CloseTabIcon" Class="@CloseIconClass" Style="@CloseIconStyle"  OnClick="EventCallback.Factory.Create<MouseEventArgs>(this, () => CloseTab.InvokeAsync(context))" DisableRipple="true"/>
 			}
 		}
 		;
     }
+
 
 }

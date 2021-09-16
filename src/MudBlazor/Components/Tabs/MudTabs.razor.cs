@@ -29,7 +29,7 @@ namespace MudBlazor
 
         private bool _isDragging = false;
         private int _dragSrc = 0;
-        private int _dragDst = 0;
+        private int _dropPanelIndex = -1;
 
         [CascadingParameter] public bool RightToLeft { get; set; }
 
@@ -392,47 +392,60 @@ namespace MudBlazor
             }
         }
 
-        private void OnDragStart(MudTabPanel panel, MouseEventArgs ev)
+        private void OnDragStart(MudTabPanel panel, DragEventArgs ev)
         {
-            if (!EnableRepositioning)
-                return;
+            ActivePanelIndex = panel.Index;
 
             _dragSrc = panel.Index;
-            _dragDst = panel.Index;
             _isDragging = true;
+
+            Rerender();
+            StateHasChanged();
         }
 
-        private void OnDragEnterPanel(MudTabPanel panel, MouseEventArgs ev)
+        private void OnDragEnterPanel(MudTabPanel panel, DragEventArgs ev)
         {
-            if (!EnableRepositioning || panel.Equals(_panels[_dragSrc])) return;
+            if (panel.Index == _dragSrc)
+                return;
 
-            _dragDst = panel.Index;
+            _dropPanelIndex = panel.Index;
+
+            StateHasChanged();
         }
 
-        private void OnDragEnd(MudTabPanel panel, MouseEventArgs ev)
+        private void OnDragLeavePanel(MudTabPanel panel, DragEventArgs ev)
         {
-            if (!EnableRepositioning) return;
+            if (panel.Index == _dropPanelIndex)
+                _dropPanelIndex = -1;
 
-            if (_dragDst != _dragSrc && _isDragging)
+            StateHasChanged();
+        }
+
+        private void OnDrop(MudTabPanel panel, DragEventArgs ev)
+        {
+            if (panel.Index != _dragSrc && _isDragging)
             {
-                MovePanel(_dragSrc, _dragDst);
-
-                ActivePanelIndex = _dragDst;
+                MovePanel(_dragSrc, panel.Index);
 
                 Rerender();
                 StateHasChanged();
 
-                _dragSrc = _dragDst;
+                _dragSrc = panel.Index;
             }
 
             _isDragging = false;
             _dragSrc = 0;
-            _dragDst = 0;
+
+            _dropPanelIndex = -1;
         }
 
-        private void OnCancelDrag(EventArgs ev)
+        private void OnDragEnd(MudTabPanel panel, DragEventArgs ev)
         {
-            if (_isDragging) _isDragging = false;
+            _dropPanelIndex = -1;
+
+            _isDragging = false;
+
+            StateHasChanged();
         }
 
         #endregion
@@ -528,6 +541,9 @@ namespace MudBlazor
               .AddClass($"mud-tab-active", when: () => panel == ActivePanel)
               .AddClass($"mud-disabled", panel.Disabled)
               .AddClass($"mud-ripple", !DisableRipple)
+              .AddClass($"mud-tab-draggable", when: () => _isDragging)
+              .AddClass($"mud-tab-dropzone", when: () => _isDragging && panel.Index == _dropPanelIndex)
+              .AddClass($"mud-tab-dragged", when: () => _isDragging && panel.Index == _dragSrc)
               .AddClass(TabPanelClass)
               .AddClass(panel.Class)
               .Build();

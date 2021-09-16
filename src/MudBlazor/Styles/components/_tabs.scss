@@ -159,6 +159,20 @@
         color: var(--mud-palette-text-disabled);
     }
 
+    &.mud-tab-draggable {
+        * {
+            pointer-events: none;
+        }
+    }
+
+    &.mud-tab-dragged {
+        color: var(--mud-palette-primary);
+    }
+
+    &.mud-tab-dropzone {
+        background-color: var(--mud-palette-action-default-hover);
+    }
+
     & .mud-tab-icon-text {
         margin-right: 8px;
         margin-inline-end: 8px;
@@ -221,7 +235,6 @@
         }
     }
 }
-
 
 .tab-transition {
     &-enter {
@@ -300,4 +313,3 @@
         justify-content: flex-end;
     }
 }
-
