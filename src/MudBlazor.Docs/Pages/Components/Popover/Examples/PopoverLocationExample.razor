@@ -19,7 +19,7 @@
             <MudBadge Origin="@AnchorOrigin" Color="Color.Primary" Dot="true" Overlap="true" Elevation="4">
                 <MudPaper Elevation="0" Outlined="true" Class="pa-12">
                     <MudPopover Open="true" AnchorOrigin="@AnchorOrigin" TransformOrigin="@TransformOrigin" Class="pa-4">
-                        <MudText @ref="myTextRef" Typo="Typo.body2" Class="px-4 py-1">The content of the popover</MudText>
+                        <MudText Typo="Typo.body2" Class="px-4 py-1">The content of the popover</MudText>
                         <div class="@GetLocation()" style="top:0; left:0;">
                             <MudIcon Icon="@GetIcon()" Color="Color.Secondary" Class="" />
                         </div>
@@ -46,8 +46,6 @@
 @code{
     public Origin TransformOrigin { get; set; } = Origin.TopLeft;
     public Origin AnchorOrigin { get; set; } = Origin.BottomLeft;
-
-    MudText myTextRef;
 
     public string GetIcon()
     {
