@@ -118,16 +118,19 @@ namespace MudBlazor
         /// <summary>
         /// Sets the direction the select menu will start from relative to its parent.
         /// </summary>
+        [Obsolete("Direction is obsolete. Use AnchorOrigin or TransformOrigin instead!", false)]
         [Parameter] public Direction Direction { get; set; } = Direction.Bottom;
 
         /// <summary>
         /// If true, the select menu will open either before or after the input depending on the direction.
         /// </summary>
+        [Obsolete("OffsetY is obsolete. Use AnchorOrigin or TransformOrigin instead!", false)]
         [Parameter] public bool OffsetY { get; set; }
 
         /// <summary>
         /// If true, the select menu will open either above or bellow the input depending on the direction.
         /// </summary>
+        [Obsolete("OffsetX is obsolete. Use AnchorOrigin or TransformOrigin instead!", false)]
         [Parameter] public bool OffsetX { get; set; }
 
         /// <summary>
@@ -204,5 +207,69 @@ namespace MudBlazor
             }
         }
 
+        internal Origin _anchorOrigin;
+        internal Origin _transformOrigin;
+
+#pragma warning disable CS0618 // This is for backwards compability until Obsolete is removed
+        private void GetPopoverOrigins()
+        {
+            if (Direction != Direction.Bottom || OffsetX || OffsetY)
+            {
+                switch (Direction)
+                {
+                    //No Offset
+                    case Direction.Bottom when !OffsetY && !OffsetX:
+                        _anchorOrigin = Origin.TopLeft;
+                        _transformOrigin = Origin.TopLeft;
+                        break;
+
+                    case Direction.Top when !OffsetY:
+                        _anchorOrigin = Origin.BottomLeft;
+                        _transformOrigin = Origin.BottomLeft;
+                        break;
+                    case Direction.Start when !OffsetX:
+                    case Direction.Left when !OffsetX:
+                        _anchorOrigin = Origin.TopLeft;
+                        _transformOrigin = Origin.TopLeft;
+                        break;
+                    case Direction.End when !OffsetX:
+                    case Direction.Right when !OffsetX:
+                        _anchorOrigin = Origin.TopRight;
+                        _transformOrigin = Origin.TopRight;
+                        break;
+
+                    //Offset
+                    case Direction.Bottom when OffsetY:
+                        _anchorOrigin = Origin.BottomLeft;
+                        _transformOrigin = Origin.TopLeft;
+                        break;
+                    case Direction.Top when OffsetY:
+                        _anchorOrigin = Origin.TopLeft;
+                        _transformOrigin = Origin.BottomLeft;
+                        break;
+                    case Direction.Start when OffsetX:
+                    case Direction.Left when OffsetX:
+                        _anchorOrigin = Origin.TopLeft;
+                        _transformOrigin = Origin.TopRight;
+                        break;
+                    case Direction.End when OffsetX:
+                    case Direction.Right when OffsetX:
+                        _anchorOrigin = Origin.TopRight;
+                        _transformOrigin = Origin.TopLeft;
+                        break;
+                }
+            }
+            else
+            {
+                _anchorOrigin = AnchorOrigin;
+                _transformOrigin = TransformOrigin;
+            }
+        }
+#pragma warning restore CS0618 // Type or member is obsolete
+
+        protected override void OnInitialized()
+        {
+            GetPopoverOrigins();
+        }
     }
 }
