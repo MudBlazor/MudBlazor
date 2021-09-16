@@ -246,10 +246,10 @@ blubSingle = function (popoverNode, classSelector) {
         }
 
         if (popoverContentNode.classList.contains('mud-popover-fixed')) {
-            offsetX = offsetY = 0;
+            /*offsetX = offsetY = 0;*/
         }
         else if (window.getComputedStyle(popoverNode).position == 'fixed') {
-            offsetX = offsetY = 0;
+            /*offsetX = offsetY = 0;*/
             popoverContentNode.style['position'] = 'fixed';
         }
         else {
