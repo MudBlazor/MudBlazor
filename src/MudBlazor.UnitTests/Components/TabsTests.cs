@@ -1006,24 +1006,28 @@ namespace MudBlazor.UnitTests.Components
             var panels = comp.FindAll(".mud-tab");
             panels.Should().HaveCount(3);
 
-            panels[0].MouseDown();
+            panels[0].DragStart();
             panels = comp.FindAll(".mud-tab");
-            panels[1].MouseOver();
+            panels[0].DragEnter();
             panels = comp.FindAll(".mud-tab");
-            panels[2].MouseOver();
+            panels[1].DragEnter();
             panels = comp.FindAll(".mud-tab");
-            panels[2].MouseUp();
+            panels[2].DragEnter();
+            panels = comp.FindAll(".mud-tab");
+            panels[2].Drop();
             panels = comp.FindAll(".mud-tab");
 
             panels[0].TextContent.Should().Contain("Panel 1");
             panels[1].TextContent.Should().Contain("Panel 2");
             panels[2].TextContent.Should().Contain("Panel 0");
 
-            panels[1].MouseDown();
+            panels[1].DragStart();
             panels = comp.FindAll(".mud-tab");
-            panels[0].MouseOver();
+            panels[1].DragEnter();
             panels = comp.FindAll(".mud-tab");
-            panels[0].MouseUp();
+            panels[0].DragEnter();
+            panels = comp.FindAll(".mud-tab");
+            panels[0].Drop();
             panels = comp.FindAll(".mud-tab");
 
             panels[0].TextContent.Should().Contain("Panel 2");
