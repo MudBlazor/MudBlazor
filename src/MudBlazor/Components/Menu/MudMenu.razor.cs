@@ -257,6 +257,10 @@ namespace MudBlazor
                         _anchorOrigin = Origin.TopRight;
                         _transformOrigin = Origin.TopLeft;
                         break;
+                    default:
+                        _anchorOrigin = AnchorOrigin;
+                        _transformOrigin = TransformOrigin;
+                        break;
                 }
             }
             else
@@ -267,9 +271,10 @@ namespace MudBlazor
         }
 #pragma warning restore CS0618 // Type or member is obsolete
 
-        protected override void OnInitialized()
+        protected override void OnParametersSet()
         {
-            GetPopoverOrigins();
+            base.OnParametersSet();
+            GetPopoverOrigins(); // Just to keep Obsolete functional until removed.
         }
     }
 }
