@@ -404,7 +404,10 @@ namespace MudBlazor
                 await SetValueAsync(value);
                 SelectedValues.Clear();
                 SelectedValues.Add(value);
-                await _elementReference.FocusAsync();
+                // Note: we need to focus the select again so it receives further keyboard events
+                // we are not awaiting this here because doing so will never return in bUnit, causing tests to hang. 
+                // we don't need to await it anyway
+                _ = _elementReference.FocusAsync();
                 StateHasChanged();
             }
             await SelectedValuesChanged.InvokeAsync(SelectedValues);

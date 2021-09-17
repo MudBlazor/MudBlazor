@@ -572,13 +572,13 @@ namespace MudBlazor.UnitTests.Components
             // menu should be closed now
             menu.ClassList.Should().NotContain("mud-popover-open");
             select.Instance.Value.Should().Be("Orange");
-            comp.Instance.ChangeCount.Should().Be(0);
+            comp.Instance.ChangeCount.Should().Be(1);
 
             // now click an item and see the value change
             items[1].Click();
             items = comp.FindAll("div.mud-list-item").ToArray();
             select.Instance.Value.Should().Be("Orange");
-            comp.WaitForAssertion(() => comp.Instance.ChangeCount.Should().Be(0));
+            comp.WaitForAssertion(() => comp.Instance.ChangeCount.Should().Be(1));
             
         }
 
