@@ -3,6 +3,7 @@
 
 using System;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Components;
 using MudBlazor.Extensions;
 
 namespace MudBlazor
@@ -27,6 +28,31 @@ namespace MudBlazor
 
         public string Icon { get; set; }
 
+        /// <summary>
+        /// Custom normal icon.
+        /// </summary>
+        [Parameter] public string NormalIcon { get; set; } = Icons.Material.Outlined.EventNote;
+
+        /// <summary>
+        /// Custom info icon.
+        /// </summary>
+        [Parameter] public string InfoIcon { get; set; } = Icons.Material.Outlined.Info;
+
+        /// <summary>
+        /// Custom success icon.
+        /// </summary>
+        [Parameter] public string SuccessIcon { get; set; } = Icons.Custom.Uncategorized.AlertSuccess;
+
+        /// <summary>
+        /// Custom warning icon.
+        /// </summary>
+        [Parameter] public string WarningIcon { get; set; } = Icons.Material.Outlined.ReportProblem;
+
+        /// <summary>
+        /// Custom error icon.
+        /// </summary>
+        [Parameter] public string ErrorIcon { get; set; } = Icons.Material.Filled.ErrorOutline;
+
         public SnackbarOptions(Severity severity, CommonSnackbarOptions options) : base(options)
         {
             Severity = severity;
@@ -42,11 +68,11 @@ namespace MudBlazor
             {
                 Icon = Severity switch
                 {
-                    Severity.Normal => Icons.Material.Outlined.EventNote,
-                    Severity.Info => Icons.Material.Outlined.Info,
-                    Severity.Success => Icons.Custom.Uncategorized.AlertSuccess,
-                    Severity.Warning => Icons.Material.Outlined.ReportProblem,
-                    Severity.Error => Icons.Material.Filled.ErrorOutline,
+                    Severity.Normal => NormalIcon,
+                    Severity.Info => InfoIcon,
+                    Severity.Success => SuccessIcon,
+                    Severity.Warning => WarningIcon,
+                    Severity.Error => ErrorIcon,
                     _ => throw new ArgumentOutOfRangeException(nameof(Severity)),
                 };
             }

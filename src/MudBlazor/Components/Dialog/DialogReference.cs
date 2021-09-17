@@ -5,6 +5,7 @@
 // License: MIT
 
 using System;
+using System.Diagnostics;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 
@@ -57,5 +58,20 @@ namespace MudBlazor
         {
             RenderFragment = rf;
         }
+
+        public async Task<T> GetReturnValueAsync<T>()
+        {
+            var result=await Result;
+            try
+            {
+                return (T)result.Data;
+            }
+            catch (InvalidCastException)
+            {
+                Debug.WriteLine($"Could not cast return value to {typeof(T)}, returning default.");
+                return default;
+            }
+        }
+
     }
 }

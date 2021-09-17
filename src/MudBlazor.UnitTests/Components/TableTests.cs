@@ -116,6 +116,38 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// Check if the loading and no records functionnality is working in grouped table.
+        /// </summary>
+        [Test]
+        public void TableGroupLoadingAndNoRecordsTest()
+        {
+            var comp = Context.RenderComponent<TableGroupLoadingAndNoRecordsTest>();
+            var searchString = comp.Find("#searchString");
+            var switchElement = comp.Find("#switch");
+
+            // It should be equal to 5 = header row + group header row + 2 rows + footer row 
+            comp.FindAll("tr").Count.Should().Be(5);
+
+            // Add filter
+            searchString.Change("ZZZ");
+
+            // It should be equal to 2 = header row + no records row
+            comp.FindAll("tr").Count.Should().Be(2);
+            comp.FindAll("tr")[1].TextContent.Should().Be("No records"); 
+
+            // It should be equal to 3 = header row + loading progress row + loading text
+            switchElement.Change(true);
+            comp.FindAll("tr").Count.Should().Be(3);
+            comp.FindAll("tr")[2].TextContent.Should().Be("Loading..."); 
+
+            // Remove filter
+            searchString.Change("");
+
+            // It should be equal to 6 = header row + loading progress row + group header row + 2 rows + footer row
+            comp.FindAll("tr").Count.Should().Be(6);
+        }
+
+        /// <summary>
         /// Check if if empty row text is correct
         /// </summary>
         [Test]
@@ -1113,6 +1145,27 @@ namespace MudBlazor.UnitTests.Components
             buttons[0].Click();
             tr = comp.FindAll("tr").ToArray();
             tr.Length.Should().Be(36);
+        }
+
+        /// <summary>
+        /// Tests the IsInitiallyExpanded grouping behavior.
+        /// </summary>
+        /// <returns></returns>
+        [Test]
+        public async Task TableGroupIsInitiallyExpandedTest()
+        {
+            // group by Racing Category and collapse groups as default:
+            var comp = Context.RenderComponent<TableGroupingTest>();
+            var table = comp.Instance.tableInstance;
+            table.GroupBy = new TableGroupDefinition<TableGroupingTest.RacingCar>(rc => rc.Category, null) { 
+                GroupName = "Category",
+                Expandable = true,
+                IsInitiallyExpanded = false 
+            };
+            comp.Render();
+            table.Context.GroupRows.Count.Should().Be(4); // 4 categories
+            var tr = comp.FindAll("tr").ToArray();
+            tr.Length.Should().Be(5); // 1 table header + 4 group headers
         }
 
         [Test]
