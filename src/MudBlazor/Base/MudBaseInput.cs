@@ -177,6 +177,8 @@ namespace MudBlazor
 
         [Parameter] public bool KeyDownPreventDefault { get; set; }
 
+        [Parameter] public bool KeyDownStopPropagation { get; set; }
+
         [Parameter] public EventCallback<KeyboardEventArgs> OnKeyPress { get; set; }
 
         protected virtual void InvokeKeyPress(KeyboardEventArgs obj)

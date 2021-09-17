@@ -29,7 +29,7 @@
 		   placeholder="@Placeholder" disabled=@Disabled readonly="@ReadOnly" @onblur="@OnBlurred" inputmode="@InputMode.ToString()" pattern="@Pattern"
 		   @onkeydown="@InvokeKeyDown" @onkeypress="@InvokeKeyPress" @onkeyup="@InvokeKeyUp"
 		   @onkeydown:preventDefault="KeyDownPreventDefault" @onkeypress:preventDefault="@KeyPressPreventDefault" @onkeyup:preventDefault="@KeyUpPreventDefault"
-		   @onmousewheel="@OnMouseWheel" />
+		   @onmousewheel="@OnMouseWheel" @onkeydown:stopPropagation="@KeyDownStopPropagation" />
 	}
 
 	@if (_showClearable && !Disabled)

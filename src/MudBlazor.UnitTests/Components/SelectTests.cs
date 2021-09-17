@@ -120,12 +120,14 @@ namespace MudBlazor.UnitTests.Components
             select.Instance.Value.Should().Be(default(MyEnum));
             select.Instance.Text.Should().Be(default(MyEnum).ToString());
             await Task.Delay(50);
-            comp.Find("div.mud-input-slot").TextContent.Trim().Should().Be("First");
+            select.Instance.Value.Should().Be(MyEnum.First);
+            select.Instance.Text.Should().Be("First");
             comp.RenderCount.Should().Be(1);
             //Console.WriteLine(comp.Markup);
             var items = comp.FindAll("div.mud-list-item").ToArray();
             items[1].Click();
-            comp.Find("div.mud-input-slot").TextContent.Trim().Should().Be("Second");
+            select.Instance.Value.Should().Be(MyEnum.Second);
+            select.Instance.Text.Should().Be("Second");
             comp.RenderCount.Should().Be(2);
         }
 
@@ -141,11 +143,10 @@ namespace MudBlazor.UnitTests.Components
             var select = comp.FindComponent<MudSelect<int>>();
             select.Instance.Value.Should().Be(17);
             select.Instance.Text.Should().Be("17");
-            comp.FindAll("div.mud-input-slot").Count.Should().Be(0);
+            comp.FindAll("div.mud-input").Count.Should().Be(1);
             //Console.WriteLine(comp.Markup);
             var items = comp.FindAll("div.mud-list-item").ToArray();
             items[1].Click();
-            comp.Find("div.mud-input-slot").TextContent.Trim().Should().Be("Two");
             select.Instance.Value.Should().Be(2);
             select.Instance.Text.Should().Be("2");
         }
@@ -165,7 +166,7 @@ namespace MudBlazor.UnitTests.Components
             await Task.Delay(100);
             // BUT: we have a select with Strict="true" so the Text will not be shown because it is not in the list of selectable values
             comp.FindComponent<MudInput<string>>().Instance.Value.Should().Be(null);
-            comp.FindComponent<MudInput<string>>().Instance.InputType.Should().Be(InputType.Hidden);
+            //comp.FindComponent<MudInput<string>>().Instance.InputType.Should().Be(InputType.Hidden);
             var items = comp.FindAll("div.mud-list-item").ToArray();
             items[1].Click();
             select.Instance.Value.Should().Be(2);
@@ -551,7 +552,7 @@ namespace MudBlazor.UnitTests.Components
         /// Reselect an already selected value should not call SelectedValuesChanged event.
         /// </summary>
         [Test]
-        public void SelectReselectTest()
+        public async Task SelectReselectTest()
         {
             var comp = Context.RenderComponent<ReselectValueTest>();
             // print the generated html
@@ -559,7 +560,7 @@ namespace MudBlazor.UnitTests.Components
             // select elements needed for the test
             var select = comp.FindComponent<MudSelect<string>>();
             var menu = comp.Find("div.mud-popover");
-            var input = comp.Find("div.mud-input-control");
+            var input = comp.Find("div.mud-input");
 
             input.Click();
             select.Instance.Value.Should().Be("Apple");
@@ -571,13 +572,14 @@ namespace MudBlazor.UnitTests.Components
             // menu should be closed now
             menu.ClassList.Should().NotContain("mud-popover-open");
             select.Instance.Value.Should().Be("Orange");
-            comp.Instance.ChangeCount.Should().Be(1);
+            comp.Instance.ChangeCount.Should().Be(0);
 
             // now click an item and see the value change
+            items[1].Click();
             items = comp.FindAll("div.mud-list-item").ToArray();
             select.Instance.Value.Should().Be("Orange");
-            comp.Instance.ChangeCount.Should().Be(1);
-            items[1].Click();
+            comp.WaitForAssertion(() => comp.Instance.ChangeCount.Should().Be(0));
+            
         }
 
         #region DataAttribute validation

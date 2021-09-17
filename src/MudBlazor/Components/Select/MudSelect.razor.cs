@@ -11,7 +11,7 @@ namespace MudBlazor
 {
     public partial class MudSelect<T> : MudBaseInput<T>, IMudSelect
     {
-        private HashSet<T> _selectedValues;
+        private HashSet<T> _selectedValues = new HashSet<T>();
         private bool _dense;
         private string multiSelectionText;
         private bool? _selectAllChecked;
@@ -25,6 +25,72 @@ namespace MudBlazor
         /// Add the MudSelectItems here
         /// </summary>
         [Parameter] public RenderFragment ChildContent { get; set; }
+
+        private int itemIndex = 0;
+
+        private async Task SelectNextItem()
+        {
+            if (MultiSelection == false)
+            {
+                if (_items == null || _items.Count == 0)
+                    return;
+                string val = Converter.Set(Value);
+                itemIndex = _items.FindIndex(e => Converter.Set(e.Value) == val);
+                
+                for (int i = 0; i <= _items.Count; i++)
+                {
+                    itemIndex = itemIndex + 1;
+                    if (_items.Count <= itemIndex)
+                    {
+                        break;
+                    }
+                    else if (itemIndex == -1 && _items[itemIndex].Disabled == false)
+                    {
+                        _selectedValues.Clear();
+                        _selectedValues.Add(_items[itemIndex].Value);
+                        await SetValueAsync(_items[itemIndex].Value, updateText: true);
+                        break;
+                    }
+                    else if (itemIndex <= _items.Count && _items[itemIndex].Disabled == false)
+                    {
+                        _selectedValues.Clear();
+                        _selectedValues.Add(_items[itemIndex].Value);
+                        await SetValueAsync(_items[itemIndex].Value, updateText: true);
+                        break;
+                    }
+                }
+
+            }
+
+        }
+
+        private async Task SelectPreviousItem()
+        {
+            if (MultiSelection == false)
+            {
+                if (_items == null || _items.Count == 0)
+                    return;
+                string val = Converter.Set(Value);
+                itemIndex = _items.FindIndex(e => Converter.Set(e.Value) == val);
+
+                for (int i = 0; i <= _items.Count; i++)
+                {
+                    itemIndex = itemIndex - 1;
+                    if (itemIndex < 0)
+                    {
+                        break;
+                    }
+                    else if (_items[itemIndex].Disabled == false)
+                    {
+                        _selectedValues.Clear();
+                        _selectedValues.Add(_items[itemIndex].Value);
+                        await SetValueAsync(_items[itemIndex].Value, updateText: true);
+                        break;
+                    }
+                }
+
+            }
+        }
 
         /// <summary>
         /// User class names for the popover, separated by space
@@ -148,6 +214,8 @@ namespace MudBlazor
         {
             Adornment = Adornment.End;
             IconSize = Size.Medium;
+
+            _keyPressPreventDefault = true;
         }
 
         protected override void OnAfterRender(bool firstRender)
@@ -336,9 +404,9 @@ namespace MudBlazor
                 await SetValueAsync(value);
                 SelectedValues.Clear();
                 SelectedValues.Add(value);
+                await _elementReference.FocusAsync();
+                StateHasChanged();
             }
-
-            StateHasChanged();
             await SelectedValuesChanged.InvokeAsync(SelectedValues);
         }
 
@@ -377,6 +445,7 @@ namespace MudBlazor
                 return;
             _isOpen = true;
             UpdateIcon();
+            
             StateHasChanged();
         }
 
@@ -386,6 +455,8 @@ namespace MudBlazor
             UpdateIcon();
             StateHasChanged();
             await OnBlur.InvokeAsync(new FocusEventArgs());
+            await _elementReference.FocusAsync();
+            StateHasChanged();
         }
 
         private void UpdateIcon()
@@ -483,6 +554,81 @@ namespace MudBlazor
             get
             {
                 return _selectAllChecked.HasValue ? _selectAllChecked.Value ? CheckedIcon : UncheckedIcon : IndeterminateIcon;
+            }
+        }
+
+        private bool _keyPressPreventDefault;
+
+        private int _key = 0;
+
+        protected void InterceptKeyDown(KeyboardEventArgs obj)
+        {
+            if (Disabled || ReadOnly)
+                return;
+            if (obj.Key == " ")
+            {
+                _keyPressPreventDefault = true;
+                _isOpen = !_isOpen;
+                return;
+            }
+            else if (obj.Key == "Tab")
+            {
+                _keyPressPreventDefault = false;
+                if (_isOpen == true)
+                {
+                    _isOpen = false;
+                }
+            }
+
+            OnKeyDown.InvokeAsync(obj).AndForget();
+        }
+
+        protected async Task InterceptKeyUp(KeyboardEventArgs obj)
+        {
+            if (Disabled || ReadOnly)
+                return;
+            else if (obj.AltKey == true && obj.Key == "ArrowUp")
+            {
+                _keyPressPreventDefault = true;
+                _isOpen = false;
+            }
+            else if (obj.AltKey == true && obj.Key == "ArrowDown")
+            {
+                _keyPressPreventDefault = true;
+                _isOpen = true;
+            }
+            else if (obj.Key == "ArrowUp")
+            {
+                _keyPressPreventDefault = true;
+                if (_isOpen == true)
+                {
+                    _isOpen = false;
+                }
+                await SelectPreviousItem();
+                _key++;
+                await Task.Delay(1);
+                StateHasChanged();
+                await Task.Delay(1);
+                await _elementReference.FocusAsync();
+            }
+            else if (obj.Key == "ArrowDown")
+            {
+                _keyPressPreventDefault = true;
+                if (_isOpen == true)
+                {
+                    _isOpen = false;
+                }
+                await SelectNextItem();
+                _key++;
+                await Task.Delay(1);
+                StateHasChanged();
+                await Task.Delay(1);
+                await _elementReference.FocusAsync();
+            }
+            else if (obj.Key == "Escape")
+            {
+                _keyPressPreventDefault = true;
+                _isOpen = false;
             }
         }
 
