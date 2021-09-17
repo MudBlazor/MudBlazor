@@ -1,0 +1,16 @@
+﻿@namespace MudBlazor.UnitTests.TestComponents
+
+<MudSelect T="int?" @bind-Value="value" PopoverClass="select-popover-class" IsPreRendered>
+    <MudSelectItem T="int?" Value="1">One</MudSelectItem>
+    <MudSelectItem T="int?" Value="2">Two</MudSelectItem>
+    <MudSelectItem T="int?" Value="3" Disabled="true">Three</MudSelectItem>
+    <MudSelectItem T="int?" Value="4">Four</MudSelectItem>
+</MudSelect>
+
+@code {
+    public static string __description__ = "Test arrowkeys: Space to open/close, Escape to close, Shift + ArrowKeys for item changing." +
+            "Alt + ArrowDown to open, Alt + ArrowUp to close." +
+            "ArrowKey navigation should not select the disable item.";
+
+    int? value = null;    
+}

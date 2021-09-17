@@ -8,6 +8,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Bunit;
 using FluentAssertions;
+using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.UnitTests.TestComponents;
 using NUnit.Framework;
 using static MudBlazor.UnitTests.TestComponents.SelectWithEnumTest;
@@ -631,6 +632,65 @@ namespace MudBlazor.UnitTests.Components
             select.Required.Should().BeTrue();
             await comp.InvokeAsync(() => select.Validate());
             select.ValidationErrors.First().Should().Be("Required");
+        }
+
+        [Test]
+        public async Task SelectKeyboardNavigationTest()
+        {
+            var comp = Context.RenderComponent<SelectKeyboardNavigationTest>();
+            var select = comp.FindComponent<MudSelect<int?>>().Instance;
+            var menu = comp.Find("div.mud-popover");
+            var input = comp.Find("div.mud-input");
+            var items = comp.FindAll("div.mud-list-item").ToList();
+
+            //Click to open popover
+            input.Click();
+            menu.ClassList.Should().Contain("mud-popover-open");
+            //Space to close popover
+            comp.Find("input").KeyPress(new KeyboardEventArgs() { Key = " " });
+            menu.ClassList.Should().NotContain("mud-popover-open");
+            //Space to open popover
+            comp.Find("input").KeyPress(new KeyboardEventArgs() { Key = " " });
+            menu.ClassList.Should().Contain("mud-popover-open");
+            //Escape to close popover
+            comp.Find("input").KeyUp(new KeyboardEventArgs() { Key = "Escape" });
+            menu.ClassList.Should().NotContain("mud-popover-open");
+            //Alt + down to open popover
+            comp.Find("input").KeyUp(new KeyboardEventArgs() { Key = "ArrowDown", AltKey = true });
+            menu.ClassList.Should().Contain("mud-popover-open");
+            //Alt + up to close popover
+            comp.Find("input").KeyUp(new KeyboardEventArgs() { Key = "ArrowUp", AltKey = true });
+            menu.ClassList.Should().NotContain("mud-popover-open");
+            //Alt + down to open popover for next step
+            comp.Find("input").KeyUp(new KeyboardEventArgs() { Key = "ArrowDown", AltKey = true });
+            menu.ClassList.Should().Contain("mud-popover-open");
+            //Down key to close and select first item
+            comp.Find("input").KeyUp(new KeyboardEventArgs() { Key = "ArrowDown", ShiftKey = true });
+            menu.ClassList.Should().NotContain("mud-popover-open");
+            select.Value.Should().Be(1);
+            //Up key to be sure there is not out of index exception and select first item
+            comp.Find("input").KeyUp(new KeyboardEventArgs() { Key = "ArrowUp", ShiftKey = true });
+            select.Value.Should().Be(1);
+            //Down key to select second item
+            comp.Find("input").KeyUp(new KeyboardEventArgs() { Key = "ArrowDown", ShiftKey = true });
+            select.Value.Should().Be(2);
+            //Down key to select fourth item
+            comp.Find("input").KeyUp(new KeyboardEventArgs() { Key = "ArrowDown", ShiftKey = true });
+            select.Value.Should().Be(4);
+            //Down key to be sure there is no out of index exception and select fourth item
+            comp.Find("input").KeyUp(new KeyboardEventArgs() { Key = "ArrowDown", ShiftKey = true });
+            select.Value.Should().Be(4);
+            //Up key to select second item
+            comp.Find("input").KeyUp(new KeyboardEventArgs() { Key = "ArrowUp", ShiftKey = true });
+            select.Value.Should().Be(2);
+            //Up key to select first item
+            comp.Find("input").KeyUp(new KeyboardEventArgs() { Key = "ArrowUp", ShiftKey = true });
+            select.Value.Should().Be(1);
+            //Click non neighbour item to be sure up key recognizes the last item
+            items[3].Click();
+            select.Value.Should().Be(4);
+            comp.Find("input").KeyUp(new KeyboardEventArgs() { Key = "ArrowUp", ShiftKey = true });
+            select.Value.Should().Be(2);
         }
     }
 }
