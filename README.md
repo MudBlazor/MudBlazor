@@ -1,12 +1,12 @@
 # ![MudBlazor](content/MudBlazor-GitHub-NoBg.png)
 # Material Design components for Blazor
-![Azure DevOps builds (master)](https://img.shields.io/azure-devops/build/gardnet-nu/4cba3d30-858f-4653-a80d-736a8adc5daf/1/master?label=azure%20pipelines&logo=Azure%20DevOps&style=flat-square)
-![Azure DevOps coverage (develop)](https://img.shields.io/azure-devops/coverage/gardnet-nu/MudBlazor/1/dev?style=flat-square&logo=Azure%20DevOps)
-[![GitHub](https://img.shields.io/github/license/Garderoben/MudBlazor?color=594ae2&logo=github&style=flat-square)](https://github.com/Garderoben/MudBlazor/blob/master/LICENSE)
-[![GitHub Repo stars](https://img.shields.io/github/stars/garderoben/mudblazor?color=594ae2&style=flat-square&logo=github)](https://github.com/Garderoben/MudBlazor/stargazers)
-[![GitHub last commit](https://img.shields.io/github/last-commit/garderoben/mudblazor?color=594ae2&style=flat-square&logo=github)](https://github.com/Garderoben/MudBlazor)
-[![Contributors](https://img.shields.io/github/contributors/garderoben/mudblazor?color=594ae2&style=flat-square&logo=github)](https://github.com/Garderoben/MudBlazor/graphs/contributors)
-[![Discussions](https://img.shields.io/github/discussions/garderoben/mudblazor?color=594ae2&logo=github&style=flat-square)](https://github.com/Garderoben/MudBlazor/discussions)
+![Azure DevOps builds (branch)](https://img.shields.io/azure-devops/build/gardnet-nu/mudblazor/14/master?label=azure%20pipelines&logo=Azure%20DevOps&style=flat-square)
+![Azure DevOps coverage (branch)](https://img.shields.io/azure-devops/coverage/gardnet-nu/MudBlazor/14/dev?style=flat-square&logo=Azure%20DevOps)
+[![GitHub](https://img.shields.io/github/license/mudblazor/mudblazor?color=594ae2&logo=github&style=flat-square)](https://github.com/mudblazor/MudBlazor/blob/master/LICENSE)
+[![GitHub Repo stars](https://img.shields.io/github/stars/mudblazor/mudblazor?color=594ae2&style=flat-square&logo=github)](https://github.com/mudblazor/MudBlazor/stargazers)
+[![GitHub last commit](https://img.shields.io/github/last-commit/mudblazor/mudblazor?color=594ae2&style=flat-square&logo=github)](https://github.com/mudblazor/mudblazor)
+[![Contributors](https://img.shields.io/github/contributors/mudblazor/mudblazor?color=594ae2&style=flat-square&logo=github)](https://github.com/mudblazor/mudblazor/graphs/contributors)
+[![Discussions](https://img.shields.io/github/discussions/mudblazor/mudblazor?color=594ae2&logo=github&style=flat-square)](https://github.com/mudblazor/mudblazor/discussions)
 [![Discord](https://img.shields.io/discord/786656789310865418?color=%237289da&label=Discord&logo=discord&logoColor=%237289da&style=flat-square)](https://discord.gg/mudblazor)
 [![Twitter](https://img.shields.io/twitter/follow/MudBlazor?color=1DA1F2&label=Twitter&logo=Twitter&style=flat-square)](https://twitter.com/MudBlazor)
 [![Nuget version](https://img.shields.io/nuget/v/MudBlazor?color=ff4081&label=nuget%20version&logo=nuget&style=flat-square)](https://www.nuget.org/packages/MudBlazor/)
@@ -33,7 +33,7 @@ MudBlazor is an ambitious Material Design component framework for Blazor with an
 
 ## Getting Started
 - Full installation instructions can be found at [mudblazor.com](https://mudblazor.com/getting-started/installation)  
-- Alternatively use one of our templates from the [MudBlazor.Templates](https://github.com/Garderoben/MudBlazor.Templates) repo.
+- Alternatively use one of our templates from the [MudBlazor.Templates](https://github.com/mudblazor/Templates) repo.
 ### Quick Installation Guide
 #### Common Configuration (Client-Side or Server-Side)
 Install Package
@@ -76,7 +76,7 @@ using MudBlazor.Services;
 services.AddMudServices();
 ```
 ### Usage
-```html
+```razor
 <MudText Typo="Typo.h6">MudBlazor is @Text</MudText>
 <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="ButtonOnClick">@ButtonText</MudButton>
 
@@ -86,10 +86,10 @@ services.AddMudServices();
   public int ButtonClicked { get; set; }
 
   void ButtonOnClick()
-    {
-        ButtonClicked += 1;
-        Text = $"Awesome x {ButtonClicked}";
-        ButtonText = "Click Me Again";
-    }
+  {
+      ButtonClicked += 1;
+      Text = $"Awesome x {ButtonClicked}";
+      ButtonText = "Click Me Again";
+  }
 }
 ```

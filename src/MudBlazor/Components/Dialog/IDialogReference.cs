@@ -1,5 +1,5 @@
 ﻿// Copyright (c) 2019 Blazored (https://github.com/Blazored)
-// Copyright (c) 2020 Jonny Larsson (https://github.com/Garderoben/MudBlazor)
+// Copyright (c) 2020 Jonny Larsson (https://github.com/MudBlazor/MudBlazor)
 // Copyright (c) 2021 improvements by Meinrad Recheis
 // See https://github.com/Blazored
 // License: MIT
@@ -29,5 +29,7 @@ namespace MudBlazor
         void InjectRenderFragment(RenderFragment rf);
 
         void InjectDialog(object inst);
+
+        Task<T> GetReturnValueAsync<T>();
     }
 }

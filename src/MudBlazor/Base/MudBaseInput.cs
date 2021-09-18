@@ -82,7 +82,7 @@ namespace MudBlazor
         [Parameter] public Margin Margin { get; set; } = Margin.None;
 
         /// <summary>
-        /// If true the input will focus automatically.
+        /// If true the input will focus automatically
         /// </summary>
         [Parameter] public bool AutoFocus { get; set; }
 

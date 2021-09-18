@@ -28,6 +28,8 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public string Text { get; set; }
 
+        [Parameter] public object Value { get; set; }
+
         /// <summary>
         /// Avatar to use if set.
         /// </summary>
@@ -85,6 +87,15 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public Color AdornmentColor { get; set; } = Color.Default;
 
+        /// <summary>
+        /// Custom expand less icon.
+        /// </summary>
+        [Parameter] public string ExpandLessIcon { get; set; } = Icons.Material.Filled.ExpandLess;
+
+        /// <summary>
+        /// Custom expand more icon.
+        /// </summary>
+        [Parameter] public string ExpandMoreIcon { get; set; } = Icons.Material.Filled.ExpandMore;
 
         /// <summary>
         /// If true, the List Subheader will be indented.
@@ -164,13 +175,13 @@ namespace MudBlazor
             }
             else if (Href != null)
             {
-                MudList?.SetSelectedItem(this);
+                MudList?.SetSelectedValue(this.Value);
                 OnClick.InvokeAsync(ev);
                 UriHelper.NavigateTo(Href, ForceLoad);
             }
             else
             {
-                MudList?.SetSelectedItem(this);
+                MudList?.SetSelectedValue(this.Value);
                 OnClick.InvokeAsync(ev);
                 if (Command?.CanExecute(CommandParameter) ?? false)
                 {

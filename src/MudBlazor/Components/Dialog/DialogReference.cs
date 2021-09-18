@@ -1,10 +1,11 @@
 ﻿// Copyright (c) 2019 Blazored (https://github.com/Blazored)
-// Copyright (c) 2020 Jonny Larsson (https://github.com/Garderoben/MudBlazor)
+// Copyright (c) 2020 Jonny Larsson (https://github.com/MudBlazor/MudBlazor)
 // Copyright (c) 2021 improvements by Meinrad Recheis
 // See https://github.com/Blazored
 // License: MIT
 
 using System;
+using System.Diagnostics;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 
@@ -57,5 +58,20 @@ namespace MudBlazor
         {
             RenderFragment = rf;
         }
+
+        public async Task<T> GetReturnValueAsync<T>()
+        {
+            var result=await Result;
+            try
+            {
+                return (T)result.Data;
+            }
+            catch (InvalidCastException)
+            {
+                Debug.WriteLine($"Could not cast return value to {typeof(T)}, returning default.");
+                return default;
+            }
+        }
+
     }
 }

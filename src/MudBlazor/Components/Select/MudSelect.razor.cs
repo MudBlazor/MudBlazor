@@ -27,11 +27,6 @@ namespace MudBlazor
         [Parameter] public RenderFragment ChildContent { get; set; }
 
         /// <summary>
-        /// If string has value the label text will be displayed in the input, and scaled down at the top if the input has value.
-        /// </summary>
-        [Parameter] public string Label { get; set; }
-
-        /// <summary>
         /// User class names for the popover, separated by space
         /// </summary>
         [Parameter] public string PopoverClass { get; set; }
@@ -164,6 +159,7 @@ namespace MudBlazor
                 // which supply the RenderFragment. So in this case, a second render is necessary
                 StateHasChanged();
             }
+            UpdateSelectAllChecked();
         }
 
         /// <summary>
@@ -311,8 +307,6 @@ namespace MudBlazor
                 else
                     SelectedValues.Remove(value);
 
-                await SelectedValuesChanged.InvokeAsync(SelectedValues);
-
                 if (MultiSelectionTextFunc != null)
                 {
                     await SetCustomizedTextAsync(string.Join(Delimiter, SelectedValues.Select(x => Converter.Set(x))),
@@ -324,19 +318,7 @@ namespace MudBlazor
                     await SetTextAsync(string.Join(Delimiter, SelectedValues.Select(x => Converter.Set(x))));
                 }
 
-                if (_items.Count == SelectedValues.Count)
-                {
-                    _selectAllChecked = true;
-                }
-                else if (SelectedValues.Count == 0)
-                {
-                    _selectAllChecked = false;
-                }
-                else
-                {
-                    _selectAllChecked = null;
-                }
-
+                UpdateSelectAllChecked();
                 BeginValidate();
             }
             else
@@ -351,14 +333,32 @@ namespace MudBlazor
                     return;
                 }
 
-                await SelectedValuesChanged.InvokeAsync(SelectedValues);
-
                 await SetValueAsync(value);
                 SelectedValues.Clear();
                 SelectedValues.Add(value);
             }
 
             StateHasChanged();
+            await SelectedValuesChanged.InvokeAsync(SelectedValues);
+        }
+
+        private void UpdateSelectAllChecked()
+        {
+            if (MultiSelection && SelectAll)
+            {
+                if (SelectedValues.Count == 0)
+                { 
+                    _selectAllChecked = false;
+                }
+                else if (_items.Count == SelectedValues.Count)
+                {
+                    _selectAllChecked = true;
+                }
+                else
+                {
+                    _selectAllChecked = null;
+                }
+            }
         }
 
         public void ToggleMenu()
@@ -461,13 +461,28 @@ namespace MudBlazor
         }
 
         /// <summary>
+        /// Custom checked icon.
+        /// </summary>
+        [Parameter] public string CheckedIcon { get; set; } = Icons.Material.Filled.CheckBox;
+
+        /// <summary>
+        /// Custom unchecked icon.
+        /// </summary>
+        [Parameter] public string UncheckedIcon { get; set; } = Icons.Material.Filled.CheckBoxOutlineBlank;
+
+        /// <summary>
+        /// Custom indeterminate icon.
+        /// </summary>
+        [Parameter] public string IndeterminateIcon { get; set; } = Icons.Material.Filled.IndeterminateCheckBox;
+
+        /// <summary>
         /// The checkbox icon reflects the select all option's state
         /// </summary>
         protected string SelectAllCheckBoxIcon
         {
             get
             {
-                return _selectAllChecked.HasValue ? _selectAllChecked.Value ? Icons.Material.Filled.CheckBox : Icons.Material.Filled.CheckBoxOutlineBlank : Icons.Material.Filled.IndeterminateCheckBox;
+                return _selectAllChecked.HasValue ? _selectAllChecked.Value ? CheckedIcon : UncheckedIcon : IndeterminateIcon;
             }
         }
 

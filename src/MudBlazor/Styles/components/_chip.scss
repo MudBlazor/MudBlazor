@@ -102,11 +102,6 @@
             &:hover {
                 background-color: var(--mud-palette-#{$color}-darken);
             }
-
-            &.mud-chip-selected {
-                color: var(--mud-palette-#{$color});
-                background-color: var(--mud-palette-#{$color}-hover) !important;
-            }
         }
     }
 }
@@ -126,11 +121,33 @@
             &:hover {
                 background-color: var(--mud-palette-#{$color}-hover);
             }
+
+            &.mud-chip-selected {
+                background-color: var(--mud-palette-#{$color}-hover);
+
+                &:hover {
+                    background-color: rgba(var(--mud-palette-#{$color}-rgb), 0.12);
+                }
+            }
         }
     }
 }
+.mud-chip-text {
+    color: var(--mud-palette-text-primary);
+    background-color: var(--mud-palette-action-default-hover);
 
-.mud-chip-selected {
-    color: var(--mud-palette-primary);
-    background-color: var(--mud-palette-primary-hover) !important;
+    &:hover {
+        background-color: var(--mud-palette-action-disabled-background);
+    }
+
+    @each $color in $mud-palette-colors {
+        &.mud-chip-color-#{$color} {
+            color: var(--mud-palette-#{$color});
+            background-color: var(--mud-palette-#{$color}-hover);
+
+            &:hover {
+                background-color: rgba(var(--mud-palette-#{$color}-rgb), 0.12);
+            }
+        }
+    }
 }
