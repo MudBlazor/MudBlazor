@@ -645,28 +645,28 @@ namespace MudBlazor.UnitTests.Components
 
             //Click to open popover
             input.Click();
-            menu.ClassList.Should().Contain("mud-popover-open");
+            comp.WaitForAssertion(() => menu.ClassList.Should().Contain("mud-popover-open"), TimeSpan.FromSeconds(10));
             //Space to close popover
             comp.Find("input").KeyPress(new KeyboardEventArgs() { Key = " " });
-            menu.ClassList.Should().NotContain("mud-popover-open");
+            comp.WaitForAssertion(() => menu.ClassList.Should().NotContain("mud-popover-open"), TimeSpan.FromSeconds(10));
             //Space to open popover
             comp.Find("input").KeyPress(new KeyboardEventArgs() { Key = " " });
-            menu.ClassList.Should().Contain("mud-popover-open");
+            comp.WaitForAssertion(() => menu.ClassList.Should().Contain("mud-popover-open"), TimeSpan.FromSeconds(10));
             //Escape to close popover
             comp.Find("input").KeyUp(new KeyboardEventArgs() { Key = "Escape" });
-            menu.ClassList.Should().NotContain("mud-popover-open");
+            comp.WaitForAssertion(() => menu.ClassList.Should().NotContain("mud-popover-open"), TimeSpan.FromSeconds(10));
             //Alt + down to open popover
             comp.Find("input").KeyUp(new KeyboardEventArgs() { Key = "ArrowDown", AltKey = true });
-            menu.ClassList.Should().Contain("mud-popover-open");
+            comp.WaitForAssertion(() => menu.ClassList.Should().Contain("mud-popover-open"), TimeSpan.FromSeconds(10));
             //Alt + up to close popover
             comp.Find("input").KeyUp(new KeyboardEventArgs() { Key = "ArrowUp", AltKey = true });
-            menu.ClassList.Should().NotContain("mud-popover-open");
+            comp.WaitForAssertion(() => menu.ClassList.Should().NotContain("mud-popover-open"), TimeSpan.FromSeconds(10));
             //Alt + down to open popover for next step
             comp.Find("input").KeyUp(new KeyboardEventArgs() { Key = "ArrowDown", AltKey = true });
-            comp.WaitForAssertion(() => menu.ClassList.Should().Contain("mud-popover-open"));
+            comp.WaitForAssertion(() => menu.ClassList.Should().Contain("mud-popover-open"), TimeSpan.FromSeconds(10));
             //Down key to close and select first item
             comp.Find("input").KeyUp(new KeyboardEventArgs() { Key = "ArrowDown", ShiftKey = true });
-            menu.ClassList.Should().NotContain("mud-popover-open");
+            comp.WaitForAssertion(() => menu.ClassList.Should().NotContain("mud-popover-open"), TimeSpan.FromSeconds(10));
             comp.WaitForAssertion(() => select.Value.Should().Be(1), TimeSpan.FromSeconds(10));
             //Up key to be sure there is not out of index exception and select first item
             comp.Find("input").KeyUp(new KeyboardEventArgs() { Key = "ArrowUp", ShiftKey = true });
@@ -690,7 +690,7 @@ namespace MudBlazor.UnitTests.Components
             items[3].Click();
             comp.WaitForAssertion(() => select.Value.Should().Be(4), TimeSpan.FromSeconds(10));
             comp.Find("input").KeyUp(new KeyboardEventArgs() { Key = "ArrowUp", ShiftKey = true });
-            comp.WaitForAssertion(() => menu.ClassList.Should().NotContain("mud-popover-open"));
+            comp.WaitForAssertion(() => menu.ClassList.Should().NotContain("mud-popover-open"), TimeSpan.FromSeconds(10));
             comp.WaitForAssertion(() => select.Value.Should().Be(2), TimeSpan.FromSeconds(10));
 
             comp.Find("input").KeyPress(new KeyboardEventArgs() { Key = "Tab"});
