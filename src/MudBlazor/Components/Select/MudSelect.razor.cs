@@ -598,14 +598,13 @@ namespace MudBlazor
         {
             if (Disabled || ReadOnly)
                 return;
-            else if (obj.AltKey == true && obj.Key == "ArrowUp")
+            _keyPressPreventDefault = false;
+            if (obj.AltKey == true && obj.Key == "ArrowUp")
             {
-                _keyPressPreventDefault = true;
                 _isOpen = false;
             }
             else if (obj.AltKey == true && obj.Key == "ArrowDown")
             {
-                _keyPressPreventDefault = true;
                 _isOpen = true;
             }
             else if (obj.Key == "ArrowUp")
@@ -624,7 +623,6 @@ namespace MudBlazor
             }
             else if (obj.Key == "ArrowDown")
             {
-                _keyPressPreventDefault = true;
                 if (_isOpen == true)
                 {
                     _isOpen = false;
@@ -638,7 +636,6 @@ namespace MudBlazor
             }
             else if (obj.Key == "Escape")
             {
-                _keyPressPreventDefault = true;
                 _isOpen = false;
                 StateHasChanged();
             }
