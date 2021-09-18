@@ -627,44 +627,55 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("input").KeyPress(new KeyboardEventArgs() { Key = " " });
             comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open"));
             //Escape to close popover
-            comp.Find("input").KeyUp(new KeyboardEventArgs() { Key = "Escape" });
+            await comp.InvokeAsync(async () => await select.InterceptKeyUp(new KeyboardEventArgs() { Key = "Escape" }));
+            comp.FindComponent<MudSelect<int?>>().Render();
             comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().NotContain("mud-popover-open"));
             //Alt + down to open popover
-            comp.Find("input").KeyUp(new KeyboardEventArgs() { Key = "ArrowDown", AltKey = true });
+            await comp.InvokeAsync(async () => await select.InterceptKeyUp(new KeyboardEventArgs() { Key = "ArrowDown", AltKey = true }));
+            comp.FindComponent<MudSelect<int?>>().Render();
             comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open"));
             //Alt + up to close popover
-            comp.Find("input").KeyUp(new KeyboardEventArgs() { Key = "ArrowUp", AltKey = true });
+            await comp.InvokeAsync(async () => await select.InterceptKeyUp(new KeyboardEventArgs() { Key = "ArrowUp", AltKey = true }));
+            comp.FindComponent<MudSelect<int?>>().Render();
             comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().NotContain("mud-popover-open"));
             //Alt + down to open popover for next step
-            comp.Find("input").KeyUp(new KeyboardEventArgs() { Key = "ArrowDown", AltKey = true });
+            await comp.InvokeAsync(async () => await select.InterceptKeyUp(new KeyboardEventArgs() { Key = "ArrowDown", AltKey = true }));
+            comp.FindComponent<MudSelect<int?>>().Render();
             comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open"));
             //Down key to close and select first item
-            comp.Find("input").KeyUp(new KeyboardEventArgs() { Key = "ArrowDown", ShiftKey = true });
+            await comp.InvokeAsync(async () => await select.InterceptKeyUp(new KeyboardEventArgs() { Key = "ArrowDown", ShiftKey = true }));
+            comp.FindComponent<MudSelect<int?>>().Render();
             comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().NotContain("mud-popover-open"));
             comp.WaitForAssertion(() => select.Value.Should().Be(1));
             //Up key to be sure there is not out of index exception and select first item
-            comp.Find("input").KeyUp(new KeyboardEventArgs() { Key = "ArrowUp", ShiftKey = true });
+            await comp.InvokeAsync(async () => await select.InterceptKeyUp(new KeyboardEventArgs() { Key = "ArrowUp", ShiftKey = true }));
+            comp.FindComponent<MudSelect<int?>>().Render();
             comp.WaitForAssertion(() => select.Value.Should().Be(1));
             //Down key to select second item
-            comp.Find("input").KeyUp(new KeyboardEventArgs() { Key = "ArrowDown", ShiftKey = true });
+            await comp.InvokeAsync(async () => await select.InterceptKeyUp(new KeyboardEventArgs() { Key = "ArrowDown", ShiftKey = true }));
+            comp.FindComponent<MudSelect<int?>>().Render();
             comp.WaitForAssertion(() => select.Value.Should().Be(2));
             //Down key to select fourth item
-            comp.Find("input").KeyUp(new KeyboardEventArgs() { Key = "ArrowDown", ShiftKey = true });
+            await comp.InvokeAsync(async ()=> await select.InterceptKeyUp(new KeyboardEventArgs() { Key = "ArrowDown", ShiftKey = true }));
+            comp.FindComponent<MudSelect<int?>>().Render();
             comp.WaitForAssertion(() => select.Value.Should().Be(4));
             //Down key to be sure there is no out of index exception and select fourth item
-            comp.Find("input").KeyUp(new KeyboardEventArgs() { Key = "ArrowDown", ShiftKey = true });
+            await comp.InvokeAsync(async () => await select.InterceptKeyUp(new KeyboardEventArgs() { Key = "ArrowDown", ShiftKey = true }));
+            comp.FindComponent<MudSelect<int?>>().Render();
             comp.WaitForAssertion(() => select.Value.Should().Be(4));
             //Up key to select second item
-            comp.Find("input").KeyUp(new KeyboardEventArgs() { Key = "ArrowUp", ShiftKey = true });
+            await comp.InvokeAsync(async () => await select.InterceptKeyUp(new KeyboardEventArgs() { Key = "ArrowUp", ShiftKey = true }));
+            comp.FindComponent<MudSelect<int?>>().Render();
             comp.WaitForAssertion(() => select.Value.Should().Be(2));
             //Up key to select first item
-            comp.Find("input").KeyUp(new KeyboardEventArgs() { Key = "ArrowUp", ShiftKey = true });
+            await comp.InvokeAsync(async () => await select.InterceptKeyUp(new KeyboardEventArgs() { Key = "ArrowUp", ShiftKey = true }));
+            comp.FindComponent<MudSelect<int?>>().Render();
             comp.WaitForAssertion(() => select.Value.Should().Be(1));
             //Click non neighbour item to be sure up key recognizes the last item
             comp.FindAll("div.mud-list-item")[3].Click();
-            await Task.Delay(1);
             comp.WaitForAssertion(() => select.Value.Should().Be(4));
-            comp.Find("input").KeyUp(new KeyboardEventArgs() { Key = "ArrowUp", ShiftKey = true });
+            await comp.InvokeAsync(async () => await select.InterceptKeyUp(new KeyboardEventArgs() { Key = "ArrowUp", ShiftKey = true }));
+            comp.FindComponent<MudSelect<int?>>().Render();
             comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().NotContain("mud-popover-open"));
             comp.WaitForAssertion(() => select.Value.Should().Be(2));
 

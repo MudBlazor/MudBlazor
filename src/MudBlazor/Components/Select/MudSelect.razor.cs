@@ -586,7 +586,7 @@ namespace MudBlazor
             OnKeyDown.InvokeAsync(obj).AndForget();
         }
 
-        protected async Task InterceptKeyUp(KeyboardEventArgs obj)
+        internal async Task InterceptKeyUp(KeyboardEventArgs obj)
         {
             if (Disabled || ReadOnly)
                 return;
@@ -632,6 +632,7 @@ namespace MudBlazor
             {
                 _keyPressPreventDefault = true;
                 _isOpen = false;
+                StateHasChanged();
             }
         }
 
