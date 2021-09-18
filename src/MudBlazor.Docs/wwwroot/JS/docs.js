@@ -263,6 +263,10 @@ blubSingle = function (popoverNode, classSelector) {
         if (popoverContentNode.classList.contains('mud-popover-relative-width')) {
             popoverContentNode.style['max-width'] = (boundingRect.width) + 'px';
         }
+
+        if (window.getComputedStyle(popoverNode).getPropertyValue('z-index') != 'auto') {
+            popoverContentNode.style['z-index'] = window.getComputedStyle(popoverNode).getPropertyValue('z-index');
+        }
     }
     else {
         console.error('something else');

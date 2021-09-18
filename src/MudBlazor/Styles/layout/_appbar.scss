@@ -12,6 +12,10 @@
     background-color: var(--mud-palette-appbar-background);
     transition: margin 225ms cubic-bezier(0.0, 0, 0.2, 1) 0ms,width 225ms cubic-bezier(0.0, 0, 0.2, 1) 0ms;
 
+    .mud-popover-cascading-value {
+        z-index: calc(var(--mud-zindex-appbar) + 1);
+    }
+
     &.mud-appbar-fixed-top {
         position: fixed;
         top: 0;
