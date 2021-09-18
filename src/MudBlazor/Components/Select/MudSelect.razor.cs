@@ -407,7 +407,7 @@ namespace MudBlazor
                 // Note: we need to focus the select again so it receives further keyboard events
                 // we are not awaiting this here because doing so will never return in bUnit, causing tests to hang. 
                 // we don't need to await it anyway
-                _ = _elementReference.FocusAsync();
+                _elementReference.FocusAsync().AndForget();
                 StateHasChanged();
             }
             await SelectedValuesChanged.InvokeAsync(SelectedValues);
@@ -458,7 +458,7 @@ namespace MudBlazor
             UpdateIcon();
             StateHasChanged();
             await OnBlur.InvokeAsync(new FocusEventArgs());
-            await _elementReference.FocusAsync();
+            _elementReference.FocusAsync().AndForget();
             StateHasChanged();
         }
 
@@ -612,7 +612,7 @@ namespace MudBlazor
                 await Task.Delay(1);
                 StateHasChanged();
                 await Task.Delay(1);
-                await _elementReference.FocusAsync();
+                _elementReference.FocusAsync().AndForget();
             }
             else if (obj.Key == "ArrowDown")
             {
@@ -626,7 +626,7 @@ namespace MudBlazor
                 await Task.Delay(1);
                 StateHasChanged();
                 await Task.Delay(1);
-                await _elementReference.FocusAsync();
+                _elementReference.FocusAsync().AndForget();
             }
             else if (obj.Key == "Escape")
             {
