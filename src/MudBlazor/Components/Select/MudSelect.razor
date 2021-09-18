@@ -13,7 +13,7 @@
                           Disabled="@Disabled" ReadOnly="true" Error="@Error"
                           OnAdornmentClick="@OnAdornmentClick" AdornmentIcon="@_currentIcon" Adornment="@Adornment" AdornmentColor="@AdornmentColor" IconSize="@IconSize" AdornmentText="@AdornmentText"
                           Clearable="@Clearable" OnClearButtonClick="(async (e) => await SelectClearButtonClickHandlerAsync(e))"
-                          @attributes="UserAttributes" OnKeyPress="@InterceptKeyPress" KeyPressPreventDefault="_keyPressPreventDefault" OnKeyUp="@InterceptKeyUp" @onfocus="@(() => _keyPressPreventDefault = true)" 
+                          @attributes="UserAttributes" OnKeyPress="@InterceptKeyPress" KeyPressPreventDefault="_keyPressPreventDefault" KeyDownPreventDefault="_keyPressPreventDefault" KeyUpPreventDefault="_keyPressPreventDefault" OnKeyUp="@InterceptKeyUp" @onfocus="@(() => _keyPressPreventDefault = true)" 
                           >
                     @if (CanRenderValue)
                     {

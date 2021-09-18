@@ -582,6 +582,14 @@ namespace MudBlazor
                     _isOpen = false;
                 }
             }
+            else if (obj.Key == "ArrowUp")
+            {
+                _keyPressPreventDefault = true;
+            }
+            else if (obj.Key == "ArrowDown")
+            {
+                _keyPressPreventDefault = true;
+            }
 
             OnKeyDown.InvokeAsync(obj).AndForget();
         }
