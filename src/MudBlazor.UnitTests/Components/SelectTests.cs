@@ -667,32 +667,33 @@ namespace MudBlazor.UnitTests.Components
             //Down key to close and select first item
             comp.Find("input").KeyUp(new KeyboardEventArgs() { Key = "ArrowDown", ShiftKey = true });
             menu.ClassList.Should().NotContain("mud-popover-open");
-            comp.WaitForAssertion(() => select.Value.Should().Be(1), TimeSpan.FromSeconds(5));
+            comp.WaitForAssertion(() => select.Value.Should().Be(1), TimeSpan.FromSeconds(10));
             //Up key to be sure there is not out of index exception and select first item
             comp.Find("input").KeyUp(new KeyboardEventArgs() { Key = "ArrowUp", ShiftKey = true });
-            comp.WaitForAssertion(() => select.Value.Should().Be(1), TimeSpan.FromSeconds(5));
+            comp.WaitForAssertion(() => select.Value.Should().Be(1), TimeSpan.FromSeconds(10));
             //Down key to select second item
             comp.Find("input").KeyUp(new KeyboardEventArgs() { Key = "ArrowDown", ShiftKey = true });
-            comp.WaitForAssertion(() => select.Value.Should().Be(2), TimeSpan.FromSeconds(5));
+            comp.WaitForAssertion(() => select.Value.Should().Be(2), TimeSpan.FromSeconds(10));
             //Down key to select fourth item
             comp.Find("input").KeyUp(new KeyboardEventArgs() { Key = "ArrowDown", ShiftKey = true });
-            comp.WaitForAssertion(() => select.Value.Should().Be(4), TimeSpan.FromSeconds(5));
+            comp.WaitForAssertion(() => select.Value.Should().Be(4), TimeSpan.FromSeconds(10));
             //Down key to be sure there is no out of index exception and select fourth item
             comp.Find("input").KeyUp(new KeyboardEventArgs() { Key = "ArrowDown", ShiftKey = true });
-            comp.WaitForAssertion(() => select.Value.Should().Be(4), TimeSpan.FromSeconds(5));
+            comp.WaitForAssertion(() => select.Value.Should().Be(4), TimeSpan.FromSeconds(10));
             //Up key to select second item
             comp.Find("input").KeyUp(new KeyboardEventArgs() { Key = "ArrowUp", ShiftKey = true });
-            comp.WaitForAssertion(() => select.Value.Should().Be(2), TimeSpan.FromSeconds(5));
+            comp.WaitForAssertion(() => select.Value.Should().Be(2), TimeSpan.FromSeconds(10));
             //Up key to select first item
             comp.Find("input").KeyUp(new KeyboardEventArgs() { Key = "ArrowUp", ShiftKey = true });
-            comp.WaitForAssertion(() => select.Value.Should().Be(1), TimeSpan.FromSeconds(5));
+            comp.WaitForAssertion(() => select.Value.Should().Be(1), TimeSpan.FromSeconds(10));
             //Click non neighbour item to be sure up key recognizes the last item
             items[3].Click();
-            comp.WaitForAssertion(() => select.Value.Should().Be(4), new TimeSpan(0, 0, 5));
+            comp.WaitForAssertion(() => select.Value.Should().Be(4), TimeSpan.FromSeconds(10));
             comp.Find("input").KeyUp(new KeyboardEventArgs() { Key = "ArrowUp", ShiftKey = true });
-            comp.WaitForAssertion(() => select.Value.Should().Be(2), TimeSpan.FromSeconds(5));
+            comp.WaitForAssertion(() => menu.ClassList.Should().NotContain("mud-popover-open"));
+            comp.WaitForAssertion(() => select.Value.Should().Be(2), TimeSpan.FromSeconds(10));
 
-            comp.Find("input").KeyUp(new KeyboardEventArgs() { Key = "Tab"});
+            comp.Find("input").KeyPress(new KeyboardEventArgs() { Key = "Tab"});
             menu.ClassList.Should().NotContain("mud-popover-open");
         }
     }
