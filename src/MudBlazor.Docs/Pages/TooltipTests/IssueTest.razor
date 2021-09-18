@@ -1,0 +1,28 @@
+﻿@using Microsoft.AspNetCore.Components;
+@if(!string.IsNullOrEmpty(WhoWillFix))
+{
+    <MudText Color="Color.Dark" Inline="true" Typo="Typo.h5">Who will fix: </MudText>
+    <MudText Color="Color.Primary" Inline="true" Typo="Typo.h5">@WhoWillFix</MudText>
+}
+<MudLink Typo="Typo.h5" Class="ml-4" Color="@Color" Href="@("https://github.com/MudBlazor/MudBlazor/issues/" + Issue)" Target="_blank">@($"#{Issue}")</MudLink>
+@if(Issue2 > 0)
+{
+    <MudLink Typo="Typo.h5" Class="ml-4" Color="@Color" Href="@("https://github.com/MudBlazor/MudBlazor/issues/" + Issue2)" Target="_blank">@($"#{Issue2}")</MudLink>
+}
+@if(Issue3 > 0)
+{
+    <MudLink Typo="Typo.h5" Class="ml-4" Color="@Color" Href="@("https://github.com/MudBlazor/MudBlazor/issues/" + Issue3)" Target="_blank">@($"#{Issue3}")</MudLink>
+}
+<MudPaper Elevation="0">
+    @ChildContent
+</MudPaper>
+<MudDivider Class="my-6"/>
+
+@code {
+    [Parameter] public int Issue { get; set; }
+    [Parameter] public int Issue2 { get; set; }
+    [Parameter] public int Issue3 { get; set; }
+    [Parameter] public string WhoWillFix { get; set; }
+    [Parameter] public Color Color { get; set; } = Color.Primary;
+    [Parameter] public RenderFragment ChildContent { get; set; }
+}
