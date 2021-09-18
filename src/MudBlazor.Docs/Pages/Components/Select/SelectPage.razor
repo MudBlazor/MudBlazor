@@ -15,6 +15,7 @@
             </SectionContent>
             <SectionSource ShowCode="false" Code="SelectVariantsExample" GitHubFolderName="Select" />
         </DocsPageSection>
+
         <DocsPageSection>
             <SectionHeader Title="Usage">
                 <Description></Description>
@@ -26,6 +27,7 @@
             </SectionContent>
             <SectionSource ShowCode="false" Code="SelectUsageExample" GitHubFolderName="Select" />
         </DocsPageSection>
+
         <DocsPageSection>
             <SectionHeader Title="Multiselect">
                 <SubTitle>Default MultiSelection Text</SubTitle>
@@ -68,6 +70,7 @@
             </SectionContent>
             <SectionSource ShowCode="false" Code="MultiSelectSelectAllExample" GitHubFolderName="Select" />
         </DocsPageSection>
+
         <DocsPageSection>
             <SectionHeader Title="Dense">
                 <Description></Description>
@@ -99,7 +102,7 @@
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader Title="Value presentation">
+            <SectionHeader Title="Value Presentation">
                 <Description>
                     Select uses the render fragments you specify for the items to display the selected value (if any). If you don't specify render fragments, the value will be displayed as text. Also, if you have render fragments
                     but the value that has been set is not in the list, it will also be displayed as text.
@@ -114,7 +117,7 @@
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader Title="Custom converter">
+            <SectionHeader Title="Custom Converter">
                 <Description>
                     Select has a built-in <CodeInline>DefaultConverter</CodeInline> which converts the values from any primitive type to string for presentation of the selected value.
                     You can customize that converter as described under <MudLink Href="/features/converters">Converters</MudLink>. Here, we use <CodeInline>ToStringFunc</CodeInline> to
@@ -131,7 +134,7 @@
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader Title="Numeric collection">
+            <SectionHeader Title="Numeric Collection">
                 <Description>
                     When using the properties <CodeInline>Required=true</CodeInline> and <CodeInline>Clearable=true</CodeInline> in combination with a numeric collection,
                     it is required that the items of the collection are of a nullable numeric type such as <CodeInline>int?</CodeInline> or <CodeInline>double?</CodeInline> in order
@@ -144,6 +147,29 @@
                 </MudContainer>
             </SectionContent>
             <SectionSource ShowCode="false" Code="SelectNumericCollectionExample" GitHubFolderName="Select" />
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Keyboard Navigation">
+                <Description>
+                    <MudChip Color="Color.Primary" Text="Beta" />
+                    <MudText>MudSelect accepts keys to keyboard navigation.</MudText>
+                    <br />
+                    <MudText><CodeInline>Escape</CodeInline> key for close</MudText>
+                    <MudText><CodeInline>Space</CodeInline> key for toggle open/close</MudText>
+                    <MudText><CodeInline>Alt + ArrowDown</CodeInline> key for open</MudText>
+                    <MudText><CodeInline>Alt + ArrowUp</CodeInline> key for close</MudText>
+                    <MudText><CodeInline>Shift + ArrowDown</CodeInline> key for next item (MultiSelect not supported)</MudText>
+                    <MudText><CodeInline>Shift + ArrowUp</CodeInline> key for previous item (MultiSelect not supported)</MudText>
+                    <MudText>*Disabled items cannot be selected by ArrowKeys.</MudText>
+                </Description>
+            </SectionHeader>
+            <SectionContent Outlined="true" DisplayFlex="true">
+                <MudContainer>
+                    <SelectKeyboardNavigationExample />
+                </MudContainer>
+            </SectionContent>
+            <SectionSource ShowCode="false" Code="SelectKeyboardNavigationExample" GitHubFolderName="Select" />
         </DocsPageSection>
 
     </DocsPageContent>

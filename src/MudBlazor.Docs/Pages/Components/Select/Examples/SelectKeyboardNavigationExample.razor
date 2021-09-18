@@ -1,0 +1,24 @@
+﻿@using Microsoft.AspNetCore.Components
+@using System.Globalization;
+@namespace MudBlazor.Docs.Examples
+
+<MudButton Class="mb-8" Variant="Variant.Filled" Color="Color.Primary" OnClick="FocusSelect">Focus</MudButton>
+
+<MudSelect @ref="mySelect" T="string" @bind-Value="value" Label="Try Me With Keys">
+    <MudSelectItem Value="@("One")" />
+    <MudSelectItem Value="@("Two")" />
+    <MudSelectItem Value="@("Three")" Disabled="true" />
+    <MudSelectItem Value="@("Four")" />
+</MudSelect>
+
+
+
+@code {
+    string value = null;
+    MudSelect<string> mySelect;
+
+    private async Task FocusSelect()
+    {
+        await mySelect.FocusAsync();
+    }
+}
