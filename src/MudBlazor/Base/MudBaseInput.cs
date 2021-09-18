@@ -82,7 +82,17 @@ namespace MudBlazor
         [Parameter] public Margin Margin { get; set; } = Margin.None;
 
         /// <summary>
-        /// If true the input will focus automatically
+        /// The short hint displayed in the input before the user enters a value.
+        /// </summary>
+        [Parameter] public string Placeholder { get; set; }
+
+        /// <summary>
+        /// If string has value the label text will be displayed in the input, and scaled down at the top if the input has value.
+        /// </summary>
+        [Parameter] public string Label { get; set; }
+
+        /// <summary>
+        /// If true the input will focus automatically.
         /// </summary>
         [Parameter] public bool AutoFocus { get; set; }
 
@@ -92,7 +102,7 @@ namespace MudBlazor
         [Parameter] public int Lines { get; set; } = 1;
 
         /// <summary>
-        /// The text to be displayed.
+        ///  The text to be displayed.
         /// </summary>
         [Parameter]
         public string Text { get; set; }
@@ -129,14 +139,13 @@ namespace MudBlazor
         /// <summary>
         /// Text change hook for descendants. Called when Text needs to be refreshed from current Value property.
         /// </summary>
-        /// <param name="updateValue">If true, refresh the value</param>
         protected virtual Task UpdateTextPropertyAsync(bool updateValue)
         {
             return SetTextAsync(Converter.Set(Value), updateValue);
         }
 
         /// <summary>
-        /// Focus the input.
+        /// Focuses the element
         /// </summary>
         /// <returns>The ValueTask</returns>
         public virtual ValueTask FocusAsync() { return new ValueTask(); }
@@ -185,6 +194,7 @@ namespace MudBlazor
         /// Prevent the default action for the KeyDown event.
         /// </summary>
         [Parameter] public bool KeyDownPreventDefault { get; set; }
+
 
         /// <summary>
         /// Fired on the KeyPress event.
@@ -272,7 +282,7 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Conversion format parameter for ToString(), can be used for formatting primitive types, DateTimes and TimeSpans.
+        /// Conversion format parameter for ToString(), can be used for formatting primitive types, DateTimes and TimeSpans
         /// </summary>
         [Parameter]
         public string Format

@@ -213,7 +213,6 @@ namespace MudBlazor
         /// <summary>
         /// Cause this component to validate its value.
         /// </summary>
-        /// <returns>The Task</returns>
         public Task Validate()
         {
             // when a validation is forced, we must set Touched to true, because for untouched fields with
@@ -440,6 +439,9 @@ namespace MudBlazor
             }
         }
 
+        /// <summary>
+        /// Reset the value and the validation.
+        /// </summary>
         public void Reset()
         {
             ResetValue();

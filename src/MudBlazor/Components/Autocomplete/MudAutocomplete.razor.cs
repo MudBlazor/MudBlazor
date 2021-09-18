@@ -26,12 +26,7 @@ namespace MudBlazor
         [Parameter] public string PopoverClass { get; set; }
 
         /// <summary>
-        /// The short hint displayed in the input before the user enters a value.
-        /// </summary>
-        [Parameter] public string Placeholder { get; set; }
-
-        /// <summary>
-        /// Sets the direction the Autocomplete menu should open.
+        /// The direction of the Autocomplete menu when it is opened.
         /// </summary>
         [Parameter] public Direction Direction { get; set; } = Direction.Bottom;
 
@@ -61,12 +56,12 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// The Open Autocomplete Icon.
+        /// The Open Autocomplete Icon
         /// </summary>
         [Parameter] public string OpenIcon { get; set; } = Icons.Material.Filled.ArrowDropDown;
 
         /// <summary>
-        /// The Close Autocomplete Icon.
+        /// The Close Autocomplete Icon
         /// </summary>
         [Parameter] public string CloseIcon { get; set; } = Icons.Material.Filled.ArrowDropUp;
 
@@ -80,7 +75,7 @@ namespace MudBlazor
         private Func<T, string> _toStringFunc;
 
         /// <summary>
-        /// Defines how values are displayed in the drop-down list.
+        /// Defines how values are displayed in the drop-down list
         /// </summary>
         [Parameter]
         public Func<T, string> ToStringFunc
@@ -99,7 +94,7 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// The SearchFunc returns a list of items matching the typed text.
+        /// The SearchFunc returns a list of items matching the typed text
         /// </summary>
         [Parameter]
         public Func<string, Task<IEnumerable<T>>> SearchFunc { get; set; }
@@ -112,13 +107,13 @@ namespace MudBlazor
         public int? MaxItems { get; set; } = 10;
 
         /// <summary>
-        /// Minimum characters to initiate a search.
+        /// Minimum characters to initiate a search
         /// </summary>
         [Parameter]
         public int MinCharacters { get; set; } = 0;
 
         /// <summary>
-        /// Reset value if user deletes the text.
+        /// Reset value if user deletes the text
         /// </summary>
         [Parameter]
         public bool ResetValueOnEmptyText { get; set; } = false;
@@ -129,12 +124,12 @@ namespace MudBlazor
         [Parameter] public int DebounceInterval { get; set; } = 100;
 
         /// <summary>
-        /// Optional presentation template for unselected items.
+        /// Optional presentation template for unselected items
         /// </summary>
         [Parameter] public RenderFragment<T> ItemTemplate { get; set; }
 
         /// <summary>
-        /// Optional presentation template for the selected item.
+        /// Optional presentation template for the selected item
         /// </summary>
         [Parameter] public RenderFragment<T> ItemSelectedTemplate { get; set; }
 
@@ -171,12 +166,12 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// An event triggered when the state of IsOpen has changed.
+        /// An event triggered when the state of IsOpen has changed
         /// </summary>
         [Parameter] public EventCallback<bool> IsOpenChanged { get; set; }
 
         /// <summary>
-        /// Set to true to select the currently selected item from the drop-down (if it is open) 
+        /// If true, the currently selected item from the drop-down (if it is open) is selected.
         /// </summary>
         [Parameter] public bool SelectValueOnTab { get; set; } = false;
 
@@ -200,11 +195,6 @@ namespace MudBlazor
             IconSize = Size.Medium;
         }
 
-        /// <summary>
-        /// Select the items from the items list.
-        /// </summary>
-        /// <param name="value">The value in the option</param>
-        /// <returns>The Task</returns>
         public async Task SelectOption(T value)
         {
             await SetValueAsync(value);
@@ -222,7 +212,6 @@ namespace MudBlazor
         /// <summary>
         /// Toggle the menu (if not disabled or not readonly, and is opened).
         /// </summary>
-        /// <returns>The Task</returns>
         public async Task ToggleMenu()
         {
             if ((Disabled || ReadOnly) && !IsOpen)
@@ -315,9 +304,8 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Clear the Autocomplete's text.
+        /// Clears the autocomplete's text
         /// </summary>
-        /// <returns>The task</returns>
         public async Task Clear()
         {
             await SetTextAsync(string.Empty, updateValue: false);
@@ -402,16 +390,13 @@ namespace MudBlazor
         /// <summary>
         /// Scroll to a specific item in the Autocomplete list of items.
         /// </summary>
-        /// <param name="increment">Scrolling increment</param>
-        /// <param name="index">Index of the item in the list</param>
-        /// <returns>The Task</returns>
         public async Task ScrollToListItem(int index, int increment)
         {
             var id = GetListItemId(index);
-            // id of the scrolled element
-            // increment 1 down; -1 up
-            // onEdges, last param, boolean. If true, only scrolls when elements reaches top or bottom of container.
-            // If false, scrolls always
+            //id of the scrolled element
+            //increment 1 down; -1 up
+            //onEdges, last param, boolean. If true, only scrolls when elements reaches top or bottom of container.
+            //If false, scrolls always
             await ScrollManager.ScrollToListItemAsync(id, increment, true);
             StateHasChanged();
         }
@@ -484,7 +469,6 @@ namespace MudBlazor
         /// <summary>
         /// Focus the input in the Autocomplete component.
         /// </summary>
-        /// <returns>The ValueTask</returns>
         public override ValueTask FocusAsync()
         {
             return _elementReference.FocusAsync();
@@ -493,7 +477,6 @@ namespace MudBlazor
         /// <summary>
         /// Select all text within the Autocomplete input.
         /// </summary>
-        /// <returns>The ValueTask</returns>
         public override ValueTask SelectAsync()
         {
             return _elementReference.SelectAsync();
@@ -502,9 +485,6 @@ namespace MudBlazor
         /// <summary>
         /// Select all text within the Autocomplete input and aligns its start and end points to the text content of the current input.
         /// </summary>
-        /// <param name="pos1">Start position of the selection</param>
-        /// <param name="pos2">End position of the selection</param> 
-        /// <returns>The Value Task</returns>
         public override ValueTask SelectRangeAsync(int pos1, int pos2)
         {
             return _elementReference.SelectRangeAsync(pos1, pos2);
@@ -516,5 +496,6 @@ namespace MudBlazor
                 return;
             _ = SetTextAsync(text, true);
         }
+
     }
 }
