@@ -564,7 +564,7 @@ namespace MudBlazor
 
         private int _key = 0;
 
-        protected void InterceptKeyDown(KeyboardEventArgs obj)
+        protected void InterceptKeyPress(KeyboardEventArgs obj)
         {
             if (Disabled || ReadOnly)
                 return;
