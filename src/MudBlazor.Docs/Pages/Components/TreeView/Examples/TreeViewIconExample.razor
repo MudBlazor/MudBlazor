@@ -2,12 +2,13 @@
 
 <MudTreeView T="string">
     <MudTreeViewItem Value='"All Mail"' Icon="@Icons.Filled.Email" />
-    <MudTreeViewItem Value='"Trash"' Icon="@Icons.Filled.Delete"  />
-    <MudTreeViewItem Value='"Categories"' Icon="@Icons.Filled.Label" >
-        <MudTreeViewItem Value='"Social"' Icon="@Icons.Filled.Group"  />
-        <MudTreeViewItem Value='"Updates"' Icon="@Icons.Filled.Info"  />
-        <MudTreeViewItem Value='"Forums"'  Icon="@Icons.Filled.QuestionAnswer" />
-        <MudTreeViewItem Value='"Promotions"' Icon="@Icons.Filled.LocalOffer"  />
+    <MudTreeViewItem Value='"Drafts"' Icon="@Icons.Filled.Drafts" />
+    <MudTreeViewItem Value='"Orders"' Icon="@Icons.Filled.Label" IconColor="Color.Success" />
+    <MudTreeViewItem Value='"Categories"' Icon="@Icons.Filled.Label" IconColor="Color.Error" ExpandedIcon="@Icons.Filled.ArrowRight">
+        <MudTreeViewItem Value='"Social"' Icon="@Icons.Filled.Group" />
+        <MudTreeViewItem Value='"Updates"' Icon="@Icons.Filled.Info" IconColor="Color.Warning" />
+        <MudTreeViewItem Value='"Forums"' Icon="@Icons.Filled.QuestionAnswer" />
+        <MudTreeViewItem Value='"Spam"' Icon="@Icons.Filled.LocalOffer" />
     </MudTreeViewItem>
-    <MudTreeViewItem Value='"History"' Icon="@Icons.Filled.Label"  />
+    <MudTreeViewItem Value='"Trash"' Icon="@Icons.Filled.Delete" />
 </MudTreeView>

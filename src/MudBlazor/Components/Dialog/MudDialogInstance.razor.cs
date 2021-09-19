@@ -65,16 +65,42 @@ namespace MudBlazor
             StateHasChanged();
         }
 
+        /// <summary>
+        /// Close and return null. 
+        /// 
+        /// This is a shorthand of Close(DialogResult.Ok((object)null));
+        /// </summary>
         public void Close()
         {
             Close(DialogResult.Ok<object>(null));
         }
 
+        /// <summary>
+        /// Close with dialog result.
+        /// 
+        /// Usage: Close(DialogResult.Ok(returnValue))
+        /// </summary>
         public void Close(DialogResult dialogResult)
         {
             Parent.DismissInstance(Id, dialogResult);
         }
 
+        /// <summary>
+        /// Close and directly pass a return value. 
+        /// 
+        /// This is a shorthand for Close(DialogResult.Ok(returnValue))
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="returnValue"></param>
+        public void Close<T>(T returnValue)
+        {
+            var dialogResult = DialogResult.Ok<T>(returnValue);
+            Parent.DismissInstance(Id, dialogResult);
+        }
+
+        /// <summary>
+        /// Cancel the dialog. DialogResult.Cancelled will be set to true
+        /// </summary>
         public void Cancel()
         {
             Close(DialogResult.Cancel());
@@ -153,13 +179,13 @@ namespace MudBlazor
         }
 
         protected string Classname =>
-        new CssBuilder("mud-dialog")
-            .AddClass(DialogMaxWidth, !FullScreen)
-            .AddClass("mud-dialog-width-full", FullWidth && !FullScreen)
-            .AddClass("mud-dialog-fullscreen", FullScreen)
-            .AddClass("mud-dialog-rtl", RightToLeft)
-            .AddClass(Class)
-        .Build();
+            new CssBuilder("mud-dialog")
+                .AddClass(DialogMaxWidth, !FullScreen)
+                .AddClass("mud-dialog-width-full", FullWidth && !FullScreen)
+                .AddClass("mud-dialog-fullscreen", FullScreen)
+                .AddClass("mud-dialog-rtl", RightToLeft)
+                .AddClass(Class)
+            .Build();
 
         private bool SetHideHeader()
         {

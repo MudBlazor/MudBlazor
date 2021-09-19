@@ -1,0 +1,38 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudGrid>
+    <MudItem xs="12" md="8" Class="my-auto">
+        <MudTreeView T="string" CheckBoxColor="Color" MultiSelection="true">
+            <MudTreeViewItem Value="@("content")">
+                <MudTreeViewItem Value="@("logo.png")" />
+            </MudTreeViewItem>
+            <MudTreeViewItem Value="@("src")">
+                <MudTreeViewItem Value="@("mudblazor.docs")" />
+                <MudTreeViewItem Value="@("mudblazor.docs.server")">
+                    <MudTreeViewItem Value="@("wwwroot")">
+                        <MudTreeViewItem Value="@("robots.txt")" />
+                        <MudTreeViewItem Value="@("favicon.ico")" />
+                    </MudTreeViewItem>
+                </MudTreeViewItem>
+            </MudTreeViewItem>
+        </MudTreeView>
+    </MudItem>
+    <MudItem xs="12" md="4">
+        <MudSelect Label="Color" OffsetY="true" Dense="true" Margin="Margin.Dense" @bind-Value="@Color">
+            <MudSelectItem T="Color" Value="Color.Default">Default</MudSelectItem>
+            <MudSelectItem T="Color" Value="Color.Primary">Primary</MudSelectItem>
+            <MudSelectItem T="Color" Value="Color.Secondary">Secondary</MudSelectItem>
+            <MudSelectItem T="Color" Value="Color.Tertiary">Tertiary</MudSelectItem>
+            <MudSelectItem T="Color" Value="Color.Info">Info</MudSelectItem>
+            <MudSelectItem T="Color" Value="Color.Success">Success</MudSelectItem>
+            <MudSelectItem T="Color" Value="Color.Warning">Warning</MudSelectItem>
+            <MudSelectItem T="Color" Value="Color.Error">Error</MudSelectItem>
+            <MudSelectItem T="Color" Value="Color.Dark">Dark</MudSelectItem>
+        </MudSelect>
+    </MudItem>
+</MudGrid>
+@code{
+    public Color Color { get; set; } = Color.Error;
+    HashSet<string> SelectedValues { get; set; }
+}
+

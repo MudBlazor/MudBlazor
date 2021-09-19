@@ -62,15 +62,15 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<TreeViewTest1>();
             Console.WriteLine(comp.Markup);
-            comp.FindAll("div.mud-treeview-item-content.mud-treeview-item-activated").Count.Should().Be(0);
+            comp.FindAll("div.mud-treeview-item-content.mud-treeview-item-selected").Count.Should().Be(0);
             comp.Find("div.mud-treeview-item-content").Click();
             comp.Instance.Item1Activated.Should().BeTrue();
             comp.Instance.Item2Activated.Should().BeFalse();
-            comp.FindAll("div.mud-treeview-item-content.mud-treeview-item-activated").Count.Should().Be(1);
+            comp.FindAll("div.mud-treeview-item-content.mud-treeview-item-selected").Count.Should().Be(1);
             comp.FindAll("div.mud-treeview-item-content")[4].Click();
             comp.Instance.Item1Activated.Should().BeFalse();
             comp.Instance.Item2Activated.Should().BeTrue();
-            comp.FindAll("div.mud-treeview-item-content.mud-treeview-item-activated").Count.Should().Be(1);
+            comp.FindAll("div.mud-treeview-item-content.mud-treeview-item-selected").Count.Should().Be(1);
         }
 
         [Test]
@@ -78,15 +78,15 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<TreeViewTest1>();
             Console.WriteLine(comp.Markup);
-            comp.FindAll("div.mud-treeview-item-content.mud-treeview-item-activated").Count.Should().Be(0);
+            comp.FindAll("div.mud-treeview-item-content.mud-treeview-item-selected").Count.Should().Be(0);
             comp.Find("div.mud-treeview-item-content").Click();
             comp.Instance.Item1Activated.Should().BeTrue();
             comp.Instance.Item2Activated.Should().BeFalse();
-            comp.FindAll("div.mud-treeview-item-content.mud-treeview-item-activated").Count.Should().Be(1);
+            comp.FindAll("div.mud-treeview-item-content.mud-treeview-item-selected").Count.Should().Be(1);
             comp.Find("div.mud-treeview-item-content").Click();
             comp.Instance.Item1Activated.Should().BeFalse();
             comp.Instance.Item2Activated.Should().BeFalse();
-            comp.FindAll("div.mud-treeview-item-content.mud-treeview-item-activated").Count.Should().Be(0);
+            comp.FindAll("div.mud-treeview-item-content.mud-treeview-item-selected").Count.Should().Be(0);
         }
 
         [Test]

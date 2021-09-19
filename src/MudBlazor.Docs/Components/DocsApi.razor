@@ -29,7 +29,16 @@
                         <RowTemplate>
                             <MudTd Class="docs-content-api-cell" DataLabel="Name"><CodeInline>@context.Name</CodeInline></MudTd>
                             <MudTd Class="docs-content-api-cell" DataLabel="Type"><div style="display: flex; flex-direction: row; align-items: center; white-space: nowrap;">@context.Type<DocsBinding IsTwoWay="@context.IsTwoWay" /></div></MudTd>
-                            <MudTd Class="docs-content-api-cell" DataLabel="Default">@PresentDefaultValue(context.Default)</MudTd>
+                            <MudTd Class="docs-content-api-cell" DataLabel="Default">
+                                @if (PresentDefaultValue(context.Default).Contains("<path"))
+                                {
+                                    <MudIcon Icon="@PresentDefaultValue(context.Default).Substring(1, PresentDefaultValue(context.Default).Length - 1)" />
+                                }
+                                else
+                                {
+                                    <MudText Typo="Typo.body2">@PresentDefaultValue(context.Default)</MudText>
+                                }                           
+                            </MudTd>
                             <MudTd Class="docs-content-api-cell docs-content-api-description" DataLabel="Description">@(HttpUtility.HtmlDecode(context.Description))</MudTd>
                         </RowTemplate>
                     </MudTable>
