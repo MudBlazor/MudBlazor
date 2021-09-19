@@ -478,6 +478,33 @@ namespace MudBlazor.UnitTests.Components
         }
         #endregion
         #endregion
+
+        [Test]
+        public async Task TextField_ClearTest1()
+        {
+            var comp = Context.RenderComponent<MudTextField<int>>();
+            comp.SetParam("Text", "17");
+            var textfield = comp.Instance;
+            textfield.Value.Should().Be(17);
+            textfield.Text.Should().Be("17");
+            await comp.InvokeAsync(async ()=> await textfield.Clear());
+            textfield.Value.Should().Be(0);
+            textfield.Text.Should().Be(null);
+        }
+
+        [Test]
+        public async Task TextField_ClearTest2()
+        {
+            var comp = Context.RenderComponent<MudTextField<string>>();
+            comp.Find("input").Change("Viva la ignorancia");
+            var textfield = comp.Instance;
+            textfield.Value.Should().Be("Viva la ignorancia");
+            textfield.Text.Should().Be("Viva la ignorancia");
+            await comp.InvokeAsync(async () => await textfield.Clear());
+            textfield.Value.Should().Be(null);
+            textfield.Text.Should().Be(null);
+        }
+
     }
 
 }
