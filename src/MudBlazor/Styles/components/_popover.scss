@@ -7,7 +7,7 @@
     transition: opacity .5s;
 
     &.mud-popover-fixed {
-        position:fixed;
+        position: fixed;
     }
 
     &.mud-popover-relative-width {
@@ -18,5 +18,23 @@
         visibility: visible;
         opacity: 1;
         animation: mud-animation-fadein 251ms;
+    }
+}
+
+.mud-appbar {
+    .mud-popover-cascading-value {
+        z-index: calc(var(--mud-zindex-appbar) + 2);
+    }
+}
+
+.mud-drawer {
+    .mud-popover-cascading-value {
+        z-index: calc(var(--mud-zindex-drawer) + 2);
+    }
+}
+
+.mud-dialog {
+    .mud-popover-cascading-value {
+        z-index: calc(var(--mud-zindex-dialog) + 3);
     }
 }
