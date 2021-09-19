@@ -332,6 +332,7 @@ namespace MudBlazor
         public virtual void ForceRender(bool forceTextUpdate)
         {
             _forceTextUpdate = true;
+            UpdateTextPropertyAsync(false).AndForget();
             StateHasChanged();
         }
 
