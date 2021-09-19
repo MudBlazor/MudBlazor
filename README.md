@@ -76,7 +76,7 @@ using MudBlazor.Services;
 services.AddMudServices();
 ```
 ### Usage
-```html
+```razor
 <MudText Typo="Typo.h6">MudBlazor is @Text</MudText>
 <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="ButtonOnClick">@ButtonText</MudButton>
 
@@ -86,10 +86,10 @@ services.AddMudServices();
   public int ButtonClicked { get; set; }
 
   void ButtonOnClick()
-    {
-        ButtonClicked += 1;
-        Text = $"Awesome x {ButtonClicked}";
-        ButtonText = "Click Me Again";
-    }
+  {
+      ButtonClicked += 1;
+      Text = $"Awesome x {ButtonClicked}";
+      ButtonText = "Click Me Again";
+  }
 }
 ```

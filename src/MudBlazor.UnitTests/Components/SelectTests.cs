@@ -630,5 +630,71 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(() => select.Validate());
             select.ValidationErrors.First().Should().Be("Required");
         }
+
+        /// <summary>
+        /// Selected option should be hilighted when drop-down opens
+        /// </summary>
+        [Test]
+        public async Task Select_Should_HilightSelectedValue()
+        {
+            var comp = Context.RenderComponent<SelectTest1>();
+            // print the generated html
+            Console.WriteLine(comp.Markup);
+            var select = comp.FindComponent<MudSelect<string>>();
+            comp.Find("div.mud-popover").ClassList.Should().Contain("select-popover-class");
+            select.Instance.Value.Should().BeNullOrEmpty();
+            comp.Find("div.mud-popover").ClassList.Should().NotContain("mud-popover-open");
+            // open the select
+            comp.Find("div.mud-input-control").Click();
+            comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open");
+            // no option should be hilited
+            comp.FindAll("div.mud-selected-item").Count.Should().Be(0);
+            // now click an item and see the value change
+            comp.FindAll("div.mud-list-item")[1].Click();
+            comp.Find("div.mud-popover").ClassList.Should().NotContain("mud-popover-open");
+            select.Instance.Value.Should().Be("2");
+            // open again and check hilited option
+            comp.Find("div.mud-input-control").Click();
+            comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open");
+            // Nr 2 should be hilited
+            comp.FindAll("div.mud-selected-item").Count.Should().Be(1);
+            comp.FindAll("div.mud-list-item")[1].ToMarkup().Should().Contain("mud-selected-item");
+            await comp.InvokeAsync(()=>select.Instance.CloseMenu());
+            select.SetParam(nameof(MudSelect<string>.Value), null);
+            await comp.InvokeAsync(() => select.Instance.OpenMenu());
+            // no option should be hilited
+            comp.FindAll("div.mud-selected-item").Count.Should().Be(0);
+        }
+
+        /// <summary>
+        /// Initially selected option should be hilighted when drop-down opens
+        /// </summary>
+        [Test]
+        public void Select_Should_HilightInitiallySelectedValue()
+        {
+            var comp = Context.RenderComponent<SelectTest2>();
+            // print the generated html
+            Console.WriteLine(comp.Markup);
+            var select = comp.FindComponent<MudSelect<string>>();
+            comp.Find("div.mud-popover").ClassList.Should().Contain("select-popover-class");
+            select.Instance.Value.Should().Be("2");
+            comp.Find("div.mud-popover").ClassList.Should().NotContain("mud-popover-open");
+            // open the select
+            comp.Find("div.mud-input-control").Click();
+            comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open");
+            // Nr 2 should be hilited
+            comp.FindAll("div.mud-selected-item").Count.Should().Be(1);
+            comp.FindAll("div.mud-list-item")[1].ToMarkup().Should().Contain("mud-selected-item");
+            // now click an item and see the value change
+            comp.FindAll("div.mud-list-item")[0].Click();
+            comp.Find("div.mud-popover").ClassList.Should().NotContain("mud-popover-open");
+            select.Instance.Value.Should().Be("1");
+            // open again and check hilited option
+            comp.Find("div.mud-input-control").Click();
+            comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open");
+            // Nr 1 should be hilited
+            comp.FindAll("div.mud-selected-item").Count.Should().Be(1);
+            comp.FindAll("div.mud-list-item")[0].ToMarkup().Should().Contain("mud-selected-item");
+        }
     }
 }
