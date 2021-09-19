@@ -12,6 +12,7 @@ using Bunit;
 using FluentAssertions;
 using FluentValidation;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.UnitTests.TestComponents;
 using NUnit.Framework;
 using static Bunit.ComponentParameterFactory;
@@ -505,6 +506,48 @@ namespace MudBlazor.UnitTests.Components
             textfield.Text.Should().Be(null);
         }
 
+        /// <summary>
+        /// This tests the suppression of the suppression (fix for #1012)
+        /// </summary>
+        /// <returns></returns>
+        [Test]
+        public async Task TextField_TextUpdateSuppression()
+        {
+            var comp = Context.RenderComponent<MudTextField<string>>();
+            var input = comp.FindComponent<MudInput<string>>();
+            var textfield = comp.Instance;
+            comp.Find("input").Change("Vat of acid");
+            // this will make the input focused!
+            comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = "Enter", Type = "keydown", });
+            textfield.Value.Should().Be("Vat of acid");
+            textfield.Text.Should().Be("Vat of acid");
+
+            // let's try to set the text directly on the input, TextUpdateSuppression should prevent it because we are focused
+            input.SetParam("Value", "");
+            input.Instance.Value.Should().Be("");
+            input.Instance.Text.Should().Be("Vat of acid");
+
+            // turn it off
+            comp.SetParam(nameof(MudBaseInput<string>.TextUpdateSuppression), false);
+
+            // now the input text should get overwritten
+            input.SetParam("Value", "In case of ladle");
+            input.Instance.Value.Should().Be("In case of ladle");
+            input.Instance.Text.Should().Be("In case of ladle");
+
+            // turn it on again
+            comp.SetParam(nameof(MudBaseInput<string>.TextUpdateSuppression), true);
+
+            input.SetParam("Value", "");
+            input.Instance.Value.Should().Be("");
+            input.Instance.Text.Should().Be("In case of ladle");
+
+            // force text update
+            await comp.InvokeAsync(()=> input.Instance.ForceRender(forceTextUpdate:true));
+
+            input.Instance.Value.Should().Be("");
+            input.Instance.Text.Should().Be("");
+        }
     }
 
 }
