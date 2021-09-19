@@ -67,7 +67,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void SelectTime_UsingClicks_24HourMode_CheckTime()
+        public async Task SelectTime_UsingClicks_24HourMode_CheckTimeAsync()
         {
             var comp = OpenPicker();
             var picker = comp.Instance;
@@ -75,23 +75,56 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("div.mud-picker-stick-outer.mud-hour")[3].Click();
             picker.TimeIntermediate.Value.Hours.Should().Be(16);
             picker.TimeIntermediate.Value.Minutes.Should().Be(0);
+
+            // check if view changed to minutes
+            comp.FindAll("div.mud-time-picker-hour.mud-time-picker-dial-hidden").Count.Should().Be(1);
+
             // select 30 minutes
             comp.FindAll("div.mud-minute")[30].Click();
             picker.TimeIntermediate.Value.Hours.Should().Be(16);
             picker.TimeIntermediate.Value.Minutes.Should().Be(30);
             Console.Write(comp.Markup);
+
+            // check if closed
+            comp.WaitForAssertion(() => comp.FindAll("div.mud-picker-open").Count.Should().Be(0));
+
+            // open picker
+            await comp.InvokeAsync(() => picker.Open());
+
             // click 04 hours on the inner dial and 21 mins
-            comp.FindAll("button.mud-timepicker-button")[0].Click();
+            //comp.FindAll("button.mud-timepicker-button")[0].Click();
             comp.FindAll("div.mud-picker-stick-inner.mud-hour")[3].Click();
+            picker.TimeIntermediate.Value.Hours.Should().Be(4);
+
+            // check if view changed to minutes
+            comp.FindAll("div.mud-time-picker-hour.mud-time-picker-dial-hidden").Count.Should().Be(1);
+
+            // click 21 mins
             comp.FindAll("div.mud-minute")[21].Click();
+            picker.TimeIntermediate.Value.Minutes.Should().Be(21);
+
+            // check if closed
+            comp.WaitForAssertion(() => comp.FindAll("div.mud-picker-open").Count.Should().Be(0));
+
             picker.TimeIntermediate.Value.Hours.Should().Be(4);
             picker.TimeIntermediate.Value.Minutes.Should().Be(21);
-            // click 10 hours on the inner dial and 56 mins
-            comp.FindAll("button.mud-timepicker-button")[0].Click();
+
+            // open picker
+            await comp.InvokeAsync(() => picker.Open());
+
+            // click 10 hours
             comp.FindAll("div.mud-picker-stick-inner.mud-hour")[9].Click();
-            comp.FindAll("div.mud-minute")[56].Click();
             picker.TimeIntermediate.Value.Hours.Should().Be(10);
+
+            // check if view changed to minutes
+            comp.FindAll("div.mud-time-picker-hour.mud-time-picker-dial-hidden").Count.Should().Be(1);
+
+            // click 56 mins
+            comp.FindAll("div.mud-minute")[56].Click();
             picker.TimeIntermediate.Value.Minutes.Should().Be(56);
+
+            // check if closed
+            comp.WaitForAssertion(() => comp.FindAll("div.mud-picker-open").Count.Should().Be(0));
         }
 
         [Test]
