@@ -251,6 +251,8 @@ namespace MudBlazor
                     case "Delete":
                     case "Enter":
                     case "NumpadEnter":
+                    case "Home":
+                    case "End":
                         break;
 
                     //copy/paste
