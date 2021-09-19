@@ -1,7 +1,7 @@
 ﻿@namespace MudBlazor
 @inherits MudComponentBase
 
-<div @attributes="UserAttributes" class="@ContainerClass" @onmouseenter=@HandleMouseOver @onmouseleave=@HandleMouseOut>
+<div @attributes="UserAttributes" class="@ContainerClass" @onmouseenter="@HandleMouseOver" @onmouseleave="@HandleMouseOut" @onfocusout="@HandleMouseOut">
 	@ChildContent
 	<MudPopover Open="_isVisible" AnchorOrigin="@AnchorOrigin" TransformOrigin="@TransformOrigin" Paper="false">
 		<div role="tooltip" class="@Classname">
