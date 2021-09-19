@@ -3,6 +3,7 @@ using System.Globalization;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
@@ -106,6 +107,14 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         public string Text { get; set; }
+
+        /// <summary>
+        /// When TextUpdateSuppression is true (which is default) the text can not be updated by bindings while the component is focused in BSS (not WASM).
+        /// This solves issue #1012: Textfield swallowing chars when typing rapidly
+        /// If you need to update the input's text while it is focused you can set this parameter to false.
+        /// Note: on WASM text update suppression is not active, so this parameter has no effect.
+        /// </summary>
+        [Parameter] public bool TextUpdateSuppression { get; set; } = true;
 
         /// <summary>
         ///  Hints at the type of data that might be entered by the user while editing the input
@@ -341,7 +350,10 @@ namespace MudBlazor
 
             if (_isFocused && !_forceTextUpdate)
             {
-                return;
+                // Text update suppression, only in BSS (not in WASM).
+                // This is a fix for #1012
+                if (RuntimeLocation.IsServerSide && TextUpdateSuppression)
+                    return;
             }
             _forceTextUpdate = false;
 
