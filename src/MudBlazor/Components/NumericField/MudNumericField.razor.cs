@@ -212,22 +212,20 @@ namespace MudBlazor
         /// <summary>
         /// Overrides KeyDown event, intercepts Arrow Up/Down and uses them to add/substract the value manually by the step value.
         /// Relying on the browser mean the steps are each integer multiple from <see cref="Min"/> up until <see cref="Max"/>.
-        /// This align the behaviour with the spinner buttons.
+        /// This aligns the behaviour with the spinner buttons.
         /// </summary>
         /// <remarks>https://try.mudblazor.com/snippet/QamlkdvmBtrsuEtb</remarks>
         protected async Task InterceptKeydown(KeyboardEventArgs obj)
         {
             if (Disabled || ReadOnly)
                 return;
-            //Server side and WASM have different (opposite) behaviour. We need to set initial value false on BSS (line 24) and true on WASM (line 204).
-            //Changing _keyDownPreventDefault value didn't work with Increment or Decrement methods in this method, so it have to be determined false before the method starts.
+            //Server side and WASM have different (opposite) behaviour. We need to set initial value false on BSS and true on WASM
             if (RuntimeLocation.IsClientSide)
             {
                 _keyDownPreventDefault = false;
             }
             if (obj.Type == "keydown") //KeyDown or repeat, blazor never fires InvokeKeyPress
             {
-
                 switch (obj.Key)
                 {
                     case "ArrowUp":
@@ -236,8 +234,7 @@ namespace MudBlazor
                         await Increment();
                         await Task.Delay(1);
                         await _elementReference.FocusAsync();
-
-                        return;
+                        break;
 
                     case "ArrowDown":
                         _key++;
@@ -245,9 +242,8 @@ namespace MudBlazor
                         await Decrement();
                         await Task.Delay(1);
                         await _elementReference.FocusAsync();
+                        break;
 
-                        return;
-                    // various navigation keys
                     case "ArrowLeft":
                     case "ArrowRight":
                     case "Tab":
@@ -268,9 +264,7 @@ namespace MudBlazor
                             StateHasChanged();
                             await Task.Delay(1);
                             await _elementReference.FocusAsync();
-                            return;
                         }
-
                         break;
 
                     default:
@@ -286,19 +280,29 @@ namespace MudBlazor
                                 StateHasChanged();
                                 await Task.Delay(1);
                                 await _elementReference.FocusAsync();
-
-                                return;
                             }
-                            break;
                         }
-                        else
-                        {
-                            return;
-                        }
+                        break;
                 }
             }
-            //Component will work properly even we delete this line.
             OnKeyDown.InvokeAsync(obj).AndForget();
+        }
+
+        protected void InterceptKeyUp(KeyboardEventArgs obj)
+        {
+            if (Disabled || ReadOnly)
+                return;
+            //Look at InterceptKeyDown method comment for details.
+            if (RuntimeLocation.IsClientSide)
+            {
+                _keyDownPreventDefault = true;
+            }
+            else
+            {
+                _keyDownPreventDefault = false;
+            }
+
+            OnKeyUp.InvokeAsync(obj).AndForget();
         }
 
         protected async Task OnMouseWheel(WheelEventArgs obj)
@@ -352,7 +356,7 @@ namespace MudBlazor
                         await Task.Delay(1);
                         _ = FocusAsync();
                     }
-                }      
+                }
             }
             else if (obj.ShiftKey == true && 0 < obj.DeltaY)
             {
@@ -407,24 +411,6 @@ namespace MudBlazor
             }
         }
 
-        protected void InterceptKeyUp(KeyboardEventArgs obj)
-        {
-            if (Disabled || ReadOnly)
-                return;
-            //Look at InterceptKeyDown method comment for details.
-            if (RuntimeLocation.IsClientSide)
-            {
-                _keyDownPreventDefault = true;
-            }
-            else
-            {
-                _keyDownPreventDefault = false;
-            }
-
-            OnKeyUp.InvokeAsync(obj).AndForget();
-        }
-
-        //Tracks if Min has a value.
         private bool _minHasValue = false;
 
         /// <summary>
@@ -433,7 +419,6 @@ namespace MudBlazor
         [Parameter]
         public bool InvertMouseWheel { get; set; } = false;
 
-        //default value for the type
         private T _minDefault;
 
         private T _min;
@@ -452,12 +437,8 @@ namespace MudBlazor
             }
         }
 
-        //Tracks if Max has a value.
         private bool _maxHasValue = false;
-
-        //default value for the type
         private T _maxDefault;
-
         private T _max;
 
         /// <summary>
@@ -474,12 +455,8 @@ namespace MudBlazor
             }
         }
 
-        //Tracks if Max has a value.
         private bool _stepHasValue = false;
-
-        //default value for the type, it's useful for decimal type to avoid constant evaluation
         private T _stepDefault;
-
         private T _step;
 
         /// <summary>
