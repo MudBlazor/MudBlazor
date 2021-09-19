@@ -69,6 +69,11 @@ namespace MudBlazor
         [Parameter] public TimeEditMode TimeEditMode { get; set; } = TimeEditMode.Normal;
 
         /// <summary>
+        /// Milliseconds to wait before closing the picker. This helps the user see that the time was selected before the popover disappears.
+        /// </summary>
+        [Parameter] public int ClosingDelay { get; set; } = 200;
+
+        /// <summary>
         /// If AutoClose is set to true and PickerActions are defined, the hour and the minutes can be defined without any action.
         /// </summary>
         [Parameter] public bool AutoClose { get; set; }
@@ -198,10 +203,6 @@ namespace MudBlazor
         private void UpdateTime()
         {
             TimeIntermediate = new TimeSpan(_timeSet.Hour, _timeSet.Minute, 0);
-            if ((PickerVariant == PickerVariant.Static && PickerActions == null) || (PickerActions != null && AutoClose))
-            {
-                Submit();
-            }
         }
 
         private void OnHourClick()
@@ -359,6 +360,7 @@ namespace MudBlazor
 
         private readonly SetTime _timeSet = new();
         private int _initialHour;
+        private int _initialMinute;
 
         protected override void OnInitialized()
         {
@@ -366,6 +368,7 @@ namespace MudBlazor
             UpdateTimeSetFromTime();
             _currentView = OpenTo;
             _initialHour = _timeSet.Hour;
+            _initialMinute = _timeSet.Minute;
         }
 
 
@@ -396,7 +399,14 @@ namespace MudBlazor
         /// </summary>
         private void OnMouseUp(MouseEventArgs e)
         {
+            if (MouseDown && _currentView == OpenTo.Minutes && _timeSet.Minute != _initialMinute || _currentView == OpenTo.Hours && _timeSet.Hour != _initialHour && TimeEditMode == TimeEditMode.OnlyHours)
+            {
+                MouseDown = false;
+                SubmitAndClose();
+            }
+
             MouseDown = false;
+
             if (_currentView == OpenTo.Hours && _timeSet.Hour != _initialHour && TimeEditMode == TimeEditMode.Normal)
             {
                 _currentView = OpenTo.Minutes;
@@ -438,7 +448,7 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// On click for the minutes "sticks", sets the minute.
+        /// On mouse over for the minutes "sticks", sets the minute.
         /// </summary>
         private void OnMouseOverMinute(int value)
         {
@@ -456,6 +466,21 @@ namespace MudBlazor
         {
             _timeSet.Minute = value;
             UpdateTime();
+            SubmitAndClose();
+        }
+
+        protected async void SubmitAndClose()
+        {
+            if (PickerActions == null || AutoClose)
+            {
+                Submit();
+
+                if (PickerVariant != PickerVariant.Static)
+                {
+                    await Task.Delay(ClosingDelay);
+                    Close(false);
+                }
+            }
         }
 
         private class SetTime
@@ -465,6 +490,5 @@ namespace MudBlazor
             public int Minute { get; set; }
 
         }
-
     }
 }
