@@ -1167,5 +1167,42 @@ namespace MudBlazor.UnitTests.Components
             var tr = comp.FindAll("tr").ToArray();
             tr.Length.Should().Be(5); // 1 table header + 4 group headers
         }
+
+        /// <summary>
+        /// Tests the correct output when filter does not return any matching elements
+        /// </summary>
+        /// <returns>The awaitable <see cref="Task"/></returns>
+        [Test]
+        public async Task TablePagerInfoTextTest()
+        {
+            // create the component
+            var tableComponent = Context.RenderComponent<TablePagerInfoTextTest>();
+ 
+            // print the generated html      
+            Console.WriteLine(tableComponent.Markup);
+
+            // assert correct info-text
+            tableComponent.Find("div.mud-table-page-number-information").Text().Should().Be("1-10 of 59", "No filter applied yet.");
+
+            // get the instance
+            var tableInstance = tableComponent.FindComponent<MudTable<string>>().Instance;
+ 
+            // get the search-string
+            var searchString = tableComponent.Find("#searchString");
+
+            // should return 3 items
+            searchString.Change("Ala");
+            tableInstance.GetFilteredItemsCount().Should().Be(3);
+            string.Join(",", tableInstance.FilteredItems).Should().Be("Alabama,Alaska,Palau");
+            tableComponent.FindAll("tr").Count.Should().Be(3);
+            tableComponent.Find("div.mud-table-page-number-information").Text().Should().Be("1-3 of 3", "'Ala' filter applied.");
+
+            // no matches
+            searchString.Change("ZZZ");
+            tableInstance.GetFilteredItemsCount().Should().Be(0);
+            tableInstance.FilteredItems.Count().Should().Be(0);
+            tableComponent.FindAll("tr").Count.Should().Be(0);
+            tableComponent.Find("div.mud-table-page-number-information").Text().Should().Be("0-0 of 0", "'ZZZ' filter applied.");
+        }
     }
 }
