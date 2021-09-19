@@ -352,6 +352,21 @@ namespace MudBlazor
         {
             try
             {
+                if (Form==null)
+                {
+                    errors.Add("Form is null, unable to validate with model!");
+                    return;
+                }
+                if (Form.Model == null)
+                {
+                    errors.Add("Form.Model is null, unable to validate with model!");
+                    return;
+                }
+                if (For == null)
+                {
+                    errors.Add($"For is null, please set parameter For on the form input component of type {GetType().Name}");
+                    return;
+                }
                 foreach (var error in func(Form.Model, For.GetFullPathOfMember()))
                     errors.Add(error);
             }
