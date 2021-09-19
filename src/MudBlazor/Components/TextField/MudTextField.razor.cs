@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Utilities;
@@ -46,7 +47,17 @@ namespace MudBlazor
             return _elementReference.SelectRangeAsync(pos1, pos2);
         }
 
+        /// <summary>
+        /// Clear the text field, set Value to default(T) and Text to null
+        /// </summary>
+        /// <returns></returns>
+        public async Task Clear()
+        {
+            await _elementReference.SetText(null);
+        }
+
     }
 
+    [Obsolete]
     public class MudTextFieldString : MudTextField<string> { }
 }

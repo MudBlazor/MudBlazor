@@ -9,7 +9,9 @@
             <InputContent>
                 <MudInput @ref="_elementReference" InputType="@(CanRenderValue || (Strict && !IsValueInList) ? InputType.Hidden : InputType.Text)"
                           Class="mud-select-input" Margin="@Margin" Placeholder="@Placeholder"
-                          Variant="@Variant" Value="@(Strict && !IsValueInList ? null : Text)" DisableUnderLine="@DisableUnderLine"
+                          Variant="@Variant"
+                          TextUpdateSuppression="@TextUpdateSuppression"
+                          Value="@(Strict && !IsValueInList ? null : Text)" DisableUnderLine="@DisableUnderLine"
                           Disabled="@Disabled" ReadOnly="true" Error="@Error"
                           OnAdornmentClick="@OnAdornmentClick" AdornmentIcon="@_currentIcon" Adornment="@Adornment"
                           AdornmentColor="@AdornmentColor" IconSize="@IconSize" AdornmentText="@AdornmentText"
