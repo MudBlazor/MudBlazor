@@ -80,7 +80,7 @@ namespace MudBlazor.UnitTests.Components
             select.Instance.Text.Should().Be("2, 1, 3");
             items[0].Click();
             select.Instance.Text.Should().Be("2, 3");
-            select.Instance.SelectedValues.Count.Should().Be(2);
+            select.Instance.SelectedValues.Count().Should().Be(2);
             select.Instance.SelectedValues.Should().Contain("2");
             select.Instance.SelectedValues.Should().Contain("3");
             //Console.WriteLine(comp.Markup);
@@ -240,7 +240,7 @@ namespace MudBlazor.UnitTests.Components
             Console.WriteLine(comp.Markup);
             var select = comp.FindComponent<MudSelect<string>>();
             string text = null;
-            ICollection<string> selectedValues = null;
+            IEnumerable<string> selectedValues = null;
             var eventCounter = 0;
             var textChangedCount = 0;
             var selectedValuesChangedCount = 0;
@@ -295,7 +295,7 @@ namespace MudBlazor.UnitTests.Components
             Console.WriteLine(comp.Markup);
             var select = comp.FindComponent<MudSelect<string>>();
             string text = null;
-            ICollection<string> selectedValues = null;
+            IEnumerable<string> selectedValues = null;
             var eventCounter = 0;
             var textChangedCount = 0;
             var selectedValuesChangedCount = 0;

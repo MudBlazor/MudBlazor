@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Microsoft.AspNetCore.Components;
 
 namespace MudBlazor
@@ -36,7 +37,7 @@ namespace MudBlazor
 
         internal MudSelect<T> MudSelect => (MudSelect<T>)IMudSelect;
 
-        private void OnUpdateSelectionStateFromOutside(ICollection<T> selection)
+        private void OnUpdateSelectionStateFromOutside(IEnumerable<T> selection)
         {
             if (selection == null)
                 return;
