@@ -26,7 +26,7 @@ namespace MudBlazor
         [Parameter] public string PopoverClass { get; set; }
 
         /// <summary>
-        /// Sets the direction the Autocomplete menu should open.
+        /// The direction of the Autocomplete menu when it is opened.
         /// </summary>
         [Parameter] public Direction Direction { get; set; } = Direction.Bottom;
 
@@ -68,7 +68,7 @@ namespace MudBlazor
         //internal event Action<HashSet<T>> SelectionChangedFromOutside;
 
         /// <summary>
-        /// Sets the maxheight the Autocomplete can have when open.
+        /// The maximum height of the Autocomplete when it is open.
         /// </summary>
         [Parameter] public int MaxHeight { get; set; } = 300;
 
@@ -101,7 +101,7 @@ namespace MudBlazor
 
         /// <summary>
         /// Maximum items to display, defaults to 10.
-        /// Set null to display all
+        /// A null value will display all items.
         /// </summary>
         [Parameter]
         public int? MaxItems { get; set; } = 10;
@@ -181,7 +181,7 @@ namespace MudBlazor
         [Parameter] public EventCallback<bool> IsOpenChanged { get; set; }
 
         /// <summary>
-        /// Set to true to select the currently selected item from the drop-down (if it is open) 
+        /// If true, the currently selected item from the drop-down (if it is open) is selected.
         /// </summary>
         [Parameter] public bool SelectValueOnTab { get; set; } = false;
 
@@ -219,6 +219,9 @@ namespace MudBlazor
             StateHasChanged();
         }
 
+        /// <summary>
+        /// Toggle the menu (if not disabled or not readonly, and is opened).
+        /// </summary>
         public async Task ToggleMenu()
         {
             if ((Disabled || ReadOnly) && !IsOpen)
@@ -400,6 +403,9 @@ namespace MudBlazor
         /// </summary>
         private readonly string _componentId = Guid.NewGuid().ToString();
 
+        /// <summary>
+        /// Scroll to a specific item in the Autocomplete list of items.
+        /// </summary>
         public async Task ScrollToListItem(int index, int increment)
         {
             var id = GetListItemId(index);
@@ -476,16 +482,25 @@ namespace MudBlazor
             base.Dispose(disposing);
         }
 
+        /// <summary>
+        /// Focus the input in the Autocomplete component.
+        /// </summary>
         public override ValueTask FocusAsync()
         {
             return _elementReference.FocusAsync();
         }
 
+        /// <summary>
+        /// Select all text within the Autocomplete input.
+        /// </summary>
         public override ValueTask SelectAsync()
         {
             return _elementReference.SelectAsync();
         }
 
+        /// <summary>
+        /// Select all text within the Autocomplete input and aligns its start and end points to the text content of the current input.
+        /// </summary>
         public override ValueTask SelectRangeAsync(int pos1, int pos2)
         {
             return _elementReference.SelectRangeAsync(pos1, pos2);

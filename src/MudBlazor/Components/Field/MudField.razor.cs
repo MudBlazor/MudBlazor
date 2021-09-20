@@ -96,7 +96,7 @@ namespace MudBlazor
         [Parameter] public string AdornmentText { get; set; }
 
         /// <summary>
-        /// Sets Start or End Adornment if not set to None.
+        /// The Adornment if used. By default, it is set to None.
         /// </summary>
         [Parameter] public Adornment Adornment { get; set; } = Adornment.None;
 

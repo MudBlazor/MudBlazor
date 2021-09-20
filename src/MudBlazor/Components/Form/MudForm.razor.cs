@@ -11,7 +11,6 @@ namespace MudBlazor
 {
     public partial class MudForm : MudComponentBase, IDisposable, IForm
     {
-
         protected string Classname =>
             new CssBuilder("mud-form")
             .AddClass(Class)
@@ -62,7 +61,7 @@ namespace MudBlazor
 
         /// <summary>
         /// Validation debounce delay in milliseconds. This can help improve rendering performance of forms with real-time validation of inputs
-        /// i.e. when textfields have Immediate="true"
+        /// i.e. when textfields have Immediate="true".
         /// </summary>
         [Parameter] public int ValidationDelay { get; set; } = 300;
 
@@ -97,7 +96,7 @@ namespace MudBlazor
         protected HashSet<string> _errors = new();
 
         /// <summary>
-        /// Validation error messages
+        /// Validation error messages.
         /// </summary>
         [Parameter]
         public string[] Errors
@@ -191,7 +190,7 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Force a validation of all form controls, even if they haven't been touched by the user yet
+        /// Force a validation of all form controls, even if they haven't been touched by the user yet.
         /// </summary>
         public async Task Validate()
         {
@@ -206,7 +205,7 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Reset all form controls and reset their validation state
+        /// Reset all form controls and reset their validation state.
         /// </summary>
         public void Reset()
         {
@@ -224,7 +223,7 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Reset the validation state but keep the values
+        /// Reset the validation state but keep the values.
         /// </summary>
         public void ResetValidation()
         {
