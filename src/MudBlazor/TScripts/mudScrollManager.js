@@ -42,8 +42,11 @@
             //define the height of an disabled item
             let dHeight = eHeight;
 
+            //get the absolute increment
+            const absIncrement = Math.abs(increment);
+
             //check if we are jumping
-            if (Math.abs(increment) > 0) {
+            if (absIncrement > 1) {
                 dHeight = parent.querySelector(".mud-list-item-disabled")?.getBoundingClientRect().height ?? eHeight;
             }
 
@@ -55,9 +58,7 @@
                 // or scroll is not constrained to the Edges
                 || !onEdges
             ) {
-                const absIncrement = Math.abs(increment);
                 const multiplicator = increment / absIncrement; // will always be 1 or -1
-
                 parent.scrollTop += (eHeight + ((absIncrement-1)*dHeight)) * multiplicator;
             }
         }
