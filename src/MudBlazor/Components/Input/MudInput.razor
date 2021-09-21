@@ -28,12 +28,13 @@
 	 <input @ref="_elementReference" @attributes="UserAttributes" type="@InputTypeString" class="@InputClassname" value="@_internalText" @oninput="OnInput" @onchange="OnChange"
 		   placeholder="@Placeholder" disabled=@Disabled readonly="@ReadOnly" @onblur="@OnBlurred" inputmode="@InputMode.ToString()" pattern="@Pattern"
 		   @onkeydown="@InvokeKeyDown" @onkeypress="@InvokeKeyPress" @onkeyup="@InvokeKeyUp"
-		   @onkeydown:preventDefault="KeyDownPreventDefault" @onkeypress:preventDefault="@KeyPressPreventDefault" @onkeyup:preventDefault="@KeyUpPreventDefault" />
+		   @onkeydown:preventDefault="KeyDownPreventDefault" @onkeypress:preventDefault="@KeyPressPreventDefault" @onkeyup:preventDefault="@KeyUpPreventDefault"
+		   @onmousewheel="@OnMouseWheel" />
 	}
 
 	@if (_showClearable && !Disabled)
 	{
-	 <MudIconButton Color="@Color.Default" Icon="@Icons.Material.Filled.Clear" Size="@Size.Small" OnClick="@ClearButtonClickHandlerAsync" Class="mud-icon-button-edge-end" />
+	 <MudIconButton Color="@Color.Default" Icon="@ClearIcon" Size="@Size.Small" OnClick="@ClearButtonClickHandlerAsync" Class="mud-icon-button-edge-end" />
 	}
 
 	@if (Adornment == Adornment.End)
@@ -49,8 +50,8 @@
 	@if (!HideSpinButtons)
 	{
 	 <div class="mud-input-numeric-spin">
-	  <MudButton Variant="Variant.Text" @onclick="OnIncrement" Disabled="@(Disabled || ReadOnly)" tabindex="-1"><MudIcon Icon="@Icons.Material.Filled.KeyboardArrowUp" Size="@GetButtonSize()" /></MudButton>
-	  <MudButton Variant="Variant.Text" @onclick="OnDecrement" Disabled="@(Disabled || ReadOnly)" tabindex="-1"><MudIcon Icon="@Icons.Material.Filled.KeyboardArrowDown" Size="@GetButtonSize()" /></MudButton>
+	  <MudButton Variant="Variant.Text" @onclick="OnIncrement" Disabled="@(Disabled || ReadOnly)" tabindex="-1"><MudIcon Icon="@NumericUpIcon" Size="@GetButtonSize()" /></MudButton>
+	  <MudButton Variant="Variant.Text" @onclick="OnDecrement" Disabled="@(Disabled || ReadOnly)" tabindex="-1"><MudIcon Icon="@NumericDownIcon" Size="@GetButtonSize()" /></MudButton>
 	 </div>
 	}
 </div>

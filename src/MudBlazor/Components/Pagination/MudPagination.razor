@@ -6,13 +6,13 @@
     @if (ShowFirstButton)
     {
         <li class="@ItemClassname">
-            <MudIconButton Icon="@Icons.Material.Filled.FirstPage" Size="@Size" Variant="@Variant" Disabled="@(Selected == 1 || Disabled)" OnClick="@(() => OnClickControlButton(Page.First))"></MudIconButton>
+            <MudIconButton Icon="@FirstIcon" Size="@Size" Variant="@Variant" Disabled="@(Selected == 1 || Disabled)" OnClick="@(() => OnClickControlButton(Page.First))"></MudIconButton>
         </li>
     }
     @if (ShowPreviousButton)
     {
         <li class="@ItemClassname">
-            <MudIconButton Icon="@Icons.Material.Filled.NavigateBefore" Size="@Size" Variant="@Variant" Disabled="@(Selected == 1 || Disabled)" OnClick="@(() => OnClickControlButton(Page.Previous))"></MudIconButton>
+            <MudIconButton Icon="@BeforeIcon" Size="@Size" Variant="@Variant" Disabled="@(Selected == 1 || Disabled)" OnClick="@(() => OnClickControlButton(Page.Previous))"></MudIconButton>
         </li>
     }
     @foreach (var state in GeneratePagination())
@@ -39,13 +39,13 @@
     @if (ShowNextButton)
     {
         <li class="@ItemClassname">
-            <MudIconButton Icon="@Icons.Material.Filled.NavigateNext" Variant="@Variant" Size="@Size" Disabled="@(Selected == Count || Disabled)" OnClick="@(() => OnClickControlButton(Page.Next))"></MudIconButton>
+            <MudIconButton Icon="@NextIcon" Variant="@Variant" Size="@Size" Disabled="@(Selected == Count || Disabled)" OnClick="@(() => OnClickControlButton(Page.Next))"></MudIconButton>
         </li>
     }
     @if (ShowLastButton)
     {
         <li class="@ItemClassname">
-            <MudIconButton Icon="@Icons.Material.Filled.LastPage" Variant="@Variant" Size="@Size" Disabled="@(Selected == Count || Disabled)" OnClick="@(() => OnClickControlButton(Page.Last))"></MudIconButton>
+            <MudIconButton Icon="@LastIcon" Variant="@Variant" Size="@Size" Disabled="@(Selected == Count || Disabled)" OnClick="@(() => OnClickControlButton(Page.Last))"></MudIconButton>
         </li>
     }
 </MudElement>

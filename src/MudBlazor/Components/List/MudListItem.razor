@@ -30,7 +30,7 @@
     </div>
     @if (NestedList != null)
     {
-        <MudIcon Icon="@($"{(_expanded ? Icons.Material.Filled.ExpandLess : Icons.Material.Filled.ExpandMore)}")" Size="@IconSize" Color="@AdornmentColor" />
+        <MudIcon Icon="@($"{(_expanded ? ExpandLessIcon : ExpandMoreIcon)}")" Size="@IconSize" Color="@AdornmentColor" />
     }
 </div>
 @if (NestedList != null)

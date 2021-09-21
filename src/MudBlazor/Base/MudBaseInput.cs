@@ -3,6 +3,7 @@ using System.Globalization;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
@@ -52,7 +53,7 @@ namespace MudBlazor
         [Parameter] public string AdornmentText { get; set; }
 
         /// <summary>
-        /// Sets Start or End Adornment if not set to None.
+        /// The Adornment if used. By default, it is set to None.
         /// </summary>
         [Parameter] public Adornment Adornment { get; set; } = Adornment.None;
 
@@ -62,7 +63,7 @@ namespace MudBlazor
         [Parameter] public Color AdornmentColor { get; set; } = Color.Default;
 
         /// <summary>
-        /// Sets the Icon Size.
+        /// The Icon Size.
         /// </summary>
         [Parameter] public Size IconSize { get; set; } = Size.Medium;
 
@@ -82,7 +83,17 @@ namespace MudBlazor
         [Parameter] public Margin Margin { get; set; } = Margin.None;
 
         /// <summary>
-        /// If true the input will focus automatically
+        /// The short hint displayed in the input before the user enters a value.
+        /// </summary>
+        [Parameter] public string Placeholder { get; set; }
+
+        /// <summary>
+        /// If string has value the label text will be displayed in the input, and scaled down at the top if the input has value.
+        /// </summary>
+        [Parameter] public string Label { get; set; }
+
+        /// <summary>
+        /// If true the input will focus automatically.
         /// </summary>
         [Parameter] public bool AutoFocus { get; set; }
 
@@ -91,8 +102,19 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public int Lines { get; set; } = 1;
 
+        /// <summary>
+        ///  The text to be displayed.
+        /// </summary>
         [Parameter]
         public string Text { get; set; }
+
+        /// <summary>
+        /// When TextUpdateSuppression is true (which is default) the text can not be updated by bindings while the component is focused in BSS (not WASM).
+        /// This solves issue #1012: Textfield swallowing chars when typing rapidly
+        /// If you need to update the input's text while it is focused you can set this parameter to false.
+        /// Note: on WASM text update suppression is not active, so this parameter has no effect.
+        /// </summary>
+        [Parameter] public bool TextUpdateSuppression { get; set; } = true;
 
         /// <summary>
         ///  Hints at the type of data that might be entered by the user while editing the input
@@ -141,10 +163,19 @@ namespace MudBlazor
 
         public virtual ValueTask SelectRangeAsync(int pos1, int pos2) { return new ValueTask(); }
 
+        /// <summary>
+        /// Fired when the text value changes.
+        /// </summary>
         [Parameter] public EventCallback<string> TextChanged { get; set; }
 
+        /// <summary>
+        /// Fired when the element loses focus.
+        /// </summary>
         [Parameter] public EventCallback<FocusEventArgs> OnBlur { get; set; }
 
+        /// <summary>
+        /// Fired when the element changes internally its text value.
+        /// </summary>
         [Parameter]
         public EventCallback<ChangeEventArgs> OnInternalInputChanged { get; set; }
 
@@ -157,6 +188,9 @@ namespace MudBlazor
             BeginValidateAfter(OnBlur.InvokeAsync(obj));
         }
 
+        /// <summary>
+        /// Fired on the KeyDown event.
+        /// </summary>
         [Parameter] public EventCallback<KeyboardEventArgs> OnKeyDown { get; set; }
 
         protected virtual void InvokeKeyDown(KeyboardEventArgs obj)
@@ -165,8 +199,15 @@ namespace MudBlazor
             OnKeyDown.InvokeAsync(obj).AndForget();
         }
 
+        /// <summary>
+        /// Prevent the default action for the KeyDown event.
+        /// </summary>
         [Parameter] public bool KeyDownPreventDefault { get; set; }
 
+
+        /// <summary>
+        /// Fired on the KeyPress event.
+        /// </summary>
         [Parameter] public EventCallback<KeyboardEventArgs> OnKeyPress { get; set; }
 
         protected virtual void InvokeKeyPress(KeyboardEventArgs obj)
@@ -174,8 +215,14 @@ namespace MudBlazor
             OnKeyPress.InvokeAsync(obj).AndForget();
         }
 
+        /// <summary>
+        /// Prevent the default action for the KeyPress event.
+        /// </summary>
         [Parameter] public bool KeyPressPreventDefault { get; set; }
 
+        /// <summary>
+        /// Fired on the KeyUp event.
+        /// </summary>
         [Parameter] public EventCallback<KeyboardEventArgs> OnKeyUp { get; set; }
 
         protected virtual void InvokeKeyUp(KeyboardEventArgs obj)
@@ -184,6 +231,9 @@ namespace MudBlazor
             OnKeyUp.InvokeAsync(obj).AndForget();
         }
 
+        /// <summary>
+        /// Prevent the default action for the KeyUp event.
+        /// </summary>
         [Parameter] public bool KeyUpPreventDefault { get; set; }
 
         /// <summary>
@@ -193,7 +243,7 @@ namespace MudBlazor
         public EventCallback<T> ValueChanged { get; set; }
 
         /// <summary>
-        /// The value of this input element. This property is two-way bindable.
+        /// The value of this input element.
         /// </summary>
         [Parameter]
         public T Value
@@ -282,6 +332,7 @@ namespace MudBlazor
         public virtual void ForceRender(bool forceTextUpdate)
         {
             _forceTextUpdate = true;
+            UpdateTextPropertyAsync(false).AndForget();
             StateHasChanged();
         }
 
@@ -300,7 +351,10 @@ namespace MudBlazor
 
             if (_isFocused && !_forceTextUpdate)
             {
-                return;
+                // Text update suppression, only in BSS (not in WASM).
+                // This is a fix for #1012
+                if (RuntimeLocation.IsServerSide && TextUpdateSuppression)
+                    return;
             }
             _forceTextUpdate = false;
 

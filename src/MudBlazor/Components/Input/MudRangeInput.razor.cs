@@ -48,6 +48,11 @@ namespace MudBlazor
         private ElementReference _elementReferenceStart, _elementReferenceEnd;
 
         /// <summary>
+        /// Custom separator icon, leave null for default.
+        /// </summary>
+        [Parameter] public string SeparatorIcon { get; set; } = Icons.Material.Filled.ArrowRightAlt;
+
+        /// <summary>
         /// Focuses the start input of MudRangeInput
         /// </summary>
         /// <returns></returns>

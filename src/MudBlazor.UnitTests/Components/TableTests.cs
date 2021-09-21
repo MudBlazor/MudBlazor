@@ -116,6 +116,38 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// Check if the loading and no records functionnality is working in grouped table.
+        /// </summary>
+        [Test]
+        public void TableGroupLoadingAndNoRecordsTest()
+        {
+            var comp = Context.RenderComponent<TableGroupLoadingAndNoRecordsTest>();
+            var searchString = comp.Find("#searchString");
+            var switchElement = comp.Find("#switch");
+
+            // It should be equal to 5 = header row + group header row + 2 rows + footer row 
+            comp.FindAll("tr").Count.Should().Be(5);
+
+            // Add filter
+            searchString.Change("ZZZ");
+
+            // It should be equal to 2 = header row + no records row
+            comp.FindAll("tr").Count.Should().Be(2);
+            comp.FindAll("tr")[1].TextContent.Should().Be("No records"); 
+
+            // It should be equal to 3 = header row + loading progress row + loading text
+            switchElement.Change(true);
+            comp.FindAll("tr").Count.Should().Be(3);
+            comp.FindAll("tr")[2].TextContent.Should().Be("Loading..."); 
+
+            // Remove filter
+            searchString.Change("");
+
+            // It should be equal to 6 = header row + loading progress row + group header row + 2 rows + footer row
+            comp.FindAll("tr").Count.Should().Be(6);
+        }
+
+        /// <summary>
         /// Check if if empty row text is correct
         /// </summary>
         [Test]
@@ -1113,6 +1145,64 @@ namespace MudBlazor.UnitTests.Components
             buttons[0].Click();
             tr = comp.FindAll("tr").ToArray();
             tr.Length.Should().Be(36);
+        }
+
+        /// <summary>
+        /// Tests the IsInitiallyExpanded grouping behavior.
+        /// </summary>
+        /// <returns></returns>
+        [Test]
+        public async Task TableGroupIsInitiallyExpandedTest()
+        {
+            // group by Racing Category and collapse groups as default:
+            var comp = Context.RenderComponent<TableGroupingTest>();
+            var table = comp.Instance.tableInstance;
+            table.GroupBy = new TableGroupDefinition<TableGroupingTest.RacingCar>(rc => rc.Category, null) { 
+                GroupName = "Category",
+                Expandable = true,
+                IsInitiallyExpanded = false 
+            };
+            comp.Render();
+            table.Context.GroupRows.Count.Should().Be(4); // 4 categories
+            var tr = comp.FindAll("tr").ToArray();
+            tr.Length.Should().Be(5); // 1 table header + 4 group headers
+        }
+
+        /// <summary>
+        /// Tests the correct output when filter does not return any matching elements
+        /// </summary>
+        /// <returns>The awaitable <see cref="Task"/></returns>
+        [Test]
+        public async Task TablePagerInfoTextTest()
+        {
+            // create the component
+            var tableComponent = Context.RenderComponent<TablePagerInfoTextTest>();
+ 
+            // print the generated html      
+            Console.WriteLine(tableComponent.Markup);
+
+            // assert correct info-text
+            tableComponent.Find("div.mud-table-page-number-information").Text().Should().Be("1-10 of 59", "No filter applied yet.");
+
+            // get the instance
+            var tableInstance = tableComponent.FindComponent<MudTable<string>>().Instance;
+ 
+            // get the search-string
+            var searchString = tableComponent.Find("#searchString");
+
+            // should return 3 items
+            searchString.Change("Ala");
+            tableInstance.GetFilteredItemsCount().Should().Be(3);
+            string.Join(",", tableInstance.FilteredItems).Should().Be("Alabama,Alaska,Palau");
+            tableComponent.FindAll("tr").Count.Should().Be(3);
+            tableComponent.Find("div.mud-table-page-number-information").Text().Should().Be("1-3 of 3", "'Ala' filter applied.");
+
+            // no matches
+            searchString.Change("ZZZ");
+            tableInstance.GetFilteredItemsCount().Should().Be(0);
+            tableInstance.FilteredItems.Count().Should().Be(0);
+            tableComponent.FindAll("tr").Count.Should().Be(0);
+            tableComponent.Find("div.mud-table-page-number-information").Text().Should().Be("0-0 of 0", "'ZZZ' filter applied.");
         }
     }
 }

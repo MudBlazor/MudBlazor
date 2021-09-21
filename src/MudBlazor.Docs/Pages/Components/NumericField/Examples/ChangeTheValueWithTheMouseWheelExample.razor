@@ -1,0 +1,18 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudGrid>
+    <MudItem xs="12" Class="d-flex justify-center">
+        <MudNumericField @bind-Value="@_normal" InvertMouseWheel="@_invertMouseWheel"
+                         Label="Use Shift + Mouse Wheel"
+                         Variant="Variant.Outlined" />
+    </MudItem>
+</MudGrid>
+<div class="mt-3">
+    <MudCheckBox @bind-Checked="@_invertMouseWheel" Label="Revert Mouse Wheel" Color="Color.Primary" />
+</div>
+
+
+@code {
+    double _normal = 0;
+    bool _invertMouseWheel = false;
+}

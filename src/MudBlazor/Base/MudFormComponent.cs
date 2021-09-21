@@ -39,12 +39,12 @@ namespace MudBlazor
         [Parameter] public bool Required { get; set; }
 
         /// <summary>
-        /// Set an error text that will be displayed if the input is not filled out but required!
+        /// The error text that will be displayed if the input is not filled out but required.
         /// </summary>
         [Parameter] public string RequiredError { get; set; } = "Required";
 
         /// <summary>
-        /// The ErrorText that will be displayed if Error true
+        /// The ErrorText that will be displayed if Error true.
         /// </summary>
         [Parameter] public string ErrorText { get; set; }
 
@@ -53,6 +53,9 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public bool Error { get; set; }
 
+        /// <summary>
+        /// The generic converter of the component.
+        /// </summary>
         [Parameter]
         public Converter<T, U> Converter
         {
@@ -71,6 +74,9 @@ namespace MudBlazor
             return changed;
         }
 
+        /// <summary>
+        /// The culture of the component.
+        /// </summary>
         [Parameter]
         public CultureInfo Culture
         {
@@ -118,6 +124,10 @@ namespace MudBlazor
         /// </summary>
         public bool HasErrors => Error || ConversionError || ValidationErrors.Count > 0;
 
+        /// <summary>
+        /// Return the validation error text or the conversion error message.
+        /// </summary>
+        /// <returns>Error text/message</returns>
         public string GetErrorText()
         {
             // ErrorText is either set from outside or the first validation error
@@ -201,7 +211,7 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Causes this component to validate its value
+        /// Cause this component to validate its value.
         /// </summary>
         public Task Validate()
         {
@@ -352,6 +362,21 @@ namespace MudBlazor
         {
             try
             {
+                if (Form==null)
+                {
+                    errors.Add("Form is null, unable to validate with model!");
+                    return;
+                }
+                if (Form.Model == null)
+                {
+                    errors.Add("Form.Model is null, unable to validate with model!");
+                    return;
+                }
+                if (For == null)
+                {
+                    errors.Add($"For is null, please set parameter For on the form input component of type {GetType().Name}");
+                    return;
+                }
                 foreach (var error in func(Form.Model, For.GetFullPathOfMember()))
                     errors.Add(error);
             }
@@ -414,6 +439,9 @@ namespace MudBlazor
             }
         }
 
+        /// <summary>
+        /// Reset the value and the validation.
+        /// </summary>
         public void Reset()
         {
             ResetValue();
@@ -428,6 +456,9 @@ namespace MudBlazor
             StateHasChanged();
         }
 
+        /// <summary>
+        /// Reset the validation.
+        /// </summary>
         public void ResetValidation()
         {
             Error = false;

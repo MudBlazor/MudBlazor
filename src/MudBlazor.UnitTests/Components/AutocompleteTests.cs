@@ -129,6 +129,8 @@ namespace MudBlazor.UnitTests.Components
             // set a value the search won't find
             autocompletecomp.SetParam(a => a.Text, "Austria"); // not part of the U.S.
             await comp.InvokeAsync(() => autocomplete.ToggleMenu());
+            // IsOpen must be true to properly simulate a user clicking outside of the component, which is what the next ToggleMenu call below does.
+            autocomplete.IsOpen.Should().BeTrue();
             // now trigger the coercion by closing the menu
             await comp.InvokeAsync(() => autocomplete.ToggleMenu());
             autocomplete.Value.Should().Be("Alabama");
@@ -237,7 +239,7 @@ namespace MudBlazor.UnitTests.Components
 
         /// <summary>
         /// Based on this try https://try.mudblazor.com/snippet/GacPunvDUyjdUJAh
-        /// and this issue https://github.com/Garderoben/MudBlazor/issues/1235
+        /// and this issue https://github.com/MudBlazor/MudBlazor/issues/1235
         /// </summary>
         [Test]
         public async Task Autocomplete_Initialize_Value_on_SetParametersAsync()
@@ -257,7 +259,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// Test for <seealso cref="https://github.com/Garderoben/MudBlazor/issues/1415"/>
+        /// Test for <seealso cref="https://github.com/MudBlazor/MudBlazor/issues/1415"/>
         /// </summary>
         [Test]
         public async Task Autocomplete_OnBlurShouldBeCalled()
@@ -353,7 +355,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// Test for <seealso cref="https://github.com/Garderoben/MudBlazor/issues/1761"/>
+        /// Test for <seealso cref="https://github.com/MudBlazor/MudBlazor/issues/1761"/>
         /// </summary>
         [Test]
         public async Task Autocomplete_Should_Close_OnTab()
