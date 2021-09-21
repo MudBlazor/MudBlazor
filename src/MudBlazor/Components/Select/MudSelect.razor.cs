@@ -513,19 +513,6 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Reset and clear value(s).
-        /// </summary>
-        protected override async void ResetValue()
-        {
-            await SetValueAsync(default, false);
-            await SetTextAsync(default, false);
-            SelectedValues = null;
-            BeginValidate();
-            StateHasChanged();
-            await SelectedValuesChanged.InvokeAsync(SelectedValues);
-        }
-
-        /// <summary>
         /// Clear the selection
         /// </summary>
         public async Task ClearAsync()
