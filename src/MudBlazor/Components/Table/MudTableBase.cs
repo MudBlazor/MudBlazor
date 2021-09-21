@@ -125,7 +125,7 @@ namespace MudBlazor
         }
         
         /// <summary>
-        /// Rows Per Page two-waybindable parameter
+        /// Rows Per Page two-way bindable parameter
         /// </summary>
         [Parameter] public EventCallback<int> RowsPerPageChanged {get;set;}
 
