@@ -30,6 +30,11 @@ namespace MudBlazor
         [CascadingParameter] public bool RightToLeft { get; set; }
 
         /// <summary>
+        /// The visibility of the badge.
+        /// </summary>
+        [Parameter] public bool Visible { get; set; } = true;
+
+        /// <summary>
         /// The color of the badge.
         /// </summary>
         [Parameter] public Color Color { get; set; } = Color.Default;
