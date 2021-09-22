@@ -171,7 +171,7 @@ namespace MudBlazor
             {
                 if (Value == null)
                     return false;
-                if (!_value_lookup.TryGetValue(Value, out var item))
+                if (!_valueLookup.TryGetValue(Value, out var item))
                     return false;
                 return (item.ChildContent != null);
             }
@@ -183,7 +183,7 @@ namespace MudBlazor
             {
                 if (Value == null)
                     return false;
-                return _value_lookup.TryGetValue(Value, out var _);
+                return _valueLookup.TryGetValue(Value, out var _);
             }
         }
 
@@ -191,7 +191,7 @@ namespace MudBlazor
         {
             if (Value == null)
                 return null;
-            if (!_value_lookup.TryGetValue(Value, out var selected_item))
+            if (!_valueLookup.TryGetValue(Value, out var selected_item))
                 return null; //<-- for now. we'll add a custom template to present values (set from outside) which are not on the list?
             return selected_item.ChildContent;
         }
@@ -232,7 +232,11 @@ namespace MudBlazor
         [Parameter] public bool MultiSelection { get; set; }
 
         protected List<MudSelectItem<T>> _items = new();
-        protected Dictionary<T, MudSelectItem<T>> _value_lookup = new();
+        protected Dictionary<T, MudSelectItem<T>> _valueLookup = new();
+        internal bool _isOpen;
+        public string _currentIcon { get; set; }
+        object _activeItemId = null;
+
         internal void Add(MudSelectItem<T> item)
         {
             // Check to avoid duplicate items based on their value
@@ -241,7 +245,7 @@ namespace MudBlazor
             {
                 _items.Add(item);
                 if (item.Value != null)
-                    _value_lookup[item.Value] = item;
+                    _valueLookup[item.Value] = item;
             }
         }
 
@@ -251,7 +255,7 @@ namespace MudBlazor
             {
                 _items.Remove(item);
                 if (item.Value != null)
-                    _value_lookup.Remove(item.Value);
+                    _valueLookup.Remove(item.Value);
             }
         }
 
@@ -291,10 +295,6 @@ namespace MudBlazor
         /// Button click event for clear button. Called after text and value has been cleared.
         /// </summary>
         [Parameter] public EventCallback<MouseEventArgs> OnClearButtonClick { get; set; }
-
-        internal bool _isOpen;
-
-        public string _currentIcon { get; set; }
 
         public async Task SelectOption(object obj)
         {
@@ -336,10 +336,35 @@ namespace MudBlazor
                 await SetValueAsync(value);
                 SelectedValues.Clear();
                 SelectedValues.Add(value);
+                HilightItemForValue(value);
             }
 
             StateHasChanged();
             await SelectedValuesChanged.InvokeAsync(SelectedValues);
+        }
+
+        private void HilightItemForValue(T value)
+        {
+            if (value==null)
+            {
+                HilightItem(null);
+                return;
+            }    
+            _valueLookup.TryGetValue(value, out var item);
+            HilightItem(item);            
+        }
+
+        private void HilightItem(MudSelectItem<T> item)
+        {
+            _activeItemId = item?.ItemId;
+        }
+
+        private void HilightSelectedValue()
+        {
+            if (MultiSelection)
+                HilightItem(_items.FirstOrDefault());
+            else
+                HilightItemForValue(Value);
         }
 
         private void UpdateSelectAllChecked()
@@ -376,6 +401,7 @@ namespace MudBlazor
             if (Disabled || ReadOnly)
                 return;
             _isOpen = true;
+            HilightSelectedValue();
             UpdateIcon();
             StateHasChanged();
         }

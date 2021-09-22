@@ -12,7 +12,7 @@
         </div>
         @if (!HideExpandIcon)
         {
-            <MudIcon Icon="@ExpandIcon" class="@(Expanded? "mud-nav-link-expand-icon mud-transform" : "mud-nav-link-expand-icon")" />
+            <MudIcon Icon="@ExpandIcon" class="@ExpandIconClassname" />
         }
     </button>
     <MudCollapse Expanded="@Expanded" MaxHeight="@MaxHeight" Class="mud-navgroup-collapse">

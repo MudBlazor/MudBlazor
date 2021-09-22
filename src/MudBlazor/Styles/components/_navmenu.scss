@@ -33,6 +33,14 @@
     }
 }
 
+.mud-nav-group-disabled {
+    &, .mud-nav-link-text, .mud-nav-link-expand-icon, .mud-nav-link-icon {
+        color: var(--mud-palette-text-disabled) !important;
+        cursor: default;
+        pointer-events: none;
+    }
+}
+
 .mud-nav-item {
     width: 100%;
     display: flex;
@@ -91,6 +99,10 @@
         &.mud-transform {
             transform: rotate(-180deg);
             fill: var(--mud-palette-primary);
+        }
+
+        &.mud-transform-disabled {
+            transform: rotate(-180deg);
         }
     }
 
