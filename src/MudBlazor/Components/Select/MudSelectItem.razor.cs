@@ -10,6 +10,7 @@ namespace MudBlazor
     public partial class MudSelectItem<T> : MudBaseSelectItem, IDisposable
     {
         private IMudSelect _parent;
+        internal string ItemId { get; } = Guid.NewGuid().ToString();
 
         /// <summary>
         /// The parent select component

@@ -7,7 +7,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
+using AngleSharp.Dom;
 using AngleSharp.Html.Dom;
 using Bunit;
 using FluentAssertions;
@@ -484,6 +486,75 @@ namespace MudBlazor.UnitTests.Components
             comp.WaitForAssertion(() => comp.Markup.Should().NotContain("mud-popover-open"));
             autocomplete.Value.Should().Be("");
             autocomplete.Text.Should().Be("");
+        }
+
+        [Test]
+        public async Task Autocomplete_Should_Not_Select_Disabled_Item()
+        {
+            // define some constant values
+            var alabamaString = "Alabama";
+            var alaskaString = "Alaska";
+            var americanSamoaString = "American Samoa";
+            var arkansasString = "Arkansas";
+            var listItemQuerySelector = "div.mud-list-item";
+            var selectedItemClassName = "mud-selected-item";
+
+            var selectedItemIndexPropertyInfo = typeof(MudAutocomplete<string>).GetField("_selectedListItemIndex", BindingFlags.NonPublic | BindingFlags.Instance) ?? throw new ArgumentException("Cannot find field named '_selectedListItemIndex' on type 'MudAutocomplete<T>'");
+            var onInputKeyUpMemberInfo = typeof(MudAutocomplete<string>).GetMethod("OnInputKeyUp", BindingFlags.Instance | BindingFlags.NonPublic) ?? throw new ArgumentException("Cannot find method named 'OnInputKeyUp' on type 'MudAutocomplete<T>'");
+
+            // create the component
+            var component = Context.RenderComponent<AutocompleteDisabledItemsTest>();
+
+            // get the elements needed for the test
+            var autocompleteComponent = component.FindComponent<MudAutocomplete<string>>();
+
+            // get the instance
+            var autocompleteInstance = autocompleteComponent.Instance;
+
+            // click to open the popup
+            autocompleteComponent.Find(TagNames.Input).Click();
+
+            // ensure popup is open
+            component.WaitForAssertion(() => autocompleteInstance.IsOpen.Should().BeTrue("Input has been focused and should open the popup"));
+
+            // get the matching states
+            var matchingStates = component.FindComponents<MudListItem>().ToArray();
+
+            // try clicking 'American Samoa'
+            matchingStates.Single(s => s.Markup.Contains(americanSamoaString)).Find(listItemQuerySelector).Click();
+            component.WaitForAssertion(() => autocompleteInstance.Value.Should().BeNullOrEmpty($"{americanSamoaString} should not be clickable."));
+
+            // try clicking 'Alaska'
+            matchingStates.Single(s => s.Markup.Contains(alaskaString)).Find(listItemQuerySelector).Click();
+            component.WaitForAssertion(() => autocompleteInstance.Value.Should().Be(alaskaString));
+
+            // reset search-string
+            autocompleteComponent.Find(TagNames.Input).Input(string.Empty);
+
+            // wait till popup is visible
+            component.WaitForAssertion(() => autocompleteInstance.IsOpen.Should().BeTrue());
+
+            // update found elements
+            matchingStates = component.FindComponents<MudListItem>().ToArray();
+
+            // ensure alabama is selected
+            component.WaitForAssertion(() => matchingStates.Single(s => s.Markup.Contains(alabamaString)).Find(listItemQuerySelector).ClassList.Should().Contain(selectedItemClassName, $"{alabamaString} should be selected/highlighted"));
+
+            // define the event-args for arrow-down
+            var arrowDownKeyboardEventArgs = new KeyboardEventArgs { Key = Key.Down.Value, Type = "keyup" };
+
+            // invoke directly (but twice)
+            onInputKeyUpMemberInfo.Invoke(autocompleteInstance, new[] { arrowDownKeyboardEventArgs });
+            onInputKeyUpMemberInfo.Invoke(autocompleteInstance, new[] { arrowDownKeyboardEventArgs });
+
+            // ensure that index '4' is selected
+            component.WaitForAssertion(() => selectedItemIndexPropertyInfo.GetValue(autocompleteInstance).Should().Be(4));
+
+            // select the highlighted value
+            component.Find(TagNames.Input).KeyUp(Key.Enter);
+
+            // Arkansas should be selected value
+            autocompleteInstance.Value.Should().Be(arkansasString);
         }
     }
 }
