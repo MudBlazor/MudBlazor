@@ -216,6 +216,7 @@ namespace MudBlazor
             IsOpen = false;
             BeginValidate();
             _elementReference?.SetText(optionText);
+            _elementReference?.FocusAsync().AndForget();
             StateHasChanged();
         }
 
@@ -517,16 +518,11 @@ namespace MudBlazor
             return _elementReference.SelectRangeAsync(pos1, pos2);
         }
 
-        //When user click an item with mouse, we lost focus. We implement because this prevent users who want to press enter or like after selecting the item.
         private async Task OnTextChanged(string text)
         {
             if (text == null)
                 return;
             await SetTextAsync(text, true);
-            if (_elementReference != null)
-            {
-                await _elementReference.FocusAsync();
-            }
         }
 
     }
