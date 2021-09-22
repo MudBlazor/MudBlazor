@@ -293,9 +293,6 @@ namespace MudBlazor.UnitTests.Components
             {
                 button.IsDisabled().Should().BeTrue();
             }
-
-            //test if rtl is used
-            pagination.ClassName.Should().Contain("mud-pagination-rtl");
         }
     }
 }

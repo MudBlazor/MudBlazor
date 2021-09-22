@@ -1,4 +1,5 @@
 ﻿@import '../abstracts/variables';
+@import '../abstracts/mixins';
 
 .mud-pagination {
     display: inline-flex;
@@ -29,6 +30,12 @@
 
         .mud-typography[disabled] {
             color: var(--mud-palette-action-disabled) !important;
+        }
+
+        @include rtl {
+            .mud-icon-root {
+                transform: scaleX(-1);
+            }
         }
     }
 
@@ -83,9 +90,5 @@
 
     &-disable-elevation .mud-pagination-item .mud-button {
         box-shadow: none;
-    }
-
-    &-rtl .mud-pagination-item .mud-icon-root {
-        transform: scaleX(-1);
     }
 }
