@@ -512,8 +512,8 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(() => autocomplete.Reset());
 
             comp.WaitForAssertion(() => comp.Markup.Should().NotContain("mud-popover-open"));
-            autocomplete.Value.Should().Be("");
-            autocomplete.Text.Should().Be("");
+            autocomplete.Value.Should().Be(null);
+            autocomplete.Text.Should().Be(null);
 
             // now let's type a different state to see the popup open
             autocompletecomp.Find("input").Input("Calif");
@@ -527,8 +527,8 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(() => autocomplete.Reset());
 
             comp.WaitForAssertion(() => comp.Markup.Should().NotContain("mud-popover-open"));
-            autocomplete.Value.Should().Be("");
-            autocomplete.Text.Should().Be("");
+            autocomplete.Value.Should().Be(null);
+            autocomplete.Text.Should().Be(null);
         }
 
         [Test]
