@@ -318,6 +318,7 @@ namespace MudBlazor
         }
 
         int _elementKey = 0;
+
         /// <summary>
         /// Clears the autocomplete's text
         /// </summary>
@@ -331,15 +332,10 @@ namespace MudBlazor
             StateHasChanged();
         }
 
-        //Same as Clear(), but we have to override the Reset method in MudFormComponent.cs, because we inherit it
         protected override async void ResetValue()
         {
-            await SetTextAsync(string.Empty, updateValue: false);
-            await CoerceValueToText();
-            IsOpen = false;
-            _elementKey++;
-            _timer?.Dispose();
-            StateHasChanged();
+            await Clear();
+            base.ResetValue();
         }
 
 

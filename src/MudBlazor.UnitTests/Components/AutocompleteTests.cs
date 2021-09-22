@@ -489,7 +489,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// Same the Clear() test. This time using Reset().
+        /// When calling Reset() the popup should not open and Value and Text should be cleared.
         /// </summary>
         [Test]
         public async Task Autocomplete_Should_CloseOnReset()
@@ -529,8 +529,8 @@ namespace MudBlazor.UnitTests.Components
             comp.WaitForAssertion(() => comp.Markup.Should().NotContain("mud-popover-open"));
             autocomplete.Value.Should().Be("");
             autocomplete.Text.Should().Be("");
-        {
-        
+        }
+
         [Test]
         public async Task Autocomplete_Should_Not_Select_Disabled_Item()
         {
