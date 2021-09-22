@@ -327,9 +327,7 @@ namespace MudBlazor
         {
             await SetTextAsync(string.Empty, updateValue: false);
             await CoerceValueToText();
-            IsOpen = false;
             await _elementReference.SetText(null);
-            //_elementKey++;
             _timer?.Dispose();
             StateHasChanged();
         }
