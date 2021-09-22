@@ -30,43 +30,41 @@ namespace MudBlazor
 
         private async Task SelectNextItem()
         {
-            if (MultiSelection == false)
+            if (_items == null || _items.Count == 0)
+                return;
+            string val = Converter.Set(Value);
+            itemIndex = _items.FindIndex(e => Converter.Set(e.Value) == val);
+
+            for (int i = 0; i <= _items.Count; i++)
             {
-                if (_items == null || _items.Count == 0)
-                    return;
-                string val = Converter.Set(Value);
-                itemIndex = _items.FindIndex(e => Converter.Set(e.Value) == val);
-                
-                for (int i = 0; i <= _items.Count; i++)
+                itemIndex = itemIndex + 1;
+                if (_items.Count <= itemIndex)
                 {
-                    itemIndex = itemIndex + 1;
-                    if (_items.Count <= itemIndex)
-                    {
-                        break;
-                    }
-                    else if (itemIndex == -1 && _items[itemIndex].Disabled == false)
-                    {
-                        _selectedValues.Clear();
-                        _selectedValues.Add(_items[itemIndex].Value);
-                        await SetValueAsync(_items[itemIndex].Value, updateText: true);
-                        break;
-                    }
-                    else if (itemIndex <= _items.Count && _items[itemIndex].Disabled == false)
+                    break;
+                }
+                else if ((itemIndex == -1 && _items[itemIndex].Disabled == false) || (itemIndex <= _items.Count && _items[itemIndex].Disabled == false))
+                {
+                    if (!MultiSelection)
                     {
                         _selectedValues.Clear();
                         _selectedValues.Add(_items[itemIndex].Value);
                         await SetValueAsync(_items[itemIndex].Value, updateText: true);
+                        HilightItem(_items[itemIndex]);
+                        break;
+                    }
+                    else
+                    {
+                        await SetValueAsync(_items[itemIndex].Value, updateText: true);
+                        HilightItem(_items[itemIndex]);
                         break;
                     }
                 }
-
             }
-
         }
 
         private async Task SelectPreviousItem()
         {
-            if (MultiSelection == false)
+            if (true)
             {
                 if (_items == null || _items.Count == 0)
                     return;
@@ -82,13 +80,61 @@ namespace MudBlazor
                     }
                     else if (_items[itemIndex].Disabled == false)
                     {
-                        _selectedValues.Clear();
-                        _selectedValues.Add(_items[itemIndex].Value);
-                        await SetValueAsync(_items[itemIndex].Value, updateText: true);
-                        break;
+                        if (!MultiSelection)
+                        {
+                            _selectedValues.Clear();
+                            _selectedValues.Add(_items[itemIndex].Value);
+                            await SetValueAsync(_items[itemIndex].Value, updateText: true);
+                            HilightItem(_items[itemIndex]);
+                            break;
+                        }
+                        else
+                        {
+                            await SetTextAsync(_items[itemIndex].Value.ToString(), updateValue: false);
+                            HilightItem(_items[itemIndex]);
+                            break;
+                        }
+
                     }
                 }
 
+            }
+        }
+
+        private async Task SelectFirstItem()
+        {
+            if (_items == null || _items.Count == 0)
+                return;
+            for (int i = 0; i < _items.Count; i++)
+            {
+                itemIndex = i;
+                if (_items[itemIndex].Disabled == false)
+                {
+                    _selectedValues.Clear();
+                    _selectedValues.Add(_items[itemIndex].Value);
+                    await SetValueAsync(_items[itemIndex].Value, updateText: true);
+                    HilightItem(_items[itemIndex]);
+                    break;
+                }
+            }
+        }
+
+        private async Task SelectLastItem()
+        {
+            if (_items == null || _items.Count == 0)
+                return;
+            itemIndex = _items.Count;
+            for (int i = 0; i < _items.Count; i++)
+            {
+                itemIndex -= 1;
+                if (_items[itemIndex].Disabled == false)
+                {
+                    _selectedValues.Clear();
+                    _selectedValues.Add(_items[itemIndex].Value);
+                    await SetValueAsync(_items[itemIndex].Value, updateText: true);
+                    HilightItem(_items[itemIndex]);
+                    break;
+                }
             }
         }
 
@@ -462,7 +508,7 @@ namespace MudBlazor
             if (Disabled || ReadOnly)
                 return;
             if (_isOpen)
-                CloseMenu();
+                CloseMenu(true);
             else
                 OpenMenu();
         }
@@ -478,14 +524,18 @@ namespace MudBlazor
             StateHasChanged();
         }
 
-        public async void CloseMenu()
+        public async void CloseMenu(bool focusAgain)
         {
             _isOpen = false;
             UpdateIcon();
-            StateHasChanged();
-            await OnBlur.InvokeAsync(new FocusEventArgs());
-            _elementReference.FocusAsync().AndForget();
-            StateHasChanged();
+            await Task.Delay(1);
+            if (focusAgain == true)
+            {
+                StateHasChanged();
+                await OnBlur.InvokeAsync(new FocusEventArgs());
+                _elementReference.FocusAsync().AndForget();
+                StateHasChanged();
+            }
         }
 
         private void UpdateIcon()
@@ -586,9 +636,51 @@ namespace MudBlazor
             }
         }
 
-        private bool _keyPressPreventDefault;
+
+        private void OnFocus()
+        {
+            _keyDownPreventDefault = false;
+            _keyPressPreventDefault = true;
+        }
+
+        private bool _keyDownPreventDefault = false;
+        private bool _keyPressPreventDefault = true;
 
         private int _key = 0;
+
+        protected async Task InterceptKeyDown(KeyboardEventArgs obj)
+        {
+            if (obj.Type == "keydown")
+            {
+
+                if (Disabled || ReadOnly)
+                    return;
+                if (obj.Key == "Tab")
+                {
+                    CloseMenu(false);
+                }
+                else if (obj.Key == "ArrowUp")
+                {
+                    await SelectPreviousItem();
+                    //await _elementReference.SetText(_elementReference.Value);
+                    _key++;
+                    await Task.Delay(1);
+                    StateHasChanged();
+                    await Task.Delay(1);
+                    _elementReference.FocusAsync().AndForget();
+                }
+                else if (obj.Key == "ArrowDown")
+                {
+                    await SelectNextItem();
+                    //await _elementReference.SetText(_elementReference.Value);
+                    _key++;
+                    await Task.Delay(1);
+                    StateHasChanged();
+                    await Task.Delay(1);
+                    _elementReference.FocusAsync().AndForget();
+                }
+            }
+        }
 
         protected void InterceptKeyPress(KeyboardEventArgs obj)
         {
@@ -596,75 +688,75 @@ namespace MudBlazor
                 return;
             if (obj.Key == " ")
             {
-                _keyPressPreventDefault = true;
                 _isOpen = !_isOpen;
                 return;
             }
-            else if (obj.Key == "Tab")
-            {
-                _keyPressPreventDefault = false;
-                if (_isOpen == true)
-                {
-                    _isOpen = false;
-                }
-            }
-            else if (obj.Key == "ArrowUp")
-            {
-                _keyPressPreventDefault = true;
-            }
-            else if (obj.Key == "ArrowDown")
-            {
-                _keyPressPreventDefault = true;
-            }
-
-            OnKeyDown.InvokeAsync(obj).AndForget();
+            
         }
 
         internal async Task InterceptKeyUp(KeyboardEventArgs obj)
         {
             if (Disabled || ReadOnly)
                 return;
-            _keyPressPreventDefault = false;
             if (obj.AltKey == true && obj.Key == "ArrowUp")
             {
-                _isOpen = false;
+                CloseMenu(true);
             }
             else if (obj.AltKey == true && obj.Key == "ArrowDown")
             {
-                _isOpen = true;
-            }
-            else if (obj.Key == "ArrowUp")
-            {
-                _keyPressPreventDefault = true;
-                if (_isOpen == true)
-                {
-                    _isOpen = false;
-                }
-                await SelectPreviousItem();
-                _key++;
-                await Task.Delay(1);
-                StateHasChanged();
-                await Task.Delay(1);
-                _elementReference.FocusAsync().AndForget();
-            }
-            else if (obj.Key == "ArrowDown")
-            {
-                if (_isOpen == true)
-                {
-                    _isOpen = false;
-                }
-                await SelectNextItem();
-                _key++;
-                await Task.Delay(1);
-                StateHasChanged();
-                await Task.Delay(1);
-                _elementReference.FocusAsync().AndForget();
+                OpenMenu();
             }
             else if (obj.Key == "Escape")
             {
-                _isOpen = false;
+                CloseMenu(true);
                 StateHasChanged();
             }
+            else if (obj.Key == "Home")
+            {
+                await SelectFirstItem();
+                _key++;
+                await Task.Delay(1);
+                StateHasChanged();
+                await Task.Delay(1);
+                _elementReference.FocusAsync().AndForget();
+            }
+            else if (obj.Key == "End")
+            {
+                await SelectLastItem();
+                _key++;
+                await Task.Delay(1);
+                StateHasChanged();
+                await Task.Delay(1);
+                _elementReference.FocusAsync().AndForget();
+            }
+            else if (obj.Key == "Enter")
+            {
+                bool isAlreadySelected = false;
+                foreach (T val in _selectedValues)
+                {
+                    if (val.ToString() == _items[itemIndex].Value.ToString())
+                    {
+                        isAlreadySelected = true;
+                    }
+                }
+
+                if (!isAlreadySelected)
+                {
+                    _selectedValues.Add(_items[itemIndex].Value);
+                }
+                else
+                {
+                    _selectedValues.Remove(_items[itemIndex].Value);
+                }
+
+                _key++;
+                await Task.Delay(1);
+                StateHasChanged();
+                await Task.Delay(1);
+                _elementReference.FocusAsync().AndForget();
+            }
+
+            OnKeyUp.InvokeAsync(obj).AndForget();
         }
 
         /// <summary>
