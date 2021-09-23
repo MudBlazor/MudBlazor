@@ -216,7 +216,7 @@ namespace MudBlazor
             IsOpen = false;
             BeginValidate();
             _elementReference?.SetText(optionText);
-            _elementReference?.FocusAsync().AndForget();
+            //_elementReference?.FocusAsync().AndForget();
             StateHasChanged();
         }
 
