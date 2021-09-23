@@ -22,13 +22,11 @@ namespace MudBlazor
             .AddClass("mud-theme-" + Color.ToDescriptionString())
             .AddClass("mud-badge-top", !Bottom)
             .AddClass("mud-badge-bottom", Bottom)
-            .AddClass("mud-badge-right", Start == RightToLeft)
-            .AddClass("mud-badge-left", Start != RightToLeft)
+            .AddClass("mud-badge-start", Start)
+            .AddClass("mud-badge-end", !Start)
             .AddClass("mud-badge-overlap", Overlap)
         .Build();
-
-        [CascadingParameter] public bool RightToLeft { get; set; }
-
+        
         /// <summary>
         /// The visibility of the badge.
         /// </summary>

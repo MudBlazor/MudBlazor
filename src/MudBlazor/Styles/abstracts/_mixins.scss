@@ -83,3 +83,15 @@
         @content
     }
 }
+
+@mixin left {
+    &left, [dir="ltr"] &start, [dir="rtl"] &end  {
+        @content
+    }
+}
+
+@mixin right {
+    &right, [dir="rtl"] &start, [dir="ltr"] &end {
+        @content
+    }
+}
