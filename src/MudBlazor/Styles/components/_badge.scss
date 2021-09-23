@@ -1,4 +1,6 @@
-﻿.mud-badge, .mud-badge-badge {
+﻿@import '../abstracts/mixins';
+
+.mud-badge, .mud-badge-badge {
     display: inline-block;
     line-height: 1;
 }
@@ -69,39 +71,41 @@
                 width: 9px;
             }
 
-            &.mud-badge-top {
-                top: auto;
-                bottom: calc(100% - 4px);
+            &.mud-badge- {
+                @include left {
+                    left: auto;
+                    right: calc(100% - 4px);
 
-                &.mud-badge-overlap {
-                    bottom: calc(100% - 12px);
+                    &.mud-badge-overlap {
+                        right: calc(100% - 12px);
+                    }
                 }
-            }
 
-            &.mud-badge-bottom {
-                bottom: auto;
-                top: calc(100% - 4px);
+                @include right {
+                    right: auto;
+                    left: calc(100% - 4px);
 
-                &.mud-badge-overlap {
-                    top: calc(100% - 12px);
+                    &.mud-badge-overlap {
+                        left: calc(100% - 12px);
+                    }
                 }
-            }
 
-            &.mud-badge-right {
-                right: auto;
-                left: calc(100% - 4px);
+                &top {
+                    top: auto;
+                    bottom: calc(100% - 4px);
 
-                &.mud-badge-overlap {
-                    left: calc(100% - 12px);
+                    &.mud-badge-overlap {
+                        bottom: calc(100% - 12px);
+                    }
                 }
-            }
 
-            &.mud-badge-left {
-                left: auto;
-                right: calc(100% - 4px);
+                &bottom {
+                    bottom: auto;
+                    top: calc(100% - 4px);
 
-                &.mud-badge-overlap {
-                    right: calc(100% - 12px);
+                    &.mud-badge-overlap {
+                        top: calc(100% - 12px);
+                    }
                 }
             }
         }
