@@ -77,3 +77,9 @@
         }
     }
 }
+
+@mixin start {
+    &start, [dir="rtl"] &right, [dir="ltr"] &left {
+        @content
+    }
+}
