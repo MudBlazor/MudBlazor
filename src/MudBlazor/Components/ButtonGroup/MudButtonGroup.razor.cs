@@ -15,12 +15,8 @@ namespace MudBlazor
           .AddClass($"mud-button-group-vertical", VerticalAlign)
           .AddClass($"mud-button-group-horizontal", !VerticalAlign)
           .AddClass($"mud-button-group-disable-elevation", DisableElevation)
-          .AddClass($"mud-button-group-rtl", RightToLeft)
           .AddClass(Class)
         .Build();
-
-
-        [CascadingParameter] public bool RightToLeft { get; set; }
 
         /// <summary>
         /// If true, the button group will override the styles of the individual buttons.

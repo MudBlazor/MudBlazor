@@ -1,4 +1,5 @@
 @import '../abstracts/variables';
+@import '../abstracts/mixins';
 
 .mud-button-group-root {
     border-radius: var(--mud-default-borderradius);
@@ -24,7 +25,7 @@
     }
 }
 .mud-button-group-horizontal {
-    &:not(.mud-button-group-rtl) {
+    @include ltr {
         > .mud-button-root:not(:last-child), > :not(:last-child) .mud-button-root {
             border-top-right-radius: 0;
             border-bottom-right-radius: 0;
@@ -37,7 +38,7 @@
         }
     }
 
-    &.mud-button-group-rtl {
+    @include rtl {
         > .mud-button-root:not(:last-child), > :not(:last-child) .mud-button-root {
             border-top-left-radius: 0;
             border-bottom-left-radius: 0;
@@ -76,13 +77,13 @@
         }
 
         &.mud-button-group-horizontal {
-            &:not(.mud-button-group-rtl) {
+            @include ltr {
                 .mud-button-root:not(:first-child), > :not(:first-child) .mud-button-root {
                     border-left: 1px solid var(--mud-palette-text-primary);
                 }
             }
 
-            &.mud-button-group-rtl {
+            @include rtl {
                 .mud-button-root:not(:first-child), > :not(:first-child) .mud-button-root {
                     border-right: 1px solid var(--mud-palette-text-primary);
                 }
@@ -106,13 +107,13 @@
                 }
 
                 &.mud-button-group-horizontal {
-                    &:not(.mud-button-group-rtl) {
+                    @include ltr {
                         .mud-button-root:not(:first-child), > :not(:first-child) .mud-button-root {
                             border-left: 1px solid var(--mud-palette-#{$color});
                         }
                     }
 
-                    &.mud-button-group-rtl {
+                    @include rtl {
                         .mud-button-root:not(:first-child), > :not(:first-child) .mud-button-root {
                             border-right: 1px solid var(--mud-palette-#{$color});
                         }
@@ -167,13 +168,13 @@
         }
 
         &.mud-button-group-horizontal {
-            &:not(.mud-button-group-rtl) {
+            @include ltr {
                 .mud-button-root:not(:first-child), > :not(:first-child) .mud-button-root {
                     border-left: 1px solid var(--mud-palette-divider);
                 }
             }
 
-            &.mud-button-group-rtl {
+            @include rtl {
                 .mud-button-root:not(:first-child), > :not(:first-child) .mud-button-root {
                     border-right: 1px solid var(--mud-palette-divider);
                 }
@@ -198,13 +199,13 @@
                 }
 
                 &.mud-button-group-horizontal {
-                    &:not(.mud-button-group-rtl) {
+                    @include ltr {
                         .mud-button-root:not(:first-child), > :not(:first-child) .mud-button-root {
                             border-left: 1px solid var(--mud-palette-#{$color}-lighten);
                         }
                     }
 
-                    &.mud-button-group-rtl {
+                    @include rtl {
                         .mud-button-root:not(:first-child), > :not(:first-child) .mud-button-root {
                             border-right: 1px solid var(--mud-palette-#{$color}-lighten);
                         }
