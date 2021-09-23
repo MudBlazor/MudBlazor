@@ -7,7 +7,7 @@
         <MudInputControl Label="@Label" Variant="@Variant" HelperText="@HelperText" FullWidth="@FullWidth" Margin="@Margin" Class="@Classname" Style="@Style"
                          Error="@Error" ErrorText="@ErrorText" Disabled="@Disabled" @onclick="@ToggleMenu" Required="@Required">
             <InputContent>
-                <MudInput @ref="_elementReference" InputType="InputType.Text"
+                <MudInput @ref="_elementReference" @key="_elementKey" InputType="InputType.Text"
                           Class="mud-select-input" Margin="@Margin"
                           Variant="@Variant" 
                           TextUpdateSuppression="@TextUpdateSuppression"
