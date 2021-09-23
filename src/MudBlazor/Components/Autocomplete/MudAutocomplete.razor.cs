@@ -216,7 +216,7 @@ namespace MudBlazor
             IsOpen = false;
             BeginValidate();
             _elementReference?.SetText(optionText);
-            //_elementReference?.FocusAsync().AndForget();
+            _elementReference?.FocusAsync().AndForget();
             StateHasChanged();
         }
 
@@ -325,9 +325,10 @@ namespace MudBlazor
         /// </summary>
         public async Task Clear()
         {
+            IsOpen = false;
             await SetTextAsync(string.Empty, updateValue: false);
             await CoerceValueToText();
-            await _elementReference.SetText(null);
+            await _elementReference.SetText("");
             _timer?.Dispose();
             StateHasChanged();
         }

@@ -446,10 +446,10 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// When calling Clear(), Value and Text should be cleared.
+        /// When calling Clear(), menu should closed, Value and Text should be cleared.
         /// </summary>
         [Test]
-        public async Task Autocomplete_Should_CloseOnClear()
+        public async Task Autocomplete_CheckTextValueandOpenState_OnClear()
         {
             var comp = Context.RenderComponent<AutocompleteTest1>();
             Console.WriteLine(comp.Markup);
@@ -465,8 +465,10 @@ namespace MudBlazor.UnitTests.Components
             autocomplete.Value.Should().Be("Alabama");
             autocomplete.Text.Should().Be("Alabama");
 
-            // Clearing it and check the text and value
+            // ToggleMenu to open menu and Clear to close it and check the text and value
+            await comp.InvokeAsync(() => autocomplete.ToggleMenu());
             await comp.InvokeAsync(() => autocomplete.Clear().Wait());
+            comp.Markup.Should().NotContain("mud-popover-open");
             autocomplete.Value.Should().Be("");
             autocomplete.Text.Should().Be("");
 
@@ -485,10 +487,10 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// When calling Reset() Value and Text should be null.
+        /// When calling Reset(), menu should closed, Value and Text should be null.
         /// </summary>
         [Test]
-        public async Task Autocomplete_Should_CloseOnReset()
+        public async Task Autocomplete_CheckTextAndValue_OnReset()
         {
             var comp = Context.RenderComponent<AutocompleteTest1>();
             Console.WriteLine(comp.Markup);
@@ -505,7 +507,9 @@ namespace MudBlazor.UnitTests.Components
             autocomplete.Text.Should().Be("Alabama");
 
             // Reset it
+            await comp.InvokeAsync(() => autocomplete.ToggleMenu());
             await comp.InvokeAsync(() => autocomplete.Reset());
+            comp.Markup.Should().NotContain("mud-popover-open");
             autocomplete.Value.Should().Be(null);
             autocomplete.Text.Should().Be(null);
 
