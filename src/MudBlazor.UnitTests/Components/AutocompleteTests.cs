@@ -480,8 +480,9 @@ namespace MudBlazor.UnitTests.Components
             items.Length.Should().Be(1);
             items.First().Markup.Should().Contain("California");
 
-            // Clearing it and check the text and value again
+            // Clearing it and check the close status text and value again
             await comp.InvokeAsync(() => autocomplete.Clear().Wait());
+            comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().NotContain("mud-popover-open"));
             autocomplete.Value.Should().Be("");
             autocomplete.Text.Should().Be("");
         }
@@ -521,8 +522,9 @@ namespace MudBlazor.UnitTests.Components
             items.Length.Should().Be(1);
             items.First().Markup.Should().Contain("California");
 
-            // Reset it should set Text and Value to null again
+            // Reseting it should close popover and set Text and Value to null again
             await comp.InvokeAsync(() => autocomplete.Reset());
+            comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().NotContain("mud-popover-open"));
             autocomplete.Value.Should().Be(null);
             autocomplete.Text.Should().Be(null);
         }
