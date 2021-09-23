@@ -1,4 +1,5 @@
-﻿@import '../abstracts/variables';
+@import '../abstracts/variables';
+@import '../abstracts/mixins';
 
 .mud-treeview {
     margin: 0px;
@@ -69,6 +70,10 @@
     margin: 0 4px;
     min-height: 32px;
     justify-content: center;
+    
+    @include rtl {
+        transform: scaleX(-1);
+    }
 
     .mud-treeview-item-arrow-expand {
         transition: .3s cubic-bezier(.25,.8,.5,1),visibility 0s;
@@ -124,11 +129,5 @@
 
     to {
         transform: rotate(359deg);
-    }
-}
-
-.mud-application-layout-rtl {
-    .mud-treeview-item-arrow {
-        transform: scaleX(-1);
     }
 }

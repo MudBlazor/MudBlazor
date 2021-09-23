@@ -51,3 +51,47 @@
         @content
     }
 }
+
+@mixin rtl {
+    @if & {
+        [dir="rtl"] & {
+            @content;
+        }
+    }
+    @else {
+        [dir="rtl"] {
+            @content;
+        }
+    }
+}
+
+@mixin ltr {
+    @if & {
+        [dir="ltr"] & {
+            @content;
+        }
+    }
+    @else {
+        [dir="ltr"] {
+            @content;
+        }
+    }
+}
+
+@mixin start {
+    &start, [dir="rtl"] &right, [dir="ltr"] &left {
+        @content
+    }
+}
+
+@mixin left {
+    &left, [dir="ltr"] &start, [dir="rtl"] &end  {
+        @content
+    }
+}
+
+@mixin right {
+    &right, [dir="rtl"] &start, [dir="ltr"] &end {
+        @content
+    }
+}

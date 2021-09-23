@@ -1,4 +1,5 @@
 @import '../abstracts/variables';
+@import '../abstracts/mixins';
 
 .mud-table {
     color: var(--mud-palette-text-primary);
@@ -376,6 +377,12 @@
     margin-inline-start: 10px;
     margin-inline-end: unset;
     margin-bottom: 3px !important;
+    
+    @include rtl {
+        .mud-icon-root {
+            transform: scaleX(-1);
+        }
+    }
 }
 
 .mud-table-smalldevices-sortselect {

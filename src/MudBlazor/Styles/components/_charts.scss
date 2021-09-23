@@ -1,4 +1,6 @@
-﻿.mud-chart {
+﻿@import '../abstracts/mixins';
+
+.mud-chart {
     display: flex;
 
     &.mud-chart-legend-bottom {
@@ -37,9 +39,15 @@
     }
 
 
-    & .mud-chart-donut, .mud-chart-pie, mud-chart-line {
+    & .mud-chart-donut, .mud-chart-pie, .mud-chart-line {
         display: flex;
         margin: auto;
+    }
+
+    & .mud-chart-line {
+        @include rtl {
+            direction: ltr;
+        }
     }
 
     & .mud-chart-legend {

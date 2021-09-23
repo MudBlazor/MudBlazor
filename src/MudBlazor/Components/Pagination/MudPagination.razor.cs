@@ -23,7 +23,6 @@ namespace MudBlazor
                 .AddClass($"mud-pagination-{Variant.ToDescriptionString()}")
                 .AddClass($"mud-pagination-{Size.ToDescriptionString()}")
                 .AddClass("mud-pagination-disable-elevation", DisableElevation)
-                .AddClass("mud-pagination-rtl", RightToLeft)
                 .AddClass(Class)
                 .Build();
 
@@ -206,9 +205,7 @@ namespace MudBlazor
         /// Custom last icon.
         /// </summary>
         [Parameter] public string LastIcon { get; set; } = Icons.Material.Filled.LastPage;
-
-        [CascadingParameter] public bool RightToLeft { get; set; }
-
+        
         #endregion
 
         #region Methods

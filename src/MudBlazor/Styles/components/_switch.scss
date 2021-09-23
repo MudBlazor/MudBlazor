@@ -1,4 +1,5 @@
 ﻿@import '../abstracts/variables';
+@import '../abstracts/mixins';
 
 .mud-switch {
     cursor: pointer;
@@ -28,6 +29,10 @@
     box-sizing: border-box;
     flex-shrink: 0;
     vertical-align: middle;
+    
+    @include rtl {
+        transform: scaleX(-1);
+    }
 
     & .mud-switch-track {
         width: 100%;

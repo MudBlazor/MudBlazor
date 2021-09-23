@@ -1,4 +1,6 @@
-﻿.mud-picker-timepicker-toolbar {
+﻿@import '../abstracts/mixins';
+
+.mud-picker-timepicker-toolbar {
 
     .mud-timepicker-button {
         padding: 0;
@@ -24,6 +26,10 @@
             font-weight: 300;
             line-height: 1;
             letter-spacing: -0.00833em;
+        }
+        
+        @include rtl {
+            direction: ltr;
         }
     }
 

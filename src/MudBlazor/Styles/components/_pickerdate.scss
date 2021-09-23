@@ -1,4 +1,5 @@
 ﻿@import '../abstracts/variables';
+@import '../abstracts/mixins';
 
 .mud-picker-datepicker-toolbar {
     align-items: flex-start;
@@ -43,6 +44,12 @@
         padding: 8px;
         margin: 6px;
         background-color: var(--mud-palette-surface);
+        
+        @include rtl {
+            .mud-icon-root {
+                transform: scaleX(-1);
+            }
+        }
 
         &:hover {
             background-color: var(--mud-palette-action-default-hover);
@@ -313,10 +320,18 @@
 
             &.mud-range-start-selected {
                 border-radius: 50% 0% 0% 50%;
+                
+                @include rtl {
+                    border-radius: 0% 50% 50% 0%;
+                }
             }
 
             &.mud-range-end-selected {
                 border-radius: 0% 50% 50% 0%;
+                
+                @include rtl {
+                    border-radius: 50% 0% 0% 50%;
+                }
             }
 
             &.mud-range-between {
@@ -331,6 +346,10 @@
 
                 &:not(.mud-range-start-selected) {
                     border-radius: 0% 50% 50% 0%;
+                    
+                    @include rtl {
+                        border-radius: 50% 0% 0% 50%;
+                    }
                 }
             }
 
@@ -362,23 +381,5 @@
         width: 15px;
         margin-top: 2px !important;
         color: var(--mud-palette-text-disabled);
-    }
-}
-
-.mud-application-layout-rtl {
-    .mud-picker-calendar .mud-day.mud-range {
-        &.mud-range-start-selected {
-            border-radius: 0% 50% 50% 0%;
-        }
-
-        &.mud-range-end-selected {
-            border-radius: 50% 0% 0% 50%;
-        }
-
-        &.mud-range-selection:hover {
-            &:not(.mud-range-start-selected) {
-                border-radius: 50% 0% 0% 50%;
-            }
-        }
     }
 }

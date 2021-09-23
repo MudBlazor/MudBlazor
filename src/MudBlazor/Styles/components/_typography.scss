@@ -1,4 +1,5 @@
-﻿
+﻿@import '../abstracts/mixins';
+
 .mud-typography{
     margin: 0;
 }
@@ -114,20 +115,22 @@
     position: absolute;
 }
 
-.mud-typography-align-left {
-    text-align: left;
-}
+.mud-typography-align- {
+    @include left {
+        text-align: left;
+    }
 
-.mud-typography-align-center {
-    text-align: center;
-}
-
-.mud-typography-align-right {
-    text-align: right;
-}
-
-.mud-typography-align-justify {
-    text-align: justify;
+    @include right {
+        text-align: right;
+    }
+    
+    &center {
+        text-align: center;
+    }
+    
+    &justify {
+        text-align: justify;
+    }
 }
 
 .mud-typography-nowrap {

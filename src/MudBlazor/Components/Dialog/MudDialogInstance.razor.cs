@@ -11,8 +11,6 @@ namespace MudBlazor
     public partial class MudDialogInstance : MudComponentBase
     {
         private DialogOptions _options = new();
-
-        [CascadingParameter] public bool RightToLeft { get; set; }
         [CascadingParameter] private MudDialogProvider Parent { get; set; }
         [CascadingParameter] private DialogOptions GlobalDialogOptions { get; set; } = new DialogOptions();
 
@@ -179,13 +177,12 @@ namespace MudBlazor
         }
 
         protected string Classname =>
-            new CssBuilder("mud-dialog")
-                .AddClass(DialogMaxWidth, !FullScreen)
-                .AddClass("mud-dialog-width-full", FullWidth && !FullScreen)
-                .AddClass("mud-dialog-fullscreen", FullScreen)
-                .AddClass("mud-dialog-rtl", RightToLeft)
-                .AddClass(Class)
-            .Build();
+        new CssBuilder("mud-dialog")
+            .AddClass(DialogMaxWidth, !FullScreen)
+            .AddClass("mud-dialog-width-full", FullWidth && !FullScreen)
+            .AddClass("mud-dialog-fullscreen", FullScreen)
+            .AddClass(Class)
+        .Build();
 
         private bool SetHideHeader()
         {
