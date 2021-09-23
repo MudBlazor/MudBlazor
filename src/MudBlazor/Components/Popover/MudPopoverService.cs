@@ -24,6 +24,7 @@ namespace MudBlazor
     {
         private IJSRuntime _runtime;
         private readonly Action _updater;
+        private bool _locked;
 
         public Guid Id { get; init; }
         public RenderFragment Fragment { get; private set; }
@@ -56,7 +57,11 @@ namespace MudBlazor
         {
             Fragment = fragment;
             SetComponentBaseParameters(componentBase, @class, @style, showContent);
-            _updater?.Invoke();
+            if(_locked == false)
+            {
+                _locked = true;
+                _updater?.Invoke();
+            }
         }
 
         public async Task Initialized()
@@ -69,6 +74,11 @@ namespace MudBlazor
         {
             await _runtime.InvokeVoidAsync("mudPopover.disconnect", Id);
             IsConnected = false;
+        }
+
+        internal void Release()
+        {
+            _locked = false;
         }
     }
 

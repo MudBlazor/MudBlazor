@@ -125,9 +125,8 @@ namespace MudBlazor
 
         protected override void OnParametersSet()
         {
-            _handler.UpdateFragment(ChildContent, this, PopoverClass, PopoverStyles, Open);
-
             base.OnParametersSet();
+            _handler.UpdateFragment(ChildContent, this, PopoverClass, PopoverStyles, Open);
         }
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -136,6 +135,8 @@ namespace MudBlazor
             {
                 await _handler.Initialized();
             }
+
+            _handler.Release();
 
             await base.OnAfterRenderAsync(firstRender);
         }

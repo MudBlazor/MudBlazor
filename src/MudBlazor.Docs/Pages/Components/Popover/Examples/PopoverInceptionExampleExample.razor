@@ -1,0 +1,45 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudMenu Label="A menu with tooltip" Variant="Variant.Filled" Color="Color.Primary">
+	<MudMenuItem>
+		<div class="d-flex flex-row">
+			<MudText>1</MudText>
+			<MudTooltip Text="1 is good option">
+				<MudIconButton Icon="@Icons.Material.Outlined.Info" />
+			</MudTooltip>
+		</div>
+	</MudMenuItem>
+	<MudMenuItem>
+		<div class="d-flex flex-row">
+			<MudText>2</MudText>
+			<MudToggleIconButton @bind-Toggled="@_isOpen" Icon="@Icons.Filled.Fullscreen" Color="@Color.Primary" ToggledIcon="@Icons.Filled.FullscreenExit" ToggledColor="@Color.Secondary" />
+
+			<MudPopover Open="@_isOpen" Class="px-4 pt-4">
+				<div class="d-flex flex-column">
+					<MudText>Content of the popover can be anything.</MudText>
+					<MudButton OnClick="@ToggleOpen" Class="ml-auto mr-n3 mb-1" Color="Color.Error">Close</MudButton>
+				</div>
+			</MudPopover>
+
+			<MudTooltip Text="2 can be a better option">
+				<MudIconButton Icon="@Icons.Material.Outlined.Info" />
+			</MudTooltip>
+		</div>
+	</MudMenuItem>
+	<MudMenuItem>
+		<div class="d-flex flex-row">
+			<MudText>3</MudText>
+			<MudTooltip Text="3 is one more than 2">
+				<MudIconButton Icon="@Icons.Material.Outlined.Info" />
+			</MudTooltip>
+		</div>
+	</MudMenuItem>
+</MudMenu>
+
+
+@code {
+	private bool _isOpen = false;
+
+	public void ToggleOpen() => _isOpen = !_isOpen;
+
+}
