@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
@@ -19,6 +19,11 @@ namespace MudBlazor
         private bool _isMouseOver = false;
 
         [Parameter] public string Label { get; set; }
+
+        /// <summary>
+        /// User class names for the list, separated by space
+        /// </summary>
+        [Parameter] public string ListClass { get; set; }
 
         /// <summary>
         /// User class names for the popover, separated by space
