@@ -40,7 +40,10 @@ namespace MudBlazor
         /// <summary>
         /// The HelperText will be displayed below the text field.
         /// </summary>
-        [Parameter] public string HelperText { get; set; }
+        [Parameter]
+        public string HelperText { get; set; }
+
+        [Parameter] public bool HelperTextOnFocus { get; set; }
 
         /// <summary>
         /// Icon that will be used if Adornment is set to Start or End.
@@ -171,6 +174,11 @@ namespace MudBlazor
         /// <summary>
         /// Fired when the element loses focus.
         /// </summary>
+        [Parameter] public EventCallback<FocusEventArgs> OnFocus { get; set; }
+
+        /// <summary>
+        /// Fired when the element loses focus.
+        /// </summary>
         [Parameter] public EventCallback<FocusEventArgs> OnBlur { get; set; }
 
         /// <summary>
@@ -181,8 +189,41 @@ namespace MudBlazor
 
         protected bool _isFocused;
 
+        protected string _backUpHelperText;
+
+        protected bool _showHelperText = true;
+
+        protected void SetHelperText()
+        {
+            if (!_showHelperText)
+            {
+                HelperText = "";
+            }
+            else
+            {
+                HelperText = _backUpHelperText;
+            }
+            StateHasChanged();
+        }
+
+        protected virtual void OnFocussed(FocusEventArgs obj)
+        {
+            if (HelperTextOnFocus)
+            {
+                _showHelperText = true;
+            }
+            SetHelperText();
+            _isFocused = true;
+            OnFocus.InvokeAsync(obj);
+        }
+
         protected virtual void OnBlurred(FocusEventArgs obj)
         {
+            if (HelperTextOnFocus)
+            {
+                _showHelperText = false;
+            }
+            SetHelperText();
             _isFocused = false;
             Touched = true;
             BeginValidateAfter(OnBlur.InvokeAsync(obj));
@@ -322,7 +363,12 @@ namespace MudBlazor
         protected override async Task OnInitializedAsync()
         {
             await base.OnInitializedAsync();
-
+            _backUpHelperText = HelperText;
+            if (HelperTextOnFocus == true)
+            {
+                _showHelperText = false;
+            }
+            SetHelperText();
             // Because the way the Value setter is built, it won't cause an update if the incoming Value is
             // equal to the initial value. This is why we force an update to the Text property here.
             if (typeof(T) != typeof(string))

@@ -1,0 +1,26 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+
+<MudGrid>
+    <MudItem xs="12">
+        <MudTextField @bind-Value="TextValue" Label="Static Helper Text" Variant="Variant.Outlined" HelperText="I am always here"></MudTextField>
+    </MudItem>
+    <MudItem xs="12">
+        <MudTextField @bind-Value="TextValue" Label="Helper Text On Focus" Variant="Variant.Outlined" HelperText="@_helperText" HelperTextOnFocus="true"></MudTextField>
+    </MudItem>
+
+    <MudButton OnClick="ChangeHelperText">Change Helper Text</MudButton>
+
+</MudGrid>
+
+@code {
+    public string TextValue { get; set; }
+
+    string _helperText = "I will help only when you want to see me";
+
+    private void ChangeHelperText()
+    {
+        _helperText = "New helper text";
+        StateHasChanged();
+    }
+}
