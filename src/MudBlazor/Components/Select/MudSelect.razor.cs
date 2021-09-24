@@ -96,9 +96,9 @@ namespace MudBlazor
             set
             {
                 var set = value ?? new HashSet<T>();
-                if (SelectedValues.Count == set.Count && SelectedValues.All(x => set.Contains(x)))
+                if (SelectedValues.Count == set.Count && SelectedValues.All(x => set.Contains(x)) && _selectedValues.Comparer == set.Comparer)
                     return;
-                _selectedValues = new HashSet<T>(set);
+                _selectedValues = new HashSet<T>(set, set.Comparer);
                 SelectionChangedFromOutside?.Invoke(_selectedValues);
                 if (!MultiSelection)
                     SetValueAsync(_selectedValues.FirstOrDefault()).AndForget();
@@ -116,7 +116,7 @@ namespace MudBlazor
                         SetTextAsync(string.Join(Delimiter, SelectedValues.Select(x => Converter.Set(x)))).AndForget();
                     }
                 }
-                SelectedValuesChanged.InvokeAsync(new HashSet<T>(SelectedValues));
+                SelectedValuesChanged.InvokeAsync(new HashSet<T>(SelectedValues, SelectedValues.Comparer));
             }
         }
 
