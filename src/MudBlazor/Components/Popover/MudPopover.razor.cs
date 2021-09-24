@@ -69,7 +69,7 @@ namespace MudBlazor
         [Parameter] public bool Open { get; set; }
 
         /// <summary>
-        /// 
+        /// If true the popover will be fixed position instead of absolute.
         /// </summary>
         [Parameter] public bool Fixed { get; set; }
 
