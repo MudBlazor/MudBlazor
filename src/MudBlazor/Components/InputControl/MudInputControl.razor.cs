@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Components;
+﻿using Microsoft.AspNetCore.Components;
 using MudBlazor.Extensions;
 using MudBlazor.Utilities;
 
@@ -13,6 +13,12 @@ namespace MudBlazor
              .AddClass("mud-input-control-full-width", FullWidth)
              .AddClass("mud-input-error", Error)
              .AddClass(Class)
+           .Build();
+
+        protected string HelperContainer =>
+           new CssBuilder("mud-input-control-helper-container")
+           .AddClass($"px-1", Variant == Variant.Filled)
+           .AddClass($"px-2", Variant == Variant.Outlined)
            .Build();
 
         protected string HelperClass =>
