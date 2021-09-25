@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Globalization;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
@@ -42,6 +42,9 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public string HelperText { get; set; }
 
+        /// <summary>
+        /// If true, the helper text will only be visible on focus.
+        /// </summary>
         [Parameter] public bool HelperTextOnFocus { get; set; }
 
         /// <summary>
