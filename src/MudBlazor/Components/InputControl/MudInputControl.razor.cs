@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components;
 using MudBlazor.Extensions;
 using MudBlazor.Utilities;
 
@@ -54,6 +54,11 @@ namespace MudBlazor
         /// The HelperText will be displayed below the text field.
         /// </summary>
         [Parameter] public string HelperText { get; set; }
+
+        /// <summary>
+        /// If true, the helper text will only be visible on focus.
+        /// </summary>
+        [Parameter] public bool HelperTextOnFocus { get; set; }
 
         /// <summary>
         /// If true, the input will take up the full width of its container.
