@@ -14,18 +14,40 @@
             </MudInputLabel>
         }
     </div>
-    @if (Error || !String.IsNullOrEmpty(HelperText))
+    @if (Error || !String.IsNullOrEmpty(HelperText) || CharacterCount)
     {
         <div class="mud-input-control-helper-container">
             <p class="@HelperClass">
-                @if (Error)
-                {
-                    @ErrorText
-                }
-                else if (!String.IsNullOrEmpty(HelperText))
-                {
-                    @HelperText
-                }
+                <div class="d-flex justify-space-between">
+                    @if (Error)
+                    {
+                        <div>
+                            @ErrorText
+                        </div>
+                        @if (CharacterCount)
+                        {
+                            <div>
+                                @CharacterCountText
+                            </div>            
+                        }
+                    }
+                    else
+                    {
+                        <div>
+                            @if (!String.IsNullOrEmpty(HelperText))
+                            {
+
+                                @HelperText
+                            }
+                        </div>
+                        @if (CharacterCount)
+                        {
+                            <div>
+                                @CharacterCountText
+                            </div>            
+                        }
+                    }
+                </div>
             </p>
         </div>
     }

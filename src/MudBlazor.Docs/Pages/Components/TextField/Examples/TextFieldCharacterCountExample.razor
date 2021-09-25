@@ -1,0 +1,73 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudForm @ref="form">
+    <MudGrid>
+        <MudItem xs="12" sm="6" md="4">
+            <MudTextField @bind-Value="@_normalText"
+                          Label="Normal"
+                          Variant="Variant.Outlined"
+                          HelperText="@_helperText"
+                          CharacterCount="_showCharacterCount"
+                          Validation="@(new Func<string, IEnumerable<string>>(Max10Characters))"
+                          MaxLength="20" />
+        </MudItem>
+        <MudItem xs="12" sm="6" md="4">
+            <MudTextField @bind-Value="@_immediateText"
+                          Label="Immediate"
+                          Variant="Variant.Outlined"
+                          HelperText="@_helperText"
+                          Immediate="true"
+                          CharacterCount="_showCharacterCount"
+                          Validation="@(new Func<string, IEnumerable<string>>(Max10Characters))"
+                          MaxLength="20" />
+        </MudItem>
+
+        <MudItem xs="12" sm="6" md="4">
+            <MudTextField @bind-Value="@_immediateText2"
+                          Label="Immediate Multiline"
+                          Variant="Variant.Outlined"
+                          HelperText="@_helperText"
+                          Lines="3"
+                          Immediate="true"
+                          CharacterCount="_showCharacterCount"
+                          Validation="@(new Func<string, IEnumerable<string>>(Max10Characters))"
+                          MaxLength="120" />
+        </MudItem>
+
+        <div>
+            <MudCheckBox @ref="@checkBox1" T="bool" Color="Color.Primary" Checked="@checkedd" CheckedChanged="@ShowHelperText" Label="Show Helper Text" />
+            <MudCheckBox T="bool" Color="Color.Primary" @bind-Checked="@_showCharacterCount" Label="Show Character Count" />
+        </div>
+    </MudGrid>
+</MudForm>
+
+@code { 
+    string _normalText;
+    string _immediateText;
+    string _immediateText2;
+    string _helperText = "Validate for 10 characters";
+    bool _showCharacterCount = true;
+    bool checkedd = true;
+    MudForm form;
+    MudCheckBox<bool> checkBox1;
+
+    private void ShowHelperText()
+    {
+        if (checkBox1.Checked == true)
+        {
+            _helperText = "Validate for 10 characters";
+            checkedd = true;
+        }
+        else
+        {
+            _helperText = "";
+            checkedd = false;
+        }
+    }
+
+    private IEnumerable<string> Max10Characters(string ch)
+    {
+        if (10 < ch.Length)
+            yield return "You have more than 10 characters";
+    }
+}
