@@ -17,6 +17,7 @@ namespace MudBlazor
 
         protected string HelperClass =>
            new CssBuilder("mud-input-helper-text")
+             .AddClass("mud-input-helper-onfocus", HelperTextOnFocus)
              .AddClass("mud-input-error", Error)
            .Build();
 
