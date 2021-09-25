@@ -139,15 +139,32 @@
     }
 }
 
+.mud-input-control-helper-container {
+    overflow: hidden;
+    margin-top: 3px;
+}
+
 .mud-input-helper-text {
     color: var(--mud-palette-text-secondary);
     margin: 0;
     font-size: 0.75rem;
-    margin-top: 3px;
     text-align: start;
     font-weight: 400;
     line-height: 1.66;
     letter-spacing: 0.03333em;
+
+    &.mud-input-helper-onfocus {
+        transform: translateY(-100%);
+        transition: color 200ms cubic-bezier(0,0,.2,1) 0ms,transform 200ms cubic-bezier(0,0,.2,1) 0ms;
+    }
+}
+
+.mud-input-control:focus-within {
+    .mud-input-helper-text {
+        &.mud-input-helper-onfocus {
+            transform: translateY(0);
+        }
+    }
 }
 
 
