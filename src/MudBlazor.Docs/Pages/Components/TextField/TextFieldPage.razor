@@ -36,13 +36,14 @@
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader Title="CharacterCount, MaxLength and HelperText">
+            <SectionHeader Title="Counter">
                 <Description>
-                    If you set <CodeInline>CharacterCount</CodeInline> to true, you will see the current length and MaxLength values. 
-                    Note: Validation does not have to be bound by the maximum character.
+                    If you set the <CodeInline>Counter</CodeInline> prop to any int, the counter will be display at the bottom of the textfield.<br />
+                    Using a specific number will show the desired max while setting it to <CodeInline>0</CodeInline> will only show the current count.<br />
+                    Add <CodeInline>MaxLenght</CodeInline> to force a max count directly on the input and use <CodeInline>Validation</CodeInline> to validate the data.
                 </Description>
             </SectionHeader>
-            <SectionContent Outlined="true">
+            <SectionContent Outlined="true" DisplayFlex="true">
                 <TextFieldCharacterCountExample />
             </SectionContent>
             <SectionSource Code="TextFieldCharacterCountExample" ShowCode="false" GitHubFolderName="TextField" />
