@@ -5,7 +5,7 @@
 @using System.Globalization;
 
 <CascadingValue Name="Standalone" Value="@Standalone" IsFixed="true">
-	<MudInputControl Label="@Label" Variant="@Variant" HelperText="@HelperText" FullWidth="@FullWidth" Class="@Classname" CharacterCount="@CharacterCount" CharacterCountText="@((string.IsNullOrEmpty(Text) ? "0" : Text.Length.ToString()) + " / " + MaxLength.ToString())"
+	<MudInputControl Label="@Label" Variant="@Variant" HelperText="@HelperText" FullWidth="@FullWidth" Class="@Classname" CounterText="@GetCounterText()"
 					 Error="@HasErrors" ErrorText="@GetErrorText()" Disabled="@Disabled" Margin="@Margin" Required="@Required">
 		<InputContent>
             <MudInput T="string" @ref="_elementReference" @key="_key" @attributes="UserAttributes" InputType="@InputType.Text" Style="@Style" Variant="@Variant"
