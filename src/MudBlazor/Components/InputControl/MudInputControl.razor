@@ -1,9 +1,6 @@
 ﻿@namespace MudBlazor
 @inherits MudComponentBase
 
-
-
-
 <div @attributes="UserAttributes" class="@Classname" style="@Style">
     <div class="mud-input-control-input-container">
         @InputContent
@@ -14,38 +11,28 @@
             </MudInputLabel>
         }
     </div>
-    @if (Error || !String.IsNullOrEmpty(HelperText) || CharacterCount)
+    @if (Error || !String.IsNullOrEmpty(HelperText) || !String.IsNullOrEmpty(CounterText))
     {
         <div class="mud-input-control-helper-container">
             <p class="@HelperClass">
-                <div class="d-flex justify-space-between">
+                <div class="d-flex">
                     @if (Error)
                     {
-                        <div>
+                        <div class="mr-auto">
                             @ErrorText
                         </div>
-                        @if (CharacterCount)
-                        {
-                            <div>
-                                @CharacterCountText
-                            </div>            
-                        }
                     }
-                    else
+                    else if (!String.IsNullOrEmpty(HelperText))
                     {
-                        <div>
-                            @if (!String.IsNullOrEmpty(HelperText))
-                            {
-
-                                @HelperText
-                            }
+                        <div class="mr-auto">
+                            @HelperText
                         </div>
-                        @if (CharacterCount)
-                        {
-                            <div>
-                                @CharacterCountText
-                            </div>            
-                        }
+                    }
+                    @if (!String.IsNullOrEmpty(CounterText))
+                    {
+                        <div class="ml-auto">
+                            @CounterText
+                        </div>            
                     }
                 </div>
             </p>
@@ -53,4 +40,3 @@
     }
     @ChildContent
 </div>
-
