@@ -170,10 +170,11 @@ namespace MudBlazor
         /// Decrements or increments depending on factor
         /// </summary>
         /// <param name="factor">Multiplication factor (1 or -1) will be applied to the step</param>
-        private Task Change(double factor = 1)
+        private async Task Change(double factor = 1)
         {
             var value = Num.To<T>(Num.From(Value) + Num.From(Step) * factor);
-            return SetValueAsync(ConstrainBoundaries(value).value);
+            await SetValueAsync(ConstrainBoundaries(value).value);
+            _elementReference.SetText(Text).AndForget();
         }
 
         /// <summary>
@@ -217,17 +218,20 @@ namespace MudBlazor
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
-            await _keyInterceptor.Connect(_self, new KeyInterceptorOptions()
+            if (firstRender)
             {
-                EnableLogging = true,
-                TargetClass = "mud-input-slot",
-                Keys = {
-                    new KeyOptions { Key="ArrowUp", SubscribeDown=true, PreventDown = "key+none" }, // prevent scrolling page, instead increment
-                    new KeyOptions { Key="ArrowDown", SubscribeDown=true, PreventDown = "key+none" }, // prevent scrolling page, instead decrement
-                    new KeyOptions { Key="^(?![0-9,.-])$", SubscribeDown=false, PreventDown = "key+none" }, // prevent input of all other characters except numbers
-                },
-            });
-            _keyInterceptor.KeyDown += OnInputKeyDown;
+                await _keyInterceptor.Connect(_self, new KeyInterceptorOptions()
+                {
+                    EnableLogging = true,
+                    TargetClass = "mud-input-slot",
+                    Keys = {
+                        new KeyOptions { Key="ArrowUp", SubscribeDown=true, PreventDown = "key+none" }, // prevent scrolling page, instead increment
+                        new KeyOptions { Key="ArrowDown", SubscribeDown=true, PreventDown = "key+none" }, // prevent scrolling page, instead decrement
+                        new KeyOptions { Key="/^(?!"+Pattern+").$/", PreventDown = "key+none|key+shift|key+alt" }, // prevent input of all other characters except allowed, like [0-9.,-+]
+                    },
+                });
+                _keyInterceptor.KeyDown += OnInputKeyDown;
+            }
             await base.OnAfterRenderAsync(firstRender);
         }
 
@@ -252,10 +256,10 @@ namespace MudBlazor
         /// This aligns the behaviour with the spinner buttons.
         /// </summary>
         /// <remarks>https://try.mudblazor.com/snippet/QamlkdvmBtrsuEtb</remarks>
-        protected void InterceptKeydown(KeyboardEventArgs obj)
+        protected Task InterceptKeydown(KeyboardEventArgs obj)
         {
             if (Disabled || ReadOnly)
-                return;
+                return Task.CompletedTask;
             /*
             //Server side and WASM have different (opposite) behaviour. We need to set initial value false on BSS and true on WASM
             if (RuntimeLocation.IsClientSide)
@@ -327,12 +331,13 @@ namespace MudBlazor
             }
             */
             OnKeyDown.InvokeAsync(obj).AndForget();
+            return Task.CompletedTask;
         }
 
-        protected void InterceptKeyUp(KeyboardEventArgs obj)
+        protected Task InterceptKeyUp(KeyboardEventArgs obj)
         {
             if (Disabled || ReadOnly)
-                return;
+                return Task.CompletedTask;
             /*
             //Look at InterceptKeyDown method comment for details.
             if (RuntimeLocation.IsClientSide)
@@ -345,111 +350,26 @@ namespace MudBlazor
             }
             */
             OnKeyUp.InvokeAsync(obj).AndForget();
+            return Task.CompletedTask;
         }
 
         protected async Task OnMouseWheel(WheelEventArgs obj)
         {
-            if (obj.ShiftKey == true && obj.DeltaY < 0)
+            if (!obj.ShiftKey)
+                return;
+            if (obj.DeltaY < 0)
             {
                 if (InvertMouseWheel == false)
-                {
-                    if (RuntimeLocation.IsServerSide)
-                    {
-                        if (!Immediate)
-                        {
-                            _key++;
-                            await Task.Delay(1);
-                            await Increment();
-                            await Task.Delay(1);
-                            _ = FocusAsync();
-                        }
-                        else
-                            await Increment();
-                    }
-                    else
-                    {
-                        _key++;
-                        await Task.Delay(1);
-                        await Increment();
-                        await Task.Delay(1);
-                        _ = FocusAsync();
-                    }
-                }
+                    await Increment();
                 else
-                {
-                    if (RuntimeLocation.IsServerSide)
-                    {
-                        if (!Immediate)
-                        {
-                            _key++;
-                            await Task.Delay(1);
-                            await Decrement();
-                            await Task.Delay(1);
-                            _ = FocusAsync();
-                        }
-                        else
-                            await Decrement();
-                    }
-                    else
-                    {
-                        _key++;
-                        await Task.Delay(1);
-                        await Decrement();
-                        await Task.Delay(1);
-                        _ = FocusAsync();
-                    }
-                }
+                    await Decrement();
             }
-            else if (obj.ShiftKey == true && 0 < obj.DeltaY)
+            else if (obj.DeltaY > 0)
             {
                 if (InvertMouseWheel == false)
-                {
-                    if (RuntimeLocation.IsServerSide)
-                    {
-                        if (!Immediate)
-                        {
-                            _key++;
-                            await Task.Delay(1);
-                            await Decrement();
-                            await Task.Delay(1);
-                            _ = FocusAsync();
-                        }
-                        else
-                            await Decrement();
-                    }
-                    else
-                    {
-                        _key++;
-                        await Task.Delay(1);
-                        await Decrement();
-                        await Task.Delay(1);
-                        _ = FocusAsync();
-                    }
-                }
+                    await Decrement();
                 else
-                {
-                    if (RuntimeLocation.IsServerSide)
-                    {
-                        if (!Immediate)
-                        {
-                            _key++;
-                            await Task.Delay(1);
-                            await Increment();
-                            await Task.Delay(1);
-                            _ = FocusAsync();
-                        }
-                        else
-                            await Increment();
-                    }
-                    else
-                    {
-                        _key++;
-                        await Task.Delay(1);
-                        await Increment();
-                        await Task.Delay(1);
-                        _ = FocusAsync();
-                    }
-                }
+                    await Increment();
             }
         }
 
@@ -530,17 +450,19 @@ namespace MudBlazor
 
         /// <summary>
         /// The pattern attribute, when specified, is a regular expression which the input's value must match in order for the value to pass constraint validation. It must be a valid JavaScript regular expression
-        /// Defaults to [0-9,\.\-+]*
+        /// Defaults to [0-9,.\-]
         /// To get a numerical keyboard on safari, use the pattern. The default pattern should achieve numerical keyboard.
+        ///
+        /// Note: this pattern is also used to prevent all input except numbers and allowed characters. So for instance to allow only numbers, no signs and no commas you might change it to to [0-9.]
         /// </summary>
         [Parameter]
-        public override string Pattern { get; set; } = @"[0-9,\.\-+]*";
+        public override string Pattern { get; set; } = @"[0-9,.\-]";
 
         protected string CleanText(string text)
         {
             if (string.IsNullOrEmpty(text))
                 return text;
-            var pattern = Pattern;
+            var pattern = Pattern + "*";
             var cleanedText = "";
             foreach (Match m in Regex.Matches(text, pattern))
             {
