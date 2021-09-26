@@ -43,13 +43,6 @@ namespace MudBlazor
         [Parameter] public string HelperText { get; set; }
 
         /// <summary>
-        /// If true, the input shows the current and maxlength character number. Works better with "Immediate".
-        /// </summary>
-        [Parameter] public bool CharacterCount { get; set; }
-
-        public string CharacterCountText { get; set; }
-
-        /// <summary>
         /// Icon that will be used if Adornment is set to Start or End.
         /// </summary>
         [Parameter] public string AdornmentIcon { get; set; }
@@ -93,6 +86,11 @@ namespace MudBlazor
         /// The short hint displayed in the input before the user enters a value.
         /// </summary>
         [Parameter] public string Placeholder { get; set; }
+
+        /// <summary>
+        /// If set, will display the counter, value 0 will display current count but no stop count.
+        /// </summary>
+        [Parameter] public int? Counter { get; set; }
 
         /// <summary>
         /// Maximum number of characters that the input will accept

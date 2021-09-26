@@ -56,11 +56,9 @@ namespace MudBlazor
         [Parameter] public string HelperText { get; set; }
 
         /// <summary>
-        /// If true, the input shows the current and maxlength character number. Works better with "Immediate".
+        /// The current character counter, displayed below the text field.
         /// </summary>
-        [Parameter] public bool CharacterCount { get; set; }
-
-        [Parameter] public string CharacterCountText { get; set; }
+        [Parameter] public string CounterText { get; set; }
 
         /// <summary>
         /// If true, the input will take up the full width of its container.
