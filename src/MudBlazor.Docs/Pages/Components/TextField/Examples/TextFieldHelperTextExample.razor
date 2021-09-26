@@ -1,51 +1,22 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
-<MudForm @ref="form">
-    <MudGrid>
-        <MudItem xs="6">
-            <MudTextField T="string" Label="OnFocus Helper" Immediate="true" HelperText="@_helperText" Validation="@(new Func<string, IEnumerable<string>>(CharacterCount))" HelperTextOnFocus="true" Variant="Variant.Text" />
-        </MudItem>
-        <MudItem xs="6">
-            <MudTextField T="string" Label="With Helper" HelperText="@_helperText" Variant="Variant.Text" />
-        </MudItem>
-        <MudItem xs="6">
-            <MudTextField T="string" Label="OnFocus Helper" HelperText="@_helperText" HelperTextOnFocus="true" Variant="Variant.Filled" />
-        </MudItem>
-        <MudItem xs="6">
-            <MudTextField T="string" Label="With Helper" HelperText="@_helperText" Variant="Variant.Filled" />
-        </MudItem>
-        <MudItem xs="6">
-            <MudTextField T="string" Label="OnFocus Helper" HelperText="@_helperText" HelperTextOnFocus="true" Variant="Variant.Outlined" />
-        </MudItem>
-        <MudItem xs="6">
-            <MudTextField T="string" Label="With Helper" HelperText="@_helperText" Variant="Variant.Outlined" />
-        </MudItem>
-    </MudGrid>
-</MudForm>
-
-<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="ChangeHelperText">Change Helper Text</MudButton>
-
-@code{
-    MudForm form;
-
-    string _helperText = "Some helping text";
-
-    private void ChangeHelperText()
-    {
-        if (_helperText == "Some helping text")
-        {
-            _helperText = "Changed helping text";
-        }
-        else
-        {
-            _helperText = "Some helping text";
-        }
-    }
-
-    private IEnumerable<string> CharacterCount(string pw)
-    {
-        if (4 < pw.Length)
-            yield return "Password must be at least of length 8";
-    }
-}
-
+<MudGrid>
+    <MudItem xs="6">
+        <MudTextField T="string" Label="OnFocus Helper" HelperText="Some helping text" HelperTextOnFocus="true" Variant="Variant.Text" />
+    </MudItem>
+    <MudItem xs="6">
+        <MudTextField T="string" Label="With Helper" HelperText="Some helping text" Variant="Variant.Text" />
+    </MudItem>
+    <MudItem xs="6">
+        <MudTextField T="string" Label="OnFocus Helper" HelperText="Some helping text" HelperTextOnFocus="true" Variant="Variant.Filled" />
+    </MudItem>
+    <MudItem xs="6">
+        <MudTextField T="string" Label="With Helper" HelperText="Some helping text" Variant="Variant.Filled" />
+    </MudItem>
+    <MudItem xs="6">
+        <MudTextField T="string" Label="OnFocus Helper" HelperText="Some helping text" HelperTextOnFocus="true" Variant="Variant.Outlined" />
+    </MudItem>
+    <MudItem xs="6">
+        <MudTextField T="string" Label="With Helper" HelperText="Some helping text" Variant="Variant.Outlined" />
+    </MudItem>
+</MudGrid>
