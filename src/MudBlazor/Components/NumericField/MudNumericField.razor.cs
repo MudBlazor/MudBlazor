@@ -222,7 +222,7 @@ namespace MudBlazor
             {
                 await _keyInterceptor.Connect(_self, new KeyInterceptorOptions()
                 {
-                    EnableLogging = true,
+                    //EnableLogging = true,
                     TargetClass = "mud-input-slot",
                     Keys = {
                         new KeyOptions { Key="ArrowUp", SubscribeDown=true, PreventDown = "key+none" }, // prevent scrolling page, instead increment
@@ -235,7 +235,7 @@ namespace MudBlazor
             await base.OnAfterRenderAsync(firstRender);
         }
 
-        private async void OnInputKeyDown(KeyboardEventArgs args)
+        internal async void OnInputKeyDown(KeyboardEventArgs args)
         {
             if (Disabled || ReadOnly)
                 return;
@@ -250,86 +250,10 @@ namespace MudBlazor
             }
         }
 
-        /// <summary>
-        /// Overrides KeyDown event, intercepts Arrow Up/Down and uses them to add/substract the value manually by the step value.
-        /// Relying on the browser mean the steps are each integer multiple from <see cref="Min"/> up until <see cref="Max"/>.
-        /// This aligns the behaviour with the spinner buttons.
-        /// </summary>
-        /// <remarks>https://try.mudblazor.com/snippet/QamlkdvmBtrsuEtb</remarks>
         protected Task InterceptKeydown(KeyboardEventArgs obj)
         {
             if (Disabled || ReadOnly)
                 return Task.CompletedTask;
-            /*
-            //Server side and WASM have different (opposite) behaviour. We need to set initial value false on BSS and true on WASM
-            if (RuntimeLocation.IsClientSide)
-            {
-                _keyDownPreventDefault = false;
-            }
-            if (obj.Type == "keydown") //KeyDown or repeat, blazor never fires InvokeKeyPress
-            {
-                switch (obj.Key)
-                {
-                    case "ArrowUp":
-                        _key++;
-                        await Task.Delay(1);
-                        await Increment();
-                        await Task.Delay(1);
-                        await _elementReference.FocusAsync();
-                        break;
-
-                    case "ArrowDown":
-                        _key++;
-                        await Task.Delay(1);
-                        await Decrement();
-                        await Task.Delay(1);
-                        await _elementReference.FocusAsync();
-                        break;
-
-                    case "ArrowLeft":
-                    case "ArrowRight":
-                    case "Tab":
-                    case "Backspace":
-                    case "Delete":
-                    case "Enter":
-                    case "NumpadEnter":
-                    case "Home":
-                    case "End":
-                        break;
-
-                    //copy/paste
-                    case "v":
-                    case "c":
-                    case "a":
-                        if (obj.CtrlKey is false)
-                        {
-                            _keyDownPreventDefault = true;
-                            _key++;
-                            StateHasChanged();
-                            await Task.Delay(1);
-                            await _elementReference.FocusAsync();
-                        }
-                        break;
-
-                    default:
-                        //Check the shift key for AZERTY keyboard support 'Shift' and copy, paste, select all execution for 'Ctrl'.
-                        if (obj.Key != "Shift" && obj.Key != "Control")
-                        {
-                            var acceptableKeyTypes = new Regex("^[0-9,.-]$");
-                            var isMatch = acceptableKeyTypes.Match(obj.Key).Success;
-                            if (isMatch is false)
-                            {
-                                _keyDownPreventDefault = true;
-                                _key++;
-                                StateHasChanged();
-                                await Task.Delay(1);
-                                await _elementReference.FocusAsync();
-                            }
-                        }
-                        break;
-                }
-            }
-            */
             OnKeyDown.InvokeAsync(obj).AndForget();
             return Task.CompletedTask;
         }
@@ -338,17 +262,6 @@ namespace MudBlazor
         {
             if (Disabled || ReadOnly)
                 return Task.CompletedTask;
-            /*
-            //Look at InterceptKeyDown method comment for details.
-            if (RuntimeLocation.IsClientSide)
-            {
-                _keyDownPreventDefault = true;
-            }
-            else
-            {
-                _keyDownPreventDefault = false;
-            }
-            */
             OnKeyUp.InvokeAsync(obj).AndForget();
             return Task.CompletedTask;
         }

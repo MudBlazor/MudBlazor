@@ -32,7 +32,7 @@ namespace MudBlazor.UnitTests.Components
             ctx.Services.AddTransient<IResizeObserver, MockResizeObserver>();
             ctx.Services.AddSingleton<IBrowserWindowSizeProvider>(new MockBrowserWindowSizeProvider());
             ctx.Services.AddTransient<IEventListener, EventListener>();
-
+            ctx.Services.AddTransient<IKeyInterceptor, MockKeyInterceptorService>();
             ctx.Services.AddOptions();
             ctx.Services.AddScoped(sp =>
                 new HttpClient(new MockDocsMessageHandler()) { BaseAddress = new Uri("https://localhost/") });

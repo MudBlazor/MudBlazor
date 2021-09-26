@@ -150,11 +150,10 @@ namespace MudBlazor.UnitTests
         public void LabelShouldShrinkWhenPlaceholderIsSet()
         {
             //Arrange
-            using var ctx = new Bunit.TestContext();
             var label = Parameter(nameof(MudNumericField<int?>.Label), "label");
             var placeholder = Parameter(nameof(MudNumericField<int?>.Placeholder), "placeholder");
             //with no placeholder, label is not shrunk
-            var comp = ctx.RenderComponent<MudNumericField<int?>>(label);
+            var comp = Context.RenderComponent<MudNumericField<int?>>(label);
             comp.Markup.Should().NotContain("shrink");
             //with placeholder label is shrunk
             comp.SetParametersAndRender(placeholder);
@@ -341,20 +340,15 @@ namespace MudBlazor.UnitTests
             var numericField = comp.Instance;
             numericField.Value.Should().Be(1234.56);
             numericField.Text.Should().Be("1234.56");
-            comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = "ArrowUp", Type = "keydown", });
-            comp.Find("input").KeyUp(new KeyboardEventArgs() { Key = "ArrowUp", Type = "keyup", });
+            await comp.InvokeAsync(()=>numericField.OnInputKeyDown(new KeyboardEventArgs() { Key = "ArrowUp", Type = "keydown", }));
             comp.WaitForAssertion(() => numericField.Value.Should().Be(1235.56));
-            comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = "ArrowDown", Type = "keydown", });
-            comp.Find("input").KeyUp(new KeyboardEventArgs() { Key = "ArrowDown", Type = "keyup", });
+            await comp.InvokeAsync(()=>numericField.OnInputKeyDown(new KeyboardEventArgs() { Key = "ArrowDown", Type = "keydown", }));
             comp.WaitForAssertion(() => numericField.Value.Should().Be(1234.56));
-            comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = "c", Type = "keydown", CtrlKey = false });
-            comp.Find("input").KeyUp(new KeyboardEventArgs() { Key = "c", Type = "keyup", CtrlKey = false });
+            await comp.InvokeAsync(()=>numericField.OnInputKeyDown(new KeyboardEventArgs() { Key = "c", Type = "keydown", CtrlKey = false }));
             comp.WaitForAssertion(() => numericField.Value.Should().Be(1234.56));
-            comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = "a", Type = "keydown", });
-            comp.Find("input").KeyUp(new KeyboardEventArgs() { Key = "a", Type = "keyup", });
+            await comp.InvokeAsync(()=>numericField.OnInputKeyDown(new KeyboardEventArgs() { Key = "a", Type = "keydown", }));
             comp.WaitForAssertion(() => numericField.Value.Should().Be(1234.56));
-            comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = "9", Type = "keydown", });
-            comp.Find("input").KeyUp(new KeyboardEventArgs() { Key = "9", Type = "keyup", });
+            await comp.InvokeAsync(()=>numericField.OnInputKeyDown(new KeyboardEventArgs() { Key = "9", Type = "keydown", }));
             comp.WaitForAssertion(() => numericField.Value.Should().Be(1234.56));
         }
 
