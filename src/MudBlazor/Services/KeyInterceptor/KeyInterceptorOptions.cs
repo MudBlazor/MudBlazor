@@ -36,15 +36,13 @@ namespace MudBlazor.Services
     ///          PreventDown=null or PreventDown="none"
     ///  * Prevent key down of unmodified keystrokes such as "Tab":
     ///          PreventDown="key+none"
-    ///  * Prevent key down of "Tab" and "Ctrl+Tab"
+    ///  * Prevent key down of Tab and Ctrl+Tab
     ///          PreventDown="key+none|key+ctrl"
-    ///  * Prevent key down of just "Ctrl+Tab"
+    ///  * Prevent key down of just Ctrl+Tab
     ///          PreventDown="key+ctrl"
-    ///  * Prevent key down of "Ctrl+Tab" and "Shift+Tab" but not "Shift+Ctrl+Tab":
-    ///          PreventDown="key+ctrl"
-    ///  * Prevent key down of "Ctrl+Tab" and "Shift+Tab" but not "Shift+Ctrl+Tab":
+    ///  * Prevent key down of Ctrl+Tab and Shift+Tab but not Shift+Ctrl+Tab:
     ///          PreventDown="key+shift|key+ctrl"
-    ///  * Prevent key down of "Shift+Ctrl+Tab" and "Ctrl+Tab" but not "Shift+Tab":
+    ///  * Prevent key down of Shift+Ctrl+Tab and Ctrl+Tab but not Shift+Tab:
     ///          PreventDown="key+shift+ctrl|key+ctrl"
     ///  * Prevent any combination of key and modifiers, but not the unmodified key:
     ///          PreventDown="key+any"
@@ -57,14 +55,10 @@ namespace MudBlazor.Services
         /// Javascript keyboard event.key
         ///
         /// Examples: " " for space, "Tab" for tab, "a" for lowercase A-key.
-        /// Also allowed (if IsRegex is true): JS regex  such as "[a-z]" or "a|b" but NOT /[a-z]/ or /[a-z]/i
+        /// Also allowed: JS regex such as "/[a-z]/" or "/a|b/" but NOT "/[a-z]/g" or "/[a-z]/i"
+        ///      regex must be inclosed in two forward slashes!
         /// </summary>
         public string Key { get; set; }
-
-        /// <summary>
-        /// Set to true to interpret Key as a JS regex. 
-        /// </summary>
-        public bool IsRegex { get; set; }
 
         /// <summary>
         /// Subscribe down key and invoke event KeyDown on c# side

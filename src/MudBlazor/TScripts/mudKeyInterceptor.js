@@ -2,13 +2,15 @@
 
     connect(dotNetRef, element, options) {
         //console.log('[MudBlazor | MudKeyInterceptorFactory] connect ', { dotNetRef, element, options });
+        if (!element)
+            throw "element: expected ElementReference!";
         if (!element.mudKeyInterceptor)
             element.mudKeyInterceptor = new MudKeyInterceptor(dotNetRef, options);
         element.mudKeyInterceptor.connect(element);
     }
 
     disconnect(element) {
-        if (!element.mudKeyInterceptor)
+        if (!element || !element.mudKeyInterceptor)
             return;
         element.mudKeyInterceptor.disconnect();
     }
@@ -50,9 +52,9 @@ class MudKeyInterceptor {
                 this.logger('[MudBlazor | KeyInterceptor] got invalid key options: ', keyOption);
                 continue;
             }
-            if (keyOption.isRegex) {
-                // JS regex key options such as "[a-z]" or "a|b", NOT allowed: /[a-z]/ or /[a-z]/i
-                keyOption.regex = new RegExp(keyOption.key);
+            if (keyOption.key.length > 2 && keyOption.key.startsWith('/') && keyOption.key.endsWith('/')) {
+                // JS regex key options such as "/[a-z]/" or "/a|b/" but NOT "/[a-z]/g" or "/[a-z]/i"
+                keyOption.regex = new RegExp(keyOption.key.substring(1, keyOption.key.length-1)); // strip the / from start and end
                 this._regexOptions.push(keyOption);
             }
             else
@@ -151,7 +153,7 @@ class MudKeyInterceptor {
                 invoke = true;
         }
         for (const keyOptions of self._regexOptions) {
-            if (keyOptions.regex.matches(key)) {
+            if (keyOptions.regex.test(key)) {
                 self.logger('[MudBlazor | KeyInterceptor] regex options for "' + key + '"', keyOptions);
                 self.processKeyDown(args, keyOptions);
                 if (keyOptions.subscribeDown)
@@ -187,7 +189,7 @@ class MudKeyInterceptor {
                 invoke = true;
         }
         for (const keyOptions of self._regexOptions) {
-            if (keyOptions.regex.matches(key)) {
+            if (keyOptions.regex.test(key)) {
                 self.processKeyUp(args, keyOptions);
                 if (keyOptions.subscribeUp)
                     invoke = true;
