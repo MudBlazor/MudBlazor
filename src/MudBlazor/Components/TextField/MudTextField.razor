@@ -3,7 +3,7 @@
 @inherits MudDebouncedInput<T>
 
 <CascadingValue Name="Standalone" Value="@Standalone" IsFixed="true">
-    <MudInputControl Label="@Label" Variant="@Variant" HelperText="@HelperText" CharacterCount="@CharacterCount" CharacterCountText="@((string.IsNullOrEmpty(Text) ? "0" : Text.Length.ToString()) + " / " + MaxLength.ToString())"
+    <MudInputControl Label="@Label" Variant="@Variant" HelperText="@HelperText" CounterText="@GetCounterText()"
                      FullWidth="@FullWidth" Class="@Classname" Error="@HasErrors" ErrorText="@GetErrorText()" Disabled="@Disabled" Margin="@Margin" Required="@Required">
         <InputContent>
             <MudInput T="string" @ref="_elementReference" @attributes="UserAttributes" InputType="@InputType" Lines="@Lines" Style="@Style" Variant="@Variant" TextUpdateSuppression="@TextUpdateSuppression" Value="@Text" 
