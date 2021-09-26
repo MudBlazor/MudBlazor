@@ -4,6 +4,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using MudBlazor.Services;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
@@ -120,6 +121,11 @@ namespace MudBlazor
                 .AddClass(Class)
                 .Build();
 
+
+        [Inject] private IKeyInterceptor _keyInterceptor { get; set; }
+
+        private ElementReference _self;
+
         private MudInput<string> _elementReference;
 
         private Converter<string> _inputConverter;
@@ -209,16 +215,48 @@ namespace MudBlazor
 
         private bool _keyDownPreventDefault = true;
 
+        protected override async Task OnAfterRenderAsync(bool firstRender)
+        {
+            await _keyInterceptor.Connect(_self, new KeyInterceptorOptions()
+            {
+                EnableLogging = true,
+                TargetClass = "mud-input-slot",
+                Keys = {
+                    new KeyOptions { Key="ArrowUp", SubscribeDown=true, PreventDown = "key+none" }, // prevent scrolling page, instead increment
+                    new KeyOptions { Key="ArrowDown", SubscribeDown=true, PreventDown = "key+none" }, // prevent scrolling page, instead decrement
+                    new KeyOptions { Key="^(?![0-9,.-])$", SubscribeDown=false, PreventDown = "key+none" }, // prevent input of all other characters except numbers
+                },
+            });
+            _keyInterceptor.KeyDown += OnInputKeyDown;
+            await base.OnAfterRenderAsync(firstRender);
+        }
+
+        private async void OnInputKeyDown(KeyboardEventArgs args)
+        {
+            if (Disabled || ReadOnly)
+                return;
+            switch (args.Key)
+            {
+                case "ArrowUp":
+                    await Increment();
+                    break;
+                case "ArrowDown":
+                    await Decrement();
+                    break;
+            }
+        }
+
         /// <summary>
         /// Overrides KeyDown event, intercepts Arrow Up/Down and uses them to add/substract the value manually by the step value.
         /// Relying on the browser mean the steps are each integer multiple from <see cref="Min"/> up until <see cref="Max"/>.
         /// This aligns the behaviour with the spinner buttons.
         /// </summary>
         /// <remarks>https://try.mudblazor.com/snippet/QamlkdvmBtrsuEtb</remarks>
-        protected async Task InterceptKeydown(KeyboardEventArgs obj)
+        protected void InterceptKeydown(KeyboardEventArgs obj)
         {
             if (Disabled || ReadOnly)
                 return;
+            /*
             //Server side and WASM have different (opposite) behaviour. We need to set initial value false on BSS and true on WASM
             if (RuntimeLocation.IsClientSide)
             {
@@ -287,6 +325,7 @@ namespace MudBlazor
                         break;
                 }
             }
+            */
             OnKeyDown.InvokeAsync(obj).AndForget();
         }
 
@@ -294,6 +333,7 @@ namespace MudBlazor
         {
             if (Disabled || ReadOnly)
                 return;
+            /*
             //Look at InterceptKeyDown method comment for details.
             if (RuntimeLocation.IsClientSide)
             {
@@ -303,7 +343,7 @@ namespace MudBlazor
             {
                 _keyDownPreventDefault = false;
             }
-
+            */
             OnKeyUp.InvokeAsync(obj).AndForget();
         }
 
