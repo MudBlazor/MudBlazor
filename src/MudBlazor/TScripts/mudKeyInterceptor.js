@@ -121,7 +121,7 @@ class MudKeyInterceptor {
             }
         }
     }
-    /*
+
     matchesKeyCombination(option, args) {
         if (!option || option=== "none")
             return false;
@@ -226,6 +226,6 @@ class MudKeyInterceptor {
             MetaKey: args.metaKey
         };
     }
-    */
+
 }
 
