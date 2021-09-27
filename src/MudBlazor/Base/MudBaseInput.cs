@@ -43,6 +43,11 @@ namespace MudBlazor
         [Parameter] public string HelperText { get; set; }
 
         /// <summary>
+        /// If true, the helper text will only be visible on focus.
+        /// </summary>
+        [Parameter] public bool HelperTextOnFocus { get; set; }
+
+        /// <summary>
         /// Icon that will be used if Adornment is set to Start or End.
         /// </summary>
         [Parameter] public string AdornmentIcon { get; set; }

@@ -13,7 +13,7 @@
     </div>
     @if (Error || !String.IsNullOrEmpty(HelperText) || !String.IsNullOrEmpty(CounterText))
     {
-        <div class="mud-input-control-helper-container">
+        <div class="@HelperContainer">
             <p class="@HelperClass">
                 <div class="d-flex">
                     @if (Error)

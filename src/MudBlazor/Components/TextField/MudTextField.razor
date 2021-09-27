@@ -3,8 +3,7 @@
 @inherits MudDebouncedInput<T>
 
 <CascadingValue Name="Standalone" Value="@Standalone" IsFixed="true">
-    <MudInputControl Label="@Label" Variant="@Variant" HelperText="@HelperText" CounterText="@GetCounterText()"
-                     FullWidth="@FullWidth" Class="@Classname" Error="@HasErrors" ErrorText="@GetErrorText()" Disabled="@Disabled" Margin="@Margin" Required="@Required">
+    <MudInputControl Label="@Label" Variant="@Variant" HelperText="@HelperText" HelperTextOnFocus="@HelperTextOnFocus" CounterText="@GetCounterText()" FullWidth="@FullWidth" Class="@Classname" Error="@HasErrors" ErrorText="@GetErrorText()" Disabled="@Disabled" Margin="@Margin" Required="@Required">
         <InputContent>
             <MudInput T="string" @ref="_elementReference" @attributes="UserAttributes" InputType="@InputType" Lines="@Lines" Style="@Style" Variant="@Variant" TextUpdateSuppression="@TextUpdateSuppression" Value="@Text" 
                       ValueChanged="(s) => SetTextAsync(s)" Placeholder="@Placeholder" Disabled=@Disabled DisableUnderLine="@DisableUnderLine" ReadOnly="@ReadOnly" MaxLength="@MaxLength"

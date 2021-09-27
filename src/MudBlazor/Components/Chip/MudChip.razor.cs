@@ -202,7 +202,7 @@ namespace MudBlazor
 
         protected async Task OnClickHandler(MouseEventArgs ev)
         {
-            if (ChipSet.ReadOnly)
+            if (ChipSet?.ReadOnly == true)
             {
                 return;
             }
