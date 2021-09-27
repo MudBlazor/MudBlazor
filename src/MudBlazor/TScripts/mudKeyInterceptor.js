@@ -17,7 +17,7 @@
 }
 window.mudKeyInterceptor = new MudKeyInterceptorFactory();
 
-/*
+
 class MudKeyInterceptor {
 
     constructor(dotNetRef, options) {
@@ -26,7 +26,7 @@ class MudKeyInterceptor {
         this.logger = options.enableLogging ? console.log : (message) => { };
         this.logger('[MudBlazor | KeyInterceptor] Interceptor initialized', { options });
     }
-
+/*
     connect(element) {
         if (!this._options)
             return;
@@ -225,5 +225,6 @@ class MudKeyInterceptor {
             MetaKey: args.metaKey
         };
     }
+    */
 }
-*/
+
