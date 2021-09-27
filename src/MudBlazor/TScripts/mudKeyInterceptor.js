@@ -49,7 +49,6 @@ class MudKeyInterceptor {
         // transform key options into a key lookup
         this._keyOptions = {};
         this._regexOptions = [];
-            /*
         for (const keyOption of this._options.keys) {
             if (!keyOption || !keyOption.key) {
                 this.logger('[MudBlazor | KeyInterceptor] got invalid key options: ', keyOption);
@@ -63,10 +62,10 @@ class MudKeyInterceptor {
             else
                 this._keyOptions[keyOption.key.toLowerCase()] = keyOption;
             // remove whitespace and enforce lowercase
-            keyOption.preventDown = (keyOption.preventDown || "none").replaceAll(/\s/g, "").toLowerCase();
-            keyOption.preventUp = (keyOption.preventUp || "none").replaceAll(/\s/g, "").toLowerCase();
-            keyOption.stopDown = (keyOption.stopDown || "none").replaceAll(/\s/g, "").toLowerCase();
-            keyOption.stopUp = (keyOption.stopUp || "none").replaceAll(/\s/g, "").toLowerCase();
+            //keyOption.preventDown = (keyOption.preventDown || "none").replaceAll(/\s/g, "").toLowerCase();
+            //keyOption.preventUp = (keyOption.preventUp || "none").replaceAll(/\s/g, "").toLowerCase();
+            //keyOption.stopDown = (keyOption.stopDown || "none").replaceAll(/\s/g, "").toLowerCase();
+            //keyOption.stopUp = (keyOption.stopUp || "none").replaceAll(/\s/g, "").toLowerCase();
         }
         this.logger('[MudBlazor | KeyInterceptor] key options: ', this._keyOptions);
         if (this._regexOptions.size > 0)
@@ -75,7 +74,6 @@ class MudKeyInterceptor {
         for (const child of this._element.getElementsByClassName(targetClass)) {
             this.attachHandlers(child);
         }
-            */
     }
 
     disconnect() {
