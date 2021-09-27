@@ -16,7 +16,7 @@
     </div>
     @if (Error || !String.IsNullOrEmpty(HelperText))
     {
-        <div class="mud-input-control-helper-container">
+        <div class="@HelperContainer">
             <p class="@HelperClass">
                 @if (Error)
                 {
