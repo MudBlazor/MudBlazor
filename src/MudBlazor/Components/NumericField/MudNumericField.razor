@@ -48,7 +48,7 @@
                           max="@(_maxHasValue ? FormatParam(_max) : null)"
                           step="@(_stepHasValue ? FormatParam(_step) : null)"
                           InputMode="@InputMode"
-                          Pattern="@(Pattern+"*")"
+                          Pattern="@((Pattern ?? "[0-9]").TrimEnd('*')+"*")"
                           OnAdornmentClick="@OnAdornmentClick" 
                           OnBlur="@OnBlurred" 
                           OnKeyDown="@HandleKeydown" 
