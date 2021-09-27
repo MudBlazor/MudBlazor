@@ -26,7 +26,7 @@ class MudKeyInterceptor {
         this.logger = options.enableLogging ? console.log : (message) => { };
         this.logger('[MudBlazor | KeyInterceptor] Interceptor initialized', { options });
     }
-/*
+
     connect(element) {
         if (!this._options)
             return;
@@ -84,7 +84,7 @@ class MudKeyInterceptor {
         for (const child of this._observedChildren)
             this.detachHandlers(child);
     }
-
+    
     attachHandlers(child) {
         this.logger('[MudBlazor | KeyInterceptor] attaching handlers ', { child });
         if (this._observedChildren.indexOf(child) > -1) {
@@ -120,7 +120,7 @@ class MudKeyInterceptor {
             }
         }
     }
-
+    /*
     matchesKeyCombination(option, args) {
         if (!option || option=== "none")
             return false;
