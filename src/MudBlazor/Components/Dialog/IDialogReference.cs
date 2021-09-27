@@ -29,5 +29,7 @@ namespace MudBlazor
         void InjectRenderFragment(RenderFragment rf);
 
         void InjectDialog(object inst);
+
+        Task<T> GetReturnValueAsync<T>();
     }
 }

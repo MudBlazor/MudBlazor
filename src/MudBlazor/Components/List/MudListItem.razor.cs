@@ -28,6 +28,8 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public string Text { get; set; }
 
+        [Parameter] public object Value { get; set; }
+
         /// <summary>
         /// Avatar to use if set.
         /// </summary>
@@ -173,13 +175,13 @@ namespace MudBlazor
             }
             else if (Href != null)
             {
-                MudList?.SetSelectedItem(this);
+                MudList?.SetSelectedValue(this.Value);
                 OnClick.InvokeAsync(ev);
                 UriHelper.NavigateTo(Href, ForceLoad);
             }
             else
             {
-                MudList?.SetSelectedItem(this);
+                MudList?.SetSelectedValue(this.Value);
                 OnClick.InvokeAsync(ev);
                 if (Command?.CanExecute(CommandParameter) ?? false)
                 {
