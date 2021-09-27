@@ -506,6 +506,32 @@ namespace MudBlazor.UnitTests.Components
             textfield.Text.Should().Be(null);
         }
 
+        [Test]
+        public void TextField_CharacterCount()
+        {
+            var comp = Context.RenderComponent<MudTextField<string>>();
+            var inputControl = comp.FindComponent<MudInputControl>();
+            //Condition 1
+            comp.Instance.Counter = null;
+            inputControl.Instance.CounterText.Should().Be("");
+            //Condition 2
+            comp.Instance.Counter = 25;
+            comp.Find("input").Change("Test text");
+            inputControl.Instance.CounterText.Should().Be("9 / 25");
+            //Condition 3
+            comp.Instance.Counter = 0;
+            comp.Find("input").Change("Test text with total of 56 characters a aaaaaaaaa aaaaaa");
+            inputControl.Instance.CounterText.Should().Be("56");
+            //Condition 4
+            comp.Instance.Counter = 25;
+            comp.Instance.MaxLength = 30;
+            comp.Find("input").Change("Test text with total of25");
+            inputControl.Instance.CounterText.Should().Be("25 / 25");
+            //Condition 5
+            comp.Find("input").Change("Test text with total of 56 characters a aaaaaaaaa aaaaaa");
+            inputControl.Instance.CounterText.Should().Be("56 / 25");
+        }
+
         /// <summary>
         /// This tests the suppression of the suppression (fix for #1012)
         /// </summary>
