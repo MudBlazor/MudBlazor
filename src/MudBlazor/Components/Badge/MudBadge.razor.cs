@@ -44,6 +44,11 @@ namespace MudBlazor
         [Parameter] public int Elevation { set; get; } = 0;
 
         /// <summary>
+        /// The visibility of the badge.
+        /// </summary>
+        [Parameter] public bool Visible { get; set; } = true;
+
+        /// <summary>
         /// The color of the badge.
         /// </summary>
         [Parameter] public Color Color { get; set; } = Color.Default;

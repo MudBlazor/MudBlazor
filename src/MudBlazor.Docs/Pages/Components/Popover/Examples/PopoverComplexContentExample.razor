@@ -2,11 +2,11 @@
 
 <div class="d-flex">
 	<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@ToggleOpen">
-		Open
+		@(_isOpen? "Close" : "Open")
 	</MudButton>
-	<MudPopover Open="@_isOpen" Placement="Placement.CenterLeft" AnchorPlacement="Placement.CenterRight" >
-		<div class="d-flex flex-column px-4 pt-4">
-			<PopoverDynamicContent />
+	<MudPopover Open="@_isOpen" AnchorOrigin="Origin.BottomCenter" TransformOrigin="Origin.TopCenter">
+		<div class="d-flex flex-column pa-1">
+			<PopoverDynamicContentExample />
 		</div>
 	</MudPopover>
 </div>

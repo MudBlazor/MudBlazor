@@ -21,6 +21,11 @@ namespace MudBlazor
         [Parameter] public string Label { get; set; }
 
         /// <summary>
+        /// User class names for the list, separated by space
+        /// </summary>
+        [Parameter] public string ListClass { get; set; }
+
+        /// <summary>
         /// User class names for the popover, separated by space
         /// </summary>
         [Parameter] public string PopoverClass { get; set; }
@@ -170,8 +175,8 @@ namespace MudBlazor
         // Sets the popover style ONLY when there is an activator
         private void SetPopoverStyle(MouseEventArgs args)
         {
-            //use the offset with a relative position to the container
-            PopoverStyle = $"left:{args?.OffsetX.ToPixels()};top:{args?.OffsetY.ToPixels()};";
+            _anchorOrigin = Origin.TopLeft;
+            PopoverStyle = $"margin-top: {args?.OffsetY.ToPixels()}; margin-left: {args?.OffsetX.ToPixels()};";
         }
 
         public void ToggleMenu(MouseEventArgs args)

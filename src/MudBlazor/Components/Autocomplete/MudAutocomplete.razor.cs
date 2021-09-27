@@ -81,7 +81,7 @@ namespace MudBlazor
         //internal event Action<HashSet<T>> SelectionChangedFromOutside;
 
         /// <summary>
-        /// Sets the maxheight the Autocomplete can have when open.
+        /// The maximum height of the Autocomplete when it is open.
         /// </summary>
         [Parameter] public int MaxHeight { get; set; } = 300;
 
@@ -114,7 +114,7 @@ namespace MudBlazor
 
         /// <summary>
         /// Maximum items to display, defaults to 10.
-        /// Set null to display all
+        /// A null value will display all items.
         /// </summary>
         [Parameter]
         public int? MaxItems { get; set; } = 10;
@@ -147,6 +147,11 @@ namespace MudBlazor
         [Parameter] public RenderFragment<T> ItemSelectedTemplate { get; set; }
 
         /// <summary>
+        /// Optional presentation template for disabled item
+        /// </summary>
+        [Parameter] public RenderFragment<T> ItemDisabledTemplate { get; set; }
+
+        /// <summary>
         /// On drop-down close override Text with selected Value. This makes it clear to the user
         /// which list value is currently selected and disallows incomplete values in Text.
         /// </summary>
@@ -157,6 +162,11 @@ namespace MudBlazor
         /// will be applied to the Value which allows to validate it and display an error message.
         /// </summary>
         [Parameter] public bool CoerceValue { get; set; }
+
+        /// <summary>
+        /// Function to be invoked when checking whether an item should be disabled or not
+        /// </summary>
+        [Parameter] public Func<T, bool> ItemDisabledFunc { get; set; }
 
         private bool _isOpen;
 
@@ -184,7 +194,7 @@ namespace MudBlazor
         [Parameter] public EventCallback<bool> IsOpenChanged { get; set; }
 
         /// <summary>
-        /// Set to true to select the currently selected item from the drop-down (if it is open) 
+        /// If true, the currently selected item from the drop-down (if it is open) is selected.
         /// </summary>
         [Parameter] public bool SelectValueOnTab { get; set; } = false;
 
@@ -259,9 +269,13 @@ namespace MudBlazor
             IsOpen = false;
             BeginValidate();
             _elementReference?.SetText(optionText);
+            _elementReference?.FocusAsync().AndForget();
             StateHasChanged();
         }
 
+        /// <summary>
+        /// Toggle the menu (if not disabled or not readonly, and is opened).
+        /// </summary>
         public async Task ToggleMenu()
         {
             if ((Disabled || ReadOnly) && !IsOpen)
@@ -297,6 +311,7 @@ namespace MudBlazor
         private Timer _timer;
         private T[] _items;
         private int _selectedListItemIndex = 0;
+        private IList<int> _enabledItemIndices = new List<int>();
 
         protected override Task UpdateTextPropertyAsync(bool updateValue)
         {
@@ -329,7 +344,7 @@ namespace MudBlazor
                 StateHasChanged();
                 return;
             }
-            _selectedListItemIndex = 0;
+
             IEnumerable<T> searched_items = Array.Empty<T>();
             try
             {
@@ -343,6 +358,9 @@ namespace MudBlazor
                 searched_items = searched_items.Take(MaxItems.Value);
             _items = searched_items.ToArray();
 
+            _enabledItemIndices = _items.Select((item, idx) => (item, idx)).Where(tuple => ItemDisabledFunc?.Invoke(tuple.item) != true).Select(tuple => tuple.idx).ToList();
+            _selectedListItemIndex = _enabledItemIndices.Any() ? _enabledItemIndices.First() : -1;
+
             if (_items?.Length == 0)
             {
                 await CoerceValueToText();
@@ -354,17 +372,27 @@ namespace MudBlazor
             StateHasChanged();
         }
 
+        int _elementKey = 0;
+
         /// <summary>
         /// Clears the autocomplete's text
         /// </summary>
         public async Task Clear()
         {
+            IsOpen = false;
             await SetTextAsync(string.Empty, updateValue: false);
             await CoerceValueToText();
-            IsOpen = false;
+            await _elementReference.SetText("");
             _timer?.Dispose();
             StateHasChanged();
         }
+
+        protected override async void ResetValue()
+        {
+            await Clear();
+            base.ResetValue();
+        }
+
 
         private string GetItemString(T item)
         {
@@ -403,10 +431,12 @@ namespace MudBlazor
                     await OnEnterKey();
                     break;
                 case "ArrowDown":
-                    await SelectNextItem(+1);
+                    var increment = _enabledItemIndices.ElementAtOrDefault(_enabledItemIndices.IndexOf(_selectedListItemIndex) + 1) - _selectedListItemIndex;
+                    await SelectNextItem(increment < 0 ? 1 : increment);
                     break;
                 case "ArrowUp":
-                    await SelectNextItem(-1);
+                    var decrement = _selectedListItemIndex - _enabledItemIndices.ElementAtOrDefault(_enabledItemIndices.IndexOf(_selectedListItemIndex) - 1);
+                    await SelectNextItem(-(decrement < 0 ? 1 : decrement));
                     break;
                 case "Escape":
                     IsOpen = false;
@@ -426,7 +456,7 @@ namespace MudBlazor
 
         private async Task SelectNextItem(int increment)
         {
-            if (_items == null || _items.Length == 0)
+            if (_items == null || _items.Length == 0 || !_enabledItemIndices.Any())
                 return;
             _selectedListItemIndex = Math.Max(0, Math.Min(_items.Length - 1, _selectedListItemIndex + increment));
             await ScrollToListItem(_selectedListItemIndex, increment);
@@ -438,6 +468,9 @@ namespace MudBlazor
         /// </summary>
         private readonly string _componentId = Guid.NewGuid().ToString();
 
+        /// <summary>
+        /// Scroll to a specific item in the Autocomplete list of items.
+        /// </summary>
         public async Task ScrollToListItem(int index, int increment)
         {
             var id = GetListItemId(index);
@@ -514,26 +547,35 @@ namespace MudBlazor
             base.Dispose(disposing);
         }
 
+        /// <summary>
+        /// Focus the input in the Autocomplete component.
+        /// </summary>
         public override ValueTask FocusAsync()
         {
             return _elementReference.FocusAsync();
         }
 
+        /// <summary>
+        /// Select all text within the Autocomplete input.
+        /// </summary>
         public override ValueTask SelectAsync()
         {
             return _elementReference.SelectAsync();
         }
 
+        /// <summary>
+        /// Select all text within the Autocomplete input and aligns its start and end points to the text content of the current input.
+        /// </summary>
         public override ValueTask SelectRangeAsync(int pos1, int pos2)
         {
             return _elementReference.SelectRangeAsync(pos1, pos2);
         }
 
-        private void OnTextChanged(string text)
+        private async Task OnTextChanged(string text)
         {
             if (text == null)
                 return;
-            _ = SetTextAsync(text, true);
+            await SetTextAsync(text, true);
         }
 
     }
