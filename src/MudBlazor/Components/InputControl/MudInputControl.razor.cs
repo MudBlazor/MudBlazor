@@ -68,6 +68,11 @@ namespace MudBlazor
         [Parameter] public bool HelperTextOnFocus { get; set; }
 
         /// <summary>
+        /// The current character counter, displayed below the text field.
+        /// </summary>
+        [Parameter] public string CounterText { get; set; }
+
+        /// <summary>
         /// If true, the input will take up the full width of its container.
         /// </summary>
         [Parameter] public bool FullWidth { get; set; }

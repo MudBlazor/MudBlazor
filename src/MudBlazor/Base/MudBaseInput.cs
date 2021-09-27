@@ -93,6 +93,16 @@ namespace MudBlazor
         [Parameter] public string Placeholder { get; set; }
 
         /// <summary>
+        /// If set, will display the counter, value 0 will display current count but no stop count.
+        /// </summary>
+        [Parameter] public int? Counter { get; set; }
+
+        /// <summary>
+        /// Maximum number of characters that the input will accept
+        /// </summary>
+        [Parameter] public int MaxLength { get; set; } = 524288;
+
+        /// <summary>
         /// If string has value the label text will be displayed in the input, and scaled down at the top if the input has value.
         /// </summary>
         [Parameter] public string Label { get; set; }
