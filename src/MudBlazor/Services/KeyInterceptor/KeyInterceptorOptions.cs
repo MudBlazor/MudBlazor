@@ -75,7 +75,4 @@ namespace MudBlazor.Services
         public string StopDown { get; set; } = "none";
         public string StopUp { get; set; } = "none";
     }
-
-
-
 }

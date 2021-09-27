@@ -6,39 +6,57 @@
 
 <CascadingValue Name="Standalone" Value="@Standalone" IsFixed="true">
     <div @ref="_self">
-        <MudInputControl Label="@Label" Variant="@Variant" HelperText="@HelperText" FullWidth="@FullWidth" Class="@Classname" CounterText="@GetCounterText()"
-                         Error="@HasErrors" ErrorText="@GetErrorText()" Disabled="@Disabled" Margin="@Margin" Required="@Required">
+        <MudInputControl 
+                    Label="@Label" 
+                    Variant="@Variant" 
+                    HelperText="@HelperText" 
+                    FullWidth="@FullWidth" 
+                    Class="@Classname"
+                    Error="@HasErrors" 
+                    ErrorText="@GetErrorText()" 
+                    Disabled="@Disabled" 
+                    Margin="@Margin" 
+                    Required="@Required"
+                    CounterText="@GetCounterText()"                    
+            >
             <InputContent>
-                <MudInput T="string" @ref="_elementReference" @key="_key" @attributes="UserAttributes" InputType="@InputType.Text" Style="@Style" Variant="@Variant"
+                <MudInput T="string" 
+                          @ref="@_elementReference"
+                          @attributes="@UserAttributes" 
+                          InputType="@InputType.Text" 
+                          Style="@Style" 
+                          Variant="@Variant"
                           TextUpdateSuppression="@TextUpdateSuppression"
-                          Value="@Text" ValueChanged="(v) => SetTextAsync(v)" Converter="_inputConverter" Placeholder="@Placeholder"
-                          Disabled=@Disabled DisableUnderLine="@DisableUnderLine" ReadOnly="@ReadOnly" Adornment="@Adornment"
-                          AdornmentText="@AdornmentText" AdornmentIcon="@AdornmentIcon" AdornmentColor="@AdornmentColor" IconSize="@IconSize"
-                          OnAdornmentClick="@OnAdornmentClick" Error="@Error" Immediate="@(Immediate)" Margin="@Margin" MaxLength="@MaxLength"
-                          OnBlur="@OnBlurred" OnKeyDown="@InterceptKeydown" OnKeyUp="@InterceptKeyUp"
-                          KeyDownPreventDefault="@(_keyDownPreventDefault || KeyDownPreventDefault)" KeyPressPreventDefault="@KeyPressPreventDefault" KeyUpPreventDefault="KeyUpPreventDefault"
-                          OnIncrement="Increment" OnDecrement="Decrement" HideSpinButtons="@HideSpinButtons"
+                          Value="@Text" 
+                          ValueChanged="@OnInputValueChanged" 
+                          Converter="@_inputConverter" 
+                          Placeholder="@Placeholder"
+                          Disabled="@Disabled"
+                          DisableUnderLine="@DisableUnderLine" 
+                          ReadOnly="@ReadOnly" 
+                          Adornment="@Adornment"
+                          AdornmentText="@AdornmentText" 
+                          AdornmentIcon="@AdornmentIcon" 
+                          AdornmentColor="@AdornmentColor" 
+                          IconSize="@IconSize"
+                          Error="@Error" 
+                          Immediate="@(Immediate)" 
+                          Margin="@Margin"
+                          MaxLength="@MaxLength"
+                          HideSpinButtons="@HideSpinButtons"
                           min="@(_minHasValue ? FormatParam(_min) : null)"
                           max="@(_maxHasValue ? FormatParam(_max) : null)"
                           step="@(_stepHasValue ? FormatParam(_step) : null)"
-                          InputMode="InputMode"
+                          InputMode="@InputMode"
                           Pattern="@(Pattern+"*")"
+                          OnAdornmentClick="@OnAdornmentClick" 
+                          OnBlur="@OnBlurred" 
+                          OnKeyDown="@HandleKeydown" 
+                          OnKeyUp="@HandleKeyUp"
+                          OnIncrement="@Increment" 
+                          OnDecrement="@Decrement" 
                           OnMouseWheel="@OnMouseWheel"/>
             </InputContent>
         </MudInputControl>
     </div>
 </CascadingValue>
-
-@code{
-	//avoids the format to use scientific notation for large or small number in floating points types, while covering all options
-	//https://stackoverflow.com/questions/1546113/double-to-string-conversion-without-scientific-notation
-	private const string TagFormat = "0.###################################################################################################################################################################################################################################################################################################################################################";
-
-	private string FormatParam(T value)
-	{
-		if (value is IFormattable f)
-			return f.ToString(TagFormat, CultureInfo.InvariantCulture.NumberFormat);
-		else
-			return null;
-	}
-}

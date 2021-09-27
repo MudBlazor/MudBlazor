@@ -340,16 +340,22 @@ namespace MudBlazor.UnitTests
             var numericField = comp.Instance;
             numericField.Value.Should().Be(1234.56);
             numericField.Text.Should().Be("1234.56");
-            await comp.InvokeAsync(()=>numericField.OnInputKeyDown(new KeyboardEventArgs() { Key = "ArrowUp", Type = "keydown", }));
+            comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = "ArrowUp", Type = "keydown", });
+            comp.Find("input").KeyUp(new KeyboardEventArgs() { Key = "ArrowUp", Type = "keyup", });
             comp.WaitForAssertion(() => numericField.Value.Should().Be(1235.56));
-            await comp.InvokeAsync(()=>numericField.OnInputKeyDown(new KeyboardEventArgs() { Key = "ArrowDown", Type = "keydown", }));
+            comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = "ArrowDown", Type = "keydown", });
+            comp.Find("input").KeyUp(new KeyboardEventArgs() { Key = "ArrowDown", Type = "keyup", });
             comp.WaitForAssertion(() => numericField.Value.Should().Be(1234.56));
-            await comp.InvokeAsync(()=>numericField.OnInputKeyDown(new KeyboardEventArgs() { Key = "c", Type = "keydown", CtrlKey = false }));
+            comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = "c", Type = "keydown", CtrlKey = false });
+            comp.Find("input").KeyUp(new KeyboardEventArgs() { Key = "c", Type = "keyup", CtrlKey = false });
             comp.WaitForAssertion(() => numericField.Value.Should().Be(1234.56));
-            await comp.InvokeAsync(()=>numericField.OnInputKeyDown(new KeyboardEventArgs() { Key = "a", Type = "keydown", }));
+            comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = "a", Type = "keydown", });
+            comp.Find("input").KeyUp(new KeyboardEventArgs() { Key = "a", Type = "keyup", });
             comp.WaitForAssertion(() => numericField.Value.Should().Be(1234.56));
-            await comp.InvokeAsync(()=>numericField.OnInputKeyDown(new KeyboardEventArgs() { Key = "9", Type = "keydown", }));
+            comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = "9", Type = "keydown", });
+            comp.Find("input").KeyUp(new KeyboardEventArgs() { Key = "9", Type = "keyup", });
             comp.WaitForAssertion(() => numericField.Value.Should().Be(1234.56));
+
         }
 
         /// <summary>

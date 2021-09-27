@@ -20,11 +20,6 @@ namespace MudBlazor
                 Culture = CultureInfo.CurrentUICulture,
             };
 
-            if (RuntimeLocation.IsServerSide)
-            {
-                _keyDownPreventDefault = false;
-            }
-
             #region parameters default depending on T
 
             //sbyte
@@ -211,35 +206,30 @@ namespace MudBlazor
 
             return (Num.To<T>(value), false);
         }
-
-        private long _key = 0;
-
-        private bool _keyDownPreventDefault = true;
-
+        
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
             if (firstRender)
             {
                 await _keyInterceptor.Connect(_self, new KeyInterceptorOptions()
                 {
-                    //EnableLogging = true,
+                    EnableLogging = true,
                     TargetClass = "mud-input-slot",
                     Keys = {
-                        new KeyOptions { Key="ArrowUp", SubscribeDown=true, PreventDown = "key+none" }, // prevent scrolling page, instead increment
-                        new KeyOptions { Key="ArrowDown", SubscribeDown=true, PreventDown = "key+none" }, // prevent scrolling page, instead decrement
+                        new KeyOptions { Key="ArrowUp", PreventDown = "key+none" }, // prevent scrolling page, instead increment
+                        new KeyOptions { Key="ArrowDown", PreventDown = "key+none" }, // prevent scrolling page, instead decrement
                         new KeyOptions { Key="/^(?!"+Pattern+").$/", PreventDown = "key+none|key+shift|key+alt" }, // prevent input of all other characters except allowed, like [0-9.,-+]
                     },
                 });
-                _keyInterceptor.KeyDown += OnInputKeyDown;
             }
             await base.OnAfterRenderAsync(firstRender);
         }
 
-        internal async void OnInputKeyDown(KeyboardEventArgs args)
+        protected async Task HandleKeydown(KeyboardEventArgs obj)
         {
             if (Disabled || ReadOnly)
                 return;
-            switch (args.Key)
+            switch (obj.Key)
             {
                 case "ArrowUp":
                     await Increment();
@@ -248,17 +238,10 @@ namespace MudBlazor
                     await Decrement();
                     break;
             }
-        }
-
-        protected Task InterceptKeydown(KeyboardEventArgs obj)
-        {
-            if (Disabled || ReadOnly)
-                return Task.CompletedTask;
             OnKeyDown.InvokeAsync(obj).AndForget();
-            return Task.CompletedTask;
         }
 
-        protected Task InterceptKeyUp(KeyboardEventArgs obj)
+        protected Task HandleKeyUp(KeyboardEventArgs obj)
         {
             if (Disabled || ReadOnly)
                 return Task.CompletedTask;
@@ -388,5 +371,22 @@ namespace MudBlazor
         }
 
         private string GetCounterText() => Counter == null ? string.Empty : (Counter == 0 ? (string.IsNullOrEmpty(Text) ? "0" : $"{Text.Length}") : ((string.IsNullOrEmpty(Text) ? "0" : $"{Text.Length}") + $" / {Counter}"));
+        
+        private Task OnInputValueChanged(string text)
+        {
+            return SetTextAsync(text);
+        }
+
+        //avoids the format to use scientific notation for large or small number in floating points types, while covering all options
+        //https://stackoverflow.com/questions/1546113/double-to-string-conversion-without-scientific-notation
+        private const string TagFormat = "0.###################################################################################################################################################################################################################################################################################################################################################";
+
+        private string FormatParam(T value)
+        {
+            if (value is IFormattable f)
+                return f.ToString(TagFormat, CultureInfo.InvariantCulture.NumberFormat);
+            else
+                return null;
+        }
     }
 }
