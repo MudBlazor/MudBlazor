@@ -134,6 +134,7 @@ namespace MudBlazor
             if (firstRender == true)
             {
                 await _handler.Initialized();
+                await Service.InitializeIfNeeded();
             }
 
             _handler.Release();
