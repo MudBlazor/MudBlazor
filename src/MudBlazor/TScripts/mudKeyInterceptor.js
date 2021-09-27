@@ -17,6 +17,7 @@
 }
 window.mudKeyInterceptor = new MudKeyInterceptorFactory();
 
+/*
 class MudKeyInterceptor {
 
     constructor(dotNetRef, options) {
@@ -225,3 +226,4 @@ class MudKeyInterceptor {
         };
     }
 }
+*/
