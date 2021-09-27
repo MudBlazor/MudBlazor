@@ -77,7 +77,7 @@ namespace MudBlazor
         /// Sets the direction the popover will start from relative to its parent.
         /// </summary>
         /// 
-        [Obsolete("Direction is obsolete. Use Placement instead!", false)]
+        [Obsolete("Direction is obsolete. Use AnchorOrigin and TransformOrigin!", false)]
         [Parameter] public Direction Direction { get; set; } = Direction.Bottom;
 
         /// <summary>
@@ -95,13 +95,13 @@ namespace MudBlazor
         /// <summary>
         /// If true, the select menu will open either above or bellow the input depending on the direction.
         /// </summary>
-        [Obsolete("OffsetX is obsolete. Use X instead!", false)]
+        [Obsolete("OffsetX is obsolete. Use AnchorOrigin and TransformOrigin", false)]
         [Parameter] public bool OffsetX { get; set; }
 
         /// <summary>
         /// If true, the select menu will open either before or after the input depending on the direction.
         /// </summary>
-        [Obsolete("OffsetX is obsolete. Use X instead!", false)]
+        [Obsolete("OffsetX is obsolete. Use AnchorOrigin and TransformOrigin", false)]
         [Parameter] public bool OffsetY { get; set; }
 
         /// <summary>
