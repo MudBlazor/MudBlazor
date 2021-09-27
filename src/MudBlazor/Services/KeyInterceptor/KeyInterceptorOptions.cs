@@ -56,7 +56,7 @@ namespace MudBlazor.Services
         ///
         /// Examples: " " for space, "Tab" for tab, "a" for lowercase A-key.
         /// Also allowed: JS regex such as "/[a-z]/" or "/a|b/" but NOT "/[a-z]/g" or "/[a-z]/i"
-        ///      regex must be inclosed in two forward slashes!
+        ///      regex must be enclosed in two forward slashes!
         /// </summary>
         public string Key { get; set; }
 
