@@ -213,15 +213,15 @@ class MudKeyInterceptor {
     }
 
     toKeyboardEventArgs(args) {
-        const Key = args.key;
-        const Code = args.code;
-        const Location = args.location;
-        const Repeat = args.repeat;
-        const CtrlKey = args.ctrlKey;
-        const ShiftKey = args.shiftKey;
-        const AltKey = args.altKey;
-        const MetaKey = args.metaKey;
-        return { Key, Code, Location, Repeat, CtrlKey, ShiftKey, AltKey, MetaKey };
+        return {
+            Key: args.key,
+            Code: args.code,
+            Location: args.location,
+            Repeat: args.repeat,
+            CtrlKey: args.ctrlKey,
+            ShiftKey: args.shiftKey,
+            AltKey: args.shiftKey,
+            MetaKey: args.metaKey
+        };
     }
-
 }
