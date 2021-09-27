@@ -27,7 +27,7 @@ class MudKeyInterceptor {
         this.logger('[MudBlazor | KeyInterceptor] Interceptor initialized', { options });
     }
 
-    /*
+    
     connect(element) {
         if (!this._options)
             return;
@@ -49,6 +49,7 @@ class MudKeyInterceptor {
         // transform key options into a key lookup
         this._keyOptions = {};
         this._regexOptions = [];
+            /*
         for (const keyOption of this._options.keys) {
             if (!keyOption || !keyOption.key) {
                 this.logger('[MudBlazor | KeyInterceptor] got invalid key options: ', keyOption);
@@ -74,8 +75,9 @@ class MudKeyInterceptor {
         for (const child of this._element.getElementsByClassName(targetClass)) {
             this.attachHandlers(child);
         }
+            */
     }
-    */
+
     disconnect() {
         if (!this._observer)
             return;
