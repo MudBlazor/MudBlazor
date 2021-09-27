@@ -27,6 +27,7 @@ class MudKeyInterceptor {
         this.logger('[MudBlazor | KeyInterceptor] Interceptor initialized', { options });
     }
 
+    /*
     connect(element) {
         if (!this._options)
             return;
@@ -74,7 +75,7 @@ class MudKeyInterceptor {
             this.attachHandlers(child);
         }
     }
-
+    */
     disconnect() {
         if (!this._observer)
             return;
