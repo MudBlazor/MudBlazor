@@ -22,6 +22,8 @@ namespace MudBlazor
 
         internal override InputType GetInputType() => InputType;
 
+        private string GetCounterText() => Counter == null ? string.Empty : (Counter == 0 ? (string.IsNullOrEmpty(Text) ? "0" : $"{Text.Length}") : ((string.IsNullOrEmpty(Text) ? "0" : $"{Text.Length}") + $" / {Counter}"));
+
         /// <summary>
         /// Show clear button.
         /// </summary>
@@ -55,7 +57,6 @@ namespace MudBlazor
         {
             await _elementReference.SetText(null);
         }
-
     }
 
     [Obsolete]

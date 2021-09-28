@@ -216,6 +216,7 @@ namespace MudBlazor
             IsOpen = false;
             BeginValidate();
             _elementReference?.SetText(optionText);
+            _elementReference?.FocusAsync().AndForget();
             StateHasChanged();
         }
 
@@ -317,17 +318,27 @@ namespace MudBlazor
             StateHasChanged();
         }
 
+        int _elementKey = 0;
+
         /// <summary>
         /// Clears the autocomplete's text
         /// </summary>
         public async Task Clear()
         {
+            IsOpen = false;
             await SetTextAsync(string.Empty, updateValue: false);
             await CoerceValueToText();
-            IsOpen = false;
+            await _elementReference.SetText("");
             _timer?.Dispose();
             StateHasChanged();
         }
+
+        protected override async void ResetValue()
+        {
+            await Clear();
+            base.ResetValue();
+        }
+
 
         private string GetItemString(T item)
         {
@@ -506,11 +517,11 @@ namespace MudBlazor
             return _elementReference.SelectRangeAsync(pos1, pos2);
         }
 
-        private void OnTextChanged(string text)
+        private async Task OnTextChanged(string text)
         {
             if (text == null)
                 return;
-            _ = SetTextAsync(text, true);
+            await SetTextAsync(text, true);
         }
 
     }
