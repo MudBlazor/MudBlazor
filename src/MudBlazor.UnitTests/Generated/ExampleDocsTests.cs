@@ -31,6 +31,7 @@ namespace MudBlazor.UnitTests.Components
             ctx.Services.AddTransient<IResizeObserver, MockResizeObserver>();
             ctx.Services.AddSingleton<IBrowserWindowSizeProvider>(new MockBrowserWindowSizeProvider());
             ctx.Services.AddTransient<IEventListener, EventListener>();
+            ctx.Services.AddSingleton<IMudPopoverService, MockPopoverService>();
 
             ctx.Services.AddOptions();
             ctx.Services.AddScoped(sp =>
