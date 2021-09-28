@@ -446,10 +446,10 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// When calling Clear() the popup should not open and Value and Text should be cleared.
+        /// When calling Clear(), menu should closed, Value and Text should be cleared.
         /// </summary>
         [Test]
-        public async Task Autocomplete_Should_CloseOnClear()
+        public async Task Autocomplete_CheckTextValueandOpenState_OnClear()
         {
             var comp = Context.RenderComponent<AutocompleteTest1>();
             Console.WriteLine(comp.Markup);
@@ -465,14 +465,14 @@ namespace MudBlazor.UnitTests.Components
             autocomplete.Value.Should().Be("Alabama");
             autocomplete.Text.Should().Be("Alabama");
 
-            // Clearing it
+            // ToggleMenu to open menu and Clear to close it and check the text and value
+            await comp.InvokeAsync(() => autocomplete.ToggleMenu());
             await comp.InvokeAsync(() => autocomplete.Clear().Wait());
-
-            comp.WaitForAssertion(() => comp.Markup.Should().NotContain("mud-popover-open"));
+            comp.Markup.Should().NotContain("mud-popover-open");
             autocomplete.Value.Should().Be("");
             autocomplete.Text.Should().Be("");
 
-            // now let's type a different state to see the popup open
+            // now let's type a different state
             autocompletecomp.Find("input").Input("Calif");
             comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open"));
             Console.WriteLine(comp.Markup);
@@ -480,12 +480,53 @@ namespace MudBlazor.UnitTests.Components
             items.Length.Should().Be(1);
             items.First().Markup.Should().Contain("California");
 
-            // Clearing it should close the popup
+            // Clearing it and check the close status text and value again
             await comp.InvokeAsync(() => autocomplete.Clear().Wait());
-
-            comp.WaitForAssertion(() => comp.Markup.Should().NotContain("mud-popover-open"));
+            comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().NotContain("mud-popover-open"));
             autocomplete.Value.Should().Be("");
             autocomplete.Text.Should().Be("");
+        }
+
+        /// <summary>
+        /// When calling Reset(), menu should closed, Value and Text should be null.
+        /// </summary>
+        [Test]
+        public async Task Autocomplete_CheckTextAndValue_OnReset()
+        {
+            var comp = Context.RenderComponent<AutocompleteTest1>();
+            Console.WriteLine(comp.Markup);
+            // select elements needed for the test
+            var autocompletecomp = comp.FindComponent<MudAutocomplete<string>>();
+            autocompletecomp.SetParam(x => x.CoerceValue, true);
+            var autocomplete = autocompletecomp.Instance;
+
+            //No popover-open, due it's closed
+            comp.Markup.Should().NotContain("mud-popover-open");
+
+            // check initial state
+            autocomplete.Value.Should().Be("Alabama");
+            autocomplete.Text.Should().Be("Alabama");
+
+            // Reset it
+            await comp.InvokeAsync(() => autocomplete.ToggleMenu());
+            await comp.InvokeAsync(() => autocomplete.Reset());
+            comp.Markup.Should().NotContain("mud-popover-open");
+            autocomplete.Value.Should().Be(null);
+            autocomplete.Text.Should().Be(null);
+
+            // now let's type a different state
+            autocompletecomp.Find("input").Input("Calif");
+            comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open"));
+            Console.WriteLine(comp.Markup);
+            var items = comp.FindComponents<MudListItem>().ToArray();
+            items.Length.Should().Be(1);
+            items.First().Markup.Should().Contain("California");
+
+            // Reseting it should close popover and set Text and Value to null again
+            await comp.InvokeAsync(() => autocomplete.Reset());
+            comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().NotContain("mud-popover-open"));
+            autocomplete.Value.Should().Be(null);
+            autocomplete.Text.Should().Be(null);
         }
 
         [Test]
