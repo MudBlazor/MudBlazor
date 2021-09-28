@@ -90,8 +90,8 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("input").Change("seventeen");
             comp.Find("input").Blur();
             Console.WriteLine(comp.Markup);
-            comp.FindAll("p.mud-input-error").Count.Should().Be(1);
-            comp.Find("p.mud-input-error").TextContent.Trim().Should().Be("Not a valid number");
+            comp.FindAll("div.mud-input-error").Count.Should().Be(1);
+            comp.Find("div.mud-input-error").TextContent.Trim().Should().Be("Not a valid number");
         }
 
         /// <summary>
@@ -504,6 +504,32 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(async () => await textfield.Clear());
             textfield.Value.Should().Be(null);
             textfield.Text.Should().Be(null);
+        }
+
+        [Test]
+        public void TextField_CharacterCount()
+        {
+            var comp = Context.RenderComponent<MudTextField<string>>();
+            var inputControl = comp.FindComponent<MudInputControl>();
+            //Condition 1
+            comp.Instance.Counter = null;
+            inputControl.Instance.CounterText.Should().Be("");
+            //Condition 2
+            comp.Instance.Counter = 25;
+            comp.Find("input").Change("Test text");
+            inputControl.Instance.CounterText.Should().Be("9 / 25");
+            //Condition 3
+            comp.Instance.Counter = 0;
+            comp.Find("input").Change("Test text with total of 56 characters a aaaaaaaaa aaaaaa");
+            inputControl.Instance.CounterText.Should().Be("56");
+            //Condition 4
+            comp.Instance.Counter = 25;
+            comp.Instance.MaxLength = 30;
+            comp.Find("input").Change("Test text with total of25");
+            inputControl.Instance.CounterText.Should().Be("25 / 25");
+            //Condition 5
+            comp.Find("input").Change("Test text with total of 56 characters a aaaaaaaaa aaaaaa");
+            inputControl.Instance.CounterText.Should().Be("56 / 25");
         }
 
         /// <summary>

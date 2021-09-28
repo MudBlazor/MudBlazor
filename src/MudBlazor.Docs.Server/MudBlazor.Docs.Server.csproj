@@ -8,9 +8,9 @@
   <ItemGroup>
     <PackageReference Include="Blazor-Analytics" Version="3.9.0" />
     <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.18.0" />
-    <PackageReference Include="Toolbelt.Blazor.HeadElement" Version="5.4.3" />
-    <PackageReference Include="Toolbelt.Blazor.HeadElement.ServerPrerendering" Version="1.5.3" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="5.0.9" />
+    <PackageReference Include="Toolbelt.Blazor.HeadElement" Version="6.0.0" />
+    <PackageReference Include="Toolbelt.Blazor.HeadElement.ServerPrerendering" Version="6.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="5.0.10" />
   </ItemGroup>
 
   <ItemGroup>
