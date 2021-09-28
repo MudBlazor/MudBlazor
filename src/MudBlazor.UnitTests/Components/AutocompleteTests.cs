@@ -556,5 +556,15 @@ namespace MudBlazor.UnitTests.Components
             // Arkansas should be selected value
             autocompleteInstance.Value.Should().Be(arkansasString);
         }
+
+        /// <summary>
+        /// When changing the bound value, ensure the new value is displayed
+        /// </summary>
+        /// <returns></returns>
+        [Test]
+        public async Task Autocomplete_ChangeBoundValue()
+        {
+            var comp = Context.RenderComponent<AutocompleteChangeBoundObjectTest>();
+        }
     }
 }
