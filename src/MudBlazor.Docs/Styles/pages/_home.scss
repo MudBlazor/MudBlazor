@@ -12,6 +12,13 @@
     max-width: 300px;
 }
 
+.mudblazor-tempory-title-hacktoberfest {
+    font-size: 1.5rem;
+    letter-spacing: .1rem;
+    margin-bottom: 12px;
+}
+
+
 .mudblazor-text-h5 {
     letter-spacing: .1rem;
     font-size: 2rem;
@@ -28,11 +35,15 @@
     font-weight: 300;
 }
 
+.mudblazor-hacktober-info {
+    font-size: 1rem;
+    text-align: center;
+    -webkit-animation: hacktober-info 3s cubic-bezier(0.215, 0.610, 0.355, 1.000) 3s both;
+    animation: hacktober-info 3s cubic-bezier(0.215, 0.610, 0.355, 1.000) 3s both;
+}
+
 @media (min-width: 960px) {
 
-    .mudblazor-index {
-        margin-top: 128px;
-    }
     .mudblazor-svg {
         max-width: 400px;
     }
@@ -40,6 +51,11 @@
     .mudblazor-text-h5 {
         font-size: 3rem;
         letter-spacing: .2rem;
+
+        .mudblazor-tempory-title-hacktoberfest {
+            font-size: 2rem;
+            letter-spacing: .2rem;
+        }
 
         &.smaller {
             font-size: 2.5rem;
@@ -164,3 +180,51 @@
     }
 }
 
+@keyframes zoom-in-58eca5dc-d40c-44cf-9db1-11f3dedc4664 {
+    0% {
+        animation-timing-function: cubic-bezier(0.0436,0.6939,0.3878,0.8531);
+        transform: matrix(0.01,0,0,0.01,0,0);
+    }
+
+    100% {
+        transform: matrix(1,0,0,1,0,0);
+    }
+}
+
+@-webkit-keyframes hacktober-info {
+    0% {
+        letter-spacing: -0.5em;
+        -webkit-transform: translateZ(-700px);
+        transform: translateZ(-700px);
+        opacity: 0;
+    }
+
+    40% {
+        opacity: 0.6;
+    }
+
+    100% {
+        -webkit-transform: translateZ(0);
+        transform: translateZ(0);
+        opacity: 1;
+    }
+}
+
+@keyframes hacktober-info {
+    0% {
+        letter-spacing: -0.5em;
+        -webkit-transform: translateZ(-700px);
+        transform: translateZ(-700px);
+        opacity: 0;
+    }
+
+    40% {
+        opacity: 0.6;
+    }
+
+    100% {
+        -webkit-transform: translateZ(0);
+        transform: translateZ(0);
+        opacity: 1;
+    }
+}
