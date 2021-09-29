@@ -540,7 +540,7 @@ namespace MudBlazor.UnitTests.Components
             Console.WriteLine(comp.Markup);
 
             comp.Instance.SetPanelActive(4);
-
+           
             GetSliderValue(comp).Should().Be(4 * 100.0);
 
             await comp.Instance.AddPanel();
@@ -997,14 +997,12 @@ namespace MudBlazor.UnitTests.Components
 
             var styleAttribute = slider.GetAttribute("style");
             var indexToSplit = styleAttribute.IndexOf($"{attribute}:");
-            var substring = styleAttribute.Substring(indexToSplit + attribute.Length + 1);
-            substring = substring.Remove(substring.Length - 3);
+            var substring = styleAttribute.Substring(indexToSplit + attribute.Length + 1).Split(';')[0];
+            substring = substring.Remove(substring.Length - 2);
             var value = double.Parse(substring, CultureInfo.InvariantCulture);
+
             return value;
         }
-
-
-
 
         #endregion
     }
