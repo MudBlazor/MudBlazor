@@ -25,6 +25,9 @@
             .mud-nav-link-text {
                 margin-left: 0px;
                 margin-inline-start: 0px;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
             }
         }
     }
