@@ -994,19 +994,17 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task ToggleTabsSliderAnimation()
         {
-            Context.Services.Add(new ServiceDescriptor(typeof(IResizeObserver), new MockResizeObserver()));
-
             //Toggle DisableSliderAnimation to true
             //Check if style attr contains transform: none
             var comp = Context.RenderComponent<ToggleTabsSlideAnimationTest>();
-            comp.Instance.toggle = true;
+            comp.SetParametersAndRender(x => x.Add(y => y.toggle, true));
             var slider = comp.Find(".mud-tab-slider");
             var styleAttr = slider.GetAttribute("style");
             styleAttr.Contains("transition:none").Should().BeTrue();
 
             //Toggle DisableSliderAnimation to false
             //Check if style attr does not contain transform: none
-            comp.Instance.toggle = false;
+            comp.SetParametersAndRender(x => x.Add(y => y.toggle, false));
             slider = comp.Find(".mud-tab-slider");
             styleAttr = slider.GetAttribute("style");
             styleAttr.Contains("transition: none").Should().BeFalse();
@@ -1026,6 +1024,9 @@ namespace MudBlazor.UnitTests.Components
             var value = double.Parse(substring, CultureInfo.InvariantCulture);
             return value;
         }
+
+
+
 
         #endregion
     }
