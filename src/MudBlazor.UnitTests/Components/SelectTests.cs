@@ -45,7 +45,7 @@ namespace MudBlazor.UnitTests.Components
             menu.ClassList.Should().NotContain("mud-popover-open");
             select.Instance.Value.Should().Be("2");
             // now we cheat and click the list without opening the menu ;)
-            
+
             input.Click();
             items = comp.FindAll("div.mud-list-item").ToArray();
 
@@ -122,6 +122,7 @@ namespace MudBlazor.UnitTests.Components
             // select elements needed for the test
             var select = comp.FindComponent<MudSelect<MyEnum>>();
             var input = comp.Find("div.mud-input-control");
+            input.Click();
 
             select.Instance.Value.Should().Be(default(MyEnum));
             select.Instance.Text.Should().Be(default(MyEnum).ToString());
@@ -299,7 +300,7 @@ namespace MudBlazor.UnitTests.Components
             selectedValuesChangedCount.Should().Be(1);
             textChangedCount.Should().Be(0);
             string.Join(",", selectedValues).Should().Be("2");
-            
+
             input.Click();
             items = comp.FindAll("div.mud-list-item").ToArray();
 
@@ -469,9 +470,20 @@ namespace MudBlazor.UnitTests.Components
             // Open the menu
             input.Click();
             menu.ClassList.Should().Contain("mud-popover-open");
-            // Check that the icon corresponds to a checked checkbox
-            var mudListItem = comp.FindComponent<MudListItem>();
-            mudListItem.Instance.Icon.Should().Be("<path d=\"M0 0h24v24H0z\" fill=\"none\"/><path d=\"M19 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.11 0 2-.9 2-2V5c0-1.1-.89-2-2-2zm-9 14l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z\"/>");
+
+            // get the first (select all item) and check if it is selected
+            var selectAllItem = comp.FindComponent<MudListItem>();
+            selectAllItem.Instance.Icon.Should().Be("<path d=\"M0 0h24v24H0z\" fill=\"none\"/><path d=\"M19 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.11 0 2-.9 2-2V5c0-1.1-.89-2-2-2zm-9 14l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z\"/>");
+
+            // Check that all select items are actually selected
+            var mudListItems = comp.FindComponents<MudSelectItem<string>>();
+
+            mudListItems.Should().HaveCount(7);
+            foreach (var item in mudListItems)
+            {
+                item.Instance.IsSelected.Should().BeTrue();
+                item.FindComponent<MudListItem>().Instance.Icon.Should().Be("<path d=\"M0 0h24v24H0z\" fill=\"none\"/><path d=\"M19 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.11 0 2-.9 2-2V5c0-1.1-.89-2-2-2zm-9 14l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z\"/>");
+            }
         }
 
         [Test]
@@ -522,7 +534,7 @@ namespace MudBlazor.UnitTests.Components
             input.Click();
             items = comp.FindAll("div.mud-list-item").ToArray();
             items[0].Click();
-            
+
             select.Instance.Value.Should().Be("1");
             select.Instance.Text.Should().Be("1");
             validatedValue.Should().Be("1");
@@ -625,7 +637,7 @@ namespace MudBlazor.UnitTests.Components
 
             select.Instance.Value.Should().Be("Orange");
             comp.Instance.ChangeCount.Should().Be(1);
-           
+
         }
 
         #region DataAttribute validation
@@ -709,7 +721,7 @@ namespace MudBlazor.UnitTests.Components
             // Nr 2 should be hilited
             comp.FindAll("div.mud-selected-item").Count.Should().Be(1);
             comp.FindAll("div.mud-list-item")[1].ToMarkup().Should().Contain("mud-selected-item");
-            await comp.InvokeAsync(()=>select.Instance.CloseMenu());
+            await comp.InvokeAsync(() => select.Instance.CloseMenu());
             select.SetParam(nameof(MudSelect<string>.Value), null);
             await comp.InvokeAsync(() => select.Instance.OpenMenu());
             // no option should be hilited

@@ -15,6 +15,7 @@ namespace MudBlazor
         private bool _dense;
         private string multiSelectionText;
         private bool? _selectAllChecked;
+        private MudElement _multiSelectContainer;
 
         protected string Classname =>
             new CssBuilder("mud-select")
@@ -235,15 +236,32 @@ namespace MudBlazor
         protected Dictionary<T, MudSelectItem<T>> _valueLookup = new();
         object _activeItemId = null;
 
-        internal void Add(MudSelectItem<T> item)
+        internal bool Add(MudSelectItem<T> item)
         {
             // Check to avoid duplicate items based on their value
             // It fixes that the number of real items is correct in the items list
             if (!_items.Select(x => x.Value).Contains(item.Value))
             {
                 _items.Add(item);
+                UpdateSelectAllChecked();
+
                 if (item.Value != null)
+                {
                     _valueLookup[item.Value] = item;
+
+                    if(item.Value.Equals(Value))
+                    {
+                        _activeItemId = item.ItemId;
+                        return true;
+                    }
+
+                }
+
+                return false;
+            }
+            else
+            {
+                return false;
             }
         }
 
@@ -425,6 +443,7 @@ namespace MudBlazor
         {
             if (MultiSelection && SelectAll)
             {
+                var oldState = _selectAllChecked;
                 if (SelectedValues.Count == 0)
                 { 
                     _selectAllChecked = false;
@@ -436,6 +455,11 @@ namespace MudBlazor
                 else
                 {
                     _selectAllChecked = null;
+                }
+
+                if(oldState != _selectAllChecked)
+                {
+                    _multiSelectContainer?.Refresh();
                 }
             }
         }
