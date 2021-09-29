@@ -1,6 +1,7 @@
 ﻿
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Bunit;
 using FluentAssertions;
 using MudBlazor.Docs.Examples;
@@ -139,6 +140,23 @@ namespace MudBlazor.UnitTests.Components
             // the test should run through instantly (max 5s for a slow build server). 
             // without the fix it took minutes on a fast computer
             var comp = Context.RenderComponent<LineChartWithBigValuesTest>();
+        }
+
+        /// <summary>  
+        /// Test setting values to Donut inner text and font size.
+        /// </summary>
+        [Test]
+        [TestCase("69", 11)]
+        [TestCase("text", -5)]
+        public void DonutChartInnerText(string text, int size)
+        {
+            var comp = Context.RenderComponent<DonutChartWithInnerTextTest>();
+
+            comp.Instance.options.DonutInnerText = text;
+            comp.Instance.options.DonutInnerTextSize = size;
+            comp.Render<DonutChartWithInnerTextTest>();
+            comp.Find("text.donut-inner-text").InnerHtml.Should().Be(text);
+            comp.Find("text.donut-inner-text").GetAttribute("font-size").Equals(size.ToString()).Should().BeTrue();
         }
     }
 }
