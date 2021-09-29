@@ -154,7 +154,7 @@ namespace MudBlazor.UnitTests.Components
 
             comp.Instance.options.DonutInnerText = text;
             comp.Instance.options.DonutInnerTextSize = size;
-            comp.Render<DonutChartWithInnerTextTest>();
+
             comp.Find("text.donut-inner-text").InnerHtml.Should().Be(text);
             comp.Find("text.donut-inner-text").GetAttribute("font-size").Equals(size.ToString()).Should().BeTrue();
         }
