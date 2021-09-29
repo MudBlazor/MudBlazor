@@ -7,10 +7,7 @@
                          CoerceText="@coerceText" CoerceValue="@coerceValue"/>
     </MudItem>
     <MudItem xs="12" sm="4">
-        <MudButton OnClick="(()=>ActivateValue1())" Variant="Variant.Outlined">Activate Value 1</MudButton>
-    </MudItem>
-    <MudItem xs="12" sm="4">
-        <MudButton OnClick="(()=>ActivateValue2())" Variant="Variant.Outlined">Activate Value 2</MudButton>
+        <MudButton OnClick="(()=>ToggleValue())" Variant="Variant.Outlined">Toggle Value</MudButton>
     </MudItem>
     <MudItem xs="12" md="12" class="flex-column">
         <MudSwitch @bind-Checked="resetValueOnEmptyText" Color="Color.Primary">Reset Value on empty Text</MudSwitch>
@@ -50,15 +47,9 @@
         public string StringValue {get;set;}
     }
 
-    private void ActivateValue1()
+    private void ToggleValue()
     {
-        ActiveStringHolder = StringHolder1;
-        StateHasChanged();
-    }
-
-    private void ActivateValue2()
-    {
-        ActiveStringHolder = StringHolder2;
+        ActiveStringHolder = ActiveStringHolder.Equals(StringHolder1)? StringHolder2 : StringHolder1;
         StateHasChanged();
     }
 
@@ -85,6 +76,6 @@
     }
     protected override void OnInitialized()
     {
-        ActivateValue1();
+        ActiveStringHolder = StringHolder1;
     }
 }
