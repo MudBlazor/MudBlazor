@@ -1,4 +1,5 @@
-﻿@namespace MudBlazor.UnitTests.TestComponents
+﻿@using System.Dynamic
+@namespace MudBlazor.UnitTests.TestComponents
 
 <MudGrid>
     <MudItem xs="12" sm="4">
@@ -21,6 +22,9 @@
     private bool resetValueOnEmptyText;
     private bool coerceText;
     private bool coerceValue;
+
+    private dynamic StateObject1 = new ExpandoObject();
+    private dynamic StateObject2 = new ExpandoObject();
     private StringHolder StringHolder1 = new StringHolder(){StringValue="Florida"};
     private StringHolder StringHolder2 = new StringHolder(){StringValue="Georgia"};
     private StringHolder ActiveStringHolder = null;
@@ -76,6 +80,8 @@
     }
     protected override void OnInitialized()
     {
+        StateObject1.StringValue = "Florida";
+        StateObject2.StringValue = "Georgia";
         ActiveStringHolder = StringHolder1;
     }
 }
