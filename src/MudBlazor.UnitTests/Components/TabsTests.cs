@@ -988,6 +988,28 @@ namespace MudBlazor.UnitTests.Components
             panels[1].TextContent.Contains("Hello World!").Should().BeTrue();
         }
 
+        /// <summary>
+        ///  Depending on the DisableSliderAnimation parameter, it should toggle the transition style attribute
+        /// </summary>
+        [Test]
+        public async Task ToggleTabsSliderAnimation()
+        {
+            //Toggle DisableSliderAnimation to true
+            //Check if style attr contains transform: none
+            var comp = Context.RenderComponent<ToggleTabsSlideAnimationTest>();
+            comp.SetParametersAndRender(x => x.Add(y => y.toggle, true));
+            var slider = comp.Find(".mud-tab-slider");
+            var styleAttr = slider.GetAttribute("style");
+            styleAttr.Contains("transition:none").Should().BeTrue();
+
+            //Toggle DisableSliderAnimation to false
+            //Check if style attr does not contain transform: none
+            comp.SetParametersAndRender(x => x.Add(y => y.toggle, false));
+            slider = comp.Find(".mud-tab-slider");
+            styleAttr = slider.GetAttribute("style");
+            styleAttr.Contains("transition: none").Should().BeFalse();
+        }
+
         #region Helper
 
         private static double GetSliderValue(IRenderedComponent<ScrollableTabsTest> comp, string attribute = "left")
