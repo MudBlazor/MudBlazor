@@ -1,0 +1,28 @@
+﻿<MudGrid>
+    <MudItem xs="12" md="6" lg="4">
+        <MudPaper Square="true" Elevation="5" Class="pa-5">
+            <MudChart ChartType="ChartType.Donut" Width="300px" Height="300px" 
+                InputData="DonutValues.ToArray()" 
+                InputLabels="DonutLabels.ToArray()"
+                ChartOptions="DonutOptions">
+            </MudChart>
+        </MudPaper>
+    </MudItem>
+</MudGrid>
+
+@code {
+	private string[] DonutLabels { get; set; } = {"Data 1", "Data 2", "Data 3", "Data 4" };
+    private double[] DonutValues { get; set; } = {10, 20, 5, 1008};
+
+    private ChartOptions DonutOptions { get; set; } = new();
+
+	protected async override Task OnInitializedAsync()
+    {
+        DonutOptions.ChartPalette = new string[] { "#00B0FF","#FFC400","#7E57C2","#00E676" };
+		DonutOptions.DonutInnerText = DonutValues.Sum().ToString();
+		DonutOptions.DonutInnerTextSize = 10;
+
+        await base.OnInitializedAsync();
+    }
+    
+}
