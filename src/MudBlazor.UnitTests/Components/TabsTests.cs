@@ -994,17 +994,19 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task ToggleTabsSliderAnimation()
         {
+            Context.Services.Add(new ServiceDescriptor(typeof(IResizeObserver), new MockResizeObserver()));
+
             //Toggle DisableSliderAnimation to true
             //Check if style attr contains transform: none
             var comp = Context.RenderComponent<ToggleTabsSlideAnimationTest>();
-            comp.SetParametersAndRender(x => x.Add(y => y.toggle, true));
+            comp.Instance.toggle = true;
             var slider = comp.Find(".mud-tab-slider");
             var styleAttr = slider.GetAttribute("style");
             styleAttr.Contains("transition:none").Should().BeTrue();
 
             //Toggle DisableSliderAnimation to false
             //Check if style attr does not contain transform: none
-            comp.SetParametersAndRender(x => x.Add(y => y.toggle, false));
+            comp.Instance.toggle = false;
             slider = comp.Find(".mud-tab-slider");
             styleAttr = slider.GetAttribute("style");
             styleAttr.Contains("transition: none").Should().BeFalse();
