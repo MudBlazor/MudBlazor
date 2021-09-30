@@ -70,11 +70,20 @@
 
                         <div class="@GetCalendarHeaderClasses(tempMonth)">
                             <div class="mud-picker-calendar-header-switch">
-                                <MudIconButton aria-label="@prevLabel" Class="mud-picker-nav-button-prev mud-flip-x-rtl" Icon="@PreviousIcon" OnClick="OnPreviousMonthClick"/>
-                                <button type="button" class="mud-picker-slide-transition mud-picker-calendar-header-transition" @onclick="(() => OnMonthClicked(tempMonth))"  @onclick:stopPropagation="true">
+                                @if (YearChangeButtons)
+	                            {
+		                            <MudIconButton Class="mud-picker-nav-button-prev mud-flip-x-rtl" Icon="@PreviousYearIcon" OnClick="OnPreviousYearClick" />
+
+	                            }
+                                <MudIconButton aria-label="@prevLabel" Class="mud-picker-nav-button-prev mud-flip-x-rtl" Icon="@PreviousIcon" OnClick="OnPreviousMonthClick" />
+                                <button type="button" class="mud-picker-slide-transition mud-picker-calendar-header-transition" @onclick="(() => OnMonthClicked(tempMonth))" @onclick:stopPropagation="true">
                                     <MudText Typo="Typo.body1" Align="Align.Center">@GetMonthName(tempMonth)</MudText>
                                 </button>
-                                <MudIconButton aria-label="@nextLabel" Class="mud-picker-nav-button-next mud-flip-x-rtl" Icon="@NextIcon" OnClick="OnNextMonthClick"/>
+                                <MudIconButton aria-label="@nextLabel" Class="mud-picker-nav-button-next mud-flip-x-rtl" Icon="@NextIcon" OnClick="OnNextMonthClick" />
+                                @if(YearChangeButtons)
+                                {
+                                    <MudIconButton Class="mud-picker-nav-button-next mud-flip-x-rtl" Icon="@NextYearIcon" OnClick="OnNextYearClick" />
+                                }
                             </div>
                             <div class="mud-picker-calendar-header-day">
                                 @if (ShowWeekNumbers)

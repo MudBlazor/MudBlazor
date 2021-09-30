@@ -141,9 +141,24 @@ namespace MudBlazor
         [Parameter] public string PreviousIcon { get; set; } = Icons.Material.Filled.ChevronLeft;
 
         /// <summary>
+        /// Custom previous year icon.
+        /// </summary>
+        [Parameter] public string PreviousYearIcon { get; set; } = Icons.Material.Filled.FirstPage;
+
+        /// <summary>
         /// Custom next icon.
         /// </summary>
         [Parameter] public string NextIcon { get; set; } = Icons.Material.Filled.ChevronRight;
+
+        /// <summary>
+        /// Custom next year icon.
+        /// </summary>
+        [Parameter] public string NextYearIcon { get; set; } = Icons.Material.Filled.LastPage;
+
+        /// <summary>
+        /// If true, shows previous/next year buttons in day selection view.
+        /// </summary>
+        [Parameter] public bool YearChangeButtons { get; set; } = true;
 
         protected virtual bool IsRange { get; } = false;
 
