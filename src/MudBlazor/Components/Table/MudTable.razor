@@ -142,7 +142,7 @@
                             </MudVirtualize>
                         }
                     }
-                    @if((Loading || NoRecordsFound)
+                    @if((NoRecordsFound || (Loading && (CurrentPageItems?.Count()??0) == 0 && (_server_data?.Items?.Count()??0) == 0))
                         && (Loading ? LoadingContent != null : NoRecordsContent != null))
                     {
                         <tr>
