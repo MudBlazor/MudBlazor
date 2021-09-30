@@ -12,6 +12,7 @@ namespace MudBlazor
     public abstract class MudTableBase : MudComponentBase
     {
         internal object _editingItem = null;
+        internal bool _isEditing => _editingItem != null;
 
         private int _currentPage = 0;
         private int? _rowsPerPage;
