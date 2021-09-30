@@ -12,8 +12,8 @@
       "commandName": "IISExpress",
       "launchBrowser": true,
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development",
-        "APIBASE": "https://localhost:44399/"
+        "APIBASE": "https://localhost:44399/",
+        "ASPNETCORE_ENVIRONMENT": "Development"
       },
       "inspectUri": "{wsProtocol}://{url.hostname}:{url.port}/_framework/debug/ws-proxy?browser={browserInspectUri}"
     },
@@ -22,8 +22,8 @@
       "launchBrowser": true,
       "launchUrl": "components/datepicker",
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development",
-        "APIBASE": "https://localhost:5001/"
+        "APIBASE": "https://localhost:5001/",
+        "ASPNETCORE_ENVIRONMENT": "Development"
       },
       "applicationUrl": "https://localhost:5001;http://localhost:5000",
       "inspectUri": "{wsProtocol}://{url.hostname}:{url.port}/_framework/debug/ws-proxy?browser={browserInspectUri}"
