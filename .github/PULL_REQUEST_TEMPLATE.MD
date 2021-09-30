@@ -10,13 +10,9 @@ Testing sections can be removed for documentation changes
 
 
 ## Description
-<!-- Describe your changes in detail -->
+<!-- Describe your changes in detail any why -->
 <!-- Note any issues that are resolved by this PR -->
 <!-- e.g. resolves #1337 or fixes #9310 -->
-
-## Motivation and Context
-<!-- Why is this change required? What problem does it solve? -->
-<!-- If it fixes an open issue, please link to the issue here. -->
 
 ## How Has This Been Tested?
 <!-- All PR's should implement unit tests if possible -->
@@ -29,12 +25,12 @@ Testing sections can be removed for documentation changes
 - [ ] Bug fix (non-breaking change which fixes an issue)
 - [ ] New feature (non-breaking change which adds functionality)
 - [ ] Breaking change (fix or feature that would cause existing functionality to not work as expected)
-- [ ] Improvement/refactoring (non-breaking change that doesn't add any features but makes things better)
+
+<!-- If you made any visual changes, provide screenshots of before/after, it its moving parts, please provide high quality gif, wemb or mp4 -->
 
 ## Checklist:
 <!-- Go over all the following points, and put an `x` in all the boxes that apply. -->
 <!-- If you're unsure about any of these, don't hesitate to ask. We're here to help! -->
-- [ ] The PR title is no longer than 64 characters.
 - [ ] The PR is submitted to the correct branch (`dev`).
 - [ ] My code follows the code style of this project.
-- [ ] I've added relevant changes to the documentation (applies to new features and breaking changes in library)
+- [ ] I've added relevant tests.

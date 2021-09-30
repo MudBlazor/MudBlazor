@@ -17,6 +17,10 @@
         }
     }
 
+    &.mud-readonly, .mud-readonly:hover {
+        cursor: default;
+    }
+
     & .mud-checkbox-dense {
         padding: 4px;
     }
