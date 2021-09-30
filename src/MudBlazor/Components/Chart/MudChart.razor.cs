@@ -20,6 +20,9 @@ namespace MudBlazor
 
         [Parameter] public ChartOptions ChartOptions { get; set; } = new ChartOptions();
 
+        /// <summary>
+        /// Custom user generated content with svg elements.
+        /// </summary>
         [Parameter] public RenderFragment CustomGraphics { get; set; }
 
         protected string Classname =>
