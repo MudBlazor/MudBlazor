@@ -349,9 +349,9 @@ namespace MudBlazor.UnitTests.Components
         /// page size select after paging tests
         /// </summary>
         [Test]
-        public async Task TablePagingChangePageSizeAfterPaging()
+        public async Task TablePagingChangePageSizeAfterPagingObsolete()
         {
-            var comp = Context.RenderComponent<TableServerSideDataTest2>();
+            var comp = Context.RenderComponent<TableServerSideDataTest2Page>();
             // print the generated html
             Console.WriteLine(comp.Markup);
             // select elements needed for the test
@@ -372,6 +372,48 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("td")[0].TextContent.Trim().Should().Be("28");
             comp.FindAll("td")[1].TextContent.Trim().Should().Be("29");
             comp.FindAll("td")[2].TextContent.Trim().Should().Be("30");
+            comp.FindAll("div.mud-table-pagination-caption")[^1].TextContent.Trim().Should().Be("91-99 of 99");
+            comp.FindAll("button")[0].IsDisabled().Should().Be(false);
+            comp.FindAll("button")[1].IsDisabled().Should().Be(false);
+            comp.FindAll("button")[2].IsDisabled().Should().Be(true);
+            comp.FindAll("button")[3].IsDisabled().Should().Be(true);
+            // change page size
+            await table.InvokeAsync(() => table.Instance.SetRowsPerPage(100));
+            pager.Value.Should().Be("100");
+            comp.FindAll("div.mud-table-pagination-caption")[^1].TextContent.Trim().Should().Be("1-99 of 99");
+            comp.FindAll("button")[0].IsDisabled().Should().Be(true);
+            comp.FindAll("button")[1].IsDisabled().Should().Be(true);
+            comp.FindAll("button")[2].IsDisabled().Should().Be(true);
+            comp.FindAll("button")[3].IsDisabled().Should().Be(true);
+        }
+
+        /// <summary>
+        /// page size select after paging tests
+        /// </summary>
+        [Test]
+        public async Task TablePagingChangePageSizeAfterPaging()
+        {
+            var comp = Context.RenderComponent<TableServerSideDataTest2Start>();
+            // print the generated html
+            Console.WriteLine(comp.Markup);
+            // select elements needed for the test
+            var table = comp.FindComponent<MudTable<int>>();
+            var pager = comp.FindComponent<MudSelect<string>>().Instance;
+            // after initial load
+            comp.FindAll("tr").Count.Should().Be(4); // three rows + header row
+            comp.FindAll("td")[0].TextContent.Trim().Should().Be("1");
+            comp.FindAll("td")[1].TextContent.Trim().Should().Be("2");
+            comp.FindAll("td")[2].TextContent.Trim().Should().Be("3");
+            comp.FindAll("div.mud-table-pagination-caption")[^1].TextContent.Trim().Should().Be("1-10 of 99");
+            comp.FindAll("button")[0].IsDisabled().Should().Be(true);
+            comp.FindAll("button")[1].IsDisabled().Should().Be(true);
+            comp.FindAll("button")[2].IsDisabled().Should().Be(false);
+            comp.FindAll("button")[3].IsDisabled().Should().Be(false);
+            // last page
+            comp.FindAll("div.mud-table-pagination-actions button")[3].Click(); // last >
+            comp.FindAll("td")[0].TextContent.Trim().Should().Be("91");
+            comp.FindAll("td")[1].TextContent.Trim().Should().Be("92");
+            comp.FindAll("td")[2].TextContent.Trim().Should().Be("93");
             comp.FindAll("div.mud-table-pagination-caption")[^1].TextContent.Trim().Should().Be("91-99 of 99");
             comp.FindAll("button")[0].IsDisabled().Should().Be(false);
             comp.FindAll("button")[1].IsDisabled().Should().Be(false);
@@ -748,9 +790,9 @@ namespace MudBlazor.UnitTests.Components
         /// The table should call ServerReload to get the items for the current page according to MudTablePager
         /// </summary>
         [Test]
-        public async Task TableServerSideDataTest2()
+        public async Task TableServerSideDataTest2Obsolete()
         {
-            var comp = Context.RenderComponent<TableServerSideDataTest2>();
+            var comp = Context.RenderComponent<TableServerSideDataTest2Page>();
             Console.WriteLine(comp.Markup);
             comp.FindAll("tr").Count.Should().Be(4); // three rows + header row
             comp.FindAll("td")[0].TextContent.Trim().Should().Be("1");
@@ -764,6 +806,32 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("td")[0].TextContent.Trim().Should().Be("7");
             comp.FindAll("td")[1].TextContent.Trim().Should().Be("8");
             comp.FindAll("td")[2].TextContent.Trim().Should().Be("9");
+            comp.FindAll("div.mud-table-pagination-actions button")[0].Click(); // |<
+            comp.FindAll("td")[0].TextContent.Trim().Should().Be("1");
+            comp.FindAll("td")[1].TextContent.Trim().Should().Be("2");
+            comp.FindAll("td")[2].TextContent.Trim().Should().Be("3");
+        }
+
+        /// <summary>
+        /// The table should call ServerReload to get the items for the current page according to MudTablePager
+        /// </summary>
+        [Test]
+        public async Task TableServerSideDataTest2()
+        {
+            var comp = Context.RenderComponent<TableServerSideDataTest2Start>();
+            Console.WriteLine(comp.Markup);
+            comp.FindAll("tr").Count.Should().Be(4); // three rows + header row
+            comp.FindAll("td")[0].TextContent.Trim().Should().Be("1");
+            comp.FindAll("td")[1].TextContent.Trim().Should().Be("2");
+            comp.FindAll("td")[2].TextContent.Trim().Should().Be("3");
+            comp.FindAll("div.mud-table-pagination-actions button")[2].Click(); // next >
+            comp.FindAll("td")[0].TextContent.Trim().Should().Be("11");
+            comp.FindAll("td")[1].TextContent.Trim().Should().Be("12");
+            comp.FindAll("td")[2].TextContent.Trim().Should().Be("13");
+            comp.FindAll("div.mud-table-pagination-actions button")[2].Click(); // next >
+            comp.FindAll("td")[0].TextContent.Trim().Should().Be("21");
+            comp.FindAll("td")[1].TextContent.Trim().Should().Be("22");
+            comp.FindAll("td")[2].TextContent.Trim().Should().Be("23");
             comp.FindAll("div.mud-table-pagination-actions button")[0].Click(); // |<
             comp.FindAll("td")[0].TextContent.Trim().Should().Be("1");
             comp.FindAll("td")[1].TextContent.Trim().Should().Be("2");
