@@ -20,6 +20,8 @@ namespace MudBlazor
 
         [Parameter] public ChartOptions ChartOptions { get; set; } = new ChartOptions();
 
+        [Parameter] public RenderFragment CustomGraphics { get; set; }
+
         protected string Classname =>
         new CssBuilder("mud-chart")
            .AddClass($"mud-chart-legend-{ConvertLegendPosition(LegendPosition).ToDescriptionString()}")

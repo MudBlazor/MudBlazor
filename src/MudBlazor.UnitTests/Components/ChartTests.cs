@@ -142,21 +142,25 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<LineChartWithBigValuesTest>();
         }
 
-        /// <summary>  
-        /// Test setting values to Donut inner text and font size.
-        /// </summary>
+        ///// <summary> 
+        ///// Checks if the element is added to the CustomGraphics RenderFragment
+        ///// </summary>
         [Test]
-        [TestCase("69", 11)]
-        [TestCase("text", -5)]
-        public void DonutChartInnerText(string text, int size)
+        [TestCase(ChartType.Line, "Hello")]
+        [TestCase(ChartType.Bar, "123")]
+        [TestCase(ChartType.Donut, "Garderoben")]
+        [TestCase(ChartType.Pie, "henon")]
+        public void ChartCustomGraphics(ChartType chartType, string text)
         {
-            var comp = Context.RenderComponent<DonutChartWithInnerTextTest>();
+            var comp = Context.RenderComponent<MudChart>(parameters => parameters
+              .Add(p => p.ChartType, chartType)
+              .Add(p => p.Width, "100%")
+              .Add(p => p.Height, "300px")
+              .Add(p => p.CustomGraphics, "<text class='text-ref'>"+text+"</text>")
+            );
 
-            comp.Instance.options.DonutInnerText = text;
-            comp.Instance.options.DonutInnerTextSize = size;
-            comp.Render();
-            comp.Find("text.donut-inner-text").InnerHtml.Should().Be(text);
-            comp.Find("text.donut-inner-text").GetAttribute("font-size").Equals(size.ToString()).Should().BeTrue();
+            //Checks if the innerHtml of the added text element matches the text parameter
+            comp.Find("text.text-ref").InnerHtml.Should().Be(text);
         }
     }
 }
