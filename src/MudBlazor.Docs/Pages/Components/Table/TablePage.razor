@@ -131,6 +131,22 @@
             <SectionSource Code="TableServerSidePaginateExample" ShowCode="false" GitHubFolderName="Table" />
         </DocsPageSection>
 
+        <DocsPageSection MaxWidth="MaxWidth.Large">
+            <SectionHeader Title="Server Side Filtering, Sorting and Virtualization">
+                <Description>
+                    Set <CodeInline>ServerData</CodeInline> to load data from the backend that is filtered, sorted and paginated. Table will call this async function whenever the user scrolls
+                    the table or changes sorting by clicking on the sort header icons.
+                    <MudAlert Severity="Severity.Info" Dense="true" Class="mt-3">
+                        Note: with a <CodeInline>ServerData</CodeInline> func you don't need <CodeInline>Items</CodeInline> and <CodeInline>Filter</CodeInline>.
+                    </MudAlert>
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" FullWidth="true">
+                <TableServerSideVirtualizeExample />
+            </SectionContent>
+            <SectionSource Code="TableServerSideVirtualizeExample" ShowCode="false" GitHubFolderName="Table" />
+        </DocsPageSection>
+
         <DocsPageSection>
             <SectionHeader Title="Header and Footer">
                 <Description>

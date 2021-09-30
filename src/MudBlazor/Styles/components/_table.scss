@@ -489,6 +489,43 @@
     }
 }
 
+// Table virtualization loading placeholders
+.mud-table {
+    .grid-row-placeholder td {
+        color: var(--mud-palette-grey-default);
+        content: " ";
+        position: relative;
+        margin-left: -2000px;
+
+        &::before {
+            overflow: hidden;
+            background-color: var(--mud-palette-table-lines);
+            border: 1px solid var(--mud-palette-table-lines);
+            border-radius: var(--mud-default-borderradius);
+            content: " ";
+            position: absolute;
+            left: 16px;
+            top: 6px;
+            bottom: 6px;
+            right: 24px;
+            display: block;
+            background: linear-gradient(to right,var(--mud-palette-grey-default) 8%,var(--mud-palette-grey-lighter) 18%,var(--mud-palette-grey-default) 33%);
+            background-size: 1024px 104px;
+            animation: linear 1s phAnimation infinite;
+        }
+    }
+
+    @keyframes phAnimation {
+        0% {
+            background-position: -500px 0;
+        }
+
+        100% {
+            background-position: 500px 0;
+        }
+    }
+}
+
 // Table Pagination Flex Wrapper on old as phones
 @media (max-width:360px) {
     .mud-table {

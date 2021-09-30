@@ -4,11 +4,12 @@
 @inject HttpClient httpClient
 
 <MudTable ServerData="@(new Func<TableState, Task<TableData<Element>>>(ServerReload))"
-          Dense="true" Hover="true" @ref="table">
+          Dense="true" Hover="true" @ref="table" 
+          Virtualize="true" Height="350px" Breakpoint="Breakpoint.Sm" FixedHeader="true">
     <ToolBarContent>
-        <MudText Typo="Typo.h6">Periodic Elements</MudText>
+        <MudText Typo="Typo.h6">Periodic Elements?</MudText>
         <MudSpacer />
-        <MudTextField T="string" ValueChanged="@(async s=> await OnSearch(s))" Placeholder="Search" Adornment="Adornment.Start"
+        <MudTextField T="string" ValueChanged="@(async s => await OnSearch(s))" Placeholder="Search" Adornment="Adornment.Start"
                       AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
     </ToolBarContent>
     <HeaderContent>
@@ -31,9 +32,6 @@
     <LoadingContent>
         <MudText>Loading...</MudText>
     </LoadingContent>
-    <PagerContent>
-        <MudTablePager />
-    </PagerContent>
 </MudTable>
 
 @code {
@@ -49,7 +47,7 @@
     private async Task<TableData<Element>> ServerReload(TableState state)
     {
         IEnumerable<Element> data = await httpClient.GetFromJsonAsync<List<Element>>("webapi/periodictable");
-        await Task.Delay(300);
+        await Task.Delay(1000);
         data = data.Where(element =>
         {
             if (string.IsNullOrWhiteSpace(searchString))

@@ -120,8 +120,9 @@ namespace MudBlazor
             SortBy = label.SortBy;
             UpdateSortLabels(label);
             if (Table.HasServerData)
-                Table.InvokeServerLoadFunc();
-            TableStateHasChanged();
+                Table.ReloadServerData();
+            else
+                TableStateHasChanged();
         }
 
         public IEnumerable<T> Sort(IEnumerable<T> items)

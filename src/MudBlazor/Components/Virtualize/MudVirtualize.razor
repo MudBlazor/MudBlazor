@@ -5,18 +5,14 @@
 
 @if (IsEnabled)
 {
-    <Virtualize Items="@Items" Context="item">
-        @if (@ChildContent != null)
-        {
-            @ChildContent(item);
-        }
-    </Virtualize>
+    <Virtualize Context="item" ItemsProvider="@ItemsProvider" Items="@(ItemsProvider == null ? Items : null)" @ref="innerComponent"
+                ChildContent="@ChildContent" ItemContent="@ItemContent" Placeholder="@Placeholder" />
 }
-else
+else if (Items != null && Items.Count > 0)
 {
-    @foreach (var item in Items ?? Array.Empty<T>())
+    @foreach (var item in Items)
     {
-        @ChildContent(item);
+        @(ChildContent != null ? ChildContent(item) : ItemContent(item));
     }
 }
 

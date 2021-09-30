@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Rendering;
 using Microsoft.AspNetCore.Components.Web;
+using Microsoft.AspNetCore.Components.Web.Virtualization;
 using MudBlazor.Extensions;
 
 
@@ -40,6 +41,8 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public string QuickColumns { get; set; }
 
+        private MudVirtualize<T> mudVirtualizeComponent;
+
         // Workaround because "where T : new()" didn't work with Blazor components
         // T must have a default constructor, otherwise we cannot show headers when Items collection
         // is empty
@@ -63,6 +66,8 @@ namespace MudBlazor
         /// </summary>
         protected override void OnInitialized()
         {
+            base.OnInitialized();
+            Loading = HasServerData;
             if (Columns == null && RowTemplate == null && RowEditingTemplate == null)
             {
                 string[] quickcolumnslist = null;
@@ -194,6 +199,7 @@ namespace MudBlazor
             {
                 if (EqualityComparer<T>.Default.Equals(SelectedItem, value))
                     return;
+
                 _selectedItem = value;
                 SelectedItemChanged.InvokeAsync(value);
             }
@@ -214,17 +220,26 @@ namespace MudBlazor
             get
             {
                 if (!MultiSelection)
+                {
                     if (_selectedItem is null)
+                    {
                         return new HashSet<T>(Array.Empty<T>());
+                    }
                     else
+                    {
                         return new HashSet<T>(new T[] { _selectedItem });
+                    }
+                }
                 else
+                {
                     return Context.Selection;
+                }
             }
             set
             {
                 if (value == Context.Selection)
                     return;
+
                 if (value == null)
                 {
                     if (Context.Selection.Count == 0)
@@ -298,6 +313,7 @@ namespace MudBlazor
 
                 if (Filter == null)
                     return Context.Sort(Items);
+
                 return Context.Sort(Items.Where(Filter));
             }
         }
@@ -307,7 +323,16 @@ namespace MudBlazor
             get
             {
                 if (@PagerContent == null)
+                {
+                    if (HasVirtualizedServerData)
+                    {
+                        //Don't use items directly, the virtualizer will call the ItemProvider
+                        return null;
+                    }
+
                     return FilteredItems; // we have no pagination
+                }
+
                 if (ServerData == null)
                 {
                     var filteredItemCount = GetFilteredItemsCount();
@@ -333,6 +358,22 @@ namespace MudBlazor
 
             return FilteredItems.Skip(n * pageSize).Take(pageSize);
         }
+
+        private ItemsProviderDelegate<T> GetVirtualizeItemsProvider()
+        {
+            if (HasVirtualizedServerData)
+            {
+                return LoadItems;
+            }
+            return null;
+        }
+
+        private async ValueTask<ItemsProviderResult<T>> LoadItems(ItemsProviderRequest request)
+        {
+            await InvokeServerLoadFunc(request.StartIndex, request.Count, !IsReloading);
+            return new ItemsProviderResult<T>(_server_data.Items, _server_data.TotalItems);
+        }
+
 
         protected override int NumPages
         {
@@ -400,8 +441,10 @@ namespace MudBlazor
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
-            if (firstRender)
+            if (firstRender && !HasVirtualizedServerData)
+            {
                 await InvokeServerLoadFunc();
+            }
 
             TableContext.UpdateRowCheckBoxes();
             await base.OnAfterRenderAsync(firstRender);
@@ -417,22 +460,40 @@ namespace MudBlazor
 
         internal override bool HasServerData => ServerData != null;
 
+        private bool NoRecordsFound => !Loading &&
+            ((HasServerData && _server_data.TotalItems == 0) || (!HasServerData && (CurrentPageItems?.Count() ?? 0) == 0));
 
-        TableData<T> _server_data = new() { TotalItems = 0, Items = Array.Empty<T>() };
+
+        private bool HasVirtualizedServerData => Virtualize && HasServerData;
+        private bool IsReloading = false;
+
+        private TableData<T> _server_data = new() { TotalItems = 0, Items = Array.Empty<T>() };
         private IEnumerable<T> _items;
 
-        internal override async Task InvokeServerLoadFunc()
+        internal override async Task InvokeServerLoadFunc(int? start = null, int? count = null, bool refreshWhenDone = true)
         {
             if (ServerData == null)
                 return;
 
             Loading = true;
             var label = Context.CurrentSortLabel;
+            if (@PagerContent != null || start == null)
+            {
+                start = CurrentPage * RowsPerPage;
+            }
+            if (@PagerContent != null || count == null)
+            {
+                count = RowsPerPage;
+            }
 
             var state = new TableState
             {
+#pragma warning disable CS0618 // Type or member is obsolete, we did that
                 Page = CurrentPage,
                 PageSize = RowsPerPage,
+#pragma warning restore CS0618 // Type or member is obsolete, we did that
+                Start = start.Value,
+                Count = count.Value,
                 SortDirection = Context.SortDirection,
                 SortLabel = label?.SortLabel
             };
@@ -442,9 +503,12 @@ namespace MudBlazor
             if (CurrentPage * RowsPerPage > _server_data.TotalItems)
                 CurrentPage = 0;
 
-            Loading = false;
-            StateHasChanged();
-            Context?.PagerStateHasChanged?.Invoke();
+            if (refreshWhenDone)
+            {
+                Loading = false;
+                StateHasChanged();
+                Context?.PagerStateHasChanged?.Invoke();
+            }
         }
 
         protected override void OnAfterRender(bool firstRender)
@@ -457,9 +521,26 @@ namespace MudBlazor
         /// <summary>
         /// Call this to reload the server-filtered, -sorted and -paginated items
         /// </summary>
-        public Task ReloadServerData()
+        public override async Task ReloadServerData()
         {
-            return InvokeServerLoadFunc();
+            Loading = IsReloading = true;
+            try
+            {
+                if (HasVirtualizedServerData)
+                {
+                    await mudVirtualizeComponent.RefreshDataAsync();
+                }
+                else
+                {
+                    await InvokeServerLoadFunc(refreshWhenDone: false);
+                }
+            }
+            finally
+            {
+                Loading = IsReloading = false;
+                StateHasChanged();
+                Context?.PagerStateHasChanged?.Invoke();
+            }
         }
 
         internal override bool IsEditable { get => (RowEditingTemplate != null) || (Columns != null); }

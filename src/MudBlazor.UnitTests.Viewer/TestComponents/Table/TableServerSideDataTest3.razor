@@ -26,7 +26,7 @@
         //if (state.SortDirection != SortDirection.None && string.IsNullOrWhiteSpace(state.SortLabel))
         //    throw new ArgumentException("SortDirection is set but SortLabel is not");
 
-        var p = state.Page*3;
+        var p = state.Count*3;
         IEnumerable<int> data = new List<int>() { 1 + p, 2 + p, 3 + p };
         totalItems = 99;
         var sortedData = state.SortDirection == SortDirection.Descending ? data.Reverse() : data;

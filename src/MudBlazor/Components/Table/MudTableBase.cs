@@ -120,14 +120,16 @@ namespace MudBlazor
             set
             {
                 if (_rowsPerPage == null)
+                {
                     SetRowsPerPage(value);
+                }
             }
         }
-        
+
         /// <summary>
         /// Rows Per Page two-way bindable parameter
         /// </summary>
-        [Parameter] public EventCallback<int> RowsPerPageChanged {get;set;}
+        [Parameter] public EventCallback<int> RowsPerPageChanged { get; set; }
 
         /// <summary>
         /// The page index of the currently displayed page (Zero based). Usually called by MudTablePager.
@@ -140,11 +142,16 @@ namespace MudBlazor
             set
             {
                 if (_currentPage == value)
+                {
                     return;
+                }
+
                 _currentPage = value;
                 InvokeAsync(StateHasChanged);
                 if (_isFirstRendered)
+                {
                     InvokeServerLoadFunc();
+                }
             }
         }
 
@@ -291,11 +298,6 @@ namespace MudBlazor
         [Parameter] public Action<object> RowEditCancel { get; set; }
 
         /// <summary>
-        /// Number of items. Used only with ServerData="true"
-        /// </summary>
-        [Parameter] public int TotalItems { get; set; }
-
-        /// <summary>
         /// CSS class for the table rows. Note, many CSS settings are overridden by MudTd though
         /// </summary>
         [Parameter] public string RowClass { get; set; }
@@ -322,7 +324,9 @@ namespace MudBlazor
         protected override Task OnAfterRenderAsync(bool firstRender)
         {
             if (firstRender)
+            {
                 _isFirstRendered = true;
+            }
 
             return base.OnAfterRenderAsync(firstRender);
         }
@@ -357,13 +361,18 @@ namespace MudBlazor
         public void SetRowsPerPage(int size)
         {
             if (_rowsPerPage == size)
+            {
                 return;
+            }
+
             _rowsPerPage = size;
             CurrentPage = 0;
             StateHasChanged();
             RowsPerPageChanged.InvokeAsync(_rowsPerPage.Value);
             if (_isFirstRendered)
+            {
                 InvokeServerLoadFunc();
+            }
         }
 
         protected abstract int NumPages { get; }
@@ -374,6 +383,8 @@ namespace MudBlazor
 
         public abstract void SetEditingItem(object item);
 
+        public abstract Task ReloadServerData();
+
         internal async Task OnCommitEditHandler(MouseEventArgs ev, object item)
         {
             await OnCommitEditClick.InvokeAsync(ev);
@@ -381,7 +392,10 @@ namespace MudBlazor
             {
                 var parameter = CommitEditCommandParameter;
                 if (parameter == null)
+                {
                     parameter = item;
+                }
+
                 CommitEditCommand.Execute(parameter);
             }
         }
@@ -403,7 +417,7 @@ namespace MudBlazor
 
         internal abstract bool HasServerData { get; }
 
-        internal abstract Task InvokeServerLoadFunc();
+        internal abstract Task InvokeServerLoadFunc(int? start = null, int? count = null, bool refreshWhenDone = true);
 
         internal abstract void FireRowClickEvent(MouseEventArgs args, MudTr mudTr, object item);
 
