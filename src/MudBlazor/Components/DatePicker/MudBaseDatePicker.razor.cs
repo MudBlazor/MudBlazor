@@ -158,7 +158,7 @@ namespace MudBlazor
         /// <summary>
         /// If true, shows previous/next year buttons in day selection view.
         /// </summary>
-        [Parameter] public bool YearChangeButtons { get; set; } = true;
+        [Parameter] public bool YearChangeButtons { get; set; }
 
         protected virtual bool IsRange { get; } = false;
 
