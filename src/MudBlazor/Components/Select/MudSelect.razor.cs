@@ -240,29 +240,32 @@ namespace MudBlazor
         {
             // Check to avoid duplicate items based on their value
             // It fixes that the number of real items is correct in the items list
+
+            var result = new bool?();
+
             if (!_items.Select(x => x.Value).Contains(item.Value))
             {
                 _items.Add(item);
-                UpdateSelectAllChecked();
 
                 if (item.Value != null)
                 {
                     _valueLookup[item.Value] = item;
 
-                    if(item.Value.Equals(Value))
+                    if (item.Value.Equals(Value))
                     {
                         _activeItemId = item.ItemId;
-                        return true;
+                        result = true;
                     }
-
                 }
+            }
 
-                return false;
-            }
-            else
+            UpdateSelectAllChecked();
+            if(result.HasValue == false)
             {
-                return false;
+                result = item.Value.Equals(Value);
             }
+
+            return result.Value;
         }
 
         internal void Remove(MudSelectItem<T> item)
@@ -343,7 +346,7 @@ namespace MudBlazor
                     case Direction.Top when OffsetY:
                         _anchorOrigin = Origin.BottomCenter;
                         _transformOrigin = Origin.TopCenter;
-                    break;
+                        break;
                     case Direction.Top when !OffsetY:
                         _anchorOrigin = Origin.BottomCenter;
                         _transformOrigin = Origin.BottomCenter;
@@ -417,13 +420,13 @@ namespace MudBlazor
 
         private void HilightItemForValue(T value)
         {
-            if (value==null)
+            if (value == null)
             {
                 HilightItem(null);
                 return;
-            }    
+            }
             _valueLookup.TryGetValue(value, out var item);
-            HilightItem(item);            
+            HilightItem(item);
         }
 
         private void HilightItem(MudSelectItem<T> item)
@@ -445,7 +448,7 @@ namespace MudBlazor
             {
                 var oldState = _selectAllChecked;
                 if (SelectedValues.Count == 0)
-                { 
+                {
                     _selectAllChecked = false;
                 }
                 else if (_items.Count == SelectedValues.Count)
@@ -457,7 +460,7 @@ namespace MudBlazor
                     _selectAllChecked = null;
                 }
 
-                if(oldState != _selectAllChecked)
+                if (oldState != _selectAllChecked)
                 {
                     _multiSelectContainer?.Refresh();
                 }

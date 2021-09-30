@@ -127,10 +127,7 @@ namespace MudBlazor.UnitTests.Components
             select.Instance.Text.Should().Be(default(MyEnum).ToString());
             await Task.Delay(50);
 
-            //comp.Find("div.mud-input-slot").TextContent.Trim().Should().Be("First");
-            //comp.RenderCount.Should().Be(2);
-
-            comp.Find(".mud-input-slot").GetAttribute("value").Trim().Should().Be("First");
+            comp.Find("div.mud-input-slot").TextContent.Trim().Should().Be("First");
             comp.RenderCount.Should().Be(1);
 
             //Console.WriteLine(comp.Markup);
@@ -481,11 +478,17 @@ namespace MudBlazor.UnitTests.Components
             // Check that all select items are actually selected
             var mudListItems = comp.FindComponents<MudSelectItem<string>>();
 
-            mudListItems.Should().HaveCount(7);
-            foreach (var item in mudListItems)
+            mudListItems.Should().HaveCount(7 * 2);
+            foreach (var item in mudListItems.Take(7))
             {
                 item.Instance.IsSelected.Should().BeTrue();
                 item.FindComponent<MudListItem>().Instance.Icon.Should().Be("<path d=\"M0 0h24v24H0z\" fill=\"none\"/><path d=\"M19 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.11 0 2-.9 2-2V5c0-1.1-.89-2-2-2zm-9 14l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z\"/>");
+            }
+
+            foreach (var item in mudListItems.Skip(7))
+            {
+                item.Instance.IsSelected.Should().BeTrue();
+                Assert.Throws<Bunit.Rendering.ComponentNotFoundException>(() => item.FindComponent<MudListItem>());
             }
         }
 

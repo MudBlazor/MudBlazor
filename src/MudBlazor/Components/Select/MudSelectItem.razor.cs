@@ -50,6 +50,8 @@ namespace MudBlazor
             }
         }
 
+        [CascadingParameter(Name = "HideContent")]protected bool HideContent { get; set; }
+
         internal MudSelect<T> MudSelect => (MudSelect<T>)IMudSelect;
 
         private void OnUpdateSelectionStateFromOutside(HashSet<T> selection)
