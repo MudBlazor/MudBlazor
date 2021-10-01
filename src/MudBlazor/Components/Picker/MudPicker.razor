@@ -21,7 +21,9 @@
             @if (PickerVariant != PickerVariant.Static)
             {
                 <CascadingValue Name="Standalone" Value="false" IsFixed="true">
-                    @InputContent
+					@if(InputContent != null) {    
+						@InputContent
+					}
                 </CascadingValue>
             }
             @if (IsOpen && PickerVariant == PickerVariant.Inline)
@@ -30,7 +32,9 @@
 				   <div @ref="_pickerInlineRef" class="@PickerInlineClass">
 					   <MudPaper @attributes="UserAttributes" Class="@PickerPaperClass" Elevation="@_pickerElevation" Square="@_pickerSquare">
 						   <div class="@PickerContainerClass">
-							   @PickerContent
+							   @if(PickerContent != null){
+								   @PickerContent
+							   }
 						   </div>
 							@if (PickerActions != null)
 							{
@@ -46,7 +50,9 @@
             {
                <MudPaper @attributes="UserAttributes" Class="@PickerPaperClass" Elevation="@_pickerElevation" Square="@_pickerSquare">
                    <div class="@PickerContainerClass">
-                       @PickerContent
+					   @if(PickerContent != null){
+						   @PickerContent
+					   }
                    </div>
                     @if (PickerActions != null)
                     {
@@ -61,7 +67,9 @@
                <MudOverlay Visible="IsOpen" OnClick="CloseOverlay" DarkBackground="true" Class="mud-overlay-dialog">
                    <MudPaper @attributes="UserAttributes" Class="@PickerPaperClass" Elevation="@_pickerElevation" Square="@_pickerSquare">
                        <div class="@PickerContainerClass">
-                           @PickerContent
+							@if(PickerContent != null){
+								@PickerContent
+							}
                        </div>
                         @if (PickerActions != null)
                         {
