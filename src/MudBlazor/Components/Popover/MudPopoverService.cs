@@ -66,7 +66,7 @@ namespace MudBlazor
             }
         }
 
-        public async Task Initialized()
+        public async Task Initialize()
         {
             await _runtime.InvokeVoidAsync("mudPopover.connect", Id);
             IsConnected = true;
@@ -78,10 +78,7 @@ namespace MudBlazor
             IsConnected = false;
         }
 
-        internal void Release()
-        {
-            _locked = false;
-        }
+        public void Release() => _locked = false;
     }
 
     public class MudPopoverService : IMudPopoverService, IAsyncDisposable
