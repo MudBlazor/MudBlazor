@@ -1,20 +1,29 @@
 ﻿@using System.Globalization;
 @namespace MudBlazor.UnitTests.TestComponents
 
-@*<MudPopoverProvider></MudPopoverProvider>*@
+<MudPopoverProvider></MudPopoverProvider>
 
-<MudDateRangePicker @ref="_picker"
-			   @bind-DateRange="@DateRange"
-			   IsDateDisabledFunc="IsDateDisabledFunc"
-			   @bind-PickerMonth="PickerMonth"
-			   OpenTo="@OpenTo"
-			   StartMonth="@StartMonth"
-			    />
-
+@if (IsDateDisabledFunc != null)
+{
+	<MudDateRangePicker @ref="_picker"
+					@bind-DateRange="@DateRange"
+					IsDateDisabledFunc="IsDateDisabledFunc"
+					@bind-PickerMonth="PickerMonth"
+					OpenTo="@OpenTo"
+					StartMonth="@StartMonth" />
+}
+else
+{
+	<MudDateRangePicker @ref="_picker"
+					@bind-DateRange="@DateRange"
+					@bind-PickerMonth="PickerMonth"
+					OpenTo="@OpenTo"
+					StartMonth="@StartMonth" />
+}
 @code {
 	private MudDateRangePicker _picker;
 
-	[Parameter]public DateRange DateRange { get; set; }
+	[Parameter] public DateRange DateRange { get; set; }
 	[Parameter] public Func<DateTime, bool> IsDateDisabledFunc { get; set; }
 	[Parameter] public DateTime? PickerMonth { get; set; }
 	[Parameter] public OpenTo OpenTo { get; set; } = OpenTo.Date;
