@@ -34,7 +34,7 @@
                 @onkeypress="@InvokeKeyPress" 
                 @onkeyup="@InvokeKeyUp" 
                 @onpaste="@OnPaste" 
-                value="@Text" 
+                value="@_internalText" 
                 maxlength="@MaxLength"
 			    @onkeydown:preventDefault="@KeyDownPreventDefault" 
                 @onkeypress:preventDefault="@KeyPressPreventDefault" 
@@ -42,10 +42,10 @@
                 @onmousewheel="@OnMouseWheel" 
                 @onwheel="@OnMouseWheel"
         > 
-            @*Note: double mouse wheel handlers needed for Firefox because it doesn't know onmousewheel*@
-            @*note: the value="@Text" is absolutely essential here. the inner html @Text is kept only for compatibility*@
-            @Text       
+            @Text
         </textarea>
+        @*Note: double mouse wheel handlers needed for Firefox because it doesn't know onmousewheel*@
+        @*note: the value="@_internalText" is absolutely essential here. the inner html @Text is needed by tests checking it*@
 	}
 	else
 	{
