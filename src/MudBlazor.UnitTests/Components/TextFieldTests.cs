@@ -12,6 +12,7 @@ using Bunit;
 using FluentAssertions;
 using FluentValidation;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.UnitTests.TestComponents;
 using NUnit.Framework;
 using static Bunit.ComponentParameterFactory;
@@ -89,8 +90,8 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("input").Change("seventeen");
             comp.Find("input").Blur();
             Console.WriteLine(comp.Markup);
-            comp.FindAll("p.mud-input-error").Count.Should().Be(1);
-            comp.Find("p.mud-input-error").TextContent.Trim().Should().Be("Not a valid number");
+            comp.FindAll("div.mud-input-error").Count.Should().Be(1);
+            comp.Find("div.mud-input-error").TextContent.Trim().Should().Be("Not a valid number");
         }
 
         /// <summary>
@@ -478,6 +479,101 @@ namespace MudBlazor.UnitTests.Components
         }
         #endregion
         #endregion
+
+        [Test]
+        public async Task TextField_ClearTest1()
+        {
+            var comp = Context.RenderComponent<MudTextField<int>>();
+            comp.SetParam("Text", "17");
+            var textfield = comp.Instance;
+            textfield.Value.Should().Be(17);
+            textfield.Text.Should().Be("17");
+            await comp.InvokeAsync(async ()=> await textfield.Clear());
+            textfield.Value.Should().Be(0);
+            textfield.Text.Should().Be(null);
+        }
+
+        [Test]
+        public async Task TextField_ClearTest2()
+        {
+            var comp = Context.RenderComponent<MudTextField<string>>();
+            comp.Find("input").Change("Viva la ignorancia");
+            var textfield = comp.Instance;
+            textfield.Value.Should().Be("Viva la ignorancia");
+            textfield.Text.Should().Be("Viva la ignorancia");
+            await comp.InvokeAsync(async () => await textfield.Clear());
+            textfield.Value.Should().Be(null);
+            textfield.Text.Should().Be(null);
+        }
+
+        [Test]
+        public void TextField_CharacterCount()
+        {
+            var comp = Context.RenderComponent<MudTextField<string>>();
+            var inputControl = comp.FindComponent<MudInputControl>();
+            //Condition 1
+            comp.Instance.Counter = null;
+            inputControl.Instance.CounterText.Should().Be("");
+            //Condition 2
+            comp.Instance.Counter = 25;
+            comp.Find("input").Change("Test text");
+            inputControl.Instance.CounterText.Should().Be("9 / 25");
+            //Condition 3
+            comp.Instance.Counter = 0;
+            comp.Find("input").Change("Test text with total of 56 characters a aaaaaaaaa aaaaaa");
+            inputControl.Instance.CounterText.Should().Be("56");
+            //Condition 4
+            comp.Instance.Counter = 25;
+            comp.Instance.MaxLength = 30;
+            comp.Find("input").Change("Test text with total of25");
+            inputControl.Instance.CounterText.Should().Be("25 / 25");
+            //Condition 5
+            comp.Find("input").Change("Test text with total of 56 characters a aaaaaaaaa aaaaaa");
+            inputControl.Instance.CounterText.Should().Be("56 / 25");
+        }
+
+        /// <summary>
+        /// This tests the suppression of the suppression (fix for #1012)
+        /// </summary>
+        /// <returns></returns>
+        [Test]
+        public async Task TextField_TextUpdateSuppression()
+        {
+            var comp = Context.RenderComponent<MudTextField<string>>();
+            var input = comp.FindComponent<MudInput<string>>();
+            var textfield = comp.Instance;
+            comp.Find("input").Change("Vat of acid");
+            // this will make the input focused!
+            comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = "Enter", Type = "keydown", });
+            textfield.Value.Should().Be("Vat of acid");
+            textfield.Text.Should().Be("Vat of acid");
+
+            // let's try to set the text directly on the input, TextUpdateSuppression should prevent it because we are focused
+            input.SetParam("Value", "");
+            input.Instance.Value.Should().Be("");
+            input.Instance.Text.Should().Be("Vat of acid");
+
+            // turn it off
+            comp.SetParam(nameof(MudBaseInput<string>.TextUpdateSuppression), false);
+
+            // now the input text should get overwritten
+            input.SetParam("Value", "In case of ladle");
+            input.Instance.Value.Should().Be("In case of ladle");
+            input.Instance.Text.Should().Be("In case of ladle");
+
+            // turn it on again
+            comp.SetParam(nameof(MudBaseInput<string>.TextUpdateSuppression), true);
+
+            input.SetParam("Value", "");
+            input.Instance.Value.Should().Be("");
+            input.Instance.Text.Should().Be("In case of ladle");
+
+            // force text update
+            await comp.InvokeAsync(()=> input.Instance.ForceRender(forceTextUpdate:true));
+
+            input.Instance.Value.Should().Be("");
+            input.Instance.Text.Should().Be("");
+        }
     }
 
 }

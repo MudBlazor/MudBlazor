@@ -62,10 +62,21 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public string InfoFormat { get; set; } = "{first_item}-{last_item} of {all_items}";
 
-        private string Info => Table == null ? "Table==null" : InfoFormat
-            .Replace("{first_item}", $"{Table?.CurrentPage * Table.RowsPerPage + 1}")
-            .Replace("{last_item}", $"{Math.Min((Table.CurrentPage + 1) * Table.RowsPerPage, Table.GetFilteredItemsCount())}")
-            .Replace("{all_items}", $"{Table.GetFilteredItemsCount()}");
+        private string Info
+        {
+            get
+            {
+                // fetch number of filtered items (once only)
+                var filteredItemsCount = Table?.GetFilteredItemsCount() ?? 0;
+
+                return Table == null
+                    ? "Table==null"
+                    : InfoFormat
+                        .Replace("{first_item}", $"{(filteredItemsCount == 0 ? 0 : Table?.CurrentPage * Table.RowsPerPage + 1)}")
+                        .Replace("{last_item}", $"{Math.Min((Table.CurrentPage + 1) * Table.RowsPerPage, filteredItemsCount)}")
+                        .Replace("{all_items}", $"{filteredItemsCount}");
+            }
+        }
 
         /// <summary>
         /// The localizable "Rows per page:" text.

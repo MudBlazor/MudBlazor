@@ -12,7 +12,7 @@
             <SectionContent Outlined="true">
                 <TextFieldBasicExample />
             </SectionContent>
-            <SectionSource Code="TextFieldBasicExample" ShowCode="false" GitHubFolderName="TextField"  />
+            <SectionSource Code="TextFieldBasicExample" ShowCode="false" GitHubFolderName="TextField" />
         </DocsPageSection>
 
         <DocsPageSection>
@@ -27,12 +27,36 @@
 
         <DocsPageSection>
             <SectionHeader Title="Form Props">
-                <Description>Required, Disabled, Type, HelperText</Description>
+                <Description>Required, Disabled, Type</Description>
             </SectionHeader>
             <SectionContent Outlined="true">
                 <TextFieldFormPropsExample />
             </SectionContent>
-            <SectionSource Code="TextFieldFormPropsExample" ShowCode="false" GitHubFolderName="TextField"  />
+            <SectionSource Code="TextFieldFormPropsExample" ShowCode="false" GitHubFolderName="TextField" />
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Helper Text On Focus">
+                <Description>With the <CodeInline>HelperTextOnFocus</CodeInline> property set to true, the helper text will only display on focus.</Description>
+            </SectionHeader>
+            <SectionContent Outlined="true">
+                <TextFieldHelperTextExample />
+            </SectionContent>
+            <SectionSource Code="TextFieldHelperTextExample" ShowCode="false" GitHubFolderName="TextField" />
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Counter">
+                <Description>
+                    If you set the <CodeInline>Counter</CodeInline> prop to any int, the counter will be display at the bottom of the textfield.<br />
+                    Using a specific number will show the desired max while setting it to <CodeInline>0</CodeInline> will only show the current count.<br />
+                    Add <CodeInline>MaxLength</CodeInline> to force a max count directly on the input and use <CodeInline>Validation</CodeInline> to validate the data.
+                </Description>
+            </SectionHeader>
+            <SectionContent Outlined="true" DisplayFlex="true">
+                <TextFieldCharacterCountExample />
+            </SectionContent>
+            <SectionSource Code="TextFieldCharacterCountExample" ShowCode="false" GitHubFolderName="TextField" />
         </DocsPageSection>
 
         <DocsPageSection>
@@ -151,7 +175,7 @@
             <SectionContent Outlined="true">
                 <TextFieldInputsExample />
             </SectionContent>
-            <SectionSource Code="TextFieldInputsExample" ShowCode="false" GitHubFolderName="TextField"  />
+            <SectionSource Code="TextFieldInputsExample" ShowCode="false" GitHubFolderName="TextField" />
         </DocsPageSection>
     </DocsPageContent>
 </DocsPage>
