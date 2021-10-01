@@ -20,7 +20,7 @@
     "MudBlazor.Docs.Server(Hosted wasm)": {
       "commandName": "Project",
       "launchBrowser": true,
-      "launchUrl": "components/datepicker",
+      "launchUrl": "components/numericfield",
       "environmentVariables": {
         "APIBASE": "https://localhost:5001/",
         "ASPNETCORE_ENVIRONMENT": "Development"
