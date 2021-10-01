@@ -1,7 +1,10 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace MudBlazor
 {
+
+    [ExcludeFromCodeCoverage]
     [Serializable]
     public class ScrollManagerException : Exception
     {
