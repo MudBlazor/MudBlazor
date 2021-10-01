@@ -46,6 +46,18 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public void MudPopoverHandler_PreventNullValuesInConstructor()
+        {
+            RenderFragment renderFragement = (tree) => { };
+            var mock = Mock.Of<IJSRuntime>();
+            Action updater = () => { };
+
+            Assert.Throws<ArgumentNullException>(() => new MudPopoverHandler(null, mock, updater));
+            Assert.Throws<ArgumentNullException>(() => new MudPopoverHandler(renderFragement, null, updater));
+            Assert.Throws<ArgumentNullException>(() => new MudPopoverHandler(renderFragement, mock, null));
+        }
+
+        [Test]
         public void MudPopoverHandler_SetComponentBaseParameters()
         {
             RenderFragment renderFragement = (tree) => { };

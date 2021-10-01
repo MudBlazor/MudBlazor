@@ -39,9 +39,9 @@ namespace MudBlazor
 
         public MudPopoverHandler(RenderFragment fragment, IJSRuntime jsInterop, Action updater)
         {
-            Fragment = fragment;
-            _runtime = jsInterop;
-            _updater = updater;
+            Fragment = fragment ?? throw new ArgumentNullException(nameof(fragment));
+            _runtime = jsInterop ?? throw new ArgumentNullException(nameof(jsInterop));
+            _updater = updater ?? throw new ArgumentNullException(nameof(updater));
             Id = Guid.NewGuid();
         }
 
@@ -62,7 +62,7 @@ namespace MudBlazor
             if (_locked == false)
             {
                 _locked = true;
-                _updater?.Invoke();
+                _updater.Invoke();
             }
         }
 
