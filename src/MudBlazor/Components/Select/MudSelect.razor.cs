@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using MudBlazor.Services;
 using MudBlazor.Utilities;
 using MudBlazor.Utilities.Exceptions;
 
@@ -20,6 +21,10 @@ namespace MudBlazor
             new CssBuilder("mud-select")
             .AddClass(Class)
             .Build();
+
+        [Inject] private IKeyInterceptor _keyInterceptor { get; set; }
+
+        private ElementReference _self;
 
         /// <summary>
         /// Add the MudSelectItems here
@@ -260,8 +265,6 @@ namespace MudBlazor
         {
             Adornment = Adornment.End;
             IconSize = Size.Medium;
-
-            _keyPressPreventDefault = true;
         }
 
         protected override void OnAfterRender(bool firstRender)
@@ -555,6 +558,26 @@ namespace MudBlazor
             UpdateIcon();
         }
 
+        protected override async Task OnAfterRenderAsync(bool firstRender)
+        {
+            if (firstRender)
+            {
+                await _keyInterceptor.Connect(_self, new KeyInterceptorOptions()
+                {
+                    EnableLogging = true,
+                    TargetClass = "mud-input-slot",
+                    Keys = {
+                        new KeyOptions { Key=" ", PreventDown = "key+none" }, //prevent scrolling page, toggle open/close
+                        new KeyOptions { Key="ArrowUp", PreventDown = "key+none" }, // prevent scrolling page, instead increment
+                        new KeyOptions { Key="ArrowDown", PreventDown = "key+none" }, // prevent scrolling page, instead decrement
+                        new KeyOptions { Key="Home", PreventDown = "key+none" },
+                        new KeyOptions { Key="End", PreventDown = "key+none" },
+                    },
+                });
+            }
+            await base.OnAfterRenderAsync(firstRender);
+        }
+
         public void CheckGenericTypeMatch(object select_item)
         {
             var itemT = select_item.GetType().GenericTypeArguments[0];
@@ -639,123 +662,81 @@ namespace MudBlazor
 
         private void OnFocus()
         {
-            _keyDownPreventDefault = false;
-            _keyPressPreventDefault = true;
-        }
 
-        private bool _keyDownPreventDefault = false;
-        private bool _keyPressPreventDefault = true;
+        }
 
         private int _key = 0;
 
-        protected async Task InterceptKeyDown(KeyboardEventArgs obj)
+        protected async Task HandleKeyDown(KeyboardEventArgs obj)
         {
-            if (obj.Type == "keydown")
+            if (Disabled || ReadOnly)
+                return;
+            switch (obj.Key)
             {
-
-                if (Disabled || ReadOnly)
-                    return;
-                if (obj.Key == "Tab")
-                {
+                case "Tab":
                     CloseMenu(false);
-                }
-                else if (obj.Key == "ArrowUp")
-                {
+                    break;
+                case "ArrowUp":
                     await SelectPreviousItem();
-                    //await _elementReference.SetText(_elementReference.Value);
-                    _key++;
-                    await Task.Delay(1);
-                    StateHasChanged();
-                    await Task.Delay(1);
-                    _elementReference.FocusAsync().AndForget();
-                }
-                else if (obj.Key == "ArrowDown")
-                {
+                    await _elementReference.SetText(_elementReference.Value);
+                    //_key++;
+                    //await Task.Delay(1);
+                    //StateHasChanged();
+                    //await Task.Delay(1);
+                    //_elementReference.FocusAsync().AndForget();
+                    break;
+                case "ArrowDown":
                     await SelectNextItem();
-                    //await _elementReference.SetText(_elementReference.Value);
+                    await _elementReference.SetText(_elementReference.Value);
+                    //_key++;
+                    //await Task.Delay(1);
+                    //StateHasChanged();
+                    //await Task.Delay(1);
+                    //_elementReference.FocusAsync().AndForget();
+                    break;
+                case " ":
+                    _isOpen = !_isOpen;
+                    break;
+                case "Escape":
+                    CloseMenu(true);
+                    break;
+                case "Home":
+                    await SelectFirstItem();
+                    break;
+                case "End":
+                    await SelectLastItem();
+                    break;
+                case "Enter":
+                    bool isAlreadySelected = false;
+                    foreach (T val in _selectedValues)
+                    {
+                        if (val.ToString() == _items[itemIndex].Value.ToString())
+                        {
+                            isAlreadySelected = true;
+                        }
+                    }
+
+                    if (!isAlreadySelected)
+                    {
+                        _selectedValues.Add(_items[itemIndex].Value);
+                    }
+                    else
+                    {
+                        _selectedValues.Remove(_items[itemIndex].Value);
+                    }
+
                     _key++;
                     await Task.Delay(1);
                     StateHasChanged();
                     await Task.Delay(1);
                     _elementReference.FocusAsync().AndForget();
-                }
+                    break;
             }
+            OnKeyDown.InvokeAsync(obj).AndForget();
         }
 
-        protected void InterceptKeyPress(KeyboardEventArgs obj)
+        internal void HandleKeyUp(KeyboardEventArgs obj)
         {
-            if (Disabled || ReadOnly)
-                return;
-            if (obj.Key == " ")
-            {
-                _isOpen = !_isOpen;
-                return;
-            }
-            
-        }
-
-        internal async Task InterceptKeyUp(KeyboardEventArgs obj)
-        {
-            if (Disabled || ReadOnly)
-                return;
-            if (obj.AltKey == true && obj.Key == "ArrowUp")
-            {
-                CloseMenu(true);
-            }
-            else if (obj.AltKey == true && obj.Key == "ArrowDown")
-            {
-                OpenMenu();
-            }
-            else if (obj.Key == "Escape")
-            {
-                CloseMenu(true);
-                StateHasChanged();
-            }
-            else if (obj.Key == "Home")
-            {
-                await SelectFirstItem();
-                _key++;
-                await Task.Delay(1);
-                StateHasChanged();
-                await Task.Delay(1);
-                _elementReference.FocusAsync().AndForget();
-            }
-            else if (obj.Key == "End")
-            {
-                await SelectLastItem();
-                _key++;
-                await Task.Delay(1);
-                StateHasChanged();
-                await Task.Delay(1);
-                _elementReference.FocusAsync().AndForget();
-            }
-            else if (obj.Key == "Enter")
-            {
-                bool isAlreadySelected = false;
-                foreach (T val in _selectedValues)
-                {
-                    if (val.ToString() == _items[itemIndex].Value.ToString())
-                    {
-                        isAlreadySelected = true;
-                    }
-                }
-
-                if (!isAlreadySelected)
-                {
-                    _selectedValues.Add(_items[itemIndex].Value);
-                }
-                else
-                {
-                    _selectedValues.Remove(_items[itemIndex].Value);
-                }
-
-                _key++;
-                await Task.Delay(1);
-                StateHasChanged();
-                await Task.Delay(1);
-                _elementReference.FocusAsync().AndForget();
-            }
-
             OnKeyUp.InvokeAsync(obj).AndForget();
         }
 
