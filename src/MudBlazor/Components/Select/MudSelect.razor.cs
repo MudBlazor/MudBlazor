@@ -54,6 +54,7 @@ namespace MudBlazor
                         _selectedValues.Clear();
                         _selectedValues.Add(_items[itemIndex].Value);
                         await SetValueAsync(_items[itemIndex].Value, updateText: true);
+                        await SetTextAsync(_items[itemIndex].Value.ToString(), false);
                         HilightItem(_items[itemIndex]);
                         break;
                     }
@@ -409,6 +410,11 @@ namespace MudBlazor
         [Parameter] public bool Clearable { get; set; } = false;
 
         /// <summary>
+        /// If true, prevent scrolling while dropdown is open.
+        /// </summary>
+        [Parameter] public bool LockScroll { get; set; } = false;
+
+        /// <summary>
         /// Button click event for clear button. Called after text and value has been cleared.
         /// </summary>
         [Parameter] public EventCallback<MouseEventArgs> OnClearButtonClick { get; set; }
@@ -678,7 +684,7 @@ namespace MudBlazor
                     break;
                 case "ArrowUp":
                     await SelectPreviousItem();
-                    await _elementReference.SetText(_elementReference.Value);
+                    await _elementReference.SetText(Text);
                     //_key++;
                     //await Task.Delay(1);
                     //StateHasChanged();
@@ -687,7 +693,7 @@ namespace MudBlazor
                     break;
                 case "ArrowDown":
                     await SelectNextItem();
-                    await _elementReference.SetText(_elementReference.Value);
+                    await _elementReference.SetText(Text);
                     //_key++;
                     //await Task.Delay(1);
                     //StateHasChanged();
@@ -707,30 +713,38 @@ namespace MudBlazor
                     await SelectLastItem();
                     break;
                 case "Enter":
-                    bool isAlreadySelected = false;
-                    foreach (T val in _selectedValues)
+                    if (!MultiSelection)
                     {
-                        if (val.ToString() == _items[itemIndex].Value.ToString())
-                        {
-                            isAlreadySelected = true;
-                        }
-                    }
-
-                    if (!isAlreadySelected)
-                    {
-                        _selectedValues.Add(_items[itemIndex].Value);
+                        _isOpen = false;
+                        break;
                     }
                     else
                     {
-                        _selectedValues.Remove(_items[itemIndex].Value);
-                    }
+                        bool isAlreadySelected = false;
+                        foreach (T val in _selectedValues)
+                        {
+                            if (val.ToString() == _items[itemIndex].Value.ToString())
+                            {
+                                isAlreadySelected = true;
+                            }
+                        }
 
-                    _key++;
-                    await Task.Delay(1);
-                    StateHasChanged();
-                    await Task.Delay(1);
-                    _elementReference.FocusAsync().AndForget();
-                    break;
+                        if (!isAlreadySelected)
+                        {
+                            _selectedValues.Add(_items[itemIndex].Value);
+                        }
+                        else
+                        {
+                            _selectedValues.Remove(_items[itemIndex].Value);
+                        }
+
+                        _key++;
+                        await Task.Delay(1);
+                        StateHasChanged();
+                        await Task.Delay(1);
+                        _elementReference.FocusAsync().AndForget();
+                        break;
+                    }
             }
             OnKeyDown.InvokeAsync(obj).AndForget();
         }
