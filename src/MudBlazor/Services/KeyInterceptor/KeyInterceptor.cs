@@ -33,7 +33,7 @@ namespace MudBlazor.Services
             _element = element;
             try
             {
-                await _jsRuntime.InvokeAsync<IEnumerable<BoundingClientRect>>("mudKeyInterceptor.connect", _dotNetRef, element, options);
+                await _jsRuntime.InvokeVoidAsync("mudKeyInterceptor.connect", _dotNetRef, element, options);
                 _isObserving = true;
             }
             catch (TaskCanceledException) { /*ignore*/ }
