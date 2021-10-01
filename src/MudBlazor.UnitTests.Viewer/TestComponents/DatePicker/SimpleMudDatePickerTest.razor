@@ -3,14 +3,26 @@
 
 <MudPopoverProvider></MudPopoverProvider>
 
-<MudDatePicker @ref="_picker"
+@if (IsDateDisabledFunc != null)
+{
+
+	<MudDatePicker @ref="_picker"
 			   Date="@Date"
 			   DateChanged="HandleDateChanged"
 			   ReadOnly="Readonly"
 			   @bind-PickerMonth="PickerMonth"
 			   IsDateDisabledFunc="IsDateDisabledFunc"
 			   OpenTo="@OpenTo" />
-
+}
+else
+{
+	<MudDatePicker @ref="_picker"
+			   Date="@Date"
+			   DateChanged="HandleDateChanged"
+			   ReadOnly="Readonly"
+			   @bind-PickerMonth="PickerMonth"
+			   OpenTo="@OpenTo" />
+}
 @code {
 	private MudDatePicker _picker;
 
