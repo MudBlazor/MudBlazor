@@ -5,86 +5,117 @@
         <Description>Easily customizable tree view.</Description>
     </DocsPageHeader>
     <DocsPageContent>
+
         <DocsPageSection>
-            <SectionHeader Title="Simple Tree View">
-                <Description></Description>
+            <SectionHeader Title="Basic">
+                <Description>Basic TreeView, icon button with hover and click to expand sub items.</Description>
             </SectionHeader>
-            <SectionContent DarkenBackground="true" DisplayFlex="true">
-                <TreeViewSimpleExample />
+            <SectionContent Outlined="true" DisplayFlex="true">
+                <TreeViewBasicExample />
             </SectionContent>
-            <SectionSource Code="TreeViewSimpleExample" GitHubFolderName="Tree" />
+            <SectionSource Code="TreeViewBasicExample" GitHubFolderName="Tree" />
         </DocsPageSection>
+
         <DocsPageSection>
-            <SectionHeader Title="Highlight TreeItem">
+            <SectionHeader Title="Hoverable">
                 <Description></Description>
             </SectionHeader>
-            <SectionContent DarkenBackground="true" DisplayFlex="true">
+            <SectionContent Outlined="true" DisplayFlex="true">
                 <TreeViewHoverExample />
             </SectionContent>
-            <SectionSource Code="TreeViewHoverExample" GitHubFolderName="Tree" />
+            <SectionSource Code="TreeViewHoverExample" GitHubFolderName="Tree" ShowCode="false" />
         </DocsPageSection>
+
         <DocsPageSection>
-            <SectionHeader Title="Activate TreeItem on click">
-                <Description>Use <CodeInline>@@bind-Activated</CodeInline> on TreeViewItem to bind a single item.</Description>
-            </SectionHeader>
-            <SectionContent DarkenBackground="true" DisplayFlex="true">
-                <TreeViewActivateExample />
-            </SectionContent>
-            <SectionSource Code="TreeViewActivateExample" GitHubFolderName="Tree" />
-        </DocsPageSection>
-        <DocsPageSection>
-            <SectionHeader Title="Selectable items">
-                <Description>Use <CodeInline>@@bind-Selected</CodeInline> on TreeViewItem to bind a single item.</Description>
-            </SectionHeader>
-            <SectionContent DarkenBackground="true" DisplayFlex="true">
-                <TreeViewSelectExample />
-            </SectionContent>
-            <SectionSource Code="TreeViewSelectExample" GitHubFolderName="Tree" />
-        </DocsPageSection>
-        <DocsPageSection>
-            <SectionHeader Title="Expand-on-click">
+            <SectionHeader Title="Dense">
                 <Description></Description>
             </SectionHeader>
-            <SectionContent DarkenBackground="true" DisplayFlex="true">
-                <TreeViewExpandOnClickExample />
-            </SectionContent>
-            <SectionSource Code="TreeViewExpandOnClickExample" GitHubFolderName="Tree" />
-        </DocsPageSection>
-        <DocsPageSection>
-            <SectionHeader Title="TreeItem with icons">
-                <Description></Description>
-            </SectionHeader>
-            <SectionContent DarkenBackground="true" DisplayFlex="true">
-                <TreeViewIconExample />
-            </SectionContent>
-            <SectionSource Code="TreeViewIconExample" GitHubFolderName="Tree" />
-        </DocsPageSection>
-        <DocsPageSection>
-            <SectionHeader Title="Dense TreeView">
-                <Description></Description>
-            </SectionHeader>
-            <SectionContent DarkenBackground="true" DisplayFlex="true">
+            <SectionContent Outlined="true" DisplayFlex="true">
                 <TreeViewDenseExample />
             </SectionContent>
-            <SectionSource Code="TreeViewDenseExample" GitHubFolderName="Tree" />
+            <SectionSource Code="TreeViewDenseExample" GitHubFolderName="Tree" ShowCode="false" />
         </DocsPageSection>
+
         <DocsPageSection>
-            <SectionHeader Title="TreeViewItemTemplate">
+            <SectionHeader Title="Expand">
+                <Description>With <CodeInline>ExpandOnClick</CodeInline> bool the whole item row can be clicked to expand/collapse the sub trees.</Description>
+            </SectionHeader>
+            <SectionContent Outlined="true" DisplayFlex="true">
+                <TreeViewExpandOnClickExample />
+            </SectionContent>
+            <SectionSource Code="TreeViewExpandOnClickExample" GitHubFolderName="Tree" ShowCode="false" />
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Icons">
+                <Description>The icons and the color of the icon can be changed individualy per item.</Description>
+            </SectionHeader>
+            <SectionContent Outlined="true" DisplayFlex="true">
+                <TreeViewIconExample />
+            </SectionContent>
+            <SectionSource Code="TreeViewIconExample" GitHubFolderName="Tree" ShowCode="false" />
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Selection">
+                <Description>Use <CodeInline>@@bind-SelectedValue</CodeInline> on the TreeView to select a single item.</Description>
+            </SectionHeader>
+            <SectionContent Outlined="true" DisplayFlex="true">
+                <TreeViewSelectedExample />
+            </SectionContent>
+            <SectionSource Code="TreeViewSelectedExample" GitHubFolderName="Tree" ShowCode="false" />
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Selected Color">
+                <Description>The color of the selected item can be changed with <CodeInline>Color</CodeInline> property.</Description>
+            </SectionHeader>
+            <SectionContent Outlined="true" FullWidth="true">
+                <TreeViewSelectedColorExample />
+            </SectionContent>
+            <SectionSource Code="TreeViewColorExample" GitHubFolderName="Tree" ShowCode="false" />
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Multiselect">
+                <Description>If you set <CodeInline>MultiSelection</CodeInline> to true, you can select multiple values and they are returned as <CodeInline>HashSet&lt;T></CodeInline> via SelectedValues.</Description>
+            </SectionHeader>
+            <SectionContent Outlined="true" DisplayFlex="true">
+                <TreeViewMultiSelectionExample />
+            </SectionContent>
+            <SectionSource Code="TreeViewMultiSelectionExample" GitHubFolderName="Tree" ShowCode="false" />
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Multiselect Color">
+                <Description>The color of the checkboxes when <CodeInline>MultiSelection</CodeInline> is set to true can be changed with <CodeInline>CheckBoxColor</CodeInline> property.</Description>
+            </SectionHeader>
+            <SectionContent Outlined="true" FullWidth="true">
+                <TreeViewMultiSelecttionColorExample />
+            </SectionContent>
+            <SectionSource Code="TreeViewMultiSelecttionColorExample" GitHubFolderName="Tree" ShowCode="false" />
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="ItemTemplate">
                 <Description>This example shows how to use ItemTemplate to automatically build the tree items according to a hierarchical data structure.</Description>
             </SectionHeader>
-            <SectionContent DarkenBackground="true" DisplayFlex="true">
+            <SectionContent Outlined="true" DisplayFlex="true">
                 <TreeViewItemTemplateExample />
             </SectionContent>
-            <SectionSource Code="TreeViewItemTemplateExample" GitHubFolderName="Tree" />
+            <SectionSource Code="TreeViewItemTemplateExample" GitHubFolderName="Tree" ShowCode="false" />
         </DocsPageSection>
+
         <DocsPageSection>
-            <SectionHeader Title="Load data on demand">
+            <SectionHeader Title="Server Side Data">
+                <Description>Data can be loaded on demand with the use of <CodeInline>ServerData</CodeInline> prop, the loading icon and its color can be changed with <CodeInline>LoadingIcon</CodeInline> and <CodeInline>LoadingIconColor</CodeInline> prop.</Description>
             </SectionHeader>
-            <SectionContent DarkenBackground="true" DisplayFlex="true">
+            <SectionContent Outlined="true" DisplayFlex="true">
                 <TreeViewServerExample />
             </SectionContent>
-            <SectionSource Code="TreeViewServerExample" GitHubFolderName="Tree" />
+            <SectionSource Code="TreeViewServerExample" GitHubFolderName="Tree" ShowCode="false" />
         </DocsPageSection>
+
         <DocsPageSection>
             <SectionHeader Title="Custom Tree">
                 <Description>
@@ -92,10 +123,12 @@
                     Use the <CodeInline>Height</CodeInline> or <CodeInline>MaxHeight</CodeInline> parameters to scroll the treeview.
                 </Description>
             </SectionHeader>
-            <SectionContent DarkenBackground="true" DisplayFlex="true">
+            <SectionContent Outlined="true" DisplayFlex="true">
                 <TreeViewCustomExample />
             </SectionContent>
-            <SectionSource Code="TreeViewCustomExample" GitHubFolderName="Tree" />
+            <SectionSource Code="TreeViewCustomExample" GitHubFolderName="Tree" ShowCode="false" />
         </DocsPageSection>
+
     </DocsPageContent>
 </DocsPage>
+

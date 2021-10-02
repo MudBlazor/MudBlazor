@@ -222,6 +222,31 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public bool DisableDragEffect { get; set; } = false;
 
+        /// <summary>
+        /// Custom close icon.
+        /// </summary>
+        [Parameter] public string CloseIcon { get; set; } = Icons.Material.Filled.Close;
+
+        /// <summary>
+        /// Custom spectrum icon.
+        /// </summary>
+        [Parameter] public string SpectrumIcon { get; set; } = Icons.Material.Filled.Tune;
+
+        /// <summary>
+        /// Custom grid icon.
+        /// </summary>
+        [Parameter] public string GridIcon { get; set; } = Icons.Material.Filled.Apps;
+
+        /// <summary>
+        /// Custom palette icon.
+        /// </summary>
+        [Parameter] public string PaletteIcon { get; set; } = Icons.Material.Filled.Palette;
+
+        /// <summary>
+        /// Custom import/export icont.
+        /// </summary>
+        [Parameter] public string ImportExportIcon { get; set; } = Icons.Material.Filled.ImportExport;
+
         #endregion
 
         private void ToggleCollection()

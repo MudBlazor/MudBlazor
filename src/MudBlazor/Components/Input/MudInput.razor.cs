@@ -93,11 +93,6 @@ namespace MudBlazor
         [Parameter] public bool HideSpinButtons { get; set; } = true;
 
         /// <summary>
-        /// Revert up and down mouse wheel events.
-        /// </summary>
-        [Parameter] public bool InvertMouseWheel { get; set; } = false;
-
-        /// <summary>
         /// Show clear button.
         /// </summary>
         [Parameter] public bool Clearable { get; set; } = false;
@@ -111,6 +106,21 @@ namespace MudBlazor
         /// Mouse wheel event for input.
         /// </summary>
         [Parameter] public EventCallback<WheelEventArgs> OnMouseWheel { get; set; }
+
+        /// <summary>
+        /// Custom clear icon.
+        /// </summary>
+        [Parameter] public string ClearIcon { get; set; } = Icons.Material.Filled.Clear;
+
+        /// <summary>
+        /// Custom numeric up icon.
+        /// </summary>
+        [Parameter] public string NumericUpIcon { get; set; } = Icons.Material.Filled.KeyboardArrowUp;
+
+        /// <summary>
+        /// Custom numeric down icon.
+        /// </summary>
+        [Parameter] public string NumericDownIcon { get; set; } = Icons.Material.Filled.KeyboardArrowDown;
 
         private Size GetButtonSize() => Margin == Margin.Dense ? Size.Small : Size.Medium;
 

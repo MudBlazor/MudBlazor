@@ -13,7 +13,7 @@
             <div class="d-flex">
                 @if (GroupDefinition.Expandable)
                 {
-                    <MudIconButton Class="mud-table-row-expander" Icon="@(IsExpanded ? Icons.Material.Filled.ExpandMore : Icons.Material.Filled.ChevronRight)" OnClick="@(() => IsExpanded = !IsExpanded)"/>
+                    <MudIconButton Class="mud-table-row-expander" Icon="@(IsExpanded ? ExpandIcon : CollapseIcon)" OnClick="@(() => IsExpanded = !IsExpanded)"/>
                 }
                 else
                 {

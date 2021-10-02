@@ -20,8 +20,8 @@ namespace MudBlazor
           .AddClass($"mud-chip-{GetVariant().ToDescriptionString()}")
           .AddClass($"mud-chip-size-{Size.ToDescriptionString()}")
           .AddClass($"mud-chip-color-{GetColor().ToDescriptionString()}")
-          .AddClass("mud-clickable", (OnClick.HasDelegate || ChipSet != null))
-          .AddClass($"mud-ripple", !DisableRipple && (OnClick.HasDelegate || ChipSet != null))
+          .AddClass("mud-clickable", !ChipSet?.ReadOnly ?? OnClick.HasDelegate)
+          .AddClass("mud-ripple", !ChipSet?.ReadOnly ?? OnClick.HasDelegate && !DisableRipple)
           .AddClass("mud-chip-label", Label)
           .AddClass("mud-disabled", Disabled)
           .AddClass("mud-chip-selected", IsSelected)
@@ -101,6 +101,11 @@ namespace MudBlazor
         /// Sets the Icon to use.
         /// </summary>
         [Parameter] public string Icon { get; set; }
+
+        /// <summary>
+        /// Custom checked icon.
+        /// </summary>
+        [Parameter] public string CheckedIcon { get; set; } = Icons.Material.Filled.Check;
 
         /// <summary>
         /// The color of the icon.
@@ -197,6 +202,10 @@ namespace MudBlazor
 
         protected async Task OnClickHandler(MouseEventArgs ev)
         {
+            if (ChipSet?.ReadOnly == true)
+            {
+                return;
+            }
             if (ChipSet != null)
             {
                 _ = ChipSet.OnChipClicked(this);
@@ -221,6 +230,10 @@ namespace MudBlazor
 
         protected async Task OnCloseHandler(MouseEventArgs ev)
         {
+            if (ChipSet?.ReadOnly == true)
+            {
+                return;
+            }
             await OnClose.InvokeAsync(this);
             ChipSet?.OnChipDeleted(this);
             StateHasChanged();

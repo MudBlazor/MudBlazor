@@ -1,39 +1,25 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
 <MudGrid>
-    <MudItem xs="12" sm="6">
-        <div>
-            <MudCheckBox T="bool" CheckedChanged="ChangeMargin" Color="Color.Primary" Label="@("Margin: " + _margin)" />
-        </div>
-        <div>
-            <MudCheckBox @bind-Checked="_dense" Color="Color.Primary" Label="@("Dense: " + _dense)" />
-        </div>
-    </MudItem>
-
-    <MudItem  xs="12" sm="6">
-        <MudSelect T="string" Label="Pies" OffsetY="true" Margin="@_margin" Dense="@_dense" Variant="Variant.Outlined">
-            <MudSelectItem Value="@("Apple Pie")" />
-            <MudSelectItem Value="@("Blackberry Pie")" />
-            <MudSelectItem Value="@("Rhubarb Pie")" />
-            <MudSelectItem Value="@("Lemon Pie")" />
+    <MudItem xs="12" sm="6" md="4">
+        <MudSelect T="string" Label="Standard" Variant="Variant.Text" Margin="Margin.Dense" Dense="true">
+            <MudSelectItem Value="@("Tyrannosaur")" />
+            <MudSelectItem Value="@("Triceratops")" />
+            <MudSelectItem Value="@("Oviraptor")" />
         </MudSelect>
-
+    </MudItem>
+    <MudItem xs="12" sm="6" md="4">
+        <MudSelect T="string" Label="Standard" Variant="Variant.Outlined" Margin="Margin.Dense" Dense="true">
+            <MudSelectItem Value="@("Tyrannosaur")" />
+            <MudSelectItem Value="@("Triceratops")" />
+            <MudSelectItem Value="@("Oviraptor")" />
+        </MudSelect>
+    </MudItem>
+    <MudItem xs="12" sm="6" md="4">
+        <MudSelect T="string" Label="Standard" Variant="Variant.Filled" Margin="Margin.Dense" Dense="true">
+            <MudSelectItem Value="@("Tyrannosaur")" />
+            <MudSelectItem Value="@("Triceratops")" />
+            <MudSelectItem Value="@("Oviraptor")" />
+        </MudSelect>
     </MudItem>
 </MudGrid>
-
-@code{
-    Margin _margin = Margin.None;
-    bool _dense = false;
-
-    private void ChangeMargin()
-    {
-        if (_margin == Margin.None)
-        {
-            _margin = Margin.Dense;
-        }
-        else
-        {
-            _margin = Margin.None;
-        }
-    }
-}

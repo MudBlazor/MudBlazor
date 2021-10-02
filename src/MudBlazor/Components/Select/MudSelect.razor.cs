@@ -15,6 +15,7 @@ namespace MudBlazor
         private bool _dense;
         private string multiSelectionText;
         private bool? _selectAllChecked;
+        private MudElement _multiSelectContainer;
 
         protected string Classname =>
             new CssBuilder("mud-select")
@@ -166,7 +167,7 @@ namespace MudBlazor
             {
                 if (Value == null)
                     return false;
-                if (!_value_lookup.TryGetValue(Value, out var item))
+                if (!_valueLookup.TryGetValue(Value, out var item))
                     return false;
                 return (item.ChildContent != null);
             }
@@ -178,7 +179,7 @@ namespace MudBlazor
             {
                 if (Value == null)
                     return false;
-                return _value_lookup.TryGetValue(Value, out var _);
+                return _valueLookup.TryGetValue(Value, out var _);
             }
         }
 
@@ -186,7 +187,7 @@ namespace MudBlazor
         {
             if (Value == null)
                 return null;
-            if (!_value_lookup.TryGetValue(Value, out var selected_item))
+            if (!_valueLookup.TryGetValue(Value, out var selected_item))
                 return null; //<-- for now. we'll add a custom template to present values (set from outside) which are not on the list?
             return selected_item.ChildContent;
         }
@@ -227,17 +228,39 @@ namespace MudBlazor
         [Parameter] public bool MultiSelection { get; set; }
 
         protected List<MudSelectItem<T>> _items = new();
-        protected Dictionary<T, MudSelectItem<T>> _value_lookup = new();
-        internal void Add(MudSelectItem<T> item)
+        protected Dictionary<T, MudSelectItem<T>> _valueLookup = new();
+        object _activeItemId = null;
+
+        internal bool Add(MudSelectItem<T> item)
         {
             // Check to avoid duplicate items based on their value
             // It fixes that the number of real items is correct in the items list
+
+            var result = new bool?();
+
             if (!_items.Select(x => x.Value).Contains(item.Value))
             {
                 _items.Add(item);
+
                 if (item.Value != null)
-                    _value_lookup[item.Value] = item;
+                {
+                    _valueLookup[item.Value] = item;
+
+                    if (item.Value.Equals(Value))
+                    {
+                        _activeItemId = item.ItemId;
+                        result = true;
+                    }
+                }
             }
+
+            UpdateSelectAllChecked();
+            if(result.HasValue == false)
+            {
+                result = item.Value.Equals(Value);
+            }
+
+            return result.Value;
         }
 
         internal void Remove(MudSelectItem<T> item)
@@ -246,7 +269,7 @@ namespace MudBlazor
             {
                 _items.Remove(item);
                 if (item.Value != null)
-                    _value_lookup.Remove(item.Value);
+                    _valueLookup.Remove(item.Value);
             }
         }
 
@@ -256,18 +279,31 @@ namespace MudBlazor
         [Parameter] public int MaxHeight { get; set; } = 300;
 
         /// <summary>
+        /// Set the anchor origin point to determen where the popover will open from.
+        /// </summary>
+        [Parameter] public Origin AnchorOrigin { get; set; } = Origin.TopCenter;
+
+        /// <summary>
+        /// Sets the transform origin point for the popover.
+        /// </summary>
+        [Parameter] public Origin TransformOrigin { get; set; } = Origin.TopCenter;
+
+        /// <summary>
         /// Sets the direction the Select menu should open.
         /// </summary>
+        [Obsolete("Direction is obsolete. Use AnchorOrigin or TransformOrigin instead!", false)]
         [Parameter] public Direction Direction { get; set; } = Direction.Bottom;
 
         /// <summary>
         /// If true, the Select menu will open either before or after the input (left/right).
         /// </summary>
+        [Obsolete("OffsetX is obsolete. Use AnchorOrigin or TransformOrigin instead!", false)]
         [Parameter] public bool OffsetX { get; set; }
 
         /// <summary>
         /// If true, the Select menu will open either before or after the input (top/bottom).
         /// </summary>
+        [Obsolete("OffsetY is obsolete. Use AnchorOrigin or TransformOrigin instead!", false)]
         [Parameter] public bool OffsetY { get; set; }
 
         /// <summary>
@@ -290,6 +326,45 @@ namespace MudBlazor
         internal bool _isOpen;
 
         public string _currentIcon { get; set; }
+
+        internal Origin _anchorOrigin;
+        internal Origin _transformOrigin;
+
+#pragma warning disable CS0618 // This is for backwards compability until Obsolete is removed
+        private void GetPopoverOrigins()
+        {
+            if (Direction != Direction.Bottom || OffsetY || OffsetX)
+            {
+                switch (Direction)
+                {
+                    case Direction.Bottom when OffsetY:
+                    case Direction.Top when OffsetY:
+                        _anchorOrigin = Origin.BottomCenter;
+                        _transformOrigin = Origin.TopCenter;
+                        break;
+                    case Direction.Top when !OffsetY:
+                        _anchorOrigin = Origin.BottomCenter;
+                        _transformOrigin = Origin.BottomCenter;
+                        break;
+                    case Direction.Start when OffsetX:
+                    case Direction.Left when OffsetX:
+                        _anchorOrigin = Origin.TopLeft;
+                        _transformOrigin = Origin.TopRight;
+                        break;
+                    case Direction.End when OffsetX:
+                    case Direction.Right when OffsetX:
+                        _anchorOrigin = Origin.TopRight;
+                        _transformOrigin = Origin.TopLeft;
+                        break;
+                }
+            }
+            else
+            {
+                _anchorOrigin = AnchorOrigin;
+                _transformOrigin = TransformOrigin;
+            }
+        }
+#pragma warning restore CS0618 // Type or member is obsolete
 
         public async Task SelectOption(object obj)
         {
@@ -331,16 +406,42 @@ namespace MudBlazor
                 await SetValueAsync(value);
                 SelectedValues.Clear();
                 SelectedValues.Add(value);
+                HilightItemForValue(value);
             }
 
             StateHasChanged();
             await SelectedValuesChanged.InvokeAsync(SelectedValues);
         }
 
+        private void HilightItemForValue(T value)
+        {
+            if (value == null)
+            {
+                HilightItem(null);
+                return;
+            }
+            _valueLookup.TryGetValue(value, out var item);
+            HilightItem(item);
+        }
+
+        private void HilightItem(MudSelectItem<T> item)
+        {
+            _activeItemId = item?.ItemId;
+        }
+
+        private void HilightSelectedValue()
+        {
+            if (MultiSelection)
+                HilightItem(_items.FirstOrDefault());
+            else
+                HilightItemForValue(Value);
+        }
+
         private void UpdateSelectAllChecked()
         {
             if (MultiSelection && SelectAll)
             {
+                var oldState = _selectAllChecked;
                 if (SelectedValues.Count == 0)
                 {
                     _selectAllChecked = false;
@@ -352,6 +453,11 @@ namespace MudBlazor
                 else
                 {
                     _selectAllChecked = null;
+                }
+
+                if (oldState != _selectAllChecked)
+                {
+                    _multiSelectContainer?.Refresh();
                 }
             }
         }
@@ -371,6 +477,7 @@ namespace MudBlazor
             if (Disabled || ReadOnly)
                 return;
             _isOpen = true;
+            HilightSelectedValue();
             UpdateIcon();
             StateHasChanged();
         }
@@ -397,6 +504,7 @@ namespace MudBlazor
         protected override void OnParametersSet()
         {
             base.OnParametersSet();
+            GetPopoverOrigins(); // Just to keep Obsolete functional until removed.
             UpdateIcon();
         }
 
@@ -456,13 +564,28 @@ namespace MudBlazor
         }
 
         /// <summary>
+        /// Custom checked icon.
+        /// </summary>
+        [Parameter] public string CheckedIcon { get; set; } = Icons.Material.Filled.CheckBox;
+
+        /// <summary>
+        /// Custom unchecked icon.
+        /// </summary>
+        [Parameter] public string UncheckedIcon { get; set; } = Icons.Material.Filled.CheckBoxOutlineBlank;
+
+        /// <summary>
+        /// Custom indeterminate icon.
+        /// </summary>
+        [Parameter] public string IndeterminateIcon { get; set; } = Icons.Material.Filled.IndeterminateCheckBox;
+
+        /// <summary>
         /// The checkbox icon reflects the select all option's state
         /// </summary>
         protected string SelectAllCheckBoxIcon
         {
             get
             {
-                return _selectAllChecked.HasValue ? _selectAllChecked.Value ? Icons.Material.Filled.CheckBox : Icons.Material.Filled.CheckBoxOutlineBlank : Icons.Material.Filled.IndeterminateCheckBox;
+                return _selectAllChecked.HasValue ? _selectAllChecked.Value ? CheckedIcon : UncheckedIcon : IndeterminateIcon;
             }
         }
 

@@ -27,6 +27,11 @@ namespace MudBlazor
 
         [Parameter] public EventCallback<ElementReference> RefChanged { get; set; }
 
+        /// <summary>
+        /// Calling StateHasChanged to refresh the component's state
+        /// </summary>
+        public void Refresh() => StateHasChanged();
+
         protected override void BuildRenderTree(RenderTreeBuilder builder)
         {
             base.BuildRenderTree(builder);

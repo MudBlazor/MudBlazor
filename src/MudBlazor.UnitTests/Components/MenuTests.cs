@@ -1,6 +1,8 @@
 ﻿
+using System.Threading.Tasks;
 using Bunit;
 using FluentAssertions;
+using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.UnitTests.TestComponents;
 using NUnit.Framework;
 
@@ -55,7 +57,19 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("div.mud-popover").ClassList.Should().Contain("menu-popover-class");
         }
 
-        //TODO
-        //Create test to check menu on hover
+        [Test]
+        public async Task MenuMouseLeave_CheckClosed()
+        {
+            var comp = Context.RenderComponent<MenuTestMouseOver>();
+            var pop = comp.FindComponent<MudPopover>();
+            comp.FindAll("button.mud-button-root")[0].Click();
+
+            var list = comp.FindAll("div.mud-list")[0];
+
+            await list.TriggerEventAsync("onmouseenter", new MouseEventArgs());
+            await list.TriggerEventAsync("onmouseleave", new MouseEventArgs());
+
+            comp.WaitForAssertion(() => pop.Instance.Open.Should().BeFalse());
+        }
     }
 }

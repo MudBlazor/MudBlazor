@@ -1,11 +1,13 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
-<MudTreeView CanActivate="true" Items="TreeItems" CanSelect="true" @bind-ActivatedValue="ActivatedValue" @bind-SelectedValues="SelectedValues">
-    <ItemTemplate>
-        <MudTreeViewItem @bind-Expanded="@context.IsExpanded" Items="@context.TreeItems" Value="@context"
-                         Icon="@context.Icon" Text="@context.Title" EndText="@context.Number?.ToString()" EndTextTypo="@Typo.caption" />
-    </ItemTemplate>
-</MudTreeView>
+<MudPaper Width="300px" Elevation="0">
+    <MudTreeView Items="TreeItems" MultiSelection="true" @bind-ActivatedValue="ActivatedValue" @bind-SelectedValues="SelectedValues">
+        <ItemTemplate>
+            <MudTreeViewItem @bind-Expanded="@context.IsExpanded" Items="@context.TreeItems" Value="@context"
+                             Icon="@context.Icon" Text="@context.Title" EndText="@context.Number?.ToString()" EndTextTypo="@Typo.caption" />
+        </ItemTemplate>
+    </MudTreeView>
+</MudPaper>
 
 <div style="width: 100%">
     <MudText Typo="@Typo.subtitle1">Activated item: @(ActivatedValue?.Title)</MudText>

@@ -184,6 +184,30 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("div.mud-chip").Count.Should().Be(2);
             string.Join(", ", chipset.Instance.SelectedChips.Select(x => x.Text).OrderBy(x => x)).Should().Be("Extra Chip, Primary");
         }
+
+        /// <summary>
+        /// If chip set parameter ReadOnly is set to true, mud-clickable and mud-ripple should not be
+        /// added to chips and chip click event should return without executing any code
+        /// </summary>
+        [Test]
+        public async Task ChipSet_ReadOnly()
+        {
+            var comp = Context.RenderComponent<ChipSetReadOnlyTest>();
+            // print the generated html
+            Console.WriteLine(comp.Markup);
+            // no chip should have mud-clickable or mud-ripple classes
+            var chipset = comp.FindComponent<MudChipSet>();
+            comp.FindAll("div.mud-clickable").Count.Should().Be(0);
+            comp.FindAll("div.mud-ripple").Count.Should().Be(0);
+
+            //Click test
+            comp.FindAll("div.mud-chip")[0].Click();
+            
+            //Should not throw an error
+            comp.FindAll("button.mud-chip-close-button")[0].Click();
+
+            chipset.Instance.SelectedChip.Should().Be(null);
+        }
     }
 
 }

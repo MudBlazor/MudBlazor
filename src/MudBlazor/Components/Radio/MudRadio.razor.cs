@@ -8,8 +8,6 @@ namespace MudBlazor
 {
     public partial class MudRadio<T> : MudComponentBase, IDisposable
     {
-        [CascadingParameter] protected MudRadioGroup<T> RadioGroup { get; set; }
-
         [CascadingParameter] public bool RightToLeft { get; set; }
 
         protected string Classname =>
@@ -43,12 +41,33 @@ namespace MudBlazor
             .AddClass($"mud-icon-size-{Size.ToDescriptionString()}")
             .Build();
 
+        private IMudRadioGroup _parent;
+
+        /// <summary>
+        /// The parent Radio Group
+        /// </summary>
+        [CascadingParameter]
+        internal IMudRadioGroup IMudRadioGroup
+        {
+            get => _parent;
+            set
+            {
+                _parent = value;
+                if (_parent == null)
+                    return;
+                _parent.CheckGenericTypeMatch(this);
+                //MudRadioGroup<T>?.Add(this);
+            }
+        }
+
+        internal MudRadioGroup<T> MudRadioGroup => (MudRadioGroup<T>)IMudRadioGroup;
+
         private Placement ConvertPlacement(Placement placement)
         {
             return placement switch
             {
-                Placement.Left => RightToLeft ? Placement.End : Placement.Start,
-                Placement.Right => RightToLeft ? Placement.Start : Placement.End,
+                Placement.Left => RightToLeft ? Placement.Right : Placement.Left,
+                Placement.Right => RightToLeft ? Placement.Left : Placement.Right,
                 _ => placement
             };
         }
@@ -61,7 +80,7 @@ namespace MudBlazor
         /// <summary>
         /// The position of the child content.
         /// </summary>
-        [Parameter] public Placement Placement { get; set; } = Placement.End;
+        [Parameter] public Placement Placement { get; set; } = Placement.Right;
 
         /// <summary>
         /// The value to associate to the button.
@@ -106,13 +125,13 @@ namespace MudBlazor
 
         public void Select()
         {
-            RadioGroup?.SetSelectedRadioAsync(this).AndForget();
+            MudRadioGroup?.SetSelectedRadioAsync(this).AndForget();
         }
 
         private Task OnClick()
         {
-            if (RadioGroup != null)
-                return RadioGroup.SetSelectedRadioAsync(this);
+            if (MudRadioGroup != null)
+                return MudRadioGroup.SetSelectedRadioAsync(this);
 
             return Task.CompletedTask;
         }
@@ -121,13 +140,13 @@ namespace MudBlazor
         {
             await base.OnInitializedAsync();
 
-            if (RadioGroup != null)
-                await RadioGroup.RegisterRadioAsync(this);
+            if (MudRadioGroup != null)
+                await MudRadioGroup.RegisterRadioAsync(this);
         }
 
         public void Dispose()
         {
-            RadioGroup?.UnregisterRadio(this);
+            MudRadioGroup?.UnregisterRadio(this);
         }
     }
 }
