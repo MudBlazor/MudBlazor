@@ -20,7 +20,8 @@
                           OnKeyDown="@HandleKeyDown">
                     @if (CanRenderValue)
                     {
-                @GetSelectedValuePresenter()}
+                        @GetSelectedValuePresenter()
+                    }
                 </MudInput>
 				<MudPopover Open=@(_isOpen) MaxHeight="@MaxHeight" AnchorOrigin="@_anchorOrigin" TransformOrigin="@_transformOrigin" Class="@PopoverClass" RelativeWidth="true">
 					<CascadingValue Value="@((IMudSelect)this)" IsFixed="true">

@@ -125,16 +125,15 @@ namespace MudBlazor.UnitTests.Components
 
             select.Instance.Value.Should().Be(default(MyEnum));
             select.Instance.Text.Should().Be(default(MyEnum).ToString());
-            await Task.Delay(50);
 
-            comp.Find("div.mud-input-slot").TextContent.Trim().Should().Be("First");
+            comp.Find("input").Attributes["value"]?.Value.Should().Be("First");
             comp.RenderCount.Should().Be(1);
 
             //Console.WriteLine(comp.Markup);
             input.Click();
             var items = comp.FindAll("div.mud-list-item").ToArray();
             items[1].Click();
-            comp.Find("div.mud-input-slot").TextContent.Trim().Should().Be("Second");
+            comp.Find("input").Attributes["value"]?.Value.Should().Be("Second");
             comp.RenderCount.Should().Be(3);
         }
 
