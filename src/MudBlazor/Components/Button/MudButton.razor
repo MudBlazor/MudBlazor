@@ -20,6 +20,9 @@
                 <MudIcon Icon="@StartIcon" Size="@Size" Color="@IconColor" />
             </span>
         }
+        @if(isLoading){
+            <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true"/>
+        }
         @ChildContent
         @if (!string.IsNullOrWhiteSpace(@EndIcon))
         {

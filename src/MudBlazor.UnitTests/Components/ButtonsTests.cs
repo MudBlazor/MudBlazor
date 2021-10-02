@@ -1,4 +1,6 @@
 ﻿
+using System;
+using System.Threading.Tasks;
 using Bunit;
 using FluentAssertions;
 using NUnit.Framework;
@@ -180,6 +182,43 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("button span.mud-icon-button-label").InnerHtml.Trim().Should().StartWith("<span")
                 .And.Contain("customicon")
                 .And.Contain($"title=\"{title}\"");
+        }
+        
+        /// <summary>
+        /// MudButton without specifying HtmlTag, renders a button
+        /// </summary>
+        [Test]
+        public void MudButtonShouldRenderASpinnerWhenAutoLoadingEnabledAndOnClick()
+        {
+            //when Autoloading enabled
+            //and Method executed
+            //Task.Delay in UnitTest is not best practice, but it's the best Idea i had, open for rework
+            bool finishedClick = false;
+            Func<Task> onClickHandler = new Func<Task>(async () =>
+            {
+                await Task.Delay(50);
+                finishedClick = true;
+            });
+
+            var comp = Context.RenderComponent<MudButton>(parameters => parameters
+                    .Add(p => p.OnClick, onClickHandler)
+                    .Add(p => p.AutoLoading,true)
+                  );
+            
+            comp.Markup.Should().NotContain("mud-progress-circular-circle");
+            
+            comp.Find("button").Click();
+            //When Loading Button should be disabled
+            comp.Instance.Disabled.Should().BeTrue();
+            //Should MudProgress shown for the time of execution
+            comp.Markup.Should().Contain("mud-progress-circular-circle");
+            while (!finishedClick)
+            {
+                Task.Delay(1).Wait();
+            }
+            //After execution LoadingSpinner should be disabled
+            comp.Instance.Disabled.Should().BeFalse();
+            comp.Markup.Should().NotContain("mud-progress-circular-circle");
         }
     }
 }
