@@ -29,6 +29,137 @@ namespace MudBlazor
 
         private ElementReference _self;
 
+        private int itemIndex = 0;
+
+        private async Task SelectNextItem()
+        {
+            if (_items == null || _items.Count == 0)
+                return;
+            if (!MultiSelection)
+            {
+                string val = Converter.Set(Value);
+                itemIndex = _items.FindIndex(e => Converter.Set(e.Value) == val);
+            }
+
+            for (int i = 0; i <= _items.Count; i++)
+            {
+                itemIndex += 1;
+                if (_items.Count <= itemIndex)
+                {
+                    break;
+                }
+                else if ((itemIndex == -1 && _items[itemIndex].Disabled == false) || (itemIndex <= _items.Count && _items[itemIndex].Disabled == false))
+                {
+                    if (!MultiSelection)
+                    {
+                        _selectedValues.Clear();
+                        _selectedValues.Add(_items[itemIndex].Value);
+                        await SetValueAsync(_items[itemIndex].Value, updateText: true);
+                        await SetTextAsync(_items[itemIndex].Value.ToString(), false);
+                        HilightItem(_items[itemIndex]);
+                        break;
+                    }
+                    else
+                    {
+                        await SetValueAsync(_items[itemIndex].Value, updateText: true);
+                        await SetTextAsync(_items[itemIndex].Value.ToString(), false);
+                        HilightItem(_items[itemIndex]);
+                        break;
+                    }
+                }
+            }
+        }
+
+        private readonly string _componentId = Guid.NewGuid().ToString();
+
+        private string GetListItemId(in int index)
+        {
+            return $"{_componentId}_item{index}";
+        }
+
+        private async Task SelectPreviousItem()
+        {
+            if (true)
+            {
+                if (_items == null || _items.Count == 0)
+                    return;
+                if (!MultiSelection)
+                {
+                    string val = Converter.Set(Value);
+                    itemIndex = _items.FindIndex(e => Converter.Set(e.Value) == val);
+                }
+
+                for (int i = 0; i <= _items.Count; i++)
+                {
+                    itemIndex = itemIndex - 1;
+                    if (itemIndex < 0)
+                    {
+                        break;
+                    }
+                    else if (_items[itemIndex].Disabled == false)
+                    {
+                        if (!MultiSelection)
+                        {
+                            _selectedValues.Clear();
+                            _selectedValues.Add(_items[itemIndex].Value);
+                            await SetValueAsync(_items[itemIndex].Value, updateText: true);
+                            HilightItem(_items[itemIndex]);
+                            break;
+                        }
+                        else
+                        {
+                            await SetValueAsync(_items[itemIndex].Value, updateText: true);
+                            await SetTextAsync(_items[itemIndex].Value.ToString(), updateValue: false);
+                            HilightItem(_items[itemIndex]);
+                            break;
+                        }
+
+                    }
+                }
+
+            }
+        }
+
+        private async Task SelectFirstItem()
+        {
+            if (_items == null || _items.Count == 0)
+                return;
+            for (int i = 0; i < _items.Count; i++)
+            {
+                itemIndex = i;
+                if (_items[itemIndex].Disabled == false)
+                {
+                    _selectedValues.Clear();
+                    _selectedValues.Add(_items[itemIndex].Value);
+                    await SetValueAsync(_items[itemIndex].Value, updateText: true);
+                    HilightItem(_items[itemIndex]);
+                    break;
+                }
+            }
+        }
+
+        private string popoverId = "asd";
+
+        private async Task SelectLastItem()
+        {
+            if (_items == null || _items.Count == 0)
+                return;
+            itemIndex = _items.Count;
+            for (int i = 0; i < _items.Count; i++)
+            {
+                itemIndex -= 1;
+                if (_items[itemIndex].Disabled == false)
+                {
+                    _selectedValues.Clear();
+                    _selectedValues.Add(_items[itemIndex].Value);
+                    await SetValueAsync(_items[itemIndex].Value, updateText: true);
+                    HilightItem(_items[itemIndex]);
+                    await ScrollManager.ScrollToAsync(popoverId, 0, 100, ScrollBehavior.Smooth);
+                    break;
+                }
+            }
+        }
+
         /// <summary>
         /// Add the MudSelectItems here
         /// </summary>
