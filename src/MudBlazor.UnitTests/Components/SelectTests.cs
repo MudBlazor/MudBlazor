@@ -144,19 +144,16 @@ namespace MudBlazor.UnitTests.Components
         public void SelectUnrepresentableValueTest()
         {
             var comp = Context.RenderComponent<SelectUnrepresentableValueTest>();
-            Console.WriteLine(comp.Markup);
             // select elements needed for the test
             var select = comp.FindComponent<MudSelect<int>>();
             var input = comp.Find("div.mud-input-control");
-
             select.Instance.Value.Should().Be(17);
             select.Instance.Text.Should().Be("17");
-            comp.FindAll("div.mud-input-slot").Count.Should().Be(0);
-            //Console.WriteLine(comp.Markup);
+            comp.Find("input").Attributes["value"]?.Value.Should().Be("17");
             input.Click();
-
             var items = comp.FindAll("div.mud-list-item").ToArray();
             items[1].Click();
+            //Console.WriteLine(comp.Markup);
             comp.Find("div.mud-input-slot").TextContent.Trim().Should().Be("Two");
             select.Instance.Value.Should().Be(2);
             select.Instance.Text.Should().Be("2");
