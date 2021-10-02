@@ -457,6 +457,11 @@ namespace MudBlazor
         [Parameter] public bool Clearable { get; set; } = false;
 
         /// <summary>
+        /// If true, prevent scrolling while dropdown is open.
+        /// </summary>
+        [Parameter] public bool LockScroll { get; set; } = false;
+
+        /// <summary>
         /// Button click event for clear button. Called after text and value has been cleared.
         /// </summary>
         [Parameter] public EventCallback<MouseEventArgs> OnClearButtonClick { get; set; }
