@@ -605,7 +605,7 @@ namespace MudBlazor
             if (Disabled || ReadOnly)
                 return;
             if (_isOpen)
-                CloseMenu();
+                CloseMenu(true);
             else
                 OpenMenu();
         }
@@ -617,15 +617,22 @@ namespace MudBlazor
             _isOpen = true;
             HilightSelectedValue();
             UpdateIcon();
+
             StateHasChanged();
         }
 
-        public async void CloseMenu()
+        public async void CloseMenu(bool focusAgain = true)
         {
             _isOpen = false;
             UpdateIcon();
-            StateHasChanged();
-            await OnBlur.InvokeAsync(new FocusEventArgs());
+            await Task.Delay(1);
+            if (focusAgain == true)
+            {
+                StateHasChanged();
+                await OnBlur.InvokeAsync(new FocusEventArgs());
+                _elementReference.FocusAsync().AndForget();
+                StateHasChanged();
+            }
         }
 
         private void UpdateIcon()
