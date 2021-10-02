@@ -11,10 +11,22 @@ namespace MudBlazor
           .AddClass($"mud-typography-{Typo.ToDescriptionString()}")
           .AddClass($"mud-{Color.ToDescriptionString()}-text")
           .AddClass("mud-typography-gutterbottom", GutterBottom)
-          .AddClass($"mud-typography-align-{Align.ToDescriptionString()}", Align != Align.Inherit)
+          .AddClass($"mud-typography-align-{ConvertAlign(Align).ToDescriptionString()}", Align != Align.Inherit)
           .AddClass("mud-typography-display-inline", Inline)
           .AddClass(Class)
         .Build();
+
+        private Align ConvertAlign(Align align)
+        {
+            return align switch
+            {
+                Align.Start => RightToLeft ? Align.Right : Align.Left,
+                Align.End => RightToLeft ? Align.Left : Align.Right,
+                _ => align
+            };
+        }
+
+        [CascadingParameter] public bool RightToLeft { get; set; }
 
         /// <summary>
         /// Applies the theme typography styles.

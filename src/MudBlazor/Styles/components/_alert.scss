@@ -74,16 +74,34 @@
     padding: 7px 0;
     font-size: 22px;
     margin-right: 12px;
+    margin-inline-end: 12px;
+    margin-inline-start: unset;
+
+    &.mud-alert-icon-left {
+        margin-right: 12px;
+        margin-inline-end: 12px;
+        margin-inline-start: unset;
+    }
+
+    &.mud-alert-icon-right {
+        margin-left: 12px;
+        margin-inline-start: 12px;
+        margin-inline-end: unset;
+    }
 }
 
 .mud-alert-message {
     padding: 9px 0;
 }
 
-.mud-alert-action {
+.mud-alert-position {
+    flex: 1;
     display: flex;
+}
+
+.mud-alert-close {
+    display: flex;
+    flex: 0;
     align-items: center;
-    margin-left: auto;
-    margin-right: -8px;
-    padding-left: 16px;
+    margin-left: 8px;
 }

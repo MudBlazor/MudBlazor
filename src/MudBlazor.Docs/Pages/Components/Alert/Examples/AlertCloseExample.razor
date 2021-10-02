@@ -1,0 +1,39 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+@if (showLeaveAlert)
+{
+    <MudAlert Severity="Severity.Info" ContentAlignment="HorizontalAlignment.Center" ShowCloseIcon="true" CloseIconClicked="(() => CloseMe(true))">Time to leave. Please close me!</MudAlert>
+}
+@if (showCallAlert)
+{
+    <MudAlert Severity="Severity.Success" ContentAlignment="HorizontalAlignment.Center" ShowCloseIcon="true" CloseIconClicked="(() => CloseMe(false))">Time to call. Please close me!</MudAlert>
+}
+@if (!showLeaveAlert && !showCallAlert)
+{
+    <div style="display: flex; justify-content: center;" class="mt-6">
+        <MudButton @onclick="ShowAlerts" Variant="Variant.Filled" Color="Color.Primary">Show Alerts</MudButton>
+    </div>
+}
+
+@code { 
+    private bool showCallAlert = true;
+    private bool showLeaveAlert = true;
+
+    private void CloseMe(bool value)
+    {
+        if (value)
+        {
+            showLeaveAlert = false;
+        }
+        else
+        {
+            showCallAlert = false;
+        }
+    }
+
+    private void ShowAlerts()
+    {
+        showCallAlert = true;
+        showLeaveAlert = true;
+    }
+}

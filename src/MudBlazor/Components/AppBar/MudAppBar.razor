@@ -1,9 +1,10 @@
 ﻿@namespace MudBlazor
 @inherits MudComponentBase
 
-<header @attributes="UserAttributes" class="@Classname" style="@Style" >
-    <MudToolBar Dense="@Dense" Class="mud-toolbar-appbar">
+<header @attributes="UserAttributes" class="@Classname" style="@Style">
+    <MudToolBar Dense="@Dense" DisableGutters="@DisableGutters" Class="@ToolBarClassname">
         @ChildContent
     </MudToolBar>
 </header>
+
 

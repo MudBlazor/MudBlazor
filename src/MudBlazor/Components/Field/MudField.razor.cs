@@ -11,9 +11,10 @@ namespace MudBlazor
         protected string Classname =>
             new CssBuilder("mud-input")
                 .AddClass($"mud-input-{Variant.ToDescriptionString()}")
+                .AddClass($"mud-input-adorned-{Adornment.ToDescriptionString()}", Adornment != Adornment.None)
                 .AddClass($"mud-input-margin-{Margin.ToDescriptionString()}", when: () => Margin != Margin.None)
                 .AddClass("mud-input-underline", when: () => DisableUnderLine == false && Variant != Variant.Outlined)
-                .AddClass("mud-shrink", when: () => !string.IsNullOrWhiteSpace(ChildContent?.ToString()))
+                .AddClass("mud-shrink", when: () => !string.IsNullOrWhiteSpace(ChildContent?.ToString()) || Adornment == Adornment.Start)
                 .AddClass("mud-disabled", Disabled)
                 .AddClass("mud-input-error", Error && !string.IsNullOrEmpty(ErrorText))
                 .Build();
@@ -23,6 +24,7 @@ namespace MudBlazor
                 .AddClass("mud-input-root")
                 .AddClass("mud-input-slot-nopadding", when: () => InnerPadding == false)
                 .AddClass($"mud-input-root-{Variant.ToDescriptionString()}")
+                .AddClass($"mud-input-adorned-{Adornment.ToDescriptionString()}", Adornment != Adornment.None)
                 .AddClass($"mud-input-root-margin-{Margin.ToDescriptionString()}", when: () => Margin != Margin.None)
                 .Build();
 
@@ -94,14 +96,14 @@ namespace MudBlazor
         [Parameter] public string AdornmentText { get; set; }
 
         /// <summary>
-        /// Sets Start or End Adornment if not set to None.
+        /// The Adornment if used. By default, it is set to None.
         /// </summary>
         [Parameter] public Adornment Adornment { get; set; } = Adornment.None;
 
         /// <summary>
         /// Sets the Icon Size.
         /// </summary>
-        [Parameter] public Size IconSize { get; set; } = Size.Small;
+        [Parameter] public Size IconSize { get; set; } = Size.Medium;
 
         /// <summary>
         /// Button click event if set and Adornment used.

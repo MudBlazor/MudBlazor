@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using MudBlazor.Charts;
 
 namespace MudBlazor.Docs.Models
@@ -10,31 +9,28 @@ namespace MudBlazor.Docs.Models
     {
         public static string GetApiLinkFor(Type type)
         {
-            if (!s_specialCaseComponents.TryGetValue(type, out var component))
-                component = new string(type.ToString().Replace("MudBlazor.Mud", "").TakeWhile(c => c != '`').ToArray()).ToLowerInvariant();
-            var href = $"api/{component}";
-            return href;
+            return $"api/{GetComponentName(type)}";
         }
 
         public static string GetComponentLinkFor(Type type)
         {
-            if (!s_specialCaseComponents.TryGetValue(type, out var component))
-                component = new string(type.ToString().Replace("MudBlazor.Mud", "").TakeWhile(c => c != '`').ToArray()).ToLowerInvariant();
-            if (s_componentLinkTranslation.ContainsKey(component))
-                component = s_componentLinkTranslation[component];
-            var href = $"components/{component}";
-            return href;
+            return $"components/{GetComponentName(type)}";
         }
 
         /// <summary>
         /// Converts a lowercase component name from an URL into the C# Type name.
         /// Examples: 
-        ///   table --> MudTable<T>
-        ///   button  MudButton
-        ///   appbar  AppBar
+        ///   table --> <see cref="MudTable{T}"/>
+        ///   button  <see cref="MudButton"/>
+        ///   appbar  <see cref="MudAppBar"/>
         /// </summary>
         public static Type GetTypeFromComponentLink(string component)
         {
+            if (component.Contains('#') == true)
+            {
+                component = component.Substring(0, component.IndexOf('#'));
+            }
+
             if (string.IsNullOrEmpty(component))
                 return null;
             if (s_inverseSpecialCase.TryGetValue(component, out var type))
@@ -59,8 +55,19 @@ namespace MudBlazor.Docs.Models
             return null;
         }
 
+        private static string GetComponentName(Type type)
+        {
+            if (!s_specialCaseComponents.TryGetValue(type, out var component))
+            {
+                component = new string(type.ToString().Replace("MudBlazor.Mud", "").TakeWhile(c => c != '`').ToArray())
+                    .ToLowerInvariant();
+            }
+
+            return component;
+        }
+
         private static Dictionary<Type, string> s_specialCaseComponents =
-            new Dictionary<Type, string>()
+            new()
             {
                 [typeof(MudFab)] = "buttonfab",
                 [typeof(MudIcon)] = "icons",
@@ -71,18 +78,11 @@ namespace MudBlazor.Docs.Models
                 [typeof(Donut)] = "donutchart",
                 [typeof(Line)] = "linechart",
                 [typeof(Pie)] = "piechart",
+                [typeof(MudChip)] = "chips"
             };
 
         // this is the inversion of above lookup
         private static Dictionary<string, Type> s_inverseSpecialCase =
             s_specialCaseComponents.ToDictionary(pair => pair.Value, pair => pair.Key);
-
-        private static Dictionary<string, string> s_componentLinkTranslation =
-            new Dictionary<string, string>()
-            {
-                ["icon"] = "icons",
-                ["chip"] = "chips",
-            };
-
     }
 }

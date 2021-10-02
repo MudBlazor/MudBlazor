@@ -4,55 +4,83 @@
 <DocsPage>
     <DocsPageHeader Title="Colors">
         <Description>
-            Out of the box you get access to all colors in the <MudLink Href="https://material.io/guidelines/style/color.html">Material Design spec</MudLink> through css classes and Blazor.<br />
+            Out of the box, you get access to all colors in the <MudLink Href="https://material.io/guidelines/style/color.html">Material Design spec</MudLink> through css classes and Blazor.<br />
             You can also use the palette colors from either the default theme or your own.
         </Description>
     </DocsPageHeader>
     <DocsPageContent>
         <DocsPageSection>
-            <SectionHeader>
-                <Title>MudBlazor Palette colors</Title>
-                <Description>Each palette color gets converted to a class with the background and contrast, but also separet classes for only background or text color.</Description>
+            <SectionHeader Title="Theme Palette colors">
+                <Description>
+                    Each palette color gets converted to a class with the color as background and its contrast, but also separate classes for only background or text color. The CSS class is bound to the MudBlazor theme and updated if you change the theme dynamicly. <br /><br />
+                    You can read more about theming <MudLink Href="/customization/theming/overview">MudBlazor here.</MudLink>
+                </Description>
+            </SectionHeader>
+        </DocsPageSection>
+        <DocsPageSection>
+            <SectionHeader Title="Using the Palette colors">
+                <Description>Here we add each class to the divs to change the background color, text color and both background and text color with one class only one class.</Description>
             </SectionHeader>
             <SectionContent DarkenBackground="true" DisplayFlex="true">
                 <ColorsMudBlazorExample />
             </SectionContent>
-            <SectionSource ShowCode="false" Code="ColorsMudBlazorExample" />
+            <SectionSource ShowCode="true" Code="ColorsMudBlazorExample" />
+            <SectionHeader>
+                <Description>You can also access the colors with blazor directly like we do in this example.</Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" DisplayFlex="true">
+                <ColorsMudBlazorCodeExample />
+            </SectionContent>
+            <SectionSource ShowCode="true" Code="ColorsMudBlazorCodeExample" />
         </DocsPageSection>
         <DocsPageSection>
-            <SectionHeader>
-                <Title>Material colors</Title>
+            <SectionHeader Title="Using Material colors">
                 <Description>
-                    Each color from the list gets converted to a background and text variant for using within your application.
+                    All Material colors, as well as background and text variants, are available for use in your application.
                 </Description>
             </SectionHeader>
-            <SectionContent DarkenBackground="true">
+            <SectionContent DarkenBackground="true" DisplayFlex="true">
                 <ColorsMaterialExample />
             </SectionContent>
             <SectionSource ShowCode="false" Code="ColorsMaterialExample" />
-            <MudText Class="my-8">Below is a list of the Material design color palette grouped by primary color</MudText>
-            <MudGrid Spacing="4">
-                @foreach (var color in MaterialColors)
-                {
-                    <MudItem md="6" lg="4" xs="12">
-                        <div class="mud-paper mud-paper-square docs-color-card" style="background-color:@color.Value;color:#fff">
-                            <MudText Align="Align.Left" Typo="Typo.h6">@color.Color</MudText>
-                        </div>
-                        @foreach (var shade in MaterialColorShades.Where(i => i.Color == color.Color))
-                        {
-                            IsLightColor = false;
-                            if (shade.Name.Contains("Lighten5") || shade.Name.Contains("Lighten4") || shade.Name.Contains("Lighten3") || shade.Name.Contains("White") || shade.Name.Contains("Transparent"))
-                            {
-                                IsLightColor = true;
-                            }
-                            <div class="mud-paper mud-paper-square docs-color-card py-6" style="background-color:@shade.Value;@(IsLightColor? "color:#444" : "color:#fff")">
-                                <MudText Align="Align.Left">@shade.Name</MudText>
-                                <MudText Align="Align.Right">@shade.Value</MudText>
+            <SectionHeader>
+                <Description>You can also access the material colors with blazor directly like we did above with the MudBlazor palette colors.</Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" DisplayFlex="true">
+                <ColorsMaterialCodeExample />
+            </SectionContent>
+            <SectionSource ShowCode="true" Code="ColorsMaterialCodeExample" />
+        </DocsPageSection>
+        <DocsPageSection>
+            <SectionHeader Title="Material colors">
+                <Description>
+                    Below is a list of the Material design color palette grouped by primary color
+                </Description>
+            </SectionHeader>
+            <SectionContent FullWidth="true" Class="pa-0">
+                <MudGrid Spacing="4">
+                    @foreach (var color in MaterialColors)
+                    {
+                        <MudItem md="6" lg="4" xs="12">
+                            <div class="mud-paper mud-paper-square docs-color-card" style="background-color:@color.Value;color:#fff">
+                                <MudText Align="Align.Left" Typo="Typo.h6">@color.Color</MudText>
                             </div>
-                        }
-                    </MudItem>
-                }
-            </MudGrid>
+                            @foreach (var shade in MaterialColorShades.Where(i => i.Color == color.Color))
+                            {
+                                IsLightColor = false;
+                                if (shade.Name.Contains("Lighten5") || shade.Name.Contains("Lighten4") || shade.Name.Contains("Lighten3") || shade.Name.Contains("White") || shade.Name.Contains("Transparent"))
+                                {
+                                    IsLightColor = true;
+                                }
+                                <div class="mud-paper mud-paper-square docs-color-card py-6" style="background-color:@shade.Value;@(IsLightColor? "color:#444" : "color:#fff")">
+                                    <MudText Align="Align.Left">@shade.Name</MudText>
+                                    <MudText Align="Align.Right">@shade.Value</MudText>
+                                </div>
+                            }
+                        </MudItem>
+                    }
+                </MudGrid>
+            </SectionContent>
         </DocsPageSection>
     </DocsPageContent>
 </DocsPage>
@@ -89,7 +117,7 @@
                         Name = color.Name,
                         Value = color.GetValue(SubColorType).ToString()
                     };
-                    if (color.Name == "Default" || color.Name == "Black")
+                    if (color.Name is "Default" or "Black")
                     {
                         tempHex = shadeColor.Value;
                     }

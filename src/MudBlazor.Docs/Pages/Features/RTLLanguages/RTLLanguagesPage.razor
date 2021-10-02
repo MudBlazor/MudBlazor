@@ -1,0 +1,89 @@
+@page "/features/rtl-languages"
+
+<DocsPage>
+    <DocsPageHeader Title="RTL Languages" SubTitle="Right-to-Left (RTL) specific styling options" />
+    <DocsPageContent>
+        <DocsPageSection>
+
+            <MudAlert Severity="Severity.Warning" Variant="Variant.Outlined" Class="my-2">Note that RTL language support is still under development!</MudAlert>
+            <MudText Typo="Typo.h4" GutterBottom="true">Explanation</MudText>
+            <MudText>Right-to-Left script is used in languages like arabic and hebrew where writing starts from the right of the page and continues to the left. The UI has to be mirrored horizontally because of that.</MudText>
+            <MudText>
+                You can check out the docs in RTL styling by clicking on the
+                <MudTooltip Text="Toggle right-to-left/left-to-right">
+                    <MudIconButton Icon="@Icons.Material.Filled.FormatTextdirectionRToL" Color="Color.Primary" />
+                </MudTooltip>
+                icon on the top right in the appbar.
+            </MudText>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="MudRTLProvider">
+                <Description>
+                    <MudText>
+                        Wrap your code inside a <CodeInline>MudRTLProvider</CodeInline>.
+                        Note that <CodeInline>MudThemeProvider</CodeInline>, <CodeInline>MudDialogProvider</CodeInline> and <CodeInline>MudSnackbarProvider</CodeInline> must be children of
+                        <CodeInline>MudRTLProvider</CodeInline> in order to support RTL. Your <CodeInline>MainLayout.razor</CodeInline>
+                        can look something like this:
+                    </MudText>
+                </Description>
+            </SectionHeader>
+            <RTLLanguagesMarkdownRtlProvider/>
+        </DocsPageSection>
+        
+        <DocsPageSection>
+            <SectionHeader Title="Example">
+                <Description>
+                    <MudText>
+                        By setting <CodeInline>RightToLeft="true"</CodeInline> you can change the layout to RTL.
+                    </MudText>
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" AutoMarginContent="false">
+                <RTLLanguagesLayoutExample />
+            </SectionContent>
+            <SectionSource Code="RTLLanguagesLayoutExample" ShowCode="false"/>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Text Fields">
+                <Description>
+                    <MudText>
+                        Text Fields with <CodeInline>InputType.Email</CodeInline> or <CodeInline>InputType.Telephone</CodeInline> remain left-aligned, with the label remaining right-aligned.
+                    </MudText>
+                </Description>
+            </SectionHeader>
+            <SectionContent Outlined="true">
+                <RTLLanguagesTextfieldExample />
+            </SectionContent>
+            <SectionSource Code="RTLLanguagesTextfieldExample" ShowCode="false" />
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Border Radius">
+                <Description>
+                    <MudText>
+                        If your application needs to support both left-to-right and right-to-left languages, make use of
+                        <CodeInline>start</CodeInline> and <CodeInline>end</CodeInline> border radiuses instead of <CodeInline>left</CodeInline> and <CodeInline>right</CodeInline>.
+                        Some other components like <MudLink Href="/components/drawer">MudDrawer</MudLink> also support <CodeInline>start</CodeInline> and <CodeInline>end</CodeInline> properties.
+                    </MudText>
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" DisplayFlex="true">
+                <RTLLanguagesBorderRadiusExample />
+            </SectionContent>
+            <SectionSource Code="RTLLanguagesBorderRadiusExample" ShowCode="false" />
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Other useful css classes">
+            </SectionHeader>
+            <ul class="mud-typography-body1">
+                <li><CodeInline>.mud-flip-x-rtl</CodeInline> - Flips the element horizontally when in <b>rtl mode</b> (Can be used for icons which should be flipped in <b>rtl mode</b>)</li>
+                <li><CodeInline>.mud-rtl</CodeInline> and <CodeInline>.mud-ltr</CodeInline> - Changes a specific element to use <b>left-to-right</b> or <b>right-to-left</b>  styling</li>
+                <li><CodeInline>.mud-float-start</CodeInline> and <CodeInline>.mud-float-end</CodeInline> - Places an element on the <b>start</b> or <b>end</b> side of its container</li>
+                <li><CodeInline>margin/padding</CodeInline> with <CodeInline>start/end</CodeInline> - See <MudLink Href="/features/spacing">Spacing</MudLink> for more information</li>
+            </ul>
+        </DocsPageSection>
+    </DocsPageContent>
+</DocsPage>

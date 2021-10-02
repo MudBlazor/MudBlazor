@@ -4,35 +4,41 @@
     <DocsPageHeader Title="Navigation Menu" />
     <DocsPageContent>
         <DocsPageSection>
-            <SectionHeader>
-                <Title>Basic Usage</Title>
+            <SectionHeader Title="Basic Usage">
                 <Description></Description>
             </SectionHeader>
             <SectionContent DarkenBackground="true">
                 <NavMenuExample />
             </SectionContent>
-            <SectionSource Code="NavMenuExample" GitHubFolderName="NavMenu" />
+            <SectionSource Code="NavMenuExample" GitHubFolderName="NavMenu" ShowCode="false" />
         </DocsPageSection>
         <DocsPageSection>
-            <SectionHeader>
-                <Title>MudNavGroup Two Way Bind </Title>
-                <Description>MudNavGroup admits two-way binding in the <CodeInline>Expanded</CodeInline> property, so you can control what happens on expanding and collapsing</Description>
+            <SectionHeader Title="Two Way Bind">
+                <Description>MudNavGroup allows two-way binding in the <CodeInline>Expanded</CodeInline> property, so you can control what happens when expanded and collapsed.</Description>
             </SectionHeader>
             <SectionContent DarkenBackground="true">
                 <NavMenuTwoWayBindableExample />
             </SectionContent>
-            <SectionSource Code="NavMenuTwoWayBindableExample" GitHubFolderName="NavMenu" />
+            <SectionSource Code="NavMenuTwoWayBindableExample" GitHubFolderName="NavMenu" ShowCode="false" />
         </DocsPageSection>
         <DocsPageSection>
-            <SectionHeader>
-                <Title>Icons</Title>
-                <Description>You can use both the icons that comes with MudBlazor or font icons <MudLink Href="/components/icons">read more about icons here.</MudLink></Description>
+            <SectionHeader Title="Sub Groups">
+                <Description>NavMenu can have up to <CodeInline>4</CodeInline> sub groups within <CodeInline>MudNavMenu</CodeInline> itself.</Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true">
+                <NavMenuSubGroupExample />
+            </SectionContent>
+            <SectionSource Code="NavMenuSubGroupExample" GitHubFolderName="NavMenu" ShowCode="false" />
+        </DocsPageSection>
+        <DocsPageSection>
+            <SectionHeader Title="Icons">
+                <Description>You can use both the icons that come with MudBlazor or font icons. <MudLink Href="/components/icons">Read more about icons here.</MudLink></Description>
             </SectionHeader>
             <SectionContent DarkenBackground="true">
                 <link href="https://use.fontawesome.com/releases/v5.14.0/css/all.css" rel="stylesheet">
                 <NavMenuIconExample />
             </SectionContent>
-            <SectionSource Code="NavMenuIconExample" GitHubFolderName="NavMenu" />
+            <SectionSource Code="NavMenuIconExample" GitHubFolderName="NavMenu" ShowCode="false" />
         </DocsPageSection>
     </DocsPageContent>
 </DocsPage>

@@ -1,0 +1,11 @@
+﻿@namespace MudBlazor.UnitTests.TestComponents
+
+<MudForm ValidationDelay="0">
+    <MudTextField T="string" Required="true" RequiredError="Enter a rock star"></MudTextField>
+    <MudDatePicker @bind-Date="Date"></MudDatePicker>
+</MudForm>
+
+@code {
+    public static string __description__ = "Changing any of the fields, required or not, should set the forms IsTouched property to true";
+    private DateTime? Date { get; set; } = new DateTime(2021, 05, 15);
+}

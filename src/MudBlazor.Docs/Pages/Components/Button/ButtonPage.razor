@@ -1,4 +1,4 @@
-﻿@page "/components/button"
+@page "/components/button"
 
 <DocsPage>
     <DocsPageHeader Title="Button"
@@ -7,8 +7,7 @@
     </DocsPageHeader>
     <DocsPageContent>
         <DocsPageSection>
-            <SectionHeader>
-                <Title>Filled Buttons</Title>
+            <SectionHeader Title="Filled Buttons">
                 <Description>Filled Buttons have elevation (box shadow) and is raised on click by default.</Description>
             </SectionHeader>
             <SectionContent Outlined="true">
@@ -23,8 +22,7 @@
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader>
-                <Title>Text Buttons</Title>
+            <SectionHeader Title="Text Buttons">
                 <Description>Text Buttons have no elevation, background or border and only hover effect is used. The <CodeInline>Color</CodeInline> property only applies to the text.</Description>
             </SectionHeader>
             <SectionContent Outlined="true">
@@ -34,8 +32,7 @@
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader>
-                <Title>Outlined Buttons</Title>
+            <SectionHeader Title="Outlined Buttons">
                 <Description>Outlined Buttons are similar to Text Buttons except for the border that inherits its color from the set <CodeInline>Color</CodeInline> property.</Description>
             </SectionHeader>
             <SectionContent Outlined="true">
@@ -45,8 +42,7 @@
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader>
-                <Title>FullWidth</Title>
+            <SectionHeader Title="FullWidth">
                 <Description>FullWidth buttons extend to 100% of available width.</Description>
             </SectionHeader>
             <SectionContent Outlined="true" FullWidth="true">
@@ -56,8 +52,7 @@
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader>
-                <Title>Sizes</Title>
+            <SectionHeader Title="Sizes">
                 <Description></Description>
             </SectionHeader>
             <SectionContent Outlined="true">
@@ -67,8 +62,7 @@
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader>
-                <Title>Buttons with icons and label</Title>
+            <SectionHeader Title="Icons and labels">
                 <Description></Description>
             </SectionHeader>
             <SectionContent Outlined="true">
@@ -78,8 +72,7 @@
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader>
-                <Title>Customized Buttons</Title>
+            <SectionHeader Title="Customized Buttons">
                 <Description></Description>
             </SectionHeader>
             <SectionContent Outlined="true">
@@ -89,17 +82,23 @@
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader>
-                <Title>Link Button</Title>
+            <SectionHeader Title="Link Button">
                 <Description>Set the <CodeInline>Link</CodeInline> parameter and the MudButton will render an anchor element. If you also set the <CodeInline>Target</CodeInline> parameter to <CodeInline>_blank</CodeInline>, the component will add <CodeInline>rel="noopener"</CodeInline> automatically.
                 If you set the <CodeInline>Disabled</CodeInline> parameter to <CodeInline>true</CodeInline>, the component will render a button with no <CodeInline>href</CodeInline> attribute.
-            
             </Description>
             </SectionHeader>
             <SectionContent Outlined="true">
                 <ButtonLinkExample />
             </SectionContent>
-            <SectionSource Code="ButtonLinkExample" ShowCode="true" GitHubFolderName="Button" />
+            <SectionSource Code="ButtonLinkExample" ShowCode="false" GitHubFolderName="Button" />
+        </DocsPageSection>
+        <DocsPageSection>
+            <SectionHeader Title="Loading Button">
+            </SectionHeader>
+            <SectionContent Outlined="true">
+                <ButtonLoadingExample/>
+            </SectionContent>
+            <SectionSource Code="ButtonLoadingExample" ShowCode="false" GitHubFolderName="Button"/>
         </DocsPageSection>
     </DocsPageContent>
 </DocsPage>

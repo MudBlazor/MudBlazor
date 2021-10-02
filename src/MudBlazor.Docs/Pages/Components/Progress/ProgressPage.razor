@@ -1,10 +1,10 @@
 ﻿@page "/components/progress"
 
 <DocsPage>
-    <DocsPageHeader Title="Progress" SubTitle="Progress indicators that either shows the length of a process or unspecified wait time also known as indeterminate. The animations is done with SVG's and CSS.">
+    <DocsPageHeader Title="Progress" SubTitle="Progress indicators that either show the length of a process or unspecified wait time, also known as indeterminate state. The animation is done with SVGs and CSS.">
         <Description>
             <div class="mt-6">
-                Progress indicators inform users about the status of ongoing processes, such as loading an app, submitting a form, or saving updates. They communicate an app’s state and indicate available actions, such as whether users can navigate away from the current screen.
+                Progress indicators inform users about the status of ongoing processes, such as loading an app, submitting a form, or saving updates. They communicate an app's state and indicate available actions, such as whether users can navigate away from the current screen.
             </div>
         </Description>
     </DocsPageHeader>
@@ -13,21 +13,20 @@
             <MudItem md="6">
                 <MudText Typo="Typo.h6" Color="Color.Primary">Determinate indicators</MudText>
                 <MudText>
-                    <b>Determinate</b> indicators display how long a process will take. They should be used when the process completion rate can be detected.
+                    <b>Determinate</b> indicators display how long a process will take. They should be used when the process completion rate can be estimated.
                 </MudText>
             </MudItem>
             <MudItem md="6">
                 <MudText Typo="Typo.h6" Color="Color.Secondary">Indeterminate indicators</MudText>
                 <MudText>
-                    <b>Indeterminate</b> indicators express an unspecified amount of wait time. They should be used when progress isn’t detectable, or if it’s not necessary to indicate how long an activity will take.
+                    <b>Indeterminate</b> indicators express an unspecified amount of wait time. They should be used when progress isn't estimable, or when it's not necessary to indicate how long an activity will take.
                 </MudText>
             </MudItem>
         </MudGrid>
     </DocsPageContent>
     <DocsPageContent>
         <DocsPageSection>
-            <SectionHeader>
-                <Title>Circular</Title>
+            <SectionHeader Title="Circular">
                 <SubTitle>Circular indeterminate</SubTitle>
             </SectionHeader>
             <SectionContent Outlined="true">
@@ -40,10 +39,10 @@
             <SectionContent Outlined="true">
                 <ProgressCircularDeterminateExample />
             </SectionContent>
-            <SectionSource Code="ProgressCircularDeterminateExample" GitHubFolderName="Progress"  />
+            <SectionSource Code="ProgressCircularDeterminateExample" GitHubFolderName="Progress" ShowCode="false" />
             <SectionHeader>
                 <SubTitle>Circular Sizes</SubTitle>
-                <Description>You can change the size with the pre defined <CodeInline>Size</CodeInline> prop or change the <CodeInline>Width</CodeInline> and <CodeInline>Height</CodeInline> in css.</Description>
+                <Description>You can change the size with the pre-defined <CodeInline>Size</CodeInline> prop or change the <CodeInline>Width</CodeInline> and <CodeInline>Height</CodeInline> in css.</Description>
             </SectionHeader>
             <SectionContent Outlined="true">
                 <ProgressCircularSizesExample />
@@ -52,8 +51,7 @@
         </DocsPageSection>
         <DocsPageSection>
 
-            <SectionHeader>
-                <Title>Linear</Title>
+            <SectionHeader Title="Linear">
                 <SubTitle>Linear indeterminate</SubTitle>
             </SectionHeader>
             <SectionContent Outlined="true" FullWidth="true">
@@ -72,7 +70,7 @@
             <SectionHeader>
                 <SubTitle>Min and Max</SubTitle>
                 <Description>
-                    Per default, the value range is between 0 and 100. If you have a custom range set Min and Max accordingly.
+                    By default, the value range is between 0 and 100. If you have a custom range, set <CodeInline>Min</CodeInline> and <CodeInline>Max</CodeInline> accordingly.
                 </Description>
             </SectionHeader>
             <SectionContent Outlined="true" FullWidth="true" Class="demo-progress">
@@ -86,7 +84,7 @@
             <SectionContent Outlined="true" FullWidth="true">
                 <ProgressLinearBufferExample />
             </SectionContent>
-            <SectionSource Code="ProgressLinearBufferExample" GitHubFolderName="Progress" />
+            <SectionSource Code="ProgressLinearBufferExample" GitHubFolderName="Progress" ShowCode="false" />
 
         </DocsPageSection>
     </DocsPageContent>

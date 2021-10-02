@@ -1,7 +1,6 @@
 ﻿using System;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
-using MudBlazor.Interop;
 
 namespace MudBlazor
 {
@@ -15,13 +14,13 @@ namespace MudBlazor
         [Parameter]
         public Action<SwipeDirection> OnSwipe { get; set; }
 
-        public void OnTouchStart(TouchEventArgs arg)
+        private void OnTouchStart(TouchEventArgs arg)
         {
             _xDown = arg.Touches[0].ClientX;
             _yDown = arg.Touches[0].ClientY;
         }
 
-        public void OnTouchEnd(TouchEventArgs arg)
+        private void OnTouchEnd(TouchEventArgs arg)
         {
             if (_xDown == null || _yDown == null)
                 return;
@@ -61,7 +60,7 @@ namespace MudBlazor
             _xDown = _yDown = null;
         }
 
-        public void OnTouchCancel(TouchEventArgs arg)
+        private void OnTouchCancel(TouchEventArgs arg)
         {
             _xDown = _yDown = null;
         }

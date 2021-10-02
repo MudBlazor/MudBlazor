@@ -1,10 +1,11 @@
 ﻿@namespace MudBlazor.Docs.Examples
 <MudGrid>
     <MudItem xs="12" sm="6" md="4">
-        <MudDatePicker Label="Basic example" @bind-Date="date" />
+        <MudDatePicker Label="Basic example" @bind-Date="date" ReadOnly="@readOnly"/>
+        <MudSwitch @bind-Checked="@readOnly" Color="Color.Tertiary">ReadOnly</MudSwitch>
     </MudItem>
     <MudItem xs="12" sm="6" md="4">
-        <MudDatePicker Label="Basic example (editable)" Editable="true" />
+        <MudDatePicker Label="Editable with Placeholder" Editable="true" @bind-Date="date" Placeholder="Select Date" />
     </MudItem>
     <MudItem xs="12" sm="6" md="4">
         <MudDatePicker Label="Only Calendar" @bind-Date="date" DisableToolbar="true" HelperText="No header" />
@@ -23,17 +24,20 @@
 </MudGrid>
 <MudGrid>
     <MudItem xs="12" sm="6" md="4">
-        <MudDatePicker @ref="_picker" Label="With action buttons" @bind-Date="date">
+        <MudDatePicker @ref="_picker" Label="With action buttons" @bind-Date="date" AutoClose="@autoClose">
             <PickerActions>
                 <MudButton Class="mr-auto align-self-start" OnClick="@(() => _picker.Clear())">Clear</MudButton>
                 <MudButton OnClick="@(() => _picker.Close(false))">Cancel</MudButton>
                 <MudButton Color="Color.Primary" OnClick="@(() => _picker.Close())">Ok</MudButton>
             </PickerActions>
         </MudDatePicker>
+        <MudSwitch @bind-Checked="@autoClose" Color="Color.Secondary">AutoClose</MudSwitch>
     </MudItem>
 </MudGrid>
 
 @code {
     MudDatePicker _picker;
     DateTime? date = DateTime.Today;
+    private bool autoClose;
+    private bool readOnly;
 }

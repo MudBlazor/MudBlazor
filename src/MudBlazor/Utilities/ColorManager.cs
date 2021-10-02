@@ -1,21 +1,22 @@
 ﻿using System;
 using System.Globalization;
-using MudColor = System.Drawing.Color;
-
+using System.Diagnostics.CodeAnalysis;
 
 namespace MudBlazor.Utilities
 {
+    [ExcludeFromCodeCoverage]
+    [Obsolete("ColorManager is now obsolete. Use MudColor instead", true)]
     public class ColorManager
     {
-        public static MudColor FromHex(string hex)
+        public static System.Drawing.Color FromHex(string hex)
         {
             FromHex(hex, out var a, out var r, out var g, out var b);
 
-            return MudColor.FromArgb(a, r, g, b);
+            return System.Drawing.Color.FromArgb(a, r, g, b);
         }
 
         // amount is between 0.0 and 1.0
-        public static MudColor ColorLighten(MudColor rgbColor, double amount)
+        public static System.Drawing.Color ColorLighten(System.Drawing.Color rgbColor, double amount)
         {
             var hsl = ColorTransformation.RgBtoHsl(rgbColor);
             hsl.L = Math.Max(0, Math.Min(1, hsl.L + amount));
@@ -23,7 +24,7 @@ namespace MudBlazor.Utilities
         }
 
         // amount is between 0.0 and 1.0
-        public static MudColor ColorDarken(MudColor rgbColor, double amount)
+        public static System.Drawing.Color ColorDarken(System.Drawing.Color rgbColor, double amount)
         {
             var hsl = ColorTransformation.RgBtoHsl(rgbColor);
             hsl.L = Math.Max(0, Math.Min(1, hsl.L - amount));
@@ -65,7 +66,7 @@ namespace MudBlazor.Utilities
                 return hex + "FF";
             }
 
-            if (hex.Length < 3 || hex.Length > 4)
+            if (hex.Length is < 3 or > 4)
             {
                 return null;
             }
@@ -76,6 +77,37 @@ namespace MudBlazor.Utilities
             var alpha = hex.Length == 3 ? "F" : char.ToString(hex[3]);
 
             return string.Concat(red, red, green, green, blue, blue, alpha, alpha);
+        }
+
+        public static string ColorRgbDarken(string hex)
+        {
+            var color = FromHex(hex);
+            color = ColorDarken(color, 0.075);
+            return $"rgb({color.R},{color.G},{color.B})";
+        }
+        public static string ColorRgbLighten(string hex)
+        {
+            var color = FromHex(hex);
+            color = ColorLighten(color, 0.075);
+            return $"rgb({color.R},{color.G},{color.B})";
+        }
+
+        public static string ColorRgb(string hex)
+        {
+            var color = FromHex(hex);
+            return $"rgb({color.R},{color.G},{color.B})";
+        }
+
+        public static string ColorRgbElements(string hex)
+        {
+            var color = FromHex(hex);
+            return $"{color.R},{color.G},{color.B}";
+        }
+
+        public static string ColorRgba(string hex, double alpha)
+        {
+            var color = FromHex(hex);
+            return $"rgba({color.R},{color.G},{color.B}, {alpha.ToString(CultureInfo.InvariantCulture)})";
         }
     }
 }

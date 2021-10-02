@@ -1,28 +1,27 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Microsoft.AspNetCore.Components;
-using MudBlazor;
 using MudBlazor.Charts.SVG.Models;
 using MudBlazor.Components.Chart;
 using MudBlazor.Components.Chart.Interpolation;
-using static MudBlazor.ChartOptions;
 
 namespace MudBlazor.Charts
 {
     partial class Line : MudChartBase
     {
+        private const int MaxHorizontalGridLines = 100;
+
         [CascadingParameter] public MudChart MudChartParent { get; set; }
 
-        private List<SvgPath> _horizontalLines = new List<SvgPath>();
-        private List<SvgText> _horizontalValues = new List<SvgText>();
+        private List<SvgPath> _horizontalLines = new();
+        private List<SvgText> _horizontalValues = new();
 
-        private List<SvgPath> _verticalLines = new List<SvgPath>();
-        private List<SvgText> _verticalValues = new List<SvgText>();
+        private List<SvgPath> _verticalLines = new();
+        private List<SvgText> _verticalValues = new();
 
-        private List<SvgLegend> _legends = new List<SvgLegend>();
-        private List<ChartSeries> _series = new List<ChartSeries>();
+        private List<SvgLegend> _legends = new();
+        private List<ChartSeries> _series = new();
 
-        private List<SvgPath> _chartLines = new List<SvgPath>();
+        private List<SvgPath> _chartLines = new();
 
         protected override void OnParametersSet()
         {
@@ -59,11 +58,21 @@ namespace MudBlazor.Charts
             var boundWidth = 650.0;
 
             double gridYUnits = MudChartParent?.ChartOptions.YAxisTicks ?? 20;
+            if (gridYUnits <= 0)
+                gridYUnits = 20;
+            int maxYTicks = MudChartParent?.ChartOptions.MaxNumYAxisTicks ?? 100;
             double gridXUnits = 30;
 
             var numVerticalLines = numValues - 1;
 
             var numHorizontalLines = ((int)(maxY / gridYUnits)) + 1;
+
+            // this is a safeguard against millions of gridlines which might arise with very high values
+            while (numHorizontalLines > maxYTicks)
+            {
+                gridYUnits *= 2;
+                numHorizontalLines = ((int)(maxY / gridYUnits)) + 1;
+            }
 
             var verticalStartSpace = 25.0;
             var horizontalStartSpace = 30.0;
@@ -86,7 +95,7 @@ namespace MudBlazor.Charts
                 };
                 _horizontalLines.Add(line);
 
-                var lineValue = new SvgText() { X = (horizontalStartSpace - 10), Y = (boundHeight - y + 5), Value = ToS(startGridY) };
+                var lineValue = new SvgText() { X = (horizontalStartSpace - 10), Y = (boundHeight - y + 5), Value = ToS(startGridY, MudChartParent?.ChartOptions.YAxisFormat) };
                 _horizontalValues.Add(lineValue);
 
                 startGridY += gridYUnits;

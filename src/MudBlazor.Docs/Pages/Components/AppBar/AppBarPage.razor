@@ -3,13 +3,13 @@
 <DocsPage>
     <DocsPageHeader Title="App Bar" SubTitle="App bar is used to display actions, branding, navigation and screen titles.">
         <Description>
-            Keeping the app bar persistant while browsing different pages will ease navigation and access to actions for your user.
+            Keeping the app bar persistent while browsing different pages will ease navigation and access to actions for your users.
         </Description>
     </DocsPageHeader>
     <DocsPageContent>
+
         <DocsPageSection>
-            <SectionHeader>
-                <Title>Regular App Bar</Title>
+            <SectionHeader Title="Regular App Bar">
                 <Description>
                     <MudText Class="py-6">App bars have two types: regular and contextual action bar. Below is an example of a regular app bar.</MudText>
                     <MudText>A contextual action bar is something that will provide actions for a selected item on the page.</MudText>
@@ -19,27 +19,39 @@
             <SectionContent DarkenBackground="true" DisplayFlex="true">
                 <AppBarSimpleExample />
             </SectionContent>
-            <SectionSource Code="AppBarSimpleExample" GitHubFolderName="AppBar"  />
+            <SectionSource Code="AppBarSimpleExample" GitHubFolderName="AppBar" />
         </DocsPageSection>
+
         <DocsPageSection>
-            <SectionHeader>
-                <Title>Elevation</Title>
-                <Description>You can change the App Bar elevation, with values from 0-24</Description>
+            <SectionHeader Title="Elevation">
+                <Description>You can change the App Bar elevation, with values from 0-25</Description>
             </SectionHeader>
             <SectionContent DarkenBackground="true" DisplayFlex="true">
                 <AppBarElevationExample />
             </SectionContent>
-            <SectionSource Code="AppBarElevationExample" GitHubFolderName="AppBar"  />
+            <SectionSource Code="AppBarElevationExample" GitHubFolderName="AppBar" />
         </DocsPageSection>
+
         <DocsPageSection>
-            <SectionHeader>
-                <Title>Dense</Title>
+            <SectionHeader Title="Dense">
                 <Description></Description>
             </SectionHeader>
             <SectionContent DarkenBackground="true" DisplayFlex="true">
                 <AppBarDenseExample />
             </SectionContent>
-            <SectionSource Code="AppBarDenseExample" GitHubFolderName="AppBar"  />
+            <SectionSource Code="AppBarDenseExample" GitHubFolderName="AppBar" />
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Bottom App Bar">
+                <Description></Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true">
+                <iframe src="/iframe/docs/examples/appbar/bottom" class="docs-iframe rounded mud-elevation-25" style="height: 450px; ">
+                    <AppBarBottomExample />
+                </iframe>
+            </SectionContent>
+            <SectionSource Code="AppBarBottomExample" GitHubFolderName="AppBar" ShowCode="false" />
         </DocsPageSection>
     </DocsPageContent>
 </DocsPage>

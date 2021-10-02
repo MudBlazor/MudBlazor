@@ -1,0 +1,76 @@
+﻿@page "/components/buttongroup"
+
+<DocsPage>
+    <DocsPageHeader Title="Button Group">
+        <Description>The <CodeInline>MudButtonGroup</CodeInline> component can be used to group related <CodeInline>MudButtons</CodeInline>.</Description>
+    </DocsPageHeader>
+    <DocsPageContent>
+        <DocsPageSection>
+            <SectionHeader Title="Basic button group">
+            </SectionHeader>
+            <SectionContent Outlined="true" DisplayFlex="true">
+                <ButtonGroupBasicExample />
+            </SectionContent>
+            <SectionSource Code="ButtonGroupBasicExample" GitHubFolderName="ButtonGroup" ShowCode="false" />
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Sizes and colors">
+            </SectionHeader>
+            <SectionContent Outlined="true">
+                <ButtonGroupSizesColorsExample />
+            </SectionContent>
+            <SectionSource Code="ButtonGroupSizesColorsExample" GitHubFolderName="ButtonGroup" ShowCode="false" />
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Vertical button group">
+                <Description>With <CodeInline>VerticalAlign="true"</CodeInline> the buttons are displayed vertically.</Description>
+            </SectionHeader>
+            <SectionContent Outlined="true">
+                <ButtonGroupVerticalExample />
+            </SectionContent>
+            <SectionSource Code="ButtonGroupVerticalExample" GitHubFolderName="ButtonGroup" ShowCode="false" />
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Icon buttons">
+                <Description><CodeInline>MudButtonGroup</CodeInline> can also make use of <CodeInline>MudIconButton</CodeInline> and <CodeInline>MudToggleIconButton</CodeInline>.</Description>
+            </SectionHeader>
+            <SectionContent Outlined="true">
+                <ButtonGroupIconButtonExample />
+            </SectionContent>
+            <SectionSource Code="ButtonGroupIconButtonExample" GitHubFolderName="ButtonGroup" />
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Split button">
+                <Description>A <CodeInline>MudMenu</CodeInline> can be used to create a split button.</Description>
+            </SectionHeader>
+            <SectionContent Outlined="true">
+                <ButtonGroupSplitButtonExample />
+            </SectionContent>
+            <SectionSource ShowCode="false" Code="ButtonGroupSplitButtonExample" GitHubFolderName="ButtonGroup" />
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Disable elevation">
+                <Description>With <CodeInline>DisableElevation="false"</CodeInline> the dropshadow of button groups with <CodeInline>Variant="Variant.Filled"</CodeInline> is removed.</Description>
+            </SectionHeader>
+            <SectionContent Outlined="true" DisplayFlex="true">
+                <ButtonGroupDisableElevationExample />
+            </SectionContent>
+            <SectionSource Code="ButtonGroupDisableElevationExample" GitHubFolderName="ButtonGroup" />
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Custom styles">
+                <Description>With <CodeInline>OverrideStyles="false"</CodeInline> the <CodeInline>MudButtonGroup</CodeInline> no longer overrides the styles of the individual buttons.</Description>
+            </SectionHeader>
+            <SectionContent Outlined="true" DisplayFlex="true">
+                <ButtonGroupCustomStylesExample />
+            </SectionContent>
+            <SectionSource Code="ButtonGroupCustomStylesExample" GitHubFolderName="ButtonGroup" />
+        </DocsPageSection>
+    </DocsPageContent>
+</DocsPage>

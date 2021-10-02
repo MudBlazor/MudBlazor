@@ -1,57 +1,82 @@
 ﻿@page "/components/avatar"
 
 <DocsPage>
-    <DocsPageHeader Title="Avatar" SubTitle="The component is typically used to display circular user profile pictures, Icons or text." />
+    <DocsPageHeader Title="Avatar" SubTitle="The component is typically used to display circular user profile pictures, icons or text." />
     <DocsPageContent>
         <DocsPageSection>
-            <SectionHeader>
-                <Title>Letter avatars</Title>
-                <Description></Description>
+            <SectionHeader Title="Usage">
+                <Description>Basic avatars, normally used to display text or numbers.<CodeInline>MudAvatar</CodeInline> can be colored with the <CodeInline>Color</CodeInline> property.</Description>
             </SectionHeader>
             <SectionContent Outlined="true" DisplayFlex="true">
-                <AvatarLetterExample />
+                <AvatarBasicExample />
             </SectionContent>
-            <SectionSource Code="AvatarLetterExample" GitHubFolderName="Avatar"  />
+            <SectionSource Code="AvatarBasicExample" GitHubFolderName="Avatar" />
         </DocsPageSection>
         <DocsPageSection>
-            <SectionHeader>
-                <Title>Icon avatars</Title>
-                <Description>To create a Icon avatar just add an icon as childen.</Description>
+            <SectionHeader Title="Outlined">
+                <Description>By default, the avatar is filled but can be changed with the <CodeInline>Variant</CodeInline> property.</Description>
+            </SectionHeader>
+            <SectionContent Outlined="true" DisplayFlex="true">
+                <AvatarOutlinedExample />
+            </SectionContent>
+            <SectionSource Code="AvatarOutlinedExample" GitHubFolderName="Avatar" />
+        </DocsPageSection>
+        <DocsPageSection>
+            <SectionHeader Title="Icons">
+                <Description>To create an icon avatar, just add an <CodeInline>MudIcon</CodeInline> inside it.</Description>
             </SectionHeader>
             <SectionContent Outlined="true" DisplayFlex="true">
                 <AvatarIconExample />
             </SectionContent>
-            <SectionSource Code="AvatarIconExample" GitHubFolderName="Avatar"  />
+            <SectionSource Code="AvatarIconExample" GitHubFolderName="Avatar" />
         </DocsPageSection>
         <DocsPageSection>
-            <SectionHeader>
-                <Title>Image avatars</Title>
-                <Description>Specify a link to image with the <CodeInline>Image</CodeInline> prop to show it in the avatar.</Description>
+            <SectionHeader Title="Images">
+                <Description>Avatars can display images as well, specify a link to the image with <CodeInline>Image</CodeInline>.  If you specify an <CodeInline>Alt</CodeInline> prop, you can specify an alternative text description for the image to help with accessibility or if the image url isn't valid.</Description>
             </SectionHeader>
             <SectionContent Outlined="true" DisplayFlex="true">
                 <AvatarImageExample />
             </SectionContent>
-            <SectionSource Code="AvatarImageExample" GitHubFolderName="Avatar"  />
+            <SectionSource Code="AvatarImageExample" GitHubFolderName="Avatar" />
         </DocsPageSection>
         <DocsPageSection>
-            <SectionHeader>
-                <Title>Sizes</Title>
-                <Description>You can change the size with the pre defined <CodeInline>Size</CodeInline> prop or change the <CodeInline>Width</CodeInline> and <CodeInline>Height</CodeInline> in css.</Description>
+            <SectionHeader Title="Sizes">
+                <Description>You can change the size with the pre-defined <CodeInline>Size</CodeInline> prop or change the <CodeInline>Width</CodeInline> and <CodeInline>Height</CodeInline> in CSS.</Description>
             </SectionHeader>
             <SectionContent Outlined="true">
                 <AvatarSizeExample />
             </SectionContent>
-            <SectionSource Code="AvatarSizeExample" GitHubFolderName="Avatar"  />
+            <SectionSource Code="AvatarSizeExample" GitHubFolderName="Avatar" ShowCode="false" />
         </DocsPageSection>
         <DocsPageSection>
-            <SectionHeader>
-                <Title>Variants</Title>
-                <Description>With the <CodeInline>Rounded</CodeInline> and <CodeInline>Square</CodeInline> prop you can change the border radius.</Description>
+            <SectionHeader Title="Shapes">
+                <Description>With the <CodeInline>Rounded</CodeInline> and <CodeInline>Square</CodeInline> props, you can change the border radius.</Description>
             </SectionHeader>
             <SectionContent Outlined="true" DisplayFlex="true">
-                <AvatarVariantsExample />
+                <AvatarShapesExample />
             </SectionContent>
-            <SectionSource Code="AvatarVariantsExample" GitHubFolderName="Avatar"  />
+            <SectionSource Code="AvatarShapesExample" GitHubFolderName="Avatar" ShowCode="false" />
         </DocsPageSection>
+        <DocsPageSection>
+            <SectionHeader Title="Groups">
+                <Description>You can group or stack avatars with <CodeInline>MudAvatarGroup</CodeInline></Description>
+            </SectionHeader>
+            <SectionContent Outlined="true" DisplayFlex="true">
+                <AvatarGroupExample />
+            </SectionContent>
+            <SectionSource Code="AvatarGroupExample" GitHubFolderName="Avatar" ShowCode="false" />
+        </DocsPageSection>
+
+        @*MudBadge needs fixing before showing this. Does not look good with avatars.*@
+
+        @*<DocsPageSection>
+                <SectionHeader Title="Badges">
+                    <Description></Description>
+                </SectionHeader>
+                <SectionContent Outlined="true" DisplayFlex="true">
+                    <AvatarBadgeExample />
+                </SectionContent>
+                <SectionSource Code="AvatarBadgeExample" GitHubFolderName="Avatar" ShowCode="true" />
+            </DocsPageSection>*@
     </DocsPageContent>
 </DocsPage>

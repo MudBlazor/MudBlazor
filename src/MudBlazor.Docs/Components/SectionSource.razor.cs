@@ -14,9 +14,11 @@ namespace MudBlazor.Docs.Components
         [Inject]
         protected IJsApiService JsApiService { get; set; }
 
-        [Parameter] public string Title { get; set; }
-
         [Parameter] public string Code { get; set; }
+        [Parameter] public string Code2 { get; set; }
+
+        [Parameter] public string ButtonTextCode1 { get; set; }
+        [Parameter] public string ButtonTextCode2 { get; set; }
 
         [Parameter] public string Class { get; set; }
 
@@ -26,14 +28,16 @@ namespace MudBlazor.Docs.Components
 
         [Parameter] public bool NoToolbar { get; set; }
 
-        private bool HideEditOnTryMudBlazor => Code.EndsWith("_Dialog");
-
         private string GitHubSourceCode { get; set; }
 
         public string TooltipSourceCodeText { get; set; }
 
         private string ShowCodeExampleString { get; set; } = "Show code example";
         private string HideCodeExampleString { get; set; } = "Hide code example";
+
+        private string CurrentCode { get; set; }
+        private Color Button1Color { get; set; }
+        private Color Button2Color { get; set; }
 
         private async Task CopyTextToClipboard()
         {
@@ -56,11 +60,11 @@ namespace MudBlazor.Docs.Components
             }
         }
 
-        RenderFragment CodeComponent() => builder =>
+        RenderFragment CodeComponent(string code) => builder =>
         {
             try
             {
-                var key = typeof(SectionSource).Assembly.GetManifestResourceNames().FirstOrDefault(x => x.Contains($".{Code}Code.html"));
+                var key = typeof(SectionSource).Assembly.GetManifestResourceNames().FirstOrDefault(x => x.Contains($".{code}Code.html"));
                 using (var stream = typeof(SectionSource).Assembly.GetManifestResourceStream(key))
                 using (var reader = new StreamReader(stream))
                 {
@@ -75,7 +79,7 @@ namespace MudBlazor.Docs.Components
 
         protected virtual async void EditOnTryMudBlazor()
         {
-            // We use a seperator that wont be in code so we can send 2 files later
+            // We use a separator that wont be in code so we can send 2 files later
             var codeFiles = "__Main.razor" + (char)31 + Snippets.GetCode(Code);
 
             // Add dialogs for dialog examples
@@ -115,10 +119,13 @@ namespace MudBlazor.Docs.Components
 
         protected override void OnInitialized()
         {
+            CurrentCode = Code;
+            Button1Color = Color.Primary;
+
             if (!string.IsNullOrEmpty(GitHubFolderName))
             {
                 var gitHubLink = "https://github.com/";
-                GitHubSourceCode = $"{gitHubLink}Garderoben/MudBlazor/blob/master/src/MudBlazor.Docs/Pages/Components/{GitHubFolderName}/Examples/{Code}.razor";
+                GitHubSourceCode = $"{gitHubLink}MudBlazor/MudBlazor/blob/master/src/MudBlazor.Docs/Pages/Components/{GitHubFolderName}/Examples/{Code}.razor";
             }
             if (ShowCode)
             {
@@ -127,6 +134,22 @@ namespace MudBlazor.Docs.Components
             else
             {
                 TooltipSourceCodeText = ShowCodeExampleString;
+            }
+        }
+
+        private void SwapCode(string code)
+        {
+            CurrentCode = code;
+
+            if (CurrentCode == Code)
+            {
+                Button1Color = Color.Primary;
+                Button2Color = Color.Default;
+            }
+            else if (CurrentCode == Code2)
+            {
+                Button1Color = Color.Default;
+                Button2Color = Color.Primary;
             }
         }
     }

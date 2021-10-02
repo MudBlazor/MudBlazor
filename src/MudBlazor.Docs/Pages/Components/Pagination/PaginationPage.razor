@@ -1,0 +1,98 @@
+﻿@page "/components/pagination"
+
+<DocsPage>
+    <DocsPageHeader Title="Pagination" SubTitle="">
+        <Description>
+            This component allows the user to select a specific page from a range of pages.
+        </Description>
+    </DocsPageHeader>
+    <DocsPageContent>
+        <DocsPageSection>
+            <SectionHeader Title="Usage">
+                <Description>
+                    Pagination displays the number of pages based on the <CodeInline>Count</CodeInline> prop, with prev and next buttons surrounding it.<br /> The selected index can be binded with <CodeInline>Selected</CodeInline> prop.
+                </Description>
+            </SectionHeader>
+            <SectionContent Outlined="true" DisplayFlex="true" FlexColumn="true">
+                <PaginationSimpleExample />
+            </SectionContent>
+            <SectionSource Code="PaginationSimpleExample" GitHubFolderName="Pagination" />
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Variants">
+                <Description>
+                    The default variant is <CodeInline>Text</CodeInline> but can be changed to both <CodeInline>Filled</CodeInline> and <CodeInline>Outlined</CodeInline>
+                </Description>
+            </SectionHeader>
+            <SectionContent Outlined="true" DisplayFlex="true" FlexColumn="true">
+                <PaginationVariantsExample />
+            </SectionContent>
+            <SectionSource Code="PaginationVariantsExample" GitHubFolderName="Pagination" />
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Disabled">
+                <Description>
+                    Pagination can be disabled with the <CodeInline>Disabled</CodeInline> prop.
+                </Description>
+            </SectionHeader>
+            <SectionContent Outlined="true" DisplayFlex="true" FlexColumn="true">
+                <PaginationDisabledExample />
+            </SectionContent>
+            <SectionSource Code="PaginationDisabledExample" GitHubFolderName="Pagination" />
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Rectangular" />
+            <SectionContent Outlined="true" DisplayFlex="true" FlexColumn="true">
+                <PaginationRectangularExample />
+            </SectionContent>
+            <SectionSource Code="PaginationRectangularExample" GitHubFolderName="Pagination" />
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Sizes" />
+            <SectionContent Outlined="true" DisplayFlex="true" FlexColumn="true">
+                <PaginationSizesExample />
+            </SectionContent>
+            <SectionSource Code="PaginationSizesExample" GitHubFolderName="Pagination" />
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Control buttons">
+                <Description>
+                    You can show/hide the <CodeInline>first</CodeInline>, <CodeInline>last</CodeInline>, <CodeInline>next</CodeInline> and <CodeInline>previous</CodeInline> buttons.
+                </Description>
+            </SectionHeader>
+            <SectionContent Outlined="true" DisplayFlex="true" FlexColumn="true">
+                <PaginationControlButtonsExample />
+            </SectionContent>
+            <SectionSource Code="PaginationControlButtonsExample" GitHubFolderName="Pagination" />
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Item count">
+                <Description>
+                    The parameter <CodeInline>BoundaryCount</CodeInline> and <CodeInline>MiddleCount</CodeInline> specify the number of items displayed before, between and after the ellipsis.
+                </Description>
+            </SectionHeader>
+            <SectionContent Outlined="true" DisplayFlex="true" FlexColumn="true">
+                <PaginationItemCountExample />
+            </SectionContent>
+            <SectionSource Code="PaginationItemCountExample" GitHubFolderName="Pagination" />
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Table pagination">
+                <Description>
+                    The <CodeInline>SelectedChanged</CodeInline> event callback can be used to control a different component. This example shows how to navigate through the pages of a <MudLink Href="/components/table">MudTable</MudLink>.
+                </Description>
+            </SectionHeader>
+            <SectionContent Outlined="true" DisplayFlex="true" FlexColumn="true">
+                <PaginationTableExample />
+            </SectionContent>
+            <SectionSource Code="PaginationTableExample" GitHubFolderName="Pagination" ShowCode="false" />
+        </DocsPageSection>
+    </DocsPageContent>
+</DocsPage>

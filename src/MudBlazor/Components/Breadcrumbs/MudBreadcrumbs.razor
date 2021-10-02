@@ -8,13 +8,13 @@
 }
 
 <CascadingValue Value="this" IsFixed="true">
-    <ul class=@Classname style="@Style">
+    <ul @attributes="UserAttributes" class=@Classname style="@Style">
         @if (MaxItems != null && Collapsed && Items.Count >= MaxItems)
         {
             <BreadcrumbLink Item="Items[0]"></BreadcrumbLink>
             <BreadcrumbSeparator></BreadcrumbSeparator>
             <li class="mud-breadcrumbs-expander" @onclick="Expand">
-                <MudIcon Icon="@Icons.Material.Filled.SettingsEthernet" Size="Size.Small"></MudIcon>
+                <MudIcon Icon="@ExpanderIcon" Size="Size.Small"></MudIcon>
             </li>
             <BreadcrumbSeparator></BreadcrumbSeparator>
             <BreadcrumbLink Item="Items[Items.Count - 1]"></BreadcrumbLink>

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using MudBlazor.Docs.Models;
 
@@ -16,7 +15,7 @@ namespace MudBlazor.Docs.Services
 
     public class ApiLinkService : IApiLinkService
     {
-        private Dictionary<string, ApiLinkServiceEntry> _lookup = new Dictionary<string, ApiLinkServiceEntry>();
+        private Dictionary<string, ApiLinkServiceEntry> _lookup = new();
 
         //constructor with DI
         public ApiLinkService(IMenuService menuService)
@@ -46,7 +45,12 @@ namespace MudBlazor.Docs.Services
                 return Task.FromResult<IEnumerable<ApiLinkServiceEntry>>(null);
             var s = text.ToLowerInvariant();
             return Task.FromResult<IEnumerable<ApiLinkServiceEntry>>(
-                _lookup.Where(x => IsMatch(x, s)).Select(x => x.Value).Distinct().ToArray()
+                _lookup
+                .Where(x => IsMatch(x, s))
+                .Select(x => x.Value)
+                .Distinct()
+                .OrderByDescending(e => e.Title.ToLowerInvariant().StartsWith(s))
+                .ToArray()
             );
         }
 

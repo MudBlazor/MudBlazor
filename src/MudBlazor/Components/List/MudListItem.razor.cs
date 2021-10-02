@@ -28,6 +28,8 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public string Text { get; set; }
 
+        [Parameter] public object Value { get; set; }
+
         /// <summary>
         /// Avatar to use if set.
         /// </summary>
@@ -39,7 +41,12 @@ namespace MudBlazor
         [Parameter] public string Href { get; set; }
 
         /// <summary>
-        /// Avatar CSS Class to applie if Avtar is set.
+        /// If true, force browser to redirect outside component router-space.
+        /// </summary>
+        [Parameter] public bool ForceLoad { get; set; }
+
+        /// <summary>
+        /// Avatar CSS Class to apply if Avatar is set.
         /// </summary>
         [Parameter] public string AvatarClass { get; set; }
 
@@ -69,6 +76,26 @@ namespace MudBlazor
         /// The color of the icon.
         /// </summary>
         [Parameter] public Color IconColor { get; set; } = Color.Inherit;
+
+        /// <summary>
+        /// Sets the Icon Size.
+        /// </summary>
+        [Parameter] public Size IconSize { get; set; } = Size.Medium;
+
+        /// <summary>
+        /// The color of the adornment if used. It supports the theme colors.
+        /// </summary>
+        [Parameter] public Color AdornmentColor { get; set; } = Color.Default;
+
+        /// <summary>
+        /// Custom expand less icon.
+        /// </summary>
+        [Parameter] public string ExpandLessIcon { get; set; } = Icons.Material.Filled.ExpandLess;
+
+        /// <summary>
+        /// Custom expand more icon.
+        /// </summary>
+        [Parameter] public string ExpandMoreIcon { get; set; } = Icons.Material.Filled.ExpandMore;
 
         /// <summary>
         /// If true, the List Subheader will be indented.
@@ -148,13 +175,13 @@ namespace MudBlazor
             }
             else if (Href != null)
             {
-                MudList?.SetSelectedItem(this);
+                MudList?.SetSelectedValue(this.Value);
                 OnClick.InvokeAsync(ev);
-                UriHelper.NavigateTo(Href);
+                UriHelper.NavigateTo(Href, ForceLoad);
             }
             else
             {
-                MudList?.SetSelectedItem(this);
+                MudList?.SetSelectedValue(this.Value);
                 OnClick.InvokeAsync(ev);
                 if (Command?.CanExecute(CommandParameter) ?? false)
                 {

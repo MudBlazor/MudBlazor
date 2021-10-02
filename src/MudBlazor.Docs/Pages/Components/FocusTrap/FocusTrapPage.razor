@@ -2,18 +2,17 @@
 
 <DocsPage>
     <DocsPageHeader Title="Focus Trap" SubTitle="The focus trap allows to restrict TAB key navigation inside the component.">
-        <Description>It is typically used when the user actions should be temporary limited, for example within dropdown selectors and modal dialogs.</Description>
+        <Description>It is typically used when the user actions should be temporarily limited, for example within dropdown selectors and modal dialogs.</Description>
     </DocsPageHeader>
     <DocsPageContent>
 
         <DocsPageSection>
             <MudText Typo="Typo.h6" GutterBottom="true">Note</MudText>
-            <MudText>The <CodeInline>Dialog</CodeInline> component already contains a focus trap so it is not necessary to add it one yourself.</MudText>
+            <MudText>The <CodeInline>Dialog</CodeInline> component already contains a focus trap, it is not necessary to add one yourself.</MudText>
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader>
-                <Title>Usage</Title>
+            <SectionHeader Title="Usage">
                 <Description>
                     By default, when the component is created or enabled, focus is set on the first tabbable child element. This behavior can be modified by using the <CodeInline>DefaultFocus</CodeInline> property.
                     If still enabled, the focus is restored to the original element when the component is disposed.
@@ -27,7 +26,7 @@
             <SectionContent Outlined="true">
                 <FocusTrapUsageExample />
             </SectionContent>
-            <SectionSource Code="FocusTrapUsageExample" GitHubFolderName="FocusTrap" />
+            <SectionSource Code="FocusTrapUsageExample" GitHubFolderName="FocusTrap" ShowCode="false" />
         </DocsPageSection>
 
     </DocsPageContent>

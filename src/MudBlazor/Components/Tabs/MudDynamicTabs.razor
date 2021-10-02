@@ -1,0 +1,44 @@
+﻿@namespace MudBlazor
+@inherits MudTabs
+
+@{ 
+    base.BuildRenderTree(__builder);
+}
+
+@code {
+
+
+	protected override void OnInitialized()
+    {
+		base.Header = (context) => 
+	@:@{
+			if (string.IsNullOrEmpty(AddIconToolTip) == false)
+			{
+				<MudTooltip Text="@AddIconToolTip">
+					<MudIconButton Icon="@AddTabIcon" Class="@AddIconClass" Style="@AddIconStyle" OnClick="@AddTab" />
+				</MudTooltip>
+			}
+			else
+			{
+				<MudIconButton Icon="@AddTabIcon" Class="@AddIconClass" Style="@AddIconStyle" OnClick="@AddTab" />
+			}
+		}
+		;
+
+        base.TabPanelHeader = (context) =>  
+	@:@{
+			if (string.IsNullOrEmpty(CloseIconToolTip) == false)
+			{
+				<MudTooltip Text="@CloseIconToolTip">
+					<MudIconButton Icon="@CloseTabIcon" Class="@CloseIconClass" Style="@CloseIconStyle" OnClick="EventCallback.Factory.Create<MouseEventArgs>(this, () => CloseTab.InvokeAsync(context))" />
+				</MudTooltip>
+			}
+			else
+			{
+				<MudIconButton Icon="@CloseTabIcon" Class="@CloseIconClass" Style="@CloseIconStyle"  OnClick="EventCallback.Factory.Create<MouseEventArgs>(this, () => CloseTab.InvokeAsync(context))" />
+			}
+		}
+		;
+    }
+
+}

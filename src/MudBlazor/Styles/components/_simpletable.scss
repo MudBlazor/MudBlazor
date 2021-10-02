@@ -25,7 +25,7 @@
                 display: table-cell;
                 padding: 16px;
                 font-size: 0.875rem;
-                text-align: left;
+                text-align: start;
                 font-weight: 400;
                 line-height: 1.43;
                 border-bottom: 1px solid var(--mud-palette-table-lines);
@@ -41,7 +41,9 @@
 
         tbody {
             tr:last-child {
-                border-bottom: none;
+                td {
+                    border-bottom: none;
+                }
             }
         }
     }
@@ -51,10 +53,13 @@
     & * tr {
         & td, th {
             padding: 6px 24px 6px 16px;
+            padding-inline-start: 16px;
+            padding-inline-end: 24px;
         }
 
         & td, th:last-child {
             padding-right: 16px;
+            padding-inline-end: 16px;
         }
     }
 }
@@ -85,7 +90,7 @@
     & .mud-table-container table tbody {
         & tr:nth-of-type(odd) {
             background-color: var(--mud-palette-table-striped);
-        } 
+        }
     }
 }
 
@@ -108,7 +113,7 @@
 
         thead {
             & * th:first-child {
-                border-radius: var(--mud-default-borderradius) 0px 0px 0px;
+                border-radius: var(--mud-default-borderradius) 0 0 0;
             }
 
             & * th {
@@ -116,6 +121,27 @@
                 position: sticky;
                 z-index: 1;
                 top: 0;
+            }
+        }
+    }
+}
+
+
+.mud-simple-table.mud-table-sticky-footer {
+    .mud-table-container {
+        overflow-x: auto;
+        max-height: 100%;
+    }
+
+    & * table {
+        border-collapse: separate;
+
+        tfoot {
+            & * td {
+                background-color: var(--mud-palette-surface);
+                position: sticky;
+                z-index: 1;
+                bottom: 0;
             }
         }
     }

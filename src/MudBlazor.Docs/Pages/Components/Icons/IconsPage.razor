@@ -6,55 +6,70 @@
     </DocsPageHeader>
     <DocsPageContent>
         <DocsPageSection>
-            <SectionHeader>
-                <Title>Icons that are loaded by default</Title>
+            <SectionHeader Title="Icons">
                 <Description>
-                    Mudblazor comes loaded with <MudLink Href="https://material.io/resources/icons/">Material Design icons</MudLink> as SVG's.<br />
-                    You can search the full list of the icons under <MudLink Href="/features/icons">MudBlazor Icons</MudLink> in the menu.</Description>
+                    See the full list of all icons that comes preloaded here: <MudLink Href="/features/icons">MudBlazor Icons</MudLink>
+                </Description>
             </SectionHeader>
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader>
-                <Title>Usage</Title>
-                <Description>MudIcon component shows the specified icon with the chosen style. You can use the Title attribute to improve accessibility with screen readers and show a tooltip on mouse over.</Description>
-
+            <SectionHeader Title="Usage">
+                <Description>The MudIcon component shows the specified icon with the chosen style. You can use the <CodeInline>Title</CodeInline> attribute to improve accessibility with screen readers and show a tooltip on mouse over.</Description>
             </SectionHeader>
             <SectionContent Outlined="true">
                 <IconsUsageExample />
             </SectionContent>
-            <SectionSource Code="IconsUsageExample" GitHubFolderName="Icons"  />
+            <SectionSource Code="IconsUsageExample" GitHubFolderName="Icons" />
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader>
-                <Title>Color</Title>
+            <SectionHeader Title="Color">
             </SectionHeader>
             <SectionContent Outlined="true">
                 <IconsColorExample />
             </SectionContent>
-            <SectionSource Code="IconsColorExample" GitHubFolderName="Icons"  />
+            <SectionSource Code="IconsColorExample" GitHubFolderName="Icons" />
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader>
-                <Title>Size</Title>
+            <SectionHeader Title="Size">
             </SectionHeader>
             <SectionContent Outlined="true">
                 <IconsSizeExample />
             </SectionContent>
-            <SectionSource Code="IconsSizeExample" GitHubFolderName="Icons"  />
+            <SectionSource Code="IconsSizeExample" GitHubFolderName="Icons" />
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader>
-                <Title>Font Icons</Title>
-                <Description>MudIcon component will display any icon font that support ligatures.<br/>This are not loaded by default, for example you can use <MudLink Color="Color.Secondary" Href="https://fontawesome.com/">Font Awesome</MudLink></Description>
+            <SectionHeader Title="Material Variants">
+                <Description>Material icons that comes loaded with MudBlazor by default is available in Filled, Outlined, Rounded, Sharp and TwoToned.</Description>
+            </SectionHeader>
+            <SectionContent Outlined="true">
+                <IconsMaterialVariantsExample />
+            </SectionContent>
+            <SectionSource Code="IconsMaterialVariantsExample" GitHubFolderName="Icons" />
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Font Icons">
+                <Description>The MudIcon component will display any icon font that supports ligatures.<br />For example, you can use <MudLink Color="Color.Secondary" Href="https://fontawesome.com/">Font Awesome</MudLink>.</Description>
             </SectionHeader>
             <SectionContent Outlined="true">
                 <IconsFontAwesomeExample />
             </SectionContent>
-            <SectionSource Code="IconsFontAwesomeExample" GitHubFolderName="Icons"  />
+            <SectionSource Code="IconsFontAwesomeExample" GitHubFolderName="Icons" />
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Change Icon By Programmatically">
+                <Description>The icon parameter of the other components are determined as strings. 
+                So changing the icon is as easy as assigning a new string.</Description>
+            </SectionHeader>
+            <SectionContent Outlined="true">
+                <ChangeIconByProgrammaticallyExample />
+            </SectionContent>
+            <SectionSource Code="ChangeIconByProgrammaticallyExample" GitHubFolderName="Icons" ShowCode="false" />
         </DocsPageSection>
     </DocsPageContent>
 </DocsPage>

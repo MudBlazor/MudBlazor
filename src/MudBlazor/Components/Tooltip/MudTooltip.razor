@@ -1,19 +1,18 @@
 ﻿@namespace MudBlazor
 @inherits MudComponentBase
 
-<div class="mud-tooltip-root">
-    @ChildContent
-    @if (!String.IsNullOrEmpty(Text) || TooltipContent != null)
-    {
-        <div class="@Classname" style="@GetTimeDelay()">
-            @if (TooltipContent != null)
-            {
-                @TooltipContent
-            }
-            else
-            {
-                @Text
-            }
-        </div>
-    }
+<div @attributes="UserAttributes" class="@ContainerClass" @onmouseenter="@HandleMouseOver" @onmouseleave="@HandleMouseOut" @onfocusout="@HandleMouseOut">
+	@ChildContent
+	<MudPopover Open="_isVisible" AnchorOrigin="@AnchorOrigin" TransformOrigin="@TransformOrigin" Paper="false">
+		<div role="tooltip" class="@Classname">
+			@if (TooltipContent != null)
+			{
+				@TooltipContent
+			}
+			else if(!String.IsNullOrEmpty(Text))
+			{
+				@Text
+			}
+		</div>
+	</MudPopover>
 </div>

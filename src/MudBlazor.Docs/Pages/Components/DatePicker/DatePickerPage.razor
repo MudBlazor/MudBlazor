@@ -7,32 +7,33 @@
     <DocsPageContent>
 
         <DocsPageSection>
-            <SectionHeader>
-                <Title>Basic Usage</Title>
+            <SectionHeader Title="Basic Usage">
                 <Description>
                     <MudAlert Severity="Severity.Info" Dense="true" Class="mt-3">Note: Always use the two-way binding <CodeInline>@@bind-Date</CodeInline> to bind to a field of type <CodeInline>DateTime?</CodeInline></MudAlert>
+                    <MudText Class="py-6">
+                        If <CodeInline>AutoClose</CodeInline> is set to true and PickerActions are defined, selecting a day will close the MudDatePicker.
+                        If <CodeInline>ReadOnly</CodeInline> is set to true, the DatePicker can be used but the value will remain unchanged regardless of the actions performed or the values entered.
+                    </MudText>
                 </Description>
             </SectionHeader>
             <SectionContent Outlined="true">
                 <DatePickerBasicUsageExample/>
             </SectionContent>
-            <SectionSource Code="DatePickerBasicUsageExample" GitHubFolderName="DatePicker"/>
+            <SectionSource Code="DatePickerBasicUsageExample" GitHubFolderName="DatePicker" ShowCode="false" />
         </DocsPageSection>
                 
         <DocsPageSection>
-            <SectionHeader>
-                <Title>Internationalization</Title>
-                <Description>When you set the <CodeInline>Culture</CodeInline> parameter the DatePicker will use culture specific month names, weekday names and even different calenders.</Description>
+            <SectionHeader Title="Internationalization">
+                <Description>When you set the <CodeInline>Culture</CodeInline> parameter, the DatePicker will use culture-specific month names, weekday names and even different calendars.</Description>
             </SectionHeader>
             <SectionContent DarkenBackground="true" DisplayFlex="true">
                 <DatePickerInternationalizationExample />
             </SectionContent>
-            <SectionSource Code="DatePickerInternationalizationExample" GitHubFolderName="DatePicker" />
+            <SectionSource Code="DatePickerInternationalizationExample" GitHubFolderName="DatePicker" ShowCode="false" />
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader>
-                <Title>Dialog Mode</Title>
+            <SectionHeader Title="Dialog Mode">
                 <Description></Description>
             </SectionHeader>
             <SectionContent Outlined="true">
@@ -42,8 +43,7 @@
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader>
-                <Title>Static Mode</Title>
+            <SectionHeader Title="Static Mode">
                 <Description></Description>
             </SectionHeader>
             <SectionContent DarkenBackground="true" DisplayFlex="true">
@@ -53,9 +53,8 @@
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader>
-                <Title>Different views</Title>
-                <Description>By default it opens to Date, but can be set to Year or Month.</Description>
+            <SectionHeader Title="Different views">
+                <Description>By default, it opens to Date, but can be set to Year or Month.</Description>
             </SectionHeader>
             <SectionContent Outlined="true">
                 <DatePickerViewsExample/>
@@ -64,8 +63,7 @@
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader>
-                <Title>Colors</Title>
+            <SectionHeader Title="Colors">
                 <Description></Description>
             </SectionHeader>
             <SectionContent DarkenBackground="true" DisplayFlex="true" Class="demo-datetime-margin">
@@ -75,9 +73,8 @@
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader>
-                <Title>Elevation</Title>
-                <Description>You can change the elevation with the <CodeInline>Elevation</CodeInline> parameter the default value is 0 for static and 8 for inline.</Description>
+            <SectionHeader Title="Elevation">
+                <Description>You can change the elevation with the <CodeInline>Elevation</CodeInline> parameter. The default value is 0 for static and 8 for inline.</Description>
             </SectionHeader>
             <SectionContent DarkenBackground="true" DisplayFlex="true">
                 <DatePickerElevationExample/>
@@ -86,14 +83,13 @@
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader>
-                <Title>Range Picker Usage</Title>
+            <SectionHeader Title="Range Picker Usage">
                 <Description></Description>
             </SectionHeader>
             <SectionContent Outlined="true">
                 <DateRangePickerUsageExample/>
             </SectionContent>
-            <SectionSource Code="DateRangePickerUsageExample" GitHubFolderName="DatePicker"/>
+            <SectionSource Code="DateRangePickerUsageExample" GitHubFolderName="DatePicker" ShowCode="false" />
         </DocsPageSection>
     </DocsPageContent>
 </DocsPage>

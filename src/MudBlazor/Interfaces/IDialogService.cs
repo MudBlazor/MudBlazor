@@ -1,5 +1,5 @@
 ﻿// Copyright (c) 2019 Blazored (https://github.com/Blazored)
-// Copyright (c) 2020 Jonny Larsson (https://github.com/Garderoben/MudBlazor)
+// Copyright (c) 2020 Jonny Larsson (https://github.com/MudBlazor/MudBlazor)
 // Copyright (c) 2021 improvements by Meinrad Recheis
 // See https://github.com/Blazored
 // License: MIT
@@ -13,6 +13,9 @@ namespace MudBlazor
 {
     public interface IDialogService
     {
+        public event Action<IDialogReference> OnDialogInstanceAdded;
+        public event Action<IDialogReference, DialogResult> OnDialogCloseRequested;
+
         IDialogReference Show<TComponent>() where TComponent : ComponentBase;
 
         IDialogReference Show<TComponent>(string title) where TComponent : ComponentBase;
@@ -33,9 +36,15 @@ namespace MudBlazor
 
         IDialogReference Show(Type component, string title, DialogParameters parameters, DialogOptions options);
 
+        IDialogReference CreateReference();
+
         Task<bool?> ShowMessageBox(string title, string message, string yesText = "OK",
             string noText = null, string cancelText = null, DialogOptions options = null);
 
         Task<bool?> ShowMessageBox(MessageBoxOptions mboxOptions, DialogOptions options = null);
+
+        void Close(DialogReference dialog);
+
+        void Close(DialogReference dialog, DialogResult result);
     }
 }

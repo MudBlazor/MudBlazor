@@ -6,18 +6,15 @@
     <DocsPageContent>
         <DocsPageSection>
             <SectionHeader>
-                <Title>Templates</Title>
                 <Description>
                     <MudAlert Severity="Severity.Info">
-                        <MudText>We provide ready to run blazor style templates that come pre-configured with everything you need to get going faster.</MudText>
-                     </MudAlert>
-                    <MudText Class="pa-2">You will find them in the <MudLink Href="https://github.com/Garderoben/MudBlazor.Templates">Github repository</MudLink> called <CodeInline>MudBlazor.Templates</CodeInline> and each template comes with both WASM and Server versions.</MudText>
+                        <MudText>We provide ready to run blazor templates that come pre-configured with everything you need to get going faster. Read more on our <MudLink Href="https://github.com/MudBlazor/Templates" Target="_blank">Template page</MudLink>.</MudText>
+                    </MudAlert>
                 </Description>
             </SectionHeader>
         </DocsPageSection>
         <DocsPageSection>
-            <SectionHeader>
-                <Title>Manual Install</Title>
+            <SectionHeader Title="Manual Install">
                 <SubTitle>1. Install the package</SubTitle>
                 <Description>Find the package through NuGet Package Manager or install it with following command.</Description>
             </SectionHeader>
@@ -65,8 +62,23 @@
             <MarkdownAddComponents />
         </DocsPageSection>
         <DocsPageSection>
-            <MudText Class="mt-16" Align="Align.Center" Typo="Typo.h6" GutterBottom="true">Now build and run your project, if you didn't get any errors, you're good to go.</MudText>
-            <MudText Class="mb-16" Align="Align.Center" Typo="Typo.h6">Jump over to the <MudLink Typo="Typo.h6" Href="/getting-started/usage">usage</MudLink> guide to get started.</MudText>
+            <SectionHeader Title="Ready for More?">
+                <Description>Now you know how to install MudBlazor, but a common pitfall is to jump straight into different components. We recommend that you read our Layout page to learn about basic project structure and different ways to use our main layout components.</Description>
+            </SectionHeader>
+            <div class="d-flex flex-row flex-wrap mud-width-full">
+                <MudList Clickable="true" Class="flex-grow-1 flex-shrink-0 mud-paper-outlined rounded py-0 ma-2">
+                    <MudListItem Icon="@Icons.Material.Filled.AutoAwesomeMosaic" IconColor="Color.Primary" Class="pl-6" Href="/getting-started/layouts">
+                        <MudText Typo="Typo.body1">Layouts</MudText>
+                        <MudText Typo="Typo.body2">Understand the structure</MudText>
+                    </MudListItem>
+                </MudList>
+                <MudList Clickable="true" Class="flex-grow-1 flex-shrink-0 mud-paper-outlined rounded py-0 ma-2">
+                    <MudListItem Icon="@Icons.Material.Filled.FilterFrames" IconColor="Color.Secondary" Class="pl-6" Href="/getting-started/wireframes">
+                        <MudText Typo="Typo.body1">Wireframes</MudText>
+                        <MudText Typo="Typo.body2">Copy, paste layouts</MudText>
+                    </MudListItem>
+                </MudList>
+            </div>
         </DocsPageSection>
     </DocsPageContent>
 </DocsPage>

@@ -5,6 +5,9 @@ var mudBlazorDocs = {
     scrollToActiveNavLink: function () {
         let element = document.querySelector('.mud-nav-link.active');
         if (!element) return;
-        element.scrollIntoView({ block: 'center', behavior:'smooth' })
+        element.scrollIntoView({ block: 'center', behavior: 'smooth' })
     }
 }
+
+
+

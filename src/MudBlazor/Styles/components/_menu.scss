@@ -3,17 +3,7 @@
     position: relative;
 }
 
-.mud-menu-container {
-    max-width: max-content;
-    width: max-content !important;
-
-    &.mud-menu-fullwidth {
-        width: 100% !important;
-        max-width: none;
-    }
+.mud-menu * {
+    cursor: pointer;
 }
 
-.mud-menu-openonhover:hover .mud-popover {
-    display: block;
-    animation: mud-animation-fadein 251ms;
-}

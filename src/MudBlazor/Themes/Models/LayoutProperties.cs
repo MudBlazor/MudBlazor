@@ -8,10 +8,14 @@ namespace MudBlazor
         public string DefaultBorderRadius { get; set; } = "4px";
         [Obsolete]
         public string DrawerWidth { get; set; } = null;
+        public string DrawerMiniWidthLeft { get; set; } = "56px";
+        public string DrawerMiniWidthRight { get; set; } = "56px";
         public string DrawerWidthLeft { get; set; } = "240px";
         public string DrawerWidthRight { get; set; } = "240px";
         public string DrawerHeightTop { get; set; } = "320px";
         public string DrawerHeightBottom { get; set; } = "320px";
-        public string AppbarMinHeight { get; set; } = "64px";
+        [Obsolete]
+        public string AppbarMinHeight { get; set; } = null;
+        public string AppbarHeight { get; set; } = "64px";
     }
 }

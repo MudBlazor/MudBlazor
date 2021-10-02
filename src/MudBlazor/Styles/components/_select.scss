@@ -14,15 +14,32 @@
             cursor: pointer;
         }
     }
-}
 
-.mud-select-input {
-    cursor: pointer;
+    .mud-select-input {
+        cursor: pointer;
 
-    &:disabled {
-        cursor: default;
+        & .mud-input-slot {
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+        }
+
+        & .mud-input-adornment-end {
+            margin-left: 0;
+        }
+
+        &:disabled {
+            cursor: default;
+        }
+    }
+
+    .mud-disabled {
+        .mud-select-input {
+            cursor: default;
+        }
     }
 }
+
 
 .mud-select > .mud-form-helpertext {
     margin-top: -21px;
@@ -31,4 +48,10 @@
 .mud-selected-item {
     color: var(--mud-palette-primary);
     background-color: var(--mud-palette-primary-hover);
+}
+
+.mud-select-all {
+    margin-top: 10px;
+    border-bottom: 1px solid lightgrey;
+    padding-bottom: 18px;
 }

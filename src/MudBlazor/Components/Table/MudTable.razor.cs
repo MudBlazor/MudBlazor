@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
-using System.Windows.Input;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Rendering;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Extensions;
-using MudBlazor.Utilities;
 
 
 namespace MudBlazor
@@ -30,9 +30,107 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public RenderFragment<T> RowEditingTemplate { get; set; }
 
+        #region Code for column based approach
+        /// <summary>
+        /// Defines how a table column looks like. Columns components should inherit from MudBaseColumn
+        /// </summary>
+        [Parameter] public RenderFragment<T> Columns { get; set; }
+        /// <summary>
+        /// Comma separated list of columns to show if there is no templates defined
+        /// </summary>
+        [Parameter] public string QuickColumns { get; set; }
+
+        // Workaround because "where T : new()" didn't work with Blazor components
+        // T must have a default constructor, otherwise we cannot show headers when Items collection
+        // is empty
+        protected T Def
+        {
+            get
+            {
+                T t1 = default;
+                if (t1 == null)
+                {
+                    return Activator.CreateInstance<T>();
+                }
+                else
+                {
+                    return default;
+                }
+            }
+        }
+        /// <summary>
+        /// Creates a default Column renderfragment if there is no templates defined
+        /// </summary>
+        protected override void OnInitialized()
+        {
+            if (Columns == null && RowTemplate == null && RowEditingTemplate == null)
+            {
+                string[] quickcolumnslist = null;
+                if (!QuickColumns.IsEmpty())
+                {
+                    quickcolumnslist = QuickColumns.Split(",");
+                }
+                // Create template from T
+                Columns = context => builder =>
+                {
+                    var myType = context.GetType();
+                    IList<PropertyInfo> propertylist = new List<PropertyInfo>(myType.GetProperties().Where(p => p.PropertyType.IsPublic));
+
+                    if (quickcolumnslist == null)
+                    {
+                        foreach (var propinfo in propertylist)
+                        {
+                            BuildMudColumnTemplateItem(context, builder, propinfo);
+                        }
+                    }
+                    else
+                    {
+                        foreach (var colname in quickcolumnslist)
+                        {
+                            var propinfo = propertylist.SingleOrDefault(pl => pl.Name == colname);
+                            if (propinfo != null)
+                            {
+                                BuildMudColumnTemplateItem(context, builder, propinfo);
+                            }
+                        }
+                    }
+
+                };
+            }
+        }
+
+        private static void BuildMudColumnTemplateItem(T context, RenderTreeBuilder builder, PropertyInfo propinfo)
+        {
+            if (propinfo.PropertyType.IsPrimitive || propinfo.PropertyType == typeof(string))
+            {
+                builder.OpenComponent<MudColumn<string>>(0);
+                builder.AddAttribute(1, "Value", propinfo.GetValue(context)?.ToString());
+                builder.AddAttribute(2, "HeaderText", propinfo.Name);
+                builder.CloseComponent();
+            }
+        }
+        #endregion
+        /// <summary>
+        /// Defines the table body content when there are no matching records found
+        /// </summary>
+        [Parameter] public RenderFragment NoRecordsContent { get; set; }
+
+        /// <summary>
+        /// Defines the table body content  the table has no rows and is loading
+        /// </summary>
+        [Parameter] public RenderFragment LoadingContent { get; set; }
+
+        /// <summary>
+        /// Defines if the table has a horizontal scrollbar.
+        /// </summary>
+        [Parameter] public bool HorizontalScrollbar { get; set; }
+
+        internal string GetHorizontalScrollbarStyle() => HorizontalScrollbar ? ";display: block; overflow-x: auto;" : string.Empty;
+
         /// <summary>
         /// The data to display in the table. MudTable will render one row per item
         /// </summary>
+        /// 
         [Parameter]
         public IEnumerable<T> Items
         {
@@ -145,16 +243,74 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public EventCallback<HashSet<T>> SelectedItemsChanged { get; set; }
 
+        private TableGroupDefinition<T> _groupBy;
+        /// <summary>
+        /// Defines data grouping parameters. It can has N hierarchical levels
+        /// </summary>
+        [Parameter]
+        public TableGroupDefinition<T> GroupBy
+        {
+            get => _groupBy;
+            set
+            {
+                _groupBy = value;
+                if (_groupBy != null)
+                    _groupBy.Context = Context;
+            }
+        }
+
+        /// <summary>
+        /// Defines how a table grouping row header looks like. It works only when GroupBy is not null. Use MudTd to define the table cells and their content.
+        /// </summary>
+        [Parameter] public RenderFragment<TableGroupData<object, T>> GroupHeaderTemplate { get; set; }
+
+        /// <summary>
+        /// Defines custom CSS classes for using on Group Header's MudTr.
+        /// </summary>
+        [Parameter] public string GroupHeaderClass { get; set; }
+
+        /// <summary>
+        /// Defines custom styles for using on Group Header's MudTr.
+        /// </summary>
+        [Parameter] public string GroupHeaderStyle { get; set; }
+
+        /// <summary>
+        /// Defines custom CSS classes for using on Group Footer's MudTr.
+        /// </summary>
+        [Parameter] public string GroupFooterClass { get; set; }
+
+        /// <summary>
+        /// Defines custom styles for using on Group Footer's MudTr.
+        /// </summary>
+        [Parameter] public string GroupFooterStyle { get; set; }
+
+        /// <summary>
+        /// Defines how a table grouping row footer looks like. It works only when GroupBy is not null. Use MudTd to define the table cells and their content.
+        /// </summary>
+        [Parameter] public RenderFragment<TableGroupData<object, T>> GroupFooterTemplate { get; set; }
+
+        private IEnumerable<T> _preEditSort { get; set; } = null;
+        private bool _hasPreEditSort => _preEditSort != null;
+
         public IEnumerable<T> FilteredItems
         {
             get
             {
+                if (_isEditing && _hasPreEditSort)
+                    return _preEditSort;
                 if (ServerData != null)
-                    return _server_data.Items;
+                {
+                    _preEditSort = _server_data.Items.ToList();
+                    return _preEditSort;
+                }
 
                 if (Filter == null)
-                    return Context.Sort(Items);
-                return Context.Sort(Items.Where(Filter));
+                {
+                    _preEditSort = Context.Sort(Items).ToList();
+                    return _preEditSort;
+                }
+                _preEditSort = Context.Sort(Items.Where(Filter)).ToList();
+                return _preEditSort;
             }
         }
 
@@ -215,7 +371,7 @@ namespace MudBlazor
 
         public override void SetEditingItem(object item)
         {
-            if (!Object.ReferenceEquals(_editingItem, item))
+            if (!ReferenceEquals(_editingItem, item))
                 _editingItem = item;
         }
 
@@ -274,7 +430,7 @@ namespace MudBlazor
         internal override bool HasServerData => ServerData != null;
 
 
-        TableData<T> _server_data = new TableData<T>() { TotalItems = 0, Items = Array.Empty<T>() };
+        TableData<T> _server_data = new() { TotalItems = 0, Items = Array.Empty<T>() };
         private IEnumerable<T> _items;
 
         internal override async Task InvokeServerLoadFunc()
@@ -282,6 +438,7 @@ namespace MudBlazor
             if (ServerData == null)
                 return;
 
+            Loading = true;
             var label = Context.CurrentSortLabel;
 
             var state = new TableState
@@ -293,6 +450,11 @@ namespace MudBlazor
             };
 
             _server_data = await ServerData(state);
+
+            if (CurrentPage * RowsPerPage > _server_data.TotalItems)
+                CurrentPage = 0;
+
+            Loading = false;
             StateHasChanged();
             Context?.PagerStateHasChanged?.Invoke();
         }
@@ -312,6 +474,40 @@ namespace MudBlazor
             return InvokeServerLoadFunc();
         }
 
-        internal override bool IsEditable { get => RowEditingTemplate != null; }
+        internal override bool IsEditable { get => (RowEditingTemplate != null) || (Columns != null); }
+
+        //GROUPING:
+        private IEnumerable<IGrouping<object, T>> GroupItemsPage
+        {
+            get
+            {
+                return GetItemsOfGroup(GroupBy, CurrentPageItems);
+            }
+        }
+
+        internal IEnumerable<IGrouping<object, T>> GetItemsOfGroup(TableGroupDefinition<T> parent, IEnumerable<T> sourceList)
+        {
+            if (parent == null || sourceList == null)
+                return new List<IGrouping<object, T>>();
+
+            return sourceList.GroupBy(parent.Selector).ToList();
+        }
+
+        internal void OnGroupHeaderCheckboxClicked(bool value, IEnumerable<T> items)
+        {
+            if (value)
+            {
+                foreach (var item in items)
+                    Context.Selection.Add(item);
+            }
+            else
+            {
+                foreach (var item in items)
+                    Context.Selection.Remove(item);
+            }
+
+            Context.UpdateRowCheckBoxes(false);
+            SelectedItemsChanged.InvokeAsync(SelectedItems);
+        }
     }
 }

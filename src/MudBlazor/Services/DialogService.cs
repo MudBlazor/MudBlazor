@@ -1,5 +1,5 @@
 ﻿// Copyright (c) 2019 Blazored (https://github.com/Blazored)
-// Copyright (c) 2020 Jonny Larsson (https://github.com/Garderoben/MudBlazor)
+// Copyright (c) 2020 Jonny Larsson (https://github.com/MudBlazor/MudBlazor)
 // Copyright (c) 2021 improvements by Meinrad Recheis
 // See https://github.com/Blazored
 // License: MIT
@@ -13,8 +13,8 @@ namespace MudBlazor
 {
     public class DialogService : IDialogService
     {
-        internal event Action<DialogReference> OnDialogInstanceAdded;
-        internal event Action<DialogReference, DialogResult> OnDialogCloseRequested;
+        public event Action<IDialogReference> OnDialogInstanceAdded;
+        public event Action<IDialogReference, DialogResult> OnDialogCloseRequested;
 
         public IDialogReference Show<T>() where T : ComponentBase
         {
@@ -67,28 +67,38 @@ namespace MudBlazor
             {
                 throw new ArgumentException($"{contentComponent.FullName} must be a Blazor Component");
             }
-            var dialogInstanceId = Guid.NewGuid();
-            DialogReference dialogReference = null;
-            dialogReference = new DialogReference(dialogInstanceId, this);
+            var dialogReference = CreateReference();
+
             var dialogContent = new RenderFragment(builder =>
             {
                 var i = 0;
                 builder.OpenComponent(i++, contentComponent);
-                foreach (var parameter in parameters._parameters)
+
+                if (!dialogReference.AreParametersRendered)
                 {
-                    builder.AddAttribute(i++, parameter.Key, parameter.Value);
+                    foreach (var parameter in parameters)
+                    {
+                        builder.AddAttribute(i++, parameter.Key, parameter.Value);
+                    }
+
+                    dialogReference.AreParametersRendered = true;
                 }
-                builder.AddComponentReferenceCapture(1, inst => { dialogReference.InjectDialog(inst); });
+                else
+                {
+                    i += parameters.Count;
+                }
+
+                builder.AddComponentReferenceCapture(i++, inst => { dialogReference.InjectDialog(inst); });
                 builder.CloseComponent();
             });
             var dialogInstance = new RenderFragment(builder =>
             {
                 builder.OpenComponent<MudDialogInstance>(0);
-                builder.SetKey(dialogInstanceId);
+                builder.SetKey(dialogReference.Id);
                 builder.AddAttribute(1, "Options", options);
                 builder.AddAttribute(2, "Title", title);
                 builder.AddAttribute(3, "Content", dialogContent);
-                builder.AddAttribute(4, "Id", dialogInstanceId);
+                builder.AddAttribute(4, "Id", dialogReference.Id);
                 builder.CloseComponent();
             });
             dialogReference.InjectRenderFragment(dialogInstance);
@@ -127,16 +137,20 @@ namespace MudBlazor
             return (bool)result.Data;
         }
 
-        internal void Close(DialogReference dialog)
+        public void Close(DialogReference dialog)
         {
             Close(dialog, DialogResult.Ok<object>(null));
         }
 
-        internal void Close(DialogReference dialog, DialogResult result)
+        public void Close(DialogReference dialog, DialogResult result)
         {
             OnDialogCloseRequested?.Invoke(dialog, result);
         }
 
+        public virtual IDialogReference CreateReference()
+        {
+            return new DialogReference(Guid.NewGuid(), this);
+        }
     }
 
     [ExcludeFromCodeCoverage]

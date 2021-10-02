@@ -1,7 +1,7 @@
 ﻿@import '../abstracts/variables';
 
-$spacing-values: ( "0": 0, "1": 4px, "2": 8px, "3": 12px, "4": 16px, "5": 20px, "6": 24px, "7": 28px, "8": 32px, "9": 36px, "10": 40px, "11": 44px, "12": 48px, "13": 52px, "14": 56px, "16": 64px, "auto": auto );
-$spacing-negative-values: ( "n1": -4px, "n2": -8px, "n3": -12px, "n4": -16px, "n5": -20px, "n6": -24px, "n7": -28px, "n8": -32px, "n9": -36px, "n10": -40px, "n11": -44px, "n12": -48px, "n13": -52px, "n14": -56px, "n16": -64px );
+$spacing-values: ( "0": 0, "1": 4px, "2": 8px, "3": 12px, "4": 16px, "5": 20px, "6": 24px, "7": 28px, "8": 32px, "9": 36px, "10": 40px, "11": 44px, "12": 48px, "13": 52px, "14": 56px, "15": 60px, "16": 64px, "auto": auto );
+$spacing-negative-values: ( "n1": -4px, "n2": -8px, "n3": -12px, "n4": -16px, "n5": -20px, "n6": -24px, "n7": -28px, "n8": -32px, "n9": -36px, "n10": -40px, "n11": -44px, "n12": -48px, "n13": -52px, "n14": -56px, "n15": -60px, "n16": -64px );
 
 @mixin spacing-positive-negative ($breakpoint) {
     @each $prop, $abbrev in (margin: m, padding: p) {
@@ -26,11 +26,20 @@ $spacing-negative-values: ( "n1": -4px, "n2": -8px, "n3": -12px, "n4": -16px, "n
                 #{$prop}-bottom: $value !important;
             }
 
+            .#{$abbrev}s-#{$breakpoint}#{$name} {
+                #{$prop}-inline-start: $value !important;
+            }
+
+            .#{$abbrev}e-#{$breakpoint}#{$name} {
+                #{$prop}-inline-end: $value !important;
+            }
+
             .#{$abbrev}a-#{$breakpoint}#{$name} {
                 #{$prop}: $value !important;
             }
         }
     }
+
     @each $prop, $abbrev in (margin: m) {
         @each $name, $value in $spacing-negative-values {
             .#{$abbrev}t-#{$breakpoint}#{$name},
@@ -51,6 +60,14 @@ $spacing-negative-values: ( "n1": -4px, "n2": -8px, "n3": -12px, "n4": -16px, "n
             .#{$abbrev}b-#{$breakpoint}#{$name},
             .#{$abbrev}y-#{$breakpoint}#{$name} {
                 #{$prop}-bottom: $value !important;
+            }
+
+            .#{$abbrev}s-#{$breakpoint}#{$name} {
+                #{$prop}-inline-start: $value !important;
+            }
+
+            .#{$abbrev}e-#{$breakpoint}#{$name} {
+                #{$prop}-inline-end: $value !important;
             }
 
             .#{$abbrev}a-#{$breakpoint}#{$name} {
@@ -77,4 +94,8 @@ $spacing-negative-values: ( "n1": -4px, "n2": -8px, "n3": -12px, "n4": -16px, "n
 
 @media screen and (min-width:$breakpoint-xl) {
     @include spacing-positive-negative("xl-");
+}
+
+@media screen and (min-width:$breakpoint-xxl) {
+    @include spacing-positive-negative("xxl-");
 }

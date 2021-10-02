@@ -6,9 +6,8 @@
     </DocsPageHeader>
     <DocsPageContent>
         <DocsPageSection>
-            <SectionHeader>
-                <Title>Basic Chips</Title>
-                <Description>The Chips when disabled differ from other components, instead of disabled color it lowers the opacity.</Description>
+            <SectionHeader Title="Filled Chips">
+                <Description>The Chips, when disabled, differ from other components. Instead of using the disabled color, the opacity is lowered.</Description>
             </SectionHeader>
             <SectionContent Outlined="true" Class="mud-text-align-center">
                 <ChipBasicExample />
@@ -16,8 +15,25 @@
             <SectionSource ShowCode="false" Code="ChipBasicExample" GitHubFolderName="Chip" />
         </DocsPageSection>
         <DocsPageSection>
-            <SectionHeader>
-                <Title>Closable</Title>
+            <SectionHeader Title="Text Chips">
+                <Description>Text Chips also differ from other components where it has transparent background instead of fully transparent.</Description>
+            </SectionHeader>
+            <SectionContent Outlined="true">
+                <ChipTextExample />
+            </SectionContent>
+            <SectionSource ShowCode="false" Code="ChipTextExample" GitHubFolderName="Chip" />
+        </DocsPageSection>
+        <DocsPageSection>
+            <SectionHeader Title="Outlined Chips">
+                <Description>This looks and feels like outlined normaly do with a border and slightly transparent background on hover.</Description>
+            </SectionHeader>
+            <SectionContent Outlined="true">
+                <ChipOutlinedExample />
+            </SectionContent>
+            <SectionSource ShowCode="false" Code="ChipOutlinedExample" GitHubFolderName="Chip" />
+        </DocsPageSection>
+        <DocsPageSection>
+            <SectionHeader Title="Closable">
                 <Description>You can change the close icon with the <CodeInline>CloseIcon</CodeInline> prop.</Description>
             </SectionHeader>
             <SectionContent Outlined="true">
@@ -26,8 +42,7 @@
             <SectionSource ShowCode="false" Code="ChipClosableExample" GitHubFolderName="Chip" />
         </DocsPageSection>
         <DocsPageSection>
-            <SectionHeader>
-                <Title>Icons</Title>
+            <SectionHeader Title="Icons">
             </SectionHeader>
             <SectionContent Outlined="true">
                 <ChipIconExample />
@@ -35,8 +50,7 @@
             <SectionSource ShowCode="false" Code="ChipIconExample" GitHubFolderName="Chip" />
         </DocsPageSection>
         <DocsPageSection>
-            <SectionHeader>
-                <Title>Label</Title>
+            <SectionHeader Title="Label">
                 <Description>Label Chips use the default theme border-radius.</Description>
             </SectionHeader>
             <SectionContent Outlined="true">
@@ -45,17 +59,7 @@
             <SectionSource ShowCode="false" Code="ChipLabelExample" GitHubFolderName="Chip" />
         </DocsPageSection>
         <DocsPageSection>
-            <SectionHeader>
-                <Title>Outlined</Title>
-            </SectionHeader>
-            <SectionContent Outlined="true">
-                <ChipOutlinedExample />
-            </SectionContent>
-            <SectionSource ShowCode="false" Code="ChipOutlinedExample" GitHubFolderName="Chip" />
-        </DocsPageSection>
-        <DocsPageSection>
-            <SectionHeader>
-                <Title>Sizes</Title>
+            <SectionHeader Title="Sizes">
             </SectionHeader>
             <SectionContent Outlined="true">
                 <ChipSizeExample />

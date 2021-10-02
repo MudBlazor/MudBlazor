@@ -2,7 +2,7 @@
 @using MudBlazor.Extensions
 @inherits MudComponentBase
 
-<div class="@DivClassname" style="@Style" role="progressbar" aria-valuenow="@_value" aria-valuemin="@_min" aria-valuemax="@_max" @attributes="UserAttributes">
+<div @attributes="UserAttributes" class="@DivClassname" style="@Style" role="progressbar" aria-valuenow="@_value" aria-valuemin="@_min" aria-valuemax="@_max">
     @if (Indeterminate)
     {
         <div class="@LinearClassname mud-progress-linear-1-indeterminate"></div>

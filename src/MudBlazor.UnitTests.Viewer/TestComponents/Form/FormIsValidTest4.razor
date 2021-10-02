@@ -1,0 +1,14 @@
+﻿<div style="max-width: 400px;">
+    <MudForm @bind-IsValid="@valid" ValidationDelay="300" >
+        <MudTextField T="string" Label="First Name" />
+        <MudTextField T="string" Label="Last Name" />
+    </MudForm>
+    <div class="d-flex mt-3">
+        <MudSwitch @bind-Checked="@valid" Label="IsValid " Color="Color.Info" />
+    </div>
+</div>
+
+@code {
+    public static string __description__ = "Form should update the bound variable valid to true even though it is set false upon calling form.Validate().";
+    bool valid=false;
+}

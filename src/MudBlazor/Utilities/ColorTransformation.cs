@@ -3,7 +3,7 @@
 // Stripped and adapted by Meinrad Recheis for MudBlazor
 
 using System;
-using MudColor = System.Drawing.Color;
+using System.Diagnostics.CodeAnalysis;
 using SystemMath = System.Math;
 
 namespace MudBlazor.Utilities
@@ -11,6 +11,8 @@ namespace MudBlazor.Utilities
     /// <summary>
     /// Static methods for transforming argb spaces and argb values.
     /// </summary>
+    [ExcludeFromCodeCoverage] 
+    [Obsolete("ColorTransformation is now obsolete. Use MudColor instead", true)]
     public static class ColorTransformation
     {
         private static double EPSILON => 0.000000000000001;
@@ -27,7 +29,7 @@ namespace MudBlazor.Utilities
         /// Output is: { H: [0, 360], S: [0, 1], L: [0, 1] }.
         /// </summary>
         /// <param name="color">The color to convert.</param>
-        public static HSLColor RgBtoHsl(MudColor color)
+        public static HSLColor RgBtoHsl(System.Drawing.Color color)
         {
             var h = 0D;
             var s = 0D;
@@ -86,7 +88,7 @@ namespace MudBlazor.Utilities
         /// hsl.S (Saturation), must be in [0, 1] - 
         /// hsl.L (Luminance), must be in [0, 1].
         /// <param name="a">Output Alpha, must be in [0, 255].</param>
-        public static MudColor HsLtoRgb(HSLColor hsl, int a = 255)
+        public static System.Drawing.Color HsLtoRgb(HSLColor hsl, int a = 255)
         {
             var h = SystemMath.Max(0D, SystemMath.Min(360D, hsl.H));
             var s = SystemMath.Max(0D, SystemMath.Min(1D, hsl.S));
@@ -96,7 +98,7 @@ namespace MudBlazor.Utilities
             // achromatic argb (gray scale)
             if (SystemMath.Abs(s) < EPSILON)
             {
-                return MudColor.FromArgb(
+                return System.Drawing.Color.FromArgb(
                         a,
                         SystemMath.Max(0, SystemMath.Min(255, Convert.ToInt32(double.Parse($"{l * 255D:0.00}")))),
                         SystemMath.Max(0, SystemMath.Min(255, Convert.ToInt32(double.Parse($"{l * 255D:0.00}")))),
@@ -131,7 +133,7 @@ namespace MudBlazor.Utilities
                     T[i] = p;
             }
 
-            return MudColor.FromArgb(
+            return System.Drawing.Color.FromArgb(
                     a,
                     SystemMath.Max(0, SystemMath.Min(255, (int)Math.Round(T[0] * 255D))),
                     SystemMath.Max(0, SystemMath.Min(255, (int)Math.Round(T[1] * 255D))),

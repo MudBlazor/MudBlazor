@@ -1,0 +1,76 @@
+﻿@page "/getting-started/layouts"
+
+<DocsPage MaxWidth="MaxWidth.Large">
+    <DocsPageHeader Title="Layouts" SubTitle="Getting started with MudBlazor for faster and easier web development.">
+    </DocsPageHeader>
+    <DocsPageContent>
+
+        <DocsPageSection>
+            <MudAlert Severity="Severity.Warning">
+                <MudText>The following sections assume you have installed Mudblazor and completed the steps on our <MudLink Href="/getting-started/installation">Installation page</MudLink>.</MudText>
+            </MudAlert>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Usage">
+                <Description>
+                    MudBlazor comes with allot of components, some of them are built to control the layout of your application or provide key functions to other layout based components and function together in a specific way.
+                    <br /><br />
+                    First we have three providers <CodeInline>MudThemeProvider</CodeInline>, <CodeInline>MudDialogProvider</CodeInline> and <CodeInline>MudSnackbarProvider</CodeInline> these should be in your file already if you followed the installation page.<br /><br />
+
+                    <CodeInline>MudThemeProvider</CodeInline> this component provides your app with all your theme settings like colors, fonts, shadows and some layout properties. It provides the default MudBlazor theme by default and you should only have one <CodeInline>MudThemeProvider</CodeInline>.<br /><br />
+
+                    Then we have the two main layout components <CodeInline>MudLayout</CodeInline> and <CodeInline>MudMainContent</CodeInline> where <CodeInline>MudLayout</CodeInline> will be the root of your application where main layout components exists. Directly inside <CodeInline>MudLayout</CodeInline> we will place <CodeInline>MudMainContent</CodeInline> this is where your page body normally is.<br />
+                    To better illustrate this, let's open our <CodeInline>MainLayout.razor</CodeInline> and create a basic MudBlazor layout.
+                </Description>
+            </SectionHeader>
+            <LayoutsMarkdownBasicMudBlazor />
+            <SectionHeader>
+                <Description>
+                    Before <CodeInline>MudMainContent</CodeInline> we can add <CodeInline>MudAppBar</CodeInline> and <CodeInline>MudDrawer</CodeInline> so its apart of all pages using this layout.
+                </Description>
+            </SectionHeader>
+            <LayoutMarkdownBasicAppBarMudBlazor />
+            <SectionHeader>
+                <Description>
+                    Because we added the components directly inside <CodeInline>MudLayout</CodeInline>, <CodeInline>MudMainContent</CodeInline> takes the height of our <CodeInline>MudAppBar</CodeInline> and uses that as top padding and if <CodeInline>MudDrawer</CodeInline> is open the main content gets the correct left or right margin.<br /><br />
+                    Now lets add some basic functionality. <CodeInline>MudIconButton</CodeInline> to open and close the drawer and we will add our <CodeInline>NavMenu</CodeInline> for basic navigation.
+                </Description>
+            </SectionHeader>
+            <LayoutMarkdownBasicFullWithCode />
+            <SectionHeader>
+                <Description>
+                    And our <CodeInline>NavMenu.razor</CodeInline> looks like this.
+                </Description>
+            </SectionHeader>
+            <LayoutMarkdownNavMenu />
+            <SectionHeader>
+                <Description>
+                    Before you go on and add content to your pages depending on what you are building you might want to use <CodeInline>MudContainer</CodeInline> to center some content and add some gutters to your page. This can be done either directly in your <CodeInline>MainLayout.razor</CodeInline> or do it per page.
+                </Description>
+            </SectionHeader>
+            <LayoutMarkdownContainer />
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Ready for More?">
+            </SectionHeader>
+            <div class="d-flex flex-row flex-wrap mud-width-full">
+                <MudList Clickable="true" Class="flex-grow-1 flex-shrink-0 mud-paper-outlined rounded py-0 ma-2">
+                    <MudListItem Icon="@Icons.Material.Filled.FileDownloadDone" IconColor="Color.Success" Class="pl-6" Href="/getting-started/installation">
+                        <MudText Typo="Typo.body1">Installation</MudText>
+                        <MudText Typo="Typo.body2">Getting Started</MudText>
+                    </MudListItem>
+                </MudList>
+                <MudList Clickable="true" Class="flex-grow-1 flex-shrink-0 mud-paper-outlined rounded py-0 ma-2">
+                    <MudListItem Icon="@Icons.Material.Filled.FilterFrames" IconColor="Color.Secondary" Class="pl-6" Href="/getting-started/wireframes">
+                        <MudText Typo="Typo.body1">Wireframes</MudText>
+                        <MudText Typo="Typo.body2">Copy, paste layouts</MudText>
+                    </MudListItem>
+                </MudList>
+            </div>
+        </DocsPageSection>
+
+    </DocsPageContent>
+</DocsPage>
+<Footer />

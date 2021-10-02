@@ -1,4 +1,4 @@
-﻿@using System.Net.Http.Json
+@using System.Net.Http.Json
 @using MudBlazor.Examples.Data.Models
 @namespace MudBlazor.Docs.Examples
 @inject HttpClient httpClient
@@ -25,6 +25,7 @@
         <MudTd colspan="5">Select All</MudTd>
     </FooterContent>
 </MudTable>
+
 <MudText Inline="true">Selected items: @(selectedItems==null ? "" : string.Join(", ", selectedItems.OrderBy(x=>x.Sign).Select(x=>x.Sign)))</MudText>
 
 @code {

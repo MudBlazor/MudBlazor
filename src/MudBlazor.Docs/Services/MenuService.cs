@@ -1,4 +1,4 @@
-﻿using System.Collections;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using MudBlazor.Charts;
@@ -12,6 +12,7 @@ namespace MudBlazor.Docs.Services
         IEnumerable<DocsLink> GettingStarted { get; }
         IEnumerable<MudComponent> Components { get; }
         IEnumerable<MudComponent> Api { get; }
+        MudComponent GetParent(Type type);
         IEnumerable<DocsLink> Features { get; }
         IEnumerable<DocsLink> Customization { get; }
         IEnumerable<DocsLink> About { get; }
@@ -30,30 +31,30 @@ namespace MudBlazor.Docs.Services
         private readonly DocsComponents _docsComponents = new DocsComponents()
             //Individual elements
             .AddItem("Container", typeof(MudContainer))
-            .AddItem("Grid", typeof(MudGrid))
+            .AddItem("Grid", typeof(MudGrid), typeof(MudItem))
             .AddItem("Hidden", typeof(MudHidden))
             .AddItem("Chips", typeof(MudChip))
             .AddItem("ChipSet", typeof(MudChipSet))
             .AddItem("Badge", typeof(MudBadge))
             .AddItem("AppBar", typeof(MudAppBar))
-            .AddItem("Drawer", typeof(MudDrawer))
+            .AddItem("Drawer", typeof(MudDrawer), typeof(MudDrawerHeader), typeof(MudDrawerContainer))
             .AddItem("Link", typeof(MudLink))
-            .AddItem("Menu", typeof(MudMenu))
+            .AddItem("Menu", typeof(MudMenu), typeof(MudMenuItem))
             .AddItem("Message Box", typeof(MudMessageBox))
-            .AddItem("Nav Menu", typeof(MudNavMenu))
-            .AddItem("Tabs", typeof(MudTabs))
-            .AddItem("Progress", typeof(MudProgressCircular))
-            .AddItem("Dialog", typeof(MudDialog))
+            .AddItem("Nav Menu", typeof(MudNavMenu), typeof(MudNavLink), typeof(MudNavGroup))
+            .AddItem("Tabs", typeof(MudTabs), typeof(MudTabPanel), typeof(MudDynamicTabs))
+            .AddItem("Progress", typeof(MudProgressCircular), typeof(MudProgressLinear))
+            .AddItem("Dialog", typeof(MudDialog), typeof(MudDialogInstance), typeof(MudDialogProvider))
             .AddItem("Snackbar", typeof(MudSnackbarProvider))
-            .AddItem("Avatar", typeof(MudAvatar))
+            .AddItem("Avatar", typeof(MudAvatar), typeof(MudAvatarGroup))
             .AddItem("Alert", typeof(MudAlert))
-            .AddItem("Card", typeof(MudCard))
+            .AddItem("Card", typeof(MudCard), typeof(MudCardActions), typeof(MudCardContent), typeof(MudCardHeader), typeof(MudCardMedia))
             .AddItem("Divider", typeof(MudDivider))
-            .AddItem("Expansion Panel", typeof(MudExpansionPanel))
+            .AddItem("Expansion Panels", typeof(MudExpansionPanels), typeof(MudExpansionPanel))
             .AddItem("Icons", typeof(MudIcon))
-            .AddItem("List", typeof(MudList))
+            .AddItem("List", typeof(MudList), typeof(MudListItem), typeof(MudListSubheader))
             .AddItem("Paper", typeof(MudPaper))
-            .AddItem("Rating", typeof(MudRating))
+            .AddItem("Rating", typeof(MudRating), typeof(MudRatingItem))
             .AddItem("Skeleton", typeof(MudSkeleton))
             .AddItem("Table", typeof(MudTable<T>))
             .AddItem("Simple Table", typeof(MudSimpleTable))
@@ -64,20 +65,23 @@ namespace MudBlazor.Docs.Services
             .AddItem("Element", typeof(MudElement))
             .AddItem("Focus Trap", typeof(MudFocusTrap))
             .AddItem("File Upload", typeof(MudFileUploader))
-            .AddItem("TreeView", typeof(MudTreeView<T>))
+            .AddItem("TreeView", typeof(MudTreeView<T>), typeof(MudTreeViewItem<T>), typeof(MudTreeViewItemToggleButton))
             .AddItem("Breadcrumbs", typeof(MudBreadcrumbs))
             .AddItem("ScrollToTop", typeof(MudScrollToTop))
             .AddItem("Popover", typeof(MudPopover))
             .AddItem("SwipeArea", typeof(MudSwipeArea))
             .AddItem("ToolBar", typeof(MudToolBar))
+            .AddItem("Carousel", typeof(MudCarousel<T>), typeof(MudCarouselItem))
+            .AddItem("Timeline", typeof(MudTimeline), typeof(MudTimelineItem))
+            .AddItem("Pagination", typeof(MudPagination))
 
             //GROUPS
 
             //Inputs
             .AddNavGroup("Form Inputs & controls", false, new DocsComponents()
-                .AddItem("Radio", typeof(MudRadio<T>))
+                .AddItem("Radio", typeof(MudRadio<T>), typeof(MudRadioGroup<T>))
                 .AddItem("Checkbox", typeof(MudCheckBox<T>))
-                .AddItem("Select", typeof(MudSelect<T>))
+                .AddItem("Select", typeof(MudSelect<T>), typeof(MudSelectItem<T>))
                 .AddItem("Slider", typeof(MudSlider<T>))
                 .AddItem("Switch", typeof(MudSwitch<T>))
                 .AddItem("Text Field", typeof(MudTextField<T>))
@@ -91,11 +95,13 @@ namespace MudBlazor.Docs.Services
             .AddNavGroup("Pickers", false, new DocsComponents()
                 .AddItem("Date Picker", typeof(MudDatePicker))
                 .AddItem("Time Picker", typeof(MudTimePicker))
+                .AddItem("Color Picker", typeof(MudColorPicker))
             )
 
             //Buttons
             .AddNavGroup("Buttons", false, new DocsComponents()
                 .AddItem("Button", typeof(MudButton))
+                .AddItem("Button Group", typeof(MudButtonGroup))
                 .AddItem("IconButton", typeof(MudIconButton))
                 .AddItem("ToggleIconButton", typeof(MudToggleIconButton))
                 .AddItem("Button FAB", typeof(MudFab))
@@ -109,7 +115,38 @@ namespace MudBlazor.Docs.Services
                 .AddItem("Bar chart", typeof(Bar))
                 .AddItem("StackedBar chart", typeof(StackedBar))
             );
+
         public IEnumerable<MudComponent> Components => _docsComponents.Elements;
+
+        private Dictionary<Type, MudComponent> _parents = new();
+
+        public MudComponent GetParent(Type child) => _parents[child];
+
+        public MenuService()
+        {
+            foreach (var item in Components)
+            {
+                if (item.IsNavGroup)
+                {
+                    foreach (var apiItem in item.GroupItems.Elements)
+                    {
+                        _parents.Add(apiItem.Component, item);
+                    }
+                }
+                else
+                {
+                    _parents.Add(item.Component, item);
+
+                    if (item.ChildComponents != null)
+                    {
+                        foreach (var childComponent in item.ChildComponents)
+                        {
+                            _parents.Add(childComponent, item);
+                        }
+                    }
+                }
+            }
+        }
 
         private DocsComponents _docsComponentsApi;
         //cached property
@@ -152,6 +189,7 @@ namespace MudBlazor.Docs.Services
         public IEnumerable<DocsLink> GettingStarted => _gettingStarted ??= new List<DocsLink>
             {
                 new DocsLink {Title = "Installation", Href = "getting-started/installation"},
+                new DocsLink {Title = "Layouts", Href = "getting-started/layouts"},
                 new DocsLink {Title = "Usage", Href = "getting-started/usage"},
                 new DocsLink {Title = "Wireframes", Href = "getting-started/wireframes"},
             }.OrderBy(x => x.Title);
@@ -172,6 +210,7 @@ namespace MudBlazor.Docs.Services
                 new DocsLink {Title = "Flex", Href = "features/flex"},
                 new DocsLink {Title = "Icons", Href = "features/icons"},
                 new DocsLink {Title = "Spacing", Href = "features/spacing"},
+                new DocsLink {Title = "RTL Languages", Href = "features/rtl-languages"},
             }.OrderBy(x => x.Title);
 
 

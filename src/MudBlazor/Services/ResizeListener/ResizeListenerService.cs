@@ -72,11 +72,11 @@ namespace MudBlazor.Services
         }
 #nullable disable
 
-        private void Start()
+        private async void Start()
         {
             if (_onResized == null || _onBreakpointChanged == null)
             {
-                _ = Task.Run(async () => await _jsRuntime.InvokeVoidAsync($"mudResizeListener.listenForResize", _dotNetRef, _options));
+                await _jsRuntime.InvokeVoidAsync($"mudResizeListener.listenForResize", _dotNetRef, _options);
             }
         }
 
@@ -105,8 +105,8 @@ namespace MudBlazor.Services
         /// </summary>
         /// <param name="mediaQuery"></param>
         /// <returns>Returns true if matched.</returns>
-        public async ValueTask<bool> MatchMedia(string mediaQuery) =>
-            await _jsRuntime.InvokeAsync<bool>($"mudResizeListener.matchMedia", mediaQuery);
+        public ValueTask<bool> MatchMedia(string mediaQuery) =>
+_jsRuntime.InvokeAsync<bool>($"mudResizeListener.matchMedia", mediaQuery);
 
         /// <summary>
         /// Get the current BrowserWindowSize, this includes the Height and Width of the document.
@@ -131,6 +131,7 @@ namespace MudBlazor.Services
 
         public static Dictionary<Breakpoint, int> BreakpointDefinitions { get; set; } = new Dictionary<Breakpoint, int>()
         {
+            [Breakpoint.Xxl] = 2560,
             [Breakpoint.Xl] = 1920,
             [Breakpoint.Lg] = 1280,
             [Breakpoint.Md] = 960,
@@ -145,7 +146,9 @@ namespace MudBlazor.Services
                 _windowSize = await _browserWindowSizeProvider.GetBrowserWindowSize();
             if (_windowSize == null)
                 return Breakpoint.Xs;
-            if (_windowSize.Width >= BreakpointDefinitions[Breakpoint.Xl])
+            if (_windowSize.Width >= BreakpointDefinitions[Breakpoint.Xxl])
+                return Breakpoint.Xxl;
+            else if (_windowSize.Width >= BreakpointDefinitions[Breakpoint.Xl])
                 return Breakpoint.Xl;
             else if (_windowSize.Width >= BreakpointDefinitions[Breakpoint.Lg])
                 return Breakpoint.Lg;
@@ -177,14 +180,17 @@ namespace MudBlazor.Services
                 Breakpoint.Md => reference == Breakpoint.Md,
                 Breakpoint.Lg => reference == Breakpoint.Lg,
                 Breakpoint.Xl => reference == Breakpoint.Xl,
+                Breakpoint.Xxl => reference == Breakpoint.Xxl,
                 // * and down
                 Breakpoint.SmAndDown => reference <= Breakpoint.Sm,
                 Breakpoint.MdAndDown => reference <= Breakpoint.Md,
                 Breakpoint.LgAndDown => reference <= Breakpoint.Lg,
+                Breakpoint.XlAndDown => reference <= Breakpoint.Xl,
                 // * and up
                 Breakpoint.SmAndUp => reference >= Breakpoint.Sm,
                 Breakpoint.MdAndUp => reference >= Breakpoint.Md,
                 Breakpoint.LgAndUp => reference >= Breakpoint.Lg,
+                Breakpoint.XlAndUp => reference >= Breakpoint.Xl,
                 _ => false,
             };
         }

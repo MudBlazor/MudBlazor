@@ -1,4 +1,4 @@
-﻿@import '../abstracts/variables';
+@import '../abstracts/variables';
 
 .mud-tabs {
     display: flex;
@@ -29,8 +29,7 @@
     }
 }
 
-.mud-tabs-toolbar {
-    z-index: 20;
+.mud-tabs-toolbar {    
     position: relative;
     background-color: var(--mud-palette-surface);
 
@@ -126,7 +125,6 @@
 .mud-tab {
     width:100%;
     min-width: 160px;
-    max-width: 360px;
     display: inline-flex;
     padding: 6px 12px;
     min-height: 48px;
@@ -163,6 +161,8 @@
 
     & .mud-tab-icon-text {
         margin-right: 8px;
+        margin-inline-end: 8px;
+        margin-inline-start: unset;
     }
 }
 
@@ -190,12 +190,15 @@
 
         &.mud-tab-slider-vertical-reverse {
             left: 0;
+            right: unset;
         }
     }
 }
 
 .mud-tab-badge{
     margin-left:8px;
+    margin-inline-start: 8px;
+    margin-inline-end: unset;
 }
 
 @each $color in $mud-palette-colors {
@@ -247,3 +250,54 @@
         transform: translate(100%, 0);
     }
 }
+
+.mud-dynamic-tabs {
+    .mud-tabs-toolbar {
+        .mud-tab {
+            padding: 6px 14px;
+
+            .mud-icon-button {
+                padding: 4px;
+                margin-right: -4px;
+                margin-inline-end: -4px;
+                margin-inline-start: unset;
+            }
+
+            .mud-tabs-panel-header-before {
+                padding-right: 8px;
+                padding-inline-end: 8px;
+                padding-inline-start: unset;
+            }
+
+            .mud-tabs-panel-header-after {
+                padding-left: 8px;
+                padding-inline-start: 8px;
+                padding-inline-end: unset;
+            }
+        }
+    }
+}
+
+.mud-tabs-header {
+    &.mud-tabs-header-before {
+        display: inherit;
+    }
+
+    &.mud-tabs-header-after {
+        display: inherit;
+    }
+}
+
+.mud-tabs-panel-header {
+    display: flex;
+    flex: 1 1 auto;
+
+    &.mud-tabs-panel-header-before {
+        justify-content: flex-start;
+    }
+
+    &.mud-tabs-panel-header-after {
+        justify-content: flex-end;
+    }
+}
+

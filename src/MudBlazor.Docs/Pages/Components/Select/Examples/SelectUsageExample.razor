@@ -4,14 +4,16 @@
 
 <MudGrid>
     <MudItem xs="12" sm="6" md="4">
-        <MudSelect Label="Select fast-food" @bind-Value="stringValue" HelperText="String">
+        <MudSelect Label="Select fast-food" @bind-Value="stringValue" HelperText="String" Placeholder="Please Select"
+                   AdornmentIcon="@Icons.Material.Filled.Fastfood" AdornmentColor="Color.Primary">
             <MudSelectItem Value="@("Pizza")" Disabled="true">Pizza (Disabled)</MudSelectItem>
             <MudSelectItem Value="@("Burger")">Burger</MudSelectItem>
             <MudSelectItem Value="@("Hotdog")">Hot Dog</MudSelectItem>
         </MudSelect>
     </MudItem>
     <MudItem xs="12" sm="6" md="4">
-        <MudSelect Label="Select drink" @bind-Value="enumValue" HelperText="Enum">
+        <MudSelect Label="Select drink" @bind-Value="enumValue" HelperText="Enum"
+                   OpenIcon="@Icons.Material.Filled.LocalDrink" AdornmentColor="Color.Secondary">
             @foreach (Drink item in Enum.GetValues(typeof(Drink)))
             {
                 <MudSelectItem Value="@item">@item</MudSelectItem>
@@ -19,7 +21,8 @@
         </MudSelect>
     </MudItem>
     <MudItem xs="12" sm="6" md="4">
-        <MudSelect Placeholder="Select culture" @bind-Value="cultureValue" HelperText="CultureInfo" ToStringFunc="@convertFunc">
+        <MudSelect Placeholder="Select culture" @bind-Value="cultureValue" HelperText="CultureInfo" ToStringFunc="@convertFunc"
+                   CloseIcon="@Icons.Material.Filled.Flag" AdornmentColor="Color.Tertiary">
             <MudSelectItem Value="@(CultureInfo.GetCultureInfo("en-US"))"></MudSelectItem>
             <MudSelectItem Value="@(CultureInfo.GetCultureInfo("de-AT"))"></MudSelectItem>
             <MudSelectItem Value="@(CultureInfo.GetCultureInfo("pt-BR"))"></MudSelectItem>

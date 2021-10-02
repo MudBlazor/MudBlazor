@@ -4,7 +4,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
-using MudBlazor.Extensions;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
@@ -18,7 +17,7 @@ namespace MudBlazor
 
         private double _height;
         private int _listenerId;
-        private bool _expanded, _isRendered;
+        private bool _expanded, _isRendered, _updateHeight;
         private ElementReference _container, _wrapper;
         private CollapseState _state = CollapseState.Exited;
         private DotNetObjectReference<MudCollapse> _dotNetRef;
@@ -27,7 +26,7 @@ namespace MudBlazor
             new StyleBuilder()
             .AddStyle("max-height", $"{MaxHeight?.ToString("#.##", CultureInfo.InvariantCulture)}px", MaxHeight != null)
             .AddStyle("height", "auto", _state == CollapseState.Entered)
-            .AddStyle("height", $"{_height.ToString("#.##", CultureInfo.InvariantCulture)}px", _state == CollapseState.Entering || _state == CollapseState.Exiting)
+            .AddStyle("height", $"{_height.ToString("#.##", CultureInfo.InvariantCulture)}px", _state is CollapseState.Entering or CollapseState.Exiting)
             .AddStyle("animation-duration", $"{CalculatedAnimationDuration.ToString("#.##", CultureInfo.InvariantCulture)}s", _state == CollapseState.Entering)
             .AddStyle(Style)
             .Build();
@@ -57,6 +56,7 @@ namespace MudBlazor
                 {
                     _state = _expanded ? CollapseState.Entering : CollapseState.Exiting;
                     _ = UpdateHeight();
+                    _updateHeight = _height == 0;
                 }
                 else if (_expanded)
                 {
@@ -128,8 +128,13 @@ namespace MudBlazor
             {
                 _isRendered = true;
                 await UpdateHeight();
-                if (_dotNetRef != null)
-                    _listenerId = await _container.MudAddEventListenerAsync(_dotNetRef, "animationend", nameof(AnimationEnd));
+                _listenerId = await _container.MudAddEventListenerAsync(_dotNetRef, "animationend", nameof(AnimationEnd));
+            }
+            else if (_updateHeight && _state is CollapseState.Entering or CollapseState.Exiting)
+            {
+                _updateHeight = false;
+                await UpdateHeight();
+                StateHasChanged();
             }
             await base.OnAfterRenderAsync(firstRender);
         }

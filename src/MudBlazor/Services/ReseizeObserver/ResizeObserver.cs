@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Options;
@@ -10,8 +9,10 @@ using MudBlazor.Interop;
 
 namespace MudBlazor.Services
 {
-    public class ResizeObserver : IResizeObserver
+    public class ResizeObserver : IResizeObserver, IDisposable, IAsyncDisposable
     {
+        private Boolean _isDisposed = false;
+
         private readonly DotNetObjectReference<ResizeObserver> _dotNetRef;
         private readonly IJSRuntime _jsRuntime;
 
@@ -46,7 +47,7 @@ namespace MudBlazor.Services
 
             foreach (var item in filteredElements)
             {
-                Guid id = Guid.NewGuid();
+                var id = Guid.NewGuid();
                 elementIds.Add(id);
                 _cachedValueIds.Add(id, item);
             }
@@ -64,10 +65,11 @@ namespace MudBlazor.Services
 
         public async Task Unobserve(ElementReference element)
         {
-            Guid elementId = _cachedValueIds.FirstOrDefault(x => x.Value.Id == element.Id).Key;
+            var elementId = _cachedValueIds.FirstOrDefault(x => x.Value.Id == element.Id).Key;
             if (elementId == default) { return; }
 
-            await _jsRuntime.InvokeVoidAsync($"mudResizeObserver.disconnect", _id, elementId);
+            //if the ubobserve happen during a component teardown, the try-catch is a safe guard to prevent a "pseudo" exception
+            try { await _jsRuntime.InvokeVoidAsync($"mudResizeObserver.disconnect", _id, elementId); } catch (Exception) { }
 
             _cachedValueIds.Remove(elementId);
             _cachedValues.Remove(element);
@@ -110,9 +112,16 @@ namespace MudBlazor.Services
 
         protected virtual void Dispose(bool disposing)
         {
-            _dotNetRef.Dispose();
-            _cachedValueIds.Clear();
-            _cachedValues.Clear();
+            if (disposing && _isDisposed == false)
+            {
+                _isDisposed = true;
+                _dotNetRef.Dispose();
+                _cachedValueIds.Clear();
+                _cachedValues.Clear();
+
+                //in a fire and forget manner, we just "trying" to cancel the listener. So, we are not interested in an potential error 
+                try { _ = _jsRuntime.InvokeVoidAsync($"mudResizeObserver.cancelListener", _id); } catch (Exception) { }
+            }
         }
 
         public void Dispose()
@@ -121,20 +130,18 @@ namespace MudBlazor.Services
             GC.SuppressFinalize(this);
         }
 
-        protected virtual async ValueTask DisposeAsyncCore()
+        public async ValueTask DisposeAsync()
         {
+            if (_isDisposed == true) { return; }
+
+            _isDisposed = true;
+
             _dotNetRef.Dispose();
             _cachedValueIds.Clear();
             _cachedValues.Clear();
-            await _jsRuntime.InvokeVoidAsync($"mudResizeObserver.cancelListener", _id);
-        }
 
-        public async ValueTask DisposeAsync()
-        {
-            await DisposeAsyncCore();
-
-            Dispose(false);
-            GC.SuppressFinalize(this);
+            //in a fire and forget manner, we just "trying" to cancel the listener. So, we are not interested in an potential error 
+            try { await _jsRuntime.InvokeVoidAsync($"mudResizeObserver.cancelListener", _id); } catch (Exception) { }
         }
     }
 }

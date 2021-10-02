@@ -6,7 +6,6 @@
     align-items: center;
     vertical-align: middle;
     -webkit-tap-highlight-color: transparent;
-    color: var(--mud-palette-text-primary);
 
     &.mud-disabled, .mud-disabled:hover {
         cursor: default;
@@ -16,6 +15,14 @@
             cursor: default;
             color: var(--mud-palette-text-disabled);
         }
+    }
+
+    &.mud-readonly, .mud-readonly:hover {
+        cursor: default;
+    }
+
+    & .mud-checkbox-dense {
+        padding: 4px;
     }
 }
 

@@ -6,7 +6,7 @@
 <div class="@Classname" style="@Style">
     @if (Adornment == Adornment.Start)
     {
-        <MudInputAdornment Class="@AdornmentClassname" Icon="@AdornmentIcon" Size="@IconSize" Text="@AdornmentText" Edge="@Edge.Start" AdornmentClick="@OnAdornmentClick" />
+        <MudInputAdornment Class="@AdornmentClassname" Icon="@AdornmentIcon" Color="@AdornmentColor" Size="@IconSize" Text="@AdornmentText" Edge="@Edge.Start" AdornmentClick="@OnAdornmentClick" />
     }
 
     @if (InputType == InputType.Hidden && ChildContent != null)
@@ -16,15 +16,15 @@
         </div>
     }
 
-    <input @attributes="UserAttributes" type="@InputTypeString" class="@InputClassname" @bind-value="@TextStart" @bind-value:event="@((Immediate ? "oninput" : "onchange"))"
-           placeholder="@PlaceholderStart" disabled=@Disabled readonly="@ReadOnly" @onblur="@OnBlurred" @onkeydown="@InvokeKeyDown" @onkeypress="@InvokeKeyPress" @onkeyup="@InvokeKeyUp" />
-    <MudIcon Class="mud-range-input-separator" Icon="@Icons.Material.Filled.ArrowRightAlt" Color="@Color.Default" />
-    <input @attributes="UserAttributes" type="@InputTypeString" class="@InputClassname" @bind-value="@TextEnd" @bind-value:event="@((Immediate ? "oninput" : "onchange"))"
+    <input @ref="_elementReferenceStart" @attributes="UserAttributes" type="@InputTypeString" class="@InputClassname" @bind-value="@TextStart" @bind-value:event="@((Immediate ? "oninput" : "onchange"))"
+           placeholder="@PlaceholderStart" disabled=@Disabled readonly="@ReadOnly" @onblur="@OnBlurred" @onkeydown="@InvokeKeyDown" @onkeypress="@InvokeKeyPress" @onkeyup="@InvokeKeyUp" inputmode="@InputMode.ToString()" pattern="@Pattern" />
+    <MudIcon Class="mud-range-input-separator mud-flip-x-rtl" Icon="@SeparatorIcon" Color="@Color.Default" />
+    <input @ref="_elementReferenceEnd" @attributes="UserAttributes" type="@InputTypeString" class="@InputClassname" @bind-value="@TextEnd" @bind-value:event="@((Immediate ? "oninput" : "onchange"))" inputmode="@InputMode.ToString()" pattern="@Pattern"
            placeholder="@PlaceholderEnd" disabled=@Disabled readonly="@ReadOnly" @onblur="@OnBlurred" @onkeydown="@InvokeKeyDown" @onkeypress="@InvokeKeyPress" @onkeyup="@InvokeKeyUp" />
 
     @if (Adornment == Adornment.End)
     {
-        <MudInputAdornment Class="@AdornmentClassname" Icon="@AdornmentIcon" Size="@IconSize" Text="@AdornmentText" Edge="@Edge.End" AdornmentClick="@OnAdornmentClick" />
+        <MudInputAdornment Class="@AdornmentClassname" Icon="@AdornmentIcon" Color="@AdornmentColor" Size="@IconSize" Text="@AdornmentText" Edge="@Edge.End" AdornmentClick="@OnAdornmentClick" />
     }
 
     @if (Variant == Variant.Outlined)

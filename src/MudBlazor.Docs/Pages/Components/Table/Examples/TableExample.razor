@@ -3,11 +3,11 @@
 @namespace MudBlazor.Docs.Examples
 @inject HttpClient httpClient
 
-<MudTable Items="@Elements" Dense="@dense" Hover="@hover" Bordered="@bordered" Striped="@striped" Filter="new Func<Element,bool>(FilterFunc)" @bind-SelectedItem="selectedItem">
+<MudTable Items="@Elements" Dense="@dense" Hover="@hover" Bordered="@bordered" Striped="@striped" Filter="new Func<Element,bool>(FilterFunc1)" @bind-SelectedItem="selectedItem1">
     <ToolBarContent>
         <MudText Typo="Typo.h6">Periodic Elements</MudText>
-        <MudToolBarSpacer />
-        <MudTextField @bind-Value="searchString" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+        <MudSpacer />
+        <MudTextField @bind-Value="searchString1" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
     </ToolBarContent>
     <HeaderContent>
         <MudTh>Nr</MudTh>
@@ -27,13 +27,17 @@
         <MudTablePager />
     </PagerContent>
 </MudTable>
+
 <div class="d-flex flex-wrap mt-4">
     <MudSwitch @bind-Checked="@hover" Color="Color.Primary">Hover</MudSwitch>
     <MudSwitch @bind-Checked="@dense" Color="Color.Secondary">Dense</MudSwitch>
     <MudSwitch @bind-Checked="@striped" Color="Color.Tertiary">Striped</MudSwitch>
     <MudSwitch @bind-Checked="@bordered" Color="Color.Warning">Bordered</MudSwitch>
-    <MudToolBarSpacer />
-    <MudText Inline="true" Class="align-self-center" Style="min-width:200px;">Selected: @selectedItem?.Name</MudText>
+    <MudSpacer />
+    <div style="min-width:200px;">
+        <MudText Inline="true" Class="align-self-center">Selected1: @selectedItem1?.Name</MudText>
+        <MudText Inline="true" Class="align-self-center">Selected2: @selectedItem2?.Name</MudText>
+    </div>
 </div>
 
 @code {
@@ -41,8 +45,10 @@
     private bool hover = true;
     private bool striped = false;
     private bool bordered = false;
-    private string searchString = "";
-    private Element selectedItem = null;
+    private string searchString1 = "";
+    private string searchString2 = "";
+    private Element selectedItem1 = null;
+    private Element selectedItem2 = null;
     private HashSet<Element> selectedItems = new HashSet<Element>();
 
     private IEnumerable<Element> Elements = new List<Element>();
@@ -52,7 +58,10 @@
         Elements = await httpClient.GetFromJsonAsync<List<Element>>("webapi/periodictable");
     }
 
-    private bool FilterFunc(Element element)
+    private bool FilterFunc1(Element element) => FilterFunc(element, searchString1);
+    private bool FilterFunc2(Element element) => FilterFunc(element, searchString2);
+
+    private bool FilterFunc(Element element, string searchString)
     {
         if (string.IsNullOrWhiteSpace(searchString))
             return true;

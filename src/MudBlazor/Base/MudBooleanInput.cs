@@ -14,7 +14,7 @@ namespace MudBlazor
         [Parameter] public bool Disabled { get; set; }
 
         /// <summary>
-        /// If true, the input will be read only.
+        /// If true, the input will be read-only.
         /// </summary>
         [Parameter] public bool ReadOnly { get; set; }
 
@@ -29,13 +29,19 @@ namespace MudBlazor
         }
 
         /// <summary>
+        /// If true will prevent the click from bubbling up the event tree.
+        /// </summary>
+        [Parameter]
+        public bool StopClickPropagation { get; set; } = true;
+
+        /// <summary>
         /// Fired when Checked changes.
         /// </summary>
         [Parameter] public EventCallback<T> CheckedChanged { get; set; }
 
         protected bool? BoolValue => Converter.Set(Checked);
 
-        protected Task OnChange(ChangeEventArgs args)
+        protected virtual Task OnChange(ChangeEventArgs args)
         {
             Touched = true;
             return SetBoolValueAsync((bool?)args.Value);

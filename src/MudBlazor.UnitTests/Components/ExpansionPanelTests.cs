@@ -4,23 +4,12 @@ using Bunit;
 using FluentAssertions;
 using MudBlazor.UnitTests.TestComponents;
 using NUnit.Framework;
+
 namespace MudBlazor.UnitTests.Components
 {
     [TestFixture]
-    public class ExpansionPanelTests
+    public class ExpansionPanelTests : BunitTest
     {
-        private Bunit.TestContext ctx;
-
-        [SetUp]
-        public void Setup()
-        {
-            ctx = new Bunit.TestContext();
-            ctx.AddTestServices();
-        }
-
-        [TearDown]
-        public void TearDown() => ctx.Dispose();
-
         /// <summary>
         /// Expansion panel must expand and collapse in the right order
         /// Here we are open the first, then the third and then the second
@@ -28,7 +17,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void MudExpansionPanel_Respects_Collapsing_Order()
         {
-            var comp = ctx.RenderComponent<ExpansionPanelExpansions>();
+            var comp = Context.RenderComponent<ExpansionPanelExpansionsTest>();
             //the order in which the panels are going to be clicked
             //First, the first; then, the third, and then the second
             var sequence = new List<int> { 0, 2, 1 };
@@ -47,9 +36,7 @@ namespace MudBlazor.UnitTests.Components
                     panels[other].OuterHtml.Should().NotContain("mud-panel-expanded");
                 }
             }
-
         }
-
 
         /// <summary>
         /// MultiExpansion panel should not collapse other panels
@@ -57,9 +44,9 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void MudExpansionPanel_MultiExpansion_Doesnt_Collapse_Others()
         {
-            var comp = ctx.RenderComponent<ExpansionPanelMultiExpansion>();
+            var comp = Context.RenderComponent<ExpansionPanelMultiExpansionTest>();
 
-            //click in the three headers 
+            //click in the three headers
             foreach (var header in comp.FindAll(".mud-expand-panel-header"))
             {
                 header.Click();
@@ -68,14 +55,49 @@ namespace MudBlazor.UnitTests.Components
             //the three panels must be expanded
             var panels = comp.FindAll(".mud-panel-expanded").ToList();
             panels.Count.Should().Be(3);
-
         }
 
+        /// <summary>
+        /// Start expanded should expand panel
+        /// </summary>
+        [Test]
+        public void MudExpansionPanel_IsInitiallyExpanded_Expands()
+        {
+            var comp = Context.RenderComponent<ExpansionPanelStartExpandedTest>();
 
+            // one panel is expanded initially
+            var panels = comp.FindAll(".mud-panel-expanded").ToList();
+            panels.Count.Should().Be(1);
 
+            var header = comp.FindAll(".panel-two > .mud-expand-panel-header").First();
+            header.Click();
 
+            //we could close the panel
+            panels = comp.FindAll(".mud-panel-expanded").ToList();
+            panels.Count.Should().Be(0);
+        }
+
+        /// <summary>
+        /// Start expanded should work with multi expansion
+        /// </summary>
+        [Test]
+        public void MudExpansionPanel_IsInitiallyExpanded_Works_With_Multi_Expanded()
+        {
+            var comp = Context.RenderComponent<ExpansionPanelStartExpandedMultipleTest>();
+
+            // three panels is expanded initially
+            var panels = comp.FindAll(".mud-panel-expanded").ToList();
+            panels.Count.Should().Be(3);
+
+            //click in the three headers
+            foreach (var header in comp.FindAll(".mud-expand-panel-header"))
+            {
+                header.Click();
+            }
+
+            //we could close them all
+            panels = comp.FindAll(".mud-panel-expanded").ToList();
+            panels.Count.Should().Be(0);
+        }
     }
 }
-
-
-

@@ -2,8 +2,7 @@
 @using MudBlazor.Utilities
 @inherits MudComponentBase;
 
-
-<svg class=@Class style=@Style stroke-linecap="round" display="block" stroke-width="@StrokeWidth" viewBox="0 0 300 75">
+<svg @attributes="UserAttributes" class=@Class style=@Style stroke-linecap="round" display="block" stroke-width="@StrokeWidth" viewBox="0 0 300 75">
     <defs>
         <linearGradient id="1337" gradientUnits="userSpaceOnUse" x1="0" y1="100%" x2="0" y2="0">
             <stop offset="0" stop-color="rgb(89,74,226)"></stop>

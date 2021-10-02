@@ -1,11 +1,10 @@
-﻿@page "/components/expansionpanel"
+﻿@page "/components/expansionpanels"
 
 <DocsPage>
-    <DocsPageHeader Title="Expansion Panel"/>
+    <DocsPageHeader Title="Expansion Panels"/>
     <DocsPageContent>
         <DocsPageSection>
-            <SectionHeader>
-                <Title>Simple Usage</Title>
+            <SectionHeader Title="Simple Usage">
                 <Description></Description>
             </SectionHeader>
             <SectionContent DarkenBackground="true" FullWidth="true">
@@ -15,8 +14,7 @@
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader>
-                <Title>Multiple Expanded Panels</Title>
+            <SectionHeader Title="Multiple Expanded Panels">
                 <Description></Description>
             </SectionHeader>
             <SectionContent DarkenBackground="true" FullWidth="true">
@@ -26,8 +24,7 @@
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader>
-                <Title>Disabled</Title>
+            <SectionHeader Title="Disabled">
                 <Description></Description>
             </SectionHeader>
             <SectionContent DarkenBackground="true" FullWidth="true">
@@ -37,9 +34,8 @@
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader>
-                <Title>Padding</Title>
-                <Description>The padding of the panels can be controlled with <CodeInline>DisableGutters</CodeInline> and <CodeInline>Dense</CodeInline> this can be done per panel or on all from the parent.</Description>
+            <SectionHeader Title="Padding">
+                <Description>The padding of the panels can be controlled with <CodeInline>DisableGutters</CodeInline> and <CodeInline>Dense</CodeInline>. These can be set individually per panel or applied on all panels by setting them on the parent.</Description>
             </SectionHeader>
             <SectionContent DarkenBackground="true" FullWidth="true">
                 <ExpansionPanelPaddingExample />
@@ -48,9 +44,8 @@
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader>
-                <Title>Borders</Title>
-                <Description>The <CodeInline>DisableBorders</CodeInline> property removes all borders around the panel.<br />For more flat ui design this might be prefered along with <CodeInline>Elevation</CodeInline> set to 0.</Description>
+            <SectionHeader Title="Borders">
+                <Description>The <CodeInline>DisableBorders</CodeInline> property removes all borders around the panel.<br />For a flatter UI design, this might be preferred along with <CodeInline>Elevation</CodeInline> set to 0.</Description>
             </SectionHeader>
             <SectionContent DarkenBackground="true" FullWidth="true">
                 <ExpansionPanelDisableBorderExample />
@@ -59,14 +54,13 @@
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader>
-                <Title>Customizing the Header and Icon</Title>
+            <SectionHeader Title="Customizing the Header and Icon">
                 <Description></Description>
             </SectionHeader>
             <SectionContent DarkenBackground="true" FullWidth="true">
                 <ExpansionPanelTitleExample />
             </SectionContent>
-            <SectionSource Code="ExpansionPanelTitleExample" GitHubFolderName="ExpansionPanel" />
+            <SectionSource Code="ExpansionPanelTitleExample" GitHubFolderName="ExpansionPanel" ShowCode="false" />
         </DocsPageSection>
 
     </DocsPageContent>

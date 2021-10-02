@@ -4,19 +4,19 @@
 <DocsPage>
     <DocsPageHeader Title="Text Field" SubTitle="Text field components are used for receiving user provided information."/>
     <DocsPageContent>
+
         <DocsPageSection>
-            <SectionHeader>
-                <Title>Basic Text Field's</Title>
+            <SectionHeader Title="Basic Text Field's">
                 <Description></Description>
             </SectionHeader>
             <SectionContent Outlined="true">
                 <TextFieldBasicExample />
             </SectionContent>
-            <SectionSource Code="TextFieldBasicExample" ShowCode="false" GitHubFolderName="TextField"  />
+            <SectionSource Code="TextFieldBasicExample" ShowCode="false" GitHubFolderName="TextField" />
         </DocsPageSection>
+
         <DocsPageSection>
-            <SectionHeader>
-                <Title>Dense</Title>
+            <SectionHeader Title="Dense">
                 <Description>With the <CodeInline>margin</CodeInline> prop you can reduce the text field height.</Description>
             </SectionHeader>
             <SectionContent Outlined="true">
@@ -24,20 +24,43 @@
             </SectionContent>
             <SectionSource Code="TextFieldDenseExample" ShowCode="false" GitHubFolderName="TextField" />
         </DocsPageSection>
+
         <DocsPageSection>
-            <SectionHeader>
-                <Title>Form Props</Title>
-                <Description>Required, Disabled, Type, HelperText</Description>
+            <SectionHeader Title="Form Props">
+                <Description>Required, Disabled, Type</Description>
             </SectionHeader>
             <SectionContent Outlined="true">
                 <TextFieldFormPropsExample />
             </SectionContent>
-            <SectionSource Code="TextFieldFormPropsExample" ShowCode="false" GitHubFolderName="TextField"  />
+            <SectionSource Code="TextFieldFormPropsExample" ShowCode="false" GitHubFolderName="TextField" />
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader>
-                <Title>Adornments</Title>
+            <SectionHeader Title="Helper Text On Focus">
+                <Description>With the <CodeInline>HelperTextOnFocus</CodeInline> property set to true, the helper text will only display on focus.</Description>
+            </SectionHeader>
+            <SectionContent Outlined="true">
+                <TextFieldHelperTextExample />
+            </SectionContent>
+            <SectionSource Code="TextFieldHelperTextExample" ShowCode="false" GitHubFolderName="TextField" />
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Counter">
+                <Description>
+                    If you set the <CodeInline>Counter</CodeInline> prop to any int, the counter will be display at the bottom of the textfield.<br />
+                    Using a specific number will show the desired max while setting it to <CodeInline>0</CodeInline> will only show the current count.<br />
+                    Add <CodeInline>MaxLength</CodeInline> to force a max count directly on the input and use <CodeInline>Validation</CodeInline> to validate the data.
+                </Description>
+            </SectionHeader>
+            <SectionContent Outlined="true" DisplayFlex="true">
+                <TextFieldCharacterCountExample />
+            </SectionContent>
+            <SectionSource Code="TextFieldCharacterCountExample" ShowCode="false" GitHubFolderName="TextField" />
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Adornments">
                 <Description>This can be used to add a prefix or a suffix. Text, Icon or Icon Button.</Description>
             </SectionHeader>
             <SectionContent Outlined="true">
@@ -47,8 +70,7 @@
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader>
-                <Title>Adornment Color</Title>
+            <SectionHeader Title="Adornment Color">
                 <Description>The color of the adornment can be changed separately from the textfield.</Description>
             </SectionHeader>
             <SectionContent Outlined="true">
@@ -58,8 +80,7 @@
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader>
-                <Title>Binding Properties of a POCO</Title>
+            <SectionHeader Title="Binding Properties of a POCO">
                 <Description>
                     The following text fields are bound against the properties of a POCO (Plain old C-Sharp Object). Edit them to see the model change. Reset the model and see the textfields change.
                     <MudAlert Severity="Severity.Info" Dense="true" Class="mt-3">Note: always use two-way bindings (<CodeInline>@("@bind-Value")</CodeInline>) with textfields.</MudAlert>
@@ -72,8 +93,7 @@
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader>
-                <Title>Binding Value Types vs Nullables</Title>
+            <SectionHeader Title="Binding Value Types vs Nullables">
                 <Description>
                     When you bind value types, the text field will not be empty even if the user hasn't entered a value yet because a value type always has a value, even when unassigned.
                     The two-way-bindable <CodeInline>Value</CodeInline> property will automatically assume the default value of that type  (i.e. <CodeInline>0</CodeInline> for <CodeInline>int</CodeInline>).<br />
@@ -87,11 +107,10 @@
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader>
-                <Title>Immediate vs Debounced</Title>
+            <SectionHeader Title="Immediate vs Debounced">
                 <Description>
-                    Per default, <CodeInline>MudTextField</CodeInline> updates the bound value on Enter or when it looses focus. Set <CodeInline>Immediate="true"</CodeInline> to update the value whenever the user types.<br />
-                    You can also set the <CodeInline>DebounceInterval</CodeInline> parameter to the amount of milliseconds you want to await before updating the bound value. If you need to know when the interval elapses, you can pass an <CodeInline>OnDebounceIntervalElapsed</CodeInline> EventCallback.
+                    By default, <CodeInline>MudTextField</CodeInline> updates the bound value on Enter or when it looses focus. Set <CodeInline>Immediate="true"</CodeInline> to update the value whenever the user types.<br />
+                    You can also set the <CodeInline>DebounceInterval</CodeInline> parameter to the number of milliseconds you want to wait before updating the bound value. If you need to know when the interval elapses, you can pass an <CodeInline>OnDebounceIntervalElapsed</CodeInline> EventCallback.
                     Notice how in this example the debounced text only updates 500 ms after you stop typing.
                 </Description>
             </SectionHeader>
@@ -100,9 +119,21 @@
             </SectionContent>
             <SectionSource Code="DebouncedTextFieldExample" ShowCode="false" GitHubFolderName="TextField" />
         </DocsPageSection>
+
         <DocsPageSection>
-            <SectionHeader>
-                <Title>Multiline</Title>
+            <SectionHeader Title="Clear button and special input types">
+                <Description>
+                    <CodeInline>MudTextField</CodeInline> can show a clear button and you can set the HTML5 input type. The input type can be important on mobile devices to show an appropriate keyboard.
+                </Description>
+            </SectionHeader>
+            <SectionContent Outlined="true" FullWidth="true">
+                <TextFieldClearableAndInputTypeExample />
+            </SectionContent>
+            <SectionSource Code="TextFieldClearableAndInputTypeExample" ShowCode="false" GitHubFolderName="TextField" />
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Multiline">
                 <Description></Description>
             </SectionHeader>
             <SectionContent Outlined="true">
@@ -111,8 +142,7 @@
             <SectionSource Code="TextFieldMultilineExample" ShowCode="false" GitHubFolderName="TextField" />
         </DocsPageSection>
         <DocsPageSection>
-            <SectionHeader>
-                <Title>Focus</Title>
+            <SectionHeader Title="Focus">
                 <Description></Description>
             </SectionHeader>
             <SectionContent Outlined="true">
@@ -121,8 +151,7 @@
             <SectionSource Code="TextFieldFocusExample" ShowCode="false" GitHubFolderName="TextField" />
         </DocsPageSection>
         <DocsPageSection>
-            <SectionHeader>
-                <Title>Select</Title>
+            <SectionHeader Title="Select">
                 <Description></Description>
             </SectionHeader>
             <SectionContent Outlined="true">
@@ -131,8 +160,7 @@
             <SectionSource Code="TextFieldSelectExample" ShowCode="false" GitHubFolderName="TextField" />
         </DocsPageSection>
         <DocsPageSection>
-            <SectionHeader>
-                <Title>Select Range</Title>
+            <SectionHeader Title="Select Range">
                 <Description></Description>
             </SectionHeader>
             <SectionContent Outlined="true">
@@ -141,14 +169,13 @@
             <SectionSource Code="TextFieldSelectRangeExample" ShowCode="false" GitHubFolderName="TextField" />
         </DocsPageSection>
         <DocsPageSection>
-            <SectionHeader>
-                <Title>Inputs</Title>
+            <SectionHeader Title="Inputs">
                 <Description></Description>
             </SectionHeader>
             <SectionContent Outlined="true">
                 <TextFieldInputsExample />
             </SectionContent>
-            <SectionSource Code="TextFieldInputsExample" ShowCode="false" GitHubFolderName="TextField"  />
+            <SectionSource Code="TextFieldInputsExample" ShowCode="false" GitHubFolderName="TextField" />
         </DocsPageSection>
     </DocsPageContent>
 </DocsPage>

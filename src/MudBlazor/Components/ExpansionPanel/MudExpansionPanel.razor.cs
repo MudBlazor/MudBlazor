@@ -47,6 +47,11 @@ namespace MudBlazor
         [Parameter] public bool HideIcon { get; set; }
 
         /// <summary>
+        /// Custom hide icon.
+        /// </summary>
+        [Parameter] public string Icon { get; set; } = Icons.Material.Filled.ExpandMore;
+
+        /// <summary>
         /// If true, removes vertical padding from childcontent.
         /// </summary>
         [Parameter] public bool Dense { get; set; }
@@ -81,6 +86,12 @@ namespace MudBlazor
                 IsExpandedChanged.InvokeAsync(_isExpanded);
             }
         }
+
+        /// <summary>
+        /// Sets the initial expansion state. Do not use in combination with IsExpanded.
+        /// Combine with MultiExpansion to have more than one panel start open.
+        /// </summary>
+        [Parameter] public bool IsInitiallyExpanded { get; set; }
 
         /// <summary>
         /// If true, the component will be disabled.
@@ -146,6 +157,7 @@ namespace MudBlazor
             //if (Parent == null)
             //    throw new ArgumentNullException(nameof(Parent), "ExpansionPanel must exist within a ExpansionPanels component");
             base.OnInitialized();
+            IsExpanded = IsInitiallyExpanded;
             Parent?.AddPanel(this);
         }
 
@@ -153,6 +165,5 @@ namespace MudBlazor
         {
             Parent?.RemovePanel(this);
         }
-
     }
 }

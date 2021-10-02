@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Microsoft.AspNetCore.Components;
@@ -14,6 +12,7 @@ namespace MudBlazor
     public abstract class MudTableBase : MudComponentBase
     {
         internal object _editingItem = null;
+        internal bool _isEditing => _editingItem != null;
 
         private int _currentPage = 0;
         private int? _rowsPerPage;
@@ -21,18 +20,20 @@ namespace MudBlazor
 
         protected string Classname =>
         new CssBuilder("mud-table")
-           .AddClass($"mud-xs-table", Breakpoint == Breakpoint.Xs)
-           .AddClass($"mud-sm-table", Breakpoint == Breakpoint.Sm)
-           .AddClass($"mud-md-table", Breakpoint == Breakpoint.Md)
-           .AddClass($"mud-lg-table", Breakpoint == Breakpoint.Lg || Breakpoint == Breakpoint.Always)
-           .AddClass($"mud-xl-table", Breakpoint == Breakpoint.Xl || Breakpoint == Breakpoint.Always)
-           .AddClass($"mud-table-dense", Dense)
-           .AddClass($"mud-table-hover", Hover)
-           .AddClass($"mud-table-bordered", Bordered)
-           .AddClass($"mud-table-striped", Striped)
-           .AddClass($"mud-table-outlined", Outlined)
-           .AddClass($"mud-table-square", Square)
-           .AddClass($"mud-table-sticky-header", FixedHeader)
+           .AddClass("mud-xs-table", Breakpoint == Breakpoint.Xs)
+           .AddClass("mud-sm-table", Breakpoint == Breakpoint.Sm)
+           .AddClass("mud-md-table", Breakpoint == Breakpoint.Md)
+           .AddClass("mud-lg-table", Breakpoint is Breakpoint.Lg or Breakpoint.Always)
+           .AddClass("mud-xl-table", Breakpoint is Breakpoint.Xl or Breakpoint.Always)
+           .AddClass("mud-xxl-table", Breakpoint is Breakpoint.Xxl or Breakpoint.Always)
+           .AddClass("mud-table-dense", Dense)
+           .AddClass("mud-table-hover", Hover)
+           .AddClass("mud-table-bordered", Bordered)
+           .AddClass("mud-table-striped", Striped)
+           .AddClass("mud-table-outlined", Outlined)
+           .AddClass("mud-table-square", Square)
+           .AddClass("mud-table-sticky-header", FixedHeader)
+           .AddClass("mud-table-sticky-footer", FixedFooter)
            .AddClass($"mud-elevation-{Elevation}", !Outlined)
           .AddClass(Class)
         .Build();
@@ -88,6 +89,11 @@ namespace MudBlazor
         [Parameter] public bool FixedHeader { get; set; }
 
         /// <summary>
+        /// When true, the footer will be visible is not scrolled to the bottom. Note: set Height to make the table scrollable.
+        /// </summary>
+        [Parameter] public bool FixedFooter { get; set; }
+
+        /// <summary>
         /// Setting a height will allow to scroll the table. If not set, it will try to grow in height. You can set this to any CSS value that the
         /// attribute 'height' accepts, i.e. 500px. 
         /// </summary>
@@ -97,6 +103,12 @@ namespace MudBlazor
         /// If table is in smalldevice mode and uses any kind of sorting the text applied here will be the sort selects label.
         /// </summary>
         [Parameter] public string SortLabel { get; set; }
+
+        /// <summary>
+        /// If true allows table to be in an unsorted state through column clicks (i.e. first click sorts "Ascending", second "Descending", third "None").
+        /// If false only "Ascending" and "Descending" states are allowed (i.e. there always should be a column to sort).
+        /// </summary>
+        [Parameter] public bool AllowUnsorted { get; set; } = true;
 
         /// <summary>
         /// If the table has more items than this number, it will break the rows into pages of said size.
@@ -112,6 +124,11 @@ namespace MudBlazor
                     SetRowsPerPage(value);
             }
         }
+        
+        /// <summary>
+        /// Rows Per Page two-way bindable parameter
+        /// </summary>
+        [Parameter] public EventCallback<int> RowsPerPageChanged {get;set;}
 
         /// <summary>
         /// The page index of the currently displayed page (Zero based). Usually called by MudTablePager.
@@ -141,6 +158,16 @@ namespace MudBlazor
         /// Optional. Add any kind of toolbar to this render fragment.
         /// </summary>
         [Parameter] public RenderFragment ToolBarContent { get; set; }
+
+        /// <summary>
+        /// Show a loading animation, if true.
+        /// </summary>
+        [Parameter] public bool Loading { get; set; }
+
+        /// <summary>
+        /// The color of the loading progress if used. It supports the theme colors.
+        /// </summary>
+        [Parameter] public Color LoadingProgressColor { get; set; } = Color.Info;
 
         /// <summary>
         /// Add MudTh cells here to define the table header. If <see cref="CustomHeader"/> is set, add one or more MudTHeadRow instead.
@@ -200,9 +227,19 @@ namespace MudBlazor
         [Parameter] public bool ReadOnly { get; set; } = false;
 
         /// <summary>
-        /// Button click event.
+        /// Button commit edit click event.
         /// </summary>
         [Parameter] public EventCallback<MouseEventArgs> OnCommitEditClick { get; set; }
+
+        /// <summary>
+        /// Button cancel edit click event.
+        /// </summary>
+        [Parameter] public EventCallback<MouseEventArgs> OnCancelEditClick { get; set; }
+
+        /// <summary>
+        /// Event is called before the item is modified in inline editing.
+        /// </summary>
+        [Parameter] public EventCallback<object> OnPreviewEditClick { get; set; }
 
         /// <summary>
         /// Command executed when the user clicks on the CommitEdit Button.
@@ -220,6 +257,41 @@ namespace MudBlazor
         [Parameter] public string CommitEditTooltip { get; set; }
 
         /// <summary>
+        /// Tooltip for the CancelEdit Button.
+        /// </summary>
+        [Parameter] public string CancelEditTooltip { get; set; }
+
+        /// <summary>
+        /// Sets the Icon of the CommitEdit Button.
+        /// </summary>
+        [Parameter] public string CommitEditIcon { get; set; } = Icons.Material.Filled.Done;
+
+        /// <summary>
+        /// Sets the Icon of the CancelEdit Button.
+        /// </summary>
+        [Parameter] public string CancelEditIcon { get; set; } = Icons.Material.Filled.Cancel;
+
+        /// <summary>
+        /// Define if Cancel button is present or not for inline editing.
+        /// </summary>
+        [Parameter] public bool CanCancelEdit { get; set; }
+
+        /// <summary>
+        /// The method is called before the item is modified in inline editing.
+        /// </summary>
+        [Parameter] public Action<object> RowEditPreview { get; set; }
+
+        /// <summary>
+        /// The method is called when the edition of the item has been committed in inline editing.
+        /// </summary>
+        [Parameter] public Action<object> RowEditCommit { get; set; }
+
+        /// <summary>
+        /// The method is called when the edition of the item has been canceled in inline editing.
+        /// </summary>
+        [Parameter] public Action<object> RowEditCancel { get; set; }
+
+        /// <summary>
         /// Number of items. Used only with ServerData="true"
         /// </summary>
         [Parameter] public int TotalItems { get; set; }
@@ -234,12 +306,16 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public string RowStyle { get; set; }
 
+        /// <summary>
+        /// If true, the results are displayed in a Virtualize component, allowing a boost in rendering speed.
+        /// </summary>
+        [Parameter] public bool Virtualize { get; set; }
 
         #region --> Obsolete Forwarders for Backwards-Compatiblilty
         /// <summary>
         /// Alignment of the table cell text when breakpoint is smaller than <see cref="Breakpoint" />
         /// </summary>
-        [Obsolete("This property is obsolete. And not needed anymore, the cells width/alignment is done automaticly.")] [Parameter] public bool RightAlignSmall { get; set; } = true;
+        [Obsolete("This property is obsolete. And not needed anymore, the cells width/alignment is done automatically.")] [Parameter] public bool RightAlignSmall { get; set; } = true;
         #endregion
 
         public abstract TableContext TableContext { get; }
@@ -270,6 +346,14 @@ namespace MudBlazor
                     break;
             }
         }
+        /// <summary>
+        /// Navigate to page with specified index.
+        /// </summary>
+        /// <param name="pageIndex"> The index of the page number.</param>
+        public void NavigateTo(int pageIndex)
+        {
+            CurrentPage = Math.Min(Math.Max(0, pageIndex), NumPages - 1);
+        }
 
         public void SetRowsPerPage(int size)
         {
@@ -278,6 +362,7 @@ namespace MudBlazor
             _rowsPerPage = size;
             CurrentPage = 0;
             StateHasChanged();
+            RowsPerPageChanged.InvokeAsync(_rowsPerPage.Value);
             if (_isFirstRendered)
                 InvokeServerLoadFunc();
         }
@@ -300,6 +385,16 @@ namespace MudBlazor
                     parameter = item;
                 CommitEditCommand.Execute(parameter);
             }
+        }
+
+        internal Task OnPreviewEditHandler(object item)
+        {
+            return OnPreviewEditClick.InvokeAsync(item);
+        }
+
+        internal Task OnCancelEditHandler(MouseEventArgs ev)
+        {
+            return OnCancelEditClick.InvokeAsync(ev);
         }
 
         protected string TableStyle

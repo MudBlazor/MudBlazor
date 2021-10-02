@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
-using Microsoft.JSInterop;
+using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
@@ -14,6 +14,25 @@ namespace MudBlazor
            .Build();
 
         private MudInput<string> _elementReference;
+
+        /// <summary>
+        /// Type of the input element. It should be a valid HTML5 input type.
+        /// </summary>
+        [Parameter] public InputType InputType { get; set; } = InputType.Text;
+
+        internal override InputType GetInputType() => InputType;
+
+        private string GetCounterText() => Counter == null ? string.Empty : (Counter == 0 ? (string.IsNullOrEmpty(Text) ? "0" : $"{Text.Length}") : ((string.IsNullOrEmpty(Text) ? "0" : $"{Text.Length}") + $" / {Counter}"));
+
+        /// <summary>
+        /// Show clear button.
+        /// </summary>
+        [Parameter] public bool Clearable { get; set; } = false;
+
+        /// <summary>
+        /// Button click event for clear button. Called after text and value has been cleared.
+        /// </summary>
+        [Parameter] public EventCallback<MouseEventArgs> OnClearButtonClick { get; set; }
 
         public override ValueTask FocusAsync()
         {
@@ -31,16 +50,15 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// The short hint displayed in the input before the user enters a value.
+        /// Clear the text field, set Value to default(T) and Text to null
         /// </summary>
-        [Parameter] public string Placeholder { get; set; }
-
-        /// <summary>
-        /// If string has value the label text will be displayed in the input, and scaled down at the top if the input has value.
-        /// </summary>
-        [Parameter] public string Label { get; set; }
-
+        /// <returns></returns>
+        public async Task Clear()
+        {
+            await _elementReference.SetText(null);
+        }
     }
 
+    [Obsolete]
     public class MudTextFieldString : MudTextField<string> { }
 }

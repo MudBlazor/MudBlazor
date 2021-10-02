@@ -58,6 +58,11 @@
             margin: 8px;
         }
     }
+    
+    &.docs-section-flex-column > .docs-section-content-inner {
+        flex-direction: column;
+        align-items: center;
+    }
 }
 
 .docs-section-source {
@@ -70,15 +75,7 @@
         & > .mud-tooltip-root .mud-icon-button .mud-svg-icon {
             font-size: 1.25rem;
         }
-        
-        @media(max-width: 1280px) {
-            .mud-tooltip-root:last-child .mud-tooltip {
-                left: unset;
-                right: 0;
-                transform: translate(0%,calc(-100% - 10px));
-            }
-        }
-    }
+}
 
     & .docs-source-code {
         height: 100%;

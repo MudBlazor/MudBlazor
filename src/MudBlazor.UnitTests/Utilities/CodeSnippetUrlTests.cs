@@ -17,7 +17,7 @@ namespace MudBlazor.UnitTests.Utilities
             var snippet = Snippets.GetCode("TableServerSidePaginateExample");
             string urlEncodedBase64compressedCode, base64compressedCode, snippet1;
             byte[] bytes;
-            // compressiong
+            // compression
             using (var uncompressed = new MemoryStream(Encoding.UTF8.GetBytes(snippet)))
             using (var compressed = new MemoryStream())
             using (var compressor = new DeflateStream(compressed, CompressionMode.Compress))

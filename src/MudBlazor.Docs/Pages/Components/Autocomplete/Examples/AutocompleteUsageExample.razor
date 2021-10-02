@@ -2,25 +2,32 @@
 
 <MudGrid>
     <MudItem xs="12" sm="6" md="4">
-        <MudAutocomplete T="string" Label="US States" @bind-Value="value1" SearchFunc="@Search1" ResetValueOnEmptyText="@resetValueOnEmptyText" CoerceText="@coerceText" />
+        <MudAutocomplete T="string" Label="US States" @bind-Value="value1" SearchFunc="@Search1"
+                         ResetValueOnEmptyText="@resetValueOnEmptyText"
+                         CoerceText="@coerceText" CoerceValue="@coerceValue" />
     </MudItem>
     <MudItem xs="12" sm="6" md="4">
-        <MudAutocomplete T="string" Label="US States" @bind-Value="value2" SearchFunc="@Search2" ResetValueOnEmptyText="@resetValueOnEmptyText" CoerceText="@coerceText" />
+        <MudAutocomplete T="string" Label="US States" @bind-Value="value2" SearchFunc="@Search2"
+                         ResetValueOnEmptyText="@resetValueOnEmptyText"
+                         CoerceText="@coerceText" CoerceValue="@coerceValue"
+                         AdornmentIcon="@Icons.Material.Filled.Search" AdornmentColor="Color.Primary" />
     </MudItem>
     <MudItem xs="12" md="12">
         <MudText Class="mb-n3" Typo="Typo.body2">
             <MudChip>@(value1 ?? "Not selected")</MudChip><MudChip>@(value2 ?? "Not selected")</MudChip>
         </MudText>
     </MudItem>
-    <MudItem xs="12" md="12">
+    <MudItem xs="12" md="12" class="flex-column">
         <MudSwitch @bind-Checked="resetValueOnEmptyText" Color="Color.Primary">Reset Value on empty Text</MudSwitch>
         <MudSwitch @bind-Checked="coerceText" Color="Color.Secondary">Coerce Text to Value</MudSwitch>
+        <MudSwitch @bind-Checked="coerceValue" Color="Color.Tertiary">Coerce Value to Text (if not found)</MudSwitch>
     </MudItem>
 </MudGrid>
 
 @code {
     private bool resetValueOnEmptyText;
     private bool coerceText;
+    private bool coerceValue;
     private string value1, value2;
     private string[] states =
     {

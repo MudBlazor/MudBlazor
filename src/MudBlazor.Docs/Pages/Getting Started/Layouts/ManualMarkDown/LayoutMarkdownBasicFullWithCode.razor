@@ -1,0 +1,32 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<div class="mud-codeblock">
+<div class="html"><pre>
+<span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">MudThemeProvider</span> <span class="htmlTagDelimiter">/&gt;</span>
+<span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">MudDialogProvider</span> <span class="htmlTagDelimiter">/&gt;</span>
+<span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">MudSnackbarProvider</span> <span class="htmlTagDelimiter">/&gt;</span>
+
+<span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">MudLayout</span><span class="htmlTagDelimiter">&gt;</span>
+    <span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">MudAppBar</span><span class="htmlTagDelimiter">&gt;</span>
+        <span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">MudIconButton</span> <span class="htmlAttributeName">Icon</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="htmlAttributeValue"><span class="atSign">&#64;</span>Icons.Material.Filled.Menu</span><span class="quot">&quot;</span> <span class="htmlAttributeName">Color</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="enum">Color</span><span class="enumValue">.Inherit</span><span class="quot">&quot;</span> <span class="htmlAttributeName">Edge</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="enum">Edge</span><span class="enumValue">.Start</span><span class="quot">&quot;</span> <span class="htmlAttributeName">OnClick</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="htmlAttributeValue"><span class="atSign">&#64;</span>((e) =&gt; DrawerToggle())</span><span class="quot">&quot;</span> <span class="htmlTagDelimiter">/&gt;</span>
+        My Application
+    <span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">MudAppBar</span><span class="htmlTagDelimiter">&gt;</span>
+    <span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">MudDrawer</span> <span class="htmlAttributeName"><span class="atSign">&#64;</span>bind-Open</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="htmlAttributeValue"><span class="atSign">&#64;</span>_drawerOpen</span><span class="quot">&quot;</span><span class="htmlTagDelimiter">&gt;</span>
+        <span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">NavMenu</span><span class="htmlTagDelimiter">/&gt;</span>
+    <span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">MudDrawer</span><span class="htmlTagDelimiter">&gt;</span>
+    <span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">MudMainContent</span><span class="htmlTagDelimiter">&gt;</span>
+        <span class="atSign">&#64;</span>Body
+    <span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">MudMainContent</span><span class="htmlTagDelimiter">&gt;</span>
+<span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">MudLayout</span><span class="htmlTagDelimiter">&gt;</span>
+</pre></div>
+<div class="csharp"><pre>
+<span class="atSign">&#64;</span>code {
+    <span class="keyword">bool</span> _drawerOpen = <span class="keyword">true</span>;
+
+    <span class="keyword">void</span> DrawerToggle()
+    {
+        _drawerOpen = !_drawerOpen;
+    }
+}
+</pre></div>
+</div>

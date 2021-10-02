@@ -34,16 +34,16 @@ namespace MudBlazor.UnitTests.Services
         public async Task ObserveAndCache()
         {
             // Arrange
-            Random random = new Random();
+            var random = new Random();
 
             List<ElementReference> allReferences = new();
             List<ElementReference> notObservedReferences = new();
             Dictionary<ElementReference, BoundingClientRect> resolvedElements = new();
 
             var amount = 13;
-            for (int i = 1; i <= amount; i++)
+            for (var i = 1; i <= amount; i++)
             {
-                ElementReference reference = new ElementReference(Guid.NewGuid().ToString(), new PseudoElementReferenceContext());
+                var reference = new ElementReference(Guid.NewGuid().ToString(), new PseudoElementReferenceContext());
                 var rect = GetRandomRect(random);
 
                 if (i % 4 == 0)
@@ -115,9 +115,9 @@ namespace MudBlazor.UnitTests.Services
             List<ElementReference> notObservedReferences = new();
 
             var amount = 10;
-            for (int i = 1; i <= amount; i++)
+            for (var i = 1; i <= amount; i++)
             {
-                ElementReference reference = new ElementReference(Guid.NewGuid().ToString(), new PseudoElementReferenceContext());
+                var reference = new ElementReference(Guid.NewGuid().ToString(), new PseudoElementReferenceContext());
 
                 if (i % 2 == 0)
                 {
@@ -141,21 +141,21 @@ namespace MudBlazor.UnitTests.Services
         public async Task Unobserve()
         {
             // Arrange
-            Random random = new Random();
+            var random = new Random();
 
             Dictionary<ElementReference, BoundingClientRect> resolvedElements = new();
 
             var amount = 13;
-            for (int i = 1; i <= amount; i++)
+            for (var i = 1; i <= amount; i++)
             {
-                ElementReference reference = new ElementReference(Guid.NewGuid().ToString(), new PseudoElementReferenceContext());
+                var reference = new ElementReference(Guid.NewGuid().ToString(), new PseudoElementReferenceContext());
                 var rect = GetRandomRect(random);
 
                 resolvedElements.Add(reference, rect);
             }
 
             List<Guid> ids = new();
-            Guid observerId = Guid.Empty;
+            var observerId = Guid.Empty;
 
             _runtimeMock.Setup(x => x.InvokeAsync<IEnumerable<BoundingClientRect>>(
                 "mudResizeObserver.connect",
@@ -200,14 +200,14 @@ namespace MudBlazor.UnitTests.Services
         public async Task OnSizeChanged()
         {
             // Arrange
-            Random random = new Random();
+            var random = new Random();
 
             Dictionary<ElementReference, BoundingClientRect> resolvedElements = new();
 
             var amount = 13;
-            for (int i = 1; i <= amount; i++)
+            for (var i = 1; i <= amount; i++)
             {
-                ElementReference reference = new ElementReference(Guid.NewGuid().ToString(), new PseudoElementReferenceContext());
+                var reference = new ElementReference(Guid.NewGuid().ToString(), new PseudoElementReferenceContext());
                 var rect = GetRandomRect(random);
 
                 resolvedElements.Add(reference, rect);
@@ -232,7 +232,7 @@ namespace MudBlazor.UnitTests.Services
 
             Dictionary<ElementReference, BoundingClientRect> expectedRects = new();
 
-            for (int i = 0; i < resolvedElements.Count(); i++)
+            for (var i = 0; i < resolvedElements.Count(); i++)
             {
                 var item = resolvedElements.ElementAt(i);
                 var correspondingId = ids[i];
@@ -286,14 +286,13 @@ namespace MudBlazor.UnitTests.Services
         {
             return new BoundingClientRect
             {
-                Bottom = random.Next(10, 200) + random.NextDouble(),
+
                 Height = random.Next(10, 200) + random.NextDouble(),
                 Left = random.Next(10, 200) + random.NextDouble(),
-                Right = random.Next(10, 200) + random.NextDouble(),
+
                 Top = random.Next(10, 200) + random.NextDouble(),
                 Width = random.Next(10, 200) + random.NextDouble(),
-                X = random.Next(10, 200) + random.NextDouble(),
-                Y = random.Next(10, 200) + random.NextDouble(),
+
             };
         }
 

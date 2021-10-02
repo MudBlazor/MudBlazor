@@ -13,6 +13,11 @@ namespace MudBlazor
         [Parameter]
         public Snackbar Snackbar { get; set; }
 
+        /// <summary>
+        /// Custom close icon.
+        /// </summary>
+        [Parameter] public string CloseIcon { get; set; } = Icons.Material.Filled.Close;
+
         protected RenderFragment Css;
 
         protected string AnimationStyle => Snackbar?.State.AnimationStyle + Style;
@@ -26,6 +31,9 @@ namespace MudBlazor
 
         protected bool ShowActionButton => Snackbar?.State.ShowActionButton == true;
         protected bool ShowCloseIcon => Snackbar?.State.ShowCloseIcon == true;
+
+        protected bool HideIcon => Snackbar?.State.HideIcon == true;
+        protected string Icon => Snackbar?.State.Icon;
 
         protected void ActionClicked() => Snackbar?.Clicked(false);
         protected void CloseIconClicked() => Snackbar?.Clicked(true);

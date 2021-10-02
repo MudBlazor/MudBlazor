@@ -1,0 +1,49 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudTable Items="_items" Height="350px" Breakpoint="Breakpoint.Sm" Virtualize="true" FixedHeader="true">
+    <HeaderContent>
+        <MudTh>Column1</MudTh>
+        <MudTh>Column2</MudTh>
+        <MudTh>Column3</MudTh>
+        <MudTh>Column4</MudTh>
+        <MudTh>Column5</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="Column1">@context.Column1</MudTd>
+        <MudTd DataLabel="Column2">@context.Column2</MudTd>
+        <MudTd DataLabel="Column3">@context.Column3</MudTd>
+        <MudTd DataLabel="Column4">@context.Column4</MudTd>
+        <MudTd DataLabel="Column5">@context.Column5</MudTd>
+    </RowTemplate>
+</MudTable>
+
+@code {
+    public class TestItem
+    {
+        public string Column1 { get; set; }
+        public string Column2 { get; set; }
+        public string Column3 { get; set; }
+        public string Column4 { get; set; }
+        public string Column5 { get; set; }
+    }
+
+
+    private List<TestItem> _items;
+
+    protected override void OnInitialized()
+    {
+        _items = new List<TestItem>();
+        for (int i = 0; i < 20000; i++)
+        {
+            _items.Add(new TestItem
+            {
+                Column1 = $"Value_{i}",
+                Column2 = $"Value_{i}",
+                Column3 = $"Value_{i}",
+                Column4 = $"Value_{i}",
+                Column5 = $"Value_{i}",
+            });
+        }
+    }
+
+}

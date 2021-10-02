@@ -2,6 +2,8 @@
 @typeparam T
 @inherits MudFormComponent<T, T>
 
-<CascadingValue Value="this" IsFixed="true">
-    @ChildContent
+<CascadingValue Value="@((IMudRadioGroup)this)" IsFixed="true">
+    <div role="radiogroup" @attributes="UserAttributes" class=@Class style="@Style">
+        @ChildContent
+    </div>
 </CascadingValue>

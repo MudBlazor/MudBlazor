@@ -1,12 +1,10 @@
 ﻿@namespace MudBlazor
 @inherits MudComponentBase
 @implements IAsyncDisposable
-@implements IDisposable
-
 
 @if (Parent?.KeepPanelsAlive == true)
 {
-    <div class="@Class" style="display:@(Parent?.ActivePanel == this ? "contents" : "none");@Style">
+    <div @attributes="UserAttributes" class="@Class" style="display:@(Parent?.ActivePanel == this ? "contents" : "none");@Style">
         @ChildContent
     </div>
 }
@@ -19,6 +17,8 @@ else
 }
 
 @code {
+
+    private Boolean _disposed;
 
     [CascadingParameter] private MudTabs Parent { get; set; }
 
@@ -46,12 +46,17 @@ else
     [Parameter] public object BadgeData { get; set; }
 
     /// <summary>
+    /// Optional information to show the badge as a dot.
+    /// </summary>
+    [Parameter] public bool BadgeDot { get; set; }
+
+    /// <summary>
     /// The color of the badge.
     /// </summary>
     [Parameter] public Color BadgeColor { get; set; } = Color.Primary;
 
     /// <summary>
-    /// Unique TabPanel ID. Usefull for actvation when Panels are dynamically generated.
+    /// Unique TabPanel ID. Useful for activation when Panels are dynamically generated.
     /// </summary>
     [Parameter] public object ID { get; set; }
 
@@ -86,32 +91,15 @@ else
         //    throw new ArgumentNullException(nameof(Parent), "TabPanel must exist within a Tabs component");
         base.OnInitialized();
 
-        if (Parent != null)
-        {
-            Parent.AddPanel(this);
-        }
-    }
-
-    protected virtual void Dispose(bool disposing)
-    {
-    }
-
-    public void Dispose()
-    {
-        Dispose(true);
-        GC.SuppressFinalize(this);
-    }
-
-    protected virtual async ValueTask DisposeAsyncCore()
-    {
-        await Parent?.RemovePanel(this);
+        Parent?.AddPanel(this);
     }
 
     public async ValueTask DisposeAsync()
     {
-        await DisposeAsyncCore();
+        if(_disposed == true) { return;  }
 
-        Dispose(false);
-        GC.SuppressFinalize(this);
+        _disposed = true;
+        await Parent?.RemovePanel(this);
+
     }
 }

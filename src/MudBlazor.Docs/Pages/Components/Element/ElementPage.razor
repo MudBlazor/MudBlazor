@@ -4,9 +4,8 @@
     <DocsPageHeader Title="MudElement" SubTitle="A primitive component that allows you to create your own components and render the html element you want in an interactive way." />
     <DocsPageContent>
         <DocsPageSection>
-            <SectionHeader>
-                <Title>Basic example</Title>
-                <Description>MudElement accepts all attributes you want, plus an <CodeInline>HtmlTag</CodeInline> parameter, that tells the component the html element that must render, and a <CodeInline>Class</CodeInline> and <CodeInline>Style</CodeInline> parameters, to style it</Description>
+            <SectionHeader Title="Basic example">
+                <Description>MudElement accepts all attributes you want, plus an <CodeInline>HtmlTag</CodeInline> parameter that tells the component which html element to render, and <CodeInline>Class</CodeInline> and <CodeInline>Style</CodeInline> parameters for styling.</Description>
             </SectionHeader>
             <SectionContent Outlined="true">
                 <MudElementSimpleExample />
@@ -14,33 +13,31 @@
             <SectionSource Code="MudElementSimpleExample" GitHubFolderName="Element" />
         </DocsPageSection>
         <DocsPageSection>
-            <SectionHeader>
-                <Title>Interactive example</Title>
-                <Description>Change the rendered html element in an interactive way</Description>
+            <SectionHeader Title="Interactive example">
+                <Description>Change the rendered html element in an interactive way:</Description>
             </SectionHeader>
             <SectionContent Outlined="true">
                 <MudElementChangingExample />
             </SectionContent>
-            <SectionSource Code="MudElementChangingExample" GitHubFolderName="Element" />
+            <SectionSource Code="MudElementChangingExample" GitHubFolderName="Element" ShowCode="false" />
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader>
-                <Title>Passing a ref</Title>
+            <SectionHeader Title="Passing a ref">
                 <Description>
-                    You can pass an ElementReference to the root element that MudElement is going to render
+                    You can pass an <CodeInline>ElementReference</CodeInline> to the root element that <CodeInline>MudElement</CodeInline> is going to render
                     <br />
                     Just make sure that you bind this reference to the 
                     <CodeInline>
                         Ref 
                     </CodeInline>
-                    property of the MudElement
+                    property of the <CodeInline>MudElement</CodeInline>.
                 </Description>
             </SectionHeader>
             <SectionContent Outlined="true">
                 <MudElementRefExample />
             </SectionContent>
-            <SectionSource Code="MudElementRefExample" GitHubFolderName="Element" />
+            <SectionSource Code="MudElementRefExample" GitHubFolderName="Element" ShowCode="false" />
         </DocsPageSection>
     </DocsPageContent>
 </DocsPage>

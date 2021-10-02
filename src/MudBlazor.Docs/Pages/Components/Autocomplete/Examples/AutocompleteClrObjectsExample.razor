@@ -5,15 +5,21 @@
 
 <MudGrid>
     <MudItem xs="12" sm="6" md="4">
-        <MudAutocomplete T="Element" Label="Periodic Table Element" @bind-Value="value1" SearchFunc="@Search" ToStringFunc="@(e=> e==null?null : $"{e.Name} ({e.Sign})")" />
+        <MudAutocomplete T="Element" Label="Periodic Table Element" @bind-Value="value1" 
+                         SearchFunc="@Search" ToStringFunc="@(e=> e==null?null : $"{e.Name} ({e.Sign})")" />
     </MudItem>
     <MudItem xs="12" sm="6" md="4">
-        <MudAutocomplete T="Element" Label="Periodic Table Element" @bind-Value="value2" SearchFunc="@Search" ToStringFunc="@(e=> e==null?null : $"{e.Name} ({e.Sign})")">
+        <MudAutocomplete T="Element" Label="Periodic Table Element" @bind-Value="value2" 
+                         SearchFunc="@Search" ToStringFunc="@(e=> e==null?null : $"{e.Name} ({e.Sign})")">
             <ItemTemplate Context="e">                          
-                <MudText><MudIcon Icon="@Icons.Material.Filled.CheckBoxOutlineBlank" Class="mb-n1 mr-3" />@($"{e.Name} ({e.Sign})")</MudText>
+                <MudText>
+                    <MudIcon Icon="@Icons.Material.Filled.CheckBoxOutlineBlank" Class="mb-n1 mr-3"/>@($"{e.Name} ({e.Sign})")
+                </MudText>
             </ItemTemplate>
             <ItemSelectedTemplate Context="e">                
-                <MudText><MudIcon Icon="@Icons.Material.Filled.CheckBox" Class="mb-n1 mr-3" />@($"{e.Name} ({e.Sign})")</MudText>
+                <MudText>
+                    <MudIcon Icon="@Icons.Material.Filled.CheckBox" Class="mb-n1 mr-3"/>@($"{e.Name} ({e.Sign})")
+                </MudText>
             </ItemSelectedTemplate>
         </MudAutocomplete>
     </MudItem>

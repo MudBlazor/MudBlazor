@@ -2,7 +2,6 @@
 // Copyright (c) 2020 Adapted by Jonny Larsson, Meinrad Recheis and Contributors
 
 using System;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Extensions;
 using MudBlazor.Utilities;
@@ -11,7 +10,9 @@ namespace MudBlazor
 {
     public partial class MudDialogInstance : MudComponentBase
     {
-        private DialogOptions _options = new DialogOptions();
+        private DialogOptions _options = new();
+
+        [CascadingParameter] public bool RightToLeft { get; set; }
         [CascadingParameter] private MudDialogProvider Parent { get; set; }
         [CascadingParameter] private DialogOptions GlobalDialogOptions { get; set; } = new DialogOptions();
 
@@ -31,6 +32,11 @@ namespace MudBlazor
         [Parameter] public RenderFragment TitleContent { get; set; }
         [Parameter] public RenderFragment Content { get; set; }
         [Parameter] public Guid Id { get; set; }
+
+        /// <summary>
+        /// Custom close icon.
+        /// </summary>
+        [Parameter] public string CloseIcon { get; set; } = Icons.Material.Filled.Close;
 
         private string Position { get; set; }
         private string DialogMaxWidth { get; set; }
@@ -59,16 +65,42 @@ namespace MudBlazor
             StateHasChanged();
         }
 
+        /// <summary>
+        /// Close and return null. 
+        /// 
+        /// This is a shorthand of Close(DialogResult.Ok((object)null));
+        /// </summary>
         public void Close()
         {
             Close(DialogResult.Ok<object>(null));
         }
 
+        /// <summary>
+        /// Close with dialog result.
+        /// 
+        /// Usage: Close(DialogResult.Ok(returnValue))
+        /// </summary>
         public void Close(DialogResult dialogResult)
         {
             Parent.DismissInstance(Id, dialogResult);
         }
 
+        /// <summary>
+        /// Close and directly pass a return value. 
+        /// 
+        /// This is a shorthand for Close(DialogResult.Ok(returnValue))
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="returnValue"></param>
+        public void Close<T>(T returnValue)
+        {
+            var dialogResult = DialogResult.Ok<T>(returnValue);
+            Parent.DismissInstance(Id, dialogResult);
+        }
+
+        /// <summary>
+        /// Cancel the dialog. DialogResult.Cancelled will be set to true
+        /// </summary>
         public void Cancel()
         {
             Close(DialogResult.Cancel());
@@ -147,12 +179,13 @@ namespace MudBlazor
         }
 
         protected string Classname =>
-        new CssBuilder("mud-dialog")
-            .AddClass(DialogMaxWidth, !FullScreen)
-            .AddClass("mud-dialog-width-full", FullWidth && !FullScreen)
-            .AddClass("mud-dialog-fullscreen", FullScreen)
-            .AddClass(Class)
-        .Build();
+            new CssBuilder("mud-dialog")
+                .AddClass(DialogMaxWidth, !FullScreen)
+                .AddClass("mud-dialog-width-full", FullWidth && !FullScreen)
+                .AddClass("mud-dialog-fullscreen", FullScreen)
+                .AddClass("mud-dialog-rtl", RightToLeft)
+                .AddClass(Class)
+            .Build();
 
         private bool SetHideHeader()
         {
@@ -189,7 +222,7 @@ namespace MudBlazor
 
         private void HandleBackgroundClick()
         {
-            if (DisableBackdropClick) 
+            if (DisableBackdropClick)
                 return;
             Cancel();
         }

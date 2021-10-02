@@ -1,7 +1,7 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
-<MudButton Variant="Variant.Text" OnClick="@(() => OpenDrawer(Anchor.Left))">Left</MudButton>
-<MudButton Variant="Variant.Text" OnClick="@(() => OpenDrawer(Anchor.Right))">Right</MudButton>
+<MudButton Variant="Variant.Text" OnClick="@(() => OpenDrawer(Anchor.Start))">Start</MudButton>
+<MudButton Variant="Variant.Text" OnClick="@(() => OpenDrawer(Anchor.End))">End</MudButton>
 <MudButton Variant="Variant.Text" OnClick="@(() => OpenDrawer(Anchor.Top))">Top</MudButton>
 <MudButton Variant="Variant.Text" OnClick="@(() => OpenDrawer(Anchor.Bottom))">Bottom</MudButton>
 
@@ -28,11 +28,11 @@
 
         switch (anchor)
         {
-            case Anchor.Left:
+            case Anchor.Start:
                 width = "300px";
                 height = "100%";
                 break;
-            case Anchor.Right:
+            case Anchor.End:
                 width = "400px";
                 height = "100%";
                 break;

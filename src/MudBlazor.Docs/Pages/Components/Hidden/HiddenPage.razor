@@ -7,18 +7,16 @@
     </DocsPageContent>
     <DocsPageContent>
         <DocsPageSection>
-            <SectionHeader>
-                <Title>How it works</Title>
-                <Description>The following example shows all breakpoint options only if they match the screensize. Because it is more intuitive for this example we inverted all the breakpoints so that you can see them only if they match.</Description>
+            <SectionHeader Title="How it works">
+                <Description>The following example shows all breakpoint options only if they match the screensize. Because it is more intuitive for this example, we inverted all the breakpoints so that you can see them only if they match.</Description>
             </SectionHeader>
             <SectionContent DarkenBackground="true" DisplayFlex="true">
                 <HiddenExample />
             </SectionContent>
-            <SectionSource Code="HiddenExample" GitHubFolderName="Hidden" />
+            <SectionSource Code="HiddenExample" GitHubFolderName="Hidden" ShowCode="false" />
         </DocsPageSection>
         <DocsPageSection>
-            <SectionHeader>
-                <Title>Listening to browser window resize events</Title>
+            <SectionHeader Title="Listening to browser window resize events">
                 <Description>
                     <MudText>Directly listening to the screen size change events is the most expensive way to adapt to a resizing browser window. Use this only if the other breakpoint methods don't work for you.</MudText>
                 </Description>
@@ -26,7 +24,7 @@
             <SectionContent DarkenBackground="true">
                 <BrowserResizeEventExample />
             </SectionContent>
-            <SectionSource Code="BrowserResizeEventExample" />
+            <SectionSource Code="BrowserResizeEventExample" ShowCode="false" />
         </DocsPageSection>
     </DocsPageContent>
 </DocsPage>

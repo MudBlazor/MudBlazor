@@ -6,10 +6,9 @@
     </DocsPageHeader>
     <DocsPageContent>
         <DocsPageSection>
-            <SectionHeader>
-                <Title>Single selection</Title>
+            <SectionHeader Title="Single selection">
                 <Description>
-                    Chipset will maintain a selection of chips for you. By default you get a single selection. Setting <CodeInline>Mandatory="true"</CodeInline> will not allow to unselect the selected chip.
+                    Chipset will maintain a selection of chips for you. By default, you get a single selection. Setting <CodeInline>Mandatory="true"</CodeInline> will not allow to unselect the selected chip.
                 </Description>
             </SectionHeader>
             <SectionContent Outlined="true" Class="mud-text-align-center">
@@ -19,8 +18,7 @@
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader>
-                <Title>Multiselection</Title>
+            <SectionHeader Title="Multiselection">
                 <Description>
                     When <CodeInline>MultiSelection="true"</CodeInline> ChipSet will maintain a selection of multiple chips. Setting <CodeInline>Filter="true"</CodeInline> the selected chips will also display a check mark.
                 </Description>
@@ -32,8 +30,7 @@
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader>
-                <Title>Adding and removing chips</Title>
+            <SectionHeader Title="Adding and removing chips">
                 <Description>
                 </Description>
             </SectionHeader>
@@ -42,10 +39,9 @@
             </SectionContent>
             <SectionSource ShowCode="false" Code="ChipSetAddRemoveExample" GitHubFolderName="ChipSet" />
         </DocsPageSection>
-        
+
         <DocsPageSection>
-            <SectionHeader>
-                <Title>Default chips</Title>
+            <SectionHeader Title="Default chips">
                 <Description>
                     Chips which have<CodeInline>Default="true"</CodeInline> will be initially selected.
                 </Description>
@@ -54,6 +50,30 @@
                 <ChipSetDefaultChipsExample />
             </SectionContent>
             <SectionSource ShowCode="false" Code="ChipSetDefaultChipsExample" GitHubFolderName="ChipSet" />
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Variants">
+                <Description>
+                    The chip's look different when selected depending on its initial <CodeInline>Variant</CodeInline>.
+                </Description>
+            </SectionHeader>
+            <SectionContent Outlined="true" Class="mud-text-align-center">
+                <ChipSetVariantsExample />
+            </SectionContent>
+            <SectionSource ShowCode="false" Code="ChipSetVariantsExample" GitHubFolderName="ChipSet" />
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Selected Color">
+                <Description>
+                    The chip's selected color can be changed with the <CodeInline>SelectedColor</CodeInline> property, by default it has the same color as the chip.
+                </Description>
+            </SectionHeader>
+            <SectionContent Outlined="true" Class="mud-text-align-center">
+                <ChipSetSelectedColorExample />
+            </SectionContent>
+            <SectionSource ShowCode="false" Code="ChipSetSelectedColorExample" GitHubFolderName="ChipSet" />
         </DocsPageSection>
     </DocsPageContent>
 </DocsPage>

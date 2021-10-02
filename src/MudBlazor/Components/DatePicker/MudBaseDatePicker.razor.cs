@@ -12,7 +12,7 @@ namespace MudBlazor
     {
         protected MudBaseDatePicker() : base(new DefaultConverter<DateTime?>
         {
-            Format = "yyyy-MM-dd",
+            Format = CultureInfo.CurrentCulture.DateTimeFormat.ShortDatePattern,
             Culture = CultureInfo.CurrentCulture
         })
         { }
@@ -116,10 +116,34 @@ namespace MudBlazor
         [Parameter] public bool ShowWeekNumbers { get; set; }
 
         /// <summary>
-        /// Format of the selected date in the title. Per default this is "ddd, dd MMM" which abbreviates day and month names. 
+        /// Format of the selected date in the title. By default, this is "ddd, dd MMM" which abbreviates day and month names. 
         /// For instance, display the long names like this "dddd, dd. MMMM". 
         /// </summary>
         [Parameter] public string TitleDateFormat { get; set; } = "ddd, dd MMM";
+
+        /// <summary>
+        /// Function to determine whether a date is disabled
+        /// </summary>
+        [Parameter]
+        public Func<DateTime, bool> IsDateDisabledFunc
+        {
+            get => _isDateDisabledFunc;
+            set
+            {
+                _isDateDisabledFunc = value ?? (_ => false);
+            }
+        }
+        private Func<DateTime, bool> _isDateDisabledFunc = _ => false;
+
+        /// <summary>
+        /// Custom previous icon.
+        /// </summary>
+        [Parameter] public string PreviousIcon { get; set; } = Icons.Material.Filled.ChevronLeft;
+
+        /// <summary>
+        /// Custom next icon.
+        /// </summary>
+        [Parameter] public string NextIcon { get; set; } = Icons.Material.Filled.ChevronRight;
 
         protected virtual bool IsRange { get; } = false;
 
@@ -140,6 +164,11 @@ namespace MudBlazor
         protected DateTime GetMonthStart(int month)
         {
             var monthStartDate = _picker_month ?? DateTime.Today.StartOfMonth(Culture);
+            // Return the min supported datetime of the calendar when this is year 1 and first month!
+            if (_picker_month.HasValue && _picker_month.Value.Year == 1 && _picker_month.Value.Month == 1)
+            {
+                return Culture.Calendar.MinSupportedDateTime;
+            }
             return Culture.Calendar.AddMonths(monthStartDate, month);
         }
 
@@ -168,7 +197,7 @@ namespace MudBlazor
         /// <returns></returns>
         protected IEnumerable<DateTime> GetWeek(int month, int index)
         {
-            if (index < 0 || index > 5)
+            if (index is < 0 or > 5)
                 throw new ArgumentException("Index must be between 0 and 5");
             var month_first = GetMonthStart(month);
             var week_first = month_first.AddDays(index * 7).StartOfWeek(GetFirstDayOfWeek());
@@ -178,7 +207,7 @@ namespace MudBlazor
 
         private string GetWeekNumber(int month, int index)
         {
-            if (index < 0 || index > 5)
+            if (index is < 0 or > 5)
                 throw new ArgumentException("Index must be between 0 and 5");
             var month_first = GetMonthStart(month);
             var week_first = month_first.AddDays(index * 7).StartOfWeek(GetFirstDayOfWeek());
@@ -231,6 +260,11 @@ namespace MudBlazor
 
         protected abstract string GetTitleDateString();
 
+        protected string FormatTitleDate(DateTime? date)
+        {
+            return date?.ToString(TitleDateFormat ?? "ddd, dd MMM", Culture) ?? "";
+        }
+
         protected string GetFormattedYearString()
         {
             return GetMonthStart(0).ToString("yyyy", Culture);
@@ -238,6 +272,11 @@ namespace MudBlazor
 
         private void OnPreviousMonthClick()
         {
+            // It is impossible to go further into the past after the first year and the first month!
+            if (PickerMonth.HasValue && PickerMonth.Value.Year == 1 && PickerMonth.Value.Month == 1)
+            {
+                return;
+            }
             PickerMonth = GetMonthStart(0).AddDays(-1).StartOfMonth(Culture);
         }
 
@@ -344,6 +383,12 @@ namespace MudBlazor
             return Culture.DateTimeFormat.AbbreviatedMonthNames[calendarMonth - 1];
         }
 
+        private string GetMonthName(DateTime month)
+        {
+            var calendarMonth = Culture.Calendar.GetMonth(month);
+            return Culture.DateTimeFormat.MonthNames[calendarMonth - 1];
+        }
+
         private string GetMonthClasses(DateTime month)
         {
             if (GetMonthStart(0) == month)
@@ -381,8 +426,7 @@ namespace MudBlazor
         {
             if (firstRender)
             {
-                if (_picker_month == null)
-                    _picker_month = GetCalendarStartOfMonth();
+                _picker_month ??= GetCalendarStartOfMonth();
             }
 
             if (firstRender && _currentView == OpenTo.Year)

@@ -15,6 +15,7 @@
         .AddClass($"mud-grid-item-md-{md.ToString()}", md != 0)
         .AddClass($"mud-grid-item-lg-{lg.ToString()}", lg != 0)
         .AddClass($"mud-grid-item-xl-{xl.ToString()}", xl != 0)
+        .AddClass($"mud-grid-item-xxl-{xxl.ToString()}", xxl != 0)
       .AddClass(Class)
     .Build();
 
@@ -26,6 +27,7 @@
     [Parameter] public int md { get; set; }
     [Parameter] public int lg { get; set; }
     [Parameter] public int xl { get; set; }
+    [Parameter] public int xxl { get; set; }
 
     // ToDo false,auto,true on all sizes.
 

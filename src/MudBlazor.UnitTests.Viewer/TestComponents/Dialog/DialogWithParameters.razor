@@ -1,0 +1,23 @@
+﻿@namespace MudBlazor.UnitTests.TestComponents
+
+<MudDialog>
+    <DialogContent>
+        <MudInput @bind-Value="TestValue" />
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="OnTest" Variant="Variant.Filled" Color="Color.Primary" Class="mr-auto">Test</MudButton>
+        <MudButton OnClick="() => MudDialog.Close()">Close</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+    [Parameter] public string TestValue { get; set; }
+    [Parameter] public Color Color_Test { get; set; }
+
+    private void OnTest()
+    {
+        MudDialog.ForceRender();
+        StateHasChanged();
+    }
+}

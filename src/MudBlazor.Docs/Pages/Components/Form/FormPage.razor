@@ -6,11 +6,10 @@
     <DocsPageContent>
 
         <DocsPageSection>
-            <SectionHeader>
-                <Title>Simple Form Validation</Title>
+            <SectionHeader Title="Simple Form Validation">
                 <Description>
                     <CodeInline>MudForm</CodeInline> is designed to be easy and simple. You just pass your own validation functions directly into the <CodeInline>Validation</CodeInline> parameter of your input controls.
-                    But if you want to make use of the handy data annotation attributes provided by Microsoft, you can pass them into <CodeInline>Validation</CodeInline> also. You can even use FluentValidation as is shown in another example below. <br />
+                    But if you want to make use of the handy data annotation attributes provided by Microsoft, you can pass them into <CodeInline>Validation</CodeInline>, as well. You can even use FluentValidation as shown in one of the examples below. <br />
                     <MudAlert Severity="Severity.Info" Dense="true" Class="mt-3">Note: for MudForm, do NOT use a button with <CodeInline>ButtonType="ButtonType.Submit"</CodeInline></MudAlert>
                 </Description>
             </SectionHeader>
@@ -23,11 +22,10 @@
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader>
-                <Title>EditForm Support</Title>
+            <SectionHeader Title="EditForm Support">
                 <Description>
-                    In Blazor form validation is usually done with EditForm in conjunction with a form model class that is decorated with <MudLink Href="https://docs.microsoft.com/en-us/aspnet/core/mvc/models/validation?view=aspnetcore-3.1">data annotations</MudLink>. MudBlazor's input components support
-                    Blazor's form validation if you put them into a <CodeInline>&lt;EditForm&gt;</CodeInline>. The following example shows a very simple use case. If you want to learn more please check out
+                    In Blazor, form validation is usually done with EditForm in conjunction with a form model class that is decorated with <MudLink Href="https://docs.microsoft.com/en-us/aspnet/core/mvc/models/validation?view=aspnetcore-3.1">data annotations</MudLink>. MudBlazor's input components support
+                    Blazor's form validation if you put them into a <CodeInline>&lt;EditForm&gt;</CodeInline>. The following example shows a very simple use case. If you want to learn more, please check out
                     <MudLink Href="https://docs.microsoft.com/en-us/aspnet/core/blazor/forms-validation?view=aspnetcore-3.1">ASP.NET Core Blazor forms and validation</MudLink> on the official Blazor documentation.
                     <br /><br />
                     <MudAlert Severity="Severity.Info" Dense="true" Class="mt-3">
@@ -44,11 +42,10 @@
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader>
-                <Title>Using Fluent Validation</Title>
+            <SectionHeader Title="Using Simple Fluent Validation">
                 <Description>
                     This example shows how to make use of the powerful <MudLink Href="https://docs.fluentvalidation.net/en/latest/index.html">FluentValidation</MudLink> validators with MudForm. Basically, we call the validator in our 
-                    validation func and simply return the error messages.
+                    validation function and simply return the error messages.
                 </Description>
             </SectionHeader>
             <SectionContent DarkenBackground="true">
@@ -58,6 +55,21 @@
             </SectionContent>
             <SectionSource ShowCode="false" Code="FluentValidationExample" GitHubFolderName="Form" />
         </DocsPageSection>
+
+		<DocsPageSection>
+			<SectionHeader Title="Using Fluent Validation">
+				<Description>
+					This example shows how to make use of the powerful <MudLink Href="https://docs.fluentvalidation.net/en/latest/index.html">FluentValidation</MudLink> validators with MudForm. This approach utilizes a standard AbstractValidator which can be shared with the <MudLink Href="https://docs.fluentvalidation.net/en/latest/aspnet.html">ASP.NET API Controllers</MudLink>.
+				</Description>
+			</SectionHeader>
+			<SectionContent DarkenBackground="true">
+				<MudContainer>
+					<FluentValidationComplexExample />
+				</MudContainer>
+			</SectionContent>
+			<SectionSource ShowCode="false" Code="FluentValidationComplexExample" GitHubFolderName="Form" />
+		</DocsPageSection>
+
     </DocsPageContent>
 </DocsPage>
 

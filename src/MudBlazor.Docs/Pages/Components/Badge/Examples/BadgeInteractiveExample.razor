@@ -3,8 +3,21 @@
 
 
 <MudGrid>
-    <MudItem md="8" Class="mud-text-align-center my-auto">
-        <MudBadge Content="@BadgeContent" Color="Color.Primary" Overlap="@Overlap" Bottom="@Bottom" Left="@Left" Dot="@Dot" Bordered="@Bordered" Icon="@BadgeIcon">
+    <MudItem md="3">
+        <MudPaper Class="pa-4" Elevation="0">
+            <MudText Typo="Typo.h6" GutterBottom="true">Test Options</MudText>
+            <MudSelect T="string" Label="Component" Margin="Margin.Dense" Dense="true" Value="@SelectedTestComponent" ValueChanged="OnSelectedTestComponent">
+                <MudSelectItem T="string" Value="@("MudIcon")">MudIcon</MudSelectItem>
+                <MudSelectItem T="string" Value="@("MudButton")">MudButton</MudSelectItem>
+                <MudSelectItem T="string" Value="@("MudIconButton")">MudIconButton</MudSelectItem>
+                <MudSelectItem T="string" Value="@("MudText")">MudText</MudSelectItem>
+                <MudSelectItem T="string" Value="@("MudAvatar")">MudAvatar</MudSelectItem>
+                <MudSelectItem T="string" Value="@("MudChip")">MudChip</MudSelectItem>
+            </MudSelect>
+        </MudPaper>
+    </MudItem>
+    <MudItem md="6" Class="mud-text-align-center my-auto">
+        <MudBadge Origin="@Origin" Content="@BadgeContent" Color="Color.Primary" Overlap="@Overlap" Dot="@Dot" Bordered="@Bordered" Icon="@BadgeIcon">
             @if (SelectedTestComponent == "MudIcon")
             {
                 <MudIcon Icon="@Icons.Custom.Brands.MudBlazor" Color="Color.Default" Size="Size.Large" />
@@ -21,43 +34,51 @@
             {
                 <MudText>MudText</MudText>
             }
+            else if(SelectedTestComponent == "MudAvatar")
+            {
+                <MudAvatar Image="_content/MudBlazor.Docs/images/mony.png" Size="Size.Large" Class="ma-2" />
+            }
+            else if(SelectedTestComponent == "MudChip")
+            {
+                <MudChip Label="true" Color="Color.Warning" Style="color:black;">Radioactive Areas</MudChip>
+            }
         </MudBadge>
     </MudItem>
-    <MudItem md="4">
-        <MudCard>
-            <MudCardContent>
-                <MudSelect  T="string" Label="Test Component" Dense="true" OffsetY="true" Value="@SelectedTestComponent" ValueChanged="OnSelectedTestComponent" Class="mb-4">
-                    <MudSelectItem T="string"  Value="@("MudIcon")">MudIcon</MudSelectItem>
-                    <MudSelectItem T="string" Value="@("MudButton")">MudButton</MudSelectItem>
-                    <MudSelectItem T="string" Value="@("MudIconButton")">MudIconButton</MudSelectItem>
-                    <MudSelectItem T="string" Value="@("MudText")">MudText</MudSelectItem>
-                </MudSelect>
-                <MudText Typo="Typo.subtitle2" GutterBottom="true">Badge Options</MudText>
-                <MudCheckBox @bind-Checked="@Bottom" Label="Bottom" Color="Color.Primary" Style="width:100%;" />
-                <MudCheckBox @bind-Checked="@Dot" Label="Dot" Color="Color.Primary" Style="width:100%;" />
-                <MudCheckBox @bind-Checked="@Left" Label="Left" Color="Color.Primary" Style="width:100%;" />
-                <MudCheckBox @bind-Checked="@Overlap" Label="Overlap" Color="Color.Primary" Style="width:100%;" />
-                <MudCheckBox @bind-Checked="@Bordered" Label="Bordered" Color="Color.Primary" Style="width:100%;" />
-                <MudCheckBox T="bool" CheckedChanged="AddIcon" Label="Icon" Color="Color.Primary" Style="width:100%;" />
-                <MudText Typo="Typo.subtitle2" Class="my-2">Badge Content</MudText>
-                <div style="display: flex;">
-                    <MudButton OnClick="AddValue" Variant="Variant.Filled" Size="Size.Small" Color="Color.Primary" Style="width:100%;" Class="mr-1">Add @AddNumber</MudButton>
-                    <MudButton OnClick="ClearContent" Variant="Variant.Filled" Size="Size.Small" Color="Color.Secondary" Style="width:100%;" Class="ml-1">Clear</MudButton>
-                </div>
-            </MudCardContent>
-        </MudCard>
+    <MudItem md="3">
+        <MudPaper Class="pa-4" Elevation="0">
+            <MudText Typo="Typo.h6" GutterBottom="true">Badge Options</MudText>
+            <MudSelect Label="Badge Origin" Margin="Margin.Dense" Dense="true" @bind-Value="@Origin">
+                <MudSelectItem Value="Origin.TopLeft">TopLeft</MudSelectItem>
+                <MudSelectItem Value="Origin.TopCenter">TopCenter</MudSelectItem>
+                <MudSelectItem Value="Origin.TopRight">TopRight</MudSelectItem>
+                <MudSelectItem Value="Origin.CenterLeft">CenterLeft</MudSelectItem>
+                <MudSelectItem Value="Origin.CenterCenter">CenterCenter</MudSelectItem>
+                <MudSelectItem Value="Origin.CenterRight">CenterRight</MudSelectItem>
+                <MudSelectItem Value="Origin.BottomLeft">BottomLeft</MudSelectItem>
+                <MudSelectItem Value="Origin.BottomCenter">BottomCenter</MudSelectItem>
+                <MudSelectItem Value="Origin.BottomRight">BottomRight</MudSelectItem>
+            </MudSelect>
+            <MudCheckBox @bind-Checked="@Dot" Label="Dot" Color="Color.Primary" Style="width:100%;" />
+            <MudCheckBox @bind-Checked="@Overlap" Label="Overlap" Color="Color.Primary" Style="width:100%;" />
+            <MudCheckBox @bind-Checked="@Bordered" Label="Bordered" Color="Color.Primary" Style="width:100%;" />
+            <MudCheckBox T="bool" CheckedChanged="AddIcon" Label="Icon" Color="Color.Primary" Style="width:100%;" />
+            <MudText Typo="Typo.subtitle2" Class="my-2">Badge Content</MudText>
+            <div style="display: flex;">
+                <MudButton OnClick="AddValue" Variant="Variant.Filled" Size="Size.Small" Color="Color.Primary" FullWidth="true" Class="mr-1">Add @AddNumber</MudButton>
+                <MudButton OnClick="ClearContent" Variant="Variant.Filled" Size="Size.Small" Color="Color.Secondary" FullWidth="true" Class="ml-1">Clear</MudButton>
+            </div>
+        </MudPaper>
     </MudItem>
 </MudGrid>
 
 @code {
-    public bool Bottom { get; set; }
+    public Origin Origin { get; set; } = Origin.TopRight;
     public bool Dot { get; set; }
-    public bool Left { get; set; }
     public bool Overlap { get; set; }
     public bool Bordered { get; set; }
     public string BadgeIcon { get; set; }
 
-    public string SelectedTestComponent { get; set; } = "MudIcon";
+    public string SelectedTestComponent { get; set; } = "MudChip";
     public string AddNumber { get; set; } = "1";
 
     public int? BadgeContent { get; set; }

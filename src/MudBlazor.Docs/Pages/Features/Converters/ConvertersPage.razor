@@ -4,19 +4,20 @@
 <DocsPage MaxWidth="MaxWidth.Large">
     <DocsPageHeader Title="Converters" SubTitle="Converters are essential for binding input elements to your model.">
         <Description>
-            When you bind a non-string value to a <CodeInline Tag="true">MudTextField<Tag>T</Tag></CodeInline> or any other input element that supports a value of type T then a <CodeInline>Converter</CodeInline>
-            converts that value to string for display and converts the user's input back to T. This happens automatically without you having to do anything special. <br/>
+            When you bind a non-string value to a <CodeInline Tag="true">MudTextField<Tag>T</Tag></CodeInline> or any other input element that supports a value of type T, then a <CodeInline>Converter</CodeInline>
+            converts that value to <CodeInline>string</CodeInline> for display and converts the user's input back to T. This happens automatically without you having to do anything special. <br/>
             MudBlazor's <CodeInline>DefaultConverter<Tag>T</Tag></CodeInline> is pretty capable as you can see below but sometimes 
             you'll want to use your own conversion functions. This page is all about that.
         </Description>
     </DocsPageHeader>
     <DocsPageContent>
         <DocsPageSection>
-            <MudText Typo="Typo.h5" GutterBottom="true" Class="my-4">DefaultConverter&lt;T&gt;</MudText>
-            <MudText>
-                The default converter converts all primitive types and their nullable variants to and from <CodeInline>string</CodeInline>.
-                Edit the textfields below to see how the default converter handles different values depending on the type.
-            </MudText>
+            <DocsPageHeader Title="DefaultConverter&lt;T&gt;">
+                <Description>
+                    The default converter converts all primitive types and their nullable variants to and from <CodeInline>string</CodeInline>.
+                    Edit the textfields below to see how the default converter handles different values depending on the type.
+                </Description>
+            </DocsPageHeader>
             <div class="d-flex flex-row mt-5">
                 <MudSwitch Color="Color.Primary" @bind-Checked="@nullable">Nullable variants</MudSwitch>
                 <MudSwitch Color="Color.Secondary" @bind-Checked="@unsigned">Unsigned variants</MudSwitch>
@@ -355,11 +356,10 @@
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader>
-                <Title>DateConverter</Title>
+            <SectionHeader Title="DateConverter">
                 <Description>
                     <MudText>
-                        By default the <CodeInline>DefaultConverter</CodeInline> uses your local culture settings. If you want to change that you can either set the <CodeInline>Culture</CodeInline> of individual inputs or converters, or change it globally
+                        By default, the <CodeInline>DefaultConverter</CodeInline> uses your local culture settings. If you want to change that, you can either set the <CodeInline>Culture</CodeInline> of individual inputs or converters, or change it globally
                         by setting <CodeInline>Converters.DefaultCulture</CodeInline> to your desired <CodeInline>CultureInfo</CodeInline> at application start.
                     </MudText>
                     <MudText Class="mt-4">
@@ -373,14 +373,13 @@
             <SectionContent DarkenBackground="false" FullWidth="true">
                 <TurkeyTestExample />
             </SectionContent>
-            <SectionSource Code="TurkeyTestExample" ShowCode="true" />
+            <SectionSource Code="TurkeyTestExample" ShowCode="false" />
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader>
-                <Title>Custom Binding Converters</Title>
+            <SectionHeader Title="Custom Binding Converters">
                 <Description>
-                    If you need some really special binding conversion it is very easy to plug in your own converter.
+                    If you need some really special binding conversion, it is very easy to plug in your own converter.
                     Just create a <CodeInline>Converter<Tag>T</Tag></CodeInline> and set the <CodeInline>SetFunc</CodeInline> and the <CodeInline>GetFunc</CodeInline>.
                     <MudText>
                         Type in the textfield to set the switch or flip the switch to set the text:

@@ -13,44 +13,32 @@
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader>
-                <Title>Usage</Title>
+            <SectionHeader Title="Usage">
                 <Description>
                     Suppose you define a <CodeInline>MudDialog</CodeInline> in <CodeInline Class="docs-code-tertiary">TermsOfServiceDialog.razor</CodeInline>. 
                     To show the dialog you simply call:
                     <p> 
                     <CodeInline>DialogService.Show&lt;<CodeInline Class="docs-code-tertiary">TermsOfServiceDialog</CodeInline>&gt;("Terms");</CodeInline>
                     </p>
-                    The advantage of having the dialog in its own razor component is obviously the ability to reuse it throughout your code-base. 
+                    The advantage of having the dialog in its own Razor component is obviously the ability to reuse it throughout your code-base. 
                     You can pass parameters to your dialog on show which allow you to load the dialog with custom data.
                 </Description>
             </SectionHeader>
             <SectionContent Outlined="true">
                 <DialogUsageExample />
             </SectionContent>
-            <MudTabs Rounded="true" Outlined="true" Class="mt-4">
-                <MudTabPanel Text="Page.razor" >
-                    <SectionSource Code="DialogUsageExample" GitHubFolderName="Dialog" Class="mt-n11" />
-                </MudTabPanel>
-                <MudTabPanel Text="Dialog.razor" >
-                    <SectionSource Code="DialogUsageExample_Dialog" GitHubFolderName="Dialog" Class="mt-n11" />
-                </MudTabPanel>
-            </MudTabs>
-        </DocsPageSection>
-        <DocsPageSection>
-            <MudDivider Class="my-16" Style="opacity: 0;" />
+                <SectionSource Code="DialogUsageExample" Code2="DialogUsageExample_Dialog" ButtonTextCode1="Page" ButtonTextCode2="Dialog" GitHubFolderName="Dialog" />
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader>
-                <Title>Configuration</Title>
+            <SectionHeader Title="Configuration">
                 <Description>
-                    The dialogs default behavior can be changed in two ways, either globaly with parameters in the <CodeInline>&lt;MudDialogProvider/&gt;</CodeInline> or pass down the <CodeInline>DialogOptions</CodeInline> class when you open the dialog.
+                    The dialog's default behavior can be changed in two ways, either globally with parameters in the <CodeInline>&lt;MudDialogProvider/&gt;</CodeInline> or pass down the <CodeInline>DialogOptions</CodeInline> class when you open the dialog.
                 </Description>
             </SectionHeader>
             <SectionHeader>
                 <SubTitle>1. Global Settings</SubTitle>
-                <Description>In the file where you added <CodeInline>&lt;MudDialogProvider/&gt;</CodeInline> we can pass down different options as parameters. See <MudLink Href="/getting-started/installation">installation page</MudLink> for more information regarding this.</Description>
+                <Description>In the file where you added <CodeInline>&lt;MudDialogProvider/&gt;</CodeInline>, we can pass down different options as parameters. See <MudLink Href="/getting-started/installation">installation page</MudLink> for more information regarding this.</Description>
             </SectionHeader>
             <MarkdownDialogParameters />
             <SectionHeader>
@@ -62,14 +50,7 @@
             <SectionContent Outlined="true">
                 <DialogOptionsExample />
             </SectionContent>
-            <MudTabs Rounded="true" Outlined="true" Class="mt-4">
-                <MudTabPanel Text="Page.razor" >
-                    <SectionSource Code="DialogOptionsExample" GitHubFolderName="Dialog" Class="mt-n11" />
-                </MudTabPanel>
-                <MudTabPanel Text="Dialog.razor" >
-                    <SectionSource Code="DialogUsageExample_Dialog" GitHubFolderName="Dialog" Class="mt-n11" />
-                </MudTabPanel>
-            </MudTabs>
+            <SectionSource Code="DialogOptionsExample" Code2="DialogUsageExample_Dialog" ButtonTextCode1="Page" ButtonTextCode2="Dialog" GitHubFolderName="Dialog" ShowCode="false" />
             <SectionHeader>
                 <SubTitle>3. Per Dialog (from dialog)</SubTitle>
                 <Description>
@@ -79,75 +60,43 @@
             <SectionContent Outlined="true">
                 <DialogSetOptionsExample />
             </SectionContent>
-            <MudTabs Rounded="true" Outlined="true" Class="mt-4">
-                <MudTabPanel Text="Page.razor" >
-                    <SectionSource Code="DialogSetOptionsExample" GitHubFolderName="Dialog" Class="mt-n11" />
-                </MudTabPanel>
-                <MudTabPanel Text="Dialog.razor" >
-                    <SectionSource Code="DialogSetOptionsExample_Dialog" GitHubFolderName="Dialog" Class="mt-n11" />
-                </MudTabPanel>
-            </MudTabs>
+            <SectionSource Code="DialogSetOptionsExample" Code2="DialogSetOptionsExample_Dialog" ButtonTextCode1="Page" ButtonTextCode2="Dialog" GitHubFolderName="Dialog" />
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader>
-                <Title>Templating and Passing Simple Data</Title>
-                <Description>In this section we will demonstrate how you can build one dialog but use it for multiple purposes.</Description>
+            <SectionHeader Title="Templating and Passing Simple Data">
+                <Description>In this section, we will demonstrate how you can build one dialog and reuse it for multiple purposes.</Description>
             </SectionHeader>
             <SectionContent Outlined="true">
                 <DialogTemplateExample />
             </SectionContent>
-            <MudTabs Rounded="true" Outlined="true" Class="mt-4">
-                <MudTabPanel Text="Page.razor" >
-                    <SectionSource Code="DialogTemplateExample" GitHubFolderName="Dialog" Class="mt-n11" />
-                </MudTabPanel>
-                <MudTabPanel Text="Dialog.razor" >
-                    <SectionSource Code="DialogTemplateExample_Dialog" GitHubFolderName="Dialog" Class="mt-n11" />
-                </MudTabPanel>
-            </MudTabs>
+            <SectionSource Code="DialogTemplateExample" Code2="DialogTemplateExample_Dialog" ButtonTextCode1="Page" ButtonTextCode2="Dialog" GitHubFolderName="Dialog" ShowCode="false" />
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader>
-                <Title>Passing Data</Title>
-                <Description>Here is a little more advanced use case, we will use the same dialog but feed it with different server data and then mimmic a delete operation.</Description>
+            <SectionHeader Title="Passing Data">
+                <Description>Here is a little more advanced use case. We will use the same dialog but feed it with different server data and then mimic a delete operation.</Description>
             </SectionHeader>
             <SectionContent DarkenBackground="true">
                 <DialogPassingDataExample />
             </SectionContent>
-            <MudTabs Rounded="true" Outlined="true" Class="mt-4">
-                <MudTabPanel Text="Page.razor" >
-                    <SectionSource Code="DialogPassingDataExample" GitHubFolderName="Dialog" Class="mt-n11" />
-                </MudTabPanel>
-                <MudTabPanel Text="Dialog.razor" >
-                    <SectionSource Code="DialogPassingDataExample_Dialog" GitHubFolderName="Dialog" Class="mt-n11" />
-                </MudTabPanel>
-            </MudTabs>
+            <SectionSource Code="DialogPassingDataExample" Code2="DialogPassingDataExample_Dialog" ButtonTextCode1="Page" ButtonTextCode2="Dialog" GitHubFolderName="Dialog" ShowCode="false" />
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader>
-                <Title>Scrollable Dialog</Title>
+            <SectionHeader Title="Scrollable Dialog">
                 <Description>Quick example on how to give your dialog scrollable content.</Description>
             </SectionHeader>
             <SectionContent Outlined="true">
                 <DialogScrollableExample />
             </SectionContent>
-            <MudTabs Rounded="true" Outlined="true" Class="mt-4">
-                <MudTabPanel Text="Page.razor" >
-                    <SectionSource Code="DialogScrollableExample" GitHubFolderName="Dialog" Class="mt-n11" />
-                </MudTabPanel>
-                <MudTabPanel Text="Dialog.razor" >
-                    <SectionSource Code="DialogScrollableExample_Dialog" GitHubFolderName="Dialog" Class="mt-n11" />
-                </MudTabPanel>
-            </MudTabs>
+            <SectionSource Code="DialogScrollableExample" Code2="DialogScrollableExample_Dialog" ButtonTextCode1="Page" ButtonTextCode2="Dialog" GitHubFolderName="Dialog" ShowCode="false" />
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader>
-                <Title>Inlining Dialog</Title>
+            <SectionHeader Title="Inlining Dialog">
                 <Description>
-                    You can inline <CodeInline>MudDialog</CodeInline> directly in another component which of course makes most sense for small dialogs that are not re-used somewhere else.
+                    You can inline <CodeInline>MudDialog</CodeInline> directly in another component which, of course, makes most sense for small dialogs that are not re-used somewhere else.
                     The advantage is that you can easily share code and data between dialog and owning component via bindings.
                     <br />
                     This example also shows how to override the dialog title with a render fragment. 
@@ -156,7 +105,7 @@
             <SectionContent Outlined="true">
                 <DialogInlineExample />
             </SectionContent>
-            <SectionSource Code="DialogInlineExample" GitHubFolderName="Dialog" Class="mt-8" />
+            <SectionSource Code="DialogInlineExample" GitHubFolderName="Dialog" ShowCode="false" />
         </DocsPageSection>
 
     </DocsPageContent>
