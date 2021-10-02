@@ -22,6 +22,12 @@ namespace MudBlazor
             .AddClass(Class)
             .Build();
 
+        [Inject] private IKeyInterceptor _keyInterceptor { get; set; }
+
+        [Inject] IScrollManager ScrollManager { get; set; }
+
+        private ElementReference _self;
+
         /// <summary>
         /// Add the MudSelectItems here
         /// </summary>
