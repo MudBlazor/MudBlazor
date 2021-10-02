@@ -39,8 +39,11 @@ namespace MudBlazor
         {
             if (_items == null || _items.Count == 0)
                 return;
-            string val = Converter.Set(Value);
-            itemIndex = _items.FindIndex(e => Converter.Set(e.Value) == val);
+            if (!MultiSelection)
+            {
+                string val = Converter.Set(Value);
+                itemIndex = _items.FindIndex(e => Converter.Set(e.Value) == val);
+            }
 
             for (int i = 0; i <= _items.Count; i++)
             {
@@ -84,8 +87,11 @@ namespace MudBlazor
             {
                 if (_items == null || _items.Count == 0)
                     return;
-                string val = Converter.Set(Value);
-                itemIndex = _items.FindIndex(e => Converter.Set(e.Value) == val);
+                if (!MultiSelection)
+                {
+                    string val = Converter.Set(Value);
+                    itemIndex = _items.FindIndex(e => Converter.Set(e.Value) == val);
+                }
 
                 for (int i = 0; i <= _items.Count; i++)
                 {
@@ -136,6 +142,8 @@ namespace MudBlazor
             }
         }
 
+        private string popoverId = "asd";
+
         private async Task SelectLastItem()
         {
             if (_items == null || _items.Count == 0)
@@ -150,6 +158,7 @@ namespace MudBlazor
                     _selectedValues.Add(_items[itemIndex].Value);
                     await SetValueAsync(_items[itemIndex].Value, updateText: true);
                     HilightItem(_items[itemIndex]);
+                    await ScrollManager.ScrollToAsync(popoverId, 0, 100, ScrollBehavior.Smooth);
                     break;
                 }
             }
@@ -589,6 +598,7 @@ namespace MudBlazor
                         new KeyOptions { Key="ArrowDown", PreventDown = "key+none" }, // prevent scrolling page, instead decrement
                         new KeyOptions { Key="Home", PreventDown = "key+none" },
                         new KeyOptions { Key="End", PreventDown = "key+none" },
+                        new KeyOptions { Key="Enter", PreventDown = "key+none" },
                     },
                 });
             }
@@ -731,12 +741,21 @@ namespace MudBlazor
                     }
                     else
                     {
-                        await SelectOption(_items[itemIndex].Value);
-                        await _elementReference.SetText(Text);
-                        break;
+                        if (_isOpen == false)
+                        {
+                            _isOpen = true;
+                            break;
+                        }
+                        else
+                        {
+                            await SelectOption(_items[itemIndex].Value);
+                            await _elementReference.SetText(Text);
+                            break;
+                        }
                     }
             }
             OnKeyDown.InvokeAsync(obj).AndForget();
+            
         }
 
         internal void HandleKeyUp(KeyboardEventArgs obj)
