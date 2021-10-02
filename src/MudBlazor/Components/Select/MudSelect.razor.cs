@@ -12,7 +12,7 @@ namespace MudBlazor
 {
     public partial class MudSelect<T> : MudBaseInput<T>, IMudSelect
     {
-        private HashSet<T> _selectedValues;
+        private HashSet<T> _selectedValues = new HashSet<T>();
         private bool _dense;
         private string multiSelectionText;
         private bool? _selectAllChecked;
