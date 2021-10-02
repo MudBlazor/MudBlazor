@@ -449,9 +449,9 @@ namespace MudBlazor
         private Placement GetTooltipPlacement()
         {
             if (Position == Position.Right)
-                return Placement.Start;
+                return Placement.Left;
             else if (Position == Position.Left)
-                return Placement.End;
+                return Placement.Right;
             else if (Position == Position.Bottom)
                 return Placement.Top;
             else
