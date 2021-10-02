@@ -630,7 +630,6 @@ namespace MudBlazor
         {
             _isOpen = false;
             UpdateIcon();
-            await Task.Delay(1);
             if (focusAgain == true)
             {
                 StateHasChanged();
