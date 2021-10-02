@@ -55,7 +55,6 @@ namespace MudBlazor
                         _selectedValues.Clear();
                         _selectedValues.Add(_items[itemIndex].Value);
                         await SetValueAsync(_items[itemIndex].Value, updateText: true);
-                        await SetTextAsync(_items[itemIndex].Value.ToString(), false);
                         HilightItem(_items[itemIndex]);
                         break;
                     }
@@ -109,7 +108,6 @@ namespace MudBlazor
                         else
                         {
                             await SetValueAsync(_items[itemIndex].Value, updateText: true);
-                            await SetTextAsync(_items[itemIndex].Value.ToString(), updateValue: false);
                             HilightItem(_items[itemIndex]);
                             break;
                         }
