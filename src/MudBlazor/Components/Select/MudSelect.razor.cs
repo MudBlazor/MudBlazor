@@ -24,6 +24,8 @@ namespace MudBlazor
 
         [Inject] private IKeyInterceptor _keyInterceptor { get; set; }
 
+        [Inject] IScrollManager ScrollManager { get; set; }
+
         private ElementReference _self;
 
         /// <summary>
@@ -42,7 +44,7 @@ namespace MudBlazor
 
             for (int i = 0; i <= _items.Count; i++)
             {
-                itemIndex = itemIndex + 1;
+                itemIndex += 1;
                 if (_items.Count <= itemIndex)
                 {
                     break;
@@ -61,11 +63,19 @@ namespace MudBlazor
                     else
                     {
                         await SetValueAsync(_items[itemIndex].Value, updateText: true);
+                        await SetTextAsync(_items[itemIndex].Value.ToString(), false);
                         HilightItem(_items[itemIndex]);
                         break;
                     }
                 }
             }
+        }
+
+        private readonly string _componentId = Guid.NewGuid().ToString();
+
+        private string GetListItemId(in int index)
+        {
+            return $"{_componentId}_item{index}";
         }
 
         private async Task SelectPreviousItem()
@@ -96,6 +106,7 @@ namespace MudBlazor
                         }
                         else
                         {
+                            await SetValueAsync(_items[itemIndex].Value, updateText: true);
                             await SetTextAsync(_items[itemIndex].Value.ToString(), updateValue: false);
                             HilightItem(_items[itemIndex]);
                             break;
@@ -498,7 +509,7 @@ namespace MudBlazor
             if (MultiSelection && SelectAll)
             {
                 if (SelectedValues.Count == 0)
-                { 
+                {
                     _selectAllChecked = false;
                 }
                 else if (_items.Count == SelectedValues.Count)
@@ -715,34 +726,13 @@ namespace MudBlazor
                 case "Enter":
                     if (!MultiSelection)
                     {
-                        _isOpen = false;
+                        _isOpen = !_isOpen;
                         break;
                     }
                     else
                     {
-                        bool isAlreadySelected = false;
-                        foreach (T val in _selectedValues)
-                        {
-                            if (val.ToString() == _items[itemIndex].Value.ToString())
-                            {
-                                isAlreadySelected = true;
-                            }
-                        }
-
-                        if (!isAlreadySelected)
-                        {
-                            _selectedValues.Add(_items[itemIndex].Value);
-                        }
-                        else
-                        {
-                            _selectedValues.Remove(_items[itemIndex].Value);
-                        }
-
-                        _key++;
-                        await Task.Delay(1);
-                        StateHasChanged();
-                        await Task.Delay(1);
-                        _elementReference.FocusAsync().AndForget();
+                        await SelectOption(_items[itemIndex].Value);
+                        await _elementReference.SetText(Text);
                         break;
                     }
             }
