@@ -748,6 +748,75 @@ namespace MudBlazor
             }
         }
 
+        protected async Task HandleKeyDown(KeyboardEventArgs obj)
+        {
+            if (Disabled || ReadOnly)
+                return;
+            switch (obj.Key)
+            {
+                case "Tab":
+                    CloseMenu(false);
+                    break;
+                case "ArrowUp":
+                    await SelectPreviousItem();
+                    await _elementReference.SetText(Text);
+                    //_key++;
+                    //await Task.Delay(1);
+                    //StateHasChanged();
+                    //await Task.Delay(1);
+                    //_elementReference.FocusAsync().AndForget();
+                    break;
+                case "ArrowDown":
+                    await SelectNextItem();
+                    await _elementReference.SetText(Text);
+                    //_key++;
+                    //await Task.Delay(1);
+                    //StateHasChanged();
+                    //await Task.Delay(1);
+                    //_elementReference.FocusAsync().AndForget();
+                    break;
+                case " ":
+                    _isOpen = !_isOpen;
+                    break;
+                case "Escape":
+                    CloseMenu(true);
+                    break;
+                case "Home":
+                    await SelectFirstItem();
+                    break;
+                case "End":
+                    await SelectLastItem();
+                    break;
+                case "Enter":
+                    if (!MultiSelection)
+                    {
+                        _isOpen = !_isOpen;
+                        break;
+                    }
+                    else
+                    {
+                        if (_isOpen == false)
+                        {
+                            _isOpen = true;
+                            break;
+                        }
+                        else
+                        {
+                            await SelectOption(_items[itemIndex].Value);
+                            await _elementReference.SetText(Text);
+                            break;
+                        }
+                    }
+            }
+            OnKeyDown.InvokeAsync(obj).AndForget();
+
+        }
+
+        internal void HandleKeyUp(KeyboardEventArgs obj)
+        {
+            OnKeyUp.InvokeAsync(obj).AndForget();
+        }
+
         /// <summary>
         /// Clear the selection
         /// </summary>
