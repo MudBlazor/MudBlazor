@@ -7,7 +7,7 @@
 		<MudInputControl Label="@Label" Variant="@Variant" HelperText="@HelperText" HelperTextOnFocus="@HelperTextOnFocus" FullWidth="@FullWidth" Margin="@Margin" Class="@Classname" Style="@Style"
 						 Error="@Error" ErrorText="@ErrorText" Disabled="@Disabled" @onclick="@ToggleMenu" Required="@Required">
 			<InputContent>
-				<MudInput @ref="_elementReference" InputType="@(CanRenderValue || (Strict && !IsValueInList) ? InputType.Hidden : InputType.Text)"
+				<MudInput @ref="_elementReference"
 						  Class="mud-select-input" Margin="@Margin" Placeholder="@Placeholder"
 						  Variant="@Variant"
 						  TextUpdateSuppression="@TextUpdateSuppression"
@@ -31,7 +31,7 @@
 										 Dense="@Dense" Class="mud-list-item-clickable mud-select-all mud-typography-body1" />
 							}
 						</MudElement>
-						<MudList Clickable="true" Dense="@Dense">
+						<MudList Clickable="true" Dense="@Dense" @bind-SelectedValue="_activeItemId">
 								@ChildContent
 						</MudList>
 					</CascadingValue>
@@ -47,4 +47,4 @@
 
 </CascadingValue>
 
-<MudOverlay Visible="_isOpen" OnClick="@CloseMenu" LockScroll="false" />
+<MudOverlay Visible="_isOpen" OnClick="@(() => CloseMenu(false))" LockScroll="@LockScroll" />
