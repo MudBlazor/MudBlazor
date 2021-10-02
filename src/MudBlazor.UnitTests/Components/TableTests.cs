@@ -1269,6 +1269,10 @@ namespace MudBlazor.UnitTests.Components
             //Check the component rendered correctly with the initial RowsPerPage
             var t = tableComponent.Find("input.mud-select-input").GetAttribute("Value");
             int.Parse(t).Should().Be(rowsPerPage, "The component rendered correctly");
+            //open the menu
+            var menuItem = tableComponent.Find("div.mud-input-control");
+            menuItem.Click();
+            
             //Now select the 25 and check it
             var items = tableComponent.FindAll("div.mud-list-item").ToArray();
             items[1].Click();

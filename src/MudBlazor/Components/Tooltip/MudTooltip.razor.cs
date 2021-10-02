@@ -12,19 +12,31 @@ namespace MudBlazor
             .AddClass("mud-tooltip-inline", Inline)
             .Build();
         protected string Classname => new CssBuilder("mud-tooltip")
-            .AddClass($"mud-tooltip-placement-{ConvertPlacement(Placement).ToDescriptionString()}")
-             .AddClass("mud-tooltip-visible", _isVisible)
+            .AddClass($"mud-tooltip-default", Color == Color.Default)
+            .AddClass($"mud-tooltip-{ConvertPlacement().ToDescriptionString()}")
+            .AddClass($"mud-tooltip-arrow", Arrow)
+            .AddClass($"mud-border-{Color.ToDescriptionString()}", Arrow && Color != Color.Default)
+            .AddClass($"mud-theme-{Color.ToDescriptionString()}", Color != Color.Default)
             .AddClass(Class)
             .Build();
-
 
         [CascadingParameter]
         public bool RightToLeft { get; set; }
 
         /// <summary>
+        /// The color of the component. It supports the theme colors.
+        /// </summary>
+        [Parameter] public Color Color { get; set; } = Color.Default;
+
+        /// <summary>
         /// Sets the text to be displayed inside the tooltip.
         /// </summary>
         [Parameter] public string Text { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        [Parameter] public bool Arrow { get; set; }
 
         /// <summary>
         /// Changes the default transition delay in milliseconds.
@@ -47,14 +59,38 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public Placement Placement { get; set; } = Placement.Bottom;
 
-        private Placement ConvertPlacement(Placement placement)
+        private Origin AnchorOrigin;
+        private Origin TransformOrigin;
+
+        private Origin ConvertPlacement()
         {
-            return placement switch
+            if(Placement == Placement.Bottom)
             {
-                Placement.Start => RightToLeft ? Placement.Right : Placement.Left,
-                Placement.End => RightToLeft ? Placement.Left : Placement.Right,
-                _ => placement
-            };
+                AnchorOrigin = Origin.BottomCenter;
+                TransformOrigin = Origin.TopCenter;
+                return Origin.BottomCenter;
+            }
+            if(Placement == Placement.Top)
+            {
+                AnchorOrigin = Origin.TopCenter;
+                TransformOrigin = Origin.BottomCenter;
+                return Origin.TopCenter;
+            }
+            if(Placement == Placement.Left || Placement == Placement.Start && !RightToLeft || Placement == Placement.End && RightToLeft)
+            {
+                AnchorOrigin = Origin.CenterLeft;
+                TransformOrigin = Origin.CenterRight;
+                return Origin.CenterLeft;
+            }
+            if (Placement == Placement.Right || Placement == Placement.End && !RightToLeft || Placement == Placement.Start && RightToLeft)
+            {
+                AnchorOrigin = Origin.CenterRight;
+                TransformOrigin = Origin.CenterLeft;
+                return Origin.CenterRight;
+            }
+            else{
+                return Origin.BottomCenter;
+            }
         }
 
         /// <summary>
@@ -70,13 +106,11 @@ namespace MudBlazor
         /// <summary>
         /// Determines if this component should be inline with it's surrounding (default) or if it should behave like a block element.
         /// </summary>
-        [Parameter] public Boolean Inline { get; set; } = true;
+        [Parameter] public bool Inline { get; set; } = true;
 
         private bool _isVisible;
         public void HandleMouseOver() => _isVisible = true;
         private void HandleMouseOut() => _isVisible = false;
-
-
 
         protected string GetTimeDelay()
         {
