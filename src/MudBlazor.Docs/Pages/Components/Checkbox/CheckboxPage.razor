@@ -8,7 +8,7 @@
     </DocsPageHeader>
     <DocsPageContent>
         <DocsPageSection>
-            <SectionHeader Title="Basic checkboxes">
+            <SectionHeader Title="Basic Checkboxes">
                 <Description></Description>
             </SectionHeader>
             <SectionContent Outlined="true">
@@ -58,7 +58,7 @@
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader Title="Indeterminate state">
+            <SectionHeader Title="Indeterminate State">
                 <Description>
                     When you use <CodeInline>T="bool?"</CodeInline> or bind the checkbox against a nullable bool it can have an indeterminate state when the value is <CodeInline>null</CodeInline>.
                     <p></p>
@@ -76,23 +76,41 @@
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader Title="Binding checkbox against different data types">
+            <SectionHeader Title="Binding Checkbox Against Different Data Types">
                 <Description></Description>
             </SectionHeader>
             <SectionContent Outlined="true">
                 <CheckboxConversionExample />
             </SectionContent>
-            <SectionSource Code="CheckboxConversionExample" GitHubFolderName="Switch" ShowCode="false" />
+            <SectionSource Code="CheckboxConversionExample" GitHubFolderName="Checkbox" ShowCode="false" />
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader Title="ReadOnly mode">
+            <SectionHeader Title="ReadOnly Mode">
                 <Description>Setting <CodeInline>ReadOnly="true"</CodeInline> will make the checkbox control stop listening to user input.</Description>
             </SectionHeader>
             <SectionContent Outlined="true">
                 <CheckboxReadOnlyExample />
             </SectionContent>
             <SectionSource Code="CheckboxReadOnlyExample" GitHubFolderName="Checkbox" ShowCode="false" />
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Keyboard Navigation">
+                <Description>
+                    <MudText>MudCheckBox accepts keys to keyboard navigation.</MudText>
+                    <br />
+                    <MudText><CodeInline>Space</CodeInline> key to toggle state true/false/(if TriState is true) indeterminate</MudText>
+                    <MudText><CodeInline>Escape</CodeInline> key to set UnChecked</MudText>
+                    <MudText><CodeInline>Enter</CodeInline> or <CodeInline>NumpadEnter</CodeInline> keys to set Checked</MudText>
+                    <MudText><CodeInline>Backspace</CodeInline> key to set indeterminate (only TriState is true)</MudText>
+                    <MudText>*Disabled or ReadOnly checkboxes cannot be changed by keys.</MudText>
+                </Description>
+            </SectionHeader>
+            <SectionContent Outlined="true">
+                <CheckboxKeyboardNavigationExample />
+            </SectionContent>
+            <SectionSource Code="CheckboxKeyboardNavigationExample" GitHubFolderName="Checkbox" ShowCode="false" />
         </DocsPageSection>
     </DocsPageContent>
 </DocsPage>
