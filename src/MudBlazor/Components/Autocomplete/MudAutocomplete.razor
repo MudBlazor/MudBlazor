@@ -22,11 +22,10 @@
                           Placeholder="@Placeholder" Immediate="true"
                           InputMode="@InputMode" Pattern="@Pattern"
                           T="string" />
-                <MudPopover Open="@IsOpen" MaxHeight="@MaxHeight" Direction="@Direction" OffsetX="@OffsetX" OffsetY="@OffsetY" Class="@PopoverClass">
+                <MudPopover Open="@IsOpen" MaxHeight="@MaxHeight" AnchorOrigin="@_anchorOrigin" TransformOrigin="@_transformOrigin" Class="@PopoverClass" RelativeWidth="true">
                     @if (_items != null && _items.Length != 0)
                     {
-                        @*this must be the real scroll container, not the Popover, hence the maxheight*@
-                        <MudList Clickable="true" Dense="@Dense" Style=@($"max-height: {MaxHeight}px; overflow-y:auto;")>
+                        <MudList Clickable="true" Dense="@Dense">
                             @for (var index = 0; index < _items.Length; index++)
                             {
                                 var item = _items[index];

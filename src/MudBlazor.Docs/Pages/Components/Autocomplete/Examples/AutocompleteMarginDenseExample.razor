@@ -1,11 +1,35 @@
-﻿@namespace MudBlazor.UnitTests.Components
+﻿@namespace MudBlazor.Docs.Examples
 
-<MudPortalProvider />
-
-<MudAutocomplete   @bind-Value="value1" SearchFunc="@Search1" />
-    
+<MudGrid>
+    <MudItem xs="12" sm="6">
+        <div>
+            <MudCheckBox T="bool" CheckedChanged="ChangeMargin" Color="Color.Primary" Label="@(" Margin: " + _margin)" />
+        </div>
+        <div>
+            <MudCheckBox @bind-Checked="_dense" Color="Color.Primary" Label="@(" Dense: " + _dense)" />
+        </div>
+    </MudItem>
+    <MudItem xs="12" sm="6" md="4">
+        <MudAutocomplete T="string" Label="US States" @bind-Value="value1" SearchFunc="@Search1" Margin="@_margin" Dense="@_dense" Variant="Variant.Outlined" />
+    </MudItem>
+</MudGrid>
 
 @code {
+    Margin _margin = Margin.None;
+    bool _dense = false;
+
+    private void ChangeMargin()
+    {
+        if (_margin == Margin.None)
+        {
+            _margin = Margin.Dense;
+        }
+        else
+        {
+            _margin = Margin.None;
+        }
+    }
+
     private string value1;
     private string[] states =
     {
@@ -24,7 +48,7 @@
         "Texas", "Utah", "Vermont", "Virgin Island", "Virginia",
         "Washington", "West Virginia", "Wisconsin", "Wyoming",
     };
-      public static string __description__ = "basic example of a portaled Autocomplete";
+
     private async Task<IEnumerable<string>> Search1(string value)
     {
         // In real life use an asynchronous function for fetching data from an api.
@@ -35,6 +59,4 @@
             return states;
         return states.Where(x => x.Contains(value, StringComparison.InvariantCultureIgnoreCase));
     }
-
-    
 }

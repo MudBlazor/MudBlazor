@@ -5,7 +5,7 @@
     @ChildContent
 	@if (Visible)
 	{
-		<span class="mud-badge-wrapper">
+		<span class="@WrapperClass">
 			<span class="@BadgeClass" @onclick="HandleBadgeClick">
 				@if (!Dot)
 				{

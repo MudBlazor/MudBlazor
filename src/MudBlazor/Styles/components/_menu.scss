@@ -7,14 +7,3 @@
     cursor: pointer;
 }
 
-.mud-menu-container {
-    max-width: max-content;
-    width: max-content !important;
-
-    &.mud-menu-fullwidth {
-        width: 100% !important;
-        max-width: none;
-    }
-}
-
-

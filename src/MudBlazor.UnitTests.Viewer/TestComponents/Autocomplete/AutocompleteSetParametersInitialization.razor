@@ -3,6 +3,9 @@
  @* Based on this try https://try.mudblazor.com/snippet/GacPunvDUyjdUJAh
   and this issue https://github.com/MudBlazor/MudBlazor/issues/1235*@
 
+<MudPopoverProvider></MudPopoverProvider>
+
+
 <MudAutocomplete T="ExternalList" SearchFunc="@Search2" @bind-Value="SelectedValue" ToStringFunc="@(e => e == null ? null : $"{e.Name}")" />
 
 @code {
