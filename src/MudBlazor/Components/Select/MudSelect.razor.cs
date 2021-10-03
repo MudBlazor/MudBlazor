@@ -479,6 +479,17 @@ namespace MudBlazor
         }
 #pragma warning restore CS0618 // Type or member is obsolete
 
+        public async Task SelectOption(int index)
+        {
+            if (index < 0 || index >= _items.Count)
+            {
+                if(!MultiSelection)
+                    CloseMenu();
+                return;
+            }
+            await SelectOption(_items[index].Value);
+        }
+
         public async Task SelectOption(object obj)
         {
             var value = (T)obj;
@@ -769,7 +780,13 @@ namespace MudBlazor
                 case "Enter":
                     if (!MultiSelection)
                     {
-                        _isOpen = !_isOpen;
+                        if (!_isOpen)
+                        {
+                            OpenMenu();
+                            return;
+                        }
+                        // this also closes the menu
+                        await SelectOption(_hilitedItemIndex);
                         break;
                     }
                     else
