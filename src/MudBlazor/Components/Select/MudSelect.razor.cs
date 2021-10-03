@@ -642,13 +642,16 @@ namespace MudBlazor
                     TargetClass = "mud-input-slot",
                     Keys = {
                         new KeyOptions { Key=" ", PreventDown = "key+none" }, //prevent scrolling page, toggle open/close
-                        new KeyOptions { Key="ArrowUp", PreventDown = "key+none" }, // prevent scrolling page, instead increment
-                        new KeyOptions { Key="ArrowDown", PreventDown = "key+none" }, // prevent scrolling page, instead decrement
+                        new KeyOptions { Key="ArrowUp", PreventDown = "key+none" }, // prevent scrolling page, instead hilight previous item
+                        new KeyOptions { Key="ArrowDown", PreventDown = "key+none" }, // prevent scrolling page, instead hilight next item
                         new KeyOptions { Key="Home", PreventDown = "key+none" },
                         new KeyOptions { Key="End", PreventDown = "key+none" },
                         new KeyOptions { Key="Enter", PreventDown = "key+none" },
+                        new KeyOptions { Key="/./", SubscribeDown = true, SubscribeUp = true }, // for our users
                     },
                 });
+                _keyInterceptor.KeyDown += HandleKeyDown;
+                _keyInterceptor.KeyUp += HandleKeyUp;
             }
             await base.OnAfterRenderAsync(firstRender);
         }
@@ -734,7 +737,7 @@ namespace MudBlazor
             }
         }
 
-        protected async Task HandleKeyDown(KeyboardEventArgs obj)
+        private async void HandleKeyDown(KeyboardEventArgs obj)
         {
             if (Disabled || ReadOnly)
                 return;
@@ -788,7 +791,7 @@ namespace MudBlazor
 
         }
 
-        internal void HandleKeyUp(KeyboardEventArgs obj)
+        private void HandleKeyUp(KeyboardEventArgs obj)
         {
             OnKeyUp.InvokeAsync(obj).AndForget();
         }
