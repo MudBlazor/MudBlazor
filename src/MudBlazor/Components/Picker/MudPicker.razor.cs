@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Web;
+using MudBlazor.Services;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
@@ -25,6 +27,10 @@ namespace MudBlazor
 
         public MudPicker() : base(new Converter<T, string>()) { }
         protected MudPicker(Converter<T, string> converter) : base(converter) { }
+
+        [Inject] private IKeyInterceptor _keyInterceptor { get; set; }
+
+        private ElementReference _self;
 
         [Inject] private IBrowserWindowSizeProvider WindowSizeListener { get; set; }
 
@@ -341,6 +347,24 @@ namespace MudBlazor
             }
         }
 
+        protected override async Task OnAfterRenderAsync(bool firstRender)
+        {
+            if (firstRender)
+            {
+                await _keyInterceptor.Connect(_self, new KeyInterceptorOptions()
+                {
+                    //EnableLogging = true,
+                    TargetClass = "mud-input-slot",
+                    Keys = {
+                        new KeyOptions { Key=" ", PreventDown = "key+none" },
+                        new KeyOptions { Key="Enter", PreventDown = "key+none" },
+                        new KeyOptions { Key="NumpadEnter", PreventDown = "key+none" },
+                    },
+                });
+            }
+            await base.OnAfterRenderAsync(firstRender);
+        }
+
         protected void ToggleState()
         {
             if (Disabled)
@@ -441,6 +465,48 @@ namespace MudBlazor
             {
                 _pickerHorizontalPosition = size.Width > clientRect.Width ?
                     PickerHorizontalPosition.Right : PickerHorizontalPosition.Left;
+            }
+        }
+
+        protected void HandleKeyDown(KeyboardEventArgs obj)
+        {
+            if (Disabled || ReadOnly)
+                return;
+            switch (obj.Key)
+            {
+                case "Enter":
+                case "NumpadEnter":
+                    Open();
+                    break;
+                case "Escape":
+                    Close(false);
+                    break;
+                case "ArrowDown":
+                    if (obj.AltKey == true)
+                    {
+                        Open();
+                    }
+                    break;
+                case "ArrowUp":
+                    if (obj.AltKey == true)
+                    {
+                        Close(false);
+                    }
+                    break;
+                case " ":
+                    if (!Editable)
+                    {
+                        if (IsOpen)
+                        {
+                            Close(false);
+                        }
+                        else
+                        {
+                            Open();
+                        }
+                        
+                    }
+                    break;
             }
         }
     }
