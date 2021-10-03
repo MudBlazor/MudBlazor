@@ -479,6 +479,7 @@ namespace MudBlazor
                     Open();
                     break;
                 case "Escape":
+                case "Tab":
                     Close(false);
                     break;
                 case "ArrowDown":
