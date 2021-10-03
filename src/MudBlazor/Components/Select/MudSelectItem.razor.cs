@@ -31,12 +31,8 @@ namespace MudBlazor
                 if (_parent == null)
                     return;
                 _parent.CheckGenericTypeMatch(this);
-
                 if(MudSelect == null)
-                {
                     return;
-                }
-
                 bool isSelected = MudSelect.Add(this);
                 if ( _parent.MultiSelection)
                 {
@@ -50,7 +46,24 @@ namespace MudBlazor
             }
         }
 
-        [CascadingParameter(Name = "HideContent")]protected bool HideContent { get; set; }
+        private IMudShadowSelect  _shadowParent;
+        [CascadingParameter]
+        internal IMudShadowSelect IMudShadowSelect
+        {
+            get => _shadowParent;
+            set
+            {
+                _shadowParent = value;
+                ((MudSelect<T>)_shadowParent)?.RegisterShadowItem(this);
+            }
+        }
+
+        /// <summary>
+        /// Select items with HideContent==true are only there to register their RenderFragment with the select but
+        /// wont render and have no other purpose!
+        /// </summary>
+        [CascadingParameter(Name = "HideContent")]
+        internal bool HideContent { get; set; }
 
         internal MudSelect<T> MudSelect => (MudSelect<T>)IMudSelect;
 
@@ -125,6 +138,7 @@ namespace MudBlazor
             try
             {
                 MudSelect?.Remove(this);
+                ((MudSelect<T>)_shadowParent)?.UnregisterShadowItem(this);
             }
             catch (Exception) { }
         }

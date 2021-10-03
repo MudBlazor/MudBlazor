@@ -1,4 +1,8 @@
-﻿using System;
+﻿// Copyright (c) MudBlazor 2021
+// MudBlazor licenses this file to you under the MIT license.
+// See the LICENSE file in the project root for more information.
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -10,7 +14,7 @@ using MudBlazor.Utilities.Exceptions;
 
 namespace MudBlazor
 {
-    public partial class MudSelect<T> : MudBaseInput<T>, IMudSelect
+    public partial class MudSelect<T> : MudBaseInput<T>, IMudSelect, IMudShadowSelect
     {
         private HashSet<T> _selectedValues = new HashSet<T>();
         private bool _dense;
@@ -29,42 +33,39 @@ namespace MudBlazor
 
         private ElementReference _self;
 
-        private int itemIndex = 0;
+        private int _hilitedItemIndex = 0;
 
-        private async Task SelectNextItem()
+        private Task SelectNextItem() => SelectAdjacentItem(+1);
+
+        private Task SelectPreviousItem() => SelectAdjacentItem(-1);
+
+        private async Task SelectAdjacentItem(int direction)
         {
             if (_items == null || _items.Count == 0)
                 return;
-            if (!MultiSelection)
+            // the loop allows us to jump over disabled items until we reach the next non-disabled one
+            for (int i = 0; i < _items.Count; i++)
             {
-                string val = Converter.Set(Value);
-                itemIndex = _items.FindIndex(e => Converter.Set(e.Value) == val);
-            }
-
-            for (int i = 0; i <= _items.Count; i++)
-            {
-                itemIndex += 1;
-                if (_items.Count <= itemIndex)
+                _hilitedItemIndex = (_hilitedItemIndex + direction) % _items.Count;
+                // modulo of negative numbers is negative, so we add item count to get a valid positive index.
+                if (_hilitedItemIndex < 0)
+                    _hilitedItemIndex = _items.Count + _hilitedItemIndex;
+                if (_items[_hilitedItemIndex].Disabled)
+                    continue;
+                if (!MultiSelection)
                 {
+                    _selectedValues.Clear();
+                    _selectedValues.Add(_items[_hilitedItemIndex].Value);
+                    await SetValueAsync(_items[_hilitedItemIndex].Value, updateText: true);
+                    HilightItem(_items[_hilitedItemIndex]);
                     break;
                 }
-                else if ((itemIndex == -1 && _items[itemIndex].Disabled == false) || (itemIndex <= _items.Count && _items[itemIndex].Disabled == false))
+                else
                 {
-                    if (!MultiSelection)
-                    {
-                        _selectedValues.Clear();
-                        _selectedValues.Add(_items[itemIndex].Value);
-                        await SetValueAsync(_items[itemIndex].Value, updateText: true);
-                        HilightItem(_items[itemIndex]);
-                        break;
-                    }
-                    else
-                    {
-                        await SetValueAsync(_items[itemIndex].Value, updateText: true);
-                        await SetTextAsync(_items[itemIndex].Value.ToString(), false);
-                        HilightItem(_items[itemIndex]);
-                        break;
-                    }
+                    // in multiselect mode don't select anything, just hilight.
+                    // selecting is done by Enter
+                    HilightItem(_items[_hilitedItemIndex]);
+                    break;
                 }
             }
         }
@@ -76,83 +77,42 @@ namespace MudBlazor
             return $"{_componentId}_item{index}";
         }
 
-        private async Task SelectPreviousItem()
-        {
-            if (true)
-            {
-                if (_items == null || _items.Count == 0)
-                    return;
-                if (!MultiSelection)
-                {
-                    string val = Converter.Set(Value);
-                    itemIndex = _items.FindIndex(e => Converter.Set(e.Value) == val);
-                }
-
-                for (int i = 0; i <= _items.Count; i++)
-                {
-                    itemIndex = itemIndex - 1;
-                    if (itemIndex < 0)
-                    {
-                        break;
-                    }
-                    else if (_items[itemIndex].Disabled == false)
-                    {
-                        if (!MultiSelection)
-                        {
-                            _selectedValues.Clear();
-                            _selectedValues.Add(_items[itemIndex].Value);
-                            await SetValueAsync(_items[itemIndex].Value, updateText: true);
-                            HilightItem(_items[itemIndex]);
-                            break;
-                        }
-                        else
-                        {
-                            await SetValueAsync(_items[itemIndex].Value, updateText: true);
-                            HilightItem(_items[itemIndex]);
-                            break;
-                        }
-
-                    }
-                }
-
-            }
-        }
-
         private async Task SelectFirstItem()
         {
             if (_items == null || _items.Count == 0)
                 return;
             for (int i = 0; i < _items.Count; i++)
             {
-                itemIndex = i;
-                if (_items[itemIndex].Disabled == false)
+                _hilitedItemIndex = i;
+                if (_items[_hilitedItemIndex].Disabled == false)
                 {
+                    // TODO: MultiSelect!
                     _selectedValues.Clear();
-                    _selectedValues.Add(_items[itemIndex].Value);
-                    await SetValueAsync(_items[itemIndex].Value, updateText: true);
-                    HilightItem(_items[itemIndex]);
+                    _selectedValues.Add(_items[_hilitedItemIndex].Value);
+                    await SetValueAsync(_items[_hilitedItemIndex].Value, updateText: true);
+                    HilightItem(_items[_hilitedItemIndex]);
                     break;
                 }
             }
         }
 
-        private string popoverId = "asd";
-
         private async Task SelectLastItem()
         {
             if (_items == null || _items.Count == 0)
                 return;
-            itemIndex = _items.Count;
+            _hilitedItemIndex = _items.Count;
             for (int i = 0; i < _items.Count; i++)
             {
-                itemIndex -= 1;
-                if (_items[itemIndex].Disabled == false)
+                _hilitedItemIndex -= 1;
+                if (_items[_hilitedItemIndex].Disabled == false)
                 {
+                    // TODO: MultiSelect!
                     _selectedValues.Clear();
-                    _selectedValues.Add(_items[itemIndex].Value);
-                    await SetValueAsync(_items[itemIndex].Value, updateText: true);
-                    HilightItem(_items[itemIndex]);
-                    await ScrollManager.ScrollToAsync(popoverId, 0, 100, ScrollBehavior.Smooth);
+                    _selectedValues.Add(_items[_hilitedItemIndex].Value);
+                    await SetValueAsync(_items[_hilitedItemIndex].Value, updateText: true);
+                    var item = _items[_hilitedItemIndex];
+                    HilightItem(item);
+                    await ScrollManager.ScrollToAsync(item.ItemId, 0, 100, ScrollBehavior.Smooth);
                     break;
                 }
             }
@@ -292,6 +252,24 @@ namespace MudBlazor
                 StateHasChanged();
             }
             UpdateSelectAllChecked();
+            // it is impossible to prevent double registration of RenderFragment providers, so we remove them at this stage
+            // because their cascading value HideContent has been set now 
+            CleanupHiddenItems();
+        }
+
+        private void CleanupHiddenItems()
+        {
+            //// it is impossible to prevent double registration of RenderFragment providers, so we remove them here
+            //// because their cascading value HideContent has been set now 
+            //_items=_items.Where(x=>x.HideContent==false).ToList();
+            //var set=new HashSet<T>();
+            //_valueLookup = _items.Where(x=>
+            //{
+            //    var rv= x.Value != null && !set.Contains(x.Value);
+            //    if (x.Value!=null)
+            //        set.Add(x.Value);
+            //    return rv;
+            //}).ToDictionary(x => x.Value);
         }
 
         /// <summary>
@@ -303,7 +281,7 @@ namespace MudBlazor
             {
                 if (Value == null)
                     return false;
-                if (!_valueLookup.TryGetValue(Value, out var item))
+                if (!_shadowLookup.TryGetValue(Value, out var item))
                     return false;
                 return (item.ChildContent != null);
             }
@@ -315,7 +293,7 @@ namespace MudBlazor
             {
                 if (Value == null)
                     return false;
-                return _valueLookup.TryGetValue(Value, out var _);
+                return _shadowLookup.TryGetValue(Value, out var _);
             }
         }
 
@@ -323,9 +301,9 @@ namespace MudBlazor
         {
             if (Value == null)
                 return null;
-            if (!_valueLookup.TryGetValue(Value, out var selected_item))
+            if (!_shadowLookup.TryGetValue(Value, out var item))
                 return null; //<-- for now. we'll add a custom template to present values (set from outside) which are not on the list?
-            return selected_item.ChildContent;
+            return item.ChildContent;
         }
 
         protected override Task UpdateValuePropertyAsync(bool updateText)
@@ -365,23 +343,22 @@ namespace MudBlazor
 
         protected List<MudSelectItem<T>> _items = new();
         protected Dictionary<T, MudSelectItem<T>> _valueLookup = new();
-        object _activeItemId = null;
+        protected Dictionary<T, MudSelectItem<T>> _shadowLookup = new();
+
+        // note: this must be object to satisfy MudList
+        private object _activeItemId = null;
 
         internal bool Add(MudSelectItem<T> item)
         {
-            // Check to avoid duplicate items based on their value
-            // It fixes that the number of real items is correct in the items list
-
-            var result = new bool?();
-
+            if (item == null)
+                return false;
+            bool? result = null;
             if (!_items.Select(x => x.Value).Contains(item.Value))
             {
                 _items.Add(item);
-
                 if (item.Value != null)
                 {
                     _valueLookup[item.Value] = item;
-
                     if (item.Value.Equals(Value))
                     {
                         _activeItemId = item.ItemId;
@@ -389,24 +366,19 @@ namespace MudBlazor
                     }
                 }
             }
-
             UpdateSelectAllChecked();
-            if(result.HasValue == false)
+            if (result.HasValue == false)
             {
-                result = item.Value.Equals(Value);
+                result = item.Value?.Equals(Value);
             }
-
-            return result.Value;
+            return result == true;
         }
 
         internal void Remove(MudSelectItem<T> item)
         {
-            if (_items.Contains(item))
-            {
-                _items.Remove(item);
-                if (item.Value != null)
-                    _valueLookup.Remove(item.Value);
-            }
+            _items.Remove(item);
+            if (item.Value != null)
+                _valueLookup.Remove(item.Value);
         }
 
         /// <summary>
@@ -545,6 +517,7 @@ namespace MudBlazor
                 }
 
                 await SetValueAsync(value);
+                _elementReference.SetText(Text).AndForget();
                 SelectedValues.Clear();
                 SelectedValues.Add(value);
                 HilightItemForValue(value);
@@ -554,28 +527,32 @@ namespace MudBlazor
             await SelectedValuesChanged.InvokeAsync(SelectedValues);
         }
 
-        private void HilightItemForValue(T value)
+        private MudSelectItem<T> HilightItemForValue(T value)
         {
             if (value == null)
             {
                 HilightItem(null);
-                return;
+                return null;
             }
             _valueLookup.TryGetValue(value, out var item);
             HilightItem(item);
+            return item;
         }
 
         private void HilightItem(MudSelectItem<T> item)
         {
             _activeItemId = item?.ItemId;
+            //_itemList?.ForceRender();
         }
 
         private void HilightSelectedValue()
         {
+            MudSelectItem<T> item;
             if (MultiSelection)
-                HilightItem(_items.FirstOrDefault());
+                HilightItem(item = _items.FirstOrDefault(x => !x.Disabled));
             else
-                HilightItemForValue(Value);
+                item = HilightItemForValue(Value);
+            _hilitedItemIndex = _items.FindIndex(x => x == item);
         }
 
         private void UpdateSelectAllChecked()
@@ -769,20 +746,10 @@ namespace MudBlazor
                 case "ArrowUp":
                     await SelectPreviousItem();
                     await _elementReference.SetText(Text);
-                    //_key++;
-                    //await Task.Delay(1);
-                    //StateHasChanged();
-                    //await Task.Delay(1);
-                    //_elementReference.FocusAsync().AndForget();
                     break;
                 case "ArrowDown":
                     await SelectNextItem();
                     await _elementReference.SetText(Text);
-                    //_key++;
-                    //await Task.Delay(1);
-                    //StateHasChanged();
-                    //await Task.Delay(1);
-                    //_elementReference.FocusAsync().AndForget();
                     break;
                 case " ":
                     _isOpen = !_isOpen;
@@ -811,7 +778,7 @@ namespace MudBlazor
                         }
                         else
                         {
-                            await SelectOption(_items[itemIndex].Value);
+                            await SelectOption(_items[_hilitedItemIndex].Value);
                             await _elementReference.SetText(Text);
                             break;
                         }
@@ -873,6 +840,20 @@ namespace MudBlazor
                     await ClearAsync();
                 }
             }
+        }
+
+        public void RegisterShadowItem(MudSelectItem<T> item)
+        {
+            if (item==null || item.Value == null)
+                return;
+            _shadowLookup[item.Value] = item;
+        }
+
+        public void UnregisterShadowItem(MudSelectItem<T> item)
+        {
+            if (item == null || item.Value == null)
+                return;
+            _shadowLookup.Remove(item.Value);
         }
     }
 }

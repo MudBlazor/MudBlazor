@@ -183,6 +183,7 @@ namespace MudBlazor.UnitTests.Components
             items[1].Click();
             select.Instance.Value.Should().Be(2);
             select.Instance.Text.Should().Be("2");
+            Console.WriteLine(comp.Markup);
             comp.FindComponent<MudInput<string>>().Instance.Value.Should().Be("2");
             comp.FindComponent<MudInput<string>>().Instance.InputType.Should().Be(InputType.Text); // because list item has no render fragment, so we show it as text
         }
@@ -471,19 +472,21 @@ namespace MudBlazor.UnitTests.Components
             var selectAllItem = comp.FindComponent<MudListItem>();
             selectAllItem.Instance.Icon.Should().Be("<path d=\"M0 0h24v24H0z\" fill=\"none\"/><path d=\"M19 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.11 0 2-.9 2-2V5c0-1.1-.89-2-2-2zm-9 14l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z\"/>");
 
-            // Check that all select items are actually selected
-            var mudListItems = comp.FindComponents<MudSelectItem<string>>();
+            // Check that all normal select items are actually selected
+            var items = comp.FindComponents<MudSelectItem<string>>().Where(x=>x.Instance.HideContent==false).ToArray();
 
-            mudListItems.Should().HaveCount(7 * 2);
-            foreach (var item in mudListItems.Take(7))
+            items.Should().HaveCount(7);
+            foreach (var item in items)
             {
                 item.Instance.IsSelected.Should().BeTrue();
                 item.FindComponent<MudListItem>().Instance.Icon.Should().Be("<path d=\"M0 0h24v24H0z\" fill=\"none\"/><path d=\"M19 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.11 0 2-.9 2-2V5c0-1.1-.89-2-2-2zm-9 14l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z\"/>");
             }
 
-            foreach (var item in mudListItems.Skip(7))
+            // Check shadow items
+            var shadowItems = comp.FindComponents<MudSelectItem<string>>().Where(x => x.Instance.HideContent == true).ToArray();
+            foreach (var item in shadowItems)
             {
-                item.Instance.IsSelected.Should().BeTrue();
+                // shadow items don't render, their state is irrelevant, all they do is provide render fragments to the select
                 Assert.Throws<Bunit.Rendering.ComponentNotFoundException>(() => item.FindComponent<MudListItem>());
             }
         }
