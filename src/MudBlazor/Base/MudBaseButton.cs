@@ -64,35 +64,24 @@ namespace MudBlazor
         /// <summary>
         /// If true, a LoadingSpinner is shown, when OnClick is executed
         /// </summary>
-        [Parameter] public bool AutoLoading { get; set; }
+        [Parameter] public bool Loading { get; set; }
         
         /// <summary>
         /// Button click event.
         /// </summary>
         [Parameter] public EventCallback<MouseEventArgs> OnClick { get; set; }
 
-        protected bool isLoading = false; 
         
         protected async Task OnClickHandler(MouseEventArgs ev)
         {
             if (Disabled)
                 return;
-            if (AutoLoading)
-            {
-                isLoading = true;
-                Disabled = true;
-            }
             await OnClick.InvokeAsync(ev);
             if (Command?.CanExecute(CommandParameter) ?? false)
             {
                 Command.Execute(CommandParameter);
             }
             Activateable?.Activate(this, ev);
-            if (AutoLoading)
-            {
-                isLoading = false;
-                Disabled = false;
-            }
         }
 
         protected override void OnInitialized()

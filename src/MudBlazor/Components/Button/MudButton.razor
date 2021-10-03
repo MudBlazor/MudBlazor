@@ -4,30 +4,57 @@
 
 <MudElement @bind-Ref="@_elementReference"
             HtmlTag="@HtmlTag"
-            Class="@Classname" 
+            Class="@Classname"
             Style="@Style"
             @attributes="UserAttributes"
             @onclick="OnClickHandler"
             type="@ButtonType.ToDescriptionString()"
-            href="@Link" 
+            href="@Link"
             target="@Target"
-            rel="@(Target=="_blank"?"noopener":null)"
+            rel="@(Target == "_blank" ? "noopener" : null)"
             disabled="@Disabled">
     <span class="mud-button-label">
         @if (!string.IsNullOrWhiteSpace(StartIcon))
         {
             <span class="@StartIconClass">
-                <MudIcon Icon="@StartIcon" Size="@Size" Color="@IconColor" />
+                @if (isLoading)
+                {
+                    <MudProgressCircular Class="@LoadingSpinnerClass" Indeterminate="true"/>
+                }
+                else
+                {
+                    <MudIcon Icon="@StartIcon" Size="@Size" Color="@IconColor"/>
+                }
             </span>
         }
-        @if(isLoading){
-            <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true"/>
+        else
+        {
+            if (isLoading && string.IsNullOrWhiteSpace(EndIcon))
+            {
+                <span class="@StartIconClass">
+                    <MudProgressCircular Class="@LoadingSpinnerClass" Indeterminate="true"/>
+                </span>
+            }
         }
-        @ChildContent
+        @if (isLoading && LoadingContent != null)
+        {
+            @LoadingContent
+        }
+        else
+        {
+            @ChildContent
+        }
         @if (!string.IsNullOrWhiteSpace(@EndIcon))
         {
             <span class="@EndIconClass">
-                <MudIcon Icon="@EndIcon" Size="@Size" Color="@IconColor" />
+                @if (isLoading && string.IsNullOrWhiteSpace(@StartIcon))
+                {
+                    <MudProgressCircular Class="@LoadingSpinnerClass" Indeterminate="true"/>
+                }
+                else
+                {
+                    <MudIcon Icon="@EndIcon" Size="@Size" Color="@IconColor"/>
+                }
             </span>
         }
     </span>

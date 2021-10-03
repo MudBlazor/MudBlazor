@@ -31,6 +31,22 @@
     }
 }
 
+.mud-button-disabled-loading-spinner{
+    color: var(--mud-palette-action-disabled) !important;
+}
+.mud-button-loading-spinner-small{
+    height: 15px !important;
+    width: 15px !important;
+}
+.mud-button-loading-spinner-medium{
+    height: 24px !important;
+    width: 24px !important;
+}
+.mud-button-loading-spinner-large{
+    height: 28px !important;
+    width: 28px !important;
+}
+
 .mud-button {
     padding: 6px 16px;
     font-family: var(--mud-typography-button-family);

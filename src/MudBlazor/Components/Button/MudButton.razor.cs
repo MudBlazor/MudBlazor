@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿using System.Threading.Tasks;
+using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Extensions;
 using MudBlazor.Utilities;
 
@@ -28,8 +30,14 @@ namespace MudBlazor
           .AddClass($"mud-button-icon-size-{Size.ToDescriptionString()}")
           .AddClass(IconClass)
         .Build();
-
-        /// <summary>
+        
+        protected  string LoadingSpinnerClass =>
+        new CssBuilder("mud-button-loading-spinner")
+            .AddClass("ms-n1")
+            .AddClass("mud-button-disabled-loading-spinner")
+            .AddClass($"mud-button-loading-spinner-{Size.ToDescriptionString()}")
+        .Build();
+            /// <summary>
         /// Icon placed before the text if set.
         /// </summary>
         [Parameter] public string StartIcon { get; set; }
@@ -73,6 +81,35 @@ namespace MudBlazor
         /// Child content of component.
         /// </summary>
         [Parameter] public RenderFragment ChildContent { get; set; }
-
+        
+        /// <summary>
+        /// Loading content of component.
+        /// </summary>
+        [Parameter] public RenderFragment LoadingContent { get; set; }
+        
+        
+        protected bool isLoading = false; 
+        
+        protected new async Task OnClickHandler(MouseEventArgs ev)
+        {
+            if (Disabled)
+                return;
+            if (Loading)
+            {
+                isLoading = true;
+                Disabled = true;
+            }
+            await OnClick.InvokeAsync(ev);
+            if (Command?.CanExecute(CommandParameter) ?? false)
+            {
+                Command.Execute(CommandParameter);
+            }
+            Activateable?.Activate(this, ev);
+            if (Loading)
+            {
+                isLoading = false;
+                Disabled = false;
+            }
+        }
     }
 }

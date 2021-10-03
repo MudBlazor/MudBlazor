@@ -1,13 +1,44 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
-<MudButton AutoLoading="true" OnClick="ProcessSomething" Variant="Variant.Filled" Color="Color.Primary">
+<MudButton Loading="true" OnClick="ProcessSomething" Variant="Variant.Filled" Color="Color.Primary">
     Long Running Task
 </MudButton>
 
+
+<MudButton StartIcon="@Icons.Filled.Send" Loading="true" OnClick="ProcessSomething" Variant="Variant.Filled" Color="Color.Primary">
+    Long Running Task
+</MudButton>
+
+<MudButton StartIcon="@Icons.Filled.Send" EndIcon="@Icons.Filled.Send" Loading="true" OnClick="ProcessSomething" Variant="Variant.Filled" Color="Color.Primary">
+    <LoadingContent>
+        Processing...
+    </LoadingContent>
+    <ChildContent>
+        Start Process
+    </ChildContent>
+</MudButton>
+
+
+<MudButton EndIcon="@Icons.Filled.Send" Loading="true" OnClick="ProcessSomething" Variant="Variant.Filled" Color="Color.Error">
+    Long Running Task
+</MudButton>
+<MudButton EndIcon="@Icons.Filled.Send" Loading="true" OnClick="ProcessSomething" Variant="Variant.Filled" Color="Color.Error">
+    Long Running Task
+</MudButton>
+
+
+<MudButton StartIcon="@Icons.Filled.Send" Size="Size.Large" Loading="true" OnClick="ProcessSomething" Variant="Variant.Filled" Color="Color.Primary">
+    Long Running Task
+</MudButton>
+
+
+<MudButton StartIcon="@Icons.Filled.Send" Size="Size.Small" Loading="true" OnClick="ProcessSomething" Variant="Variant.Filled" Color="Color.Primary">
+    Long Running Task
+</MudButton>
 @code {
     
     async Task ProcessSomething()
     {
-        await Task.Delay(1000);
+        await Task.Delay(10000);
     }
 }

@@ -202,7 +202,7 @@ namespace MudBlazor.UnitTests.Components
 
             var comp = Context.RenderComponent<MudButton>(parameters => parameters
                     .Add(p => p.OnClick, onClickHandler)
-                    .Add(p => p.AutoLoading,true)
+                    .Add(p => p.Loading,true)
                   );
             
             comp.Markup.Should().NotContain("mud-progress-circular-circle");
