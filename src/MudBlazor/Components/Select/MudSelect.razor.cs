@@ -249,7 +249,32 @@ namespace MudBlazor
                 StateHasChanged();
             }
             UpdateSelectAllChecked();
+            lock (this)
+            {
+                if (_renderComplete != null)
+                {
+                    _renderComplete.TrySetResult();
+                    _renderComplete = null;
+                }
+            }
         }
+
+
+        private Task WaitForRender()
+        {
+            Task t=null;
+            lock (this)
+            {
+                if (_renderComplete != null)
+                    return _renderComplete.Task;
+                _renderComplete = new TaskCompletionSource();
+                t= _renderComplete.Task;
+            }
+            StateHasChanged();
+            return t;
+        }
+
+        private TaskCompletionSource _renderComplete;
 
         /// <summary>
         /// Returns whether or not the Value can be found in items. If not, the Select will display it as a string.
@@ -521,18 +546,20 @@ namespace MudBlazor
                 HilightItem(null);
                 return;
             }
-            await Task.Delay(1);
+            await WaitForRender();
             _valueLookup.TryGetValue(value, out var item);
             HilightItem(item);
         }
 
         private async void HilightItem(MudSelectItem<T> item)
         {
+            _activeItemId = item?.ItemId;
+            // we need to make sure we are just after a render here or else there will be race conditions
+            await WaitForRender();
             // Note: this is a hack but I found no other way to make the list hilight the currently hilighted item
             // without the delay it always shows the previously hilighted item because the popup items don't exist yet
             // they are only registered after they are rendered, so we need to render again!
             await Task.Delay(1);
-            _activeItemId = item?.ItemId;
             StateHasChanged();
         }
 
