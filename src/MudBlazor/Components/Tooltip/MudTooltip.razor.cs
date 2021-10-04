@@ -6,11 +6,14 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    public partial class MudTooltip : MudComponentBase
+    public partial class MudTooltip : MudComponentBase, IDisposable
     {
+        [Inject] public ITooltipManager TooltipManager { get; set; }
+
         protected string ContainerClass => new CssBuilder("mud-tooltip-root")
             .AddClass("mud-tooltip-inline", Inline)
             .Build();
+
         protected string Classname => new CssBuilder("mud-tooltip")
             .AddClass($"mud-tooltip-default", Color == Color.Default)
             .AddClass($"mud-tooltip-{ConvertPlacement().ToDescriptionString()}")
@@ -19,6 +22,13 @@ namespace MudBlazor
             .AddClass($"mud-theme-{Color.ToDescriptionString()}", Color != Color.Default)
             .AddClass(Class)
             .Build();
+
+
+        private bool _isVisible;
+
+        private Origin _anchorOrigin;
+        private Origin _transformOrigin;
+        private bool _disposedValue;
 
         [CascadingParameter]
         public bool RightToLeft { get; set; }
@@ -59,40 +69,6 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public Placement Placement { get; set; } = Placement.Bottom;
 
-        private Origin AnchorOrigin;
-        private Origin TransformOrigin;
-
-        private Origin ConvertPlacement()
-        {
-            if(Placement == Placement.Bottom)
-            {
-                AnchorOrigin = Origin.BottomCenter;
-                TransformOrigin = Origin.TopCenter;
-                return Origin.BottomCenter;
-            }
-            if(Placement == Placement.Top)
-            {
-                AnchorOrigin = Origin.TopCenter;
-                TransformOrigin = Origin.BottomCenter;
-                return Origin.TopCenter;
-            }
-            if(Placement == Placement.Left || Placement == Placement.Start && !RightToLeft || Placement == Placement.End && RightToLeft)
-            {
-                AnchorOrigin = Origin.CenterLeft;
-                TransformOrigin = Origin.CenterRight;
-                return Origin.CenterLeft;
-            }
-            if (Placement == Placement.Right || Placement == Placement.End && !RightToLeft || Placement == Placement.Start && RightToLeft)
-            {
-                AnchorOrigin = Origin.CenterRight;
-                TransformOrigin = Origin.CenterLeft;
-                return Origin.CenterRight;
-            }
-            else{
-                return Origin.BottomCenter;
-            }
-        }
-
         /// <summary>
         /// Child content of component.
         /// </summary>
@@ -108,13 +84,82 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public bool Inline { get; set; } = true;
 
-        private bool _isVisible;
-        public void HandleMouseOver() => _isVisible = true;
+        private void HandleMouseOver()
+        {
+            _isVisible = true;
+            TooltipManager.HandleOpenend(this);
+        }
+
         private void HandleMouseOut() => _isVisible = false;
+
+        private Origin ConvertPlacement()
+        {
+            if (Placement == Placement.Bottom)
+            {
+                _anchorOrigin = Origin.BottomCenter;
+                _transformOrigin = Origin.TopCenter;
+                return Origin.BottomCenter;
+            }
+            if (Placement == Placement.Top)
+            {
+                _anchorOrigin = Origin.TopCenter;
+                _transformOrigin = Origin.BottomCenter;
+                return Origin.TopCenter;
+            }
+            if (Placement == Placement.Left || Placement == Placement.Start && !RightToLeft || Placement == Placement.End && RightToLeft)
+            {
+                _anchorOrigin = Origin.CenterLeft;
+                _transformOrigin = Origin.CenterRight;
+                return Origin.CenterLeft;
+            }
+            if (Placement == Placement.Right || Placement == Placement.End && !RightToLeft || Placement == Placement.Start && RightToLeft)
+            {
+                _anchorOrigin = Origin.CenterRight;
+                _transformOrigin = Origin.CenterLeft;
+                return Origin.CenterRight;
+            }
+            else
+            {
+                return Origin.BottomCenter;
+            }
+        }
+
+        public void RequestClose()
+        {
+            if (_isVisible == false) { return; }
+
+            _isVisible = false;
+            InvokeAsync(StateHasChanged);
+        }
 
         protected string GetTimeDelay()
         {
             return $"transition-delay: {Delay.ToString(CultureInfo.InvariantCulture)}ms;{Style}";
+        }
+
+
+        protected override void OnInitialized()
+        {
+            TooltipManager.Register(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!_disposedValue)
+            {
+                if (disposing)
+                {
+                    TooltipManager.Unregister(this, _isVisible);
+                }
+
+                _disposedValue = true;
+            }
+        }
+
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
         }
     }
 }

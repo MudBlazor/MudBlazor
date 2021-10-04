@@ -3,7 +3,7 @@
 
 <div @attributes="UserAttributes" class="@ContainerClass" @onmouseenter="@HandleMouseOver" @onmouseleave="@HandleMouseOut" @onfocusout="@HandleMouseOut">
 	@ChildContent
-	<MudPopover Open="_isVisible" AnchorOrigin="@AnchorOrigin" TransformOrigin="@TransformOrigin" Paper="false">
+	<MudPopover Open="_isVisible" AnchorOrigin="@_anchorOrigin" TransformOrigin="@_transformOrigin" Paper="false">
 		<div role="tooltip" class="@Classname">
 			@if (TooltipContent != null)
 			{
