@@ -41,7 +41,7 @@ namespace MudBlazor
         {
             if (_items == null || _items.Count == 0)
                 return;
-            var index = _items.FindIndex(x => x.Value!=null && _selectedValues.Contains(x.Value));
+            var index = _items.FindIndex(x => x.ItemId == (string)_activeItemId);
             if (direction < 0 && index<0)
                 index= 0;
             // the loop allows us to jump over disabled items until we reach the next non-disabled one
@@ -783,7 +783,7 @@ namespace MudBlazor
                     await SelectLastItem();
                     break;
                 case "Enter":
-                    var index = _items.FindIndex(x => x.Value != null && _selectedValues.Contains(x.Value));
+                    var index = _items.FindIndex(x => x.ItemId == (string)_activeItemId);
                     if (!MultiSelection)
                     {
                         if (!_isOpen)
