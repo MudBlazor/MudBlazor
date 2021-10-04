@@ -27,11 +27,16 @@ namespace MudBlazor
           .AddClass($"mud-treeview-item-selected", _isSelected)
         .Build();
 
+        protected string Stylename =>
+        new StyleBuilder()
+            .AddStyle($"margin-left", $"{IndentMargin}px", MudTreeRoot.IsVirtualized)
+            .AddStyle(Style)
+        .Build();
+
         public string TextClassname =>
         new CssBuilder("mud-treeview-item-label")
             .AddClass(TextClass)
         .Build();
-
 
         [CascadingParameter] MudTreeView<T> MudTreeRoot { get; set; }
 
@@ -126,6 +131,18 @@ namespace MudBlazor
         /// Called whenever expanded changed.
         /// </summary>
         [Parameter] public EventCallback<bool> ExpandedChanged { get; set; }
+
+        /// <summary>
+        /// If Virtualization is on, sets the indent margin of the item in pixels
+        /// </summary>
+        internal float IndentMargin
+        {
+            get
+            {
+                if (Parent is null) return 0f;
+                else return Parent.IndentMargin + MudTreeRoot.ItemIndentMargin;
+            }
+        }
 
         [Parameter]
         public bool Activated

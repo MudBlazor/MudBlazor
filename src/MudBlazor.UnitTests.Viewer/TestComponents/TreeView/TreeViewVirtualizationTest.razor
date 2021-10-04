@@ -1,0 +1,35 @@
+﻿@namespace MudBlazor.UnitTests.TestComponents
+
+<MudTreeView T="Item" Items="Items" IsVirtualized="true" MaxHeight="500px">
+	<ItemTemplate>
+		<MudTreeViewItem T="Item" Value="@context" Text="@context.Title" @bind-Expanded="@context.IsExpanded" Items="@context.Items" />
+	</ItemTemplate>
+</MudTreeView>
+
+@code {
+	public HashSet<Item> Items { get; set; } = new();
+
+	public class Item
+	{
+		public bool IsExpanded { get; set; }
+		public string Title { get; set; }
+		public HashSet<Item> Items { get; set; } = new();
+	}
+
+	public TreeViewVirtualizationTest()
+	{
+		// Add huge amount of items
+		for (int i = 0; i < 1000; i++)
+		{
+			this.Items.Add(new() { Title = "Test" + i.ToString() });
+		}
+
+		foreach (Item item in this.Items)
+		{
+			for (int i = 0; i < 50; i++)
+			{
+				item.Items.Add(new() { Title = "Test", Items = new(Enumerable.Repeat<Item>(new() { Title = "TestNest" }, 50)) });
+			}
+		}
+	}
+}

@@ -108,5 +108,11 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("div.mud-treeview-item-content")[2].Click();
             comp.FindAll("li.mud-treeview-item").Count.Should().Be(8);
         }
+
+        [Test]
+        public void TreeViewVirtualizationTest()
+        {
+            var comp = Context.RenderComponent<TreeViewVirtualizationTest>();
+        }
     }
 }

@@ -27,6 +27,7 @@ namespace MudBlazor
             .AddStyle($"width", Width, !string.IsNullOrWhiteSpace(Width))
             .AddStyle($"height", Height, !string.IsNullOrWhiteSpace(Height))
             .AddStyle($"max-height", MaxHeight, !string.IsNullOrWhiteSpace(MaxHeight))
+            .AddStyle($"overflow-y", "auto", IsVirtualized)
             .AddStyle(Style)
         .Build();
 
@@ -106,6 +107,16 @@ namespace MudBlazor
         /// If true, treeview will be disabled and all its childitems.
         /// </summary>
         [Parameter] public bool Disabled { get; set; }
+
+        /// <summary>
+        /// If ture, all TreeView and TreeViewItems children will be virtualized
+        /// </summary>
+        [Parameter] public bool IsVirtualized { get; set; }
+
+        /// <summary>
+        /// If <see cref="IsVirtualized"/> is true, sets the margin of a nested item in pixels, defaults to 32px
+        /// </summary>
+        [Parameter] public float ItemIndentMargin { get; set; } = 32;
 
         [Parameter] public HashSet<T> Items { get; set; }
 

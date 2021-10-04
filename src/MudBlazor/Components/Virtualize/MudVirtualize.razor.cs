@@ -25,5 +25,11 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         public ICollection<T> Items { get; set; }
+
+        /// <summary>
+        /// Size of an item in pixels, defaults to 50px
+        /// </summary>
+        [Parameter]
+        public float ItemSize { get; set; } = 50f;
     }
 }
