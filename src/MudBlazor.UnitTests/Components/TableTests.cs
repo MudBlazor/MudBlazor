@@ -889,6 +889,51 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// This test validates the edit row maintains position on changing sort key for an inline editing table.
+        /// </summary>
+        [Test]
+        public async Task TableInlineEditSortTest()
+        {
+            var comp = Context.RenderComponent<TableInlineEditSortTest>();
+
+            // Count the number of rows including header
+            comp.FindAll("tr").Count.Should().Be(4); // Three rows + header row
+            
+            // Check the values of rows
+            comp.FindAll("td")[0].TextContent.Trim().Should().Be("B");
+            comp.FindAll("td")[2].TextContent.Trim().Should().Be("A");
+            comp.FindAll("td")[4].TextContent.Trim().Should().Be("C");
+            
+            // Access to the table
+            var table = comp.FindComponent<MudTable<TableInlineEditSortTest.Element>>();
+
+            // Get the mudtablesortlabels associated to the table
+            var mudTableSortLabels = table.Instance.Context.SortLabels;
+
+            // Sort the first column
+            await table.InvokeAsync(() => mudTableSortLabels[0].ToggleSortDirection());
+
+            // Check the values of rows
+            comp.FindAll("td")[0].TextContent.Trim().Should().Be("A");
+            comp.FindAll("td")[2].TextContent.Trim().Should().Be("B");
+            comp.FindAll("td")[4].TextContent.Trim().Should().Be("C");
+            
+            // Click on the second row
+            var trs = comp.FindAll("tr");
+            trs[2].Click();
+            
+            // Change row two data
+            var input = comp.Find(("#Id1"));
+            input.Change("D");
+            
+            // Check row two is still in position 2 of the data rows
+            var trs2 = comp.FindAll("tr");
+            trs2[1].InnerHtml.Contains("input").Should().BeFalse();
+            trs2[2].InnerHtml.Contains("input").Should().BeTrue();
+            trs2[3].InnerHtml.Contains("input").Should().BeFalse();
+        }
+
+        /// <summary>
         /// This test validates the processing of the Commit and Cancel buttons for an inline editing table.
         /// </summary>
         [Test]

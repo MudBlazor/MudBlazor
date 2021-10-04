@@ -32,7 +32,7 @@
         </DocsPageSection>
         <DocsPageSection>
             <SectionHeader Title="Images">
-                <Description>Avatars can display images as well, specify a link to the image with <CodeInline>Image</CodeInline>.</Description>
+                <Description>Avatars can display images as well, specify a link to the image with <CodeInline>Image</CodeInline>.  If you specify an <CodeInline>Alt</CodeInline> prop, you can specify an alternative text description for the image to help with accessibility or if the image url isn't valid.</Description>
             </SectionHeader>
             <SectionContent Outlined="true" DisplayFlex="true">
                 <AvatarImageExample />
@@ -64,19 +64,19 @@
             <SectionContent Outlined="true" DisplayFlex="true">
                 <AvatarGroupExample />
             </SectionContent>
-            <SectionSource Code="AvatarGroupExample" GitHubFolderName="Avatar" ShowCode="true" />
+            <SectionSource Code="AvatarGroupExample" GitHubFolderName="Avatar" ShowCode="false" />
         </DocsPageSection>
 
         @*MudBadge needs fixing before showing this. Does not look good with avatars.*@
 
         @*<DocsPageSection>
-            <SectionHeader Title="Badges">
-                <Description></Description>
-            </SectionHeader>
-            <SectionContent Outlined="true" DisplayFlex="true">
-                <AvatarBadgeExample />
-            </SectionContent>
-            <SectionSource Code="AvatarBadgeExample" GitHubFolderName="Avatar" ShowCode="true" />
-        </DocsPageSection>*@
+                <SectionHeader Title="Badges">
+                    <Description></Description>
+                </SectionHeader>
+                <SectionContent Outlined="true" DisplayFlex="true">
+                    <AvatarBadgeExample />
+                </SectionContent>
+                <SectionSource Code="AvatarBadgeExample" GitHubFolderName="Avatar" ShowCode="true" />
+            </DocsPageSection>*@
     </DocsPageContent>
 </DocsPage>

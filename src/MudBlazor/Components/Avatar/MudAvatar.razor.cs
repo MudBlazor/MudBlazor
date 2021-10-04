@@ -47,6 +47,11 @@ namespace MudBlazor
         [Parameter] public string Image { get; set; }
 
         /// <summary>
+        /// If set (and Image is also set), will add an alt property to the img element
+        /// </summary>
+        [Parameter] public string Alt { get; set; }
+
+        /// <summary>
         /// The color of the component. It supports the theme colors.
         /// </summary>
         [Parameter] public Color Color { get; set; } = Color.Default;
