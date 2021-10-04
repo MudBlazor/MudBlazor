@@ -133,6 +133,7 @@ class MudPopover {
     constructor() {
         this.map = {};
         this.contentObserver = null;
+        this.mainContainerClass = null;
     }
 
     callback(id, mutationsList, observer) {
@@ -145,19 +146,31 @@ class MudPopover {
     }
 
     initilize(containerClass) {
-        if (this.contentObserver == null) {
-            var mainContent = document.getElementsByClassName(containerClass);
-            if (mainContent.length > 0) {
-                this.contentObserver = new ResizeObserver(entries => {
-                    window.mudpopoverHelper.placePopoverByClassSelector();
-                });
+        this.mainContainerClass = containerClass;
+        const mainContent = document.getElementsByClassName(containerClass);
+        if (mainContent.length == 0) {
+            return;
+        }
 
-                this.contentObserver.observe(mainContent[0]);
+        if (!mainContent[0].mudPopoverMark) {
+            mainContent[0].mudPopoverMark = "mudded";
+            if (this.contentObserver != null) {
+                this.contentObserver.disconnect();
+                this.contentObserver = null;
             }
+
+            this.contentObserver = new ResizeObserver(entries => {
+                console.log('contentObserver size changed');
+                window.mudpopoverHelper.placePopoverByClassSelector();
+            });
+
+            this.contentObserver.observe(mainContent[0]);
         }
     }
 
     connect(id) {
+        this.initilize(this.mainContainerClass);
+
         const popoverNode = document.getElementById('popover-' + id);
         const popoverContentNode = document.getElementById('popovercontent-' + id);
         if (popoverNode && popoverNode.parentNode && popoverContentNode) {
