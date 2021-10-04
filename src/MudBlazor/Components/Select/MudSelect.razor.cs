@@ -33,8 +33,6 @@ namespace MudBlazor
 
         private ElementReference _self;
 
-        private int _hilitedItemIndex = 0;
-
         private Task SelectNextItem() => SelectAdjacentItem(+1);
 
         private Task SelectPreviousItem() => SelectAdjacentItem(-1);
@@ -43,28 +41,31 @@ namespace MudBlazor
         {
             if (_items == null || _items.Count == 0)
                 return;
+            var index = _items.FindIndex(x => x.Value!=null && _selectedValues.Contains(x.Value));
+            if (direction < 0 && index<0)
+                index= 0;
             // the loop allows us to jump over disabled items until we reach the next non-disabled one
             for (int i = 0; i < _items.Count; i++)
             {
-                _hilitedItemIndex = (_hilitedItemIndex + direction) % _items.Count;
+                index = (index + direction) % _items.Count;
                 // modulo of negative numbers is negative, so we add item count to get a valid positive index.
-                if (_hilitedItemIndex < 0)
-                    _hilitedItemIndex = _items.Count + _hilitedItemIndex;
-                if (_items[_hilitedItemIndex].Disabled)
+                if (index < 0)
+                    index = _items.Count + index;
+                if (_items[index].Disabled)
                     continue;
                 if (!MultiSelection)
                 {
                     _selectedValues.Clear();
-                    _selectedValues.Add(_items[_hilitedItemIndex].Value);
-                    await SetValueAsync(_items[_hilitedItemIndex].Value, updateText: true);
-                    HilightItem(_items[_hilitedItemIndex]);
+                    _selectedValues.Add(_items[index].Value);
+                    await SetValueAsync(_items[index].Value, updateText: true);
+                    HilightItem(_items[index]);
                     break;
                 }
                 else
                 {
                     // in multiselect mode don't select anything, just hilight.
                     // selecting is done by Enter
-                    HilightItem(_items[_hilitedItemIndex]);
+                    HilightItem(_items[index]);
                     break;
                 }
             }
@@ -83,14 +84,13 @@ namespace MudBlazor
                 return;
             for (int i = 0; i < _items.Count; i++)
             {
-                _hilitedItemIndex = i;
-                if (_items[_hilitedItemIndex].Disabled == false)
+                if (_items[i].Disabled == false)
                 {
                     // TODO: MultiSelect!
                     _selectedValues.Clear();
-                    _selectedValues.Add(_items[_hilitedItemIndex].Value);
-                    await SetValueAsync(_items[_hilitedItemIndex].Value, updateText: true);
-                    HilightItem(_items[_hilitedItemIndex]);
+                    _selectedValues.Add(_items[i].Value);
+                    await SetValueAsync(_items[i].Value, updateText: true);
+                    HilightItem(_items[i]);
                     break;
                 }
             }
@@ -100,17 +100,16 @@ namespace MudBlazor
         {
             if (_items == null || _items.Count == 0)
                 return;
-            _hilitedItemIndex = _items.Count;
-            for (int i = 0; i < _items.Count; i++)
+            for (int i = _items.Count-1; i > 0; i--)
             {
-                _hilitedItemIndex -= 1;
-                if (_items[_hilitedItemIndex].Disabled == false)
+                i -= 1;
+                if (_items[i].Disabled == false)
                 {
                     // TODO: MultiSelect!
                     _selectedValues.Clear();
-                    _selectedValues.Add(_items[_hilitedItemIndex].Value);
-                    await SetValueAsync(_items[_hilitedItemIndex].Value, updateText: true);
-                    var item = _items[_hilitedItemIndex];
+                    _selectedValues.Add(_items[i].Value);
+                    await SetValueAsync(_items[i].Value, updateText: true);
+                    var item = _items[i];
                     HilightItem(item);
                     await ScrollManager.ScrollToAsync(item.ItemId, 0, 100, ScrollBehavior.Smooth);
                     break;
@@ -247,29 +246,9 @@ namespace MudBlazor
             base.OnAfterRender(firstRender);
             if (firstRender && Value != null)
             {
-                // we need to render the initial Value which is not possible without the items
-                // which supply the RenderFragment. So in this case, a second render is necessary
                 StateHasChanged();
             }
             UpdateSelectAllChecked();
-            // it is impossible to prevent double registration of RenderFragment providers, so we remove them at this stage
-            // because their cascading value HideContent has been set now 
-            CleanupHiddenItems();
-        }
-
-        private void CleanupHiddenItems()
-        {
-            //// it is impossible to prevent double registration of RenderFragment providers, so we remove them here
-            //// because their cascading value HideContent has been set now 
-            //_items=_items.Where(x=>x.HideContent==false).ToList();
-            //var set=new HashSet<T>();
-            //_valueLookup = _items.Where(x=>
-            //{
-            //    var rv= x.Value != null && !set.Contains(x.Value);
-            //    if (x.Value!=null)
-            //        set.Add(x.Value);
-            //    return rv;
-            //}).ToDictionary(x => x.Value);
         }
 
         /// <summary>
@@ -359,11 +338,8 @@ namespace MudBlazor
                 if (item.Value != null)
                 {
                     _valueLookup[item.Value] = item;
-                    if (item.Value.Equals(Value))
-                    {
-                        _activeItemId = item.ItemId;
+                    if (item.Value.Equals(Value) && !MultiSelection)
                         result = true;
-                    }
                 }
             }
             UpdateSelectAllChecked();
@@ -538,32 +514,34 @@ namespace MudBlazor
             await SelectedValuesChanged.InvokeAsync(SelectedValues);
         }
 
-        private MudSelectItem<T> HilightItemForValue(T value)
+        private async void HilightItemForValue(T value)
         {
             if (value == null)
             {
                 HilightItem(null);
-                return null;
+                return;
             }
+            await Task.Delay(1);
             _valueLookup.TryGetValue(value, out var item);
             HilightItem(item);
-            return item;
         }
 
-        private void HilightItem(MudSelectItem<T> item)
+        private async void HilightItem(MudSelectItem<T> item)
         {
+            // Note: this is a hack but I found no other way to make the list hilight the currently hilighted item
+            // without the delay it always shows the previously hilighted item because the popup items don't exist yet
+            // they are only registered after they are rendered, so we need to render again!
+            await Task.Delay(1);
             _activeItemId = item?.ItemId;
-            //_itemList?.ForceRender();
+            StateHasChanged();
         }
 
         private void HilightSelectedValue()
         {
-            MudSelectItem<T> item;
             if (MultiSelection)
-                HilightItem(item = _items.FirstOrDefault(x => !x.Disabled));
+                HilightItem(_items.FirstOrDefault(x => !x.Disabled));
             else
-                item = HilightItemForValue(Value);
-            _hilitedItemIndex = _items.FindIndex(x => x == item);
+                HilightItemForValue(Value);
         }
 
         private void UpdateSelectAllChecked()
@@ -650,7 +628,7 @@ namespace MudBlazor
                 await _keyInterceptor.Connect(_self, new KeyInterceptorOptions()
                 {
                     EnableLogging = true,
-                    TargetClass = "mud-input-slot",
+                    TargetClass = "mud-input-control",
                     Keys = {
                         new KeyOptions { Key=" ", PreventDown = "key+none" }, //prevent scrolling page, toggle open/close
                         new KeyOptions { Key="ArrowUp", PreventDown = "key+none" }, // prevent scrolling page, instead hilight previous item
@@ -766,7 +744,7 @@ namespace MudBlazor
                     await _elementReference.SetText(Text);
                     break;
                 case " ":
-                    _isOpen = !_isOpen;
+                    ToggleMenu();
                     break;
                 case "Escape":
                     CloseMenu(true);
@@ -778,6 +756,7 @@ namespace MudBlazor
                     await SelectLastItem();
                     break;
                 case "Enter":
+                    var index = _items.FindIndex(x => x.Value != null && _selectedValues.Contains(x.Value));
                     if (!MultiSelection)
                     {
                         if (!_isOpen)
@@ -786,7 +765,7 @@ namespace MudBlazor
                             return;
                         }
                         // this also closes the menu
-                        await SelectOption(_hilitedItemIndex);
+                        await SelectOption(index);
                         break;
                     }
                     else
@@ -798,7 +777,7 @@ namespace MudBlazor
                         }
                         else
                         {
-                            await SelectOption(_items[_hilitedItemIndex].Value);
+                            await SelectOption(index);
                             await _elementReference.SetText(Text);
                             break;
                         }

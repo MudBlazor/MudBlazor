@@ -10,7 +10,7 @@
                 <MudInput @ref="_elementReference" InputType="@(CanRenderValue || (Strict && !IsValueInList) ? InputType.Hidden : InputType.Text)"
                           Class="mud-select-input" Margin="@Margin" Placeholder="@Placeholder"
                           Variant="@Variant"
-                          TextUpdateSuppression="@TextUpdateSuppression"
+                          TextUpdateSuppression="false"
                           Value="@(Strict && !IsValueInList ? null : Text)" DisableUnderLine="@DisableUnderLine"
                           Disabled="@Disabled" ReadOnly="true" Error="@Error"
                           OnAdornmentClick="@OnAdornmentClick" AdornmentIcon="@_currentIcon" Adornment="@Adornment"
@@ -39,6 +39,7 @@
 			</InputContent>
 		</MudInputControl>
 	</div>
+    @*Shadow select items for IsValueInList and CanRenderValue*@
     <CascadingValue Value="@((IMudShadowSelect)this)" IsFixed="true">
         <CascadingValue Name="HideContent" Value="true">
 			@ChildContent

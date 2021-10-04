@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Utilities;
 
@@ -11,7 +12,6 @@ namespace MudBlazor
     public partial class MudSelectItem<T> : MudBaseSelectItem, IDisposable
     {
         private String GetCssClasses() =>  new CssBuilder()
-            .AddClass("mud-selected-item", IsSelected)
             .AddClass(Class)
             .Build();
 
@@ -47,6 +47,8 @@ namespace MudBlazor
         }
 
         private IMudShadowSelect  _shadowParent;
+        private bool _isSelected;
+
         [CascadingParameter]
         internal IMudShadowSelect IMudShadowSelect
         {
@@ -98,7 +100,14 @@ namespace MudBlazor
         /// <summary>
         /// Selected state of the option. Only works if the parent is a mulit-select
         /// </summary>
-        internal bool IsSelected { get; set; }
+        internal bool IsSelected
+        {
+            get => _isSelected;
+            set
+            {
+                _isSelected = value;
+            }
+        }
 
         /// <summary>
         /// The checkbox icon reflects the multi-select option's state
