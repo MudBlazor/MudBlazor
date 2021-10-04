@@ -33,7 +33,6 @@ namespace MudBlazor.UnitTests.Components
             ctx.Services.AddTransient<IEventListener, EventListener>();
             ctx.Services.AddTransient<IKeyInterceptor, MockKeyInterceptorService>();
             ctx.Services.AddSingleton<IMudPopoverService, MockPopoverService>();
-            ctx.Services.AddSingleton<ITooltipManager, MockMudTooltipManager>();
 
             ctx.Services.AddOptions();
             ctx.Services.AddScoped(sp =>

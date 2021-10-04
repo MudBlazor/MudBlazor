@@ -142,16 +142,6 @@ namespace MudBlazor.Services
         }
 
         /// <summary>
-        /// Adds MudTooltipManager as a scoped instance.
-        /// </summary>
-        /// <param name="services">IServiceCollection</param>
-        public static IServiceCollection AddMudTooltipManager(this IServiceCollection services)
-        {
-            services.TryAddScoped<ITooltipManager, MudTooltipManager>();
-            return services;
-        }
-
-        /// <summary>
         /// Adds ScrollManager as a transient instance.
         /// </summary>
         /// <param name="services">IServiceCollection</param>
@@ -240,8 +230,7 @@ namespace MudBlazor.Services
                 .AddMudBlazorJsApi()
                 .AddMudBlazorScrollSpy()
                 .AddMudPopoverService(configuration.PopoverOptions)
-                .AddMudEventManager()
-                .AddMudTooltipManager();
+                .AddMudEventManager();
         }
 
         /// <summary>
@@ -268,8 +257,7 @@ namespace MudBlazor.Services
                 .AddMudBlazorJsApi()
                 .AddMudPopoverService(options.PopoverOptions)
                 .AddMudBlazorScrollSpy()
-                .AddMudEventManager()
-                .AddMudTooltipManager();
+                .AddMudEventManager();
         }
     }
 }

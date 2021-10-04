@@ -35,7 +35,6 @@ namespace MudBlazor.UnitTests.Components
             ctx.Services.AddSingleton<IDocsNavigationService, DocsNavigationService>();
             ctx.Services.AddSingleton<IMenuService, MenuService>();
             ctx.Services.AddSingleton<IMudPopoverService, MockPopoverService>();
-            ctx.Services.AddSingleton<ITooltipManager, MockMudTooltipManager>();
 
             ctx.Services.AddTransient<IKeyInterceptor, MockKeyInterceptorService>();
             ctx.Services.AddScoped(sp => new HttpClient());

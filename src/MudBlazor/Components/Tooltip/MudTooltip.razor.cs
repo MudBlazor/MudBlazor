@@ -6,10 +6,8 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    public partial class MudTooltip : MudComponentBase, IDisposable
+    public partial class MudTooltip : MudComponentBase
     {
-        [Inject] public ITooltipManager TooltipManager { get; set; }
-
         protected string ContainerClass => new CssBuilder("mud-tooltip-root")
             .AddClass("mud-tooltip-inline", Inline)
             .Build();
@@ -28,7 +26,6 @@ namespace MudBlazor
 
         private Origin _anchorOrigin;
         private Origin _transformOrigin;
-        private bool _disposedValue;
 
         [CascadingParameter]
         public bool RightToLeft { get; set; }
@@ -84,12 +81,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public bool Inline { get; set; } = true;
 
-        private void HandleMouseOver()
-        {
-            _isVisible = true;
-            TooltipManager.HandleOpenend(this);
-        }
-
+        private void HandleMouseOver() => _isVisible = true;
         private void HandleMouseOut() => _isVisible = false;
 
         private Origin ConvertPlacement()
@@ -123,43 +115,10 @@ namespace MudBlazor
                 return Origin.BottomCenter;
             }
         }
-
-        public void RequestClose()
-        {
-            if (_isVisible == false) { return; }
-
-            _isVisible = false;
-            InvokeAsync(StateHasChanged);
-        }
-
+        
         protected string GetTimeDelay()
         {
             return $"transition-delay: {Delay.ToString(CultureInfo.InvariantCulture)}ms;{Style}";
-        }
-
-
-        protected override void OnInitialized()
-        {
-            TooltipManager.Register(this);
-        }
-
-        protected virtual void Dispose(bool disposing)
-        {
-            if (!_disposedValue)
-            {
-                if (disposing)
-                {
-                    TooltipManager.Unregister(this, _isVisible);
-                }
-
-                _disposedValue = true;
-            }
-        }
-
-        public void Dispose()
-        {
-            Dispose(disposing: true);
-            GC.SuppressFinalize(this);
         }
     }
 }
