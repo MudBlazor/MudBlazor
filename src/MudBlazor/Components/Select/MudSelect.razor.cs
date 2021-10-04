@@ -535,8 +535,8 @@ namespace MudBlazor
                 HilightItemForValue(value);
             }
 
-            StateHasChanged();
             await SelectedValuesChanged.InvokeAsync(SelectedValues);
+            StateHasChanged();
         }
 
         private async void HilightItemForValue(T value)
@@ -610,6 +610,7 @@ namespace MudBlazor
         {
             if (Disabled || ReadOnly)
                 return;
+            Console.WriteLine($"Open ...");
             _isOpen = true;
             HilightSelectedValue();
             UpdateIcon();
@@ -619,6 +620,7 @@ namespace MudBlazor
 
         public async void CloseMenu(bool focusAgain = true)
         {
+            Console.WriteLine($"... Close");
             _isOpen = false;
             UpdateIcon();
             if (focusAgain == true)
@@ -880,6 +882,16 @@ namespace MudBlazor
             if (item == null || item.Value == null)
                 return;
             _shadowLookup.Remove(item.Value);
+        }
+
+        private void OnLostFocus(FocusEventArgs obj)
+        {
+            Console.WriteLine($"LostFocus. IsOpen={_isOpen}");
+            if (_isOpen)
+            {
+                Console.WriteLine($"Regaining focus!");
+                _elementReference.FocusAsync().AndForget();
+            }
         }
     }
 }

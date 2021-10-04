@@ -59,9 +59,12 @@ namespace MudBlazor
         [Parameter] public RenderFragment ChildContent { get; set; }
 
         private ElementReference _elementReference;
+        private ElementReference _elementReference1;
 
         public override ValueTask FocusAsync()
         {
+            if (InputType == InputType.Hidden && ChildContent != null)
+                return _elementReference1.FocusAsync();
             return _elementReference.FocusAsync();
         }
 
