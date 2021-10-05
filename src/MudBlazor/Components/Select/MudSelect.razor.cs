@@ -787,6 +787,11 @@ namespace MudBlazor
                         CloseMenu();
                         break;
                     }
+                    else if (_isOpen == false)
+                    {
+                        OpenMenu();
+                        break;
+                    }
                     else
                     {
                         await SelectPreviousItem();
@@ -795,6 +800,11 @@ namespace MudBlazor
                     }
                 case "ArrowDown":
                     if (obj.AltKey == true)
+                    {
+                        OpenMenu();
+                        break;
+                    }
+                    else if (_isOpen == false)
                     {
                         OpenMenu();
                         break;
