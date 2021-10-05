@@ -120,7 +120,7 @@ namespace MudBlazor
 
         [Inject] private IKeyInterceptor _keyInterceptor { get; set; }
 
-        private ElementReference _self;
+        private string _elementId = "numericField_" + Guid.NewGuid().ToString().Substring(0, 8);
 
         private MudInput<string> _elementReference;
 
@@ -211,12 +211,12 @@ namespace MudBlazor
 
             return (Num.To<T>(value), false);
         }
-        
+
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
             if (firstRender)
             {
-                await _keyInterceptor.Connect(_self, new KeyInterceptorOptions()
+                await _keyInterceptor.Connect(_elementId, new KeyInterceptorOptions()
                 {
                     //EnableLogging = true,
                     TargetClass = "mud-input-slot",
@@ -377,7 +377,7 @@ namespace MudBlazor
         }
 
         private string GetCounterText() => Counter == null ? string.Empty : (Counter == 0 ? (string.IsNullOrEmpty(Text) ? "0" : $"{Text.Length}") : ((string.IsNullOrEmpty(Text) ? "0" : $"{Text.Length}") + $" / {Counter}"));
-        
+
         private Task OnInputValueChanged(string text)
         {
             return SetTextAsync(text);
