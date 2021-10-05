@@ -681,6 +681,8 @@ namespace MudBlazor
                         new KeyOptions { Key="Home", PreventDown = "key+none" },
                         new KeyOptions { Key="End", PreventDown = "key+none" },
                         new KeyOptions { Key="Enter", PreventDown = "key+none" },
+                        new KeyOptions { Key="NumpadEnter", PreventDown = "key+none" },
+                        new KeyOptions { Key="a", PreventDown = "key+ctrl" }, // select all items instead of all page text
                         new KeyOptions { Key="/./", SubscribeDown = true, SubscribeUp = true }, // for our users
                     },
                 });
@@ -857,7 +859,7 @@ namespace MudBlazor
                 case "a":
                     if (obj.CtrlKey == true)
                     {
-                        if (SelectAll)
+                        if (MultiSelection)
                         {
                             await SelectAllClickAsync();
                             //If we didn't add delay, it won't work.
