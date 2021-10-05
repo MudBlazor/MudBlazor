@@ -47,10 +47,11 @@ namespace MudBlazor
             // the loop allows us to jump over disabled items until we reach the next non-disabled one
             for (int i = 0; i < _items.Count; i++)
             {
-                index = (index + direction) % _items.Count;
-                // modulo of negative numbers is negative, so we add item count to get a valid positive index.
+                index +=direction;
                 if (index < 0)
-                    index = _items.Count + index;
+                    index = 0;
+                if (index >= _items.Count)
+                    index = _items.Count-1;
                 if (_items[index].Disabled)
                     continue;
                 if (!MultiSelection)
@@ -502,7 +503,7 @@ namespace MudBlazor
             if (index < 0 || index >= _items.Count)
             {
                 if(!MultiSelection)
-                    CloseMenu();
+                    await CloseMenu();
                 return;
             }
             await SelectOption(_items[index].Value);
@@ -527,7 +528,7 @@ namespace MudBlazor
                 }
                 else
                 {
-                    await SetTextAsync(string.Join(Delimiter, SelectedValues.Select(x => Converter.Set(x))));
+                    await SetTextAsync(string.Join(Delimiter, SelectedValues.Select(x => Converter.Set(x))), updateValue:false);
                 }
 
                 UpdateSelectAllChecked();
@@ -580,8 +581,9 @@ namespace MudBlazor
             StateHasChanged();
         }
 
-        private void HilightSelectedValue()
+        private async Task HilightSelectedValue()
         {
+            await WaitForRender();
             if (MultiSelection)
                 HilightItem(_items.FirstOrDefault(x => !x.Disabled));
             else
@@ -613,29 +615,28 @@ namespace MudBlazor
             }
         }
 
-        public void ToggleMenu()
+        public async Task ToggleMenu()
         {
             if (Disabled || ReadOnly)
                 return;
             if (_isOpen)
-                CloseMenu(true);
+                await CloseMenu(true);
             else
-                OpenMenu();
+                await OpenMenu();
         }
 
-        public void OpenMenu()
+        public async Task OpenMenu()
         {
             if (Disabled || ReadOnly)
                 return;
             Console.WriteLine($"Open ...");
             _isOpen = true;
-            HilightSelectedValue();
             UpdateIcon();
-
             StateHasChanged();
+            await HilightSelectedValue();
         }
 
-        public async void CloseMenu(bool focusAgain = true)
+        public async Task CloseMenu(bool focusAgain = true)
         {
             Console.WriteLine($"... Close");
             _isOpen = false;
@@ -779,17 +780,17 @@ namespace MudBlazor
             switch (obj.Key)
             {
                 case "Tab":
-                    CloseMenu(false);
+                    await CloseMenu(false);
                     break;
                 case "ArrowUp":
                     if (obj.AltKey == true)
                     {
-                        CloseMenu();
+                        await CloseMenu();
                         break;
                     }
                     else if (_isOpen == false)
                     {
-                        CloseMenu();
+                        await CloseMenu();
                         break;
                     }
                     else
@@ -801,12 +802,12 @@ namespace MudBlazor
                 case "ArrowDown":
                     if (obj.AltKey == true)
                     {
-                        OpenMenu();
+                        await OpenMenu();
                         break;
                     }
                     else if (_isOpen == false)
                     {
-                        OpenMenu();
+                        await OpenMenu();
                         break;
                     }
                     else
@@ -816,10 +817,10 @@ namespace MudBlazor
                         break;
                     }
                 case " ":
-                    ToggleMenu();
+                    await ToggleMenu();
                     break;
                 case "Escape":
-                    CloseMenu(true);
+                    await CloseMenu(true);
                     break;
                 case "Home":
                     await SelectFirstItem();
@@ -834,7 +835,7 @@ namespace MudBlazor
                     {
                         if (!_isOpen)
                         {
-                            OpenMenu();
+                            await OpenMenu();
                             return;
                         }
                         // this also closes the menu
@@ -845,7 +846,7 @@ namespace MudBlazor
                     {
                         if (_isOpen == false)
                         {
-                            OpenMenu();
+                            await OpenMenu();
                             break;
                         }
                         else
