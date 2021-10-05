@@ -51,9 +51,16 @@
 	{
 		@if (InputType == InputType.Hidden && ChildContent != null)
 		{
-		    <div class="@InputClassname" tabindex="@(Disabled ? -1 : 0)" @onblur="@OnBlurred" @ref="@_elementReference1">
-		        @ChildContent
-		    </div>
+            @if(Disabled) {
+		    	<div class="@InputClassname" @onblur="@OnBlurred">
+		        	@ChildContent
+		    	</div>
+            }
+            else {
+		    	<div class="@InputClassname"  tabindex="0" @onblur="@OnBlurred" @ref="@_elementReference1">
+		       		@ChildContent
+		    	</div>
+            }
 		}
 
 	    <input class="@InputClassname"
