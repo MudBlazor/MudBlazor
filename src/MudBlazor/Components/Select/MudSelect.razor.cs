@@ -780,7 +780,7 @@ namespace MudBlazor
             if (Disabled || ReadOnly)
                 return;
             var key = obj.Key.ToLowerInvariant();
-            if (_isOpen && key.Length == 1 && !(obj.CtrlKey || obj.ShiftKey || obj.AltKey || obj.MetaKey))
+            if (_isOpen && key.Length == 1 && key != " " && !(obj.CtrlKey || obj.ShiftKey || obj.AltKey || obj.MetaKey))
             {
                 await SelectFirstItem(key);
                 return;
