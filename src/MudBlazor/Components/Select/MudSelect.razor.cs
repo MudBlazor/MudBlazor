@@ -844,6 +844,20 @@ namespace MudBlazor
                             break;
                         }
                     }
+                case "a":
+                    if (obj.CtrlKey == true)
+                    {
+                        if (SelectAll)
+                        {
+                            await SelectAllClickAsync();
+                            //If we didn't add delay, it won't work.
+                            await Task.Delay(1);
+                            StateHasChanged();
+                            //It only works when selecting all, not render unselect all.
+                            //UpdateSelectAllChecked();
+                        }
+                    }
+                    break;
             }
             OnKeyDown.InvokeAsync(obj).AndForget();
 
