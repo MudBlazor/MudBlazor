@@ -214,6 +214,7 @@ namespace MudBlazor.UnitTests.Components
             comp.WaitForAssertion(() => comp.FindAll("div.mud-list-item").Count.Should().BeGreaterThan(0));
             var items = comp.FindAll("div.mud-list-item").ToArray();
             items[1].Click();
+            comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().NotContain("mud-popover-open"));
             comp.WaitForAssertion(() => comp.FindAll("div.mud-input-slot").Count.Should().Be(0));
             select.Instance.Value.Should().Be(2);
             select.Instance.Text.Should().Be("2");
@@ -427,7 +428,7 @@ namespace MudBlazor.UnitTests.Components
             var items = comp.FindAll("div.mud-list-item").ToArray();
             items[1].Click();
             // menu should still be open now!!
-            menu.ClassList.Should().Contain("mud-popover-open");
+            comp.WaitForAssertion(() => menu.ClassList.Should().Contain("mud-popover-open"));
             comp.WaitForAssertion(() => select.Instance.Text.Should().Be("2"));
             validatedValue.Should().Be("2");
             items[0].Click();
@@ -609,6 +610,7 @@ namespace MudBlazor.UnitTests.Components
             // Button shows after selecting item
             var items = comp.FindAll("div.mud-list-item").ToArray();
             items[1].Click();
+            comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().NotContain("mud-popover-open"));
             comp.WaitForAssertion(() => select.Instance.Value.Should().Be("2"));
             comp.Find("button").Should().NotBeNull();
             // Selection cleared and button removed after clicking clear button
@@ -730,7 +732,7 @@ namespace MudBlazor.UnitTests.Components
             comp.WaitForAssertion(() => comp.FindAll("div.mud-selected-item").Count.Should().Be(0));
             // now click an item and see the value change
             comp.FindAll("div.mud-list-item")[1].Click();
-            comp.Find("div.mud-popover").ClassList.Should().NotContain("mud-popover-open");
+            comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().NotContain("mud-popover-open"));
             comp.WaitForAssertion(() => select.Instance.Value.Should().Be("2"));
             // open again and check hilited option
             comp.Find("div.mud-input-control").Click();

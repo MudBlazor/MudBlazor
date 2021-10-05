@@ -221,10 +221,12 @@ namespace MudBlazor
                     }
                     else
                     {
-                        SetTextAsync(string.Join(Delimiter, SelectedValues.Select(x => Converter.Set(x)))).AndForget();
+                        SetTextAsync(string.Join(Delimiter, SelectedValues.Select(x => Converter.Set(x))), updateValue:false).AndForget();
                     }
                 }
                 SelectedValuesChanged.InvokeAsync(new HashSet<T>(SelectedValues));
+                if (MultiSelection && typeof(T) == typeof(string))
+                    SetValueAsync((T)(object)Text, updateText: false).AndForget();
             }
         }
 
@@ -888,10 +890,13 @@ namespace MudBlazor
             OnKeyUp.InvokeAsync(obj).AndForget();
         }
 
+        [Obsolete("Use Clear() instead")]
+        public Task ClearAsync() => Clear();
+
         /// <summary>
         /// Clear the selection
         /// </summary>
-        public async Task ClearAsync()
+        public async Task Clear()
         {
             await SetValueAsync(default, false);
             await SetTextAsync(default, false);
@@ -905,36 +910,40 @@ namespace MudBlazor
         {
             // Manage the fake tri-state of a checkbox
             if (!_selectAllChecked.HasValue)
-            {
                 _selectAllChecked = true;
-            }
             else if (_selectAllChecked.Value)
-            {
                 _selectAllChecked = false;
+            else
+                _selectAllChecked = true;
+            // Define the items selection
+            if (_selectAllChecked.Value == true)
+                await SelectAllItems();
+            else
+                await Clear();
+        }
+
+        private async Task SelectAllItems()
+        {
+            if (!MultiSelection)
+                return;
+            var selectedValues = new HashSet<T>(_items.Where(x => !x.Disabled && x.Value != null).Select(x => x.Value));
+            _selectedValues=  new HashSet<T>(selectedValues);
+            if (MultiSelectionTextFunc != null)
+            {
+                await SetCustomizedTextAsync(string.Join(Delimiter, SelectedValues.Select(x => Converter.Set(x))),
+                    selectedConvertedValues: SelectedValues.Select(x => Converter.Set(x)).ToList(),
+                    multiSelectionTextFunc: MultiSelectionTextFunc);
             }
             else
             {
-                _selectAllChecked = true;
+                await SetTextAsync(string.Join(Delimiter, SelectedValues.Select(x => Converter.Set(x))), updateValue: false);
             }
-
-            // Define the items selection
-            if (_selectAllChecked.HasValue)
-            {
-                if (_selectAllChecked.Value)
-                {
-                    foreach (var item in _items)
-                    {
-                        if (item != null && !item.IsSelected)
-                        {
-                            await SelectOption(item.Value);
-                        }
-                    }
-                }
-                else
-                {
-                    await ClearAsync();
-                }
-            }
+            UpdateSelectAllChecked();
+            _selectedValues = selectedValues; // need to force selected values because Blazor overwrites it under certain circumstances due to changes of Text or Value
+            BeginValidate();
+            await SelectedValuesChanged.InvokeAsync(SelectedValues);
+            if (MultiSelection && typeof(T) == typeof(string))
+                SetValueAsync((T)(object)Text, updateText: false).AndForget();
         }
 
         public void RegisterShadowItem(MudSelectItem<T> item)
