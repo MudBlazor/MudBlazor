@@ -210,7 +210,6 @@ namespace MudBlazor.UnitTests.Components
             //Console.WriteLine(comp.Markup);
 
             input.Click();
-            comp.RenderCount.Should().Be(2);
             comp.WaitForAssertion(() => comp.FindAll("div.mud-list-item").Count.Should().BeGreaterThan(0));
             var items = comp.FindAll("div.mud-list-item").ToArray();
             items[1].Click();
@@ -370,17 +369,17 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void Select_Should_FireOnBlur()
+        public async Task Select_Should_FireOnBlur()
         {
             var comp = Context.RenderComponent<SelectTest1>();
             Console.WriteLine(comp.Markup);
             var select = comp.FindComponent<MudSelect<string>>();
             var eventCounter = 0;
             select.SetCallback(s => s.OnBlur, x => eventCounter++);
-            comp.InvokeAsync(() =>
+            await comp.InvokeAsync(async () =>
             {
-                select.Instance.OpenMenu();
-                select.Instance.CloseMenu();
+                await select.Instance.OpenMenu();
+                await select.Instance.CloseMenu();
             });
             eventCounter.Should().Be(1);
         }
@@ -788,14 +787,17 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("div.mud-input-control").Click();
             comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open"));
             comp.FindAll("div.mud-list-item")[0].Click();
+            comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().NotContain("mud-popover-open"));
             comp.WaitForAssertion(() => select.Instance.Value.Should().Be("American Samoa"));
             comp.Find("div.mud-input-control").Click();
             comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open"));
             comp.FindAll("div.mud-list-item")[1].Click();
+            comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().NotContain("mud-popover-open"));
             comp.WaitForAssertion(() => select.Instance.Value.Should().Be("Arizona"));
             comp.Find("div.mud-input-control").Click();
             comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open"));
             comp.FindAll("div.mud-list-item")[2].Click();
+            comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().NotContain("mud-popover-open"));
             comp.WaitForAssertion(() => select.Instance.Value.Should().Be("Arkansas"));
             // reloading!
             comp.Find(".reload").Click();
@@ -803,14 +805,17 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("div.mud-input-control").Click();
             comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open"));
             comp.FindAll("div.mud-list-item")[0].Click();
+            comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().NotContain("mud-popover-open"));
             comp.WaitForAssertion(() => select.Instance.Value.Should().Be("Alabama"));
             comp.Find("div.mud-input-control").Click();
             comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open"));
             comp.FindAll("div.mud-list-item")[1].Click();
+            comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().NotContain("mud-popover-open"));
             comp.WaitForAssertion(() => select.Instance.Value.Should().Be("Alaska"));
             comp.Find("div.mud-input-control").Click();
             comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open"));
             comp.FindAll("div.mud-list-item")[2].Click();
+            comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().NotContain("mud-popover-open"));
             comp.WaitForAssertion(() => select.Instance.Value.Should().Be("American Samoa"));
         }
     }

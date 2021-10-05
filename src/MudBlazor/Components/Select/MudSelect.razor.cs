@@ -554,6 +554,8 @@ namespace MudBlazor
             }
 
             await SelectedValuesChanged.InvokeAsync(SelectedValues);
+            if (MultiSelection && typeof(T)==typeof(string))
+                await SetValueAsync((T)(object)Text, updateText:false);
             StateHasChanged();
         }
 
