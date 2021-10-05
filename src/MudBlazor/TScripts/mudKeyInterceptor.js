@@ -223,7 +223,7 @@ class MudKeyInterceptor {
             Repeat: args.repeat,
             CtrlKey: args.ctrlKey,
             ShiftKey: args.shiftKey,
-            AltKey: args.shiftKey,
+            AltKey: args.altKey,
             MetaKey: args.metaKey
         };
     }
