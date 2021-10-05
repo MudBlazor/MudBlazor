@@ -631,7 +631,6 @@ namespace MudBlazor
         {
             if (Disabled || ReadOnly)
                 return;
-            Console.WriteLine($"Open ...");
             _isOpen = true;
             UpdateIcon();
             StateHasChanged();
@@ -640,7 +639,6 @@ namespace MudBlazor
 
         public async Task CloseMenu(bool focusAgain = true)
         {
-            Console.WriteLine($"... Close");
             _isOpen = false;
             UpdateIcon();
             if (focusAgain == true)
@@ -948,10 +946,10 @@ namespace MudBlazor
 
         private void OnLostFocus(FocusEventArgs obj)
         {
-            Console.WriteLine($"LostFocus. IsOpen={_isOpen}");
             if (_isOpen)
             {
-                Console.WriteLine($"Regaining focus!");
+                // when the menu is open we immediately get back the focus if we lose it (i.e. because of checkboxes in multi-select)
+                // otherwise we can't receive key strokes any longer
                 _elementReference.FocusAsync().AndForget();
             }
         }
