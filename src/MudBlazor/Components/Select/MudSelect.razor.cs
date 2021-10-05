@@ -31,7 +31,7 @@ namespace MudBlazor
 
         [Inject] IScrollManager ScrollManager { get; set; }
 
-        private ElementReference _self;
+        private string _elementId = "select_" + Guid.NewGuid().ToString().Substring(0, 8);
 
         private Task SelectNextItem() => SelectAdjacentItem(+1);
 
@@ -670,7 +670,7 @@ namespace MudBlazor
         {
             if (firstRender)
             {
-                await _keyInterceptor.Connect(_self, new KeyInterceptorOptions()
+                await _keyInterceptor.Connect(_elementId, new KeyInterceptorOptions()
                 {
                     EnableLogging = true,
                     TargetClass = "mud-input-control",
