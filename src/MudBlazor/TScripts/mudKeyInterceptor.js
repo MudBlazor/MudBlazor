@@ -1,15 +1,19 @@
 ﻿class MudKeyInterceptorFactory {
 
-    connect(dotNetRef, element, options) {
+    connect(dotNetRef, elementId, options) {
         //console.log('[MudBlazor | MudKeyInterceptorFactory] connect ', { dotNetRef, element, options });
+        if (!elementId)
+            throw "elementId: expected element id!";
+        var element = document.getElementById(elementId);
         if (!element)
-            throw "element: expected ElementReference!";
+            throw "no element found for id: " +elementId;
         if (!element.mudKeyInterceptor)
             element.mudKeyInterceptor = new MudKeyInterceptor(dotNetRef, options);
         element.mudKeyInterceptor.connect(element);
     }
 
-    disconnect(element) {
+    disconnect(elementId) {
+        var element = document.getElementById(elementId);
         if (!element || !element.mudKeyInterceptor)
             return;
         element.mudKeyInterceptor.disconnect();
