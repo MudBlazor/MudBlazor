@@ -828,6 +828,7 @@ namespace MudBlazor
                     await SelectLastItem();
                     break;
                 case "Enter":
+                case "NumpadEnter":
                     var index = _items.FindIndex(x => x.ItemId == (string)_activeItemId);
                     if (!MultiSelection)
                     {
@@ -849,13 +850,8 @@ namespace MudBlazor
                         }
                         else
                         {
-                            await Task.Delay(1);
                             await SelectOption(index);
-                            await Task.Delay(1);
-                            StateHasChanged();
                             await _elementReference.SetText(Text);
-                            await Task.Delay(1);
-                            StateHasChanged();
                             break;
                         }
                     }
