@@ -17,7 +17,7 @@
 
     protected virtual RenderFragment Render =>
     @<CascadingValue Value="@this" IsFixed="true">
-        <div class="@PickerClass" @ref="_self">
+        <div class="@PickerClass" id="@_elementId">
             @if (PickerVariant != PickerVariant.Static)
             {
                 <CascadingValue Name="Standalone" Value="false" IsFixed="true">

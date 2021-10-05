@@ -30,7 +30,7 @@ namespace MudBlazor
 
         [Inject] private IKeyInterceptor _keyInterceptor { get; set; }
 
-        private ElementReference _self;
+        private string _elementId = "picker" + Guid.NewGuid().ToString().Substring(0, 8);
 
         [Inject] private IBrowserWindowSizeProvider WindowSizeListener { get; set; }
 
@@ -351,7 +351,7 @@ namespace MudBlazor
         {
             if (firstRender)
             {
-                await _keyInterceptor.Connect(_self, new KeyInterceptorOptions()
+                await _keyInterceptor.Connect(_elementId, new KeyInterceptorOptions()
                 {
                     //EnableLogging = true,
                     TargetClass = "mud-input-slot",
