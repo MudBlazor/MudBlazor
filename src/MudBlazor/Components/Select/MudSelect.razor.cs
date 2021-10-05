@@ -762,7 +762,7 @@ namespace MudBlazor
             }
         }
 
-        private async void HandleKeyDown(KeyboardEventArgs obj)
+        internal async void HandleKeyDown(KeyboardEventArgs obj)
         {
             if (Disabled || ReadOnly)
                 return;
@@ -779,7 +779,7 @@ namespace MudBlazor
                     }
                     else if (_isOpen == false)
                     {
-                        await CloseMenu();
+                        await OpenMenu();
                         break;
                     }
                     else
