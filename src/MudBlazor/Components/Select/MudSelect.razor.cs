@@ -789,7 +789,7 @@ namespace MudBlazor
                     }
                     else if (_isOpen == false)
                     {
-                        OpenMenu();
+                        CloseMenu();
                         break;
                     }
                     else
