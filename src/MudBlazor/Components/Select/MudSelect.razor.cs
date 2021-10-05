@@ -77,11 +77,24 @@ namespace MudBlazor
                 await ScrollManager.ScrollToListItemAsync(item.ItemId, direction, true);
         }
 
-        private async Task SelectFirstItem()
+        private async Task SelectFirstItem(string startChar=null)
         {
             if (_items == null || _items.Count == 0)
                 return;
-            var item = _items.FirstOrDefault(x => !x.Disabled);
+            var items = _items.Where(x => !x.Disabled);
+            if (!string.IsNullOrWhiteSpace(startChar))
+            {
+                // find first item that starts with the letter
+                var currentItem = items.FirstOrDefault(x => x.ItemId == (string)_activeItemId);
+                if (currentItem != null &&
+                    Converter.Set(currentItem.Value)?.ToLowerInvariant().StartsWith(startChar) == true)
+                {
+                    // this will step through all items that start with the same letter if pressed multiple times
+                    items = items.SkipWhile(x => x != currentItem).Skip(1);
+                }
+                items = items.Where(x => Converter.Set(x.Value)?.ToLowerInvariant().StartsWith(startChar) == true);
+            }
+            var item = items.FirstOrDefault();
             if (item == null)
                 return;
             if (!MultiSelection)
@@ -766,6 +779,12 @@ namespace MudBlazor
         {
             if (Disabled || ReadOnly)
                 return;
+            var key = obj.Key.ToLowerInvariant();
+            if (_isOpen && key.Length == 1 && !(obj.CtrlKey || obj.ShiftKey || obj.AltKey || obj.MetaKey))
+            {
+                await SelectFirstItem(key);
+                return;
+            }
             switch (obj.Key)
             {
                 case "Tab":
