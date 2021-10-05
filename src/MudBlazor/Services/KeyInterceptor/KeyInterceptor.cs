@@ -10,6 +10,11 @@ using MudBlazor.Interop;
 
 namespace MudBlazor.Services
 {
+    /// <summary>
+    /// This transient service binds itself to a parent element to observe the keys of one of its children.
+    /// It can call preventDefault or stopPropagation directly on the JavaScript side for single key strokes / key combinations as per configuration.
+    /// Furthermore, you can precisely subscribe single keystrokes or combinations and only the subscribed ones will be forwarded into .NET
+    /// </summary>
     public class KeyInterceptor : IKeyInterceptor, IDisposable
     {
         private bool _isDisposed = false;
@@ -17,35 +22,40 @@ namespace MudBlazor.Services
         private readonly DotNetObjectReference<KeyInterceptor> _dotNetRef;
         private readonly IJSRuntime _jsRuntime;
         private bool _isObserving;
-        private ElementReference _element;
+        private string _elementId;
 
         public KeyInterceptor(IJSRuntime jsRuntime)
         {
             _dotNetRef = DotNetObjectReference.Create(this);
             _jsRuntime = jsRuntime;
-
         }
 
-        public async Task Connect(ElementReference element, KeyInterceptorOptions options)
+        /// <summary>
+        /// Connect to the ancestor element of the element(s) that should be observed
+        /// </summary>
+        /// <param name="elementId">Ancestor html element id</param>
+        /// <param name="options">Define here the descendant(s) by setting TargetClass and the keystrokes to be monitored / suppressed</param>
+        public async Task Connect(string elementId, KeyInterceptorOptions options)
         {
             if (_isObserving)
                 return;
-            _element = element;
+            _elementId = elementId;
             try
             {
-                await _jsRuntime.InvokeVoidAsync("mudKeyInterceptor.connect", _dotNetRef, element, options);
+                await _jsRuntime.InvokeVoidAsync("mudKeyInterceptor.connect", _dotNetRef, elementId, options);
                 _isObserving = true;
             }
             catch (TaskCanceledException) { /*ignore*/ }
         }
 
+        /// <summary>
+        /// Disconnect from the previously connected ancestor and its descendants
+        /// </summary>
         public async Task Disconnect()
         {
             try
             {
-                var task=_jsRuntime.InvokeVoidAsync($"mudKeyInterceptor.disconnect", _element);
-                if (!_isDisposed)
-                    await task;
+                await _jsRuntime.InvokeVoidAsync($"mudKeyInterceptor.disconnect", _elementId);
             } catch (Exception) {  /*ignore*/ }
             _isObserving = false;
         }
@@ -70,7 +80,7 @@ namespace MudBlazor.Services
             if (!disposing || _isDisposed)
                 return;
             _isDisposed = true;
-            _=Disconnect();
+            Disconnect().AndForget();
             _dotNetRef.Dispose();
         }
 
