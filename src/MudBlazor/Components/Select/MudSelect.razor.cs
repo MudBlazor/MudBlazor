@@ -78,59 +78,46 @@ namespace MudBlazor
 
         private async Task SelectFirstItem()
         {
+            await WaitForRender();
             if (_items == null || _items.Count == 0)
                 return;
-            MudSelectItem<T> item = null;
-
-            for (int i = 0; i < _items.Count; i++)
+            var item = _items.FirstOrDefault(x => !x.Disabled);
+            if (item == null)
+                return;
+            if (!MultiSelection)
             {
-                if (_items[i].Disabled)
-                    continue;
-                item = _items[i];
-                if (!MultiSelection)
-                {
-                    _selectedValues.Clear();
-                    _selectedValues.Add(item.Value);
-                    await SetValueAsync(item.Value, updateText: true);
-                    HilightItem(item);
-                    break;
-                }
-                else
-                {
-                    HilightItem(item);
-                    break;
-                }
+                _selectedValues.Clear();
+                _selectedValues.Add(item.Value);
+                await SetValueAsync(item.Value, updateText: true);
+                HilightItem(item);
             }
-            if (item != null)
-                await ScrollManager.ScrollToListItemAsync(item.ItemId, -1, true);
+            else
+            {
+                HilightItem(item);
+            }
+            await ScrollManager.ScrollToListItemAsync(item.ItemId, -1, true);
         }
 
         private async Task SelectLastItem()
         {
+            await WaitForRender();
             if (_items == null || _items.Count == 0)
                 return;
-            MudSelectItem<T> item = null;
-            for (int i = _items.Count - 1; i > 0; i--)
+            var item = _items.LastOrDefault(x => !x.Disabled);
+            if (item == null)
+                return;
+            if (!MultiSelection)
             {
-                if (_items[i].Disabled)
-                    continue;
-                item = _items[i];
-                if (!MultiSelection)
-                {
-                    _selectedValues.Clear();
-                    _selectedValues.Add(item.Value);
-                    await SetValueAsync(item.Value, updateText: true);
-                    HilightItem(item);
-                    break;
-                }
-                else
-                {
-                    HilightItem(item);
-                    break;
-                }
+                _selectedValues.Clear();
+                _selectedValues.Add(item.Value);
+                await SetValueAsync(item.Value, updateText: true);
+                HilightItem(item);
             }
-            if (item != null)
-                await ScrollManager.ScrollToListItemAsync(item.ItemId, 1, true);
+            else
+            {
+                HilightItem(item);
+            }
+            await ScrollManager.ScrollToListItemAsync(item.ItemId, 1, true);
         }
 
         /// <summary>
