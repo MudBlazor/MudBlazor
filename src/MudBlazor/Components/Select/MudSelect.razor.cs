@@ -86,12 +86,20 @@ namespace MudBlazor
             {
                 if (_items[i].Disabled == false)
                 {
-                    // TODO: MultiSelect!
-                    _selectedValues.Clear();
-                    _selectedValues.Add(_items[i].Value);
-                    await SetValueAsync(_items[i].Value, updateText: true);
-                    HilightItem(_items[i]);
-                    break;
+                    // TODO: MultiSelect test for disabled items
+                    if (!MultiSelection)
+                    {
+                        _selectedValues.Clear();
+                        _selectedValues.Add(_items[i].Value);
+                        await SetValueAsync(_items[i].Value, updateText: true);
+                        HilightItem(_items[i]);
+                        break;
+                    }
+                    else
+                    {
+                        HilightItem(_items[i]);
+                        break;
+                    }
                 }
             }
         }
@@ -102,17 +110,26 @@ namespace MudBlazor
                 return;
             for (int i = _items.Count-1; i > 0; i--)
             {
-                i -= 1;
+                //i -= 1;
                 if (_items[i].Disabled == false)
                 {
-                    // TODO: MultiSelect!
-                    _selectedValues.Clear();
-                    _selectedValues.Add(_items[i].Value);
-                    await SetValueAsync(_items[i].Value, updateText: true);
-                    var item = _items[i];
-                    HilightItem(item);
-                    await ScrollManager.ScrollToAsync(item.ItemId, 0, 100, ScrollBehavior.Smooth);
-                    break;
+                    // TODO: MultiSelect test for disabled items
+                    if (!MultiSelection)
+                    {
+                        _selectedValues.Clear();
+                        _selectedValues.Add(_items[i].Value);
+                        await SetValueAsync(_items[i].Value, updateText: true);
+                        var item = _items[i];
+                        HilightItem(item);
+                        break;
+                    }
+                    else
+                    {
+                        HilightItem(_items[i]);
+                        break;
+                    }
+                    //Below line line scrolls the page, not the dropdown
+                    //await ScrollManager.ScrollToAsync(item.ItemId, 0, 100, ScrollBehavior.Smooth);
                 }
             }
         }
@@ -765,13 +782,29 @@ namespace MudBlazor
                     CloseMenu(false);
                     break;
                 case "ArrowUp":
-                    await SelectPreviousItem();
-                    await _elementReference.SetText(Text);
-                    break;
+                    if (obj.AltKey == true)
+                    {
+                        CloseMenu();
+                        break;
+                    }
+                    else
+                    {
+                        await SelectPreviousItem();
+                        await _elementReference.SetText(Text);
+                        break;
+                    }
                 case "ArrowDown":
-                    await SelectNextItem();
-                    await _elementReference.SetText(Text);
-                    break;
+                    if (obj.AltKey == true)
+                    {
+                        OpenMenu();
+                        break;
+                    }
+                    else
+                    {
+                        await SelectNextItem();
+                        await _elementReference.SetText(Text);
+                        break;
+                    }
                 case " ":
                     ToggleMenu();
                     break;
@@ -801,7 +834,7 @@ namespace MudBlazor
                     {
                         if (_isOpen == false)
                         {
-                            _isOpen = true;
+                            OpenMenu();
                             break;
                         }
                         else
