@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Extensions;
@@ -140,13 +141,13 @@ namespace MudBlazor
 
         [Inject] private IKeyInterceptor _keyInterceptor { get; set; }
 
-        private ElementReference _self;
+        private string _elementId = "checkbox" + Guid.NewGuid().ToString().Substring(0, 8);
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
             if (firstRender)
             {
-                await _keyInterceptor.Connect(_self, new KeyInterceptorOptions()
+                await _keyInterceptor.Connect(_elementId, new KeyInterceptorOptions()
                 {
                     //EnableLogging = true,
                     TargetClass = "mud-input-slot",
