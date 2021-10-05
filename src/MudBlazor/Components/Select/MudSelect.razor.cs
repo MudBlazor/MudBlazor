@@ -31,7 +31,7 @@ namespace MudBlazor
 
         [Inject] IScrollManager ScrollManager { get; set; }
 
-        private ElementReference _self;
+        private string _elementId = "select_" + Guid.NewGuid().ToString().Substring(0, 8);
 
         private Task SelectNextItem() => SelectAdjacentItem(+1);
 
@@ -72,6 +72,7 @@ namespace MudBlazor
                     break;
                 }
             }
+            await _elementReference.SetText(Text);
             if (item != null)
                 await ScrollManager.ScrollToListItemAsync(item.ItemId, direction, true);
         }
@@ -80,57 +81,44 @@ namespace MudBlazor
         {
             if (_items == null || _items.Count == 0)
                 return;
-            MudSelectItem<T> item = null;
-
-            for (int i = 0; i < _items.Count; i++)
+            var item = _items.FirstOrDefault(x => !x.Disabled);
+            if (item == null)
+                return;
+            if (!MultiSelection)
             {
-                if (_items[i].Disabled)
-                    continue;
-                item = _items[i];
-                if (!MultiSelection)
-                {
-                    _selectedValues.Clear();
-                    _selectedValues.Add(item.Value);
-                    await SetValueAsync(item.Value, updateText: true);
-                    HilightItem(item);
-                    break;
-                }
-                else
-                {
-                    HilightItem(item);
-                    break;
-                }
+                _selectedValues.Clear();
+                _selectedValues.Add(item.Value);
+                await SetValueAsync(item.Value, updateText: true);
+                HilightItem(item);
             }
-            if (item != null)
-                await ScrollManager.ScrollToListItemAsync(item.ItemId, -1, true);
+            else
+            {
+                HilightItem(item);
+            }
+            await _elementReference.SetText(Text);
+            await ScrollManager.ScrollToListItemAsync(item.ItemId, -1, true);
         }
 
         private async Task SelectLastItem()
         {
             if (_items == null || _items.Count == 0)
                 return;
-            MudSelectItem<T> item = null;
-            for (int i = _items.Count - 1; i > 0; i--)
+            var item = _items.LastOrDefault(x => !x.Disabled);
+            if (item == null)
+                return;
+            if (!MultiSelection)
             {
-                if (_items[i].Disabled)
-                    continue;
-                item = _items[i];
-                if (!MultiSelection)
-                {
-                    _selectedValues.Clear();
-                    _selectedValues.Add(item.Value);
-                    await SetValueAsync(item.Value, updateText: true);
-                    HilightItem(item);
-                    break;
-                }
-                else
-                {
-                    HilightItem(item);
-                    break;
-                }
+                _selectedValues.Clear();
+                _selectedValues.Add(item.Value);
+                await SetValueAsync(item.Value, updateText: true);
+                HilightItem(item);
             }
-            if (item != null)
-                await ScrollManager.ScrollToListItemAsync(item.ItemId, 1, true);
+            else
+            {
+                HilightItem(item);
+            }
+            await _elementReference.SetText(Text);
+            await ScrollManager.ScrollToListItemAsync(item.ItemId, 1, true);
         }
 
         /// <summary>
@@ -670,7 +658,7 @@ namespace MudBlazor
         {
             if (firstRender)
             {
-                await _keyInterceptor.Connect(_self, new KeyInterceptorOptions()
+                await _keyInterceptor.Connect(_elementId, new KeyInterceptorOptions()
                 {
                     EnableLogging = true,
                     TargetClass = "mud-input-control",
@@ -797,7 +785,6 @@ namespace MudBlazor
                     else
                     {
                         await SelectPreviousItem();
-                        await _elementReference.SetText(Text);
                         break;
                     }
                 case "ArrowDown":
@@ -814,7 +801,6 @@ namespace MudBlazor
                     else
                     {
                         await SelectNextItem();
-                        await _elementReference.SetText(Text);
                         break;
                     }
                 case " ":
