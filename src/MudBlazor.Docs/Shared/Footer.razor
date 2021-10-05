@@ -39,6 +39,17 @@
                 </ul>
             </MudItem>
         </MudGrid>
-        <MudText Typo="Typo.body2">Currently v5.1.4. Released under the <MudLink Typo="Typo.body2" Href="https://github.com/MudBlazor/MudBlazor/blob/master/LICENSE" Target="_blank">MIT License.</MudLink> Copyright © 2020-2021 MudBlazor.</MudText>
+        <MudText Typo="Typo.body2">Currently @MudBlazorVersion Released under the <MudLink Typo="Typo.body2" Href="https://github.com/MudBlazor/MudBlazor/blob/master/LICENSE" Target="_blank">MIT License.</MudLink> Copyright © 2020-2021 MudBlazor.</MudText>
     </div>
 </MudContainer>
+
+@code {
+    string MudBlazorVersion
+    {
+        get
+        {
+            var v = typeof(MudText).Assembly.GetName().Version;
+            return $"v{v.Major}.{v.Minor}.{v.Build}.";
+        }
+    }
+}

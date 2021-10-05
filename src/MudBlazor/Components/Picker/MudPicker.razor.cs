@@ -135,6 +135,11 @@ namespace MudBlazor
         [Parameter] public string HelperText { get; set; }
 
         /// <summary>
+        /// If true, the helper text will only be visible on focus.
+        /// </summary>
+        [Parameter] public bool HelperTextOnFocus { get; set; }
+
+        /// <summary>
         /// If string has value the label text will be displayed in the input, and scaled down at the top if the input has value.
         /// </summary>
         [Parameter] public string Label { get; set; }

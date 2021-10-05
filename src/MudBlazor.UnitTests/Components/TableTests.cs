@@ -889,6 +889,51 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// This test validates the edit row maintains position on changing sort key for an inline editing table.
+        /// </summary>
+        [Test]
+        public async Task TableInlineEditSortTest()
+        {
+            var comp = Context.RenderComponent<TableInlineEditSortTest>();
+
+            // Count the number of rows including header
+            comp.FindAll("tr").Count.Should().Be(4); // Three rows + header row
+            
+            // Check the values of rows
+            comp.FindAll("td")[0].TextContent.Trim().Should().Be("B");
+            comp.FindAll("td")[2].TextContent.Trim().Should().Be("A");
+            comp.FindAll("td")[4].TextContent.Trim().Should().Be("C");
+            
+            // Access to the table
+            var table = comp.FindComponent<MudTable<TableInlineEditSortTest.Element>>();
+
+            // Get the mudtablesortlabels associated to the table
+            var mudTableSortLabels = table.Instance.Context.SortLabels;
+
+            // Sort the first column
+            await table.InvokeAsync(() => mudTableSortLabels[0].ToggleSortDirection());
+
+            // Check the values of rows
+            comp.FindAll("td")[0].TextContent.Trim().Should().Be("A");
+            comp.FindAll("td")[2].TextContent.Trim().Should().Be("B");
+            comp.FindAll("td")[4].TextContent.Trim().Should().Be("C");
+            
+            // Click on the second row
+            var trs = comp.FindAll("tr");
+            trs[2].Click();
+            
+            // Change row two data
+            var input = comp.Find(("#Id1"));
+            input.Change("D");
+            
+            // Check row two is still in position 2 of the data rows
+            var trs2 = comp.FindAll("tr");
+            trs2[1].InnerHtml.Contains("input").Should().BeFalse();
+            trs2[2].InnerHtml.Contains("input").Should().BeTrue();
+            trs2[3].InnerHtml.Contains("input").Should().BeFalse();
+        }
+
+        /// <summary>
         /// This test validates the processing of the Commit and Cancel buttons for an inline editing table.
         /// </summary>
         [Test]
@@ -1203,6 +1248,35 @@ namespace MudBlazor.UnitTests.Components
             tableInstance.FilteredItems.Count().Should().Be(0);
             tableComponent.FindAll("tr").Count.Should().Be(0);
             tableComponent.Find("div.mud-table-page-number-information").Text().Should().Be("0-0 of 0", "'ZZZ' filter applied.");
+        }
+
+        /// <summary>
+        /// Tests checks that RowsPerPage Parameter is two-way bindable
+        /// </summary>
+        [Test]
+        public async Task RowsPerPageParameterTwoWayBinding()
+        {
+            int rowsPerPage = 5;
+            int newRowsPerPage = 25;
+            var tableComponent = Context.RenderComponent<TableRowsPerPageTwoWayBindingTest>(parameters => parameters
+                .Add(p => p.RowsPerPage, rowsPerPage)
+                .Add(p => p.RowsPerPageChanged, (s) =>
+                {
+                    rowsPerPage = int.Parse(s.ToString());
+                })
+            );
+            Console.WriteLine(tableComponent.Markup);
+            //Check the component rendered correctly with the initial RowsPerPage
+            var t = tableComponent.Find("input.mud-select-input").GetAttribute("Value");
+            int.Parse(t).Should().Be(rowsPerPage, "The component rendered correctly");
+            //open the menu
+            var menuItem = tableComponent.Find("div.mud-input-control");
+            menuItem.Click();
+            
+            //Now select the 25 and check it
+            var items = tableComponent.FindAll("div.mud-list-item").ToArray();
+            items[1].Click();
+            rowsPerPage.Should().Be(newRowsPerPage, "ValueChanged EventCallback fired correctly");
         }
     }
 }

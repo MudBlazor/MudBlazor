@@ -15,7 +15,7 @@
             <SectionHeader Title="Usage">
                 <Description>
                     How you write the search function determines whether or not the Autocomplete shows a full list initially. By setting <CodeInline>ResetValueOnEmptyText="true"</CodeInline>,
-                    the <CodeInline>Value</CodeInline> will be reset when the user clears the input text. With <CodeInline>CoerceText="true"</CodeInline> upon selection of an entry from the list, 
+                    the <CodeInline>Value</CodeInline> will be reset when the user clears the input text. With <CodeInline>CoerceText="true"</CodeInline> upon selection of an entry from the list,
                     the <CodeInline>Text</CodeInline> is always updated. When the user types something that is not on the list and <CodeInline>CoerceValue</CodeInline> is true,
                     the <CodeInline>Value</CodeInline> will be overwritten with the user input which allows it to be passed to the validation function.
                 </Description>
@@ -27,10 +27,20 @@
         </DocsPageSection>
 
         <DocsPageSection>
+            <SectionHeader Title="Margin And Dense">
+                <Description>While the margin property affects the input element, the dense property affects the dropdown element.</Description>
+            </SectionHeader>
+            <SectionContent Outlined="true" DisplayFlex="true">
+                <AutocompleteMarginDenseExample />
+            </SectionContent>
+            <SectionSource ShowCode="false" Code="AutocompleteMarginDenseExample" GitHubFolderName="Autocomplete" />
+        </DocsPageSection>
+
+        <DocsPageSection>
             <SectionHeader Title="Presentation">
                 <Description>
                     When you use objects, Autocomplete uses <CodeInline>ToString()</CodeInline> to convert the object into text form. You can set a custom <CodeInline>ToStringFunc</CodeInline>
-                    to override how the list items are stringified. This string representation is also what you'll get as input to the search function.<br /> 
+                    to override how the list items are stringified. This string representation is also what you'll get as input to the search function.<br />
                     If that is not enough, you can define an <CodeInline Tag="true">ItemTemplate</CodeInline> and even an <CodeInline Tag="true">ItemSelectedTemplate</CodeInline>
                     to create highly sophisticated list item presentations.
                 </Description>
@@ -41,11 +51,11 @@
             <SectionSource ShowCode="false" Code="AutocompleteClrObjectsExample" GitHubFolderName="Autocomplete" />
         </DocsPageSection>
 
-		<DocsPageSection>
+        <DocsPageSection>
             <SectionHeader Title="Validation">
                 <Description>
-                    Below there are different examples of validation with the MudAutocomplete control. The validation uses an EditForm or a MudForm. The result and display will vary if the 
-                    <CodeInline Tag="true">CoerceValue</CodeInline> option is set to <CodeInline Tag="true">true</CodeInline>. But also if characters are typed into the control instead of a selection from the dropdown list.<br/>
+                    Below there are different examples of validation with the MudAutocomplete control. The validation uses an EditForm or a MudForm. The result and display will vary if the
+                    <CodeInline Tag="true">CoerceValue</CodeInline> option is set to <CodeInline Tag="true">true</CodeInline>. But also if characters are typed into the control instead of a selection from the dropdown list.<br />
                     For more info on form validation, check out <MudLink Href="/components/form">Form</MudLink>.
                 </Description>
             </SectionHeader>

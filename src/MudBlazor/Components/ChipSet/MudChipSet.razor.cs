@@ -56,6 +56,12 @@ namespace MudBlazor
         }
 
         /// <summary>
+        ///  Will make all chips read only.
+        /// </summary>
+        [Parameter]
+        public bool ReadOnly { get; set; } = false;
+
+        /// <summary>
         /// The currently selected chip in Choice mode
         /// </summary>
         [Parameter]

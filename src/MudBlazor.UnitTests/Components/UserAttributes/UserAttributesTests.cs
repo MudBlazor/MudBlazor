@@ -47,8 +47,6 @@ namespace MudBlazor.UnitTests.UserAttributes
             {
                 //this components doesn't need to have markup
                 if (componentType == typeof(MudPopover)
-                    || componentType == typeof(MudPortal)
-                    || componentType == typeof(MudPortalProvider)
                     ) { continue; }
 
                 var component = componentFactory.Create(componentType, testContext);

@@ -121,12 +121,50 @@ namespace MudBlazor.Services
         }
 
         /// <summary>
+        /// Adds IKeyInterceptor as a Transient instance.
+        /// </summary>
+        /// <param name="services">IServiceCollection</param>
+        /// <returns>Continues the IServiceCollection chain.</returns>
+        public static IServiceCollection AddMudBlazorKeyInterceptor(this IServiceCollection services)
+        {
+            services.TryAddTransient<IKeyInterceptor, KeyInterceptor>();
+            return services;
+        }
+
+        /// <summary>
         /// Adds ScrollManager as a transient instance.
         /// </summary>
         /// <param name="services">IServiceCollection</param>
         public static IServiceCollection AddMudBlazorScrollManager(this IServiceCollection services)
         {
             services.TryAddTransient<IScrollManager, ScrollManager>();
+            return services;
+        }
+
+        /// <summary>
+        /// Adds ScrollManager as a transient instance.
+        /// </summary>
+        /// <param name="services">IServiceCollection</param>
+        /// <param name="options">Defines PopoverOptions for the application/user</param>
+        public static IServiceCollection AddMudPopoverService(this IServiceCollection services, Action<PopoverOptions> options)
+        {
+            services.Configure(options);
+            services.TryAddScoped<IMudPopoverService, MudPopoverService>();
+            return services;
+        }
+
+        /// <summary>
+        /// Adds ScrollManager as a transient instance.
+        /// </summary>
+        /// <param name="services">IServiceCollection</param>
+        /// <param name="options">Defines PopoverOptions for the application/user</param>
+        public static IServiceCollection AddMudPopoverService(this IServiceCollection services, PopoverOptions options)
+        {
+            options ??= new PopoverOptions();
+            services.AddMudPopoverService(o =>
+            {
+                o = options;
+            });
             return services;
         }
 
@@ -162,20 +200,6 @@ namespace MudBlazor.Services
         }
 
         /// <summary>
-        ///     Adds a portal
-        /// </summary>
-        /// <param name="services">IServiceCollection</param>
-        public static IServiceCollection AddMudBlazorPortal(this IServiceCollection services)
-        {
-            services.TryAddScoped<IPortal, Portal>();
-            return services;
-        }
-
-
-
-
-
-        /// <summary>
         /// Adds IEventListener as a transient instance.
         /// </summary>
         /// <param name="services">IServiceCollection</param>
@@ -200,11 +224,12 @@ namespace MudBlazor.Services
                 .AddMudBlazorResizeListener(configuration.ResizeOptions)
                 .AddMudBlazorResizeObserver(configuration.ResizeObserverOptions)
                 .AddMudBlazorResizeObserverFactory()
+                .AddMudBlazorKeyInterceptor()
                 .AddMudBlazorScrollManager()
                 .AddMudBlazorScrollListener()
                 .AddMudBlazorJsApi()
-                .AddMudBlazorPortal()
                 .AddMudBlazorScrollSpy()
+                .AddMudPopoverService(configuration.PopoverOptions)
                 .AddMudEventManager();
         }
 
@@ -226,10 +251,11 @@ namespace MudBlazor.Services
                 .AddMudBlazorResizeListener(options.ResizeOptions)
                 .AddMudBlazorResizeObserver(options.ResizeObserverOptions)
                 .AddMudBlazorResizeObserverFactory()
+                .AddMudBlazorKeyInterceptor()
                 .AddMudBlazorScrollManager()
                 .AddMudBlazorScrollListener()
                 .AddMudBlazorJsApi()
-                .AddMudBlazorPortal()
+                .AddMudPopoverService(options.PopoverOptions)
                 .AddMudBlazorScrollSpy()
                 .AddMudEventManager();
         }

@@ -9,6 +9,10 @@
         color: var(--mud-palette-#{$color}) !important;
     }
 
+    .mud-border-#{$color} {
+        border-color: var(--mud-palette-#{$color});
+    }
+
     .mud-theme-#{$color} {
         color: var(--mud-palette-#{$color}-text) !important;
         background-color: var(--mud-palette-#{$color}) !important;

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Components;
+using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
@@ -10,6 +11,11 @@ namespace MudBlazor
     /// </summary>
     public partial class MudSelectItem<T> : MudBaseSelectItem, IDisposable
     {
+        private String GetCssClasses() =>  new CssBuilder()
+            .AddClass("mud-selected-item", IsSelected)
+            .AddClass(Class)
+            .Build();
+
         private IMudSelect _parent;
         internal string ItemId { get; } = Guid.NewGuid().ToString();
 
@@ -26,14 +32,26 @@ namespace MudBlazor
                 if (_parent == null)
                     return;
                 _parent.CheckGenericTypeMatch(this);
-                MudSelect?.Add(this);
-                if (MudSelect != null && _parent.MultiSelection)
+
+                if(MudSelect == null)
+                {
+                    return;
+                }
+
+                bool isSelected = MudSelect.Add(this);
+                if ( _parent.MultiSelection)
                 {
                     MudSelect.SelectionChangedFromOutside += OnUpdateSelectionStateFromOutside;
                     InvokeAsync(() => OnUpdateSelectionStateFromOutside(MudSelect.SelectedValues));
                 }
+                else
+                {
+                    IsSelected = isSelected;
+                }
             }
         }
+
+        [CascadingParameter(Name = "HideContent")]protected bool HideContent { get; set; }
 
         internal MudSelect<T> MudSelect => (MudSelect<T>)IMudSelect;
 
