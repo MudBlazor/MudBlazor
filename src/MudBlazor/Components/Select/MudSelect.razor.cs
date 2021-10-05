@@ -72,13 +72,13 @@ namespace MudBlazor
                     break;
                 }
             }
+            await _elementReference.SetText(Text);
             if (item != null)
                 await ScrollManager.ScrollToListItemAsync(item.ItemId, direction, true);
         }
 
         private async Task SelectFirstItem()
         {
-            await WaitForRender();
             if (_items == null || _items.Count == 0)
                 return;
             var item = _items.FirstOrDefault(x => !x.Disabled);
@@ -95,12 +95,12 @@ namespace MudBlazor
             {
                 HilightItem(item);
             }
+            await _elementReference.SetText(Text);
             await ScrollManager.ScrollToListItemAsync(item.ItemId, -1, true);
         }
 
         private async Task SelectLastItem()
         {
-            await WaitForRender();
             if (_items == null || _items.Count == 0)
                 return;
             var item = _items.LastOrDefault(x => !x.Disabled);
@@ -117,6 +117,7 @@ namespace MudBlazor
             {
                 HilightItem(item);
             }
+            await _elementReference.SetText(Text);
             await ScrollManager.ScrollToListItemAsync(item.ItemId, 1, true);
         }
 
@@ -784,7 +785,6 @@ namespace MudBlazor
                     else
                     {
                         await SelectPreviousItem();
-                        await _elementReference.SetText(Text);
                         break;
                     }
                 case "ArrowDown":
@@ -801,7 +801,6 @@ namespace MudBlazor
                     else
                     {
                         await SelectNextItem();
-                        await _elementReference.SetText(Text);
                         break;
                     }
                 case " ":
