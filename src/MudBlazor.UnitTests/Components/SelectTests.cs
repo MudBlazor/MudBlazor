@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using Bunit;
 using FluentAssertions;
 using MudBlazor.UnitTests.TestComponents;
+using MudBlazor.UnitTests.TestComponents.Select;
 using NUnit.Framework;
 using static MudBlazor.UnitTests.TestComponents.SelectWithEnumTest;
 
@@ -759,14 +760,15 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("div.mud-popover").ClassList.Should().NotContain("mud-popover-open");
             // open the select
             comp.Find("div.mud-input-control").Click();
+            Console.WriteLine(comp.Markup);
             comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open"));
             // Nr 2 should be hilited
             comp.WaitForAssertion(()=>comp.FindAll("div.mud-selected-item").Count.Should().Be(1));
             comp.FindAll("div.mud-list-item")[1].ToMarkup().Should().Contain("mud-selected-item");
             // now click an item and see the value change
             comp.FindAll("div.mud-list-item")[0].Click();
-            comp.Find("div.mud-popover").ClassList.Should().NotContain("mud-popover-open");
-            select.Instance.Value.Should().Be("1");
+            comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().NotContain("mud-popover-open"));
+            comp.WaitForAssertion(() => select.Instance.Value.Should().Be("1"));
             // open again and check hilited option
             comp.Find("div.mud-input-control").Click();
             comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open"));
@@ -775,6 +777,41 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("div.mud-list-item")[0].ToMarkup().Should().Contain("mud-selected-item");
             comp.Find("div.mud-input-control").Click();
             comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().NotContain("mud-popover-open"));
+        }
+
+        [Test]
+        public async Task Select_Should_AllowReloadingItems()
+        {
+            var comp = Context.RenderComponent<ReloadSelectItemsTest>();
+            var select = comp.FindComponent<MudSelect<string>>();
+            // normal, without reloading
+            comp.Find("div.mud-input-control").Click();
+            comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open"));
+            comp.FindAll("div.mud-list-item")[0].Click();
+            comp.WaitForAssertion(() => select.Instance.Value.Should().Be("American Samoa"));
+            comp.Find("div.mud-input-control").Click();
+            comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open"));
+            comp.FindAll("div.mud-list-item")[1].Click();
+            comp.WaitForAssertion(() => select.Instance.Value.Should().Be("Arizona"));
+            comp.Find("div.mud-input-control").Click();
+            comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open"));
+            comp.FindAll("div.mud-list-item")[2].Click();
+            comp.WaitForAssertion(() => select.Instance.Value.Should().Be("Arkansas"));
+            // reloading!
+            comp.Find(".reload").Click();
+            // check again, different values expected now
+            comp.Find("div.mud-input-control").Click();
+            comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open"));
+            comp.FindAll("div.mud-list-item")[0].Click();
+            comp.WaitForAssertion(() => select.Instance.Value.Should().Be("Alabama"));
+            comp.Find("div.mud-input-control").Click();
+            comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open"));
+            comp.FindAll("div.mud-list-item")[1].Click();
+            comp.WaitForAssertion(() => select.Instance.Value.Should().Be("Alaska"));
+            comp.Find("div.mud-input-control").Click();
+            comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open"));
+            comp.FindAll("div.mud-list-item")[2].Click();
+            comp.WaitForAssertion(() => select.Instance.Value.Should().Be("American Samoa"));
         }
     }
 }
