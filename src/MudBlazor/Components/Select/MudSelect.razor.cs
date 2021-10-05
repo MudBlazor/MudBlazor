@@ -839,8 +839,13 @@ namespace MudBlazor
                         }
                         else
                         {
+                            await Task.Delay(1);
                             await SelectOption(index);
+                            await Task.Delay(1);
+                            StateHasChanged();
                             await _elementReference.SetText(Text);
+                            await Task.Delay(1);
+                            StateHasChanged();
                             break;
                         }
                     }
@@ -851,6 +856,7 @@ namespace MudBlazor
                         {
                             await SelectAllClickAsync();
                             //If we didn't add delay, it won't work.
+                            await WaitForRender();
                             await Task.Delay(1);
                             StateHasChanged();
                             //It only works when selecting all, not render unselect all.
