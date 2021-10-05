@@ -42,97 +42,95 @@ namespace MudBlazor
             if (_items == null || _items.Count == 0)
                 return;
             var index = _items.FindIndex(x => x.ItemId == (string)_activeItemId);
-            if (direction < 0 && index<0)
-                index= 0;
+            if (direction < 0 && index < 0)
+                index = 0;
+            MudSelectItem<T> item = null;
             // the loop allows us to jump over disabled items until we reach the next non-disabled one
             for (int i = 0; i < _items.Count; i++)
             {
-                index +=direction;
+                index += direction;
                 if (index < 0)
                     index = 0;
                 if (index >= _items.Count)
-                    index = _items.Count-1;
+                    index = _items.Count - 1;
                 if (_items[index].Disabled)
                     continue;
+                item = _items[index];
                 if (!MultiSelection)
                 {
                     _selectedValues.Clear();
-                    _selectedValues.Add(_items[index].Value);
-                    await SetValueAsync(_items[index].Value, updateText: true);
-                    HilightItem(_items[index]);
+                    _selectedValues.Add(item.Value);
+                    await SetValueAsync(item.Value, updateText: true);
+                    HilightItem(item);
                     break;
                 }
                 else
                 {
                     // in multiselect mode don't select anything, just hilight.
                     // selecting is done by Enter
-                    HilightItem(_items[index]);
+                    HilightItem(item);
                     break;
                 }
             }
-        }
-
-        private readonly string _componentId = Guid.NewGuid().ToString();
-
-        private string GetListItemId(in int index)
-        {
-            return $"{_componentId}_item{index}";
+            if (item != null)
+                await ScrollManager.ScrollToListItemAsync(item.ItemId, direction, true);
         }
 
         private async Task SelectFirstItem()
         {
             if (_items == null || _items.Count == 0)
                 return;
+            MudSelectItem<T> item = null;
+
             for (int i = 0; i < _items.Count; i++)
             {
-                if (_items[i].Disabled == false)
+                if (_items[i].Disabled)
+                    continue;
+                item = _items[i];
+                if (!MultiSelection)
                 {
-                    // TODO: MultiSelect test for disabled items
-                    if (!MultiSelection)
-                    {
-                        _selectedValues.Clear();
-                        _selectedValues.Add(_items[i].Value);
-                        await SetValueAsync(_items[i].Value, updateText: true);
-                        HilightItem(_items[i]);
-                        break;
-                    }
-                    else
-                    {
-                        HilightItem(_items[i]);
-                        break;
-                    }
+                    _selectedValues.Clear();
+                    _selectedValues.Add(item.Value);
+                    await SetValueAsync(item.Value, updateText: true);
+                    HilightItem(item);
+                    break;
+                }
+                else
+                {
+                    HilightItem(item);
+                    break;
                 }
             }
+            if (item != null)
+                await ScrollManager.ScrollToListItemAsync(item.ItemId, -1, true);
         }
 
         private async Task SelectLastItem()
         {
             if (_items == null || _items.Count == 0)
                 return;
-            for (int i = _items.Count-1; i > 0; i--)
+            MudSelectItem<T> item = null;
+            for (int i = _items.Count - 1; i > 0; i--)
             {
-                //i -= 1;
-                if (_items[i].Disabled == false)
+                if (_items[i].Disabled)
+                    continue;
+                item = _items[i];
+                if (!MultiSelection)
                 {
-                    // TODO: MultiSelect test for disabled items
-                    if (!MultiSelection)
-                    {
-                        _selectedValues.Clear();
-                        _selectedValues.Add(_items[i].Value);
-                        await SetValueAsync(_items[i].Value, updateText: true);
-                        var item = _items[i];
-                        HilightItem(item);
-                        break;
-                    }
-                    else
-                    {
-                        HilightItem(_items[i]);
-                        break;
-                    }
-                    //Below line line scrolls the page, not the dropdown
-                    //await ScrollManager.ScrollToAsync(item.ItemId, 0, 100, ScrollBehavior.Smooth);
+                    _selectedValues.Clear();
+                    _selectedValues.Add(item.Value);
+                    await SetValueAsync(item.Value, updateText: true);
+                    HilightItem(item);
+                    break;
+                }
+                else
+                {
+                    HilightItem(item);
+                    break;
                 }
             }
+            if (item != null)
+                await ScrollManager.ScrollToListItemAsync(item.ItemId, 1, true);
         }
 
         /// <summary>
@@ -280,13 +278,13 @@ namespace MudBlazor
 
         private Task WaitForRender()
         {
-            Task t=null;
+            Task t = null;
             lock (this)
             {
                 if (_renderComplete != null)
                     return _renderComplete.Task;
                 _renderComplete = new TaskCompletionSource();
-                t= _renderComplete.Task;
+                t = _renderComplete.Task;
             }
             StateHasChanged();
             return t;
@@ -502,7 +500,7 @@ namespace MudBlazor
         {
             if (index < 0 || index >= _items.Count)
             {
-                if(!MultiSelection)
+                if (!MultiSelection)
                     await CloseMenu();
                 return;
             }
@@ -528,7 +526,7 @@ namespace MudBlazor
                 }
                 else
                 {
-                    await SetTextAsync(string.Join(Delimiter, SelectedValues.Select(x => Converter.Set(x))), updateValue:false);
+                    await SetTextAsync(string.Join(Delimiter, SelectedValues.Select(x => Converter.Set(x))), updateValue: false);
                 }
 
                 UpdateSelectAllChecked();
@@ -554,8 +552,8 @@ namespace MudBlazor
             }
 
             await SelectedValuesChanged.InvokeAsync(SelectedValues);
-            if (MultiSelection && typeof(T)==typeof(string))
-                await SetValueAsync((T)(object)Text, updateText:false);
+            if (MultiSelection && typeof(T) == typeof(string))
+                await SetValueAsync((T)(object)Text, updateText: false);
             StateHasChanged();
         }
 
@@ -932,7 +930,7 @@ namespace MudBlazor
 
         public void RegisterShadowItem(MudSelectItem<T> item)
         {
-            if (item==null || item.Value == null)
+            if (item == null || item.Value == null)
                 return;
             _shadowLookup[item.Value] = item;
         }
