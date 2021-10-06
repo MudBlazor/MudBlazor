@@ -39,6 +39,29 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// Multiple expanded expansion panels should not enter an infinite loop 
+        /// when MultiExpansionPanel is false
+        /// </summary>
+        [Test]
+        public void MudExpansionPanel_Without_MultiExpansion_Doesnt_Crash_With_Multiple_Expanded_Tabs()
+        {
+            var comp = Context.RenderComponent<ExpansionPanelExpandedMultipleWithoutMultipleExpansionSetTest>();
+
+            //click in the three headers
+            //foreach (var header in comp.FindAll(".mud-expand-panel-header"))
+            //{
+            //    header.Click();
+            //}
+
+            //Only one panel should be expanded
+            var allPanels = comp.FindAll(".mud-expand-panel").ToList();
+
+            var expandedPanels = comp.FindAll(".mud-panel-expanded").ToList();
+            expandedPanels.Count.Should().Be(1);
+            expandedPanels.First().Should().Be(allPanels.First());
+        }
+
+        /// <summary>
         /// MultiExpansion panel should not collapse other panels
         /// </summary>
         [Test]
