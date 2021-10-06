@@ -8,14 +8,14 @@
             <span class="mud-switch-button">
                 <input @attributes="UserAttributes" aria-checked="@((BoolValue == true).ToString().ToLower())" aria-readonly="@(Disabled.ToString().ToLower())" type="checkbox" class="mud-switch-input" checked="@BoolValue" @onkeydown="@HandleKeyDown" @onchange="@OnChange" disabled="@Disabled" @onclick:preventDefault="@ReadOnly"/>
                 @*<MudIcon Class="mud-switch-thumb" Color="Color.Info" Icon="@SwitchIcon" />*@
-                <span class="mud-switch-thumb d-flex align-center">
+                <span class="mud-switch-thumb d-flex align-center justify-center">
                     @if (Progress)
                     {
-                        <MudProgressCircular Class="mt-n4" Indeterminate="true" Style="height:20px; width:20px;" />
+                        <MudProgressCircular Indeterminate="true" Style="height:18px; width:18px;" />
                     }
                     else
                     {
-                        <MudIcon Color="Color.Info" Icon="@GetIcon()" Style="z-index:5; height:20px; width:20px;" />
+                        <MudIcon Color="@IconColor" Icon="@GetIcon()" Style=" height:18px; width:18px;" />
                     }
                     
                 </span>

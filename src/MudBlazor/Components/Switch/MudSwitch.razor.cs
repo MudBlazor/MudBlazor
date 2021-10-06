@@ -39,6 +39,8 @@ namespace MudBlazor
 
         [Parameter] public string SwitchIcon { get; set; } = Icons.Material.Filled.Done;
 
+        [Parameter] public Color IconColor { get; set; } = Color.Info;
+
         [Parameter] public string SwitchIconOff { get; set; }
 
         [Parameter] public Size Size { get; set; } = Size.Small;

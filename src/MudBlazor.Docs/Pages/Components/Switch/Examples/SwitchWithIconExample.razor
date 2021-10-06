@@ -1,0 +1,21 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+    <MudGrid>
+        <MudItem xs="12">
+            <MudSwitch @bind-Checked="@Label_Switch1" SwitchIcon="@(_showIcon==true?_iconString:null)" Progress="@(_showProgress==true?true:false)" />
+        </MudItem>
+        <MudItem xs="12" Class="d-flex">
+            <MudCheckBox @bind-Checked="_showIcon" Color="Color.Primary" Label="Show Icon"></MudCheckBox>
+        </MudItem>
+        <MudItem xs="12">
+            <MudCheckBox @bind-Checked="_showProgress" Color="Color.Primary" Label="Show Progress"></MudCheckBox>
+        </MudItem>
+    </MudGrid>
+
+
+@code{
+    bool Label_Switch1 = false;
+    bool _showIcon = true;
+    bool _showProgress = false;
+    string _iconString = Icons.Custom.Brands.MudBlazor;
+}
