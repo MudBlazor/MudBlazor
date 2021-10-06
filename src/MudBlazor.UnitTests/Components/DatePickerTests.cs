@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using AngleSharp.Html.Dom;
 using Bunit;
 using FluentAssertions;
+using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.UnitTests.TestComponents;
 using MudBlazor.UnitTests.TestComponents.DatePicker;
 using NUnit.Framework;
@@ -597,6 +598,21 @@ namespace MudBlazor.UnitTests.Components
             {
                 button.ToMarkup().Contains("type=\"button\"").Should().BeTrue();
             }
+        }
+
+        [Test]
+        public async Task DatePickerTest_KeyboardNavigation()
+        {
+            var comp = Context.RenderComponent<MudDatePicker>();
+
+            Console.WriteLine(comp.Markup);
+            var datePicker = comp.Instance;
+
+            await comp.InvokeAsync(() => comp.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = "Enter", Type = "keydown", }));
+            comp.WaitForAssertion(() => comp.FindAll("div.mud-picker-open").Count.Should().Be(1));
+
+            //datePicker.SetParam(x => x.Disabled, true);
+
         }
     }
 }

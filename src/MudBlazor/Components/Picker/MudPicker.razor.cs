@@ -468,7 +468,7 @@ namespace MudBlazor
             }
         }
 
-        protected void HandleKeyDown(KeyboardEventArgs obj)
+        protected internal void HandleKeyDown(KeyboardEventArgs obj)
         {
             if (Disabled || ReadOnly)
                 return;
