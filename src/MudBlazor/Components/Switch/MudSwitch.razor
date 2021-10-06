@@ -3,11 +3,22 @@
 @typeparam T
 
 <label class="@Classname" style="@Style">
-    <span class="mud-switch-span mud-flip-x-rtl">
+    <span class="@SpanClassname">
         <span class="@SwitchClassname">
             <span class="mud-switch-button">
-                <input @attributes="UserAttributes" aria-checked="@((BoolValue == true).ToString().ToLower())" aria-readonly="@(Disabled.ToString().ToLower())" type="checkbox" class="mud-switch-input" checked="@BoolValue" @onchange="@OnChange" disabled="@Disabled" @onclick:preventDefault="@ReadOnly"/>
-                <span class="mud-switch-thumb"></span>
+                <input @attributes="UserAttributes" aria-checked="@((BoolValue == true).ToString().ToLower())" aria-readonly="@(Disabled.ToString().ToLower())" type="checkbox" class="mud-switch-input" checked="@BoolValue" @onkeydown="@HandleKeyDown" @onchange="@SwitchOnChange" disabled="@Disabled" @onclick:preventDefault="@ReadOnly"/>
+                @*<MudIcon Class="mud-switch-thumb" Color="Color.Info" Icon="@SwitchIcon" />*@
+                <span class="mud-switch-thumb d-flex align-center">
+                    @if (Progress)
+                    {
+                        <MudProgressCircular Class="mt-n4" Indeterminate="true" Style="height:20px; width:20px;" />
+                    }
+                    else
+                    {
+                        <MudIcon Color="Color.Info" Icon="@SwitchIcon" Style="z-index:5; height:20px; width:20px;" />
+                    }
+                    
+                </span>
             </span>
         </span>
         <span class="mud-switch-track"></span>

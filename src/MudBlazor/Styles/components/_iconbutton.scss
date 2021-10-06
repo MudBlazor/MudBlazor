@@ -15,13 +15,17 @@
         border-radius: var(--mud-default-borderradius);
     }
 
-    &:hover, &:focus-within {
+    &:hover &:focus-within {
         background-color: var(--mud-palette-action-default-hover);
     }
 
     &:disabled {
         color: var(--mud-palette-action-disabled);
         background-color: transparent;
+    }
+
+    &.mud-readonly, .mud-readonly:hover {
+        cursor: default;
     }
 }
 
