@@ -37,31 +37,39 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public string Label { get; set; }
 
-        [Parameter] public string SwitchIconOn { get; set; } = Icons.Material.Filled.Done;
+        [Parameter] public string SwitchIcon { get; set; } = Icons.Material.Filled.Done;
 
-        [Parameter] public string SwitchIconOff { get; set; } = Icons.Material.Filled.Close;
+        [Parameter] public string SwitchIconOff { get; set; }
 
-        [Parameter] public Size Size { get; set; } = Size.Large;
+        [Parameter] public Size Size { get; set; } = Size.Small;
 
         [Parameter] public bool Progress { get; set; } = false;
-
-        private string SwitchIcon = "";
 
         /// <summary>
         /// If true, disables ripple effect.
         /// </summary>
         [Parameter] public bool DisableRipple { get; set; }
 
-        protected void SwitchOnChange(ChangeEventArgs e)
+        private string GetIcon()
         {
-            OnChange(e);
-            if (BoolValue == true)
+            if (string.IsNullOrEmpty(SwitchIcon) && string.IsNullOrEmpty(SwitchIconOff))
             {
-                SwitchIcon = SwitchIconOn;
+                return "";
+            }
+            else if (string.IsNullOrEmpty(SwitchIconOff))
+            {
+                return SwitchIcon;
             }
             else
             {
-                SwitchIcon = SwitchIconOff;
+                if (BoolValue == true)
+                {
+                    return SwitchIcon;
+                }
+                else
+                {
+                    return SwitchIconOff;
+                }
             }
         }
 
