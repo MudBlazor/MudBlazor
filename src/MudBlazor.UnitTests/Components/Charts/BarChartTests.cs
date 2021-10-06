@@ -14,12 +14,6 @@ namespace MudBlazor.UnitTests.Charts
 {
     public class BarChartTests : BunitTest
     { 
-        private static readonly List<ChartSeries> _exampleDataBarChart = new ()
-        {
-            new () { Name = "United States", Data = new double[] { 40, 20, 25, 27, 46, 60, 48, 80, 15 } },
-            new () { Name = "Germany", Data = new double[] { 19, 24, 35, 13, 28, 15, 13, 16, 31 } },
-            new () { Name = "Sweden", Data = new double[] { 8, 6, 11, 13, 4, 16, 10, 16, 18 } },
-        };
         
         [SetUp]
         public void Init()
@@ -45,7 +39,7 @@ namespace MudBlazor.UnitTests.Charts
             };
             string[] xAxisLabels = { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep" };
             
-            var comp = Context.RenderComponent<Bar>(parameters => parameters
+            var comp = Context.RenderComponent<MudChart>(parameters => parameters
                 .Add(p => p.ChartType, ChartType.Bar)
                 .Add(p => p.Height, "350px")
                 .Add(p => p.Width, "100%")

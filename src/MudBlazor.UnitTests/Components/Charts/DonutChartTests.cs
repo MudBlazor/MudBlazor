@@ -34,9 +34,8 @@ namespace MudBlazor.UnitTests.Charts
                 "Hydro", "Geothermal", "Fossil", "Nuclear", "Solar", "Wind", "Oil",
                 "Coal", "Gas", "Biomass", "Hydro", "Geothermal" };
             
-            var comp = Context.RenderComponent<Donut>(parameters => parameters
+            var comp = Context.RenderComponent<MudChart>(parameters => parameters
                 .Add(p => p.ChartType, ChartType.Donut)
-                .Add(p => p.MudChartParent, new MudChart())
                 .Add(p => p.Height, "300px")
                 .Add(p => p.Width, "300px")
                 .Add(p => p.InputData, data)
