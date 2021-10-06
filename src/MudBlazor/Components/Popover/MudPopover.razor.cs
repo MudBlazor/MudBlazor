@@ -17,6 +17,7 @@ namespace MudBlazor
             .AddClass($"mud-popover-open", Open)
             .AddClass($"mud-popover-{TransformOrigin.ToDescriptionString()}")
             .AddClass($"mud-popover-anchor-{AnchorOrigin.ToDescriptionString()}")
+            .AddClass($"mud-popover-overflow-{OverflowBehavior.ToDescriptionString()}")
             .AddClass($"mud-popover-relative-width", RelativeWidth)
             .AddClass($"mud-paper", Paper)
             .AddClass($"mud-paper-square", Paper && Square)
@@ -91,6 +92,12 @@ namespace MudBlazor
         /// This property in conjunction with AnchorPlacement determinate where the popover will be placed.
         /// </summary>
         [Parameter] public Origin TransformOrigin { get; set; } = Origin.TopLeft;
+
+        /// <summary>
+        /// Set the overflow behavior of a popover and controls how the element should react if there is not enough space for the element to be visible
+        /// Defaults to none, which doens't apply any overflow logic
+        /// </summary>
+        [Parameter] public OverflowBehavior OverflowBehavior { get; set; } = OverflowBehavior.None;
 
         /// <summary>
         /// If true, the select menu will open either above or bellow the input depending on the direction.

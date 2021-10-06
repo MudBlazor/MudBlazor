@@ -22,9 +22,9 @@ namespace MudBlazor
             Service.FragmentsChanged += Service_FragmentsChanged;
         }
 
-        private void Service_FragmentsChanged(object sender, EventArgs e)
+        private  void Service_FragmentsChanged(object sender, EventArgs e)
         {
-            InvokeAsync(StateHasChanged);
+             InvokeAsync(StateHasChanged);
         }
     }
 }
