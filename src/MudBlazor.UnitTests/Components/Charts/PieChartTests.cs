@@ -14,10 +14,17 @@ namespace MudBlazor.UnitTests.Charts
 {
     public class PieChartTests : BunitTest
     {
+        private readonly string[] _chartPalette = 
+        {
+            "#2979FF", "#1DE9B6", "#FFC400", "#FF9100", "#651FFF", "#00E676", "#00B0FF", "#26A69A", "#FFCA28",
+            "#FFA726", "#EF5350", "#EF5350", "#7E57C2", "#66BB6A", "#29B6F6", "#FFA000", "#F57C00", "#D32F2F",
+            "#512DA8", "#616161"
+        };  
+        
         [SetUp]
         public void Init()
-        {
-            
+        { 
+           
         }
 
         [Test]
@@ -27,7 +34,7 @@ namespace MudBlazor.UnitTests.Charts
             comp.Markup.Should().Contain("mud-chart-pie");
         }
 
-        [Test]
+        [Theory]
         [TestCase(new double[]{77, 25, 20, 5})]
         [TestCase(new double[]{77, 25, 20, 5, 8})]
         public void PieChartExampleData(double[] data)
@@ -38,6 +45,7 @@ namespace MudBlazor.UnitTests.Charts
             
             var comp = Context.RenderComponent<MudChart>(parameters => parameters
                 .Add(p => p.ChartType, ChartType.Pie)
+                .Add(p => p.ChartOptions, new ChartOptions(){ChartPalette = _chartPalette})
                 .Add(p => p.Height, "300px")
                 .Add(p => p.Width, "300px")
                 .Add(p => p.InputData, data)
