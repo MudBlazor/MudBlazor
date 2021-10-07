@@ -888,6 +888,48 @@ namespace MudBlazor.UnitTests.Components
             validator.ControlCount.Should().Be(2);
         }
 
+        [Test]
+        public async Task TableInlineEdit_RowSwitching()
+        {
+            var comp = Context.RenderComponent<TableInlineEditTest>();
+
+            var trs = comp.FindAll("tr");
+
+            trs[1].InnerHtml.Contains("input").Should().BeFalse();
+
+            trs[1].Click();
+
+            var trs2 = comp.FindAll("tr");
+            trs2[1].InnerHtml.Contains("input").Should().BeTrue();
+
+            trs[2].Click();
+
+            var trs3 = comp.FindAll("tr");
+            trs3[1].InnerHtml.Contains("input").Should().BeFalse();
+            trs3[2].InnerHtml.Contains("input").Should().BeTrue();
+        }
+
+        [Test]
+        public async Task TableInlineEdit_RowSwitchingBlocked()
+        {
+            var comp = Context.RenderComponent<TableInlineEditTest2>();
+
+            var trs = comp.FindAll("tr");
+
+            trs[1].InnerHtml.Contains("input").Should().BeFalse();
+
+            trs[1].Click();
+
+            var trs2 = comp.FindAll("tr");
+            trs2[1].InnerHtml.Contains("input").Should().BeTrue();
+
+            trs[2].Click();
+
+            var trs3 = comp.FindAll("tr");
+            trs3[1].InnerHtml.Contains("input").Should().BeTrue();
+            trs3[2].InnerHtml.Contains("input").Should().BeFalse();
+        }
+
         /// <summary>
         /// This test validates the edit row maintains position on changing sort key for an inline editing table.
         /// </summary>
