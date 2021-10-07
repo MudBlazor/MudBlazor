@@ -23,6 +23,7 @@ namespace MudBlazor.Services
         private IBrowserWindowSizeProvider _browserWindowSizeProvider;
         private BrowserWindowSize _windowSize;
         private Breakpoint _breakpoint = Breakpoint.None;
+        private static SemaphoreSlim _subscribeSemaphore = new SemaphoreSlim(1, 1);
 
         /// <summary>
         /// 
@@ -146,36 +147,45 @@ namespace MudBlazor.Services
 
             var existingOptionId = Listeners.Where(x => x.Value.Option == options).Select(x => x.Key).FirstOrDefault();
 
-            if (existingOptionId == default)
+            try
             {
-                var subscriptionInfo = new BreakpointListenerSubscriptionInfo(options);
-                var subscriptionId = subscriptionInfo.AddSubscription(callback);
-                var listenerId = Guid.NewGuid();
+                await _subscribeSemaphore.WaitAsync();
 
-                Listeners.Add(listenerId, subscriptionInfo);
-
-                try
+                if (existingOptionId == default)
                 {
-                    await JsRuntime.InvokeVoidAsync($"mudResizeListenerFactory.listenForResize", DotNetRef, options, listenerId);
-                    if (_breakpoint == Breakpoint.None)
+                    var subscriptionInfo = new BreakpointListenerSubscriptionInfo(options);
+                    var subscriptionId = subscriptionInfo.AddSubscription(callback);
+                    var listenerId = Guid.NewGuid();
+
+                    Listeners.Add(listenerId, subscriptionInfo);
+
+                    try
                     {
-                        _breakpoint = await GetBreakpoint();
+                        await JsRuntime.InvokeVoidAsync($"mudResizeListenerFactory.listenForResize", DotNetRef, options, listenerId);
+                        if (_breakpoint == Breakpoint.None)
+                        {
+                            _breakpoint = await GetBreakpoint();
 
+                        }
+                        return new BreakpointListenerSubscribeResult(subscriptionId, _breakpoint);
                     }
-                    return new BreakpointListenerSubscribeResult(subscriptionId, _breakpoint);
+                    catch (TaskCanceledException)
+                    {
+                        return new BreakpointListenerSubscribeResult(subscriptionId, _breakpoint);
+                        // no worries here
+                    }
                 }
-                catch (TaskCanceledException)
+                else
                 {
+                    var entry = Listeners[existingOptionId];
+                    var subscriptionId = entry.AddSubscription(callback);
+
                     return new BreakpointListenerSubscribeResult(subscriptionId, _breakpoint);
-                    // no worries here
                 }
             }
-            else
+            finally
             {
-                var entry = Listeners[existingOptionId];
-                var subscriptionId = entry.AddSubscription(callback);
-
-                return new BreakpointListenerSubscribeResult(subscriptionId, _breakpoint);
+                _subscribeSemaphore.Release();
             }
         }
     }

@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Bunit;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.JSInterop;
 using Moq;
 using MudBlazor.Services;
 using MudBlazor.UnitTests.TestComponents;
@@ -256,6 +257,31 @@ namespace MudBlazor.UnitTests.Components
             listenerMock.Verify(x => x.IsMediaSize(Breakpoint.Lg, Breakpoint.Sm), Times.Exactly(16));
 
             listenerMock.Verify();
+        }
+
+        [Test]
+        public void TestSemaphore_RenderInParallel()
+        {
+            Mock<IBrowserWindowSizeProvider> sizeMock = new Mock<IBrowserWindowSizeProvider>(MockBehavior.Strict);
+            sizeMock.Setup(x => x.GetBrowserWindowSize()).ReturnsAsync(new BrowserWindowSize { Width = 1920 });
+
+            Mock<IJSRuntime> _jsruntimeMock = new Mock<IJSRuntime>(MockBehavior.Strict);
+
+            _jsruntimeMock.Setup(x => x.InvokeAsync<object>("mudResizeListenerFactory.listenForResize", It.IsAny<object[]>()))
+                .ReturnsAsync(new object(), TimeSpan.FromMilliseconds(200)).Verifiable();
+            _jsruntimeMock.Setup(x => x.InvokeAsync<object>("mudResizeListenerFactory.cancelListeners", It.IsAny<object[]>()))
+    .ReturnsAsync(new object());
+
+            BreakpointListenerService service = new BreakpointListenerService(_jsruntimeMock.Object, sizeMock.Object);
+
+            Context.Services.AddSingleton<IBreakpointListenerService, BreakpointListenerService>(sp => service);
+
+            var comp = Context.RenderComponent<RenderMultipleHiddenInParallel>();
+
+            comp.WaitForAssertion(() => comp.FindAll(".xl").Should().HaveCount(10), TimeSpan.FromSeconds(1));
+            comp.WaitForAssertion(() => comp.FindAll(".lg-and-up").Should().HaveCount(10), TimeSpan.FromSeconds(1));
+            comp.WaitForAssertion(() => comp.FindAll(".md-and-up").Should().HaveCount(10), TimeSpan.FromSeconds(1));
+            comp.WaitForAssertion(() => comp.FindAll(".sm-and-up").Should().HaveCount(10), TimeSpan.FromSeconds(1));
         }
     }
 }

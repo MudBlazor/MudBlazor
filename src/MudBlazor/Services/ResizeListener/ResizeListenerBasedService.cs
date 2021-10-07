@@ -16,7 +16,7 @@ namespace MudBlazor.Services
         where TSelf : class
         where TInfo : SubscriptionInfo<TAction, TaskOption>
     {
-        private static SemaphoreSlim _semaphore = new SemaphoreSlim(1, 1);
+        private static SemaphoreSlim _unsubscribeSemaphore = new SemaphoreSlim(1, 1);
 
         protected Dictionary<Guid, TInfo> Listeners { get; } = new();
         protected IJSRuntime JsRuntime { get; init; }
@@ -43,7 +43,7 @@ namespace MudBlazor.Services
 
             try
             {
-                await _semaphore.WaitAsync();
+                await _unsubscribeSemaphore.WaitAsync();
 
                 var isLastSubscriber = info.Value.RemoveSubscription(subscriptionId);
                 if (isLastSubscriber == true)
@@ -68,7 +68,7 @@ namespace MudBlazor.Services
             }
             finally
             {
-                _semaphore.Release();
+                _unsubscribeSemaphore.Release();
             }
 
             return true;
