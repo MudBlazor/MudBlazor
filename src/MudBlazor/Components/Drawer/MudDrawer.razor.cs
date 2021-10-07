@@ -64,7 +64,7 @@ namespace MudBlazor
             .AddStyle(Style)
         .Build();
 
-        [Inject] public IBreakpointListenerService Breakpointistener { get; set; }
+        [Inject] public IBreakpointService Breakpointistener { get; set; }
 
         [CascadingParameter] MudDrawerContainer DrawerContainer { get; set; }
 

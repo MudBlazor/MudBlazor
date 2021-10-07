@@ -17,11 +17,11 @@ using NUnit.Framework;
 namespace MudBlazor.UnitTests.Services
 {
     [TestFixture]
-    public class BreakpointListenerServiceTests
+    public class BreakpointServiceTests
     {
         private Mock<IBrowserWindowSizeProvider> _browserWindowSizeProvider;
         private Mock<IJSRuntime> _jsruntimeMock;
-        private BreakpointListenerService _service;
+        private BreakpointService _service;
 
         [SetUp]
         public void SetUp()
@@ -29,28 +29,28 @@ namespace MudBlazor.UnitTests.Services
             _browserWindowSizeProvider = new Mock<IBrowserWindowSizeProvider>();
             _browserWindowSizeProvider.Setup(x => x.GetBrowserWindowSize()).ReturnsAsync(new BrowserWindowSize { Width = 970, Height = 30 }).Verifiable();
             _jsruntimeMock = new Mock<IJSRuntime>();
-            _service = new BreakpointListenerService(_jsruntimeMock.Object, _browserWindowSizeProvider.Object);
+            _service = new BreakpointService(_jsruntimeMock.Object, _browserWindowSizeProvider.Object);
         }
 
 
         private record ListenForResizeCallbackInfo(
-            DotNetObjectReference<BreakpointListenerService> DotnetRef, ResizeOptions options, Guid ListenerId);
+            DotNetObjectReference<BreakpointService> DotnetRef, ResizeOptions options, Guid ListenerId);
 
 
         private void SetupJsMockForSubscription(ResizeOptions expectedOptions, bool setBreakpoints, Action<ListenForResizeCallbackInfo> callbackInfo = null)
         {
             if (setBreakpoints == true)
             {
-                expectedOptions.BreakpointDefinitions = BreakpointListenerService.DefaultBreakpointDefinitions.ToDictionary(x => x.Key.ToString(), x => x.Value);
+                expectedOptions.BreakpointDefinitions = BreakpointService.DefaultBreakpointDefinitions.ToDictionary(x => x.Key.ToString(), x => x.Value);
             }
 
             _jsruntimeMock.Setup(x => x.InvokeAsync<object>("mudResizeListenerFactory.listenForResize",
                It.Is<object[]>(z =>
-                   z[0] is DotNetObjectReference<BreakpointListenerService> == true &&
+                   z[0] is DotNetObjectReference<BreakpointService> == true &&
                    (ResizeOptions)z[1] == expectedOptions &&
                    (Guid)z[2] != default
                ))).ReturnsAsync(new object()).Callback<string, object[]>((x, z) => callbackInfo?.Invoke(new ListenForResizeCallbackInfo(
-                    (DotNetObjectReference<BreakpointListenerService>)z[0],
+                    (DotNetObjectReference<BreakpointService>)z[0],
                     (ResizeOptions)z[1], (Guid)z[2]
                    ))).Verifiable();
 
@@ -93,8 +93,8 @@ namespace MudBlazor.UnitTests.Services
             option.BreakpointDefinitions.Should().NotBeNull();
 
             option.BreakpointDefinitions.Should().NotBeNull();
-            option.BreakpointDefinitions.Keys.Should().BeEquivalentTo(BreakpointListenerService.DefaultBreakpointDefinitions.Keys.Select(x => x.ToString()).ToList());
-            option.BreakpointDefinitions.Values.Should().BeEquivalentTo(BreakpointListenerService.DefaultBreakpointDefinitions.Values);
+            option.BreakpointDefinitions.Keys.Should().BeEquivalentTo(BreakpointService.DefaultBreakpointDefinitions.Keys.Select(x => x.ToString()).ToList());
+            option.BreakpointDefinitions.Values.Should().BeEquivalentTo(BreakpointService.DefaultBreakpointDefinitions.Values);
         }
 
         [Test]
@@ -126,7 +126,7 @@ namespace MudBlazor.UnitTests.Services
             var optionGetter = new Mock<IOptions<ResizeOptions>>();
             optionGetter.SetupGet(x => x.Value).Returns(customResizeOptioons);
 
-            _service = new BreakpointListenerService(_jsruntimeMock.Object, _browserWindowSizeProvider.Object, optionGetter.Object);
+            _service = new BreakpointService(_jsruntimeMock.Object, _browserWindowSizeProvider.Object, optionGetter.Object);
             await CheckSubscriptionOptions(customResizeOptioons, true);
         }
 
@@ -420,7 +420,7 @@ namespace MudBlazor.UnitTests.Services
             public Guid SubscriptionId { get; private set; }
             public Breakpoint ActualSize { get; private set; } = Breakpoint.None;
 
-            public async Task Subscribe(BreakpointListenerService service,
+            public async Task Subscribe(BreakpointService service,
                 ResizeOptions options)
             {
                 var result = await service.Subscribe((x) => ActualSize = x, options);
@@ -531,10 +531,10 @@ namespace MudBlazor.UnitTests.Services
         [Test]
         public void DefaultBreakpointDefinitions()
         {
-            BreakpointListenerService.DefaultBreakpointDefinitions.Keys.Should().BeEquivalentTo(new[] {
+            BreakpointService.DefaultBreakpointDefinitions.Keys.Should().BeEquivalentTo(new[] {
                 Breakpoint.Xl, Breakpoint.Lg, Breakpoint.Md, Breakpoint.Sm, Breakpoint.Xs });
 
-            BreakpointListenerService.DefaultBreakpointDefinitions.Values.Should().BeEquivalentTo(new[] {
+            BreakpointService.DefaultBreakpointDefinitions.Values.Should().BeEquivalentTo(new[] {
                 1920, 1280, 960, 600, 0 });
         }
 

@@ -14,9 +14,9 @@ using Microsoft.JSInterop;
 namespace MudBlazor.Services
 {
   
-    public class BreakpointListenerService :
-        ResizeListenerBasedService<BreakpointListenerService, BreakpointListenerSubscriptionInfo, Breakpoint, ResizeOptions>,
-        IBreakpointListenerService
+    public class BreakpointService :
+        ResizeBasedService<BreakpointService, BreakpointServiceSubscriptionInfo, Breakpoint, ResizeOptions>,
+        IBreakpointService
     {
         private readonly IJSRuntime _jsRuntime;
         private readonly ResizeOptions _options;
@@ -31,7 +31,7 @@ namespace MudBlazor.Services
         /// <param name="jsRuntime"></param>
         /// <param name="browserWindowSizeProvider"></param>
         /// <param name="options"></param>
-        public BreakpointListenerService(IJSRuntime jsRuntime, IBrowserWindowSizeProvider browserWindowSizeProvider, IOptions<ResizeOptions> options = null)
+        public BreakpointService(IJSRuntime jsRuntime, IBrowserWindowSizeProvider browserWindowSizeProvider, IOptions<ResizeOptions> options = null)
             : base(jsRuntime)
         {
             this._options = options?.Value ?? new ResizeOptions();
@@ -125,9 +125,9 @@ namespace MudBlazor.Services
             };
         }
 
-        public async Task<BreakpointListenerSubscribeResult> Subscribe(Action<Breakpoint> callback) => await Subscribe(callback, _options);
+        public async Task<BreakpointServiceSubscribeResult> Subscribe(Action<Breakpoint> callback) => await Subscribe(callback, _options);
 
-        public async Task<BreakpointListenerSubscribeResult> Subscribe(Action<Breakpoint> callback, ResizeOptions options)
+        public async Task<BreakpointServiceSubscribeResult> Subscribe(Action<Breakpoint> callback, ResizeOptions options)
         {
             if (callback is null)
             {
@@ -153,7 +153,7 @@ namespace MudBlazor.Services
 
                 if (existingOptionId == default)
                 {
-                    var subscriptionInfo = new BreakpointListenerSubscriptionInfo(options);
+                    var subscriptionInfo = new BreakpointServiceSubscriptionInfo(options);
                     var subscriptionId = subscriptionInfo.AddSubscription(callback);
                     var listenerId = Guid.NewGuid();
 
@@ -167,11 +167,11 @@ namespace MudBlazor.Services
                             _breakpoint = await GetBreakpoint();
 
                         }
-                        return new BreakpointListenerSubscribeResult(subscriptionId, _breakpoint);
+                        return new BreakpointServiceSubscribeResult(subscriptionId, _breakpoint);
                     }
                     catch (TaskCanceledException)
                     {
-                        return new BreakpointListenerSubscribeResult(subscriptionId, _breakpoint);
+                        return new BreakpointServiceSubscribeResult(subscriptionId, _breakpoint);
                         // no worries here
                     }
                 }
@@ -180,7 +180,7 @@ namespace MudBlazor.Services
                     var entry = Listeners[existingOptionId];
                     var subscriptionId = entry.AddSubscription(callback);
 
-                    return new BreakpointListenerSubscribeResult(subscriptionId, _breakpoint);
+                    return new BreakpointServiceSubscribeResult(subscriptionId, _breakpoint);
                 }
             }
             finally
@@ -195,9 +195,9 @@ namespace MudBlazor.Services
     /// </summary>
     /// <param name="SubscriptionId">The subscription id, can be used for cancel the subscription later</param>
     /// <param name="Breakpoint">The current breakpoint of the window</param>
-    public record BreakpointListenerSubscribeResult(Guid SubscriptionId, Breakpoint Breakpoint);
+    public record BreakpointServiceSubscribeResult(Guid SubscriptionId, Breakpoint Breakpoint);
 
-    public interface IBreakpointListenerService : IAsyncDisposable
+    public interface IBreakpointService : IAsyncDisposable
     {
         /// <summary>
         /// Check if the current breakpoint fits within the current window size
@@ -225,7 +225,7 @@ namespace MudBlazor.Services
         /// </summary>
         /// <param name="callback">The method (callbacK) that is invoke as soon as the size of the window has changed</param>
         /// <returns>Returning an object containing the current breakpoint and a subscription id, that should be used for unsubscribe</returns>
-        Task<BreakpointListenerSubscribeResult> Subscribe(Action<Breakpoint> callback);
+        Task<BreakpointServiceSubscribeResult> Subscribe(Action<Breakpoint> callback);
 
         /// <summary>
         /// Subscribe to size changes of the browser window using the provided options
@@ -233,7 +233,7 @@ namespace MudBlazor.Services
         /// <param name="callback">The method (callbacK) that is invoke as soon as the size of the window has changed</param>
         /// <param name="options">The options used to subscribe to changes</param>
         /// <returns>Returning an object containing the current breakpoint and a subscription id, that should be used for unsubscribe</returns>
-        Task<BreakpointListenerSubscribeResult> Subscribe(Action<Breakpoint> callback, ResizeOptions options);
+        Task<BreakpointServiceSubscribeResult> Subscribe(Action<Breakpoint> callback, ResizeOptions options);
 
         /// <summary>
         /// Used for cancel the subscription to the resize event.

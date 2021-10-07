@@ -48,16 +48,16 @@ namespace MudBlazor.Services
         }
     }
 
-    public class ResizeListenerSubscriptionInfo : SubscriptionInfo<BrowserWindowSize,ResizeOptions>
+    public class ResizeServiceSubscriptionInfo : SubscriptionInfo<BrowserWindowSize,ResizeOptions>
     {
-        public ResizeListenerSubscriptionInfo(ResizeOptions options) : base(options)
+        public ResizeServiceSubscriptionInfo(ResizeOptions options) : base(options)
         {
         }
     }
 
-    public class BreakpointListenerSubscriptionInfo : SubscriptionInfo<Breakpoint, ResizeOptions>
+    public class BreakpointServiceSubscriptionInfo : SubscriptionInfo<Breakpoint, ResizeOptions>
     {
-        public BreakpointListenerSubscriptionInfo(ResizeOptions options) : base(options)
+        public BreakpointServiceSubscriptionInfo(ResizeOptions options) : base(options)
         {
         }
     }

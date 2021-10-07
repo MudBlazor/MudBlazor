@@ -10,9 +10,9 @@ namespace MudBlazor.Services
     /// <summary>
     /// This service listens to browser resize events and allows you to react to a changing window size in Blazor
     /// </summary>
-    public class SubscriptionBasedResizeListenerService : 
-        ResizeListenerBasedService<SubscriptionBasedResizeListenerService, ResizeListenerSubscriptionInfo,BrowserWindowSize,ResizeOptions>, 
-        ISubscriptionBasedResizeListenerService
+    public class ResizeService :
+        ResizeBasedService<ResizeService, ResizeServiceSubscriptionInfo, BrowserWindowSize, ResizeOptions>,
+        IResizeService
     {
         private readonly IBrowserWindowSizeProvider _browserWindowSizeProvider;
         private readonly ResizeOptions _options;
@@ -23,7 +23,7 @@ namespace MudBlazor.Services
         /// <param name="jsRuntime"></param>
         /// <param name="browserWindowSizeProvider"></param>
         /// <param name="options"></param>
-        public SubscriptionBasedResizeListenerService(IJSRuntime jsRuntime, IBrowserWindowSizeProvider browserWindowSizeProvider, IOptions<ResizeOptions> options = null) :
+        public ResizeService(IJSRuntime jsRuntime, IBrowserWindowSizeProvider browserWindowSizeProvider, IOptions<ResizeOptions> options = null) :
             base(jsRuntime)
         {
             this._options = options?.Value ?? new ResizeOptions();
@@ -82,7 +82,7 @@ namespace MudBlazor.Services
 
             if (existingOptionId == default)
             {
-                var subscriptionInfo = new ResizeListenerSubscriptionInfo(options);
+                var subscriptionInfo = new ResizeServiceSubscriptionInfo(options);
                 var subscriptionId = subscriptionInfo.AddSubscription(callback);
                 var listenerId = Guid.NewGuid();
 
@@ -110,7 +110,7 @@ namespace MudBlazor.Services
         }
     }
 
-    public interface ISubscriptionBasedResizeListenerService : IAsyncDisposable
+    public interface IResizeService : IAsyncDisposable
     {
         /// <summary>
         /// Get the current size of the window
@@ -132,7 +132,7 @@ namespace MudBlazor.Services
         /// <param name="options">The options used to subscribe to changes</param>
         /// <returns>The subscription id. This id is needed for unscribe</returns>
         Task<Guid> Subscribe(Action<BrowserWindowSize> callback, ResizeOptions options);
-        
+
         /// <summary>
         /// Used for cancel the subscription to the resize event.
         /// </summary>

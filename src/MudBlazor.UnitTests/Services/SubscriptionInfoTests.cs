@@ -20,7 +20,7 @@ namespace MudBlazor.UnitTests.Services
         public void Constructor()
         {
             var option = new ResizeOptions();
-            var info = new ResizeListenerSubscriptionInfo(option);
+            var info = new ResizeServiceSubscriptionInfo(option);
 
             info.Option.Should().Be(option);
         }
@@ -28,7 +28,7 @@ namespace MudBlazor.UnitTests.Services
         [Test]
         public void AddSubscription()
         {
-            var info = new ResizeListenerSubscriptionInfo(new ResizeOptions());
+            var info = new ResizeServiceSubscriptionInfo(new ResizeOptions());
 
             var id = info.AddSubscription((x) => { });
             info.ContainsSubscription(id).Should().BeTrue();
@@ -37,7 +37,7 @@ namespace MudBlazor.UnitTests.Services
         [Test]
         public void ContainsSubscription_NotFound()
         {
-            var info = new ResizeListenerSubscriptionInfo(new ResizeOptions());
+            var info = new ResizeServiceSubscriptionInfo(new ResizeOptions());
 
             info.ContainsSubscription(Guid.NewGuid()).Should().BeFalse();
         }
@@ -45,7 +45,7 @@ namespace MudBlazor.UnitTests.Services
         [Test]
         public void RemoveSubscription_IsNotLast()
         {
-            var info = new ResizeListenerSubscriptionInfo(new ResizeOptions());
+            var info = new ResizeServiceSubscriptionInfo(new ResizeOptions());
 
             var firstId = info.AddSubscription((x) => { });
             var secondId = info.AddSubscription((x) => { });
@@ -59,7 +59,7 @@ namespace MudBlazor.UnitTests.Services
         [Test]
         public void RemoveSubscription_IsLast()
         {
-            var info = new ResizeListenerSubscriptionInfo(new ResizeOptions());
+            var info = new ResizeServiceSubscriptionInfo(new ResizeOptions());
 
             var firstId = info.AddSubscription((x) => { });
             var secondId = info.AddSubscription((x) => { });

@@ -10,9 +10,9 @@ namespace MudBlazor
     {
         private Breakpoint _currentBreakpoint = Breakpoint.None;
         private bool _serviceIsReady = false;
-        private Guid _breakpointListenerSubscriptionId;
+        private Guid _breakpointServiceSubscriptionId;
 
-        [Inject] public IBreakpointListenerService BreakpointListenerService { get; set; }
+        [Inject] public IBreakpointService BreakpointService { get; set; }
 
         [CascadingParameter] public Breakpoint CurrentBreakpointFromProvider { get; set; } = Breakpoint.None;
 
@@ -68,7 +68,7 @@ namespace MudBlazor
 
             _currentBreakpoint = currentBreakpoint;
 
-            var hidden = BreakpointListenerService.IsMediaSize(Breakpoint, currentBreakpoint);
+            var hidden = BreakpointService.IsMediaSize(Breakpoint, currentBreakpoint);
             if (Invert == true)
             {
                 hidden = !hidden;
@@ -90,14 +90,14 @@ namespace MudBlazor
             {
                 if (CurrentBreakpointFromProvider == Breakpoint.None)
                 {
-                    var attachResult = await BreakpointListenerService.Subscribe((x) =>
+                    var attachResult = await BreakpointService.Subscribe((x) =>
                     {
                         Update(x);
                         InvokeAsync(StateHasChanged);
                     });
 
                     _serviceIsReady = true;
-                    _breakpointListenerSubscriptionId = attachResult.SubscriptionId;
+                    _breakpointServiceSubscriptionId = attachResult.SubscriptionId;
                     Update(attachResult.Breakpoint);
                     StateHasChanged();
                 }
@@ -108,6 +108,6 @@ namespace MudBlazor
             }
         }
 
-        public async ValueTask DisposeAsync() => await BreakpointListenerService.Unsubscribe(_breakpointListenerSubscriptionId);
+        public async ValueTask DisposeAsync() => await BreakpointService.Unsubscribe(_breakpointServiceSubscriptionId);
     }
 }

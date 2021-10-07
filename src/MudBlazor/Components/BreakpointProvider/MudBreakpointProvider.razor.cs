@@ -20,7 +20,7 @@ namespace MudBlazor
 
         [Parameter] public EventCallback<Breakpoint> OnBreakpointChanged { get; set; }
 
-        [Inject] public IBreakpointListenerService Service { get; set; }
+        [Inject] public IBreakpointService Service { get; set; }
 
         [Parameter] public RenderFragment ChildContent { get; set; }
 

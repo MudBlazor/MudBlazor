@@ -76,8 +76,8 @@ namespace MudBlazor.Services
         {
             services.TryAddScoped<IResizeListenerService, ResizeListenerService>();
             services.TryAddScoped<IBrowserWindowSizeProvider, BrowserWindowSizeProvider>();
-            services.TryAddScoped<ISubscriptionBasedResizeListenerService, SubscriptionBasedResizeListenerService>();
-            services.TryAddScoped<IBreakpointListenerService, BreakpointListenerService>();
+            services.TryAddScoped<IResizeService, ResizeService>();
+            services.TryAddScoped<IBreakpointService, BreakpointService>();
             services.Configure(options);
             return services;
         }

@@ -19,7 +19,7 @@
 
 @code
 {
-	[Inject] IBreakpointListenerService BreakpointListener { get; set; }
+	[Inject] IBreakpointService BreakpointListener { get; set; }
 
 	private List<Breakpoint> _breakpointHistory = new();
 

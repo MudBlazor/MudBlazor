@@ -17,17 +17,17 @@ namespace MudBlazor.UnitTests.Components
     [TestFixture]
     public class DrawerTest : BunitTest
     {
-        private Mock<IBreakpointListenerService> _breakpointListenerServiceMock;
+        private Mock<IBreakpointService> _breakpointListenerServiceMock;
         private Action<Breakpoint> _breakpointUpdateCallback;
 
         public override void Setup()
         {
             base.Setup();
-            _breakpointListenerServiceMock = new Mock<IBreakpointListenerService>();
+            _breakpointListenerServiceMock = new Mock<IBreakpointService>();
 
             _breakpointListenerServiceMock
                 .Setup(x => x.Subscribe(It.IsAny<Action<Breakpoint>>()))
-                .ReturnsAsync(new BreakpointListenerSubscribeResult(Guid.NewGuid(), Breakpoint.Md))
+                .ReturnsAsync(new BreakpointServiceSubscribeResult(Guid.NewGuid(), Breakpoint.Md))
                 .Callback<Action<Breakpoint>>(x => _breakpointUpdateCallback = x)
                 .Verifiable();
 

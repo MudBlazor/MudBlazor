@@ -17,18 +17,18 @@ using NUnit.Framework;
 namespace MudBlazor.UnitTests.Services
 {
     [TestFixture]
-    public class SubscriptionBasedResizeListenerServiceTests
+    public class ResizeBasedServiceTests
     {
         private Mock<IBrowserWindowSizeProvider> _browserWindowSizeProvider;
         private Mock<IJSRuntime> _jsruntimeMock;
-        private SubscriptionBasedResizeListenerService _service;
+        private ResizeService _service;
 
         [SetUp]
         public void SetUp()
         {
             _browserWindowSizeProvider = new Mock<IBrowserWindowSizeProvider>();
             _jsruntimeMock = new Mock<IJSRuntime>();
-            _service = new SubscriptionBasedResizeListenerService(_jsruntimeMock.Object, _browserWindowSizeProvider.Object);
+            _service = new ResizeService(_jsruntimeMock.Object, _browserWindowSizeProvider.Object);
         }
 
         [Test]
@@ -49,7 +49,7 @@ namespace MudBlazor.UnitTests.Services
         }
 
         private record ListenForResizeCallbackInfo(
-            DotNetObjectReference<SubscriptionBasedResizeListenerService> DotnetRef, ResizeOptions options, Guid ListenerId);
+            DotNetObjectReference<ResizeService> DotnetRef, ResizeOptions options, Guid ListenerId);
 
 
         private void SetupJsMockForSubscription(ResizeOptions expectedOptions, Action<ListenForResizeCallbackInfo> callbackInfo = null)
@@ -57,11 +57,11 @@ namespace MudBlazor.UnitTests.Services
 
             _jsruntimeMock.Setup(x => x.InvokeAsync<object>("mudResizeListenerFactory.listenForResize",
                It.Is<object[]>(z =>
-                   z[0] is DotNetObjectReference<SubscriptionBasedResizeListenerService> == true &&
+                   z[0] is DotNetObjectReference<ResizeService> == true &&
                    (ResizeOptions)z[1] == expectedOptions &&
                    (Guid)z[2] != default
                ))).ReturnsAsync(new object()).Callback<string, object[]>((x, z) => callbackInfo?.Invoke(new ListenForResizeCallbackInfo(
-                    (DotNetObjectReference<SubscriptionBasedResizeListenerService>)z[0],
+                    (DotNetObjectReference<ResizeService>)z[0],
                     (ResizeOptions)z[1], (Guid)z[2]
                    ))).Verifiable();
 
@@ -103,7 +103,7 @@ namespace MudBlazor.UnitTests.Services
             var optionGetter = new Mock<IOptions<ResizeOptions>>();
             optionGetter.SetupGet(x => x.Value).Returns(customResizeOptioons);
 
-            _service = new SubscriptionBasedResizeListenerService(_jsruntimeMock.Object, _browserWindowSizeProvider.Object, optionGetter.Object);
+            _service = new ResizeService(_jsruntimeMock.Object, _browserWindowSizeProvider.Object, optionGetter.Object);
             await CheckSubscriptionOptions(customResizeOptioons);
         }
 
@@ -394,7 +394,7 @@ namespace MudBlazor.UnitTests.Services
             public Guid SubscriptionId { get; set; }
             public BrowserWindowSize ActualSize { get; set; } = new BrowserWindowSize { };
 
-            public async Task Subscribe(SubscriptionBasedResizeListenerService service,
+            public async Task Subscribe(ResizeService service,
                 ResizeOptions options)
             {
                 SubscriptionId = await service.Subscribe((x) => ActualSize = x, options);

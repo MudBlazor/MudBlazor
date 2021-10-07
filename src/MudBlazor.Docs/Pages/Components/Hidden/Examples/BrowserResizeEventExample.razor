@@ -3,9 +3,9 @@
 @implements IAsyncDisposable
 
 <MudAlert Severity=Severity.Warning>
-	MudBlazor 5.1.2 introduced new implementations for handling browser resize events.
+	MudBlazor 5.2 introduced new implementations for handling browser resize events.
 	The <strong>IResizeListenerService</strong> can still be used but we strongly encourage you to move to the 
-	<strong>ISubscriptionBasedResizeListenerService </strong>
+	<strong>IResizeService </strong>
 </MudAlert>
 
 <MudCard Class="pa-5">
@@ -17,7 +17,7 @@
 
 @code
 {
-	[Inject] ISubscriptionBasedResizeListenerService ResizeListener { get; set; }
+	[Inject] IResizeService ResizeService { get; set; }
 
     int width = 0;
     int height = 0;
@@ -28,7 +28,7 @@
     {
         if (firstRender)
         {
-			_subscriptionId = await ResizeListener.Subscribe((size) =>
+			_subscriptionId = await ResizeService.Subscribe((size) =>
 			{
 				width = size.Width;
 				height = size.Height;
@@ -39,7 +39,7 @@
 				NotifyOnBreakpointOnly = false,
 			});
 
-            var size = await ResizeListener.GetBrowserWindowSize();
+            var size = await ResizeService.GetBrowserWindowSize();
             height = size.Height;
             width = size.Width;
             StateHasChanged();
@@ -48,5 +48,5 @@
         await base.OnAfterRenderAsync(firstRender);
     }
 
-    public async ValueTask DisposeAsync() => await ResizeListener.Unsubscribe(_subscriptionId);
+    public async ValueTask DisposeAsync() => await ResizeService.Unsubscribe(_subscriptionId);
 }

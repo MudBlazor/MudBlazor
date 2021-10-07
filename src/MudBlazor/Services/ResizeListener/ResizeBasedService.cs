@@ -12,7 +12,7 @@ using Microsoft.JSInterop;
 
 namespace MudBlazor.Services
 {
-    public abstract class ResizeListenerBasedService<TSelf, TInfo, TAction, TaskOption> : IAsyncDisposable
+    public abstract class ResizeBasedService<TSelf, TInfo, TAction, TaskOption> : IAsyncDisposable
         where TSelf : class
         where TInfo : SubscriptionInfo<TAction, TaskOption>
     {
@@ -22,7 +22,7 @@ namespace MudBlazor.Services
         protected IJSRuntime JsRuntime { get; init; }
         protected DotNetObjectReference<TSelf> DotNetRef { get; set; }
 
-        public ResizeListenerBasedService(IJSRuntime jsRuntime)
+        public ResizeBasedService(IJSRuntime jsRuntime)
         {
             JsRuntime = jsRuntime;
         }

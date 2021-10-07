@@ -24,8 +24,8 @@ namespace MudBlazor.UnitTests.Components
         [TestCase(true, true, false)]
         public void Content_Visible(bool mediaResult, bool invert, bool isHidden)
         {
-            var listenerMock = new Mock<IBreakpointListenerService>();
-            listenerMock.Setup(x => x.Subscribe(It.IsAny<Action<Breakpoint>>())).ReturnsAsync(new BreakpointListenerSubscribeResult(Guid.NewGuid(), Breakpoint.Md)).Verifiable();
+            var listenerMock = new Mock<IBreakpointService>();
+            listenerMock.Setup(x => x.Subscribe(It.IsAny<Action<Breakpoint>>())).ReturnsAsync(new BreakpointServiceSubscribeResult(Guid.NewGuid(), Breakpoint.Md)).Verifiable();
             listenerMock.Setup(x => x.IsMediaSize(Breakpoint.Lg, Breakpoint.Md)).Returns(mediaResult).Verifiable();
 
             Context.Services.AddSingleton(sp => listenerMock.Object);
@@ -54,9 +54,9 @@ namespace MudBlazor.UnitTests.Components
         {
             Action<Breakpoint> callback = null;
 
-            var listenerMock = new Mock<IBreakpointListenerService>();
+            var listenerMock = new Mock<IBreakpointService>();
             listenerMock.Setup(x => x.Subscribe(It.IsAny<Action<Breakpoint>>()))
-                .ReturnsAsync(new BreakpointListenerSubscribeResult(Guid.NewGuid(), Breakpoint.Md))
+                .ReturnsAsync(new BreakpointServiceSubscribeResult(Guid.NewGuid(), Breakpoint.Md))
                 .Callback<Action<Breakpoint>>(x => callback = x)
                 .Verifiable();
 
@@ -89,8 +89,8 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void InvertChangedAfterInitilizing()
         {
-            var listenerMock = new Mock<IBreakpointListenerService>();
-            listenerMock.Setup(x => x.Subscribe(It.IsAny<Action<Breakpoint>>())).ReturnsAsync(new BreakpointListenerSubscribeResult(Guid.NewGuid(), Breakpoint.Md)).Verifiable();
+            var listenerMock = new Mock<IBreakpointService>();
+            listenerMock.Setup(x => x.Subscribe(It.IsAny<Action<Breakpoint>>())).ReturnsAsync(new BreakpointServiceSubscribeResult(Guid.NewGuid(), Breakpoint.Md)).Verifiable();
             listenerMock.Setup(x => x.IsMediaSize(Breakpoint.Lg, Breakpoint.Md)).Returns(false).Verifiable();
 
             Context.Services.AddSingleton(sp => listenerMock.Object);
@@ -115,8 +115,8 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void ReferenceBreakpointChangedAfterInitilizing()
         {
-            var listenerMock = new Mock<IBreakpointListenerService>();
-            listenerMock.Setup(x => x.Subscribe(It.IsAny<Action<Breakpoint>>())).ReturnsAsync(new BreakpointListenerSubscribeResult(Guid.NewGuid(), Breakpoint.Md)).Verifiable();
+            var listenerMock = new Mock<IBreakpointService>();
+            listenerMock.Setup(x => x.Subscribe(It.IsAny<Action<Breakpoint>>())).ReturnsAsync(new BreakpointServiceSubscribeResult(Guid.NewGuid(), Breakpoint.Md)).Verifiable();
             listenerMock.Setup(x => x.IsMediaSize(Breakpoint.Lg, Breakpoint.Md)).Returns(false).Verifiable();
             listenerMock.Setup(x => x.IsMediaSize(Breakpoint.Xs, Breakpoint.Md)).Returns(true).Verifiable();
 
@@ -145,9 +145,9 @@ namespace MudBlazor.UnitTests.Components
         {
             Action<Breakpoint> callback = null;
 
-            var listenerMock = new Mock<IBreakpointListenerService>();
+            var listenerMock = new Mock<IBreakpointService>();
             listenerMock.Setup(x => x.Subscribe(It.IsAny<Action<Breakpoint>>()))
-                .ReturnsAsync(new BreakpointListenerSubscribeResult(Guid.NewGuid(), Breakpoint.Md))
+                .ReturnsAsync(new BreakpointServiceSubscribeResult(Guid.NewGuid(), Breakpoint.Md))
                 .Callback<Action<Breakpoint>>(x => callback = x)
                 .Verifiable();
 
@@ -174,9 +174,9 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void WithinMudBreakpointProvider()
         {
-            var listenerMock = new Mock<IBreakpointListenerService>();
+            var listenerMock = new Mock<IBreakpointService>();
             listenerMock.Setup(x => x.Subscribe(It.IsAny<Action<Breakpoint>>()))
-                .ReturnsAsync(new BreakpointListenerSubscribeResult(Guid.NewGuid(), Breakpoint.Md))
+                .ReturnsAsync(new BreakpointServiceSubscribeResult(Guid.NewGuid(), Breakpoint.Md))
                 .Verifiable();
 
             listenerMock.Setup(x => x.IsMediaSize(Breakpoint.Lg, Breakpoint.Md)).Returns(false).Verifiable();
@@ -208,9 +208,9 @@ namespace MudBlazor.UnitTests.Components
         {
             Action<Breakpoint> callback = null;
 
-            var listenerMock = new Mock<IBreakpointListenerService>();
+            var listenerMock = new Mock<IBreakpointService>();
             listenerMock.Setup(x => x.Subscribe(It.IsAny<Action<Breakpoint>>()))
-                .ReturnsAsync(new BreakpointListenerSubscribeResult(Guid.NewGuid(), Breakpoint.Md))
+                .ReturnsAsync(new BreakpointServiceSubscribeResult(Guid.NewGuid(), Breakpoint.Md))
                 .Callback<Action<Breakpoint>>(x => callback = x)
                 .Verifiable();
 
@@ -272,9 +272,9 @@ namespace MudBlazor.UnitTests.Components
             _jsruntimeMock.Setup(x => x.InvokeAsync<object>("mudResizeListenerFactory.cancelListeners", It.IsAny<object[]>()))
     .ReturnsAsync(new object());
 
-            BreakpointListenerService service = new BreakpointListenerService(_jsruntimeMock.Object, sizeMock.Object);
+            BreakpointService service = new BreakpointService(_jsruntimeMock.Object, sizeMock.Object);
 
-            Context.Services.AddSingleton<IBreakpointListenerService, BreakpointListenerService>(sp => service);
+            Context.Services.AddSingleton<IBreakpointService, BreakpointService>(sp => service);
 
             var comp = Context.RenderComponent<RenderMultipleHiddenInParallel>();
 
