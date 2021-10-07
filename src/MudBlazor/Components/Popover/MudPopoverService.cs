@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Options;
@@ -87,6 +88,7 @@ namespace MudBlazor
         private bool _isInitilized = false;
         private readonly IJSRuntime _jsRuntime;
         private readonly PopoverOptions _options;
+        private SemaphoreSlim _semaphoreSlim = new(1, 1);
 
         public event EventHandler FragmentsChanged;
 
@@ -102,8 +104,18 @@ namespace MudBlazor
         {
             if (_isInitilized == true) { return; }
 
-            await _jsRuntime.InvokeVoidAsync("mudPopover.initilize", _options.ContainerClass);
-            _isInitilized = true;
+            try
+            {
+                await _semaphoreSlim.WaitAsync();
+                if (_isInitilized == true) { return; }
+
+                await _jsRuntime.InvokeVoidAsync("mudPopover.initilize", _options.ContainerClass, _options.FlipMargin);
+                _isInitilized = true;
+            }
+            finally
+            {
+                _semaphoreSlim.Release();
+            }
         }
 
         public MudPopoverHandler Register(RenderFragment fragment)

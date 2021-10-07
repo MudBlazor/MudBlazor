@@ -25,6 +25,7 @@ namespace MudBlazor.UnitTests.Components
             var options = new PopoverOptions();
 
             options.ContainerClass.Should().Be("mudblazor-main-content");
+            options.FlipMargin.Should().Be(8);
         }
 
         [Test]
@@ -228,7 +229,7 @@ namespace MudBlazor.UnitTests.Components
             mock.Setup(x =>
            x.InvokeAsync<object>(
                "mudPopover.initilize",
-               It.Is<object[]>(x => x.Length == 1 && (string)x[0] == "mudblazor-main-content"))).ReturnsAsync(new object()).Verifiable();
+               It.Is<object[]>(x => x.Length == 2 && (string)x[0] == "mudblazor-main-content" && (int)x[1] == 8))).ReturnsAsync(new object()).Verifiable();
 
             {
                 var service = new MudPopoverService(mock.Object, null);
@@ -249,6 +250,7 @@ namespace MudBlazor.UnitTests.Components
             var option = new PopoverOptions
             {
                 ContainerClass = "my-custom-class",
+                FlipMargin = 12,
             };
 
             var optionMock = new Mock<IOptions<PopoverOptions>>();
@@ -257,7 +259,7 @@ namespace MudBlazor.UnitTests.Components
             mock.Setup(x =>
            x.InvokeAsync<object>(
                "mudPopover.initilize",
-               It.Is<object[]>(x => x.Length == 1 && (string)x[0] == "my-custom-class"))).ReturnsAsync(new object()).Verifiable();
+               It.Is<object[]>(x => x.Length == 2 && (string)x[0] == "my-custom-class" && (int)x[1] == 12))).ReturnsAsync(new object()).Verifiable();
 
             var service = new MudPopoverService(mock.Object, optionMock.Object);
 
@@ -274,19 +276,22 @@ namespace MudBlazor.UnitTests.Components
             mock.Setup(x =>
            x.InvokeAsync<object>(
                "mudPopover.initilize",
-               It.Is<object[]>(x => x.Length == 1 && (string)x[0] == "mudblazor-main-content"))).ReturnsAsync(new object()).Verifiable();
+               It.Is<object[]>(x => x.Length == 2 && (string)x[0] == "mudblazor-main-content" && (int)x[1] == 8))).ReturnsAsync(new object(), TimeSpan.FromMilliseconds(300)).Verifiable();
 
+            Task[] tasks = new Task[5];
             var service = new MudPopoverService(mock.Object);
 
             for (int i = 0; i < 5; i++)
             {
-                await service.InitializeIfNeeded();
+                tasks[i] = Task.Run(async () => await service.InitializeIfNeeded());
             }
+
+            Task.WaitAll(tasks);
 
             mock.Verify(x =>
            x.InvokeAsync<object>(
                "mudPopover.initilize",
-               It.Is<object[]>(x => x.Length == 1 && (string)x[0] == "mudblazor-main-content")), Times.Once());
+               It.Is<object[]>(x => x.Length == 2 && (string)x[0] == "mudblazor-main-content" && (int)x[1] == 8)), Times.Once());
         }
 
         [Test]
@@ -304,7 +309,7 @@ namespace MudBlazor.UnitTests.Components
             mock.Setup(x =>
            x.InvokeAsync<object>(
                "mudPopover.initilize",
-               It.Is<object[]>(x => x.Length == 1 && (string)x[0] == "mudblazor-main-content"))).ReturnsAsync(new object()).Verifiable();
+               It.Is<object[]>(x => x.Length == 2 && (string)x[0] == "mudblazor-main-content" && (int)x[1] == 8))).ReturnsAsync(new object()).Verifiable();
 
             mock.Setup(x =>
             x.InvokeAsync<object>(
@@ -444,8 +449,7 @@ namespace MudBlazor.UnitTests.Components
             popover.AnchorOrigin.Should().Be(Origin.TopLeft);
             popover.TransformOrigin.Should().Be(Origin.TopLeft);
             popover.RelativeWidth.Should().BeFalse();
-            
-
+            popover.OverflowBehavior.Should().Be(OverflowBehavior.None);
         }
 
         [Test]
@@ -575,7 +579,7 @@ namespace MudBlazor.UnitTests.Components
         [TestCase(Origin.TopCenter, "top-center")]
         [TestCase(Origin.TopLeft, "top-left")]
         [TestCase(Origin.TopRight, "top-right")]
-        public void MudPopover_Property_TransformOrigin(Origin transformOrigin, String expectedClass)
+        public void MudPopover_Property_TransformOrigin(Origin transformOrigin, string expectedClass)
         {
             var comp = Context.RenderComponent<PopoverPropertyTest>(p => p.Add(
                 x => x.TransformOrigin, transformOrigin));
@@ -597,7 +601,7 @@ namespace MudBlazor.UnitTests.Components
         [TestCase(Origin.TopCenter, "top-center")]
         [TestCase(Origin.TopLeft, "top-left")]
         [TestCase(Origin.TopRight, "top-right")]
-        public void MudPopover_Property_AnchorOrigin(Origin anchorOrigin, String expectedClass)
+        public void MudPopover_Property_AnchorOrigin(Origin anchorOrigin, string expectedClass)
         {
             var comp = Context.RenderComponent<PopoverPropertyTest>(p => p.Add(
                 x => x.AnchorOrigin, anchorOrigin));
@@ -607,6 +611,21 @@ namespace MudBlazor.UnitTests.Components
             var popoverElement = comp.Find(".test-popover-content").ParentElement;
 
             popoverElement.ClassList.Should().Contain(new[] { "mud-popover-open", $"mud-popover-anchor-{expectedClass}", "my-custom-class" });
+        }
+
+        [Test]
+        [TestCase(OverflowBehavior.None, "none")]
+        [TestCase(OverflowBehavior.Flip, "flip")]
+        public void MudPopover_Property_OverflowBehavior(OverflowBehavior overflowBehavior, string expectedClass)
+        {
+            var comp = Context.RenderComponent<PopoverPropertyTest>(p => p.Add(
+                x => x.OverflowBehavior, overflowBehavior));
+
+            Console.WriteLine(comp.Markup);
+
+            var popoverElement = comp.Find(".test-popover-content").ParentElement;
+
+            popoverElement.ClassList.Should().Contain(new[] { "mud-popover-open", $"mud-popover-overflow-{expectedClass}", "my-custom-class" });
         }
 
         [Test]
