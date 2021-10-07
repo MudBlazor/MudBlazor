@@ -138,6 +138,9 @@
 
                 .mud-input-helper-text {
                     text-align: center;
+                    & div div {
+                        margin:auto;
+                    }
                 }
             }
         }
