@@ -48,7 +48,7 @@
 	</CascadingValue>;
 }
 
-@if(MudTreeRoot.IsVirtualized)
+@if(MudTreeRoot is not null && MudTreeRoot.IsVirtualized)
 {
 	<div @attributes="UserAttributes" class="@Classname" style="@Stylename">
 		@ItemBody

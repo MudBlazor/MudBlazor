@@ -29,7 +29,7 @@ namespace MudBlazor
 
         protected string Stylename =>
         new StyleBuilder()
-            .AddStyle($"margin-left", $"{IndentMargin}px", MudTreeRoot.IsVirtualized)
+            .AddStyle($"margin-left", $"{IndentMargin}px", MudTreeRoot?.IsVirtualized ?? false)
             .AddStyle(Style)
         .Build();
 
@@ -139,7 +139,7 @@ namespace MudBlazor
         {
             get
             {
-                if (Parent is null) return 0f;
+                if (Parent is null || MudTreeRoot is null) return 0f;
                 else return Parent.IndentMargin + MudTreeRoot.ItemIndentMargin;
             }
         }
