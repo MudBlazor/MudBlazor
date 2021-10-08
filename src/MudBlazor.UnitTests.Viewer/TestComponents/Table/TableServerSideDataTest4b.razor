@@ -1,5 +1,7 @@
 @namespace MudBlazor.UnitTests.TestComponents
 
+<MudPopoverProvider></MudPopoverProvider>
+
 <MudTable ServerData="@(new Func<TableState, Task<TableData<TestModel>>>(ServerReload))" SortLabel="Sort by">
     <HeaderContent>
         <MudTh><MudTableSortLabel SortLabel="a" T="TestModel">a</MudTableSortLabel></MudTh>

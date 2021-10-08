@@ -5,17 +5,17 @@
 <div class="@Class">
     @if (!string.IsNullOrWhiteSpace(Text))
     {
-        <MudText Color="@Color">@Text</MudText>
+        <MudText Color="@Color" tabindex="-1">@Text</MudText>
     }
     else if (!string.IsNullOrWhiteSpace(Icon))
     {
         @if (AdornmentClick.HasDelegate)
         {
-            <MudIconButton Icon="@Icon" OnClick="@AdornmentClick" Edge="@Edge" Size="@Size" Color="@Color" />
+            <MudIconButton Icon="@Icon" OnClick="@AdornmentClick" Edge="@Edge" Size="@Size" Color="@Color"  tabindex="-1"/>
         }
         else
         {
-            <MudIcon Icon="@Icon" Size="@Size" Color="@Color"/>
+            <MudIcon Icon="@Icon" Size="@Size" Color="@Color" tabindex="-1"/>
         }
     }
 </div>

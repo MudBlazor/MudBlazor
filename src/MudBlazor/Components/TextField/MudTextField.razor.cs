@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Utilities;
@@ -20,6 +21,8 @@ namespace MudBlazor
         [Parameter] public InputType InputType { get; set; } = InputType.Text;
 
         internal override InputType GetInputType() => InputType;
+
+        private string GetCounterText() => Counter == null ? string.Empty : (Counter == 0 ? (string.IsNullOrEmpty(Text) ? "0" : $"{Text.Length}") : ((string.IsNullOrEmpty(Text) ? "0" : $"{Text.Length}") + $" / {Counter}"));
 
         /// <summary>
         /// Show clear button.
@@ -46,7 +49,16 @@ namespace MudBlazor
             return _elementReference.SelectRangeAsync(pos1, pos2);
         }
 
+        /// <summary>
+        /// Clear the text field, set Value to default(T) and Text to null
+        /// </summary>
+        /// <returns></returns>
+        public async Task Clear()
+        {
+            await _elementReference.SetText(null);
+        }
     }
 
+    [Obsolete]
     public class MudTextFieldString : MudTextField<string> { }
 }

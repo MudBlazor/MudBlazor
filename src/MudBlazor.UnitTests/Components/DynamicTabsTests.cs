@@ -7,6 +7,7 @@ using System.Xml.Linq;
 using AngleSharp.Html.Dom;
 using Bunit;
 using FluentAssertions;
+using Microsoft.AspNetCore.Components.Web;
 using Microsoft.Extensions.DependencyInjection;
 using MudBlazor.Services;
 using MudBlazor.UnitTests.Mocks;
@@ -111,12 +112,20 @@ namespace MudBlazor.UnitTests.Components
                 actual.Should().BeEquivalentTo(expected);
 
                 var parent = (IHtmlElement)item.Parent;
-                parent.Children.Should().HaveCount(1);
+                parent.Children.Should().HaveCount(2, because: "the button and the empty popover hint");
 
-                //the tooltips are now portaled
-                //var toolTip = parent.Children[1];
-                //toolTip.ClassList.Should().StartWith(new string[] { "mud-tooltip" });
-                //toolTip.TextContent.Should().Be("close here");
+                await item.ParentElement.TriggerEventAsync("onmouseenter", new MouseEventArgs());
+                var popoverId = parent.Children[1].Id.Substring(8);
+
+                var toolTip = comp.Find($"#popovercontent-{popoverId}");
+
+                toolTip.ChildNodes.Should().ContainSingle();
+
+                toolTip.Children[0].ClassList.Should().StartWith(new string[] { "mud-tooltip" });
+                toolTip.Children[0].TextContent.Should().Be("close here");
+
+                await item.ParentElement.TriggerEventAsync("onmouseleave", new MouseEventArgs());
+
             }
 
             var addButtons = comp.FindAll(".my-add-icon-class");
@@ -133,11 +142,19 @@ namespace MudBlazor.UnitTests.Components
                 actual.Should().BeEquivalentTo(expected);
 
                 var parent = (IHtmlElement)item.Parent;
-                parent.Children.Should().HaveCount(1);
+                parent.Children.Should().HaveCount(2, because: "the button and the empty popover hint"); ;
 
-                //var toolTip = parent.Children[1];
-                //toolTip.ClassList.Should().StartWith(new string[] { "mud-tooltip" });
-                //toolTip.TextContent.Should().Be("add here");
+                await item.ParentElement.TriggerEventAsync("onmouseenter", new MouseEventArgs());
+                var popoverId = parent.Children[1].Id.Substring(8);
+
+                var toolTip = comp.Find($"#popovercontent-{popoverId}");
+
+                toolTip.ChildNodes.Should().ContainSingle();
+
+                toolTip.Children[0].ClassList.Should().StartWith(new string[] { "mud-tooltip" });
+                toolTip.Children[0].TextContent.Should().Be("add here");
+
+                await item.ParentElement.TriggerEventAsync("onmouseleave", new MouseEventArgs());
             }
         }
 

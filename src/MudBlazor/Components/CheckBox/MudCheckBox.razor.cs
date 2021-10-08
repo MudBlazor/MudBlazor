@@ -1,6 +1,9 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Extensions;
+using MudBlazor.Services;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
@@ -10,6 +13,7 @@ namespace MudBlazor
         protected string Classname =>
         new CssBuilder("mud-checkbox")
             .AddClass($"mud-disabled", Disabled)
+            .AddClass($"mud-readonly", ReadOnly)
           .AddClass(Class)
         .Build();
 
@@ -19,6 +23,7 @@ namespace MudBlazor
             .AddClass($"mud-checkbox-dense", Dense)
             .AddClass($"mud-ripple mud-ripple-checkbox", !DisableRipple)
             .AddClass($"mud-disabled", Disabled)
+            .AddClass($"mud-readonly", ReadOnly)
         .Build();
 
         /// <summary>
@@ -110,6 +115,52 @@ namespace MudBlazor
             {
                 return SetBoolValueAsync((bool?)args.Value);
             }
+        }
+
+        protected void HandleKeyDown(KeyboardEventArgs obj)
+        {
+            if (Disabled || ReadOnly)
+                return;
+            switch (obj.Key)
+            {
+                case "Escape":
+                    SetBoolValueAsync(false);
+                    break;
+                case "Enter":
+                case "NumpadEnter":
+                    SetBoolValueAsync(true);
+                    break;
+                case "Backspace":
+                    if (TriState)
+                    {
+                        SetBoolValueAsync(null);
+                    }
+                    break;
+            }
+        }
+
+        [Inject] private IKeyInterceptor _keyInterceptor { get; set; }
+
+        private string _elementId = "checkbox" + Guid.NewGuid().ToString().Substring(0, 8);
+
+        protected override async Task OnAfterRenderAsync(bool firstRender)
+        {
+            if (firstRender)
+            {
+                await _keyInterceptor.Connect(_elementId, new KeyInterceptorOptions()
+                {
+                    //EnableLogging = true,
+                    TargetClass = "mud-input-slot",
+                    Keys = {
+                        new KeyOptions { Key=" ", PreventDown = "key+none" }, // prevent scrolling page
+                        new KeyOptions { Key="Enter", PreventDown = "key+none" },
+                        new KeyOptions { Key="NumpadEnter", PreventDown = "key+none" },
+                        new KeyOptions { Key="Escape", PreventDown = "key+none" },
+                        new KeyOptions { Key="Backspace", PreventDown = "key+none" },
+                    },
+                });
+            }
+            await base.OnAfterRenderAsync(firstRender);
         }
     }
 }

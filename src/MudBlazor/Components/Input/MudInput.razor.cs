@@ -93,11 +93,6 @@ namespace MudBlazor
         [Parameter] public bool HideSpinButtons { get; set; } = true;
 
         /// <summary>
-        /// Revert up and down mouse wheel events.
-        /// </summary>
-        [Parameter] public bool InvertMouseWheel { get; set; } = false;
-
-        /// <summary>
         /// Show clear button.
         /// </summary>
         [Parameter] public bool Clearable { get; set; } = false;

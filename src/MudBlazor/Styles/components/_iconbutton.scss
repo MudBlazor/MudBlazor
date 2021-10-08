@@ -15,7 +15,7 @@
         border-radius: var(--mud-default-borderradius);
     }
 
-    &:hover {
+    &:hover, &:focus-within {
         background-color: var(--mud-palette-action-default-hover);
     }
 
@@ -28,7 +28,7 @@
 .mud-icon-button-color-inherit {
     color: inherit;
 
-    &:hover {
+    &:hover, &:focus-within {
         background-color: var(--mud-palette-action-default-hover);
     }
 }
@@ -37,7 +37,7 @@
     .mud-icon-button-color-#{$color} {
         color: var(--mud-palette-#{$color});
 
-        &:hover {
+        &:hover, &:focus-within {
             background-color: var(--mud-palette-#{$color}-hover);
         }
     }
