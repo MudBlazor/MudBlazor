@@ -54,7 +54,7 @@
 		@ItemBody
 	</div>
 
-	@if(Expanded)
+	@if(Expanded && Items is not null && MudTreeRoot.ItemTemplate is not null)
 	{
 		<CascadingValue Value="@this" IsFixed="true">
 			@foreach(T item in Items)

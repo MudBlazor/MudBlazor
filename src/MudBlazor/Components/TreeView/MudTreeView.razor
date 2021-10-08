@@ -4,29 +4,32 @@
 
 @if (IsVirtualized)
 {
-	<div @attributes="UserAttributes" class="@Classname" style="@Stylename">
-		<CascadingValue Value="@MudTreeRoot" IsFixed="true">
-			<MudVirtualize IsEnabled="IsVirtualized" Items="Items" Context="item" ItemSize="40f">
-				@ItemTemplate(item)
-			</MudVirtualize>
-		</CascadingValue>
-	</div>
+    <div @attributes="UserAttributes" class="@Classname" style="@Stylename">
+        <CascadingValue Value="@MudTreeRoot" IsFixed="true">
+            @if (ItemTemplate != null && Items != null)
+            {
+                <MudVirtualize IsEnabled="IsVirtualized" Items="Items" Context="item" ItemSize="40f">
+                    @ItemTemplate(item)
+                </MudVirtualize>
+            }   
+        </CascadingValue>
+    </div>
 }
 else
 {
-	<ul @attributes="UserAttributes" class="@Classname" style="@Stylename">
-		<CascadingValue Value="@MudTreeRoot" IsFixed="true">
-			@if (ItemTemplate != null && Items != null)
-			{
-				@foreach (var item in Items)
-				{
-					@ItemTemplate(item)
-				}
-			}
-			else if (ChildContent != null)
-			{
-				@ChildContent
-			}
-		</CascadingValue>
-	</ul>
+    <ul @attributes="UserAttributes" class="@Classname" style="@Stylename">
+        <CascadingValue Value="@MudTreeRoot" IsFixed="true">
+            @if (ItemTemplate != null && Items != null)
+            {
+                @foreach (var item in Items)
+                {
+                    @ItemTemplate(item)
+                }
+            }
+            else if (ChildContent != null)
+            {
+                @ChildContent
+            }
+        </CascadingValue>
+    </ul>
 }
