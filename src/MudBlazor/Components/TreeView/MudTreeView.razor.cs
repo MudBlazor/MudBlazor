@@ -109,7 +109,7 @@ namespace MudBlazor
         [Parameter] public bool Disabled { get; set; }
 
         /// <summary>
-        /// If ture, all TreeView and TreeViewItems children will be virtualized
+        /// If true, all TreeView and TreeViewItems children will be virtualized
         /// </summary>
         [Parameter] public bool IsVirtualized { get; set; }
 
