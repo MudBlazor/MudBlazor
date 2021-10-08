@@ -25,7 +25,7 @@ namespace MudBlazor.UnitTests.Components
             var options = new PopoverOptions();
 
             options.ContainerClass.Should().Be("mudblazor-main-content");
-            options.FlipMargin.Should().Be(8);
+            options.FlipMargin.Should().Be(0);
         }
 
         [Test]
@@ -229,7 +229,7 @@ namespace MudBlazor.UnitTests.Components
             mock.Setup(x =>
            x.InvokeAsync<object>(
                "mudPopover.initilize",
-               It.Is<object[]>(x => x.Length == 2 && (string)x[0] == "mudblazor-main-content" && (int)x[1] == 8))).ReturnsAsync(new object()).Verifiable();
+               It.Is<object[]>(x => x.Length == 2 && (string)x[0] == "mudblazor-main-content" && (int)x[1] == 0))).ReturnsAsync(new object()).Verifiable();
 
             {
                 var service = new MudPopoverService(mock.Object, null);
@@ -276,7 +276,7 @@ namespace MudBlazor.UnitTests.Components
             mock.Setup(x =>
            x.InvokeAsync<object>(
                "mudPopover.initilize",
-               It.Is<object[]>(x => x.Length == 2 && (string)x[0] == "mudblazor-main-content" && (int)x[1] == 8))).ReturnsAsync(new object(), TimeSpan.FromMilliseconds(300)).Verifiable();
+               It.Is<object[]>(x => x.Length == 2 && (string)x[0] == "mudblazor-main-content" && (int)x[1] == 0))).ReturnsAsync(new object(), TimeSpan.FromMilliseconds(300)).Verifiable();
 
             Task[] tasks = new Task[5];
             var service = new MudPopoverService(mock.Object);
@@ -291,7 +291,7 @@ namespace MudBlazor.UnitTests.Components
             mock.Verify(x =>
            x.InvokeAsync<object>(
                "mudPopover.initilize",
-               It.Is<object[]>(x => x.Length == 2 && (string)x[0] == "mudblazor-main-content" && (int)x[1] == 8)), Times.Once());
+               It.Is<object[]>(x => x.Length == 2 && (string)x[0] == "mudblazor-main-content" && (int)x[1] == 0)), Times.Once());
         }
 
         [Test]
@@ -309,7 +309,7 @@ namespace MudBlazor.UnitTests.Components
             mock.Setup(x =>
            x.InvokeAsync<object>(
                "mudPopover.initilize",
-               It.Is<object[]>(x => x.Length == 2 && (string)x[0] == "mudblazor-main-content" && (int)x[1] == 8))).ReturnsAsync(new object()).Verifiable();
+               It.Is<object[]>(x => x.Length == 2 && (string)x[0] == "mudblazor-main-content" && (int)x[1] == 0))).ReturnsAsync(new object()).Verifiable();
 
             mock.Setup(x =>
             x.InvokeAsync<object>(
@@ -449,7 +449,7 @@ namespace MudBlazor.UnitTests.Components
             popover.AnchorOrigin.Should().Be(Origin.TopLeft);
             popover.TransformOrigin.Should().Be(Origin.TopLeft);
             popover.RelativeWidth.Should().BeFalse();
-            popover.OverflowBehavior.Should().Be(OverflowBehavior.None);
+            popover.OverflowBehavior.Should().Be(OverflowBehavior.Flip);
         }
 
         [Test]

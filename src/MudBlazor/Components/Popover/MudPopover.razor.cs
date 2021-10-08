@@ -97,7 +97,7 @@ namespace MudBlazor
         /// Set the overflow behavior of a popover and controls how the element should react if there is not enough space for the element to be visible
         /// Defaults to none, which doens't apply any overflow logic
         /// </summary>
-        [Parameter] public OverflowBehavior OverflowBehavior { get; set; } = OverflowBehavior.None;
+        [Parameter] public OverflowBehavior OverflowBehavior { get; set; } = OverflowBehavior.Flip;
 
         /// <summary>
         /// If true, the select menu will open either above or bellow the input depending on the direction.
