@@ -7,11 +7,24 @@ using System.Linq;
 using FluentAssertions;
 using MudBlazor.Charts;
 using NUnit.Framework;
+using Bunit;
 
 namespace MudBlazor.UnitTests.Charts
 {
     public class DonutChartTests : BunitTest
     {
+        private readonly string[] _baseChartPalette = 
+        {
+            "#2979FF", "#1DE9B6", "#FFC400", "#FF9100", "#651FFF", "#00E676", "#00B0FF", "#26A69A", "#FFCA28",
+            "#FFA726", "#EF5350", "#EF5350", "#7E57C2", "#66BB6A", "#29B6F6", "#FFA000", "#F57C00", "#D32F2F",
+            "#512DA8", "#616161"
+        };
+        
+        private readonly string[] _modifiedPalette =
+        {
+            "#264653", "#2a9d8f", "#e9c46a", "#f4a261", "#e76f51"
+        };
+        
          [SetUp]
         public void Init()
         {
@@ -39,6 +52,7 @@ namespace MudBlazor.UnitTests.Charts
                 .Add(p => p.Height, "300px")
                 .Add(p => p.Width, "300px")
                 .Add(p => p.InputData, data)
+                .Add(p => p.ChartOptions, new ChartOptions {ChartPalette = _baseChartPalette})
                 .Add(p => p.InputLabels,labels));
             
             comp.Markup.Should().Contain("class=\"mud-chart-donut\"");
@@ -69,6 +83,10 @@ namespace MudBlazor.UnitTests.Charts
                     .Contain("stroke-dasharray=\"5 95\" stroke-dashoffset=\"30\"");
             }
             
+            comp.SetParametersAndRender(parameters => parameters
+                .Add(p => p.ChartOptions, new ChartOptions(){ChartPalette = _modifiedPalette}));
+
+            comp.Markup.Should().Contain(_modifiedPalette[0]);
         }
     }
 }

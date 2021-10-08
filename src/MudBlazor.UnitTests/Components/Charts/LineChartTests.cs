@@ -9,11 +9,24 @@ using FluentAssertions;
 using MudBlazor.Charts;
 using MudBlazor.UnitTests.Components;
 using NUnit.Framework;
+using Bunit;
 
 namespace MudBlazor.UnitTests.Charts
 {
     public class LineChartTests: BunitTest
     {
+        private readonly string[] _baseChartPalette = 
+        {
+            "#2979FF", "#1DE9B6", "#FFC400", "#FF9100", "#651FFF", "#00E676", "#00B0FF", "#26A69A", "#FFCA28",
+            "#FFA726", "#EF5350", "#EF5350", "#7E57C2", "#66BB6A", "#29B6F6", "#FFA000", "#F57C00", "#D32F2F",
+            "#512DA8", "#616161"
+        };
+        
+        private readonly string[] _modifiedPalette =
+        {
+            "#264653", "#2a9d8f", "#e9c46a", "#f4a261", "#e76f51"
+        };
+        
         private static Array GetInterpolationOptions()
         {
             return Enum.GetValues(typeof(InterpolationOption));
@@ -49,7 +62,7 @@ namespace MudBlazor.UnitTests.Charts
                 .Add(p => p.Width, "100%")
                 .Add(p => p.ChartSeries, chartSeries)
                 .Add(p => p.XAxisLabels, xAxisLabels)
-                .Add(p => p.ChartOptions, new ChartOptions() {InterpolationOption = opt}));
+                .Add(p => p.ChartOptions, new ChartOptions { ChartPalette = _baseChartPalette, InterpolationOption = opt}));
 
             comp.Instance.ChartSeries.Should().NotBeEmpty();
             
@@ -103,6 +116,11 @@ namespace MudBlazor.UnitTests.Charts
                 comp.Markup.Should()
                     .Contain("d=\"M 30 306.25 L 103.75 248.125 L 177.5 259.375 L 251.25 229.375 L 325 233.125 L 398.75 208.75 L 472.5 195.625 L 546.25 154.375 L 620 47.5\"");
             }
+            
+            comp.SetParametersAndRender(parameters => parameters
+                .Add(p => p.ChartOptions, new ChartOptions(){ChartPalette = _modifiedPalette}));
+
+            comp.Markup.Should().Contain(_modifiedPalette[0]);
         }
     }
 }
