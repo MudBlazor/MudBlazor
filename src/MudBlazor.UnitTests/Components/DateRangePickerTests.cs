@@ -2,6 +2,7 @@
 
 using System;
 using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using AngleSharp.Html.Dom;
@@ -402,6 +403,30 @@ namespace MudBlazor.UnitTests.Components
             var comp = OpenPicker();
             comp.FindAll("button.mud-picker-calendar-day").Select(button => ((IHtmlButtonElement)button).IsDisabled)
                 .Should().OnlyContain(disabled => disabled == false);
+        }
+
+        [Test]
+        public void SetRangeTextFunc_NullInputNoError()
+        {
+            var comp = Context.RenderComponent<MudDateRangePicker>(parameters =>
+                parameters.Add(p => p.DateRange,
+                    new DateRange(new DateTime(2020, 12, 26),null))); 
+            comp.Find("input").Change("");
+            comp.Instance.DateRange.End.Should().BeNull();
+            comp.Instance.DateRange.Start.Should().BeNull();
+
+        }
+
+        [Test]
+        public void SetRangeTextFunc_NullRangeTextNoError()
+        {
+            var dateTime = new DateTime(2020, 12, 26);
+            var comp = Context.RenderComponent<MudDateRangePicker>(parameters =>
+                parameters.Add(p => p.DateRange, null)
+                    .Add(p=>p.Culture, CultureInfo.CurrentCulture));
+            comp.Find("input").Change(dateTime.ToString(CultureInfo.CurrentCulture.DateTimeFormat.ShortDatePattern));
+            comp.Instance.DateRange.Start.Should().Be(dateTime);
+
         }
 
         [Test]
