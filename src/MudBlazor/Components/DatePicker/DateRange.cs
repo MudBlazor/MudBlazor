@@ -3,7 +3,7 @@ using MudBlazor.Extensions;
 
 namespace MudBlazor
 {
-    public class DateRange : Range<DateTime?>
+    public class DateRange : Range<DateTime?>, IEquatable<DateRange>
     {
         public DateRange() : base(null, null)
         {
@@ -54,5 +54,22 @@ namespace MudBlazor
             date = new DateRange(startDate, endDate);
             return true;
         }
+
+        public override int GetHashCode() => HashCode.Combine(Start, End);
+        public override bool Equals(object obj) => Equals(obj as DateRange);
+
+        public bool Equals(DateRange other) => other != null && Start == other.Start && End == other.End;
+
+        public static bool operator ==(DateRange dateRange1, DateRange dateRange2)
+        {
+            if (ReferenceEquals(dateRange1, dateRange2))
+                return true;
+            if (dateRange1 is null || dateRange2 is null)
+                return false;
+
+            return dateRange1.Equals(dateRange2);
+        }
+
+        public static bool operator !=(DateRange dateRange1, DateRange dateRange2) => !(dateRange1 == dateRange2);
     }
 }
