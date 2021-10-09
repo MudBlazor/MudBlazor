@@ -414,6 +414,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+
         public void Open_FixMonth_FixDay_ClickYear2022_CheckDate()
         {
             var comp = OpenPicker(new ComponentParameter[] { ComponentParameter.CreateParameter("OpenTo", OpenTo.Year), ComponentParameter.CreateParameter("FixMonth", 1), ComponentParameter.CreateParameter("FixDay", 1) });
@@ -450,6 +451,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+
         public async Task Open_Programmatically_CheckOpen_Close_Programmatically_CheckClosed()
         {
             var comp = Context.RenderComponent<SimpleMudDatePickerTest>();
