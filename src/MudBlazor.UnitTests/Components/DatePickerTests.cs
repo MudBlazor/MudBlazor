@@ -648,8 +648,11 @@ namespace MudBlazor.UnitTests.Components
 
             datePicker.Disabled = false;
 
+            await comp.InvokeAsync(() => comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = "NumpadEnter", Type = "keydown", }));
+            comp.WaitForAssertion(() => comp.FindAll("div.mud-picker-open").Count.Should().Be(1));
+
             await comp.InvokeAsync(() => datePicker.ToggleState());
-            comp.WaitForAssertion(() => comp.FindAll("div.mud-picker-open").Count.Should().Be(0));
+            comp.WaitForAssertion(() => comp.FindAll("div.mud-picker-open").Count.Should().Be(1));
         }
     }
 }
