@@ -11,7 +11,7 @@ namespace MudBlazor
 {
     public partial class MudSelect<T> : MudBaseInput<T>, IMudSelect
     {
-        private HashSet<T> _selectedValues;
+        private HashSet<T> _selectedValues = new();
         private bool _dense;
         private string multiSelectionText;
         private bool? _selectAllChecked;
@@ -65,7 +65,7 @@ namespace MudBlazor
         /// <summary>
         /// Fires when SelectedValues changes.
         /// </summary>
-        [Parameter] public EventCallback<HashSet<T>> SelectedValuesChanged { get; set; }
+        [Parameter] public EventCallback<IEnumerable<T>> SelectedValuesChanged { get; set; }
 
         /// <summary>
         /// Function to define a customized multiselection text.
@@ -81,7 +81,7 @@ namespace MudBlazor
         /// Set of selected values. If MultiSelection is false it will only ever contain a single value. This property is two-way bindable.
         /// </summary>
         [Parameter]
-        public HashSet<T> SelectedValues
+        public IEnumerable<T> SelectedValues
         {
             get
             {
@@ -92,7 +92,7 @@ namespace MudBlazor
             set
             {
                 var set = value ?? new HashSet<T>();
-                if (SelectedValues.Count == set.Count && SelectedValues.All(x => set.Contains(x)))
+                if (SelectedValues.Count() == set.Count() && _selectedValues.All(x => set.Contains(x)))
                     return;
                 _selectedValues = new HashSet<T>(set);
                 SelectionChangedFromOutside?.Invoke(_selectedValues);
@@ -112,7 +112,7 @@ namespace MudBlazor
                         SetTextAsync(string.Join(Delimiter, SelectedValues.Select(x => Converter.Set(x)))).AndForget();
                     }
                 }
-                SelectedValuesChanged.InvokeAsync(new HashSet<T>(SelectedValues));
+                SelectedValuesChanged.InvokeAsync(_selectedValues);
             }
         }
 
@@ -220,7 +220,7 @@ namespace MudBlazor
             }
         }
 
-        internal event Action<HashSet<T>> SelectionChangedFromOutside;
+        internal event Action<ICollection<T>> SelectionChangedFromOutside;
 
         /// <summary>
         /// If true, multiple values can be selected via checkboxes which are automatically shown in the dropdown
@@ -372,10 +372,10 @@ namespace MudBlazor
             if (MultiSelection)
             {
                 // multi-selection: menu stays open
-                if (!SelectedValues.Contains(value))
-                    SelectedValues.Add(value);
+                if (!_selectedValues.Contains(value))
+                    _selectedValues.Add(value);
                 else
-                    SelectedValues.Remove(value);
+                    _selectedValues.Remove(value);
 
                 if (MultiSelectionTextFunc != null)
                 {
@@ -404,13 +404,13 @@ namespace MudBlazor
                 }
 
                 await SetValueAsync(value);
-                SelectedValues.Clear();
-                SelectedValues.Add(value);
+                _selectedValues.Clear();
+                _selectedValues.Add(value);
                 HilightItemForValue(value);
             }
 
             StateHasChanged();
-            await SelectedValuesChanged.InvokeAsync(SelectedValues);
+            await SelectedValuesChanged.InvokeAsync(_selectedValues);
         }
 
         private void HilightItemForValue(T value)
@@ -442,11 +442,11 @@ namespace MudBlazor
             if (MultiSelection && SelectAll)
             {
                 var oldState = _selectAllChecked;
-                if (SelectedValues.Count == 0)
+                if (_selectedValues.Count == 0)
                 {
                     _selectAllChecked = false;
                 }
-                else if (_items.Count == SelectedValues.Count)
+                else if (_items.Count == _selectedValues.Count)
                 {
                     _selectAllChecked = true;
                 }
@@ -537,10 +537,10 @@ namespace MudBlazor
         {
             await SetValueAsync(default, false);
             await SetTextAsync(default, false);
-            SelectedValues.Clear();
+            _selectedValues.Clear();
             BeginValidate();
             StateHasChanged();
-            await SelectedValuesChanged.InvokeAsync(SelectedValues);
+            await SelectedValuesChanged.InvokeAsync(_selectedValues);
             await OnClearButtonClick.InvokeAsync(e);
         }
 
@@ -596,10 +596,10 @@ namespace MudBlazor
         {
             await SetValueAsync(default, false);
             await SetTextAsync(default, false);
-            SelectedValues.Clear();
+            _selectedValues.Clear();
             BeginValidate();
             StateHasChanged();
-            await SelectedValuesChanged.InvokeAsync(SelectedValues);
+            await SelectedValuesChanged.InvokeAsync(_selectedValues);
         }
 
         private async Task SelectAllClickAsync()

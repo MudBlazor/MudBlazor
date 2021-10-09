@@ -25,7 +25,7 @@
 @code {
     private bool multiselectionTextChoice;
     private string value { get; set; } = "Nothing selected";
-    private HashSet<string> options { get; set; } = new HashSet<string>() { "Alaska" };
+    private IEnumerable<string> options { get; set; } = new HashSet<string>() { "Alaska" };
 
     private string[] states =
     {
