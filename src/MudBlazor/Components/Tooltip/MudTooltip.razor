@@ -3,16 +3,19 @@
 
 <div @attributes="UserAttributes" class="@ContainerClass" @onmouseenter="@HandleMouseOver" @onmouseleave="@HandleMouseOut" @onfocusout="@HandleMouseOut">
 	@ChildContent
-	<MudPopover Open="_isVisible" AnchorOrigin="@_anchorOrigin" TransformOrigin="@_transformOrigin" Paper="false">
-		<div role="tooltip" class="@Classname">
-			@if (TooltipContent != null)
-			{
-				@TooltipContent
-			}
-			else if(!String.IsNullOrEmpty(Text))
-			{
-				@Text
-			}
-		</div>
-	</MudPopover>
+	@if (TooltipContent != null || string.IsNullOrEmpty(Text) == false)
+	{
+		<MudPopover Open="_isVisible" AnchorOrigin="@_anchorOrigin" TransformOrigin="@_transformOrigin" Paper="false">
+			<div role="tooltip" class="@Classname">
+				@if (TooltipContent != null)
+				{
+					@TooltipContent
+				}
+				else if (!String.IsNullOrEmpty(Text))
+				{
+					@Text
+				}
+			</div>
+		</MudPopover>
+	}
 </div>
