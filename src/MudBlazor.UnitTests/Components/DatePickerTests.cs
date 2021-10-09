@@ -642,6 +642,14 @@ namespace MudBlazor.UnitTests.Components
 
             await comp.InvokeAsync(() => datePicker.ToggleOpen());
             comp.WaitForAssertion(() => comp.FindAll("div.mud-picker-open").Count.Should().Be(0));
+
+            await comp.InvokeAsync(() => datePicker.ToggleState());
+            comp.WaitForAssertion(() => comp.FindAll("div.mud-picker-open").Count.Should().Be(0));
+
+            datePicker.Disabled = false;
+
+            await comp.InvokeAsync(() => datePicker.ToggleState());
+            comp.WaitForAssertion(() => comp.FindAll("div.mud-picker-open").Count.Should().Be(0));
         }
     }
 }

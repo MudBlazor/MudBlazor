@@ -365,7 +365,7 @@ namespace MudBlazor
             await base.OnAfterRenderAsync(firstRender);
         }
 
-        protected void ToggleState()
+        protected internal void ToggleState()
         {
             if (Disabled)
                 return;
