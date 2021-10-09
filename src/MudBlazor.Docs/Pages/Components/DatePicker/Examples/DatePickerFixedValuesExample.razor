@@ -1,0 +1,19 @@
+﻿@namespace MudBlazor.Docs.Examples
+<MudGrid>
+    <MudItem xs="12" sm="6">
+        <MudDatePicker Label="Year-Month Picker (Fixed Day)" @bind-Date="_yearMonth" OpenTo="OpenTo.Year" FixDay="1" DateFormat="yyyy/MM" />
+        <MudText>@_yearMonth?.ToShortDateString()</MudText>
+    </MudItem>
+    <MudItem xs="12" sm="6">
+        <MudDatePicker Label="Month-Day Picker (Fixed Year)" @bind-Date="_monthDay" OpenTo="OpenTo.Month" FixYear="2021" DateFormat="MM/dd" />
+        <MudText>@_monthDay?.ToShortDateString()</MudText>
+    </MudItem>
+    <MudItem xs="12" sm="6">
+        <MudDatePicker Label="Year-Day Picker (Fixed Month)" @bind-Date="_yearDay" FixMonth="10" />
+        <MudText>@_yearDay?.ToShortDateString()</MudText>
+    </MudItem>
+</MudGrid>
+
+@code { DateTime? _yearMonth;
+    DateTime? _monthDay;
+    DateTime? _yearDay; }
