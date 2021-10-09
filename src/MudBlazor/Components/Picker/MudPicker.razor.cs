@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
@@ -82,6 +83,7 @@ namespace MudBlazor
         /// <summary>
         /// Sets the icon of the input text field
         /// </summary>
+        [ExcludeFromCodeCoverage]
         [Parameter]
         [Obsolete("Obsolete, use AdornmentIcon")]
         public string InputIcon
@@ -178,6 +180,7 @@ namespace MudBlazor
         /// <summary>
         ///  Variant of the text input
         /// </summary>
+        [ExcludeFromCodeCoverage]
         [Parameter]
         [Obsolete("Obsolete, use Variant")]
         public Variant InputVariant
