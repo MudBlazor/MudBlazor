@@ -1,7 +1,7 @@
 ﻿@namespace MudBlazor.UnitTests.TestComponents
 
 
-<MudTable Items="@Cars" Hover="true" @ref="tableInstance"
+<MudTable Items="@Cars" Hover="true" @ref="tableInstance" GroupBy="@groups"
           GroupHeaderStyle="background-color:var(--mud-palette-background-grey)"
           GroupFooterStyle="background-color:var(--mud-palette-background-grey)"
           MultiSelection="true">
@@ -17,15 +17,18 @@
     <GroupFooterTemplate>
         <MudTh Style="font-weight: 500;text-align: right;">Count: @context.Items.Count()</MudTh>
     </GroupFooterTemplate>
+    <PagerContent>
+        <MudTablePager />
+    </PagerContent>
 </MudTable>
 
 @code {
-    public MudTable<RacingCar> tableInstance;
-    private IEnumerable<RacingCar> Cars;
+    public MudTable<TableGroupingTest.RacingCar> tableInstance;
+    private IEnumerable<TableGroupingTest.RacingCar> Cars;
 
     protected override Task OnInitializedAsync()
     {
-        Cars = new List<RacingCar>()
+        Cars = new List<TableGroupingTest.RacingCar>()
     {
             new("919 Hybrid", "Porsche", "LMP1"),
             new("911 RSR", "Porsche", "GTE"),
@@ -34,28 +37,22 @@
             new("R8 LMS", "Audi", "GT3"),
             new ("F488", "Ferrari", "GTE"),
             new ("SF-1000", "Ferrari", "Formula 1"),
+            new ("MCL35M", "McLaren", "Formula 1"),
+            new ("720s", "McLaren", "GT3"),
             new ("Vantage", "Aston Martin", "GTE"),
             new ("AMR21", "Aston Martin", "Formula 1"),
         };
         return base.OnInitializedAsync();
     }
 
-    public class RacingCar
+    TableGroupDefinition<TableGroupingTest.RacingCar> groups = new()
     {
-        public RacingCar(string name, string brand, string category)
+        GroupName = "Category",
+        Selector = rc => rc.Category,
+        InnerGroup = new TableGroupDefinition<TableGroupingTest.RacingCar>()
         {
-            Name = name;
-            Brand = brand;
-            Category = category;
+            GroupName = "Brand",
+            Selector = rc => rc.Brand
         }
-
-        public string Name { get; set; }
-        public string Brand { get; set; }
-        public string Category { get; set; }
-
-        public override string ToString()
-        {
-            return $"({Category}) {Brand} {Name}";
-        }
-    }
+    };
 }
