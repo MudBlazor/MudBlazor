@@ -359,6 +359,61 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public void Open_FixYear_Click2ndMonth_Click3_CheckDate()
+        {
+            var comp = OpenPicker(ComponentParameter.CreateParameter("FixYear", 2021));
+            comp.FindAll("div.mud-picker-datepicker-toolbar > button.mud-button-year").Count.Should().Be(0);
+            comp.Find("div.mud-picker-calendar-container > .mud-picker-calendar-header > .mud-picker-calendar-header-switch > .mud-button-month").Click();
+            comp.FindAll("div.mud-picker-month-container").Count.Should().Be(1);
+            comp.FindAll("div.mud-picker-calendar-container > div.mud-picker-month-container > button.mud-picker-month")[1].Click();
+            comp.FindAll("div.mud-picker-calendar-container > div.mud-picker-calendar-header").Count.Should().Be(1);
+            comp.FindAll("button.mud-picker-calendar-day")
+                .Where(x => x.TrimmedText().Equals("3")).First().Click();
+            comp.Instance.Date.Value.Date.Should().Be(new DateTime(2021, 2, 3));
+        }
+
+        [Test]
+        public void Open_FixDay_ClickYear_Click2ndMonth_CheckDate()
+        {
+            var comp = OpenPicker(ComponentParameter.CreateParameter("FixDay", 1));
+            comp.Find("div.mud-picker-datepicker-toolbar > button.mud-button-year").Click();
+            comp.FindAll("div.mud-picker-calendar-container > div.mud-picker-year-container").Count.Should().Be(1);
+            comp.FindAll("div.mud-picker-calendar-container > div.mud-picker-year-container > div.mud-picker-year")
+                .Where(x => x.TrimmedText().Contains("2022")).First().Click();
+            comp.FindAll("div.mud-picker-month-container").Count.Should().Be(1);
+            comp.FindAll("div.mud-picker-calendar-container > div.mud-picker-month-container > button.mud-picker-month")[1].Click();
+            comp.Instance.Date.Value.Date.Should().Be(new DateTime(2022, 2, 1));
+        }
+
+        [Test]
+        public void Open_FixMonth_ClickYear_Click3_CheckDate()
+        {
+            var comp = OpenPicker(ComponentParameter.CreateParameter("FixMonth", 1));
+            comp.FindAll("div.mud-picker-calendar-container > .mud-picker-calendar-header > .mud-picker-calendar-header-switch > .mud-button-month").Count().Should().Be(0);
+            comp.Find("div.mud-picker-datepicker-toolbar > button.mud-button-year").Click();
+            comp.FindAll("div.mud-picker-calendar-container > div.mud-picker-year-container").Count.Should().Be(1);
+            comp.FindAll("div.mud-picker-calendar-container > div.mud-picker-year-container > div.mud-picker-year")
+                .Where(x => x.TrimmedText().Contains("2022")).First().Click();
+            comp.FindAll("div.mud-picker-month-container").Count.Should().Be(0);
+            comp.FindAll("div.mud-picker-calendar-container > div.mud-picker-calendar-header").Count.Should().Be(1);
+            comp.FindAll("button.mud-picker-calendar-day")
+                .Where(x => x.TrimmedText().Equals("3")).First().Click();
+            comp.Instance.Date.Value.Date.Should().Be(new DateTime(2022, 1, 3));
+        }
+
+        [Test]
+        public void Open_FixYear_FixMonth_Click3_CheckDate()
+        {
+            var comp = OpenPicker(new ComponentParameter[] { ComponentParameter.CreateParameter("FixMonth", 1), ComponentParameter.CreateParameter("FixYear", 2022) });
+            comp.FindAll("div.mud-picker-datepicker-toolbar > button.mud-button-year").Count().Should().Be(0);
+            comp.FindAll("div.mud-picker-calendar-container > .mud-picker-calendar-header > .mud-picker-calendar-header-switch > .mud-button-month").Count().Should().Be(0);
+            comp.FindAll("div.mud-picker-calendar-container > div.mud-picker-calendar-header").Count.Should().Be(1);
+            comp.FindAll("button.mud-picker-calendar-day")
+                .Where(x => x.TrimmedText().Equals("3")).First().Click();
+            comp.Instance.Date.Value.Date.Should().Be(new DateTime(2022, 1, 3));
+        }
+
+        [Test]
         public async Task Open_Programmatically_CheckOpen_Close_Programmatically_CheckClosed()
         {
             var comp = Context.RenderComponent<SimpleMudDatePickerTest>();
