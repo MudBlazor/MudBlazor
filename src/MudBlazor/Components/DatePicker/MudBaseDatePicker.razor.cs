@@ -161,15 +161,28 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public string NextIcon { get; set; } = Icons.Material.Filled.ChevronRight;
 
+        /// <summary>
+        /// Set a predefined fix year - no year can be selected
+        /// </summary>
+        [Parameter] public int? FixYear { get; set; }
+        /// <summary>
+        /// Set a predefined fix month - no month can be selected
+        /// </summary>
+        [Parameter] public int? FixMonth { get; set; }
+        /// <summary>
+        /// Set a predefined fix day - no day can be selected
+        /// </summary>
+        [Parameter] public int? FixDay { get; set; }
+
         protected virtual bool IsRange { get; } = false;
 
-        private OpenTo _currentView;
+        protected OpenTo CurrentView;
 
         protected override void OnPickerOpened()
         {
             base.OnPickerOpened();
-            _currentView = OpenTo;
-            if (_currentView == OpenTo.Year)
+            CurrentView = OpenTo;
+            if (CurrentView == OpenTo.Year)
                 _scrollToYearAfterRender = true;
         }
 
@@ -240,6 +253,31 @@ namespace MudBlazor
                 Culture.DateTimeFormat.CalendarWeekRule, FirstDayOfWeek ?? Culture.DateTimeFormat.FirstDayOfWeek).ToString();
         }
 
+        protected virtual OpenTo? GetNextView()
+        {
+            OpenTo? nextView = CurrentView switch
+            {
+                OpenTo.Year => FixMonth.HasValue ? OpenTo.Date : OpenTo.Month,
+                OpenTo.Month => FixDay.HasValue ? null : OpenTo.Date,
+                _ => null,
+            };
+            return nextView;
+        }
+
+        protected virtual async void SubmitAndClose()
+        {
+            if (PickerActions == null)
+            {
+                Submit();
+
+                if (PickerVariant != PickerVariant.Static)
+                {
+                    await Task.Delay(ClosingDelay);
+                    Close(false);
+                }
+            }
+        }
+
         protected abstract string GetDayClasses(int month, DateTime day);
 
         /// <summary>
@@ -250,18 +288,30 @@ namespace MudBlazor
         /// <summary>
         /// user clicked on a month
         /// </summary>
-        protected virtual void OnMonthClicked(int month)
+        /// <param name="month"></param>
+        protected virtual void OnMonthSelected(DateTime month)
         {
-            _currentView = OpenTo.Month;
-            _picker_month = _picker_month?.AddMonths(month);
-            StateHasChanged();
+            PickerMonth = month;
+            var nextView = GetNextView();
+            if (nextView != null)
+            {
+                CurrentView = (OpenTo)nextView;
+            }
         }
 
+        /// <summary>
+        /// user clicked on a year
+        /// </summary>
+        /// <param name="year"></param>
         protected virtual void OnYearClicked(int year)
         {
-            _currentView = OpenTo.Month;
             var current = GetMonthStart(0);
             PickerMonth = new DateTime(year, current.Month, 1);
+            var nextView = GetNextView();
+            if (nextView != null)
+            {
+                CurrentView = (OpenTo)nextView;
+            }
         }
 
         /// <summary>
@@ -330,7 +380,7 @@ namespace MudBlazor
 
         private void OnYearClick()
         {
-            _currentView = OpenTo.Year;
+            CurrentView = OpenTo.Year;
             StateHasChanged();
             _scrollToYearAfterRender = true;
         }
@@ -430,18 +480,17 @@ namespace MudBlazor
             return Typo.subtitle1;
         }
 
-       
-
-        private void OnMonthSelected(DateTime month)
+        private void OnMonthClicked(int month)
         {
-            _currentView = OpenTo.Date;
-            PickerMonth = month;
+            CurrentView = OpenTo.Month;
+            _picker_month = _picker_month?.AddMonths(month);
+            StateHasChanged();
         }
 
         protected override void OnInitialized()
         {
             base.OnInitialized();
-            _currentView = OpenTo;
+            CurrentView = OpenTo;
         }
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -451,7 +500,7 @@ namespace MudBlazor
                 _picker_month ??= GetCalendarStartOfMonth();
             }
 
-            if (firstRender && _currentView == OpenTo.Year)
+            if (firstRender && CurrentView == OpenTo.Year)
             {
                 ScrollToYear();
                 return;
