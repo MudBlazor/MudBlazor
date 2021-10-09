@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
@@ -291,18 +292,21 @@ namespace MudBlazor
         /// <summary>
         /// Sets the direction the Select menu should open.
         /// </summary>
+        [ExcludeFromCodeCoverage]
         [Obsolete("Direction is obsolete. Use AnchorOrigin or TransformOrigin instead!", false)]
         [Parameter] public Direction Direction { get; set; } = Direction.Bottom;
 
         /// <summary>
         /// If true, the Select menu will open either before or after the input (left/right).
         /// </summary>
+        [ExcludeFromCodeCoverage]
         [Obsolete("OffsetX is obsolete. Use AnchorOrigin or TransformOrigin instead!", false)]
         [Parameter] public bool OffsetX { get; set; }
 
         /// <summary>
         /// If true, the Select menu will open either before or after the input (top/bottom).
         /// </summary>
+        /// [ExcludeFromCodeCoverage]
         [Obsolete("OffsetY is obsolete. Use AnchorOrigin or TransformOrigin instead!", false)]
         [Parameter] public bool OffsetY { get; set; }
 
