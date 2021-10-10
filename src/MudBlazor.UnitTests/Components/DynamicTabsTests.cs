@@ -35,7 +35,8 @@ namespace MudBlazor.UnitTests.Components
             Context.Services.Add(new ServiceDescriptor(typeof(IResizeObserver), new MockResizeObserver()));
 
             var comp = Context.RenderComponent<SimpleDynamicTabsTest>();
-            await Verifier.Verify(comp);
+            await Verifier.Verify(comp)
+                .ScrubInlineGuids();
         }
 
         [Test]
