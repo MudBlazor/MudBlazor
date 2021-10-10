@@ -1193,6 +1193,52 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// Tests the grouping behavior and ensure that it won't break anything else.
+        /// </summary>
+        /// <returns></returns>
+        [Test]
+        public async Task TableGroupingAndPaginationTest()
+        {
+            // without grouping, to ensure that anything was broken:
+            var comp = Context.RenderComponent<TableGroupingTest2>();
+            var table = comp.Instance.tableInstance;
+            table.Context.HeaderRows.Count.Should().Be(1);
+
+            // Page 01:
+            // [00] Porsche
+            //      [01] LMP1
+            //      [02] GTE
+            //      [03] GT3
+            // [04] Audi
+            //      [05] LMP1
+            //      [06] GT3
+            // [07] Ferrari
+            //      [08] Formula 1
+            // [09] McLaren
+            //      [10] Formula 1
+            //      [11] GT3
+            // [12] Aston Martin
+            //      [13] GTE
+            table.Context.GroupRows.Count.Should().Be(14);
+            table.Context.Rows.Count.Should().Be(10);
+            var tr = comp.FindAll("tr").ToArray();
+            tr.Length.Should().Be(39); // 01 Table header + 14 Group Headers + 14 Group Footers + 10 Entries
+
+            // Navigating to page 2
+            table.NavigateTo(1);
+
+            // Page 02:
+            // [00] Aston Martin
+            //      [01] GTE
+            table.Context.GroupRows.Count.Should().Be(2);
+            table.Context.Rows.Count.Should().Be(1);
+            tr = comp.FindAll("tr").ToArray();
+            tr.Length.Should().Be(6); // 01 Table header + 02 Group Headers + 02 Group Footers + 01 Entries
+
+        }
+
+
+        /// <summary>
         /// Tests the IsInitiallyExpanded grouping behavior.
         /// </summary>
         /// <returns></returns>

@@ -429,6 +429,25 @@ namespace MudBlazor.UnitTests.Components
 
         }
 
+
+        [Test]
+        public void SetDateRange_NoChangedIfSameValues()
+        {
+            var dr1 = new DateRange(new DateTime(2021, 10, 08), new DateTime(2021, 10, 09));
+            var dr2 = new DateRange(new DateTime(2021, 10, 08), new DateTime(2021, 10, 09));
+
+            var wasEventCallbackCalled = false;
+
+            var comp = Context.RenderComponent<MudDateRangePicker>(
+                Parameter(nameof(MudDateRangePicker.DateRange), dr1),
+                EventCallback(nameof(MudDateRangePicker.DateRangeChanged), (DateRange _) => wasEventCallbackCalled = true));
+
+            comp.SetParam(nameof(MudDateRangePicker.DateRange), dr2);
+
+            comp.Instance.DateRange.Should().Be(dr2);
+            wasEventCallbackCalled.Should().BeFalse();
+        }
+
         [Test]
         public void InitializeDateRange_DefaultConstructor()
         {
