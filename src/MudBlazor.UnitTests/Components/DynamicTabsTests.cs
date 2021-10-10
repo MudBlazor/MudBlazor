@@ -13,6 +13,7 @@ using MudBlazor.Services;
 using MudBlazor.UnitTests.Mocks;
 using MudBlazor.UnitTests.TestComponents;
 using NUnit.Framework;
+using VerifyNUnit;
 
 namespace MudBlazor.UnitTests.Components
 {
@@ -25,29 +26,7 @@ namespace MudBlazor.UnitTests.Components
             Context.Services.Add(new ServiceDescriptor(typeof(IResizeObserver), new MockResizeObserver()));
 
             var comp = Context.RenderComponent<MudDynamicTabs>();
-            var tabs = comp.Instance;
-
-            tabs.Header.Should().NotBeNull();
-            tabs.TabPanelHeader.Should().NotBeNull();
-
-            tabs.HeaderPosition.Should().Be(TabHeaderPosition.After);
-            tabs.TabPanelHeaderPosition.Should().Be(TabHeaderPosition.After);
-
-            tabs.AddTabIcon.Should().Be(Icons.Material.Filled.Add);
-            tabs.CloseTabIcon.Should().Be(Icons.Material.Filled.Close);
-
-            tabs.AddIconClass.Should().BeNullOrEmpty();
-            tabs.AddIconStyle.Should().BeNullOrEmpty();
-            tabs.AddIconToolTip.Should().BeNullOrEmpty();
-
-            tabs.CloseIconClass.Should().BeNullOrEmpty();
-            tabs.CloseIconStyle.Should().BeNullOrEmpty();
-            tabs.CloseIconToolTip.Should().BeNullOrEmpty();
-
-            comp.Nodes.Should().ContainSingle();
-            comp.Nodes[0].Should().BeAssignableTo<IHtmlDivElement>();
-
-            ((IHtmlDivElement)comp.Nodes[0]).ClassList.Should().BeEquivalentTo("mud-tabs", "mud-dynamic-tabs");
+            await Verifier.Verify(comp);
         }
 
         [Test]
@@ -56,37 +35,7 @@ namespace MudBlazor.UnitTests.Components
             Context.Services.Add(new ServiceDescriptor(typeof(IResizeObserver), new MockResizeObserver()));
 
             var comp = Context.RenderComponent<SimpleDynamicTabsTest>();
-            Console.WriteLine(comp.Markup);
-
-            // three panels three close icons;
-            var closeButtons = comp.FindAll(".my-close-icon-class");
-            closeButtons.Should().HaveCount(3);
-
-            foreach (var item in closeButtons)
-            {
-                item.GetAttribute("style").Should().Be("propertyA: 4px");
-                item.ClassList.Should().StartWith(new string[] { "mud-button-root" });
-
-                var actual = XElement.Parse($"<test>{item.Children[0].Children[0].InnerHtml}</test>");
-                var expected = XElement.Parse($"<test>{Icons.Material.Filled.RestoreFromTrash}</test>");
-
-                actual.Should().BeEquivalentTo(expected);
-            }
-
-            var addButtons = comp.FindAll(".my-add-icon-class");
-
-            addButtons.Should().HaveCount(1);
-            foreach (var item in addButtons)
-            {
-                item.GetAttribute("style").Should().Be("propertyB: 6px");
-                item.ClassList.Should().StartWith(new string[] { "mud-button-root" });
-
-                var actual = XElement.Parse($"<test>{item.Children[0].Children[0].InnerHtml}</test>");
-                var expected = XElement.Parse($"<test>{Icons.Material.Filled.AddAlarm}</test>");
-
-                actual.Should().BeEquivalentTo(expected);
-
-            }
+            await Verifier.Verify(comp);
         }
 
         [Test]

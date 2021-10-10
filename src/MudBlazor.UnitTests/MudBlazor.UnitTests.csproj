@@ -42,6 +42,9 @@
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.11.0" />
     <PackageReference Include="ReportGenerator" Version="4.8.13" />
     <PackageReference Include="RichardSzalay.MockHttp" Version="6.0.0" />
+    <PackageReference Include="Verify.Bunit" Version="7.1.1" />
+    <PackageReference Include="Verify.NUnit" Version="13.1.0" />
+    <PackageReference Include="Verify.AngleSharp" Version="2.7.2" />
   </ItemGroup>
 
   <ItemGroup>

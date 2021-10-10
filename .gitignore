@@ -387,3 +387,6 @@ src/MudBlazor/Styles/MudBlazor.css.map
 src/MudBlazor/Styles/.vscode/settings.json
 
 src/MudBlazor/wwwroot/MudBlazor.min.css.map
+
+
+*.received.*
