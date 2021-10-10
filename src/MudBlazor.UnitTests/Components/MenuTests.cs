@@ -71,5 +71,15 @@ namespace MudBlazor.UnitTests.Components
 
             comp.WaitForAssertion(() => pop.Instance.Open.Should().BeFalse());
         }
+
+
+        [Test]
+        public void ActivatorContent_Disabled_CheckDisabled()
+        {
+            var comp = Context.RenderComponent<MenuTestDisabledCustomActivator>();
+            var activator = comp.Find("div.mud-menu-activator");
+            activator.ClassList.Should().Contain("mud-disabled");
+            activator.GetAttribute("disabled").Should().NotBeNull();
+        }
     }
 }
