@@ -6,18 +6,13 @@
     <span class="@SpanClassname">
         <span class="@SwitchClassname">
             <span class="mud-switch-button">
-                <input @attributes="UserAttributes" aria-checked="@((BoolValue == true).ToString().ToLower())" aria-readonly="@(Disabled.ToString().ToLower())" type="checkbox" class="mud-switch-input" checked="@BoolValue" @onkeydown="@HandleKeyDown" @onchange="@OnChange" disabled="@Disabled" @onclick:preventDefault="@ReadOnly"/>
-                @*<MudIcon Class="mud-switch-thumb" Color="Color.Info" Icon="@SwitchIcon" />*@
+                <input @attributes="UserAttributes" aria-checked="@((BoolValue == true).ToString().ToLower())" aria-readonly="@(Disabled.ToString().ToLower())" type="checkbox" class="mud-switch-input" 
+                       checked="@BoolValue" @onkeydown="@HandleKeyDown" @onchange="@OnChange" disabled="@Disabled" @onclick:preventDefault="@ReadOnly"/>
                 <span class="mud-switch-thumb d-flex align-center justify-center">
-                    @if (Progress)
+                    @if (!string.IsNullOrEmpty(ThumbIcon))
                     {
-                        <MudProgressCircular Indeterminate="true" Style="height:18px; width:18px;" />
+                        <MudIcon Color="@ThumbIconColor" Icon="@GetThumbIcon()" Style=" height:18px; width:18px;" />
                     }
-                    else
-                    {
-                        <MudIcon Color="@IconColor" Icon="@GetIcon()" Style=" height:18px; width:18px;" />
-                    }
-                    
                 </span>
             </span>
         </span>

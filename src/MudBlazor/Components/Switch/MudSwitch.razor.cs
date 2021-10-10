@@ -15,7 +15,7 @@ namespace MudBlazor
         .Build();
         protected string SwitchClassname =>
         new CssBuilder("mud-button-root mud-icon-button mud-switch-base")
-            .AddClass($"mud-ripple mud-ripple-switch", !DisableRipple)
+            .AddClass($"mud-ripple mud-ripple-switch", !DisableRipple && !ReadOnly)
             .AddClass($"mud-switch-{Color.ToDescriptionString()}")
             .AddClass($"mud-switch-disabled", Disabled)
             .AddClass($"mud-readonly", ReadOnly)
@@ -24,7 +24,6 @@ namespace MudBlazor
 
         protected string SpanClassname =>
         new CssBuilder("mud-switch-span mud-flip-x-rtl")
-            .AddClass($"mud-switch-span-{Size.ToDescriptionString()}")
         .Build();
 
         /// <summary>
@@ -37,40 +36,45 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public string Label { get; set; }
 
-        [Parameter] public string SwitchIcon { get; set; } = Icons.Material.Filled.Done;
+        /// <summary>
+        /// Shows an icon on Switch's thumb.
+        /// </summary>
+        [Parameter] public string ThumbIcon { get; set; }
 
-        [Parameter] public Color IconColor { get; set; } = Color.Info;
+        /// <summary>
+        /// The color of the thumb icon. Supports the theme colors.
+        /// </summary>
+        [Parameter] public Color ThumbIconColor { get; set; } = Color.Info;
 
-        [Parameter] public string SwitchIconOff { get; set; }
-
-        [Parameter] public Size Size { get; set; } = Size.Small;
-
-        [Parameter] public bool Progress { get; set; } = false;
+        /// <summary>
+        /// Shows an icon when thumb is off. Only works when there is a ThumbIcon.
+        /// </summary>
+        [Parameter] public string ThumbIconOff { get; set; }
 
         /// <summary>
         /// If true, disables ripple effect.
         /// </summary>
         [Parameter] public bool DisableRipple { get; set; }
 
-        private string GetIcon()
+        private string GetThumbIcon()
         {
-            if (string.IsNullOrEmpty(SwitchIcon) && string.IsNullOrEmpty(SwitchIconOff))
+            if (string.IsNullOrEmpty(ThumbIcon) && string.IsNullOrEmpty(ThumbIconOff))
             {
                 return "";
             }
-            else if (string.IsNullOrEmpty(SwitchIconOff))
+            else if (string.IsNullOrEmpty(ThumbIconOff))
             {
-                return SwitchIcon;
+                return ThumbIcon;
             }
             else
             {
                 if (BoolValue == true)
                 {
-                    return SwitchIcon;
+                    return ThumbIcon;
                 }
                 else
                 {
-                    return SwitchIconOff;
+                    return ThumbIconOff;
                 }
             }
         }
