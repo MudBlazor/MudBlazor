@@ -3,6 +3,7 @@
 <DocsPage>
     <DocsPageHeader Title="Switch" SubTitle="Similar to a checkbox but visually different, the switch lets the user switch between two values with the tap of a button." />
     <DocsPageContent>
+
         <DocsPageSection>
             <SectionHeader Title="Basic switches">
                 <Description></Description>
@@ -25,7 +26,10 @@
 
         <DocsPageSection>
             <SectionHeader Title="Switch with Icon">
-                <Description></Description>
+                <Description>
+                    An icon can be determined with <CodeInline>ThumbIcon</CodeInline> parameter.
+                    In addition, if ThumbIcon parameter is assigned, separate icons can be determined for open and closed positions with <CodeInline>ThumbIconOff</CodeInline>.
+                </Description>
             </SectionHeader>
             <SectionContent Outlined="true">
                 <SwitchWithIconExample />
@@ -52,6 +56,24 @@
             </SectionContent>
             <SectionSource Code="SwitchReadOnlyExample" GitHubFolderName="Switch" />
         </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Keyboard Navigation">
+                <Description>
+                    <MudText>MudSwitch accepts keys to keyboard navigation.</MudText>
+                    <br />
+                    <MudText><CodeInline>Space</CodeInline> key to toggle state true/false</MudText>
+                    <MudText><CodeInline>Escape</CodeInline> or <CodeInline>ArrowLeft</CodeInline> keys to set UnChecked</MudText>
+                    <MudText><CodeInline>Enter</CodeInline> or <CodeInline>NumpadEnter</CodeInline> or <CodeInline>ArrowRight</CodeInline> keys to set Checked</MudText>
+                    <MudText>*Disabled or ReadOnly switches cannot be changed by keys.</MudText>
+                </Description>
+            </SectionHeader>
+            <SectionContent Outlined="true">
+                <SwitchKeyboardNavigationExample />
+            </SectionContent>
+            <SectionSource Code="SwitchKeyboardNavigationExample" GitHubFolderName="Switch" ShowCode="false" />
+        </DocsPageSection>
+
     </DocsPageContent>
 </DocsPage>
 

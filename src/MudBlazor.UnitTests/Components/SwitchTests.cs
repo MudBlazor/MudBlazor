@@ -21,17 +21,21 @@ namespace MudBlazor.UnitTests.Components
             comp.SetParam("ThumbIcon", Icons.Material.Filled.Done);
             comp.SetParam("ThumbIconOff", Icons.Material.Filled.Close);
 
-            var iconElement = comp.FindComponent<MudIcon>();
+            var iconElement = comp.FindComponent<MudIcon>().Instance;
 
             await comp.InvokeAsync(() => comp.Instance.GetThumbIcon());
-            comp.WaitForAssertion(() => iconElement.Instance.Icon.Should().Be(Icons.Material.Filled.Close));
+            comp.WaitForAssertion(() => iconElement.Icon.Should().Be(Icons.Material.Filled.Close));
 
             await comp.InvokeAsync(() => comp.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = "Enter", Type = "keydown", }));
-            comp.WaitForAssertion(() => comp.Instance.ThumbIcon.Should().Be(Icons.Material.Filled.Done));
+            comp.WaitForAssertion(() => iconElement.Icon.Should().Be(Icons.Material.Filled.Done));
 
-            comp.SetParam("ThumbIconOff", "");
+            comp.SetParam("ThumbIconOff", null);
             await comp.InvokeAsync(() => comp.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = "Escape", Type = "keydown", }));
-            comp.WaitForAssertion(() => comp.Instance.ThumbIcon.Should().Be(Icons.Material.Filled.Done));
+            comp.WaitForAssertion(() => iconElement.Icon.Should().Be(Icons.Material.Filled.Done));
+
+            comp.SetParam("ThumbIcon", null);
+            await comp.InvokeAsync(() => comp.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = "Enter", Type = "keydown", }));
+            comp.WaitForAssertion(() => comp.Instance.ThumbIcon.Should().Be(null));
         }
 
         [Test]
