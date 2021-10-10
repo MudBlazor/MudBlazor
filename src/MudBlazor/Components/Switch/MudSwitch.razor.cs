@@ -56,7 +56,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public bool DisableRipple { get; set; }
 
-        private string GetThumbIcon()
+        internal string GetThumbIcon()
         {
             if (string.IsNullOrEmpty(ThumbIcon) && string.IsNullOrEmpty(ThumbIconOff))
             {
@@ -79,7 +79,7 @@ namespace MudBlazor
             }
         }
 
-        protected void HandleKeyDown(KeyboardEventArgs obj)
+        protected internal void HandleKeyDown(KeyboardEventArgs obj)
         {
             //Space key works by default, so we didn't write it again.
             if (Disabled || ReadOnly)
