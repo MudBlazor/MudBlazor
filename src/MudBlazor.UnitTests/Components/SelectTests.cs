@@ -89,7 +89,7 @@ namespace MudBlazor.UnitTests.Components
             comp.WaitForAssertion(() => select.Instance.Text.Should().Be("2, 1, 3"));
             items[0].Click();
             comp.WaitForAssertion(() => select.Instance.Text.Should().Be("2, 3"));
-            select.Instance.SelectedValues.Count.Should().Be(2);
+            select.Instance.SelectedValues.Count().Should().Be(2);
             select.Instance.SelectedValues.Should().Contain("2");
             select.Instance.SelectedValues.Should().Contain("3");
             //Console.WriteLine(comp.Markup);
