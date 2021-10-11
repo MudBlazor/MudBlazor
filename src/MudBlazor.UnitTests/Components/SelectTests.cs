@@ -933,6 +933,7 @@ namespace MudBlazor.UnitTests.Components
 
             await comp.InvokeAsync(() => select.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = "Tab", Type = "keydown", }));
             await comp.InvokeAsync(() => select.Instance.OnKeyUp.InvokeAsync(new KeyboardEventArgs() { Key = "Tab" }));
+            comp.Render();
             comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().NotContain("mud-popover-open"));
         }
     }
