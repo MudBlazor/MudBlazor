@@ -555,8 +555,8 @@ namespace MudBlazor
 
                 await SetValueAsync(value);
                 _elementReference.SetText(Text).AndForget();
-                SelectedValues.Clear();
-                SelectedValues.Add(value);
+                _selectedValues.Clear();
+                _selectedValues.Add(value);
                 HilightItemForValue(value);
             }
 
