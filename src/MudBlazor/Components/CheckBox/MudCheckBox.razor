@@ -3,9 +3,9 @@
 @typeparam T
 
 <label class="@Classname" style="@Style">
-    <span class="@CheckBoxClassname">
+    <span class="@CheckBoxClassname" id="@_elementId">
         @*note: stopping the click propagation is important here. otherwise checking the checkbox results in click events on its parent (i.e. table row), which is generally not what you would want*@
-        <input @attributes="UserAttributes" type="checkbox" class="mud-checkbox-input" checked="@BoolValue" @onchange="@OnChange" disabled="@Disabled" @onclick:stopPropagation="@StopClickPropagation" @onclick:preventDefault="@ReadOnly"/>
+        <input @attributes="UserAttributes" type="checkbox" @onkeydown="HandleKeyDown" class="mud-checkbox-input" checked="@BoolValue" @onchange="@OnChange" disabled="@Disabled" @onclick:stopPropagation="@StopClickPropagation" @onclick:preventDefault="@ReadOnly"/>
         <MudIcon Icon="@GetIcon()" Size="@Size"/>
     </span>
     @if (!String.IsNullOrEmpty(Label))

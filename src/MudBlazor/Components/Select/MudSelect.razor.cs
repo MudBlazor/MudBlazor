@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
@@ -177,7 +178,7 @@ namespace MudBlazor
         /// <summary>
         /// Fires when SelectedValues changes.
         /// </summary>
-        [Parameter] public EventCallback<HashSet<T>> SelectedValuesChanged { get; set; }
+        [Parameter] public EventCallback<IEnumerable<T>> SelectedValuesChanged { get; set; }
 
         /// <summary>
         /// Function to define a customized multiselection text.
@@ -193,7 +194,7 @@ namespace MudBlazor
         /// Set of selected values. If MultiSelection is false it will only ever contain a single value. This property is two-way bindable.
         /// </summary>
         [Parameter]
-        public HashSet<T> SelectedValues
+        public IEnumerable<T> SelectedValues
         {
             get
             {
@@ -204,7 +205,7 @@ namespace MudBlazor
             set
             {
                 var set = value ?? new HashSet<T>();
-                if (SelectedValues.Count == set.Count && SelectedValues.All(x => set.Contains(x)))
+                if (SelectedValues.Count() == set.Count() && _selectedValues.All(x => set.Contains(x)))
                     return;
                 _selectedValues = new HashSet<T>(set);
                 SelectionChangedFromOutside?.Invoke(_selectedValues);
@@ -265,6 +266,8 @@ namespace MudBlazor
             base.OnAfterRender(firstRender);
             if (firstRender && Value != null)
             {
+                // we need to render the initial Value which is not possible without the items
+                // which supply the RenderFragment. So in this case, a second render is necessary
                 StateHasChanged();
             }
             UpdateSelectAllChecked();
@@ -357,7 +360,7 @@ namespace MudBlazor
             }
         }
 
-        internal event Action<HashSet<T>> SelectionChangedFromOutside;
+        internal event Action<ICollection<T>> SelectionChangedFromOutside;
 
         /// <summary>
         /// If true, multiple values can be selected via checkboxes which are automatically shown in the dropdown
@@ -419,18 +422,21 @@ namespace MudBlazor
         /// <summary>
         /// Sets the direction the Select menu should open.
         /// </summary>
+        [ExcludeFromCodeCoverage]
         [Obsolete("Direction is obsolete. Use AnchorOrigin or TransformOrigin instead!", false)]
         [Parameter] public Direction Direction { get; set; } = Direction.Bottom;
 
         /// <summary>
         /// If true, the Select menu will open either before or after the input (left/right).
         /// </summary>
+        [ExcludeFromCodeCoverage]
         [Obsolete("OffsetX is obsolete. Use AnchorOrigin or TransformOrigin instead!", false)]
         [Parameter] public bool OffsetX { get; set; }
 
         /// <summary>
         /// If true, the Select menu will open either before or after the input (top/bottom).
         /// </summary>
+        /// [ExcludeFromCodeCoverage]
         [Obsolete("OffsetY is obsolete. Use AnchorOrigin or TransformOrigin instead!", false)]
         [Parameter] public bool OffsetY { get; set; }
 
@@ -516,10 +522,10 @@ namespace MudBlazor
             if (MultiSelection)
             {
                 // multi-selection: menu stays open
-                if (!SelectedValues.Contains(value))
-                    SelectedValues.Add(value);
+                if (!_selectedValues.Contains(value))
+                    _selectedValues.Add(value);
                 else
-                    SelectedValues.Remove(value);
+                    _selectedValues.Remove(value);
 
                 if (MultiSelectionTextFunc != null)
                 {
@@ -598,11 +604,11 @@ namespace MudBlazor
             if (MultiSelection && SelectAll)
             {
                 var oldState = _selectAllChecked;
-                if (SelectedValues.Count == 0)
+                if (_selectedValues.Count == 0)
                 {
                     _selectAllChecked = false;
                 }
-                else if (_items.Count == SelectedValues.Count)
+                else if (_items.Count == _selectedValues.Count)
                 {
                     _selectAllChecked = true;
                 }
@@ -725,10 +731,10 @@ namespace MudBlazor
         {
             await SetValueAsync(default, false);
             await SetTextAsync(default, false);
-            SelectedValues.Clear();
+            _selectedValues.Clear();
             BeginValidate();
             StateHasChanged();
-            await SelectedValuesChanged.InvokeAsync(SelectedValues);
+            await SelectedValuesChanged.InvokeAsync(_selectedValues);
             await OnClearButtonClick.InvokeAsync(e);
         }
 
@@ -900,10 +906,10 @@ namespace MudBlazor
         {
             await SetValueAsync(default, false);
             await SetTextAsync(default, false);
-            SelectedValues.Clear();
+            _selectedValues.Clear();
             BeginValidate();
             StateHasChanged();
-            await SelectedValuesChanged.InvokeAsync(SelectedValues);
+            await SelectedValuesChanged.InvokeAsync(_selectedValues);
         }
 
         private async Task SelectAllClickAsync()

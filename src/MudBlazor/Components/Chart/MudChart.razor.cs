@@ -16,9 +16,9 @@ namespace MudBlazor
 
         [Parameter] public string[] XAxisLabels { get; set; } = Array.Empty<string>();
 
-        [Parameter] public List<ChartSeries> ChartSeries { get; set; } = new List<ChartSeries>();
+        [Parameter] public List<ChartSeries> ChartSeries { get; set; } = new();
 
-        [Parameter] public ChartOptions ChartOptions { get; set; } = new ChartOptions();
+        [Parameter] public ChartOptions ChartOptions { get; set; } = new();
 
         protected string Classname =>
         new CssBuilder("mud-chart")
