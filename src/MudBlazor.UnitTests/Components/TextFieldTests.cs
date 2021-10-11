@@ -14,6 +14,7 @@ using FluentValidation;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.UnitTests.TestComponents;
+using MudBlazor.UnitTests.TestComponents.TextField;
 using NUnit.Framework;
 using static Bunit.ComponentParameterFactory;
 
@@ -488,7 +489,7 @@ namespace MudBlazor.UnitTests.Components
             var textfield = comp.Instance;
             textfield.Value.Should().Be(17);
             textfield.Text.Should().Be("17");
-            await comp.InvokeAsync(async ()=> await textfield.Clear());
+            await comp.InvokeAsync(async () => await textfield.Clear());
             textfield.Value.Should().Be(0);
             textfield.Text.Should().Be(null);
         }
@@ -569,10 +570,30 @@ namespace MudBlazor.UnitTests.Components
             input.Instance.Text.Should().Be("In case of ladle");
 
             // force text update
-            await comp.InvokeAsync(()=> input.Instance.ForceRender(forceTextUpdate:true));
+            await comp.InvokeAsync(() => input.Instance.ForceRender(forceTextUpdate: true));
 
             input.Instance.Value.Should().Be("");
             input.Instance.Text.Should().Be("");
+        }
+
+        [Test]
+        public async Task TextField_Should_UpdateOnBoundValueChange_WhenFocused_WithTextUpdateSuppressionOff()
+        {
+            var comp = Context.RenderComponent<TextFieldUpdateViaBindingTest>();
+            var input = comp.FindComponent<MudInput<string>>();
+            // this will make the input focused!
+            comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = "a", Type = "keydown", });
+            // now simulate user input:
+            comp.Find("input").Input("The Stormlight Archive");
+            // check binding update
+            comp.Find("span").TrimmedText().Should().Be("value: The Stormlight Archive");
+            input.Instance.Value.Should().Be("The Stormlight Archive");
+            input.Instance.Text.Should().Be("The Stormlight Archive");
+            // now hit Enter to cause the clearing of the focused text field
+            comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = "Enter", Type = "keydown", });
+            comp.WaitForAssertion(() => comp.Find("span").TrimmedText().Should().Be("value:"));
+            comp.WaitForAssertion(() => input.Instance.Value.Should().Be(""));
+            comp.WaitForAssertion(() => input.Instance.Text.Should().Be(""));
         }
     }
 
