@@ -429,7 +429,6 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = OpenPicker(new ComponentParameter[] { ComponentParameter.CreateParameter("OpenTo", OpenTo.Month), ComponentParameter.CreateParameter("FixYear", 2022), ComponentParameter.CreateParameter("FixDay", 1) });
             comp.FindAll("div.mud-picker-datepicker-toolbar > button.mud-button-year").Count().Should().Be(0);
-            comp.FindAll("div.mud-picker-calendar-container > .mud-picker-calendar-header > .mud-picker-calendar-header-switch > .mud-button-month").Count().Should().Be(1);
             comp.FindAll("div.mud-picker-month-container").Count.Should().Be(1);
             comp.FindAll("div.mud-picker-calendar-container > div.mud-picker-month-container > button.mud-picker-month")[2].Click();
             comp.Instance.Date.Value.Date.Should().Be(new DateTime(2022, 3, 1));
