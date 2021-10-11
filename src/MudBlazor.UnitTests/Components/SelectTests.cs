@@ -989,6 +989,7 @@ namespace MudBlazor.UnitTests.Components
         public async Task SelectTest_ItemlessSelect()
         {
             var comp = Context.RenderComponent<MudSelect<string>>();
+
             // print the generated html
             Console.WriteLine(comp.Markup);
 
