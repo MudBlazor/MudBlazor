@@ -367,7 +367,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public bool MultiSelection { get; set; }
 
-        protected List<MudSelectItem<T>> _items = new();
+        protected internal List<MudSelectItem<T>> _items = new();
         protected Dictionary<T, MudSelectItem<T>> _valueLookup = new();
         protected Dictionary<T, MudSelectItem<T>> _shadowLookup = new();
 
@@ -892,11 +892,12 @@ namespace MudBlazor
 
         }
 
-        private void HandleKeyUp(KeyboardEventArgs obj)
+        internal void HandleKeyUp(KeyboardEventArgs obj)
         {
             OnKeyUp.InvokeAsync(obj).AndForget();
         }
 
+        [ExcludeFromCodeCoverage]
         [Obsolete("Use Clear() instead")]
         public Task ClearAsync() => Clear();
 
