@@ -257,8 +257,8 @@ namespace MudBlazor
         {
             OpenTo? nextView = CurrentView switch
             {
-                OpenTo.Year => FixMonth.HasValue ? OpenTo.Date : OpenTo.Month,
-                OpenTo.Month => FixDay.HasValue ? null : OpenTo.Date,
+                OpenTo.Year => !FixMonth.HasValue ? OpenTo.Month : !FixDay.HasValue ? OpenTo.Date : null,
+                OpenTo.Month => !FixDay.HasValue ? OpenTo.Date : null,
                 _ => null,
             };
             return nextView;

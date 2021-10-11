@@ -414,6 +414,29 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public void Open_FixMonth_FixDay_ClickYear2022_CheckDate()
+        {
+            var comp = OpenPicker(new ComponentParameter[] { ComponentParameter.CreateParameter("OpenTo", OpenTo.Year), ComponentParameter.CreateParameter("FixMonth", 1), ComponentParameter.CreateParameter("FixDay", 1) });
+            comp.FindAll("div.mud-picker-calendar-container > .mud-picker-calendar-header > .mud-picker-calendar-header-switch > .mud-button-month").Count().Should().Be(0);
+            comp.FindAll("div.mud-picker-calendar-container > div.mud-picker-year-container").Count.Should().Be(1);
+            comp.FindAll("div.mud-picker-calendar-container > div.mud-picker-year-container > div.mud-picker-year")
+                .Where(x => x.TrimmedText().Contains("2022")).First().Click();
+
+            comp.Instance.Date.Value.Date.Should().Be(new DateTime(2022, 1, 1));
+        }
+
+        [Test]
+        public void Open_FixYear_FixDay_Click3rdMonth_CheckDate()
+        {
+            var comp = OpenPicker(new ComponentParameter[] { ComponentParameter.CreateParameter("OpenTo", OpenTo.Month), ComponentParameter.CreateParameter("FixYear", 2022), ComponentParameter.CreateParameter("FixDay", 1) });
+            comp.FindAll("div.mud-picker-datepicker-toolbar > button.mud-button-year").Count().Should().Be(0);
+            comp.FindAll("div.mud-picker-calendar-container > .mud-picker-calendar-header > .mud-picker-calendar-header-switch > .mud-button-month").Count().Should().Be(1);
+            comp.FindAll("div.mud-picker-month-container").Count.Should().Be(1);
+            comp.FindAll("div.mud-picker-calendar-container > div.mud-picker-month-container > button.mud-picker-month")[2].Click();
+            comp.Instance.Date.Value.Date.Should().Be(new DateTime(2022, 3, 1));
+        }
+
+        [Test]
         public async Task Open_Programmatically_CheckOpen_Close_Programmatically_CheckClosed()
         {
             var comp = Context.RenderComponent<SimpleMudDatePickerTest>();

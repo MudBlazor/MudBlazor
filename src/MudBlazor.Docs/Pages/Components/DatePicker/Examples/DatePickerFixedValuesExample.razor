@@ -5,15 +5,45 @@
         <MudText>@_yearMonth?.ToShortDateString()</MudText>
     </MudItem>
     <MudItem xs="12" sm="6">
+        <MudDatePicker Label="Month-Year Picker (Fixed Day)" @bind-Date="_monthYear" OpenTo="OpenTo.Month" FixDay="1" DateFormat="MM/yyyy" />
+        <MudText>@_monthYear?.ToShortDateString()</MudText>
+    </MudItem>
+    <MudItem xs="12" sm="6">
         <MudDatePicker Label="Month-Day Picker (Fixed Year)" @bind-Date="_monthDay" OpenTo="OpenTo.Month" FixYear="2021" DateFormat="MM/dd" />
         <MudText>@_monthDay?.ToShortDateString()</MudText>
     </MudItem>
     <MudItem xs="12" sm="6">
-        <MudDatePicker Label="Year-Day Picker (Fixed Month)" @bind-Date="_yearDay" FixMonth="10" />
+        <MudDatePicker Label="Day-Month Picker (Fixed Year)" @bind-Date="_dayMonth" FixYear="2021" DateFormat="dd/MM" />
+        <MudText>@_dayMonth?.ToShortDateString()</MudText>
+    </MudItem>
+    <MudItem xs="12" sm="6">
+        <MudDatePicker Label="Year-Day Picker (Fixed Month)" @bind-Date="_yearDay" OpenTo="OpenTo.Year" FixMonth="10" />
         <MudText>@_yearDay?.ToShortDateString()</MudText>
+    </MudItem>
+    <MudItem xs="12" sm="6">
+        <MudDatePicker Label="Day-Year Picker (Fixed Month)" @bind-Date="_dayYear" FixMonth="10" />
+        <MudText>@_dayYear?.ToShortDateString()</MudText>
+    </MudItem>
+    <MudItem xs="12" sm="6">
+        <MudDatePicker Label="Year Picker (Fixed Month and Day)" @bind-Date="_year" OpenTo="OpenTo.Year" FixMonth="@DateTime.Today.Month" FixDay="@DateTime.Today.Day" DateFormat="yyyy" />
+        <MudText>@_year?.ToShortDateString()</MudText>
+    </MudItem>
+    <MudItem xs="12" sm="6">
+        <MudDatePicker Label="Month Picker (Fixed Year and Day)" @bind-Date="_month" OpenTo="OpenTo.Month" FixYear="@DateTime.Today.Year" FixDay="@DateTime.Today.Day" DateFormat="MMM" />
+        <MudText>@_month?.ToShortDateString()</MudText>
+    </MudItem>
+    <MudItem xs="12" sm="6">
+        <MudDatePicker Label="Day Picker (Fixed Year and Month)" @bind-Date="_day" FixYear="@DateTime.Today.Year" FixMonth="@DateTime.Today.Month" DateFormat="dd" />
+        <MudText>@_day?.ToShortDateString()</MudText>
     </MudItem>
 </MudGrid>
 
 @code { DateTime? _yearMonth;
+    DateTime? _monthYear;
     DateTime? _monthDay;
-    DateTime? _yearDay; }
+    DateTime? _dayMonth;
+    DateTime? _yearDay;
+    DateTime? _dayYear;
+    DateTime? _year;
+    DateTime? _month;
+    DateTime? _day; }
