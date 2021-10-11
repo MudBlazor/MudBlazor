@@ -822,6 +822,30 @@ namespace MudBlazor.UnitTests.Components
             comp.WaitForAssertion(() => select.Instance.Value.Should().Be("American Samoa"));
         }
 
+        [Test]
+        public async Task SelectTest_ToggleOpenCloseMenuMethods()
+        {
+            var comp = Context.RenderComponent<SelectTest1>();
+            // print the generated html
+            Console.WriteLine(comp.Markup);
+            // select elements needed for the test
+            var select = comp.FindComponent<MudSelect<string>>();
+
+            await comp.InvokeAsync(() => select.Instance.ToggleMenu());
+            comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open"));
+
+            select.SetParam("Disabled", true);
+            await comp.InvokeAsync(() => select.Instance.ToggleMenu());
+            comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open"));
+
+            select.SetParam("Disabled", false);
+            await comp.InvokeAsync(() => select.Instance.ToggleMenu());
+            comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().NotContain("mud-popover-open"));
+
+            select.SetParam("Disabled", true);
+            await comp.InvokeAsync(() => select.Instance.ToggleMenu());
+            comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().NotContain("mud-popover-open"));
+        }
 
         [Test]
         public async Task SelectTest_KeyboardNavigation_SingleSelect()
