@@ -470,6 +470,7 @@ namespace MudBlazor
         internal Origin _transformOrigin;
 
 #pragma warning disable CS0618 // This is for backwards compability until Obsolete is removed
+        [ExcludeFromCodeCoverage]
         private void GetPopoverOrigins()
         {
             if (Direction != Direction.Bottom || OffsetY || OffsetX)
