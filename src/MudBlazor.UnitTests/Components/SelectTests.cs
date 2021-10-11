@@ -914,6 +914,9 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(() => select.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = "2", Type = "keydown", }));
             comp.WaitForAssertion(() => select.Instance.Value.Should().Be("2"));
 
+            await comp.InvokeAsync(() => select.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = "2", Type = "keydown", }));
+            comp.WaitForAssertion(() => select.Instance.Value.Should().Be("2"));
+
             await comp.InvokeAsync(() => select.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = " ", Type = "keydown", }));
             comp.Render(); // <-- this is necessary for reliable passing of the test
             comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().NotContain("mud-popover-open"));
@@ -979,6 +982,20 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(() => select.Instance.OnKeyUp.InvokeAsync(new KeyboardEventArgs() { Key = "Tab" }));
             comp.Render(); // <-- this is necessary for reliable passing of the test
             comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().NotContain("mud-popover-open"));
+        }
+
+        [Test]
+        public async Task SelectTest_ItemlessSelect()
+        {
+            var comp = Context.RenderComponent<MudSelect<string>>();
+            // print the generated html
+            Console.WriteLine(comp.Markup);
+
+            await comp.InvokeAsync(() => comp.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = "ArrowDown", Type = "keydown", }));
+            await comp.InvokeAsync(() => comp.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = "Home", Type = "keydown", }));
+            await comp.InvokeAsync(() => comp.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = "End", Type = "keydown", }));
+            await comp.InvokeAsync(() => comp.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = "Enter", Type = "keydown", }));
+            comp.WaitForAssertion(() => comp.Instance.Value.Should().Be(null));
         }
     }
 }
