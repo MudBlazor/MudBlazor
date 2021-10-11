@@ -6,7 +6,6 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
-using AngleSharp.Dom;
 using AngleSharp.Html.Dom;
 using Bunit;
 using FluentAssertions;
@@ -414,7 +413,6 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-
         public void Open_FixMonth_FixDay_ClickYear2022_CheckDate()
         {
             var comp = OpenPicker(new ComponentParameter[] { ComponentParameter.CreateParameter("OpenTo", OpenTo.Year), ComponentParameter.CreateParameter("FixMonth", 1), ComponentParameter.CreateParameter("FixDay", 1) });
@@ -431,27 +429,13 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = OpenPicker(new ComponentParameter[] { ComponentParameter.CreateParameter("OpenTo", OpenTo.Month), ComponentParameter.CreateParameter("FixYear", 2022), ComponentParameter.CreateParameter("FixDay", 1) });
             comp.FindAll("div.mud-picker-datepicker-toolbar > button.mud-button-year").Count().Should().Be(0);
+            comp.FindAll("div.mud-picker-calendar-container > .mud-picker-calendar-header > .mud-picker-calendar-header-switch > .mud-button-month").Count().Should().Be(1);
             comp.FindAll("div.mud-picker-month-container").Count.Should().Be(1);
             comp.FindAll("div.mud-picker-calendar-container > div.mud-picker-month-container > button.mud-picker-month")[2].Click();
             comp.Instance.Date.Value.Date.Should().Be(new DateTime(2022, 3, 1));
         }
 
         [Test]
-        public void Open_FixDay_WithoutOpenTo_CheckOpenView()
-        {
-            var comp = OpenPicker(new ComponentParameter[] { ComponentParameter.CreateParameter("FixDay", 1), ComponentParameter.CreateParameter("FixMonth", 1) });
-            comp.FindAll("div.mud-picker-calendar-container > div.mud-picker-year-container").Count.Should().Be(1);
-        }
-
-        [Test]
-        public void Open_FixDay_FixMonth_WithoutOpenTo_CheckOpenView()
-        {
-            var comp = OpenPicker(new ComponentParameter[] { ComponentParameter.CreateParameter("FixDay", 1) });
-            comp.FindAll("div.mud-picker-month-container").Count.Should().Be(1);
-        }
-
-        [Test]
-
         public async Task Open_Programmatically_CheckOpen_Close_Programmatically_CheckClosed()
         {
             var comp = Context.RenderComponent<SimpleMudDatePickerTest>();
@@ -788,44 +772,6 @@ namespace MudBlazor.UnitTests.Components
 
             await comp.InvokeAsync(() => datePicker.ToggleState());
             comp.WaitForAssertion(() => comp.FindAll("div.mud-picker-open").Count.Should().Be(1));
-        }
-
-        /// <summary>
-        /// Test to check whether validation is working or not for required form-control
-        /// </summary>
-        /// <returns>The awaitable <see cref="Task"/></returns>
-        [Test]
-        public async Task DatePicker_Validation()
-        {
-            // render the component
-            var datePickerComponent = Context.RenderComponent<DatePickerValidationTest>();
-
-            // output the markup
-            Console.WriteLine(datePickerComponent.Markup);
-
-            // get the datepicker instance
-            var datePickerInstance = datePickerComponent.FindComponent<MudDatePicker>().Instance;
-
-            // ensure it's marked as required
-            datePickerComponent.WaitForAssertion(() => datePickerInstance.Required.Should().BeTrue($"{typeof(DatePickerValidationTest).FullName}: {nameof(MudDatePicker)} is not marked as required."));
-            
-            // get the form's instance
-            var formInstance = datePickerComponent.FindComponent<MudForm>().Instance;
-
-            // ensure form is invalid
-            datePickerComponent.WaitForAssertion(() => formInstance.IsValid.Should().BeFalse($"{typeof(DatePickerValidationTest).FullName}: {nameof(MudForm)} should be invalid at this point."));
-
-            // set value for date-picker
-            await datePickerComponent.InvokeAsync(() => datePickerInstance.Date = DateTime.Now.Date);
-
-            // ensure date-picker is now valid
-            datePickerComponent.WaitForAssertion(() => datePickerInstance.Error.Should().BeFalse($"{typeof(DatePickerValidationTest).FullName}: {nameof(MudDatePicker)} should be valid as it has a value."));
-
-            // validate the form
-            await datePickerComponent.InvokeAsync(() => formInstance.Validate());
-
-            // ensure form is valid
-            datePickerComponent.WaitForAssertion(() => formInstance.IsValid.Should().BeTrue($"{typeof(DatePickerValidationTest).FullName}: {nameof(MudForm)} should be valid as all required values have been provided."));
         }
     }
 }
