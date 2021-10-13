@@ -946,6 +946,34 @@ namespace MudBlazor.UnitTests.Components
             tf.Instance.ErrorText.Should().Be("Error1");
         }
 
+        /// <summary>
+        /// Calling form.Reset() should clear the text field
+        /// </summary>
+        [Test]
+        public async Task FormReset_Should_ClearTextField()
+        {
+            var comp = Context.RenderComponent<FormResetTest>();
+            Console.WriteLine(comp.Markup);
+            var form = comp.FindComponent<MudForm>();
+            var tf = comp.FindComponent<MudTextField<string>>();
+            // input some text
+            comp.Find("input").Input("asdf");
+            tf.Instance.Value.Should().Be("asdf");
+            tf.Instance.Text.Should().Be("asdf");
+            // call reset directly
+            await comp.InvokeAsync(() => form.Instance.Reset());
+            tf.Instance.Value.Should().BeNullOrEmpty();
+            tf.Instance.Text.Should().BeNullOrEmpty();
+            // input some text
+            comp.Find("input").Input("asdf");
+            tf.Instance.Value.Should().Be("asdf");
+            tf.Instance.Text.Should().Be("asdf");
+            // hit reset button
+            comp.FindComponent<MudButton>().Find("button").Click();
+            tf.Instance.Value.Should().BeNullOrEmpty();
+            tf.Instance.Text.Should().BeNullOrEmpty();
+        }
+
     }
 }
 
