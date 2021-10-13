@@ -166,7 +166,7 @@
                 const deltaToRight = window.innerWidth - left - selfRect.width;
                 const deltaTop = top - selfRect.height - appBarOffset;
                 const deltaBottom = window.innerHeight - top - selfRect.height;
-                console.log('left: ' + deltaToLeft + ' | rigth:' + deltaToRight + ' | top: ' + deltaTop + ' | bottom: ' + deltaBottom);
+                /*console.log('left: ' + deltaToLeft + ' | rigth:' + deltaToRight + ' | top: ' + deltaTop + ' | bottom: ' + deltaBottom);*/
 
                 let selector = null;
 
