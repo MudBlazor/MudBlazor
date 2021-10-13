@@ -31,16 +31,10 @@ namespace MudBlazor
                 if (_parent == null)
                     return;
                 _parent.CheckGenericTypeMatch(this);
-                if(MudSelect == null)
+                if (MudSelect == null)
                     return;
                 bool isSelected = MudSelect.Add(this);
-                if ( _parent.MultiSelection)
-                {
-                    return;
-                }
-
-                bool isSelected = MudSelect.Add(this);
-                if ( _parent.MultiSelection)
+                if (_parent.MultiSelection)
                 {
                     MudSelect.SelectionChangedFromOutside += OnUpdateSelectionStateFromOutside;
                     InvokeAsync(() => OnUpdateSelectionStateFromOutside(MudSelect.SelectedValues));
