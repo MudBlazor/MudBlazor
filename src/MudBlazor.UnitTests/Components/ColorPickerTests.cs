@@ -1299,8 +1299,6 @@ namespace MudBlazor.UnitTests.Components
                 "mud-popover-top-left",
                 "mud-popover-anchor-top-left",
                 "mud-popover-overflow-flip",
-                "mud-paper",
-                "mud-elevation-8",
             });
         }
     }
