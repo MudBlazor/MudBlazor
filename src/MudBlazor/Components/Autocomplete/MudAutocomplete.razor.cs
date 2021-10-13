@@ -29,6 +29,16 @@ namespace MudBlazor
         /// <summary>
         /// Set the anchor origin point to determen where the popover will open from.
         /// </summary>
+        [Parameter] public Origin AnchorOrigin { get; set; } = Origin.BottomCenter;
+
+        /// <summary>
+        /// Sets the transform origin point for the popover.
+        /// </summary>
+        [Parameter] public Origin TransformOrigin { get; set; } = Origin.TopCenter;
+
+        /// <summary>
+        /// Set the anchor origin point to determen where the popover will open from.
+        /// </summary>
         [ExcludeFromCodeCoverage]
         [Obsolete("Direction is obsolete. Use AnchorOrigin or TransformOrigin instead!", false)]
         [Parameter] public Direction Direction { get; set; } = Direction.Bottom;
