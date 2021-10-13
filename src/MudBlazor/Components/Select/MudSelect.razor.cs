@@ -21,7 +21,6 @@ namespace MudBlazor
         private bool _dense;
         private string multiSelectionText;
         private bool? _selectAllChecked;
-        private MudElement _multiSelectContainer;
 
         protected string Classname =>
             new CssBuilder("mud-select")
@@ -617,11 +616,6 @@ namespace MudBlazor
                 else
                 {
                     _selectAllChecked = null;
-                }
-
-                if (oldState != _selectAllChecked)
-                {
-                    _multiSelectContainer?.Refresh();
                 }
             }
         }
