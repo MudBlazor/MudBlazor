@@ -35,3 +35,10 @@
         z-index: calc(var(--mud-zindex-dialog) + 3);
     }
 }
+
+.mud-popover {
+    .mud-list {
+        max-height: inherit;
+        overflow-y: auto;
+    }
+}
