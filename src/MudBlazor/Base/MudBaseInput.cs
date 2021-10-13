@@ -406,7 +406,7 @@ namespace MudBlazor
 
         protected override void ResetValue()
         {
-            Text = null;
+            SetTextAsync(null, updateValue:true).AndForget();
             base.ResetValue();
         }
     }
