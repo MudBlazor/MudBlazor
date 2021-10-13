@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -28,28 +29,21 @@ namespace MudBlazor
         /// <summary>
         /// Set the anchor origin point to determen where the popover will open from.
         /// </summary>
-        [Parameter] public Origin AnchorOrigin { get; set; } = Origin.BottomCenter;
-
-        /// <summary>
-        /// Sets the transform origin point for the popover.
-        /// </summary>
-        [Parameter] public Origin TransformOrigin { get; set; } = Origin.TopCenter;
-
-        /// <summary>
-        /// Sets the direction the Autocomplete menu should open.
-        /// </summary>
+        [ExcludeFromCodeCoverage]
         [Obsolete("Direction is obsolete. Use AnchorOrigin or TransformOrigin instead!", false)]
         [Parameter] public Direction Direction { get; set; } = Direction.Bottom;
 
         /// <summary>
         /// If true, the Autocomplete menu will open either before or after the input (left/right).
         /// </summary>
+        [ExcludeFromCodeCoverage]
         [Obsolete("OffsetX is obsolete. Use AnchorOrigin or TransformOrigin instead!", false)]
         [Parameter] public bool OffsetX { get; set; }
 
         /// <summary>
         /// If true, the Autocomplete menu will open either before or after the input (top/bottom).
         /// </summary>
+        [ExcludeFromCodeCoverage]
         [Obsolete("OffsetY is obsolete. Use AnchorOrigin or TransformOrigin instead!", false)]
         [Parameter] public bool OffsetY { get; set; }
 
@@ -60,12 +54,7 @@ namespace MudBlazor
         public bool Dense
         {
             get { return _dense; }
-            set
-            {
-                // Ensure that when dense is applied we set the margin on the input controls
-                _dense = value;
-                Margin = _dense ? Margin.Dense : Margin.None;
-            }
+            set { _dense = value; }
         }
 
         /// <summary>

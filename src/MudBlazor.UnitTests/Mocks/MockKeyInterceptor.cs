@@ -14,7 +14,7 @@ namespace MudBlazor.UnitTests.Mocks
             
         }
 
-        public Task Connect(ElementReference element, KeyInterceptorOptions options)
+        public Task Connect(string element, KeyInterceptorOptions options)
         {
             return Task.CompletedTask;
         }

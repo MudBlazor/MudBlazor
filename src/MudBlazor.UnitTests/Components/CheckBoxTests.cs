@@ -1,8 +1,10 @@
 ﻿
 using System;
 using System.Linq;
+using System.Threading.Tasks;
 using Bunit;
 using FluentAssertions;
+using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.UnitTests.TestComponents;
 using NUnit.Framework;
 
@@ -189,6 +191,40 @@ namespace MudBlazor.UnitTests.Components
             using var comp = Context.RenderComponent<MudCheckBox<bool>>();
             comp.Instance.StopClickPropagation.Should().BeTrue();
             comp.Markup.Contains("blazor:onclick:stopPropagation").Should().BeTrue();
+        }
+
+        /// <summary>
+        /// Change state with several keys
+        /// </summary>
+        [Test]
+        public void CheckBoxTest_KeyboardInput()
+        {
+            var comp = Context.RenderComponent<MudCheckBox<bool?>>();
+            comp.SetParam(x => x.TriState, true);
+            // print the generated html
+            Console.WriteLine(comp.Markup);
+            // select elements needed for the test
+            var checkbox = comp.Instance;
+            checkbox.Checked.Should().Be(null);
+            
+            comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = "Escape", Type = "keydown", });
+            comp.WaitForAssertion(() => checkbox.Checked.Should().Be(false));
+
+            comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = "Enter", Type = "keydown", });
+            comp.WaitForAssertion(() => checkbox.Checked.Should().Be(true));
+
+            comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = "Backspace", Type = "keydown", });
+            comp.WaitForAssertion(() => checkbox.Checked.Should().Be(null));
+
+            comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = "NumpadEnter", Type = "keydown", });
+            comp.WaitForAssertion(() => checkbox.Checked.Should().Be(true));
+
+            //Backspace should not change state on non-tristate checkbox
+            comp.SetParam(x => x.TriState, false);
+            comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = "Backspace", Type = "keydown", });
+            comp.WaitForAssertion(() => checkbox.Checked.Should().Be(true));
+
+            //Space key works by default (OnKeyUp), we didn't set or override it, so we cannot test the key.
         }
     }
 }

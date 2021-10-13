@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
+using System.Diagnostics.CodeAnalysis;
 using MudBlazor.Extensions;
 using MudBlazor.Utilities;
 
@@ -102,12 +103,14 @@ namespace MudBlazor
         /// <summary>
         /// If true, the select menu will open either above or bellow the input depending on the direction.
         /// </summary>
+        [ExcludeFromCodeCoverage]
         [Obsolete("OffsetX is obsolete. Use AnchorOrigin and TransformOrigin", false)]
         [Parameter] public bool OffsetX { get; set; }
 
         /// <summary>
         /// If true, the select menu will open either before or after the input depending on the direction.
         /// </summary>
+        [ExcludeFromCodeCoverage]
         [Obsolete("OffsetX is obsolete. Use AnchorOrigin and TransformOrigin", false)]
         [Parameter] public bool OffsetY { get; set; }
 

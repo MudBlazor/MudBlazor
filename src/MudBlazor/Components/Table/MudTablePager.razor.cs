@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Utilities;
 
@@ -32,6 +33,7 @@ namespace MudBlazor
         /// <summary>
         /// Set true to hide the part of the pager which allows to change the page size.
         /// </summary>
+        [ExcludeFromCodeCoverage]
         [Obsolete("DisableRowsPerPage is obsolete. Use HideRowsPerPage instead!", false)]
         [Parameter] public bool DisableRowsPerPage { get => HideRowsPerPage; set => HideRowsPerPage = value; }
 

@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Web;
+using MudBlazor.Services;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
@@ -10,6 +13,12 @@ namespace MudBlazor
 
         public MudPicker() : base(new Converter<T, string>()) { }
         protected MudPicker(Converter<T, string> converter) : base(converter) { }
+
+        [Inject] private IKeyInterceptor _keyInterceptor { get; set; }
+
+        private string _elementId = "picker" + Guid.NewGuid().ToString().Substring(0, 8);
+
+        [Inject] private IBrowserWindowSizeProvider WindowSizeListener { get; set; }
 
         protected string PickerClass =>
             new CssBuilder("mud-picker")
@@ -52,6 +61,7 @@ namespace MudBlazor
         /// <summary>
         /// Sets the icon of the input text field
         /// </summary>
+        [ExcludeFromCodeCoverage]
         [Parameter]
         [Obsolete("Obsolete, use AdornmentIcon")]
         public string InputIcon
@@ -148,6 +158,7 @@ namespace MudBlazor
         /// <summary>
         ///  Variant of the text input
         /// </summary>
+        [ExcludeFromCodeCoverage]
         [Parameter]
         [Obsolete("Obsolete, use Variant")]
         public Variant InputVariant
@@ -314,7 +325,25 @@ namespace MudBlazor
             }
         }
 
-        protected void ToggleState()
+        protected override async Task OnAfterRenderAsync(bool firstRender)
+        {
+            if (firstRender)
+            {
+                await _keyInterceptor.Connect(_elementId, new KeyInterceptorOptions()
+                {
+                    //EnableLogging = true,
+                    TargetClass = "mud-input-slot",
+                    Keys = {
+                        new KeyOptions { Key=" ", PreventDown = "key+none" },
+                        new KeyOptions { Key="Enter", PreventDown = "key+none" },
+                        new KeyOptions { Key="NumpadEnter", PreventDown = "key+none" },
+                    },
+                });
+            }
+            await base.OnAfterRenderAsync(firstRender);
+        }
+
+        protected internal void ToggleState()
         {
             if (Disabled)
                 return;
@@ -354,5 +383,47 @@ namespace MudBlazor
         {
             PickerClosed.InvokeAsync(this);
         }
+        protected internal void HandleKeyDown(KeyboardEventArgs obj)
+        {
+            if (Disabled || ReadOnly)
+        }
+            }
+                    break;
+                    }
+                        }
+                        
+                            Open();
+                        {
+                        else
+                        }
+                        {
+                        if (IsOpen)
+                            Close(false);
+                    {
+                case " ":
+                    if (!Editable)
+                    break;
+                    }
+                        Close(false);
+                    {
+                case "ArrowUp":
+                    if (obj.AltKey == true)
+                    break;
+                    }
+                        Open();
+                    {
+                    if (obj.AltKey == true)
+                case "ArrowDown":
+                    break;
+                    Close(false);
+                case "Tab":
+                case "Escape":
+                    break;
+                    Open();
+                case "NumpadEnter":
+                case "Enter":
+            {
+            switch (obj.Key)
+                return;
     }
 }
