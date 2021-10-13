@@ -53,12 +53,12 @@
     private int selectedRowNumber = -1;
     private MudTable<Element> mudTable;
     private List<string> clickedEvents = new();
-    private IEnumerable<Element> Elements = new List<Element>();
-
-    protected override async Task OnInitializedAsync()
+    private IEnumerable<Element> Elements = new List<Element>()
     {
-        Elements = await httpClient.GetFromJsonAsync<List<Element>>("webapi/periodictable");
-    }
+        new Element() { Number = 1, Sign = "H", Name = "Hydrogen", Position = 0, Molar = 1.00794 },
+        new Element() { Number = 2, Sign = "He", Name = "Helium", Position = 17, Molar = 4.002602 },
+        new Element() { Number = 3, Sign = "Li", Name = "Lithium", Position = 0, Molar = 6.941 }
+    };
 
     private void RowClickEvent(TableRowClickEventArgs<Element> tableRowClickEventArgs)
     {
