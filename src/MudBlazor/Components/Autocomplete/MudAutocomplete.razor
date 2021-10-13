@@ -25,7 +25,7 @@
                 <MudPopover Open="@IsOpen" MaxHeight="@MaxHeight" AnchorOrigin="@_anchorOrigin" TransformOrigin="@_transformOrigin" Class="@PopoverClass" RelativeWidth="true">
                     @if (_items != null && _items.Length != 0)
                     {
-                        <MudList Clickable="true" Dense="@Dense" Style="@($"max-height: {MaxHeight}px; overflow-y:auto;")">
+                        <MudList Clickable="true" Dense="@Dense">
                             @for (var index = 0; index < _items.Length; index++)
                             {
                                 var item = _items[index];
