@@ -386,44 +386,44 @@ namespace MudBlazor
         protected internal void HandleKeyDown(KeyboardEventArgs obj)
         {
             if (Disabled || ReadOnly)
-        }
-            }
+                return;
+            switch (obj.Key)
+            {
+                case "Enter":
+                case "NumpadEnter":
+                    Open();
                     break;
-                    }
-                        }
-                        
-                            Open();
-                        {
-                        else
-                        }
-                        {
-                        if (IsOpen)
-                            Close(false);
-                    {
-                case " ":
-                    if (!Editable)
+                case "Escape":
+                case "Tab":
+                    Close(false);
                     break;
-                    }
-                        Close(false);
+                case "ArrowDown":
+                    if (obj.AltKey == true)
                     {
+                        Open();
+                    }
+                    break;
                 case "ArrowUp":
                     if (obj.AltKey == true)
-                    break;
-                    }
-                        Open();
                     {
-                    if (obj.AltKey == true)
-                case "ArrowDown":
+                        Close(false);
+                    }
                     break;
-                    Close(false);
-                case "Tab":
-                case "Escape":
+                case " ":
+                    if (!Editable)
+                    {
+                        if (IsOpen)
+                        {
+                            Close(false);
+                        }
+                        else
+                        {
+                            Open();
+                        }
+
+                    }
                     break;
-                    Open();
-                case "NumpadEnter":
-                case "Enter":
-            {
-            switch (obj.Key)
-                return;
+            }
+        }
     }
 }
