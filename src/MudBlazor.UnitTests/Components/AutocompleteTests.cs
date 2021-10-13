@@ -606,39 +606,53 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task Autocomplete_ChangeBoundValue()
         {
-            var b = new ExpandoObject();
             var comp = Context.RenderComponent<AutocompleteChangeBoundObjectTest>();
             Console.WriteLine(comp.Markup);
             var autocompletecomp = comp.FindComponent<MudAutocomplete<string>>();
             var autocomplete = autocompletecomp.Instance;
-            autocompletecomp.SetParam(x => x.DebounceInterval, 0);
-            autocompletecomp.SetParam(x => x.CoerceText, false);
+            autocompletecomp.SetParametersAndRender(parameters => parameters.Add(p=> p.DebounceInterval, 0));
+            autocompletecomp.SetParametersAndRender(parameters => parameters.Add(p => p.CoerceText, true));
             // check initial state
             autocomplete.Value.Should().Be("Florida");
             autocomplete.Text.Should().Be("Florida");
+            comp.WaitForAssertion(() => autocompletecomp.Find("input").GetAttribute("value").Should().Be("Florida"));//redundant?
             //Get the button to toggle the value
-            var buttonComp = comp.FindComponent<MudButton>();
-            var button = buttonComp.Instance;
-            await buttonComp.InvokeAsync(() => button.OnClick.InvokeAsync());
-            //await comp.InvokeAsync(() => autocomplete.ToggleMenu());
+            var buttonElement = comp.Find("button");
+            await comp.InvokeAsync(() => buttonElement.Click());
             autocomplete.Value.Should().Be("Georgia");
             autocomplete.Text.Should().Be("Georgia");
+            comp.WaitForAssertion(() => autocompletecomp.Find("input").GetAttribute("value").Should().Be("Georgia"));//redundant?
             //Change the value of the current bound value component
-            await comp.InvokeAsync(() => autocomplete.ToggleMenu());
-            autocompletecomp.SetParam(a => a.Value, "Alabama");
-            // now trigger the coercion by closing the menu
-            await comp.InvokeAsync(() => autocomplete.ToggleMenu());
+            //insert "Calif"
+            autocompletecomp.Find("input").Input("Alabam");
+            await Task.Delay(100);
+            var args = new KeyboardEventArgs();
+            args.Key = "Enter";
 
-            //autocompletecomp.SetParam(a => a.value Value, "Alabama");
-            //await autocompletecomp.InvokeAsync(() => autocomplete.ValueChanged.InvokeAsync());
+            //press Enter key
+            autocompletecomp.Find("input").KeyUp(args);
+
+            //The value of the input should be California
+            comp.WaitForAssertion(() => autocompletecomp.Find("input").GetAttribute("value").Should().Be("Alabama"));
+
             autocomplete.Value.Should().Be("Alabama");
             autocomplete.Text.Should().Be("Alabama");
             //Change the bound object
-            await buttonComp.InvokeAsync(() => button.OnClick.InvokeAsync());
+            var markup1 = autocompletecomp.Markup;
+            await comp.InvokeAsync(()=> buttonElement.Click());
+            //await comp.InvokeAsync(() => comp.Render());
+            autocomplete.Value.Should().Be("Florida"); //pass
+            autocomplete.Text.Should().Be("Florida"); //fail
+            comp.WaitForAssertion(() => autocompletecomp.Find("input").GetAttribute("value").Should().Be("Florida"));//breaks here:
+            var markup2 = autocompletecomp.Markup;
             autocomplete.Value.Should().Be("Florida");
-            autocomplete.Text.Should().Be("Florida");
+            //autocomplete.Text.Should().Be("Florida");
+
             //Change the bound object back and check again.
-            await buttonComp.InvokeAsync(() => button.OnClick.InvokeAsync());
+            //await buttonComp.InvokeAsync(() => button.OnClick.InvokeAsync());
+            await comp.InvokeAsync(() => buttonElement.Click());
+            var t1 = autocompletecomp.Find("input").GetAttribute("value");
+            var t2 = autocompletecomp.Find("input").GetAttribute("text");
             autocomplete.Value.Should().Be("Alabama");
             autocomplete.Text.Should().Be("Alabama");
         }
