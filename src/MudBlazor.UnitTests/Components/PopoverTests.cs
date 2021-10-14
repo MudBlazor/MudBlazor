@@ -216,6 +216,66 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task MudPopoverHandler_InitizeAndDetach_DetachThrowsTaskCancelledException()
+        {
+            var handlerId = Guid.NewGuid();
+
+            RenderFragment renderFragement = (tree) => { };
+            var mock = new Mock<IJSRuntime>();
+            mock.Setup(x =>
+            x.InvokeAsync<object>(
+                "mudPopover.connect",
+                It.Is<object[]>(x => x.Length == 1 && (Guid)x[0] == handlerId))).ReturnsAsync(new object()).Verifiable();
+
+            mock.Setup(x =>
+            x.InvokeAsync<object>(
+                "mudPopover.disconnect",
+                It.Is<object[]>(x => x.Length == 1 && (Guid)x[0] == handlerId))).ThrowsAsync(new TaskCanceledException()).Verifiable();
+
+            var updateCounter = 0;
+            Action updater = () => { updateCounter++; };
+
+            var handler = new MudPopoverHandler(renderFragement, mock.Object, updater);
+            handlerId = handler.Id;
+          
+            await handler.Initialize();
+            //task canceled exception shoudn't result in an exception
+            await handler.Detach();
+            handler.IsConnected.Should().BeFalse();
+        }
+
+        [Test]
+        public async Task MudPopoverHandler_InitizeAndDetach_DetachThrowsNotTaskCancelledException()
+        {
+            var handlerId = Guid.NewGuid();
+
+            RenderFragment renderFragement = (tree) => { };
+            var mock = new Mock<IJSRuntime>();
+            mock.Setup(x =>
+            x.InvokeAsync<object>(
+                "mudPopover.connect",
+                It.Is<object[]>(x => x.Length == 1 && (Guid)x[0] == handlerId))).ReturnsAsync(new object()).Verifiable();
+
+            mock.Setup(x =>
+            x.InvokeAsync<object>(
+                "mudPopover.disconnect",
+                It.Is<object[]>(x => x.Length == 1 && (Guid)x[0] == handlerId))).ThrowsAsync(new InvalidOperationException()).Verifiable();
+
+            var updateCounter = 0;
+            Action updater = () => { updateCounter++; };
+
+            var handler = new MudPopoverHandler(renderFragement, mock.Object, updater);
+            handlerId = handler.Id;
+
+            await handler.Initialize();
+            //exception of the js interop should result in an exception
+            Assert.ThrowsAsync<InvalidOperationException>( async () => await handler.Detach());
+          
+            //despite the exception the handler should be disconnected
+            handler.IsConnected.Should().BeFalse();
+        }
+
+        [Test]
         public void MudPopoverService_Constructor_NoJsInterop()
         {
             Assert.Throws<ArgumentNullException>(() => new MudPopoverService(null));
@@ -320,6 +380,54 @@ namespace MudBlazor.UnitTests.Components
             await service.InitializeIfNeeded();
 
             await service.DisposeAsync();
+
+            mock.Verify();
+        }
+
+        [Test]
+        public async Task MudPopoverService_DisposeAsync_WithTaskCancelException()
+        {
+            var mock = new Mock<IJSRuntime>();
+
+            mock.Setup(x =>
+           x.InvokeAsync<object>(
+               "mudPopover.initilize",
+               It.Is<object[]>(x => x.Length == 2 && (string)x[0] == "mudblazor-main-content" && (int)x[1] == 0))).ReturnsAsync(new object()).Verifiable();
+
+            mock.Setup(x =>
+            x.InvokeAsync<object>(
+            "mudPopover.dispose",
+            It.Is<object[]>(x => x.Length == 0))).ThrowsAsync(new TaskCanceledException()).Verifiable();
+
+            var service = new MudPopoverService(mock.Object);
+            await service.InitializeIfNeeded();
+
+            //dispose shouldn't throw an exception in task a TaskCanceledException happend
+            await service.DisposeAsync();
+
+            mock.Verify();
+        }
+
+        [Test]
+        public async Task MudPopoverService_DisposeAsync_ThrowsExceptionIfNotTaskCancelException()
+        {
+            var mock = new Mock<IJSRuntime>();
+
+            mock.Setup(x =>
+           x.InvokeAsync<object>(
+               "mudPopover.initilize",
+               It.Is<object[]>(x => x.Length == 2 && (string)x[0] == "mudblazor-main-content" && (int)x[1] == 0))).ReturnsAsync(new object()).Verifiable();
+
+            mock.Setup(x =>
+            x.InvokeAsync<object>(
+            "mudPopover.dispose",
+            It.Is<object[]>(x => x.Length == 0))).ThrowsAsync(new InvalidOperationException()).Verifiable();
+
+            var service = new MudPopoverService(mock.Object);
+            await service.InitializeIfNeeded();
+
+            //any other exception (despite TaskCancelException, should result in an exception
+            Assert.ThrowsAsync<InvalidOperationException>(async () => await service.DisposeAsync());
 
             mock.Verify();
         }

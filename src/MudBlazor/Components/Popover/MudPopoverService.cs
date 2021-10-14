@@ -75,8 +75,17 @@ namespace MudBlazor
 
         public async Task Detach()
         {
-            await _runtime.InvokeVoidAsync("mudPopover.disconnect", Id);
-            IsConnected = false;
+            try
+            {
+                await _runtime.InvokeVoidAsync("mudPopover.disconnect", Id);
+            }
+            catch (TaskCanceledException)
+            {
+            }
+            finally
+            {
+                IsConnected = false;
+            }
         }
 
         public void Release() => _locked = false;
@@ -147,7 +156,13 @@ namespace MudBlazor
         {
             if (_isInitilized == false) { return; }
 
-            await _jsRuntime.InvokeVoidAsync("mudPopover.dispose");
+            try
+            {
+                await _jsRuntime.InvokeVoidAsync("mudPopover.dispose");
+            }
+            catch (TaskCanceledException)
+            {
+            }
         }
     }
 }
