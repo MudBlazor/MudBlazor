@@ -128,7 +128,7 @@ namespace MudBlazor
 
         protected override void OnInitialized()
         {
-            _handler = Service.Register(ChildContent);
+            _handler = Service.Register(ChildContent ?? new RenderFragment((x) => { }));
             _handler.SetComponentBaseParameters(this, PopoverClass, PopoverStyles, Open);
             base.OnInitialized();
         }
