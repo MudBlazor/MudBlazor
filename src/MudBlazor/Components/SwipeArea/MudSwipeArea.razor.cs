@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using Microsoft.JSInterop;
 
 namespace MudBlazor
 {
@@ -8,11 +10,28 @@ namespace MudBlazor
     {
         private double? _xDown, _yDown;
 
+        [Inject] public IJSRuntime JsRuntime { get; set; }
+
         [Parameter]
         public RenderFragment ChildContent { get; set; }
 
         [Parameter]
         public Action<SwipeDirection> OnSwipe { get; set; }
+
+        [Parameter]
+        public bool PreventDefault { get; set; }
+
+        private ElementReference _componentRef;
+
+        protected override async Task OnAfterRenderAsync(bool firstRender)
+        {
+            if (firstRender && PreventDefault)
+            {
+                await JsRuntime.InvokeVoidAsync("addDefaultPreventingHandler", _componentRef, "touchstart");
+                await JsRuntime.InvokeVoidAsync("addDefaultPreventingHandler", _componentRef, "touchend");
+                await JsRuntime.InvokeVoidAsync("addDefaultPreventingHandler", _componentRef, "touchcancel");
+            }
+        }
 
         private void OnTouchStart(TouchEventArgs arg)
         {
