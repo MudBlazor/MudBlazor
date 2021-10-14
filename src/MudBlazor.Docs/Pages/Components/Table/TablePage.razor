@@ -18,6 +18,18 @@
         </DocsPageSection>
 
         <DocsPageSection>
+            <SectionHeader Title="Click Event and display for selected Row">
+                <Description>
+                    The <CodeInline>RowClassFunc</CodeInline> function can be used to customize the display of the selected row. <CodeInline>RowClickEvent</CodeInline> is triggered each time the row is clicked. 
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" FullWidth="true">
+                <TableRowClassFuncExample />
+            </SectionContent>
+            <SectionSource Code="TableRowClassFuncExample" ShowCode="false" GitHubFolderName="Table" />
+        </DocsPageSection>
+
+        <DocsPageSection>
             <SectionHeader Title="Table with pagination and filtering">
                 <Description>
                     The <CodeInline>&lt;MudTable></CodeInline> component supports pagination, sorting and filtering of rows, as well as single and multiple row selection. To tell the table how to render your data, define a <CodeInline>&lt;RowTemplate></CodeInline>
@@ -106,7 +118,9 @@
             <SectionHeader Title="Inline Edit Mode">
                 <Description>
                     Provides input elements for Selected Row. A click on a row makes the row editable.
-                    A Cancel button appears and can be used if <CodeInline>CanCancelEdit="true"</CodeInline>. In this case, the <CodeInline>RowEditPreview</CodeInline> and <CodeInline>RowEditCancel</CodeInline> methods must be defined to save and retrieve the initial values of the edited item. <CodeInline>RowEditCommit</CodeInline> method can be used to handle the commit of the item.
+                    A Cancel button appears and can be used if <CodeInline>CanCancelEdit="true"</CodeInline>.
+                    In this case, the <CodeInline>RowEditPreview</CodeInline> and <CodeInline>RowEditCancel</CodeInline> methods must be defined to save and retrieve the initial values of the edited item.
+                    <CodeInline>RowEditCommit</CodeInline> method can be used to handle the commit of the item.
                 </Description>
             </SectionHeader>
             <SectionContent DarkenBackground="true" FullWidth="true">
