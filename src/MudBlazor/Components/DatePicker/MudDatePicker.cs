@@ -72,7 +72,7 @@ namespace MudBlazor
             if ((Date?.Date == day && _selectedDate == null) || _selectedDate?.Date == day)
                 return b.AddClass("mud-selected").AddClass($"mud-theme-{Color.ToDescriptionString()}").Build();
             if (day == DateTime.Today)
-                return b.AddClass("mud-current").AddClass($"mud-{Color.ToDescriptionString()}-text").Build();
+                return b.AddClass("mud-current mud-button-outlined").AddClass($"mud-button-outlined-{Color.ToDescriptionString()} mud-{Color.ToDescriptionString()}-text").Build();
             return b.Build();
         }
 
