@@ -12,12 +12,13 @@
         .mud-button {
             color: var(--mud-palette-text-primary);
         }
+
         .mud-button-root {
             background-color: inherit;
             box-shadow: none;
             border: none;
 
-            &:hover {
+            &:hover, &:focus-visible {
                 background-color: var(--mud-palette-action-default-hover);
             }
         }
@@ -100,7 +101,7 @@
                 .mud-button-root {
                     color: var(--mud-palette-#{$color});
 
-                    &:hover {
+                    &:hover, &:focus-visible {
                         background-color: var(--mud-palette-#{$color}-hover);
                     }
                 }
@@ -141,7 +142,7 @@
                 color: var(--mud-palette-#{$color});
                 border: 1px solid var(--mud-palette-#{$color});
 
-                &:hover {
+                &:hover, &:focus-visible {
                     background-color: var(--mud-palette-#{$color}-hover);
                 }
             }
@@ -155,7 +156,7 @@
     .mud-button-root {
         box-shadow: none;
 
-        &:hover {
+        &:hover, &:focus-visible {
             box-shadow: var(--mud-elevation-4);
         }
     }
@@ -192,7 +193,7 @@
                     background-color: var(--mud-palette-#{$color});
                     color: var(--mud-palette-#{$color}-text);
 
-                    &:hover {
+                    &:hover, &:focus-visible {
                         background-color: var(--mud-palette-#{$color}-darken);
                     }
                 }
