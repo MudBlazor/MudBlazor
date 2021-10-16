@@ -392,7 +392,7 @@ namespace MudBlazor
         private string GetMonthClasses(DateTime month)
         {
             if (GetMonthStart(0) == month)
-                return $"mud-picker-month-selected mud-color-text-{Color.ToDescriptionString()}";
+                return $"mud-picker-month-selected mud-{Color.ToDescriptionString()}-text";
             return null;
         }
 
