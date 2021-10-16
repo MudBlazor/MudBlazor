@@ -612,45 +612,55 @@ namespace MudBlazor.UnitTests.Components
             var autocomplete = autocompletecomp.Instance;
             autocompletecomp.SetParametersAndRender(parameters => parameters.Add(p=> p.DebounceInterval, 0));
             autocompletecomp.SetParametersAndRender(parameters => parameters.Add(p => p.CoerceText, true));
+            autocompletecomp.SetParametersAndRender(parameters => parameters.Add(p => p.TextUpdateSuppression, true));//try this?
             // check initial state
             autocomplete.Value.Should().Be("Florida");
             autocomplete.Text.Should().Be("Florida");
             comp.WaitForAssertion(() => autocompletecomp.Find("input").GetAttribute("value").Should().Be("Florida"));//redundant?
+            
             //Get the button to toggle the value
-            var buttonElement = comp.Find("button");
-            await comp.InvokeAsync(() => buttonElement.Click());
+            //var buttonElement = comp.Find("button").Click();
+            //await comp.InvokeAsync(() => buttonElement.Click());
+            comp.Find("button").Click();
             autocomplete.Value.Should().Be("Georgia");
             autocomplete.Text.Should().Be("Georgia");
             comp.WaitForAssertion(() => autocompletecomp.Find("input").GetAttribute("value").Should().Be("Georgia"));//redundant?
             //Change the value of the current bound value component
-            //insert "Calif"
+            //insert "Alabam"
             autocompletecomp.Find("input").Input("Alabam");
             await Task.Delay(100);
+            
+            /*
             var args = new KeyboardEventArgs();
             args.Key = "Enter";
-
-            //press Enter key
             autocompletecomp.Find("input").KeyUp(args);
+            */
+            
+            //press Enter key
+            autocompletecomp.Find("input").KeyUp(key: Key.Enter);
 
-            //The value of the input should be California
+            autocomplete.IsOpen.Should().BeFalse();
+
+            //The value of the input should be Alabama
             comp.WaitForAssertion(() => autocompletecomp.Find("input").GetAttribute("value").Should().Be("Alabama"));
 
             autocomplete.Value.Should().Be("Alabama");
             autocomplete.Text.Should().Be("Alabama");
             //Change the bound object
             var markup1 = autocompletecomp.Markup;
-            await comp.InvokeAsync(()=> buttonElement.Click());
+            comp.Find("button").Click();
+            var markup2 = autocompletecomp.Markup;
+            //await comp.InvokeAsync(()=> buttonElement.Click());
             //await comp.InvokeAsync(() => comp.Render());
             autocomplete.Value.Should().Be("Florida"); //pass
-            autocomplete.Text.Should().Be("Florida"); //fail
+            autocomplete.Text.Should().Be("Florida"); //fail breaks here
             comp.WaitForAssertion(() => autocompletecomp.Find("input").GetAttribute("value").Should().Be("Florida"));//breaks here:
-            var markup2 = autocompletecomp.Markup;
             autocomplete.Value.Should().Be("Florida");
-            //autocomplete.Text.Should().Be("Florida");
 
             //Change the bound object back and check again.
             //await buttonComp.InvokeAsync(() => button.OnClick.InvokeAsync());
-            await comp.InvokeAsync(() => buttonElement.Click());
+            //await comp.InvokeAsync(() => buttonElement.Click());
+            comp.Find("button").Click();
             var t1 = autocompletecomp.Find("input").GetAttribute("value");
             var t2 = autocompletecomp.Find("input").GetAttribute("text");
             autocomplete.Value.Should().Be("Alabama");
