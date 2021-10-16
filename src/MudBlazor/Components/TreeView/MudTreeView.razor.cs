@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
@@ -48,6 +49,7 @@ namespace MudBlazor
         /// <summary>
         /// if true, multiple values can be selected via checkboxes which are automatically shown in the tree view.
         /// </summary>
+        [ExcludeFromCodeCoverage]
         [Obsolete("CanSelect is obsolete. Use MultiSelection!", false)]
         [Parameter]
         public bool CanSelect
@@ -56,6 +58,7 @@ namespace MudBlazor
             set => MultiSelection = value;
         }
 
+        [ExcludeFromCodeCoverage]
         [Obsolete("CanActivate is obsolete. Automaticly activates when using SelectedValue!", false)]
         [Parameter] public bool CanActivate { get; set; }
 
@@ -72,6 +75,7 @@ namespace MudBlazor
         /// <summary>
         /// Hover effect for item's on mouse-over.
         /// </summary>
+        [ExcludeFromCodeCoverage]
         [Obsolete("CanHover is obsolete. Use Hover!", false)]
         [Parameter]
         public bool CanHover
@@ -109,6 +113,7 @@ namespace MudBlazor
 
         [Parameter] public HashSet<T> Items { get; set; }
 
+        [ExcludeFromCodeCoverage]
         [Obsolete("ActivatedValueChanged is obsolete. Use SelectedValueChanged!", false)]
         [Parameter] public EventCallback<T> ActivatedValueChanged
         {

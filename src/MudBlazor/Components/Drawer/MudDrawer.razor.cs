@@ -21,6 +21,8 @@ namespace MudBlazor
         private Breakpoint _breakpoint = Breakpoint.Md, _screenBreakpoint = Breakpoint.None;
         private DotNetObjectReference<MudDrawer> _dotNetRef;
 
+        private Guid _breakpointListenerSubscriptionId;
+
         private bool OverlayVisible => _open && !DisableOverlay &&
             (Variant == DrawerVariant.Temporary ||
              (_screenBreakpoint < Breakpoint && Variant == DrawerVariant.Mini) ||
@@ -57,12 +59,12 @@ namespace MudBlazor
             .AddStyle("height", Height, !string.IsNullOrWhiteSpace(Height))
             .AddStyle("--mud-drawer-content-height",
                 string.IsNullOrWhiteSpace(Height) ? $"{_height}px" : Height,
-                Anchor is Anchor.Bottom or Anchor.Top)
-            .AddStyle("visibility", "hidden", string.IsNullOrWhiteSpace(Height) && _height == 0 && Anchor is Anchor.Bottom or Anchor.Top)
+                Anchor == Anchor.Bottom || Anchor == Anchor.Top)
+            .AddStyle("visibility", "hidden", string.IsNullOrWhiteSpace(Height) && _height == 0 && (Anchor == Anchor.Bottom || Anchor == Anchor.Top))
             .AddStyle(Style)
         .Build();
 
-        [Inject] public IResizeListenerService ResizeListener { get; set; }
+        [Inject] public IBreakpointService Breakpointistener { get; set; }
 
         [CascadingParameter] MudDrawerContainer DrawerContainer { get; set; }
 
@@ -179,7 +181,7 @@ namespace MudBlazor
                 {
                     _keepInitialState = false;
                 }
-                if (_isRendered && value && Anchor is Anchor.Top or Anchor.Bottom)
+                if (_isRendered && value && (Anchor == Anchor.Top || Anchor == Anchor.Bottom))
                 {
                     _ = UpdateHeight();
                 }
@@ -243,9 +245,12 @@ namespace MudBlazor
             if (firstRender)
             {
                 await UpdateHeight();
-                ResizeListener.OnBreakpointChanged += ResizeListener_OnBreakpointChanged;
+                var result = await Breakpointistener.Subscribe(UpdateBreakpointState);
+                var currentBreakpoint = result.Breakpoint;
 
-                _screenBreakpoint = await ResizeListener.GetBreakpoint();
+                _breakpointListenerSubscriptionId = result.SubscriptionId;
+
+                _screenBreakpoint = result.Breakpoint;
                 if (_screenBreakpoint < Breakpoint && _open)
                 {
                     _keepInitialState = true;
@@ -253,7 +258,7 @@ namespace MudBlazor
                 }
 
                 _isRendered = true;
-                if (string.IsNullOrWhiteSpace(Height) && Anchor is Anchor.Bottom or Anchor.Top)
+                if (string.IsNullOrWhiteSpace(Height) && (Anchor == Anchor.Bottom || Anchor == Anchor.Top))
                 {
                     StateHasChanged();
                 }
@@ -279,7 +284,6 @@ namespace MudBlazor
                 if (disposing)
                 {
                     DrawerContainer?.Remove(this);
-                    ResizeListener.OnBreakpointChanged -= ResizeListener_OnBreakpointChanged;
 
                     if (_mouseEnterListenerId != 0)
                         _ = _drawerRef.MudRemoveEventListenerAsync("mouseenter", _mouseEnterListenerId);
@@ -289,6 +293,11 @@ namespace MudBlazor
                     var toDispose = _dotNetRef;
                     _dotNetRef = null;
                     toDispose?.Dispose();
+
+                    if (_breakpointListenerSubscriptionId != default)
+                    {
+                        Breakpointistener.Unsubscribe(_breakpointListenerSubscriptionId).AndForget();
+                    }
                 }
             }
         }
@@ -304,7 +313,7 @@ namespace MudBlazor
         public async Task OnNavigation()
         {
             if (Variant == DrawerVariant.Temporary ||
-                (Variant == DrawerVariant.Responsive && await ResizeListener.GetBreakpoint() < Breakpoint))
+                (Variant == DrawerVariant.Responsive && await Breakpointistener.GetBreakpoint() < Breakpoint))
             {
                 await OpenChanged.InvokeAsync(false);
             }
@@ -328,7 +337,7 @@ namespace MudBlazor
             var isStateChanged = false;
             if (breakpoint == Breakpoint.None)
             {
-                breakpoint = await ResizeListener.GetBreakpoint();
+                breakpoint = await Breakpointistener.GetBreakpoint();
             }
 
             if (breakpoint < Breakpoint && _screenBreakpoint >= Breakpoint && (Variant == DrawerVariant.Responsive || Variant == DrawerVariant.Mini))
@@ -373,6 +382,7 @@ namespace MudBlazor
 
             return Anchor.ToDescriptionString();
         }
+
 
         private bool closeOnMouseLeave = false;
         [JSInvokable]

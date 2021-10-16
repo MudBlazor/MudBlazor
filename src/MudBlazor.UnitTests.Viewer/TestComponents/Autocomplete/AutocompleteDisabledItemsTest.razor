@@ -1,5 +1,7 @@
 ﻿@namespace MudBlazor.UnitTests.TestComponents
 
+<MudPopoverProvider></MudPopoverProvider>
+
 <MudAutocomplete @bind-Value="value" SearchFunc="@Search" ItemDisabledFunc="@(s => s?.ToLower().Contains("o") == true)" Label="DisabledItemsTest" MaxItems="25">
     <ItemTemplate>
         @context

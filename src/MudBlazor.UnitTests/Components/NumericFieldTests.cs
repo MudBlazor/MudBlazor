@@ -150,11 +150,10 @@ namespace MudBlazor.UnitTests
         public void LabelShouldShrinkWhenPlaceholderIsSet()
         {
             //Arrange
-            using var ctx = new Bunit.TestContext();
             var label = Parameter(nameof(MudNumericField<int?>.Label), "label");
             var placeholder = Parameter(nameof(MudNumericField<int?>.Placeholder), "placeholder");
             //with no placeholder, label is not shrunk
-            var comp = ctx.RenderComponent<MudNumericField<int?>>(label);
+            var comp = Context.RenderComponent<MudNumericField<int?>>(label);
             comp.Markup.Should().NotContain("shrink");
             //with placeholder label is shrunk
             comp.SetParametersAndRender(placeholder);
@@ -356,6 +355,7 @@ namespace MudBlazor.UnitTests
             comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = "9", Type = "keydown", });
             comp.Find("input").KeyUp(new KeyboardEventArgs() { Key = "9", Type = "keyup", });
             comp.WaitForAssertion(() => numericField.Value.Should().Be(1234.56));
+
         }
 
         /// <summary>
@@ -397,8 +397,58 @@ namespace MudBlazor.UnitTests
             //MouseWheel down
             comp.Find("input").MouseWheel(new WheelEventArgs() { DeltaY = 1, ShiftKey = true });
             comp.WaitForAssertion(() => numericField.Value.Should().Be(1234.56));
+
+            //MouseWheel without Shift doesn't do anything
+            comp.Find("input").MouseWheel(new WheelEventArgs() { DeltaY = 77, ShiftKey = false });
+            comp.Find("input").MouseWheel(new WheelEventArgs() { DeltaY = -17, ShiftKey = false });
+            comp.WaitForAssertion(() => numericField.Value.Should().Be(1234.56));
         }
 
+        /// <summary>
+        /// MouseWheel actions should work on Firefox
+        /// </summary>
+        [Test]
+        public async Task NumericFieldTest_Wheel_Firefox()
+        {
+            var comp = Context.RenderComponent<MudNumericField<double>>();
+            comp.SetParam(x => x.Value, 1234.56);
+            var numericField = comp.Instance;
+
+            //MouseWheel up
+            comp.Find("input").Wheel(new WheelEventArgs() { DeltaY = -1, ShiftKey = true });
+            comp.WaitForAssertion(() => numericField.Value.Should().Be(1235.56));
+
+            //MouseWheel down
+            comp.Find("input").Wheel(new WheelEventArgs() { DeltaY = 1, ShiftKey = true });
+            comp.WaitForAssertion(() => numericField.Value.Should().Be(1234.56));
+
+            //Invert MouseWheel
+            numericField.InvertMouseWheel = true;
+
+            //MouseWheel up
+            comp.Find("input").Wheel(new WheelEventArgs() { DeltaY = -1, ShiftKey = true });
+            comp.WaitForAssertion(() => numericField.Value.Should().Be(1233.56));
+
+            //MouseWheel down
+            comp.Find("input").Wheel(new WheelEventArgs() { DeltaY = 1, ShiftKey = true });
+            comp.WaitForAssertion(() => numericField.Value.Should().Be(1234.56));
+
+            //Try with different step
+            numericField.Step = 0.5;
+
+            //MouseWheel up
+            comp.Find("input").Wheel(new WheelEventArgs() { DeltaY = -1, ShiftKey = true });
+            comp.WaitForAssertion(() => numericField.Value.Should().Be(1234.06));
+
+            //MouseWheel down
+            comp.Find("input").Wheel(new WheelEventArgs() { DeltaY = 1, ShiftKey = true });
+            comp.WaitForAssertion(() => numericField.Value.Should().Be(1234.56));
+
+            //MouseWheel without Shift doesn't do anything
+            comp.Find("input").Wheel(new WheelEventArgs() { DeltaY = 77, ShiftKey = false });
+            comp.Find("input").Wheel(new WheelEventArgs() { DeltaY = -17, ShiftKey = false });
+            comp.WaitForAssertion(() => numericField.Value.Should().Be(1234.56));
+        }
 
         /// <summary>
         /// NumericalField Formats input according to culture
@@ -407,46 +457,33 @@ namespace MudBlazor.UnitTests
         public async Task NumericFieldTestCultureFormat()
         {
             var comp = Context.RenderComponent<NumericFieldCultureTest>();
-            // print the generated html
-            Console.WriteLine(comp.Markup);
-            // select elements needed for the test
-
             var inputs = comp.FindAll("input");
             var immediate = inputs.First();
             var notImmediate = inputs.Last();
-
             //german
             notImmediate.Change("1234");
             notImmediate.Blur();
             comp.WaitForAssertion(() => comp.Instance.FieldNotImmediate.Text.Should().Be("1.234,00"));
             comp.WaitForAssertion(() => comp.Instance.FieldNotImmediate.Value.Should().Be(1234.0));
-
             notImmediate.Change("0");
             notImmediate.Blur();
             comp.WaitForAssertion(() => comp.Instance.FieldNotImmediate.Text.Should().Be("0,00"));
             comp.WaitForAssertion(() => comp.Instance.FieldNotImmediate.Value.Should().Be(0.0));
-
             notImmediate.Change("");
             notImmediate.Blur();
             comp.WaitForAssertion(() => comp.Instance.FieldNotImmediate.Text.Should().Be(null));
             comp.WaitForAssertion(() => comp.Instance.FieldNotImmediate.Value.Should().Be(null));
-
             // English
             immediate.Input("1234");
             immediate.Blur();
-
             comp.WaitForAssertion(() => comp.Instance.FieldImmediate.Text.Should().Be("1,234.00"));
             comp.WaitForAssertion(() => comp.Instance.FieldImmediate.Value.Should().Be(1234.0));
-
             immediate.Input("0");
             immediate.Blur();
-
             comp.WaitForAssertion(() => comp.Instance.FieldImmediate.Text.Should().Be("0.00"));
             comp.WaitForAssertion(() => comp.Instance.FieldImmediate.Value.Should().Be(0.0));
-
             immediate.Input("");
             immediate.Blur();
-
             comp.WaitForAssertion(() => comp.Instance.FieldImmediate.Text.Should().Be(null));
             comp.WaitForAssertion(() => comp.Instance.FieldImmediate.Value.Should().Be(null));
         }
@@ -458,34 +495,49 @@ namespace MudBlazor.UnitTests
         public async Task NumericField_should_RemoveIllegalCharacters()
         {
             var comp = Context.RenderComponent<NumericFieldCultureTest>();
-            // print the generated html
-            Console.WriteLine(comp.Markup);
-            // select elements needed for the test            
-
             //german
             comp.FindAll("input").Last().Change("abcd");
             comp.FindAll("input").Last().Blur();
             comp.WaitForAssertion(() => comp.Instance.FieldNotImmediate.Text.Should().Be(null));
             comp.WaitForAssertion(() => comp.Instance.FieldNotImmediate.Value.Should().Be(null));
-
             // English
             comp.FindAll("input").First().Input("abcd");
             comp.FindAll("input").First().Blur();
-
             comp.WaitForAssertion(() => comp.Instance.FieldImmediate.Text.Should().Be(null));
             comp.WaitForAssertion(() => comp.Instance.FieldImmediate.Value.Should().Be(null));
-
             // English
             comp.FindAll("input").First().Input("-12-34abc.56");
             comp.FindAll("input").First().Blur();
-
             comp.WaitForAssertion(() => comp.Instance.FieldImmediate.Text.Should().Be("-1,234.56"));
             comp.WaitForAssertion(() => comp.Instance.FieldImmediate.Value.Should().Be(-1234.56));
-
             comp.FindAll("input").Last().Change("x+17,9y9z");
             comp.FindAll("input").Last().Blur();
             comp.WaitForAssertion(() => comp.Instance.FieldNotImmediate.Text.Should().Be("17,99"));
             comp.WaitForAssertion(() => comp.Instance.FieldNotImmediate.Value.Should().Be(17.99));
+        }
+
+        [Test]
+        public async Task NumericField_should_ReformatTextOnBlur()
+        {
+            var comp = Context.RenderComponent<NumericFieldCultureTest>();
+            // english
+            comp.FindAll("input").First().Input("1,234.56");
+            comp.FindAll("input").First().Blur();
+            comp.WaitForAssertion(() => comp.Instance.FieldImmediate.Text.Should().Be("1,234.56"));
+            comp.WaitForAssertion(() => comp.Instance.FieldImmediate.Value.Should().Be(1234.56));
+            comp.FindAll("input").First().Input("1234.56");
+            comp.FindAll("input").First().Blur();
+            comp.WaitForAssertion(() => comp.Instance.FieldImmediate.Text.Should().Be("1,234.56"));
+            comp.WaitForAssertion(() => comp.Instance.FieldImmediate.Value.Should().Be(1234.56));
+            // german
+            comp.FindAll("input").Last().Change("7.000,99");
+            comp.FindAll("input").Last().Blur();
+            comp.WaitForAssertion(() => comp.Instance.FieldNotImmediate.Text.Should().Be("7.000,99"));
+            comp.WaitForAssertion(() => comp.Instance.FieldNotImmediate.Value.Should().Be(7000.99));
+            comp.FindAll("input").Last().Change("7000,99");
+            comp.FindAll("input").Last().Blur();
+            comp.WaitForAssertion(() => comp.Instance.FieldNotImmediate.Text.Should().Be("7.000,99"));
+            comp.WaitForAssertion(() => comp.Instance.FieldNotImmediate.Value.Should().Be(7000.99));
         }
 
         [TestCase((byte)5)]

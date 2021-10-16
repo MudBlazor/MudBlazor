@@ -120,7 +120,7 @@
         }
         var lowerText = text.ToLowerInvariant();
         return Task.FromResult<IEnumerable<Type>>(
-            availableComponentTypes.Where(type => type.Name.ToLowerInvariant().Contains(lowerText))
+            availableComponentTypes.Where(type => type.Name.ToLowerInvariant().StartsWith(lowerText))
         );
     }
 

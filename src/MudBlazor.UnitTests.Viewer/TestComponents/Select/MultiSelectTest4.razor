@@ -1,4 +1,5 @@
 ﻿@namespace MudBlazor.UnitTests.TestComponents
+<MudPopoverProvider></MudPopoverProvider>
 
 <MudGrid>
     <MudItem xs="12" md="12">
@@ -19,7 +20,7 @@
 
 @code {
     private string value { get; set; } = "Nothing selected";
-    private HashSet<string> options { get; set; }
+    private IEnumerable<string> options { get; set; }
 
     private string[] felines =
     {

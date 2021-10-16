@@ -62,6 +62,8 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<MenuTestMouseOver>();
             var pop = comp.FindComponent<MudPopover>();
+            comp.FindAll("button.mud-button-root")[0].Click();
+
             var list = comp.FindAll("div.mud-list")[0];
 
             await list.TriggerEventAsync("onmouseenter", new MouseEventArgs());
