@@ -310,6 +310,12 @@ class MudPopover {
         for (const mutation of mutationsList) {
             if (mutation.type === 'attributes') {
                 const target = mutation.target
+                if (target.classList.contains('mud-popover-overflow-flip-once') &&
+                    target.classList.contains('mud-popover-open') == false) {
+                    target.mudPopoverFliped = null;
+                }
+                
+
                 window.mudpopoverHelper.placePopoverByNode(target);
             }
         }
