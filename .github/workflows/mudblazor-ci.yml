@@ -18,6 +18,9 @@ jobs:
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: 5.0.x
+        
+    - name: Restore
+      run: dotnet restore ./src/MudBlazor.sln
       
     - name: Build
       run: dotnet build ./src/MudBlazor.sln --no-restore
