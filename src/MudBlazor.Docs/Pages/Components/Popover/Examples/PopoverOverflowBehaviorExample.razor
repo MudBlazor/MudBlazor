@@ -2,11 +2,8 @@
 @namespace MudBlazor.Docs.Examples
 
 <div class="d-flex flex-column justify-center">
-        <MudPaper Outlined="true" Class="pa-12">
-            @if(OverflowBehavior == OverflowBehavior.FlipOnOpen)
-            {
-                <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@ToggleOpen">Open/Close</MudButton>
-            }
+        <MudPaper Outlined="true" Class="px-12 py-6">
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(OverflowBehavior == OverflowBehavior.FilpOnOpen? false :true)" DisableElevation="true" OnClick="@ToggleOpen">@(_isOpen? "Close" : "Open")</MudButton>
 	        <MudPopover Open="_isOpen" OverflowBehavior="@OverflowBehavior" AnchorOrigin="@AnchorOrigin" TransformOrigin="@TransformOrigin" Paper="false">
                     <MudPaper MinWidth="375px" Outlined="true" Class="d-flex justify-space-between align-center">
                         <div>
@@ -43,7 +40,7 @@
 
     public void SetPopoverOverflow(OverflowBehavior behavior)
     {
-        if(behavior == OverflowBehavior.FlipOnOpen && OverflowBehavior != OverflowBehavior.FlipOnOpen)
+        if(behavior == OverflowBehavior.FilpOnOpen && OverflowBehavior != OverflowBehavior.FilpOnOpen)
         {
             _isOpen = false;
         }
