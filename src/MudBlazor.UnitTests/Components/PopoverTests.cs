@@ -558,7 +558,7 @@ namespace MudBlazor.UnitTests.Components
             popover.TransformOrigin.Should().Be(Origin.TopLeft);
             popover.RelativeWidth.Should().BeFalse();
             popover.OverflowBehavior.Should().Be(OverflowBehavior.FilpOnOpen);
-            popover.AnimationDuration.Should().Be(251);
+            popover.Duration.Should().Be(251);
         }
 
         [Test]
@@ -605,16 +605,16 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void MudPopover_Property_AnimationDuration()
+        public void MudPopover_Property_TransitionDuration()
         {
-            var comp = Context.RenderComponent<PopoverPropertyTest>(p => p.Add(x => x.AnimationDuration, 100));
+            var comp = Context.RenderComponent<PopoverPropertyTest>(p => p.Add(x => x.Duration, 100));
 
 
             Console.WriteLine(comp.Markup);
 
             var popoverElement = comp.Find(".test-popover-content").ParentElement;
 
-            popoverElement.GetAttribute("style").Split(';', StringSplitOptions.RemoveEmptyEntries).Should().Contain(new[] { "animation-duration:100ms" });
+            popoverElement.GetAttribute("style").Split(';', StringSplitOptions.RemoveEmptyEntries).Should().Contain(new[] { "transition-duration:100ms" });
         }
 
         [Test]

@@ -13,7 +13,7 @@
 				RelativeWidth="RelativeWidth"
 				TransformOrigin="TransformOrigin"
 				OverflowBehavior="OverflowBehavior"
-				AnimationDuration="AnimationDuration"
+				Duration="Duration"
 				>
 		<MudText Class="test-popover-content">Popover content</MudText>
 	</MudPopover>
@@ -30,5 +30,5 @@
 	[Parameter] public Origin TransformOrigin { get; set; } = Origin.TopLeft;
 	[Parameter] public bool RelativeWidth { get; set; } = false;
 	[Parameter] public OverflowBehavior OverflowBehavior { get; set; } = OverflowBehavior.FlipNever;
-	[Parameter] public int AnimationDuration { get; set; } = 251;
+	[Parameter] public double Duration { get; set; } = 251;
 }
