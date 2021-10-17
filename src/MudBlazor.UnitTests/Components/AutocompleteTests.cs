@@ -6,6 +6,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Dynamic;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
@@ -596,6 +597,62 @@ namespace MudBlazor.UnitTests.Components
 
             // Arkansas should be selected value
             autocompleteInstance.Value.Should().Be(arkansasString);
+        }
+
+        /// <summary>
+        /// When changing the bound value, ensure the new value is displayed
+        /// </summary>
+        /// <returns></returns>
+        [Test]
+        public async Task Autocomplete_ChangeBoundValue()
+        {
+            var comp = Context.RenderComponent<AutocompleteChangeBoundObjectTest>();
+            Console.WriteLine(comp.Markup);
+            var autocompletecomp = comp.FindComponent<MudAutocomplete<string>>();
+            var autocomplete = autocompletecomp.Instance;
+            autocompletecomp.SetParametersAndRender(parameters => parameters.Add(p=> p.DebounceInterval, 0));
+            autocompletecomp.SetParametersAndRender(parameters => parameters.Add(p => p.CoerceText, true));
+            // this needs to be false because in the unit test the autocomplete's input does not lose focus state on click of another button.
+            // TextUpdateSuppression is used to avoid binding to change the input text while typing.  
+            autocompletecomp.SetParametersAndRender(parameters => parameters.Add(p => p.TextUpdateSuppression, false)); 
+            // check initial state
+            autocomplete.Value.Should().Be("Florida");
+            autocomplete.Text.Should().Be("Florida");
+            comp.WaitForAssertion(() => autocompletecomp.Find("input").GetAttribute("value").Should().Be("Florida"));//redundant?
+            
+            //Get the button to toggle the value
+            comp.Find("button").Click();
+            autocomplete.Value.Should().Be("Georgia");
+            autocomplete.Text.Should().Be("Georgia");
+            comp.WaitForAssertion(() => autocompletecomp.Find("input").GetAttribute("value").Should().Be("Georgia"));//redundant?
+            //Change the value of the current bound value component
+            //insert "Alabam"
+            autocompletecomp.Find("input").Input("Alabam");
+            await Task.Delay(100);
+
+            //press Enter key
+            autocompletecomp.Find("input").KeyUp(key: Key.Enter);
+
+            comp.WaitForAssertion(() => autocomplete.IsOpen.Should().BeFalse());
+
+            //The value of the input should be Alabama
+            comp.WaitForAssertion(() => autocompletecomp.Find("input").GetAttribute("value").Should().Be("Alabama"));
+
+            autocomplete.Value.Should().Be("Alabama");
+            autocomplete.Text.Should().Be("Alabama");
+            //Change the bound object
+            var markup1 = autocompletecomp.Markup;
+            comp.Find("button").Click();
+            var markup2 = autocompletecomp.Markup;
+            comp.WaitForAssertion(() => autocomplete.Value.Should().Be("Florida")); //pass
+            autocomplete.Text.Should().Be("Florida"); //fail breaks here
+            comp.WaitForAssertion(() => autocompletecomp.Find("input").GetAttribute("value").Should().Be("Florida"));//breaks here:
+            autocomplete.Value.Should().Be("Florida");
+
+            //Change the bound object back and check again.
+            comp.Find("button").Click();
+            comp.WaitForAssertion(() => autocomplete.Value.Should().Be("Alabama"));
+            autocomplete.Text.Should().Be("Alabama");
         }
     }
 }
