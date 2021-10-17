@@ -29,9 +29,9 @@ namespace MudBlazor
 
         protected string PopoverStyles =>
             new StyleBuilder()
+            .AddStyle("animation-duration", $"{AnimationDuration}ms")
+            //.AddStyle("animation-delay", $"{AnimationDelay}ms")
             .AddStyle("max-height", $"{MaxHeight}px", MaxHeight != null)
-            //.AddStyle("animation-duration", $"{AnimationDuration}ms", AnimationDuration != 251)
-            //.AddStyle("animation-delay", $"{AnimationDelay}ms", AnimationDelay != 0)
             .AddStyle(Style)
             .Build();
 

@@ -54,7 +54,7 @@ namespace MudBlazor
         /// <summary>
         /// Sets the length of time that the opening animation takes to complete.
         /// </summary>
-        [Parameter] public double AnimationDuration { get; set; } = 500;
+        [Parameter] public double AnimationDuration { get; set; } = 251;
 
         /// <summary>
         /// Sets the amount of time to wait from opening the popover before beginning to perform the animation. 
