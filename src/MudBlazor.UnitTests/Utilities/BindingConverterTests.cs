@@ -637,5 +637,33 @@ namespace MudBlazor.UnitTests.Utilities
             c1.GetError.Should().Be(false);
             c1.GetErrorMessage.Should().BeNull();
         }
+
+        [Test]
+        public void DefaultConverterOverrideTest()
+        {
+            var conv = new MyTestConverter();
+            conv.Set(null).Should().Be("nada");
+            conv.Get("nada").Should().Be(null);
+            conv.Set(18).Should().Be("18");
+            conv.Get("18").Should().Be(18);
+        }
+
+        // a custom converter used only in test cases
+        private class MyTestConverter : DefaultConverter<int?>
+        {
+            protected override int? ConvertFromString(string value)
+            {
+                if (value == "nada")
+                    return null;
+                return base.ConvertFromString(value);
+            }
+
+            protected override string ConvertToString(int? arg)
+            {
+                if (arg == null)
+                    return "nada";
+                return base.ConvertToString(arg);
+            }
+        }
     }
 }
