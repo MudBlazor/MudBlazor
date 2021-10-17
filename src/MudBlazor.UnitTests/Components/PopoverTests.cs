@@ -602,7 +602,7 @@ namespace MudBlazor.UnitTests.Components
             var popoverElement = comp.Find(".test-popover-content").ParentElement;
 
             popoverElement.ClassList.Should().Contain(new[] { "mud-popover-open", "overflow-y-auto", "my-custom-class" });
-            popoverElement.GetAttribute("style").Should().Be("max-height:100px;my-custom-style: 3px;");
+            popoverElement.GetAttribute("style").Should().Be("animation-duration:251ms;max-height:100px;my-custom-style: 3px;");
         }
 
         [Test]
