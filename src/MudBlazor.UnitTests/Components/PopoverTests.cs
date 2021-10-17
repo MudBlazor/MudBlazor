@@ -557,7 +557,7 @@ namespace MudBlazor.UnitTests.Components
             popover.AnchorOrigin.Should().Be(Origin.TopLeft);
             popover.TransformOrigin.Should().Be(Origin.TopLeft);
             popover.RelativeWidth.Should().BeFalse();
-            popover.OverflowBehavior.Should().Be(OverflowBehavior.Flip);
+            popover.OverflowBehavior.Should().Be(OverflowBehavior.FlipOnce);
         }
 
         [Test]
@@ -723,7 +723,8 @@ namespace MudBlazor.UnitTests.Components
 
         [Test]
         [TestCase(OverflowBehavior.None, "none")]
-        [TestCase(OverflowBehavior.Flip, "flip")]
+        [TestCase(OverflowBehavior.FlipOnce, "flip-once")]
+        [TestCase(OverflowBehavior.FlipAlways, "flip-always")]
         public void MudPopover_Property_OverflowBehavior(OverflowBehavior overflowBehavior, string expectedClass)
         {
             var comp = Context.RenderComponent<PopoverPropertyTest>(p => p.Add(

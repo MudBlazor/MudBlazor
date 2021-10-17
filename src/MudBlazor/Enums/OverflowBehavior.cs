@@ -6,7 +6,9 @@ namespace MudBlazor
     {
         [Description("none")]
         None,
-        [Description("flip")]
-        Flip,
+        [Description("flip-once")]
+        FlipOnce,
+        [Description("flip-always")]
+        FlipAlways,
     }
 }
