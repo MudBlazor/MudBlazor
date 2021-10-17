@@ -7,6 +7,11 @@ on:
   pull_request:
     branches: [ feature/github-actions ]
 
+env:
+  AZURE_WEBAPP_NAME: mudblazor-dev
+  AZURE_WEBAPP_PACKAGE_PATH: './src/MudBlazor.Docs.Server'
+  DOTNET_VERSION: '5.0.x'
+
 jobs:
 
   build:
@@ -46,4 +51,26 @@ jobs:
       with:
         project-token: ${{ secrets.CODACY_PROJECT_TOKEN }}
         coverage-reports: ./src/MudBlazor.UnitTests/TestResults/coverage.cobertura.xml
+
+  deploy:
+    name: Deploy
+    needs: [build, test]
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v2
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 5.0.x
+    
+    - name: Publish
+      run: dotnet publish ./src/MudBlazor.Docs.Server -c release -o ./src/MudBlazor.Docs.Server/mudblazor-dev
       
+    - name: Deploy to Azure
+      uses: azure/webapps-deploy@v2
+      with: 
+          app-name: mudblazor-dev
+          publish-profile: ${{ secrets.PUBLISH_MUDBLAZOR_DEV  }}
+          package: ./src/MudBlazor.Docs.Server/mudblazor-dev
+          
