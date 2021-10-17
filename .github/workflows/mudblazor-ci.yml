@@ -2,10 +2,10 @@ name: mudblazor-ci
 
 on:
   push:
-    branches: [ dev_blackops ]
+    branches: [ feature/github-actions ]
     
   pull_request:
-    branches: [ dev_blackops ]
+    branches: [ feature/github-actions ]
 
 jobs:
 
