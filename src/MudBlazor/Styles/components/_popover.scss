@@ -15,6 +15,7 @@
     &.mud-popover-open {
         opacity: 1;
         animation: mud-animation-fadein;
+        animation-duration: 251ms;
     }
 }
 

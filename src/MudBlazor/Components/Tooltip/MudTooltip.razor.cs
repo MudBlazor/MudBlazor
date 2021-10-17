@@ -93,7 +93,7 @@ namespace MudBlazor
         [Parameter] public bool Inline { get; set; } = true;
 
         private void HandleMouseOver() => _isVisible = true;
-        //private void HandleMouseOut() => _isVisible = false;
+        private void HandleMouseOut() => _isVisible = false;
 
         private Origin ConvertPlacement()
         {
