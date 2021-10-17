@@ -1,8 +1,8 @@
 ﻿.mud-popover {
-    opacity: 0;
     outline: 0;
     z-index: calc(var(--mud-zindex-popover) + 1);
     position: absolute;
+    visibility: hidden;
 
     &.mud-popover-fixed {
         position: fixed;
@@ -13,9 +13,8 @@
     }
 
     &.mud-popover-open {
-        opacity: 1;
+        visibility: visible;
         animation: mud-animation-fadein;
-        animation-duration: 251ms;
     }
 }
 

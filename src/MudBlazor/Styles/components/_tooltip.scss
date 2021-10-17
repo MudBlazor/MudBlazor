@@ -18,7 +18,6 @@
     line-height: 1.4em;
     border-radius: var(--mud-default-borderradius);
     z-index: var(--mud-zindex-tooltip);
-    transition: all;
 
     &.mud-tooltip-default {
         color: var(--mud-palette-dark-text);
@@ -74,27 +73,5 @@
         border-style: solid;
         border-color: transparent;
         border-top-color: inherit;
-    }
-}
-
-
-
-@keyframes tooltip-scale {
-    0% {
-        transform: scale(0);
-    }
-
-    100% {
-        transform: scale(1);
-    }
-}
-
-@keyframes tooltip-fade {
-    0% {
-        opacity: 0;
-    }
-
-    100% {
-        opacity: 1;
     }
 }
