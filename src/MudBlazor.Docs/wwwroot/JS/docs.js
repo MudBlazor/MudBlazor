@@ -170,7 +170,7 @@ window.mudpopoverHelper = {
             let offsetX = postion.offsetX;
             let offsetY = postion.offsetY;
 
-            if ((classList.contains('mud-popover-overflow-flip-once')) || classList.contains('mud-popover-overflow-flip-always')) {
+            if (classList.contains('mud-popover-overflow-flip-once') || classList.contains('mud-popover-overflow-flip-always')) {
 
                 const appBarElements = document.getElementsByClassName("mud-appbar mud-appbar-fixed-top");
                 let appBarOffset = 0;
@@ -249,14 +249,13 @@ window.mudpopoverHelper = {
                     top = newPosition.top;
                     offsetX = newPosition.offsetX;
                     offsetY = newPosition.offsetY;
-                    console.log(selector);
-                    
                 }
 
-                if (!popoverContentNode.mudPopoverFliped) {
-                    popoverContentNode.mudPopoverFliped = selector ?? 'none';
+                if (classList.contains('mud-popover-overflow-flip-once')) {
+                    if (!popoverContentNode.mudPopoverFliped) {
+                        popoverContentNode.mudPopoverFliped = selector ?? 'none';
+                    }
                 }
-
             }
 
             if (popoverContentNode.classList.contains('mud-popover-fixed')) {
@@ -430,7 +429,7 @@ window.mudPopover = new MudPopover();
 
 window.addEventListener('scroll', () => {
     window.mudpopoverHelper.placePopoverByClassSelector('mud-popover-fixed');
-    window.mudpopoverHelper.placePopoverByClassSelector('mud-popover-overflow-flip');
+    window.mudpopoverHelper.placePopoverByClassSelector('mud-popover-overflow-flip-always');
 });
 
 window.addEventListener('resize', () => {
