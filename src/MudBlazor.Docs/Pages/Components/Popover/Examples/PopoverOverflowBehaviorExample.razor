@@ -11,7 +11,8 @@
                         </div>
                         <div class="mx-sm-2 mx-md-8 mx-lg-16">
                             <MudButton Variant="Variant.Filled" DisableElevation="true" Class="mx-1" OnClick="@(()=> SetPopoverOverflow(OverflowBehavior.None))" Color="@(OverflowBehavior == OverflowBehavior.None? Color.Primary : Color.Default)">None</MudButton>
-                            <MudButton Variant="Variant.Filled" DisableElevation="true" Class="mx-1" OnClick="@(()=> SetPopoverOverflow(OverflowBehavior.FlipOnce))" Color="@(OverflowBehavior == OverflowBehavior.FlipOnce? Color.Primary : Color.Default)">Flip</MudButton>
+                            <MudButton Variant="Variant.Filled" DisableElevation="true" Class="mx-1" OnClick="@(()=> SetPopoverOverflow(OverflowBehavior.FlipOnce))" Color="@(OverflowBehavior == OverflowBehavior.FlipOnce? Color.Primary : Color.Default)">Onces</MudButton>
+                             <MudButton Variant="Variant.Filled" DisableElevation="true" Class="mx-1" OnClick="@(()=> SetPopoverOverflow(OverflowBehavior.FlipAlways))" Color="@(OverflowBehavior == OverflowBehavior.FlipAlways? Color.Primary : Color.Default)">Always</MudButton>
                         </div>
                         <div>
                             <MudIconButton Icon="@Icons.Material.Filled.ArrowDownward"  OnClick="@(()=> SetPopoverOrigin(Origin.BottomCenter, Origin.TopCenter))" Color="@(TransformOrigin == Origin.TopCenter? Color.Primary : Color.Default)"/>
@@ -25,7 +26,7 @@
 @code {
     public Origin AnchorOrigin { get; set; } = Origin.CenterRight;
     public Origin TransformOrigin { get; set; } = Origin.CenterLeft;
-    public OverflowBehavior OverflowBehavior { get; set; } = OverflowBehavior.FlipOnce;
+    public OverflowBehavior OverflowBehavior { get; set; } = OverflowBehavior.FlipAlways;
 
     public void SetPopoverOrigin(Origin anchor, Origin transform)
     {
