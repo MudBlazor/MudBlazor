@@ -21,7 +21,7 @@ jobs:
         dotnet-version: 5.0.x
         
     - name: Restore
-      run: dotnet restore ./src/MudBlazor.sln -c release
+      run: dotnet restore ./src/MudBlazor.sln
 
     - name: Build
       run: dotnet build ./src/MudBlazor.sln -c release
