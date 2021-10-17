@@ -9,7 +9,7 @@ on:
 
 env:
   AZURE_WEBAPP_NAME: mudblazor-dev
-  AZURE_WEBAPP_PACKAGE_PATH: './src/MudBlazor.Docs.Server'
+  AZURE_WEBAPP_PACKAGE_PATH: MudBlazor.Docs.Server/publish
   DOTNET_VERSION: '5.0.x'
 
 jobs:
@@ -65,14 +65,14 @@ jobs:
         dotnet-version: 5.0.x
     
     - name: Publish
-      run: dotnet publish ./src/MudBlazor.Docs.Server -c release -o ${{env.DOTNET_ROOT}}/mudblazor
+      run: dotnet publish ./src/MudBlazor.Docs.Server -c release -o ${{ env.AZURE_WEBAPP_PACKAGE_PATH  }}
       
     - name: Deploy to Azure
       uses: azure/webapps-deploy@v2
       with: 
-          app-name: mudblazor-dev
+          app-name: ${{ env.AZURE_WEBAPP_NAME  }}
           publish-profile: ${{ secrets.PUBLISH_MUDBLAZOR_DEV  }}
-          package: ${{env.DOTNET_ROOT}}/mudblazor
+          package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH  }}
           
     - name: Publish Artifacts
       uses: actions/upload-artifact@v2
