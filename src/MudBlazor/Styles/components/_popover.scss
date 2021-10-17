@@ -25,8 +25,16 @@
 }
 
 .mud-drawer {
-    .mud-popover-cascading-value {
-        z-index: calc(var(--mud-zindex-drawer) + 2);
+    &:not(.mud-drawer-temporary) {
+        .mud-popover-cascading-value {
+            z-index: calc(var(--mud-zindex-drawer) + 2);
+        }
+    }
+    /*see drawer scss for drawer responsive popover values*/
+    &.mud-drawer-temporary, &.mud-drawer-responsive {
+        .mud-popover-cascading-value {
+            z-index: calc(var(--mud-zindex-appbar) + 4);
+        }
     }
 }
 

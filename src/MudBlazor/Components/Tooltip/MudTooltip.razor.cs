@@ -48,6 +48,11 @@ namespace MudBlazor
         [Parameter] public bool Arrow { get; set; }
 
         /// <summary>
+        /// If true, tooltip will show on touch on a touch-sensitive device.
+        /// </summary>
+        [Parameter] public bool Touch { get; set; }
+
+        /// <summary>
         /// Changes the default transition delay in milliseconds.
         /// </summary>
         [Obsolete("Delay is obsolete. Use AnimationDelay instead.", false)]
@@ -96,6 +101,9 @@ namespace MudBlazor
 
         private void HandleMouseOver() => _isVisible = true;
         private void HandleMouseOut() => _isVisible = false;
+
+        private void HandleTouchDown() => _isVisible = Touch;
+        private void HandleTouchUp() => _isVisible = false;
 
         private Origin ConvertPlacement()
         {
