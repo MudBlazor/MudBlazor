@@ -44,9 +44,7 @@ namespace MudBlazor.UnitTests.Components
             await button.ParentElement.TriggerEventAsync("onmouseenter", new MouseEventArgs());
 
             //content should be visible
-            popoverContentNode.Children.Should().ContainSingle();
-            popoverContentNode.Children[0].GetAttribute("role").Should().Be("tooltip");
-            popoverContentNode.Children[0].TextContent.Should().Be("my tooltip content text");
+            popoverContentNode.TextContent.Should().Be("my tooltip content text");
 
             //trigger mouseleave
             if (usingFocusout == false)
@@ -109,8 +107,8 @@ namespace MudBlazor.UnitTests.Components
             await button.ParentElement.TriggerEventAsync("onmouseenter", new MouseEventArgs());
 
             //content should be visible
-            popoverContentNode.Children.Should().ContainSingle();
-            popoverContentNode.Children[0].GetAttribute("role").Should().Be("tooltip");
+            popoverContentNode.ClassList.Should().Contain("mud-tooltip");
+            popoverContentNode.ClassList.Should().Contain("d-block");
 
             comp.Find(".my-customer-paper").Children[0].TextContent.Should().Be("My content");
 
