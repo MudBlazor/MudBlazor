@@ -170,7 +170,7 @@ window.mudpopoverHelper = {
             let offsetX = postion.offsetX;
             let offsetY = postion.offsetY;
 
-            if (classList.contains('mud-popover-overflow-flip-once') || classList.contains('mud-popover-overflow-flip-always')) {
+            if (classList.contains('mud-popover-overflow-flip-onopen') || classList.contains('mud-popover-overflow-flip-always')) {
 
                 const appBarElements = document.getElementsByClassName("mud-appbar mud-appbar-fixed-top");
                 let appBarOffset = 0;
@@ -251,7 +251,7 @@ window.mudpopoverHelper = {
                     offsetY = newPosition.offsetY;
                 }
 
-                if (classList.contains('mud-popover-overflow-flip-once')) {
+                if (classList.contains('mud-popover-overflow-flip-onopen')) {
                     if (!popoverContentNode.mudPopoverFliped) {
                         popoverContentNode.mudPopoverFliped = selector ?? 'none';
                     }
@@ -309,7 +309,7 @@ class MudPopover {
         for (const mutation of mutationsList) {
             if (mutation.type === 'attributes') {
                 const target = mutation.target
-                if (target.classList.contains('mud-popover-overflow-flip-once') &&
+                if (target.classList.contains('mud-popover-overflow-flip-onopen') &&
                     target.classList.contains('mud-popover-open') == false) {
                     target.mudPopoverFliped = null;
                 }
