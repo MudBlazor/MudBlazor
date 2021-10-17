@@ -30,19 +30,7 @@ jobs:
 
     - name: Build
       run: dotnet build ./src/MudBlazor.sln -c release
-
-  test:
-    name: Test
-    needs: build
-    runs-on: ubuntu-latest
-
-    steps:
-    - uses: actions/checkout@v2
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v1
-      with:
-        dotnet-version: 5.0.x
-
+      
     - name: Test
       run: dotnet test ./src/MudBlazor.UnitTests/MudBlazor.UnitTests.csproj -c release --blame-hang --blame-hang-timeout 60s /property:GenerateFullPaths=true /consoleloggerparameters:NoSummary /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura /p:ExcludeByAttribute='ExcludeFromCodeCoverage' /p:Include='[MudBlazor]*' /p:SkipAutoProps=true /p:CoverletOutput='./TestResults/'
       
@@ -51,22 +39,7 @@ jobs:
       with:
         project-token: ${{ secrets.CODACY_PROJECT_TOKEN }}
         coverage-reports: ./src/MudBlazor.UnitTests/TestResults/coverage.cobertura.xml
-
-  deploy:
-    name: Deploy
-    needs: [build, test]
-    runs-on: ubuntu-latest
-    
-    steps:
-    - uses: actions/checkout@v2
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v1
-      with:
-        dotnet-version: 5.0.x
         
-    - name: Build
-      run: dotnet build ./src/MudBlazor.sln -c release -o ${{ env.AZURE_WEBAPP_PACKAGE_PATH  }}
-    
     - name: Publish
       run: dotnet publish ./src/MudBlazor.Docs.Server -c release -o ${{ env.AZURE_WEBAPP_PACKAGE_PATH  }}
       
@@ -82,4 +55,6 @@ jobs:
       with:
         name: webapp
         path: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
+
+  
           
