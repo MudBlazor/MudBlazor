@@ -612,7 +612,9 @@ namespace MudBlazor.UnitTests.Components
             var autocomplete = autocompletecomp.Instance;
             autocompletecomp.SetParametersAndRender(parameters => parameters.Add(p=> p.DebounceInterval, 0));
             autocompletecomp.SetParametersAndRender(parameters => parameters.Add(p => p.CoerceText, true));
-            autocompletecomp.SetParametersAndRender(parameters => parameters.Add(p => p.TextUpdateSuppression, true));//try this?
+            // this needs to be false because in the unit test the autocomplete's input does not lose focus state on click of another button.
+            // TextUpdateSuppression is used to avoid binding to change the input text while typing.  
+            autocompletecomp.SetParametersAndRender(parameters => parameters.Add(p => p.TextUpdateSuppression, false)); 
             // check initial state
             autocomplete.Value.Should().Be("Florida");
             autocomplete.Text.Should().Be("Florida");
