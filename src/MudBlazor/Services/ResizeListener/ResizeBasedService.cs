@@ -16,7 +16,7 @@ namespace MudBlazor.Services
         where TSelf : class
         where TInfo : SubscriptionInfo<TAction, TaskOption>
     {
-        private static SemaphoreSlim _unsubscribeSemaphore = new SemaphoreSlim(1, 1);
+        private SemaphoreSlim _unsubscribeSemaphore = new SemaphoreSlim(1, 1);
 
         protected Dictionary<Guid, TInfo> Listeners { get; } = new();
         protected IJSRuntime JsRuntime { get; init; }
