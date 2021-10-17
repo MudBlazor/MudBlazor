@@ -29,7 +29,7 @@ jobs:
       run: dotnet restore ./src/MudBlazor.sln
 
     - name: Build
-      run: dotnet build ./src/MudBlazor.sln -c release
+      run: dotnet build ./src/MudBlazor.sln -c release -o ${{ env.AZURE_WEBAPP_PACKAGE_PATH  }}
 
   test:
     name: Test
