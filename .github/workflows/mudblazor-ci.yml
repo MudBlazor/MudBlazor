@@ -1,0 +1,49 @@
+name: mudblazor-ci
+
+on:
+  push:
+    branches: [ feature/github-actions ]
+    
+  pull_request:
+    branches: [ feature/github-actions ]
+
+jobs:
+
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 5.0.x
+        
+    - name: Restore
+      run: dotnet restore ./src/MudBlazor.sln
+
+    - name: Build
+      run: dotnet build ./src/MudBlazor.sln --no-restore
+
+  test:
+    name: Test
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 5.0.x
+
+    - name: Test
+      run: dotnet test ./src/MudBlazor.UnitTests/MudBlazor.UnitTests.csproj -c release --blame-hang --blame-hang-timeout 60s /property:GenerateFullPaths=true /consoleloggerparameters:NoSummary /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura /p:ExcludeByAttribute='ExcludeFromCodeCoverage' /p:Include='[MudBlazor]*' /p:SkipAutoProps=true /p:CoverletOutput='./TestResults/'
+      
+    - name: Test Coverage
+      uses: codacy/codacy-coverage-reporter-action@v1.1.0
+      with:
+        project-token: ${{ secrets.CODACY_PROJECT_TOKEN }}
+        coverage-reports: ./src/MudBlazor.UnitTests/TestResults/coverage.cobertura.xml
+      
