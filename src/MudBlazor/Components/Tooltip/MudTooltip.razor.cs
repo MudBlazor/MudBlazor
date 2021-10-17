@@ -18,6 +18,8 @@ namespace MudBlazor
             .AddClass($"mud-tooltip-arrow", Arrow)
             .AddClass($"mud-border-{Color.ToDescriptionString()}", Arrow && Color != Color.Default)
             .AddClass($"mud-theme-{Color.ToDescriptionString()}", Color != Color.Default)
+            .AddClass($"d-block", TooltipContent != null)
+            .AddClass($"d-flex", !String.IsNullOrEmpty(Text))
             .AddClass(Class)
             .Build();
 
