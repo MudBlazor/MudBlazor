@@ -126,14 +126,10 @@
     {
         var currentComp = ApiLink.GetTypeFromComponentLink(GetComponentName());
         var parent = MenuService.GetParent(currentComp);
-        string ComponentPageLink = "";
 
-        if (parent.Component is not null)
-            ComponentPageLink = $"components/{parent.Link}";
-        else
-            ComponentPageLink = $"api/{parent.GroupItems.Elements.FirstOrDefault(x => x.Component == currentComp).Name}";
-
-        return ComponentPageLink;
+        if (parent.Component is not null) return $"components/{parent.Link}";
+        
+        return $"api/{parent.GroupItems.Elements.FirstOrDefault(x => x.Component == currentComp).Name}";
     }
 
     private string GetParentComponentPage()
