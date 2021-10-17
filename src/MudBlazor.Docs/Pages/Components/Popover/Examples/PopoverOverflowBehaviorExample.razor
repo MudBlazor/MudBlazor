@@ -3,7 +3,11 @@
 
 <div class="d-flex flex-column justify-center">
         <MudPaper Outlined="true" Class="pa-12">
-	        <MudPopover Open="true" OverflowBehavior="@OverflowBehavior" AnchorOrigin="@AnchorOrigin" TransformOrigin="@TransformOrigin" Paper="false">
+            @if(OverflowBehavior == OverflowBehavior.FlipOnOpen)
+            {
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@ToggleOpen">Open/Close</MudButton>
+            }
+	        <MudPopover Open="_isOpen" OverflowBehavior="@OverflowBehavior" AnchorOrigin="@AnchorOrigin" TransformOrigin="@TransformOrigin" Paper="false">
                     <MudPaper MinWidth="375px" Outlined="true" Class="d-flex justify-space-between align-center">
                         <div>
                             <MudIconButton Icon="@Icons.Material.Filled.ArrowBack" OnClick="@(()=> SetPopoverOrigin(Origin.CenterLeft, Origin.CenterRight))" Color="@(TransformOrigin == Origin.CenterRight? Color.Primary : Color.Default)" />
@@ -24,6 +28,9 @@
 </div>
 
 @code {
+
+    public bool _isOpen = true;
+
     public Origin AnchorOrigin { get; set; } = Origin.CenterRight;
     public Origin TransformOrigin { get; set; } = Origin.CenterLeft;
     public OverflowBehavior OverflowBehavior { get; set; } = OverflowBehavior.FlipAlways;
@@ -36,6 +43,18 @@
 
     public void SetPopoverOverflow(OverflowBehavior behavior)
     {
+        if(behavior == OverflowBehavior.FlipOnOpen && OverflowBehavior != OverflowBehavior.FlipOnOpen)
+        {
+            _isOpen = false;
+        }
         OverflowBehavior = behavior;
+    }
+
+    public void ToggleOpen()
+    {
+        if (_isOpen)
+            _isOpen = false;
+        else
+            _isOpen = true;
     }
 }
