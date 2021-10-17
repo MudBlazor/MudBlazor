@@ -8,7 +8,7 @@ on:
     branches: [ feature/github-actions ]
 
 env:
-  AZURE_WEBAPP_NAME: mudblazor-dev
+  AZURE_WEBAPP_NAME: mudblazor-test
   AZURE_WEBAPP_PACKAGE_PATH: MudBlazor.Docs.Server/publish
   DOTNET_VERSION: '5.0.x'
 
@@ -29,7 +29,7 @@ jobs:
       run: dotnet restore ./src/MudBlazor.sln
 
     - name: Build
-      run: dotnet build ./src/MudBlazor.sln -c release -o ${{ env.AZURE_WEBAPP_PACKAGE_PATH  }}
+      run: dotnet build ./src/MudBlazor.sln -c release
 
   test:
     name: Test
@@ -63,6 +63,9 @@ jobs:
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: 5.0.x
+        
+    - name: Build
+      run: dotnet build ./src/MudBlazor.sln -c release -o ${{ env.AZURE_WEBAPP_PACKAGE_PATH  }}
     
     - name: Publish
       run: dotnet publish ./src/MudBlazor.Docs.Server -c release -o ${{ env.AZURE_WEBAPP_PACKAGE_PATH  }}
@@ -71,7 +74,7 @@ jobs:
       uses: azure/webapps-deploy@v2
       with: 
           app-name: ${{ env.AZURE_WEBAPP_NAME  }}
-          publish-profile: ${{ secrets.PUBLISH_MUDBLAZOR_DEV  }}
+          publish-profile: ${{ secrets.PUBLISH_MUDBLAZOR_TEST  }}
           package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH  }}
           
     - name: Publish Artifacts
