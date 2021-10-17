@@ -10,6 +10,7 @@ on:
 jobs:
 
   build:
+    name:Build
     runs-on: ubuntu-latest
 
     steps:
@@ -26,6 +27,7 @@ jobs:
       run: dotnet build ./src/MudBlazor.sln --no-restore
 
   test:
+    name: Test
     needs: build
     runs-on: ubuntu-latest
 
