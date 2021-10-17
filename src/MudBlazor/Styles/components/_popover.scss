@@ -2,7 +2,7 @@
     outline: 0;
     z-index: calc(var(--mud-zindex-popover) + 1);
     position: absolute;
-    visibility: hidden;
+    opacity: 0;
 
     &.mud-popover-fixed {
         position: fixed;
@@ -13,8 +13,13 @@
     }
 
     &.mud-popover-open {
-        visibility: visible;
-        animation: mud-animation-fadein;
+        opacity: 1;
+        transition: opacity;
+    }
+
+    &:not(.mud-popover-open ) {
+        transition-duration:0ms !important;
+        transition-delay:0ms !important;
     }
 }
 
@@ -30,7 +35,7 @@
             z-index: calc(var(--mud-zindex-drawer) + 2);
         }
     }
-    /*see drawer scss for drawer responsive popover values*/
+
     &.mud-drawer-temporary, &.mud-drawer-responsive {
         .mud-popover-cascading-value {
             z-index: calc(var(--mud-zindex-appbar) + 4);

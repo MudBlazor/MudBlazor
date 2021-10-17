@@ -53,20 +53,14 @@ namespace MudBlazor
         [Parameter] public bool Touch { get; set; }
 
         /// <summary>
-        /// Changes the default transition delay in milliseconds.
+        /// Sets the length of time that the opening transition takes to complete.
         /// </summary>
-        [Obsolete("Delay is obsolete. Use AnimationDelay instead.", false)]
-        [Parameter] public double Delay { get; set; } = 200;
+        [Parameter] public double Duration { get; set; } = 251;
 
         /// <summary>
-        /// Sets the length of time that the opening animation takes to complete.
+        /// Sets the amount of time to wait from opening the popover before beginning to perform the transition. 
         /// </summary>
-        [Parameter] public double AnimationDuration { get; set; } = 251;
-
-        /// <summary>
-        /// Sets the amount of time to wait from opening the popover before beginning to perform the animation. 
-        /// </summary>
-        [Parameter] public double AnimationDelay { get; set; } = 200;
+        [Parameter] public double Delay { get; set; } = 0;
 
         /// <summary>
         /// Changes the default transition delay in seconds.
