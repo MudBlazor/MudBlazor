@@ -26,4 +26,4 @@ jobs:
       run: dotnet build ./src/MudBlazor.sln --no-restore
       
     - name: Test
-      run: dotnet test ./src/MudBlazor.UnitTests/MudBlazor.UnitTests.csproj --blame-hang --blame-hang-timeout 60s /property:GenerateFullPaths=true /consoleloggerparameters:NoSummary /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura /p:ExcludeByAttribute="ExcludeFromCodeCoverage" /p:Include="[MudBlazor]*" /p:SkipAutoProps=true /p:CoverletOutput="./TestResults/"'
+      run: dotnet test ./src/MudBlazor.UnitTests/MudBlazor.UnitTests.csproj -c release --logger GitHubActions --blame-hang --blame-hang-timeout 60s /property:GenerateFullPaths=true /consoleloggerparameters:NoSummary /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura /p:ExcludeByAttribute="ExcludeFromCodeCoverage" /p:Include="[MudBlazor]*" /p:SkipAutoProps=true /p:CoverletOutput="./TestResults/"'
