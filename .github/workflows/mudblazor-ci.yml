@@ -1,0 +1,26 @@
+name: mudblazor-ci
+
+on:
+  push:
+    branches: [ dev_blackops ]
+    
+  pull_request:
+    branches: [ dev_blackops ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 5.0.x
+      
+    - name: Build
+      run: dotnet build ./src/MudBlazor.sln --no-restore
+      
+    - name: Test
+      run: dotnet test ./src/MudBlazor.UnitTests/MudBlazor.UnitTests.csproj --blame-hang --blame-hang-timeout 60s /property:GenerateFullPaths=true /consoleloggerparameters:NoSummary /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura /p:ExcludeByAttribute="ExcludeFromCodeCoverage" /p:Include="[MudBlazor]*" /p:SkipAutoProps=true /p:CoverletOutput="./TestResults/"'
