@@ -65,12 +65,12 @@ jobs:
         dotnet-version: 5.0.x
     
     - name: Publish
-      run: dotnet publish ./src/MudBlazor.Docs.Server -c release -o ./src/MudBlazor.Docs.Server/mudblazor-dev
+      run: dotnet publish ./src/MudBlazor.Docs.Server -c release -o ${{env.DOTNET_ROOT}}/mudblazor
       
     - name: Deploy to Azure
       uses: azure/webapps-deploy@v2
       with: 
           app-name: mudblazor-dev
           publish-profile: ${{ secrets.PUBLISH_MUDBLAZOR_DEV  }}
-          package: ./src/MudBlazor.Docs.Server/mudblazor-dev
+          package: ${{env.DOTNET_ROOT}}/mudblazor
           
