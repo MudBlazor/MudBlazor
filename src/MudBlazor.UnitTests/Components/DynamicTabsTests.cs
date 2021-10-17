@@ -119,10 +119,8 @@ namespace MudBlazor.UnitTests.Components
 
                 var toolTip = comp.Find($"#popovercontent-{popoverId}");
 
-                toolTip.ChildNodes.Should().ContainSingle();
-
-                toolTip.Children[0].ClassList.Should().StartWith(new string[] { "mud-tooltip" });
-                toolTip.Children[0].TextContent.Should().Be("close here");
+                toolTip.ClassList.Should().Contain(new string[] { "mud-tooltip" });
+                toolTip.TextContent.Should().Be("close here");
 
                 await item.ParentElement.TriggerEventAsync("onmouseleave", new MouseEventArgs());
 
@@ -149,10 +147,8 @@ namespace MudBlazor.UnitTests.Components
 
                 var toolTip = comp.Find($"#popovercontent-{popoverId}");
 
-                toolTip.ChildNodes.Should().ContainSingle();
-
-                toolTip.Children[0].ClassList.Should().StartWith(new string[] { "mud-tooltip" });
-                toolTip.Children[0].TextContent.Should().Be("add here");
+                toolTip.ClassList.Should().Contain(new string[] { "mud-tooltip" });
+                toolTip.TextContent.Should().Be("add here");
 
                 await item.ParentElement.TriggerEventAsync("onmouseleave", new MouseEventArgs());
             }
