@@ -41,14 +41,25 @@ namespace MudBlazor
         [Parameter] public string Text { get; set; }
 
         /// <summary>
-        /// 
+        /// If true, a arrow will be displayed pointing towards the content from the tooltip.
         /// </summary>
         [Parameter] public bool Arrow { get; set; }
 
         /// <summary>
         /// Changes the default transition delay in milliseconds.
         /// </summary>
+        [Obsolete("Delay is obsolete. Use AnimationDelay instead.", false)]
         [Parameter] public double Delay { get; set; } = 200;
+
+        /// <summary>
+        /// Sets the length of time that the opening animation takes to complete.
+        /// </summary>
+        [Parameter] public double AnimationDuration { get; set; } = 500;
+
+        /// <summary>
+        /// Sets the amount of time to wait from opening the popover before beginning to perform the animation. 
+        /// </summary>
+        [Parameter] public double AnimationDelay { get; set; } = 200;
 
         /// <summary>
         /// Changes the default transition delay in seconds.
@@ -82,7 +93,7 @@ namespace MudBlazor
         [Parameter] public bool Inline { get; set; } = true;
 
         private void HandleMouseOver() => _isVisible = true;
-        private void HandleMouseOut() => _isVisible = false;
+        //private void HandleMouseOut() => _isVisible = false;
 
         private Origin ConvertPlacement()
         {
@@ -114,11 +125,6 @@ namespace MudBlazor
             {
                 return Origin.BottomCenter;
             }
-        }
-        
-        protected string GetTimeDelay()
-        {
-            return $"transition-delay: {Delay.ToString(CultureInfo.InvariantCulture)}ms;{Style}";
         }
     }
 }
