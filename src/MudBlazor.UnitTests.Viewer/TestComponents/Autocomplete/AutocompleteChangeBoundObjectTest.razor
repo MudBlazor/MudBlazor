@@ -1,14 +1,13 @@
-﻿@using System.Dynamic
-@namespace MudBlazor.UnitTests.TestComponents
+﻿@namespace MudBlazor.UnitTests.TestComponents
 
 <MudGrid>
     <MudItem xs="12" sm="4">
-        <MudAutocomplete T="string" Label="US States" @bind-Value="@ActiveStringHolder.StringValue" SearchFunc="@Search1" 
-                         ResetValueOnEmptyText="@resetValueOnEmptyText" 
-                         CoerceText="@coerceText" CoerceValue="@coerceValue"/>
+        <MudAutocomplete T="string" Label="US States" @bind-Value="@ActiveStringHolder.StringValue" SearchFunc="@Search1"
+                         ResetValueOnEmptyText="@resetValueOnEmptyText"
+                         CoerceText="@coerceText" CoerceValue="@coerceValue" />
     </MudItem>
     <MudItem xs="12" sm="4">
-        <MudButton OnClick="(()=>ToggleValue())" Variant="Variant.Outlined">Toggle Value</MudButton>
+        <MudButton OnClick="@(()=>ToggleValue())" Variant="Variant.Outlined">Toggle Value</MudButton>
     </MudItem>
     <MudItem xs="12" md="12" class="flex-column">
         <MudSwitch @bind-Checked="@resetValueOnEmptyText" Color="Color.Primary">Reset Value on empty Text</MudSwitch>
@@ -24,12 +23,10 @@
     private bool coerceValue = true;
 
     [Parameter]
-    public dynamic Thing {get;set;}
+    public dynamic Thing { get; set; }
 
-    //private dynamic StateObject1 = new ExpandoObject();
-    //private dynamic StateObject2 = new ExpandoObject();
-    private StringHolder StringHolder1 = new StringHolder(){StringValue="Florida"};
-    private StringHolder StringHolder2 = new StringHolder(){StringValue="Georgia"};
+    private StringHolder StringHolder1 = new StringHolder() { StringValue = "Florida" };
+    private StringHolder StringHolder2 = new StringHolder() { StringValue = "Georgia" };
     private StringHolder ActiveStringHolder = null;
     private string[] states =
     {
@@ -51,12 +48,12 @@
 
     private sealed class StringHolder
     {
-        public string StringValue {get;set;}
+        public string StringValue { get; set; }
     }
 
     private void ToggleValue()
     {
-        ActiveStringHolder = ActiveStringHolder.Equals(StringHolder1)? StringHolder2 : StringHolder1;
+        ActiveStringHolder = ActiveStringHolder.Equals(StringHolder1) ? StringHolder2 : StringHolder1;
         StateHasChanged();
     }
 
@@ -71,20 +68,8 @@
         return states.Where(x => x.Contains(value, StringComparison.InvariantCultureIgnoreCase));
     }
 
-    private async Task<IEnumerable<string>> Search2(string value)
-    {
-        // In real life use an asynchronous function for fetching data from an api.
-        await Task.Delay(5);
-
-        // if text is null or empty, don't return values (drop-down will not open)
-        if (string.IsNullOrEmpty(value))
-            return new string[0];
-        return states.Where(x => x.Contains(value, StringComparison.InvariantCultureIgnoreCase));
-    }
     protected override void OnInitialized()
     {
-        //StateObject1.StringValue = "Florida";
-        //StateObject2.StringValue = "Georgia";
         ActiveStringHolder = StringHolder1;
     }
 }
