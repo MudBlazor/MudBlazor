@@ -42,7 +42,14 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [TearDown]
-        public void TearDown() => ctx.Dispose();
+        public void TearDown()
+        {
+            try
+            {
+                ctx.Dispose();
+            }
+            catch(Exception) { /*ignore, may fail because of dispose in the middle of a (second) render pass*/ }
+        }
     }
 }
 
