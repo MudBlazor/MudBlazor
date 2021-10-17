@@ -237,7 +237,7 @@ namespace MudBlazor.UnitTests.Components
 
             var handler = new MudPopoverHandler(renderFragement, mock.Object, updater);
             handlerId = handler.Id;
-          
+
             await handler.Initialize();
             //task canceled exception shoudn't result in an exception
             await handler.Detach();
@@ -269,8 +269,8 @@ namespace MudBlazor.UnitTests.Components
 
             await handler.Initialize();
             //exception of the js interop should result in an exception
-            Assert.ThrowsAsync<InvalidOperationException>( async () => await handler.Detach());
-          
+            Assert.ThrowsAsync<InvalidOperationException>(async () => await handler.Detach());
+
             //despite the exception the handler should be disconnected
             handler.IsConnected.Should().BeFalse();
         }
@@ -558,6 +558,7 @@ namespace MudBlazor.UnitTests.Components
             popover.TransformOrigin.Should().Be(Origin.TopLeft);
             popover.RelativeWidth.Should().BeFalse();
             popover.OverflowBehavior.Should().Be(OverflowBehavior.FlipOnce);
+            popover.AnimationDuration.Should().Be(251);
         }
 
         [Test]
@@ -594,15 +595,26 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void MudPopover_Property_MaxHeight()
         {
-            var comp = Context.RenderComponent<PopoverPropertyTest>(p => p.Add(
-                x => x.MaxHeight, 100));
+            var comp = Context.RenderComponent<PopoverPropertyTest>(p => p.Add(x => x.MaxHeight, 100));
 
             Console.WriteLine(comp.Markup);
 
             var popoverElement = comp.Find(".test-popover-content").ParentElement;
 
-            popoverElement.ClassList.Should().Contain(new[] { "mud-popover-open", "overflow-y-auto", "my-custom-class" });
-            popoverElement.GetAttribute("style").Should().Be("max-height:100px;my-custom-style: 3px;");
+            popoverElement.GetAttribute("style").Split(';', StringSplitOptions.RemoveEmptyEntries).Should().Contain(new[] { "max-height:100px", "my-custom-style:3px" });
+        }
+
+        [Test]
+        public void MudPopover_Property_AnimationDuration()
+        {
+            var comp = Context.RenderComponent<PopoverPropertyTest>(p => p.Add(x => x.AnimationDuration, 100));
+
+
+            Console.WriteLine(comp.Markup);
+
+            var popoverElement = comp.Find(".test-popover-content").ParentElement;
+
+            popoverElement.GetAttribute("style").Split(';', StringSplitOptions.RemoveEmptyEntries).Should().Contain(new[] { "animation-duration:100ms" });
         }
 
         [Test]
