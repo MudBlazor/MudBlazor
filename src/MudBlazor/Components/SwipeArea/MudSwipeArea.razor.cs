@@ -9,6 +9,7 @@ namespace MudBlazor
     public partial class MudSwipeArea : MudComponentBase
     {
         private double? _xDown, _yDown;
+        private ElementReference _componentRef;
 
         [Inject] public IJSRuntime JsRuntime { get; set; }
 
@@ -20,8 +21,6 @@ namespace MudBlazor
 
         [Parameter]
         public bool PreventDefault { get; set; }
-
-        private ElementReference _componentRef;
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
