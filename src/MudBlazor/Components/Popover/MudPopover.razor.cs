@@ -30,6 +30,8 @@ namespace MudBlazor
         protected string PopoverStyles =>
             new StyleBuilder()
             .AddStyle("max-height", $"{MaxHeight}px", MaxHeight != null)
+            //.AddStyle("animation-duration", $"{AnimationDuration}ms", AnimationDuration != 251)
+            //.AddStyle("animation-delay", $"{AnimationDelay}ms", AnimationDelay != 0)
             .AddStyle(Style)
             .Build();
 
@@ -74,6 +76,16 @@ namespace MudBlazor
         /// If true the popover will be fixed position instead of absolute.
         /// </summary>
         [Parameter] public bool Fixed { get; set; }
+
+        /// <summary>
+        /// Sets the length of time that the opening animation takes to complete.
+        /// </summary>
+        [Parameter] public double AnimationDuration { get; set; } = 251;
+
+        /// <summary>
+        /// Sets the amount of time to wait from opening the popover before beginning to perform the animation. 
+        /// </summary>
+        [Parameter] public double AnimationDelay { get; set; } = 0;
 
         /// <summary>
         /// Sets the direction the popover will start from relative to its parent.
