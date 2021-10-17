@@ -74,3 +74,9 @@ jobs:
           publish-profile: ${{ secrets.PUBLISH_MUDBLAZOR_DEV  }}
           package: ${{env.DOTNET_ROOT}}/mudblazor
           
+    - name: Publish Artifacts
+      uses: actions/upload-artifact@v2
+      with:
+        name: webapp
+        path: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
+          
