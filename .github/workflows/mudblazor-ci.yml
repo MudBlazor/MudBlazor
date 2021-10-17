@@ -44,5 +44,6 @@ jobs:
     - name: Test Coverage
       uses: codacy/codacy-coverage-reporter-action@v1.1.0
       with:
-          coverage-reports: ./src/MudBlazor.UnitTests/TestResults/coverage.cobertura.xml
+        project-token: ${{ secrets.CODACY_PROJECT_TOKEN }}
+        coverage-reports: ./src/MudBlazor.UnitTests/TestResults/coverage.cobertura.xml
       
