@@ -20,7 +20,7 @@ namespace MudBlazor
         protected string ButtonClassname =>
         new CssBuilder("mud-button-root mud-icon-button")
             .AddClass($"mud-ripple mud-ripple-radio", !DisableRipple)
-            .AddClass($"mud-radio-color-{Color.ToDescriptionString()}")
+            .AddClass($"mud-icon-button-color-{Color.ToDescriptionString()}")
             .AddClass($"mud-radio-dense", Dense)
             .AddClass($"mud-disabled", Disabled)
             .AddClass($"mud-checked", Checked)
@@ -66,8 +66,8 @@ namespace MudBlazor
         {
             return placement switch
             {
-                Placement.Left => RightToLeft ? Placement.End : Placement.Start,
-                Placement.Right => RightToLeft ? Placement.Start : Placement.End,
+                Placement.Left => RightToLeft ? Placement.Right : Placement.Left,
+                Placement.Right => RightToLeft ? Placement.Left : Placement.Right,
                 _ => placement
             };
         }
@@ -80,7 +80,7 @@ namespace MudBlazor
         /// <summary>
         /// The position of the child content.
         /// </summary>
-        [Parameter] public Placement Placement { get; set; } = Placement.End;
+        [Parameter] public Placement Placement { get; set; } = Placement.Right;
 
         /// <summary>
         /// The value to associate to the button.

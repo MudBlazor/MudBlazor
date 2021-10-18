@@ -17,6 +17,10 @@
         top: 0;
         right: 0;
         left: 0;
+
+        .mud-popover-cascading-value {
+            position: fixed;
+        }
     }
 
     &.mud-appbar-fixed-bottom {
@@ -24,6 +28,10 @@
         bottom: 0;
         right: 0;
         left: 0;
+
+        .mud-popover-cascading-value {
+            position: fixed;
+        }
     }
 
     .mud-toolbar-appbar {

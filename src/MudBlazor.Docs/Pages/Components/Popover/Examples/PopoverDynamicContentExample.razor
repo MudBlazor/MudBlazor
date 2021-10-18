@@ -1,0 +1,17 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudButton OnClick="@AddMoreContent" Color="Color.Error">Add another line</MudButton>
+@foreach (var item in _content)
+{
+	<MudText Class="pa-2" Align="Align.Center">@item</MudText>
+}
+
+@code {
+
+	private List<String> _content = new();
+
+	public void AddMoreContent()
+	{
+		_content.Add("line of text");
+	}
+}

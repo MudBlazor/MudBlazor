@@ -13,21 +13,21 @@ namespace MudBlazor.UnitTests.Components
     [TestFixture]
     public class TimePickerTests : BunitTest
     {
-        public IRenderedComponent<MudTimePicker> OpenPicker(ComponentParameter parameter)
+        public IRenderedComponent<SimpleTimePickerTest> OpenPicker(ComponentParameter parameter)
         {
             return OpenPicker(new ComponentParameter[] { parameter });
         }
 
-        public IRenderedComponent<MudTimePicker> OpenPicker(ComponentParameter[] parameters = null)
+        public IRenderedComponent<SimpleTimePickerTest> OpenPicker(ComponentParameter[] parameters = null)
         {
-            IRenderedComponent<MudTimePicker> comp;
+            IRenderedComponent<SimpleTimePickerTest> comp;
             if (parameters is null)
             {
-                comp = Context.RenderComponent<MudTimePicker>();
+                comp = Context.RenderComponent<SimpleTimePickerTest>();
             }
             else
             {
-                comp = Context.RenderComponent<MudTimePicker>(parameters);
+                comp = Context.RenderComponent<SimpleTimePickerTest>(parameters);
             }
 
             // should not be open
@@ -51,18 +51,21 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task Change_24hrsTo12Hours_CheckHours()
+        public void Change_24hrsTo12Hours_CheckHours()
         {
             var comp = OpenPicker();
             var picker = comp.Instance;
+            var underlyingPicker = comp.FindComponent<MudTimePicker>();
             // count hours
-            picker.AmPm.Should().Be(false);
+            underlyingPicker.Instance.AmPm.Should().Be(false);
             comp.FindAll("div.mud-hour").Count.Should().Be(24);
             // change to 12 hour
-            await comp.InvokeAsync(() => picker.AmPm = true);
-            comp.Render();
+
+            underlyingPicker.SetParametersAndRender(x => x.Add(p =>
+                p.AmPm, true));
+
             // count hours
-            comp.Instance.AmPm.Should().Be(true);
+            underlyingPicker.Instance.AmPm.Should().Be(true);
             comp.FindAll("div.mud-hour").Count.Should().Be(12);
         }
 
@@ -71,57 +74,59 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = OpenPicker();
             var picker = comp.Instance;
+            var underlyingPicker = comp.FindComponent<MudTimePicker>().Instance;
+
             // select 16 hours on outer dial and 30 mins
             comp.FindAll("div.mud-picker-stick-outer.mud-hour")[3].Click();
-            picker.TimeIntermediate.Value.Hours.Should().Be(16);
-            picker.TimeIntermediate.Value.Minutes.Should().Be(0);
+            underlyingPicker.TimeIntermediate.Value.Hours.Should().Be(16);
+            underlyingPicker.TimeIntermediate.Value.Minutes.Should().Be(0);
 
             // check if view changed to minutes
             comp.FindAll("div.mud-time-picker-hour.mud-time-picker-dial-hidden").Count.Should().Be(1);
 
             // select 30 minutes
             comp.FindAll("div.mud-minute")[30].Click();
-            picker.TimeIntermediate.Value.Hours.Should().Be(16);
-            picker.TimeIntermediate.Value.Minutes.Should().Be(30);
+            underlyingPicker.TimeIntermediate.Value.Hours.Should().Be(16);
+            underlyingPicker.TimeIntermediate.Value.Minutes.Should().Be(30);
             Console.Write(comp.Markup);
 
             // check if closed
             comp.WaitForAssertion(() => comp.FindAll("div.mud-picker-open").Count.Should().Be(0));
 
             // open picker
-            await comp.InvokeAsync(() => picker.Open());
+            await comp.Instance.Open();
 
             // click 04 hours on the inner dial and 21 mins
             //comp.FindAll("button.mud-timepicker-button")[0].Click();
             comp.FindAll("div.mud-picker-stick-inner.mud-hour")[3].Click();
-            picker.TimeIntermediate.Value.Hours.Should().Be(4);
+            underlyingPicker.TimeIntermediate.Value.Hours.Should().Be(4);
 
             // check if view changed to minutes
             comp.FindAll("div.mud-time-picker-hour.mud-time-picker-dial-hidden").Count.Should().Be(1);
 
             // click 21 mins
             comp.FindAll("div.mud-minute")[21].Click();
-            picker.TimeIntermediate.Value.Minutes.Should().Be(21);
+            underlyingPicker.TimeIntermediate.Value.Minutes.Should().Be(21);
 
             // check if closed
             comp.WaitForAssertion(() => comp.FindAll("div.mud-picker-open").Count.Should().Be(0));
 
-            picker.TimeIntermediate.Value.Hours.Should().Be(4);
-            picker.TimeIntermediate.Value.Minutes.Should().Be(21);
+            underlyingPicker.TimeIntermediate.Value.Hours.Should().Be(4);
+            underlyingPicker.TimeIntermediate.Value.Minutes.Should().Be(21);
 
             // open picker
             await comp.InvokeAsync(() => picker.Open());
 
             // click 10 hours
             comp.FindAll("div.mud-picker-stick-inner.mud-hour")[9].Click();
-            picker.TimeIntermediate.Value.Hours.Should().Be(10);
+            underlyingPicker.TimeIntermediate.Value.Hours.Should().Be(10);
 
             // check if view changed to minutes
             comp.FindAll("div.mud-time-picker-hour.mud-time-picker-dial-hidden").Count.Should().Be(1);
 
             // click 56 mins
             comp.FindAll("div.mud-minute")[56].Click();
-            picker.TimeIntermediate.Value.Minutes.Should().Be(56);
+            underlyingPicker.TimeIntermediate.Value.Minutes.Should().Be(56);
 
             // check if closed
             comp.WaitForAssertion(() => comp.FindAll("div.mud-picker-open").Count.Should().Be(0));
@@ -131,36 +136,42 @@ namespace MudBlazor.UnitTests.Components
         public void SelectTime_UsingClicks_12HourMode_CheckTime()
         {
             var comp = OpenPicker(Parameter("AmPm", true));
-            var picker = comp.Instance;
+            var underlyingPicker = comp.FindComponent<MudTimePicker>().Instance;
+
             // select 11 hours on outer dial and 30 mins
             comp.FindAll("div.mud-hour")[10].Click();
             comp.FindAll("div.mud-minute")[30].Click();
-            picker.TimeIntermediate.Value.Hours.Should().Be(11);
-            picker.TimeIntermediate.Value.Minutes.Should().Be(30);
+            underlyingPicker.TimeIntermediate.Value.Hours.Should().Be(11);
+            underlyingPicker.TimeIntermediate.Value.Minutes.Should().Be(30);
             Console.Write(comp.Markup);
             // click 04 hours on the inner dial and 21 mins
             comp.FindAll("button.mud-timepicker-button")[0].Click();
             comp.FindAll("div.mud-hour")[11].Click();
             comp.FindAll("div.mud-minute")[21].Click();
-            picker.TimeIntermediate.Value.Hours.Should().Be(0);
-            picker.TimeIntermediate.Value.Minutes.Should().Be(21);
+            underlyingPicker.TimeIntermediate.Value.Hours.Should().Be(0);
+            underlyingPicker.TimeIntermediate.Value.Minutes.Should().Be(21);
             // click 10 hours on the inner dial and 56 mins
             comp.FindAll("button.mud-timepicker-button")[0].Click();
             comp.FindAll("div.mud-hour")[9].Click();
             comp.FindAll("div.mud-minute")[56].Click();
-            picker.TimeIntermediate.Value.Hours.Should().Be(10);
-            picker.TimeIntermediate.Value.Minutes.Should().Be(56);
+            underlyingPicker.TimeIntermediate.Value.Hours.Should().Be(10);
+            underlyingPicker.TimeIntermediate.Value.Minutes.Should().Be(56);
             // click pm button
             comp.FindAll("button.mud-timepicker-button")[3].Click();
-            picker.TimeIntermediate.Value.Hours.Should().Be(22);
-            picker.TimeIntermediate.Value.Minutes.Should().Be(56);
+            underlyingPicker.TimeIntermediate.Value.Hours.Should().Be(22);
+            underlyingPicker.TimeIntermediate.Value.Minutes.Should().Be(56);
         }
 
         [Test]
         public void SelectTime_UsingClicks_12HourMode_ChangeAmPm_CheckTime()
         {
-            var comp = OpenPicker(Parameter("AmPm", true));
+            var comp = Context.RenderComponent<MudTimePicker>(x =>
+            {
+                x.Add(p => p.PickerVariant, PickerVariant.Static);
+                x.Add(p => p.AmPm, true);
+            });
             var picker = comp.Instance;
+
             // select 11 hours on outer dial and 30 mins
             comp.FindAll("div.mud-hour")[10].Click();
             comp.FindAll("div.mud-minute")[30].Click();
@@ -253,15 +264,17 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = OpenPicker();
             var picker = comp.Instance;
+            var underlyingPicker = comp.FindComponent<MudTimePicker>().Instance;
+
             // click on the minutes input
             comp.Find("div.mud-time-picker-hour").MouseDown();
             comp.FindAll("div.mud-picker-stick-outer.mud-hour")[3].MouseOver();
-            picker.TimeIntermediate.Value.Hours.Should().Be(16);
-            picker.TimeIntermediate.Value.Minutes.Should().Be(0);
+            underlyingPicker.TimeIntermediate.Value.Hours.Should().Be(16);
+            underlyingPicker.TimeIntermediate.Value.Minutes.Should().Be(0);
             comp.FindAll("div.mud-picker-stick-outer.mud-hour")[5].MouseOver();
             comp.FindAll("div.mud-picker-stick-outer.mud-hour")[5].MouseUp();
-            picker.TimeIntermediate.Value.Hours.Should().Be(18);
-            picker.TimeIntermediate.Value.Minutes.Should().Be(0);
+            underlyingPicker.TimeIntermediate.Value.Hours.Should().Be(18);
+            underlyingPicker.TimeIntermediate.Value.Minutes.Should().Be(0);
             // Are minutes displayed
             comp.FindAll("div.mud-time-picker-hour.mud-time-picker-dial-hidden").Count.Should().Be(1);
         }
@@ -272,17 +285,19 @@ namespace MudBlazor.UnitTests.Components
             // Use bare component
             var comp = OpenPicker(Parameter("OpenTo", OpenTo.Minutes));
             var picker = comp.Instance;
+            var underlyingPicker = comp.FindComponent<MudTimePicker>().Instance;
+
             // Any hours displayed
             comp.FindAll("div.mud-time-picker-hour.mud-time-picker-dial-hidden").Count.Should().Be(1);
             // click and drag
             comp.Find("div.mud-time-picker-minute").MouseDown();
             comp.FindAll("div.mud-minute")[3].MouseOver();
-            picker.TimeIntermediate.Value.Minutes.Should().Be(3);
+            underlyingPicker.TimeIntermediate.Value.Minutes.Should().Be(3);
             comp.FindAll("div.mud-minute")[31].MouseOver();
-            picker.TimeIntermediate.Value.Minutes.Should().Be(31);
+            underlyingPicker.TimeIntermediate.Value.Minutes.Should().Be(31);
             comp.FindAll("div.mud-minute")[5].MouseOver();
             comp.FindAll("div.mud-minute")[5].MouseUp();
-            picker.TimeIntermediate.Value.Minutes.Should().Be(5);
+            underlyingPicker.TimeIntermediate.Value.Minutes.Should().Be(5);
         }
 
         [Test]
@@ -306,6 +321,8 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = OpenPicker(new ComponentParameter[] { Parameter("OpenTo", OpenTo.Hours), Parameter("AmPm", true) });
             var picker = comp.Instance;
+            var underlyingPicker = comp.FindComponent<MudTimePicker>().Instance;
+
             Console.Write(comp.Markup);
             // Any hours displayed
             comp.FindAll("div.mud-time-picker-minute.mud-time-picker-dial-hidden").Count.Should().Be(1);
@@ -314,11 +331,11 @@ namespace MudBlazor.UnitTests.Components
             {
                 comp.Find("div.mud-time-picker-hour").MouseDown();
                 comp.FindAll("div.mud-hour")[i].MouseOver();
-                picker.TimeIntermediate.Value.Hours.Should().Be(i + 1);
+                underlyingPicker.TimeIntermediate.Value.Hours.Should().Be(i + 1);
                 comp.FindAll("div.mud-hour")[i].MouseUp();
-                picker.TimeIntermediate.Value.Hours.Should().Be(i + 1);
+                underlyingPicker.TimeIntermediate.Value.Hours.Should().Be(i + 1);
                 comp.FindAll("div.mud-hour")[i].Click();
-                picker.TimeIntermediate.Value.Hours.Should().Be(i + 1);
+                underlyingPicker.TimeIntermediate.Value.Hours.Should().Be(i + 1);
             }
         }
 
@@ -327,6 +344,8 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = OpenPicker(Parameter("OpenTo", OpenTo.Hours));
             var picker = comp.Instance;
+            var underlyingPicker = comp.FindComponent<MudTimePicker>().Instance;
+
             // Any hours displayed
             comp.FindAll("div.mud-time-picker-minute.mud-time-picker-dial-hidden").Count.Should().Be(1);
             // click and drag 13 to 00 on outer dial
@@ -334,22 +353,22 @@ namespace MudBlazor.UnitTests.Components
             {
                 comp.Find("div.mud-time-picker-hour").MouseDown();
                 comp.FindAll("div.mud-picker-stick-outer.mud-hour")[i].MouseOver();
-                picker.TimeIntermediate.Value.Hours.Should().Be(i + 13 == 24 ? 0 : i + 13);
+                underlyingPicker.TimeIntermediate.Value.Hours.Should().Be(i + 13 == 24 ? 0 : i + 13);
                 comp.FindAll("div.mud-picker-stick-outer.mud-hour")[i].MouseUp();
-                picker.TimeIntermediate.Value.Hours.Should().Be(i + 13 == 24 ? 0 : i + 13);
+                underlyingPicker.TimeIntermediate.Value.Hours.Should().Be(i + 13 == 24 ? 0 : i + 13);
                 comp.FindAll("div.mud-picker-stick-outer.mud-hour")[i].Click();
-                picker.TimeIntermediate.Value.Hours.Should().Be(i + 13 == 24 ? 0 : i + 13);
+                underlyingPicker.TimeIntermediate.Value.Hours.Should().Be(i + 13 == 24 ? 0 : i + 13);
             }
             // click and drag 1 to 12 on inner dial
             for (var i = 0; i < 12; i++)
             {
                 comp.Find("div.mud-time-picker-hour").MouseDown();
                 comp.FindAll("div.mud-picker-stick-inner.mud-hour")[i].MouseOver();
-                picker.TimeIntermediate.Value.Hours.Should().Be(i + 1);
+                underlyingPicker.TimeIntermediate.Value.Hours.Should().Be(i + 1);
                 comp.FindAll("div.mud-picker-stick-inner.mud-hour")[i].MouseUp();
-                picker.TimeIntermediate.Value.Hours.Should().Be(i + 1);
+                underlyingPicker.TimeIntermediate.Value.Hours.Should().Be(i + 1);
                 comp.FindAll("div.mud-picker-stick-inner.mud-hour")[i].Click();
-                picker.TimeIntermediate.Value.Hours.Should().Be(i + 1);
+                underlyingPicker.TimeIntermediate.Value.Hours.Should().Be(i + 1);
             }
         }
 
@@ -361,6 +380,8 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = OpenPicker(Parameter("TimeEditMode", TimeEditMode.OnlyMinutes));
             var picker = comp.Instance;
+            var underlyingPicker = comp.FindComponent<MudTimePicker>().Instance;
+
             // Any minutes displayed
             comp.FindAll("div.mud-time-picker-hour.mud-time-picker-dial-hidden").Count.Should().Be(1);
 
@@ -369,12 +390,12 @@ namespace MudBlazor.UnitTests.Components
             for (var i = 0; i < 60; i++)
             {
                 comp.FindAll("div.mud-minute")[i].MouseOver();
-                picker.TimeIntermediate.Value.Minutes.Should().Be(i);
-                
-                if(i == 59)
+                underlyingPicker.TimeIntermediate.Value.Minutes.Should().Be(i);
+
+                if (i == 59)
                 {
                     comp.FindAll("div.mud-minute")[i].MouseUp();
-                    picker.TimeIntermediate.Value.Minutes.Should().Be(i);
+                    underlyingPicker.TimeIntermediate.Value.Minutes.Should().Be(i);
                 }
             }
 
@@ -390,6 +411,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<MudTimePicker>(new ComponentParameter[] { Parameter("TimeEditMode", TimeEditMode.OnlyMinutes), Parameter("PickerVariant", PickerVariant.Static), Parameter("OpenTo", OpenTo.Minutes) });
             var picker = comp.Instance;
+
             // Any minutes displayed
             comp.FindAll("div.mud-time-picker-hour.mud-time-picker-dial-hidden").Count.Should().Be(1);
 
@@ -409,6 +431,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = OpenPicker();
             var picker = comp.Instance;
+            var underlyingPicker = comp.FindComponent<MudTimePicker>().Instance;
 
             // check if correct view (Hour)
             comp.FindAll("div.mud-time-picker-hour").Count.Should().Be(1);
@@ -417,9 +440,9 @@ namespace MudBlazor.UnitTests.Components
             // drag to 13 and mouse up
             comp.Find("div.mud-time-picker-hour").MouseDown();
             comp.FindAll("div.mud-picker-stick-outer.mud-hour")[0].MouseOver();
-            picker.TimeIntermediate.Value.Hours.Should().Be(13);
+            underlyingPicker.TimeIntermediate.Value.Hours.Should().Be(13);
             comp.FindAll("div.mud-picker-stick-outer.mud-hour")[0].MouseUp();
-            picker.TimeIntermediate.Value.Hours.Should().Be(13);
+            underlyingPicker.TimeIntermediate.Value.Hours.Should().Be(13);
 
             // check if the view changed to minutes
             comp.FindAll("div.mud-time-picker-hour.mud-time-picker-dial-hidden").Count.Should().Be(1);
@@ -428,17 +451,17 @@ namespace MudBlazor.UnitTests.Components
             // drag to 37 minutes and mouse up
             comp.Find("div.mud-time-picker-minute").MouseDown();
             comp.FindAll("div.mud-minute")[37].MouseOver();
-            picker.TimeIntermediate.Value.Minutes.Should().Be(37);
+            underlyingPicker.TimeIntermediate.Value.Minutes.Should().Be(37);
             comp.FindAll("div.mud-minute")[37].MouseUp();
-            picker.TimeIntermediate.Value.Minutes.Should().Be(37);
+            underlyingPicker.TimeIntermediate.Value.Minutes.Should().Be(37);
 
             // check if closed
             comp.WaitForAssertion(() => comp.FindAll("div.mud-picker-open").Count.Should().Be(0));
 
             // check correct time
-            picker.TimeIntermediate.Value.Hours.Should().Be(13);
-            picker.TimeIntermediate.Value.Minutes.Should().Be(37);
-            Console.WriteLine($"{picker.TimeIntermediate.Value.Hours}:{picker.TimeIntermediate.Value.Minutes}");
+            underlyingPicker.TimeIntermediate.Value.Hours.Should().Be(13);
+            underlyingPicker.TimeIntermediate.Value.Minutes.Should().Be(37);
+            Console.WriteLine($"{underlyingPicker.TimeIntermediate.Value.Hours}:{underlyingPicker.TimeIntermediate.Value.Minutes}");
         }
 
         /// <summary>
@@ -449,6 +472,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = OpenPicker();
             var picker = comp.Instance;
+            var underlyingPicker = comp.FindComponent<MudTimePicker>().Instance;
 
             // check if correct view (Hour)
             comp.FindAll("div.mud-time-picker-hour").Count.Should().Be(1);
@@ -456,7 +480,7 @@ namespace MudBlazor.UnitTests.Components
 
             // click on 13 (hour)
             comp.FindAll("div.mud-picker-stick-outer.mud-hour")[0].Click();
-            picker.TimeIntermediate.Value.Hours.Should().Be(13);
+            underlyingPicker.TimeIntermediate.Value.Hours.Should().Be(13);
 
             // check if the view changed to minutes
             comp.FindAll("div.mud-time-picker-hour.mud-time-picker-dial-hidden").Count.Should().Be(1);
@@ -464,29 +488,29 @@ namespace MudBlazor.UnitTests.Components
 
             // click on 37 (minute)
             comp.FindAll("div.mud-minute")[37].Click();
-            picker.TimeIntermediate.Value.Minutes.Should().Be(37);
+            underlyingPicker.TimeIntermediate.Value.Minutes.Should().Be(37);
 
             // check if closed
             comp.WaitForAssertion(() => comp.FindAll("div.mud-picker-open").Count.Should().Be(0));
 
             // check correct time
-            picker.TimeIntermediate.Value.Hours.Should().Be(13);
-            picker.TimeIntermediate.Value.Minutes.Should().Be(37);
-            Console.WriteLine($"{picker.TimeIntermediate.Value.Hours}:{picker.TimeIntermediate.Value.Minutes}");
+            underlyingPicker.TimeIntermediate.Value.Hours.Should().Be(13);
+            underlyingPicker.TimeIntermediate.Value.Minutes.Should().Be(37);
+            Console.WriteLine($"{underlyingPicker.TimeIntermediate.Value.Hours}:{underlyingPicker.TimeIntermediate.Value.Minutes}");
         }
 
         [Test]
         public async Task Open_Programmatically_CheckOpen_Close_Programmatically_CheckClosed()
         {
-            var comp = Context.RenderComponent<MudTimePicker>();
+            var comp = Context.RenderComponent<SimpleTimePickerTest>();
             Console.WriteLine(comp.Markup + "\n");
             comp.FindAll("div.mud-picker-content").Count.Should().Be(0);
             // clicking the button should open the picker
-            await comp.InvokeAsync(() => comp.Instance.Open());
+            await comp.Instance.Open();
             Console.WriteLine(comp.Markup);
             comp.FindAll("div.mud-picker-content").Count.Should().Be(1);
             // closing programmatically
-            await comp.InvokeAsync(() => comp.Instance.Close());
+            await comp.Instance.Close();
             comp.FindAll("div.mud-picker-content").Count.Should().Be(0);
         }
 

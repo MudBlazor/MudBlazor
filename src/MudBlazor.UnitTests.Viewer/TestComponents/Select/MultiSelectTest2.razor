@@ -1,4 +1,5 @@
 ﻿@namespace MudBlazor.UnitTests.TestComponents
+<MudPopoverProvider></MudPopoverProvider>
 
 <MudSelect Label="Select Item" 
     MultiSelection="true" 
@@ -16,7 +17,7 @@
 @code {
     public static string __description__ = "Test for the Select All option";
     private List<string> AllItems = new();    
-    private HashSet<string> SelectedItems = new();
+    private IEnumerable<string> SelectedItems = new HashSet<string>();
     protected override void OnInitialized()
     {
         AllItems.Add("FirstA");
