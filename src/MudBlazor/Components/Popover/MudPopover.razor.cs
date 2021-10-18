@@ -1,8 +1,8 @@
 ﻿using System;
-using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
+using System.Diagnostics.CodeAnalysis;
 using MudBlazor.Extensions;
 using MudBlazor.Utilities;
 
@@ -18,6 +18,7 @@ namespace MudBlazor
             .AddClass($"mud-popover-open", Open)
             .AddClass($"mud-popover-{TransformOrigin.ToDescriptionString()}")
             .AddClass($"mud-popover-anchor-{AnchorOrigin.ToDescriptionString()}")
+            .AddClass($"mud-popover-overflow-{OverflowBehavior.ToDescriptionString()}")
             .AddClass($"mud-popover-relative-width", RelativeWidth)
             .AddClass($"mud-paper", Paper)
             .AddClass($"mud-paper-square", Paper && Square)
@@ -28,6 +29,8 @@ namespace MudBlazor
 
         protected string PopoverStyles =>
             new StyleBuilder()
+            .AddStyle("transition-duration", $"{Duration}ms")
+            .AddStyle("transition-delay", $"{Delay}ms")
             .AddStyle("max-height", $"{MaxHeight}px", MaxHeight != null)
             .AddStyle(Style)
             .Build();
@@ -75,6 +78,16 @@ namespace MudBlazor
         [Parameter] public bool Fixed { get; set; }
 
         /// <summary>
+        /// Sets the length of time that the opening transition takes to complete.
+        /// </summary>
+        [Parameter] public double Duration { get; set; } = 251;
+
+        /// <summary>
+        /// Sets the amount of time to wait from opening the popover before beginning to perform the transition. 
+        /// </summary>
+        [Parameter] public double Delay { get; set; } = 0;
+
+        /// <summary>
         /// Sets the direction the popover will start from relative to its parent.
         /// </summary>
         /// 
@@ -92,6 +105,12 @@ namespace MudBlazor
         /// This property in conjunction with AnchorPlacement determinate where the popover will be placed.
         /// </summary>
         [Parameter] public Origin TransformOrigin { get; set; } = Origin.TopLeft;
+
+        /// <summary>
+        /// Set the overflow behavior of a popover and controls how the element should react if there is not enough space for the element to be visible
+        /// Defaults to none, which doens't apply any overflow logic
+        /// </summary>
+        [Parameter] public OverflowBehavior OverflowBehavior { get; set; } = OverflowBehavior.FilpOnOpen;
 
         /// <summary>
         /// If true, the select menu will open either above or bellow the input depending on the direction.
@@ -121,7 +140,7 @@ namespace MudBlazor
 
         protected override void OnInitialized()
         {
-            _handler = Service.Register(ChildContent);
+            _handler = Service.Register(ChildContent ?? new RenderFragment((x) => { }));
             _handler.SetComponentBaseParameters(this, PopoverClass, PopoverStyles, Open);
             base.OnInitialized();
         }

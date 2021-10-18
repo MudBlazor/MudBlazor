@@ -2,7 +2,7 @@
 
 <div class="popoverparent">
 	<p>Some Text</p>
-	<MudPopover Open="true" Style="my-custom-style: 3px"
+	<MudPopover Open="true" Style="my-custom-style:3px"
 				MaxHeight="@MaxHeight"
 				Paper="Paper"
 				Elevation="Elevation"
@@ -11,7 +11,10 @@
 				Class="my-custom-class"
 				AnchorOrigin="AnchorOrigin"
 				RelativeWidth="RelativeWidth"
-				TransformOrigin="TransformOrigin">
+				TransformOrigin="TransformOrigin"
+				OverflowBehavior="OverflowBehavior"
+				Duration="Duration"
+				>
 		<MudText Class="test-popover-content">Popover content</MudText>
 	</MudPopover>
 </div>
@@ -26,5 +29,6 @@
 	[Parameter] public Origin AnchorOrigin { get; set; } = Origin.TopLeft;
 	[Parameter] public Origin TransformOrigin { get; set; } = Origin.TopLeft;
 	[Parameter] public bool RelativeWidth { get; set; } = false;
-
+	[Parameter] public OverflowBehavior OverflowBehavior { get; set; } = OverflowBehavior.FlipNever;
+	[Parameter] public double Duration { get; set; } = 251;
 }

@@ -381,6 +381,7 @@ namespace MudBlazor
             if (!_items.Select(x => x.Value).Contains(item.Value))
             {
                 _items.Add(item);
+
                 if (item.Value != null)
                 {
                     _valueLookup[item.Value] = item;
