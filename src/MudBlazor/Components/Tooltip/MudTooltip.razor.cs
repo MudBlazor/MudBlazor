@@ -40,17 +40,17 @@ namespace MudBlazor
         /// <summary>
         /// Sets the text to be displayed inside the tooltip.
         /// </summary>
-        [Parameter] public string Text { get; set; }
+        [Parameter] public string Text { get; set; } = String.Empty;
 
         /// <summary>
         /// If true, a arrow will be displayed pointing towards the content from the tooltip.
         /// </summary>
-        [Parameter] public bool Arrow { get; set; }
+        [Parameter] public bool Arrow { get; set; } = false;
 
         /// <summary>
         /// If true, tooltip will show on touch on a touch-sensitive device.
         /// </summary>
-        [Parameter] public bool Touch { get; set; }
+        [Parameter] public bool Touch { get; set; } = false;
 
         /// <summary>
         /// Sets the length of time that the opening transition takes to complete.

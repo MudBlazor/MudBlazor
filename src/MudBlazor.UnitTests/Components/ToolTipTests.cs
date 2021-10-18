@@ -1,6 +1,8 @@
 ﻿
 using System;
+using System.Linq;
 using System.Threading.Tasks;
+using AngleSharp.Html.Dom;
 using Bunit;
 using FluentAssertions;
 using Microsoft.AspNetCore.Components.Web;
@@ -12,6 +14,21 @@ namespace MudBlazor.UnitTests.Components
     [TestFixture]
     public class ToolTipTests : BunitTest
     {
+        [Test]
+        public void DefaultValue()
+        {
+            var toolTip = new MudTooltip();
+
+            toolTip.Color.Should().Be(Color.Default);
+            toolTip.Text.Should().BeEmpty();
+            toolTip.Arrow.Should().BeFalse();
+            toolTip.Touch.Should().BeFalse();
+            toolTip.Duration.Should().Be(251);
+            toolTip.Delay.Should().Be(0);
+            toolTip.Placement.Should().Be(Placement.Bottom);
+            toolTip.Inline.Should().BeTrue();
+        }
+
         [Test]
         [TestCase(false)]
         [TestCase(true)]
@@ -45,6 +62,7 @@ namespace MudBlazor.UnitTests.Components
 
             //content should be visible
             popoverContentNode.TextContent.Should().Be("my tooltip content text");
+            popoverContentNode.ClassList.Should().Contain("d-flex");
 
             //trigger mouseleave
             if (usingFocusout == false)
@@ -78,7 +96,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        [TestCase(true)]
+        [TestCase(false)]
         [TestCase(true)]
         public async Task RenderTooltipFragement(bool usingFocusout)
         {
@@ -123,6 +141,165 @@ namespace MudBlazor.UnitTests.Components
             }
             //no content should be visible
             popoverContentNode.Children.Should().BeEmpty();
+        }
+
+        [Test]
+        [TestCase(false)]
+        [TestCase(true)]
+        public void HandleTouch(bool touchIsEnabled)
+        {
+            var comp = Context.RenderComponent<TooltipWithTextTest>(p =>
+            {
+                p.Add(x => x.TooltipTextContent, "my tooltip content text");
+                p.Add(x => x.EnableTouch, touchIsEnabled);
+
+            });
+            Console.WriteLine(comp.Markup);
+
+            // content should always be visible
+            var button = comp.Find("button");
+            button.TextContent.Should().Be("My Buttion");
+
+
+            var popoverNode = button.ParentElement.Children[1];
+            popoverNode.Id.Should().StartWith("popover-");
+            var popoverContentNode = comp.Find($"#popovercontent-{popoverNode.Id.Substring(8)}");
+
+            //no content for the popover node
+            popoverContentNode.Children.Should().BeNullOrEmpty();
+
+            //trigger TouchStart
+            button.ParentElement.TouchStart();
+
+            if (touchIsEnabled == true)
+            {
+                //content should be visible
+                popoverContentNode.TextContent.Should().Be("my tooltip content text");
+            }
+            else
+            {
+                popoverContentNode.TextContent.Should().BeNullOrEmpty();
+            }
+
+            //trigger touch end
+            button.ParentElement.TouchEnd();
+
+            //no content should be visible
+            popoverContentNode.Children.Should().BeEmpty();
+        }
+
+        [Test]
+        [TestCase(false, new[] { "mud-tooltip-root" })]
+        [TestCase(true, new[] { "mud-tooltip-root", "mud-tooltip-inline" })]
+        public void ContainerClass_PropertyRelations(bool inlineValue, string[] expectedClasses)
+        {
+            var comp = Context.RenderComponent<ToolTipContainerPropertyTest>(p =>
+            p.Add(x => x.Inline, inlineValue));
+
+            Console.WriteLine(comp.Markup);
+
+            comp.Nodes.Last().Should().BeAssignableTo<IHtmlElement>();
+
+            var container = comp.Nodes.Last() as IHtmlElement;
+
+            container.ClassList.Should().BeEquivalentTo(expectedClasses);
+        }
+
+        [Test]
+        [TestCase(false, new[] { "mud-tooltip" })]
+        [TestCase(true, new[] { "mud-tooltip", "mud-tooltip-arrow" })]
+        public async Task PopoverClass_PropertyArrow(bool arrowValue, string[] expectedClasses)
+        {
+            var comp = Context.RenderComponent<ToolTipPopoverClassPropertyTest>(p =>
+            p.Add(x => x.Arrow, arrowValue));
+
+            Console.WriteLine(comp.Markup);
+
+            var button = comp.Find("button");
+            await button.ParentElement.TriggerEventAsync("onmouseenter", new MouseEventArgs());
+
+            var popoverContentNode = comp.Find("#my-tooltip-content").ParentElement;
+
+            popoverContentNode.ClassList.Should().Contain(expectedClasses);
+        }
+
+        [Test]
+        [TestCase(Color.Default, new[] { "mud-tooltip", "mud-tooltip-default" })]
+        [TestCase(Color.Tertiary, new[] { "mud-tooltip", "mud-theme-tertiary" })]
+        [TestCase(Color.Success, new[] { "mud-tooltip", "mud-theme-success" })]
+        [TestCase(Color.Dark, new[] { "mud-tooltip", "mud-theme-dark" })]
+        public async Task PopoverClass_PropertyColor(Color colorValue, string[] expectedClasses)
+        {
+            var comp = Context.RenderComponent<ToolTipPopoverClassPropertyTest>(p =>
+            p.Add(x => x.Color, colorValue));
+
+            Console.WriteLine(comp.Markup);
+
+            var button = comp.Find("button");
+            await button.ParentElement.TriggerEventAsync("onmouseenter", new MouseEventArgs());
+
+            var popoverContentNode = comp.Find("#my-tooltip-content").ParentElement;
+
+            popoverContentNode.ClassList.Should().Contain(expectedClasses);
+        }
+
+        [Test]
+        [TestCase(Color.Default, false, new[] { "mud-tooltip", "mud-tooltip-default", })]
+        [TestCase(Color.Default, true, new[] { "mud-tooltip", "mud-tooltip-default", "mud-tooltip-arrow" })]
+        [TestCase(Color.Success, true, new[] { "mud-tooltip", "mud-theme-success", "mud-tooltip-arrow", "mud-border-success" })]
+        [TestCase(Color.Success, false, new[] { "mud-tooltip", "mud-theme-success" })]
+        public async Task PopoverClass_PropertyColorAndArrow(Color colorValue, bool arrowValue, string[] expectedClasses)
+        {
+            var comp = Context.RenderComponent<ToolTipPopoverClassPropertyTest>(p =>
+            {
+                p.Add(x => x.Color, colorValue);
+                p.Add(x => x.Arrow, arrowValue);
+            });
+
+            Console.WriteLine(comp.Markup);
+
+            var button = comp.Find("button");
+            await button.ParentElement.TriggerEventAsync("onmouseenter", new MouseEventArgs());
+
+            var popoverContentNode = comp.Find("#my-tooltip-content").ParentElement;
+
+            popoverContentNode.ClassList.Should().Contain(expectedClasses);
+        }
+
+        // .AddClass($"mud-popover-{TransformOrigin.ToDescriptionString()}")
+        //  .AddClass($"mud-popover-anchor-{AnchorOrigin.ToDescriptionString()}")
+        //  .AddClass($"mud-tooltip-{ConvertPlacement().ToDescriptionString()}")
+
+        [Test]
+        [TestCase(Placement.Bottom, false, new[] { "mud-tooltip", "mud-tooltip-bottom-center", "mud-popover-anchor-bottom-center", "mud-popover-top-center" })]
+        [TestCase(Placement.Bottom, true, new[] { "mud-tooltip", "mud-tooltip-bottom-center", "mud-popover-anchor-bottom-center", "mud-popover-top-center" })]
+        [TestCase(Placement.Top, false, new[] { "mud-tooltip", "mud-tooltip-top-center", "mud-popover-anchor-top-center", "mud-popover-bottom-center" })]
+        [TestCase(Placement.Top, true, new[] { "mud-tooltip", "mud-tooltip-top-center", "mud-popover-anchor-top-center", "mud-popover-bottom-center" })]
+        [TestCase(Placement.Left, false, new[] { "mud-tooltip", "mud-tooltip-center-left", "mud-popover-anchor-center-left", "mud-popover-center-right" })]
+        [TestCase(Placement.Left, true, new[] { "mud-tooltip", "mud-tooltip-center-left", "mud-popover-anchor-center-left", "mud-popover-center-right" })]
+        [TestCase(Placement.Start, false, new[] { "mud-tooltip", "mud-tooltip-center-left", "mud-popover-anchor-center-left", "mud-popover-center-right" })]
+        [TestCase(Placement.Start, true, new[] { "mud-tooltip", "mud-tooltip-center-right", "mud-popover-anchor-center-right", "mud-popover-center-left" })]
+        [TestCase(Placement.Right, false, new[] { "mud-tooltip", "mud-tooltip-center-right", "mud-popover-anchor-center-right", "mud-popover-center-left" })]
+        [TestCase(Placement.Right, true, new[] { "mud-tooltip", "mud-tooltip-center-right", "mud-popover-anchor-center-right", "mud-popover-center-left" })]
+        [TestCase(Placement.End, false, new[] { "mud-tooltip", "mud-tooltip-center-right", "mud-popover-anchor-center-right", "mud-popover-center-left" })]
+        [TestCase(Placement.End, true, new[] { "mud-tooltip", "mud-tooltip-center-left", "mud-popover-anchor-center-left", "mud-popover-center-right" })]
+
+        public async Task PopoverClass_Placement(Placement placementValue, bool rtlValue, string[] expectedClasses)
+        {
+            var comp = Context.RenderComponent<ToolTipPlacementPropertyTest>(p =>
+            {
+                p.Add(x => x.Placement, placementValue);
+                p.Add(x => x.RightToLeft, rtlValue);
+            });
+
+            Console.WriteLine(comp.Markup);
+
+            var button = comp.Find("button");
+            await button.ParentElement.TriggerEventAsync("onmouseenter", new MouseEventArgs());
+
+            var popoverContentNode = comp.Find("#my-tooltip-content").ParentElement;
+
+            popoverContentNode.ClassList.Should().Contain(expectedClasses);
         }
     }
 }
