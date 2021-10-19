@@ -74,6 +74,7 @@ namespace MudBlazor.UnitTests.Components
             Console.WriteLine("\nOpened dialog: " + comp.Markup);
             comp.Find("div.mud-dialog-container").Should().NotBe(null);
             comp.Find("p.mud-typography").TrimmedText().Should().Be("Wabalabadubdub!");
+            comp.Find("div.mud-dialog").GetAttribute("class").Should().Contain("mud-dialog-width-full");
             // close by click on ok button
             comp.Find("button").Click();
             comp.Markup.Trim().Should().BeEmpty();
