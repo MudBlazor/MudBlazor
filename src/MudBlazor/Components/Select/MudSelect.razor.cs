@@ -77,7 +77,7 @@ namespace MudBlazor
                 await ScrollManager.ScrollToListItemAsync(item.ItemId, direction, true);
         }
 
-        private async Task SelectFirstItem(string startChar=null)
+        private async Task SelectFirstItem(string startChar = null)
         {
             if (_items == null || _items.Count == 0)
                 return;
@@ -198,7 +198,7 @@ namespace MudBlazor
             get
             {
                 if (_selectedValues == null)
-                    _selectedValues = new HashSet<T>();
+                    _selectedValues = new HashSet<T>(SelectedValuesComparer);
                 return _selectedValues;
             }
             set
@@ -206,7 +206,7 @@ namespace MudBlazor
                 var set = value ?? new HashSet<T>();
                 if (SelectedValues.Count() == set.Count() && _selectedValues.All(x => set.Contains(x)))
                     return;
-                _selectedValues = new HashSet<T>(set);
+                _selectedValues = new HashSet<T>(set, SelectedValuesComparer);
                 SelectionChangedFromOutside?.Invoke(_selectedValues);
                 if (!MultiSelection)
                     SetValueAsync(_selectedValues.FirstOrDefault()).AndForget();
@@ -221,7 +221,7 @@ namespace MudBlazor
                     }
                     else
                     {
-                        SetTextAsync(string.Join(Delimiter, SelectedValues.Select(x => Converter.Set(x))), updateValue:false).AndForget();
+                        SetTextAsync(string.Join(Delimiter, SelectedValues.Select(x => Converter.Set(x))), updateValue: false).AndForget();
                     }
                 }
                 SelectedValuesChanged.InvokeAsync(new HashSet<T>(SelectedValues));
@@ -229,6 +229,9 @@ namespace MudBlazor
                     SetValueAsync((T)(object)Text, updateText: false).AndForget();
             }
         }
+
+        [Parameter]
+        public IEqualityComparer<T> SelectedValuesComparer { get; set; }
 
         private Func<T, string> _toStringFunc = x => x?.ToString();
 
@@ -928,8 +931,8 @@ namespace MudBlazor
         {
             if (!MultiSelection)
                 return;
-            var selectedValues = new HashSet<T>(_items.Where(x => !x.Disabled && x.Value != null).Select(x => x.Value));
-            _selectedValues=  new HashSet<T>(selectedValues);
+            var selectedValues = new HashSet<T>(_items.Where(x => !x.Disabled && x.Value != null).Select(x => x.Value), SelectedValuesComparer);
+            _selectedValues = new HashSet<T>(selectedValues, SelectedValuesComparer);
             if (MultiSelectionTextFunc != null)
             {
                 await SetCustomizedTextAsync(string.Join(Delimiter, SelectedValues.Select(x => Converter.Set(x))),

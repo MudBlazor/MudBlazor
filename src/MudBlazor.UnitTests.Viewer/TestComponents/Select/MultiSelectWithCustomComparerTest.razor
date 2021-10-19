@@ -1,9 +1,12 @@
 ﻿@namespace MudBlazor.UnitTests.TestComponents
+<MudPopoverProvider></MudPopoverProvider>
 
 <MudGrid>
     <MudItem xs="12">
         <MudSelect T="Coffee" Label="Coffee"
-                   MultiSelection="true" SelectedValues="Selected" SelectedValuesChanged="SelectedChanged"
+                   MultiSelection="true"
+                   SelectedValues="Selected" SelectedValuesChanged="SelectedChanged"
+                   SelectedValuesComparer="SelectedComparer"
                    ToStringFunc="@(x => x.Name)">
             <MudSelectItem Value="@(new Coffee("cap","Cappuccino"))" />
             <MudSelectItem Value="@(new Coffee("lat","Cafe Latte"))" />
@@ -17,9 +20,11 @@
 </MudGrid>
 
 @code {
-    HashSet<Coffee> Selected { get; } = new(new CoffeeComparer());
+    static CoffeeComparer SelectedComparer { get; } = new();
 
-    void SelectedChanged(HashSet<Coffee> newSelected)
+    HashSet<Coffee> Selected { get; } = new(SelectedComparer);
+
+    void SelectedChanged(IEnumerable<Coffee> newSelected)
     {
         Selected.Clear();
         Selected.UnionWith(newSelected);
