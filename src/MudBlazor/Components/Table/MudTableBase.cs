@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Microsoft.AspNetCore.Components;
@@ -12,6 +13,7 @@ namespace MudBlazor
     public abstract class MudTableBase : MudComponentBase
     {
         internal object _editingItem = null;
+        internal bool _isEditing => _editingItem != null;
 
         private int _currentPage = 0;
         private int? _rowsPerPage;
@@ -314,6 +316,7 @@ namespace MudBlazor
         /// <summary>
         /// Alignment of the table cell text when breakpoint is smaller than <see cref="Breakpoint" />
         /// </summary>
+        [ExcludeFromCodeCoverage]
         [Obsolete("This property is obsolete. And not needed anymore, the cells width/alignment is done automatically.")] [Parameter] public bool RightAlignSmall { get; set; } = true;
         #endregion
 

@@ -14,6 +14,7 @@ using FluentValidation;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.UnitTests.TestComponents;
+using MudBlazor.UnitTests.TestComponents.TextField;
 using NUnit.Framework;
 using static Bunit.ComponentParameterFactory;
 
@@ -90,8 +91,8 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("input").Change("seventeen");
             comp.Find("input").Blur();
             Console.WriteLine(comp.Markup);
-            comp.FindAll("p.mud-input-error").Count.Should().Be(1);
-            comp.Find("p.mud-input-error").TextContent.Trim().Should().Be("Not a valid number");
+            comp.FindAll("div.mud-input-error").Count.Should().Be(1);
+            comp.Find("div.mud-input-error").TextContent.Trim().Should().Be("Not a valid number");
         }
 
         /// <summary>
@@ -488,7 +489,7 @@ namespace MudBlazor.UnitTests.Components
             var textfield = comp.Instance;
             textfield.Value.Should().Be(17);
             textfield.Text.Should().Be("17");
-            await comp.InvokeAsync(async ()=> await textfield.Clear());
+            await comp.InvokeAsync(async () => await textfield.Clear());
             textfield.Value.Should().Be(0);
             textfield.Text.Should().Be(null);
         }
@@ -504,6 +505,32 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(async () => await textfield.Clear());
             textfield.Value.Should().Be(null);
             textfield.Text.Should().Be(null);
+        }
+
+        [Test]
+        public void TextField_CharacterCount()
+        {
+            var comp = Context.RenderComponent<MudTextField<string>>();
+            var inputControl = comp.FindComponent<MudInputControl>();
+            //Condition 1
+            comp.Instance.Counter = null;
+            inputControl.Instance.CounterText.Should().Be("");
+            //Condition 2
+            comp.Instance.Counter = 25;
+            comp.Find("input").Change("Test text");
+            inputControl.Instance.CounterText.Should().Be("9 / 25");
+            //Condition 3
+            comp.Instance.Counter = 0;
+            comp.Find("input").Change("Test text with total of 56 characters a aaaaaaaaa aaaaaa");
+            inputControl.Instance.CounterText.Should().Be("56");
+            //Condition 4
+            comp.Instance.Counter = 25;
+            comp.Instance.MaxLength = 30;
+            comp.Find("input").Change("Test text with total of25");
+            inputControl.Instance.CounterText.Should().Be("25 / 25");
+            //Condition 5
+            comp.Find("input").Change("Test text with total of 56 characters a aaaaaaaaa aaaaaa");
+            inputControl.Instance.CounterText.Should().Be("56 / 25");
         }
 
         /// <summary>
@@ -543,10 +570,30 @@ namespace MudBlazor.UnitTests.Components
             input.Instance.Text.Should().Be("In case of ladle");
 
             // force text update
-            await comp.InvokeAsync(()=> input.Instance.ForceRender(forceTextUpdate:true));
+            await comp.InvokeAsync(() => input.Instance.ForceRender(forceTextUpdate: true));
 
             input.Instance.Value.Should().Be("");
             input.Instance.Text.Should().Be("");
+        }
+
+        [Test]
+        public async Task TextField_Should_UpdateOnBoundValueChange_WhenFocused_WithTextUpdateSuppressionOff()
+        {
+            var comp = Context.RenderComponent<TextFieldUpdateViaBindingTest>();
+            var input = comp.FindComponent<MudInput<string>>();
+            // this will make the input focused!
+            comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = "a", Type = "keydown", });
+            // now simulate user input:
+            comp.Find("input").Input("The Stormlight Archive");
+            // check binding update
+            comp.Find("span").TrimmedText().Should().Be("value: The Stormlight Archive");
+            input.Instance.Value.Should().Be("The Stormlight Archive");
+            input.Instance.Text.Should().Be("The Stormlight Archive");
+            // now hit Enter to cause the clearing of the focused text field
+            comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = "Enter", Type = "keydown", });
+            comp.WaitForAssertion(() => comp.Find("span").TrimmedText().Should().Be("value:"));
+            comp.WaitForAssertion(() => input.Instance.Value.Should().Be(""));
+            comp.WaitForAssertion(() => input.Instance.Text.Should().Be(""));
         }
     }
 

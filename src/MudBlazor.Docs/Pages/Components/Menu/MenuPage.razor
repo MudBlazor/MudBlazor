@@ -1,6 +1,5 @@
 ﻿@page "/components/menu"
 
-
 <DocsPage>
     <DocsPageHeader Title="Menus" SubTitle="The component shows a menu at the position of the element used to activate it" />
     <DocsPageContent>
@@ -12,7 +11,7 @@
             <SectionContent Outlined="true">
                 <MenuSimpleExample />
             </SectionContent>
-            <SectionSource Code="MenuSimpleExample" GitHubFolderName="Menu"  />
+            <SectionSource Code="MenuSimpleExample" GitHubFolderName="Menu" />
         </DocsPageSection>
 
         <DocsPageSection>
@@ -22,7 +21,7 @@
             <SectionContent Outlined="true" DisplayFlex="true">
                 <MenuCustomizationExample />
             </SectionContent>
-            <SectionSource Code="MenuCustomizationExample" ShowCode="false" GitHubFolderName="Menu"  />
+            <SectionSource Code="MenuCustomizationExample" ShowCode="false" GitHubFolderName="Menu" />
         </DocsPageSection>
 
         <DocsPageSection>
@@ -46,43 +45,13 @@
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader Title="Direction">
-                <Description>Control where the menu should start relatively to the parent. Top-Left is the default.</Description>
-            </SectionHeader>
-            <SectionContent Outlined="true" DisplayFlex="true">
-                <MenuDirectionExample />
-            </SectionContent>
-            <SectionSource Code="MenuDirectionExample" ShowCode="false" GitHubFolderName="Menu" />
-        </DocsPageSection>
-
-        <DocsPageSection>
-            <SectionHeader Title="Offset">
-                <Description>Offset the menu to be located outside of the parent.</Description>
-            </SectionHeader>
-            <SectionContent Outlined="true" DisplayFlex="true">
-                <MenuOffsetExample />
-            </SectionContent>
-            <SectionSource Code="MenuOffsetExample" ShowCode="false" GitHubFolderName="Menu" />
-        </DocsPageSection>
-
-        <DocsPageSection>
             <SectionHeader Title="Icon Buttons">
                 <Description>If an Icon is supplied through the <CodeInline>Icon</CodeInline> property, the menu button will display as an <CodeInline>IconButton</CodeInline>.</Description>
             </SectionHeader>
             <SectionContent Outlined="true" DisplayFlex="true">
                 <MenuIconButtonsExample />
             </SectionContent>
-            <SectionSource Code="MenuIconButtonsExample" ShowCode="true" GitHubFolderName="Menu"  />
-        </DocsPageSection>
-
-        <DocsPageSection>
-            <SectionHeader Title="Usage">
-                <Description>The menu items also act like buttons, simply assign an onclick event or a link to them.</Description>
-            </SectionHeader>
-            <SectionContent Outlined="true" DisplayFlex="true">
-                <MenuUsageExample />
-            </SectionContent>
-            <SectionSource Code="MenuUsageExample" ShowCode="true" GitHubFolderName="Menu"  />
+            <SectionSource Code="MenuIconButtonsExample" ShowCode="false" GitHubFolderName="Menu"  />
         </DocsPageSection>
 
         <DocsPageSection>
@@ -108,7 +77,46 @@
             <SectionContent Outlined="true">
                 <MenuActivatorOnMouseExample />
             </SectionContent>
-            <SectionSource Code="MenuActivatorOnMouseExample" ShowCode="true" GitHubFolderName="Menu" />
+            <SectionSource Code="MenuActivatorOnMouseExample" ShowCode="false" GitHubFolderName="Menu" />
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Placement">
+                <Description>
+                    The component uses <MudLink Href="/components/popover">MudPopover</MudLink> to place it's menu. It can be controlled with <CodeInline>AnchorOrigin</CodeInline> and <CodeInline>TransformOrigin</CodeInline><br />
+                    To change where the popover should start from you only need to change the <CodeInline>AnchorOrigin</CodeInline> property.
+                </Description>
+            </SectionHeader>
+            <SectionHeader>
+                <SubTitle>AnchorOrigin</SubTitle>
+                <Description>
+                    For example, to change the vertical origin of the popover set <CodeInline>AnchorOrigin</CodeInline>'s orgin to CenterCenter or BottomCenter.
+                </Description>
+            </SectionHeader>
+            <SectionContent Outlined="true" DisplayFlex="true">
+                <MenuAnchorOriginExample />
+            </SectionContent>
+            <SectionSource Code="MenuAnchorOriginExample" GitHubFolderName="Menu" ShowCode="false" />
+            <SectionHeader>
+                <SubTitle>TransformOrigin</SubTitle>
+                <Description>
+                    Controll the transform origin point with the <CodeInline>TransformOrigin</CodeInline> property, note that its always relative to the <CodeInline>AnchorOrigin</CodeInline>
+                </Description>
+            </SectionHeader>
+            <SectionContent Outlined="true" DisplayFlex="true">
+                <MenuTransformOriginExample />
+            </SectionContent>
+            <SectionSource Code="MenuTransformOriginExample" GitHubFolderName="Menu" ShowCode="false" />
+            <SectionHeader>
+                <SubTitle>Advanced Placement</SubTitle>
+                <Description>
+                    To learn and see all posibile examples of how you can position the popover check out <MudLink Color="Color.Secondary" Href="/components/popover">popover's documentation page!</MudLink>
+                </Description>
+            </SectionHeader>
+            <SectionContent Outlined="true" DisplayFlex="true">
+                <MenuAdvancedPopoverExample />
+            </SectionContent>
+            <SectionSource Code="MenuAdvancedPopoverExample" GitHubFolderName="Menu" ShowCode="false" />
         </DocsPageSection>
 
     </DocsPageContent>

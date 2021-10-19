@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Web;
+using MudBlazor.Services;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
@@ -25,6 +28,10 @@ namespace MudBlazor
 
         public MudPicker() : base(new Converter<T, string>()) { }
         protected MudPicker(Converter<T, string> converter) : base(converter) { }
+
+        [Inject] private IKeyInterceptor _keyInterceptor { get; set; }
+
+        private string _elementId = "picker" + Guid.NewGuid().ToString().Substring(0, 8);
 
         [Inject] private IBrowserWindowSizeProvider WindowSizeListener { get; set; }
 
@@ -76,6 +83,7 @@ namespace MudBlazor
         /// <summary>
         /// Sets the icon of the input text field
         /// </summary>
+        [ExcludeFromCodeCoverage]
         [Parameter]
         [Obsolete("Obsolete, use AdornmentIcon")]
         public string InputIcon
@@ -135,6 +143,11 @@ namespace MudBlazor
         [Parameter] public string HelperText { get; set; }
 
         /// <summary>
+        /// If true, the helper text will only be visible on focus.
+        /// </summary>
+        [Parameter] public bool HelperTextOnFocus { get; set; }
+
+        /// <summary>
         /// If string has value the label text will be displayed in the input, and scaled down at the top if the input has value.
         /// </summary>
         [Parameter] public string Label { get; set; }
@@ -167,6 +180,7 @@ namespace MudBlazor
         /// <summary>
         ///  Variant of the text input
         /// </summary>
+        [ExcludeFromCodeCoverage]
         [Parameter]
         [Obsolete("Obsolete, use Variant")]
         public Variant InputVariant
@@ -336,7 +350,25 @@ namespace MudBlazor
             }
         }
 
-        protected void ToggleState()
+        protected override async Task OnAfterRenderAsync(bool firstRender)
+        {
+            if (firstRender)
+            {
+                await _keyInterceptor.Connect(_elementId, new KeyInterceptorOptions()
+                {
+                    //EnableLogging = true,
+                    TargetClass = "mud-input-slot",
+                    Keys = {
+                        new KeyOptions { Key=" ", PreventDown = "key+none" },
+                        new KeyOptions { Key="Enter", PreventDown = "key+none" },
+                        new KeyOptions { Key="NumpadEnter", PreventDown = "key+none" },
+                    },
+                });
+            }
+            await base.OnAfterRenderAsync(firstRender);
+        }
+
+        protected internal void ToggleState()
         {
             if (Disabled)
                 return;
@@ -436,6 +468,49 @@ namespace MudBlazor
             {
                 _pickerHorizontalPosition = size.Width > clientRect.Width ?
                     PickerHorizontalPosition.Right : PickerHorizontalPosition.Left;
+            }
+        }
+
+        protected internal void HandleKeyDown(KeyboardEventArgs obj)
+        {
+            if (Disabled || ReadOnly)
+                return;
+            switch (obj.Key)
+            {
+                case "Enter":
+                case "NumpadEnter":
+                    Open();
+                    break;
+                case "Escape":
+                case "Tab":
+                    Close(false);
+                    break;
+                case "ArrowDown":
+                    if (obj.AltKey == true)
+                    {
+                        Open();
+                    }
+                    break;
+                case "ArrowUp":
+                    if (obj.AltKey == true)
+                    {
+                        Close(false);
+                    }
+                    break;
+                case " ":
+                    if (!Editable)
+                    {
+                        if (IsOpen)
+                        {
+                            Close(false);
+                        }
+                        else
+                        {
+                            Open();
+                        }
+                        
+                    }
+                    break;
             }
         }
     }
