@@ -87,7 +87,7 @@ namespace MudBlazor
         /// <summary>
         /// The minimum height of the Autocomplete when it is open. 
         /// </summary>
-        [Parameter] public int MinHeight { get; set; } = 0;
+        [Parameter] public int MinHeight { get; set; }
 
 
         private Func<T, string> _toStringFunc;
