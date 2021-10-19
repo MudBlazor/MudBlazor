@@ -23,38 +23,43 @@
                           InputMode="@InputMode" Pattern="@Pattern"
                           T="string" />
                 <MudPopover Open="@IsOpen" MaxHeight="@MaxHeight" AnchorOrigin="@_anchorOrigin" TransformOrigin="@_transformOrigin" Class="@PopoverClass" RelativeWidth="true">
-                    @if (_items != null && _items.Length != 0)
-                    {
-                        <MudList Clickable="true" Dense="@Dense">
-                            @for (var index = 0; index < _items.Length; index++)
+                    
+                   
+                    <div style="@($"min-height: {MinHeight}px;")">
+                        @if (ShowLoading && IsLoading)
                             {
-                                var item = _items[index];
-                                bool is_selected = index == _selectedListItemIndex;
-                                bool is_disabled = !_enabledItemIndices.Contains(index);
-                                <MudListItem @key="@item" id="@GetListItemId(index)" Disabled="@(is_disabled)" OnClick="@(() => SelectOption(item))" Class="@(is_selected ? "mud-selected-item" : "")">
-                                    @if (ItemTemplate == null)
-                                    {
-                                        @GetItemString(item)
-                                    }
-                                    else if (is_disabled && ItemDisabledTemplate != null)
-                                    {
-                                        @ItemDisabledTemplate(item)
-                                    }
-                                    else if (is_selected)
-                                    {
-                                        @if (ItemSelectedTemplate == null)
-                                            @ItemTemplate(item)
-                                        else
-                                            @ItemSelectedTemplate(item)
-                                    }
-                                    else
-                                    {
-                                        @ItemTemplate(item)
-                                    }
-                                </MudListItem>
-                            }
-                        </MudList>
-                    }
+                        <div style="height: 100%; position: absolute; background-color: transparent;  width: 100%;">
+                            <div style="position: absolute; top: 45%; left:50%; height: 50px; width: 50px; -ms-transform: translateY(-50%); transform: translateY(-50%); -ms-transform: translateX(-50%); transform: translateX(-50%);">
+                                <MudProgressCircular Color="@LoadingColor" Indeterminate="true" Size="@LoadingSize" />
+                            </div>
+                        </div>}
+                        @if (_items != null && _items.Length != 0)
+                        {
+                    <MudList Clickable="true" Dense="@Dense">
+                        @for (var index = 0; index < _items.Length; index++)
+                        {
+                            var item = _items[index];
+                            bool is_selected = index == _selectedListItemIndex;
+                            bool is_disabled = !_enabledItemIndices.Contains(index);
+                    <MudListItem @key="@item" id="@GetListItemId(index)" Disabled="@(is_disabled)" OnClick="@(() => SelectOption(item))" Class="@(is_selected ? "mud-selected-item" : "")">
+                        @if (ItemTemplate == null)
+                        {
+                    @GetItemString(item) }
+                else if (is_disabled && ItemDisabledTemplate != null)
+                {
+                    @ItemDisabledTemplate(item) }
+                else if (is_selected)
+                {
+                    @if (ItemSelectedTemplate == null)
+                    @ItemTemplate(item) else
+                    @ItemSelectedTemplate(item) }
+                else
+                {
+                    @ItemTemplate(item)}
+                    </MudListItem>}
+                    </MudList>}
+                    </div>
+                  
                 </MudPopover>
             </InputContent>
         </MudInputControl>

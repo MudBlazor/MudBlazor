@@ -84,6 +84,12 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public int MaxHeight { get; set; } = 300;
 
+        /// <summary>
+        /// The minimum height of the Autocomplete when it is open. 
+        /// </summary>
+        [Parameter] public int MinHeight { get; set; } = 0;
+
+
         private Func<T, string> _toStringFunc;
 
         /// <summary>
@@ -110,6 +116,16 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         public Func<string, Task<IEnumerable<T>>> SearchFunc { get; set; }
+
+
+        /// <summary>
+        /// Func that returns a list of items matching the typed text.  Provides a cancellation token that
+        /// is marked as cancelled when the user changes the search text or selects 
+        /// a value from the list. This can be used to cancel expensive asynchronous work occuring within 
+        /// the SearchFunc itself.
+        /// </summary>
+        [Parameter]
+        public Func<string, CancellationToken, Task<IEnumerable<T>>> SearchFuncWithCancel { get; set; }
 
         /// <summary>
         /// Maximum items to display, defaults to 10.
@@ -163,9 +179,26 @@ namespace MudBlazor
         [Parameter] public bool CoerceValue { get; set; }
 
         /// <summary>
+        /// Show a loading animation, if true. 
+        /// </summary>
+        [Parameter] public bool ShowLoading { get; set; }
+
+        /// <summary>
+        /// The color of the loading circle.
+        /// </summary>
+        [Parameter] public Color LoadingColor { get; set; } = Color.Default;
+
+        /// <summary>
+        /// The size of the loading circle.
+        /// </summary>
+        [Parameter] public Size LoadingSize { get; set; } = Size.Medium;
+
+        /// <summary>
         /// Function to be invoked when checking whether an item should be disabled or not
         /// </summary>
         [Parameter] public Func<T, bool> ItemDisabledFunc { get; set; }
+
+        private bool IsLoading { get; set; }
 
         private bool _isOpen;
 
@@ -207,6 +240,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public EventCallback<MouseEventArgs> OnClearButtonClick { get; set; }
 
+        private CancellationTokenSource CancellationTokenSrc { get; set; }
         private string _currentIcon;
 
         private MudInput<string> _elementReference;
@@ -255,10 +289,12 @@ namespace MudBlazor
         {
             Adornment = Adornment.End;
             IconSize = Size.Medium;
+            CancellationTokenSrc = new CancellationTokenSource();
         }
 
         public async Task SelectOption(T value)
         {
+            CancelToken();
             await SetValueAsync(value);
             if (_items != null)
                 _selectedListItemIndex = Array.IndexOf(_items, value);
@@ -331,6 +367,12 @@ namespace MudBlazor
 
         private void OnTimerComplete(object stateInfo) => InvokeAsync(OnSearchAsync);
 
+        private void CancelToken()
+        {
+            CancellationTokenSrc.Cancel();
+            CancellationTokenSrc = new CancellationTokenSource();
+        }
+
         /// <remarks>
         /// This async method needs to return a task and be awaited in order for
         /// unit tests that trigger this method to work correctly.
@@ -345,14 +387,36 @@ namespace MudBlazor
             }
 
             IEnumerable<T> searched_items = Array.Empty<T>();
+            CancelToken();
+
             try
             {
-                searched_items = (await SearchFunc(Text)) ?? Array.Empty<T>();
+                IsLoading = true;
+                if (ShowLoading)
+                {
+                    IsOpen = true;
+                    StateHasChanged();
+                }
+
+                if (SearchFuncWithCancel != null)
+                {
+                    searched_items = (await SearchFuncWithCancel(Text, CancellationTokenSrc.Token)) ?? Array.Empty<T>();
+                }
+                else
+                {
+                    searched_items = (await SearchFunc(Text)) ?? Array.Empty<T>();
+                }
+               
             }
             catch (Exception e)
             {
                 Console.WriteLine("The search function failed to return results: " + e.Message);
             }
+            finally
+            {
+                IsLoading = false;
+            }
+
             if (MaxItems.HasValue)
                 searched_items = searched_items.Take(MaxItems.Value);
             _items = searched_items.ToArray();
