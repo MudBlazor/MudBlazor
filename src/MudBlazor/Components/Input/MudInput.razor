@@ -49,20 +49,6 @@
 	}
 	else
 	{
-		@if (InputType == InputType.Hidden && ChildContent != null)
-		{
-            @if(Disabled) {
-		    	<div class="@InputClassname" @onblur="@OnBlurred">
-		        	@ChildContent
-		    	</div>
-            }
-            else {
-		    	<div class="@InputClassname"  tabindex="0" @onblur="@OnBlurred" @ref="@_elementReference1">
-		       		@ChildContent
-		    	</div>
-            }
-		}
-
 	    <input class="@InputClassname"
                 @ref="_elementReference" 
                 @attributes="UserAttributes" 
@@ -87,6 +73,20 @@
                 @onwheel="@OnMouseWheel"
          />
 	     @*Note: double mouse wheel handlers needed for Firefox because it doesn't know onmousewheel*@
+      
+	    @if (InputType == InputType.Hidden && ChildContent != null)
+	    {
+	        @if(Disabled) {
+	            <div class="@InputClassname" @onblur="@OnBlurred">
+                    @ChildContent
+                </div>
+	        }
+	        else {
+	            <div class="@InputClassname" tabindex="0" @onblur="@OnBlurred" @ref="@_elementReference1" >
+                    @ChildContent
+                </div>
+	        }
+	    }
 	}
 
 	@if (_showClearable && !Disabled)
