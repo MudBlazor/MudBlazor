@@ -13,32 +13,6 @@ namespace MudBlazor.UnitTests.Components
     public class SwitchTest : BunitTest
     {
         [Test]
-        public async Task SwitchTest_CheckIcon()
-        {
-            var comp = Context.RenderComponent<MudSwitch<bool>>();
-            Console.WriteLine(comp.Markup);
-
-            comp.SetParam("ThumbIcon", Icons.Material.Filled.Done);
-            comp.SetParam("ThumbIconOff", Icons.Material.Filled.Close);
-
-            var iconElement = comp.FindComponent<MudIcon>().Instance;
-
-            await comp.InvokeAsync(() => comp.Instance.GetThumbIcon());
-            comp.WaitForAssertion(() => iconElement.Icon.Should().Be(Icons.Material.Filled.Close));
-
-            await comp.InvokeAsync(() => comp.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = "Enter", Type = "keydown", }));
-            comp.WaitForAssertion(() => iconElement.Icon.Should().Be(Icons.Material.Filled.Done));
-
-            comp.SetParam("ThumbIconOff", null);
-            await comp.InvokeAsync(() => comp.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = "Escape", Type = "keydown", }));
-            comp.WaitForAssertion(() => iconElement.Icon.Should().Be(Icons.Material.Filled.Done));
-
-            comp.SetParam("ThumbIcon", null);
-            await comp.InvokeAsync(() => comp.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = "Enter", Type = "keydown", }));
-            comp.WaitForAssertion(() => comp.Instance.ThumbIcon.Should().Be(null));
-        }
-
-        [Test]
         public async Task SwitchTest_KeyboardNavigation()
         {
             var comp = Context.RenderComponent<MudSwitch<bool>>();
