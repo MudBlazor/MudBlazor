@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Extensions;
+using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
@@ -59,9 +60,12 @@ namespace MudBlazor
         [Parameter] public RenderFragment ChildContent { get; set; }
 
         private ElementReference _elementReference;
+        private ElementReference _elementReference1;
 
         public override ValueTask FocusAsync()
         {
+            if (InputType == InputType.Hidden && ChildContent != null)
+                return _elementReference1.FocusAsync();
             return _elementReference.FocusAsync();
         }
 
@@ -158,8 +162,20 @@ namespace MudBlazor
         public override async Task SetParametersAsync(ParameterView parameters)
         {
             await base.SetParametersAsync(parameters);
-            if (!_isFocused || _forceTextUpdate)
+            //if (!_isFocused || _forceTextUpdate)
+            //    _internalText = Text;
+            if (RuntimeLocation.IsServerSide && TextUpdateSuppression)
+            {
+                // Text update suppression, only in BSS (not in WASM).
+                // This is a fix for #1012
+                if (!_isFocused || _forceTextUpdate)
+                    _internalText = Text;
+            }
+            else
+            {
+                // in WASM (or in BSS with TextUpdateSuppression==false) we always update
                 _internalText = Text;
+            }
         }
 
         /// <summary>

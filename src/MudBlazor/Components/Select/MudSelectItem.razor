@@ -4,7 +4,7 @@
 
 @if (HideContent == false)
 {
-	<MudListItem @attributes="UserAttributes" Value="@ItemId" @onclick="@OnClicked" Icon="@CheckBoxIcon" Disabled="@Disabled" Class="@GetCssClasses()" Style="@Style">
+	<MudListItem @attributes="UserAttributes" Value="@ItemId" id="@ItemId" @onclick="@OnClicked" Icon="@CheckBoxIcon" Disabled="@Disabled" Class="@GetCssClasses()" Style="@Style">
 		@if (ChildContent != null)
 		{
 			@ChildContent
@@ -13,7 +13,7 @@
 		{
 			@DisplayString
 		}
-		</MudListItem>
+	</MudListItem>
 }
 
 

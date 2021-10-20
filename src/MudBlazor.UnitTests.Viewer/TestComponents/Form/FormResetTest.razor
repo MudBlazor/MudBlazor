@@ -1,0 +1,20 @@
+﻿<MudForm @ref="form">
+    <MudTextField Label="Name" T="string" Immediate @bind-Value="@vm" />
+</MudForm>
+<br><br>
+<span>Value: @vm</span>
+<br><br>
+<MudButton  Variant = "Variant.Filled" Color="Color.Primary" OnClick="@ResetForm">Reset</MudButton>
+
+@code
+{
+    public static string __description__ = "Calling Form.Reset() should clear the text field.";
+    private MudForm form;
+    private string vm;
+
+    void ResetForm()
+    {
+        form.Reset();
+        StateHasChanged();
+    }
+}

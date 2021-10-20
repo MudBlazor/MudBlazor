@@ -7,7 +7,7 @@
     vertical-align: middle;
     -webkit-tap-highlight-color: transparent;
 
-    &.mud-disabled, .mud-disabled:hover {
+    &.mud-disabled, .mud-disabled:hover, .mud-disabled:focus-visible {
         cursor: default;
         background-color: transparent;
 
@@ -45,12 +45,3 @@
     cursor: pointer;
 }
 
-@each $color in $mud-palette-colors {
-    .mud-checkbox-#{$color} {
-        color: var(--mud-palette-#{$color});
-
-        &:hover {
-            background-color: var(--mud-palette-#{$color}-hover);
-        }
-    }
-}
