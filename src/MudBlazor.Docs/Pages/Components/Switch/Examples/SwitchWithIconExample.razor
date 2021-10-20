@@ -1,22 +1,22 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
     <MudGrid>
-        <MudItem xs="12" Class="d-flex justify-center">
-            <MudSwitch @bind-Checked="@Label_Switch1" ThumbIcon="@(_showIcon==true?_iconString:null)" ThumbIconOff="@(_showOffIcon==true?_iconOffString:null)" ThumbIconColor="Color.Primary" />
+        <MudItem xs="12" md="4" Class="d-flex justify-center">
+            <MudSwitch @bind-Checked="@_checked1" ThumbIcon="@Icons.Custom.Brands.MudBlazor">Basic</MudSwitch>
         </MudItem>
-        <MudItem xs="12" Class="d-flex">
-            <MudCheckBox @bind-Checked="_showIcon" Color="Color.Primary" Label="Show Icon"></MudCheckBox>
+        <MudItem xs="12" md="4" Class="d-flex justify-center">
+            <MudSwitch @bind-Checked="@_checked2" ThumbIcon="@Icons.Custom.Brands.MudBlazor" ThumbIconColor="Color.Info">Colored</MudSwitch>
         </MudItem>
-        <MudItem xs="12">
-            <MudCheckBox @bind-Checked="_showOffIcon" Color="Color.Primary" Label="Show Off Icon"></MudCheckBox>
+        <MudItem xs="12" md="4" Class="d-flex justify-center">
+            <MudSwitch @bind-Checked="@_checked3" 
+                       ThumbIcon="@(_checked3==true ? Icons.Material.Filled.Done : Icons.Material.Filled.Close)"
+                       ThumbIconColor="@(_checked3==true ? Color.Success : Color.Error)">Changing</MudSwitch>
         </MudItem>
     </MudGrid>
 
 
 @code{
-    bool Label_Switch1 = false;
-    bool _showIcon = true;
-    bool _showOffIcon = false;
-    string _iconString = Icons.Material.Filled.Done;
-    string _iconOffString = Icons.Material.Filled.Close;
+    bool _checked1 = false;
+    bool _checked2 = false;
+    bool _checked3 = false;
 }

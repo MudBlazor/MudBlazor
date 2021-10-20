@@ -44,40 +44,12 @@ namespace MudBlazor
         /// <summary>
         /// The color of the thumb icon. Supports the theme colors.
         /// </summary>
-        [Parameter] public Color ThumbIconColor { get; set; } = Color.Info;
-
-        /// <summary>
-        /// Shows an icon when thumb is off. Only works when there is a ThumbIcon.
-        /// </summary>
-        [Parameter] public string ThumbIconOff { get; set; }
+        [Parameter] public Color ThumbIconColor { get; set; } = Color.Default;
 
         /// <summary>
         /// If true, disables ripple effect.
         /// </summary>
         [Parameter] public bool DisableRipple { get; set; }
-
-        internal string GetThumbIcon()
-        {
-            if (string.IsNullOrEmpty(ThumbIcon) && string.IsNullOrEmpty(ThumbIconOff))
-            {
-                return "";
-            }
-            else if (string.IsNullOrEmpty(ThumbIconOff))
-            {
-                return ThumbIcon;
-            }
-            else
-            {
-                if (BoolValue == true)
-                {
-                    return ThumbIcon;
-                }
-                else
-                {
-                    return ThumbIconOff;
-                }
-            }
-        }
 
         protected internal void HandleKeyDown(KeyboardEventArgs obj)
         {
