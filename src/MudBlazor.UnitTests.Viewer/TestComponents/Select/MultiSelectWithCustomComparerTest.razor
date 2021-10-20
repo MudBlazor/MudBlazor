@@ -6,7 +6,7 @@
         <MudSelect T="Coffee" Label="Coffee"
                    MultiSelection="true"
                    SelectedValues="Selected" SelectedValuesChanged="SelectedChanged"
-                   SelectedValuesComparer="SelectedComparer"
+                   Comparer="Comparer"
                    ToStringFunc="@(x => x.Name)">
             <MudSelectItem Value="@(new Coffee("cap","Cappuccino"))" />
             <MudSelectItem Value="@(new Coffee("lat","Cafe Latte"))" />
@@ -20,9 +20,9 @@
 </MudGrid>
 
 @code {
-    static CoffeeComparer SelectedComparer { get; } = new();
+    static CoffeeComparer Comparer { get; } = new();
 
-    HashSet<Coffee> Selected { get; } = new(SelectedComparer);
+    HashSet<Coffee> Selected { get; } = new(Comparer);
 
     void SelectedChanged(IEnumerable<Coffee> newSelected)
     {

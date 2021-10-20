@@ -18,7 +18,7 @@ namespace MudBlazor
     public partial class MudSelect<T> : MudBaseInput<T>, IMudSelect, IMudShadowSelect
     {
         private HashSet<T> _selectedValues = new HashSet<T>();
-        private IEqualityComparer<T> _selectedValuesComparer;
+        private IEqualityComparer<T> _comparer;
         private bool _dense;
         private string multiSelectionText;
         private bool? _selectAllChecked;
@@ -199,15 +199,15 @@ namespace MudBlazor
             get
             {
                 if (_selectedValues == null)
-                    _selectedValues = new HashSet<T>(_selectedValuesComparer);
+                    _selectedValues = new HashSet<T>(_comparer);
                 return _selectedValues;
             }
             set
             {
-                var set = value ?? new HashSet<T>(_selectedValuesComparer);
+                var set = value ?? new HashSet<T>(_comparer);
                 if (SelectedValues.Count() == set.Count() && _selectedValues.All(x => set.Contains(x)))
                     return;
-                _selectedValues = new HashSet<T>(set, _selectedValuesComparer);
+                _selectedValues = new HashSet<T>(set, _comparer);
                 SelectionChangedFromOutside?.Invoke(_selectedValues);
                 if (!MultiSelection)
                     SetValueAsync(_selectedValues.FirstOrDefault()).AndForget();
@@ -225,21 +225,21 @@ namespace MudBlazor
                         SetTextAsync(string.Join(Delimiter, SelectedValues.Select(x => Converter.Set(x))), updateValue: false).AndForget();
                     }
                 }
-                SelectedValuesChanged.InvokeAsync(new HashSet<T>(SelectedValues, _selectedValuesComparer));
+                SelectedValuesChanged.InvokeAsync(new HashSet<T>(SelectedValues, _comparer));
                 if (MultiSelection && typeof(T) == typeof(string))
                     SetValueAsync((T)(object)Text, updateText: false).AndForget();
             }
         }
 
         [Parameter]
-        public IEqualityComparer<T> SelectedValuesComparer
+        public IEqualityComparer<T> Comparer
         {
-            get => _selectedValuesComparer;
+            get => _comparer;
             set
             {
-                _selectedValuesComparer = value;
+                _comparer = value;
                 // Apply comparer and refresh selected values
-                _selectedValues = new HashSet<T>(_selectedValues, _selectedValuesComparer);
+                _selectedValues = new HashSet<T>(_selectedValues, _comparer);
                 SelectedValues = _selectedValues;
             }
         }
@@ -942,8 +942,8 @@ namespace MudBlazor
         {
             if (!MultiSelection)
                 return;
-            var selectedValues = new HashSet<T>(_items.Where(x => !x.Disabled && x.Value != null).Select(x => x.Value), _selectedValuesComparer);
-            _selectedValues = new HashSet<T>(selectedValues, _selectedValuesComparer);
+            var selectedValues = new HashSet<T>(_items.Where(x => !x.Disabled && x.Value != null).Select(x => x.Value), _comparer);
+            _selectedValues = new HashSet<T>(selectedValues, _comparer);
             if (MultiSelectionTextFunc != null)
             {
                 await SetCustomizedTextAsync(string.Join(Delimiter, SelectedValues.Select(x => Converter.Set(x))),
