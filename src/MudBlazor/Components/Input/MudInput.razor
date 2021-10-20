@@ -90,13 +90,26 @@
 	}
 
 	@if (_showClearable && !Disabled)
-	{
-	    <MudIconButton Class="mud-icon-button-edge-end" 
+    {
+        if (Adornment != Adornment.End)
+        {
+            <MudIconButton Class="mud-icon-button-edge-margin-end"
                 Color="@Color.Default" 
                 Icon="@ClearIcon" 
                 Size="@Size.Small" 
                 OnClick="@ClearButtonClickHandlerAsync"
-        />
+            />
+        }
+        else
+        {
+            <MudIconButton Class="mud-icon-button-edge-end" 
+                Color="@Color.Default" 
+                Icon="@ClearIcon" 
+                Size="@Size.Small" 
+                OnClick="@ClearButtonClickHandlerAsync"
+            />
+        }
+	    
 	}
 
 	@if (Adornment == Adornment.End)
