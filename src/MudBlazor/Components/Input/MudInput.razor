@@ -91,7 +91,28 @@
 
 	@if (_showClearable && !Disabled)
     {
-        if (Adornment != Adornment.End)
+        if (HideSpinButtons == false)
+        {
+            if (Adornment == Adornment.End)
+            {
+                <MudIconButton Class="mr-n1"
+                    Color="@Color.Default" 
+                    Icon="@ClearIcon" 
+                    Size="@Size.Small" 
+                    OnClick="@ClearButtonClickHandlerAsync"
+                />
+            }
+            else
+            {
+                <MudIconButton Class="mr-6"
+                    Color="@Color.Default" 
+                    Icon="@ClearIcon" 
+                    Size="@Size.Small" 
+                    OnClick="@ClearButtonClickHandlerAsync"
+                />
+            }
+        }
+        else if (Adornment != Adornment.End)
         {
             <MudIconButton Class="mud-icon-button-edge-margin-end"
                 Color="@Color.Default" 
