@@ -231,6 +231,9 @@ namespace MudBlazor
             }
         }
 
+        /// <summary>
+        /// The Comparer to use for comparing selected values internally.
+        /// </summary>
         [Parameter]
         public IEqualityComparer<T> Comparer
         {
