@@ -45,8 +45,9 @@ jobs:
       - name: Coverage
         uses: codecov/codecov-action@v2
         with:
-          token: ${{ secrets.CODECOV_TOKEN }} 
-          files: ./coverage/coverage.cobertura.xml
+          token: ${{ secrets.CODECOV_TOKEN }}
+          directory: ./TestResults/
+          files: ./coverage.cobertura.xml
           flags: unittests # optional
           name: codecov-umbrella # optional
           fail_ci_if_error: true # optional (default = false)
