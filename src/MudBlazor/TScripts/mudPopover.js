@@ -148,6 +148,11 @@
                 }
             }
             const boundingRect = popoverNode.parentNode.getBoundingClientRect();
+
+            if (popoverContentNode.classList.contains('mud-popover-relative-width')) {
+                popoverContentNode.style['max-width'] = (boundingRect.width) + 'px';
+            }
+
             const selfRect = popoverContentNode.getBoundingClientRect();
             const classList = popoverContentNode.classList;
             const classListArray = Array.from(popoverContentNode.classList);
@@ -258,10 +263,6 @@
 
             popoverContentNode.style['left'] = (left + offsetX) + 'px';
             popoverContentNode.style['top'] = (top + offsetY) + 'px';
-
-            if (popoverContentNode.classList.contains('mud-popover-relative-width')) {
-                popoverContentNode.style['max-width'] = (boundingRect.width) + 'px';
-            }
 
             if (window.getComputedStyle(popoverNode).getPropertyValue('z-index') != 'auto') {
                 popoverContentNode.style['z-index'] = window.getComputedStyle(popoverNode).getPropertyValue('z-index');
