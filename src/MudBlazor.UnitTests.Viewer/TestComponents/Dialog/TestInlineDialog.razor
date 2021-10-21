@@ -2,7 +2,7 @@
 
 <MudButton Variant="Variant.Filled" OnClick="()=>visible=true">Open</MudButton>
 
-<MudDialog @bind-IsVisible="visible">
+<MudDialog @bind-IsVisible="visible" Options="inlineOptions">
     <DialogContent>
         <MudText>Wabalabadubdub!</MudText>
     </DialogContent>
@@ -15,4 +15,6 @@
     public static string __description__ = "Click on open will open the inlined dialog";
 
     bool visible;
+
+    private DialogOptions inlineOptions = new() { FullWidth = true };
 }
