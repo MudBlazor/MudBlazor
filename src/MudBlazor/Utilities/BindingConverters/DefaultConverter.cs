@@ -12,13 +12,13 @@ namespace MudBlazor
 
         public DefaultConverter()
         {
-            SetFunc = OnSet;
-            GetFunc = OnGet;
+            SetFunc = ConvertToString;
+            GetFunc = ConvertFromString;
         }
 
         public string DefaultTimeSpanFormat { get; set; } = "c";
 
-        private T OnGet(string value)
+        protected virtual T ConvertFromString(string value)
         {
             try
             {
@@ -179,7 +179,7 @@ namespace MudBlazor
             return default(T);
         }
 
-        private string OnSet(T arg)
+        protected virtual string ConvertToString(T arg)
         {
             if (arg == null)
                 return null; // <-- this catches all nullable values which are null. no nullchecks necessary below!

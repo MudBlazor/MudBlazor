@@ -19,7 +19,7 @@ namespace MudBlazor
 
         protected string CheckBoxClassname =>
         new CssBuilder("mud-button-root mud-icon-button")
-            .AddClass($"mud-checkbox-{Color.ToDescriptionString()}")
+            .AddClass($"mud-icon-button-color-{Color.ToDescriptionString()}")
             .AddClass($"mud-checkbox-dense", Dense)
             .AddClass($"mud-ripple mud-ripple-checkbox", !DisableRipple)
             .AddClass($"mud-disabled", Disabled)

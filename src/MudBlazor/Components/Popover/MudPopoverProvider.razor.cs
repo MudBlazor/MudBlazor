@@ -7,11 +7,23 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Components;
 
 namespace MudBlazor
 {
     public partial class MudPopoverProvider : IDisposable
     {
+
+        [Inject] public IMudPopoverService Service { get; set; }
+
+        /// <summary>
+        /// In some scenarios we need more than one ThemeProvider but we must not have more than one
+        /// PopoverProvider. Set a cascading value with UsePopoverProvider=false to prevent it.
+        /// </summary>
+        [CascadingParameter(Name = "UsePopoverProvider")]
+        public bool IsEnabled { get; set; } = true;
+
+
         public void Dispose()
         {
             Service.FragmentsChanged -= Service_FragmentsChanged;
@@ -19,11 +31,15 @@ namespace MudBlazor
 
         protected override void OnInitialized()
         {
+            if (!IsEnabled)
+                return;
             Service.FragmentsChanged += Service_FragmentsChanged;
         }
 
         private void Service_FragmentsChanged(object sender, EventArgs e)
         {
+            if (!IsEnabled)
+                return;
             InvokeAsync(StateHasChanged);
         }
     }

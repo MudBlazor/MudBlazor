@@ -1,8 +1,6 @@
-﻿@namespace MudBlazor.Docs.Examples
-
-<MudGrid>
+﻿<MudGrid>
     <MudItem xs="12" sm="6" md="4">
-        <MudSelect T="string" Label="Coffee" AnchorOrigin="Origin.BottomCenter">
+        <MudSelect T="string" Label="Coffee" Strict="true" AnchorOrigin="Origin.BottomCenter">
             <MudSelectItem Value="@("Cappuccino")" />
             <MudSelectItem Value="@("Cafe Latte")" />
             <MudSelectItem Value="@("Espresso")" />
@@ -26,3 +24,8 @@
         </MudSelect>
     </MudItem>
 </MudGrid>
+
+@code {
+    public static string __description__ = "The first two selects are Strict and should not crash in WASM on navigating the list with arrows.";
+
+}
