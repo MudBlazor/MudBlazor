@@ -206,7 +206,7 @@ namespace MudBlazor.UnitTests.Components
 
             select.Instance.Value.Should().Be(1);
             select.Instance.Text.Should().Be("1");
-            comp.FindAll("div.mud-input-slot").Count.Should().Be(0);
+            comp.Find("div.mud-input-slot").Attributes["style"].Value.Should().Contain("display:none");
             comp.RenderCount.Should().Be(1);
             //Console.WriteLine(comp.Markup);
 
@@ -215,7 +215,7 @@ namespace MudBlazor.UnitTests.Components
             var items = comp.FindAll("div.mud-list-item").ToArray();
             items[1].Click();
             comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().NotContain("mud-popover-open"));
-            comp.WaitForAssertion(() => comp.FindAll("div.mud-input-slot").Count.Should().Be(0));
+            comp.WaitForAssertion(() => comp.Find("div.mud-input-slot").Attributes["style"].Value.Should().Contain("display:none"));
             select.Instance.Value.Should().Be(2);
             select.Instance.Text.Should().Be("2");
         }
