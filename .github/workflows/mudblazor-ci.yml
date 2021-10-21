@@ -42,14 +42,8 @@ jobs:
       - name: Build
         run: dotnet build --no-restore
 
-      - name: CheckPath
-        run: ls
-
       - name: Test
-        run: dotnet test --no-build --verbosity normal --blame-hang --blame-hang-timeout 60s /property:GenerateFullPaths=true /consoleloggerparameters:NoSummary /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura /p:ExcludeByAttribute='ExcludeFromCodeCoverage' /p:Include='[MudBlazor]*' /p:SkipAutoProps=true /p:CoverletOutput='./TestResults/'
-        
-      - name: CheckPath
-        run: ls
+        run: dotnet test --blame-hang --blame-hang-timeout 60s /property:GenerateFullPaths=true /consoleloggerparameters:NoSummary /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura /p:ExcludeByAttribute='ExcludeFromCodeCoverage' /p:Include='[MudBlazor]*' /p:SkipAutoProps=true /p:CoverletOutput='./TestResults/'
         
       - name: Coverage
         uses: codecov/codecov-action@v2
