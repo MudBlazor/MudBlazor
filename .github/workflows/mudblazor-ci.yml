@@ -18,6 +18,9 @@ jobs:
     name: Build
     runs-on: ubuntu-latest
 
+    defaults:
+        run:
+          working-directory: ./src
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
@@ -34,16 +37,16 @@ jobs:
           include-prerelease: true
         
       - name: Restore
-        run: dotnet restore ./src/MudBlazor.sln
+        run: dotnet restore
 
       - name: Build
-        run: dotnet build ./src/MudBlazor.sln -c release --no-restore
+        run: dotnet build --no-restore
 
       - name: CheckPath
         run: ls
 
       - name: Test
-        run: dotnet test ./src/MudBlazor.UnitTests/MudBlazor.UnitTests.csproj -c release --blame-hang --blame-hang-timeout 60s /property:GenerateFullPaths=true /consoleloggerparameters:NoSummary /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura /p:ExcludeByAttribute='ExcludeFromCodeCoverage' /p:Include='[MudBlazor]*' /p:SkipAutoProps=true /p:CoverletOutput='./TestResults/' --no-restore
+        run: dotnet test --no-build --verbosity normal --blame-hang --blame-hang-timeout 60s /property:GenerateFullPaths=true /consoleloggerparameters:NoSummary /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura /p:ExcludeByAttribute='ExcludeFromCodeCoverage' /p:Include='[MudBlazor]*' /p:SkipAutoProps=true /p:CoverletOutput='./TestResults/'
         
       - name: CheckPath
         run: ls
@@ -52,8 +55,7 @@ jobs:
         uses: codecov/codecov-action@v2
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-          directory: ./src/MudBlazor.UnitTests/TestResults/
-          files: ./coverage.cobertura.xml
+          file: coverage.cobertura.xml
           flags: unittests # optional
           name: codecov-umbrella # optional
           fail_ci_if_error: true # optional (default = false)
