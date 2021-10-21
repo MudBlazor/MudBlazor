@@ -1305,25 +1305,25 @@ namespace MudBlazor.UnitTests.Components
         {
             int rowsPerPage = 5;
             int newRowsPerPage = 25;
-            var tableComponent = Context.RenderComponent<TableRowsPerPageTwoWayBindingTest>(parameters => parameters
+            var comp = Context.RenderComponent<TableRowsPerPageTwoWayBindingTest>(parameters => parameters
                 .Add(p => p.RowsPerPage, rowsPerPage)
                 .Add(p => p.RowsPerPageChanged, (s) =>
                 {
                     rowsPerPage = int.Parse(s.ToString());
                 })
             );
-            Console.WriteLine(tableComponent.Markup);
+            Console.WriteLine(comp.Markup);
             //Check the component rendered correctly with the initial RowsPerPage
-            var t = tableComponent.Find("input.mud-select-input").GetAttribute("Value");
+            var t = comp.Find("input.mud-select-input").GetAttribute("Value");
             int.Parse(t).Should().Be(rowsPerPage, "The component rendered correctly");
             //open the menu
-            var menuItem = tableComponent.Find("div.mud-input-control");
+            var menuItem = comp.Find("div.mud-input-control");
             menuItem.Click();
 
             //Now select the 25 and check it
-            var items = tableComponent.FindAll("div.mud-list-item").ToArray();
+            var items = comp.FindAll("div.mud-list-item").ToArray();
             items[1].Click();
-            rowsPerPage.Should().Be(newRowsPerPage, "ValueChanged EventCallback fired correctly");
+            comp.WaitForAssertion(() => rowsPerPage.Should().Be(newRowsPerPage, "ValueChanged EventCallback fired correctly"));
         }
     }
 }
