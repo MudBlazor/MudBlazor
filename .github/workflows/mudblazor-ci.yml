@@ -40,12 +40,12 @@ jobs:
         run: dotnet build ./src/MudBlazor.sln -c release --no-restore
 
       - name: Test
-        run: dotnet test ./src/MudBlazor.UnitTests/MudBlazor.UnitTests.csproj -c release --blame-hang --blame-hang-timeout 60s /property:GenerateFullPaths=true /consoleloggerparameters:NoSummary /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura /p:ExcludeByAttribute='ExcludeFromCodeCoverage' /p:Include='[MudBlazor]*' /p:SkipAutoProps=true /p:CoverletOutput='./coverage/' --no-restore
+        run: dotnet test ./src/MudBlazor.UnitTests/MudBlazor.UnitTests.csproj -c release --blame-hang --blame-hang-timeout 60s /property:GenerateFullPaths=true /consoleloggerparameters:NoSummary /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura /p:ExcludeByAttribute='ExcludeFromCodeCoverage' /p:Include='[MudBlazor]*' /p:SkipAutoProps=true /p:CoverletOutput='./TestResults/' --no-restore
         
       - uses: actions/checkout@master
       - uses: codecov/codecov-action@v2
         with:
-          files: ./coverage/coverage.cobertura.xml
+          files: ./TestResults/coverage.cobertura.xml
           flags: unittests # optional
           name: codecov-umbrella # optional
           fail_ci_if_error: true # optional (default = false)
