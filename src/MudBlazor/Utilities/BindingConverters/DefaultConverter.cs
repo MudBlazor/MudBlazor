@@ -12,13 +12,13 @@ namespace MudBlazor
 
         public DefaultConverter()
         {
-            SetFunc = OnSet;
-            GetFunc = OnGet;
+            SetFunc = ConvertToString;
+            GetFunc = ConvertFromString;
         }
 
         public string DefaultTimeSpanFormat { get; set; } = "c";
 
-        private T OnGet(string value)
+        protected virtual T ConvertFromString(string value)
         {
             try
             {
@@ -38,9 +38,9 @@ namespace MudBlazor
                 else if (typeof(T) == typeof(bool) || typeof(T) == typeof(bool?))
                 {
                     var lowerValue = value.ToLowerInvariant();
-                    if (lowerValue == "true" || lowerValue == "on")
+                    if (lowerValue is "true" or "on")
                         return (T)(object)true;
-                    if (lowerValue == "false" || lowerValue == "off")
+                    if (lowerValue is "false" or "off")
                         return (T)(object)false;
                     UpdateGetError("Not a valid boolean");
                 }
@@ -179,7 +179,7 @@ namespace MudBlazor
             return default(T);
         }
 
-        private string OnSet(T arg)
+        protected virtual string ConvertToString(T arg)
         {
             if (arg == null)
                 return null; // <-- this catches all nullable values which are null. no nullchecks necessary below!

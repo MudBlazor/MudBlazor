@@ -116,6 +116,26 @@ namespace MudBlazor
         [Parameter] public string DelimitersClass { get; set; }
 
         /// <summary>
+        /// Custom previous navigation icon.
+        /// </summary>
+        [Parameter] public string PreviousIcon { get; set; } = Icons.Material.Filled.NavigateBefore;
+
+        /// <summary>
+        /// Custom selected delimiter icon.
+        /// </summary>
+        [Parameter] public string CheckedIcon { get; set; } = Icons.Material.Filled.RadioButtonChecked;
+
+        /// <summary>
+        /// Custom unselected delimiter icon.
+        /// </summary>
+        [Parameter] public string UncheckedIcon { get; set; } = Icons.Material.Filled.RadioButtonUnchecked;
+
+        /// <summary>
+        /// Custom next navigation icon.
+        /// </summary>
+        [Parameter] public string NextIcon { get; set; } = Icons.Material.Filled.NavigateNext;
+
+        /// <summary>
         /// Gets or Sets the Template for the Left Arrow
         /// </summary>
         [Parameter] public RenderFragment NextButtonTemplate { get; set; }
@@ -140,7 +160,7 @@ namespace MudBlazor
         {
             InvokeAsync(async () => await ResetTimerAsync());
 
-            _currentColor = SelectedContainer != null ? SelectedContainer.Color : Color.Inherit;
+            _currentColor = SelectedContainer?.Color ?? Color.Inherit;
         }
 
 
@@ -164,22 +184,21 @@ namespace MudBlazor
         /// <summary>
         /// Immediately starts the AutoCycle timer
         /// </summary>
-        private async ValueTask StartTimerAsync()
+        private ValueTask StartTimerAsync()
         {
-            await Task.CompletedTask;
-
             if (AutoCycle)
                 _timer?.Change(AutoCycleTime, TimeSpan.Zero);
+
+            return ValueTask.CompletedTask;
         }
 
         /// <summary>
         /// Immediately stops the AutoCycle timer
         /// </summary>
-        private async ValueTask StopTimerAsync()
+        private ValueTask StopTimerAsync()
         {
-            await Task.CompletedTask;
-
             _timer?.Change(Timeout.Infinite, Timeout.Infinite);
+            return ValueTask.CompletedTask;
         }
 
         /// <summary>

@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Extensions;
 using MudBlazor.Utilities;
@@ -87,12 +86,13 @@ namespace MudBlazor
         /// <summary>
         /// Max avatars to show before showing +x avatar, default value 0 has no max.
         /// </summary>
-        [Parameter] public int Max
+        [Parameter]
+        public int Max
         {
             get => _max;
             set
             {
-                if(value != _max)
+                if (value != _max)
                 {
                     _max = value;
                     _childrenNeedUpdates = true;
@@ -110,7 +110,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public RenderFragment ChildContent { get; set; }
 
-        internal List<MudAvatar> _avatars = new List<MudAvatar>();
+        internal List<MudAvatar> _avatars = new();
 
         internal void AddAvatar(MudAvatar avatar)
         {
@@ -141,9 +141,9 @@ namespace MudBlazor
         {
             base.OnParametersSet();
 
-            if(_childrenNeedUpdates == true)
+            if (_childrenNeedUpdates == true)
             {
-                foreach(var avatar in _avatars)
+                foreach (var avatar in _avatars)
                 {
                     avatar.ForceRedraw();
                 }

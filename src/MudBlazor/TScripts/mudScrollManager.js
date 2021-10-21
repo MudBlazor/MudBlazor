@@ -39,6 +39,17 @@
             let { bottom: eBottom, height: eHeight, top: eTop } = element.getBoundingClientRect();
             let { bottom: pBottom, top: pTop } = parent.getBoundingClientRect();
 
+            //define the height of an disabled item
+            let dHeight = eHeight;
+
+            //get the absolute increment
+            const absIncrement = Math.abs(increment);
+
+            //check if we are jumping
+            if (absIncrement > 1) {
+                dHeight = parent.querySelector(".mud-list-item-disabled")?.getBoundingClientRect().height ?? eHeight;
+            }
+
             if (
                 //if element reached bottom and direction is down
                 ((pBottom - eBottom <= 0) && increment > 0)
@@ -47,7 +58,8 @@
                 // or scroll is not constrained to the Edges
                 || !onEdges
             ) {
-                parent.scrollTop += eHeight * increment;
+                const multiplicator = increment / absIncrement; // will always be 1 or -1
+                parent.scrollTop += (eHeight + ((absIncrement-1)*dHeight)) * multiplicator;
             }
         }
     }
@@ -56,6 +68,14 @@
     scrollTo (selector, left, top, behavior) {
         let element = document.querySelector(selector) || document.documentElement;
         element.scrollTo({ left, top, behavior });
+    }
+
+    scrollToBottom(selector, behavior) {
+        let element = document.querySelector(selector);
+        if (element)
+            element.scrollTop = element.scrollHeight;
+        else
+            window.scrollTo(0, document.body.scrollHeight);
     }
 
     //locks the scroll of the selected element. Default is body

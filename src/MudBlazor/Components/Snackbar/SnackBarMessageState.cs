@@ -94,7 +94,7 @@ namespace MudBlazor
 
         private int RemainingTransitionMilliseconds(int transitionDuration)
         {
-            var duration = transitionDuration - (int) Stopwatch.ElapsedMilliseconds;
+            var duration = transitionDuration - (int)Stopwatch.ElapsedMilliseconds;
 
             return duration >= 0 ? duration : 0;
         }

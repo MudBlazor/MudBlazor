@@ -356,7 +356,7 @@ namespace MudBlazor.UnitTests.Utilities
             c5.Get(false).Should().Be(0);
             c5.Get(true).Should().Be(1);
 
-            // non-convertable types will be handled without exceptions
+            // non-convertible types will be handled without exceptions
             var c6 = new BoolConverter<DateTime>();
             c6.Set(DateTime.Now).Should().Be(null);
             c6.Get(true).Should().Be(default(DateTime));
@@ -448,11 +448,11 @@ namespace MudBlazor.UnitTests.Utilities
         [Test]
         public void NumericBoundariesConverterTest()
         {
-            Func<int, int> functInt = (int i) => i;//Not testing test the function, return the parameter
-            Func<double?, double?> functDbl = (double? d) => d;//Not testing test the function, return the parameter
+            Func<int, int> funcInt = (int i) => i;//Not testing test the function, return the parameter
+            Func<double?, double?> funcDbl = (double? d) => d;//Not testing test the function, return the parameter
 
             //Note: Set doesn't do anything. The Get can change the value
-            var c1 = new NumericBoundariesConverter<int>(functInt);
+            var c1 = new NumericBoundariesConverter<int>(funcInt);
             c1.Set("hello").Should().Be("hello");
             c1.Get("hello").Should().Be(null);
             c1.GetError.Should().Be(true);
@@ -479,7 +479,7 @@ namespace MudBlazor.UnitTests.Utilities
             c1.Get("1.5").Should().Be(null);
             c1.GetError.Should().Be(true);
             c1.GetErrorMessage.Should().Be("Not a valid number");
-            var c3 = new NumericBoundariesConverter<double?>(functDbl) { Culture = CultureInfo.InvariantCulture };
+            var c3 = new NumericBoundariesConverter<double?>(funcDbl) { Culture = CultureInfo.InvariantCulture };
             c3.Set("1.7").Should().Be("1.7");
             c3.Get("1.7").Should().Be("1.7");
             c3.GetError.Should().Be(false);
@@ -636,6 +636,34 @@ namespace MudBlazor.UnitTests.Utilities
             c1.Get(Math.PI.ToString(c1.Culture)).Should().Be(Math.PI.ToString("F3", c1.Culture));
             c1.GetError.Should().Be(false);
             c1.GetErrorMessage.Should().BeNull();
+        }
+
+        [Test]
+        public void DefaultConverterOverrideTest()
+        {
+            var conv = new MyTestConverter();
+            conv.Set(null).Should().Be("nada");
+            conv.Get("nada").Should().Be(null);
+            conv.Set(18).Should().Be("18");
+            conv.Get("18").Should().Be(18);
+        }
+
+        // a custom converter used only in test cases
+        private class MyTestConverter : DefaultConverter<int?>
+        {
+            protected override int? ConvertFromString(string value)
+            {
+                if (value == "nada")
+                    return null;
+                return base.ConvertFromString(value);
+            }
+
+            protected override string ConvertToString(int? arg)
+            {
+                if (arg == null)
+                    return "nada";
+                return base.ConvertToString(arg);
+            }
         }
     }
 }

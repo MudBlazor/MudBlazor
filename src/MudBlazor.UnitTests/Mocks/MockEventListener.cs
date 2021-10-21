@@ -4,8 +4,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components.Web;
 
@@ -15,11 +13,11 @@ namespace MudBlazor.UnitTests.Mocks
     {
         public Dictionary<Guid, Func<object, Task>> Callbacks { get; private set; } = new();
 
-        public Dictionary<Guid, String> ElementIdMapper { get; private set; } = new();
+        public Dictionary<Guid, string> ElementIdMapper { get; private set; } = new();
 
-        public Task<Guid> Subscribe<T>(string eventName, string elementId, string projection, int throotleInterval, Func<object, Task> callback)
+        public Task<Guid> Subscribe<T>(string eventName, string elementId, string projection, int throttleInterval, Func<object, Task> callback)
         {
-            Guid id = Guid.NewGuid();
+            var id = Guid.NewGuid();
             ElementIdMapper.Add(id, elementId);
             Callbacks.Add(id, callback);
             return Task.FromResult(id);
@@ -28,7 +26,7 @@ namespace MudBlazor.UnitTests.Mocks
         public Task<bool> Unsubscribe(Guid key)
         {
             var result = Callbacks.ContainsKey(key);
-            if(result == true)
+            if (result == true)
             {
                 Callbacks.Remove(key);
                 ElementIdMapper.Remove(key);

@@ -19,15 +19,15 @@ namespace Server.Controllers
         }
 
         [HttpGet("{search}")]
-        public async Task<IEnumerable<Element>> Get(string search)
+        public Task<IEnumerable<Element>> Get(string search)
         {
-            return await _periodicTableService.GetElements(search);
+            return _periodicTableService.GetElements(search);
         }
 
         [HttpGet]
-        public async Task<IEnumerable<Element>> Get()
+        public Task<IEnumerable<Element>> Get()
         {
-            return await _periodicTableService.GetElements();
+            return _periodicTableService.GetElements();
         }
     }
 }

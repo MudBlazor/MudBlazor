@@ -1,7 +1,7 @@
 ﻿@namespace MudBlazor
 @inherits MudComponentBase
 
-<div @attributes="UserAttributes" class="@Classname" @onclick="OnClickHandler" @onclick:stopPropagation="true" style="@Style">
+<div tabindex="0" @attributes="UserAttributes" class="@Classname" @onclick="OnClickHandler" @onclick:stopPropagation="true" style="@Style">
     @if (!string.IsNullOrWhiteSpace(Avatar))
     {
         <div class="mud-list-item-avatar">
@@ -30,7 +30,7 @@
     </div>
     @if (NestedList != null)
     {
-        <MudIcon Icon="@($"{(_expanded ? Icons.Material.Filled.ExpandLess : Icons.Material.Filled.ExpandMore)}")" Size="@IconSize" Color="@AdornmentColor" />
+        <MudIcon Icon="@($"{(_expanded ? ExpandLessIcon : ExpandMoreIcon)}")" Size="@IconSize" Color="@AdornmentColor" />
     }
 </div>
 @if (NestedList != null)

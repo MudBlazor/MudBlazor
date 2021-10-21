@@ -50,13 +50,13 @@
     background-color: transparent;
     -webkit-appearance: none;
     -webkit-tap-highlight-color: transparent;
+    transition: background-color 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
 
     &:hover {
         background-color: var(--mud-palette-action-default-hover);
-        transition: background-color 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
     }
 
-    &:focus {
+    &:focus:not(.mud-selected-item) {
         background-color: var(--mud-palette-action-default-hover);
     }
 }

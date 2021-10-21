@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Utilities;
 
@@ -39,7 +40,7 @@ namespace MudBlazor
         [Parameter] public bool DisableGutters { get; set; }
 
         /// <summary>
-        /// If true, the borders around eatch panel will be removed.
+        /// If true, the borders around each panel will be removed.
         /// </summary>
         [Parameter] public bool DisableBorders { get; set; }
 
@@ -48,22 +49,39 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public RenderFragment ChildContent { get; set; }
 
-        private List<MudExpansionPanel> _panels = new List<MudExpansionPanel>();
+        private List<MudExpansionPanel> _panels = new();
 
         internal void AddPanel(MudExpansionPanel panel)
         {
+            if (MultiExpansion == false && _panels.Any(p => p.IsExpanded))
+            {
+                panel.Collapse(update_parent: false);
+            }
+
+            panel.NotifyIsExpandedChanged += UpdatePanelsOnPanelsChanged;
             _panels.Add(panel);
-            StateHasChanged();
         }
 
         public void RemovePanel(MudExpansionPanel panel)
         {
+            panel.NotifyIsExpandedChanged -= UpdatePanelsOnPanelsChanged;
             _panels.Remove(panel);
             try
             {
                 StateHasChanged();
             }
             catch (InvalidOperationException) { /* this happens on page reload, probably a Blazor bug */ }
+        }
+
+        internal void UpdatePanelsOnPanelsChanged(MudExpansionPanel panel)
+        {
+            if(MultiExpansion == false && panel.IsExpanded)
+            {
+                CloseAllExcept(panel);
+                return;
+            }
+
+            UpdateAll();
         }
 
         public void UpdateAll()
@@ -88,7 +106,5 @@ namespace MudBlazor
             }
             UpdateAll();
         }
-
-
     }
 }

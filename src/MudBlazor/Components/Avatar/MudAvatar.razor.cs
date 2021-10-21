@@ -5,7 +5,7 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    partial class MudAvatar : MudComponentBase
+    partial class MudAvatar : MudComponentBase, IDisposable
     {
         [CascadingParameter] protected MudAvatarGroup AvatarGroup { get; set; }
         protected string Classname =>
@@ -47,6 +47,11 @@ namespace MudBlazor
         [Parameter] public string Image { get; set; }
 
         /// <summary>
+        /// If set (and Image is also set), will add an alt property to the img element
+        /// </summary>
+        [Parameter] public string Alt { get; set; }
+
+        /// <summary>
         /// The color of the component. It supports the theme colors.
         /// </summary>
         [Parameter] public Color Color { get; set; } = Color.Default;
@@ -70,18 +75,12 @@ namespace MudBlazor
         {
             base.OnInitialized();
 
-            if (AvatarGroup != null)
-            {
-                AvatarGroup.AddAvatar(this);
-            }
+            AvatarGroup?.AddAvatar(this);
         }
 
-        protected void Dispose()
+        public void Dispose()
         {
-            if (AvatarGroup != null)
-            {
-                AvatarGroup.RemoveAvatar(this);
-            }
+            AvatarGroup?.RemoveAvatar(this);
         }
 
         internal void ForceRedraw()

@@ -53,6 +53,7 @@ namespace MudBlazor
                 }
 
                 _dateRange = range;
+                _value = range?.End;
 
                 if (updateValue)
                 {
@@ -81,12 +82,12 @@ namespace MudBlazor
             get => _rangeText;
             set
             {
-                if (_rangeText.Equals(value))
+                if (_rangeText?.Equals(value) ?? value == null)
                     return;
 
                 Touched = true;
                 _rangeText = value;
-                SetDateRangeAsync(ParseDateRangeValue(value.Start, value.End), false).AndForget();
+                SetDateRangeAsync(ParseDateRangeValue(value?.Start, value?.End), false).AndForget();
             }
         }
 

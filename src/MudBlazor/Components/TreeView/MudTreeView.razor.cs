@@ -1,24 +1,26 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
+using MudBlazor.Extensions;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
     public partial class MudTreeView<T> : MudComponentBase
     {
-        private MudTreeViewItem<T> _activatedValue;
+        private MudTreeViewItem<T> _selectedValue;
         private HashSet<MudTreeViewItem<T>> _selectedValues;
-        private List<MudTreeViewItem<T>> _childItems = new List<MudTreeViewItem<T>>();
+        private List<MudTreeViewItem<T>> _childItems = new();
 
         protected string Classname =>
         new CssBuilder("mud-treeview")
           .AddClass("mud-treeview-dense", Dense)
-          .AddClass("mud-treeview-canhover", CanHover)
-          .AddClass("mud-treeview-canactivate", CanActivate)
-          .AddClass("mud-treeview-expand-on-click", ExpandOnClick)
+          .AddClass("mud-treeview-hover", Hover)
+          .AddClass($"mud-treeview-selected-{Color.ToDescriptionString()}")
+           .AddClass($"mud-treeview-checked-{CheckBoxColor.ToDescriptionString()}")
           .AddClass(Class)
         .Build();
         protected string Stylename =>
@@ -29,45 +31,104 @@ namespace MudBlazor
             .AddStyle(Style)
         .Build();
 
-        [Parameter]
-        public bool CanSelect { get; set; }
+        /// <summary>
+        /// The color of the selected treeviewitem.
+        /// </summary>
+        [Parameter] public Color Color { get; set; } = Color.Primary;
 
-        [Parameter]
-        public bool CanActivate { get; set; }
+        /// <summary>
+        /// Check box color if multiselection is used.
+        /// </summary>
+        [Parameter] public Color CheckBoxColor { get; set; }
 
-        [Parameter]
-        public bool ExpandOnClick { get; set; }
+        /// <summary>
+        /// if true, multiple values can be selected via checkboxes which are automatically shown in the tree view.
+        /// </summary>
+        [Parameter] public bool MultiSelection { get; set; }
 
+        /// <summary>
+        /// if true, multiple values can be selected via checkboxes which are automatically shown in the tree view.
+        /// </summary>
+        [ExcludeFromCodeCoverage]
+        [Obsolete("CanSelect is obsolete. Use MultiSelection!", false)]
         [Parameter]
-        public bool CanHover { get; set; }
+        public bool CanSelect
+        {
+            get => MultiSelection;
+            set => MultiSelection = value;
+        }
 
+        [ExcludeFromCodeCoverage]
+        [Obsolete("CanActivate is obsolete. Automaticly activates when using SelectedValue!", false)]
+        [Parameter] public bool CanActivate { get; set; }
+
+        /// <summary>
+        /// If true, clicking anywhere on the item will expand it, if it has childs.
+        /// </summary>
+        [Parameter] public bool ExpandOnClick { get; set; }
+
+        /// <summary>
+        /// Hover effect for item's on mouse-over.
+        /// </summary>
+        [Parameter] public bool Hover { get; set; }
+
+        /// <summary>
+        /// Hover effect for item's on mouse-over.
+        /// </summary>
+        [ExcludeFromCodeCoverage]
+        [Obsolete("CanHover is obsolete. Use Hover!", false)]
         [Parameter]
-        public bool Dense { get; set; }
+        public bool CanHover
+        {
+            get => Hover;
+            set => Hover = value;
+        }
+
+        /// <summary>
+        /// If true, compact vertical padding will be applied to all treeview items.
+        /// </summary>
+        [Parameter] public bool Dense { get; set; }
 
         /// <summary>
         /// Setting a height will allow to scroll the treeview. If not set, it will try to grow in height. 
         /// You can set this to any CSS value that the attribute 'height' accepts, i.e. 500px. 
         /// </summary>
-        [Parameter]
-        public string Height { get; set; }
+        [Parameter] public string Height { get; set; }
 
         /// <summary>
         /// Setting a maximum height will allow to scroll the treeview. If not set, it will try to grow in height. 
         /// You can set this to any CSS value that the attribute 'height' accepts, i.e. 500px. 
         /// </summary>
-        [Parameter]
-        public string MaxHeight { get; set; }
+        [Parameter] public string MaxHeight { get; set; }
 
         /// <summary>
         /// Setting a width the treeview. You can set this to any CSS value that the attribute 'height' accepts, i.e. 500px. 
         /// </summary>
-        [Parameter]
-        public string Width { get; set; }
+        [Parameter] public string Width { get; set; }
+
+        /// <summary>
+        /// If true, treeview will be disabled and all its childitems.
+        /// </summary>
+        [Parameter] public bool Disabled { get; set; }
 
         [Parameter] public HashSet<T> Items { get; set; }
 
-        [Parameter] public EventCallback<T> ActivatedValueChanged { get; set; }
+        [ExcludeFromCodeCoverage]
+        [Obsolete("ActivatedValueChanged is obsolete. Use SelectedValueChanged!", false)]
+        [Parameter] public EventCallback<T> ActivatedValueChanged
+        {
+            get => SelectedValueChanged;
+            set => SelectedValueChanged = value;
+        }
 
+        /// <summary>
+        /// Called whenever the selected value changed.
+        /// </summary>
+        [Parameter] public EventCallback<T> SelectedValueChanged { get; set; }
+
+        /// <summary>
+        /// Called whenever the selectedvalues changed.
+        /// </summary>
         [Parameter] public EventCallback<HashSet<T>> SelectedValuesChanged { get; set; }
 
         /// <summary>
@@ -76,7 +137,7 @@ namespace MudBlazor
         [Parameter] public RenderFragment ChildContent { get; set; }
 
         /// <summary>
-        /// ItemTemplate for rendering childre.
+        /// ItemTemplate for rendering children.
         /// </summary>
         [Parameter] public RenderFragment<T> ItemTemplate { get; set; }
 
@@ -90,6 +151,13 @@ namespace MudBlazor
             MudTreeRoot = this;
         }
 
+        internal bool IsSelectable { get; private set; }
+
+        protected override void OnInitialized()
+        {
+            IsSelectable = SelectedValueChanged.HasDelegate;
+        }
+
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
             if (firstRender && MudTreeRoot == this)
@@ -99,34 +167,33 @@ namespace MudBlazor
             await base.OnAfterRenderAsync(firstRender);
         }
 
-        internal async Task UpdateActivatedItem(MudTreeViewItem<T> item, bool requestedValue)
+        internal async Task UpdateSelected(MudTreeViewItem<T> item, bool requestedValue)
         {
-            if ((_activatedValue == item && requestedValue) ||
-                (_activatedValue != item && !requestedValue))
+            if ((_selectedValue == item && requestedValue) ||
+                (_selectedValue != item && !requestedValue))
                 return;
 
-            if (_activatedValue == item && !requestedValue)
+            if (_selectedValue == item && !requestedValue)
             {
-                _activatedValue = default;
-                await item.Activate(requestedValue);
-                await ActivatedValueChanged.InvokeAsync(default);
+                _selectedValue = default;
+                await item.Select(requestedValue);
+                await SelectedValueChanged.InvokeAsync(default);
                 return;
             }
 
-            if (_activatedValue != null)
+            if (_selectedValue != null)
             {
-                await _activatedValue.Activate(false);
+                await _selectedValue.Select(false);
             }
 
-            _activatedValue = item;
-            await item?.Activate(requestedValue);
-            await ActivatedValueChanged.InvokeAsync(item.Value);
+            _selectedValue = item;
+            await item.Select(requestedValue);
+            await SelectedValueChanged.InvokeAsync(item.Value);
         }
 
-        internal async Task UpdateSelectedItems()
+        internal Task UpdateSelectedItems()
         {
-            if (_selectedValues == null)
-                _selectedValues = new HashSet<MudTreeViewItem<T>>();
+            _selectedValues ??= new HashSet<MudTreeViewItem<T>>();
 
             //collect selected items
             _selectedValues.Clear();
@@ -138,7 +205,7 @@ namespace MudBlazor
                 }
             }
 
-            await SelectedValuesChanged.InvokeAsync(new HashSet<T>(_selectedValues.Select(i => i.Value)));
+            return SelectedValuesChanged.InvokeAsync(new HashSet<T>(_selectedValues.Select(i => i.Value)));
         }
 
         internal void AddChild(MudTreeViewItem<T> item) => _childItems.Add(item);

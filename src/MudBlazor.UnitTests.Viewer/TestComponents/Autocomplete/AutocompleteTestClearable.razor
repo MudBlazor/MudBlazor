@@ -1,9 +1,10 @@
 ﻿@namespace MudBlazor.UnitTests.TestComponents
+<MudPopoverProvider></MudPopoverProvider>
 
 <MudAutocomplete T="string" Label="US States" @bind-Value="value1" SearchFunc="@Search1" DebounceInterval="10" Clearable="true" />
 
 @code {
-    public static string __description__ = "Initialy hidden clear button should show when text is entered or item selected.";
+    public static string __description__ = "Initially hidden clear button should show when text is entered or item selected.";
 
     private string value1 = string.Empty;
 

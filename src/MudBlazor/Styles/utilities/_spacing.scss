@@ -95,3 +95,7 @@ $spacing-negative-values: ( "n1": -4px, "n2": -8px, "n3": -12px, "n4": -16px, "n
 @media screen and (min-width:$breakpoint-xl) {
     @include spacing-positive-negative("xl-");
 }
+
+@media screen and (min-width:$breakpoint-xxl) {
+    @include spacing-positive-negative("xxl-");
+}

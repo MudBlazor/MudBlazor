@@ -1,6 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Microsoft.AspNetCore.Components;
@@ -14,6 +13,7 @@ namespace MudBlazor
     public abstract class MudTableBase : MudComponentBase
     {
         internal object _editingItem = null;
+        internal bool _isEditing => _editingItem != null;
 
         private int _currentPage = 0;
         private int? _rowsPerPage;
@@ -24,8 +24,9 @@ namespace MudBlazor
            .AddClass("mud-xs-table", Breakpoint == Breakpoint.Xs)
            .AddClass("mud-sm-table", Breakpoint == Breakpoint.Sm)
            .AddClass("mud-md-table", Breakpoint == Breakpoint.Md)
-           .AddClass("mud-lg-table", Breakpoint == Breakpoint.Lg || Breakpoint == Breakpoint.Always)
-           .AddClass("mud-xl-table", Breakpoint == Breakpoint.Xl || Breakpoint == Breakpoint.Always)
+           .AddClass("mud-lg-table", Breakpoint is Breakpoint.Lg or Breakpoint.Always)
+           .AddClass("mud-xl-table", Breakpoint is Breakpoint.Xl or Breakpoint.Always)
+           .AddClass("mud-xxl-table", Breakpoint is Breakpoint.Xxl or Breakpoint.Always)
            .AddClass("mud-table-dense", Dense)
            .AddClass("mud-table-hover", Hover)
            .AddClass("mud-table-bordered", Bordered)
@@ -124,6 +125,11 @@ namespace MudBlazor
                     SetRowsPerPage(value);
             }
         }
+        
+        /// <summary>
+        /// Rows Per Page two-way bindable parameter
+        /// </summary>
+        [Parameter] public EventCallback<int> RowsPerPageChanged {get;set;}
 
         /// <summary>
         /// The page index of the currently displayed page (Zero based). Usually called by MudTablePager.
@@ -277,7 +283,7 @@ namespace MudBlazor
         [Parameter] public Action<object> RowEditPreview { get; set; }
 
         /// <summary>
-        /// The method is called when the edition of the item has been commited in inline editing.
+        /// The method is called when the edition of the item has been committed in inline editing.
         /// </summary>
         [Parameter] public Action<object> RowEditCommit { get; set; }
 
@@ -310,7 +316,8 @@ namespace MudBlazor
         /// <summary>
         /// Alignment of the table cell text when breakpoint is smaller than <see cref="Breakpoint" />
         /// </summary>
-        [Obsolete("This property is obsolete. And not needed anymore, the cells width/alignment is done automaticly.")] [Parameter] public bool RightAlignSmall { get; set; } = true;
+        [ExcludeFromCodeCoverage]
+        [Obsolete("This property is obsolete. And not needed anymore, the cells width/alignment is done automatically.")] [Parameter] public bool RightAlignSmall { get; set; } = true;
         #endregion
 
         public abstract TableContext TableContext { get; }
@@ -341,6 +348,14 @@ namespace MudBlazor
                     break;
             }
         }
+        /// <summary>
+        /// Navigate to page with specified index.
+        /// </summary>
+        /// <param name="pageIndex"> The index of the page number.</param>
+        public void NavigateTo(int pageIndex)
+        {
+            CurrentPage = Math.Min(Math.Max(0, pageIndex), NumPages - 1);
+        }
 
         public void SetRowsPerPage(int size)
         {
@@ -349,6 +364,7 @@ namespace MudBlazor
             _rowsPerPage = size;
             CurrentPage = 0;
             StateHasChanged();
+            RowsPerPageChanged.InvokeAsync(_rowsPerPage.Value);
             if (_isFirstRendered)
                 InvokeServerLoadFunc();
         }
@@ -373,14 +389,14 @@ namespace MudBlazor
             }
         }
 
-        internal async Task OnPreviewEditHandler(object item)
+        internal Task OnPreviewEditHandler(object item)
         {
-            await OnPreviewEditClick.InvokeAsync(item);
+            return OnPreviewEditClick.InvokeAsync(item);
         }
 
-        internal async Task OnCancelEditHandler(MouseEventArgs ev)
+        internal Task OnCancelEditHandler(MouseEventArgs ev)
         {
-            await OnCancelEditClick.InvokeAsync(ev);
+            return OnCancelEditClick.InvokeAsync(ev);
         }
 
         protected string TableStyle

@@ -1,9 +1,9 @@
-﻿@using System.Net.Http.Json
+@using System.Net.Http.Json
 @using MudBlazor.Examples.Data.Models
 @namespace MudBlazor.Docs.Examples
 @inject HttpClient httpClient
 
-<MudTable Items="@Elements" MultiSelection="true" @bind-SelectedItems="selectedItems1" Hover="@hover">
+<MudTable Items="@Elements" MultiSelection="true" @bind-SelectedItems="selectedItems" Hover="@hover">
     <HeaderContent>
         <MudTh>Nr</MudTh>
         <MudTh>Sign</MudTh>
@@ -50,8 +50,7 @@
 
 @code {
     private bool hover = true;
-    private HashSet<Element> selectedItems1 = new HashSet<Element>();
-    private HashSet<Element> selectedItems2 = new HashSet<Element>();
+    private HashSet<Element> selectedItems = new HashSet<Element>();
 
     private IEnumerable<Element> Elements = new List<Element>();
 

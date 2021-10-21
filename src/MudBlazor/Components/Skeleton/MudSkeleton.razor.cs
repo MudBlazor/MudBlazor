@@ -1,5 +1,4 @@
-﻿using System;
-using Microsoft.AspNetCore.Components;
+﻿using Microsoft.AspNetCore.Components;
 using MudBlazor.Extensions;
 using MudBlazor.Utilities;
 
@@ -25,7 +24,7 @@ namespace MudBlazor
         [Parameter] public string Height { set; get; }
 
         /// <summary>
-        /// Shape of the skeleton that will be renderd.
+        /// Shape of the skeleton that will be rendered.
         /// </summary>
         [Parameter] public SkeletonType SkeletonType { set; get; } = SkeletonType.Text;
 

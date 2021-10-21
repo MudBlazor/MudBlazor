@@ -117,7 +117,7 @@
                         Name = color.Name,
                         Value = color.GetValue(SubColorType).ToString()
                     };
-                    if (color.Name == "Default" || color.Name == "Black")
+                    if (color.Name is "Default" or "Black")
                     {
                         tempHex = shadeColor.Value;
                     }

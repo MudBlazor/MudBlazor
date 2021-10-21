@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using MudBlazor.Charts;
@@ -34,6 +33,7 @@ namespace MudBlazor.Docs.Services
             .AddItem("Container", typeof(MudContainer))
             .AddItem("Grid", typeof(MudGrid), typeof(MudItem))
             .AddItem("Hidden", typeof(MudHidden))
+            .AddItem("Breakpoint Provider", typeof(MudBreakpointProvider))
             .AddItem("Chips", typeof(MudChip))
             .AddItem("ChipSet", typeof(MudChipSet))
             .AddItem("Badge", typeof(MudBadge))
@@ -74,6 +74,7 @@ namespace MudBlazor.Docs.Services
             .AddItem("ToolBar", typeof(MudToolBar))
             .AddItem("Carousel", typeof(MudCarousel<T>), typeof(MudCarouselItem))
             .AddItem("Timeline", typeof(MudTimeline), typeof(MudTimelineItem))
+            .AddItem("Pagination", typeof(MudPagination))
 
             //GROUPS
 
@@ -109,10 +110,11 @@ namespace MudBlazor.Docs.Services
 
             //Charts
             .AddNavGroup("Charts", false, new DocsComponents()
-                .AddItem("Donut chart", typeof(Donut))
-                .AddItem("Line chart", typeof(Line))
-                .AddItem("Pie chart", typeof(Pie))
-                .AddItem("Bar chart", typeof(Bar))
+                .AddItem("Options", typeof(ChartOptions))
+                .AddItem("Donut Chart", typeof(Donut))
+                .AddItem("Line Chart", typeof(Line))
+                .AddItem("Pie Chart", typeof(Pie))
+                .AddItem("Bar Chart", typeof(Bar))
             );
 
         public IEnumerable<MudComponent> Components => _docsComponents.Elements;
@@ -123,9 +125,9 @@ namespace MudBlazor.Docs.Services
 
         public MenuService()
         {
-            foreach(var item in Components)
+            foreach (var item in Components)
             {
-                if(item.IsNavGroup)
+                if (item.IsNavGroup)
                 {
                     foreach (var apiItem in item.GroupItems.Elements)
                     {
@@ -138,7 +140,7 @@ namespace MudBlazor.Docs.Services
 
                     if (item.ChildComponents != null)
                     {
-                        foreach(var childComponent in item.ChildComponents)
+                        foreach (var childComponent in item.ChildComponents)
                         {
                             _parents.Add(childComponent, item);
                         }

@@ -15,8 +15,15 @@ namespace MudBlazor
              .AddClass(Class)
            .Build();
 
+        protected string HelperContainer =>
+           new CssBuilder("mud-input-control-helper-container")
+           .AddClass($"px-1", Variant == Variant.Filled)
+           .AddClass($"px-2", Variant == Variant.Outlined)
+           .Build();
+
         protected string HelperClass =>
            new CssBuilder("mud-input-helper-text")
+             .AddClass("mud-input-helper-onfocus", HelperTextOnFocus)
              .AddClass("mud-input-error", Error)
            .Build();
 
@@ -54,6 +61,16 @@ namespace MudBlazor
         /// The HelperText will be displayed below the text field.
         /// </summary>
         [Parameter] public string HelperText { get; set; }
+
+        /// <summary>
+        /// If true, the helper text will only be visible on focus.
+        /// </summary>
+        [Parameter] public bool HelperTextOnFocus { get; set; }
+
+        /// <summary>
+        /// The current character counter, displayed below the text field.
+        /// </summary>
+        [Parameter] public string CounterText { get; set; }
 
         /// <summary>
         /// If true, the input will take up the full width of its container.

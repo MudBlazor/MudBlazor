@@ -16,19 +16,19 @@ namespace MudBlazor
 
         [Parameter] public string[] XAxisLabels { get; set; } = Array.Empty<string>();
 
-        [Parameter] public List<ChartSeries> ChartSeries { get; set; } = new List<ChartSeries>();
+        [Parameter] public List<ChartSeries> ChartSeries { get; set; } = new();
 
-        [Parameter] public ChartOptions ChartOptions { get; set; } = new ChartOptions();
+        [Parameter] public ChartOptions ChartOptions { get; set; } = new();
 
         protected string Classname =>
         new CssBuilder("mud-chart")
            .AddClass($"mud-chart-legend-{ConvertLegendPosition(LegendPosition).ToDescriptionString()}")
           .AddClass(Class)
         .Build();
-        
+
         [CascadingParameter]
         public bool RightToLeft { get; set; }
-        
+
         /// <summary>
         /// The Type of the chart.
         /// </summary>
@@ -58,7 +58,7 @@ namespace MudBlazor
                 _ => position
             };
         }
-        
+
         private int _selectedIndex;
 
         /// <summary>

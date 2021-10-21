@@ -58,6 +58,11 @@
             margin: 8px;
         }
     }
+    
+    &.docs-section-flex-column > .docs-section-content-inner {
+        flex-direction: column;
+        align-items: center;
+    }
 }
 
 .docs-section-source {

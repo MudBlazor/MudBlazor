@@ -1,5 +1,5 @@
-﻿#pragma warning disable CS1998 // async without await
-#pragma warning disable IDE1006 // leading underscore
+﻿
+#pragma warning disable CS1998 // async without await
 
 using System;
 using System.Threading.Tasks;
@@ -11,25 +11,14 @@ using static Bunit.ComponentParameterFactory;
 namespace MudBlazor.UnitTests.Components
 {
     [TestFixture]
-    public class LinkTests
+    public class LinkTests : BunitTest
     {
-        private Bunit.TestContext ctx;
-
-        [SetUp]
-        public void Setup()
-        {
-            ctx = new Bunit.TestContext();
-            ctx.AddTestServices();
-        }
-
         [Test]
         public async Task NavLink_CheckDisabled()
         {
-            var comp = ctx.RenderComponent<MudLink>(new[]
-            {
+            var comp = Context.RenderComponent<MudLink>(
                 Parameter(nameof(MudLink.Href), "#"),
-                Parameter(nameof(MudLink.Disabled), true)
-            });
+                Parameter(nameof(MudLink.Disabled), true));
             Console.WriteLine(comp.Markup);
             comp.Find("a").GetAttribute("href").Should().BeNullOrEmpty();
         }

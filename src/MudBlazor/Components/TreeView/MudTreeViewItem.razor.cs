@@ -11,9 +11,10 @@ namespace MudBlazor
     public partial class MudTreeViewItem<T> : MudComponentBase
     {
         private string _text;
-        private bool _isSelected, _isActivated, _isServerLoaded;
+        private bool _disabled;
+        private bool _isChecked, _isSelected, _isServerLoaded;
         private Converter<T> _converter = new DefaultConverter<T>();
-        private readonly List<MudTreeViewItem<T>> _childItems = new List<MudTreeViewItem<T>>();
+        private readonly List<MudTreeViewItem<T>> _childItems = new();
 
         protected string Classname =>
         new CssBuilder("mud-treeview-item")
@@ -22,7 +23,8 @@ namespace MudBlazor
 
         protected string ContentClassname =>
         new CssBuilder("mud-treeview-item-content")
-          .AddClass("mud-treeview-item-activated", Activated && MudTreeRoot.CanActivate)
+          .AddClass("cursor-pointer", MudTreeRoot?.IsSelectable == true || MudTreeRoot?.ExpandOnClick == true && HasChild)
+          .AddClass($"mud-treeview-item-selected", _isSelected)
         .Build();
 
         public string TextClassname =>
@@ -30,6 +32,31 @@ namespace MudBlazor
             .AddClass(TextClass)
         .Build();
 
+
+        [CascadingParameter] MudTreeView<T> MudTreeRoot { get; set; }
+
+        [CascadingParameter] MudTreeViewItem<T> Parent { get; set; }
+
+        /// <summary>
+        /// Custom checked icon, leave null for default.
+        /// </summary>
+        [Parameter] public string CheckedIcon { get; set; } = Icons.Material.Filled.CheckBox;
+
+        /// <summary>
+        /// Custom unchecked icon, leave null for default.
+        /// </summary>
+        [Parameter] public string UncheckedIcon { get; set; } = Icons.Material.Filled.CheckBoxOutlineBlank;
+
+        /// <summary>
+        /// Value of the treeviewitem. Acts as the displayed text if no text is set.
+        /// </summary>
+        [Parameter] public T Value { get; set; }
+
+        [Parameter] public CultureInfo Culture { get; set; } = CultureInfo.CurrentCulture;
+
+        /// <summary>
+        /// The text to display
+        /// </summary>
         [Parameter]
         public string Text
         {
@@ -37,27 +64,49 @@ namespace MudBlazor
             set => _text = value;
         }
 
-        [Parameter]
-        public T Value { get; set; }
-
-        [Parameter] public CultureInfo Culture { get; set; } = CultureInfo.CurrentCulture;
-
+        /// <summary>
+        /// Tyopography for the text.
+        /// </summary>
         [Parameter] public Typo TextTypo { get; set; } = Typo.body1;
 
+        /// <summary>
+        /// User class names for the text, separated by space.
+        /// </summary>
         [Parameter] public string TextClass { get; set; }
 
+        /// <summary>
+        /// The text at the end of the item.
+        /// </summary>
         [Parameter] public string EndText { get; set; }
 
+        /// <summary>
+        /// Tyopography for the endtext.
+        /// </summary>
         [Parameter] public Typo EndTextTypo { get; set; } = Typo.body1;
 
+        /// <summary>
+        /// User class names for the endtext, separated by space.
+        /// </summary>
         [Parameter] public string EndTextClass { get; set; }
 
-        [CascadingParameter] MudTreeView<T> MudTreeRoot { get; set; }
+        /// <summary>
+        /// If true, treeviewitem will be disabled.
+        /// </summary>
+        [Parameter]
+        public bool Disabled
+        {
+            get => _disabled || (MudTreeRoot?.Disabled ?? false);
+            set => _disabled = value;
+        }
 
-        [CascadingParameter] MudTreeViewItem<T> Parent { get; set; }
-
+        /// <summary>
+        /// Child content of component used to create sub levels.
+        /// </summary>
         [Parameter] public RenderFragment ChildContent { get; set; }
 
+        /// <summary>
+        /// Content of the item, if used completly replaced the default rendering.
+        /// </summary>
         [Parameter] public RenderFragment Content { get; set; }
 
         [Parameter] public HashSet<T> Items { get; set; }
@@ -67,60 +116,96 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public ICommand Command { get; set; }
 
-        [Parameter]
-        public bool Expanded { get; set; }
+        /// <summary>
+        /// Expand or collapse treeview item when it has children. Two-way bindable. Note: if you directly set this to
+        /// true or false (instead of using two-way binding) it will force the item's expansion state.
+        /// </summary>
+        [Parameter] public bool Expanded { get; set; }
+
+        /// <summary>
+        /// Called whenever expanded changed.
+        /// </summary>
+        [Parameter] public EventCallback<bool> ExpandedChanged { get; set; }
 
         [Parameter]
         public bool Activated
         {
-            get => _isActivated;
+            get => _isSelected;
             set
             {
-                _ = MudTreeRoot?.UpdateActivatedItem(this, value);
+                _ = MudTreeRoot?.UpdateSelected(this, value);
             }
         }
 
         [Parameter]
         public bool Selected
         {
-            get => _isSelected;
+            get => _isChecked;
             set
             {
-                if (_isSelected == value)
+                if (_isChecked == value)
                     return;
 
-                _isSelected = value;
+                _isChecked = value;
                 MudTreeRoot?.UpdateSelectedItems();
-                SelectedChanged.InvokeAsync(_isSelected);
+                SelectedChanged.InvokeAsync(_isChecked);
             }
         }
 
-        [Parameter]
-        public string Icon { get; set; }
+        /// <summary>
+        /// Icon placed before the text if set.
+        /// </summary>
+        [Parameter] public string Icon { get; set; }
 
-        [Parameter]
-        public Color IconColor { get; set; } = Color.Default;
+        /// <summary>
+        /// The color of the icon. It supports the theme colors.
+        /// </summary>
+        [Parameter] public Color IconColor { get; set; } = Color.Default;
 
-        [Parameter]
-        public string EndIcon { get; set; }
+        /// <summary>
+        /// Icon placed after the text if set.
+        /// </summary>
+        [Parameter] public string EndIcon { get; set; }
 
-        [Parameter]
-        public Color EndIconColor { get; set; } = Color.Default;
+        /// <summary>
+        /// The color of the icon. It supports the theme colors.
+        /// </summary>
+        [Parameter] public Color EndIconColor { get; set; } = Color.Default;
 
-        [Parameter]
-        public EventCallback<bool> ActivatedChanged { get; set; }
+        /// <summary>
+        /// The expand/collapse icon.
+        /// </summary>
+        [Parameter] public string ExpandedIcon { get; set; } = Icons.Material.Filled.ChevronRight;
 
-        [Parameter]
-        public EventCallback<bool> ExpandedChanged { get; set; }
+        /// <summary>
+        /// The color of the expand/collapse button. It supports the theme colors.
+        /// </summary>
+        [Parameter] public Color ExpandedIconColor { get; set; } = Color.Default;
 
-        [Parameter]
-        public EventCallback<bool> SelectedChanged { get; set; }
+        /// <summary>
+        /// The loading icon.
+        /// </summary>
+        [Parameter] public string LoadingIcon { get; set; } = Icons.Material.Filled.Loop;
+
+        /// <summary>
+        /// The color of the loading. It supports the theme colors.
+        /// </summary>
+        [Parameter] public Color LoadingIconColor { get; set; } = Color.Default;
+
+        /// <summary>
+        /// Called whenever the activated value changed.
+        /// </summary>
+        [Parameter] public EventCallback<bool> ActivatedChanged { get; set; }
+
+        /// <summary>
+        /// Called whenever the selected value changed.
+        /// </summary>
+        [Parameter] public EventCallback<bool> SelectedChanged { get; set; }
 
         /// <summary>
         /// Tree item click event.
         /// </summary>
-        [Parameter]
-        public EventCallback<MouseEventArgs> OnClick { get; set; }
+        [Parameter] public EventCallback<MouseEventArgs> OnClick { get; set; }
 
         public bool Loading { get; set; }
 
@@ -131,7 +216,7 @@ namespace MudBlazor
         protected bool IsChecked
         {
             get => Selected;
-            set { _ = Select(value, this); }
+            set { _ = SelectItem(value, this); }
         }
 
         protected bool ArrowExpanded
@@ -161,18 +246,19 @@ namespace MudBlazor
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
-            if (firstRender && _isActivated)
+            if (firstRender && _isSelected)
             {
-                await MudTreeRoot.UpdateActivatedItem(this, _isActivated);
+                await MudTreeRoot.UpdateSelected(this, _isSelected);
             }
+
             await base.OnAfterRenderAsync(firstRender);
         }
 
         protected async Task OnItemClicked(MouseEventArgs ev)
         {
-            if (MudTreeRoot?.CanActivate ?? false)
+            if (MudTreeRoot?.IsSelectable ?? false)
             {
-                await MudTreeRoot.UpdateActivatedItem(this, !_isActivated);
+                await MudTreeRoot.UpdateSelected(this, !_isSelected);
             }
 
             if (HasChild && (MudTreeRoot?.ExpandOnClick ?? false))
@@ -199,33 +285,36 @@ namespace MudBlazor
             return ExpandedChanged.InvokeAsync(expanded);
         }
 
-        internal async Task Activate(bool value)
+        internal Task Select(bool value)
         {
-            if (_isActivated == value)
-                return;
-
-            _isActivated = value;
-
-            StateHasChanged();
-
-            await ActivatedChanged.InvokeAsync(_isActivated);
-        }
-
-        internal async Task Select(bool value, MudTreeViewItem<T> source = null)
-        {
-            if (value == _isSelected)
-                return;
+            if (_isSelected == value)
+                return Task.CompletedTask;
 
             _isSelected = value;
-            _childItems.ForEach(async c => await c.Select(value, source));
 
             StateHasChanged();
 
-            await SelectedChanged.InvokeAsync(_isSelected);
+            return ActivatedChanged.InvokeAsync(_isSelected);
+        }
+
+        internal async Task SelectItem(bool value, MudTreeViewItem<T> source = null)
+        {
+            if (value == _isChecked)
+                return;
+
+            _isChecked = value;
+            _childItems.ForEach(async c => await c.SelectItem(value, source));
+
+            StateHasChanged();
+
+            await SelectedChanged.InvokeAsync(_isChecked);
 
             if (source == this)
             {
-                await MudTreeRoot?.UpdateSelectedItems();
+                if (MudTreeRoot != null)
+                {
+                    await MudTreeRoot.UpdateSelectedItems();
+                }
             }
         }
 
@@ -233,7 +322,7 @@ namespace MudBlazor
 
         internal IEnumerable<MudTreeViewItem<T>> GetSelectedItems()
         {
-            if (_isSelected)
+            if (_isChecked)
                 yield return this;
 
             foreach (var treeItem in _childItems)

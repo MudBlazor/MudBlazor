@@ -1,6 +1,4 @@
-﻿#pragma warning disable CS1998 // async without await
-#pragma warning disable IDE1006 // leading underscore
-
+﻿
 using System;
 using System.Linq;
 using Bunit;
@@ -10,26 +8,13 @@ using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Components
 {
-
     [TestFixture]
-    public class RadioTests
+    public class RadioTests : BunitTest
     {
-        private Bunit.TestContext ctx;
-
-        [SetUp]
-        public void Setup()
-        {
-            ctx = new Bunit.TestContext();
-            ctx.AddTestServices();
-        }
-
-        [TearDown]
-        public void TearDown() => ctx.Dispose();
-
         [Test]
         public void RadioGroupTest1()
         {
-            var comp = ctx.RenderComponent<RadioGroupTest1>();
+            var comp = Context.RenderComponent<RadioGroupTest1>();
             Console.WriteLine(comp.Markup);
             // select elements needed for the test
             var group = comp.FindComponent<MudRadioGroup<string>>();
@@ -73,7 +58,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void RadioGroupTest2()
         {
-            var comp = ctx.RenderComponent<RadioGroupTest2>();
+            var comp = Context.RenderComponent<RadioGroupTest2>();
             Console.WriteLine(comp.Markup);
             // select elements needed for the test
             var group = comp.FindComponent<MudRadioGroup<string>>();
@@ -88,7 +73,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void RadioGroupTest3()
         {
-            var comp = ctx.RenderComponent<RadioGroupTest3>();
+            var comp = Context.RenderComponent<RadioGroupTest3>();
             Console.WriteLine(comp.Markup);
             // select elements needed for the test
             var groups = comp.FindComponents<MudRadioGroup<string>>();
@@ -124,7 +109,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void RadioGroupTest4()
         {
-            var comp = ctx.RenderComponent<RadioGroupTest4>();
+            var comp = Context.RenderComponent<RadioGroupTest4>();
             Console.WriteLine(comp.Markup);
             // select elements needed for the test
             var groups = comp.FindComponents<MudRadioGroup<string>>();
@@ -160,7 +145,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void RadioGroupTest5()
         {
-            var comp = ctx.RenderComponent<RadioGroupTest5>();
+            var comp = Context.RenderComponent<RadioGroupTest5>();
             Console.WriteLine(comp.Markup);
             // select elements needed for the test
             var group = comp.FindComponent<MudRadioGroup<string>>();
@@ -190,7 +175,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void RadioGroupTest6()
         {
-            var comp = ctx.RenderComponent<RadioGroupTest6>();
+            var comp = Context.RenderComponent<RadioGroupTest6>();
             Console.WriteLine(comp.Markup);
             // select elements needed for the test
             var group = comp.FindComponent<MudRadioGroup<string>>();

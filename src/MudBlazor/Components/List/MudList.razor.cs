@@ -47,7 +47,7 @@ namespace MudBlazor
         [Parameter] public bool Disabled { get; set; }
 
         /// <summary>
-        /// The current selected list item. Bind this with a two-way binding to activate the lists exclusive selection behavior.
+        /// The current selected list item.
         /// Note: make the list Clickable for item selection to work.
         /// </summary>
         [Parameter]
@@ -58,7 +58,7 @@ namespace MudBlazor
             {
                 if (_selectedItem == value)
                     return;
-                SetSelectedItem(value, force: true);
+                SetSelectedValue(_selectedItem?.Value, force: true);
             }
         }
 
@@ -67,18 +67,35 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public EventCallback<MudListItem> SelectedItemChanged { get; set; }
 
+        /// <summary>
+        /// The current selected value.
+        /// Note: make the list Clickable for item selection to work.
+        /// </summary>
+        [Parameter]
+        public object SelectedValue
+        {
+            get => _selectedValue;
+            set
+            {
+                SetSelectedValue(value, force: true);
+            }
+        }
+
+        /// <summary>
+        /// Called whenever the selection changed
+        /// </summary>
+        [Parameter] public EventCallback<object> SelectedValueChanged { get; set; }
+
         protected override void OnInitialized()
         {
             if (ParentList != null)
             {
                 ParentList.Register(this);
                 CanSelect = ParentList.CanSelect;
-                //OnListParametersChanged();
-                //ParentList.ParametersChanged += OnListParametersChanged;
             }
             else
             {
-                CanSelect = SelectedItemChanged.HasDelegate;
+                CanSelect = SelectedItemChanged.HasDelegate || SelectedValueChanged.HasDelegate || SelectedValue != null;
             }
         }
 
@@ -90,13 +107,20 @@ namespace MudBlazor
             ParametersChanged?.Invoke();
         }
 
-        private HashSet<MudListItem> _items = new HashSet<MudListItem>();
-        private HashSet<MudList> _childLists = new HashSet<MudList>();
+        private HashSet<MudListItem> _items = new();
+        private HashSet<MudList> _childLists = new();
         private MudListItem _selectedItem;
+        private object _selectedValue;
 
         internal void Register(MudListItem item)
         {
             _items.Add(item);
+            if (CanSelect && SelectedValue!=null && object.Equals(item.Value, SelectedValue))
+            {
+                item.SetSelected(true);
+                _selectedItem = item;
+                SelectedItemChanged.InvokeAsync(item);
+            }
         }
 
         internal void Unregister(MudListItem item)
@@ -114,21 +138,30 @@ namespace MudBlazor
             _childLists.Remove(child);
         }
 
-        internal void SetSelectedItem(MudListItem item, bool force = false)
+        internal void SetSelectedValue(object value, bool force = false)
         {
             if ((!CanSelect || !Clickable) && !force)
                 return;
-            if (_selectedItem == item)
+            if (object.Equals(_selectedValue, value))
                 return;
-            _selectedItem = item;
-            _ = SelectedItemChanged.InvokeAsync(item);
+            _selectedValue = value;
+            SelectedValueChanged.InvokeAsync(value).AndForget();
+            _selectedItem = null; // <-- for now, we'll see which item matches the value below
             foreach (var listItem in _items.ToArray())
             {
-                listItem.SetSelected(item == listItem);
+                var isSelected = value!=null && object.Equals(value, listItem.Value);
+                listItem.SetSelected(isSelected);
+                if (isSelected)
+                    _selectedItem = listItem;
             }
             foreach (var childList in _childLists.ToArray())
-                childList.SetSelectedItem(item);
-            ParentList?.SetSelectedItem(item);
+            {
+                childList.SetSelectedValue(value);
+                if (childList.SelectedItem != null)
+                    _selectedItem= childList.SelectedItem;
+            }
+            SelectedItemChanged.InvokeAsync(_selectedItem).AndForget();
+            ParentList?.SetSelectedValue(value);
         }
 
         internal bool CanSelect { get; private set; }

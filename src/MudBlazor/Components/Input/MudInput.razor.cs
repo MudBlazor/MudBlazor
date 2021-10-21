@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Extensions;
+using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
@@ -60,10 +61,21 @@ namespace MudBlazor
         [Parameter] public RenderFragment ChildContent { get; set; }
 
         private ElementReference _elementReference;
+        private ElementReference _elementReference1;
 
-        public override ValueTask FocusAsync()
+        public override async ValueTask FocusAsync()
         {
-            return _elementReference.FocusAsync();
+            try
+            {
+                if (InputType == InputType.Hidden && ChildContent != null)
+                    await _elementReference1.FocusAsync();
+                else
+                    await _elementReference.FocusAsync();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("MudInput.FocusAsync: " + e.Message);
+            }
         }
 
         public override ValueTask SelectAsync()
@@ -75,11 +87,6 @@ namespace MudBlazor
         {
             return _elementReference.MudSelectRangeAsync(pos1, pos2);
         }
-
-        /// <summary>
-        /// The short hint displayed in the input before the user enters a value.
-        /// </summary>
-        [Parameter] public string Placeholder { get; set; }
 
         /// <summary>
         /// Invokes the callback when the Up arrow button is clicked when the input is set to <see cref="InputType.Number"/>.
@@ -107,6 +114,26 @@ namespace MudBlazor
         /// Button click event for clear button. Called after text and value has been cleared.
         /// </summary>
         [Parameter] public EventCallback<MouseEventArgs> OnClearButtonClick { get; set; }
+
+        /// <summary>
+        /// Mouse wheel event for input.
+        /// </summary>
+        [Parameter] public EventCallback<WheelEventArgs> OnMouseWheel { get; set; }
+
+        /// <summary>
+        /// Custom clear icon.
+        /// </summary>
+        [Parameter] public string ClearIcon { get; set; } = Icons.Material.Filled.Clear;
+
+        /// <summary>
+        /// Custom numeric up icon.
+        /// </summary>
+        [Parameter] public string NumericUpIcon { get; set; } = Icons.Material.Filled.KeyboardArrowUp;
+
+        /// <summary>
+        /// Custom numeric down icon.
+        /// </summary>
+        [Parameter] public string NumericDownIcon { get; set; } = Icons.Material.Filled.KeyboardArrowDown;
 
         private Size GetButtonSize() => Margin == Margin.Dense ? Size.Small : Size.Medium;
 
@@ -144,8 +171,20 @@ namespace MudBlazor
         public override async Task SetParametersAsync(ParameterView parameters)
         {
             await base.SetParametersAsync(parameters);
-            if (!_isFocused  || _forceTextUpdate)
+            //if (!_isFocused || _forceTextUpdate)
+            //    _internalText = Text;
+            if (RuntimeLocation.IsServerSide && TextUpdateSuppression)
+            {
+                // Text update suppression, only in BSS (not in WASM).
+                // This is a fix for #1012
+                if (!_isFocused || _forceTextUpdate)
+                    _internalText = Text;
+            }
+            else
+            {
+                // in WASM (or in BSS with TextUpdateSuppression==false) we always update
                 _internalText = Text;
+            }
         }
 
         /// <summary>
@@ -153,10 +192,10 @@ namespace MudBlazor
         /// </summary>
         /// <param name="text"></param>
         /// <returns></returns>
-        public async Task SetText(string text)
+        public Task SetText(string text)
         {
             _internalText = text;
-            await SetTextAsync(text);
+            return SetTextAsync(text);
         }
     }
 

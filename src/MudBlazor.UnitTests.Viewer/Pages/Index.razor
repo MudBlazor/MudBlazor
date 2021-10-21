@@ -2,8 +2,8 @@
 @using System.Reflection
 
 <MudLayout>
-    <MudAppBar Position="Position.Absolute" Elevation="0">
-        <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DocsDrawerToggle())" />
+    <MudAppBar Elevation="0">
+        <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="DocsDrawerToggle" />
         <MudText Typo="Typo.h6">@selectedType?.Name</MudText>
         <MudSpacer />
         <MudAutocomplete @ref="autocomplete" T="Type" Placeholder="Search" SearchFunc="Search" Variant="Variant.Outlined" ValueChanged="OnSearchResult" Class="docs-search-bar" AdornmentIcon="@Icons.Material.Filled.Search">
@@ -13,7 +13,7 @@
         </MudAutocomplete>
         <MudSpacer />
     </MudAppBar>
-    <MudDrawer Open="@drawerOpen">
+    <MudDrawer Open="@drawerOpen" DisableOverlay="true" Variant="DrawerVariant.Responsive" ClipMode="DrawerClipMode.Always" Breakpoint="Breakpoint.Sm">
         <MudDrawerHeader>
             <MudText Typo="Typo.h6">TestComponents</MudText>
         </MudDrawerHeader>
@@ -24,7 +24,7 @@
             }
         </MudList>
     </MudDrawer>
-    <MudMainContent>
+    <MudMainContent Class="mt-4">
 
         <MudText Style="padding-left: 24px; margin-left: 24px;">
             @getDescription(selectedType)
@@ -36,7 +36,10 @@
             }
             else
             {
-                @TestComponent()
+                @* Prevent double popovers! *@
+                <CascadingValue Name="UsePopoverProvider" Value="false"  IsFixed="true">
+                    @TestComponent()
+                </CascadingValue>
             }
         </MudPaper>
 
@@ -106,7 +109,7 @@
         }
         catch (Exception)
         {
-            return "string __description__ = \"...\" not found in this component.";
+            return "public static string __description__ = \"...\"; not found in this component.";
         }
     }
 
@@ -120,7 +123,7 @@
         }
         var lowerText = text.ToLowerInvariant();
         return Task.FromResult<IEnumerable<Type>>(
-            availableComponentTypes.Where(type => type.Name.ToLowerInvariant().Contains(lowerText))
+            availableComponentTypes.Where(type => type.Name.ToLowerInvariant().StartsWith(lowerText))
         );
     }
 

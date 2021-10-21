@@ -3,12 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
-using System.Windows.Input;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Rendering;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Extensions;
-using MudBlazor.Utilities;
 
 
 namespace MudBlazor
@@ -43,7 +41,7 @@ namespace MudBlazor
         [Parameter] public string QuickColumns { get; set; }
 
         // Workaround because "where T : new()" didn't work with Blazor components
-        // T must have a default constructor, otherwise we caanot show headers when Items collection
+        // T must have a default constructor, otherwise we cannot show headers when Items collection
         // is empty
         protected T Def
         {
@@ -75,12 +73,12 @@ namespace MudBlazor
                 // Create template from T
                 Columns = context => builder =>
                 {
-                    Type myType = context.GetType();
+                    var myType = context.GetType();
                     IList<PropertyInfo> propertylist = new List<PropertyInfo>(myType.GetProperties().Where(p => p.PropertyType.IsPublic));
 
                     if (quickcolumnslist == null)
                     {
-                        foreach (PropertyInfo propinfo in propertylist)
+                        foreach (var propinfo in propertylist)
                         {
                             BuildMudColumnTemplateItem(context, builder, propinfo);
                         }
@@ -291,16 +289,28 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public RenderFragment<TableGroupData<object, T>> GroupFooterTemplate { get; set; }
 
+        private IEnumerable<T> _preEditSort { get; set; } = null;
+        private bool _hasPreEditSort => _preEditSort != null;
+
         public IEnumerable<T> FilteredItems
         {
             get
             {
+                if (_isEditing && _hasPreEditSort)
+                    return _preEditSort;
                 if (ServerData != null)
-                    return _server_data.Items;
+                {
+                    _preEditSort = _server_data.Items.ToList();
+                    return _preEditSort;
+                }
 
                 if (Filter == null)
-                    return Context.Sort(Items);
-                return Context.Sort(Items.Where(Filter));
+                {
+                    _preEditSort = Context.Sort(Items).ToList();
+                    return _preEditSort;
+                }
+                _preEditSort = Context.Sort(Items.Where(Filter)).ToList();
+                return _preEditSort;
             }
         }
 
@@ -361,7 +371,7 @@ namespace MudBlazor
 
         public override void SetEditingItem(object item)
         {
-            if (!Object.ReferenceEquals(_editingItem, item))
+            if (!ReferenceEquals(_editingItem, item))
                 _editingItem = item;
         }
 
@@ -420,7 +430,7 @@ namespace MudBlazor
         internal override bool HasServerData => ServerData != null;
 
 
-        TableData<T> _server_data = new TableData<T>() { TotalItems = 0, Items = Array.Empty<T>() };
+        TableData<T> _server_data = new() { TotalItems = 0, Items = Array.Empty<T>() };
         private IEnumerable<T> _items;
 
         internal override async Task InvokeServerLoadFunc()

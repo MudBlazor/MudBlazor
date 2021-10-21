@@ -12,12 +12,12 @@
          <MudPickerToolbar DisableToolbar="@DisableToolbar" Class="mud-picker-color-toolbar">
              @if(PickerVariant != PickerVariant.Static)
              { 
-                <MudIconButton Class="pa-1 mud-close-picker-button" Size="Size.Small" Color="Color.Inherit" Icon="@Icons.Material.Filled.Close" OnClick="@GetEventCallback()" />
+                <MudIconButton Class="pa-1 mud-close-picker-button" Size="Size.Small" Color="Color.Inherit" Icon="@CloseIcon" OnClick="@GetEventCallback()" />
              }
              <MudSpacer />
-             <MudIconButton Class="pa-1" Size="Size.Small" Color="GetButtonColor(ColorPickerView.Spectrum)" Icon="@Icons.Material.Filled.Tune" OnClick="(() => ChangeView(ColorPickerView.Spectrum))" />
-             <MudIconButton Class="pa-1 mx-1" Size="Size.Small" Color="GetButtonColor(ColorPickerView.Grid)" Icon="@Icons.Material.Filled.Apps" OnClick="(() => ChangeView(ColorPickerView.Grid))" />
-             <MudIconButton Class="pa-1" Size="Size.Small" Color="GetButtonColor(ColorPickerView.Palette)" Icon="@Icons.Material.Filled.Palette" OnClick="(() => ChangeView(ColorPickerView.Palette))" />
+             <MudIconButton Class="pa-1" Size="Size.Small" Color="GetButtonColor(ColorPickerView.Spectrum)" Icon="@SpectrumIcon" OnClick="(() => ChangeView(ColorPickerView.Spectrum))" />
+             <MudIconButton Class="pa-1 mx-1" Size="Size.Small" Color="GetButtonColor(ColorPickerView.Grid)" Icon="@GridIcon" OnClick="(() => ChangeView(ColorPickerView.Grid))" />
+             <MudIconButton Class="pa-1" Size="Size.Small" Color="GetButtonColor(ColorPickerView.Palette)" Icon="@PaletteIcon" OnClick="(() => ChangeView(ColorPickerView.Palette))" />
          </MudPickerToolbar>
         <MudPickerContent Class="mud-picker-color-content">
             @if(!DisableColorField)
@@ -28,8 +28,8 @@
                         <div class="mud-picker-color-overlay" style="@($"background-color: {_baseColor.ToString(MudColorOutputFormats.RGB)}")">
                             <div class="mud-picker-color-overlay mud-picker-color-overlay-white">
                                 <div class="mud-picker-color-overlay mud-picker-color-overlay-black">
-                                    <div class="mud-picker-color-overlay" id="@_id" @onclick="OnMouseClick">
-                                        <svg class="mud-picker-color-selector" height="26" width="26" style="transform: @GetSelectorLocation()" @onclick:stopPropagation="true">
+                                    <div class="mud-picker-color-overlay" id="@_id" @onclick="OnColorOverlayClick">
+                                        <svg class="mud-picker-color-selector" height="26" width="26" style="transform: @GetSelectorLocation()" @onclick="OnSelectorClicked" @onclick:stopPropagation="true">
                                             <defs>
                                                 <filter id="mud-picker-color-selector-shadow" x="-50%" y="-50%" width="200%" height="200%">
                                                     <feGaussianBlur in="SourceAlpha" stdDeviation="1" />
@@ -46,7 +46,7 @@
                             </div>
                         </div>
                     }
-                    @if(ColorPickerView == ColorPickerView.Grid || ColorPickerView == ColorPickerView.GridCompact)
+                    @if(ColorPickerView is ColorPickerView.Grid or ColorPickerView.GridCompact)
                     {
                         <div class="mud-picker-color-grid">
                             @foreach (var item in _gridList)
@@ -126,7 +126,7 @@
                                 @if (!DisableModeSwitch)
                                 {
                                     <div class="mud-picker-control-switch">
-                                        <MudIconButton OnClick="ChangeMode" Icon="@Icons.Material.Filled.ImportExport" Class="pa-1 me-n1"></MudIconButton>
+                                        <MudIconButton OnClick="ChangeMode" Icon="@ImportExportIcon" Class="pa-1 me-n1"></MudIconButton>
                                     </div>
                                 }
                             </div>
