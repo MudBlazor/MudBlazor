@@ -53,7 +53,7 @@
 <MudItem xs="4">
     @if (dataType == typeof(string))
     {
-        <MudTextFieldString Value="@_valueString" ValueChanged="@StringValueChanged" FullWidth="true" Label="Value" Placeholder="Filter value" Margin="@Margin.Dense"></MudTextFieldString>
+        <MudTextField T="string" Value="@_valueString" ValueChanged="@StringValueChanged" FullWidth="true" Label="Value" Placeholder="Filter value" Margin="@Margin.Dense"></MudTextField>
     }
     else if (isNumber)
     {
