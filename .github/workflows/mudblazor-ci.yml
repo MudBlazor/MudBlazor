@@ -46,7 +46,7 @@ jobs:
         uses: codecov/codecov-action@v2
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-          directory: ./TestResults/
+          directory: ./src/MudBlazor.UnitTests/TestResults/
           files: ./coverage.cobertura.xml
           flags: unittests # optional
           name: codecov-umbrella # optional
