@@ -184,6 +184,11 @@ namespace MudBlazor
         [Parameter] public EventCallback<string> TextChanged { get; set; }
 
         /// <summary>
+        /// Fired when the element has focus.
+        /// </summary>
+        [Parameter] public EventCallback<FocusEventArgs> OnFocus { get; set; }
+
+        /// <summary>
         /// Fired when the element loses focus.
         /// </summary>
         [Parameter] public EventCallback<FocusEventArgs> OnBlur { get; set; }
@@ -196,11 +201,36 @@ namespace MudBlazor
 
         protected bool _isFocused;
 
+        protected virtual void OnFocussed(FocusEventArgs obj)
+        {
+            _isFocused = true;
+            OnFocus.InvokeAsync().AndForget();
+        }
+
         protected virtual void OnBlurred(FocusEventArgs obj)
         {
             _isFocused = false;
             Touched = true;
             BeginValidateAfter(OnBlur.InvokeAsync(obj));
+        }
+
+        protected string GetPlaceholder()
+        {
+            if (_isFocused == true)
+            {
+                return Placeholder;
+            }
+            else
+            {
+                if (string.IsNullOrEmpty(Label))
+                {
+                    return Placeholder;
+                }
+                else
+                {
+                    return null;
+                }
+            }
         }
 
         /// <summary>
@@ -388,6 +418,9 @@ namespace MudBlazor
             //Only focus automatically after the first render cycle!
             if (firstRender && AutoFocus)
             {
+                //https://github.com/dotnet/aspnetcore/issues/30070
+                //Should be solved in .net6 and no need to yield line
+                await Task.Yield();
                 await FocusAsync();
             }
         }
