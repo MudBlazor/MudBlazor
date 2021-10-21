@@ -1,0 +1,67 @@
+﻿@namespace MudBlazor
+@inherits MudComponentBase 
+@typeparam T
+
+@if (ColumnType == ColumnType.SelectionCheckBox)
+{
+    <td class="@Class" style="@Style">
+        <div class="d-flex">
+            <MudCheckBox T="bool" Checked="@_isSelected" CheckedChanged="@((v) => CellCheckedChanged(v, Value))"></MudCheckBox>
+        </div>
+    </td>  
+}
+else if (ColumnType == ColumnType.Text)
+{
+    <td data-label="@computedTitle" class="@Class" style="@Style">
+        @if (isEditing)
+        {
+            if (EditTemplate != null)
+            {
+                @EditTemplate(Value)
+            }
+            else
+            {
+                if (dataType == typeof(string))
+                {
+                    <MudTextFieldString Value="@_valueString" ValueChanged="@StringValueChanged" Margin="@Margin.Dense" Style="margin-top:0"
+                        Required="true"></MudTextFieldString>
+                }
+                else if (isNumber)
+                {
+                    <MudNumericField T="double" Value="@_valueNumber" ValueChanged="@NumberValueChanged" Margin="@Margin.Dense" Style="margin-top:0"
+                        Required="true"></MudNumericField>
+                }
+            }
+        }
+        else
+        {
+            if (CellTemplate != null)
+            {
+                @CellTemplate(Value)
+            }
+            else
+            {
+                @computedValue
+            }
+        }
+    </td>
+}
+else if (ColumnType == ColumnType.InlineEditCommand)
+{
+    <td class="mud-table-cell">
+    @if (isEditing)
+    {
+        <div style="display: flex;">
+            <MudTooltip Text="Save">
+                <MudIconButton Class="pa-0" Icon="@Icons.Material.Filled.Done" Size="@Size.Small" OnClick="@Save" Disabled="@(!(DataGrid.Validator?.IsValid ?? false))" />
+            </MudTooltip>
+            @if (DataGrid.CanCancelEdit)
+            {
+                <MudTooltip Text="Cancel">
+                    <MudIconButton Class="pa-0 ml-4" Icon="@Icons.Material.Filled.Close" Size="@Size.Small" OnClick="@Cancel" />
+                </MudTooltip>
+            }
+        </div>
+    }
+    </td>
+}

@@ -60,6 +60,32 @@
 <MudText Inline="true">Selected1: @selectedItem1?.Name</MudText>
 <MudText Inline="true">Selected2: @selectedItem2?.Name</MudText>
 
+<MudDataGrid Items="@Elements" ShowColumnOptions="false" ReadOnly="@ronly" EditMode="@DataGridEditMode.Inline" Dense="@dense" Hover="@hover" @bind-SelectedItem="selectedItem2"
+    CanCancelEdit="@canCancelEdit">
+    <ColGroup>
+        <col style="width:50px;" />
+        <col style="width:80px;" />
+        <col style="width:50%;" />
+        <col />
+        <col />
+        <col style="width:50px;" />
+    </ColGroup>
+    <Columns>
+        <Column T="Element" Field="Number" Title="Nr" IsEditable="false" />
+        <Column T="Element" Field="Sign">
+            <EditTemplate>
+                <MudTextField @bind-Value="@context.Sign" Required RequiredError="Sign is required!!!" Margin="@Margin.Dense" />
+            </EditTemplate>
+        </Column>
+        <Column T="Element" Field="Name" Sortable="true" InitialDirection="SortDirection.Ascending" />
+        <Column T="Element" Field="Position" />
+        <Column T="Element" Field="Molar" Title="Molar mass" />
+    </Columns>
+    <PagerContent>
+        <MudDataGridPager T="Element" />
+    </PagerContent>
+</MudDataGrid>
+
 <MudExpansionPanels Style="flex: 1;">
     <MudExpansionPanel Text="Show inline-edit event log">
         @foreach (var message in editEvents)

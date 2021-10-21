@@ -40,6 +40,25 @@
     </div>
 </div>
 
+<MudDataGrid Items="@Elements" Dense="@dense" Hover="@hover" Bordered="@bordered" Striped="@striped" QuickFilter="new Func<Element,bool>(FilterFunc2)" 
+    @bind-SelectedItem="selectedItem2" ShowColumnOptions="false">
+    <ToolBarContent>
+        <MudText Typo="Typo.h6">Periodic Elements</MudText>
+        <MudSpacer />
+        <MudTextField @bind-Value="searchString2" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+    </ToolBarContent>
+    <Columns>
+        <Column T="Element" Field="@nameof(Element.Number)" Title="Nr"></Column>
+        <Column T="Element" Field="@nameof(Element.Sign)"></Column>
+        <Column T="Element" Field="@nameof(Element.Name)"></Column>
+        <Column T="Element" Field="@nameof(Element.Position)"></Column>
+        <Column T="Element" Field="@nameof(Element.Molar)" Title="Molar mass"></Column>
+    </Columns>
+    <PagerContent>
+        <MudDataGridPager T="Element" />
+    </PagerContent>
+</MudDataGrid>
+
 @code {
     private bool dense = false;
     private bool hover = true;

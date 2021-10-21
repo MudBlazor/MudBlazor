@@ -37,6 +37,15 @@
     </RowTemplate>
 </MudTable>
 
+<MudDataGrid Items="_items" Height="350px" Breakpoint="Breakpoint.Sm" HorizontalScrollbar="true" ShowColumnOptions="false">
+    <Columns>
+        @for (var i = 1; i <= 15; i++)
+        {
+            <Column T="TestItem" Field="@($"Column{i}")" />
+        }
+    </Columns>
+</MudDataGrid>
+
 @code {
     public class TestItem{
         public string Column1 {get;set;}

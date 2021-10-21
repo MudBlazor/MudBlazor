@@ -36,12 +36,40 @@
     </PagerContent>
 </MudTable>
 
+<MudDataGrid ServerData="@(new Func<GridState<Element>, Task<GridData<Element>>>(ServerReload2))"
+    Dense="true" Hover="true" @ref="table2" ShowColumnOptions="false" Sortable="true">
+    <ToolBarContent>
+        <MudText Typo="Typo.h6">Periodic Elements</MudText>
+        <MudSpacer />
+        <MudTextField T="string" ValueChanged="@(s=>OnSearch2(s))" Placeholder="Search" Adornment="Adornment.Start"
+                      AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+    </ToolBarContent>
+    <Columns>
+        <Column T="Element" Field="Number" Title="Nr" />
+        <Column T="Element" Field="Sign" />
+        <Column T="Element" Field="Name" />
+        <Column T="Element" Field="Position" />
+        <Column T="Element" Field="Molar" Title="Molar mass" />
+    </Columns>
+    <NoRecordsContent>
+        <MudText>No matching records found</MudText>
+    </NoRecordsContent>
+    <LoadingContent>
+        <MudText>Loading...</MudText>
+    </LoadingContent>
+    <PagerContent>
+        <MudDataGridPager T="Element" />
+    </PagerContent>
+</MudDataGrid>
+
 @code {
     private IEnumerable<Element> pagedData;
     private MudTable<Element> table;
+    private MudDataGrid<Element> table2;
 
     private int totalItems;
     private string searchString = null;
+    private string searchString2 = null;
 
     /// <summary>
     /// Here we simulate getting the paged, filtered and ordered data from the server
@@ -86,10 +114,38 @@
         return new TableData<Element>() {TotalItems = totalItems, Items = pagedData};
     }
 
+    private async Task<GridData<Element>> ServerReload2(GridState<Element> state)
+    {
+        IEnumerable<Element> data = await httpClient.GetFromJsonAsync<List<Element>>("webapi/periodictable");
+        await Task.Delay(300);
+        data = data.Where(element =>
+        {
+            if (string.IsNullOrWhiteSpace(searchString2))
+                return true;
+            if (element.Sign.Contains(searchString2, StringComparison.OrdinalIgnoreCase))
+                return true;
+            if (element.Name.Contains(searchString2, StringComparison.OrdinalIgnoreCase))
+                return true;
+            if ($"{element.Number} {element.Position} {element.Molar}".Contains(searchString2))
+                return true;
+            return false;
+        }).ToArray();
+        totalItems = data.Count();
+        data = data.OrderByDirection(state);
+        pagedData = data.Skip(state.Page * state.PageSize).Take(state.PageSize).ToArray();
+        return new GridData<Element>() {TotalItems = totalItems, Items = pagedData};
+    }
+
     private void OnSearch(string text)
     {
         searchString = text;
         table.ReloadServerData();
+    }
+
+    private void OnSearch2(string text)
+    {
+        searchString2 = text;
+        table2.ReloadServerData();
     }
 }
 

@@ -54,10 +54,48 @@
 </MudTable>
 <MudSwitch @bind-Checked="_hidePosition">Hide <b>position</b> when Breakpoint=Xs</MudSwitch>
 
+<MudDataGrid Items="@Elements.Take(10)" MultiSelection="true" @bind-SelectedItems="selectedItems2" Hover="true" Breakpoint="Breakpoint.Sm" Striped="true" Bordered="true"
+          HeaderClass="table-head-bordered" FooterClass="table-foot-bordered" Sortable="false" ShowColumnOptions="false">
+    <Header>
+        <Row Class="header-centered">
+            <HeaderCell T="Element" Title="Periodic Elements Info" ColSpan="6" />
+        </Row>
+        <Row Class="header-centered">
+            <HeaderCell T="Element" Title="" />
+            <HeaderCell T="Element" Title="Basic" ColSpan="2" />
+            <HeaderCell T="Element" Title="Extended" ColSpan="3" />
+        </Row>
+    </Header>
+    <Columns>
+        <Column T="Element" Type="@ColumnType.SelectionCheckBox" EnableFooterSelection="true" />
+        <Column T="Element" Field="Number" Title="Nr" FooterColSpan="5">
+            <FooterTemplate>
+                Selected: @selectedItems2.Count
+            </FooterTemplate>
+        </Column>
+        <Column T="Element" Field="Sign"></Column>
+        <Column T="Element" Field="Name"></Column>
+        <Column T="Element" Field="Position" HideSmall="_hidePosition"></Column>
+        <Column T="Element" Field="Molar" Title="Molar mass"></Column>
+    </Columns>
+    <Footer>
+        <Row Class="bold-text">
+            <FooterCell T="Element"></FooterCell>
+            <FooterCell T="Element">Nr</FooterCell>
+            <FooterCell T="Element">Sign</FooterCell>
+            <FooterCell T="Element">Name</FooterCell>
+            <FooterCell T="Element">Position</FooterCell>
+            <FooterCell T="Element">Molar mass</FooterCell>
+        </Row>
+    </Footer>
+</MudDataGrid>
+
+
 @code {
     private bool _hidePosition;
     private IEnumerable<Element> Elements = new List<Element>();
     private HashSet<Element> selectedItems = new HashSet<Element>();
+    private HashSet<Element> selectedItems2 = new HashSet<Element>();
 
     protected override async Task OnInitializedAsync()
     {

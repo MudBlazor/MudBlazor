@@ -115,4 +115,8 @@
     <Watch Include="**/*.scss" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Watch Remove="Styles\components\_datagrid.scss" />
+  </ItemGroup>
+
 </Project>

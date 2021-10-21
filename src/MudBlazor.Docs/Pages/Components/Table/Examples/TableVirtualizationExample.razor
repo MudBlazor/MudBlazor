@@ -17,6 +17,15 @@
     </RowTemplate>
 </MudTable>
 
+<MudDataGrid Items="_items" Height="350px" Breakpoint="Breakpoint.Sm" Virtualize="true" FixedHeader="true" ShowColumnOptions="false" Sortable="true">
+    <Columns>
+        @for (var i = 1; i <= 5; i++)
+        {
+            <Column T="TestItem" Field="@($"Column{i}")" />
+        }
+    </Columns>
+</MudDataGrid>
+
 @code {
     public class TestItem
     {

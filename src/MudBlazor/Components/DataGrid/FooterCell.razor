@@ -1,0 +1,25 @@
+﻿@namespace MudBlazor
+@inherits MudComponentBase
+@typeparam T
+
+@if (IsOnlyFooter)
+{
+    <td  class="mud-table-cell @Class" style="@Style" colspan="@ColSpan">
+        @ChildContent
+    </td>
+}
+else
+{
+    <td class="@Class" style="@Style" colspan="@ColSpan">
+        @if (ColumnType == ColumnType.SelectionCheckBox)
+        {
+            <div class="d-flex">
+                <MudCheckBox T="bool" CheckedChanged="@CheckedChanged"></MudCheckBox>
+            </div>
+        }
+        else
+        {
+            @FooterTemplate
+        }
+    </td>
+}
