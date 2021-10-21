@@ -145,6 +145,17 @@ namespace MudBlazor
             await base.OnAfterRenderAsync(firstRender);
         }
 
-        public async ValueTask DisposeAsync() => await Service.Unregister(_handler);
+        public async ValueTask DisposeAsync()
+        {
+            try
+            {
+                await Service.Unregister(_handler);
+            }
+            catch (TaskCanceledException)
+            {
+                /*ignore*/
+            }
+        }
+
     }
 }
