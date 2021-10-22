@@ -1,51 +1,18 @@
-﻿
-@namespace MudBlazor.Docs.Examples
+﻿@namespace MudBlazor.Docs.Examples
 
-<div class="d-flex flex-column justify-center">
-        <MudPaper Outlined="true" Class="px-12 py-6">
-            <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(OverflowBehavior == OverflowBehavior.FilpOnOpen? false :true)" DisableElevation="true" OnClick="@ToggleOpen">@(_isOpen? "Close" : "Open")</MudButton>
-	        <MudPopover Open="_isOpen" OverflowBehavior="@OverflowBehavior" AnchorOrigin="@AnchorOrigin" TransformOrigin="@TransformOrigin" Paper="false">
-                    <MudPaper MinWidth="375px" Outlined="true" Class="d-flex justify-space-between align-center">
-                        <div>
-                            <MudIconButton Icon="@Icons.Material.Filled.ArrowBack" OnClick="@(()=> SetPopoverOrigin(Origin.CenterLeft, Origin.CenterRight))" Color="@(TransformOrigin == Origin.CenterRight? Color.Primary : Color.Default)" />
-                            <MudIconButton Icon="@Icons.Material.Filled.ArrowUpward" OnClick="@(()=> SetPopoverOrigin(Origin.TopCenter, Origin.BottomCenter))" Color="@(TransformOrigin == Origin.BottomCenter? Color.Primary : Color.Default)" />
-                        </div>
-                        <div class="mx-sm-2 mx-md-8 mx-lg-16">
-                            <MudButton Variant="Variant.Filled" DisableElevation="true" Class="mx-1" OnClick="@(()=> SetPopoverOverflow(OverflowBehavior.FlipNever))" Color="@(OverflowBehavior == OverflowBehavior.FlipNever? Color.Primary : Color.Default)">Never</MudButton>
-                            <MudButton Variant="Variant.Filled" DisableElevation="true" Class="mx-1" OnClick="@(()=> SetPopoverOverflow(OverflowBehavior.FilpOnOpen))" Color="@(OverflowBehavior == OverflowBehavior.FilpOnOpen? Color.Primary : Color.Default)">OnOpen</MudButton>
-                             <MudButton Variant="Variant.Filled" DisableElevation="true" Class="mx-1" OnClick="@(()=> SetPopoverOverflow(OverflowBehavior.FlipAlways))" Color="@(OverflowBehavior == OverflowBehavior.FlipAlways? Color.Primary : Color.Default)">Always</MudButton>
-                        </div>
-                        <div>
-                            <MudIconButton Icon="@Icons.Material.Filled.ArrowDownward"  OnClick="@(()=> SetPopoverOrigin(Origin.BottomCenter, Origin.TopCenter))" Color="@(TransformOrigin == Origin.TopCenter? Color.Primary : Color.Default)"/>
-                            <MudIconButton Icon="@Icons.Material.Filled.ArrowForward" OnClick="@(()=> SetPopoverOrigin(Origin.CenterRight, Origin.CenterLeft))" Color="@(TransformOrigin == Origin.CenterLeft? Color.Primary : Color.Default)" />
-                        </div>
-                    </MudPaper>
-	        </MudPopover>
+
+<MudPaper Outlined="true" Class="px-12 py-6">
+    <MudButton Variant="Variant.Filled" Color="Color.Primary" DisableElevation="true" OnClick="@ToggleOpen">@(_isOpen? "Close" : "Open")</MudButton>
+	<MudPopover Open="_isOpen" OverflowBehavior="OverflowBehavior.FlipAlways" AnchorOrigin="Origin.BottomCenter" TransformOrigin="Origin.TopCenter" Paper="false">
+        <MudPaper Outlined="true" Class="px-4 py-8">
+            <MudText>Scroll your browser to see effect.</MudText>
         </MudPaper>
-</div>
+	</MudPopover>
+</MudPaper>
+
 
 @code {
-
     public bool _isOpen = true;
-
-    public Origin AnchorOrigin { get; set; } = Origin.CenterRight;
-    public Origin TransformOrigin { get; set; } = Origin.CenterLeft;
-    public OverflowBehavior OverflowBehavior { get; set; } = OverflowBehavior.FlipAlways;
-
-    public void SetPopoverOrigin(Origin anchor, Origin transform)
-    {
-        AnchorOrigin = anchor;
-        TransformOrigin = transform;
-    }
-
-    public void SetPopoverOverflow(OverflowBehavior behavior)
-    {
-        if(behavior == OverflowBehavior.FilpOnOpen && OverflowBehavior != OverflowBehavior.FilpOnOpen)
-        {
-            _isOpen = false;
-        }
-        OverflowBehavior = behavior;
-    }
 
     public void ToggleOpen()
     {
