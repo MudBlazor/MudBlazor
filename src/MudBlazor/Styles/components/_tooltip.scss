@@ -28,7 +28,7 @@
     }
 
     &.mud-tooltip {
-        &-center-left {
+        &-center-left:not([data-mudpopover-flip]), &-center-right[data-mudpopover-flip] {
             transform: translateX(-10px);
 
             &.mud-tooltip-arrow::after {
@@ -37,7 +37,7 @@
             }
         }
 
-        &-center-right {
+        &-center-right:not([data-mudpopover-flip]), &-center-left[data-mudpopover-flip] {
             transform: translateX(10px);
 
             &.mud-tooltip-arrow::after {
@@ -46,7 +46,7 @@
             }
         }
 
-        &-top-center {
+        &-top-center:not([data-mudpopover-flip]), &-bottom-center[data-mudpopover-flip] {
             transform: translateY(-10px);
 
             &.mud-tooltip-arrow::after {
@@ -55,7 +55,7 @@
             }
         }
 
-        &-bottom-center {
+        &-bottom-center:not([data-mudpopover-flip]), &-top-center[data-mudpopover-flip] {
             transform: translateY(10px);
 
             &.mud-tooltip-arrow::after {
