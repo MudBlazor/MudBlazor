@@ -48,11 +48,6 @@ namespace MudBlazor
         [Parameter] public bool Arrow { get; set; } = false;
 
         /// <summary>
-        /// If true, tooltip will show on touch on a touch-sensitive device.
-        /// </summary>
-        [Parameter] public bool Touch { get; set; } = false;
-
-        /// <summary>
         /// Sets the length of time that the opening transition takes to complete.
         /// </summary>
         [Parameter] public double Duration { get; set; } = 251;
@@ -95,9 +90,6 @@ namespace MudBlazor
 
         private void HandleMouseOver() => _isVisible = true;
         private void HandleMouseOut() => _isVisible = false;
-
-        private void HandleTouchDown() => _isVisible = Touch;
-        private void HandleTouchUp() => _isVisible = false;
 
         private Origin ConvertPlacement()
         {
