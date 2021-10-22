@@ -23,6 +23,10 @@
         color: var(--mud-palette-action-disabled);
         background-color: transparent;
     }
+
+    &.mud-readonly, .mud-readonly:hover {
+        cursor: default;
+    }
 }
 
 .mud-icon-button-color-inherit {
