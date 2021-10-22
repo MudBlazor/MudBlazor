@@ -37,7 +37,7 @@ namespace MudBlazor
         [Parameter] public Origin TransformOrigin { get; set; } = Origin.TopCenter;
 
         /// <summary>
-        /// Sets the direction the Autocomplete menu should open.
+        /// Set the anchor origin point to determen where the popover will open from.
         /// </summary>
         [ExcludeFromCodeCoverage]
         [Obsolete("Direction is obsolete. Use AnchorOrigin or TransformOrigin instead!", false)]

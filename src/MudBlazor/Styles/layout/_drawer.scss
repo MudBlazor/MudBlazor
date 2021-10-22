@@ -29,13 +29,7 @@
     }
 
     @each $breakpoint in map-keys($breakpoints) {
-        &.mud-drawer-mini.mud-drawer-#{$breakpoint} {
-            @media (max-width: map-get($breakpoints, $breakpoint) - 1px) {
-                z-index: calc(var(--mud-zindex-appbar) + 2);
-            }
-        }
-
-        &.mud-drawer-responsive.mud-drawer-#{$breakpoint} {
+        &.mud-drawer-mini.mud-drawer-#{$breakpoint}, &.mud-drawer-responsive.mud-drawer-#{$breakpoint} {
             @media (max-width: map-get($breakpoints, $breakpoint) - 1px) {
                 z-index: calc(var(--mud-zindex-appbar) + 2);
 
