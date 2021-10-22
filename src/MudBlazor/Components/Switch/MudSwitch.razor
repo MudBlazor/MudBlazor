@@ -2,11 +2,11 @@
 @inherits MudBooleanInput<T>
 @typeparam T
 
-<label class="@Classname" style="@Style">
+<label class="@Classname" style="@Style" @onkeydown="@HandleKeyDown" id="@_elementId">
     <span class="mud-switch-span mud-flip-x-rtl">
         <span tabindex="0" class="@SwitchClassname">
             <span class="mud-switch-button">
-                <input tabindex="-1" @attributes="UserAttributes" aria-checked="@((BoolValue == true).ToString().ToLower())" aria-readonly="@(Disabled.ToString().ToLower())" type="checkbox" class="mud-switch-input" checked="@BoolValue" @onchange="@OnChange" disabled="@Disabled" @onclick:preventDefault="@ReadOnly"/>
+                <input tabindex="-1" @attributes="UserAttributes" id="@_elementId" aria-checked="@((BoolValue == true).ToString().ToLower())" aria-readonly="@(Disabled.ToString().ToLower())" type="checkbox" class="mud-switch-input" checked="@BoolValue" @onchange="@OnChange" disabled="@Disabled" @onclick:preventDefault="@ReadOnly"/>
                 <span class="mud-switch-thumb d-flex align-center justify-center">
                     @if (!string.IsNullOrEmpty(ThumbIcon))
                     {
