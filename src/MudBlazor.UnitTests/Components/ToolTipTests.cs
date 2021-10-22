@@ -22,7 +22,6 @@ namespace MudBlazor.UnitTests.Components
             toolTip.Color.Should().Be(Color.Default);
             toolTip.Text.Should().BeEmpty();
             toolTip.Arrow.Should().BeFalse();
-            toolTip.Touch.Should().BeFalse();
             toolTip.Duration.Should().Be(251);
             toolTip.Delay.Should().Be(0);
             toolTip.Placement.Should().Be(Placement.Bottom);
