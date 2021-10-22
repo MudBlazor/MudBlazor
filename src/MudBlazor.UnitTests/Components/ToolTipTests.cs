@@ -143,51 +143,6 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        [TestCase(false)]
-        [TestCase(true)]
-        public void HandleTouch(bool touchIsEnabled)
-        {
-            var comp = Context.RenderComponent<TooltipWithTextTest>(p =>
-            {
-                p.Add(x => x.TooltipTextContent, "my tooltip content text");
-                p.Add(x => x.EnableTouch, touchIsEnabled);
-
-            });
-            Console.WriteLine(comp.Markup);
-
-            // content should always be visible
-            var button = comp.Find("button");
-            button.TextContent.Should().Be("My Buttion");
-
-
-            var popoverNode = button.ParentElement.Children[1];
-            popoverNode.Id.Should().StartWith("popover-");
-            var popoverContentNode = comp.Find($"#popovercontent-{popoverNode.Id.Substring(8)}");
-
-            //no content for the popover node
-            popoverContentNode.Children.Should().BeNullOrEmpty();
-
-            //trigger TouchStart
-            button.ParentElement.TouchStart();
-
-            if (touchIsEnabled == true)
-            {
-                //content should be visible
-                popoverContentNode.TextContent.Should().Be("my tooltip content text");
-            }
-            else
-            {
-                popoverContentNode.TextContent.Should().BeNullOrEmpty();
-            }
-
-            //trigger touch end
-            button.ParentElement.TouchEnd();
-
-            //no content should be visible
-            popoverContentNode.Children.Should().BeEmpty();
-        }
-
-        [Test]
         [TestCase(false, new[] { "mud-tooltip-root" })]
         [TestCase(true, new[] { "mud-tooltip-root", "mud-tooltip-inline" })]
         public void ContainerClass_PropertyRelations(bool inlineValue, string[] expectedClasses)
