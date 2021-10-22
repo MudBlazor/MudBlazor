@@ -79,21 +79,25 @@
         'top': {
             'mud-popover-top-left': 'mud-popover-bottom-left',
             'mud-popover-top-center': 'mud-popover-bottom-center',
+            'mud-popover-anchor-top-bottom': 'mud-popover-anchor-top-center',
             'mud-popover-top-right': 'mud-popover-bottom-right',
         },
         'left': {
             'mud-popover-top-left': 'mud-popover-top-right',
             'mud-popover-center-left': 'mud-popover-center-right',
+            'mud-popover-anchor-center-right': 'mud-popover-anchor-center-left',
             'mud-popover-bottom-left': 'mud-popover-bottom-right',
         },
         'right': {
             'mud-popover-top-right': 'mud-popover-top-left',
             'mud-popover-center-right': 'mud-popover-center-left',
+            'mud-popover-anchor-center-left': 'mud-popover-anchor-center-right',
             'mud-popover-bottom-right': 'mud-popover-bottom-left',
         },
         'bottom': {
             'mud-popover-bottom-left': 'mud-popover-top-left',
             'mud-popover-bottom-center': 'mud-popover-top-center',
+            'mud-popover-anchor-top-center': 'mud-popover-anchor-bottom-center',
             'mud-popover-bottom-right': 'mud-popover-top-right',
         },
         'top-and-left': {
@@ -242,6 +246,8 @@
                     top = newPosition.top;
                     offsetX = newPosition.offsetX;
                     offsetY = newPosition.offsetY;
+
+                    popoverContentNode.setAttribute('data-mudpopover-flip', 'flipped');
                 }
 
                 if (classList.contains('mud-popover-overflow-flip-onopen')) {
