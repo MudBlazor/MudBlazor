@@ -79,7 +79,7 @@
         'top': {
             'mud-popover-top-left': 'mud-popover-bottom-left',
             'mud-popover-top-center': 'mud-popover-bottom-center',
-            'mud-popover-anchor-top-bottom': 'mud-popover-anchor-top-center',
+            'mud-popover-anchor-bottom-center': 'mud-popover-anchor-top-center',
             'mud-popover-top-right': 'mud-popover-bottom-right',
         },
         'left': {
