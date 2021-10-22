@@ -249,6 +249,9 @@
 
                     popoverContentNode.setAttribute('data-mudpopover-flip', 'flipped');
                 }
+                else {
+                    popoverContentNode.removeAttribute('data-mudpopover-flip');
+                }
 
                 if (classList.contains('mud-popover-overflow-flip-onopen')) {
                     if (!popoverContentNode.mudPopoverFliped) {
@@ -307,8 +310,8 @@ class MudPopover {
                 if (target.classList.contains('mud-popover-overflow-flip-onopen') &&
                     target.classList.contains('mud-popover-open') == false) {
                     target.mudPopoverFliped = null;
+                    target.removeAttribute('data-mudpopover-flip');
                 }
-
 
                 window.mudpopoverHelper.placePopoverByNode(target);
             }
