@@ -94,7 +94,7 @@ namespace MudBlazor
                 await _keyInterceptor.Connect(_elementId, new KeyInterceptorOptions()
                 {
                     //EnableLogging = true,
-                    TargetClass = "mud-switch-input",
+                    TargetClass = "mud-switch-base",
                     Keys = {
                         new KeyOptions { Key="ArrowUp", PreventDown = "key+none" }, // prevent scrolling page, instead increment
                         new KeyOptions { Key="ArrowDown", PreventDown = "key+none" }, // prevent scrolling page, instead decrement
