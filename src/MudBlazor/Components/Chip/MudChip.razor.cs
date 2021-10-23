@@ -156,7 +156,7 @@ namespace MudBlazor
         /// <summary>
         /// If true, this chip is selected by default if used in a ChipSet. 
         /// </summary>
-        [Parameter] public bool Default { get; set; }
+        [Parameter] public bool? Default { get; set; }
 
         /// <summary>
         /// Command executed when the user clicks on an element.
