@@ -98,7 +98,7 @@ namespace MudBlazor
                     Keys = {
                         new KeyOptions { Key="ArrowUp", PreventDown = "key+none" }, // prevent scrolling page, instead increment
                         new KeyOptions { Key="ArrowDown", PreventDown = "key+none" }, // prevent scrolling page, instead decrement
-                        new KeyOptions { Key=" ", PreventDown = "key+none", PreventUp = "key+none" }, // prevent dead keys like ^ ` ´ etc
+                        new KeyOptions { Key=" ", PreventDown = "key+none", PreventUp = "key+none" },
                     },
                 });
             }
