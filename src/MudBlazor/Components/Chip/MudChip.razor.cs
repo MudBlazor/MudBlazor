@@ -143,6 +143,12 @@ namespace MudBlazor
         [Parameter] public string Text { get; set; }
 
         /// <summary>
+        /// A value that should be managed in the SelectedValues collection.
+        /// Note: do not change the value during the chip's lifetime
+        /// </summary>
+        [Parameter] public object Value { get; set; }
+
+        /// <summary>
         /// If true, force browser to redirect outside component router-space.
         /// </summary>
         [Parameter] public bool ForceLoad { get; set; }
@@ -198,6 +204,13 @@ namespace MudBlazor
                 _isSelected = value;
                 StateHasChanged();
             }
+        }
+
+        protected override void OnInitialized()
+        {
+            base.OnInitialized();
+            if (Value == null)
+                Value = this;
         }
 
         protected async Task OnClickHandler(MouseEventArgs ev)
