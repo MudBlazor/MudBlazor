@@ -1,6 +1,9 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿using System;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Extensions;
+using MudBlazor.Services;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
@@ -25,6 +28,8 @@ namespace MudBlazor
         protected string SpanClassname =>
         new CssBuilder("mud-switch-span mud-flip-x-rtl")
         .Build();
+
+        [Inject] private IKeyInterceptor _keyInterceptor { get; set; }
 
         /// <summary>
         /// The color of the component. It supports the theme colors.
@@ -67,7 +72,37 @@ namespace MudBlazor
                 case "NumpadEnter":
                     SetBoolValueAsync(true);
                     break;
+                case " ":
+                    if (BoolValue == true)
+                    {
+                        SetBoolValueAsync(false);
+                    }
+                    else
+                    {
+                        SetBoolValueAsync(true);
+                    }
+                    break;
             }
+        }
+
+        private string _elementId = "switch_" + Guid.NewGuid().ToString().Substring(0, 8);
+
+        protected override async Task OnAfterRenderAsync(bool firstRender)
+        {
+            if (firstRender)
+            {
+                await _keyInterceptor.Connect(_elementId, new KeyInterceptorOptions()
+                {
+                    //EnableLogging = true,
+                    TargetClass = "mud-switch-base",
+                    Keys = {
+                        new KeyOptions { Key="ArrowUp", PreventDown = "key+none" }, // prevent scrolling page, instead increment
+                        new KeyOptions { Key="ArrowDown", PreventDown = "key+none" }, // prevent scrolling page, instead decrement
+                        new KeyOptions { Key=" ", PreventDown = "key+none", PreventUp = "key+none" },
+                    },
+                });
+            }
+            await base.OnAfterRenderAsync(firstRender);
         }
     }
 }
