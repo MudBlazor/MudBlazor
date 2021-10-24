@@ -51,3 +51,11 @@
         @content
     }
 }
+
+@function themePadding($value) {
+    @return ($value * 0.5);
+}
+
+@function themeMargin($value) {
+    @return ($value * 0.5);
+}
