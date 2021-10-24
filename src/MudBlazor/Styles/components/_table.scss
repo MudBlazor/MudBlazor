@@ -122,7 +122,7 @@
 .mud-table-dense {
     & * .mud-table-row {
         & .mud-table-cell {
-            padding: 6px 24px 6px 16px;
+            padding: themePadding(6px) themePadding(24px) themePadding(6px) themePadding(16px);
             padding-inline-start: 16px;
             padding-inline-end: 24px;
 

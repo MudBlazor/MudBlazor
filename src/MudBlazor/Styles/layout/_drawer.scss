@@ -244,11 +244,11 @@
 .mud-drawer-header {
     display: flex;
     min-height: var(--mud-appbar-height);
-    padding: 12px 24px 12px 24px;
+    padding: themePadding(12px) themePadding(24px) themePadding(12px) themePadding(24px);
 
     &.mud-drawer-header-dense {
         min-height: calc(var(--mud-appbar-height) - var(--mud-appbar-height) / 4);
-        padding: 8px 24px 8px 24px;
+        padding: themePadding(8px) themePadding(24px) themePadding(8px) themePadding(24px);
     }
 }
 

@@ -52,7 +52,7 @@
 .mud-simple-table.mud-table-dense {
     & * tr {
         & td, th {
-            padding: 6px 24px 6px 16px;
+            padding: themePadding(6px) themePadding(24px) themePadding(6px) themePadding(16px);
             padding-inline-start: 16px;
             padding-inline-end: 24px;
         }
