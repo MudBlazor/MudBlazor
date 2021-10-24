@@ -319,7 +319,7 @@
     width: 100%;
     border: 0;
     height: auto;
-    margin: 6px 0 7px;
+    margin: themeMargin(6px) themeMargin(0px) themeMargin(7px);
     padding: 0;
     display: block;
     min-width: 0;
@@ -360,7 +360,7 @@
     }
 
     &.mud-input-root-filled {
-      margin: 27px 12px 10px;
+      margin: themeMargin(27px) themeMargin(12px) themeMargin(10px);
 
       &.mud-input-root-margin-dense {
         margin-top: 23px;

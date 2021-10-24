@@ -90,7 +90,7 @@
 }
 
 .mud-picker-time-container {
-    margin: 16px 0 8px;
+    margin: themeMargin(16px) themeMargin(0px) themeMargin(8px);
     display: flex;
     align-items: flex-end;
     justify-content: center;
