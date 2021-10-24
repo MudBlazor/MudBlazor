@@ -39,7 +39,7 @@
         padding-left: themePadding(16px);
         margin-inline-start: auto;
         margin-inline-end: -8px;
-        padding-inline-start: 16px;
+        padding-inline-start: themePadding(16px);
         padding-inline-end: unset;
 
         & > button {

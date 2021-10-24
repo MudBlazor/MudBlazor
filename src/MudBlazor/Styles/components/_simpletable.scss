@@ -53,7 +53,7 @@
     & * tr {
         & td, th {
             padding: themePadding(6px) themePadding(24px) themePadding(6px) themePadding(16px);
-            padding-inline-start: 16px;
+            padding-inline-start: themePadding(16px);
             padding-inline-end: 24px;
         }
 

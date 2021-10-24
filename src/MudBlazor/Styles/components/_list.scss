@@ -77,7 +77,7 @@
 
 .mud-list-item-text-inset {
     padding-left: themePadding(56px);
-    padding-inline-start: 56px;
+    padding-inline-start: themePadding(56px);
     padding-inline-end: unset;
 }
 
@@ -106,7 +106,7 @@
 
 .mud-list-subheader-inset {
     padding-left: themePadding(72px);
-    padding-inline-start: 72px;
+    padding-inline-start: themePadding(72px);
     padding-inline-end: unset;
 }
 
@@ -126,7 +126,7 @@
 .mud-nested-list {
     & > .mud-list-item {
         padding-left: themePadding(32px);
-        padding-inline-start: 32px;
+        padding-inline-start: themePadding(32px);
         padding-inline-end: unset;
     }
 }

@@ -91,7 +91,7 @@
 .mud-table-toolbar {
     padding-left: themePadding(16px);
     padding-right: themePadding(8px);
-    padding-inline-start: 16px;
+    padding-inline-start: themePadding(16px);
     padding-inline-end: 8px;
 }
 
@@ -123,7 +123,7 @@
     & * .mud-table-row {
         & .mud-table-cell {
             padding: themePadding(6px) themePadding(24px) themePadding(6px) themePadding(16px);
-            padding-inline-start: 16px;
+            padding-inline-start: themePadding(16px);
             padding-inline-end: 24px;
 
             .mud-table-cell-checkbox {

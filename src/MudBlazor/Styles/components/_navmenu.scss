@@ -28,7 +28,7 @@
 
     & * .mud-navmenu .mud-nav-item .mud-nav-link {
         padding-left: themePadding(36px);
-        padding-inline-start: 36px;
+        padding-inline-start: themePadding(36px);
         padding-inline-end: unset;
     }
 }
@@ -119,38 +119,38 @@
 .mud-nav-group * .mud-navmenu > .mud-nav-group {
     & .mud-nav-link {
         padding-left: themePadding(36px);
-        padding-inline-start: 36px;
+        padding-inline-start: themePadding(36px);
         padding-inline-end: 16px;
     }
 
     & * .mud-navmenu .mud-nav-item .mud-nav-link {
         padding-left: themePadding(48px);
-        padding-inline-start: 48px;
+        padding-inline-start: themePadding(48px);
     }
 
     & * .mud-navmenu > .mud-nav-group {
         & .mud-nav-link {
             padding-left: themePadding(48px);
-            padding-inline-start: 48px;
+            padding-inline-start: themePadding(48px);
             padding-inline-end: 16px;
         }
 
         & * .mud-navmenu .mud-nav-item .mud-nav-link {
             padding-left: themePadding(60px);
-            padding-inline-start: 60px;
+            padding-inline-start: themePadding(60px);
             padding-inline-end: 0;
         }
 
         & * .mud-navmenu > .mud-nav-group {
             & .mud-nav-link {
                 padding-left: themePadding(60px);
-                padding-inline-start: 60px;
+                padding-inline-start: themePadding(60px);
                 padding-inline-end: 16px;
             }
 
             & * .mud-navmenu .mud-nav-item .mud-nav-link {
                 padding-left: themePadding(72px);
-                padding-inline-start: 72px;
+                padding-inline-start: themePadding(72px);
                 padding-inline-end: 0;
             }
         }

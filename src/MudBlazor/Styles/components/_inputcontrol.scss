@@ -93,26 +93,26 @@
                 }
             }
             &.mud-input-text input {
-                padding-inline-start: 0;
+                padding-inline-start: themePadding(0px);
 
                 &.mud-input-root-margin-dense {
-                    padding-inline-start: 0;
+                    padding-inline-start: themePadding(0px);
                 }
             }
 
             &.mud-input-filled input {
-                padding-inline-start: 12px;
+                padding-inline-start: themePadding(12px);
 
                 &.mud-input-root-margin-dense {
-                    padding-inline-start: 12px;
+                    padding-inline-start: themePadding(12px);
                 }
             }
 
             &.mud-input-outlined input {
-                padding-inline-start: 14px;
+                padding-inline-start: themePadding(14px);
 
                 &.mud-input-root-margin-dense {
-                    padding-inline-start: 14px;
+                    padding-inline-start: themePadding(14px);
                 }
             }
         }

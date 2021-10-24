@@ -271,7 +271,7 @@
 
             .mud-tabs-panel-header-after {
                 padding-left: themePadding(8px);
-                padding-inline-start: 8px;
+                padding-inline-start: themePadding(8px);
                 padding-inline-end: unset;
             }
         }
