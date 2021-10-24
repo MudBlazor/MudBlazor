@@ -20,7 +20,7 @@
         flex: 1 1 auto;
 
         & .mud-typography {
-            margin-bottom: 0;
+            margin-bottom: themeMargin(0px);
         }
     }
 

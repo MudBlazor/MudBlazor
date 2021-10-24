@@ -52,7 +52,7 @@
         }
 
         &:last-child {
-            margin-bottom: 0;
+            margin-bottom: themeMargin(0px);
         }
 
         & + .mud-expand-panel {

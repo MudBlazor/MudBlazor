@@ -364,7 +364,7 @@
 
       &.mud-input-root-margin-dense {
         margin-top: themeMargin(23px);
-        margin-bottom: 6px;
+        margin-bottom: themeMargin(6px);
       }
 
       &:-webkit-autofill {
@@ -374,11 +374,11 @@
 
       &.mud-input-root-hidden-label {
         margin-top: themeMargin(18px);
-        margin-bottom: 19px;
+        margin-bottom: themeMargin(19px);
 
         &.mud-input-root-margin-dense {
           margin-top: themeMargin(10px);
-          margin-bottom: 11px;
+          margin-bottom: themeMargin(11px);
         }
       }
 

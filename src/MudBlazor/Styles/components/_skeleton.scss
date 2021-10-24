@@ -10,7 +10,7 @@
     transform: scale(1, 0.60);
     margin-top: themeMargin(0px);
     border-radius: var(--mud-default-borderradius);
-    margin-bottom: 0;
+    margin-bottom: themeMargin(0px);
     transform-origin: 0 60%;
 }
 

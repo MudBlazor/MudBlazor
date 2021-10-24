@@ -12,12 +12,12 @@
 
     &.mud-input-control-margin-normal {
         margin-top: themeMargin(16px);
-        margin-bottom: 8px;
+        margin-bottom: themeMargin(8px);
     }
 
     &.mud-input-control-margin-dense {
         margin-top: themeMargin(3px);
-        margin-bottom: 2px;
+        margin-bottom: themeMargin(2px);
     }
 
     &.mud-input-control-full-width {

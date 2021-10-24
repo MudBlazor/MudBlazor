@@ -35,7 +35,7 @@
     display: flex;
     margin-top: themeMargin(4px);
     align-items: center;
-    margin-bottom: 8px;
+    margin-bottom: themeMargin(8px);
     justify-content: space-between;
 
     & > .mud-icon-button {

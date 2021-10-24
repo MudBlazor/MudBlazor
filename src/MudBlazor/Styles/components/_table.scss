@@ -248,7 +248,7 @@
             color: var(--mud-theme-on-surface);
             font-size: 0.875rem;
             margin-top: themeMargin(-14px);
-            margin-bottom: -8px;
+            margin-bottom: themeMargin(-8px);
         }
     }
 
@@ -258,7 +258,7 @@
                 color: var(--mud-theme-on-surface);
                 font-size: 0.875rem;
                 margin-top: themeMargin(-14px);
-                margin-bottom: -8px;
+                margin-bottom: themeMargin(-8px);
             }
         }
     }
