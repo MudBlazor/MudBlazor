@@ -9,7 +9,7 @@
     font-weight: 400;
     line-height: 1.43;
     overflow: hidden;
-    margin-top: 16px;
+    margin-top: themeMargin(16px);
     min-width: 288px;
     max-width: 500px;
     border-radius: var(--mud-default-borderradius);

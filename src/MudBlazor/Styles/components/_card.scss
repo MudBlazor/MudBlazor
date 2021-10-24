@@ -27,7 +27,7 @@
     & .mud-card-header-actions {
         flex: 0 0 auto;
         align-self: flex-start;
-        margin-top: -8px;
+        margin-top: themeMargin(-8px);
         margin-right: themeMargin(-8px);
         margin-inline-end: -8px;
         margin-inline-start: unset;

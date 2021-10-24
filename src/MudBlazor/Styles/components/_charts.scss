@@ -5,7 +5,7 @@
         flex-direction: column;
 
         .mud-chart-legend {
-            margin-top: 10px;
+            margin-top: themeMargin(10px);
             justify-content: center;
             width: 100%;
         }

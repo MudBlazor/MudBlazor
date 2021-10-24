@@ -59,7 +59,7 @@
         align-items: center;
 
         & + .mud-picker-color-controls-row {
-            margin-top: 24px;
+            margin-top: themeMargin(24px);
         }
 
         .mud-picker-color-sliders {
@@ -81,7 +81,7 @@
 
                     @include slider-thumb {
                         appearance: none;
-                        margin-top: -6px;
+                        margin-top: themeMargin(-6px);
                         height: 14px;
                         width: 14px;
                         transform: none;
@@ -98,7 +98,7 @@
                 }
 
                 &.hue + .alpha {
-                    margin-top: 18px;
+                    margin-top: themeMargin(18px);
                 }
 
                 &.hue > input {

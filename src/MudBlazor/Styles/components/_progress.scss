@@ -119,7 +119,7 @@
     height: 100%;
     position: absolute;
     animation: mud-progress-linear-keyframes-buffer 3s infinite linear;
-    margin-top: 0;
+    margin-top: themeMargin(0px);
 }
 
 .mud-progress-linear-dashed-color-primary {

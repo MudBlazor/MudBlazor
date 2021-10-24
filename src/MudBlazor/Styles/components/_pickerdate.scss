@@ -33,7 +33,7 @@
 
 .mud-picker-calendar-header-switch {
     display: flex;
-    margin-top: 4px;
+    margin-top: themeMargin(4px);
     align-items: center;
     margin-bottom: 8px;
     justify-content: space-between;
@@ -150,7 +150,7 @@
 }
 
 .mud-picker-calendar-transition {
-    margin-top: 12px;
+    margin-top: themeMargin(12px);
     min-height: 216px;
 }
 
@@ -298,7 +298,7 @@
         }
 
         .mud-typography {
-            margin-top: 2px;
+            margin-top: themeMargin(2px);
         }
 
         &.mud-disabled {

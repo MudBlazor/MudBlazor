@@ -247,7 +247,7 @@
         & > div.mud-input.mud-input-text {
             color: var(--mud-theme-on-surface);
             font-size: 0.875rem;
-            margin-top: -14px;
+            margin-top: themeMargin(-14px);
             margin-bottom: -8px;
         }
     }
@@ -257,7 +257,7 @@
             & > div.mud-input.mud-input-text {
                 color: var(--mud-theme-on-surface);
                 font-size: 0.875rem;
-                margin-top: -14px;
+                margin-top: themeMargin(-14px);
                 margin-bottom: -8px;
             }
         }
@@ -299,7 +299,7 @@
 .mud-table-pagination-information {
     white-space: nowrap;
     direction: initial;
-    margin-top: 6px;
+    margin-top: themeMargin(6px);
 }
 
 .mud-table-page-number-information {
@@ -359,7 +359,7 @@
     & .mud-input .mud-input-root {
         max-width: 80px;
         cursor: pointer;
-        margin-top: 2px;
+        margin-top: themeMargin(2px);
         border: none;
         font-size: .875rem;
         font-weight: 400;

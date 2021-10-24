@@ -8,7 +8,7 @@
 .mud-skeleton-text {
     height: auto;
     transform: scale(1, 0.60);
-    margin-top: 0;
+    margin-top: themeMargin(0px);
     border-radius: var(--mud-default-borderradius);
     margin-bottom: 0;
     transform-origin: 0 60%;

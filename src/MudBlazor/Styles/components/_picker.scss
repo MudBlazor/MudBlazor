@@ -87,7 +87,7 @@
 
 .mud-picker-view {
     display: none;
-    margin-top: 20px;
+    margin-top: themeMargin(20px);
 
     &.mud-picker-open {
         display: block;

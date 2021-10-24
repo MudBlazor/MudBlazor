@@ -339,7 +339,7 @@
     }
 
     &.mud-input-root-margin-dense {
-      margin-top: 3px;
+      margin-top: themeMargin(3px);
     }
 
     &.mud-input-root-type-search {
@@ -363,7 +363,7 @@
       margin: themeMargin(27px) themeMargin(12px) themeMargin(10px);
 
       &.mud-input-root-margin-dense {
-        margin-top: 23px;
+        margin-top: themeMargin(23px);
         margin-bottom: 6px;
       }
 
@@ -373,11 +373,11 @@
       }
 
       &.mud-input-root-hidden-label {
-        margin-top: 18px;
+        margin-top: themeMargin(18px);
         margin-bottom: 19px;
 
         &.mud-input-root-margin-dense {
-          margin-top: 10px;
+          margin-top: themeMargin(10px);
           margin-bottom: 11px;
         }
       }
@@ -450,7 +450,7 @@
 
 .mud-input-adornment-start {
   &.mud-input-root-filled-shrink {
-    margin-top: 16px;
+    margin-top: themeMargin(16px);
   }
 }
 

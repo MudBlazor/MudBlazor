@@ -8,15 +8,15 @@
     position: relative;
     flex-direction: column;
     vertical-align: top;
-    margin-top: 6px;
+    margin-top: themeMargin(6px);
 
     &.mud-input-control-margin-normal {
-        margin-top: 16px;
+        margin-top: themeMargin(16px);
         margin-bottom: 8px;
     }
 
     &.mud-input-control-margin-dense {
-        margin-top: 3px;
+        margin-top: themeMargin(3px);
         margin-bottom: 2px;
     }
 
@@ -31,7 +31,7 @@
 
         & > div {
             &.mud-input.mud-input-text {
-                margin-top: 16px;
+                margin-top: themeMargin(16px);
             }
 
             &.mud-input.mud-input-filled {
@@ -141,7 +141,7 @@
 
 .mud-input-control-helper-container {
     overflow: hidden;
-    margin-top: 3px;
+    margin-top: themeMargin(3px);
 }
 
 .mud-input-helper-text {
@@ -178,7 +178,7 @@
     }
 
     .mud-input-helper-text-margin-dense {
-        margin-top: 4px;
+        margin-top: themeMargin(4px);
     }
 
     .mud-input-helper-text-contained {
