@@ -90,7 +90,7 @@
 
 .mud-table-toolbar {
     padding-left: themePadding(16px);
-    padding-right: 8px;
+    padding-right: themePadding(8px);
     padding-inline-start: 16px;
     padding-inline-end: 8px;
 }
@@ -134,7 +134,7 @@
         }
 
         & .mud-table-cell:last-child {
-            padding-right: 16px;
+            padding-right: themePadding(16px);
             padding-inline-end: 16px;
         }
     }
@@ -321,7 +321,7 @@
 .mud-table-pagination-toolbar {
     border-top: 1px solid var(--mud-palette-table-lines);
     height: 52px;
-    padding-right: 2px;
+    padding-right: themePadding(2px);
     padding-inline-end: 2px;
     padding-inline-start: unset;
 
@@ -342,7 +342,7 @@
     flex-shrink: 0;
     align-items: center;
     padding-left: themePadding(10px);
-    padding-right: 10px;
+    padding-right: themePadding(10px);
 }
 
 .mud-table-pagination-select {
@@ -449,7 +449,7 @@
         .mud-table-cell:before {
             content: attr(data-label);
             font-weight: 500;
-            padding-right: 16px;
+            padding-right: themePadding(16px);
             padding-inline-end: 16px;
             padding-inline-start: unset;
         }
@@ -514,7 +514,7 @@
             .mud-table-pagination-toolbar {
                 flex-wrap: wrap;
                 padding-top: 16px;
-                padding-right: 16px;
+                padding-right: themePadding(16px);
                 padding-inline-end: 16px;
                 padding-inline-start: unset;
                 min-height: 100px;

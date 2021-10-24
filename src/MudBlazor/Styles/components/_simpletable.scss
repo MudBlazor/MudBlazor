@@ -58,7 +58,7 @@
         }
 
         & td, th:last-child {
-            padding-right: 16px;
+            padding-right: themePadding(16px);
             padding-inline-end: 16px;
         }
     }

@@ -26,7 +26,7 @@
     &.mud-dialog-centerright {
         align-items: center;
         justify-content: flex-end;
-        padding-right: 32px;
+        padding-right: themePadding(32px);
     }
 
     &.mud-dialog-centerleft {

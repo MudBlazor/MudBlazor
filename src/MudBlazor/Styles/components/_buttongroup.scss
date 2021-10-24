@@ -306,7 +306,7 @@
     }
 
     .mud-button-root.mud-icon-button {
-        padding-right: 12px;
+        padding-right: themePadding(12px);
         padding-left: themePadding(12px);
 
         .mud-icon-root {

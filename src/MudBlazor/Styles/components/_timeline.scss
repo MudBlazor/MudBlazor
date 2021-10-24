@@ -51,7 +51,7 @@
 
     .mud-timeline-item {
         padding-left: themePadding(24px);
-        padding-right: 24px;
+        padding-right: themePadding(24px);
         width: 100%;
 
         .mud-timeline-item-content {

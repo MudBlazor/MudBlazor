@@ -7,19 +7,19 @@
     margin-left: auto;
     margin-right: auto;
     padding-left: themePadding(16px);
-    padding-right: 16px;
+    padding-right: themePadding(16px);
 }
 
 @media (min-width:$breakpoint-sm) {
     .mud-container {
         padding-left: themePadding(24px);
-        padding-right: 24px;
+        padding-right: themePadding(24px);
     }
 }
 
 .mud-container-disable-gutters {
     padding-left: themePadding(0px);
-    padding-right: 0;
+    padding-right: themePadding(0px);
 }
 
 @media (min-width:$breakpoint-sm) {

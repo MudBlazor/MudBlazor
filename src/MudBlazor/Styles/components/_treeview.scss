@@ -96,7 +96,7 @@
 .mud-treeview-item-label {
     flex-grow: 1;
     padding-left: themePadding(4px);
-    padding-right: 4px;
+    padding-right: themePadding(4px);
 }
 
 .mud-treeview-dense {
