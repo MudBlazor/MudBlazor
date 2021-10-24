@@ -41,7 +41,7 @@
     & > .mud-icon-button {
         z-index: 1;
         padding: 8px;
-        margin: 6px;
+        margin: themeMargin(6px);
         background-color: var(--mud-palette-surface);
 
         &:hover {
@@ -307,7 +307,7 @@
         }
 
         &.mud-range {
-            margin: 0;
+            margin: themeMargin(0px);
             width: 40px;
             transition: none;
 

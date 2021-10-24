@@ -36,7 +36,7 @@
         border-radius: var(--mud-default-borderradius);
         letter-spacing: .02857em;
         text-transform: uppercase;
-        margin: 40px auto !important;
+        margin: themeMargin(40px) auto !important;
 
         &:hover {
             background-color: var(--mud-palette-action-default-hover);

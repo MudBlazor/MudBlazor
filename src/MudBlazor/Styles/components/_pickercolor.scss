@@ -215,7 +215,7 @@
 
         .mud-picker-color-dot {
             max-width: 38px;
-            margin: 8px;
+            margin: themeMargin(8px);
 
             &.selected {
                 border-radius: 50%;

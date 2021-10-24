@@ -8,7 +8,7 @@
 }
 
 .mud-grid-item {
-    margin: 0;
+    margin: themeMargin(0px);
     box-sizing: border-box;
 }
 
@@ -94,7 +94,7 @@
 
 .mud-grid-spacing-xs-1 {
     width: calc(100% + 8px);
-    margin: -4px;
+    margin: themeMargin(-4px);
 }
 
 .mud-grid-spacing-xs-1 > .mud-grid-item {
@@ -103,7 +103,7 @@
 
 .mud-grid-spacing-xs-2 {
     width: calc(100% + 16px);
-    margin: -8px;
+    margin: themeMargin(-8px);
 }
 
 .mud-grid-spacing-xs-2 > .mud-grid-item {
@@ -112,7 +112,7 @@
 
 .mud-grid-spacing-xs-3 {
     width: calc(100% + 24px);
-    margin: -12px;
+    margin: themeMargin(-12px);
 }
 
 .mud-grid-spacing-xs-3 > .mud-grid-item {
@@ -121,7 +121,7 @@
 
 .mud-grid-spacing-xs-4 {
     width: calc(100% + 32px);
-    margin: -16px;
+    margin: themeMargin(-16px);
 }
 
 .mud-grid-spacing-xs-4 > .mud-grid-item {
@@ -130,7 +130,7 @@
 
 .mud-grid-spacing-xs-5 {
     width: calc(100% + 40px);
-    margin: -20px;
+    margin: themeMargin(-20px);
 }
 
 .mud-grid-spacing-xs-5 > .mud-grid-item {
@@ -139,7 +139,7 @@
 
 .mud-grid-spacing-xs-6 {
     width: calc(100% + 48px);
-    margin: -24px;
+    margin: themeMargin(-24px);
 }
 
 .mud-grid-spacing-xs-6 > .mud-grid-item {
@@ -148,7 +148,7 @@
 
 .mud-grid-spacing-xs-7 {
     width: calc(100% + 56px);
-    margin: -28px;
+    margin: themeMargin(-28px);
 }
 
 .mud-grid-spacing-xs-7 > .mud-grid-item {
@@ -157,7 +157,7 @@
 
 .mud-grid-spacing-xs-8 {
     width: calc(100% + 64px);
-    margin: -32px;
+    margin: themeMargin(-32px);
 }
 
 .mud-grid-spacing-xs-8 > .mud-grid-item {
@@ -166,7 +166,7 @@
 
 .mud-grid-spacing-xs-9 {
     width: calc(100% + 72px);
-    margin: -36px;
+    margin: themeMargin(-36px);
 }
 
 .mud-grid-spacing-xs-9 > .mud-grid-item {
@@ -175,7 +175,7 @@
 
 .mud-grid-spacing-xs-10 {
     width: calc(100% + 80px);
-    margin: -40px;
+    margin: themeMargin(-40px);
 }
 
 .mud-grid-spacing-xs-10 > .mud-grid-item {

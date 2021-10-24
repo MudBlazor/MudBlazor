@@ -3,7 +3,7 @@
 .mud-carousel {
     display: flex !important;
     position: relative;
-    margin: 0px !important;
+    margin: themeMargin(0px) !important;
     clip-path: inset(0px 0px 0px 0px);
     overflow: hidden;
 

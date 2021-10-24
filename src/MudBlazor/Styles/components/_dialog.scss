@@ -78,7 +78,7 @@
     
     & .mud-dialog-title {
         flex: 0 0 auto;
-        margin: 0;
+        margin: themeMargin(0px);
         padding: 16px 24px;        
         border-top-left-radius: var(--mud-default-borderradius);
         border-top-right-radius: var(--mud-default-borderradius);
@@ -159,7 +159,7 @@
 .mud-dialog-fullscreen {
     width: 100%;
     height: 100%;
-    margin: 0;
+    margin: themeMargin(0px);
     max-width: 100%;
     max-height: none;
     border-radius: 0;

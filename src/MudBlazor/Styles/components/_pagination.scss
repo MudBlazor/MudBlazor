@@ -5,7 +5,7 @@
     flex-wrap: wrap;
     gap: 6px;
     align-items: center;
-    margin: 0;
+    margin: themeMargin(0px);
 
     .mud-pagination-item {
         & > * {

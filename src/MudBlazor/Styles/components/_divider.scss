@@ -1,7 +1,7 @@
 ﻿.mud-divider {
     border: none;
     height: 1px;
-    margin: 0;
+    margin: themeMargin(0px);
     flex-shrink: 0;
     background-color: var(--mud-palette-divider);
 }
