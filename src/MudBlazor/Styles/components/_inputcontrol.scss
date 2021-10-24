@@ -85,11 +85,11 @@
         &.mud-input-showspin .mud-input:not(.mud-input-adorned-end) {
             input {
                 padding-right: themePadding(24px); //This must be the same width of the spinners
-                padding-inline-end: 24px;
+                padding-inline-end: themePadding(24px);
 
                 &.mud-input-root-margin-dense {
                     padding-right: themePadding(20px); //This must be the same width of the spinners
-                    padding-inline-end: 20px;
+                    padding-inline-end: themePadding(20px);
                 }
             }
             &.mud-input-text input {

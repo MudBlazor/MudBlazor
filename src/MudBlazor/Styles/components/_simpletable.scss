@@ -54,12 +54,12 @@
         & td, th {
             padding: themePadding(6px) themePadding(24px) themePadding(6px) themePadding(16px);
             padding-inline-start: themePadding(16px);
-            padding-inline-end: 24px;
+            padding-inline-end: themePadding(24px);
         }
 
         & td, th:last-child {
             padding-right: themePadding(16px);
-            padding-inline-end: 16px;
+            padding-inline-end: themePadding(16px);
         }
     }
 }

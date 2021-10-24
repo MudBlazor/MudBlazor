@@ -89,7 +89,7 @@
 
         &.mud-input-adorned-end {
             padding-right: themePadding(12px);
-            padding-inline-end: 12px;
+            padding-inline-end: themePadding(12px);
             padding-inline-start: unset;
         }
 
@@ -176,7 +176,7 @@
 
         &.mud-input-adorned-end {
             padding-right: themePadding(14px);
-            padding-inline-end: 14px;
+            padding-inline-end: themePadding(14px);
             padding-inline-start: unset;
         }
     }
@@ -270,12 +270,12 @@
             &.mud-input-root-adorned-start {
                 padding-left: themePadding(0px);
                 padding-inline-start: themePadding(0px);
-                padding-inline-end: 12px;
+                padding-inline-end: themePadding(12px);
             }
 
             &.mud-input-root-adorned-end {
                 padding-right: themePadding(0px);
-                padding-inline-end: 0;
+                padding-inline-end: themePadding(0px);
                 padding-inline-start: themePadding(12px);
             }
         }
@@ -297,12 +297,12 @@
         &.mud-input-root-adorned-start {
             padding-left: themePadding(0px);
             padding-inline-start: themePadding(0px);
-            padding-inline-end: 14px;
+            padding-inline-end: themePadding(14px);
         }
 
         &.mud-input-root-adorned-end {
             padding-right: themePadding(0px);
-            padding-inline-end: 0;
+            padding-inline-end: themePadding(0px);
             padding-inline-start: themePadding(14px);
         }
     }

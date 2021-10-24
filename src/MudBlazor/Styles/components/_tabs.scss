@@ -265,7 +265,7 @@
 
             .mud-tabs-panel-header-before {
                 padding-right: themePadding(8px);
-                padding-inline-end: 8px;
+                padding-inline-end: themePadding(8px);
                 padding-inline-start: unset;
             }
 

@@ -120,7 +120,7 @@
     & .mud-nav-link {
         padding-left: themePadding(36px);
         padding-inline-start: themePadding(36px);
-        padding-inline-end: 16px;
+        padding-inline-end: themePadding(16px);
     }
 
     & * .mud-navmenu .mud-nav-item .mud-nav-link {
@@ -132,26 +132,26 @@
         & .mud-nav-link {
             padding-left: themePadding(48px);
             padding-inline-start: themePadding(48px);
-            padding-inline-end: 16px;
+            padding-inline-end: themePadding(16px);
         }
 
         & * .mud-navmenu .mud-nav-item .mud-nav-link {
             padding-left: themePadding(60px);
             padding-inline-start: themePadding(60px);
-            padding-inline-end: 0;
+            padding-inline-end: themePadding(0px);
         }
 
         & * .mud-navmenu > .mud-nav-group {
             & .mud-nav-link {
                 padding-left: themePadding(60px);
                 padding-inline-start: themePadding(60px);
-                padding-inline-end: 16px;
+                padding-inline-end: themePadding(16px);
             }
 
             & * .mud-navmenu .mud-nav-item .mud-nav-link {
                 padding-left: themePadding(72px);
                 padding-inline-start: themePadding(72px);
-                padding-inline-end: 0;
+                padding-inline-end: themePadding(0px);
             }
         }
     }

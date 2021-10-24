@@ -92,7 +92,7 @@
     padding-left: themePadding(16px);
     padding-right: themePadding(8px);
     padding-inline-start: themePadding(16px);
-    padding-inline-end: 8px;
+    padding-inline-end: themePadding(8px);
 }
 
 
@@ -124,7 +124,7 @@
         & .mud-table-cell {
             padding: themePadding(6px) themePadding(24px) themePadding(6px) themePadding(16px);
             padding-inline-start: themePadding(16px);
-            padding-inline-end: 24px;
+            padding-inline-end: themePadding(24px);
 
             .mud-table-cell-checkbox {
                 .mud-button-root {
@@ -135,7 +135,7 @@
 
         & .mud-table-cell:last-child {
             padding-right: themePadding(16px);
-            padding-inline-end: 16px;
+            padding-inline-end: themePadding(16px);
         }
     }
 }
@@ -322,7 +322,7 @@
     border-top: 1px solid var(--mud-palette-table-lines);
     height: 52px;
     padding-right: themePadding(2px);
-    padding-inline-end: 2px;
+    padding-inline-end: themePadding(2px);
     padding-inline-start: unset;
 
     & .mud-tablepager-left {
@@ -450,7 +450,7 @@
             content: attr(data-label);
             font-weight: 500;
             padding-right: themePadding(16px);
-            padding-inline-end: 16px;
+            padding-inline-end: themePadding(16px);
             padding-inline-start: unset;
         }
 
@@ -515,7 +515,7 @@
                 flex-wrap: wrap;
                 padding-top: themePadding(16px);
                 padding-right: themePadding(16px);
-                padding-inline-end: 16px;
+                padding-inline-end: themePadding(16px);
                 padding-inline-start: unset;
                 min-height: 100px;
 

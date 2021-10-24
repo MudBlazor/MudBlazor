@@ -6,13 +6,13 @@
         &.mud-input-root-outlined.mud-input-adorned-start {
             padding-left: themePadding(0px);
             padding-inline-start: themePadding(0px);
-            padding-inline-end: 14px;
+            padding-inline-end: themePadding(14px);
         }
 
         &.mud-input-root-filled.mud-input-adorned-start {
             padding-left: themePadding(0px);
             padding-inline-start: themePadding(0px);
-            padding-inline-end: 12px;
+            padding-inline-end: themePadding(12px);
         }
 
         &.mud-input-slot-nopadding {
