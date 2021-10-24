@@ -383,6 +383,11 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public bool MultiSelection { get; set; }
 
+        /// <summary>
+        /// The collection of items within this select
+        /// </summary>
+        public IReadOnlyList<MudSelectItem<T>> Items => _items;
+
         protected internal List<MudSelectItem<T>> _items = new();
         protected Dictionary<T, MudSelectItem<T>> _valueLookup = new();
         protected Dictionary<T, MudSelectItem<T>> _shadowLookup = new();
