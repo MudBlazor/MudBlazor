@@ -45,7 +45,7 @@
 
     .mud-timepicker-separator {
         cursor: default;
-        margin: 0 4px 0 2px;
+        margin: themeMargin(0px) themeMargin(4px) themeMargin(0px) themeMargin(2px);
         margin-inline-start: 2px;
         margin-inline-end: 4px;
     }

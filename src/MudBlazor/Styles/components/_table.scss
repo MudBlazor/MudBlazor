@@ -404,7 +404,7 @@
 }
 
 .mud-table-row-expander {
-    margin: -12px -2px -12px -12px;
+    margin: themeMargin(-12px) themeMargin(-2px) themeMargin(-12px) themeMargin(-12px);
 }
 
 @mixin table-display-smalldevices ($breakpoint) {
