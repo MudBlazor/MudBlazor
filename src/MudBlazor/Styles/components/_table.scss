@@ -416,7 +416,7 @@
 
         .mud-table-smalldevices-sortselect {
             display: block;
-            padding: 4px 16px 8px;
+            padding: themePadding(4px) themePadding(16px) themePadding(8px);
         }
 
         .mud-table-body {

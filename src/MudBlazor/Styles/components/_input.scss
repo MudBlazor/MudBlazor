@@ -199,7 +199,7 @@
         height: 1.1876em;
         margin: themeMargin(0px);
         display: block;
-        padding: 6px 0 7px;
+        padding: themePadding(6px) themePadding(0px) themePadding(7px);
         min-width: 0;
         background: none;
         position: relative;
@@ -241,7 +241,7 @@
         }
 
         &.mud-input-root-filled {
-            padding: 27px 12px 10px;
+            padding: themePadding(27px) themePadding(12px) themePadding(10px);
 
             &.mud-input-root-margin-dense {
                 padding-top: 23px;

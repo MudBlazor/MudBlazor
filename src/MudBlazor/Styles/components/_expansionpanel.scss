@@ -98,7 +98,7 @@
     }
 
     & .mud-expand-panel-content {
-        padding: 0 24px 16px;
+        padding: themePadding(0px) themePadding(24px) themePadding(16px);
         flex: 1 1 auto;
         max-width: 100%;
 
