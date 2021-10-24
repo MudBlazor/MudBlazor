@@ -50,18 +50,19 @@ namespace MudBlazor
             {
                 if (_expanded == value)
                     return;
-
                 _expanded = value;
+
                 if (_isRendered)
                 {
                     _state = _expanded ? CollapseState.Entering : CollapseState.Exiting;
                     _ = UpdateHeight();
-                    _updateHeight = _height == 0;
+                    _updateHeight = true;
                 }
                 else if (_expanded)
                 {
                     _state = CollapseState.Entered;
                 }
+
                 _ = ExpandedChanged.InvokeAsync(_expanded);
             }
         }
