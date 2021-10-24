@@ -30,7 +30,7 @@
     .mud-timepicker-ampm {
         display: flex;
         margin-left: themeMargin(20px);
-        margin-right: -20px;
+        margin-right: themeMargin(-20px);
         margin-inline-start: 20px;
         margin-inline-end: -20px;
         flex-direction: column;
@@ -67,7 +67,7 @@
         .mud-timepicker-ampm {
             display: flex;
             margin-left: themeMargin(20px);
-            margin-right: -20px;
+            margin-right: themeMargin(-20px);
             margin-inline-start: 20px;
             margin-inline-end: -20px;
             flex-direction: column;

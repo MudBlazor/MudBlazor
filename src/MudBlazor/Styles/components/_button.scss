@@ -227,7 +227,7 @@
     .mud-button-icon-start {
         display: inherit;
         margin-left: themeMargin(-4px);
-        margin-right: 8px;
+        margin-right: themeMargin(8px);
         margin-inline-start: -4px;
         margin-inline-end: 8px;
 
@@ -241,12 +241,12 @@
     .mud-button-icon-end {
         display: inherit;
         margin-left: themeMargin(8px);
-        margin-right: -4px;
+        margin-right: themeMargin(-4px);
         margin-inline-start: 8px;
         margin-inline-end: -4px;
 
         &.mud-button-icon-size-small {
-            margin-right: -2px;
+            margin-right: themeMargin(-2px);
             margin-inline-end: -2px;
             margin-inline-start: 8px;
         }

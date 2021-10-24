@@ -117,12 +117,12 @@
 
             .mud-picker-color-inputfield {
                 width: 100%;
-                margin-right: 8px;
+                margin-right: themeMargin(8px);
                 margin-inline-end: 8px;
                 margin-inline-start: unset;
 
                 &:last-of-type {
-                    margin-right: 0;
+                    margin-right: themeMargin(0px);
                     margin-inline-end: 0;
                     margin-inline-start: unset;
                 }

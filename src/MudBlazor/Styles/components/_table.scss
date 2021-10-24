@@ -73,7 +73,7 @@
         transition: opacity 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,transform 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
         margin-left: themeMargin(4px);
         user-select: none;
-        margin-right: 4px;
+        margin-right: themeMargin(4px);
         opacity: 0;
 
         &.mud-direction-desc {
@@ -495,7 +495,7 @@
         .mud-table-pagination {
             .mud-select {
                 margin-left: auto;
-                margin-right: -14px;
+                margin-right: themeMargin(-14px);
                 margin-inline-start: auto;
                 margin-inline-end: -14px;
             }
@@ -521,7 +521,7 @@
 
                 .mud-table-pagination-actions {
                     margin-left: auto;
-                    margin-right: -14px;
+                    margin-right: themeMargin(-14px);
                     margin-inline-start: auto;
                     margin-inline-end: -14px;
                 }

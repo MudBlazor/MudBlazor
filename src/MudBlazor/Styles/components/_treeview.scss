@@ -87,7 +87,7 @@
     width: 32px;
     display: flex;
     flex-shrink: 0;
-    margin-right: 4px;
+    margin-right: themeMargin(4px);
     margin-inline-end: 4px;
     margin-inline-start: unset;
     justify-content: center;

@@ -90,7 +90,7 @@
         border-radius: 24px;
 
         .mud-icon-root {
-            margin-right: 8px;
+            margin-right: themeMargin(8px);
             margin-inline-end: 8px;
             margin-inline-start: unset;
         }
@@ -104,7 +104,7 @@
         border-radius: 17px;
 
         .mud-icon-root {
-            margin-right: 4px;
+            margin-right: themeMargin(4px);
             margin-inline-end: 4px;
             margin-inline-start: unset;
         }
@@ -118,7 +118,7 @@
         border-radius: 20px;
 
         .mud-icon-root {
-            margin-right: 8px;
+            margin-right: themeMargin(8px);
             margin-inline-end: 8px;
             margin-inline-start: unset;
         }
