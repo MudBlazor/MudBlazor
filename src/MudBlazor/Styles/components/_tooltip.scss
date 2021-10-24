@@ -8,7 +8,7 @@
 }
 
 .mud-tooltip {
-    padding: 4px 8px;
+    padding: themePadding(4px) themePadding(8px);
     text-align: center;
     align-items: center;
     justify-content: center;

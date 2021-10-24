@@ -79,7 +79,7 @@
     & .mud-dialog-title {
         flex: 0 0 auto;
         margin: themeMargin(0px);
-        padding: 16px 24px;        
+        padding: themePadding(16px) themePadding(24px);        
         border-top-left-radius: var(--mud-default-borderradius);
         border-top-right-radius: var(--mud-default-borderradius);
 
@@ -96,13 +96,13 @@
     & .mud-dialog-content {
         position: relative;
         flex: 1 1 auto;
-        padding: 8px 24px;
+        padding: themePadding(8px) themePadding(24px);
         -webkit-overflow-scrolling: touch;
         border-top-left-radius: var(--mud-default-borderradius);
         border-top-right-radius: var(--mud-default-borderradius);
 
         &.mud-dialog-no-side-padding {
-            padding: 12px 0px;
+            padding: themePadding(12px) themePadding(0px);
         }
     }
 

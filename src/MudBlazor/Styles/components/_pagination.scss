@@ -12,7 +12,7 @@
             height: 32px;
             min-width: 32px;
             margin: themeMargin(0px) themeMargin(3px);
-            padding: 0 6px;
+            padding: themePadding(0px) themePadding(6px);
             text-align: center;
             border-radius: 16px;
         }
@@ -70,7 +70,7 @@
                 height: 26px;
                 min-width: 26px;
                 margin: themeMargin(0px) themeMargin(1px);
-                padding: 0 4px;
+                padding: themePadding(0px) themePadding(4px);
                 border-radius: 13px;
             }
         }
@@ -81,7 +81,7 @@
             & > * {
                 height: 40px;
                 min-width: 40px;
-                padding: 0 10px;
+                padding: themePadding(0px) themePadding(10px);
                 border-radius: 20px;
             }
         }

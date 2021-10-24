@@ -32,7 +32,7 @@
 }
 
 .mud-button {
-    padding: 6px 16px;
+    padding: themePadding(6px) themePadding(16px);
     font-family: var(--mud-typography-button-family);
     font-size: var(--mud-typography-button-size);
     font-weight: var(--mud-typography-button-weight);
@@ -58,7 +58,7 @@
 }
 
 .mud-button-text {
-    padding: 6px 8px;
+    padding: themePadding(6px) themePadding(8px);
 
     &.mud-button-text-inherit {
         color: inherit;
@@ -78,7 +78,7 @@
 .mud-button-outlined {
     color: var(--mud-palette-text-primary);
     border: 1px solid var(--mud-palette-text-primary);
-    padding: 5px 15px;
+    padding: themePadding(5px) themePadding(15px);
 
     &.mud-button-outlined-inherit {
         color: inherit;
@@ -174,17 +174,17 @@
 }
 
 .mud-button-text-size-small {
-    padding: 4px 5px;
+    padding: themePadding(4px) themePadding(5px);
     font-size: 0.8125rem;
 }
 
 .mud-button-text-size-large {
-    padding: 8px 11px;
+    padding: themePadding(8px) themePadding(11px);
     font-size: 0.9375rem;
 }
 
 .mud-button-outlined-size-small {
-    padding: 3px 9px;
+    padding: themePadding(3px) themePadding(9px);
     font-size: 0.8125rem;
 
     &.mud-icon-button {
@@ -193,7 +193,7 @@
 }
 
 .mud-button-outlined-size-large {
-    padding: 7px 21px;
+    padding: themePadding(7px) themePadding(21px);
     font-size: 0.9375rem;
 
     &.mud-icon-button {
@@ -202,7 +202,7 @@
 }
 
 .mud-button-filled-size-small {
-    padding: 4px 10px;
+    padding: themePadding(4px) themePadding(10px);
     font-size: 0.8125rem;
 
     &.mud-icon-button {
@@ -211,7 +211,7 @@
 }
 
 .mud-button-filled-size-large {
-    padding: 8px 22px;
+    padding: themePadding(8px) themePadding(22px);
     font-size: 0.9375rem;
 
     &.mud-icon-button {

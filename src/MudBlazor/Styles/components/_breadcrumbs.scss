@@ -5,11 +5,11 @@
     align-items: center;
     list-style-type: none;
     margin: themeMargin(0px);
-    padding: 16px 12px;
+    padding: themePadding(16px) themePadding(12px);
 }
 
 .mud-breadcrumb-separator {
-    padding: 0 12px;
+    padding: themePadding(0px) themePadding(12px);
 }
 
 .mud-breadcrumb-separator > span {

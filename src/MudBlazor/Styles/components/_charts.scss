@@ -44,7 +44,7 @@
 
     & .mud-chart-legend {
         display: flex;
-        padding: 10px 0px;
+        padding: themePadding(10px) themePadding(0px);
         margin: auto;
         flex-wrap: wrap;
 

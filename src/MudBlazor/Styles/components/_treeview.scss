@@ -53,7 +53,7 @@
 .mud-treeview-item-content {
     width: 100%;
     display: flex;
-    padding: 4px 8px;
+    padding: themePadding(4px) themePadding(8px);
     align-items: center;
     transition: background-color 150ms cubic-bezier(.4,0,.2,1) 0ms;
 }
@@ -105,7 +105,7 @@
     }
 
     .mud-treeview-item-content {
-        padding: 1px 4px;
+        padding: themePadding(1px) themePadding(4px);
     }
 
     .mud-treeview-item-arrow {

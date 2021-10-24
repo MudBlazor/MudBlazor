@@ -106,7 +106,7 @@
     justify-content: center;
 
     &.mud-picker-content-landscape {
-        padding: 0 8px;
+        padding: themePadding(0px) themePadding(8px);
     }
 }
 

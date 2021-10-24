@@ -38,7 +38,7 @@
     transform: translate(14px, 20px) scale(1);
     pointer-events: none;
     background-color: var(--mud-palette-surface);
-    padding: 0px 5px !important;
+    padding: themePadding(0px) themePadding(5px) !important;
 
 
     &.mud-input-label-margin-dense {

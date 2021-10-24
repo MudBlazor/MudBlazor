@@ -2,7 +2,7 @@
 
 .mud-alert {
     display: flex;
-    padding: 6px 16px;
+    padding: themePadding(6px) themePadding(16px);
     border-radius: var(--mud-default-borderradius);
     background-color: transparent;
     transition: box-shadow 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
@@ -12,7 +12,7 @@
     }
 
     &.mud-dense {
-        padding: 0px 12px;
+        padding: themePadding(0px) themePadding(12px);
     }
 }
 
@@ -71,7 +71,7 @@
 .mud-alert-icon {
     display: flex;
     opacity: 0.9;
-    padding: 7px 0;
+    padding: themePadding(7px) themePadding(0px);
     font-size: 22px;
     margin-right: 12px;
     margin-inline-end: 12px;
@@ -91,7 +91,7 @@
 }
 
 .mud-alert-message {
-    padding: 9px 0;
+    padding: themePadding(9px) themePadding(0px);
 }
 
 .mud-alert-position {

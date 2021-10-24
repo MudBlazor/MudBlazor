@@ -75,7 +75,7 @@
         line-height: 1;
         min-height: 48px;
         outline: none;
-        padding: 16px 24px;
+        padding: themePadding(16px) themePadding(24px);
         position: relative;
         transition: min-height .3s cubic-bezier(.25,.8,.5,1);
         user-select: none;

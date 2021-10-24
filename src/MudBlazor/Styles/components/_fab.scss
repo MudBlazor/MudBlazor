@@ -84,7 +84,7 @@
     &.mud-fab-size-large {
         width: auto;
         height: 48px;
-        padding: 0 16px;
+        padding: themePadding(0px) themePadding(16px);
         min-width: 48px;
         min-height: auto;
         border-radius: 24px;
@@ -99,7 +99,7 @@
     &.mud-fab-size-small {
         width: auto;
         height: 34px;
-        padding: 0 12px;
+        padding: themePadding(0px) themePadding(12px);
         min-width: 34px;
         border-radius: 17px;
 
@@ -113,7 +113,7 @@
     &.mud-fab-size-medium {
         width: auto;
         height: 40px;
-        padding: 0 16px;
+        padding: themePadding(0px) themePadding(16px);
         min-width: 40px;
         border-radius: 20px;
 

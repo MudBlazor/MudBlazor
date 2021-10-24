@@ -72,7 +72,7 @@
     height: 20px;
     letter-spacing: 0;
     min-width: 20px;
-    padding: 4px 6px;
+    padding: themePadding(4px) themePadding(6px);
     pointer-events: auto;
     line-height: 1;
     position: absolute;
@@ -86,10 +86,10 @@
         border-color: inherit;
         border-style: solid;
         border-width: 2px;
-        padding: 3px 4px;
+        padding: themePadding(3px) themePadding(4px);
 
         &.mud-badge-icon {
-            padding: 4px 6px;
+            padding: themePadding(4px) themePadding(6px);
 
             & .mud-icon-badge {
                 margin-left: -4px;

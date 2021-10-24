@@ -282,7 +282,7 @@
     }
 
     &.mud-input-root-outlined {
-        padding: 18.5px 14px;
+        padding: themePadding(18.5px) themePadding(14px);
 
 
         &.mud-input-root:-webkit-autofill {

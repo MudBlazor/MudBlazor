@@ -126,7 +126,7 @@
     width:100%;
     min-width: 160px;
     display: inline-flex;
-    padding: 6px 12px;
+    padding: themePadding(6px) themePadding(12px);
     min-height: 48px;
     flex-shrink: 0;
     font-weight: 500;
@@ -254,7 +254,7 @@
 .mud-dynamic-tabs {
     .mud-tabs-toolbar {
         .mud-tab {
-            padding: 6px 14px;
+            padding: themePadding(6px) themePadding(14px);
 
             .mud-icon-button {
                 padding: themePadding(4px);

@@ -436,13 +436,13 @@
             justify-content: space-between;
             align-items: center;
             border: none;
-            padding: 14px 16px;
+            padding: themePadding(14px) themePadding(16px);
             text-align: start !important;
         }
 
         &.mud-table-dense {
             & .mud-table-cell {
-                padding: 6px 16px;
+                padding: themePadding(6px) themePadding(16px);
             }
         }
 
