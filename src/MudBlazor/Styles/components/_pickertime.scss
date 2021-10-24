@@ -32,7 +32,7 @@
         margin-left: themeMargin(20px);
         margin-right: themeMargin(-20px);
         margin-inline-start: themeMargin(20px);
-        margin-inline-end: -20px;
+        margin-inline-end: themeMargin(-20px);
         flex-direction: column;
 
         .mud-timepicker-button {
@@ -47,7 +47,7 @@
         cursor: default;
         margin: themeMargin(0px) themeMargin(4px) themeMargin(0px) themeMargin(2px);
         margin-inline-start: themeMargin(2px);
-        margin-inline-end: 4px;
+        margin-inline-end: themeMargin(4px);
     }
 
     &.mud-picker-timepicker-toolbar-landscape {
@@ -69,7 +69,7 @@
             margin-left: themeMargin(20px);
             margin-right: themeMargin(-20px);
             margin-inline-start: themeMargin(20px);
-            margin-inline-end: -20px;
+            margin-inline-end: themeMargin(-20px);
             flex-direction: column;
 
             .mud-timepicker-button {

@@ -82,7 +82,7 @@
         margin-left: themeMargin(16px);
         margin-right: themeMargin(-11px);
         margin-inline-start: themeMargin(16px);
-        margin-inline-end: -11px;
+        margin-inline-end: themeMargin(-11px);
         flex-direction: row-reverse;
     }
 
@@ -90,7 +90,7 @@
         margin-left: themeMargin(-11px);
         margin-right: themeMargin(16px);
         margin-inline-start: themeMargin(-11px);
-        margin-inline-end: 16px;
+        margin-inline-end: themeMargin(16px);
         flex-direction: row;
     }
 

@@ -12,7 +12,7 @@
     & .mud-card-header-avatar {
         flex: 0 0 auto;
         margin-right: themeMargin(16px);
-        margin-inline-end: 16px;
+        margin-inline-end: themeMargin(16px);
         margin-inline-start: unset;
     }
 
@@ -29,7 +29,7 @@
         align-self: flex-start;
         margin-top: themeMargin(-8px);
         margin-right: themeMargin(-8px);
-        margin-inline-end: -8px;
+        margin-inline-end: themeMargin(-8px);
         margin-inline-start: unset;
     }
 }

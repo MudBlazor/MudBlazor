@@ -497,7 +497,7 @@
                 margin-left: auto;
                 margin-right: themeMargin(-14px);
                 margin-inline-start: auto;
-                margin-inline-end: -14px;
+                margin-inline-end: themeMargin(-14px);
             }
 
             .mud-select ~ .mud-table-pagination-caption {
@@ -523,7 +523,7 @@
                     margin-left: auto;
                     margin-right: themeMargin(-14px);
                     margin-inline-start: auto;
-                    margin-inline-end: -14px;
+                    margin-inline-end: themeMargin(-14px);
                 }
             }
         }

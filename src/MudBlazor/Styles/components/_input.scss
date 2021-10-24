@@ -385,7 +385,7 @@
       &.mud-input-root-adorned-start {
         margin-left: themeMargin(0px);
         margin-inline-start: themeMargin(0px);
-        margin-inline-end: 12px;
+        margin-inline-end: themeMargin(12px);
 
       }
 
@@ -429,12 +429,12 @@
     &.mud-input-root-adorned-start {
       margin-left: themeMargin(0px);
       margin-inline-start: themeMargin(0px);
-      margin-inline-end: 14px;
+      margin-inline-end: themeMargin(14px);
     }
 
     &.mud-input-root-adorned-end {
       margin-right: themeMargin(0px);
-      margin-inline-end: 0;
+      margin-inline-end: themeMargin(0px);
       margin-inline-start: themeMargin(14px);
     }
   }
@@ -456,7 +456,7 @@
 
 .mud-input-adornment-start {
     margin-right: themeMargin(8px);
-    margin-inline-end: 8px;
+    margin-inline-end: themeMargin(8px);
     margin-inline-start: unset;
 }
 
@@ -468,13 +468,13 @@
 
 .mud-input-number-control.mud-input-showspin .mud-input-adornment-end {
     margin-right: themeMargin(12px);
-    margin-inline-end: 12px;
+    margin-inline-end: themeMargin(12px);
     margin-inline-start: unset;
 }
 
 .mud-input-number-control.mud-input-showspin .mud-input-underline:not(.mud-input-filled) .mud-input-adornment-end {
     margin-right: themeMargin(24px);
-    margin-inline-end: 24px;
+    margin-inline-end: themeMargin(24px);
     margin-inline-start: unset;
 }
 

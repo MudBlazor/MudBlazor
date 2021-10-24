@@ -161,7 +161,7 @@
 
     & .mud-tab-icon-text {
         margin-right: themeMargin(8px);
-        margin-inline-end: 8px;
+        margin-inline-end: themeMargin(8px);
         margin-inline-start: unset;
     }
 }
@@ -259,7 +259,7 @@
             .mud-icon-button {
                 padding: themePadding(4px);
                 margin-right: themeMargin(-4px);
-                margin-inline-end: -4px;
+                margin-inline-end: themeMargin(-4px);
                 margin-inline-start: unset;
             }
 

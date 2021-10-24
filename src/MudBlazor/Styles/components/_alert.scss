@@ -74,12 +74,12 @@
     padding: themePadding(7px) themePadding(0px);
     font-size: 22px;
     margin-right: themeMargin(12px);
-    margin-inline-end: 12px;
+    margin-inline-end: themeMargin(12px);
     margin-inline-start: unset;
 
     &.mud-alert-icon-left {
         margin-right: themeMargin(12px);
-        margin-inline-end: 12px;
+        margin-inline-end: themeMargin(12px);
         margin-inline-start: unset;
     }
 
