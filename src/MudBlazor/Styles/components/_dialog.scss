@@ -14,7 +14,7 @@
     &.mud-dialog-topcenter {
         align-items: flex-start;
         justify-content: center;
-        padding-top: 32px;
+        padding-top: themePadding(32px);
     }
 
     &.mud-dialog-bottomcenter {

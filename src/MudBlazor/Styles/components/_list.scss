@@ -5,7 +5,7 @@
     list-style: none;
 
     &.mud-list-padding {
-        padding-top: 8px;
+        padding-top: themePadding(8px);
         padding-bottom: 8px;
     }
 }
@@ -17,13 +17,13 @@
     box-sizing: border-box;
     text-align: start;
     align-items: center;
-    padding-top: 8px;
+    padding-top: themePadding(8px);
     padding-bottom: 8px;
     justify-content: flex-start;
     text-decoration: none;
 
     &.mud-list-item-dense {
-        padding-top: 4px;
+        padding-top: themePadding(4px);
         padding-bottom: 4px;
     }
 
@@ -95,7 +95,7 @@
     box-sizing: border-box;
     list-style: none;
     font-weight: 500;
-    padding-top: 8px;
+    padding-top: themePadding(8px);
     padding-bottom: 20px;
 }
 

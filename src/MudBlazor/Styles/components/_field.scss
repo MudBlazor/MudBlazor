@@ -16,16 +16,16 @@
         }
 
         &.mud-input-slot-nopadding {
-            padding-top: 0px;
+            padding-top: themePadding(0px);
             padding-bottom: 0px;
 
             &.mud-input-root-filled {
-                padding-top: 21px;
+                padding-top: themePadding(21px);
                 padding-bottom: 2px;
             }
 
             &.mud-input-root-outlined {
-                padding-top: 7px;
+                padding-top: themePadding(7px);
                 padding-bottom: 2px;
             }
         }

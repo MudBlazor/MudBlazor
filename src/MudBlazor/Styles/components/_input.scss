@@ -214,7 +214,7 @@
         }
 
         &.mud-input-root-margin-dense {
-            padding-top: 3px;
+            padding-top: themePadding(3px);
         }
 
         &.mud-input-root-multiline {
@@ -244,7 +244,7 @@
             padding: themePadding(27px) themePadding(12px) themePadding(10px);
 
             &.mud-input-root-margin-dense {
-                padding-top: 23px;
+                padding-top: themePadding(23px);
                 padding-bottom: 6px;
             }
 
@@ -254,11 +254,11 @@
             }
 
             &.mud-input-root-hidden-label {
-                padding-top: 18px;
+                padding-top: themePadding(18px);
                 padding-bottom: 19px;
 
                 &.mud-input-root-margin-dense {
-                    padding-top: 10px;
+                    padding-top: themePadding(10px);
                     padding-bottom: 11px;
                 }
             }

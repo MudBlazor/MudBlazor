@@ -5,7 +5,7 @@
 }
 
 .mud-timeline-vertical {
-    padding-top: 24px;
+    padding-top: themePadding(24px);
     flex-direction: column;
 
     &::before {

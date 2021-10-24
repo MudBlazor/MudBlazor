@@ -513,7 +513,7 @@
         .mud-table-pagination {
             .mud-table-pagination-toolbar {
                 flex-wrap: wrap;
-                padding-top: 16px;
+                padding-top: themePadding(16px);
                 padding-right: themePadding(16px);
                 padding-inline-end: 16px;
                 padding-inline-start: unset;
