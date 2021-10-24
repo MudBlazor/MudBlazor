@@ -92,7 +92,7 @@
             padding: themePadding(4px) themePadding(6px);
 
             & .mud-icon-badge {
-                margin-left: -4px;
+                margin-left: themeMargin(-4px);
                 margin-inline-start: -4px;
                 margin-inline-end: unset;
                 margin-top: -4px;
@@ -107,7 +107,7 @@
         & .mud-icon-badge {
             color: inherit;
             font-size: 12px;
-            margin-left: -2px;
+            margin-left: themeMargin(-2px);
             margin-inline-start: -2px;
             margin-inline-end: unset;
         }

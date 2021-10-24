@@ -226,13 +226,13 @@
 .mud-button-label {
     .mud-button-icon-start {
         display: inherit;
-        margin-left: -4px;
+        margin-left: themeMargin(-4px);
         margin-right: 8px;
         margin-inline-start: -4px;
         margin-inline-end: 8px;
 
         &.mud-button-icon-size-small {
-            margin-left: -2px;
+            margin-left: themeMargin(-2px);
             margin-inline-start: -2px;
             margin-inline-end: 8px;
         }
@@ -240,7 +240,7 @@
 
     .mud-button-icon-end {
         display: inherit;
-        margin-left: 8px;
+        margin-left: themeMargin(8px);
         margin-right: -4px;
         margin-inline-start: 8px;
         margin-inline-end: -4px;

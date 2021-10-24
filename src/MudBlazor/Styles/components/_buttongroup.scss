@@ -34,7 +34,7 @@
         > .mud-button-root:not(:first-child), > :not(:first-child) .mud-button-root {
             border-top-left-radius: 0;
             border-bottom-left-radius: 0;
-            margin-left: -1px;
+            margin-left: themeMargin(-1px);
         }
     }
 
@@ -42,7 +42,7 @@
         > .mud-button-root:not(:last-child), > :not(:last-child) .mud-button-root {
             border-top-left-radius: 0;
             border-bottom-left-radius: 0;
-            margin-left: -1px;
+            margin-left: themeMargin(-1px);
         }
 
         > .mud-button-root:not(:first-child), > :not(:first-child) .mud-button-root {

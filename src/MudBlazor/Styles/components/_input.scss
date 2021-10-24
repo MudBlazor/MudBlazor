@@ -383,7 +383,7 @@
       }
 
       &.mud-input-root-adorned-start {
-        margin-left: 0;
+        margin-left: themeMargin(0px);
         margin-inline-start: 0;
         margin-inline-end: 12px;
 
@@ -427,7 +427,7 @@
     }
 
     &.mud-input-root-adorned-start {
-      margin-left: 0;
+      margin-left: themeMargin(0px);
       margin-inline-start: 0;
       margin-inline-end: 14px;
     }
@@ -461,7 +461,7 @@
 }
 
 .mud-input-adornment-end {
-  margin-left: 8px;
+  margin-left: themeMargin(8px);
   margin-inline-start: 8px;
   margin-inline-end: unset;
 }

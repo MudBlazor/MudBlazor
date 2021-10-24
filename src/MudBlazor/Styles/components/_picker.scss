@@ -11,7 +11,7 @@
         justify-content: flex-end;
 
         & > :not(:first-child) {
-            margin-left: 8px;
+            margin-left: themeMargin(8px);
             margin-inline-start: 8px;
             margin-inline-end: unset;
         }

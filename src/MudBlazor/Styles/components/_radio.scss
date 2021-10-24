@@ -79,7 +79,7 @@
 
 .mud-radio-content-placement- {
     &start {
-        margin-left: 16px;
+        margin-left: themeMargin(16px);
         margin-right: -11px;
         margin-inline-start: 16px;
         margin-inline-end: -11px;
@@ -87,7 +87,7 @@
     }
 
     &end {
-        margin-left: -11px;
+        margin-left: themeMargin(-11px);
         margin-right: 16px;
         margin-inline-start: -11px;
         margin-inline-end: 16px;
@@ -95,14 +95,14 @@
     }
 
     &top {
-        margin-left: 16px;
+        margin-left: themeMargin(16px);
         margin-inline-start: 16px;
         margin-inline-end: unset;
         flex-direction: column-reverse;
     }
 
     &bottom {
-        margin-left: 16px;
+        margin-left: themeMargin(16px);
         margin-inline-start: 16px;
         margin-inline-end: unset;
         flex-direction: column;
