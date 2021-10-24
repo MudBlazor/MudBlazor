@@ -42,7 +42,7 @@
     }
 
     &.mud-panel-expanded {
-        margin: 16px 0;
+        margin: themeMargin(16px) themeMargin(0px);
         border-radius: inherit;
         border-bottom: none;
         transition-delay: 0ms;

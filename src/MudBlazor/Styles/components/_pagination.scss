@@ -11,7 +11,7 @@
         & > * {
             height: 32px;
             min-width: 32px;
-            margin: 0 3px;
+            margin: themeMargin(0px) themeMargin(3px);
             padding: 0 6px;
             text-align: center;
             border-radius: 16px;
@@ -69,7 +69,7 @@
             & > * {
                 height: 26px;
                 min-width: 26px;
-                margin: 0 1px;
+                margin: themeMargin(0px) themeMargin(1px);
                 padding: 0 4px;
                 border-radius: 13px;
             }

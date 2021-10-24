@@ -484,7 +484,7 @@
 
 .mud-range-input-separator {
     visibility: hidden;
-    margin: 0 4px;
+    margin: themeMargin(0px) themeMargin(4px);
 }
 
 .mud-input:focus-within .mud-range-input-separator {

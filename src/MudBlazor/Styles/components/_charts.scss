@@ -50,7 +50,7 @@
 
         & .mud-chart-legend-item {
             display: block;
-            margin: 2px 5px;
+            margin: themeMargin(2px) themeMargin(5px);
 
             & .mud-chart-legend-marker {
                 height: 12px;

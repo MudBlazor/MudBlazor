@@ -66,7 +66,7 @@
     width: 2rem;
     display: flex;
     flex-shrink: 0;
-    margin: 0 4px;
+    margin: themeMargin(0px) themeMargin(4px);
     min-height: 32px;
     justify-content: center;
 
