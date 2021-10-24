@@ -98,7 +98,7 @@
 }
 
 .mud-grid-spacing-xs-1 > .mud-grid-item {
-    padding: 4px;
+    padding: themePadding(4px);
 }
 
 .mud-grid-spacing-xs-2 {
@@ -107,7 +107,7 @@
 }
 
 .mud-grid-spacing-xs-2 > .mud-grid-item {
-    padding: 8px;
+    padding: themePadding(8px);
 }
 
 .mud-grid-spacing-xs-3 {
@@ -116,7 +116,7 @@
 }
 
 .mud-grid-spacing-xs-3 > .mud-grid-item {
-    padding: 12px;
+    padding: themePadding(12px);
 }
 
 .mud-grid-spacing-xs-4 {
@@ -125,7 +125,7 @@
 }
 
 .mud-grid-spacing-xs-4 > .mud-grid-item {
-    padding: 16px;
+    padding: themePadding(16px);
 }
 
 .mud-grid-spacing-xs-5 {
@@ -134,7 +134,7 @@
 }
 
 .mud-grid-spacing-xs-5 > .mud-grid-item {
-    padding: 20px;
+    padding: themePadding(20px);
 }
 
 .mud-grid-spacing-xs-6 {
@@ -143,7 +143,7 @@
 }
 
 .mud-grid-spacing-xs-6 > .mud-grid-item {
-    padding: 24px;
+    padding: themePadding(24px);
 }
 
 .mud-grid-spacing-xs-7 {
@@ -152,7 +152,7 @@
 }
 
 .mud-grid-spacing-xs-7 > .mud-grid-item {
-    padding: 28px;
+    padding: themePadding(28px);
 }
 
 .mud-grid-spacing-xs-8 {
@@ -161,7 +161,7 @@
 }
 
 .mud-grid-spacing-xs-8 > .mud-grid-item {
-    padding: 32px;
+    padding: themePadding(32px);
 }
 
 .mud-grid-spacing-xs-9 {
@@ -170,7 +170,7 @@
 }
 
 .mud-grid-spacing-xs-9 > .mud-grid-item {
-    padding: 36px;
+    padding: themePadding(36px);
 }
 
 .mud-grid-spacing-xs-10 {
@@ -179,7 +179,7 @@
 }
 
 .mud-grid-spacing-xs-10 > .mud-grid-item {
-    padding: 40px;
+    padding: themePadding(40px);
 }
 
 .mud-grid-item-xs-auto {

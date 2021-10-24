@@ -26,7 +26,7 @@
     width: 58px;
     height: 38px;
     display: inline-flex;
-    padding: 12px;
+    padding: themePadding(12px);
     z-index: 0;
     overflow: hidden;
     position: relative;
@@ -48,7 +48,7 @@
 
 
 .mud-switch-base {
-    padding: 9px;
+    padding: themePadding(9px);
     top: 0;
     left: 0;
     color: #fafafa;
@@ -95,7 +95,7 @@
         height: 100%;
         margin: themeMargin(0px);
         opacity: 0;
-        padding: 0;
+        padding: themePadding(0px);
         z-index: 1;
         position: absolute;
     }

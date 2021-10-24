@@ -220,7 +220,7 @@
         &.mud-input-root-multiline {
             height: auto;
             resize: none;
-            padding: 0;
+            padding: themePadding(0px);
         }
 
         &.mud-input-root-type-search {
@@ -264,7 +264,7 @@
             }
 
             &.mud-input-root-multiline {
-                padding: 0;
+                padding: themePadding(0px);
             }
 
             &.mud-input-root-adorned-start {
@@ -320,7 +320,7 @@
     border: 0;
     height: auto;
     margin: themeMargin(6px) themeMargin(0px) themeMargin(7px);
-    padding: 0;
+    padding: themePadding(0px);
     display: block;
     min-width: 0;
     background: none;

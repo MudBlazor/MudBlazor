@@ -2,7 +2,7 @@
 
 .mud-treeview {
     margin: themeMargin(0px);
-    padding: 0px;
+    padding: themePadding(0px);
     list-style: none;
     overflow: auto;
 
@@ -28,7 +28,7 @@
 
 .mud-treeview-group {
     margin: themeMargin(0px);
-    padding: 0px;
+    padding: themePadding(0px);
     margin-left: 17px;
     margin-inline-start: 17px;
     margin-inline-end: unset;
@@ -38,7 +38,7 @@
 .mud-treeview-item {
     margin: themeMargin(0px);
     outline: 0;
-    padding: 0;
+    padding: themePadding(0px);
     cursor: default;
     list-style: none;
     min-height: 2rem;
@@ -46,7 +46,7 @@
     -webkit-tap-highlight-color: transparent;
 
     .mud-icon-button {
-        padding: 4px;
+        padding: themePadding(4px);
     }
 }
 
@@ -113,7 +113,7 @@
     }
 
     .mud-icon-button {
-        padding: 0;
+        padding: themePadding(0px);
     }
 }
 

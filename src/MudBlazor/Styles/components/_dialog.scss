@@ -109,7 +109,7 @@
     & .mud-dialog-actions {
         flex: 0 0 auto;
         display: flex;
-        padding: 8px;
+        padding: themePadding(8px);
         align-items: center;
         justify-content: flex-end;
         border-bottom-left-radius: var(--mud-default-borderradius);

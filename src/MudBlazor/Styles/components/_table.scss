@@ -99,7 +99,7 @@
 
 .mud-table-cell {
     display: table-cell;
-    padding: 16px;
+    padding: themePadding(16px);
     font-size: 0.875rem;
     text-align: start;
     font-weight: 400;
@@ -128,7 +128,7 @@
 
             .mud-table-cell-checkbox {
                 .mud-button-root {
-                    padding: 4px;
+                    padding: themePadding(4px);
                 }
             }
         }
@@ -315,7 +315,7 @@
 }
 
 .mud-table-pagination:last-child {
-    padding: 0;
+    padding: themePadding(0px);
 }
 
 .mud-table-pagination-toolbar {
@@ -461,7 +461,7 @@
         .mud-table-cell-hide {
             visibility: collapse;
             height: 0;
-            padding: 0;
+            padding: themePadding(0px);
             margin: themeMargin(0px);
         }
 

@@ -17,7 +17,7 @@ button {
     margin: themeMargin(0px);
     display: inline-flex;
     outline: 0;
-    padding: 0;
+    padding: themePadding(0px);
     position: relative;
     align-items: center;
     user-select: none;
@@ -76,6 +76,6 @@ iframe {
 
 ul {
     margin: themeMargin(0px);
-    padding: 0;
+    padding: themePadding(0px);
     list-style: none;
 }

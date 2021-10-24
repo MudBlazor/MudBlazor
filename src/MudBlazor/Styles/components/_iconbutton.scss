@@ -2,7 +2,7 @@
 
 .mud-icon-button {
     flex: 0 0 auto;
-    padding: 12px;
+    padding: themePadding(12px);
     overflow: visible;
     font-size: 1.5rem;
     text-align: center;
@@ -74,7 +74,7 @@
 }
 
 .mud-icon-button-size-small {
-    padding: 3px;
+    padding: themePadding(3px);
     font-size: 1.125rem;
 
     &.mud-icon-button-edge-start {

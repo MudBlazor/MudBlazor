@@ -7,7 +7,7 @@
     margin: themeMargin(0px);
     display: inline-flex;
     outline: 0;
-    padding: 0;
+    padding: themePadding(0px);
     position: relative;
     align-items: center;
     user-select: none;
@@ -86,7 +86,7 @@
     }
 
     &.mud-icon-button {
-        padding: 5px;
+        padding: themePadding(5px);
     }
 
     &:hover, &:focus-visible {
@@ -116,7 +116,7 @@
     background-color: var(--mud-palette-action-default-hover);
 
     &.mud-icon-button {
-        padding: 6px;
+        padding: themePadding(6px);
     }
 
     &:hover, &:focus-visible {
@@ -188,7 +188,7 @@
     font-size: 0.8125rem;
 
     &.mud-icon-button {
-        padding: 4px;
+        padding: themePadding(4px);
     }
 }
 
@@ -197,7 +197,7 @@
     font-size: 0.9375rem;
 
     &.mud-icon-button {
-        padding: 4px;
+        padding: themePadding(4px);
     }
 }
 
@@ -206,7 +206,7 @@
     font-size: 0.8125rem;
 
     &.mud-icon-button {
-        padding: 5px;
+        padding: themePadding(5px);
     }
 }
 
@@ -215,7 +215,7 @@
     font-size: 0.9375rem;
 
     &.mud-icon-button {
-        padding: 5px;
+        padding: themePadding(5px);
     }
 }
 

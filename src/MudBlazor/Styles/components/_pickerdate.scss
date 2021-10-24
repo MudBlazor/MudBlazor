@@ -21,7 +21,7 @@
 }
 
 .mud-picker-datepicker-toolbar-landscape {
-    padding: 16px;
+    padding: themePadding(16px);
 }
 
 .mud-picker-datepicker-date-landscape {
@@ -40,7 +40,7 @@
 
     & > .mud-icon-button {
         z-index: 1;
-        padding: 8px;
+        padding: themePadding(8px);
         margin: themeMargin(6px);
         background-color: var(--mud-palette-surface);
 
@@ -276,7 +276,7 @@
         width: 36px;
         height: 36px;
         margin: themeMargin(0px) themeMargin(2px);
-        padding: 0;
+        padding: themePadding(0px);
         font-size: 0.75rem;
         font-weight: 500;
 

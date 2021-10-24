@@ -50,7 +50,7 @@
 
 .mud-picker-color-controls {
     width: 312px;
-    padding: 16px;
+    padding: themePadding(16px);
     display: flex;
     flex-direction: column;
 
@@ -129,7 +129,7 @@
 
                 .mud-input {
                     input {
-                        padding: 6px;
+                        padding: themePadding(6px);
                         height: 1em;
                         text-align: center;
                         font-size: 14px;
@@ -205,7 +205,7 @@
     width: 100%;
     height: 100%;
     overflow: auto;
-    padding: 6px;
+    padding: themePadding(6px);
     background-color: var(--mud-palette-surface);
 
     .mud-picker-color-view-collection {

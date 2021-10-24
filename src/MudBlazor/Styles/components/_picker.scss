@@ -6,7 +6,7 @@
     & .mud-picker-actions {
         flex: 0 0 auto;
         display: flex;
-        padding: 8px;
+        padding: themePadding(8px);
         align-items: center;
         justify-content: flex-end;
 
@@ -119,14 +119,14 @@
 
     &.mud-picker-toolbar-landscape {
         height: auto;
-        padding: 8px;
+        padding: themePadding(8px);
         max-width: 150px;
         justify-content: flex-start;
     }
 
 
     &.mud-button-root {
-        padding: 0;
+        padding: themePadding(0px);
         min-width: 16px;
         text-transform: none;
     }
