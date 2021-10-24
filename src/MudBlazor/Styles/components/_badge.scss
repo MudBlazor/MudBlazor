@@ -93,7 +93,7 @@
 
             & .mud-icon-badge {
                 margin-left: themeMargin(-4px);
-                margin-inline-start: -4px;
+                margin-inline-start: themeMargin(-4px);
                 margin-inline-end: unset;
                 margin-top: themeMargin(-4px);
             }
@@ -108,7 +108,7 @@
             color: inherit;
             font-size: 12px;
             margin-left: themeMargin(-2px);
-            margin-inline-start: -2px;
+            margin-inline-start: themeMargin(-2px);
             margin-inline-end: unset;
         }
     }

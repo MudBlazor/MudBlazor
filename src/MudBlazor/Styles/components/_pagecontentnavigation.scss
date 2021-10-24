@@ -24,7 +24,7 @@
 
             .mud-nav-link-text {
                 margin-left: themeMargin(0px);
-                margin-inline-start: 0px;
+                margin-inline-start: themeMargin(0px);
                 white-space: nowrap;
                 overflow: hidden;
                 text-overflow: ellipsis;

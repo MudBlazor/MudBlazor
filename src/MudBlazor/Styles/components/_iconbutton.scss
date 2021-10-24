@@ -57,7 +57,7 @@
 
 .mud-icon-button-edge-start {
     margin-left: themeMargin(-12px);
-    margin-inline-start: -12px;
+    margin-inline-start: themeMargin(-12px);
     margin-inline-end: unset;
 }
 
@@ -79,7 +79,7 @@
 
     &.mud-icon-button-edge-start {
         margin-left: themeMargin(-3px);
-        margin-inline-start: -3px;
+        margin-inline-start: themeMargin(-3px);
         margin-inline-end: unset;
     }
 

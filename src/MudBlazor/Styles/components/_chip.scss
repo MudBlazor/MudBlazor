@@ -52,7 +52,7 @@
     .mud-chip-icon {
         margin-left: themeMargin(-4px);
         margin-right: themeMargin(4px);
-        margin-inline-start: -4px;
+        margin-inline-start: themeMargin(-4px);
         margin-inline-end: 4px;
         color: inherit;
     }
@@ -62,7 +62,7 @@
         margin-right: themeMargin(-4px);
         margin-left: themeMargin(6px);
         margin-inline-end: -4px;
-        margin-inline-start: 6px;
+        margin-inline-start: themeMargin(6px);
         height: 18px;
         width: 18px;
         color: inherit;

@@ -373,7 +373,7 @@
     flex-shrink: 0;
     align-items: center;
     margin-left: themeMargin(10px);
-    margin-inline-start: 10px;
+    margin-inline-start: themeMargin(10px);
     margin-inline-end: unset;
     margin-bottom: 3px !important;
 }

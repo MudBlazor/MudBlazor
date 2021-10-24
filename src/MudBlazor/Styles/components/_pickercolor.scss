@@ -147,7 +147,7 @@
 
         .mud-picker-control-switch {
             margin-left: themeMargin(8px);
-            margin-inline-start: 8px;
+            margin-inline-start: themeMargin(8px);
             margin-inline-end: unset;
             padding-bottom: themePadding(16px);
         }
@@ -189,13 +189,13 @@
 
     & + .mud-picker-color-sliders {
         margin-left: themeMargin(16px);
-        margin-inline-start: 16px;
+        margin-inline-start: themeMargin(16px);
         margin-inline-end: unset;
     }
 
     & + .mud-picker-color-collection {
         margin-left: themeMargin(10px);
-        margin-inline-start: 10px;
+        margin-inline-start: themeMargin(10px);
         margin-inline-end: unset;
     }
 }

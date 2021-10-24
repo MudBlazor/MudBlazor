@@ -228,12 +228,12 @@
         display: inherit;
         margin-left: themeMargin(-4px);
         margin-right: themeMargin(8px);
-        margin-inline-start: -4px;
+        margin-inline-start: themeMargin(-4px);
         margin-inline-end: 8px;
 
         &.mud-button-icon-size-small {
             margin-left: themeMargin(-2px);
-            margin-inline-start: -2px;
+            margin-inline-start: themeMargin(-2px);
             margin-inline-end: 8px;
         }
     }
@@ -242,13 +242,13 @@
         display: inherit;
         margin-left: themeMargin(8px);
         margin-right: themeMargin(-4px);
-        margin-inline-start: 8px;
+        margin-inline-start: themeMargin(8px);
         margin-inline-end: -4px;
 
         &.mud-button-icon-size-small {
             margin-right: themeMargin(-2px);
             margin-inline-end: -2px;
-            margin-inline-start: 8px;
+            margin-inline-start: themeMargin(8px);
         }
     }
 }

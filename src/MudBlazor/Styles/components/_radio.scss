@@ -81,7 +81,7 @@
     &start {
         margin-left: themeMargin(16px);
         margin-right: themeMargin(-11px);
-        margin-inline-start: 16px;
+        margin-inline-start: themeMargin(16px);
         margin-inline-end: -11px;
         flex-direction: row-reverse;
     }
@@ -89,21 +89,21 @@
     &end {
         margin-left: themeMargin(-11px);
         margin-right: themeMargin(16px);
-        margin-inline-start: -11px;
+        margin-inline-start: themeMargin(-11px);
         margin-inline-end: 16px;
         flex-direction: row;
     }
 
     &top {
         margin-left: themeMargin(16px);
-        margin-inline-start: 16px;
+        margin-inline-start: themeMargin(16px);
         margin-inline-end: unset;
         flex-direction: column-reverse;
     }
 
     &bottom {
         margin-left: themeMargin(16px);
-        margin-inline-start: 16px;
+        margin-inline-start: themeMargin(16px);
         margin-inline-end: unset;
         flex-direction: column;
     }
