@@ -6,19 +6,19 @@
     box-sizing: border-box;
     margin-left: auto;
     margin-right: auto;
-    padding-left: 16px;
+    padding-left: themePadding(16px);
     padding-right: 16px;
 }
 
 @media (min-width:$breakpoint-sm) {
     .mud-container {
-        padding-left: 24px;
+        padding-left: themePadding(24px);
         padding-right: 24px;
     }
 }
 
 .mud-container-disable-gutters {
-    padding-left: 0;
+    padding-left: themePadding(0px);
     padding-right: 0;
 }
 

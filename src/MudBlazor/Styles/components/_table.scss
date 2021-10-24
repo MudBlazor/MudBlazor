@@ -89,7 +89,7 @@
 }
 
 .mud-table-toolbar {
-    padding-left: 16px;
+    padding-left: themePadding(16px);
     padding-right: 8px;
     padding-inline-start: 16px;
     padding-inline-end: 8px;
@@ -341,7 +341,7 @@
 .mud-table-pagination-caption {
     flex-shrink: 0;
     align-items: center;
-    padding-left: 10px;
+    padding-left: themePadding(10px);
     padding-right: 10px;
 }
 

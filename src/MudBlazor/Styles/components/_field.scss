@@ -4,13 +4,13 @@
         min-height: 19px;
 
         &.mud-input-root-outlined.mud-input-adorned-start {
-            padding-left: 0;
+            padding-left: themePadding(0px);
             padding-inline-start: 0;
             padding-inline-end: 14px;
         }
 
         &.mud-input-root-filled.mud-input-adorned-start {
-            padding-left: 0;
+            padding-left: themePadding(0px);
             padding-inline-start: 0;
             padding-inline-end: 12px;
         }

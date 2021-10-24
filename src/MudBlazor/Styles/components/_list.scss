@@ -62,7 +62,7 @@
 }
 
 .mud-list-item-gutters {
-    padding-left: 16px;
+    padding-left: themePadding(16px);
     padding-right: 16px;
 }
 
@@ -76,7 +76,7 @@
 
 
 .mud-list-item-text-inset {
-    padding-left: 56px;
+    padding-left: themePadding(56px);
     padding-inline-start: 56px;
     padding-inline-end: unset;
 }
@@ -100,12 +100,12 @@
 }
 
 .mud-list-subheader-gutters {
-    padding-left: 16px;
+    padding-left: themePadding(16px);
     padding-right: 16px;
 }
 
 .mud-list-subheader-inset {
-    padding-left: 72px;
+    padding-left: themePadding(72px);
     padding-inline-start: 72px;
     padding-inline-end: unset;
 }
@@ -125,7 +125,7 @@
 
 .mud-nested-list {
     & > .mud-list-item {
-        padding-left: 32px;
+        padding-left: themePadding(32px);
         padding-inline-start: 32px;
         padding-inline-end: unset;
     }

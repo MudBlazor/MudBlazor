@@ -307,7 +307,7 @@
 
     .mud-button-root.mud-icon-button {
         padding-right: 12px;
-        padding-left: 12px;
+        padding-left: themePadding(12px);
 
         .mud-icon-root {
             font-size: 1.516rem;

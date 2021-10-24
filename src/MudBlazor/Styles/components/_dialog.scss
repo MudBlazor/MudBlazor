@@ -32,7 +32,7 @@
     &.mud-dialog-centerleft {
         align-items: center;
         justify-content: flex-start;
-        padding-left: 32px;
+        padding-left: themePadding(32px);
     }
 
     &.mud-dialog-topleft .mud-dialog {
