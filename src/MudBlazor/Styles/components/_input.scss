@@ -245,7 +245,7 @@
 
             &.mud-input-root-margin-dense {
                 padding-top: themePadding(23px);
-                padding-bottom: 6px;
+                padding-bottom: themePadding(6px);
             }
 
             &:-webkit-autofill {
@@ -255,11 +255,11 @@
 
             &.mud-input-root-hidden-label {
                 padding-top: themePadding(18px);
-                padding-bottom: 19px;
+                padding-bottom: themePadding(19px);
 
                 &.mud-input-root-margin-dense {
                     padding-top: themePadding(10px);
-                    padding-bottom: 11px;
+                    padding-bottom: themePadding(11px);
                 }
             }
 

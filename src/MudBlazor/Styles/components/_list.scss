@@ -6,7 +6,7 @@
 
     &.mud-list-padding {
         padding-top: themePadding(8px);
-        padding-bottom: 8px;
+        padding-bottom: themePadding(8px);
     }
 }
 
@@ -18,13 +18,13 @@
     text-align: start;
     align-items: center;
     padding-top: themePadding(8px);
-    padding-bottom: 8px;
+    padding-bottom: themePadding(8px);
     justify-content: flex-start;
     text-decoration: none;
 
     &.mud-list-item-dense {
         padding-top: themePadding(4px);
-        padding-bottom: 4px;
+        padding-bottom: themePadding(4px);
     }
 
     &.mud-list-item-disabled {
@@ -96,7 +96,7 @@
     list-style: none;
     font-weight: 500;
     padding-top: themePadding(8px);
-    padding-bottom: 20px;
+    padding-bottom: themePadding(20px);
 }
 
 .mud-list-subheader-gutters {

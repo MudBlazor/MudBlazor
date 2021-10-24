@@ -109,7 +109,7 @@
 
         &.mud-expand-panel-dense {
             padding-top: themePadding(0px);
-            padding-bottom: 0px;
+            padding-bottom: themePadding(0px);
         }
     }
 }

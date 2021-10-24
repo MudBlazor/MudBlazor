@@ -19,7 +19,7 @@
     }
 
     .mud-timeline-item {
-        padding-bottom: 24px;
+        padding-bottom: themePadding(24px);
 
         .mud-timeline-item-content {
             max-width: calc(50% - 48px);

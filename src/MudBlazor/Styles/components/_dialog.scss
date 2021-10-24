@@ -20,7 +20,7 @@
     &.mud-dialog-bottomcenter {
         align-items: flex-end;
         justify-content: center;
-        padding-bottom: 32px;
+        padding-bottom: themePadding(32px);
     }
 
     &.mud-dialog-centerright {
