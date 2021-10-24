@@ -1,7 +1,7 @@
 ﻿@import '../abstracts/variables';
 
 .mud-treeview {
-    margin: themeMargin(0px);
+    margin: 0;
     padding: themePadding(0px);
     list-style: none;
     overflow: auto;
@@ -27,7 +27,7 @@
 }
 
 .mud-treeview-group {
-    margin: themeMargin(0px);
+    margin: 0;
     padding: themePadding(0px);
     margin-left: themeMargin(17px);
     margin-inline-start: themeMargin(17px);
@@ -36,7 +36,7 @@
 }
 
 .mud-treeview-item {
-    margin: themeMargin(0px);
+    margin: 0;
     outline: 0;
     padding: themePadding(0px);
     cursor: default;
@@ -66,7 +66,7 @@
     width: 2rem;
     display: flex;
     flex-shrink: 0;
-    margin: themeMargin(0px) themeMargin(4px);
+    margin: 0 themeMargin(4px);
     min-height: 32px;
     justify-content: center;
 

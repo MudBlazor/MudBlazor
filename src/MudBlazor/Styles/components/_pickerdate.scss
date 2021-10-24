@@ -73,7 +73,7 @@
     .mud-day-label {
         color: var(--mud-palette-text-secondary);
         width: 36px;
-        margin: themeMargin(0px) themeMargin(2px);
+        margin: 0 themeMargin(2px);
         text-align: center;
     }
 }
@@ -98,7 +98,7 @@
         }
 
         & .mud-picker-year-selected {
-            margin: themeMargin(10px) themeMargin(0px);
+            margin: themeMargin(10px) 0;
             font-weight: 500;
         }
     }
@@ -275,7 +275,7 @@
         color: var(--mud-palette-text-primary);
         width: 36px;
         height: 36px;
-        margin: themeMargin(0px) themeMargin(2px);
+        margin: 0 themeMargin(2px);
         padding: themePadding(0px);
         font-size: 0.75rem;
         font-weight: 500;
@@ -307,7 +307,7 @@
         }
 
         &.mud-range {
-            margin: themeMargin(0px);
+            margin: 0;
             width: 40px;
             transition: none;
 
@@ -354,7 +354,7 @@
 
 .mud-picker-calendar-week {
     display: flex;
-    margin: themeMargin(0px) themeMargin(5px);
+    margin: 0 themeMargin(5px);
     justify-content: center;
     align-items: center;
 

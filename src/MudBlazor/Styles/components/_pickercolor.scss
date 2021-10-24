@@ -122,8 +122,8 @@
                 margin-inline-start: unset;
 
                 &:last-of-type {
-                    margin-right: themeMargin(0px);
-                    margin-inline-end: themeMargin(0px);
+                    margin-right: 0;
+                    margin-inline-end: 0;
                     margin-inline-start: unset;
                 }
 

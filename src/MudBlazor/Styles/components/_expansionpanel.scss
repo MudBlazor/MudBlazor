@@ -42,17 +42,17 @@
     }
 
     &.mud-panel-expanded {
-        margin: themeMargin(16px) themeMargin(0px);
+        margin: themeMargin(16px) 0;
         border-radius: inherit;
         border-bottom: none;
         transition-delay: 0ms;
 
         &:first-child {
-            margin-top: themeMargin(0px);
+            margin-top: 0;
         }
 
         &:last-child {
-            margin-bottom: themeMargin(0px);
+            margin-bottom: 0;
         }
 
         & + .mud-expand-panel {

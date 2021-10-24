@@ -1,6 +1,6 @@
 .mud-input-control {
     border: 0;
-    margin: themeMargin(0px);
+    margin: 0;
     padding: themePadding(0px);
     display: flex;
     flex: 1 1 auto;
@@ -75,7 +75,7 @@
         & input::-webkit-outer-spin-button,
         & input::-webkit-inner-spin-button {
             -webkit-appearance: none;
-            margin: themeMargin(0px);
+            margin: 0;
         }
 
         & input[type=number] {
@@ -146,7 +146,7 @@
 
 .mud-input-helper-text {
     color: var(--mud-palette-text-secondary);
-    margin: themeMargin(0px);
+    margin: 0;
     font-size: 0.75rem;
     text-align: start;
     font-weight: 400;

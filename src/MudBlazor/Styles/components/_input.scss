@@ -197,7 +197,7 @@
         width: 100%;
         border: 0;
         height: 1.1876em;
-        margin: themeMargin(0px);
+        margin: 0;
         display: block;
         padding: themePadding(6px) themePadding(0px) themePadding(7px);
         min-width: 0;
@@ -319,7 +319,7 @@
     width: 100%;
     border: 0;
     height: auto;
-    margin: themeMargin(6px) themeMargin(0px) themeMargin(7px);
+    margin: themeMargin(6px) 0 themeMargin(7px);
     padding: themePadding(0px);
     display: block;
     min-width: 0;
@@ -383,14 +383,14 @@
       }
 
       &.mud-input-root-adorned-start {
-        margin-left: themeMargin(0px);
-        margin-inline-start: themeMargin(0px);
+        margin-left: 0;
+        margin-inline-start: 0;
         margin-inline-end: themeMargin(12px);
 
       }
 
       &.mud-input-root-adorned-end {
-        margin-right: themeMargin(0px);
+        margin-right: 0;
         margin-inline-end: unset;
         margin-inline-start: themeMargin(12px);
       }
@@ -427,14 +427,14 @@
     }
 
     &.mud-input-root-adorned-start {
-      margin-left: themeMargin(0px);
-      margin-inline-start: themeMargin(0px);
+      margin-left: 0;
+      margin-inline-start: 0;
       margin-inline-end: themeMargin(14px);
     }
 
     &.mud-input-root-adorned-end {
-      margin-right: themeMargin(0px);
-      margin-inline-end: themeMargin(0px);
+      margin-right: 0;
+      margin-inline-end: 0;
       margin-inline-start: themeMargin(14px);
     }
   }
@@ -484,7 +484,7 @@
 
 .mud-range-input-separator {
     visibility: hidden;
-    margin: themeMargin(0px) themeMargin(4px);
+    margin: 0 themeMargin(4px);
 }
 
 .mud-input:focus-within .mud-range-input-separator {
