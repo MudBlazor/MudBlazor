@@ -1,0 +1,34 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudGrid>
+    <MudItem xs="12">
+        <MudSlider @bind-Value="@value" TickMark="true">Default Ticks (Value: @value)</MudSlider>
+    </MudItem>
+    <MudItem Class="mt-2 mb-2">
+        <MudDivider DividerType="DividerType.Middle" />
+    </MudItem>
+    <MudItem xs="12" Class="mt-2">
+        <MudSlider @bind-Value="@value2" TickMark="true" TickMarkCount="null" Step="_step">Ticks By Step (Value: @value2)</MudSlider>
+        <MudRadioGroup T="int" @bind-SelectedOption="_step">
+            <MudRadio Option="10" Color="Color.Primary">Step: 10 (11 Ticks)</MudRadio>
+            <MudRadio Option="25" Color="Color.Primary">Step: 25 (5 Ticks)</MudRadio>
+            <MudRadio Option="50" Color="Color.Primary">Step: 50 (3 Ticks)</MudRadio>
+        </MudRadioGroup>
+    </MudItem>
+    <MudItem Class="mt-2 mb-2">
+        <MudDivider DividerType="DividerType.Middle" />
+    </MudItem>
+    <MudItem xs="12" Class="d-flex">
+        <MudSlider @bind-Value="@value3" TickMark="true" TickMarkCount="@_tickMarkCount">Ticks By Count Parameter</MudSlider>
+        <MudNumericField Class="pl-4" Variant="Variant.Outlined" @bind-Value="@_tickMarkCount" Label="Tick Mark Count" Min="0" Max="200" />
+    </MudItem>
+</MudGrid>
+
+
+@code {
+    double value = 50.0;
+    double value2 = 50.0;
+    double value3 = 50.0;
+    int _step = 25;
+    int _tickMarkCount = 5;
+}

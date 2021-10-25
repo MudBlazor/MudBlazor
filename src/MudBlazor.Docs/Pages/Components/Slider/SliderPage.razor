@@ -3,6 +3,7 @@
 <DocsPage>
     <DocsPageHeader Title="Slider" SubTitle="A slider is a visual representation and action to let the user select from a range of values." />
     <DocsPageContent>
+
         <DocsPageSection>
             <SectionHeader Title="Basic Sliders">
                 <Description>Lets you select a value along the whole range.</Description>
@@ -10,8 +11,9 @@
             <SectionContent Outlined="true">
                 <SliderBasicExample />
             </SectionContent>
-            <SectionSource Code="SliderBasicExample" GitHubFolderName="Slider"  />
+            <SectionSource Code="SliderBasicExample" GitHubFolderName="Slider" />
         </DocsPageSection>
+
         <DocsPageSection>
             <SectionHeader Title="Step Sliders">
                 <Description>You can choose the increment with the <CodeInline>Step</CodeInline> prop.</Description>
@@ -19,8 +21,9 @@
             <SectionContent Outlined="true">
                 <SliderStepsExample />
             </SectionContent>
-            <SectionSource Code="SliderStepsExample" GitHubFolderName="Slider"  />
+            <SectionSource Code="SliderStepsExample" GitHubFolderName="Slider" ShowCode="false" />
         </DocsPageSection>
+
         <DocsPageSection>
             <SectionHeader Title="Minimum and Maximum Values">
                 <Description>With the <CodeInline>Min</CodeInline> and <CodeInline>Max</CodeInline> properties, you can set the minimum and maximum allowed value.</Description>
@@ -28,7 +31,42 @@
             <SectionContent Outlined="true">
                 <SliderMinMaxExample />
             </SectionContent>
-            <SectionSource Code="SliderMinMaxExample" GitHubFolderName="Slider"  />
+            <SectionSource Code="SliderMinMaxExample" GitHubFolderName="Slider" ShowCode="false" />
         </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Size">
+                <Description>MudSlider has three size: small, medium and large.</Description>
+            </SectionHeader>
+            <SectionContent Outlined="true">
+                <SliderSizeExample />
+            </SectionContent>
+            <SectionSource Code="SliderSizeExample" GitHubFolderName="Slider" ShowCode="false" />
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Slider With Ticks">
+                <Description>
+                    You can place ticks in MudSlide with <CodeInline>TickMark</CodeInline> parameter.
+                    By default, <CodeInline>TickMarkCount</CodeInline> value is 0 and 5 ticks are placed.
+                    If you set <CodeInline>TickMarkCount</CodeInline> to null, automatic ticks will be calculated according to the step value.
+                </Description>
+            </SectionHeader>
+            <SectionContent Outlined="true" FullWidth="true">
+                <SliderTicksExample />
+            </SectionContent>
+            <SectionSource Code="SliderTicksExample" GitHubFolderName="Slider" ShowCode="false" />
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Vertical Slider">
+                <Description>MudSlider can be adjusted horizontally and vertically with the <CodeInline>Orientation</CodeInline> parameter.</Description>
+            </SectionHeader>
+            <SectionContent Outlined="true">
+                <SliderVerticalExample />
+            </SectionContent>
+            <SectionSource Code="SliderVerticalExample" GitHubFolderName="Slider" ShowCode="false" />
+        </DocsPageSection>
+
     </DocsPageContent>
 </DocsPage>

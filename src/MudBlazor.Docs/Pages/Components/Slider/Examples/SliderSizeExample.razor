@@ -1,0 +1,18 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudGrid>
+    <MudItem>
+        <MudSlider Value="@value" Size="Size.Small">Small (Default)</MudSlider>
+    </MudItem>
+    <MudItem>
+        <MudSlider Value="@value" Size="Size.Medium" Color="Color.Tertiary">Medium</MudSlider>
+    </MudItem>
+    <MudItem>
+        <MudSlider Value="@(20)" Size="Size.Large">Large</MudSlider>
+    </MudItem>
+</MudGrid>
+
+
+@code {
+    double value = 50.0;
+}

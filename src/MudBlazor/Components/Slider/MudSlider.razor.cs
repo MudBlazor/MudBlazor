@@ -9,8 +9,14 @@ namespace MudBlazor
     {
         protected string Classname =>
             new CssBuilder("mud-slider")
+                .AddClass("mud-slider-vertical", Orientation == SliderOrientation.Vertical)
                 .AddClass(Class)
                 .Build();
+
+        protected string InputClassName => 
+            new CssBuilder($"mud-slider-{Color.ToDescriptionString()}")
+            .AddClass($"mud-slider-{Size.ToDescriptionString()}")
+            .Build();
 
         protected string _value;
         protected string _min = "0";
@@ -66,6 +72,14 @@ namespace MudBlazor
 
         [Parameter] public EventCallback<T> ValueChanged { get; set; }
 
+        [Parameter] public SliderOrientation Orientation { get; set; } = SliderOrientation.Horizontal;
+
+        [Parameter] public bool TickMark { get; set; }
+
+        [Parameter] public int? TickMarkCount { get; set; } = 0;
+
+        [Parameter] public Size Size { get; set; } = Size.Small;
+
         [Parameter]
         public T Value
         {
@@ -84,8 +98,6 @@ namespace MudBlazor
         /// The color of the component. It supports the Primary, Secondary and Tertiary theme colors.
         /// </summary>
         [Parameter] public Color Color { get; set; } = Color.Primary;
-
-        protected string InputClassName => $"mud-slider-{Color.ToDescriptionString()}";
 
         protected string Text
         {

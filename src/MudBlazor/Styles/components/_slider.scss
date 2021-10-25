@@ -6,6 +6,12 @@
     width: 100%;
     user-select: none;
 
+    &.mud-slider-vertical {
+        transform: rotate(270deg);
+        height: 100%;
+        width: unset;
+    }
+
     & > .mud-typography {
         margin-top: 10px;
     }
@@ -35,10 +41,10 @@
             -webkit-appearance: none;
             border: none;
             border-radius: 50%;
+            transition: box-shadow 0.2s;
             height: 2px;
             width: 2px;
             transform: scale(6, 6);
-            transition: box-shadow 0.2s;
         }
 
         @each $color in $mud-palette-colors {
@@ -85,4 +91,37 @@
             }
         }
     }
+}
+
+.mud-slider-medium {
+    @include slider-track {
+        height: 4px !important;
+    }
+
+    @include slider-thumb {
+        height: 3px !important;
+        width: 3px !important;
+        transform: scale(6, 6);
+    }
+}
+
+.mud-slider-large {
+    @include slider-track {
+        height: 6px !important;
+    }
+
+    @include slider-thumb {
+        height: 4px !important;
+        width: 4px !important;
+        transform: scale(5, 5) !important;
+    }
+}
+
+.mud-slider-tick {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    width: 1px;
+    height: 6px;
+    background-color: var(--mud-palette-text-secondary);
 }

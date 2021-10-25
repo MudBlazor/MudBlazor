@@ -5,8 +5,39 @@
 <div class="@Classname" style="@Style">
     @if(ChildContent != null)
     {
-        <MudText Typo="Typo.body1">@ChildContent</MudText>
+        @ChildContent
     }
     <input class="@InputClassName" aria-valuenow="@Value" aria-valuemin="@_min" aria-valuemax="@_max" role="slider" @attributes="UserAttributes" type="range" min="@_min" max="@_max" step="@_step" disabled="@Disabled"
-                    @bind-value="@Text" @bind-value:event="@((Immediate ? "oninput" : "onchange"))"/>
+            @bind-value="@Text" @bind-value:event="@((Immediate ? "oninput" : "onchange"))" />
+    <div class="d-flex justify-space-between">
+        @if (TickMark == true)
+        {
+            if (TickMarkCount == null)
+            {
+                double _min = double.Parse(Converter.Set(Min));
+                double _max = double.Parse(Converter.Set(Max));
+                double _step = double.Parse(Converter.Set(Step));
+
+                for (double i = 0; i <= _max; i = i + _step)
+                {
+                    <span class="mud-slider-tick" />
+                }
+            }
+            else if (TickMarkCount == 0)
+            {
+                for (int i = 0; i < 5; i++)
+                {
+                    <span class="mud-slider-tick" />
+                }
+            }
+            else
+            {
+                for (int i = 0; i < TickMarkCount; i++)
+                {
+                    <span class="mud-slider-tick" />
+                }
+            }
+            
+        }
+    </div>
 </div>
