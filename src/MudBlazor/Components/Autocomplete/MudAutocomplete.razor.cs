@@ -427,15 +427,41 @@ namespace MudBlazor
             switch (args.Key)
             {
                 case "Enter":
-                    await OnEnterKey();
+                case "NumpadEnter":
+                    if (!IsOpen)
+                    {
+                        await ToggleMenu();
+                    }
+                    else
+                    {
+                        await OnEnterKey();
+                    }
                     break;
                 case "ArrowDown":
-                    var increment = _enabledItemIndices.ElementAtOrDefault(_enabledItemIndices.IndexOf(_selectedListItemIndex) + 1) - _selectedListItemIndex;
-                    await SelectNextItem(increment < 0 ? 1 : increment);
+                    if (!IsOpen)
+                    {
+                        await ToggleMenu();
+                    }
+                    else
+                    {
+                        var increment = _enabledItemIndices.ElementAtOrDefault(_enabledItemIndices.IndexOf(_selectedListItemIndex) + 1) - _selectedListItemIndex;
+                        await SelectNextItem(increment < 0 ? 1 : increment);
+                    }
                     break;
                 case "ArrowUp":
-                    var decrement = _selectedListItemIndex - _enabledItemIndices.ElementAtOrDefault(_enabledItemIndices.IndexOf(_selectedListItemIndex) - 1);
-                    await SelectNextItem(-(decrement < 0 ? 1 : decrement));
+                    if (args.AltKey == true)
+                    {
+                        IsOpen = false;
+                    }
+                    else if (!IsOpen)
+                    {
+                        await ToggleMenu();
+                    }
+                    else
+                    {
+                        var decrement = _selectedListItemIndex - _enabledItemIndices.ElementAtOrDefault(_enabledItemIndices.IndexOf(_selectedListItemIndex) - 1);
+                        await SelectNextItem(-(decrement < 0 ? 1 : decrement));
+                    }
                     break;
                 case "Escape":
                     IsOpen = false;
