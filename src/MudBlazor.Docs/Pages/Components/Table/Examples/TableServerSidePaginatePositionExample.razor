@@ -1,0 +1,47 @@
+﻿@using System.Net.Http.Json
+@using MudBlazor.Examples.Data.Models
+@namespace MudBlazor.Docs.Examples
+@inject HttpClient httpClient
+
+<MudTable Items="@Elements" PagerPosition="@_tablePagerPosition">
+    <ToolBarContent>
+        <MudText Typo="Typo.h6">Periodic Elements</MudText>
+    </ToolBarContent>
+    <HeaderContent>
+        <MudTh>Nr</MudTh>
+        <MudTh>Sign</MudTh>
+        <MudTh>Name</MudTh>
+        <MudTh>Position</MudTh>
+        <MudTh>Molar mass</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="Nr">@context.Number</MudTd>
+        <MudTd DataLabel="Sign">@context.Sign</MudTd>
+        <MudTd DataLabel="Name">@context.Name</MudTd>
+        <MudTd DataLabel="Position">@context.Position</MudTd>
+        <MudTd DataLabel="Molar mass">@context.Molar</MudTd>
+    </RowTemplate>
+    <PagerContent>
+		<MudTablePager HorizontalAlignment="HorizontalAlignment.Center" />
+    </PagerContent>
+</MudTable>
+
+<div class="d-flex flex-wrap mt-4">
+	<MudSelect T="Enums.TablePagerPosition" Label="Pager position options" @bind-Value="_tablePagerPosition">
+		<MudSelectItem T=Enums.TablePagerPosition Value="Enums.TablePagerPosition.Bottom">Bottom</MudSelectItem>
+		<MudSelectItem T=Enums.TablePagerPosition Value="Enums.TablePagerPosition.Top">Top</MudSelectItem>
+		<MudSelectItem T=Enums.TablePagerPosition Value="Enums.TablePagerPosition.TopAndBottom">TopAndBottom</MudSelectItem>
+	</MudSelect>
+</div>
+
+@code {
+
+	private Enums.TablePagerPosition _tablePagerPosition = Enums.TablePagerPosition.Bottom;
+
+	private IEnumerable<Element> Elements = new List<Element>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        Elements = await httpClient.GetFromJsonAsync<List<Element>>("webapi/periodictable");
+    }
+}

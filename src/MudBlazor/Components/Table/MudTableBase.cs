@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using MudBlazor.Enums;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
@@ -311,6 +312,11 @@ namespace MudBlazor
         /// If true, the results are displayed in a Virtualize component, allowing a boost in rendering speed.
         /// </summary>
         [Parameter] public bool Virtualize { get; set; }
+
+        /// <summary>
+        /// Sets the location of the table pager.
+        /// </summary>
+        [Parameter] public TablePagerPosition PagerPosition { get; set; }
 
         #region --> Obsolete Forwarders for Backwards-Compatiblilty
         /// <summary>

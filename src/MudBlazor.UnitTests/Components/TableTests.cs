@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using AngleSharp.Dom;
 using Bunit;
 using FluentAssertions;
+using MudBlazor.Enums;
 using MudBlazor.UnitTests.TestComponents;
 using NUnit.Framework;
 
@@ -403,6 +404,41 @@ namespace MudBlazor.UnitTests.Components
             searchString.Change(string.Empty);
             comp.FindAll("tr").Count.Should().Be(10);
             comp.FindAll("div.mud-table-pagination-caption")[^1].TextContent.Trim().Should().Be("1-10 of 59");
+        }
+
+        /// <summary>
+        /// Test checks that the table pager can be positioned top, bottom or top and bottom
+        /// </summary>
+        [Test]
+        [TestCase(Enums.TablePagerPosition.Top, true, false)]
+        [TestCase(Enums.TablePagerPosition.Bottom, false, true)]
+        [TestCase(Enums.TablePagerPosition.TopAndBottom, true, true)]
+        public async Task TablePagerPosition(
+            TablePagerPosition pagerPosition,
+            bool topPagerShouldExist,
+            bool bottomPagerShouldExist)
+        {
+            var comp = Context.RenderComponent<TablePagingLocationTest>(parameters =>
+                parameters.Add(p => p.PagerPosition, pagerPosition));
+            // print the generated html      
+            Console.WriteLine(comp.Markup);
+
+            if (topPagerShouldExist && bottomPagerShouldExist)
+                comp.FindAll(".mud-table-pagination").Should().HaveCount(2);
+            else
+                comp.FindAll(".mud-table-pagination").Should().HaveCount(1);
+
+            comp
+                .FindAll(".mud-table-container")
+                .Previous(".mud-table-pagination")
+                .Should()
+                .HaveCount(topPagerShouldExist ? 1 : 0);
+
+            comp
+                .FindAll(".mud-table-container")
+                .Next(".mud-table-pagination")
+                .Should()
+                .HaveCount(bottomPagerShouldExist ? 1 : 0);
         }
 
         /// <summary>
