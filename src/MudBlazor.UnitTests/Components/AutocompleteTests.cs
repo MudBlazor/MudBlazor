@@ -679,8 +679,23 @@ namespace MudBlazor.UnitTests.Components
             autocomplete.Value.Should().Be("Alabama");
             autocomplete.Text.Should().Be("Alabama");
 
+            autocompletecomp.Find("input").KeyUp(new KeyboardEventArgs() { Key = "ArrowUp" });
+            comp.WaitForAssertion(() => autocomplete.IsOpen.Should().BeTrue());
+
+            autocompletecomp.Find("input").KeyUp(new KeyboardEventArgs() { Key = "ArrowUp" });
+            comp.WaitForAssertion(() => autocompletecomp.Find("input").GetAttribute("value").Should().Be("Alabama"));
+
+            autocompletecomp.Find("input").KeyUp(new KeyboardEventArgs() { Key = "ArrowUp" });
             autocompletecomp.Find("input").KeyDown(new KeyboardEventArgs() { Key = "Tab" });
             autocompletecomp.Find("input").KeyUp(new KeyboardEventArgs() { Key = "Tab" });
+            comp.WaitForAssertion(() => autocomplete.IsOpen.Should().BeFalse());
+
+            autocompletecomp.SetParam("SelectValueOnTab", true);
+            autocompletecomp.Find("input").KeyUp(new KeyboardEventArgs() { Key = "ArrowUp" });
+            autocompletecomp.Find("input").KeyDown(new KeyboardEventArgs() { Key = "Tab" });
+            comp.WaitForAssertion(() => autocompletecomp.Find("input").GetAttribute("value").Should().Be("Alabama"));
+
+            autocompletecomp.Find("input").KeyDown(new KeyboardEventArgs() { Key = "Tab" });
             comp.WaitForAssertion(() => autocomplete.IsOpen.Should().BeFalse());
         }
     }
