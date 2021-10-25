@@ -30,6 +30,7 @@
                         <MudMenuItem Link="https://opencollective.com/mudblazor" Target="_blank">Open Collective</MudMenuItem>
                     </MudMenu>
                     <MudDivider Vertical="true" FlexItem="true" DividerType="DividerType.Middle" Class="mx-4 my-3" />
+                    <MudNumericField @bind-Value="@_currentTheme.Density.Modifier" Immediate="true" Variant="Variant.Filled" Min="0" Step="0.25d" Max="10" Label="Theme Density"></MudNumericField>
                     @if (Wasm)
                     {
                         <MudTooltip Text="Switch to Blazor server-side">
