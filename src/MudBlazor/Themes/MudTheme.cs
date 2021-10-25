@@ -8,6 +8,7 @@
         public Typography Typography { get; set; }
         public LayoutProperties LayoutProperties { get; set; }
         public ZIndex ZIndex { get; set; }
+        public Density Density { get; set; }
 
         public MudTheme()
         {
@@ -16,6 +17,7 @@
             Typography = new Typography();
             LayoutProperties = new LayoutProperties();
             ZIndex = new ZIndex();
+            Density = new Density();
         }
     }
 }

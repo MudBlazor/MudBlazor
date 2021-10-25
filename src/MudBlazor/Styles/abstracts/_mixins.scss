@@ -51,3 +51,13 @@
         @content
     }
 }
+
+@function density($values...) {
+    $result: ();
+
+    @each $value in $values {
+        $result: $result + calc( #{$value} * var(--mud-density-modifier));
+    }
+
+    @return unquote($result);
+}
