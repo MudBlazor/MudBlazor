@@ -73,7 +73,7 @@
 .mud-button-group-text {
     &.mud-button-group-override-styles {
         .mud-button-root {
-            padding: 6px 8px;
+            padding: density(6px, 8px);
         }
 
         &.mud-button-group-horizontal {
@@ -133,7 +133,7 @@
 .mud-button-group-outlined {
     &.mud-button-group-override-styles {
         .mud-button-root {
-            padding: 5px 15px;
+            padding: density(5px, 15px);
             border: 1px solid var(--mud-palette-text-primary);
         }
 
@@ -164,7 +164,7 @@
     &.mud-button-group-override-styles {
         .mud-button-root {
             background-color: var(--mud-palette-action-default-hover);
-            padding: 6px 16px;
+            padding: density(6px, 16px);
         }
 
         &.mud-button-group-horizontal {
@@ -228,7 +228,7 @@
 
 .mud-button-group-root {
     &.mud-button-group-text-size-small .mud-button-root {
-        padding: 4px 5px;
+        padding: density(4px, 5px);
         font-size: 0.8125rem;
 
         &.mud-icon-button .mud-icon-root {
@@ -237,7 +237,7 @@
     }
 
     &.mud-button-group-text-size-large .mud-button-root {
-        padding: 8px 11px;
+        padding: density(8px, 11px);
         font-size: 0.9375rem;
 
         &.mud-icon-button .mud-icon-root {
@@ -246,7 +246,7 @@
     }
 
     &.mud-button-group-outlined-size-small .mud-button-root {
-        padding: 3px 9px;
+        padding: density(3px, 9px);
         font-size: 0.8125rem;
 
         &.mud-icon-button {
@@ -259,7 +259,7 @@
     }
 
     &.mud-button-group-outlined-size-large .mud-button-root {
-        padding: 7px 21px;
+        padding: density(7px, 21px);
         font-size: 0.9375rem;
 
         &.mud-icon-button {
@@ -272,7 +272,7 @@
     }
 
     &.mud-button-group-filled-size-small .mud-button-root {
-        padding: 4px 10px;
+        padding: density(4px, 10px);
         font-size: 0.8125rem;
 
         &.mud-icon-button {
@@ -285,7 +285,7 @@
     }
 
     &.mud-button-group-filled-size-large .mud-button-root {
-        padding: 8px 22px;
+        padding: density(8px, 22px);
         font-size: 0.9375rem;
 
         &.mud-icon-button {
