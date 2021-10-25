@@ -33,7 +33,8 @@ namespace MudBlazor
             .Build();
 
         protected string PickerPaperClass =>
-            new CssBuilder("mud-picker-paper")
+            new CssBuilder("mud-picker")
+                .AddClass("mud-picker-paper")
                 .AddClass("mud-picker-view", PickerVariant == PickerVariant.Inline)
                 .AddClass("mud-picker-open", IsOpen && PickerVariant == PickerVariant.Inline)
                 .AddClass("mud-picker-popover-paper", PickerVariant == PickerVariant.Inline)

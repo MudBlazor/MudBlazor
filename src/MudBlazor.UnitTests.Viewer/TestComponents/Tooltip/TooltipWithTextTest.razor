@@ -2,11 +2,12 @@
 
 <MudPopoverProvider></MudPopoverProvider>
 
-<MudTooltip Text="@TooltipTextContent">
+<MudTooltip Text="@TooltipTextContent" Touch="@EnableTouch">
 	<MudButton>My Buttion</MudButton>
 </MudTooltip>
 
 @code {
 	[Parameter] public string TooltipTextContent { get; set; }
+	[Parameter] public bool EnableTouch { get; set; } = false;
 }
 

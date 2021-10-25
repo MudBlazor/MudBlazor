@@ -73,6 +73,15 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public void ActivatorContent_Disabled_CheckDisabled()
+        {
+            var comp = Context.RenderComponent<MenuTestDisabledCustomActivator>();
+            var activator = comp.Find("div.mud-menu-activator");
+            activator.ClassList.Should().Contain("mud-disabled");
+            activator.GetAttribute("disabled").Should().NotBeNull();
+        }
+
+        [Test]
         public void MenuTest_LeftAndRightClick_CheckClosed()
         {
             //Standart button menu -- left click

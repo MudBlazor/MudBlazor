@@ -9,21 +9,13 @@
     <MudItem xs="12" sm="4">
         <MudButton OnClick="@(()=>ToggleValue())" Variant="Variant.Outlined">Toggle Value</MudButton>
     </MudItem>
-    <MudItem xs="12" md="12" class="flex-column">
-        <MudSwitch @bind-Checked="@resetValueOnEmptyText" Color="Color.Primary">Reset Value on empty Text</MudSwitch>
-        <MudSwitch @bind-Checked="@coerceText" Color="Color.Secondary">Coerce Text to Value</MudSwitch>
-        <MudSwitch @bind-Checked="@coerceValue" Color="Color.Tertiary">Coerce Value to Text (if not found)</MudSwitch>
-    </MudItem>
 </MudGrid>
 
 @code {
-    public static string __description__ = "Change Bound Object Value and Autocomplete's display value should match new bound value";
-    private bool resetValueOnEmptyText;
+    public static string __description__ = "Change Bound Object Value of Autocomplete. Should display value of new/updated bound value";
+    private bool resetValueOnEmptyText = false;
     private bool coerceText = true;
     private bool coerceValue = true;
-
-    [Parameter]
-    public dynamic Thing { get; set; }
 
     private StringHolder StringHolder1 = new StringHolder() { StringValue = "Florida" };
     private StringHolder StringHolder2 = new StringHolder() { StringValue = "Georgia" };
@@ -54,6 +46,7 @@
     private void ToggleValue()
     {
         ActiveStringHolder = ActiveStringHolder.Equals(StringHolder1) ? StringHolder2 : StringHolder1;
+        
         StateHasChanged();
     }
 

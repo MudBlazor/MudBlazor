@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Extensions;
@@ -62,11 +63,19 @@ namespace MudBlazor
         private ElementReference _elementReference;
         private ElementReference _elementReference1;
 
-        public override ValueTask FocusAsync()
+        public override async ValueTask FocusAsync()
         {
-            if (InputType == InputType.Hidden && ChildContent != null)
-                return _elementReference1.FocusAsync();
-            return _elementReference.FocusAsync();
+            try
+            {
+                if (InputType == InputType.Hidden && ChildContent != null)
+                    await _elementReference1.FocusAsync();
+                else
+                    await _elementReference.FocusAsync();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("MudInput.FocusAsync: " + e.Message);
+            }
         }
 
         public override ValueTask SelectAsync()

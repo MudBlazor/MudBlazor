@@ -79,21 +79,25 @@
         'top': {
             'mud-popover-top-left': 'mud-popover-bottom-left',
             'mud-popover-top-center': 'mud-popover-bottom-center',
+            'mud-popover-anchor-bottom-center': 'mud-popover-anchor-top-center',
             'mud-popover-top-right': 'mud-popover-bottom-right',
         },
         'left': {
             'mud-popover-top-left': 'mud-popover-top-right',
             'mud-popover-center-left': 'mud-popover-center-right',
+            'mud-popover-anchor-center-right': 'mud-popover-anchor-center-left',
             'mud-popover-bottom-left': 'mud-popover-bottom-right',
         },
         'right': {
             'mud-popover-top-right': 'mud-popover-top-left',
             'mud-popover-center-right': 'mud-popover-center-left',
+            'mud-popover-anchor-center-left': 'mud-popover-anchor-center-right',
             'mud-popover-bottom-right': 'mud-popover-bottom-left',
         },
         'bottom': {
             'mud-popover-bottom-left': 'mud-popover-top-left',
             'mud-popover-bottom-center': 'mud-popover-top-center',
+            'mud-popover-anchor-top-center': 'mud-popover-anchor-bottom-center',
             'mud-popover-bottom-right': 'mud-popover-top-right',
         },
         'top-and-left': {
@@ -148,6 +152,11 @@
                 }
             }
             const boundingRect = popoverNode.parentNode.getBoundingClientRect();
+
+            if (popoverContentNode.classList.contains('mud-popover-relative-width')) {
+                popoverContentNode.style['max-width'] = (boundingRect.width) + 'px';
+            }
+
             const selfRect = popoverContentNode.getBoundingClientRect();
             const classList = popoverContentNode.classList;
             const classListArray = Array.from(popoverContentNode.classList);
@@ -237,6 +246,11 @@
                     top = newPosition.top;
                     offsetX = newPosition.offsetX;
                     offsetY = newPosition.offsetY;
+
+                    popoverContentNode.setAttribute('data-mudpopover-flip', 'flipped');
+                }
+                else {
+                    popoverContentNode.removeAttribute('data-mudpopover-flip');
                 }
 
                 if (classList.contains('mud-popover-overflow-flip-onopen')) {
@@ -258,10 +272,6 @@
 
             popoverContentNode.style['left'] = (left + offsetX) + 'px';
             popoverContentNode.style['top'] = (top + offsetY) + 'px';
-
-            if (popoverContentNode.classList.contains('mud-popover-relative-width')) {
-                popoverContentNode.style['max-width'] = (boundingRect.width) + 'px';
-            }
 
             if (window.getComputedStyle(popoverNode).getPropertyValue('z-index') != 'auto') {
                 popoverContentNode.style['z-index'] = window.getComputedStyle(popoverNode).getPropertyValue('z-index');
@@ -300,8 +310,8 @@ class MudPopover {
                 if (target.classList.contains('mud-popover-overflow-flip-onopen') &&
                     target.classList.contains('mud-popover-open') == false) {
                     target.mudPopoverFliped = null;
+                    target.removeAttribute('data-mudpopover-flip');
                 }
-
 
                 window.mudpopoverHelper.placePopoverByNode(target);
             }
