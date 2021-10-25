@@ -3,6 +3,9 @@
 
 <MudGrid>
     <MudItem xs="12" sm="6" md="4">
+        <MudMaskField @bind-Value="TextValue" Mask="nnn-nn-nn" Label="Mask" Variant="Variant.Text"></MudMaskField>
+    </MudItem>
+    <MudItem xs="12" sm="6" md="4">
         <MudTextField @bind-Value="TextValue" Label="Standard" Variant="Variant.Text"></MudTextField>
     </MudItem>
     <MudItem xs="12" sm="6" md="4">
