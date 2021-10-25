@@ -2,7 +2,7 @@
 
 .mud-alert {
     display: flex;
-    padding: 6px 16px;
+    padding: density(6px, 16px);
     border-radius: var(--mud-default-borderradius);
     background-color: transparent;
     transition: box-shadow 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
@@ -12,7 +12,7 @@
     }
 
     &.mud-dense {
-        padding: 0px 12px;
+       padding: density(0px, 12px);
     }
 }
 
