@@ -33,7 +33,7 @@
             @media (max-width: map-get($breakpoints, $breakpoint) - 1px) {
                 z-index: calc(var(--mud-zindex-appbar) + 2);
 
-                &.mud-drawer--initial {
+                &.mud-drawer--initial:not(.mud-drawer-mini) {
                     display: none !important;
                 }
             }
