@@ -635,6 +635,32 @@ namespace MudBlazor.UnitTests.Components
             //ensure autocomplete is closed and new value is committed/bound
             comp.WaitForAssertion(() => autocomplete.IsOpen.Should().BeFalse());
 
+            autocompletecomp.Find("input").KeyUp(key: Key.Enter);
+            comp.WaitForAssertion(() => autocomplete.IsOpen.Should().BeTrue());
+
+            autocompletecomp.Find("input").KeyUp(key: Key.Escape);
+            comp.WaitForAssertion(() => autocomplete.IsOpen.Should().BeFalse());
+
+            autocompletecomp.Find("input").KeyUp(new KeyboardEventArgs() { Key = "ArrowUp"});
+            comp.WaitForAssertion(() => autocomplete.IsOpen.Should().BeTrue());
+
+            autocompletecomp.Find("input").KeyUp(new KeyboardEventArgs() { Key = "ArrowUp", AltKey = true });
+            comp.WaitForAssertion(() => autocomplete.IsOpen.Should().BeFalse());
+
+            autocompletecomp.Find("input").KeyUp(new KeyboardEventArgs() { Key = "ArrowDown" });
+            comp.WaitForAssertion(() => autocomplete.IsOpen.Should().BeTrue());
+
+            autocompletecomp.Find("input").KeyUp(key: Key.Escape);
+            comp.WaitForAssertion(() => autocomplete.IsOpen.Should().BeFalse());
+
+            autocompletecomp.Find("input").KeyUp(new KeyboardEventArgs() { Key = "NumpadEnter" });
+            comp.WaitForAssertion(() => autocomplete.IsOpen.Should().BeTrue());
+
+            autocompletecomp.Find("input").KeyUp(new KeyboardEventArgs() { Key = "ArrowDown" });
+            comp.WaitForAssertion(() => autocomplete.IsOpen.Should().BeTrue());
+
+            autocompletecomp.Find("input").KeyUp(new KeyboardEventArgs() { Key = "ArrowDown" });
+
             //The value of the input should be Alabama
             comp.WaitForAssertion(() => autocompletecomp.Find("input").GetAttribute("value").Should().Be("Alabama"));
             autocomplete.Value.Should().Be("Alabama");
@@ -652,6 +678,10 @@ namespace MudBlazor.UnitTests.Components
             comp.WaitForAssertion(() => autocompletecomp.Find("input").GetAttribute("value").Should().Be("Alabama"));
             autocomplete.Value.Should().Be("Alabama");
             autocomplete.Text.Should().Be("Alabama");
+
+            autocompletecomp.Find("input").KeyDown(new KeyboardEventArgs() { Key = "Tab" });
+            autocompletecomp.Find("input").KeyUp(new KeyboardEventArgs() { Key = "Tab" });
+            comp.WaitForAssertion(() => autocomplete.IsOpen.Should().BeFalse());
         }
     }
 }
