@@ -10,7 +10,7 @@ on:
 jobs:
   pipline:
     name: Pipeline
-    uses: MudBlazor/MudBlazor/.github/workflows/template-pipeline.yml@${{ github.base_ref }}
+    uses: MudBlazor/MudBlazor/.github/workflows/template-pipeline.yml@dev
     with:
       dotnet-version: 5.0.x
       publish-coverage: true
