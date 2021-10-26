@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Bunit;
 using FluentAssertions;
 using MudBlazor.UnitTests.TestComponents;
+using MudBlazor.UnitTests.TestComponents.ChipSet;
 using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Components
@@ -207,6 +208,68 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("button.mud-chip-close-button")[0].Click();
 
             chipset.Instance.SelectedChip.Should().Be(null);
+        }
+
+        /// <summary>
+        /// In this test component two chipsets are synchronized via a single selectedValues collection
+        /// Whenever one ChipSet changes the other must update to the same selection state.
+        /// </summary>
+        [Test]
+        public async Task ChipSet_SelectedValues_TwoWayBinding()
+        {
+            var comp = Context.RenderComponent<ChipSetSelectionTwoWayBindingTest>();
+            // print the generated html
+            Console.WriteLine(comp.Markup);
+            // initial values check
+            comp.Find("p.set1").TrimmedText().Should().Be("Set1 Selection: Set1 Chip1");
+            comp.Find("p.set2").TrimmedText().Should().Be("Set2 Selection: Set2 Chip1");
+
+            // change selection and check state of both sets
+            comp.FindAll("div.mud-chip")[0].Click();
+            comp.WaitForAssertion(() => comp.Find("p.set1").TrimmedText().Should().Be("Set1 Selection:"));
+            comp.WaitForAssertion(() => comp.Find("p.set2").TrimmedText().Should().Be("Set2 Selection:"));
+            comp.FindAll("div.mud-chip")[1].Click();
+            Console.WriteLine(comp.Markup);
+            comp.WaitForAssertion(() => comp.Find("p.set1").TrimmedText().Should().Be("Set1 Selection: Set1 Chip2"));
+            comp.WaitForAssertion(() => comp.Find("p.set2").TrimmedText().Should().Be("Set2 Selection: Set2 Chip2"));
+            comp.FindAll("div.mud-chip")[2].Click();
+            comp.WaitForAssertion(() => comp.Find("p.set1").TrimmedText().Should().Be("Set1 Selection: Set1 Chip1, Set1 Chip2"));
+            comp.WaitForAssertion(() => comp.Find("p.set2").TrimmedText().Should().Be("Set2 Selection: Set2 Chip1, Set2 Chip2"));
+            comp.FindAll("div.mud-chip")[3].Click();
+            comp.WaitForAssertion(() => comp.Find("p.set1").TrimmedText().Should().Be("Set1 Selection: Set1 Chip1"));
+            comp.WaitForAssertion(() => comp.Find("p.set2").TrimmedText().Should().Be("Set2 Selection: Set2 Chip1"));
+        }
+
+        [Test]
+        public async Task ChipSet_InitialSelectedValuesShouldBeApplied_ButOverriddenByChipDefault()
+        {
+            var comp = Context.RenderComponent<ChipSetSelectionInitialValuesTest>();
+            // print the generated html
+            Console.WriteLine(comp.Markup);
+            // initial values check
+            comp.WaitForAssertion(() => comp.Find("p.sel").TrimmedText().Should().Be("Selection: Chip1, Chip3"));
+
+            // change selection and check state
+            comp.FindAll("div.mud-chip")[0].Click();
+            comp.WaitForAssertion(() => comp.Find("p.sel").TrimmedText().Should().Be("Selection: Chip3"));
+        }
+
+        [Test]
+        public async Task ChipSetComparerTest()
+        {
+            var comp = Context.RenderComponent<ChipSetComparerTest>();
+            // print the generated html
+            Console.WriteLine(comp.Markup);
+            // initial values check
+            comp.WaitForAssertion(() => comp.Find("p.sel").TrimmedText().Should().Be("Selection:"));
+
+            // change selection and check state
+            comp.FindAll("div.mud-chip")[0].Click();
+            comp.WaitForAssertion(() => comp.Find("p.sel").TrimmedText().Should().Be("Selection: Cappuccino"));
+
+            // set new selection and see if the comparer works correctly
+            comp.FindComponent<MudButton>().Find("button").Click();
+            comp.WaitForAssertion(() => comp.Find("p.sel").TrimmedText().Should().Be("Selection: Cafe Latte, Espresso"));
         }
     }
 
