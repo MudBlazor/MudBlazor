@@ -1,0 +1,89 @@
+name: template-pipeline
+
+on:
+  workflow_call:
+    inputs:
+      dotnet-version:
+        description: 'dotnet version to install'
+        required: false
+        type: string
+        default: '5.0.x'
+      publish-coverage:
+        required: false
+        type: boolean
+        default: false
+      deploy-web-app:
+        required: false
+        type: boolean
+        default: false
+      deploy-condition:
+        required: false
+        type: string
+      deploy-web-app-name:
+        description: 'name of the azure app only needed if deploy web app is true'
+        required: false
+        type: string
+    secrets:
+      publish-profile:
+        required: false
+
+jobs:
+  ci:
+    name: Build & Test
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./src
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Setup dotnet version
+        uses: actions/setup-dotnet@v1
+        with: 
+          dotnet-version: ${{ inputs.dotnet-version }}
+
+      - name: Restore
+        run: dotnet restore
+
+      - name: Build
+        run: dotnet build --no-restore
+
+      - name: Test
+        run: dotnet test --no-build --no-restore --blame-hang --blame-hang-timeout 60s /property:GenerateFullPaths=true /consoleloggerparameters:NoSummary /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura /p:ExcludeByAttribute='ExcludeFromCodeCoverage' /p:Include='[MudBlazor]*' /p:SkipAutoProps=true /p:CoverletOutput='./TestResults/'
+
+      - name: Coverage
+        if: ${{ inputs.publish-coverage == true }}
+        uses: codecov/codecov-action@v2
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          file: coverage.cobertura.xml
+
+      - name: Publish
+        if: ${{ inputs.deploy-web-app == true }}
+        run: dotnet publish ./MudBlazor.Docs.Server -c Release -o ${{env.DOTNET_ROOT}}/${{ inputs.deploy-web-app-name }}
+        
+      - uses: actions/upload-artifact@v2
+        if: ${{ inputs.deploy-web-app == true }}
+        with:
+          name: ${{ inputs.deploy-web-app-name }}
+          path: ${{env.DOTNET_ROOT}}/${{ inputs.deploy-web-app-name }}
+  cd:
+    name: Deploy
+    needs: ci
+    if: ${{ inputs.deploy-web-app == true && github.event_name == 'push' && github.repository_owner == 'MudBlazor' && github.ref == inputs.deploy-condition }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download Artifact
+        uses: actions/download-artifact@v2.0.10
+        with:
+          name: ${{ inputs.deploy-web-app-name }}
+          path: ${{ inputs.deploy-web-app-name }}
+
+      - name: Deploy to Azure
+        uses: azure/webapps-deploy@v2
+        with: 
+            app-name: ${{ inputs.deploy-web-app-name }}
+            publish-profile: ${{ secrets.publish-profile }}
+            package: ${{ inputs.deploy-web-app-name }}
