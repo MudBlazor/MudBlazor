@@ -23,17 +23,6 @@
 <MudSwitch @bind-Checked="_hidePosition">Hide <b>position</b> when Breakpoint=Xs</MudSwitch>
 <MudSwitch @bind-Checked="_loading">Show Loading</MudSwitch>
 
-<MudDataGrid Items="@Elements.Take(4)" Hover="true" Breakpoint="Breakpoint.Sm" Loading="@_loading" LoadingProgressColor="Color.Info"
-    ShowColumnOptions="false">
-    <Columns>
-        <Column T="Element" Field="Number" Title="Nr"></Column>
-        <Column T="Element" Field="Sign"></Column>
-        <Column T="Element" Field="Name"></Column>
-        <Column T="Element" Field="Position" HideSmall="_hidePosition"></Column>
-        <Column T="Element" Field="Molar" Title="Molar mass"></Column>
-    </Columns>
-</MudDataGrid>
-
 @code { 
     private bool _hidePosition;
     private bool _loading;

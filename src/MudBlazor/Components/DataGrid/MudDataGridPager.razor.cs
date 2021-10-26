@@ -3,12 +3,13 @@
 // See the LICENSE file in the project root for more information.
 
 using System;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    public partial class MudDataGridPager<T> : MudComponentBase
+    public partial class MudDataGridPager<T> : MudComponentBase, IDisposable
     {
         [CascadingParameter] public MudDataGrid<T> DataGrid { get; set; }
 
@@ -48,9 +49,9 @@ namespace MudBlazor
             .AddClass(Class)
             .Build();
 
-        private void SetRowsPerPage(string size)
+        private async Task SetRowsPerPageAsync(string size)
         {
-            DataGrid?.SetRowsPerPage(int.Parse(size));
+            await DataGrid?.SetRowsPerPageAsync(int.Parse(size));
         }
 
         protected override void OnInitialized()
@@ -60,7 +61,15 @@ namespace MudBlazor
             if (DataGrid != null)
             {
                 DataGrid.HasPager = true;
-                DataGrid.PagerStateHasChanged = StateHasChanged;
+                DataGrid.PagerStateHasChangedEvent += StateHasChanged;
+            }
+        }
+
+        public void Dispose()
+        {
+            if (DataGrid != null)
+            {
+                DataGrid.PagerStateHasChangedEvent -= StateHasChanged;
             }
         }
     }

@@ -58,6 +58,7 @@ namespace MudBlazor.Docs.Services
             .AddItem("Rating", typeof(MudRating), typeof(MudRatingItem))
             .AddItem("Skeleton", typeof(MudSkeleton))
             .AddItem("Table", typeof(MudTable<T>))
+            .AddItem("Data Grid", typeof(MudDataGrid<T>))
             .AddItem("Simple Table", typeof(MudSimpleTable))
             .AddItem("Tooltip", typeof(MudTooltip))
             .AddItem("Typography", typeof(MudText))

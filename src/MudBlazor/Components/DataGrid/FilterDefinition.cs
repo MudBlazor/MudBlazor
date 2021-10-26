@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Numerics;
 
-namespace MudBlazor.Components.DataGrid
+namespace MudBlazor
 {
     public class FilterDefinition<T>
     {

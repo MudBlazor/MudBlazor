@@ -1,14 +1,12 @@
 ﻿@namespace MudBlazor
 @inherits MudComponentBase
 @typeparam T
-
 @using MudBlazor.Utilities
-@using MudBlazor.Components.DataGrid;
 
 <CascadingValue IsFixed="true" Value="this">@Columns</CascadingValue>
 
 <CascadingValue IsFixed="true" Value="this">
-    <div @attributes="UserAttributes" class="@Classname" style="@Style">
+    <div @attributes="UserAttributes" class="@_classname" style="@Style">
         @if (Items != null || ServerData != null)
         {
             @if (ToolBarContent != null)
@@ -17,7 +15,7 @@
                     @ToolBarContent
                 </MudToolBar>
             }
-            <div class="mud-table-container" style="@TableStyle @(GetHorizontalScrollbarStyle())">
+            <div class="mud-table-container" style="@_tableStyle @(GetHorizontalScrollbarStyle())">
                 <table class="mud-table-root">
                     @if (ColGroup != null)
                     {
@@ -25,7 +23,7 @@
                             @ColGroup
                         </colgroup>
                     }
-                    <thead class="@HeadClassname">
+                    <thead class="@_headClassname">
                         <CascadingValue Name="IsOnlyHeader" IsFixed="true" Value="true">
                             @Header
                         </CascadingValue>
@@ -49,7 +47,7 @@
                             <MudOverlay  Visible="true" OnClick="@(() => _filtersMenuVisible = false)"></MudOverlay>
                             <MudPaper Class="pa-2" Style="position:absolute;width:600px;z-index:var(--mud-zindex-drawer)" Elevation="4">
                                 <MudGrid Spacing="0">
-                                    @foreach (var f in _filterDefinitions)
+                                    @foreach (var f in FilterDefinitions)
                                     { 
                                         <Filter T="T" @bind-Field="f.Field" @bind-Operator="f.Operator" @bind-Value="f.Value"
                                             Id="@f.Id"></Filter>
@@ -84,28 +82,28 @@
                                    @{ var rowClass = new CssBuilder(RowClass).AddClass(RowClassFunc?.Invoke(item, rowIndex)).Build(); }
                                    @{ var rowStyle = new StyleBuilder().AddStyle(RowStyle).AddStyle(RowStyleFunc?.Invoke(item, rowIndex)).Build(); }
                                    @{ var tmpRowIndex = rowIndex; }
-                                    <tr class="mud-table-row" @onclick="@((args) => OnRowClicked(args, item, tmpRowIndex))">  
+                                    <tr class="mud-table-row @rowClass" Style="@rowStyle" @key="item" @onclick="@((args) => OnRowClickedAsync(args, item, tmpRowIndex))">  
                                         <CascadingValue Value="@Validator" IsFixed="true">
                                         @foreach (var column in @_columns)
                                         {
-                                            <Cell Value="@item" Title="@column.Title" Field="@column.Field" Class="@column.cellClassname"
+                                            <Cell Item="@item" Title="@column.Title" Field="@column.Field" Class="@column.cellClassname"
                                                 CellTemplate="@column.CellTemplate" ColumnType="@column.Type" Style="@column.CellStyle"
-                                                IsEditable="@(column.IsEditable ?? true)" EditTemplate="@column.EditTemplate"></Cell>
+                                                IsEditable="@(column.IsEditable ?? true)" EditTemplate="@column.EditTemplate"
+                                                CellClass="@column.CellClass" CellClassFunc="@column.CellClassFunc"
+                                                CellStyle="@column.CellStyle" CellStyleFunc="@column.CellStyleFunc"></Cell>
                                         }
                                         
                                         @if (EditMode == DataGridEditMode.Inline)
                                         {
                                             @*Add the inline edit controls.*@
-                                            <Cell Value="@item" ColumnType="@ColumnType.InlineEditCommand"></Cell>
+                                            <Cell Item="@item" ColumnType="@ColumnType.InlineEditCommand"></Cell>
                                         }
                                         </CascadingValue>
-                                    </tr>
-                                    <tr class="mud-table-row">
-                                        @if (ChildRowContent != null)
-                                        {
-                                            @ChildRowContent(item)
-                                        } 
-                                    </tr>
+                                    </tr>                                   
+                                    @if (ChildRowContent != null)
+                                    {
+                                        @ChildRowContent(item)
+                                    }                                    
                                    @{ rowIndex++; }
                                 </MudVirtualize>
                             }
@@ -128,7 +126,7 @@
                             }
                         }
                     </tbody>
-                    <tfoot class="@FootClassname">
+                    <tfoot class="@_footClassname">
                         <CascadingValue Name="IsOnlyFooter" IsFixed="true" Value="true">
                             @Footer
                         </CascadingValue>

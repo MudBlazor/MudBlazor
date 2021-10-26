@@ -8,7 +8,7 @@ using System.Numerics;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 
-namespace MudBlazor.Components.DataGrid
+namespace MudBlazor
 {
     public partial class Filter<T>
     {

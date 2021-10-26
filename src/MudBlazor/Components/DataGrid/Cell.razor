@@ -4,32 +4,32 @@
 
 @if (ColumnType == ColumnType.SelectionCheckBox)
 {
-    <td class="@Class" style="@Style">
+    <td class="mud-table-cell @classname" style="@style" @attributes="@UserAttributes">
         <div class="d-flex">
-            <MudCheckBox T="bool" Checked="@_isSelected" CheckedChanged="@((v) => CellCheckedChanged(v, Value))"></MudCheckBox>
+            <MudCheckBox T="bool" Checked="@_isSelected" CheckedChanged="@((v) => CellCheckedChangedAsync(v, Item))" />
         </div>
     </td>  
 }
 else if (ColumnType == ColumnType.Text)
 {
-    <td data-label="@computedTitle" class="@Class" style="@Style">
+    <td data-label="@computedTitle" class="@classname" style="@style" @attributes="@UserAttributes">
         @if (isEditing)
         {
             if (EditTemplate != null)
             {
-                @EditTemplate(Value)
+                @EditTemplate(Item)
             }
             else
             {
                 if (dataType == typeof(string))
                 {
                     <MudTextField T="string" Value="@_valueString" ValueChanged="@StringValueChanged" Margin="@Margin.Dense" Style="margin-top:0"
-                        Required="true"></MudTextField>
+                        Required="true" />
                 }
                 else if (isNumber)
                 {
                     <MudNumericField T="double" Value="@_valueNumber" ValueChanged="@NumberValueChanged" Margin="@Margin.Dense" Style="margin-top:0"
-                        Required="true"></MudNumericField>
+                        Required="true" />
                 }
             }
         }
@@ -37,7 +37,7 @@ else if (ColumnType == ColumnType.Text)
         {
             if (CellTemplate != null)
             {
-                @CellTemplate(Value)
+                @CellTemplate(Item)
             }
             else
             {
@@ -48,7 +48,7 @@ else if (ColumnType == ColumnType.Text)
 }
 else if (ColumnType == ColumnType.InlineEditCommand)
 {
-    <td class="mud-table-cell">
+    <td class="mud-table-cell @classname" style="@style" @attributes="@UserAttributes">
     @if (isEditing)
     {
         <div style="display: flex;">
@@ -58,7 +58,7 @@ else if (ColumnType == ColumnType.InlineEditCommand)
             @if (DataGrid.CanCancelEdit)
             {
                 <MudTooltip Text="Cancel">
-                    <MudIconButton Class="pa-0 ml-4" Icon="@Icons.Material.Filled.Close" Size="@Size.Small" OnClick="@Cancel" />
+                    <MudIconButton Class="pa-0 ml-4" Icon="@Icons.Material.Filled.Close" Size="@Size.Small" OnClick="@CancelAsync" />
                 </MudTooltip>
             }
         </div>

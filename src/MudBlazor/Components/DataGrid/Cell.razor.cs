@@ -6,9 +6,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
+using System.Threading.Tasks;
 using System.Windows.Input;
 using Microsoft.AspNetCore.Components;
-using MudBlazor.Components.DataGrid;
+using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
@@ -16,18 +17,31 @@ namespace MudBlazor
     {
         [CascadingParameter] public MudDataGrid<T> DataGrid { get; set; }
 
-        [Parameter] public T Value { get; set; }
+        [Parameter] public T Item { get; set; }
         [Parameter] public string Title { get; set; }
         [Parameter] public string Field { get; set; }
         [Parameter] public RenderFragment<T> CellTemplate { get; set; }
         [Parameter] public RenderFragment<T> EditTemplate { get; set; }
         [Parameter] public ColumnType ColumnType { get; set; }
         [Parameter] public bool IsEditable { get; set; }
+        [Parameter] public string CellClass { get; set; }
+        [Parameter] public string CellStyle { get; set; }
+        [Parameter] public Func<T, string> CellClassFunc { get; set; }
+        [Parameter] public Func<T, string> CellStyleFunc { get; set; }
 
         private bool _isSelected = false;
         private object _cachedValue;
         private string _valueString;
         private double _valueNumber;
+        private string _classname =>
+            new CssBuilder(CellClass)
+                .AddClass(Class)
+            .Build();
+        private string _style =>
+            new StyleBuilder()
+                .AddStyle(CellStyle)
+                .AddStyle(Style)
+            .Build();
 
         #region Computed Properties and Functions
 
@@ -38,11 +52,11 @@ namespace MudBlazor
         {
             get
             {
-                if (Value == null || Field == null)
+                if (Item == null || Field == null)
                     return null;
 
-                var property = Value.GetType().GetProperties().SingleOrDefault(x => x.Name == Field);
-                return property.GetValue(Value);
+                var property = Item.GetType().GetProperties().SingleOrDefault(x => x.Name == Field);
+                return property.GetValue(Item);
             }
         }
         private string computedTitle
@@ -56,6 +70,9 @@ namespace MudBlazor
         {
             get
             {
+                if (Field == null)
+                    return typeof(object);
+
                 return typeof(T).GetProperty(Field).PropertyType;
             }
         }
@@ -70,7 +87,28 @@ namespace MudBlazor
         {
             get
             {
-                return !DataGrid.ReadOnly && (IsEditable || ColumnType == ColumnType.InlineEditCommand) && Equals(DataGrid._editingItem, Value);
+                if (DataGrid == null)
+                    return false;
+
+                return !DataGrid.ReadOnly && (IsEditable || ColumnType == ColumnType.InlineEditCommand) && Equals(DataGrid._editingItem, Item);
+            }
+        }
+        private string classname
+        {
+            get
+            {
+                return new CssBuilder(CellClassFunc?.Invoke(Item))
+                    .AddClass(_classname)
+                    .Build();
+            }
+        }
+        private string style
+        {
+            get
+            {
+                return new CssBuilder(CellStyleFunc?.Invoke(Item))
+                    .AddClass(_style)
+                    .Build();
             }
         }
 
@@ -78,23 +116,38 @@ namespace MudBlazor
 
         protected override void OnInitialized()
         {
-            if (ColumnType != ColumnType.InlineEditCommand)
+            if (DataGrid != null)
             {
-                DataGrid.OnSelectedItemsChanged += OnSelectedItemsChanged;
-                DataGrid.StartedEditingItem += OnStartedEditingItem;
-                DataGrid.StartedCommittingItemChanges += OnStartedCommittingItemChanges;
-                DataGrid.EditingCancelled += OnEditingCancelled;
+                if (ColumnType != ColumnType.InlineEditCommand)
+                {
+                    DataGrid.SelectedItemsChangedEvent += OnSelectedItemsChanged;
+                    DataGrid.StartedEditingItemEvent += OnStartedEditingItem;
+                    DataGrid.StartedCommittingItemChangesEvent += OnStartedCommittingItemChanges;
+                    DataGrid.EditingCancelledEvent += OnEditingCancelled;
+                }
+
+                DataGrid.PagerStateHasChangedEvent += OnPagerStateHasChanged;
             }
         }
 
+        #region Events
+
         private void OnSelectedItemsChanged(HashSet<T> items)
         {
-            _isSelected = items.Contains(Value);
+            _isSelected = items.Contains(Item);
+            StateHasChanged();
+        }
+
+        private void OnPagerStateHasChanged()
+        {
+            // Here, we need to make sure that the item is selected if it is in the list of selected items.
+            _isSelected = DataGrid.SelectedItems.Contains(Item);
+            StateHasChanged();
         }
 
         private void OnStartedEditingItem()
         {
-            if (isEditing)
+            if (isEditing && EditTemplate == null)
             {
                 _cachedValue = computedValue;
 
@@ -117,8 +170,8 @@ namespace MudBlazor
             if (EditTemplate != null && _cachedValue != null)
             {
                 // since we have an EditTemplate with possible bound values, we need to revert those here.
-                var property = Value.GetType().GetProperties().SingleOrDefault(x => x.Name == Field);
-                property.SetValue(Value, _cachedValue);
+                var property = Item.GetType().GetProperties().SingleOrDefault(x => x.Name == Field);
+                property.SetValue(Item, _cachedValue);
             }
         }
 
@@ -126,29 +179,27 @@ namespace MudBlazor
         {
             if (IsEditable && EditTemplate == null)
             {
-                if (ReferenceEquals(Value, item))
+                if (ReferenceEquals(Item, item))
                 {
-                    var property = Value.GetType().GetProperties().SingleOrDefault(x => x.Name == Field);
+                    var property = Item.GetType().GetProperties().SingleOrDefault(x => x.Name == Field);
 
                     // commit the change at the cell.
                     if (dataType == typeof(string))
                     {
-                        property.SetValue(Value, _valueString);
+                        property.SetValue(Item, _valueString);
                     }
                     else if (isNumber)
                     {
-                        property.SetValue(Value, Convert.ChangeType(_valueNumber, property.PropertyType));
+                        property.SetValue(Item, Convert.ChangeType(_valueNumber, property.PropertyType));
                     }
                 }
             }
         }
 
-        #region Events
-
-        private void CellCheckedChanged(bool value, T item)
+        private async Task CellCheckedChangedAsync(bool value, T item)
         {
             _isSelected = value;
-            DataGrid?.SetSelectedItem(value, item);
+            await DataGrid?.SetSelectedItemAsync(value, item);
         }
 
         private void StringValueChanged(string value)
@@ -161,26 +212,31 @@ namespace MudBlazor
             _valueNumber = value;
         }
 
-        private void Save()
+        private async Task Save()
         {
-            DataGrid.CommitItemChanges(Value);
+            await DataGrid?.CommitItemChangesAsync(Item);
         }
 
-        private void Cancel()
+        private async Task CancelAsync()
         {
-            DataGrid.CancelEditingItem();
+            await DataGrid?.CancelEditingItemAsync();
         }
 
         #endregion
 
         public void Dispose()
         {
-            if (ColumnType != ColumnType.InlineEditCommand)
+            if (DataGrid != null)
             {
-                DataGrid.OnSelectedItemsChanged -= OnSelectedItemsChanged;
-                DataGrid.StartedEditingItem -= OnStartedEditingItem;
-                DataGrid.StartedCommittingItemChanges -= OnStartedCommittingItemChanges;
-                DataGrid.EditingCancelled -= OnEditingCancelled;
+                if (ColumnType != ColumnType.InlineEditCommand)
+                {
+                    DataGrid.SelectedItemsChangedEvent -= OnSelectedItemsChanged;
+                    DataGrid.StartedEditingItemEvent -= OnStartedEditingItem;
+                    DataGrid.StartedCommittingItemChangesEvent -= OnStartedCommittingItemChanges;
+                    DataGrid.EditingCancelledEvent -= OnEditingCancelled;
+                }
+
+                DataGrid.PagerStateHasChangedEvent -= OnPagerStateHasChanged;
             }
         }
     }

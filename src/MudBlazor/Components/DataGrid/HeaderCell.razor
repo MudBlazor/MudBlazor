@@ -4,17 +4,17 @@
 
 @if (IsOnlyHeader)
 {
-    <th scope="col" class="mud-table-cell @Class" style="@Style" colspan="@ColSpan">
+    <th scope="col" class="mud-table cell @_classname" style="@_style" colspan="@ColSpan" @attributes="@UserAttributes">
         @_content
     </th>
 }
 else
 {
-    <th scope="col" class="@Class" style="@Style" colspan="@ColSpan">
+    <th scope="col" class="@_classname" style="@_style" colspan="@ColSpan" @attributes="@UserAttributes">
         @if (ColumnType == ColumnType.SelectionCheckBox)
         {
             <div class="d-flex">
-                <MudCheckBox T="bool" CheckedChanged="@CheckedChanged"></MudCheckBox>
+                <MudCheckBox T="bool" Checked="@_isSelected" CheckedChanged="@CheckedChangedAsync"></MudCheckBox>
             </div>        
         }
         else
@@ -41,6 +41,11 @@ else
                         {
                             <MudIconButton Icon="@SortIcon" Class="@sortIconClass" Size="@Size.Small" OnClick="@SortChangedAsync"></MudIconButton>
                         }
+                    }
+
+                    @if (hasFilter)
+                    {
+                        <MudIconButton Icon="@Icons.Material.Filled.FilterAlt" Size="@Size.Small" OnClick="@OpenFilters"></MudIconButton>
                     }
 
                     @if (showColumnOptions)

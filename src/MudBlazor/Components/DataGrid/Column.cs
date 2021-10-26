@@ -36,7 +36,10 @@ namespace MudBlazor
 
         #region HeaderCell Properties
 
+        [Parameter] public string HeaderClass { get; set; }
+        [Parameter] public Func<T, string> HeaderClassFunc { get; set; }
         [Parameter] public string HeaderStyle { get; set; }
+        [Parameter] public Func<T, string> HeaderStyleFunc { get; set; }
         /// <summary>
         /// Determines whether this columns data can be sorted. This overrides the Sortable parameter on the DataGrid.
         /// </summary>
@@ -52,13 +55,16 @@ namespace MudBlazor
         [Parameter] public Func<T, object> SortBy { get; set; } = null;
         [Parameter] public SortDirection InitialDirection { get; set; } = SortDirection.None;
         [Parameter] public string SortIcon { get; set; } = Icons.Material.Filled.ArrowUpward;
-        [Parameter] public Func<T, bool> Filter { get; set; } = null;
+        //[Parameter] public Func<T, bool> Filter { get; set; } = null;
 
         #endregion
 
         #region Cell Properties
 
+        [Parameter] public string CellClass { get; set; }
+        [Parameter] public Func<T, string> CellClassFunc { get; set; }
         [Parameter] public string CellStyle { get; set; }
+        [Parameter] public Func<T, string> CellStyleFunc { get; set; }
         [Parameter] public bool? IsEditable { get; set; }
         [Parameter] public RenderFragment<T> EditTemplate { get; set; }
 
@@ -66,8 +72,10 @@ namespace MudBlazor
 
         #region FooterCell Properties
 
+        [Parameter] public string FooterClass { get; set; }
+        [Parameter] public Func<T, string> FooterClassFunc { get; set; }
         [Parameter] public string FooterStyle { get; set; }
-
+        [Parameter] public Func<T, string> FooterStyleFunc { get; set; }
         [Parameter] public bool EnableFooterSelection { get; set; }
 
         #endregion
@@ -92,7 +100,7 @@ namespace MudBlazor
 
         protected override void OnInitialized()
         {
-            DataGrid.AddColumn(this);
+            DataGrid?.AddColumn(this);
         }
     }
 }

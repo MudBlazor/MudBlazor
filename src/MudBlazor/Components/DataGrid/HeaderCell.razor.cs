@@ -3,15 +3,16 @@
 // See the LICENSE file in the project root for more information.
 
 using System;
-using Microsoft.AspNetCore.Components;
+using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
-using System.Collections.Generic;
-using MudBlazor.Components.DataGrid;
+using Microsoft.AspNetCore.Components;
+using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    public partial class HeaderCell<T> : MudComponentBase
+    public partial class HeaderCell<T> : MudComponentBase, IDisposable
     {
         [CascadingParameter] public MudDataGrid<T> DataGrid { get; set; }
         [CascadingParameter(Name = "IsOnlyHeader")] public bool IsOnlyHeader { get; set; } = false;
@@ -27,9 +28,21 @@ namespace MudBlazor
         [Parameter] public bool? Sortable { get; set; }
         [Parameter] public bool? Filterable { get; set; }
         [Parameter] public bool? ShowColumnOptions { get; set; }
+        [Parameter] public string HeaderClass { get; set; }
+        [Parameter] public string HeaderStyle { get; set; }
 
         private SortDirection _initialDirection;
         private Type _dataType;
+        private bool _isSelected;
+        private string _classname =>
+            new CssBuilder(HeaderClass)
+                .AddClass(Class)
+            .Build();
+        private string _style =>
+            new StyleBuilder()
+                .AddStyle(HeaderStyle)
+                .AddStyle(Style)
+            .Build();
 
         #region Computed Properties and Functions
 
@@ -79,6 +92,16 @@ namespace MudBlazor
                 }
             }
         }
+        private bool hasFilter
+        {
+            get
+            {
+                if (DataGrid == null)
+                    return false;
+
+                return DataGrid.FilterDefinitions.Any(x => x.Field == Field && x.Operator != null && x.Value != null);
+            }
+        }
 
         #endregion
 
@@ -116,7 +139,11 @@ namespace MudBlazor
             }
 
             if (DataGrid != null)
-                DataGrid.OnSortChanged += ClearSort;
+            {
+                DataGrid.SortChangedEvent += ClearSort;
+                DataGrid.SelectedAllItemsChangedEvent += OnSelectedAllItemsChanged;
+                DataGrid.SelectedItemsChangedEvent += OnSelectedItemsChanged;
+            }
         }
 
         private void CompileSortBy()
@@ -138,6 +165,29 @@ namespace MudBlazor
 
         #region Events
 
+        /// <summary>
+        /// Removes the sort icon from the HeaderCell. This is triggered by the DataGrid when a sort is applied
+        /// from another HeaderCell to remove all other sorts.
+        /// </summary>
+        /// <param name="field">The field that is the currently set sort.</param>
+        private void ClearSort(string field)
+        {
+            if (Field != field)
+                _initialDirection = SortDirection.None;
+        }
+
+        private void OnSelectedAllItemsChanged(bool value)
+        {
+            _isSelected = value;
+            StateHasChanged();
+        }
+
+        private void OnSelectedItemsChanged(HashSet<T> items)
+        {
+            _isSelected = items.Count == DataGrid.GetFilteredItemsCount();
+            StateHasChanged();
+        }
+
         private async Task SortChangedAsync()
         {
             CompileSortBy();
@@ -155,18 +205,8 @@ namespace MudBlazor
         private async Task RemoveSortAsync()
         {
             CompileSortBy();
+            _initialDirection = SortDirection.None;
             await InvokeAsync(() => DataGrid.SetSortAsync(SortDirection.None, SortBy, Field));
-        }
-
-        /// <summary>
-        /// Removes the sort icon from the HeaderCell. This is triggered by the DataGrid when a sort is applied
-        /// from another HeaderCell to remove all other sorts.
-        /// </summary>
-        /// <param name="field">The field that is the currently set sort.</param>
-        private void ClearSort(string field)
-        {
-            if (Field != field)
-                _initialDirection = SortDirection.None;
         }
 
         private void AddFilter()
@@ -174,11 +214,26 @@ namespace MudBlazor
             DataGrid.AddFilter(Guid.NewGuid(), Field);
         }
 
-        private void CheckedChanged(bool value)
+        private void OpenFilters()
         {
-            DataGrid.SetSelectAll(value);
+            DataGrid.OpenFilters();
+        }
+
+        private async Task CheckedChangedAsync(bool value)
+        {
+            await DataGrid?.SetSelectAllAsync(value);
         }
 
         #endregion
+
+        public void Dispose()
+        {
+            if (DataGrid != null)
+            {
+                DataGrid.SortChangedEvent -= ClearSort;
+                DataGrid.SelectedAllItemsChangedEvent -= OnSelectedAllItemsChanged;
+                DataGrid.SelectedItemsChangedEvent -= OnSelectedItemsChanged;
+            }
+        }
     }
 }
