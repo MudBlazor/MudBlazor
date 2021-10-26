@@ -1,10 +1,8 @@
 ﻿.mud-popover {
     outline: 0;
     z-index: calc(var(--mud-zindex-popover) + 1);
-    visibility: hidden;
-    opacity: 0;
     position: absolute;
-    transition: opacity .5s;
+    opacity: 0;
 
     &.mud-popover-fixed {
         position: fixed;
@@ -15,9 +13,13 @@
     }
 
     &.mud-popover-open {
-        visibility: visible;
         opacity: 1;
-        animation: mud-animation-fadein 251ms;
+        transition: opacity;
+    }
+
+    &:not(.mud-popover-open ) {
+        transition-duration:0ms !important;
+        transition-delay:0ms !important;
     }
 }
 
@@ -28,13 +30,28 @@
 }
 
 .mud-drawer {
-    .mud-popover-cascading-value {
-        z-index: calc(var(--mud-zindex-drawer) + 2);
+    &:not(.mud-drawer-temporary) {
+        .mud-popover-cascading-value {
+            z-index: calc(var(--mud-zindex-drawer) + 2);
+        }
+    }
+
+    &.mud-drawer-temporary, &.mud-drawer-responsive {
+        .mud-popover-cascading-value {
+            z-index: calc(var(--mud-zindex-appbar) + 4);
+        }
     }
 }
 
 .mud-dialog {
     .mud-popover-cascading-value {
         z-index: calc(var(--mud-zindex-dialog) + 3);
+    }
+}
+
+.mud-popover {
+    .mud-list {
+        max-height: inherit;
+        overflow-y: auto;
     }
 }

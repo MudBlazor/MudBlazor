@@ -34,6 +34,8 @@ namespace MudBlazor
         {
             if (_value != date)
             {
+                Touched = true;
+
                 if (date is not null && IsDateDisabledFunc(date.Value.Date))
                 {
                     await SetTextAsync(null, false);

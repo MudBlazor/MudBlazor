@@ -216,10 +216,10 @@ namespace MudBlazor.UnitTests.Components
                 "--mud-typography-overline-weight: 400;",
                 "--mud-typography-overline-lineheight: 2.66;",
                 "--mud-typography-overline-letterspacing: .08333em;",
-                "--mud-zindex-drawer: 1200;",
+                "--mud-zindex-drawer: 1100;",
                 "--mud-zindex-appbar: 1300;",
                 "--mud-zindex-dialog: 1400;",
-                "--mud-zindex-popover: 1100;",
+                "--mud-zindex-popover: 1200;",
                 "--mud-zindex-snackbar: 1500;",
                 "--mud-zindex-tooltip: 1600;",
                 "}"

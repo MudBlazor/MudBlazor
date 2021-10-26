@@ -21,7 +21,7 @@ namespace MudBlazor
             .AddClass("mud-badge-bottom right", Bottom) // Type or member is obsolete
         .Build();
 
-        protected string BadgeClass =>
+        protected string BadgeClassName =>
         new CssBuilder("mud-badge")
             .AddClass("mud-badge-dot", Dot)
             .AddClass("mud-badge-bordered", Bordered)
@@ -32,6 +32,7 @@ namespace MudBlazor
             .AddClass("mud-badge-bottom right", Bottom) // Type or member is obsolete
 #pragma warning restore CS0618 // Type or member is obsolete
             .AddClass("mud-badge-overlap", Overlap)
+            .AddClass(BadgeClass)
         .Build();
 
         /// <summary>
@@ -104,6 +105,11 @@ namespace MudBlazor
         /// Content you want inside the badge. Supported types are string and integer.
         /// </summary>
         [Parameter] public object Content { get; set; }
+
+        /// <summary>
+        /// Badge class names, separated by space.
+        /// </summary>
+        [Parameter] public string BadgeClass { get; set; }
 
         /// <summary>
         /// Child content of component, the content that the badge will apply to.

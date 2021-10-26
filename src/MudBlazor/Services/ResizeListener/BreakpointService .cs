@@ -23,7 +23,7 @@ namespace MudBlazor.Services
         private IBrowserWindowSizeProvider _browserWindowSizeProvider;
         private BrowserWindowSize _windowSize;
         private Breakpoint _breakpoint = Breakpoint.None;
-        private static SemaphoreSlim _subscribeSemaphore = new SemaphoreSlim(1, 1);
+        private SemaphoreSlim _subscribeSemaphore = new SemaphoreSlim(1, 1);
 
         /// <summary>
         /// 
