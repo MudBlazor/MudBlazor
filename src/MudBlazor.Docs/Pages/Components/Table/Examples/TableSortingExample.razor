@@ -25,19 +25,6 @@
 
 <MudSwitch @bind-Checked="enabled" Color="Color.Info">Enable sorting on the Sign Column</MudSwitch>
 
-<MudDataGrid Items="@Elements" Hover="true" ShowColumnOptions="false" Sortable="true">
-    <Columns>
-        <Column T="Element" Field="Number" Title="Nr"></Column>
-        <Column T="Element" Field="Sign" Sortable="enabled"></Column>
-        <Column T="Element" Field="Name" InitialDirection="@SortDirection.Ascending"></Column>
-        <Column T="Element" Field="Position"></Column>
-        <Column T="Element" Field="Molar" Title="Molar mass"></Column>
-    </Columns>
-    <PagerContent>
-        <MudDataGridPager T="Element" PageSizeOptions="new int[]{50, 100}" />
-    </PagerContent>
-</MudDataGrid>
-
 @code {
     private bool enabled = true;
     private IEnumerable<Element> Elements = new List<Element>();

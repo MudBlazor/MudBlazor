@@ -56,51 +56,6 @@
 	</ChildRowContent>
 </MudTable>
 
-<MudDataGrid Items="@People" Hover="true" Breakpoint="Breakpoint.Sm" ShowColumnOptions="false">
-    <ColGroup>
-		<col style="width:300px;" />
-		<col style="width:100px;" />
-		<col />
-		<col style="width:100px;" />
-	</ColGroup>
-    <Columns>
-        <Column T="Person">
-            <CellTemplate>
-                <MudButton Variant="Variant.Outlined" Size="Size.Small" OnClick="@(() => ShowBtnPress(context.Number))">@((context.ShowDetails == true)? "Hide" : "Show") Address Details</MudButton>
-            </CellTemplate>
-        </Column>
-        <Column T="Person" Field="Number" Title="Nr" />
-        <Column T="Person" Field="Name" />
-        <Column T="Person" Field="Age" />
-    </Columns>
-    <ChildRowContent>
-        @if (context.ShowDetails)
-        {
-            <td colspan="4">
-                <MudCard Elevation="0">
-                    <MudCardHeader>
-                        <MudText Typo="Typo.body1">Address Details for <strong>@context.Name</strong></MudText>
-                    </MudCardHeader>
-                    <MudCardContent Class="pa-0">
-                        <MudDataGrid Items="@context.Addresses" Context="AddressContext" Hover="true" Breakpoint="Breakpoint.Sm" Elevation="0">
-                            <ColGroup>
-                                <col />
-                                <col />
-                                <col style="width:200px;" />
-                            </ColGroup>
-                            <Columns>
-                                <Column T="Address" Field="Address_Line_1" Title="Address Line 1" />
-                                <Column T="Address" Field="Address_Line_2" Title="Address Line 2" />
-                                <Column T="Address" Field="Postal_Code" Title="Postal Code" />
-                            </Columns>
-                        </MudDataGrid>
-                    </MudCardContent>
-                </MudCard>
-            </td>
-        }
-    </ChildRowContent>
-</MudDataGrid>
-
 @code
 {
 	protected override void OnInitialized()

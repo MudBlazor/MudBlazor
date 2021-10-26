@@ -33,30 +33,6 @@
 <MudSwitch @bind-Checked="@fixed_header">Fixed Header</MudSwitch>
 <MudSwitch @bind-Checked="@fixed_footer">Fixed Footer</MudSwitch>
 
-<MudDataGrid Items="@Elements" FixedHeader="@fixed_header" FixedFooter="@fixed_footer" Height="@(fixed_header || fixed_footer ?"400px":"")"
-    ShowColumnOptions="false">
-    <Columns>
-        <Column T="Element" Field="Number" Title="Nr">
-            <FooterTemplate>Nr</FooterTemplate>
-        </Column>
-        <Column T="Element" Field="Sign">
-            <FooterTemplate>Sign</FooterTemplate>
-        </Column>
-        <Column T="Element" Field="Name">
-            <FooterTemplate>Name</FooterTemplate>
-        </Column>
-        <Column T="Element" Field="Position">
-            <FooterTemplate>Position</FooterTemplate>
-        </Column>
-        <Column T="Element" Field="Molar" Title="Molar mass">
-            <FooterTemplate>Molar mass</FooterTemplate>
-        </Column>
-    </Columns>
-    <PagerContent>
-        <MudDataGridPager T="Element" PageSizeOptions="new int[]{50, 100}" />
-    </PagerContent>
-</MudDataGrid>
-
 @code {
     bool fixed_header = true;
     bool fixed_footer = false;

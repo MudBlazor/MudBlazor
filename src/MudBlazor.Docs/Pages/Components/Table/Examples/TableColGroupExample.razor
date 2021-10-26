@@ -30,26 +30,6 @@
     </PagerContent>
 </MudTable>
 
-<MudDataGrid Items="@Elements" ShowColumnOptions="false">
-    <ColGroup>
-        <col style="width: 60px;" />
-        <col />
-        <col style="width: 60%;" />
-        <col style="width: 60px;" />
-        <col />
-    </ColGroup>
-    <Columns>
-        <Column T="Element" Field="Number" Title="Nr"></Column>
-        <Column T="Element" Field="Sign"></Column>
-        <Column T="Element" Field="Name"></Column>
-        <Column T="Element" Field="Position"></Column>
-        <Column T="Element" Field="Molar" Title="Molar mass" HeaderStyle="text-align:center" CellStyle="text-align:right"></Column>
-    </Columns>
-    <PagerContent>
-        <MudDataGridPager T="Element" />
-    </PagerContent>
-</MudDataGrid>
-
 @code {
     private IEnumerable<Element> Elements = new List<Element>();
 

@@ -36,28 +36,8 @@
     <MudSpacer />
     <div style="min-width:200px;">
         <MudText Inline="true" Class="align-self-center">Selected1: @selectedItem1?.Name</MudText>
-        <MudText Inline="true" Class="align-self-center">Selected2: @selectedItem2?.Name</MudText>
     </div>
 </div>
-
-<MudDataGrid Items="@Elements" Dense="@dense" Hover="@hover" Bordered="@bordered" Striped="@striped" QuickFilter="new Func<Element,bool>(FilterFunc2)" 
-    @bind-SelectedItem="selectedItem2" ShowColumnOptions="false">
-    <ToolBarContent>
-        <MudText Typo="Typo.h6">Periodic Elements</MudText>
-        <MudSpacer />
-        <MudTextField @bind-Value="searchString2" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
-    </ToolBarContent>
-    <Columns>
-        <Column T="Element" Field="@nameof(Element.Number)" Title="Nr"></Column>
-        <Column T="Element" Field="@nameof(Element.Sign)"></Column>
-        <Column T="Element" Field="@nameof(Element.Name)"></Column>
-        <Column T="Element" Field="@nameof(Element.Position)"></Column>
-        <Column T="Element" Field="@nameof(Element.Molar)" Title="Molar mass"></Column>
-    </Columns>
-    <PagerContent>
-        <MudDataGridPager T="Element" />
-    </PagerContent>
-</MudDataGrid>
 
 @code {
     private bool dense = false;
@@ -65,9 +45,7 @@
     private bool striped = false;
     private bool bordered = false;
     private string searchString1 = "";
-    private string searchString2 = "";
     private Element selectedItem1 = null;
-    private Element selectedItem2 = null;
     private HashSet<Element> selectedItems = new HashSet<Element>();
 
     private IEnumerable<Element> Elements = new List<Element>();
@@ -78,7 +56,6 @@
     }
 
     private bool FilterFunc1(Element element) => FilterFunc(element, searchString1);
-    private bool FilterFunc2(Element element) => FilterFunc(element, searchString2);
 
     private bool FilterFunc(Element element, string searchString)
     {
