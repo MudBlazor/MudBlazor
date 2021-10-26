@@ -10,12 +10,12 @@ on:
 jobs:
   pipline:
     name: Pipeline
-    uses: MudBlazor/MudBlazor/.github/workflows/template-pipeline.yml@dev
+    uses: MudBlazor/MudBlazor/.github/workflows/template-pipeline.yml@${{ github.base_ref }}
     with:
       dotnet-version: 5.0.x
       publish-coverage: true
       deploy-web-app: true
-      deploy-condition: 'refs/heads/feature/github-actions'
+      deploy-condition: 'refs/heads/dev'
       deploy-web-app-name: mudblazor-dev
     secrets:
       publish-profile: ${{ secrets.PUBLISH_MUDBLAZOR_DEV }}
