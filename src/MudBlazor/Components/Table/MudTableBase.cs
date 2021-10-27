@@ -42,7 +42,10 @@ namespace MudBlazor
             .AddClass(HeaderClass).Build();
         protected string FootClassname => new CssBuilder("mud-table-foot")
             .AddClass(FooterClass).Build();
-
+        
+        /// <summary>
+        /// When editing a row and this is true, the editing row must be saved/cancelled before a new row will be selected.
+        /// </summary>
         [Parameter] public bool IsEditRowSwitchingBlocked { get; set; } = false;
 
         /// <summary>

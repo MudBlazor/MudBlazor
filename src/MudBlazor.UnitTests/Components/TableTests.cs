@@ -912,7 +912,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task TableInlineEdit_RowSwitchingBlocked()
         {
-            var comp = Context.RenderComponent<TableInlineEditTest2>();
+            var comp = Context.RenderComponent<TableInlineEditRowBlockingTest>();
 
             var trs = comp.FindAll("tr");
 
