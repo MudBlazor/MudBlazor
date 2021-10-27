@@ -14,6 +14,7 @@ jobs:
     uses: MudBlazor/MudBlazor/.github/workflows/template-pipeline.yml@net6
     with:
       dotnet-version: 6.0.x
+      dotnet-prerelease: true
       publish-coverage: true
       deploy-web-app: true
       deploy-condition: 'refs/heads/net6'
