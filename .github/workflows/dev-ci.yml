@@ -1,4 +1,4 @@
-name: dev-cicd
+name: dev-ci
 
 on:
   push:
