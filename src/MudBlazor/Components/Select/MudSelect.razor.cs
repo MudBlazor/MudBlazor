@@ -18,6 +18,7 @@ namespace MudBlazor
     public partial class MudSelect<T> : MudBaseInput<T>, IMudSelect, IMudShadowSelect
     {
         private HashSet<T> _selectedValues = new HashSet<T>();
+        private IEqualityComparer<T> _comparer;
         private bool _dense;
         private string multiSelectionText;
         private bool? _selectAllChecked;
@@ -77,7 +78,7 @@ namespace MudBlazor
                 await ScrollManager.ScrollToListItemAsync(item.ItemId, direction, true);
         }
 
-        private async Task SelectFirstItem(string startChar=null)
+        private async Task SelectFirstItem(string startChar = null)
         {
             if (_items == null || _items.Count == 0)
                 return;
@@ -198,15 +199,15 @@ namespace MudBlazor
             get
             {
                 if (_selectedValues == null)
-                    _selectedValues = new HashSet<T>();
+                    _selectedValues = new HashSet<T>(_comparer);
                 return _selectedValues;
             }
             set
             {
-                var set = value ?? new HashSet<T>();
+                var set = value ?? new HashSet<T>(_comparer);
                 if (SelectedValues.Count() == set.Count() && _selectedValues.All(x => set.Contains(x)))
                     return;
-                _selectedValues = new HashSet<T>(set);
+                _selectedValues = new HashSet<T>(set, _comparer);
                 SelectionChangedFromOutside?.Invoke(_selectedValues);
                 if (!MultiSelection)
                     SetValueAsync(_selectedValues.FirstOrDefault()).AndForget();
@@ -221,12 +222,28 @@ namespace MudBlazor
                     }
                     else
                     {
-                        SetTextAsync(string.Join(Delimiter, SelectedValues.Select(x => Converter.Set(x))), updateValue:false).AndForget();
+                        SetTextAsync(string.Join(Delimiter, SelectedValues.Select(x => Converter.Set(x))), updateValue: false).AndForget();
                     }
                 }
-                SelectedValuesChanged.InvokeAsync(new HashSet<T>(SelectedValues));
+                SelectedValuesChanged.InvokeAsync(new HashSet<T>(SelectedValues, _comparer));
                 if (MultiSelection && typeof(T) == typeof(string))
                     SetValueAsync((T)(object)Text, updateText: false).AndForget();
+            }
+        }
+
+        /// <summary>
+        /// The Comparer to use for comparing selected values internally.
+        /// </summary>
+        [Parameter]
+        public IEqualityComparer<T> Comparer
+        {
+            get => _comparer;
+            set
+            {
+                _comparer = value;
+                // Apply comparer and refresh selected values
+                _selectedValues = new HashSet<T>(_selectedValues, _comparer);
+                SelectedValues = _selectedValues;
             }
         }
 
@@ -381,6 +398,7 @@ namespace MudBlazor
             if (!_items.Select(x => x.Value).Contains(item.Value))
             {
                 _items.Add(item);
+
                 if (item.Value != null)
                 {
                     _valueLookup[item.Value] = item;
@@ -647,7 +665,7 @@ namespace MudBlazor
             {
                 StateHasChanged();
                 await OnBlur.InvokeAsync(new FocusEventArgs());
-                _elementReference.FocusAsync().AndForget();
+                _elementReference.FocusAsync().AndForget(TaskOption.Safe);
                 StateHasChanged();
             }
         }
@@ -676,7 +694,7 @@ namespace MudBlazor
             {
                 await _keyInterceptor.Connect(_elementId, new KeyInterceptorOptions()
                 {
-                    EnableLogging = true,
+                    //EnableLogging = true,
                     TargetClass = "mud-input-control",
                     Keys = {
                         new KeyOptions { Key=" ", PreventDown = "key+none" }, //prevent scrolling page, toggle open/close
@@ -928,8 +946,8 @@ namespace MudBlazor
         {
             if (!MultiSelection)
                 return;
-            var selectedValues = new HashSet<T>(_items.Where(x => !x.Disabled && x.Value != null).Select(x => x.Value));
-            _selectedValues=  new HashSet<T>(selectedValues);
+            var selectedValues = new HashSet<T>(_items.Where(x => !x.Disabled && x.Value != null).Select(x => x.Value), _comparer);
+            _selectedValues = new HashSet<T>(selectedValues, _comparer);
             if (MultiSelectionTextFunc != null)
             {
                 await SetCustomizedTextAsync(string.Join(Delimiter, SelectedValues.Select(x => Converter.Set(x))),
@@ -968,7 +986,7 @@ namespace MudBlazor
             {
                 // when the menu is open we immediately get back the focus if we lose it (i.e. because of checkboxes in multi-select)
                 // otherwise we can't receive key strokes any longer
-                _elementReference.FocusAsync().AndForget();
+                _elementReference.FocusAsync().AndForget(TaskOption.Safe);
             }
         }
     }

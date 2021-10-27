@@ -1,4 +1,4 @@
-﻿@using System
+@using System
 @using System.Linq
 @using Microsoft.AspNetCore.Components
 @using MudBlazor
@@ -62,13 +62,13 @@
 }
 @if (IsApiPage && !string.IsNullOrEmpty(ComponentLink))
 {
-    <Link Rel="canonical" Href="@($"https://mudblazor.com/{ComponentPageLink}")" />
+    <Link Rel="canonical" Href="@($"https://mudblazor.com/{ComponentLink}")" />
     <DocsPageSection api-link-section>
         <SectionHeader Title="Pages" />
         <div class="docs-page-apilinks">
             <ul class="my-2">
                 <li>
-                    <MudLink Href="@ComponentPageLink">
+                    <MudLink Href="@GetComponentLink()">
                         <CodeInline>@($"{GetParentComponentPage()}")</CodeInline>
                     </MudLink>
                 </li>
@@ -101,7 +101,6 @@
 
     private string GetApiLink() => $"api/{GetComponentName()}";
     private string ComponentPage;
-    private string ComponentPageLink;
 
     private string GetComponentName()
     {
@@ -123,23 +122,29 @@
         return MenuService.Components.Where(c => c.Component == ApiLink.GetTypeFromComponentLink(GetComponentName()) && c.ChildComponents != null).SelectMany(l => l.ChildComponents).ToList();
     }
 
+    private string GetComponentLink()
+    {
+        var currentComp = ApiLink.GetTypeFromComponentLink(GetComponentName());
+        var parent = MenuService.GetParent(currentComp);
+
+        if (parent.Component is not null) return $"components/{parent.Link}";
+        
+        return $"components/{parent.GroupItems.Elements.FirstOrDefault(x => x.Component == currentComp).Link}";
+    }
+
     private string GetParentComponentPage()
     {
         var currentComp = ApiLink.GetTypeFromComponentLink(GetComponentName());
         var parent = MenuService.GetParent(currentComp);
-        var test = parent;
         if (parent.Component != null)
         {
             ComponentPage = parent.Name;
-            ComponentPageLink = $"components/{parent.Link}";
         }
         else
         {
             var groupComp = parent.GroupItems.Elements.FirstOrDefault(x => x.Component == currentComp);
             ComponentPage = groupComp.Name;
-            ComponentPageLink = $"components/{groupComp.Link}";
         }
-
         return ComponentPage;
     }
 
