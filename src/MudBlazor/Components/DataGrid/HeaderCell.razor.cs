@@ -22,7 +22,7 @@ namespace MudBlazor
         [Parameter] public RenderFragment HeaderTemplate { get; set; }
         [Parameter] public int ColSpan { get; set; }
         [Parameter] public ColumnType ColumnType { get; set; } = ColumnType.Text;
-        [Parameter] public Func<T, object> SortBy { get; set; } = null;
+        [Parameter] public Func<T, object> SortBy { get; set; }
         [Parameter] public string SortIcon { get; set; } = Icons.Material.Filled.ArrowUpward;
         [Parameter] public SortDirection InitialDirection { get; set; } = SortDirection.None;
         [Parameter] public bool? Sortable { get; set; }
@@ -150,10 +150,15 @@ namespace MudBlazor
         {
             if (SortBy == null)
             {
-                // set the default SortBy
-                var parameter = Expression.Parameter(typeof(T), "x");
-                var field = Expression.Convert(Expression.Property(parameter, typeof(T).GetProperty(Field)), typeof(object));
-                SortBy = Expression.Lambda<Func<T, object>>(field, parameter).Compile();
+                var o = SortBy.Invoke(default(T));
+
+                if (o == null)
+                {
+                    // set the default SortBy
+                    var parameter = Expression.Parameter(typeof(T), "x");
+                    var field = Expression.Convert(Expression.Property(parameter, typeof(T).GetProperty(Field)), typeof(object));
+                    SortBy = Expression.Lambda<Func<T, object>>(field, parameter).Compile();
+                }
             }
         }
 

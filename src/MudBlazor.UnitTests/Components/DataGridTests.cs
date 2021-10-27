@@ -31,28 +31,28 @@ namespace MudBlazor.UnitTests.Components
             dataGrid.FindAll("td")[1].TextContent.Trim().Should().Be("A");
             dataGrid.FindAll("td")[2].TextContent.Trim().Should().Be("C");
 
-            dataGrid.Find(".column-header .sortable-column-header").Click();
+            await comp.InvokeAsync(() => dataGrid.Instance.SetSortAsync(SortDirection.Ascending, x => { return x.Name; }, "Name"));
 
             // Check the values of rows - should be sorted ascending by Name.
             dataGrid.FindAll("td")[0].TextContent.Trim().Should().Be("A");
             dataGrid.FindAll("td")[1].TextContent.Trim().Should().Be("B");
             dataGrid.FindAll("td")[2].TextContent.Trim().Should().Be("C");
 
-            dataGrid.Find(".column-header .sortable-column-header").Click();
+            await comp.InvokeAsync(() => dataGrid.Instance.SetSortAsync(SortDirection.Descending, x => { return x.Name; }, "Name"));
 
             // Check the values of rows - should be sorted descending by Name.
             dataGrid.FindAll("td")[0].TextContent.Trim().Should().Be("C");
             dataGrid.FindAll("td")[1].TextContent.Trim().Should().Be("B");
             dataGrid.FindAll("td")[2].TextContent.Trim().Should().Be("A");
 
-            dataGrid.Find(".column-header .sortable-column-header").Click();
+            await comp.InvokeAsync(() => dataGrid.Instance.SetSortAsync(SortDirection.None, x => { return x.Name; }, "Name"));
 
             // Check the values of rows - should not be sorted and should be in the original order.
             dataGrid.FindAll("td")[0].TextContent.Trim().Should().Be("B");
             dataGrid.FindAll("td")[1].TextContent.Trim().Should().Be("A");
             dataGrid.FindAll("td")[2].TextContent.Trim().Should().Be("C");
 
-            dataGrid.Instance.Sortable = false;
+            await comp.InvokeAsync(() => dataGrid.Instance.Sortable = false);
             dataGrid.Render();
 
             // Since Sortable is now false, the click handler (and element holding it) should no longer exist.
@@ -138,9 +138,7 @@ namespace MudBlazor.UnitTests.Components
             dataGrid.FindAll("td")[2].GetAttribute("style").Should().Contain("font-weight:bold");
         }
 
-        /* Commented this test out for now because it was causing the github test action to fail.
-         * Why it is failing there and not in the IDE I have no clue.
-         * [Test]
+        [Test]
         public async Task DataGridEventCallbacksTest()
         {
             var comp = Context.RenderComponent<DataGridEventCallbacksTest>();
@@ -187,6 +185,6 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.StartedEditingItem.Should().Be(true);
             comp.Instance.StartedCommittingItemChanges.Should().Be(true);
             comp.Instance.EditingItemCancelled.Should().Be(true);
-        }*/
+        }
     }
 }

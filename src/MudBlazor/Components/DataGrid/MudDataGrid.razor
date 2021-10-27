@@ -28,12 +28,23 @@
                             @Header
                         </CascadingValue>
                         <tr class="mud-table-row">
-                            @foreach (var column in @_columns)
+                            @foreach (var column in _columns)
                             {
-                                <HeaderCell T="T" Title="@column.Title" Field="@column.Field" Class="@column.headerClassname"
-                                    HeaderTemplate="@column.HeaderTemplate" SortBy="@column.SortBy" SortIcon="@column.SortIcon"
-                                    InitialDirection="@column.InitialDirection" Sortable="@column.Sortable" Style="@column.HeaderStyle"
-                                    Filterable="@column.Filterable" ColumnType="@column.Type" ColSpan="@column.HeaderColSpan"></HeaderCell>
+                                @*This is necessary on .net6.0-preview4 and below.*@
+                                if (column.HeaderTemplate != null)
+                                {
+                                    <HeaderCell T="T" Title="@column.Title" Field="@column.Field" Class="@column.headerClassname"
+                                        SortIcon="@column.SortIcon" SortBy="@column.SortBy" HeaderTemplate="@column.HeaderTemplate"
+                                        InitialDirection="@column.InitialDirection" Sortable="@column.Sortable" Style="@column.HeaderStyle"
+                                        Filterable="@column.Filterable" ColumnType="@column.Type" ColSpan="@column.HeaderColSpan"></HeaderCell>
+                                }
+                                else
+                                {
+                                    <HeaderCell T="T" Title="@column.Title" Field="@column.Field" Class="@column.headerClassname"
+                                        SortIcon="@column.SortIcon" SortBy="@column.SortBy"
+                                        InitialDirection="@column.InitialDirection" Sortable="@column.Sortable" Style="@column.HeaderStyle"
+                                        Filterable="@column.Filterable" ColumnType="@column.Type" ColSpan="@column.HeaderColSpan"></HeaderCell>
+                                }
                             }
 
                             @if (EditMode == DataGridEditMode.Inline)
