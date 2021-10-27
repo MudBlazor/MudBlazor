@@ -170,12 +170,12 @@
                 {
                     yield return new ApiProperty()
                     {
-                        Name = info.Name,
                         PropertyInfo = info,
+                        Name = info.Name,
+                        Type = info.PropertyType,
+                        IsTwoWay = CheckIsTwoWayEventCallback(info),
                         Default = string.Empty,
                         Description = GetDescription(Type, info),
-                        IsTwoWay = CheckIsTwoWayEventCallback(info),
-                        Type = info.PropertyType,
                     };
                 }
             }
@@ -225,12 +225,12 @@
                 {
                     yield return new ApiProperty()
                     {
-                        Name = info.Name,
                         PropertyInfo = info,
-                        Default = GetDefaultValue(info),
-                        IsTwoWay = CheckIsTwoWayProperty(info),
-                        Description = GetDescription(Type, info),
+                        Name = info.Name,
                         Type = info.PropertyType,
+                        IsTwoWay = CheckIsTwoWayProperty(info),
+                        Default = GetDefaultValue(info),
+                        Description = GetDescription(Type, info),
                     };
                 }
             }
