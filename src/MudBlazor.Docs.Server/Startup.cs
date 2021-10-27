@@ -24,7 +24,7 @@ namespace MudBlazor.Docs.Server
 
         // This method gets called by the runtime. Use this method to add services to the container.
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
-        public void ConfigureServices(IServiceCollection services)
+        public void ConfigureServices(IServiceCollection services, IWebHostEnvironment env)
         {
             services.AddScoped<IPeriodicTableService, PeriodicTableService>();
             services.AddScoped(sp => new HttpClient() { BaseAddress = new Uri(Configuration["ApiBase"]) });
@@ -35,6 +35,11 @@ namespace MudBlazor.Docs.Server
             services.TryAddDocsViewServices();
             services.AddApplicationInsightsTelemetry();
             services.AddGoogleAnalytics("G-PRYNCB61NV");
+
+            if (!env.IsDevelopment())
+            {
+                services.AddSignalR().AddAzureSignalR(Configuration["Azure:SignalR:ConnectionString"]);
+            }
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
