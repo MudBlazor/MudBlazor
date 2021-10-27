@@ -47,6 +47,7 @@ jobs:
         uses: actions/setup-dotnet@v1
         with: 
           dotnet-version: ${{ inputs.dotnet-version }}
+          include-prerelease: ${{ inputs.dotnet-prerelease }}
 
       - name: Restore
         run: dotnet restore
