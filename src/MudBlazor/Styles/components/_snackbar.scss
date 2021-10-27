@@ -2,7 +2,7 @@
 .mud-snackbar {
     display: flex;
     flex-grow: initial;
-    padding: 6px 16px;
+    padding: density(6px, 16px);
     align-items: center;
     position: relative;
     pointer-events: auto;
