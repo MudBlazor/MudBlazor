@@ -19,7 +19,7 @@
     }
 
     .mud-timeline-item {
-        padding-bottom: 24px;
+        padding-bottom: density(24px);
 
         .mud-timeline-item-content {
             max-width: calc(50% - 48px);
@@ -50,8 +50,8 @@
     }
 
     .mud-timeline-item {
-        padding-left: 24px;
-        padding-right: 24px;
+        padding-left: density(24px);
+        padding-right: density(24px);
         width: 100%;
 
         .mud-timeline-item-content {
