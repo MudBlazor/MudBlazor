@@ -45,16 +45,16 @@
                             </MudTd>
                             <MudTd Class="docs-content-api-cell" DataLabel="Type">
                                 <div style="display: flex; flex-direction: row; align-items: center; white-space: nowrap;">
-                                    @if (context.PropertyInfo.PropertyType.IsEnum)
+                                    @if (context.Type.IsEnum)
                                     {
                                         <MudTooltip>
-                                            <ChildContent>@context.Type</ChildContent>
+                                            <ChildContent>@context.Type.ConvertToCSharpSource()</ChildContent>
                                             <TooltipContent>
                                                 enumeration type
                                                 <MudText Align="Align.Left" Typo="Typo.body2">
-                                                    @foreach (var name in Enum.GetNames(context.PropertyInfo.PropertyType))
+                                                    @foreach (var name in Enum.GetNames(context.Type))
                                                     {
-                                                        @(context.PropertyInfo.PropertyType.Name + "." + name)<br />
+                                                        @(context.Type.Name + "." + name)<br />
                                                     }
                                                 </MudText>
                                             </TooltipContent>
@@ -62,7 +62,7 @@
                                     }
                                     else
                                     {
-                                        @context.Type
+                                        @context.Type.ConvertToCSharpSource()
                                     }
                                     <DocsBinding IsTwoWay="@context.IsTwoWay" />
                                 </div>
@@ -98,7 +98,7 @@
                         </HeaderContent>
                         <RowTemplate>
                             <MudTd Class="docs-content-api-cell" DataLabel="Name"><CodeInline>@context.Name</CodeInline></MudTd>
-                            <MudTd Class="docs-content-api-cell" DataLabel="Type"><div style="display: flex; flex-direction: row; align-items: center; white-space: nowrap;">@context.Type</div></MudTd>
+                            <MudTd Class="docs-content-api-cell" DataLabel="Type"><div style="display: flex; flex-direction: row; align-items: center; white-space: nowrap;">@context.Type.ConvertToCSharpSource()</div></MudTd>
                             <MudTd Class="docs-content-api-cell docs-content-api-description" DataLabel="Description">@(HttpUtility.HtmlDecode(context.Description))</MudTd>
                         </RowTemplate>
                     </MudTable>
@@ -175,7 +175,7 @@
                         Default = string.Empty,
                         Description = GetDescription(Type, info),
                         IsTwoWay = CheckIsTwoWayEventCallback(info),
-                        Type = info.PropertyType.ConvertToCSharpSource(),
+                        Type = info.PropertyType,
                     };
                 }
             }
@@ -230,7 +230,7 @@
                         Default = GetDefaultValue(info),
                         IsTwoWay = CheckIsTwoWayProperty(info),
                         Description = GetDescription(Type, info),
-                        Type = info.PropertyType.ConvertToCSharpSource()
+                        Type = info.PropertyType,
                     };
                 }
             }
