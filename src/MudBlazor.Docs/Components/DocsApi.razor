@@ -43,7 +43,30 @@
                                     <MudChip Variant="Variant.Outlined" Color="Color.Secondary" Size="Size.Small">overridden</MudChip>
                                 }
                             </MudTd>
-                            <MudTd Class="docs-content-api-cell" DataLabel="Type"><div style="display: flex; flex-direction: row; align-items: center; white-space: nowrap;">@context.Type<DocsBinding IsTwoWay="@context.IsTwoWay" /></div></MudTd>
+                            <MudTd Class="docs-content-api-cell" DataLabel="Type">
+                                <div style="display: flex; flex-direction: row; align-items: center; white-space: nowrap;">
+                                    @if (context.PropertyInfo.PropertyType.IsEnum)
+                                    {
+                                        <MudTooltip>
+                                            <ChildContent>@context.Type</ChildContent>
+                                            <TooltipContent>
+                                                enumeration type
+                                                <MudText Align="Align.Left" Typo="Typo.body2">
+                                                    @foreach (var name in Enum.GetNames(context.PropertyInfo.PropertyType))
+                                                    {
+                                                        @(context.PropertyInfo.PropertyType.Name + "." + name)<br />
+                                                    }
+                                                </MudText>
+                                            </TooltipContent>
+                                        </MudTooltip>
+                                    }
+                                    else
+                                    {
+                                        @context.Type
+                                    }
+                                    <DocsBinding IsTwoWay="@context.IsTwoWay" />
+                                </div>
+                            </MudTd>
                             <MudTd Class="docs-content-api-cell" DataLabel="Default">
                                 @if (PresentDefaultValue(context.Default).Contains("<path"))
                                 {
