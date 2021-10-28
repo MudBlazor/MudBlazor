@@ -50,7 +50,6 @@
 
 .mud-nav-link {
     width: 100%;
-    white-space: pre;
     font-weight: 400;
     padding: 8px 16px 8px 16px;
     color: inherit;
@@ -160,7 +159,7 @@
 .mud-drawer--closed.mud-drawer-mini {
     & > .mud-drawer-content > .mud-navmenu {
         & .mud-nav-link .mud-icon-root:first-child + .mud-nav-link-text {
-            visibility: hidden;
+            display: none;
         }
     }
 
