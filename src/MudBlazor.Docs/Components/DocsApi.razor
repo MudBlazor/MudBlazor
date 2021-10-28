@@ -45,16 +45,17 @@
                             </MudTd>
                             <MudTd Class="docs-content-api-cell" DataLabel="Type">
                                 <div style="display: flex; flex-direction: row; align-items: center; white-space: nowrap;">
-                                    @if (context.Type.IsEnum)
+                                    @{ Type nonnullableType = Nullable.GetUnderlyingType(context.Type) ?? context.Type; }
+                                    @if (nonnullableType.IsEnum)
                                     {
                                         <MudTooltip>
                                             <ChildContent>@context.Type.ConvertToCSharpSource()</ChildContent>
                                             <TooltipContent>
                                                 enumeration type
                                                 <MudText Align="Align.Left" Typo="Typo.body2">
-                                                    @foreach (var name in Enum.GetNames(context.Type))
+                                                    @foreach (var name in Enum.GetNames(nonnullableType))
                                                     {
-                                                        @(context.Type.Name + "." + name)<br />
+                                                        @(nonnullableType.Name + "." + name)<br />
                                                     }
                                                 </MudText>
                                             </TooltipContent>
