@@ -111,7 +111,7 @@ namespace MudBlazor
             StateHasChanged();
         }
 
-        private string GetSortIconClass()
+        internal string GetSortIconClass()
         {
             if (_direction == SortDirection.Descending)
             {

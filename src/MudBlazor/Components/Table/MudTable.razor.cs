@@ -474,6 +474,14 @@ namespace MudBlazor
             return InvokeServerLoadFunc();
         }
 
+        public void Reverse()
+        {
+            Context.CurrentSortLabel.SetSortDirection(Context.SortDirection == SortDirection.Descending ? SortDirection.Ascending : SortDirection.Descending);
+            Context.SetSortFunc(Context.CurrentSortLabel);
+
+            this.StateHasChanged();
+        }
+
         internal override bool IsEditable { get => (RowEditingTemplate != null) || (Columns != null); }
 
         //GROUPING:
