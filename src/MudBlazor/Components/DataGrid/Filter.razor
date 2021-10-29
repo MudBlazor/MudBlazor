@@ -5,7 +5,7 @@
     <MudIconButton Icon="@Icons.Material.Filled.Close" OnClick="@RemoveFilter" Size="@Size.Small" Style="align-self:flex-end"></MudIconButton>
 </MudItem>
 <MudItem xs="4">
-    <MudSelect Value="@Field" ValueChanged="@FieldChanged" FullWidth="true" Label="Column" Dense="true" Margin="@Margin.Dense" PopoverClass="z-highest">
+    <MudSelect Value="@Field" ValueChanged="@FieldChanged" FullWidth="true" Label="Column" Dense="true" Margin="@Margin.Dense">
         @if (DataGrid?._columns != null)
         {
             @foreach (var column in DataGrid?._columns)
@@ -18,7 +18,7 @@
 <MudItem xs="3">
     @if (dataType == typeof(string))
     {
-        <MudSelect @bind-Value="_operator" FullWidth="true" Label="Operator" Dense="true" Margin="@Margin.Dense" PopoverClass="z-highest">
+        <MudSelect @bind-Value="_operator" FullWidth="true" Label="Operator" Dense="true" Margin="@Margin.Dense">
             <MudSelectItem Value="@("contains")">contains</MudSelectItem>
             <MudSelectItem Value="@("equals")">equals</MudSelectItem>
             <MudSelectItem Value="@("starts with")">starts with</MudSelectItem>
@@ -29,7 +29,7 @@
     }
     else if (isNumber)
     {
-        <MudSelect @bind-Value="_operator" FullWidth="true" Label="Operator" Dense="true" Margin="@Margin.Dense" PopoverClass="z-highest">
+        <MudSelect @bind-Value="_operator" FullWidth="true" Label="Operator" Dense="true" Margin="@Margin.Dense">
             <MudSelectItem Value="@("=")">=</MudSelectItem>
             <MudSelectItem Value="@("!=")">!=</MudSelectItem>
             <MudSelectItem Value="@(">")">></MudSelectItem>
@@ -42,14 +42,14 @@
     }
     else if (dataType.IsEnum)
     {
-        <MudSelect @bind-Value="_operator" FullWidth="true" Label="Operator" Dense="true" Margin="@Margin.Dense" PopoverClass="z-highest">
+        <MudSelect @bind-Value="_operator" FullWidth="true" Label="Operator" Dense="true" Margin="@Margin.Dense">
             <MudSelectItem Value="@("is")">is</MudSelectItem>
             <MudSelectItem Value="@("is not")">is not</MudSelectItem>
         </MudSelect>
     }
     else if (dataType == typeof(bool))
     {
-        <MudSelect @bind-Value="_operator" FullWidth="true" Label="Operator" Dense="true" Margin="@Margin.Dense" PopoverClass="z-highest">
+        <MudSelect @bind-Value="_operator" FullWidth="true" Label="Operator" Dense="true" Margin="@Margin.Dense">
             <MudSelectItem Value="@("is")">is</MudSelectItem>
         </MudSelect>
     }

@@ -22,7 +22,18 @@ namespace MudBlazor
         [Parameter] public RenderFragment HeaderTemplate { get; set; }
         [Parameter] public int ColSpan { get; set; }
         [Parameter] public ColumnType ColumnType { get; set; } = ColumnType.Text;
-        [Parameter] public Func<T, object> SortBy { get; set; }
+        [Parameter] public Func<T, object> SortBy 
+        { 
+            get
+            {
+                CompileSortBy();
+                return _sortBy;
+            }
+            set
+            {
+                _sortBy = value;
+            }
+        }
         [Parameter] public string SortIcon { get; set; } = Icons.Material.Filled.ArrowUpward;
         [Parameter] public SortDirection InitialDirection { get; set; } = SortDirection.None;
         [Parameter] public bool? Sortable { get; set; }
@@ -32,6 +43,7 @@ namespace MudBlazor
         [Parameter] public string HeaderStyle { get; set; }
 
         private SortDirection _initialDirection;
+        private Func<T, object> _sortBy;
         private Type _dataType;
         private bool _isSelected;
         private string _classname =>
@@ -133,7 +145,6 @@ namespace MudBlazor
 
             if (_initialDirection != SortDirection.None)
             {
-                CompileSortBy();
                 // set initial sort
                 await InvokeAsync(() => DataGrid.SetSortAsync(_initialDirection, SortBy, Field));
             }
@@ -148,16 +159,16 @@ namespace MudBlazor
 
         private void CompileSortBy()
         {
-            if (SortBy == null)
+            if (_sortBy == null)
             {
-                var o = SortBy.Invoke(default(T));
+                var o = _sortBy.Invoke(default(T));
 
                 if (o == null)
                 {
                     // set the default SortBy
                     var parameter = Expression.Parameter(typeof(T), "x");
                     var field = Expression.Convert(Expression.Property(parameter, typeof(T).GetProperty(Field)), typeof(object));
-                    SortBy = Expression.Lambda<Func<T, object>>(field, parameter).Compile();
+                    _sortBy = Expression.Lambda<Func<T, object>>(field, parameter).Compile();
                 }
             }
         }
@@ -195,8 +206,6 @@ namespace MudBlazor
 
         private async Task SortChangedAsync()
         {
-            CompileSortBy();
-
             if (_initialDirection == SortDirection.None)
                 _initialDirection = SortDirection.Ascending;
             else if (_initialDirection == SortDirection.Ascending)
@@ -209,7 +218,6 @@ namespace MudBlazor
 
         private async Task RemoveSortAsync()
         {
-            CompileSortBy();
             _initialDirection = SortDirection.None;
             await InvokeAsync(() => DataGrid.SetSortAsync(SortDirection.None, SortBy, Field));
         }
