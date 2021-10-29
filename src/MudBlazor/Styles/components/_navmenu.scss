@@ -50,7 +50,6 @@
 
 .mud-nav-link {
     width: 100%;
-    white-space: pre;
     font-weight: 400;
     padding: 8px 16px 8px 16px;
     color: inherit;
@@ -61,6 +60,7 @@
     text-transform: none;
     background-color: transparent;
     transition: background-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,box-shadow 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,border 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, padding 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+    align-items: flex-start;
 
     &.mud-nav-link-disabled {
         color: var(--mud-palette-text-disabled) !important;
@@ -160,7 +160,7 @@
 .mud-drawer--closed.mud-drawer-mini {
     & > .mud-drawer-content > .mud-navmenu {
         & .mud-nav-link .mud-icon-root:first-child + .mud-nav-link-text {
-            visibility: hidden;
+            display: none;
         }
     }
 
