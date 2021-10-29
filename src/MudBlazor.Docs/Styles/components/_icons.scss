@@ -55,6 +55,15 @@
     transition: background-color 250ms cubic-bezier(.4,0,.2,1) 0ms,box-shadow 250ms cubic-bezier(.4,0,.2,1) 0ms,border 250ms cubic-bezier(.4,0,.2,1);
     user-select: none;
 
+    &:focus {
+        outline: 2px solid var(--mud-palette-primary);
+    }
+
+    &:focus-visible {
+        background-color: var(--mud-palette-action-default-hover);
+        outline:none;
+    }
+
     & .mud-svg-icon {
         font-size: 40px;
         margin-top: 12px;
