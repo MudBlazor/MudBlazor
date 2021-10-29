@@ -8,10 +8,10 @@
         <DocsPageSection>
             <SectionHeader Title="Icons" />
             <MudGrid Class="my-4">
-                <MudItem xs="10">
+                <MudItem xs="12" sm="8" md="10">
                     <MudTextField Immediate="true" DebounceInterval="1000" @bind-Value="SearchText" Variant="Variant.Outlined" Placeholder="Search icons..." Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" />
                 </MudItem>
-                <MudItem xs="2">
+                <MudItem xs="12" sm="4" md="2">
                     <MudSelect T="IconOrigin" Value="SelectedIconOrigin" ValueChanged="OnSelectedValue" Variant="Variant.Outlined" AnchorOrigin="Origin.BottomCenter">
                         <MudSelectItem Value="IconOrigin.Custom">Custom Icons</MudSelectItem>
                         <MudSelectItem Value="IconOrigin.Material">Material Icons</MudSelectItem>
