@@ -1,62 +1,124 @@
 ﻿@page "/features/icons"
 @using System.Reflection
+@using Microsoft.AspNetCore.Components.Web.Virtualization
+
+<MudDrawer @bind-Open="@iconDrawerOpen" ClipMode="DrawerClipMode.Always" Anchor="Anchor.End" DisableOverlay="true" Elevation="25" Width="260px" Class="mud-icondrawer" Variant="@DrawerVariant.Temporary">
+    <MudToolBar Dense="true" DisableGutters="true" Class="pl-4 py-8">
+        <MudIcon Size="Size.Large" Icon="@SelectedIcon.Icon" Class="mr-4"/>
+        <MudText Typo="Typo.subtitle1">@SelectedIcon.Name</MudText>
+        <MudSpacer/>
+        <MudIconButton OnClick="@(() => CloseIconDrawer())" Icon="@Icons.Material.Filled.Close" Class="pa-2"></MudIconButton>
+    </MudToolBar>
+    <div class="px-4">
+        <MudText Typo="Typo.subtitle2">Icon Code</MudText>
+        <MudPaper Class="mud-iconcode pa-2" Elevation="0">
+            @IconCodeOutput
+            <div class="d-flex justify-end">
+                <MudIconButton OnClick="CopyTextToClipboard" Icon="@Icons.Filled.ContentCopy" Size="Size.Small" Class="pa-1 mb-n1 mr-n1" />
+            </div>
+        </MudPaper>
+        <MudText Typo="Typo.subtitle2">Icon Preview</MudText>
+        <MudPaper Class="d-flex justify-center align-center" Elevation="0" Height="228px">
+            <MudIcon Size="@PreviewIconSize" Color="@PreviewIconColor" Icon="@SelectedIcon.Icon" />
+        </MudPaper>
+
+        <MudSelect T="Color" @bind-Value="@PreviewIconColor" Label="Color" AnchorOrigin="Origin.BottomCenter" Variant="Variant.Outlined" Dense="true" Margin="Margin.Dense" Class="my-4">
+            <DocsColorSelect Color="Color.Default" />
+            <DocsColorSelect Color="Color.Primary" />
+            <DocsColorSelect Color="Color.Secondary" />
+            <DocsColorSelect Color="Color.Tertiary" />
+            <DocsColorSelect Color="Color.Info" />
+            <DocsColorSelect Color="Color.Success" />
+            <DocsColorSelect Color="Color.Warning" />
+            <DocsColorSelect Color="Color.Error" />
+            <DocsColorSelect Color="Color.Dark" />
+            <DocsColorSelect Color="Color.Surface" />
+        </MudSelect>
+        <MudSelect T="Size" @bind-Value="@PreviewIconSize" Label="Size" AnchorOrigin="Origin.BottomCenter" Variant="Variant.Outlined" Dense="true" Margin="Margin.Dense" Class="my-4">
+            <MudSelectItem Value="Size.Small">Small</MudSelectItem>
+            <MudSelectItem Value="Size.Medium">Medium</MudSelectItem>
+            <MudSelectItem Value="Size.Large">Large</MudSelectItem>
+        </MudSelect>
+    </div>
+</MudDrawer>
 
 <DocsPage MaxWidth="MaxWidth.Large">
-    <DocsPageHeader Title="MudBlazor Icons" SubTitle="Over 1800 Material Design icons and a few custom ones.">
-        <Description>To use these icons, or if you want to load your own icons, you can check out the <MudLink Href="/components/icons">component's Icon Page</MudLink>.</Description>
-    </DocsPageHeader>
+    <DocsPageHeader Title="MudBlazor Icons" DisableApiHeader="true" SubTitle="Over 1800 Material Design icons and a few custom ones." />
     <DocsPageContent>
         <DocsPageSection>
-            <SectionHeader Title="Custom Icons">
+            <SectionHeader Title="Icons">
+                <Description>
+                    To use these icons in our components, you can specify the type of material icon directly <CodeInline>@@Icons.Filled.Menu</CodeInline> or specify the whole path <CodeInline>@@Icons.Material.Filled.Menu</CodeInline>
+                </Description>
             </SectionHeader>
-            <MudDivider />
-            <SectionContent FullWidth="true">
-                @if (MudIconsMaterial != null)
+            <MudGrid Class="my-4">
+                <MudItem xs="10">
+                    <MudTextField Immediate="true" DebounceInterval="1000" @bind-Value="SearchText" Variant="Variant.Outlined" Placeholder="Search icons..." Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" />
+                </MudItem>
+                <MudItem xs="2">
+                    <MudSelect T="IconOrigin" @bind-Value="SelectedIconOrigin" Variant="Variant.Outlined" AnchorOrigin="Origin.BottomCenter">
+                        <MudSelectItem Value="IconOrigin.Custom">Custom Icons</MudSelectItem>
+                        <MudSelectItem Value="IconOrigin.Material">Material Icons</MudSelectItem>
+                    </MudSelect>
+                </MudItem>
+                <MudItem xs="12">
+                    <MudChipSet Filter="true" Mandatory="true">
+                        <MudChip Default="true" Text="Filled" OnClick="@(() => ChangeMaterialType(IconType.Filled))" Variant="Variant.Outlined" Color="Color.Default" SelectedColor="Color.Primary" />
+                        <MudChip Text="Outlined" OnClick="@(() => ChangeMaterialType(IconType.Outlined))" Variant="Variant.Outlined" Color="Color.Default" SelectedColor="Color.Primary" />
+                        <MudChip Text="Rounded" OnClick="@(() => ChangeMaterialType(IconType.Rounded))" Variant="Variant.Outlined" Color="Color.Default" SelectedColor="Color.Primary" />
+                        <MudChip Text="Sharp" OnClick="@(() => ChangeMaterialType(IconType.Sharp))" Variant="Variant.Outlined" Color="Color.Default" SelectedColor="Color.Primary" />
+                        <MudChip Text="TwoTone" OnClick="@(() => ChangeMaterialType(IconType.TwoTone))" Variant="Variant.Outlined" Color="Color.Default" SelectedColor="Color.Primary" />
+                    </MudChipSet>
+                </MudItem>
+            </MudGrid>
+            <div class="docs-icon-container">
+                @if (DisplayedIcons != null)
                 {
-                    <DocsIcons List="MudIconsCustom" />
+                    <Virtualize Items="@SelectedIcons" ItemSize="128" OverscanCount="128">
+                        <div class="docs-icon-panel" @onclick="@(() => SetIconDrawer(true, context.Code, context.Name))">
+                            <MudIcon Icon="@context.Code" Title="@context.Name" />
+                            <MudText Typo="Typo.caption">
+                                @context.Name
+                            </MudText>
+                        </div>
+                    </Virtualize>
                 }
                 else
                 {
                     <MudText Typo="Typo.h5" Align="Align.Center">Loading...</MudText>
                 }
-            </SectionContent>
-        </DocsPageSection>
-        <DocsPageSection>
-            <SectionHeader Title="Material Icon">
-            </SectionHeader>
-            <SectionContent Class="docs-icon-material-container" FullWidth="true">
-                <MudRadioGroup T="string" SelectedOption="@SelectedIconType" SelectedOptionChanged="HandleSelectedOptionChanged">
-                    @foreach (var item in IconTypes)
-                    {
-                        <MudRadio Option="@item.Key" Color="Color.Primary">@item.Key</MudRadio>
-                    }
-                </MudRadioGroup>
-                <MudTextField Immediate="true" DebounceInterval="1000" @bind-Value="SearchText" Variant="Variant.Outlined" Placeholder="Search icons..." Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" />
-                <MudText Class="mx-3" Typo="Typo.body1">@SelectedIcons.Count() matching results</MudText>
-                <MudDivider />
-                @if (MudIconsMaterial != null)
-                {
-                    <DocsIcons List="@SelectedIcons" />
-                }
-                else
-                {
-                    <MudText Typo="Typo.h5" Align="Align.Center">Loading...</MudText>
-                }
-            </SectionContent>
+            </div>
         </DocsPageSection>
     </DocsPageContent>
 </DocsPage>
 
 @code {
 
-    List<MudIcons> MudIconsMaterial;
-    List<MudIcons> MudIconsCustom;
+    [Inject] protected IJsApiService JsApiService { get; set; }
 
+    bool iconDrawerOpen;
+    List<MudIcons> DisplayedIcons;
+    List<MudIcons> CustomIcons;
+
+    private IconOrigin SelectedIconOrigin { get; set; } = IconOrigin.Custom;
     private string SelectedIconType { get; set; } = IconType.Filled;
     private string SearchText { get; set; } = string.Empty;
+
+    private List<MudIcons> MaterialFilled { get; set; }
+    private List<MudIcons> MaterialOutlined { get; set; }
+    private List<MudIcons> MaterialRounded { get; set; }
+    private List<MudIcons> MaterialSharp { get; set; }
+    private List<MudIcons> MaterialTwoTone { get; set; }
+
+    private SelectedDrawerIcon SelectedIcon { get; set; } = new();
+    private string IconCodeOutput { get; set; }
+    private Size PreviewIconSize { get; set; } = Size.Medium;
+    private Color PreviewIconColor { get; set; } = Color.Default;
+
     private List<MudIcons> SelectedIcons => string.IsNullOrWhiteSpace(SearchText)
-        ? MudIconsMaterial
-        : MudIconsMaterial.Where(m => m.Name.Contains(SearchText, StringComparison.OrdinalIgnoreCase)).ToList();
+        ? DisplayedIcons
+        : DisplayedIcons.Where(m => m.Name.Contains(SearchText, StringComparison.OrdinalIgnoreCase)).ToList();
+
     private readonly IDictionary<string, object> IconTypes = new Dictionary<string, object>()
     {
         { IconType.Filled,new Filled()},
@@ -68,20 +130,30 @@
 
     protected override async Task OnInitializedAsync()
     {
-        await LoadMaterialIcons(SelectedIconType);
+        MaterialFilled = await LoadMaterialIcons(IconType.Filled);
+        DisplayedIcons = MaterialFilled;
+
+        MaterialOutlined = await LoadMaterialIcons(IconType.Outlined);
+        MaterialRounded = await LoadMaterialIcons(IconType.Rounded);
+        MaterialSharp = await LoadMaterialIcons(IconType.Sharp);
+        MaterialTwoTone = await LoadMaterialIcons(IconType.TwoTone);
+
         await LoadCustomIcons();
     }
 
-    public async Task LoadMaterialIcons(string selectedIcoType)
+    public async Task<List<MudIcons>> LoadMaterialIcons(string type)
     {
         var result = new List<MudIcons>();
-        var icons = IconTypes[selectedIcoType];
+        var icons = IconTypes[type];
+
         foreach (var prop in icons.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetProperty ))
         {
             result.Add(new MudIcons(prop.Name, prop.GetValue(icons).ToString()));
         }
+
         await Task.WhenAll();
-        MudIconsMaterial = result;
+
+        return result;
     }
 
     public async Task LoadCustomIcons()
@@ -97,21 +169,59 @@
         foreach (var prop in typeof(Uncategorized).GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetProperty))
             result.Add(new MudIcons(prop.Name, prop.GetValue(uncategorized).ToString()));
         await Task.WhenAll();
-        MudIconsCustom = result;
+        CustomIcons = result;
     }
 
-    public async Task HandleSelectedOptionChanged(string e)
+    public void ChangeMaterialType(string type)
     {
-        SelectedIconType = e;
-        await LoadMaterialIcons(SelectedIconType);
+        switch(type)
+        {
+            case IconType.Filled:
+                DisplayedIcons = MaterialFilled;
+                break;
+            case IconType.Outlined:
+                DisplayedIcons = MaterialOutlined;
+                break;
+            case IconType.Rounded:
+                DisplayedIcons = MaterialRounded;
+                break;
+            case IconType.Sharp:
+                DisplayedIcons = MaterialSharp;
+                break;
+            case IconType.TwoTone:
+                DisplayedIcons = MaterialTwoTone;
+                break;
+        };
+    }
+
+    void SetIconDrawer(bool value, string icon, string name)
+    {
+        iconDrawerOpen = true;
+        SelectedIcon.Icon = icon;
+        SelectedIcon.Name = name;
+        IconCodeOutput = $"@Icons.{(SelectedIconOrigin == IconOrigin.Material? "Material" : "Custom")}.{name}";
+    }
+    void CloseIconDrawer()
+    {
+        iconDrawerOpen = false;
+    }
+
+    private async Task CopyTextToClipboard()
+    {
+        await JsApiService.CopyToClipboardAsync(Snippets.GetCode(IconCodeOutput));
     }
 
     private struct IconType
     {
-        public const string Filled = "Filled",
-                            Outlined = "Outlined",
-                            Rounded = "Rounded",
-                            Sharp = "Sharp",
-                            TwoTone = "TwoTone";
+        public const string Filled = "Filled", Outlined = "Outlined", Rounded = "Rounded", Sharp = "Sharp", TwoTone = "TwoTone";
+    }
+    private enum IconOrigin
+    {
+        Custom,
+        Material
+    }
+    private class SelectedDrawerIcon{
+        public string Icon { get; set; }
+        public string Name { get; set; }
     }
 }
