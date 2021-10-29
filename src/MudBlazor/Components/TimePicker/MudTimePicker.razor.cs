@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Extensions;
+using MudBlazor.Services;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
@@ -55,6 +56,8 @@ namespace MudBlazor
         private bool _amPm = false;
         private OpenTo _currentView;
         private string _timeFormat = string.Empty;
+
+        MudPickerContent _mudPickerContent;
 
         internal TimeSpan? TimeIntermediate { get; private set; }
 
@@ -485,6 +488,77 @@ namespace MudBlazor
                     Close(false);
                 }
             }
+        }
+
+        [Inject] private IKeyInterceptor _keyInterceptor { get; set; }
+
+        private string _elementId = "timepicker" + Guid.NewGuid().ToString().Substring(0, 8);
+
+        //protected override async Task OnAfterRenderAsync(bool firstRender)
+        //{
+        //    if (firstRender)
+        //    {
+        //        await _keyInterceptor.Connect(_elementId, new KeyInterceptorOptions()
+        //        {
+        //            //EnableLogging = true,
+        //            TargetClass = "mud-picker-time-container",
+        //            Keys = {
+        //                new KeyOptions { Key=" ", PreventDown = "key+none", PreventUp = "key+none" }, // prevent scrolling page
+        //                new KeyOptions { Key="ArrowUp", PreventDown = "key+none" },
+        //                new KeyOptions { Key="ArrowDown", PreventDown = "key+none" },
+        //            },
+        //        });
+        //    }
+        //    await base.OnAfterRenderAsync(firstRender);
+        //}
+
+        protected void HandleKeyDowns(KeyboardEventArgs obj)
+        {
+            if (Disabled || ReadOnly)
+                return;
+            switch (obj.Key)
+            {
+                case "ArrowRight":
+                    if (obj.ShiftKey == false)
+                    {
+                        ChangeMinute(1);
+                    }
+                    else
+                    {
+                        ChangeHour(1);
+                    }
+                    break;
+                case "ArrowLeft":
+                    if (obj.ShiftKey == false)
+                    {
+                        ChangeMinute(-1);
+                    }
+                    else
+                    {
+                        ChangeHour(-1);
+                    }
+                    break;
+                case "ArrowUp":
+                    ChangeHour(1);
+                    break;
+                case "ArrowDown":
+                    ChangeHour(-1);
+                    break;
+            }
+        }
+
+        protected void ChangeMinute(int val)
+        {
+            _currentView = OpenTo.Minutes;
+            _timeSet.Minute += val;
+            UpdateTime();
+        }
+
+        protected void ChangeHour(int val)
+        {
+            _currentView = OpenTo.Hours;
+            _timeSet.Hour += val;
+            UpdateTime();
         }
 
         private class SetTime

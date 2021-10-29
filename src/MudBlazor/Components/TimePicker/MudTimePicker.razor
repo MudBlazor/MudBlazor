@@ -29,8 +29,8 @@
                 </div>
             }
         </MudPickerToolbar>
-        <MudPickerContent>
-            <div class="mud-picker-time-container">
+        <MudPickerContent  @ref="_mudPickerContent" InvokeKeyDown="HandleKeyDowns">
+            <div class="mud-picker-time-container" id="@_elementId">
                 <div class="mud-picker-time-clock">
                     <div role="menu" tabindex="-1" class="mud-picker-time-clock-mask" @onmousedown="OnMouseDown" @onmouseup="OnMouseUp">
                         <div class="@GetClockPinColor()"></div>
