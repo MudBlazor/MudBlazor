@@ -2,6 +2,10 @@
   "dependencies": {
     "appInsights1": {
       "type": "appInsights"
+    },
+    "signalr1": {
+      "type": "signalr",
+      "connectionId": "Azure:SignalR:ConnectionString"
     }
   }
 }
