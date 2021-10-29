@@ -71,7 +71,7 @@
 .mud-alert-icon {
     display: flex;
     opacity: 0.9;
-    padding: 7px 0;
+    padding: density(7px, 0px);
     font-size: 22px;
     margin-right: 12px;
     margin-inline-end: 12px;
@@ -91,7 +91,7 @@
 }
 
 .mud-alert-message {
-    padding: 9px 0;
+    align-self:center;
 }
 
 .mud-alert-position {
