@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
@@ -336,6 +337,8 @@ namespace MudBlazor
                     TargetClass = "mud-input-slot",
                     Keys = {
                         new KeyOptions { Key=" ", PreventDown = "key+none" },
+                        new KeyOptions { Key="ArrowUp", PreventDown = "key+none" },
+                        new KeyOptions { Key="ArrowDown", PreventDown = "key+none" },
                         new KeyOptions { Key="Enter", PreventDown = "key+none" },
                         new KeyOptions { Key="NumpadEnter", PreventDown = "key+none" },
                     },
@@ -384,12 +387,86 @@ namespace MudBlazor
         {
             PickerClosed.InvokeAsync(this);
         }
+
+        private int FindHour()
+        {
+            string hour = "";
+            char[] textArray = Text.ToCharArray();
+            foreach (char c in textArray)
+            {
+                if (c == ':')
+                {
+                    break;
+                }
+                else
+                {
+                    hour += c.ToString();
+                }
+            }
+
+            return int.Parse(hour);
+        }
+
+        private int FindMinute()
+        {
+            string minute = "";
+            char[] textArray = Text.ToCharArray();
+
+            for (int i = 0; i < textArray.Length; i++)
+            {
+                if (textArray[i] == ':')
+                {
+                    minute = textArray[i + 1].ToString();
+                    if (Regex.IsMatch(textArray[i + 2].ToString(), "[0-9]"))
+                    {
+                        minute += textArray[i + 2].ToString();
+                    }
+                    break;
+                }
+            }
+
+            return int.Parse(minute);
+        }
+
+        private string SetTimeString(int hour, int minute)
+        {
+            if (hour < 10)
+            {
+                if (minute < 10)
+                {
+                    return "0" + hour.ToString() + ":" + "0" + minute.ToString();
+                }
+                else
+                {
+                    return "0" + hour.ToString() + ":" + minute.ToString();
+                }
+            }
+            else
+            {
+                if (minute < 10)
+                {
+                    return hour.ToString() + ":" + "0" + minute.ToString();
+                }
+                else
+                {
+                    return hour.ToString() + ":" + minute.ToString();
+                }
+            }
+            
+        }
+
         protected internal void HandleKeyDown(KeyboardEventArgs obj)
         {
             if (Disabled || ReadOnly)
                 return;
             switch (obj.Key)
             {
+                case "Backspace":
+                    if (obj.CtrlKey == true && obj.ShiftKey == true)
+                    {
+                        Reset();
+                    }
+                    break;
                 case "Enter":
                 case "NumpadEnter":
                     Open();
@@ -399,9 +476,28 @@ namespace MudBlazor
                     Close(false);
                     break;
                 case "ArrowDown":
-                    if (obj.AltKey == true)
+                    if (obj.AltKey == true || IsOpen == false)
                     {
                         Open();
+                    }
+                    else if (this.GetType() == typeof(MudTimePicker))
+                    {
+                        int hour = FindHour();
+                        if (hour == 24)
+                        {
+                            hour = 0;
+                        }
+                        else if (hour == 0)
+                        {
+                            hour = 11;
+                        }
+                        else
+                        {
+                            hour -= 1;
+                        }
+                        int minute = FindMinute();
+                        Text = SetTimeString(hour, minute);
+                        SetTextAsync(Text, true).AndForget();
                     }
                     break;
                 case "ArrowUp":
@@ -409,7 +505,94 @@ namespace MudBlazor
                     {
                         Close(false);
                     }
+                    else if (IsOpen == false)
+                    {
+                        Open();
+                    }
+                    else if (this.GetType() == typeof(MudTimePicker))
+                    {
+                        try
+                        {
+                            int hour = FindHour();
+                            if (hour == 23)
+                            {
+                                hour = 0;
+                            }
+                            else
+                            {
+                                hour += 1;
+                            }
+                            int minute = FindMinute();
+                            Text = SetTimeString(hour, minute);
+                            SetTextAsync(Text, true).AndForget();
+                        }
+                        catch (Exception)
+                        {
+
+                        }
+                    }
                     break;
+                case "ArrowRight":
+                    if (IsOpen)
+                    {
+                        if (this.GetType() == typeof(MudTimePicker))
+                        {
+                            int hour = FindHour();
+                            int minute = FindMinute();
+                            if (minute == 59)
+                            {
+                                minute = 0;
+                                if (hour == 23)
+                                {
+                                    hour = 0;
+                                }
+                                else
+                                {
+                                    hour += 1;
+                                }
+                            }
+                            else
+                            {
+                                minute += 1;
+                            }
+                            Text = SetTimeString(hour, minute);
+                            SetTextAsync(Text, true).AndForget();
+                        }
+                    }
+                    break;
+                case "ArrowLeft":
+                    if (IsOpen)
+                    {
+                        if (this.GetType() == typeof(MudTimePicker))
+                        {
+                            int hour = FindHour();
+                            int minute = FindMinute();
+                            if (minute == 0)
+                            {
+                                minute = 59;
+                                if (hour == 24)
+                                {
+                                    hour = 0;
+                                }
+                                else if (hour == 0)
+                                {
+                                    hour = 11;
+                                }
+                                else
+                                {
+                                    hour -= 1;
+                                }
+                            }
+                            else
+                            {
+                                minute -= 1;
+                            }
+                            Text = SetTimeString(hour, minute);
+                            SetTextAsync(Text, true).AndForget();
+                        }
+                    }
+                    break;
+
                 case " ":
                     if (!Editable)
                     {
@@ -426,5 +609,34 @@ namespace MudBlazor
                     break;
             }
         }
+
+        private void HandleOnBlur()
+        {
+            if (!Text.Contains(":") && Text.Length == 4)
+            {
+                try
+                {
+                    int hour = int.Parse(Text.Substring(0, 2));
+                    int minute = int.Parse(Text.Substring(2, 2));
+                    if (23 < hour)
+                    {
+                        hour = 23;
+                    }
+
+                    if (59 < minute)
+                    {
+                        minute = 59;
+                    }
+                    Text = hour.ToString() + ":" + minute.ToString();
+                    SetTextAsync(Text, true).AndForget();
+                }
+                catch (Exception)
+                {
+                    //ignore
+                }
+                
+            }
+        }
+
     }
 }
