@@ -436,6 +436,20 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public void Open_FixDay_WithoutOpenTo_CheckOpenView()
+        {
+            var comp = OpenPicker(new ComponentParameter[] { ComponentParameter.CreateParameter("FixDay", 1), ComponentParameter.CreateParameter("FixMonth", 1) });
+            comp.FindAll("div.mud-picker-calendar-container > div.mud-picker-year-container").Count.Should().Be(1);
+        }
+
+        [Test]
+        public void Open_FixDay_FixMonth_WithoutOpenTo_CheckOpenView()
+        {
+            var comp = OpenPicker(new ComponentParameter[] { ComponentParameter.CreateParameter("FixDay", 1) });
+            comp.FindAll("div.mud-picker-month-container").Count.Should().Be(1);
+        }
+
+        [Test]
         public async Task Open_Programmatically_CheckOpen_Close_Programmatically_CheckClosed()
         {
             var comp = Context.RenderComponent<SimpleMudDatePickerTest>();

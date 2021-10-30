@@ -181,6 +181,14 @@ namespace MudBlazor
         protected override void OnPickerOpened()
         {
             base.OnPickerOpened();
+            if (OpenTo == OpenTo.Date && FixDay.HasValue)
+            {
+                OpenTo = OpenTo.Month;
+            }
+            if (OpenTo == OpenTo.Date && FixDay.HasValue && FixMonth.HasValue)
+            {
+                OpenTo = OpenTo.Year;
+            }
             CurrentView = OpenTo;
             if (CurrentView == OpenTo.Year)
                 _scrollToYearAfterRender = true;
