@@ -57,7 +57,7 @@ namespace MudBlazor
         private OpenTo _currentView;
         private string _timeFormat = string.Empty;
 
-        MudPickerContent _mudPickerContent;
+        ElementReference _mudPickerContent = new ElementReference();
 
         internal TimeSpan? TimeIntermediate { get; private set; }
 
@@ -501,7 +501,7 @@ namespace MudBlazor
         //        await _keyInterceptor.Connect(_elementId, new KeyInterceptorOptions()
         //        {
         //            //EnableLogging = true,
-        //            TargetClass = "mud-picker-time-container",
+        //            TargetClass = "mud-picker-content",
         //            Keys = {
         //                new KeyOptions { Key=" ", PreventDown = "key+none", PreventUp = "key+none" }, // prevent scrolling page
         //                new KeyOptions { Key="ArrowUp", PreventDown = "key+none" },
@@ -543,6 +543,11 @@ namespace MudBlazor
                     break;
                 case "ArrowDown":
                     ChangeHour(-1);
+                    break;
+                case "Escape":
+                case " ":
+                    Close();
+                    _inputReference.FocusAsync();
                     break;
             }
         }

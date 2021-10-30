@@ -12,9 +12,9 @@
             <div class="mud-timepicker-hourminute mud-ltr">
                 @if (TimeEditMode == TimeEditMode.Normal)
                 {
-                    <MudButton Variant="Variant.Text" Color="Color.Inherit" Class="@HoursButtonClass" OnClick="OnHourClick">@GetHourString()</MudButton>
+                    <MudButton @onkeydown="HandleKeyDowns" Variant="Variant.Text" Color="Color.Inherit" Class="@HoursButtonClass" OnClick="OnHourClick">@GetHourString()</MudButton>
                     <MudText Typo="Typo.h2" Class="mud-timepicker-separator">:</MudText>
-                    <MudButton Variant="Variant.Text" Color="Color.Inherit" Class="@MinuteButtonClass" OnClick="OnMinutesClick">@GetMinuteString()</MudButton>
+                    <MudButton @onkeydown="HandleKeyDowns" Variant="Variant.Text" Color="Color.Inherit" Class="@MinuteButtonClass" OnClick="OnMinutesClick">@GetMinuteString()</MudButton>
                 }
                 else
                 {
@@ -24,13 +24,13 @@
             @if (AmPm)
             {
                 <div class="mud-timepicker-ampm">
-                    <MudButton Variant="Variant.Text" Color="Color.Inherit" Class="@AmButtonClass" OnClick="OnAmClicked">AM</MudButton>
-                    <MudButton Variant="Variant.Text" Color="Color.Inherit" Class="@PmButtonClass" OnClick="OnPmClicked">PM</MudButton>
+                    <MudButton @onkeydown="HandleKeyDowns" Variant="Variant.Text" Color="Color.Inherit" Class="@AmButtonClass" OnClick="OnAmClicked">AM</MudButton>
+                    <MudButton @onkeydown="HandleKeyDowns" Variant="Variant.Text" Color="Color.Inherit" Class="@PmButtonClass" OnClick="OnPmClicked">PM</MudButton>
                 </div>
             }
         </MudPickerToolbar>
-        <MudPickerContent  @ref="_mudPickerContent" InvokeKeyDown="HandleKeyDowns">
-            <div class="mud-picker-time-container" id="@_elementId">
+        <MudPickerContent Id="@_elementId" Ref="_mudPickerContent" InvokeKeyDown="HandleKeyDowns">
+            <div class="mud-picker-time-container">
                 <div class="mud-picker-time-clock">
                     <div role="menu" tabindex="-1" class="mud-picker-time-clock-mask" @onmousedown="OnMouseDown" @onmouseup="OnMouseUp">
                         <div class="@GetClockPinColor()"></div>

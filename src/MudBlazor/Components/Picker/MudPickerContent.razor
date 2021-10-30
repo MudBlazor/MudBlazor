@@ -1,7 +1,8 @@
 ﻿@namespace MudBlazor
 @using MudBlazor.Utilities
+@using MudBlazor.Services
 
-<div id="@Id" @ref="_divRef" class="@Classnames" tabindex="0" @onkeydown="InvokeKeyDown" @onclick:stopPropagation="true">
+<div id="@Id" @ref="Ref" class="@Classnames" tabindex="0" @onkeydown="InvokeKeyDown" @onclick:stopPropagation="true">
     @ChildContent
 </div>
 
@@ -11,11 +12,11 @@
       .AddClass(Class)
     .Build();
 
-    ElementReference _divRef;
+    [Parameter] public string Id { get; set; }
+    [Parameter] public ElementReference Ref { get; set; }
 
     [Parameter] public string Class { get; set; }
     [Parameter] public RenderFragment ChildContent { get; set; }
 
-    [Parameter] public string Id { get; set; }
     [Parameter] public EventCallback<KeyboardEventArgs> InvokeKeyDown { get; set; }
 }
