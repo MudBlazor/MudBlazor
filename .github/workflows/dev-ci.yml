@@ -9,7 +9,7 @@ on:
     
 
 jobs:
-  pipline:
+  pipeline:
     name: Pipeline
     uses: MudBlazor/MudBlazor/.github/workflows/template-pipeline.yml@dev
     with:
