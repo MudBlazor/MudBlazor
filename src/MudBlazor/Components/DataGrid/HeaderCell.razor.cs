@@ -83,6 +83,9 @@ namespace MudBlazor
         {
             get
             {
+                if (!sortable && !filterable)
+                    return false;
+
                 return ShowColumnOptions ?? DataGrid?.ShowColumnOptions ?? true;
             }
         }
