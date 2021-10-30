@@ -79,9 +79,8 @@ namespace MudBlazor
             {
                 await _runtime.InvokeVoidAsync("mudPopover.disconnect", Id);
             }
-            catch (TaskCanceledException)
-            {
-            }
+            catch (JSDisconnectedException) { }
+            catch (TaskCanceledException) { }
             finally
             {
                 IsConnected = false;
@@ -160,9 +159,8 @@ namespace MudBlazor
             {
                 await _jsRuntime.InvokeVoidAsync("mudPopover.dispose");
             }
-            catch (TaskCanceledException)
-            {
-            }
+            catch (JSDisconnectedException) { }
+            catch (TaskCanceledException) { }
         }
     }
 }
