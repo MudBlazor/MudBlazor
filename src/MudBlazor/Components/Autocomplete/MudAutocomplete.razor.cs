@@ -280,14 +280,20 @@ namespace MudBlazor
         {
             if ((Disabled || ReadOnly) && !IsOpen)
                 return;
-            IsOpen = !IsOpen;
-            if (IsOpen)
+            await ChangeMenu(!IsOpen);
+        }
+
+        private async Task ChangeMenu(bool open)
+        {
+            IsOpen = open;
+            if (open)
             {
                 await _elementReference.SelectAsync();
                 await OnSearchAsync();
             }
             else
             {
+                _timer?.Dispose();
                 RestoreScrollPosition();
                 await CoerceTextToValue();
             }
@@ -452,7 +458,7 @@ namespace MudBlazor
                 case "ArrowUp":
                     if (args.AltKey == true)
                     {
-                        IsOpen = false;
+                        await ChangeMenu(open:false);
                     }
                     else if (!IsOpen)
                     {
@@ -465,7 +471,7 @@ namespace MudBlazor
                     }
                     break;
                 case "Escape":
-                    IsOpen = false;
+                    await ChangeMenu(open: false);
                     break;
                 case "Tab":
                     await Task.Delay(1);
