@@ -120,12 +120,12 @@ namespace MudBlazor
         /// <summary>
         /// Set the anchor origin point to determen where the popover will open from.
         /// </summary>
-        [Parameter] public Origin AnchorOrigin { get; set; } = Origin.TopCenter;
+        [Parameter] public Origin AnchorOrigin { get; set; } = Origin.TopLeft;
 
         /// <summary>
         /// Sets the transform origin point for the popover.
         /// </summary>
-        [Parameter] public Origin TransformOrigin { get; set; } = Origin.TopCenter;
+        [Parameter] public Origin TransformOrigin { get; set; } = Origin.TopLeft;
 
         /// <summary>
         /// Sets the direction the select menu will start from relative to its parent.
