@@ -19,15 +19,30 @@
             <DocsPageSection>
                 <SectionHeader Title="Properties" />
                 <SectionContent Class="docs-content-api" FullWidth="true">
-                    <MudTable Items="@Properties" Elevation="0" Class="mx-0" Breakpoint="@Breakpoint.Sm">
+                    <MudCheckBox Label="Group by class" @bind-Checked="@_arePropertiesGrouped" Style="float: right; margin-top: -30px;" Color="Color.Primary" Size="Size.Small" Dense />
+                    <MudTable Items="@Properties" Elevation="0" Class="mx-0" Breakpoint="@Breakpoint.Sm" GroupBy="@(_arePropertiesGrouped ? @_propertiesGroupDefinition : null)">
                         <HeaderContent>
                             <MudTh>Name</MudTh>
                             <MudTh>Type</MudTh>
                             <MudTd>Default</MudTd>
                             <MudTh>Description</MudTh>
                         </HeaderContent>
+                        <GroupHeaderTemplate>
+                            @if ((Type)context.Key != Type)
+                            {
+                                <MudTh colspan="4">
+                                    <MudText Typo="Typo.h6">@($"Inherited from {((Type)context.Key).ConvertToCSharpSource()}")</MudText>
+                                </MudTh>
+                            }
+                        </GroupHeaderTemplate>
                         <RowTemplate>
-                            <MudTd Class="docs-content-api-cell" DataLabel="Name"><CodeInline>@context.Name</CodeInline></MudTd>
+                            <MudTd Class="docs-content-api-cell" DataLabel="Name">
+                                <CodeInline>@context.Name</CodeInline>
+                                @if (_arePropertiesGrouped && IsOverridden(context.PropertyInfo))
+                                {
+                                    <MudChip Variant="Variant.Outlined" Color="Color.Secondary" Size="Size.Small">overridden</MudChip>
+                                }
+                            </MudTd>
                             <MudTd Class="docs-content-api-cell" DataLabel="Type"><div style="display: flex; flex-direction: row; align-items: center; white-space: nowrap;">@context.Type<DocsBinding IsTwoWay="@context.IsTwoWay" /></div></MudTd>
                             <MudTd Class="docs-content-api-cell" DataLabel="Default">
                                 @if (PresentDefaultValue(context.Default).Contains("<path"))
@@ -41,6 +56,7 @@
                             </MudTd>
                             <MudTd Class="docs-content-api-cell docs-content-api-description" DataLabel="Description">@(HttpUtility.HtmlDecode(context.Description))</MudTd>
                         </RowTemplate>
+                        <GroupFooterTemplate></GroupFooterTemplate>
                     </MudTable>
                 </SectionContent>
             </DocsPageSection>
@@ -178,7 +194,9 @@
     {
         get
         {
-            foreach (var info in Type.GetPropertyInfosWithAttribute<ParameterAttribute>().OrderBy(x => x.Name))
+            foreach (var info in Type.GetPropertyInfosWithAttribute<ParameterAttribute>()
+                                     .OrderByDescending(x => _arePropertiesGrouped ? NumberOfAncestorClasses(BaseDefinitionClass(x)) : 0)
+                                     .ThenBy(x => x.Name))
             {
                 if (info.GetCustomAttributes(typeof(System.ObsoleteAttribute), true).Length == 0 && !info.PropertyType.Name.Contains("EventCallback"))
                 {
@@ -312,4 +330,30 @@
             return _converter.Set( @default);
         return "";
     }
+
+
+    #region Grouping properties by inheritance
+
+    private bool _arePropertiesGrouped = true;
+
+    private TableGroupDefinition<ApiProperty> _propertiesGroupDefinition = new() { Selector = (p) => BaseDefinitionClass(p.PropertyInfo) };
+
+    private static Type BaseDefinitionClass(MethodInfo m) => m.GetBaseDefinition().DeclaringType;
+
+    private static Type BaseDefinitionClass(PropertyInfo p) => BaseDefinitionClass(p.GetMethod ?? p.SetMethod);  // used for grouping properties
+
+    private static bool IsOverridden(MethodInfo m) => m.GetBaseDefinition().DeclaringType != m.DeclaringType;
+
+    private static bool IsOverridden(PropertyInfo p) => IsOverridden(p.GetMethod ?? p.SetMethod);                // used for the "overridden" chip
+
+    // used for ordering groups of properties
+    private static int NumberOfAncestorClasses(Type type)
+    {
+        int n = 0;
+        while ((type = type.BaseType) != null)
+            n++;
+        return n;
+    }
+
+    #endregion
 }

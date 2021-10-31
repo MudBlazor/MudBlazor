@@ -6,52 +6,147 @@
 <div class="@Classname" style="@Style">
 	@if (Adornment == Adornment.Start)
 	{
-	 <MudInputAdornment Class="@AdornmentClassname" Icon="@AdornmentIcon" Color="@AdornmentColor" Size="@IconSize" Text="@AdornmentText" Edge="@Edge.Start" AdornmentClick="@OnAdornmentClick" />
+	    <MudInputAdornment Class="@AdornmentClassname" 
+                Icon="@AdornmentIcon" 
+                Color="@AdornmentColor" 
+                Size="@IconSize" 
+                Text="@AdornmentText" 
+                Edge="@Edge.Start" 
+                AdornmentClick="@OnAdornmentClick" 
+        />
 	}
 
 	@if (Lines > 1)
 	{
-		@*note: the value="@Text" is absolutely essential here. the inner html @Text is kept only for compatibility*@
-	 <textarea @ref="_elementReference" rows="@Lines" @attributes="UserAttributes" type="@InputTypeString" class="@InputClassname" placeholder="@Placeholder" disabled=@Disabled readonly="@ReadOnly" inputmode="@InputMode.ToString()"
-			  @oninput="OnInput" @onchange="OnChange" @onblur="@OnBlurred" @onkeydown="@InvokeKeyDown" @onkeypress="@InvokeKeyPress" @onkeyup="@InvokeKeyUp" @onpaste="@OnPaste" value="@Text" maxlength="@MaxLength"
-			  @onkeydown:preventDefault="@KeyDownPreventDefault" @onkeypress:preventDefault="@KeyPressPreventDefault" @onkeyup:preventDefault="@KeyUpPreventDefault">@Text</textarea>
+	    <textarea class="@InputClassname"
+                @ref="_elementReference" 
+                rows="@Lines" 
+                @attributes="UserAttributes"
+                type="@InputTypeString"                  
+                placeholder="@Placeholder" 
+                disabled=@Disabled 
+                readonly="@ReadOnly" 
+                inputmode="@InputMode.ToString()"
+			    @oninput="OnInput" 
+                @onchange="OnChange" 
+                @onblur="@OnBlurred" 
+                @onkeydown="@InvokeKeyDown" 
+                @onkeypress="@InvokeKeyPress" 
+                @onkeyup="@InvokeKeyUp" 
+                @onpaste="@OnPaste" 
+                value="@_internalText" 
+                maxlength="@MaxLength"
+			    @onkeydown:preventDefault="@KeyDownPreventDefault" 
+                @onkeypress:preventDefault="@KeyPressPreventDefault" 
+                @onkeyup:preventDefault="@KeyUpPreventDefault"
+                @onmousewheel="@OnMouseWheel" 
+                @onwheel="@OnMouseWheel"
+        > 
+            @Text
+        </textarea>
+        @*Note: double mouse wheel handlers needed for Firefox because it doesn't know onmousewheel*@
+        @*note: the value="@_internalText" is absolutely essential here. the inner html @Text is needed by tests checking it*@
 	}
 	else
 	{
-		@if (InputType == InputType.Hidden && ChildContent != null)
-		{
-		 <div class="@InputClassname">
-				@ChildContent
-		 </div>
-		}
-
-	 <input @ref="_elementReference" @attributes="UserAttributes" type="@InputTypeString" class="@InputClassname" value="@_internalText" @oninput="OnInput" @onchange="OnChange"
-		   placeholder="@Placeholder" disabled=@Disabled readonly="@ReadOnly" @onblur="@OnBlurred" inputmode="@InputMode.ToString()" pattern="@Pattern"
-		   @onkeydown="@InvokeKeyDown" @onkeypress="@InvokeKeyPress" @onkeyup="@InvokeKeyUp" maxlength="@MaxLength"
-		   @onkeydown:preventDefault="KeyDownPreventDefault" @onkeypress:preventDefault="@KeyPressPreventDefault" @onkeyup:preventDefault="@KeyUpPreventDefault"
-		   @onmousewheel="@OnMouseWheel" />
-	}
+	    <input class="@InputClassname"
+                @ref="_elementReference" 
+                @attributes="UserAttributes" 
+                type="@InputTypeString"                  
+                value="@_internalText" 
+                @oninput="OnInput" 
+                @onchange="OnChange"
+                placeholder="@Placeholder" 
+                disabled=@Disabled 
+                readonly="@ReadOnly" 
+                @onblur="@OnBlurred" 
+                inputmode="@InputMode.ToString()" 
+                pattern="@Pattern"
+                @onkeydown="@InvokeKeyDown" 
+                @onkeypress="@InvokeKeyPress" 
+                @onkeyup="@InvokeKeyUp" 
+                maxlength="@MaxLength"
+                @onkeydown:preventDefault="KeyDownPreventDefault" 
+                @onkeypress:preventDefault="@KeyPressPreventDefault" 
+                @onkeyup:preventDefault="@KeyUpPreventDefault"
+                @onmousewheel="@OnMouseWheel" 
+                @onwheel="@OnMouseWheel"
+         />
+	     @*Note: double mouse wheel handlers needed for Firefox because it doesn't know onmousewheel*@
+      
+         @if (Disabled) {
+             @*Note: this div must always be there to avoid crashes in WASM, but it is hidden most of the time except if ChildContent should be shown.
+                           In Disabled state the tabindex attribute must NOT be set at all or else it will get focus on click
+             *@
+	        <div class="@InputClassname"
+                style="@("display:"+(InputType == InputType.Hidden && ChildContent != null ? "inline" : "none"))"                  
+                @onblur="@OnBlurred" @ref="@_elementReference1" 
+            >
+                @ChildContent
+            </div>
+        } 
+        else
+        {
+             @*Note: this div must always be there to avoid crashes in WASM, but it is hidden most of the time except if ChildContent should be shown.*@
+            <div class="@InputClassname"
+                 style="@("display:"+(InputType == InputType.Hidden && ChildContent != null ? "inline" : "none"))"  
+                 tabindex="@(InputType == InputType.Hidden && ChildContent != null ? 0 : -1)" 
+                 @onblur="@OnBlurred" @ref="@_elementReference1" 
+            >
+                @ChildContent
+            </div>            
+        }
+    }
 
 	@if (_showClearable && !Disabled)
-	{
-	 <MudIconButton Color="@Color.Default" Icon="@ClearIcon" Size="@Size.Small" OnClick="@ClearButtonClickHandlerAsync" Class="mud-icon-button-edge-end" />
+    {
+        if (Adornment != Adornment.End)
+        {
+            <MudIconButton Class="mud-icon-button-edge-margin-end"
+                Color="@Color.Default" 
+                Icon="@ClearIcon" 
+                Size="@Size.Small" 
+                OnClick="@ClearButtonClickHandlerAsync"
+            />
+        }
+        else
+        {
+            <MudIconButton Class="mud-icon-button-edge-end" 
+                Color="@Color.Default" 
+                Icon="@ClearIcon" 
+                Size="@Size.Small" 
+                OnClick="@ClearButtonClickHandlerAsync"
+            />
+        }
+	    
 	}
 
 	@if (Adornment == Adornment.End)
 	{
-	 <MudInputAdornment Class="@AdornmentClassname" Icon="@AdornmentIcon" Color="@AdornmentColor" Size="@IconSize" Text="@AdornmentText" Edge="@Edge.End" AdornmentClick="@OnAdornmentClick" />
+	    <MudInputAdornment Class="@AdornmentClassname" 
+                Icon="@AdornmentIcon" 
+                Color="@AdornmentColor" 
+                Size="@IconSize" 
+                Text="@AdornmentText" 
+                Edge="@Edge.End" 
+                AdornmentClick="@OnAdornmentClick" 
+        />
 	}
 
 	@if (Variant == Variant.Outlined)
 	{
-	 <div class="mud-input-outlined-border"></div>
+	    <div class="mud-input-outlined-border"></div>
 	}
 
 	@if (!HideSpinButtons)
 	{
-	 <div class="mud-input-numeric-spin">
-	  <MudButton Variant="Variant.Text" @onclick="OnIncrement" Disabled="@(Disabled || ReadOnly)" tabindex="-1"><MudIcon Icon="@NumericUpIcon" Size="@GetButtonSize()" /></MudButton>
-	  <MudButton Variant="Variant.Text" @onclick="OnDecrement" Disabled="@(Disabled || ReadOnly)" tabindex="-1"><MudIcon Icon="@NumericDownIcon" Size="@GetButtonSize()" /></MudButton>
-	 </div>
+	    <div class="mud-input-numeric-spin">
+            <MudButton Variant="Variant.Text" @onclick="OnIncrement" Disabled="@(Disabled || ReadOnly)" tabindex="-1">
+                <MudIcon Icon="@NumericUpIcon" Size="@GetButtonSize()" />
+            </MudButton>
+            <MudButton Variant="Variant.Text" @onclick="OnDecrement" Disabled="@(Disabled || ReadOnly)" tabindex="-1">
+                <MudIcon Icon="@NumericDownIcon" Size="@GetButtonSize()" />
+            </MudButton>
+	    </div>
 	}
 </div>

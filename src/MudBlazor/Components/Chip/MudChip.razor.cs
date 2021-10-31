@@ -20,8 +20,8 @@ namespace MudBlazor
           .AddClass($"mud-chip-{GetVariant().ToDescriptionString()}")
           .AddClass($"mud-chip-size-{Size.ToDescriptionString()}")
           .AddClass($"mud-chip-color-{GetColor().ToDescriptionString()}")
-          .AddClass("mud-clickable", ((OnClick.HasDelegate || ChipSet != null) && !ChipSet.ReadOnly))
-          .AddClass($"mud-ripple", (!DisableRipple && (OnClick.HasDelegate || ChipSet != null) && !ChipSet.ReadOnly))
+          .AddClass("mud-clickable", !ChipSet?.ReadOnly ?? OnClick.HasDelegate)
+          .AddClass("mud-ripple", !ChipSet?.ReadOnly ?? OnClick.HasDelegate && !DisableRipple)
           .AddClass("mud-chip-label", Label)
           .AddClass("mud-disabled", Disabled)
           .AddClass("mud-chip-selected", IsSelected)
@@ -143,6 +143,12 @@ namespace MudBlazor
         [Parameter] public string Text { get; set; }
 
         /// <summary>
+        /// A value that should be managed in the SelectedValues collection.
+        /// Note: do not change the value during the chip's lifetime
+        /// </summary>
+        [Parameter] public object Value { get; set; }
+
+        /// <summary>
         /// If true, force browser to redirect outside component router-space.
         /// </summary>
         [Parameter] public bool ForceLoad { get; set; }
@@ -150,7 +156,7 @@ namespace MudBlazor
         /// <summary>
         /// If true, this chip is selected by default if used in a ChipSet. 
         /// </summary>
-        [Parameter] public bool Default { get; set; }
+        [Parameter] public bool? Default { get; set; }
 
         /// <summary>
         /// Command executed when the user clicks on an element.
@@ -200,6 +206,13 @@ namespace MudBlazor
             }
         }
 
+        protected override void OnInitialized()
+        {
+            base.OnInitialized();
+            if (Value == null)
+                Value = this;
+        }
+
         protected async Task OnClickHandler(MouseEventArgs ev)
         {
             if (ChipSet?.ReadOnly == true)
@@ -230,7 +243,7 @@ namespace MudBlazor
 
         protected async Task OnCloseHandler(MouseEventArgs ev)
         {
-            if (ChipSet.ReadOnly)
+            if (ChipSet?.ReadOnly == true)
             {
                 return;
             }

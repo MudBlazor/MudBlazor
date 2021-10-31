@@ -12,7 +12,7 @@
         color: var(--mud-palette-text-primary);
     }
 
-    &.mud-disabled, .mud-disabled:hover {
+    &.mud-disabled, .mud-disabled:hover, .mud-disabled:focus-visible {
         cursor: default;
         background-color: transparent !important;
 
@@ -52,7 +52,7 @@
         cursor: inherit;
         height: 100%;
         margin: 0;
-        opacity: 0;
+        opacity:0;
         padding: 0;
         z-index: 1;
         position: absolute;
@@ -76,17 +76,6 @@
     transform: scale(0);
     transition: transform 150ms cubic-bezier(0.4, 0, 1, 1) 0ms;
 }
-
-@each $color in $mud-palette-colors {
-    .mud-radio-color-#{$color} {
-        color: var(--mud-palette-#{$color});
-
-        &:hover {
-            background-color: var(--mud-palette-#{$color}-hover);
-        }
-    }
-}
-
 
 .mud-radio-content-placement- {
     &start {

@@ -3,6 +3,7 @@
 <DocsPage>
     <DocsPageHeader Title="Switch" SubTitle="Similar to a checkbox but visually different, the switch lets the user switch between two values with the tap of a button." />
     <DocsPageContent>
+
         <DocsPageSection>
             <SectionHeader Title="Basic switches">
                 <Description></Description>
@@ -10,7 +11,7 @@
             <SectionContent Outlined="true">
                 <SwitchBasicExample />
             </SectionContent>
-            <SectionSource Code="SwitchBasicExample" GitHubFolderName="Switch"  />
+            <SectionSource Code="SwitchBasicExample" GitHubFolderName="Switch" />
         </DocsPageSection>
 
         <DocsPageSection>
@@ -20,9 +21,21 @@
             <SectionContent Outlined="true">
                 <SwitchWithLabelExample />
             </SectionContent>
-            <SectionSource Code="SwitchWithLabelExample" GitHubFolderName="Switch"  />
+            <SectionSource Code="SwitchWithLabelExample" GitHubFolderName="Switch" />
         </DocsPageSection>
-        
+
+        <DocsPageSection>
+            <SectionHeader Title="Thumb Icon">
+                <Description>
+                    An icon can be determined with <CodeInline>ThumbIcon</CodeInline> parameter.
+                </Description>
+            </SectionHeader>
+            <SectionContent Outlined="true">
+                <SwitchWithIconExample />
+            </SectionContent>
+            <SectionSource Code="SwitchWithIconExample" ShowCode="false" GitHubFolderName="Switch" />
+        </DocsPageSection>
+
         <DocsPageSection>
             <SectionHeader Title="Different data types">
                 <Description></Description>
@@ -30,7 +43,7 @@
             <SectionContent Outlined="true">
                 <SwitchConversionExample />
             </SectionContent>
-            <SectionSource Code="SwitchConversionExample" GitHubFolderName="Switch"  />
+            <SectionSource Code="SwitchConversionExample" GitHubFolderName="Switch" ShowCode="false" />
         </DocsPageSection>
 
         <DocsPageSection>
@@ -38,10 +51,28 @@
                 <Description>Setting <CodeInline>ReadOnly="true"</CodeInline> will make the switch control stop listening to user inputs.</Description>
             </SectionHeader>
             <SectionContent Outlined="true">
-                <SwitchReadOnlyExample/>
+                <SwitchReadOnlyExample />
             </SectionContent>
             <SectionSource Code="SwitchReadOnlyExample" GitHubFolderName="Switch" />
         </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Keyboard Navigation">
+                <Description>
+                    <MudText>MudSwitch accepts keys to keyboard navigation.</MudText>
+                    <br />
+                    <MudText><CodeInline>Space</CodeInline> key to toggle state true/false</MudText>
+                    <MudText><CodeInline>Escape</CodeInline> or <CodeInline>ArrowLeft</CodeInline> keys to set UnChecked</MudText>
+                    <MudText><CodeInline>Enter</CodeInline> or <CodeInline>NumpadEnter</CodeInline> or <CodeInline>ArrowRight</CodeInline> keys to set Checked</MudText>
+                    <MudText>*Disabled or ReadOnly switches cannot be changed by keys.</MudText>
+                </Description>
+            </SectionHeader>
+            <SectionContent Outlined="true">
+                <SwitchKeyboardNavigationExample />
+            </SectionContent>
+            <SectionSource Code="SwitchKeyboardNavigationExample" GitHubFolderName="Switch" ShowCode="false" />
+        </DocsPageSection>
+
     </DocsPageContent>
 </DocsPage>
 

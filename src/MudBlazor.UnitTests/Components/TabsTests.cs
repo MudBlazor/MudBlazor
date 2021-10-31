@@ -988,6 +988,53 @@ namespace MudBlazor.UnitTests.Components
             panels[1].TextContent.Contains("Hello World!").Should().BeTrue();
         }
 
+        /// <summary>
+        ///  Depending on the DisableSliderAnimation parameter, it should toggle the transition style attribute
+        /// </summary>
+        [Test]
+        public async Task ToggleTabsSliderAnimation()
+        {
+            Context.Services.Add(new ServiceDescriptor(typeof(IResizeObserver), new MockResizeObserver()));
+
+            //Toggle DisableSliderAnimation to true
+            //Check if style attr contains transform: none
+            var comp = Context.RenderComponent<ToggleTabsSlideAnimationTest>();
+            comp.Instance.toggle = true;
+            var slider = comp.Find(".mud-tab-slider");
+            var styleAttr = slider.GetAttribute("style");
+            styleAttr.Contains("transition:none").Should().BeTrue();
+
+            //Toggle DisableSliderAnimation to false
+            //Check if style attr does not contain transform: none
+            comp.Instance.toggle = false;
+            slider = comp.Find(".mud-tab-slider");
+            styleAttr = slider.GetAttribute("style");
+            styleAttr.Contains("transition: none").Should().BeFalse();
+        }
+
+        /// <summary>
+        /// See: https://github.com/MudBlazor/MudBlazor/issues/2976
+        /// </summary>
+        [Test]
+        public async Task MenuInHeaderPanelCloseOnClickOutside()
+        {
+            Context.Services.Add(new ServiceDescriptor(typeof(IResizeObserver), new MockResizeObserver()));
+
+            var comp = Context.RenderComponent<TabsWithMenuInHeader>();
+
+            //open the menu
+            comp.Find("button").Click();
+
+            // make sure the menu is rendered
+            _ = comp.Find(".my-menu-item-1");
+
+            //click the overlay to force a close
+            comp.Find(".mud-overlay").Click();
+
+            //no menu item should be visible anymore
+            Assert.Throws<ElementNotFoundException>(() => comp.Find(".my-menu-item-1"));
+        }
+
         #region Helper
 
         private static double GetSliderValue(IRenderedComponent<ScrollableTabsTest> comp, string attribute = "left")
@@ -997,14 +1044,12 @@ namespace MudBlazor.UnitTests.Components
 
             var styleAttribute = slider.GetAttribute("style");
             var indexToSplit = styleAttribute.IndexOf($"{attribute}:");
-            var substring = styleAttribute.Substring(indexToSplit + attribute.Length + 1);
-            substring = substring.Remove(substring.Length - 3);
+            var substring = styleAttribute.Substring(indexToSplit + attribute.Length + 1).Split(';')[0];
+            substring = substring.Remove(substring.Length - 2);
             var value = double.Parse(substring, CultureInfo.InvariantCulture);
+
             return value;
         }
-
-
-
 
         #endregion
     }

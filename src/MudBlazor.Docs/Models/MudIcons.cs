@@ -6,10 +6,13 @@ namespace MudBlazor.Docs.Models
         public string Name { get; set; }
         public string Code { get; set; }
 
-        public MudIcons(string name, string code)
+        public string Category { get; set; }
+
+        public MudIcons(string name, string code, string category)
         {
             Name = name;
             Code = code;
+            Category = category;
         }
     }
 }

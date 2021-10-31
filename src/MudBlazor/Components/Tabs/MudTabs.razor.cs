@@ -20,6 +20,7 @@ namespace MudBlazor
         private bool _prevButtonDisabled;
         private bool _nextButtonDisabled;
         private bool _showScrollButtons;
+        private bool _disableSliderAnimation;
         private ElementReference _tabsContentSize;
         private double _size;
         private double _position;
@@ -121,6 +122,11 @@ namespace MudBlazor
         /// If true, disables ripple effect.
         /// </summary>
         [Parameter] public bool DisableRipple { get; set; }
+
+        /// <summary>
+        /// If true, disables slider animation
+        /// </summary>
+        [Parameter] public bool DisableSliderAnimation { get => _disableSliderAnimation; set => _disableSliderAnimation = value; }
 
         /// <summary>
         /// Child content of component.
@@ -399,12 +405,15 @@ namespace MudBlazor
             new StyleBuilder()
             .AddStyle("width", $"{_size.ToString(CultureInfo.InvariantCulture)}px", Position is Position.Top or Position.Bottom)
             .AddStyle("right", $"{_position.ToString(CultureInfo.InvariantCulture)}px", Position is Position.Top or Position.Bottom)
-            .AddStyle("transition", "right .3s cubic-bezier(.64,.09,.08,1);", Position is Position.Top or Position.Bottom)
+            .AddStyle("transition", _disableSliderAnimation ? "none" : "right .3s cubic-bezier(.64,.09,.08,1);", Position is Position.Top or Position.Bottom)
+            .AddStyle("transition", _disableSliderAnimation ? "none" : "top .3s cubic-bezier(.64,.09,.08,1);", IsVerticalTabs())
             .AddStyle("height", $"{_size.ToString(CultureInfo.InvariantCulture)}px", IsVerticalTabs())
             .AddStyle("top", $"{_position.ToString(CultureInfo.InvariantCulture)}px", IsVerticalTabs())
             .Build() : new StyleBuilder()
             .AddStyle("width", $"{_size.ToString(CultureInfo.InvariantCulture)}px", Position is Position.Top or Position.Bottom)
             .AddStyle("left", $"{_position.ToString(CultureInfo.InvariantCulture)}px", Position is Position.Top or Position.Bottom)
+            .AddStyle("transition", _disableSliderAnimation ? "none" : "left .3s cubic-bezier(.64,.09,.08,1);", Position is Position.Top or Position.Bottom)
+            .AddStyle("transition", _disableSliderAnimation ? "none" : "top .3s cubic-bezier(.64,.09,.08,1);", IsVerticalTabs())
             .AddStyle("height", $"{_size.ToString(CultureInfo.InvariantCulture)}px", IsVerticalTabs())
             .AddStyle("top", $"{_position.ToString(CultureInfo.InvariantCulture)}px", IsVerticalTabs())
             .Build();
@@ -440,9 +449,9 @@ namespace MudBlazor
         private Placement GetTooltipPlacement()
         {
             if (Position == Position.Right)
-                return Placement.Start;
+                return Placement.Left;
             else if (Position == Position.Left)
-                return Placement.End;
+                return Placement.Right;
             else if (Position == Position.Bottom)
                 return Placement.Top;
             else

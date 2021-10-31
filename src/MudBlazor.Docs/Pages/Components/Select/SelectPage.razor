@@ -4,9 +4,10 @@
 <DocsPage>
     <DocsPageHeader Title="Select" SubTitle="Select fields allow users to provide information from a list of options." />
     <DocsPageContent>
+
         <DocsPageSection>
             <SectionHeader Title="Variants">
-                <Description>Select comes in the variants Text, Filled and Outline. Also, Select is generic, meaning you can use values of any type with it. See the example code how that works.</Description>
+                <Description>Select comes in the variants Text, Filled and Outline.<br />Select is generic, meaning you can use values of any type with it. See the example code how that works.</Description>
             </SectionHeader>
             <SectionContent Outlined="true" DisplayFlex="true">
                 <MudContainer>
@@ -15,8 +16,29 @@
             </SectionContent>
             <SectionSource ShowCode="false" Code="SelectVariantsExample" GitHubFolderName="Select" />
         </DocsPageSection>
+
         <DocsPageSection>
-            <SectionHeader Title="Usage">
+            <SectionHeader Title="Margin and Dense">
+                <Description>With the <CodeInline>Margin</CodeInline> prop you can reduce the selects height and with <CodeInline>Dense</CodeInline> set to true the select list will be displayed with dense vertical padding.</Description>
+            </SectionHeader>
+            <SectionContent Outlined="true">
+                <SelectDenseExample />
+            </SectionContent>
+            <SectionSource Code="SelectDenseExample" GitHubFolderName="Select" ShowCode="false" />
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Props">
+                <Description>Select behaves and looks allot like a regular textfield and takes all of the textfields different form props.</Description>
+            </SectionHeader>
+            <SectionContent Outlined="true">
+                <SelectPropsExample />
+            </SectionContent>
+            <SectionSource Code="SelectPropsExample" GitHubFolderName="Select" ShowCode="false" />
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Using Select">
                 <Description></Description>
             </SectionHeader>
             <SectionContent Outlined="true" DisplayFlex="true">
@@ -26,6 +48,7 @@
             </SectionContent>
             <SectionSource ShowCode="false" Code="SelectUsageExample" GitHubFolderName="Select" />
         </DocsPageSection>
+
         <DocsPageSection>
             <SectionHeader Title="Multiselect">
                 <SubTitle>Default MultiSelection Text</SubTitle>
@@ -67,35 +90,6 @@
                 </MudContainer>
             </SectionContent>
             <SectionSource ShowCode="false" Code="MultiSelectSelectAllExample" GitHubFolderName="Select" />
-        </DocsPageSection>
-        <DocsPageSection>
-            <SectionHeader Title="Dense">
-                <Description></Description>
-            </SectionHeader>
-            <SectionContent Outlined="true">
-                <SelectDenseExample />
-            </SectionContent>
-            <SectionSource Code="SelectDenseExample" GitHubFolderName="Select" />
-        </DocsPageSection>
-        <DocsPageSection>
-            <SectionHeader Title="Disabled">
-                <Description></Description>
-            </SectionHeader>
-            <SectionContent Outlined="true">
-                <SelectDisabledExample />
-            </SectionContent>
-            <SectionSource Code="SelectDisabledExample" GitHubFolderName="Select" />
-        </DocsPageSection>
-        <DocsPageSection>
-            <SectionHeader Title="Interactive">
-                <Description></Description>
-            </SectionHeader>
-            <SectionContent Outlined="true" DisplayFlex="true">
-                <MudContainer Class="py-6">
-                    <SelectInteractiveExample />
-                </MudContainer>
-            </SectionContent>
-            <SectionSource ShowCode="false" Code="SelectInteractiveExample" GitHubFolderName="Select" />
         </DocsPageSection>
 
         <DocsPageSection>
@@ -144,6 +138,46 @@
                 </MudContainer>
             </SectionContent>
             <SectionSource ShowCode="false" Code="SelectNumericCollectionExample" GitHubFolderName="Select" />
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Placement">
+                <Description>
+                    The component uses <MudLink Href="/components/popover">MudPopover</MudLink> to place it's list of items. It can be controlled with <CodeInline>AnchorOrigin</CodeInline> and <CodeInline>TransformOrigin</CodeInline>
+                    To change where the popover should start from you only need to change the <CodeInline>AnchorOrigin</CodeInline>. <MudLink Color="Color.Secondary" Href="/components/popover">Read more on popover's page.</MudLink>
+                </Description>
+            </SectionHeader>
+            <SectionContent Outlined="true" DisplayFlex="true">
+                <SelectAdvancedPopoverExample />
+            </SectionContent>
+            <SectionSource Code="SelectAdvancedPopoverExample" GitHubFolderName="Select" ShowCode="false" />
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Keyboard Navigation">
+                <Description>
+                    <MudText>MudSelect accepts keys to keyboard navigation.</MudText>
+                    <br />
+                    <MudText><CodeInline>Space</CodeInline> key to toggle dropdown open/close</MudText>
+                    <MudText><CodeInline>Escape</CodeInline> or <CodeInline>Alt+ArrowUp</CodeInline> keys to close dropdown</MudText>
+                    <MudText><CodeInline>Enter</CodeInline> or <CodeInline>NumpadEnter</CodeInline> or <CodeInline>Alt+ArrowDown</CodeInline> keys to open dropdown</MudText>
+                    <MudText><CodeInline>ArrowUp</CodeInline> key to select/navigate previous item</MudText>
+                    <MudText><CodeInline>ArrowDown</CodeInline> key to select/navigate next item</MudText>
+                    <MudText><CodeInline>Home</CodeInline> key to select/navigate first item</MudText>
+                    <MudText><CodeInline>End</CodeInline> key to select/navigate last item</MudText>
+                    <MudText><CodeInline>Enter</CodeInline> or <CodeInline>NumpadEnter</CodeInline> keys to select item (MultiSelect only)</MudText>
+                    <MudText><CodeInline>Ctrl+A</CodeInline> key to toggle select all/clear all items (MultiSelect only)</MudText>
+                    <MudText><CodeInline>Printable Characters</CodeInline> to set the first item in the list whose text starts with that character. Press again to select the next item with the same status.</MudText>
+                    <br />
+                    <MudText>*Disabled items cannot be selected by keys.</MudText>
+                </Description>
+            </SectionHeader>
+            <SectionContent Outlined="true" DisplayFlex="true">
+                <MudContainer>
+                    <SelectKeyboardNavigationExample />
+                </MudContainer>
+            </SectionContent>
+            <SectionSource ShowCode="false" Code="SelectKeyboardNavigationExample" GitHubFolderName="Select" />
         </DocsPageSection>
 
     </DocsPageContent>

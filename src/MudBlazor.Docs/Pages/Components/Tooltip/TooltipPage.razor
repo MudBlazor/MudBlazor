@@ -3,6 +3,7 @@
 <DocsPage>
     <DocsPageHeader Title="Tooltip"/>
     <DocsPageContent>
+
         <DocsPageSection>
             <SectionHeader Title="Simple Tooltips">
                 <Description></Description>
@@ -10,34 +11,47 @@
             <SectionContent Outlined="true" Class="py-8">
                 <TooltipSimpleExample />
             </SectionContent>
-            <SectionSource Code="TooltipSimpleExample" GitHubFolderName="Tooltip"  />
+            <SectionSource Code="TooltipSimpleExample" GitHubFolderName="Tooltip" />
         </DocsPageSection>
+
         <DocsPageSection>
-            <SectionHeader Title="Change Default Delay">
-                <Description>The tooltip's default delay can be set with <CodeInline>Delay</CodeInline> as a double in milliseconds.</Description>
+            <SectionHeader Title="Arrow Tooltips">
+                <Description>The tooltip can display arrows pointing to its activator, set the <CodeInline>Arrow</CodeInline> property to true to show them.</Description>
             </SectionHeader>
-            <SectionContent Outlined="true" Class="py-8">
-                <TooltipDelayedExample />
+            <SectionContent Outlined="true" Class="py-10">
+                <TooltipArrowExample />
             </SectionContent>
-            <SectionSource Code="TooltipDelayedExample" ShowCode="false" GitHubFolderName="Tooltip"  />
+            <SectionSource Code="TooltipArrowExample" GitHubFolderName="Tooltip" ShowCode="false" />
         </DocsPageSection>
+
         <DocsPageSection>
-            <SectionHeader Title="Positioned Tooltips">
-                <Description>With the <CodeInline>Placement</CodeInline> enum,  you can change the default position of the tooltip.</Description>
+            <SectionHeader Title="Colored Tooltips">
+                <Description>Tooltips can be displayed in different colors with the <CodeInline>Color</CodeInline> property.</Description>
             </SectionHeader>
-            <SectionContent Outlined="true" Class="py-8">
-                <TooltipPostionExample />
+            <SectionContent Outlined="true" Class="py-10">
+                <TooltipColorExample />
             </SectionContent>
-            <SectionSource Code="TooltipPostionExample" GitHubFolderName="Tooltip"  />
+            <SectionSource Code="TooltipColorExample" GitHubFolderName="Tooltip" />
         </DocsPageSection>
+
         <DocsPageSection>
             <SectionHeader Title="HTML Tooltips">
                 <Description>With the <CodeInline>TooltipContent</CodeInline> render fragment, you can specify custom HTML content for your tooltip.</Description>
             </SectionHeader>
-            <SectionContent Outlined="true" Class="py-8">
+            <SectionContent Outlined="true" Class="py-10">
                 <TooltipHtmlExample />
             </SectionContent>
-            <SectionSource Code="TooltipHtmlExample" GitHubFolderName="Tooltip"  />
+            <SectionSource Code="TooltipHtmlExample" GitHubFolderName="Tooltip" />
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Transitions">
+                <Description>The tooltip's default delay can be set with <CodeInline>Delay</CodeInline> as a double in milliseconds.</Description>
+            </SectionHeader>
+            <SectionContent Outlined="true" Class="py-8">
+                <TooltipTransitionsExample />
+            </SectionContent>
+            <SectionSource Code="TooltipTransitionsExample" ShowCode="false" GitHubFolderName="Tooltip" />
         </DocsPageSection>
     </DocsPageContent>
 </DocsPage>

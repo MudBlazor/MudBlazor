@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
+using System.Windows.Input;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Extensions;
@@ -8,23 +10,27 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    public partial class MudMenu : MudBaseButton, IActivatable
+    public partial class MudMenu : MudComponentBase, IActivatable
     {
         protected string Classname =>
         new CssBuilder("mud-menu")
         .AddClass(Class)
        .Build();
 
-        protected string MenuClassname =>
-            new CssBuilder("mud-menu-container")
-            .AddClass("mud-menu-fullwidth", FullWidth)
-            .AddClass(PopoverClass)
-           .Build();
+        protected string ActivatorClassname =>
+        new CssBuilder("mud-menu-activator")
+        .AddClass("mud-disabled", Disabled)
+       .Build();
 
         private bool _isOpen;
         private bool _isMouseOver = false;
 
         [Parameter] public string Label { get; set; }
+
+        /// <summary>
+        /// User class names for the list, separated by space
+        /// </summary>
+        [Parameter] public string ListClass { get; set; }
 
         /// <summary>
         /// User class names for the popover, separated by space
@@ -112,24 +118,83 @@ namespace MudBlazor
         [Parameter] public MouseEvent ActivationEvent { get; set; } = MouseEvent.LeftClick;
 
         /// <summary>
+        /// Set the anchor origin point to determen where the popover will open from.
+        /// </summary>
+        [Parameter] public Origin AnchorOrigin { get; set; } = Origin.TopLeft;
+
+        /// <summary>
+        /// Sets the transform origin point for the popover.
+        /// </summary>
+        [Parameter] public Origin TransformOrigin { get; set; } = Origin.TopLeft;
+
+        /// <summary>
         /// Sets the direction the select menu will start from relative to its parent.
         /// </summary>
+        [ExcludeFromCodeCoverage]
+        [Obsolete("Direction is obsolete. Use AnchorOrigin or TransformOrigin instead!", false)]
         [Parameter] public Direction Direction { get; set; } = Direction.Bottom;
 
         /// <summary>
         /// If true, the select menu will open either before or after the input depending on the direction.
         /// </summary>
+        [ExcludeFromCodeCoverage]
+        [Obsolete("OffsetY is obsolete. Use AnchorOrigin or TransformOrigin instead!", false)]
         [Parameter] public bool OffsetY { get; set; }
 
         /// <summary>
         /// If true, the select menu will open either above or bellow the input depending on the direction.
         /// </summary>
+        [ExcludeFromCodeCoverage]
+        [Obsolete("OffsetX is obsolete. Use AnchorOrigin or TransformOrigin instead!", false)]
         [Parameter] public bool OffsetX { get; set; }
 
         /// <summary>
         /// Set to true if you want to prevent page from scrolling when the menu is open
         /// </summary>
         [Parameter] public bool LockScroll { get; set; }
+
+        /// <summary>
+        /// If true, menu will be disabled.
+        /// </summary>
+        [Parameter] public bool Disabled { get; set; }
+
+        /// <summary>
+        /// If true, disables ripple effect.
+        /// </summary>
+        [Parameter] public bool DisableRipple { get; set; }
+
+        /// <summary>
+        /// If true, no drop-shadow will be used.
+        /// </summary>
+        [Parameter] public bool DisableElevation { get; set; }
+
+        #region Obsolete members from previous MudButtonBase inherited structure
+
+        [ExcludeFromCodeCoverage]
+        [Obsolete("Obsolete. Linking is not supported. MudMenu is not a MudBaseButton anymore.")]
+        [Parameter] public string Link { get; set; }
+
+        [ExcludeFromCodeCoverage]
+        [Obsolete("Obsolete. Linking is not supported. MudMenu is not a MudBaseButton anymore.")]
+        [Parameter] public string Target { get; set; }
+
+        [ExcludeFromCodeCoverage]
+        [Obsolete("Obsolete. MudMenu is not a MudBaseButton anymore.")]
+        [Parameter] public string HtmlTag { get; set; } = "button";
+
+        [ExcludeFromCodeCoverage]
+        [Obsolete("Obsolete. MudMenu is not a MudBaseButton anymore.")]
+        [Parameter] public ButtonType ButtonType { get; set; }
+
+        [ExcludeFromCodeCoverage]
+        [Obsolete("Obsolete. MudMenu is not a MudBaseButton anymore.")]
+        [Parameter] public ICommand Command { get; set; }
+
+        [ExcludeFromCodeCoverage]
+        [Obsolete("Obsolete. MudMenu is not a MudBaseButton anymore.")]
+        [Parameter] public object CommandParameter { get; set; }
+
+        #endregion
 
         /// <summary>
         /// Add menu items here
@@ -163,8 +228,8 @@ namespace MudBlazor
         // Sets the popover style ONLY when there is an activator
         private void SetPopoverStyle(MouseEventArgs args)
         {
-            //use the offset with a relative position to the container
-            PopoverStyle = $"left:{args?.OffsetX.ToPixels()};top:{args?.OffsetY.ToPixels()};";
+            _anchorOrigin = Origin.TopLeft;
+            PopoverStyle = $"margin-top: {args?.OffsetY.ToPixels()}; margin-left: {args?.OffsetX.ToPixels()};";
         }
 
         public void ToggleMenu(MouseEventArgs args)
@@ -200,5 +265,74 @@ namespace MudBlazor
             }
         }
 
+        internal Origin _anchorOrigin;
+        internal Origin _transformOrigin;
+
+#pragma warning disable CS0618 // This is for backwards compability until Obsolete is removed
+        private void GetPopoverOrigins()
+        {
+            if (Direction != Direction.Bottom || OffsetX || OffsetY)
+            {
+                switch (Direction)
+                {
+                    //No Offset
+                    case Direction.Bottom when !OffsetY && !OffsetX:
+                        _anchorOrigin = Origin.TopLeft;
+                        _transformOrigin = Origin.TopLeft;
+                        break;
+
+                    case Direction.Top when !OffsetY:
+                        _anchorOrigin = Origin.BottomLeft;
+                        _transformOrigin = Origin.BottomLeft;
+                        break;
+                    case Direction.Start when !OffsetX:
+                    case Direction.Left when !OffsetX:
+                        _anchorOrigin = Origin.TopLeft;
+                        _transformOrigin = Origin.TopLeft;
+                        break;
+                    case Direction.End when !OffsetX:
+                    case Direction.Right when !OffsetX:
+                        _anchorOrigin = Origin.TopRight;
+                        _transformOrigin = Origin.TopRight;
+                        break;
+
+                    //Offset
+                    case Direction.Bottom when OffsetY:
+                        _anchorOrigin = Origin.BottomLeft;
+                        _transformOrigin = Origin.TopLeft;
+                        break;
+                    case Direction.Top when OffsetY:
+                        _anchorOrigin = Origin.TopLeft;
+                        _transformOrigin = Origin.BottomLeft;
+                        break;
+                    case Direction.Start when OffsetX:
+                    case Direction.Left when OffsetX:
+                        _anchorOrigin = Origin.TopLeft;
+                        _transformOrigin = Origin.TopRight;
+                        break;
+                    case Direction.End when OffsetX:
+                    case Direction.Right when OffsetX:
+                        _anchorOrigin = Origin.TopRight;
+                        _transformOrigin = Origin.TopLeft;
+                        break;
+                    default:
+                        _anchorOrigin = AnchorOrigin;
+                        _transformOrigin = TransformOrigin;
+                        break;
+                }
+            }
+            else
+            {
+                _anchorOrigin = AnchorOrigin;
+                _transformOrigin = TransformOrigin;
+            }
+        }
+#pragma warning restore CS0618 // Type or member is obsolete
+
+        protected override void OnParametersSet()
+        {
+            base.OnParametersSet();
+            GetPopoverOrigins(); // Just to keep Obsolete functional until removed.
+        }
     }
 }

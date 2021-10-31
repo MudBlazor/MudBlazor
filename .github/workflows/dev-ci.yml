@@ -1,0 +1,24 @@
+name: dev-ci
+
+on:
+  push:
+    branches: [ dev ]
+  pull_request:
+    branches: [ dev ]
+  workflow_dispatch:
+    
+
+jobs:
+  pipeline:
+    name: Pipeline
+    uses: MudBlazor/MudBlazor/.github/workflows/template-pipeline.yml@dev
+    with:
+      dotnet-version: 5.0.x
+      publish-coverage: true
+      deploy-web-app: true
+      deploy-condition: 'refs/heads/dev'
+      deploy-web-app-name: mudblazor-dev
+    secrets:
+      publish-profile: ${{ secrets.PUBLISH_MUDBLAZOR_DEV }}
+
+

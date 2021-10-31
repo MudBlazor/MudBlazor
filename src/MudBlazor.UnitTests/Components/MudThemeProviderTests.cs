@@ -20,7 +20,7 @@ namespace MudBlazor.UnitTests.Components
         [TestCase("ar-ER")]
         public void DifferentCultures(string cultureString)
         {
-            var culture = new CultureInfo(cultureString);
+            var culture = new CultureInfo(cultureString, false);
 
             CultureInfo.CurrentCulture = culture;
             CultureInfo.CurrentUICulture = culture;
@@ -217,9 +217,9 @@ namespace MudBlazor.UnitTests.Components
                 "--mud-typography-overline-lineheight: 2.66;",
                 "--mud-typography-overline-letterspacing: .08333em;",
                 "--mud-zindex-drawer: 1100;",
-                "--mud-zindex-appbar: 1200;",
-                "--mud-zindex-dialog: 1300;",
-                "--mud-zindex-popover: 1400;",
+                "--mud-zindex-appbar: 1300;",
+                "--mud-zindex-dialog: 1400;",
+                "--mud-zindex-popover: 1200;",
                 "--mud-zindex-snackbar: 1500;",
                 "--mud-zindex-tooltip: 1600;",
                 "}"

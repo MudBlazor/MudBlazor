@@ -11,25 +11,51 @@ namespace MudBlazor
         protected string ContainerClass => new CssBuilder("mud-tooltip-root")
             .AddClass("mud-tooltip-inline", Inline)
             .Build();
+
         protected string Classname => new CssBuilder("mud-tooltip")
-            .AddClass($"mud-tooltip-placement-{ConvertPlacement(Placement).ToDescriptionString()}")
-             .AddClass("mud-tooltip-visible", _isVisible)
+            .AddClass($"mud-tooltip-default", Color == Color.Default)
+            .AddClass($"mud-tooltip-{ConvertPlacement().ToDescriptionString()}")
+            .AddClass($"mud-tooltip-arrow", Arrow)
+            .AddClass($"mud-border-{Color.ToDescriptionString()}", Arrow && Color != Color.Default)
+            .AddClass($"mud-theme-{Color.ToDescriptionString()}", Color != Color.Default)
+            .AddClass($"d-block", TooltipContent != null)
+            .AddClass($"d-flex", !String.IsNullOrEmpty(Text))
             .AddClass(Class)
             .Build();
 
+
+        private bool _isVisible;
+
+        private Origin _anchorOrigin;
+        private Origin _transformOrigin;
 
         [CascadingParameter]
         public bool RightToLeft { get; set; }
 
         /// <summary>
-        /// Sets the text to be displayed inside the tooltip.
+        /// The color of the component. It supports the theme colors.
         /// </summary>
-        [Parameter] public string Text { get; set; }
+        [Parameter] public Color Color { get; set; } = Color.Default;
 
         /// <summary>
-        /// Changes the default transition delay in milliseconds.
+        /// Sets the text to be displayed inside the tooltip.
         /// </summary>
-        [Parameter] public double Delay { get; set; } = 200;
+        [Parameter] public string Text { get; set; } = String.Empty;
+
+        /// <summary>
+        /// If true, a arrow will be displayed pointing towards the content from the tooltip.
+        /// </summary>
+        [Parameter] public bool Arrow { get; set; } = false;
+
+        /// <summary>
+        /// Sets the length of time that the opening transition takes to complete.
+        /// </summary>
+        [Parameter] public double Duration { get; set; } = 251;
+
+        /// <summary>
+        /// Sets the amount of time to wait from opening the popover before beginning to perform the transition. 
+        /// </summary>
+        [Parameter] public double Delay { get; set; } = 0;
 
         /// <summary>
         /// Changes the default transition delay in seconds.
@@ -47,16 +73,6 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public Placement Placement { get; set; } = Placement.Bottom;
 
-        private Placement ConvertPlacement(Placement placement)
-        {
-            return placement switch
-            {
-                Placement.Start => RightToLeft ? Placement.Right : Placement.Left,
-                Placement.End => RightToLeft ? Placement.Left : Placement.Right,
-                _ => placement
-            };
-        }
-
         /// <summary>
         /// Child content of component.
         /// </summary>
@@ -70,17 +86,41 @@ namespace MudBlazor
         /// <summary>
         /// Determines if this component should be inline with it's surrounding (default) or if it should behave like a block element.
         /// </summary>
-        [Parameter] public Boolean Inline { get; set; } = true;
+        [Parameter] public bool Inline { get; set; } = true;
 
-        private bool _isVisible;
-        public void HandleMouseOver() => _isVisible = true;
+        private void HandleMouseOver() => _isVisible = true;
         private void HandleMouseOut() => _isVisible = false;
 
-
-
-        protected string GetTimeDelay()
+        private Origin ConvertPlacement()
         {
-            return $"transition-delay: {Delay.ToString(CultureInfo.InvariantCulture)}ms;{Style}";
+            if (Placement == Placement.Bottom)
+            {
+                _anchorOrigin = Origin.BottomCenter;
+                _transformOrigin = Origin.TopCenter;
+                return Origin.BottomCenter;
+            }
+            if (Placement == Placement.Top)
+            {
+                _anchorOrigin = Origin.TopCenter;
+                _transformOrigin = Origin.BottomCenter;
+                return Origin.TopCenter;
+            }
+            if (Placement == Placement.Left || Placement == Placement.Start && !RightToLeft || Placement == Placement.End && RightToLeft)
+            {
+                _anchorOrigin = Origin.CenterLeft;
+                _transformOrigin = Origin.CenterRight;
+                return Origin.CenterLeft;
+            }
+            if (Placement == Placement.Right || Placement == Placement.End && !RightToLeft || Placement == Placement.Start && RightToLeft)
+            {
+                _anchorOrigin = Origin.CenterRight;
+                _transformOrigin = Origin.CenterLeft;
+                return Origin.CenterRight;
+            }
+            else
+            {
+                return Origin.BottomCenter;
+            }
         }
     }
 }
