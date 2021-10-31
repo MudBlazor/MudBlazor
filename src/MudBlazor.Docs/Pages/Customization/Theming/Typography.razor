@@ -1,0 +1,62 @@
+﻿@page "/customization/theming/typography"
+
+<DocsPage>
+    <DocsPageHeader Title="Typography" SubTitle="Typography controls the text trough out the theme, like font-family, size, and other settings." DisableApiHeader="true" />
+    <DocsPageContent>
+        <DocsPageSection>
+            <SectionHeader Title="How it works">
+                <Description>
+                   <MudText>It's possible to change the following typography types in the theme and effects all text accross the library.</MudText>
+                </Description>
+            </SectionHeader>
+            <MudGrid>
+                <MudItem xs="6" sm="3">
+                    <ul class="mud-typography-body1">
+                        <li><CodeInline>Default</CodeInline></li>
+                        <li><CodeInline>Body1</CodeInline></li>
+                        <li><CodeInline>Body2</CodeInline></li>
+                        <li><CodeInline>Button</CodeInline></li>
+                    </ul>
+                </MudItem>
+                <MudItem xs="6" sm="3">
+                    <ul class="mud-typography-body1">
+                        <li><CodeInline>H1</CodeInline></li>
+                        <li><CodeInline>H2</CodeInline></li>
+                        <li><CodeInline>H3</CodeInline></li>
+                    </ul>
+                </MudItem>
+                <MudItem xs="6" sm="3">
+                    <ul class="mud-typography-body1">
+                        <li><CodeInline>H4</CodeInline></li>
+                        <li><CodeInline>H5</CodeInline></li>
+                        <li><CodeInline>H6</CodeInline></li>
+                    </ul>
+                </MudItem>
+                <MudItem xs="6" sm="3">
+                    <ul class="mud-typography-body1">
+                        <li><CodeInline>Caption</CodeInline></li>
+                        <li><CodeInline>Subtitle1</CodeInline></li>
+                        <li><CodeInline>Subtitle2</CodeInline></li>
+                    </ul>
+                </MudItem>
+            </MudGrid>
+        </DocsPageSection>
+        <DocsPageSection>
+            <SectionHeader Title="Change Default Font">
+                <Description>
+                    To change the default font for all available typography change <CodeInline>FontFamily</CodeInline> for the <CodeInline>Default</CodeInline> typography.
+                </Description>
+            </SectionHeader>
+            <SectionSource Code="TypographyDefaultFontExample" NoToolbar="true" />
+        </DocsPageSection>
+        <DocsPageSection>
+            <SectionHeader Title="Typography Settings">
+                <Description>
+                    Each typography can be configured with five different settings.
+                </Description>
+            </SectionHeader>
+            <SectionSource Code="TypographySettingsExample" NoToolbar="true" />
+        </DocsPageSection>
+    </DocsPageContent>
+</DocsPage>
+<Footer />
