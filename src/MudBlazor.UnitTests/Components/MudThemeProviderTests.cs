@@ -20,7 +20,7 @@ namespace MudBlazor.UnitTests.Components
         [TestCase("ar-ER")]
         public void DifferentCultures(string cultureString)
         {
-            var culture = new CultureInfo(cultureString);
+            var culture = new CultureInfo(cultureString, false);
 
             CultureInfo.CurrentCulture = culture;
             CultureInfo.CurrentUICulture = culture;
