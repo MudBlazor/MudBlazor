@@ -638,18 +638,24 @@ namespace MudBlazor.UnitTests.Components
             autocompletecomp.Find("input").KeyUp(key: Key.Enter);
             comp.WaitForAssertion(() => autocomplete.IsOpen.Should().BeTrue());
 
+            // this greatly increases test reliability because obviously earlier key presses might influence later assertions due to async code still running
+            await Task.Delay(100);
             autocompletecomp.Find("input").KeyUp(key: Key.Escape);
             comp.WaitForAssertion(() => autocomplete.IsOpen.Should().BeFalse());
 
-            autocompletecomp.Find("input").KeyUp(new KeyboardEventArgs() { Key = "ArrowUp"});
+            autocompletecomp.Find("input").KeyUp(new KeyboardEventArgs() { Key = "ArrowUp" });
             comp.WaitForAssertion(() => autocomplete.IsOpen.Should().BeTrue());
 
+            // this greatly increases test reliability because obviously earlier key presses might influence later assertions due to async code still running
+            await Task.Delay(100);
             autocompletecomp.Find("input").KeyUp(new KeyboardEventArgs() { Key = "ArrowUp", AltKey = true });
             comp.WaitForAssertion(() => autocomplete.IsOpen.Should().BeFalse());
 
             autocompletecomp.Find("input").KeyUp(new KeyboardEventArgs() { Key = "ArrowDown" });
             comp.WaitForAssertion(() => autocomplete.IsOpen.Should().BeTrue());
 
+            // this greatly increases test reliability because obviously earlier key presses might influence later assertions due to async code still running
+            await Task.Delay(100);
             autocompletecomp.Find("input").KeyUp(key: Key.Escape);
             comp.WaitForAssertion(() => autocomplete.IsOpen.Should().BeFalse());
 
