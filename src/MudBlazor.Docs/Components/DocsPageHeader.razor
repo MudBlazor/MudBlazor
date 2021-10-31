@@ -34,7 +34,7 @@
         <MudElement HtmlTag="script" async type="text/javascript" src="//cdn.carbonads.com/carbon.js?serve=CESDLK3E&placement=mudblazorcom" id="_carbonads_js"></MudElement>
     }
 </div>
-@if (!IsApiPage && GetComponentTypeName() != null)
+@if (!IsApiPage && GetComponentTypeName() != null && !DisableApiHeader)
 {
     <DocsPageSection api-link-section>
         <SectionHeader Title="API" />
@@ -96,6 +96,7 @@
     [Parameter] public string Title { get; set; }
     [Parameter] public string SubTitle { get; set; }
     [Parameter] public string Keywords { get; set; }
+    [Parameter] public bool DisableApiHeader { get; set; }
     [Parameter] public RenderFragment Description { get; set; }
     [Parameter] public string ComponentLink { get; set; }
 
