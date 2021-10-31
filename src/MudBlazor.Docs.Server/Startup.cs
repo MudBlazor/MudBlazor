@@ -35,10 +35,10 @@ namespace MudBlazor.Docs.Server
             services.TryAddDocsViewServices();
             services.AddApplicationInsightsTelemetry();
             services.AddGoogleAnalytics("G-PRYNCB61NV");
-#if DEBUG
-#else
-            services.AddSignalR().AddAzureSignalR(Configuration["Azure:SignalR:ConnectionString"]);
-#endif
+            if (Configuration["Azure:SignalR:Enabled"] == "true")
+            {
+                services.AddSignalR().AddAzureSignalR(Configuration["Azure:SignalR:ConnectionString"]);
+            }
         }
 
 
