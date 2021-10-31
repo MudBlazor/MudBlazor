@@ -175,7 +175,7 @@
                     appBarOffset = appBarElements[0].getBoundingClientRect().height;
                 }
 
-                const gracePeriod = window.mudpopoverHelper.flipMargin;
+                const graceMargin = window.mudpopoverHelper.flipMargin;
                 const deltaToLeft = left + offsetX;
                 const deltaToRight = window.innerWidth - left - selfRect.width;
                 const deltaTop = top - selfRect.height - appBarOffset;
@@ -188,55 +188,55 @@
 
                 if (!selector) {
                     if (classList.contains('mud-popover-top-left')) {
-                        if (deltaBottom < gracePeriod && deltaToRight < gracePeriod && spaceToTop >= selfRect.height && deltaToLeft >= selfRect.width) {
+                        if (deltaBottom < graceMargin && deltaToRight < graceMargin && spaceToTop >= selfRect.height && deltaToLeft >= selfRect.width) {
                             selector = 'top-and-left';
-                        } else if (deltaBottom < gracePeriod && spaceToTop >= selfRect.height) {
+                        } else if (deltaBottom < graceMargin && spaceToTop >= selfRect.height) {
                             selector = 'top';
-                        } else if (deltaToRight < gracePeriod && deltaToLeft >= selfRect.width) {
+                        } else if (deltaToRight < graceMargin && deltaToLeft >= selfRect.width) {
                             selector = 'left';
                         }
                     } else if (classList.contains('mud-popover-top-center')) {
-                        if (deltaBottom < gracePeriod && spaceToTop >= selfRect.height) {
+                        if (deltaBottom < graceMargin && spaceToTop >= selfRect.height) {
                             selector = 'top';
                         }
                     } else if (classList.contains('mud-popover-top-right')) {
-                        if (deltaBottom < gracePeriod && deltaToLeft < gracePeriod && spaceToTop >= selfRect.height && deltaToRight >= selfRect.width) {
+                        if (deltaBottom < graceMargin && deltaToLeft < graceMargin && spaceToTop >= selfRect.height && deltaToRight >= selfRect.width) {
                             selector = 'top-and-right';
-                        } else if (deltaBottom < gracePeriod && spaceToTop >= selfRect.height) {
+                        } else if (deltaBottom < graceMargin && spaceToTop >= selfRect.height) {
                             selector = 'top';
-                        } else if (deltaToLeft < gracePeriod && deltaToRight >= selfRect.width) {
+                        } else if (deltaToLeft < graceMargin && deltaToRight >= selfRect.width) {
                             selector = 'right';
                         }
                     }
 
                     else if (classList.contains('mud-popover-center-left')) {
-                        if (deltaToRight < gracePeriod && deltaToLeft >= selfRect.width) {
+                        if (deltaToRight < graceMargin && deltaToLeft >= selfRect.width) {
                             selector = 'left';
                         }
                     }
                     else if (classList.contains('mud-popover-center-right')) {
-                        if (deltaToLeft < gracePeriod && deltaToRight >= selfRect.width) {
+                        if (deltaToLeft < graceMargin && deltaToRight >= selfRect.width) {
                             selector = 'right';
                         }
                     }
                     else if (classList.contains('mud-popover-bottom-left')) {
-                        if (deltaTop < gracePeriod && deltaToRight < gracePeriod && deltaBottom >= 0 && deltaToLeft >= selfRect.width) {
+                        if (deltaTop < graceMargin && deltaToRight < graceMargin && deltaBottom >= 0 && deltaToLeft >= selfRect.width) {
                             selector = 'bottom-and-left';
-                        } else if (deltaTop < gracePeriod && deltaBottom >= 0) {
+                        } else if (deltaTop < graceMargin && deltaBottom >= 0) {
                             selector = 'bottom';
-                        } else if (deltaToRight < gracePeriod && deltaToLeft >= selfRect.width) {
+                        } else if (deltaToRight < graceMargin && deltaToLeft >= selfRect.width) {
                             selector = 'left';
                         }
                     } else if (classList.contains('mud-popover-bottom-center')) {
-                        if (deltaTop < gracePeriod && deltaBottom >= 0) {
+                        if (deltaTop < graceMargin && deltaBottom >= 0) {
                             selector = 'bottom';
                         }
                     } else if (classList.contains('mud-popover-bottom-right')) {
-                        if (deltaTop < gracePeriod && deltaToLeft < gracePeriod && deltaBottom >= 0 && deltaToRight >= selfRect.width) {
+                        if (deltaTop < graceMargin && deltaToLeft < graceMargin && deltaBottom >= 0 && deltaToRight >= selfRect.width) {
                             selector = 'bottom-and-right';
-                        } else if (deltaTop < gracePeriod && deltaBottom >= 0) {
+                        } else if (deltaTop < graceMargin && deltaBottom >= 0) {
                             selector = 'bottom';
-                        } else if (deltaToLeft < gracePeriod && deltaToRight >= selfRect.width) {
+                        } else if (deltaToLeft < graceMargin && deltaToRight >= selfRect.width) {
                             selector = 'right';
                         }
                     }
