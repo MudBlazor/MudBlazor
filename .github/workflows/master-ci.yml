@@ -17,6 +17,8 @@ jobs:
       publish-coverage: true
       deploy-web-app: true
       deploy-condition: 'refs/heads/master'
-      deploy-web-app-name: mudblazor-staging
+      deploy-web-app-name: mudblazor
+      deploy-web-app-slot-name: staging
+
     secrets:
       publish-profile: ${{ secrets.PUBLISH_MUDBLAZOR_STAGING }}
