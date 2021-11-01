@@ -412,7 +412,7 @@ namespace MudBlazor
             return "null";
         }
 
-        protected virtual async Task OnInputKeyDown(KeyboardEventArgs args)
+        internal virtual async Task OnInputKeyDown(KeyboardEventArgs args)
         {
             switch (args.Key)
             {
@@ -429,7 +429,7 @@ namespace MudBlazor
             }
         }
 
-        protected virtual async Task OnInputKeyUp(KeyboardEventArgs args)
+        internal virtual async Task OnInputKeyUp(KeyboardEventArgs args)
         {
             switch (args.Key)
             {
