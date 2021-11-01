@@ -631,41 +631,35 @@ namespace MudBlazor.UnitTests.Components
             await Task.Delay(100);
 
             //press Enter key
-            autocompletecomp.Find("input").KeyUp(key: Key.Enter);
+            await comp.InvokeAsync(async () => await autocomplete.OnInputKeyUp(new KeyboardEventArgs() { Key = "Enter"}));
             //ensure autocomplete is closed and new value is committed/bound
             comp.WaitForAssertion(() => autocomplete.IsOpen.Should().BeFalse());
 
-            autocompletecomp.Find("input").KeyUp(key: Key.Enter);
+            await comp.InvokeAsync(async () => await autocomplete.OnInputKeyUp(new KeyboardEventArgs() { Key = "Enter" }));
             comp.WaitForAssertion(() => autocomplete.IsOpen.Should().BeTrue());
 
-            // this greatly increases test reliability because obviously earlier key presses might influence later assertions due to async code still running
-            await Task.Delay(100);
-            autocompletecomp.Find("input").KeyUp(key: Key.Escape);
+            await comp.InvokeAsync(async () => await autocomplete.OnInputKeyUp(new KeyboardEventArgs() { Key = "Escape" }));
             comp.WaitForAssertion(() => autocomplete.IsOpen.Should().BeFalse());
 
-            autocompletecomp.Find("input").KeyUp(new KeyboardEventArgs() { Key = "ArrowUp" });
+            await comp.InvokeAsync(async () => await autocomplete.OnInputKeyUp(new KeyboardEventArgs() { Key = "ArrowUp" }));
             comp.WaitForAssertion(() => autocomplete.IsOpen.Should().BeTrue());
 
-            // this greatly increases test reliability because obviously earlier key presses might influence later assertions due to async code still running
-            await Task.Delay(100);
-            autocompletecomp.Find("input").KeyUp(new KeyboardEventArgs() { Key = "ArrowUp", AltKey = true });
+            await comp.InvokeAsync(async () => await autocomplete.OnInputKeyUp(new KeyboardEventArgs() { Key = "ArrowUp", AltKey = true }));
             comp.WaitForAssertion(() => autocomplete.IsOpen.Should().BeFalse());
 
-            autocompletecomp.Find("input").KeyUp(new KeyboardEventArgs() { Key = "ArrowDown" });
+            await comp.InvokeAsync(async () => await autocomplete.OnInputKeyUp(new KeyboardEventArgs() { Key = "ArrowDown" }));
             comp.WaitForAssertion(() => autocomplete.IsOpen.Should().BeTrue());
 
-            // this greatly increases test reliability because obviously earlier key presses might influence later assertions due to async code still running
-            await Task.Delay(100);
-            autocompletecomp.Find("input").KeyUp(key: Key.Escape);
+            await comp.InvokeAsync(async () => await autocomplete.OnInputKeyUp(new KeyboardEventArgs() { Key = "Escape" }));
             comp.WaitForAssertion(() => autocomplete.IsOpen.Should().BeFalse());
 
-            autocompletecomp.Find("input").KeyUp(new KeyboardEventArgs() { Key = "NumpadEnter" });
+            await comp.InvokeAsync(async () => await autocomplete.OnInputKeyUp(new KeyboardEventArgs() { Key = "NumpadEnter" }));
             comp.WaitForAssertion(() => autocomplete.IsOpen.Should().BeTrue());
 
-            autocompletecomp.Find("input").KeyUp(new KeyboardEventArgs() { Key = "ArrowDown" });
+            await comp.InvokeAsync(async () => await autocomplete.OnInputKeyUp(new KeyboardEventArgs() { Key = "ArrowDown" }));
             comp.WaitForAssertion(() => autocomplete.IsOpen.Should().BeTrue());
 
-            autocompletecomp.Find("input").KeyUp(new KeyboardEventArgs() { Key = "ArrowDown" });
+            await comp.InvokeAsync(async () => await autocomplete.OnInputKeyUp(new KeyboardEventArgs() { Key = "ArrowDown" }));
 
             //The value of the input should be Alabama
             comp.WaitForAssertion(() => autocompletecomp.Find("input").GetAttribute("value").Should().Be("Alabama"));
@@ -685,23 +679,23 @@ namespace MudBlazor.UnitTests.Components
             autocomplete.Value.Should().Be("Alabama");
             autocomplete.Text.Should().Be("Alabama");
 
-            autocompletecomp.Find("input").KeyUp(new KeyboardEventArgs() { Key = "ArrowUp" });
+            await comp.InvokeAsync(async () => await autocomplete.OnInputKeyUp(new KeyboardEventArgs() { Key = "ArrowUp" }));
             comp.WaitForAssertion(() => autocomplete.IsOpen.Should().BeTrue());
 
-            autocompletecomp.Find("input").KeyUp(new KeyboardEventArgs() { Key = "ArrowUp" });
+            await comp.InvokeAsync(async () => await autocomplete.OnInputKeyUp(new KeyboardEventArgs() { Key = "ArrowUp" }));
             comp.WaitForAssertion(() => autocompletecomp.Find("input").GetAttribute("value").Should().Be("Alabama"));
 
-            autocompletecomp.Find("input").KeyUp(new KeyboardEventArgs() { Key = "ArrowUp" });
-            autocompletecomp.Find("input").KeyDown(new KeyboardEventArgs() { Key = "Tab" });
-            autocompletecomp.Find("input").KeyUp(new KeyboardEventArgs() { Key = "Tab" });
+            await comp.InvokeAsync(async () => await autocomplete.OnInputKeyUp(new KeyboardEventArgs() { Key = "ArrowUp" }));
+            await comp.InvokeAsync(async () => await autocomplete.OnInputKeyDown(new KeyboardEventArgs() { Key = "Tab" }));
+            await comp.InvokeAsync(async () => await autocomplete.OnInputKeyUp(new KeyboardEventArgs() { Key = "Tab" }));
             comp.WaitForAssertion(() => autocomplete.IsOpen.Should().BeFalse());
 
             autocompletecomp.SetParam("SelectValueOnTab", true);
-            autocompletecomp.Find("input").KeyUp(new KeyboardEventArgs() { Key = "ArrowUp" });
-            autocompletecomp.Find("input").KeyDown(new KeyboardEventArgs() { Key = "Tab" });
+            await comp.InvokeAsync(async () => await autocomplete.OnInputKeyUp(new KeyboardEventArgs() { Key = "ArrowUp" }));
+            await comp.InvokeAsync(async () => await autocomplete.OnInputKeyDown(new KeyboardEventArgs() { Key = "Tab" }));
             comp.WaitForAssertion(() => autocompletecomp.Find("input").GetAttribute("value").Should().Be("Alabama"));
 
-            autocompletecomp.Find("input").KeyDown(new KeyboardEventArgs() { Key = "Tab" });
+            await comp.InvokeAsync(async () => await autocomplete.OnInputKeyDown(new KeyboardEventArgs() { Key = "Tab" }));
             comp.WaitForAssertion(() => autocomplete.IsOpen.Should().BeFalse());
         }
     }
