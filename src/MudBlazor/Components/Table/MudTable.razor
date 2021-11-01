@@ -24,7 +24,7 @@
             </div>
 
         }
-		@if (PagerContent != null && (PagerPosition == Enums.TablePagerPosition.Top || PagerPosition == Enums.TablePagerPosition.TopAndBottom))
+		@if (PagerContent != null && PagerPosition.HasFlag(Enums.TablePagerPosition.Top))
 		{
 			<div class="mud-table-pagination">
 				@PagerContent
@@ -176,7 +176,7 @@
                 }
             </table>
         </div>
-		@if (PagerContent != null && (PagerPosition == Enums.TablePagerPosition.Bottom || PagerPosition == Enums.TablePagerPosition.TopAndBottom))	        
+        @if (PagerContent != null && PagerPosition.HasFlag(Enums.TablePagerPosition.Bottom))
         {
             <div class="mud-table-pagination">
                 @PagerContent

@@ -412,7 +412,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         [TestCase(Enums.TablePagerPosition.Top, true, false)]
         [TestCase(Enums.TablePagerPosition.Bottom, false, true)]
-        [TestCase(Enums.TablePagerPosition.TopAndBottom, true, true)]
+        [TestCase((Enums.TablePagerPosition.Top | Enums.TablePagerPosition.Bottom), true, true)]
         public async Task TablePagerPosition(
             TablePagerPosition pagerPosition,
             bool topPagerShouldExist,
@@ -420,7 +420,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<TablePagingLocationTest>(parameters =>
                 parameters.Add(p => p.PagerPosition, pagerPosition));
-            // print the generated html      
+            // print the generated html
             Console.WriteLine(comp.Markup);
 
             if (topPagerShouldExist && bottomPagerShouldExist)

@@ -316,7 +316,7 @@ namespace MudBlazor
         /// <summary>
         /// Sets the location of the table pager.
         /// </summary>
-        [Parameter] public TablePagerPosition PagerPosition { get; set; }
+        [Parameter] public TablePagerPosition PagerPosition { get; set; } = TablePagerPosition.Bottom;
 
         #region --> Obsolete Forwarders for Backwards-Compatiblilty
         /// <summary>

@@ -27,11 +27,11 @@
 </MudTable>
 
 <div class="d-flex flex-wrap mt-4">
-	<MudSelect T="Enums.TablePagerPosition" Label="Pager position options" @bind-Value="_tablePagerPosition">
-		<MudSelectItem T=Enums.TablePagerPosition Value="Enums.TablePagerPosition.Bottom">Bottom</MudSelectItem>
-		<MudSelectItem T=Enums.TablePagerPosition Value="Enums.TablePagerPosition.Top">Top</MudSelectItem>
-		<MudSelectItem T=Enums.TablePagerPosition Value="Enums.TablePagerPosition.TopAndBottom">TopAndBottom</MudSelectItem>
-	</MudSelect>
+    <MudSelect T="Enums.TablePagerPosition" Label="Pager position options" @bind-Value="_tablePagerPosition">
+        <MudSelectItem T=Enums.TablePagerPosition Value="Enums.TablePagerPosition.Bottom">Bottom</MudSelectItem>
+        <MudSelectItem T=Enums.TablePagerPosition Value="Enums.TablePagerPosition.Top">Top</MudSelectItem>
+        <MudSelectItem T=Enums.TablePagerPosition Value="(Enums.TablePagerPosition.Top | Enums.TablePagerPosition.Bottom)">Top & Bottom</MudSelectItem>
+    </MudSelect>
 </div>
 
 @code {
