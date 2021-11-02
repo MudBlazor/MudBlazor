@@ -45,26 +45,7 @@
                             </MudTd>
                             <MudTd Class="docs-content-api-cell" DataLabel="Type">
                                 <div style="display: flex; flex-direction: row; align-items: center; white-space: nowrap;">
-                                    @{ Type nonnullableType = Nullable.GetUnderlyingType(context.Type) ?? context.Type; }
-                                    @if (nonnullableType.IsEnum)
-                                    {
-                                        <MudTooltip>
-                                            <ChildContent>@context.Type.ConvertToCSharpSource()</ChildContent>
-                                            <TooltipContent>
-                                                enumeration type
-                                                <MudText Align="Align.Left" Typo="Typo.body2">
-                                                    @foreach (var name in Enum.GetNames(nonnullableType))
-                                                    {
-                                                        @(nonnullableType.Name + "." + name)<br />
-                                                    }
-                                                </MudText>
-                                            </TooltipContent>
-                                        </MudTooltip>
-                                    }
-                                    else
-                                    {
-                                        @context.Type.ConvertToCSharpSource()
-                                    }
+                                    <DocsTypeInfo Type="@context.Type" />
                                     <DocsBinding IsTwoWay="@context.IsTwoWay" />
                                 </div>
                             </MudTd>
