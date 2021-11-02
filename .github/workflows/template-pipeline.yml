@@ -27,6 +27,7 @@ on:
         description: 'name of the azure app slot name only needed if deploy web app is true'
         required: false
         type: string
+        default: 'production'
     secrets:
       publish-profile:
         required: false
