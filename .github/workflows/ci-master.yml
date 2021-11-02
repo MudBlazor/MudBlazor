@@ -1,11 +1,10 @@
-name: master-ci
+name: ci-master
 
 on:
   push:
     branches: [ master ]
   pull_request:
     branches: [ master ]
-  workflow_dispatch:
     
 
 jobs:
@@ -15,10 +14,3 @@ jobs:
     with:
       dotnet-version: 5.0.x
       publish-coverage: true
-      deploy-web-app: true
-      deploy-condition: 'refs/heads/master'
-      deploy-web-app-name: mudblazor
-      deploy-web-app-slot-name: staging
-
-    secrets:
-      publish-profile: ${{ secrets.PUBLISH_MUDBLAZOR_STAGING }}
