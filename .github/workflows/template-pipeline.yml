@@ -90,5 +90,6 @@ jobs:
         uses: azure/webapps-deploy@v2
         with: 
             app-name: ${{ inputs.deploy-web-app-name }}
+            slot-name: ${{ inputs.deploy-web-app-slot-name }}
             publish-profile: ${{ secrets.publish-profile }}
             package: ${{ inputs.deploy-web-app-name }}
