@@ -1,11 +1,10 @@
-name: net6-ci
+name: ci-net6
 
 on:
   push:
     branches: [ net6 ]
   pull_request:
     branches: [ net6 ]
-  workflow_dispatch:
     
 
 jobs:

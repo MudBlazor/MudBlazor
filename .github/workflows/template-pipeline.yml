@@ -27,6 +27,11 @@ on:
         description: 'name of the azure app only needed if deploy web app is true'
         required: false
         type: string
+      deploy-web-app-slot-name:
+        description: 'name of the azure app slot name only needed if deploy web app is true'
+        required: false
+        type: string
+        default: 'production'
     secrets:
       publish-profile:
         required: false
@@ -90,5 +95,6 @@ jobs:
         uses: azure/webapps-deploy@v2
         with: 
             app-name: ${{ inputs.deploy-web-app-name }}
+            slot-name: ${{ inputs.deploy-web-app-slot-name }}
             publish-profile: ${{ secrets.publish-profile }}
             package: ${{ inputs.deploy-web-app-name }}
