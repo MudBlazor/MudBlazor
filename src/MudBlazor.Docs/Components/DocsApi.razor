@@ -76,7 +76,7 @@
                                 else
                                 {
                                     <MudText Typo="Typo.body2">@PresentDefaultValue(context.Default)</MudText>
-                                }
+                                }                           
                             </MudTd>
                             <MudTd Class="docs-content-api-cell docs-content-api-description" DataLabel="Description">@(HttpUtility.HtmlDecode(context.Description))</MudTd>
                         </RowTemplate>
@@ -171,12 +171,12 @@
                 {
                     yield return new ApiProperty()
                     {
-                        PropertyInfo = info,
                         Name = info.Name,
-                        Type = info.PropertyType,
-                        IsTwoWay = CheckIsTwoWayEventCallback(info),
+                        PropertyInfo = info,
                         Default = string.Empty,
                         Description = GetDescription(Type, info),
+                        IsTwoWay = CheckIsTwoWayEventCallback(info),
+                        Type = info.PropertyType,
                     };
                 }
             }
@@ -226,12 +226,12 @@
                 {
                     yield return new ApiProperty()
                     {
-                        PropertyInfo = info,
                         Name = info.Name,
-                        Type = info.PropertyType,
-                        IsTwoWay = CheckIsTwoWayProperty(info),
+                        PropertyInfo = info,
                         Default = GetDefaultValue(info),
+                        IsTwoWay = CheckIsTwoWayProperty(info),
                         Description = GetDescription(Type, info),
+                        Type = info.PropertyType
                     };
                 }
             }
