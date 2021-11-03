@@ -49,13 +49,6 @@
 	}
 	else
 	{
-		@if (InputType == InputType.Hidden && ChildContent != null)
-		{
-		    <div class="@InputClassname">
-		        @ChildContent
-		    </div>
-		}
-
 	    <input class="@InputClassname"
                 @ref="_elementReference" 
                 @attributes="UserAttributes" 
@@ -80,16 +73,52 @@
                 @onwheel="@OnMouseWheel"
          />
 	     @*Note: double mouse wheel handlers needed for Firefox because it doesn't know onmousewheel*@
-	}
+      
+         @if (Disabled) {
+             @*Note: this div must always be there to avoid crashes in WASM, but it is hidden most of the time except if ChildContent should be shown.
+                           In Disabled state the tabindex attribute must NOT be set at all or else it will get focus on click
+             *@
+	        <div class="@InputClassname"
+                style="@("display:"+(InputType == InputType.Hidden && ChildContent != null ? "inline" : "none"))"                  
+                @onblur="@OnBlurred" @ref="@_elementReference1" 
+            >
+                @ChildContent
+            </div>
+        } 
+        else
+        {
+             @*Note: this div must always be there to avoid crashes in WASM, but it is hidden most of the time except if ChildContent should be shown.*@
+            <div class="@InputClassname"
+                 style="@("display:"+(InputType == InputType.Hidden && ChildContent != null ? "inline" : "none"))"  
+                 tabindex="@(InputType == InputType.Hidden && ChildContent != null ? 0 : -1)" 
+                 @onblur="@OnBlurred" @ref="@_elementReference1" 
+            >
+                @ChildContent
+            </div>            
+        }
+    }
 
 	@if (_showClearable && !Disabled)
-	{
-	    <MudIconButton Class="mud-icon-button-edge-end" 
+    {
+        if (Adornment != Adornment.End)
+        {
+            <MudIconButton Class="mud-icon-button-edge-margin-end"
                 Color="@Color.Default" 
                 Icon="@ClearIcon" 
                 Size="@Size.Small" 
                 OnClick="@ClearButtonClickHandlerAsync"
-        />
+            />
+        }
+        else
+        {
+            <MudIconButton Class="mud-icon-button-edge-end" 
+                Color="@Color.Default" 
+                Icon="@ClearIcon" 
+                Size="@Size.Small" 
+                OnClick="@ClearButtonClickHandlerAsync"
+            />
+        }
+	    
 	}
 
 	@if (Adornment == Adornment.End)

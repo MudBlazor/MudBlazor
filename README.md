@@ -1,7 +1,7 @@
 # ![MudBlazor](content/MudBlazor-GitHub-NoBg.png)
 # Material Design components for Blazor
-![Azure DevOps builds (branch)](https://img.shields.io/azure-devops/build/gardnet-nu/mudblazor/14/master?label=azure%20pipelines&logo=Azure%20DevOps&style=flat-square)
-![Azure DevOps coverage (branch)](https://img.shields.io/azure-devops/coverage/gardnet-nu/MudBlazor/14/dev?style=flat-square&logo=Azure%20DevOps)
+![GitHub Workflow Status (event)](https://img.shields.io/github/workflow/status/mudblazor/mudblazor/dev-ci?event=push&label=dev-ci&logo=github&style=flat-square)
+![Codecov](https://img.shields.io/codecov/c/github/MudBlazor/MudBlazor?logo=codecov&logoColor=white&style=flat-square&token=4BBNQPPATD)
 [![GitHub](https://img.shields.io/github/license/mudblazor/mudblazor?color=594ae2&logo=github&style=flat-square)](https://github.com/mudblazor/MudBlazor/blob/master/LICENSE)
 [![GitHub Repo stars](https://img.shields.io/github/stars/mudblazor/mudblazor?color=594ae2&style=flat-square&logo=github)](https://github.com/mudblazor/MudBlazor/stargazers)
 [![GitHub last commit](https://img.shields.io/github/last-commit/mudblazor/mudblazor?color=594ae2&style=flat-square&logo=github)](https://github.com/mudblazor/mudblazor)

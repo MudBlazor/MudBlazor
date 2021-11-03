@@ -24,6 +24,8 @@ namespace MudBlazor.UnitTests.Components
             ctx.Services.AddSingleton<IDialogService>(new DialogService());
             ctx.Services.AddSingleton<ISnackbar, SnackbarService>();
             ctx.Services.AddSingleton<IResizeListenerService>(new MockResizeListenerService());
+            ctx.Services.AddSingleton<IResizeService>(new MockResizeService());
+            ctx.Services.AddSingleton<IBreakpointService>(new MockBreakpointService());
             ctx.Services.AddTransient<IScrollManager, MockScrollManager>();
             ctx.Services.AddTransient<IScrollListener, MockScrollListener>();
             ctx.Services.AddTransient<IJsApiService, MockJsApiServices>();
@@ -40,7 +42,14 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [TearDown]
-        public void TearDown() => ctx.Dispose();
+        public void TearDown()
+        {
+            try
+            {
+                ctx.Dispose();
+            }
+            catch(Exception) { /*ignore, may fail because of dispose in the middle of a (second) render pass*/ }
+        }
     }
 }
 

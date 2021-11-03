@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -36,20 +37,23 @@ namespace MudBlazor
         [Parameter] public Origin TransformOrigin { get; set; } = Origin.TopCenter;
 
         /// <summary>
-        /// Sets the direction the Autocomplete menu should open.
+        /// Set the anchor origin point to determen where the popover will open from.
         /// </summary>
+        [ExcludeFromCodeCoverage]
         [Obsolete("Direction is obsolete. Use AnchorOrigin or TransformOrigin instead!", false)]
         [Parameter] public Direction Direction { get; set; } = Direction.Bottom;
 
         /// <summary>
         /// If true, the Autocomplete menu will open either before or after the input (left/right).
         /// </summary>
+        [ExcludeFromCodeCoverage]
         [Obsolete("OffsetX is obsolete. Use AnchorOrigin or TransformOrigin instead!", false)]
         [Parameter] public bool OffsetX { get; set; }
 
         /// <summary>
         /// If true, the Autocomplete menu will open either before or after the input (top/bottom).
         /// </summary>
+        [ExcludeFromCodeCoverage]
         [Obsolete("OffsetY is obsolete. Use AnchorOrigin or TransformOrigin instead!", false)]
         [Parameter] public bool OffsetY { get; set; }
 
@@ -211,6 +215,7 @@ namespace MudBlazor
         internal Origin _transformOrigin;
 
 #pragma warning disable CS0618 // This is for backwards compability until Obsolete is removed
+        [ExcludeFromCodeCoverage]
         private void GetPopoverOrigins()
         {
             if (Direction != Direction.Bottom || OffsetY || OffsetX)
@@ -275,14 +280,20 @@ namespace MudBlazor
         {
             if ((Disabled || ReadOnly) && !IsOpen)
                 return;
-            IsOpen = !IsOpen;
-            if (IsOpen)
+            await ChangeMenu(!IsOpen);
+        }
+
+        private async Task ChangeMenu(bool open)
+        {
+            IsOpen = open;
+            if (open)
             {
                 await _elementReference.SelectAsync();
                 await OnSearchAsync();
             }
             else
             {
+                _timer?.Dispose();
                 RestoreScrollPosition();
                 await CoerceTextToValue();
             }
@@ -401,7 +412,7 @@ namespace MudBlazor
             return "null";
         }
 
-        protected virtual async Task OnInputKeyDown(KeyboardEventArgs args)
+        internal virtual async Task OnInputKeyDown(KeyboardEventArgs args)
         {
             switch (args.Key)
             {
@@ -418,23 +429,49 @@ namespace MudBlazor
             }
         }
 
-        protected virtual async Task OnInputKeyUp(KeyboardEventArgs args)
+        internal virtual async Task OnInputKeyUp(KeyboardEventArgs args)
         {
             switch (args.Key)
             {
                 case "Enter":
-                    await OnEnterKey();
+                case "NumpadEnter":
+                    if (!IsOpen)
+                    {
+                        await ToggleMenu();
+                    }
+                    else
+                    {
+                        await OnEnterKey();
+                    }
                     break;
                 case "ArrowDown":
-                    var increment = _enabledItemIndices.ElementAtOrDefault(_enabledItemIndices.IndexOf(_selectedListItemIndex) + 1) - _selectedListItemIndex;
-                    await SelectNextItem(increment < 0 ? 1 : increment);
+                    if (!IsOpen)
+                    {
+                        await ToggleMenu();
+                    }
+                    else
+                    {
+                        var increment = _enabledItemIndices.ElementAtOrDefault(_enabledItemIndices.IndexOf(_selectedListItemIndex) + 1) - _selectedListItemIndex;
+                        await SelectNextItem(increment < 0 ? 1 : increment);
+                    }
                     break;
                 case "ArrowUp":
-                    var decrement = _selectedListItemIndex - _enabledItemIndices.ElementAtOrDefault(_enabledItemIndices.IndexOf(_selectedListItemIndex) - 1);
-                    await SelectNextItem(-(decrement < 0 ? 1 : decrement));
+                    if (args.AltKey == true)
+                    {
+                        await ChangeMenu(open:false);
+                    }
+                    else if (!IsOpen)
+                    {
+                        await ToggleMenu();
+                    }
+                    else
+                    {
+                        var decrement = _selectedListItemIndex - _enabledItemIndices.ElementAtOrDefault(_enabledItemIndices.IndexOf(_selectedListItemIndex) - 1);
+                        await SelectNextItem(-(decrement < 0 ? 1 : decrement));
+                    }
                     break;
                 case "Escape":
-                    IsOpen = false;
+                    await ChangeMenu(open: false);
                     break;
                 case "Tab":
                     await Task.Delay(1);

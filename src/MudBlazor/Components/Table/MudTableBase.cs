@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Microsoft.AspNetCore.Components;
@@ -120,7 +121,7 @@ namespace MudBlazor
             get => _rowsPerPage ?? 10;
             set
             {
-                if (_rowsPerPage == null)
+                if (_rowsPerPage is null || _rowsPerPage != value)
                     SetRowsPerPage(value);
             }
         }
@@ -315,6 +316,7 @@ namespace MudBlazor
         /// <summary>
         /// Alignment of the table cell text when breakpoint is smaller than <see cref="Breakpoint" />
         /// </summary>
+        [ExcludeFromCodeCoverage]
         [Obsolete("This property is obsolete. And not needed anymore, the cells width/alignment is done automatically.")] [Parameter] public bool RightAlignSmall { get; set; } = true;
         #endregion
 

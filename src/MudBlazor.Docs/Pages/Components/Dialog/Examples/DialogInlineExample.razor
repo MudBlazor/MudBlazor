@@ -7,7 +7,7 @@
     <MudRating SelectedValue="rating" Disabled="true" Class="mt-1 ml-3" />
 </div>
 
-<MudDialog @bind-IsVisible="visible">
+<MudDialog @bind-IsVisible="visible" Options="dialogOptions">
     <TitleContent>
         <MudText Typo="Typo.h6">
             <MudIcon Icon="@Icons.Material.Filled.Edit" Class="mr-3"/> Edit rating
@@ -27,4 +27,6 @@
     private int rating;
     private void OpenDialog() => visible = true;
     void Submit() => visible = false;
+
+    private DialogOptions dialogOptions = new() { FullWidth = true };
 }

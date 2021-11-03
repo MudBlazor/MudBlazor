@@ -20,7 +20,7 @@
     "MudBlazor.Docs.Server(Hosted wasm)": {
       "commandName": "Project",
       "launchBrowser": true,
-      "launchUrl": "components/textfield",
+      "launchUrl": "components/select",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
         "APIBASE": "https://localhost:5001/"

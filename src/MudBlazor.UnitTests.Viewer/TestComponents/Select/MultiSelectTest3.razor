@@ -20,7 +20,7 @@
 
 @code {
     private string value { get; set; } = "Nothing selected";
-    private HashSet<string> options { get; set; } = new HashSet<string>() { "Jaguar", "Leopard", "Lion", "Lynx", "Panther", "Puma", "Tiger"};
+    private IEnumerable<string> options { get; set; } = new List<string>() { "Jaguar", "Leopard", "Lion", "Lynx", "Panther", "Puma", "Tiger"};
 
     private string[] felines =
     {

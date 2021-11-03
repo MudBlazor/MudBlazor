@@ -36,7 +36,10 @@
             }
             else
             {
-                @TestComponent()
+                @* Prevent double popovers! *@
+                <CascadingValue Name="UsePopoverProvider" Value="false"  IsFixed="true">
+                    @TestComponent()
+                </CascadingValue>
             }
         </MudPaper>
 
@@ -106,7 +109,7 @@
         }
         catch (Exception)
         {
-            return "string __description__ = \"...\" not found in this component.";
+            return "public static string __description__ = \"...\"; not found in this component.";
         }
     }
 
@@ -120,7 +123,7 @@
         }
         var lowerText = text.ToLowerInvariant();
         return Task.FromResult<IEnumerable<Type>>(
-            availableComponentTypes.Where(type => type.Name.ToLowerInvariant().Contains(lowerText))
+            availableComponentTypes.Where(type => type.Name.ToLowerInvariant().StartsWith(lowerText))
         );
     }
 

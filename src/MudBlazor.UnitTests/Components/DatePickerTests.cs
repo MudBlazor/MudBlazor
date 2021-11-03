@@ -6,9 +6,11 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
+using AngleSharp.Dom;
 using AngleSharp.Html.Dom;
 using Bunit;
 using FluentAssertions;
+using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.UnitTests.TestComponents;
 using MudBlazor.UnitTests.TestComponents.DatePicker;
 using NUnit.Framework;
@@ -577,7 +579,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void CheckButtonTypeTest(bool navigateToMonthSelection)
         {
-            var dateComp = Context.RenderComponent<MudDatePicker>(p => 
+            var dateComp = Context.RenderComponent<MudDatePicker>(p =>
             p.Add(x => x.PickerVariant, PickerVariant.Dialog));
 
             Console.WriteLine(dateComp.Markup);
@@ -597,6 +599,99 @@ namespace MudBlazor.UnitTests.Components
             {
                 button.ToMarkup().Contains("type=\"button\"").Should().BeTrue();
             }
+        }
+
+        [Test]
+        public async Task DatePickerTest_KeyboardNavigation()
+        {
+            var comp = Context.RenderComponent<SimpleMudDatePickerTest>();
+
+            Console.WriteLine(comp.Markup);
+            var datePicker = comp.FindComponent<MudDatePicker>().Instance;
+
+            await comp.InvokeAsync(() => comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = "Enter", Type = "keydown", }));
+            comp.WaitForAssertion(() => comp.FindAll("div.mud-picker-open").Count.Should().Be(1));
+
+            await comp.InvokeAsync(() => comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = "Escape", Type = "keydown", }));
+            comp.WaitForAssertion(() => comp.FindAll("div.mud-picker-open").Count.Should().Be(0));
+
+            await comp.InvokeAsync(() => comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = " ", Type = "keydown", }));
+            comp.WaitForAssertion(() => comp.FindAll("div.mud-picker-open").Count.Should().Be(1));
+
+            await comp.InvokeAsync(() => comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = " ", Type = "keydown", }));
+            comp.WaitForAssertion(() => comp.FindAll("div.mud-picker-open").Count.Should().Be(0));
+
+            await comp.InvokeAsync(() => comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = "ArrowDown", AltKey = true, Type = "keydown", }));
+            comp.WaitForAssertion(() => comp.FindAll("div.mud-picker-open").Count.Should().Be(1));
+
+            await comp.InvokeAsync(() => comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = "ArrowUp", AltKey = true, Type = "keydown", }));
+            comp.WaitForAssertion(() => comp.FindAll("div.mud-picker-open").Count.Should().Be(0));
+
+            await comp.InvokeAsync(() => comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = "NumpadEnter", Type = "keydown", }));
+            comp.WaitForAssertion(() => comp.FindAll("div.mud-picker-open").Count.Should().Be(1));
+
+            await comp.InvokeAsync(() => comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = "Tab", Type = "keydown", }));
+            comp.WaitForAssertion(() => comp.FindAll("div.mud-picker-open").Count.Should().Be(0));
+
+            datePicker.Disabled = true;
+
+            await comp.InvokeAsync(() => comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = "Enter", Type = "keydown", }));
+            comp.WaitForAssertion(() => comp.FindAll("div.mud-picker-open").Count.Should().Be(0));
+
+            await comp.InvokeAsync(() => datePicker.ToggleOpen());
+            comp.WaitForAssertion(() => comp.FindAll("div.mud-picker-open").Count.Should().Be(1));
+
+            await comp.InvokeAsync(() => datePicker.ToggleOpen());
+            comp.WaitForAssertion(() => comp.FindAll("div.mud-picker-open").Count.Should().Be(0));
+
+            await comp.InvokeAsync(() => datePicker.ToggleState());
+            comp.WaitForAssertion(() => comp.FindAll("div.mud-picker-open").Count.Should().Be(0));
+
+            datePicker.Disabled = false;
+
+            await comp.InvokeAsync(() => comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = "NumpadEnter", Type = "keydown", }));
+            comp.WaitForAssertion(() => comp.FindAll("div.mud-picker-open").Count.Should().Be(1));
+
+            await comp.InvokeAsync(() => datePicker.ToggleState());
+            comp.WaitForAssertion(() => comp.FindAll("div.mud-picker-open").Count.Should().Be(1));
+        }
+
+        /// <summary>
+        /// Test to check whether validation is working or not for required form-control
+        /// </summary>
+        /// <returns>The awaitable <see cref="Task"/></returns>
+        [Test]
+        public async Task DatePicker_Validation()
+        {
+            // render the component
+            var datePickerComponent = Context.RenderComponent<DatePickerValidationTest>();
+
+            // output the markup
+            Console.WriteLine(datePickerComponent.Markup);
+
+            // get the datepicker instance
+            var datePickerInstance = datePickerComponent.FindComponent<MudDatePicker>().Instance;
+
+            // ensure it's marked as required
+            datePickerComponent.WaitForAssertion(() => datePickerInstance.Required.Should().BeTrue($"{typeof(DatePickerValidationTest).FullName}: {nameof(MudDatePicker)} is not marked as required."));
+            
+            // get the form's instance
+            var formInstance = datePickerComponent.FindComponent<MudForm>().Instance;
+
+            // ensure form is invalid
+            datePickerComponent.WaitForAssertion(() => formInstance.IsValid.Should().BeFalse($"{typeof(DatePickerValidationTest).FullName}: {nameof(MudForm)} should be invalid at this point."));
+
+            // set value for date-picker
+            await datePickerComponent.InvokeAsync(() => datePickerInstance.Date = DateTime.Now.Date);
+
+            // ensure date-picker is now valid
+            datePickerComponent.WaitForAssertion(() => datePickerInstance.Error.Should().BeFalse($"{typeof(DatePickerValidationTest).FullName}: {nameof(MudDatePicker)} should be valid as it has a value."));
+
+            // validate the form
+            await datePickerComponent.InvokeAsync(() => formInstance.Validate());
+
+            // ensure form is valid
+            datePickerComponent.WaitForAssertion(() => formInstance.IsValid.Should().BeTrue($"{typeof(DatePickerValidationTest).FullName}: {nameof(MudForm)} should be valid as all required values have been provided."));
         }
     }
 }

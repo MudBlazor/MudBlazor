@@ -364,18 +364,23 @@ namespace MudBlazor
             if (hasText && !hasValue)
                 await UpdateValuePropertyAsync(false);
 
-            if (_isFocused && !_forceTextUpdate)
-            {
-                // Text update suppression, only in BSS (not in WASM).
-                // This is a fix for #1012
-                if (RuntimeLocation.IsServerSide && TextUpdateSuppression)
-                    return;
-            }
-            _forceTextUpdate = false;
-
             // Refresh Text from Value
             if (hasValue && !hasText)
-                await UpdateTextPropertyAsync(false);
+            {
+                var updateText = true;
+                if (_isFocused && !_forceTextUpdate)
+                {
+                    // Text update suppression, only in BSS (not in WASM).
+                    // This is a fix for #1012
+                    if (RuntimeLocation.IsServerSide && TextUpdateSuppression)
+                        updateText=false;
+                }
+                if (updateText)
+                {
+                    _forceTextUpdate = false;
+                    await UpdateTextPropertyAsync(false);
+                }
+            }
         }
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -401,7 +406,7 @@ namespace MudBlazor
 
         protected override void ResetValue()
         {
-            Text = null;
+            SetTextAsync(null, updateValue:true).AndForget();
             base.ResetValue();
         }
     }

@@ -12,7 +12,7 @@ namespace MudBlazor.Services
 
     public interface IKeyInterceptor : IDisposable
     {
-        Task Connect(ElementReference element, KeyInterceptorOptions options);
+        Task Connect(string elementId, KeyInterceptorOptions options);
         Task Disconnect();
 
         event KeyboardEvent KeyDown;

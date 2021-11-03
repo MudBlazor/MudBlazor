@@ -18,7 +18,7 @@
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader Title="Dense">
+            <SectionHeader Title="Margin and Dense">
                 <Description>With the <CodeInline>Margin</CodeInline> prop you can reduce the selects height and with <CodeInline>Dense</CodeInline> set to true the select list will be displayed with dense vertical padding.</Description>
             </SectionHeader>
             <SectionContent Outlined="true">
@@ -49,17 +49,6 @@
             <SectionSource ShowCode="false" Code="SelectUsageExample" GitHubFolderName="Select" />
         </DocsPageSection>
 
-        <DocsPageSection>
-            <SectionHeader Title="Margin And Dense">
-                <Description>While the margin property affects the input element, the dense property affects the dropdown element.</Description>
-            </SectionHeader>
-            <SectionContent Outlined="true" DisplayFlex="true">
-                <MudContainer>
-                    <SelectDenseExample />
-                </MudContainer>
-            </SectionContent>
-            <SectionSource ShowCode="false" Code="SelectDenseExample" GitHubFolderName="Select" />
-        </DocsPageSection>
         <DocsPageSection>
             <SectionHeader Title="Multiselect">
                 <SubTitle>Default MultiSelection Text</SubTitle>
@@ -154,40 +143,41 @@
         <DocsPageSection>
             <SectionHeader Title="Placement">
                 <Description>
-                    The component uses <MudLink Href="/components/popover">MudPopover</MudLink> to place it's list of items. It can be controlled with <CodeInline>AnchorOrigin</CodeInline> and <CodeInline>TransformOrigin</CodeInline><br />
-                    To change where the popover should start from you only need to change the <CodeInline>AnchorOrigin</CodeInline> property.
-                </Description>
-            </SectionHeader>
-            <SectionHeader>
-                <SubTitle>AnchorOrigin</SubTitle>
-                <Description>
-                    For example, to change the vertical origin of the popover set <CodeInline>AnchorOrigin</CodeInline>'s orgin to CenterCenter or BottomCenter.
-                </Description>
-            </SectionHeader>
-            <SectionContent Outlined="true" DisplayFlex="true">
-                <SelectAnchorOriginExample />
-            </SectionContent>
-            <SectionSource Code="SelectAnchorOriginExample" GitHubFolderName="Select" ShowCode="false" />
-            <SectionHeader>
-                <SubTitle>TransformOrigin</SubTitle>
-                <Description>
-                    Controll the transform origin point with the <CodeInline>TransformOrigin</CodeInline> property, note that its always relative to the <CodeInline>AnchorOrigin</CodeInline>
-                </Description>
-            </SectionHeader>
-            <SectionContent Outlined="true" DisplayFlex="true">
-                <SelectTransformOriginExample />
-            </SectionContent>
-            <SectionSource Code="SelectTransformOriginExample" GitHubFolderName="Select" ShowCode="false" />
-            <SectionHeader>
-                <SubTitle>Advanced Placement</SubTitle>
-                <Description>
-                    To learn and see all posibile examples of how you can position the popover check out <MudLink Color="Color.Secondary" Href="/components/popover">popover's documentation page!</MudLink>
+                    The component uses <MudLink Href="/components/popover">MudPopover</MudLink> to place it's list of items. It can be controlled with <CodeInline>AnchorOrigin</CodeInline> and <CodeInline>TransformOrigin</CodeInline>
+                    To change where the popover should start from you only need to change the <CodeInline>AnchorOrigin</CodeInline>. <MudLink Color="Color.Secondary" Href="/components/popover">Read more on popover's page.</MudLink>
                 </Description>
             </SectionHeader>
             <SectionContent Outlined="true" DisplayFlex="true">
                 <SelectAdvancedPopoverExample />
             </SectionContent>
             <SectionSource Code="SelectAdvancedPopoverExample" GitHubFolderName="Select" ShowCode="false" />
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Keyboard Navigation">
+                <Description>
+                    <MudText>MudSelect accepts keys to keyboard navigation.</MudText>
+                    <br />
+                    <MudText><CodeInline>Space</CodeInline> key to toggle dropdown open/close</MudText>
+                    <MudText><CodeInline>Escape</CodeInline> or <CodeInline>Alt+ArrowUp</CodeInline> keys to close dropdown</MudText>
+                    <MudText><CodeInline>Enter</CodeInline> or <CodeInline>NumpadEnter</CodeInline> or <CodeInline>Alt+ArrowDown</CodeInline> keys to open dropdown</MudText>
+                    <MudText><CodeInline>ArrowUp</CodeInline> key to select/navigate previous item</MudText>
+                    <MudText><CodeInline>ArrowDown</CodeInline> key to select/navigate next item</MudText>
+                    <MudText><CodeInline>Home</CodeInline> key to select/navigate first item</MudText>
+                    <MudText><CodeInline>End</CodeInline> key to select/navigate last item</MudText>
+                    <MudText><CodeInline>Enter</CodeInline> or <CodeInline>NumpadEnter</CodeInline> keys to select item (MultiSelect only)</MudText>
+                    <MudText><CodeInline>Ctrl+A</CodeInline> key to toggle select all/clear all items (MultiSelect only)</MudText>
+                    <MudText><CodeInline>Printable Characters</CodeInline> to set the first item in the list whose text starts with that character. Press again to select the next item with the same status.</MudText>
+                    <br />
+                    <MudText>*Disabled items cannot be selected by keys.</MudText>
+                </Description>
+            </SectionHeader>
+            <SectionContent Outlined="true" DisplayFlex="true">
+                <MudContainer>
+                    <SelectKeyboardNavigationExample />
+                </MudContainer>
+            </SectionContent>
+            <SectionSource ShowCode="false" Code="SelectKeyboardNavigationExample" GitHubFolderName="Select" />
         </DocsPageSection>
 
     </DocsPageContent>
