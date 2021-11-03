@@ -1,0 +1,25 @@
+﻿@if (NonnullableType.IsEnum)
+{
+    <MudTooltip>
+        <ChildContent>@Type.ConvertToCSharpSource()</ChildContent>
+        <TooltipContent>
+            enumeration type
+            <MudText Align="Align.Left" Typo="Typo.body2">
+                @foreach (var name in Enum.GetNames(NonnullableType))
+                {
+                    @(NonnullableType.Name + "." + name)<br />
+                }
+            </MudText>
+        </TooltipContent>
+    </MudTooltip>
+}
+else
+{
+    @Type.ConvertToCSharpSource()
+}
+
+@code {
+    [Parameter] public Type Type { get; set; }
+
+    private Type NonnullableType => Nullable.GetUnderlyingType(Type) ?? Type;
+}

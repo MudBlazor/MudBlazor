@@ -31,7 +31,7 @@ namespace MudBlazor
             new StyleBuilder()
             .AddStyle("transition-duration", $"{Duration}ms")
             .AddStyle("transition-delay", $"{Delay}ms")
-            .AddStyle("max-height", $"{MaxHeight}px", MaxHeight != null)
+            .AddStyle("max-height", MaxHeight.ToPx(), MaxHeight != null)
             .AddStyle(Style)
             .Build();
 

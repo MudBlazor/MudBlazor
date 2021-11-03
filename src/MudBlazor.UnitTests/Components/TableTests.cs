@@ -1351,6 +1351,25 @@ namespace MudBlazor.UnitTests.Components
             // Make sure number of items has updated
             tableInstance.GetFilteredItemsCount().Should().Be(1);
         }
+        
+        /// Issue #3033
+        /// Tests changing RowsPerPage Parameter from code - Table should re-render new RowsPerPage parameter and parameter value should be set
+        /// </summary>
+        /// <returns></returns>
+        [Test]
+        public async Task RowsPerPageChangeValueFromCode()
+        {
+            var testComponent = Context.RenderComponent<TablePagerChangeRowsPerPageTest>();
+            var table = testComponent.FindComponent<MudTable<string>>().Instance;
+            var buttonComponent = testComponent.FindComponent<MudButton>();
+            testComponent.WaitForAssertion(() => table.RowsPerPage.Should().Be(35));
+            //Toggle the rows per page value from 35 to 10
+            buttonComponent.Find("button").Click();
+            testComponent.WaitForAssertion(() => table.RowsPerPage.Should().Be(10));
+            //Toggle the rows per page value from 10 back to  to 35
+            buttonComponent.Find("button").Click();
+            testComponent.WaitForAssertion(() => table.RowsPerPage.Should().Be(35));
+        }
 
     }
 }

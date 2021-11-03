@@ -229,7 +229,7 @@ namespace MudBlazor
         private void SetPopoverStyle(MouseEventArgs args)
         {
             _anchorOrigin = Origin.TopLeft;
-            PopoverStyle = $"margin-top: {args?.OffsetY.ToPixels()}; margin-left: {args?.OffsetX.ToPixels()};";
+            PopoverStyle = $"margin-top: {args?.OffsetY.ToPx()}; margin-left: {args?.OffsetX.ToPx()};";
         }
 
         public void ToggleMenu(MouseEventArgs args)
