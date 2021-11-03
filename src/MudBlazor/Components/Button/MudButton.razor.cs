@@ -81,35 +81,5 @@ namespace MudBlazor
         /// Child content of component.
         /// </summary>
         [Parameter] public RenderFragment ChildContent { get; set; }
-        
-        /// <summary>
-        /// Loading content of component.
-        /// </summary>
-        [Parameter] public RenderFragment LoadingContent { get; set; }
-        
-        
-        protected bool isLoading = false; 
-        
-        protected new async Task OnClickHandler(MouseEventArgs ev)
-        {
-            if (Disabled)
-                return;
-            if (Loading)
-            {
-                isLoading = true;
-                Disabled = true;
-            }
-            await OnClick.InvokeAsync(ev);
-            if (Command?.CanExecute(CommandParameter) ?? false)
-            {
-                Command.Execute(CommandParameter);
-            }
-            Activateable?.Activate(this, ev);
-            if (Loading)
-            {
-                isLoading = false;
-                Disabled = false;
-            }
-        }
     }
 }
