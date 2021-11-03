@@ -16,6 +16,10 @@ on:
         required: false
         type: boolean
         default: false
+      pack-library:
+        required: false
+        type: boolean
+        default: false
       deploy-web-app:
         required: false
         type: boolean
@@ -58,10 +62,10 @@ jobs:
         run: dotnet restore
 
       - name: Build
-        run: dotnet build --no-restore
+        run: dotnet build -c Release --no-restore
 
       - name: Test
-        run: dotnet test --no-build --no-restore --blame-hang --blame-hang-timeout 60s /property:GenerateFullPaths=true /consoleloggerparameters:NoSummary /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura /p:ExcludeByAttribute='ExcludeFromCodeCoverage' /p:Include='[MudBlazor]*' /p:SkipAutoProps=true /p:CoverletOutput='./TestResults/'
+        run: dotnet test -c Release --no-build --no-restore --blame-hang --blame-hang-timeout 60s /property:GenerateFullPaths=true /consoleloggerparameters:NoSummary /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura /p:ExcludeByAttribute='ExcludeFromCodeCoverage' /p:Include='[MudBlazor]*' /p:SkipAutoProps=true /p:CoverletOutput='./TestResults/'
 
       - name: Coverage
         if: ${{ inputs.publish-coverage == true }}
@@ -79,10 +83,11 @@ jobs:
         with:
           name: ${{ inputs.deploy-web-app-name }}
           path: ${{env.DOTNET_ROOT}}/${{ inputs.deploy-web-app-name }}
+
   cd:
     name: Deploy
     needs: ci
-    if: ${{ inputs.deploy-web-app == true && github.event_name == 'push' && github.repository_owner == 'MudBlazor' && github.ref == inputs.deploy-condition }}
+    if: ${{ github.event_name == 'push' || github.event_name == 'workflow_dispatch' && inputs.deploy-web-app == true && github.repository_owner == 'Garderoben' && github.ref == inputs.deploy-condition }}
     runs-on: ubuntu-latest
     steps:
       - name: Download Artifact

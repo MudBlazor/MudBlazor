@@ -24,9 +24,9 @@ namespace MudBlazor
 
         protected string Stylename =>
             new StyleBuilder()
-            .AddStyle("max-height", $"{MaxHeight?.ToString("#.##", CultureInfo.InvariantCulture)}px", MaxHeight != null)
+            .AddStyle("max-height", MaxHeight.ToPx(), MaxHeight != null)
             .AddStyle("height", "auto", _state == CollapseState.Entered)
-            .AddStyle("height", $"{_height.ToString("#.##", CultureInfo.InvariantCulture)}px", _state is CollapseState.Entering or CollapseState.Exiting)
+            .AddStyle("height", _height.ToPx(), _state is CollapseState.Entering or CollapseState.Exiting)
             .AddStyle("animation-duration", $"{CalculatedAnimationDuration.ToString("#.##", CultureInfo.InvariantCulture)}s", _state == CollapseState.Entering)
             .AddStyle(Style)
             .Build();
