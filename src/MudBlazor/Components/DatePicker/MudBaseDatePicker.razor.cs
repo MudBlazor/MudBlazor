@@ -10,6 +10,8 @@ namespace MudBlazor
 {
     public abstract partial class MudBaseDatePicker : MudPicker<DateTime?>
     {
+        private bool _dateFormatTouched;
+
         protected MudBaseDatePicker() : base(new DefaultConverter<DateTime?>
         {
             Format = CultureInfo.CurrentCulture.DateTimeFormat.ShortDatePattern,
@@ -47,7 +49,10 @@ namespace MudBlazor
             set
             {
                 if (Converter is DefaultConverter<DateTime?> defaultConverter)
+                {
                     defaultConverter.Format = value;
+                    _dateFormatTouched = true;
+                }
                 DateFormatChanged(value);
             }
         }
@@ -58,6 +63,17 @@ namespace MudBlazor
         protected virtual Task DateFormatChanged(string newFormat)
         {
             return Task.CompletedTask;
+        }
+
+        protected override bool SetCulture(CultureInfo value)
+        {
+            if (!base.SetCulture(value))
+                return false;
+
+            if (!_dateFormatTouched && Converter is DefaultConverter<DateTime?> defaultConverter)
+                defaultConverter.Format = value.DateTimeFormat.ShortDatePattern;
+
+            return true;
         }
 
         /// <summary>
