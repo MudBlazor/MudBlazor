@@ -8,6 +8,10 @@ on:
         required: false
         type: string
         default: '5.0.x'
+      dotnet-prerelease:
+        required: false
+        type: boolean
+        default: false
       publish-coverage:
         required: false
         type: boolean
@@ -52,6 +56,7 @@ jobs:
         uses: actions/setup-dotnet@v1
         with: 
           dotnet-version: ${{ inputs.dotnet-version }}
+          include-prerelease: ${{ inputs.dotnet-prerelease }}
 
       - name: Restore
         run: dotnet restore

@@ -45,7 +45,8 @@ namespace MudBlazor.Services
                 await _jsRuntime.InvokeVoidAsync("mudKeyInterceptor.connect", _dotNetRef, elementId, options);
                 _isObserving = true;
             }
-            catch (TaskCanceledException) { /*ignore*/ }
+            catch (JSDisconnectedException) { }
+            catch (TaskCanceledException) { }
         }
 
         /// <summary>
