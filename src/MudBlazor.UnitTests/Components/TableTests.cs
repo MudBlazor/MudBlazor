@@ -1327,6 +1327,31 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// Tests that clicking a row in a non-editable table does not set IsEditing to true and stop the table from updating.
+        /// </summary>
+        [Test]
+        public void TableRowClickNotEditable()
+        {
+            var comp = Context.RenderComponent<TableRowClickNotEditableTest>();
+
+            // Get table instance
+            var tableInstance = comp.FindComponent<MudTable<string>>().Instance;
+
+            // Check number of filtered items
+            tableInstance.GetFilteredItemsCount().Should().Be(3);
+
+            // Click row
+            var trs = comp.FindAll("tr");
+            trs[1].Click();
+
+            // Filter items
+            var searchString = comp.Find("#searchString");
+            searchString.Change("b");
+
+            // Make sure number of items has updated
+            tableInstance.GetFilteredItemsCount().Should().Be(1);
+        }
+        
         /// Issue #3033
         /// Tests changing RowsPerPage Parameter from code - Table should re-render new RowsPerPage parameter and parameter value should be set
         /// </summary>
