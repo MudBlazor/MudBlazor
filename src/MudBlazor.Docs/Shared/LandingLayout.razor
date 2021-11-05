@@ -1,0 +1,27 @@
+﻿@inherits LayoutComponentBase
+
+<MudThemeProvider Theme="_currentTheme"/>
+
+<MudLayout Class="mudblazor-landingpage">
+    <MudAppBar Elevation="25" DisableGutters="true">
+        <MudContainer MaxWidth="MaxWidth.Large">
+            <MudToolBar>
+                <MudBlazorLogo Style="width:50px;" Class="mr-6"/>
+                <MudButton Variant="Variant.Text" Class="mx-1">Documentation</MudButton>
+                <MudButton Variant="Variant.Text" Class="mx-1">Components</MudButton>
+                <MudButton Variant="Variant.Text" Class="mx-1">Products</MudButton>
+                <MudSpacer />
+                <MudTooltip Duration="1000" Text="@(isDarkMode? "Switch to Light Theme" : "Switch to Dark Theme")">
+                    <MudIconButton Icon="@(isDarkMode? @Icons.Material.Outlined.LightMode : @Icons.Material.Outlined.DarkMode)" Color="Color.Inherit" OnClick="@((e) => DarkMode())" />
+                </MudTooltip>
+            </MudToolBar>
+        </MudContainer>
+    </MudAppBar>
+    <MudMainContent>
+        <MudContainer MaxWidth="MaxWidth.Large">
+            @Body
+        </MudContainer>
+    </MudMainContent>
+</MudLayout>
+
+
