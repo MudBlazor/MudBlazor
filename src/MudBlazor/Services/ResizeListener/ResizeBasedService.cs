@@ -16,7 +16,7 @@ namespace MudBlazor.Services
         where TSelf : class
         where TInfo : SubscriptionInfo<TAction, TaskOption>
     {
-        private static SemaphoreSlim _unsubscribeSemaphore = new SemaphoreSlim(1, 1);
+        private SemaphoreSlim _unsubscribeSemaphore = new SemaphoreSlim(1, 1);
 
         protected Dictionary<Guid, TInfo> Listeners { get; } = new();
         protected IJSRuntime JsRuntime { get; init; }
@@ -54,10 +54,8 @@ namespace MudBlazor.Services
                     {
                         await JsRuntime.InvokeVoidAsync($"mudResizeListenerFactory.cancelListener", info.Key);
                     }
-                    catch (TaskCanceledException)
-                    {
-                        // no worries here
-                    }
+                    catch (JSDisconnectedException) { }
+                    catch (TaskCanceledException) { }
                 }
 
                 if (Listeners.Count == 0)
@@ -86,10 +84,8 @@ namespace MudBlazor.Services
             {
                 await JsRuntime.InvokeVoidAsync($"mudResizeListenerFactory.cancelListeners", ids);
             }
-            catch (TaskCanceledException)
-            {
-                // no worries here
-            }
+            catch (JSDisconnectedException) { }
+            catch (TaskCanceledException) { }
 
             DotNetRef.Dispose();
         }

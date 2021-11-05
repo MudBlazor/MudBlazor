@@ -121,7 +121,7 @@ namespace MudBlazor
             get => _rowsPerPage ?? 10;
             set
             {
-                if (_rowsPerPage == null)
+                if (_rowsPerPage is null || _rowsPerPage != value)
                     SetRowsPerPage(value);
             }
         }

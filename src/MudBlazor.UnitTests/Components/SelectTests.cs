@@ -206,7 +206,7 @@ namespace MudBlazor.UnitTests.Components
 
             select.Instance.Value.Should().Be(1);
             select.Instance.Text.Should().Be("1");
-            comp.FindAll("div.mud-input-slot").Count.Should().Be(0);
+            comp.Find("div.mud-input-slot").Attributes["style"].Value.Should().Contain("display:none");
             comp.RenderCount.Should().Be(1);
             //Console.WriteLine(comp.Markup);
 
@@ -215,7 +215,7 @@ namespace MudBlazor.UnitTests.Components
             var items = comp.FindAll("div.mud-list-item").ToArray();
             items[1].Click();
             comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().NotContain("mud-popover-open"));
-            comp.WaitForAssertion(() => comp.FindAll("div.mud-input-slot").Count.Should().Be(0));
+            comp.WaitForAssertion(() => comp.Find("div.mud-input-slot").Attributes["style"].Value.Should().Contain("display:none"));
             select.Instance.Value.Should().Be(2);
             select.Instance.Text.Should().Be("2");
         }
@@ -423,7 +423,7 @@ namespace MudBlazor.UnitTests.Components
             // click and check if it has toggled the menu
             input.Click();
             comp.WaitForAssertion(() => comp.FindAll("div.mud-list-item").Count.Should().BeGreaterThan(0));
-            menu.ClassList.Should().Contain("mud-popover-open");
+            comp.WaitForAssertion(() => menu.ClassList.Should().Contain("mud-popover-open"));
             // now click an item and see the value change
             var items = comp.FindAll("div.mud-list-item").ToArray();
             items[1].Click();
@@ -1000,6 +1000,30 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(() => comp.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = "Enter", Type = "keydown", }));
             comp.WaitForAssertion(() => comp.Instance.SelectedValues.Should().HaveCount(0));
             comp.WaitForAssertion(() => comp.Instance.Value.Should().Be(null));
+        }
+
+        [Test]
+        public void MultiSelectWithCustomComparerTest()
+        {
+            var comp = Context.RenderComponent<MultiSelectWithCustomComparerTest>();
+            // print the generated html
+            Console.WriteLine(comp.Markup);
+            // Click select button
+            comp.Find("button").Click();
+            // Check input text
+            comp.Find("input").GetAttribute("value").Should().Be("Selected Cafe Latte, Selected Espresso");
+            // Click to render the menu
+            comp.Find("div.mud-input-control").Click();
+            // Check check marks
+            const string @unchecked =
+                "M19 5v14H5V5h14m0-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z";
+            const string @checked =
+                "M19 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.11 0 2-.9 2-2V5c0-1.1-.89-2-2-2zm-9 14l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z";
+            var icons = comp.FindAll("div.mud-list-item path").ToArray();
+            icons[1].Attributes["d"].Value.Should().Be(@unchecked);
+            icons[3].Attributes["d"].Value.Should().Be(@checked);
+            icons[5].Attributes["d"].Value.Should().Be(@checked);
+            icons[7].Attributes["d"].Value.Should().Be(@unchecked);
         }
     }
 }

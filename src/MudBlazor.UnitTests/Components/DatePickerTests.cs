@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
+using AngleSharp.Dom;
 using AngleSharp.Html.Dom;
 using Bunit;
 using FluentAssertions;
@@ -97,6 +98,47 @@ namespace MudBlazor.UnitTests.Components
             comp.SetParam(p => p.Date, new DateTime(2020, 10, 26));
             picker.Date.Should().Be(new DateTime(2020, 10, 26));
             picker.Text.Should().Be("26/10/2020");
+        }
+
+        [Test]
+        public async Task DatePicker_Should_ApplyCultureDateFormat()
+        {
+            var comp = Context.RenderComponent<MudDatePicker>();
+            // select elements needed for the test
+            var picker = comp.Instance;
+            picker.Text.Should().Be(null);
+            picker.Date.Should().Be(null);
+
+            var customCulture = new CultureInfo("en-US");
+            customCulture.DateTimeFormat.ShortDatePattern.Should().Be("M/d/yyyy");
+            customCulture.DateTimeFormat.ShortDatePattern = "dd MM yyyy";
+            comp.SetParam(p => p.Culture, customCulture);
+
+            comp.SetParam(p => p.Text, "23 10 2020");
+            picker.Date.Should().Be(new DateTime(2020, 10, 23));
+            comp.SetParam(p => p.Date, new DateTime(2020, 10, 26));
+            picker.Text.Should().Be("26 10 2020");
+
+            customCulture.DateTimeFormat.ShortDatePattern = "yyyy-MM-dd";
+            comp.SetParam(p => p.Text, "13 10 2020");
+            picker.Date.Should().Be(new DateTime(2020, 10, 13));
+            comp.SetParam(p => p.Date, new DateTime(2020, 10, 16));
+            picker.Text.Should().Be("16 10 2020");
+        }
+
+        [Test]
+        public async Task DatePicker_Should_DateFormatTakesPrecedenceOverCulture()
+        {
+            var comp = Context.RenderComponent<MudDatePicker>();
+            // select elements needed for the test
+            var picker = comp.Instance;
+            picker.Text.Should().Be(null);
+            picker.Date.Should().Be(null);
+            comp.SetParam(p => p.DateFormat, "dd MM yyyy");
+            comp.SetParam(p => p.Culture, CultureInfo.InvariantCulture); // <-- this makes a huge difference!
+            comp.SetParam(p => p.Date, new DateTime(2020, 10, 26));
+            picker.Date.Should().Be(new DateTime(2020, 10, 26));
+            picker.Text.Should().Be("26 10 2020");
         }
 
         [Test]
@@ -578,7 +620,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void CheckButtonTypeTest(bool navigateToMonthSelection)
         {
-            var dateComp = Context.RenderComponent<MudDatePicker>(p => 
+            var dateComp = Context.RenderComponent<MudDatePicker>(p =>
             p.Add(x => x.PickerVariant, PickerVariant.Dialog));
 
             Console.WriteLine(dateComp.Markup);
@@ -653,6 +695,44 @@ namespace MudBlazor.UnitTests.Components
 
             await comp.InvokeAsync(() => datePicker.ToggleState());
             comp.WaitForAssertion(() => comp.FindAll("div.mud-picker-open").Count.Should().Be(1));
+        }
+
+        /// <summary>
+        /// Test to check whether validation is working or not for required form-control
+        /// </summary>
+        /// <returns>The awaitable <see cref="Task"/></returns>
+        [Test]
+        public async Task DatePicker_Validation()
+        {
+            // render the component
+            var datePickerComponent = Context.RenderComponent<DatePickerValidationTest>();
+
+            // output the markup
+            Console.WriteLine(datePickerComponent.Markup);
+
+            // get the datepicker instance
+            var datePickerInstance = datePickerComponent.FindComponent<MudDatePicker>().Instance;
+
+            // ensure it's marked as required
+            datePickerComponent.WaitForAssertion(() => datePickerInstance.Required.Should().BeTrue($"{typeof(DatePickerValidationTest).FullName}: {nameof(MudDatePicker)} is not marked as required."));
+            
+            // get the form's instance
+            var formInstance = datePickerComponent.FindComponent<MudForm>().Instance;
+
+            // ensure form is invalid
+            datePickerComponent.WaitForAssertion(() => formInstance.IsValid.Should().BeFalse($"{typeof(DatePickerValidationTest).FullName}: {nameof(MudForm)} should be invalid at this point."));
+
+            // set value for date-picker
+            await datePickerComponent.InvokeAsync(() => datePickerInstance.Date = DateTime.Now.Date);
+
+            // ensure date-picker is now valid
+            datePickerComponent.WaitForAssertion(() => datePickerInstance.Error.Should().BeFalse($"{typeof(DatePickerValidationTest).FullName}: {nameof(MudDatePicker)} should be valid as it has a value."));
+
+            // validate the form
+            await datePickerComponent.InvokeAsync(() => formInstance.Validate());
+
+            // ensure form is valid
+            datePickerComponent.WaitForAssertion(() => formInstance.IsValid.Should().BeTrue($"{typeof(DatePickerValidationTest).FullName}: {nameof(MudForm)} should be valid as all required values have been provided."));
         }
     }
 }

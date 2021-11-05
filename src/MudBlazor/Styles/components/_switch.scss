@@ -15,6 +15,11 @@
         color: var(--mud-palette-text-disabled);
         cursor: default;
     }
+
+    &.mud-readonly, .mud-readonly:hover {
+        cursor: default;
+        background-color: transparent;
+    }
 }
 
 .mud-switch-span {
@@ -39,6 +44,8 @@
         background-color: var(--mud-palette-black);
     }
 }
+
+
 
 .mud-switch-base {
     padding: 9px;

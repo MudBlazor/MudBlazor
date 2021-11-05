@@ -24,7 +24,7 @@ namespace MudBlazor.UnitTests.Utilities
         [TestCase("1abd", 17, 170, 187, 221)]
         public void FromString_Hex(string input, byte r, byte g, byte b, byte alpha)
         {
-            var cultures = new[] { new CultureInfo("en"), new CultureInfo("se") };
+            var cultures = new[] { new CultureInfo("en", false), new CultureInfo("se", false) };
 
             foreach (var item in cultures)
             {
@@ -52,7 +52,7 @@ namespace MudBlazor.UnitTests.Utilities
         [TestCase("rgb(255,255,255)", 255, 255, 255, 255)]
         public void FromString_RGB(string input, byte r, byte g, byte b, byte alpha)
         {
-            var cultures = new[] { new CultureInfo("en"), new CultureInfo("se") };
+            var cultures = new[] { new CultureInfo("en", false), new CultureInfo("se", false) };
 
             foreach (var item in cultures)
             {
@@ -80,7 +80,7 @@ namespace MudBlazor.UnitTests.Utilities
         [TestCase("rgba(255,255,255,1)", 255, 255, 255, 255)]
         public void FromString_RGBA(string input, byte r, byte g, byte b, byte alpha)
         {
-            var cultures = new[] { new CultureInfo("en"), new CultureInfo("se") };
+            var cultures = new[] { new CultureInfo("en", false), new CultureInfo("se", false) };
 
             foreach (var item in cultures)
             {
@@ -436,7 +436,7 @@ namespace MudBlazor.UnitTests.Utilities
         [TestCase(71, 88, 99, 255, "rgb(71,88,99)")]
         public void ToRGB(byte r, byte g, byte b, byte a, string expectedValue)
         {
-            var cultures = new[] { new CultureInfo("en"), new CultureInfo("se") };
+            var cultures = new[] { new CultureInfo("en", false), new CultureInfo("se", false) };
 
             foreach (var item in cultures)
             {
@@ -454,7 +454,7 @@ namespace MudBlazor.UnitTests.Utilities
         [TestCase(71, 88, 99, 204, "rgba(71,88,99,0.8)")]
         public void ToRGBA(byte r, byte g, byte b, byte a, string expectedValue)
         {
-            var cultures = new[] { new CultureInfo("en"), new CultureInfo("se") };
+            var cultures = new[] { new CultureInfo("en", false), new CultureInfo("se", false) };
 
             foreach (var item in cultures)
             {
@@ -471,7 +471,7 @@ namespace MudBlazor.UnitTests.Utilities
         [TestCase(71, 88, 99, 255, "71,88,99")]
         public void ToColorRgbElements(byte r, byte g, byte b, byte a, string expectedValue)
         {
-            var cultures = new[] { new CultureInfo("en"), new CultureInfo("se") };
+            var cultures = new[] { new CultureInfo("en", false), new CultureInfo("se", false) };
 
             foreach (var item in cultures)
             {
@@ -488,7 +488,7 @@ namespace MudBlazor.UnitTests.Utilities
         [TestCase(71, 88, 99, 204, "#475863")]
         public void ToHex(byte r, byte g, byte b, byte a, string expectedValue)
         {
-            var cultures = new[] { new CultureInfo("en"), new CultureInfo("se") };
+            var cultures = new[] { new CultureInfo("en", false), new CultureInfo("se", false) };
 
             foreach (var item in cultures)
             {
@@ -610,7 +610,7 @@ namespace MudBlazor.UnitTests.Utilities
         [TestCase("ar-ER")]
         public void CheckPaletteInDifferentCultures(string cultureString)
         {
-            var culture = new CultureInfo(cultureString);
+            var culture = new CultureInfo(cultureString, false);
 
             CultureInfo.CurrentCulture = culture;
             CultureInfo.CurrentUICulture = culture;

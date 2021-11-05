@@ -1,43 +1,89 @@
 ﻿
 .docs-icon-container {
-    margin-top: 20px;
-    display: flex;
-    flex-wrap: wrap;
+    display: grid;
+    gap: 12px;
+    grid-template-rows: 1px minmax(128px, auto);
+    grid-template-columns: repeat(auto-fill,112px);
 
-    & .mud-divider {
-        margin-bottom: 20px;
+    div:first-child:not(.docs-icon-panel) {
+        grid-column: 1 / -1;
+    }
+
+    div:last-child:not(.docs-icon-panel) {
     }
 }
 
+.mud-icondrawer {
+    .mud-typography-subtitle1 {
+        font-weight: 500;
+    }
+
+    .mud-typography-subtitle2 {
+        margin-top: 16px;
+        margin-bottom: 8px;
+        font-size: 1rem;
+    }
+
+    .mud-paper {
+        background-color: var(--mud-palette-background-grey);
+    }
+
+    .mud-input-adornment{
+        display:none;
+    }
+}
+
+.mud-iconcode {
+    font-size: 12px;
+    overflow: hidden;
+    user-select: all;
+    letter-spacing: normal;
+    font-family: Consolas,"Liberation Mono",Menlo,Courier,monospace;
+    -webkit-font-smoothing: subpixel-antialiased;
+}
 
 .docs-icon-panel {
-    height: 120px;
-    width: 90px;
-    padding: 20px 10px;
-    display: inline-block;
+    height: 128px;
+    width: 96px;
+    padding: 0px 6px;
+    display: flex;
     text-align: center;
+    align-items: center;
+    justify-content: space-around;
+    flex-direction: column;
+    border-radius: var(--mud-default-borderradius);
+    transition: background-color 250ms cubic-bezier(.4,0,.2,1) 0ms,box-shadow 250ms cubic-bezier(.4,0,.2,1) 0ms,border 250ms cubic-bezier(.4,0,.2,1);
+    user-select: none;
+
+    &:focus {
+        outline: 2px solid var(--mud-palette-primary);
+    }
+
+    &:focus-visible {
+        background-color: var(--mud-palette-action-default-hover);
+        outline:none;
+    }
+
+    & .mud-svg-icon {
+        font-size: 40px;
+        margin-top: 12px;
+    }
 
     & .mud-typography {
-        margin-top: 10px;
+        margin-bottom: 4px;
         width: 100%;
         text-overflow: ellipsis;
         overflow: hidden;
     }
-}
 
-.docs-icon-panel-inner {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-
-    & .mud-svg-icon {
-        font-size: 40px;
+    &:hover {
+        cursor: pointer;
+        background-color: var(--mud-palette-action-default-hover);
     }
 }
 
-.docs-icon-material-container {
-    & .mud-input-control {
-        background-color: var(--mud-palette-surface);
+@media screen and (min-width: 720px) {
+    .docs-icon-panel {
+        width: 112px;
     }
 }

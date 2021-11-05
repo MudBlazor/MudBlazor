@@ -9,5 +9,3 @@ var mudBlazorDocs = {
     }
 }
 
-
-

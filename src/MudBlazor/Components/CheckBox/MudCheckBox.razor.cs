@@ -136,6 +136,27 @@ namespace MudBlazor
                         SetBoolValueAsync(null);
                     }
                     break;
+                case " ":
+                    if (BoolValue == null)
+                    {
+                        SetBoolValueAsync(true);
+                    }
+                    else if (BoolValue == true)
+                    {
+                        SetBoolValueAsync(false);
+                    }
+                    else if (BoolValue == false)
+                    {
+                        if (TriState == true)
+                        {
+                            SetBoolValueAsync(null);
+                        }
+                        else
+                        {
+                            SetBoolValueAsync(true);
+                        }
+                    }
+                    break;
             }
         }
 
@@ -150,9 +171,9 @@ namespace MudBlazor
                 await _keyInterceptor.Connect(_elementId, new KeyInterceptorOptions()
                 {
                     //EnableLogging = true,
-                    TargetClass = "mud-input-slot",
+                    TargetClass = "mud-button-root",
                     Keys = {
-                        new KeyOptions { Key=" ", PreventDown = "key+none" }, // prevent scrolling page
+                        new KeyOptions { Key=" ", PreventDown = "key+none", PreventUp = "key+none" }, // prevent scrolling page
                         new KeyOptions { Key="Enter", PreventDown = "key+none" },
                         new KeyOptions { Key="NumpadEnter", PreventDown = "key+none" },
                         new KeyOptions { Key="Escape", PreventDown = "key+none" },

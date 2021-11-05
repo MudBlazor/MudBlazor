@@ -23,6 +23,10 @@
         color: var(--mud-palette-action-disabled);
         background-color: transparent;
     }
+
+    &.mud-readonly, .mud-readonly:hover {
+        cursor: default;
+    }
 }
 
 .mud-icon-button-color-inherit {
@@ -60,6 +64,12 @@
 .mud-icon-button-edge-end {
     margin-right: -12px;
     margin-inline-end: -12px;
+    margin-inline-start: unset;
+}
+
+.mud-icon-button-edge-margin-end {
+    margin-right: 8px;
+    margin-inline-end: 8px;
     margin-inline-start: unset;
 }
 

@@ -540,7 +540,7 @@ namespace MudBlazor.UnitTests.Components
             Console.WriteLine(comp.Markup);
 
             comp.Instance.SetPanelActive(4);
-           
+
             GetSliderValue(comp).Should().Be(4 * 100.0);
 
             await comp.Instance.AddPanel();
@@ -1007,6 +1007,29 @@ namespace MudBlazor.UnitTests.Components
             //Check if style attr does not contain transform: none
             comp.Instance.toggle = false;
             comp.Find(".mud-tab-slider").GetAttribute("style").Contains("transition: none").Should().BeFalse();
+        }
+
+        /// <summary>
+        /// See: https://github.com/MudBlazor/MudBlazor/issues/2976
+        /// </summary>
+        [Test]
+        public async Task MenuInHeaderPanelCloseOnClickOutside()
+        {
+            Context.Services.Add(new ServiceDescriptor(typeof(IResizeObserver), new MockResizeObserver()));
+
+            var comp = Context.RenderComponent<TabsWithMenuInHeader>();
+
+            //open the menu
+            comp.Find("button").Click();
+
+            // make sure the menu is rendered
+            _ = comp.Find(".my-menu-item-1");
+
+            //click the overlay to force a close
+            comp.Find(".mud-overlay").Click();
+
+            //no menu item should be visible anymore
+            Assert.Throws<ElementNotFoundException>(() => comp.Find(".my-menu-item-1"));
         }
 
         #region Helper

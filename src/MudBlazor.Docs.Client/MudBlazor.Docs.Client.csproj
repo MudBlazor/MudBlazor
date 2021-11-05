@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.BlazorWebAssembly">
 
   <PropertyGroup>
-    <TargetFramework>net5.0</TargetFramework>
+    <TargetFramework>net6.0</TargetFramework>
     <!--Please see https://github.com/dotnet/aspnetcore/issues/27776 -->
     <StaticWebAssetBasePath Condition="'$(BuildType)' != 'publish'">wasm</StaticWebAssetBasePath>
     <!--Note trailing slash -->
@@ -11,9 +11,9 @@
 
   <ItemGroup>
     <PackageReference Include="Blazor-Analytics" Version="3.9.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="5.0.10" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="5.0.10" PrivateAssets="all" />
-    <PackageReference Include="System.Net.Http.Json" Version="5.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="6.0.0-rc.2.*" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="6.0.0-rc.2.*" PrivateAssets="all" />
+    <PackageReference Include="System.Net.Http.Json" Version="6.0.0-rc.2.*" />
     <PackageReference Include="Toolbelt.Blazor.HeadElement" Version="6.0.0" />
   </ItemGroup>
 

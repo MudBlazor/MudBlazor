@@ -1305,25 +1305,71 @@ namespace MudBlazor.UnitTests.Components
         {
             int rowsPerPage = 5;
             int newRowsPerPage = 25;
-            var tableComponent = Context.RenderComponent<TableRowsPerPageTwoWayBindingTest>(parameters => parameters
+            var comp = Context.RenderComponent<TableRowsPerPageTwoWayBindingTest>(parameters => parameters
                 .Add(p => p.RowsPerPage, rowsPerPage)
                 .Add(p => p.RowsPerPageChanged, (s) =>
                 {
                     rowsPerPage = int.Parse(s.ToString());
                 })
             );
-            Console.WriteLine(tableComponent.Markup);
+            Console.WriteLine(comp.Markup);
             //Check the component rendered correctly with the initial RowsPerPage
-            var t = tableComponent.Find("input.mud-select-input").GetAttribute("Value");
+            var t = comp.Find("input.mud-select-input").GetAttribute("Value");
             int.Parse(t).Should().Be(rowsPerPage, "The component rendered correctly");
             //open the menu
-            var menuItem = tableComponent.Find("div.mud-input-control");
+            var menuItem = comp.Find("div.mud-input-control");
             menuItem.Click();
 
             //Now select the 25 and check it
-            var items = tableComponent.FindAll("div.mud-list-item").ToArray();
+            var items = comp.FindAll("div.mud-list-item").ToArray();
             items[1].Click();
-            rowsPerPage.Should().Be(newRowsPerPage, "ValueChanged EventCallback fired correctly");
+            comp.WaitForAssertion(() => rowsPerPage.Should().Be(newRowsPerPage, "ValueChanged EventCallback fired correctly"));
         }
+
+        /// <summary>
+        /// Tests that clicking a row in a non-editable table does not set IsEditing to true and stop the table from updating.
+        /// </summary>
+        [Test]
+        public void TableRowClickNotEditable()
+        {
+            var comp = Context.RenderComponent<TableRowClickNotEditableTest>();
+
+            // Get table instance
+            var tableInstance = comp.FindComponent<MudTable<string>>().Instance;
+
+            // Check number of filtered items
+            tableInstance.GetFilteredItemsCount().Should().Be(3);
+
+            // Click row
+            var trs = comp.FindAll("tr");
+            trs[1].Click();
+
+            // Filter items
+            var searchString = comp.Find("#searchString");
+            searchString.Change("b");
+
+            // Make sure number of items has updated
+            tableInstance.GetFilteredItemsCount().Should().Be(1);
+        }
+        
+        /// Issue #3033
+        /// Tests changing RowsPerPage Parameter from code - Table should re-render new RowsPerPage parameter and parameter value should be set
+        /// </summary>
+        /// <returns></returns>
+        [Test]
+        public async Task RowsPerPageChangeValueFromCode()
+        {
+            var testComponent = Context.RenderComponent<TablePagerChangeRowsPerPageTest>();
+            var table = testComponent.FindComponent<MudTable<string>>().Instance;
+            var buttonComponent = testComponent.FindComponent<MudButton>();
+            testComponent.WaitForAssertion(() => table.RowsPerPage.Should().Be(35));
+            //Toggle the rows per page value from 35 to 10
+            buttonComponent.Find("button").Click();
+            testComponent.WaitForAssertion(() => table.RowsPerPage.Should().Be(10));
+            //Toggle the rows per page value from 10 back to  to 35
+            buttonComponent.Find("button").Click();
+            testComponent.WaitForAssertion(() => table.RowsPerPage.Should().Be(35));
+        }
+
     }
 }

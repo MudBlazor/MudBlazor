@@ -35,7 +35,12 @@ namespace MudBlazor.Docs.Server
             services.TryAddDocsViewServices();
             services.AddApplicationInsightsTelemetry();
             services.AddGoogleAnalytics("G-PRYNCB61NV");
+            if (Configuration["Azure:SignalR:Enabled"] == "true")
+            {
+                services.AddSignalR().AddAzureSignalR(Configuration["Azure:SignalR:ConnectionString"]);
+            }
         }
+
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

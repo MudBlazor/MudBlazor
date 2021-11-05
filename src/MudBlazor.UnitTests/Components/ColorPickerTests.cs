@@ -1273,5 +1273,33 @@ namespace MudBlazor.UnitTests.Components
             CheckColorRelatedValues(comp, x - 8, y + 7, secondExpectedColor, ColorPickerMode.RGB);
 
         }
+
+        [Test]
+        public async Task CheckPickerPopover()
+        {
+            var comp = Context.RenderComponent<SimpleColorPickerTest>(p =>
+            {
+                p.Add(x => x.Variant, PickerVariant.Inline);
+            });
+            
+            await comp.Instance.OpenPicker();
+
+            Console.WriteLine(comp.Markup);
+
+            var providerNode =  comp.Find(".mud-popover-provider");
+            providerNode.Children.Should().ContainSingle();
+
+            var popoverNode = providerNode.Children[0];
+
+            popoverNode.ClassList.Should().BeEquivalentTo(new[]
+            {
+                "mud-popover",
+                "mud-popover-fixed",
+                "mud-popover-open",
+                "mud-popover-top-left",
+                "mud-popover-anchor-top-left",
+                "mud-popover-overflow-flip-onopen",
+            });
+        }
     }
 }

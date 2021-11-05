@@ -67,6 +67,19 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public void RangeConverter_RoundTrip_Ok()
+        {
+            var d1 = "val1";
+            var d2 = "val2";
+
+            var repr = RangeConverter<DateTime>.Join(d1, d2);
+            RangeConverter<DateTime>.Split(repr, out var c1, out var c2).Should().BeTrue();
+
+            c1.Should().Be(d1);
+            c2.Should().Be(d2);
+        }
+
+        [Test]
         public void Open_SelectTheSameDateTwice_RangeStartShouldEqualsEnd()
         {
             var comp = OpenPicker();
