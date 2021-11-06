@@ -120,6 +120,8 @@ namespace MudBlazor
                 await _jsRuntime.InvokeVoidAsync("mudPopover.initilize", _options.ContainerClass, _options.FlipMargin);
                 _isInitilized = true;
             }
+            catch (JSDisconnectedException) { }
+            catch (TaskCanceledException) { }
             finally
             {
                 _semaphoreSlim.Release();
