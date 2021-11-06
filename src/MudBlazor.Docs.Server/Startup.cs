@@ -9,7 +9,6 @@ using Microsoft.Extensions.Hosting;
 using MudBlazor.Docs.Extensions;
 using MudBlazor.Docs.Services;
 using MudBlazor.Examples.Data;
-using Toolbelt.Blazor.Extensions.DependencyInjection;
 
 namespace MudBlazor.Docs.Server
 {
@@ -29,7 +28,6 @@ namespace MudBlazor.Docs.Server
             services.AddScoped<IPeriodicTableService, PeriodicTableService>();
             services.AddScoped(sp => new HttpClient() { BaseAddress = new Uri(Configuration["ApiBase"]) });
             services.AddScoped<GitHubApiClient>();
-            services.AddHeadElementHelper();
             services.AddRazorPages();
             services.AddServerSideBlazor();
             services.TryAddDocsViewServices();
@@ -71,8 +69,6 @@ namespace MudBlazor.Docs.Server
                     endpoints.MapFallbackToFile("wasm/{*path:nonfile}", "wasm/index.html");
                 });
             });
-
-            app.UseHeadElementServerPrerendering();
 
             // only reach here if path does not start /wasm
             app.UseStaticFiles();
