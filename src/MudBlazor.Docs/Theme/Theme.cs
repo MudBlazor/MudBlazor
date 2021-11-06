@@ -18,12 +18,17 @@ namespace MudBlazor.Docs
             {
                 Palette = (isDarkMode? LandingPageDarkPalette : LandingPageLightPalette),
                 Shadows = LandingPageShadows,
-                LayoutProperties = new LayoutProperties(),
+                LayoutProperties = LandingPageLayoutProperties,
                 ZIndex = new ZIndex(),
                 Typography = LandingPageTypography
             };
             return theme;
         }
+
+        public static LayoutProperties LandingPageLayoutProperties = new LayoutProperties()
+        {
+            DefaultBorderRadius = "6px"
+        };
 
         #region Docs
         public static MudTheme DocsLightTheme { get; set; } =
@@ -74,6 +79,12 @@ namespace MudBlazor.Docs
             Default = new Default()
             {
                 FontFamily = new[] { "Public Sans", "Roboto", "Arial", "sans-serif" }
+            },
+            H1 = new H1()
+            {
+                FontSize = "5.8rem",
+                FontWeight = 700,
+                LetterSpacing = "normal"
             }
         };
         public static Palette LandingPageLightPalette = new Palette()
@@ -84,7 +95,7 @@ namespace MudBlazor.Docs
         public static Palette LandingPageDarkPalette = new Palette()
         {
             AppbarText = "#424242",
-            AppbarBackground = "#000"
+            AppbarBackground = "#FFFFFF"
         };
 
         public static Shadow LandingPageShadows = new Shadow()

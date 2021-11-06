@@ -5,7 +5,7 @@
 <MudLayout Class="mudblazor-landingpage">
     <MudAppBar Elevation="25" DisableGutters="true">
         <MudContainer MaxWidth="MaxWidth.Large">
-            <MudToolBar>
+            <MudToolBar DisableGutters="true">
                 <MudBlazorLogo Style="width:50px;" Class="mr-6"/>
                 <MudButton Variant="Variant.Text" Class="mx-1">Documentation</MudButton>
                 <MudButton Variant="Variant.Text" Class="mx-1">Components</MudButton>
@@ -18,9 +18,7 @@
         </MudContainer>
     </MudAppBar>
     <MudMainContent>
-        <MudContainer MaxWidth="MaxWidth.Large">
-            @Body
-        </MudContainer>
+        @Body
     </MudMainContent>
 </MudLayout>
 
