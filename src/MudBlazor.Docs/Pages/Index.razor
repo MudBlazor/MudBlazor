@@ -2,17 +2,17 @@
 @layout LandingLayout
 
 <MudContainer MaxWidth="MaxWidth.Large" Class="d-flex flex-column justify-center">
-    <MudGrid Spacing="0">
-        <MudItem xs="12" md="6">
-            <MudText Typo="Typo.h1">MudBlazor</MudText>
-            <MudText Typo="Typo.h1">Is here to stay</MudText>
-            <MudText Typo="Typo.body1" Class="pa-4">
-                MudBlazor is perfect for .NET developers who want to rapidly build amazing web applications without having to struggle with CSS and Javascript. Being written entirely in C#, it empowers you to adapt or extend the framework.
-            </MudText>
-            <MudButton Color="Color.Primary" Variant="Variant.Filled" DisableElevation="true" Size="Size.Large">Read More</MudButton>
-            <MudButton Color="Color.Default" Variant="Variant.Filled" DisableElevation="true" Size="Size.Large">Get Started</MudButton>
-        </MudItem>
-    </MudGrid>
+    <div style="max-width:530px;">
+        <MudText Typo="Typo.h1">MudBlazor</MudText>
+        <MudText Typo="Typo.h1">Is here to stay</MudText>
+        <MudText Typo="Typo.body1">
+            MudBlazor is perfect for .NET developers who want to rapidly build amazing web applications without having to struggle with CSS and Javascript. Being written entirely in C#, it empowers you to adapt or extend the framework.
+        </MudText>
+        <div class="d-flex py-4">
+            <MudButton Color="Color.Default" Variant="Variant.Filled" DisableElevation="true" Size="Size.Large" Class="mr-4">Get started</MudButton>
+            <MudButton Color="Color.Primary" Variant="Variant.Filled" DisableElevation="true" Size="Size.Large">Read more</MudButton>
+        </div>
+    </div>
 </MudContainer>
 <MudContainer MaxWidth="MaxWidth.Large" Class="d-flex flex-column justify-center">
    

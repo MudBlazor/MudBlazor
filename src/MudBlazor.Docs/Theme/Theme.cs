@@ -82,7 +82,7 @@ namespace MudBlazor.Docs
             },
             H1 = new H1()
             {
-                FontSize = "5.8rem",
+                FontSize = "5rem",
                 FontWeight = 700,
                 LetterSpacing = "normal"
             }
