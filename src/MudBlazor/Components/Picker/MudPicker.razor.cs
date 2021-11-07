@@ -390,6 +390,10 @@ namespace MudBlazor
 
         private int FindHour()
         {
+            if (Text == null)
+            {
+                Text = "00:00";
+            }
             string hour = "";
             char[] textArray = Text.ToCharArray();
             foreach (char c in textArray)
@@ -409,6 +413,10 @@ namespace MudBlazor
 
         private int FindMinute()
         {
+            if (Text == null)
+            {
+                Text = "00:00";
+            }
             string minute = "";
             char[] textArray = Text.ToCharArray();
 
@@ -430,29 +438,7 @@ namespace MudBlazor
 
         private string SetTimeString(int hour, int minute)
         {
-            if (hour < 10)
-            {
-                if (minute < 10)
-                {
-                    return "0" + hour.ToString() + ":" + "0" + minute.ToString();
-                }
-                else
-                {
-                    return "0" + hour.ToString() + ":" + minute.ToString();
-                }
-            }
-            else
-            {
-                if (minute < 10)
-                {
-                    return hour.ToString() + ":" + "0" + minute.ToString();
-                }
-                else
-                {
-                    return hour.ToString() + ":" + minute.ToString();
-                }
-            }
-            
+            return $"{hour:D2}:{minute:D2}";
         }
 
         protected internal void HandleKeyDown(KeyboardEventArgs obj)
@@ -612,7 +598,7 @@ namespace MudBlazor
 
         private void HandleOnBlur()
         {
-            if (!Text.Contains(":") && Text.Length == 4)
+            if (Text != null && !Text.Contains(":") && Text.Length == 4)
             {
                 try
                 {
