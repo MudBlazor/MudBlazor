@@ -1,9 +1,13 @@
 ﻿using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
+using Microsoft.Extensions.DependencyInjection;
+
+using System;
+using System.Net.Http;
+using Blazor.Analytics;
 using MudBlazor.Docs.Client;
 using MudBlazor.Docs.Extensions;
 using MudBlazor.Docs.Services;
-using Blazor.Analytics;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");

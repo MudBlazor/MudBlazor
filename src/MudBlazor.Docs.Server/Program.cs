@@ -1,6 +1,10 @@
-﻿using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Web;
+﻿using System;
+using System.Net.Http;
 using Blazor.Analytics;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using MudBlazor.Docs.Extensions;
 using MudBlazor.Docs.Services;
 using MudBlazor.Examples.Data;
