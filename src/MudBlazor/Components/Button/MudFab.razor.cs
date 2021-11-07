@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿using System;
+using Microsoft.AspNetCore.Components;
 using MudBlazor.Extensions;
 using MudBlazor.Utilities;
 
@@ -27,9 +28,19 @@ namespace MudBlazor
         [Parameter] public Size Size { get; set; } = Size.Large;
 
         /// <summary>
-        /// If applied Icon will be added to the component.
+        /// If applied Icon will be added at the start of the component.
         /// </summary>
-        [Parameter] public string Icon { get; set; }
+        [Obsolete("This property is obsolete. Use StartIcon instead.")] [Parameter] public string Icon { get => StartIcon; set => StartIcon = value; }
+
+        /// <summary>
+        /// If applied Icon will be added at the start of the component.
+        /// </summary>
+        [Parameter] public string StartIcon { get; set; }
+
+        /// <summary>
+        /// If applied Icon will be added at the end of the component.
+        /// </summary>
+        [Parameter] public string EndIcon { get; set; }
 
         /// <summary>
         /// The color of the icon. It supports the theme colors.
@@ -45,6 +56,5 @@ namespace MudBlazor
         /// If applied the text will be added to the component.
         /// </summary>
         [Parameter] public string Label { get; set; }
-
     }
 }
