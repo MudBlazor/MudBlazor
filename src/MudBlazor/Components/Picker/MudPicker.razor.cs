@@ -489,7 +489,7 @@ namespace MudBlazor
                         }
                         else if (hour == 0)
                         {
-                            hour = 11;
+                            hour = 23;
                         }
                         else
                         {
