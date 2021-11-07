@@ -12,9 +12,9 @@
             <div class="mud-timepicker-hourminute mud-ltr">
                 @if (TimeEditMode == TimeEditMode.Normal)
                 {
-                    <MudButton @onkeydown="HandleKeyDowns" Variant="Variant.Text" Color="Color.Inherit" Class="@HoursButtonClass" OnClick="OnHourClick">@GetHourString()</MudButton>
+                    <MudButton Variant="Variant.Text" Color="Color.Inherit" Class="@HoursButtonClass" OnClick="OnHourClick">@GetHourString()</MudButton>
                     <MudText Typo="Typo.h2" Class="mud-timepicker-separator">:</MudText>
-                    <MudButton @onkeydown="HandleKeyDowns" Variant="Variant.Text" Color="Color.Inherit" Class="@MinuteButtonClass" OnClick="OnMinutesClick">@GetMinuteString()</MudButton>
+                    <MudButton Variant="Variant.Text" Color="Color.Inherit" Class="@MinuteButtonClass" OnClick="OnMinutesClick">@GetMinuteString()</MudButton>
                 }
                 else
                 {
@@ -24,12 +24,12 @@
             @if (AmPm)
             {
                 <div class="mud-timepicker-ampm">
-                    <MudButton @onkeydown="HandleKeyDowns" Variant="Variant.Text" Color="Color.Inherit" Class="@AmButtonClass" OnClick="OnAmClicked">AM</MudButton>
-                    <MudButton @onkeydown="HandleKeyDowns" Variant="Variant.Text" Color="Color.Inherit" Class="@PmButtonClass" OnClick="OnPmClicked">PM</MudButton>
+                    <MudButton Variant="Variant.Text" Color="Color.Inherit" Class="@AmButtonClass" OnClick="OnAmClicked">AM</MudButton>
+                    <MudButton Variant="Variant.Text" Color="Color.Inherit" Class="@PmButtonClass" OnClick="OnPmClicked">PM</MudButton>
                 </div>
             }
         </MudPickerToolbar>
-        <MudPickerContent InvokeKeyDown="HandleKeyDowns">
+        <MudPickerContent>
             <div class="mud-picker-time-container">
                 <div class="mud-picker-time-clock">
                     <div role="menu" tabindex="-1" class="mud-picker-time-clock-mask" @onmousedown="OnMouseDown" @onmouseup="OnMouseUp">

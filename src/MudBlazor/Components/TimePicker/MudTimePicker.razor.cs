@@ -490,42 +490,72 @@ namespace MudBlazor
             }
         }
 
-        protected void HandleKeyDowns(KeyboardEventArgs obj)
+        protected internal override void HandleKeyDown(KeyboardEventArgs obj)
         {
             if (Disabled || ReadOnly)
                 return;
+            base.HandleKeyDown(obj);
             switch (obj.Key)
             {
                 case "ArrowRight":
-                    if (obj.ShiftKey == false)
+                    if (obj.CtrlKey == true)
+                    {
+                        ChangeHour(1);
+                    }
+                    else if (obj.ShiftKey == true)
+                    {
+                        ChangeMinute(5);
+                    }
+                    else
                     {
                         ChangeMinute(1);
+                    }
+                    break;
+                case "ArrowLeft":
+                    if (obj.CtrlKey == true)
+                    {
+                        ChangeHour(-1);
+                    }
+                    else if (obj.ShiftKey == true)
+                    {
+                        ChangeMinute(-5);
+                    }
+                    else
+                    {
+                        ChangeMinute(-1);
+                    }
+                    break;
+                case "ArrowUp":
+                    if (IsOpen == false && Editable == false)
+                    {
+                        IsOpen = true;
+                    }
+                    else if (obj.AltKey == true)
+                    {
+                        IsOpen = false;
+                    }
+                    else if (obj.ShiftKey == true)
+                    {
+                        ChangeHour(5);
                     }
                     else
                     {
                         ChangeHour(1);
                     }
                     break;
-                case "ArrowLeft":
-                    if (obj.ShiftKey == false)
+                case "ArrowDown":
+                    if (IsOpen == false && Editable == false)
                     {
-                        ChangeMinute(-1);
+                        IsOpen = true;
+                    }
+                    else if (obj.ShiftKey == true)
+                    {
+                        ChangeHour(-5);
                     }
                     else
                     {
                         ChangeHour(-1);
                     }
-                    break;
-                case "ArrowUp":
-                    ChangeHour(1);
-                    break;
-                case "ArrowDown":
-                    ChangeHour(-1);
-                    break;
-                case "Escape":
-                case " ":
-                    Close();
-                    _inputReference.FocusAsync();
                     break;
             }
         }
