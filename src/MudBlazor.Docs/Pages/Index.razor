@@ -1,6 +1,21 @@
 ﻿@page "/"
 @layout LandingLayout
 
+<MudContainer MaxWidth="MaxWidth.Large">
+    <div style="max-width:530px;">
+        <MudText Typo="Typo.h1">The Blazor</MudText>
+        <MudText Typo="Typo.h1">Component Library</MudText>
+        <MudText Typo="Typo.h1" Inline="true">Is </MudText>
+        <MudText Typo="Typo.h1" Inline="true" Class="landing-h1-gradient">here to stay</MudText>
+        <MudText Typo="Typo.body1">
+            MudBlazor is perfect for .NET developers who want to rapidly build amazing web applications without having to struggle with CSS and Javascript. Being written entirely in C#, it empowers you to adapt or extend the framework.
+        </MudText>
+        <div class="d-flex py-4">
+            <MudButton Color="Color.Default" Variant="Variant.Filled" DisableElevation="true" Size="Size.Large" Class="mr-4">Get started</MudButton>
+            <MudButton Color="Color.Primary" Variant="Variant.Filled" DisableElevation="true" Size="Size.Large">Read more</MudButton>
+        </div>
+    </div>
+</MudContainer>
 <MudContainer MaxWidth="MaxWidth.Large" Class="d-flex flex-column justify-center">
     <div style="max-width:530px;">
         <MudText Typo="Typo.h1">MudBlazor</MudText>
@@ -15,16 +30,23 @@
         </div>
     </div>
 </MudContainer>
-<MudContainer MaxWidth="MaxWidth.Large" Class="d-flex flex-column justify-center">
-    <MudText Typo="Typo.h2">Project Sponsors</MudText>
+<MudContainer MaxWidth="MaxWidth.Large">
+    <MudText Typo="Typo.h3">Our Sponsors</MudText>
     <MudText Typo="Typo.body1">
-        Our sponsors that secure the continued development and maintenance of MudBlazor.
+        The continued development and maintenance of MudBlazor is secured by our sponsors.
     </MudText>
-    <div class="d-flex">
-        <Sponsor Website="https://www.adaris.ch/" NameAndImage="Adaris" />
-        <Sponsor Website="https://timestatement.com/" NameAndImage="TimeStatement" />
-        <Sponsor Website="https://www.jetbrains.com/?from=MudBlazor" NameAndImage="JetBrains" />
-    </div>
+    <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="mt-6 mb-10" DisableElevation="true">Become a sponsor</MudButton>
+    <MudGrid Spacing="5">
+        <MudItem xs="6" sm="4">
+            <Sponsor Name="Adaris" Image="Adaris.png" Website="https://www.adaris.ch/" />
+        </MudItem>
+        <MudItem xs="6" sm="4">
+            <Sponsor Name="TimeStatement" Image="TimeStatement.png" Website="https://timestatement.com/"  />
+        </MudItem>
+        <MudItem xs="6" sm="4">
+            <Sponsor Name="JetBrains" Image="JetBrains.png" Website="https://www.jetbrains.com/?from=MudBlazor" />
+        </MudItem>
+    </MudGrid>
 </MudContainer>
 <MudContainer MaxWidth="MaxWidth.Large" Class="d-flex flex-column justify-center">
     

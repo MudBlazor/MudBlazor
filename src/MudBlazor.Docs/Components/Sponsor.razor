@@ -1,18 +1,12 @@
-﻿<MudPaper Elevation="0" Class="rounded-lg" Outlined="true">
-    @if (String.IsNullOrWhiteSpace(Website))
-    {
-        <img src="@($"_content/MudBlazor.Docs/images/sponsors/{NameAndImage}.png")" class="mudblazor-sponsor-image">
-    }
-    else
-    {
-        <a href="@Website" target="_blank">
-            <img src="@($"_content/MudBlazor.Docs/images/sponsors/{NameAndImage}.png")" class="mudblazor-sponsor-image">
-        </a>
-    }
+﻿<a href="@Website" target="_blank">
+<MudPaper Elevation="23" Class="d-flex justify-center align-center rounded-lg pa-4 relative" Height="100%">
+    <MudIcon Size="Size.Small" Icon="@Icons.Outlined.OpenInNew" Class="absolute" Style="top:6px; right:6px;color: rgba(0, 0, 0, 0.1);" />
+    <img alt="@Name" src="@($"_content/MudBlazor.Docs/images/sponsors/{Image}")">
 </MudPaper>
+</a>
 
 @code {
-    [Parameter] public RenderFragment Childcontent { get; set; }
     [Parameter] public string Website { get; set; }
-    [Parameter] public string NameAndImage { get; set; }
+    [Parameter] public string Name { get; set; }
+    [Parameter] public string Image { get; set; }
 }
