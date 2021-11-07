@@ -130,39 +130,6 @@
     }
 }
 
-.mudblazor-sponsor-list {
-    align-items: center;
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    margin: 0 auto;
-
-    .mudblazor-sponsor {
-        width: 180px;
-        height: 80px;
-        margin: 10px 5px;
-        text-align: center;
-        justify-content: center;
-        border-radius: var(--mud-default-borderradius);
-        transition: background-color 250ms cubic-bezier(.4,0,.2,1) 0ms,box-shadow 250ms cubic-bezier(.4,0,.2,1) 0ms,border 250ms cubic-bezier(.4,0,.2,1) 0ms;
-
-        &:hover {
-            background-color: rgba(0,0,0, 0.04);
-        }
-
-        .mudblazor-sponsor-item {
-            display: flex;
-            align-items: center;
-            display: flex;
-            justify-content: center;
-
-            .mudblazor-sponsor-image {
-                width: 150px;
-            }
-        }
-    }
-}
-
 @keyframes zoom-in-58eca5dc-d40c-44cf-9db1-11f3dedc4664 {
     0% {
         animation-timing-function: cubic-bezier(0.0436,0.6939,0.3878,0.8531);

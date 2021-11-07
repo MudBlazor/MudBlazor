@@ -78,13 +78,18 @@ namespace MudBlazor.Docs
         {
             Default = new Default()
             {
-                FontFamily = new[] { "Public Sans", "Roboto", "Arial", "sans-serif" }
+                FontFamily = new[] { "Public Sans", "Roboto", "Arial", "sans-serif" },
+                LetterSpacing = "normal"
             },
             H1 = new H1()
             {
                 FontSize = "5rem",
                 FontWeight = 700,
-                LetterSpacing = "normal"
+            },
+            H2 = new H2()
+            {
+                FontSize = "3rem",
+                FontWeight = 700,
             }
         };
         public static Palette LandingPageLightPalette = new Palette()

@@ -1,17 +1,15 @@
-﻿<div class="mudblazor-sponsor">
+﻿<MudPaper Elevation="0" Class="rounded-lg" Outlined="true">
     @if (String.IsNullOrWhiteSpace(Website))
     {
-        <div class="mudblazor-sponsor-item">
-            <img src="@($"_content/MudBlazor.Docs/images/sponsors/{NameAndImage}.png")" class="mudblazor-sponsor-image">
-        </div>
+        <img src="@($"_content/MudBlazor.Docs/images/sponsors/{NameAndImage}.png")" class="mudblazor-sponsor-image">
     }
     else
     {
-        <a class="mudblazor-sponsor-item" href="@Website" target="_blank">
+        <a href="@Website" target="_blank">
             <img src="@($"_content/MudBlazor.Docs/images/sponsors/{NameAndImage}.png")" class="mudblazor-sponsor-image">
         </a>
     }
-</div>
+</MudPaper>
 
 @code {
     [Parameter] public RenderFragment Childcontent { get; set; }

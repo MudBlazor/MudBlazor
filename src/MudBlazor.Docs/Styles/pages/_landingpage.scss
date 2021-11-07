@@ -3,6 +3,12 @@
         text-transform:none;
     }
   
+  .landing-h1-gradient{
+    background: linear-gradient(82deg, rgba(89,74,226,1) 0%, rgba(255,102,153,1) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  
    .mud-main-content .mud-container{
      height:100vh;
      width: 100vw;
