@@ -9,7 +9,7 @@
     <PackageReference Include="Blazor-Analytics" Version="3.9.0" />
     <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.18.0" />
     <PackageReference Include="Microsoft.Azure.SignalR" Version="1.12.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="6.0.0-rc.2.*" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="6.0.0.*" />
   </ItemGroup>
 
   <ItemGroup>
