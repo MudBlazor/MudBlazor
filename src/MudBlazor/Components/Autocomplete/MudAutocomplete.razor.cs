@@ -214,44 +214,6 @@ namespace MudBlazor
         internal Origin _anchorOrigin;
         internal Origin _transformOrigin;
 
-#pragma warning disable CS0618 // This is for backwards compability until Obsolete is removed
-        [ExcludeFromCodeCoverage]
-        private void GetPopoverOrigins()
-        {
-            if (Direction != Direction.Bottom || OffsetY || OffsetX)
-            {
-                switch (Direction)
-                {
-                    case Direction.Bottom when OffsetY:
-                    case Direction.Top when OffsetY:
-                        _anchorOrigin = Origin.BottomCenter;
-                        _transformOrigin = Origin.TopCenter;
-                        break;
-                    case Direction.Top when !OffsetY:
-                        _anchorOrigin = Origin.BottomCenter;
-                        _transformOrigin = Origin.BottomCenter;
-                        break;
-                    case Direction.Start when OffsetX:
-                    case Direction.Left when OffsetX:
-                        _anchorOrigin = Origin.TopLeft;
-                        _transformOrigin = Origin.TopRight;
-                        break;
-                    case Direction.End when OffsetX:
-                    case Direction.Right when OffsetX:
-                        _anchorOrigin = Origin.TopRight;
-                        _transformOrigin = Origin.TopLeft;
-                        break;
-                }
-            }
-            else
-            {
-                _anchorOrigin = AnchorOrigin;
-                _transformOrigin = TransformOrigin;
-            }
-        }
-#pragma warning restore CS0618 // Type or member is obsolete
-
-
         public MudAutocomplete()
         {
             Adornment = Adornment.End;
@@ -308,7 +270,6 @@ namespace MudBlazor
         protected override void OnInitialized()
         {
             UpdateIcon();
-            GetPopoverOrigins(); // Just to keep Obsolete functional until removed.
             var text = GetItemString(Value);
             if (!string.IsNullOrWhiteSpace(text))
                 Text = text;
