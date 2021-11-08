@@ -76,7 +76,7 @@ jobs:
 
       - name: Publish
         if: ${{ inputs.deploy-web-app == true }}
-        run: dotnet publish ./MudBlazor.Docs.Server -c Release -r win-x64 -o ${{env.DOTNET_ROOT}}/${{ inputs.deploy-web-app-name }}
+        run: dotnet publish ./MudBlazor.Docs.Server -c Release --runtime win-x64 --self-contained -o ${{env.DOTNET_ROOT}}/${{ inputs.deploy-web-app-name }}
         
       - uses: actions/upload-artifact@v2
         if: ${{ inputs.deploy-web-app == true }}
