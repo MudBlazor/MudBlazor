@@ -1,0 +1,9 @@
+﻿<section>
+    <MudContainer MaxWidth="MaxWidth.Large" Class="py-16 my-16">
+        @ChildContent
+    </MudContainer>
+</section>
+
+@code {
+    [Parameter] public RenderFragment ChildContent { get; set; }
+}

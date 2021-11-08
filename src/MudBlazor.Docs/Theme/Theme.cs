@@ -83,25 +83,56 @@ namespace MudBlazor.Docs
             },
             H1 = new H1()
             {
-                FontSize = "5rem",
+                FontSize = "4rem",
                 FontWeight = 700,
             },
             H3 = new H3()
             {
                 FontSize = "2.375rem",
                 FontWeight = 700,
-                LineHeight = 1.8
+                LineHeight = 1.8,
+            },
+            H5 = new H5()
+            {
+                FontSize = "1.8rem",
+                FontWeight = 700,
+                LineHeight = 2,
+            },
+            H6 = new H6()
+            {
+                FontSize = "1.125rem",
+                FontWeight = 700,
+                LineHeight = 2,
+            },
+            Subtitle1 = new Subtitle1()
+            {
+                FontSize = "1.1rem",
+                FontWeight = 500
+            },
+            Subtitle2 = new Subtitle2()
+            {
+                FontSize = "1.1rem",
+                FontWeight = 600,
+                LineHeight = 1.8,
+            },
+            Body1 = new Body1()
+            {
+                FontSize = "1rem",
+                FontWeight = 400
             }
         };
         public static Palette LandingPageLightPalette = new Palette()
         {
             AppbarText = "#424242",
-            AppbarBackground = "#FFFFFF"
+            AppbarBackground = "#FFFFFF",
+            Background = "#F9FAFC",
+            TextSecondary = "#425466"
         };
         public static Palette LandingPageDarkPalette = new Palette()
         {
             AppbarText = "#424242",
-            AppbarBackground = "#FFFFFF"
+            AppbarBackground = "#FFFFFF",
+            Background = "#0b0f19"
         };
 
         public static Shadow LandingPageShadows = new Shadow()

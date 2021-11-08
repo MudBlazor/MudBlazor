@@ -1,22 +1,78 @@
 ﻿@page "/"
 @layout LandingLayout
 
-<MudContainer MaxWidth="MaxWidth.Large">
-    <div style="max-width:530px;">
-        <MudText Typo="Typo.h1">The Blazor</MudText>
-        <MudText Typo="Typo.h1">Component Library</MudText>
-        <MudText Typo="Typo.h1" Inline="true">Is </MudText>
-        <MudText Typo="Typo.h1" Inline="true" Class="landing-h1-gradient">here to stay</MudText>
-        <MudText Typo="Typo.body1">
-            MudBlazor is perfect for .NET developers who want to rapidly build amazing web applications without having to struggle with CSS and Javascript. Being written entirely in C#, it empowers you to adapt or extend the framework.
-        </MudText>
-        <div class="d-flex py-4">
-            <MudButton Color="Color.Default" Variant="Variant.Filled" DisableElevation="true" Size="Size.Large" Class="mr-4">Get started</MudButton>
-            <MudButton Color="Color.Primary" Variant="Variant.Filled" DisableElevation="true" Size="Size.Large">Read more</MudButton>
+<LandingSection>
+    <div style="max-width:570px;">
+            <MudText Typo="Typo.h1">The Blazor</MudText>
+            <MudText Typo="Typo.h1" Inline="true" Class="landing-h1-gradient">Component </MudText>
+            <MudText Typo="Typo.h1" Inline="true">Library</MudText>
+            <MudText Typo="Typo.h1">You always wanted</MudText>
+            <div class="pl-1 my-4">
+                <MudText Typo="Typo.subtitle1" Class="mud-text-secondary">
+                    Trusted by half a million users, from hobby developers to large enterprises. Use MudBlazor to rapidly build amazing web applications without leaving your loved C# language and toolchain.
+                </MudText>
+            </div>
+            <div class="d-flex py-4">
+                <MudButton Color="Color.Primary" Variant="Variant.Filled" DisableElevation="true" Size="Size.Large">Get started</MudButton>
+            </div>
         </div>
-    </div>
-</MudContainer>
-<MudContainer MaxWidth="MaxWidth.Large" Class="d-flex flex-column justify-center">
+</LandingSection>
+<LandingSection>
+    <MudText Typo="Typo.h5">Our Sponsors</MudText>
+    <MudText Typo="Typo.subtitle1" Class="mud-text-secondary">
+        The continued development and maintenance of MudBlazor is secured by our sponsors.
+    </MudText>
+    <MudGrid Spacing="5">
+        <MudItem xs="6" sm="4">
+            <Sponsor Name="Adaris" Image="Adaris.png" Website="https://www.adaris.ch/" />
+        </MudItem>
+        <MudItem xs="6" sm="4">
+            <Sponsor Name="TimeStatement" Image="TimeStatement.png" Website="https://timestatement.com/"  />
+        </MudItem>
+        <MudItem xs="6" sm="4">
+            <Sponsor Name="JetBrains" Image="JetBrains.png" Website="https://www.jetbrains.com/?from=MudBlazor" />
+        </MudItem>
+    </MudGrid>
+</LandingSection>
+<LandingSection>
+    <MudGrid Spacing="0">
+        <MudItem xs="12" sm="6">
+            <MudText Typo="Typo.h6" Color="Color.Primary">Unified platform</MudText>
+            <MudText Typo="Typo.h5">MudBlazor is more than a library</MudText>
+            <MudText Typo="Typo.subtitle1" Class="mud-text-secondary mb-4">
+                We are heading for the creation of an entire ecosystem. An ecosystem that makes it easier to develop feature-rich Blazor applications. A system where knowledge, components, can be shared and promoted.
+            </MudText>
+        </MudItem>
+        <MudItem xs="12" sm="6"></MudItem>
+        <MudItem xs="12" sm="6" md="4">
+            <MudText Typo="Typo.subtitle2">TryMudBlazor</MudText>
+            <MudText Typo="Typo.body1">Write <MudLink Href="http://try.mudblazor.com/" Underline="Underline.None" Typo="Typo.inherit">code online</MudLink> with Blazor and MudBlazor components entirely in the browser. Test and experiment anytime, anywhere.</MudText>
+        </MudItem>
+        <MudItem xs="12" sm="6" md="4">
+            <MudText Typo="Typo.subtitle2">MudStore</MudText>
+            <MudText Typo="Typo.body1">coming soon</MudText>
+        </MudItem>
+        <MudItem xs="12" sm="6" md="4">
+            <MudText Typo="Typo.subtitle2">MudAcademy</MudText>
+            <MudText Typo="Typo.body1">coming soon</MudText>
+        </MudItem>
+    </MudGrid>
+    
+</LandingSection>
+
+
+@*<svg id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080" style="position: absolute;height: 100vh;top: 0;right: 0;"><defs><style>.cls-1{fill:#7967f3;}.cls-2{fill:#5e49e7;}.cls-3{opacity:0.05;}</style></defs><polygon class="cls-1" points="0 1080 1920 397.34 1920 737.57 1348.56 1080 0 1080"/><polygon class="cls-2" points="1655.09 491.53 1247.83 0 1546.94 0 1920 254.51 1920 397.34 1655.09 491.53"/><polyline class="cls-3" points="1655.09 491.53 1617.44 446.09 1920 379.87 1920 397.34"/><polyline class="cls-3" points="1655.09 491.53 1609.29 436.26 1920 376.41 1920 397.34"/><polyline class="cls-3" points="1655.09 491.53 1599.05 423.9 1920 372.23 1920 397.34"/></svg>*@
+@*<svg id="Layer_4" data-name="Layer 4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1974.77 2048" style="position: absolute;height: 100vh;top: 0;right: 0;">
+    <defs>
+        <style>.cls-1{fill:#7967f3;}.cls-2{fill:#5e49e7;}.cls-3{opacity:0.05;}</style>
+    </defs>
+    <polygon class="cls-1" points="0 2048 1974.77 794.97 1974.77 1475.68 1641.16 2048 0 2048"/>
+    <polygon class="cls-2" points="1444.76 1131.27 629.94 0 1228.39 0 1974.77 509.21 1974.77 794.97 1444.76 1131.27"/>
+    <polyline class="cls-3" points="1444.76 1131.27 1379.3 1040.36 1974.77 760.02 1974.77 794.97"/>
+    <polyline class="cls-3" points="1444.76 1131.27 1365.13 1020.68 1974.77 753.09 1974.77 794.97"/>
+    <polyline class="cls-3" points="1444.76 1131.27 1347.33 995.97 1974.77 744.72 1974.77 794.97"/>
+</svg>*@
+@*<MudContainer MaxWidth="MaxWidth.Large" Class="d-flex flex-column justify-center">
     <div style="max-width:530px;">
         <MudText Typo="Typo.h1">MudBlazor</MudText>
         <MudText Typo="Typo.h1" Inline="true">Is </MudText>
@@ -29,24 +85,9 @@
             <MudButton Color="Color.Primary" Variant="Variant.Filled" DisableElevation="true" Size="Size.Large">Read more</MudButton>
         </div>
     </div>
-</MudContainer>
+</MudContainer>*@
 <MudContainer MaxWidth="MaxWidth.Large">
-    <MudText Typo="Typo.h3">Our Sponsors</MudText>
-    <MudText Typo="Typo.body1">
-        The continued development and maintenance of MudBlazor is secured by our sponsors.
-    </MudText>
-    <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="mt-6 mb-10" DisableElevation="true">Become a sponsor</MudButton>
-    <MudGrid Spacing="5">
-        <MudItem xs="6" sm="4">
-            <Sponsor Name="Adaris" Image="Adaris.png" Website="https://www.adaris.ch/" />
-        </MudItem>
-        <MudItem xs="6" sm="4">
-            <Sponsor Name="TimeStatement" Image="TimeStatement.png" Website="https://timestatement.com/"  />
-        </MudItem>
-        <MudItem xs="6" sm="4">
-            <Sponsor Name="JetBrains" Image="JetBrains.png" Website="https://www.jetbrains.com/?from=MudBlazor" />
-        </MudItem>
-    </MudGrid>
+    
 </MudContainer>
 <MudContainer MaxWidth="MaxWidth.Large" Class="d-flex flex-column justify-center">
     
