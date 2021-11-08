@@ -54,7 +54,7 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Components" Version="6.0.0-rc.2.*" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="6.0.0-rc.2.*" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="6.0.0.*" />
   </ItemGroup>
 
   <Target Name="ToolRestore">
