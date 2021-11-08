@@ -46,7 +46,7 @@ namespace MudBlazor
         /// Sets the position of the text to the start (Left in LTR and right in RTL).
         /// </summary>
         [ExcludeFromCodeCoverage]
-        [Obsolete("AlertTextPosition is obsolete. Use ContentAlignment instead!", false)]
+        [Obsolete("Use ContentAlignment instead.", true)]
         [Parameter]
         public AlertTextPosition AlertTextPosition
         {

@@ -40,21 +40,21 @@ namespace MudBlazor
         /// Set the anchor origin point to determen where the popover will open from.
         /// </summary>
         [ExcludeFromCodeCoverage]
-        [Obsolete("Direction is obsolete. Use AnchorOrigin or TransformOrigin instead!", false)]
+        [Obsolete("Use AnchorOrigin or TransformOrigin instead.", true)]
         [Parameter] public Direction Direction { get; set; } = Direction.Bottom;
 
         /// <summary>
         /// If true, the Autocomplete menu will open either before or after the input (left/right).
         /// </summary>
         [ExcludeFromCodeCoverage]
-        [Obsolete("OffsetX is obsolete. Use AnchorOrigin or TransformOrigin instead!", false)]
+        [Obsolete("Use AnchorOrigin or TransformOrigin instead.", true)]
         [Parameter] public bool OffsetX { get; set; }
 
         /// <summary>
         /// If true, the Autocomplete menu will open either before or after the input (top/bottom).
         /// </summary>
         [ExcludeFromCodeCoverage]
-        [Obsolete("OffsetY is obsolete. Use AnchorOrigin or TransformOrigin instead!", false)]
+        [Obsolete("Use AnchorOrigin or TransformOrigin instead.", true)]
         [Parameter] public bool OffsetY { get; set; }
 
         /// <summary>

@@ -98,7 +98,7 @@ namespace MudBlazor
         /// If true, instead of positioning the menu at the left upper corner, position at the exact cursor location.
         /// This makes sense for larger activators
         /// </summary>
-        [Obsolete("Obsolete.  Replace with `PositionAtCursor`.")]
+        [Obsolete("Use PositionAtCursor instead.",true)]
         [Parameter]
         public bool PositionAtCurser
         {
@@ -131,21 +131,21 @@ namespace MudBlazor
         /// Sets the direction the select menu will start from relative to its parent.
         /// </summary>
         [ExcludeFromCodeCoverage]
-        [Obsolete("Direction is obsolete. Use AnchorOrigin or TransformOrigin instead!", false)]
+        [Obsolete("Use AnchorOrigin or TransformOrigin instead.", true)]
         [Parameter] public Direction Direction { get; set; } = Direction.Bottom;
 
         /// <summary>
         /// If true, the select menu will open either before or after the input depending on the direction.
         /// </summary>
         [ExcludeFromCodeCoverage]
-        [Obsolete("OffsetY is obsolete. Use AnchorOrigin or TransformOrigin instead!", false)]
+        [Obsolete("Use AnchorOrigin or TransformOrigin instead.", true)]
         [Parameter] public bool OffsetY { get; set; }
 
         /// <summary>
         /// If true, the select menu will open either above or bellow the input depending on the direction.
         /// </summary>
         [ExcludeFromCodeCoverage]
-        [Obsolete("OffsetX is obsolete. Use AnchorOrigin or TransformOrigin instead!", false)]
+        [Obsolete("Use AnchorOrigin or TransformOrigin instead.", true)]
         [Parameter] public bool OffsetX { get; set; }
 
         /// <summary>
@@ -171,27 +171,27 @@ namespace MudBlazor
         #region Obsolete members from previous MudButtonBase inherited structure
 
         [ExcludeFromCodeCoverage]
-        [Obsolete("Obsolete. Linking is not supported. MudMenu is not a MudBaseButton anymore.")]
+        [Obsolete("Linking is not supported. MudMenu is not a MudBaseButton anymore.", true)]
         [Parameter] public string Link { get; set; }
 
         [ExcludeFromCodeCoverage]
-        [Obsolete("Obsolete. Linking is not supported. MudMenu is not a MudBaseButton anymore.")]
+        [Obsolete("Linking is not supported. MudMenu is not a MudBaseButton anymore.", true)]
         [Parameter] public string Target { get; set; }
 
         [ExcludeFromCodeCoverage]
-        [Obsolete("Obsolete. MudMenu is not a MudBaseButton anymore.")]
+        [Obsolete("MudMenu is not a MudBaseButton anymore.", true)]
         [Parameter] public string HtmlTag { get; set; } = "button";
 
         [ExcludeFromCodeCoverage]
-        [Obsolete("Obsolete. MudMenu is not a MudBaseButton anymore.")]
+        [Obsolete("MudMenu is not a MudBaseButton anymore.", true)]
         [Parameter] public ButtonType ButtonType { get; set; }
 
         [ExcludeFromCodeCoverage]
-        [Obsolete("Obsolete. MudMenu is not a MudBaseButton anymore.")]
+        [Obsolete("MudMenu is not a MudBaseButton anymore.", true)]
         [Parameter] public ICommand Command { get; set; }
 
         [ExcludeFromCodeCoverage]
-        [Obsolete("Obsolete. MudMenu is not a MudBaseButton anymore.")]
+        [Obsolete("MudMenu is not a MudBaseButton anymore.", true)]
         [Parameter] public object CommandParameter { get; set; }
 
         #endregion

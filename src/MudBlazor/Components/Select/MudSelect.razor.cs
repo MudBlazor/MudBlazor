@@ -440,21 +440,21 @@ namespace MudBlazor
         /// Sets the direction the Select menu should open.
         /// </summary>
         [ExcludeFromCodeCoverage]
-        [Obsolete("Direction is obsolete. Use AnchorOrigin or TransformOrigin instead!", false)]
+        [Obsolete("Use AnchorOrigin or TransformOrigin instead.", true)]
         [Parameter] public Direction Direction { get; set; } = Direction.Bottom;
 
         /// <summary>
         /// If true, the Select menu will open either before or after the input (left/right).
         /// </summary>
         [ExcludeFromCodeCoverage]
-        [Obsolete("OffsetX is obsolete. Use AnchorOrigin or TransformOrigin instead!", false)]
+        [Obsolete("Use AnchorOrigin or TransformOrigin instead.", true)]
         [Parameter] public bool OffsetX { get; set; }
 
         /// <summary>
         /// If true, the Select menu will open either before or after the input (top/bottom).
         /// </summary>
         /// [ExcludeFromCodeCoverage]
-        [Obsolete("OffsetY is obsolete. Use AnchorOrigin or TransformOrigin instead!", false)]
+        [Obsolete("Use AnchorOrigin or TransformOrigin instead.", true)]
         [Parameter] public bool OffsetY { get; set; }
 
         /// <summary>
@@ -910,7 +910,7 @@ namespace MudBlazor
         }
 
         [ExcludeFromCodeCoverage]
-        [Obsolete("Use Clear() instead")]
+        [Obsolete("Use Clear instead.", true)]
         public Task ClearAsync() => Clear();
 
         /// <summary>
