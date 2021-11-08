@@ -178,30 +178,11 @@ namespace MudBlazor
 
             //Layout Properties
             theme.AppendLine($"--{LayoutProperties}-default-borderradius: {Theme.LayoutProperties.DefaultBorderRadius};");
-#pragma warning disable CS0612 // Type or member is obsolete
-            if (!string.IsNullOrEmpty(Theme.LayoutProperties.DrawerWidth))
-            {
-                theme.AppendLine($"--{LayoutProperties}-drawer-width-left: {Theme.LayoutProperties.DrawerWidth};");
-                theme.AppendLine($"--{LayoutProperties}-drawer-width-right: {Theme.LayoutProperties.DrawerWidth};");
-            }
-#pragma warning restore CS0612 // Type or member is obsolete
-            else
-            {
-                theme.AppendLine($"--{LayoutProperties}-drawer-width-left: {Theme.LayoutProperties.DrawerWidthLeft};");
-                theme.AppendLine($"--{LayoutProperties}-drawer-width-right: {Theme.LayoutProperties.DrawerWidthRight};");
-            }
+            theme.AppendLine($"--{LayoutProperties}-drawer-width-left: {Theme.LayoutProperties.DrawerWidthLeft};");
+            theme.AppendLine($"--{LayoutProperties}-drawer-width-right: {Theme.LayoutProperties.DrawerWidthRight};");
             theme.AppendLine($"--{LayoutProperties}-drawer-width-mini-left: {Theme.LayoutProperties.DrawerMiniWidthLeft};");
             theme.AppendLine($"--{LayoutProperties}-drawer-width-mini-right: {Theme.LayoutProperties.DrawerMiniWidthRight};");
-#pragma warning disable CS0612 // Type or member is obsolete
-            if (!string.IsNullOrEmpty(Theme.LayoutProperties.AppbarMinHeight))
-            {
-                theme.AppendLine($"--{LayoutProperties}-appbar-height: {Theme.LayoutProperties.AppbarMinHeight};");
-            }
-#pragma warning restore CS0612 // Type or member is obsolete
-            else
-            {
-                theme.AppendLine($"--{LayoutProperties}-appbar-height: {Theme.LayoutProperties.AppbarHeight};");
-            }
+            theme.AppendLine($"--{LayoutProperties}-appbar-height: {Theme.LayoutProperties.AppbarHeight};");
 
             //Breakpoint
             //theme.AppendLine($"--{Breakpoint}-xs: {Theme.Breakpoints.xs};");

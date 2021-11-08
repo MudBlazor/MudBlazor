@@ -64,7 +64,7 @@ namespace MudBlazor
         /// </summary>
         [ExcludeFromCodeCoverage]
         [Parameter]
-        [Obsolete("Obsolete, use AdornmentIcon")]
+        [Obsolete("Use AdornmentIcon instead.", true)]
         public string InputIcon
         {
             get { return AdornmentIcon; }
@@ -161,7 +161,7 @@ namespace MudBlazor
         /// </summary>
         [ExcludeFromCodeCoverage]
         [Parameter]
-        [Obsolete("Obsolete, use Variant")]
+        [Obsolete("Use Variant instead.", true)]
         public Variant InputVariant
         {
             get { return Variant; }
