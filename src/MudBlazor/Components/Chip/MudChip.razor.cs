@@ -45,7 +45,7 @@ namespace MudBlazor
             {
                 return SelectedColor;
             }
-            else if(IsSelected && SelectedColor == Color.Inherit)
+            else if (IsSelected && SelectedColor == Color.Inherit)
             {
                 return Color;
             }

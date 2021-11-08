@@ -115,7 +115,8 @@ namespace MudBlazor
 
         [ExcludeFromCodeCoverage]
         [Obsolete("ActivatedValueChanged is obsolete. Use SelectedValueChanged!", false)]
-        [Parameter] public EventCallback<T> ActivatedValueChanged
+        [Parameter]
+        public EventCallback<T> ActivatedValueChanged
         {
             get => SelectedValueChanged;
             set => SelectedValueChanged = value;

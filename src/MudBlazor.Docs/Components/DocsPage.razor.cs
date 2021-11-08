@@ -4,10 +4,10 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Docs.Models;
-using System.Threading.Tasks;
-using System.Linq;
 using MudBlazor.Docs.Services;
 
 namespace MudBlazor.Docs.Components

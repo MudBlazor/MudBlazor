@@ -206,7 +206,7 @@ namespace MudBlazor.UnitTests.Components
             // select elements needed for the test
             var checkbox = comp.Instance;
             checkbox.Checked.Should().Be(null);
-            
+
             comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = "Escape", Type = "keydown", });
             comp.WaitForAssertion(() => checkbox.Checked.Should().Be(false));
 

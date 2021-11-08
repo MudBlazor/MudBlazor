@@ -362,7 +362,7 @@ namespace MudBlazor
         {
             try
             {
-                if (Form==null)
+                if (Form == null)
                 {
                     errors.Add("Form is null, unable to validate with model!");
                     return;

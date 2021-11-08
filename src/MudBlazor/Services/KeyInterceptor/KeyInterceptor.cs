@@ -57,20 +57,21 @@ namespace MudBlazor.Services
             try
             {
                 await _jsRuntime.InvokeVoidAsync($"mudKeyInterceptor.disconnect", _elementId);
-            } catch (Exception) {  /*ignore*/ }
+            }
+            catch (Exception) {  /*ignore*/ }
             _isObserving = false;
         }
 
         [JSInvokable]
         public void OnKeyDown(KeyboardEventArgs args)
         {
-            KeyDown?.Invoke( args);
+            KeyDown?.Invoke(args);
         }
 
         [JSInvokable]
         public void OnKeyUp(KeyboardEventArgs args)
         {
-            KeyUp?.Invoke( args);
+            KeyUp?.Invoke(args);
         }
 
         public event KeyboardEvent KeyDown;

@@ -13,7 +13,7 @@ using Microsoft.JSInterop;
 
 namespace MudBlazor.Services
 {
-  
+
     public class BreakpointService :
         ResizeBasedService<BreakpointService, BreakpointServiceSubscriptionInfo, Breakpoint, ResizeOptions>,
         IBreakpointService
@@ -216,7 +216,7 @@ namespace MudBlazor.Services
         /// <param name="reference">The reference breakpoint (xs,sm,md,lg,xl)</param>
         /// <returns>True if the media size is meet, false otherwise. For instance if the reference size is sm and the breakpoint is SmAndSmaller, this method returns true</returns>
         bool IsMediaSize(Breakpoint breakpoint, Breakpoint reference);
-        
+
         /// <summary>
         /// Get the current breakpoint
         /// </summary>

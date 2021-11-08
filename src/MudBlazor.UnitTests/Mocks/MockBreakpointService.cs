@@ -71,7 +71,7 @@ namespace MudBlazor.UnitTests.Mocks
 
         public async Task<Breakpoint> GetBreakpoint() => GetBreakpointInternal();
 
-        public Task<BreakpointServiceSubscribeResult> Subscribe(Action<Breakpoint> callback) => Task.FromResult(new BreakpointServiceSubscribeResult(Guid.NewGuid(),Breakpoint.Sm));
+        public Task<BreakpointServiceSubscribeResult> Subscribe(Action<Breakpoint> callback) => Task.FromResult(new BreakpointServiceSubscribeResult(Guid.NewGuid(), Breakpoint.Sm));
         public Task<BreakpointServiceSubscribeResult> Subscribe(Action<Breakpoint> callback, ResizeOptions options) => Task.FromResult(new BreakpointServiceSubscribeResult(Guid.NewGuid(), Breakpoint.Sm));
         public Task<bool> Unsubscribe(Guid subscriptionId) => Task.FromResult(true);
 

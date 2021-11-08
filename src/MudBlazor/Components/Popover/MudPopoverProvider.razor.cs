@@ -50,7 +50,7 @@ namespace MudBlazor
                 Service.FragmentsChanged -= Service_FragmentsChanged;
                 _isConnectedToSerivce = false;
             }
-            else if(IsEnabled == true && _isConnectedToSerivce == false)
+            else if (IsEnabled == true && _isConnectedToSerivce == false)
             {
                 Service.FragmentsChanged += Service_FragmentsChanged;
                 _isConnectedToSerivce = true;

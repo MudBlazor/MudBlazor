@@ -715,7 +715,7 @@ namespace MudBlazor.UnitTests.Components
 
             // ensure it's marked as required
             datePickerComponent.WaitForAssertion(() => datePickerInstance.Required.Should().BeTrue($"{typeof(DatePickerValidationTest).FullName}: {nameof(MudDatePicker)} is not marked as required."));
-            
+
             // get the form's instance
             var formInstance = datePickerComponent.FindComponent<MudForm>().Instance;
 

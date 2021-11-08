@@ -22,12 +22,12 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<ChipOnClickTest>();
             // print the generated html
             Console.WriteLine(comp.Markup);
-            
+
             // chip should have mud-clickable and mud-ripple classes
             var chip = comp.Find("div.mud-chip");
             chip.ClassName.Should().Contain("mud-clickable");
             chip.ClassName.Should().Contain("mud-ripple");
-            
+
             // click on chip
             chip.Click();
 
@@ -43,12 +43,12 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<ChipOnClickTest>();
             // print the generated html
             Console.WriteLine(comp.Markup);
-            
+
             // chip should have mud-clickable and mud-ripple classes
             var chip = comp.Find("div.mud-chip");
             chip.ClassName.Should().Contain("mud-clickable");
             chip.ClassName.Should().Contain("mud-ripple");
-            
+
             // click on close button
             comp.Find("button.mud-chip-close-button").Click();
 
@@ -57,4 +57,4 @@ namespace MudBlazor.UnitTests.Components
         }
     }
 }
-    
+

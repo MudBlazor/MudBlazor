@@ -11,12 +11,12 @@ namespace MudBlazor
     /// </summary>
     public partial class MudSelectItem<T> : MudBaseSelectItem, IDisposable
     {
-        private String GetCssClasses() =>  new CssBuilder()
+        private String GetCssClasses() => new CssBuilder()
             .AddClass(Class)
             .Build();
 
         private IMudSelect _parent;
-        internal string ItemId { get; } = "_"+Guid.NewGuid().ToString().Substring(0,8);
+        internal string ItemId { get; } = "_" + Guid.NewGuid().ToString().Substring(0, 8);
 
         /// <summary>
         /// The parent select component
@@ -46,7 +46,7 @@ namespace MudBlazor
             }
         }
 
-        private IMudShadowSelect  _shadowParent;
+        private IMudShadowSelect _shadowParent;
         private bool _isSelected;
 
         [CascadingParameter]

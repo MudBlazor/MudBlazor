@@ -45,7 +45,7 @@ namespace MudBlazor.UnitTests.Components
             {
                 ctx.Dispose();
             }
-            catch(Exception) { /*ignore, may fail because of dispose in the middle of a (second) render pass*/ }
+            catch (Exception) { /*ignore, may fail because of dispose in the middle of a (second) render pass*/ }
         }
     }
 }

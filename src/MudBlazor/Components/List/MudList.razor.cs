@@ -115,7 +115,7 @@ namespace MudBlazor
         internal void Register(MudListItem item)
         {
             _items.Add(item);
-            if (CanSelect && SelectedValue!=null && object.Equals(item.Value, SelectedValue))
+            if (CanSelect && SelectedValue != null && object.Equals(item.Value, SelectedValue))
             {
                 item.SetSelected(true);
                 _selectedItem = item;
@@ -149,7 +149,7 @@ namespace MudBlazor
             _selectedItem = null; // <-- for now, we'll see which item matches the value below
             foreach (var listItem in _items.ToArray())
             {
-                var isSelected = value!=null && object.Equals(value, listItem.Value);
+                var isSelected = value != null && object.Equals(value, listItem.Value);
                 listItem.SetSelected(isSelected);
                 if (isSelected)
                     _selectedItem = listItem;
@@ -158,7 +158,7 @@ namespace MudBlazor
             {
                 childList.SetSelectedValue(value);
                 if (childList.SelectedItem != null)
-                    _selectedItem= childList.SelectedItem;
+                    _selectedItem = childList.SelectedItem;
             }
             SelectedItemChanged.InvokeAsync(_selectedItem).AndForget();
             ParentList?.SetSelectedValue(value);

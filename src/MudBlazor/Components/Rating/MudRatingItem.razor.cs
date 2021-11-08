@@ -111,7 +111,7 @@ namespace MudBlazor
         // rating item lose hover
         private Task HandleMouseOut(MouseEventArgs e)
         {
-            if (Disabled || Rating == null) 
+            if (Disabled || Rating == null)
                 return Task.CompletedTask;
 
             IsActive = false;

@@ -1281,12 +1281,12 @@ namespace MudBlazor.UnitTests.Components
             {
                 p.Add(x => x.Variant, PickerVariant.Inline);
             });
-            
+
             await comp.Instance.OpenPicker();
 
             Console.WriteLine(comp.Markup);
 
-            var providerNode =  comp.Find(".mud-popover-provider");
+            var providerNode = comp.Find(".mud-popover-provider");
             providerNode.Children.Should().ContainSingle();
 
             var popoverNode = providerNode.Children[0];

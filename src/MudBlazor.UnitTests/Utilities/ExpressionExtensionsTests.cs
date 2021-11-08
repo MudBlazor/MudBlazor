@@ -1,8 +1,8 @@
-﻿using FluentAssertions;
+﻿using System;
+using System.Linq.Expressions;
+using FluentAssertions;
 using MudBlazor.Utilities;
 using NUnit.Framework;
-using System.Linq.Expressions;
-using System;
 
 namespace UtilityTests
 {
@@ -31,7 +31,7 @@ namespace UtilityTests
         public void GetFullPathOfMemberTest()
         {
             var model = new TestClass();
-            
+
             Expression<Func<string>> expression = () => model.Field1;
 
             expression.GetFullPathOfMember().Should().Be("Field1");

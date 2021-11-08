@@ -1,4 +1,4 @@
-using MudBlazor.Utilities;
+﻿using MudBlazor.Utilities;
 
 namespace MudBlazor
 {

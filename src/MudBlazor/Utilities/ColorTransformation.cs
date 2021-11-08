@@ -11,7 +11,7 @@ namespace MudBlazor.Utilities
     /// <summary>
     /// Static methods for transforming argb spaces and argb values.
     /// </summary>
-    [ExcludeFromCodeCoverage] 
+    [ExcludeFromCodeCoverage]
     [Obsolete("ColorTransformation is now obsolete. Use MudColor instead", true)]
     public static class ColorTransformation
     {

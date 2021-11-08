@@ -61,7 +61,7 @@ namespace MudBlazor
 
         public async Task<T> GetReturnValueAsync<T>()
         {
-            var result=await Result;
+            var result = await Result;
             try
             {
                 return (T)result.Data;

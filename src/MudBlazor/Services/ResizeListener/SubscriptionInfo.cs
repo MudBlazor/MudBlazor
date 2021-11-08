@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace MudBlazor.Services
 {
-    public class SubscriptionInfo<TAction,TOption>
+    public class SubscriptionInfo<TAction, TOption>
     {
         private Dictionary<Guid, Action<TAction>> _subscriptions;
         public TOption Option { get; init; }
@@ -48,7 +48,7 @@ namespace MudBlazor.Services
         }
     }
 
-    public class ResizeServiceSubscriptionInfo : SubscriptionInfo<BrowserWindowSize,ResizeOptions>
+    public class ResizeServiceSubscriptionInfo : SubscriptionInfo<BrowserWindowSize, ResizeOptions>
     {
         public ResizeServiceSubscriptionInfo(ResizeOptions options) : base(options)
         {

@@ -5,10 +5,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Reflection;
-using MudBlazor.Docs.Models;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
+using MudBlazor.Docs.Models;
 
 namespace MudBlazor.Docs.Pages.Features.Icons
 {
@@ -98,7 +98,7 @@ namespace MudBlazor.Docs.Pages.Features.Icons
             {
                 CustomFileFormats.Add(new MudIcons(prop.Name, prop.GetValue(fileFormats).ToString(), IconType.FileFormats));
             }
-                
+
             CustomAll.AddRange(CustomFileFormats);
 
             var uncategorized = new Uncategorized();
@@ -107,7 +107,7 @@ namespace MudBlazor.Docs.Pages.Features.Icons
             {
                 CustomUncategorized.Add(new MudIcons(prop.Name, prop.GetValue(uncategorized).ToString(), IconType.Uncategorized));
             }
-                
+
             CustomAll.AddRange(CustomUncategorized);
 
             await Task.WhenAll();

@@ -20,7 +20,7 @@ namespace MudBlazor
     }
 
     public class Default : BaseTypography
-    { 
+    {
         public Default()
         {
             FontFamily = new[] { "Roboto", "Helvetica", "Arial", "sans-serif" };
