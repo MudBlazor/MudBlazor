@@ -304,6 +304,38 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task MudPopoverService_Initialize_Catch_JSDisconnectedException()
+        {
+            var mock = new Mock<IJSRuntime>();
+
+            mock.Setup(x =>
+           x.InvokeAsync<IJSVoidResult>(
+               "mudPopover.initilize",
+               It.Is<object[]>(x => x.Length == 2 && (string)x[0] == "mudblazor-main-content" && (int)x[1] == 0))).ThrowsAsync(new JSDisconnectedException("JSDisconnectedException")).Verifiable();
+            {
+                var service = new MudPopoverService(mock.Object);
+                await service.InitializeIfNeeded();
+            }
+            mock.Verify();
+        }
+
+        [Test]
+        public async Task MudPopoverService_Initialize_Catch_TaskCancelledException()
+        {
+            var mock = new Mock<IJSRuntime>();
+
+            mock.Setup(x =>
+           x.InvokeAsync<IJSVoidResult>(
+               "mudPopover.initilize",
+               It.Is<object[]>(x => x.Length == 2 && (string)x[0] == "mudblazor-main-content" && (int)x[1] == 0))).ThrowsAsync(new TaskCanceledException()).Verifiable();
+            {
+                var service = new MudPopoverService(mock.Object);
+                await service.InitializeIfNeeded();
+            }
+            mock.Verify();
+        }
+
+        [Test]
         public async Task MudPopoverService_Constructor_OptionWithCustomClass()
         {
             var mock = new Mock<IJSRuntime>();

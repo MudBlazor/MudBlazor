@@ -50,7 +50,7 @@ namespace MudBlazor
         /// if true, multiple values can be selected via checkboxes which are automatically shown in the tree view.
         /// </summary>
         [ExcludeFromCodeCoverage]
-        [Obsolete("CanSelect is obsolete. Use MultiSelection!", false)]
+        [Obsolete("Use MultiSelection instead.", true)]
         [Parameter]
         public bool CanSelect
         {
@@ -59,7 +59,7 @@ namespace MudBlazor
         }
 
         [ExcludeFromCodeCoverage]
-        [Obsolete("CanActivate is obsolete. Automaticly activates when using SelectedValue!", false)]
+        [Obsolete("MudTreeView now automaticly activates when using SelectedValue.", true)]
         [Parameter] public bool CanActivate { get; set; }
 
         /// <summary>
@@ -76,7 +76,7 @@ namespace MudBlazor
         /// Hover effect for item's on mouse-over.
         /// </summary>
         [ExcludeFromCodeCoverage]
-        [Obsolete("CanHover is obsolete. Use Hover!", false)]
+        [Obsolete("Use Hover instead.", true)]
         [Parameter]
         public bool CanHover
         {
@@ -114,7 +114,7 @@ namespace MudBlazor
         [Parameter] public HashSet<T> Items { get; set; }
 
         [ExcludeFromCodeCoverage]
-        [Obsolete("ActivatedValueChanged is obsolete. Use SelectedValueChanged!", false)]
+        [Obsolete("Use SelectedValueChanged instead.", true)]
         [Parameter] public EventCallback<T> ActivatedValueChanged
         {
             get => SelectedValueChanged;

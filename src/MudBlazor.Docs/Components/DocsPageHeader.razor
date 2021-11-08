@@ -3,22 +3,24 @@
 @using Microsoft.AspNetCore.Components
 @using MudBlazor
 @using MudBlazor.Docs.Models
-@using Toolbelt.Blazor.HeadElement
 @using MudBlazor.Docs.Extensions
 @using System.Collections.Generic
 @using System.Text.RegularExpressions
 
 @*html head (for server prerendering)*@
-<Title>@(GetTitle())</Title>
-<Meta Name="keywords" Content="@GetKeywords()" />
-<Meta Property="og:title" Content="@GetTitle()" />
-<Meta Name="twitter:title" Content="@GetTitle()" />
-@if (!string.IsNullOrEmpty(SubTitle))
-{
-    <Meta Name="description" Content="@(SubTitle)" />
-    <Meta Property="og:description" Content="@SubTitle" />
-    <Meta Name="twitter:description" Content="@SubTitle" />
-}
+<PageTitle>@(GetTitle())</PageTitle>
+<HeadContent>
+    <meta Name="keywords" Content="@GetKeywords()" />
+    <meta Property="og:title" Content="@GetTitle()" />
+    <meta Name="twitter:title" Content="@GetTitle()" />
+    @if (!string.IsNullOrEmpty(SubTitle))
+    {
+        <meta Name="description" Content="@(SubTitle)" />
+        <meta Property="og:description" Content="@SubTitle" />
+        <meta Name="twitter:description" Content="@SubTitle" />
+    }
+</HeadContent>
+
 @if (IsApiPage && !string.IsNullOrEmpty(ComponentLink))
 {
     
@@ -62,7 +64,7 @@
 }
 @if (IsApiPage && !string.IsNullOrEmpty(ComponentLink))
 {
-    <Link Rel="canonical" Href="@($"https://mudblazor.com/{ComponentLink}")" />
+    <link Rel="canonical" Href="@($"https://mudblazor.com/{ComponentLink}")" />
     <DocsPageSection api-link-section>
         <SectionHeader Title="Pages" />
         <div class="docs-page-apilinks">

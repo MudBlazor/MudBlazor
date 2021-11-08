@@ -34,7 +34,7 @@ namespace MudBlazor
         /// Set true to hide the part of the pager which allows to change the page size.
         /// </summary>
         [ExcludeFromCodeCoverage]
-        [Obsolete("DisableRowsPerPage is obsolete. Use HideRowsPerPage instead!", false)]
+        [Obsolete("Use HideRowsPerPage instead.", true)]
         [Parameter] public bool DisableRowsPerPage { get => HideRowsPerPage; set => HideRowsPerPage = value; }
 
         /// <summary>

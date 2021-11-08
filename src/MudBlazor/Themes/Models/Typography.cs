@@ -138,6 +138,7 @@ namespace MudBlazor
             FontWeight = 500;
             LineHeight = 1.75;
             LetterSpacing = ".02857em";
+            TextTransform = "uppercase";
         }
     }
     public class Caption : BaseTypography
@@ -168,5 +169,6 @@ namespace MudBlazor
         public string FontSize { get; set; }
         public double LineHeight { get; set; }
         public string LetterSpacing { get; set; }
+        public string TextTransform { get; set; } = "none";
     }
 }
