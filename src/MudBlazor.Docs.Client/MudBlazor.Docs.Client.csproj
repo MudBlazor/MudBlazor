@@ -13,7 +13,7 @@
     <PackageReference Include="Blazor-Analytics" Version="3.9.0" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="6.0.0-rc.2.*" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="6.0.0.*" PrivateAssets="all" />
-    <PackageReference Include="System.Net.Http.Json" Version="6.0.0-rc.2.*" />
+    <PackageReference Include="System.Net.Http.Json" Version="6.0.0.*" />
   </ItemGroup>
 
   <ItemGroup>
