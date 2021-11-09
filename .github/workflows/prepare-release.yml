@@ -22,31 +22,31 @@ jobs:
     secrets:
       publish-profile: ${{ secrets.PUBLISH_MUDBLAZOR }}
       
-  pack-library:
-    name: Pack / Publish Library
-    needs: pipeline
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ./src
-    
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
-
-      - name: Setup dotnet version
-        uses: actions/setup-dotnet@v1
-        with: 
-          dotnet-version: 6.0.x
-          
+#  pack-library:
+#    name: Pack / Publish Library
+#    needs: pipeline
+#    runs-on: ubuntu-latest
+#    defaults:
+#      run:
+#        working-directory: ./src
+#    
+#    steps:
+#      - name: Checkout repository
+#        uses: actions/checkout@v2
+#
+#      - name: Setup dotnet version
+#        uses: actions/setup-dotnet@v1
+#        with: 
+#          dotnet-version: 6.0.x
+#          
 #      - name: Pack
 #        run: dotnet pack ./MudBlazor -c Release -o ${{env.DOTNET_ROOT}}/packages        
-      - name: Publish
-        run: dotnet nuget push ${{env.DOTNET_ROOT}}/packages/*.nupkg -k ${{ secrets.NUGET_KEY }} -s https://api.nuget.org/v3/index.json
+#      - name: Publish
+#        run: dotnet nuget push ${{env.DOTNET_ROOT}}/packages/*.nupkg -k ${{ secrets.NUGET_KEY }} -s https://api.nuget.org/v3/index.json
       
   update-trymudblazor:
     name: Update TryMudBlazor
-    needs: pack-library
+    needs: pipeline
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/master'
     steps:
