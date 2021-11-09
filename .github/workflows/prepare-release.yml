@@ -6,17 +6,14 @@ on:
       mud-version:
         description: 'The new MudBlazor version number'     
         required: true
-        default: '5.2.?'
-      dotnet-version:
-        required: true
-        default: '5.0.x'
+        default: '6.0.?'
   
 jobs:
   pipeline:
     name: Pipeline
     uses: MudBlazor/MudBlazor/.github/workflows/template-pipeline.yml@master
     with:
-      dotnet-version: ${{ github.event.inputs.dotnet-version }}
+      dotnet-version: 6.0.x
       publish-coverage: true
       deploy-web-app: true
       deploy-condition: 'refs/heads/master'
@@ -40,7 +37,7 @@ jobs:
       - name: Setup dotnet version
         uses: actions/setup-dotnet@v1
         with: 
-          dotnet-version: ${{ github.event.inputs.dotnet-version }}
+          dotnet-version: 6.0.x
           
       - name: Pack
         run: dotnet pack ./MudBlazor -c Release -o ${{env.DOTNET_ROOT}}/packages
@@ -60,5 +57,5 @@ jobs:
           token: ${{ secrets.WORKFLOW_TRIGGER_TOKEN }}
           repository: mudblazor/trymudblazor
           event-type: mudblazor-release
-          client-payload: '{"mud-version": "${{ github.event.inputs.mud-version }}", "dotnet-version": "${{ github.event.inputs.dotnet-version }}"}'
+          client-payload: '{"mud-version": "${{ github.event.inputs.mud-version }}", "dotnet-version": "6.0.x"}'
 
