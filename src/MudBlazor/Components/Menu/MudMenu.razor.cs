@@ -228,7 +228,7 @@ namespace MudBlazor
         // Sets the popover style ONLY when there is an activator
         private void SetPopoverStyle(MouseEventArgs args)
         {
-            _anchorOrigin = Origin.TopLeft;
+            AnchorOrigin = Origin.TopLeft;
             PopoverStyle = $"margin-top: {args?.OffsetY.ToPx()}; margin-left: {args?.OffsetX.ToPx()};";
         }
 
@@ -264,8 +264,5 @@ namespace MudBlazor
                 CloseMenu();
             }
         }
-
-        internal Origin _anchorOrigin;
-        internal Origin _transformOrigin;
     }
 }
