@@ -27,17 +27,18 @@
         pointer-events: none;
 
         .grid {
-            height: 100%;
+            height: 200%;
             align-content: end;
             position: absolute;
             width: 100%;
             display: grid;
-            grid-template-rows: repeat(auto-fill,64px);
+            grid-template-rows: repeat(auto-fill,128px);
         }
 
         .mud-landingpage-grid-background {
             display: flex;
             justify-content: flex-end;
+            flex-direction: column;
             align-items: center;
             position: absolute;
             width: 100%;
@@ -69,6 +70,12 @@
             width: 100%;
             height: 100%;
             transform: skewY(-12deg);
+
+            .stripe:first-child {
+                grid-row: 8;
+                grid-column: auto;
+                background: linear-gradient(82deg, rgba(89,74,226,1) 0%, rgba(116,103,239,1) 100%);
+            }
         }
     }
 }
