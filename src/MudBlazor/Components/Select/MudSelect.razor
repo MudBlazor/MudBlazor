@@ -22,7 +22,7 @@
                         @GetSelectedValuePresenter()
                     }
                 </MudInput>
-				<MudPopover Open=@(_isOpen) MaxHeight="@MaxHeight" AnchorOrigin="@_anchorOrigin" TransformOrigin="@_transformOrigin" Class="@PopoverClass" RelativeWidth="true">
+				<MudPopover Open=@(_isOpen) MaxHeight="@MaxHeight" AnchorOrigin="@AnchorOrigin" TransformOrigin="@TransformOrigin" Class="@PopoverClass" RelativeWidth="true">
 					<CascadingValue Value="@((IMudSelect)this)" IsFixed="true">
 						<MudList Clickable="true" Dense="@Dense" @bind-SelectedValue="_activeItemId">
                             @if (MultiSelection && SelectAll)
