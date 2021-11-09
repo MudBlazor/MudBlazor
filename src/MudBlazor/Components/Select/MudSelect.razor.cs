@@ -483,9 +483,6 @@ namespace MudBlazor
 
         public string _currentIcon { get; set; }
 
-        internal Origin _anchorOrigin;
-        internal Origin _transformOrigin;
-
         public async Task SelectOption(int index)
         {
             if (index < 0 || index >= _items.Count)

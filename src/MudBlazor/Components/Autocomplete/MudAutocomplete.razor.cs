@@ -211,9 +211,6 @@ namespace MudBlazor
 
         private MudInput<string> _elementReference;
 
-        internal Origin _anchorOrigin;
-        internal Origin _transformOrigin;
-
         public MudAutocomplete()
         {
             Adornment = Adornment.End;
