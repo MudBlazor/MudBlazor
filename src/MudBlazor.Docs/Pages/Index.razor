@@ -1,6 +1,10 @@
 ﻿@page "/"
 @layout LandingLayout
 
+
+<div class="mud-landingpage-top-section">
+
+
 <LandingSection>
     <div style="max-width:570px;">
             <MudText Typo="Typo.h1">The Blazor</MudText>
@@ -17,23 +21,20 @@
             </div>
         </div>
 </LandingSection>
-<LandingSection>
-    <MudText Typo="Typo.h5">Our Sponsors</MudText>
-    <MudText Typo="Typo.subtitle1" Class="mud-text-secondary">
-        The continued development and maintenance of MudBlazor is secured by our sponsors.
-    </MudText>
-    <MudGrid Spacing="5">
-        <MudItem xs="6" sm="4">
-            <Sponsor Name="Adaris" Image="Adaris.png" Website="https://www.adaris.ch/" />
-        </MudItem>
-        <MudItem xs="6" sm="4">
-            <Sponsor Name="TimeStatement" Image="TimeStatement.png" Website="https://timestatement.com/"  />
-        </MudItem>
-        <MudItem xs="6" sm="4">
-            <Sponsor Name="JetBrains" Image="JetBrains.png" Website="https://www.jetbrains.com/?from=MudBlazor" />
-        </MudItem>
-    </MudGrid>
-</LandingSection>
+ <div class="mud-landingpage-grid">
+     <div class="mud-landingpage-grid-background">
+         <div class="grid">
+             <div class="background">
+
+             </div>
+         </div>
+
+     </div>
+     <div class="mud-landingpage-grid-stripes">
+
+     </div>
+ </div>
+</div>
 <LandingSection>
     <MudText Typo="Typo.h5">Our Sponsors</MudText>
     <MudText Typo="Typo.subtitle1" Class="mud-text-secondary">

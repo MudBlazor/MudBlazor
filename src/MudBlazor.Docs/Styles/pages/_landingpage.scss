@@ -9,11 +9,66 @@
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
     }
-
-    
 }
 
+.mud-landingpage-top-section {
+    position: relative;
 
-.mud-landingpage-grid{
+    section {
+        position: relative;
+    }
 
+    .mud-landingpage-grid {
+        position: absolute;
+        width: 100%;
+        top: 0;
+        bottom: 0;
+        z-index: -1;
+        pointer-events: none;
+
+        .grid {
+            height: 100%;
+            align-content: end;
+            position: absolute;
+            width: 100%;
+            display: grid;
+            grid-template-rows: repeat(auto-fill,64px);
+        }
+
+        .mud-landingpage-grid-background {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            transform: skewY(-12deg);
+
+            .grid {
+                grid-template-columns: 1fr;
+                min-width: 0;
+            }
+
+            .background {
+                grid-row: 1/-4;
+                grid-row: 1/-1;
+                grid-column: 1/-1;
+                z-index: -1;
+                background-color: #F9FAFC;
+            }
+        }
+
+        .mud-landingpage-grid-stripes {
+            overflow: hidden;
+            display: flex;
+            justify-content: flex-end;
+            flex-direction: column;
+            -webkit-box-align: center;
+            align-items: center;
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            transform: skewY(-12deg);
+        }
+    }
 }
