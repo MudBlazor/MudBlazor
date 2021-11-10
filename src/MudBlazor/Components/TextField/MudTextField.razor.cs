@@ -59,6 +59,6 @@ namespace MudBlazor
         }
     }
 
-    [Obsolete]
+    [Obsolete("MudTextFieldString is no longer available.", true)]
     public class MudTextFieldString : MudTextField<string> { }
 }

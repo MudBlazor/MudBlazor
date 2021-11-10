@@ -1325,5 +1325,51 @@ namespace MudBlazor.UnitTests.Components
             items[1].Click();
             comp.WaitForAssertion(() => rowsPerPage.Should().Be(newRowsPerPage, "ValueChanged EventCallback fired correctly"));
         }
+
+        /// <summary>
+        /// Tests that clicking a row in a non-editable table does not set IsEditing to true and stop the table from updating.
+        /// </summary>
+        [Test]
+        public void TableRowClickNotEditable()
+        {
+            var comp = Context.RenderComponent<TableRowClickNotEditableTest>();
+
+            // Get table instance
+            var tableInstance = comp.FindComponent<MudTable<string>>().Instance;
+
+            // Check number of filtered items
+            tableInstance.GetFilteredItemsCount().Should().Be(3);
+
+            // Click row
+            var trs = comp.FindAll("tr");
+            trs[1].Click();
+
+            // Filter items
+            var searchString = comp.Find("#searchString");
+            searchString.Change("b");
+
+            // Make sure number of items has updated
+            tableInstance.GetFilteredItemsCount().Should().Be(1);
+        }
+        
+        /// Issue #3033
+        /// Tests changing RowsPerPage Parameter from code - Table should re-render new RowsPerPage parameter and parameter value should be set
+        /// </summary>
+        /// <returns></returns>
+        [Test]
+        public async Task RowsPerPageChangeValueFromCode()
+        {
+            var testComponent = Context.RenderComponent<TablePagerChangeRowsPerPageTest>();
+            var table = testComponent.FindComponent<MudTable<string>>().Instance;
+            var buttonComponent = testComponent.FindComponent<MudButton>();
+            testComponent.WaitForAssertion(() => table.RowsPerPage.Should().Be(35));
+            //Toggle the rows per page value from 35 to 10
+            buttonComponent.Find("button").Click();
+            testComponent.WaitForAssertion(() => table.RowsPerPage.Should().Be(10));
+            //Toggle the rows per page value from 10 back to  to 35
+            buttonComponent.Find("button").Click();
+            testComponent.WaitForAssertion(() => table.RowsPerPage.Should().Be(35));
+        }
+
     }
 }

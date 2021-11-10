@@ -440,21 +440,21 @@ namespace MudBlazor
         /// Sets the direction the Select menu should open.
         /// </summary>
         [ExcludeFromCodeCoverage]
-        [Obsolete("Direction is obsolete. Use AnchorOrigin or TransformOrigin instead!", false)]
+        [Obsolete("Use AnchorOrigin or TransformOrigin instead.", true)]
         [Parameter] public Direction Direction { get; set; } = Direction.Bottom;
 
         /// <summary>
         /// If true, the Select menu will open either before or after the input (left/right).
         /// </summary>
         [ExcludeFromCodeCoverage]
-        [Obsolete("OffsetX is obsolete. Use AnchorOrigin or TransformOrigin instead!", false)]
+        [Obsolete("Use AnchorOrigin or TransformOrigin instead.", true)]
         [Parameter] public bool OffsetX { get; set; }
 
         /// <summary>
         /// If true, the Select menu will open either before or after the input (top/bottom).
         /// </summary>
         /// [ExcludeFromCodeCoverage]
-        [Obsolete("OffsetY is obsolete. Use AnchorOrigin or TransformOrigin instead!", false)]
+        [Obsolete("Use AnchorOrigin or TransformOrigin instead.", true)]
         [Parameter] public bool OffsetY { get; set; }
 
         /// <summary>
@@ -482,46 +482,6 @@ namespace MudBlazor
         internal bool _isOpen;
 
         public string _currentIcon { get; set; }
-
-        internal Origin _anchorOrigin;
-        internal Origin _transformOrigin;
-
-#pragma warning disable CS0618 // This is for backwards compability until Obsolete is removed
-        [ExcludeFromCodeCoverage]
-        private void GetPopoverOrigins()
-        {
-            if (Direction != Direction.Bottom || OffsetY || OffsetX)
-            {
-                switch (Direction)
-                {
-                    case Direction.Bottom when OffsetY:
-                    case Direction.Top when OffsetY:
-                        _anchorOrigin = Origin.BottomCenter;
-                        _transformOrigin = Origin.TopCenter;
-                        break;
-                    case Direction.Top when !OffsetY:
-                        _anchorOrigin = Origin.BottomCenter;
-                        _transformOrigin = Origin.BottomCenter;
-                        break;
-                    case Direction.Start when OffsetX:
-                    case Direction.Left when OffsetX:
-                        _anchorOrigin = Origin.TopLeft;
-                        _transformOrigin = Origin.TopRight;
-                        break;
-                    case Direction.End when OffsetX:
-                    case Direction.Right when OffsetX:
-                        _anchorOrigin = Origin.TopRight;
-                        _transformOrigin = Origin.TopLeft;
-                        break;
-                }
-            }
-            else
-            {
-                _anchorOrigin = AnchorOrigin;
-                _transformOrigin = TransformOrigin;
-            }
-        }
-#pragma warning restore CS0618 // Type or member is obsolete
 
         public async Task SelectOption(int index)
         {
@@ -684,7 +644,6 @@ namespace MudBlazor
         protected override void OnParametersSet()
         {
             base.OnParametersSet();
-            GetPopoverOrigins(); // Just to keep Obsolete functional until removed.
             UpdateIcon();
         }
 
@@ -910,7 +869,7 @@ namespace MudBlazor
         }
 
         [ExcludeFromCodeCoverage]
-        [Obsolete("Use Clear() instead")]
+        [Obsolete("Use Clear instead.", true)]
         public Task ClearAsync() => Clear();
 
         /// <summary>

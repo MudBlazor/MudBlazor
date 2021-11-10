@@ -26,7 +26,7 @@ MudBlazor is an ambitious Material Design component framework for Blazor with an
 - [MudBlazor.com](https://mudblazor.com)
 - [Try.MudBlazor.com](https://try.mudblazor.com/)
 ## Prerequisites
-- [.NET 5.0](https://dotnet.microsoft.com/download/dotnet/5.0) for v5.x.x or [.NET Core 3.1](https://dotnet.microsoft.com/download/dotnet-core/3.1) for v2.x.x (legacy)
+- [.NET 6.0](https://dotnet.microsoft.com/download/dotnet/6.0) for v6.x.x or [.NET 5.0](https://dotnet.microsoft.com/download/dotnet/5.0) for v5.x.x (legacy)
 
 ## Contributing
 - Check out the [contribution guidelines](/CONTRIBUTING.md) if you want to help improve MudBlazor.
@@ -35,7 +35,7 @@ MudBlazor is an ambitious Material Design component framework for Blazor with an
 - Full installation instructions can be found at [mudblazor.com](https://mudblazor.com/getting-started/installation)  
 - Alternatively use one of our templates from the [MudBlazor.Templates](https://github.com/mudblazor/Templates) repo.
 ### Quick Installation Guide
-#### Common Configuration (Client-Side or Server-Side)
+
 Install Package
 ```
 dotnet add package MudBlazor
@@ -59,7 +59,7 @@ Add the following to `index.html` or `_Host.cshtml` in the `body`
 ```razor
 <script src="_content/MudBlazor/MudBlazor.min.js"></script>
 ```
-#### Client-Side Configuration(WebAssembly)
+
 Add the following to the relevant sections of `Program.cs`
 ```c#
 using MudBlazor.Services;
@@ -67,14 +67,7 @@ using MudBlazor.Services;
 ```c#
 builder.Services.AddMudServices();
 ```
-#### Server-Side Configuration
-Add the following to the relevant sections of `Startup.cs`
-```c#
-using MudBlazor.Services;
-```
-```c#
-services.AddMudServices();
-```
+
 ### Usage
 ```razor
 <MudText Typo="Typo.h6">MudBlazor is @Text</MudText>

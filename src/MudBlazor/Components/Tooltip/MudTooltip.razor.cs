@@ -60,7 +60,7 @@ namespace MudBlazor
         /// <summary>
         /// Changes the default transition delay in seconds.
         /// </summary>
-        [Obsolete]
+        [Obsolete("Use Delay instead.", true)]
         [Parameter]
         public double Delayed
         {

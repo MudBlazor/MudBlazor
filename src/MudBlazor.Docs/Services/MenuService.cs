@@ -224,6 +224,7 @@ namespace MudBlazor.Docs.Services
             //new DocsLink{Title="Default theme", Href="customization/default-theme"},
             new DocsLink {Title = "Overview", Href = "customization/theming/overview"},
             new DocsLink {Title = "Palette", Href = "customization/theming/palette"},
+            new DocsLink {Title = "Typography", Href = "customization/theming/typography"},
             new DocsLink {Title = "z-index", Href = "customization/theming/z-index"},
         }.OrderBy(x => x.Title);
 

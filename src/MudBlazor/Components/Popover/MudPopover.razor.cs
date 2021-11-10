@@ -31,7 +31,7 @@ namespace MudBlazor
             new StyleBuilder()
             .AddStyle("transition-duration", $"{Duration}ms")
             .AddStyle("transition-delay", $"{Delay}ms")
-            .AddStyle("max-height", $"{MaxHeight}px", MaxHeight != null)
+            .AddStyle("max-height", MaxHeight.ToPx(), MaxHeight != null)
             .AddStyle(Style)
             .Build();
 
@@ -91,7 +91,7 @@ namespace MudBlazor
         /// Sets the direction the popover will start from relative to its parent.
         /// </summary>
         /// 
-        [Obsolete("Direction is obsolete. Use AnchorOrigin and TransformOrigin!", false)]
+        [Obsolete("Use AnchorOrigin and TransformOrigin instead.", true)]
         [Parameter] public Direction Direction { get; set; } = Direction.Bottom;
 
         /// <summary>
@@ -116,14 +116,14 @@ namespace MudBlazor
         /// If true, the select menu will open either above or bellow the input depending on the direction.
         /// </summary>
         [ExcludeFromCodeCoverage]
-        [Obsolete("OffsetX is obsolete. Use AnchorOrigin and TransformOrigin", false)]
+        [Obsolete("Use AnchorOrigin and TransformOrigin instead.", true)]
         [Parameter] public bool OffsetX { get; set; }
 
         /// <summary>
         /// If true, the select menu will open either before or after the input depending on the direction.
         /// </summary>
         [ExcludeFromCodeCoverage]
-        [Obsolete("OffsetX is obsolete. Use AnchorOrigin and TransformOrigin", false)]
+        [Obsolete("Use AnchorOrigin and TransformOrigin instead.", true)]
         [Parameter] public bool OffsetY { get; set; }
 
         /// <summary>
@@ -170,11 +170,8 @@ namespace MudBlazor
             {
                 await Service.Unregister(_handler);
             }
-            catch (TaskCanceledException)
-            {
-                /*ignore*/
-            }
+            catch (JSDisconnectedException) { }
+            catch (TaskCanceledException) { }
         }
-
     }
 }

@@ -43,7 +43,12 @@
                                     <MudChip Variant="Variant.Outlined" Color="Color.Secondary" Size="Size.Small">overridden</MudChip>
                                 }
                             </MudTd>
-                            <MudTd Class="docs-content-api-cell" DataLabel="Type"><div style="display: flex; flex-direction: row; align-items: center; white-space: nowrap;">@context.Type<DocsBinding IsTwoWay="@context.IsTwoWay" /></div></MudTd>
+                            <MudTd Class="docs-content-api-cell" DataLabel="Type">
+                                <div style="display: flex; flex-direction: row; align-items: center; white-space: nowrap;">
+                                    <DocsTypeInfo Type="@context.Type" />
+                                    <DocsBinding IsTwoWay="@context.IsTwoWay" />
+                                </div>
+                            </MudTd>
                             <MudTd Class="docs-content-api-cell" DataLabel="Default">
                                 @if (PresentDefaultValue(context.Default).Contains("<path"))
                                 {
@@ -75,7 +80,7 @@
                         </HeaderContent>
                         <RowTemplate>
                             <MudTd Class="docs-content-api-cell" DataLabel="Name"><CodeInline>@context.Name</CodeInline></MudTd>
-                            <MudTd Class="docs-content-api-cell" DataLabel="Type"><div style="display: flex; flex-direction: row; align-items: center; white-space: nowrap;">@context.Type</div></MudTd>
+                            <MudTd Class="docs-content-api-cell" DataLabel="Type"><div style="display: flex; flex-direction: row; align-items: center; white-space: nowrap;">@context.Type.ConvertToCSharpSource()</div></MudTd>
                             <MudTd Class="docs-content-api-cell docs-content-api-description" DataLabel="Description">@(HttpUtility.HtmlDecode(context.Description))</MudTd>
                         </RowTemplate>
                     </MudTable>
@@ -152,7 +157,7 @@
                         Default = string.Empty,
                         Description = GetDescription(Type, info),
                         IsTwoWay = CheckIsTwoWayEventCallback(info),
-                        Type = info.PropertyType.ConvertToCSharpSource(),
+                        Type = info.PropertyType,
                     };
                 }
             }
@@ -207,7 +212,7 @@
                         Default = GetDefaultValue(info),
                         IsTwoWay = CheckIsTwoWayProperty(info),
                         Description = GetDescription(Type, info),
-                        Type = info.PropertyType.ConvertToCSharpSource()
+                        Type = info.PropertyType
                     };
                 }
             }
