@@ -686,6 +686,10 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(() => timePicker.HandleKeyDown(new KeyboardEventArgs() { Key = " ", Type = "keydown", }));
             comp.WaitForAssertion(() => timePicker.TimeIntermediate.Should().Be(new TimeSpan(02, 00, 00)));
             comp.WaitForAssertion(() => timePicker.Time.Should().Be(new TimeSpan(02, 00, 00)));
+
+            await comp.InvokeAsync(() => timePicker.HandleKeyDown(new KeyboardEventArgs() { Key = "Backspace", CtrlKey = true, ShiftKey = true, Type = "keydown", }));
+            comp.WaitForAssertion(() => timePicker.TimeIntermediate.Should().Be(null));
+            comp.WaitForAssertion(() => timePicker.Time.Should().Be(null));
         }
     }
 }
