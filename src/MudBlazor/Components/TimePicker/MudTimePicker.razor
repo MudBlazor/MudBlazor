@@ -74,7 +74,7 @@
                                     var _i = i;
                                     <div class="mud-picker-stick" style="@($"transform: rotateZ({_i * 30}deg);")">
                                         <div class="mud-picker-stick-inner mud-hour" @onclick="(() => OnMouseClickHour(_i))" @onmouseover="(() => OnMouseOverHour(_i))" @onclick:stopPropagation="true"></div>
-                                        <div class="mud-picker-stick-outer mud-hour" @onclick="(() => OnMouseClickHour(_i + 12))" @onmouseover="(() => OnMouseOverHour(_i + 12))" @onclick:stopPropagation="true"></div>
+                                        <div class="mud-picker-stick-outer mud-hour" @onclick="(() => OnMouseClickHour((_i + 12) % 24))" @onmouseover="(() => OnMouseOverHour((_i + 12) % 24))" @onclick:stopPropagation="true"></div>
                                     </div>
                                 }
                             }
