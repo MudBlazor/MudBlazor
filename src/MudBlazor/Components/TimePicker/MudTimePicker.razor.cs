@@ -498,31 +498,37 @@ namespace MudBlazor
             switch (obj.Key)
             {
                 case "ArrowRight":
-                    if (obj.CtrlKey == true)
+                    if (IsOpen)
                     {
-                        ChangeHour(1);
-                    }
-                    else if (obj.ShiftKey == true)
-                    {
-                        ChangeMinute(5);
-                    }
-                    else
-                    {
-                        ChangeMinute(1);
+                        if (obj.CtrlKey == true)
+                        {
+                            ChangeHour(1);
+                        }
+                        else if (obj.ShiftKey == true)
+                        {
+                            ChangeMinute(5);
+                        }
+                        else
+                        {
+                            ChangeMinute(1);
+                        }
                     }
                     break;
                 case "ArrowLeft":
-                    if (obj.CtrlKey == true)
+                    if (IsOpen)
                     {
-                        ChangeHour(-1);
-                    }
-                    else if (obj.ShiftKey == true)
-                    {
-                        ChangeMinute(-5);
-                    }
-                    else
-                    {
-                        ChangeMinute(-1);
+                        if (obj.CtrlKey == true)
+                        {
+                            ChangeHour(-1);
+                        }
+                        else if (obj.ShiftKey == true)
+                        {
+                            ChangeMinute(-5);
+                        }
+                        else
+                        {
+                            ChangeMinute(-1);
+                        }
                     }
                     break;
                 case "ArrowUp":
@@ -557,6 +563,35 @@ namespace MudBlazor
                         ChangeHour(-1);
                     }
                     break;
+                case "Escape":
+                    ReturnTimeBackUp();
+                    break;
+                case "Enter":
+                case "NumpadEnter":
+                    if (!IsOpen)
+                    {
+                        Open();
+                    }
+                    else
+                    {
+                        Submit();                 
+                        Close();
+                    }
+                    break;
+                case " ":
+                    if (!Editable)
+                    {
+                        if (!IsOpen)
+                        {
+                            Open();
+                        }
+                        else
+                        {
+                            Submit();
+                            Close();
+                        }
+                    }
+                    break;
             }
         }
 
@@ -572,6 +607,20 @@ namespace MudBlazor
             _currentView = OpenTo.Hours;
             _timeSet.Hour += val;
             UpdateTime();
+        }
+
+        protected void ReturnTimeBackUp()
+        {
+            if (Time == null)
+            {
+                TimeIntermediate = null;
+            }
+            else
+            {
+                _timeSet.Hour = Time.Value.Hours;
+                _timeSet.Minute = Time.Value.Minutes;
+                UpdateTime();
+            }
         }
 
         private class SetTime

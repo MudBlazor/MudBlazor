@@ -360,6 +360,7 @@ namespace MudBlazor
             {
                 IsOpen = true;
                 OnOpened();
+                _inputReference.FocusAsync();
             }
         }
 
@@ -397,30 +398,14 @@ namespace MudBlazor
                 case "Backspace":
                     if (obj.CtrlKey == true && obj.ShiftKey == true)
                     {
+                        Clear();
+                        _value = default(T);
                         Reset();
                     }
-                    break;
-                case "Enter":
-                case "NumpadEnter":
-                    Open();
                     break;
                 case "Escape":
                 case "Tab":
                     Close(false);
-                    break;
-                case " ":
-                    if (!Editable)
-                    {
-                        if (IsOpen)
-                        {
-                            Close(false);
-                        }
-                        else
-                        {
-                            Open();
-                        }
-
-                    }
                     break;
             }
         }
