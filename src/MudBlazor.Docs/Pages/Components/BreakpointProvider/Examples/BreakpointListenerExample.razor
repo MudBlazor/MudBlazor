@@ -1,0 +1,52 @@
+﻿@using MudBlazor.Services
+@namespace MudBlazor.Docs.Examples
+@implements IAsyncDisposable
+
+
+<MudCard Class="pa-5">
+	<MudText>Size started with @_start</MudText>
+	@if (_breakpointHistory.Count > 0)
+	{
+		<MudText>And continued with: </MudText>
+		<MudList Dense="_breakpointHistory.Count > 10">
+			@foreach (var item in _breakpointHistory)
+			{
+				<MudListItem Text="@item.ToString()"></MudListItem>
+			}
+		</MudList>
+	}
+</MudCard>
+
+@code
+{
+	[Inject] IBreakpointService BreakpointListener { get; set; }
+
+	private List<Breakpoint> _breakpointHistory = new();
+
+	private Guid _subscriptionId;
+	private Breakpoint _start;
+
+	protected override async Task OnAfterRenderAsync(bool firstRender)
+	{
+		if (firstRender)
+		{
+			var subscriptionResult = await BreakpointListener.Subscribe((breakpoint) =>
+			{
+				_breakpointHistory.Add(breakpoint);
+				InvokeAsync(StateHasChanged);
+			}, new ResizeOptions
+			{
+				ReportRate = 250,
+				NotifyOnBreakpointOnly = true,
+			});
+
+			_start = subscriptionResult.Breakpoint;
+			_subscriptionId = subscriptionResult.SubscriptionId;
+			StateHasChanged();
+		}
+
+		await base.OnAfterRenderAsync(firstRender);
+	}
+
+	public async ValueTask DisposeAsync() => await BreakpointListener.Unsubscribe(_subscriptionId);
+}

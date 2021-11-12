@@ -2,6 +2,8 @@
 
 .mud-pagination {
     display: inline-flex;
+    flex-wrap: wrap;
+    gap: 6px;
     align-items: center;
     margin: 0;
 
@@ -17,6 +19,10 @@
 
         :not(mud-pagination-item-selected) > * {
             box-shadow: none;
+        }
+
+        .mud-button {
+            line-height: normal;
         }
 
         .mud-icon-button {

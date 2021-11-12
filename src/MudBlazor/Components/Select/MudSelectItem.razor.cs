@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Microsoft.AspNetCore.Components;
+using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
@@ -9,7 +11,12 @@ namespace MudBlazor
     /// </summary>
     public partial class MudSelectItem<T> : MudBaseSelectItem, IDisposable
     {
+        private String GetCssClasses() =>  new CssBuilder()
+            .AddClass(Class)
+            .Build();
+
         private IMudSelect _parent;
+        internal string ItemId { get; } = "_"+Guid.NewGuid().ToString().Substring(0,8);
 
         /// <summary>
         /// The parent select component
@@ -24,18 +31,45 @@ namespace MudBlazor
                 if (_parent == null)
                     return;
                 _parent.CheckGenericTypeMatch(this);
-                MudSelect?.Add(this);
-                if (MudSelect != null && _parent.MultiSelection)
+                if (MudSelect == null)
+                    return;
+                bool isSelected = MudSelect.Add(this);
+                if (_parent.MultiSelection)
                 {
                     MudSelect.SelectionChangedFromOutside += OnUpdateSelectionStateFromOutside;
                     InvokeAsync(() => OnUpdateSelectionStateFromOutside(MudSelect.SelectedValues));
                 }
+                else
+                {
+                    IsSelected = isSelected;
+                }
             }
         }
 
+        private IMudShadowSelect  _shadowParent;
+        private bool _isSelected;
+
+        [CascadingParameter]
+        internal IMudShadowSelect IMudShadowSelect
+        {
+            get => _shadowParent;
+            set
+            {
+                _shadowParent = value;
+                ((MudSelect<T>)_shadowParent)?.RegisterShadowItem(this);
+            }
+        }
+
+        /// <summary>
+        /// Select items with HideContent==true are only there to register their RenderFragment with the select but
+        /// wont render and have no other purpose!
+        /// </summary>
+        [CascadingParameter(Name = "HideContent")]
+        internal bool HideContent { get; set; }
+
         internal MudSelect<T> MudSelect => (MudSelect<T>)IMudSelect;
 
-        private void OnUpdateSelectionStateFromOutside(HashSet<T> selection)
+        private void OnUpdateSelectionStateFromOutside(IEnumerable<T> selection)
         {
             if (selection == null)
                 return;
@@ -66,7 +100,14 @@ namespace MudBlazor
         /// <summary>
         /// Selected state of the option. Only works if the parent is a mulit-select
         /// </summary>
-        internal bool IsSelected { get; set; }
+        internal bool IsSelected
+        {
+            get => _isSelected;
+            set
+            {
+                _isSelected = value;
+            }
+        }
 
         /// <summary>
         /// The checkbox icon reflects the multi-select option's state
@@ -106,6 +147,7 @@ namespace MudBlazor
             try
             {
                 MudSelect?.Remove(this);
+                ((MudSelect<T>)_shadowParent)?.UnregisterShadowItem(this);
             }
             catch (Exception) { }
         }

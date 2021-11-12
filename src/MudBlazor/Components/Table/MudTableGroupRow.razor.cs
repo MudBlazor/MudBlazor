@@ -22,17 +22,26 @@ namespace MudBlazor
 
         [CascadingParameter] public TableContext Context { get; set; }
 
-        private IEnumerable<IGrouping<object, T>> _innerGroupItems;
+        private IEnumerable<IGrouping<object, T>> _innerGroupItems = null;
 
         /// <summary>
         /// The group definition for this grouping level. It's recursive.
         /// </summary>
         [Parameter] public TableGroupDefinition<T> GroupDefinition { get; set; }
 
+        IGrouping<object, T> _items = null;
         /// <summary>
         /// Inner Items List for the Group
         /// </summary>
-        [Parameter] public IGrouping<object, T> Items { get; set; }
+        [Parameter] public IGrouping<object, T> Items 
+        {
+            get => _items;
+            set
+            {
+                _items = value;
+                SyncInnerGroupItems();
+            }
+        }
 
         /// <summary>
         /// Defines Group Header Data Template
@@ -55,6 +64,15 @@ namespace MudBlazor
         [Parameter] public string HeaderStyle { get; set; }
         [Parameter] public string FooterStyle { get; set; }
 
+        /// <summary>
+        /// Custom expand icon.
+        /// </summary>
+        [Parameter] public string ExpandIcon { get; set; } = Icons.Material.Filled.ExpandMore;
+
+        /// <summary>
+        /// Custom collapse icon.
+        /// </summary>
+        [Parameter] public string CollapseIcon { get; set; } = Icons.Material.Filled.ChevronRight;
 
         /// <summary>
         /// On click event
@@ -82,13 +100,19 @@ namespace MudBlazor
         {
             if (GroupDefinition != null)
             {
+                IsExpanded = GroupDefinition.IsInitiallyExpanded;
                 ((TableContext<T>)Context)?.GroupRows.Add(this);
-                if (GroupDefinition.InnerGroup != null)
-                {
-                    _innerGroupItems = Table.GetItemsOfGroup(GroupDefinition.InnerGroup, Items);
-                }
+                SyncInnerGroupItems();
             }
             return base.OnInitializedAsync();
+        }
+
+        private void SyncInnerGroupItems()
+        {
+            if (GroupDefinition.InnerGroup != null)
+            {
+                _innerGroupItems = Table?.GetItemsOfGroup(GroupDefinition.InnerGroup, Items);
+            }
         }
 
         public void Dispose()

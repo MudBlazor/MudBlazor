@@ -2,11 +2,15 @@
 
 <MudGrid>
     <MudItem xs="12" sm="6" md="4">
-        <MudTextField @bind-Value="@_searchString"
-                              Immediate="true" 
-                              Placeholder="Clearable"
-                              Clearable="true"
-                              Class="mt-0" />
+        <MudTextField @bind-Value="_string" Label="Clearable Standard" Variant="Variant.Text" Clearable="true" Adornment="Adornment.End"
+                      AdornmentIcon="@Icons.Custom.Brands.MudBlazor" AdornmentColor="Color.Primary" Immediate="true" />
+    </MudItem>
+
+    <MudItem xs="12" sm="6" md="4">
+        <MudTextField @bind-Value="_string" Label="Clearable Filled" Variant="Variant.Filled" Clearable="true" Immediate="true" />
+    </MudItem>
+    <MudItem xs="12" sm="6" md="4">
+        <MudTextField @bind-Value="_string" Label="Clearable Outlined" Variant="Variant.Outlined" Clearable="true" />
     </MudItem>
     <MudItem xs="12" sm="6" md="4">
         <MudTextField @bind-Value="@_telephone"
@@ -15,12 +19,12 @@
     </MudItem>
 </MudGrid>
 <div class="mt-3">
-    <MudText>Clearable textfield: @_searchString</MudText>
+    <MudText>Clearable textfield: @_string</MudText>
     <MudText>InputType telephone: @_telephone</MudText>
 </div>
 
 
 @code {
-    string _searchString;
+    string _string;
     string _telephone;
 }

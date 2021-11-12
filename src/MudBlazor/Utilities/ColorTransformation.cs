@@ -3,6 +3,7 @@
 // Stripped and adapted by Meinrad Recheis for MudBlazor
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using SystemMath = System.Math;
 
 namespace MudBlazor.Utilities
@@ -10,7 +11,8 @@ namespace MudBlazor.Utilities
     /// <summary>
     /// Static methods for transforming argb spaces and argb values.
     /// </summary>
-    [Obsolete("ColorTransformation is now obsolete. Use MudColor instead", true)]
+    [ExcludeFromCodeCoverage] 
+    [Obsolete("Use MudColor instead.", true)]
     public static class ColorTransformation
     {
         private static double EPSILON => 0.000000000000001;

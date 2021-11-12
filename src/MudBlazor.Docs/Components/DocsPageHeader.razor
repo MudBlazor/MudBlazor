@@ -1,24 +1,26 @@
-﻿@using System
+@using System
 @using System.Linq
 @using Microsoft.AspNetCore.Components
 @using MudBlazor
 @using MudBlazor.Docs.Models
-@using Toolbelt.Blazor.HeadElement
 @using MudBlazor.Docs.Extensions
 @using System.Collections.Generic
 @using System.Text.RegularExpressions
 
 @*html head (for server prerendering)*@
-<Title>@(GetTitle())</Title>
-<Meta Name="keywords" Content="@GetKeywords()" />
-<Meta Property="og:title" Content="@GetTitle()" />
-<Meta Name="twitter:title" Content="@GetTitle()" />
-@if (!string.IsNullOrEmpty(SubTitle))
-{
-    <Meta Name="description" Content="@(SubTitle)" />
-    <Meta Property="og:description" Content="@SubTitle" />
-    <Meta Name="twitter:description" Content="@SubTitle" />
-}
+<PageTitle>@(GetTitle())</PageTitle>
+<HeadContent>
+    <meta Name="keywords" Content="@GetKeywords()" />
+    <meta Property="og:title" Content="@GetTitle()" />
+    <meta Name="twitter:title" Content="@GetTitle()" />
+    @if (!string.IsNullOrEmpty(SubTitle))
+    {
+        <meta Name="description" Content="@(SubTitle)" />
+        <meta Property="og:description" Content="@SubTitle" />
+        <meta Name="twitter:description" Content="@SubTitle" />
+    }
+</HeadContent>
+
 @if (IsApiPage && !string.IsNullOrEmpty(ComponentLink))
 {
     
@@ -34,7 +36,7 @@
         <MudElement HtmlTag="script" async type="text/javascript" src="//cdn.carbonads.com/carbon.js?serve=CESDLK3E&placement=mudblazorcom" id="_carbonads_js"></MudElement>
     }
 </div>
-@if (!IsApiPage && GetComponentTypeName() != null)
+@if (!IsApiPage && GetComponentTypeName() != null && !DisableApiHeader)
 {
     <DocsPageSection api-link-section>
         <SectionHeader Title="API" />
@@ -62,13 +64,13 @@
 }
 @if (IsApiPage && !string.IsNullOrEmpty(ComponentLink))
 {
-    <Link Rel="canonical" Href="@($"https://mudblazor.com/{ComponentPageLink}")" />
+    <link Rel="canonical" Href="@($"https://mudblazor.com/{ComponentLink}")" />
     <DocsPageSection api-link-section>
         <SectionHeader Title="Pages" />
         <div class="docs-page-apilinks">
             <ul class="my-2">
                 <li>
-                    <MudLink Href="@ComponentPageLink">
+                    <MudLink Href="@GetComponentLink()">
                         <CodeInline>@($"{GetParentComponentPage()}")</CodeInline>
                     </MudLink>
                 </li>
@@ -96,12 +98,12 @@
     [Parameter] public string Title { get; set; }
     [Parameter] public string SubTitle { get; set; }
     [Parameter] public string Keywords { get; set; }
+    [Parameter] public bool DisableApiHeader { get; set; }
     [Parameter] public RenderFragment Description { get; set; }
     [Parameter] public string ComponentLink { get; set; }
 
     private string GetApiLink() => $"api/{GetComponentName()}";
     private string ComponentPage;
-    private string ComponentPageLink;
 
     private string GetComponentName()
     {
@@ -123,23 +125,29 @@
         return MenuService.Components.Where(c => c.Component == ApiLink.GetTypeFromComponentLink(GetComponentName()) && c.ChildComponents != null).SelectMany(l => l.ChildComponents).ToList();
     }
 
+    private string GetComponentLink()
+    {
+        var currentComp = ApiLink.GetTypeFromComponentLink(GetComponentName());
+        var parent = MenuService.GetParent(currentComp);
+
+        if (parent.Component is not null) return $"components/{parent.Link}";
+        
+        return $"components/{parent.GroupItems.Elements.FirstOrDefault(x => x.Component == currentComp).Link}";
+    }
+
     private string GetParentComponentPage()
     {
         var currentComp = ApiLink.GetTypeFromComponentLink(GetComponentName());
         var parent = MenuService.GetParent(currentComp);
-        var test = parent;
         if (parent.Component != null)
         {
             ComponentPage = parent.Name;
-            ComponentPageLink = $"components/{parent.Link}";
         }
         else
         {
             var groupComp = parent.GroupItems.Elements.FirstOrDefault(x => x.Component == currentComp);
             ComponentPage = groupComp.Name;
-            ComponentPageLink = $"components/{groupComp.Link}";
         }
-
         return ComponentPage;
     }
 

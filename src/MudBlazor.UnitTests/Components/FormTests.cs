@@ -2,6 +2,8 @@
 #pragma warning disable CS1998 // async without await
 
 using System;
+using System.Collections.Generic;
+using System.Linq.Expressions;
 using System.Reflection;
 using System.Threading.Tasks;
 using Bunit;
@@ -842,6 +844,136 @@ namespace MudBlazor.UnitTests.Components
             numericFields[1].Instance.HasErrors.Should().BeFalse();
             numericFields[1].Instance.ErrorText.Should().BeNullOrEmpty();
         }
+
+        /// <summary>
+        /// Testing error handling of MudFormComponent.ValidateModelWithFullPathOfMember
+        /// We have no form, error should reflect that
+        /// </summary>
+        [Test]
+        public async Task MudFormComponent_ValidationWithModel_UnexpectedErrorInValidationFunc1()
+        {
+            var comp = Context.RenderComponent<MudTextField<string>>();
+            comp.SetParam(nameof(MudTextField<string>.Validation), new Func<object, string, IEnumerable<string>>((obj, property) => new[] { "Error1", "Error2" }));
+            await comp.InvokeAsync(comp.Instance.Validate);
+            comp.Instance.Error.Should().Be(true);
+            comp.Instance.ErrorText.Should().Be("Form is null, unable to validate with model!");
+        }
+
+        /// <summary>
+        /// Testing error handling of MudFormComponent.ValidateModelWithFullPathOfMember
+        /// We have not set a form model, error should reflect that
+        /// </summary>
+        [Test]
+        public async Task MudFormComponent_ValidationWithModel_UnexpectedErrorInValidationFunc2()
+        {
+            var comp = Context.RenderComponent<FormWithSingleTextField>();
+            var tf = comp.FindComponent<MudTextField<string>>();
+            var validationFunc = new Func<object, string, IEnumerable<string>>((obj, property) => new string[] { });
+            tf.SetParam(nameof(MudTextField<string>.Validation), validationFunc);
+            await comp.InvokeAsync(tf.Instance.Validate);
+            tf.Instance.Error.Should().Be(true);
+            tf.Instance.ErrorText.Should().Be("Form.Model is null, unable to validate with model!");
+        }
+
+        /// <summary>
+        /// Testing error handling of MudFormComponent.ValidateModelWithFullPathOfMember
+        /// Validation func throws an error, the error should contain the exception message
+        /// </summary>
+        [Test]
+        public async Task MudFormComponent_ValidationWithModel_UnexpectedErrorInValidationFunc3()
+        {
+            var comp = Context.RenderComponent<FormWithSingleTextField>();
+            var form = comp.FindComponent<MudForm>();
+            var model = new { data = "asdf" };
+            form.SetParam(nameof(MudForm.Model), model);
+            var tf = comp.FindComponent<MudTextField<string>>();
+            var validationFunc = new Func<object, string, IEnumerable<string>>((obj, property) =>
+            {
+                throw new InvalidOperationException("User error");
+            });
+            tf.SetParam(nameof(MudTextField<string>.Validation), validationFunc);
+            Expression<Func<string>> expression = () => model.data;
+            tf.SetParam(nameof(MudTextField<string>.For), expression);
+            await comp.InvokeAsync(tf.Instance.Validate);
+            tf.Instance.Error.Should().Be(true);
+            tf.Instance.ErrorText.Should().Be("Error in validation func: User error");
+        }
+
+        /// <summary>
+        /// Testing error handling of MudFormComponent.ValidateModelWithFullPathOfMember
+        /// We have set no For expression, error should reflect that
+        /// </summary>
+        [Test]
+        public async Task MudFormComponent_ValidationWithModel_UnexpectedErrorInValidationFunc4()
+        {
+            var comp = Context.RenderComponent<FormWithSingleTextField>();
+            var form = comp.FindComponent<MudForm>();
+            var model = new { data = "asdf" };
+            form.SetParam(nameof(MudForm.Model), model);
+            var tf = comp.FindComponent<MudTextField<string>>();
+            var validationFunc = new Func<object, string, IEnumerable<string>>((obj, property) =>
+            {
+                throw new InvalidOperationException("User error");
+            });
+            tf.SetParam(nameof(MudTextField<string>.Validation), validationFunc);
+            await comp.InvokeAsync(tf.Instance.Validate);
+            tf.Instance.Error.Should().Be(true);
+            tf.Instance.ErrorText.Should().Be("For is null, please set parameter For on the form input component of type MudTextField`1");
+        }
+
+        /// <summary>
+        /// Testing validation with MudFormComponent.ValidateModelWithFullPathOfMember
+        /// </summary>
+        [Test]
+        public async Task MudFormComponent_ValidationWithModel_UnexpectedErrorInValidationFunc5()
+        {
+            var comp = Context.RenderComponent<FormWithSingleTextField>();
+            var form = comp.FindComponent<MudForm>();
+            var model = new { data = "asdf" };
+            form.SetParam(nameof(MudForm.Model), model);
+            var tf = comp.FindComponent<MudTextField<string>>();
+            var validationFunc = new Func<object, string, IEnumerable<string>>((obj, property) =>
+            {
+                obj.Should().Be(model);
+                property.Should().Be("data");
+                return new[] { "Error1", "Error2" };
+            });
+            tf.SetParam(nameof(MudTextField<string>.Validation), validationFunc);
+            Expression<Func<string>> expression = () => model.data;
+            tf.SetParam(nameof(MudTextField<string>.For), expression);
+            await comp.InvokeAsync(tf.Instance.Validate);
+            tf.Instance.Error.Should().Be(true);
+            tf.Instance.ErrorText.Should().Be("Error1");
+        }
+
+        /// <summary>
+        /// Calling form.Reset() should clear the text field
+        /// </summary>
+        [Test]
+        public async Task FormReset_Should_ClearTextField()
+        {
+            var comp = Context.RenderComponent<FormResetTest>();
+            Console.WriteLine(comp.Markup);
+            var form = comp.FindComponent<MudForm>();
+            var tf = comp.FindComponent<MudTextField<string>>();
+            // input some text
+            comp.Find("input").Input("asdf");
+            tf.Instance.Value.Should().Be("asdf");
+            tf.Instance.Text.Should().Be("asdf");
+            // call reset directly
+            await comp.InvokeAsync(() => form.Instance.Reset());
+            tf.Instance.Value.Should().BeNullOrEmpty();
+            tf.Instance.Text.Should().BeNullOrEmpty();
+            // input some text
+            comp.Find("input").Input("asdf");
+            tf.Instance.Value.Should().Be("asdf");
+            tf.Instance.Text.Should().Be("asdf");
+            // hit reset button
+            comp.FindComponent<MudButton>().Find("button").Click();
+            tf.Instance.Value.Should().BeNullOrEmpty();
+            tf.Instance.Text.Should().BeNullOrEmpty();
+        }
+
     }
 }
 

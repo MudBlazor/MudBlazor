@@ -5,7 +5,7 @@ using System.Diagnostics.CodeAnalysis;
 namespace MudBlazor.Utilities
 {
     [ExcludeFromCodeCoverage]
-    [Obsolete("ColorManager is now obsolete. Use MudColor instead", true)]
+    [Obsolete("Use MudColor instead.", true)]
     public class ColorManager
     {
         public static System.Drawing.Color FromHex(string hex)

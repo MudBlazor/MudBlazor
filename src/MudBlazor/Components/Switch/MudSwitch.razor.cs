@@ -1,5 +1,9 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿using System;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Extensions;
+using MudBlazor.Services;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
@@ -9,15 +13,23 @@ namespace MudBlazor
         protected string Classname =>
         new CssBuilder("mud-switch")
             .AddClass($"mud-disabled", Disabled)
+            .AddClass($"mud-readonly", ReadOnly)
           .AddClass(Class)
         .Build();
         protected string SwitchClassname =>
         new CssBuilder("mud-button-root mud-icon-button mud-switch-base")
-            .AddClass($"mud-ripple mud-ripple-switch", !DisableRipple)
+            .AddClass($"mud-ripple mud-ripple-switch", !DisableRipple && !ReadOnly)
             .AddClass($"mud-switch-{Color.ToDescriptionString()}")
             .AddClass($"mud-switch-disabled", Disabled)
+            .AddClass($"mud-readonly", ReadOnly)
             .AddClass($"mud-checked", BoolValue)
         .Build();
+
+        protected string SpanClassname =>
+        new CssBuilder("mud-switch-span mud-flip-x-rtl")
+        .Build();
+
+        [Inject] private IKeyInterceptor _keyInterceptor { get; set; }
 
         /// <summary>
         /// The color of the component. It supports the theme colors.
@@ -30,9 +42,67 @@ namespace MudBlazor
         [Parameter] public string Label { get; set; }
 
         /// <summary>
+        /// Shows an icon on Switch's thumb.
+        /// </summary>
+        [Parameter] public string ThumbIcon { get; set; }
+
+        /// <summary>
+        /// The color of the thumb icon. Supports the theme colors.
+        /// </summary>
+        [Parameter] public Color ThumbIconColor { get; set; } = Color.Default;
+
+        /// <summary>
         /// If true, disables ripple effect.
         /// </summary>
         [Parameter] public bool DisableRipple { get; set; }
 
+        protected internal void HandleKeyDown(KeyboardEventArgs obj)
+        {
+            //Space key works by default, so we didn't write it again.
+            if (Disabled || ReadOnly)
+                return;
+            switch (obj.Key)
+            {
+                case "ArrowLeft":
+                case "Escape":
+                    SetBoolValueAsync(false);
+                    break;
+                case "ArrowRight":
+                case "Enter":
+                case "NumpadEnter":
+                    SetBoolValueAsync(true);
+                    break;
+                case " ":
+                    if (BoolValue == true)
+                    {
+                        SetBoolValueAsync(false);
+                    }
+                    else
+                    {
+                        SetBoolValueAsync(true);
+                    }
+                    break;
+            }
+        }
+
+        private string _elementId = "switch_" + Guid.NewGuid().ToString().Substring(0, 8);
+
+        protected override async Task OnAfterRenderAsync(bool firstRender)
+        {
+            if (firstRender)
+            {
+                await _keyInterceptor.Connect(_elementId, new KeyInterceptorOptions()
+                {
+                    //EnableLogging = true,
+                    TargetClass = "mud-switch-base",
+                    Keys = {
+                        new KeyOptions { Key="ArrowUp", PreventDown = "key+none" }, // prevent scrolling page, instead increment
+                        new KeyOptions { Key="ArrowDown", PreventDown = "key+none" }, // prevent scrolling page, instead decrement
+                        new KeyOptions { Key=" ", PreventDown = "key+none", PreventUp = "key+none" },
+                    },
+                });
+            }
+            await base.OnAfterRenderAsync(firstRender);
+        }
     }
 }

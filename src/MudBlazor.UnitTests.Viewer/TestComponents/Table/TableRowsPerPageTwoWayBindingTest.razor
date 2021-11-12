@@ -1,0 +1,21 @@
+﻿@using System.ComponentModel
+@using System.Runtime.CompilerServices
+@namespace MudBlazor.UnitTests.TestComponents
+
+<MudPopoverProvider></MudPopoverProvider>
+
+<MudPaper>
+    <MudTable InlineEdit="false"
+              Items="@viewModel.Items"
+              Dense="true" Hover="true"
+              FixedHeader="true"
+              SortLabel="Sort By"
+              @bind-RowsPerPage=@RowsPerPage>
+        <RowTemplate>
+            <MudTd DataLabel="Text">@context.Text</MudTd>
+        </RowTemplate>
+        <PagerContent>
+            <MudTablePager />
+        </PagerContent>
+    </MudTable>
+</MudPaper>

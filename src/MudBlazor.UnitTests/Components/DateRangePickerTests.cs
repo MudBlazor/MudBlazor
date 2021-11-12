@@ -2,6 +2,7 @@
 
 using System;
 using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using AngleSharp.Html.Dom;
@@ -66,6 +67,19 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public void RangeConverter_RoundTrip_Ok()
+        {
+            var d1 = "val1";
+            var d2 = "val2";
+
+            var repr = RangeConverter<DateTime>.Join(d1, d2);
+            RangeConverter<DateTime>.Split(repr, out var c1, out var c2).Should().BeTrue();
+
+            c1.Should().Be(d1);
+            c2.Should().Be(d2);
+        }
+
+        [Test]
         public void Open_SelectTheSameDateTwice_RangeStartShouldEqualsEnd()
         {
             var comp = OpenPicker();
@@ -93,21 +107,21 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.DateRange.End.Value.Month.Should().Be(start.Month);
         }
 
-        public IRenderedComponent<MudDateRangePicker> OpenPicker(ComponentParameter parameter)
+        public IRenderedComponent<SimpleMudMudDateRangePickerTest> OpenPicker(ComponentParameter parameter)
         {
             return OpenPicker(new ComponentParameter[] { parameter });
         }
 
-        public IRenderedComponent<MudDateRangePicker> OpenPicker(ComponentParameter[] parameters = null)
+        public IRenderedComponent<SimpleMudMudDateRangePickerTest> OpenPicker(ComponentParameter[] parameters = null)
         {
-            IRenderedComponent<MudDateRangePicker> comp;
+            IRenderedComponent<SimpleMudMudDateRangePickerTest> comp;
             if (parameters is null)
             {
-                comp = Context.RenderComponent<MudDateRangePicker>();
+                comp = Context.RenderComponent<SimpleMudMudDateRangePickerTest>();
             }
             else
             {
-                comp = Context.RenderComponent<MudDateRangePicker>(parameters);
+                comp = Context.RenderComponent<SimpleMudMudDateRangePickerTest>(parameters);
             }
 
             // should not be open
@@ -240,7 +254,7 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.DateRange.Start.Should().Be(new DateTime(DateTime.Now.Year, 3, 2));
         }
 
-        public IRenderedComponent<MudDateRangePicker> OpenTo12thMonth()
+        public IRenderedComponent<SimpleMudMudDateRangePickerTest> OpenTo12thMonth()
         {
             var comp = OpenPicker(Parameter("PickerMonth", new DateTime(DateTime.Now.Year, 12, 01)));
             comp.Instance.PickerMonth.Value.Month.Should().Be(12);
@@ -305,15 +319,16 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task Open_Programmatically_CheckOpen_Close_Programmatically_CheckClosed()
         {
-            var comp = Context.RenderComponent<MudDateRangePicker>();
+            var comp = Context.RenderComponent<SimpleMudMudDateRangePickerTest>();
             Console.WriteLine(comp.Markup + "\n");
             comp.FindAll("div.mud-picker-content").Count.Should().Be(0);
             // open programmatically
-            await comp.InvokeAsync(() => comp.Instance.Open());
+            await comp.Instance.Open();
             Console.WriteLine(comp.Markup);
             comp.FindAll("div.mud-picker-content").Count.Should().Be(1);
             // closing programmatically
-            await comp.InvokeAsync(() => comp.Instance.Close());
+            await comp.Instance.Close();
+
             comp.FindAll("div.mud-picker-content").Count.Should().Be(0);
         }
 
@@ -401,6 +416,49 @@ namespace MudBlazor.UnitTests.Components
             var comp = OpenPicker();
             comp.FindAll("button.mud-picker-calendar-day").Select(button => ((IHtmlButtonElement)button).IsDisabled)
                 .Should().OnlyContain(disabled => disabled == false);
+        }
+
+        [Test]
+        public void SetRangeTextFunc_NullInputNoError()
+        {
+            var comp = Context.RenderComponent<MudDateRangePicker>(parameters =>
+                parameters.Add(p => p.DateRange,
+                    new DateRange(new DateTime(2020, 12, 26),null))); 
+            comp.Find("input").Change("");
+            comp.Instance.DateRange.End.Should().BeNull();
+            comp.Instance.DateRange.Start.Should().BeNull();
+
+        }
+
+        [Test]
+        public void SetRangeTextFunc_NullRangeTextNoError()
+        {
+            var dateTime = new DateTime(2020, 12, 26);
+            var comp = Context.RenderComponent<MudDateRangePicker>(parameters =>
+                parameters.Add(p => p.DateRange, null)
+                    .Add(p=>p.Culture, CultureInfo.CurrentCulture));
+            comp.Find("input").Change(dateTime.ToString(CultureInfo.CurrentCulture.DateTimeFormat.ShortDatePattern));
+            comp.Instance.DateRange.Start.Should().Be(dateTime);
+
+        }
+
+
+        [Test]
+        public void SetDateRange_NoChangedIfSameValues()
+        {
+            var dr1 = new DateRange(new DateTime(2021, 10, 08), new DateTime(2021, 10, 09));
+            var dr2 = new DateRange(new DateTime(2021, 10, 08), new DateTime(2021, 10, 09));
+
+            var wasEventCallbackCalled = false;
+
+            var comp = Context.RenderComponent<MudDateRangePicker>(
+                Parameter(nameof(MudDateRangePicker.DateRange), dr1),
+                EventCallback(nameof(MudDateRangePicker.DateRangeChanged), (DateRange _) => wasEventCallbackCalled = true));
+
+            comp.SetParam(nameof(MudDateRangePicker.DateRange), dr2);
+
+            comp.Instance.DateRange.Should().Be(dr2);
+            wasEventCallbackCalled.Should().BeFalse();
         }
 
         [Test]

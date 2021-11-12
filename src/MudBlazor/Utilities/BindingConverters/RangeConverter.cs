@@ -42,11 +42,20 @@ namespace MudBlazor
         {
             valueStart = valueEnd = string.Empty;
 
-            if (string.IsNullOrEmpty(value) || value[0] != '[' || value.Last() != ']' || !value.Contains(';'))
+            if (string.IsNullOrEmpty(value) || value[0] != '[' || value[^1] != ']')
+            {
                 return false;
+            }
 
-            valueStart = value.Split(';')[0][1..];
-            valueEnd = value.Split(';')[1][..^1];
+            var idx = value.IndexOf(';');
+
+            if (idx < 1)
+            {
+                return false;
+            }
+
+            valueStart = value[1..idx];
+            valueEnd = value[(idx + 1)..^1];
 
             return true;
         }

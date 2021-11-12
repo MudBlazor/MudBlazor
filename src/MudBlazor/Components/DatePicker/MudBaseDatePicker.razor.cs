@@ -10,6 +10,8 @@ namespace MudBlazor
 {
     public abstract partial class MudBaseDatePicker : MudPicker<DateTime?>
     {
+        private bool _dateFormatTouched;
+
         protected MudBaseDatePicker() : base(new DefaultConverter<DateTime?>
         {
             Format = CultureInfo.CurrentCulture.DateTimeFormat.ShortDatePattern,
@@ -47,7 +49,10 @@ namespace MudBlazor
             set
             {
                 if (Converter is DefaultConverter<DateTime?> defaultConverter)
+                {
                     defaultConverter.Format = value;
+                    _dateFormatTouched = true;
+                }
                 DateFormatChanged(value);
             }
         }
@@ -58,6 +63,17 @@ namespace MudBlazor
         protected virtual Task DateFormatChanged(string newFormat)
         {
             return Task.CompletedTask;
+        }
+
+        protected override bool SetCulture(CultureInfo value)
+        {
+            if (!base.SetCulture(value))
+                return false;
+
+            if (!_dateFormatTouched && Converter is DefaultConverter<DateTime?> defaultConverter)
+                defaultConverter.Format = value.DateTimeFormat.ShortDatePattern;
+
+            return true;
         }
 
         /// <summary>
@@ -134,6 +150,16 @@ namespace MudBlazor
             }
         }
         private Func<DateTime, bool> _isDateDisabledFunc = _ => false;
+
+        /// <summary>
+        /// Custom previous icon.
+        /// </summary>
+        [Parameter] public string PreviousIcon { get; set; } = Icons.Material.Filled.ChevronLeft;
+
+        /// <summary>
+        /// Custom next icon.
+        /// </summary>
+        [Parameter] public string NextIcon { get; set; } = Icons.Material.Filled.ChevronRight;
 
         protected virtual bool IsRange { get; } = false;
 
@@ -382,7 +408,7 @@ namespace MudBlazor
         private string GetMonthClasses(DateTime month)
         {
             if (GetMonthStart(0) == month)
-                return $"mud-picker-month-selected mud-color-text-{Color.ToDescriptionString()}";
+                return $"mud-picker-month-selected mud-{Color.ToDescriptionString()}-text";
             return null;
         }
 

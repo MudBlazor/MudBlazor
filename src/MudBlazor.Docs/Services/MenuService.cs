@@ -33,6 +33,7 @@ namespace MudBlazor.Docs.Services
             .AddItem("Container", typeof(MudContainer))
             .AddItem("Grid", typeof(MudGrid), typeof(MudItem))
             .AddItem("Hidden", typeof(MudHidden))
+            .AddItem("Breakpoint Provider", typeof(MudBreakpointProvider))
             .AddItem("Chips", typeof(MudChip))
             .AddItem("ChipSet", typeof(MudChipSet))
             .AddItem("Badge", typeof(MudBadge))
@@ -109,10 +110,11 @@ namespace MudBlazor.Docs.Services
 
             //Charts
             .AddNavGroup("Charts", false, new DocsComponents()
-                .AddItem("Donut chart", typeof(Donut))
-                .AddItem("Line chart", typeof(Line))
-                .AddItem("Pie chart", typeof(Pie))
-                .AddItem("Bar chart", typeof(Bar))
+                .AddItem("Options", typeof(ChartOptions))
+                .AddItem("Donut Chart", typeof(Donut))
+                .AddItem("Line Chart", typeof(Line))
+                .AddItem("Pie Chart", typeof(Pie))
+                .AddItem("Bar Chart", typeof(Bar))
             );
 
         public IEnumerable<MudComponent> Components => _docsComponents.Elements;
@@ -222,6 +224,7 @@ namespace MudBlazor.Docs.Services
             //new DocsLink{Title="Default theme", Href="customization/default-theme"},
             new DocsLink {Title = "Overview", Href = "customization/theming/overview"},
             new DocsLink {Title = "Palette", Href = "customization/theming/palette"},
+            new DocsLink {Title = "Typography", Href = "customization/theming/typography"},
             new DocsLink {Title = "z-index", Href = "customization/theming/z-index"},
         }.OrderBy(x => x.Title);
 

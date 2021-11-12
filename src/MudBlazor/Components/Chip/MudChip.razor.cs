@@ -17,16 +17,43 @@ namespace MudBlazor
 
         protected string Classname =>
         new CssBuilder("mud-chip")
-          .AddClass($"mud-chip-{Variant.ToDescriptionString()}")
+          .AddClass($"mud-chip-{GetVariant().ToDescriptionString()}")
           .AddClass($"mud-chip-size-{Size.ToDescriptionString()}")
-          .AddClass($"mud-chip-color-{Color.ToDescriptionString()}")
-          .AddClass("mud-clickable", (OnClick.HasDelegate || ChipSet != null))
-          .AddClass($"mud-ripple", !DisableRipple && (OnClick.HasDelegate || ChipSet != null))
+          .AddClass($"mud-chip-color-{GetColor().ToDescriptionString()}")
+          .AddClass("mud-clickable", !ChipSet?.ReadOnly ?? OnClick.HasDelegate)
+          .AddClass("mud-ripple", !ChipSet?.ReadOnly ?? OnClick.HasDelegate && !DisableRipple)
           .AddClass("mud-chip-label", Label)
           .AddClass("mud-disabled", Disabled)
           .AddClass("mud-chip-selected", IsSelected)
           .AddClass(Class)
         .Build();
+
+        private Variant GetVariant()
+        {
+            return Variant switch
+            {
+                Variant.Text => IsSelected ? Variant.Filled : Variant.Text,
+                Variant.Filled => IsSelected ? Variant.Text : Variant.Filled,
+                Variant.Outlined => Variant.Outlined,
+                _ => Variant
+            };
+        }
+
+        private Color GetColor()
+        {
+            if (IsSelected && SelectedColor != Color.Inherit)
+            {
+                return SelectedColor;
+            }
+            else if(IsSelected && SelectedColor == Color.Inherit)
+            {
+                return Color;
+            }
+            else
+            {
+                return Color;
+            }
+        }
 
         [CascadingParameter] MudChipSet ChipSet { get; set; }
 
@@ -44,6 +71,11 @@ namespace MudBlazor
         /// The variant to use.
         /// </summary>
         [Parameter] public Variant Variant { get; set; } = Variant.Filled;
+
+        /// <summary>
+        /// The selected color to use when selected, only works togheter with ChipSet, Color.Inherit for default value.
+        /// </summary>
+        [Parameter] public Color SelectedColor { get; set; } = Color.Inherit;
 
         /// <summary>
         /// Avatar Icon, Overrides the regular Icon if set.
@@ -69,6 +101,11 @@ namespace MudBlazor
         /// Sets the Icon to use.
         /// </summary>
         [Parameter] public string Icon { get; set; }
+
+        /// <summary>
+        /// Custom checked icon.
+        /// </summary>
+        [Parameter] public string CheckedIcon { get; set; } = Icons.Material.Filled.Check;
 
         /// <summary>
         /// The color of the icon.
@@ -106,6 +143,12 @@ namespace MudBlazor
         [Parameter] public string Text { get; set; }
 
         /// <summary>
+        /// A value that should be managed in the SelectedValues collection.
+        /// Note: do not change the value during the chip's lifetime
+        /// </summary>
+        [Parameter] public object Value { get; set; }
+
+        /// <summary>
         /// If true, force browser to redirect outside component router-space.
         /// </summary>
         [Parameter] public bool ForceLoad { get; set; }
@@ -113,7 +156,7 @@ namespace MudBlazor
         /// <summary>
         /// If true, this chip is selected by default if used in a ChipSet. 
         /// </summary>
-        [Parameter] public bool Default { get; set; }
+        [Parameter] public bool? Default { get; set; }
 
         /// <summary>
         /// Command executed when the user clicks on an element.
@@ -163,8 +206,19 @@ namespace MudBlazor
             }
         }
 
+        protected override void OnInitialized()
+        {
+            base.OnInitialized();
+            if (Value == null)
+                Value = this;
+        }
+
         protected async Task OnClickHandler(MouseEventArgs ev)
         {
+            if (ChipSet?.ReadOnly == true)
+            {
+                return;
+            }
             if (ChipSet != null)
             {
                 _ = ChipSet.OnChipClicked(this);
@@ -189,6 +243,10 @@ namespace MudBlazor
 
         protected async Task OnCloseHandler(MouseEventArgs ev)
         {
+            if (ChipSet?.ReadOnly == true)
+            {
+                return;
+            }
             await OnClose.InvokeAsync(this);
             ChipSet?.OnChipDeleted(this);
             StateHasChanged();

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
@@ -10,24 +11,40 @@ namespace MudBlazor
     public partial class MudBadge : MudComponentBase
     {
         protected string Classname =>
-        new CssBuilder("mud-badge")
+        new CssBuilder("mud-badge-root")
           .AddClass(Class)
         .Build();
+        protected string WrapperClass =>
+        new CssBuilder("mud-badge-wrapper")
+            .AddClass($"mud-badge-{Origin.ToDescriptionString().Replace("-", " ")}")
+        .Build();
 
-        protected string BadgeClass =>
-        new CssBuilder("mud-badge-badge")
+        protected string BadgeClassName =>
+        new CssBuilder("mud-badge")
             .AddClass("mud-badge-dot", Dot)
             .AddClass("mud-badge-bordered", Bordered)
             .AddClass("mud-badge-icon", !string.IsNullOrEmpty(Icon) && !Dot)
+            .AddClass($"mud-badge-{Origin.ToDescriptionString().Replace("-", " ")}")
+            .AddClass($"mud-elevation-{Elevation.ToString()}")
             .AddClass("mud-theme-" + Color.ToDescriptionString())
-            .AddClass("mud-badge-top", !Bottom)
-            .AddClass("mud-badge-bottom", Bottom)
-            .AddClass("mud-badge-right", Start == RightToLeft)
-            .AddClass("mud-badge-left", Start != RightToLeft)
             .AddClass("mud-badge-overlap", Overlap)
+            .AddClass(BadgeClass)
         .Build();
 
-        [CascadingParameter] public bool RightToLeft { get; set; }
+        /// <summary>
+        /// The placement of the badge.
+        /// </summary>
+        [Parameter] public Origin Origin { get; set; } = Origin.TopRight;
+
+        /// <summary>
+        /// The higher the number, the heavier the drop-shadow.
+        /// </summary>
+        [Parameter] public int Elevation { set; get; } = 0;
+
+        /// <summary>
+        /// The visibility of the badge.
+        /// </summary>
+        [Parameter] public bool Visible { get; set; } = true;
 
         /// <summary>
         /// The color of the badge.
@@ -37,17 +54,22 @@ namespace MudBlazor
         /// <summary>
         /// Aligns the badge to bottom.
         /// </summary>
+        [ExcludeFromCodeCoverage]
+        [Obsolete("Use Origin instead.", true)]
         [Parameter] public bool Bottom { get; set; }
 
         /// <summary>
         /// Aligns the badge to left.
         /// </summary>
-        [ObsoleteAttribute("Left is obsolete. Use Start instead!", false)]
+        [ExcludeFromCodeCoverage]
+        [Obsolete("Use Origin instead.", true)]
         [Parameter] public bool Left { get => Start; set { Start = value; } }
 
         /// <summary>
         /// Aligns the badge to the start (Left in LTR and right in RTL).
         /// </summary>
+        [ExcludeFromCodeCoverage]
+        [Obsolete("Use Origin instead.", true)]
         [Parameter] public bool Start { get; set; }
 
         /// <summary>
@@ -79,6 +101,11 @@ namespace MudBlazor
         /// Content you want inside the badge. Supported types are string and integer.
         /// </summary>
         [Parameter] public object Content { get; set; }
+
+        /// <summary>
+        /// Badge class names, separated by space.
+        /// </summary>
+        [Parameter] public string BadgeClass { get; set; }
 
         /// <summary>
         /// Child content of component, the content that the badge will apply to.

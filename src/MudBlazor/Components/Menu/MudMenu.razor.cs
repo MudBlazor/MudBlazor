@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
+using System.Threading.Tasks;
+using System.Windows.Input;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Extensions;
@@ -7,22 +10,27 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    public partial class MudMenu : MudBaseButton, IActivatable
+    public partial class MudMenu : MudComponentBase, IActivatable
     {
         protected string Classname =>
         new CssBuilder("mud-menu")
         .AddClass(Class)
        .Build();
 
-        protected string MenuClassname =>
-            new CssBuilder("mud-menu-container")
-            .AddClass("mud-menu-fullwidth", FullWidth)
-            .AddClass(PopoverClass)
-           .Build();
+        protected string ActivatorClassname =>
+        new CssBuilder("mud-menu-activator")
+        .AddClass("mud-disabled", Disabled)
+       .Build();
 
         private bool _isOpen;
+        private bool _isMouseOver = false;
 
         [Parameter] public string Label { get; set; }
+
+        /// <summary>
+        /// User class names for the list, separated by space
+        /// </summary>
+        [Parameter] public string ListClass { get; set; }
 
         /// <summary>
         /// User class names for the popover, separated by space
@@ -90,7 +98,7 @@ namespace MudBlazor
         /// If true, instead of positioning the menu at the left upper corner, position at the exact cursor location.
         /// This makes sense for larger activators
         /// </summary>
-        [Obsolete("Obsolete.  Replace with `PositionAtCursor`.")]
+        [Obsolete("Use PositionAtCursor instead.",true)]
         [Parameter]
         public bool PositionAtCurser
         {
@@ -110,24 +118,83 @@ namespace MudBlazor
         [Parameter] public MouseEvent ActivationEvent { get; set; } = MouseEvent.LeftClick;
 
         /// <summary>
+        /// Set the anchor origin point to determen where the popover will open from.
+        /// </summary>
+        [Parameter] public Origin AnchorOrigin { get; set; } = Origin.TopLeft;
+
+        /// <summary>
+        /// Sets the transform origin point for the popover.
+        /// </summary>
+        [Parameter] public Origin TransformOrigin { get; set; } = Origin.TopLeft;
+
+        /// <summary>
         /// Sets the direction the select menu will start from relative to its parent.
         /// </summary>
+        [ExcludeFromCodeCoverage]
+        [Obsolete("Use AnchorOrigin or TransformOrigin instead.", true)]
         [Parameter] public Direction Direction { get; set; } = Direction.Bottom;
 
         /// <summary>
         /// If true, the select menu will open either before or after the input depending on the direction.
         /// </summary>
+        [ExcludeFromCodeCoverage]
+        [Obsolete("Use AnchorOrigin or TransformOrigin instead.", true)]
         [Parameter] public bool OffsetY { get; set; }
 
         /// <summary>
         /// If true, the select menu will open either above or bellow the input depending on the direction.
         /// </summary>
+        [ExcludeFromCodeCoverage]
+        [Obsolete("Use AnchorOrigin or TransformOrigin instead.", true)]
         [Parameter] public bool OffsetX { get; set; }
 
         /// <summary>
         /// Set to true if you want to prevent page from scrolling when the menu is open
         /// </summary>
         [Parameter] public bool LockScroll { get; set; }
+
+        /// <summary>
+        /// If true, menu will be disabled.
+        /// </summary>
+        [Parameter] public bool Disabled { get; set; }
+
+        /// <summary>
+        /// If true, disables ripple effect.
+        /// </summary>
+        [Parameter] public bool DisableRipple { get; set; }
+
+        /// <summary>
+        /// If true, no drop-shadow will be used.
+        /// </summary>
+        [Parameter] public bool DisableElevation { get; set; }
+
+        #region Obsolete members from previous MudButtonBase inherited structure
+
+        [ExcludeFromCodeCoverage]
+        [Obsolete("Linking is not supported. MudMenu is not a MudBaseButton anymore.", true)]
+        [Parameter] public string Link { get; set; }
+
+        [ExcludeFromCodeCoverage]
+        [Obsolete("Linking is not supported. MudMenu is not a MudBaseButton anymore.", true)]
+        [Parameter] public string Target { get; set; }
+
+        [ExcludeFromCodeCoverage]
+        [Obsolete("MudMenu is not a MudBaseButton anymore.", true)]
+        [Parameter] public string HtmlTag { get; set; } = "button";
+
+        [ExcludeFromCodeCoverage]
+        [Obsolete("MudMenu is not a MudBaseButton anymore.", true)]
+        [Parameter] public ButtonType ButtonType { get; set; }
+
+        [ExcludeFromCodeCoverage]
+        [Obsolete("MudMenu is not a MudBaseButton anymore.", true)]
+        [Parameter] public ICommand Command { get; set; }
+
+        [ExcludeFromCodeCoverage]
+        [Obsolete("MudMenu is not a MudBaseButton anymore.", true)]
+        [Parameter] public object CommandParameter { get; set; }
+
+        #endregion
 
         /// <summary>
         /// Add menu items here
@@ -139,6 +206,7 @@ namespace MudBlazor
         public void CloseMenu()
         {
             _isOpen = false;
+            _isMouseOver = false;
             PopoverStyle = null;
             StateHasChanged();
         }
@@ -152,11 +220,16 @@ namespace MudBlazor
             StateHasChanged();
         }
 
+        public void PopoverMouseEnter()
+        {
+            _isMouseOver = true;
+        }
+
         // Sets the popover style ONLY when there is an activator
         private void SetPopoverStyle(MouseEventArgs args)
         {
-            //use the offset with a relative position to the container
-            PopoverStyle = $"left:{args?.OffsetX.ToPixels()};top:{args?.OffsetY.ToPixels()};";
+            AnchorOrigin = Origin.TopLeft;
+            PopoverStyle = $"margin-top: {args?.OffsetY.ToPx()}; margin-left: {args?.OffsetX.ToPx()};";
         }
 
         public void ToggleMenu(MouseEventArgs args)
@@ -183,5 +256,13 @@ namespace MudBlazor
             ToggleMenu(args);
         }
 
+        public async void MouseLeave()
+        {
+            await Task.Delay(100);
+            if (ActivationEvent == MouseEvent.MouseOver && _isMouseOver == false)
+            {
+                CloseMenu();
+            }
+        }
     }
 }

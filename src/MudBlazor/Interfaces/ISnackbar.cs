@@ -16,7 +16,7 @@ namespace MudBlazor
 
         Snackbar Add(string message, Severity severity = Severity.Normal, Action<SnackbarOptions> configure = null);
 
-        [Obsolete]
+        [Obsolete("Use Add instead.", true)]
         Snackbar AddNew(Severity severity, string message, Action<SnackbarOptions> configure);
 
         void Clear();

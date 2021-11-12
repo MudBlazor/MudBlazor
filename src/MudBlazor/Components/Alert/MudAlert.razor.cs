@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
@@ -44,7 +45,8 @@ namespace MudBlazor
         /// <summary>
         /// Sets the position of the text to the start (Left in LTR and right in RTL).
         /// </summary>
-        [Obsolete("AlertTextPosition is obsolete. Use ContentAlignment instead!", false)]
+        [ExcludeFromCodeCoverage]
+        [Obsolete("Use ContentAlignment instead.", true)]
         [Parameter]
         public AlertTextPosition AlertTextPosition
         {

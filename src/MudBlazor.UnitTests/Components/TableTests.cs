@@ -116,6 +116,38 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// Check if the loading and no records functionnality is working in grouped table.
+        /// </summary>
+        [Test]
+        public void TableGroupLoadingAndNoRecordsTest()
+        {
+            var comp = Context.RenderComponent<TableGroupLoadingAndNoRecordsTest>();
+            var searchString = comp.Find("#searchString");
+            var switchElement = comp.Find("#switch");
+
+            // It should be equal to 5 = header row + group header row + 2 rows + footer row 
+            comp.FindAll("tr").Count.Should().Be(5);
+
+            // Add filter
+            searchString.Change("ZZZ");
+
+            // It should be equal to 2 = header row + no records row
+            comp.FindAll("tr").Count.Should().Be(2);
+            comp.FindAll("tr")[1].TextContent.Should().Be("No records");
+
+            // It should be equal to 3 = header row + loading progress row + loading text
+            switchElement.Change(true);
+            comp.FindAll("tr").Count.Should().Be(3);
+            comp.FindAll("tr")[2].TextContent.Should().Be("Loading...");
+
+            // Remove filter
+            searchString.Change("");
+
+            // It should be equal to 6 = header row + loading progress row + group header row + 2 rows + footer row
+            comp.FindAll("tr").Count.Should().Be(6);
+        }
+
+        /// <summary>
         /// Check if if empty row text is correct
         /// </summary>
         [Test]
@@ -770,15 +802,15 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<TableServerSideDataTest4>();
             Console.WriteLine(comp.Markup);
-            comp.FindAll("tr").Count.Should().Be(4); // three rows + header row
-            comp.FindAll("td")[0].TextContent.Trim().Should().Be("1");
-            comp.FindAll("td")[2].TextContent.Trim().Should().Be("2");
-            comp.FindAll("td")[4].TextContent.Trim().Should().Be("3");
+            comp.WaitForAssertion(() => comp.FindAll("tr").Count.Should().Be(4)); // three rows + header row
+            comp.WaitForAssertion(() => comp.FindAll("td")[0].TextContent.Trim().Should().Be("1"));
+            comp.WaitForAssertion(() => comp.FindAll("td")[2].TextContent.Trim().Should().Be("2"));
+            comp.WaitForAssertion(() => comp.FindAll("td")[4].TextContent.Trim().Should().Be("3"));
             comp.FindAll("div.mud-select-input")[0].Click(); // mobile sort drop down
             comp.FindAll("div.mud-list-item-clickable")[1].Click(); // sort b column
-            comp.FindAll("td")[0].TextContent.Trim().Should().Be("3");
-            comp.FindAll("td")[2].TextContent.Trim().Should().Be("2");
-            comp.FindAll("td")[4].TextContent.Trim().Should().Be("1");
+            comp.WaitForAssertion(() => comp.FindAll("td")[0].TextContent.Trim().Should().Be("3"));
+            comp.WaitForAssertion(() => comp.FindAll("td")[2].TextContent.Trim().Should().Be("2"));
+            comp.WaitForAssertion(() => comp.FindAll("td")[4].TextContent.Trim().Should().Be("1"));
         }
 
         /// <summary>
@@ -796,9 +828,9 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("td")[4].TextContent.Trim().Should().Be("3");
             comp.FindAll("div.mud-select-input")[0].Click(); // mobile sort drop down
             comp.FindAll("div.mud-list-item-clickable")[1].Click(); // sort b column
-            comp.FindAll("td")[0].TextContent.Trim().Should().Be("3");
-            comp.FindAll("td")[2].TextContent.Trim().Should().Be("2");
-            comp.FindAll("td")[4].TextContent.Trim().Should().Be("1");
+            comp.WaitForAssertion(() => comp.FindAll("td")[0].TextContent.Trim().Should().Be("3"));
+            comp.WaitForAssertion(() => comp.FindAll("td")[2].TextContent.Trim().Should().Be("2"));
+            comp.WaitForAssertion(() => comp.FindAll("td")[4].TextContent.Trim().Should().Be("1"));
         }
 
         /// <summary>
@@ -854,6 +886,51 @@ namespace MudBlazor.UnitTests.Components
                 trs[i % 3 + 1].Click();
             }
             validator.ControlCount.Should().Be(2);
+        }
+
+        /// <summary>
+        /// This test validates the edit row maintains position on changing sort key for an inline editing table.
+        /// </summary>
+        [Test]
+        public async Task TableInlineEditSortTest()
+        {
+            var comp = Context.RenderComponent<TableInlineEditSortTest>();
+
+            // Count the number of rows including header
+            comp.FindAll("tr").Count.Should().Be(4); // Three rows + header row
+
+            // Check the values of rows
+            comp.FindAll("td")[0].TextContent.Trim().Should().Be("B");
+            comp.FindAll("td")[2].TextContent.Trim().Should().Be("A");
+            comp.FindAll("td")[4].TextContent.Trim().Should().Be("C");
+
+            // Access to the table
+            var table = comp.FindComponent<MudTable<TableInlineEditSortTest.Element>>();
+
+            // Get the mudtablesortlabels associated to the table
+            var mudTableSortLabels = table.Instance.Context.SortLabels;
+
+            // Sort the first column
+            await table.InvokeAsync(() => mudTableSortLabels[0].ToggleSortDirection());
+
+            // Check the values of rows
+            comp.FindAll("td")[0].TextContent.Trim().Should().Be("A");
+            comp.FindAll("td")[2].TextContent.Trim().Should().Be("B");
+            comp.FindAll("td")[4].TextContent.Trim().Should().Be("C");
+
+            // Click on the second row
+            var trs = comp.FindAll("tr");
+            trs[2].Click();
+
+            // Change row two data
+            var input = comp.Find(("#Id1"));
+            input.Change("D");
+
+            // Check row two is still in position 2 of the data rows
+            var trs2 = comp.FindAll("tr");
+            trs2[1].InnerHtml.Contains("input").Should().BeFalse();
+            trs2[2].InnerHtml.Contains("input").Should().BeTrue();
+            trs2[3].InnerHtml.Contains("input").Should().BeFalse();
         }
 
         /// <summary>
@@ -1114,5 +1191,185 @@ namespace MudBlazor.UnitTests.Components
             tr = comp.FindAll("tr").ToArray();
             tr.Length.Should().Be(36);
         }
+
+        /// <summary>
+        /// Tests the grouping behavior and ensure that it won't break anything else.
+        /// </summary>
+        /// <returns></returns>
+        [Test]
+        public async Task TableGroupingAndPaginationTest()
+        {
+            // without grouping, to ensure that anything was broken:
+            var comp = Context.RenderComponent<TableGroupingTest2>();
+            var table = comp.Instance.tableInstance;
+            table.Context.HeaderRows.Count.Should().Be(1);
+
+            // Page 01:
+            // [00] Porsche
+            //      [01] LMP1
+            //      [02] GTE
+            //      [03] GT3
+            // [04] Audi
+            //      [05] LMP1
+            //      [06] GT3
+            // [07] Ferrari
+            //      [08] Formula 1
+            // [09] McLaren
+            //      [10] Formula 1
+            //      [11] GT3
+            // [12] Aston Martin
+            //      [13] GTE
+            table.Context.GroupRows.Count.Should().Be(14);
+            table.Context.Rows.Count.Should().Be(10);
+            var tr = comp.FindAll("tr").ToArray();
+            tr.Length.Should().Be(39); // 01 Table header + 14 Group Headers + 14 Group Footers + 10 Entries
+
+            // Navigating to page 2
+            table.NavigateTo(1);
+
+            // Page 02:
+            // [00] Aston Martin
+            //      [01] GTE
+            table.Context.GroupRows.Count.Should().Be(2);
+            table.Context.Rows.Count.Should().Be(1);
+            tr = comp.FindAll("tr").ToArray();
+            tr.Length.Should().Be(6); // 01 Table header + 02 Group Headers + 02 Group Footers + 01 Entries
+
+        }
+
+
+        /// <summary>
+        /// Tests the IsInitiallyExpanded grouping behavior.
+        /// </summary>
+        /// <returns></returns>
+        [Test]
+        public async Task TableGroupIsInitiallyExpandedTest()
+        {
+            // group by Racing Category and collapse groups as default:
+            var comp = Context.RenderComponent<TableGroupingTest>();
+            var table = comp.Instance.tableInstance;
+            table.GroupBy = new TableGroupDefinition<TableGroupingTest.RacingCar>(rc => rc.Category, null)
+            {
+                GroupName = "Category",
+                Expandable = true,
+                IsInitiallyExpanded = false
+            };
+            comp.Render();
+            table.Context.GroupRows.Count.Should().Be(4); // 4 categories
+            var tr = comp.FindAll("tr").ToArray();
+            tr.Length.Should().Be(5); // 1 table header + 4 group headers
+        }
+
+        /// <summary>
+        /// Tests the correct output when filter does not return any matching elements
+        /// </summary>
+        /// <returns>The awaitable <see cref="Task"/></returns>
+        [Test]
+        public async Task TablePagerInfoTextTest()
+        {
+            // create the component
+            var tableComponent = Context.RenderComponent<TablePagerInfoTextTest>();
+
+            // print the generated html      
+            Console.WriteLine(tableComponent.Markup);
+
+            // assert correct info-text
+            tableComponent.Find("div.mud-table-page-number-information").Text().Should().Be("1-10 of 59", "No filter applied yet.");
+
+            // get the instance
+            var tableInstance = tableComponent.FindComponent<MudTable<string>>().Instance;
+
+            // get the search-string
+            var searchString = tableComponent.Find("#searchString");
+
+            // should return 3 items
+            searchString.Change("Ala");
+            tableInstance.GetFilteredItemsCount().Should().Be(3);
+            string.Join(",", tableInstance.FilteredItems).Should().Be("Alabama,Alaska,Palau");
+            tableComponent.FindAll("tr").Count.Should().Be(3);
+            tableComponent.Find("div.mud-table-page-number-information").Text().Should().Be("1-3 of 3", "'Ala' filter applied.");
+
+            // no matches
+            searchString.Change("ZZZ");
+            tableInstance.GetFilteredItemsCount().Should().Be(0);
+            tableInstance.FilteredItems.Count().Should().Be(0);
+            tableComponent.FindAll("tr").Count.Should().Be(0);
+            tableComponent.Find("div.mud-table-page-number-information").Text().Should().Be("0-0 of 0", "'ZZZ' filter applied.");
+        }
+
+        /// <summary>
+        /// Tests checks that RowsPerPage Parameter is two-way bindable
+        /// </summary>
+        [Test]
+        public async Task RowsPerPageParameterTwoWayBinding()
+        {
+            int rowsPerPage = 5;
+            int newRowsPerPage = 25;
+            var comp = Context.RenderComponent<TableRowsPerPageTwoWayBindingTest>(parameters => parameters
+                .Add(p => p.RowsPerPage, rowsPerPage)
+                .Add(p => p.RowsPerPageChanged, (s) =>
+                {
+                    rowsPerPage = int.Parse(s.ToString());
+                })
+            );
+            Console.WriteLine(comp.Markup);
+            //Check the component rendered correctly with the initial RowsPerPage
+            var t = comp.Find("input.mud-select-input").GetAttribute("Value");
+            int.Parse(t).Should().Be(rowsPerPage, "The component rendered correctly");
+            //open the menu
+            var menuItem = comp.Find("div.mud-input-control");
+            menuItem.Click();
+
+            //Now select the 25 and check it
+            var items = comp.FindAll("div.mud-list-item").ToArray();
+            items[1].Click();
+            comp.WaitForAssertion(() => rowsPerPage.Should().Be(newRowsPerPage, "ValueChanged EventCallback fired correctly"));
+        }
+
+        /// <summary>
+        /// Tests that clicking a row in a non-editable table does not set IsEditing to true and stop the table from updating.
+        /// </summary>
+        [Test]
+        public void TableRowClickNotEditable()
+        {
+            var comp = Context.RenderComponent<TableRowClickNotEditableTest>();
+
+            // Get table instance
+            var tableInstance = comp.FindComponent<MudTable<string>>().Instance;
+
+            // Check number of filtered items
+            tableInstance.GetFilteredItemsCount().Should().Be(3);
+
+            // Click row
+            var trs = comp.FindAll("tr");
+            trs[1].Click();
+
+            // Filter items
+            var searchString = comp.Find("#searchString");
+            searchString.Change("b");
+
+            // Make sure number of items has updated
+            tableInstance.GetFilteredItemsCount().Should().Be(1);
+        }
+        
+        /// Issue #3033
+        /// Tests changing RowsPerPage Parameter from code - Table should re-render new RowsPerPage parameter and parameter value should be set
+        /// </summary>
+        /// <returns></returns>
+        [Test]
+        public async Task RowsPerPageChangeValueFromCode()
+        {
+            var testComponent = Context.RenderComponent<TablePagerChangeRowsPerPageTest>();
+            var table = testComponent.FindComponent<MudTable<string>>().Instance;
+            var buttonComponent = testComponent.FindComponent<MudButton>();
+            testComponent.WaitForAssertion(() => table.RowsPerPage.Should().Be(35));
+            //Toggle the rows per page value from 35 to 10
+            buttonComponent.Find("button").Click();
+            testComponent.WaitForAssertion(() => table.RowsPerPage.Should().Be(10));
+            //Toggle the rows per page value from 10 back to  to 35
+            buttonComponent.Find("button").Click();
+            testComponent.WaitForAssertion(() => table.RowsPerPage.Should().Be(35));
+        }
+
     }
 }

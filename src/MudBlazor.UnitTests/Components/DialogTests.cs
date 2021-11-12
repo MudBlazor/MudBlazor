@@ -74,6 +74,7 @@ namespace MudBlazor.UnitTests.Components
             Console.WriteLine("\nOpened dialog: " + comp.Markup);
             comp.Find("div.mud-dialog-container").Should().NotBe(null);
             comp.Find("p.mud-typography").TrimmedText().Should().Be("Wabalabadubdub!");
+            comp.Find("div.mud-dialog").GetAttribute("class").Should().Contain("mud-dialog-width-full");
             // close by click on ok button
             comp.Find("button").Click();
             comp.Markup.Trim().Should().BeEmpty();
@@ -257,6 +258,32 @@ namespace MudBlazor.UnitTests.Components
             //Dialog should now be closable through backdrop click
             comp.Find("div.mud-overlay").Click();
             comp.WaitForAssertion(() => comp.Markup.Trim().Should().BeEmpty(), TimeSpan.FromSeconds(5));
+        }
+
+        /// <summary>
+        /// Getting return value from dialog
+        /// </summary>
+        [Test]
+        public async Task DialogShouldReturnTheReturnValue()
+        {
+            var comp = Context.RenderComponent<MudDialogProvider>();
+            comp.Markup.Trim().Should().BeEmpty();
+            var service = Context.Services.GetService<IDialogService>() as DialogService;
+            service.Should().NotBe(null);
+            IDialogReference dialogReference = null;
+            // open dialog
+            await comp.InvokeAsync(() => dialogReference = service?.Show<DialogWithReturnValue>());
+            dialogReference.Should().NotBe(null);
+            // close by click on cancel button
+            comp.FindAll("button")[0].Click();
+            var rv = await dialogReference.GetReturnValueAsync<string>();
+            rv.Should().BeNull();
+            // open dialog
+            await comp.InvokeAsync(() => dialogReference = service?.Show<DialogWithReturnValue>());
+            // close by click on ok button
+            comp.FindAll("button")[1].Click();
+            rv = await dialogReference.GetReturnValueAsync<string>();
+            rv.Should().Be("Closed via OK");
         }
     }
 
