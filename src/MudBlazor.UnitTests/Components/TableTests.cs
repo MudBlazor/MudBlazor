@@ -934,6 +934,58 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// This test validates that rows have "mud-table-row-editing" class when in editing mode.
+        /// </summary>
+        [Test]
+        public async Task TableInlineEditRowEditingClass()
+        {
+            var comp = Context.RenderComponent<TableInlineEditTest>();
+
+            // Check that no rows have a "mud-table-row-editing" class set
+            comp.FindAll("tr").Any(r => r.ClassList.Any(c => c == "mud-table-row-editing")).Should().BeFalse();
+
+            // Click on the second row
+            var trs = comp.FindAll("tr");
+            trs[2].Click();
+
+            // Check that second row now have a "mud-table-row-editing" class set
+            comp.FindAll("tr")[2].ClassList.Any(c => c == "mud-table-row-editing").Should().BeTrue();
+
+            // Click the commit button
+            var commitButton = comp.Find("button");
+            commitButton.Click();
+
+            // Check again that no rows have a "mud-table-row-editing" class set
+            comp.FindAll("tr").Any(r => r.ClassList.Any(c => c == "mud-table-row-editing")).Should().BeFalse();
+        }
+
+        /// <summary>
+        /// This test validates that rows have "mud-table-row-editing" class when in editing mode.
+        /// </summary>
+        [Test]
+        public async Task TableInlineEditTableEditingClass()
+        {
+            var comp = Context.RenderComponent<TableInlineEditTest>();
+
+            // Check that table doesn't have a "mud-table-editing" class set
+            comp.Find(".mud-table").ClassList.Any(c => c == "mud-table-editing").Should().BeFalse();
+
+            // Click on the second row
+            var trs = comp.FindAll("tr");
+            trs[2].Click();
+
+            // Check that table now have a "mud-table-editing" class set
+            comp.Find(".mud-table").ClassList.Any(c => c == "mud-table-editing").Should().BeTrue();
+
+            // Click the commit button
+            var commitButton = comp.Find("button");
+            commitButton.Click();
+
+            // Check again that table doesn't have a "mud-table-editing" class set
+            comp.Find(".mud-table").ClassList.Any(c => c == "mud-table-editing").Should().BeFalse();
+        }
+
+        /// <summary>
         /// This test validates the processing of the Commit and Cancel buttons for an inline editing table.
         /// </summary>
         [Test]
