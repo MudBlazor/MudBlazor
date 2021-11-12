@@ -39,6 +39,8 @@ namespace MudBlazor.UnitTests.Components
             return comp;
         }
 
+
+
         [Test]
         public void Open_ClickOutside_CheckClosed()
         {
