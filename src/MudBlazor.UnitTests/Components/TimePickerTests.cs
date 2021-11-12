@@ -39,6 +39,8 @@ namespace MudBlazor.UnitTests.Components
             return comp;
         }
 
+
+
         [Test]
         public void Open_ClickOutside_CheckClosed()
         {
@@ -67,6 +69,17 @@ namespace MudBlazor.UnitTests.Components
             // count hours
             underlyingPicker.Instance.AmPm.Should().Be(true);
             comp.FindAll("div.mud-hour").Count.Should().Be(12);
+        }
+
+        [Test]
+        public void SelectTime_UsingClicks_24HourMode_Midnight_CheckTime()
+        {
+            var comp = OpenPicker();
+            var underlyingPicker = comp.FindComponent<MudTimePicker>().Instance;
+
+            // select 00 hours
+            comp.FindAll("div.mud-picker-stick-outer.mud-hour")[11].Click();
+            underlyingPicker.TimeIntermediate.Value.Hours.Should().Be(0);
         }
 
         [Test]
