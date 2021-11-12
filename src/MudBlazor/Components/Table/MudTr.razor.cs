@@ -137,6 +137,7 @@ namespace MudBlazor
 
             // Set hasBeenClickedFirstTime to false 
             hasBeenClickedFirstTime = false;
+            Context?.TableStateHasChanged();
         }
 
         private void CancelEdit(MouseEventArgs ev)
@@ -157,6 +158,7 @@ namespace MudBlazor
 
             // Set hasBeenClickedFirstTime to false 
             hasBeenClickedFirstTime = false;
+            Context?.TableStateHasChanged();
         }
 
         public void ManagePreviousEdition()
@@ -172,6 +174,7 @@ namespace MudBlazor
 
                 // Trigger the row edit cancel event
                 Context.Table.RowEditCancel?.Invoke(Item);
+                Context?.TableStateHasChanged();
             }
 
             // Reset the variables

@@ -901,8 +901,8 @@ namespace MudBlazor.UnitTests.Components
 
             // Check the values of rows
             comp.FindAll("td")[0].TextContent.Trim().Should().Be("B");
-            comp.FindAll("td")[2].TextContent.Trim().Should().Be("A");
-            comp.FindAll("td")[4].TextContent.Trim().Should().Be("C");
+            comp.FindAll("td")[1].TextContent.Trim().Should().Be("A");
+            comp.FindAll("td")[2].TextContent.Trim().Should().Be("C");
 
             // Access to the table
             var table = comp.FindComponent<MudTable<TableInlineEditSortTest.Element>>();
@@ -915,8 +915,8 @@ namespace MudBlazor.UnitTests.Components
 
             // Check the values of rows
             comp.FindAll("td")[0].TextContent.Trim().Should().Be("A");
-            comp.FindAll("td")[2].TextContent.Trim().Should().Be("B");
-            comp.FindAll("td")[4].TextContent.Trim().Should().Be("C");
+            comp.FindAll("td")[1].TextContent.Trim().Should().Be("B");
+            comp.FindAll("td")[2].TextContent.Trim().Should().Be("C");
 
             // Click on the second row
             var trs = comp.FindAll("tr");
@@ -942,7 +942,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<TableInlineEditCancelTest>();
 
             // Check that the value in the second row is equal to 'B'
-            comp.FindAll("td")[2].TextContent.Trim().Should().Be("B");
+            comp.FindAll("td")[1].TextContent.Trim().Should().Be("B");
 
             // Click on the second row
             var trs = comp.FindAll("tr");
@@ -956,7 +956,7 @@ namespace MudBlazor.UnitTests.Components
             commitButton.Click();
 
             // Value in the second row should be now equal to 'C'
-            comp.FindAll("td")[2].TextContent.Trim().Should().Be("C");
+            comp.FindAll("td")[1].TextContent.Trim().Should().Be("C");
 
             // Click on the second row
             trs[2].Click();
@@ -969,7 +969,7 @@ namespace MudBlazor.UnitTests.Components
             cancelButton.Click();
 
             // Value in the second row should still be equal to 'C'
-            comp.FindAll("td")[2].TextContent.Trim().Should().Be("C");
+            comp.FindAll("td")[1].TextContent.Trim().Should().Be("C");
         }
 
         /// <summary>
@@ -981,7 +981,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<TableInlineEditCancelTest>();
 
             // Check that the value in the second row is equal to 'B'
-            comp.FindAll("td")[2].TextContent.Trim().Should().Be("B");
+            comp.FindAll("td")[1].TextContent.Trim().Should().Be("B");
 
             // Click on the second row
             var trs = comp.FindAll("tr");
@@ -1001,7 +1001,7 @@ namespace MudBlazor.UnitTests.Components
             cancelButton.Click();
 
             // Value in the second row should still be equal to 'B'
-            comp.FindAll("td")[2].TextContent.Trim().Should().Be("B");
+            comp.FindAll("td")[1].TextContent.Trim().Should().Be("B");
         }
 
         /// <summary>
