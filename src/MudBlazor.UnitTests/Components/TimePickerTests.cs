@@ -70,6 +70,17 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public void SelectTime_UsingClicks_24HourMode_Midnight_CheckTime()
+        {
+            var comp = OpenPicker();
+            var underlyingPicker = comp.FindComponent<MudTimePicker>().Instance;
+
+            // select 00 hours
+            comp.FindAll("div.mud-picker-stick-outer.mud-hour")[11].Click();
+            underlyingPicker.TimeIntermediate.Value.Hours.Should().Be(0);
+        }
+
+        [Test]
         public async Task SelectTime_UsingClicks_24HourMode_CheckTimeAsync()
         {
             var comp = OpenPicker();
