@@ -78,6 +78,7 @@ namespace MudBlazor.UnitTests.Components
             // select 00 hours
             comp.FindAll("div.mud-picker-stick-outer.mud-hour")[11].Click();
             underlyingPicker.TimeIntermediate.Value.Hours.Should().Be(0);
+            underlyingPicker.TimeIntermediate.Value.Days.Should().Be(0);
         }
 
         [Test]
