@@ -30,6 +30,10 @@
                 {
                     <colgroup>
                         @ColGroup
+                        @if (Context.Table.IsEditable && Context.Table.IsEditing)
+                        {
+                            <col class="mud-table-cell-commands" />
+                        }
                     </colgroup>
                 }
                 @if (HeaderContent != null || Columns != null)

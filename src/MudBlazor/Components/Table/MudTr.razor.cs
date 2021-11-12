@@ -14,7 +14,9 @@ namespace MudBlazor
         internal object _itemCopy;
 
         protected string Classname => new CssBuilder("mud-table-row")
-            .AddClass(Class).Build();
+            .AddClass(Class)
+            .AddClass("mud-table-row-editing", object.ReferenceEquals(Context?.Table._editingItem, Item))
+            .Build();
 
         protected string ActionsStylename => new StyleBuilder()
             .AddStyle("padding-left", "34px", IsExpandable).Build();
@@ -79,15 +81,16 @@ namespace MudBlazor
                 Context?.Table.OnPreviewEditHandler(Item);
 
                 // Trigger the row edit preview event
-                Context.Table.RowEditPreview?.Invoke(Item);
+                Context?.Table.RowEditPreview?.Invoke(Item);
+                Context?.Table.SetEditingItem(Item);
             }
-
-            Context?.Table.SetEditingItem(Item);
 
             if (Context?.Table.MultiSelection == true && !IsHeader)
             {
                 IsChecked = !IsChecked;
             }
+
+            Context?.TableStateHasChanged();
             Context?.Table.FireRowClickEvent(args, this, Item);
         }
 

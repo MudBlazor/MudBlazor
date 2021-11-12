@@ -15,21 +15,21 @@
         </MudElement>
     }
     @ChildContent
-    @if (IsEditable)
+    @if (IsEditable && Context.Table.IsEditing)
     {
         if (IsHeader)
         {
-            <MudTh/>
+            <MudTh Class="mud-table-cell-commands" />
         }
         else if (IsFooter)
         {
-            <MudTd/>
+            <MudTd Class="mud-table-cell-commands" />
         }
         else
         {
             @* Add datalabel as a placeholder to avoid jumps on small viewports *@
-            <MudTd DataLabel="&nbsp;">
-                @if (object.ReferenceEquals(Context?.Table._editingItem, Item) && (!Context?.Table.ReadOnly ?? false))
+            <MudTd Class="mud-table-cell-commands" DataLabel="&nbsp;">
+                @if (object.ReferenceEquals(Context.Table._editingItem, Item) && (!Context?.Table.ReadOnly ?? false))
                 {
                     <div style="display: flex;">
                         <MudTooltip Text="@Context.Table.CommitEditTooltip">

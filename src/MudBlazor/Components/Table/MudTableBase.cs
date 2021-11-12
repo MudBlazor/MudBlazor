@@ -21,6 +21,7 @@ namespace MudBlazor
 
         protected string Classname =>
         new CssBuilder("mud-table")
+           .AddClass("mud-table-editing", _isEditing)
            .AddClass("mud-xs-table", Breakpoint == Breakpoint.Xs)
            .AddClass("mud-sm-table", Breakpoint == Breakpoint.Sm)
            .AddClass("mud-md-table", Breakpoint == Breakpoint.Md)
@@ -321,6 +322,11 @@ namespace MudBlazor
         #endregion
 
         public abstract TableContext TableContext { get; }
+
+        /// <summary>
+        /// If true, the table is currently in editing mode
+        /// </summary>
+        public bool IsEditing => _isEditing;
 
         protected override Task OnAfterRenderAsync(bool firstRender)
         {

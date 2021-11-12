@@ -113,6 +113,11 @@
     }
 }
 
+.mud-table-cell-commands {
+    width: 0;
+    white-space: nowrap;
+}
+
 .mud-table-cell-footer {
     color: var(--mud-palette-text-secondary);
     font-size: 0.75rem;

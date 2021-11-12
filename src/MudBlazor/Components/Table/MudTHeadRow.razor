@@ -17,9 +17,9 @@
         </MudTh>
     }
     @ChildContent
-    @if ((Context?.Table.IsEditable ?? false) && !IgnoreEditable)
+    @if ((Context?.Table.IsEditable ?? false) && !IgnoreEditable && Context.Table.IsEditing)
     {
-        <MudTh/>
+        <MudTh Class="mud-table-cell-commands" />
     }
 </tr>
 
