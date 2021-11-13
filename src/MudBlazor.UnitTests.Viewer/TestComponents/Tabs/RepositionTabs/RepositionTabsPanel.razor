@@ -1,4 +1,5 @@
 ﻿@namespace MudBlazor.UnitTests.TestComponents
+@implements IAsyncDisposable
 
 <MudButton OnClick="@(() => Counter++)">@($"{PanelName}={Counter}")</MudButton>
 
@@ -9,10 +10,17 @@
 
     [Parameter] public EventCallback<string> FirstRender { get; set; }
 
+    [Parameter] public EventCallback<string> OnDispose { get; set; }
+
     protected override Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
-            FirstRender.InvokeAsync(PanelName);
+            FirstRender.InvokeAsync($"Render {PanelName}");
         return base.OnAfterRenderAsync(firstRender);
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        await OnDispose.InvokeAsync($"Disposed {PanelName}");
     }
 }

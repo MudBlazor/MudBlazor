@@ -1,0 +1,25 @@
+﻿@namespace MudBlazor
+@inherits MudComponentBase
+
+<div @attributes="UserAttributes" class="mud-tabs-content">
+    @ChildContent
+</div>
+
+@code {
+    [Parameter] public bool RenderContent { get; set; }
+
+    [Parameter] public EventCallback AfterRender { get; set; }
+
+    [Parameter] public RenderFragment ChildContent { get; set; }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await base.OnAfterRenderAsync(firstRender);
+        await AfterRender.InvokeAsync();
+    }
+
+    protected override bool ShouldRender()
+    {
+        return RenderContent;
+    }
+}

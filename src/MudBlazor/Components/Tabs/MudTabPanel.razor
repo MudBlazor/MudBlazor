@@ -5,20 +5,27 @@
 @if (Parent?.KeepPanelsAlive == true)
 {
     <div @attributes="UserAttributes" class="@Class" style="display:@(Parent?.ActivePanel == this ? "contents" : "none");@Style">
-        @ChildContent
+        <MudTabPanelContent RenderContent=@_shouldRender
+                            AfterRender=@(() => _shouldRender = false)>
+            @ChildContent
+        </MudTabPanelContent>
     </div>
 }
 else
 {
     @if (Parent?.ActivePanel == this)
     {
-        @ChildContent
+        <MudTabPanelContent RenderContent=@_shouldRender
+                            AfterRender=@(() => _shouldRender = false)>
+            @ChildContent
+        </MudTabPanelContent>
     }
 }
 
 @code {
 
     private Boolean _disposed;
+    private Boolean _shouldRender = true;
 
     [CascadingParameter] private MudTabs Parent { get; set; }
 
@@ -76,6 +83,8 @@ else
 
     public int Index { get; set; }
 
+    internal Action RenderPanel { get; set; }
+
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         await base.OnAfterRenderAsync(firstRender);
@@ -91,6 +100,12 @@ else
         //if (Parent == null)
         //    throw new ArgumentNullException(nameof(Parent), "TabPanel must exist within a Tabs component");
         base.OnInitialized();
+
+        RenderPanel = (()=>
+        {
+            InvokeAsync(() => _shouldRender = true);
+            Console.WriteLine($"Should Render: {Text}");
+        });
 
         Parent?.AddPanel(this);
     }

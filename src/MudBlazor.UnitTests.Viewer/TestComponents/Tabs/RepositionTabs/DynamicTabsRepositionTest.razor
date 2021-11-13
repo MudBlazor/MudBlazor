@@ -4,7 +4,7 @@
 <MudForm>
 	<MudSwitch T="bool" @bind-Checked="@_isCentered" Label="Centered Tabs"/>
 	<MudSwitch T="bool" @bind-Checked="@_isEnableRepositioning" Label="Enable repositioning"/>
-	<MudSwitch T="bool" @bind-Checked="@_isKeepPanelsAlive" Label="Keep Tabs Alive"/>
+	<MudSwitch T="bool" @bind-Checked="@KeepPanelsAlive" Label="Keep Tabs Alive"/>
 
 	<MudRadioGroup @bind-SelectedOption="@_position">
 		<MudRadio Option="@(Position.Bottom)">Bottom</MudRadio>
@@ -22,25 +22,39 @@
 		AddIconClass="my-add-icon-class" AddTab="OnAddClicked"
 		Centered="@_isCentered"
 		Position="@_position"
-        KeepPanelsAlive="@_isKeepPanelsAlive"
+        KeepPanelsAlive="@KeepPanelsAlive"
 		EnableRepositioning="@_isEnableRepositioning"
 >
-	@foreach(var panel in _panels)
+	@foreach(var panel in Panels)
 	{
-		<MudTabPanel Text="@panel" @key=panel>
-            <RepositionTabsPanel PanelName="@panel" FirstRender="@((x) => _firstRenders.Add(x))"/>
+		<MudTabPanel Text="@panel.Text" ID="@panel.ID" @key=panel.ID>
+            <RepositionTabsPanel PanelName="@panel.Text"
+                                 FirstRender="@((x) => _firstRenders.Add(x))"
+                                 OnDispose="@((x) => _disposedPanels.Add(x))"/>
 		</MudTabPanel>
 	}
 </MudDynamicTabs>
 
-<p>
+<p id="first-renders">
     @foreach (var firstRender in _firstRenders)
     {
         @firstRender<br />
     }
 </p>
 
+<p id="disposed-panels">
+    @foreach (var panel in _disposedPanels)
+    {
+        @panel<br/>
+    }
+</p>
+
 @code {
+    [Parameter]
+    public List<(object ID, string Text)> Panels { get; set; } = new List<(object, string)>();
+
+    [Parameter]
+    public bool KeepPanelsAlive { get; set; } = false;
 
     public static string __description__ = @"Should be able to reposition tabs
     after adding/deleting tabs and
@@ -49,28 +63,38 @@
 
     bool _isCentered = false;
     bool _isEnableRepositioning = true;
-    bool _isKeepPanelsAlive = false;
+
     Position _position { get; set; } = Position.Top;
-    List<string> _panels = new List<string>();
     List<string> _firstRenders = new List<string>();
+    List<string> _subsequentRenders = new List<string>();
+    List<string> _disposedPanels = new List<string>();
 
     public Int32 AddClickCounter { get; private set; }
 
     protected override void OnInitialized()
     {
-        _panels = new List<string>() { "Panel 0", "Panel 1", "Panel 2" };
-        AddClickCounter = _panels.Count;
+    }
+
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+
+        AddClickCounter = Panels.Count;
+    }
+
+    public async Task AddPanel()
+    {
+        Panels.Add((++AddClickCounter, $"Panel {AddClickCounter}"));
+        await InvokeAsync(StateHasChanged);
     }
 
     private void OnAddClicked()
     {
-        _panels.Add($"Panel {AddClickCounter}");
-        AddClickCounter++;
+        InvokeAsync(() => AddPanel());
     }
 
     private void OnCloseClicked(MudTabPanel panel)
     {
-        Console.WriteLine($"Closing {panel.Text}");
-        _panels.Remove(panel.Text);
+        Panels.Remove((panel.ID, panel.Text));
 	}
 }

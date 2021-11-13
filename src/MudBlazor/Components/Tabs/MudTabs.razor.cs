@@ -162,13 +162,13 @@ namespace MudBlazor
             get => _activePanelIndex;
             set
             {
-                if (_activePanelIndex != value)
+                _activePanelIndex = value;
+                if (_isRendered)
                 {
-                    _activePanelIndex = value;
-                    if (_isRendered)
-                        ActivePanel = _panels[_activePanelIndex];
-                    ActivePanelIndexChanged.InvokeAsync(value);
+                    ActivePanel = _panels[_activePanelIndex];
+                    InvokeAsync(_panels[_activePanelIndex].RenderPanel);
                 }
+                ActivePanelIndexChanged.InvokeAsync(value);
             }
         }
 
@@ -307,13 +307,13 @@ namespace MudBlazor
                 await ActivePanelIndexChanged.InvokeAsync(_activePanelIndex);
             }
 
-            if (index != newIndex)
+            _panels.Remove(tabPanel);
+            await _resizeObserver.Unobserve(tabPanel.PanelRef);
+
+            if (ActivePanelIndex == index && _panels.Count > 0)
             {
                 ActivePanelIndex = newIndex;
             }
-
-            _panels.Remove(tabPanel);
-            await _resizeObserver.Unobserve(tabPanel.PanelRef);
 
             for (int i = 0; i != _panels.Count; i++)
             {
@@ -366,12 +366,6 @@ namespace MudBlazor
             if (src == dst)
                 return;
 
-            List<ElementReference> refs = new List<ElementReference>();
-            foreach (var p in _panels)
-            {
-                refs.Add(p.PanelRef);
-            }
-
             MudTabPanel tmp = _panels[src];
 
             if (src < dst)
@@ -391,11 +385,12 @@ namespace MudBlazor
                 _panels[dst] = tmp;
             }
 
-            for (int i = 0; i != refs.Count; i++)
+            for (int i = 0; i != _panels.Count; i++)
             {
-                _panels[i].PanelRef = refs[i];
                 _panels[i].Index = i;
             }
+
+            ActivePanelIndex = dst;
         }
 
         private void OnDragStart(MudTabPanel panel, DragEventArgs ev)

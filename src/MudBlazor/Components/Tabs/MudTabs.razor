@@ -22,7 +22,7 @@
                          style="@WrapperScrollStyle">
                         @foreach (MudTabPanel panel in _panels)
                         {
-                            <MudTooltip Placement="@GetTooltipPlacement()" Text="@panel.ToolTip">
+                            <MudTooltip Placement="@GetTooltipPlacement()" Text="@panel.ToolTip" @key=panel.ID>
                                 <div @ref=panel.PanelRef
                                     class="@GetTabClass(panel)"
                                     style="@GetTabStyle(panel)"
