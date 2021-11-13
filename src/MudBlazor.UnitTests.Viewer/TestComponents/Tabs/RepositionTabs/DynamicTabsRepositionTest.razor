@@ -1,0 +1,76 @@
+﻿@namespace MudBlazor.UnitTests.TestComponents
+@using System
+
+<MudForm>
+	<MudSwitch T="bool" @bind-Checked="@_isCentered" Label="Centered Tabs"/>
+	<MudSwitch T="bool" @bind-Checked="@_isEnableRepositioning" Label="Enable repositioning"/>
+	<MudSwitch T="bool" @bind-Checked="@_isKeepPanelsAlive" Label="Keep Tabs Alive"/>
+
+	<MudRadioGroup @bind-SelectedOption="@_position">
+		<MudRadio Option="@(Position.Bottom)">Bottom</MudRadio>
+		<MudRadio Option="@(Position.Center)">Center</MudRadio>
+		<MudRadio Option="@(Position.Top)">Top</MudRadio>
+		<MudRadio Option="@(Position.Left)">Left</MudRadio>
+		<MudRadio Option="@(Position.Right)">Right</MudRadio>
+		<MudRadio Option="@(Position.Start)">Start</MudRadio>
+		<MudRadio Option="@(Position.End)">End</MudRadio>
+	</MudRadioGroup>
+</MudForm>
+
+<MudDynamicTabs
+		CloseIconClass="my-close-icon-class" CloseTab="OnCloseClicked"
+		AddIconClass="my-add-icon-class" AddTab="OnAddClicked"
+		Centered="@_isCentered"
+		Position="@_position"
+        KeepPanelsAlive="@_isKeepPanelsAlive"
+		EnableRepositioning="@_isEnableRepositioning"
+>
+	@foreach(var panel in _panels)
+	{
+		<MudTabPanel Text="@panel" @key=panel>
+            <RepositionTabsPanel PanelName="@panel" FirstRender="@((x) => _firstRenders.Add(x))"/>
+		</MudTabPanel>
+	}
+</MudDynamicTabs>
+
+<p>
+    @foreach (var firstRender in _firstRenders)
+    {
+        @firstRender<br />
+    }
+</p>
+
+@code {
+
+    public static string __description__ = @"Should be able to reposition tabs
+    after adding/deleting tabs and
+    changing positions (centered, top,
+    left, etc).";
+
+    bool _isCentered = false;
+    bool _isEnableRepositioning = true;
+    bool _isKeepPanelsAlive = false;
+    Position _position { get; set; } = Position.Top;
+    List<string> _panels = new List<string>();
+    List<string> _firstRenders = new List<string>();
+
+    public Int32 AddClickCounter { get; private set; }
+
+    protected override void OnInitialized()
+    {
+        _panels = new List<string>() { "Panel 0", "Panel 1", "Panel 2" };
+        AddClickCounter = _panels.Count;
+    }
+
+    private void OnAddClicked()
+    {
+        _panels.Add($"Panel {AddClickCounter}");
+        AddClickCounter++;
+    }
+
+    private void OnCloseClicked(MudTabPanel panel)
+    {
+        Console.WriteLine($"Closing {panel.Text}");
+        _panels.Remove(panel.Text);
+	}
+}
