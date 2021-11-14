@@ -114,16 +114,15 @@ namespace MudBlazor.Docs.Services
                     var link =
                         section ==
                         NavigationSection.Api
-                            ? ApiLink.GetApiLinkFor(menuElement.Component).Split("/").Last()
+                            ? ApiLink.GetApiLinkFor(menuElement.Type).Split("/").Last()
                             : menuElement.Link;
 
                     var name = menuElement.Name;
 
                     links.Add(new NavigationFooterLink(name, link));
                 }
-                if (menuElement.GroupItems != null)
-                    links.AddRange(menuElement.GroupItems
-                        .Elements
+                if (menuElement.GroupComponents != null)
+                    links.AddRange(menuElement.GroupComponents
                         .Select(i => new NavigationFooterLink(i.Name, i.Link)).OrderBy(i => i.Link));
             };
             return links;
