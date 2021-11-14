@@ -285,6 +285,8 @@
 
     RenderFragment RenderTheType()
     {
+        if (!Type.IsAssignableTo(typeof(IComponent)))
+            return null;
         return new RenderFragment(builder =>
         {
             builder.OpenComponent(0, Type);
