@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Globalization;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Extensions;
 using MudBlazor.Utilities;
@@ -10,6 +9,7 @@ namespace MudBlazor
     {
         protected string ContainerClass => new CssBuilder("mud-tooltip-root")
             .AddClass("mud-tooltip-inline", Inline)
+            .AddClass(RootClass)
             .Build();
 
         protected string Classname => new CssBuilder("mud-tooltip")
@@ -87,6 +87,14 @@ namespace MudBlazor
         /// Determines if this component should be inline with it's surrounding (default) or if it should behave like a block element.
         /// </summary>
         [Parameter] public bool Inline { get; set; } = true;
+
+        /// <summary>
+        /// Styles applied directly to root component of the tooltip
+        /// </summary>
+        [Parameter] public string RootStyle { get; set; }
+
+        /// Classes applied directly to root component of the tooltip
+        [Parameter] public string RootClass { get; set; }
 
         private void HandleMouseOver() => _isVisible = true;
         private void HandleMouseOut() => _isVisible = false;
