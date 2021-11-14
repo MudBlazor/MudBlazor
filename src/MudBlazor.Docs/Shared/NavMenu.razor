@@ -24,7 +24,7 @@
             if (item.IsNavGroup)
             {
                 <MudNavGroup Title="@item.Name" Expanded="@(IsSubGroupExpanded(item))" ExpandIcon="@Icons.Material.Filled.ExpandMore">
-                    @foreach (var subItem in item.GroupItems.Elements)
+                    @foreach (var subItem in item.GroupComponents)
                     {
                         string href = $"components/{subItem.Link}";
                         <MudNavLink Href="@href">@subItem.Name</MudNavLink>
@@ -46,7 +46,7 @@
                  ExpandIcon="@Icons.Material.Filled.ExpandMore">
         @foreach (var item in MenuService.Api)
         {
-            <MudNavLink Href="@ApiLink.GetApiLinkFor(item.Component)">@item.Name</MudNavLink>
+            <MudNavLink Href="@ApiLink.GetApiLinkFor(item.Type)">@item.Name</MudNavLink>
         }
     </MudNavGroup>
 
