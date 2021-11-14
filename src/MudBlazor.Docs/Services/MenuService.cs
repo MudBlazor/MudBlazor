@@ -111,7 +111,7 @@ namespace MudBlazor.Docs.Services
 
             //Charts
             .AddNavGroup("Charts", false, new DocsComponents()
-                .AddItem("Options", typeof(ChartOptions))
+                //.AddItem("Options", typeof(ChartOptions)) // <-- this does not work because ChartOptions is not a component!
                 .AddItem("Donut Chart", typeof(Donut))
                 .AddItem("Line Chart", typeof(Line))
                 .AddItem("Pie Chart", typeof(Pie))
@@ -125,9 +125,18 @@ namespace MudBlazor.Docs.Services
         private Dictionary<Type, MudComponent> _parents = new();
         private Dictionary<Type, MudComponent> _componentLookup = new();
 
-        public MudComponent GetParent(Type child) => _parents[child];
+        public MudComponent GetParent(Type child) {
+            if (child == null)
+                return null;
+            if ( _parents.TryGetValue(child, out var parent))
+                return parent;
+            return null;
+        }
+
         public MudComponent GetComponent(Type type)
         {
+            if (type == null)
+                return null;
             if (_componentLookup.ContainsKey(type))
                 return _componentLookup[type];
             if (_parents.ContainsKey(type))

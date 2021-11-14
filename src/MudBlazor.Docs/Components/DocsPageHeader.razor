@@ -96,9 +96,9 @@
     private string _apiLink;
     private string _componentTypeName;
 
-    protected override void OnInitialized()
+    protected override void OnParametersSet()
     {
-        base.OnInitialized();
+        base.OnParametersSet();
         _isApiPage = NavigationManager.Uri.ToString().Contains("/api/");
         _componentName = NavigationManager.Uri.ToString().Split('/', StringSplitOptions.RemoveEmptyEntries).LastOrDefault();
         _componentType = ApiLink.GetTypeFromComponentLink(_componentName);
@@ -106,7 +106,7 @@
         _parentComponent = MenuService.GetParent(_componentType);
         _componentTypeName = _componentType?.Name.Replace("`1", "");
         _apiLink = $"api/{_componentName}";
-        _componentPage = (_parentComponent.Type != null) ? _parentComponent.Name : _component.Name;
+        _componentPage = (_component?.Type == null) ? _parentComponent?.Name : _component?.Name;
     }
 
     protected override void OnAfterRender(bool firstRender)
@@ -120,9 +120,9 @@
 
     private string GetComponentLink()
     {
-        if (_parentComponent.Type is not null)
-            return $"components/{_parentComponent.Link}";
-        return $"components/{_parentComponent.GroupComponents.FirstOrDefault(x => x.Type == _componentType).Link}";
+        if (_component?.Type != null)
+            return $"components/{_component?.Link}";
+        return $"components/{_parentComponent?.Link}";
     }
 
     string GetTitle() => $"{Title} - MudBlazor";

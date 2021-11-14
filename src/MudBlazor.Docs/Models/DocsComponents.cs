@@ -28,7 +28,7 @@ namespace MudBlazor.Docs.Models
             {
                 Name = name,
                 NavGroupExpanded = expanded,
-                GroupComponents = groupItems.Components,
+                GroupComponents = groupItems.GetComponentsSortedByName(),
                 IsNavGroup = true
             };
             _mudComponents.Add(componentItem);
