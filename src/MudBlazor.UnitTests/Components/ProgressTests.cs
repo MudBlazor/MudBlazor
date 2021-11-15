@@ -79,8 +79,8 @@ namespace MudBlazor.UnitTests.Components
             comp.SetParam(x => x.Buffer, false);
             var percent = (-2 - (-7)) / 14.0 * 100;
             comp.Instance.GetValuePercent().Should().Be(percent);
-            comp.Find("div.mud-progress-linear-bar").MarkupMatches(
-                $"<div class=\"mud-progress-linear-bar mud-default mud-progress-linear-bar-1-determinate\" style=\"transform: translateY({Math.Round(100 - percent)}%);\"></div>");
+            comp.Find("div.mud-progress-linear-vertical-bar").MarkupMatches(
+                $"<div class=\"mud-progress-linear-vertical-bar mud-default mud-progress-linear-vertical-bar-1-determinate\" style=\"transform: translateY({Math.Round(100 - percent)}%);\"></div>");
         }
     }
 }
