@@ -1,0 +1,21 @@
+﻿@namespace MudBlazor
+@using MudBlazor.Extensions
+@inherits MudComponentBase
+
+<div @attributes="UserAttributes" class="@DivClassname" style="@Style" role="progressbar" aria-valuenow="@_value" aria-valuemin="@_min" aria-valuemax="@_max">
+    @if (Indeterminate)
+    {
+        <div class="@LinearClassname mud-progress-linear-vertical-1-indeterminate"></div>
+        <div class="@LinearClassname mud-progress-linear-vertical-2-indeterminate"></div>
+    }
+    else if (Buffer)
+    {
+        <div class="@BufferClassname"></div>
+        <div class="mud-progress-linear-vertical-bar mud-@Color.ToDescriptionString() mud-progress-linear-vertical-bar-1-buffer" style="transform: translateY(@((int)Math.Round(100-ValuePercent))%);"></div>
+        <div class="mud-progress-linear-vertical-bar mud-progress-linear-vertical-color-@Color.ToDescriptionString() mud-progress-linear-vertical-bar-2-buffer" style="transform: translateY(@((int)Math.Round(100-BufferPercent))%);"></div>
+    }
+    else
+    {
+        <div class="@LinearClassname" style="transform: translateY(@((int)Math.Round(100-ValuePercent))%);"></div>
+    }
+</div>
