@@ -1,0 +1,34 @@
+﻿@implements IDisposable
+
+@if (_showContent)
+{
+    @ChildContent
+}
+
+@code {
+
+    [Parameter] public RenderFragment ChildContent { get; set; }
+
+    [Parameter] public int DelayMs { get; set; } = 50;
+
+    private bool _showContent = false;
+    private bool _disposed = false;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await Task.Delay(DelayMs );
+            if (_disposed)
+                return;
+            _showContent = true;
+            StateHasChanged();
+        }
+        await base.OnAfterRenderAsync(firstRender);
+    }
+
+    public void Dispose()
+    {
+        _disposed = true;
+    }
+}
