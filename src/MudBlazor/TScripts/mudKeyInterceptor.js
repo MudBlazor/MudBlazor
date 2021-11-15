@@ -67,10 +67,10 @@ class MudKeyInterceptor {
                 this._keyOptions[keyOption.key.toLowerCase()] = keyOption;
             // remove whitespace and enforce lowercase
             var whitespace = new RegExp("\\s", "g");
-            keyOption.preventDown = (keyOption.preventDown || "none").replaceAll(whitespace, "").toLowerCase();
-            keyOption.preventUp = (keyOption.preventUp || "none").replaceAll(whitespace, "").toLowerCase();
-            keyOption.stopDown = (keyOption.stopDown || "none").replaceAll(whitespace, "").toLowerCase();
-            keyOption.stopUp = (keyOption.stopUp || "none").replaceAll(whitespace, "").toLowerCase();
+            keyOption.preventDown = (keyOption.preventDown || "none").replace(whitespace, "").toLowerCase();
+            keyOption.preventUp = (keyOption.preventUp || "none").replace(whitespace, "").toLowerCase();
+            keyOption.stopDown = (keyOption.stopDown || "none").replace(whitespace, "").toLowerCase();
+            keyOption.stopUp = (keyOption.stopUp || "none").replace(whitespace, "").toLowerCase();
         }
         this.logger('[MudBlazor | KeyInterceptor] key options: ', this._keyOptions);
         if (this._regexOptions.size > 0)
