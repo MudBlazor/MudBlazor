@@ -6,6 +6,13 @@
     <DocsPageContent>
 
         <DocsPageSection>
+            <MudText Typo="Typo.h6" GutterBottom="true">Note</MudText>
+            <MudText>The MessageBox depends on <CodeInline Class="docs-code-tertiary">IDialogService</CodeInline> and <CodeInline>MudDialogProvider</CodeInline></MudText>
+            <MudText>Any global configuration done on the MudDialogProvider will affect all MessageBoxes in your application.</MudText>
+            <MudText>Check the Dialog <MudLink Href="/components/dialog#configuration">Configuration</MudLink> section for instructions on how to configure your dialogs globally.</MudText>
+        </DocsPageSection>
+
+        <DocsPageSection>
             <SectionHeader Title="Message Box">
                 <Description>
                     The simplest way to show a message box is to use <CodeInline>IDialogService.ShowMessageBox</CodeInline>. It is a purely procedural way of showing a message box and awaiting the user's decision. 
