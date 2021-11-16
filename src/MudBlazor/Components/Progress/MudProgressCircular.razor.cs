@@ -33,6 +33,10 @@ namespace MudBlazor
         /// The size of the component.
         /// </summary>
         [Parameter] public Size Size { get; set; } = Size.Medium;
+
+        /// <summary>
+        /// Constantly animates, does not follow any value.
+        /// </summary>
         [Parameter] public bool Indeterminate { get; set; }
 
         [Parameter] public double Min { get; set; } = 0.0;

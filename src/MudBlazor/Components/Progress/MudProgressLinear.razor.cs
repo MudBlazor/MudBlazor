@@ -9,14 +9,18 @@ namespace MudBlazor
     {
         protected string DivClassname =>
             new CssBuilder("mud-progress-linear")
+                .AddClass($"mud-progress-linear-{Size.ToDescriptionString()}")
                 .AddClass($"mud-progress-linear-color-{Color.ToDescriptionString()}", !Buffer)
+                .AddClass("rounded", Rounded)
                 .AddClass("mud-flip-x-rtl")
                 .AddClass(Class)
                 .Build();
 
         protected string LinearClassname =>
             new CssBuilder("mud-progress-linear-bar")
+                .AddClass("rounded", Rounded)
                 .AddClass($"mud-{Color.ToDescriptionString()}")
+                .AddClass("mud-progress-linear-striped", Striped)
                 .AddClass($"mud-progress-indeterminate", Indeterminate)
                 .AddClass($"mud-progress-linear-bar-1-determinate", !Indeterminate)
                 .Build();
@@ -34,14 +38,30 @@ namespace MudBlazor
         /// <summary>
         /// The color of the component. It supports the theme colors.
         /// </summary>
-        [Parameter] public Size Size { get; set; } = Size.Medium;
-        [Parameter] public bool Indeterminate { get; set; }
-        [Parameter] public bool Buffer { get; set; }
-        [Parameter] public bool Static { get; set; }
-        [Parameter] public int StrokeWidth { get; set; } = 3;
+        [Parameter] public Size Size { get; set; } = Size.Small;
 
         /// <summary>
-        /// The minimum allowed value of the slider. Should not be equal to max.
+        /// Constantly animates, does not follow any value.
+        /// </summary>
+        [Parameter] public bool Indeterminate { get; set; }
+
+        /// <summary>
+        /// If true, the buffer value will be used.
+        /// </summary>
+        [Parameter] public bool Buffer { get; set; }
+
+        /// <summary>
+        /// If true, border-radius is set to the themes default value.
+        /// </summary>
+        [Parameter] public bool Rounded { get; set; }
+
+        /// <summary>
+        /// Adds stripes to the filled part of the linear progress.
+        /// </summary>
+        [Parameter] public bool Striped { get; set; }
+
+        /// <summary>
+        /// The minimum allowed value of the linear prgoress. Should not be equal to max.
         /// </summary>
         [Parameter]
         public double Min
@@ -54,13 +74,9 @@ namespace MudBlazor
             }
         }
 
-        private double _min = 0.0;
-        private double _max = 100.0;
-
         /// <summary>
-        /// The maximum allowed value of the slider. Should not be equal to min.
+        /// The maximum allowed value of the linear prgoress. Should not be equal to min.
         /// </summary>
-        /// 
         [Parameter]
         public double Max
         {
@@ -72,9 +88,15 @@ namespace MudBlazor
             }
         }
 
+        private double _min = 0.0;
+        private double _max = 100.0;
+
         private double _value;
         private double _bufferValue;
 
+        /// <summary>
+        /// The maximum allowed value of the linear prgoress. Should not be equal to min.
+        /// </summary>
         [Parameter]
         public double Value
         {

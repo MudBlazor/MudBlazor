@@ -3,22 +3,23 @@
 <MudProgressLinear Color="Color.Primary" Value="@Value" Class="my-7" />
 <MudProgressLinear Color="Color.Secondary" Value="@Value" Class="my-7" />
 
-@code { public int Value { get; set; }
+@code {
+    public int Value { get; set; }
 
     public async void StartTimerAsync()
     {
         if (disposed)
             return;
-        Value = 100;
-        while (Value > 0)
+        Value = 5;
+        while (Value < 100)
         {
-            Value = Value - 4;
+            Value = Value + 4;
             StateHasChanged();
             await Task.Delay(500);
             if (disposed)
                 return;
         }
-        Value = 100;
+        Value = 5;
         StartTimerAsync();
     }
     protected override void OnInitialized()
@@ -28,4 +29,5 @@
     public void Dispose()
     {
         disposed = true;
-    } }
+    }
+}

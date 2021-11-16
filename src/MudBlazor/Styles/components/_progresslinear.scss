@@ -1,0 +1,100 @@
+﻿
+.mud-progress-linear {
+    overflow: hidden;
+    position: relative;
+}
+
+.mud-progress-linear-small {
+    height: 4px;
+}
+
+.mud-progress-linear-medium {
+    height: 8px;
+}
+
+.mud-progress-linear-large {
+    height: 12px;
+}
+
+@each $color in $mud-palette-colors {
+    .mud-progress-linear-color-#{$color} {
+        &::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 100%;
+            display: block;
+            background-color: var(--mud-palette-#{$color});
+            opacity: 0.2;
+        }
+    }
+}
+
+.mud-progress-linear-buffer {
+    background-color: transparent;
+}
+
+.mud-progress-linear-query {
+    transform: rotate(180deg);
+}
+
+.mud-progress-linear-dashed {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    animation: mud-progress-linear-keyframes-buffer 3s infinite linear;
+    margin-top: 0;
+}
+
+.mud-progress-linear-dashed-color-primary {
+    background-size: 10px 10px;
+    background-image: radial-gradient(rgb(195, 189, 244) 0%, rgb(154, 145, 237) 16%, transparent 42%);
+    background-position: 0 -23px;
+}
+
+.mud-progress-linear-dashed-color-secondary {
+    background-size: 10px 10px;
+    background-image: radial-gradient(rgb(255, 128, 175) 0%, rgb(255, 77, 143) 16%, transparent 42%);
+    background-position: 0 -23px;
+}
+
+.mud-progress-linear-bar {
+    top: 0;
+    left: 0;
+    width: 100%;
+    bottom: 0;
+    position: absolute;
+    transition: transform 0.2s linear;
+    transform-origin: left;
+
+    &.mud-progress-linear-1-indeterminate {
+        width: auto;
+        animation: mud-progress-linear-keyframes-indeterminate1 2.1s cubic-bezier(0.65, 0.815, 0.735, 0.395) infinite;
+    }
+
+    &.mud-progress-linear-2-indeterminate {
+        width: auto;
+        animation: mud-progress-linear-keyframes-indeterminate2 2.1s cubic-bezier(0.165, 0.84, 0.44, 1) 1.15s infinite;
+    }
+
+    &.mud-progress-linear-bar-1-determinate {
+        transition: transform .4s linear;
+    }
+
+    &.mud-progress-linear-bar-1-buffer {
+        z-index: 1;
+        transition: transform .4s linear;
+    }
+
+    &.mud-progress-linear-bar-2-buffer {
+        transition: transform .4s linear;
+    }
+}
+
+.mud-progress-linear-striped {
+    background-image: linear-gradient( 135deg,hsla(0,0%,100%,.25) 25%,transparent 0,transparent 50%,hsla(0,0%,100%,.25) 0,hsla(0,0%,100%,.25) 75%,transparent 0,transparent);
+    background-size: 40px 40px;
+    background-repeat: repeat;
+}

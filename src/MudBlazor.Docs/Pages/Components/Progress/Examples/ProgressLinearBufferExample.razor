@@ -11,19 +11,19 @@
     {
         if (disposed)
             return;
-        Value = 100;
-        BufferValue = 100;
-        while (Value > 0)
+        Value = 5;
+        BufferValue = 10;
+        while (Value < 100)
         {
-            Value = Value - 4;
-            BufferValue = BufferValue - 5;
+            Value = Value + 4;
+            BufferValue = BufferValue + 5;
             StateHasChanged();
             await Task.Delay(500);
             if (disposed)
                 return;
         }
-        Value = 100;
-        BufferValue = 100;
+        Value = 5;
+        BufferValue = 10;
         StartTimerAsync();
     }
     protected override void OnInitialized()
@@ -34,5 +34,4 @@
     {
         disposed = true;
     }
-
 }
