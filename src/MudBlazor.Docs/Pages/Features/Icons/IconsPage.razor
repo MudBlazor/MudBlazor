@@ -40,13 +40,8 @@
                 </MudItem>
             </MudGrid>
             <MudScrollToTop TopOffset="650" OnScroll="OnScroll" />
-            <MudText Typo="Typo.h5" Color="Color.Error" Class="fixed" Style="top:20px; left:20px; z-index:9999;">Scrolled Value: @_scrolledValue</MudText>
-            <MudText Typo="Typo.h5" Color="Color.Error" Class="fixed" Style="top:40px; left:20px; z-index:9999;">Scrolled Height: @_scrolledHeight</MudText>
-            <MudText Typo="Typo.h5" Color="Color.Error" Class="fixed" Style="top:60px; left:20px; z-index:9999;">Scrolled Diff: @_scrolledDiff</MudText>
             <div class="relative" style="height:34000px;">
-                <div @ref="KillZone" style="@($"height:65vh;width:100%;position:absolute;top:0px;border-color:#ff0000;border-style:dashed;border-width:4px;border-radius:8px;")">
-                    <MudText Color="Color.Error">@($"{ResizeObserver.GetWidth(KillZone)}-{ResizeObserver.GetHeight(KillZone)}")</MudText>
-                </div>
+                <div @ref="KillZone" style="@GetKillZoneStyle(false)"></div>
                 <div class="d-flex flex-wrap align-content-start justify-center" style="height:65vh;position:sticky;top:0px;">
                     @if (DisplayedIcons != null)
                     {

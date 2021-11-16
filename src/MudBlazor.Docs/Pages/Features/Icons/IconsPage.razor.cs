@@ -233,6 +233,7 @@ namespace MudBlazor.Docs.Pages.Features.Icons
                     DisplayedIcons = CustomUncategorized;
                     break;
             };
+            UpdateIconRange(false);
         }
 
         private void OnSelectedValue(IconOrigin origin)
@@ -273,6 +274,18 @@ namespace MudBlazor.Docs.Pages.Features.Icons
         {
             Custom,
             Material
+        }
+
+        private string GetKillZoneStyle(bool debugg)
+        {
+            if (debugg)
+            {
+                return $"height:65vh;width:100%;position:absolute;top:0px;border-color:#ff0000;border-style:dashed;border-width:4px;border-radius:8px;";
+            }
+            else
+            {
+                return $"height:65vh;width:100%;position:absolute;top:0px;";
+            }
         }
     }
 }
