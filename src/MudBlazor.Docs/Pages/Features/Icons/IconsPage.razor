@@ -39,22 +39,51 @@
                     }
                 </MudItem>
             </MudGrid>
-            <div class="docs-icon-container">
-                @if (DisplayedIcons != null)
-                {
-                    <Virtualize Items="@SelectedIcons" ItemSize="128" OverscanCount="128">
-                        <button class="docs-icon-panel" @onclick="@(() => SetIconDrawer(context))">
-                            <MudIcon Icon="@context.Code" Title="@context.Name" />
-                            <MudText Typo="Typo.caption">
-                                @context.Name
-                            </MudText>
-                        </button>
-                    </Virtualize>
-                }
-                else
-                {
-                    <MudText Typo="Typo.h5" Align="Align.Center">Loading...</MudText>
-                }
+            <MudScrollToTop TopOffset="650" OnScroll="OnScroll" />
+            <MudText Typo="Typo.h5" Color="Color.Error" Class="fixed" Style="top:20px; left:20px; z-index:9999;">Scrolled Value: @_scrolledValue</MudText>
+            <MudText Typo="Typo.h5" Color="Color.Error" Class="fixed" Style="top:40px; left:20px; z-index:9999;">Scrolled Height: @_scrolledHeight</MudText>
+            <MudText Typo="Typo.h5" Color="Color.Error" Class="fixed" Style="top:60px; left:20px; z-index:9999;">Scrolled Diff: @_scrolledDiff</MudText>
+            <div class="relative" style="height:34000px;">
+                <div class="absolute mud-height-full mud-width-full" style="top:0px;"></div>
+                <div @ref="KillZone" style="@($"height:65vh;width:100%;position:absolute;top:0px;border-color:#ff0000;border-style:dashed;border-width:4px;border-radius:8px;")">
+                    <MudText Color="Color.Error">@($"{ResizeObserver.GetWidth(KillZone)}-{ResizeObserver.GetHeight(KillZone)}")</MudText>
+                </div>
+                <div class="d-flex flex-wrap align-content-start justify-center" style="height:65vh;position:sticky;top:0px;">
+                    @if (DisplayedIcons != null)
+                    {
+                        @foreach (var icon in IconCardsTop)
+                        {
+                            <button class="docs-icon-panel" @onclick="@(() => SetIconDrawer(icon))">
+                                <MudIcon Icon="@icon.Code" Title="@icon.Name" />
+                                <MudText Typo="Typo.caption">
+                                    @icon.Name
+                                </MudText>
+                            </button>
+                        }
+                        @foreach (var icon in IconCardsCenter)
+                        {
+                            <button class="docs-icon-panel" @onclick="@(() => SetIconDrawer(icon))">
+                                <MudIcon Icon="@icon.Code" Title="@icon.Name" />
+                                <MudText Typo="Typo.caption">
+                                    @icon.Name
+                                </MudText>
+                            </button>
+                        }
+                        @foreach (var icon in IconCardsBottom)
+                        {
+                            <button class="docs-icon-panel" @onclick="@(() => SetIconDrawer(icon))">
+                                <MudIcon Icon="@icon.Code" Title="@icon.Name" />
+                                <MudText Typo="Typo.caption">
+                                    @icon.Name
+                                </MudText>
+                            </button>
+                        }
+                    }
+                    else
+                    {
+                        <MudText Typo="Typo.h5" Align="Align.Center">Loading...</MudText>
+                    }
+                </div>
             </div>
         </DocsPageSection>
     </DocsPageContent>
