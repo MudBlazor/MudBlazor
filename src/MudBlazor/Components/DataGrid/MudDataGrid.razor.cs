@@ -457,7 +457,6 @@ namespace MudBlazor
                 return GetItemsOfPage(CurrentPage, RowsPerPage);
             }
         }
-        public TableGroupDefinition<T> GroupBy { get; set; }
         public HashSet<T> Selection { get; set; } = new HashSet<T>();
         public bool HasPager { get; set; }
         GridData<T> _server_data = new GridData<T>() { TotalItems = 0, Items = Array.Empty<T>() };

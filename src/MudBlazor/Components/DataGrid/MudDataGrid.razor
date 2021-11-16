@@ -56,7 +56,7 @@
                         @if (_filtersMenuVisible)
                         {
                             <MudOverlay  Visible="true" OnClick="@(() => _filtersMenuVisible = false)"></MudOverlay>
-                            <MudPaper Class="pa-2" Style="position:absolute;width:600px;z-index:var(--mud-zindex-drawer)" Elevation="4">
+                            <MudPaper Class="pa-2 filters-panel" Style="position:absolute;width:600px;z-index:var(--mud-zindex-drawer)" Elevation="4">
                                 <MudGrid Spacing="0">
                                     @foreach (var f in FilterDefinitions)
                                     { 
@@ -78,63 +78,54 @@
                             </tr>
                         }
 
-                        @if (GroupBy != null)
+                        @if (CurrentPageItems != null && CurrentPageItems.Count() > 0)
                         {
-                            <colgroup>
-                                @ColGroup
-                            </colgroup>
-                        }
-                        else
-                        {
-                            @if (CurrentPageItems != null && CurrentPageItems.Count() > 0)
-                            {
-                                var rowIndex = 0;
-                                <MudVirtualize IsEnabled="@Virtualize" Items="@CurrentPageItems?.ToList()" Context="item">
-                                   @{ var rowClass = new CssBuilder(RowClass).AddClass(RowClassFunc?.Invoke(item, rowIndex)).Build(); }
-                                   @{ var rowStyle = new StyleBuilder().AddStyle(RowStyle).AddStyle(RowStyleFunc?.Invoke(item, rowIndex)).Build(); }
-                                   @{ var tmpRowIndex = rowIndex; }
-                                    <tr class="mud-table-row @rowClass" Style="@rowStyle" @key="item" @onclick="@((args) => OnRowClickedAsync(args, item, tmpRowIndex))">  
-                                        <CascadingValue Value="@Validator" IsFixed="true">
-                                        @foreach (var column in @_columns)
-                                        {
-                                            <Cell Item="@item" Title="@column.Title" Field="@column.Field" Class="@column.cellClassname"
-                                                CellTemplate="@column.CellTemplate" ColumnType="@column.Type" Style="@column.CellStyle"
-                                                IsEditable="@(column.IsEditable ?? true)" EditTemplate="@column.EditTemplate"
-                                                CellClass="@column.CellClass" CellClassFunc="@column.CellClassFunc"
-                                                CellStyle="@column.CellStyle" CellStyleFunc="@column.CellStyleFunc"></Cell>
-                                        }
-                                        
-                                        @if (EditMode == DataGridEditMode.Inline)
-                                        {
-                                            @*Add the inline edit controls.*@
-                                            <Cell Item="@item" ColumnType="@ColumnType.InlineEditCommand"></Cell>
-                                        }
-                                        </CascadingValue>
-                                    </tr>                                   
-                                    @if (ChildRowContent != null)
+                            var rowIndex = 0;
+                            <MudVirtualize IsEnabled="@Virtualize" Items="@CurrentPageItems?.ToList()" Context="item">
+                                @{ var rowClass = new CssBuilder(RowClass).AddClass(RowClassFunc?.Invoke(item, rowIndex)).Build(); }
+                                @{ var rowStyle = new StyleBuilder().AddStyle(RowStyle).AddStyle(RowStyleFunc?.Invoke(item, rowIndex)).Build(); }
+                                @{ var tmpRowIndex = rowIndex; }
+                                <tr class="mud-table-row @rowClass" Style="@rowStyle" @key="item" @onclick="@((args) => OnRowClickedAsync(args, item, tmpRowIndex))">  
+                                    <CascadingValue Value="@Validator" IsFixed="true">
+                                    @foreach (var column in @_columns)
                                     {
-                                        @ChildRowContent(item)
-                                    }                                    
-                                   @{ rowIndex++; }
-                                </MudVirtualize>
-                            }
-                            else if(Loading ? LoadingContent != null : NoRecordsContent != null)
-                            {
-                                <tr>
-                                    <th colspan="1000" class="mud-table-empty-row">
-                                        <div Class="my-3">
-                                            @if(Loading)
-                                            {
-                                                @LoadingContent
-                                            }
-                                            else
-                                            {
-                                                @NoRecordsContent
-                                            }
-                                        </div>
-                                    </th>
-                                </tr>
-                            }
+                                        <Cell Item="@item" Title="@column.Title" Field="@column.Field" Class="@column.cellClassname"
+                                            CellTemplate="@column.CellTemplate" ColumnType="@column.Type" Style="@column.CellStyle"
+                                            IsEditable="@(column.IsEditable ?? true)" EditTemplate="@column.EditTemplate"
+                                            CellClass="@column.CellClass" CellClassFunc="@column.CellClassFunc"
+                                            CellStyle="@column.CellStyle" CellStyleFunc="@column.CellStyleFunc"></Cell>
+                                    }
+                                        
+                                    @if (EditMode == DataGridEditMode.Inline)
+                                    {
+                                        @*Add the inline edit controls.*@
+                                        <Cell Item="@item" ColumnType="@ColumnType.InlineEditCommand"></Cell>
+                                    }
+                                    </CascadingValue>
+                                </tr>                                   
+                                @if (ChildRowContent != null)
+                                {
+                                    @ChildRowContent(item)
+                                }                                    
+                                @{ rowIndex++; }
+                            </MudVirtualize>
+                        }
+                        else if(Loading ? LoadingContent != null : NoRecordsContent != null)
+                        {
+                            <tr>
+                                <th colspan="1000" class="mud-table-empty-row">
+                                    <div Class="my-3">
+                                        @if(Loading)
+                                        {
+                                            @LoadingContent
+                                        }
+                                        else
+                                        {
+                                            @NoRecordsContent
+                                        }
+                                    </div>
+                                </th>
+                            </tr>
                         }
                     </tbody>
                     <tfoot class="@_footClassname">

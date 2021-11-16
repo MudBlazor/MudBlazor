@@ -14,6 +14,9 @@ using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Components
 {
+    public record TestModel1(string Name, int Age);
+    public record TestModel2(string Name, int Age, DateTime Date);
+
     [TestFixture]
     public class DataGridTests : BunitTest
     {
@@ -46,6 +49,9 @@ namespace MudBlazor.UnitTests.Components
             dataGrid.FindAll("td")[2].TextContent.Trim().Should().Be("A");
 
             await comp.InvokeAsync(() => dataGrid.Instance.SetSortAsync(SortDirection.None, x => { return x.Name; }, "Name"));
+
+            var headerCell = dataGrid.FindComponent<HeaderCell<DataGridSortableTest.Item>>();
+            await comp.InvokeAsync(() => headerCell.Instance.SortBy = x => { return x.Name; });
 
             // Check the values of rows - should not be sorted and should be in the original order.
             dataGrid.FindAll("td")[0].TextContent.Trim().Should().Be("B");
@@ -100,6 +106,23 @@ namespace MudBlazor.UnitTests.Components
             dataGrid.Instance.SelectedItems.Count.Should().Be(0);
             dataGrid.FindAll("input")[0].Change(true);
             dataGrid.Instance.SelectedItems.Count.Should().Be(3);
+
+            // deselect an item programmatically
+            await comp.InvokeAsync(async () => await dataGrid.Instance.SetSelectedItemAsync(false, dataGrid.Instance.SelectedItems.First()));
+            dataGrid.Instance.SelectedItems.Count.Should().Be(2);
+
+            // select an item programmatically
+            await comp.InvokeAsync(async () => await dataGrid.Instance.SetSelectedItemAsync(dataGrid.Instance.Items.First()));
+            dataGrid.Instance.SelectedItems.Count.Should().Be(3);
+
+            // deselect all programmatically
+            await comp.InvokeAsync(async () => await dataGrid.Instance.SetSelectAllAsync(false));
+            dataGrid.Instance.SelectedItems.Count.Should().Be(0);
+
+            // deselect all programmatically
+            await comp.InvokeAsync(async () => await dataGrid.Instance.SetSelectAllAsync(true));
+            dataGrid.Instance.SelectedItems.Count.Should().Be(3);
+
         }
 
         [Test]
@@ -108,24 +131,59 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<DataGridPaginationTest>();
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridPaginationTest.Item>>();
             dataGrid.FindAll(".mud-table-pagination-caption")[^1].TextContent.Trim().Should().Be("1-10 of 20");
+
+            // test that we are on the first page of results
+            dataGrid.Find(".mud-table-body td").TextContent.Trim().Should().Be("0");
+
+            // click to go to the next page
+            dataGrid.FindAll(".mud-table-pagination-actions button")[2].Click();
+
+            // test that we are on the second page of results
+            dataGrid.Find(".mud-table-body td").TextContent.Trim().Should().Be("10");
+            dataGrid.Instance.RowsPerPage.Should().Be(10);
+
+            // set rows per page programmatically
+            await comp.InvokeAsync(async () => await dataGrid.Instance.SetRowsPerPageAsync(4));
+            dataGrid.Instance.RowsPerPage.Should().Be(4);
+
+            // navigate to the last page programmatically
+            await comp.InvokeAsync(() => dataGrid.Instance.NavigateTo(Page.Last));
+            dataGrid.Instance.CurrentPage.Should().Be(4);
+
+            // navigate to the previous page programmatically
+            await comp.InvokeAsync(() => dataGrid.Instance.NavigateTo(Page.Previous));
+            dataGrid.Instance.CurrentPage.Should().Be(3);
+
+            // navigate back to the first page programmatically
+            await comp.InvokeAsync(() => dataGrid.Instance.NavigateTo(Page.First));
+            dataGrid.Instance.CurrentPage.Should().Be(0);
         }
 
         [Test]
         public async Task DataGridInlineEditTest()
         {
             var comp = Context.RenderComponent<DataGridInlineEditTest>();
-            var dataGrid = comp.FindComponent<MudDataGrid<DataGridInlineEditTest.Item>>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridInlineEditTest.Model>>();
 
-            dataGrid.FindAll("td")[0].TextContent.Trim().Should().Be("A");
-            dataGrid.FindAll("td")[2].TextContent.Trim().Should().Be("B");
-            dataGrid.FindAll("td")[4].TextContent.Trim().Should().Be("C");
+            Console.WriteLine(dataGrid.Markup);
+
+            dataGrid.FindAll("td")[0].TextContent.Trim().Should().Be("John");
+            dataGrid.FindAll("td")[1].TextContent.Trim().Should().Be("45");
+            dataGrid.FindAll("td")[3].TextContent.Trim().Should().Be("Johanna");
+            dataGrid.FindAll("td")[4].TextContent.Trim().Should().Be("23");
+            dataGrid.FindAll("td")[6].TextContent.Trim().Should().Be("Steve");
+            dataGrid.FindAll("td")[7].TextContent.Trim().Should().Be("32");
             dataGrid.FindAll(".mud-table-body tr")[0].Click();
-            dataGrid.FindAll(".mud-table-body tr input")[0].Change("Z");
-            dataGrid.FindAll(".mud-table-body tr td:nth-child(2) button")[0].Click();
-            dataGrid.FindAll(".mud-table-body tr td")[0].TextContent.Trim().Should().Be("Z");
+            dataGrid.FindAll(".mud-table-body tr input")[0].Change("Jonathan");
+            dataGrid.FindAll(".mud-table-body tr input")[1].Change("52");
+            dataGrid.FindAll(".mud-table-body tr td:nth-child(3) button")[0].Click();
+            dataGrid.FindAll(".mud-table-body tr td")[0].TextContent.Trim().Should().Be("Jonathan");
+            dataGrid.FindAll(".mud-table-body tr td")[1].TextContent.Trim().Should().Be("52");
 
             var name = dataGrid.Instance.Items.First().Name;
-            name.Should().Be("Z");
+            var age = dataGrid.Instance.Items.First().Age;
+            name.Should().Be("Jonathan");
+            age.Should().Be(52);
         }
 
         [Test]
@@ -185,6 +243,433 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.StartedEditingItem.Should().Be(true);
             comp.Instance.StartedCommittingItemChanges.Should().Be(true);
             comp.Instance.EditingItemCancelled.Should().Be(true);
+        }
+
+        [Test]
+        public async Task DataGridServerSideSortableTest()
+        {
+            var comp = Context.RenderComponent<DataGridServerSideSortableTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridServerSideSortableTest.Item>>();
+
+            // Check the values of rows - should be the default order of the items.
+            dataGrid.FindAll("td")[0].TextContent.Trim().Should().Be("2");
+            dataGrid.FindAll("td")[1].TextContent.Trim().Should().Be("3");
+            dataGrid.FindAll("td")[2].TextContent.Trim().Should().Be("1");
+            dataGrid.FindAll("td")[3].TextContent.Trim().Should().Be("1");
+            dataGrid.FindAll("td")[4].TextContent.Trim().Should().Be("3");
+            dataGrid.FindAll("td")[5].TextContent.Trim().Should().Be("2");
+
+            await comp.InvokeAsync(() => dataGrid.Instance.SetSortAsync(SortDirection.Ascending, x => { return x.A; }, "A"));
+
+            // Check the values of rows - should be sorted ascending by A.
+            dataGrid.FindAll("td")[0].TextContent.Trim().Should().Be("1");
+            dataGrid.FindAll("td")[1].TextContent.Trim().Should().Be("1");
+            dataGrid.FindAll("td")[2].TextContent.Trim().Should().Be("2");
+            dataGrid.FindAll("td")[3].TextContent.Trim().Should().Be("3");
+            dataGrid.FindAll("td")[4].TextContent.Trim().Should().Be("3");
+            dataGrid.FindAll("td")[5].TextContent.Trim().Should().Be("2");
+
+            await comp.InvokeAsync(() => dataGrid.Instance.SetSortAsync(SortDirection.Descending, x => { return x.A; }, "A"));
+
+            Console.WriteLine(dataGrid.Markup);
+
+            // Check the values of rows - should be sorted descending by A.
+            dataGrid.FindAll("td")[0].TextContent.Trim().Should().Be("3");
+            dataGrid.FindAll("td")[1].TextContent.Trim().Should().Be("2");
+            dataGrid.FindAll("td")[2].TextContent.Trim().Should().Be("2");
+            dataGrid.FindAll("td")[3].TextContent.Trim().Should().Be("3");
+            dataGrid.FindAll("td")[4].TextContent.Trim().Should().Be("1");
+            dataGrid.FindAll("td")[5].TextContent.Trim().Should().Be("1");
+
+            await comp.InvokeAsync(() => dataGrid.Instance.SetSortAsync(SortDirection.None, x => { return x.A; }, "A"));
+
+            Console.WriteLine(dataGrid.Markup);
+
+            // Check the values of rows - should be the default order of the items.
+            dataGrid.FindAll("td")[0].TextContent.Trim().Should().Be("2");
+            dataGrid.FindAll("td")[1].TextContent.Trim().Should().Be("3");
+            dataGrid.FindAll("td")[2].TextContent.Trim().Should().Be("1");
+            dataGrid.FindAll("td")[3].TextContent.Trim().Should().Be("1");
+            dataGrid.FindAll("td")[4].TextContent.Trim().Should().Be("3");
+            dataGrid.FindAll("td")[5].TextContent.Trim().Should().Be("2");
+
+            await comp.InvokeAsync(() => dataGrid.Instance.Sortable = false);
+            dataGrid.Render();
+
+            // Since Sortable is now false, the click handler (and element holding it) should no longer exist.
+            dataGrid.FindAll(".column-header .sortable-column-header").Should().BeEmpty();
+        }
+
+        [Test]
+        public async Task FilterDefinitionsTest()
+        {
+
+            #region String Data Type 
+
+            // test filter definition on the Name property (string contains)
+            var filterDefinition = new FilterDefinition<TestModel1>
+            {
+                Id = Guid.NewGuid(),
+                Field = "Name",
+                Operator = "contains",
+                Value = "Joe"
+            };
+            var func = filterDefinition.GenerateFilterFunction();
+            Assert.IsFalse(func.Invoke(new("Does not contain", 45)));
+            Assert.IsTrue(func.Invoke(new("Joe", 45)));
+
+            // test filter definition on the Name property (handle null value)
+            filterDefinition = new FilterDefinition<TestModel1>
+            {
+                Id = Guid.NewGuid(),
+                Field = "Name",
+                Operator = "equals",
+                Value = null
+            };
+            func = filterDefinition.GenerateFilterFunction();
+            Assert.IsTrue(func.Invoke(new("Joe Not", 45)));
+            Assert.IsTrue(func.Invoke(new("Joe", 45)));
+
+            // test filter definition on the Name property (handle null operator)
+            filterDefinition = new FilterDefinition<TestModel1>
+            {
+                Id = Guid.NewGuid(),
+                Field = "Name",
+                Operator = null,
+                Value = "Joe"
+            };
+            func = filterDefinition.GenerateFilterFunction();
+            Assert.IsTrue(func.Invoke(new("Joe Not", 45)));
+            Assert.IsTrue(func.Invoke(new("Joe", 45)));
+
+            // test filter definition on the Name property (string equals)
+            filterDefinition = new FilterDefinition<TestModel1>
+            {
+                Id = Guid.NewGuid(),
+                Field = "Name",
+                Operator = "equals",
+                Value = "Joe"
+            };
+            func = filterDefinition.GenerateFilterFunction();
+            Assert.IsFalse(func.Invoke(new("Not Joe", 45)));
+            Assert.IsTrue(func.Invoke(new("Joe", 45)));
+
+            // test filter definition on the Name property (string starts with)
+            filterDefinition = new FilterDefinition<TestModel1>
+            {
+                Id = Guid.NewGuid(),
+                Field = "Name",
+                Operator = "starts with",
+                Value = "Joe"
+            };
+            func = filterDefinition.GenerateFilterFunction();
+            Assert.IsFalse(func.Invoke(new("Not Joe", 45)));
+            Assert.IsTrue(func.Invoke(new("Joe", 45)));
+
+            // test filter definition on the Name property (string ends with)
+            filterDefinition = new FilterDefinition<TestModel1>
+            {
+                Id = Guid.NewGuid(),
+                Field = "Name",
+                Operator = "ends with",
+                Value = "Joe"
+            };
+            func = filterDefinition.GenerateFilterFunction();
+            Assert.IsFalse(func.Invoke(new("Joe Not", 45)));
+            Assert.IsTrue(func.Invoke(new("Joe", 45)));
+
+            #endregion
+
+            #region Int Data Type
+
+            // test filter definition on the Age property (int =)
+            filterDefinition = new FilterDefinition<TestModel1>
+            {
+                Id = Guid.NewGuid(),
+                Field = "Age",
+                Operator = "=",
+                Value = 45
+            };
+            func = filterDefinition.GenerateFilterFunction();
+            // data type is an int
+            Assert.IsFalse(func.Invoke(new("Sam", 456)));
+            Assert.IsTrue(func.Invoke(new("Joe", 45)));
+
+            // test filter definition on the Age property (int = handle null value)
+            filterDefinition = new FilterDefinition<TestModel1>
+            {
+                Id = Guid.NewGuid(),
+                Field = "Age",
+                Operator = "=",
+                Value = null
+            };
+            func = filterDefinition.GenerateFilterFunction();
+            // data type is an int
+            Assert.IsTrue(func.Invoke(new("Sam", 456)));
+            Assert.IsTrue(func.Invoke(new("Joe", 45)));
+
+            // test filter definition on the Age property (int = handle null operator)
+            filterDefinition = new FilterDefinition<TestModel1>
+            {
+                Id = Guid.NewGuid(),
+                Field = "Age",
+                Operator = null,
+                Value = 45
+            };
+            func = filterDefinition.GenerateFilterFunction();
+            // data type is an int
+            Assert.IsTrue(func.Invoke(new("Sam", 456)));
+            Assert.IsTrue(func.Invoke(new("Joe", 45)));
+
+            // test filter definition on the Age property (int !=)
+            filterDefinition = new FilterDefinition<TestModel1>
+            {
+                Id = Guid.NewGuid(),
+                Field = "Age",
+                Operator = "!=",
+                Value = 45
+            };
+            func = filterDefinition.GenerateFilterFunction();
+            // data type is an int
+            Assert.IsTrue(func.Invoke(new("Sam", 456)));
+            Assert.IsFalse(func.Invoke(new("Joe", 45)));
+
+            // test filter definition on the Age property (int >)
+            filterDefinition = new FilterDefinition<TestModel1>
+            {
+                Id = Guid.NewGuid(),
+                Field = "Age",
+                Operator = ">",
+                Value = 45
+            };
+            func = filterDefinition.GenerateFilterFunction();
+            // data type is an int
+            Assert.IsTrue(func.Invoke(new("Sam", 456)));
+            Assert.IsFalse(func.Invoke(new("Joe", 45)));
+
+            // test filter definition on the Age property (int <)
+            filterDefinition = new FilterDefinition<TestModel1>
+            {
+                Id = Guid.NewGuid(),
+                Field = "Age",
+                Operator = "<",
+                Value = 45
+            };
+            func = filterDefinition.GenerateFilterFunction();
+            // data type is an int
+            Assert.IsTrue(func.Invoke(new("Sam", 4)));
+            Assert.IsFalse(func.Invoke(new("Joe", 45)));
+
+            // test filter definition on the Age property (int >=)
+            filterDefinition = new FilterDefinition<TestModel1>
+            {
+                Id = Guid.NewGuid(),
+                Field = "Age",
+                Operator = ">=",
+                Value = 45
+            };
+            func = filterDefinition.GenerateFilterFunction();
+            // data type is an int
+            Assert.IsFalse(func.Invoke(new("Sam", 4)));
+            Assert.IsTrue(func.Invoke(new("Joe", 45)));
+
+            // test filter definition on the Age property (int <=)
+            filterDefinition = new FilterDefinition<TestModel1>
+            {
+                Id = Guid.NewGuid(),
+                Field = "Age",
+                Operator = "<=",
+                Value = 45
+            };
+            func = filterDefinition.GenerateFilterFunction();
+            Console.WriteLine(func.Invoke(new("Joe", 45)));
+            // data type is an int
+            Assert.IsFalse(func.Invoke(new("Sam", 46)));
+            Assert.IsTrue(func.Invoke(new("Joe", 45)));
+
+            #endregion
+
+            // test an unknown data type
+            var filterDefinition2 = new FilterDefinition<TestModel2>
+            {
+                Id = Guid.NewGuid(),
+                Field = "Date",
+                Operator = "=",
+                Value = null
+            };
+            var func2 = filterDefinition2.GenerateFilterFunction();
+            // data type is an int
+            Assert.IsTrue(func2.Invoke(new("Sam", 456, DateTime.UtcNow)));
+            Assert.IsTrue(func2.Invoke(new("Joe", 45, DateTime.UtcNow)));
+        }
+
+        [Test]
+        public async Task DataGridFiltersTest()
+        {
+            var comp = Context.RenderComponent<DataGridFiltersTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridFiltersTest.Model>>();
+
+            // test filter definition on the Name property (string contains)
+            var filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
+            {
+                Id = Guid.NewGuid(),
+                Field = "Name",
+                Operator = "contains",
+                Value = "John"
+            };
+            // test filter definition on the Age property (int >)
+            var filterDefinition2 = new FilterDefinition<DataGridFiltersTest.Model>
+            {
+                Id = Guid.NewGuid(),
+                Field = "Age",
+                Operator = ">",
+                Value = 30
+            };
+            // test filter definition on the Status property (Enum is)
+            var filterDefinition3 = new FilterDefinition<DataGridFiltersTest.Model>
+            {
+                Id = Guid.NewGuid(),
+                Field = "Status",
+                Operator = "is",
+                Value = Severity.Normal
+            };
+
+            await comp.InvokeAsync(() => dataGrid.Instance.FilterDefinitions.Add(filterDefinition));
+            await comp.InvokeAsync(() => dataGrid.Instance.FilterDefinitions.Add(filterDefinition2));
+            await comp.InvokeAsync(() => dataGrid.Instance.FilterDefinitions.Add(filterDefinition3));
+            await comp.InvokeAsync(() => dataGrid.Instance.OpenFilters());
+
+            var filters = comp.FindComponents<Filter<DataGridFiltersTest.Model>>();
+
+            // assertions for string
+            Assert.AreEqual(filterDefinition.Id, filters[0].Instance.Id);
+            Assert.AreEqual(filterDefinition.Field, filters[0].Instance.Field);
+            Assert.AreEqual(filterDefinition.Operator, filters[0].Instance.Operator);
+            Assert.AreEqual(filterDefinition.Value, filters[0].Instance.Value);
+            filters[0].Instance.Value = "Not Joe";
+            await comp.InvokeAsync(async () => await filters[0].Instance.ValueChanged.InvokeAsync(filters[0].Instance.Value));
+            Assert.AreEqual(filterDefinition.Value, "Not Joe");
+
+            // assertions for int
+            Assert.AreEqual(filterDefinition2.Id, filters[1].Instance.Id);
+            Assert.AreEqual(filterDefinition2.Field, filters[1].Instance.Field);
+            Assert.AreEqual(filterDefinition2.Operator, filters[1].Instance.Operator);
+            Assert.AreEqual(filterDefinition2.Value, filters[1].Instance.Value);
+            filters[1].Instance.Value = 45;
+            await comp.InvokeAsync(async () => await filters[1].Instance.ValueChanged.InvokeAsync(filters[1].Instance.Value));
+            Assert.AreEqual(filterDefinition2.Value, 45);
+
+            // assertions for Enum
+            Assert.AreEqual(filterDefinition3.Id, filters[2].Instance.Id);
+            Assert.AreEqual(filterDefinition3.Field, filters[2].Instance.Field);
+            Assert.AreEqual(filterDefinition3.Operator, filters[2].Instance.Operator);
+            Assert.AreEqual(filterDefinition3.Value, filters[2].Instance.Value);
+            filters[2].Instance.Value = Severity.Error;
+            await comp.InvokeAsync(async () => await filters[2].Instance.ValueChanged.InvokeAsync(filters[2].Instance.Value));
+            Assert.AreEqual(filterDefinition3.Value, Severity.Error);
+
+            // check the number of filters displayed in the filters panel
+            dataGrid.FindAll(".filters-panel .mud-grid-item.d-flex").Count.Should().Be(3);
+
+            // click the Add Filter button in the filters panel to add a filter
+            dataGrid.FindAll(".filters-panel > button")[0].Click();
+
+            // check the number of filters displayed in the filters panel is 1 more because we added a filter
+            dataGrid.FindAll(".filters-panel .mud-grid-item.d-flex").Count.Should().Be(4);
+
+            // add a filter via the AddFilter method
+            await comp.InvokeAsync(() => dataGrid.Instance.AddFilter());
+
+            // check the number of filters displayed in the filters panel is 1 more because we added a filter
+            dataGrid.FindAll(".filters-panel .mud-grid-item.d-flex").Count.Should().Be(5);
+
+            // add a filter via the AddFilter method
+            await comp.InvokeAsync(() => dataGrid.Instance.AddFilter(Guid.NewGuid(), "Status"));
+
+            // check the number of filters displayed in the filters panel is 1 more because we added a filter
+            dataGrid.FindAll(".filters-panel .mud-grid-item.d-flex").Count.Should().Be(6);
+
+            // toggle the filters menu (should be closed after this)
+            await comp.InvokeAsync(() => dataGrid.Instance.ToggleFiltersMenu());
+            dataGrid.FindAll(".filters-panel").Count.Should().Be(0);
+
+            //Console.WriteLine(dataGrid.Markup);
+
+            //Assert.Fail();
+        }
+
+        [Test]
+        public async Task DataGridColGroupTest()
+        {
+            var comp = Context.RenderComponent<DataGridColGroupTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridColGroupTest.Model>>();
+
+            dataGrid.FindAll("col").Count.Should().Be(3);
+        }
+
+        [Test]
+        public async Task DataGridHeaderTemplateTest()
+        {
+            var comp = Context.RenderComponent<DataGridHeaderTemplateTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridHeaderTemplateTest.Model>>();
+
+            dataGrid.Find("span.column-header").FirstChild.NodeName.Should().Be("svg");
+            dataGrid.Find("span.column-header span").TextContent.Should().Be("Name");
+        }
+
+        [Test]
+        public async Task DataGridChildRowContentTest()
+        {
+            var comp = Context.RenderComponent<DataGridChildRowContentTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridChildRowContentTest.Model>>();
+
+            dataGrid.FindAll("td")[3].TextContent.Trim().Should().StartWith("uid = Sam|56|Normal|");
+        }
+
+        [Test]
+        public async Task DataGridLoadingTest()
+        {
+            var comp = Context.RenderComponent<DataGridLoadingTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridLoadingTest.Model>>();
+
+            dataGrid.Find("th.mud-table-empty-row div").TextContent.Trim().Should().Be("Data loading, please wait...");
+        }
+
+        [Test]
+        public async Task DataGridNoRecordsContentTest()
+        {
+            var comp = Context.RenderComponent<DataGridNoRecordsContentTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridNoRecordsContentTest.Model>>();
+
+            dataGrid.Find("th.mud-table-empty-row div").TextContent.Trim().Should().Be("There are no records to view.");
+        }
+
+        [Test]
+        public async Task DataGridFooterTemplateTest()
+        {
+            var comp = Context.RenderComponent<DataGridFooterTemplateTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridFooterTemplateTest.Model>>();
+
+            dataGrid.Find("tfoot td").TextContent.Trim().Should().Be("Total Records: 4");
+        }
+
+        [Test]
+        public async Task DataGridServerPaginationTest()
+        {
+            var comp = Context.RenderComponent<DataGridServerPaginationTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridServerPaginationTest.Model>>();
+
+            // test that we are on the first page of results
+            dataGrid.Find(".mud-table-body td").TextContent.Trim().Should().Be("Name 0");
+
+            // click to go to the next page
+            dataGrid.FindAll(".mud-table-pagination-actions button")[2].Click();
+
+            // test that we are on the second page of results
+            dataGrid.Find(".mud-table-body td").TextContent.Trim().Should().Be("Name 10");
+
+            // test reloading server side results programmatically
+            await comp.InvokeAsync(async () => await dataGrid.Instance.ReloadServerData());
         }
     }
 }

@@ -87,7 +87,7 @@ namespace MudBlazor
             else if (isNumber)
             {
                 var field = Expression.Convert(Expression.Property(parameter, typeof(T).GetProperty(Field)), typeof(double));
-                var valueNumber = Value == null ? 0 : (double)Value;
+                var valueNumber = Value == null ? 0 : Convert.ToDouble(Value);
 
                 switch (Operator)
                 {
@@ -107,7 +107,7 @@ namespace MudBlazor
                         comparison = Expression.MakeBinary(ExpressionType.LessThan, field, Expression.Constant(valueNumber));
                         break;
                     case "<=":
-                        comparison = Expression.MakeBinary(ExpressionType.LessThan, field, Expression.Constant(valueNumber));
+                        comparison = Expression.MakeBinary(ExpressionType.LessThanOrEqual, field, Expression.Constant(valueNumber));
                         break;
                     default:
                         return new Func<T, bool>(x => true);

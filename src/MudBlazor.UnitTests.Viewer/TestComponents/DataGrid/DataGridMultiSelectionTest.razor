@@ -1,6 +1,6 @@
 ﻿@namespace MudBlazor.UnitTests.TestComponents
 
-<MudDataGrid Items="@_items" MultiSelection="true">
+<MudDataGrid Items="@_items" MultiSelection="true" @bind-bind-SelectedItems="_selectedItems">
     <Columns>
         <Column T="Item" Type="@ColumnType.SelectionCheckBox" />
         <Column T="Item" Field="@nameof(Item.Name)" />
@@ -14,6 +14,8 @@
         new Item("B"), 
         new Item("C"),
     };
+
+    private HashSet<Item> _selectedItems;
 
     public class Item
     {
