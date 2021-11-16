@@ -23,19 +23,12 @@ namespace MudBlazor.Docs.Pages.Features.Icons
         List<MudIcons> DisplayedIcons;
         private IconOrigin SelectedIconOrigin { get; set; } = IconOrigin.Material;
         private string SearchText { get; set; } = string.Empty;
-        private double _scrolledValue { get; set; }
-        private double _scrolledHeight { get; set; }
-        private double _scrolledDiff { get; set; }
-        private double _scrolledVerticalMark { get; set; }
         private double _iconCardWidth = 136.88; // single icon card width includin margins
-        private double _iconCardHeight = 144; // single icon card height includin margins
-        private int _currentIconRange = 0;
+        private float _iconCardHeight = 144; // single icon card height includin margins
+        private int CardsPerRow = 0;
 
-        int CenterCardsCount = 100;
-        int CardsPerRow = 0;
-        int CardsToSwap = 0;
 
-        private ElementReference KillZone;
+        private ElementReference killZone;
 
         private List<MudIcons> CustomAll { get; set; } = new List<MudIcons>();
         private List<MudIcons> CustomBrands { get; set; } = new List<MudIcons>();
@@ -52,14 +45,33 @@ namespace MudBlazor.Docs.Pages.Features.Icons
         private string IconCodeOutput { get; set; }
         private Size PreviewIconSize { get; set; } = Size.Medium;
         private Color PreviewIconColor { get; set; } = Color.Dark;
+        private List<MudVirtualizedIcons> SelectedIcons => string.IsNullOrWhiteSpace(SearchText)
+            ? GetVirtualizedIcons(DisplayedIcons)
+            : GetVirtualizedIcons(DisplayedIcons.Where(m => m.Name.Contains(SearchText, StringComparison.OrdinalIgnoreCase)).ToList());
 
-        private List<MudIcons> IconCardsTop { get; set; } = new List<MudIcons>();
-        private List<MudIcons> IconCardsCenter { get; set; } = new List<MudIcons>();
-        private List<MudIcons> IconCardsBottom { get; set; } = new List<MudIcons>();
+        private List<MudVirtualizedIcons> GetVirtualizedIcons(List<MudIcons> iconlist)
+        {
+            var virtualizedIcons = new List<MudVirtualizedIcons>();
+            var rowIcons = new List<MudIcons>();
+            int counter = 0;
 
-        private List<MudIcons> SelectedIcons => string.IsNullOrWhiteSpace(SearchText)
-            ? DisplayedIcons
-            : DisplayedIcons.Where(m => m.Name.Contains(SearchText, StringComparison.OrdinalIgnoreCase)).ToList();
+            foreach (var icon in iconlist)
+            {
+                if(CardsPerRow > counter)
+                {
+                    counter++;
+                    rowIcons.Add(icon);
+                }
+                else if(CardsPerRow == counter)
+                {
+                    rowIcons.Add(icon);
+                    virtualizedIcons.Add(new MudVirtualizedIcons(rowIcons));
+                    rowIcons = new List<MudIcons>();
+                    counter = 0;
+                }
+            }
+            return virtualizedIcons;
+        }
 
         private readonly IDictionary<string, object> IconTypes = new Dictionary<string, object>()
         {
@@ -91,11 +103,11 @@ namespace MudBlazor.Docs.Pages.Features.Icons
             if (firstRender)
             {
 
-                await ResizeObserver.Observe(KillZone);
+                await ResizeObserver.Observe(killZone);
 
                 ResizeObserver.OnResized += OnResized;
 
-                UpdateIconRange(false);
+                SetCardsPerRow();
                 StateHasChanged();
             }
         }
@@ -105,53 +117,9 @@ namespace MudBlazor.Docs.Pages.Features.Icons
             await InvokeAsync(StateHasChanged);
         }
 
-        private void OnScroll(ScrollEventArgs e)
+        private void SetCardsPerRow()
         {
-            CardsPerRow = Convert.ToInt32(ResizeObserver.GetWidth(KillZone) / _iconCardWidth);
-            CardsToSwap = CardsPerRow;
-            //CardsToSwap = (CardsPerRow) switch
-            //{
-            //    var x when x < 4 => 2 * CardsPerRow,
-            //    var x when x < 6 => 3 * CardsPerRow,
-            //    var x when x < 8 => 4 * CardsPerRow,
-            //    _=> 5 * CardsPerRow
-            //};
-
-            var oldvalue = _scrolledValue;
-
-            _scrolledValue = e.FirstChildBoundingClientRect.Top * -1;
-            _scrolledHeight += _scrolledValue;
-            _scrolledDiff += Math.Abs(_scrolledValue - oldvalue);
-
-            if (_scrolledDiff > _iconCardHeight && _scrolledValue > oldvalue)
-            {
-                _currentIconRange += CardsToSwap;
-                UpdateIconRange(false);
-            }
-            else if (_scrolledDiff > _iconCardHeight && _scrolledValue < oldvalue)
-            {
-                _currentIconRange += CardsToSwap;
-                UpdateIconRange(true);
-            }
-        }
-
-        private void UpdateIconRange(bool scrollUp)
-        {
-            CardsPerRow = Convert.ToInt32(ResizeObserver.GetWidth(KillZone) / _iconCardWidth);
-            CardsToSwap = CardsPerRow;
-
-            if (scrollUp)
-            {
-                IconCardsTop = SelectedIcons.GetRange(_currentIconRange - CardsToSwap, CardsToSwap).ToList();
-                IconCardsCenter = SelectedIcons.GetRange((_currentIconRange - CardsToSwap - CardsToSwap), CenterCardsCount).ToList();
-                IconCardsBottom = SelectedIcons.GetRange((_currentIconRange - CardsToSwap - CardsToSwap - CardsToSwap), CardsToSwap).ToList();
-            }
-            else
-            {
-                IconCardsTop = SelectedIcons.GetRange(_currentIconRange, CardsToSwap).ToList();
-                IconCardsCenter = SelectedIcons.GetRange((_currentIconRange + CardsToSwap), CenterCardsCount).ToList();
-                IconCardsBottom = SelectedIcons.GetRange((_currentIconRange + CardsToSwap + CardsToSwap), CardsToSwap).ToList();
-            }
+            CardsPerRow = Convert.ToInt32(ResizeObserver.GetWidth(killZone) / _iconCardWidth);
         }
 
         public async Task<List<MudIcons>> LoadMaterialIcons(string type)
