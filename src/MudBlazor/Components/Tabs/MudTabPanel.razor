@@ -104,7 +104,6 @@ else
         RenderPanel = (()=>
         {
             InvokeAsync(() => _shouldRender = true);
-            Console.WriteLine($"Should Render: {Text}");
         });
 
         Parent?.AddPanel(this);
