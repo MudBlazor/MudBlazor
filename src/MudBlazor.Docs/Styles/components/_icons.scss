@@ -1,18 +1,4 @@
 ﻿
-.docs-icon-container {
-    display: grid;
-    gap: 12px;
-    grid-template-rows: 1px minmax(128px, auto);
-    grid-template-columns: repeat(auto-fill,112px);
-
-    div:first-child:not(.docs-icon-panel) {
-        grid-column: 1 / -1;
-    }
-
-    div:last-child:not(.docs-icon-panel) {
-    }
-}
-
 .mud-icondrawer {
     .mud-typography-subtitle1 {
         font-weight: 500;
@@ -46,6 +32,7 @@
     height: 128px;
     width: 96px;
     padding: 0px 6px;
+    margin: 16px 12px;
     display: flex;
     text-align: center;
     align-items: center;
@@ -61,7 +48,7 @@
 
     &:focus-visible {
         background-color: var(--mud-palette-action-default-hover);
-        outline:none;
+        outline: none;
     }
 
     & .mud-svg-icon {
