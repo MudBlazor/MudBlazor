@@ -30,7 +30,8 @@
 
 .docs-icon-panel {
     height: 128px;
-    width: 96px;
+    width: 100%;
+    max-width:112px;
     padding: 0px 6px;
     margin: 16px 12px;
     display: flex;
@@ -66,11 +67,5 @@
     &:hover {
         cursor: pointer;
         background-color: var(--mud-palette-action-default-hover);
-    }
-}
-
-@media screen and (min-width: 720px) {
-    .docs-icon-panel {
-        width: 112px;
     }
 }

@@ -57,12 +57,13 @@ namespace MudBlazor.Docs.Pages.Features.Icons
 
             foreach (var icon in iconlist)
             {
-                if(CardsPerRow > counter)
+                counter++;
+                if (CardsPerRow > counter)
                 {
-                    counter++;
+                    
                     rowIcons.Add(icon);
                 }
-                else if(CardsPerRow == counter)
+                else if(CardsPerRow <= counter)
                 {
                     rowIcons.Add(icon);
                     virtualizedIcons.Add(new MudVirtualizedIcons(rowIcons));
@@ -114,6 +115,7 @@ namespace MudBlazor.Docs.Pages.Features.Icons
 
         private async void OnResized(IDictionary<ElementReference, BoundingClientRect> changes)
         {
+            SetCardsPerRow();
             await InvokeAsync(StateHasChanged);
         }
 
@@ -241,6 +243,18 @@ namespace MudBlazor.Docs.Pages.Features.Icons
         {
             Custom,
             Material
+        }
+
+        private string GetKillZoneStyle(bool debugg)
+        {
+            if (debugg)
+            {
+                return $"height:65vh;width:100%;position:sticky;top:0px;border-color:#ff0000;border-style:dashed;border-width:4px;border-radius:8px;";
+            }
+            else
+            {
+                return $"height:65vh;width:100%;position:sticky;top:0px;";
+            }
         }
     }
 }

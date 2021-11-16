@@ -17,7 +17,7 @@
                         <MudSelectItem Value="IconOrigin.Material">Material Icons</MudSelectItem>
                     </MudSelect>
                 </MudItem>
-                <MudItem xs="12">
+                <MudItem xs="12" Class="relative">
                     @if(SelectedIconOrigin == IconOrigin.Material)
                     {
                         <MudChipSet Filter="true" Mandatory="true">
@@ -41,11 +41,11 @@
             </MudGrid>
             
             <div class="relative" style="height:34000px;">
-                <div @ref="killZone" style="@($"height:65vh;width:100%;position:sticky;top:0px;border-color:#ff0000;border-style:dashed;border-width:4px;border-radius:8px;")">
-                    <MudText Color="Color.Error">@($"{ResizeObserver.GetWidth(killZone)}-{ResizeObserver.GetHeight(killZone)}")</MudText>
+                <div class="absolute" style="top:0px;width:100%;">
+                    <div @ref="killZone" style="@GetKillZoneStyle(false)"></div>
                 </div>
                 <Virtualize Items="@SelectedIcons" ItemSize="@_iconCardHeight">
-                    <div class="d-flex mud-width-full">
+                    <div class="d-flex mud-width-full justify-center">
                         @foreach(var icon in context.RowIcons)
                         {
                             <button class="docs-icon-panel" @onclick="@(() => SetIconDrawer(icon))">
