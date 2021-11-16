@@ -1123,13 +1123,13 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// Moving a panel should not cause the rendering all the panels when
+        /// Moving a panel should not cause any panel content to be rendered when
         /// the <c>KeepPanelsAlive</c> parameter is set to <c>true</c>.
         ///
         /// The effect of <c>KeepPanelsAlive</c> should work as expected even after moving tabs.
         /// </summary>
         [Test]
-        public async Task ReorderTabs_KeepAlive_ShouldNotRenderAllPanels()
+        public async Task ReorderTabs_KeepAlive_ShouldNotRenderAnyPanelContent()
         {
 
             Context.Services.Add(new ServiceDescriptor(typeof(IResizeObserver), new MockResizeObserver()));
@@ -1218,8 +1218,12 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("button > span.mud-button-label")[2].TrimmedText().Should().Contain("Panel 3=3");
         }
 
+        /// <summary>
+        /// Moving a panel should not cause any panel content to be rendered when
+        /// the <c>KeepPanelsAlive</c> parameter is set to <c>false</c>.
+        /// </summary>
         [Test]
-        public async Task ReorderTabs_NotKeepAlive_ShouldNotRenderAllPanels()
+        public async Task ReorderTabs_NotKeepAlive_ShouldNotRenderAnyPanelContent()
         {
             Context.Services.Add(new ServiceDescriptor(typeof(IResizeObserver), new MockResizeObserver()));
 
