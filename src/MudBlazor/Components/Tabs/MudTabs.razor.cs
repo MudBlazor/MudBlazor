@@ -694,6 +694,9 @@ namespace MudBlazor
 
         private void CenterScrollPositionAroundSelectedItem()
         {
+            if (ActivePanel == null)
+                return;
+
             MudTabPanel panelToStart = ActivePanel;
             var length = GetPanelLength(panelToStart);
             if (length >= _toolbarContentSize)
@@ -705,7 +708,7 @@ namespace MudBlazor
             var indexCorrection = 1;
             while (true)
             {
-                var panelAfterIndex = _activePanelIndex + indexCorrection;
+                var panelAfterIndex = ActivePanel.Index + indexCorrection;
                 if (IsAfterLastPanelIndex(panelAfterIndex) == false)
                 {
                     length += GetPanelLength(_panels[panelAfterIndex]);
@@ -719,7 +722,7 @@ namespace MudBlazor
 
                 length = _toolbarContentSize - length;
 
-                var panelBeforeindex = _activePanelIndex - indexCorrection;
+                var panelBeforeindex = ActivePanel.Index - indexCorrection;
                 if (IsBeforeFirstPanelIndex(panelBeforeindex) == false)
                 {
                     length -= GetPanelLength(_panels[panelBeforeindex]);
@@ -736,7 +739,7 @@ namespace MudBlazor
                 }
 
                 length = _toolbarContentSize - length;
-                panelToStart = _panels[_activePanelIndex - indexCorrection];
+                panelToStart = _panels[ActivePanel.Index - indexCorrection];
 
                 indexCorrection++;
             }
