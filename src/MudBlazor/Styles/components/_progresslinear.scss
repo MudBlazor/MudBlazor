@@ -2,6 +2,22 @@
 .mud-progress-linear {
     position: relative;
 
+    &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: 100%;
+        width: 100%;
+        display: block;
+        background-color: var(--mud-palette-action-disabled);
+        opacity: 0.2;
+    }
+
+    .mud-progress-linear-bar.mud-default {
+        background-color: var(--mud-palette-action-default);
+    }
+
     &.horizontal {
         width: 100%;
 
@@ -55,15 +71,7 @@
 @each $color in $mud-palette-colors {
     .mud-progress-linear-color-#{$color} {
         &::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            height: 100%;
-            width: 100%;
-            display: block;
             background-color: var(--mud-palette-#{$color});
-            opacity: 0.2;
         }
     }
 }
