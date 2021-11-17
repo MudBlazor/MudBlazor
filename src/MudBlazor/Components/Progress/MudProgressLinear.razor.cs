@@ -9,31 +9,17 @@ namespace MudBlazor
     {
         protected string DivClassname =>
             new CssBuilder("mud-progress-linear")
+                .AddClass("mud-progress-linear-rounded", Rounded)
+                .AddClass($"mud-progress-linear-striped", Striped)
+                .AddClass($"mud-progress-indeterminate", Indeterminate)
+                .AddClass($"mud-progress-linear-buffer", Buffer && !Indeterminate)
                 .AddClass($"mud-progress-linear-{Size.ToDescriptionString()}")
-                .AddClass($"mud-progress-linear-color-{Color.ToDescriptionString()}", !Buffer)
+                .AddClass($"mud-progress-linear-color-{Color.ToDescriptionString()}")
                 .AddClass("horizontal", !Vertical)
                 .AddClass("vertical", Vertical)
-                .AddClass("rounded", Rounded)
+                
                 .AddClass("mud-flip-x-rtl")
                 .AddClass(Class)
-                .Build();
-
-        protected string LinearClassname =>
-            new CssBuilder("mud-progress-linear-bar")
-                .AddClass("horizontal", !Vertical)
-                .AddClass("vertical", Vertical)
-                .AddClass("rounded", Rounded)
-                .AddClass($"mud-{Color.ToDescriptionString()}")
-                .AddClass("mud-progress-linear-striped", Striped)
-                .AddClass($"mud-progress-indeterminate", Indeterminate)
-                .AddClass($"mud-progress-linear-bar-1-determinate", !Indeterminate)
-                .Build();
-
-        protected string BufferClassname =>
-            new CssBuilder("mud-progress-linear-dashed")
-                .AddClass("horizontal", !Vertical)
-                .AddClass("vertical", Vertical)
-                .AddClass($"mud-progress-linear-dashed-color-{Color.ToDescriptionString()}")
                 .Build();
 
         /// <summary>

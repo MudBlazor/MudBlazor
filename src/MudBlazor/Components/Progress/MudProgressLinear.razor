@@ -9,21 +9,21 @@
             @ChildContent
         </div>
     }
-    <div class="absolute mud-width-full mud-height-full overflow-hidden">
+    <div class="mud-progress-linear-bars">
         @if (Indeterminate)
         {
-            <div class="@LinearClassname mud-progress-linear-1-indeterminate"></div>
-            <div class="@LinearClassname mud-progress-linear-2-indeterminate"></div>
+            <div class="mud-progress-linear-bar"></div>
+            <div class="mud-progress-linear-bar"></div>
         }
         else if (Buffer)
         {
-            <div class="@BufferClassname"></div>
-            <div class="mud-progress-linear-bar mud-@Color.ToDescriptionString() mud-progress-linear-bar-1-buffer" style="@GetStyledBar1Transform()"></div>
-            <div class="mud-progress-linear-bar mud-progress-linear-color-@Color.ToDescriptionString() mud-progress-linear-bar-2-buffer" style="@GetStyledBar2Transform()"></div>
+            <div class="mud-progress-linear-bar"></div>
+            <div class="mud-progress-linear-bar" style="@GetStyledBar1Transform()"></div>
+            <div class="mud-progress-linear-bar last" style="@GetStyledBar2Transform()"></div>
         }
         else
         {
-            <div class="@LinearClassname" style="@GetStyledBar1Transform()"></div>
+            <div class="mud-progress-linear-bar" style="@GetStyledBar1Transform()"></div>
         }
     </div>
 </div>
