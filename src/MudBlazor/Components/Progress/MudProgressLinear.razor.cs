@@ -11,6 +11,8 @@ namespace MudBlazor
             new CssBuilder("mud-progress-linear")
                 .AddClass($"mud-progress-linear-{Size.ToDescriptionString()}")
                 .AddClass($"mud-progress-linear-color-{Color.ToDescriptionString()}", !Buffer)
+                .AddClass("horizontal", !Vertical)
+                .AddClass("vertical", Vertical)
                 .AddClass("rounded", Rounded)
                 .AddClass("mud-flip-x-rtl")
                 .AddClass(Class)
@@ -18,6 +20,8 @@ namespace MudBlazor
 
         protected string LinearClassname =>
             new CssBuilder("mud-progress-linear-bar")
+                .AddClass("horizontal", !Vertical)
+                .AddClass("vertical", Vertical)
                 .AddClass("rounded", Rounded)
                 .AddClass($"mud-{Color.ToDescriptionString()}")
                 .AddClass("mud-progress-linear-striped", Striped)
@@ -27,6 +31,8 @@ namespace MudBlazor
 
         protected string BufferClassname =>
             new CssBuilder("mud-progress-linear-dashed")
+                .AddClass("horizontal", !Vertical)
+                .AddClass("vertical", Vertical)
                 .AddClass($"mud-progress-linear-dashed-color-{Color.ToDescriptionString()}")
                 .Build();
 
@@ -59,6 +65,16 @@ namespace MudBlazor
         /// Adds stripes to the filled part of the linear progress.
         /// </summary>
         [Parameter] public bool Striped { get; set; }
+
+        /// <summary>
+        /// If true, the progress bar  will be displayed vertically.
+        /// </summary>
+        [Parameter] public bool Vertical { get; set; }
+
+        /// <summary>
+        /// Child content of component.
+        /// </summary>
+        [Parameter] public RenderFragment ChildContent { get; set; }
 
         /// <summary>
         /// The minimum allowed value of the linear prgoress. Should not be equal to max.
@@ -145,6 +161,29 @@ namespace MudBlazor
                 return 0;
             var value = Math.Max(0, Math.Min(total, _bufferValue - _min));
             return value / total * 100.0;
+        }
+
+        public string GetStyledBar1Transform()
+        {
+            if (Vertical)
+            {
+                return $"transform: translateY({(int)Math.Round(100 - ValuePercent)}%);";
+            }
+            else
+            {
+                return $"transform: translateX(-{(int)Math.Round(100 - ValuePercent)}%);";
+            }
+        }
+        public string GetStyledBar2Transform()
+        {
+            if (Vertical)
+            {
+                return $"transform: translateY({(int)Math.Round(100 - BufferPercent)}%);";
+            }
+            else
+            {
+                return $"transform: translateX(-{(int)Math.Round(100 - BufferPercent)}%);";
+            }
         }
 
         #region --> Obsolete Forwarders for Backwards-Compatiblilty
