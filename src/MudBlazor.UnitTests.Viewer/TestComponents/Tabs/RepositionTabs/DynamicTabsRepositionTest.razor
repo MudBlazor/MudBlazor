@@ -24,6 +24,7 @@
 		Position="@_position"
         KeepPanelsAlive="@KeepPanelsAlive"
 		EnableRepositioning="@_isEnableRepositioning"
+        ActivePanelIndexChanged=@(idx => _activePanelIndex = idx)
 >
 	@foreach(var panel in Panels)
 	{
@@ -34,6 +35,10 @@
 		</MudTabPanel>
 	}
 </MudDynamicTabs>
+
+<p id="active-panel-index">
+    @_activePanelIndex
+</p>
 
 <p id="first-renders">
     @foreach (var firstRender in _firstRenders)
@@ -61,6 +66,7 @@
     changing positions (centered, top,
     left, etc).";
 
+    int _activePanelIndex = -1;
     bool _isCentered = false;
     bool _isEnableRepositioning = true;
 

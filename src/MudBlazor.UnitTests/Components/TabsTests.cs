@@ -1122,6 +1122,41 @@ namespace MudBlazor.UnitTests.Components
             resultingPanels[4].TrimmedText().Should().Contain("Panel 1");
         }
 
+        [Test]
+        public async Task ReorderTabs_MovedTab_ShouldEqualToActivePanelIndex()
+        {
+            Context.Services.Add(new ServiceDescriptor(typeof(IResizeObserver), new MockResizeObserver()));
+
+            var comp = Context.RenderComponent<DynamicTabsRepositionTest>(parameters =>
+                parameters
+                    .Add(p => p.Panels, new List<(object ID, string Text)>
+                    {
+                        (0, "Panel 1"),
+                        (1, "Panel 2"),
+                        (2, "Panel 3"),
+                    })
+                    .Add(p => p.KeepPanelsAlive, true)
+            );
+
+            Console.WriteLine(comp.Markup);
+
+            comp.FindAll(".mud-tab").Count.Should().Be(3);
+            comp.FindAll(".mud-tab")[0].TrimmedText().Should().Contain("Panel 1");
+            comp.FindAll(".mud-tab")[1].TrimmedText().Should().Contain("Panel 2");
+            comp.FindAll(".mud-tab")[2].TrimmedText().Should().Contain("Panel 3");
+
+            await PerformActions(comp, new Action[]
+            {
+                new Action("move", "Panel 2", "Panel 3")
+            });
+
+            comp.FindAll(".mud-tab")[0].TrimmedText().Should().Contain("Panel 1");
+            comp.FindAll(".mud-tab")[1].TrimmedText().Should().Contain("Panel 3");
+            comp.FindAll(".mud-tab")[2].TrimmedText().Should().Contain("Panel 2");
+
+            comp.FindAll("#active-panel-index").First().TrimmedText().Should().Contain("2");
+        }
+
         /// <summary>
         /// Moving a panel should not cause any panel content to be rendered when
         /// the <c>KeepPanelsAlive</c> parameter is set to <c>true</c>.
