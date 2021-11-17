@@ -3,19 +3,15 @@
 <MudThemeProvider Theme="@_currentTheme"/>
 
 <MudLayout Class="mudblazor-landingpage">
-    <MudAppBar Elevation="25" DisableGutters="true">
-        <MudContainer MaxWidth="MaxWidth.Large">
-            <MudToolBar DisableGutters="true">
-                <MudBlazorLogo Style="width:40px;" Class="mr-6"/>
-                <MudButton Variant="Variant.Text" Class="mx-1">Documentation</MudButton>
-                <MudButton Variant="Variant.Text" Class="mx-1">Components</MudButton>
-                <MudButton Variant="Variant.Text" Class="mx-1">Products</MudButton>
-                <MudSpacer />
-                <MudTooltip Duration="1000" Text="@(_isDarkMode? "Switch to Light Theme" : "Switch to Dark Theme")">
-                    <MudIconButton Icon="@(_isDarkMode? @Icons.Material.Outlined.LightMode : @Icons.Material.Outlined.DarkMode)" Color="Color.Inherit" OnClick="@((e) => DarkMode())" />
-                </MudTooltip>
-            </MudToolBar>
-        </MudContainer>
+    <MudAppBar Elevation="0" DisableGutters="true" Class="py-2" ToolBarClass="px-8" Color="Color.Transparent">
+            <MudBlazorLogo Style="width:40px;" Class="mr-6"/>
+            <MudButton Variant="Variant.Text" Class="mx-1">Documentation</MudButton>
+            <MudButton Variant="Variant.Text" Class="mx-1">Components</MudButton>
+            <MudButton Variant="Variant.Text" Class="mx-1">Products</MudButton>
+            <MudSpacer />
+            <MudTooltip Duration="1000" Text="@(_isDarkMode? "Switch to Light Theme" : "Switch to Dark Theme")">
+                <MudIconButton Icon="@(_isDarkMode? @Icons.Material.Outlined.LightMode : @Icons.Material.Outlined.DarkMode)" Color="Color.Inherit" OnClick="@((e) => DarkMode())" />
+            </MudTooltip>
     </MudAppBar>
     <MudMainContent>
         @Body

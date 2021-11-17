@@ -1,12 +1,14 @@
 ﻿@page "/"
 @layout LandingLayout
+@using MudBlazor.Docs.Components.LandingPage
 
 
 <div class="mud-landingpage-top-section">
 
 
 <LandingSection>
-    <div style="max-width:570px;">
+    <div class="d-flex">
+        <div style="max-width:570px;">
             <MudText Typo="Typo.h1">The Blazor</MudText>
             <MudText Typo="Typo.h1" Inline="true" Class="landing-h1-gradient">Component </MudText>
             <MudText Typo="Typo.h1" Inline="true">Library</MudText>
@@ -20,6 +22,12 @@
                 <MudButton Color="Color.Primary" Variant="Variant.Filled" DisableElevation="true" Size="Size.Large">Get started</MudButton>
             </div>
         </div>
+        <div class="relative mud-height-full mud-width-full">
+            <Browser Class="absolute" Style="top:0px;left:240px;box-shadow: inset 0 1px 1px 0 hsla(0deg, 0%, 100%, 10%), 0 50px 100px -20px rgb(50 50 93 / 25%), 0 30px 60px -30px rgb(0 0 0 / 30%);" />
+            <Phone Class="absolute" Style="top:128px;left:128px;box-shadow: inset 0 1px 1px 0 hsl(0deg 0% 100% / 10%), 0 50px 100px -20px rgb(50 50 93 / 25%), 0 30px 60px -30px rgb(0 0 0 / 30%);border-radius: 40px;" />
+        </div>
+    </div>
+    
 </LandingSection>
  <div class="mud-landingpage-grid">
      <div class="mud-landingpage-grid-background">
@@ -39,19 +47,21 @@
  </div>
 </div>
 <LandingSection>
-    <MudText Typo="Typo.h5">Our Sponsors</MudText>
-    <MudText Typo="Typo.subtitle1" Class="mud-text-secondary">
-        The continued development and maintenance of MudBlazor is secured by our sponsors.
+    <MudText Typo="Typo.subtitle2" Align="Align.Center" Class="mt-8 mb-16" Style="color: #8898aa;">
+        The continued development and maintenance of MudBlazor is secured by our sponsors
     </MudText>
     <MudGrid Spacing="5">
-        <MudItem xs="6" sm="4">
+        <MudItem xs="6" sm="3">
             <Sponsor Name="Adaris" Image="Adaris.png" Website="https://www.adaris.ch/" />
         </MudItem>
-        <MudItem xs="6" sm="4">
+        <MudItem xs="6" sm="3">
+            <Sponsor Name="JetBrains" Image="JetBrains.png" Website="https://www.jetbrains.com/?from=MudBlazor" />
+        </MudItem>
+        <MudItem xs="6" sm="3">
             <Sponsor Name="TimeStatement" Image="TimeStatement.png" Website="https://timestatement.com/"  />
         </MudItem>
-        <MudItem xs="6" sm="4">
-            <Sponsor Name="JetBrains" Image="JetBrains.png" Website="https://www.jetbrains.com/?from=MudBlazor" />
+        <MudItem xs="6" sm="3">
+            <Sponsor Name="TimeStatement" Image="TimeStatement.png" Website="https://timestatement.com/"  />
         </MudItem>
     </MudGrid>
 </LandingSection>
@@ -88,14 +98,14 @@
         Do you have questions? Do you want to help others? Just talk or get news? Join one of our channels and become part of the MudBlazor community.
     </MudText>
     </div>
-    <MudGrid Spacing="0">
+    <MudGrid Spacing="0" Class="pt-4">
         <MudItem xs="12" sm="6" md="3">
             <MudIcon Icon="@Icons.Custom.Brands.Twitter" Color="Color.Info"/>
             <MudText Typo="Typo.subtitle2">Twitter</MudText>
             <MudText Typo="Typo.body1">For announcements, blog posts, and general MudBlazor stuff.</MudText>
         </MudItem>
         <MudItem xs="12" sm="6" md="3">
-            <MudIcon Icon="@Icons.Custom.Brands.Discord" Color="Color.Primary"/>
+            <MudIcon Icon="@Icons.Custom.Brands.Discord" Style="color:#7781ff;"/>
             <MudText Typo="Typo.subtitle2">Discord</MudText>
             <MudText Typo="Typo.body1">To get involved in the community, ask questions, help others or just talk.</MudText>
         </MudItem>
