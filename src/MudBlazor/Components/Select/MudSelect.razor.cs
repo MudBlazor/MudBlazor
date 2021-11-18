@@ -615,6 +615,8 @@ namespace MudBlazor
             UpdateIcon();
             StateHasChanged();
             await HilightSelectedValue();
+
+            await _keyInterceptor.UpdateKey(new() { Key = "Escape", StopDown = "Key+none" });
         }
 
         public async Task CloseMenu(bool focusAgain = true)
@@ -628,6 +630,8 @@ namespace MudBlazor
                 _elementReference.FocusAsync().AndForget(TaskOption.Safe);
                 StateHasChanged();
             }
+
+            await _keyInterceptor.UpdateKey(new() { Key = "Escape", StopDown = "none" });
         }
 
         private void UpdateIcon()
@@ -661,6 +665,7 @@ namespace MudBlazor
                         new KeyOptions { Key="ArrowDown", PreventDown = "key+none" }, // prevent scrolling page, instead hilight next item
                         new KeyOptions { Key="Home", PreventDown = "key+none" },
                         new KeyOptions { Key="End", PreventDown = "key+none" },
+                        new KeyOptions { Key="Escape" },
                         new KeyOptions { Key="Enter", PreventDown = "key+none" },
                         new KeyOptions { Key="NumpadEnter", PreventDown = "key+none" },
                         new KeyOptions { Key="a", PreventDown = "key+ctrl" }, // select all items instead of all page text
