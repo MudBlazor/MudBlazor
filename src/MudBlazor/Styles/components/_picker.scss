@@ -18,6 +18,10 @@
     }
 }
 
+.mud-picker-dense {
+    transform: scale(0.8, 0.8);
+}
+
 .mud-picker-inline {
     display: flex;
     flex: 1 1 auto;

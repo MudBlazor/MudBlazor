@@ -22,6 +22,7 @@ namespace MudBlazor
 
         protected string PickerClass =>
             new CssBuilder("mud-picker")
+                
                 .AddClass($"mud-picker-inline", PickerVariant != PickerVariant.Static)
                 .AddClass($"mud-picker-static", PickerVariant == PickerVariant.Static)
                 .AddClass($"mud-rounded", PickerVariant == PickerVariant.Static && !_pickerSquare)
@@ -43,6 +44,7 @@ namespace MudBlazor
 
         protected string PickerInlineClass =>
             new CssBuilder("mud-picker-inline-paper")
+            .AddClass($"mud-picker-dense", Dense == true)
             .Build();
 
         protected string PickerContainerClass =>
@@ -85,6 +87,11 @@ namespace MudBlazor
         /// The short hint displayed in the input before the user enters a value.
         /// </summary>
         [Parameter] public string Placeholder { get; set; }
+
+        /// <summary>
+        /// If true, picker content takes up less space.
+        /// </summary>
+        [Parameter] public bool Dense { get; set; }
 
         /// <summary>
         /// Fired when the dropdown / dialog opens
