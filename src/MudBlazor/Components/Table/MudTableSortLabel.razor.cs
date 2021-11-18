@@ -56,7 +56,7 @@ namespace MudBlazor
         private Task UpdateSortDirectionAsync(SortDirection sortDirection)
         {
             SortDirection = sortDirection;
-            return Context.SetSortFunc(this);
+            return Context?.SetSortFunc(this);
         }
 
         [Parameter]
