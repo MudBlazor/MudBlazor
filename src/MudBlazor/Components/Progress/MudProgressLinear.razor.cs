@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Extensions;
 using MudBlazor.Utilities;
@@ -34,27 +35,27 @@ namespace MudBlazor
         /// <summary>
         /// Constantly animates, does not follow any value.
         /// </summary>
-        [Parameter] public bool Indeterminate { get; set; }
+        [Parameter] public bool Indeterminate { get; set; } = false;
 
         /// <summary>
         /// If true, the buffer value will be used.
         /// </summary>
-        [Parameter] public bool Buffer { get; set; }
+        [Parameter] public bool Buffer { get; set; } = false;
 
         /// <summary>
         /// If true, border-radius is set to the themes default value.
         /// </summary>
-        [Parameter] public bool Rounded { get; set; }
+        [Parameter] public bool Rounded { get; set; } = false;
 
         /// <summary>
         /// Adds stripes to the filled part of the linear progress.
         /// </summary>
-        [Parameter] public bool Striped { get; set; }
+        [Parameter] public bool Striped { get; set; } = false;
 
         /// <summary>
         /// If true, the progress bar  will be displayed vertically.
         /// </summary>
-        [Parameter] public bool Vertical { get; set; }
+        [Parameter] public bool Vertical { get; set; } = false;
 
         /// <summary>
         /// Child content of component.
@@ -130,7 +131,7 @@ namespace MudBlazor
             StateHasChanged();
         }
 
-        private double GetPercentage(Double input)
+        private double GetPercentage(double input)
         {
             var total = Math.Abs(_max - _min);
             if (NumericConverter<double>.AreEqual(0, total))
@@ -144,19 +145,20 @@ namespace MudBlazor
         public double GetValuePercent() => GetPercentage(_value);
         public double GetBufferPercent() => GetPercentage(_bufferValue);
 
-        public string GetStyledBar1Transform() =>
-            Vertical == true ? $"transform: translateY({(int)Math.Round(100 - ValuePercent)}%);" : $"transform: translateX(-{(int)Math.Round(100 - ValuePercent)}%);";
-        
+        private string GetStyleBarTransform(double input) =>
+            Vertical == true ? $"transform: translateY({(int)Math.Round(100 - input)}%);" : $"transform: translateX(-{(int)Math.Round(100 - input)}%);";
 
-        public string GetStyledBar2Transform() =>
-            Vertical == true ? $"transform: translateY({(int)Math.Round(100 - BufferPercent)}%);" : $"transform: translateX(-{(int)Math.Round(100 - BufferPercent)}%);";
+        public string GetStyledBar1Transform() => GetStyleBarTransform(ValuePercent);
+        public string GetStyledBar2Transform() => GetStyleBarTransform(BufferPercent);
 
         #region --> Obsolete Forwarders for Backwards-Compatiblilty
 
         [Obsolete("Use Min instead.", true)]
+        [ExcludeFromCodeCoverage]
         [Parameter] public double Minimum { get => Min; set => Min = value; }
 
         [Obsolete("Use Max instead.", true)]
+        [ExcludeFromCodeCoverage]
         [Parameter] public double Maximum { get => Max; set => Max = value; }
 
         #endregion
