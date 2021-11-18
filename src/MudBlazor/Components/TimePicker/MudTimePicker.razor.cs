@@ -57,8 +57,6 @@ namespace MudBlazor
         private OpenTo _currentView;
         private string _timeFormat = string.Empty;
 
-        //ElementReference _mudPickerContent = new ElementReference();
-
         internal TimeSpan? TimeIntermediate { get; private set; }
 
         /// <summary>

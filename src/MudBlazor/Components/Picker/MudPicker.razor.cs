@@ -409,36 +409,5 @@ namespace MudBlazor
                     break;
             }
         }
-
-        private void HandleOnBlur()
-        {
-            if (this.GetType() == typeof(MudTimePicker))
-            {
-                if (Text != null && !Text.Contains(":") && Text.Length == 4)
-                {
-                    try
-                    {
-                        int hour = int.Parse(Text.Substring(0, 2));
-                        int minute = int.Parse(Text.Substring(2, 2));
-                        if (23 < hour)
-                        {
-                            hour = 23;
-                        }
-
-                        if (59 < minute)
-                        {
-                            minute = 59;
-                        }
-                        Text = hour.ToString() + ":" + minute.ToString();
-                        SetTextAsync(Text, true).AndForget();
-                    }
-                    catch (Exception)
-                    {
-                        //ignore
-                    }
-                }
-            }
-        }
-
     }
 }
