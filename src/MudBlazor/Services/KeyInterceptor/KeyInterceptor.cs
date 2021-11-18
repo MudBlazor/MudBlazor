@@ -49,6 +49,11 @@ namespace MudBlazor.Services
             catch (TaskCanceledException) { }
         }
 
+        public async Task UpdateKey(KeyOptions option)
+        {
+            await _jsRuntime.InvokeVoidAsync($"mudKeyInterceptor.updatekey", _elementId, option);
+        }
+
         /// <summary>
         /// Disconnect from the previously connected ancestor and its descendants
         /// </summary>
