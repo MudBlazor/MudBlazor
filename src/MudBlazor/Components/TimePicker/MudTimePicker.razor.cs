@@ -178,7 +178,7 @@ namespace MudBlazor
         {
             if (ReadOnly)
                 return;
-            Time = TimeIntermediate;
+            Time = TimeIntermediate;            
         }
 
         public override void Clear(bool close = true)
@@ -576,6 +576,7 @@ namespace MudBlazor
                     {
                         Submit();
                         Close();
+                        _inputReference?.SetText(Text);
                     }
                     break;
                 case " ":
@@ -589,6 +590,7 @@ namespace MudBlazor
                         {
                             Submit();
                             Close();
+                            _inputReference?.SetText(Text);
                         }
                     }
                     break;
