@@ -360,7 +360,7 @@ namespace MudBlazor
             {
                 IsOpen = true;
                 OnOpened();
-                _inputReference?.FocusAsync();
+                FocusAsync();
             }
         }
 
