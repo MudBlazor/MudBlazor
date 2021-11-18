@@ -144,8 +144,8 @@ namespace MudBlazor
         public double GetValuePercent() => GetPercentage(_value);
         public double GetBufferPercent() => GetPercentage(_bufferValue);
 
-        public string GetStyledBar1Transform() => 
-            Vertical == true ? $"transform: translateY({(int)Math.Round(100 - ValuePercent)}%);" : $"transform: translateX(-{(int)Math.Round(100 - ValuePercent)}%);"
+        public string GetStyledBar1Transform() =>
+            Vertical == true ? $"transform: translateY({(int)Math.Round(100 - ValuePercent)}%);" : $"transform: translateX(-{(int)Math.Round(100 - ValuePercent)}%);";
         
 
         public string GetStyledBar2Transform() =>
