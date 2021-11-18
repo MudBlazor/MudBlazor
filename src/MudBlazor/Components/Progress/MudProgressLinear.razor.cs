@@ -17,7 +17,6 @@ namespace MudBlazor
                 .AddClass($"mud-progress-linear-color-{Color.ToDescriptionString()}")
                 .AddClass("horizontal", !Vertical)
                 .AddClass("vertical", Vertical)
-                
                 .AddClass("mud-flip-x-rtl")
                 .AddClass(Class)
                 .Build();
@@ -131,46 +130,26 @@ namespace MudBlazor
             StateHasChanged();
         }
 
-        public double GetValuePercent()
+        private double GetPercentage(Double input)
         {
             var total = Math.Abs(_max - _min);
-            if (NumericConverter<double>.AreEqual(0, total)) // numeric instability!
-                return 0;
-            var value = Math.Max(0, Math.Min(total, _value - _min));
+            if (NumericConverter<double>.AreEqual(0, total))
+            {  // numeric instability!
+                return 0.0;
+            }
+            var value = Math.Max(0, Math.Min(total, input - _min));
             return value / total * 100.0;
         }
 
-        public double GetBufferPercent()
-        {
-            var total = Math.Abs(_max - _min);
-            if (NumericConverter<double>.AreEqual(0, total)) // numeric instability!
-                return 0;
-            var value = Math.Max(0, Math.Min(total, _bufferValue - _min));
-            return value / total * 100.0;
-        }
+        public double GetValuePercent() => GetPercentage(_value);
+        public double GetBufferPercent() => GetPercentage(_bufferValue);
 
-        public string GetStyledBar1Transform()
-        {
-            if (Vertical)
-            {
-                return $"transform: translateY({(int)Math.Round(100 - ValuePercent)}%);";
-            }
-            else
-            {
-                return $"transform: translateX(-{(int)Math.Round(100 - ValuePercent)}%);";
-            }
-        }
-        public string GetStyledBar2Transform()
-        {
-            if (Vertical)
-            {
-                return $"transform: translateY({(int)Math.Round(100 - BufferPercent)}%);";
-            }
-            else
-            {
-                return $"transform: translateX(-{(int)Math.Round(100 - BufferPercent)}%);";
-            }
-        }
+        public string GetStyledBar1Transform() => 
+            Vertical == true ? $"transform: translateY({(int)Math.Round(100 - ValuePercent)}%);" : $"transform: translateX(-{(int)Math.Round(100 - ValuePercent)}%);"
+        
+
+        public string GetStyledBar2Transform() =>
+            Vertical == true ? $"transform: translateY({(int)Math.Round(100 - BufferPercent)}%);" : $"transform: translateX(-{(int)Math.Round(100 - BufferPercent)}%);";
 
         #region --> Obsolete Forwarders for Backwards-Compatiblilty
 
