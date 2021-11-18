@@ -574,7 +574,7 @@ namespace MudBlazor
                     }
                     else
                     {
-                        Submit();                 
+                        Submit();
                         Close();
                     }
                     break;
@@ -598,14 +598,14 @@ namespace MudBlazor
         protected void ChangeMinute(int val)
         {
             _currentView = OpenTo.Minutes;
-            _timeSet.Minute += val;
+            _timeSet.Minute = (_timeSet.Minute + val + 60) % 60;
             UpdateTime();
         }
 
         protected void ChangeHour(int val)
         {
             _currentView = OpenTo.Hours;
-            _timeSet.Hour += val;
+            _timeSet.Hour = (_timeSet.Hour + val + 24) % 24;
             UpdateTime();
         }
 
