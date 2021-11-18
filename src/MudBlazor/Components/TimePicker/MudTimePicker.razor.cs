@@ -506,10 +506,18 @@ namespace MudBlazor
                         }
                         else if (obj.ShiftKey == true)
                         {
+                            if (_timeSet.Minute > 55)
+                            {
+                                ChangeHour(1);
+                            }
                             ChangeMinute(5);
                         }
                         else
                         {
+                            if (_timeSet.Minute == 59)
+                            {
+                                ChangeHour(1);
+                            }
                             ChangeMinute(1);
                         }
                     }
@@ -523,10 +531,18 @@ namespace MudBlazor
                         }
                         else if (obj.ShiftKey == true)
                         {
+                            if (_timeSet.Minute < 5)
+                            {
+                                ChangeHour(-1);
+                            }
                             ChangeMinute(-5);
                         }
                         else
                         {
+                            if (_timeSet.Minute == 0)
+                            {
+                                ChangeHour(-1);
+                            }
                             ChangeMinute(-1);
                         }
                     }
