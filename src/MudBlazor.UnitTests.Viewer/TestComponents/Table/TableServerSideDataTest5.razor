@@ -27,8 +27,6 @@
     /// </summary>
     private async Task<TableData<int>> ServerReload(TableState state)
     {
-        //if (state.SortDirection != SortDirection.None && string.IsNullOrWhiteSpace(state.SortLabel))
-        //    throw new ArgumentException("SortDirection is set but SortLabel is not");
 
         ++reloadCounter;
         StateHasChanged();
