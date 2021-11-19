@@ -542,7 +542,7 @@ namespace MudBlazor.UnitTests.Components
             var selectedItemClassName = "mud-selected-item";
 
             var selectedItemIndexPropertyInfo = typeof(MudAutocomplete<string>).GetField("_selectedListItemIndex", BindingFlags.NonPublic | BindingFlags.Instance) ?? throw new ArgumentException("Cannot find field named '_selectedListItemIndex' on type 'MudAutocomplete<T>'");
-            var onInputKeyUpMemberInfo = typeof(MudAutocomplete<string>).GetMethod("OnInputKeyUp", BindingFlags.Instance | BindingFlags.NonPublic) ?? throw new ArgumentException("Cannot find method named 'OnInputKeyUp' on type 'MudAutocomplete<T>'");
+            var onInputKeyUpMemberInfo = typeof(MudAutocomplete<string>).GetMethod("HandleKeyUp", BindingFlags.Instance | BindingFlags.NonPublic) ?? throw new ArgumentException("Cannot find method named 'OnInputKeyUp' on type 'MudAutocomplete<T>'");
 
             // create the component
             var component = Context.RenderComponent<AutocompleteDisabledItemsTest>();
