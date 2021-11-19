@@ -124,7 +124,7 @@ namespace MudBlazor
             }
         }
 
-        private void HandleItemHovered(int? itemValue) => HoveredValue = itemValue;
+        internal void HandleItemHovered(int? itemValue) => HoveredValue = itemValue;
 
         private void IncreaseValue(int val)
         {

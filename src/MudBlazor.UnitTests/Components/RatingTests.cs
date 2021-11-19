@@ -153,6 +153,10 @@ namespace MudBlazor.UnitTests.Components
             // check initial state
             comp.Instance.SelectedValue.Should().Be(0);
             Assert.AreEqual(ratingItemsSpans.Length, 12);
+
+            comp.Instance.HandleItemHovered(6);
+            comp.Instance.HoveredValue.Should().Be(6);
+            comp.Instance.SelectedValue.Should().Be(0);
         }
 
         [Test]
