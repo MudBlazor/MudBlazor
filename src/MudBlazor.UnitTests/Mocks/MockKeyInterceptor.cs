@@ -24,6 +24,11 @@ namespace MudBlazor.UnitTests.Mocks
             return Task.CompletedTask;
         }
 
+        public Task UpdateKey(KeyOptions option)
+        {
+            return Task.CompletedTask;
+        }
+
         public event KeyboardEvent KeyDown;
         public event KeyboardEvent KeyUp;
     }

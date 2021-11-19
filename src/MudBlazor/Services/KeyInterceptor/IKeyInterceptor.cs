@@ -14,6 +14,7 @@ namespace MudBlazor.Services
     {
         Task Connect(string elementId, KeyInterceptorOptions options);
         Task Disconnect();
+        Task UpdateKey(KeyOptions option);
 
         event KeyboardEvent KeyDown;
         event KeyboardEvent KeyUp;
