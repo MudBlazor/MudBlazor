@@ -631,35 +631,35 @@ namespace MudBlazor.UnitTests.Components
             await Task.Delay(100);
 
             //press Enter key
-            await comp.InvokeAsync(async () => await autocomplete.HandleKeyUp(new KeyboardEventArgs() { Key = "Enter"}));
+            await comp.InvokeAsync(() => autocomplete.HandleKeyUp(new KeyboardEventArgs() { Key = "Enter"}));
             //ensure autocomplete is closed and new value is committed/bound
             comp.WaitForAssertion(() => autocomplete.IsOpen.Should().BeFalse());
 
-            await comp.InvokeAsync(async () => await autocomplete.HandleKeyUp(new KeyboardEventArgs() { Key = "Enter" }));
+            await comp.InvokeAsync(() => autocomplete.HandleKeyUp(new KeyboardEventArgs() { Key = "Enter" }));
             comp.WaitForAssertion(() => autocomplete.IsOpen.Should().BeTrue());
 
-            await comp.InvokeAsync(async () => await autocomplete.HandleKeyDown(new KeyboardEventArgs() { Key = "Escape" }));
+            await comp.InvokeAsync(() => autocomplete.HandleKeyDown(new KeyboardEventArgs() { Key = "Escape" }));
             comp.WaitForAssertion(() => autocomplete.IsOpen.Should().BeFalse());
 
-            await comp.InvokeAsync(async () => await autocomplete.HandleKeyUp(new KeyboardEventArgs() { Key = "ArrowUp" }));
+            await comp.InvokeAsync(() => autocomplete.HandleKeyUp(new KeyboardEventArgs() { Key = "ArrowUp" }));
             comp.WaitForAssertion(() => autocomplete.IsOpen.Should().BeTrue());
 
-            await comp.InvokeAsync(async () => await autocomplete.HandleKeyUp(new KeyboardEventArgs() { Key = "ArrowUp", AltKey = true }));
+            await comp.InvokeAsync(() => autocomplete.HandleKeyUp(new KeyboardEventArgs() { Key = "ArrowUp", AltKey = true }));
             comp.WaitForAssertion(() => autocomplete.IsOpen.Should().BeFalse());
 
-            await comp.InvokeAsync(async () => await autocomplete.HandleKeyUp(new KeyboardEventArgs() { Key = "ArrowDown" }));
+            await comp.InvokeAsync(() => autocomplete.HandleKeyUp(new KeyboardEventArgs() { Key = "ArrowDown" }));
             comp.WaitForAssertion(() => autocomplete.IsOpen.Should().BeTrue());
 
-            await comp.InvokeAsync(async () => await autocomplete.HandleKeyDown(new KeyboardEventArgs() { Key = "Escape" }));
+            await comp.InvokeAsync(() => autocomplete.HandleKeyDown(new KeyboardEventArgs() { Key = "Escape" }));
             comp.WaitForAssertion(() => autocomplete.IsOpen.Should().BeFalse());
 
-            await comp.InvokeAsync(async () => await autocomplete.HandleKeyUp(new KeyboardEventArgs() { Key = "NumpadEnter" }));
+            await comp.InvokeAsync(() => autocomplete.HandleKeyUp(new KeyboardEventArgs() { Key = "NumpadEnter" }));
             comp.WaitForAssertion(() => autocomplete.IsOpen.Should().BeTrue());
 
-            await comp.InvokeAsync(async () => await autocomplete.HandleKeyUp(new KeyboardEventArgs() { Key = "ArrowDown" }));
+            await comp.InvokeAsync(() => autocomplete.HandleKeyUp(new KeyboardEventArgs() { Key = "ArrowDown" }));
             comp.WaitForAssertion(() => autocomplete.IsOpen.Should().BeTrue());
 
-            await comp.InvokeAsync(async () => await autocomplete.HandleKeyUp(new KeyboardEventArgs() { Key = "ArrowDown" }));
+            await comp.InvokeAsync(() => autocomplete.HandleKeyUp(new KeyboardEventArgs() { Key = "ArrowDown" }));
 
             //The value of the input should be Alabama
             comp.WaitForAssertion(() => autocompletecomp.Find("input").GetAttribute("value").Should().Be("Alabama"));
@@ -679,23 +679,23 @@ namespace MudBlazor.UnitTests.Components
             autocomplete.Value.Should().Be("Alabama");
             autocomplete.Text.Should().Be("Alabama");
 
-            await comp.InvokeAsync(async () => await autocomplete.HandleKeyUp(new KeyboardEventArgs() { Key = "ArrowUp" }));
+            await comp.InvokeAsync(() => autocomplete.HandleKeyUp(new KeyboardEventArgs() { Key = "ArrowUp" }));
             comp.WaitForAssertion(() => autocomplete.IsOpen.Should().BeTrue());
 
-            await comp.InvokeAsync(async () => await autocomplete.HandleKeyUp(new KeyboardEventArgs() { Key = "ArrowUp" }));
+            await comp.InvokeAsync(() => autocomplete.HandleKeyUp(new KeyboardEventArgs() { Key = "ArrowUp" }));
             comp.WaitForAssertion(() => autocompletecomp.Find("input").GetAttribute("value").Should().Be("Alabama"));
 
-            await comp.InvokeAsync(async () => await autocomplete.HandleKeyUp(new KeyboardEventArgs() { Key = "ArrowUp" }));
-            await comp.InvokeAsync(async () => await autocomplete.HandleKeyDown(new KeyboardEventArgs() { Key = "Tab" }));
-            await comp.InvokeAsync(async () => await autocomplete.HandleKeyUp(new KeyboardEventArgs() { Key = "Tab" }));
+            await comp.InvokeAsync(() => autocomplete.HandleKeyUp(new KeyboardEventArgs() { Key = "ArrowUp" }));
+            await comp.InvokeAsync(() => autocomplete.HandleKeyDown(new KeyboardEventArgs() { Key = "Tab" }));
+            await comp.InvokeAsync(() => autocomplete.HandleKeyUp(new KeyboardEventArgs() { Key = "Tab" }));
             comp.WaitForAssertion(() => autocomplete.IsOpen.Should().BeFalse());
 
             autocompletecomp.SetParam("SelectValueOnTab", true);
-            await comp.InvokeAsync(async () => await autocomplete.HandleKeyUp(new KeyboardEventArgs() { Key = "ArrowUp" }));
-            await comp.InvokeAsync(async () => await autocomplete.HandleKeyDown(new KeyboardEventArgs() { Key = "Tab" }));
+            await comp.InvokeAsync(() => autocomplete.HandleKeyUp(new KeyboardEventArgs() { Key = "ArrowUp" }));
+            await comp.InvokeAsync(() => autocomplete.HandleKeyDown(new KeyboardEventArgs() { Key = "Tab" }));
             comp.WaitForAssertion(() => autocompletecomp.Find("input").GetAttribute("value").Should().Be("Alabama"));
 
-            await comp.InvokeAsync(async () => await autocomplete.HandleKeyDown(new KeyboardEventArgs() { Key = "Tab" }));
+            await comp.InvokeAsync(() => autocomplete.HandleKeyDown(new KeyboardEventArgs() { Key = "Tab" }));
             comp.WaitForAssertion(() => autocomplete.IsOpen.Should().BeFalse());
         }
     }
