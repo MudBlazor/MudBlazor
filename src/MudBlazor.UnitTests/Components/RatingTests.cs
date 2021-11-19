@@ -157,6 +157,7 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.HandleItemHovered(6);
             comp.Instance.HoveredValue.Should().Be(6);
             comp.Instance.SelectedValue.Should().Be(0);
+            comp.Instance.IsRatingHover.Should().Be(true);
         }
 
         [Test]
