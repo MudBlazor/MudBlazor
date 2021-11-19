@@ -6,6 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using MudBlazor.Services;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
@@ -370,7 +371,7 @@ namespace MudBlazor
             return "null";
         }
 
-        internal virtual async Task OnInputKeyDown(KeyboardEventArgs args)
+        internal async void HandleKeyDown(KeyboardEventArgs args)
         {
             switch (args.Key)
             {
@@ -384,10 +385,13 @@ namespace MudBlazor
                     else
                         IsOpen = false;
                     break;
+                case "Escape":
+                    await ChangeMenu(open: false);
+                    break;
             }
         }
 
-        internal virtual async Task OnInputKeyUp(KeyboardEventArgs args)
+        internal async void HandleKeyUp(KeyboardEventArgs args)
         {
             switch (args.Key)
             {
@@ -428,9 +432,7 @@ namespace MudBlazor
                         await SelectNextItem(-(decrement < 0 ? 1 : decrement));
                     }
                     break;
-                case "Escape":
-                    await ChangeMenu(open: false);
-                    break;
+                
                 case "Tab":
                     await Task.Delay(1);
                     if (!IsOpen)
@@ -442,6 +444,38 @@ namespace MudBlazor
                     break;
             }
             base.InvokeKeyUp(args);
+        }
+
+        [Inject] private IKeyInterceptor _keyInterceptor { get; set; }
+
+        private string _elementId = "autocomplete_" + Guid.NewGuid().ToString().Substring(0, 8);
+
+        protected override async Task OnAfterRenderAsync(bool firstRender)
+        {
+            if (firstRender)
+            {
+                await _keyInterceptor.Connect(_elementId, new KeyInterceptorOptions()
+                {
+                    //EnableLogging = true,
+                    TargetClass = "mud-input-control",
+                    Keys = {
+                        new KeyOptions { Key=" ", PreventDown = "key+none" }, //prevent scrolling page, toggle open/close
+                        new KeyOptions { Key="ArrowUp", PreventDown = "key+none" }, // prevent scrolling page, instead hilight previous item
+                        new KeyOptions { Key="ArrowDown", PreventDown = "key+none" }, // prevent scrolling page, instead hilight next item
+                        new KeyOptions { Key="Home", PreventDown = "key+none" },
+                        new KeyOptions { Key="End", PreventDown = "key+none" },
+                        new KeyOptions { Key="Escape", StopDown = "key+none" },
+                        new KeyOptions { Key="Enter", PreventDown = "key+none" },
+                        new KeyOptions { Key="NumpadEnter", PreventDown = "key+none" },
+                        new KeyOptions { Key="a", PreventDown = "key+ctrl" }, // select all items instead of all page text
+                        new KeyOptions { Key="A", PreventDown = "key+ctrl" }, // select all items instead of all page text
+                        new KeyOptions { Key="/./", SubscribeDown = true, SubscribeUp = true }, // for our users
+                    },
+                });
+                _keyInterceptor.KeyDown += HandleKeyDown;
+                _keyInterceptor.KeyUp += HandleKeyUp;
+            }
+            await base.OnAfterRenderAsync(firstRender);
         }
 
         private async Task SelectNextItem(int increment)

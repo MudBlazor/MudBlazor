@@ -99,8 +99,10 @@ namespace MudBlazor
                         new KeyOptions { Key="ArrowUp", PreventDown = "key+none" }, // prevent scrolling page, instead increment
                         new KeyOptions { Key="ArrowDown", PreventDown = "key+none" }, // prevent scrolling page, instead decrement
                         new KeyOptions { Key=" ", PreventDown = "key+none", PreventUp = "key+none" },
+                        new KeyOptions { Key="Escape", StopDown = "key+none", SubscribeDown = true },
                     },
                 });
+                _keyInterceptor.KeyDown += HandleKeyDown;
             }
             await base.OnAfterRenderAsync(firstRender);
         }
