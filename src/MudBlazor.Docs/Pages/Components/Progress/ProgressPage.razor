@@ -26,22 +26,28 @@
     </DocsPageContent>
     <DocsPageContent>
         <DocsPageSection>
-            <SectionHeader Title="Circular">
-                <SubTitle>Circular indeterminate</SubTitle>
+            <SectionHeader Title="Circular Progress" />
+        </DocsPageSection>
+        <DocsPageSection>
+            <SectionHeader Title="Circular Indeterminate">
+                <Description></Description>
             </SectionHeader>
             <SectionContent Outlined="true">
                 <ProgressCircularInterminateExample />
             </SectionContent>
             <SectionSource Code="ProgressCircularInterminateExample" GitHubFolderName="Progress"  />
-            <SectionHeader>
-                <SubTitle>Circular determinate</SubTitle>
+        </DocsPageSection>
+        <DocsPageSection>
+            <SectionHeader Title="Circular Determinate">
+                <Description></Description>
             </SectionHeader>
             <SectionContent Outlined="true">
                 <ProgressCircularDeterminateExample />
             </SectionContent>
             <SectionSource Code="ProgressCircularDeterminateExample" GitHubFolderName="Progress" ShowCode="false" />
-            <SectionHeader>
-                <SubTitle>Circular Sizes</SubTitle>
+        </DocsPageSection>
+        <DocsPageSection>
+            <SectionHeader Title="Circular Sizes">
                 <Description>You can change the size with the pre-defined <CodeInline>Size</CodeInline> prop or change the <CodeInline>Width</CodeInline> and <CodeInline>Height</CodeInline> in css.</Description>
             </SectionHeader>
             <SectionContent Outlined="true">
@@ -49,26 +55,31 @@
             </SectionContent>
             <SectionSource Code="ProgressCircularSizesExample" GitHubFolderName="Progress" />
         </DocsPageSection>
+    </DocsPageContent>
+    <DocsPageContent>
         <DocsPageSection>
-
-            <SectionHeader Title="Linear">
-                <SubTitle>Linear indeterminate</SubTitle>
+            <SectionHeader Title="Linear Progress" />
+        </DocsPageSection>
+                <DocsPageSection>
+            <SectionHeader Title="Linear indeterminate">
+                <Description></Description>
             </SectionHeader>
             <SectionContent Outlined="true" FullWidth="true">
                 <ProgressLinearInterminateExample />
             </SectionContent>
             <SectionSource Code="ProgressLinearInterminateExample" GitHubFolderName="Progress" />
-
-            <SectionHeader>
-                <SubTitle>Linear determinate</SubTitle>
+        </DocsPageSection>
+        <DocsPageSection>
+            <SectionHeader Title="Linear Determinate">
+                <Description></Description>
             </SectionHeader>
             <SectionContent Outlined="true" FullWidth="true">
                 <ProgressLinearDeterminateExample />
             </SectionContent>
             <SectionSource Code="ProgressLinearDeterminateExample" ShowCode="false" GitHubFolderName="Progress" />
-
-            <SectionHeader>
-                <SubTitle>Min and Max</SubTitle>
+        </DocsPageSection>
+        <DocsPageSection>
+            <SectionHeader Title="Linear Min Max">
                 <Description>
                     By default, the value range is between 0 and 100. If you have a custom range, set <CodeInline>Min</CodeInline> and <CodeInline>Max</CodeInline> accordingly.
                 </Description>
@@ -77,15 +88,62 @@
                 <ProgressLinearMinMaxExample />
             </SectionContent>
             <SectionSource Code="ProgressLinearMinMaxExample" ShowCode="false" GitHubFolderName="Progress" />
-
-            <SectionHeader>
-                <SubTitle>Linear buffer</SubTitle>
+        </DocsPageSection>
+        <DocsPageSection>
+            <SectionHeader Title="Linear Buffer">
+                <Description>
+                    When setting <CodeInline>Buffer</CodeInline> to true you also have to give it a <CodeInline>BufferValue</CodeInline>. You can use any combination of buffer-value and value to achieve your design.
+                </Description>
             </SectionHeader>
             <SectionContent Outlined="true" FullWidth="true">
                 <ProgressLinearBufferExample />
             </SectionContent>
             <SectionSource Code="ProgressLinearBufferExample" GitHubFolderName="Progress" ShowCode="false" />
-
+        </DocsPageSection>
+        <DocsPageSection>
+            <SectionHeader Title="Linear Size">
+                <Description></Description>
+            </SectionHeader>
+            <SectionContent Outlined="true" FullWidth="true">
+                <ProgressLinearSizeExample />
+            </SectionContent>
+            <SectionSource Code="ProgressLinearSizeExample" GitHubFolderName="Progress" ShowCode="false" />
+        </DocsPageSection>
+        <DocsPageSection>
+            <SectionHeader Title="Linear Rounded">
+                <Description>Sets the border radius on the progress linear to the set theme value.</Description>
+            </SectionHeader>
+            <SectionContent Outlined="true" FullWidth="true">
+                <ProgressLinearRoundedExample />
+            </SectionContent>
+            <SectionSource Code="ProgressLinearRoundedExample" GitHubFolderName="Progress" ShowCode="false" />
+        </DocsPageSection>
+        <DocsPageSection>
+            <SectionHeader Title="Linear Striped">
+                <Description>Applies a striped background over the progress bar.</Description>
+            </SectionHeader>
+            <SectionContent Outlined="true" FullWidth="true">
+                <ProgressLinearStripedExample />
+            </SectionContent>
+            <SectionSource Code="ProgressLinearStripedExample" GitHubFolderName="Progress" ShowCode="false" />
+        </DocsPageSection>
+        <DocsPageSection>
+            <SectionHeader Title="Linear Labels">
+                <Description>While using the <CodeInline>ChildContent</CodeInline> of the component you can add a text to display current value.</Description>
+            </SectionHeader>
+            <SectionContent Outlined="true" FullWidth="true">
+                <ProgressLinearLabelsExample />
+            </SectionContent>
+            <SectionSource Code="ProgressLinearLabelsExample" GitHubFolderName="Progress" ShowCode="false" />
+        </DocsPageSection>
+        <DocsPageSection>
+            <SectionHeader Title="Linear Vertical">
+                <Description>Vertical progress bars works exactly the same way as the default horizontal ones.</Description>
+            </SectionHeader>
+            <SectionContent Outlined="true" FullWidth="true">
+                <ProgressLinearVerticalExample />
+            </SectionContent>
+            <SectionSource Code="ProgressLinearVerticalExample" GitHubFolderName="Progress" ShowCode="false" />
         </DocsPageSection>
     </DocsPageContent>
 </DocsPage>
