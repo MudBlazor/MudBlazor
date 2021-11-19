@@ -616,6 +616,7 @@ namespace MudBlazor
             StateHasChanged();
             await HilightSelectedValue();
 
+            //disable escape propagation: if selectmenu is open, only the select popover should close and underlying components should not handle escape key
             await _keyInterceptor.UpdateKey(new() { Key = "Escape", StopDown = "Key+none" });
         }
 
@@ -631,6 +632,7 @@ namespace MudBlazor
                 StateHasChanged();
             }
 
+            //enable escape propagation: the select popover was closed, now underlying components are allowed to handle escape key
             await _keyInterceptor.UpdateKey(new() { Key = "Escape", StopDown = "none" });
         }
 
