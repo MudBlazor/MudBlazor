@@ -1,5 +1,6 @@
 ﻿using System;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
@@ -124,5 +125,49 @@ namespace MudBlazor
         }
 
         private void HandleItemHovered(int? itemValue) => HoveredValue = itemValue;
+
+        private void IncreaseValue(int val)
+        {
+            if ((SelectedValue == MaxValue && val > 0) || (SelectedValue == 0 && val < 0))
+            {
+
+            }
+            else
+            {
+                SelectedValue += val;
+            }
+        }
+
+        protected internal void HandleKeyDown(KeyboardEventArgs obj)
+        {
+            if (Disabled || ReadOnly)
+            {
+                return;
+            }
+
+            switch (obj.Key)
+            {
+                case "ArrowRight":
+                    if (obj.ShiftKey == true)
+                    {
+                        IncreaseValue(MaxValue - SelectedValue);
+                    }
+                    else
+                    {
+                        IncreaseValue(1);
+                    }
+                    break;
+                case "ArrowLeft":
+                    if (obj.ShiftKey == true)
+                    {
+                        IncreaseValue(-SelectedValue);
+                    }
+                    else
+                    {
+                        IncreaseValue(-1);
+                    }
+                    break;
+            }
+        }
     }
 }

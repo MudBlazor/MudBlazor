@@ -3,6 +3,7 @@ using System;
 using System.Linq;
 using Bunit;
 using FluentAssertions;
+using Microsoft.AspNetCore.Components.Web;
 using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Components
@@ -159,6 +160,39 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<MudRating>(("ReadOnly", true));
             comp.FindAll("input").Should().BeEmpty();
+        }
+
+        [Test]
+        public  void RatingTest_KeyboardNavigation()
+        {
+            var comp = Context.RenderComponent<MudRating>(("MaxValue", 12));
+            // print the generated html
+            Console.WriteLine(comp.Markup);
+            
+            comp.InvokeAsync(() => comp.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = "ArrowRight", Type = "keydown", }));
+            comp.WaitForAssertion(() => comp.Instance.SelectedValue.Should().Be(1));
+
+            comp.InvokeAsync(() => comp.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = "ArrowLeft", Type = "keydown", }));
+            comp.WaitForAssertion(() => comp.Instance.SelectedValue.Should().Be(0));
+            //ArrowLeft should not decrease when the value is 0
+            comp.InvokeAsync(() => comp.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = "ArrowLeft", Type = "keydown", }));
+            comp.WaitForAssertion(() => comp.Instance.SelectedValue.Should().Be(0));
+
+            comp.InvokeAsync(() => comp.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = "ArrowRight", ShiftKey = true, Type = "keydown", }));
+            comp.WaitForAssertion(() => comp.Instance.SelectedValue.Should().Be(12));
+            //Shift+ArrowKey should not go beyond the max value
+            comp.InvokeAsync(() => comp.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = "ArrowRight", ShiftKey = true, Type = "keydown", }));
+            comp.WaitForAssertion(() => comp.Instance.SelectedValue.Should().Be(12));
+
+            comp.InvokeAsync(() => comp.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = "ArrowLeft", ShiftKey = true, Type = "keydown", }));
+            comp.WaitForAssertion(() => comp.Instance.SelectedValue.Should().Be(0));
+
+            comp.InvokeAsync(() => comp.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = "ArrowLeft", ShiftKey = true, Type = "keydown", }));
+            comp.WaitForAssertion(() => comp.Instance.SelectedValue.Should().Be(0));
+
+            comp.SetParam("Disabled", true);
+            comp.InvokeAsync(() => comp.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = "ArrowRight", Type = "keydown", }));
+            comp.WaitForAssertion(() => comp.Instance.SelectedValue.Should().Be(0));
         }
     }
 }
