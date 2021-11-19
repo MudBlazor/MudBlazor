@@ -213,18 +213,20 @@ namespace MudBlazor
         private void OnHourClick()
         {
             _currentView = OpenTo.Hours;
+            FocusAsync().AndForget();
         }
 
         private void OnMinutesClick()
         {
             _currentView = OpenTo.Minutes;
+            FocusAsync().AndForget();
         }
 
         private void OnAmClicked()
         {
             _timeSet.Hour %= 12;  // "12:-- am" is "00:--" in 24h
             UpdateTime();
-            _inputReference.FocusAsync();
+            FocusAsync().AndForget();
         }
 
         private void OnPmClicked()
@@ -233,7 +235,7 @@ namespace MudBlazor
                 _timeSet.Hour += 12;
             _timeSet.Hour %= 24;
             UpdateTime();
-            _inputReference.FocusAsync();
+            FocusAsync().AndForget();
         }
 
         protected string ToolbarClass =>
