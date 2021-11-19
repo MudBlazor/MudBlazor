@@ -46,6 +46,7 @@ namespace MudBlazor
         private string Position { get; set; }
         private string DialogMaxWidth { get; set; }
         private bool DisableBackdropClick { get; set; }
+        private bool CloseOnEscapeKey { get; set; }
         private bool NoHeader { get; set; }
         private bool CloseButton { get; set; }
         private bool FullScreen { get; set; }
@@ -61,14 +62,18 @@ namespace MudBlazor
         {
             if (firstRender)
             {
-                await _keyInterceptor.Connect(_elementId, new KeyInterceptorOptions()
+                //Since CloseOnEscapeKey is the only thing to be handled, turn interceptor off
+                if (CloseOnEscapeKey)
                 {
-                    TargetClass = "mud-dialog",
-                    Keys = {
-                        new KeyOptions { Key="Escape", SubscribeDown = true },
-                    },
-                });
-                _keyInterceptor.KeyDown += HandleKeyDown;
+                    await _keyInterceptor.Connect(_elementId, new KeyInterceptorOptions()
+                    {
+                        TargetClass = "mud-dialog",
+                        Keys = {
+                            new KeyOptions { Key="Escape", SubscribeDown = true },
+                        },
+                    });
+                    _keyInterceptor.KeyDown += HandleKeyDown;
+                }
             }
             await base.OnAfterRenderAsync(firstRender);
         }
@@ -78,7 +83,7 @@ namespace MudBlazor
             switch (args.Key)
             {
                 case "Escape":
-                    if (!DisableBackdropClick)
+                    if (!CloseOnEscapeKey)
                     {
                         Cancel();
                     }
@@ -150,6 +155,7 @@ namespace MudBlazor
             FullWidth = SetFullWidth();
             FullScreen = SetFulScreen();
             DisableBackdropClick = SetDisableBackdropClick();
+            CloseOnEscapeKey = SetCloseOnEscapeKey();
         }
 
         private string SetPosition()
@@ -250,6 +256,17 @@ namespace MudBlazor
 
             if (GlobalDialogOptions.DisableBackdropClick.HasValue)
                 return GlobalDialogOptions.DisableBackdropClick.Value;
+
+            return false;
+        }
+
+        private bool SetCloseOnEscapeKey()
+        {
+            if (Options.CloseOnEscapeKey.HasValue)
+                return Options.CloseOnEscapeKey.Value;
+
+            if (GlobalDialogOptions.CloseOnEscapeKey.HasValue)
+                return GlobalDialogOptions.CloseOnEscapeKey.Value;
 
             return false;
         }
