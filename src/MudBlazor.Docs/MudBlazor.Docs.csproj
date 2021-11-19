@@ -125,5 +125,8 @@
     <Content Remove="compilerconfig.json" />
     <Content Remove="excubowebcompiler.json" />
   </ItemGroup>
+  <ItemGroup>
+    <None Remove="Pages\Components\Menu\Code\MenuWithMenuItemIconExample.html" />
+  </ItemGroup>
 
 </Project>

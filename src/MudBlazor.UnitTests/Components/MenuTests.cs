@@ -134,5 +134,15 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("button.mud-button-root")[5].Click();
             comp.FindAll("div.mud-popover-open").Count.Should().Be(0);
         }
+
+        [Test]
+        public void OpenMenu_CheckFirstItem_Icon()
+        {
+            var comp = Context.RenderComponent<MenuTestItemWithIcon>();
+            comp.FindAll("button.mud-button-root")[0].Click();
+            comp.FindAll("div.mud-list-item-icon").Count.Should().Be(1);
+            comp.FindAll("div.mud-list-item")[0].Click();
+            comp.FindAll("div.mud-popover-open").Count.Should().Be(0);
+        }
     }
 }

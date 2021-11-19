@@ -18,6 +18,10 @@ namespace MudBlazor
         [Parameter] public ICommand Command { get; set; }
         [Parameter] public object CommandParameter { get; set; }
         [Parameter] public EventCallback<MouseEventArgs> OnClick { get; set; }
+        /// <summary>
+        /// Icon to use if set.
+        /// </summary>
+        [Parameter] public string Icon { get; set; }
 
         protected async Task OnClickHandler(MouseEventArgs ev)
         {
