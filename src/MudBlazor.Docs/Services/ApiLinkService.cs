@@ -80,7 +80,7 @@ namespace MudBlazor.Docs.Services
                 RegisterPage(
                 title: item.Name,
                 subtitle: $"{item.ComponentName} usage examples",
-                componentType: item.Component,
+                componentType: item.Type,
                 link: $"components/{item.Link}"
                 );
 
@@ -88,8 +88,8 @@ namespace MudBlazor.Docs.Services
                 RegisterPage(
                     title: item.ComponentName,
                     subtitle: $"API documentation",
-                    componentType: item.Component,
-                    link: ApiLink.GetApiLinkFor(item.Component)
+                    componentType: item.Type,
+                    link: ApiLink.GetApiLinkFor(item.Type)
                     );
             }
 

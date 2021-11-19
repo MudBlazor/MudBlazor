@@ -4,10 +4,11 @@
 
 using System;
 using System.Collections.Generic;
-using Microsoft.AspNetCore.Components;
-using MudBlazor.Docs.Models;
 using System.Threading.Tasks;
 using System.Linq;
+using System.Diagnostics;
+using Microsoft.AspNetCore.Components;
+using MudBlazor.Docs.Models;
 using MudBlazor.Docs.Services;
 
 namespace MudBlazor.Docs.Components
@@ -19,6 +20,7 @@ namespace MudBlazor.Docs.Components
         private NavigationFooterLink _previous;
         private NavigationFooterLink _next;
         private NavigationSection? _section = null;
+        private Stopwatch _stopwatch = Stopwatch.StartNew();
 
         [Inject] NavigationManager NavigationManager { get; set; }
 
@@ -28,6 +30,7 @@ namespace MudBlazor.Docs.Components
         [Parameter] public RenderFragment ChildContent { get; set; }
 
         private bool _contentDrawerOpen = true;
+        public event Action<Stopwatch> Rendered;
 
         protected override void OnParametersSet()
         {
@@ -40,6 +43,7 @@ namespace MudBlazor.Docs.Components
         {
             if (firstRender)
             {
+                Rendered?.Invoke(_stopwatch);
                 await _contentNavigation.ScrollToSection(new Uri(NavigationManager.Uri));
             }
         }

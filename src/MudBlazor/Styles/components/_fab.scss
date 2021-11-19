@@ -89,10 +89,8 @@
         min-height: auto;
         border-radius: 24px;
 
-        .mud-icon-root {
-            margin-right: 8px;
-            margin-inline-end: 8px;
-            margin-inline-start: unset;
+        .mud-fab-label {
+            gap: 8px;
         }
     }
 
@@ -103,10 +101,8 @@
         min-width: 34px;
         border-radius: 17px;
 
-        .mud-icon-root {
-            margin-right: 4px;
-            margin-inline-end: 4px;
-            margin-inline-start: unset;
+        .mud-fab-label {
+            gap: 4px;
         }
     }
 
@@ -117,10 +113,8 @@
         min-width: 40px;
         border-radius: 20px;
 
-        .mud-icon-root {
-            margin-right: 8px;
-            margin-inline-end: 8px;
-            margin-inline-start: unset;
+        .mud-fab-label {
+            gap: 8px;
         }
     }
 }

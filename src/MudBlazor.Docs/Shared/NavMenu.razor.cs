@@ -42,7 +42,7 @@ namespace MudBlazor.Docs.Shared
             //radio, select...
             //this route `/components/autocomplete` should open the subgroup "form inputs..."
             #endregion
-            return item.GroupItems.Elements.Any(i => i.Link == _componentLink);
+            return item.GroupComponents.Any(i => i.Link == _componentLink);
         }
     }
 }
