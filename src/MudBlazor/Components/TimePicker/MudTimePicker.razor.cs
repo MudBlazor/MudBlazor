@@ -224,6 +224,7 @@ namespace MudBlazor
         {
             _timeSet.Hour %= 12;  // "12:-- am" is "00:--" in 24h
             UpdateTime();
+            _inputReference.FocusAsync();
         }
 
         private void OnPmClicked()
@@ -232,6 +233,7 @@ namespace MudBlazor
                 _timeSet.Hour += 12;
             _timeSet.Hour %= 24;
             UpdateTime();
+            _inputReference.FocusAsync();
         }
 
         protected string ToolbarClass =>

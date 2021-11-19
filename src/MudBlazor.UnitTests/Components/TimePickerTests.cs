@@ -716,6 +716,7 @@ namespace MudBlazor.UnitTests.Components
             comp.WaitForAssertion(() => timePicker.Time.Should().Be(null));
             //When its disabled, keys should not work
             timePicker.Disabled = true;
+            timePicker.FocusAsync().AndForget();
             await comp.InvokeAsync(() => timePicker.HandleKeyDown(new KeyboardEventArgs() { Key = "Escape", Type = "keydown", }));
             await comp.InvokeAsync(() => timePicker.HandleKeyDown(new KeyboardEventArgs() { Key = "Enter", Type = "keydown", }));
             comp.WaitForAssertion(() => comp.FindAll("div.mud-picker-open").Count.Should().Be(0));

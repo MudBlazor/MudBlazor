@@ -1,8 +1,7 @@
 ﻿@namespace MudBlazor
 @using MudBlazor.Utilities
-@using MudBlazor.Services
 
-<div id="@_elementId" class="@Classnames" tabindex="0" @onkeydown="InvokeKeyDown" @onclick:stopPropagation="true">
+<div class="@Classnames" @onclick:stopPropagation="true">
     @ChildContent
 </div>
 
@@ -14,28 +13,4 @@
 
     [Parameter] public string Class { get; set; }
     [Parameter] public RenderFragment ChildContent { get; set; }
-
-    [Parameter] public EventCallback<KeyboardEventArgs> InvokeKeyDown { get; set; }
-
-    [Inject] private IKeyInterceptor _keyInterceptor { get; set; }
-
-    private string _elementId = "timepicker" + Guid.NewGuid().ToString().Substring(0, 8);
-
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (firstRender)
-        {
-            await _keyInterceptor.Connect(_elementId, new KeyInterceptorOptions()
-            {
-                //EnableLogging = true,
-                TargetClass = "mud-picker-time-container",
-                Keys = {
-                    new KeyOptions { Key=" ", PreventDown = "key+none", PreventUp = "key+none" }, // prevent scrolling page
-                    new KeyOptions { Key="ArrowUp", PreventDown = "key+none" },
-                    new KeyOptions { Key="ArrowDown", PreventDown = "key+none" },
-                },
-            });
-        }
-        await base.OnAfterRenderAsync(firstRender);
-    }
 }
