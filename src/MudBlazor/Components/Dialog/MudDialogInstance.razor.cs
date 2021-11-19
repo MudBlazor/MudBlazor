@@ -80,10 +80,10 @@ namespace MudBlazor
 
         internal void HandleKeyDown(KeyboardEventArgs args)
         {
-            switch (args.Key)
+             switch (args.Key)
             {
                 case "Escape":
-                    if (!CloseOnEscapeKey)
+                    if (CloseOnEscapeKey)
                     {
                         Cancel();
                     }
