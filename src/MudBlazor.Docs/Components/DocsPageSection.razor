@@ -1,7 +1,9 @@
 ﻿
-<div @attributes="UserAttributes" class="docs-page-section">
-    @ChildContent
-</div>
+<QueuedContent>
+    <div @attributes="UserAttributes" class="docs-page-section">
+        @ChildContent
+    </div>
+</QueuedContent>
 
 @code {
     [Parameter] public RenderFragment ChildContent { get; set; }
