@@ -1,4 +1,6 @@
-﻿.mud-codeblock {
+﻿
+
+.mud-codeblock {
     height: 100%;
     background-color: var(--mud-palette-black);
     border-radius: var(--mud-default-borderradius);
@@ -18,8 +20,10 @@
     & .html + .csharp {
         margin-top: 23px;
     }
+}
 
-    & .html {
+.mud-codeblock, .mud-landingpage-editor {
+    & .html, .codearea {
 
         & .htmlTagDelimiter {
             color: #979797;

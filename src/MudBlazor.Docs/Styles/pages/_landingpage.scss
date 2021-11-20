@@ -4,7 +4,15 @@
     }
 
     .mud-button-gradient-primary {
-        background: linear-gradient(82deg, rgba(116,103,239,1) 0%, rgba(89,74,226,1) 100%);
+        position: relative;
+        background-size: 300% 100%;
+        background-image: linear-gradient(to right, #766ae7, #594ae2, #ff4081, #594ae2);
+        transition: all .2s ease-in-out;
+
+        &:hover {
+            transition: all .2s ease-in-out;
+            background-position: 100% 0;
+        }
     }
 
     .landing-h1-gradient {
@@ -15,7 +23,6 @@
 
     .mud-landingpage-section {
         position: relative;
-
         /*&.top-section {
             height: 800px;
 
@@ -58,19 +65,18 @@
                 position: absolute;
                 width: 100%;
                 height: 100%;
-                transform: skewY(-12deg);
+
+                &.skew {
+                    transform: skewY(-12deg);
+                }
 
                 .background {
-                    grid-row: 1/-1;
+                    grid-row: 3/-1;
                     grid-column: 1/-1;
                     z-index: -1;
 
                     &.sweet {
                         background-color: #F9FAFC;
-                    }
-
-                    &.dark {
-                        background-color: #110E2D;
                     }
                 }
             }
@@ -92,22 +98,58 @@
                 .stripe {
                     grid-column: 1 / 13;
 
-                    &.half-gradient {
-                        background: linear-gradient(82deg, rgba(121,103,243,1) 0%, rgba(94,73,231,1) 100%);
-                    }
-
                     &.main-gradient {
                         grid-row: -2;
                         background: linear-gradient(82deg, rgba(89,74,226,1) 0%, rgba(116,103,239,1) 100%);
                     }
-
-                    &.main-half-gradient {
-                        grid-row: -1;
-                        height: 64px;
-                        background: linear-gradient(82deg, rgba(89,74,226,1) 0%, rgba(255,255,255,1) 80%);
-                    }
                 }
             }
+        }
+    }
+
+    .mud-landingpage-editor {
+        display: flex;
+        height: 100%;
+        top: 0px;
+        left: 128px;
+        position: absolute;
+        color: #ededed;
+        border-width: 1px;
+        border-style: solid;
+        border-color: rgba(89, 74, 226, .35);
+        border-radius: 8px;
+        background-color: var(--mud-palette-dark-lighten);
+        box-shadow: 0 30px 60px rgba(0,0,0,0.12);
+
+        pre {
+            font-family: SourceCodePro, Consolas,"Liberation Mono",Menlo,Courier,monospace;
+            font-weight: 500;
+            font-size: 14px;
+            -webkit-font-smoothing: subpixel-antialiased;
+
+            div {
+                user-select: none;
+            }
+        }
+
+        .linenumber {
+            color: rgba(152, 142, 241, .4);
+        }
+
+        .codearea {
+            min-width: 100px;
+            max-width: 720px;
+            overflow: hidden;
+        }
+
+        .absolute {
+            top: 0px;
+            right: 0px;
+            height: 100%;
+            width: 42px;
+            border-top-right-radius: 8px;
+            border-bottom-right-radius: 8px;
+            background: linear-gradient(90deg, rgba(0,0,0,0) 0%, rgba(26, 22, 67, .5) 100%);
         }
     }
 }

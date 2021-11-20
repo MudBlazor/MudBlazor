@@ -3,7 +3,7 @@
 @using MudBlazor.Docs.Components.LandingPage
 
 
-<LandingSection Class="top-section" GridBackgroundClass="sweet">
+<LandingSection Class="top-section" BackgroundClass="sweet">
     <ChildContent>
         <div class="d-flex">
             <div class="my-16 py-16" style="width:50%">
@@ -17,7 +17,7 @@
                     </MudText>
                 </div>
                 <div class="d-flex py-4">
-                    <MudButton Color="Color.Primary" Variant="Variant.Filled" DisableElevation="true" Class="mud-button-gradient-primary" Size="Size.Large">Get started</MudButton>
+                    <MudButton Color="Color.Primary" Variant="Variant.Filled" DisableElevation="true" Class="mud-button-gradient-primary" Size="Size.Large" Link="/getting-started/installation">Get started</MudButton>
                     <MudButton Color="Color.Default" Variant="Variant.Outlined" StartIcon="@Icons.Custom.Brands.GitHub" Size="Size.Large" Class="ms-4" Link="https://github.com/MudBlazor/MudBlazor/" Target="_blank">Star on GitHub</MudButton>
                 </div>
             </div>
@@ -52,84 +52,98 @@
     </MudGrid>
 </LandingSection>
 
-<LandingSection GridBackgroundClass="sweet">
-    <MudText Typo="Typo.h6" Color="Color.Primary">Unified platform</MudText>
-    <MudText Typo="Typo.h5">MudBlazor is more than a library</MudText>
-    <MudGrid Spacing="0">
-        <MudItem xs="12" sm="6">
-            <MudText Typo="Typo.subtitle1" Class="mud-text-secondary">
-                We bring together everything that’s required to build amazing Blazor applications that scales from mobile to desktop and native to web.
-            </MudText>
-            <MudText Typo="Typo.subtitle1" Class="mud-text-secondary">                 The tools and utilities that we provide are here to make your Blazor experience better. 
-            </MudText>
-        </MudItem>
-        <MudItem xs="12" sm="6">
-            <MudText Typo="Typo.subtitle1" Class="mud-text-secondary">
-                We are heading for the creation of an entire ecosystem. A system where knowledge, components, themes and templates can be shared and promoted.
-            </MudText>
-        </MudItem>
-    </MudGrid>
+<LandingSection BackgroundClass="sweet" Straight="true">
+    <div class="pb-16">
+        <MudText Typo="Typo.h6" Color="Color.Primary">Unified platform</MudText>
+        <MudText Typo="Typo.h5">MudBlazor is more than a library</MudText>
+        <MudGrid Spacing="0">
+            <MudItem xs="12" sm="6">
+                <MudText Typo="Typo.subtitle1" Class="mud-text-secondary">
+                    We bring together everything that’s required to build amazing Blazor applications that scales from mobile to desktop and native to web. The tools and utilities that we provide are here to make your Blazor experience better.
+                </MudText>
+            </MudItem>
+            <MudItem xs="12" sm="6">
+                <MudText Typo="Typo.subtitle1" Class="mud-text-secondary">
+                    We are heading for the creation of an entire ecosystem. A system where knowledge, components, themes and templates can be shared and promoted.
+                </MudText>
+            </MudItem>
+        </MudGrid>
+    </div>
 </LandingSection>
 
-<LandingSection GridBackgroundClass="dark">
-    
-    <MudGrid Spacing="0">
-        <MudItem xs="12" sm="6">
-            <MudText Typo="Typo.h6" Color="Color.Primary">Designed for developers</MudText>
-            <MudText Typo="Typo.h5">Developers love to work with MudBlazor</MudText>
-            <MudText Typo="Typo.subtitle1" Class="mud-text-secondary">
-                One of the reasons we created MudBlazor was that other libraries was either js ports or very complex where they dont have to. That made it hard and time-consuming for developers that wanted to contribute to the project.                 So we started MudBlazor with a simple promise, to empower the developer and fully take advatange of what Blazor offers.                 With MudBlazor you can create exceptional apps without the burden of mastering HTML, CSS and JS and focus your skillset on C#
-            </MudText>
-        </MudItem>
-        <MudItem xs="12" sm="6">
-
-        </MudItem>
-    </MudGrid>
+<LandingSection BackgroundClass="mud-dark">
+    <div class="py-16">
+        <MudGrid Spacing="0">
+            <MudItem xs="12" sm="6">
+                <MudText Typo="Typo.h6" Color="Color.Primary">Designed for developers</MudText>
+                <MudText Typo="Typo.h5" Class="white-text">Developers love to work with MudBlazor</MudText>
+                <MudText Typo="Typo.subtitle1" Class="mud-text-secondary">
+                    One of the reasons we created MudBlazor was that other libraries was either js ports or very complex where they dont have to. That made it hard and time-consuming for developers that wanted to contribute to the project. So we started MudBlazor with a simple promise, to empower the developer and fully take advatange of what Blazor offers. With MudBlazor you can create exceptional apps without the burden of mastering HTML, CSS and JS and focus your skillset on C#
+                </MudText>
+            </MudItem>
+            <MudItem xs="12" sm="6">
+                <CodeEditor/>
+                 <MudCard>
+                    <MudCardMedia Image="_content/MudBlazor.Docs/images/content-template-door.png" Height="200" />
+                    <MudCardContent>
+                        <MudText Typo="Typo.h5">Old Paint</MudText>
+                        <MudText Typo="Typo.body2">Old paint found on a stone house door.</MudText>
+                        <MudText Typo="Typo.body2">This photo was taken in a small village in Istra Croatia.</MudText>
+                    </MudCardContent>
+                    <MudCardActions>
+                        <MudButton Variant="Variant.Text" Color="Color.Primary">Share</MudButton>
+                        <MudButton Variant="Variant.Text" Color="Color.Primary">Learn More</MudButton>
+                    </MudCardActions>
+                </MudCard>
+            </MudItem>
+        </MudGrid>
+    </div>
 </LandingSection>
 
 <LandingSection>
-    <div style="max-width:570px;">
-    <MudText Typo="Typo.h6" Color="Color.Primary">Community</MudText>
-    <MudText Typo="Typo.h5">Join our fast-growing community</MudText>
-    <MudText Typo="Typo.subtitle1" Class="mud-text-secondary mb-4">
-        Do you have questions? Do you want to help others? Just talk or get news? Join one of our channels and become part of the MudBlazor community.
-    </MudText>
+    <div class="py-16">
+        <div style="max-width:570px;">
+        <MudText Typo="Typo.h6" Color="Color.Primary">Community</MudText>
+        <MudText Typo="Typo.h5">Join our fast-growing community</MudText>
+        <MudText Typo="Typo.subtitle1" Class="mud-text-secondary mb-4">
+            Do you have questions? Do you want to help others? Just talk or get news? Join one of our channels and become part of the MudBlazor community.
+        </MudText>
+        </div>
+        <MudGrid Spacing="0" Class="pt-4">
+            <MudItem xs="12" sm="6" md="3">
+                <MudIcon Icon="@Icons.Custom.Brands.Twitter" Color="Color.Info"/>
+                <MudText Typo="Typo.subtitle2">Twitter</MudText>
+                <MudText Typo="Typo.body1">For announcements, blog posts, and general MudBlazor stuff.</MudText>
+            </MudItem>
+            <MudItem xs="12" sm="6" md="3">
+                <MudIcon Icon="@Icons.Custom.Brands.Discord" Style="color:#7781ff;"/>
+                <MudText Typo="Typo.subtitle2">Discord</MudText>
+                <MudText Typo="Typo.body1">To get involved in the community, ask questions, help others or just talk.</MudText>
+            </MudItem>
+            <MudItem xs="12" sm="6" md="3">
+                <MudIcon Icon="@Icons.Custom.Brands.GitHub" Color="Color.Dark"/>
+                <MudText Typo="Typo.subtitle2">GitHub</MudText>
+                <MudText Typo="Typo.body1">To file issues, request features, and contribute, check out our GitHub.</MudText>
+            </MudItem>
+            <MudItem xs="12" sm="6" md="3">
+               <MudIcon Icon="@Icons.Custom.Brands.StackOverflow" Color="Color.Warning"/>
+                <MudText Typo="Typo.subtitle2">Stack Overflow</MudText>
+                <MudText Typo="Typo.body1">Active on Stack Overflow? Answer or ask question's under our tag.</MudText>
+            </MudItem>
+            @*<MudItem xs="12" sm="6" md="4">
+                <MudText Typo="Typo.subtitle2">TryMudBlazor</MudText>
+                <MudText Typo="Typo.body1">Write <MudLink Href="http://try.mudblazor.com/" Underline="Underline.None" Typo="Typo.inherit">code online</MudLink> with Blazor and MudBlazor components entirely in the browser. Test and experiment anytime, anywhere.</MudText>
+            </MudItem>
+            <MudItem xs="12" sm="6" md="4">
+                <MudText Typo="Typo.subtitle2">MudStore</MudText>
+                <MudText Typo="Typo.body1">coming soon</MudText>
+            </MudItem>
+            <MudItem xs="12" sm="6" md="4">
+                <MudText Typo="Typo.subtitle2">MudAcademy</MudText>
+                <MudText Typo="Typo.body1">coming soon</MudText>
+            </MudItem>*@
+        </MudGrid>
     </div>
-    <MudGrid Spacing="0" Class="pt-4">
-        <MudItem xs="12" sm="6" md="3">
-            <MudIcon Icon="@Icons.Custom.Brands.Twitter" Color="Color.Info"/>
-            <MudText Typo="Typo.subtitle2">Twitter</MudText>
-            <MudText Typo="Typo.body1">For announcements, blog posts, and general MudBlazor stuff.</MudText>
-        </MudItem>
-        <MudItem xs="12" sm="6" md="3">
-            <MudIcon Icon="@Icons.Custom.Brands.Discord" Style="color:#7781ff;"/>
-            <MudText Typo="Typo.subtitle2">Discord</MudText>
-            <MudText Typo="Typo.body1">To get involved in the community, ask questions, help others or just talk.</MudText>
-        </MudItem>
-        <MudItem xs="12" sm="6" md="3">
-            <MudIcon Icon="@Icons.Custom.Brands.GitHub" Color="Color.Dark"/>
-            <MudText Typo="Typo.subtitle2">GitHub</MudText>
-            <MudText Typo="Typo.body1">To file issues, request features, and contribute, check out our GitHub.</MudText>
-        </MudItem>
-        <MudItem xs="12" sm="6" md="3">
-           <MudIcon Icon="@Icons.Custom.Brands.StackOverflow" Color="Color.Warning"/>
-            <MudText Typo="Typo.subtitle2">Stack Overflow</MudText>
-            <MudText Typo="Typo.body1">Active on Stack Overflow? Answer or ask question's under our tag.</MudText>
-        </MudItem>
-        @*<MudItem xs="12" sm="6" md="4">
-            <MudText Typo="Typo.subtitle2">TryMudBlazor</MudText>
-            <MudText Typo="Typo.body1">Write <MudLink Href="http://try.mudblazor.com/" Underline="Underline.None" Typo="Typo.inherit">code online</MudLink> with Blazor and MudBlazor components entirely in the browser. Test and experiment anytime, anywhere.</MudText>
-        </MudItem>
-        <MudItem xs="12" sm="6" md="4">
-            <MudText Typo="Typo.subtitle2">MudStore</MudText>
-            <MudText Typo="Typo.body1">coming soon</MudText>
-        </MudItem>
-        <MudItem xs="12" sm="6" md="4">
-            <MudText Typo="Typo.subtitle2">MudAcademy</MudText>
-            <MudText Typo="Typo.body1">coming soon</MudText>
-        </MudItem>*@
-    </MudGrid>
-    
 </LandingSection>
 
 

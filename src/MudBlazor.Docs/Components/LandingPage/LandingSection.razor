@@ -4,16 +4,19 @@
 
 <section class="@Classnames">
     <div class="mud-landingpage-grid">
-         <div class="mud-landingpage-grid-background">
+         <div class="@BackgroundContainer">
              <div class="grid">
-                 <div class="@GridBackgroundClassnames"></div>
+                 <div class="@BackgroundClassnames"></div>
              </div>
          </div>
-         <div class="mud-landingpage-grid-stripes">
-             <div class="grid">
-                 @Stripes
-             </div>
-         </div>
+         @if(Stripes != null)
+        {
+            <div class="mud-landingpage-grid-stripes">
+                <div class="grid">
+                    @Stripes
+                </div>
+            </div>
+        }
      </div>
      <MudContainer MaxWidth="MaxWidth.Large" Class="py-16">
          <div class="py-16">
@@ -27,16 +30,22 @@
 @code {
     [Parameter] public RenderFragment ChildContent { get; set; }
     [Parameter] public RenderFragment Stripes { get; set; }
+    [Parameter] public bool Straight { get; set; }
     [Parameter] public string Class { get; set; }
-    [Parameter] public string GridBackgroundClass { get; set; }
+    [Parameter] public string BackgroundClass { get; set; }
 
     protected string Classnames =>
         new CssBuilder("mud-landingpage-section")
           .AddClass(Class)
         .Build();
 
-    protected string GridBackgroundClassnames =>
+    protected string BackgroundContainer =>
+        new CssBuilder("mud-landingpage-grid-background")
+          .AddClass("skew", !Straight)
+        .Build();
+
+    protected string BackgroundClassnames =>
         new CssBuilder("background")
-          .AddClass(GridBackgroundClass)
+          .AddClass(BackgroundClass)
         .Build();
 }
