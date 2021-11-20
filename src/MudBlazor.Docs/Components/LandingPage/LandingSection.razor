@@ -1,0 +1,42 @@
+﻿@namespace MudBlazor.Docs.Components
+@using MudBlazor.Utilities
+
+
+<section class="@Classnames">
+    <div class="mud-landingpage-grid">
+         <div class="mud-landingpage-grid-background">
+             <div class="grid">
+                 <div class="@GridBackgroundClassnames"></div>
+             </div>
+         </div>
+         <div class="mud-landingpage-grid-stripes">
+             <div class="grid">
+                 @Stripes
+             </div>
+         </div>
+     </div>
+     <MudContainer MaxWidth="MaxWidth.Large" Class="py-16">
+         <div class="py-16">
+             @ChildContent
+         </div>
+    </MudContainer>
+</section>
+
+
+
+@code {
+    [Parameter] public RenderFragment ChildContent { get; set; }
+    [Parameter] public RenderFragment Stripes { get; set; }
+    [Parameter] public string Class { get; set; }
+    [Parameter] public string GridBackgroundClass { get; set; }
+
+    protected string Classnames =>
+        new CssBuilder("mud-landingpage-section")
+          .AddClass(Class)
+        .Build();
+
+    protected string GridBackgroundClassnames =>
+        new CssBuilder("background")
+          .AddClass(GridBackgroundClass)
+        .Build();
+}

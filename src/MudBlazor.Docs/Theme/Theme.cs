@@ -124,7 +124,7 @@ namespace MudBlazor.Docs
         public static Palette LandingPageLightPalette = new Palette()
         {
             AppbarText = "#424242",
-            AppbarBackground = "#FFFFFF",
+            Background = "#FFFFFF",
             TextSecondary = "#425466"
         };
         public static Palette LandingPageDarkPalette = new Palette()
