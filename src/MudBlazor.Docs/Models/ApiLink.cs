@@ -78,7 +78,8 @@ namespace MudBlazor.Docs.Models
                 [typeof(Donut)] = "donutchart",
                 [typeof(Line)] = "linechart",
                 [typeof(Pie)] = "piechart",
-                [typeof(MudChip)] = "chips"
+                [typeof(MudChip)] = "chips",
+                [typeof(ChartOptions)] = "options"
             };
 
         // this is the inversion of above lookup

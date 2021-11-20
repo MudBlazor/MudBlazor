@@ -9,17 +9,26 @@ using System.Threading.Tasks;
 using System.Reflection;
 using MudBlazor.Docs.Models;
 using Microsoft.AspNetCore.Components;
+using MudBlazor.Services;
+using MudBlazor.Interop;
 
 namespace MudBlazor.Docs.Pages.Features.Icons
 {
     public partial class IconsPage
     {
+        [Inject] IResizeObserver ResizeObserver { get; set; }
         [Inject] protected IJsApiService JsApiService { get; set; }
 
         bool iconDrawerOpen;
         List<MudIcons> DisplayedIcons;
         private IconOrigin SelectedIconOrigin { get; set; } = IconOrigin.Material;
         private string SearchText { get; set; } = string.Empty;
+        private double _iconCardWidth = 136.88; // single icon card width includin margins
+        private float _iconCardHeight = 144; // single icon card height includin margins
+        private int CardsPerRow = 0;
+
+
+        private ElementReference killZone;
 
         private List<MudIcons> CustomAll { get; set; } = new List<MudIcons>();
         private List<MudIcons> CustomBrands { get; set; } = new List<MudIcons>();
@@ -36,10 +45,34 @@ namespace MudBlazor.Docs.Pages.Features.Icons
         private string IconCodeOutput { get; set; }
         private Size PreviewIconSize { get; set; } = Size.Medium;
         private Color PreviewIconColor { get; set; } = Color.Dark;
+        private List<MudVirtualizedIcons> SelectedIcons => string.IsNullOrWhiteSpace(SearchText)
+            ? GetVirtualizedIcons(DisplayedIcons)
+            : GetVirtualizedIcons(DisplayedIcons.Where(m => m.Name.Contains(SearchText, StringComparison.OrdinalIgnoreCase)).ToList());
 
-        private List<MudIcons> SelectedIcons => string.IsNullOrWhiteSpace(SearchText)
-            ? DisplayedIcons
-            : DisplayedIcons.Where(m => m.Name.Contains(SearchText, StringComparison.OrdinalIgnoreCase)).ToList();
+        private List<MudVirtualizedIcons> GetVirtualizedIcons(List<MudIcons> iconlist)
+        {
+            var virtualizedIcons = new List<MudVirtualizedIcons>();
+            var rowIcons = new List<MudIcons>();
+            int counter = 0;
+
+            foreach (var icon in iconlist)
+            {
+                counter++;
+                if (CardsPerRow > counter)
+                {
+                    
+                    rowIcons.Add(icon);
+                }
+                else if(CardsPerRow <= counter)
+                {
+                    rowIcons.Add(icon);
+                    virtualizedIcons.Add(new MudVirtualizedIcons(rowIcons));
+                    rowIcons = new List<MudIcons>();
+                    counter = 0;
+                }
+            }
+            return virtualizedIcons;
+        }
 
         private readonly IDictionary<string, object> IconTypes = new Dictionary<string, object>()
         {
@@ -64,6 +97,31 @@ namespace MudBlazor.Docs.Pages.Features.Icons
             MaterialTwoTone = await LoadMaterialIcons(IconType.TwoTone);
 
             await LoadCustomIcons();
+        }
+
+        protected override async Task OnAfterRenderAsync(bool firstRender)
+        {
+            if (firstRender)
+            {
+
+                await ResizeObserver.Observe(killZone);
+
+                ResizeObserver.OnResized += OnResized;
+
+                SetCardsPerRow();
+                StateHasChanged();
+            }
+        }
+
+        private async void OnResized(IDictionary<ElementReference, BoundingClientRect> changes)
+        {
+            SetCardsPerRow();
+            await InvokeAsync(StateHasChanged);
+        }
+
+        private void SetCardsPerRow()
+        {
+            CardsPerRow = Convert.ToInt32(ResizeObserver.GetWidth(killZone) / _iconCardWidth);
         }
 
         public async Task<List<MudIcons>> LoadMaterialIcons(string type)
@@ -185,6 +243,18 @@ namespace MudBlazor.Docs.Pages.Features.Icons
         {
             Custom,
             Material
+        }
+
+        private string GetKillZoneStyle(bool debugg)
+        {
+            if (debugg)
+            {
+                return $"height:65vh;width:100%;position:sticky;top:0px;border-color:#ff0000;border-style:dashed;border-width:4px;border-radius:8px;";
+            }
+            else
+            {
+                return $"height:65vh;width:100%;position:sticky;top:0px;";
+            }
         }
     }
 }

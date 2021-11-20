@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Extensions;
 using MudBlazor.Utilities;
 
@@ -135,6 +136,97 @@ namespace MudBlazor
             var diff = date.Year - year;
             var calenderYear = Culture.Calendar.GetYear(date);
             return calenderYear - diff;
+        }
+
+        //To be completed on next PR
+        protected internal override void HandleKeyDown(KeyboardEventArgs obj)
+        {
+            if (Disabled || ReadOnly)
+                return;
+            base.HandleKeyDown(obj);
+            switch (obj.Key)
+            {
+                case "ArrowRight":
+                    if (IsOpen)
+                    {
+
+                    }
+                    break;
+                case "ArrowLeft":
+                    if (IsOpen)
+                    {
+
+                    }
+                    break;
+                case "ArrowUp":
+                    if (IsOpen == false && Editable == false)
+                    {
+                        IsOpen = true;
+                    }
+                    else if (obj.AltKey == true)
+                    {
+                        IsOpen = false;
+                    }
+                    else if (obj.ShiftKey == true)
+                    {
+                        
+                    }
+                    else
+                    {
+                        
+                    }
+                    break;
+                case "ArrowDown":
+                    if (IsOpen == false && Editable == false)
+                    {
+                        IsOpen = true;
+                    }
+                    else if (obj.ShiftKey == true)
+                    {
+                        
+                    }
+                    else
+                    {
+                        
+                    }
+                    break;
+                case "Escape":
+                    ReturnDateBackUp();
+                    break;
+                case "Enter":
+                case "NumpadEnter":
+                    if (!IsOpen)
+                    {
+                        Open();
+                    }
+                    else
+                    {
+                        Submit();
+                        Close();
+                        _inputReference?.SetText(Text);
+                    }
+                    break;
+                case " ":
+                    if (!Editable)
+                    {
+                        if (!IsOpen)
+                        {
+                            Open();
+                        }
+                        else
+                        {
+                            Submit();
+                            Close();
+                            _inputReference?.SetText(Text);
+                        }
+                    }
+                    break;
+            }
+        }
+
+        private void ReturnDateBackUp()
+        {
+            Close();
         }
     }
 }
