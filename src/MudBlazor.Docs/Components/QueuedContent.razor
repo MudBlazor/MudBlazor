@@ -1,7 +1,7 @@
 ﻿@implements IDisposable
 @inject IRenderQueueService RenderQueue
 
-@if (_showContent)
+@if (_showContent || RenderImmediately)
 {
     @ChildContent
 }
@@ -9,6 +9,7 @@
 @code {
 
     [Parameter] public RenderFragment ChildContent { get; set; }
+    [Parameter] public bool RenderImmediately { get; set; }
 
     private bool _showContent = false;
     private bool _disposed = false;
@@ -18,7 +19,8 @@
     protected override void OnInitialized()
     {
         base.OnInitialized();
-        RenderQueue.Enqueue(this);
+        if (!RenderImmediately)
+            RenderQueue.Enqueue(this);
     }
 
     protected override void OnAfterRender(bool firstRender)

@@ -60,7 +60,7 @@ namespace MudBlazor.Docs.Services
                     return;
                 }
             }
-            await Task.Delay(25);            
+            await Task.Delay(1);            
             componentToRender.Render();
         }
 
