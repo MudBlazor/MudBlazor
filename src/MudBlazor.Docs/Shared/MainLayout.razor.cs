@@ -1,21 +1,26 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Docs.Extensions;
 using MudBlazor.Docs.Models;
 using MudBlazor.Docs.Services;
+using MudBlazor.Docs.Services.UserPreferences;
 
 namespace MudBlazor.Docs.Shared
 {
     public partial class MainLayout : LayoutComponentBase
     {
         private bool _drawerOpen = true;
-        private bool _rightToLeft = false;
+        private bool _rightToLeft;
         private NavMenu _navMenuRef;
+        private UserPreferences _userPreferences;
 
         [Inject] private NavigationManager NavigationManager { get; set; }
 
         [Inject] private IApiLinkService ApiLinkService { get; set; }
+
+        [Inject] private IUserPreferencesService UserPreferencesService { get; set; }
 
         MudAutocomplete<ApiLinkServiceEntry> _searchAutocomplete;
 
@@ -24,14 +29,22 @@ namespace MudBlazor.Docs.Shared
             _drawerOpen = !_drawerOpen;
         }
 
-        private void RightToLeftToggle()
+        private async Task RightToLeftToggle()
         {
             _rightToLeft = !_rightToLeft;
+            _userPreferences.RightToLeft = _rightToLeft;
+            await UserPreferencesService.SaveUserPreferences(_userPreferences);
         }
 
-        protected override void OnInitialized()
+        protected override async Task OnAfterRenderAsync(bool firstRender)
         {
-            _currentTheme = Theme.DocsLightTheme;
+            if (firstRender)
+            {
+                _userPreferences = await UserPreferencesService.LoadUserPreferences();
+                _rightToLeft = _userPreferences.RightToLeft;
+                LightTheme = _userPreferences.LightTheme;
+                StateHasChanged();
+            }
         }
 
         protected override void OnAfterRender(bool firstRender)
@@ -100,19 +113,25 @@ namespace MudBlazor.Docs.Shared
 
         private bool Wasm => NavigationManager.Uri.Contains("wasm");
 
-        private void DarkMode()
+        private async Task DarkMode()
         {
-            if (_currentTheme == Theme.DocsLightTheme)
+            LightTheme = !LightTheme;
+            _userPreferences.LightTheme = LightTheme;
+            await UserPreferencesService.SaveUserPreferences(_userPreferences);
+        }
+        
+        private MudTheme _currentTheme = new();
+        private bool _lightTheme;
+        private bool LightTheme
+        {
+            get => _lightTheme;
+            set
             {
-                _currentTheme = Theme.DocsDarkTheme;
-            }
-            else
-            {
-                _currentTheme = Theme.DocsLightTheme;
+                _lightTheme = value;
+                _currentTheme = _lightTheme ? Theme.DocsLightTheme : Theme.DocsDarkTheme;
             }
         }
 
-        private MudTheme _currentTheme = new();
         #endregion
     }
 }
