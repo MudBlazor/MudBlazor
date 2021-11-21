@@ -56,7 +56,7 @@
     <div class="pb-16">
         <MudText Typo="Typo.h6" Color="Color.Primary">Unified platform</MudText>
         <MudText Typo="Typo.h5">MudBlazor is more than a library</MudText>
-        <MudGrid Spacing="0">
+        <MudGrid>
             <MudItem xs="12" sm="6">
                 <MudText Typo="Typo.subtitle1" Class="mud-text-secondary">
                     We bring together everything that’s required to build amazing Blazor applications that scales from mobile to desktop and native to web. The tools and utilities that we provide are here to make your Blazor experience better.
@@ -71,30 +71,57 @@
     </div>
 </LandingSection>
 
-<LandingSection BackgroundClass="mud-dark">
+<LandingSection Class="dark-section-text" BackgroundClass="mud-dark">
     <div class="py-16">
-        <MudGrid Spacing="0">
-            <MudItem xs="12" sm="6">
-                <MudText Typo="Typo.h6" Color="Color.Primary">Designed for developers</MudText>
-                <MudText Typo="Typo.h5" Class="white-text">Developers love to work with MudBlazor</MudText>
-                <MudText Typo="Typo.subtitle1" Class="mud-text-secondary">
-                    One of the reasons we created MudBlazor was that other libraries was either js ports or very complex where they dont have to. That made it hard and time-consuming for developers that wanted to contribute to the project. So we started MudBlazor with a simple promise, to empower the developer and fully take advatange of what Blazor offers. With MudBlazor you can create exceptional apps without the burden of mastering HTML, CSS and JS and focus your skillset on C#
-                </MudText>
+        <MudGrid>
+             <MudItem xs="12" sm="12" md="6">
+                 <MudGrid>
+                     <MudItem xs="12">
+                        <MudText Typo="Typo.h6" Color="Color.Primary">Designed for developers</MudText>
+                        <MudText Typo="Typo.h5" Class="white-text">Developers love to work with MudBlazor</MudText>
+                        <MudText Typo="Typo.subtitle1" Class="my-4">
+                            We started MudBlazor with a simple promise, to empower the developer and fully take advatange of what Blazor offers. With MudBlazor you can create exceptional apps without the burden of mastering HTML, CSS and JS and focus your skillset on C#
+                        </MudText>
+                     </MudItem>
+                     <MudItem xs="12" sm="12" md="6">
+                         <MudIcon Icon="@lpIconCode" Size="Size.Large"/>
+                         <MudText Typo="Typo.subtitle2" Class="white-text my-2">TryMudBlazor</MudText>
+                         <MudText>Use the full power of Blazor directly in your browser with TryMudBlazor.</MudText>
+                         <MudText>Full fetched editor with intellisense, multiple files and save your code.</MudText>
+                         <MudLink Class="landing-link my-4" Href="https://try.mudblazor.com/" Taget="_blank">Test online<MudIcon Icon="@Icons.Rounded.KeyboardArrowRight" Size="Size.Small" /></MudLink>
+                     </MudItem>
+                     <MudItem xs="12" sm="12" md="6">
+                         <MudIcon Icon="@lpIconTemplates" Size="Size.Large"/>
+                         <MudText Typo="Typo.subtitle2" Class="white-text my-2">Templates</MudText>
+                         <MudText>We provide all the default Blazor templates but pre configured with MudBlazor to help you get started faster.</MudText>
+                         <MudLink Class="landing-link my-4" Href="https://github.com/MudBlazor/Templates" Taget="_blank">Explore templates<MudIcon Icon="@Icons.Rounded.KeyboardArrowRight" Size="Size.Small"/></MudLink>
+                     </MudItem>
+                 </MudGrid>
+             </MudItem>
+            <MudItem xs="12" sm="12" md="6">
+                <div class="code-animation-container">
+                    <CodeEditor/>
+                    <MudCard Elevation="3" Class="code-change-card w-max z-2 mt-n12 ml-16">
+                        <MudCardMedia Image="_content/MudBlazor.Docs/images/content-template-door.png" Height="0"/>
+                        <MudCardContent>
+                            <MudText>Old Paint</MudText>
+                            <MudText Typo="Typo.body2">Old paint found on a stone house door.</MudText>
+                            <MudText Typo="Typo.body2">This photo was taken in a small village in Istra Croatia.</MudText>
+                        </MudCardContent>
+                        <MudCardActions>
+                            <MudButton Variant="Variant.Text" Color="Color.Primary">Share</MudButton>
+                            <MudButton Variant="Variant.Text" Color="Color.Primary">Learn More</MudButton>
+                        </MudCardActions>
+                    </MudCard>
+                </div>
             </MudItem>
-            <MudItem xs="12" sm="6">
-                <CodeEditor/>
-                 <MudCard>
-                    <MudCardMedia Image="_content/MudBlazor.Docs/images/content-template-door.png" Height="200" />
-                    <MudCardContent>
-                        <MudText Typo="Typo.h5">Old Paint</MudText>
-                        <MudText Typo="Typo.body2">Old paint found on a stone house door.</MudText>
-                        <MudText Typo="Typo.body2">This photo was taken in a small village in Istra Croatia.</MudText>
-                    </MudCardContent>
-                    <MudCardActions>
-                        <MudButton Variant="Variant.Text" Color="Color.Primary">Share</MudButton>
-                        <MudButton Variant="Variant.Text" Color="Color.Primary">Learn More</MudButton>
-                    </MudCardActions>
-                </MudCard>
+        </MudGrid>
+        <MudGrid>
+            <MudItem xs="12" sm="12" md="6">
+                
+            </MudItem>
+            <MudItem xs="12" sm="12" md="6">
+                
             </MudItem>
         </MudGrid>
     </div>
@@ -178,3 +205,9 @@
 <MudContainer MaxWidth="MaxWidth.Large" Class="d-flex flex-column justify-center">
     
 </MudContainer>
+
+
+@code {
+    private string lpIconCode = "<path d=\"M8.52 21C8.2 21 7.92 20.8806 7.68 20.6417L0.36 13.356C-0.12 12.8782 -0.12 12.1218 0.36 11.6838L7.68 4.35831C8.16 3.88056 8.92 3.88056 9.36 4.35831C9.84 4.83607 9.84 5.59251 9.36 6.03044L2.88 12.4801L9.36 18.9297C9.84 19.4075 9.84 20.1639 9.36 20.6019C9.16 20.8806 8.84 21 8.52 21Z\" fill=\"#5E5BF0\"/><path d=\"M15.48 21C15.16 21 14.88 20.8806 14.64 20.6417C14.16 20.1639 14.16 19.4075 14.64 18.9696L21.12 12.5199L14.6 6.03044C14.12 5.55269 14.12 4.79625 14.6 4.35831C15.08 3.88056 15.84 3.88056 16.28 4.35831L23.6 11.6838C24.08 12.1616 24.08 12.918 23.6 13.356L16.32 20.6417C16.08 20.8806 15.76 21 15.48 21Z\" fill=\"#66EDE5\"/>";
+    private string lpIconTemplates = "<g clip-path=\"url(#clip0_95_632)\"><path d=\"M12.0182 22C11.8723 22 11.7264 21.9642 11.6169 21.9283L1.6932 18.0215C1.29187 17.8423 1 17.448 1 17.0179V6.98208C1 6.37276 1.4743 5.90681 2.09453 5.90681C2.71476 5.90681 3.18905 6.37276 3.18905 6.98208V16.2652L12.0182 19.7419L20.8474 16.2652V6.98208C20.8474 6.37276 21.3217 5.90681 21.942 5.90681C22.5622 5.90681 23.0365 6.37276 23.0365 6.98208V17.0179C23.0365 17.448 22.7811 17.8423 22.3433 18.0215L12.4196 21.9283C12.2736 21.9642 12.1642 22 12.0182 22Z\" fill=\"#5E5BF0\"/><path d=\"M17.199 9.99283C17.0531 9.99283 16.9436 9.95699 16.7977 9.92115L6.8375 6.01434C6.29024 5.79928 5.99836 5.15412 6.21727 4.61649C6.47266 4.07885 7.09289 3.79211 7.64015 4.00717L17.5639 7.91398C18.1111 8.12903 18.403 8.77419 18.1841 9.31183C18.0382 9.74194 17.6368 9.99283 17.199 9.99283Z\" fill=\"#66EDE5\"/><path d=\"M12.0182 12.0009C11.8723 12.0009 11.7264 11.9651 11.6169 11.9292L1.6932 7.98656C1.25539 7.84319 1 7.44893 1 6.98298C1 6.51703 1.25539 6.1586 1.6932 5.97939L11.5804 2.07258C11.8358 1.96505 12.1277 1.96505 12.3831 2.07258L22.3068 5.97939C22.7081 6.1586 23 6.55287 23 6.98298C23 7.41308 22.7446 7.80735 22.3068 7.98656L12.4196 11.8934C12.2736 11.9651 12.1277 12.0009 12.0182 12.0009ZM5.01327 6.98298L11.9818 9.74283L18.9502 6.98298L12.0182 4.22312L5.01327 6.98298Z\" fill=\"#5E5BF0\"/><path d=\"M12.0182 22C11.398 22 10.9237 21.5341 10.9237 20.9247V10.8889C10.9237 10.2796 11.398 9.81362 12.0182 9.81362C12.6385 9.81362 13.1128 10.2796 13.1128 10.8889V20.9247C13.1128 21.5341 12.602 22 12.0182 22Z\" fill=\"#5E5BF0\"/></g><defs><clipPath id=\"clip0_95_632\"><rect width=\"22\" height=\"20\" fill=\"white\" transform=\"translate(1 2)\"/></clipPath></defs>";
+}

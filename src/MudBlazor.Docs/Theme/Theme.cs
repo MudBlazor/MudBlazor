@@ -119,6 +119,10 @@ namespace MudBlazor.Docs
             {
                 FontSize = "1rem",
                 FontWeight = 400
+            },
+            Button = new Button()
+            {
+                TextTransform = "none"
             }
         };
         public static Palette LandingPageLightPalette = new Palette()
@@ -127,7 +131,8 @@ namespace MudBlazor.Docs
             Background = "#FFFFFF",
             TextSecondary = "#425466",
             Dark = "#110E2D",
-            DarkLighten = "#1A1643"
+            DarkLighten = "#1A1643",
+            DarkContrastText = "#ADBDCC"
         };
         public static Palette LandingPageDarkPalette = new Palette()
         {
@@ -143,7 +148,7 @@ namespace MudBlazor.Docs
             "none",
             "rgba(50, 50, 93, 0.25) 0px 2px 5px -1px, rgba(0, 0, 0, 0.3) 0px 1px 3px -1px;",
             "0px 3px 1px -2px rgba(0,0,0,0.2),0px 2px 2px 0px rgba(0,0,0,0.14),0px 1px 5px 0px rgba(0,0,0,0.12)",
-            "0px 3px 3px -2px rgba(0,0,0,0.2),0px 3px 4px 0px rgba(0,0,0,0.14),0px 1px 8px 0px rgba(0,0,0,0.12)",
+            "0 30px 60px rgba(0,0,0,0.12)",
             "0px 2px 4px -1px rgba(0,0,0,0.2),0px 4px 5px 0px rgba(0,0,0,0.14),0px 1px 10px 0px rgba(0,0,0,0.12)",
             "0px 3px 5px -1px rgba(0,0,0,0.2),0px 5px 8px 0px rgba(0,0,0,0.14),0px 1px 14px 0px rgba(0,0,0,0.12)",
             "0px 3px 5px -1px rgba(0,0,0,0.2),0px 6px 10px 0px rgba(0,0,0,0.14),0px 1px 18px 0px rgba(0,0,0,0.12)",
