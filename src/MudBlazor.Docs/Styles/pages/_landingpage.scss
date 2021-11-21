@@ -2,6 +2,35 @@
     .mud-button {
         text-transform: none;
     }
+  
+  .mud-tabs-toolbar-transparent{
+    background-color: transparent;
+
+    .mud-tab{
+      min-width: auto;
+      min-height: unset;
+      padding: 3px 12px;
+      text-transform: none;
+      border-radius: 9999px;
+      color: var(--mud-palette-text-secondary);
+    }
+    
+    .mud-tab.mud-tab-active {
+      color: var(--mud-palette-primary-text);
+      transition: color .2s ease-in-out;
+    }
+
+    .mud-tab:hover {
+      color: var(--mud-palette-text-primary);
+      background-color: transparent;
+    }
+    
+    .mud-tab-slider.mud-tab-slider-horizontal{
+      height: 100%;
+      border-radius: 9999px;
+      z-index: -1;
+    }
+  }
 
     .mud-button-gradient-primary {
         position: relative;
