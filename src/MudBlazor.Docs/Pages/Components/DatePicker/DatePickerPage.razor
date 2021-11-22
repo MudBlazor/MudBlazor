@@ -3,7 +3,7 @@
 <DocsPage>
     <DocsPageHeader Title="Date Picker">
         <Description>Provides the user with a simple way to select a date.</Description>
-        </DocsPageHeader>
+    </DocsPageHeader>
     <DocsPageContent>
 
         <DocsPageSection>
@@ -17,11 +17,11 @@
                 </Description>
             </SectionHeader>
             <SectionContent Outlined="true">
-                <DatePickerBasicUsageExample/>
+                <DatePickerBasicUsageExample />
             </SectionContent>
             <SectionSource Code="DatePickerBasicUsageExample" GitHubFolderName="DatePicker" ShowCode="false" />
         </DocsPageSection>
-                
+
         <DocsPageSection>
             <SectionHeader Title="Internationalization">
                 <Description>When you set the <CodeInline>Culture</CodeInline> parameter, the DatePicker will use culture-specific month names, weekday names and even different calendars.</Description>
@@ -37,9 +37,9 @@
                 <Description></Description>
             </SectionHeader>
             <SectionContent Outlined="true">
-                <DatePickerDialogExample/>
+                <DatePickerDialogExample />
             </SectionContent>
-            <SectionSource Code="DatePickerDialogExample" GitHubFolderName="DatePicker"/>
+            <SectionSource Code="DatePickerDialogExample" GitHubFolderName="DatePicker" />
         </DocsPageSection>
 
         <DocsPageSection>
@@ -47,9 +47,9 @@
                 <Description></Description>
             </SectionHeader>
             <SectionContent DarkenBackground="true" DisplayFlex="true">
-                <DatePickerStaticExample/>
+                <DatePickerStaticExample />
             </SectionContent>
-            <SectionSource Code="DatePickerStaticExample" GitHubFolderName="DatePicker"/>
+            <SectionSource Code="DatePickerStaticExample" GitHubFolderName="DatePicker" />
         </DocsPageSection>
 
         <DocsPageSection>
@@ -57,9 +57,9 @@
                 <Description>By default, it opens to Date, but can be set to Year or Month.</Description>
             </SectionHeader>
             <SectionContent Outlined="true">
-                <DatePickerViewsExample/>
+                <DatePickerViewsExample />
             </SectionContent>
-            <SectionSource Code="DatePickerViewsExample" GitHubFolderName="DatePicker"/>
+            <SectionSource Code="DatePickerViewsExample" GitHubFolderName="DatePicker" />
         </DocsPageSection>
 
         <DocsPageSection>
@@ -67,9 +67,9 @@
                 <Description></Description>
             </SectionHeader>
             <SectionContent DarkenBackground="true" DisplayFlex="true" Class="demo-datetime-margin">
-                <DatePickerColorExample/>
+                <DatePickerColorExample />
             </SectionContent>
-            <SectionSource Code="DatePickerColorExample" GitHubFolderName="DatePicker"/>
+            <SectionSource Code="DatePickerColorExample" GitHubFolderName="DatePicker" />
         </DocsPageSection>
 
         <DocsPageSection>
@@ -77,9 +77,23 @@
                 <Description>You can change the elevation with the <CodeInline>Elevation</CodeInline> parameter. The default value is 0 for static and 8 for inline.</Description>
             </SectionHeader>
             <SectionContent DarkenBackground="true" DisplayFlex="true">
-                <DatePickerElevationExample/>
+                <DatePickerElevationExample />
             </SectionContent>
-            <SectionSource Code="DatePickerElevationExample" GitHubFolderName="DatePicker"/>
+            <SectionSource Code="DatePickerElevationExample" GitHubFolderName="DatePicker" />
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Fixed Values Usage">
+                <Description>
+                    You can set fix values for day, month or year via <CodeInline>FixDay</CodeInline>, <CodeInline>FixMonth</CodeInline> and <CodeInline>FixYear</CodeInline>, default value is null for all of them.
+                    This in combination with the <CodeInline>OpenTo</CodeInline> parameter allows for Year-Month Pickers, where the user only selects those two values or Month-Day Pickers where the year is already given.
+                    This changes the behaviour of the picker so only views that can be set are displayed.
+                </Description>
+            </SectionHeader>
+            <SectionContent Outlined="true">
+                <DatePickerFixedValuesExample />
+            </SectionContent>
+            <SectionSource Code="DatePickerFixedValuesExample" GitHubFolderName="DatePicker" ShowCode="false" />
         </DocsPageSection>
 
         <DocsPageSection>
@@ -87,7 +101,7 @@
                 <Description></Description>
             </SectionHeader>
             <SectionContent Outlined="true">
-                <DateRangePickerUsageExample/>
+                <DateRangePickerUsageExample />
             </SectionContent>
             <SectionSource Code="DateRangePickerUsageExample" GitHubFolderName="DatePicker" ShowCode="false" />
         </DocsPageSection>
