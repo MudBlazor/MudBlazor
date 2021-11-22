@@ -94,7 +94,7 @@ namespace MudBlazor
     ///      - <see cref="MudBaseInput{T}.AdornmentText"/> - because it can describe information important to a user, e.g. a numeric field unit such as kilograms.<br/>
     ///     Sometimes choosing a category can be difficult - in such case choose a category that makes the most sense.
     ///     </para>
-    /// 
+    ///
     ///     <b>Categories for specific behaviors or specific parts of components</b>
     ///     <para>If some elements or behaviors can be distinguished in a component, their properties are included in separate groups.</para>
     ///
