@@ -76,29 +76,30 @@ namespace MudBlazor
     /// <remarks>
     ///     <b>General categories</b>
     ///     <para>
-    ///       - <i>Data</i>       - Used e.g. in form fields, pickers, MudRating, MudTreeView, MudTreeViewItem, MudTable, and MudCarousel. Containers have this group when
-    ///                             their items can be defined not only in markup language, but also programmatically in the Items property and by specifying ItemTemplate.<br/>
+    ///       - <i>Data</i>       - Used e.g. in form fields, pickers, <see cref="MudRating"/>, <see cref="MudTable{T}"/>, <see cref="MudTreeView{T}"/>,
+    ///                              <see cref="MudTreeViewItem{T}"/>, and <see cref="MudCarousel{TData}"/>. Containers have this group when their items can be defined
+    ///                             not only in markup language, but also programmatically in the Items property and by specifying ItemTemplate.<br/>
     ///       - <i>Validation</i> - Used in form fields and pickers.<br/>
     ///       - <i>Behavior</i>   - Changing these properties changes behavior of the component and behavior of the application. So in some way they are or may be more
     ///                             important than the "Appearance" category.<br/>
     ///       - <i>Appearance</i> - Changing these properties doesn't change behavior of the component and behavior of the application, but only changes the appearance
     ///                             of the component irrelevant to the understanding of the application by a user. So in some way they are less important than the "Behavior"
     ///                             category, because they are only used to adjust the look of the application. Example properties are: Color, Size, Elevation, and Dense.<br/>
-    ///       - <i>Common</i>     - Properties defined in MudComponentBase.
+    ///       - <i>Common</i>     - Properties defined in <see cref="MudComponentBase"/>.
     ///     </para>
     ///     <para>
     ///     Note: The following properties belong to the "Behavior" group, not to the "Appearance" group:<br/>
-    ///      - MudIconButton.Icon - because it describes meaning of the button, since MudIconButton doesn't have text,<br/>
-    ///      - MudTextField.Label - because it describes meaning of the field,<br/>
-    ///      - MudTextField.AdornmentText - because it can describe information important to a user, e.g. field unit such as kilograms.<br/>
-    ///     Sometimes choosing a category can be difficult - in such a case choose a category that makes the most sense.
+    ///      - <see cref="MudIconButton.Icon"/> - because it describes meaning of the button, since MudIconButton doesn't have text,<br/>
+    ///      - <see cref="MudBaseInput{T}.Label"/> - because it describes meaning of the field,<br/>
+    ///      - <see cref="MudBaseInput{T}.AdornmentText"/> - because it can describe information important to a user, e.g. a numeric field unit such as kilograms.<br/>
+    ///     Sometimes choosing a category can be difficult - in such case choose a category that makes the most sense.
     ///     </para>
     /// 
     ///     <b>Categories for specific behaviors or specific parts of components</b>
     ///     <para>If some elements or behaviors can be distinguished in a component, their properties are included in separate groups.</para>
     ///
     ///     <para>Note: If a property qualifies for both the "Appearance" or "Behavior" group, and for some special group, then this special group takes precedence.
-    ///           For example, MudTable.CommitEditIcon could belong to the "Appearance" group, but belongs to the "Editing" group.</para>
+    ///           For example, <see cref="MudTableBase.CommitEditIcon"/> could belong to the "Appearance" group, but belongs to the "Editing" group.</para>
     /// 
     ///     <b>Additional information</b>
     ///     <para>The list of categories is inspired by the categories displayed for Windows Forms and Web Forms components in the Visual Studio "Properties" window.</para>
@@ -190,7 +191,7 @@ namespace MudBlazor
             public const string Appearance = "Appearance";
         }
 
-        /// <summary>Used in all charts.</summary>
+        /// <summary>Used in all charts, that is in <see cref="MudChartBase"/> and all components inheriting from it.</summary>
         public static class Chart
         {
             public const string Behavior = "Behavior";
