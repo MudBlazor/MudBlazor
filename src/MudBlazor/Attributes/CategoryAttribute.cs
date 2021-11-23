@@ -119,8 +119,6 @@ namespace MudBlazor
             public const string Behavior = "Behavior";
             public const string ClickAction = "Click action";
             public const string Appearance = "Apperance";
-            public const string PopupBehavior = "Popup behavior";
-            public const string PopupAppearance = "Popup appearance";
         }
 
         /// <summary>Used in <see cref="MudFormComponent{T, U}"/> and all components inheriting from it.</summary>
@@ -297,6 +295,15 @@ namespace MudBlazor
             public const string Selecting = "Selecting";
             public const string ClickAction = "Click action";
             public const string Appearance = "Appearance";
+        }
+
+        public static class Menu
+        {
+            public const string Behavior = "Behavior";
+            public const string ClickAction = "Click action";
+            public const string Appearance = "Appearance";
+            public const string PopupBehavior = "Popup behavior";
+            public const string PopupAppearance = "Popup appearance";
         }
 
         public static class MessageBox
