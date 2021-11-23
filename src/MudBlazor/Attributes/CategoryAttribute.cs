@@ -118,7 +118,7 @@ namespace MudBlazor
         {
             public const string Behavior = "Behavior";
             public const string ClickAction = "Click action";
-            public const string Appearance = "Apperance";
+            public const string Appearance = "Appearance";
         }
 
         /// <summary>Used in <see cref="MudFormComponent{T, U}"/> and all components inheriting from it.</summary>
@@ -127,7 +127,7 @@ namespace MudBlazor
             public const string Data = "Data";
             public const string Validation = "Validation";
             public const string Behavior = "Behavior";
-            public const string Appearance = "Apperance";
+            public const string Appearance = "Appearance";
             public const string ListBehavior = "List behavior";
             public const string ListAppearance = "List appearance";
             public const string PickerBehavior = "Picker behavior";
@@ -137,49 +137,49 @@ namespace MudBlazor
         public static class Alert
         {
             public const string Behavior = "Behavior";
-            public const string Appearance = "Apperance";
+            public const string Appearance = "Appearance";
         }
 
         public static class AppBar
         {
             public const string Behavior = "Behavior";
-            public const string Appearance = "Apperance";
+            public const string Appearance = "Appearance";
         }
 
         public static class Avatar
         {
             public const string Behavior = "Behavior";
-            public const string Appearance = "Apperance";
+            public const string Appearance = "Appearance";
         }
 
         public static class AvatarGroup
         {
             public const string Behavior = "Behavior";
-            public const string Appearance = "Apperance";
+            public const string Appearance = "Appearance";
         }
 
         public static class Badge
         {
             public const string Behavior = "Behavior";
-            public const string Appearance = "Apperance";
+            public const string Appearance = "Appearance";
         }
 
         public static class Breadcrumbs
         {
             public const string Behavior = "Behavior";
-            public const string Appearance = "Apperance";
+            public const string Appearance = "Appearance";
         }
 
         public static class ButtonGroup
         {
             public const string Behavior = "Behavior";
-            public const string Appearance = "Apperance";
+            public const string Appearance = "Appearance";
         }
 
         public static class Card
         {
             public const string Behavior = "Behavior";
-            public const string Appearance = "Apperance";
+            public const string Appearance = "Appearance";
         }
 
         public static class Carousel
@@ -193,7 +193,7 @@ namespace MudBlazor
         public static class Chart
         {
             public const string Behavior = "Behavior";
-            public const string Appearance = "Apperance";
+            public const string Appearance = "Appearance";
         }
 
         public static class Chip
@@ -206,7 +206,7 @@ namespace MudBlazor
         public static class ChipSet
         {
             public const string Behavior = "Behavior";
-            public const string Appearance = "Apperance";
+            public const string Appearance = "Appearance";
         }
 
         public static class Container
@@ -217,25 +217,25 @@ namespace MudBlazor
         public static class Dialog
         {
             public const string Behavior = "Behavior";
-            public const string Appearance = "Apperance";
+            public const string Appearance = "Appearance";
         }
 
         public static class Divider
         {
             public const string Behavior = "Behavior";
-            public const string Appearance = "Apperance";
+            public const string Appearance = "Appearance";
         }
 
         public static class Drawer
         {
             public const string Behavior = "Behavior";
-            public const string Appearance = "Apperance";
+            public const string Appearance = "Appearance";
         }
 
         public static class ExpansionPanel
         {
             public const string Behavior = "Behavior";
-            public const string Appearance = "Apperance";
+            public const string Appearance = "Appearance";
         }
 
         public static class Field
@@ -261,31 +261,31 @@ namespace MudBlazor
         public static class Grid
         {
             public const string Behavior = "Behavior";
-            public const string Appearance = "Apperance";
+            public const string Appearance = "Appearance";
         }
 
         public static class Item
         {
             public const string Behavior = "Behavior";
-            public const string Appearance = "Apperance";
+            public const string Appearance = "Appearance";
         }
 
         public static class Hidden
         {
             public const string Behavior = "Behavior";
-            public const string Appearance = "Apperance";
+            public const string Appearance = "Appearance";
         }
 
         public static class Icon
         {
             public const string Behavior = "Behavior";
-            public const string Appearance = "Apperance";
+            public const string Appearance = "Appearance";
         }
 
         public static class Link
         {
             public const string Behavior = "Behavior";
-            public const string Appearance = "Apperance";
+            public const string Appearance = "Appearance";
         }
 
         public static class List
@@ -309,7 +309,7 @@ namespace MudBlazor
         public static class MessageBox
         {
             public const string Behavior = "Behavior";
-            public const string Appearance = "Apperance";
+            public const string Appearance = "Appearance";
         }
 
         public static class NavMenu
@@ -328,37 +328,37 @@ namespace MudBlazor
         public static class Pagination
         {
             public const string Behavior = "Behavior";
-            public const string Appearance = "Apperance";
+            public const string Appearance = "Appearance";
         }
 
         public static class Paper
         {
             public const string Behavior = "Behavior";
-            public const string Appearance = "Apperance";
+            public const string Appearance = "Appearance";
         }
 
         public static class Popover
         {
             public const string Behavior = "Behavior";
-            public const string Appearance = "Apperance";
+            public const string Appearance = "Appearance";
         }
 
         public static class ProgressLinear
         {
             public const string Behavior = "Behavior";
-            public const string Appearance = "Apperance";
+            public const string Appearance = "Appearance";
         }
 
         public static class ProgressCircular
         {
             public const string Behavior = "Behavior";
-            public const string Appearance = "Apperance";
+            public const string Appearance = "Appearance";
         }
 
         public static class Radio
         {
             public const string Behavior = "Behavior";
-            public const string Appearance = "Apperance";
+            public const string Appearance = "Appearance";
         }
 
         public static class Rating
@@ -371,13 +371,13 @@ namespace MudBlazor
         public static class ScrollToTop
         {
             public const string Behavior = "Behavior";
-            public const string Appearance = "Apperance";
+            public const string Appearance = "Appearance";
         }
 
         public static class Skeleton
         {
             public const string Behavior = "Behavior";
-            public const string Appearance = "Apperance";
+            public const string Appearance = "Appearance";
         }
 
         public static class Slider
@@ -391,7 +391,7 @@ namespace MudBlazor
         public static class SwipeArea
         {
             public const string Behavior = "Behavior";
-            public const string Appearance = "Apperance";
+            public const string Appearance = "Appearance";
         }
 
         public static class Table
@@ -413,13 +413,13 @@ namespace MudBlazor
         public static class SimpleTable
         {
             public const string Behavior = "Behavior";
-            public const string Appearance = "Apperance";
+            public const string Appearance = "Appearance";
         }
 
         public static class Tabs
         {
             public const string Behavior = "Behavior";
-            public const string Appearance = "Apperance";
+            public const string Appearance = "Appearance";
         }
 
         public static class Timeline
@@ -432,13 +432,13 @@ namespace MudBlazor
         public static class ToolBar
         {
             public const string Behavior = "Behavior";
-            public const string Appearance = "Apperance";
+            public const string Appearance = "Appearance";
         }
 
         public static class Tooltip
         {
             public const string Behavior = "Behavior";
-            public const string Appearance = "Apperance";
+            public const string Appearance = "Appearance";
         }
 
         public static class TreeView
@@ -454,7 +454,7 @@ namespace MudBlazor
         public static class Text
         {
             public const string Behavior = "Behavior";
-            public const string Appearance = "Apperance";
+            public const string Appearance = "Appearance";
         }
     }
 }
