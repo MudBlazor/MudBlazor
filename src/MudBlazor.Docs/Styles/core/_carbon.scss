@@ -23,6 +23,11 @@
     animation: mud-animation-fadein ease .15s;
 }
 
+// hide doubled ad
+#carbonads_1 {
+    display: none;
+}
+
 #carbonads a {
     color: inherit;
     text-decoration: none;
