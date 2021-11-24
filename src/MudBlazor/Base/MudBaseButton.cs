@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using System.Windows.Input;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
@@ -88,16 +89,22 @@ namespace MudBlazor
                 isLoading = true;
                 Disabled = true;
             }
-            await OnClick.InvokeAsync(ev);
-            if (Command?.CanExecute(CommandParameter) ?? false)
+            try
             {
-                Command.Execute(CommandParameter);
+                await OnClick.InvokeAsync(ev);
+                if (Command?.CanExecute(CommandParameter) ?? false)
+                {
+                    Command.Execute(CommandParameter);
+                }
+                Activateable?.Activate(this, ev);
             }
-            Activateable?.Activate(this, ev);
-            if (Loading)
+            finally
             {
-                isLoading = false;
-                Disabled = false;
+                if (Loading)
+                {
+                    isLoading = false;
+                    Disabled = false;
+                }
             }
         }
 
