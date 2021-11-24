@@ -8,6 +8,8 @@ namespace MudBlazor
     {
         private bool _nextPanelExpanded;
         private bool _isExpanded;
+        private bool _collapseIsExpanded;
+
         [CascadingParameter] private MudExpansionPanels Parent { get; set; }
 
         protected string Classname =>
@@ -81,7 +83,14 @@ namespace MudBlazor
                 _isExpanded = value;
 
                 NotifyIsExpandedChanged?.Invoke(this);
-                IsExpandedChanged.InvokeAsync(_isExpanded);
+                IsExpandedChanged.InvokeAsync(_isExpanded).ContinueWith(t =>
+                {
+                    if (_collapseIsExpanded != _isExpanded)
+                    {
+                        _collapseIsExpanded = _isExpanded;
+                        InvokeAsync(() => StateHasChanged());
+                    }
+                });
             }
         }
 
@@ -116,7 +125,9 @@ namespace MudBlazor
         public void ToggleExpansion()
         {
             if (Disabled)
+            {
                 return;
+            }
 
             IsExpanded = !IsExpanded;
         }
@@ -128,6 +139,7 @@ namespace MudBlazor
             else
             {
                 _isExpanded = true;
+                _collapseIsExpanded = true;
                 IsExpandedChanged.InvokeAsync(_isExpanded);
             }
         }
@@ -139,6 +151,7 @@ namespace MudBlazor
             else
             {
                 _isExpanded = false;
+                _collapseIsExpanded = false;
                 IsExpandedChanged.InvokeAsync(_isExpanded);
             }
         }
@@ -150,7 +163,11 @@ namespace MudBlazor
             //    throw new ArgumentNullException(nameof(Parent), "ExpansionPanel must exist within a ExpansionPanels component");
             base.OnInitialized();
             if (!IsExpanded && IsInitiallyExpanded)
-                _isExpanded = IsInitiallyExpanded;
+            {
+                _isExpanded = true;
+                _collapseIsExpanded = true;
+            }
+
             Parent?.AddPanel(this);
         }
 

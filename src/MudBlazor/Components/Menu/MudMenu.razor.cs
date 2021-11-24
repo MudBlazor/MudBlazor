@@ -98,7 +98,7 @@ namespace MudBlazor
         /// If true, instead of positioning the menu at the left upper corner, position at the exact cursor location.
         /// This makes sense for larger activators
         /// </summary>
-        [Obsolete("Obsolete.  Replace with `PositionAtCursor`.")]
+        [Obsolete("Use PositionAtCursor instead.",true)]
         [Parameter]
         public bool PositionAtCurser
         {
@@ -131,21 +131,21 @@ namespace MudBlazor
         /// Sets the direction the select menu will start from relative to its parent.
         /// </summary>
         [ExcludeFromCodeCoverage]
-        [Obsolete("Direction is obsolete. Use AnchorOrigin or TransformOrigin instead!", false)]
+        [Obsolete("Use AnchorOrigin or TransformOrigin instead.", true)]
         [Parameter] public Direction Direction { get; set; } = Direction.Bottom;
 
         /// <summary>
         /// If true, the select menu will open either before or after the input depending on the direction.
         /// </summary>
         [ExcludeFromCodeCoverage]
-        [Obsolete("OffsetY is obsolete. Use AnchorOrigin or TransformOrigin instead!", false)]
+        [Obsolete("Use AnchorOrigin or TransformOrigin instead.", true)]
         [Parameter] public bool OffsetY { get; set; }
 
         /// <summary>
         /// If true, the select menu will open either above or bellow the input depending on the direction.
         /// </summary>
         [ExcludeFromCodeCoverage]
-        [Obsolete("OffsetX is obsolete. Use AnchorOrigin or TransformOrigin instead!", false)]
+        [Obsolete("Use AnchorOrigin or TransformOrigin instead.", true)]
         [Parameter] public bool OffsetX { get; set; }
 
         /// <summary>
@@ -171,27 +171,27 @@ namespace MudBlazor
         #region Obsolete members from previous MudButtonBase inherited structure
 
         [ExcludeFromCodeCoverage]
-        [Obsolete("Obsolete. Linking is not supported. MudMenu is not a MudBaseButton anymore.")]
+        [Obsolete("Linking is not supported. MudMenu is not a MudBaseButton anymore.", true)]
         [Parameter] public string Link { get; set; }
 
         [ExcludeFromCodeCoverage]
-        [Obsolete("Obsolete. Linking is not supported. MudMenu is not a MudBaseButton anymore.")]
+        [Obsolete("Linking is not supported. MudMenu is not a MudBaseButton anymore.", true)]
         [Parameter] public string Target { get; set; }
 
         [ExcludeFromCodeCoverage]
-        [Obsolete("Obsolete. MudMenu is not a MudBaseButton anymore.")]
+        [Obsolete("MudMenu is not a MudBaseButton anymore.", true)]
         [Parameter] public string HtmlTag { get; set; } = "button";
 
         [ExcludeFromCodeCoverage]
-        [Obsolete("Obsolete. MudMenu is not a MudBaseButton anymore.")]
+        [Obsolete("MudMenu is not a MudBaseButton anymore.", true)]
         [Parameter] public ButtonType ButtonType { get; set; }
 
         [ExcludeFromCodeCoverage]
-        [Obsolete("Obsolete. MudMenu is not a MudBaseButton anymore.")]
+        [Obsolete("MudMenu is not a MudBaseButton anymore.", true)]
         [Parameter] public ICommand Command { get; set; }
 
         [ExcludeFromCodeCoverage]
-        [Obsolete("Obsolete. MudMenu is not a MudBaseButton anymore.")]
+        [Obsolete("MudMenu is not a MudBaseButton anymore.", true)]
         [Parameter] public object CommandParameter { get; set; }
 
         #endregion
@@ -228,7 +228,7 @@ namespace MudBlazor
         // Sets the popover style ONLY when there is an activator
         private void SetPopoverStyle(MouseEventArgs args)
         {
-            _anchorOrigin = Origin.TopLeft;
+            AnchorOrigin = Origin.TopLeft;
             PopoverStyle = $"margin-top: {args?.OffsetY.ToPx()}; margin-left: {args?.OffsetX.ToPx()};";
         }
 
@@ -263,76 +263,6 @@ namespace MudBlazor
             {
                 CloseMenu();
             }
-        }
-
-        internal Origin _anchorOrigin;
-        internal Origin _transformOrigin;
-
-#pragma warning disable CS0618 // This is for backwards compability until Obsolete is removed
-        private void GetPopoverOrigins()
-        {
-            if (Direction != Direction.Bottom || OffsetX || OffsetY)
-            {
-                switch (Direction)
-                {
-                    //No Offset
-                    case Direction.Bottom when !OffsetY && !OffsetX:
-                        _anchorOrigin = Origin.TopLeft;
-                        _transformOrigin = Origin.TopLeft;
-                        break;
-
-                    case Direction.Top when !OffsetY:
-                        _anchorOrigin = Origin.BottomLeft;
-                        _transformOrigin = Origin.BottomLeft;
-                        break;
-                    case Direction.Start when !OffsetX:
-                    case Direction.Left when !OffsetX:
-                        _anchorOrigin = Origin.TopLeft;
-                        _transformOrigin = Origin.TopLeft;
-                        break;
-                    case Direction.End when !OffsetX:
-                    case Direction.Right when !OffsetX:
-                        _anchorOrigin = Origin.TopRight;
-                        _transformOrigin = Origin.TopRight;
-                        break;
-
-                    //Offset
-                    case Direction.Bottom when OffsetY:
-                        _anchorOrigin = Origin.BottomLeft;
-                        _transformOrigin = Origin.TopLeft;
-                        break;
-                    case Direction.Top when OffsetY:
-                        _anchorOrigin = Origin.TopLeft;
-                        _transformOrigin = Origin.BottomLeft;
-                        break;
-                    case Direction.Start when OffsetX:
-                    case Direction.Left when OffsetX:
-                        _anchorOrigin = Origin.TopLeft;
-                        _transformOrigin = Origin.TopRight;
-                        break;
-                    case Direction.End when OffsetX:
-                    case Direction.Right when OffsetX:
-                        _anchorOrigin = Origin.TopRight;
-                        _transformOrigin = Origin.TopLeft;
-                        break;
-                    default:
-                        _anchorOrigin = AnchorOrigin;
-                        _transformOrigin = TransformOrigin;
-                        break;
-                }
-            }
-            else
-            {
-                _anchorOrigin = AnchorOrigin;
-                _transformOrigin = TransformOrigin;
-            }
-        }
-#pragma warning restore CS0618 // Type or member is obsolete
-
-        protected override void OnParametersSet()
-        {
-            base.OnParametersSet();
-            GetPopoverOrigins(); // Just to keep Obsolete functional until removed.
         }
     }
 }

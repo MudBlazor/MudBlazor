@@ -79,9 +79,8 @@ namespace MudBlazor
             {
                 await _runtime.InvokeVoidAsync("mudPopover.disconnect", Id);
             }
-            catch (TaskCanceledException)
-            {
-            }
+            catch (JSDisconnectedException) { }
+            catch (TaskCanceledException) { }
             finally
             {
                 IsConnected = false;
@@ -121,6 +120,8 @@ namespace MudBlazor
                 await _jsRuntime.InvokeVoidAsync("mudPopover.initilize", _options.ContainerClass, _options.FlipMargin);
                 _isInitilized = true;
             }
+            catch (JSDisconnectedException) { }
+            catch (TaskCanceledException) { }
             finally
             {
                 _semaphoreSlim.Release();
@@ -160,9 +161,8 @@ namespace MudBlazor
             {
                 await _jsRuntime.InvokeVoidAsync("mudPopover.dispose");
             }
-            catch (TaskCanceledException)
-            {
-            }
+            catch (JSDisconnectedException) { }
+            catch (TaskCanceledException) { }
         }
     }
 }

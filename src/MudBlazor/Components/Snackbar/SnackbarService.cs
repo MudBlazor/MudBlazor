@@ -49,7 +49,7 @@ namespace MudBlazor
             }
         }
 
-        [Obsolete]
+        [Obsolete("Use Add instead.", true)]
         public Snackbar AddNew(Severity severity, string message, Action<SnackbarOptions> configure)
         {
             return Add(message, severity, configure);

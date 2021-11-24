@@ -834,6 +834,86 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// The server-side load callback should be called only once per page change
+        /// </summary>
+        [Test]
+        public async Task TableServerSideDataTest5()
+        {
+            var comp = Context.RenderComponent<TableServerSideDataTest5>();
+            comp.Find("#counter").TextContent.Should().Be("1"); //initial counter
+
+            comp.FindAll("div.mud-table-pagination-actions button")[2].Click(); // next >
+            comp.Find("#counter").TextContent.Should().Be("2");
+
+            comp.FindAll("div.mud-table-pagination-actions button")[2].Click(); // next >
+            comp.Find("#counter").TextContent.Should().Be("3");
+
+            comp.FindAll("div.mud-table-pagination-actions button")[2].Click(); // next >
+            comp.Find("#counter").TextContent.Should().Be("4");
+
+            comp.FindAll("div.mud-table-pagination-actions button")[1].Click(); // < previous
+            comp.Find("#counter").TextContent.Should().Be("5");
+
+            comp.FindAll("div.mud-table-pagination-actions button")[1].Click(); // < previous
+            comp.Find("#counter").TextContent.Should().Be("6");
+
+            comp.FindAll("div.mud-table-pagination-actions button")[1].Click(); // < previous
+            comp.Find("#counter").TextContent.Should().Be("7");
+
+            comp.Find("#reseter").Click(); //reset counter and test again
+            comp.Find("#counter").TextContent.Should().Be("0");
+
+            comp.FindAll("div.mud-table-pagination-actions button")[2].Click(); // next >
+            comp.Find("#counter").TextContent.Should().Be("1");
+
+            comp.FindAll("div.mud-table-pagination-actions button")[2].Click(); // next >
+            comp.Find("#counter").TextContent.Should().Be("2");
+
+            comp.FindAll("div.mud-table-pagination-actions button")[2].Click(); // next >
+            comp.Find("#counter").TextContent.Should().Be("3");
+
+            comp.FindAll("div.mud-table-pagination-actions button")[1].Click(); // < previous
+            comp.Find("#counter").TextContent.Should().Be("4");
+
+            comp.FindAll("div.mud-table-pagination-actions button")[1].Click(); // < previous
+            comp.Find("#counter").TextContent.Should().Be("5");
+
+            comp.FindAll("div.mud-table-pagination-actions button")[1].Click(); // < previous
+            comp.Find("#counter").TextContent.Should().Be("6");
+        }
+
+        /// <summary>
+        /// The server-side load callback should be called only once per sort change
+        /// </summary>
+        [Test]
+        public async Task TableServerSideDataTest6()
+        {
+            var comp = Context.RenderComponent<TableServerSideDataTest5>();
+            comp.Find("#counter").TextContent.Should().Be("1"); //initial counter
+
+            comp.Find("span.mud-button-root.mud-table-sort-label").Click(); // sort
+            comp.Find("#counter").TextContent.Should().Be("2");
+
+            comp.Find("span.mud-button-root.mud-table-sort-label").Click(); // sort
+            comp.Find("#counter").TextContent.Should().Be("3");
+
+            comp.Find("span.mud-button-root.mud-table-sort-label").Click(); // sort
+            comp.Find("#counter").TextContent.Should().Be("4");
+
+            comp.Find("#reseter").Click(); //reset counter and test again
+            comp.Find("#counter").TextContent.Should().Be("0");
+
+            comp.Find("span.mud-button-root.mud-table-sort-label").Click(); // sort
+            comp.Find("#counter").TextContent.Should().Be("1");
+
+            comp.Find("span.mud-button-root.mud-table-sort-label").Click(); // sort
+            comp.Find("#counter").TextContent.Should().Be("2");
+
+            comp.Find("span.mud-button-root.mud-table-sort-label").Click(); // sort
+            comp.Find("#counter").TextContent.Should().Be("3");
+        }
+
+        /// <summary>
         /// The table should render the classes and style to the tr using the RowStyleFunc and RowClassFunc parameters
         /// </summary>
         [Test]
@@ -1327,6 +1407,31 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// Tests that clicking a row in a non-editable table does not set IsEditing to true and stop the table from updating.
+        /// </summary>
+        [Test]
+        public void TableRowClickNotEditable()
+        {
+            var comp = Context.RenderComponent<TableRowClickNotEditableTest>();
+
+            // Get table instance
+            var tableInstance = comp.FindComponent<MudTable<string>>().Instance;
+
+            // Check number of filtered items
+            tableInstance.GetFilteredItemsCount().Should().Be(3);
+
+            // Click row
+            var trs = comp.FindAll("tr");
+            trs[1].Click();
+
+            // Filter items
+            var searchString = comp.Find("#searchString");
+            searchString.Change("b");
+
+            // Make sure number of items has updated
+            tableInstance.GetFilteredItemsCount().Should().Be(1);
+        }
+        
         /// Issue #3033
         /// Tests changing RowsPerPage Parameter from code - Table should re-render new RowsPerPage parameter and parameter value should be set
         /// </summary>

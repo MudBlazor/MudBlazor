@@ -35,7 +35,7 @@
         <MudIconButton Variant="@Variant" Icon="@Icon" Color="@Color" Size="@Size" Disabled="@Disabled" DisableRipple="@DisableRipple" DisableElevation="@DisableElevation" @onclick="@ToggleMenu" @oncontextmenu="@(ActivationEvent==MouseEvent.RightClick ? ToggleMenu : null)" />
     }
     @* The portal has to include  the cascading values inside, because it's not able to teletransport the cascade *@
-    <MudPopover Open="@_isOpen" Class="@PopoverClass" MaxHeight="@MaxHeight" AnchorOrigin="@_anchorOrigin" TransformOrigin="@_transformOrigin" RelativeWidth="@FullWidth" oncontextmenu="@(ActivationEvent == MouseEvent.RightClick ? "return false;" : null)" Style="@PopoverStyle">
+    <MudPopover Open="@_isOpen" Class="@PopoverClass" MaxHeight="@MaxHeight" AnchorOrigin="@AnchorOrigin" TransformOrigin="@TransformOrigin" RelativeWidth="@FullWidth" oncontextmenu="@(ActivationEvent == MouseEvent.RightClick ? "return false;" : null)" Style="@PopoverStyle">
         <CascadingValue Value="@this">
             <MudList Class="@ListClass" Clickable="true" Dense="@Dense"  
               @onmouseenter="@PopoverMouseEnter"

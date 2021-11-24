@@ -1,0 +1,57 @@
+﻿@implements IDisposable
+@inject IRenderQueueService RenderQueue
+
+@if (_showContent || RenderImmediately)
+{
+    @ChildContent
+}
+
+@code {
+
+    [Parameter] public RenderFragment ChildContent { get; set; }
+    [Parameter] public bool RenderImmediately { get; set; }
+
+    private bool _showContent = false;
+    private bool _disposed = false;
+    public event Action<QueuedContent> Rendered;
+    public event Action<QueuedContent> Disposed;
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        if (!RenderImmediately)
+            RenderQueue.Enqueue(this);
+    }
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        base.OnAfterRender(firstRender);
+        if (_disposed)
+            return;
+        if (_showContent && Rendered != null)
+        {
+            Rendered?.Invoke(this);
+            Rendered = null;
+        }
+    }
+
+    public void Render()
+    {
+        if (_disposed)
+            return;
+        _showContent = true;
+        InvokeAsync(StateHasChanged);
+    }
+
+    public bool IsDisposed => _disposed;
+    public bool IsRendered => _showContent;
+
+    public void Dispose()
+    {
+        _disposed = true;
+        Rendered = null;
+        if (!_showContent)
+            Disposed?.Invoke(this);
+        Disposed = null;
+    }
+}
