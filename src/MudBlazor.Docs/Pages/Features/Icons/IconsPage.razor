@@ -45,7 +45,7 @@
                     <div @ref="killZone" style="@GetKillZoneStyle(false)"></div>
                 </div>
                 <Virtualize Items="@SelectedIcons" ItemSize="@_iconCardHeight">
-                    <div class="d-flex mud-width-full justify-center">
+                    <div class="d-flex mud-width-full">
                         @foreach(var icon in context.RowIcons)
                         {
                             <button class="docs-icon-panel" @onclick="@(() => SetIconDrawer(icon))">
