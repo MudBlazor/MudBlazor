@@ -51,27 +51,9 @@ namespace MudBlazor.Docs.Pages.Features.Icons
 
         private List<MudVirtualizedIcons> GetVirtualizedIcons(List<MudIcons> iconlist)
         {
-            var virtualizedIcons = new List<MudVirtualizedIcons>();
-            var rowIcons = new List<MudIcons>();
-            int counter = 0;
-
-            foreach (var icon in iconlist)
-            {
-                counter++;
-                if (CardsPerRow > counter)
-                {
-                    
-                    rowIcons.Add(icon);
-                }
-                else if(CardsPerRow <= counter)
-                {
-                    rowIcons.Add(icon);
-                    virtualizedIcons.Add(new MudVirtualizedIcons(rowIcons));
-                    rowIcons = new List<MudIcons>();
-                    counter = 0;
-                }
-            }
-            return virtualizedIcons;
+            if (CardsPerRow <= 0)
+                return new List<MudVirtualizedIcons>();
+            return iconlist.Chunk(CardsPerRow).Select(row => new MudVirtualizedIcons(row)).ToList();
         }
 
         private readonly IDictionary<string, object> IconTypes = new Dictionary<string, object>()
