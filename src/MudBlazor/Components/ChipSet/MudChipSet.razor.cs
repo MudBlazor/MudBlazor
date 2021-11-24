@@ -18,30 +18,36 @@ namespace MudBlazor
         /// <summary>
         /// Child content of component.
         /// </summary>
-        [Parameter] public RenderFragment ChildContent { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.ChipSet.Behavior)]
+        public RenderFragment ChildContent { get; set; }
 
         /// <summary>
         /// Allows to select more than one chip.
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.ChipSet.Behavior)]
         public bool MultiSelection { get; set; } = false;
 
         /// <summary>
         /// Will not allow to deselect the selected chip in single selection mode.
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.ChipSet.Behavior)]
         public bool Mandatory { get; set; } = false;
 
         /// <summary>
         /// Will make all chips closable.
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.ChipSet.Behavior)]
         public bool AllClosable { get; set; } = false;
 
         /// <summary>
         ///  Will show a check-mark for the selected components.
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.ChipSet.Appearance)]
         public bool Filter
         {
             get => _filter;
@@ -66,6 +72,7 @@ namespace MudBlazor
         /// The currently selected chip in Choice mode
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.ChipSet.Behavior)]
         public MudChip SelectedChip
         {
             get { return _chips.OfType<MudChip>().FirstOrDefault(x => x.IsSelected); }
@@ -99,6 +106,7 @@ namespace MudBlazor
         /// The currently selected chips in Filter mode
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.ChipSet.Behavior)]
         public MudChip[] SelectedChips
         {
             get { return _chips.OfType<MudChip>().Where(x => x.IsSelected).ToArray(); }

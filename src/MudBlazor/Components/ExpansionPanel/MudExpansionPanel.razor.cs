@@ -31,37 +31,51 @@ namespace MudBlazor
         /// <summary>
         /// Explicitly sets the height for the Collapse element to override the css default.
         /// </summary>
-        [Parameter] public int? MaxHeight { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.ExpansionPanel.Appearance)]
+        public int? MaxHeight { get; set; }
 
         /// <summary>
         /// RenderFragment to be displayed in the expansion panel which will override header text if defined.
         /// </summary>
-        [Parameter] public RenderFragment TitleContent { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.ExpansionPanel.Behavior)]
+        public RenderFragment TitleContent { get; set; }
 
         /// <summary>
         /// The text to be displayed in the expansion panel.
         /// </summary>
-        [Parameter] public string Text { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.ExpansionPanel.Behavior)]
+        public string Text { get; set; }
 
         /// <summary>
         /// If true, expand icon will not show
         /// </summary>
-        [Parameter] public bool HideIcon { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.ExpansionPanel.Appearance)]
+        public bool HideIcon { get; set; }
 
         /// <summary>
         /// Custom hide icon.
         /// </summary>
-        [Parameter] public string Icon { get; set; } = Icons.Material.Filled.ExpandMore;
+        [Parameter]
+        [Category(CategoryTypes.ExpansionPanel.Appearance)]
+        public string Icon { get; set; } = Icons.Material.Filled.ExpandMore;
 
         /// <summary>
         /// If true, removes vertical padding from childcontent.
         /// </summary>
-        [Parameter] public bool Dense { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.ExpansionPanel.Appearance)]
+        public bool Dense { get; set; }
 
         /// <summary>
         /// If true, the left and right padding is removed from childcontent.
         /// </summary>
-        [Parameter] public bool DisableGutters { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.ExpansionPanel.Appearance)]
+        public bool DisableGutters { get; set; }
 
         /// <summary>
         /// Raised when IsExpanded changes.
@@ -73,6 +87,7 @@ namespace MudBlazor
         /// Expansion state of the panel (two-way bindable)
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.ExpansionPanel.Behavior)]
         public bool IsExpanded
         {
             get => _isExpanded;
@@ -98,17 +113,23 @@ namespace MudBlazor
         /// Sets the initial expansion state. Do not use in combination with IsExpanded.
         /// Combine with MultiExpansion to have more than one panel start open.
         /// </summary>
-        [Parameter] public bool IsInitiallyExpanded { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.ExpansionPanel.Behavior)]
+        public bool IsInitiallyExpanded { get; set; }
 
         /// <summary>
         /// If true, the component will be disabled.
         /// </summary>
-        [Parameter] public bool Disabled { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.ExpansionPanel.Behavior)]
+        public bool Disabled { get; set; }
 
         /// <summary>
         /// Child content of component.
         /// </summary>
-        [Parameter] public RenderFragment ChildContent { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.ExpansionPanel.Behavior)]
+        public RenderFragment ChildContent { get; set; }
 
         public bool NextPanelExpanded
         {

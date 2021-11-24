@@ -134,6 +134,22 @@ namespace MudBlazor
             public const string PickerAppearance = "Picker appearance";
         }
 
+        /// <summary>Used in all charts, that is in <see cref="MudChartBase"/> and all components inheriting from it.</summary>
+        public static class Chart
+        {
+            public const string Behavior = "Behavior";
+            public const string Appearance = "Appearance";
+        }
+
+        /// <summary>Used in other base classes.</summary>
+        public static class General
+        {
+            public const string Data = "Data";
+            public const string Behavior = "Behavior";
+            public const string ClickAction = "Click action";
+            public const string Appearance = "Appearance";
+        }
+
         public static class Alert
         {
             public const string Behavior = "Behavior";
@@ -185,13 +201,6 @@ namespace MudBlazor
         public static class Carousel
         {
             public const string Data = "Data";
-            public const string Behavior = "Behavior";
-            public const string Appearance = "Appearance";
-        }
-
-        /// <summary>Used in all charts, that is in <see cref="MudChartBase"/> and all components inheriting from it.</summary>
-        public static class Chart
-        {
             public const string Behavior = "Behavior";
             public const string Appearance = "Appearance";
         }
@@ -253,8 +262,8 @@ namespace MudBlazor
 
         public static class Form
         {
-            public const string ValidatedData = "Validated Data";
-            public const string ValidatedResult = "Validation result";
+            public const string ValidatedData = "Validated data";
+            public const string ValidationResult = "Validation result";
             public const string Behavior = "Behavior";
         }
 

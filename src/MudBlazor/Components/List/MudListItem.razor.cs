@@ -26,29 +26,41 @@ namespace MudBlazor
         /// <summary>
         /// The text to display
         /// </summary>
-        [Parameter] public string Text { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.List.Behavior)]
+        public string Text { get; set; }
 
-        [Parameter] public object Value { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.List.Selecting)]
+        public object Value { get; set; }
 
         /// <summary>
         /// Avatar to use if set.
         /// </summary>
-        [Parameter] public string Avatar { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.List.Appearance)]
+        public string Avatar { get; set; }
 
         /// <summary>
         /// Link to a URL when clicked.
         /// </summary>
-        [Parameter] public string Href { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.List.ClickAction)]
+        public string Href { get; set; }
 
         /// <summary>
         /// If true, force browser to redirect outside component router-space.
         /// </summary>
-        [Parameter] public bool ForceLoad { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.List.ClickAction)]
+        public bool ForceLoad { get; set; }
 
         /// <summary>
         /// Avatar CSS Class to apply if Avatar is set.
         /// </summary>
-        [Parameter] public string AvatarClass { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.List.Appearance)]
+        public string AvatarClass { get; set; }
 
         private bool _disabled;
         /// <summary>
@@ -56,6 +68,7 @@ namespace MudBlazor
         /// The value can be overridden by the parent list.
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.List.Behavior)]
         public bool Disabled
         {
             get => _disabled || (MudList?.Disabled ?? false);
@@ -65,58 +78,79 @@ namespace MudBlazor
         /// <summary>
         /// If true, disables ripple effect.
         /// </summary>
-        [Parameter] public bool DisableRipple { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.List.Appearance)]
+        public bool DisableRipple { get; set; }
 
         /// <summary>
         /// Icon to use if set.
         /// </summary>
-        [Parameter] public string Icon { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.List.Appearance)]
+        public string Icon { get; set; }
 
         /// <summary>
         /// The color of the icon.
         /// </summary>
-        [Parameter] public Color IconColor { get; set; } = Color.Inherit;
+        [Parameter]
+        [Category(CategoryTypes.List.Appearance)]
+        public Color IconColor { get; set; } = Color.Inherit;
 
         /// <summary>
         /// Sets the Icon Size.
         /// </summary>
-        [Parameter] public Size IconSize { get; set; } = Size.Medium;
+        [Parameter]
+        [Category(CategoryTypes.List.Appearance)]
+        public Size IconSize { get; set; } = Size.Medium;
 
         /// <summary>
         /// The color of the adornment if used. It supports the theme colors.
         /// </summary>
-        [Parameter] public Color AdornmentColor { get; set; } = Color.Default;
+        [Parameter]
+        [Category(CategoryTypes.List.Expanding)]
+        public Color AdornmentColor { get; set; } = Color.Default;
 
         /// <summary>
         /// Custom expand less icon.
         /// </summary>
-        [Parameter] public string ExpandLessIcon { get; set; } = Icons.Material.Filled.ExpandLess;
+        [Parameter]
+        [Category(CategoryTypes.List.Expanding)]
+        public string ExpandLessIcon { get; set; } = Icons.Material.Filled.ExpandLess;
 
         /// <summary>
         /// Custom expand more icon.
         /// </summary>
-        [Parameter] public string ExpandMoreIcon { get; set; } = Icons.Material.Filled.ExpandMore;
+        [Parameter]
+        [Category(CategoryTypes.List.Expanding)]
+        public string ExpandMoreIcon { get; set; } = Icons.Material.Filled.ExpandMore;
 
         /// <summary>
         /// If true, the List Subheader will be indented.
         /// </summary>
-        [Parameter] public bool Inset { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.List.Appearance)]
+        public bool Inset { get; set; }
 
         /// <summary>
         /// If true, compact vertical padding will be used.
         /// </summary>
-        [Parameter] public bool Dense { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.List.Appearance)]
+        public bool Dense { get; set; }
 
         /// <summary>
         /// If true, the left and right padding is removed.
         /// </summary>
-        [Parameter] public bool DisableGutters { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.List.Appearance)]
+        public bool DisableGutters { get; set; }
 
         /// <summary>
         /// Expand or collapse nested list. Two-way bindable. Note: if you directly set this to
         /// true or false (instead of using two-way binding) it will force the nested list's expansion state.
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.List.Expanding)]
         public bool Expanded
         {
             get => _expanded;
@@ -137,27 +171,37 @@ namespace MudBlazor
         /// <summary>
         /// If true, expands the nested list on first display
         /// </summary>
-        [Parameter] public bool InitiallyExpanded { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.List.Expanding)]
+        public bool InitiallyExpanded { get; set; }
 
         /// <summary>
         /// Command parameter.
         /// </summary>
-        [Parameter] public object CommandParameter { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.List.ClickAction)]
+        public object CommandParameter { get; set; }
 
         /// <summary>
         /// Command executed when the user clicks on an element.
         /// </summary>
-        [Parameter] public ICommand Command { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.List.ClickAction)]
+        public ICommand Command { get; set; }
 
         /// <summary>
         /// Display content of this list item. If set, this overrides Text
         /// </summary>
-        [Parameter] public RenderFragment ChildContent { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.List.Behavior)]
+        public RenderFragment ChildContent { get; set; }
 
         /// <summary>
         /// Add child list items here to create a nested list.
         /// </summary>
-        [Parameter] public RenderFragment NestedList { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.List.Behavior)]
+        public RenderFragment NestedList { get; set; }
 
         /// <summary>
         /// List click event.

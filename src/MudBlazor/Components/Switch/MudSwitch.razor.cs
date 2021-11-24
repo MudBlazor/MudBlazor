@@ -34,12 +34,16 @@ namespace MudBlazor
         /// <summary>
         /// The color of the component. It supports the theme colors.
         /// </summary>
-        [Parameter] public Color Color { get; set; } = Color.Default;
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Appearance)]
+        public Color Color { get; set; } = Color.Default;
 
         /// <summary>
         /// The text/label will be displayed next to the switch if set.
         /// </summary>
-        [Parameter] public string Label { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Behavior)]
+        public string Label { get; set; }
 
         /// <summary>
         /// Shows an icon on Switch's thumb.
@@ -54,7 +58,9 @@ namespace MudBlazor
         /// <summary>
         /// If true, disables ripple effect.
         /// </summary>
-        [Parameter] public bool DisableRipple { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Appearance)]
+        public bool DisableRipple { get; set; }
 
         protected internal void HandleKeyDown(KeyboardEventArgs obj)
         {

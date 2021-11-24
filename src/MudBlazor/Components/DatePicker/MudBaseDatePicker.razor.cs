@@ -24,22 +24,29 @@ namespace MudBlazor
         /// <summary>
         /// Max selectable date.
         /// </summary>
-        [Parameter] public DateTime? MaxDate { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Validation)]
+        public DateTime? MaxDate { get; set; }
 
         /// <summary>
         /// Max selectable date.
         /// </summary>
-        [Parameter] public DateTime? MinDate { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Validation)]
+        public DateTime? MinDate { get; set; }
 
         /// <summary>
         /// First view to show in the MudDatePicker.
         /// </summary>
-        [Parameter] public OpenTo OpenTo { get; set; } = OpenTo.Date;
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.PickerBehavior)]
+        public OpenTo OpenTo { get; set; } = OpenTo.Date;
 
         /// <summary>
         /// String Format for selected date view
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.FormComponent.Behavior)]
         public string DateFormat
         {
             get
@@ -79,7 +86,9 @@ namespace MudBlazor
         /// <summary>
         /// Defines on which day the week starts. Depends on the value of Culture. 
         /// </summary>
-        [Parameter] public DayOfWeek? FirstDayOfWeek { get; set; } = null;
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.PickerBehavior)]
+        public DayOfWeek? FirstDayOfWeek { get; set; } = null;
 
         /// <summary>
         /// The current month of the date picker (two-way bindable). This changes when the user browses through the calender.
@@ -109,38 +118,51 @@ namespace MudBlazor
         /// <summary>
         /// Milliseconds to wait before closing the picker. This helps the user see that the date was selected before the popover disappears.
         /// </summary>
-        [Parameter] public int ClosingDelay { get; set; } = 100;
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.PickerBehavior)]
+        public int ClosingDelay { get; set; } = 100;
 
         /// <summary>
         /// Number of months to display in the calendar
         /// </summary>
-        [Parameter] public int DisplayMonths { get; set; } = 1;
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.PickerBehavior)]
+        public int DisplayMonths { get; set; } = 1;
 
         /// <summary>
         /// Maximum number of months in one row
         /// </summary>
-        [Parameter] public int? MaxMonthColumns { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.PickerAppearance)]
+        public int? MaxMonthColumns { get; set; }
 
         /// <summary>
         /// Start month when opening the picker. 
         /// </summary>
-        [Parameter] public DateTime? StartMonth { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.PickerBehavior)]
+        public DateTime? StartMonth { get; set; }
 
         /// <summary>
         /// Display week numbers according to the Culture parameter. If no culture is defined, CultureInfo.CurrentCulture will be used.
         /// </summary>
-        [Parameter] public bool ShowWeekNumbers { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.PickerBehavior)]
+        public bool ShowWeekNumbers { get; set; }
 
         /// <summary>
         /// Format of the selected date in the title. By default, this is "ddd, dd MMM" which abbreviates day and month names. 
         /// For instance, display the long names like this "dddd, dd. MMMM". 
         /// </summary>
-        [Parameter] public string TitleDateFormat { get; set; } = "ddd, dd MMM";
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.PickerBehavior)]
+        public string TitleDateFormat { get; set; } = "ddd, dd MMM";
 
         /// <summary>
         /// Function to determine whether a date is disabled
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.FormComponent.Validation)]
         public Func<DateTime, bool> IsDateDisabledFunc
         {
             get => _isDateDisabledFunc;
@@ -154,12 +176,16 @@ namespace MudBlazor
         /// <summary>
         /// Custom previous icon.
         /// </summary>
-        [Parameter] public string PreviousIcon { get; set; } = Icons.Material.Filled.ChevronLeft;
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.PickerAppearance)]
+        public string PreviousIcon { get; set; } = Icons.Material.Filled.ChevronLeft;
 
         /// <summary>
         /// Custom next icon.
         /// </summary>
-        [Parameter] public string NextIcon { get; set; } = Icons.Material.Filled.ChevronRight;
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.PickerAppearance)]
+        public string NextIcon { get; set; } = Icons.Material.Filled.ChevronRight;
 
         /// <summary>
         /// Set a predefined fix year - no year can be selected

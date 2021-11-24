@@ -62,12 +62,16 @@ namespace MudBlazor
         /// <summary>
         /// First view to show in the MudDatePicker.
         /// </summary>
-        [Parameter] public OpenTo OpenTo { get; set; } = OpenTo.Hours;
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.PickerBehavior)]
+        public OpenTo OpenTo { get; set; } = OpenTo.Hours;
 
         /// <summary>
         /// Choose the edition mode. By default, you can edit hours and minutes.
         /// </summary>
-        [Parameter] public TimeEditMode TimeEditMode { get; set; } = TimeEditMode.Normal;
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.PickerBehavior)]
+        public TimeEditMode TimeEditMode { get; set; } = TimeEditMode.Normal;
 
         /// <summary>
         /// Milliseconds to wait before closing the picker. This helps the user see that the time was selected before the popover disappears.
@@ -77,12 +81,15 @@ namespace MudBlazor
         /// <summary>
         /// If AutoClose is set to true and PickerActions are defined, the hour and the minutes can be defined without any action.
         /// </summary>
-        [Parameter] public bool AutoClose { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.PickerBehavior)]
+        public bool AutoClose { get; set; }
 
         /// <summary>
         /// If true, sets 12 hour selection clock.
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.FormComponent.Behavior)]
         public bool AmPm
         {
             get => _amPm;
@@ -107,6 +114,7 @@ namespace MudBlazor
         /// String Format for selected time view
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.FormComponent.Behavior)]
         public string TimeFormat
         {
             get => _timeFormat;
@@ -128,6 +136,7 @@ namespace MudBlazor
         /// The currently selected time (two-way bindable). If null, then nothing was selected.
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.FormComponent.Data)]
         public TimeSpan? Time
         {
             get => _value;

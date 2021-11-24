@@ -25,22 +25,30 @@ namespace MudBlazor
         /// <summary>
         /// The color of the component. It supports the theme colors.
         /// </summary>
-        [Parameter] public Color Color { get; set; } = Color.Default;
+        [Parameter]
+        [Category(CategoryTypes.ProgressLinear.Appearance)]
+        public Color Color { get; set; } = Color.Default;
 
         /// <summary>
         /// The color of the component. It supports the theme colors.
         /// </summary>
-        [Parameter] public Size Size { get; set; } = Size.Small;
+        [Parameter]
+        [Category(CategoryTypes.ProgressLinear.Appearance)]
+        public Size Size { get; set; } = Size.Small;
 
         /// <summary>
         /// Constantly animates, does not follow any value.
         /// </summary>
-        [Parameter] public bool Indeterminate { get; set; } = false;
+        [Parameter]
+        [Category(CategoryTypes.ProgressLinear.Behavior)]
+        public bool Indeterminate { get; set; } = false;
 
         /// <summary>
         /// If true, the buffer value will be used.
         /// </summary>
-        [Parameter] public bool Buffer { get; set; } = false;
+        [Parameter]
+        [Category(CategoryTypes.ProgressLinear.Behavior)]
+        public bool Buffer { get; set; } = false;
 
         /// <summary>
         /// If true, border-radius is set to the themes default value.
@@ -66,6 +74,7 @@ namespace MudBlazor
         /// The minimum allowed value of the linear prgoress. Should not be equal to max.
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.ProgressLinear.Behavior)]
         public double Min
         {
             get => _min;
@@ -80,6 +89,7 @@ namespace MudBlazor
         /// The maximum allowed value of the linear prgoress. Should not be equal to min.
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.ProgressLinear.Behavior)]
         public double Max
         {
             get => _max;
@@ -100,6 +110,7 @@ namespace MudBlazor
         /// The maximum allowed value of the linear prgoress. Should not be equal to min.
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.ProgressLinear.Behavior)]
         public double Value
         {
             get => _value;
@@ -111,6 +122,7 @@ namespace MudBlazor
         }
 
         [Parameter]
+        [Category(CategoryTypes.ProgressLinear.Behavior)]
         public double BufferValue
         {
             get => _bufferValue;

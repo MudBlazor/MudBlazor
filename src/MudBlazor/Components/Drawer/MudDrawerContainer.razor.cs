@@ -31,6 +31,7 @@ namespace MudBlazor
         public bool RightToLeft { get; set; }
 
         [Parameter]
+        [Category(CategoryTypes.Drawer.Behavior)]
         public RenderFragment ChildContent { get; set; }
 
         internal void FireDrawersChanged() => StateHasChanged();

@@ -281,6 +281,7 @@ namespace MudBlazor
         /// Reverts mouse wheel up and down events, if true.
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.FormComponent.Behavior)]
         public bool InvertMouseWheel { get; set; } = false;
 
         private T _minDefault;
@@ -291,6 +292,7 @@ namespace MudBlazor
         /// The minimum value for the input.
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.FormComponent.Validation)]
         public T Min
         {
             get => _minHasValue ? _min : _minDefault;
@@ -309,6 +311,7 @@ namespace MudBlazor
         /// The maximum value for the input.
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.FormComponent.Validation)]
         public T Max
         {
             get => _maxHasValue ? _max : _maxDefault;
@@ -327,6 +330,7 @@ namespace MudBlazor
         /// The increment added/subtracted by the spin buttons.
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.FormComponent.Behavior)]
         public T Step
         {
             get => _stepHasValue ? _step : _stepDefault;
@@ -341,6 +345,7 @@ namespace MudBlazor
         /// Hides the spin buttons, the user can still change value with keyboard arrows and manual update.
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.FormComponent.Appearance)]
         public bool HideSpinButtons { get; set; }
 
         /// <summary>

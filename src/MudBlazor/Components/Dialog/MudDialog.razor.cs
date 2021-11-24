@@ -26,17 +26,23 @@ namespace MudBlazor
         /// <summary>
         /// Define the dialog title as a renderfragment (overrides Title)
         /// </summary>
-        [Parameter] public RenderFragment TitleContent { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.Dialog.Behavior)]
+        public RenderFragment TitleContent { get; set; }
 
         /// <summary>
         /// Define the dialog body here
         /// </summary>
-        [Parameter] public RenderFragment DialogContent { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.Dialog.Behavior)]
+        public RenderFragment DialogContent { get; set; }
 
         /// <summary>
         /// Define the action buttons here
         /// </summary>
-        [Parameter] public RenderFragment DialogActions { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.Dialog.Behavior)]
+        public RenderFragment DialogActions { get; set; }
 
         /// <summary>
         /// Default options to pass to Show(), if none are explicitly provided.
@@ -47,27 +53,36 @@ namespace MudBlazor
         /// <summary>
         /// No padding at the sides
         /// </summary>
-        [Parameter] public bool DisableSidePadding { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.Dialog.Appearance)]
+        public bool DisableSidePadding { get; set; }
 
         /// <summary>
         /// CSS class that will be applied to the dialog content
         /// </summary>
-        [Parameter] public string ClassContent { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.Dialog.Appearance)]
+        public string ClassContent { get; set; }
 
         /// <summary>
         /// CSS class that will be applied to the action buttons container
         /// </summary>
-        [Parameter] public string ClassActions { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.Dialog.Appearance)]
+        public string ClassActions { get; set; }
 
         /// <summary>
         /// CSS styles to be applied to the dialog content
         /// </summary>
-        [Parameter] public string ContentStyle { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.Dialog.Appearance)]
+        public string ContentStyle { get; set; }
 
         /// <summary>
         /// Bind this two-way to show and close an inlined dialog. Has no effect on opened dialogs
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.Dialog.Behavior)]
         public bool IsVisible
         {
             get => _isVisible;

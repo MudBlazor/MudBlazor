@@ -14,33 +14,45 @@ namespace MudBlazor
         /// <summary>
         /// If true, the input element will be disabled.
         /// </summary>
-        [Parameter] public bool Disabled { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Behavior)]
+        public bool Disabled { get; set; }
 
         /// <summary>
         /// If true, the input will be read-only.
         /// </summary>
-        [Parameter] public bool ReadOnly { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Behavior)]
+        public bool ReadOnly { get; set; }
 
         /// <summary>
         /// If true, the input will take up the full width of its container.
         /// </summary>
-        [Parameter] public bool FullWidth { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Appearance)]
+        public bool FullWidth { get; set; }
 
         /// <summary>
         /// If true, the input will update the Value immediately on typing.
         /// If false, the Value is updated only on Enter.
         /// </summary>
-        [Parameter] public bool Immediate { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Behavior)]
+        public bool Immediate { get; set; }
 
         /// <summary>
         /// If true, the input will not have an underline.
         /// </summary>
-        [Parameter] public bool DisableUnderLine { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Appearance)]
+        public bool DisableUnderLine { get; set; }
 
         /// <summary>
         /// The HelperText will be displayed below the text field.
         /// </summary>
-        [Parameter] public string HelperText { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Behavior)]
+        public string HelperText { get; set; }
 
         /// <summary>
         /// If true, the helper text will only be visible on focus.
@@ -50,27 +62,37 @@ namespace MudBlazor
         /// <summary>
         /// Icon that will be used if Adornment is set to Start or End.
         /// </summary>
-        [Parameter] public string AdornmentIcon { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Behavior)]
+        public string AdornmentIcon { get; set; }
 
         /// <summary>
         /// Text that will be used if Adornment is set to Start or End, the Text overrides Icon.
         /// </summary>
-        [Parameter] public string AdornmentText { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Behavior)]
+        public string AdornmentText { get; set; }
 
         /// <summary>
         /// The Adornment if used. By default, it is set to None.
         /// </summary>
-        [Parameter] public Adornment Adornment { get; set; } = Adornment.None;
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Behavior)]
+        public Adornment Adornment { get; set; } = Adornment.None;
 
         /// <summary>
         /// The color of the adornment if used. It supports the theme colors.
         /// </summary>
-        [Parameter] public Color AdornmentColor { get; set; } = Color.Default;
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Appearance)]
+        public Color AdornmentColor { get; set; } = Color.Default;
 
         /// <summary>
         /// The Icon Size.
         /// </summary>
-        [Parameter] public Size IconSize { get; set; } = Size.Medium;
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Appearance)]
+        public Size IconSize { get; set; } = Size.Medium;
 
         /// <summary>
         /// Button click event if set and Adornment used.
@@ -80,17 +102,23 @@ namespace MudBlazor
         /// <summary>
         /// Variant to use.
         /// </summary>
-        [Parameter] public Variant Variant { get; set; } = Variant.Text;
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Appearance)]
+        public Variant Variant { get; set; } = Variant.Text;
 
         /// <summary>
         ///  Will adjust vertical spacing.
         /// </summary>
-        [Parameter] public Margin Margin { get; set; } = Margin.None;
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Appearance)]
+        public Margin Margin { get; set; } = Margin.None;
 
         /// <summary>
         /// The short hint displayed in the input before the user enters a value.
         /// </summary>
-        [Parameter] public string Placeholder { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Behavior)]
+        public string Placeholder { get; set; }
 
         /// <summary>
         /// If set, will display the counter, value 0 will display current count but no stop count.
@@ -105,22 +133,29 @@ namespace MudBlazor
         /// <summary>
         /// If string has value the label text will be displayed in the input, and scaled down at the top if the input has value.
         /// </summary>
-        [Parameter] public string Label { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Behavior)]
+        public string Label { get; set; }
 
         /// <summary>
         /// If true the input will focus automatically.
         /// </summary>
-        [Parameter] public bool AutoFocus { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Behavior)]
+        public bool AutoFocus { get; set; }
 
         /// <summary>
         ///  A multiline input (textarea) will be shown, if set to more than one line.
         /// </summary>
-        [Parameter] public int Lines { get; set; } = 1;
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Behavior)]
+        public int Lines { get; set; } = 1;
 
         /// <summary>
         ///  The text to be displayed.
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.FormComponent.Data)]
         public string Text { get; set; }
 
         /// <summary>
@@ -134,13 +169,17 @@ namespace MudBlazor
         /// <summary>
         ///  Hints at the type of data that might be entered by the user while editing the input
         /// </summary>
-        [Parameter] public virtual InputMode InputMode { get; set; } = InputMode.text;
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Behavior)]
+        public virtual InputMode InputMode { get; set; } = InputMode.text;
 
         /// <summary>
         /// The pattern attribute, when specified, is a regular expression which the input's value must match in order for the value to pass constraint validation. It must be a valid JavaScript regular expression
         /// Not Supported in multline input
         /// </summary>
-        [Parameter] public virtual string Pattern { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Validation)]
+        public virtual string Pattern { get; set; }
 
         /// <summary>
         /// Derived classes need to override this if they can be something other than text
@@ -217,7 +256,9 @@ namespace MudBlazor
         /// <summary>
         /// Prevent the default action for the KeyDown event.
         /// </summary>
-        [Parameter] public bool KeyDownPreventDefault { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Behavior)]
+        public bool KeyDownPreventDefault { get; set; }
 
 
         /// <summary>
@@ -233,7 +274,9 @@ namespace MudBlazor
         /// <summary>
         /// Prevent the default action for the KeyPress event.
         /// </summary>
-        [Parameter] public bool KeyPressPreventDefault { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Behavior)]
+        public bool KeyPressPreventDefault { get; set; }
 
         /// <summary>
         /// Fired on the KeyUp event.
@@ -249,7 +292,9 @@ namespace MudBlazor
         /// <summary>
         /// Prevent the default action for the KeyUp event.
         /// </summary>
-        [Parameter] public bool KeyUpPreventDefault { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Behavior)]
+        public bool KeyUpPreventDefault { get; set; }
 
         /// <summary>
         /// Fired when the Value property changes.
@@ -261,6 +306,7 @@ namespace MudBlazor
         /// The value of this input element.
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.FormComponent.Data)]
         public T Value
         {
             get => _value;
@@ -309,6 +355,7 @@ namespace MudBlazor
         /// Conversion format parameter for ToString(), can be used for formatting primitive types, DateTimes and TimeSpans
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.FormComponent.Behavior)]
         public string Format
         {
             get => ((Converter<T>)Converter).Format;

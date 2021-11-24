@@ -19,12 +19,16 @@ namespace MudBlazor
         /// <summary>
         /// The screen size(s) depending on which the ChildContent should not be rendered (or should be, if Invert is true)
         /// </summary>
-        [Parameter] public Breakpoint Breakpoint { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.Hidden.Behavior)]
+        public Breakpoint Breakpoint { get; set; }
 
         /// <summary>
         /// Inverts the Breakpoint, so that the ChildContent is only rendered when the breakpoint matches the screen size.
         /// </summary>
-        [Parameter] public bool Invert { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.Hidden.Behavior)]
+        public bool Invert { get; set; }
 
         private bool _isHidden = true;
 
@@ -32,6 +36,7 @@ namespace MudBlazor
         /// True if the component is not visible (two-way bindable)
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.Hidden.Behavior)]
         public bool IsHidden
         {
             get => _isHidden;
@@ -54,7 +59,9 @@ namespace MudBlazor
         /// <summary>
         /// Child content of component.
         /// </summary>
-        [Parameter] public RenderFragment ChildContent { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.Hidden.Behavior)]
+        public RenderFragment ChildContent { get; set; }
 
         protected void Update(Breakpoint currentBreakpoint)
         {
