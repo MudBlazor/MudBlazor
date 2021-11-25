@@ -39,11 +39,12 @@ namespace MudBlazor
             // specific categories associated with data
             ["Validated data"] = 2,
             ["Validation result"] = 3,
-            ["Header"] = 4,
-            ["Footer"] = 5,
-            ["Rows"] = 6,
 
             ["Behavior"] = 100, // general category
+
+            ["Header"] = 101,
+            ["Rows"] = 102,
+            ["Footer"] = 103,
 
             // specific behaviors of a component
             ["Filtering"] = 200,
@@ -96,7 +97,7 @@ namespace MudBlazor
     ///     </para>
     ///
     ///     <b>Categories for specific behaviors or specific parts of components</b>
-    ///     <para>If some elements or behaviors can be distinguished in a component, their properties are included in separate groups.</para>
+    ///     <para>If some elements or behaviors can be distinguished in a component, then their properties are included in separate groups.</para>
     ///
     ///     <para>Note: If a property qualifies for both the "Appearance" or "Behavior" group, and for some special group, then this special group takes precedence.
     ///           For example, <see cref="MudTableBase.CommitEditIcon"/> could belong to the "Appearance" group, but belongs to the "Editing" group.</para>
@@ -106,6 +107,10 @@ namespace MudBlazor
     /// </remarks>
     public static class CategoryTypes
     {
+        /* Implementation note:
+         * Almost all components use the "Behavior" and "Appearance" categories. We could simplify the code
+         * by inheriting these constants, but C# doesn't allow to inherit static members of a class.
+         */
 
         /// <summary>Used in <see cref="MudComponentBase"/>.</summary>
         public static class ComponentBase
@@ -406,10 +411,10 @@ namespace MudBlazor
         public static class Table
         {
             public const string Data = "Data";
-            public const string Header = "Header";
-            public const string Footer = "Footer";
-            public const string Rows = "Rows";
             public const string Behavior = "Behavior";
+            public const string Header = "Header";
+            public const string Rows = "Rows";
+            public const string Footer = "Footer";
             public const string Filtering = "Filtering";
             public const string Grouping = "Grouping";
             public const string Sorting = "Sorting";
