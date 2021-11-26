@@ -88,8 +88,8 @@ namespace MudBlazor.Docs
             },
             H3 = new H3()
             {
-                FontSize = "2.375rem",
-                FontWeight = 700,
+                FontSize = "3rem",
+                FontWeight = 600,
                 LineHeight = 1.8,
             },
             H5 = new H5()
@@ -128,7 +128,6 @@ namespace MudBlazor.Docs
         public static Palette LandingPageLightPalette = new Palette()
         {
             AppbarText = "#424242",
-            Background = "#FFFFFF",
             Success = "#4EAE2C",
             TextSecondary = "#425466",
             Dark = "#110E2D",

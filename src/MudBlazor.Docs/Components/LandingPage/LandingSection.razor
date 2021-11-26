@@ -2,50 +2,45 @@
 @using MudBlazor.Utilities
 
 
-<section class="@Classnames">
-    <div class="mud-landingpage-grid">
-         <div class="@BackgroundContainer">
-             <div class="grid">
-                 <div class="@BackgroundClassnames"></div>
-             </div>
-         </div>
-         @if(Stripes != null)
-        {
-            <div class="mud-landingpage-grid-stripes">
-                <div class="grid">
-                    @Stripes
-                </div>
-            </div>
-        }
-     </div>
-     <MudContainer MaxWidth="MaxWidth.Large" Class="py-16">
-         <div class="py-16">
-             @ChildContent
-         </div>
+<section class="@SectionClassnames">
+    <div class="section-background-container">
+        <div class="@BackgroundClassnames">
+            @Stripes
+        </div>
+    </div>
+    <MudContainer MaxWidth="MaxWidth.Large">
+        <div class="@ContainerClassnames">
+            @ChildContent
+        </div>
     </MudContainer>
 </section>
 
 
 
 @code {
-    [Parameter] public RenderFragment ChildContent { get; set; }
     [Parameter] public RenderFragment Stripes { get; set; }
+    [Parameter] public RenderFragment ChildContent { get; set; }
     [Parameter] public bool Straight { get; set; }
-    [Parameter] public string Class { get; set; }
+    [Parameter] public string SectionClass { get; set; }
     [Parameter] public string BackgroundClass { get; set; }
+    [Parameter] public string Class { get; set; }
 
-    protected string Classnames =>
+    protected string SectionClassnames =>
         new CssBuilder("mud-landingpage-section")
-          .AddClass(Class)
-        .Build();
-
-    protected string BackgroundContainer =>
-        new CssBuilder("mud-landingpage-grid-background")
-          .AddClass("skew", !Straight)
+          .AddClass(SectionClass)
         .Build();
 
     protected string BackgroundClassnames =>
-        new CssBuilder("background")
+        new CssBuilder("section-background d-flex flex-column justify-end")
+          .AddClass("straight", Straight)
+          .AddClass("skew", !Straight)
           .AddClass(BackgroundClass)
+        .Build();
+
+    protected string ContainerClassnames =>
+        new CssBuilder("section-container")
+          .AddClass("padding-straight", Straight)
+          .AddClass("padding-skew", !Straight)
+          .AddClass(Class)
         .Build();
 }
