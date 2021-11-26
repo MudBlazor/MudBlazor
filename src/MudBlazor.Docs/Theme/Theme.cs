@@ -111,7 +111,7 @@ namespace MudBlazor.Docs
             },
             Subtitle2 = new Subtitle2()
             {
-                FontSize = "1.1rem",
+                FontSize = "1rem",
                 FontWeight = 600,
                 LineHeight = 1.8,
             },
@@ -132,7 +132,9 @@ namespace MudBlazor.Docs
             TextSecondary = "#425466",
             Dark = "#110E2D",
             DarkLighten = "#1A1643",
-            DarkContrastText = "#ADBDCC"
+            DarkContrastText = "#ADBDCC",
+            GrayDefault = "#4B5563",
+            GrayLight = "#9CA3AF"
         };
         public static Palette LandingPageDarkPalette = new Palette()
         {

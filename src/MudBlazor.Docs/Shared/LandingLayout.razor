@@ -4,27 +4,28 @@
 
 <MudLayout Class="mudblazor-landingpage">
     <MudAppBar Elevation="0" DisableGutters="true" Fixed="false" Class="py-2" ToolBarClass="px-8" Color="Color.Transparent">
-            <MudBlazorLogo Style="width:40px;" Class="mr-6"/>
-            <MudButton Variant="Variant.Text" Class="mx-1 px-3">Docs</MudButton>
-            <MudButton Variant="Variant.Text" Class="mx-1 px-3">Components</MudButton>
-            <MudButton Variant="Variant.Text" Class="mx-1 px-3">Products</MudButton>
-            <MudButton Variant="Variant.Text" Class="mx-1 px-3">Pricing</MudButton>
-            <MudButton Variant="Variant.Text" Class="mx-1 px-3">Services</MudButton>
-            <MudSpacer />
-            <MudTooltip Duration="1000" Text="@(_isDarkMode? "Switch to Light Theme" : "Switch to Dark Theme")">
-                <MudIconButton Icon="@(_isDarkMode? @Icons.Material.Outlined.LightMode : @Icons.Material.Outlined.DarkMode)" Color="Color.Inherit" OnClick="@((e) => DarkMode())" />
-            </MudTooltip>
-            <MudBadge Color="Color.Secondary" Dot="true" Overlap="true">
-                <MudMenu Icon="@Icons.Outlined.Notifications" Color="Color.Inherit" AnchorOrigin="Origin.BottomLeft" TransformOrigin="Origin.TopCenter">
-                    <MudMenuItem>No Notifications</MudMenuItem>
-                </MudMenu>
-            </MudBadge>
-            <MudTooltip Duration="1000" Text="Toggle right-to-left/left-to-right">
-                <MudIconButton Icon="@Icons.Material.Filled.FormatTextdirectionRToL" Color="Color.Inherit" />
-            </MudTooltip>
+        <MudBlazorLogo Style="width:40px;" Class="mr-6"/>
+        <MudButton Variant="Variant.Text" Class="mx-1 px-3">Docs</MudButton>
+        <MudButton Variant="Variant.Text" Class="mx-1 px-3">Components</MudButton>
+        <MudButton Variant="Variant.Text" Class="mx-1 px-3">Products</MudButton>
+        <MudButton Variant="Variant.Text" Class="mx-1 px-3">Pricing</MudButton>
+        <MudButton Variant="Variant.Text" Class="mx-1 px-3">Services</MudButton>
+        <MudSpacer />
+        <MudTooltip Duration="1000" Text="@(_isDarkMode? "Switch to Light Theme" : "Switch to Dark Theme")">
+            <MudIconButton Icon="@(_isDarkMode? @Icons.Material.Outlined.LightMode : @Icons.Material.Outlined.DarkMode)" Color="Color.Inherit" OnClick="@((e) => DarkMode())" />
+        </MudTooltip>
+        <MudBadge Color="Color.Secondary" Dot="true" Overlap="true">
+            <MudMenu Icon="@Icons.Outlined.Notifications" Color="Color.Inherit" AnchorOrigin="Origin.BottomLeft" TransformOrigin="Origin.TopCenter">
+                <MudMenuItem>No Notifications</MudMenuItem>
+            </MudMenu>
+        </MudBadge>
+        <MudTooltip Duration="1000" Text="Toggle right-to-left/left-to-right">
+            <MudIconButton Icon="@Icons.Material.Filled.FormatTextdirectionRToL" Color="Color.Inherit" />
+        </MudTooltip>
     </MudAppBar>
     <MudMainContent Class="pa-0">
         @Body
+        <LandingFooter/>
     </MudMainContent>
 </MudLayout>
 

@@ -3,8 +3,54 @@
 }
 
 .mudblazor-landingpage {
-    .mud-button {
-        text-transform: none;
+
+    .lp-grid {
+        display: grid;
+        row-gap: 32px;
+        column-gap: 16px;
+        align-items: flex-start;
+
+        .lp-grid-item {
+            display: grid;
+            row-gap: 24px;
+
+            &.main-description {
+                padding-right: 116px;
+            }
+        }
+
+        @media (min-width:960px) {
+            grid-template-columns: 2fr repeat(2,1fr);
+        }
+    }
+
+    .mud-link {
+        margin: 8px 0px;
+        color: var(--mud-palette-grey-default);
+        cursor: pointer;
+        transition: color 200ms cubic-bezier(.4,0,.2,1) 0ms;
+
+        &:hover {
+            color: var(--mud-palette-grey-light);
+        }
+    }
+
+    .lp-border-title {
+        position: relative;
+
+        &::before {
+            position: absolute;
+            top: 6px;
+            left: -16px;
+            width: 1px;
+            height: 16px;
+            background-color: var(--mud-palette-primary,transparent);
+            content: "";
+        }
+    }
+
+    .landing-border-left {
+        border-left: 1px solid var(--mud-palette-primary);
     }
 
     .mud-tabs-toolbar-transparent {
@@ -38,15 +84,13 @@
 
     .mud-button-gradient-primary {
         position: relative;
-        background-size: 300% 100%;
-        background-image: linear-gradient(to right, #766ae7, #594ae2, #ff4081, #594ae2);
-        transition: all .2s ease-in-out;
+        background-image: linear-gradient(82deg, rgba(89,74,226,1) 0%, rgba(116,103,239,1) 100%, rgba(89,74,226,1) 200%);
 
         &:hover {
-            transition: all .2s ease-in-out;
-            background-position: 100% 0;
+            box-shadow: 0.3px 0.5px 0.4px hsla(247deg, 59%, 41%, 0.62), 0.3px 0.6px 0.5px -0.7px hsla(247deg, 59%, 41%, 0.54), 0.8px 1.6px 1.3px -1.4px hsla(247deg, 59%, 41%, 0.46), 2px 4.1px 3.4px -2.1px hsla(247deg, 59%, 41%, 0.38), 4.5px 9px 7.5px -2.9px hsla(247deg, 59%, 41%, 0.31), 8.5px 17.1px 14.3px -3.6px hsla(247deg, 59%, 41%, 0.23), 14.6px 29.2px 24.5px -4.3px hsla(247deg, 59%, 41%, 0.15), 23px 46px 38.6px -5px hsla(247deg, 59%, 41%, 0.08);
         }
     }
+
 
     .landing-h1-gradient {
         background: linear-gradient(82deg, rgba(89,74,226,1) 0%, rgba(255,102,153,1) 100%);
@@ -68,6 +112,10 @@
             &.surface {
                 background-color: var(--mud-palette-surface);
             }
+
+            &.sweet {
+                background-color: #F9FAFC;
+            }
         }
 
         section {
@@ -84,6 +132,11 @@
                 height: 100%;
                 width: 100%;
                 overflow: hidden;
+
+                &.straight-end {
+                    top: -50%;
+                    height: 50%;
+                }
 
                 &.straight {
                     height: calc(100% + var(--section-diff));
@@ -170,7 +223,7 @@
         font-weight: 700;
         width: max-content;
         font-size: .875rem;
-        color: #5E5BF0 !important;
+        color: #5E5BF0;
         text-decoration: none;
         transform: perspective(1px) translateZ(0);
         transition: all 0.3s;
@@ -237,14 +290,12 @@
         .world-map {
             display: flex;
             align-items: end;
-            transform: skewY(-12deg);
 
             .world-map-wrapper {
                 overflow: hidden;
 
                 svg {
                     margin-bottom: -128px;
-                    transform: skewY(12deg);
                 }
             }
         }
@@ -258,7 +309,7 @@
 
     @media (max-width:600px) {
         .global-scale-item {
-            padding-bottom:64px;
+            padding-bottom: 64px;
         }
 
         .world-map {
@@ -274,6 +325,18 @@
                     margin-right: -128px;
                 }
             }
+        }
+    }
+
+    .lp-footer {
+
+        .section-background.straight {
+            height: 100% !important;
+        }
+
+        .lp-footer-content {
+            padding-bottom: 32px !important;
+            color: var(--mud-palette-text-secondary);
         }
     }
 }
@@ -379,3 +442,29 @@
             transform: translateX(0);
         }
     }
+
+.twitter {
+    color: #1DA1F2 !important;
+}
+
+.discord {
+    color: #7781ff !important;
+}
+
+.github {
+    color: #24292f !important;
+}
+
+.stackoverflow {
+    color: #F48024 !important;
+
+    &.mud-icon-root {
+        path:first-child {
+            fill: #BCBBBB;
+        }
+
+        path:last-child {
+            fill: #F48024;
+        }
+    }
+}
