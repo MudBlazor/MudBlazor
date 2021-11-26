@@ -197,34 +197,6 @@
         color: var(--mud-palette-dark-text);
     }
 
-
-    @media (max-width:960px) {
-        .global-scale-item {
-            padding-bottom: 128px;
-        }
-
-        .world-map {
-            display: flex;
-            align-items: end;
-            transform: skewY(-12deg);
-
-            .world-map-wrapper {
-                overflow: hidden;
-
-                svg {
-                    margin-bottom: -128px;
-                    transform: skewY(12deg);
-                }
-            }
-        }
-    }
-
-    @media (min-width:960px) {
-        .world-map-item {
-            position: relative;
-        }
-    }
-
     .world-map {
         position: absolute;
         top: 0;
@@ -253,6 +225,54 @@
         #United_States, #Germany, #United_Kingdom, #India, #Italy, #Netherlands, #Australia, #Brazil, #Russia, #Spain, #South_Africa, #Egypt, #Sweden, #Austria, #Japan {
             circle {
                 fill: #5e5bf0;
+            }
+        }
+    }
+
+    @media (max-width:960px) {
+        .global-scale-item {
+            padding-bottom: 128px;
+        }
+
+        .world-map {
+            display: flex;
+            align-items: end;
+            transform: skewY(-12deg);
+
+            .world-map-wrapper {
+                overflow: hidden;
+
+                svg {
+                    margin-bottom: -128px;
+                    transform: skewY(12deg);
+                }
+            }
+        }
+    }
+
+    @media (min-width:960px) {
+        .world-map-item {
+            position: relative;
+        }
+    }
+
+    @media (max-width:600px) {
+        .global-scale-item {
+            padding-bottom:64px;
+        }
+
+        .world-map {
+
+
+            .world-map-wrapper {
+                width: 120%;
+                margin-left: -16px;
+                margin-right: -16px;
+
+                svg {
+                    margin-left: -128px;
+                    margin-right: -128px;
+                }
             }
         }
     }
