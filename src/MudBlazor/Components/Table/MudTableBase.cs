@@ -369,7 +369,9 @@ namespace MudBlazor
         /// <summary>
         /// Number of items. Used only with ServerData="true"
         /// </summary>
-        [Parameter] public int TotalItems { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.Table.Data)]
+        public int TotalItems { get; set; }
 
         /// <summary>
         /// CSS class for the table rows. Note, many CSS settings are overridden by MudTd though

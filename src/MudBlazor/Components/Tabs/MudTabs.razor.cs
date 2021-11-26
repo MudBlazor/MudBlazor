@@ -162,7 +162,9 @@ namespace MudBlazor
         /// <summary>
         /// If true, disables slider animation
         /// </summary>
-        [Parameter] public bool DisableSliderAnimation { get => _disableSliderAnimation; set => _disableSliderAnimation = value; }
+        [Parameter]
+        [Category(CategoryTypes.Tabs.Appearance)]
+        public bool DisableSliderAnimation { get => _disableSliderAnimation; set => _disableSliderAnimation = value; }
 
         /// <summary>
         /// Child content of component.

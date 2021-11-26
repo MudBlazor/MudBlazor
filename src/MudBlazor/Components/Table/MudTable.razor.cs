@@ -40,7 +40,9 @@ namespace MudBlazor
         /// <summary>
         /// Defines how a table column looks like. Columns components should inherit from MudBaseColumn
         /// </summary>
-        [Parameter] public RenderFragment<T> Columns { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.Table.Behavior)]
+        public RenderFragment<T> Columns { get; set; }
         /// <summary>
         /// Comma separated list of columns to show if there is no templates defined
         /// </summary>

@@ -50,7 +50,9 @@ namespace MudBlazor
         [Category(CategoryTypes.NavMenu.Appearance)]
         public Color IconColor { get; set; } = Color.Default;
 
-        [Parameter] public NavLinkMatch Match { get; set; } = NavLinkMatch.Prefix;
+        [Parameter]
+        [Category(CategoryTypes.NavMenu.Behavior)]
+        public NavLinkMatch Match { get; set; } = NavLinkMatch.Prefix;
 
         [Parameter]
         [Category(CategoryTypes.NavMenu.ClickAction)]

@@ -48,6 +48,7 @@ namespace MudBlazor
         /// Default options to pass to Show(), if none are explicitly provided.
         /// Typically useful on inline dialogs.
         /// </summary>
+        // "Misc" category (Behavior and Appearance)
         [Parameter] public DialogOptions Options { get; set; }
 
         /// <summary>
