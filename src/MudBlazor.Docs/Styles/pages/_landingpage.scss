@@ -193,12 +193,22 @@
         }
     }
 
+    .global-scale-item {
+        .title {
+            border-left: 2px solid #594ae2;
+        }
+    }
+
     .dark-section-text {
         color: var(--mud-palette-dark-text);
     }
 
 
     @media (max-width:960px) {
+        .global-scale-item {
+            padding-bottom: 128px;
+        }
+
         .world-map {
             display: flex;
             align-items: end;
@@ -208,7 +218,7 @@
                 overflow: hidden;
 
                 svg {
-                    margin-bottom:-64px;
+                    margin-bottom: -128px;
                     transform: skewY(12deg);
                 }
             }
@@ -227,6 +237,8 @@
         left: 0;
         height: 100%;
         width: 100%;
+        z-index: -1;
+        user-select: none;
 
         .world-map-wrapper {
             position: relative;
