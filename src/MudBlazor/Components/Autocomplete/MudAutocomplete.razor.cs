@@ -435,10 +435,10 @@ namespace MudBlazor
             OnKeyDown.InvokeAsync(obj).AndForget();
         }
 
-        internal void HandleKeyUp(KeyboardEventArgs obj)
-        {
-            OnKeyUp.InvokeAsync(obj).AndForget();
-        }
+        //internal void HandleKeyUp(KeyboardEventArgs obj)
+        //{
+        //    OnKeyUp.InvokeAsync(obj).AndForget();
+        //}
 
         [Inject] private IKeyInterceptor _keyInterceptor { get; set; }
 
@@ -457,6 +457,7 @@ namespace MudBlazor
                         new KeyOptions { Key="ArrowUp", PreventDown = "key+none" }, // prevent scrolling page, instead hilight previous item
                         new KeyOptions { Key="ArrowDown", PreventDown = "key+none" }, // prevent scrolling page, instead hilight next item
                         new KeyOptions { Key="Home", PreventDown = "key+none" },
+                        new KeyOptions { Key="Enter", PreventDown = "key+none" },
                         new KeyOptions { Key="End", PreventDown = "key+none" },
                         new KeyOptions { Key="a", PreventDown = "key+ctrl" }, // select all items instead of all page text
                         new KeyOptions { Key="A", PreventDown = "key+ctrl" }, // select all items instead of all page text
@@ -465,6 +466,7 @@ namespace MudBlazor
                 });
                 _keyInterceptor.KeyDown += HandleKeyDown;
                 
+
             }
             await base.OnAfterRenderAsync(firstRender);
         }
