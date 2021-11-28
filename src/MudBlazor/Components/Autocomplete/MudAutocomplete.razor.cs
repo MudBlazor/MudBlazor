@@ -371,9 +371,11 @@ namespace MudBlazor
             return "null";
         }
 
-        internal async void HandleKeyDown(KeyboardEventArgs args)
+        internal async void HandleKeyDown(KeyboardEventArgs obj)
         {
-            switch (args.Key)
+            if (Disabled || ReadOnly)
+                return;
+            switch (obj.Key)
             {
                 case "Tab":
                     // NOTE: We need to catch Tab in Keydown because a tab will move focus to the next element and thus
@@ -388,13 +390,6 @@ namespace MudBlazor
                 case "Escape":
                     await ChangeMenu(open: false);
                     break;
-            }
-        }
-
-        internal async void HandleKeyUp(KeyboardEventArgs args)
-        {
-            switch (args.Key)
-            {
                 case "Enter":
                 case "NumpadEnter":
                     if (!IsOpen)
@@ -418,9 +413,9 @@ namespace MudBlazor
                     }
                     break;
                 case "ArrowUp":
-                    if (args.AltKey == true)
+                    if (obj.AltKey == true)
                     {
-                        await ChangeMenu(open:false);
+                        await ChangeMenu(open: false);
                     }
                     else if (!IsOpen)
                     {
@@ -432,18 +427,13 @@ namespace MudBlazor
                         await SelectNextItem(-(decrement < 0 ? 1 : decrement));
                     }
                     break;
-                
-                case "Tab":
-                    await Task.Delay(1);
-                    if (!IsOpen)
-                        return;
-                    if (SelectValueOnTab)
-                        await OnEnterKey();
-                    else
-                        await ToggleMenu();
-                    break;
             }
-            base.InvokeKeyUp(args);
+            OnKeyDown.InvokeAsync(obj).AndForget();
+        }
+
+        internal void HandleKeyUp(KeyboardEventArgs obj)
+        {
+            OnKeyUp.InvokeAsync(obj).AndForget();
         }
 
         [Inject] private IKeyInterceptor _keyInterceptor { get; set; }
@@ -464,7 +454,7 @@ namespace MudBlazor
                         new KeyOptions { Key="ArrowDown", PreventDown = "key+none" }, // prevent scrolling page, instead hilight next item
                         new KeyOptions { Key="Home", PreventDown = "key+none" },
                         new KeyOptions { Key="End", PreventDown = "key+none" },
-                        new KeyOptions { Key="Escape", StopDown = "key+none" },
+                        new KeyOptions { Key="Escape", SubscribeDown = true },
                         new KeyOptions { Key="Enter", PreventDown = "key+none" },
                         new KeyOptions { Key="NumpadEnter", PreventDown = "key+none" },
                         new KeyOptions { Key="a", PreventDown = "key+ctrl" }, // select all items instead of all page text

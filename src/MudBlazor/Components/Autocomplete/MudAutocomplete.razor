@@ -17,8 +17,7 @@
                           Clearable="@Clearable" OnClearButtonClick="@OnClearButtonClick"
                           @attributes="UserAttributes"
                           TextChanged="OnTextChanged" OnBlur="OnInputBlurred"
-                          OnKeyDown="@this.HandleKeyDown"
-                          OnKeyUp="@this.HandleKeyUp" autocomplete=@("mud-disabled-"+Guid.NewGuid()) KeyUpPreventDefault="KeyUpPreventDefault"
+                          autocomplete=@("mud-disabled-"+Guid.NewGuid())
                           Placeholder="@Placeholder" Immediate="true"
                           InputMode="@InputMode" Pattern="@Pattern"
                           T="string" />
