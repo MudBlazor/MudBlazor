@@ -341,7 +341,7 @@ namespace MudBlazor
                         new KeyOptions { Key="ArrowDown", PreventDown = "key+none" },
                         new KeyOptions { Key="Enter", PreventDown = "key+none" },
                         new KeyOptions { Key="NumpadEnter", PreventDown = "key+none" },
-                        new KeyOptions { Key="Escape", StopDown = "key+none", SubscribeDown = true },
+                        new KeyOptions { Key="/./", SubscribeDown = true, SubscribeUp = true }, // for our users
                     },
                 });
                 _keyInterceptor.KeyDown += HandleKeyDown;
@@ -374,11 +374,15 @@ namespace MudBlazor
             {
                 await _pickerInlineRef.MudChangeCssAsync(PickerInlineClass);
             }
+
+            await _keyInterceptor.UpdateKey(new() { Key = "Escape", StopDown = "key+none" });
         }
 
         protected virtual void OnClosed()
         {
             OnPickerClosed();
+
+            _keyInterceptor.UpdateKey(new() { Key = "Escape", StopDown = "none" });
         }
 
         protected virtual void OnPickerOpened()
