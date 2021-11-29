@@ -4,7 +4,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
@@ -170,15 +169,10 @@ namespace MudBlazor
         {
             if (_sortBy == null)
             {
-                var o = _sortBy.Invoke(default(T));
-
-                if (o == null)
-                {
-                    // set the default SortBy
-                    var parameter = Expression.Parameter(typeof(T), "x");
-                    var field = Expression.Convert(Expression.Property(parameter, typeof(T).GetProperty(Field)), typeof(object));
-                    _sortBy = Expression.Lambda<Func<T, object>>(field, parameter).Compile();
-                }
+                // set the default SortBy
+                var parameter = Expression.Parameter(typeof(T), "x");
+                var field = Expression.Convert(Expression.Property(parameter, typeof(T).GetProperty(Field)), typeof(object));
+                _sortBy = Expression.Lambda<Func<T, object>>(field, parameter).Compile();
             }
         }
 

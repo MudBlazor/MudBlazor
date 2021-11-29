@@ -52,7 +52,7 @@ namespace MudBlazor
         /// Determines whether to show or hide column options. This overrides the ShowColumnOptions parameter on the DataGrid.
         /// </summary>
         [Parameter] public bool? ShowColumnOptions { get; set; }
-        [Parameter] public Func<T, object> SortBy { get; set; } = x => { return null; };
+        [Parameter] public Func<T, object> SortBy { get; set; }// = x => { return null; };
         [Parameter] public SortDirection InitialDirection { get; set; } = SortDirection.None;
         [Parameter] public string SortIcon { get; set; } = Icons.Material.Filled.ArrowUpward;
 

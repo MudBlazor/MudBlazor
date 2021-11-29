@@ -612,7 +612,6 @@ namespace MudBlazor
 
             if (_sortBy == null || _direction == SortDirection.None)
                 return items;
-
             if (_direction == SortDirection.Ascending)
                 return items.OrderBy(item => _sortBy(item));
             else
