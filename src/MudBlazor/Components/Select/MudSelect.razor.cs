@@ -253,6 +253,7 @@ namespace MudBlazor
         /// The Comparer to use for comparing selected values internally.
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.FormComponent.Behavior)]
         public IEqualityComparer<T> Comparer
         {
             get => _comparer;

@@ -191,15 +191,21 @@ namespace MudBlazor
         /// <summary>
         /// Set a predefined fix year - no year can be selected
         /// </summary>
-        [Parameter] public int? FixYear { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.PickerBehavior)]
+        public int? FixYear { get; set; }
         /// <summary>
         /// Set a predefined fix month - no month can be selected
         /// </summary>
-        [Parameter] public int? FixMonth { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.PickerBehavior)]
+        public int? FixMonth { get; set; }
         /// <summary>
         /// Set a predefined fix day - no day can be selected
         /// </summary>
-        [Parameter] public int? FixDay { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.PickerBehavior)]
+        public int? FixDay { get; set; }
 
         protected virtual bool IsRange { get; } = false;
 
