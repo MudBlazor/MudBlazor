@@ -48,12 +48,16 @@ namespace MudBlazor
         /// <summary>
         /// Shows an icon on Switch's thumb.
         /// </summary>
-        [Parameter] public string ThumbIcon { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Appearance)]
+        public string ThumbIcon { get; set; }
 
         /// <summary>
         /// The color of the thumb icon. Supports the theme colors.
         /// </summary>
-        [Parameter] public Color ThumbIconColor { get; set; } = Color.Default;
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Appearance)]
+        public Color ThumbIconColor { get; set; } = Color.Default;
 
         /// <summary>
         /// If true, disables ripple effect.

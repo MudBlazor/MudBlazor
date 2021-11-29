@@ -76,7 +76,9 @@ namespace MudBlazor
         /// <summary>
         /// Milliseconds to wait before closing the picker. This helps the user see that the time was selected before the popover disappears.
         /// </summary>
-        [Parameter] public int ClosingDelay { get; set; } = 200;
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.PickerBehavior)]
+        public int ClosingDelay { get; set; } = 200;
 
         /// <summary>
         /// If AutoClose is set to true and PickerActions are defined, the hour and the minutes can be defined without any action.

@@ -72,21 +72,21 @@ namespace MudBlazor
         /// Custom checked icon, leave null for default.
         /// </summary>
         [Parameter]
-        [Category(CategoryTypes.FormComponent.Behavior)]
+        [Category(CategoryTypes.FormComponent.Appearance)]
         public string CheckedIcon { get; set; } = Icons.Material.Filled.CheckBox;
 
         /// <summary>
         /// Custom unchecked icon, leave null for default.
         /// </summary>
         [Parameter]
-        [Category(CategoryTypes.FormComponent.Behavior)]
+        [Category(CategoryTypes.FormComponent.Appearance)]
         public string UncheckedIcon { get; set; } = Icons.Material.Filled.CheckBoxOutlineBlank;
 
         /// <summary>
         /// Custom indeterminate icon, leave null for default.
         /// </summary>
         [Parameter]
-        [Category(CategoryTypes.FormComponent.Behavior)]
+        [Category(CategoryTypes.FormComponent.Appearance)]
         public string IndeterminateIcon { get; set; } = Icons.Material.Filled.IndeterminateCheckBox;
 
         /// <summary>

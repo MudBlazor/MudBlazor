@@ -172,7 +172,9 @@ namespace MudBlazor
         /// <summary>
         /// Optional presentation template for disabled item
         /// </summary>
-        [Parameter] public RenderFragment<T> ItemDisabledTemplate { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.ListBehavior)]
+        public RenderFragment<T> ItemDisabledTemplate { get; set; }
 
         /// <summary>
         /// On drop-down close override Text with selected Value. This makes it clear to the user
@@ -193,7 +195,9 @@ namespace MudBlazor
         /// <summary>
         /// Function to be invoked when checking whether an item should be disabled or not
         /// </summary>
-        [Parameter] public Func<T, bool> ItemDisabledFunc { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.ListBehavior)]
+        public Func<T, bool> ItemDisabledFunc { get; set; }
 
         private bool _isOpen;
 

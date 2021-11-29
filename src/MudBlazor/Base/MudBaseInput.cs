@@ -57,7 +57,9 @@ namespace MudBlazor
         /// <summary>
         /// If true, the helper text will only be visible on focus.
         /// </summary>
-        [Parameter] public bool HelperTextOnFocus { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Behavior)]
+        public bool HelperTextOnFocus { get; set; }
 
         /// <summary>
         /// Icon that will be used if Adornment is set to Start or End.
@@ -123,12 +125,16 @@ namespace MudBlazor
         /// <summary>
         /// If set, will display the counter, value 0 will display current count but no stop count.
         /// </summary>
-        [Parameter] public int? Counter { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Validation)]
+        public int? Counter { get; set; }
 
         /// <summary>
         /// Maximum number of characters that the input will accept
         /// </summary>
-        [Parameter] public int MaxLength { get; set; } = 524288;
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Validation)]
+        public int MaxLength { get; set; } = 524288;
 
         /// <summary>
         /// If string has value the label text will be displayed in the input, and scaled down at the top if the input has value.
@@ -164,7 +170,9 @@ namespace MudBlazor
         /// If you need to update the input's text while it is focused you can set this parameter to false.
         /// Note: on WASM text update suppression is not active, so this parameter has no effect.
         /// </summary>
-        [Parameter] public bool TextUpdateSuppression { get; set; } = true;
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Behavior)]
+        public bool TextUpdateSuppression { get; set; } = true;
 
         /// <summary>
         ///  Hints at the type of data that might be entered by the user while editing the input

@@ -35,7 +35,9 @@ namespace MudBlazor
         /// <summary>
         /// The color of the component. It supports the theme colors.
         /// </summary>
-        [Parameter] public Color Color { get; set; } = Color.Default;
+        [Parameter]
+        [Category(CategoryTypes.Tooltip.Appearance)]
+        public Color Color { get; set; } = Color.Default;
 
         /// <summary>
         /// Sets the text to be displayed inside the tooltip.
@@ -47,12 +49,16 @@ namespace MudBlazor
         /// <summary>
         /// If true, a arrow will be displayed pointing towards the content from the tooltip.
         /// </summary>
-        [Parameter] public bool Arrow { get; set; } = false;
+        [Parameter]
+        [Category(CategoryTypes.Tooltip.Appearance)]
+        public bool Arrow { get; set; } = false;
 
         /// <summary>
         /// Sets the length of time that the opening transition takes to complete.
         /// </summary>
-        [Parameter] public double Duration { get; set; } = 251;
+        [Parameter]
+        [Category(CategoryTypes.Tooltip.Appearance)]
+        public double Duration { get; set; } = 251;
 
         /// <summary>
         /// Sets the amount of time to wait from opening the popover before beginning to perform the transition. 

@@ -503,7 +503,9 @@ namespace MudBlazor
         /// <summary>
         /// If true, prevent scrolling while dropdown is open.
         /// </summary>
-        [Parameter] public bool LockScroll { get; set; } = false;
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.ListBehavior)]
+        public bool LockScroll { get; set; } = false;
 
         /// <summary>
         /// Button click event for clear button. Called after text and value has been cleared.

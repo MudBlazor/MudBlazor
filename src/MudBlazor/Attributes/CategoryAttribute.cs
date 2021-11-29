@@ -191,6 +191,11 @@ namespace MudBlazor
             public const string Appearance = "Appearance";
         }
 
+        public static class BreakpointProvider
+        {
+            public const string Behavior = "Behavior";
+        }
+
         public static class ButtonGroup
         {
             public const string Behavior = "Behavior";
@@ -273,6 +278,12 @@ namespace MudBlazor
         }
 
         public static class Grid
+        {
+            public const string Behavior = "Behavior";
+            public const string Appearance = "Appearance";
+        }
+
+        public static class Highlighter
         {
             public const string Behavior = "Behavior";
             public const string Appearance = "Appearance";
@@ -371,6 +382,7 @@ namespace MudBlazor
 
         public static class Radio
         {
+            public const string Data = "Data";
             public const string Behavior = "Behavior";
             public const string Appearance = "Appearance";
         }

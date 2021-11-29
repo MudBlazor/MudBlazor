@@ -41,12 +41,16 @@ namespace MudBlazor
         /// <summary>
         /// The higher the number, the heavier the drop-shadow.
         /// </summary>
-        [Parameter] public int Elevation { set; get; } = 0;
+        [Parameter]
+        [Category(CategoryTypes.Badge.Appearance)]
+        public int Elevation { set; get; } = 0;
 
         /// <summary>
         /// The visibility of the badge.
         /// </summary>
-        [Parameter] public bool Visible { get; set; } = true;
+        [Parameter]
+        [Category(CategoryTypes.Badge.Behavior)]
+        public bool Visible { get; set; } = true;
 
         /// <summary>
         /// The color of the badge.
@@ -121,7 +125,9 @@ namespace MudBlazor
         /// <summary>
         /// Badge class names, separated by space.
         /// </summary>
-        [Parameter] public string BadgeClass { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.Badge.Appearance)]
+        public string BadgeClass { get; set; }
 
         /// <summary>
         /// Child content of component, the content that the badge will apply to.

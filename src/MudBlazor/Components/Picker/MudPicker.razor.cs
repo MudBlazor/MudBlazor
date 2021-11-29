@@ -141,7 +141,9 @@ namespace MudBlazor
         /// <summary>
         /// If true, the helper text will only be visible on focus.
         /// </summary>
-        [Parameter] public bool HelperTextOnFocus { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Behavior)]
+        public bool HelperTextOnFocus { get; set; }
 
         /// <summary>
         /// If string has value the label text will be displayed in the input, and scaled down at the top if the input has value.
@@ -246,6 +248,7 @@ namespace MudBlazor
         /// The currently selected string value (two-way bindable)
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.FormComponent.Data)]
         public string Text
         {
             get => _text;

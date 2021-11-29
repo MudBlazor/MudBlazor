@@ -95,6 +95,7 @@ namespace MudBlazor
         /// The month is represented as a DateTime which is always the first day of that month. You can also set this to define which month is initially shown. If not set, the current month is shown.
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.FormComponent.PickerBehavior)]
         public DateTime? PickerMonth
         {
             get => _picker_month;

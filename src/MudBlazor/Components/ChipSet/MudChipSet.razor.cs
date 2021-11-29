@@ -66,6 +66,7 @@ namespace MudBlazor
         ///  Will make all chips read only.
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.ChipSet.Behavior)]
         public bool ReadOnly { get; set; } = false;
 
         /// <summary>
@@ -147,6 +148,7 @@ namespace MudBlazor
         /// The Comparer to use for comparing selected values internally.
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.ChipSet.Behavior)]
         public IEqualityComparer<object> Comparer
         {
             get => _comparer;
@@ -170,6 +172,7 @@ namespace MudBlazor
         /// Note: make the list Clickable for item selection to work.
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.ChipSet.Behavior)]
         public ICollection<object> SelectedValues
         {
             get => _selectedValues;

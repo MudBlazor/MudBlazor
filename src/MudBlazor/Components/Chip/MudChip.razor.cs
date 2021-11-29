@@ -180,7 +180,9 @@ namespace MudBlazor
         /// A value that should be managed in the SelectedValues collection.
         /// Note: do not change the value during the chip's lifetime
         /// </summary>
-        [Parameter] public object Value { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.Chip.Behavior)]
+        public object Value { get; set; }
 
         /// <summary>
         /// If true, force browser to redirect outside component router-space.

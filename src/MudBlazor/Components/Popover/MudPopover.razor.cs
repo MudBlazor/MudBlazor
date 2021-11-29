@@ -57,7 +57,9 @@ namespace MudBlazor
         /// <summary>
         /// If true, will apply default MudPaper classes.
         /// </summary>
-        [Parameter] public bool Paper { get; set; } = true;
+        [Parameter]
+        [Category(CategoryTypes.Popover.Appearance)]
+        public bool Paper { get; set; } = true;
 
         /// <summary>
         /// The higher the number, the heavier the drop-shadow.
@@ -83,17 +85,23 @@ namespace MudBlazor
         /// <summary>
         /// If true the popover will be fixed position instead of absolute.
         /// </summary>
-        [Parameter] public bool Fixed { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.Popover.Behavior)]
+        public bool Fixed { get; set; }
 
         /// <summary>
         /// Sets the length of time that the opening transition takes to complete.
         /// </summary>
-        [Parameter] public double Duration { get; set; } = 251;
+        [Parameter]
+        [Category(CategoryTypes.Popover.Appearance)]
+        public double Duration { get; set; } = 251;
 
         /// <summary>
         /// Sets the amount of time to wait from opening the popover before beginning to perform the transition. 
         /// </summary>
-        [Parameter] public double Delay { get; set; } = 0;
+        [Parameter]
+        [Category(CategoryTypes.Popover.Appearance)]
+        public double Delay { get; set; } = 0;
 
         /// <summary>
         /// Sets the direction the popover will start from relative to its parent.
@@ -122,7 +130,9 @@ namespace MudBlazor
         /// Set the overflow behavior of a popover and controls how the element should react if there is not enough space for the element to be visible
         /// Defaults to none, which doens't apply any overflow logic
         /// </summary>
-        [Parameter] public OverflowBehavior OverflowBehavior { get; set; } = OverflowBehavior.FilpOnOpen;
+        [Parameter]
+        [Category(CategoryTypes.Popover.Appearance)]
+        public OverflowBehavior OverflowBehavior { get; set; } = OverflowBehavior.FilpOnOpen;
 
         /// <summary>
         /// If true, the select menu will open either above or bellow the input depending on the direction.
@@ -141,7 +151,9 @@ namespace MudBlazor
         /// <summary>
         /// If true, the popover will have the same width at its parent element, default to false
         /// </summary>
-        [Parameter] public bool RelativeWidth { get; set; } = false;
+        [Parameter]
+        [Category(CategoryTypes.Popover.Appearance)]
+        public bool RelativeWidth { get; set; } = false;
 
         /// <summary>
         /// Child content of the component.

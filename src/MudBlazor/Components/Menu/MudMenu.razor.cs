@@ -32,7 +32,9 @@ namespace MudBlazor
         /// <summary>
         /// User class names for the list, separated by space
         /// </summary>
-        [Parameter] public string ListClass { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.Menu.PopupAppearance)]
+        public string ListClass { get; set; }
 
         /// <summary>
         /// User class names for the popover, separated by space

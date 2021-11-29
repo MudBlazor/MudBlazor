@@ -53,22 +53,30 @@ namespace MudBlazor
         /// <summary>
         /// If true, border-radius is set to the themes default value.
         /// </summary>
-        [Parameter] public bool Rounded { get; set; } = false;
+        [Parameter]
+        [Category(CategoryTypes.ProgressLinear.Appearance)]
+        public bool Rounded { get; set; } = false;
 
         /// <summary>
         /// Adds stripes to the filled part of the linear progress.
         /// </summary>
-        [Parameter] public bool Striped { get; set; } = false;
+        [Parameter]
+        [Category(CategoryTypes.ProgressLinear.Appearance)]
+        public bool Striped { get; set; } = false;
 
         /// <summary>
         /// If true, the progress bar  will be displayed vertically.
         /// </summary>
-        [Parameter] public bool Vertical { get; set; } = false;
+        [Parameter]
+        [Category(CategoryTypes.ProgressLinear.Appearance)]
+        public bool Vertical { get; set; } = false;
 
         /// <summary>
         /// Child content of component.
         /// </summary>
-        [Parameter] public RenderFragment ChildContent { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.ProgressLinear.Behavior)]
+        public RenderFragment ChildContent { get; set; }
 
         /// <summary>
         /// The minimum allowed value of the linear prgoress. Should not be equal to max.
