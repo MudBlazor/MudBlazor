@@ -11,7 +11,7 @@ namespace MudBlazor
     {
         protected string Classname =>
                     new CssBuilder("mud-carousel")
-                         .AddClass($"mud-carousel-{_currentColor.ToDescriptionString()}")
+                         .AddClass($"mud-carousel-{(DelimitersColor ?? _currentColor).ToDescriptionString()}")
                                  .AddClass(Class)
                                  .Build();
 
@@ -32,9 +32,9 @@ namespace MudBlazor
         private bool _autoCycle = true;
         private Color _currentColor = Color.Inherit;
         private TimeSpan _cycleTimeout = TimeSpan.FromSeconds(5);
-        private void _timerElapsed(object stateInfo) => InvokeAsync(async () => await TimerTickAsync());
+        private void TimerElapsed(object stateInfo) => InvokeAsync(async () => await TimerTickAsync());
 
-        private Position ConvertArrowsPosition(Position position)
+        private static Position ConvertArrowsPosition(Position position)
         {
             return position switch
             {
@@ -60,10 +60,15 @@ namespace MudBlazor
         [Parameter] public Position ArrowsPosition { get; set; } = Position.Center;
 
         /// <summary>
-        /// Gets or Sets if bottom bar with Delimiters musb be visible
+        /// Gets or Sets if bottom bar with Delimiters must be visible
         /// </summary>
         [Parameter] public bool ShowDelimiters { get; set; } = true;
 
+        /// <summary>
+        /// Gets or Sets the Delimiters color.
+        /// If not set, the color is determined based on the <see cref="MudCarouselItem.Color"/> property of the active child.
+        /// </summary>
+        [Parameter] public Color? DelimitersColor { get; set; }
 
         /// <summary>
         /// Gets or Sets automatic cycle on item collection
@@ -154,13 +159,24 @@ namespace MudBlazor
 
 
         /// <summary>
-        /// Fires when selected Index changed on base class
+        /// Called when selected Index changed on base class
         /// </summary>
-        private void SelectionChanged()
+        protected override void SelectionChanged()
         {
             InvokeAsync(async () => await ResetTimerAsync());
 
             _currentColor = SelectedContainer?.Color ?? Color.Inherit;
+        }
+
+        //When an item is added, it automatically checks the color
+        public override void AddItem(MudCarouselItem item)
+        {
+            Items.Add(item);
+            if (Items.Count - 1 == SelectedIndex)
+            {
+                _currentColor = item.Color;
+                StateHasChanged();
+            }
         }
 
 
@@ -225,9 +241,7 @@ namespace MudBlazor
 
             if (firstRender)
             {
-                SelectedIndexChanged = new EventCallback<int>(this, (Action)SelectionChanged);
-
-                _timer = new Timer(_timerElapsed, null, AutoCycle ? AutoCycleTime : Timeout.InfiniteTimeSpan, AutoCycleTime);
+                _timer = new Timer(TimerElapsed, null, AutoCycle ? AutoCycleTime : Timeout.InfiniteTimeSpan, AutoCycleTime);
             }
         }
 
