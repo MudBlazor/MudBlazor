@@ -12,12 +12,12 @@
     </DocsPageHeader>
     <DocsPageContent>
         <DocsPageSection>
-            <DocsPageHeader Title="DefaultConverter&lt;T&gt;">
+            <SectionHeader Title="DefaultConverter&lt;T&gt;">
                 <Description>
                     The default converter converts all primitive types and their nullable variants to and from <CodeInline>string</CodeInline>.
                     Edit the textfields below to see how the default converter handles different values depending on the type.
                 </Description>
-            </DocsPageHeader>
+            </SectionHeader>
             <div class="d-flex flex-row mt-5">
                 <MudSwitch Color="Color.Primary" @bind-Checked="@nullable">Nullable variants</MudSwitch>
                 <MudSwitch Color="Color.Secondary" @bind-Checked="@unsigned">Unsigned variants</MudSwitch>

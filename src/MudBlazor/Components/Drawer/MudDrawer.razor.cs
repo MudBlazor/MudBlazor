@@ -58,7 +58,7 @@ namespace MudBlazor
             .AddStyle("--mud-drawer-width", Width, !string.IsNullOrWhiteSpace(Width) && (!Fixed || Variant == DrawerVariant.Temporary))
             .AddStyle("height", Height, !string.IsNullOrWhiteSpace(Height))
             .AddStyle("--mud-drawer-content-height",
-                string.IsNullOrWhiteSpace(Height) ? $"{_height}px" : Height,
+                string.IsNullOrWhiteSpace(Height) ? _height.ToPx() : Height,
                 Anchor == Anchor.Bottom || Anchor == Anchor.Top)
             .AddStyle("visibility", "hidden", string.IsNullOrWhiteSpace(Height) && _height == 0 && (Anchor == Anchor.Bottom || Anchor == Anchor.Top))
             .AddStyle(Style)

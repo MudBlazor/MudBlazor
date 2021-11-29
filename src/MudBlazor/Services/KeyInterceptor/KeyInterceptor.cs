@@ -45,7 +45,18 @@ namespace MudBlazor.Services
                 await _jsRuntime.InvokeVoidAsync("mudKeyInterceptor.connect", _dotNetRef, elementId, options);
                 _isObserving = true;
             }
-            catch (TaskCanceledException) { /*ignore*/ }
+            catch (JSDisconnectedException) { }
+            catch (TaskCanceledException) { }
+        }
+
+        /// <summary>
+        /// Update behavior of a registered keyoption
+        /// The keystrike to update has to be monitored previously
+        /// </summary>
+        /// <param name="option">Define KeyOption to update</param>
+        public async Task UpdateKey(KeyOptions option)
+        {
+            await _jsRuntime.InvokeVoidAsync($"mudKeyInterceptor.updatekey", _elementId, option);
         }
 
         /// <summary>

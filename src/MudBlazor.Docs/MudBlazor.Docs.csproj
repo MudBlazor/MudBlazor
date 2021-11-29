@@ -11,7 +11,7 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <TargetFramework>net5.0</TargetFramework>
+    <TargetFramework>net6.0</TargetFramework>
   </PropertyGroup>
 
   <!--Outside Visual Studio SolutionDir is not available-->  
@@ -25,7 +25,7 @@
       <PropertyGroup><BinDocsCompiler>$(SolutionDir)MudBlazor.Docs.Compiler/bin/Debug/netcoreapp3.1/MudBlazor.Docs.Compiler.dll</BinDocsCompiler></PropertyGroup>
     </When>
     <Otherwise>
-      <PropertyGroup><BinDocsCompiler>$(SolutionDir)MudBlazor.Docs.Compiler/bin/Debug/net5.0/MudBlazor.Docs.Compiler.dll</BinDocsCompiler></PropertyGroup>
+      <PropertyGroup><BinDocsCompiler>$(SolutionDir)MudBlazor.Docs.Compiler/bin/Debug/net6.0/MudBlazor.Docs.Compiler.dll</BinDocsCompiler></PropertyGroup>
     </Otherwise>
   </Choose>
 
@@ -88,11 +88,10 @@
 
   <!--Packages-->
   <ItemGroup>
-    <PackageReference Include="FluentValidation" Version="10.3.3" />
-    <PackageReference Include="Microsoft.AspNetCore.Components" Version="5.0.11" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="5.0.10" />
+    <PackageReference Include="FluentValidation" Version="10.3.4" />
+    <PackageReference Include="Microsoft.AspNetCore.Components" Version="6.0.0.*" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="6.0.0.*" />
     <PackageReference Include="Microsoft.AspNetCore.WebUtilities" Version="2.2.0" />
-    <PackageReference Include="Toolbelt.Blazor.HeadElement" Version="6.0.0" />
   </ItemGroup>
 
   <!--Project dependencies-->

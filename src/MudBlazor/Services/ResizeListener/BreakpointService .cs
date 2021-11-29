@@ -169,10 +169,13 @@ namespace MudBlazor.Services
                         }
                         return new BreakpointServiceSubscribeResult(subscriptionId, _breakpoint);
                     }
+                    catch (JSDisconnectedException)
+                    {
+                        return new BreakpointServiceSubscribeResult(subscriptionId, _breakpoint);
+                    }
                     catch (TaskCanceledException)
                     {
                         return new BreakpointServiceSubscribeResult(subscriptionId, _breakpoint);
-                        // no worries here
                     }
                 }
                 else

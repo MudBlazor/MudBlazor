@@ -2,10 +2,8 @@
 @page "/project/versions"
 
 <DocsPage MaxWidth="MaxWidth.Large">
-    <MudContainer>
-        <MudText Typo="Typo.h3" GutterBottom="true">Versions</MudText>
-    </MudContainer>
-    <MudContainer>
+    <DocsPageHeader Title="Versions" />
+    <DocsPageContent>
         <MudText Typo="Typo.h4" GutterBottom="true">Strategy</MudText>
 
         <MudText GutterBottom="true">MudBlazor versions follow <MudLink Href="https://semver.org/spec/v2.0.0.html" Color="Color.Secondary">Semantic Versioning 2.0.0</MudLink> and have three parts for our non-prereleases: <CodeInline>major.minor.patch</CodeInline> where the numbers are incremented based on what changes are in that release.</MudText>
@@ -26,8 +24,6 @@
                 </MudText>
             </li>
         </ul>
-    </MudContainer>
-    <MudContainer>
         <MudText Typo="Typo.h4" GutterBottom="true">
             Released versions
         </MudText>
@@ -42,6 +38,20 @@
                 </tr>
             </thead>
             <tbody class="mb-16">
+                <tr>
+                    <td>v6.0.2</td>
+                    <td><MudChip Color="Color.Success" Size="Size.Small" Label="true" Style="width:60px;">Major</MudChip></td>
+                    <td><MudChip Style="background-color: #5027d5; color: #ffffff; width:100px;" Size="Size.Small" Label="true">.NET 6</MudChip></td>
+                    <td><MudLink Typo="Typo.body2" Href="https://www.nuget.org/packages/MudBlazor/6.0.2">Nuget Package</MudLink></td>
+                    <td><MudLink Typo="Typo.body2" Href="https://github.com/MudBlazor/MudBlazor/releases/tag/v6.0.2">GitHub Release</MudLink></td>
+                </tr>
+                <tr>
+                    <td>v5.2.0</td>
+                    <td><MudChip Color="Color.Info" Size="Size.Small" Label="true" Style="width:60px;">Minor</MudChip></td>
+                    <td><MudChip Style="background-color: #5027d5; color: #ffffff; width:100px;" Size="Size.Small" Label="true">.NET 5</MudChip></td>
+                    <td><MudLink Typo="Typo.body2" Href="https://www.nuget.org/packages/MudBlazor/5.2.0">Nuget Package</MudLink></td>
+                    <td><MudLink Typo="Typo.body2" Href="https://github.com/MudBlazor/MudBlazor/releases/tag/v5.2.0">GitHub Release</MudLink></td>
+                </tr>
                 <tr>
                     <td>v5.2.0-rc5</td>
                     <td><MudChip Color="Color.Warning" Size="Size.Small" Label="true" Style="width:60px;">Pre</MudChip></td>
@@ -407,8 +417,6 @@
                 </tr>
             </tbody>
         </MudSimpleTable>
-    </MudContainer>
-    <MudContainer>
         <MudText Typo="Typo.h4" GutterBottom="true">Development</MudText>
         <MudText Class="my-4">Here you can download the source code. Documentation and code might be missing or wrong.</MudText>
         <MudSimpleTable Elevation="0">
@@ -425,6 +433,6 @@
                 </tr>
             </tbody>
         </MudSimpleTable>
-    </MudContainer>
+    </DocsPageContent>
 </DocsPage>
 <Footer />

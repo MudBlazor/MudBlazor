@@ -440,21 +440,21 @@ namespace MudBlazor
         /// Sets the direction the Select menu should open.
         /// </summary>
         [ExcludeFromCodeCoverage]
-        [Obsolete("Direction is obsolete. Use AnchorOrigin or TransformOrigin instead!", false)]
+        [Obsolete("Use AnchorOrigin or TransformOrigin instead.", true)]
         [Parameter] public Direction Direction { get; set; } = Direction.Bottom;
 
         /// <summary>
         /// If true, the Select menu will open either before or after the input (left/right).
         /// </summary>
         [ExcludeFromCodeCoverage]
-        [Obsolete("OffsetX is obsolete. Use AnchorOrigin or TransformOrigin instead!", false)]
+        [Obsolete("Use AnchorOrigin or TransformOrigin instead.", true)]
         [Parameter] public bool OffsetX { get; set; }
 
         /// <summary>
         /// If true, the Select menu will open either before or after the input (top/bottom).
         /// </summary>
         /// [ExcludeFromCodeCoverage]
-        [Obsolete("OffsetY is obsolete. Use AnchorOrigin or TransformOrigin instead!", false)]
+        [Obsolete("Use AnchorOrigin or TransformOrigin instead.", true)]
         [Parameter] public bool OffsetY { get; set; }
 
         /// <summary>
@@ -482,46 +482,6 @@ namespace MudBlazor
         internal bool _isOpen;
 
         public string _currentIcon { get; set; }
-
-        internal Origin _anchorOrigin;
-        internal Origin _transformOrigin;
-
-#pragma warning disable CS0618 // This is for backwards compability until Obsolete is removed
-        [ExcludeFromCodeCoverage]
-        private void GetPopoverOrigins()
-        {
-            if (Direction != Direction.Bottom || OffsetY || OffsetX)
-            {
-                switch (Direction)
-                {
-                    case Direction.Bottom when OffsetY:
-                    case Direction.Top when OffsetY:
-                        _anchorOrigin = Origin.BottomCenter;
-                        _transformOrigin = Origin.TopCenter;
-                        break;
-                    case Direction.Top when !OffsetY:
-                        _anchorOrigin = Origin.BottomCenter;
-                        _transformOrigin = Origin.BottomCenter;
-                        break;
-                    case Direction.Start when OffsetX:
-                    case Direction.Left when OffsetX:
-                        _anchorOrigin = Origin.TopLeft;
-                        _transformOrigin = Origin.TopRight;
-                        break;
-                    case Direction.End when OffsetX:
-                    case Direction.Right when OffsetX:
-                        _anchorOrigin = Origin.TopRight;
-                        _transformOrigin = Origin.TopLeft;
-                        break;
-                }
-            }
-            else
-            {
-                _anchorOrigin = AnchorOrigin;
-                _transformOrigin = TransformOrigin;
-            }
-        }
-#pragma warning restore CS0618 // Type or member is obsolete
 
         public async Task SelectOption(int index)
         {
@@ -655,6 +615,9 @@ namespace MudBlazor
             UpdateIcon();
             StateHasChanged();
             await HilightSelectedValue();
+
+            //disable escape propagation: if selectmenu is open, only the select popover should close and underlying components should not handle escape key
+            await _keyInterceptor.UpdateKey(new() { Key = "Escape", StopDown = "Key+none" });
         }
 
         public async Task CloseMenu(bool focusAgain = true)
@@ -668,6 +631,9 @@ namespace MudBlazor
                 _elementReference.FocusAsync().AndForget(TaskOption.Safe);
                 StateHasChanged();
             }
+
+            //enable escape propagation: the select popover was closed, now underlying components are allowed to handle escape key
+            await _keyInterceptor.UpdateKey(new() { Key = "Escape", StopDown = "none" });
         }
 
         private void UpdateIcon()
@@ -684,7 +650,6 @@ namespace MudBlazor
         protected override void OnParametersSet()
         {
             base.OnParametersSet();
-            GetPopoverOrigins(); // Just to keep Obsolete functional until removed.
             UpdateIcon();
         }
 
@@ -702,6 +667,7 @@ namespace MudBlazor
                         new KeyOptions { Key="ArrowDown", PreventDown = "key+none" }, // prevent scrolling page, instead hilight next item
                         new KeyOptions { Key="Home", PreventDown = "key+none" },
                         new KeyOptions { Key="End", PreventDown = "key+none" },
+                        new KeyOptions { Key="Escape" },
                         new KeyOptions { Key="Enter", PreventDown = "key+none" },
                         new KeyOptions { Key="NumpadEnter", PreventDown = "key+none" },
                         new KeyOptions { Key="a", PreventDown = "key+ctrl" }, // select all items instead of all page text
@@ -910,7 +876,7 @@ namespace MudBlazor
         }
 
         [ExcludeFromCodeCoverage]
-        [Obsolete("Use Clear() instead")]
+        [Obsolete("Use Clear instead.", true)]
         public Task ClearAsync() => Clear();
 
         /// <summary>

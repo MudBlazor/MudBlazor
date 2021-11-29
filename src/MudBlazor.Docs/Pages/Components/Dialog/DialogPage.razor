@@ -108,5 +108,36 @@
             <SectionSource Code="DialogInlineExample" GitHubFolderName="Dialog" ShowCode="false" />
         </DocsPageSection>
 
+        <DocsPageSection>
+            <SectionHeader Title="Inlining Dialog">
+                <Description>
+                    You can inline <CodeInline>MudDialog</CodeInline> directly in another component which, of course, makes most sense for small dialogs that are not re-used somewhere else.
+                    The advantage is that you can easily share code and data between dialog and owning component via bindings.
+                    <br />
+                    This example also shows how to override the dialog title with a render fragment. 
+                </Description>
+            </SectionHeader>
+            <SectionContent Outlined="true">
+                <DialogInlineExample />
+            </SectionContent>
+            <SectionSource Code="DialogInlineExample" GitHubFolderName="Dialog" ShowCode="false" />
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Keyboard Navigation">
+                <Description>
+                    <MudText>MudDialog accepts keys to keyboard navigation.</MudText>
+                    <br />
+                    <MudText><CodeInline>Escape</CodeInline> key to close dialog. Closing a dialog by pressing escape has to be enabled by setting option <CodeInline>CloseOnEscapekey=true</CodeInline></MudText>
+                </Description>
+            </SectionHeader>
+            <SectionContent Outlined="true">
+                <MudContainer>
+                    <DialogKeyboardNavigationExample />
+                </MudContainer>
+            </SectionContent>
+            <SectionSource Code="DialogKeyboardNavigationExample" GitHubFolderName="Dialog" ShowCode="false" />
+        </DocsPageSection>
+
     </DocsPageContent>
 </DocsPage>

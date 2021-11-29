@@ -57,8 +57,18 @@ namespace MudBlazor
         {
             await _elementReference.SetText(null);
         }
+
+        /// <summary>
+        /// Sets the input text from outside programmatically
+        /// </summary>
+        /// <param name="text"></param>
+        /// <returns></returns>
+        public Task SetText(string text)
+        {
+            return _elementReference?.SetText(text);
+        }
     }
 
-    [Obsolete]
+    [Obsolete("MudTextFieldString is no longer available.", true)]
     public class MudTextFieldString : MudTextField<string> { }
 }

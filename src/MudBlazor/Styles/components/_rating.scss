@@ -1,6 +1,14 @@
 ﻿.mud-rating-root {
     display: inline-flex;
     color: #ffb400;
+
+    &:focus-visible {
+        outline: none;
+
+        &:not(.mud-disabled) {
+            background-color: var(--mud-palette-action-default-hover);
+        }
+    }
 }
 
 .mud-rating-item {

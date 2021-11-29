@@ -84,8 +84,7 @@
                                     @if (item.Name == "FontFamily")
                                     {
                                         string unifiedText = "";
-                                        string[] fontFamilies = (string[])_typography.GetValue(typography, null).GetType().GetProperty("FontFamily").GetValue(_typography.GetValue(typography, null), null);
-                                        foreach (string a in fontFamilies)
+                                        foreach (string a in defaultFontFamily)
                                         {
                                             if (unifiedText == "")
                                             {
@@ -125,11 +124,13 @@
     LayoutProperties layoutProperties = new LayoutProperties();
     ZIndex zIndex = new ZIndex();
     Typography typography = new Typography();
+    string[] defaultFontFamily;
 
     protected override void OnInitialized()
     {
         palette = mudTheme.Palette;
         layoutProperties = mudTheme.LayoutProperties;
         zIndex = mudTheme.ZIndex;
+        defaultFontFamily = mudTheme.Typography.Default.FontFamily;
     }
 }

@@ -14,11 +14,9 @@ namespace MudBlazor
         new CssBuilder("mud-badge-root")
           .AddClass(Class)
         .Build();
-#pragma warning disable CS0618 // Type or member is obsolete
         protected string WrapperClass =>
         new CssBuilder("mud-badge-wrapper")
             .AddClass($"mud-badge-{Origin.ToDescriptionString().Replace("-", " ")}")
-            .AddClass("mud-badge-bottom right", Bottom) // Type or member is obsolete
         .Build();
 
         protected string BadgeClassName =>
@@ -29,8 +27,6 @@ namespace MudBlazor
             .AddClass($"mud-badge-{Origin.ToDescriptionString().Replace("-", " ")}")
             .AddClass($"mud-elevation-{Elevation.ToString()}")
             .AddClass("mud-theme-" + Color.ToDescriptionString())
-            .AddClass("mud-badge-bottom right", Bottom) // Type or member is obsolete
-#pragma warning restore CS0618 // Type or member is obsolete
             .AddClass("mud-badge-overlap", Overlap)
             .AddClass(BadgeClass)
         .Build();
@@ -59,21 +55,21 @@ namespace MudBlazor
         /// Aligns the badge to bottom.
         /// </summary>
         [ExcludeFromCodeCoverage]
-        [Obsolete("Bottom is obsolete. Use Placement instead!", false)]
+        [Obsolete("Use Origin instead.", true)]
         [Parameter] public bool Bottom { get; set; }
 
         /// <summary>
         /// Aligns the badge to left.
         /// </summary>
         [ExcludeFromCodeCoverage]
-        [Obsolete("Left is obsolete. Use Placement instead!", false)]
+        [Obsolete("Use Origin instead.", true)]
         [Parameter] public bool Left { get => Start; set { Start = value; } }
 
         /// <summary>
         /// Aligns the badge to the start (Left in LTR and right in RTL).
         /// </summary>
         [ExcludeFromCodeCoverage]
-        [Obsolete("Start is obsolete. Use Placement instead!", false)]
+        [Obsolete("Use Origin instead.", true)]
         [Parameter] public bool Start { get; set; }
 
         /// <summary>

@@ -398,24 +398,24 @@ namespace MudBlazor
 
         protected string MaxHeightStyles =>
             new StyleBuilder()
-            .AddStyle("max-height", $"{MaxHeight}px", MaxHeight != null)
+            .AddStyle("max-height", MaxHeight.ToPx(), MaxHeight != null)
             .Build();
 
         protected string SliderStyle => RightToLeft ?
             new StyleBuilder()
-            .AddStyle("width", $"{_size.ToString(CultureInfo.InvariantCulture)}px", Position is Position.Top or Position.Bottom)
-            .AddStyle("right", $"{_position.ToString(CultureInfo.InvariantCulture)}px", Position is Position.Top or Position.Bottom)
+            .AddStyle("width", _size.ToPx(), Position is Position.Top or Position.Bottom)
+            .AddStyle("right", _position.ToPx(), Position is Position.Top or Position.Bottom)
             .AddStyle("transition", _disableSliderAnimation ? "none" : "right .3s cubic-bezier(.64,.09,.08,1);", Position is Position.Top or Position.Bottom)
             .AddStyle("transition", _disableSliderAnimation ? "none" : "top .3s cubic-bezier(.64,.09,.08,1);", IsVerticalTabs())
-            .AddStyle("height", $"{_size.ToString(CultureInfo.InvariantCulture)}px", IsVerticalTabs())
-            .AddStyle("top", $"{_position.ToString(CultureInfo.InvariantCulture)}px", IsVerticalTabs())
+            .AddStyle("height", _size.ToPx(), IsVerticalTabs())
+            .AddStyle("top", _position.ToPx(), IsVerticalTabs())
             .Build() : new StyleBuilder()
-            .AddStyle("width", $"{_size.ToString(CultureInfo.InvariantCulture)}px", Position is Position.Top or Position.Bottom)
-            .AddStyle("left", $"{_position.ToString(CultureInfo.InvariantCulture)}px", Position is Position.Top or Position.Bottom)
+            .AddStyle("width", _size.ToPx(), Position is Position.Top or Position.Bottom)
+            .AddStyle("left", _position.ToPx(), Position is Position.Top or Position.Bottom)
             .AddStyle("transition", _disableSliderAnimation ? "none" : "left .3s cubic-bezier(.64,.09,.08,1);", Position is Position.Top or Position.Bottom)
             .AddStyle("transition", _disableSliderAnimation ? "none" : "top .3s cubic-bezier(.64,.09,.08,1);", IsVerticalTabs())
-            .AddStyle("height", $"{_size.ToString(CultureInfo.InvariantCulture)}px", IsVerticalTabs())
-            .AddStyle("top", $"{_position.ToString(CultureInfo.InvariantCulture)}px", IsVerticalTabs())
+            .AddStyle("height", _size.ToPx(), IsVerticalTabs())
+            .AddStyle("top", _position.ToPx(), IsVerticalTabs())
             .Build();
 
         private bool IsVerticalTabs()
