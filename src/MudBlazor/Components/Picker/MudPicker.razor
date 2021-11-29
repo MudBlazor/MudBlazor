@@ -39,7 +39,7 @@
 							@if (PickerActions != null)
 							{
 								<div class="@ActionClass">
-									@PickerActions
+									@PickerActions(this)
 								</div>
 							}
 					   </MudPaper>
@@ -57,7 +57,7 @@
                     @if (PickerActions != null)
                     {
                         <div class="@ActionClass">
-                            @PickerActions
+                            @PickerActions(this)
                         </div>
                     }
                </MudPaper>
@@ -74,7 +74,7 @@
                         @if (PickerActions != null)
                         {
                             <div class="@ActionClass">
-                                @PickerActions
+                                @PickerActions(this)
                             </div>
                         }
                    </MudPaper>

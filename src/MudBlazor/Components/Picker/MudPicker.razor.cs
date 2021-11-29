@@ -222,7 +222,7 @@ namespace MudBlazor
         /// <summary>
         /// Define the action buttons here
         /// </summary>
-        [Parameter] public RenderFragment PickerActions { get; set; }
+        [Parameter] public RenderFragment<MudPicker<T>> PickerActions { get; set; }
 
         /// <summary>
         ///  Will adjust vertical spacing.
