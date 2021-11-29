@@ -1,0 +1,11 @@
+﻿@namespace MudBlazor.Docs.Examples
+<MudGrid>
+    <MudItem xs="12" sm="6" md="4">
+        <MudDatePicker Label="Basic example" @bind-Date="date"/>
+    </MudItem>
+</MudGrid>
+
+
+@code {
+    DateTime? date = DateTime.Today;
+}

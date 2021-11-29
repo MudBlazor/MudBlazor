@@ -105,5 +105,31 @@
             </SectionContent>
             <SectionSource Code="DateRangePickerUsageExample" GitHubFolderName="DatePicker" ShowCode="false" />
         </DocsPageSection>
+
+		<DocsPageSection>
+            <SectionHeader Title="Keyboard Navigation">
+                <Description>
+                    <MudText>MudTimePicker accepts keys to keyboard navigation.</MudText>
+                    <br />
+                    <MudText><CodeInline>Escape</CodeInline> or <CodeInline>Alt+ArrowUp</CodeInline> keys to close dropdown</MudText>
+                    <MudText><CodeInline>Enter</CodeInline> or <CodeInline>NumpadEnter</CodeInline> or <CodeInline>ArrowDown</CodeInline> or <CodeInline>ArrowUp</CodeInline> keys to open dropdown</MudText>
+                    <MudText><CodeInline>Ctrl+Shift+Backspace</CodeInline> keys to reset (validation)</MudText>
+					<br />
+					<MudText>If it's not editable or static:</MudText>
+					<MudText><CodeInline>Space</CodeInline> key to toggle open/close the picker</MudText>
+                    <MudText><CodeInline>Arrow Keys</CodeInline> to navigate between days in picker</MudText>
+					<MudText><CodeInline>Home</CodeInline> or <CodeInline>Shift+ArrowRight</CodeInline> keys to increase month by 1</MudText>
+                    <MudText><CodeInline>End</CodeInline> or <CodeInline>Shift+ArrowLeft</CodeInline> keys to decrease month by 1</MudText>
+					<MudText><CodeInline>PageUp</CodeInline> or <CodeInline>Ctrl+ArrowRight</CodeInline> keys to increase year by 1</MudText>
+                    <MudText><CodeInline>PageDown</CodeInline> or <CodeInline>Ctrl+ArrowLeft</CodeInline> keys to decrease year by 1</MudText>
+					<MudText>*Disabled or readonly components are not affected by keys.</MudText>
+                </Description>
+            </SectionHeader>
+            <SectionContent Outlined="true">
+                <DatePickerKeyboardNavigationExample />
+            </SectionContent>
+            <SectionSource Code="DatePickerKeyboardNavigationExample" GitHubFolderName="DatePicker" ShowCode="false" />
+        </DocsPageSection>
+
     </DocsPageContent>
 </DocsPage>
