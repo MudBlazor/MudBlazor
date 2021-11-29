@@ -1,9 +1,12 @@
 ﻿:root {
     --section-diff: calc(calc(calc(100vw - 16px) * 0.106) + calc(128 * 1px) - 0.106 * calc(calc(100vw - 15px)/2 - 1080px / 2));
+    --mobile-scale-value: 0.6;
+    --browser-scaler-value: 0.8;
 }
 
 .mudblazor-landingpage {
     overflow: hidden;
+
     &::before {
         content: "";
         width: 100%;
@@ -27,6 +30,112 @@
         left: 0;
         position: absolute;
         display: inline-block;
+    }
+
+    .lp-appbar {
+        position: absolute !important;
+    }
+
+    .lp-graphic-container {
+        width: 100%;
+        height: 100%;
+
+        .lp-graphic-app-wrapper {
+            position: absolute;
+        }
+    }
+
+    .lp-mini-app {
+        width: 100%;
+        height: 100%;
+        background-color: #f4f5fa;
+    }
+
+    .lp-app-grid {
+        display: grid;
+        gap: 24px;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    }
+
+    .lp-device {
+        overflow: hidden;
+        position: absolute;
+        outline: rgba(255, 255, 255, 0.8) solid 1px;
+        background-color: rgba(255, 255, 255, .2);
+        backdrop-filter: blur(5px);
+        box-shadow: inset 0 1px 1px 0 hsla(0deg, 0%, 100%, 0.1), 0 50px 100px -20px rgba(50, 50, 93, 0.25), 0 30px 60px -30px rgba(0, 0, 0, 0.3);
+
+        .lp-device-screen {
+            position: relative;
+            height: 100%;
+            width: 100%;
+        }
+
+        &.phone {
+            top: 128px;
+            left: 128px;
+            width: calc(calc(1170px / 4) + 28px);
+            height: calc(calc(2432px / 4) + 28px);
+            padding: 14px;
+            border-radius: 46px;
+
+            .lp-device-screen {
+                border-radius: 36px;
+            }
+
+            .lp-app-scale {
+                position: absolute;
+                transform-origin: 0 0;
+                transform: scale(var(--mobile-scale-value));
+                width: calc(100% / var(--mobile-scale-value));
+                height: calc(100% / var(--mobile-scale-value));
+            }
+
+            .lp-mini-app {
+                padding: 32px;
+                border-radius: 46px;
+            }
+        }
+
+        &.browser {
+            top: -96px;
+            left: 240px;
+            width: calc(calc(2560px / 2) + 24px);
+            height: calc(calc(1440px / 2) + 24px);
+            padding: 12px;
+            border-radius: 12px;
+
+            .lp-device-toolbar {
+                display: flex;
+                padding-bottom: 8px;
+
+                .lp-device-toolbar-button {
+                    width: 8px;
+                    height: 8px;
+                    margin-right: 4px;
+                    background-color: #fff;
+                    border-radius: 100%;
+                }
+            }
+
+            .lp-device-screen {
+                border-radius: 8px;
+            }
+
+
+            .lp-app-scale {
+                position: absolute;
+                transform-origin: 0 0;
+                transform: scale(var(--browser-scaler-value));
+                width: calc(100% / var(--browser-scaler-value));
+                height: calc(100% / var(--browser-scaler-value) - 18px);
+            }
+
+            .lp-mini-app {
+                padding: 32px;
+                border-radius: 8px;
+            }
+        }
     }
 
     .lp-grid {
@@ -192,6 +301,13 @@
             &.padding-skew {
                 padding: var(--section-diff) 0px;
             }
+        }
+    }
+
+    .top-section {
+        .section-container {
+            padding-top: calc(var(--section-diff) / 1.5) !important;
+            padding-bottom: calc(var(--section-diff) * 1.5) !important;
         }
     }
 

@@ -92,6 +92,11 @@ namespace MudBlazor.Docs
                 FontWeight = 600,
                 LineHeight = 1.8,
             },
+            H4 = new H4()
+            {
+                FontSize = "1.8rem",
+                FontWeight = 700,
+            },
             H5 = new H5()
             {
                 FontSize = "1.8rem",
@@ -128,7 +133,6 @@ namespace MudBlazor.Docs
         public static Palette LandingPageLightPalette = new Palette()
         {
             AppbarText = "#424242",
-            Success = "#4EAE2C",
             TextSecondary = "#425466",
             Dark = "#110E2D",
             DarkLighten = "#1A1643",
@@ -148,7 +152,7 @@ namespace MudBlazor.Docs
             Elevation = new string[]
             {
             "none",
-            "rgba(50, 50, 93, 0.25) 0px 2px 5px -1px, rgba(0, 0, 0, 0.3) 0px 1px 3px -1px;",
+            "0 2px 4px -1px rgba(6, 24, 44, 0.2)",
             "0px 3px 1px -2px rgba(0,0,0,0.2),0px 2px 2px 0px rgba(0,0,0,0.14),0px 1px 5px 0px rgba(0,0,0,0.12)",
             "0 30px 60px rgba(0,0,0,0.12)",
             "0 6px 12px -2px rgba(50,50,93,0.25),0 3px 7px -3px rgba(0,0,0,0.3)",
