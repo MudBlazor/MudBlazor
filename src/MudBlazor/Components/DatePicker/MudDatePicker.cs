@@ -334,6 +334,11 @@ namespace MudBlazor
         {
             if (Date.HasValue)
             {
+                if (PickerMonth == null)
+                {
+                    PickerMonth = Date;
+                }
+                
                 if (yearChange != 0)
                 {
                     PickerMonth = PickerMonth.Value.AddYears(yearChange);

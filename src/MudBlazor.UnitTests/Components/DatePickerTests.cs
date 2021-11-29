@@ -724,53 +724,71 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<SimpleMudDatePickerTest>();
 
             Console.WriteLine(comp.Markup);
+            //var datePicker = comp.FindComponent<MudDatePicker>().Instance;
             var datePicker = comp.FindComponent<MudDatePicker>().Instance;
+            var overlay = comp.FindComponent<MudOverlay>();
 
-            await comp.InvokeAsync(() => comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = "Enter", Type = "keydown", }));
-            comp.WaitForAssertion(() => comp.FindAll("div.mud-picker-open").Count.Should().Be(1));
+            await comp.InvokeAsync(() => datePicker.HandleKeyDown(new KeyboardEventArgs() { Key = "Enter", Type = "keydown", }));
+            comp.WaitForAssertion(() => datePicker.IsOpen.Should().BeTrue());
 
-            await comp.InvokeAsync(() => comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = "Escape", Type = "keydown", }));
-            comp.WaitForAssertion(() => comp.FindAll("div.mud-picker-open").Count.Should().Be(0));
+            await comp.InvokeAsync(() => datePicker.HandleKeyDown(new KeyboardEventArgs() { Key = "Escape", Type = "keydown", }));
+            comp.WaitForAssertion(() => datePicker.IsOpen.Should().BeFalse());
+            //Space key to toggle open/close
+            await comp.InvokeAsync(() => datePicker.HandleKeyDown(new KeyboardEventArgs() { Key = " ", Type = "keydown", }));
+            comp.WaitForAssertion(() => datePicker.IsOpen.Should().BeTrue());
+            await comp.InvokeAsync(() => datePicker.HandleKeyDown(new KeyboardEventArgs() { Key = " ", Type = "keydown", }));
+            comp.WaitForAssertion(() => datePicker.IsOpen.Should().BeFalse());
 
-            await comp.InvokeAsync(() => comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = " ", Type = "keydown", }));
-            comp.WaitForAssertion(() => comp.FindAll("div.mud-picker-open").Count.Should().Be(1));
+            await comp.InvokeAsync(() => datePicker.HandleKeyDown(new KeyboardEventArgs() { Key = "ArrowUp", Type = "keydown", }));
+            comp.WaitForAssertion(() => datePicker.IsOpen.Should().BeTrue());
 
-            await comp.InvokeAsync(() => comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = " ", Type = "keydown", }));
-            comp.WaitForAssertion(() => comp.FindAll("div.mud-picker-open").Count.Should().Be(0));
+            await comp.InvokeAsync(() => datePicker.HandleKeyDown(new KeyboardEventArgs() { Key = "ArrowUp", AltKey = true, Type = "keydown", }));
+            comp.WaitForAssertion(() => datePicker.IsOpen.Should().BeFalse());
 
-            await comp.InvokeAsync(() => comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = "ArrowDown", AltKey = true, Type = "keydown", }));
-            comp.WaitForAssertion(() => comp.FindAll("div.mud-picker-open").Count.Should().Be(1));
+            await comp.InvokeAsync(() => datePicker.HandleKeyDown(new KeyboardEventArgs() { Key = "ArrowDown", Type = "keydown", }));
+            comp.WaitForAssertion(() => datePicker.IsOpen.Should().BeTrue());
 
-            await comp.InvokeAsync(() => comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = "ArrowUp", AltKey = true, Type = "keydown", }));
-            comp.WaitForAssertion(() => comp.FindAll("div.mud-picker-open").Count.Should().Be(0));
+            await comp.InvokeAsync(() => datePicker.Date = new DateTime(2021, 01, 01));
+            comp.WaitForAssertion(() => datePicker.Date.Should().Be(new DateTime(2021, 01, 01)));
 
-            await comp.InvokeAsync(() => comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = "NumpadEnter", Type = "keydown", }));
-            comp.WaitForAssertion(() => comp.FindAll("div.mud-picker-open").Count.Should().Be(1));
+            await comp.InvokeAsync(() => datePicker.HandleKeyDown(new KeyboardEventArgs() { Key = "ArrowLeft", Type = "keydown", }));
+            comp.WaitForAssertion(() => datePicker.Date.Should().Be(new DateTime(2020, 12, 31)));
+            //comp.WaitForAssertion(() => datePicker.PickerMonth.Should().Be(new DateTime(2020, 12, 01)));
 
-            await comp.InvokeAsync(() => comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = "Tab", Type = "keydown", }));
-            comp.WaitForAssertion(() => comp.FindAll("div.mud-picker-open").Count.Should().Be(0));
+            await comp.InvokeAsync(() => datePicker.HandleKeyDown(new KeyboardEventArgs() { Key = "ArrowRight", Type = "keydown", }));
+            comp.WaitForAssertion(() => datePicker.Date.Should().Be(new DateTime(2021, 01, 01)));
+            //comp.WaitForAssertion(() => datePicker.PickerMonth.Should().Be(new DateTime(2021, 01, 01)));
 
-            datePicker.Disabled = true;
+            await comp.InvokeAsync(() => datePicker.HandleKeyDown(new KeyboardEventArgs() { Key = "ArrowDown", Type = "keydown", }));
+            comp.WaitForAssertion(() => datePicker.Date.Should().Be(new DateTime(2021, 01, 08)));
 
-            await comp.InvokeAsync(() => comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = "Enter", Type = "keydown", }));
-            comp.WaitForAssertion(() => comp.FindAll("div.mud-picker-open").Count.Should().Be(0));
+            await comp.InvokeAsync(() => datePicker.HandleKeyDown(new KeyboardEventArgs() { Key = "ArrowUp", Type = "keydown", }));
+            comp.WaitForAssertion(() => datePicker.Date.Should().Be(new DateTime(2021, 01, 01)));
 
-            await comp.InvokeAsync(() => datePicker.ToggleOpen());
-            comp.WaitForAssertion(() => comp.FindAll("div.mud-picker-open").Count.Should().Be(1));
+            await comp.InvokeAsync(() => datePicker.HandleKeyDown(new KeyboardEventArgs() { Key = "ArrowRight", ShiftKey = true, Type = "keydown", }));
+            comp.WaitForAssertion(() => datePicker.Date.Should().Be(new DateTime(2021, 02, 01)));
 
-            await comp.InvokeAsync(() => datePicker.ToggleOpen());
-            comp.WaitForAssertion(() => comp.FindAll("div.mud-picker-open").Count.Should().Be(0));
+            await comp.InvokeAsync(() => datePicker.HandleKeyDown(new KeyboardEventArgs() { Key = "ArrowLeft", ShiftKey = true, Type = "keydown", }));
+            comp.WaitForAssertion(() => datePicker.Date.Should().Be(new DateTime(2021, 01, 01)));
 
-            await comp.InvokeAsync(() => datePicker.ToggleState());
-            comp.WaitForAssertion(() => comp.FindAll("div.mud-picker-open").Count.Should().Be(0));
+            await comp.InvokeAsync(() => datePicker.HandleKeyDown(new KeyboardEventArgs() { Key = "Home", Type = "keydown", }));
+            comp.WaitForAssertion(() => datePicker.Date.Should().Be(new DateTime(2021, 02, 01)));
 
-            datePicker.Disabled = false;
+            await comp.InvokeAsync(() => datePicker.HandleKeyDown(new KeyboardEventArgs() { Key = "End", Type = "keydown", }));
+            comp.WaitForAssertion(() => datePicker.Date.Should().Be(new DateTime(2021, 01, 01)));
 
-            await comp.InvokeAsync(() => comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = "NumpadEnter", Type = "keydown", }));
-            comp.WaitForAssertion(() => comp.FindAll("div.mud-picker-open").Count.Should().Be(1));
+            await comp.InvokeAsync(() => datePicker.HandleKeyDown(new KeyboardEventArgs() { Key = "PageUp", Type = "keydown", }));
+            comp.WaitForAssertion(() => datePicker.Date.Should().Be(new DateTime(2022, 01, 01)));
 
-            await comp.InvokeAsync(() => datePicker.ToggleState());
-            comp.WaitForAssertion(() => comp.FindAll("div.mud-picker-open").Count.Should().Be(1));
+            await comp.InvokeAsync(() => datePicker.HandleKeyDown(new KeyboardEventArgs() { Key = "PageDown", Type = "keydown", }));
+            comp.WaitForAssertion(() => datePicker.Date.Should().Be(new DateTime(2021, 01, 01)));
+
+            //When its disabled, keys should not work
+            //datePicker.ReadOnly = true;
+            //datePicker.FocusAsync().AndForget();
+            //await comp.InvokeAsync(() => datePicker.HandleKeyDown(new KeyboardEventArgs() { Key = "Escape", Type = "keydown", }));
+            //await comp.InvokeAsync(() => datePicker.HandleKeyDown(new KeyboardEventArgs() { Key = "Enter", Type = "keydown", }));
+            //comp.WaitForAssertion(() => datePicker.IsOpen.Should().BeFalse());
         }
     }
 }

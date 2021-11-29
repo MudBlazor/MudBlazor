@@ -249,7 +249,7 @@ namespace MudBlazor
             return Task.CompletedTask;
         }
 
-        protected bool IsOpen { get; set; }
+        protected internal bool IsOpen { get; set; }
 
         public void ToggleOpen()
         {
