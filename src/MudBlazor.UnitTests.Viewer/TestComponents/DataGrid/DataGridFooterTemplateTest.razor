@@ -10,6 +10,11 @@
             </FooterTemplate>
         </Column>
     </Columns>
+    <Footer>
+        <FooterCell T="Model">
+            Names: @(string.Join(",", _items.Select(x => x.Name)))
+        </FooterCell>
+    </Footer>
 </MudDataGrid>
 
 @code {

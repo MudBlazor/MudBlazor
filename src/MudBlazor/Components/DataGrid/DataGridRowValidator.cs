@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using MudBlazor.Interfaces;
 
@@ -25,6 +26,7 @@ namespace MudBlazor
         }
 
 #nullable enable
+        [ExcludeFromCodeCoverage]
         public object? Model { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
 #nullable disable
 
@@ -47,6 +49,7 @@ namespace MudBlazor
 
         protected HashSet<IFormComponent> _formControls = new HashSet<IFormComponent>();
 
+        [ExcludeFromCodeCoverage]
         public void Validate()
         {
             _errors.Clear();

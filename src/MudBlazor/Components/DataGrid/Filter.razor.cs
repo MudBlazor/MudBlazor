@@ -70,13 +70,13 @@ namespace MudBlazor
                 _valueNumber = Value == null ? 0 : Convert.ToDouble(Value);
         }
 
-        private void StringValueChanged(string value)
+        internal void StringValueChanged(string value)
         {
             _valueString = value;
             ValueChanged.InvokeAsync(value);
         }
 
-        private void NumberValueChanged(double value)
+        internal void NumberValueChanged(double value)
         {
             _valueNumber = value;
             ValueChanged.InvokeAsync(value);

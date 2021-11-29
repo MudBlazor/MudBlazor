@@ -99,7 +99,7 @@
                                     @if (EditMode == DataGridEditMode.Inline)
                                     {
                                         @*Add the inline edit controls.*@
-                                        <Cell Item="@item" ColumnType="@ColumnType.InlineEditCommand"></Cell>
+                                        <Cell Item="@item" ColumnType="@ColumnType.InlineEditCommand" IsEditable="false"></Cell>
                                     }
                                     </CascadingValue>
                                 </tr>                                   

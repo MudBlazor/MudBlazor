@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
@@ -20,6 +21,7 @@ namespace MudBlazor
         [Parameter] public string Title { get; set; }
         [Parameter] public string Field { get; set; }
         [Parameter] public RenderFragment HeaderTemplate { get; set; }
+        [Parameter] public RenderFragment ChildContent { get; set; }
         [Parameter] public int ColSpan { get; set; }
         [Parameter] public ColumnType ColumnType { get; set; } = ColumnType.Text;
         [Parameter] public Func<T, object> SortBy 
@@ -130,7 +132,11 @@ namespace MudBlazor
             {
                 return (builder =>
                 {
-                    if (HeaderTemplate != null)
+                    if (IsOnlyHeader)
+                    {
+                        builder.AddContent(0, ChildContent);
+                    }
+                    else if (HeaderTemplate != null)
                     {
                         builder.AddContent(0, HeaderTemplate);
                     }
@@ -160,7 +166,7 @@ namespace MudBlazor
             }
         }
 
-        private void CompileSortBy()
+        internal void CompileSortBy()
         {
             if (_sortBy == null)
             {
@@ -176,7 +182,7 @@ namespace MudBlazor
             }
         }
 
-        private void GetDataType()
+        internal void GetDataType()
         {
             var p = typeof(T).GetProperty(Field);
             _dataType = p.GetType();
@@ -207,7 +213,7 @@ namespace MudBlazor
             StateHasChanged();
         }
 
-        private async Task SortChangedAsync()
+        internal async Task SortChangedAsync()
         {
             if (_initialDirection == SortDirection.None)
                 _initialDirection = SortDirection.Ascending;
@@ -219,18 +225,18 @@ namespace MudBlazor
             await InvokeAsync(() => DataGrid.SetSortAsync(_initialDirection, SortBy, Field));
         }
 
-        private async Task RemoveSortAsync()
+        internal async Task RemoveSortAsync()
         {
             _initialDirection = SortDirection.None;
             await InvokeAsync(() => DataGrid.SetSortAsync(SortDirection.None, SortBy, Field));
         }
 
-        private void AddFilter()
+        internal void AddFilter()
         {
             DataGrid.AddFilter(Guid.NewGuid(), Field);
         }
 
-        private void OpenFilters()
+        internal void OpenFilters()
         {
             DataGrid.OpenFilters();
         }

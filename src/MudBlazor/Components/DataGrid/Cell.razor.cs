@@ -147,7 +147,7 @@ namespace MudBlazor
 
         private void OnStartedEditingItem()
         {
-            if (isEditing && EditTemplate == null)
+            if (IsEditable && isEditing)
             {
                 _cachedValue = computedValue;
 
@@ -167,7 +167,7 @@ namespace MudBlazor
 
         private void OnEditingCancelled()
         {
-            if (EditTemplate != null && _cachedValue != null)
+            if (IsEditable && EditTemplate != null && _cachedValue != null)
             {
                 // since we have an EditTemplate with possible bound values, we need to revert those here.
                 var property = Item.GetType().GetProperties().SingleOrDefault(x => x.Name == Field);
@@ -177,6 +177,8 @@ namespace MudBlazor
 
         private void OnStartedCommittingItemChanges(T item)
         {
+            _cachedValue = null;
+
             if (IsEditable && EditTemplate == null)
             {
                 if (ReferenceEquals(Item, item))
@@ -196,7 +198,7 @@ namespace MudBlazor
             }
         }
 
-        private async Task CellCheckedChangedAsync(bool value, T item)
+        internal async Task CellCheckedChangedAsync(bool value, T item)
         {
             _isSelected = value;
             await DataGrid?.SetSelectedItemAsync(value, item);
