@@ -1,4 +1,10 @@
-﻿:root {
+﻿@property --rotate {
+    syntax: "<angle>";
+    initial-value: 132deg;
+    inherits: false;
+}
+
+:root {
     --section-diff: calc(calc(calc(100vw - 16px) * 0.106) + calc(128 * 1px) - 0.106 * calc(calc(100vw - 15px)/2 - 1080px / 2));
     --mobile-scale-value: 0.6;
     --browser-scaler-value: 0.8;
@@ -56,19 +62,25 @@
         height: 100%;
         background-color: var(--mud-palette-background);
 
-        .mini-drawer{
+        .mini-drawer {
+            height: 100%;
+            z-index: 2;
+            background-color: var(--mud-palette-background);
             border-right: 1px solid var(--mud-palette-table-lines);
+            overflow: hidden;
+            transition: width ease-in 0.1s;
         }
 
         .mini-fake-nav {
-            .mud-list-item-icon{
+            .mud-list-item-icon {
                 color: var(--mud-palette-action-default);
                 min-width: 36px;
             }
 
-            .mud-selected-item{
+            .mud-selected-item {
                 border-right: 1px solid var(--mud-palette-primary);
-                .mud-list-item-icon{
+
+                .mud-list-item-icon {
                     color: var(--mud-palette-primary);
                 }
             }
@@ -116,7 +128,16 @@
             }
 
             .lp-mini-app {
-                border-radius: 46px;
+                border-radius: 60px;
+
+                .mud-overlay {
+                    border-radius: 60px;
+                }
+
+                .mini-drawer {
+                    border-top-left-radius: 60px;
+                    border-bottom-left-radius: 60px;
+                }
             }
         }
 
@@ -156,7 +177,39 @@
 
             .lp-mini-app {
                 border-radius: 8px;
+
+                .mini-drawer {
+                    border-top-left-radius: 8px;
+                    border-bottom-left-radius: 8px;
+                }
             }
+        }
+    }
+
+    .lp-effect {
+        content: "";
+        position: absolute;
+
+        &.browser-shadow {
+            top: -96px;
+            left: 240px;
+            width: calc(calc(2560px / 2) + 24px);
+            height: calc(calc(1440px / 2) + 24px);
+            filter: blur(2px);
+            border-radius: 12px;
+            animation: spin 10s reverse infinite;
+            background-image: linear-gradient(var(--rotate), rgba(89, 74, 226, 0.5), rgba(255, 64, 129, 0.5) 43%, rgba(116, 103, 239, 0.5));
+        }
+
+        &.phone-shadow {
+            top: 128px;
+            left: 128px;
+            width: calc(calc(1170px / 4) + 28px);
+            height: calc(calc(2432px / 4) + 28px);
+            border-radius: 46px;
+            filter: grayscale(1);
+            animation: spin 20s linear infinite;
+            background-image: linear-gradient(var(--rotate), rgba(89, 74, 226, 0.5), rgba(255, 255, 255, 0.5) 43%, rgba(116, 103, 239, 0.5));
         }
     }
 
@@ -600,6 +653,16 @@
             transform: translateX(0);
         }
     }
+
+@keyframes spin {
+    0% {
+        --rotate: 0deg;
+    }
+
+    100% {
+        --rotate: 360deg;
+    }
+}
 
 .twitter {
     color: #1DA1F2 !important;

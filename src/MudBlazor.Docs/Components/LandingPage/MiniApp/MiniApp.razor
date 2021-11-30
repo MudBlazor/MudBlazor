@@ -1,49 +1,48 @@
-﻿@namespace MudBlazor.Docs.Components.LandingPage
+﻿@using Microsoft.AspNetCore.Components
+@using MudBlazor.Utilities
+@namespace MudBlazor.Docs.Components.LandingPage
 @layout MiniAppLayout
 
 <div class="d-flex mud-width-full mud-height-full">
-    @if (!IsMobile)
-    {
-        <div class="mini-drawer py-8 flex-grow-0 flex-shrink-0">
-            <div class="d-flex align-center px-4">
-                <MudBlazorLogo Class="mr-3" Style="width:36px;"/>
-                <MudText Typo="Typo.h6" Color="Color.Dark">Mud Mini</MudText>
-            </div>
-            <MudList Clickable="true" @bind-SelectedItem="selectedItem" @bind-SelectedValue="selectedValue" Class="py-6 mini-fake-nav">
-
-                <MudListSubheader Class="pt-6 pb-2">General</MudListSubheader>
-
-                <MudListItem Value="1" Icon="@Icons.Rounded.SpaceDashboard" Text="Dashboard" />
-                <MudListItem Value="2" Icon="@Icons.Rounded.ShoppingCart" Text="E-Commerce" />
-                <MudListItem Value="3" Icon="@Icons.Rounded.AccountBalance" Text="Banking" />
-                <MudListItem Value="4" Icon="@Icons.Rounded.Event" Text="Booking" />
-
-                <MudListSubheader Class="pt-6 pb-2">Applications</MudListSubheader>
-
-                <MudListItem Value="5" Icon="@Icons.Rounded.Email" Text="Mail" />
-                <MudListItem Value="6" Icon="@Icons.Rounded.QuestionAnswer" Text="Chat" />
-                <MudListItem Value="7" Icon="@Icons.Rounded.EventNote" Text="Calendar" />
-                <MudListItem Value="8" Icon="@Icons.Rounded.ViewKanban" Text="Kanban" />
-
-                <MudListSubheader Class="pt-6 pb-2">Manage</MudListSubheader>
-
-                <MudListItem Value="9" Icon="@Icons.Rounded.Person" Text="Users" />
-                <MudListItem Value="10" Icon="@Icons.Rounded.Group" Text="Groups" />
-                <MudListItem Value="11" Icon="@Icons.Rounded.ShoppingCart" Text="E-Commerce" InitiallyExpanded="false">
-                    <NestedList>
-                        <MudListItem Value="12" Text="Analytics"/>
-                        <MudListItem Value="13" Text="Products"/>
-                        <MudListItem Value="14" Text="Orders"/>
-                        <MudListItem Value="15" Text="Invoice"/>
-                    </NestedList>
-                </MudListItem>
-            </MudList>
+    <MudOverlay OnClick="@(() => ToggleMiniDrawer())" @bind-Visible="@overlayVisible" DarkBackground="true" Absolute="true" ZIndex="1" />
+    <div class="@MiniDrawerClassNames" style="@GetDrawerWidth()">
+        <div class="d-flex align-center px-4">
+            <MudBlazorLogo Class="mr-3" Style="width:36px;"/>
+            <MudText Typo="Typo.h6" Color="Color.Dark">Mud Mini</MudText>
         </div>
-    }
-    
+        <MudList Clickable="true" @bind-SelectedItem="selectedItem" @bind-SelectedValue="selectedValue" Class="py-6 mini-fake-nav">
+
+            <MudListSubheader Class="pt-6 pb-2">General</MudListSubheader>
+
+            <MudListItem Value="1" Icon="@Icons.Rounded.SpaceDashboard" Text="Dashboard" />
+            <MudListItem Value="2" Icon="@Icons.Rounded.ShoppingCart" Text="E-Commerce" />
+            <MudListItem Value="3" Icon="@Icons.Rounded.AccountBalance" Text="Banking" />
+            <MudListItem Value="4" Icon="@Icons.Rounded.Event" Text="Booking" />
+
+            <MudListSubheader Class="pt-6 pb-2">Applications</MudListSubheader>
+
+            <MudListItem Value="5" Icon="@Icons.Rounded.Email" Text="Mail" />
+            <MudListItem Value="6" Icon="@Icons.Rounded.QuestionAnswer" Text="Chat" />
+            <MudListItem Value="7" Icon="@Icons.Rounded.EventNote" Text="Calendar" />
+            <MudListItem Value="8" Icon="@Icons.Rounded.ViewKanban" Text="Kanban" />
+
+            <MudListSubheader Class="pt-6 pb-2">Manage</MudListSubheader>
+
+            <MudListItem Value="9" Icon="@Icons.Rounded.Person" Text="Users" />
+            <MudListItem Value="10" Icon="@Icons.Rounded.Group" Text="Groups" />
+            <MudListItem Value="11" Icon="@Icons.Rounded.ShoppingCart" Text="E-Commerce" InitiallyExpanded="false">
+                <NestedList>
+                    <MudListItem Value="12" Text="Analytics"/>
+                    <MudListItem Value="13" Text="Products"/>
+                    <MudListItem Value="14" Text="Orders"/>
+                    <MudListItem Value="15" Text="Invoice"/>
+                </NestedList>
+            </MudListItem>
+        </MudList>
+    </div>
     <div class="pa-5 flex-grow-1 flex-shrink-1">
         <MudToolBar DisableGutters="true">
-            <MudIconButton Icon="@Icons.Rounded.MenuOpen"/>
+            <MudIconButton OnClick="@(() => ToggleMiniDrawer())" Icon="@Icons.Rounded.MenuOpen"/>
             <MudIconButton Icon="@Icons.Outlined.Search"/>
             <MudSpacer/>
             <MudIconButton Icon="@Icons.Outlined.Notifications"/>
@@ -171,6 +170,52 @@
 
 @code {
     [Parameter] public bool IsMobile { get; set; }
+
+    private bool miniDrawerOpen;
+    private bool overlayVisible { get; set; }
+
     MudListItem selectedItem;
     object selectedValue = 1;
+
+    private void ToggleMiniDrawer()
+    {
+        miniDrawerOpen = !miniDrawerOpen;
+        if (IsMobile && miniDrawerOpen)
+        {
+            overlayVisible = true;
+        }
+        else
+        {
+            overlayVisible = false;
+        }
+    }
+
+    protected string MiniDrawerClassNames =>
+        new CssBuilder("mini-drawer py-8 flex-grow-0 flex-shrink-0")
+          .AddClass("absolute", IsMobile)
+        .Build();
+
+    private string GetDrawerWidth()
+    {
+        if (miniDrawerOpen)
+        {
+            return "width:240px;";
+        }
+        else
+        {
+            return "width:0;opacity:0;";
+        }
+    }
+
+    protected override void OnParametersSet()
+    {
+        if (IsMobile)
+        {
+            miniDrawerOpen = false;
+        }
+        else
+        {
+            miniDrawerOpen = true;
+        }
+    }
 }
