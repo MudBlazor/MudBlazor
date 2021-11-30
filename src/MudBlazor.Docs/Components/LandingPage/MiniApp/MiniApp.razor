@@ -1,81 +1,145 @@
 ﻿@namespace MudBlazor.Docs.Components.LandingPage
 @layout MiniAppLayout
 
+<div class="d-flex mud-width-full mud-height-full">
+    @if (!IsMobile)
+    {
+        <div class="mini-drawer py-8 flex-grow-0 flex-shrink-0">
+            <div class="d-flex align-center px-4">
+                <MudBlazorLogo Class="mr-3" Style="width:36px;"/>
+                <MudText Typo="Typo.h6" Color="Color.Dark">Mud Mini</MudText>
+            </div>
+            <MudList Clickable="true" @bind-SelectedItem="selectedItem" @bind-SelectedValue="selectedValue" Class="py-6 mini-fake-nav">
 
-<div class="lp-app-grid">
-    <MudPaper Class="py-4 px-6 rounded-lg d-flex align-center">
-        <div class="flex-grow-1">
-            <MudText Typo="Typo.h6">Graphite on roof</MudText>
-            <div class="d-flex align-center my-1">
-                <MudAvatar Class="mr-2 pa-4" Style="background-color:var(--mud-palette-primary-hover);" Size="Size.Small">
-                    <MudIcon Color="Color.Primary" Icon="@Icons.Material.Filled.TrendingDown" Size="Size.Small" />
-                </MudAvatar>
-                <MudText Typo="Typo.subtitle2">+2.6%</MudText>
-            </div>
-            <MudText Typo="Typo.h4">149,567</MudText>
+                <MudListSubheader Class="pt-6 pb-2">General</MudListSubheader>
+
+                <MudListItem Value="1" Icon="@Icons.Rounded.SpaceDashboard" Text="Dashboard" />
+                <MudListItem Value="2" Icon="@Icons.Rounded.ShoppingCart" Text="E-Commerce" />
+                <MudListItem Value="3" Icon="@Icons.Rounded.AccountBalance" Text="Banking" />
+                <MudListItem Value="4" Icon="@Icons.Rounded.Event" Text="Booking" />
+
+                <MudListSubheader Class="pt-6 pb-2">Applications</MudListSubheader>
+
+                <MudListItem Value="5" Icon="@Icons.Rounded.Email" Text="Mail" />
+                <MudListItem Value="6" Icon="@Icons.Rounded.QuestionAnswer" Text="Chat" />
+                <MudListItem Value="7" Icon="@Icons.Rounded.EventNote" Text="Calendar" />
+                <MudListItem Value="8" Icon="@Icons.Rounded.ViewKanban" Text="Kanban" />
+
+                <MudListSubheader Class="pt-6 pb-2">Manage</MudListSubheader>
+
+                <MudListItem Value="9" Icon="@Icons.Rounded.Person" Text="Users" />
+                <MudListItem Value="10" Icon="@Icons.Rounded.Group" Text="Groups" />
+                <MudListItem Value="11" Icon="@Icons.Rounded.ShoppingCart" Text="E-Commerce" InitiallyExpanded="false">
+                    <NestedList>
+                        <MudListItem Value="12" Text="Analytics"/>
+                        <MudListItem Value="13" Text="Products"/>
+                        <MudListItem Value="14" Text="Orders"/>
+                        <MudListItem Value="15" Text="Invoice"/>
+                    </NestedList>
+                </MudListItem>
+            </MudList>
         </div>
-        <div class="d-flex align-end justify-end mud-height-full py-8">
-            <MudPaper Height="80%" Width="6px" Square="true" Class="mud-primary mr-1 rounded-t" />
-            <MudPaper Height="95%" Width="6px" Square="true" Class="mud-primary mr-1 rounded-t" />
-            <MudPaper Height="90%" Width="6px" Square="true" Class="mud-primary mr-1 rounded-t" />
-            <MudPaper Height="85%" Width="6px" Square="true" Class="mud-primary mr-1 rounded-t" />
-            <MudPaper Height="65%" Width="6px" Square="true" Class="mud-primary mr-1 rounded-t" />
-            <MudPaper Height="52%" Width="6px" Square="true" Class="mud-primary mr-1 rounded-t" />
-            <MudPaper Height="40%" Width="6px" Square="true" Class="mud-primary mr-1 rounded-t" />
-            <MudPaper Height="38%" Width="6px" Square="true" Class="mud-primary mr-1 rounded-t" />
-            <MudPaper Height="36%" Width="6px" Square="true" Class="mud-primary mr-1 rounded-t" />
-            <MudPaper Height="20%" Width="6px" Square="true" Class="mud-primary mr-1 rounded-t" />
+    }
+    
+    <div class="pa-5 flex-grow-1 flex-shrink-1">
+        <MudToolBar DisableGutters="true">
+            <MudIconButton Icon="@Icons.Rounded.MenuOpen"/>
+            <MudIconButton Icon="@Icons.Outlined.Search"/>
+            <MudSpacer/>
+            <MudIconButton Icon="@Icons.Outlined.Notifications"/>
+            <MudMenu AnchorOrigin="Origin.BottomRight" TransformOrigin="Origin.TopRight" PopoverClass="mudblazor-landingpage-scaled-menu mud-elevation-1">
+                <ActivatorContent>
+                    <MiniAppAvatar />
+                </ActivatorContent>
+                <ChildContent>
+                    <div class="px-4">
+                        <MudText Typo="Typo.subtitle2">Martin Mudsson</MudText>
+                        <MudText Typo="Typo.body1" Class="mt-n2">martin@mudsson.se</MudText>
+                    </div>
+                    <MudDivider Class="my-2"/>
+                    <MudListItem Dense="true" Icon="@Icons.Rounded.Person">Profile</MudListItem>
+                    <MudListItem Dense="true" Icon="@Icons.Rounded.Settings">Settings</MudListItem>
+                    <MudListItem Dense="true" Icon="@Icons.Rounded.Logout">Logout</MudListItem>
+                </ChildContent>
+            </MudMenu>
+        </MudToolBar>
+        <div class="lp-app-grid">
+            <MudPaper Class="py-4 px-6 rounded-lg d-flex align-center">
+                <div class="flex-grow-1">
+                    <MudText Typo="Typo.h6">Graphite on roof</MudText>
+                    <div class="d-flex align-center my-1">
+                        <MudAvatar Class="mr-2 pa-4" Style="background-color: var(--mud-palette-primary-hover);" Size="Size.Small">
+                            <MudIcon Color="Color.Primary" Icon="@Icons.Material.Filled.TrendingDown" Size="Size.Small"/>
+                        </MudAvatar>
+                        <MudText Typo="Typo.subtitle2">+2.6%</MudText>
+                    </div>
+                    <MudText Typo="Typo.h4">149,567</MudText>
+                </div>
+                <div class="d-flex align-end justify-end mud-height-full py-8">
+                    <MudPaper Height="80%" Width="6px" Square="true" Class="mud-primary mr-1 rounded-t"/>
+                    <MudPaper Height="95%" Width="6px" Square="true" Class="mud-primary mr-1 rounded-t"/>
+                    <MudPaper Height="90%" Width="6px" Square="true" Class="mud-primary mr-1 rounded-t"/>
+                    <MudPaper Height="85%" Width="6px" Square="true" Class="mud-primary mr-1 rounded-t"/>
+                    <MudPaper Height="65%" Width="6px" Square="true" Class="mud-primary mr-1 rounded-t"/>
+                    <MudPaper Height="52%" Width="6px" Square="true" Class="mud-primary mr-1 rounded-t"/>
+                    <MudPaper Height="40%" Width="6px" Square="true" Class="mud-primary mr-1 rounded-t"/>
+                    <MudPaper Height="38%" Width="6px" Square="true" Class="mud-primary mr-1 rounded-t"/>
+                    <MudPaper Height="36%" Width="6px" Square="true" Class="mud-primary mr-1 rounded-t"/>
+                    <MudPaper Height="20%" Width="6px" Square="true" Class="mud-primary mr-1 rounded-t"/>
+                </div>
+            </MudPaper>
+            <MudPaper Class="py-4 px-6 rounded-lg d-flex align-center">
+                <div class="flex-grow-1">
+                    <MudText Typo="Typo.h6">Global Spread</MudText>
+                    <div class="d-flex align-center my-1">
+                        <MudAvatar Class="mr-2 pa-4" Style="background-color: var(--mud-palette-secondary-hover);" Size="Size.Small">
+                            <MudIcon Color="Color.Secondary" Icon="@Icons.Material.Filled.TrendingUp" Size="Size.Small"/>
+                        </MudAvatar>
+                        <MudText Typo="Typo.subtitle2">+9.6%</MudText>
+                    </div>
+                    <MudText Typo="Typo.h4">12%</MudText>
+                </div>
+                <div class="d-flex align-end justify-end mud-height-full py-8">
+                    <MudPaper Height="15%" Width="6px" Square="true" Class="mud-secondary mr-1 rounded-t"/>
+                    <MudPaper Height="20%" Width="6px" Square="true" Class="mud-secondary mr-1 rounded-t"/>
+                    <MudPaper Height="53%" Width="6px" Square="true" Class="mud-secondary mr-1 rounded-t"/>
+                    <MudPaper Height="35%" Width="6px" Square="true" Class="mud-secondary mr-1 rounded-t"/>
+                    <MudPaper Height="45%" Width="6px" Square="true" Class="mud-secondary mr-1 rounded-t"/>
+                    <MudPaper Height="70%" Width="6px" Square="true" Class="mud-secondary mr-1 rounded-t"/>
+                    <MudPaper Height="58%" Width="6px" Square="true" Class="mud-secondary mr-1 rounded-t"/>
+                    <MudPaper Height="76%" Width="6px" Square="true" Class="mud-secondary mr-1 rounded-t"/>
+                    <MudPaper Height="85%" Width="6px" Square="true" Class="mud-secondary mr-1 rounded-t"/>
+                    <MudPaper Height="61%" Width="6px" Square="true" Class="mud-secondary mr-1 rounded-t"/>
+                </div>
+            </MudPaper>
+            <MudPaper Class="py-4 px-6 rounded-lg d-flex align-center">
+                <div class="flex-grow-1">
+                    <MudText Typo="Typo.h6">Roentgen</MudText>
+                    <div class="d-flex align-center my-1">
+                        <MudAvatar Class="mr-2 pa-4" Style="background-color: var(--mud-palette-tertiary-hover);" Size="Size.Small">
+                            <MudIcon Color="Color.Tertiary" Icon="@Icons.Material.Filled.TrendingFlat" Size="Size.Small"/>
+                        </MudAvatar>
+                        <MudText Typo="Typo.subtitle2">~0.0%</MudText>
+                    </div>
+                    <MudText Typo="Typo.h4">3,6</MudText>
+                </div>
+                <div class="d-flex align-end justify-end mud-height-full py-8">
+                    <MudPaper Height="10%" Width="6px" Square="true" Class="mud-tertiary mr-1 rounded-t"/>
+                    <MudPaper Height="16%" Width="6px" Square="true" Class="mud-tertiary mr-1 rounded-t"/>
+                    <MudPaper Height="26%" Width="6px" Square="true" Class="mud-tertiary mr-1 rounded-t"/>
+                    <MudPaper Height="36%" Width="6px" Square="true" Class="mud-tertiary mr-1 rounded-t"/>
+                    <MudPaper Height="36%" Width="6px" Square="true" Class="mud-tertiary mr-1 rounded-t"/>
+                    <MudPaper Height="28%" Width="6px" Square="true" Class="mud-tertiary mr-1 rounded-t"/>
+                    <MudPaper Height="36%" Width="6px" Square="true" Class="mud-tertiary mr-1 rounded-t"/>
+                    <MudPaper Height="36%" Width="6px" Square="true" Class="mud-tertiary mr-1 rounded-t"/>
+                    <MudPaper Height="28%" Width="6px" Square="true" Class="mud-tertiary mr-1 rounded-t"/>
+                    <MudPaper Height="36%" Width="6px" Square="true" Class="mud-tertiary mr-1 rounded-t"/>
+                </div>
+            </MudPaper>
         </div>
-    </MudPaper>
-    <MudPaper Class="py-4 px-6 rounded-lg d-flex align-center">
-        <div class="flex-grow-1">
-            <MudText Typo="Typo.h6">Global Spread</MudText>
-            <div class="d-flex align-center my-1">
-                <MudAvatar Class="mr-2 pa-4" Style="background-color:var(--mud-palette-secondary-hover);" Size="Size.Small">
-                    <MudIcon Color="Color.Secondary" Icon="@Icons.Material.Filled.TrendingUp" Size="Size.Small" />
-                </MudAvatar>
-                <MudText Typo="Typo.subtitle2">+9.6%</MudText>
-            </div>
-            <MudText Typo="Typo.h4">12%</MudText>
-        </div>
-        <div class="d-flex align-end justify-end mud-height-full py-8">
-            <MudPaper Height="15%" Width="6px" Square="true" Class="mud-secondary mr-1 rounded-t" />
-            <MudPaper Height="20%" Width="6px" Square="true" Class="mud-secondary mr-1 rounded-t" />
-            <MudPaper Height="53%" Width="6px" Square="true" Class="mud-secondary mr-1 rounded-t" />
-            <MudPaper Height="35%" Width="6px" Square="true" Class="mud-secondary mr-1 rounded-t" />
-            <MudPaper Height="45%" Width="6px" Square="true" Class="mud-secondary mr-1 rounded-t" />
-            <MudPaper Height="70%" Width="6px" Square="true" Class="mud-secondary mr-1 rounded-t" />
-            <MudPaper Height="58%" Width="6px" Square="true" Class="mud-secondary mr-1 rounded-t" />
-            <MudPaper Height="76%" Width="6px" Square="true" Class="mud-secondary mr-1 rounded-t" />
-            <MudPaper Height="85%" Width="6px" Square="true" Class="mud-secondary mr-1 rounded-t" />
-            <MudPaper Height="61%" Width="6px" Square="true" Class="mud-secondary mr-1 rounded-t" />
-        </div>
-    </MudPaper>
-    <MudPaper Class="py-4 px-6 rounded-lg d-flex align-center">
-        <div class="flex-grow-1">
-            <MudText Typo="Typo.h6">Roentgen</MudText>
-            <div class="d-flex align-center my-1">
-                <MudAvatar Class="mr-2 pa-4" Style="background-color:var(--mud-palette-tertiary-hover);" Size="Size.Small">
-                    <MudIcon Color="Color.Tertiary" Icon="@Icons.Material.Filled.TrendingFlat" Size="Size.Small" />
-                </MudAvatar>
-                <MudText Typo="Typo.subtitle2">~0.0%</MudText>
-            </div>
-            <MudText Typo="Typo.h4">3,6</MudText>
-        </div>
-        <div class="d-flex align-end justify-end mud-height-full py-8">
-            <MudPaper Height="10%" Width="6px" Square="true" Class="mud-tertiary mr-1 rounded-t" />
-            <MudPaper Height="16%" Width="6px" Square="true" Class="mud-tertiary mr-1 rounded-t" />
-            <MudPaper Height="26%" Width="6px" Square="true" Class="mud-tertiary mr-1 rounded-t" />
-            <MudPaper Height="36%" Width="6px" Square="true" Class="mud-tertiary mr-1 rounded-t" />
-            <MudPaper Height="36%" Width="6px" Square="true" Class="mud-tertiary mr-1 rounded-t" />
-            <MudPaper Height="28%" Width="6px" Square="true" Class="mud-tertiary mr-1 rounded-t" />
-            <MudPaper Height="36%" Width="6px" Square="true" Class="mud-tertiary mr-1 rounded-t" />
-            <MudPaper Height="36%" Width="6px" Square="true" Class="mud-tertiary mr-1 rounded-t" />
-            <MudPaper Height="28%" Width="6px" Square="true" Class="mud-tertiary mr-1 rounded-t" />
-            <MudPaper Height="36%" Width="6px" Square="true" Class="mud-tertiary mr-1 rounded-t" />
-        </div>
-    </MudPaper>
+    </div>
 </div>
+
 
 @*<MudPaper Class="pa-4 rounded-lg d-flex align-center">
         <div class="flex-grow-1">
@@ -106,5 +170,7 @@
     </MudPaper>*@
 
 @code {
-
+    [Parameter] public bool IsMobile { get; set; }
+    MudListItem selectedItem;
+    object selectedValue = 1;
 }
