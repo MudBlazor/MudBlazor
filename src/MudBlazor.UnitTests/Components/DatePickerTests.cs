@@ -809,6 +809,19 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(() => datePicker.HandleKeyDown(new KeyboardEventArgs() { Key = "Escape", Type = "keydown", }));
             await comp.InvokeAsync(() => datePicker.HandleKeyDown(new KeyboardEventArgs() { Key = "Enter", Type = "keydown", }));
             comp.WaitForAssertion(() => datePicker.IsOpen.Should().BeFalse());
+
+            datePicker.ReadOnly = false;
+            await comp.InvokeAsync(() => datePicker.HandleKeyDown(new KeyboardEventArgs() { Key = "Enter", Type = "keydown", }));
+            comp.WaitForAssertion(() => datePicker.IsOpen.Should().BeTrue());
+            await comp.InvokeAsync(() => datePicker.HandleKeyDown(new KeyboardEventArgs() { Key = "Backspace", CtrlKey = true, ShiftKey = true, Type = "keydown", }));
+            comp.WaitForAssertion(() => datePicker.Date.Should().Be(null));
+
+            await comp.InvokeAsync(() => datePicker.HandleKeyDown(new KeyboardEventArgs() { Key = "Escape", Type = "keydown", }));
+            comp.WaitForAssertion(() => datePicker.Date.Should().Be(new DateTime(2021, 01, 02)));
+
+            await comp.InvokeAsync(() => datePicker.Clear());
+            comp.WaitForAssertion(() => datePicker.Date.Should().Be(null));
+
         }
     }
 }
