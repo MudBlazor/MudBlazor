@@ -423,7 +423,7 @@ namespace MudBlazor.UnitTests.Components
             // click and check if it has toggled the menu
             input.Click();
             comp.WaitForAssertion(() => comp.FindAll("div.mud-list-item").Count.Should().BeGreaterThan(0));
-            menu.ClassList.Should().Contain("mud-popover-open");
+            comp.WaitForAssertion(() => menu.ClassList.Should().Contain("mud-popover-open"));
             // now click an item and see the value change
             var items = comp.FindAll("div.mud-list-item").ToArray();
             items[1].Click();

@@ -40,21 +40,21 @@ namespace MudBlazor
         /// Set the anchor origin point to determen where the popover will open from.
         /// </summary>
         [ExcludeFromCodeCoverage]
-        [Obsolete("Direction is obsolete. Use AnchorOrigin or TransformOrigin instead!", false)]
+        [Obsolete("Use AnchorOrigin or TransformOrigin instead.", true)]
         [Parameter] public Direction Direction { get; set; } = Direction.Bottom;
 
         /// <summary>
         /// If true, the Autocomplete menu will open either before or after the input (left/right).
         /// </summary>
         [ExcludeFromCodeCoverage]
-        [Obsolete("OffsetX is obsolete. Use AnchorOrigin or TransformOrigin instead!", false)]
+        [Obsolete("Use AnchorOrigin or TransformOrigin instead.", true)]
         [Parameter] public bool OffsetX { get; set; }
 
         /// <summary>
         /// If true, the Autocomplete menu will open either before or after the input (top/bottom).
         /// </summary>
         [ExcludeFromCodeCoverage]
-        [Obsolete("OffsetY is obsolete. Use AnchorOrigin or TransformOrigin instead!", false)]
+        [Obsolete("Use AnchorOrigin or TransformOrigin instead.", true)]
         [Parameter] public bool OffsetY { get; set; }
 
         /// <summary>
@@ -211,46 +211,6 @@ namespace MudBlazor
 
         private MudInput<string> _elementReference;
 
-        internal Origin _anchorOrigin;
-        internal Origin _transformOrigin;
-
-#pragma warning disable CS0618 // This is for backwards compability until Obsolete is removed
-        private void GetPopoverOrigins()
-        {
-            if (Direction != Direction.Bottom || OffsetY || OffsetX)
-            {
-                switch (Direction)
-                {
-                    case Direction.Bottom when OffsetY:
-                    case Direction.Top when OffsetY:
-                        _anchorOrigin = Origin.BottomCenter;
-                        _transformOrigin = Origin.TopCenter;
-                        break;
-                    case Direction.Top when !OffsetY:
-                        _anchorOrigin = Origin.BottomCenter;
-                        _transformOrigin = Origin.BottomCenter;
-                        break;
-                    case Direction.Start when OffsetX:
-                    case Direction.Left when OffsetX:
-                        _anchorOrigin = Origin.TopLeft;
-                        _transformOrigin = Origin.TopRight;
-                        break;
-                    case Direction.End when OffsetX:
-                    case Direction.Right when OffsetX:
-                        _anchorOrigin = Origin.TopRight;
-                        _transformOrigin = Origin.TopLeft;
-                        break;
-                }
-            }
-            else
-            {
-                _anchorOrigin = AnchorOrigin;
-                _transformOrigin = TransformOrigin;
-            }
-        }
-#pragma warning restore CS0618 // Type or member is obsolete
-
-
         public MudAutocomplete()
         {
             Adornment = Adornment.End;
@@ -279,14 +239,20 @@ namespace MudBlazor
         {
             if ((Disabled || ReadOnly) && !IsOpen)
                 return;
-            IsOpen = !IsOpen;
-            if (IsOpen)
+            await ChangeMenu(!IsOpen);
+        }
+
+        private async Task ChangeMenu(bool open)
+        {
+            IsOpen = open;
+            if (open)
             {
                 await _elementReference.SelectAsync();
                 await OnSearchAsync();
             }
             else
             {
+                _timer?.Dispose();
                 RestoreScrollPosition();
                 await CoerceTextToValue();
             }
@@ -301,7 +267,6 @@ namespace MudBlazor
         protected override void OnInitialized()
         {
             UpdateIcon();
-            GetPopoverOrigins(); // Just to keep Obsolete functional until removed.
             var text = GetItemString(Value);
             if (!string.IsNullOrWhiteSpace(text))
                 Text = text;
@@ -405,7 +370,7 @@ namespace MudBlazor
             return "null";
         }
 
-        protected virtual async Task OnInputKeyDown(KeyboardEventArgs args)
+        internal virtual async Task OnInputKeyDown(KeyboardEventArgs args)
         {
             switch (args.Key)
             {
@@ -422,23 +387,49 @@ namespace MudBlazor
             }
         }
 
-        protected virtual async Task OnInputKeyUp(KeyboardEventArgs args)
+        internal virtual async Task OnInputKeyUp(KeyboardEventArgs args)
         {
             switch (args.Key)
             {
                 case "Enter":
-                    await OnEnterKey();
+                case "NumpadEnter":
+                    if (!IsOpen)
+                    {
+                        await ToggleMenu();
+                    }
+                    else
+                    {
+                        await OnEnterKey();
+                    }
                     break;
                 case "ArrowDown":
-                    var increment = _enabledItemIndices.ElementAtOrDefault(_enabledItemIndices.IndexOf(_selectedListItemIndex) + 1) - _selectedListItemIndex;
-                    await SelectNextItem(increment < 0 ? 1 : increment);
+                    if (!IsOpen)
+                    {
+                        await ToggleMenu();
+                    }
+                    else
+                    {
+                        var increment = _enabledItemIndices.ElementAtOrDefault(_enabledItemIndices.IndexOf(_selectedListItemIndex) + 1) - _selectedListItemIndex;
+                        await SelectNextItem(increment < 0 ? 1 : increment);
+                    }
                     break;
                 case "ArrowUp":
-                    var decrement = _selectedListItemIndex - _enabledItemIndices.ElementAtOrDefault(_enabledItemIndices.IndexOf(_selectedListItemIndex) - 1);
-                    await SelectNextItem(-(decrement < 0 ? 1 : decrement));
+                    if (args.AltKey == true)
+                    {
+                        await ChangeMenu(open:false);
+                    }
+                    else if (!IsOpen)
+                    {
+                        await ToggleMenu();
+                    }
+                    else
+                    {
+                        var decrement = _selectedListItemIndex - _enabledItemIndices.ElementAtOrDefault(_enabledItemIndices.IndexOf(_selectedListItemIndex) - 1);
+                        await SelectNextItem(-(decrement < 0 ? 1 : decrement));
+                    }
                     break;
                 case "Escape":
-                    IsOpen = false;
+                    await ChangeMenu(open: false);
                     break;
                 case "Tab":
                     await Task.Delay(1);

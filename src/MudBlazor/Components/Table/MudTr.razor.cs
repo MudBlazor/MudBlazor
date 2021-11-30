@@ -80,9 +80,9 @@ namespace MudBlazor
 
                 // Trigger the row edit preview event
                 Context.Table.RowEditPreview?.Invoke(Item);
-            }
 
-            Context?.Table.SetEditingItem(Item);
+                Context?.Table.SetEditingItem(Item);
+            }
 
             if (Context?.Table.MultiSelection == true && !IsHeader)
             {

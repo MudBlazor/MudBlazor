@@ -56,11 +56,7 @@ namespace MudBlazor
         private Task UpdateSortDirectionAsync(SortDirection sortDirection)
         {
             SortDirection = sortDirection;
-
-            if (SortBy != null || Table.HasServerData)
-                Context?.SetSortFunc(this);
-
-            return Table.InvokeServerLoadFunc();
+            return Context?.SetSortFunc(this);
         }
 
         [Parameter]

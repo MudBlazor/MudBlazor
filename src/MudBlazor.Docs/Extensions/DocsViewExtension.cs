@@ -23,6 +23,7 @@ namespace MudBlazor.Docs.Extensions
             services.AddSingleton<IApiLinkService, ApiLinkService>();
             services.AddSingleton<IMenuService, MenuService>();
             services.AddScoped<IDocsNavigationService, DocsNavigationService>();
+            services.AddSingleton<IRenderQueueService, RenderQueueService>();
         }
     }
 }

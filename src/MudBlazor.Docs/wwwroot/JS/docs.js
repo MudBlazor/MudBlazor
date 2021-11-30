@@ -8,3 +8,4 @@ var mudBlazorDocs = {
         element.scrollIntoView({ block: 'center', behavior: 'smooth' })
     }
 }
+

@@ -34,10 +34,10 @@
             </SectionHeader>
             <MarkdownAddReferences />
             <MudText GutterBottom="true" Class="mt-4">
-                <b class="mud-secondary-text">Note:</b> If you're installing on a fresh Blazor template make sure to remove everything in your <CodeInline SecondaryColor="true">site.css</CodeInline> and remove the <CodeInline SecondaryColor="true">bootstrap.min.css</CodeInline> completely from either <CodeInline>index.html</CodeInline> or <CodeInline>_Host.cshtml</CodeInline>.
+                <b class="mud-secondary-text">Note:</b> If you're installing on a fresh Blazor template make sure to remove everything in your <CodeInline SecondaryColor="true">site.css</CodeInline> and remove the <CodeInline SecondaryColor="true">bootstrap.min.css</CodeInline> completely from either <CodeInline>index.html</CodeInline> or <CodeInline>_Host.cshtml</CodeInline>/<CodeInline>_Layout.cshtml</CodeInline>.
             </MudText>
             <MudText GutterBottom="true" Class="mt-4">
-                In the HTML body section of either <CodeInline>index.html</CodeInline> or <CodeInline>_Host.cshtml</CodeInline> add this:
+                In the HTML body section of either <CodeInline>index.html</CodeInline> or <CodeInline>_Host.cshtml</CodeInline>/<CodeInline>_Layout.cshtml</CodeInline> add this:
             </MudText>
             <MarkdownAddJsReference />
         </DocsPageSection>
@@ -46,13 +46,9 @@
                 <SubTitle>4. Register Services</SubTitle>
             </SectionHeader>
             <MudText GutterBottom="true">
-                <b>For Blazor WebAssembly</b> add the following to your <CodeInline>Program.Main</CodeInline>
+                Add the following to your <CodeInline>Program.cs</CodeInline>
             </MudText>
-            <MarkdownRegisterServicesWebAssembly />
-            <MudText GutterBottom="true" Class="mt-6">
-                <b>For Blazor Server</b> add the following in your <CodeInline>Startup.cs</CodeInline> under <CodeInline>ConfigureServices</CodeInline>
-            </MudText>
-            <MarkdownRegisterServicesServer />
+            <MarkdownRegisterServices />
         </DocsPageSection>
         <DocsPageSection>
             <SectionHeader>

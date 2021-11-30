@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
@@ -64,7 +65,7 @@ namespace MudBlazor
         /// </summary>
         [ExcludeFromCodeCoverage]
         [Parameter]
-        [Obsolete("Obsolete, use AdornmentIcon")]
+        [Obsolete("Use AdornmentIcon instead.", true)]
         public string InputIcon
         {
             get { return AdornmentIcon; }
@@ -161,7 +162,7 @@ namespace MudBlazor
         /// </summary>
         [ExcludeFromCodeCoverage]
         [Parameter]
-        [Obsolete("Obsolete, use Variant")]
+        [Obsolete("Use Variant instead.", true)]
         public Variant InputVariant
         {
             get { return Variant; }
@@ -289,7 +290,7 @@ namespace MudBlazor
             }
         }
 
-        private MudTextField<string> _inputReference;
+        protected internal MudTextField<string> _inputReference;
 
         public virtual ValueTask FocusAsync() => _inputReference?.FocusAsync() ?? ValueTask.CompletedTask;
 
@@ -336,6 +337,8 @@ namespace MudBlazor
                     TargetClass = "mud-input-slot",
                     Keys = {
                         new KeyOptions { Key=" ", PreventDown = "key+none" },
+                        new KeyOptions { Key="ArrowUp", PreventDown = "key+none" },
+                        new KeyOptions { Key="ArrowDown", PreventDown = "key+none" },
                         new KeyOptions { Key="Enter", PreventDown = "key+none" },
                         new KeyOptions { Key="NumpadEnter", PreventDown = "key+none" },
                     },
@@ -357,6 +360,7 @@ namespace MudBlazor
             {
                 IsOpen = true;
                 OnOpened();
+                FocusAsync();
             }
         }
 
@@ -384,45 +388,24 @@ namespace MudBlazor
         {
             PickerClosed.InvokeAsync(this);
         }
-        protected internal void HandleKeyDown(KeyboardEventArgs obj)
+
+        protected internal virtual void HandleKeyDown(KeyboardEventArgs obj)
         {
             if (Disabled || ReadOnly)
                 return;
             switch (obj.Key)
             {
-                case "Enter":
-                case "NumpadEnter":
-                    Open();
+                case "Backspace":
+                    if (obj.CtrlKey == true && obj.ShiftKey == true)
+                    {
+                        Clear();
+                        _value = default(T);
+                        Reset();
+                    }
                     break;
                 case "Escape":
                 case "Tab":
                     Close(false);
-                    break;
-                case "ArrowDown":
-                    if (obj.AltKey == true)
-                    {
-                        Open();
-                    }
-                    break;
-                case "ArrowUp":
-                    if (obj.AltKey == true)
-                    {
-                        Close(false);
-                    }
-                    break;
-                case " ":
-                    if (!Editable)
-                    {
-                        if (IsOpen)
-                        {
-                            Close(false);
-                        }
-                        else
-                        {
-                            Open();
-                        }
-
-                    }
                     break;
             }
         }
