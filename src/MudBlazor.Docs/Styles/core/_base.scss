@@ -1,46 +1,3 @@
-.mudblazor-brand {
-    margin: 32px 0 0;
-    padding: 0px;
-
-    &:hover {
-        cursor: pointer;
-        color: var(--mud-palette-primary);
-        transition: color 250ms cubic-bezier(.4,0,.2,1) 0ms,box-shadow 250ms cubic-bezier(.4,0,.2,1) 0ms,border 250ms cubic-bezier(.4,0,.2,1) 0ms;
-    }
-
-    & > .mudblazor-svg {
-        width: 80px;
-        margin-left: auto;
-        margin-right: auto;
-    }
-}
-
-.mudblazor-appbar-band {
-    background-image: url(../../_content/MudBlazor.Docs/MudAppbarCorner.svg);
-    background-repeat: no-repeat;
-    background-position: top right;
-    overflow: hidden;
-}
-
-@media (max-width:600px) {
-    .mudblazor-appbar-band {
-        background-position: 14px 0px;
-    }
-}
-
-.mudblazor-appbar-brand-text {
-    letter-spacing: 0.5rem;
-    font-weight: 300;
-    margin-left: 12px;
-    font-size: 24px;
-    user-select:none;
-}
-
-@media (max-width:400px) {
-    .mudblazor-appbar-brand-text {
-        letter-spacing: 0.25rem;
-    }
-}
 
 
 .mudblazor-navmenu {
@@ -112,14 +69,10 @@
     }
 
     &.mud-input-control {
-        background-color: rgba(white,.15);
+        background-color: rgba(236, 236, 236, 0.5);
         margin-bottom: 5px;
         height: 42px;
         border-radius: var(--mud-default-borderradius);
-
-        & .mud-input-root, .mud-icon-default {
-            color: #fafafa;
-        }
     }
 
     & .mud-input.mud-input-outlined .mud-input-outlined-border {

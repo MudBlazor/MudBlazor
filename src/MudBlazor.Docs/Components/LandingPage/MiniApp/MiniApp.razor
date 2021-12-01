@@ -4,7 +4,7 @@
 @layout MiniAppLayout
 
 <div class="d-flex mud-width-full mud-height-full">
-    <MudOverlay OnClick="@(() => ToggleMiniDrawer())" @bind-Visible="@overlayVisible" DarkBackground="true" Absolute="true" ZIndex="1" />
+    <MudOverlay OnClick="@(() => ToggleMiniDrawer())" @bind-Visible="@overlayVisible" Absolute="true" ZIndex="1" />
     <div class="@MiniDrawerClassNames" style="@GetDrawerWidth()">
         <div class="d-flex align-center px-4">
             <MudBlazorLogo Class="mr-3" Style="width:36px;"/>

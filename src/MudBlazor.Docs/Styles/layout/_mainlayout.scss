@@ -1,0 +1,20 @@
+﻿
+.docs-appbar{
+  backdrop-filter: blur(12px);
+}
+
+.landing-appbar{
+  position: absolute !important;
+}
+
+.docs-mudblazor-logo{
+  width: 40px;
+}
+.docs-brand-text {
+  letter-spacing: .3rem;
+  font-weight: 400;
+  font-family: 'Roboto';
+  margin-left: 12px;
+  font-size: 24px;
+  user-select: none;
+}

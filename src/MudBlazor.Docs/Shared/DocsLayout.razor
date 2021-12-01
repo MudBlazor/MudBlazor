@@ -1,0 +1,28 @@
+﻿@inherits LayoutComponentBase
+@layout MainLayout
+
+<MudThemeProvider Theme="_currentTheme"/>
+
+<MudSwipeArea OnSwipe="@OnSwipe">
+        <MudLayout>
+            <MudAppBar Class="docs-appbar" Elevation="0">
+                <MudBlazorLogo Class="docs-mudblazor-logo mr-2"/>
+                <MudText Color="Color.Primary" Typo="Typo.h5" Class="docs-brand-text d-none d-md-flex">MudBlazor</MudText>
+                @*<MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())"/>*@
+                <MudSpacer/>
+                <MudAutocomplete AutoFocus="true" @ref="_searchAutocomplete" T="ApiLinkServiceEntry" Placeholder="Search" SearchFunc="Search" Variant="Variant.Outlined" ValueChanged="OnSearchResult" Class="docs-search-bar" AdornmentIcon="@Icons.Material.Filled.Search">
+                    <ItemTemplate Context="result">
+                        <MudText>@result.Title</MudText> <MudText Typo="Typo.body2">@result.SubTitle</MudText>
+                    </ItemTemplate>
+                </MudAutocomplete>
+                <MudSpacer/>
+            </MudAppBar>
+            <MudDrawer @bind-Open="_drawerOpen" ClipMode="DrawerClipMode.Docked" Elevation="0" Breakpoint="Breakpoint.Lg">
+                <NavMenu @ref="@_navMenuRef" />
+            </MudDrawer>
+                @Body
+            <MudScrollToTop TopOffset="400" Style="z-index:2000;">
+                <MudFab Icon="@Icons.Material.Filled.KeyboardArrowUp" Color="Color.Primary" />
+            </MudScrollToTop>
+        </MudLayout>
+    </MudSwipeArea>

@@ -25,20 +25,27 @@ namespace MudBlazor.Docs
             return theme;
         }
 
+        public MudTheme DocsTheme()
+        {
+            MudTheme theme = new MudTheme()
+            {
+                Palette = DocsLightPalette
+            };
+            return theme;
+        }
+
         public static LayoutProperties LandingPageLayoutProperties = new LayoutProperties()
         {
             DefaultBorderRadius = "6px"
         };
 
         #region Docs
-        public static MudTheme DocsLightTheme { get; set; } =
-            new()
-            {
-                Palette = new Palette()
-                {
-                    Black = "#272c34"
-                }
-            };
+        public static Palette DocsLightPalette = new Palette()
+        {
+            Black = "#272c34",
+            AppbarBackground = "rgba(255,255,255,0.8)"
+        };
+
         public static MudTheme DocsDarkTheme { get; set; } =
             new()
             {

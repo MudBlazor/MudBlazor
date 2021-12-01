@@ -9,7 +9,7 @@
             <NavigationFooter Section=_section Previous="@_previous" Next="@_next" />
         </div>
     </MudContainer>
-    <MudDrawer @bind-Open="_contentDrawerOpen" Breakpoint="Breakpoint.Lg" Anchor="Anchor.End" ClipMode="DrawerClipMode.Always" Elevation="0" Color="Color.Transparent" Class="pt-6">
+    <MudDrawer @bind-Open="_contentDrawerOpen" Breakpoint="Breakpoint.Lg" Anchor="Anchor.End" ClipMode="DrawerClipMode.Always" Elevation="0" Color="Color.Transparent">
         <MudPageContentNavigation SectionClassSelector="docs-section-header" @ref="_contentNavigation" ActivateFirstSectionAsDefault="true" />
     </MudDrawer>
 </MudMainContent>

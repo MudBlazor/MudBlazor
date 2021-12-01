@@ -1,10 +1,12 @@
 ﻿@inherits LayoutComponentBase
+@layout MainLayout
 
 <MudThemeProvider Theme="@_currentTheme"/>
 
 <MudLayout Class="mudblazor-landingpage">
-    <MudAppBar Elevation="0" DisableGutters="true" Fixed="false" Class="lp-appbar py-2" ToolBarClass="px-8" Color="Color.Transparent">
-        <MudBlazorLogo Style="width:40px;" Class="mr-6"/>
+    <MudAppBar Class="landing-appbar py-2" Elevation="0" Color="Color.Transparent">
+        <MudBlazorLogo Class="docs-mudblazor-logo mr-2"/>
+        <MudText Color="Color.Primary" Typo="Typo.h5" Class="docs-brand-text d-none d-md-flex">MudBlazor</MudText>
         <MudButton Variant="Variant.Text" Class="mx-1 px-3">Docs</MudButton>
         <MudButton Variant="Variant.Text" Class="mx-1 px-3">Components</MudButton>
         <MudButton Variant="Variant.Text" Class="mx-1 px-3">Products</MudButton>
