@@ -40,7 +40,7 @@
             </MudListItem>
         </MudList>
     </div>
-    <div class="pa-5 flex-grow-1 flex-shrink-1">
+    <div class="@ContentClassNames">
         <MudToolBar DisableGutters="true">
             <MudIconButton OnClick="@(() => ToggleMiniDrawer())" Icon="@Icons.Rounded.MenuOpen"/>
             <MudIconButton Icon="@Icons.Outlined.Search"/>
@@ -194,6 +194,11 @@
         new CssBuilder("mini-drawer py-8 flex-grow-0 flex-shrink-0")
           .AddClass("absolute", IsMobile)
         .Build();
+    protected string ContentClassNames =>
+        new CssBuilder("flex-grow-1 flex-shrink-1")
+            .AddClass("pa-5", !IsMobile)
+            .AddClass("px-8", IsMobile)
+            .Build();
 
     private string GetDrawerWidth()
     {

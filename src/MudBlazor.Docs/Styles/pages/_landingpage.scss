@@ -115,6 +115,33 @@
             padding: 14px;
             border-radius: 46px;
 
+            .lp-device-toolbar {
+              width: 100%;
+              height: 50px;
+              display: flex;
+              justify-content: space-between;
+              padding: 0 24px 0 24px;
+              
+              .lp-time, .lp-device-info{
+                width: 30%;
+              }
+
+              .lp-phone-notch {
+                position: absolute;
+                width: 100%;
+                height: auto;
+                left: 0;
+                fill: var(--mud-palette-background);
+                z-index: -1;
+
+
+                .lp-phone-notch-speaker{
+
+
+                }
+              }
+            }
+
             .lp-device-screen {
                 border-radius: 36px;
             }
@@ -128,7 +155,8 @@
             }
 
             .lp-mini-app {
-                border-radius: 60px;
+                height: calc(100% - 50px);
+                border-radius: 0 0 60px 60px;
 
                 .mud-overlay {
                     border-radius: 60px;
