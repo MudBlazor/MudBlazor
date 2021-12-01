@@ -3,19 +3,22 @@
 
 <MudGrid>
     <MudItem xs="12" sm="6" md="4">
-        <MudMaskField @bind-Value="TextValue" Mask="nnn-nn-nn" Label="Mask" Variant="Variant.Text"></MudMaskField>
+        <MudMaskField OnKeyDown="KeyDownn" @bind-Value="TextValue" Mask="nnn111-nn-nn" Label="Mask" Variant="Variant.Text"></MudMaskField>
     </MudItem>
     <MudItem xs="12" sm="6" md="4">
-        <MudTextField @bind-Value="TextValue" Label="Standard" Variant="Variant.Text"></MudTextField>
+        <MudText>@pressedKey @DateTime.Now.ToLongTimeString()</MudText>
     </MudItem>
     <MudItem xs="12" sm="6" md="4">
-        <MudTextField @bind-Value="TextValue" Label="Filled" Variant="Variant.Filled"></MudTextField>
-    </MudItem>
-    <MudItem xs="12" sm="6" md="4">
-        <MudTextField @bind-Value="TextValue" Label="Outlined" Variant="Variant.Outlined"></MudTextField>
+        <MudText>@TextValue @DateTime.Now.ToLongTimeString()</MudText>
     </MudItem>
 </MudGrid>
 
 @code {
-    public string TextValue { get; set; }
+	public string TextValue { get; set; }
+	private string pressedKey = "";
+
+	private void KeyDownn(KeyboardEventArgs e)
+	{
+		pressedKey = e.Key.ToString();
+	}
 }
