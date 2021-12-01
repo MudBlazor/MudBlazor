@@ -12,11 +12,12 @@
 				Style="@Style" 
 				Variant="@Variant" 
 				TextUpdateSuppression="@TextUpdateSuppression" 
-				Value="@Text" 
-                      ValueChanged="@((s) => SetTextAsync(s))" Placeholder="@Placeholder" Disabled=@Disabled DisableUnderLine="@DisableUnderLine" ReadOnly="@ReadOnly" MaxLength="@MaxLength"
+				Value="@Text"
+				MaxLength="@MaxLength"
+                      ValueChanged="@((s) => SetTextAsync(s))" Placeholder="@Placeholder" Disabled=@Disabled DisableUnderLine="@DisableUnderLine" ReadOnly="@ReadOnly" 
                       Adornment="@Adornment" AdornmentText="@AdornmentText" AdornmentIcon="@AdornmentIcon" AdornmentColor="@AdornmentColor" IconSize="@IconSize" OnAdornmentClick="@OnAdornmentClick" Error="@Error" 
                       Immediate="true" Margin="@Margin" OnBlur="@OnBlurred"  OnInternalInputChanged="OnChange" 
-                      OnKeyDown="HandleKeyDown"
+                      OnKeyDown="HandleKeyDown" @onfocus="@(() => ImplementMask(Text, Mask))"
                       HideSpinButtons="true" Clearable="@Clearable" OnClearButtonClick="@OnClearButtonClick" Pattern="@Pattern"/>
         </InputContent>
     </MudInputControl>

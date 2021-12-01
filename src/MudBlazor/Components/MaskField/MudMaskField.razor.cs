@@ -82,6 +82,7 @@ namespace MudBlazor
                     },
                 });
             }
+            //await ImplementMask(Text, Mask);
             await base.OnAfterRenderAsync(firstRender);
         }
 
@@ -98,6 +99,10 @@ namespace MudBlazor
 
         private CharacterType FindCharacterType(string character)
         {
+            if (character == null)
+            {
+                return CharacterType.None;
+            }
             if (Regex.IsMatch(character, @"[a-zA-Z]"))
             {
                 return CharacterType.Letter;
@@ -108,8 +113,51 @@ namespace MudBlazor
             }
             else
             {
-                return CharacterType.None;
+                return CharacterType.Other;
             }
+        }
+
+        private async Task ImplementMask(string RawText, string Mask)
+        {
+            if (RawText == null)
+            {
+                RawText = "";
+            }
+
+            string returnedText = "";
+            char[] textArray = RawText.ToCharArray();
+            char[]maskArray = Mask.ToCharArray();
+            int timer = 0;
+            int findingNum = 0;
+            bool check = true;
+            foreach (char c in maskArray)
+            {
+                if (FindCharacterType(c.ToString()) == CharacterType.Other)
+                {
+                    returnedText += c.ToString();
+                }
+                else
+                {
+                    if (timer < RawText.Length)
+                    {
+                        returnedText += textArray[timer].ToString();
+                    }
+                    else
+                    {
+                        returnedText += "_";
+                        if (check)
+                        {
+                            findingNum = timer;
+                            check = false;
+                        }
+
+                    }
+                }
+                timer++;
+            }
+
+            await _elementReference.SetText(returnedText);
+            _elementReference.SelectRangeAsync(findingNum, findingNum).AndForget();
         }
 
         private string CheckCharacterType(int i)
@@ -274,23 +322,41 @@ namespace MudBlazor
             string _text = "";
             if (Text != null)
             {
-                _text = Text;
+                char[] rawArray = Text.ToCharArray();
+                foreach (char c in rawArray)
+                {
+                    if (c == '_')
+                    {
+                        break;
+                    }
+                    else
+                    {
+                        _text += c.ToString();
+                    }
+                }
+                //_text = Text;
             }
 
             string specialMaskCharacters = "";
             char[] maskArray = Mask.ToCharArray();
             List<char> textArray =  _text.ToCharArray().ToList();
             CharacterType keyType = FindCharacterType(obj.Key);
-            CharacterType maskType = FindCharacterType(maskArray[textArray.Count].ToString());
-
-            if (keyType == maskType)
+            try
             {
-                _isCharacterTypeMatch = true;
+                CharacterType maskType = FindCharacterType(maskArray[textArray.Count].ToString());
+                if (keyType == maskType)
+                {
+                    _isCharacterTypeMatch = true;
+                }
+            }
+            catch (Exception)
+            {
+                
             }
 
-            if (textArray.Count < maskArray.Length)
+            if (textArray.Count + 1 < maskArray.Length)
             {
-                if (CharacterType.None == FindCharacterType(maskArray[textArray.Count + 1].ToString()))
+                if (CharacterType.Other == FindCharacterType(maskArray[textArray.Count + 1].ToString()))
                 {
                     specialMaskCharacters += maskArray[textArray.Count + 1].ToString();
                 }
@@ -484,11 +550,11 @@ namespace MudBlazor
             //implement mask
             if (_isCharacterTypeMatch == true && obj.Key != "Backspace")
             {
-                await _elementReference.SetText(Text + _lastKeyDownCharacter + specialMaskCharacters);
-
-                //await SetValueAsync(Converter.Get(Text + "a"), true);
+                await _elementReference.SetText(_text + _lastKeyDownCharacter + specialMaskCharacters);
             }
+            
             OnKeyDown.InvokeAsync(obj).AndForget();
+            await ImplementMask(Text, Mask);
             _isCharacterTypeMatch = false;
             specialMaskCharacters = "";
             //await Task.Delay(1);

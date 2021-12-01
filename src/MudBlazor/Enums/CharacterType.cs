@@ -7,6 +7,7 @@ namespace MudBlazor
         Letter,
         Numeric,
         Both,
+        Other,
         None,
     }
 }

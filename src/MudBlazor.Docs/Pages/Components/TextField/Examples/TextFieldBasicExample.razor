@@ -3,7 +3,7 @@
 
 <MudGrid>
     <MudItem xs="12" sm="6" md="4">
-        <MudMaskField OnKeyDown="KeyDownn" @bind-Value="TextValue" Mask="nnn111-nn-nn" Label="Mask" Variant="Variant.Text"></MudMaskField>
+        <MudMaskField OnKeyDown="KeyDownn" @bind-Value="TextValue" Mask="nnn111-nn-nn" Label="Text" Variant="Variant.Text" MaxLength="mask.Length"></MudMaskField>
     </MudItem>
     <MudItem xs="12" sm="6" md="4">
         <MudText>Pressed Key: @pressedKey @DateTime.Now.ToLongTimeString()</MudText>
@@ -11,11 +11,15 @@
     <MudItem xs="12" sm="6" md="4">
         <MudText>Value: @TextValue @DateTime.Now.ToLongTimeString()</MudText>
     </MudItem>
+	<MudItem xs="12" sm="6" md="4">
+        <MudTextField @bind-Value="mask" Label="Mask"></MudTextField>
+    </MudItem>
 </MudGrid>
 
 @code {
 	public string TextValue { get; set; }
 	private string pressedKey = "";
+	private string mask = "nnn111-nn-nn";
 
 	private void KeyDownn(KeyboardEventArgs e)
 	{
