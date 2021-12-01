@@ -89,7 +89,7 @@ namespace MudBlazor
         /// Avatar Icon, Overrides the regular Icon if set.
         /// </summary>
         [Parameter]
-        [Category(CategoryTypes.Chip.Appearance)]
+        [Category(CategoryTypes.Chip.Behavior)]
         public string Avatar { get; set; }
 
         /// <summary>
@@ -117,7 +117,7 @@ namespace MudBlazor
         /// Sets the Icon to use.
         /// </summary>
         [Parameter]
-        [Category(CategoryTypes.Chip.Appearance)]
+        [Category(CategoryTypes.Chip.Behavior)]
         public string Icon { get; set; }
 
         /// <summary>

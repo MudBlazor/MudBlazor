@@ -40,7 +40,7 @@ namespace MudBlazor
         /// Icon to use if set.
         /// </summary>
         [Parameter]
-        [Category(CategoryTypes.NavMenu.Appearance)]
+        [Category(CategoryTypes.NavMenu.Behavior)]
         public string Icon { get; set; }
 
         /// <summary>

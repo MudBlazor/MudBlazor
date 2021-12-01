@@ -38,7 +38,7 @@ namespace MudBlazor
         /// Avatar to use if set.
         /// </summary>
         [Parameter]
-        [Category(CategoryTypes.List.Appearance)]
+        [Category(CategoryTypes.List.Behavior)]
         public string Avatar { get; set; }
 
         /// <summary>
@@ -86,7 +86,7 @@ namespace MudBlazor
         /// Icon to use if set.
         /// </summary>
         [Parameter]
-        [Category(CategoryTypes.List.Appearance)]
+        [Category(CategoryTypes.List.Behavior)]
         public string Icon { get; set; }
 
         /// <summary>

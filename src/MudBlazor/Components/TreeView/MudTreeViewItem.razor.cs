@@ -77,14 +77,14 @@ namespace MudBlazor
         /// Tyopography for the text.
         /// </summary>
         [Parameter]
-        [Category(CategoryTypes.TreeView.Behavior)]
+        [Category(CategoryTypes.TreeView.Appearance)]
         public Typo TextTypo { get; set; } = Typo.body1;
 
         /// <summary>
         /// User class names for the text, separated by space.
         /// </summary>
         [Parameter]
-        [Category(CategoryTypes.TreeView.Behavior)]
+        [Category(CategoryTypes.TreeView.Appearance)]
         public string TextClass { get; set; }
 
         /// <summary>
@@ -98,14 +98,14 @@ namespace MudBlazor
         /// Tyopography for the endtext.
         /// </summary>
         [Parameter]
-        [Category(CategoryTypes.TreeView.Behavior)]
+        [Category(CategoryTypes.TreeView.Appearance)]
         public Typo EndTextTypo { get; set; } = Typo.body1;
 
         /// <summary>
         /// User class names for the endtext, separated by space.
         /// </summary>
         [Parameter]
-        [Category(CategoryTypes.TreeView.Behavior)]
+        [Category(CategoryTypes.TreeView.Appearance)]
         public string EndTextClass { get; set; }
 
         /// <summary>
@@ -195,7 +195,7 @@ namespace MudBlazor
         /// The color of the icon. It supports the theme colors.
         /// </summary>
         [Parameter]
-        [Category(CategoryTypes.TreeView.Behavior)]
+        [Category(CategoryTypes.TreeView.Appearance)]
         public Color IconColor { get; set; } = Color.Default;
 
         /// <summary>
@@ -209,7 +209,7 @@ namespace MudBlazor
         /// The color of the icon. It supports the theme colors.
         /// </summary>
         [Parameter]
-        [Category(CategoryTypes.TreeView.Behavior)]
+        [Category(CategoryTypes.TreeView.Appearance)]
         public Color EndIconColor { get; set; } = Color.Default;
 
         /// <summary>
