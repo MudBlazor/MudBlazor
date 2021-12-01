@@ -32,19 +32,28 @@
             </SectionHeader>
             <SectionSource Code="OverviewThemesScrollbarExample" NoToolbar="true" GitHubFolderName="Customization/Theming" />
         </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Dark Palette">
+                <Description>Dark palettes are integrated in <CodeInline>MudTheme</CodeInline>. Just set <CodeInline>IsDarkMode</CodeInline> to  <CodeInline>true</CodeInline>.</Description>
+            </SectionHeader>
+            <SectionContent FullWidth="true" Outlined="true" Class="pa-0">
+                <iframe src="/iframe/docs/examples/themeprovider/darkpalette" class="ma-0 rounded">
+                    <OverviewThemesDarkPaletteExample/>
+                </iframe>
+            </SectionContent>
+            <SectionSource Code="OverviewThemesDarkPaletteExample" GitHubFolderName="Customization/OverviewThemesDarkPaletteExample"/>
+        </DocsPageSection>
+        
         <DocsPageSection>
             <SectionHeader Title="Custom Themes">
-                <Description>To customize the theme, you need to give the ThemeProvider a new <CodeInline>MudTheme</CodeInline> class with the settings you want to change.</Description>
+                <Description>To customize the theme, you need to give the ThemeProvider a new <CodeInline>MudTheme</CodeInline> class with the settings you want to change.
+                    <CodeInline>Palette</CodeInline> defines the color of the Light Palette. <CodeInline>PaletteDark</CodeInline> on the other hand defines the colors of
+                    the Dark Palette.</Description>
             </SectionHeader>
             <SectionSource Code="OverviewThemesCustomExample" NoToolbar="true" GitHubFolderName="Customization/Theming" />
 
             <MudText Class="my-2">This way, you only need to change the stuff you don't like in our default theme, but you can replace all the defaults completely if you want to.</MudText>
-        </DocsPageSection>
-        <DocsPageSection>
-            <SectionHeader Title="Multiple Themes">
-                <Description>You can have multiple themes applied in different ways but this is how we apply our dark theme on the MudBlazor page.</Description>
-            </SectionHeader>
-            <SectionSource Code="OverviewThemesMultipleExample" NoToolbar="true" GitHubFolderName="Customization/Theming" />
         </DocsPageSection>
     </DocsPageContent>
 </DocsPage>
