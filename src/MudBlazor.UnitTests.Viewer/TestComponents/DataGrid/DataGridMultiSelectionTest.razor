@@ -1,0 +1,30 @@
+﻿@namespace MudBlazor.UnitTests.TestComponents
+
+<MudDataGrid Items="@_items" MultiSelection="true" @bind-bind-SelectedItems="_selectedItems">
+    <Columns>
+        <Column T="Item" Type="@ColumnType.SelectionCheckBox" EnableFooterSelection="true" />
+        <Column T="Item" Field="@nameof(Item.Name)" />
+    </Columns>
+</MudDataGrid>
+
+@code {
+    private IEnumerable<Item> _items = new List<Item>()
+    {
+        new Item("A"), 
+        new Item("B"), 
+        new Item("C"),
+    };
+
+    private HashSet<Item> _selectedItems;
+
+    public class Item
+    {
+        public string Name { get; set; }
+
+        public Item(string name)
+        {
+            Name = name;
+        }
+    }
+
+}

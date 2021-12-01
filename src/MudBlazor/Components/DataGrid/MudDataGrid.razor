@@ -1,0 +1,161 @@
+﻿@namespace MudBlazor
+@inherits MudComponentBase
+@typeparam T
+@using MudBlazor.Utilities
+
+<CascadingValue IsFixed="true" Value="this">@Columns</CascadingValue>
+
+<CascadingValue IsFixed="true" Value="this">
+    <div @attributes="UserAttributes" class="@_classname" style="@Style">
+        @if (Items != null || ServerData != null)
+        {
+            @if (ToolBarContent != null)
+            {
+                <MudToolBar Class="mud-table-toolbar">
+                    @ToolBarContent
+                </MudToolBar>
+            }
+            <div class="mud-table-container" style="@_tableStyle @(GetHorizontalScrollbarStyle())">
+                <table class="mud-table-root">
+                    @if (ColGroup != null)
+                    {
+                        <colgroup>
+                            @ColGroup
+                        </colgroup>
+                    }
+                    <thead class="@_headClassname">
+                        <CascadingValue Name="IsOnlyHeader" IsFixed="true" Value="true">
+                            @Header
+                        </CascadingValue>
+                        <tr class="mud-table-row">
+                            @foreach (var column in _columns)
+                            {
+                                @*This is necessary on .net6.0-preview4 and below.*@
+                                if (column.HeaderTemplate != null)
+                                {
+                                    <HeaderCell T="T" Title="@column.Title" Field="@column.Field" Class="@column.headerClassname"
+                                        SortIcon="@column.SortIcon" SortBy="@column.SortBy" HeaderTemplate="@column.HeaderTemplate"
+                                        InitialDirection="@column.InitialDirection" Sortable="@column.Sortable" Style="@column.HeaderStyle"
+                                        Filterable="@column.Filterable" ColumnType="@column.Type" ColSpan="@column.HeaderColSpan"></HeaderCell>
+                                }
+                                else
+                                {
+                                    <HeaderCell T="T" Title="@column.Title" Field="@column.Field" Class="@column.headerClassname"
+                                        SortIcon="@column.SortIcon" SortBy="@column.SortBy"
+                                        InitialDirection="@column.InitialDirection" Sortable="@column.Sortable" Style="@column.HeaderStyle"
+                                        Filterable="@column.Filterable" ColumnType="@column.Type" ColSpan="@column.HeaderColSpan"></HeaderCell>
+                                }
+                            }
+
+                            @if (EditMode == DataGridEditMode.Inline)
+                            {
+                                @*Add the column header for the edit controls.*@
+                                <th scope="col" class="mud-table-cell"></th>
+                            }
+                        </tr>
+                        @if (_filtersMenuVisible)
+                        {
+                            <MudOverlay  Visible="true" OnClick="@(() => _filtersMenuVisible = false)"></MudOverlay>
+                            <MudPaper Class="pa-2 filters-panel" Style="position:absolute;width:600px;z-index:var(--mud-zindex-drawer)" Elevation="4">
+                                <MudGrid Spacing="0">
+                                    @foreach (var f in FilterDefinitions)
+                                    { 
+                                        <Filter T="T" @bind-Field="f.Field" @bind-Operator="f.Operator" @bind-Value="f.Value"
+                                            Id="@f.Id"></Filter>
+                                    }
+                                </MudGrid>
+                                <MudButton Class="mt-2" StartIcon="@Icons.Material.Filled.Add" OnClick="@AddFilter" Color="@Color.Primary">Add Filter</MudButton>
+                            </MudPaper>
+                        }
+                    </thead>
+                    <tbody class="mud-table-body">
+                        @if (Loading)
+                        {
+                            <tr>
+                                <td colspan="1000" class="mud-table-loading">
+                                    <MudProgressLinear Color="@LoadingProgressColor" Class="mud-table-loading-progress" Indeterminate="true" />
+                                </td>
+                            </tr>
+                        }
+
+                        @if (CurrentPageItems != null && CurrentPageItems.Count() > 0)
+                        {
+                            var rowIndex = 0;
+                            <MudVirtualize IsEnabled="@Virtualize" Items="@CurrentPageItems?.ToList()" Context="item">
+                                @{ var rowClass = new CssBuilder(RowClass).AddClass(RowClassFunc?.Invoke(item, rowIndex)).Build(); }
+                                @{ var rowStyle = new StyleBuilder().AddStyle(RowStyle).AddStyle(RowStyleFunc?.Invoke(item, rowIndex)).Build(); }
+                                @{ var tmpRowIndex = rowIndex; }
+                                <tr class="mud-table-row @rowClass" Style="@rowStyle" @key="item" @onclick="@((args) => OnRowClickedAsync(args, item, tmpRowIndex))">  
+                                    <CascadingValue Value="@Validator" IsFixed="true">
+                                    @foreach (var column in @_columns)
+                                    {
+                                        <Cell Item="@item" Title="@column.Title" Field="@column.Field" Class="@column.cellClassname"
+                                            CellTemplate="@column.CellTemplate" ColumnType="@column.Type" Style="@column.CellStyle"
+                                            IsEditable="@(column.IsEditable ?? true)" EditTemplate="@column.EditTemplate"
+                                            CellClass="@column.CellClass" CellClassFunc="@column.CellClassFunc"
+                                            CellStyle="@column.CellStyle" CellStyleFunc="@column.CellStyleFunc"></Cell>
+                                    }
+                                        
+                                    @if (EditMode == DataGridEditMode.Inline)
+                                    {
+                                        @*Add the inline edit controls.*@
+                                        <Cell Item="@item" ColumnType="@ColumnType.InlineEditCommand" IsEditable="false"></Cell>
+                                    }
+                                    </CascadingValue>
+                                </tr>                                   
+                                @if (ChildRowContent != null)
+                                {
+                                    @ChildRowContent(item)
+                                }                                    
+                                @{ rowIndex++; }
+                            </MudVirtualize>
+                        }
+                        else if(Loading ? LoadingContent != null : NoRecordsContent != null)
+                        {
+                            <tr>
+                                <th colspan="1000" class="mud-table-empty-row">
+                                    <div Class="my-3">
+                                        @if(Loading)
+                                        {
+                                            @LoadingContent
+                                        }
+                                        else
+                                        {
+                                            @NoRecordsContent
+                                        }
+                                    </div>
+                                </th>
+                            </tr>
+                        }
+                    </tbody>
+                    <tfoot class="@_footClassname">
+                        <CascadingValue Name="IsOnlyFooter" IsFixed="true" Value="true">
+                            @Footer
+                        </CascadingValue>
+                        <tr class="mud-table-row">
+                            @foreach (var column in @_columns)
+                            {
+                                if (column.Type == ColumnType.SelectionCheckBox && MultiSelection && column.EnableFooterSelection)
+                                {
+                                    <FooterCell T="T" Class="@column.footerClassname" ColumnType="@ColumnType.SelectionCheckBox" ColSpan="@column.FooterColSpan"
+                                        Style="@column.FooterStyle"></FooterCell>
+                                }
+                                else if (column.Type != ColumnType.SelectionCheckBox && column.FooterTemplate != null)
+                                {
+                                    <FooterCell T="T" Class="@column.footerClassname" ColumnType="@column.Type" FooterTemplate="@column.FooterTemplate"
+                                        ColSpan="@column.FooterColSpan" Style="@column.FooterStyle"></FooterCell>
+                                }
+                            }
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+            @if (PagerContent != null)
+            {
+                <div class="mud-table-pagination">
+                    @PagerContent
+                </div>
+            }
+        }
+    </div>
+</CascadingValue>
