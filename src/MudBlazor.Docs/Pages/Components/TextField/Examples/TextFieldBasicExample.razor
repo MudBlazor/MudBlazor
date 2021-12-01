@@ -6,10 +6,10 @@
         <MudMaskField OnKeyDown="KeyDownn" @bind-Value="TextValue" Mask="nnn111-nn-nn" Label="Mask" Variant="Variant.Text"></MudMaskField>
     </MudItem>
     <MudItem xs="12" sm="6" md="4">
-        <MudText>@pressedKey @DateTime.Now.ToLongTimeString()</MudText>
+        <MudText>Pressed Key: @pressedKey @DateTime.Now.ToLongTimeString()</MudText>
     </MudItem>
     <MudItem xs="12" sm="6" md="4">
-        <MudText>@TextValue @DateTime.Now.ToLongTimeString()</MudText>
+        <MudText>Value: @TextValue @DateTime.Now.ToLongTimeString()</MudText>
     </MudItem>
 </MudGrid>
 

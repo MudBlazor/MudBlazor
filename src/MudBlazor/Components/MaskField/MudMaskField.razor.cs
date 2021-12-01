@@ -65,7 +65,7 @@ namespace MudBlazor
             {
                 await _keyInterceptor.Connect(_elementId, new KeyInterceptorOptions()
                 {
-                    //EnableLogging = true,
+                    EnableLogging = true,
                     TargetClass = "mud-input-slot",
                     Keys = {
                         new KeyOptions { Key=" ", PreventDown = "key+none" }, //prevent scrolling page, toggle open/close
@@ -74,12 +74,11 @@ namespace MudBlazor
                         new KeyOptions { Key="Home", PreventDown = "key+none" },
                         new KeyOptions { Key="End", PreventDown = "key+none" },
                         new KeyOptions { Key="Escape" },
-                        new KeyOptions { Key="/[a-z]/", PreventDown = "key+none" },
-                        new KeyOptions { Key="/[A-Z]/", PreventDown = "key+none" },
-                        new KeyOptions { Key="/[0-9]/", PreventDown = "key+none" },
+                        new KeyOptions { Key="/^[a-zA-Z0-9]$/", PreventDown = "key+none" },
                         new KeyOptions { Key="Enter", PreventDown = "key+none" },
                         new KeyOptions { Key="NumpadEnter", PreventDown = "key+none" },
                         new KeyOptions { Key="/./", SubscribeDown = true, SubscribeUp = true }, // for our users
+                        new KeyOptions { Key="Backspace", PreventDown = "none" },
                     },
                 });
             }
@@ -481,18 +480,20 @@ namespace MudBlazor
             //    }
             //}
             //await SetTextAsync(Text.Substring(0, Text.Length - 1), true);
-            if (_isCharacterTypeMatch == true)
+
+            //implement mask
+            if (_isCharacterTypeMatch == true && obj.Key != "Backspace")
             {
-                await SetTextAsync(Text + _lastKeyDownCharacter + specialMaskCharacters);
-                _key++;
+                await _elementReference.SetText(Text + _lastKeyDownCharacter + specialMaskCharacters);
 
                 //await SetValueAsync(Converter.Get(Text + "a"), true);
             }
             OnKeyDown.InvokeAsync(obj).AndForget();
             _isCharacterTypeMatch = false;
-            await Task.Delay(1);
-            _elementReference.FocusAsync().AndForget(TaskOption.Safe);
-            await Task.Delay(1);
+            specialMaskCharacters = "";
+            //await Task.Delay(1);
+            //_elementReference.FocusAsync().AndForget(TaskOption.Safe);
+            //await Task.Delay(1);
         }
 
         private string _lastKeyDownCharacter = "";
