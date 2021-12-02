@@ -5,8 +5,8 @@ namespace MudBlazor
     public enum CharacterType
     {
         Letter,
-        Numeric,
-        Both,
+        Digit,
+        LetterOrDigit,
         Other,
         None,
     }

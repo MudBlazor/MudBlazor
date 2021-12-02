@@ -28,6 +28,12 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public InputType InputType { get; set; } = InputType.Text;
 
+        [Parameter] public Dictionary<char, CharacterType> MaskCharacters { get; set; } = new() { 
+            ['a'] = CharacterType.Letter,
+            ['0'] = CharacterType.Digit,
+            ['*'] = CharacterType.LetterOrDigit,
+        };
+
         internal string RawValue { get; set; }
 
         internal override InputType GetInputType() => InputType;
@@ -99,34 +105,45 @@ namespace MudBlazor
 
         string val = "";
 
-        private CharacterType FindCharacterType(string character)
+        private CharacterType GetCharacterType(string character, bool isMaskingCharacter = false)
         {
-            if (character == null)
+            if (string.IsNullOrEmpty(character))
             {
                 return CharacterType.None;
             }
-            if (Regex.IsMatch(character, @"[a-zA-Z]"))
+
+            if (isMaskingCharacter)
             {
-                return CharacterType.Letter;
-            }
-            else if (Regex.IsMatch(character, @"[0-9]"))
-            {
-                return CharacterType.Numeric;
+                if (!MaskCharacters.ContainsKey(character[0]))
+                    return CharacterType.Other;
+
+                return MaskCharacters[character[0]];
             }
             else
             {
-                return CharacterType.Other;
+                if (Regex.IsMatch(character, @"^[a-zA-Z]$"))
+                {
+                    return CharacterType.Letter;
+                }
+                else if (Regex.IsMatch(character, @"^[0-9]$"))
+                {
+                    return CharacterType.Digit;
+                }
+                else
+                {
+                    return CharacterType.Other;
+                }
             }
         }
 
         private void SetRawValue()
         {
             string rawValue = "";
-            char[]textArray = Text.ToCharArray();
 
-            foreach (char c in textArray)
+            foreach (var c in Text)
             {
-                if (FindCharacterType(c.ToString()) == CharacterType.Letter || FindCharacterType(c.ToString()) == CharacterType.Numeric)
+                var type = GetCharacterType(c.ToString());
+                if (type == CharacterType.Letter || type == CharacterType.Digit)
                 {
                     rawValue += c.ToString();
                 }
@@ -149,13 +166,11 @@ namespace MudBlazor
 
             string returnedText = "";
             char[] textArray = RawText.ToCharArray();
-            char[]maskArray = Mask.ToCharArray();
+            char[] maskArray = Mask.ToCharArray();
             int timer = 0;
-            int findingNum = 0;
-            bool check = true;
             foreach (char c in maskArray)
             {
-                if (FindCharacterType(c.ToString()) == CharacterType.Other)
+                if (GetCharacterType(c.ToString(), true) == CharacterType.Other)
                 {
                     returnedText += c.ToString();
                 }
@@ -168,19 +183,40 @@ namespace MudBlazor
                     else
                     {
                         returnedText += "_";
-                        if (check)
-                        {
-                            findingNum = timer;
-                            check = false;
-                        }
-
                     }
                 }
                 timer++;
             }
-
             await _elementReference.SetText(returnedText);
-            _elementReference.SelectRangeAsync(findingNum, findingNum).AndForget();
+        }
+
+        public void SetCaretPosition()
+        {
+            char[] textArray = RawValue.ToCharArray();
+            char[] maskArray = Mask.ToCharArray();
+            int timer = 0;
+            int findingNum = 0;
+            foreach (char c in maskArray)
+            {
+                if (GetCharacterType(c.ToString(), true) == CharacterType.Other)
+                {
+                    
+                }
+                else
+                {
+                    if (timer < RawValue.Length)
+                    {
+                        
+                    }
+                    else
+                    {
+                        findingNum = timer;
+                        break;
+                    }
+                }
+                timer++;
+            }
+            _elementReference.SelectRangeAsync(findingNum, findingNum);
         }
 
         private string CheckCharacterType(int i)
@@ -342,6 +378,8 @@ namespace MudBlazor
         {
             _lastKeyDownCharacter = obj.Key;
 
+            if (obj.Key == "ArrowUp" || obj.Key == "ArrowDown" || obj.Key == "ArrowLeft" || obj.Key == "ArrowRight")
+                return;
             string _text = "";
             if (Text != null)
             {
@@ -362,11 +400,11 @@ namespace MudBlazor
 
             string specialMaskCharacters = "";
             char[] maskArray = Mask.ToCharArray();
-            List<char> textArray =  _text.ToCharArray().ToList();
-            CharacterType keyType = FindCharacterType(obj.Key);
+            List<char> textArray = _text.ToCharArray().ToList();
+            CharacterType keyType = GetCharacterType(obj.Key);
             try
             {
-                CharacterType maskType = FindCharacterType(maskArray[textArray.Count].ToString());
+                CharacterType maskType = GetCharacterType(maskArray[textArray.Count].ToString(), true);
                 if (keyType == maskType)
                 {
                     _isCharacterTypeMatch = true;
@@ -379,7 +417,7 @@ namespace MudBlazor
 
             if (textArray.Count + 1 < maskArray.Length)
             {
-                if (CharacterType.Other == FindCharacterType(maskArray[textArray.Count + 1].ToString()))
+                if (CharacterType.Other == GetCharacterType(maskArray[textArray.Count + 1].ToString()))
                 {
                     specialMaskCharacters += maskArray[textArray.Count + 1].ToString();
                 }
@@ -577,12 +615,11 @@ namespace MudBlazor
             }
             await ImplementMask(Text, Mask);
             SetRawValue();
+            
             OnKeyDown.InvokeAsync(obj).AndForget();
             _isCharacterTypeMatch = false;
             specialMaskCharacters = "";
-            //await Task.Delay(1);
-            //_elementReference.FocusAsync().AndForget(TaskOption.Safe);
-            //await Task.Delay(1);
+            SetCaretPosition();
         }
 
         private string _lastKeyDownCharacter = "";
