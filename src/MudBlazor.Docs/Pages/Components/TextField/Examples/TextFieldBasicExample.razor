@@ -3,13 +3,12 @@
 
 <MudGrid>
     <MudItem xs="12" sm="6" md="4">
-        <MudMaskField OnKeyDown="KeyDownn" @bind-Value="TextValue" Mask="nnn111-nn-nn" Label="Text" Variant="Variant.Text" MaxLength="mask.Length"></MudMaskField>
+        <MudMaskField @ref="maskField" OnKeyDown="KeyDownn" @bind-Value="TextValue" Mask="nnn111-nn-nn" Label="Text" Variant="Variant.Text" MaxLength="mask.Length"></MudMaskField>
     </MudItem>
     <MudItem xs="12" sm="6" md="4">
-        <MudText>Pressed Key: @pressedKey @DateTime.Now.ToLongTimeString()</MudText>
-    </MudItem>
-    <MudItem xs="12" sm="6" md="4">
-        <MudText>Value: @TextValue @DateTime.Now.ToLongTimeString()</MudText>
+        <MudText>Pressed Key: @pressedKey</MudText>
+		<MudText>Value: @TextValue</MudText>
+		<MudText>RawValue: @RawValue</MudText>
     </MudItem>
 	<MudItem xs="12" sm="6" md="4">
         <MudTextField @bind-Value="mask" Label="Mask"></MudTextField>
@@ -17,12 +16,15 @@
 </MudGrid>
 
 @code {
+	MudMaskField<string> maskField;
 	public string TextValue { get; set; }
+	public string RawValue { get; set; }
 	private string pressedKey = "";
 	private string mask = "nnn111-nn-nn";
 
 	private void KeyDownn(KeyboardEventArgs e)
 	{
 		pressedKey = e.Key.ToString();
+		RawValue = maskField.GetRawValue();
 	}
 }

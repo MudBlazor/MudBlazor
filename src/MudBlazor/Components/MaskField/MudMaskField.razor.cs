@@ -28,6 +28,8 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public InputType InputType { get; set; } = InputType.Text;
 
+        internal string RawValue { get; set; }
+
         internal override InputType GetInputType() => InputType;
 
         private string GetCounterText() => Counter == null ? string.Empty : (Counter == 0 ? (string.IsNullOrEmpty(Text) ? "0" : $"{Text.Length}") : ((string.IsNullOrEmpty(Text) ? "0" : $"{Text.Length}") + $" / {Counter}"));
@@ -115,6 +117,27 @@ namespace MudBlazor
             {
                 return CharacterType.Other;
             }
+        }
+
+        private void SetRawValue()
+        {
+            string rawValue = "";
+            char[]textArray = Text.ToCharArray();
+
+            foreach (char c in textArray)
+            {
+                if (FindCharacterType(c.ToString()) == CharacterType.Letter || FindCharacterType(c.ToString()) == CharacterType.Numeric)
+                {
+                    rawValue += c.ToString();
+                }
+            }
+
+            RawValue = rawValue;
+        }
+
+        public string GetRawValue()
+        {
+            return RawValue;
         }
 
         private async Task ImplementMask(string RawText, string Mask)
@@ -552,9 +575,9 @@ namespace MudBlazor
             {
                 await _elementReference.SetText(_text + _lastKeyDownCharacter + specialMaskCharacters);
             }
-            
-            OnKeyDown.InvokeAsync(obj).AndForget();
             await ImplementMask(Text, Mask);
+            SetRawValue();
+            OnKeyDown.InvokeAsync(obj).AndForget();
             _isCharacterTypeMatch = false;
             specialMaskCharacters = "";
             //await Task.Delay(1);
