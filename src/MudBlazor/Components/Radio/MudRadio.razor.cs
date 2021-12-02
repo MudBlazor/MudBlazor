@@ -77,42 +77,58 @@ namespace MudBlazor
         /// <summary>
         /// The color of the component. It supports the theme colors.
         /// </summary>
-        [Parameter] public Color Color { get; set; } = Color.Default;
+        [Parameter]
+        [Category(CategoryTypes.Radio.Appearance)]
+        public Color Color { get; set; } = Color.Default;
 
         /// <summary>
         /// The position of the child content.
         /// </summary>
-        [Parameter] public Placement Placement { get; set; } = Placement.Right;
+        [Parameter]
+        [Category(CategoryTypes.Radio.Behavior)]
+        public Placement Placement { get; set; } = Placement.Right;
 
         /// <summary>
         /// The value to associate to the button.
         /// </summary>
-        [Parameter] public T Option { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.Radio.Behavior)]
+        public T Option { get; set; }
 
         /// <summary>
         /// If true, compact padding will be applied.
         /// </summary>
-        [Parameter] public bool Dense { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.Radio.Appearance)]
+        public bool Dense { get; set; }
 
         /// <summary>
         /// The Size of the component.
         /// </summary>
-        [Parameter] public Size Size { get; set; } = Size.Medium;
+        [Parameter]
+        [Category(CategoryTypes.Radio.Appearance)]
+        public Size Size { get; set; } = Size.Medium;
 
         /// <summary>
         /// If true, disables ripple effect.
         /// </summary>
-        [Parameter] public bool DisableRipple { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.Radio.Appearance)]
+        public bool DisableRipple { get; set; }
 
         /// <summary>
         /// If true, the button will be disabled.
         /// </summary>
-        [Parameter] public bool Disabled { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.Radio.Behavior)]
+        public bool Disabled { get; set; }
 
         /// <summary>
         /// Child content of component.
         /// </summary>
-        [Parameter] public RenderFragment ChildContent { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.Radio.Behavior)]
+        public RenderFragment ChildContent { get; set; }
 
         internal bool Checked { get; private set; }
 
