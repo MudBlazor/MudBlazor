@@ -13,16 +13,19 @@ namespace MudBlazor
         /// <summary>
         /// Child content
         /// </summary>
+        // "Misc" category
         [Parameter] public RenderFragment ChildContent { get; set; }
 
         /// <summary>
         /// The HTML element that will be rendered in the root by the component
         /// </summary>
+        // "Misc" category
         [Parameter] public string HtmlTag { get; set; } = "span";
         /// <summary>
         /// The ElementReference to bind to.
         /// Use like @bind-Ref="myRef"
         /// </summary>
+        // "Misc" category
         [Parameter] public ElementReference? Ref { get; set; }
 
         [Parameter] public EventCallback<ElementReference> RefChanged { get; set; }
