@@ -152,6 +152,12 @@ namespace MudBlazor
         public bool ShowWeekNumbers { get; set; }
 
         /// <summary>
+        /// Week rule to use when ShowWeekNumbers is set to true.  If no culture is defined, CultureInfo.CurrentCulture.DateTimeFormat.CalendarWeekRule will be used.
+        /// </summary>
+        [Parameter]
+        public CalendarWeekRule CalendarWeekRule { get; set; } = CultureInfo.CurrentCulture.DateTimeFormat.CalendarWeekRule;
+
+        /// <summary>
         /// Format of the selected date in the title. By default, this is "ddd, dd MMM" which abbreviates day and month names. 
         /// For instance, display the long names like this "dddd, dd. MMMM". 
         /// </summary>
@@ -275,7 +281,7 @@ namespace MudBlazor
                 yield return week_first.AddDays(i);
         }
 
-        private string GetWeekNumber(int month, int index)
+        public string GetWeekNumber(int month, int index)
         {
             if (index is < 0 or > 5)
                 throw new ArgumentException("Index must be between 0 and 5");
@@ -291,7 +297,7 @@ namespace MudBlazor
                 return "";
 
             return Culture.Calendar.GetWeekOfYear(week_first,
-                Culture.DateTimeFormat.CalendarWeekRule, FirstDayOfWeek ?? Culture.DateTimeFormat.FirstDayOfWeek).ToString();
+                CalendarWeekRule, FirstDayOfWeek ?? Culture.DateTimeFormat.FirstDayOfWeek).ToString();
         }
 
         protected virtual OpenTo? GetNextView()

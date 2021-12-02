@@ -772,5 +772,80 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(() => datePicker.ToggleState());
             comp.WaitForAssertion(() => comp.FindAll("div.mud-picker-open").Count.Should().Be(1));
         }
+
+        [Test]
+        public void Check_WeekNumber_CalendarWeekRule_FirstDay()
+        {
+            // Define a date for comparison
+            //2021, 1, 1 is a good sample as all option have a different value
+            var dateSample = new DateTime(2021, 1, 1);
+            var cal = CultureInfo.CurrentCulture.Calendar;
+            var sampleWeekNumber = cal.GetWeekOfYear(dateSample.Date, CalendarWeekRule.FirstDay, CultureInfo.CurrentCulture.DateTimeFormat.FirstDayOfWeek).ToString();
+
+            //init picker
+            var comp = Context.RenderComponent<MudDatePicker>();
+            var datepicker = comp.Instance;
+            datepicker.PickerMonth = dateSample;
+
+            //Set week rule
+            datepicker.CalendarWeekRule = CalendarWeekRule.FirstDay;
+
+            //Get week number
+            var weekNumber = datepicker.GetWeekNumber(0, 0);
+
+            //Assert
+            Assert.True(weekNumber == "1");
+            Assert.True(weekNumber == sampleWeekNumber);
+        }
+
+        [Test]
+        public void Check_WeekNumber_CalendarWeekRule_FirstFullWeek()
+        {
+            // Define a date for comparison
+            //2021, 1, 1 is a good sample as all option have a different value
+            var dateSample = new DateTime(2021, 1, 1);
+            var cal = CultureInfo.CurrentCulture.Calendar;
+            var sampleWeekNumber = cal.GetWeekOfYear(dateSample.Date, CalendarWeekRule.FirstFullWeek, CultureInfo.CurrentCulture.DateTimeFormat.FirstDayOfWeek).ToString();
+
+            //init picker
+            var comp = Context.RenderComponent<MudDatePicker>();
+            var datepicker = comp.Instance;
+            datepicker.PickerMonth = dateSample;
+
+            //Set week rule
+            datepicker.CalendarWeekRule = CalendarWeekRule.FirstFullWeek;
+
+            //Get week number
+            var weekNumber = datepicker.GetWeekNumber(0, 0);
+
+            //Assert
+            Assert.True(weekNumber == "52");
+            Assert.True(weekNumber == sampleWeekNumber);
+        }
+
+        [Test]
+        public void Check_WeekNumber_CalendarWeekRule_FirstFourDayWeek()
+        {
+            // Define a date for comparison
+            //2021, 1, 1 is a good sample as all option have a different value
+            var dateSample = new DateTime(2021, 1, 1);
+            var cal = CultureInfo.CurrentCulture.Calendar;
+            var sampleWeekNumber = cal.GetWeekOfYear(dateSample.Date, CalendarWeekRule.FirstFourDayWeek, CultureInfo.CurrentCulture.DateTimeFormat.FirstDayOfWeek).ToString();
+
+            //init picker
+            var comp = Context.RenderComponent<MudDatePicker>();
+            var datepicker = comp.Instance;
+            datepicker.PickerMonth = dateSample;
+
+            //Set week rule
+            datepicker.CalendarWeekRule = CalendarWeekRule.FirstFourDayWeek;
+
+            //Get week number
+            var weekNumber = datepicker.GetWeekNumber(0, 0);
+
+            //Assert
+            Assert.True(weekNumber == "53");
+            Assert.True(weekNumber == sampleWeekNumber);
+        }
     }
 }
