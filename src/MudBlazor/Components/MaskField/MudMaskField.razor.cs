@@ -87,6 +87,7 @@ namespace MudBlazor
                         new KeyOptions { Key="NumpadEnter", PreventDown = "key+none" },
                         new KeyOptions { Key="/./", SubscribeDown = true, SubscribeUp = true }, // for our users
                         new KeyOptions { Key="Backspace", PreventDown = "key+none" },
+                        new KeyOptions { Key="Delete", PreventDown = "key+none" },
                     },
                 });
             }
@@ -103,7 +104,7 @@ namespace MudBlazor
             await _elementReference.SetText(null);
         }
 
-        string val = "";
+        //string val = "";
 
         private CharacterType GetCharacterType(string character, bool isMaskingCharacter = false)
         {
@@ -184,30 +185,6 @@ namespace MudBlazor
                 string s = item.Value.ToString();
                 midTermText = midTermText.Insert(item.Key, s);
             }
-
-            //string returnedText = "";
-            //char[] textArray = RawText.ToCharArray();
-            //char[] maskArray = Mask.ToCharArray();
-            //int timer = 0;
-            //foreach (char c in maskArray)
-            //{
-            //    if (GetCharacterType(c.ToString(), true) == CharacterType.Other)
-            //    {
-            //        returnedText += c.ToString();
-            //    }
-            //    else
-            //    {
-            //        if (timer < RawText.Length)
-            //        {
-            //            returnedText += textArray[timer].ToString();
-            //        }
-            //        else
-            //        {
-            //            returnedText += "_";
-            //        }
-            //    }
-            //    timer++;
-            //}
             await _elementReference.SetText(midTermText);
         }
 
@@ -291,161 +268,6 @@ namespace MudBlazor
             }
             _elementReference.SelectRangeAsync(findingNum, findingNum);
         }
-
-        private string CheckCharacterType(int i)
-        {
-            string _text = "";
-            if (Text != null)
-            {
-                _text = Text;
-            }
-            char[] maskArray = Mask.ToCharArray();
-            List<char> textArray = new List<char>();
-
-            if (0 < _text.Length && _text.Length <= Mask.Length && textArray.Count + i <= maskArray.Length)
-            {
-                if (maskArray[textArray.Count + i] == 's')
-                {
-                    return "letter";
-                }
-                else if (maskArray[textArray.Count + i] == 'n')
-                {
-                    return "numeric";
-                }
-                else if (maskArray[textArray.Count + i] == 'c')
-                {
-                    return "both";
-                }
-                else
-                {
-                    return "none";
-                }
-            }
-            else
-            {
-                return null;
-            }
-        }
-
-        public void MaskTheText(KeyboardEventArgs e)
-        {
-            char[] maskCharArray = Mask.ToCharArray();
-            //find key char is numeric or letter
-            string keyNumericOrLetter = "numeric";
-            string valNumericOrLetter = "numeric";
-            if (Regex.IsMatch(e.Key, @"[a-z][A-Z]"))
-            {
-                keyNumericOrLetter = "letter";
-            }
-            else if (Regex.IsMatch(e.Key, @"[0-9]"))
-            {
-                keyNumericOrLetter = "numeric";
-            }
-            else
-            {
-                keyNumericOrLetter = "none";
-            }
-
-            //find raw text
-            string rawTextInMask = "";
-            char[] maskedCharArray = Text.ToCharArray();
-
-            //prevent key if not match type
-            int textLength = maskedCharArray.Length;
-            if (maskCharArray[maskedCharArray.Length - 1] == 's')
-            {
-                valNumericOrLetter = "letter";
-            }
-            else if (maskCharArray[maskedCharArray.Length - 1] == 'n')
-            {
-                valNumericOrLetter = "numeric";
-            }
-            else if (maskCharArray[maskedCharArray.Length - 1] == 'c')
-            {
-                valNumericOrLetter = "both";
-            }
-
-            if (keyNumericOrLetter == valNumericOrLetter)
-            {
-                foreach (char c in maskedCharArray)
-                {
-                    if (c != ' ' && c != '(' && c != ')' && c != '-')
-                    {
-                        rawTextInMask += c.ToString();
-                    }
-                }
-                val = "";
-                string rawText = rawTextInMask;
-
-                char[] rawTextChar = rawText.ToCharArray();
-                string resultMaskedString = rawText;
-
-                //find special char numbers
-                List<int> allSpecialNo = new List<int>();
-                List<int> whiteSpaceNo = new List<int>();
-                List<int> parantheseOpenNo = new List<int>();
-                List<int> parantheseCloseNo = new List<int>();
-                List<int> hyphenNo = new List<int>();
-                for (int i = 0; i < maskCharArray.Length; i++)
-                {
-                    if (maskCharArray[i] == '.')
-                    {
-                        allSpecialNo.Add(i);
-                        whiteSpaceNo.Add(i);
-                    }
-                    else if (maskCharArray[i] == '(')
-                    {
-                        allSpecialNo.Add(i);
-                        parantheseOpenNo.Add(i);
-                    }
-                    else if (maskCharArray[i] == ')')
-                    {
-                        allSpecialNo.Add(i);
-                        parantheseCloseNo.Add(i);
-                    }
-                    else if (maskCharArray[i] == '-')
-                    {
-                        allSpecialNo.Add(i);
-                        hyphenNo.Add(i);
-                    }
-
-                }
-
-                //insert special characters
-                foreach (int i in allSpecialNo)
-                {
-                    if (whiteSpaceNo.Contains<int>(i) && i <= resultMaskedString.Length)
-                    {
-                        resultMaskedString = resultMaskedString.Insert(i, " ");
-                    }
-                    else if (parantheseOpenNo.Contains<int>(i) && i <= resultMaskedString.Length)
-                    {
-                        resultMaskedString = resultMaskedString.Insert(i, "(");
-                    }
-                    else if (parantheseCloseNo.Contains<int>(i) && i <= resultMaskedString.Length)
-                    {
-                        resultMaskedString = resultMaskedString.Insert(i, ")");
-                    }
-                    else if (hyphenNo.Contains<int>(i) && i <= resultMaskedString.Length)
-                    {
-                        resultMaskedString = resultMaskedString.Insert(i, "-");
-                    }
-                }
-
-                val = resultMaskedString;
-            }
-            else
-            {
-                //backup
-            }
-
-
-
-            //need lost focus to show masked value (it dont show automatically)
-            //focus again component to continuous keypress
-        }
-
-        int _key = 0;
 
         protected async Task HandleKeyDown(KeyboardEventArgs obj)
         {
