@@ -67,6 +67,10 @@ namespace MudBlazor
             ["Picker appearance"] = 405,
             ["Dot"] = 406,
 
+            // "Miscellaneous" category. In classes inheriting from MudComponentBase it can be used only exceptionally -
+            //  - only when the property can define behavior or appearance depending on value of the property.
+            ["Misc"] = int.MaxValue - 1,
+
             ["Common"] = int.MaxValue // general category
         };
     }
@@ -241,6 +245,7 @@ namespace MudBlazor
         {
             public const string Behavior = "Behavior";
             public const string Appearance = "Appearance";
+            public const string Misc = "Misc";
         }
 
         public static class Divider
@@ -253,6 +258,11 @@ namespace MudBlazor
         {
             public const string Behavior = "Behavior";
             public const string Appearance = "Appearance";
+        }
+
+        public static class Element
+        {
+            public const string Misc = "Misc";
         }
 
         public static class ExpansionPanel
@@ -326,6 +336,11 @@ namespace MudBlazor
             public const string Appearance = "Appearance";
         }
 
+        public static class MainContent
+        {
+            public const string Behavior = "Behavior";
+        }
+
         public static class Menu
         {
             public const string Behavior = "Behavior";
@@ -396,6 +411,11 @@ namespace MudBlazor
             public const string Data = "Data";
             public const string Behavior = "Behavior";
             public const string Appearance = "Appearance";
+        }
+
+        public static class RTLProvider
+        {
+            public const string Behavior = "Behavior";
         }
 
         public static class ScrollToTop
