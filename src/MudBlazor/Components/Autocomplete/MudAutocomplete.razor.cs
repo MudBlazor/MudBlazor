@@ -25,18 +25,21 @@ namespace MudBlazor
         /// User class names for the popover, separated by space
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.FormComponent.ListAppearance)]
         public string PopoverClass { get; set; }
 
         /// <summary>
         /// Set the anchor origin point to determen where the popover will open from.
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.FormComponent.ListAppearance)]
         public Origin AnchorOrigin { get; set; } = Origin.BottomCenter;
 
         /// <summary>
         /// Sets the transform origin point for the popover.
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.FormComponent.ListAppearance)]
         public Origin TransformOrigin { get; set; } = Origin.TopCenter;
 
         /// <summary>
@@ -64,6 +67,7 @@ namespace MudBlazor
         /// If true, compact vertical padding will be applied to all Autocomplete items.
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.FormComponent.ListAppearance)]
         public bool Dense
         {
             get { return _dense; }
@@ -74,12 +78,14 @@ namespace MudBlazor
         /// The Open Autocomplete Icon
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.FormComponent.Appearance)]
         public string OpenIcon { get; set; } = Icons.Material.Filled.ArrowDropDown;
 
         /// <summary>
         /// The Close Autocomplete Icon
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.FormComponent.Appearance)]
         public string CloseIcon { get; set; } = Icons.Material.Filled.ArrowDropUp;
 
         //internal event Action<HashSet<T>> SelectionChangedFromOutside;
@@ -88,6 +94,7 @@ namespace MudBlazor
         /// The maximum height of the Autocomplete when it is open.
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.FormComponent.ListAppearance)]
         public int MaxHeight { get; set; } = 300;
 
         private Func<T, string> _toStringFunc;
@@ -96,6 +103,7 @@ namespace MudBlazor
         /// Defines how values are displayed in the drop-down list
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.FormComponent.ListBehavior)]
         public Func<T, string> ToStringFunc
         {
             get => _toStringFunc;
@@ -115,6 +123,7 @@ namespace MudBlazor
         /// The SearchFunc returns a list of items matching the typed text
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.FormComponent.ListBehavior)]
         public Func<string, Task<IEnumerable<T>>> SearchFunc { get; set; }
 
         /// <summary>
@@ -122,42 +131,49 @@ namespace MudBlazor
         /// A null value will display all items.
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.FormComponent.ListBehavior)]
         public int? MaxItems { get; set; } = 10;
 
         /// <summary>
         /// Minimum characters to initiate a search
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.FormComponent.Behavior)]
         public int MinCharacters { get; set; } = 0;
 
         /// <summary>
         /// Reset value if user deletes the text
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.FormComponent.Behavior)]
         public bool ResetValueOnEmptyText { get; set; } = false;
 
         /// <summary>
         /// Debounce interval in milliseconds.
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.FormComponent.Behavior)]
         public int DebounceInterval { get; set; } = 100;
 
         /// <summary>
         /// Optional presentation template for unselected items
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.FormComponent.ListBehavior)]
         public RenderFragment<T> ItemTemplate { get; set; }
 
         /// <summary>
         /// Optional presentation template for the selected item
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.FormComponent.ListBehavior)]
         public RenderFragment<T> ItemSelectedTemplate { get; set; }
 
         /// <summary>
         /// Optional presentation template for disabled item
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.FormComponent.ListBehavior)]
         public RenderFragment<T> ItemDisabledTemplate { get; set; }
 
         /// <summary>
@@ -165,6 +181,7 @@ namespace MudBlazor
         /// which list value is currently selected and disallows incomplete values in Text.
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.FormComponent.Behavior)]
         public bool CoerceText { get; set; } = true;
 
         /// <summary>
@@ -172,12 +189,14 @@ namespace MudBlazor
         /// will be applied to the Value which allows to validate it and display an error message.
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.FormComponent.Behavior)]
         public bool CoerceValue { get; set; }
 
         /// <summary>
         /// Function to be invoked when checking whether an item should be disabled or not
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.FormComponent.ListBehavior)]
         public Func<T, bool> ItemDisabledFunc { get; set; }
 
         private bool _isOpen;
@@ -209,12 +228,14 @@ namespace MudBlazor
         /// If true, the currently selected item from the drop-down (if it is open) is selected.
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.FormComponent.ListBehavior)]
         public bool SelectValueOnTab { get; set; } = false;
 
         /// <summary>
         /// Show clear button.
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.FormComponent.Behavior)]
         public bool Clearable { get; set; } = false;
 
         /// <summary>

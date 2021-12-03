@@ -19,12 +19,15 @@ namespace MudBlazor
         /// <summary>
         /// Child content of the component.
         /// </summary>
-        [Parameter] public RenderFragment ChildContent { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.FocusTrap.Behavior)]
+        public RenderFragment ChildContent { get; set; }
 
         /// <summary>
         /// If true, the focus will no longer loop inside the component.
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.FocusTrap.Behavior)]
         public bool Disabled
         {
             get => _disabled;
@@ -42,7 +45,9 @@ namespace MudBlazor
         /// Defines on which element to set the focus when the component is created or enabled.
         /// When DefaultFocus.Element is used, the focus will be set to the FocusTrap itself, so the user will have to press TAB key once to focus the first tabbable element.
         /// </summary>
-        [Parameter] public DefaultFocus DefaultFocus { get; set; } = DefaultFocus.FirstChild;
+        [Parameter]
+        [Category(CategoryTypes.FocusTrap.Behavior)]
+        public DefaultFocus DefaultFocus { get; set; } = DefaultFocus.FirstChild;
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {

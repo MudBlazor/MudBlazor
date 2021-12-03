@@ -19,12 +19,15 @@ namespace MudBlazor
         /// <summary>
         /// Child content of component.
         /// </summary>
-        [Parameter] public RenderFragment ChildContent { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.Form.ValidatedData)]
+        public RenderFragment ChildContent { get; set; }
 
         /// <summary>
         /// Validation status. True if the form is valid and without errors. This parameter is two-way bindable.
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.Form.ValidationResult)]
         public bool IsValid
         {
             get => _valid && ChildForms.All(x => x.IsValid);
@@ -55,6 +58,7 @@ namespace MudBlazor
         /// True if any field of the field was touched. This parameter is readonly.
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.Form.Behavior)]
         public bool IsTouched { get => _touched; set {/* readonly parameter! */ } }
 
         private bool _touched = false;
@@ -63,13 +67,17 @@ namespace MudBlazor
         /// Validation debounce delay in milliseconds. This can help improve rendering performance of forms with real-time validation of inputs
         /// i.e. when textfields have Immediate="true".
         /// </summary>
-        [Parameter] public int ValidationDelay { get; set; } = 300;
+        [Parameter]
+        [Category(CategoryTypes.Form.Behavior)]
+        public int ValidationDelay { get; set; } = 300;
 
         /// <summary>
         /// When true, the form will not re-render its child contents on validation updates (i.e. when IsValid changes).
         /// This is an optimization which can be necessary especially for larger forms on older devices.
         /// </summary>
-        [Parameter] public bool SuppressRenderingOnValidation { get; set; } = false;
+        [Parameter]
+        [Category(CategoryTypes.Form.Behavior)]
+        public bool SuppressRenderingOnValidation { get; set; } = false;
 
         /// <summary>
         /// When true, will not cause a page refresh on Enter if any input has focus.
@@ -79,7 +87,9 @@ namespace MudBlazor
         /// Usually this is not wanted, as it can cause a page refresh in the middle of editing a form. 
         /// When the form is in a dialog this will cause the dialog to close. So by default we suppress it.
         /// </remarks>
-        [Parameter] public bool SuppressImplicitSubmission { get; set; } = true;
+        [Parameter]
+        [Category(CategoryTypes.Form.Behavior)]
+        public bool SuppressImplicitSubmission { get; set; } = true;
 
         /// <summary>
         /// Raised when IsValid changes.
@@ -99,6 +109,7 @@ namespace MudBlazor
         /// Validation error messages.
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.Form.ValidationResult)]
         public string[] Errors
         {
             get => _errors.ToArray();
@@ -111,7 +122,9 @@ namespace MudBlazor
         /// Specifies the top-level model object for the form. Used with Fluent Validation
         /// </summary>
 #nullable enable
-        [Parameter] public object? Model { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.Form.ValidatedData)]
+        public object? Model { get; set; }
 #nullable disable
 
         private HashSet<MudForm> ChildForms { get; set; } = new HashSet<MudForm>();

@@ -21,6 +21,7 @@ namespace MudBlazor
         [CascadingParameter] private MudDialogProvider Parent { get; set; }
         [CascadingParameter] private DialogOptions GlobalDialogOptions { get; set; } = new DialogOptions();
 
+        // "Misc" category (Behavior and Appearance)
         [Parameter]
         public DialogOptions Options
         {
@@ -33,15 +34,28 @@ namespace MudBlazor
             set => _options = value;
         }
 
-        [Parameter] public string Title { get; set; }
-        [Parameter] public RenderFragment TitleContent { get; set; }
-        [Parameter] public RenderFragment Content { get; set; }
-        [Parameter] public Guid Id { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.Dialog.Behavior)]
+        public string Title { get; set; }
+
+        [Parameter]
+        [Category(CategoryTypes.Dialog.Behavior)]
+        public RenderFragment TitleContent { get; set; }
+
+        [Parameter]
+        [Category(CategoryTypes.Dialog.Behavior)]
+        public RenderFragment Content { get; set; }
+
+        [Parameter]
+        [Category(CategoryTypes.Dialog.Behavior)]
+        public Guid Id { get; set; }
 
         /// <summary>
         /// Custom close icon.
         /// </summary>
-        [Parameter] public string CloseIcon { get; set; } = Icons.Material.Filled.Close;
+        [Parameter]
+        [Category(CategoryTypes.Dialog.Appearance)]
+        public string CloseIcon { get; set; } = Icons.Material.Filled.Close;
 
         private string Position { get; set; }
         private string DialogMaxWidth { get; set; }

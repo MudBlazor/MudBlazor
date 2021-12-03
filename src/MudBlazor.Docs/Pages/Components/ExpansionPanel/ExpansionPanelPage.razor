@@ -15,12 +15,22 @@
 
         <DocsPageSection>
             <SectionHeader Title="Multiple Expanded Panels">
-                <Description></Description>
+                <Description>Multiple expansion panels can be opened at the same time by setting <CodeInline>MultiExpansion</CodeInline>.</Description>
             </SectionHeader>
             <SectionContent DarkenBackground="true" FullWidth="true">
                 <ExpansionPanelMultiExample />
             </SectionContent>
             <SectionSource Code="ExpansionPanelMultiExample" GitHubFolderName="ExpansionPanel" />
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Async loading of data">
+                <Description>The panels inner collapsible won't expand until IsExpandedChanged has completed, enabling smooth opening of expansion panels even if the data is not loaded when the header is clicked.</Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" FullWidth="true">
+                <ExpansionPanelAsyncExample />
+            </SectionContent>
+            <SectionSource Code="ExpansionPanelAsyncExample" ShowCode="false" GitHubFolderName="ExpansionPanel" />
         </DocsPageSection>
 
         <DocsPageSection>

@@ -3,6 +3,7 @@ using System.Net.Http;
 using Bunit;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.DependencyInjection;
+using MudBlazor.Docs.Services;
 using MudBlazor.Services;
 using MudBlazor.UnitTests.Mocks;
 using NUnit.Framework;
@@ -33,6 +34,7 @@ namespace MudBlazor.UnitTests.Components
             ctx.Services.AddTransient<IEventListener, EventListener>();
             ctx.Services.AddTransient<IKeyInterceptor, MockKeyInterceptorService>();
             ctx.Services.AddSingleton<IMudPopoverService, MockPopoverService>();
+            ctx.Services.AddSingleton<IRenderQueueService, RenderQueueService>();
             ctx.Services.AddOptions();
             ctx.Services.AddScoped(sp =>
                 new HttpClient(new MockDocsMessageHandler()) { BaseAddress = new Uri("https://localhost/") });

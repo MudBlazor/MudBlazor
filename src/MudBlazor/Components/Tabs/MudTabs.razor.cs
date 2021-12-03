@@ -36,112 +36,156 @@ namespace MudBlazor
         /// <summary>
         /// If true, render all tabs and hide (display:none) every non-active.
         /// </summary>
-        [Parameter] public bool KeepPanelsAlive { get; set; } = false;
+        [Parameter]
+        [Category(CategoryTypes.Tabs.Behavior)]
+        public bool KeepPanelsAlive { get; set; } = false;
 
         /// <summary>
         /// If true, sets the border-radius to theme default.
         /// </summary>
-        [Parameter] public bool Rounded { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.Tabs.Appearance)]
+        public bool Rounded { get; set; }
 
         /// <summary>
         /// If true, sets a border between the content and the toolbar depending on the position.
         /// </summary>
-        [Parameter] public bool Border { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.Tabs.Appearance)]
+        public bool Border { get; set; }
 
         /// <summary>
         /// If true, toolbar will be outlined.
         /// </summary>
-        [Parameter] public bool Outlined { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.Tabs.Appearance)]
+        public bool Outlined { get; set; }
 
         /// <summary>
         /// If true, centers the tabitems.
         /// </summary>
-        [Parameter] public bool Centered { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.Tabs.Appearance)]
+        public bool Centered { get; set; }
 
         /// <summary>
         /// Hides the active tab slider.
         /// </summary>
-        [Parameter] public bool HideSlider { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.Tabs.Appearance)]
+        public bool HideSlider { get; set; }
 
         /// <summary>
         /// Icon to use for left pagination.
         /// </summary>
-        [Parameter] public string PrevIcon { get; set; } = Icons.Filled.ChevronLeft;
+        [Parameter]
+        [Category(CategoryTypes.Tabs.Appearance)]
+        public string PrevIcon { get; set; } = Icons.Filled.ChevronLeft;
 
         /// <summary>
         /// Icon to use for right pagination.
         /// </summary>
-        [Parameter] public string NextIcon { get; set; } = Icons.Filled.ChevronRight;
+        [Parameter]
+        [Category(CategoryTypes.Tabs.Appearance)]
+        public string NextIcon { get; set; } = Icons.Filled.ChevronRight;
 
         /// <summary>
         /// If true, always display the scroll buttons even if the tabs are smaller than the required with, buttons will be disabled if there is nothing to scroll.
         /// </summary>
-        [Parameter] public bool AlwaysShowScrollButtons { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.Tabs.Appearance)]
+        public bool AlwaysShowScrollButtons { get; set; }
 
         /// <summary>
         /// Sets the maxheight the component can have.
         /// </summary>
-        [Parameter] public int? MaxHeight { get; set; } = null;
+        [Parameter]
+        [Category(CategoryTypes.Tabs.Appearance)]
+        public int? MaxHeight { get; set; } = null;
 
         /// <summary>
         /// Sets the position of the tabs itself.
         /// </summary>
-        [Parameter] public Position Position { get; set; } = Position.Top;
+        [Parameter]
+        [Category(CategoryTypes.Tabs.Behavior)]
+        public Position Position { get; set; } = Position.Top;
 
         /// <summary>
         /// The color of the component. It supports the theme colors.
         /// </summary>
-        [Parameter] public Color Color { get; set; } = Color.Default;
+        [Parameter]
+        [Category(CategoryTypes.Tabs.Appearance)]
+        public Color Color { get; set; } = Color.Default;
 
         /// <summary>
         /// The color of the tab slider. It supports the theme colors.
         /// </summary>
-        [Parameter] public Color SliderColor { get; set; } = Color.Inherit;
+        [Parameter]
+        [Category(CategoryTypes.Tabs.Appearance)]
+        public Color SliderColor { get; set; } = Color.Inherit;
 
         /// <summary>
         /// The color of the icon. It supports the theme colors.
         /// </summary>
-        [Parameter] public Color IconColor { get; set; } = Color.Inherit;
+        [Parameter]
+        [Category(CategoryTypes.Tabs.Appearance)]
+        public Color IconColor { get; set; } = Color.Inherit;
 
         /// <summary>
         /// The color of the next/prev icons. It supports the theme colors.
         /// </summary>
-        [Parameter] public Color ScrollIconColor { get; set; } = Color.Inherit;
+        [Parameter]
+        [Category(CategoryTypes.Tabs.Appearance)]
+        public Color ScrollIconColor { get; set; } = Color.Inherit;
 
         /// <summary>
         /// The higher the number, the heavier the drop-shadow, applies around the whole component.
         /// </summary>
-        [Parameter] public int Elevation { set; get; } = 0;
+        [Parameter]
+        [Category(CategoryTypes.Tabs.Appearance)]
+        public int Elevation { set; get; } = 0;
 
         /// <summary>
         /// If true, will apply elevation, rounded, outlined effects to the whole tab component instead of just toolbar.
         /// </summary>
-        [Parameter] public bool ApplyEffectsToContainer { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.Tabs.Appearance)]
+        public bool ApplyEffectsToContainer { get; set; }
 
         /// <summary>
         /// If true, disables ripple effect.
         /// </summary>
-        [Parameter] public bool DisableRipple { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.Tabs.Appearance)]
+        public bool DisableRipple { get; set; }
 
         /// <summary>
         /// If true, disables slider animation
         /// </summary>
-        [Parameter] public bool DisableSliderAnimation { get => _disableSliderAnimation; set => _disableSliderAnimation = value; }
+        [Parameter]
+        [Category(CategoryTypes.Tabs.Appearance)]
+        public bool DisableSliderAnimation { get => _disableSliderAnimation; set => _disableSliderAnimation = value; }
 
         /// <summary>
         /// Child content of component.
         /// </summary>
-        [Parameter] public RenderFragment ChildContent { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.Tabs.Behavior)]
+        public RenderFragment ChildContent { get; set; }
 
         /// <summary>
         /// Custom class/classes for TabPanel
         /// </summary>
-        [Parameter] public string TabPanelClass { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.Tabs.Appearance)]
+        public string TabPanelClass { get; set; }
 
         /// <summary>
         /// Custom class/classes for Selected Content Panel
         /// </summary>
-        [Parameter] public string PanelClass { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.Tabs.Appearance)]
+        public string PanelClass { get; set; }
 
         public MudTabPanel ActivePanel { get; private set; }
 
@@ -149,6 +193,7 @@ namespace MudBlazor
         /// The current active panel index. Also with Bidirectional Binding
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.Tabs.Behavior)]
         public int ActivePanelIndex
         {
             get => _activePanelIndex;
@@ -181,24 +226,28 @@ namespace MudBlazor
         /// A render fragment that is added before or after (based on the value of HeaderPosition) the tabs inside the header panel of the tab control
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.Tabs.Behavior)]
         public RenderFragment<MudTabs> Header { get; set; }
 
         /// <summary>
         /// Additional content specified by Header is placed either before the tabs, after or not at all
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.Tabs.Behavior)]
         public TabHeaderPosition HeaderPosition { get; set; } = TabHeaderPosition.After;
 
         /// <summary>
         /// A render fragment that is added before or after (based on the value of HeaderPosition) inside each tab panel
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.Tabs.Behavior)]
         public RenderFragment<MudTabPanel> TabPanelHeader { get; set; }
 
         /// <summary>
         /// Additional content specified by Header is placed either before the tabs, after or not at all
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.Tabs.Behavior)]
         public TabHeaderPosition TabPanelHeaderPosition { get; set; } = TabHeaderPosition.After;
 
         /// <summary>

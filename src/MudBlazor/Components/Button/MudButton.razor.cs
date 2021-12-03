@@ -32,47 +32,65 @@ namespace MudBlazor
         /// <summary>
         /// Icon placed before the text if set.
         /// </summary>
-        [Parameter] public string StartIcon { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.Button.Behavior)]
+        public string StartIcon { get; set; }
 
         /// <summary>
         /// Icon placed after the text if set.
         /// </summary>
-        [Parameter] public string EndIcon { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.Button.Behavior)]
+        public string EndIcon { get; set; }
 
         /// <summary>
         /// The color of the icon. It supports the theme colors.
         /// </summary>
-        [Parameter] public Color IconColor { get; set; } = Color.Inherit;
+        [Parameter]
+        [Category(CategoryTypes.Button.Appearance)]
+        public Color IconColor { get; set; } = Color.Inherit;
 
         /// <summary>
         /// Icon class names, separated by space
         /// </summary>
-        [Parameter] public string IconClass { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.Button.Appearance)]
+        public string IconClass { get; set; }
 
         /// <summary>
         /// The color of the component. It supports the theme colors.
         /// </summary>
-        [Parameter] public Color Color { get; set; } = Color.Default;
+        [Parameter]
+        [Category(CategoryTypes.Button.Appearance)]
+        public Color Color { get; set; } = Color.Default;
 
         /// <summary>
         /// The Size of the component.
         /// </summary>
-        [Parameter] public Size Size { get; set; } = Size.Medium;
+        [Parameter]
+        [Category(CategoryTypes.Button.Appearance)]
+        public Size Size { get; set; } = Size.Medium;
 
         /// <summary>
         /// The variant to use.
         /// </summary>
-        [Parameter] public Variant Variant { get; set; } = Variant.Text;
+        [Parameter]
+        [Category(CategoryTypes.Button.Appearance)]
+        public Variant Variant { get; set; } = Variant.Text;
 
         /// <summary>
         /// If true, the button will take up 100% of available width.
         /// </summary>
-        [Parameter] public bool FullWidth { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.Button.Appearance)]
+        public bool FullWidth { get; set; }
 
         /// <summary>
         /// Child content of component.
         /// </summary>
-        [Parameter] public RenderFragment ChildContent { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.Button.Behavior)]
+        public RenderFragment ChildContent { get; set; }
 
     }
 }
