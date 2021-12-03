@@ -11,6 +11,7 @@ namespace MudBlazor
           .AddClass(Class)
         .Build();
 
+        [Category(CategoryTypes.NavMenu.Behavior)]
         [Parameter] public RenderFragment ChildContent { get; set; }
     }
 }

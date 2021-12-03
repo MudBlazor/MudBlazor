@@ -24,22 +24,29 @@ namespace MudBlazor
         /// <summary>
         /// Max selectable date.
         /// </summary>
-        [Parameter] public DateTime? MaxDate { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Validation)]
+        public DateTime? MaxDate { get; set; }
 
         /// <summary>
         /// Max selectable date.
         /// </summary>
-        [Parameter] public DateTime? MinDate { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Validation)]
+        public DateTime? MinDate { get; set; }
 
         /// <summary>
         /// First view to show in the MudDatePicker.
         /// </summary>
-        [Parameter] public OpenTo OpenTo { get; set; } = OpenTo.Date;
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.PickerBehavior)]
+        public OpenTo OpenTo { get; set; } = OpenTo.Date;
 
         /// <summary>
         /// String Format for selected date view
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.FormComponent.Behavior)]
         public string DateFormat
         {
             get
@@ -79,13 +86,16 @@ namespace MudBlazor
         /// <summary>
         /// Defines on which day the week starts. Depends on the value of Culture. 
         /// </summary>
-        [Parameter] public DayOfWeek? FirstDayOfWeek { get; set; } = null;
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.PickerBehavior)]
+        public DayOfWeek? FirstDayOfWeek { get; set; } = null;
 
         /// <summary>
         /// The current month of the date picker (two-way bindable). This changes when the user browses through the calender.
         /// The month is represented as a DateTime which is always the first day of that month. You can also set this to define which month is initially shown. If not set, the current month is shown.
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.FormComponent.PickerBehavior)]
         public DateTime? PickerMonth
         {
             get => _picker_month;
@@ -109,38 +119,51 @@ namespace MudBlazor
         /// <summary>
         /// Milliseconds to wait before closing the picker. This helps the user see that the date was selected before the popover disappears.
         /// </summary>
-        [Parameter] public int ClosingDelay { get; set; } = 100;
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.PickerBehavior)]
+        public int ClosingDelay { get; set; } = 100;
 
         /// <summary>
         /// Number of months to display in the calendar
         /// </summary>
-        [Parameter] public int DisplayMonths { get; set; } = 1;
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.PickerBehavior)]
+        public int DisplayMonths { get; set; } = 1;
 
         /// <summary>
         /// Maximum number of months in one row
         /// </summary>
-        [Parameter] public int? MaxMonthColumns { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.PickerAppearance)]
+        public int? MaxMonthColumns { get; set; }
 
         /// <summary>
         /// Start month when opening the picker. 
         /// </summary>
-        [Parameter] public DateTime? StartMonth { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.PickerBehavior)]
+        public DateTime? StartMonth { get; set; }
 
         /// <summary>
         /// Display week numbers according to the Culture parameter. If no culture is defined, CultureInfo.CurrentCulture will be used.
         /// </summary>
-        [Parameter] public bool ShowWeekNumbers { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.PickerBehavior)]
+        public bool ShowWeekNumbers { get; set; }
 
         /// <summary>
         /// Format of the selected date in the title. By default, this is "ddd, dd MMM" which abbreviates day and month names. 
         /// For instance, display the long names like this "dddd, dd. MMMM". 
         /// </summary>
-        [Parameter] public string TitleDateFormat { get; set; } = "ddd, dd MMM";
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.PickerBehavior)]
+        public string TitleDateFormat { get; set; } = "ddd, dd MMM";
 
         /// <summary>
         /// Function to determine whether a date is disabled
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.FormComponent.Validation)]
         public Func<DateTime, bool> IsDateDisabledFunc
         {
             get => _isDateDisabledFunc;
@@ -154,22 +177,53 @@ namespace MudBlazor
         /// <summary>
         /// Custom previous icon.
         /// </summary>
-        [Parameter] public string PreviousIcon { get; set; } = Icons.Material.Filled.ChevronLeft;
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.PickerAppearance)]
+        public string PreviousIcon { get; set; } = Icons.Material.Filled.ChevronLeft;
 
         /// <summary>
         /// Custom next icon.
         /// </summary>
-        [Parameter] public string NextIcon { get; set; } = Icons.Material.Filled.ChevronRight;
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.PickerAppearance)]
+        public string NextIcon { get; set; } = Icons.Material.Filled.ChevronRight;
+
+        /// <summary>
+        /// Set a predefined fix year - no year can be selected
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.PickerBehavior)]
+        public int? FixYear { get; set; }
+        /// <summary>
+        /// Set a predefined fix month - no month can be selected
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.PickerBehavior)]
+        public int? FixMonth { get; set; }
+        /// <summary>
+        /// Set a predefined fix day - no day can be selected
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.PickerBehavior)]
+        public int? FixDay { get; set; }
 
         protected virtual bool IsRange { get; } = false;
 
-        private OpenTo _currentView;
+        protected OpenTo CurrentView;
 
         protected override void OnPickerOpened()
         {
             base.OnPickerOpened();
-            _currentView = OpenTo;
-            if (_currentView == OpenTo.Year)
+            if (OpenTo == OpenTo.Date && FixDay.HasValue)
+            {
+                OpenTo = OpenTo.Month;
+            }
+            if (OpenTo == OpenTo.Date && FixDay.HasValue && FixMonth.HasValue)
+            {
+                OpenTo = OpenTo.Year;
+            }
+            CurrentView = OpenTo;
+            if (CurrentView == OpenTo.Year)
                 _scrollToYearAfterRender = true;
         }
 
@@ -240,12 +294,76 @@ namespace MudBlazor
                 Culture.DateTimeFormat.CalendarWeekRule, FirstDayOfWeek ?? Culture.DateTimeFormat.FirstDayOfWeek).ToString();
         }
 
+        protected virtual OpenTo? GetNextView()
+        {
+            OpenTo? nextView = CurrentView switch
+            {
+                OpenTo.Year => !FixMonth.HasValue ? OpenTo.Month : !FixDay.HasValue ? OpenTo.Date : null,
+                OpenTo.Month => !FixDay.HasValue ? OpenTo.Date : null,
+                _ => null,
+            };
+            return nextView;
+        }
+
+        protected virtual async void SubmitAndClose()
+        {
+            if (PickerActions == null)
+            {
+                Submit();
+
+                if (PickerVariant != PickerVariant.Static)
+                {
+                    await Task.Delay(ClosingDelay);
+                    Close(false);
+                }
+            }
+        }
+
         protected abstract string GetDayClasses(int month, DateTime day);
 
         /// <summary>
         /// User clicked on a day
         /// </summary>
         protected abstract void OnDayClicked(DateTime dateTime);
+
+        /// <summary>
+        /// user clicked on a month
+        /// </summary>
+        /// <param name="month"></param>
+        protected virtual void OnMonthSelected(DateTime month)
+        {
+            PickerMonth = month;
+            var nextView = GetNextView();
+            if (nextView != null)
+            {
+                CurrentView = (OpenTo)nextView;
+            }
+        }
+
+        /// <summary>
+        /// user clicked on a year
+        /// </summary>
+        /// <param name="year"></param>
+        protected virtual void OnYearClicked(int year)
+        {
+            var current = GetMonthStart(0);
+            PickerMonth = new DateTime(year, current.Month, 1);
+            var nextView = GetNextView();
+            if (nextView != null)
+            {
+                CurrentView = (OpenTo)nextView;
+            }
+        }
+
+        /// <summary>
+        /// user clicked on a month
+        /// </summary>
+        protected virtual void OnMonthClicked(int month)
+        {
+            CurrentView = OpenTo.Month;
+            _picker_month = _picker_month?.AddMonths(month);
+            StateHasChanged();
+        }
 
         /// <summary>
         /// return Mo, Tu, We, Th, Fr, Sa, Su in the right culture
@@ -313,7 +431,7 @@ namespace MudBlazor
 
         private void OnYearClick()
         {
-            _currentView = OpenTo.Year;
+            CurrentView = OpenTo.Year;
             StateHasChanged();
             _scrollToYearAfterRender = true;
         }
@@ -377,12 +495,6 @@ namespace MudBlazor
             // todo: raise an event the user can handle
         }
 
-        private void OnYearClicked(int year)
-        {
-            _currentView = OpenTo.Month;
-            var current = GetMonthStart(0);
-            PickerMonth = new DateTime(year, current.Month, 1);
-        }
 
         private IEnumerable<DateTime> GetAllMonths()
         {
@@ -419,23 +531,12 @@ namespace MudBlazor
             return Typo.subtitle1;
         }
 
-        private void OnMonthClicked(int month)
-        {
-            _currentView = OpenTo.Month;
-            _picker_month = _picker_month?.AddMonths(month);
-            StateHasChanged();
-        }
 
-        private void OnMonthSelected(DateTime month)
-        {
-            _currentView = OpenTo.Date;
-            PickerMonth = month;
-        }
 
         protected override void OnInitialized()
         {
             base.OnInitialized();
-            _currentView = OpenTo;
+            CurrentView = OpenTo;
         }
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -445,7 +546,7 @@ namespace MudBlazor
                 _picker_month ??= GetCalendarStartOfMonth();
             }
 
-            if (firstRender && _currentView == OpenTo.Year)
+            if (firstRender && CurrentView == OpenTo.Year)
             {
                 ScrollToYear();
                 return;

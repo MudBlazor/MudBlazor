@@ -1,0 +1,64 @@
+﻿@using System.Net.Http.Json
+@using MudBlazor.Examples.Data.Models
+@namespace MudBlazor.Docs.Examples
+@inject HttpClient httpClient
+
+<MudDataGrid MultiSelection="true" Items="@Elements" Sortable="true" Filterable="true" QuickFilter="@_quickFilter">
+    <ToolBarContent>
+        <MudText Typo="Typo.h6">Periodic Elements</MudText>
+        <MudSpacer />
+        <MudTextField @bind-Value="_searchString" Placeholder="Search" Adornment="Adornment.Start" Immediate="true"
+            AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+    </ToolBarContent>
+    <Columns>
+        <Column T="Element" Field="Number" Title="Nr" Sortable="false" Filterable="false" />
+        <Column T="Element" Field="Sign" />
+        <Column T="Element" Field="Name" SortBy="@_sortBy" />
+        <Column T="Element" Field="Position" />
+        <Column T="Element" Field="Molar" Title="Molar mass" />
+    </Columns>
+    <PagerContent>
+        <MudDataGridPager T="Element" />
+    </PagerContent>
+</MudDataGrid>
+
+<div class="d-flex flex-wrap mt-4">
+    <MudSwitch @bind-Checked="@_sortNameByLength" Color="Color.Primary">Sort Name Column By Length</MudSwitch>
+</div>
+
+@code {
+    private IEnumerable<Element> Elements = new List<Element>();
+    private string _searchString;
+    private bool _sortNameByLength;
+    // custom sort by name length
+    private Func<Element, object> _sortBy => x =>
+    {
+        if (_sortNameByLength)
+            return x.Name.Length;
+        else
+            return x.Name;
+    };
+    // quick filter - filter gobally across multiple columns with the same input
+    private Func<Element, bool> _quickFilter => x =>
+    {
+        if (string.IsNullOrWhiteSpace(_searchString))
+            return true;
+
+        if (x.Sign.Contains(_searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+
+        if (x.Name.Contains(_searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+
+        if ($"{x.Number} {x.Position} {x.Molar}".Contains(_searchString))
+            return true;
+
+        return false;
+    };
+
+    protected override async Task OnInitializedAsync()
+    {
+        Elements = await httpClient.GetFromJsonAsync<List<Element>>("webapi/periodictable");
+    }
+
+}

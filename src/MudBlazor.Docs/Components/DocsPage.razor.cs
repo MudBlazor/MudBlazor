@@ -32,6 +32,22 @@ namespace MudBlazor.Docs.Components
         private bool _contentDrawerOpen = true;
         public event Action<Stopwatch> Rendered;
 
+        int _sectionCount;
+        public int SectionCount
+        {
+            get
+            {
+                lock (this)
+                    return _sectionCount;
+            }
+        }
+
+        public int IncrementSectionCount()
+        {
+            lock (this)
+                return _sectionCount++;
+        }
+
         protected override void OnParametersSet()
         {
             _previous = DocsService.Previous;

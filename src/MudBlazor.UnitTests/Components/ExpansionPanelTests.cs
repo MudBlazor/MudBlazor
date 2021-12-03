@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Bunit;
 using FluentAssertions;
 using MudBlazor.UnitTests.TestComponents;
@@ -65,14 +66,14 @@ namespace MudBlazor.UnitTests.Components
         /// MultiExpansion panel should not collapse other panels
         /// </summary>
         [Test]
-        public void MudExpansionPanel_MultiExpansion_Doesnt_Collapse_Others()
+        public async Task MudExpansionPanel_MultiExpansion_Doesnt_Collapse_Others()
         {
             var comp = Context.RenderComponent<ExpansionPanelMultiExpansionTest>();
 
             //click in the three headers
             foreach (var header in comp.FindAll(".mud-expand-panel-header"))
             {
-                header.Click();
+                await comp.InvokeAsync(() => header.Click());
             }
 
             //the three panels must be expanded
@@ -104,7 +105,7 @@ namespace MudBlazor.UnitTests.Components
         /// Start expanded should work with multi expansion
         /// </summary>
         [Test]
-        public void MudExpansionPanel_IsInitiallyExpanded_Works_With_Multi_Expanded()
+        public async Task MudExpansionPanel_IsInitiallyExpanded_Works_With_Multi_Expanded()
         {
             var comp = Context.RenderComponent<ExpansionPanelStartExpandedMultipleTest>();
 
@@ -115,7 +116,7 @@ namespace MudBlazor.UnitTests.Components
             //click in the three headers
             foreach (var header in comp.FindAll(".mud-expand-panel-header"))
             {
-                header.Click();
+                await comp.InvokeAsync(() => header.Click());
             }
 
             //we could close them all

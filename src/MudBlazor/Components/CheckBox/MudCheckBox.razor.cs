@@ -29,55 +29,72 @@ namespace MudBlazor
         /// <summary>
         /// The color of the component. It supports the theme colors.
         /// </summary>
-        [Parameter] public Color Color { get; set; } = Color.Default;
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Appearance)]
+        public Color Color { get; set; } = Color.Default;
 
         /// <summary>
         /// If applied the text will be added to the component.
         /// </summary>
-        [Parameter] public string Label { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Behavior)]
+        public string Label { get; set; }
 
         /// <summary>
         /// If true, disables ripple effect.
         /// </summary>
-        [Parameter] public bool DisableRipple { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Appearance)]
+        public bool DisableRipple { get; set; }
 
         /// <summary>
         /// If true, compact padding will be applied.
         /// </summary>
-        [Parameter] public bool Dense { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Appearance)]
+        public bool Dense { get; set; }
 
         /// <summary>
         /// The Size of the component.
         /// </summary>
-        [Parameter] public Size Size { get; set; } = Size.Medium;
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Appearance)]
+        public Size Size { get; set; } = Size.Medium;
 
         /// <summary>
         /// Child content of component.
         /// </summary>
-        [Parameter] public RenderFragment ChildContent { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Behavior)]
+        public RenderFragment ChildContent { get; set; }
 
         /// <summary>
         /// Custom checked icon, leave null for default.
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.FormComponent.Appearance)]
         public string CheckedIcon { get; set; } = Icons.Material.Filled.CheckBox;
 
         /// <summary>
         /// Custom unchecked icon, leave null for default.
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.FormComponent.Appearance)]
         public string UncheckedIcon { get; set; } = Icons.Material.Filled.CheckBoxOutlineBlank;
 
         /// <summary>
         /// Custom indeterminate icon, leave null for default.
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.FormComponent.Appearance)]
         public string IndeterminateIcon { get; set; } = Icons.Material.Filled.IndeterminateCheckBox;
 
         /// <summary>
         /// Define if the checkbox can cycle again through indeterminate status.
         /// </summary>
-        [Parameter] public bool TriState { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Validation)]
+        public bool TriState { get; set; }
 
         private string GetIcon()
         {

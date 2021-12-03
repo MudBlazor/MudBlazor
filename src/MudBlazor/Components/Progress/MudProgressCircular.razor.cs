@@ -7,7 +7,7 @@ namespace MudBlazor
 {
     public partial class MudProgressCircular : MudComponentBase
     {
-        private const int MagicNumber = 126; // weird, but required for the SVG to work
+        private const int _magicNumber = 126; // weird, but required for the SVG to work
 
         protected string DivClassname =>
             new CssBuilder("mud-progress-circular")
@@ -24,35 +24,56 @@ namespace MudBlazor
                 .AddClass($"mud-progress-static", !Indeterminate)
                 .Build();
 
+        protected string DivStyle =>
+            new StyleBuilder("transform", "rotate(-90deg)")
+            .AddStyle(Style)
+            .Build();
+
         /// <summary>
         /// The color of the component. It supports the theme colors.
         /// </summary>
-        [Parameter] public Color Color { get; set; } = Color.Default;
+        [Parameter]
+        [Category(CategoryTypes.ProgressCircular.Appearance)]
+        public Color Color { get; set; } = Color.Default;
 
         /// <summary>
         /// The size of the component.
         /// </summary>
-        [Parameter] public Size Size { get; set; } = Size.Medium;
-        [Parameter] public bool Indeterminate { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.ProgressCircular.Appearance)]
+        public Size Size { get; set; } = Size.Medium;
 
-        [Parameter] public double Min { get; set; } = 0.0;
+        /// <summary>
+        /// Constantly animates, does not follow any value.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.ProgressCircular.Behavior)]
+        public bool Indeterminate { get; set; }
 
-        [Parameter] public double Max { get; set; } = 100.0;
+        [Parameter]
+        [Category(CategoryTypes.ProgressCircular.Behavior)]
+        public double Min { get; set; } = 0.0;
 
-        private int _svg_value;
+        [Parameter]
+        [Category(CategoryTypes.ProgressCircular.Behavior)]
+        public double Max { get; set; } = 100.0;
+
+        private int _svgValue;
         private double _value;
 
         [Parameter]
+        [Category(CategoryTypes.ProgressCircular.Behavior)]
         public double Value
         {
             get => _value;
             set
             {
-                if (_value.Equals(value))
-                    return;
-                _value = value;
-                _svg_value = ToSvgValue(_value);
-                InvokeAsync(StateHasChanged);
+                if (_value != value)
+                {
+                    _value = value;
+                    _svgValue = ToSvgValue(_value);
+                    StateHasChanged();
+                }
             }
         }
 
@@ -62,15 +83,17 @@ namespace MudBlazor
             // calculate fraction, which is a value between 0 and 1
             var fraction = (value - Min) / (Max - Min);
             // now project into the range of the SVG value (126 .. 0)
-            return (int)Math.Round(MagicNumber - MagicNumber * fraction);
+            return (int)Math.Round(_magicNumber - _magicNumber * fraction);
         }
 
-        [Parameter] public int StrokeWidth { get; set; } = 3;
+        [Parameter]
+        [Category(CategoryTypes.ProgressCircular.Appearance)]
+        public int StrokeWidth { get; set; } = 3;
 
         protected override void OnInitialized()
         {
             base.OnInitialized();
-            _svg_value = ToSvgValue(_value);
+            _svgValue = ToSvgValue(_value);
         }
 
         #region --> Obsolete Forwarders for Backwards-Compatiblilty
