@@ -700,8 +700,14 @@ namespace MudBlazor.UnitTests.Components
 
             await comp.InvokeAsync(async () => await autocomplete.OnInputKeyDown(new KeyboardEventArgs() { Key = "Tab" }));
             comp.WaitForAssertion(() => autocomplete.IsOpen.Should().BeFalse());
-
-            
+            //Check popover is closed if coerce text is true (it fixed with a PR)
+            autocomplete.CoerceText = true;
+            await comp.InvokeAsync(() => autocomplete.OnInputKeyUp(new KeyboardEventArgs() { Key = "Enter" }));
+            comp.WaitForAssertion(() => autocomplete.IsOpen.Should().BeTrue());
+            autocompletecomp.Find("input").Input("abc");
+            autocompletecomp.Find("input").Input("");
+            await comp.InvokeAsync(() => autocomplete.ToggleMenu());
+            comp.WaitForAssertion(() => autocomplete.IsOpen.Should().BeFalse());
         }
     }
 }
