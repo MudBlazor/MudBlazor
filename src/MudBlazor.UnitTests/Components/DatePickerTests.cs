@@ -566,7 +566,7 @@ namespace MudBlazor.UnitTests.Components
             datePicker.Instance.Date.Should().Be(now);
 
             // Close the datepicker without submitting the date
-            // The date of the datepicker remains equal to now 
+            // The date of the datepicker remains equal to now
             await comp.InvokeAsync(() => datePicker.Instance.Close(false));
 
             // Change the value of autoclose
@@ -774,13 +774,16 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void Check_WeekNumber_CalendarWeekRule_FirstDay()
+        [TestCase(CalendarWeekRule.FirstDay, "1")]
+        [TestCase(CalendarWeekRule.FirstFullWeek, "52")]
+        [TestCase(CalendarWeekRule.FirstFourDayWeek, "53")]
+        public void Check_WeekNumber_CalendarWeekRule_FirstDay(CalendarWeekRule weekRule, string expectedWeekNumber)
         {
             // Define a date for comparison
             //2021, 1, 1 is a good sample as all option have a different value
             var dateSample = new DateTime(2021, 1, 1);
             var cal = CultureInfo.CurrentCulture.Calendar;
-            var sampleWeekNumber = cal.GetWeekOfYear(dateSample.Date, CalendarWeekRule.FirstDay, CultureInfo.CurrentCulture.DateTimeFormat.FirstDayOfWeek).ToString();
+            var sampleWeekNumber = cal.GetWeekOfYear(dateSample.Date, weekRule, CultureInfo.CurrentCulture.DateTimeFormat.FirstDayOfWeek).ToString();
 
             //init picker
             var comp = Context.RenderComponent<MudDatePicker>();
@@ -788,63 +791,13 @@ namespace MudBlazor.UnitTests.Components
             datepicker.PickerMonth = dateSample;
 
             //Set week rule
-            datepicker.CalendarWeekRule = CalendarWeekRule.FirstDay;
+            datepicker.CalendarWeekRule = weekRule;
 
             //Get week number
             var weekNumber = datepicker.GetWeekNumber(0, 0);
 
             //Assert
-            Assert.True(weekNumber == "1");
-            Assert.True(weekNumber == sampleWeekNumber);
-        }
-
-        [Test]
-        public void Check_WeekNumber_CalendarWeekRule_FirstFullWeek()
-        {
-            // Define a date for comparison
-            //2021, 1, 1 is a good sample as all option have a different value
-            var dateSample = new DateTime(2021, 1, 1);
-            var cal = CultureInfo.CurrentCulture.Calendar;
-            var sampleWeekNumber = cal.GetWeekOfYear(dateSample.Date, CalendarWeekRule.FirstFullWeek, CultureInfo.CurrentCulture.DateTimeFormat.FirstDayOfWeek).ToString();
-
-            //init picker
-            var comp = Context.RenderComponent<MudDatePicker>();
-            var datepicker = comp.Instance;
-            datepicker.PickerMonth = dateSample;
-
-            //Set week rule
-            datepicker.CalendarWeekRule = CalendarWeekRule.FirstFullWeek;
-
-            //Get week number
-            var weekNumber = datepicker.GetWeekNumber(0, 0);
-
-            //Assert
-            Assert.True(weekNumber == "52");
-            Assert.True(weekNumber == sampleWeekNumber);
-        }
-
-        [Test]
-        public void Check_WeekNumber_CalendarWeekRule_FirstFourDayWeek()
-        {
-            // Define a date for comparison
-            //2021, 1, 1 is a good sample as all option have a different value
-            var dateSample = new DateTime(2021, 1, 1);
-            var cal = CultureInfo.CurrentCulture.Calendar;
-            var sampleWeekNumber = cal.GetWeekOfYear(dateSample.Date, CalendarWeekRule.FirstFourDayWeek, CultureInfo.CurrentCulture.DateTimeFormat.FirstDayOfWeek).ToString();
-
-            //init picker
-            var comp = Context.RenderComponent<MudDatePicker>();
-            var datepicker = comp.Instance;
-            datepicker.PickerMonth = dateSample;
-
-            //Set week rule
-            datepicker.CalendarWeekRule = CalendarWeekRule.FirstFourDayWeek;
-
-            //Get week number
-            var weekNumber = datepicker.GetWeekNumber(0, 0);
-
-            //Assert
-            Assert.True(weekNumber == "53");
+            Assert.True(weekNumber == expectedWeekNumber);
             Assert.True(weekNumber == sampleWeekNumber);
         }
     }
