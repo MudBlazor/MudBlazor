@@ -452,7 +452,7 @@ namespace MudBlazor
                 case "ArrowUp":
                     if (args.AltKey == true)
                     {
-                        await ChangeMenu(open:false);
+                        await ChangeMenu(open: false);
                     }
                     else if (!IsOpen)
                     {

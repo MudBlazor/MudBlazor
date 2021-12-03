@@ -74,7 +74,7 @@ namespace MudBlazor
             switch (obj.Key)
             {
                 case "ArrowLeft":
-                case "Escape":
+                case "Delete":
                     SetBoolValueAsync(false);
                     break;
                 case "ArrowRight":
@@ -111,6 +111,7 @@ namespace MudBlazor
                         new KeyOptions { Key=" ", PreventDown = "key+none", PreventUp = "key+none" },
                     },
                 });
+                _keyInterceptor.KeyDown += HandleKeyDown;
             }
             await base.OnAfterRenderAsync(firstRender);
         }

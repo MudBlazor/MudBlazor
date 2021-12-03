@@ -140,7 +140,7 @@ namespace MudBlazor
                 return;
             switch (obj.Key)
             {
-                case "Escape":
+                case "Delete":
                     SetBoolValueAsync(false);
                     break;
                 case "Enter":
@@ -193,10 +193,10 @@ namespace MudBlazor
                         new KeyOptions { Key=" ", PreventDown = "key+none", PreventUp = "key+none" }, // prevent scrolling page
                         new KeyOptions { Key="Enter", PreventDown = "key+none" },
                         new KeyOptions { Key="NumpadEnter", PreventDown = "key+none" },
-                        new KeyOptions { Key="Escape", PreventDown = "key+none" },
                         new KeyOptions { Key="Backspace", PreventDown = "key+none" },
                     },
                 });
+                _keyInterceptor.KeyDown += HandleKeyDown;
             }
             await base.OnAfterRenderAsync(firstRender);
         }
