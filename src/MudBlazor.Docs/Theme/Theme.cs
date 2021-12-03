@@ -43,6 +43,7 @@ namespace MudBlazor.Docs
         public static Palette DocsLightPalette = new Palette()
         {
             Black = "#272c34",
+            AppbarText = "#424242",
             AppbarBackground = "rgba(255,255,255,0.8)"
         };
 
@@ -140,12 +141,13 @@ namespace MudBlazor.Docs
         public static Palette LandingPageLightPalette = new Palette()
         {
             AppbarText = "#424242",
+            AppbarBackground = "rgba(0,0,0,0)",
             TextSecondary = "#425466",
             Dark = "#110E2D",
             DarkLighten = "#1A1643",
-            DarkContrastText = "#ADBDCC",
             GrayDefault = "#4B5563",
-            GrayLight = "#9CA3AF"
+            GrayLight = "#9CA3AF",
+            GrayLighter = "#adbdccff"
         };
         public static Palette LandingPageDarkPalette = new Palette()
         {

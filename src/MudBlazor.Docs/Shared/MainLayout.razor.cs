@@ -18,7 +18,7 @@ namespace MudBlazor.Docs.Shared
         [Inject] private NavigationManager NavigationManager { get; set; }
         [Inject] private IUserPreferencesService UserPreferencesService { get; set; }
 
-        
+        private MudTheme _currentTheme = new Theme().LandingPageTheme(false);
 
         private async Task RightToLeftToggle()
         {

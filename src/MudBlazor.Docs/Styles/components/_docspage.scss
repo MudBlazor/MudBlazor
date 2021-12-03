@@ -4,6 +4,29 @@
     }
 }
 
+.docs-page-content-navigation-drawer{
+  .title{
+    font-weight: 500;
+  }
+  
+  .mode-links{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 10px 20px;
+    border-radius: 4px;
+    font-weight: 500;
+    width: 100%;
+    color: var(--mud-palette-text-secondary);
+    background-color: var(--mud-palette-background-grey);
+    
+    &.active{
+      color: var(--mud-palette-primary);
+      background-color: var(--mud-palette-primary-hover);
+    }
+  }
+}
+
 .docs-page-header {
 
     & .mud-typography-h3 {

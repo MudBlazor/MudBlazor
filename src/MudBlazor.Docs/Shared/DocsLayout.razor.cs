@@ -62,20 +62,6 @@ public partial class DocsLayout : LayoutComponentBase
             await Task.Delay(1000);
             await _searchAutocomplete.Clear();
         }
-
-        private void OnSwipe(SwipeDirection direction)
-        {
-            if (direction == SwipeDirection.LeftToRight && !_drawerOpen)
-            {
-                _drawerOpen = true;
-                StateHasChanged();
-            }
-            else if (direction == SwipeDirection.RightToLeft && _drawerOpen)
-            {
-                _drawerOpen = false;
-                StateHasChanged();
-            }
-        }
         
         protected override void OnInitialized()
         {

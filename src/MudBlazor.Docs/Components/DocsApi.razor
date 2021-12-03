@@ -46,7 +46,12 @@
                             <MudTd Class="docs-content-api-cell" DataLabel="Type">
                                 <div style="display: flex; flex-direction: row; align-items: center; white-space: nowrap;">
                                     <DocsTypeInfo Type="@context.Type" />
-                                    <DocsBinding IsTwoWay="@context.IsTwoWay" />
+                                    @if (context.IsTwoWay)
+                                    {
+                                        <MudTooltip Text="Binding TwoWay" Placement="Placement.Top">
+                                            <MudIcon Icon="@Icons.Material.Filled.SyncAlt" Color="Color.Default" Class="ml-2 mt-2" />
+                                        </MudTooltip>
+                                    }
                                 </div>
                             </MudTd>
                             <MudTd Class="docs-content-api-cell" DataLabel="Default">

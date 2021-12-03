@@ -30,6 +30,8 @@ namespace MudBlazor.Docs.Components
         [Parameter] public RenderFragment ChildContent { get; set; }
 
         private bool _contentDrawerOpen = true;
+        private bool _displayView;
+        private string _componentName;
         public event Action<Stopwatch> Rendered;
 
         protected override void OnParametersSet()
@@ -37,6 +39,11 @@ namespace MudBlazor.Docs.Components
             _previous = DocsService.Previous;
             _next = DocsService.Next;
             _section = DocsService.Section;
+            if (NavigationManager.Uri.ToString().Contains("/api/") || NavigationManager.Uri.ToString().Contains("/components/"))
+            {
+                _componentName = NavigationManager.Uri.ToString().Split('/', StringSplitOptions.RemoveEmptyEntries).LastOrDefault();
+                _displayView = true;
+            }
         }
 
         protected override async Task OnAfterRenderAsync(bool firstRender)

@@ -1,7 +1,24 @@
 ﻿
-.docs-appbar{
+
+
+.docs-appbar-filter{
   backdrop-filter: blur(12px);
 }
+
+.docs-appbar{
+  .mud-autocomplete{
+    max-width: 360px;
+  }
+  .mud-button{
+    font-family: 'Public Sans', 'Roboto','Arial','sans-serif';
+    font-size: .875rem;
+    font-weight: 500;
+    line-height: 1.75;
+    letter-spacing: .02857em;
+    text-transform: none;
+  }
+}
+
 
 .landing-appbar{
   position: absolute !important;

@@ -1,29 +1,35 @@
-﻿@inherits LayoutComponentBase
+﻿@using System.Text.RegularExpressions
+@inherits LayoutComponentBase
 @layout MainLayout
 
 <MudThemeProvider Theme="@_currentTheme"/>
 
 <MudLayout Class="mudblazor-landingpage">
-    <MudAppBar Class="landing-appbar py-2" Elevation="0" Color="Color.Transparent">
+    <MudAppBar Class="landing-appbar" Elevation="0">
         <MudBlazorLogo Class="docs-mudblazor-logo mr-2"/>
         <MudText Color="Color.Primary" Typo="Typo.h5" Class="docs-brand-text d-none d-md-flex">MudBlazor</MudText>
-        <MudButton Variant="Variant.Text" Class="mx-1 px-3">Docs</MudButton>
-        <MudButton Variant="Variant.Text" Class="mx-1 px-3">Components</MudButton>
-        <MudButton Variant="Variant.Text" Class="mx-1 px-3">Products</MudButton>
-        <MudButton Variant="Variant.Text" Class="mx-1 px-3">Pricing</MudButton>
-        <MudButton Variant="Variant.Text" Class="mx-1 px-3">Services</MudButton>
+        
+        <MudButton Color="Color.Inherit" Variant="Variant.Text" Class="mx-1 px-3">Docs</MudButton>
+        <MudButton Color="Color.Inherit" Variant="Variant.Text" Class="mx-1 px-3">Components</MudButton>
         <MudSpacer />
-        <MudTooltip Duration="1000" Text="@(_isDarkMode? "Switch to Light Theme" : "Switch to Dark Theme")">
-            <MudIconButton Icon="@(_isDarkMode? @Icons.Material.Outlined.LightMode : @Icons.Material.Outlined.DarkMode)" Color="Color.Inherit" OnClick="@((e) => DarkMode())" />
-        </MudTooltip>
+        
         <MudBadge Color="Color.Secondary" Dot="true" Overlap="true">
             <MudMenu Icon="@Icons.Outlined.Notifications" Color="Color.Inherit" AnchorOrigin="Origin.BottomLeft" TransformOrigin="Origin.TopCenter">
                 <MudMenuItem>No Notifications</MudMenuItem>
             </MudMenu>
         </MudBadge>
-        <MudTooltip Duration="1000" Text="Toggle right-to-left/left-to-right">
+        
+        @*<MudTooltip Duration="1000" Text="@(_isDarkMode? "Switch to Light Theme" : "Switch to Dark Theme")">
+            <MudIconButton Icon="@(_isDarkMode? @Icons.Rounded.LightMode : @Icons.Material.Outlined.DarkMode)" Color="Color.Inherit" OnClick="@((e) => DarkMode())" />
+        </MudTooltip>*@
+        @*<MudTooltip Duration="1000" Text="Toggle right-to-left/left-to-right">
             <MudIconButton Icon="@Icons.Material.Filled.FormatTextdirectionRToL" Color="Color.Inherit" />
+        </MudTooltip>*@
+        <MudTooltip Duration="1000" Text="GitHub Repository">
+            <MudIconButton Link="https://github.com/MudBlazor/MudBlazor/" Icon="@Icons.Custom.Brands.GitHub" Color="Color.Inherit" />
         </MudTooltip>
+        
+        <MudIconButton Icon="@Icons.Outlined.Settings" Color="Color.Inherit" />
     </MudAppBar>
     <MudMainContent Class="pa-0">
         @Body
