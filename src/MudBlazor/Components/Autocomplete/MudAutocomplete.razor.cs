@@ -476,6 +476,12 @@ namespace MudBlazor
                     else
                         await ToggleMenu();
                     break;
+                case "Backspace":
+                    if (args.CtrlKey == true && args.ShiftKey == true)
+                    {
+                        Reset();
+                    }
+                    break;
             }
             base.InvokeKeyUp(args);
         }
@@ -547,7 +553,8 @@ namespace MudBlazor
             if (Value == null)
             {
                 _timer?.Dispose();
-                return SetTextAsync(null);
+                //Below line's false parameter added for prevent opening popover again, it may break something else
+                return SetTextAsync(null, false);
             }
             var actualvalueStr = GetItemString(Value);
             if (!Equals(actualvalueStr, Text))
@@ -599,6 +606,8 @@ namespace MudBlazor
 
         private async Task OnTextChanged(string text)
         {
+            await base.TextChanged.InvokeAsync();
+
             if (text == null)
                 return;
             await SetTextAsync(text, true);
