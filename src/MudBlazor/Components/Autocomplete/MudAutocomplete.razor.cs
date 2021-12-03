@@ -6,7 +6,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
-using MudBlazor.Services;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
@@ -25,17 +24,20 @@ namespace MudBlazor
         /// <summary>
         /// User class names for the popover, separated by space
         /// </summary>
-        [Parameter] public string PopoverClass { get; set; }
+        [Parameter]
+        public string PopoverClass { get; set; }
 
         /// <summary>
         /// Set the anchor origin point to determen where the popover will open from.
         /// </summary>
-        [Parameter] public Origin AnchorOrigin { get; set; } = Origin.BottomCenter;
+        [Parameter]
+        public Origin AnchorOrigin { get; set; } = Origin.BottomCenter;
 
         /// <summary>
         /// Sets the transform origin point for the popover.
         /// </summary>
-        [Parameter] public Origin TransformOrigin { get; set; } = Origin.TopCenter;
+        [Parameter]
+        public Origin TransformOrigin { get; set; } = Origin.TopCenter;
 
         /// <summary>
         /// Set the anchor origin point to determen where the popover will open from.
@@ -71,19 +73,22 @@ namespace MudBlazor
         /// <summary>
         /// The Open Autocomplete Icon
         /// </summary>
-        [Parameter] public string OpenIcon { get; set; } = Icons.Material.Filled.ArrowDropDown;
+        [Parameter]
+        public string OpenIcon { get; set; } = Icons.Material.Filled.ArrowDropDown;
 
         /// <summary>
         /// The Close Autocomplete Icon
         /// </summary>
-        [Parameter] public string CloseIcon { get; set; } = Icons.Material.Filled.ArrowDropUp;
+        [Parameter]
+        public string CloseIcon { get; set; } = Icons.Material.Filled.ArrowDropUp;
 
         //internal event Action<HashSet<T>> SelectionChangedFromOutside;
 
         /// <summary>
         /// The maximum height of the Autocomplete when it is open.
         /// </summary>
-        [Parameter] public int MaxHeight { get; set; } = 300;
+        [Parameter]
+        public int MaxHeight { get; set; } = 300;
 
         private Func<T, string> _toStringFunc;
 
@@ -134,39 +139,46 @@ namespace MudBlazor
         /// <summary>
         /// Debounce interval in milliseconds.
         /// </summary>
-        [Parameter] public int DebounceInterval { get; set; } = 100;
+        [Parameter]
+        public int DebounceInterval { get; set; } = 100;
 
         /// <summary>
         /// Optional presentation template for unselected items
         /// </summary>
-        [Parameter] public RenderFragment<T> ItemTemplate { get; set; }
+        [Parameter]
+        public RenderFragment<T> ItemTemplate { get; set; }
 
         /// <summary>
         /// Optional presentation template for the selected item
         /// </summary>
-        [Parameter] public RenderFragment<T> ItemSelectedTemplate { get; set; }
+        [Parameter]
+        public RenderFragment<T> ItemSelectedTemplate { get; set; }
 
         /// <summary>
         /// Optional presentation template for disabled item
         /// </summary>
-        [Parameter] public RenderFragment<T> ItemDisabledTemplate { get; set; }
+        [Parameter]
+        public RenderFragment<T> ItemDisabledTemplate { get; set; }
 
         /// <summary>
         /// On drop-down close override Text with selected Value. This makes it clear to the user
         /// which list value is currently selected and disallows incomplete values in Text.
         /// </summary>
-        [Parameter] public bool CoerceText { get; set; } = true;
+        [Parameter]
+        public bool CoerceText { get; set; } = true;
 
         /// <summary>
         /// If user input is not found by the search func and CoerceValue is set to true the user input
         /// will be applied to the Value which allows to validate it and display an error message.
         /// </summary>
-        [Parameter] public bool CoerceValue { get; set; }
+        [Parameter]
+        public bool CoerceValue { get; set; }
 
         /// <summary>
         /// Function to be invoked when checking whether an item should be disabled or not
         /// </summary>
-        [Parameter] public Func<T, bool> ItemDisabledFunc { get; set; }
+        [Parameter]
+        public Func<T, bool> ItemDisabledFunc { get; set; }
 
         private bool _isOpen;
 
@@ -196,12 +208,14 @@ namespace MudBlazor
         /// <summary>
         /// If true, the currently selected item from the drop-down (if it is open) is selected.
         /// </summary>
-        [Parameter] public bool SelectValueOnTab { get; set; } = false;
+        [Parameter]
+        public bool SelectValueOnTab { get; set; } = false;
 
         /// <summary>
         /// Show clear button.
         /// </summary>
-        [Parameter] public bool Clearable { get; set; } = false;
+        [Parameter]
+        public bool Clearable { get; set; } = false;
 
         /// <summary>
         /// Button click event for clear button. Called after text and value has been cleared.
@@ -250,16 +264,12 @@ namespace MudBlazor
             {
                 await _elementReference.SelectAsync();
                 await OnSearchAsync();
-
-                await _keyInterceptor.UpdateKey(new() { Key = "Escape", StopDown = "key+none" });
             }
             else
             {
                 _timer?.Dispose();
                 RestoreScrollPosition();
                 await CoerceTextToValue();
-
-                await _keyInterceptor.UpdateKey(new() { Key = "Escape", StopDown = "none" });
             }
             StateHasChanged();
         }
@@ -375,11 +385,9 @@ namespace MudBlazor
             return "null";
         }
 
-        internal async void HandleKeyDown(KeyboardEventArgs obj)
+        internal virtual async Task OnInputKeyDown(KeyboardEventArgs args)
         {
-            if (Disabled || ReadOnly)
-                return;
-            switch (obj.Key)
+            switch (args.Key)
             {
                 case "Tab":
                     // NOTE: We need to catch Tab in Keydown because a tab will move focus to the next element and thus
@@ -391,9 +399,13 @@ namespace MudBlazor
                     else
                         IsOpen = false;
                     break;
-                case "Escape":
-                    await ChangeMenu(open: false);
-                    break;
+            }
+        }
+
+        internal virtual async Task OnInputKeyUp(KeyboardEventArgs args)
+        {
+            switch (args.Key)
+            {
                 case "Enter":
                 case "NumpadEnter":
                     if (!IsOpen)
@@ -417,7 +429,7 @@ namespace MudBlazor
                     }
                     break;
                 case "ArrowUp":
-                    if (obj.AltKey == true)
+                    if (args.AltKey == true)
                     {
                         await ChangeMenu(open: false);
                     }
@@ -431,44 +443,20 @@ namespace MudBlazor
                         await SelectNextItem(-(decrement < 0 ? 1 : decrement));
                     }
                     break;
+                case "Escape":
+                    await ChangeMenu(open: false);
+                    break;
+                case "Tab":
+                    await Task.Delay(1);
+                    if (!IsOpen)
+                        return;
+                    if (SelectValueOnTab)
+                        await OnEnterKey();
+                    else
+                        await ToggleMenu();
+                    break;
             }
-            OnKeyDown.InvokeAsync(obj).AndForget();
-        }
-
-        //internal void HandleKeyUp(KeyboardEventArgs obj)
-        //{
-        //    OnKeyUp.InvokeAsync(obj).AndForget();
-        //}
-
-        [Inject] private IKeyInterceptor _keyInterceptor { get; set; }
-
-        private string _elementId = "autocomplete_" + Guid.NewGuid().ToString().Substring(0, 8);
-
-        protected override async Task OnAfterRenderAsync(bool firstRender)
-        {
-            if (firstRender)
-            {
-                await _keyInterceptor.Connect(_elementId, new KeyInterceptorOptions()
-                {
-                    //EnableLogging = true,
-                    TargetClass = "mud-input-control",
-                    Keys = {
-                        new KeyOptions { Key=" ", PreventDown = "key+none" }, //prevent scrolling page, toggle open/close
-                        new KeyOptions { Key="ArrowUp", PreventDown = "key+none" }, // prevent scrolling page, instead hilight previous item
-                        new KeyOptions { Key="ArrowDown", PreventDown = "key+none" }, // prevent scrolling page, instead hilight next item
-                        new KeyOptions { Key="Home", PreventDown = "key+none" },
-                        new KeyOptions { Key="Enter", PreventDown = "key+none" },
-                        new KeyOptions { Key="End", PreventDown = "key+none" },
-                        new KeyOptions { Key="a", PreventDown = "key+ctrl" }, // select all items instead of all page text
-                        new KeyOptions { Key="A", PreventDown = "key+ctrl" }, // select all items instead of all page text
-                        new KeyOptions { Key="/./", SubscribeDown = true, SubscribeUp = true }, // for our users
-                    },
-                });
-                _keyInterceptor.KeyDown += HandleKeyDown;
-                
-
-            }
-            await base.OnAfterRenderAsync(firstRender);
+            base.InvokeKeyUp(args);
         }
 
         private async Task SelectNextItem(int increment)
