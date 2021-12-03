@@ -282,7 +282,7 @@ namespace MudBlazor
                 yield return week_first.AddDays(i);
         }
 
-        public string GetWeekNumber(int month, int index)
+        internal string GetWeekNumber(int month, int index)
         {
             if (index is < 0 or > 5)
                 throw new ArgumentException("Index must be between 0 and 5");

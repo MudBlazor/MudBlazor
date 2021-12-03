@@ -777,7 +777,7 @@ namespace MudBlazor.UnitTests.Components
         [TestCase(CalendarWeekRule.FirstDay, "1")]
         [TestCase(CalendarWeekRule.FirstFullWeek, "52")]
         [TestCase(CalendarWeekRule.FirstFourDayWeek, "53")]
-        public void Check_WeekNumber_CalendarWeekRule_FirstDay(CalendarWeekRule weekRule, string expectedWeekNumber)
+        public async Task Check_WeekNumber_CalendarWeekRule_FirstDay(CalendarWeekRule weekRule, string expectedWeekNumber)
         {
             // Define a date for comparison
             //2021, 1, 1 is a good sample as all option have a different value
@@ -787,11 +787,12 @@ namespace MudBlazor.UnitTests.Components
 
             //init picker
             var comp = Context.RenderComponent<MudDatePicker>();
-            var datepicker = comp.Instance;
-            datepicker.PickerMonth = dateSample;
+            comp.SetParam(p => p.ShowWeekNumbers, true);
+            comp.SetParam(p => p.CalendarWeekRule, weekRule);
+            comp.SetParam(p => p.PickerMonth, dateSample);
 
-            //Set week rule
-            datepicker.CalendarWeekRule = weekRule;
+            //Check method
+            var datepicker = comp.Instance;
 
             //Get week number
             var weekNumber = datepicker.GetWeekNumber(0, 0);
