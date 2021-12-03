@@ -32,26 +32,37 @@ namespace MudBlazor
         /// <summary>
         /// The color of the component. It supports the theme colors.
         /// </summary>
-        [Parameter] public Color Color { get; set; } = Color.Default;
+        [Parameter]
+        [Category(CategoryTypes.ProgressCircular.Appearance)]
+        public Color Color { get; set; } = Color.Default;
 
         /// <summary>
         /// The size of the component.
         /// </summary>
-        [Parameter] public Size Size { get; set; } = Size.Medium;
+        [Parameter]
+        [Category(CategoryTypes.ProgressCircular.Appearance)]
+        public Size Size { get; set; } = Size.Medium;
 
         /// <summary>
         /// Constantly animates, does not follow any value.
         /// </summary>
-        [Parameter] public bool Indeterminate { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.ProgressCircular.Behavior)]
+        public bool Indeterminate { get; set; }
 
-        [Parameter] public double Min { get; set; } = 0.0;
+        [Parameter]
+        [Category(CategoryTypes.ProgressCircular.Behavior)]
+        public double Min { get; set; } = 0.0;
 
-        [Parameter] public double Max { get; set; } = 100.0;
+        [Parameter]
+        [Category(CategoryTypes.ProgressCircular.Behavior)]
+        public double Max { get; set; } = 100.0;
 
         private int _svgValue;
         private double _value;
 
         [Parameter]
+        [Category(CategoryTypes.ProgressCircular.Behavior)]
         public double Value
         {
             get => _value;
@@ -75,7 +86,9 @@ namespace MudBlazor
             return (int)Math.Round(_magicNumber - _magicNumber * fraction);
         }
 
-        [Parameter] public int StrokeWidth { get; set; } = 3;
+        [Parameter]
+        [Category(CategoryTypes.ProgressCircular.Appearance)]
+        public int StrokeWidth { get; set; } = 3;
 
         protected override void OnInitialized()
         {

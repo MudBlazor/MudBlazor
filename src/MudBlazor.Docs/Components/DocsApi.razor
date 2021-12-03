@@ -19,8 +19,11 @@
             <DocsPageSection>
                 <SectionHeader Title="Properties" />
                 <SectionContent Class="docs-content-api" FullWidth="true">
-                    <MudCheckBox Label="Group by class" @bind-Checked="@_arePropertiesGrouped" Style="float: right; margin-top: -30px;" Color="Color.Primary" Size="Size.Small" Dense />
-                    <MudTable Items="@Properties" Elevation="0" Class="mx-0" Breakpoint="@Breakpoint.Sm" GroupBy="@(_arePropertiesGrouped ? @_propertiesGroupDefinition : null)">
+                    <div style="float: right; margin-top: -10px; display: flex; flex-direction: row; align-items: center; white-space: nowrap;">
+                        <MudText>Group by:&nbsp;</MudText>
+                        <EnumSwitch T="Grouping" @bind-Value="@_propertiesGrouping" Color="Color.Primary" />
+                    </div>
+                    <MudTable Items="@Properties" Elevation="0" Class="mx-0" Breakpoint="@Breakpoint.Sm" GroupBy="@PropertiesGroupDefinition">
                         <HeaderContent>
                             <MudTh>Name</MudTh>
                             <MudTh>Type</MudTh>
@@ -28,17 +31,23 @@
                             <MudTh>Description</MudTh>
                         </HeaderContent>
                         <GroupHeaderTemplate>
-                            @if ((Type)context.Key != Type)
+                            @if (_propertiesGrouping == Grouping.Class && (Type)context.Key != Type)
                             {
                                 <MudTh colspan="4">
                                     <MudText Typo="Typo.h6">@($"Inherited from {((Type)context.Key).ConvertToCSharpSource()}")</MudText>
+                                </MudTh>
+                            }
+                            else if (_propertiesGrouping == Grouping.Category)
+                            {
+                                <MudTh colspan="4">
+                                    <MudText Typo="Typo.h6">@context.Key</MudText>
                                 </MudTh>
                             }
                         </GroupHeaderTemplate>
                         <RowTemplate>
                             <MudTd Class="docs-content-api-cell" DataLabel="Name">
                                 <CodeInline>@context.Name</CodeInline>
-                                @if (_arePropertiesGrouped && IsOverridden(context.PropertyInfo))
+                                @if (_propertiesGrouping == Grouping.Class && IsOverridden(context.PropertyInfo))
                                 {
                                     <MudChip Variant="Variant.Outlined" Color="Color.Secondary" Size="Size.Small">overridden</MudChip>
                                 }
@@ -200,7 +209,11 @@
         get
         {
             foreach (var info in Type.GetPropertyInfosWithAttribute<ParameterAttribute>()
-                                     .OrderByDescending(x => _arePropertiesGrouped ? NumberOfAncestorClasses(BaseDefinitionClass(x)) : 0)
+                                     .OrderBy(x => _propertiesGrouping switch {
+                                                        Grouping.Category => x.GetCustomAttribute<CategoryAttribute>()?.Order ?? int.MaxValue - 1,
+                                                        Grouping.Class => -NumberOfAncestorClasses(BaseDefinitionClass(x)),
+                                                        _ => 0
+                                                    })
                                      .ThenBy(x => x.Name))
             {
                 if (info.GetCustomAttributes(typeof(System.ObsoleteAttribute), true).Length == 0 && !info.PropertyType.Name.Contains("EventCallback"))
@@ -339,11 +352,20 @@
     }
 
 
-    #region Grouping properties by inheritance
+    #region Grouping properties
 
-    private bool _arePropertiesGrouped = true;
+    private enum Grouping { Category, Class, None }
 
-    private TableGroupDefinition<ApiProperty> _propertiesGroupDefinition = new() { Selector = (p) => BaseDefinitionClass(p.PropertyInfo) };
+    private Grouping _propertiesGrouping = Grouping.Class;
+
+    private TableGroupDefinition<ApiProperty> PropertiesGroupDefinition => _propertiesGrouping switch
+    {
+        Grouping.Category => new() { Selector = (p) => p.PropertyInfo.GetCustomAttribute<CategoryAttribute>()?.Name ?? "Misc" },
+        Grouping.Class => new() { Selector = (p) => BaseDefinitionClass(p.PropertyInfo) },
+        _ => null
+    };
+
+    // -- Grouping properties by class ------------------------------------------------------------------------------------------
 
     private static Type BaseDefinitionClass(MethodInfo m) => m.GetBaseDefinition().DeclaringType;
 

@@ -14,24 +14,28 @@ namespace MudBlazor
         /// The message box title. If null or empty, title will be hidden
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.MessageBox.Behavior)]
         public string Title { get; set; }
 
         /// <summary>
         /// Define the message box title as a renderfragment (overrides Title)
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.MessageBox.Behavior)]
         public RenderFragment TitleContent { get; set; }
 
         /// <summary>
         /// The message box title. If null or empty, title will be hidden
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.MessageBox.Behavior)]
         public string Message { get; set; }
 
         /// <summary>
         /// Define the message box body as a renderfragment (overrides Message)
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.MessageBox.Behavior)]
         public RenderFragment MessageContent { get; set; }
 
 
@@ -39,6 +43,7 @@ namespace MudBlazor
         /// Text of the cancel button. Leave null to hide the button.
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.MessageBox.Behavior)]
         public string CancelText { get; set; }
 
         /// <summary>
@@ -46,12 +51,14 @@ namespace MudBlazor
         /// Must be a MudButton
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.MessageBox.Behavior)]
         public RenderFragment CancelButton { get; set; }
 
         /// <summary>
         /// Text of the no button. Leave null to hide the button.
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.MessageBox.Behavior)]
         public string NoText { get; set; }
 
         /// <summary>
@@ -59,12 +66,14 @@ namespace MudBlazor
         /// Must be a MudButton
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.MessageBox.Behavior)]
         public RenderFragment NoButton { get; set; }
 
         /// <summary>
         /// Text of the yes/OK button. Leave null to hide the button.
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.MessageBox.Behavior)]
         public string YesText { get; set; } = "OK";
 
         /// <summary>
@@ -72,6 +81,7 @@ namespace MudBlazor
         /// Must be a MudButton
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.MessageBox.Behavior)]
         public RenderFragment YesButton { get; set; }
 
         /// <summary>
@@ -96,6 +106,7 @@ namespace MudBlazor
         /// Bind this two-way to show and close an inlined message box. Has no effect on opened msg boxes
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.MessageBox.Behavior)]
         public bool IsVisible
         {
             get => _isVisible;
