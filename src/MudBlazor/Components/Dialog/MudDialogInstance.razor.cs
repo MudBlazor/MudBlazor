@@ -21,8 +21,8 @@ namespace MudBlazor
         [CascadingParameter] private MudDialogProvider Parent { get; set; }
         [CascadingParameter] private DialogOptions GlobalDialogOptions { get; set; } = new DialogOptions();
 
-        // "Misc" category (Behavior and Appearance)
         [Parameter]
+        [Category(CategoryTypes.Dialog.Misc)]  // Behavior and Appearance
         public DialogOptions Options
         {
             get
