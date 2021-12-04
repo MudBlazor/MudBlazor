@@ -20,9 +20,9 @@ namespace MudBlazor.Docs.Models
 
     public class MudVirtualizedIcons
     {
-        public List<MudIcons> RowIcons { get; set; }
+        public MudIcons[] RowIcons { get; set; }
 
-        public MudVirtualizedIcons(List<MudIcons> rowicons)
+        public MudVirtualizedIcons(MudIcons[] rowicons)
         {
             RowIcons = rowicons;
         }

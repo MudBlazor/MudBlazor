@@ -34,6 +34,22 @@ namespace MudBlazor.Docs.Components
         private string _componentName;
         public event Action<Stopwatch> Rendered;
 
+        int _sectionCount;
+        public int SectionCount
+        {
+            get
+            {
+                lock (this)
+                    return _sectionCount;
+            }
+        }
+
+        public int IncrementSectionCount()
+        {
+            lock (this)
+                return _sectionCount++;
+        }
+
         protected override void OnParametersSet()
         {
             _previous = DocsService.Previous;

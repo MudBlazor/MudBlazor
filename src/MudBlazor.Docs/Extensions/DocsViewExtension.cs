@@ -27,6 +27,7 @@ namespace MudBlazor.Docs.Extensions
             services.AddScoped<IDocsNavigationService, DocsNavigationService>();
             services.AddBlazoredLocalStorage();
             services.AddScoped<IUserPreferencesService, UserPreferencesService>();
+            services.AddSingleton<IRenderQueueService, RenderQueueService>();
         }
     }
 }

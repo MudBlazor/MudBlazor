@@ -17,37 +17,51 @@ namespace MudBlazor
         /// <summary>
         /// If true, border-radius is set to 0.
         /// </summary>
-        [Parameter] public bool Square { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.ExpansionPanel.Appearance)]
+        public bool Square { get; set; }
 
         /// <summary>
         /// If true, multiple panels can be expanded at the same time.
         /// </summary>
-        [Parameter] public bool MultiExpansion { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.ExpansionPanel.Behavior)]
+        public bool MultiExpansion { get; set; }
 
         /// <summary>
         /// The higher the number, the heavier the drop-shadow. 0 for no shadow.
         /// </summary>
-        [Parameter] public int Elevation { set; get; } = 1;
+        [Parameter]
+        [Category(CategoryTypes.ExpansionPanel.Appearance)]
+        public int Elevation { set; get; } = 1;
 
         /// <summary>
         /// If true, removes vertical padding from all panels' childcontent.
         /// </summary>
-        [Parameter] public bool Dense { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.ExpansionPanel.Appearance)]
+        public bool Dense { get; set; }
 
         /// <summary>
         /// If true, the left and right padding is removed from all panels' childcontent.
         /// </summary>
-        [Parameter] public bool DisableGutters { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.ExpansionPanel.Appearance)]
+        public bool DisableGutters { get; set; }
 
         /// <summary>
         /// If true, the borders around each panel will be removed.
         /// </summary>
-        [Parameter] public bool DisableBorders { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.ExpansionPanel.Appearance)]
+        public bool DisableBorders { get; set; }
 
         /// <summary>
         /// Child content of component.
         /// </summary>
-        [Parameter] public RenderFragment ChildContent { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.ExpansionPanel.Behavior)]
+        public RenderFragment ChildContent { get; set; }
 
         private List<MudExpansionPanel> _panels = new();
 
