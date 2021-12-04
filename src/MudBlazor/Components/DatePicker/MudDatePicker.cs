@@ -250,6 +250,12 @@ namespace MudBlazor
                     {
                         IsOpen = false;
                     }
+                    else if (Date.HasValue && OpenTo == OpenTo.Year)
+                    {
+                        Date = Date.Value.AddYears(-1);
+                        _yearChange = -1;
+                        ScrollToYear();
+                    }
                     else if (Date.HasValue)
                     {
                         Date = Date.Value.AddDays(-7);
@@ -262,10 +268,28 @@ namespace MudBlazor
                     }
                     else if (Date.HasValue)
                     {
-                        Date = Date.Value.AddDays(7);
+                        if (OpenTo == OpenTo.Year)
+                        {
+                            Date = Date.Value.AddYears(1);
+                            _yearChange = 1;
+                            ScrollToYear();
+                        }
+                        else if (OpenTo == OpenTo.Month)
+                        {
+                            Date = Date.Value.AddMonths(3);
+                            PickerMonth = (DateTime)Date;
+                            Submit();
+                            //GetMonthClasses((DateTime)Date);
+                            StateHasChanged();
+                            return;
+                        }
+                        else if (OpenTo == OpenTo.Date)
+                        {
+                            Date = Date.Value.AddDays(7);
+                        }
                     }
                     break;
-                
+
                 case "Home":
                     if (Date.HasValue && Editable == false)
                     {

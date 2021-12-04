@@ -1,12 +1,16 @@
 ﻿@namespace MudBlazor.Docs.Examples
 <MudGrid>
     <MudItem xs="12" sm="6" md="4">
-        <MudDatePicker Label="Year" OpenTo="OpenTo.Year" Text="2020-10-19" />
+        <MudDatePicker Label="Year" OpenTo="OpenTo.Year" Date="date" />
     </MudItem>
     <MudItem xs="12" sm="6" md="4">
-        <MudDatePicker Label="Month" OpenTo="OpenTo.Month" Text="2020-10-19" />
+        <MudDatePicker Label="Month" OpenTo="OpenTo.Month" Date="date" />
     </MudItem>
     <MudItem xs="12" sm="6" md="4">
-        <MudDatePicker Label="Date" Text="2020-10-19" />
+        <MudDatePicker Label="Date" Date="date" />
     </MudItem>
 </MudGrid>
+
+@code{
+	private DateTime date = new DateTime(2021, 01, 19);
+}
