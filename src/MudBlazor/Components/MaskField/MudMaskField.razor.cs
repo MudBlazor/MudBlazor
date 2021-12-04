@@ -34,7 +34,22 @@ namespace MudBlazor
             ['*'] = CharacterType.LetterOrDigit,
         };
 
-        internal string RawValue { get; set; }
+        private string _rawValue;
+
+        [Parameter] public string RawValue
+        {
+            get => _rawValue;
+            set
+            {
+                if (_rawValue == value)
+                    return;
+                _rawValue = value;
+                //UltimateImplementMask(_rawValue, Mask).AndForget();
+                BindingValueChanged.InvokeAsync(value);
+            }
+        }
+
+        [Parameter] public EventCallback<string> BindingValueChanged { get; set; }
 
         internal override InputType GetInputType() => InputType;
 
@@ -91,7 +106,6 @@ namespace MudBlazor
                     },
                 });
             }
-            //await ImplementMask(Text, Mask);
             await base.OnAfterRenderAsync(firstRender);
         }
 
@@ -137,18 +151,31 @@ namespace MudBlazor
             }
         }
 
-        private void SetRawValue()
+        private void SetRawValueFromText()
         {
+            if (Text == null)
+            {
+                Text = "";
+            }
             string rawValue = "";
-
+            int counterMeter = 0;
             foreach (var c in Text)
             {
-                var type = GetCharacterType(c.ToString());
-                if (type == CharacterType.Letter || type == CharacterType.Digit)
+                if (c != Mask[counterMeter] && c != '_')
                 {
                     rawValue += c.ToString();
                 }
+                counterMeter++;
             }
+
+            //foreach (var c in Text)
+            //{
+            //    var type = GetCharacterType(c.ToString());
+            //    if (type == CharacterType.Letter || type == CharacterType.Digit)
+            //    {
+            //        rawValue += c.ToString();
+            //    }
+            //}
 
             RawValue = rawValue;
         }
@@ -160,6 +187,67 @@ namespace MudBlazor
                 return "";
             }
             return RawValue;
+        }
+
+        private string GetSemiRawText(string value)
+        {
+            for (int i = 0; i < Mask.Length; i++)
+            {
+                int a = i;
+                if (!MaskCharacters.ContainsKey(Mask[a]) && a <= value.Length)
+                {
+                    value = value.Insert(a, Mask[a].ToString());
+                }
+            }
+
+            //UpdateMaskSymbols();
+            //foreach (var item in MaskSymbols)
+            //{
+            //    if (item.Key <= value.Length)
+            //    {
+            //        value = value.Insert(item.Key, item.Value.ToString());
+            //    }
+            //}
+
+            return value;
+        }
+
+        private async Task UltimateImplementMask(string RawText, string Mask)
+        {
+            if (Mask == null)
+            {
+                return;
+            }
+
+            if (RawText == null)
+            {
+                RawText = "";
+            }
+
+            string semiRawText = GetSemiRawText(RawText);
+            string maskedText = "";
+
+            for (int i = 0; i < Mask.Length; i++)
+            {
+                int a = i;
+                if (!MaskCharacters.ContainsKey(Mask[a]))
+                {
+                    maskedText += Mask[a];
+                }
+                else if (semiRawText.Length < a + 1)
+                {
+                    maskedText += "_";
+                }
+                else if (GetCharacterType(Mask[a].ToString(), true) == GetCharacterType(semiRawText[a].ToString()))
+                {
+                    maskedText += semiRawText[a].ToString();
+                }
+                else
+                {
+                    maskedText += "_";
+                }
+            }
+            await _elementReference.SetText(maskedText);
         }
 
         private async Task ImplementMask(string RawText, string Mask)
@@ -206,25 +294,36 @@ namespace MudBlazor
 
         private string GetRawMask()
         {
-            string rawMask = "";
+            //string rawMask = "";
 
-            foreach (var m in Mask)
+            //foreach (var m in Mask)
+            //{
+            //    bool isMatch = false;
+
+            //    foreach (var item in MaskCharacters)
+            //    {
+            //        if (m == item.Key)
+            //        {
+            //            isMatch = true;
+            //            //break;
+            //        }
+            //    }
+
+            //    if (isMatch == true)
+            //    {
+            //        rawMask += m.ToString();
+            //    }
+            //}
+
+            //return rawMask;
+
+            var rawMask = "";
+            foreach (var c in from c in Mask
+                              let isMatch = MaskCharacters.Any(m => m.Key == c)
+                              where isMatch
+                              select c)
             {
-                bool isMatch = false;
-
-                foreach (var item in MaskCharacters)
-                {
-                    if (m == item.Key)
-                    {
-                        isMatch = true;
-                        //break;
-                    }
-                }
-
-                if (isMatch == true)
-                {
-                    rawMask += m.ToString();
-                }
+                rawMask += c.ToString();
             }
 
             return rawMask;
@@ -240,33 +339,38 @@ namespace MudBlazor
             }
         }
 
-        public void SetCaretPosition()
+        private int _caretPosition = 0;
+
+        public void SetCaretPosition(int caretPosition)
         {
-            char[] textArray = RawValue.ToCharArray();
-            char[] maskArray = Mask.ToCharArray();
-            int timer = 0;
-            int findingNum = 0;
-            foreach (char c in maskArray)
-            {
-                if (GetCharacterType(c.ToString(), true) == CharacterType.Other)
-                {
-                    
-                }
-                else
-                {
-                    if (timer < RawValue.Length)
-                    {
-                        
-                    }
-                    else
-                    {
-                        findingNum = timer;
-                        break;
-                    }
-                }
-                timer++;
-            }
-            _elementReference.SelectRangeAsync(findingNum, findingNum);
+            //char[] textArray = RawValue.ToCharArray();
+            //char[] maskArray = Mask.ToCharArray();
+            //int timer = 0;
+            //int findingNum = 0;
+            //foreach (char c in maskArray)
+            //{
+            //    if (GetCharacterType(c.ToString(), true) == CharacterType.Other)
+            //    {
+
+            //    }
+            //    else
+            //    {
+            //        if (timer < RawValue.Length)
+            //        {
+
+            //        }
+            //        else
+            //        {
+            //            findingNum = timer;
+            //            break;
+            //        }
+            //    }
+            //    timer++;
+            //}
+            //_elementReference.SelectRangeAsync(findingNum, findingNum);
+
+            _caretPosition = caretPosition;
+            _elementReference.SelectRangeAsync(_caretPosition, _caretPosition);
         }
 
         protected async Task HandleKeyDown(KeyboardEventArgs obj)
@@ -276,70 +380,30 @@ namespace MudBlazor
             if (obj.Key == "ArrowUp" || obj.Key == "ArrowDown" || obj.Key == "ArrowLeft" || obj.Key == "ArrowRight")
                 return;
 
-            SetRawValue();
+            SetRawValueFromText();
             string _text = GetRawValue();
 
-            string _semiRawText = "";
-            if (Text != null)
-            {
-                char[] rawArray = Text.ToCharArray();
-                foreach (char c in rawArray)
-                {
-                    if (c == '_')
-                    {
-                        break;
-                    }
-                    else
-                    {
-                        _semiRawText += c.ToString();
-                    }
-                }
-                //_text = Text;
-            }
-
-            //string specialMaskCharacters = "";
-            char[] maskArray = Mask.ToCharArray();
-            List<char> textArray = _semiRawText.ToCharArray().ToList();
-            CharacterType keyType = GetCharacterType(obj.Key);
-            try
-            {
-                CharacterType maskType = GetCharacterType(maskArray[textArray.Count].ToString(), true);
-                if (keyType == maskType)
-                {
-                    _isCharacterTypeMatch = true;
-                }
-            }
-            catch (Exception)
-            {
-                
-            }
-
-            //implement mask
-            if (_isCharacterTypeMatch == true && obj.Key != "Backspace")
-            {
-                //await _elementReference.SetText(_text + _lastKeyDownCharacter);
-                Text = _text +_lastKeyDownCharacter;
-            }
-            else
-            {
-                Text = _text;
-            }
+            string toBeMaskedText = "";
             if (obj.Key == "Backspace")
             {
                 if (1 <= RawValue.Length)
                 {
-                    Text = Text.Substring(0, Text.Length - 1);
+                    toBeMaskedText = _text.Substring(0, _text.Length - 1);
                 }
             }
-            await ImplementMask(Text, Mask);
-            SetRawValue();
+            else
+            {
+                toBeMaskedText = _text + _lastKeyDownCharacter;
+            }
+            //await ImplementMask(Text, Mask);
+            await UltimateImplementMask(toBeMaskedText, Mask);
+            SetRawValueFromText();
 
             OnKeyDown.InvokeAsync(obj).AndForget();
-            _isCharacterTypeMatch = false;
-            SetCaretPosition();
+            await Task.Delay(1);
+            SetCaretPosition(_caretPosition + 1);
         }
 
         private string _lastKeyDownCharacter = "";
-        private bool _isCharacterTypeMatch = false;
     }
 }
