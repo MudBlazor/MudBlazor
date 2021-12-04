@@ -415,6 +415,21 @@
             padding-top: calc(var(--section-diff) / 1.5) !important;
             padding-bottom: calc(var(--section-diff) * 1.5) !important;
         }
+
+      @media (max-width:600px) {
+        h1{
+          font-size: 2.5rem;
+        }
+        h6{
+          font-size: .875rem;
+        }
+      }
+      
+      .graphic-wrapper{
+        position: absolute;
+        top: 0;
+        right: 0;
+      }
     }
 
     .code-animation-container {

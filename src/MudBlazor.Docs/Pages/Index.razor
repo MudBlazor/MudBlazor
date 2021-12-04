@@ -4,8 +4,8 @@
 
 <LandingSection SectionClass="top-section" BackgroundClass="sweet">
     <ChildContent>
-        <div class="d-flex">
-            <div style="width:50%">
+        <MudGrid Class="mb-16 mb-sm-0">
+            <MudItem Class="relative" xs="12" lg="6">
                 <MudText Typo="Typo.h1">The Blazor</MudText>
                 <MudText Typo="Typo.h1" Inline="true" Class="landing-h1-gradient">Component </MudText>
                 <MudText Typo="Typo.h1" Inline="true">Library</MudText>
@@ -15,16 +15,16 @@
                         Trusted by half a million users, from hobby developers to large enterprises. Use MudBlazor to rapidly build amazing web applications without leaving your loved C# language and toolchain.
                     </MudText>
                 </div>
-                <div class="d-flex py-4">
+                <div class="d-flex py-4 mb-16 mb-sm-0">
                     <MudButton Color="Color.Primary" Variant="Variant.Filled" DisableElevation="true" Class="mud-button-gradient-primary" Size="Size.Large" Link="/getting-started/installation">Get started</MudButton>
                     <MudButton Color="Color.Default" Variant="Variant.Outlined" StartIcon="@Icons.Custom.Brands.GitHub" Size="Size.Large" Class="ms-4" Link="https://github.com/MudBlazor/MudBlazor/" Target="_blank">Star on GitHub</MudButton>
                 </div>
-            </div>
-            <div class="relative">
-                <Browser />
-                <Phone />
-            </div>
-        </div>
+                <div class="graphic-wrapper">
+                    <Browser/>
+                    <Phone/>
+                </div>
+            </MudItem>
+        </MudGrid>
     </ChildContent>
     <Stripes>
         <div class="stripe gradient"></div>
