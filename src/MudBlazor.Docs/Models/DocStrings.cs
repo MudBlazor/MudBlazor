@@ -4,7 +4,7 @@ using System.Text.RegularExpressions;
 
 namespace MudBlazor.Docs.Models
 {
-    // this is needed for the api docs
+    // this is needed for the api docs 
     public static partial class DocStrings
     {
         public static string GetPropertyDescription(Type t, string property)
