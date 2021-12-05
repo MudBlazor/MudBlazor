@@ -161,7 +161,7 @@ namespace MudBlazor
             int counterMeter = 0;
             foreach (var c in Text)
             {
-                if (c != Mask[counterMeter] && c != '_')
+                if ((c != Mask[counterMeter] || (GetCharacterType(Mask[counterMeter].ToString(), true) != CharacterType.Other && c == Mask[counterMeter] && GetCharacterType(Mask[counterMeter].ToString(), true) == GetCharacterType(c.ToString()))) && c != '_')
                 {
                     rawValue += c.ToString();
                 }
@@ -401,7 +401,7 @@ namespace MudBlazor
 
             OnKeyDown.InvokeAsync(obj).AndForget();
             await Task.Delay(1);
-            SetCaretPosition(_caretPosition + 1);
+            SetCaretPosition(Text.Length);
         }
 
         private string _lastKeyDownCharacter = "";
