@@ -449,6 +449,7 @@ namespace MudBlazor
 
         private void OnYearClick()
         {
+            if (FixYear.HasValue) return;
             CurrentView = OpenTo.Year;
             StateHasChanged();
             _scrollToYearAfterRender = true;

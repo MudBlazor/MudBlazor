@@ -17,8 +17,7 @@
                FixMonth="@FixMonth"
                FixYear="@FixYear"
                HideDateInToolbar="@HideDateInToolbar"
-               HideMonthInToolbar="@HideMonthInToolbar"
-               HideYearInToolbar="@HideDateInToolbar"
+               HideYearInToolbar="@HideYearInToolbar"
                HideToolbar="@HideToolbar"/> }
             else
             {
@@ -32,13 +31,12 @@
                FixMonth="@FixMonth"
                FixYear="@FixYear"
                HideDateInToolbar="@HideDateInToolbar"
-               HideMonthInToolbar="@HideMonthInToolbar"
-               HideYearInToolbar="@HideDateInToolbar"
+               HideYearInToolbar="@HideYearInToolbar"
                HideToolbar="@HideToolbar"
                />}
 @code { private MudDatePicker _picker;
-
-            public DateTime? Date { get; set; }
+            
+            [Parameter] public DateTime? Date { get; set; }
 
             private async Task HandleDateChanged(DateTime? input)
             {
@@ -56,7 +54,6 @@
             [Parameter] public int? FixYear { get; set; }
             [Parameter] public bool HideToolbar { get; set; }
             [Parameter] public bool HideYearInToolbar { get; set; }
-            [Parameter] public bool HideMonthInToolbar { get; set; }
             [Parameter] public bool HideDateInToolbar { get; set; }
 
 

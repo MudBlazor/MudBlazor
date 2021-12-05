@@ -363,8 +363,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = OpenPicker(ComponentParameter.CreateParameter("FixYear", 2021));
 
             comp.Find("div.mud-picker-datepicker-toolbar > button.mud-button-year").Click();
-            
-            comp.FindAll("div.mud-picker-calendar-container > div.mud-picker-calendar-header").Count.Should().Be(1);
+
             comp.Find("div.mud-picker-calendar-container > .mud-picker-calendar-header > .mud-picker-calendar-header-switch > .mud-button-month").Click();
             comp.FindAll("div.mud-picker-month-container").Count.Should().Be(1);
             comp.FindAll("div.mud-picker-calendar-container > div.mud-picker-month-container > button.mud-picker-month")[1].Click();
@@ -412,7 +411,6 @@ namespace MudBlazor.UnitTests.Components
             var comp = OpenPicker(new ComponentParameter[] { ComponentParameter.CreateParameter("FixMonth", 1), ComponentParameter.CreateParameter("FixYear", 2022) });
             comp.Find("div.mud-picker-datepicker-toolbar > button.mud-button-year").Click();
             comp.FindAll("div.mud-picker-year-container").Count.Should().Be(0);
-            comp.FindAll("div.mud-picker-calendar-container > .mud-picker-calendar-header > .mud-picker-calendar-header-switch > .mud-button-month").Count().Should().Be(0);
             comp.FindAll("div.mud-picker-calendar-container > div.mud-picker-calendar-header").Count.Should().Be(1);
             comp.FindAll("button.mud-picker-calendar-day")
                 .Where(x => x.TrimmedText().Equals("3")).First().Click();
@@ -441,6 +439,33 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("div.mud-picker-calendar-container > div.mud-picker-month-container > button.mud-picker-month")[2].Click();
             comp.Instance.Date.Value.Date.Should().Be(new DateTime(2022, 3, 1));
         }
+
+        [Test]
+        public void Hide_Entire_Toolbar()
+        {
+            //entire toolbar
+            var comp = OpenPicker(new ComponentParameter[] { ComponentParameter.CreateParameter("HideToolbar", true) });
+            comp.FindAll("div.mud-picker-datepicker-toolbar").Count.Should().Be(0);
+        }
+
+        [Test]
+        public void Hide_Year_In_Toolbar()
+        {
+            var comp = OpenPicker(new ComponentParameter[] { ComponentParameter.CreateParameter("HideYearInToolbar", true), ComponentParameter.CreateParameter("Date", DateTime.UtcNow) });
+            comp.FindAll("div.mud-picker-datepicker-toolbar").Count.Should().Be(1);
+            comp.FindAll("div.mud-picker-datepicker-toolbar > button.mud-button-date").Count.Should().Be(1);
+            comp.FindAll("div.mud-picker-datepicker-toolbar > button.mud-button-year").Count.Should().Be(0);
+        }
+
+        [Test]
+        public void Hide_Date_In_Toolbar()
+        {
+            var comp = OpenPicker(new ComponentParameter[] { ComponentParameter.CreateParameter("HideDateInToolbar", true), ComponentParameter.CreateParameter("Date", DateTime.UtcNow) });
+            comp.FindAll("div.mud-picker-datepicker-toolbar").Count.Should().Be(1);
+            comp.FindAll("div.mud-picker-datepicker-toolbar > button.mud-button-year").Count.Should().Be(1);
+            comp.FindAll("div.mud-picker-datepicker-toolbar > button.mud-button-date").Count.Should().Be(0);
+        }
+
 
         [Test]
         public async Task Open_Programmatically_CheckOpen_Close_Programmatically_CheckClosed()
