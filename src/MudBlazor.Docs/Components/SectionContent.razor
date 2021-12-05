@@ -1,30 +1,80 @@
 ﻿@using MudBlazor.Utilities
+@using System;
+@using System.IO;
+@using System.Linq;
+@using System.Text.RegularExpressions;
+@using System.Threading.Tasks;
+@using Microsoft.AspNetCore.Components;
+@using MudBlazor.Docs.Extensions;
+@using MudBlazor.Docs.Models;
 
 <div class="@Classname" style="@Style">
-    <div class="docs-section-content-inner">
+    @if (Code != null)
+    {
+        <MudToolBar DisableGutters="true" Dense="true">
+            @if (ShowCode && !String.IsNullOrEmpty(Code2))
+            {
+                <MudButton Variant="Variant.Filled" Size="Size.Small" DisableElevation="true" Color="@Button1Color" OnClick="@(e => SwapCode(Code))">@ButtonTextCode1</MudButton>
+                <MudButton Variant="Variant.Filled" Size="Size.Small" DisableElevation="true" Color="Button2Color" Class="ml-2" OnClick="@(e => SwapCode(Code2))">@ButtonTextCode2</MudButton>
+            }
+            <MudSpacer />
+            <MudTooltip Text="@TooltipSourceCodeText" Placement="Placement.Top">
+                <MudIconButton Icon="@Icons.Material.Filled.Code" Size="Size.Small" Class="pa-3" OnClick="OnShowCode" />
+            </MudTooltip>
+
+            <MudTooltip Text="Edit on TryMudBlazor" Placement="Placement.Top">
+                <MudIconButton Icon="@Icons.Material.Filled.Create" Size="Size.Small" Class="pa-3" OnClick="EditOnTryMudBlazor" />
+            </MudTooltip>
+
+            @if (!String.IsNullOrEmpty(CurrentCode))
+            {
+                <MudTooltip Text="Copy Code" Placement="Placement.Top">
+                    <MudIconButton Icon="@Icons.Material.Filled.FileCopy" Size="Size.Small" Class="pa-3" @onclick="CopyTextToClipboard" />
+                </MudTooltip>
+            }
+            @if (!String.IsNullOrEmpty(GitHubFolderName))
+            {
+                <MudTooltip Text="View the source on GitHub" Placement="Placement.Top">
+                    <MudIconButton Icon="@Icons.Custom.Brands.GitHub" Size="Size.Small" Class="pa-3" Link="@GitHubSourceCode" Target="_blank" />
+                </MudTooltip>
+            }
+        </MudToolBar>
+    }
+    <div class="@InnerClassname">
         @ChildContent
+    </div>
+    <div class="@SourceClassname">
+        @CodeComponent(Code)
     </div>
 </div>
 
 @code {
 
+    [Inject]
+    protected IJsApiService JsApiService { get; set; }
+    
     protected string Classname =>
     new CssBuilder("docs-section-content")
-    .AddClass($"docs-content-full-width", FullWidth)
-    .AddClass($"docs-section-content-display-grid", DisplayGrid)
-    .AddClass($"docs-section-content-outlined", Outlined)
-    .AddClass($"docs-section-content-darken", DarkenBackground)
-    .AddClass($"docs-display-flex", DisplayFlex)
-    .AddClass($"docs-section-auto-margin-content", AutoMarginContent)
-    .AddClass($"docs-section-flex-column", FlexColumn)
-    .AddClass(Class)
+        .AddClass(Class)
     .Build();
+    
+    protected string InnerClassname =>
+        new CssBuilder("docs-section-content-inner")
+            .AddClass($"mud-width-full", FullWidth)
+            .AddClass($"docs-section-content-outlined", Outlined)
+            .AddClass($"docs-section-content-darken", DarkenBackground)
+            .AddClass($"d-flex flex-grow-1 flex-wrap", DisplayFlex)
+            .Build();
 
+    protected string SourceClassname =>
+        new CssBuilder("docs-section-source")
+            .AddClass($"d-block", ShowCode)
+            .AddClass($"d-none", !ShowCode)
+            .Build();
+    
     [Parameter] public string Class { get; set; }
     [Parameter] public string Style { get; set; }
-
-    [Parameter] public bool DisplayGrid { get; set; }
-
+    
     [Parameter] public bool DisplayFlex { get; set; }
 
     [Parameter] public bool FullWidth { get; set; }
@@ -32,11 +82,74 @@
     [Parameter] public bool DarkenBackground { get; set; }
 
     [Parameter] public bool Outlined { get; set; }
-
-    [Parameter] public bool AutoMarginContent { get; set; } = true;
     
-    [Parameter] public bool FlexColumn { get; set; }
+    [Parameter] public string Code { get; set; }
+    
+    [Parameter] public bool ShowCode { get; set; } = true;
 
     [Parameter] public RenderFragment ChildContent { get; set; }
+    
+    
+    private async Task CopyTextToClipboard()
+    {
+        await JsApiService.CopyToClipboardAsync(Snippets.GetCode(Code));
+    }
+    
+    RenderFragment CodeComponent(string code) => builder =>
+    {
+        try
+        {
+            var key = typeof(SectionSource).Assembly.GetManifestResourceNames().FirstOrDefault(x => x.Contains($".{code}Code.html"));
+            using (var stream = typeof(SectionSource).Assembly.GetManifestResourceStream(key))
+            using (var reader = new StreamReader(stream))
+            {
+                builder.AddMarkupContent(0, reader.ReadToEnd());
+            }
+        }
+        catch (Exception)
+        {
+            // todo: log this
+        }
+    };
+    
+    protected virtual async void RunOnTryMudBlazor()
+    {
+        // We use a separator that wont be in code so we can send 2 files later
+            var codeFiles = "__Main.razor" + (char)31 + Snippets.GetCode(Code);
+
+        // Add dialogs for dialog examples
+            if (Code.StartsWith("Dialog"))
+            {
+                var regex = new Regex(@"\Show<(Dialog.*?_Dialog)\>");
+                var dialogCodeName = regex.Match(codeFiles).Groups[1].Value;
+                if (dialogCodeName != string.Empty)
+                {
+                    var dialogCodeFile = dialogCodeName + ".razor" + (char)31 + Snippets.GetCode(dialogCodeName);
+                    codeFiles = codeFiles + (char)31 + dialogCodeFile;
+                }
+            }
+
+        // Data models
+            if (codeFiles.Contains("MudBlazor.Examples.Data.Models"))
+            {
+                if (Regex.Match(codeFiles, @"\bElement\b").Success)
+                {
+                    var elementCodeFile = "Element.cs" + (char)31 + Snippets.GetCode("Element");
+                    codeFiles = codeFiles + (char)31 + elementCodeFile;
+                }
+
+                if (Regex.Match(codeFiles, @"\bServer\b").Success)
+                {
+                    var serverCodeFile = "Server.cs" + (char)31 + Snippets.GetCode("Server");
+                    codeFiles = codeFiles + (char)31 + serverCodeFile;
+                }
+            }
+
+            var codeFileEncoded = codeFiles.ToCompressedEncodedUrl();
+        // var tryMudBlazorLocation = "https://localhost:5001/";
+            var tryMudBlazorLocation = "https://try.mudblazor.com/";
+            var url = $"{tryMudBlazorLocation}snippet/{codeFileEncoded}";
+            await JsApiService.OpenInNewTabAsync(url);
+    }
 
 }
