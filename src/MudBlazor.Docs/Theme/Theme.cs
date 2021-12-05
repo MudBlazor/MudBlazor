@@ -40,11 +40,9 @@ namespace MudBlazor.Docs
         #region Docs
         public static Palette DocsLightPalette = new Palette()
         {
-            Black = "#272c34",
+            Black = "#110e2d",
             AppbarText = "#424242",
-            AppbarBackground = "rgba(249,250,252,0.8)",
-            Background = "#f9fafc",
-            DrawerBackground = "#f9fafc"
+            AppbarBackground = "rgba(255,255,255,0.8)",
         };
 
         public static MudTheme DocsDarkTheme { get; set; } =
