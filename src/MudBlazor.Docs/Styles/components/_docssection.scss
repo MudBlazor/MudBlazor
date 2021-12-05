@@ -8,46 +8,96 @@
 }
 
 .docs-section-content {
-    padding: 20px;
-    border-radius: 4px;
-    margin-bottom: 40px;
+    border-radius: 12px;
     background-color: var(--mud-palette-surface);
-    margin: auto;
+    transition: border-radius 250ms cubic-bezier(.4,0,.2,1);
     display: flex;
-    outline: 0;
+    flex-direction: column;
     position: relative;
-    justify-content: center;
+  
+    .docs-section-content-toolbar{
+      height: unset;
+      padding:0;
+      
+      .mud-button{
+        text-transform: none;
+        font-family: Consolas, "Liberation Mono", Menlo, Courier, monospace;
+        font-size: 14px;
+        border-radius:0;
+        
+        &:last-child{
+          border-top-right-radius: 12px;
+          .mud-button-label{
+            margin: 0 4px;
+          }
+        }
+      }
+    }
 
+    &.docs-section-content-darken {
+      background-color: var(--mud-palette-background-grey);
+    }
+  
+    &.docs-section-content-outlined {
+      border: 1px solid var(--mud-palette-lines-default);
+    }
+  
     & .docs-section-content-inner {
         margin-left: auto;
         margin-right: auto;
         display: block;
-        outline: 0;
         position: relative;
         justify-content: center;
-
-        &.docs-section-content-darken {
-          background-color: var(--mud-palette-background-grey);
-        }
-  
-        &.docs-section-content-outlined {
-          border: 1px solid var(--mud-palette-lines-default);
-        }
-  
-        &.docs-section-auto-margin-content > .docs-section-content-inner {
+      
           & > *:not(.mud-grid) {
             margin: 8px;
           }
-        }
     }
 }
 
+.docs-section-content.show-code {
+  border-bottom: none;
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+  
+  + .docs-section-source{
+    .mud-codeblock{
+      border-top-left-radius: 0;
+      border-top-right-radius: 0;
+    }
+  }
+}
+
+
+
+
 .docs-section-source {
-    
+  overflow: hidden;
+  border-bottom-left-radius: 12px;
+  border-bottom-right-radius: 12px;
+  background-color: var(--mud-palette-black);
+  
+  .docs-section-source-container{
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.15s ease-out;
+
+    &.show-code{
+      overflow: auto;
+      max-height: 500px;
+      border-bottom-left-radius: 12px;
+      border-bottom-right-radius: 12px;
+      transition: max-height 0.25s ease-in;
+
+      &::-webkit-scrollbar-thumb {
+        border-bottom-right-radius: 0px;
+      }
+    }
+  }
 }
 
 .docs-content-api {
-    padding: 0px;
+    padding: 0;
     width:100%;
 }
 
@@ -80,5 +130,5 @@
 .docs-iframe {
     height: 400px;
     width: 100%;
-    margin: 0px !important;
+    margin: 0 !important;
 }

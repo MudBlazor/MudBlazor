@@ -11,75 +11,72 @@
             <SectionHeader Title="Filled Buttons">
                 <Description>Filled Buttons have elevation (box shadow) and is raised on click by default.</Description>
             </SectionHeader>
-            <SectionContent Outlined="true">
+            <SectionContent Outlined="true" Code="ButtonFilledExample">
                 <ButtonFilledExample/>
             </SectionContent>
-            <SectionSource Code="ButtonFilledExample" GitHubFolderName="Button"/>
-            <MudText Class="mt-6" GutterBottom="true">Elevation can be removed with the <CodeInline>DisableElevation</CodeInline> bool.</MudText>
-            <SectionContent Outlined="true">
-                <ButtonElevationExample/>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader>
+                <Description>Elevation can be removed with the <CodeInline>DisableElevation</CodeInline> bool.<CodeInline>Color</CodeInline> property only applies to the text.</Description>
+            </SectionHeader>
+            <SectionContent Outlined="true" Code="ButtonElevationExample">
+                <ButtonTextExample/>
             </SectionContent>
-            <SectionSource Code="ButtonElevationExample" GitHubFolderName="Button"/>
         </DocsPageSection>
 
         <DocsPageSection>
             <SectionHeader Title="Text Buttons">
                 <Description>Text Buttons have no elevation, background or border and only hover effect is used. The <CodeInline>Color</CodeInline> property only applies to the text.</Description>
             </SectionHeader>
-            <SectionContent Outlined="true">
+            <SectionContent Outlined="true" Code="ButtonTextExample">
                 <ButtonTextExample/>
             </SectionContent>
-            <SectionSource Code="ButtonTextExample" GitHubFolderName="Button"/>
         </DocsPageSection>
 
         <DocsPageSection>
             <SectionHeader Title="Outlined Buttons">
                 <Description>Outlined Buttons are similar to Text Buttons except for the border that inherits its color from the set <CodeInline>Color</CodeInline> property.</Description>
             </SectionHeader>
-            <SectionContent Outlined="true">
+            <SectionContent Outlined="true" Code="ButtonOutlinedExample">
                 <ButtonOutlinedExample/>
             </SectionContent>
-            <SectionSource Code="ButtonOutlinedExample" GitHubFolderName="Button"/>
         </DocsPageSection>
 
         <DocsPageSection>
             <SectionHeader Title="FullWidth">
                 <Description>FullWidth buttons extend to 100% of available width.</Description>
             </SectionHeader>
-            <SectionContent Outlined="true" FullWidth="true">
+            <SectionContent Outlined="true" FullWidth="true" Code="ButtonFullWidthExample">
                 <ButtonFullWidthExample/>
             </SectionContent>
-            <SectionSource Code="ButtonFullWidthExample" GitHubFolderName="Button"/>
         </DocsPageSection>
-
-        <DocsPageSection>
-            <SectionHeader Title="Sizes">
-                <Description></Description>
-            </SectionHeader>
-            <SectionContent Outlined="true">
-                <ButtonSizeExample/>
-            </SectionContent>
-            <SectionSource Code="ButtonSizeExample" ShowCode="false" GitHubFolderName="Button"/>
-        </DocsPageSection>
-
+        
         <DocsPageSection>
             <SectionHeader Title="Icons and labels">
                 <Description></Description>
             </SectionHeader>
-            <SectionContent Outlined="true">
+            <SectionContent Outlined="true" Code="ButtonIconLabelExample">
                 <ButtonIconLabelExample/>
             </SectionContent>
-            <SectionSource Code="ButtonIconLabelExample" ShowCode="false" GitHubFolderName="Button"/>
+        </DocsPageSection>
+        
+        <DocsPageSection>
+            <SectionHeader Title="Sizes">
+                <Description></Description>
+            </SectionHeader>
+            <SectionContent Outlined="true" Code="ButtonSizeExample" ShowCode="false">
+                <ButtonSizeExample/>
+            </SectionContent>
         </DocsPageSection>
 
         <DocsPageSection>
             <SectionHeader Title="Customized Buttons">
                 <Description></Description>
             </SectionHeader>
-            <SectionContent Outlined="true">
+            <SectionContent Outlined="true" Code="ButtonCustomizedExample" ShowCode="false">
                 <ButtonCustomizedExample/>
             </SectionContent>
-            <SectionSource Code="ButtonCustomizedExample" ShowCode="false" GitHubFolderName="Button"/>
         </DocsPageSection>
 
         <DocsPageSection>
@@ -88,19 +85,17 @@
                     If you set the <CodeInline>Disabled</CodeInline> parameter to <CodeInline>true</CodeInline>, the component will render a button with no <CodeInline>href</CodeInline> attribute.
                 </Description>
             </SectionHeader>
-            <SectionContent Outlined="true">
+            <SectionContent Outlined="true" Code="ButtonLinkExample" ShowCode="false">
                 <ButtonLinkExample/>
             </SectionContent>
-            <SectionSource Code="ButtonLinkExample" ShowCode="false" GitHubFolderName="Button"/>
         </DocsPageSection>
         
         <DocsPageSection>
             <SectionHeader Title="Loading Button">
             </SectionHeader>
-            <SectionContent Outlined="true">
+            <SectionContent Outlined="true" Code="ButtonLoadingExample" ShowCode="false">
                 <ButtonLoadingExample/>
             </SectionContent>
-            <SectionSource Code="ButtonLoadingExample" ShowCode="false" GitHubFolderName="Button"/>
         </DocsPageSection>
         
     </DocsPageContent>

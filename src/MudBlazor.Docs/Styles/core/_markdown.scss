@@ -2,15 +2,15 @@
 
 .mud-codeblock {
     height: 100%;
-    background-color: var(--mud-palette-black);
     border-radius: 12px;
-    padding: 16px;
+    transition: border-radius 250ms cubic-bezier(.4,0,.2,1);
+    padding: 24px;
     overflow: auto;
 
     & pre {
         height: 100%;
         color: #ededed;
-        padding: 0px;
+        padding: 0;
         font-size: 1em;
         font-family: Consolas, "Liberation Mono", Menlo, Courier, monospace;
         -webkit-font-smoothing: subpixel-antialiased;

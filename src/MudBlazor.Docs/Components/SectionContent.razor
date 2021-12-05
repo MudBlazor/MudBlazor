@@ -11,42 +11,28 @@
 <div class="@Classname" style="@Style">
     @if (Code != null)
     {
-        <MudToolBar DisableGutters="true" Dense="true">
-            @if (ShowCode && !String.IsNullOrEmpty(Code2))
-            {
-                <MudButton Variant="Variant.Filled" Size="Size.Small" DisableElevation="true" Color="@Button1Color" OnClick="@(e => SwapCode(Code))">@ButtonTextCode1</MudButton>
-                <MudButton Variant="Variant.Filled" Size="Size.Small" DisableElevation="true" Color="Button2Color" Class="ml-2" OnClick="@(e => SwapCode(Code2))">@ButtonTextCode2</MudButton>
-            }
+        <MudToolBar Class="docs-section-content-toolbar">
             <MudSpacer />
-            <MudTooltip Text="@TooltipSourceCodeText" Placement="Placement.Top">
-                <MudIconButton Icon="@Icons.Material.Filled.Code" Size="Size.Small" Class="pa-3" OnClick="OnShowCode" />
+            <MudTooltip Text="Online Playground" Arrow="true" Color="Color.Dark" Placement="Placement.Top" Delay="300" Duration="500">
+                <MudButton OnClick="RunOnTryMudBlazor" StartIcon="@Icons.Rounded.PlayArrow" IconColor="Color.Success" Color="Color.Default" Size="Size.Small">Run</MudButton>
             </MudTooltip>
-
-            <MudTooltip Text="Edit on TryMudBlazor" Placement="Placement.Top">
-                <MudIconButton Icon="@Icons.Material.Filled.Create" Size="Size.Small" Class="pa-3" OnClick="EditOnTryMudBlazor" />
-            </MudTooltip>
-
-            @if (!String.IsNullOrEmpty(CurrentCode))
-            {
-                <MudTooltip Text="Copy Code" Placement="Placement.Top">
-                    <MudIconButton Icon="@Icons.Material.Filled.FileCopy" Size="Size.Small" Class="pa-3" @onclick="CopyTextToClipboard" />
-                </MudTooltip>
-            }
-            @if (!String.IsNullOrEmpty(GitHubFolderName))
-            {
-                <MudTooltip Text="View the source on GitHub" Placement="Placement.Top">
-                    <MudIconButton Icon="@Icons.Custom.Brands.GitHub" Size="Size.Small" Class="pa-3" Link="@GitHubSourceCode" Target="_blank" />
-                </MudTooltip>
-            }
+            <MudButton OnClick="OnShowCode" StartIcon="@(ShowCode? @Icons.Rounded.CodeOff : Icons.Rounded.Code)" Color="Color.Default" Size="Size.Small">
+                @(ShowCode? "Hide code": "Show code")
+            </MudButton>
         </MudToolBar>
     }
     <div class="@InnerClassname">
         @ChildContent
     </div>
-    <div class="@SourceClassname">
-        @CodeComponent(Code)
-    </div>
 </div>
+@if (Code != null)
+{
+    <div class="docs-section-source">
+        <div class="@SourceContainerClassname">
+            @CodeComponent(Code)
+        </div>
+    </div>
+}
 
 @code {
 
@@ -55,21 +41,23 @@
     
     protected string Classname =>
     new CssBuilder("docs-section-content")
+        .AddClass("show-code", Code != null && ShowCode)
+        .AddClass($"docs-section-content-outlined", Outlined)
+        .AddClass($"docs-section-content-darken", DarkenBackground)
         .AddClass(Class)
     .Build();
     
     protected string InnerClassname =>
         new CssBuilder("docs-section-content-inner")
+            .AddClass("px-5 py-8", Code == null)
+            .AddClass("px-5 pb-8", Code != null)
             .AddClass($"mud-width-full", FullWidth)
-            .AddClass($"docs-section-content-outlined", Outlined)
-            .AddClass($"docs-section-content-darken", DarkenBackground)
             .AddClass($"d-flex flex-grow-1 flex-wrap", DisplayFlex)
             .Build();
 
-    protected string SourceClassname =>
-        new CssBuilder("docs-section-source")
-            .AddClass($"d-block", ShowCode)
-            .AddClass($"d-none", !ShowCode)
+    protected string SourceContainerClassname =>
+        new CssBuilder("docs-section-source-container")
+            .AddClass("show-code", Code != null && ShowCode)
             .Build();
     
     [Parameter] public string Class { get; set; }
@@ -89,6 +77,10 @@
 
     [Parameter] public RenderFragment ChildContent { get; set; }
     
+    public void OnShowCode()
+    {
+        ShowCode = !ShowCode;
+    }
     
     private async Task CopyTextToClipboard()
     {
