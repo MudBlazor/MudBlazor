@@ -1,0 +1,17 @@
+﻿@namespace MudBlazor.Docs.Examples
+<MudGrid>
+    <MudItem xs="12" sm="6">
+        <MudDatePicker HideToolbar Label="Datepicker with hidden Toolbar" @bind-Date="_date" OpenTo="OpenTo.Year" />
+        <MudText>@_date?.ToShortDateString()</MudText>
+    </MudItem>
+    <MudItem xs="12" sm="6">
+        <MudDatePicker HideYearInToolbar Label="Datepicker with hidden Year in toolbar" @bind-Date="_date" OpenTo="OpenTo.Year" />
+        <MudText>@_date?.ToShortDateString()</MudText>
+    </MudItem>
+    <MudItem xs="12" sm="6">
+        <MudDatePicker HideDateInToolbar Label="Datepicker with hidden Date in toolbar" @bind-Date="_date" OpenTo="OpenTo.Year" />
+        <MudText>@_date?.ToShortDateString()</MudText>
+    </MudItem>
+</MudGrid>
+
+@code { DateTime? _date;}

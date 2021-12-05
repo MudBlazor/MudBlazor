@@ -15,7 +15,11 @@
                OpenTo="@OpenTo" 
                FixDay="@FixDay"
                FixMonth="@FixMonth"
-               FixYear="@FixYear"/> }
+               FixYear="@FixYear"
+               HideDateInToolbar="@HideDateInToolbar"
+               HideMonthInToolbar="@HideMonthInToolbar"
+               HideYearInToolbar="@HideDateInToolbar"
+               HideToolbar="@HideToolbar"/> }
             else
             {
 <MudDatePicker @ref="_picker"
@@ -26,7 +30,12 @@
                OpenTo="@OpenTo"
                FixDay="@FixDay"
                FixMonth="@FixMonth"
-               FixYear="@FixYear"/>}
+               FixYear="@FixYear"
+               HideDateInToolbar="@HideDateInToolbar"
+               HideMonthInToolbar="@HideMonthInToolbar"
+               HideYearInToolbar="@HideDateInToolbar"
+               HideToolbar="@HideToolbar"
+               />}
 @code { private MudDatePicker _picker;
 
             public DateTime? Date { get; set; }
@@ -45,6 +54,10 @@
             [Parameter] public int? FixDay { get; set; }
             [Parameter] public int? FixMonth { get; set; }
             [Parameter] public int? FixYear { get; set; }
+            [Parameter] public bool HideToolbar { get; set; }
+            [Parameter] public bool HideYearInToolbar { get; set; }
+            [Parameter] public bool HideMonthInToolbar { get; set; }
+            [Parameter] public bool HideDateInToolbar { get; set; }
 
 
             public async Task Open() => await InvokeAsync(() => _picker.Open());

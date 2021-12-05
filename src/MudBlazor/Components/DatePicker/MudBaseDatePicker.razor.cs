@@ -206,6 +206,24 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.FormComponent.PickerBehavior)]
         public int? FixDay { get; set; }
+        /// <summary>
+        /// Hides the year button in the toolbar
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.PickerAppearance)]
+        public bool HideYearInToolbar { get; set; }
+        /// <summary>
+        /// Hides the date display in the toolbar
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.PickerAppearance)]
+        public bool HideDateInToolbar { get; set; }
+        /// <summary>
+        /// Hide the toolbar
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.PickerAppearance)]
+        public bool HideToolbar { get; set; }
 
         protected virtual bool IsRange { get; } = false;
 
