@@ -29,22 +29,22 @@ namespace MudBlazor.Docs
         {
             MudTheme theme = new MudTheme()
             {
-                Palette = DocsLightPalette
+                Palette = DocsLightPalette,
+                LayoutProperties = DocsLayoutProperties
             };
             return theme;
         }
 
-        public static LayoutProperties LandingPageLayoutProperties = new LayoutProperties()
-        {
-            DefaultBorderRadius = "6px"
-        };
+        
 
         #region Docs
         public static Palette DocsLightPalette = new Palette()
         {
             Black = "#272c34",
             AppbarText = "#424242",
-            AppbarBackground = "rgba(255,255,255,0.8)"
+            AppbarBackground = "rgba(249,250,252,0.8)",
+            Background = "#f9fafc",
+            DrawerBackground = "#f9fafc"
         };
 
         public static MudTheme DocsDarkTheme { get; set; } =
@@ -80,8 +80,18 @@ namespace MudBlazor.Docs
                     Dark = "#27272f"
                 }
             };
+        
+        public static LayoutProperties DocsLayoutProperties = new LayoutProperties()
+        {
+            DrawerWidthLeft = "260px",
+            DrawerWidthRight = "260px"
+        };
         #endregion
         #region LandingPage
+        public static LayoutProperties LandingPageLayoutProperties = new LayoutProperties()
+        {
+            DefaultBorderRadius = "6px"
+        };
         public static Typography LandingPageTypography = new Typography()
         {
             Default = new Default()
