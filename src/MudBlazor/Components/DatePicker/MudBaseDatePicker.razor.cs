@@ -173,6 +173,18 @@ namespace MudBlazor
         /// Set a predefined fix day - no day can be selected
         /// </summary>
         [Parameter] public int? FixDay { get; set; }
+        /// <summary>
+        /// Hides the year button in the toolbar
+        /// </summary>
+        [Parameter] public bool HideYearInToolbar { get; set; }
+        /// <summary>
+        /// Hides the date display in the toolbar
+        /// </summary>
+        [Parameter] public bool HideDateInToolbar { get; set; }
+        /// <summary>
+        /// Hide the toolbar
+        /// </summary>
+        [Parameter] public bool HideToolbar { get; set; }
 
         protected virtual bool IsRange { get; } = false;
 
