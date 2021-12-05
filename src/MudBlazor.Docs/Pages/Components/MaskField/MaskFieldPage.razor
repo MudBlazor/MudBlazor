@@ -1,0 +1,69 @@
+﻿@page "/components/maskfield"
+
+
+<DocsPage>
+    <DocsPageHeader Title="Mask Field" SubTitle="Mask field components are used for input masking."/>
+    <DocsPageContent>
+
+        <DocsPageSection>
+            <SectionHeader Title="Basic Mask Fields">
+                <Description>
+					MaskField can accept a certain keypad for each character.
+					<br/>
+					In this example, you can see the masked and unmasked values ​​along with the key you pressed.
+				</Description>
+            </SectionHeader>
+            <SectionContent FullWidth="true" Outlined="true">
+                <MaskFieldBasicExample />
+            </SectionContent>
+            <SectionSource Code="MaskFieldBasicExample" ShowCode="false" GitHubFolderName="MaskField" />
+        </DocsPageSection>
+
+		<DocsPageSection>
+            <SectionHeader Title="Control Mask With Mask Parameter">
+                <Description>
+					<CodeInline>Mask</CodeInline> parameter can be changed dynamically in runtime. New mask will be implement when user focus on Mask Field.
+					<br/>
+					The default masking characters:
+					<br/>
+					<CodeInline>a</CodeInline> for letter, <CodeInline>0</CodeInline> for digit, <CodeInline>*</CodeInline> for all characters.
+					You can also use punctuations or symbols (included space) wherever you want.
+					You can use unassigned masking characters as you wish.
+					<br/>
+					In this example, you can change the mask with the right text field and see the result on Mask Field.
+				</Description>
+            </SectionHeader>
+            <SectionContent FullWidth="true" Outlined="true">
+                <MaskFieldBasicExample />
+            </SectionContent>
+            <SectionSource Code="MaskFieldBasicExample" ShowCode="false" GitHubFolderName="MaskField" />
+        </DocsPageSection>
+
+		<DocsPageSection>
+            <SectionHeader Title="Change Masking Characters">
+                <Description>
+					You can always change the masking characters, delete the default ones and add new ones.
+					<br/>
+					This example demonstrates how to change masking characters.
+				</Description>
+            </SectionHeader>
+            <SectionContent FullWidth="true" Outlined="true">
+                <MaskFieldBasicExample />
+            </SectionContent>
+            <SectionSource Code="MaskFieldBasicExample" ShowCode="false" GitHubFolderName="MaskField" />
+        </DocsPageSection>
+
+		<DocsPageSection>
+            <SectionHeader Title="Mask Types">
+                <Description>
+					You can use predefined mask types for faster coding.
+				</Description>
+            </SectionHeader>
+            <SectionContent FullWidth="true" Outlined="true">
+                <MaskFieldBasicExample />
+            </SectionContent>
+            <SectionSource Code="MaskFieldBasicExample" ShowCode="false" GitHubFolderName="MaskField" />
+        </DocsPageSection>
+
+    </DocsPageContent>
+</DocsPage>
