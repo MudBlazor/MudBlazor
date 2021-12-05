@@ -1,0 +1,24 @@
+﻿@namespace MudBlazor.Docs.Examples
+@using System.Text.RegularExpressions
+
+
+<MudGrid Class="justify-space-between">
+    <MudItem xs="12" sm="6" md="4">
+        <MudMaskField T="string" MaskType="MaskType.Telephone" OnKeyDown="KeyDown" HelperText="(000) 000 0000" HelperTextOnFocus="true" Label="Mask Type: Telephone" Variant="Variant.Text" />
+		<MudMaskField T="string" MaskType="MaskType.Mac" CustomCharacterType="@rgx" OnKeyDown="KeyDown" HelperText="cc cc cc cc cc cc" HelperTextOnFocus="true" Label="Mask Type: MAC" Variant="Variant.Text" />
+    </MudItem>
+    <MudItem xs="12" sm="6" md="4">
+        <MudText>Pressed Key: <b>@pressedKey</b></MudText>
+    </MudItem>
+</MudGrid>
+
+@code {
+	public string TextValue { get; set; }
+	private string pressedKey = "";
+	private Regex rgx = new Regex("^[1-9A-F]$");
+
+	private void KeyDown(KeyboardEventArgs e)
+	{
+		pressedKey = e.Key.ToString();
+	}
+}

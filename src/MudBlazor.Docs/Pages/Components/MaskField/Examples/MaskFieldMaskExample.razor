@@ -3,12 +3,13 @@
 
 <MudGrid Class="justify-space-between">
     <MudItem xs="12" sm="6" md="4">
-        <MudMaskField @ref="maskField" OnKeyDown="KeyDown" HelperText="@mask" HelperTextOnFocus="true" RawValue="@RawValue" @bind-Value="TextValue" Mask="@mask" Label="Text" Variant="Variant.Text" MaxLength="mask.Length"></MudMaskField>
+        <MudMaskField @ref="maskField" OnKeyDown="KeyDown" HelperText="@mask" HelperTextOnFocus="true" RawValue="@RawValue" @bind-Value="TextValue" Mask="@mask" Label="Text" Variant="Variant.Text" MaxLength="mask.Length" />
     </MudItem>
     <MudItem xs="12" sm="6" md="4">
         <MudText>Pressed Key: <b>@pressedKey</b></MudText>
 		<MudText>Value: <b>@TextValue</b></MudText>
 		<MudText>RawValue: <b>@RawValue</b></MudText>
+		<MudTextField @bind-Value="@mask" Label="Mask" />
     </MudItem>
 </MudGrid>
 

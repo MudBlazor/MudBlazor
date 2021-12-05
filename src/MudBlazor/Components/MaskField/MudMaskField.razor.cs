@@ -28,6 +28,8 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public InputType InputType { get; set; } = InputType.Text;
 
+        [Parameter] public MaskType MaskType { get; set; } = MaskType.Default;
+
         [Parameter] public Dictionary<char, CharacterType> MaskCharacters { get; set; } = new() { 
             ['a'] = CharacterType.Letter,
             ['0'] = CharacterType.Digit,
@@ -106,6 +108,7 @@ namespace MudBlazor
                         new KeyOptions { Key="/./", SubscribeDown = true, SubscribeUp = true }, // for our users
                         new KeyOptions { Key="Backspace", PreventDown = "key+none" },
                         new KeyOptions { Key="Delete", PreventDown = "key+none" },
+                        new KeyOptions { Key="Shift", PreventDown = "key+none" },
                     },
                 });
             }
@@ -152,6 +155,30 @@ namespace MudBlazor
                     return CharacterType.Other;
                 }
             }
+        }
+
+        private string GetMaskByType()
+        {
+            string resultMask = "";
+
+            if (MaskType == MaskType.Telephone)
+            {
+                resultMask = "(000) 000 0000";
+            }
+            else if (MaskType == MaskType.Mac)
+            {
+                resultMask = "cc cc cc cc cc cc";
+            }
+            else if (Mask == null)
+            {
+                resultMask = "";
+            }
+            else
+            {
+                resultMask = Mask;
+            }
+
+            return resultMask;
         }
 
         private void SetRawValueFromText()
@@ -395,7 +422,7 @@ namespace MudBlazor
         {
             _lastKeyDownCharacter = obj.Key;
 
-            if (obj.Key == "ArrowUp" || obj.Key == "ArrowDown" || obj.Key == "ArrowLeft" || obj.Key == "ArrowRight")
+            if (obj.Key == "ArrowUp" || obj.Key == "ArrowDown" || obj.Key == "ArrowLeft" || obj.Key == "ArrowRight" || obj.Key == "Shift" || obj.Key == "CapsLock")
                 return;
 
             SetRawValueFromText();
@@ -414,7 +441,7 @@ namespace MudBlazor
                 toBeMaskedText = _text + _lastKeyDownCharacter;
             }
             //await ImplementMask(Text, Mask);
-            await UltimateImplementMask(toBeMaskedText, Mask);
+            await UltimateImplementMask(toBeMaskedText, GetMaskByType());
             SetRawValueFromText();
 
             OnKeyDown.InvokeAsync(obj).AndForget();

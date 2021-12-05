@@ -1,0 +1,29 @@
+﻿@namespace MudBlazor.Docs.Examples
+@using System.Text.RegularExpressions
+
+
+<MudGrid Class="justify-space-between">
+    <MudItem xs="12" sm="6" md="4">
+        <MudMaskField T="string" OnKeyDown="KeyDown" HelperText="Mask: cc cc cc cc" HelperTextOnFocus="true" Mask="cc cc cc cc" Label="Only LowerCase" Variant="Variant.Text" 
+			CustomCharacterType="@rgx"/>
+		<MudMaskField T="string" OnKeyDown="KeyDown" HelperText="Mask: cc cc cc cc" HelperTextOnFocus="true" Mask="cc cc cc cc" Label="Only UpperCase" Variant="Variant.Text" 
+			CustomCharacterType="@rgx2"/>
+		<MudMaskField T="string" OnKeyDown="KeyDown" HelperText="Mask: cc cc cc cc" HelperTextOnFocus="true" Mask="ccc ccc" Label="Only a-fA-F" Variant="Variant.Text" 
+			CustomCharacterType="@rgx3"/>
+    </MudItem>
+	<MudItem xs="12" sm="6" md="4">
+       <MudText>Pressed Key: <b>@pressedKey</b></MudText>
+    </MudItem>
+</MudGrid>
+
+@code {
+	private string pressedKey = "";
+	private Regex rgx = new Regex("^[a-z]$");
+	private Regex rgx2 = new Regex("^[A-Z]$");
+	private Regex rgx3 = new Regex("^[a-fA-F]$");
+
+	private void KeyDown(KeyboardEventArgs e)
+	{
+		pressedKey = e.Key.ToString();
+	}
+}

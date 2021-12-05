@@ -26,17 +26,16 @@
 					<br/>
 					The default masking characters:
 					<br/>
-					<CodeInline>a</CodeInline> for letter, <CodeInline>0</CodeInline> for digit, <CodeInline>*</CodeInline> for all characters.
-					You can also use punctuations or symbols (included space) wherever you want.
-					You can use unassigned masking characters as you wish.
+					<CodeInline>a</CodeInline> for letter, <CodeInline>0</CodeInline> for digit, <CodeInline>*</CodeInline> for all, <CodeInline>c</CodeInline> for custom characters.
+					You can use all unassigned masking characters as you wish.
 					<br/>
 					In this example, you can change the mask with the right text field and see the result on Mask Field.
 				</Description>
             </SectionHeader>
             <SectionContent FullWidth="true" Outlined="true">
-                <MaskFieldBasicExample />
+                <MaskFieldMaskExample />
             </SectionContent>
-            <SectionSource Code="MaskFieldBasicExample" ShowCode="false" GitHubFolderName="MaskField" />
+            <SectionSource Code="MaskFieldMaskExample" ShowCode="false" GitHubFolderName="MaskField" />
         </DocsPageSection>
 
 		<DocsPageSection>
@@ -48,9 +47,23 @@
 				</Description>
             </SectionHeader>
             <SectionContent FullWidth="true" Outlined="true">
-                <MaskFieldBasicExample />
+                <MaskFieldChangeMaskCharactersExample />
             </SectionContent>
-            <SectionSource Code="MaskFieldBasicExample" ShowCode="false" GitHubFolderName="MaskField" />
+            <SectionSource Code="MaskFieldChangeMaskCharactersExample" ShowCode="false" GitHubFolderName="MaskField" />
+        </DocsPageSection>
+
+		<DocsPageSection>
+            <SectionHeader Title="Regex Masking">
+                <Description>
+					Using custom character type, Regex masking is possible with Mask Field.
+					<br/>
+					This example demonstrates how to do Regex masking.
+				</Description>
+            </SectionHeader>
+            <SectionContent FullWidth="true" Outlined="true">
+                <MaskFieldRegexExample />
+            </SectionContent>
+            <SectionSource Code="MaskFieldRegexExample" ShowCode="false" GitHubFolderName="MaskField" />
         </DocsPageSection>
 
 		<DocsPageSection>
@@ -60,9 +73,9 @@
 				</Description>
             </SectionHeader>
             <SectionContent FullWidth="true" Outlined="true">
-                <MaskFieldBasicExample />
+                <MaskFieldMaskTypesExample />
             </SectionContent>
-            <SectionSource Code="MaskFieldBasicExample" ShowCode="false" GitHubFolderName="MaskField" />
+            <SectionSource Code="MaskFieldMaskTypesExample" ShowCode="false" GitHubFolderName="MaskField" />
         </DocsPageSection>
 
     </DocsPageContent>
