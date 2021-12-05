@@ -32,7 +32,10 @@ namespace MudBlazor
             ['a'] = CharacterType.Letter,
             ['0'] = CharacterType.Digit,
             ['*'] = CharacterType.LetterOrDigit,
+            ['c'] = CharacterType.Custom,
         };
+
+        [Parameter] public Regex CustomCharacterType { get; set; } = new Regex(@"^[a-zA-Z0-9]$");
 
         private string _rawValue;
 
@@ -238,16 +241,31 @@ namespace MudBlazor
                 {
                     maskedText += "_";
                 }
-                else if (GetCharacterType(Mask[a].ToString(), true) == GetCharacterType(semiRawText[a].ToString()))
+                else if (IsCharsMatch(semiRawText[a], Mask[a]))
                 {
                     maskedText += semiRawText[a].ToString();
                 }
+                //else if (GetCharacterType(Mask[a].ToString(), true) == GetCharacterType(semiRawText[a].ToString()))
+                //{
+                //    maskedText += semiRawText[a].ToString();
+                //}
                 else
                 {
                     maskedText += "_";
                 }
             }
             await _elementReference.SetText(maskedText);
+        }
+
+        private bool IsCharsMatch(char TextChar, char MaskChar)
+        {
+            if (GetCharacterType(MaskChar.ToString(), true) == GetCharacterType(TextChar.ToString()))
+                return true;
+            if (GetCharacterType(MaskChar.ToString(), true) == CharacterType.LetterOrDigit && GetCharacterType(TextChar.ToString()) != CharacterType.Other)
+                return true;
+            if (GetCharacterType(MaskChar.ToString(), true) == CharacterType.Custom && CustomCharacterType.IsMatch(TextChar.ToString()))
+                return true;
+            return false;
         }
 
         private async Task ImplementMask(string RawText, string Mask)
