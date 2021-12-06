@@ -277,18 +277,12 @@
 
     private bool CheckIsTwoWayProperty(PropertyInfo propertyInfo)
     {
-        foreach (var info in Type.GetPropertyInfosWithAttribute<ParameterAttribute>().OrderBy(x => x.Name))
-        {
-            if (info.GetCustomAttributes(typeof(System.ObsoleteAttribute), true).Length == 0 && info.PropertyType.Name.Contains("EventCallback"))
-            {
-                if (info.Name == propertyInfo.Name + "Changed")
-                {
-                    return true;
-                }
-            }
-        }
+        PropertyInfo eventCallbackInfo = Type.GetProperty(propertyInfo.Name + "Changed");
 
-        return false;
+        return eventCallbackInfo != null &&
+               eventCallbackInfo.PropertyType.Name.Contains("EventCallback") &&
+               eventCallbackInfo.GetCustomAttribute<ParameterAttribute>() != null &&
+               eventCallbackInfo.GetCustomAttribute<ObsoleteAttribute>() == null;
     }
 
     private string GetDescription(Type type, PropertyInfo info)
