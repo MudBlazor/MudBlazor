@@ -8,15 +8,19 @@ namespace MudBlazor
     public partial class MudMenuItem : MudComponentBase
     {
         [CascadingParameter] public MudMenu MudMenu { get; set; }
-        [Parameter] public RenderFragment ChildContent { get; set; }
-        [Parameter] public bool Disabled { get; set; }
+
+        [Parameter] [Category(CategoryTypes.Menu.Behavior)] public RenderFragment ChildContent { get; set; }
+        [Parameter] [Category(CategoryTypes.Menu.Behavior)] public bool Disabled { get; set; }
+
         [Inject] public NavigationManager UriHelper { get; set; }
         [Inject] public IJsApiService JsApiService { get; set; }
-        [Parameter] public string Link { get; set; }
-        [Parameter] public string Target { get; set; }
-        [Parameter] public bool ForceLoad { get; set; }
-        [Parameter] public ICommand Command { get; set; }
-        [Parameter] public object CommandParameter { get; set; }
+
+        [Parameter] [Category(CategoryTypes.Menu.ClickAction)] public string Link { get; set; }
+        [Parameter] [Category(CategoryTypes.Menu.ClickAction)] public string Target { get; set; }
+        [Parameter] [Category(CategoryTypes.Menu.ClickAction)] public bool ForceLoad { get; set; }
+        [Parameter] [Category(CategoryTypes.Menu.ClickAction)] public ICommand Command { get; set; }
+        [Parameter] [Category(CategoryTypes.Menu.ClickAction)] public object CommandParameter { get; set; }
+
         [Parameter] public EventCallback<MouseEventArgs> OnClick { get; set; }
 
         protected async Task OnClickHandler(MouseEventArgs ev)

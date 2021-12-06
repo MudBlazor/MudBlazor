@@ -31,31 +31,43 @@ namespace MudBlazor
         /// <summary>
         /// Applies the theme typography styles.
         /// </summary>
-        [Parameter] public Typo Typo { get; set; } = Typo.body1;
+        [Parameter]
+        [Category(CategoryTypes.Text.Appearance)]
+        public Typo Typo { get; set; } = Typo.body1;
 
         /// <summary>
         /// Set the text-align on the component.
         /// </summary>
-        [Parameter] public Align Align { get; set; } = Align.Inherit;
+        [Parameter]
+        [Category(CategoryTypes.Text.Appearance)]
+        public Align Align { get; set; } = Align.Inherit;
 
         /// <summary>
         /// The color of the component. It supports the theme colors.
         /// </summary>
-        [Parameter] public Color Color { get; set; } = Color.Inherit;
+        [Parameter]
+        [Category(CategoryTypes.Text.Appearance)]
+        public Color Color { get; set; } = Color.Inherit;
 
         /// <summary>
         /// If true, the text will have a bottom margin.
         /// </summary>
-        [Parameter] public bool GutterBottom { get; set; } = false;
+        [Parameter]
+        [Category(CategoryTypes.Text.Appearance)]
+        public bool GutterBottom { get; set; } = false;
 
         /// <summary>
         /// Child content of component.
         /// </summary>
-        [Parameter] public RenderFragment ChildContent { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.Text.Behavior)]
+        public RenderFragment ChildContent { get; set; }
 
         /// <summary>
         /// If true, Sets display inline
         /// </summary>
-        [Parameter] public bool Inline { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.Text.Appearance)]
+        public bool Inline { get; set; }
     }
 }

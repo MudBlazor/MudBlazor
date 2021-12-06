@@ -29,6 +29,7 @@ namespace MudBlazor
         /// The currently selected range (two-way bindable). If null, then nothing was selected.
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.FormComponent.Data)]
         public DateRange DateRange
         {
             get => _dateRange;

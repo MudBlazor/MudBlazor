@@ -15,8 +15,8 @@ namespace MudBlazor
                 .AddClass(Class)
                 .Build();
 
-        [Parameter] public string Title { get; set; }
-        [Parameter] public string Image { get; set; }
-        [Parameter] public int Height { get; set; } = 300;
+        [Parameter] [Category(CategoryTypes.Card.Behavior)] public string Title { get; set; }
+        [Parameter] [Category(CategoryTypes.Card.Behavior)] public string Image { get; set; }
+        [Parameter] [Category(CategoryTypes.Card.Behavior)] public int Height { get; set; } = 300;
     }
 }
