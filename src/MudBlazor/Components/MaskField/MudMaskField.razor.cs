@@ -34,10 +34,17 @@ namespace MudBlazor
             ['a'] = CharacterType.Letter,
             ['0'] = CharacterType.Digit,
             ['*'] = CharacterType.LetterOrDigit,
-            ['c'] = CharacterType.Custom,
+            
         };
 
         [Parameter] public Regex CustomCharacterType { get; set; } = new Regex(@"^[a-zA-Z0-9]$");
+
+        [Parameter] public List<(char, Regex)> CustomCharacterTypes { get; set; } = new()
+        {
+            ('c', new Regex("^[a-z]$")),
+            ('e', new Regex("^[A-Z]$"))
+        };
+
 
         private string _rawValue;
 
@@ -125,6 +132,15 @@ namespace MudBlazor
         }
 
         //string val = "";
+
+        private void GetCustomCharacters()
+        {
+            foreach (var item in CustomCharacterTypes)
+            {
+                if (!MaskCharacters.ContainsKey(item.Item1))
+                    MaskCharacters.Add(item.Item1, CharacterType.Custom);
+            }
+        }
 
         private CharacterType GetCharacterType(string character, bool isMaskingCharacter = false)
         {
@@ -254,13 +270,14 @@ namespace MudBlazor
                 RawText = "";
             }
 
+            GetCustomCharacters();
             string semiRawText = GetSemiRawText(RawText);
             string maskedText = "";
 
             for (int i = 0; i < Mask.Length; i++)
             {
                 int a = i;
-                if (!MaskCharacters.ContainsKey(Mask[a]))
+                if ((!MaskCharacters.ContainsKey(Mask[a])))
                 {
                     maskedText += Mask[a];
                 }
@@ -272,10 +289,6 @@ namespace MudBlazor
                 {
                     maskedText += semiRawText[a].ToString();
                 }
-                //else if (GetCharacterType(Mask[a].ToString(), true) == GetCharacterType(semiRawText[a].ToString()))
-                //{
-                //    maskedText += semiRawText[a].ToString();
-                //}
                 else
                 {
                     maskedText += "_";
@@ -290,35 +303,25 @@ namespace MudBlazor
                 return true;
             if (GetCharacterType(MaskChar.ToString(), true) == CharacterType.LetterOrDigit && GetCharacterType(TextChar.ToString()) != CharacterType.Other)
                 return true;
-            if (GetCharacterType(MaskChar.ToString(), true) == CharacterType.Custom && CustomCharacterType.IsMatch(TextChar.ToString()))
-                return true;
+            //foreach (var item in CustomCharacterTypes)
+            //{
+            //    //if (GetCharacterType(item.Item1.ToString(), true) == CharacterType.Custom && item.Item2.IsMatch(TextChar.ToString()))
+            //    //    return true;
+            //    if (item.Item1 == MaskChar && item.Item2.IsMatch(TextChar.ToString()))
+            //        return true;
+            //}
+            if (GetCharacterType(MaskChar.ToString(), true) == CharacterType.Custom)
+            {
+                foreach (var item in CustomCharacterTypes)
+                {
+                    if (item.Item1 == MaskChar && item.Item2.IsMatch(TextChar.ToString()))
+                    {
+                        return true;
+                    }
+                }
+                
+            }
             return false;
-        }
-
-        private async Task ImplementMask(string RawText, string Mask)
-        {
-            if (RawText == null)
-            {
-                RawText = "";
-            }
-
-            int rawMaskLength = GetRawMask().Length;
-            int rawTextLength = RawText.Length;
-
-            UpdateMaskSymbols();
-            string remainingChars = "";
-            for (int i = 0; i < (rawMaskLength - rawTextLength) ; i++)
-            {
-                remainingChars += "_";
-            }
-            string midTermText = RawText + remainingChars;
-
-            foreach (var item in MaskSymbols)
-            {
-                string s = item.Value.ToString();
-                midTermText = midTermText.Insert(item.Key, s);
-            }
-            await _elementReference.SetText(midTermText);
         }
 
         private Dictionary<int, char> MaskSymbols = new Dictionary<int, char>();
@@ -374,46 +377,10 @@ namespace MudBlazor
             return rawMask;
         }
 
-        private void SetTextFromRawText(string rawText)
-        {
-            UpdateMaskSymbols();
-
-            foreach (var item in MaskSymbols)
-            {
-
-            }
-        }
-
         private int _caretPosition = 0;
 
         public void SetCaretPosition(int caretPosition)
         {
-            //char[] textArray = RawValue.ToCharArray();
-            //char[] maskArray = Mask.ToCharArray();
-            //int timer = 0;
-            //int findingNum = 0;
-            //foreach (char c in maskArray)
-            //{
-            //    if (GetCharacterType(c.ToString(), true) == CharacterType.Other)
-            //    {
-
-            //    }
-            //    else
-            //    {
-            //        if (timer < RawValue.Length)
-            //        {
-
-            //        }
-            //        else
-            //        {
-            //            findingNum = timer;
-            //            break;
-            //        }
-            //    }
-            //    timer++;
-            //}
-            //_elementReference.SelectRangeAsync(findingNum, findingNum);
-
             _caretPosition = caretPosition;
             _elementReference.SelectRangeAsync(_caretPosition, _caretPosition);
         }
