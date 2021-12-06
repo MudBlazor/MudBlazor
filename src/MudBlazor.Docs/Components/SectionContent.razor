@@ -49,10 +49,10 @@
     
     protected string InnerClassname =>
         new CssBuilder("docs-section-content-inner")
+            .AddClass($"d-flex flex-grow-1 flex-wrap justify-center")
             .AddClass("px-5 py-8", Code == null)
             .AddClass("px-5 pb-8 pt-2", Code != null)
             .AddClass($"mud-width-full", FullWidth)
-            .AddClass($"d-flex flex-grow-1 flex-wrap justify-center", DisplayFlex)
             .Build();
 
     protected string SourceContainerClassname =>

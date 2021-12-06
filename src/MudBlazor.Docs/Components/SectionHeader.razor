@@ -3,7 +3,9 @@
 <div @ref="@SectionReference" id="@GetSectionId()" class="@Classname">
     @if(!String.IsNullOrWhiteSpace(Title))
     {
-        <MudText Typo="Typo.h4">@Title</MudText>
+        <MudText Typo="Typo.h5" Class="mb-5 mt-15">
+            <b>@Title</b>
+        </MudText>
     }
     @if(SubTitle != null)
     {
@@ -11,7 +13,7 @@
     }
     @if(Description != null)
     {
-        <MudText>@Description</MudText>
+        <MudText Class="mb-5">@Description</MudText>
     }
 </div>
 

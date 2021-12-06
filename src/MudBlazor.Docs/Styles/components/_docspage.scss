@@ -1,10 +1,4 @@
-﻿.docs-page {
-    & > .mud-container > .mud-typography-h4 {
-        margin-top: 52px;
-    }
-}
-
-.docs-page-content-navigation-drawer{
+﻿.docs-page-content-navigation-drawer{
   .title{
     font-weight: 500;
   }
@@ -25,27 +19,6 @@
       background-color: var(--mud-palette-primary-hover);
     }
   }
-}
-
-.docs-page-header {
-
-    & .mud-typography-h3 {
-        font-size: 40px;
-        margin-bottom: 16px;
-    }
-
-    & .mud-typography-h4 {
-        margin-top: 0px;
-    }
-
-    margin-bottom: 50px;
-}
-
-.docs-page-content {
-}
-
-.docs-page-section {
-    margin-bottom: 50px;
 }
 
 .docs-code {
