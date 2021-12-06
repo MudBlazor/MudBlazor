@@ -1035,6 +1035,30 @@ namespace MudBlazor.UnitTests.Components
             Assert.Throws<ElementNotFoundException>(() => comp.Find(".my-menu-item-1"));
         }
 
+        [Test]
+        public async Task PrePanelContent()
+        {
+            Context.Services.Add(new ServiceDescriptor(typeof(IResizeObserver), new MockResizeObserver()));
+
+            var comp = Context.RenderComponent<TabsWithPrePanelContent>(p => p.Add(x => x.SelectedIndex, 0));
+
+            var content =  comp.Find(".pre-panel-content-custom");
+
+            content.TextContent.Should().Be("Selected: Tab One");
+
+            content.PreviousElementSibling.ClassList.Should().Contain("mud-tabs-toolbar");
+            content.NextElementSibling.ClassList.Should().Contain("mud-tabs-panels");
+
+            comp.SetParametersAndRender(p => p.Add(x => x.SelectedIndex, 1));
+
+            content = comp.Find(".pre-panel-content-custom");
+
+            content.TextContent.Should().Be("Selected: Tab Two");
+
+            content.PreviousElementSibling.ClassList.Should().Contain("mud-tabs-toolbar");
+            content.NextElementSibling.ClassList.Should().Contain("mud-tabs-panels");
+        }
+
         #region Helper
 
         private static double GetSliderValue(IRenderedComponent<ScrollableTabsTest> comp, string attribute = "left")
