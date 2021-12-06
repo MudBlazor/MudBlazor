@@ -26,20 +26,30 @@ namespace MudBlazor
         /// <summary>
         /// Type of the input element. It should be a valid HTML5 input type.
         /// </summary>
-        [Parameter] public InputType InputType { get; set; } = InputType.Text;
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.ListAppearance)]
+        public InputType InputType { get; set; } = InputType.Text;
 
-        [Parameter] public MaskType MaskType { get; set; } = MaskType.Default;
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.ListAppearance)]
+        public MaskType MaskType { get; set; } = MaskType.Default;
 
-        [Parameter] public Dictionary<char, CharacterType> MaskCharacters { get; set; } = new() { 
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.ListBehavior)]
+        public Dictionary<char, CharacterType> MaskCharacters { get; set; } = new() { 
             ['a'] = CharacterType.Letter,
             ['0'] = CharacterType.Digit,
             ['*'] = CharacterType.LetterOrDigit,
             
         };
 
-        [Parameter] public Regex CustomCharacterType { get; set; } = new Regex(@"^[a-zA-Z0-9]$");
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.ListBehavior)] 
+        public Regex CustomCharacterType { get; set; } = new Regex(@"^[a-zA-Z0-9]$");
 
-        [Parameter] public List<(char, Regex)> CustomCharacterTypes { get; set; } = new()
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.ListBehavior)]
+        public List<(char, Regex)> CustomCharacterTypes { get; set; } = new()
         {
             ('c', new Regex("^[a-z]$")),
             ('e', new Regex("^[A-Z]$"))
@@ -48,7 +58,9 @@ namespace MudBlazor
 
         private string _rawValue;
 
-        [Parameter] public string RawValue
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.ListBehavior)]
+        public string RawValue
         {
             get => _rawValue;
             set
@@ -61,7 +73,9 @@ namespace MudBlazor
             }
         }
 
-        [Parameter] public EventCallback<string> BindingValueChanged { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.ListAppearance)]
+        public EventCallback<string> BindingValueChanged { get; set; }
 
         internal override InputType GetInputType() => InputType;
 
@@ -70,14 +84,20 @@ namespace MudBlazor
         /// <summary>
         /// Show clear button.
         /// </summary>
-        [Parameter] public bool Clearable { get; set; } = false;
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.ListBehavior)]
+        public bool Clearable { get; set; } = false;
 
         /// <summary>
         /// Button click event for clear button. Called after text and value has been cleared.
         /// </summary>
-        [Parameter] public EventCallback<MouseEventArgs> OnClearButtonClick { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.ListAppearance)]
+        public EventCallback<MouseEventArgs> OnClearButtonClick { get; set; }
 
-        [Parameter] public string Mask { get; set; } = "";
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.ListBehavior)]
+        public string Mask { get; set; } = "";
 
         public override ValueTask FocusAsync()
         {
