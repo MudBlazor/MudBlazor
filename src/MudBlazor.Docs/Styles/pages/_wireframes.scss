@@ -21,8 +21,8 @@
     padding: 8px;
     flex-shrink: 0;
     position: absolute;
-    color: var(--mud-palette-appbar-text);
-    background-color: var(--mud-palette-appbar-background);
+    color: var(--mud-palette-primary-text);
+    background-color: var(--mud-palette-primary);
 
     &.wf-drawer-open-left {
         margin-left: 70px;
