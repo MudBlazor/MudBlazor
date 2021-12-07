@@ -20,6 +20,7 @@ namespace MudBlazor
         private MudInput<string> _elementReference;
 
         [Inject] private IKeyInterceptor _keyInterceptor { get; set; }
+        [Inject] private JsEvent _jsEvent { get; set; }
 
         private string _elementId = "maskfield_" + Guid.NewGuid().ToString().Substring(0, 8);
 
@@ -121,9 +122,16 @@ namespace MudBlazor
         {
             if (firstRender)
             {
-                await _keyInterceptor.Connect(_elementId, new KeyInterceptorOptions()
+                await _jsEvent.Connect(_elementId, new JsEventOptions
                 {
                     EnableLogging = true,
+                    TargetClass = "mud-input-slot",
+                    TagName= "INPUT"
+                });
+                _jsEvent.CaretPositionChanged += OnCaretPositionChanged;
+                await _keyInterceptor.Connect(_elementId, new KeyInterceptorOptions()
+                {
+                    //EnableLogging = true,
                     TargetClass = "mud-input-slot",
                     Keys = {
                         new KeyOptions { Key=" ", PreventDown = "key+none" }, //prevent scrolling page, toggle open/close
@@ -143,6 +151,11 @@ namespace MudBlazor
                 });
             }
             await base.OnAfterRenderAsync(firstRender);
+        }
+
+        private void OnCaretPositionChanged(int pos)
+        {
+            Console.WriteLine($"Caret position: {pos}");
         }
 
         /// <summary>
@@ -441,5 +454,6 @@ namespace MudBlazor
         }
 
         private string _lastKeyDownCharacter = "";
+
     }
 }
