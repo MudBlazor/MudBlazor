@@ -1,0 +1,28 @@
+﻿@namespace MudBlazor.Docs.Examples
+@using System.Text.RegularExpressions
+
+
+<MudGrid Class="justify-space-between">
+    <MudItem xs="12" sm="6" md="4">
+        <MudMaskField T="string" OnKeyDown="KeyDown" HelperText="Mask: (000) 000-0000" HelperTextOnFocus="true" Mask="(000) 000-0000" Label="Underscore Placeholder" Variant="Variant.Text" />
+		<MudMaskField T="string" OnKeyDown="KeyDown" PlaceholderCharacter="@(' ')" HelperText="Mask: (000) 000-0000" HelperTextOnFocus="true" Mask="(000) 000-0000" Label="Whitespace Placeholder" Variant="Variant.Text" />
+		<MudMaskField T="string" OnKeyDown="KeyDown" PlaceholderCharacter="@customPlaceholderChar" HelperText="Mask: (000) 000-0000" HelperTextOnFocus="true" Mask="(000) 000-0000" Label="Dynamic Placeholder" Variant="Variant.Text" />
+    </MudItem>
+	<MudItem xs="12" sm="6" md="4">
+       <MudText>Pressed Key: <b>@pressedKey</b></MudText>
+	   <MudTextField Class="mt-2" T="char" MaxLength="1" @bind-Value="customPlaceholderChar" Label="Custom Placeholder Character" />
+    </MudItem>
+</MudGrid>
+
+@code {
+	private string pressedKey = "";
+	private char customPlaceholderChar = '-';
+	private Regex rgx = new Regex("^[a-z]$");
+	private Regex rgx2 = new Regex("^[A-Z]$");
+	private Regex rgx3 = new Regex("^[a-fA-F]$");
+
+	private void KeyDown(KeyboardEventArgs e)
+	{
+		pressedKey = e.Key.ToString();
+	}
+}

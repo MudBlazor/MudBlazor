@@ -55,6 +55,9 @@ namespace MudBlazor
             ('e', new Regex("^[A-Z]$"))
         };
 
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.ListBehavior)]
+        public char PlaceholderCharacter { get; set; } = '_';
 
         private string _rawValue;
 
@@ -227,7 +230,7 @@ namespace MudBlazor
             int counterMeter = 0;
             foreach (var c in Text)
             {
-                if ((c != Mask[counterMeter] || (GetCharacterType(Mask[counterMeter].ToString(), true) != CharacterType.Other && c == Mask[counterMeter] && GetCharacterType(Mask[counterMeter].ToString(), true) == GetCharacterType(c.ToString()))) && c != '_')
+                if ((c != Mask[counterMeter] || (GetCharacterType(Mask[counterMeter].ToString(), true) != CharacterType.Other && c == Mask[counterMeter] && GetCharacterType(Mask[counterMeter].ToString(), true) == GetCharacterType(c.ToString()))) && c != PlaceholderCharacter)
                 {
                     rawValue += c.ToString();
                 }
@@ -303,7 +306,7 @@ namespace MudBlazor
                 }
                 else if (semiRawText.Length < a + 1)
                 {
-                    maskedText += "_";
+                    maskedText += PlaceholderCharacter.ToString();
                 }
                 else if (IsCharsMatch(semiRawText[a], Mask[a]))
                 {
@@ -311,7 +314,7 @@ namespace MudBlazor
                 }
                 else
                 {
-                    maskedText += "_";
+                    maskedText += PlaceholderCharacter.ToString();
                 }
             }
             await _elementReference.SetText(maskedText);
