@@ -465,6 +465,10 @@ namespace MudBlazor
             {
                 _currentView = OpenTo.Minutes;
             }
+            else if (TimeEditMode == TimeEditMode.OnlyHours)
+            {
+                SubmitAndClose();
+            }
         }
 
         /// <summary>
