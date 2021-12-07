@@ -169,6 +169,12 @@
                   padding: 0 !important;
                   padding-top: 24px !important;
                 }
+
+              .phone-to-home{
+                position: absolute;
+                width:100%;
+                bottom:24px;
+              }
             }
         }
 
@@ -699,16 +705,6 @@
             transform: translateX(0);
         }
     }
-
-@keyframes spin {
-    0% {
-        --rotate: 0deg;
-    }
-
-    100% {
-        --rotate: 360deg;
-    }
-}
 
 .twitter {
     color: #1DA1F2 !important;

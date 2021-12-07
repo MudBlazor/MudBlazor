@@ -1,4 +1,5 @@
 ﻿@namespace MudBlazor.Docs.Components.LandingPage
+@using MudBlazor.Docs.Components.MudBlazorApp
 
 <div class="lp-effect phone-shadow"></div>
 <div class="lp-device phone">
@@ -19,7 +20,18 @@
                     </div>
                 </div>
                 <div class="lp-mini-app">
-                    <MiniApp IsMobile="true"/>
+                    @if (!IsNativeOS)
+                    {
+                        <MiniApp IsMobile="true"/>
+                    }
+                    else
+                    {
+                        <Calculator />
+                    }
+                    <div class="phone-to-home d-flex justify-center align-center">
+                        <MudIconButton Icon="@Icons.Outlined.Circle" OnClick="ToggleNativeOS"/>
+                    </div>
+                    
                 </div>
             </div>
         </div>
@@ -37,4 +49,10 @@
         return $"{hour}:{minute}";
     }
 
+    private bool IsNativeOS { get; set; }
+
+    private void ToggleNativeOS()
+    {
+        IsNativeOS = !IsNativeOS;
+    }
 }

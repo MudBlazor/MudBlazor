@@ -62,8 +62,8 @@
                     @foreach (var color in MaterialColors)
                     {
                         <MudItem md="6" lg="4" xs="12">
-                            <div class="mud-paper mud-paper-square docs-color-card" style="background-color:@color.Value;color:#fff">
-                                <MudText Align="Align.Left" Typo="Typo.h6">@color.Color</MudText>
+                            <div class="mud-paper mud-paper-square pa-4 d-flex" style="background-color:@color.Value;color:#fff">
+                                <MudText Align="Align.Left" Typo="Typo.h6" Class="flex-grow-1">@color.Color</MudText>
                             </div>
                             @foreach (var shade in MaterialColorShades.Where(i => i.Color == color.Color))
                             {

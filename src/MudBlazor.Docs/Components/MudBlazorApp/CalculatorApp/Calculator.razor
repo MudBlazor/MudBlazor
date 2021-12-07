@@ -2,16 +2,16 @@
 @using System.Globalization
 @namespace MudBlazor.Docs.Components.MudBlazorApp
 
-<div class="d-flex flex-column rounded-b-lg grey-text" style="background: black;">
+<div class="d-flex flex-column rounded-b-lg grey-text">
     <div class="d-flex justify-center my-2">
-        <div class="d-flex justify-center" style="height:32px; width:100%;">
+        <div class="d-flex justify-center">
             @if (string.IsNullOrWhiteSpace(CalcExpression) || CalcExpression == Result)
             {
                 <MudText Typo="Typo.h6" Align="Align.Center">@Result</MudText>
             }
             else
             {
-                <MudText Typo="Typo.button" Align="Align.Center" Style="font-size: 1rem;">@CalcExpression</MudText>
+                <MudText Typo="Typo.button" Align="Align.Center">@CalcExpression</MudText>
             }
         </div>
     </div>
