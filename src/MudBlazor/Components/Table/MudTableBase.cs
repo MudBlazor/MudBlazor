@@ -13,7 +13,7 @@ namespace MudBlazor
     public abstract class MudTableBase : MudComponentBase
     {
         internal object _editingItem = null;
-        internal bool _isEditing => _editingItem != null;
+        internal bool IsEditing => _editingItem != null;
 
         private int _currentPage = 0;
         private int? _rowsPerPage;
@@ -43,6 +43,11 @@ namespace MudBlazor
             .AddClass(HeaderClass).Build();
         protected string FootClassname => new CssBuilder("mud-table-foot")
             .AddClass(FooterClass).Build();
+        
+        /// <summary>
+        /// When editing a row and this is true, the editing row must be saved/cancelled before a new row will be selected.
+        /// </summary>
+        [Parameter] public bool IsEditRowSwitchingBlocked { get; set; } = false;
 
         /// <summary>
         /// The higher the number, the heavier the drop-shadow. 0 for no shadow.
