@@ -132,7 +132,7 @@ namespace MudBlazor
                         new KeyOptions { Key="Home", PreventDown = "key+none" },
                         new KeyOptions { Key="End", PreventDown = "key+none" },
                         new KeyOptions { Key="Escape" },
-                        new KeyOptions { Key="/^[a-zA-Z0-9]$/", PreventDown = "key+none" },
+                        new KeyOptions { Key="/^[a-zA-Z0-9]$/", PreventDown = "key+none|key+shift" },
                         new KeyOptions { Key="Enter", PreventDown = "key+none" },
                         new KeyOptions { Key="NumpadEnter", PreventDown = "key+none" },
                         new KeyOptions { Key="/./", SubscribeDown = true, SubscribeUp = true }, // for our users
@@ -412,7 +412,8 @@ namespace MudBlazor
         {
             _lastKeyDownCharacter = obj.Key;
 
-            if (obj.Key == "ArrowUp" || obj.Key == "ArrowDown" || obj.Key == "ArrowLeft" || obj.Key == "ArrowRight" || obj.Key == "Shift" || obj.Key == "CapsLock")
+            if (obj.Key == "ArrowUp" || obj.Key == "ArrowDown" || obj.Key == "ArrowLeft" || obj.Key == "ArrowRight" || 
+                    obj.Key == "Shift" || obj.Key == "Ctrl" || obj.Key == "CapsLock" || obj.Key == "Tab" || obj.CtrlKey == true)
                 return;
 
             SetRawValueFromText();
