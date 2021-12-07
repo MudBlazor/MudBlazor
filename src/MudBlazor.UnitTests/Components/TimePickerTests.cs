@@ -261,6 +261,47 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("div.mud-time-picker-minute.mud-time-picker-dial-hidden").Count.Should().Be(1);
         }
 
+        /// <summary>
+        /// Tests if picker works correctly with TimeEditMode.OnlyHours
+        /// </summary>
+        [Test]
+        public void TimeEditModeHours_CheckSelection()
+        {
+            var comp = Context.RenderComponent<SimpleTimePickerTest>((Parameter("TimeEditMode", TimeEditMode.OnlyHours)));
+            var underlyingPicker = comp.FindComponent<MudTimePicker>().Instance;
+            
+            // click to to open picker
+            comp.Find("input").Click();
+            
+            // should be open
+            comp.WaitForAssertion(() => comp.FindAll("div.mud-picker-open").Count.Should().Be(1));
+            
+            // click on 13 hour
+            comp.FindAll("div.mud-picker-stick-outer.mud-hour")[0].Click();
+            
+            // should be closed
+            comp.WaitForAssertion(() => comp.FindAll("div.mud-picker-open").Count.Should().Be(0));
+
+            // should be 13 hours            
+            underlyingPicker.TimeIntermediate.Value.Hours.Should().Be(13);
+
+            // click to to open picker
+            comp.Find("input").Click();
+            
+            // should be open
+            comp.WaitForAssertion(() => comp.FindAll("div.mud-picker-open").Count.Should().Be(1));
+
+            //click on 14 hour
+            comp.FindAll("div.mud-picker-stick-outer.mud-hour")[1].Click();
+
+            // should be closed
+            comp.WaitForAssertion(() => comp.FindAll("div.mud-picker-open").Count.Should().Be(0));
+
+            // should be 14 hours
+            underlyingPicker.TimeIntermediate.Value.Hours.Should().Be(14);
+
+        }
+        
         [Test]
         public void ChangeToMinutes_FromHours_CheckHoursHidden()
         {
