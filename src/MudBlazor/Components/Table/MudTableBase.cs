@@ -48,7 +48,7 @@ namespace MudBlazor
         /// When editing a row and this is true, the editing row must be saved/cancelled before a new row will be selected.
         /// </summary>
         [Parameter]
-        [Category(CategoryTypes.Table.Behavior)]
+        [Category(CategoryTypes.Table.Editing)]
         public bool IsEditRowSwitchingBlocked { get; set; } = false;
 
         /// <summary>
