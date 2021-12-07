@@ -14,7 +14,7 @@ using Microsoft.AspNetCore.Components.Routing;
 
 namespace MudBlazor.Docs.Components
 {
-    public partial class DocsPage : ComponentBase, IDisposable
+    public partial class DocsPage : ComponentBase
     {
         private Queue<DocsSectionLink> _bufferedSections = new();
         private MudPageContentNavigation _contentNavigation;
@@ -51,21 +51,11 @@ namespace MudBlazor.Docs.Components
 
         protected override void OnParametersSet()
         {
+            _stopwatch = Stopwatch.StartNew();
+            _sectionCount = 0;
             _previous = DocsService.Previous;
             _next = DocsService.Next;
             _section = DocsService.Section;
-        }
-
-        protected override void OnInitialized()
-        {
-            base.OnInitialized();
-            NavigationManager.LocationChanged += OnNavLocationChanged;
-        }
-
-        private void OnNavLocationChanged(object sender, LocationChangedEventArgs e)
-        {
-            _sectionCount = 0;
-            _stopwatch = Stopwatch.StartNew();
         }
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -101,11 +91,5 @@ namespace MudBlazor.Docs.Components
             }
         }
 
-        public void Dispose()
-        {
-            var navman = NavigationManager;
-            if (navman != null)
-                navman.LocationChanged -= OnNavLocationChanged;
-        }
     }
 }
