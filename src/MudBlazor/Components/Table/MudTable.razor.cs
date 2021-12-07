@@ -332,7 +332,7 @@ namespace MudBlazor
         {
             get
             {
-                if (_isEditing && _hasPreEditSort)
+                if (IsEditing && _hasPreEditSort)
                     return _preEditSort;
                 if (ServerData != null)
                 {
