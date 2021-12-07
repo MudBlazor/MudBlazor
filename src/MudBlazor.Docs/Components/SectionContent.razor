@@ -21,9 +21,12 @@
             </MudButton>
         </MudToolBar>
     }
-    <div class="@InnerClassname">
-        @ChildContent
-    </div>
+    @if (ChildContent != null)
+    {
+        <div class="@InnerClassname">
+            @ChildContent
+        </div>
+    }
 </div>
 @if (Code != null)
 {
@@ -50,8 +53,8 @@
     protected string InnerClassname =>
         new CssBuilder("docs-section-content-inner")
             .AddClass($"d-flex flex-grow-1 flex-wrap justify-center")
-            .AddClass("px-5 py-8", Code == null)
-            .AddClass("px-5 pb-8 pt-2", Code != null)
+            .AddClass("pa-8", Code == null)
+            .AddClass("px-8 pb-8 pt-2", Code != null)
             .AddClass($"mud-width-full", FullWidth)
             .Build();
 
