@@ -156,6 +156,7 @@ namespace MudBlazor
         private void OnCaretPositionChanged(int pos)
         {
             Console.WriteLine($"Caret position: {pos}");
+            _caretPosition = pos;
         }
 
         /// <summary>
@@ -333,19 +334,123 @@ namespace MudBlazor
             await _elementReference.SetText(maskedText);
         }
 
+        private async Task ImplementMask(string RawText, string Mask)
+        {
+            if (Mask == null)
+            {
+                return;
+            }
+
+            if (RawText == null)
+            {
+                RawText = "";
+            }
+            string maskedText = "";
+
+            GetCustomCharacters();
+            //Find raw mask by removing not masking characters(so remains isLetter, isDigit or custom(regex) key chars)
+            string rawMask = GetRawMask();
+            //Find raw text(we use reverse masking for all text)
+            string rawText = GetRawText(RawText);
+            //Insert last pressed character into correct place(or pasted etc.)
+            //Check raw mask and raw text char by char, and place underscore(or custom) character if its not match
+            for (int i = 0; i < rawMask.Length; i++)
+            {
+                int a = i;
+                if (rawText.Length < a)
+                {
+                    maskedText += PlaceholderCharacter;
+                }
+                else if (rawText[a] == PlaceholderCharacter)
+                {
+                    maskedText += PlaceholderCharacter;
+                }
+                else if (IsCharsMatch(rawText[a], rawMask[a]))
+                {
+                    maskedText += rawText[a];
+                }
+                else
+                {
+                    maskedText += PlaceholderCharacter;
+                }
+            }
+            //Insert mask symbols on raw text
+            for (int i = 0; i < Mask.Length; i++)
+            {
+                int a = i;
+                if (!MaskCharacters.ContainsKey(Mask[a]))
+                {
+                    maskedText = maskedText.Insert(a, Mask[a].ToString());
+                }
+            }
+
+            await _elementReference.SetText(maskedText);
+        }
+
+        //private string _rawMask = "";
+
+        private string GetRawText(string t)
+        {
+            if (t == null)
+            {
+                return null;
+            }
+
+            string rawText = "";
+            foreach (var item in t)
+            {
+                if (item == PlaceholderCharacter)
+                {
+                    rawText += PlaceholderCharacter;
+                }
+                else if (Regex.IsMatch(item.ToString(), "^[a-zA-Z0-9]$"))
+                {
+                    rawText += item;
+                }
+            }
+            for (int i = 0; i < GetRawMask().Length - t.Length; i++)
+            {
+                rawText += PlaceholderCharacter;
+            }
+            return rawText;
+        }
+
+        private int FindNextCaretLocation(int currentCaretIndex)
+        {
+            int a = currentCaretIndex;
+            for (int i = a; i < Mask.Length; i++)
+            {
+                if (Text[a] == PlaceholderCharacter)
+                {
+                    return a;
+                }
+                a++;
+            }
+            return a;
+        }
+
+        private int FindPreviousCaretLocation(int currentCaretIndex)
+        {
+            int a = currentCaretIndex;
+            for (int i = 0; i < Text.Length; i++)
+            {
+                if (a <= 0)
+                    return 0;
+                if (Text[a - 1] == PlaceholderCharacter)
+                {
+                    return a - 1;
+                }
+                a--;
+            }
+            return a;
+        }
+
         private bool IsCharsMatch(char TextChar, char MaskChar)
         {
             if (GetCharacterType(MaskChar.ToString(), true) == GetCharacterType(TextChar.ToString()))
                 return true;
             if (GetCharacterType(MaskChar.ToString(), true) == CharacterType.LetterOrDigit && GetCharacterType(TextChar.ToString()) != CharacterType.Other)
                 return true;
-            //foreach (var item in CustomCharacterTypes)
-            //{
-            //    //if (GetCharacterType(item.Item1.ToString(), true) == CharacterType.Custom && item.Item2.IsMatch(TextChar.ToString()))
-            //    //    return true;
-            //    if (item.Item1 == MaskChar && item.Item2.IsMatch(TextChar.ToString()))
-            //        return true;
-            //}
             if (GetCharacterType(MaskChar.ToString(), true) == CharacterType.Custom)
             {
                 foreach (var item in CustomCharacterTypes)
@@ -435,22 +540,39 @@ namespace MudBlazor
             string toBeMaskedText = "";
             if (obj.Key == "Backspace")
             {
-                if (1 <= RawValue.Length)
+                for (int i = 1; i < Text.Length; i++)
                 {
-                    toBeMaskedText = _text.Substring(0, _text.Length - 1);
+                    if (_caretPosition - i == 0 || Text[_caretPosition - i] == PlaceholderCharacter)
+                        return;
+                    if (Regex.IsMatch(Text[_caretPosition - i].ToString(), "^[a-zA-Z0-9]$"))
+                    {
+                        toBeMaskedText = Text.Remove(_caretPosition - i, 1).Insert(_caretPosition - i, PlaceholderCharacter.ToString());
+                        break;
+                    }
                 }
             }
             else
             {
-                toBeMaskedText = _text + _lastKeyDownCharacter;
+                if (Text.Length <= _caretPosition)
+                {
+                    _caretPosition--;
+                }
+                toBeMaskedText = Text.Remove(_caretPosition, 1).Insert(_caretPosition, _lastKeyDownCharacter);
             }
             //await ImplementMask(Text, Mask);
-            await UltimateImplementMask(toBeMaskedText, GetMaskByType());
+            await ImplementMask(toBeMaskedText, GetMaskByType());
             SetRawValueFromText();
-
             OnKeyDown.InvokeAsync(obj).AndForget();
             await Task.Delay(1);
-            SetCaretPosition(Text.Length);
+            if (obj.Key == "Backspace")
+            {
+                SetCaretPosition(FindPreviousCaretLocation(_caretPosition));
+            }
+            else
+            {
+                SetCaretPosition(FindNextCaretLocation(_caretPosition));
+            }
+            
         }
 
         private string _lastKeyDownCharacter = "";
