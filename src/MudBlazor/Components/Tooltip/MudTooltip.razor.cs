@@ -106,6 +106,11 @@ namespace MudBlazor
         [Category(CategoryTypes.Tooltip.Appearance)]
         public bool Inline { get; set; } = true;
 
+        /// <summary>
+        /// Hides the tooltip programatically.
+        /// </summary>
+        public void Hide() => _isVisible = false;
+
         private void HandleMouseOver() => _isVisible = true;
         private void HandleMouseOut() => _isVisible = false;
 
