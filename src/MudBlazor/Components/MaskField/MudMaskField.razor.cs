@@ -324,34 +324,34 @@ namespace MudBlazor
             return value;
         }
 
-        private async Task UltimateImplementMask(string RawText, string Mask)
+        private async Task UltimateImplementMask(string rawText, string mask)
         {
-            if (Mask == null)
+            if (mask == null)
             {
                 return;
             }
 
-            if (RawText == null)
+            if (rawText == null)
             {
-                RawText = "";
+                rawText = "";
             }
 
             GetCustomCharacters();
-            string semiRawText = GetSemiRawText(RawText);
+            string semiRawText = GetSemiRawText(rawText);
             string maskedText = "";
 
-            for (int i = 0; i < Mask.Length; i++)
+            for (int i = 0; i < mask.Length; i++)
             {
                 int a = i;
-                if ((!MaskCharacters.ContainsKey(Mask[a])))
+                if ((!MaskCharacters.ContainsKey(mask[a])))
                 {
-                    maskedText += Mask[a];
+                    maskedText += mask[a];
                 }
                 else if (semiRawText.Length < a + 1)
                 {
                     maskedText += PlaceholderCharacter.ToString();
                 }
-                else if (IsCharsMatch(semiRawText[a], Mask[a]))
+                else if (IsCharsMatch(semiRawText[a], mask[a]))
                 {
                     maskedText += semiRawText[a].ToString();
                 }
@@ -363,16 +363,16 @@ namespace MudBlazor
             await _elementReference.SetText(maskedText);
         }
 
-        private async Task ImplementMask(string RawText, string Mask)
+        private async Task ImplementMask(string rawText, string mask)
         {
-            if (Mask == null)
+            if (mask == null)
             {
                 return;
             }
 
-            if (RawText == null)
+            if (rawText == null)
             {
-                RawText = "";
+                rawText = "";
             }
             string maskedText = "";
 
@@ -380,7 +380,7 @@ namespace MudBlazor
             //Find raw mask by removing not masking characters(so remains isLetter, isDigit or custom(regex) key chars)
             string rawMask = GetRawMask();
             //Find raw text(we use reverse masking for all text)
-            string rawText = GetRawText(RawText);
+            rawText = GetRawText(rawText);
             //Insert last pressed character into correct place(or pasted etc.)
             //Check raw mask and raw text char by char, and place underscore(or custom) character if its not match
             for (int i = 0; i < rawMask.Length; i++)
@@ -404,12 +404,12 @@ namespace MudBlazor
                 }
             }
             //Insert mask symbols on raw text
-            for (int i = 0; i < Mask.Length; i++)
+            for (int i = 0; i < mask.Length; i++)
             {
                 int a = i;
-                if (!MaskCharacters.ContainsKey(Mask[a]))
+                if (!MaskCharacters.ContainsKey(mask[a]))
                 {
-                    maskedText = maskedText.Insert(a, Mask[a].ToString());
+                    maskedText = maskedText.Insert(a, mask[a].ToString());
                 }
             }
 
@@ -551,17 +551,17 @@ namespace MudBlazor
             return result;
         }
 
-        private bool IsCharsMatch(char TextChar, char MaskChar)
+        private bool IsCharsMatch(char textChar, char maskChar)
         {
-            if (GetCharacterType(MaskChar.ToString(), true) == GetCharacterType(TextChar.ToString()))
+            if (GetCharacterType(maskChar.ToString(), true) == GetCharacterType(textChar.ToString()))
                 return true;
-            if (GetCharacterType(MaskChar.ToString(), true) == CharacterType.LetterOrDigit && GetCharacterType(TextChar.ToString()) != CharacterType.Other)
+            if (GetCharacterType(maskChar.ToString(), true) == CharacterType.LetterOrDigit && GetCharacterType(textChar.ToString()) != CharacterType.Other)
                 return true;
-            if (GetCharacterType(MaskChar.ToString(), true) == CharacterType.Custom)
+            if (GetCharacterType(maskChar.ToString(), true) == CharacterType.Custom)
             {
                 foreach (var item in CustomCharacterTypes)
                 {
-                    if (item.Item1 == MaskChar && item.Item2.IsMatch(TextChar.ToString()))
+                    if (item.Item1 == maskChar && item.Item2.IsMatch(textChar.ToString()))
                     {
                         return true;
                     }
@@ -571,18 +571,18 @@ namespace MudBlazor
             return false;
         }
 
-        private Dictionary<int, char> MaskSymbols = new Dictionary<int, char>();
+        private Dictionary<int, char> _maskSymbols = new Dictionary<int, char>();
 
         private void UpdateMaskSymbols()
         {
-            MaskSymbols.Clear();
+            _maskSymbols.Clear();
 
             for (int i = 0; i < Mask.Length; i++)
             {
                 int a = i;
                 if (GetCharacterType(Mask[a].ToString()) == CharacterType.Other)
                 {
-                    MaskSymbols.Add(a, Mask[a]);
+                    _maskSymbols.Add(a, Mask[a]);
                 }
             }
         }
