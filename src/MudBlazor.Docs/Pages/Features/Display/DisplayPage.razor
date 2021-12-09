@@ -3,6 +3,7 @@
 <DocsPage>
     <DocsPageHeader Title="Display" SubTitle="The display classes help you set the display type or change it upon viewport." />
     <DocsPageContent>
+
         <DocsPageSection>
             <SectionHeader Title="How it works">
                 <Description>
@@ -50,13 +51,13 @@
                     <SectionSource Code="DisplayDinlineExample" />
                 </MudTabPanel>
                 <MudTabPanel Text="d-block">
-                    <SectionContent Outlined="true" FullWidth="true" Class="mt-6" Style="height:130px;">
+                    <SectionContent Outlined="true" FullWidth="true" Class="mt-6" Style="height:130px;" Code="DisplayDblockExample">
                         <DisplayDblockExample />
                     </SectionContent>
-                    <SectionSource Code="DisplayDblockExample" />
                 </MudTabPanel>
             </MudTabs>
         </DocsPageSection>
+
         <DocsPageSection>
             <SectionHeader Title="Visibility">
                 <Description>Display an element based on the current viewport. The same breakpoint classes apply from the bottom up. That means <CodeInline>.d-none</CodeInline> applies to all breakpoints, but <CodeInline>.d-md-none</CodeInline> will only apply to <CodeInline>md</CodeInline> and up.</Description>
@@ -82,10 +83,10 @@
                     <tr><td>Visible only on xxl</td> <td><CodeInline>.d-none .d-xxl-flex</CodeInline></td></tr>
                 </tbody>
             </MudSimpleTable>
-            <SectionContent DarkenBackground="true" DisplayFlex="true" Class="mt-6">
+            <SectionContent DarkenBackground="true" DisplayFlex="true" Class="mt-6" Code="DisplayVisibilyExample">
                 <DisplayVisibilyExample />
             </SectionContent>
-            <SectionSource Code="DisplayVisibilyExample" />
         </DocsPageSection>
+
     </DocsPageContent>
 </DocsPage>
