@@ -161,6 +161,15 @@ namespace MudBlazor
             SetCaretPosition(FindFirstCaretLocation());
         }
 
+        protected override void OnBlurred(FocusEventArgs obj)
+        {
+            base.OnBlurred(obj);
+            if (string.IsNullOrEmpty(_rawValue))
+            {
+                _elementReference.SetText("");
+            }
+        }
+
         /// <summary>
         /// Clear the text field, set Value to default(T) and Text to null
         /// </summary>
@@ -475,6 +484,55 @@ namespace MudBlazor
             return Mask.Length;
         }
 
+        private string GetToBeMaskedText(KeyboardEventArgs obj)
+        {
+            string result = "";
+            if (obj.Key == "Backspace")
+            {
+                for (int i = 1; i < Text.Length; i++)
+                {
+                    if (_caretPosition - i < 0 || Text[_caretPosition - i] == PlaceholderCharacter)
+                        return Text;
+                    if (Regex.IsMatch(Text[_caretPosition - i].ToString(), "^[a-zA-Z0-9]$"))
+                    {
+                        result = Text.Remove(_caretPosition - i, 1).Insert(_caretPosition - i, PlaceholderCharacter.ToString());
+                        break;
+                    }
+                }
+            }
+            else if (obj.Key == "Delete")
+            {
+                if (Regex.IsMatch(Text[_caretPosition].ToString(), "^[a-zA-Z0-9]$"))
+                {
+                    result = Text.Remove(_caretPosition, 1).Insert(Text.Length - 1, PlaceholderCharacter.ToString());
+                }
+                else
+                {
+                    result = Text;
+                }
+                //for (int i = 0; i < Text.Length; i++)
+                //{
+                //    if (Text.Length <= _caretPosition + i || Text[_caretPosition + i] == PlaceholderCharacter)
+                //        return Text;
+                //    if (Regex.IsMatch(Text[_caretPosition + i].ToString(), "^[a-zA-Z0-9]$"))
+                //    {
+                //        result = Text.Remove(_caretPosition + i, 1).Insert(_caretPosition + i, PlaceholderCharacter.ToString());
+                //        break;
+                //    }
+                //}
+            }
+            else
+            {
+                if (Text.Length <= _caretPosition)
+                {
+                    _caretPosition--;
+                }
+                result = Text.Remove(_caretPosition, 1).Insert(_caretPosition, _lastKeyDownCharacter);
+            }
+
+            return result;
+        }
+
         private bool IsCharsMatch(char TextChar, char MaskChar)
         {
             if (GetCharacterType(MaskChar.ToString(), true) == GetCharacterType(TextChar.ToString()))
@@ -558,39 +616,16 @@ namespace MudBlazor
 
         protected async Task HandleKeyDown(KeyboardEventArgs obj)
         {
-            _lastKeyDownCharacter = obj.Key;
-
             //if (obj.Key == "ArrowUp" || obj.Key == "ArrowDown" || obj.Key == "ArrowLeft" || obj.Key == "ArrowRight" || 
             //        obj.Key == "Shift" || obj.Key == "Ctrl" || obj.Key == "CapsLock" || obj.Key == "Tab" || obj.CtrlKey == true)
             //    return;
-            if (obj.CtrlKey == true || (!Regex.IsMatch(obj.Key, "^[a-zA-Z0-9]$") && obj.Key != "Backspace"))
+            if (obj.CtrlKey == true || (!Regex.IsMatch(obj.Key, "^[a-zA-Z0-9]$") && !(obj.Key == "Backspace" || obj.Key == "Delete")))
                 return;
+            _lastKeyDownCharacter = obj.Key;
             SetRawValueFromText();
             string _text = GetRawValue();
 
-            string toBeMaskedText = "";
-            if (obj.Key == "Backspace")
-            {
-                for (int i = 1; i < Text.Length; i++)
-                {
-                    if (_caretPosition - i < 0 || Text[_caretPosition - i] == PlaceholderCharacter)
-                        return;
-                    if (Regex.IsMatch(Text[_caretPosition - i].ToString(), "^[a-zA-Z0-9]$"))
-                    {
-                        toBeMaskedText = Text.Remove(_caretPosition - i, 1).Insert(_caretPosition - i, PlaceholderCharacter.ToString());
-                        break;
-                    }
-                }
-            }
-            else
-            {
-                if (Text.Length <= _caretPosition)
-                {
-                    _caretPosition--;
-                }
-                toBeMaskedText = Text.Remove(_caretPosition, 1).Insert(_caretPosition, _lastKeyDownCharacter);
-            }
-            //await ImplementMask(Text, Mask);
+            string toBeMaskedText = GetToBeMaskedText(obj);
             await ImplementMask(toBeMaskedText, GetMaskByType());
             SetRawValueFromText();
             OnKeyDown.InvokeAsync(obj).AndForget();
@@ -598,6 +633,10 @@ namespace MudBlazor
             if (obj.Key == "Backspace")
             {
                 SetCaretPosition(FindPreviousCaretLocation(_caretPosition));
+            }
+            else if (obj.Key == "Delete")
+            {
+                SetCaretPosition(_caretPosition);
             }
             else
             {
