@@ -1,10 +1,5 @@
 ﻿.docs-section-header {
-    margin-bottom: 20px;
 
-    .mud-typography-h4 {
-        font-size:30px;
-        margin: 40px 0 16px;
-    }
 }
 
 .docs-section-content {
@@ -43,11 +38,7 @@
     }
   
     & .docs-section-content-inner {
-        margin-left: auto;
-        margin-right: auto;
-        display: block;
         position: relative;
-        justify-content: center;
       
           & > *:not(.mud-grid) {
             margin: 8px;
@@ -60,7 +51,9 @@
   border-bottom-left-radius: 0;
   border-bottom-right-radius: 0;
   
-  + .docs-section-source{
+  + .docs-section-source.show-code{
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
     .mud-codeblock{
       border-top-left-radius: 0;
       border-top-right-radius: 0;
@@ -73,8 +66,7 @@
 
 .docs-section-source {
   overflow: hidden;
-  border-bottom-left-radius: 12px;
-  border-bottom-right-radius: 12px;
+  border-radius: 12px;
   background-color: var(--mud-palette-black);
   
   .docs-section-source-container{
@@ -85,8 +77,6 @@
     &.show-code{
       overflow: auto;
       max-height: 500px;
-      border-bottom-left-radius: 12px;
-      border-bottom-right-radius: 12px;
       transition: max-height 0.25s ease-in;
 
       &::-webkit-scrollbar-thumb {

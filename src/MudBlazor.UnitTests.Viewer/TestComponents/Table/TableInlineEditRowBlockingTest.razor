@@ -1,6 +1,6 @@
 ﻿@namespace MudBlazor.UnitTests.TestComponents
 
-<MudTable @ref="Table" T="string" Items="items" @bind-SelectedItem="selectedItem">
+<MudTable @ref="Table" T="string" Items="items" @bind-SelectedItem="selectedItem" IsEditRowSwitchingBlocked="true">
     <HeaderContent>
         <MudTh>#</MudTh>
     </HeaderContent>
@@ -15,9 +15,10 @@
 </MudTable>
 
 @code {
-    public static string __description__ = "Inline Edit Table: Basic";
+    public static string __description__ = "Inline Edit Table w/ Blocked Row Switching";
+
     private string selectedItem = null;
     string[] items = new string[] { "A", "B", "C" };
 
-    public MudTable<string> Table { get; private set; }
+    public MudTable<string> Table { get; private set; } 
 }
