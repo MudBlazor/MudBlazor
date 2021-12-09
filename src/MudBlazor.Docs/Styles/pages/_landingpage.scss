@@ -639,6 +639,17 @@
         }
     }
 
+  @keyframes spin {
+    0% {
+      --rotate: 0deg;
+    }
+  
+    100% {
+      --rotate: 360deg;
+    }
+  }
+  
+
     @keyframes code-animate-card-media {
         from {
             height: 0;

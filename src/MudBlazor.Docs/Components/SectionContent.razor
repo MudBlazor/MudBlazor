@@ -8,29 +8,32 @@
 @using MudBlazor.Docs.Extensions;
 @using MudBlazor.Docs.Models;
 
-<div class="@Classname" style="@Style">
-    @if (Code != null)
-    {
-        <MudToolBar Class="docs-section-content-toolbar">
-            <MudSpacer />
-            <MudTooltip Text="Online Playground" Arrow="true" Color="Color.Dark" Placement="Placement.Top" Delay="300" Duration="500">
-                <MudButton OnClick="RunOnTryMudBlazor" StartIcon="@Icons.Rounded.PlayArrow" IconColor="Color.Success" Color="Color.Default" Size="Size.Small">Run</MudButton>
-            </MudTooltip>
-            <MudButton OnClick="OnShowCode" StartIcon="@(ShowCode? @Icons.Rounded.CodeOff : Icons.Rounded.Code)" Color="Color.Default" Size="Size.Small">
-                @(ShowCode? "Hide code": "Show code")
-            </MudButton>
-        </MudToolBar>
-    }
-    @if (ChildContent != null)
-    {
-        <div class="@InnerClassname">
-            @ChildContent
-        </div>
-    }
-</div>
+@if (Code != null && ChildContent != null)
+{
+    <div class="@Classname" style="@Style">
+        @if (Code != null)
+        {
+            <MudToolBar Class="docs-section-content-toolbar">
+                <MudSpacer />
+                <MudTooltip Text="Online Playground" Arrow="true" Color="Color.Dark" Placement="Placement.Top" Delay="300" Duration="500">
+                    <MudButton OnClick="RunOnTryMudBlazor" StartIcon="@Icons.Rounded.PlayArrow" IconColor="Color.Success" Color="Color.Default" Size="Size.Small">Run</MudButton>
+                </MudTooltip>
+                <MudButton OnClick="OnShowCode" StartIcon="@(ShowCode? @Icons.Rounded.CodeOff : Icons.Rounded.Code)" Color="Color.Default" Size="Size.Small">
+                    @(ShowCode? "Hide code": "Show code")
+                </MudButton>
+            </MudToolBar>
+        }
+        @if (ChildContent != null)
+        {
+            <div class="@InnerClassname">
+                @ChildContent
+            </div>
+        }
+    </div>
+}
 @if (Code != null)
 {
-    <div class="docs-section-source">
+    <div class="@SourceClassname">
         <div class="@SourceContainerClassname">
             @CodeComponent(Code)
         </div>
@@ -56,6 +59,11 @@
             .AddClass("pa-8", Code == null)
             .AddClass("px-8 pb-8 pt-2", Code != null)
             .AddClass($"mud-width-full", FullWidth)
+            .Build();
+    
+    protected string SourceClassname =>
+        new CssBuilder("docs-section-source")
+            .AddClass("show-code", Code != null && ShowCode)
             .Build();
 
     protected string SourceContainerClassname =>

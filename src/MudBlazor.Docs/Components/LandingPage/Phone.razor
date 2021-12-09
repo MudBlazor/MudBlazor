@@ -20,18 +20,15 @@
                     </div>
                 </div>
                 <div class="lp-mini-app">
-                    @if (!IsNativeOS)
-                    {
-                        <MiniApp IsMobile="true"/>
-                    }
-                    else
+                    @if (IsCalculator)
                     {
                         <Calculator />
+                    }else{
+                        <MiniApp IsMobile="true"/>
                     }
                     <div class="phone-to-home d-flex justify-center align-center">
-                        <MudIconButton Icon="@Icons.Outlined.Circle" OnClick="ToggleNativeOS"/>
+                        <MudIconButton Icon="@Icons.Outlined.Circle" OnClick="ChangeApp" />
                     </div>
-                    
                 </div>
             </div>
         </div>
@@ -49,10 +46,10 @@
         return $"{hour}:{minute}";
     }
 
-    private bool IsNativeOS { get; set; }
+    private bool IsCalculator;
 
-    private void ToggleNativeOS()
+    private void ChangeApp()
     {
-        IsNativeOS = !IsNativeOS;
+        IsCalculator = !IsCalculator;
     }
 }
