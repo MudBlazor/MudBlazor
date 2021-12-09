@@ -58,24 +58,27 @@ namespace MudBlazor
 
         private string _rawValue;
 
-        [Parameter]
-        [Category(CategoryTypes.FormComponent.ListBehavior)]
-        public string RawValue
+        internal string RawValue
         {
             get => _rawValue;
             set
             {
                 if (_rawValue == value)
                     return;
+                SetValueAsync(Converter.Get(value), updateText: false).AndForget();
                 _rawValue = value;
                 //UltimateImplementMask(_rawValue, Mask).AndForget();
-                RawValueChanged.InvokeAsync(value);
             }
         }
 
-        [Parameter]
-        [Category(CategoryTypes.FormComponent.ListAppearance)]
-        public EventCallback<string> RawValueChanged { get; set; }
+        protected override async Task SetValueAsync(T value, bool updateText = true)
+        {
+            // never update text directly. we do it below
+            await base.SetValueAsync(value, updateText: false);
+            _rawValue = Converter.Set(value);
+            if (updateText)
+                await ImplementMask(_rawValue, Mask);
+        }
 
         internal override InputType GetInputType() => InputType;
 
