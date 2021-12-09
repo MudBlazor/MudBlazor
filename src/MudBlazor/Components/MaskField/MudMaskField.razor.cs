@@ -21,6 +21,7 @@ namespace MudBlazor
 
         [Inject] private IKeyInterceptor _keyInterceptor { get; set; }
         [Inject] private JsEvent _jsEvent { get; set; }
+        [Inject] private IJsApiService _jsApiService { get; set; }
 
         private string _elementId = "maskfield_" + Guid.NewGuid().ToString().Substring(0, 8);
 
@@ -124,6 +125,8 @@ namespace MudBlazor
                     TagName= "INPUT"
                 });
                 _jsEvent.CaretPositionChanged += OnCaretPositionChanged;
+                _jsEvent.Copy += OnCopy;
+                _jsEvent.Paste += OnPaste;
                 await _keyInterceptor.Connect(_elementId, new KeyInterceptorOptions()
                 {
                     //EnableLogging = true,
@@ -152,6 +155,18 @@ namespace MudBlazor
         {
             Console.WriteLine($"Caret position: {pos}");
             _caretPosition = pos;
+        }
+
+        private void OnCopy()
+        {
+            var text = RawValue;
+            _jsApiService.CopyToClipboardAsync(text);
+            Console.WriteLine($"Copy: {text}");
+        }
+
+        private void OnPaste(string text)
+        {
+            Console.WriteLine($"Paste: {text}");
         }
 
         private async void OnFocussed()
