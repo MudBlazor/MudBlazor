@@ -41,12 +41,7 @@ namespace MudBlazor
             ['a'] = CharacterType.Letter,
             ['0'] = CharacterType.Digit,
             ['*'] = CharacterType.LetterOrDigit,
-            
         };
-
-        [Parameter]
-        [Category(CategoryTypes.FormComponent.ListBehavior)] 
-        public Regex CustomCharacterType { get; set; } = new Regex(@"^[a-zA-Z0-9]$");
 
         [Parameter]
         [Category(CategoryTypes.FormComponent.ListBehavior)]
@@ -73,13 +68,13 @@ namespace MudBlazor
                     return;
                 _rawValue = value;
                 //UltimateImplementMask(_rawValue, Mask).AndForget();
-                BindingValueChanged.InvokeAsync(value);
+                RawValueChanged.InvokeAsync(value);
             }
         }
 
         [Parameter]
         [Category(CategoryTypes.FormComponent.ListAppearance)]
-        public EventCallback<string> BindingValueChanged { get; set; }
+        public EventCallback<string> RawValueChanged { get; set; }
 
         internal override InputType GetInputType() => InputType;
 
@@ -157,6 +152,13 @@ namespace MudBlazor
         {
             Console.WriteLine($"Caret position: {pos}");
             _caretPosition = pos;
+        }
+
+        private async void OnFocussed()
+        {
+            await ImplementMask(RawValue, Mask);
+            await Task.Delay(1);
+            SetCaretPosition(FindFirstCaretLocation());
         }
 
         /// <summary>
@@ -429,6 +431,20 @@ namespace MudBlazor
             return a;
         }
 
+        private int FindFirstCaretLocation()
+        {
+            int a = 0;
+            for (int i = 0; i < Mask.Length; i++)
+            {
+                a = i;
+                if (Text[a] == PlaceholderCharacter)
+                {
+                    return a;
+                }
+            }
+            return 0;
+        }
+
         private int FindPreviousCaretLocation(int currentCaretIndex)
         {
             int a = currentCaretIndex;
@@ -443,6 +459,20 @@ namespace MudBlazor
                 a--;
             }
             return a;
+        }
+
+        private int FindLastCaretLocation()
+        {
+            int a = Mask.Length;
+            for (int i = 0; i < Mask.Length; i++)
+            {
+                a -= i;
+                if (Text[a] == PlaceholderCharacter)
+                {
+                    return a;
+                }
+            }
+            return Mask.Length;
         }
 
         private bool IsCharsMatch(char TextChar, char MaskChar)
@@ -530,10 +560,11 @@ namespace MudBlazor
         {
             _lastKeyDownCharacter = obj.Key;
 
-            if (obj.Key == "ArrowUp" || obj.Key == "ArrowDown" || obj.Key == "ArrowLeft" || obj.Key == "ArrowRight" || 
-                    obj.Key == "Shift" || obj.Key == "Ctrl" || obj.Key == "CapsLock" || obj.Key == "Tab" || obj.CtrlKey == true)
+            //if (obj.Key == "ArrowUp" || obj.Key == "ArrowDown" || obj.Key == "ArrowLeft" || obj.Key == "ArrowRight" || 
+            //        obj.Key == "Shift" || obj.Key == "Ctrl" || obj.Key == "CapsLock" || obj.Key == "Tab" || obj.CtrlKey == true)
+            //    return;
+            if (obj.CtrlKey == true || (!Regex.IsMatch(obj.Key, "^[a-zA-Z0-9]$") && obj.Key != "Backspace"))
                 return;
-
             SetRawValueFromText();
             string _text = GetRawValue();
 
@@ -542,7 +573,7 @@ namespace MudBlazor
             {
                 for (int i = 1; i < Text.Length; i++)
                 {
-                    if (_caretPosition - i == 0 || Text[_caretPosition - i] == PlaceholderCharacter)
+                    if (_caretPosition - i < 0 || Text[_caretPosition - i] == PlaceholderCharacter)
                         return;
                     if (Regex.IsMatch(Text[_caretPosition - i].ToString(), "^[a-zA-Z0-9]$"))
                     {
