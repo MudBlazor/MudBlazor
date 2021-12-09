@@ -155,31 +155,51 @@ class MudJsEvent {
         }
     }
 
-    eventHandler(args) {
+    eventHandler(e) {
         var self = this.mudJsEvent; // func is invoked with this == child
-        var eventName = args.type;
-        self.logger('[MudBlazor | JsEvent] "' + eventName + '"', args);
+        var eventName = e.type;
+        self.logger('[MudBlazor | JsEvent] "' + eventName + '"', e);
         // call specific handler
-        self["on" + eventName](self, args);
+        self["on" + eventName](self, e);
     }
 
-    onkeyup(self, args) {
-        var caretPosition = args.target.selectionStart;
-        var invoke = self._subscribedEvents["keyup"];
+    onkeyup(self, e) {
+        const caretPosition = e.target.selectionStart;
+        const invoke = self._subscribedEvents["keyup"];
         if (invoke) {
             self.logger('[MudBlazor | JsEvent] caret pos: ' + caretPosition);
             self._dotNetRef.invokeMethodAsync('OnCaretPositionChanged', caretPosition);
         }
     }
 
-    onclick(self, args) {
-        var caretPosition = args.target.selectionStart;
-        var invoke = self._subscribedEvents["click"];
+    onclick(self, e) {
+        const caretPosition = e.target.selectionStart;
+        const invoke = self._subscribedEvents["click"];
         if (invoke) {
             self.logger('[MudBlazor | JsEvent] caret pos: ' + caretPosition);
             self._dotNetRef.invokeMethodAsync('OnCaretPositionChanged', caretPosition);
         }
     }
 
+    oncopy(self, e) {
+        const invoke = self._subscribedEvents["copy"];
+        if (invoke) {
+            self.logger('[MudBlazor | JsEvent] copy (preventing default and stopping propagation)');
+            e.preventDefault();
+            e.stopPropagation();
+            self._dotNetRef.invokeMethodAsync('OnCopy');
+        }
+    }
+
+    onpaste(self, e) {
+        const invoke = self._subscribedEvents["paste"];
+        if (invoke) {
+            self.logger('[MudBlazor | JsEvent] paste (preventing default and stopping propagation)');
+            e.preventDefault();
+            e.stopPropagation();
+            const text = (e.originalEvent || e).clipboardData.getData('text/plain');
+            self._dotNetRef.invokeMethodAsync('OnPaste', text);
+        }
+    }
 }
 

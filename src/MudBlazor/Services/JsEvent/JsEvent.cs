@@ -105,6 +105,10 @@ namespace MudBlazor.Services
         }
 
         List<Action<int>> _caretPositionChangedHandlers = new List<Action<int>>();
+
+        /// <summary>
+        /// Subscribe this event to get notified about caret changes in an input on click and on keyup
+        /// </summary>
         public event Action<int> CaretPositionChanged
         {
             add
@@ -129,12 +133,85 @@ namespace MudBlazor.Services
             }
         }
 
+        /// <summary>
+        /// To be invoked only by JS
+        /// </summary>
         [JSInvokable]
         public void OnCaretPositionChanged(int caretPosition)
         {
             foreach (var handler in _caretPositionChangedHandlers)
             {
                 handler.Invoke(caretPosition);
+            }
+        }
+
+        List<Action<string>> _pasteHandlers = new List<Action<string>>();
+
+        /// <summary>
+        /// Subscribe this event to get notified about paste actions
+        /// </summary>
+        public event Action<string> Paste
+        {
+            add
+            {
+                if (_pasteHandlers.Count == 0)
+                    Subscribe("paste").AndForget();
+                _pasteHandlers.Add(value);
+            }
+            remove
+            {
+                if (_pasteHandlers.Count == 0)
+                    return;
+                if (_pasteHandlers.Count == 1)
+                    Unsubscribe("paste").AndForget();
+                _pasteHandlers.Remove(value);
+            }
+        }
+
+        /// <summary>
+        /// To be invoked only by JS
+        /// </summary>
+        [JSInvokable]
+        public void OnPaste(string text)
+        {
+            foreach (var handler in _pasteHandlers)
+            {
+                handler.Invoke(text);
+            }
+        }
+
+        List<Action> _copyHandlers = new List<Action>();
+
+        /// <summary>
+        /// Subscribe this event to get notified about paste actions
+        /// </summary>
+        public event Action Copy
+        {
+            add
+            {
+                if (_copyHandlers.Count == 0)
+                    Subscribe("copy").AndForget();
+                _copyHandlers.Add(value);
+            }
+            remove
+            {
+                if (_copyHandlers.Count == 0)
+                    return;
+                if (_copyHandlers.Count == 1)
+                    Unsubscribe("copy").AndForget();
+                _copyHandlers.Remove(value);
+            }
+        }
+
+        /// <summary>
+        /// To be invoked only by JS
+        /// </summary>
+        [JSInvokable]
+        public void OnCopy()
+        {
+            foreach (var handler in _copyHandlers)
+            {
+                handler.Invoke();
             }
         }
 
