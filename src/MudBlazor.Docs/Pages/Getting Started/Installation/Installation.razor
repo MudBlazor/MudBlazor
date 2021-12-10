@@ -83,7 +83,7 @@
             <SectionHeader>
                 <SubTitle>4. Register Services</SubTitle>
             </SectionHeader>
-            <SectionContent Codes="@(new CodeFile(".NET 6", "InstallServicesNET6Manual"), new CodeFile(".NET 5 Wasm", "InstallServicesNET5WasmManual"), new CodeFile(".NET 5 Server", "InstallServicesNET5ServerManual"))" />
+            <SectionContent Codes="@(new[] {new CodeFile(".NET 6", "InstallServicesNET6Manual"), new CodeFile(".NET 5 Wasm", "InstallServicesNET5WasmManual"), new CodeFile(".NET 5 Server", "InstallServicesNET5ServerManual")})" />
         </DocsPageSection>
         
         
