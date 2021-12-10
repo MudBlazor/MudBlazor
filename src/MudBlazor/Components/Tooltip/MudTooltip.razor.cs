@@ -107,12 +107,31 @@ namespace MudBlazor
         public bool Inline { get; set; } = true;
 
         /// <summary>
-        /// Hides the tooltip programatically.
+        /// Returns the visible state of the Tooltip
         /// </summary>
-        public void Hide() => _isVisible = false;
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Behavior)]
+        public bool IsVisible
+        {
+            get => _isVisible;
+            set
+            {
+                if (value == _isVisible)
+                    return;
+                _isVisible = value;
+                IsVisibleChanged.InvokeAsync(_isVisible).AndForget();
+            }
+        }
 
-        private void HandleMouseOver() => _isVisible = true;
-        private void HandleMouseOut() => _isVisible = false;
+        /// <summary>
+        /// An event triggered when the state of IsVisible has changed
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Behavior)]
+        public EventCallback<bool> IsVisibleChanged { get; set; }
+
+        private void HandleMouseOver() { _isVisible = true; IsVisibleChanged.InvokeAsync(true).AndForget(); }
+        private void HandleMouseOut() { _isVisible = false; IsVisibleChanged.InvokeAsync(false).AndForget(); }
 
         private Origin ConvertPlacement()
         {
