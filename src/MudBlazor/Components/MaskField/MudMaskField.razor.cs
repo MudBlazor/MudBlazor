@@ -20,7 +20,7 @@ namespace MudBlazor
         private MudInput<string> _elementReference;
 
         [Inject] private IKeyInterceptor _keyInterceptor { get; set; }
-        [Inject] private JsEvent _jsEvent { get; set; }
+        [Inject] private IJsEvent _jsEvent { get; set; }
         [Inject] private IJsApiService _jsApiService { get; set; }
 
         private string _elementId = "maskfield_" + Guid.NewGuid().ToString().Substring(0, 8);

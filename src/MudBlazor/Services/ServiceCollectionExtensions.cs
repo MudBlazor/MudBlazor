@@ -140,7 +140,7 @@ namespace MudBlazor.Services
         /// <returns>Continues the IServiceCollection chain.</returns>
         public static IServiceCollection AddMudBlazorJsEvent(this IServiceCollection services)
         {
-            services.TryAddTransient<JsEvent>();
+            services.TryAddTransient<IJsEvent, JsEvent>();
             return services;
         }
 

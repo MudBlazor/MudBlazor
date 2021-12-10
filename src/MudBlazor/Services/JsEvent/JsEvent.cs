@@ -10,10 +10,19 @@ using MudBlazor.Interop;
 
 namespace MudBlazor.Services
 {
+    public interface IJsEvent
+    {
+        Task Connect(string elementId, JsEventOptions options);
+        Task Disconnect();
+        event Action<int> CaretPositionChanged;
+        event Action<string> Paste;
+        event Action Copy;
+    }
+
     /// <summary>
     /// Subscribe JS events of any element by html id
     /// </summary>
-    public class JsEvent : IDisposable
+    public class JsEvent : IJsEvent, IDisposable
     {
         private bool _isDisposed = false;
 
