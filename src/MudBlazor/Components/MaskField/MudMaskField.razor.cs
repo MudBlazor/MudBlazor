@@ -58,17 +58,26 @@ namespace MudBlazor
 
         private string _rawValue;
 
-        internal string RawValue
+        //internal string RawValue
+        //{
+        //    get => _rawValue;
+        //    set
+        //    {
+        //        if (_rawValue == value)
+        //            return;
+        //        SetValueAsync(Converter.Get(value), updateText: false).AndForget();
+        //        _rawValue = value;
+        //        //UltimateImplementMask(_rawValue, Mask).AndForget();
+        //    }
+        //}
+
+        internal async void SetRawValue(string rawValue, bool updateText = false)
         {
-            get => _rawValue;
-            set
-            {
-                if (_rawValue == value)
-                    return;
-                SetValueAsync(Converter.Get(value), updateText: false).AndForget();
-                _rawValue = value;
-                //UltimateImplementMask(_rawValue, Mask).AndForget();
-            }
+            if (_rawValue == rawValue)
+                return;
+            _rawValue = rawValue;
+            await SetValueAsync(Converter.Get(rawValue), updateText);
+            _rawValue = rawValue;
         }
 
         protected override async Task SetValueAsync(T value, bool updateText = true)
@@ -125,7 +134,7 @@ namespace MudBlazor
                 {
                     EnableLogging = true,
                     TargetClass = "mud-input-slot",
-                    TagName= "INPUT"
+                    TagName = "INPUT"
                 });
                 _jsEvent.CaretPositionChanged += OnCaretPositionChanged;
                 _jsEvent.Copy += OnCopy;
@@ -162,19 +171,21 @@ namespace MudBlazor
 
         private void OnCopy()
         {
-            var text = RawValue;
+            var text = _rawValue;
             _jsApiService.CopyToClipboardAsync(text);
-            Console.WriteLine($"Copy: {text}");
+            //Console.WriteLine($"Copy: {text}");
         }
 
         private void OnPaste(string text)
         {
-            Console.WriteLine($"Paste: {text}");
+            SetRawValue(text, true);
+            //await SetValueAsync(Converter.Get(text));
+            //Console.WriteLine($"Paste: {text}");
         }
 
-        private async void OnFocussed()
+        private async void OnFocussed(FocusEventArgs obj)
         {
-            await ImplementMask(RawValue, Mask);
+            await ImplementMask(_rawValue, Mask);
             await Task.Delay(1);
             SetCaretPosition(FindFirstCaretLocation());
         }
@@ -199,7 +210,7 @@ namespace MudBlazor
 
         //string val = "";
 
-        private void GetCustomCharacters()
+        private void UpdateCustomCharacters()
         {
             foreach (var item in CustomCharacterTypes)
             {
@@ -289,16 +300,16 @@ namespace MudBlazor
             //    }
             //}
 
-            RawValue = rawValue;
+            _rawValue = rawValue;
         }
 
         public string GetRawValue()
         {
-            if (RawValue == null)
+            if (_rawValue == null)
             {
                 return "";
             }
-            return RawValue;
+            return _rawValue;
         }
 
         private string GetSemiRawText(string value)
@@ -336,7 +347,7 @@ namespace MudBlazor
                 rawText = "";
             }
 
-            GetCustomCharacters();
+            UpdateCustomCharacters();
             string semiRawText = GetSemiRawText(rawText);
             string maskedText = "";
 
@@ -376,7 +387,7 @@ namespace MudBlazor
             }
             string maskedText = "";
 
-            GetCustomCharacters();
+            UpdateCustomCharacters();
             //Find raw mask by removing not masking characters(so remains isLetter, isDigit or custom(regex) key chars)
             string rawMask = GetRawMask();
             //Find raw text(we use reverse masking for all text)
@@ -528,16 +539,6 @@ namespace MudBlazor
                 {
                     result = Text;
                 }
-                //for (int i = 0; i < Text.Length; i++)
-                //{
-                //    if (Text.Length <= _caretPosition + i || Text[_caretPosition + i] == PlaceholderCharacter)
-                //        return Text;
-                //    if (Regex.IsMatch(Text[_caretPosition + i].ToString(), "^[a-zA-Z0-9]$"))
-                //    {
-                //        result = Text.Remove(_caretPosition + i, 1).Insert(_caretPosition + i, PlaceholderCharacter.ToString());
-                //        break;
-                //    }
-                //}
             }
             else
             {
@@ -571,21 +572,21 @@ namespace MudBlazor
             return false;
         }
 
-        private Dictionary<int, char> _maskSymbols = new Dictionary<int, char>();
+        //private Dictionary<int, char> _maskSymbols = new Dictionary<int, char>();
 
-        private void UpdateMaskSymbols()
-        {
-            _maskSymbols.Clear();
+        //private void UpdateMaskSymbols()
+        //{
+        //    _maskSymbols.Clear();
 
-            for (int i = 0; i < Mask.Length; i++)
-            {
-                int a = i;
-                if (GetCharacterType(Mask[a].ToString()) == CharacterType.Other)
-                {
-                    _maskSymbols.Add(a, Mask[a]);
-                }
-            }
-        }
+        //    for (int i = 0; i < Mask.Length; i++)
+        //    {
+        //        int a = i;
+        //        if (GetCharacterType(Mask[a].ToString()) == CharacterType.Other)
+        //        {
+        //            _maskSymbols.Add(a, Mask[a]);
+        //        }
+        //    }
+        //}
 
         private string GetRawMask()
         {
