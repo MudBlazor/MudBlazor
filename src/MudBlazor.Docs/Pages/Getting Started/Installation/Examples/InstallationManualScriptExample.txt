@@ -1,3 +1,0 @@
-﻿@namespace MudBlazor.Docs.Examples
-
-<script src="_content/MudBlazor/MudBlazor.min.js"></script>
