@@ -8,18 +8,53 @@
 @using MudBlazor.Docs.Extensions;
 @using MudBlazor.Docs.Models;
 
+
+<MudTabs>
+    <Header>
+        
+    </Header>
+    <PrePanelContent>
+
+    </PrePanelContent>
+    <ChildContent>
+        @if (Codes == null)
+        {
+            <div class="@SourceClassname">
+                <div class="@SourceContainerClassname">
+                    @CodeComponent(Code)
+                </div>
+            </div>
+        }
+        else if (Codes != null)
+        {
+            @foreach (var codeFile in Codes)
+            {
+                <MudTabPanel Text="@codeFile.title">
+                    <div class="@SourceClassname">
+                        <div class="@SourceContainerClassname">
+                            @CodeComponent(codeFile.code)
+                        </div>
+                    </div>
+                </MudTabPanel>
+            }
+        }
+    </ChildContent>
+</MudTabs>
+
+
+@*
 @if (Code != null && ChildContent != null)
 {
     <div class="@Classname" style="@Style">
         @if (Code != null)
         {
             <MudToolBar Class="docs-section-content-toolbar">
-                <MudSpacer />
+                <MudSpacer/>
                 <MudTooltip Text="Online Playground" Arrow="true" Color="Color.Dark" Placement="Placement.Top" Delay="300" Duration="500">
                     <MudButton OnClick="RunOnTryMudBlazor" StartIcon="@Icons.Rounded.PlayArrow" IconColor="Color.Success" Color="Color.Default" Size="Size.Small">Run</MudButton>
                 </MudTooltip>
-                <MudButton OnClick="OnShowCode" StartIcon="@(ShowCode? @Icons.Rounded.CodeOff : Icons.Rounded.Code)" Color="Color.Default" Size="Size.Small">
-                    @(ShowCode? "Hide code": "Show code")
+                <MudButton OnClick="OnShowCode" StartIcon="@(ShowCode ? @Icons.Rounded.CodeOff : Icons.Rounded.Code)" Color="Color.Default" Size="Size.Small">
+                    @(ShowCode ? "Hide code" : "Show code")
                 </MudButton>
             </MudToolBar>
         }
@@ -33,12 +68,14 @@
 }
 @if (Code != null)
 {
-    <div class="@SourceClassname">
-        <div class="@SourceContainerClassname">
-            @CodeComponent(Code)
+
+        <div class="@SourceClassname">
+            <div class="@SourceContainerClassname">
+                @CodeComponent(file)
+            </div>
         </div>
-    </div>
 }
+*@
 
 @code {
 
@@ -73,8 +110,6 @@
     
     [Parameter] public string Class { get; set; }
     [Parameter] public string Style { get; set; }
-    
-    [Parameter] public bool DisplayFlex { get; set; }
 
     [Parameter] public bool FullWidth { get; set; }
 
@@ -84,9 +119,12 @@
     
     [Parameter] public string Code { get; set; }
     
+    [Parameter] public IEnumerable<CodeFile> Codes { get; set; }
+
     [Parameter] public bool ShowCode { get; set; } = true;
 
     [Parameter] public RenderFragment ChildContent { get; set; }
+    
     
     public void OnShowCode()
     {
