@@ -8,6 +8,14 @@
     z-index: 100;
 }
 
+.docs-line-height-normal{
+  line-height: normal;
+}
+
+.docs-no-text-transform{
+  text-transform: none;
+}
+
 .docs-search-bar {
     & .mud-input {
         height: 42px;
