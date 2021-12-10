@@ -14,7 +14,7 @@
 				TextUpdateSuppression="@TextUpdateSuppression" 
 				Value="@Text"
 				MaxLength="@MaxLength"
-                      ValueChanged="@((s) => SetTextAsync(s))" Placeholder="@Placeholder" Disabled=@Disabled DisableUnderLine="@DisableUnderLine" ReadOnly="@ReadOnly" 
+                      ValueChanged="(s) => SetTextAsync(s)" Placeholder="@Placeholder" Disabled=@Disabled DisableUnderLine="@DisableUnderLine" ReadOnly="@ReadOnly" 
                       Adornment="@Adornment" AdornmentText="@AdornmentText" AdornmentIcon="@AdornmentIcon" AdornmentColor="@AdornmentColor" IconSize="@IconSize" OnAdornmentClick="@OnAdornmentClick" Error="@Error" 
                       Immediate="true" Margin="@Margin" OnBlur="@OnBlurred"  OnInternalInputChanged="OnChange" 
                       OnKeyDown="HandleKeyDown" @onfocus="OnFocussed"
