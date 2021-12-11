@@ -20,6 +20,7 @@
 @code {
 
     [CascadingParameter] private DocsPage DocsPage { get; set; }
+    [CascadingParameter] private SectionSubGroups SubGroup { get; set; }
 
     protected string Classname =>
     new CssBuilder("docs-section-header")
