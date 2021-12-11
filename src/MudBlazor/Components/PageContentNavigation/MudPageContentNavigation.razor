@@ -9,9 +9,9 @@
             @Headline
         </MudText>
         <MudNavMenu Class="pl-4">
-            @foreach (var docSection in _sections)
+            @foreach (var docSection in _sections.OrderBy(x => x.LevelSortingValue))
             {
-                <MudNavLink Match="NavLinkMatch.All" Class="@GetNavLinkClass(docSection)" @onclick="@(e => OnNavLinkClick(docSection.Id))">
+                <MudNavLink @key="docSection.Id" Match="NavLinkMatch.All" Class="@GetNavLinkClass(docSection)" @onclick="@(e => OnNavLinkClick(docSection.Id))">
                     @docSection.Title
                 </MudNavLink>
 			}

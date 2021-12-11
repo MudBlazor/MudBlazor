@@ -34,6 +34,7 @@ namespace MudBlazor.Docs.Components
         private bool _displayView;
         private string _componentName;
         public event Action<Stopwatch> Rendered;
+        private Dictionary<DocsPageSection, MudPageContentSection> _sectionMapper = new();
 
         int _sectionCount;
         public int SectionCount
@@ -78,7 +79,6 @@ namespace MudBlazor.Docs.Components
             }
         }
 
-        private int GetSectionLevel(DocsPageSection section) => 0;
 
         internal void AddSection(DocsSectionLink sectionLinkInfo, DocsPageSection section)
         {
@@ -92,8 +92,16 @@ namespace MudBlazor.Docs.Components
 
                     if (_contentNavigation.Sections.FirstOrDefault(x => x.Id == sectionLinkInfo.Id) == default)
                     {
-                        _contentNavigation.AddSection(
-                            new MudPageContentSection(sectionLinkInfo.Title, GetSectionLevel(section), sectionLinkInfo.Id), false);
+                        MudPageContentSection parentInfo = null;
+                       if(section.ParentSection != null && _sectionMapper.ContainsKey(section.ParentSection) == true)
+                        {
+                            parentInfo = _sectionMapper[section.ParentSection];
+                        }
+
+                        var info =
+                            new MudPageContentSection(sectionLinkInfo.Title, sectionLinkInfo.Id, section.Level, parentInfo);
+                        _sectionMapper.Add(section, info);
+                        _contentNavigation.AddSection(info, false);
                     }
                 }
 

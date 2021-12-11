@@ -102,6 +102,8 @@ namespace MudBlazor
         /// <param name="forceUpdate">If true, StateHasChanged is called, forcing a rerender of the component</param>
         public void AddSection(string sectionName, string sectionId, bool forceUpdate) => AddSection(new(sectionName, sectionId), forceUpdate);
 
+        private Dictionary<MudPageContentSection, MudPageContentSection> _parentMapper = new();
+
         /// <summary>
         /// Add a section to the content navigation
         /// </summary>
@@ -110,6 +112,14 @@ namespace MudBlazor
         public void AddSection(MudPageContentSection section, bool forceUpdate)
         {
             _sections.Add(section);
+
+            int diffRootLevel = 1_000_000;
+            int counter = 0;
+            foreach (var item in _sections.Where(x => x.Parent == null))
+            {
+                item.SetLevelStructure(counter, diffRootLevel);
+                counter += diffRootLevel;
+            }
 
             if (section.Id == ScrollSpy.CenteredSection)
             {
