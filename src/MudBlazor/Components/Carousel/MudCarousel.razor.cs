@@ -11,21 +11,20 @@ namespace MudBlazor
     {
         protected string Classname =>
                     new CssBuilder("mud-carousel")
-                         .AddClass($"mud-carousel-{(DelimitersColor ?? _currentColor).ToDescriptionString()}")
+                         .AddClass($"mud-carousel-{(BulletsColor ?? _currentColor).ToDescriptionString()}")
                                  .AddClass(Class)
                                  .Build();
 
         protected string NavigationButtonsClassName =>
                     new CssBuilder()
-                        .AddClass($"align-self-{ConvertArrowsPosition(ArrowsPosition).ToDescriptionString()}", !(NavigationButtonsClass ?? "").Contains("align-self-"))
+                        .AddClass($"align-self-{ConvertPosition(ArrowsPosition).ToDescriptionString()}", !(NavigationButtonsClass ?? "").Contains("align-self-"))
                         .AddClass("mud-carousel-elements-rtl", RightToLeft)
                         .AddClass(NavigationButtonsClass)
                         .Build();
 
-        protected string DelimitersButtonsClassName =>
+        protected string BulletsButtonsClassName =>
                     new CssBuilder()
-                        .AddClass("align-self-center", !(DelimitersClass ?? "").Contains("align-self-"))
-                        .AddClass(DelimitersClass)
+                        .AddClass(BulletsClass)
                         .Build();
 
         private Timer _timer;
@@ -34,7 +33,7 @@ namespace MudBlazor
         private TimeSpan _cycleTimeout = TimeSpan.FromSeconds(5);
         private void TimerElapsed(object stateInfo) => InvokeAsync(async () => await TimerTickAsync());
 
-        private static Position ConvertArrowsPosition(Position position)
+        private static Position ConvertPosition(Position position)
         {
             return position switch
             {
@@ -60,15 +59,34 @@ namespace MudBlazor
         [Parameter] public Position ArrowsPosition { get; set; } = Position.Center;
 
         /// <summary>
+        /// Gets or Sets if bar with Bullets must be visible
+        /// </summary>
+        [Parameter] public bool ShowBullets { get; set; } = true;
+
+        /// <summary>
+        /// Sets the position of the bullets. By default, the position is the Bottom position
+        /// </summary>
+        [Parameter] public Position BulletsPosition { get; set; } = Position.Bottom;
+
+        /// <summary>
+        /// Gets or Sets the Bullets color.
+        /// If not set, the color is determined based on the <see cref="MudCarouselItem.Color"/> property of the active child.
+        /// </summary>
+        [Parameter] public Color? BulletsColor { get; set; }
+
+
+        /// <summary>
         /// Gets or Sets if bottom bar with Delimiters must be visible
         /// </summary>
-        [Parameter] public bool ShowDelimiters { get; set; } = true;
+        [Obsolete($"Use {nameof(BulletsPosition)} instead", false)]
+        [Parameter] public bool ShowDelimiters { get => ShowBullets; set => ShowBullets = value; }
 
         /// <summary>
         /// Gets or Sets the Delimiters color.
         /// If not set, the color is determined based on the <see cref="MudCarouselItem.Color"/> property of the active child.
         /// </summary>
-        [Parameter] public Color? DelimitersColor { get; set; }
+        [Obsolete($"Use {nameof(BulletsColor)} instead", false)]
+        [Parameter] public Color? DelimitersColor { get => BulletsColor; set => BulletsColor = value; }
 
         /// <summary>
         /// Gets or Sets automatic cycle on item collection
@@ -116,9 +134,15 @@ namespace MudBlazor
         [Parameter] public string NavigationButtonsClass { get; set; }
 
         /// <summary>
+        /// Gets or Sets custom class(es) for Bullets buttons
+        /// </summary>
+        [Parameter] public string BulletsClass { get; set; }
+
+        /// <summary>
         /// Gets or Sets custom class(es) for Delimiters buttons
         /// </summary>
-        [Parameter] public string DelimitersClass { get; set; }
+        [Obsolete($"Use {nameof(BulletsClass)} instead", false)]
+        [Parameter] public string DelimetersClass { get => BulletsClass; set => BulletsClass = value; }
 
         /// <summary>
         /// Custom previous navigation icon.
@@ -126,12 +150,12 @@ namespace MudBlazor
         [Parameter] public string PreviousIcon { get; set; } = Icons.Material.Filled.NavigateBefore;
 
         /// <summary>
-        /// Custom selected delimiter icon.
+        /// Custom selected bullet icon.
         /// </summary>
         [Parameter] public string CheckedIcon { get; set; } = Icons.Material.Filled.RadioButtonChecked;
 
         /// <summary>
-        /// Custom unselected delimiter icon.
+        /// Custom unselected bullet icon.
         /// </summary>
         [Parameter] public string UncheckedIcon { get; set; } = Icons.Material.Filled.RadioButtonUnchecked;
 
@@ -153,8 +177,14 @@ namespace MudBlazor
 
 
         /// <summary>
+        /// Gets or Sets the Template for Bullets
+        /// </summary>
+        [Parameter] public RenderFragment<bool> BulletsTemplate { get; set; }
+
+        /// <summary>
         /// Gets or Sets the Template for Delimiters
         /// </summary>
+        [Obsolete($"Use {nameof(BulletsTemplate)} instead", false)]
         [Parameter] public RenderFragment<bool> DelimiterTemplate { get; set; }
 
 
