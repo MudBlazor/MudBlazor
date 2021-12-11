@@ -52,23 +52,30 @@ namespace MudBlazor
         /// <summary>
         /// Gets or Sets if 'Next' and 'Previous' arrows must be visible
         /// </summary>
-        [Parameter] public bool ShowArrows { get; set; } = true;
+        [Parameter]
+        [Category(CategoryTypes.Carousel.Behavior)]
+        public bool ShowArrows { get; set; } = true;
 
         /// <summary>
         /// Sets the position of the arrows. By default, the position is the Center position
         /// </summary>
-        [Parameter] public Position ArrowsPosition { get; set; } = Position.Center;
+        [Parameter]
+        [Category(CategoryTypes.Carousel.Appearance)]
+        public Position ArrowsPosition { get; set; } = Position.Center;
 
         /// <summary>
         /// Gets or Sets if bottom bar with Delimiters musb be visible
         /// </summary>
-        [Parameter] public bool ShowDelimiters { get; set; } = true;
+        [Parameter]
+        [Category(CategoryTypes.Carousel.Behavior)]
+        public bool ShowDelimiters { get; set; } = true;
 
 
         /// <summary>
         /// Gets or Sets automatic cycle on item collection
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.Carousel.Behavior)]
         public bool AutoCycle
         {
             get => _autoCycle;
@@ -89,6 +96,7 @@ namespace MudBlazor
         /// Gets or Sets the Auto Cycle time
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.Carousel.Behavior)]
         public TimeSpan AutoCycleTime
         {
             get => _cycleTimeout;
@@ -108,49 +116,67 @@ namespace MudBlazor
         /// <summary>
         /// Gets or Sets custom class(es) for 'Next' and 'Previous' arrows
         /// </summary>
-        [Parameter] public string NavigationButtonsClass { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.Carousel.Appearance)]
+        public string NavigationButtonsClass { get; set; }
 
         /// <summary>
         /// Gets or Sets custom class(es) for Delimiters buttons
         /// </summary>
-        [Parameter] public string DelimitersClass { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.Carousel.Appearance)]
+        public string DelimitersClass { get; set; }
 
         /// <summary>
         /// Custom previous navigation icon.
         /// </summary>
-        [Parameter] public string PreviousIcon { get; set; } = Icons.Material.Filled.NavigateBefore;
+        [Parameter]
+        [Category(CategoryTypes.Carousel.Appearance)]
+        public string PreviousIcon { get; set; } = Icons.Material.Filled.NavigateBefore;
 
         /// <summary>
         /// Custom selected delimiter icon.
         /// </summary>
-        [Parameter] public string CheckedIcon { get; set; } = Icons.Material.Filled.RadioButtonChecked;
+        [Parameter]
+        [Category(CategoryTypes.Carousel.Appearance)]
+        public string CheckedIcon { get; set; } = Icons.Material.Filled.RadioButtonChecked;
 
         /// <summary>
         /// Custom unselected delimiter icon.
         /// </summary>
-        [Parameter] public string UncheckedIcon { get; set; } = Icons.Material.Filled.RadioButtonUnchecked;
+        [Parameter]
+        [Category(CategoryTypes.Carousel.Appearance)]
+        public string UncheckedIcon { get; set; } = Icons.Material.Filled.RadioButtonUnchecked;
 
         /// <summary>
         /// Custom next navigation icon.
         /// </summary>
-        [Parameter] public string NextIcon { get; set; } = Icons.Material.Filled.NavigateNext;
+        [Parameter]
+        [Category(CategoryTypes.Carousel.Appearance)]
+        public string NextIcon { get; set; } = Icons.Material.Filled.NavigateNext;
 
         /// <summary>
         /// Gets or Sets the Template for the Left Arrow
         /// </summary>
-        [Parameter] public RenderFragment NextButtonTemplate { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.Carousel.Appearance)]
+        public RenderFragment NextButtonTemplate { get; set; }
 
 
         /// <summary>
         /// Gets or Sets the Template for the Right Arrow
         /// </summary>
-        [Parameter] public RenderFragment PreviousButtonTemplate { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.Carousel.Appearance)]
+        public RenderFragment PreviousButtonTemplate { get; set; }
 
 
         /// <summary>
         /// Gets or Sets the Template for Delimiters
         /// </summary>
-        [Parameter] public RenderFragment<bool> DelimiterTemplate { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.Carousel.Appearance)]
+        public RenderFragment<bool> DelimiterTemplate { get; set; }
 
 
         /// <summary>

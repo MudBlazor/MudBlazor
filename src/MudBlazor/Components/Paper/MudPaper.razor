@@ -30,50 +30,70 @@
     /// <summary>
     /// The higher the number, the heavier the drop-shadow.
     /// </summary>
-    [Parameter] public int Elevation { set; get; } = 1;
+    [Parameter]
+    [Category(CategoryTypes.Paper.Appearance)]
+    public int Elevation { set; get; } = 1;
 
     /// <summary>
     /// If true, border-radius is set to 0.
     /// </summary>
-    [Parameter] public bool Square { get; set; }
+    [Parameter] 
+    [Category(CategoryTypes.Paper.Appearance)]
+    public bool Square { get; set; }
 
     /// <summary>
     /// If true, card will be outlined.
     /// </summary>
-    [Parameter] public bool Outlined { get; set; }
+    [Parameter]
+    [Category(CategoryTypes.Paper.Appearance)]
+    public bool Outlined { get; set; }
 
     /// <summary>
     /// Height of the component.
     /// </summary>
-    [Parameter] public string Height { get; set; }
+    [Parameter] 
+    [Category(CategoryTypes.Paper.Appearance)]
+    public string Height { get; set; }
 
     /// <summary>
     /// Width of the component.
     /// </summary>
-    [Parameter] public string Width { get; set; }
+    [Parameter] 
+    [Category(CategoryTypes.Paper.Appearance)]
+    public string Width { get; set; }
 
     /// <summary>
     /// Max-Height of the component.
     /// </summary>
-    [Parameter] public string MaxHeight { get; set; }
+    [Parameter] 
+    [Category(CategoryTypes.Paper.Appearance)]
+    public string MaxHeight { get; set; }
 
     /// <summary>
     /// Max-Width of the component.
     /// </summary>
-    [Parameter] public string MaxWidth { get; set; }
+    [Parameter]
+    [Category(CategoryTypes.Paper.Appearance)]
+    public string MaxWidth { get; set; }
 
     /// <summary>
     /// Min-Height of the component.
     /// </summary>
-    [Parameter] public string MinHeight { get; set; }
+    [Parameter] 
+    [Category(CategoryTypes.Paper.Appearance)]
+    public string MinHeight { get; set; }
 
     /// <summary>
     /// Min-Width of the component.
     /// </summary>
-    [Parameter] public string MinWidth { get; set; }
+    [Parameter]
+    [Category(CategoryTypes.Paper.Appearance)]
+    public string MinWidth { get; set; }
 
     /// <summary>
     /// Child content of the component.
     /// </summary>
-    [Parameter] public RenderFragment ChildContent { get; set; }
+    [Parameter] 
+    [Category(CategoryTypes.Paper.Behavior)]
+    public RenderFragment ChildContent { get; set; }
 }

@@ -21,6 +21,7 @@ namespace MudBlazor
         /// The minimum allowed value of the slider. Should not be equal to max.
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.Slider.Validation)]
         public T Min
         {
             get => Converter.Get(_min);
@@ -32,6 +33,7 @@ namespace MudBlazor
         /// </summary>
         /// 
         [Parameter]
+        [Category(CategoryTypes.Slider.Validation)]
         public T Max
         {
             get => Converter.Get(_max);
@@ -43,6 +45,7 @@ namespace MudBlazor
         /// </summary>
         /// 
         [Parameter]
+        [Category(CategoryTypes.Slider.Validation)]
         public T Step
         {
             get => Converter.Get(_step);
@@ -54,19 +57,24 @@ namespace MudBlazor
         /// </summary>
         /// 
         [Parameter]
+        [Category(CategoryTypes.Slider.Behavior)]
         public bool Disabled { get; set; }
 
         /// <summary>
         /// Child content of component.
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.Slider.Behavior)]
         public RenderFragment ChildContent { get; set; }
 
-        [Parameter] public Converter<T> Converter { get; set; } = new DefaultConverter<T>() { Culture = CultureInfo.InvariantCulture };
+        [Parameter]
+        [Category(CategoryTypes.Slider.Behavior)]
+        public Converter<T> Converter { get; set; } = new DefaultConverter<T>() { Culture = CultureInfo.InvariantCulture };
 
         [Parameter] public EventCallback<T> ValueChanged { get; set; }
 
         [Parameter]
+        [Category(CategoryTypes.Slider.Data)]
         public T Value
         {
             get => Converter.Get(_value);
@@ -83,7 +91,9 @@ namespace MudBlazor
         /// <summary>
         /// The color of the component. It supports the Primary, Secondary and Tertiary theme colors.
         /// </summary>
-        [Parameter] public Color Color { get; set; } = Color.Primary;
+        [Parameter]
+        [Category(CategoryTypes.Slider.Appearance)]
+        public Color Color { get; set; } = Color.Primary;
 
         protected string InputClassName => $"mud-slider-{Color.ToDescriptionString()}";
 
@@ -104,6 +114,7 @@ namespace MudBlazor
         /// If false, the Value is updated only on releasing the handle.
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.Slider.Behavior)]
         public bool Immediate { get; set; } = true;
 
         //protected static string ToFpS(double value)
