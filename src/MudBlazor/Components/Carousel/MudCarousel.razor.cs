@@ -72,12 +72,14 @@ namespace MudBlazor
         /// <summary>
         /// Sets the position of the bullets. By default, the position is the Bottom position
         /// </summary>
+        [Category(CategoryTypes.Carousel.Appearance)]
         [Parameter] public Position BulletsPosition { get; set; } = Position.Bottom;
 
         /// <summary>
         /// Gets or Sets the Bullets color.
         /// If not set, the color is determined based on the <see cref="MudCarouselItem.Color"/> property of the active child.
         /// </summary>
+        [Category(CategoryTypes.Carousel.Appearance)]
         [Parameter] public Color? BulletsColor { get; set; }
 
 
