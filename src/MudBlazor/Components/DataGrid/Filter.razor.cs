@@ -38,6 +38,8 @@ namespace MudBlazor
         }
         private string _valueString;
         private double _valueNumber;
+        private Enum _valueEnum = null;
+        private bool _valueBool;
 
         #region Computed Properties and Functions
 
@@ -53,7 +55,7 @@ namespace MudBlazor
         {
             get
             {
-                return FilterDefinition<T>.NumericTypes.Contains(dataType);
+                return FilterOperator.NumericTypes.Contains(dataType);
             }
         }
 
@@ -65,9 +67,12 @@ namespace MudBlazor
 
             if (dataType == typeof(string))
                 _valueString = Value == null ? null : Value.ToString();
-
-            if (isNumber && Value != null)
+            else if (isNumber)
                 _valueNumber = Value == null ? 0 : Convert.ToDouble(Value);
+            else if (dataType.IsEnum)
+                _valueEnum = Value == null ? null : (Enum)Value;
+            else if (dataType == typeof(bool))
+                _valueBool = Value == null ? false : Convert.ToBoolean(Value);
         }
 
         internal void StringValueChanged(string value)
@@ -79,6 +84,18 @@ namespace MudBlazor
         internal void NumberValueChanged(double value)
         {
             _valueNumber = value;
+            ValueChanged.InvokeAsync(value);
+        }
+
+        internal void EnumValueChanged(Enum value)
+        {
+            _valueEnum = value;
+            ValueChanged.InvokeAsync(value);
+        }
+
+        internal void BoolValueChanged(bool value)
+        {
+            _valueBool = value;
             ValueChanged.InvokeAsync(value);
         }
 

@@ -3,9 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using System;
-using System.Collections.Generic;
 using System.Linq.Expressions;
-using System.Numerics;
 
 namespace MudBlazor
 {
@@ -24,38 +22,19 @@ namespace MudBlazor
             }
         }
 
-        /// <summary>
-        /// This should be in a separate utility class.
-        /// </summary>
-        internal static readonly HashSet<Type> NumericTypes = new HashSet<Type>
-        {
-            typeof(int),
-            typeof(double),
-            typeof(decimal),
-            typeof(long),
-            typeof(short),
-            typeof(sbyte),
-            typeof(byte),
-            typeof(ulong),
-            typeof(ushort),
-            typeof(uint),
-            typeof(float),
-            typeof(BigInteger)
-        };
-
         private bool isNumber
         {
             get
             {
-                return NumericTypes.Contains(dataType);
+                return FilterOperator.NumericTypes.Contains(dataType);
             }
         }
 
         internal Func<T, bool> GenerateFilterFunction()
         {
             // short circuit
-            if (Value == null)
-                return new Func<T, bool>(x => true);
+            //if (Value == null)
+            //    return new Func<T, bool>(x => true);
 
             var parameter = Expression.Parameter(typeof(T), "x");
 
@@ -66,22 +45,47 @@ namespace MudBlazor
                 var field = Expression.Property(parameter, typeof(T).GetProperty(Field));
                 var valueString = Value?.ToString();
 
+                // reuseable expressions
+                var trim = Expression.Call(field, dataType.GetMethod("Trim", Type.EmptyTypes));
+
                 switch (Operator)
                 {
-                    case "contains":
+                    case FilterOperator.String.Contains:
+                        if (Value == null)
+                            return alwaysTrue;
+
                         comparison = Expression.Call(field, dataType.GetMethod("Contains", new[] { dataType }), Expression.Constant(valueString));
                         break;
-                    case "equals":
+                    case FilterOperator.String.Equal:
+                        if (Value == null)
+                            return alwaysTrue;
+
                         comparison = Expression.MakeBinary(ExpressionType.Equal, field, Expression.Constant(valueString));
                         break;
-                    case "starts with":
+                    case FilterOperator.String.StartsWith:
+                        if (Value == null)
+                            return alwaysTrue;
+
                         comparison = Expression.Call(field, dataType.GetMethod("StartsWith", new[] { dataType }), Expression.Constant(valueString));
                         break;
-                    case "ends with":
+                    case FilterOperator.String.EndsWith:
+                        if (Value == null)
+                            return alwaysTrue;
+
                         comparison = Expression.Call(field, dataType.GetMethod("EndsWith", new[] { dataType }), Expression.Constant(valueString));
                         break;
+                    case FilterOperator.String.Empty:
+                        comparison = Expression.MakeBinary(ExpressionType.Or,
+                            Expression.MakeBinary(ExpressionType.Equal, field, Expression.Constant(null, dataType)),
+                            Expression.MakeBinary(ExpressionType.Equal, trim, Expression.Constant(string.Empty, dataType)));
+                        break;
+                    case FilterOperator.String.NotEmpty:
+                        comparison = Expression.MakeBinary(ExpressionType.And,
+                            Expression.MakeBinary(ExpressionType.NotEqual, field, Expression.Constant(null, dataType)),
+                            Expression.MakeBinary(ExpressionType.NotEqual, trim, Expression.Constant(string.Empty, dataType)));
+                        break;
                     default:
-                        return new Func<T, bool>(x => true);
+                        return alwaysTrue;
                 }
             }
             else if (isNumber)
@@ -91,31 +95,98 @@ namespace MudBlazor
 
                 switch (Operator)
                 {
-                    case "=":
+                    case FilterOperator.Number.Equal:
+                        if (Value == null)
+                            return alwaysTrue;
+
                         comparison = Expression.MakeBinary(ExpressionType.Equal, field, Expression.Constant(valueNumber));
                         break;
-                    case "!=":
+                    case FilterOperator.Number.NotEqual:
+                        if (Value == null)
+                            return alwaysTrue;
+
                         comparison = Expression.MakeBinary(ExpressionType.NotEqual, field, Expression.Constant(valueNumber));
                         break;
-                    case ">":
+                    case FilterOperator.Number.GreaterThan:
+                        if (Value == null)
+                            return alwaysTrue;
+
                         comparison = Expression.MakeBinary(ExpressionType.GreaterThan, field, Expression.Constant(valueNumber));
                         break;
-                    case ">=":
+                    case FilterOperator.Number.GreaterThanOrEqual:
+                        if (Value == null)
+                            return alwaysTrue;
+
                         comparison = Expression.MakeBinary(ExpressionType.GreaterThanOrEqual, field, Expression.Constant(valueNumber));
                         break;
-                    case "<":
+                    case FilterOperator.Number.LessThan:
+                        if (Value == null)
+                            return alwaysTrue;
+
                         comparison = Expression.MakeBinary(ExpressionType.LessThan, field, Expression.Constant(valueNumber));
                         break;
-                    case "<=":
+                    case FilterOperator.Number.LessThanOrEqual:
+                        if (Value == null)
+                            return alwaysTrue;
+
                         comparison = Expression.MakeBinary(ExpressionType.LessThanOrEqual, field, Expression.Constant(valueNumber));
                         break;
+                    case FilterOperator.Number.Empty:
+                        comparison = Expression.MakeBinary(ExpressionType.Equal, field, Expression.Constant(null, dataType));
+                        break;
+                    case FilterOperator.Number.NotEmpty:
+                        comparison = Expression.MakeBinary(ExpressionType.NotEqual, field, Expression.Constant(null, dataType));
+                        break;
+
                     default:
-                        return new Func<T, bool>(x => true);
+                        return alwaysTrue;
+                }
+            }
+            else if (dataType.IsEnum)
+            {
+                var field = Expression.Convert(Expression.Property(parameter, typeof(T).GetProperty(Field)), dataType);
+                var valueEnum = Value == null ? null : (Enum)Value;
+
+                switch (Operator)
+                {
+                    case FilterOperator.Enum.Is:
+                        if (Value == null)
+                            return alwaysTrue;
+
+                        comparison = Expression.MakeBinary(ExpressionType.Equal, field, Expression.Convert(Expression.Constant(valueEnum), dataType));
+                        break;
+                    case FilterOperator.Enum.IsNot:
+                        if (Value == null)
+                            return alwaysTrue;
+
+                        comparison = Expression.MakeBinary(ExpressionType.NotEqual, field, Expression.Convert(Expression.Constant(valueEnum), dataType));
+                        break;
+
+                    default:
+                        return alwaysTrue;
+                }
+            }
+            else if (dataType == typeof(bool))
+            {
+                var field = Expression.Convert(Expression.Property(parameter, typeof(T).GetProperty(Field)), dataType);
+                var valueBool = Value == null ? false : Convert.ToBoolean(Value);
+
+                switch (Operator)
+                {
+                    case FilterOperator.Enum.Is:
+                        if (Value == null)
+                            return alwaysTrue;
+
+                        comparison = Expression.MakeBinary(ExpressionType.Equal, field, Expression.Constant(valueBool));
+                        break;
+
+                    default:
+                        return alwaysTrue;
                 }
             }
             else
             {
-                return new Func<T, bool>(x => true);
+                return alwaysTrue;
             }
 
             var ex = Expression.Lambda<Func<T, bool>>(comparison, parameter);
@@ -123,5 +194,6 @@ namespace MudBlazor
             return ex.Compile();
         }
 
+        private Func<T, bool> alwaysTrue = (x) => true;
     }
 }

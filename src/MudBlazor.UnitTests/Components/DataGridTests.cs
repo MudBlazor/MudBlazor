@@ -17,6 +17,7 @@ namespace MudBlazor.UnitTests.Components
 {
     public record TestModel1(string Name, int Age);
     public record TestModel2(string Name, int Age, DateTime Date);
+    public record TestModel3(string Name, int Age, Severity Status);
 
     [TestFixture]
     public class DataGridTests : BunitTest
@@ -100,7 +101,7 @@ namespace MudBlazor.UnitTests.Components
             {
                 Id = Guid.NewGuid(),
                 Field = "Name",
-                Operator = "equals",
+                Operator = FilterOperator.String.Equal,
                 Value = "C"
             });
             dataGrid.Render();
@@ -397,24 +398,122 @@ namespace MudBlazor.UnitTests.Components
             {
                 Id = Guid.NewGuid(),
                 Field = "Name",
-                Operator = "contains",
+                Operator = FilterOperator.String.Contains,
                 Value = "Joe"
             };
             var func = filterDefinition.GenerateFilterFunction();
             Assert.IsFalse(func.Invoke(new("Does not contain", 45)));
             Assert.IsTrue(func.Invoke(new("Joe", 45)));
 
-            // test filter definition on the Name property (handle null value)
+            // test filter definition on the Name property (string contains, null)
             filterDefinition = new FilterDefinition<TestModel1>
             {
                 Id = Guid.NewGuid(),
                 Field = "Name",
-                Operator = "equals",
+                Operator = FilterOperator.String.Contains,
+                Value = null
+            };
+            func = filterDefinition.GenerateFilterFunction();
+            Assert.IsTrue(func.Invoke(new("Does not contain", 45)));
+            Assert.IsTrue(func.Invoke(new("Joe", 45)));
+
+            // test filter definition on the Name property (string equals)
+            filterDefinition = new FilterDefinition<TestModel1>
+            {
+                Id = Guid.NewGuid(),
+                Field = "Name",
+                Operator = FilterOperator.String.Equal,
+                Value = "Joe"
+            };
+            func = filterDefinition.GenerateFilterFunction();
+            Assert.IsFalse(func.Invoke(new("Not Joe", 45)));
+            Assert.IsTrue(func.Invoke(new("Joe", 45)));
+
+            // test filter definition on the Name property (string equals, null)
+            filterDefinition = new FilterDefinition<TestModel1>
+            {
+                Id = Guid.NewGuid(),
+                Field = "Name",
+                Operator = FilterOperator.String.Equal,
                 Value = null
             };
             func = filterDefinition.GenerateFilterFunction();
             Assert.IsTrue(func.Invoke(new("Joe Not", 45)));
             Assert.IsTrue(func.Invoke(new("Joe", 45)));
+
+            // test filter definition on the Name property (string starts with)
+            filterDefinition = new FilterDefinition<TestModel1>
+            {
+                Id = Guid.NewGuid(),
+                Field = "Name",
+                Operator = FilterOperator.String.StartsWith,
+                Value = "Joe"
+            };
+            func = filterDefinition.GenerateFilterFunction();
+            Assert.IsFalse(func.Invoke(new("Not Joe", 45)));
+            Assert.IsTrue(func.Invoke(new("Joe", 45)));
+
+            // test filter definition on the Name property (string starts with, null)
+            filterDefinition = new FilterDefinition<TestModel1>
+            {
+                Id = Guid.NewGuid(),
+                Field = "Name",
+                Operator = FilterOperator.String.StartsWith,
+                Value = null
+            };
+            func = filterDefinition.GenerateFilterFunction();
+            Assert.IsTrue(func.Invoke(new("Not Joe", 45)));
+            Assert.IsTrue(func.Invoke(new("Joe", 45)));
+
+            // test filter definition on the Name property (string ends with)
+            filterDefinition = new FilterDefinition<TestModel1>
+            {
+                Id = Guid.NewGuid(),
+                Field = "Name",
+                Operator = FilterOperator.String.EndsWith,
+                Value = "Joe"
+            };
+            func = filterDefinition.GenerateFilterFunction();
+            Assert.IsFalse(func.Invoke(new("Joe Not", 45)));
+            Assert.IsTrue(func.Invoke(new("Joe", 45)));
+
+            // test filter definition on the Name property (string ends with, null)
+            filterDefinition = new FilterDefinition<TestModel1>
+            {
+                Id = Guid.NewGuid(),
+                Field = "Name",
+                Operator = FilterOperator.String.EndsWith,
+                Value = null
+            };
+            func = filterDefinition.GenerateFilterFunction();
+            Assert.IsTrue(func.Invoke(new("Joe Not", 45)));
+            Assert.IsTrue(func.Invoke(new("Joe", 45)));
+
+            // test filter definition on the Name property (string empty)
+            filterDefinition = new FilterDefinition<TestModel1>
+            {
+                Id = Guid.NewGuid(),
+                Field = "Name",
+                Operator = FilterOperator.String.Empty,
+                Value = null
+            };
+            func = filterDefinition.GenerateFilterFunction();
+            Assert.IsFalse(func.Invoke(new("Joe Not", 45)));
+            Assert.IsTrue(func.Invoke(new("", 45)));
+            Assert.IsTrue(func.Invoke(new(String.Empty, 45)));
+
+            // test filter definition on the Name property (string not empty)
+            filterDefinition = new FilterDefinition<TestModel1>
+            {
+                Id = Guid.NewGuid(),
+                Field = "Name",
+                Operator = FilterOperator.String.NotEmpty,
+                Value = null
+            };
+            func = filterDefinition.GenerateFilterFunction();
+            Assert.IsTrue(func.Invoke(new("Joe Not", 45)));
+            Assert.IsFalse(func.Invoke(new("", 45)));
+            Assert.IsFalse(func.Invoke(new(String.Empty, 45)));
 
             // test filter definition on the Name property (handle null operator)
             filterDefinition = new FilterDefinition<TestModel1>
@@ -428,42 +527,6 @@ namespace MudBlazor.UnitTests.Components
             Assert.IsTrue(func.Invoke(new("Joe Not", 45)));
             Assert.IsTrue(func.Invoke(new("Joe", 45)));
 
-            // test filter definition on the Name property (string equals)
-            filterDefinition = new FilterDefinition<TestModel1>
-            {
-                Id = Guid.NewGuid(),
-                Field = "Name",
-                Operator = "equals",
-                Value = "Joe"
-            };
-            func = filterDefinition.GenerateFilterFunction();
-            Assert.IsFalse(func.Invoke(new("Not Joe", 45)));
-            Assert.IsTrue(func.Invoke(new("Joe", 45)));
-
-            // test filter definition on the Name property (string starts with)
-            filterDefinition = new FilterDefinition<TestModel1>
-            {
-                Id = Guid.NewGuid(),
-                Field = "Name",
-                Operator = "starts with",
-                Value = "Joe"
-            };
-            func = filterDefinition.GenerateFilterFunction();
-            Assert.IsFalse(func.Invoke(new("Not Joe", 45)));
-            Assert.IsTrue(func.Invoke(new("Joe", 45)));
-
-            // test filter definition on the Name property (string ends with)
-            filterDefinition = new FilterDefinition<TestModel1>
-            {
-                Id = Guid.NewGuid(),
-                Field = "Name",
-                Operator = "ends with",
-                Value = "Joe"
-            };
-            func = filterDefinition.GenerateFilterFunction();
-            Assert.IsFalse(func.Invoke(new("Joe Not", 45)));
-            Assert.IsTrue(func.Invoke(new("Joe", 45)));
-
             #endregion
 
             #region Int Data Type
@@ -473,7 +536,7 @@ namespace MudBlazor.UnitTests.Components
             {
                 Id = Guid.NewGuid(),
                 Field = "Age",
-                Operator = "=",
+                Operator = FilterOperator.Number.Equal,
                 Value = 45
             };
             func = filterDefinition.GenerateFilterFunction();
@@ -486,7 +549,7 @@ namespace MudBlazor.UnitTests.Components
             {
                 Id = Guid.NewGuid(),
                 Field = "Age",
-                Operator = "=",
+                Operator = FilterOperator.Number.Equal,
                 Value = null
             };
             func = filterDefinition.GenerateFilterFunction();
@@ -512,7 +575,7 @@ namespace MudBlazor.UnitTests.Components
             {
                 Id = Guid.NewGuid(),
                 Field = "Age",
-                Operator = "!=",
+                Operator = FilterOperator.Number.NotEqual,
                 Value = 45
             };
             func = filterDefinition.GenerateFilterFunction();
@@ -525,7 +588,7 @@ namespace MudBlazor.UnitTests.Components
             {
                 Id = Guid.NewGuid(),
                 Field = "Age",
-                Operator = ">",
+                Operator = FilterOperator.Number.GreaterThan,
                 Value = 45
             };
             func = filterDefinition.GenerateFilterFunction();
@@ -538,7 +601,7 @@ namespace MudBlazor.UnitTests.Components
             {
                 Id = Guid.NewGuid(),
                 Field = "Age",
-                Operator = "<",
+                Operator = FilterOperator.Number.LessThan,
                 Value = 45
             };
             func = filterDefinition.GenerateFilterFunction();
@@ -551,7 +614,7 @@ namespace MudBlazor.UnitTests.Components
             {
                 Id = Guid.NewGuid(),
                 Field = "Age",
-                Operator = ">=",
+                Operator = FilterOperator.Number.GreaterThanOrEqual,
                 Value = 45
             };
             func = filterDefinition.GenerateFilterFunction();
@@ -564,7 +627,7 @@ namespace MudBlazor.UnitTests.Components
             {
                 Id = Guid.NewGuid(),
                 Field = "Age",
-                Operator = "<=",
+                Operator = FilterOperator.Number.LessThanOrEqual,
                 Value = 45
             };
             func = filterDefinition.GenerateFilterFunction();
@@ -580,13 +643,44 @@ namespace MudBlazor.UnitTests.Components
             {
                 Id = Guid.NewGuid(),
                 Field = "Date",
-                Operator = "=",
+                Operator = FilterOperator.Number.Equal,
                 Value = null
             };
             var func2 = filterDefinition2.GenerateFilterFunction();
             // data type is an int
             Assert.IsTrue(func2.Invoke(new("Sam", 456, DateTime.UtcNow)));
             Assert.IsTrue(func2.Invoke(new("Joe", 45, DateTime.UtcNow)));
+
+            #region Enum Data Type
+
+            // test filter definition on the Status property (Enum is)
+            var filterDefinition3 = new FilterDefinition<TestModel3>
+            {
+                Id = Guid.NewGuid(),
+                Field = "Status",
+                Operator = FilterOperator.Enum.Is,
+                Value = Severity.Normal
+            };
+            var func3 = filterDefinition3.GenerateFilterFunction();
+            // data type is an Enum
+            Assert.IsFalse(func3.Invoke(new("Sam", 456, Severity.Info)));
+            Assert.IsTrue(func3.Invoke(new("Joe", 45, Severity.Normal)));
+
+            // test filter definition on the Status property (Enum is not)
+            filterDefinition3 = new FilterDefinition<TestModel3>
+            {
+                Id = Guid.NewGuid(),
+                Field = "Status",
+                Operator = FilterOperator.Enum.IsNot,
+                Value = Severity.Normal
+            };
+            func3 = filterDefinition3.GenerateFilterFunction();
+            // data type is an Enum
+            Assert.IsFalse(func3.Invoke(new("Sam", 456, Severity.Normal)));
+            Assert.IsTrue(func3.Invoke(new("Joe", 45, Severity.Info)));
+
+            #endregion
+
         }
 
         [Test]

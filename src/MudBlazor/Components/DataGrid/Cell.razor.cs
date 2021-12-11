@@ -80,7 +80,7 @@ namespace MudBlazor
         {
             get
             {
-                return FilterDefinition<T>.NumericTypes.Contains(dataType);
+                return FilterOperator.NumericTypes.Contains(dataType);
             }
         }
         private bool isEditing
