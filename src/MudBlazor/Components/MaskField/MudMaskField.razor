@@ -1,6 +1,6 @@
 ﻿@namespace MudBlazor
 @typeparam T
-@inherits MudDebouncedInput<T>
+@inherits MudBaseInput<T>
 
 <CascadingValue Name="Standalone" Value="@Standalone" IsFixed="true">
     <MudInputControl id="@_elementId" Label="@Label" Variant="@Variant" HelperText="@HelperText" HelperTextOnFocus="@HelperTextOnFocus" CounterText="@GetCounterText()" FullWidth="@FullWidth" Class="@Classname" Error="@HasErrors" ErrorText="@GetErrorText()" Disabled="@Disabled" Margin="@Margin" Required="@Required">
@@ -11,14 +11,29 @@
 				Lines="@Lines" 
 				Style="@Style" 
 				Variant="@Variant" 
-				TextUpdateSuppression="@TextUpdateSuppression" 
+				TextUpdateSuppression="false" 
 				Value="@Text"
 				MaxLength="@MaxLength"
-                      ValueChanged="(s) => SetTextAsync(s)" Placeholder="@Placeholder" Disabled=@Disabled DisableUnderLine="@DisableUnderLine" ReadOnly="@ReadOnly" 
-                      Adornment="@Adornment" AdornmentText="@AdornmentText" AdornmentIcon="@AdornmentIcon" AdornmentColor="@AdornmentColor" IconSize="@IconSize" OnAdornmentClick="@OnAdornmentClick" Error="@Error" 
-                      Immediate="true" Margin="@Margin" OnBlur="@OnBlurred"  OnInternalInputChanged="OnChange" 
-                      OnKeyDown="HandleKeyDown" @onfocus="OnFocussed"
-                      HideSpinButtons="true" Clearable="@Clearable" OnClearButtonClick="@OnClearButtonClick" Pattern="@Pattern"/>
+                Placeholder="@Placeholder" 
+                Disabled=@Disabled 
+                DisableUnderLine="@DisableUnderLine" 
+                ReadOnly="@ReadOnly" 
+                Adornment="@Adornment" 
+                AdornmentText="@AdornmentText" 
+                AdornmentIcon="@AdornmentIcon" 
+                AdornmentColor="@AdornmentColor" 
+                IconSize="@IconSize" 
+                OnAdornmentClick="@OnAdornmentClick" 
+                Error="@Error" 
+                Immediate="false" 
+                Margin="@Margin" 
+                OnBlur="@OnBlurred"  
+                OnKeyDown="HandleKeyDown" 
+                @onfocus="OnFocussed"
+                HideSpinButtons="true" 
+                Clearable="@Clearable" 
+                OnClearButtonClick="@OnClearButtonClick" 
+                Pattern="@Pattern"/>
         </InputContent>
     </MudInputControl>
 </CascadingValue>

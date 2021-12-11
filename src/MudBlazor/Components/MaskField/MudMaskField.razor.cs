@@ -10,7 +10,7 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    public partial class MudMaskField<T> : MudDebouncedInput<T>
+    public partial class MudMaskField<T> : MudBaseInput<T>
     {
         protected string Classname =>
            new CssBuilder("mud-input-input-control")
@@ -187,6 +187,8 @@ namespace MudBlazor
                     },
                 });
             }
+            if (_isFocused)
+                await _elementReference.SelectRangeAsync(_caretPosition, _caretPosition);
             await base.OnAfterRenderAsync(firstRender);
         }
 
@@ -217,8 +219,8 @@ namespace MudBlazor
 
         private async void OnFocussed(FocusEventArgs obj)
         {
+            _isFocused = true;
             await UltimateImplementMask(_rawValue, Mask);
-            await Task.Delay(1);
             SetCaretPosition(FindFirstCaretLocation());
         }
 
@@ -227,17 +229,18 @@ namespace MudBlazor
             base.OnBlurred(obj);
             if (string.IsNullOrEmpty(_rawValue))
             {
-                _elementReference.SetText("");
+                SetTextAsync("", updateValue:false).AndForget();
             }
+            _isFocused = false;
         }
 
         /// <summary>
         /// Clear the text field, set Value to default(T) and Text to null
         /// </summary>
         /// <returns></returns>
-        public async Task Clear()
+        public Task Clear()
         {
-            await _elementReference.SetText(null);
+            return SetTextAsync(null, updateValue: true);
         }
 
         //string val = "";
@@ -550,8 +553,8 @@ namespace MudBlazor
                 }
             }
 
-            await SetTextAsync(result, false);
-            await _elementReference.SetText(result);
+            await SetTextAsync(result, updateValue:false);
+            //await _elementReference.SetText(result);
         }
 
         private async Task ImplementMask(string rawText, string mask)
@@ -604,7 +607,8 @@ namespace MudBlazor
                 }
             }
 
-            await _elementReference.SetText(maskedText);
+            await SetTextAsync("", updateValue: false);
+            //await _elementReference.SetText(maskedText);
         }
 
         //private string _rawMask = "";
@@ -637,6 +641,8 @@ namespace MudBlazor
 
         private int FindNextCaretLocation(int currentCaretIndex)
         {
+            if (Text == null || Text.Length == 0)
+                return 0;
             int a = currentCaretIndex;
             for (int i = a; i < Mask.Length; i++)
             {
@@ -651,6 +657,8 @@ namespace MudBlazor
 
         private int FindFirstCaretLocation()
         {
+            if (Text == null || Text.Length == 0)
+                return 0;
             int a = 0;
             for (int i = 0; i < Mask.Length; i++)
             {
@@ -665,6 +673,8 @@ namespace MudBlazor
 
         private int FindPreviousCaretLocation(int currentCaretIndex)
         {
+            if (Text == null || Text.Length == 0)
+                return 0;
             int a = currentCaretIndex;
             for (int i = 0; i < Text.Length; i++)
             {
@@ -681,6 +691,8 @@ namespace MudBlazor
 
         private int FindLastCaretLocation()
         {
+            if (Text == null || Text.Length == 0)
+                return 0;
             int a = Mask.Length;
             for (int i = 0; i < Mask.Length; i++)
             {
@@ -844,7 +856,10 @@ namespace MudBlazor
         public void SetCaretPosition(int caretPosition)
         {
             _caretPosition = caretPosition;
-            _elementReference.SelectRangeAsync(_caretPosition, _caretPosition);
+            if (!_isFocused)
+                return;
+            _elementReference.SelectRangeAsync(_caretPosition, _caretPosition).AndForget();
+            StateHasChanged();
         }
 
         protected async Task HandleKeyDown(KeyboardEventArgs obj)
@@ -867,7 +882,7 @@ namespace MudBlazor
             //_rawValue = GetRawValueFromText();
             //SetRawValueFromText();
             OnKeyDown.InvokeAsync(obj).AndForget();
-            await Task.Delay(1);
+            //await Task.Delay(1);
             if (obj.Key == "Backspace")
             {
                 SetCaretPosition(FindPreviousCaretLocation(_caretPosition));
