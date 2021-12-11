@@ -34,27 +34,37 @@ namespace MudBlazor
         /// <summary>
         /// The color of the component. It supports the theme colors.
         /// </summary>
-        [Parameter] public Color Color { get; set; } = Color.Default;
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Appearance)]
+        public Color Color { get; set; } = Color.Default;
 
         /// <summary>
         /// The text/label will be displayed next to the switch if set.
         /// </summary>
-        [Parameter] public string Label { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Behavior)]
+        public string Label { get; set; }
 
         /// <summary>
         /// Shows an icon on Switch's thumb.
         /// </summary>
-        [Parameter] public string ThumbIcon { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Appearance)]
+        public string ThumbIcon { get; set; }
 
         /// <summary>
         /// The color of the thumb icon. Supports the theme colors.
         /// </summary>
-        [Parameter] public Color ThumbIconColor { get; set; } = Color.Default;
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Appearance)]
+        public Color ThumbIconColor { get; set; } = Color.Default;
 
         /// <summary>
         /// If true, disables ripple effect.
         /// </summary>
-        [Parameter] public bool DisableRipple { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Appearance)]
+        public bool DisableRipple { get; set; }
 
         protected internal void HandleKeyDown(KeyboardEventArgs obj)
         {
@@ -64,7 +74,7 @@ namespace MudBlazor
             switch (obj.Key)
             {
                 case "ArrowLeft":
-                case "Escape":
+                case "Delete":
                     SetBoolValueAsync(false);
                     break;
                 case "ArrowRight":
@@ -101,6 +111,7 @@ namespace MudBlazor
                         new KeyOptions { Key=" ", PreventDown = "key+none", PreventUp = "key+none" },
                     },
                 });
+                _keyInterceptor.KeyDown += HandleKeyDown;
             }
             await base.OnAfterRenderAsync(firstRender);
         }

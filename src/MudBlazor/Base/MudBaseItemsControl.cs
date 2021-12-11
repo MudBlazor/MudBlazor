@@ -12,6 +12,7 @@ namespace MudBlazor
         /// Collection of T
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.General.Data)]
         public RenderFragment ChildContent { get; set; }
 
         /// <summary>
@@ -24,6 +25,7 @@ namespace MudBlazor
         /// Selected Item's index
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.General.Behavior)]
         public int SelectedIndex
         {
             get => _selectedIndexField;

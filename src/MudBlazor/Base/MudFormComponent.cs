@@ -36,27 +36,36 @@ namespace MudBlazor
         /// <summary>
         /// If true, this form input is required to be filled out.
         /// </summary>
-        [Parameter] public bool Required { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Validation)]
+        public bool Required { get; set; }
 
         /// <summary>
         /// The error text that will be displayed if the input is not filled out but required.
         /// </summary>
-        [Parameter] public string RequiredError { get; set; } = "Required";
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Validation)]
+        public string RequiredError { get; set; } = "Required";
 
         /// <summary>
         /// The ErrorText that will be displayed if Error true.
         /// </summary>
-        [Parameter] public string ErrorText { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Validation)]
+        public string ErrorText { get; set; }
 
         /// <summary>
         /// If true, the label will be displayed in an error state.
         /// </summary>
-        [Parameter] public bool Error { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Validation)]
+        public bool Error { get; set; }
 
         /// <summary>
         /// The generic converter of the component.
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.FormComponent.Behavior)]
         public Converter<T, U> Converter
         {
             get => _converter;
@@ -78,6 +87,7 @@ namespace MudBlazor
         /// The culture of the component.
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.FormComponent.Behavior)]
         public CultureInfo Culture
         {
             get => _converter.Culture;
@@ -166,6 +176,7 @@ namespace MudBlazor
         /// <para>System.ComponentModel.DataAnnotations.ValidationAttribute instances</para>
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.FormComponent.Validation)]
         public object Validation { get; set; }
 
         /// <summary>
@@ -495,6 +506,7 @@ namespace MudBlazor
         /// </summary>
 #nullable enable
         [Parameter]
+        [Category(CategoryTypes.FormComponent.Validation)]
         public Expression<Func<T>>? For { get; set; }
 #nullable disable
 

@@ -10,6 +10,7 @@ using System.Diagnostics;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Docs.Models;
 using MudBlazor.Docs.Services;
+using Microsoft.AspNetCore.Components.Routing;
 
 namespace MudBlazor.Docs.Components
 {
@@ -50,6 +51,8 @@ namespace MudBlazor.Docs.Components
 
         protected override void OnParametersSet()
         {
+            _stopwatch = Stopwatch.StartNew();
+            _sectionCount = 0;
             _previous = DocsService.Previous;
             _next = DocsService.Next;
             _section = DocsService.Section;
@@ -57,9 +60,13 @@ namespace MudBlazor.Docs.Components
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
+            if (_stopwatch.IsRunning)
+            {
+                _stopwatch.Stop();
+                Rendered?.Invoke(_stopwatch);
+            }
             if (firstRender)
             {
-                Rendered?.Invoke(_stopwatch);
                 await _contentNavigation.ScrollToSection(new Uri(NavigationManager.Uri));
             }
         }
@@ -83,5 +90,6 @@ namespace MudBlazor.Docs.Components
                 _contentNavigation.Update();
             }
         }
+
     }
 }
