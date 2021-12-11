@@ -994,6 +994,7 @@ namespace MudBlazor
                 // otherwise we can't receive key strokes any longer
                 _elementReference.FocusAsync().AndForget(TaskOption.Safe);
             }
+            base.OnBlur.InvokeAsync(obj);
         }
     }
 }
