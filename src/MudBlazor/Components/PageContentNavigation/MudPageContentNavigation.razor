@@ -11,9 +11,10 @@
         <MudNavMenu Class="pl-4">
             @foreach (var docSection in _sections)
             {
-                <MudNavLink Match="NavLinkMatch.All" Class="@GetNavLinkClass(docSection.IsActive)" @onclick="@(e => OnNavLinkClick(docSection.Id))">
+                <MudNavLink Match="NavLinkMatch.All" Class="@GetNavLinkClass(docSection)" @onclick="@(e => OnNavLinkClick(docSection.Id))">
                     @docSection.Title
-                </MudNavLink>}
+                </MudNavLink>
+			}
         </MudNavMenu>
     }
 </div>

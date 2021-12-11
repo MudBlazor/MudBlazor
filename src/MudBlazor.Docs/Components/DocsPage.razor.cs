@@ -78,9 +78,11 @@ namespace MudBlazor.Docs.Components
             }
         }
 
-        internal void AddSection(DocsSectionLink section)
+        private int GetSectionLevel(DocsPageSection section) => 0;
+
+        internal void AddSection(DocsSectionLink sectionLinkInfo, DocsPageSection section)
         {
-            _bufferedSections.Enqueue(section);
+            _bufferedSections.Enqueue(sectionLinkInfo);
 
             if (_contentNavigation != null)
             {
@@ -88,9 +90,10 @@ namespace MudBlazor.Docs.Components
                 {
                     var item = _bufferedSections.Dequeue();
 
-                    if (_contentNavigation.Sections.FirstOrDefault(x => x.Id == section.Id) == default)
+                    if (_contentNavigation.Sections.FirstOrDefault(x => x.Id == sectionLinkInfo.Id) == default)
                     {
-                        _contentNavigation.AddSection(item.Title, item.Id, false);
+                        _contentNavigation.AddSection(
+                            new MudPageContentSection(sectionLinkInfo.Title, GetSectionLevel(section), sectionLinkInfo.Id), false);
                     }
                 }
 

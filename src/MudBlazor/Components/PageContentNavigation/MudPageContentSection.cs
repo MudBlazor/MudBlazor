@@ -10,15 +10,28 @@ namespace MudBlazor
     public class MudPageContentSection
     {
         /// <summary>
-        /// create a new instance with a title and and id
+        /// create a new instance with a title and id and level set to zero
         /// </summary>
         /// <param name="title">name of the section will be displayed in the navigation</param>
         /// <param name="id">id of the section. It will be appending to the current url, if the section becomes active</param>
-        public MudPageContentSection(string title, string id)
+        public MudPageContentSection(string title, string id) : this(title, 0, id)
+        {
+        }
+
+        /// <summary>
+        /// create a new instance with a title and id and level
+        /// </summary>
+        /// <param name="title">name of the section will be displayed in the navigation</param>
+        /// <param name="level">The level within the hierachy</param>
+        /// <param name="id">id of the section. It will be appending to the current url, if the section becomes active</param>
+        public MudPageContentSection(string title, int level, string id)
         {
             Title = title;
             Id = id;
+            Level = level;
         }
+
+        public int Level { get; set; }
 
         /// <summary>
         /// The Title of the section. This will be displayed in the navigation
