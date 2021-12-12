@@ -98,8 +98,8 @@ public partial class SectionContent
     {
         try
         {
-            var key = typeof(SectionSource).Assembly.GetManifestResourceNames().FirstOrDefault(x => x.Contains($".{code}Code.html"));
-            using (var stream = typeof(SectionSource).Assembly.GetManifestResourceStream(key))
+            var key = typeof(SectionContent).Assembly.GetManifestResourceNames().FirstOrDefault(x => x.Contains($".{code}Code.html"));
+            using (var stream = typeof(SectionContent).Assembly.GetManifestResourceStream(key))
             using (var reader = new StreamReader(stream))
             {
                 builder.AddMarkupContent(0, reader.ReadToEnd());
@@ -113,11 +113,22 @@ public partial class SectionContent
     
     protected virtual async void RunOnTryMudBlazor()
     {
+        string firstFile = "";
+        
+        if(Codes != null)
+        {
+            firstFile = Codes.FirstOrDefault().code;
+        }
+        else
+        {
+            firstFile = Code;
+        }
+        
         // We use a separator that wont be in code so we can send 2 files later
-        var codeFiles = "__Main.razor" + (char)31 + Snippets.GetCode(Code);
+        var codeFiles = "__Main.razor" + (char)31 + Snippets.GetCode(firstFile);
 
         // Add dialogs for dialog examples
-        if (Code.StartsWith("Dialog"))
+        if (firstFile.StartsWith("Dialog"))
         {
             var regex = new Regex(@"\Show<(Dialog.*?_Dialog)\>");
             var dialogCodeName = regex.Match(codeFiles).Groups[1].Value;
