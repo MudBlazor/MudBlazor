@@ -35,29 +35,38 @@
                     The dialog's default behavior can be changed in two ways, either globally with parameters in the <CodeInline>&lt;MudDialogProvider/&gt;</CodeInline> or pass down the <CodeInline>DialogOptions</CodeInline> class when you open the dialog.
                 </Description>
             </SectionHeader>
-            <SectionHeader>
-                <SubTitle>1. Global Settings</SubTitle>
-                <Description>In the file where you added <CodeInline>&lt;MudDialogProvider/&gt;</CodeInline>, we can pass down different options as parameters. See <MudLink Href="/getting-started/installation">installation page</MudLink> for more information regarding this.</Description>
-            </SectionHeader>
-            <SectionContent Code="DialogConfigurationExample"/>
-            <SectionHeader>
-                <SubTitle>2. Per Dialog (on open)</SubTitle>
-                <Description>
-                    Below we pass along the DialogOptions class when we open the dialog, this can be done per dialog or you can predefine a bunch of them that you use for specific cases in your system.<br />
-                </Description>
-            </SectionHeader>
-            <SectionContent Outlined="true" Codes="@(new[] {new CodeFile("Page.razor", "DialogOptionsExample"), new CodeFile("Dialog.razor", "DialogUsageExample_Dialog")})">
-                <DialogOptionsExample />
-            </SectionContent>
-            <SectionHeader>
-                <SubTitle>3. Per Dialog (from dialog)</SubTitle>
-                <Description>
-                    The title and the options can also be modified from the dialog component itself by calling <CodeInline>SetTitle</CodeInline> and <CodeInline>SetOptions</CodeInline> on the <CodeInline>MudDialogInstance</CodeInline> object.
-                </Description>
-            </SectionHeader>
-            <SectionContent Outlined="true" Codes="@(new[] {new CodeFile("Page.razor", "DialogSetOptionsExample"), new CodeFile("Dialog.razor", "DialogSetOptionsExample_Dialog")})">
-                <DialogSetOptionsExample />
-            </SectionContent>
+            <SectionSubGroups>
+                
+                <DocsPageSection>
+                    <SectionHeader Title="Global Settings">
+                        <Description>In the file where you added <CodeInline>&lt;MudDialogProvider/&gt;</CodeInline>, we can pass down different options as parameters. See <MudLink Href="/getting-started/installation">installation page</MudLink> for more information regarding this.</Description>
+                    </SectionHeader>
+                    <SectionContent Code="DialogConfigurationExample"/>
+                </DocsPageSection>
+
+                <DocsPageSection>
+                    <SectionHeader Title="Per Dialog">
+                        <Description>
+                            Below we pass along the DialogOptions class when we open the dialog, this can be done per dialog or you can predefine a bunch of them that you use for specific cases in your system.<br/>
+                        </Description>
+                    </SectionHeader>
+                    <SectionContent Outlined="true" Codes="@(new[] {new CodeFile("Page.razor", "DialogOptionsExample"), new CodeFile("Dialog.razor", "DialogUsageExample_Dialog")})">
+                        <DialogOptionsExample />
+                    </SectionContent>
+                </DocsPageSection>
+
+                <DocsPageSection>
+                    <SectionHeader Title="From dialog">
+                        <Description>
+                            The title and the options can also be modified from the dialog component itself by calling <CodeInline>SetTitle</CodeInline> and <CodeInline>SetOptions</CodeInline> on the <CodeInline>MudDialogInstance</CodeInline> object.
+                        </Description>
+                    </SectionHeader>
+                    <SectionContent Outlined="true" Codes="@(new[] {new CodeFile("Page.razor", "DialogSetOptionsExample"), new CodeFile("Dialog.razor", "DialogSetOptionsExample_Dialog")})">
+                        <DialogSetOptionsExample />
+                    </SectionContent>
+                </DocsPageSection>
+                
+            </SectionSubGroups>
         </DocsPageSection>
 
         <DocsPageSection>

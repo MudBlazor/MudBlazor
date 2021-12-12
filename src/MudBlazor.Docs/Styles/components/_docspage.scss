@@ -3,6 +3,29 @@
     font-weight: 500;
   }
   
+  .navigation-level{
+    &-0{
+      .mud-nav-link-text{
+        padding-inline-start: 0;
+      }
+    }
+    &-1{
+      .mud-nav-link-text{
+        padding-inline-start: 14px;
+      }
+    }
+    &-2{
+      .mud-nav-link-text{
+
+      }
+    }
+    &-3{
+      .mud-nav-link-text{
+
+      }
+    }
+  }
+  
   .mode-links{
     display: flex;
     justify-content: center;

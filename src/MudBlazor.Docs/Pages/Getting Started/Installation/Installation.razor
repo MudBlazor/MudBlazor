@@ -61,35 +61,35 @@
             <SectionSubGroups>
                 
                 <DocsPageSection>
-                    <SectionHeader Title="1. Install the package">
+                    <SectionHeader Title="Install the package">
                         <Description>Find the package through NuGet Package Manager or install it with following command.</Description>
                     </SectionHeader>
                     <SectionContent Code="InstallationManualPackageExample" />
                 </DocsPageSection>
 
                 <DocsPageSection>
-                    <SectionHeader Title="2. Add Imports">
+                    <SectionHeader Title="Add Imports">
                         <Description>After the package is added, you need to add the following in your <CodeInline>_Imports.razor</CodeInline></Description>
                     </SectionHeader>
                     <SectionContent Code="InstallationManualImportsExample"/>
                 </DocsPageSection>
 
                 <DocsPageSection>
-                    <SectionHeader Title="3. Add font and style references">
+                    <SectionHeader Title="Add font and style references">
                         <Description>Add the following to your HTML head section, it's either <CodeInline>index.html</CodeInline> or <CodeInline>_Host.cshtml</CodeInline> depending on whether you're running WebAssembly or Server.</Description>
                     </SectionHeader>
                     <SectionContent Code="InstallationManualCssFontsExample"/>
                 </DocsPageSection>
 
                 <DocsPageSection>
-                    <SectionHeader Title="4. Add script reference">
+                    <SectionHeader Title="Add script reference">
                         <Description>In the same file but located in the end of it add the MudBlazor js file, it should be in the same location as the default blazor script.</Description>
                     </SectionHeader>
                     <SectionContent Code="InstallScriptManual"/>
                 </DocsPageSection>
 
                 <DocsPageSection>
-                    <SectionHeader Title="4. Register Services">
+                    <SectionHeader Title="Register Services">
                         <Description></Description>
                     </SectionHeader>
                     <SectionContent Codes="@(new[] {new CodeFile(".NET 6", "InstallServicesNET6Manual"), new CodeFile(".NET 5 Wasm", "InstallServicesNET5WasmManual"), new CodeFile(".NET 5 Server", "InstallServicesNET5ServerManual")})"/>
