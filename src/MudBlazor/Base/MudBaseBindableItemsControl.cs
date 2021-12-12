@@ -12,12 +12,14 @@ namespace MudBlazor
         /// Items Collection - For databinding usage
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.General.Data)]
         public IEnumerable<TData> ItemsSource { get; set; }
 
         /// <summary>
         /// Template for each Item in ItemsSource collection
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.General.Appearance)]
         public RenderFragment<TData> ItemTemplate { get; set; }
 
         /// <summary>

@@ -86,6 +86,7 @@ namespace MudBlazor
         /// <summary>
         /// Gets or Sets if bottom bar with Delimiters must be visible
         /// </summary>
+        [Category(CategoryTypes.Carousel.Behavior)]
         [Parameter] public bool ShowDelimiters { get; set; } = true;
 
         /// <summary>
@@ -93,6 +94,7 @@ namespace MudBlazor
         /// If not set, the color is determined based on the <see cref="MudCarouselItem.Color"/> property of the active child.
         /// </summary>
         [Obsolete($"Use {nameof(BulletsColor)} instead", false)]
+        [Category(CategoryTypes.Carousel.Appearance)]
         [Parameter] public Color? DelimitersColor { get => BulletsColor; set => BulletsColor = value; }
 
         /// <summary>
@@ -153,6 +155,7 @@ namespace MudBlazor
         /// <summary>
         /// Gets or Sets custom class(es) for Delimiters buttons
         /// </summary>
+        [Category(CategoryTypes.Carousel.Appearance)]
         [Parameter] public string DelimitersClass { get; set; }
 
         /// <summary>
@@ -208,6 +211,7 @@ namespace MudBlazor
         /// <summary>
         /// Gets or Sets the Template for Delimiters
         /// </summary>
+        [Category(CategoryTypes.Carousel.Appearance)]
         [Parameter] public RenderFragment<bool> DelimiterTemplate { get; set; }
 
 
