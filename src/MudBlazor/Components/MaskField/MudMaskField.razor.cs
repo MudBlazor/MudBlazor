@@ -674,7 +674,6 @@ namespace MudBlazor
                 return;
 
             await ImplementMask(obj.Key, Mask);
-            await Task.Delay(1);
             await SetValueAsync(Converter.Get(GetRawValueFromDictionary()), false);
 
             OnKeyDown.InvokeAsync(obj).AndForget();
