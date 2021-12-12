@@ -1,0 +1,23 @@
+﻿@namespace MudBlazor.Docs.Examples
+@using System.Text.RegularExpressions
+
+
+<MudGrid Class="justify-space-between">
+    <MudItem xs="12" sm="6" md="4">
+        <MudMaskField T="string" OnKeyDown="KeyDown" Placeholder = "Credit Card" HelperText="Mask: 0000 0000 0000 0000" HelperTextOnFocus="true" Mask="0000 0000 0000 0000" Label="Card Number" Variant="Variant.Text" />
+		<MudMaskField T="string" OnKeyDown="KeyDown" Placeholder = "MM/YY" PlaceholderCharacter="@(' ')" HelperText="Mask: 00/00" HelperTextOnFocus="true" Mask="00/00" Label="Card Date" Variant="Variant.Text" />
+		<MudMaskField T="string" OnKeyDown="KeyDown" Placeholder = "123" HelperText="Mask: (000) 000-0000" HelperTextOnFocus="true" Mask="000" Label="CVV" Variant="Variant.Text" />
+    </MudItem>
+	<MudItem xs="12" sm="6" md="4">
+       <MudText>Pressed Key: <b>@pressedKey</b></MudText>
+    </MudItem>
+</MudGrid>
+
+@code {
+	private string pressedKey = "";
+
+	private void KeyDown(KeyboardEventArgs e)
+	{
+		pressedKey = e.Key.ToString();
+	}
+}

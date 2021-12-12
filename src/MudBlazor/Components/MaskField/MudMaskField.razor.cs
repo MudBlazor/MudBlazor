@@ -220,8 +220,15 @@ namespace MudBlazor
         private async void OnFocussed(FocusEventArgs obj)
         {
             _isFocused = true;
-            await UltimateImplementMask(_rawValue, Mask);
-            SetCaretPosition(FindFirstCaretLocation());
+            if (string.IsNullOrEmpty(_rawValue) && !string.IsNullOrEmpty(Placeholder))
+            {
+
+            }
+            else
+            {
+                await UltimateImplementMask(_rawValue, Mask);
+                SetCaretPosition(FindFirstCaretLocation());
+            }
         }
 
         protected override void OnBlurred(FocusEventArgs obj)
@@ -527,7 +534,7 @@ namespace MudBlazor
             //        result = result.Insert(a, mask[a].ToString());
             //    }
             //}
-
+            bool hasValue = false;
             for (int i = 0; i < mask.Length; i++)
             {
                 int a = i;
@@ -540,6 +547,8 @@ namespace MudBlazor
                     if (IsCharsMatch(_rawValueDictionary[a], mask[a]))
                     {
                         result += _rawValueDictionary[a].ToString();
+                        if (!hasValue)
+                            hasValue = true;
                     }
                     else
                     {
@@ -553,63 +562,71 @@ namespace MudBlazor
                 }
             }
 
-            await SetTextAsync(result, updateValue:false);
+            if (hasValue == false)
+            {
+                await SetTextAsync(null, updateValue: false);
+            }
+            else
+            {
+                await SetTextAsync(result, updateValue: false);
+            }
+
             //await _elementReference.SetText(result);
         }
 
-        private async Task ImplementMask(string rawText, string mask)
-        {
-            if (mask == null)
-            {
-                return;
-            }
+        //private async Task ImplementMask(string rawText, string mask)
+        //{
+        //    if (mask == null)
+        //    {
+        //        return;
+        //    }
 
-            if (rawText == null)
-            {
-                rawText = "";
-            }
-            string maskedText = "";
+        //    if (rawText == null)
+        //    {
+        //        rawText = "";
+        //    }
+        //    string maskedText = "";
 
-            UpdateCustomCharacters();
-            //Find raw mask by removing not masking characters(so remains isLetter, isDigit or custom(regex) key chars)
-            string rawMask = GetRawMask();
-            //Find raw text(we use reverse masking for all text)
-            rawText = GetRawText(rawText);
-            //Insert last pressed character into correct place(or pasted etc.)
-            //Check raw mask and raw text char by char, and place underscore(or custom) character if its not match
-            for (int i = 0; i < rawMask.Length; i++)
-            {
-                int a = i;
-                if (rawText.Length < a)
-                {
-                    maskedText += PlaceholderCharacter;
-                }
-                else if (rawText[a] == PlaceholderCharacter)
-                {
-                    maskedText += PlaceholderCharacter;
-                }
-                else if (IsCharsMatch(rawText[a], rawMask[a]))
-                {
-                    maskedText += rawText[a];
-                }
-                else
-                {
-                    maskedText += PlaceholderCharacter;
-                }
-            }
-            //Insert mask symbols on raw text
-            for (int i = 0; i < mask.Length; i++)
-            {
-                int a = i;
-                if (!MaskCharacters.ContainsKey(mask[a]))
-                {
-                    maskedText = maskedText.Insert(a, mask[a].ToString());
-                }
-            }
+        //    UpdateCustomCharacters();
+        //    //Find raw mask by removing not masking characters(so remains isLetter, isDigit or custom(regex) key chars)
+        //    string rawMask = GetRawMask();
+        //    //Find raw text(we use reverse masking for all text)
+        //    rawText = GetRawText(rawText);
+        //    //Insert last pressed character into correct place(or pasted etc.)
+        //    //Check raw mask and raw text char by char, and place underscore(or custom) character if its not match
+        //    for (int i = 0; i < rawMask.Length; i++)
+        //    {
+        //        int a = i;
+        //        if (rawText.Length < a)
+        //        {
+        //            maskedText += PlaceholderCharacter;
+        //        }
+        //        else if (rawText[a] == PlaceholderCharacter)
+        //        {
+        //            maskedText += PlaceholderCharacter;
+        //        }
+        //        else if (IsCharsMatch(rawText[a], rawMask[a]))
+        //        {
+        //            maskedText += rawText[a];
+        //        }
+        //        else
+        //        {
+        //            maskedText += PlaceholderCharacter;
+        //        }
+        //    }
+        //    //Insert mask symbols on raw text
+        //    for (int i = 0; i < mask.Length; i++)
+        //    {
+        //        int a = i;
+        //        if (!MaskCharacters.ContainsKey(mask[a]))
+        //        {
+        //            maskedText = maskedText.Insert(a, mask[a].ToString());
+        //        }
+        //    }
 
-            await SetTextAsync("", updateValue: false);
-            //await _elementReference.SetText(maskedText);
-        }
+        //    await SetTextAsync("", updateValue: false);
+        //    //await _elementReference.SetText(maskedText);
+        //}
 
         //private string _rawMask = "";
 
