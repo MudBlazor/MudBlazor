@@ -1,0 +1,26 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+
+<MudGrid Class="justify-space-between">
+    <MudItem xs="12" sm="6" md="4">
+		<MudSwitch @bind-Checked="@keepCharacterPosition" Color="Color.Primary">Keep Character Position</MudSwitch>
+        <MudMaskField @ref="maskField" Class="mt-4" OnKeyDown="KeyDown" KeepCharacterPositions="@keepCharacterPosition" HelperText="Mask: (000) 000-0000" HelperTextOnFocus="true" @bind-Value="@RawValue" @bind-Text="TextValue" Mask="(000) 000-0000" Label="Text" Variant="Variant.Text" />
+    </MudItem>
+    <MudItem xs="12" sm="6" md="4">
+        <MudText>Pressed Key: <b>@pressedKey</b></MudText>
+    </MudItem>
+</MudGrid>
+
+@code {
+	MudMaskField<string> maskField;
+	public string TextValue { get; set; }
+	public string RawValue { get; set; }
+	private string pressedKey = "";
+	private bool keepCharacterPosition = false;
+
+	private void KeyDown(KeyboardEventArgs e)
+	{
+		pressedKey = e.Key.ToString();
+		RawValue = maskField.GetRawValue();
+	}
+}

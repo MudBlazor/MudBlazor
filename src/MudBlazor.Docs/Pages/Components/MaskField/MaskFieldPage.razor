@@ -34,6 +34,20 @@
         </DocsPageSection>
 
 		<DocsPageSection>
+            <SectionHeader Title="Keep Character Positions">
+                <Description>
+					With <CodeInline>KeepCharacterPositions</CodeInline> parameter, different input approaches supported. By default (false), adding or removing characters forces other characters to move. Otherwise no character move their position.
+					<br/>
+					In this example, you can see and control the two approaches.
+				</Description>
+            </SectionHeader>
+            <SectionContent FullWidth="true" Outlined="true">
+                <MaskFieldKeepIndexExample />
+            </SectionContent>
+            <SectionSource Code="MaskFieldKeepIndexExample" ShowCode="false" GitHubFolderName="MaskField" />
+        </DocsPageSection>
+
+		<DocsPageSection>
             <SectionHeader Title="Control Mask With Mask Parameter">
                 <Description>
 					<CodeInline>Mask</CodeInline> parameter can be changed dynamically in runtime. New mask will be implement when user focus on Mask Field.

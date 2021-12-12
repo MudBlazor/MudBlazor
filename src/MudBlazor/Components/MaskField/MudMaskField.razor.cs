@@ -38,6 +38,10 @@ namespace MudBlazor
 
         [Parameter]
         [Category(CategoryTypes.FormComponent.ListBehavior)]
+        public bool KeepCharacterPositions { get; set; } = false;
+
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.ListBehavior)]
         public Dictionary<char, CharacterType> MaskCharacters { get; set; } = new() { 
             ['a'] = CharacterType.Letter,
             ['0'] = CharacterType.Digit,
@@ -113,7 +117,7 @@ namespace MudBlazor
             await base.SetValueAsync(value, updateText: false);
             _rawValue = Converter.Set(value);
             if (updateText)
-                await UltimateImplementMask(_rawValue, Mask, _pastedText);
+                await UltimateImplementMask(true, Mask, _pastedText);
         }
 
         internal override InputType GetInputType() => InputType;
@@ -226,7 +230,7 @@ namespace MudBlazor
             }
             else
             {
-                await UltimateImplementMask(_rawValue, Mask);
+                await UltimateImplementMask(false, Mask);
                 SetCaretPosition(FindFirstCaretLocation());
             }
         }
@@ -378,6 +382,13 @@ namespace MudBlazor
         //}
         private void UpdateRawValueDictionary(bool insertLastPressedKey = false, string pastedText = null)
         {
+            Dictionary<int, char> backUpDictionary = new Dictionary<int, char>();
+            for (int i = 0; i < Mask.Length; i++)
+            {
+                int a = i;
+                if (_rawValueDictionary.ContainsKey(a))
+                    backUpDictionary.Add(a, _rawValueDictionary[a]);
+            }
             _rawValueDictionary.Clear();
             if (pastedText != null)
             {
@@ -412,31 +423,124 @@ namespace MudBlazor
             if (string.IsNullOrEmpty(Text))
                 return;
 
-            for (int i = 0; i < Mask.Length; i++)
+            if (KeepCharacterPositions)
             {
-                int a = i;
-                if (Regex.IsMatch(Text[a].ToString(), "^[a-zA-Z0-9]$") && !_rawValueDictionary.ContainsKey(a))
+                for (int i = 0; i < Mask.Length; i++)
                 {
-                    _rawValueDictionary.Add(a, Text[a]);
+                    int a = i;
+                    if (Regex.IsMatch(Text[a].ToString(), "^[a-zA-Z0-9]$") && !_rawValueDictionary.ContainsKey(a))
+                    {
+                        _rawValueDictionary.Add(a, Text[a]);
+                    }
                 }
+            }
+            else
+            {
+                for (int i = 0; i < Mask.Length; i++)
+                {
+                    int a = i;
+                    if (backUpDictionary.ContainsKey(a))
+                    {
+                        if (a < _caretPosition)
+                            _rawValueDictionary.Add(a, backUpDictionary[a]);
+                        else
+                        {
+                            for (int i2 = 0; a + i2 < Mask.Length; i2++)
+                            {
+                                int a2 = i2;
+                                if (MaskCharacters.ContainsKey(Mask[a + a2]) && !_rawValueDictionary.ContainsKey(a + a2))
+                                {
+                                    _rawValueDictionary.Add(a + a2, backUpDictionary[a]);
+                                    break;
+                                }
+                            }
+                        }    
+                    }
+                }
+                //foreach (var item in backUpDictionary)
+                //{
+                //    if (item.Key < _caretPosition)
+                //        _rawValueDictionary.Add(item.Key, item.Value);
+                //    else
+                //        _rawValueDictionary.Add(item.Key + 1, item.Value);
+                //}
+                //for (int i = 0; i < Mask.Length; i++)
+                //{
+                //    int a = i;
+                //    if (Regex.IsMatch(Text[a].ToString(), "^[a-zA-Z0-9]$") && !_rawValueDictionary.ContainsKey(a))
+                //    {
+                //        if (a < _caretPosition)
+                //        {
+                //            _rawValueDictionary.Add(a, Text[a]);
+                //        }
+                //        else
+                //        {
+                //            for (int i2 = 0; i + i2 < Text.Length - _caretPosition; i2++)
+                //            {
+                //                int a2 = i2;
+                //                if (Text[_caretPosition + a + a2] == PlaceholderCharacter)
+                //                    _rawValueDictionary.Add(a + a2, Text[a]);
+                //            }         
+                //        }
+                //    }
+                //}
             }
 
             if (_lastKeyDownCharacter == "Backspace")
             {
-                for (int i = 1; i < Text.Length; i++)
+                if (KeepCharacterPositions)
                 {
-                    int a = i;
-                    if (_caretPosition - a < 0)
-                        break;
-                    if (Text[_caretPosition - a] == PlaceholderCharacter)
-                        break;
-                    if (_rawValueDictionary.ContainsKey(_caretPosition - a))
+                    for (int i = 1; i < Text.Length; i++)
                     {
-                        _rawValueDictionary.Remove(_caretPosition - a);
-                        break;
+                        int a = i;
+                        if (_caretPosition - a < 0)
+                            break;
+                        if (Text[_caretPosition - a] == PlaceholderCharacter)
+                            break;
+                        if (_rawValueDictionary.ContainsKey(_caretPosition - a))
+                        {
+                            _rawValueDictionary.Remove(_caretPosition - a);
+                            break;
+                        }
                     }
                 }
+                else
+                {
+                    int removedIndex = 0;
+                    for (int i = 0; i < (Text.Length - (Text.Length - _caretPosition)); i++)
+                    {
+                        removedIndex++;
+                        if (MaskCharacters.ContainsKey(Mask[_caretPosition - removedIndex]))
+                        {
+                            _rawValueDictionary.Remove(_caretPosition - removedIndex);
+                            break;
+                        }
+                    }
+
+                    Dictionary<int, char> replacedDictionary = new Dictionary<int, char>();
+                    foreach (var item in _rawValueDictionary)
+                    {
+                        if (_caretPosition <= item.Key)
+                        {
+                            for (int i = 0; i < Text.Length; i++)
+                            {
+                                int a = i;
+                                if (MaskCharacters.ContainsKey(Mask[item.Key - removedIndex - a]))
+                                {
+                                    replacedDictionary.Add(item.Key - removedIndex - a, item.Value);
+                                    break;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            replacedDictionary.Add(item.Key, item.Value);
+                        }
+                    }
+                    _rawValueDictionary = replacedDictionary;
+                }
             }
+
             else if (_lastKeyDownCharacter == "Delete")
             {
                 for (int i = 0; i < Text.Length; i++)
@@ -484,25 +588,25 @@ namespace MudBlazor
             return result;
         }
 
-        private async Task UltimateImplementMask(string rawText, string mask, string pastedText = null)
+        private async Task UltimateImplementMask(bool insertLastPressedKey, string mask, string pastedText = null)
         {
             if (mask == null)
             {
                 return;
             }
 
-            if (_rawValue == null)
-            {
-                rawText = "";
-            }
-            else
-            {
-                rawText = _rawValue;
-            }
+            //if (_rawValue == null)
+            //{
+            //    rawText = "";
+            //}
+            //else
+            //{
+            //    rawText = _rawValue;
+            //}
             string result = "";
 
             UpdateCustomCharacters();
-            UpdateRawValueDictionary(true, pastedText);
+            UpdateRawValueDictionary(insertLastPressedKey, pastedText);
             string rawMask = GetRawMask();
 
             //result = GetRawValueFromRawMask(rawText, rawMask, false);
