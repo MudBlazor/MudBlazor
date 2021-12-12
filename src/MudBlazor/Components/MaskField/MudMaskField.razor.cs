@@ -171,7 +171,7 @@ namespace MudBlazor
                 _jsEvent.Paste += OnPaste;
                 await _keyInterceptor.Connect(_elementId, new KeyInterceptorOptions()
                 {
-                    //EnableLogging = true,
+                    EnableLogging = true,
                     TargetClass = "mud-input-slot",
                     Keys = {
                         new KeyOptions { Key=" ", PreventDown = "key+none" }, //prevent scrolling page, toggle open/close
@@ -182,7 +182,7 @@ namespace MudBlazor
                         new KeyOptions { Key="PageUp", PreventDown = "key+none" },
                         new KeyOptions { Key="PageDown", PreventDown = "key+none" },
                         new KeyOptions { Key="Escape" },
-                        new KeyOptions { Key=@"/^(\p{L}|\d)$/", PreventDown = "key+none|key+shift" },
+                        new KeyOptions { Key=@"/^(\w|\d)$/", PreventDown = "key+none|key+shift" },
                         new KeyOptions { Key="Enter", PreventDown = "key+none" },
                         new KeyOptions { Key="NumpadEnter", PreventDown = "key+none" },
                         new KeyOptions { Key="/./", SubscribeDown = true, SubscribeUp = true }, // for our users
@@ -390,7 +390,7 @@ namespace MudBlazor
                 for (int i = 0; i < Mask.Length; i++)
                 {
                     int a = i;
-                    if (Regex.IsMatch(Text[a].ToString(), "^[a-zA-Z0-9]$") && !_rawValueDictionary.ContainsKey(a))
+                    if (Regex.IsMatch(Text[a].ToString(), @"^(\p{L}|\d)$") && !_rawValueDictionary.ContainsKey(a))
                     {
                         _rawValueDictionary.Add(a, Text[a]);
                     }
@@ -674,7 +674,8 @@ namespace MudBlazor
                 return;
 
             await ImplementMask(obj.Key, Mask);
-            await SetValueAsync(Converter.Get(GetRawValueFromDictionary()), false);
+            string val = GetRawValueFromDictionary();
+            await SetValueAsync(Converter.Get(val), false);
 
             OnKeyDown.InvokeAsync(obj).AndForget();
             ArrangeCaretPosition(obj);
