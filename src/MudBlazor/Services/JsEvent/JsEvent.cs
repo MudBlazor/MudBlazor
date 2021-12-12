@@ -17,6 +17,7 @@ namespace MudBlazor.Services
         event Action<int> CaretPositionChanged;
         event Action<string> Paste;
         event Action Copy;
+        event Action<int, int> Select;
     }
 
     /// <summary>
@@ -221,6 +222,41 @@ namespace MudBlazor.Services
             foreach (var handler in _copyHandlers)
             {
                 handler.Invoke();
+            }
+        }
+
+        List<Action<int, int>> _selectHandlers = new List<Action<int, int>>();
+
+        /// <summary>
+        /// Subscribe this event to get notified about paste actions
+        /// </summary>
+        public event Action<int, int> Select
+        {
+            add
+            {
+                if (_selectHandlers.Count == 0)
+                    Subscribe("select").AndForget();
+                _selectHandlers.Add(value);
+            }
+            remove
+            {
+                if (_selectHandlers.Count == 0)
+                    return;
+                if (_selectHandlers.Count == 1)
+                    Unsubscribe("select").AndForget();
+                _selectHandlers.Remove(value);
+            }
+        }
+
+        /// <summary>
+        /// To be invoked only by JS
+        /// </summary>
+        [JSInvokable]
+        public void OnSelect(int start, int end)
+        {
+            foreach (var handler in _selectHandlers)
+            {
+                handler.Invoke(start, end);
             }
         }
 
