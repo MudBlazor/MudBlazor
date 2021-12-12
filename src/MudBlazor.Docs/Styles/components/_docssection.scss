@@ -10,7 +10,7 @@
 }
 
 .docs-section-content {
-    border-radius: 12px;
+    border-radius: 8px;
     background-color: var(--mud-palette-surface);
     transition: border-radius 250ms cubic-bezier(.4,0,.2,1);
     display: flex;
@@ -28,7 +28,7 @@
         border-radius:0;
         
         &:last-child{
-          border-top-right-radius: 12px;
+          border-top-right-radius: 8px;
           .mud-button-label{
             margin: 0 4px;
           }
@@ -61,10 +61,6 @@
   + .docs-section-source.show-code{
     border-top-left-radius: 0;
     border-top-right-radius: 0;
-    .mud-codeblock{
-      border-top-left-radius: 0;
-      border-top-right-radius: 0;
-    }
   }
 }
 
@@ -72,9 +68,26 @@
 
 
 .docs-section-source {
+  position: relative;
   overflow: hidden;
   border-radius: 12px;
   background-color: var(--mud-palette-black);
+  transition: border-radius 250ms cubic-bezier(.4,0,.2,1);
+  
+  .copy-code-button{
+    position: absolute;
+    bottom: 8px;
+    right: 8px;
+    color: rgba(152, 142, 241, 0.0);
+    background-color: var(--mud-palette-black);
+    transition: color 250ms cubic-bezier(.4,0,.2,1) 0ms;
+  }
+  
+  &:hover{
+    .copy-code-button{
+      color: rgba(152, 142, 241, 0.8);
+    }
+  }
   
   .docs-section-source-container{
     max-height: 0;
@@ -87,7 +100,7 @@
       transition: max-height 0.25s ease-in;
 
       &::-webkit-scrollbar-thumb {
-        border-bottom-right-radius: 0px;
+        border-bottom-right-radius: 0;
       }
     }
   }
