@@ -23,8 +23,6 @@ namespace MudBlazor
 
         private int _caretPosition = 0;
 
-        private string _lastKeyDownCharacter = "";
-
         private string _pastedText;
 
         private Dictionary<int, char> _rawValueDictionary = new();
@@ -86,7 +84,7 @@ namespace MudBlazor
             await base.SetValueAsync(value, updateText: false);
             _rawValue = Converter.Set(value);
             if (updateText)
-                await ImplementMask(true, Mask, _pastedText);
+                await ImplementMask(null, Mask, _pastedText);
         }
 
         internal async void SetRawValue(string rawValue, bool updateText = false)
@@ -237,7 +235,7 @@ namespace MudBlazor
             //}
             if (!string.IsNullOrEmpty(_rawValue) || string.IsNullOrEmpty(Placeholder))
             {
-                await ImplementMask(false, Mask);
+                await ImplementMask(null, Mask);
                 SetCaretPosition(FindFirstCaretLocation());
             }
         }
@@ -344,7 +342,7 @@ namespace MudBlazor
 
         #region Core Masking
 
-        private void UpdateRawValueDictionary(bool insertLastPressedKey = false, string pastedText = null)
+        private void UpdateRawValueDictionary(string lastPressedKey = null, string pastedText = null)
         {
             Dictionary<int, char> backUpDictionary = new Dictionary<int, char>();
             for (int i = 0; i < Mask.Length; i++)
@@ -379,10 +377,10 @@ namespace MudBlazor
                 _pastedText = null;
                 return;
             }
-            if (insertLastPressedKey && !_rawValueDictionary.ContainsKey(_caretPosition) && !string.IsNullOrEmpty(_lastKeyDownCharacter)
-                 && !(_lastKeyDownCharacter == "Backspace" || _lastKeyDownCharacter == "Delete"))
+            if (lastPressedKey != null && !_rawValueDictionary.ContainsKey(_caretPosition) && !string.IsNullOrEmpty(lastPressedKey)
+                 && !(lastPressedKey == "Backspace" || lastPressedKey == "Delete"))
             {
-                _rawValueDictionary.Add(_caretPosition, _lastKeyDownCharacter[0]);
+                _rawValueDictionary.Add(_caretPosition, lastPressedKey[0]);
             }
             if (string.IsNullOrEmpty(Text))
                 return;
@@ -423,7 +421,7 @@ namespace MudBlazor
                 }
             }
 
-            if (_lastKeyDownCharacter == "Backspace")
+            if (lastPressedKey == "Backspace")
             {
                 if (KeepCharacterPositions)
                 {
@@ -478,7 +476,7 @@ namespace MudBlazor
                 }
             }
 
-            else if (_lastKeyDownCharacter == "Delete")
+            else if (lastPressedKey == "Delete")
             {
                 for (int i = 0; i < Text.Length; i++)
                 {
@@ -496,7 +494,7 @@ namespace MudBlazor
             }
         }
 
-        private async Task ImplementMask(bool insertLastPressedKey, string mask, string pastedText = null)
+        private async Task ImplementMask(string lastPressedKey, string mask, string pastedText = null)
         {
             if (mask == null)
             {
@@ -506,7 +504,7 @@ namespace MudBlazor
             string result = "";
 
             UpdateCustomCharacters();
-            UpdateRawValueDictionary(insertLastPressedKey, pastedText);
+            UpdateRawValueDictionary(lastPressedKey, pastedText);
 
             bool hasValue = false;
             for (int i = 0; i < mask.Length; i++)
@@ -675,10 +673,9 @@ namespace MudBlazor
                 !(obj.Key == "Backspace" || obj.Key == "Delete")))
                 return;
 
-            _lastKeyDownCharacter = obj.Key;
-
-            await ImplementMask(true, Mask);
-            GetRawValueFromDictionary();
+            await ImplementMask(obj.Key, Mask);
+            await Task.Delay(1);
+            await SetValueAsync(Converter.Get(GetRawValueFromDictionary()), false);
 
             OnKeyDown.InvokeAsync(obj).AndForget();
             ArrangeCaretPosition(obj);
