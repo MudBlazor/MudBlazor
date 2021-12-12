@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 
@@ -37,6 +36,7 @@ namespace MudBlazor
 
                 LastContainer = _selectedIndexField >= 0 ? SelectedContainer : null;
                 _selectedIndexField = value;
+                SelectionChanged();
                 StateHasChanged();
                 SelectedIndexChanged.InvokeAsync(value);
             }
@@ -108,33 +108,9 @@ namespace MudBlazor
                 SelectedIndex = index;
             }
         }
-    }
 
-    public abstract class MudBaseBindableItemsControl<TChildComponent, TData> : MudBaseItemsControl<TChildComponent>
-        where TChildComponent : MudComponentBase
-    {
+        protected virtual void SelectionChanged() { }
 
-        /// <summary>
-        /// Items Collection - For databinding usage
-        /// </summary>
-        [Parameter]
-        [Category(CategoryTypes.General.Data)]
-        public IEnumerable<TData> ItemsSource { get; set; }
-
-        /// <summary>
-        /// Template for each Item in ItemsSource collection
-        /// </summary>
-        [Parameter]
-        [Category(CategoryTypes.General.Data)]
-        public RenderFragment<TData> ItemTemplate { get; set; }
-
-        /// <summary>
-        /// Gets the Selected Item from ItemsSource, or Selected TChildComponent, when it's null
-        /// </summary>
-        public object SelectedItem
-        {
-            get => ItemsSource == null ? Items[SelectedIndex] : ItemsSource.ElementAtOrDefault(SelectedIndex);
-        }
-
+        public virtual void AddItem(TChildComponent item) { }
     }
 }
