@@ -1,0 +1,15 @@
+﻿@namespace MudBlazor.UnitTests.TestComponents
+
+<MudMaskField
+    @bind-Value="_value"
+     Label="Input" 
+     Variant="Variant.Outlined"
+     Required="true"
+	 Mask="(aaa) 000-0000"
+/>
+   
+@code {
+    public static string __description__ = "The textfield should not show required-error initially!";
+
+    private string _value = "";
+}

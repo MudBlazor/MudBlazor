@@ -862,7 +862,7 @@ namespace MudBlazor
             StateHasChanged();
         }
 
-        protected async Task HandleKeyDown(KeyboardEventArgs obj)
+        protected internal async Task HandleKeyDown(KeyboardEventArgs obj)
         {
             //if (obj.Key == "ArrowUp" || obj.Key == "ArrowDown" || obj.Key == "ArrowLeft" || obj.Key == "ArrowRight" || 
             //        obj.Key == "Shift" || obj.Key == "Ctrl" || obj.Key == "CapsLock" || obj.Key == "Tab" || obj.CtrlKey == true)
