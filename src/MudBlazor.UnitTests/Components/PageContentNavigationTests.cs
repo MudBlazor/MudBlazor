@@ -61,7 +61,7 @@ namespace MudBlazor.UnitTests.Components
 
             var navLinks = comp.FindComponents<MudNavLink>();
             navLinks.Should().HaveCount(2);
-            navLinks[0].Instance.Class.Should().Be("page-content-navigation-navlink");
+            navLinks[0].Instance.Class.Should().Be("page-content-navigation-navlink navigation-level-0");
 
             var firstLinkText = navLinks[0].Find(".mud-nav-link-text");
             firstLinkText.TextContent.Should().Be("my section");
@@ -98,7 +98,7 @@ namespace MudBlazor.UnitTests.Components
 
             var navLinks = comp.FindComponents<MudNavLink>();
             navLinks.Should().HaveCount(2);
-            navLinks[0].Instance.Class.Should().Be("page-content-navigation-navlink active");
+            navLinks[0].Instance.Class.Should().Be("page-content-navigation-navlink active navigation-level-0");
             var linkText = navLinks[0].Find(".mud-nav-link-text");
             linkText.TextContent.Should().Be("my section");
 
@@ -128,7 +128,7 @@ namespace MudBlazor.UnitTests.Components
 
             var navLinks = comp.FindComponents<MudNavLink>();
             navLinks.Should().HaveCount(2);
-            navLinks[0].Instance.Class.Should().Be("page-content-navigation-navlink active");
+            navLinks[0].Instance.Class.Should().Be("page-content-navigation-navlink active navigation-level-0");
             var linkText = navLinks[0].Find(".mud-nav-link-text");
 
             linkText.TextContent.Should().Be("my section");
@@ -168,7 +168,7 @@ namespace MudBlazor.UnitTests.Components
 
                 for (var j = 0; j < 3; j++)
                 {
-                    navLinks[j].Instance.Class.Should().Be(i == j ? "page-content-navigation-navlink active" : "page-content-navigation-navlink");
+                    navLinks[j].Instance.Class.Should().Be(i == j ? "page-content-navigation-navlink active navigation-level-0" : "page-content-navigation-navlink navigation-level-0");
                 }
             }
 
