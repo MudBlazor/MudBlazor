@@ -36,11 +36,13 @@ namespace MudBlazor.UnitTests.Components
 
             await comp.InvokeAsync(() => maskField.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = "a" }));
             comp.WaitForAssertion(() => maskField.Instance.Text.Should().Be("(a__) ___-____"));
+            comp.WaitForAssertion(() => maskField.Instance.GetRawValue().Should().Be("a"));
             comp.WaitForAssertion(() => maskField.Instance.Value.Should().Be("a"));
 
             await comp.InvokeAsync(() => maskField.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = "b" }));
             comp.WaitForAssertion(() => maskField.Instance.Text.Should().Be("(ab_) ___-____"));
             comp.WaitForAssertion(() => maskField.Instance.GetRawValue().Should().Be("ab"));
+            comp.WaitForAssertion(() => maskField.Instance.Value.Should().Be("ab"));
 
             await comp.InvokeAsync(() => maskField.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = "c" }));
             comp.WaitForAssertion(() => maskField.Instance.Text.Should().Be("(abc) ___-____"));

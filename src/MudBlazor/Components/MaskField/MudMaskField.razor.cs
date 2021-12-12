@@ -78,13 +78,20 @@ namespace MudBlazor
             return rawValue;
         }
 
+        protected override async Task SetTextAsync(string text, bool updateValue=true )
+        {
+            Console.WriteLine($"SetTextAsync: '{text}' updateValue:{updateValue}");
+            await base.SetTextAsync(text, updateValue);
+        }
+
         protected override async Task SetValueAsync(T value, bool updateText = true)
         {
-            // never update text directly. we do it below
-            await base.SetValueAsync(value, updateText: false);
+            Console.WriteLine($"SetValueAsync: '{value}' updateText:{updateText}");
             _rawValue = Converter.Set(value);
             if (updateText)
                 await ImplementMask(null, Mask, _pastedText);
+            // never update text directly. we already did it
+            await base.SetValueAsync(value, updateText: false);
         }
 
         internal async void SetRawValue(string rawValue, bool updateText = false)
@@ -672,7 +679,7 @@ namespace MudBlazor
             if (obj.CtrlKey == true || (!Regex.IsMatch(obj.Key, @"^(\p{L}|\d)$") &&
                 !(obj.Key == "Backspace" || obj.Key == "Delete")))
                 return;
-
+            Console.WriteLine($"HandleKeyDown: '{obj.Key}'");
             await ImplementMask(obj.Key, Mask);
             string val = GetRawValueFromDictionary();
             await SetValueAsync(Converter.Get(val), false);
