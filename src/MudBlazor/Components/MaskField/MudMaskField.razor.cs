@@ -562,7 +562,7 @@ namespace MudBlazor
                 }
             }
 
-            if (hasValue == false)
+            if (hasValue == false && !string.IsNullOrEmpty(Placeholder))
             {
                 await SetTextAsync(null, updateValue: false);
             }
@@ -892,7 +892,9 @@ namespace MudBlazor
 
             //string toBeMaskedText = GetToBeMaskedText(obj);
             //await ImplementMask(toBeMaskedText, Mask);
+
             await SetValueAsync(Converter.Get(Text), true);
+
             //_rawValue = GetRawValueFromRawMask(_rawValue, GetRawMask(), false);
             SetRawValueFromText();
             //await UltimateImplementMask(toBeMaskedText, GetMaskByType());
