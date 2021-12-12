@@ -205,7 +205,6 @@
         position: relative;
         box-sizing: content-box;
         letter-spacing: inherit;
-        -webkit-tap-highlight-color: transparent;
 
         @include inputplaceholder {
             color: currentColor;
