@@ -1,5 +1,5 @@
 ﻿using System;
-using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
@@ -84,21 +84,26 @@ namespace MudBlazor
 
 
         /// <summary>
-        /// Gets or Sets if bottom bar with Delimiters must be visible
+        /// Gets or Sets if bottom bar with Delimiters must be visible.
+        /// Deprecated, use ShowBullets instead.
         /// </summary>
         [Category(CategoryTypes.Carousel.Behavior)]
-        [Parameter] public bool ShowDelimiters { get; set; } = true;
+        [Obsolete($"Use {nameof(ShowBullets)} instead", false)]
+        [ExcludeFromCodeCoverage]
+        [Parameter] public bool ShowDelimiters { get => ShowBullets; set => ShowBullets = value; }
 
         /// <summary>
         /// Gets or Sets the Delimiters color.
         /// If not set, the color is determined based on the <see cref="MudCarouselItem.Color"/> property of the active child.
+        /// Deprecated, use BulletsColor instead.
         /// </summary>
         [Obsolete($"Use {nameof(BulletsColor)} instead", false)]
         [Category(CategoryTypes.Carousel.Appearance)]
+        [ExcludeFromCodeCoverage]
         [Parameter] public Color? DelimitersColor { get => BulletsColor; set => BulletsColor = value; }
 
         /// <summary>
-        /// Gets or Sets automatic cycle on item collection
+        /// Gets or Sets automatic cycle on item collection.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Carousel.Behavior)]
@@ -153,10 +158,13 @@ namespace MudBlazor
         [Parameter] public string BulletsClass { get; set; }
 
         /// <summary>
-        /// Gets or Sets custom class(es) for Delimiters buttons
+        /// Gets or Sets custom class(es) for Delimiters buttons.
+        /// Deprecated, use BulletsClass instead.
         /// </summary>
         [Category(CategoryTypes.Carousel.Appearance)]
-        [Parameter] public string DelimitersClass { get; set; }
+        [Obsolete($"Use {nameof(BulletsClass)} instead", false)]
+        [ExcludeFromCodeCoverage]
+        [Parameter] public string DelimitersClass { get => BulletsClass; set => BulletsClass = value; }
 
         /// <summary>
         /// Custom previous navigation icon.
@@ -209,10 +217,13 @@ namespace MudBlazor
         [Parameter] public RenderFragment<bool> BulletsTemplate { get; set; }
 
         /// <summary>
-        /// Gets or Sets the Template for Delimiters
+        /// Gets or Sets the Template for Delimiters.
+        /// Deprecated, use BulletsTemplate instead.
         /// </summary>
         [Category(CategoryTypes.Carousel.Appearance)]
-        [Parameter] public RenderFragment<bool> DelimiterTemplate { get; set; }
+        [Obsolete($"Use {nameof(BulletsTemplate)} instead", false)]
+        [ExcludeFromCodeCoverage]
+        [Parameter] public RenderFragment<bool> DelimiterTemplate { get => BulletsTemplate; set => BulletsTemplate = value; }
 
 
         /// <summary>

@@ -35,7 +35,7 @@
                 }
                 else
                 {
-                <div @onclick="Previous" tabindex="1" aria-label="Go to previous" class="@NavigationButtonsClassName" style="z-index:3;opacity:0.75">
+                <div @onclick="Previous" tabindex="1" aria-label="Go to previous" class="@NavigationButtonsClassName" style="z-index:3">
                     @PreviousButtonTemplate
                 </div>
                 }
@@ -55,7 +55,7 @@
                             }
                             else
                             {
-                                <div @onclick="() => MoveTo(current)" class="@BulletsButtonsClassName" style="z-index:3;opacity:0.75">
+                                <div @onclick="() => MoveTo(current)" class="@BulletsButtonsClassName" style="z-index:3">
                                     @BulletsTemplate(current == SelectedIndex)
                                 </div>
                             }
@@ -73,7 +73,7 @@
                 }
                 else
                 {
-                    <div @onclick="Next" tabindex="2" aria-label="Go to next" class="@NavigationButtonsClassName" style="z-index:3;opacity:0.75">
+                    <div @onclick="Next" tabindex="2" aria-label="Go to next" class="@NavigationButtonsClassName" style="z-index:3">
                         @NextButtonTemplate
                     </div>
                 }
