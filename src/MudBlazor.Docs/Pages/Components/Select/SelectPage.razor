@@ -39,15 +39,12 @@
                 <Description></Description>
             </SectionHeader>
             <SectionContent Outlined="true" ShowCode="false" Code="SelectUsageExample">
-                <MudContainer>
-                    <SelectUsageExample />
-                </MudContainer>
+                <SelectUsageExample />
             </SectionContent>
         </DocsPageSection>
 
         <DocsPageSection>
             <SectionHeader Title="Multiselect">
-                <SubTitle>Default MultiSelection Text</SubTitle>
                 <Description>
                     If you set <CodeInline>MultiSelection="true"</CodeInline>, you can select multiple values. The selected options are returned as concatenated comma-delimited
                     string via <CodeInline>Value</CodeInline> and as a <CodeInline>HashSet&lt;string></CodeInline> via <CodeInline>SelectedValues</CodeInline>. The delimited string
@@ -55,34 +52,32 @@
                 </Description>
             </SectionHeader>
             <SectionContent Outlined="true" ShowCode="false" Code="MultiSelectExample">
-                <MudContainer>
-                    <MultiSelectExample />
-                </MudContainer>
+                <MultiSelectExample />
             </SectionContent>
-            <SectionHeader>
-                <SubTitle>Customized MultiSelection Text</SubTitle>
-                <Description>
-                    If you set <CodeInline>MultiSelection="true"</CodeInline>, you can select multiple values.
-                    By defining the <CodeInline>MultiSelectionTextFunc</CodeInline> method, the returned selection can be fully customized.
-                </Description>
-            </SectionHeader>
-            <SectionContent Outlined="true" ShowCode="false" Code="MultiSelectCustomizedExample">
-                <MudContainer>
-                    <MultiSelectCustomizedExample />
-                </MudContainer>
-            </SectionContent>
-            <SectionHeader>
-                <SubTitle>Select All</SubTitle>
-                <Description>
-                    If you set <CodeInline>SelectAll="true"</CodeInline>, you can display a 'Select all' option to select or deselect all items.
-                    It is added at the top of the list of items. The text for this option can be customized by the <CodeInline>SelectAllText</CodeInline> parameter.
-                </Description>
-            </SectionHeader>
-            <SectionContent Outlined="true" ShowCode="false" Code="MultiSelectSelectAllExample">
-                <MudContainer>
-                    <MultiSelectSelectAllExample />
-                </MudContainer>
-            </SectionContent>
+            <SectionSubGroups>
+                <DocsPageSection>
+                    <SectionHeader Title="Customized Selection Text">
+                        <Description>
+                            If you set <CodeInline>MultiSelection="true"</CodeInline>, you can select multiple values.
+                            By defining the <CodeInline>MultiSelectionTextFunc</CodeInline> method, the returned selection can be fully customized.
+                        </Description>
+                    </SectionHeader>
+                    <SectionContent Outlined="true" ShowCode="false" Code="MultiSelectCustomizedExample">
+                        <MultiSelectCustomizedExample />
+                    </SectionContent>
+                </DocsPageSection>
+                <DocsPageSection>
+                    <SectionHeader Title="Select All">
+                        <Description>
+                            If you set <CodeInline>SelectAll="true"</CodeInline>, you can display a 'Select all' option to select or deselect all items.
+                            It is added at the top of the list of items. The text for this option can be customized by the <CodeInline>SelectAllText</CodeInline> parameter.
+                        </Description>
+                    </SectionHeader>
+                    <SectionContent Outlined="true" ShowCode="false" Code="MultiSelectSelectAllExample">
+                        <MultiSelectSelectAllExample />
+                    </SectionContent>
+                </DocsPageSection>
+            </SectionSubGroups>
         </DocsPageSection>
 
         <DocsPageSection>
@@ -93,9 +88,7 @@
                 </Description>
             </SectionHeader>
             <SectionContent Outlined="true" ShowCode="false" Code="SelectPresentationExample">
-                <MudContainer Class="py-6">
-                    <SelectPresentationExample />
-                </MudContainer>
+                <SelectPresentationExample />
             </SectionContent>
         </DocsPageSection>
 
@@ -109,9 +102,7 @@
                 </Description>
             </SectionHeader>
             <SectionContent Outlined="true" ShowCode="false" Code="SelectCustomConverterExample">
-                <MudContainer Class="py-6">
-                    <SelectCustomConverterExample />
-                </MudContainer>
+                <SelectCustomConverterExample />
             </SectionContent>
         </DocsPageSection>
 
@@ -124,9 +115,7 @@
                 </Description>
             </SectionHeader>
             <SectionContent Outlined="true" ShowCode="false" Code="SelectNumericCollectionExample">
-                <MudContainer>
-                    <SelectNumericCollectionExample />
-                </MudContainer>
+                <SelectNumericCollectionExample />
             </SectionContent>
         </DocsPageSection>
 
