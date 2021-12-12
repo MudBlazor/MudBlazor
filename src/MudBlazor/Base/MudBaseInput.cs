@@ -194,7 +194,7 @@ namespace MudBlazor
         /// </summary>
         internal virtual InputType GetInputType() { return InputType.Text; }
 
-        protected async Task SetTextAsync(string text, bool updateValue = true)
+        protected virtual async Task SetTextAsync(string text, bool updateValue = true)
         {
             if (Text != text)
             {
