@@ -33,7 +33,9 @@ namespace MudBlazor
         /// <summary>
         /// RenderFragment for costumization inside the chart's svg.
         /// </summary>
-        [Parameter] public RenderFragment CustomGraphics { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.Chart.Appearance)]
+        public RenderFragment CustomGraphics { get; set; }
 
         protected string Classname =>
         new CssBuilder("mud-chart")
