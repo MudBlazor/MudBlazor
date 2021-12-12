@@ -94,33 +94,15 @@
                     </SectionHeader>
                     <SectionContent Codes="@(new[] {new CodeFile(".NET 6", "InstallServicesNET6Manual"), new CodeFile(".NET 5 Wasm", "InstallServicesNET5WasmManual"), new CodeFile(".NET 5 Server", "InstallServicesNET5ServerManual")})"/>
                 </DocsPageSection>
+                
+                <DocsPageSection>
+                    <SectionHeader Title="Add Components">
+                        <Description>Add the following components to your <CodeInline>MainLayout.razor</CodeInline> note that the <CodeInline>ThemeProvider</CodeInline> is essential for MudBlazor but the rest is optional.</Description>
+                    </SectionHeader>
+                    <SectionContent Code="InstallationManualComponentsExample"/>
+                </DocsPageSection>
 
             </SectionSubGroups>
-            
-            
-            
-            
-            
-            
-            
-            
-        </DocsPageSection>
-        
-        
-        <DocsPageSection>
-            <SectionHeader>
-                <SubTitle>4. Register Services</SubTitle>
-            </SectionHeader>
-            <MudText GutterBottom="true">
-                Add the following to your <CodeInline>Program.cs</CodeInline>
-            </MudText>
-        </DocsPageSection>
-        
-        <DocsPageSection>
-            <SectionHeader>
-                <SubTitle>5. Add Components</SubTitle>
-                <Description>Add the following components to your <CodeInline>MainLayout.razor</CodeInline> or <CodeInline>App.razor</CodeInline> note that the <CodeInline>ThemeProvider</CodeInline> is essential for MudBlazor but the rest is optional.</Description>
-            </SectionHeader>
         </DocsPageSection>
         
         <DocsPageSection>
