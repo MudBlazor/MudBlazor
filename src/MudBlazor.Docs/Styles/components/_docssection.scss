@@ -71,7 +71,7 @@
   position: relative;
   overflow: hidden;
   border-radius: 8px;
-  background-color: var(--mud-palette-black);
+  background-color: var(--mud-palette-background-grey);
   transition: border-radius 250ms cubic-bezier(.4,0,.2,1);
   
   .copy-code-button{
@@ -79,7 +79,7 @@
     bottom: 8px;
     right: 8px;
     color: rgba(152, 142, 241, 0.0);
-    background-color: var(--mud-palette-black);
+    background-color: var(--mud-palette-background-grey);
     transition: color 250ms cubic-bezier(.4,0,.2,1) 0ms;
   }
   
