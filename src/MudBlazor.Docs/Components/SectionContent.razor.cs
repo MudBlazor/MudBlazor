@@ -21,9 +21,9 @@ public partial class SectionContent
 
     protected string Classname =>
         new CssBuilder("docs-section-content")
+            .AddClass($"outlined", Outlined)
+            .AddClass($"darken {_luckyColor}", DarkenBackground)
             .AddClass("show-code", _hasCode && ShowCode)
-            .AddClass($"docs-section-content-outlined", Outlined)
-            .AddClass($"docs-section-content-darken", DarkenBackground)
             .AddClass(Class)
             .Build();
 
@@ -37,6 +37,7 @@ public partial class SectionContent
 
     protected string SourceClassname =>
         new CssBuilder("docs-section-source")
+            .AddClass($"outlined", Outlined)
             .AddClass("show-code", _hasCode && ShowCode)
             .Build();
 
@@ -64,6 +65,7 @@ public partial class SectionContent
     
     private bool _hasCode;
     private string _activeCode;
+    private string _luckyColor;
     
     protected override void OnParametersSet()
     {
@@ -76,6 +78,11 @@ public partial class SectionContent
         {
             _hasCode = true;
             _activeCode = Code;
+        }
+
+        if (DarkenBackground)
+        {
+            _luckyColor = GetDarkenColor();
         }
     }
     
@@ -93,7 +100,14 @@ public partial class SectionContent
     {
         await JsApiService.CopyToClipboardAsync(Snippets.GetCode(Code));
     }
-    
+
+    private string GetDarkenColor()
+    {
+        string[] bgColors = {"primary", "secondary", "tetriary", "info", "success", "warning", "error"};
+        Random rnd = new Random();
+        return bgColors[rnd.Next(6)];
+    }
+
     RenderFragment CodeComponent(string code) => builder =>
     {
         try
