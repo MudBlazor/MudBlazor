@@ -5,11 +5,11 @@
      Label="Input" 
      Variant="Variant.Outlined"
      Required="true"
-	 Mask="(aaa) 000-0000"
+	 Mask="(0)0-0"
 />
    
 @code {
-    public static string __description__ = "Mask input should work!";
+    public static string __description__ = "Mask input should result in a valid int value!";
 
-    private string _value = "";
+    private int _value = 0;
 }

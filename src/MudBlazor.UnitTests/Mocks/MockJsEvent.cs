@@ -27,5 +27,6 @@ namespace MudBlazor.UnitTests.Mocks
         public event Action<int> CaretPositionChanged;
         public event Action<string> Paste;
         public event Action Copy;
+        public event Action<int, int> Select;
     }
 }

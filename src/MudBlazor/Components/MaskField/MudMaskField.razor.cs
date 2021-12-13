@@ -22,6 +22,7 @@ namespace MudBlazor
         private string _rawValue;
 
         private int _caretPosition = 0;
+        private (int, int)? _selection = null;
 
         private string _pastedText;
 
@@ -184,6 +185,7 @@ namespace MudBlazor
                 _jsEvent.CaretPositionChanged += OnCaretPositionChanged;
                 _jsEvent.Copy += OnCopy;
                 _jsEvent.Paste += OnPaste;
+                _jsEvent.Select += OnSelect;
                 await _keyInterceptor.Connect(_elementId, new KeyInterceptorOptions()
                 {
                     EnableLogging = true,
@@ -215,6 +217,7 @@ namespace MudBlazor
         private void OnCaretPositionChanged(int pos)
         {
             _caretPosition = pos;
+            _selection = null;
             //Console.WriteLine($"Caret position: {pos}");
         }
 
@@ -236,7 +239,13 @@ namespace MudBlazor
             //Console.WriteLine($"Paste: {text}");
         }
 
-        private async void OnFocussed(FocusEventArgs obj)
+        public void OnSelect(int start, int end)
+        {
+            _selection = (start, end);
+            Console.WriteLine($"Select: {_selection.Value.Item1}-{_selection.Value.Item2}");
+        }
+
+        private async void OnFocused(FocusEventArgs obj)
         {
             _isFocused = true;
             //if (string.IsNullOrEmpty(_rawValue) && !string.IsNullOrEmpty(Placeholder))

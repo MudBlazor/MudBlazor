@@ -167,7 +167,7 @@ class MudJsEvent {
         const caretPosition = e.target.selectionStart;
         const invoke = self._subscribedEvents["keyup"];
         if (invoke) {
-            self.logger('[MudBlazor | JsEvent] caret pos: ' + caretPosition);
+            //self.logger('[MudBlazor | JsEvent] caret pos: ' + caretPosition);
             self._dotNetRef.invokeMethodAsync('OnCaretPositionChanged', caretPosition);
         }
     }
@@ -176,7 +176,7 @@ class MudJsEvent {
         const caretPosition = e.target.selectionStart;
         const invoke = self._subscribedEvents["click"];
         if (invoke) {
-            self.logger('[MudBlazor | JsEvent] caret pos: ' + caretPosition);
+            //self.logger('[MudBlazor | JsEvent] caret pos: ' + caretPosition);
             self._dotNetRef.invokeMethodAsync('OnCaretPositionChanged', caretPosition);
         }
     }
@@ -184,7 +184,7 @@ class MudJsEvent {
     oncopy(self, e) {
         const invoke = self._subscribedEvents["copy"];
         if (invoke) {
-            self.logger('[MudBlazor | JsEvent] copy (preventing default and stopping propagation)');
+            //self.logger('[MudBlazor | JsEvent] copy (preventing default and stopping propagation)');
             e.preventDefault();
             e.stopPropagation();
             self._dotNetRef.invokeMethodAsync('OnCopy');
@@ -194,11 +194,23 @@ class MudJsEvent {
     onpaste(self, e) {
         const invoke = self._subscribedEvents["paste"];
         if (invoke) {
-            self.logger('[MudBlazor | JsEvent] paste (preventing default and stopping propagation)');
+            //self.logger('[MudBlazor | JsEvent] paste (preventing default and stopping propagation)');
             e.preventDefault();
             e.stopPropagation();
             const text = (e.originalEvent || e).clipboardData.getData('text/plain');
             self._dotNetRef.invokeMethodAsync('OnPaste', text);
+        }
+    }
+
+    onselect(self, e) {
+        const invoke = self._subscribedEvents["select"];
+        if (invoke) {
+            const start = e.target.selectionStart;
+            const end = e.target.selectionEnd;
+            if (start === end)
+                return; // <-- we have caret position changed for that.
+            //self.logger('[MudBlazor | JsEvent] select ' + start + "-" + end);
+            self._dotNetRef.invokeMethodAsync('OnSelect', start, end);
         }
     }
 }
