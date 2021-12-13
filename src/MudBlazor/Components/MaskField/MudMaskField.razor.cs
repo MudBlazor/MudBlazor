@@ -258,7 +258,7 @@ namespace MudBlazor
             Console.WriteLine($"Select: {_selection.Value.Item1}-{_selection.Value.Item2}");
         }
 
-        private async void OnFocused(FocusEventArgs obj)
+        internal async void OnFocused(FocusEventArgs obj)
         {
             _isFocused = true;
             //if (string.IsNullOrEmpty(_rawValue) && !string.IsNullOrEmpty(Placeholder))
@@ -270,7 +270,7 @@ namespace MudBlazor
             //    await UltimateImplementMask(false, Mask);
             //    SetCaretPosition(FindFirstCaretLocation());
             //}
-            if (!string.IsNullOrEmpty(_rawValue) || string.IsNullOrEmpty(Placeholder))
+            if (!string.IsNullOrEmpty(Converter.Set(Value)) || string.IsNullOrEmpty(Placeholder))
             {
                 await ImplementMask(null, Mask);
                 SetCaretPosition(FindFirstCaretLocation());

@@ -30,7 +30,6 @@ namespace MudBlazor.UnitTests.Components
         public async Task MaskFieldTest_Fundamentals()
         {
             var comp = Context.RenderComponent<MaskFieldStringTest>();
-
             var maskField = comp.FindComponent<MudMaskField<string>>();
 
             comp.WaitForAssertion(() => maskField.Instance.Value.Should().Be(""));
@@ -183,7 +182,28 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task MaskFieldTest_InsertCharactersIntoMiddle()
         {
+            var comp = Context.RenderComponent<MaskFieldStringTest>();
+            var maskField = comp.FindComponent<MudMaskField<string>>();
 
+            await comp.InvokeAsync(() => maskField.Instance.SetCaretPosition(6));
+            await comp.InvokeAsync(() => maskField.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = "1" }));
+            comp.WaitForAssertion(() => maskField.Instance.Text.Should().Be("(___) 1__-__"));
+            comp.WaitForAssertion(() => maskField.Instance.Value.Should().Be("1"));
+
+            await comp.InvokeAsync(() => maskField.Instance.SetCaretPosition(10));
+            await comp.InvokeAsync(() => maskField.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = "a" }));
+            comp.WaitForAssertion(() => maskField.Instance.Text.Should().Be("(___) 1__-a_"));
+            comp.WaitForAssertion(() => maskField.Instance.Value.Should().Be("1a"));
+
+            await comp.InvokeAsync(() => maskField.Instance.SetCaretPosition(1));
+            await comp.InvokeAsync(() => maskField.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = "a" }));
+            comp.WaitForAssertion(() => maskField.Instance.Text.Should().Be("(a__) 1__-a_"));
+            comp.WaitForAssertion(() => maskField.Instance.Value.Should().Be("a1a"));
+
+            await comp.InvokeAsync(() => maskField.Instance.SetCaretPosition(1));
+            await comp.InvokeAsync(() => maskField.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = "b" }));
+            comp.WaitForAssertion(() => maskField.Instance.Text.Should().Be("(ba_) 1__-a_"));
+            comp.WaitForAssertion(() => maskField.Instance.Value.Should().Be("ba1a"));
         }
 
         [Test]
