@@ -71,9 +71,17 @@ namespace MudBlazor
         private string GetRawValueFromDictionary()
         {
             string rawValue = "";
-            foreach (var item in _rawValueDictionary)
+            //foreach (var item in _rawValueDictionary)
+            //{
+            //    rawValue += item.Value.ToString();
+            //}
+            for (int i = 0; i < Mask.Length; i++)
             {
-                rawValue += item.Value.ToString();
+                int a = i;
+                if (_rawValueDictionary.ContainsKey(a))
+                {
+                    rawValue += _rawValueDictionary[a];
+                }
             }
             return rawValue;
         }
@@ -520,6 +528,10 @@ namespace MudBlazor
                 if (!MaskCharacters.ContainsKey(mask[a]))
                 {
                     result += mask[a].ToString();
+                    if (_rawValueDictionary.ContainsKey(a))
+                    {
+                        _rawValueDictionary.Remove(a);
+                    }
                 }
                 else if (_rawValueDictionary.ContainsKey(a))
                 {
