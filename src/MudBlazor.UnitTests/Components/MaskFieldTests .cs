@@ -209,7 +209,26 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task MaskFieldTest_ChangeMaskCharacters()
         {
+            //var comp = Context.RenderComponent<MaskFieldStringTest>();
+            //var maskField = comp.FindComponent<MudMaskField<string>>();
 
+            //await comp.InvokeAsync(() => maskField.Instance.SetCaretPosition(1));
+            //await comp.InvokeAsync(() => maskField.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = "a" }));
+            //comp.WaitForAssertion(() => maskField.Instance.Text.Should().Be("(a__) ___-__"));
+            //comp.WaitForAssertion(() => maskField.Instance.Value.Should().Be("a"));
+
+            //await comp.InvokeAsync(() => maskField.Instance.Mask = "(bbb) 999-bb");
+            //await comp.InvokeAsync(() => maskField.Instance.MaskCharacters = new Dictionary<char, CharacterType>()
+            //{
+            //    ['b'] = CharacterType.Letter,
+            //    ['9'] = CharacterType.Digit,
+            //    ['+'] = CharacterType.LetterOrDigit,
+            //});
+
+            //await comp.InvokeAsync(() => maskField.Instance.SetCaretPosition(2));
+            //await comp.InvokeAsync(() => maskField.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = "b" }));
+            //comp.WaitForAssertion(() => maskField.Instance.Text.Should().Be("(ab_) ___-__"));
+            //comp.WaitForAssertion(() => maskField.Instance.Value.Should().Be("ab"));
         }
 
         [Test]
