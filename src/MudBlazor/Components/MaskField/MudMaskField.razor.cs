@@ -89,6 +89,8 @@ namespace MudBlazor
 
         protected override async Task SetTextAsync(string text, bool updateValue=true )
         {
+            //if (text == "a")
+            //    text="a";
             Console.WriteLine($"SetTextAsync: '{text}' updateValue:{updateValue}");
             await base.SetTextAsync(text, updateValue);
         }
@@ -103,6 +105,13 @@ namespace MudBlazor
             await base.SetValueAsync(value, updateText: false);
         }
 
+        protected override async Task UpdateTextPropertyAsync(bool updateValue)
+        {
+            if (GetRawValueFromText() == Converter.Set(Value))
+                return;
+            await ImplementMask(null, Mask, _pastedText);
+        }
+
         internal async void SetRawValue(string rawValue, bool updateText = false)
         {
             if (_rawValue == rawValue)
@@ -114,6 +123,10 @@ namespace MudBlazor
 
         internal string GetRawValueFromText()
         {
+            if (Text==null)
+                return null;
+            if (Text == "")
+                return "";
             string result = "";
             for (int i = 0; i < Text.Length; i++)
             {
