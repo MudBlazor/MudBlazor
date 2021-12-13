@@ -34,21 +34,27 @@
             </SectionHeader>
             <SectionContent Code="OverviewThemesScrollbarExample" />
         </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Dark Palette">
+                <Description>Dark palettes are integrated in <CodeInline>MudTheme</CodeInline>. Just set <CodeInline>IsDarkMode</CodeInline> to  <CodeInline>true</CodeInline>.</Description>
+            </SectionHeader>
+            <SectionContent FullWidth="true" Outlined="true" Class="pa-0">
+                <iframe src="/iframe/docs/examples/themeprovider/darkpalette" class="ma-0 rounded">
+                    <OverviewThemesDarkPaletteExample/>
+                </iframe>
+            </SectionContent>
+            <SectionSource Code="OverviewThemesDarkPaletteExample" GitHubFolderName="Customization/OverviewThemesDarkPaletteExample"/>
+        </DocsPageSection>
         
         <DocsPageSection>
             <SectionHeader Title="Custom Themes">
-                <Description>To customize the theme, you need to give the ThemeProvider a new <CodeInline>MudTheme</CodeInline> class with the settings you want to change.</Description>
+                <Description>To customize the theme, you need to give the ThemeProvider a new <CodeInline>MudTheme</CodeInline> class with the settings you want to change.
+                    <CodeInline>Palette</CodeInline> defines the color of the Light Palette. <CodeInline>PaletteDark</CodeInline> on the other hand defines the colors of
+                    the Dark Palette.</Description>
             </SectionHeader>
             <SectionContent Code="OverviewThemesCustomExample" />
         </DocsPageSection>
-        
-        <DocsPageSection>
-            <SectionHeader Title="Multiple Themes">
-                <Description>You can have multiple themes applied in different ways but this is how we apply our dark theme on the MudBlazor page.</Description>
-            </SectionHeader>
-            <SectionContent Code="OverviewThemesMultipleExample" />
-        </DocsPageSection>
-        
     </DocsPageContent>
 </DocsPage>
 <Footer />
