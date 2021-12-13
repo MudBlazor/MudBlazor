@@ -1,6 +1,7 @@
 ﻿
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Bunit;
 using FluentAssertions;
 using MudBlazor.Docs.Examples;
@@ -139,6 +140,27 @@ namespace MudBlazor.UnitTests.Components
             // the test should run through instantly (max 5s for a slow build server). 
             // without the fix it took minutes on a fast computer
             var comp = Context.RenderComponent<LineChartWithBigValuesTest>();
+        }
+
+        ///// <summary> 
+        ///// Checks if the element is added to the CustomGraphics RenderFragment
+        ///// </summary>
+        [Test]
+        [TestCase(ChartType.Line, "Hello")]
+        [TestCase(ChartType.Bar, "123")]
+        [TestCase(ChartType.Donut, "Garderoben")]
+        [TestCase(ChartType.Pie, "henon")]
+        public void ChartCustomGraphics(ChartType chartType, string text)
+        {
+            var comp = Context.RenderComponent<MudChart>(parameters => parameters
+              .Add(p => p.ChartType, chartType)
+              .Add(p => p.Width, "100%")
+              .Add(p => p.Height, "300px")
+              .Add(p => p.CustomGraphics, "<text class='text-ref'>"+text+"</text>")
+            );
+
+            //Checks if the innerHtml of the added text element matches the text parameter
+            comp.Find("text.text-ref").InnerHtml.Should().Be(text);
         }
     }
 }

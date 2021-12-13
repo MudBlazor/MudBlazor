@@ -50,6 +50,16 @@ namespace MudBlazor.Services
         }
 
         /// <summary>
+        /// Update behavior of a registered keyoption
+        /// The keystrike to update has to be monitored previously
+        /// </summary>
+        /// <param name="option">Define KeyOption to update</param>
+        public async Task UpdateKey(KeyOptions option)
+        {
+            await _jsRuntime.InvokeVoidAsync($"mudKeyInterceptor.updatekey", _elementId, option);
+        }
+
+        /// <summary>
         /// Disconnect from the previously connected ancestor and its descendants
         /// </summary>
         public async Task Disconnect()

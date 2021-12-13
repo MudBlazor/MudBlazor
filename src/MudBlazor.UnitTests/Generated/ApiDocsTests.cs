@@ -1,4 +1,5 @@
 ﻿using System.Net.Http;
+using System.Threading.Tasks;
 using Bunit;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.DependencyInjection;
@@ -35,9 +36,19 @@ namespace MudBlazor.UnitTests.Components
             ctx.Services.AddSingleton<IDocsNavigationService, DocsNavigationService>();
             ctx.Services.AddSingleton<IMenuService, MenuService>();
             ctx.Services.AddSingleton<IMudPopoverService, MockPopoverService>();
-
             ctx.Services.AddTransient<IKeyInterceptor, MockKeyInterceptorService>();
+            ctx.Services.AddSingleton<IRenderQueueService, RenderQueueService>();
             ctx.Services.AddScoped(sp => new HttpClient());
+        }
+
+        // This shows how to test a docs page with incremental rendering. 
+        // We are not (yet) testing all docs pages (just the examples), but if we wanted to, this would be the way.
+        [Test]
+        public async Task AlertPage_Test()
+        {
+            var comp = ctx.RenderComponent<Docs.Pages.Components.Alert.AlertPage>();
+            await ctx.Services.GetService<IRenderQueueService>().WaitUntilEmpty();
+            System.Console.WriteLine(comp.Markup);
         }
 
         [TearDown]

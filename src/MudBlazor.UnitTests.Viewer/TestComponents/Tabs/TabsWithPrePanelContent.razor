@@ -1,0 +1,25 @@
+﻿@namespace MudBlazor.UnitTests.TestComponents
+
+<MudPopoverProvider></MudPopoverProvider>
+
+<MudTabs @bind-ActivePanelIndex="SelectedIndex" Class="">
+	<ChildContent>
+		<MudTabPanel Text="Tab One">
+			<MudText class="my-text">Some Content</MudText>
+		</MudTabPanel>
+		<MudTabPanel Text="Tab Two">
+			<MudText class="my-text">Another content</MudText>
+		</MudTabPanel>
+	</ChildContent>
+	<PrePanelContent>
+		<MudText Class="pre-panel-content-custom">Selected: @context?.Text</MudText>
+	</PrePanelContent>
+</MudTabs>
+
+
+@code {
+
+	[Parameter]
+	public Int32 SelectedIndex { get; set; } = 0;
+
+}

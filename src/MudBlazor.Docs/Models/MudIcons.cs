@@ -1,4 +1,6 @@
 ﻿
+using System.Collections.Generic;
+
 namespace MudBlazor.Docs.Models
 {
     public class MudIcons
@@ -13,6 +15,16 @@ namespace MudBlazor.Docs.Models
             Name = name;
             Code = code;
             Category = category;
+        }
+    }
+
+    public class MudVirtualizedIcons
+    {
+        public MudIcons[] RowIcons { get; set; }
+
+        public MudVirtualizedIcons(MudIcons[] rowicons)
+        {
+            RowIcons = rowicons;
         }
     }
 }

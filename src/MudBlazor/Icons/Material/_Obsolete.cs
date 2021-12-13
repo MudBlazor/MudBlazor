@@ -71,6 +71,15 @@ namespace MudBlazor
 
         [Obsolete("Removed from Material Design Icons.  Replace with `NoMeals` icon." ,true)]
         public string NoMealsOuline => NoMeals;
+        
+        [Obsolete("Removed from Material Design Icons.  Replace with `Icons.Filled.Flag` icon.", false)]
+        public string EmojiFlags => Icons.Filled.Flag;
+
+        [Obsolete("Removed from Material Design Icons.  Replace with `Icons.Custom.Brands.Facebook` icon.", false)]
+        public string Facebook => Icons.Custom.Brands.Facebook;
+        
+        [Obsolete("Removed from Material Design Icons.  Replace with `Icons.Filled.Lock` icon.", false)]
+        public string LockOutline => Icons.Filled.Lock;
     }
 
     public partial class Outlined
@@ -101,6 +110,12 @@ namespace MudBlazor
 
         [Obsolete("Removed from Material Design Icons.  Replace with `Icons.Outlined.Lightbulb` icon." ,true)]
         public string LightbulbOutline => Icons.Outlined.Lightbulb;
+
+        [Obsolete("Removed from Material Design Icons.  Replace with `Icons.Outlined.Flag` icon.", false)]
+        public string EmojiFlags => Icons.Outlined.Flag;
+
+        [Obsolete("Removed from Material Design Icons.  Replace with `Icons.Custom.Brands.Facebook` icon.", false)]
+        public string Facebook => Icons.Custom.Brands.Facebook;
     }
 
     public partial class Rounded
@@ -131,6 +146,12 @@ namespace MudBlazor
 
         [Obsolete("Removed from Material Design Icons.  Replace with `Icons.Outlined.Lightbulb` icon." ,true)]
         public string LightbulbOutline => Icons.Outlined.Lightbulb;
+        
+        [Obsolete("Removed from Material Design Icons.  Replace with `Icons.Rounded.Flag` icon.", false)]
+        public string EmojiFlags => Icons.Rounded.Flag;
+        
+        [Obsolete("Removed from Material Design Icons.  Replace with `Icons.Custom.Brands.Facebook` icon.", false)]
+        public string Facebook => Icons.Custom.Brands.Facebook;
     }
 
     public partial class Sharp
@@ -161,5 +182,11 @@ namespace MudBlazor
 
         [Obsolete("Removed from Material Design Icons.  Replace with `Icons.Outlined.Lightbulb` icon." ,true)]
         public string LightbulbOutline => Icons.Outlined.Lightbulb;
+        
+        [Obsolete("Removed from Material Design Icons.  Replace with `Icons.Sharp.Flag` icon.", false)]
+        public string EmojiFlags => Icons.Sharp.Flag;
+        
+        [Obsolete("Removed from Material Design Icons.  Replace with `Icons.Custom.Brands.Facebook` icon.", false)]
+        public string Facebook => Icons.Custom.Brands.Facebook;
     }
 }
