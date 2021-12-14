@@ -87,23 +87,27 @@
     &.darken {
 
       &.primary {
-        background: linear-gradient(45deg, rgba(234, 232, 251, 1) 0%, rgba(218, 215, 249, 1) 100%);
+        background: linear-gradient(45deg, rgba(250, 245, 255, 1) 0%, rgba(243, 232, 255, 1) 100%);
       }
 
       &.secondary {
         background: linear-gradient(45deg, rgba(255, 248, 250, 1) 0%, rgba(255, 227, 237, 1) 100%);
       }
+      
+      &.tertiary{
+        background: linear-gradient(45deg, rgba(236, 253, 245, 1) 0%, rgba(204, 251, 241, 1) 100%);
+      }
 
       &.info {
-        background: linear-gradient(45deg, rgba(207, 232, 252, 1) 0%, rgba(188, 223, 251, 1) 100%);
+        background: linear-gradient(45deg, rgba(240, 249, 255, 1) 0%, rgba(224, 242, 254, 1) 100%);
       }
 
       &.warning {
-        background: linear-gradient(45deg, rgba(255, 226, 184, 1) 0%, rgba(255, 218, 163, 1) 100%);
+        background: linear-gradient(45deg, rgba(255, 251, 235, 1) 0%, rgba(254, 243, 199, 1) 100%);
       }
 
       &.error {
-        background: linear-gradient(45deg, rgba(254, 230, 228, 1) 0%, rgba(252, 212, 209, 1) 100%);
+        background: linear-gradient(45deg, rgba(255, 241, 242, 1) 0%, rgba(255, 228, 230, 1) 100%);
       }
     }
 

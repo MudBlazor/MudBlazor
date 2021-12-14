@@ -21,14 +21,14 @@ public partial class SectionContent
 
     protected string Classname =>
         new CssBuilder("docs-section-content")
-            .AddClass($"outlined", Outlined)
+            .AddClass($"outlined", Outlined && ChildContent != null && !DarkenBackground )
             .AddClass($"darken {_luckyColor}", DarkenBackground)
             .AddClass("show-code", _hasCode && ShowCode)
             .AddClass(Class)
             .Build();
     protected string ToolbarClassname =>
         new CssBuilder("docs-section-content-toolbar")
-            .AddClass($"outlined", Outlined)
+            .AddClass($"outlined", Outlined && ChildContent != null && Codes != null && !DarkenBackground)
             .AddClass("darken", ChildContent == null && Codes != null)
             .Build();
 
@@ -41,7 +41,7 @@ public partial class SectionContent
     
     protected string SourceClassname =>
         new CssBuilder("docs-section-source")
-            .AddClass($"outlined", Outlined)
+            .AddClass($"outlined", Outlined && ChildContent != null && !DarkenBackground)
             .AddClass("show-code", _hasCode && ShowCode)
             .Build();
 
@@ -105,9 +105,9 @@ public partial class SectionContent
 
     private string GetDarkenColor()
     {
-        string[] bgColors = {"primary", "secondary", "info", "warning", "error"};
+        string[] bgColors = {"primary", "secondary", "tertiary", "info", "warning", "error"};
         Random rnd = new Random();
-        return bgColors[rnd.Next(4)];
+        return bgColors[rnd.Next(5)];
     }
 
     RenderFragment CodeComponent(string code) => builder =>
