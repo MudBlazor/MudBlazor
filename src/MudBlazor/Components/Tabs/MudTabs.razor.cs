@@ -15,7 +15,10 @@ namespace MudBlazor
     public partial class MudTabs : MudComponentBase, IAsyncDisposable
     {
         private bool _isDisposed;
+
         private int _activePanelIndex = 0;
+        private int _scrollIndex = 0;
+
         private bool _isRendered = false;
         private bool _prevButtonDisabled;
         private bool _nextButtonDisabled;
@@ -606,28 +609,15 @@ namespace MudBlazor
 
         private void ScrollPrev()
         {
-            var scrollValue = RightToLeft ? _scrollPosition + _toolbarContentSize : _scrollPosition - _toolbarContentSize;
-
-            if (RightToLeft && scrollValue > 0) scrollValue = 0;
-
-            if (!RightToLeft && scrollValue < 0) scrollValue = 0;
-
-            _scrollPosition = scrollValue;
-
+            _scrollIndex = Math.Max(_scrollIndex - 1, 0);
+            ScrollToItem(_panels[_scrollIndex]);
             SetScrollabilityStates();
         }
-
+        //TODO Scroll Step as parameter
         private void ScrollNext()
         {
-            var scrollValue = RightToLeft ? _scrollPosition - _toolbarContentSize : _scrollPosition + _toolbarContentSize;
-
-            if (scrollValue > _allTabsSize)
-            {
-                scrollValue = _allTabsSize - _toolbarContentSize - 96;
-            }
-
-            _scrollPosition = scrollValue;
-
+            _scrollIndex = Math.Min(_scrollIndex + 1, _panels.Count - 1);
+            ScrollToItem(_panels[_scrollIndex]);
             SetScrollabilityStates();
         }
 
@@ -654,13 +644,14 @@ namespace MudBlazor
             while (true)
             {
                 var panelAfterIndex = _activePanelIndex + indexCorrection;
-                if (IsAfterLastPanelIndex(panelAfterIndex) == false)
+                if (!IsAfterLastPanelIndex(panelAfterIndex))
                 {
                     length += GetPanelLength(_panels[panelAfterIndex]);
                 }
 
                 if (length >= _toolbarContentSize)
                 {
+                    _scrollIndex = _panels.IndexOf(panelToStart);
                     ScrollToItem(panelToStart);
                     break;
                 }
@@ -668,7 +659,7 @@ namespace MudBlazor
                 length = _toolbarContentSize - length;
 
                 var panelBeforeindex = _activePanelIndex - indexCorrection;
-                if (IsBeforeFirstPanelIndex(panelBeforeindex) == false)
+                if (!IsBeforeFirstPanelIndex(panelBeforeindex))
                 {
                     length -= GetPanelLength(_panels[panelBeforeindex]);
                 }
@@ -679,6 +670,7 @@ namespace MudBlazor
 
                 if (length < 0)
                 {
+                    _scrollIndex = _panels.IndexOf(panelToStart);
                     ScrollToItem(panelToStart);
                     break;
                 }
@@ -689,6 +681,7 @@ namespace MudBlazor
                 indexCorrection++;
             }
 
+            _scrollIndex = _panels.IndexOf(panelToStart);
             ScrollToItem(panelToStart);
 
             SetScrollabilityStates();
@@ -698,15 +691,15 @@ namespace MudBlazor
         {
             var isEnoughSpace = _allTabsSize <= _toolbarContentSize;
 
-            if (isEnoughSpace == true)
+            if (isEnoughSpace)
             {
                 _nextButtonDisabled = true;
                 _prevButtonDisabled = true;
             }
             else
             {
-                _nextButtonDisabled = RightToLeft ? (_scrollPosition - _toolbarContentSize) <= -_allTabsSize : (_scrollPosition + _toolbarContentSize) >= _allTabsSize;
-                _prevButtonDisabled = RightToLeft ? _scrollPosition >= 0 : _scrollPosition <= 0;
+                _nextButtonDisabled = RightToLeft ? _scrollIndex == 0 : _scrollIndex >= _panels.Count - 1;
+                _prevButtonDisabled = RightToLeft ? _scrollIndex >= _panels.Count - 1 : _scrollIndex == 0;
             }
         }
 
