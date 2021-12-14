@@ -12,7 +12,7 @@ namespace MudBlazor.Docs.Components;
 public partial class SectionHeader
 {
     [CascadingParameter] private DocsPage DocsPage { get; set; }
-    
+
     [CascadingParameter] private SectionSubGroups SubGroup { get; set; }
     [CascadingParameter] private DocsPageSection Section { get; set; }
 
@@ -36,25 +36,25 @@ public partial class SectionHeader
     {
         base.OnInitialized();
 
-        if (DocsPage != null && !String.IsNullOrWhiteSpace(Title))
+        if (DocsPage == null || string.IsNullOrWhiteSpace(Title))
         {
-            SectionInfo = new DocsSectionLink
-            {
-                Id = Title.Replace(" ", "-").ToLower(),
-                Title = Title,
-            };
+            return;
         }
-    }
-
-    protected override void OnAfterRender(bool firstRender)
-    {
-        base.OnAfterRender(firstRender);
-        if (firstRender == true && DocsPage != null && !String.IsNullOrWhiteSpace(Title))
+        
+        var parentTitle = DocsPage.GetParentTitle(Section) ?? string.Empty;
+        if (string.IsNullOrEmpty(parentTitle) == false)
         {
-            DocsPage.AddSection(SectionInfo, Section);
+            parentTitle += '-';
         }
-    }
 
+        var id = (parentTitle + Title).Replace(" ", "-").ToLower();
+
+        SectionInfo = new DocsSectionLink {Id = id, Title = Title,};
+        
+        DocsPage.AddSection(SectionInfo, Section);
+
+    }
+    
     private string GetSectionId() => SectionInfo?.Id ?? Guid.NewGuid().ToString();
 
     private Typo GetTitleTypo()

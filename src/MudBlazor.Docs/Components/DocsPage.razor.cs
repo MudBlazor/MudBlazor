@@ -79,6 +79,17 @@ namespace MudBlazor.Docs.Components
             }
         }
 
+        
+        public string GetParentTitle(DocsPageSection section)
+        {
+            if(section == null) {return string.Empty;}
+
+            if (section == null || section.ParentSection == null || _sectionMapper.ContainsKey(section.ParentSection) == false) { return string.Empty; }
+
+            var item = _sectionMapper[section.ParentSection];
+
+            return item.Title;
+        }
 
         internal void AddSection(DocsSectionLink sectionLinkInfo, DocsPageSection section)
         {
