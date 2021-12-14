@@ -24,7 +24,7 @@
                     You can pass parameters to your dialog on show which allow you to load the dialog with custom data.
                 </Description>
             </SectionHeader>
-            <SectionContent Outlined="true" Codes="@(new[] {new CodeFile("Page.razor", "DialogUsageExample"), new CodeFile("Dialog.razor", "DialogUsageExample_Dialog")})">
+            <SectionContent Codes="@(new[] {new CodeFile("Page.razor", "DialogUsageExample"), new CodeFile("Dialog.razor", "DialogUsageExample_Dialog")})">
                 <DialogUsageExample />
             </SectionContent>
         </DocsPageSection>
@@ -50,7 +50,7 @@
                             Below we pass along the DialogOptions class when we open the dialog, this can be done per dialog or you can predefine a bunch of them that you use for specific cases in your system.<br/>
                         </Description>
                     </SectionHeader>
-                    <SectionContent Outlined="true" Codes="@(new[] {new CodeFile("Page.razor", "DialogOptionsExample"), new CodeFile("Dialog.razor", "DialogOptionsExample_Dialog")})">
+                    <SectionContent Codes="@(new[] {new CodeFile("Page.razor", "DialogOptionsExample"), new CodeFile("Dialog.razor", "DialogOptionsExample_Dialog")})">
                         <DialogOptionsExample />
                     </SectionContent>
                 </DocsPageSection>
@@ -61,7 +61,7 @@
                             The title and the options can also be modified from the dialog component itself by calling <CodeInline>SetTitle</CodeInline> and <CodeInline>SetOptions</CodeInline> on the <CodeInline>MudDialogInstance</CodeInline> object.
                         </Description>
                     </SectionHeader>
-                    <SectionContent Outlined="true" Codes="@(new[] {new CodeFile("Page.razor", "DialogSetOptionsExample"), new CodeFile("Dialog.razor", "DialogSetOptionsExample_Dialog")})">
+                    <SectionContent Codes="@(new[] {new CodeFile("Page.razor", "DialogSetOptionsExample"), new CodeFile("Dialog.razor", "DialogSetOptionsExample_Dialog")})">
                         <DialogSetOptionsExample />
                     </SectionContent>
                 </DocsPageSection>
@@ -73,7 +73,7 @@
             <SectionHeader Title="Templating and Passing Simple Data">
                 <Description>In this section, we will demonstrate how you can build one dialog and reuse it for multiple purposes.</Description>
             </SectionHeader>
-            <SectionContent Outlined="true" Codes="@(new[] {new CodeFile("Page.razor", "DialogTemplateExample"), new CodeFile("Dialog.razor", "DialogTemplateExample_Dialog")})">
+            <SectionContent Codes="@(new[] {new CodeFile("Page.razor", "DialogTemplateExample"), new CodeFile("Dialog.razor", "DialogTemplateExample_Dialog")})">
                 <DialogTemplateExample />
             </SectionContent>
         </DocsPageSection>
@@ -82,7 +82,7 @@
             <SectionHeader Title="Passing Data">
                 <Description>Here is a little more advanced use case. We will use the same dialog but feed it with different server data and then mimic a delete operation.</Description>
             </SectionHeader>
-            <SectionContent Outlined="true" Codes="@(new[] {new CodeFile("Page.razor", "DialogPassingDataExample"), new CodeFile("Dialog.razor", "DialogPassingDataExample_Dialog")})">
+            <SectionContent Codes="@(new[] {new CodeFile("Page.razor", "DialogPassingDataExample"), new CodeFile("Dialog.razor", "DialogPassingDataExample_Dialog")})">
                 <DialogPassingDataExample />
             </SectionContent>
         </DocsPageSection>
@@ -91,7 +91,7 @@
             <SectionHeader Title="Scrollable Dialog">
                 <Description>Quick example on how to give your dialog scrollable content.</Description>
             </SectionHeader>
-            <SectionContent Outlined="true" Codes="@(new[] {new CodeFile("Page.razor", "DialogScrollableExample"), new CodeFile("Dialog.razor", "DialogScrollableExample_Dialog")})">
+            <SectionContent Codes="@(new[] {new CodeFile("Page.razor", "DialogScrollableExample"), new CodeFile("Dialog.razor", "DialogScrollableExample_Dialog")})">
                 <DialogScrollableExample />
             </SectionContent>
         </DocsPageSection>
@@ -105,7 +105,7 @@
                     This example also shows how to override the dialog title with a render fragment. 
                 </Description>
             </SectionHeader>
-            <SectionContent Outlined="true" Code="DialogInlineExample">
+            <SectionContent Code="DialogInlineExample">
                 <DialogInlineExample />
             </SectionContent>
         </DocsPageSection>
@@ -118,7 +118,7 @@
                     <MudText><CodeInline>Escape</CodeInline> key to close dialog. Closing a dialog by pressing escape has to be enabled by setting option <CodeInline>CloseOnEscapekey=true</CodeInline></MudText>
                 </Description>
             </SectionHeader>
-            <SectionContent Outlined="true" Codes="@(new[] {new CodeFile("Page.razor", "DialogKeyboardNavigationExample"), new CodeFile("Dialog.razor", "DialogKeyboardNavigationExample_Dialog")})">
+            <SectionContent Codes="@(new[] {new CodeFile("Page.razor", "DialogKeyboardNavigationExample"), new CodeFile("Dialog.razor", "DialogKeyboardNavigationExample_Dialog")})">
                 <MudContainer>
                     <DialogKeyboardNavigationExample />
                 </MudContainer>

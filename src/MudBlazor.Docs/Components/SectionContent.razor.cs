@@ -37,7 +37,6 @@ public partial class SectionContent
             .AddClass($"relative d-flex flex-grow-1 flex-wrap justify-center")
             .AddClass("pa-8", !_hasCode)
             .AddClass("px-8 pb-8 pt-2", _hasCode)
-            .AddClass($"mud-width-full", FullWidth)
             .Build();
     
     protected string SourceClassname =>
@@ -47,12 +46,11 @@ public partial class SectionContent
             .Build();
 
     [Parameter] public string Class { get; set; }
-    [Parameter] public bool FullWidth { get; set; }
     [Parameter] public bool DarkenBackground { get; set; }
-    [Parameter] public bool Outlined { get; set; }
+    [Parameter] public bool Outlined { get; set; } = true;
+    [Parameter] public bool ShowCode { get; set; } = true;
     [Parameter] public string Code { get; set; }
     [Parameter] public IEnumerable<CodeFile> Codes { get; set; }
-    [Parameter] public bool ShowCode { get; set; } = true;
     [Parameter] public RenderFragment ChildContent { get; set; }
     
     private bool _hasCode;
