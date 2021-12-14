@@ -26,41 +26,33 @@ public partial class SectionContent
             .AddClass("show-code", _hasCode && ShowCode)
             .AddClass(Class)
             .Build();
+    protected string ToolbarClassname =>
+        new CssBuilder("docs-section-content-toolbar")
+            .AddClass($"outlined", Outlined)
+            .AddClass("darken", ChildContent == null && Codes != null)
+            .Build();
 
     protected string InnerClassname =>
         new CssBuilder("docs-section-content-inner")
-            .AddClass($"d-flex flex-grow-1 flex-wrap justify-center")
+            .AddClass($"relative d-flex flex-grow-1 flex-wrap justify-center")
             .AddClass("pa-8", !_hasCode)
             .AddClass("px-8 pb-8 pt-2", _hasCode)
             .AddClass($"mud-width-full", FullWidth)
             .Build();
-
+    
     protected string SourceClassname =>
         new CssBuilder("docs-section-source")
             .AddClass($"outlined", Outlined)
             .AddClass("show-code", _hasCode && ShowCode)
             .Build();
 
-    protected string SourceContainerClassname =>
-        new CssBuilder("docs-section-source-container")
-            .AddClass("show-code", _hasCode && ShowCode)
-            .Build();
-
     [Parameter] public string Class { get; set; }
-    [Parameter] public string Style { get; set; }
-
     [Parameter] public bool FullWidth { get; set; }
-
     [Parameter] public bool DarkenBackground { get; set; }
-
     [Parameter] public bool Outlined { get; set; }
-
     [Parameter] public string Code { get; set; }
-
     [Parameter] public IEnumerable<CodeFile> Codes { get; set; }
-
     [Parameter] public bool ShowCode { get; set; } = true;
-
     [Parameter] public RenderFragment ChildContent { get; set; }
     
     private bool _hasCode;
@@ -95,6 +87,18 @@ public partial class SectionContent
     {
         _activeCode = value;
     }
+
+    private string GetActiveCode(string value)
+    {
+        if (value == _activeCode)
+        {
+            return "file-button active";
+        }
+        else
+        {
+            return "file-button";
+        }
+    }
     
     private async Task CopyTextToClipboard()
     {
@@ -103,9 +107,9 @@ public partial class SectionContent
 
     private string GetDarkenColor()
     {
-        string[] bgColors = {"primary", "secondary", "tetriary", "info", "success", "warning", "error"};
+        string[] bgColors = {"primary", "secondary", "info", "warning", "error"};
         Random rnd = new Random();
-        return bgColors[rnd.Next(6)];
+        return bgColors[rnd.Next(4)];
     }
 
     RenderFragment CodeComponent(string code) => builder =>
