@@ -176,7 +176,20 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task MaskFieldTest_PlaceholderCheck()
         {
+            var comp = Context.RenderComponent<MaskFieldStringPlaceholderTest>();
+            var maskField = comp.FindComponent<MudMaskField<string>>();
 
+            await comp.InvokeAsync(() => maskField.Instance.OnFocused(new FocusEventArgs()));
+            comp.WaitForAssertion(() => maskField.Instance.Text.Should().Be(null));
+
+            await comp.InvokeAsync(() => maskField.Instance.SetCaretPosition(1));
+            await comp.InvokeAsync(() => maskField.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = "a" }));
+            comp.WaitForAssertion(() => maskField.Instance.Text.Should().Be("(a__) ___-__"));
+            comp.WaitForAssertion(() => maskField.Instance.Value.Should().Be("a"));
+
+            await comp.InvokeAsync(() => maskField.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = "Backspace" }));
+            comp.WaitForAssertion(() => maskField.Instance.Text.Should().Be(null));
+            comp.WaitForAssertion(() => maskField.Instance.Value.Should().Be(""));
         }
 
         [Test]
@@ -209,40 +222,61 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task MaskFieldTest_ChangeMaskCharacters()
         {
-            //var comp = Context.RenderComponent<MaskFieldStringTest>();
-            //var maskField = comp.FindComponent<MudMaskField<string>>();
+            var comp = Context.RenderComponent<MaskFieldStringTest>();
+            var maskField = comp.FindComponent<MudMaskField<string>>();
 
-            //await comp.InvokeAsync(() => maskField.Instance.SetCaretPosition(1));
-            //await comp.InvokeAsync(() => maskField.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = "a" }));
-            //comp.WaitForAssertion(() => maskField.Instance.Text.Should().Be("(a__) ___-__"));
-            //comp.WaitForAssertion(() => maskField.Instance.Value.Should().Be("a"));
+            await comp.InvokeAsync(() => maskField.Instance.SetCaretPosition(1));
+            await comp.InvokeAsync(() => maskField.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = "a" }));
+            comp.WaitForAssertion(() => maskField.Instance.Text.Should().Be("(a__) ___-__"));
+            comp.WaitForAssertion(() => maskField.Instance.Value.Should().Be("a"));
 
-            //await comp.InvokeAsync(() => maskField.Instance.MaskCharacters = new Dictionary<char, CharacterType>()
-            //{
-            //    ['b'] = CharacterType.Letter,
-            //    ['9'] = CharacterType.Digit,
-            //    ['+'] = CharacterType.LetterOrDigit,
-            //});
-            //await comp.InvokeAsync(() => maskField.Instance.Mask = "(bbb) 999-bb");
+            await comp.InvokeAsync(() => maskField.Instance.MaskCharacters = new Dictionary<char, CharacterType>()
+            {
+                ['b'] = CharacterType.Letter,
+                ['9'] = CharacterType.Digit,
+                ['+'] = CharacterType.LetterOrDigit,
+            });
+            await comp.InvokeAsync(() => maskField.Instance.Mask = "(bbb) 999-bb");
+            await comp.InvokeAsync(() => maskField.Instance.OnFocused(new FocusEventArgs()));
 
-            //await comp.InvokeAsync(() => maskField.Instance.SetCaretPosition(2));
-            //await comp.InvokeAsync(() => maskField.Instance.ImplementMask(null, maskField.Instance.Mask));
-            //await comp.InvokeAsync(() => maskField.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = "b" }));
-            //comp.WaitForAssertion(() => maskField.Instance.Text.Should().Be("(ab_) ___-__"));
-            //comp.WaitForAssertion(() => maskField.Instance.Value.Should().Be("ab"));
+            await comp.InvokeAsync(() => maskField.Instance.SetCaretPosition(2));
+            await comp.InvokeAsync(() => maskField.Instance.ImplementMask(null, maskField.Instance.Mask));
+            await comp.InvokeAsync(() => maskField.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = "b" }));
+            comp.WaitForAssertion(() => maskField.Instance.Text.Should().Be("(ab_) ___-__"));
+            comp.WaitForAssertion(() => maskField.Instance.Value.Should().Be("ab"));
         }
 
         [Test]
         public async Task MaskFieldTest_RegexMasking()
         {
-            //var comp = Context.RenderComponent<MaskFieldStringTest>();
-            //var maskField = comp.FindComponent<MudMaskField<string>>();
+            var comp = Context.RenderComponent<MaskFieldStringTest>();
+            var maskField = comp.FindComponent<MudMaskField<string>>();
 
-            //await maskField.InvokeAsync(() => maskField.SetParam("Mask", "(cc) ee"));
-            //await comp.InvokeAsync(() => maskField.Instance.SetCaretPosition(1));
-            //await comp.InvokeAsync(() => maskField.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = "a" }));
-            //comp.WaitForAssertion(() => maskField.Instance.Text.Should().Be("(a_) __"));
-            //comp.WaitForAssertion(() => maskField.Instance.Value.Should().Be("a"));
+            await comp.InvokeAsync(() => maskField.Instance.Mask = "(cc) ee");
+            await comp.InvokeAsync(() => maskField.Instance.OnFocused(new FocusEventArgs()));
+
+            await comp.InvokeAsync(() => maskField.Instance.SetCaretPosition(1));
+            await comp.InvokeAsync(() => maskField.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = "a" }));
+            comp.WaitForAssertion(() => maskField.Instance.Text.Should().Be("(a_) __"));
+            comp.WaitForAssertion(() => maskField.Instance.Value.Should().Be("a"));
+            //Need to set mask parameter for each condition, don't know why
+            await comp.InvokeAsync(() => maskField.Instance.Mask = "(cc) ee");
+            await comp.InvokeAsync(() => maskField.Instance.OnFocused(new FocusEventArgs()));
+            await comp.InvokeAsync(() => maskField.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = "A" }));
+            comp.WaitForAssertion(() => maskField.Instance.Text.Should().Be("(a_) __"));
+            comp.WaitForAssertion(() => maskField.Instance.Value.Should().Be("a"));
+
+            await comp.InvokeAsync(() => maskField.Instance.Mask = "(cc) ee");
+            await comp.InvokeAsync(() => maskField.Instance.OnFocused(new FocusEventArgs()));
+            await comp.InvokeAsync(() => maskField.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = "a" }));
+            comp.WaitForAssertion(() => maskField.Instance.Text.Should().Be("(aa) __"));
+            comp.WaitForAssertion(() => maskField.Instance.Value.Should().Be("aa"));
+
+            await comp.InvokeAsync(() => maskField.Instance.Mask = "(cc) ee");
+            await comp.InvokeAsync(() => maskField.Instance.OnFocused(new FocusEventArgs()));
+            await comp.InvokeAsync(() => maskField.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = "A" }));
+            comp.WaitForAssertion(() => maskField.Instance.Text.Should().Be("(aa) A_"));
+            comp.WaitForAssertion(() => maskField.Instance.Value.Should().Be("aaA"));
         }
 
         [Test]
