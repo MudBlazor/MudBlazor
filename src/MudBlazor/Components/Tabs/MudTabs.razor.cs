@@ -305,7 +305,6 @@ namespace MudBlazor
             }
         }
 
-
         public async ValueTask DisposeAsync()
         {
             if (_isDisposed == true)
@@ -407,7 +406,6 @@ namespace MudBlazor
         #endregion
 
         #region Style and classes
-
         protected string TabsClassnames =>
             new CssBuilder("mud-tabs")
             .AddClass($"mud-tabs-rounded", ApplyEffectsToContainer && Rounded)
@@ -540,7 +538,6 @@ namespace MudBlazor
             GetToolbarContentSize();
             GetAllTabsSize();
             SetScrollButtonVisibility();
-            CenterScrollPositionAroundSelectedItem();
             SetSliderState();
             SetScrollabilityStates();
         }
@@ -573,20 +570,24 @@ namespace MudBlazor
             _allTabsSize = totalTabsSize;
         }
 
-
         private double GetRelevantSize(ElementReference reference) => Position switch
         {
             Position.Top or Position.Bottom => _resizeObserver.GetWidth(reference),
             _ => _resizeObserver.GetHeight(reference)
         };
 
-        private double GetLengthOfPanelItems(MudTabPanel panel)
+        private double GetLengthOfPanelItems(MudTabPanel panel, bool inclusive = false)
         {
             var value = 0.0;
             foreach (var item in _panels)
             {
                 if (item == panel)
                 {
+                    if (inclusive)
+                    {
+                        value += GetRelevantSize(item.PanelRef);
+                    }
+
                     break;
                 }
 
@@ -613,7 +614,7 @@ namespace MudBlazor
             ScrollToItem(_panels[_scrollIndex]);
             SetScrollabilityStates();
         }
-        //TODO Scroll Step as parameter
+
         private void ScrollNext()
         {
             _scrollIndex = Math.Min(_scrollIndex + 1, _panels.Count - 1);
@@ -698,8 +699,9 @@ namespace MudBlazor
             }
             else
             {
-                _nextButtonDisabled = RightToLeft ? _scrollIndex == 0 : _scrollIndex >= _panels.Count - 1;
-                _prevButtonDisabled = RightToLeft ? _scrollIndex >= _panels.Count - 1 : _scrollIndex == 0;
+                // Disable next button if the last panel is completely visible
+                _nextButtonDisabled = Math.Abs(_scrollPosition) >= GetLengthOfPanelItems(_panels.Last(), true) - _toolbarContentSize;
+                _prevButtonDisabled = _scrollIndex == 0;
             }
         }
 
