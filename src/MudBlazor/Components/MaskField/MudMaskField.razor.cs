@@ -241,7 +241,7 @@ namespace MudBlazor
             //Console.WriteLine($"Copy: {text}");
         }
 
-        private async void OnPaste(string text)
+        internal async void OnPaste(string text)
         {
             //UpdateRawValueDictionary(false, text);
             _pastedText = text;
@@ -531,7 +531,7 @@ namespace MudBlazor
             }
         }
 
-        private async Task ImplementMask(string lastPressedKey, string mask, string pastedText = null)
+        internal async Task ImplementMask(string lastPressedKey, string mask, string pastedText = null)
         {
             if (mask == null)
             {
