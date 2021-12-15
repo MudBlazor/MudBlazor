@@ -24,8 +24,6 @@ namespace MudBlazor
         private int _caretPosition = 0;
         private (int, int)? _selection = null;
 
-        private string _pastedText;
-
         private Dictionary<int, char> _rawValueDictionary = new();
 
         [Inject] private IKeyInterceptor _keyInterceptor { get; set; }
@@ -100,7 +98,7 @@ namespace MudBlazor
             Console.WriteLine($"SetValueAsync: '{value}' updateText:{updateText}");
             _rawValue = Converter.Set(value);
             if (updateText)
-                await ImplementMask(null, Mask, _pastedText);
+                await ImplementMask(null, Mask, true);
             // never update text directly. we already did it
             await base.SetValueAsync(value, updateText: false);
         }
@@ -109,7 +107,7 @@ namespace MudBlazor
         {
             if (GetRawValueFromText() == Converter.Set(Value))
                 return;
-            await ImplementMask(null, Mask, _pastedText);
+            await ImplementMask(null, Mask, true);
         }
 
         internal async void SetRawValue(string rawValue, bool updateText = false)
@@ -201,12 +199,14 @@ namespace MudBlazor
                 _jsEvent.Select += OnSelect;
                 await _keyInterceptor.Connect(_elementId, new KeyInterceptorOptions()
                 {
-                    EnableLogging = true,
+                    //EnableLogging = true,
                     TargetClass = "mud-input-slot",
                     Keys = {
                         new KeyOptions { Key=" ", PreventDown = "key+none" }, //prevent scrolling page, toggle open/close
-                        new KeyOptions { Key="ArrowUp", PreventDown = "key+none" }, // prevent scrolling page, instead hilight previous item
-                        new KeyOptions { Key="ArrowDown", PreventDown = "key+none" }, // prevent scrolling page, instead hilight next item
+                        new KeyOptions { Key="ArrowUp", PreventDown = "key+none" }, // prevent scrolling page,
+                        new KeyOptions { Key="ArrowDown", PreventDown = "key+none" }, // prevent scrolling page,
+                        new KeyOptions { Key="ArrowLeft", PreventDown = "key+none" },
+                        new KeyOptions { Key="ArrowRight", PreventDown = "key+none" },
                         new KeyOptions { Key="Home", PreventDown = "key+none" },
                         new KeyOptions { Key="End", PreventDown = "key+none" },
                         new KeyOptions { Key="PageUp", PreventDown = "key+none" },
@@ -243,13 +243,29 @@ namespace MudBlazor
 
         internal async void OnPaste(string text)
         {
-            //UpdateRawValueDictionary(false, text);
-            _pastedText = text;
-            await SetValueAsync(Converter.Get(text), true);
-            await Task.Delay(1);
-            //SetRawValue(text, true);
-            await SetValueAsync(Converter.Get(GetRawValueFromDictionary()));
-            //Console.WriteLine($"Paste: {text}");
+            ////Console.WriteLine($"Paste: {text}");
+            if (Text == null)
+                return;
+            var val = GetRawValueFromDictionary();
+            int lastAddedIndex = 0;
+            for (int i = 0; i < text.Length; i++)
+            {
+                for (int i2 = _caretPosition; i + i2 < Text.Length; i2++)
+                {
+                    if (MaskCharacters.ContainsKey(Mask[i + i2]) && lastAddedIndex < i + i2)
+                    {
+                        if (_rawValueDictionary.ContainsKey(i + i2))
+                        {
+                            _rawValueDictionary.Remove(i + i2);
+                        }
+                        _rawValueDictionary.Add(i + i2, text[i]);
+                        lastAddedIndex = i + i2;
+                        break;
+                    }
+                }
+            }
+            await ImplementMask(null, Mask, false);
+            await SetValueAsync(Converter.Get(GetRawValueFromDictionary()), false);
         }
 
         public void OnSelect(int start, int end)
@@ -272,7 +288,7 @@ namespace MudBlazor
             //}
             if (!string.IsNullOrEmpty(Converter.Set(Value)) || string.IsNullOrEmpty(Placeholder))
             {
-                await ImplementMask(null, Mask);
+                await ImplementMask(null, Mask, true);
                 SetCaretPosition(FindFirstCaretLocation());
             }
         }
@@ -379,7 +395,24 @@ namespace MudBlazor
 
         #region Core Masking
 
-        private void UpdateRawValueDictionary(string lastPressedKey = null, string pastedText = null)
+        internal void SetRawValueDictionary(string value)
+        {
+            _rawValueDictionary.Clear();
+
+            for (int i = 0; i < value.Length; i++)
+            {
+                for (int i2 = 0; i + i2 < Mask.Length; i2++)
+                {
+                    if (MaskCharacters.ContainsKey(Mask[i + i2]) && !_rawValueDictionary.ContainsKey(i + i2))
+                    {
+                        _rawValueDictionary.Add(i + i2, value[i]);
+                        break;
+                    }
+                }
+            }
+        }
+
+        private void UpdateRawValueDictionary(string lastPressedKey = null)
         {
             Dictionary<int, char> backUpDictionary = new Dictionary<int, char>();
             for (int i = 0; i < Mask.Length; i++)
@@ -389,31 +422,6 @@ namespace MudBlazor
                     backUpDictionary.Add(a, _rawValueDictionary[a]);
             }
             _rawValueDictionary.Clear();
-            if (pastedText != null)
-            {
-                int pastedIndex = 0;
-                foreach (var c in pastedText)
-                {
-                    for (int i = 0; i < Mask.Length; i++)
-                    {
-                        int a = i;
-                        if (Mask.Length <= _caretPosition + pastedIndex + a)
-                        {
-                            _pastedText = null;
-                            return;
-                        }
-
-                        if (MaskCharacters.ContainsKey(Mask[_caretPosition + pastedIndex + a]) && !_rawValueDictionary.ContainsKey(_caretPosition + pastedIndex + a))
-                        {
-                            _rawValueDictionary.Add(_caretPosition + pastedIndex + a, c);
-                            break;
-                        }
-                    }
-                    pastedIndex++;
-                }
-                _pastedText = null;
-                return;
-            }
             if (lastPressedKey != null && !_rawValueDictionary.ContainsKey(_caretPosition) && !string.IsNullOrEmpty(lastPressedKey)
                  && !(lastPressedKey == "Backspace" || lastPressedKey == "Delete"))
             {
@@ -515,23 +523,65 @@ namespace MudBlazor
 
             else if (lastPressedKey == "Delete")
             {
-                for (int i = 0; i < Text.Length; i++)
+                if (KeepCharacterPositions == true)
                 {
-                    int a = i;
-                    if (_caretPosition + a < 0)
-                        break;
-                    if (Text[_caretPosition + a] == PlaceholderCharacter)
-                        break;
-                    if (_rawValueDictionary.ContainsKey(_caretPosition + a))
+                    for (int i = 0; i < Text.Length; i++)
                     {
-                        _rawValueDictionary.Remove(_caretPosition + a);
-                        break;
+                        int a = i;
+                        if (_caretPosition + a < 0)
+                            break;
+                        if (Text[_caretPosition + a] == PlaceholderCharacter)
+                            break;
+                        if (_rawValueDictionary.ContainsKey(_caretPosition + a))
+                        {
+                            _rawValueDictionary.Remove(_caretPosition + a);
+                            break;
+                        }
                     }
+                }
+                else
+                {
+                    int? removedPosition = null;
+                    for (int i = 0; i < Text.Length; i++)
+                    {
+                        int a = i;
+                        if (Text.Length <= _caretPosition + a)
+                            break;
+                        if (Text[_caretPosition + a] == PlaceholderCharacter)
+                            break;
+                        if (_rawValueDictionary.ContainsKey(_caretPosition + a))
+                        {
+                            _rawValueDictionary.Remove(_caretPosition + a);
+                            removedPosition = _caretPosition + a;
+                            break;
+                        }
+                    }
+                    if (removedPosition != null)
+                    {
+                        for (int i = 0; i < Text.Length; i++)
+                        {
+                            if (_rawValueDictionary.ContainsKey((int)removedPosition + i))
+                            {
+                                var c = _rawValueDictionary[(int)removedPosition + i];
+                                for (int i2 = 1; 0 < removedPosition + i - i2; i2++)
+                                {
+                                    if (MaskCharacters.ContainsKey(Mask[(int)removedPosition + i - i2]))
+                                    {
+                                        _rawValueDictionary.Remove((int)removedPosition + i);
+                                        _rawValueDictionary.Add((int)removedPosition + i - i2, c);
+                                        break;
+                                    }
+                                }
+
+                            }
+                        }
+                    }
+                    
                 }
             }
         }
 
-        internal async Task ImplementMask(string lastPressedKey, string mask, string pastedText = null)
+        internal async Task ImplementMask(string lastPressedKey, string mask, bool updateCharactersOrDictionary = true)
         {
             if (mask == null)
             {
@@ -540,8 +590,11 @@ namespace MudBlazor
 
             string result = "";
 
-            UpdateCustomCharacters();
-            UpdateRawValueDictionary(lastPressedKey, pastedText);
+            if (updateCharactersOrDictionary == true)
+            {
+                UpdateCustomCharacters();
+                UpdateRawValueDictionary(lastPressedKey);
+            }
 
             bool hasValue = false;
             for (int i = 0; i < mask.Length; i++)
@@ -591,20 +644,37 @@ namespace MudBlazor
 
         #region Caret
 
-        private int FindNextCaretLocation(int currentCaretIndex)
+        private int FindNextCaretLocation(int currentCaretIndex, bool onlyPlaceholderCharacter = true)
         {
             if (Text == null || Text.Length == 0)
                 return 0;
-            int a = currentCaretIndex;
-            for (int i = a; i < Mask.Length; i++)
+            for (int i = currentCaretIndex; i < Mask.Length; i++)
             {
-                if (Text[a] == PlaceholderCharacter)
+                if (onlyPlaceholderCharacter == true)
                 {
-                    return a;
+                    if (Text.Length <= i + 1)
+                    {
+                        return Mask.Length;
+                    }
+                    if (Text[i + 1] == PlaceholderCharacter)
+                    {
+                        return i + 1;
+                    }
                 }
-                a++;
+                else
+                {
+                    if (Mask.Length <= i + 1)
+                    {
+                        return Mask.Length;
+                    }
+                    if (MaskCharacters.ContainsKey(Mask[i + 1]))
+                    {
+                        return i + 1;
+                    }
+                }
+
             }
-            return a;
+            return currentCaretIndex;
         }
 
         private int FindFirstCaretLocation()
@@ -623,22 +693,33 @@ namespace MudBlazor
             return 0;
         }
 
-        private int FindPreviousCaretLocation(int currentCaretIndex)
+        private int FindPreviousCaretLocation(int currentCaretIndex, bool onlyPlaceholderCharacter = true)
         {
             if (Text == null || Text.Length == 0)
                 return 0;
-            int a = currentCaretIndex;
-            for (int i = 0; i < Text.Length; i++)
+            for (int i = currentCaretIndex; 0 < i; i--)
             {
-                if (a <= 0)
-                    return 0;
-                if (Text[a - 1] == PlaceholderCharacter)
+                if (onlyPlaceholderCharacter == true)
                 {
-                    return a - 1;
+                    if (i <= 0)
+                        return 0;
+                    if (Text[i - 1] == PlaceholderCharacter)
+                    {
+                        return i - 1;
+                    }
                 }
-                a--;
+                else
+                {
+                    if (i <= 0)
+                        return 0;
+                    if (MaskCharacters.ContainsKey(Mask[i - 1]))
+                    {
+                        return i - 1;
+                    }
+                }
+                
             }
-            return a;
+            return currentCaretIndex;
         }
 
         private int FindLastCaretLocation()
@@ -668,18 +749,57 @@ namespace MudBlazor
 
         internal void ArrangeCaretPosition(KeyboardEventArgs obj)
         {
-            if (obj.Key == "Backspace")
+            switch (obj.Key)
             {
-                SetCaretPosition(FindPreviousCaretLocation(_caretPosition));
+                case "ArrowLeft":
+                    if (0 < _caretPosition)
+                    {
+                        SetCaretPosition(FindPreviousCaretLocation(_caretPosition, false));
+                    }
+                    break;
+                case "ArrowRight":
+                    if (_caretPosition < Text.Length)
+                    {
+                        SetCaretPosition(FindNextCaretLocation(_caretPosition, false));
+                    }
+                    break;
+                case "Backspace":
+                    SetCaretPosition(FindPreviousCaretLocation(_caretPosition, false));
+                    break;
+                case "Delete":
+                    SetCaretPosition(_caretPosition);
+                    break;
+                default:
+                    SetCaretPosition(FindNextCaretLocation(_caretPosition));
+                    break;
             }
-            else if (obj.Key == "Delete")
-            {
-                SetCaretPosition(_caretPosition);
-            }
-            else
-            {
-                SetCaretPosition(FindNextCaretLocation(_caretPosition));
-            }
+
+            //if (obj.Key == "ArrowLeft")
+            //{
+            //    if (0 < _caretPosition)
+            //    {
+            //        SetCaretPosition(_caretPosition - 1);
+            //    }
+            //}
+            //else if (obj.Key == "ArrowRight")
+            //{
+            //    if (_caretPosition < Text.Length)
+            //    {
+            //        SetCaretPosition(_caretPosition + 1);
+            //    }
+            //}
+            //else if (obj.Key == "Backspace")
+            //{
+            //    SetCaretPosition(FindPreviousCaretLocation(_caretPosition));
+            //}
+            //else if (obj.Key == "Delete")
+            //{
+            //    SetCaretPosition(_caretPosition);
+            //}
+            //else
+            //{
+            //    SetCaretPosition(FindNextCaretLocation(_caretPosition));
+            //}
         }
 
         #endregion
@@ -710,16 +830,41 @@ namespace MudBlazor
 
         protected internal async Task HandleKeyDown(KeyboardEventArgs obj)
         {
+            if (obj.Key == "ArrowLeft" || obj.Key == "ArrowRight")
+            {
+                ArrangeCaretPosition(obj);
+                return;
+            }
             if (obj.CtrlKey == true || (!Regex.IsMatch(obj.Key, @"^(\p{L}|\d)$") &&
                 !(obj.Key == "Backspace" || obj.Key == "Delete")))
                 return;
+            if (_caretPosition == Mask.Length && !(obj.Key == "Backspace" || obj.Key == "Delete"))
+                return;
             Console.WriteLine($"HandleKeyDown: '{obj.Key}'");
-            await ImplementMask(obj.Key, Mask);
+            await ImplementMask(obj.Key, Mask, true);
             string val = GetRawValueFromDictionary();
             await SetValueAsync(Converter.Get(val), false);
 
             OnKeyDown.InvokeAsync(obj).AndForget();
-            ArrangeCaretPosition(obj);
+
+            if (obj.Key == "Backspace" || obj.Key == "Delete")
+            {
+                ArrangeCaretPosition(obj);
+            }
+            else
+            {
+                for (int i = _caretPosition; i < Text.Length; i++)
+                {
+                    if (_rawValueDictionary.ContainsKey(i))
+                    {
+                        if (IsCharsMatch(Text[i], Mask[i]))
+                        {
+                            ArrangeCaretPosition(obj);
+                            break;
+                        }
+                    }
+                }
+            }
         }
     }
 }
