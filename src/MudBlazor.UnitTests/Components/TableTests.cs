@@ -2,11 +2,13 @@
 #pragma warning disable BL0005 // Set parameter outside component
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AngleSharp.Dom;
 using Bunit;
 using FluentAssertions;
+using Moq;
 using MudBlazor.UnitTests.TestComponents;
 using NUnit.Framework;
 
@@ -1473,7 +1475,7 @@ namespace MudBlazor.UnitTests.Components
             // Make sure number of items has updated
             tableInstance.GetFilteredItemsCount().Should().Be(1);
         }
-        
+
         /// Issue #3033
         /// Tests changing RowsPerPage Parameter from code - Table should re-render new RowsPerPage parameter and parameter value should be set
         /// </summary>
@@ -1493,5 +1495,103 @@ namespace MudBlazor.UnitTests.Components
             testComponent.WaitForAssertion(() => table.RowsPerPage.Should().Be(35));
         }
 
+        /// <summary>
+        /// Checks that the table calls the `CurrentPageItemsChanged` action on every changes in the displayed page. Testing for `Items` data source
+        /// </summary>
+        [Test]
+        public async Task TableTriggersPagedItemsChanged_Items()
+        {
+            var mockItemsChangedAction = new Mock<Action<IEnumerable<string>>>();
+            mockItemsChangedAction.Setup(_ => _(It.IsAny<IEnumerable<string>>())).Verifiable();
+            var testComponent = Context.RenderComponent<TableSimpleWrapper>(
+                ComponentParameter.CreateParameter("Items", TableSimpleWrapper.states),
+                ComponentParameter.CreateParameter("PagedChanged", mockItemsChangedAction.Object));
+            mockItemsChangedAction.Verify(
+                _ => _(It.Is<IEnumerable<string>>(v => v.SequenceEqual(new ArraySegment<string>(TableSimpleWrapper.states, 0, 10)))),
+                Times.Exactly(1));
+            mockItemsChangedAction.VerifyNoOtherCalls();
+
+            var filter = (string s) => s.Contains("e", StringComparison.InvariantCultureIgnoreCase);
+            testComponent.SetParam("Filter", filter);
+            mockItemsChangedAction.Verify(
+                _ => _(It.Is<IEnumerable<string>>(v => v.SequenceEqual(new ArraySegment<string>(TableSimpleWrapper.states.Where(filter).ToArray(), 0, 10)))),
+                Times.Exactly(1));
+            mockItemsChangedAction.VerifyNoOtherCalls();
+
+            var table = testComponent.FindComponent<MudTable<string>>().Instance;
+            table.CurrentPage = 1;
+            mockItemsChangedAction.Verify(
+                _ => _(It.Is<IEnumerable<string>>(v => v.SequenceEqual(new ArraySegment<string>(TableSimpleWrapper.states.Where(filter).ToArray(), 10, 10)))),
+                Times.Exactly(1));
+            mockItemsChangedAction.VerifyNoOtherCalls();
+
+            testComponent.SetParam("Filter", null);
+            mockItemsChangedAction.Verify(
+                _ => _(It.Is<IEnumerable<string>>(v => v.SequenceEqual(new ArraySegment<string>(TableSimpleWrapper.states.ToArray(), 10, 10)))),
+                Times.Exactly(1));
+            mockItemsChangedAction.VerifyNoOtherCalls();
+
+            testComponent.SetParam("Items", Array.Empty<string>());
+            mockItemsChangedAction.Verify(
+                _ => _(It.Is<IEnumerable<string>>(v => !v.Any())),
+                // Here, it is called 2 times in a row, probably due to changes affecting the pager in another render cycle since it is asyncly called
+                // Ideally, this should cause re-render once. The `Times` assertion bellow should actually be `Times.Exactly(1)`.
+                Times.Between(1, 2, Moq.Range.Inclusive));
+            mockItemsChangedAction.VerifyNoOtherCalls();
+        }
+
+        /// <summary>
+        /// Checks that the table calls the `CurrentPageItemsChanged` action on every changes in the displayed page. Testing for `ServerData` data source.
+        /// Note that we are are not interested in the TableState or ServerData calls behavior, just in the action calls.
+        /// </summary>
+        [Test]
+        public async Task TableTriggersPagedItemsChanged_ServerData()
+        {
+            TableData<string> serverDataRet = new();
+            serverDataRet.Items = TableSimpleWrapper.states;
+            serverDataRet.TotalItems = TableSimpleWrapper.states.Length;
+            Func<TableState, Task<TableData<string>>> serverDataFn = (s) => Task.FromResult(serverDataRet);
+            var mockItemsChangedAction = new Mock<Action<IEnumerable<string>>>();
+            mockItemsChangedAction.Setup(_ => _(It.IsAny<IEnumerable<string>>())).Verifiable();
+            var testComponent = Context.RenderComponent<TableSimpleWrapper>(
+                ComponentParameter.CreateParameter("ServerData", serverDataFn),
+                ComponentParameter.CreateParameter("PagedChanged", mockItemsChangedAction.Object));
+            // This triggers once while server data is not set
+            mockItemsChangedAction.Verify(
+                _ => _(It.Is<IEnumerable<string>>(v => !v.Any())),
+                Times.Exactly(1));
+            mockItemsChangedAction.Verify(
+                _ => _(It.Is<IEnumerable<string>>(v => v.SequenceEqual(TableSimpleWrapper.states))),
+                Times.Exactly(1));
+            mockItemsChangedAction.VerifyNoOtherCalls();
+
+            var filter = (string s) => s.Contains("e", StringComparison.InvariantCultureIgnoreCase);
+            testComponent.SetParam("Filter", filter);
+            mockItemsChangedAction.Verify(
+                _ => _(It.Is<IEnumerable<string>>(v => v.SequenceEqual(TableSimpleWrapper.states))),
+                Times.Exactly(2));
+            mockItemsChangedAction.VerifyNoOtherCalls();
+
+            var table = testComponent.FindComponent<MudTable<string>>().Instance;
+            table.CurrentPage = 1;
+            mockItemsChangedAction.Verify(
+                _ => _(It.Is<IEnumerable<string>>(v => v.SequenceEqual(TableSimpleWrapper.states))),
+                Times.Exactly(3));
+            mockItemsChangedAction.VerifyNoOtherCalls();
+
+            testComponent.SetParam("Filter", null);
+            mockItemsChangedAction.Verify(
+                _ => _(It.Is<IEnumerable<string>>(v => v.SequenceEqual(TableSimpleWrapper.states))),
+                Times.Exactly(4));
+            mockItemsChangedAction.VerifyNoOtherCalls();
+
+            testComponent.SetParam("ServerData", null);
+            mockItemsChangedAction.Verify(
+                _ => _(It.Is<IEnumerable<string>>(v => !v.Any())),
+                // Here, it is called 2 times in a row, probably due to changes affecting the pager in another render cycle since it is asyncly called
+                // Ideally, this should cause re-render once. The `Times` assertion bellow should actually be `Times.Exactly(1)`.
+                Times.Between(1, 2, Moq.Range.Inclusive));
+            mockItemsChangedAction.VerifyNoOtherCalls();
+        }
     }
 }

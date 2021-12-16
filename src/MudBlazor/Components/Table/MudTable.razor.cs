@@ -163,6 +163,14 @@ namespace MudBlazor
         }
 
         /// <summary>
+        /// Action is called when items displayed in the tables changed. This can be useful to dispose row states persistent accross updates of the table.
+        /// Only triggered when using <see cref="Items"/>.
+        /// </summary>
+        [Category(CategoryTypes.Table.Data)]
+        [Parameter]
+        public Action<IEnumerable<T>> CurrentPageItemsChanged { get; set; }
+
+        /// <summary>
         /// A function that returns whether or not an item should be displayed in the table. You can use this to implement your own search function.
         /// </summary>
         [Parameter]
@@ -354,8 +362,11 @@ namespace MudBlazor
         {
             get
             {
-                if (@PagerContent == null)
-                    return FilteredItems; // we have no pagination
+                if (@PagerContent == null) // we have no pagination
+                {
+                    CurrentPageItemsChanged?.Invoke(FilteredItems);
+                    return FilteredItems;
+                }
                 if (ServerData == null)
                 {
                     var filteredItemCount = GetFilteredItemsCount();
@@ -367,7 +378,9 @@ namespace MudBlazor
                     CurrentPage = lastPageNo < CurrentPage ? lastPageNo : CurrentPage;
                 }
 
-                return GetItemsOfPage(CurrentPage, RowsPerPage);
+                var paginated = GetItemsOfPage(CurrentPage, RowsPerPage);
+                CurrentPageItemsChanged?.Invoke(paginated);
+                return paginated;
             }
         }
 
