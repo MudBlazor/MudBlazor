@@ -373,7 +373,7 @@ namespace MudBlazor
         {
             try
             {
-                if (Form==null)
+                if (Form == null)
                 {
                     errors.Add("Form is null, unable to validate with model!");
                     return;
@@ -511,6 +511,19 @@ namespace MudBlazor
 #nullable disable
 
         /// <summary>
+        /// Specify the explicit type to retrieve the <see cref="For"/> expession validation attributes. Only the direct container type is supported.
+        /// This is useful for cases where the actual runtime type may be derived from the statically declared type.
+        /// </summary>
+        /// <example><code>
+        /// <MudTextField For="@(() => Model.Foo)" ForModel="typeof(Model)"/>
+        /// </code></example>
+#nullable enable
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Validation)]
+        public Type? ForModel { get; set; }
+#nullable disable
+
+        /// <summary>
         /// Stores the list of validation attributes attached to the property targeted by <seealso cref="For"/>. If <seealso cref="For"/> is null, this property is null too.
         /// </summary>
 #nullable enable
@@ -538,6 +551,7 @@ namespace MudBlazor
         /// </summary>
 #nullable enable
         private Expression<Func<T>>? _currentFor;
+        private Type? _currentForModel;
 #nullable disable
 
         /// <summary>
@@ -549,16 +563,20 @@ namespace MudBlazor
 
         protected override void OnParametersSet()
         {
-            if (For != null && For != _currentFor)
+            if ((For != null && For != _currentFor) || (ForModel != null && ForModel != _currentForModel))
             {
                 // Extract validation attributes
                 // Sourced from https://stackoverflow.com/a/43076222/4839162
                 var expression = (MemberExpression)For.Body;
                 var propertyInfo = (PropertyInfo)expression.Member;
+                // If we have an explicit type to get the property from, re-get the property from it.
+                if (ForModel != null)
+                    propertyInfo = ForModel.GetProperty(propertyInfo.Name);
                 _validationAttrsFor = propertyInfo.GetCustomAttributes(typeof(ValidationAttribute), true).Cast<ValidationAttribute>();
 
                 _fieldIdentifier = FieldIdentifier.Create(For);
                 _currentFor = For;
+                _currentForModel = ForModel;
             }
 
             if (EditContext != null && EditContext != _currentEditContext)
