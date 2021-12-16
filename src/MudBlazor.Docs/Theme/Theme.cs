@@ -43,6 +43,8 @@ namespace MudBlazor.Docs
             Black = "#110e2d",
             AppbarText = "#424242",
             AppbarBackground = "rgba(255,255,255,0.8)",
+            GrayLight = "#e8e8e8",
+            GrayLighter = "#f5f5f5"
         };
 
         public static MudTheme DocsDarkTheme { get; set; } =

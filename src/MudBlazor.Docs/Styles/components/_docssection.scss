@@ -68,7 +68,7 @@
       }
       
       &.darken {
-        background-color: #e6e6e6;
+        background-color: var(--mud-palette-grey-light);
 
         .file-button{
           &.active{
@@ -85,30 +85,7 @@
     }
 
     &.darken {
-
-      &.primary {
-        background: linear-gradient(45deg, rgba(250, 245, 255, 1) 0%, rgba(243, 232, 255, 1) 100%);
-      }
-
-      &.secondary {
-        background: linear-gradient(45deg, rgba(255, 248, 250, 1) 0%, rgba(255, 227, 237, 1) 100%);
-      }
-      
-      &.tertiary{
-        background: linear-gradient(45deg, rgba(236, 253, 245, 1) 0%, rgba(204, 251, 241, 1) 100%);
-      }
-
-      &.info {
-        background: linear-gradient(45deg, rgba(240, 249, 255, 1) 0%, rgba(224, 242, 254, 1) 100%);
-      }
-
-      &.warning {
-        background: linear-gradient(45deg, rgba(255, 251, 235, 1) 0%, rgba(254, 243, 199, 1) 100%);
-      }
-
-      &.error {
-        background: linear-gradient(45deg, rgba(255, 241, 242, 1) 0%, rgba(255, 228, 230, 1) 100%);
-      }
+      background-color: var(--mud-palette-grey-light);
     }
 
     &.outlined {
@@ -138,7 +115,7 @@
     position: relative;
     overflow: hidden;
     border-radius: 8px;
-    background-color: var(--mud-palette-background-grey);
+    background-color: var(--mud-palette-grey-lighter);
     transition: border-radius 250ms cubic-bezier(.4, 0, .2, 1);
 
     .copy-code-button {
@@ -146,7 +123,7 @@
       bottom: 4px;
       right: 4px;
       color: rgba(5, 0, 51, 0.0);
-      background-color: var(--mud-palette-background-grey);
+      background-color: var(--mud-palette-grey-lighter);
       transition: color 250ms cubic-bezier(.4, 0, .2, 1) 0ms;
     }
 
