@@ -93,13 +93,6 @@ namespace MudBlazor
                 if (_isVisible == value)
                     return;
                 _isVisible = value;
-                if (IsInline)
-                {
-                    if (_isVisible)
-                        Show();
-                    else
-                        Close();
-                }
                 IsVisibleChanged.InvokeAsync(value);
             }
         }
@@ -128,6 +121,9 @@ namespace MudBlazor
                 Close();
             var parameters = new DialogParameters()
             {
+                [nameof(Class)] = Class,
+                [nameof(Style)] = Style,
+                [nameof(Tag)] = Tag,
                 [nameof(TitleContent)] = TitleContent,
                 [nameof(DialogContent)] = DialogContent,
                 [nameof(DialogActions)] = DialogActions,
@@ -148,6 +144,13 @@ namespace MudBlazor
         {
             if (IsInline && _reference != null)
                 (_reference.Dialog as MudDialog)?.ForceUpdate(); // forward render update to instance
+            if (IsInline)
+            {
+                if (_isVisible)
+                    Show();
+                else
+                    Close();
+            }
             base.OnAfterRender(firstRender);
         }
 

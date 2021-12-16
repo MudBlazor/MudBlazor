@@ -428,7 +428,7 @@ namespace MudBlazor
                     // Text update suppression, only in BSS (not in WASM).
                     // This is a fix for #1012
                     if (RuntimeLocation.IsServerSide && TextUpdateSuppression)
-                        updateText=false;
+                        updateText = false;
                 }
                 if (updateText)
                 {
@@ -461,7 +461,7 @@ namespace MudBlazor
 
         protected override void ResetValue()
         {
-            SetTextAsync(null, updateValue:true).AndForget();
+            SetTextAsync(null, updateValue: true).AndForget();
             base.ResetValue();
         }
     }
