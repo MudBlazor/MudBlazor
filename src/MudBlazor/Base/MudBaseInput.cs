@@ -247,7 +247,7 @@ namespace MudBlazor
 
         protected bool _isFocused;
 
-        protected virtual void OnBlurred(FocusEventArgs obj)
+        protected internal virtual void OnBlurred(FocusEventArgs obj)
         {
             _isFocused = false;
             Touched = true;

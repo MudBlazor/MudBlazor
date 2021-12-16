@@ -173,6 +173,11 @@ namespace MudBlazor.UnitTests.Components
             comp.WaitForAssertion(() => maskField.Instance.Text.Should().Be("(bc_) 20_-c_"));
             comp.WaitForAssertion(() => maskField.Instance.Value.Should().Be("bc20c"));
 
+            await comp.InvokeAsync(() => maskField.Instance.SetCaretPosition(7));
+            await comp.InvokeAsync(() => maskField.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = "Backspace" }));
+            comp.WaitForAssertion(() => maskField.Instance.Text.Should().Be("(bc_) 0__-__"));
+            comp.WaitForAssertion(() => maskField.Instance.Value.Should().Be("bc0"));
+
             await comp.InvokeAsync(() => maskField.Instance.Clear());
             comp.WaitForAssertion(() => maskField.Instance.Text.Should().Be(null));
             comp.WaitForAssertion(() => maskField.Instance.Value.Should().Be(null));
@@ -262,6 +267,18 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(() => maskField.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = "Backspace" }));
             comp.WaitForAssertion(() => maskField.Instance.Text.Should().Be(null));
             comp.WaitForAssertion(() => maskField.Instance.Value.Should().Be(""));
+
+            await comp.InvokeAsync(() => maskField.Instance.OnFocused(new FocusEventArgs()));
+            comp.WaitForAssertion(() => maskField.Instance.Text.Should().Be(null));
+
+            await comp.InvokeAsync(() => maskField.Instance.SetCaretPosition(1));
+            await comp.InvokeAsync(() => maskField.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = "a" }));
+            comp.WaitForAssertion(() => maskField.Instance.Text.Should().Be("(a__) ___-__"));
+            comp.WaitForAssertion(() => maskField.Instance.Value.Should().Be("a"));
+
+            await comp.InvokeAsync(() => maskField.Instance.OnBlurred(new FocusEventArgs()));
+            comp.WaitForAssertion(() => maskField.Instance.Text.Should().Be("(a__) ___-__"));
+            comp.WaitForAssertion(() => maskField.Instance.Value.Should().Be("a"));
         }
 
         [Test]

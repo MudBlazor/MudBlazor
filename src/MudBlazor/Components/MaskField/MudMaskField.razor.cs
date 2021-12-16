@@ -294,7 +294,7 @@ namespace MudBlazor
             }
         }
 
-        protected override void OnBlurred(FocusEventArgs obj)
+        protected internal override void OnBlurred(FocusEventArgs obj)
         {
             base.OnBlurred(obj);
             if (string.IsNullOrEmpty(_rawValue))

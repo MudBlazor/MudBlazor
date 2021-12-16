@@ -151,7 +151,7 @@ namespace MudBlazor
             return base.SetValueAsync(value, valueChanged || updateText);
         }
 
-        protected override async void OnBlurred(FocusEventArgs obj)
+        protected internal override async void OnBlurred(FocusEventArgs obj)
         {
             base.OnBlurred(obj);
             await UpdateTextPropertyAsync(false);
