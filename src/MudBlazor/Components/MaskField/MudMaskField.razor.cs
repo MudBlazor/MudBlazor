@@ -414,6 +414,35 @@ namespace MudBlazor
 
         private void UpdateRawValueDictionary(string lastPressedKey = null)
         {
+            if (_selection != null && _selection.Value.Item1 != _selection.Value.Item2)
+            {
+                for (int i = _selection.Value.Item1; i < _selection.Value.Item2; i++)
+                {
+                    if (_rawValueDictionary.ContainsKey(i))
+                    {
+                        _rawValueDictionary.Remove(i);
+                    }
+                }
+                if (KeepCharacterPositions == false)
+                {
+                    for (int i = 0; i < Text.Length - _selection.Value.Item2; i++)
+                    {
+                        if (_rawValueDictionary.ContainsKey(_selection.Value.Item2 + i))
+                        {
+                            for (int i2 = 0; _selection.Value.Item1 + i2 < Text.Length; i2++)
+                            {
+                                if (MaskCharacters.ContainsKey(Mask[_selection.Value.Item1 + i2]) && !_rawValueDictionary.ContainsKey(_selection.Value.Item1 + i2))
+                                {
+                                    _rawValueDictionary.Add(_selection.Value.Item1 + i2, _rawValueDictionary[_selection.Value.Item2 + i]);
+                                    _rawValueDictionary.Remove(_selection.Value.Item2 + i);
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
             Dictionary<int, char> backUpDictionary = new Dictionary<int, char>();
             for (int i = 0; i < Mask.Length; i++)
             {
@@ -458,11 +487,15 @@ namespace MudBlazor
             {
                 for (int i = 0; i < Mask.Length; i++)
                 {
-                    int a = i;
-                    if (Regex.IsMatch(Text[a].ToString(), @"^(\p{L}|\d)$") && !_rawValueDictionary.ContainsKey(a))
+                    if (backUpDictionary.ContainsKey(i))
                     {
-                        _rawValueDictionary.Add(a, Text[a]);
+                        _rawValueDictionary.Add(i, backUpDictionary[i]);
                     }
+                    //int a = i;
+                    //if (Regex.IsMatch(Text[a].ToString(), @"^(\p{L}|\d)$") && !_rawValueDictionary.ContainsKey(a))
+                    //{
+                    //    _rawValueDictionary.Add(a, Text[a]);
+                    //}
                 }
             }
             else
@@ -490,7 +523,7 @@ namespace MudBlazor
                 }
             }
 
-            if (lastPressedKey == "Backspace")
+            if (lastPressedKey == "Backspace" && _selection == null)
             {
                 if (KeepCharacterPositions)
                 {
@@ -555,7 +588,7 @@ namespace MudBlazor
                 }
             }
 
-            else if (lastPressedKey == "Delete")
+            else if (lastPressedKey == "Delete" && _selection == null)
             {
                 if (KeepCharacterPositions == true)
                 {

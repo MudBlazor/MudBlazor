@@ -406,9 +406,68 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task MaskFieldTest_CaretPosition()
+        public async Task MaskFieldTest_Selection()
         {
+            var comp = Context.RenderComponent<MudMaskField<string>>();
+            var maskField = comp.Instance;
 
+            await comp.InvokeAsync(() => maskField.Mask = "0000 0000 000");
+            await comp.InvokeAsync(() => maskField.Value = "1234567899");
+            await comp.InvokeAsync(() => maskField.OnFocused(new FocusEventArgs()));
+            await comp.InvokeAsync(() => maskField.SetRawValueDictionary("1234567899"));
+            await comp.InvokeAsync(() => maskField.ImplementMask(null, maskField.Mask));
+            //await comp.InvokeAsync(() => maskField.OnFocused(new FocusEventArgs()));
+
+            await comp.InvokeAsync(() => maskField.SetCaretPosition(12));
+            await comp.InvokeAsync(() => maskField.HandleKeyDown(new KeyboardEventArgs() { Key = "9" }));
+            comp.WaitForAssertion(() => maskField.Text.Should().Be("1234 5678 999"));
+            //Select and delete
+            await comp.InvokeAsync(() => maskField.OnSelect(10, 12));
+            await comp.InvokeAsync(() => maskField.HandleKeyDown(new KeyboardEventArgs() { Key = "Backspace" }));
+            comp.WaitForAssertion(() => maskField.Text.Should().Be("1234 5678 9__"));
+            comp.WaitForAssertion(() => maskField.Value.Should().Be("123456789"));
+            //Select with a whitespace and test again
+            await comp.InvokeAsync(() => maskField.OnSelect(4, 8));
+            await comp.InvokeAsync(() => maskField.HandleKeyDown(new KeyboardEventArgs() { Key = "Delete" }));
+            comp.WaitForAssertion(() => maskField.Text.Should().Be("1234 89__ ___"));
+            comp.WaitForAssertion(() => maskField.Value.Should().Be("123489"));
+
+            await comp.InvokeAsync(() => maskField.SetCaretPosition(7));
+            await comp.InvokeAsync(() => maskField.OnSelect(7, 11));
+            await comp.InvokeAsync(() => maskField.OnPaste("567"));
+            comp.WaitForAssertion(() => maskField.Text.Should().Be("1234 8956 7__"));
+            comp.WaitForAssertion(() => maskField.Value.Should().Be("123489567"));
+
+            await comp.InvokeAsync(() => maskField.SetCaretPosition(0));
+            await comp.InvokeAsync(() => maskField.OnSelect(0, 1));
+            await comp.InvokeAsync(() => maskField.HandleKeyDown(new KeyboardEventArgs() { Key = "a" }));
+            comp.WaitForAssertion(() => maskField.Text.Should().Be("_234 8956 7__"));
+            comp.WaitForAssertion(() => maskField.Value.Should().Be("23489567"));
+
+            await comp.InvokeAsync(() => maskField.SetCaretPosition(0));
+            await comp.InvokeAsync(() => maskField.OnSelect(0, 1));
+            await comp.InvokeAsync(() => maskField.HandleKeyDown(new KeyboardEventArgs() { Key = "1" }));
+            comp.WaitForAssertion(() => maskField.Text.Should().Be("1234 8956 7__"));
+            comp.WaitForAssertion(() => maskField.Value.Should().Be("123489567"));
+
+            await comp.InvokeAsync(() => maskField.SetCaretPosition(6));
+            await comp.InvokeAsync(() => maskField.OnSelect(6, 11));
+            await comp.InvokeAsync(() => maskField.OnPaste("1Mud9"));
+            comp.WaitForAssertion(() => maskField.Text.Should().Be("1234 81__ _9_"));
+            comp.WaitForAssertion(() => maskField.Value.Should().Be("1234819"));
+
+            await comp.InvokeAsync(() => maskField.KeepCharacterPositions = true);
+            await comp.InvokeAsync(() => maskField.SetCaretPosition(1));
+            await comp.InvokeAsync(() => maskField.OnSelect(1, 3));
+            await comp.InvokeAsync(() => maskField.HandleKeyDown(new KeyboardEventArgs() { Key = "Backspace" }));
+            comp.WaitForAssertion(() => maskField.Text.Should().Be("1__4 81__ _9_"));
+            comp.WaitForAssertion(() => maskField.Value.Should().Be("14819"));
+
+            await comp.InvokeAsync(() => maskField.SetCaretPosition(3));
+            await comp.InvokeAsync(() => maskField.OnSelect(3, 7));
+            await comp.InvokeAsync(() => maskField.OnPaste("a1a"));
+            comp.WaitForAssertion(() => maskField.Text.Should().Be("1___ 1___ _9_"));
+            comp.WaitForAssertion(() => maskField.Value.Should().Be("119"));
         }
 
     }
