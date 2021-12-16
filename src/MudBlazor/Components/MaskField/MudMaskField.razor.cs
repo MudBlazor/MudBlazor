@@ -74,10 +74,6 @@ namespace MudBlazor
         private string GetRawValueFromDictionary()
         {
             string rawValue = "";
-            //foreach (var item in _rawValueDictionary)
-            //{
-            //    rawValue += item.Value.ToString();
-            //}
             for (int i = 0; i < Mask.Length; i++)
             {
                 int a = i;
@@ -114,18 +110,18 @@ namespace MudBlazor
             await ImplementMask(null, Mask, true);
         }
 
-        internal async void SetRawValue(string rawValue, bool updateText = false)
-        {
-            if (_rawValue == rawValue)
-                return;
-            _rawValue = rawValue;
-            await SetValueAsync(Converter.Get(rawValue), updateText);
-            _rawValue = rawValue;
-        }
+        //internal async void SetRawValue(string rawValue, bool updateText = false)
+        //{
+        //    if (_rawValue == rawValue)
+        //        return;
+        //    _rawValue = rawValue;
+        //    await SetValueAsync(Converter.Get(rawValue), updateText);
+        //    _rawValue = rawValue;
+        //}
 
         internal string GetRawValueFromText()
         {
-            if (Text==null)
+            if (Text == null)
                 return null;
             if (Text == "")
                 return "";
@@ -193,7 +189,7 @@ namespace MudBlazor
             {
                 await _jsEvent.Connect(_elementId, new JsEventOptions
                 {
-                    EnableLogging = true,
+                    //EnableLogging = true,
                     TargetClass = "mud-input-slot",
                     TagName = "INPUT"
                 });
@@ -238,9 +234,10 @@ namespace MudBlazor
             //Console.WriteLine($"Caret position: {pos}");
         }
 
-        private void OnCopy()
+        internal void OnCopy()
         {
-            var text = _rawValue;
+            //Before this is _rawValue, i changed to Value, please check it
+            var text = Value.ToString();
             _jsApiService.CopyToClipboardAsync(text);
             //Console.WriteLine($"Copy: {text}");
         }
@@ -275,7 +272,7 @@ namespace MudBlazor
         public void OnSelect(int start, int end)
         {
             _selection = (start, end);
-            Console.WriteLine($"Select: {_selection.Value.Item1}-{_selection.Value.Item2}");
+            //Console.WriteLine($"Select: {_selection.Value.Item1}-{_selection.Value.Item2}");
         }
 
         internal async void OnFocused(FocusEventArgs obj)
@@ -318,6 +315,7 @@ namespace MudBlazor
 
         #region Masking Helpers
 
+        //Add custom regex mask characters into the main mask dictionary, needed only if user change their custom mask characters, not the main ones
         private void UpdateCustomCharacters()
         {
             foreach (var item in CustomCharacterTypes)
@@ -399,6 +397,7 @@ namespace MudBlazor
 
         #region Core Masking
 
+        //Create main dictionary with given string (not affect value directly)
         internal void SetRawValueDictionary(string value)
         {
             _rawValueDictionary.Clear();
@@ -418,6 +417,9 @@ namespace MudBlazor
 
         private void UpdateRawValueDictionary(string lastPressedKey = null)
         {
+            //If there is a selection, first delete the selected characters and move the after ones if keep position is false
+            //If we have selection, we think the text cannot be null, so we didn't have null check
+            #region Selection
             if (_selection != null && _selection.Value.Item1 != _selection.Value.Item2)
             {
                 for (int i = _selection.Value.Item1; i < _selection.Value.Item2; i++)
@@ -446,15 +448,21 @@ namespace MudBlazor
                     }
                 }
             }
+            #endregion
 
+            //BackUp and clear the main dictionary
+            #region BackUp and Clear
             Dictionary<int, char> backUpDictionary = new Dictionary<int, char>();
             for (int i = 0; i < Mask.Length; i++)
             {
-                int a = i;
-                if (_rawValueDictionary.ContainsKey(a))
-                    backUpDictionary.Add(a, _rawValueDictionary[a]);
+                if (_rawValueDictionary.ContainsKey(i))
+                    backUpDictionary.Add(i, _rawValueDictionary[i]);
             }
             _rawValueDictionary.Clear();
+            #endregion
+
+            //Add pressed key as the first item of cleared dictionary (if there is a key)
+            #region Insert Key
             if (lastPressedKey != null && !_rawValueDictionary.ContainsKey(_caretPosition) && !string.IsNullOrEmpty(lastPressedKey)
                  && !(lastPressedKey == "Backspace" || lastPressedKey == "Delete"))
             {
@@ -463,7 +471,7 @@ namespace MudBlazor
                     _rawValueDictionary.Add(_caretPosition, lastPressedKey[0]);
                     return;
                 }
-                    
+
                 for (int i = 0; i < Text.Length - _caretPosition; i++)
                 {
                     if (KeepCharacterPositions)
@@ -484,6 +492,10 @@ namespace MudBlazor
                     }
                 }
             }
+            #endregion
+
+            //Create the main dictionary with backup again
+            #region Fetch Into BackUp
             if (string.IsNullOrEmpty(Text))
                 return;
 
@@ -506,19 +518,17 @@ namespace MudBlazor
             {
                 for (int i = 0; i < Mask.Length; i++)
                 {
-                    int a = i;
-                    if (backUpDictionary.ContainsKey(a))
+                    if (backUpDictionary.ContainsKey(i))
                     {
-                        if (a < _caretPosition)
-                            _rawValueDictionary.Add(a, backUpDictionary[a]);
+                        if (i < _caretPosition)
+                            _rawValueDictionary.Add(i, backUpDictionary[i]);
                         else
                         {
-                            for (int i2 = 0; a + i2 < Mask.Length; i2++)
+                            for (int i2 = 0; i + i2 < Mask.Length; i2++)
                             {
-                                int a2 = i2;
-                                if (MaskCharacters.ContainsKey(Mask[a + a2]) && !_rawValueDictionary.ContainsKey(a + a2))
+                                if (MaskCharacters.ContainsKey(Mask[i + i2]) && !_rawValueDictionary.ContainsKey(i + i2))
                                 {
-                                    _rawValueDictionary.Add(a + a2, backUpDictionary[a]);
+                                    _rawValueDictionary.Add(i + i2, backUpDictionary[i]);
                                     break;
                                 }
                             }
@@ -526,28 +536,30 @@ namespace MudBlazor
                     }
                 }
             }
+            #endregion
 
+
+            #region Backspace Arrangement
             if (lastPressedKey == "Backspace" && _selection == null)
             {
                 if (KeepCharacterPositions)
                 {
                     for (int i = 1; i < Text.Length; i++)
                     {
-                        int a = i;
-                        if (_caretPosition - a < 0)
+                        if (_caretPosition - i < 0)
                             break;
-                        if (Text[_caretPosition - a] == PlaceholderCharacter)
+                        if (Text[_caretPosition - i] == PlaceholderCharacter)
                             break;
-                        if (_rawValueDictionary.ContainsKey(_caretPosition - a))
+                        if (_rawValueDictionary.ContainsKey(_caretPosition - i))
                         {
-                            _rawValueDictionary.Remove(_caretPosition - a);
+                            _rawValueDictionary.Remove(_caretPosition - i);
                             break;
                         }
                     }
                 }
                 else
                 {
-                    //Check is there any remaining value
+                    //Check is there any remaining value, otherwise it always removes the first char
                     bool hasValueBefore = false;
                     int removedIndex = 0;
                     for (int i = 0; i < (Text.Length - (Text.Length - _caretPosition)); i++)
@@ -591,7 +603,9 @@ namespace MudBlazor
                     _rawValueDictionary = replacedDictionary;
                 }
             }
+            #endregion
 
+            #region Delete Arrangement
             else if (lastPressedKey == "Delete" && _selection == null)
             {
                 if (KeepCharacterPositions == true)
@@ -650,6 +664,7 @@ namespace MudBlazor
                     
                 }
             }
+            #endregion
         }
 
         internal async Task ImplementMask(string lastPressedKey, string mask, bool updateCharactersOrDictionary = true)
@@ -659,37 +674,38 @@ namespace MudBlazor
                 return;
             }
 
-            string result = "";
-
+            //Useful if only need to change text, not the dictionary itself
             if (updateCharactersOrDictionary == true)
             {
                 UpdateCustomCharacters();
                 UpdateRawValueDictionary(lastPressedKey);
             }
 
+            //Create masked text from dictionary
+            #region Create Masked Text
+            string result = "";
             bool hasValue = false;
             for (int i = 0; i < mask.Length; i++)
             {
-                int a = i;
-                if (!MaskCharacters.ContainsKey(mask[a]))
+                if (!MaskCharacters.ContainsKey(mask[i]))
                 {
-                    result += mask[a].ToString();
-                    if (_rawValueDictionary.ContainsKey(a))
+                    result += mask[i].ToString();
+                    if (_rawValueDictionary.ContainsKey(i))
                     {
-                        _rawValueDictionary.Remove(a);
+                        _rawValueDictionary.Remove(i);
                     }
                 }
-                else if (_rawValueDictionary.ContainsKey(a))
+                else if (_rawValueDictionary.ContainsKey(i))
                 {
-                    if (IsCharsMatch(_rawValueDictionary[a], mask[a]))
+                    if (IsCharsMatch(_rawValueDictionary[i], mask[i]))
                     {
-                        result += _rawValueDictionary[a].ToString();
+                        result += _rawValueDictionary[i].ToString();
                         if (!hasValue)
                             hasValue = true;
                     }
                     else
                     {
-                        _rawValueDictionary.Remove(a);
+                        _rawValueDictionary.Remove(i);
                         result += PlaceholderCharacter.ToString();
                     }
                 }
@@ -698,7 +714,9 @@ namespace MudBlazor
                     result += PlaceholderCharacter.ToString();
                 }
             }
+            #endregion
 
+            #region Internal Text Change
             if (hasValue == false && !string.IsNullOrEmpty(Placeholder))
             {
                 await SetTextAsync(null, updateValue: false);
@@ -707,8 +725,7 @@ namespace MudBlazor
             {
                 await SetTextAsync(result, updateValue: false);
             }
-
-            //await _elementReference.SetText(result);
+            #endregion
         }
 
         #endregion
@@ -788,22 +805,19 @@ namespace MudBlazor
                         return i - 1;
                     }
                 }
-                
             }
             return currentCaretIndex;
         }
 
-        private int FindLastCaretLocation()
+        internal int FindLastCaretLocation()
         {
             if (Text == null || Text.Length == 0)
                 return 0;
-            int a = Mask.Length;
-            for (int i = 0; i < Mask.Length; i++)
+            for (int i = Mask.Length; 0 < i; i--)
             {
-                a -= i;
-                if (Text[a] == PlaceholderCharacter)
+                if (Text[i - 1] == PlaceholderCharacter)
                 {
-                    return a;
+                    return i;
                 }
             }
             return Mask.Length;
@@ -928,8 +942,8 @@ namespace MudBlazor
                 return;
             Console.WriteLine($"HandleKeyDown: '{obj.Key}'");
             await ImplementMask(obj.Key, Mask, true);
-            string val = GetRawValueFromDictionary();
-            await SetValueAsync(Converter.Get(val), false);
+            //string val = GetRawValueFromDictionary();
+            await SetValueAsync(Converter.Get(GetRawValueFromDictionary()), false);
 
             OnKeyDown.InvokeAsync(obj).AndForget();
 

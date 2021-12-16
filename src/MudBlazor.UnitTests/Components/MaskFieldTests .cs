@@ -182,6 +182,9 @@ namespace MudBlazor.UnitTests.Components
             comp.WaitForAssertion(() => maskField.Instance.Text.Should().Be("(a__) ___-__"));
             comp.WaitForAssertion(() => maskField.Instance.Value.Should().Be("a"));
             comp.WaitForAssertion(() => maskField.Instance._caretPosition.Should().Be(2));
+
+            await comp.InvokeAsync(() => maskField.Instance.SetCaretPosition(maskField.Instance.FindLastCaretLocation()));
+            comp.WaitForAssertion(() => maskField.Instance._caretPosition.Should().Be(12));
         }
 
         [Test]
