@@ -588,5 +588,62 @@ namespace MudBlazor.UnitTests.Components
             comp.WaitForAssertion(() => maskField2.Instance.Value.Should().Be("abC123"));
         }
 
+        [Test]
+        public async Task MaskFieldTest_CaretPosition()
+        {
+            var comp = Context.RenderComponent<MudMaskField<string>>();
+            var maskField = comp.Instance;
+
+            comp.SetParam("Mask", "(000) 000-00-00");
+            await comp.InvokeAsync(() => maskField.SetCaretPosition(1));
+            await comp.InvokeAsync(() => maskField.HandleKeyDown(new KeyboardEventArgs() { Key = "1" }));
+            comp.WaitForAssertion(() => maskField.Text.Should().Be("(1__) ___-__-__"));
+            comp.WaitForAssertion(() => maskField.Value.Should().Be("1"));
+
+            await comp.InvokeAsync(() => maskField.SetCaretPosition(14));
+            await comp.InvokeAsync(() => maskField.HandleKeyDown(new KeyboardEventArgs() { Key = "1" }));
+            comp.WaitForAssertion(() => maskField.Text.Should().Be("(1__) ___-__-_1"));
+            comp.WaitForAssertion(() => maskField.Value.Should().Be("11"));
+
+            await comp.InvokeAsync(() => maskField.SetCaretPosition(maskField.FindFirstCaretLocation()));
+            comp.WaitForAssertion(() => maskField._caretPosition.Should().Be(2));
+
+            await comp.InvokeAsync(() => maskField.SetCaretPosition(maskField.FindLastCaretLocation()));
+            comp.WaitForAssertion(() => maskField._caretPosition.Should().Be(14));
+
+            await comp.InvokeAsync(() => maskField.SetCaretPosition(maskField.FindPreviousCaretLocation(2, false)));
+            comp.WaitForAssertion(() => maskField._caretPosition.Should().Be(1));
+
+            await comp.InvokeAsync(() => maskField.SetCaretPosition(maskField.FindPreviousCaretLocation(2, true)));
+            comp.WaitForAssertion(() => maskField._caretPosition.Should().Be(2));
+
+            await comp.InvokeAsync(() => maskField.SetCaretPosition(maskField.FindNextCaretLocation(13, false)));
+            comp.WaitForAssertion(() => maskField._caretPosition.Should().Be(14));
+
+            await comp.InvokeAsync(() => maskField.SetCaretPosition(maskField.FindNextCaretLocation(13, true)));
+            comp.WaitForAssertion(() => maskField._caretPosition.Should().Be(15));
+        }
+
+        [Test]
+        public async Task MaskFieldTest_Extreme()
+        {
+            var comp = Context.RenderComponent<MudMaskField<string>>();
+            var maskField = comp.Instance;
+
+            comp.SetParam("Mask", "000 000");
+
+            await comp.InvokeAsync(() => maskField.FocusAsync());
+            await comp.InvokeAsync(() => maskField.HandleKeyDown(new KeyboardEventArgs() { Key = "1" }));
+            comp.WaitForAssertion(() => maskField.Text.Should().Be("1__ ___"));
+            comp.WaitForAssertion(() => maskField.Value.Should().Be("1"));
+
+            await comp.InvokeAsync(() => maskField.SelectAsync());
+            await comp.InvokeAsync(() => maskField.SetCaretPosition(0));
+            await comp.InvokeAsync(() => maskField.SelectRangeAsync(0, 7));
+            await comp.InvokeAsync(() => maskField.OnSelect(0, 7));
+            await comp.InvokeAsync(() => maskField.HandleKeyDown(new KeyboardEventArgs() { Key = "2" }));
+            comp.WaitForAssertion(() => maskField.Text.Should().Be("2__ ___"));
+            comp.WaitForAssertion(() => maskField.Value.Should().Be("2"));
+        }
     }
 }

@@ -732,7 +732,7 @@ namespace MudBlazor
 
         #region Caret
 
-        private int FindNextCaretLocation(int currentCaretIndex, bool onlyPlaceholderCharacter = true)
+        internal int FindNextCaretLocation(int currentCaretIndex, bool onlyPlaceholderCharacter = true)
         {
             if (Text == null || Text.Length == 0)
                 return 0;
@@ -765,7 +765,7 @@ namespace MudBlazor
             return currentCaretIndex;
         }
 
-        private int FindFirstCaretLocation()
+        internal int FindFirstCaretLocation()
         {
             if (Text == null || Text.Length == 0)
                 return 0;
@@ -781,7 +781,7 @@ namespace MudBlazor
             return 0;
         }
 
-        private int FindPreviousCaretLocation(int currentCaretIndex, bool onlyPlaceholderCharacter = true)
+        internal int FindPreviousCaretLocation(int currentCaretIndex, bool onlyPlaceholderCharacter = true)
         {
             if (Text == null || Text.Length == 0)
                 return 0;
