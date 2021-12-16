@@ -1,4 +1,8 @@
-﻿using System;
+﻿// Copyright (c) MudBlazor 2021
+// MudBlazor licenses this file to you under the MIT license.
+// See the LICENSE file in the project root for more information.
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -31,7 +35,7 @@ namespace MudBlazor.Services
         private readonly IJSRuntime _jsRuntime;
         private string _elementId;
         private bool _isObserving;
-        private HashSet<string> _subscribedEvents = new HashSet<string>();
+        internal HashSet<string> _subscribedEvents = new HashSet<string>();
 
         public JsEvent(IJSRuntime jsRuntime)
         {
@@ -74,7 +78,7 @@ namespace MudBlazor.Services
             _isObserving = false;
         }
 
-        private async Task Subscribe(string eventName)
+        private void Subscribe(string eventName)
         {
             if (_elementId == null)
                 throw new InvalidOperationException("Call Connect(...) before attaching events!");
@@ -82,7 +86,7 @@ namespace MudBlazor.Services
                 return;
             try
             {
-                await _jsRuntime.InvokeVoidAsync("mudJsEvent.subscribe", _elementId, eventName);
+                _jsRuntime.InvokeVoidAsync("mudJsEvent.subscribe", _elementId, eventName).AndForget();
                 _subscribedEvents.Add(eventName);
             }
             catch (JSDisconnectedException) { }
@@ -125,8 +129,8 @@ namespace MudBlazor.Services
             {
                 if (_caretPositionChangedHandlers.Count == 0)
                 {
-                    Subscribe("click").AndForget();
-                    Subscribe("keyup").AndForget();
+                    Subscribe("click");
+                    Subscribe("keyup");
                 }
                 _caretPositionChangedHandlers.Add(value);
             }
@@ -165,7 +169,7 @@ namespace MudBlazor.Services
             add
             {
                 if (_pasteHandlers.Count == 0)
-                    Subscribe("paste").AndForget();
+                    Subscribe("paste");
                 _pasteHandlers.Add(value);
             }
             remove
@@ -200,7 +204,7 @@ namespace MudBlazor.Services
             add
             {
                 if (_copyHandlers.Count == 0)
-                    Subscribe("copy").AndForget();
+                    Subscribe("copy");
                 _copyHandlers.Add(value);
             }
             remove
@@ -208,7 +212,7 @@ namespace MudBlazor.Services
                 if (_copyHandlers.Count == 0)
                     return;
                 if (_copyHandlers.Count == 1)
-                    Unsubscribe("copy").AndForget();
+                    Unsubscribe("copy").Wait();
                 _copyHandlers.Remove(value);
             }
         }
@@ -235,7 +239,7 @@ namespace MudBlazor.Services
             add
             {
                 if (_selectHandlers.Count == 0)
-                    Subscribe("select").AndForget();
+                    Subscribe("select");
                 _selectHandlers.Add(value);
             }
             remove
