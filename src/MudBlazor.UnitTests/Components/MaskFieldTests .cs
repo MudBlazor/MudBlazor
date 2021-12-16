@@ -477,5 +477,78 @@ namespace MudBlazor.UnitTests.Components
             comp.WaitForAssertion(() => maskField.Value.Should().Be("119"));
         }
 
+        [Test]
+        public async Task MaskFieldTest_TwoWayBinding()
+        {
+            var comp = Context.RenderComponent<MaskFieldStringTest>();
+            var maskField1 = comp.FindComponents<MudMaskField<string>>().First();
+            var maskField2 = comp.FindComponents<MudMaskField<string>>().Last();
+            comp.WaitForAssertion(() => maskField1.Instance.Value.Should().Be(""));
+
+            // input in maskField1
+            await comp.InvokeAsync(() => maskField1.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = "a" }));
+            comp.WaitForAssertion(() => maskField1.Instance.Text.Should().Be("(a__) ___-__"));
+            comp.WaitForAssertion(() => maskField1.Instance.Value.Should().Be("a"));
+
+            // check maskField2
+            comp.WaitForAssertion(() => maskField2.Instance.Text.Should().Be("(a__) ___-__"));
+            comp.WaitForAssertion(() => maskField2.Instance.Value.Should().Be("a"));
+
+            // input in maskField1
+            await comp.InvokeAsync(() => maskField1.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = "b" }));
+            comp.WaitForAssertion(() => maskField1.Instance.Text.Should().Be("(ab_) ___-__"));
+            comp.WaitForAssertion(() => maskField1.Instance.Value.Should().Be("ab"));
+
+            // check maskField2
+            comp.WaitForAssertion(() => maskField2.Instance.Text.Should().Be("(ab_) ___-__"));
+            comp.WaitForAssertion(() => maskField2.Instance.Value.Should().Be("ab"));
+
+            // input in maskField2
+            await comp.InvokeAsync(() => maskField2.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = "C" }));
+            comp.WaitForAssertion(() => maskField2.Instance.Text.Should().Be("(abC) ___-__"));
+            comp.WaitForAssertion(() => maskField2.Instance.Value.Should().Be("abC"));
+            comp.WaitForAssertion(() => maskField2.Instance._caretPosition.Should().Be(6));
+
+            // check maskField1
+            comp.WaitForAssertion(() => maskField1.Instance.Text.Should().Be("(abC) ___-__"));
+            comp.WaitForAssertion(() => maskField1.Instance.Value.Should().Be("abC"));
+
+            // input in maskField2
+            await comp.InvokeAsync(() => maskField2.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = "1" }));
+            comp.WaitForAssertion(() => maskField2.Instance.Text.Should().Be("(abC) 1__-__"));
+            comp.WaitForAssertion(() => maskField2.Instance.Value.Should().Be("abC1"));
+
+            // check maskField1
+            comp.WaitForAssertion(() => maskField1.Instance.Text.Should().Be("(abC) 1__-__"));
+            comp.WaitForAssertion(() => maskField1.Instance.Value.Should().Be("abC1"));
+
+            // input in maskField2
+            await comp.InvokeAsync(() => maskField2.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = "2" }));
+            comp.WaitForAssertion(() => maskField2.Instance.Text.Should().Be("(abC) 12_-__"));
+            comp.WaitForAssertion(() => maskField2.Instance.Value.Should().Be("abC12"));
+
+            // check maskField1
+            comp.WaitForAssertion(() => maskField1.Instance.Text.Should().Be("(abC) 12_-__"));
+            comp.WaitForAssertion(() => maskField1.Instance.Value.Should().Be("abC12"));
+
+            // input in maskField1
+            await comp.InvokeAsync(() => maskField1.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = "Backspace" }));
+            comp.WaitForAssertion(() => maskField1.Instance.Text.Should().Be("(abC) 1__-__"));
+            comp.WaitForAssertion(() => maskField1.Instance.Value.Should().Be("abC1"));
+
+            // check maskField2
+            comp.WaitForAssertion(() => maskField2.Instance.Text.Should().Be("(abC) 1__-__"));
+            comp.WaitForAssertion(() => maskField2.Instance.Value.Should().Be("abC1"));
+
+            // input in maskField2
+            await comp.InvokeAsync(() => maskField2.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = "Backspace" }));
+            comp.WaitForAssertion(() => maskField2.Instance.Text.Should().Be("(abC) ___-__"));
+            comp.WaitForAssertion(() => maskField2.Instance.Value.Should().Be("abC"));
+
+            // check maskField1
+            comp.WaitForAssertion(() => maskField1.Instance.Text.Should().Be("(abC) ___-__"));
+            comp.WaitForAssertion(() => maskField1.Instance.Value.Should().Be("abC"));           
+        }
+
     }
 }

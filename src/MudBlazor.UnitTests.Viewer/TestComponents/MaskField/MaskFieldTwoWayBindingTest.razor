@@ -1,0 +1,23 @@
+﻿@namespace MudBlazor.UnitTests.TestComponents
+
+<MudMaskField
+    @bind-Value="_value"
+     Label="Input" 
+     Variant="Variant.Outlined"
+     Required="true"
+	 Mask="(aaa) 000-aa"
+/>
+
+<MudMaskField
+    @bind-Value="_value"
+     Label="Input" 
+     Variant="Variant.Outlined"
+     Required="true"
+	 Mask="(aaa) 000-aa"
+/>
+   
+@code {
+    public static string __description__ = "Two Mask fields should be bindable against each other via Value!";
+
+    private string _value = "";
+}
