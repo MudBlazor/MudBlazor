@@ -185,6 +185,21 @@ namespace MudBlazor.UnitTests.Components
 
             await comp.InvokeAsync(() => maskField.Instance.SetCaretPosition(maskField.Instance.FindLastCaretLocation()));
             comp.WaitForAssertion(() => maskField.Instance._caretPosition.Should().Be(12));
+
+            await comp.InvokeAsync(() => maskField.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = "ArrowLeft" }));
+            comp.WaitForAssertion(() => maskField.Instance._caretPosition.Should().Be(11));
+
+            await comp.InvokeAsync(() => maskField.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = "ArrowLeft" }));
+            comp.WaitForAssertion(() => maskField.Instance._caretPosition.Should().Be(10));
+
+            await comp.InvokeAsync(() => maskField.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = "ArrowLeft" }));
+            comp.WaitForAssertion(() => maskField.Instance._caretPosition.Should().Be(8));
+
+            await comp.InvokeAsync(() => maskField.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = "ArrowRight" }));
+            comp.WaitForAssertion(() => maskField.Instance._caretPosition.Should().Be(10));
+
+            await comp.InvokeAsync(() => maskField.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = "ArrowRight" }));
+            comp.WaitForAssertion(() => maskField.Instance._caretPosition.Should().Be(11));
         }
 
         [Test]
@@ -547,7 +562,13 @@ namespace MudBlazor.UnitTests.Components
 
             // check maskField1
             comp.WaitForAssertion(() => maskField1.Instance.Text.Should().Be("(abC) ___-__"));
-            comp.WaitForAssertion(() => maskField1.Instance.Value.Should().Be("abC"));           
+            comp.WaitForAssertion(() => maskField1.Instance.Value.Should().Be("abC"));
+
+            await comp.InvokeAsync(() => maskField1.Instance.OnPaste("123"));
+            comp.WaitForAssertion(() => maskField1.Instance.Text.Should().Be("(abC) 123-__"));
+            comp.WaitForAssertion(() => maskField1.Instance.Value.Should().Be("abC123"));
+            comp.WaitForAssertion(() => maskField2.Instance.Text.Should().Be("(abC) 123-__"));
+            comp.WaitForAssertion(() => maskField2.Instance.Value.Should().Be("abC123"));
         }
 
     }
