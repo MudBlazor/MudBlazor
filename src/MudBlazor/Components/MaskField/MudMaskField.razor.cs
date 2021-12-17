@@ -223,7 +223,12 @@ namespace MudBlazor
                 });
             }
             if (_isFocused)
-                await _elementReference.SelectRangeAsync(_caretPosition, _caretPosition);
+            {
+                if (_selection == null)
+                    await _elementReference.SelectRangeAsync(_caretPosition, _caretPosition);
+                //else
+                //    await _elementReference.SelectRangeAsync(_selection.Item1, _selection.Item2);
+            }
             await base.OnAfterRenderAsync(firstRender);
         }
 
@@ -236,8 +241,7 @@ namespace MudBlazor
 
         internal void OnCopy()
         {
-            //Before this is _rawValue, i changed to Value, please check it
-            var text = Value.ToString();
+            var text = Value?.ToString();
             _jsApiService.CopyToClipboardAsync(text);
             //Console.WriteLine($"Copy: {text}");
         }
@@ -930,7 +934,7 @@ namespace MudBlazor
 
         protected internal async Task HandleKeyDown(KeyboardEventArgs obj)
         {
-            if (obj.Key == "ArrowLeft" || obj.Key == "ArrowRight")
+            if ((obj.Key == "ArrowLeft" || obj.Key == "ArrowRight") && obj.ShiftKey == false)
             {
                 ArrangeCaretPosition(obj);
                 return;
