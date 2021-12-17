@@ -1,8 +1,4 @@
-﻿// Copyright (c) MudBlazor 2021
-// MudBlazor licenses this file to you under the MIT license.
-// See the LICENSE file in the project root for more information.
-
-class MudScrollManager {
+﻿class MudScrollManager {
     //scrolls to an Id. Useful for navigation to fragments
     scrollToFragment (elementId, behavior) {
         let element = document.getElementById(elementId);

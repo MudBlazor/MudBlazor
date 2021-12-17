@@ -10,10 +10,6 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.Options;
 using Microsoft.JSInterop;
-// Copyright (c) MudBlazor 2021
-// MudBlazor licenses this file to you under the MIT license.
-// See the LICENSE file in the project root for more information.
-
 using Microsoft.JSInterop.Infrastructure;
 using Moq;
 using MudBlazor.Services;
