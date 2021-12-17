@@ -232,7 +232,7 @@ namespace MudBlazor
             await base.OnAfterRenderAsync(firstRender);
         }
 
-        private void OnCaretPositionChanged(int pos)
+        internal void OnCaretPositionChanged(int pos)
         {
             _caretPosition = pos;
             _selection = null;
@@ -329,7 +329,7 @@ namespace MudBlazor
             }
         }
 
-        private CharacterType GetCharacterType(string character, bool isMaskingCharacter = false)
+        internal CharacterType GetCharacterType(string character, bool isMaskingCharacter = false)
         {
             if (string.IsNullOrEmpty(character))
             {
@@ -433,7 +433,7 @@ namespace MudBlazor
                         _rawValueDictionary.Remove(i);
                     }
                 }
-                if (KeepCharacterPositions == false)
+                if (KeepCharacterPositions == false && Text != null)
                 {
                     for (int i = 0; i < Text.Length - _selection.Value.Item2; i++)
                     {
@@ -453,6 +453,12 @@ namespace MudBlazor
                 }
             }
             #endregion
+
+            //If value changed by user from outside, create dictionary from _rawValue scratch, if there is a problem with value changing, probably is here
+            if (_rawValue != null && Converter.Set(Value) != _rawValue)
+            {
+                SetRawValueDictionary(_rawValue);
+            }
 
             //BackUp and clear the main dictionary
             #region BackUp and Clear
@@ -777,8 +783,6 @@ namespace MudBlazor
             {
                 if (onlyPlaceholderCharacter == true)
                 {
-                    if (i <= 0)
-                        return 0;
                     if (Text[i - 1] == PlaceholderCharacter)
                     {
                         return i - 1;
@@ -786,8 +790,6 @@ namespace MudBlazor
                 }
                 else
                 {
-                    if (i <= 0)
-                        return 0;
                     if (MaskCharacters.ContainsKey(Mask[i - 1]))
                     {
                         return i - 1;
@@ -949,6 +951,11 @@ namespace MudBlazor
 
         //    return resultMask;
         //}
+
+        internal async Task SetBothValueAndText(T value)
+        {
+            await SetValueAsync(value, true);
+        }
 
         protected internal async Task HandleKeyDown(KeyboardEventArgs obj)
         {

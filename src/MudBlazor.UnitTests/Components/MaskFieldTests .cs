@@ -154,9 +154,11 @@ namespace MudBlazor.UnitTests.Components
             comp.WaitForAssertion(() => maskField.Instance.Value.Should().Be(""));
             comp.WaitForAssertion(() => maskField.Instance._caretPosition.Should().Be(1));
 
-            await comp.InvokeAsync(() => maskField.Instance.Value = "abc120ac");
-            await comp.InvokeAsync(() => maskField.Instance.SetRawValueDictionary("abc120ac"));
-            await comp.InvokeAsync(() => maskField.Instance.ImplementMask(null, maskField.Instance.Mask));
+            await comp.InvokeAsync(() => maskField.Instance.OnFocused(new FocusEventArgs()));
+            await comp.InvokeAsync(() => maskField.Instance.SetBothValueAndText("abc120ac"));
+            //await comp.InvokeAsync(() => maskField.Instance.Value = "abc120ac");
+            //await comp.InvokeAsync(() => maskField.Instance.SetRawValueDictionary("abc120ac"));
+            //await comp.InvokeAsync(() => maskField.Instance.ImplementMask(null, maskField.Instance.Mask));
 
             await comp.InvokeAsync(() => maskField.Instance.SetCaretPosition(1));
             await comp.InvokeAsync(() => maskField.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = "Delete" }));
@@ -629,7 +631,7 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(() => maskField.SetCaretPosition(maskField.FindPreviousCaretLocation(2, false)));
             comp.WaitForAssertion(() => maskField._caretPosition.Should().Be(1));
 
-            await comp.InvokeAsync(() => maskField.SetCaretPosition(maskField.FindPreviousCaretLocation(2, true)));
+            await comp.InvokeAsync(() => maskField.SetCaretPosition(maskField.FindPreviousCaretLocation(3, true)));
             comp.WaitForAssertion(() => maskField._caretPosition.Should().Be(2));
 
             await comp.InvokeAsync(() => maskField.SetCaretPosition(maskField.FindNextCaretLocation(13, false)));
@@ -637,6 +639,19 @@ namespace MudBlazor.UnitTests.Components
 
             await comp.InvokeAsync(() => maskField.SetCaretPosition(maskField.FindNextCaretLocation(13, true)));
             comp.WaitForAssertion(() => maskField._caretPosition.Should().Be(15));
+
+            comp.SetParam("Mask", "()");
+            await comp.InvokeAsync(() => maskField.SetCaretPosition(maskField.FindFirstCaretLocation(true)));
+            comp.WaitForAssertion(() => maskField._caretPosition.Should().Be(0));
+
+            await comp.InvokeAsync(() => maskField.SetCaretPosition(maskField.FindLastCaretLocation(true)));
+            comp.WaitForAssertion(() => maskField._caretPosition.Should().Be(2));
+
+            await comp.InvokeAsync(() => maskField.SetCaretPosition(maskField.FindPreviousCaretLocation(2, true)));
+            comp.WaitForAssertion(() => maskField._caretPosition.Should().Be(2));
+
+            await comp.InvokeAsync(() => maskField.SetCaretPosition(maskField.FindNextCaretLocation(2, true)));
+            comp.WaitForAssertion(() => maskField._caretPosition.Should().Be(2));
         }
 
         [Test]
@@ -645,9 +660,35 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<MudMaskField<string>>();
             var maskField = comp.Instance;
 
-            comp.SetParam("Mask", "000 000");
+            comp.WaitForAssertion(() => maskField.Text.Should().Be(null));
+            await comp.InvokeAsync(() => maskField.OnPaste("abc"));
+            comp.WaitForAssertion(() => maskField.Text.Should().Be(null));
 
+            await comp.InvokeAsync(() => maskField.SetCaretPosition(0));
+            await comp.InvokeAsync(() => comp.SetParam("Placeholder", "Some Placeholder"));
+            await comp.InvokeAsync(() => maskField.HandleKeyDown(new KeyboardEventArgs() { Key = "Backspace" }));
+            comp.WaitForAssertion(() => maskField.Text.Should().Be(null));
+
+            await comp.InvokeAsync(() => maskField.OnBlurred(new FocusEventArgs()));
+            comp.WaitForAssertion(() => maskField.Text.Should().Be(""));
+
+            comp.WaitForAssertion(() => maskField.GetRawValue().Should().Be(""));
+
+            comp.WaitForAssertion(() => maskField.GetCharacterType("").Should().Be(CharacterType.None));
+
+            comp.WaitForAssertion(() => maskField.GetInputType().Should().Be(InputType.Text));
+
+            await comp.InvokeAsync(() => maskField.OnCaretPositionChanged(2));
+            comp.WaitForAssertion(() => maskField._caretPosition.Should().Be(2));
+
+            await comp.InvokeAsync(() => maskField.Text = "");
+            comp.WaitForAssertion(() => maskField.GetRawValueFromText().Should().Be(""));
+
+            comp.SetParam("Mask", "*00 000");
+
+            await comp.InvokeAsync(() => maskField.OnCopy());
             await comp.InvokeAsync(() => maskField.FocusAsync());
+            await comp.InvokeAsync(() => maskField.SetCaretPosition(maskField.FindFirstCaretLocation(false)));
             await comp.InvokeAsync(() => maskField.HandleKeyDown(new KeyboardEventArgs() { Key = "1" }));
             comp.WaitForAssertion(() => maskField.Text.Should().Be("1__ ___"));
             comp.WaitForAssertion(() => maskField.Value.Should().Be("1"));
@@ -659,6 +700,16 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(() => maskField.HandleKeyDown(new KeyboardEventArgs() { Key = "2" }));
             comp.WaitForAssertion(() => maskField.Text.Should().Be("2__ ___"));
             comp.WaitForAssertion(() => maskField.Value.Should().Be("2"));
+
+            await comp.InvokeAsync(() => maskField.ImplementMask(null, null));
+            comp.WaitForAssertion(() => maskField.Text.Should().Be("2__ ___"));
+            comp.WaitForAssertion(() => maskField.Value.Should().Be("2"));
+
+            await comp.InvokeAsync(() => maskField.SetCaretPosition(0));
+            await comp.InvokeAsync(() => maskField.OnFocused(new FocusEventArgs()));
+            await comp.InvokeAsync(() => maskField.SetBothValueAndText("123"));
+            //comp.WaitForAssertion(() => maskField.Text.Should().Be("123 ___"));
+            comp.WaitForAssertion(() => maskField.Value.Should().Be("123"));
         }
     }
 }
