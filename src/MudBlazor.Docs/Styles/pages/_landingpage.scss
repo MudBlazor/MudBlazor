@@ -602,6 +602,24 @@
             color: var(--mud-palette-text-secondary);
         }
     }
+  
+  .lp-testimonials{
+    position: relative;
+    max-height: 1200px;
+    transition: max-height 0.15s ease-in-out;
+    
+    &.hide-testimonials{
+      max-height: 300px;
+
+      .lp-fader{
+        position: absolute;
+        bottom: -100%;
+        width: 100%;
+        height: 150%;
+        background: linear-gradient(0deg, rgba(249,250,252,1) 0%, rgba(249,250,252,0) 100%);
+      }
+    }
+  }
 }
 
     .typed-code {
