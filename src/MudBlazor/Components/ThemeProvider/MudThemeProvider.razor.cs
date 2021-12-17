@@ -183,6 +183,7 @@ namespace MudBlazor
             theme.AppendLine($"--{LayoutProperties}-drawer-width-mini-left: {Theme.LayoutProperties.DrawerMiniWidthLeft};");
             theme.AppendLine($"--{LayoutProperties}-drawer-width-mini-right: {Theme.LayoutProperties.DrawerMiniWidthRight};");
             theme.AppendLine($"--{LayoutProperties}-appbar-height: {Theme.LayoutProperties.AppbarHeight};");
+            theme.AppendLine($"--{LayoutProperties}-spacing-step: {Theme.LayoutProperties.SpacingStep};");
 
             //Breakpoint
             //theme.AppendLine($"--{Breakpoint}-xs: {Theme.Breakpoints.xs};");

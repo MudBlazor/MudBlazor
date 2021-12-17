@@ -5,7 +5,10 @@ $spacing-negative-values: ( "n1": -4px, "n2": -8px, "n3": -12px, "n4": -16px, "n
 
 @mixin spacing-positive-negative ($breakpoint) {
     @each $prop, $abbrev in (margin: m, padding: p) {
-        @each $name, $value in $spacing-values {
+        @each $name, $_ in $spacing-values {
+            $i: index(($spacing-values), ($name $_));
+            $value: calc(var(--mud-spacing-step) * #{$i});
+
             .#{$abbrev}t-#{$breakpoint}#{$name},
             .#{$abbrev}y-#{$breakpoint}#{$name} {
                 #{$prop}-top: $value !important;
@@ -41,7 +44,10 @@ $spacing-negative-values: ( "n1": -4px, "n2": -8px, "n3": -12px, "n4": -16px, "n
     }
 
     @each $prop, $abbrev in (margin: m) {
-        @each $name, $value in $spacing-negative-values {
+        @each $name, $_ in $spacing-negative-values {
+            $i: index(($spacing-negative-values), ($name $_));
+            $value: calc(var(--mud-spacing-step) * #{$i} * -1);
+
             .#{$abbrev}t-#{$breakpoint}#{$name},
             .#{$abbrev}y-#{$breakpoint}#{$name} {
                 #{$prop}-top: $value !important;

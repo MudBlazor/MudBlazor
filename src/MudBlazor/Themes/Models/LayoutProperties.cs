@@ -17,5 +17,6 @@ namespace MudBlazor
         [Obsolete("AppbarMinHeight has been removed.", true)]
         public string AppbarMinHeight { get; set; } = null;
         public string AppbarHeight { get; set; } = "64px";
+        public string SpacingStep { get; set; } = "4px";
     }
 }
