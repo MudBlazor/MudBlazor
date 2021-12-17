@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Services;
 using MudBlazor.Utilities;
+using MudBlazor.Components.MaskField;
 
 namespace MudBlazor
 {
@@ -35,6 +36,26 @@ namespace MudBlazor
         [Inject] private IJsApiService _jsApiService { get; set; }
 
         private string _elementId = "maskfield_" + Guid.NewGuid().ToString().Substring(0, 8);
+
+        private Dictionary<char, MaskChar> _maskDict = new Dictionary<char, MaskChar>();
+        private MaskChar[] _maskChars = new MaskChar[]
+        {
+            MaskChar.Letter('a'),
+            MaskChar.Digit('0'),
+            MaskChar.LetterOrDigit('*'),
+            new MaskChar { Char = 'l', Writable = true, AddToValue = false },
+        };
+
+        [Parameter]
+        public MaskChar[] MaskDefinition
+        {
+            get => _maskChars;
+            set
+            {
+                _maskChars = value;
+                _maskDict = value.ToDictionary(x => x.Char);
+            }
+        }
 
         /// <summary>
         /// Type of the input element. It should be a valid HTML5 input type.
