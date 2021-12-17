@@ -189,9 +189,6 @@ namespace MudBlazor.UnitTests.Components
             comp.WaitForAssertion(() => maskField.Instance._caretPosition.Should().Be(2));
 
             await comp.InvokeAsync(() => maskField.Instance.SetCaretPosition(maskField.Instance.FindLastCaretLocation()));
-            comp.WaitForAssertion(() => maskField.Instance._caretPosition.Should().Be(12));
-
-            await comp.InvokeAsync(() => maskField.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = "ArrowLeft" }));
             comp.WaitForAssertion(() => maskField.Instance._caretPosition.Should().Be(11));
 
             await comp.InvokeAsync(() => maskField.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = "ArrowLeft" }));
@@ -594,6 +591,18 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<MudMaskField<string>>();
             var maskField = comp.Instance;
 
+            await comp.InvokeAsync(() => maskField.SetCaretPosition(maskField.FindFirstCaretLocation(true)));
+            comp.WaitForAssertion(() => maskField._caretPosition.Should().Be(0));
+
+            await comp.InvokeAsync(() => maskField.SetCaretPosition(maskField.FindLastCaretLocation(true)));
+            comp.WaitForAssertion(() => maskField._caretPosition.Should().Be(0));
+
+            await comp.InvokeAsync(() => maskField.SetCaretPosition(maskField.FindPreviousCaretLocation(maskField._caretPosition)));
+            comp.WaitForAssertion(() => maskField._caretPosition.Should().Be(0));
+
+            await comp.InvokeAsync(() => maskField.SetCaretPosition(maskField.FindNextCaretLocation(maskField._caretPosition)));
+            comp.WaitForAssertion(() => maskField._caretPosition.Should().Be(0));
+
             comp.SetParam("Mask", "(000) 000-00-00");
             await comp.InvokeAsync(() => maskField.SetCaretPosition(1));
             await comp.InvokeAsync(() => maskField.HandleKeyDown(new KeyboardEventArgs() { Key = "1" }));
@@ -605,10 +614,16 @@ namespace MudBlazor.UnitTests.Components
             comp.WaitForAssertion(() => maskField.Text.Should().Be("(1__) ___-__-_1"));
             comp.WaitForAssertion(() => maskField.Value.Should().Be("11"));
 
-            await comp.InvokeAsync(() => maskField.SetCaretPosition(maskField.FindFirstCaretLocation()));
+            await comp.InvokeAsync(() => maskField.SetCaretPosition(maskField.FindFirstCaretLocation(true)));
             comp.WaitForAssertion(() => maskField._caretPosition.Should().Be(2));
 
-            await comp.InvokeAsync(() => maskField.SetCaretPosition(maskField.FindLastCaretLocation()));
+            await comp.InvokeAsync(() => maskField.SetCaretPosition(maskField.FindFirstCaretLocation(false)));
+            comp.WaitForAssertion(() => maskField._caretPosition.Should().Be(1));
+
+            await comp.InvokeAsync(() => maskField.SetCaretPosition(maskField.FindLastCaretLocation(true)));
+            comp.WaitForAssertion(() => maskField._caretPosition.Should().Be(13));
+
+            await comp.InvokeAsync(() => maskField.SetCaretPosition(maskField.FindLastCaretLocation(false)));
             comp.WaitForAssertion(() => maskField._caretPosition.Should().Be(14));
 
             await comp.InvokeAsync(() => maskField.SetCaretPosition(maskField.FindPreviousCaretLocation(2, false)));

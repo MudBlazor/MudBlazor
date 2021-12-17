@@ -769,22 +769,6 @@ namespace MudBlazor
             return currentCaretIndex;
         }
 
-        internal int FindFirstCaretLocation()
-        {
-            if (Text == null || Text.Length == 0)
-                return 0;
-            int a = 0;
-            for (int i = 0; i < Mask.Length; i++)
-            {
-                a = i;
-                if (Text[a] == PlaceholderCharacter)
-                {
-                    return a;
-                }
-            }
-            return 0;
-        }
-
         internal int FindPreviousCaretLocation(int currentCaretIndex, bool onlyPlaceholderCharacter = true)
         {
             if (Text == null || Text.Length == 0)
@@ -813,15 +797,49 @@ namespace MudBlazor
             return currentCaretIndex;
         }
 
-        internal int FindLastCaretLocation()
+        internal int FindFirstCaretLocation(bool onlyPlaceholderCharacter = true)
+        {
+            if (Text == null || Text.Length == 0)
+                return 0;
+            for (int i = 0; i < Mask.Length; i++)
+            {
+                if (onlyPlaceholderCharacter)
+                {
+                    if (Text[i] == PlaceholderCharacter)
+                    {
+                        return i;
+                    }
+                }
+                else
+                {
+                    if (Text[i] != PlaceholderCharacter && MaskCharacters.ContainsKey(Mask[i]))
+                    {
+                        return i;
+                    }
+                }
+            }
+            return 0;
+        }
+
+        internal int FindLastCaretLocation(bool onlyPlaceholderCharacter = true)
         {
             if (Text == null || Text.Length == 0)
                 return 0;
             for (int i = Mask.Length; 0 < i; i--)
             {
-                if (Text[i - 1] == PlaceholderCharacter)
+                if (onlyPlaceholderCharacter)
                 {
-                    return i;
+                    if (Text[i - 1] == PlaceholderCharacter)
+                    {
+                        return i - 1;
+                    }
+                }
+                else
+                {
+                    if (Text[i - 1] != PlaceholderCharacter && MaskCharacters.ContainsKey(Mask[i - 1]))
+                    {
+                        return i - 1;
+                    }
                 }
             }
             return Mask.Length;
