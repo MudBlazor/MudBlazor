@@ -13,7 +13,7 @@
                 return IsDarkMode ? PaletteDark : Palette;
             }
         }
-        public bool IsDarkMode { get; set; }
+        internal bool IsDarkMode { get; set; }
         public Shadow Shadows { get; set; }
         public Typography Typography { get; set; }
         public LayoutProperties LayoutProperties { get; set; }

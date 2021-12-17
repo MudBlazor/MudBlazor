@@ -19,7 +19,7 @@ namespace MudBlazor.Docs.Services.UserPreferences
         /// <summary>
         /// Loads UserPreferences in local storage
         /// </summary>
-        /// <returns>UserPreferences object</returns>
+        /// <returns>UserPreferences object. Null when no settings were found.</returns>
         public Task<UserPreferences> LoadUserPreferences();
     }
     
@@ -40,13 +40,7 @@ namespace MudBlazor.Docs.Services.UserPreferences
 
         public async Task<UserPreferences> LoadUserPreferences()
         {
-            var userPreferences = await _localStorage.GetItemAsync<UserPreferences>(Key);
-            if (userPreferences == null)
-            {
-                userPreferences = new UserPreferences();
-                await SaveUserPreferences(userPreferences);
-            }
-            return userPreferences;
+            return await _localStorage.GetItemAsync<UserPreferences>(Key);
         }
     }
 }

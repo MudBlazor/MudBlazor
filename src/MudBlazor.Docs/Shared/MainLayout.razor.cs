@@ -12,13 +12,10 @@ namespace MudBlazor.Docs.Shared
     public partial class MainLayout : LayoutComponentBase
     {
         private bool _rightToLeft;
-        
         private UserPreferences _userPreferences;
         
         [Inject] private NavigationManager NavigationManager { get; set; }
         [Inject] private IUserPreferencesService UserPreferencesService { get; set; }
-
-        private MudTheme _currentTheme = new Theme().LandingPageTheme(false);
 
         private async Task RightToLeftToggle()
         {
@@ -31,9 +28,21 @@ namespace MudBlazor.Docs.Shared
         {
             if (firstRender)
             {
-                _userPreferences = await UserPreferencesService.LoadUserPreferences();
+                await LoadUserPreferences();
+            }
+        }
+
+        private async Task LoadUserPreferences()
+        {
+            _userPreferences = await UserPreferencesService.LoadUserPreferences();
+            if (_userPreferences != null)
+            {
                 _rightToLeft = _userPreferences.RightToLeft;
                 StateHasChanged();
+            }
+            else
+            {
+                _userPreferences = new UserPreferences();
             }
         }
         

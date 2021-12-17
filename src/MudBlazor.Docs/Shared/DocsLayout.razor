@@ -1,7 +1,7 @@
 ﻿@inherits LayoutComponentBase
 @layout MainLayout
 
-<MudThemeProvider Theme="_currentTheme"/>
+<MudThemeProvider @ref="@_mudThemeProvider" Theme="_currentTheme" @bind-IsDarkMode="@_isDarkMode"/>
 
 
 <MudLayout>

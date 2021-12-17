@@ -12,11 +12,12 @@ namespace MudBlazor.Docs
 {
     public class Theme
     {
-        public MudTheme LandingPageTheme(bool isDarkMode)
+        public static MudTheme LandingPageTheme()
         {
-            MudTheme theme = new MudTheme()
+            var theme = new MudTheme()
             {
-                Palette = (isDarkMode? LandingPageDarkPalette : LandingPageLightPalette),
+                Palette = LandingPageLightPalette,
+                PaletteDark = LandingPageDarkPalette,
                 Shadows = LandingPageShadows,
                 LayoutProperties = LandingPageLayoutProperties,
                 ZIndex = new ZIndex(),
@@ -25,11 +26,12 @@ namespace MudBlazor.Docs
             return theme;
         }
 
-        public MudTheme DocsTheme()
+        public static MudTheme DocsTheme()
         {
-            MudTheme theme = new MudTheme()
+            var theme = new MudTheme()
             {
                 Palette = DocsLightPalette,
+                PaletteDark = DocsDarkPalette,
                 LayoutProperties = DocsLayoutProperties
             };
             return theme;
@@ -38,7 +40,8 @@ namespace MudBlazor.Docs
         
 
         #region Docs
-        public static Palette DocsLightPalette = new Palette()
+
+        private static readonly Palette DocsLightPalette = new()
         {
             Black = "#110e2d",
             AppbarText = "#424242",
@@ -47,52 +50,49 @@ namespace MudBlazor.Docs
             GrayLighter = "#f5f5f5"
         };
 
-        public static MudTheme DocsDarkTheme { get; set; } =
-            new()
-            {
-                Palette = new Palette()
-                {
-                    Primary = "#776be7",
-                    Black = "#27272f",
-                    Background = "#32333d",
-                    BackgroundGrey = "#27272f",
-                    Surface = "#373740",
-                    DrawerBackground = "#27272f",
-                    DrawerText = "rgba(255,255,255, 0.50)",
-                    DrawerIcon = "rgba(255,255,255, 0.50)",
-                    AppbarBackground = "#27272f",
-                    AppbarText = "rgba(255,255,255, 0.70)",
-                    TextPrimary = "rgba(255,255,255, 0.70)",
-                    TextSecondary = "rgba(255,255,255, 0.50)",
-                    ActionDefault = "#adadb1",
-                    ActionDisabled = "rgba(255,255,255, 0.26)",
-                    ActionDisabledBackground = "rgba(255,255,255, 0.12)",
-                    Divider = "rgba(255,255,255, 0.12)",
-                    DividerLight = "rgba(255,255,255, 0.06)",
-                    TableLines = "rgba(255,255,255, 0.12)",
-                    LinesDefault = "rgba(255,255,255, 0.12)",
-                    LinesInputs = "rgba(255,255,255, 0.3)",
-                    TextDisabled = "rgba(255,255,255, 0.2)",
-                    Info = "#3299ff",
-                    Success = "#0bba83",
-                    Warning = "#ffa800",
-                    Error = "#f64e62",
-                    Dark = "#27272f"
-                }
-            };
+        private static readonly Palette DocsDarkPalette  = new()
+        {
+            Primary = "#776be7",
+            Black = "#27272f",
+            Background = "#32333d",
+            BackgroundGrey = "#27272f",
+            Surface = "#373740",
+            DrawerBackground = "#27272f",
+            DrawerText = "rgba(255,255,255, 0.50)",
+            DrawerIcon = "rgba(255,255,255, 0.50)",
+            AppbarBackground = "#27272f",
+            AppbarText = "rgba(255,255,255, 0.70)",
+            TextPrimary = "rgba(255,255,255, 0.70)",
+            TextSecondary = "rgba(255,255,255, 0.50)",
+            ActionDefault = "#adadb1",
+            ActionDisabled = "rgba(255,255,255, 0.26)",
+            ActionDisabledBackground = "rgba(255,255,255, 0.12)",
+            Divider = "rgba(255,255,255, 0.12)",
+            DividerLight = "rgba(255,255,255, 0.06)",
+            TableLines = "rgba(255,255,255, 0.12)",
+            LinesDefault = "rgba(255,255,255, 0.12)",
+            LinesInputs = "rgba(255,255,255, 0.3)",
+            TextDisabled = "rgba(255,255,255, 0.2)",
+            Info = "#3299ff",
+            Success = "#0bba83",
+            Warning = "#ffa800",
+            Error = "#f64e62",
+            Dark = "#27272f"
+        };
         
-        public static LayoutProperties DocsLayoutProperties = new LayoutProperties()
+        private static readonly LayoutProperties DocsLayoutProperties = new()
         {
             DrawerWidthLeft = "260px",
             DrawerWidthRight = "260px"
         };
         #endregion
         #region LandingPage
-        public static LayoutProperties LandingPageLayoutProperties = new LayoutProperties()
+
+        private static readonly LayoutProperties LandingPageLayoutProperties = new()
         {
             DefaultBorderRadius = "6px"
         };
-        public static Typography LandingPageTypography = new Typography()
+        private static readonly Typography LandingPageTypography = new()
         {
             Default = new Default()
             {
@@ -148,7 +148,7 @@ namespace MudBlazor.Docs
                 TextTransform = "none"
             }
         };
-        public static Palette LandingPageLightPalette = new Palette()
+        private static readonly Palette LandingPageLightPalette = new()
         {
             AppbarText = "#424242",
             AppbarBackground = "rgba(0,0,0,0)",
@@ -159,14 +159,14 @@ namespace MudBlazor.Docs
             GrayLight = "#9CA3AF",
             GrayLighter = "#adbdccff"
         };
-        public static Palette LandingPageDarkPalette = new Palette()
+        private static readonly Palette LandingPageDarkPalette = new()
         {
             AppbarText = "#424242",
             AppbarBackground = "#FFFFFF",
             Background = "#0b0f19"
         };
 
-        public static Shadow LandingPageShadows = new Shadow()
+        private static readonly Shadow LandingPageShadows = new()
         {
             Elevation = new string[]
             {

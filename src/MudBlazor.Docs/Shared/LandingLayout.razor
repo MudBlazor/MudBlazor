@@ -2,7 +2,7 @@
 @inherits LayoutComponentBase
 @layout MainLayout
 
-<MudThemeProvider Theme="@_currentTheme"/>
+<MudThemeProvider @ref="@_mudThemeProvider" Theme="@_currentTheme" @bind-IsDarkMode="@_isDarkMode"/>
 
 <MudLayout Class="mudblazor-landingpage">
     <MudAppBar Class="landing-appbar" Elevation="0">
@@ -19,9 +19,9 @@
             </MudMenu>
         </MudBadge>
         
-        @*<MudTooltip Duration="1000" Text="@(_isDarkMode? "Switch to Light Theme" : "Switch to Dark Theme")">
+        <MudTooltip Duration="1000" Text="@(_isDarkMode? "Switch to Light Theme" : "Switch to Dark Theme")">
             <MudIconButton Icon="@(_isDarkMode? @Icons.Rounded.LightMode : @Icons.Material.Outlined.DarkMode)" Color="Color.Inherit" OnClick="@((e) => DarkMode())" />
-        </MudTooltip>*@
+        </MudTooltip>
         @*<MudTooltip Duration="1000" Text="Toggle right-to-left/left-to-right">
             <MudIconButton Icon="@Icons.Material.Filled.FormatTextdirectionRToL" Color="Color.Inherit" />
         </MudTooltip>*@

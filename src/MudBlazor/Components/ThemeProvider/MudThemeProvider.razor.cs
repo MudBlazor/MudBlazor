@@ -1,29 +1,77 @@
-﻿using System.Globalization;
+﻿using System;
+using System.Globalization;
 using System.Text;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
+using Microsoft.JSInterop;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
     public class BaseMudThemeProvider : ComponentBase
     {
-        [Parameter] public MudTheme Theme { get; set; }
+        /// <summary>
+        /// The theme used by the application.
+        /// </summary>
+        [Parameter]
+        public MudTheme Theme { get; set; }
 
         /// <summary>
         ///  If true, will not apply MudBlazor styled scrollbar and use browser default. 
         /// </summary>
         [Parameter] public bool DefaultScrollbar { get; set; }
 
-        protected override void OnInitialized()
+        #region Dark mode handeling
+        public BaseMudThemeProvider()
         {
-            if (Theme == null)
-            {
-                var theme = new MudTheme();
-                Theme = theme;
-            }
+            _dotNetRef = DotNetObjectReference.Create(this);
         }
 
-        public string BuildTheme()
+        private readonly DotNetObjectReference<BaseMudThemeProvider> _dotNetRef;
+        [Inject] private IJSRuntime JsRuntime { get; set; }
+        /// <summary>
+        /// Returns the dark mode preference of the user. True if dark mode is preferred.
+        /// </summary>
+        /// <returns></returns>
+        public async Task<bool> GetSystemPreference()
+        {
+            return await JsRuntime.InvokeAsync<bool>("darkModeChange", _dotNetRef);
+        }
+
+        private bool _isDarkMode;
+        /// <summary>
+        /// The active palette of the theme.
+        /// </summary>
+        [Parameter]
+        public bool IsDarkMode
+        {
+            get => _isDarkMode;
+            set
+            {
+                if (_isDarkMode == value)
+                    return;
+                _isDarkMode = value;
+                if (Theme != null)
+                {
+                    Theme.IsDarkMode = _isDarkMode;
+                    IsDarkModeChanged.InvokeAsync(_isDarkMode);
+                }
+            }
+        }
+        /// <summary>
+        /// Invoked when the dark mode changes.
+        /// </summary>
+        [Parameter] public EventCallback<bool> IsDarkModeChanged { get; set; }
+        
+        #endregion
+
+        protected override void OnInitialized()
+        {
+            Theme ??= new MudTheme();
+            Theme.IsDarkMode = IsDarkMode;
+        }
+
+        protected string BuildTheme()
         {
             var theme = new StringBuilder();
             theme.AppendLine("<style>");
@@ -35,7 +83,7 @@ namespace MudBlazor
             return theme.ToString();
         }
 
-        public string BuildMudBlazorScrollbar()
+        protected string BuildMudBlazorScrollbar()
         {
             var scrollbar = new StringBuilder();
             scrollbar.AppendLine("<style>");
