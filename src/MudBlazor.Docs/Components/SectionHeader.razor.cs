@@ -40,7 +40,7 @@ public partial class SectionHeader
         {
             return;
         }
-        
+
         var parentTitle = DocsPage.GetParentTitle(Section) ?? string.Empty;
         if (string.IsNullOrEmpty(parentTitle) == false)
         {
@@ -50,11 +50,17 @@ public partial class SectionHeader
         var id = (parentTitle + Title).Replace(" ", "-").ToLower();
 
         SectionInfo = new DocsSectionLink {Id = id, Title = Title,};
-        
-        DocsPage.AddSection(SectionInfo, Section);
-
     }
-    
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        base.OnAfterRender(firstRender);
+        if (firstRender == true && DocsPage != null && !String.IsNullOrWhiteSpace(Title))
+        {
+            DocsPage.AddSection(SectionInfo, Section);
+        }
+    }
+
     private string GetSectionId() => SectionInfo?.Id ?? Guid.NewGuid().ToString();
 
     private Typo GetTitleTypo()
