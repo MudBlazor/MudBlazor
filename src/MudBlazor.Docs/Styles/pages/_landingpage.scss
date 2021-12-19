@@ -100,9 +100,13 @@
         overflow: hidden;
         position: absolute;
         outline: rgba(255, 255, 255, 0.8) solid 1px;
-        background-color: rgba(255, 255, 255, .2);
-        backdrop-filter: blur(5px);
         box-shadow: inset 0 1px 1px 0 hsla(0deg, 0%, 100%, 0.1), 0 50px 100px -20px rgba(50, 50, 93, 0.25), 0 30px 60px -30px rgba(0, 0, 0, 0.3);
+        background: linear-gradient(0deg, rgba(0,0,0,0.2) 0%, rgba(255,255,255,0.2) 50%, rgba(0,0,0,0.2) 100%);
+
+        @supports ((-webkit-backdrop-filter: blur(5px)) or (backdrop-filter: blur(5px))) {
+          background: rgba(255, 255, 255, .2);
+          backdrop-filter: blur(5px);
+        }
 
         .lp-device-screen {
             position: relative;
