@@ -55,6 +55,7 @@ namespace MudBlazor
         private const string Typography = "mud-typography";
         private const string LayoutProperties = "mud";
         private const string Zindex = "mud-zindex";
+        private const string Density = "mud-density";
 
         protected virtual void GenerateTheme(StringBuilder theme)
         {
@@ -299,6 +300,9 @@ namespace MudBlazor
             theme.AppendLine($"--{Zindex}-popover: {Theme.ZIndex.Popover};");
             theme.AppendLine($"--{Zindex}-snackbar: {Theme.ZIndex.Snackbar};");
             theme.AppendLine($"--{Zindex}-tooltip: {Theme.ZIndex.Tooltip};");
+
+            //Density
+            theme.AppendLine($"--{Density}-modifier: {Theme.Density.Modifier};");
         }
     }
 }

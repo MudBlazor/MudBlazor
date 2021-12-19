@@ -27,8 +27,8 @@
     }
 
     & * .mud-navmenu .mud-nav-item .mud-nav-link {
-        padding-left: 36px;
-        padding-inline-start: 36px;
+        padding-left: density(36px);
+        padding-inline-start: density(36px);
         padding-inline-end: unset;
     }
 }
@@ -51,7 +51,7 @@
 .mud-nav-link {
     width: 100%;
     font-weight: 400;
-    padding: 8px 16px 8px 16px;
+    padding: density(8px, 16px, 8px, 16px);
     color: inherit;
     line-height: 1.75;
     display: inline-flex;
@@ -166,35 +166,35 @@
 
     .mud-nav-group {
         & * .mud-navmenu .mud-nav-item .mud-nav-link {
-            padding: 8px 16px 8px 16px;
+            padding: density(8px, 16px, 8px, 16px);
         }
     }
 
     .mud-nav-group * .mud-navmenu > .mud-nav-group {
         & .mud-nav-link {
-            padding: 8px 16px 8px 16px;
+            padding: density(8px, 16px, 8px, 16px);
         }
 
         & * .mud-navmenu .mud-nav-item .mud-nav-link {
-            padding: 8px 16px 8px 16px;
+            padding: density(8px, 16px, 8px, 16px);
         }
 
         & * .mud-navmenu > .mud-nav-group {
             & .mud-nav-link {
-                padding: 8px 16px 8px 16px;
+                padding: density(8px, 16px, 8px, 16px);
             }
 
             & * .mud-navmenu .mud-nav-item .mud-nav-link {
-                padding: 8px 16px 8px 16px;
+                padding: density(8px, 16px, 8px, 16px);
             }
 
             & * .mud-navmenu > .mud-nav-group {
                 & .mud-nav-link {
-                    padding: 8px 16px 8px 16px;
+                    padding: density(8px, 16px, 8px, 16px);
                 }
 
                 & * .mud-navmenu .mud-nav-item .mud-nav-link {
-                    padding: 8px 16px 8px 16px;
+                    padding: density(8px, 16px, 8px, 16px);
                 }
             }
         }

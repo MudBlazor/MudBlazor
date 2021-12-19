@@ -199,7 +199,7 @@
         height: 1.1876em;
         margin: 0;
         display: block;
-        padding: 6px 0 7px;
+        padding: density(6px) 0px 7px;
         min-width: 0;
         background: none;
         position: relative;
@@ -241,11 +241,11 @@
         }
 
         &.mud-input-root-filled {
-            padding: 27px 12px 10px;
+            padding: calc(20px + (7px * var(--mud-density-modifier))) 12px density(10px);
 
             &.mud-input-root-margin-dense {
-                padding-top: 23px;
-                padding-bottom: 6px;
+                padding-top: calc(16px + (7px * var(--mud-density-modifier)));
+                padding-bottom: density(6px);
             }
 
             &:-webkit-autofill {
@@ -282,7 +282,7 @@
     }
 
     &.mud-input-root-outlined {
-        padding: 18.5px 14px;
+        padding: calc(8.5px + (10px * var(--mud-density-modifier))) 14px;
 
 
         &.mud-input-root:-webkit-autofill {
@@ -290,8 +290,8 @@
         }
 
         &.mud-input-root-margin-dense {
-            padding-top: 10.5px;
-            padding-bottom: 10.5px;
+            padding-top: calc(8.5px + (2px * var(--mud-density-modifier)));
+            padding-bottom: calc(8.5px + (2px * var(--mud-density-modifier)));
         }
 
         &.mud-input-root-adorned-start {
