@@ -22,7 +22,8 @@ namespace MudBlazor.Docs.Components
         private NavigationFooterLink _next;
         private NavigationSection? _section = null;
         private Stopwatch _stopwatch = Stopwatch.StartNew();
-
+        private string _anchor=null;
+        
         [Inject] NavigationManager NavigationManager { get; set; }
 
         [Inject] private IDocsNavigationService DocsService { get; set; }
@@ -31,8 +32,6 @@ namespace MudBlazor.Docs.Components
         [Parameter] public RenderFragment ChildContent { get; set; }
 
         private bool _contentDrawerOpen = true;
-        private bool _displayView;
-        private string _componentName;
         public event Action<Stopwatch> Rendered;
         private Dictionary<DocsPageSection, MudPageContentSection> _sectionMapper = new();
 
@@ -59,11 +58,6 @@ namespace MudBlazor.Docs.Components
             _previous = DocsService.Previous;
             _next = DocsService.Next;
             _section = DocsService.Section;
-            if (NavigationManager.Uri.ToString().Contains("/api/") || NavigationManager.Uri.ToString().Contains("/components/"))
-            {
-                _componentName = NavigationManager.Uri.ToString().Split('/', StringSplitOptions.RemoveEmptyEntries).LastOrDefault();
-                _displayView = true;
-            }
         }
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -79,7 +73,6 @@ namespace MudBlazor.Docs.Components
             }
         }
 
-        
         public string GetParentTitle(DocsPageSection section)
         {
             if(section == null) {return string.Empty;}
@@ -90,8 +83,8 @@ namespace MudBlazor.Docs.Components
 
             return item.Title;
         }
-
-        internal void AddSection(DocsSectionLink sectionLinkInfo, DocsPageSection section)
+        
+        internal async void AddSection(DocsSectionLink sectionLinkInfo, DocsPageSection section)
         {
             _bufferedSections.Enqueue(sectionLinkInfo);
 
@@ -104,7 +97,7 @@ namespace MudBlazor.Docs.Components
                     if (_contentNavigation.Sections.FirstOrDefault(x => x.Id == sectionLinkInfo.Id) == default)
                     {
                         MudPageContentSection parentInfo = null;
-                       if(section.ParentSection != null && _sectionMapper.ContainsKey(section.ParentSection) == true)
+                        if(section.ParentSection != null && _sectionMapper.ContainsKey(section.ParentSection) == true)
                         {
                             parentInfo = _sectionMapper[section.ParentSection];
                         }
@@ -117,6 +110,15 @@ namespace MudBlazor.Docs.Components
                 }
 
                 _contentNavigation.Update();
+                if (_anchor!=null)
+                {
+                    if (sectionLinkInfo.Id == _anchor)
+                    {
+                        await _contentNavigation.ScrollToSection(new Uri(NavigationManager.Uri));
+                        _anchor= null;
+                    }
+                }
+                
             }
         }
 
