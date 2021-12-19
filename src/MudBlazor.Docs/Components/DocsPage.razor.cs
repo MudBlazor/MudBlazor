@@ -27,6 +27,7 @@ namespace MudBlazor.Docs.Components
         [Inject] NavigationManager NavigationManager { get; set; }
 
         [Inject] private IDocsNavigationService DocsService { get; set; }
+        [Inject] private IRenderQueueService RenderQueue { get; set; }
 
         [Parameter] public MaxWidth MaxWidth { get; set; } = MaxWidth.Medium;
         [Parameter] public RenderFragment ChildContent { get; set; }
@@ -53,6 +54,7 @@ namespace MudBlazor.Docs.Components
         protected override void OnInitialized()
         {
             base.OnInitialized();
+            RenderQueue.Clear();
             var relativePath=NavigationManager.ToBaseRelativePath(NavigationManager.Uri);
             if (relativePath.Contains("#"))
                 _anchor = relativePath.Split(new[] { "#" }, StringSplitOptions.RemoveEmptyEntries)[1];
