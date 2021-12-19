@@ -21,6 +21,7 @@ namespace MudBlazor.Docs.Components
         private NavigationFooterLink _previous;
         private NavigationFooterLink _next;
         private NavigationSection? _section = null;
+        private string _anchor=null;
         private Stopwatch _stopwatch = Stopwatch.StartNew();
 
         [Inject] NavigationManager NavigationManager { get; set; }
@@ -49,6 +50,14 @@ namespace MudBlazor.Docs.Components
                 return _sectionCount++;
         }
 
+        protected override void OnInitialized()
+        {
+            base.OnInitialized();
+            var relativePath=NavigationManager.ToBaseRelativePath(NavigationManager.Uri);
+            if (relativePath.Contains("#"))
+                _anchor = relativePath.Split(new[] { "#" }, StringSplitOptions.RemoveEmptyEntries)[1];
+        }
+
         protected override void OnParametersSet()
         {
             _stopwatch = Stopwatch.StartNew();
@@ -58,23 +67,18 @@ namespace MudBlazor.Docs.Components
             _section = DocsService.Section;
         }
 
-        protected override async Task OnAfterRenderAsync(bool firstRender)
+        protected override void OnAfterRender(bool firstRender)
         {
             if (_stopwatch.IsRunning)
             {
                 _stopwatch.Stop();
                 Rendered?.Invoke(_stopwatch);
             }
-            if (firstRender)
-            {
-                await _contentNavigation.ScrollToSection(new Uri(NavigationManager.Uri));
-            }
         }
 
-        internal void AddSection(DocsSectionLink section)
+        internal async void AddSection(DocsSectionLink section)
         {
             _bufferedSections.Enqueue(section);
-
             if (_contentNavigation != null)
             {
                 while (_bufferedSections.Count > 0)
@@ -86,8 +90,15 @@ namespace MudBlazor.Docs.Components
                         _contentNavigation.AddSection(item.Title, item.Id, false);
                     }
                 }
-
                 _contentNavigation.Update();
+                if (_anchor!=null)
+                {
+                    if (section.Id == _anchor)
+                    {
+                        await _contentNavigation.ScrollToSection(new Uri(NavigationManager.Uri));
+                        _anchor= null;
+                    }
+                }
             }
         }
 
