@@ -610,16 +610,43 @@ namespace MudBlazor
 
         private void ScrollPrev()
         {
-            _scrollIndex = Math.Max(_scrollIndex - 1, 0);
+            _scrollIndex = Math.Max(_scrollIndex - GetVisiblePanels(), 0);
             ScrollToItem(_panels[_scrollIndex]);
             SetScrollabilityStates();
         }
 
         private void ScrollNext()
         {
-            _scrollIndex = Math.Min(_scrollIndex + 1, _panels.Count - 1);
+            _scrollIndex = Math.Min(_scrollIndex + GetVisiblePanels(), _panels.Count - 1);
             ScrollToItem(_panels[_scrollIndex]);
             SetScrollabilityStates();
+        }
+
+        /// <summary>
+        /// Calculates the amount of panels that are completely visible inside the toolbar content area. Panels that are just partially visible are not considered here!
+        /// </summary>
+        /// <returns>The amount of panels visible inside the toolbar area. CAUTION: Might return 0!</returns>
+        private int GetVisiblePanels() {
+            var x = 0D;
+            var count = 0;
+            
+            var toolbarContentSize = GetRelevantSize(_tabsContentSize);
+
+            foreach (var panel in _panels)
+            {
+                x += GetRelevantSize(panel.PanelRef);
+
+                if (x < toolbarContentSize)
+                {
+                    count++;
+                }
+                else
+                {
+                    break;
+                }
+            }
+
+            return count;
         }
 
         private void ScrollToItem(MudTabPanel panel)
