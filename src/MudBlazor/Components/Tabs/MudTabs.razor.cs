@@ -626,7 +626,8 @@ namespace MudBlazor
         /// Calculates the amount of panels that are completely visible inside the toolbar content area. Panels that are just partially visible are not considered here!
         /// </summary>
         /// <returns>The amount of panels visible inside the toolbar area. CAUTION: Might return 0!</returns>
-        private int GetVisiblePanels() {
+        private int GetVisiblePanels()
+        {
             var x = 0D;
             var count = 0;
             
