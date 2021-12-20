@@ -397,7 +397,7 @@ namespace MudBlazor.UnitTests.Components
             for (var i = 0; i < 2; i++)
             {
                 scrollButtons.Last().Find("button").Click();
-                expectedTranslation += 100;
+                expectedTranslation += observer.PanelSize;
 
                 var toolbarWrapper = comp.Find(".mud-tabs-toolbar-wrapper");
                 toolbarWrapper.Should().NotBeNull();
@@ -432,7 +432,7 @@ namespace MudBlazor.UnitTests.Components
             for (var i = 0; i < 2; i++)
             {
                 scrollButtons.First().Find("button").Click();
-                expectedTranslation -= 100;
+                expectedTranslation -= observer.PanelSize;
 
                 var toolbarWrapper = comp.Find(".mud-tabs-toolbar-wrapper");
                 toolbarWrapper.Should().NotBeNull();
