@@ -15,12 +15,22 @@ namespace MudBlazor.Docs.Services
     {
         void Enqueue(QueuedContent component);
         Task WaitUntilEmpty();
+        void Clear();
     }
 
     public class RenderQueueService : IRenderQueueService
     {
         private Queue<QueuedContent> _queue = new();
         private TaskCompletionSource _tcs;
+
+        public void Clear() {
+            lock (_queue)
+            {
+                _queue.Clear();                
+                _tcs?.TrySetResult();
+                _tcs = null;
+            }
+        }
 
         void IRenderQueueService.Enqueue(QueuedContent component)
         {
@@ -60,7 +70,7 @@ namespace MudBlazor.Docs.Services
                     return;
                 }
             }
-            await Task.Delay(1);            
+            await Task.Delay(1);
             componentToRender.Render();
         }
 
