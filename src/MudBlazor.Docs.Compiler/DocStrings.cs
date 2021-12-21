@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -9,7 +8,7 @@ namespace MudBlazor.Docs.Compiler
 {
     public class DocStrings
     {
-        private static List<string> hiddenMethods = new() { "ToString", "GetType", "GetHashCode", "Equals", "SetParametersAsync", "ReferenceEquals" };
+        private static string[] hiddenMethods = { "ToString", "GetType", "GetHashCode", "Equals", "SetParametersAsync", "ReferenceEquals" };
 
         public bool Execute()
         {
@@ -35,16 +34,12 @@ namespace MudBlazor.Docs.Compiler
                 var assembly = typeof(MudText).Assembly;
                 foreach (var type in assembly.GetTypes().OrderBy(t => GetSaveTypename(t)))
                 {
-                    // -- properties -----------------------
-
                     foreach (var property in type.GetPropertyInfosWithAttribute<ParameterAttribute>())
                     {
                         var doc = property.GetDocumentation() ?? "";
                         doc = Regex.Replace(doc, @"</?.+?>", "");
                         cb.AddLine($"public const string {GetSaveTypename(type)}_{property.Name} = @\"{EscapeDescription(doc).Trim()}\";\n");
                     }
-
-                    // -- methods --------------------------
 
                     // TableContext was causing conflicts due to the imperfect mapping from the name of class to the name of field in DocStrings
                     if (type.IsSubclassOf(typeof(Attribute)) || GetSaveTypename(type) == "TypeInference" || type == typeof(Utilities.CssBuilder) || type == typeof(TableContext))
@@ -59,7 +54,7 @@ namespace MudBlazor.Docs.Compiler
                                 continue;
 
                             var doc = method.GetDocumentation() ?? "";
-                            cb.AddLine($"public const string {GetSaveTypename(type)}_method_{GetSaveMethodName(method)} = @\"{EscapeDescription(doc)}\";\n");
+                            cb.AddLine($"public const string {GetSaveTypename(type)}_method_{GetSaveMethodIdentifier(method)} = @\"{EscapeDescription(doc)}\";\n");
                         }
                     }
                 }
@@ -84,7 +79,14 @@ namespace MudBlazor.Docs.Compiler
         }
 
         private static string GetSaveTypename(Type t) => Regex.Replace(t.ConvertToCSharpSource(), @"[\.,<>]", "_").TrimEnd('_');
-        private static string GetSaveMethodName(MethodInfo method) => Regex.Replace(method.ToString(), "[^A-Za-z0-9_]", "_");  // we need the method signature - it cannot be the method name alone, because methods can be overloaded
+
+        /* Methods can be overloaded so the method name doesn't identify it uniquely. Instead of method name we need the method signature.
+         * Currently the return type of a method is also used, but probably it can be removed.
+         *
+         * Alternatively we could use the format similar to this used in XML documentation - it will be even better because I think it is
+         * less likely to be changed in the future. See XmlDocumentation.cs for a method computing identifiers.
+         */
+        private static string GetSaveMethodIdentifier(MethodInfo method) => Regex.Replace(method.ToString(), "[^A-Za-z0-9_]", "_");
 
         private static Type GetBaseDefinitionClass(MethodInfo m) => m.GetBaseDefinition().DeclaringType;
 

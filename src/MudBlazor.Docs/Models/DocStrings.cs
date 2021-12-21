@@ -7,7 +7,6 @@ namespace MudBlazor.Docs.Models
     // this is needed for the api docs 
     public static partial class DocStrings
     {
-        // currently implemented only for properties
         public static string GetMemberDescription(Type t, MemberInfo member)
         {
             var name = GetSaveTypename(t);
@@ -15,7 +14,7 @@ namespace MudBlazor.Docs.Models
             if (member is PropertyInfo property)
                 name += "_" + property.Name;
             else if (member is MethodInfo method)
-                name += "_method_" + GetSaveMethodName(method);
+                name += "_method_" + GetSaveMethodIdentifier(method);
             else
                 throw new Exception("Implemented only for properties and methods.");
 
@@ -26,6 +25,7 @@ namespace MudBlazor.Docs.Models
         }
 
         private static string GetSaveTypename(Type t) => Regex.Replace(t.ConvertToCSharpSource(), @"[\.]", "_").Replace("<T>", "").TrimEnd('_');
-        private static string GetSaveMethodName(MethodInfo method) => Regex.Replace(method.ToString().Replace("MudBlazor.Docs.Models.T", "T"), "[^A-Za-z0-9_]", "_");  // method signature
+
+        private static string GetSaveMethodIdentifier(MethodInfo method) => Regex.Replace(method.ToString().Replace("MudBlazor.Docs.Models.T", "T"), "[^A-Za-z0-9_]", "_");  // method signature
     }
 }
