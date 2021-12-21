@@ -268,7 +268,6 @@ namespace MudBlazor
             BeginValidate();
             if (!_isCleared)
                 _elementReference?.SetText(optionText);
-            _isCleared = false;
             _elementReference?.FocusAsync().AndForget();
             StateHasChanged();
         }
@@ -313,6 +312,12 @@ namespace MudBlazor
                 Text = text;
         }
 
+        protected override void OnAfterRender(bool firstRender)
+        {
+            _isCleared = false;
+            base.OnAfterRender(firstRender);
+        }
+
         private Timer _timer;
         private T[] _items;
         private int _selectedListItemIndex = 0;
@@ -321,6 +326,8 @@ namespace MudBlazor
         protected override Task UpdateTextPropertyAsync(bool updateValue)
         {
             _timer?.Dispose();
+            if (_isCleared)
+                return Task.CompletedTask;
             return base.UpdateTextPropertyAsync(updateValue);
         }
 
