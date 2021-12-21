@@ -245,6 +245,8 @@ namespace MudBlazor
 
         private string _currentIcon;
 
+        private bool _isCleared;
+
         private MudInput<string> _elementReference;
 
         public MudAutocomplete()
@@ -259,11 +261,14 @@ namespace MudBlazor
             if (_items != null)
                 _selectedListItemIndex = Array.IndexOf(_items, value);
             var optionText = GetItemString(value);
-            await SetTextAsync(optionText, false);
+            if (!_isCleared)
+                await SetTextAsync(optionText, false);
             _timer?.Dispose();
             IsOpen = false;
             BeginValidate();
-            _elementReference?.SetText(optionText);
+            if (!_isCleared)
+                _elementReference?.SetText(optionText);
+            _isCleared = false;
             _elementReference?.FocusAsync().AndForget();
             StateHasChanged();
         }
@@ -379,6 +384,7 @@ namespace MudBlazor
         /// </summary>
         public async Task Clear()
         {
+            _isCleared = true;
             IsOpen = false;
             await SetTextAsync(string.Empty, updateValue: false);
             await CoerceValueToText();
