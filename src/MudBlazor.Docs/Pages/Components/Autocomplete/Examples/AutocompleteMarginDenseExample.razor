@@ -10,8 +10,7 @@
         </div>
     </MudItem>
     <MudItem xs="12" sm="6" md="4">
-        <MudAutocomplete T="string" Label="US States" @ref="autocompleteRef" Value="@_value1" ValueChanged="@Changed" SearchFunc="@Search1" Margin="@_margin" Dense="@_dense" Variant="Variant.Outlined" />
-        <MudText>@_value1</MudText>
+        <MudAutocomplete T="string" Label="US States" @bind-Value="value1" SearchFunc="@Search1" Margin="@_margin" Dense="@_dense" Variant="Variant.Outlined" />
     </MudItem>
 </MudGrid>
 
@@ -31,16 +30,7 @@
         }
     }
 
-    private MudAutocomplete<string> autocompleteRef;
-
-    private string _value1;
-
-    private async void Changed(string value)
-    {
-          await autocompleteRef.Clear();
-          _value1 = value;
-    }
-
+    private string value1;
     private string[] states =
     {
         "Alabama", "Alaska", "American Samoa", "Arizona",
