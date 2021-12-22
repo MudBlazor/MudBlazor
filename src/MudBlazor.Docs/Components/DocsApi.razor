@@ -164,7 +164,7 @@
                         Name = info.Name,
                         PropertyInfo = info,
                         Default = string.Empty,
-                        Description = GetDescription(Type, info),
+                        Description = DocStrings.GetMemberDescription(Type, info),
                         IsTwoWay = CheckIsTwoWayEventCallback(info),
                         Type = info.PropertyType,
                     };
@@ -195,7 +195,7 @@
                                 Return = info.ReturnParameter,
                                 Signature = info.GetSignature(),
                                 Parameters = info.GetParameters(),
-                                Documentation = info.GetDocumentation()
+                                Documentation = DocStrings.GetMemberDescription(Type, info)
                             };
                         }
                     }
@@ -224,7 +224,7 @@
                         PropertyInfo = info,
                         Default = GetDefaultValue(info),
                         IsTwoWay = CheckIsTwoWayProperty(info),
-                        Description = GetDescription(Type, info),
+                        Description = DocStrings.GetMemberDescription(Type, info),
                         Type = info.PropertyType
                     };
                 }
@@ -278,13 +278,6 @@
                eventCallbackInfo.PropertyType.Name.Contains("EventCallback") &&
                eventCallbackInfo.GetCustomAttribute<ParameterAttribute>() != null &&
                eventCallbackInfo.GetCustomAttribute<ObsoleteAttribute>() == null;
-    }
-
-    private string GetDescription(Type type, PropertyInfo info)
-    {
-        var doc = DocStrings.GetPropertyDescription(type, info.Name);
-        doc = Regex.Replace(doc??"", @"</?.+?>", "");
-        return doc;
     }
 
     // used for default value getting
