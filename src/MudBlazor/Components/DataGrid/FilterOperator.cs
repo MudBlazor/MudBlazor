@@ -52,6 +52,20 @@ namespace MudBlazor
             internal static string[] Values = GetFields(typeof(Boolean));
         }
 
+        public static class DateTime
+        {
+            public const string Is = "is";
+            public const string IsNot = "is not";
+            public const string After = "is after";
+            public const string OnOrAfter = "is on or after";
+            public const string Before = "is before";
+            public const string OnOrBefore = "is on or before";
+            public const string Empty = "is empty";
+            public const string NotEmpty = "is not empty";
+
+            internal static string[] Values = GetFields(typeof(DateTime));
+        }
+
         internal static string[] GetOperatorByDataType(Type type)
         {
             if (type == typeof(string))
@@ -62,13 +76,17 @@ namespace MudBlazor
             {
                 return Number.Values;
             }
-            if (type.IsEnum)
+            if (IsEnum(type))
             {
                 return Enum.Values;
             }
             if (type == typeof(bool))
             {
                 return Boolean.Values;
+            }
+            if (type == typeof(System.DateTime))
+            {
+                return DateTime.Values;
             }
 
             // default
@@ -100,12 +118,33 @@ namespace MudBlazor
             typeof(ushort),
             typeof(uint),
             typeof(float),
-            typeof(BigInteger)
+            typeof(BigInteger),
+            typeof(int?),
+            typeof(double?),
+            typeof(decimal?),
+            typeof(long?),
+            typeof(short?),
+            typeof(sbyte?),
+            typeof(byte?),
+            typeof(ulong?),
+            typeof(ushort?),
+            typeof(uint?),
+            typeof(float?),
+            typeof(BigInteger?),
         };
 
         internal static bool IsNumber(Type type)
         {
             return NumericTypes.Contains(type);
+        }
+
+        internal static bool IsEnum(Type type)
+        {
+            if (type.IsEnum)
+                return true;
+
+            Type u = Nullable.GetUnderlyingType(type);
+            return (u != null) && u.IsEnum;
         }
     }
 }

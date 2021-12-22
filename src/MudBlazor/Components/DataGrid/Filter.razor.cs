@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Numerics;
 using System.Threading.Tasks;
@@ -37,9 +38,11 @@ namespace MudBlazor
             }
         }
         private string _valueString;
-        private double _valueNumber;
+        private double? _valueNumber;
         private Enum _valueEnum = null;
-        private bool _valueBool;
+        private bool? _valueBool;
+        private DateTime? _valueDate;
+        private TimeSpan? _valueTime;
 
         #region Computed Properties and Functions
 
@@ -47,7 +50,10 @@ namespace MudBlazor
         {
             get
             {
-                return Field == null ? typeof(object) : typeof(T).GetProperty(Field).PropertyType;
+                if (Field == null) return typeof(object);
+
+                var t = typeof(T).GetProperty(Field).PropertyType;
+                return Nullable.GetUnderlyingType(t) ?? t;
             }
         }
 
@@ -55,7 +61,15 @@ namespace MudBlazor
         {
             get
             {
-                return FilterOperator.NumericTypes.Contains(dataType);
+                return FilterOperator.IsNumber(dataType);
+            }
+        }
+
+        private bool isEnum
+        {
+            get
+            {
+                return FilterOperator.IsEnum(dataType);
             }
         }
 
@@ -68,11 +82,28 @@ namespace MudBlazor
             if (dataType == typeof(string))
                 _valueString = Value == null ? null : Value.ToString();
             else if (isNumber)
-                _valueNumber = Value == null ? 0 : Convert.ToDouble(Value);
-            else if (dataType.IsEnum)
+                _valueNumber = Value == null ? null : Convert.ToDouble(Value);
+            else if (isEnum)
                 _valueEnum = Value == null ? null : (Enum)Value;
             else if (dataType == typeof(bool))
-                _valueBool = Value == null ? false : Convert.ToBoolean(Value);
+                _valueBool = Value == null ? null : Convert.ToBoolean(Value);
+            else if (dataType == typeof(DateTime) || dataType == typeof(DateTime?))
+            {
+                var dateTime = Convert.ToDateTime(Value);
+                _valueDate = Value == null ? null : dateTime;
+                _valueTime = Value == null ? null : dateTime.TimeOfDay;
+            }
+        }
+
+        internal async Task FieldChangedAsync(string field)
+        {
+            Field = field;
+            var operators = FilterOperator.GetOperatorByDataType(dataType);
+            Operator = operators.FirstOrDefault();
+            Value = null;
+            await OperatorChanged.InvokeAsync(Operator);
+            await ValueChanged.InvokeAsync(Value);
+            await FieldChanged.InvokeAsync(Field);
         }
 
         internal void StringValueChanged(string value)
@@ -81,7 +112,7 @@ namespace MudBlazor
             ValueChanged.InvokeAsync(value);
         }
 
-        internal void NumberValueChanged(double value)
+        internal void NumberValueChanged(double? value)
         {
             _valueNumber = value;
             ValueChanged.InvokeAsync(value);
@@ -93,10 +124,49 @@ namespace MudBlazor
             ValueChanged.InvokeAsync(value);
         }
 
-        internal void BoolValueChanged(bool value)
+        internal void BoolValueChanged(bool? value)
         {
             _valueBool = value;
             ValueChanged.InvokeAsync(value);
+        }
+
+        internal void DateValueChanged(DateTime? value)
+        {
+            _valueDate = value;
+
+            if (value != null)
+            {
+                var date = value.Value.Date;
+
+                // get the time component and add it to the date.
+                if (_valueTime != null)
+                {
+                    date.Add(_valueTime.Value);
+                }
+
+                ValueChanged.InvokeAsync(date);
+            }
+            else
+                ValueChanged.InvokeAsync(value);
+        }
+
+        internal void TimeValueChanged(TimeSpan? value)
+        {
+            _valueTime = value;
+
+            if (_valueDate != null)
+            {
+                var date = _valueDate.Value.Date;
+
+                
+                // get the time component and add it to the date.
+                if (_valueTime != null)
+                {
+                    date = date.Add(_valueTime.Value);
+                }
+
+                ValueChanged.InvokeAsync(date);
+            }
         }
 
         internal void RemoveFilter()
