@@ -593,15 +593,14 @@ namespace MudBlazor
                     int? removedPosition = null;
                     for (int i = 0; i < Text.Length; i++)
                     {
-                        int a = i;
-                        if (Text.Length <= _caretPosition + a)
+                        if (Text.Length <= _caretPosition + i)
                             break;
-                        if (Text[_caretPosition + a] == PlaceholderCharacter)
+                        if (Text[_caretPosition + i] == PlaceholderCharacter)
                             break;
-                        if (_rawValueDictionary.ContainsKey(_caretPosition + a))
+                        if (_rawValueDictionary.ContainsKey(_caretPosition + i))
                         {
-                            _rawValueDictionary.Remove(_caretPosition + a);
-                            removedPosition = _caretPosition + a;
+                            _rawValueDictionary.Remove(_caretPosition + i);
+                            removedPosition = _caretPosition + i;
                             break;
                         }
                     }
@@ -612,12 +611,12 @@ namespace MudBlazor
                             if (_rawValueDictionary.ContainsKey((int)removedPosition + i))
                             {
                                 var c = _rawValueDictionary[(int)removedPosition + i];
-                                for (int i2 = 1; 0 < removedPosition + i - i2; i2++)
+                                for (int i2 = 0; 0 < removedPosition + i - i2; i2++)
                                 {
-                                    if (_maskDict.ContainsKey(Mask[(int)removedPosition + i - i2]))
+                                    if (_maskDict.ContainsKey(Mask[(int)removedPosition + i - i2 - 1]))
                                     {
                                         _rawValueDictionary.Remove((int)removedPosition + i);
-                                        _rawValueDictionary.Add((int)removedPosition + i - i2, c);
+                                        _rawValueDictionary.Add((int)removedPosition + i - i2 - 1, c);
                                         break;
                                     }
                                 }
