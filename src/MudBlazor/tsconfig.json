@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "target": "ES6",
+    "module": "None",
+    "alwaysStrict": true,
+    "noEmitOnError": true,
+    "removeComments": true,
+    "allowJs": true,
+    "outFile": "TScripts/combined/MudBlazor.js"
+
+  },
+  "include": [ "TScripts/**/*" ],
+  "exclude": [ "wwwroot"]
+}
