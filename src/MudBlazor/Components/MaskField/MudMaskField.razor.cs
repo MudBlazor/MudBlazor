@@ -48,6 +48,7 @@ namespace MudBlazor
         };
 
         [Parameter]
+        [Category(CategoryTypes.FormComponent.ListBehavior)]
         public MaskChar[] MaskDefinition
         {
             get => _maskChars;
