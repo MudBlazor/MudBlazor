@@ -9,6 +9,6 @@
     "outFile": "TScripts/combined/MudBlazor.js"
 
   },
-  "include": [ "TScripts/**/*" ],
-  "exclude": [ "wwwroot"]
+  "include": [ "TScripts/*.js" ],
+  "exclude": [ "wwwroot", "TScripts/combined" ]
 }
