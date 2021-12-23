@@ -27,6 +27,7 @@ namespace MudBlazor
         private string _rawValue;
 
         internal int _caretPosition = 0;
+
         private (int, int)? _selection = null;
 
         private Dictionary<int, char> _rawValueDictionary = new();
@@ -43,10 +44,13 @@ namespace MudBlazor
             MaskChar.Letter('a'),
             MaskChar.Digit('0'),
             MaskChar.LetterOrDigit('*'),
-            new MaskChar { Char = 'l', Writable = true, AddToValue = false, Regex = "^[a-z]$" },
-            new MaskChar { Char = 'u', Writable = true, AddToValue = false, Regex = "^[A-Z]$" },
+            new MaskChar { Char = 'l', Writable = true, AddToValue = false, Regex = "^[a-zıöüşçğ]$" },
+            new MaskChar { Char = 'u', Writable = true, AddToValue = false, Regex = "^[A-ZİÖÜŞÇĞ]$" },
         };
 
+        /// <summary>
+        /// Set your new MaskChar[] definition. MaskChar's can be used for masking characters. By default 'a' for letter, '0' for digit, '*' for letter or digit characters. You can also add custom parameters and Regex patterns.
+        /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.ListBehavior)]
         public MaskChar[] MaskDefinition
@@ -66,17 +70,26 @@ namespace MudBlazor
         [Category(CategoryTypes.FormComponent.ListAppearance)]
         public InputType InputType { get; set; } = InputType.Text;
 
-        [Parameter]
-        [Category(CategoryTypes.FormComponent.ListAppearance)]
-        public MaskType MaskType { get; set; } = MaskType.Default;
-
+        /// <summary>
+        /// If false, characters move previous or next location when insert or delete a character.
+        /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.ListBehavior)]
         public bool KeepCharacterPositions { get; set; } = false;
 
+        /// <summary>
+        /// Sets the empty-mask character.
+        /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.ListBehavior)]
         public char PlaceholderCharacter { get; set; } = '_';
+
+        /// <summary>
+        /// Show clear button.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.ListBehavior)]
+        public bool Clearable { get; set; } = false;
 
         private string GetRawValueFromDictionary()
         {
@@ -148,12 +161,7 @@ namespace MudBlazor
 
         private string GetCounterText() => Counter == null ? string.Empty : (Counter == 0 ? (string.IsNullOrEmpty(Text) ? "0" : $"{Text.Length}") : ((string.IsNullOrEmpty(Text) ? "0" : $"{Text.Length}") + $" / {Counter}"));
 
-        /// <summary>
-        /// Show clear button.
-        /// </summary>
-        [Parameter]
-        [Category(CategoryTypes.FormComponent.ListBehavior)]
-        public bool Clearable { get; set; } = false;
+
 
         /// <summary>
         /// Clear the text field, set Value to default(T) and Text to null
@@ -290,15 +298,6 @@ namespace MudBlazor
         internal async void OnFocused(FocusEventArgs obj)
         {
             _isFocused = true;
-            //if (string.IsNullOrEmpty(_rawValue) && !string.IsNullOrEmpty(Placeholder))
-            //{
-
-            //}
-            //else
-            //{
-            //    await UltimateImplementMask(false, Mask);
-            //    SetCaretPosition(FindFirstCaretLocation());
-            //}
             if (!string.IsNullOrEmpty(Converter.Set(Value)) || string.IsNullOrEmpty(Placeholder))
             {
                 await ImplementMask(null, Mask, true);
@@ -325,7 +324,7 @@ namespace MudBlazor
             return _rawValue;
         }
 
-        #region Masking Helpers
+        #region Core Masking
 
         private bool IsCharsMatch(char textChar, char maskChar)
         {
@@ -333,28 +332,6 @@ namespace MudBlazor
                 return true;
             return false;
         }
-
-        //private void SetRawValueFromText()
-        //{
-        //    if (Text == null)
-        //    {
-        //        Text = "";
-        //    }
-        //    string rawValue = "";
-        //    int counterMeter = 0;
-        //    foreach (var c in Text)
-        //    {
-        //        if ((c != Mask[counterMeter] || (GetCharacterType(Mask[counterMeter].ToString(), true) != CharacterType.Other && c == Mask[counterMeter] && GetCharacterType(Mask[counterMeter].ToString(), true) == GetCharacterType(c.ToString()))) && c != PlaceholderCharacter)
-        //        {
-        //            rawValue += c.ToString();
-        //        }
-        //        counterMeter++;
-        //    }
-        //    _rawValue = rawValue;
-        //}
-        #endregion
-
-        #region Core Masking
 
         //Create main dictionary with given string (not affect value directly)
         internal void SetRawValueDictionary(string value)
@@ -701,29 +678,33 @@ namespace MudBlazor
                 return 0;
             for (int i = currentCaretIndex; i < Mask.Length; i++)
             {
-                if (onlyPlaceholderCharacter == true)
-                {
-                    if (Text.Length <= i + 1)
-                    {
-                        return Mask.Length;
-                    }
-                    if (Text[i + 1] == PlaceholderCharacter)
-                    {
-                        return i + 1;
-                    }
-                }
-                else
-                {
-                    if (Mask.Length <= i + 1)
-                    {
-                        return Mask.Length;
-                    }
-                    if (_maskDict.ContainsKey(Mask[i + 1]))
-                    {
-                        return i + 1;
-                    }
-                }
-
+                //if (onlyPlaceholderCharacter == true)
+                //{
+                //    if (Text.Length <= i + 1)
+                //    {
+                //        return Mask.Length;
+                //    }
+                //    if (Text[i + 1] == PlaceholderCharacter)
+                //    {
+                //        return i + 1;
+                //    }
+                //}
+                //else
+                //{
+                //    if (Mask.Length <= i + 1)
+                //    {
+                //        return Mask.Length;
+                //    }
+                //    if (_maskDict.ContainsKey(Mask[i + 1]))
+                //    {
+                //        return i + 1;
+                //    }
+                //}
+                if (Text.Length <= i + 1)
+                    return Mask.Length;
+                if (onlyPlaceholderCharacter && Text[i + 1] == PlaceholderCharacter ||
+                            !onlyPlaceholderCharacter && _maskDict.ContainsKey(Mask[i + 1]))
+                    return i + 1;
             }
             return currentCaretIndex;
         }
@@ -850,60 +831,9 @@ namespace MudBlazor
                     }
                     break;
             }
-
-            //if (obj.Key == "ArrowLeft")
-            //{
-            //    if (0 < _caretPosition)
-            //    {
-            //        SetCaretPosition(_caretPosition - 1);
-            //    }
-            //}
-            //else if (obj.Key == "ArrowRight")
-            //{
-            //    if (_caretPosition < Text.Length)
-            //    {
-            //        SetCaretPosition(_caretPosition + 1);
-            //    }
-            //}
-            //else if (obj.Key == "Backspace")
-            //{
-            //    SetCaretPosition(FindPreviousCaretLocation(_caretPosition));
-            //}
-            //else if (obj.Key == "Delete")
-            //{
-            //    SetCaretPosition(_caretPosition);
-            //}
-            //else
-            //{
-            //    SetCaretPosition(FindNextCaretLocation(_caretPosition));
-            //}
         }
 
         #endregion
-
-        //private string GetMaskByType()
-        //{
-        //    string resultMask = "";
-
-        //    if (MaskType == MaskType.Telephone)
-        //    {
-        //        resultMask = "(000) 000 0000";
-        //    }
-        //    else if (MaskType == MaskType.Mac)
-        //    {
-        //        resultMask = "cc cc cc cc cc cc";
-        //    }
-        //    else if (Mask == null)
-        //    {
-        //        resultMask = "";
-        //    }
-        //    else
-        //    {
-        //        resultMask = Mask;
-        //    }
-
-        //    return resultMask;
-        //}
 
         internal async Task SetBothValueAndText(T value)
         {
@@ -924,7 +854,6 @@ namespace MudBlazor
                 return;
             Console.WriteLine($"HandleKeyDown: '{obj.Key}'");
             await ImplementMask(obj.Key, Mask, true);
-            //string val = GetRawValueFromDictionary();
             await SetValueAsync(Converter.Get(GetRawValueFromDictionary()), false);
 
             OnKeyDown.InvokeAsync(obj).AndForget();
