@@ -1,0 +1,56 @@
+﻿@page "/project/sponsor"
+
+<DocsPage MaxWidth="MaxWidth.Large">
+    <DocsPageHeader Title="Sponsors & Backers" SubTitle="The continued development and maintenance of MudBlazor is secured by our sponsors" />
+    <DocsPageContent>
+        
+        <DocsPageSection>
+            <SectionHeader Title="Sponsor">
+                <Description>
+                    MudBlazor believes in the open source concept because we want to put the community at the steering wheel. With more community members using it, we can also generate more feedback in what direction to move MudBlazor in and also make sure we become as versatile as possible.<br/><br/>
+                    While MudBlazor is completely free to use, and always will be, we do have alot of contributors and a core team that invests alot of time into the project.<br/><br/>
+                    We want to make sure MudBlazor becomes a financially stable project, and that is the reason we have gone with the crowd-funding concept, so that we can invest into infrastructure, and potentially full time devs in the future.<br/><br/>
+                </Description>
+            </SectionHeader>
+            <MudButton DisableElevation="true" StartIcon="@Icons.Custom.Brands.GitHub" Variant="Variant.Filled" Size="Size.Large" Class="docs-no-text-transform" Link="https://github.com/sponsors/MudBlazor" Target="_blank">Sponsor on GitHub</MudButton>
+            <MudButton DisableElevation="true" StartIcon="@Icons.Filled.DataUsage" IconColor="Color.Info" Size="Size.Large" Variant="Variant.Filled" Class="docs-no-text-transform mx-2" Link="https://opencollective.com/mudblazor" Target="_blank">Sponsor on Open Collective</MudButton>
+        </DocsPageSection>
+        
+        <DocsPageSection>
+            <SectionHeader Title="MudBlazor Sponsors"></SectionHeader>
+            <SectionSubGroups>
+
+                <DocsPageSection>
+                    <SectionHeader Title="Bronze Sponsors"/>
+                    <MudGrid>
+                        <MudItem xs="6" md="3">
+                            <Sponsor Name="Adaris" Image="Adaris_color.png" Website="https://www.adaris.ch/"/>
+                        </MudItem>
+                        <MudItem xs="6" md="3">
+                            <Sponsor Name="TimeStatement" Image="TimeStatement_color.png" Website="https://timestatement.com/"/>
+                        </MudItem>
+                    </MudGrid>
+                </DocsPageSection>
+
+                <DocsPageSection>
+                    <SectionHeader Title="Backers"/>
+                    <SectionContent>
+
+                    </SectionContent>
+                </DocsPageSection>
+
+                <DocsPageSection>
+                    <SectionHeader Title="Services"/>
+                    <MudGrid>
+                        <MudItem xs="6" md="3">
+                            <Sponsor Name="JetBrains" Image="JetBrains_color.png" Website="https://www.jetbrains.com/?from=MudBlazor"/>
+                        </MudItem>
+                    </MudGrid>
+
+                </DocsPageSection>
+
+            </SectionSubGroups>
+        </DocsPageSection>
+    </DocsPageContent>
+</DocsPage>
+<Footer />

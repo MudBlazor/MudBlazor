@@ -258,9 +258,11 @@ namespace MudBlazor.Docs.Services
         /// </summary>
         public IEnumerable<DocsLink> About => _about ??= new List<DocsLink>
         {
+            new DocsLink{Href="project/announcements", Title="Announcements" },
             new DocsLink{Href="project/about", Title="How it started" },
+            new DocsLink{Href="project/sponsor", Title="Sponsors & Backers" },
             new DocsLink{Href="project/team", Title="Team & Contributors" },
-            new DocsLink{Href="project/versions", Title="Versions" },
+            new DocsLink{Href="project/releases", Title="Releases" },
         }.OrderBy(x => x.Title);
     }
 }

@@ -1,5 +1,5 @@
 ﻿@page "/versions"
-@page "/releases"
+@page "/project/releases"
 @page "/project/versions"
 @using System.Text.RegularExpressions
 
@@ -8,10 +8,6 @@
 <DocsPage MaxWidth="MaxWidth.Large">
     <DocsPageHeader Title="Releases" />
     <DocsPageContent>
-        <MudText Typo="Typo.h4" GutterBottom="true">
-            Releases
-        </MudText>
-        
         @if (_githubReleases == null)
         {
             <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
@@ -23,7 +19,8 @@
                 {
                     <MudItem xs="12" md="4">
                         <div class="docs-release-info">
-                            <MudText Typo="Typo.h5">Version <b>@release.name</b></MudText>
+                            <MudText Typo="Typo.h5" Inline="true">Version </MudText>
+                            <MudText Typo="Typo.h5" Inline="true" Color="Color.Primary"><b>@release.name</b></MudText>
                             <MudText Typo="Typo.subtitle1">Released on @release.published_at.ToString("MMMM MM, yyyy")</MudText>
                         </div>
                     </MudItem>
