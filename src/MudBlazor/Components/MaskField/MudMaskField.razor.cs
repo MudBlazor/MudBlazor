@@ -37,13 +37,14 @@ namespace MudBlazor
 
         private string _elementId = "maskfield_" + Guid.NewGuid().ToString().Substring(0, 8);
 
-        private Dictionary<char, MaskChar> _maskDict = new Dictionary<char, MaskChar>();
+        internal Dictionary<char, MaskChar> _maskDict = new Dictionary<char, MaskChar>();
         private MaskChar[] _maskChars = new MaskChar[]
         {
             MaskChar.Letter('a'),
             MaskChar.Digit('0'),
             MaskChar.LetterOrDigit('*'),
-            new MaskChar { Char = 'l', Writable = true, AddToValue = false },
+            new MaskChar { Char = 'l', Writable = true, AddToValue = false, Regex = "^[a-z]$" },
+            new MaskChar { Char = 'u', Writable = true, AddToValue = false, Regex = "^[A-Z]$" },
         };
 
         [Parameter]
@@ -71,22 +72,6 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.FormComponent.ListBehavior)]
         public bool KeepCharacterPositions { get; set; } = false;
-
-        [Parameter]
-        [Category(CategoryTypes.FormComponent.ListBehavior)]
-        public Dictionary<char, CharacterType> MaskCharacters { get; set; } = new() { 
-            ['a'] = CharacterType.Letter,
-            ['0'] = CharacterType.Digit,
-            ['*'] = CharacterType.LetterOrDigit,
-        };
-
-        [Parameter]
-        [Category(CategoryTypes.FormComponent.ListBehavior)]
-        public List<(char, Regex)> CustomCharacterTypes { get; set; } = new()
-        {
-            ('c', new Regex("^[a-z]$")),
-            ('e', new Regex("^[A-Z]$"))
-        };
 
         [Parameter]
         [Category(CategoryTypes.FormComponent.ListBehavior)]
@@ -242,6 +227,7 @@ namespace MudBlazor
                         new KeyOptions { Key="Shift", PreventDown = "key+none" },
                     },
                 });
+                _maskDict = _maskChars.ToDictionary(x => x.Char);
             }
             if (_isFocused)
             {
@@ -278,7 +264,7 @@ namespace MudBlazor
             {
                 for (int i2 = _caretPosition; i + i2 < Text.Length; i2++)
                 {
-                    if (MaskCharacters.ContainsKey(Mask[i + i2]) && lastAddedIndex < i + i2)
+                    if (_maskDict.ContainsKey(Mask[i + i2]) && lastAddedIndex < i + i2)
                     {
                         if (_rawValueDictionary.ContainsKey(i + i2))
                         {
@@ -340,63 +326,10 @@ namespace MudBlazor
 
         #region Masking Helpers
 
-        //Add custom regex mask characters into the main mask dictionary, needed only if user change their custom mask characters, not the main ones
-        private void UpdateCustomCharacters()
-        {
-            foreach (var item in CustomCharacterTypes)
-            {
-                if (!MaskCharacters.ContainsKey(item.Item1))
-                    MaskCharacters.Add(item.Item1, CharacterType.Custom);
-            }
-        }
-
-        internal CharacterType GetCharacterType(string character, bool isMaskingCharacter = false)
-        {
-            if (string.IsNullOrEmpty(character))
-            {
-                return CharacterType.None;
-            }
-
-            if (isMaskingCharacter)
-            {
-                if (!MaskCharacters.ContainsKey(character[0]))
-                    return CharacterType.Other;
-
-                return MaskCharacters[character[0]];
-            }
-            else
-            {
-                if (Regex.IsMatch(character, @"\p{L}"))
-                {
-                    return CharacterType.Letter;
-                }
-                else if (Regex.IsMatch(character, @"^\d$"))
-                {
-                    return CharacterType.Digit;
-                }
-                else
-                {
-                    return CharacterType.Other;
-                }
-            }
-        }
-
         private bool IsCharsMatch(char textChar, char maskChar)
         {
-            if (GetCharacterType(maskChar.ToString(), true) == GetCharacterType(textChar.ToString()))
+            if (_maskDict.ContainsKey(maskChar) && Regex.IsMatch(textChar.ToString(), _maskDict[maskChar].Regex))
                 return true;
-            if (GetCharacterType(maskChar.ToString(), true) == CharacterType.LetterOrDigit && GetCharacterType(textChar.ToString()) != CharacterType.Other)
-                return true;
-            if (GetCharacterType(maskChar.ToString(), true) == CharacterType.Custom)
-            {
-                foreach (var item in CustomCharacterTypes)
-                {
-                    if (item.Item1 == maskChar && item.Item2.IsMatch(textChar.ToString()))
-                    {
-                        return true;
-                    }
-                }
-            }
             return false;
         }
 
@@ -431,7 +364,7 @@ namespace MudBlazor
             {
                 for (int i2 = 0; i + i2 < Mask.Length; i2++)
                 {
-                    if (MaskCharacters.ContainsKey(Mask[i + i2]) && !_rawValueDictionary.ContainsKey(i + i2))
+                    if (_maskDict.ContainsKey(Mask[i + i2]) && !_rawValueDictionary.ContainsKey(i + i2))
                     {
                         _rawValueDictionary.Add(i + i2, value[i]);
                         break;
@@ -462,7 +395,7 @@ namespace MudBlazor
                         {
                             for (int i2 = 0; _selection.Value.Item1 + i2 < Text.Length; i2++)
                             {
-                                if (MaskCharacters.ContainsKey(Mask[_selection.Value.Item1 + i2]) && !_rawValueDictionary.ContainsKey(_selection.Value.Item1 + i2))
+                                if (_maskDict.ContainsKey(Mask[_selection.Value.Item1 + i2]) && !_rawValueDictionary.ContainsKey(_selection.Value.Item1 + i2))
                                 {
                                     _rawValueDictionary.Add(_selection.Value.Item1 + i2, _rawValueDictionary[_selection.Value.Item2 + i]);
                                     _rawValueDictionary.Remove(_selection.Value.Item2 + i);
@@ -515,7 +448,7 @@ namespace MudBlazor
                     }
                     else
                     {
-                        if (MaskCharacters.ContainsKey(Mask[_caretPosition + i]))
+                        if (_maskDict.ContainsKey(Mask[_caretPosition + i]))
                         {
                             _rawValueDictionary.Add(_caretPosition + i, lastPressedKey[0]);
                             break;
@@ -557,7 +490,7 @@ namespace MudBlazor
                         {
                             for (int i2 = 0; i + i2 < Mask.Length; i2++)
                             {
-                                if (MaskCharacters.ContainsKey(Mask[i + i2]) && !_rawValueDictionary.ContainsKey(i + i2))
+                                if (_maskDict.ContainsKey(Mask[i + i2]) && !_rawValueDictionary.ContainsKey(i + i2))
                                 {
                                     _rawValueDictionary.Add(i + i2, backUpDictionary[i]);
                                     break;
@@ -596,7 +529,7 @@ namespace MudBlazor
                     for (int i = 0; i < (Text.Length - (Text.Length - _caretPosition)); i++)
                     {
                         removedIndex++;
-                        if (MaskCharacters.ContainsKey(Mask[_caretPosition - removedIndex]))
+                        if (_maskDict.ContainsKey(Mask[_caretPosition - removedIndex]))
                         {
                             hasValueBefore = true;
                             _rawValueDictionary.Remove(_caretPosition - removedIndex);
@@ -619,7 +552,7 @@ namespace MudBlazor
                                 {
                                     break;
                                 }
-                                if (MaskCharacters.ContainsKey(Mask[item.Key - i]))
+                                if (_maskDict.ContainsKey(Mask[item.Key - i]))
                                 {
                                     replacedDictionary.Add(item.Key - i, item.Value);
                                     break;
@@ -681,7 +614,7 @@ namespace MudBlazor
                                 var c = _rawValueDictionary[(int)removedPosition + i];
                                 for (int i2 = 1; 0 < removedPosition + i - i2; i2++)
                                 {
-                                    if (MaskCharacters.ContainsKey(Mask[(int)removedPosition + i - i2]))
+                                    if (_maskDict.ContainsKey(Mask[(int)removedPosition + i - i2]))
                                     {
                                         _rawValueDictionary.Remove((int)removedPosition + i);
                                         _rawValueDictionary.Add((int)removedPosition + i - i2, c);
@@ -708,7 +641,6 @@ namespace MudBlazor
             //Useful if only need to change text, not the dictionary itself
             if (updateCharactersOrDictionary == true)
             {
-                UpdateCustomCharacters();
                 UpdateRawValueDictionary(lastPressedKey);
             }
 
@@ -718,7 +650,7 @@ namespace MudBlazor
             bool hasValue = false;
             for (int i = 0; i < mask.Length; i++)
             {
-                if (!MaskCharacters.ContainsKey(mask[i]))
+                if (!_maskDict.ContainsKey(mask[i]))
                 {
                     result += mask[i].ToString();
                     if (_rawValueDictionary.ContainsKey(i))
@@ -786,7 +718,7 @@ namespace MudBlazor
                     {
                         return Mask.Length;
                     }
-                    if (MaskCharacters.ContainsKey(Mask[i + 1]))
+                    if (_maskDict.ContainsKey(Mask[i + 1]))
                     {
                         return i + 1;
                     }
@@ -811,7 +743,7 @@ namespace MudBlazor
                 }
                 else
                 {
-                    if (MaskCharacters.ContainsKey(Mask[i - 1]))
+                    if (_maskDict.ContainsKey(Mask[i - 1]))
                     {
                         return i - 1;
                     }
@@ -835,7 +767,7 @@ namespace MudBlazor
                 }
                 else
                 {
-                    if (Text[i] != PlaceholderCharacter && MaskCharacters.ContainsKey(Mask[i]))
+                    if (Text[i] != PlaceholderCharacter && _maskDict.ContainsKey(Mask[i]))
                     {
                         return i;
                     }
@@ -859,7 +791,7 @@ namespace MudBlazor
                 }
                 else
                 {
-                    if (Text[i - 1] != PlaceholderCharacter && MaskCharacters.ContainsKey(Mask[i - 1]))
+                    if (Text[i - 1] != PlaceholderCharacter && _maskDict.ContainsKey(Mask[i - 1]))
                     {
                         return i - 1;
                     }
