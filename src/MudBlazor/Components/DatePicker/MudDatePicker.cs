@@ -20,6 +20,7 @@ namespace MudBlazor
         /// The currently selected date (two-way bindable). If null, then nothing was selected.
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.FormComponent.Data)]
         public DateTime? Date
         {
             get => _value;
@@ -29,7 +30,9 @@ namespace MudBlazor
         /// <summary>
         /// If AutoClose is set to true and PickerActions are defined, selecting a day will close the MudDatePicker.
         /// </summary>
-        [Parameter] public bool AutoClose { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.PickerBehavior)]
+        public bool AutoClose { get; set; }
 
         protected async Task SetDateAsync(DateTime? date, bool updateValue)
         {

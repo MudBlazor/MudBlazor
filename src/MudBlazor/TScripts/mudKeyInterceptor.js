@@ -1,4 +1,8 @@
-﻿class MudKeyInterceptorFactory {
+﻿// Copyright (c) MudBlazor 2021
+// MudBlazor licenses this file to you under the MIT license.
+// See the LICENSE file in the project root for more information.
+
+class MudKeyInterceptorFactory {
 
     connect(dotNetRef, elementId, options) {
         //console.log('[MudBlazor | MudKeyInterceptorFactory] connect ', { dotNetRef, element, options });

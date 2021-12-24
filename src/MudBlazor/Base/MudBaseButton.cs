@@ -20,47 +20,65 @@ namespace MudBlazor
         /// The HTML element that will be rendered in the root by the component
         /// By default, is a button
         /// </summary>
-        [Parameter] public string HtmlTag { get; set; } = "button";
+        [Parameter]
+        [Category(CategoryTypes.Button.ClickAction)]
+        public string HtmlTag { get; set; } = "button";
 
         /// <summary>
         /// The button Type (Button, Submit, Refresh)
         /// </summary>
-        [Parameter] public ButtonType ButtonType { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.Button.ClickAction)]
+        public ButtonType ButtonType { get; set; }
 
         /// <summary>
         /// If set to a URL, clicking the button will open the referenced document. Use Target to specify where
         /// </summary>
-        [Parameter] public string Link { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.Button.ClickAction)]
+        public string Link { get; set; }
 
         /// <summary>
         /// The target attribute specifies where to open the link, if Link is specified. Possible values: _blank | _self | _parent | _top | <i>framename</i>
         /// </summary>
-        [Parameter] public string Target { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.Button.ClickAction)]
+        public string Target { get; set; }
 
         /// <summary>
         /// If true, the button will be disabled.
         /// </summary>
-        [Parameter] public bool Disabled { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.Button.Behavior)]
+        public bool Disabled { get; set; }
 
         /// <summary>
         /// If true, no drop-shadow will be used.
         /// </summary>
-        [Parameter] public bool DisableElevation { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.Button.Appearance)]
+        public bool DisableElevation { get; set; }
 
         /// <summary>
         /// If true, disables ripple effect.
         /// </summary>
-        [Parameter] public bool DisableRipple { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.Button.Appearance)]
+        public bool DisableRipple { get; set; }
 
         /// <summary>
         /// Command executed when the user clicks on an element.
         /// </summary>
-        [Parameter] public ICommand Command { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.Button.ClickAction)]
+        public ICommand Command { get; set; }
 
         /// <summary>
         /// Command parameter.
         /// </summary>
-        [Parameter] public object CommandParameter { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.Button.ClickAction)]
+        public object CommandParameter { get; set; }
 
         /// <summary>
         /// If true, a LoadingSpinner is shown, when OnClick is executed

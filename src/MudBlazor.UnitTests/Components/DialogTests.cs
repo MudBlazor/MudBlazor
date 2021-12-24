@@ -112,6 +112,30 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// Based on bug report #3128
+        /// Dialog Class and Style parameters should be honored for inline dialog
+        /// </summary>
+        [Ignore("Sadly we can not get this test to work when it is run in bulk (local and CI). It passes when executed individually")]
+        [Test]
+        public async Task InlineDialogShouldHonorClassAndStyle()
+        {
+            var comp = Context.RenderComponent<MudDialogProvider>();
+            comp.Markup.Trim().Should().BeEmpty();
+            var service = Context.Services.GetService<IDialogService>() as DialogService;
+            service.Should().NotBe(null);
+            IDialogReference dialogReference = null;
+            // open simple test dialog
+            await comp.InvokeAsync(() => dialogReference = service?.Show<TestInlineDialog>());
+            dialogReference.Should().NotBe(null);
+            comp.Find("button").Click();
+            comp.Find("div.mud-dialog").ClassList.Should().Contain("test-class");
+            comp.Find("div.mud-dialog").Attributes["style"].Value.Should().Be("color: red;");
+            comp.Find("div.mud-dialog-content").Attributes["style"].Value.Should().Be("color: blue;");
+            comp.Find("div.mud-dialog-content").ClassList.Should().NotContain("test-class");
+            comp.Find("div.mud-dialog-content").ClassList.Should().Contain("content-class");
+        }
+
+        /// <summary>
         /// Based on bug report by Porkopek:
         /// Updating values that are referenced in TitleContent render fragment won't result in an update of the dialog title
         /// when they change. This is solved by allowing the user to call ForceRender() on DialogInstance

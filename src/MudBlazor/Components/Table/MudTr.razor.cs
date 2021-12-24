@@ -30,6 +30,10 @@ namespace MudBlazor
 
         [Parameter] public bool IsEditable { get; set; }
 
+        [Parameter] public bool IsEditing { get; set; }
+
+        [Parameter] public bool IsEditSwitchBlocked { get; set; }
+
         [Parameter] public bool IsExpandable { get; set; }
 
         [Parameter] public bool IsHeader { get; set; }
@@ -56,6 +60,8 @@ namespace MudBlazor
 
         public void OnRowClicked(MouseEventArgs args)
         {
+            if (Context?.Table.IsEditable == true && Context?.Table.IsEditing == true && Context?.Table.IsEditRowSwitchingBlocked == true) return;
+
             // Manage any previous edited row
             Context.ManagePreviousEditedRow(this);
 
