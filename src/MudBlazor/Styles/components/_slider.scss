@@ -46,19 +46,26 @@
                 @include slider-track {
                     background-color: rgba(var(--mud-palette-#{$color}-rgb), 0.30);
                 }
+
                 @include slider-thumb {
                     background-color: var(--mud-palette-#{$color});
                 }
 
-                &:active{
+                &:active, &:focus-visible {
                     @include slider-thumb {
+                        box-shadow: 0 0 0 2px rgba(var(--mud-palette-#{$color}-rgb), 0.24) !important;
+                    }
+                }
+
+                @include slider-thumb {
+                    &:hover {
                         box-shadow: 0 0 0 2px rgba(var(--mud-palette-#{$color}-rgb), 0.24) !important;
                     }
                 }
             }
         }
 
-        &:disabled{
+        &:disabled {
             cursor: default;
             opacity: 0.38;
 
@@ -71,6 +78,10 @@
                 color: rgb(255, 255, 255);
                 box-shadow: 0 0 0 1px rgb( 255, 255, 255) !important;
                 transform: scale(4, 4);
+
+                &:hover {
+                    box-shadow: 0 0 0 1px rgb( 255, 255, 255) !important;
+                }
             }
         }
     }

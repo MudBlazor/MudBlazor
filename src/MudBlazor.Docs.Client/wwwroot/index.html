@@ -22,6 +22,31 @@
     <meta name="twitter:image" content="https://mudblazor.com/_content/MudBlazor.Docs/images/logo.png">
     <meta name="docsearch:language" content="en">
     <meta name="docsearch:version" content="master">
+    <meta http-equiv="Content-Security-Policy"
+          content="base-uri 'self';
+                   default-src 'self';
+                   img-src data: https:;
+                   object-src 'none';
+                   script-src 'self'
+                              'sha256-v8v3RKRPmN4odZ1CWM5gw80QKPCCWMcpNeOmimNL2AA=' 
+                              https://www.googletagmanager.com
+                              https://*.carbonads.com
+                              https://*.carbonads.net
+                              https://use.fontawesome.com
+                              https://kit.fontawesome.com
+                              'unsafe-eval';
+                   style-src 'self'
+                              https://fonts.googleapis.com
+                              https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css
+                              *.fontawesome.com
+                              'unsafe-inline';
+                   font-src 'self'
+                             *.fontawesome.com
+                             https://fonts.gstatic.com;
+                   connect-src 'self'
+                               https://api.github.com
+                               https://www.google-analytics.com;
+                   upgrade-insecure-requests;">
     <base href="/wasm/" />
     <link rel="apple-touch-icon" sizes="180x180" href="_content/MudBlazor.Docs/apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="32x32" href="_content/MudBlazor.Docs/favicon-32x32.png">
@@ -30,12 +55,12 @@
     <meta name="msapplication-TileColor" content="#867af1">
     <meta name="theme-color" content="#ffffff">
     <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" rel="stylesheet" />
-    <link href="_content/MudBlazor/MudBlazor.min.css?v=5.1.5" rel="stylesheet" />
-    <link href="_content/MudBlazor.Docs/MudBlazorDocs.min.css?v=5.1.5" rel="stylesheet" />
+    <link href="_content/MudBlazor/MudBlazor.min.css?v=6.0.2" rel="stylesheet" />
+    <link href="_content/MudBlazor.Docs/MudBlazorDocs.min.css?v=6.0.2" rel="stylesheet" />
 </head>
 
 <body>
-    <app>
+    <div id="app">
         <div style="height:100%;width:100%;margin:0;position:fixed;">
             <svg width="400px" height="253.83px" viewBox="0 0 1653 1049" xmlns="http://www.w3.org/2000/svg" style="left:50%;position:fixed;top:383px;transform: translate(-50%,-50%);margin-right:8px;">
                 <path fill="#7467EF" d="M0.15,572.58V0.16L495.9,286.37v190.81L165.4,286.37v381.62L0.15,572.58z"></path>
@@ -48,15 +73,15 @@
                 <path fill="#594AE2" d="M1652.43,191.21l-165.25,95.41v762.99l165.25-95.4L1652.43,191.21z"></path>
             </svg>
         </div>
-    </app>
+    </div>
 
     <div id="blazor-error-ui">
         An unhandled error has occurred.
         <a href="" class="reload">Reload</a>
         <a class="dismiss">🗙</a>
     </div>
-    <script src="_content/MudBlazor/MudBlazor.min.js?v=5.1.5"></script>
-    <script src="_content/MudBlazor.Docs/JS/docs.js?v=5.1.5"></script>
+    <script src="_content/MudBlazor/MudBlazor.min.js?v=6.0.2"></script>
+    <script src="_content/MudBlazor.Docs/JS/docs.js?v=6.0.2"></script>
     <script src="_framework/blazor.webassembly.js"></script>
     <script src="_content/Blazor-Analytics/blazor-analytics.js"></script>
 </body>

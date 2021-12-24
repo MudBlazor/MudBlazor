@@ -1,7 +1,9 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Extensions;
+using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
@@ -13,6 +15,14 @@ namespace MudBlazor
         protected string InputClassname => MudInputCssHelper.GetInputClassname(this);
 
         protected string AdornmentClassname => MudInputCssHelper.GetAdornmentClassname(this);
+
+        protected string ClearButtonClassname =>
+                    new CssBuilder()
+                    .AddClass("me-n1", Adornment == Adornment.End && HideSpinButtons == false)
+                    .AddClass("mud-icon-button-edge-end", Adornment == Adornment.End && HideSpinButtons == true)
+                    .AddClass("me-6", Adornment != Adornment.End && HideSpinButtons == false)
+                    .AddClass("mud-icon-button-edge-margin-end", Adornment != Adornment.End && HideSpinButtons == true)
+                    .Build();
 
         /// <summary>
         /// Type of the input element. It should be a valid HTML5 input type.
@@ -59,10 +69,21 @@ namespace MudBlazor
         [Parameter] public RenderFragment ChildContent { get; set; }
 
         private ElementReference _elementReference;
+        private ElementReference _elementReference1;
 
-        public override ValueTask FocusAsync()
+        public override async ValueTask FocusAsync()
         {
-            return _elementReference.FocusAsync();
+            try
+            {
+                if (InputType == InputType.Hidden && ChildContent != null)
+                    await _elementReference1.FocusAsync();
+                else
+                    await _elementReference.FocusAsync();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("MudInput.FocusAsync: " + e.Message);
+            }
         }
 
         public override ValueTask SelectAsync()
@@ -158,8 +179,20 @@ namespace MudBlazor
         public override async Task SetParametersAsync(ParameterView parameters)
         {
             await base.SetParametersAsync(parameters);
-            if (!_isFocused || _forceTextUpdate)
+            //if (!_isFocused || _forceTextUpdate)
+            //    _internalText = Text;
+            if (RuntimeLocation.IsServerSide && TextUpdateSuppression)
+            {
+                // Text update suppression, only in BSS (not in WASM).
+                // This is a fix for #1012
+                if (!_isFocused || _forceTextUpdate)
+                    _internalText = Text;
+            }
+            else
+            {
+                // in WASM (or in BSS with TextUpdateSuppression==false) we always update
                 _internalText = Text;
+            }
         }
 
         /// <summary>

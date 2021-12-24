@@ -15,6 +15,11 @@
         color: var(--mud-palette-text-disabled);
         cursor: default;
     }
+
+    &.mud-readonly, .mud-readonly:hover {
+        cursor: default;
+        background-color: transparent;
+    }
 }
 
 .mud-switch-span {
@@ -40,6 +45,8 @@
     }
 }
 
+
+
 .mud-switch-base {
     padding: 9px;
     top: 0;
@@ -47,7 +54,7 @@
     color: #fafafa;
     z-index: 1;
     position: absolute;
-    transition: left 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,transform 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+    transition: left 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,transform 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,background-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,box-shadow 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
 
     &.mud-checked {
         transform: translateX(20px);
@@ -68,7 +75,7 @@
             opacity: 0.12;
         }
 
-        &:hover {
+        &:hover, &:focus-visible {
             cursor: default;
             background-color: transparent;
         }
@@ -108,7 +115,7 @@
         &.mud-checked {
             color: var(--mud-palette-#{$color});
 
-            &:hover {
+            &:hover, &:focus-visible {
                 background-color: var(--mud-palette-#{$color}-hover);
             }
 

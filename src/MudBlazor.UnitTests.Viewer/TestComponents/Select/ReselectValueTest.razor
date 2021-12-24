@@ -2,11 +2,11 @@
 <MudPopoverProvider></MudPopoverProvider>
 
 <div>
-    <MudSelect Variant="Variant.Text"
+    <MudSelect T="string" Variant="Variant.Text"
                IsPreRendered="true"
                @bind-Value="fruit"
                Direction="Direction.Bottom" Dense="true" OffsetY="true"
-               SelectedValuesChanged="@((HashSet<string> f) => FruitChanged(f))">
+               SelectedValuesChanged="@(() => FruitChanged(null))">
 
         <MudSelectItem Value="@("Apple")">Apple</MudSelectItem>
         <MudSelectItem Value="@("Orange")">Orange</MudSelectItem>
@@ -17,7 +17,7 @@
     string fruit = "Apple";
     public int ChangeCount { get; private set; }
 
-    void FruitChanged(HashSet<string> fruits)
+    void FruitChanged(IEnumerable<string> fruits)
     {
         ChangeCount++;
     }

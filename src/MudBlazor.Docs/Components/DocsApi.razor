@@ -19,16 +19,45 @@
             <DocsPageSection>
                 <SectionHeader Title="Properties" />
                 <SectionContent Class="docs-content-api" FullWidth="true">
-                    <MudTable Items="@Properties" Elevation="0" Class="mx-0" Breakpoint="@Breakpoint.Sm">
+                    <div style="float: right; margin-top: -10px; display: flex; flex-flow: row wrap; gap: 7px; align-items: center; white-space: nowrap;">
+                        <MudText>Group by:</MudText>
+                        <EnumSwitch T="Grouping" @bind-Value="@_propertiesGrouping" Color="Color.Primary" />
+                    </div>
+                    <MudTable Items="@Properties" Elevation="0" Class="mx-0" Breakpoint="@Breakpoint.Sm" GroupBy="@PropertiesGroupDefinition">
                         <HeaderContent>
                             <MudTh>Name</MudTh>
                             <MudTh>Type</MudTh>
                             <MudTd>Default</MudTd>
                             <MudTh>Description</MudTh>
                         </HeaderContent>
+                        <GroupHeaderTemplate>
+                            @if (_propertiesGrouping == Grouping.Inheritance && (Type)context.Key != Type)
+                            {
+                                <MudTh colspan="4">
+                                    <MudText Typo="Typo.h6">@($"Inherited from {((Type)context.Key).ConvertToCSharpSource()}")</MudText>
+                                </MudTh>
+                            }
+                            else if (_propertiesGrouping == Grouping.Category)
+                            {
+                                <MudTh colspan="4">
+                                    <MudText Typo="Typo.h6">@context.Key</MudText>
+                                </MudTh>
+                            }
+                        </GroupHeaderTemplate>
                         <RowTemplate>
-                            <MudTd Class="docs-content-api-cell" DataLabel="Name"><CodeInline>@context.Name</CodeInline></MudTd>
-                            <MudTd Class="docs-content-api-cell" DataLabel="Type"><div style="display: flex; flex-direction: row; align-items: center; white-space: nowrap;">@context.Type<DocsBinding IsTwoWay="@context.IsTwoWay" /></div></MudTd>
+                            <MudTd Class="docs-content-api-cell" DataLabel="Name">
+                                <CodeInline>@context.Name</CodeInline>
+                                @if (_propertiesGrouping == Grouping.Inheritance && IsOverridden(context.PropertyInfo))
+                                {
+                                    <MudChip Variant="Variant.Outlined" Color="Color.Secondary" Size="Size.Small">overridden</MudChip>
+                                }
+                            </MudTd>
+                            <MudTd Class="docs-content-api-cell" DataLabel="Type">
+                                <div style="display: flex; flex-direction: row; align-items: center; white-space: nowrap;">
+                                    <DocsTypeInfo Type="@context.Type" />
+                                    <DocsBinding IsTwoWay="@context.IsTwoWay" />
+                                </div>
+                            </MudTd>
                             <MudTd Class="docs-content-api-cell" DataLabel="Default">
                                 @if (PresentDefaultValue(context.Default).Contains("<path"))
                                 {
@@ -41,6 +70,7 @@
                             </MudTd>
                             <MudTd Class="docs-content-api-cell docs-content-api-description" DataLabel="Description">@(HttpUtility.HtmlDecode(context.Description))</MudTd>
                         </RowTemplate>
+                        <GroupFooterTemplate></GroupFooterTemplate>
                     </MudTable>
                 </SectionContent>
             </DocsPageSection>
@@ -59,7 +89,7 @@
                         </HeaderContent>
                         <RowTemplate>
                             <MudTd Class="docs-content-api-cell" DataLabel="Name"><CodeInline>@context.Name</CodeInline></MudTd>
-                            <MudTd Class="docs-content-api-cell" DataLabel="Type"><div style="display: flex; flex-direction: row; align-items: center; white-space: nowrap;">@context.Type</div></MudTd>
+                            <MudTd Class="docs-content-api-cell" DataLabel="Type"><div style="display: flex; flex-direction: row; align-items: center; white-space: nowrap;">@context.Type.ConvertToCSharpSource()</div></MudTd>
                             <MudTd Class="docs-content-api-cell docs-content-api-description" DataLabel="Description">@(HttpUtility.HtmlDecode(context.Description))</MudTd>
                         </RowTemplate>
                     </MudTable>
@@ -134,9 +164,9 @@
                         Name = info.Name,
                         PropertyInfo = info,
                         Default = string.Empty,
-                        Description = GetDescription(Type, info),
+                        Description = DocStrings.GetMemberDescription(Type, info),
                         IsTwoWay = CheckIsTwoWayEventCallback(info),
-                        Type = info.PropertyType.ConvertToCSharpSource(),
+                        Type = info.PropertyType,
                     };
                 }
             }
@@ -165,7 +195,7 @@
                                 Return = info.ReturnParameter,
                                 Signature = info.GetSignature(),
                                 Parameters = info.GetParameters(),
-                                Documentation = info.GetDocumentation()
+                                Documentation = DocStrings.GetMemberDescription(Type, info)
                             };
                         }
                     }
@@ -178,7 +208,13 @@
     {
         get
         {
-            foreach (var info in Type.GetPropertyInfosWithAttribute<ParameterAttribute>().OrderBy(x => x.Name))
+            foreach (var info in Type.GetPropertyInfosWithAttribute<ParameterAttribute>()
+                                     .OrderBy(x => _propertiesGrouping switch {
+                                                        Grouping.Category => x.GetCustomAttribute<CategoryAttribute>()?.Order ?? int.MaxValue - 1,
+                                                        Grouping.Inheritance => -NumberOfAncestorClasses(BaseDefinitionClass(x)),
+                                                        _ => 0
+                                                    })
+                                     .ThenBy(x => x.Name))
             {
                 if (info.GetCustomAttributes(typeof(System.ObsoleteAttribute), true).Length == 0 && !info.PropertyType.Name.Contains("EventCallback"))
                 {
@@ -188,8 +224,8 @@
                         PropertyInfo = info,
                         Default = GetDefaultValue(info),
                         IsTwoWay = CheckIsTwoWayProperty(info),
-                        Description = GetDescription(Type, info),
-                        Type = info.PropertyType.ConvertToCSharpSource()
+                        Description = DocStrings.GetMemberDescription(Type, info),
+                        Type = info.PropertyType
                     };
                 }
             }
@@ -236,25 +272,12 @@
 
     private bool CheckIsTwoWayProperty(PropertyInfo propertyInfo)
     {
-        foreach (var info in Type.GetPropertyInfosWithAttribute<ParameterAttribute>().OrderBy(x => x.Name))
-        {
-            if (info.GetCustomAttributes(typeof(System.ObsoleteAttribute), true).Length == 0 && info.PropertyType.Name.Contains("EventCallback"))
-            {
-                if (info.Name == propertyInfo.Name + "Changed")
-                {
-                    return true;
-                }
-            }
-        }
+        PropertyInfo eventCallbackInfo = Type.GetProperty(propertyInfo.Name + "Changed");
 
-        return false;
-    }
-
-    private string GetDescription(Type type, PropertyInfo info)
-    {
-        var doc = DocStrings.GetPropertyDescription(type, info.Name);
-        doc = Regex.Replace(doc??"", @"</?.+?>", "");
-        return doc;
+        return eventCallbackInfo != null &&
+               eventCallbackInfo.PropertyType.Name.Contains("EventCallback") &&
+               eventCallbackInfo.GetCustomAttribute<ParameterAttribute>() != null &&
+               eventCallbackInfo.GetCustomAttribute<ObsoleteAttribute>() == null;
     }
 
     // used for default value getting
@@ -262,6 +285,8 @@
 
     RenderFragment RenderTheType()
     {
+        if (!Type.IsAssignableTo(typeof(IComponent)))
+            return null;
         return new RenderFragment(builder =>
         {
             builder.OpenComponent(0, Type);
@@ -312,4 +337,39 @@
             return _converter.Set( @default);
         return "";
     }
+
+
+    #region Grouping properties
+
+    private enum Grouping { Category, Inheritance, None }
+
+    private Grouping _propertiesGrouping = Grouping.Inheritance;
+
+    private TableGroupDefinition<ApiProperty> PropertiesGroupDefinition => _propertiesGrouping switch
+    {
+        Grouping.Category => new() { Selector = (p) => p.PropertyInfo.GetCustomAttribute<CategoryAttribute>()?.Name ?? "Misc" },
+        Grouping.Inheritance => new() { Selector = (p) => BaseDefinitionClass(p.PropertyInfo) },
+        _ => null
+    };
+
+    // -- Grouping properties by inheritance ------------------------------------------------------------------------------------------
+
+    private static Type BaseDefinitionClass(MethodInfo m) => m.GetBaseDefinition().DeclaringType;
+
+    private static Type BaseDefinitionClass(PropertyInfo p) => BaseDefinitionClass(p.GetMethod ?? p.SetMethod);  // used for grouping properties
+
+    private static bool IsOverridden(MethodInfo m) => m.GetBaseDefinition().DeclaringType != m.DeclaringType;
+
+    private static bool IsOverridden(PropertyInfo p) => IsOverridden(p.GetMethod ?? p.SetMethod);                // used for the "overridden" chip
+
+    // used for ordering groups of properties
+    private static int NumberOfAncestorClasses(Type type)
+    {
+        int n = 0;
+        while ((type = type.BaseType) != null)
+            n++;
+        return n;
+    }
+
+    #endregion
 }

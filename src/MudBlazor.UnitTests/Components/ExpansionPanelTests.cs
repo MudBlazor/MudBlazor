@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Bunit;
 using FluentAssertions;
 using MudBlazor.UnitTests.TestComponents;
@@ -39,17 +40,40 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// Multiple expanded expansion panels should not enter an infinite loop 
+        /// when MultiExpansionPanel is false
+        /// </summary>
+        [Test]
+        public void MudExpansionPanel_Without_MultiExpansion_Doesnt_Crash_With_Multiple_Expanded_Tabs()
+        {
+            var comp = Context.RenderComponent<ExpansionPanelExpandedMultipleWithoutMultipleExpansionSetTest>();
+
+            //click in the three headers
+            //foreach (var header in comp.FindAll(".mud-expand-panel-header"))
+            //{
+            //    header.Click();
+            //}
+
+            //Only one panel should be expanded
+            var allPanels = comp.FindAll(".mud-expand-panel").ToList();
+
+            var expandedPanels = comp.FindAll(".mud-panel-expanded").ToList();
+            expandedPanels.Count.Should().Be(1);
+            expandedPanels.First().Should().Be(allPanels.First());
+        }
+
+        /// <summary>
         /// MultiExpansion panel should not collapse other panels
         /// </summary>
         [Test]
-        public void MudExpansionPanel_MultiExpansion_Doesnt_Collapse_Others()
+        public async Task MudExpansionPanel_MultiExpansion_Doesnt_Collapse_Others()
         {
             var comp = Context.RenderComponent<ExpansionPanelMultiExpansionTest>();
 
             //click in the three headers
             foreach (var header in comp.FindAll(".mud-expand-panel-header"))
             {
-                header.Click();
+                await comp.InvokeAsync(() => header.Click());
             }
 
             //the three panels must be expanded
@@ -81,7 +105,7 @@ namespace MudBlazor.UnitTests.Components
         /// Start expanded should work with multi expansion
         /// </summary>
         [Test]
-        public void MudExpansionPanel_IsInitiallyExpanded_Works_With_Multi_Expanded()
+        public async Task MudExpansionPanel_IsInitiallyExpanded_Works_With_Multi_Expanded()
         {
             var comp = Context.RenderComponent<ExpansionPanelStartExpandedMultipleTest>();
 
@@ -92,7 +116,7 @@ namespace MudBlazor.UnitTests.Components
             //click in the three headers
             foreach (var header in comp.FindAll(".mud-expand-panel-header"))
             {
-                header.Click();
+                await comp.InvokeAsync(() => header.Click());
             }
 
             //we could close them all

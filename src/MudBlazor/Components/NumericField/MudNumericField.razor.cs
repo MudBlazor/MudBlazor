@@ -120,7 +120,7 @@ namespace MudBlazor
 
         [Inject] private IKeyInterceptor _keyInterceptor { get; set; }
 
-        private ElementReference _self;
+        private string _elementId = "numericField_" + Guid.NewGuid().ToString().Substring(0, 8);
 
         private MudInput<string> _elementReference;
 
@@ -167,6 +167,13 @@ namespace MudBlazor
         }
 
         /// <summary>
+        /// Show clear button.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Behavior)]
+        public bool Clearable { get; set; } = false;
+
+        /// <summary>
         /// Decrements or increments depending on factor
         /// </summary>
         /// <param name="factor">Multiplication factor (1 or -1) will be applied to the step</param>
@@ -211,12 +218,12 @@ namespace MudBlazor
 
             return (Num.To<T>(value), false);
         }
-        
+
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
             if (firstRender)
             {
-                await _keyInterceptor.Connect(_self, new KeyInterceptorOptions()
+                await _keyInterceptor.Connect(_elementId, new KeyInterceptorOptions()
                 {
                     //EnableLogging = true,
                     TargetClass = "mud-input-slot",
@@ -281,6 +288,7 @@ namespace MudBlazor
         /// Reverts mouse wheel up and down events, if true.
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.FormComponent.Behavior)]
         public bool InvertMouseWheel { get; set; } = false;
 
         private T _minDefault;
@@ -291,6 +299,7 @@ namespace MudBlazor
         /// The minimum value for the input.
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.FormComponent.Validation)]
         public T Min
         {
             get => _minHasValue ? _min : _minDefault;
@@ -309,6 +318,7 @@ namespace MudBlazor
         /// The maximum value for the input.
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.FormComponent.Validation)]
         public T Max
         {
             get => _maxHasValue ? _max : _maxDefault;
@@ -327,6 +337,7 @@ namespace MudBlazor
         /// The increment added/subtracted by the spin buttons.
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.FormComponent.Behavior)]
         public T Step
         {
             get => _stepHasValue ? _step : _stepDefault;
@@ -341,6 +352,7 @@ namespace MudBlazor
         /// Hides the spin buttons, the user can still change value with keyboard arrows and manual update.
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.FormComponent.Appearance)]
         public bool HideSpinButtons { get; set; }
 
         /// <summary>
@@ -377,7 +389,7 @@ namespace MudBlazor
         }
 
         private string GetCounterText() => Counter == null ? string.Empty : (Counter == 0 ? (string.IsNullOrEmpty(Text) ? "0" : $"{Text.Length}") : ((string.IsNullOrEmpty(Text) ? "0" : $"{Text.Length}") + $" / {Counter}"));
-        
+
         private Task OnInputValueChanged(string text)
         {
             return SetTextAsync(text);

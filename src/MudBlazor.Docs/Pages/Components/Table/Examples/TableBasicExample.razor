@@ -23,7 +23,7 @@
 <MudSwitch @bind-Checked="_hidePosition">Hide <b>position</b> when Breakpoint=Xs</MudSwitch>
 <MudSwitch @bind-Checked="_loading">Show Loading</MudSwitch>
 
-@code {
+@code { 
     private bool _hidePosition;
     private bool _loading;
     private IEnumerable<Element> Elements = new List<Element>();
@@ -32,4 +32,5 @@
     {
         Elements = await httpClient.GetFromJsonAsync<List<Element>>("webapi/periodictable");
     }
+
 }

@@ -29,6 +29,7 @@ namespace MudBlazor
         /// The currently selected range (two-way bindable). If null, then nothing was selected.
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.FormComponent.Data)]
         public DateRange DateRange
         {
             get => _dateRange;
@@ -82,12 +83,12 @@ namespace MudBlazor
             get => _rangeText;
             set
             {
-                if (_rangeText.Equals(value))
+                if (_rangeText?.Equals(value) ?? value == null)
                     return;
 
                 Touched = true;
                 _rangeText = value;
-                SetDateRangeAsync(ParseDateRangeValue(value.Start, value.End), false).AndForget();
+                SetDateRangeAsync(ParseDateRangeValue(value?.Start, value?.End), false).AndForget();
             }
         }
 

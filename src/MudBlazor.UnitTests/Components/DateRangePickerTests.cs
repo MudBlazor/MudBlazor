@@ -2,6 +2,7 @@
 
 using System;
 using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using AngleSharp.Html.Dom;
@@ -63,6 +64,19 @@ namespace MudBlazor.UnitTests.Components
             picker.DateRange.End.Should().Be(new DateTime(2021, 01, 10));
             await comp.InvokeAsync(() => picker.DateRange = new DateRange(new DateTime(2020, 12, 26), new DateTime(2021, 02, 01)));
             picker.Text.Should().Be(RangeConverter<DateTime>.Join(new DateTime(2020, 12, 26).ToShortDateString(), new DateTime(2021, 02, 01).ToShortDateString()));
+        }
+
+        [Test]
+        public void RangeConverter_RoundTrip_Ok()
+        {
+            var d1 = "val1";
+            var d2 = "val2";
+
+            var repr = RangeConverter<DateTime>.Join(d1, d2);
+            RangeConverter<DateTime>.Split(repr, out var c1, out var c2).Should().BeTrue();
+
+            c1.Should().Be(d1);
+            c2.Should().Be(d2);
         }
 
         [Test]
@@ -402,6 +416,49 @@ namespace MudBlazor.UnitTests.Components
             var comp = OpenPicker();
             comp.FindAll("button.mud-picker-calendar-day").Select(button => ((IHtmlButtonElement)button).IsDisabled)
                 .Should().OnlyContain(disabled => disabled == false);
+        }
+
+        [Test]
+        public void SetRangeTextFunc_NullInputNoError()
+        {
+            var comp = Context.RenderComponent<MudDateRangePicker>(parameters =>
+                parameters.Add(p => p.DateRange,
+                    new DateRange(new DateTime(2020, 12, 26),null))); 
+            comp.Find("input").Change("");
+            comp.Instance.DateRange.End.Should().BeNull();
+            comp.Instance.DateRange.Start.Should().BeNull();
+
+        }
+
+        [Test]
+        public void SetRangeTextFunc_NullRangeTextNoError()
+        {
+            var dateTime = new DateTime(2020, 12, 26);
+            var comp = Context.RenderComponent<MudDateRangePicker>(parameters =>
+                parameters.Add(p => p.DateRange, null)
+                    .Add(p=>p.Culture, CultureInfo.CurrentCulture));
+            comp.Find("input").Change(dateTime.ToString(CultureInfo.CurrentCulture.DateTimeFormat.ShortDatePattern));
+            comp.Instance.DateRange.Start.Should().Be(dateTime);
+
+        }
+
+
+        [Test]
+        public void SetDateRange_NoChangedIfSameValues()
+        {
+            var dr1 = new DateRange(new DateTime(2021, 10, 08), new DateTime(2021, 10, 09));
+            var dr2 = new DateRange(new DateTime(2021, 10, 08), new DateTime(2021, 10, 09));
+
+            var wasEventCallbackCalled = false;
+
+            var comp = Context.RenderComponent<MudDateRangePicker>(
+                Parameter(nameof(MudDateRangePicker.DateRange), dr1),
+                EventCallback(nameof(MudDateRangePicker.DateRangeChanged), (DateRange _) => wasEventCallbackCalled = true));
+
+            comp.SetParam(nameof(MudDateRangePicker.DateRange), dr2);
+
+            comp.Instance.DateRange.Should().Be(dr2);
+            wasEventCallbackCalled.Should().BeFalse();
         }
 
         [Test]

@@ -1,15 +1,30 @@
-﻿class MudKeyInterceptorFactory {
+﻿// Copyright (c) MudBlazor 2021
+// MudBlazor licenses this file to you under the MIT license.
+// See the LICENSE file in the project root for more information.
 
-    connect(dotNetRef, element, options) {
+class MudKeyInterceptorFactory {
+
+    connect(dotNetRef, elementId, options) {
         //console.log('[MudBlazor | MudKeyInterceptorFactory] connect ', { dotNetRef, element, options });
+        if (!elementId)
+            throw "elementId: expected element id!";
+        var element = document.getElementById(elementId);
         if (!element)
-            throw "element: expected ElementReference!";
+            throw "no element found for id: " +elementId;
         if (!element.mudKeyInterceptor)
             element.mudKeyInterceptor = new MudKeyInterceptor(dotNetRef, options);
         element.mudKeyInterceptor.connect(element);
     }
 
-    disconnect(element) {
+    updatekey(elementId, option) {
+        var element = document.getElementById(elementId);
+        if (!element || !element.mudKeyInterceptor)
+            return;
+        element.mudKeyInterceptor.updatekey(option);
+    }
+
+    disconnect(elementId) {
+        var element = document.getElementById(elementId);
         if (!element || !element.mudKeyInterceptor)
             return;
         element.mudKeyInterceptor.disconnect();
@@ -54,19 +69,7 @@ class MudKeyInterceptor {
                 this.logger('[MudBlazor | KeyInterceptor] got invalid key options: ', keyOption);
                 continue;
             }
-            if (keyOption.key.length > 2 && keyOption.key.startsWith('/') && keyOption.key.endsWith('/')) {
-                // JS regex key options such as "/[a-z]/" or "/a|b/" but NOT "/[a-z]/g" or "/[a-z]/i"
-                keyOption.regex = new RegExp(keyOption.key.substring(1, keyOption.key.length-1)); // strip the / from start and end
-                this._regexOptions.push(keyOption);
-            }
-            else
-                this._keyOptions[keyOption.key.toLowerCase()] = keyOption;
-            // remove whitespace and enforce lowercase
-            var whitespace = new RegExp("\\s", "g");
-            keyOption.preventDown = (keyOption.preventDown || "none").replaceAll(whitespace, "").toLowerCase();
-            keyOption.preventUp = (keyOption.preventUp || "none").replaceAll(whitespace, "").toLowerCase();
-            keyOption.stopDown = (keyOption.stopDown || "none").replaceAll(whitespace, "").toLowerCase();
-            keyOption.stopUp = (keyOption.stopUp || "none").replaceAll(whitespace, "").toLowerCase();
+            this.setKeyOption(keyOption)
         }
         this.logger('[MudBlazor | KeyInterceptor] key options: ', this._keyOptions);
         if (this._regexOptions.size > 0)
@@ -75,6 +78,29 @@ class MudKeyInterceptor {
         for (const child of this._element.getElementsByClassName(targetClass)) {
             this.attachHandlers(child);
         }
+    }
+
+    setKeyOption(keyOption) {
+        if (keyOption.key.length > 2 && keyOption.key.startsWith('/') && keyOption.key.endsWith('/')) {
+            // JS regex key options such as "/[a-z]/" or "/a|b/" but NOT "/[a-z]/g" or "/[a-z]/i"
+            keyOption.regex = new RegExp(keyOption.key.substring(1, keyOption.key.length - 1)); // strip the / from start and end
+            this._regexOptions.push(keyOption);
+        }
+        else
+            this._keyOptions[keyOption.key.toLowerCase()] = keyOption;
+        // remove whitespace and enforce lowercase
+        var whitespace = new RegExp("\\s", "g");
+        keyOption.preventDown = (keyOption.preventDown || "none").replace(whitespace, "").toLowerCase();
+        keyOption.preventUp = (keyOption.preventUp || "none").replace(whitespace, "").toLowerCase();
+        keyOption.stopDown = (keyOption.stopDown || "none").replace(whitespace, "").toLowerCase();
+        keyOption.stopUp = (keyOption.stopUp || "none").replace(whitespace, "").toLowerCase();
+    }
+
+    updatekey(updatedOption) {        
+        var option = this._keyOptions[updatedOption.key.toLowerCase()];
+        option || this.logger('[MudBlazor | KeyInterceptor] updating option failed: key not registered');
+        this.setKeyOption(updatedOption);
+        this.logger('[MudBlazor | KeyInterceptor] updated option ', { option, updatedOption });
     }
 
     disconnect() {
@@ -223,7 +249,7 @@ class MudKeyInterceptor {
             Repeat: args.repeat,
             CtrlKey: args.ctrlKey,
             ShiftKey: args.shiftKey,
-            AltKey: args.shiftKey,
+            AltKey: args.altKey,
             MetaKey: args.metaKey
         };
     }

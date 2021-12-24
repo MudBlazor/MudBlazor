@@ -1,5 +1,9 @@
 ﻿a {
     text-decoration: none;
+
+    &:focus-visible{
+        outline:none;
+    }
 }
 
 label {
