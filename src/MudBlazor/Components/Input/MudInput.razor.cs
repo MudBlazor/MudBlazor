@@ -10,7 +10,7 @@ namespace MudBlazor
     public partial class MudInput<T> : MudBaseInput<T>
     {
         protected string Classname => MudInputCssHelper.GetClassname(this,
-            () => !string.IsNullOrEmpty(Text) || Adornment == Adornment.Start || !string.IsNullOrWhiteSpace(Placeholder));
+            () => HasNativeHtmlPlaceholder() || !string.IsNullOrEmpty(Text) || Adornment == Adornment.Start || !string.IsNullOrWhiteSpace(Placeholder));
 
         protected string InputClassname => MudInputCssHelper.GetInputClassname(this);
 
@@ -204,6 +204,19 @@ namespace MudBlazor
         {
             _internalText = text;
             return SetTextAsync(text);
+        }
+
+
+        // Certain HTML5 inputs (dates and color) have a native placeholder
+        private bool HasNativeHtmlPlaceholder()
+        {
+            var inputType = GetInputType();
+            return inputType == InputType.Color ||
+                   inputType == InputType.Date ||
+                   inputType == InputType.DateTimeLocal ||
+                   inputType == InputType.Month ||
+                   inputType == InputType.Time ||
+                   inputType == InputType.Week;
         }
     }
 
