@@ -214,16 +214,16 @@ namespace MudBlazor
         /// Gets or Sets the Template for Bullets
         /// </summary>
         [Category(CategoryTypes.Carousel.Appearance)]
-        [Parameter] public RenderFragment<bool> BulletsTemplate { get; set; }
+        [Parameter] public RenderFragment<bool> BulletTemplate { get; set; }
 
         /// <summary>
         /// Gets or Sets the Template for Delimiters.
         /// Deprecated, use BulletsTemplate instead.
         /// </summary>
         [Category(CategoryTypes.Carousel.Appearance)]
-        [Obsolete($"Use {nameof(BulletsTemplate)} instead", false)]
+        [Obsolete($"Use {nameof(BulletTemplate)} instead", false)]
         [ExcludeFromCodeCoverage]
-        [Parameter] public RenderFragment<bool> DelimiterTemplate { get => BulletsTemplate; set => BulletsTemplate = value; }
+        [Parameter] public RenderFragment<bool> DelimiterTemplate { get => BulletTemplate; set => BulletTemplate = value; }
 
 
         /// <summary>
