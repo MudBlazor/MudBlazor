@@ -107,7 +107,7 @@ namespace MudBlazor
         public bool Inline { get; set; } = true;
 
         /// <summary>
-        /// Returns the visible state of the Tooltip
+        /// The visible state of the Tooltip.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
