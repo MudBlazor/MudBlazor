@@ -130,8 +130,8 @@ namespace MudBlazor
         [Category(CategoryTypes.FormComponent.Behavior)]
         public EventCallback<bool> IsVisibleChanged { get; set; }
 
-        private void HandleMouseOver() { _isVisible = true; IsVisibleChanged.InvokeAsync(true).AndForget(); }
-        private void HandleMouseOut() { _isVisible = false; IsVisibleChanged.InvokeAsync(false).AndForget(); }
+        private void HandleMouseOver() { IsVisible = true;}
+        private void HandleMouseOut() { IsVisible = false;}
 
         private Origin ConvertPlacement()
         {
