@@ -49,14 +49,14 @@
                         @for (int i = 0; i < Items.Count; i++)
                         {
                             int current = i;
-                            if (BulletsTemplate == null)
+                            if (BulletTemplate == null)
                             {
                                 <MudIconButton tabindex="@(i+3)" aria-label="@(i+1)" Class="@BulletsButtonsClassName" Style="z-index:3;opacity:0.75" Icon="@(current == SelectedIndex ? CheckedIcon : UncheckedIcon)" OnClick="(() => MoveTo(current))" Color="Color.Inherit" />
                             }
                             else
                             {
                                 <div @onclick="() => MoveTo(current)" class="@BulletsButtonsClassName" style="z-index:3">
-                                    @BulletsTemplate(current == SelectedIndex)
+                                    @BulletTemplate(current == SelectedIndex)
                                 </div>
                             }
                         }
