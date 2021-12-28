@@ -6,11 +6,24 @@
     </MudItem>
 
     <MudItem xs="12" sm="4">
-        <MudTextField T="DateTime" Label="Date"  InputType="InputType.Date"/>
+        <MudTextField T="DateTime?" Format="yyyy-MM-dd" Label="Date"  InputType="InputType.Date"/>
     </MudItem>
 
     <MudItem xs="12" sm="4">
-        <MudTextField T="DateTime" Label="DateTimeLocal" InputType="InputType.DateTimeLocal"/>
+        <MudTextField T="DateTime?" Format="s" Label="DateTimeLocal" InputType="InputType.DateTimeLocal"/>
     </MudItem>
+ 
+    <MudItem xs="12" sm="4">
+        <MudTextField T="string" Label="Month" InputType="InputType.Month"/>
+    </MudItem> 
 
+    <MudItem xs="12" sm="4">
+        <MudTextField T="string" Label="Time" InputType="InputType.Time"/>
+    </MudItem>
+ 
+    <MudItem xs="12" sm="4">
+        <MudTextField T="string" Label="Week" InputType="InputType.Week"/>
+    </MudItem>
+ 
 </MudGrid>
+
