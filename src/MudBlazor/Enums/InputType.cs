@@ -31,9 +31,7 @@ namespace MudBlazor
         [Description("time")]
         Time,
         [Description("week")]
-        Week,
-        [Description("tel")]
-        Tel
+        Week
 
 
     }
