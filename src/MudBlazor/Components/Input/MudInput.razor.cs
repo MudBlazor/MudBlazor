@@ -210,13 +210,8 @@ namespace MudBlazor
         // Certain HTML5 inputs (dates and color) have a native placeholder
         private bool HasNativeHtmlPlaceholder()
         {
-            var inputType = GetInputType();
-            return inputType == InputType.Color ||
-                   inputType == InputType.Date ||
-                   inputType == InputType.DateTimeLocal ||
-                   inputType == InputType.Month ||
-                   inputType == InputType.Time ||
-                   inputType == InputType.Week;
+            return GetInputType() is InputType.Color or InputType.Date or InputType.DateTimeLocal or InputType.Month
+                or InputType.Time or InputType.Week;
         }
     }
 
