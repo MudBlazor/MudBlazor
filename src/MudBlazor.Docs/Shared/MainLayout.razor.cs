@@ -45,22 +45,6 @@ namespace MudBlazor.Docs.Shared
                 _userPreferences = new UserPreferences();
             }
         }
-        
-        private void SwitchToServer()
-        {
-            NavigationManager.NavigateTo(NavigationManager.Uri.Replace("wasm/", string.Empty), forceLoad: true);
-        }
 
-        private void SwitchToWasm()
-        {
-            NavigationManager.NavigateTo(NavigationManager.Uri.Replace(
-                NavigationManager.BaseUri,
-                NavigationManager.BaseUri + "wasm/" + NavigationManager.ToBaseRelativePath(NavigationManager.BaseUri))
-                , forceLoad: true);
-        }
-
-        private bool Wasm => NavigationManager.Uri.Contains("wasm");
-
-        
     }
 }

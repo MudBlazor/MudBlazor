@@ -19,6 +19,20 @@ namespace MudBlazor
         [Description("tel")]
         Telephone,
         [Description("url")]
-        Url
+        Url,
+        [Description("color")]
+        Color,
+        [Description("date")]
+        Date,
+        [Description("datetime-local")]
+        DateTimeLocal,
+        [Description("month")]
+        Month,
+        [Description("time")]
+        Time,
+        [Description("week")]
+        Week
+
+
     }
 }
