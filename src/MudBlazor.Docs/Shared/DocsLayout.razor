@@ -16,10 +16,10 @@
         <MudButton Color="Color.Inherit" Variant="Variant.Text" Class="mx-1 px-3">Ecosystem</MudButton>
         <MudSpacer/>
         <MudAutocomplete AutoFocus="true" @ref="_searchAutocomplete" T="ApiLinkServiceEntry" Placeholder="Search" SearchFunc="Search" Variant="Variant.Outlined" ValueChanged="OnSearchResult" Class="docs-search-bar mx-4" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search">
-                    <ItemTemplate Context="result">
-                        <MudText>@result.Title</MudText> <MudText Typo="Typo.body2">@result.SubTitle</MudText>
-                    </ItemTemplate>
-                </MudAutocomplete>
+            <ItemTemplate Context="result">
+                <MudText>@result.Title</MudText> <MudText Typo="Typo.body2">@result.SubTitle</MudText>
+            </ItemTemplate>
+        </MudAutocomplete>
         <MudDivider FlexItem="true" Vertical="true" DividerType="DividerType.Middle" Class="mx-4 my-4"/>
         <MudBadge Color="Color.Secondary" Dot="true" Overlap="true">
             <MudMenu Icon="@Icons.Outlined.Notifications" Color="Color.Inherit" AnchorOrigin="Origin.BottomLeft" TransformOrigin="Origin.TopCenter">
@@ -38,4 +38,5 @@
         <MudFab Icon="@Icons.Material.Filled.KeyboardArrowUp" Color="Color.Primary"/>
     </MudScrollToTop>
 </MudLayout>
+
   

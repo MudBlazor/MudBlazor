@@ -155,8 +155,9 @@
 
 
 .docs-content-api {
-  padding: 0;
-  width: 100%;
+  .docs-section-content-inner{
+    padding: 0 !important;
+  }
 }
 
 @media(min-width: 600px) {
