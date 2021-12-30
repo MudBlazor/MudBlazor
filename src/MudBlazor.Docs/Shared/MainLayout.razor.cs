@@ -50,6 +50,7 @@ namespace MudBlazor.Docs.Shared
             _isDarkMode = !_isDarkMode;
             _userPreferences.DarkTheme = _isDarkMode;
             await UserPreferencesService.SaveUserPreferences(_userPreferences);
+            StateHasChanged();
         }
         
         internal async Task RightToLeft()
@@ -57,6 +58,7 @@ namespace MudBlazor.Docs.Shared
             _rightToLeft = !_rightToLeft;
             _userPreferences.RightToLeft = _rightToLeft;
             await UserPreferencesService.SaveUserPreferences(_userPreferences);
+            StateHasChanged();
         }
         
         internal void SetBaseTheme(MudTheme theme)
