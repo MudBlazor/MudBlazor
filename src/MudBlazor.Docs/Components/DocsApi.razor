@@ -17,12 +17,12 @@
         {
             <DocsPageSection>
                 <SectionHeader Title="Properties" />
-                <SectionContent Class="docs-content-api">
+                <SectionContent Class="docs-content-api" Outlined="false">
                     <div style="float: right; margin-top: -10px; display: flex; flex-flow: row wrap; gap: 7px; align-items: center; white-space: nowrap;">
                         <MudText>Group by:</MudText>
                         <EnumSwitch T="Grouping" @bind-Value="@_propertiesGrouping" Color="Color.Primary" />
                     </div>
-                    <MudTable Items="@Properties" Elevation="0" Class="mx-0" Breakpoint="@Breakpoint.Sm" GroupBy="@PropertiesGroupDefinition">
+                    <MudTable Items="@Properties" Elevation="0" Class="ma-0 mud-width-full" Breakpoint="@Breakpoint.Sm" GroupBy="@PropertiesGroupDefinition">
                         <HeaderContent>
                             <MudTh>Name</MudTh>
                             <MudTh>Type</MudTh>
@@ -84,8 +84,8 @@
         {
             <DocsPageSection>
                 <SectionHeader Title="EventCallbacks" />
-                <SectionContent Class="docs-content-api">
-                    <MudTable Items="@EventCallbacks" Elevation="0" Class="mx-0" Breakpoint="@Breakpoint.Sm">
+                <SectionContent Class="docs-content-api" Outlined="false">
+                    <MudTable Items="@EventCallbacks" Elevation="0" Class="ma-0 mud-width-full" Breakpoint="@Breakpoint.Sm">
                         <HeaderContent>
                             <MudTh>Name</MudTh>
                             <MudTh>Type</MudTh>
@@ -105,8 +105,8 @@
         {
             <DocsPageSection>
                 <SectionHeader Title="Methods" />
-                <SectionContent Class="docs-content-api">
-                    <MudTable Items="@Methods" Elevation="0" Class="mx-0" Breakpoint="@Breakpoint.Sm">
+                <SectionContent Class="docs-content-api" Outlined="false">
+                    <MudTable Items="@Methods" Elevation="0" Class="ma-0 mud-width-full" Breakpoint="@Breakpoint.Sm">
                         <HeaderContent>
                             <MudTh>Name</MudTh>
                             <MudTd>Parameters</MudTd>

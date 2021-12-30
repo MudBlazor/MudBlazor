@@ -71,14 +71,17 @@ namespace MudBlazor.Docs.Components
             _previous = DocsService.Previous;
             _next = DocsService.Next;
             _section = DocsService.Section;
-
-            if (NavigationManager.Uri.ToString().Contains("/api/") ||
+            
+            /*for after this release is done*/
+            _displayView = false;
+            _componentName = "temp";
+            /*if (NavigationManager.Uri.ToString().Contains("/api/") ||
                 NavigationManager.Uri.ToString().Contains("/components/"))
             {
                 _componentName = NavigationManager.Uri.ToString().Split('/', StringSplitOptions.RemoveEmptyEntries)
                     .LastOrDefault();
                 _displayView = true;
-            }
+            }*/
         }
 
         protected override void OnAfterRender(bool firstRender)

@@ -12,6 +12,10 @@
             <NavigationFooter Section=_section Previous="@_previous" Next="@_next" />
         </div>
     </MudContainer>
+    <MudDivider />
+    <MudContainer>
+        <DocsFooter />
+    </MudContainer>
     <MudDrawer Class="docs-page-content-navigation-drawer" @bind-Open="_contentDrawerOpen" Breakpoint="Breakpoint.Lg" Anchor="Anchor.End" ClipMode="DrawerClipMode.Always" Elevation="0" Color="Color.Transparent">
         @if (_displayView)
         {
@@ -24,5 +28,11 @@
             </div>
         }
         <MudPageContentNavigation SectionClassSelector="docs-section-header" @ref="_contentNavigation" ActivateFirstSectionAsDefault="true"/>
+        <MudPaper Elevation="0" Class="docs-gray-bg pa-4 ma-4 mt-8">
+            <MudText Typo="Typo.body1" Align="Align.Center" Color="Color.Primary" GutterBottom="true" Style="font-weight: 500;">Developer Survey 2022</MudText>
+            <MudText Typo="Typo.body2" Align="Align.Center">
+                Influence the roadmap for MudBlazor and be part of the future! <MudLink Typo="Typo.body2" Href="https://v7sdw9q9qoe.typeform.com/to/D19AoutC" Target="_blank">Take the survey</MudLink>
+            </MudText>
+        </MudPaper>
     </MudDrawer>
 </MudMainContent>

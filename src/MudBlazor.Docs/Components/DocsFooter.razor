@@ -1,0 +1,65 @@
+@namespace MudBlazor.Docs.Components
+
+<MudGrid>
+    <MudItem xs="6" sm="3">
+        <MudBlazorLogo Style="width:40px;"/>
+        <div class="d-flex flex-column mt-4">
+            <div class="d-flex align-center my-2">
+                <MudIcon Icon="@Icons.Custom.Brands.MudBlazor" Size="Size.Small" Color="Color.Inherit" Class="mr-2" />
+                <MudText Typo="Typo.body1">MudBlazor</MudText>
+            </div>
+            <div class="d-flex align-center my-2">
+                <MudIcon Icon="@Icons.Rounded.MapsHomeWork" Size="Size.Small" Color="Color.Inherit" Class="mr-2" />
+                <MudText Typo="Typo.body1">Gardnet AB</MudText>
+            </div>
+            <div class="d-flex align-center my-2">
+                <MudIcon Icon="@Icons.Rounded.NearMe" Size="Size.Small" Color="Color.Inherit" Class="mr-2" />
+                <MudText Typo="Typo.body1">Sweden</MudText>
+            </div>
+        </div>
+        <div class="d-flex mt-4">
+            <MudIconButton Link="https://twitter.com/MudBlazor" Taget="_blank" Edge="Edge.Start" Class="mr-2" Color="Color.Inherit" Icon="@Icons.Custom.Brands.Twitter" aria-label="twitter"/>
+            <MudIconButton Link="https://discord.gg/mudblazor" Taget="_blank" Edge="Edge.Start" Class="mr-2" Color="Color.Inherit" Icon="@Icons.Custom.Brands.Discord" aria-label="discord"/>
+            <MudIconButton Link="https://github.com/MudBlazor/MudBlazor" Taget="_blank" Edge="Edge.Start" Class="mr-2" Color="Color.Inherit" Icon="@Icons.Custom.Brands.GitHub" aria-label="github"/>
+            <MudIconButton Link="https://stackoverflow.com/tags/mudblazor" Taget="_blank" Edge="Edge.Start" Class="mr-2" Color="Color.Inherit" Icon="@Icons.Custom.Brands.StackOverflow" aria-label="stack overflow"/>
+        </div>
+    </MudItem>
+    <MudItem xs="6" sm="3" Class="d-flex flex-column">
+        <MudText Typo="Typo.subtitle2" Class="mb-3">Community</MudText>
+        <MudLink Typo="Typo.body1" Color="Color.Inherit" Underline="Underline.None">Getting Help</MudLink>
+        <MudLink Typo="Typo.body1" Color="Color.Inherit" Underline="Underline.None">Reporting Bugs</MudLink>
+        <MudLink Typo="Typo.body1" Color="Color.Inherit" Underline="Underline.None">Contribute</MudLink>
+    </MudItem>
+    <MudItem xs="6" sm="3" Class="d-flex flex-column">
+        <MudText Typo="Typo.subtitle2" Class="mb-3">Project</MudText>
+        <MudLink Typo="Typo.body1" Color="Color.Inherit" Underline="Underline.None">Announcements</MudLink>
+        <MudLink Typo="Typo.body1" Color="Color.Inherit" Underline="Underline.None">How it started</MudLink>
+        <MudLink Typo="Typo.body1" Color="Color.Inherit" Underline="Underline.None">Releases</MudLink>
+        <MudLink Typo="Typo.body1" Color="Color.Inherit" Underline="Underline.None">Roadmap</MudLink>
+        <MudLink Typo="Typo.body1" Color="Color.Inherit" Underline="Underline.None">Sponsors and Backers</MudLink>
+        <MudLink Typo="Typo.body1" Color="Color.Inherit" Underline="Underline.None">Team and Contributors</MudLink>
+    </MudItem>
+    <MudItem xs="6" sm="3" Class="d-flex flex-column">
+        <MudText Typo="Typo.subtitle2" Class="mb-3">Products</MudText>
+        <MudLink Href="https://mudblazor.com/" Typo="Typo.body1" Color="Color.Inherit" Underline="Underline.None">MudBlazor</MudLink>
+        <MudLink Href="https://try.mudblazor.com/" Typo="Typo.body1" Color="Color.Inherit" Underline="Underline.None">TryMudBlazor</MudLink>
+        <MudLink Href="https://github.com/MudBlazor/ThemeManager" Typo="Typo.body1" Color="Color.Inherit" Underline="Underline.None">ThemeManager</MudLink>
+        <MudLink Href="https://github.com/MudBlazor/Templates" Typo="Typo.body1" Color="Color.Inherit" Underline="Underline.None">Templates</MudLink>
+    </MudItem>
+    <MudItem xs="12">
+        <MudToolBar DisableGutters="true" Dense="true">
+            <MudText Typo="Typo.body1">@MudBlazorVersion Copyright © 2022 MudBlazor.</MudText>
+        </MudToolBar>
+    </MudItem>
+</MudGrid>
+
+@code {
+    string MudBlazorVersion
+    {
+        get
+        {
+            var v = typeof(MudText).Assembly.GetName().Version;
+            return $"v{v.Major}.{v.Minor}.{v.Build}.";
+        }
+    }
+}
