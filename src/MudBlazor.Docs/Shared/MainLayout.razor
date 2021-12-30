@@ -1,10 +1,12 @@
-@using MudBlazor.Docs.Services
 @inherits LayoutComponentBase
 
 <PageTitle>MudBlazor - Blazor Component Library</PageTitle>
 
 <MudRTLProvider RightToLeft="@_rightToLeft">
-    <MudDialogProvider FullWidth="true" MaxWidth="MaxWidth.ExtraSmall" />
-    <MudSnackbarProvider />
-    @Body
+    <MudThemeProvider @ref="@_mudThemeProvider" Theme="@_currentTheme" @bind-IsDarkMode="@_isDarkMode"/>
+    <MudDialogProvider FullWidth="true" MaxWidth="MaxWidth.ExtraSmall"/>
+    <MudSnackbarProvider/>
+    <CascadingValue Value="this">
+        @Body
+    </CascadingValue>
 </MudRTLProvider>

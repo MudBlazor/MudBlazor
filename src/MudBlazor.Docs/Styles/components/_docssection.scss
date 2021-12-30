@@ -85,7 +85,7 @@
     }
 
     &.darken {
-      background-color: var(--mud-palette-grey-light);
+      background: linear-gradient(0deg, var(--mud-palette-grey-lighter) 0%, var(--mud-palette-background-grey) 50%);
     }
 
     &.outlined {
@@ -115,7 +115,7 @@
     position: relative;
     overflow: hidden;
     border-radius: 8px;
-    background-color: var(--mud-palette-grey-lighter);
+    background-color: var(--mud-palette-background-grey);
     transition: border-radius 250ms cubic-bezier(.4, 0, .2, 1);
 
     .copy-code-button {
@@ -123,7 +123,7 @@
       bottom: 4px;
       right: 4px;
       color: rgba(5, 0, 51, 0.0);
-      background-color: var(--mud-palette-grey-lighter);
+      background-color: var(--mud-palette-background-grey);
       transition: color 250ms cubic-bezier(.4, 0, .2, 1) 0ms;
     }
 

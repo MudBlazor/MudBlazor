@@ -11,19 +11,14 @@ namespace MudBlazor.Docs.Shared
 {
     public partial class MainLayout : LayoutComponentBase
     {
-        private bool _rightToLeft;
-        private UserPreferences _userPreferences;
-        
-        [Inject] private NavigationManager NavigationManager { get; set; }
         [Inject] private IUserPreferencesService UserPreferencesService { get; set; }
-
-        private async Task RightToLeftToggle()
-        {
-            _rightToLeft = !_rightToLeft;
-            _userPreferences.RightToLeft = _rightToLeft;
-            await UserPreferencesService.SaveUserPreferences(_userPreferences);
-        }
-
+        
+        internal bool _rightToLeft;
+        internal bool _isDarkMode;
+        private UserPreferences _userPreferences;
+        private MudThemeProvider _mudThemeProvider;
+        private MudTheme _currentTheme;
+        
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
             if (firstRender)
@@ -37,14 +32,37 @@ namespace MudBlazor.Docs.Shared
             _userPreferences = await UserPreferencesService.LoadUserPreferences();
             if (_userPreferences != null)
             {
+                _isDarkMode = _userPreferences.DarkTheme;
                 _rightToLeft = _userPreferences.RightToLeft;
                 StateHasChanged();
             }
             else
             {
-                _userPreferences = new UserPreferences();
+                _isDarkMode = await _mudThemeProvider.GetSystemPreference();
+                StateHasChanged();
+                _userPreferences = new UserPreferences {DarkTheme = _isDarkMode};
+                await UserPreferencesService.SaveUserPreferences(_userPreferences);
             }
         }
-
+        
+        internal async Task DarkMode()
+        {
+            _isDarkMode = !_isDarkMode;
+            _userPreferences.DarkTheme = _isDarkMode;
+            await UserPreferencesService.SaveUserPreferences(_userPreferences);
+        }
+        
+        internal async Task RightToLeft()
+        {
+            _rightToLeft = !_rightToLeft;
+            _userPreferences.RightToLeft = _rightToLeft;
+            await UserPreferencesService.SaveUserPreferences(_userPreferences);
+        }
+        
+        internal void SetBaseTheme(MudTheme theme)
+        {
+            _currentTheme = theme;
+            StateHasChanged();
+        }
     }
 }

@@ -35,3 +35,12 @@
   font-size: 24px;
   user-select: none;
 }
+
+.docs-footer{
+  .mud-link {
+    margin: 8px 0;
+    cursor: pointer;
+    transition: color 200ms cubic-bezier(.4, 0, .2, 1) 0ms;
+  }
+}
+

@@ -47,7 +47,7 @@ namespace MudBlazor.Docs
             AppbarText = "#424242",
             AppbarBackground = "rgba(255,255,255,0.8)",
             GrayLight = "#e8e8e8",
-            GrayLighter = "#f5f5f5"
+            GrayLighter = "#f9f9f9"
         };
 
         private static readonly Palette DocsDarkPalette  = new()

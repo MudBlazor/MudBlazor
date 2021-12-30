@@ -1,6 +1,4 @@
 ﻿
-
-
 <MudMainContent Class="mudblazor-main-content">
     <MudContainer MaxWidth="@MaxWidth">
         <div id="docspage" class="docs-page">
@@ -12,9 +10,12 @@
             <NavigationFooter Section=_section Previous="@_previous" Next="@_next" />
         </div>
     </MudContainer>
-    <MudContainer MaxWidth="@MaxWidth" Class="mt-16">
-        <DocsFooter />
-    </MudContainer>
+    @if (DisplayFooter)
+    {
+        <MudContainer MaxWidth="@MaxWidth" Class="mt-16">
+            <Footer />
+        </MudContainer>
+    }
     <MudDrawer Class="docs-page-content-navigation-drawer" @bind-Open="_contentDrawerOpen" Breakpoint="Breakpoint.Lg" Anchor="Anchor.End" ClipMode="DrawerClipMode.Always" Elevation="0" Color="Color.Transparent">
         @if (_displayView)
         {

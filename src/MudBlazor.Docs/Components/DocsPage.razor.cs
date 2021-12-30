@@ -16,6 +16,8 @@ namespace MudBlazor.Docs.Components
 {
     public partial class DocsPage : ComponentBase
     {
+        [Parameter] public bool DisplayFooter { get; set; }
+        
         private Queue<DocsSectionLink> _bufferedSections = new();
         private MudPageContentNavigation _contentNavigation;
         private NavigationFooterLink _previous;
