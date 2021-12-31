@@ -1,0 +1,85 @@
+﻿@page "/components/datagrid"
+
+<DocsPage MaxWidth="MaxWidth.Large">
+    <DocsPageHeader Title="DataGrid - Experimental" SubTitle="A sortable, filterable data grid with multiselection and pagination" />
+    <DocsPageContent>
+        <DocsPageSection>
+            <MudAlert Severity="Severity.Warning">
+                <b>Warning experimental component!</b>
+            </MudAlert>
+            <MudAlert Class="mt-4" Severity="Severity.Error">
+                This component is under active development and breaking changes will occur even in minor patch releases.<br/>
+                <b>DO NOT</b> use this component if you are not prepared to update your code and adapt to new changes.<br />
+                The finished component might not have the same name, might not have the features it has now, or look the same.
+            </MudAlert>
+        </DocsPageSection>
+        <DocsPageSection>
+            <SectionHeader Title="Default Data Grid">
+                <Description>
+                    The <CodeInline>&lt;MudDataGrid></CodeInline> is used to display and work with small amounts of data up to very large datasets, easily and efficiently. In it's 
+                    simplest form, the data grid is a just a table, displaying data from a data source.
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" FullWidth="true">
+                <DataGridBasicExample />
+            </SectionContent>
+            <SectionSource Code="DataGridBasicExample" ShowCode="false" GitHubFolderName="DataGrid" />
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Advanced Data Grid">
+                <Description>
+                    In a more advanced scenario, the data grid offers sorting, filtering, pagination and selection. There are two ways to filter the data 
+                    fed into the data grid. A <CodeInline>QuickFilter</CodeInline> function allows filtering the items in the grid globally. Data can also be filtered by specifying 
+                    column filters, enabling a more robust filtration.
+                    <br><br>
+                    In this example, we turn sorting and filtering off for the Nr column using the boolean <CodeInline>Sortable</CodeInline> and <CodeInline>Filterable</CodeInline> properties
+                    as well as hide the column options icon button by setting the <CodeInline>ShowColumnOptions</CodeInline> property to <CodeInline>false</CodeInline>. Additionally, we 
+                    can override the default <CodeInline>SortBy</CodeInline> function for each column, seen in the Name column where we show how you can switch to a sort by the Name's length.
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" FullWidth="true">
+                <DataGridAdvancedExample />
+            </SectionContent>
+            <SectionSource Code="DataGridAdvancedExample" ShowCode="false" GitHubFolderName="DataGrid" />
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Visual Styling">
+                <Description>
+                    The <CodeInline>&lt;MudDataGrid></CodeInline> has many built in properties to change its style and also allows for custom styling as well.
+                    <br><br>
+                    Row level classes and styles can be applied using the <CodeInline>RowClass</CodeInline> and <CodeInline>RowStyle</CodeInline> properties 
+                    respectively. To style rows according to the data of the row, you would use the <CodeInline>RowClassFunc</CodeInline> and <CodeInline>RowStyleFunc</CodeInline>
+                    properties. For even finer grain control, you can style at the header, cell and footer level as well by using the <CodeInline>CellClass</CodeInline>, 
+                    <CodeInline>CellStyle</CodeInline>, <CodeInline>CellClassFunc</CodeInline>, <CodeInline>CellStyleFunc</CodeInline>, etc. properties. However, the header and footer
+                    do not have the Func properties since they are not needed.
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" FullWidth="true">
+                <DataGridVisualStylingExample />
+            </SectionContent>
+            <SectionSource Code="DataGridVisualStylingExample" ShowCode="false" GitHubFolderName="DataGrid" />
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Inline Editing">
+                <Description>
+                    The <CodeInline>&lt;MudDataGrid></CodeInline> allows editing the data passed into it. Setting the <CodeInline>ReadOnly</CodeInline> property
+                    to <CodeInline>false</CodeInline> and the <CodeInline>EditMode</CodeInline> property to <CodeInline>DataGridEditMode.Inline</CodeInline> turns 
+                    on row level editing. To disable editing on a column, set its <CodeInline>IsEditable</CodeInline> property to <CodeInline>false</CodeInline>.
+
+                    By default, the built in editing in the data grid automatically supplies the proper input component for each cell. However, this can be overidden
+                    by supplying an <CodeInline>&lt;EditTemplate></CodeInline>. Inside the template, you have full control over the editing. Take a look at the Position
+                    column below.
+
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" FullWidth="true">
+                <DataGridInlineEditingExample />
+            </SectionContent>
+            <SectionSource Code="DataGridInlineEditingExample" ShowCode="false" GitHubFolderName="DataGrid" />
+        </DocsPageSection>
+
+    </DocsPageContent>
+</DocsPage>

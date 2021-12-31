@@ -38,6 +38,8 @@ namespace MudBlazor.UnitTests.Components
                 ));
             Console.WriteLine(comp.Markup);
 
+            var tooltipComp = comp.FindComponent<MudTooltip>().Instance;
+
             // content should always be visible
             var button = comp.Find("button");
             button.TextContent.Should().Be("My Buttion");
@@ -55,6 +57,9 @@ namespace MudBlazor.UnitTests.Components
             //no content for the popover node
             popoverContentNode.Children.Should().BeEmpty();
 
+            //not visible by default
+            tooltipComp.IsVisible.Should().BeFalse();
+
             //trigger mouseover
 
             await button.ParentElement.TriggerEventAsync("onmouseenter", new MouseEventArgs());
@@ -62,6 +67,8 @@ namespace MudBlazor.UnitTests.Components
             //content should be visible
             popoverContentNode.TextContent.Should().Be("my tooltip content text");
             popoverContentNode.ClassList.Should().Contain("d-flex");
+
+            tooltipComp.IsVisible.Should().BeTrue();
 
             //trigger mouseleave
             if (usingFocusout == false)
@@ -74,6 +81,8 @@ namespace MudBlazor.UnitTests.Components
             }
             //no content should be visible
             popoverContentNode.Children.Should().BeEmpty();
+
+            tooltipComp.IsVisible.Should().BeFalse();
         }
 
         [Test]
@@ -254,6 +263,35 @@ namespace MudBlazor.UnitTests.Components
             var popoverContentNode = comp.Find("#my-tooltip-content").ParentElement;
 
             popoverContentNode.ClassList.Should().Contain(expectedClasses);
+        }
+
+        [Test]
+        [TestCase(true)]
+        [TestCase(false)]        
+        public async Task Visible_ByDefault(bool usingFocusout)
+        {
+            var comp = Context.RenderComponent<TooltipVisiblePropTest>(p =>
+            {
+                p.Add(x => x.TooltipVisible, true);
+            });
+            var tooltipComp = comp.FindComponent<MudTooltip>().Instance;
+
+            comp.Instance.TooltipVisible.Should().BeTrue();
+            tooltipComp.IsVisible.Should().BeTrue(); //tooltip is visible by default in this case
+
+            var button = comp.Find("button");
+
+            if (usingFocusout == false)
+            {
+                await button.ParentElement.TriggerEventAsync("onmouseleave", new MouseEventArgs());
+            }
+            else
+            {
+                button.ParentElement.FocusOut();
+            }
+
+            tooltipComp.IsVisible.Should().BeFalse();
+            comp.Instance.TooltipVisible.Should().BeFalse();
         }
     }
 }

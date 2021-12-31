@@ -2,10 +2,8 @@
 @page "/project/versions"
 
 <DocsPage MaxWidth="MaxWidth.Large">
-    <MudContainer>
-        <MudText Typo="Typo.h3" GutterBottom="true">Versions</MudText>
-    </MudContainer>
-    <MudContainer>
+    <DocsPageHeader Title="Versions" />
+    <DocsPageContent>
         <MudText Typo="Typo.h4" GutterBottom="true">Strategy</MudText>
 
         <MudText GutterBottom="true">MudBlazor versions follow <MudLink Href="https://semver.org/spec/v2.0.0.html" Color="Color.Secondary">Semantic Versioning 2.0.0</MudLink> and have three parts for our non-prereleases: <CodeInline>major.minor.patch</CodeInline> where the numbers are incremented based on what changes are in that release.</MudText>
@@ -26,8 +24,6 @@
                 </MudText>
             </li>
         </ul>
-    </MudContainer>
-    <MudContainer>
         <MudText Typo="Typo.h4" GutterBottom="true">
             Released versions
         </MudText>
@@ -421,8 +417,6 @@
                 </tr>
             </tbody>
         </MudSimpleTable>
-    </MudContainer>
-    <MudContainer>
         <MudText Typo="Typo.h4" GutterBottom="true">Development</MudText>
         <MudText Class="my-4">Here you can download the source code. Documentation and code might be missing or wrong.</MudText>
         <MudSimpleTable Elevation="0">
@@ -439,6 +433,6 @@
                 </tr>
             </tbody>
         </MudSimpleTable>
-    </MudContainer>
+    </DocsPageContent>
 </DocsPage>
 <Footer />

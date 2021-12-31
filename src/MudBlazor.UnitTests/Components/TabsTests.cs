@@ -996,20 +996,17 @@ namespace MudBlazor.UnitTests.Components
         {
             Context.Services.Add(new ServiceDescriptor(typeof(IResizeObserver), new MockResizeObserver()));
 
+            var comp = Context.RenderComponent<ToggleTabsSlideAnimationTest>();
+
             //Toggle DisableSliderAnimation to true
             //Check if style attr contains transform: none
-            var comp = Context.RenderComponent<ToggleTabsSlideAnimationTest>();
             comp.Instance.toggle = true;
-            var slider = comp.Find(".mud-tab-slider");
-            var styleAttr = slider.GetAttribute("style");
-            styleAttr.Contains("transition:none").Should().BeTrue();
+            comp.Find(".mud-tab-slider").GetAttribute("style").Contains("transition:none").Should().BeTrue();
 
             //Toggle DisableSliderAnimation to false
             //Check if style attr does not contain transform: none
             comp.Instance.toggle = false;
-            slider = comp.Find(".mud-tab-slider");
-            styleAttr = slider.GetAttribute("style");
-            styleAttr.Contains("transition: none").Should().BeFalse();
+            comp.Find(".mud-tab-slider").GetAttribute("style").Contains("transition: none").Should().BeFalse();
         }
 
         /// <summary>
@@ -1033,6 +1030,30 @@ namespace MudBlazor.UnitTests.Components
 
             //no menu item should be visible anymore
             Assert.Throws<ElementNotFoundException>(() => comp.Find(".my-menu-item-1"));
+        }
+
+        [Test]
+        public async Task PrePanelContent()
+        {
+            Context.Services.Add(new ServiceDescriptor(typeof(IResizeObserver), new MockResizeObserver()));
+
+            var comp = Context.RenderComponent<TabsWithPrePanelContent>(p => p.Add(x => x.SelectedIndex, 0));
+
+            var content =  comp.Find(".pre-panel-content-custom");
+
+            content.TextContent.Should().Be("Selected: Tab One");
+
+            content.PreviousElementSibling.ClassList.Should().Contain("mud-tabs-toolbar");
+            content.NextElementSibling.ClassList.Should().Contain("mud-tabs-panels");
+
+            comp.SetParametersAndRender(p => p.Add(x => x.SelectedIndex, 1));
+
+            content = comp.Find(".pre-panel-content-custom");
+
+            content.TextContent.Should().Be("Selected: Tab Two");
+
+            content.PreviousElementSibling.ClassList.Should().Contain("mud-tabs-toolbar");
+            content.NextElementSibling.ClassList.Should().Contain("mud-tabs-panels");
         }
 
         #region Helper

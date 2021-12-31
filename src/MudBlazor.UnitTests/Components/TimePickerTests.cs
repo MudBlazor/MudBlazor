@@ -4,6 +4,7 @@ using System;
 using System.Threading.Tasks;
 using Bunit;
 using FluentAssertions;
+using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.UnitTests.TestComponents.TimePicker;
 using NUnit.Framework;
 using static Bunit.ComponentParameterFactory;
@@ -67,6 +68,18 @@ namespace MudBlazor.UnitTests.Components
             // count hours
             underlyingPicker.Instance.AmPm.Should().Be(true);
             comp.FindAll("div.mud-hour").Count.Should().Be(12);
+        }
+
+        [Test]
+        public void SelectTime_UsingClicks_24HourMode_Midnight_CheckTime()
+        {
+            var comp = OpenPicker();
+            var underlyingPicker = comp.FindComponent<MudTimePicker>().Instance;
+
+            // select 00 hours
+            comp.FindAll("div.mud-picker-stick-outer.mud-hour")[11].Click();
+            underlyingPicker.TimeIntermediate.Value.Hours.Should().Be(0);
+            underlyingPicker.TimeIntermediate.Value.Days.Should().Be(0);
         }
 
         [Test]
@@ -248,6 +261,47 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("div.mud-time-picker-minute.mud-time-picker-dial-hidden").Count.Should().Be(1);
         }
 
+        /// <summary>
+        /// Tests if picker works correctly with TimeEditMode.OnlyHours
+        /// </summary>
+        [Test]
+        public void TimeEditModeHours_CheckSelection()
+        {
+            var comp = Context.RenderComponent<SimpleTimePickerTest>((Parameter("TimeEditMode", TimeEditMode.OnlyHours)));
+            var underlyingPicker = comp.FindComponent<MudTimePicker>().Instance;
+            
+            // click to to open picker
+            comp.Find("input").Click();
+            
+            // should be open
+            comp.WaitForAssertion(() => comp.FindAll("div.mud-picker-open").Count.Should().Be(1));
+            
+            // click on 13 hour
+            comp.FindAll("div.mud-picker-stick-outer.mud-hour")[0].Click();
+            
+            // should be closed
+            comp.WaitForAssertion(() => comp.FindAll("div.mud-picker-open").Count.Should().Be(0));
+
+            // should be 13 hours            
+            underlyingPicker.TimeIntermediate.Value.Hours.Should().Be(13);
+
+            // click to to open picker
+            comp.Find("input").Click();
+            
+            // should be open
+            comp.WaitForAssertion(() => comp.FindAll("div.mud-picker-open").Count.Should().Be(1));
+
+            //click on 14 hour
+            comp.FindAll("div.mud-picker-stick-outer.mud-hour")[1].Click();
+
+            // should be closed
+            comp.WaitForAssertion(() => comp.FindAll("div.mud-picker-open").Count.Should().Be(0));
+
+            // should be 14 hours
+            underlyingPicker.TimeIntermediate.Value.Hours.Should().Be(14);
+
+        }
+        
         [Test]
         public void ChangeToMinutes_FromHours_CheckHoursHidden()
         {
@@ -633,6 +687,92 @@ namespace MudBlazor.UnitTests.Components
 
             // Check that the time have not been changed
             picker.Time.Should().Be(new TimeSpan(16, 30, 00));
+        }
+
+        [Test]
+        public async Task TimePickerTest_KeyboardNavigation()
+        {
+            var comp = Context.RenderComponent<SimpleTimePickerTest>();
+
+            Console.WriteLine(comp.Markup);
+            var timePicker = comp.FindComponent<MudTimePicker>().Instance;
+            var overlay = comp.FindComponent<MudOverlay>();
+
+            await comp.InvokeAsync(() => comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = "Enter", Type = "keydown", }));
+            comp.WaitForAssertion(() => comp.FindAll("div.mud-picker-open").Count.Should().Be(1));
+
+            await comp.InvokeAsync(() => comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = "Escape", Type = "keydown", }));
+            comp.WaitForAssertion(() => comp.FindAll("div.mud-picker-open").Count.Should().Be(0));
+
+            await comp.InvokeAsync(() => comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = " ", Type = "keydown", }));
+            comp.WaitForAssertion(() => comp.FindAll("div.mud-picker-open").Count.Should().Be(1));
+
+            await comp.InvokeAsync(() => comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = "ArrowUp", AltKey = true, Type = "keydown", }));
+            comp.WaitForAssertion(() => comp.FindAll("div.mud-picker-open").Count.Should().Be(0));
+
+            comp.SetParam("Time", new TimeSpan(02, 00, 00));
+            comp.WaitForAssertion(() => comp.Instance.Time.Should().Be(new TimeSpan(02, 00, 00)));
+
+            await comp.InvokeAsync(() => timePicker.HandleKeyDown(new KeyboardEventArgs() { Key = "ArrowUp", Type = "keydown", }));
+            await comp.InvokeAsync(() => timePicker.HandleKeyDown(new KeyboardEventArgs() { Key = "ArrowDown", Type = "keydown", }));
+            comp.WaitForAssertion(() => timePicker.TimeIntermediate.Should().Be(new TimeSpan(01, 00, 00)));
+
+            await comp.InvokeAsync(() => timePicker.HandleKeyDown(new KeyboardEventArgs() { Key = "ArrowUp", Type = "keydown", }));
+            comp.WaitForAssertion(() => timePicker.TimeIntermediate.Should().Be(new TimeSpan(02, 00, 00)));
+
+            await comp.InvokeAsync(() => timePicker.HandleKeyDown(new KeyboardEventArgs() { Key = "ArrowLeft", Type = "keydown", }));
+            comp.WaitForAssertion(() => timePicker.TimeIntermediate.Should().Be(new TimeSpan(01, 59, 00)));
+            //Enter keys submit, so time should only change with enter
+            comp.WaitForAssertion(() => timePicker.Time.Should().Be(new TimeSpan(02, 00, 00)));
+            await comp.InvokeAsync(() => timePicker.HandleKeyDown(new KeyboardEventArgs() { Key = "Enter", Type = "keydown", }));
+            comp.WaitForAssertion(() => timePicker.Time.Should().Be(new TimeSpan(01, 59, 00)));
+            //If IsOpen is false, arrowkeys should now change TimeIntermediate
+            await comp.InvokeAsync(() => timePicker.HandleKeyDown(new KeyboardEventArgs() { Key = "ArrowRight", Type = "keydown", }));
+            comp.WaitForAssertion(() => timePicker.TimeIntermediate.Should().Be(new TimeSpan(01, 59, 00)));
+
+            await comp.InvokeAsync(() => timePicker.HandleKeyDown(new KeyboardEventArgs() { Key = " ", Type = "keydown", }));
+            await comp.InvokeAsync(() => timePicker.HandleKeyDown(new KeyboardEventArgs() { Key = "ArrowRight", Type = "keydown", }));
+            comp.WaitForAssertion(() => timePicker.TimeIntermediate.Should().Be(new TimeSpan(02, 00, 00)));
+            //Escape key should turn last submitted time
+            await comp.InvokeAsync(() => timePicker.HandleKeyDown(new KeyboardEventArgs() { Key = "Escape", Type = "keydown", }));
+            comp.WaitForAssertion(() => timePicker.TimeIntermediate.Should().Be(new TimeSpan(01, 59, 00)));
+            comp.WaitForAssertion(() => timePicker.Time.Should().Be(new TimeSpan(01, 59, 00)));
+            //Space key should also submit
+            await comp.InvokeAsync(() => timePicker.HandleKeyDown(new KeyboardEventArgs() { Key = " ", Type = "keydown", }));
+            await comp.InvokeAsync(() => timePicker.HandleKeyDown(new KeyboardEventArgs() { Key = "ArrowRight", Type = "keydown", }));
+            await comp.InvokeAsync(() => timePicker.HandleKeyDown(new KeyboardEventArgs() { Key = " ", Type = "keydown", }));
+            comp.WaitForAssertion(() => timePicker.TimeIntermediate.Should().Be(new TimeSpan(02, 00, 00)));
+            comp.WaitForAssertion(() => timePicker.Time.Should().Be(new TimeSpan(02, 00, 00)));
+
+            await comp.InvokeAsync(() => timePicker.HandleKeyDown(new KeyboardEventArgs() { Key = " ", CtrlKey = true, Type = "keydown", }));
+            await comp.InvokeAsync(() => timePicker.HandleKeyDown(new KeyboardEventArgs() { Key = "ArrowRight", CtrlKey = true, Type = "keydown", }));
+            comp.WaitForAssertion(() => timePicker.TimeIntermediate.Should().Be(new TimeSpan(03, 00, 00)));
+
+            comp.SetParam("Time", new TimeSpan(03, 56, 00));
+            await comp.InvokeAsync(() => timePicker.HandleKeyDown(new KeyboardEventArgs() { Key = "ArrowRight", ShiftKey = true, Type = "keydown", }));
+            comp.WaitForAssertion(() => timePicker.TimeIntermediate.Should().Be(new TimeSpan(04, 01, 00)));
+
+            await comp.InvokeAsync(() => timePicker.HandleKeyDown(new KeyboardEventArgs() { Key = "ArrowLeft", ShiftKey = true, Type = "keydown", }));
+            comp.WaitForAssertion(() => timePicker.TimeIntermediate.Should().Be(new TimeSpan(03, 56, 00)));
+
+            await comp.InvokeAsync(() => timePicker.HandleKeyDown(new KeyboardEventArgs() { Key = "ArrowLeft", CtrlKey = true, Type = "keydown", }));
+            comp.WaitForAssertion(() => timePicker.TimeIntermediate.Should().Be(new TimeSpan(02, 56, 00)));
+
+            await comp.InvokeAsync(() => timePicker.HandleKeyDown(new KeyboardEventArgs() { Key = "ArrowLeft", ShiftKey = true, Type = "keydown", }));
+            comp.WaitForAssertion(() => timePicker.TimeIntermediate.Should().Be(new TimeSpan(02, 51, 00)));
+
+            await comp.InvokeAsync(() => timePicker.HandleKeyDown(new KeyboardEventArgs() { Key = "ArrowRight", ShiftKey = true, Type = "keydown", }));
+            comp.WaitForAssertion(() => timePicker.TimeIntermediate.Should().Be(new TimeSpan(02, 56, 00)));
+
+            await comp.InvokeAsync(() => timePicker.HandleKeyDown(new KeyboardEventArgs() { Key = "Backspace", CtrlKey = true, ShiftKey = true, Type = "keydown", }));
+            comp.WaitForAssertion(() => timePicker.TimeIntermediate.Should().Be(null));
+            comp.WaitForAssertion(() => timePicker.Time.Should().Be(null));
+            //When its disabled, keys should not work
+            timePicker.Disabled = true;
+            timePicker.FocusAsync().AndForget();
+            await comp.InvokeAsync(() => timePicker.HandleKeyDown(new KeyboardEventArgs() { Key = "Escape", Type = "keydown", }));
+            await comp.InvokeAsync(() => timePicker.HandleKeyDown(new KeyboardEventArgs() { Key = "Enter", Type = "keydown", }));
+            comp.WaitForAssertion(() => comp.FindAll("div.mud-picker-open").Count.Should().Be(0));
         }
     }
 }
