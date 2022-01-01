@@ -305,6 +305,8 @@ namespace MudBlazor
             _isFocused = true;
             if (!string.IsNullOrEmpty(Converter.Set(Value)) || string.IsNullOrEmpty(Placeholder))
             {
+                //This delay let click event fires first to set caret position proper (for only first click)
+                await Task.Delay(1);
                 await ImplementMask(null, Mask, true);
                 SetCaretPosition(FindFirstCaretLocation());
             }
