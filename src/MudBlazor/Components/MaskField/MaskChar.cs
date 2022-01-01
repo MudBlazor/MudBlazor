@@ -15,10 +15,9 @@ namespace MudBlazor.Components.MaskField
         public char Char { get; set; }
         public string Regex { get; set; }
         public bool AddToValue { get; set; }
-        public bool Writable { get; set; }
 
-        public static MaskChar Letter(char c) => new MaskChar { Char = c, Regex = @"^\p{L}$", AddToValue = true };
-        public static MaskChar Digit(char c) => new MaskChar { Char = c, Regex = @"^\d$", AddToValue = true };
-        public static MaskChar LetterOrDigit(char c) => new MaskChar { Char = c, Regex = @"^\p{L}|\d$", AddToValue = true };
+        public static MaskChar Letter(char c) => new MaskChar { Char = c, Regex = @"^\p{L}$", AddToValue = false };
+        public static MaskChar Digit(char c) => new MaskChar { Char = c, Regex = @"^\d$", AddToValue = false };
+        public static MaskChar LetterOrDigit(char c) => new MaskChar { Char = c, Regex = @"^\p{L}|\d$", AddToValue = false };
     }
 }

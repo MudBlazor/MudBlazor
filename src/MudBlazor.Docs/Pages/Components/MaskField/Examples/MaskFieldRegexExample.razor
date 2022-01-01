@@ -1,13 +1,14 @@
 ﻿@namespace MudBlazor.Docs.Examples
 @using System.Text.RegularExpressions
+@using MudBlazor.Components.MaskField
 
 
 <MudGrid Class="justify-space-between">
     <MudItem xs="12" sm="6" md="4">
-        <MudMaskField T="string" OnKeyDown="KeyDown" HelperText="Mask: ccc ccc" HelperTextOnFocus="true" Mask="ccc ccc" Label="Only LowerCase" Variant="Variant.Text" />
-		<MudMaskField T="string" OnKeyDown="KeyDown" HelperText="Mask: eee eee" HelperTextOnFocus="true" Mask="eee eee" Label="Only UpperCase" Variant="Variant.Text" />
-		<MudMaskField T="string" OnKeyDown="KeyDown" HelperText="Mask: fff fff" HelperTextOnFocus="true" Mask="fff fff" Label="Only a-fA-F" Variant="Variant.Text" 
-			CustomCharacterTypes="@rgx"/>
+        <MudMaskField T="string" OnKeyDown="KeyDown" HelperText="Mask: lll lll" HelperTextOnFocus="true" Mask="lll lll" Label="Only LowerCase" Variant="Variant.Text" />
+		<MudMaskField T="string" OnKeyDown="KeyDown" HelperText="Mask: uuu uuu" HelperTextOnFocus="true" Mask="uuu uuu" Label="Only UpperCase" Variant="Variant.Text" />
+		<MudMaskField T="string" OnKeyDown="KeyDown" HelperText="Mask: fff fff" HelperTextOnFocus="true" Mask="fff fff" Label="Only a-f A-F" Variant="Variant.Text" 
+			MaskDefinition="@rgx"/>
     </MudItem>
 	<MudItem xs="12" sm="6" md="4">
        <MudText>Pressed Key: <b>@pressedKey</b></MudText>
@@ -16,10 +17,13 @@
 
 @code {
 	private string pressedKey = "";
-	private List<(char, Regex)> rgx = new List<(char, Regex)>()
-	{
-        ('f', new Regex("^[a-fA-F]$")),
-    };
+	private MaskChar[] rgx = new MaskChar[]
+        {
+            MaskChar.Letter('a'),
+            MaskChar.Digit('0'),
+            MaskChar.LetterOrDigit('*'),
+            new MaskChar { Char = 'f', AddToValue = false, Regex = "^[a-fA-F]$" },
+        };
 
 	private void KeyDown(KeyboardEventArgs e)
 	{

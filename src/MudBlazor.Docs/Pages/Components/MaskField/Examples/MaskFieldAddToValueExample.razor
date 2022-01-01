@@ -1,0 +1,36 @@
+﻿@namespace MudBlazor.Docs.Examples
+@using MudBlazor.Components.MaskField
+
+
+<MudGrid Class="justify-space-between">
+    <MudItem xs="12" sm="6" md="4">
+        <MudMaskField @ref="maskField" MaskDefinition="@_maskDefinition" OnKeyDown="KeyDown" HelperText="@mask" HelperTextOnFocus="true" @bind-Value="RawValue" @bind-Text="TextValue" Mask="@mask" Label="Text" Variant="Variant.Text" MaxLength="mask.Length" />
+    </MudItem>
+    <MudItem xs="12" sm="6" md="4">
+        <MudText>Pressed Key: <b>@pressedKey</b></MudText>
+		<MudText>Text: <b>@TextValue</b></MudText>
+		<MudText>Value: <b>@RawValue</b></MudText>
+		@*<MudTextField @bind-Value="@mask" Label="Mask" />*@
+    </MudItem>
+</MudGrid>
+
+@code {
+	MudMaskField<string> maskField;
+	public string TextValue { get; set; }
+	public string RawValue { get; set; }
+	private string pressedKey = "";
+	private string mask = "00:00";
+	private MaskChar[] _maskDefinition = new MaskChar[]
+        {
+            MaskChar.Letter('a'),
+            MaskChar.Digit('0'),
+            MaskChar.LetterOrDigit('*'),
+            new MaskChar { Char = ':', AddToValue = true },
+        };
+
+	private void KeyDown(KeyboardEventArgs e)
+	{
+		pressedKey = e.Key.ToString();
+		RawValue = maskField.GetRawValue();
+	}
+}

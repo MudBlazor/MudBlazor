@@ -324,7 +324,7 @@ namespace MudBlazor.UnitTests.Components
                 MaskChar.Letter('b'),
                 MaskChar.Digit('9'),
                 MaskChar.LetterOrDigit('+'),
-                new MaskChar { Char = 'l', Writable = true, AddToValue = false },
+                new MaskChar { Char = 'l', AddToValue = false },
             });
 
             await comp.InvokeAsync(() => maskField.Instance.Mask = "(bb+) 999-bb");
@@ -650,6 +650,50 @@ namespace MudBlazor.UnitTests.Components
 
             await comp.InvokeAsync(() => maskField.SetCaretPosition(maskField.FindNextCaretLocation(2, true)));
             comp.WaitForAssertion(() => maskField._caretPosition.Should().Be(2));
+        }
+
+        [Test]
+        public async Task MaskFieldTest_AddToValue()
+        {
+            var comp = Context.RenderComponent<MudMaskField<string>>();
+            var maskField = comp.Instance;
+
+            maskField.MaskDefinition = new MaskChar[]
+            {
+                MaskChar.Letter('a'),
+                MaskChar.Digit('0'),
+                MaskChar.LetterOrDigit('*'),
+                new MaskChar { Char = 'l', AddToValue = false, Regex = "^[a-zıöüşçğ]$" },
+                new MaskChar { Char = 'u', AddToValue = false, Regex = "^[A-ZİÖÜŞÇĞ]$" },
+                new MaskChar { Char = ':', AddToValue = true},
+            };
+
+            maskField.Mask = "00:00";
+
+            await comp.InvokeAsync(() => maskField.HandleKeyDown(new KeyboardEventArgs() { Key = "1" }));
+            comp.WaitForAssertion(() => maskField.Text.Should().Be("1_:__"));
+            comp.WaitForAssertion(() => maskField.Value.Should().Be("1:"));
+
+            await comp.InvokeAsync(() => maskField.HandleKeyDown(new KeyboardEventArgs() { Key = "2" }));
+            comp.WaitForAssertion(() => maskField.Text.Should().Be("12:__"));
+            comp.WaitForAssertion(() => maskField.Value.Should().Be("12:"));
+
+            await comp.InvokeAsync(() => maskField.HandleKeyDown(new KeyboardEventArgs() { Key = "3" }));
+            comp.WaitForAssertion(() => maskField.Text.Should().Be("12:3_"));
+            comp.WaitForAssertion(() => maskField.Value.Should().Be("12:3"));
+
+            await comp.InvokeAsync(() => maskField.HandleKeyDown(new KeyboardEventArgs() { Key = "4" }));
+            comp.WaitForAssertion(() => maskField.Text.Should().Be("12:34"));
+            comp.WaitForAssertion(() => maskField.Value.Should().Be("12:34"));
+
+            await comp.InvokeAsync(() => maskField.SetCaretPosition(2));
+            await comp.InvokeAsync(() => maskField.HandleKeyDown(new KeyboardEventArgs() { Key = "Backspace" }));
+            comp.WaitForAssertion(() => maskField.Text.Should().Be("13:4_"));
+            comp.WaitForAssertion(() => maskField.Value.Should().Be("13:4"));
+
+            await comp.InvokeAsync(() => maskField.HandleKeyDown(new KeyboardEventArgs() { Key = "Delete" }));
+            comp.WaitForAssertion(() => maskField.Text.Should().Be("14:__"));
+            comp.WaitForAssertion(() => maskField.Value.Should().Be("14:"));
         }
 
         [Test]

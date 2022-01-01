@@ -2,9 +2,14 @@
 
 
 <DocsPage>
+	<MudChip Class="me-n2" Color="Color.Primary">Experimental</MudChip>
     <DocsPageHeader Title="Mask Field" SubTitle="Mask field components are used for input masking."/>
     <DocsPageContent>
-
+		<MudAlert Class="mt-4" Severity="Severity.Error">
+            This component is under active development and breaking changes will occur even in minor patch releases.<br/>
+            <b>DO NOT</b> use this component if you are not prepared to update your code and adapt to new changes.<br />
+            The finished component might not have the same name, might not have the features it has now, or look the same.
+        </MudAlert>
         <DocsPageSection>
             <SectionHeader Title="Basic Mask Fields">
                 <Description>
@@ -17,6 +22,25 @@
                 <MaskFieldBasicExample />
             </SectionContent>
             <SectionSource Code="MaskFieldBasicExample" ShowCode="false" GitHubFolderName="MaskField" />
+        </DocsPageSection>
+
+		<DocsPageSection>
+            <SectionHeader Title="Control Mask With Mask Parameter">
+                <Description>
+					<CodeInline>Mask</CodeInline> parameter can be changed dynamically in runtime. New mask will be implement when user focus on Mask Field.
+					<br/>
+					The default masking characters:
+					<br/>
+					<CodeInline>a</CodeInline> for letter, <CodeInline>0</CodeInline> for digit, <CodeInline>*</CodeInline> for all characters.
+					Also <CodeInline>l</CodeInline> for lowercase and <CodeInline>u</CodeInline> for uppercase letters.
+					<br/>
+					In this example, you can change the mask with the right text field and see the result on Mask Field.
+				</Description>
+            </SectionHeader>
+            <SectionContent FullWidth="true" Outlined="true">
+                <MaskFieldMaskExample />
+            </SectionContent>
+            <SectionSource Code="MaskFieldMaskExample" ShowCode="false" GitHubFolderName="MaskField" />
         </DocsPageSection>
 
 		<DocsPageSection>
@@ -34,53 +58,6 @@
         </DocsPageSection>
 
 		<DocsPageSection>
-            <SectionHeader Title="Keep Character Positions">
-                <Description>
-					With <CodeInline>KeepCharacterPositions</CodeInline> parameter, different input approaches supported. By default (false), adding or removing characters forces other characters to move. Otherwise no character move their position.
-					<br/>
-					In this example, you can see and control the two approaches.
-				</Description>
-            </SectionHeader>
-            <SectionContent FullWidth="true" Outlined="true">
-                <MaskFieldKeepIndexExample />
-            </SectionContent>
-            <SectionSource Code="MaskFieldKeepIndexExample" ShowCode="false" GitHubFolderName="MaskField" />
-        </DocsPageSection>
-
-		<DocsPageSection>
-            <SectionHeader Title="Control Mask With Mask Parameter">
-                <Description>
-					<CodeInline>Mask</CodeInline> parameter can be changed dynamically in runtime. New mask will be implement when user focus on Mask Field.
-					<br/>
-					The default masking characters:
-					<br/>
-					<CodeInline>a</CodeInline> for letter, <CodeInline>0</CodeInline> for digit, <CodeInline>*</CodeInline> for all, <CodeInline>c</CodeInline> for custom characters.
-					You can use all unassigned masking characters as you wish.
-					<br/>
-					In this example, you can change the mask with the right text field and see the result on Mask Field.
-				</Description>
-            </SectionHeader>
-            <SectionContent FullWidth="true" Outlined="true">
-                <MaskFieldMaskExample />
-            </SectionContent>
-            <SectionSource Code="MaskFieldMaskExample" ShowCode="false" GitHubFolderName="MaskField" />
-        </DocsPageSection>
-
-		<DocsPageSection>
-            <SectionHeader Title="Change Masking Characters">
-                <Description>
-					You can always change the masking characters, delete the default ones and add new ones.
-					<br/>
-					This example demonstrates how to change masking characters.
-				</Description>
-            </SectionHeader>
-            <SectionContent FullWidth="true" Outlined="true">
-                <MaskFieldChangeMaskCharactersExample />
-            </SectionContent>
-            <SectionSource Code="MaskFieldChangeMaskCharactersExample" ShowCode="false" GitHubFolderName="MaskField" />
-        </DocsPageSection>
-
-		<DocsPageSection>
             <SectionHeader Title="Change Placeholder Character">
                 <Description>
 					Placeholder character can be controlled by <CodeInline>PlaceholderCharacter</CodeInline> parameter.
@@ -95,11 +72,58 @@
         </DocsPageSection>
 
 		<DocsPageSection>
+            <SectionHeader Title="Change Masking Characters">
+                <Description>
+					Masking characters can be set in <CodeInline>MaskDefinition</CodeInline> parameter.
+					<br/>
+					This example demonstrates how to change masking characters.
+					<br/>
+					Note: <CodeInline>MaskDefinition</CodeInline> cannot be set partially, it overrides the default. Be sure to added all required characters.
+				</Description>
+            </SectionHeader>
+            <SectionContent FullWidth="true" Outlined="true">
+                <MaskFieldChangeMaskCharactersExample />
+            </SectionContent>
+            <SectionSource Code="MaskFieldChangeMaskCharactersExample" ShowCode="false" GitHubFolderName="MaskField" />
+        </DocsPageSection>
+
+		<DocsPageSection>
+            <SectionHeader Title="Keep Character Positions">
+                <Description>
+					With <CodeInline>KeepCharacterPositions</CodeInline> parameter, different input approaches supported. By default (false), adding or removing characters forces other characters to move. Otherwise no character move their position.
+					<br/>
+					In this example, you can see and control the two approaches.
+				</Description>
+            </SectionHeader>
+            <SectionContent FullWidth="true" Outlined="true">
+                <MaskFieldKeepIndexExample />
+            </SectionContent>
+            <SectionSource Code="MaskFieldKeepIndexExample" ShowCode="false" GitHubFolderName="MaskField" />
+        </DocsPageSection>
+
+		<DocsPageSection>
+            <SectionHeader Title="Add Punctuations to the Value">
+                <Description>
+					Normally, value contains only user-inputted characters. However, characters that will automatically be added to the value can also be specified in MaskDefinition, <CodeInline>AddToValue</CodeInline> parameter. Once a character set add to value, it can not be used as mask or regex character.
+					<br />
+					This feature is especially useful when acquiring date value.
+					<br/>
+					In this example, you can see the two dots are added to the value (if there is at least one inputted character).
+				</Description>
+            </SectionHeader>
+            <SectionContent FullWidth="true" Outlined="true">
+                <MaskFieldAddToValueExample />
+            </SectionContent>
+            <SectionSource Code="MaskFieldAddToValueExample" ShowCode="false" GitHubFolderName="MaskField" />
+        </DocsPageSection>
+
+		<DocsPageSection>
             <SectionHeader Title="Regex Masking">
                 <Description>
-					By defining or overriding <CodeInline>CustomCharacterTypes</CodeInline> Regex masking is possible with Mask Field.
+					By <CodeInline>MaskDefinition</CodeInline> Regex masking is also possible with Mask Field.
 					<br />
-					By default <CodeInline>c</CodeInline> character is used to lowercase and <CodeInline>e</CodeInline> character is used to uppercase characters.
+					By default <CodeInline>l</CodeInline> character is used to lowercase and <CodeInline>u</CodeInline> character is used to uppercase characters.
+					You can add unlimited Regex definitions as mask character.
 					<br/>
 					This example demonstrates how to do Regex masking.
 				</Description>
@@ -108,18 +132,6 @@
                 <MaskFieldRegexExample />
             </SectionContent>
             <SectionSource Code="MaskFieldRegexExample" ShowCode="false" GitHubFolderName="MaskField" />
-        </DocsPageSection>
-
-		<DocsPageSection>
-            <SectionHeader Title="Mask Types">
-                <Description>
-					You can use predefined mask types for faster coding.
-				</Description>
-            </SectionHeader>
-            <SectionContent FullWidth="true" Outlined="true">
-                <MaskFieldMaskTypesExample />
-            </SectionContent>
-            <SectionSource Code="MaskFieldMaskTypesExample" ShowCode="false" GitHubFolderName="MaskField" />
         </DocsPageSection>
 
     </DocsPageContent>

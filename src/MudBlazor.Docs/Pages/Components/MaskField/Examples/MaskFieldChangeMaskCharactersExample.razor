@@ -1,33 +1,34 @@
 ﻿@namespace MudBlazor.Docs.Examples
 @using System.Text.RegularExpressions
+@using MudBlazor.Components.MaskField
 
 
 <MudGrid Class="justify-space-between">
     <MudItem xs="12" sm="6" md="4">
         <MudMaskField T="string" OnKeyDown="KeyDown" HelperText="Mask: aaa 000" HelperTextOnFocus="true" Mask="aaa 000" Label="Default" Variant="Variant.Text" />
 		<MudMaskField T="string" OnKeyDown="KeyDown" HelperText="@helperText" HelperTextOnFocus="true" Mask="@changedMask" Label="Changed" Variant="Variant.Text" 
-			MaskCharacters="customMaskCharacters"/>
+			MaskDefinition="customMaskCharacters"/>
     </MudItem>
 	<MudItem xs="12" sm="6" md="4">
         <MudText>Pressed Key: <b>@pressedKey</b></MudText>
-		<MudTextField T="char" @bind-value="@forLetter" Label="Character For Letter" MaxLength="1" Variant="Variant.Outlined" />
-		<MudTextField T="char" @bind-value="@forDigit" Label="Character For Digit" MaxLength="1" Variant="Variant.Outlined" />
+		<MudTextField Class="mt-2" T="char" @bind-value="@letterChar" Label="Character For Letter" MaxLength="1" Variant="Variant.Outlined" />
+		<MudTextField Class="mt-2" T="char" @bind-value="@digitChar" Label="Character For Digit" MaxLength="1" Variant="Variant.Outlined" />
 		<MudButton Class="mt-2" Variant="Variant.Filled" Color="Color.Primary" OnClick="ChangeMaskCharacters">Change Mask Characters</MudButton>
     </MudItem>
 </MudGrid>
 
 @code {
 	private string pressedKey = "";
-	private char forLetter = 'b';
-	private char forDigit = '9';
+	private char letterChar = 'b';
+	private char digitChar = '9';
 	private string changedMask = "bbb 999";
 	private string helperText = "bbb 999";
 
-	private Dictionary<char, CharacterType> customMaskCharacters = new() { 
-            ['b'] = CharacterType.Letter,
-            ['9'] = CharacterType.Digit,
-            ['f'] = CharacterType.LetterOrDigit,
-            ['k'] = CharacterType.Custom,
+	private MaskChar[] customMaskCharacters = new MaskChar[]
+        {
+            MaskChar.Letter('b'),
+            MaskChar.Digit('9'),
+            MaskChar.LetterOrDigit('*'),
         };
 
 	private void KeyDown(KeyboardEventArgs e)
@@ -37,14 +38,14 @@
 
 	private void ChangeMaskCharacters()
 	{
-		customMaskCharacters = new() { 
-            [forLetter] = CharacterType.Letter,
-            [forDigit] = CharacterType.Digit,
-            ['f'] = CharacterType.LetterOrDigit,
-            ['k'] = CharacterType.Custom,
+		customMaskCharacters = new MaskChar[]
+        {
+            MaskChar.Letter(letterChar),
+            MaskChar.Digit(digitChar),
+            MaskChar.LetterOrDigit('*'),
         };
 
-		changedMask = forLetter.ToString() + forLetter.ToString() + " " + forDigit.ToString() + forDigit.ToString();
-		helperText = "Mask: " + forLetter + forLetter + " " + forDigit + forDigit;
+		changedMask = letterChar.ToString() + letterChar.ToString() + " " + digitChar.ToString() + digitChar.ToString();
+		helperText = "Mask: " + letterChar + letterChar + " " + digitChar + digitChar;
 	}
 }

@@ -44,8 +44,8 @@ namespace MudBlazor
             MaskChar.Letter('a'),
             MaskChar.Digit('0'),
             MaskChar.LetterOrDigit('*'),
-            new MaskChar { Char = 'l', Writable = true, AddToValue = false, Regex = "^[a-zıöüşçğ]$" },
-            new MaskChar { Char = 'u', Writable = true, AddToValue = false, Regex = "^[A-ZİÖÜŞÇĞ]$" },
+            new MaskChar { Char = 'l', AddToValue = false, Regex = "^[a-zıöüşçğ]$" },
+            new MaskChar { Char = 'u', AddToValue = false, Regex = "^[A-ZİÖÜŞÇĞ]$" },
         };
 
         /// <summary>
@@ -94,6 +94,10 @@ namespace MudBlazor
         private string GetRawValueFromDictionary()
         {
             string rawValue = "";
+            if (_rawValueDictionary.Count == 0)
+            {
+                return "";
+            }
             for (int i = 0; i < Mask.Length; i++)
             {
                 int a = i;
@@ -101,21 +105,23 @@ namespace MudBlazor
                 {
                     rawValue += _rawValueDictionary[a];
                 }
+                else if (_maskDict.ContainsKey(Mask[a]) && _maskDict[Mask[a]].AddToValue == true)
+                {
+                    rawValue += Mask[a];
+                }
             }
             return rawValue;
         }
 
-        protected override async Task SetTextAsync(string text, bool updateValue=true )
+        protected override async Task SetTextAsync(string text, bool updateValue = true )
         {
-            //if (text == "a")
-            //    text="a";
-            Console.WriteLine($"SetTextAsync: '{text}' updateValue:{updateValue}");
+            //Console.WriteLine($"SetTextAsync: '{text}' updateValue:{updateValue}");
             await base.SetTextAsync(text, updateValue);
         }
 
         protected override async Task SetValueAsync(T value, bool updateText = true)
         {
-            Console.WriteLine($"SetValueAsync: '{value}' updateText:{updateText}");
+            //Console.WriteLine($"SetValueAsync: '{value}' updateText:{updateText}");
             _rawValue = Converter.Set(value);
             if (updateText)
                 await ImplementMask(null, Mask, true);
@@ -160,8 +166,6 @@ namespace MudBlazor
         internal override InputType GetInputType() => InputType;
 
         private string GetCounterText() => Counter == null ? string.Empty : (Counter == 0 ? (string.IsNullOrEmpty(Text) ? "0" : $"{Text.Length}") : ((string.IsNullOrEmpty(Text) ? "0" : $"{Text.Length}") + $" / {Counter}"));
-
-
 
         /// <summary>
         /// Clear the text field, set Value to default(T) and Text to null
@@ -234,6 +238,7 @@ namespace MudBlazor
                         new KeyOptions { Key="Backspace", PreventDown = "key+none" },
                         new KeyOptions { Key="Delete", PreventDown = "key+none" },
                         new KeyOptions { Key="Shift", PreventDown = "key+none" },
+                        new KeyOptions { Key="[/-+_-*()%&]'/", PreventDown = "key+none" },
                     },
                 });
                 _maskDict = _maskChars.ToDictionary(x => x.Char);
@@ -310,7 +315,7 @@ namespace MudBlazor
             base.OnBlurred(obj);
             if (string.IsNullOrEmpty(_rawValue))
             {
-                SetTextAsync("", updateValue:false).AndForget();
+                SetTextAsync("", updateValue: false).AndForget();
             }
             _isFocused = false;
         }
@@ -507,7 +512,7 @@ namespace MudBlazor
                     for (int i = 0; i < (Text.Length - (Text.Length - _caretPosition)); i++)
                     {
                         removedIndex++;
-                        if (_maskDict.ContainsKey(Mask[_caretPosition - removedIndex]))
+                        if (_maskDict.ContainsKey(Mask[_caretPosition - removedIndex]) && _maskDict[Mask[_caretPosition - removedIndex]].AddToValue == false)
                         {
                             hasValueBefore = true;
                             _rawValueDictionary.Remove(_caretPosition - removedIndex);
@@ -530,7 +535,7 @@ namespace MudBlazor
                                 {
                                     break;
                                 }
-                                if (_maskDict.ContainsKey(Mask[item.Key - i]))
+                                if (_maskDict.ContainsKey(Mask[item.Key - i]) && _maskDict[Mask[item.Key - i]].AddToValue == false)
                                 {
                                     replacedDictionary.Add(item.Key - i, item.Value);
                                     break;
@@ -591,7 +596,7 @@ namespace MudBlazor
                                 var c = _rawValueDictionary[(int)removedPosition + i];
                                 for (int i2 = 0; 0 < removedPosition + i - i2; i2++)
                                 {
-                                    if (_maskDict.ContainsKey(Mask[(int)removedPosition + i - i2 - 1]))
+                                    if (_maskDict.ContainsKey(Mask[(int)removedPosition + i - i2 - 1]) && _maskDict[Mask[(int)removedPosition + i - i2 - 1]].AddToValue == false)
                                     {
                                         _rawValueDictionary.Remove((int)removedPosition + i);
                                         _rawValueDictionary.Add((int)removedPosition + i - i2 - 1, c);
@@ -627,7 +632,7 @@ namespace MudBlazor
             bool hasValue = false;
             for (int i = 0; i < mask.Length; i++)
             {
-                if (!_maskDict.ContainsKey(mask[i]))
+                if (!_maskDict.ContainsKey(mask[i]) || (_maskDict.ContainsKey(mask[i]) && _maskDict[mask[i]].AddToValue == true))
                 {
                     result += mask[i].ToString();
                     if (_rawValueDictionary.ContainsKey(i))
@@ -724,7 +729,7 @@ namespace MudBlazor
                 }
                 else
                 {
-                    if (_maskDict.ContainsKey(Mask[i - 1]))
+                    if (_maskDict.ContainsKey(Mask[i - 1]) && _maskDict[Mask[i - 1]].AddToValue == false)
                     {
                         return i - 1;
                     }
@@ -835,6 +840,7 @@ namespace MudBlazor
 
         #endregion
 
+        //This is used for some tests, not has a production aim.
         internal async Task SetBothValueAndText(T value)
         {
             await SetValueAsync(value, true);
