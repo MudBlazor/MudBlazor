@@ -9,7 +9,6 @@ namespace MudBlazor.Docs.Services
     public interface IMenuService
     {
         //Menu sections
-        IEnumerable<DocsLink> GettingStarted { get; }
         IEnumerable<MudComponent> Components { get; }
         IEnumerable<MudComponent> Api { get; }
         MudComponent GetParent(Type type);
@@ -204,20 +203,6 @@ namespace MudBlazor.Docs.Services
         }
 
         public IEnumerable<MudComponent> Api => DocsComponentsApi.Components;
-
-        //cached property
-        private IEnumerable<DocsLink> _gettingStarted;
-        /// <summary>
-        /// Getting started menu links
-        /// </summary>
-        public IEnumerable<DocsLink> GettingStarted => _gettingStarted ??= new List<DocsLink>
-            {
-                new DocsLink {Title = "Installation", Href = "getting-started/installation"},
-                new DocsLink {Title = "Layouts", Href = "getting-started/layouts"},
-                new DocsLink {Title = "Usage", Href = "getting-started/usage"},
-                new DocsLink {Title = "Wireframes", Href = "getting-started/wireframes"},
-            }.OrderBy(x => x.Title);
-
 
         private IEnumerable<DocsLink> _features;
         /// <summary>

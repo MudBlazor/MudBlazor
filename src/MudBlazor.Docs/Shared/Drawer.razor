@@ -1,0 +1,10 @@
+﻿<MudDrawer @bind-Open="_drawerOpen" ClipMode="DrawerClipMode.Docked" Elevation="0" Breakpoint="Breakpoint.Lg">
+    <MudNavMenu Color="Color.Primary" Rounded="true" Dense="true" Margin="Margin.Dense" Class="pa-2 overflow-auto mb-3">
+        @ChildContent
+    </MudNavMenu>
+</MudDrawer>
+
+@code {
+    [Parameter] public RenderFragment ChildContent { get; set; }
+    private bool _drawerOpen = true;
+}
