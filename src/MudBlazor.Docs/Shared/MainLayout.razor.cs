@@ -55,10 +55,10 @@ namespace MudBlazor.Docs.Shared
             StateHasChanged();
         }
         
-        internal async Task SetBaseTheme(MudTheme theme)
+        internal void SetBaseTheme(MudTheme theme)
         {
             _currentTheme = theme;
-            await ApplyUserPreferences();
+            StateHasChanged();
         }
     }
 }

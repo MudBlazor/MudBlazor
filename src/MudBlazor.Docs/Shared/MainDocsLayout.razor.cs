@@ -11,8 +11,8 @@ public partial class MainDocsLayout : LayoutComponentBase
 {
     [CascadingParameter] private MainLayout MainData { get; set; }
 
-    protected override async Task OnInitializedAsync()
+    protected override void OnInitialized()
     {
-        await MainData.SetBaseTheme(Theme.DocsTheme());
+         MainData.SetBaseTheme(Theme.DocsTheme());
     }
 }
