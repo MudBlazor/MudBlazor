@@ -27,6 +27,7 @@ namespace MudBlazor.Docs.Components
         private string _anchor = null;
         private bool _displayView;
         private string _componentName;
+        private bool _renderAds;
         [Inject] NavigationManager NavigationManager { get; set; }
 
         [Inject] private IDocsNavigationService DocsService { get; set; }
@@ -92,6 +93,11 @@ namespace MudBlazor.Docs.Components
             {
                 _stopwatch.Stop();
                 Rendered?.Invoke(_stopwatch);
+            }
+            if (firstRender)
+            {
+                _renderAds = true;
+                StateHasChanged();
             }
         }
 
