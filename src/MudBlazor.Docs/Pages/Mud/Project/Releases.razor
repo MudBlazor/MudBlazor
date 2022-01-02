@@ -1,11 +1,9 @@
-﻿@page "/versions"
-@page "/project/releases"
-@page "/project/versions"
+﻿@page "/mud/project/releases"
 @using System.Text.RegularExpressions
 
 @inject GitHubApiClient _gitHubApiClient;
 
-<DocsPage MaxWidth="MaxWidth.Large">
+<DocsPage MaxWidth="MaxWidth.Large" DisplayFooter="true">
     <DocsPageHeader Title="Releases" />
     <DocsPageContent>
         @if (_githubReleases == null)

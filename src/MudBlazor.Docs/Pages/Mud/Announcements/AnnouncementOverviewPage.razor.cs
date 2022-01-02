@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Docs.Services.Notifications;
 
-namespace MudBlazor.Docs.Pages.Announcements;
+namespace MudBlazor.Docs.Pages.Mud.Announcements;
 
 public partial class AnnouncementOverviewPage
 {
