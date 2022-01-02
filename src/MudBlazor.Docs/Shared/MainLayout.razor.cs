@@ -18,23 +18,22 @@ namespace MudBlazor.Docs.Shared
         {
             if (firstRender)
             {
-                await LoadUserPreferences();
+                await ApplyUserPreferences();
+                StateHasChanged();
             }
         }
 
-        private async Task LoadUserPreferences()
+        private async Task ApplyUserPreferences()
         {
             _userPreferences = await UserPreferencesService.LoadUserPreferences();
             if (_userPreferences != null)
             {
                 _isDarkMode = _userPreferences.DarkTheme;
                 _rightToLeft = _userPreferences.RightToLeft;
-                StateHasChanged();
             }
             else
             {
                 _isDarkMode = await _mudThemeProvider.GetSystemPreference();
-                StateHasChanged();
                 _userPreferences = new UserPreferences {DarkTheme = _isDarkMode};
                 await UserPreferencesService.SaveUserPreferences(_userPreferences);
             }
@@ -56,10 +55,10 @@ namespace MudBlazor.Docs.Shared
             StateHasChanged();
         }
         
-        internal void SetBaseTheme(MudTheme theme)
+        internal async Task SetBaseTheme(MudTheme theme)
         {
             _currentTheme = theme;
-            StateHasChanged();
+            await ApplyUserPreferences();
         }
     }
 }
