@@ -4,7 +4,7 @@
 <PageTitle>MudBlazor - Blazor Component Library</PageTitle>
 
 <MudRTLProvider RightToLeft="@_rightToLeft">
-    <MudThemeProvider Theme="_theme"/>
+    <MudThemeProvider Theme="_theme" @bind-IsDarkMode="_isDarkMode"/>
     <MudDialogProvider FullWidth="true" MaxWidth="MaxWidth.ExtraSmall" />
     <MudSnackbarProvider />
 
