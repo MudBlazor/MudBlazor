@@ -55,6 +55,19 @@ public class InMemoryNotificationService : INotificationService
         await _localStorageService.SetItemAsync(LocalStorageKey, DateTime.UtcNow.Date);
     }
 
+    public async Task MarkNotificationsAsRead(string id)
+    {
+        var message = await GetMessageById(id);
+        if (message == null) { return; }
+        
+        var timestamp = await _localStorageService.GetItemAsync<DateTime>(LocalStorageKey);
+        if (message.PublishDate > timestamp)
+        {
+            await _localStorageService.SetItemAsync(LocalStorageKey, message.PublishDate);
+        }
+        
+    }
+
     public Task<NotificationMessage> GetMessageById(string id) =>
         Task.FromResult(_messages.FirstOrDefault((x => x.Id == id)));
 
@@ -71,6 +84,7 @@ public class InMemoryNotificationService : INotificationService
         return Task.CompletedTask;
     }
 
+
     public void Preload()
     {
         _messages.Add(new NotificationMessage(
@@ -85,7 +99,7 @@ public class InMemoryNotificationService : INotificationService
                 new NotificationAuthor("The MudBlazor Team",
                     "https://mudblazor.com/_content/MudBlazor.Docs/images/logo.png")
             }, typeof(NewDocsPageNotificationContent)));
-        
+
         _messages.Add(new NotificationMessage(
             "cool-stuff",
             "cooler than yours",

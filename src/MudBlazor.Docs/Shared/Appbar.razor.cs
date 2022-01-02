@@ -33,6 +33,12 @@ public partial class Appbar
         await base.OnInitializedAsync();
     }
 
+    private async Task MarkNotificationAsRead()
+    {
+        await NotificationService.MarkNotificationsAsRead();
+        _newNotificationsAvailable = false;
+    }
+
     private Task<IEnumerable<ApiLinkServiceEntry>> Search(string text)
         {
             if (string.IsNullOrWhiteSpace(text))

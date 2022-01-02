@@ -26,4 +26,14 @@ public partial class AnnoucementPage
             
         }
     }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender == true)
+        {
+            await NotificationService.MarkNotificationsAsRead(Id);
+        }
+        
+        await base.OnAfterRenderAsync(firstRender);
+    }
 }
