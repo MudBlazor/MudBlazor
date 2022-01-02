@@ -135,7 +135,7 @@ public partial class Appbar
         {
             return activeClass;
         }
-        else if (NavigationManager.Uri.Contains("/discover-more/") && page == DocsBasePage.DiscoverMore)
+        else if (NavigationManager.Uri.Contains("/mud/") && page == DocsBasePage.DiscoverMore)
         {
             return activeClass;
         }

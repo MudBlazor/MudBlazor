@@ -4,7 +4,7 @@
 </NavLink>
 <MudButton Link="/components/alert" Color="Color.Inherit" Variant="Variant.Text" Class="@GetActiveClass(DocsBasePage.Docs)">Docs</MudButton>
 <MudButton Link="/getting-started/installation" Color="Color.Inherit" Variant="Variant.Text" Class="@GetActiveClass(DocsBasePage.GettingStarted)">Getting Started</MudButton>
-<MudButton Color="Color.Inherit" Variant="Variant.Text" Class="@GetActiveClass(DocsBasePage.DiscoverMore)">Discover More</MudButton>
+<MudButton Link="/mud/concepts/what-is-mudblazor" Color="Color.Inherit" Variant="Variant.Text" Class="@GetActiveClass(DocsBasePage.DiscoverMore)">Discover More</MudButton>
 <MudMenu Color="Color.Inherit" Variant="Variant.Text" Class="mx-1 px-3" Label="Products" ActivationEvent="@MouseEvent.MouseOver" EndIcon="@Icons.Filled.KeyboardArrowDown" AnchorOrigin="Origin.BottomCenter" TransformOrigin="Origin.TopCenter">
     <div class="d-flex">
         <div class="d-flex flex-column">
@@ -43,9 +43,9 @@
         {
             @foreach (var (message, isRead) in _messages.Take(5))
             {
-                <MudMenuItem Class="px-2 py-0 rounded" Link="@($"/announcements/{message.Id}")">
+                <MudMenuItem Class="px-2 py-0 rounded" Link="@($"/mud/announcements/{message.Id}")">
                     <MudText Typo="Typo.subtitle2">@message.Title</MudText>
-                    <MudText Typo="Typo.body2">@($"{message.Authors.FirstOrDefault()?.DisplayName} • {message.PublishDate}")</MudText>
+                    <MudText Typo="Typo.body2">@($"{message.Authors.FirstOrDefault()?.DisplayName} • {message.PublishDate.ToString("MM/dd/yyyy")}")</MudText>
                 </MudMenuItem>
                 <MudDivider Class="my-2"/>
             }
