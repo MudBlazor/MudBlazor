@@ -46,6 +46,7 @@ namespace MudBlazor.Docs
             Black = "#110e2d",
             AppbarText = "#424242",
             AppbarBackground = "rgba(255,255,255,0.8)",
+            DrawerBackground = "rgba(255,255,255,0.0)",
             GrayLight = "#e8e8e8",
             GrayLighter = "#f9f9f9"
         };
@@ -57,7 +58,7 @@ namespace MudBlazor.Docs
             Background = "#32333d",
             BackgroundGrey = "#27272f",
             Surface = "#373740",
-            DrawerBackground = "#27272f",
+            DrawerBackground = "rgba(255,255,255,0.0)",
             DrawerText = "rgba(255,255,255, 0.50)",
             DrawerIcon = "rgba(255,255,255, 0.50)",
             AppbarBackground = "#27272f",
