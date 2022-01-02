@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Components;
 using MudBlazor.Docs.Extensions;
 using MudBlazor.Docs.Models;
 using MudBlazor.Docs.Services;
+using MudBlazor.Docs.Services.Notifications;
 
 namespace MudBlazor.Docs.Shared;
 
@@ -19,8 +20,19 @@ public partial class Appbar
     [Inject] private NavigationManager NavigationManager { get; set; }
     [Inject] private IApiLinkService ApiLinkService { get; set; }
 
-    MudAutocomplete<ApiLinkServiceEntry> _searchAutocomplete;
+    [Inject] private INotificationService NotificationService { get; set; }
     
+    MudAutocomplete<ApiLinkServiceEntry> _searchAutocomplete;
+
+    private IDictionary<NotificationMessage,bool> _messages = null;
+    private bool _newNotificationsAvailable = false;
+    protected override async Task OnInitializedAsync()
+    {
+        _newNotificationsAvailable = await NotificationService.AreNewNotificationsAvailable();
+        _messages = await NotificationService.GetNotifications();
+        await base.OnInitializedAsync();
+    }
+
     private Task<IEnumerable<ApiLinkServiceEntry>> Search(string text)
         {
             if (string.IsNullOrWhiteSpace(text))

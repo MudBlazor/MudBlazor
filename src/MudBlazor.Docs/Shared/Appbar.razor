@@ -32,11 +32,21 @@
     </MudAutocomplete>
     <MudDivider FlexItem="true" Vertical="true" DividerType="DividerType.Middle" Class="mx-4 my-4"/>
 }
-<MudBadge Color="Color.Secondary" Dot="true" Overlap="true">
-    <MudMenu Icon="@Icons.Outlined.Notifications" Color="Color.Inherit" AnchorOrigin="Origin.BottomLeft" TransformOrigin="Origin.TopCenter">
-        <MudMenuItem>No Notifications</MudMenuItem>
-    </MudMenu>
-</MudBadge>
+@if (_newNotificationsAvailable == true)
+{
+    <MudBadge Color="Color.Secondary" Dot="true" Overlap="true">
+        <MudMenu Icon="@Icons.Outlined.Notifications" Color="Color.Inherit" AnchorOrigin="Origin.BottomLeft" TransformOrigin="Origin.TopCenter" IsOpenChanged="MarkNotificationAsRead">
+            @if (_messages != null)
+            {
+                @foreach (var (message, isRead) in _messages.Take(5))
+                {
+                    <MudMenuItem  Link="@($"/announcements/{message.Id}")">@message.Title</MudMenuItem>
+                }
+            }
+        </MudMenu>
+    </MudBadge>
+}
+
 <MudTooltip Duration="1000" Text="@(MainData._isDarkMode ? "Switch to Light Theme" : "Switch to Dark Theme")">
     <MudIconButton Icon="@(MainData._isDarkMode ? @Icons.Rounded.LightMode : @Icons.Material.Outlined.DarkMode)" Color="Color.Inherit" OnClick="@((e) => MainData.DarkMode())"/>
 </MudTooltip>
