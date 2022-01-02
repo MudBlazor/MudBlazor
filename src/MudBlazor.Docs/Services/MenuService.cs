@@ -15,7 +15,6 @@ namespace MudBlazor.Docs.Services
         MudComponent GetComponent(Type type);
         IEnumerable<DocsLink> Features { get; }
         IEnumerable<DocsLink> Customization { get; }
-        IEnumerable<DocsLink> About { get; }
     }
 
     /// <summary>
@@ -234,20 +233,6 @@ namespace MudBlazor.Docs.Services
             new DocsLink {Title = "Palette", Href = "customization/theming/palette"},
             new DocsLink {Title = "Typography", Href = "customization/theming/typography"},
             new DocsLink {Title = "z-index", Href = "customization/theming/z-index"},
-        }.OrderBy(x => x.Title);
-
-
-        private IEnumerable<DocsLink> _about;
-        /// <summary>
-        /// About menu links
-        /// </summary>
-        public IEnumerable<DocsLink> About => _about ??= new List<DocsLink>
-        {
-            new DocsLink{Href="project/announcements", Title="Announcements" },
-            new DocsLink{Href="project/about", Title="How it started" },
-            new DocsLink{Href="project/sponsor", Title="Sponsors & Backers" },
-            new DocsLink{Href="project/team", Title="Team & Contributors" },
-            new DocsLink{Href="project/releases", Title="Releases" },
         }.OrderBy(x => x.Title);
     }
 }

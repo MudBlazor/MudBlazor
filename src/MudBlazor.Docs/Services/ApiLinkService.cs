@@ -24,7 +24,6 @@ namespace MudBlazor.Docs.Services
             Register(menuService.Api);//this also registers components
             Register(menuService.Customization);
             Register(menuService.Features);
-            Register(menuService.About);
 
         }
 

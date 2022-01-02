@@ -61,13 +61,3 @@
         }
     </MudNavGroup>
 </MudNavGroup>
-
-@*ABOUT*@
-<MudNavGroup Title="About" Icon="@Icons.Custom.Brands.MudBlazor" Expanded="@(_section=="project")" ExpandIcon="@Icons.Material.Filled.ExpandMore">
-    @foreach (var link in MenuService.About)
-    {
-        <MudNavLink Href="@link.Href">@link.Title</MudNavLink>
-    }
-
-</MudNavGroup>
-
