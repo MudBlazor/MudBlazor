@@ -32,7 +32,7 @@ namespace MudBlazor.Docs
             {
                 Palette = DocsLightPalette,
                 PaletteDark = DocsDarkPalette,
-                LayoutProperties = DocsLayoutProperties
+                LayoutProperties = new LayoutProperties()
             };
             return theme;
         }
@@ -78,12 +78,6 @@ namespace MudBlazor.Docs
             Warning = "#ffa800",
             Error = "#f64e62",
             Dark = "#27272f"
-        };
-        
-        private static readonly LayoutProperties DocsLayoutProperties = new()
-        {
-            DrawerWidthLeft = "260px",
-            DrawerWidthRight = "260px"
         };
         #endregion
         #region LandingPage
