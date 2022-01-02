@@ -11,6 +11,7 @@ namespace MudBlazor.Docs.Shared
     {
         private bool _drawerOpen = false;
         private bool _rightToLeft = false;
+        private bool _isDarkMode = false;
         private NavMenu _navMenuRef;
 
         [Inject] private NavigationManager NavigationManager { get; set; }
@@ -90,7 +91,7 @@ namespace MudBlazor.Docs.Shared
         #region Theme   
         private void DarkMode()
         {
-            _theme.IsDarkMode = !_theme.IsDarkMode;
+            _isDarkMode = !_isDarkMode;
         }
 
         private MudTheme _theme = new();

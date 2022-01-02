@@ -2,7 +2,7 @@
 @namespace MudBlazor.Docs.Examples
 @page "/iframe/docs/examples/themeprovider/darkpalette"
 
-<MudThemeProvider Theme="_theme" />
+<MudThemeProvider Theme="_theme" @bind-IsDarkMode="_isDarkMode"/>
 <MudSwitch Color="Color.Primary" Class="ma-4" T="bool" CheckedChanged="DarkMode" Label="Toggle Light/Dark Mode"/>
 
 <MudText Class="ma-4">This is an example text!</MudText>
@@ -10,8 +10,10 @@
 @code{
 
     private MudTheme _theme = new();
+    private bool _isDarkMode = false;
     
-    void DarkMode(bool value) {
-        _theme.IsDarkMode = value;
+    void DarkMode(bool value)
+    {
+        _isDarkMode = value;
     }
 }
