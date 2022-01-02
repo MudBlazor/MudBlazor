@@ -154,8 +154,8 @@ namespace MudBlazor
         protected override async void OnBlurred(FocusEventArgs obj)
         {
             base.OnBlurred(obj);
-            await UpdateValuePropertyAsync(true);
-            await UpdateTextPropertyAsync(false);
+            await UpdateValuePropertyAsync(true); //Required to set the value after a blur before the debounce period has elapsed
+            await UpdateTextPropertyAsync(false); //Required to update the string formatting after a blur before the debouce period has elapsed
         }
 
         protected async Task<bool> ValidateInput(T value)
