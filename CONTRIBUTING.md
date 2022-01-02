@@ -9,6 +9,7 @@ Please make sure that you follow our [code of conduct](/CODE_OF_CONDUCT.md)
 ## Minimal Prerequisites to Compile from Source
 
 - [.NET 5.0 SDK](https://dotnet.microsoft.com/download/dotnet/5.0)
+- [node](https://nodejs.org/en/download/) (required for JS compilation)
 
 ## Pull Requests
 - Your Pull Request must only consist of one topic. It is better to split Pull Requests with more than one feature or bug fix in seperate Pull Requests
