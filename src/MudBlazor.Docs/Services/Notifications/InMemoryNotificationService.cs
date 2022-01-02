@@ -85,5 +85,18 @@ public class InMemoryNotificationService : INotificationService
                 new NotificationAuthor("The MudBlazor Team",
                     "https://mudblazor.com/_content/MudBlazor.Docs/images/logo.png")
             }, typeof(NewDocsPageNotificationContent)));
+        
+        _messages.Add(new NotificationMessage(
+            "cool-stuff",
+            "cooler than yours",
+            "Here goes content to explain something",
+            "Announcement",
+            new DateTime(2022, 01, 02),
+            "https://media.discordapp.net/attachments/814877828638179358/926959380115640330/Lory1-MERGED-WEB.jpg?width=491&height=687",
+            new[]
+            {
+                new NotificationAuthor("The MudBlazor Team",
+                    "https://mudblazor.com/_content/MudBlazor.Docs/images/logo.png")
+            }, typeof(NewDocsPageNotificationContent)));
     }
 }
