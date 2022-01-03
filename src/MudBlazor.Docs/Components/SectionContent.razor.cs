@@ -34,7 +34,10 @@ public partial class SectionContent
 
     protected string InnerClassname =>
         new CssBuilder("docs-section-content-inner")
-            .AddClass($"relative d-flex flex-grow-1 flex-wrap justify-center")
+            .AddClass($"relative d-flex flex-grow-1 flex-wrap justify-center align-center", !Block)
+            .AddClass($"flex-column", !Block && Column)
+            .AddClass($"d-block mx-auto", Block)
+            .AddClass($"mud-width-full", Block && FullWidth)
             .AddClass("pa-8", !_hasCode)
             .AddClass("px-8 pb-8 pt-2", _hasCode)
             .Build();
@@ -49,6 +52,9 @@ public partial class SectionContent
     [Parameter] public bool DarkenBackground { get; set; }
     [Parameter] public bool Outlined { get; set; } = true;
     [Parameter] public bool ShowCode { get; set; } = true;
+    [Parameter] public bool Block { get; set; }
+    [Parameter] public bool Column { get; set; }
+    [Parameter] public bool FullWidth { get; set; }
     [Parameter] public string Code { get; set; }
     [Parameter] public IEnumerable<CodeFile> Codes { get; set; }
     [Parameter] public RenderFragment ChildContent { get; set; }
