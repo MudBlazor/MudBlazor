@@ -334,6 +334,32 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(() => dialog2.MudDialog.HandleKeyDown(new KeyboardEventArgs() { Key = "Escape", Type = "keydown", }));
             comp.Markup.Trim().Should().NotBeEmpty();
         }
+
+        [Test]
+        public async Task DialogOverlayLightAndDark()
+        {
+            var comp = Context.RenderComponent<MudDialogProvider>();
+            comp.Markup.Trim().Should().BeEmpty();
+            var service = Context.Services.GetService<IDialogService>() as DialogService;
+            service.Should().NotBe(null);
+            IDialogReference dialogReference = null;
+            // open simple test dialog
+            await comp.InvokeAsync(() => dialogReference = service?.Show<DialogOkCancel>());
+            dialogReference.Should().NotBe(null);
+            Console.WriteLine(comp.Markup);
+            comp.Find("div.mud-dialog-container").Should().NotBe(null);
+            //Should be a dark overlay by default
+            comp.Find("div.mud-overlay-scrim").ClassList.Should().Contain("mud-overlay-dark");
+            //Should be a light overlay
+            await comp.InvokeAsync(() => dialogReference.Close());
+            await comp.InvokeAsync(() => dialogReference = service?.Show<DialogOkCancel>("Light", new DialogOptions() { LightOverlayBackground = true }));
+            comp.Find("div.mud-overlay-scrim").ClassList.Should().Contain("mud-overlay-light");
+            //Should be a dark overlay when specified
+            await comp.InvokeAsync(() => dialogReference.Close());
+            await comp.InvokeAsync(() => dialogReference = service?.Show<DialogOkCancel>("Dark", new DialogOptions() { DarkOverlayBackground = true }));
+            comp.Find("div.mud-overlay-scrim").ClassList.Should().Contain("mud-overlay-dark");
+            await comp.InvokeAsync(() => dialogReference.Close());
+        }
     }
 
     internal class CustomDialogService : DialogService
