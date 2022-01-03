@@ -7,7 +7,7 @@
 
     & pre {
         height: 100%;
-        color: #3e3e3e;
+        color: var(--mud-palette-text-primary);
         padding: 0;
         font-size: 1em;
         font-family: Consolas, "Liberation Mono", Menlo, Courier, monospace;
@@ -51,22 +51,22 @@
 
         & .enum {
           color: #00c853;
-          background-color: rgba(205, 205, 205, 0.15);
+          background-color: var(--mud-palette-grey-light);
         }
 
         & .enumValue, .sharpVariable {
-          color: #353535;
-          background-color: rgba(205, 205, 205, 0.15);
+          color: var(--mud-palette-text-primary);
+          background-color: var(--mud-palette-grey-light);
         }
 
         & .keyword {
             color: #2196f3;
-            background-color: rgba(255,255,255,0.15);
+            background-color: var(--mud-palette-grey-light);
         }
 
         & .atSign {
-          color: #353535;
-          background-color: rgba(255, 235, 59, 0.5);
+          color: var(--mud-palette-text-primary);
+          background-color: var(--mud-palette-grey-light);
         }
 
         & .comment {
@@ -77,7 +77,7 @@
     & .csharp {
         & .atSign {
           color: #353535;
-          background-color: rgba(255, 235, 59, 0.5);
+          background-color: var(--mud-palette-grey-light);
         }
 
         & .keyword {

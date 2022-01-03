@@ -1,13 +1,4 @@
 
-.docs-nav-fader {
-    display: block;
-    position: sticky;
-    top: 0;
-    height: 40px;
-    background-image: linear-gradient(to top,rgba(255,255,255,0),var(--mud-palette-drawer-background));
-    z-index: 100;
-}
-
 .docs-line-height-normal{
   line-height: normal;
 }
@@ -61,7 +52,7 @@
     }
 
     &.mud-input-control {
-        background-color: rgba(236, 236, 236, 0.5);
+        background-color: var(--mud-palette-grey-light);
         margin-bottom: 5px;
         height: 42px;
         border-radius: var(--mud-default-borderradius);
