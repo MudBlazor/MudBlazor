@@ -264,7 +264,7 @@ namespace MudBlazor
 
         protected async Task OnMouseWheel(WheelEventArgs obj)
         {
-            if (!obj.ShiftKey)
+            if (!obj.ShiftKey || Disabled || ReadOnly)
                 return;
             if (obj.DeltaY < 0)
             {
