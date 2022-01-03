@@ -87,10 +87,7 @@
     <Content Remove="compilerconfig.json" />
     <Content Remove="excubowebcompiler.json" />
     <Content Remove="**/*/DoNotRemove.txt" />
-    <!--Don't include in output, Build Action = content-->
-    <Content Update="tsconfig.json">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Content>
+    <Content Remove="tsconfig.json" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="TScripts\combined\" />
