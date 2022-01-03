@@ -26,6 +26,7 @@ public partial class Appbar
 
     private IDictionary<NotificationMessage,bool> _messages = null;
     private bool _newNotificationsAvailable = false;
+    private string _badgeTextSoon = "coming soon";
     protected override async Task OnInitializedAsync()
     {
         _newNotificationsAvailable = await NotificationService.AreNewNotificationsAvailable();

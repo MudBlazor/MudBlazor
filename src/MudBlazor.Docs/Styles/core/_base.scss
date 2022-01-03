@@ -29,6 +29,32 @@
   }
 }
 
+.docs-appbar-special-menu {
+  .mud-list-item{
+    border-radius: 6px;
+    margin: 4px 0;
+  }
+  .mud-list-subheader{
+    font-family: 'Public Sans', 'Roboto','Arial','sans-serif';
+    font-weight: 700;
+    font-size: 1rem;
+    color: #8898aa;
+  }
+  .mud-typography-body1{
+    font-family: 'Public Sans', 'Roboto','Arial','sans-serif';
+    font-weight: 600;
+  }
+  .mud-typography-body2{
+    font-family: 'Public Sans', 'Roboto','Arial','sans-serif';
+    font-weight: 600;
+    color: #8898aa;
+  }
+}
+
+.docs-layout-menu-shadow {
+  box-shadow: 0 30px 60px rgba(0,0,0,0.12) !important;
+}
+
 .docs-search-bar {
     & .mud-input {
         height: 42px;
