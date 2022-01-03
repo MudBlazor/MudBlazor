@@ -676,7 +676,7 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(() => select.Validate());
             select.ValidationErrors.Should().NotBeEmpty();
             select.ValidationErrors.Should().HaveCount(1);
-            select.ValidationErrors[0].Should().Equals("Should not be longer than 3");
+            select.ValidationErrors[0].Should().Be("Should not be longer than 3");
         }
 
         [Test]
