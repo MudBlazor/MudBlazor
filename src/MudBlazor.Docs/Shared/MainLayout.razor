@@ -4,7 +4,7 @@
 <PageTitle>MudBlazor - Blazor Component Library</PageTitle>
 
 <MudRTLProvider RightToLeft="@_rightToLeft">
-    <MudThemeProvider Theme="_currentTheme"/>
+    <MudThemeProvider Theme="_theme" @bind-IsDarkMode="_isDarkMode"/>
     <MudDialogProvider FullWidth="true" MaxWidth="MaxWidth.ExtraSmall" />
     <MudSnackbarProvider />
 
@@ -32,18 +32,6 @@
                         <MudMenuItem Link="https://opencollective.com/mudblazor" Target="_blank">Open Collective</MudMenuItem>
                     </MudMenu>
                     <MudDivider Vertical="true" FlexItem="true" DividerType="DividerType.Middle" Class="mx-4 my-3" />
-                    @if (Wasm)
-                    {
-                        <MudTooltip Text="Switch to Blazor server-side">
-                            <MudIconButton Icon="@Icons.Material.Filled.Computer" Color="Color.Inherit" OnClick="@((e) => SwitchToServer())" />
-                        </MudTooltip>
-                    }
-                    else
-                    {
-                        <MudTooltip Text="Switch to Blazor wasm">
-                            <MudIconButton Icon="@Icons.Material.Filled.Dns" Color="Color.Inherit" OnClick="@((e) => SwitchToWasm())" />
-                        </MudTooltip>
-                    }
                     <MudTooltip Text="Toggle light/dark theme">
                         <MudIconButton Icon="@Icons.Material.Filled.Brightness4" Color="Color.Inherit" OnClick="@((e) => DarkMode())" />
                     </MudTooltip>
@@ -56,14 +44,6 @@
                 </div>
                 <MudMenu Icon="@Icons.Filled.Settings" Color="Color.Inherit" Dense="true" Direction="Direction.Right" OffsetY="true" Class="d-md-none">
                     <div class="px-2">
-                        @if (Wasm)
-                        {
-                            <MudIconButton Icon="@Icons.Material.Filled.Computer" Color="Color.Inherit" OnClick="@((e) => SwitchToServer())" />
-                        }
-                        else
-                        {
-                            <MudIconButton Icon="@Icons.Material.Filled.Dns" Color="Color.Inherit" OnClick="@((e) => SwitchToWasm())" />
-                        }
                         <MudIconButton Icon="@Icons.Material.Filled.Brightness4" Color="Color.Inherit" OnClick="@((e) => DarkMode())" />
                         <MudIconButton Icon="@Icons.Custom.Brands.GitHub" Color="Color.Inherit" Link="https://github.com/MudBlazor/MudBlazor/" Target="_blank" />
                         <MudIconButton Icon="@Icons.Material.Filled.FormatTextdirectionRToL" Color="Color.Inherit" OnClick="@((e) => RightToLeftToggle())" />

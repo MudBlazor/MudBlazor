@@ -34,22 +34,30 @@ namespace MudBlazor
         /// <summary>
         /// The placement of the badge.
         /// </summary>
-        [Parameter] public Origin Origin { get; set; } = Origin.TopRight;
+        [Parameter]
+        [Category(CategoryTypes.Badge.Appearance)]
+        public Origin Origin { get; set; } = Origin.TopRight;
 
         /// <summary>
         /// The higher the number, the heavier the drop-shadow.
         /// </summary>
-        [Parameter] public int Elevation { set; get; } = 0;
+        [Parameter]
+        [Category(CategoryTypes.Badge.Appearance)]
+        public int Elevation { set; get; } = 0;
 
         /// <summary>
         /// The visibility of the badge.
         /// </summary>
-        [Parameter] public bool Visible { get; set; } = true;
+        [Parameter]
+        [Category(CategoryTypes.Badge.Behavior)]
+        public bool Visible { get; set; } = true;
 
         /// <summary>
         /// The color of the badge.
         /// </summary>
-        [Parameter] public Color Color { get; set; } = Color.Default;
+        [Parameter]
+        [Category(CategoryTypes.Badge.Appearance)]
+        public Color Color { get; set; } = Color.Default;
 
         /// <summary>
         /// Aligns the badge to bottom.
@@ -75,42 +83,58 @@ namespace MudBlazor
         /// <summary>
         /// Reduces the size of the badge and hide any of its content.
         /// </summary>
-        [Parameter] public bool Dot { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.Badge.Behavior)]
+        public bool Dot { get; set; }
 
         /// <summary>
         /// Overlaps the childcontent on top of the content.
         /// </summary>
-        [Parameter] public bool Overlap { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.Badge.Appearance)]
+        public bool Overlap { get; set; }
 
         /// <summary>
         /// Applies a border around the badge.
         /// </summary>
-        [Parameter] public bool Bordered { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.Badge.Appearance)]
+        public bool Bordered { get; set; }
 
         /// <summary>
         /// Sets the Icon to use in the badge.
         /// </summary>
-        [Parameter] public string Icon { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.Badge.Behavior)]
+        public string Icon { get; set; }
 
         /// <summary>
         /// Max value to show when content is integer type.
         /// </summary>
-        [Parameter] public int Max { get; set; } = 99;
+        [Parameter]
+        [Category(CategoryTypes.Badge.Behavior)]
+        public int Max { get; set; } = 99;
 
         /// <summary>
         /// Content you want inside the badge. Supported types are string and integer.
         /// </summary>
-        [Parameter] public object Content { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.Badge.Behavior)]
+        public object Content { get; set; }
 
         /// <summary>
         /// Badge class names, separated by space.
         /// </summary>
-        [Parameter] public string BadgeClass { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.Badge.Appearance)]
+        public string BadgeClass { get; set; }
 
         /// <summary>
         /// Child content of component, the content that the badge will apply to.
         /// </summary>
-        [Parameter] public RenderFragment ChildContent { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.Badge.Behavior)]
+        public RenderFragment ChildContent { get; set; }
 
         /// <summary>
         /// Button click event if set.
