@@ -60,6 +60,8 @@ namespace MudBlazor
         private string Position { get; set; }
         private string DialogMaxWidth { get; set; }
         private bool DisableBackdropClick { get; set; }
+        private bool DarkOverlayBackground { get; set; }
+        private bool LightOverlayBackground { get; set; }
         private bool CloseOnEscapeKey { get; set; }
         private bool NoHeader { get; set; }
         private bool CloseButton { get; set; }
@@ -169,6 +171,8 @@ namespace MudBlazor
             FullWidth = SetFullWidth();
             FullScreen = SetFulScreen();
             DisableBackdropClick = SetDisableBackdropClick();
+            DarkOverlayBackground = SetDarkOverlayBackground();
+            LightOverlayBackground = SetLightOverlayBackground();
             CloseOnEscapeKey = SetCloseOnEscapeKey();
         }
 
@@ -273,6 +277,29 @@ namespace MudBlazor
 
             return false;
         }
+
+        private bool SetDarkOverlayBackground()
+        {
+            if (Options.DarkOverlayBackground.HasValue)
+                return Options.DarkOverlayBackground.Value;
+
+            if (GlobalDialogOptions.DarkOverlayBackground.HasValue)
+                return GlobalDialogOptions.DarkOverlayBackground.Value;
+
+            return true;
+        }
+
+        private bool SetLightOverlayBackground()
+        {
+            if (Options.LightOverlayBackground.HasValue)
+                return Options.LightOverlayBackground.Value;
+
+            if (GlobalDialogOptions.LightOverlayBackground.HasValue)
+                return GlobalDialogOptions.LightOverlayBackground.Value;
+
+            return false;
+        }
+
 
         private bool SetCloseOnEscapeKey()
         {

@@ -22,6 +22,8 @@ namespace MudBlazor
         [Parameter] [Category(CategoryTypes.Dialog.Behavior)] public bool? NoHeader { get; set; }
         [Parameter] [Category(CategoryTypes.Dialog.Behavior)] public bool? CloseButton { get; set; }
         [Parameter] [Category(CategoryTypes.Dialog.Behavior)] public bool? DisableBackdropClick { get; set; }
+        [Parameter][Category(CategoryTypes.Dialog.Behavior)] public bool? DarkOverlayBackground { get; set; }
+        [Parameter][Category(CategoryTypes.Dialog.Behavior)] public bool? LightOverlayBackground { get; set; }
         [Parameter] [Category(CategoryTypes.Dialog.Behavior)] public bool? CloseOnEscapeKey { get; set; }
         [Parameter] [Category(CategoryTypes.Dialog.Appearance)] public bool? FullWidth { get; set; }
         [Parameter] [Category(CategoryTypes.Dialog.Appearance)] public DialogPosition? Position { get; set; }
@@ -37,6 +39,8 @@ namespace MudBlazor
             NavigationManager.LocationChanged += LocationChanged;
 
             _globalDialogOptions.DisableBackdropClick = DisableBackdropClick;
+            _globalDialogOptions.DarkOverlayBackground = DarkOverlayBackground;
+            _globalDialogOptions.LightOverlayBackground = LightOverlayBackground;
             _globalDialogOptions.CloseOnEscapeKey = CloseOnEscapeKey;
             _globalDialogOptions.CloseButton = CloseButton;
             _globalDialogOptions.NoHeader = NoHeader;
