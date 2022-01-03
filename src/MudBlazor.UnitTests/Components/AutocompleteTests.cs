@@ -319,7 +319,7 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(() => autocomplete.Validate());
             autocomplete.ValidationErrors.Should().NotBeEmpty();
             autocomplete.ValidationErrors.Should().HaveCount(1);
-            autocomplete.ValidationErrors[0].Should().Equals("Should not be longer than 3");
+            autocomplete.ValidationErrors[0].Should().Be("Should not be longer than 3");
         }
 
         [Test]
