@@ -278,7 +278,6 @@ namespace MudBlazor
                         {
                             Date = Date.Value.AddYears(-1);
                             _yearChange = -1;
-                            ScrollToYear();
                         }
                         else if (CurrentView == OpenTo.Month)
                         {
@@ -303,7 +302,6 @@ namespace MudBlazor
                         {
                             Date = Date.Value.AddYears(1);
                             _yearChange = 1;
-                            ScrollToYear();
                         }
                         else if (CurrentView == OpenTo.Month)
                         {
@@ -388,6 +386,10 @@ namespace MudBlazor
                     break;
             }
             SetPickerMonthByCurrentDate(_yearChange);
+            if (CurrentView == OpenTo.Year)
+            {
+                ScrollToYear();
+            }
         }
 
         private void SetPickerMonthByCurrentDate(int yearChange)
