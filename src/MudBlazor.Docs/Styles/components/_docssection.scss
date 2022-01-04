@@ -123,13 +123,13 @@
       bottom: 4px;
       right: 4px;
       color: rgba(5, 0, 51, 0.0);
-      background-color: var(--mud-palette-background-grey);
       transition: color 250ms cubic-bezier(.4, 0, .2, 1) 0ms;
     }
 
     &:hover {
       .copy-code-button {
         color: rgba(5, 0, 51, 0.4);
+        background-color: var(--mud-palette-background-grey);
       }
     }
 

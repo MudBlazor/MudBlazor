@@ -31,7 +31,7 @@
         width: 100%;
         height: calc(100vw / 5);
         min-height: 200px;
-        background-color: #F9FAFC;
+        background-color: var(--mud-palette-background-grey);
         top: 0;
         left: 0;
         position: absolute;
@@ -44,7 +44,7 @@
         height: 100%;
         min-height: 200px;
         max-height: 384px;
-        background-color: #F9FAFC;
+        background-color: var(--mud-palette-background-grey);
         bottom: 0;
         left: 0;
         position: absolute;
@@ -353,8 +353,12 @@
                 background-color: var(--mud-palette-surface);
             }
 
+            &.background {
+              background-color: var(--mud-palette-background);
+            }
+
             &.sweet {
-                background-color: #F9FAFC;
+                background-color: var(--mud-palette-background-grey);
             }
         }
 
@@ -387,7 +391,11 @@
                 }
 
                 &.sweet {
-                    background-color: #F9FAFC;
+                  background-color: var(--mud-palette-background-grey);
+                }
+
+                &.background {
+                  background-color: var(--mud-palette-background);
                 }
 
                 &.surface {
@@ -603,7 +611,7 @@
         bottom: -100%;
         width: 100%;
         height: 150%;
-        background: linear-gradient(0deg, rgba(249,250,252,1) 0%, rgba(249,250,252,0) 100%);
+        background: linear-gradient(0deg, var(--mud-palette-background-grey) 0%, rgba(249,250,252,0) 100%);
       }
     }
   }
