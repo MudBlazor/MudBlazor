@@ -10,14 +10,28 @@
             <SectionHeader Title="Basic Usage">
                 <Description>
                     <MudAlert Severity="Severity.Info" Dense="true" Class="mt-3">Note: Always use the two-way binding <CodeInline>@@bind-Date</CodeInline> to bind to a field of type <CodeInline>DateTime?</CodeInline></MudAlert>
-                    <MudText Class="py-6">
-                        If <CodeInline>AutoClose</CodeInline> is set to true and PickerActions are defined, selecting a day will close the MudDatePicker.
-                        If <CodeInline>ReadOnly</CodeInline> is set to true, the DatePicker can be used but the value will remain unchanged regardless of the actions performed or the values entered.
-                    </MudText>
                 </Description>
             </SectionHeader>
             <SectionContent Code="DatePickerBasicUsageExample" ShowCode="false">
                 <DatePickerBasicUsageExample />
+            </SectionContent>
+        </DocsPageSection>
+        
+        <DocsPageSection>
+            <SectionHeader Title="Read Only">
+                <Description>If <CodeInline>ReadOnly</CodeInline> is set to true, the DatePicker can be used but the value will remain unchanged regardless of the actions performed or the values entered.</Description>
+            </SectionHeader>
+            <SectionContent Code="DatePickerReadOnlyExample" ShowCode="false">
+                <DatePickerReadOnlyExample />
+            </SectionContent>
+        </DocsPageSection>
+        
+        <DocsPageSection>
+            <SectionHeader Title="Action Buttons">
+                <Description>You can add buttons by using the <CodeInline>PickerActions</CodeInline> render fragment. If <CodeInline>AutoClose</CodeInline> is set to true and PickerActions are defined, selecting a day will close the MudDatePicker.</Description>
+            </SectionHeader>
+            <SectionContent Code="DatePickerActionButtonsExample" ShowCode="false">
+                <DatePickerActionButtonsExample />
             </SectionContent>
         </DocsPageSection>
 
@@ -25,7 +39,7 @@
             <SectionHeader Title="Internationalization">
                 <Description>When you set the <CodeInline>Culture</CodeInline> parameter, the DatePicker will use culture-specific month names, weekday names and even different calendars.</Description>
             </SectionHeader>
-            <SectionContent DarkenBackground="true" Code="DatePickerInternationalizationExample" ShowCode="false">
+            <SectionContent Code="DatePickerInternationalizationExample" ShowCode="false">
                 <DatePickerInternationalizationExample />
             </SectionContent>
         </DocsPageSection>
