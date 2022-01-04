@@ -118,6 +118,7 @@ namespace MudBlazor
             else
             {
                 CurrentView = (OpenTo)nextView;
+                _ = _inputReference.FocusAsync();
             }
         }
 
@@ -220,10 +221,19 @@ namespace MudBlazor
                             Date = Date.Value.AddYears(1);
                             _yearChange = 1;
                         }
-                        else if (IsOpen)
+                        else if (IsOpen && Date.HasValue)
                         {
-                            Date = Date.Value.AddDays(1);
-                        } 
+                            if (CurrentView == OpenTo.Month)
+                            {
+                                Date = Date.Value.AddMonths(1);
+                                PickerMonth = new DateTime(Date.Value.Year, Date.Value.Month, 1);
+                                //return;
+                            }
+                            else if (CurrentView == OpenTo.Date)
+                            {
+                                Date = Date.Value.AddDays(1);
+                            }
+                        }
                     }
                     break;
                 case "ArrowLeft":
@@ -238,10 +248,19 @@ namespace MudBlazor
                             Date = Date.Value.AddYears(-1);
                             _yearChange = -1;
                         }
-                        else if (IsOpen)
+                        else if (IsOpen && Date.HasValue)
                         {
-                            Date = Date.Value.AddDays(-1);
-                        } 
+                            if (CurrentView == OpenTo.Month)
+                            {
+                                Date = Date.Value.AddMonths(-1);
+                                PickerMonth = new DateTime(Date.Value.Year, Date.Value.Month, 1);
+                                //return;
+                            }
+                            else if (CurrentView == OpenTo.Date)
+                            {
+                                Date = Date.Value.AddDays(-1);
+                            }
+                        }
                     }
                     break;
                 case "ArrowUp":
@@ -253,15 +272,24 @@ namespace MudBlazor
                     {
                         IsOpen = false;
                     }
-                    else if (Date.HasValue && OpenTo == OpenTo.Year)
-                    {
-                        Date = Date.Value.AddYears(-1);
-                        _yearChange = -1;
-                        ScrollToYear();
-                    }
                     else if (Date.HasValue)
                     {
-                        Date = Date.Value.AddDays(-7);
+                        if (CurrentView == OpenTo.Year)
+                        {
+                            Date = Date.Value.AddYears(-1);
+                            _yearChange = -1;
+                            ScrollToYear();
+                        }
+                        else if (CurrentView == OpenTo.Month)
+                        {
+                            Date = Date.Value.AddMonths(-3);
+                            PickerMonth = new DateTime(Date.Value.Year, Date.Value.Month, 1);
+                            //return;
+                        }
+                        else if (CurrentView == OpenTo.Date)
+                        {
+                            Date = Date.Value.AddDays(-7);
+                        }
                     }
                     break;
                 case "ArrowDown":
@@ -271,22 +299,19 @@ namespace MudBlazor
                     }
                     else if (Date.HasValue)
                     {
-                        if (OpenTo == OpenTo.Year)
+                        if (CurrentView == OpenTo.Year)
                         {
                             Date = Date.Value.AddYears(1);
                             _yearChange = 1;
                             ScrollToYear();
                         }
-                        else if (OpenTo == OpenTo.Month)
+                        else if (CurrentView == OpenTo.Month)
                         {
                             Date = Date.Value.AddMonths(3);
-                            PickerMonth = (DateTime)Date;
-                            Submit();
-                            //GetMonthClasses((DateTime)Date);
-                            StateHasChanged();
-                            return;
+                            PickerMonth = new DateTime(Date.Value.Year, Date.Value.Month, 1);
+                            //return;
                         }
-                        else if (OpenTo == OpenTo.Date)
+                        else if (CurrentView == OpenTo.Date)
                         {
                             Date = Date.Value.AddDays(7);
                         }
@@ -331,10 +356,18 @@ namespace MudBlazor
                     }
                     else
                     {
-                        Submit();
-                        _backUpDate = Date;
-                        Close();
-                        _inputReference?.SetText(Text);
+                        var nextView = GetNextView();
+                        if (nextView == null)
+                        {
+                            Submit();
+                            _backUpDate = Date;
+                            Close();
+                            _inputReference?.SetText(Text);
+                        }
+                        else
+                        {
+                            CurrentView = (OpenTo)nextView;
+                        }
                     }
                     break;
                 case " ":
