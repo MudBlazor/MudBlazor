@@ -10,14 +10,28 @@
             <SectionHeader Title="Basic Usage">
                 <Description>
                     <MudAlert Severity="Severity.Info" Dense="true" Class="mt-3">Note: Always use the two-way binding <CodeInline>@@bind-Time</CodeInline> to bind to a field of type <CodeInline>TimeSpan?</CodeInline></MudAlert>
-                    <MudText Class="py-6">
-                        If <CodeInline>AutoClose</CodeInline> is set to true and PickerActions are defined, the hour and the minutes can be selected and the drop-down will close without having to click any of the action buttons.
-                        If <CodeInline>ReadOnly</CodeInline> is set to true, the TimePicker can be used but the value will remain unchanged regardless of the actions performed or the values entered.
-                    </MudText>
                 </Description>
             </SectionHeader>
             <SectionContent Code="TimePickerBasicUsageExample" ShowCode="true">
                 <TimePickerBasicUsageExample />
+            </SectionContent>
+        </DocsPageSection>
+        
+        <DocsPageSection>
+            <SectionHeader Title="Read Only">
+                <Description>If <CodeInline>ReadOnly</CodeInline> is set to true, the TimePicker can be used but the value will remain unchanged regardless of the actions performed or the values entered.</Description>
+            </SectionHeader>
+            <SectionContent Code="TimePickerReadOnlyExample" ShowCode="false">
+                <TimePickerReadOnlyExample />
+            </SectionContent>
+        </DocsPageSection>
+                
+        <DocsPageSection>
+            <SectionHeader Title="Action Buttons">
+                <Description>You can add buttons by using the <CodeInline>PickerActions</CodeInline> render fragment. If <CodeInline>AutoClose</CodeInline> is set to true and PickerActions are defined, the hour and the minutes can be selected and the drop-down will close without having to click any of the action buttons.</Description>
+            </SectionHeader>
+            <SectionContent Code="TimePickerActionButtonsExample" ShowCode="false">
+                <TimePickerActionButtonsExample />
             </SectionContent>
         </DocsPageSection>
 
