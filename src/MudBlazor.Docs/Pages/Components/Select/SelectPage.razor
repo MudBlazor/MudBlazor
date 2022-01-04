@@ -10,18 +10,7 @@
                 <Description>Select comes in the variants Text, Filled and Outline.<br />Select is generic, meaning you can use values of any type with it. See the example code how that works.</Description>
             </SectionHeader>
             <SectionContent ShowCode="false" Code="SelectVariantsExample">
-                <MudContainer>
-                    <SelectVariantsExample />
-                </MudContainer>
-            </SectionContent>
-        </DocsPageSection>
-
-        <DocsPageSection>
-            <SectionHeader Title="Margin and Dense">
-                <Description>With the <CodeInline>Margin</CodeInline> prop you can reduce the selects height and with <CodeInline>Dense</CodeInline> set to true the select list will be displayed with dense vertical padding.</Description>
-            </SectionHeader>
-            <SectionContent Code="SelectDenseExample" ShowCode="false">
-                <SelectDenseExample />
+                <SelectVariantsExample />
             </SectionContent>
         </DocsPageSection>
 
@@ -32,6 +21,24 @@
             <SectionContent Code="SelectPropsExample" ShowCode="false">
                 <SelectPropsExample />
             </SectionContent>
+            <SectionSubGroups>
+                <DocsPageSection>
+                    <SectionHeader Title="Margin">
+                        <Description>With the <CodeInline>Margin</CodeInline> prop you can reduce the height of the component.</Description>
+                    </SectionHeader>
+                    <SectionContent Code="SelectMarginExample" ShowCode="false">
+                        <SelectMarginExample />
+                    </SectionContent>
+                </DocsPageSection>
+                <DocsPageSection>
+                    <SectionHeader Title="Dense">
+                        <Description>The <CodeInline>Dense</CodeInline> prop set to true the select list will be displayed with dense vertical padding.</Description>
+                    </SectionHeader>
+                    <SectionContent Code="SelectDenseExample" ShowCode="false">
+                        <SelectDenseExample />
+                    </SectionContent>
+                </DocsPageSection>
+            </SectionSubGroups>
         </DocsPageSection>
 
         <DocsPageSection>
@@ -151,9 +158,7 @@
                 </Description>
             </SectionHeader>
             <SectionContent ShowCode="false" Code="SelectKeyboardNavigationExample">
-                <MudContainer>
-                    <SelectKeyboardNavigationExample />
-                </MudContainer>
+                <SelectKeyboardNavigationExample />
             </SectionContent>
         </DocsPageSection>
 
