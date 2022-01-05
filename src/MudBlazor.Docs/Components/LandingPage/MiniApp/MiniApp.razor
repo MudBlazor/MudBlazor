@@ -1,30 +1,29 @@
 ﻿@using Microsoft.AspNetCore.Components
 @using MudBlazor.Utilities
 @namespace MudBlazor.Docs.Components.LandingPage
-@layout MiniAppLayout
 
 <div class="d-flex mud-width-full mud-height-full">
     <MudOverlay OnClick="@(() => ToggleMiniDrawer())" @bind-Visible="@overlayVisible" Absolute="true" ZIndex="1" />
     <div class="@MiniDrawerClassNames" style="@GetDrawerWidth()">
         <div class="d-flex align-center px-4">
             <MudBlazorLogo Class="mr-3" Style="width:36px;"/>
-            <MudText Typo="Typo.h6" Color="Color.Dark">Mud Mini</MudText>
+            <MudText Typo="Typo.h6">Mud Mini</MudText>
         </div>
         <MudList Clickable="true" @bind-SelectedItem="selectedItem" @bind-SelectedValue="selectedValue" Class="py-6 mini-fake-nav">
 
             <MudListSubheader Class="pt-6 pb-2">General</MudListSubheader>
 
-            <MudListItem Value="1" Icon="@Icons.Rounded.SpaceDashboard" Text="Dashboard" />
-            <MudListItem Value="2" Icon="@Icons.Rounded.ShoppingCart" Text="E-Commerce" />
-            <MudListItem Value="3" Icon="@Icons.Rounded.AccountBalance" Text="Banking" />
-            <MudListItem Value="4" Icon="@Icons.Rounded.Event" Text="Booking" />
+            <MudListItem Value="1" Icon="@Icons.Rounded.SpaceDashboard" Text="Dashboard" IconColor="Color.Inherit"/>
+            <MudListItem Value="2" Icon="@Icons.Rounded.ShoppingCart" Text="E-Commerce" IconColor="Color.Inherit"/>
+            <MudListItem Value="3" Icon="@Icons.Rounded.AccountBalance" Text="Banking" IconColor="Color.Inherit"/>
+            <MudListItem Value="4" Icon="@Icons.Rounded.Event" Text="Booking" IconColor="Color.Inherit"/>
 
             <MudListSubheader Class="pt-6 pb-2">Applications</MudListSubheader>
 
-            <MudListItem Value="5" Icon="@Icons.Rounded.Email" Text="Mail" />
-            <MudListItem Value="6" Icon="@Icons.Rounded.QuestionAnswer" Text="Chat" />
-            <MudListItem Value="7" Icon="@Icons.Rounded.EventNote" Text="Calendar" />
-            <MudListItem Value="8" Icon="@Icons.Rounded.ViewKanban" Text="Kanban" />
+            <MudListItem Value="5" Icon="@Icons.Rounded.Email" Text="Mail" IconColor="Color.Inherit" />
+            <MudListItem Value="6" Icon="@Icons.Rounded.QuestionAnswer" Text="Chat" IconColor="Color.Inherit" />
+            <MudListItem Value="7" Icon="@Icons.Rounded.EventNote" Text="Calendar" IconColor="Color.Inherit" />
+            <MudListItem Value="8" Icon="@Icons.Rounded.ViewKanban" Text="Kanban" IconColor="Color.Inherit" />
 
             <MudListSubheader Class="pt-6 pb-2">Manage</MudListSubheader>
 
@@ -41,11 +40,11 @@
         </MudList>
     </div>
     <div class="@ContentClassNames">
-        <MudToolBar DisableGutters="true">
-            <MudIconButton OnClick="@(() => ToggleMiniDrawer())" Icon="@Icons.Rounded.MenuOpen"/>
-            <MudIconButton Icon="@Icons.Outlined.Search"/>
+        <MudToolBar DisableGutters="true" Class="mud-text-secondary">
+            <MudIconButton OnClick="@(() => ToggleMiniDrawer())" Icon="@Icons.Rounded.MenuOpen" Color="Color.Inherit"/>
+            <MudIconButton Icon="@Icons.Outlined.Search" Color="Color.Inherit"/>
             <MudSpacer/>
-            <MudIconButton Icon="@Icons.Outlined.Notifications"/>
+            <MudIconButton Class="mud-text-secondary" Icon="@Icons.Outlined.Notifications"/>
             <MudMenu AnchorOrigin="Origin.BottomRight" TransformOrigin="Origin.TopRight" PopoverClass="mudblazor-landingpage-scaled-menu mud-elevation-1">
                 <ActivatorContent>
                     <MiniAppAvatar />
@@ -53,7 +52,7 @@
                 <ChildContent>
                     <div class="px-4">
                         <MudText Typo="Typo.subtitle2">Martin Mudsson</MudText>
-                        <MudText Typo="Typo.body1" Class="mt-n2">martin@mudsson.se</MudText>
+                        <MudText Class="mt-n2" Typo="Typo.body1">martin@mudsson.se</MudText>
                     </div>
                     <MudDivider Class="my-2"/>
                     <MudListItem Dense="true" Icon="@Icons.Rounded.Person">Profile</MudListItem>

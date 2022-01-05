@@ -28,7 +28,7 @@
         }
 
         & .htmlElementName {
-            color: #594ae2;
+            color: var(--mud-palette-primary);
             font-weight: 600;
         }
 
@@ -81,7 +81,7 @@
         }
 
         & .keyword {
-            color: #594ae2;
+            color: var(--mud-palette-primary);
         }
 
         & .string {

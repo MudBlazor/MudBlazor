@@ -19,7 +19,6 @@
   }
 }
 
-
 .landing-appbar{
   position: absolute !important;
 }
@@ -44,3 +43,41 @@
   }
 }
 
+.docs-mobile-dialog-search{
+  height: 400px;
+}
+
+.docs-mobile-dialog-search-popover{
+  box-shadow: none !important;
+  margin-top: 8px;
+  background-color: var(--mud-palette-background-grey);
+  
+  .mud-list{
+    background-color: var(--mud-palette-background-grey);
+    .mud-list-item{
+      background-color: var(--mud-palette-surface);
+      margin: 6px 0;
+      border-radius: 4px;
+
+      .mud-typography-body2{
+        font-size: 12px;
+        font-weight: 500;
+        color: var(--mud-palette-text-secondary);
+      }
+      
+      &:hover{
+        color: var(--mud-palette-primary-text);
+        background-color: var(--mud-palette-primary);
+        .mud-typography-body2{
+          color: var(--mud-palette-primary-text);
+        }
+      }
+    }
+  }
+}
+
+@media (max-width:960px) {
+  :root {
+    --mud-drawer-width-left: 300px !important;
+  }
+}

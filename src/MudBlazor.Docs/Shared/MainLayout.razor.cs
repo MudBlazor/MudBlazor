@@ -1,19 +1,21 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Docs.Services.UserPreferences;
+using MudBlazor.Docs.Models;
 
 namespace MudBlazor.Docs.Shared
 {
     public partial class MainLayout : LayoutComponentBase
     {
         [Inject] private IUserPreferencesService UserPreferencesService { get; set; }
+        [Inject] private NavigationManager NavigationManager { get; set; }
         
         internal bool _rightToLeft;
         internal bool _isDarkMode;
         private UserPreferences _userPreferences;
         private MudThemeProvider _mudThemeProvider;
         private MudTheme _currentTheme;
-        
+
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
             if (firstRender)
@@ -59,6 +61,26 @@ namespace MudBlazor.Docs.Shared
         {
             _currentTheme = theme;
             StateHasChanged();
+        }
+
+        internal DocsBasePage GetDocsBasePage()
+        {
+            if (NavigationManager.Uri.Contains("/api/") || NavigationManager.Uri.Contains("/components/"))
+            {
+                return DocsBasePage.Docs;
+            }
+            else if (NavigationManager.Uri.Contains("/getting-started/"))
+            {
+                return DocsBasePage.GettingStarted;
+            }
+            else if (NavigationManager.Uri.Contains("/mud/"))
+            {
+                return DocsBasePage.DiscoverMore;
+            }
+            else
+            {
+                return DocsBasePage.None;
+            }
         }
     }
 }

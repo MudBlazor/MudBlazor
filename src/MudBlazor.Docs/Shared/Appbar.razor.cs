@@ -6,10 +6,10 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Docs.Extensions;
 using MudBlazor.Docs.Models;
 using MudBlazor.Docs.Services;
-using MudBlazor.Docs.Services.Notifications;
 
 namespace MudBlazor.Docs.Shared;
 
@@ -17,29 +17,18 @@ public partial class Appbar
 {
     [CascadingParameter] private MainLayout MainData { get; set; }
     [Parameter] public bool DisplaySearchBar { get; set; }
+    
     [Inject] private NavigationManager NavigationManager { get; set; }
     [Inject] private IApiLinkService ApiLinkService { get; set; }
-
-    [Inject] private INotificationService NotificationService { get; set; }
+    
+    [Parameter] public EventCallback<MouseEventArgs> DrawerToggleCallback { get; set; }
     
     MudAutocomplete<ApiLinkServiceEntry> _searchAutocomplete;
-
-    private IDictionary<NotificationMessage,bool> _messages = null;
-    private bool _newNotificationsAvailable = false;
+    
     private string _badgeTextSoon = "coming soon";
-    protected override async Task OnInitializedAsync()
-    {
-        _newNotificationsAvailable = await NotificationService.AreNewNotificationsAvailable();
-        _messages = await NotificationService.GetNotifications();
-        await base.OnInitializedAsync();
-    }
-
-    private async Task MarkNotificationAsRead()
-    {
-        await NotificationService.MarkNotificationsAsRead();
-        _newNotificationsAvailable = false;
-    }
-
+    private bool _dialogOpen;
+    private void OpenDialog() => _dialogOpen = true;
+    private DialogOptions _dialogOptions = new() { Position = DialogPosition.TopCenter, NoHeader = true };
     private Task<IEnumerable<ApiLinkServiceEntry>> Search(string text)
         {
             if (string.IsNullOrWhiteSpace(text))
@@ -126,30 +115,13 @@ public partial class Appbar
 
     private string GetActiveClass(DocsBasePage page)
     {
-        string activeClass = "mud-chip-text mud-chip-color-primary mx-1 px-3";
-        
-        if ((NavigationManager.Uri.Contains("/api/") || NavigationManager.Uri.Contains("/components/")) && page == DocsBasePage.Docs)
+        if (page == MainData.GetDocsBasePage())
         {
-            return activeClass;
-        }
-        else if (NavigationManager.Uri.Contains("/getting-started/") && page == DocsBasePage.GettingStarted)
-        {
-            return activeClass;
-        }
-        else if (NavigationManager.Uri.Contains("/mud/") && page == DocsBasePage.DiscoverMore)
-        {
-            return activeClass;
+            return "mud-chip-text mud-chip-color-primary mx-1 px-3";
         }
         else
         {
             return "mx-1 px-3";
         }
-    }
-
-    private enum DocsBasePage
-    {
-        Docs,
-        GettingStarted,
-        DiscoverMore
     }
 }
