@@ -21,14 +21,14 @@ public partial class SectionContent
 
     protected string Classname =>
         new CssBuilder("docs-section-content")
-            .AddClass($"outlined", Outlined && ChildContent != null && !DarkenBackground )
+            .AddClass($"outlined", Outlined && ChildContent != null )
             .AddClass($"darken", DarkenBackground)
             .AddClass("show-code", _hasCode && ShowCode)
             .AddClass(Class)
             .Build();
     protected string ToolbarClassname =>
         new CssBuilder("docs-section-content-toolbar")
-            .AddClass($"outlined", Outlined && ChildContent != null && Codes != null && !DarkenBackground)
+            .AddClass($"outlined", Outlined && ChildContent != null)
             .AddClass("darken", ChildContent == null && Codes != null)
             .Build();
 
@@ -43,7 +43,7 @@ public partial class SectionContent
     
     protected string SourceClassname =>
         new CssBuilder("docs-section-source")
-            .AddClass($"outlined", Outlined && ChildContent != null && !DarkenBackground)
+            .AddClass($"outlined", Outlined && ChildContent != null)
             .AddClass("show-code", _hasCode && ShowCode)
             .Build();
 
