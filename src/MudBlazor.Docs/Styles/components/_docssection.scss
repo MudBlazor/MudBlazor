@@ -120,16 +120,16 @@
 
     .copy-code-button {
       position: absolute;
-      bottom: 4px;
-      right: 4px;
+      bottom: 8px;
+      right: 8px;
       color: rgba(5, 0, 51, 0.0);
       transition: color 250ms cubic-bezier(.4, 0, .2, 1) 0ms;
     }
 
     &:hover {
       .copy-code-button {
-        color: rgba(5, 0, 51, 0.4);
-        background-color: var(--mud-palette-background-grey);
+        color: var(--mud-palette-text-secondary) !important;
+        background-color: transparent;
       }
     }
 
