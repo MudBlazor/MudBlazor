@@ -15,6 +15,7 @@ namespace MudBlazor
                 .AddClass($"mud-progress-{Size.ToDescriptionString()}")
                 .AddClass($"mud-progress-indeterminate", Indeterminate)
                 .AddClass($"mud-progress-static", !Indeterminate)
+                .AddClass("mud-progress-circular-rounded", Rounded)
                 .AddClass(Class)
                 .Build();
 
@@ -24,10 +25,12 @@ namespace MudBlazor
                 .AddClass($"mud-progress-static", !Indeterminate)
                 .Build();
 
-        protected string DivStyle =>
-            new StyleBuilder("transform", "rotate(-90deg)")
-            .AddStyle(Style)
-            .Build();
+        /// <summary>
+        /// The color of the component. It supports the theme colors.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.ProgressCircular.Appearance)]
+        public bool Rounded { get; set; } = false;
 
         /// <summary>
         /// The color of the component. It supports the theme colors.
@@ -95,6 +98,7 @@ namespace MudBlazor
             base.OnInitialized();
             _svgValue = ToSvgValue(_value);
         }
+
 
         #region --> Obsolete Forwarders for Backwards-Compatiblilty
 
