@@ -65,7 +65,7 @@ namespace MudBlazor.Docs.Shared
 
         internal DocsBasePage GetDocsBasePage()
         {
-            if (NavigationManager.Uri.Contains("/api/") || NavigationManager.Uri.Contains("/components/"))
+            if (NavigationManager.Uri.Contains("/api/") || NavigationManager.Uri.Contains("/components/") || NavigationManager.Uri.Contains("/features/") || NavigationManager.Uri.Contains("/customization/"))
             {
                 return DocsBasePage.Docs;
             }
