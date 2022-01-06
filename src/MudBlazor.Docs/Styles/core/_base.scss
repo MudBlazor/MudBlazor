@@ -67,3 +67,15 @@
 .docs-logo-filter{
   filter: grayscale(1) opacity(0.05);
 }
+
+.docs-class-table {
+  td{
+    font-family: Consolas,"Liberation Mono",Menlo,Courier,monospace;
+  }
+  
+  .docs-td-nowrap{
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+}
