@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Docs.Extensions;
@@ -99,26 +101,44 @@ namespace MudBlazor.Docs.Services
         /// <returns></returns>
         private List<NavigationFooterLink> GetOrderedMenuLinks(NavigationSection? section)
         {
-            var menuElements = section == NavigationSection.Components ? _menuService.Components : _menuService.Api;
-
-            var links = new List<NavigationFooterLink>();
-            foreach (var menuElement in menuElements)
+            if (section == NavigationSection.Api || section == NavigationSection.Components)
             {
-                if (menuElement.Link != null)
+                var menuElements = section == NavigationSection.Components ? _menuService.Components : _menuService.Api;
+                var links = new List<NavigationFooterLink>();
+                foreach (var menuElement in menuElements)
                 {
-                    var link = section == NavigationSection.Api ? ApiLink.GetApiLinkFor(menuElement.Type).Split("/").Last() : menuElement.Link;
+                    if (menuElement.Link != null)
+                    {
+                        var link = section == NavigationSection.Api
+                            ? ApiLink.GetApiLinkFor(menuElement.Type).Split("/").Last()
+                            : menuElement.Link;
 
-                    var name = menuElement.Name;
+                        var name = menuElement.Name;
 
-                    links.Add(new NavigationFooterLink(name, link));
+                        links.Add(new NavigationFooterLink(name, link));
+                    }
+
+                    if (menuElement.GroupComponents != null)
+                    {
+                        links.AddRange(menuElement.GroupComponents.Select(i => new NavigationFooterLink(i.Name, i.Link))
+                            .OrderBy(i => i.Link));
+                    }
                 }
 
-                if (menuElement.GroupComponents != null)
+                ;
+                return links;
+            }
+            else
+            {
+                var potentialLinks = section switch
                 {
-                    links.AddRange(menuElement.GroupComponents.Select(i => new NavigationFooterLink(i.Name, i.Link)).OrderBy(i => i.Link));
-                }
-            };
-            return links;
+                    // NavigationSection.Customization => _menuService.Customization,
+                    NavigationSection.Features => _menuService.Features,
+                    _ => Array.Empty<DocsLink>()
+                };
+
+                return potentialLinks.Select((x => new NavigationFooterLink(x.Title, x.Href.Split("/").Last()))).ToList();
+            }
         }
 
         private NavigationSection GetCurrentSection()
@@ -139,9 +159,9 @@ namespace MudBlazor.Docs.Services
                     thisSection = NavigationSection.Customization;
                     break;
             }
+
             return thisSection;
         }
-        
     }
 
     #region ENUMS
@@ -149,5 +169,6 @@ namespace MudBlazor.Docs.Services
     public enum NavigationOrder { Previous, Next }
 
     public enum NavigationSection { Api, Components, Features, Customization }
+
     #endregion
 }
