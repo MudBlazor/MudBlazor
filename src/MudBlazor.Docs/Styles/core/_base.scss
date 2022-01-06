@@ -69,8 +69,10 @@
 }
 
 .docs-class-table {
+  height: 400px;
   table{
     table-layout: fixed;
+    position: relative;
     width: 100%;
   }
   td{
@@ -78,6 +80,14 @@
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
+    user-select: all;
+  }
+  tbody tr th{
+    background-color: var(--mud-palette-surface);
+    color: var(--mud-palette-primary);
+    position: sticky;
+    z-index: 2;
+    top: 37px;
   }
   
   td, th{
