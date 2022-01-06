@@ -1,18 +1,90 @@
 @page "/customization/default-theme"
 @using System.Reflection
+@using System.Text.RegularExpressions
 
-<DocsPage>
+<DocsPage MaxWidth="MaxWidth.Large">
     <DocsPageHeader Title="Default Theme" SubTitle="Here's the default theme class with the default values." />
     <DocsPageContent>
         <DocsPageSection>
-            <SectionHeader Title="MudTheme" />
+            <SectionHeader Title="MudTheme">
+                
+            </SectionHeader>
+            <SectionSubGroups>
+                <DocsPageSection>
+                    <SectionHeader Title="Palette"/>
+                    <MudDataGrid Items="@ApiPalette" Dense="true" Elevation="0" Class="docs-class-table">
+                        <ColGroup>
+                            <col style="width: 100px;" />
+                            <col style="width: 100px;"/>
+                            <col style="width: 30%;" />
+                            <col style="width: 20%;" />
+                            <col />
+                        </ColGroup>
+                        <Columns>
+                            <Column T="ApiDefaultTheme" Field="Name" Class="pl-0"/>
+                            <Column T="ApiDefaultTheme" Field="Type"/>
+                            <Column T="ApiDefaultTheme" Field="CSSVariable" Title="CSS Variable"/>
+                            <Column T="ApiDefaultTheme" Field="CSSClass" Title="CSS Class"/>
+                            <Column T="ApiDefaultTheme" Field="Default" Class="pr-0"/>
+                        </Columns>
+                    </MudDataGrid>
+                </DocsPageSection>
+                <DocsPageSection>
+                    <SectionHeader Title="Shadows"/>
+                    <MudDataGrid Items="@ApiShadow" Dense="true" Elevation="0" Class="docs-class-table">
+                        <ColGroup>
+                            <col style="width: 100px;" />
+                            <col style="width: 100px;"/>
+                            <col style="width: 30%;" />
+                            <col style="width: 20%;" />
+                            <col />
+                        </ColGroup>
+                        <Columns>
+                            <Column T="ApiDefaultTheme" Field="Name" Class="pl-0"/>
+                            <Column T="ApiDefaultTheme" Field="Type"/>
+                            <Column T="ApiDefaultTheme" Field="CSSVariable" Title="CSS Variable"/>
+                            <Column T="ApiDefaultTheme" Field="CSSClass" Title="CSS Class"/>
+                            <Column T="ApiDefaultTheme" Field="Default" Class="pr-0"/>
+                        </Columns>
+                    </MudDataGrid>
+                </DocsPageSection>
+                <DocsPageSection>
+                    <SectionHeader Title="LayoutProperties"/>
+                    <MudDataGrid Items="@ApiLayout" Dense="true" Elevation="0" Class="docs-class-table">
+                        <ColGroup>
+                            <col style="width: 100px;" />
+                            <col style="width: 100px;"/>
+                            <col style="width: 30%;" />
+                            <col style="width: 20%;" />
+                            <col />
+                        </ColGroup>
+                        <Columns>
+                            <Column T="ApiDefaultTheme" Field="Name" Class="pl-0"/>
+                            <Column T="ApiDefaultTheme" Field="Type"/>
+                            <Column T="ApiDefaultTheme" Field="CSSVariable" Title="CSS Variable"/>
+                            <Column T="ApiDefaultTheme" Field="CSSClass" Title="CSS Class"/>
+                            <Column T="ApiDefaultTheme" Field="Default" Class="pr-0"/>
+                        </Columns>
+                    </MudDataGrid>
+                </DocsPageSection>
+                <DocsPageSection>
+                    <SectionHeader Title="Typography"/>
+                </DocsPageSection>
+                <DocsPageSection>
+                    <SectionHeader Title="ZIndex"/>
+                </DocsPageSection>
+                
+            </SectionSubGroups>
+        </DocsPageSection>
+        <DocsPageSection>
+            <SectionHeader Title="MudTheme2"/>
             <MudExpansionPanels MultiExpansion="true" Elevation="0">
                 <MudExpansionPanel Text="Palette">
                     @foreach (var _pal in typeof(Palette).GetProperties())
                     {
                         <div class="mt-1">
                             <MudText Inline="true">@_pal.Name</MudText>
-                            <MudText Inline="true" Style="color:#d69d85;">@_pal.GetValue(palette, null)</MudText>
+                            <MudText Inline="true" Style="color:#d69d85;">@_pal.GetValue(mudTheme.Palette, null)</MudText>
                         </div>
                     }
                 </MudExpansionPanel>
@@ -26,7 +98,7 @@
                                 <MudTooltip Text="@($"Elevation {a.ToString()}")">
                                     <MudText Class="mt-1" Style="color:#d69d85;">@mudTheme.Shadows.Elevation.GetValue(a)</MudText>
                                 </MudTooltip>
-                            </div>   
+                            </div>
                         }
                     </div>
                 </MudExpansionPanel>
@@ -34,13 +106,13 @@
                     @* List not obsolete ones *@
                     @foreach (var _layout in typeof(LayoutProperties).GetProperties())
                     {
-                        var attr = (ObsoleteAttribute)_layout.GetCustomAttribute(typeof(ObsoleteAttribute));
+                        var attr = (ObsoleteAttribute) _layout.GetCustomAttribute(typeof(ObsoleteAttribute));
 
                         if (attr == null)
                         {
                             <div class="mt-1">
                                 <MudText Inline="true">@_layout.Name</MudText>
-                                <MudText Inline="true" Style="color:#d69d85;">@_layout.GetValue(layoutProperties, null)</MudText>
+                                <MudText Inline="true" Style="color:#d69d85;">@_layout.GetValue(mudTheme.LayoutProperties, null)</MudText>
                             </div>
                         }
                     }
@@ -48,7 +120,7 @@
                     @* List obsolete ones *@
                     @foreach (var _layout in typeof(LayoutProperties).GetProperties())
                     {
-                        var attr = (ObsoleteAttribute)_layout.GetCustomAttribute(typeof(ObsoleteAttribute));
+                        var attr = (ObsoleteAttribute) _layout.GetCustomAttribute(typeof(ObsoleteAttribute));
 
                         if (attr != null)
                         {
@@ -64,42 +136,42 @@
                     {
                         <div class="mt-1">
                             <MudText Inline="true">@_zIndex.Name</MudText>
-                            <MudText Inline="true" Style="color:#79cc41;">@_zIndex.GetValue(zIndex, null)</MudText>
+                            <MudText Inline="true" Style="color:#79cc41;">@_zIndex.GetValue(mudTheme.ZIndex, null)</MudText>
                         </div>
                     }
                 </MudExpansionPanel>
                 <MudExpansionPanel Text="Typography">
                     @foreach (var _typography in typeof(Typography).GetProperties())
                     {
-                    <div class="mt-1">
-                        <MudText Inline="true">@_typography.Name</MudText>
-                        @foreach (var item in _typography.GetValue(typography, null).GetType().GetProperties())
-	                    {
-		                    <div>
-                                <MudText Inline="true" Style="color:#d69d85;">@_typography.GetValue(typography, null).GetType().GetProperty(item.Name).Name :</MudText>
-                                @if (item.Name == "FontFamily")
-                                {
-                                    string unifiedText = "";
-                                    foreach (string a in defaultFontFamily)
+                        <div class="mt-1">
+                            <MudText Inline="true">@_typography.Name</MudText>
+                            @foreach (var item in _typography.GetValue(mudTheme.Typography, null).GetType().GetProperties())
+                            {
+                                <div>
+                                    <MudText Inline="true" Style="color:#d69d85;">@_typography.GetValue(mudTheme.Typography, null).GetType().GetProperty(item.Name).Name :</MudText>
+                                    @if (item.Name == "FontFamily")
                                     {
-                                        if (unifiedText == "")
+                                        string unifiedText = "";
+                                        foreach (string a in defaultFontFamily)
                                         {
-                                            unifiedText += a;
+                                            if (unifiedText == "")
+                                            {
+                                                unifiedText += a;
+                                            }
+                                            else
+                                            {
+                                                unifiedText = unifiedText + ", " + a;
+                                            }
                                         }
-                                        else
-                                        {
-                                            unifiedText = unifiedText + ", " + a;
-                                        }
+                                        <MudText Inline="true" Style="color:#79cc41;">@unifiedText</MudText>
                                     }
-                                    <MudText Inline="true" Style="color:#79cc41;">@unifiedText</MudText>
-                                }
-                                else
-                                {
-                                    <MudText Inline="true" Style="color:#79cc41;">@_typography.GetValue(typography, null).GetType().GetProperty(item.Name).GetValue(_typography.GetValue(typography, null), null)</MudText>
-                                }
-                            </div>
-	                    }
-                    </div>
+                                    else
+                                    {
+                                        <MudText Inline="true" Style="color:#79cc41;">@_typography.GetValue(mudTheme.Typography, null).GetType().GetProperty(item.Name).GetValue(_typography.GetValue(mudTheme.Typography, null), null)</MudText>
+                                    }
+                                </div>
+                            }
+                        </div>
                     }
                 </MudExpansionPanel>
             </MudExpansionPanels>
@@ -109,17 +181,89 @@
 
 @code {
     MudTheme mudTheme = new MudTheme();
-    Palette palette = new Palette();
-    LayoutProperties layoutProperties = new LayoutProperties();
-    ZIndex zIndex = new ZIndex();
-    Typography typography = new Typography();
     string[] defaultFontFamily;
+    
+    private List<ApiDefaultTheme> ApiPalette = new List<ApiDefaultTheme>();
+    private List<ApiDefaultTheme> ApiShadow = new List<ApiDefaultTheme>();
+    private List<ApiDefaultTheme> ApiLayout = new List<ApiDefaultTheme>();
 
     protected override void OnInitialized()
     {
-        palette = mudTheme.Palette;
-        layoutProperties = mudTheme.LayoutProperties;
-        zIndex = mudTheme.ZIndex;
         defaultFontFamily = mudTheme.Typography.Default.FontFamily;
+        LoadPalette();
+        LoadShadows();
+        LoadLayout();
+    }
+
+    private void LoadPalette()
+    {
+        foreach (var value in typeof(Palette).GetProperties())
+        {
+            var newprop = new ApiDefaultTheme()
+            {
+                Name = value.Name,
+                Type = value.PropertyType.ConvertToCSharpSource(),
+                Default = value.GetValue(mudTheme.Palette, null),
+                CSSVariable = $"--mud-palette-{GetCssVar(value.Name)}"
+            };
+            ApiPalette.Add(newprop);
+        }
+    }
+
+    private void LoadShadows()
+    {
+        ApiShadow.Add(new ApiDefaultTheme()
+        {
+            Name = "Elevation",
+            Type = "String[]",
+            Default = "System.String[]"
+        });
+        for (int i = 0; i < mudTheme.Shadows.Elevation.Length; i++)
+        {
+            int a = i;
+            ApiShadow.Add(new ApiDefaultTheme()
+            {
+                Name = $"Elevation[{a}]",
+                Type = "String",
+                Default = mudTheme.Shadows.Elevation.GetValue(a),
+                CSSVariable = $"--mud-elevation-{a}",
+                CSSClass = $"mud-elevation-{a}"
+            });
+        }
+    }
+    
+    private void LoadLayout()
+    {
+        foreach (var value in typeof(LayoutProperties).GetProperties())
+        {
+            ApiLayout.Add(new ApiDefaultTheme()
+            {
+                Name = value.Name,
+                Type = value.PropertyType.ConvertToCSharpSource(),
+                Default = value.GetValue(mudTheme.LayoutProperties, null),
+                CSSVariable = $"--mud-{GetCssVar(value.Name)}"
+            });
+        }
+    }
+
+    private string GetCssVar(string value)
+    {
+        if (value.Contains("ContrastText"))
+        {
+            return value.Replace("ContrastText", "-Text").ToLower();
+        }
+        else
+        {
+            return Regex.Replace(value, @"\B[A-Z]", "-$&").ToLower();
+        }
+    }
+
+    private class ApiDefaultTheme
+    {
+        public string Name { get; set; }
+        public string Type { get; set; }
+        public object Default { get; set; }
+        public string CSSClass { get; set; }
+        public string CSSVariable { get; set; }
     }
 }
