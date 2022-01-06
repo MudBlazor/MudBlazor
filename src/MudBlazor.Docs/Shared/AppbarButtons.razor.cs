@@ -16,10 +16,8 @@ namespace MudBlazor.Docs.Shared;
 
 public partial class AppbarButtons
 {
-    [CascadingParameter] private MainLayout MainData { get; set; }
-
     [Inject] private INotificationService NotificationService { get; set; }
-    
+    [Inject] private LayoutService LayoutService { get; set; }
     private IDictionary<NotificationMessage,bool> _messages = null;
     private bool _newNotificationsAvailable = false;
 

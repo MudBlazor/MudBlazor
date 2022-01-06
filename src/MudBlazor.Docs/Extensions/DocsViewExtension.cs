@@ -30,6 +30,8 @@ namespace MudBlazor.Docs.Extensions
             services.AddScoped<IUserPreferencesService, UserPreferencesService>();
             services.AddScoped<INotificationService, InMemoryNotificationService>();
             services.AddSingleton<IRenderQueueService, RenderQueueService>();
+            services.AddScoped<LayoutService>();
+
         }
     }
 }

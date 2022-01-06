@@ -15,95 +15,96 @@ namespace MudBlazor.Docs.Shared;
 
 public partial class Appbar
 {
-    [CascadingParameter] private MainLayout MainData { get; set; }
     [Parameter] public bool DisplaySearchBar { get; set; }
-    
+
     [Inject] private NavigationManager NavigationManager { get; set; }
     [Inject] private IApiLinkService ApiLinkService { get; set; }
-    
-    [Parameter] public EventCallback<MouseEventArgs> DrawerToggleCallback { get; set; }
-    
+
+    [Inject] private LayoutService LayoutService { get; set; }
+
     MudAutocomplete<ApiLinkServiceEntry> _searchAutocomplete;
-    
+
     private string _badgeTextSoon = "coming soon";
     private bool _dialogOpen;
     private void OpenDialog() => _dialogOpen = true;
-    private DialogOptions _dialogOptions = new() { Position = DialogPosition.TopCenter, NoHeader = true };
+    private DialogOptions _dialogOptions = new() {Position = DialogPosition.TopCenter, NoHeader = true};
+
     private Task<IEnumerable<ApiLinkServiceEntry>> Search(string text)
+    {
+        if (string.IsNullOrWhiteSpace(text))
         {
-            if (string.IsNullOrWhiteSpace(text))
+            // the user just clicked the autocomplete open, show the most popular pages as search result according to our analytics data
+            // ordered by popularity
+            return Task.FromResult<IEnumerable<ApiLinkServiceEntry>>(new[]
             {
-                // the user just clicked the autocomplete open, show the most popular pages as search result according to our analytics data
-                // ordered by popularity
-                return Task.FromResult<IEnumerable<ApiLinkServiceEntry>>(new[]
+                new ApiLinkServiceEntry
                 {
-                    new ApiLinkServiceEntry
-                    {
-                        Title = "Installation",
-                        Link = "getting-started/installation",
-                        SubTitle = "Getting started with MudBlazor fast and easy."
-                    },
-                    new ApiLinkServiceEntry
-                    {
-                        Title = "Wireframes",
-                        Link = "getting-started/wireframes",
-                        SubTitle =
-                            "These small templates can be copied directly or just be used for inspiration."
-                    },
-                    new ApiLinkServiceEntry
-                    {
-                        Title = "Table",
-                        Link = "components/table",
-                        ComponentType = typeof(MudTable<T>),
-                        SubTitle = "A sortable, filterable table with multiselection and pagination."
-                    },
-                    new ApiLinkServiceEntry
-                    {
-                        Title = "Grid",
-                        Link = "components/grid",
-                        ComponentType = typeof(MudGrid),
-                        SubTitle =
-                            "The grid component helps keeping layout consistent across various screen resolutions and sizes."
-                    },
-                    new ApiLinkServiceEntry
-                    {
-                        Title = "Button",
-                        Link = "components/button",
-                        ComponentType = typeof(MudGrid),
-                        SubTitle = "A Material Design button for triggering an action or navigating to a link."
-                    },
-                    new ApiLinkServiceEntry
-                    {
-                        Title = "Card",
-                        Link = "components/card",
-                        ComponentType = typeof(MudCard),
-                        SubTitle = "Cards can contain actions, text, or media like images or graphics."
-                    },
-                    new ApiLinkServiceEntry
-                    {
-                        Title = "Dialog",
-                        Link = "components/dialog",
-                        ComponentType = typeof(MudDialog),
-                        SubTitle =
-                            "A dialog will overlay your current app content, providing the user with either information, a choice, or other tasks."
-                    },
-                    new ApiLinkServiceEntry
-                    {
-                        Title = "App Bar",
-                        Link = "components/appbar",
-                        ComponentType = typeof(MudAppBar),
-                        SubTitle = "App bar is used to display actions, branding, navigation and screen titles."
-                    },
-                    new ApiLinkServiceEntry
-                    {
-                        Title = "Navigation Menu",
-                        Link = "components/navmenu",
-                        ComponentType = typeof(MudNavMenu),
-                        SubTitle = "Nav menu provides a tree-like menu linking to the content on your site."
-                    },
-                });
-            }
-            return ApiLinkService.Search(text);
+                    Title = "Installation",
+                    Link = "getting-started/installation",
+                    SubTitle = "Getting started with MudBlazor fast and easy."
+                },
+                new ApiLinkServiceEntry
+                {
+                    Title = "Wireframes",
+                    Link = "getting-started/wireframes",
+                    SubTitle =
+                        "These small templates can be copied directly or just be used for inspiration."
+                },
+                new ApiLinkServiceEntry
+                {
+                    Title = "Table",
+                    Link = "components/table",
+                    ComponentType = typeof(MudTable<T>),
+                    SubTitle = "A sortable, filterable table with multiselection and pagination."
+                },
+                new ApiLinkServiceEntry
+                {
+                    Title = "Grid",
+                    Link = "components/grid",
+                    ComponentType = typeof(MudGrid),
+                    SubTitle =
+                        "The grid component helps keeping layout consistent across various screen resolutions and sizes."
+                },
+                new ApiLinkServiceEntry
+                {
+                    Title = "Button",
+                    Link = "components/button",
+                    ComponentType = typeof(MudGrid),
+                    SubTitle = "A Material Design button for triggering an action or navigating to a link."
+                },
+                new ApiLinkServiceEntry
+                {
+                    Title = "Card",
+                    Link = "components/card",
+                    ComponentType = typeof(MudCard),
+                    SubTitle = "Cards can contain actions, text, or media like images or graphics."
+                },
+                new ApiLinkServiceEntry
+                {
+                    Title = "Dialog",
+                    Link = "components/dialog",
+                    ComponentType = typeof(MudDialog),
+                    SubTitle =
+                        "A dialog will overlay your current app content, providing the user with either information, a choice, or other tasks."
+                },
+                new ApiLinkServiceEntry
+                {
+                    Title = "App Bar",
+                    Link = "components/appbar",
+                    ComponentType = typeof(MudAppBar),
+                    SubTitle = "App bar is used to display actions, branding, navigation and screen titles."
+                },
+                new ApiLinkServiceEntry
+                {
+                    Title = "Navigation Menu",
+                    Link = "components/navmenu",
+                    ComponentType = typeof(MudNavMenu),
+                    SubTitle = "Nav menu provides a tree-like menu linking to the content on your site."
+                },
+            });
+        }
+
+        return ApiLinkService.Search(text);
     }
 
     private async void OnSearchResult(ApiLinkServiceEntry entry)
@@ -115,13 +116,8 @@ public partial class Appbar
 
     private string GetActiveClass(DocsBasePage page)
     {
-        if (page == MainData.GetDocsBasePage())
-        {
-            return "mud-chip-text mud-chip-color-primary mx-1 px-3";
-        }
-        else
-        {
-            return "mx-1 px-3";
-        }
+        return page == LayoutService.GetDocsBasePage(NavigationManager.Uri) ? "mud-chip-text mud-chip-color-primary mx-1 px-3" : "mx-1 px-3";
     }
+
+    private void ToggleDrawerState() => LayoutService.ToggleDrawer();
 }

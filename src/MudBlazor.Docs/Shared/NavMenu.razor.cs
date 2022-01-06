@@ -8,7 +8,6 @@ namespace MudBlazor.Docs.Shared
 {
     public partial class NavMenu
     {
-        [CascadingParameter] private MainLayout MainData { get; set; }
         [Inject] IMenuService MenuService { get; set; } 
         [Inject] NavigationManager NavMan { get; set; }
 

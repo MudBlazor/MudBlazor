@@ -2,23 +2,43 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System;
 using Microsoft.AspNetCore.Components;
+using MudBlazor.Docs.Services;
 
 namespace MudBlazor.Docs.Shared
 {
-    public partial class LandingLayout : LayoutComponentBase
+    public partial class LandingLayout : LayoutComponentBase, IDisposable
     {
-        [CascadingParameter] private MainLayout MainData { get; set; }
+        [Inject] protected LayoutService LayoutService { get; set; }
         
-        private bool _drawerOpen = false;
         protected override void OnInitialized()
         {
-            MainData.SetBaseTheme(Theme.LandingPageTheme());
+            LayoutService.SetBaseTheme(Theme.LandingPageTheme());
+            
+            LayoutService.CloseDrawerRequested += LayoutServiceOnCloseDrawerRequested;
+            LayoutService.OpenDrawerRequested += LayoutServiceOnOpenDrawerRequested;
+        
+            base.OnInitialized();
         }
         
-        private void ToggleDrawer()
+        private void LayoutServiceOnOpenDrawerRequested(object sender, EventArgs e) => StateHasChanged();
+        private void LayoutServiceOnCloseDrawerRequested(object sender, EventArgs e) => StateHasChanged();
+
+
+        protected virtual void Dispose(bool disposing)
         {
-            _drawerOpen = !_drawerOpen;
+            if (disposing)
+            {
+                LayoutService.CloseDrawerRequested -= LayoutServiceOnCloseDrawerRequested;
+                LayoutService.OpenDrawerRequested -= LayoutServiceOnOpenDrawerRequested;
+            }
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
         }
     }
 }

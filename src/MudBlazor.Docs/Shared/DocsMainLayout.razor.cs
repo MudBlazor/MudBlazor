@@ -4,22 +4,17 @@
 
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
+using MudBlazor.Docs.Services;
 
 namespace MudBlazor.Docs.Shared;
 
 public partial class DocsMainLayout : LayoutComponentBase
 {
-    [CascadingParameter] private MainLayout MainData { get; set; }
-    
-    private bool _drawerOpen = true;
-
+    [Inject] private LayoutService LayoutService { get; set; }
     protected override void OnInitialized()
     {
-         MainData.SetBaseTheme(Theme.DocsTheme());
+        LayoutService.SetBaseTheme(Theme.DocsTheme());
     }
     
-    private void ToggleDrawer()
-    {
-        _drawerOpen = !_drawerOpen;
-    }
+
 }

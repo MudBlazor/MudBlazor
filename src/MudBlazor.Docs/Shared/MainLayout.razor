@@ -2,11 +2,9 @@
 
 <PageTitle>MudBlazor - Blazor Component Library</PageTitle>
 
-<MudRTLProvider RightToLeft="@_rightToLeft">
-    <MudThemeProvider @ref="@_mudThemeProvider" Theme="@_currentTheme" @bind-IsDarkMode="@_isDarkMode"/>
+<MudRTLProvider RightToLeft="@LayoutService.IsRTL">
+    <MudThemeProvider @ref="@_mudThemeProvider" Theme="@LayoutService.CurrentTheme" IsDarkMode="@LayoutService.IsDarkMode" IsDarkModeChanged="LayoutService.SetDarkMode"/>
     <MudDialogProvider FullWidth="true" MaxWidth="MaxWidth.ExtraSmall"/>
     <MudSnackbarProvider/>
-    <CascadingValue Value="this">
-        @Body
-    </CascadingValue>
+    @Body
 </MudRTLProvider>

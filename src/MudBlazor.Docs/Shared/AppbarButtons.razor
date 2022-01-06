@@ -24,9 +24,9 @@
         }
     </MudMenu>
 </MudBadge>
-<MudTooltip Duration="1000" Text="@(MainData._rightToLeft ? "Switch to left-to-right" : "Switch to right-to-left")">
-    <MudIconButton Icon="@(MainData._rightToLeft ? @Icons.Material.Filled.FormatTextdirectionLToR : @Icons.Material.Filled.FormatTextdirectionRToL)" OnClick="@((e) => MainData.RightToLeft())" Color="Color.Inherit"/>
+<MudTooltip Duration="1000" Text="@(LayoutService.IsRTL ? "Switch to left-to-right" : "Switch to right-to-left")">
+    <MudIconButton Icon="@(LayoutService.IsRTL ? @Icons.Material.Filled.FormatTextdirectionLToR : @Icons.Material.Filled.FormatTextdirectionRToL)" OnClick="@LayoutService.ToggleRightToLeft" Color="Color.Inherit"/>
 </MudTooltip>
-<MudTooltip Duration="1000" Text="@(MainData._isDarkMode ? "Switch to Light Theme" : "Switch to Dark Theme")">
-    <MudIconButton Icon="@(MainData._isDarkMode ? @Icons.Rounded.LightMode : @Icons.Material.Outlined.DarkMode)" Color="Color.Inherit" OnClick="@((e) => MainData.DarkMode())"/>
+<MudTooltip Duration="1000" Text="@(LayoutService.IsDarkMode ? "Switch to Light Theme" : "Switch to Dark Theme")">
+    <MudIconButton Icon="@(LayoutService.IsDarkMode ? @Icons.Rounded.LightMode : @Icons.Material.Outlined.DarkMode)" Color="Color.Inherit" OnClick="@LayoutService.ToggleDarkMode"/>
 </MudTooltip>
