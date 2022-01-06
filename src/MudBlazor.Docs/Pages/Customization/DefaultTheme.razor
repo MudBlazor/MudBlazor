@@ -147,6 +147,29 @@
                 </DocsPageSection>
                 <DocsPageSection>
                     <SectionHeader Title="ZIndex"/>
+                    <MudSimpleTable Class="docs-class-table" Dense="true" Elevation="0" FixedHeader="true">
+                        <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Type</th>
+                            <th>Default</th>
+                            <th>CSS Variable</th>
+                            <th>CSS Class</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        @foreach (var Row in ApiZindex)
+                        {
+                            <tr>
+                                <td>@Row.Name</td>
+                                <td>@Row.Type</td>
+                                <td>@Row.Default</td>
+                                <td>@Row.CSSVariable</td>
+                                <td>@Row.CSSClass</td>
+                            </tr>
+                        }
+                        </tbody>
+                    </MudSimpleTable>
                 </DocsPageSection>
                 
             </SectionSubGroups>
@@ -162,6 +185,7 @@
     private List<ApiDefaultTheme> ApiShadow = new List<ApiDefaultTheme>();
     private List<ApiDefaultTheme> ApiLayout = new List<ApiDefaultTheme>();
     private List<ApiDefaultTheme> ApiTypography= new List<ApiDefaultTheme>();
+    private List<ApiDefaultTheme> ApiZindex= new List<ApiDefaultTheme>();
 
     protected override void OnInitialized()
     {
@@ -169,6 +193,7 @@
         LoadShadows();
         LoadLayout();
         LoadTypography();
+        LoadZIndexes();
     }
 
     private void LoadPalette()
@@ -244,10 +269,28 @@
             }
         }
     }
+    
+    private void LoadZIndexes()
+    {
+        foreach (var value in typeof(ZIndex).GetProperties())
+        {
+            ApiZindex.Add(new ApiDefaultTheme()
+            {
+                Name = value.Name,
+                Type = value.PropertyType.ConvertToCSharpSource(),
+                Default = value.GetValue(mudTheme.ZIndex, null),
+                CSSVariable = $"--mud-zindex-{GetCssVar(value.Name)}"
+            });
+        }
+    }
 
     private string GetCssVar(string value)
     {
-        if (value.Contains("ContrastText"))
+        if (value == "AppBar")
+        {
+            return value.ToLower();
+        }
+        else if (value.Contains("ContrastText"))
         {
             return value.Replace("ContrastText", "-Text").ToLower();
         }
