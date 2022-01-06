@@ -13,57 +13,36 @@
                 <DocsPageSection>
                     <SectionHeader Title="Palette"/>
                     <MudDataGrid Items="@ApiPalette" Dense="true" Elevation="0" Class="docs-class-table">
-                        <ColGroup>
-                            <col style="width: 100px;" />
-                            <col style="width: 100px;"/>
-                            <col style="width: 30%;" />
-                            <col style="width: 20%;" />
-                            <col />
-                        </ColGroup>
                         <Columns>
-                            <Column T="ApiDefaultTheme" Field="Name" Class="pl-0"/>
+                            <Column T="ApiDefaultTheme" Field="Name"/>
                             <Column T="ApiDefaultTheme" Field="Type"/>
+                            <Column T="ApiDefaultTheme" Field="Default"/>
                             <Column T="ApiDefaultTheme" Field="CSSVariable" Title="CSS Variable"/>
                             <Column T="ApiDefaultTheme" Field="CSSClass" Title="CSS Class"/>
-                            <Column T="ApiDefaultTheme" Field="Default" Class="pr-0"/>
                         </Columns>
                     </MudDataGrid>
                 </DocsPageSection>
                 <DocsPageSection>
                     <SectionHeader Title="Shadows"/>
                     <MudDataGrid Items="@ApiShadow" Dense="true" Elevation="0" Class="docs-class-table">
-                        <ColGroup>
-                            <col style="width: 100px;" />
-                            <col style="width: 100px;"/>
-                            <col style="width: 30%;" />
-                            <col style="width: 20%;" />
-                            <col />
-                        </ColGroup>
                         <Columns>
-                            <Column T="ApiDefaultTheme" Field="Name" Class="pl-0"/>
+                            <Column T="ApiDefaultTheme" Field="Name"/>
                             <Column T="ApiDefaultTheme" Field="Type"/>
+                            <Column T="ApiDefaultTheme" Field="Default"/>
                             <Column T="ApiDefaultTheme" Field="CSSVariable" Title="CSS Variable"/>
                             <Column T="ApiDefaultTheme" Field="CSSClass" Title="CSS Class"/>
-                            <Column T="ApiDefaultTheme" Field="Default" Class="pr-0"/>
                         </Columns>
                     </MudDataGrid>
                 </DocsPageSection>
                 <DocsPageSection>
                     <SectionHeader Title="LayoutProperties"/>
                     <MudDataGrid Items="@ApiLayout" Dense="true" Elevation="0" Class="docs-class-table">
-                        <ColGroup>
-                            <col style="width: 100px;" />
-                            <col style="width: 100px;"/>
-                            <col style="width: 30%;" />
-                            <col style="width: 20%;" />
-                            <col />
-                        </ColGroup>
                         <Columns>
-                            <Column T="ApiDefaultTheme" Field="Name" Class="pl-0"/>
+                            <Column T="ApiDefaultTheme" Field="Name"/>
                             <Column T="ApiDefaultTheme" Field="Type"/>
+                            <Column T="ApiDefaultTheme" Field="Default"/>
                             <Column T="ApiDefaultTheme" Field="CSSVariable" Title="CSS Variable"/>
                             <Column T="ApiDefaultTheme" Field="CSSClass" Title="CSS Class"/>
-                            <Column T="ApiDefaultTheme" Field="Default" Class="pr-0"/>
                         </Columns>
                     </MudDataGrid>
                 </DocsPageSection>
@@ -233,6 +212,20 @@
     }
     
     private void LoadLayout()
+    {
+        foreach (var value in typeof(LayoutProperties).GetProperties())
+        {
+            ApiLayout.Add(new ApiDefaultTheme()
+            {
+                Name = value.Name,
+                Type = value.PropertyType.ConvertToCSharpSource(),
+                Default = value.GetValue(mudTheme.LayoutProperties, null),
+                CSSVariable = $"--mud-{GetCssVar(value.Name)}"
+            });
+        }
+    }
+    
+    private void LoadTypography()
     {
         foreach (var value in typeof(LayoutProperties).GetProperties())
         {
