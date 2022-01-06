@@ -132,7 +132,7 @@ namespace MudBlazor.Docs.Services
             {
                 var potentialLinks = section switch
                 {
-                    // NavigationSection.Customization => _menuService.Customization,
+                    NavigationSection.Customization => _menuService.Customization,
                     NavigationSection.Features => _menuService.Features,
                     _ => Array.Empty<DocsLink>()
                 };

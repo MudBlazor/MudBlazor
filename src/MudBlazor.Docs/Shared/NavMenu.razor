@@ -67,12 +67,10 @@
         </MudNavGroup>
         <MudNavGroup Title="Customization" Icon="@Icons.Material.Filled.Handyman" Expanded="@(_section == "customization")" ExpandIcon="@Icons.Material.Filled.ExpandMore">
             <MudNavLink Href="customization/default-theme">Default Theme</MudNavLink>
-            <MudNavGroup Title="Theming" Expanded="true" ExpandIcon="@Icons.Material.Filled.ExpandMore">
-                @foreach (var link in MenuService.Customization)
-                {
-                    <MudNavLink Href="@link.Href">@link.Title</MudNavLink>
-                }
-            </MudNavGroup>
+            @foreach (var link in MenuService.Customization)
+            {
+                <MudNavLink Href="@link.Href">@link.Title</MudNavLink>
+            }
         </MudNavGroup>
     }
 </MudNavMenu>
