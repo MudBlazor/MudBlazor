@@ -26,7 +26,7 @@ namespace MudBlazor
                 .Build();
 
         /// <summary>
-        /// The color of the component. It supports the theme colors.
+        /// Sets the stroke rounded or not.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.ProgressCircular.Appearance)]
@@ -98,7 +98,6 @@ namespace MudBlazor
             base.OnInitialized();
             _svgValue = ToSvgValue(_value);
         }
-
 
         #region --> Obsolete Forwarders for Backwards-Compatiblilty
 
