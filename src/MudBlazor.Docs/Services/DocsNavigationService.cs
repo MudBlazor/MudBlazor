@@ -137,13 +137,14 @@ namespace MudBlazor.Docs.Services
                     _ => Array.Empty<DocsLink>()
                 };
 
-                return potentialLinks.Select((x => new NavigationFooterLink(x.Title, x.Href.Split("/").Last()))).ToList();
+                return potentialLinks.Select((x => new NavigationFooterLink(x.Title, x.Href.Split("/").Last())))
+                    .ToList();
             }
         }
 
         private NavigationSection GetCurrentSection()
         {
-            var thisSection = NavigationSection.Api;
+            var thisSection = NavigationSection.Unspecified;
             switch (Section)
             {
                 case NavigationSection.Api:
@@ -168,7 +169,7 @@ namespace MudBlazor.Docs.Services
 
     public enum NavigationOrder { Previous, Next }
 
-    public enum NavigationSection { Api, Components, Features, Customization }
+    public enum NavigationSection { Api, Components, Features, Customization, Unspecified }
 
     #endregion
 }
