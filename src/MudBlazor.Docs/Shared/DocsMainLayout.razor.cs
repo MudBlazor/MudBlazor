@@ -13,6 +13,7 @@ public partial class DocsMainLayout : LayoutComponentBase
     [Inject] private LayoutService LayoutService { get; set; }
     protected override void OnInitialized()
     {
+        LayoutService.SetDrawer(true);
         LayoutService.SetBaseTheme(Theme.DocsTheme());
     }
     

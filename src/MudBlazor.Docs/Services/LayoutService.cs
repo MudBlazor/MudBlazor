@@ -17,7 +17,7 @@ public class LayoutService
 
     public bool IsRTL { get; private  set; } = false;
     public bool IsDarkMode { get; private set; } = false;
-    public bool DrawerIsOpen { get; private set; } = false;
+    public bool DrawerIsOpen { get; private set; } = true;
 
     public MudTheme CurrentTheme { get; private set; }
 

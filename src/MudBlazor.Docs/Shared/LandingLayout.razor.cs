@@ -14,8 +14,9 @@ namespace MudBlazor.Docs.Shared
         
         protected override void OnInitialized()
         {
+            LayoutService.SetDrawer(false);
             LayoutService.SetBaseTheme(Theme.LandingPageTheme());
-            
+
             LayoutService.CloseDrawerRequested += LayoutServiceOnCloseDrawerRequested;
             LayoutService.OpenDrawerRequested += LayoutServiceOnOpenDrawerRequested;
         
