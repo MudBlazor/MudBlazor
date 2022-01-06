@@ -1,0 +1,42 @@
+﻿<MudDrawer @bind-Open="@_drawerOpen" ClipMode="DrawerClipMode.Docked" Elevation="0" Breakpoint="Breakpoint.Lg">
+    <MudHidden Breakpoint="Breakpoint.MdAndUp">
+        <MudToolBar Dense="true" DisableGutters="true" Class="docs-gray-bg">
+            @if (_topMenuOpen == false)
+            {
+                <MudIconButton Icon="@Icons.Rounded.ArrowBack" Color="Color.Inherit" OnClick="@((e) => OpenTopMenu())"/>
+            }
+            else
+            {
+                <MudIconButton Icon="@Icons.Rounded.Close" Color="Color.Inherit" OnClick="@((e) => ToggleDrawer())"/>
+            }
+            <MudSpacer/>
+            <AppbarButtons/>
+        </MudToolBar>
+    </MudHidden>
+    @if (_topMenuOpen)
+    {
+        <TopNavMenu />
+    }
+    else
+    {
+        <MudNavMenu Color="Color.Primary" Rounded="true" Dense="true" Margin="Margin.Dense" Class="pa-2 overflow-auto mb-3">
+            @ChildContent
+        </MudNavMenu>
+    }
+</MudDrawer>
+
+@code {
+    [Parameter] public RenderFragment ChildContent { get; set; }
+    private bool _drawerOpen = true;
+    private bool _topMenuOpen = false;
+    
+    private void OpenTopMenu()
+    {
+        _topMenuOpen = true;
+    }
+    
+    private void ToggleDrawer()
+    {
+        _drawerOpen = !_drawerOpen;
+    }
+}

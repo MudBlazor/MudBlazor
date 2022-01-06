@@ -1,37 +1,7 @@
 ﻿@inherits LayoutComponentBase
-@layout MainLayout
+@layout DocsMainLayout
 
-<MudLayout>
-    <MudAppBar Class="docs-appbar-filter" Color="Color.Transparent" Elevation="0"></MudAppBar>
-    <MudAppBar Class="docs-appbar" Elevation="0">
-        <Appbar DrawerToggleCallback="@ToggleDrawer" DisplaySearchBar="true" />
-    </MudAppBar>
-    <MudDrawer Open="@_drawerOpen" OpenChanged="OnDrawerOpenChanged" ClipMode="DrawerClipMode.Docked" Elevation="0" Breakpoint="Breakpoint.Lg">
-        <MudHidden Breakpoint="Breakpoint.MdAndUp">
-            <MudToolBar Dense="true" DisableGutters="true" Class="docs-gray-bg">
-                @if (MainData.GetDocsBasePage() != DocsBasePage.None && _topMenuOpen == false)
-                {
-                    <MudIconButton Icon="@Icons.Rounded.ArrowBack" Color="Color.Inherit" OnClick="@((e) => OpenTopMenu())"/>
-                }
-                else
-                {
-                    <MudIconButton Icon="@Icons.Rounded.Close" Color="Color.Inherit" OnClick="@((e) => ToggleDrawer())"/>
-                }
-                <MudSpacer/>
-                <AppbarButtons/>
-            </MudToolBar>
-        </MudHidden>
-        @if (_topMenuOpen)
-        {
-            <TopNavMenu />
-        }
-        else
-        {
-            <NavMenu @ref="@_navMenuRef"/>
-        }
-    </MudDrawer>
-    @Body
-    <MudScrollToTop TopOffset="400" Style="z-index:2000;">
-        <MudFab Icon="@Icons.Material.Filled.KeyboardArrowUp" Color="Color.Primary"/>
-    </MudScrollToTop>
-</MudLayout>
+<Drawer>
+    <NavMenu @ref="@_navMenuRef"/>
+</Drawer>
+@Body

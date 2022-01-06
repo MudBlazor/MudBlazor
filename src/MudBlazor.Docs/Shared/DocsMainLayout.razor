@@ -1,0 +1,13 @@
+﻿@inherits LayoutComponentBase
+@layout MainLayout
+
+<MudLayout>
+    <MudAppBar Class="docs-appbar-filter" Color="Color.Transparent" Elevation="0"></MudAppBar>
+    <MudAppBar Class="docs-appbar" Elevation="0">
+        <Appbar DrawerToggleCallback="@ToggleDrawer" DisplaySearchBar="true" />
+    </MudAppBar>
+    @Body
+    <MudScrollToTop TopOffset="400" Style="z-index:2000;">
+        <MudFab Icon="@Icons.Material.Filled.KeyboardArrowUp" Color="Color.Primary"/>
+    </MudScrollToTop>
+</MudLayout>
