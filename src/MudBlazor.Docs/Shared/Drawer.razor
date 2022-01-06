@@ -12,15 +12,21 @@
             <MudSpacer/>
             <AppbarButtons/>
         </MudToolBar>
+
+        @if (_topMenuOpen == true)
+        {
+            <TopNavMenu />
+        }
+        else
+        {
+            <MudNavMenu Color="Color.Primary" Rounded="true" Dense="true" Margin="Margin.Dense" Class="pa-2 overflow-auto mb-3">
+                @ChildContent
+            </MudNavMenu>
+        }
     </MudHidden>
-    @if (_topMenuOpen)
-    {
-        <TopNavMenu />
-    }
-    else
-    {
+    <MudHidden Breakpoint="Breakpoint.MdAndUp" Invert="true">
         <MudNavMenu Color="Color.Primary" Rounded="true" Dense="true" Margin="Margin.Dense" Class="pa-2 overflow-auto mb-3">
             @ChildContent
         </MudNavMenu>
-    }
+    </MudHidden>
 </MudDrawer>

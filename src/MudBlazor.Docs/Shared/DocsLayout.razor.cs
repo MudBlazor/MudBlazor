@@ -14,6 +14,6 @@ public partial class DocsLayout : LayoutComponentBase
     protected override void OnAfterRender(bool firstRender)
     {
         //refresh nav menu because no parameters change in nav menu but internal data does
-        _navMenuRef.Refresh();
+        _navMenuRef?.Refresh();
     }
 }

@@ -28,8 +28,20 @@ public partial class Drawer : IDisposable
         base.OnInitialized();
     }
 
-    private void LayoutServiceOnOpenDrawerRequested(object sender, EventArgs e) => StateHasChanged();
-    private void LayoutServiceOnCloseDrawerRequested(object sender, EventArgs e) => StateHasChanged();
+    private void LayoutServiceOnOpenDrawerRequested(object sender, EventArgs e)
+    {
+        StateHasChanged();
+    }
+
+    private void LayoutServiceOnCloseDrawerRequested(object sender, EventArgs e)
+    {
+        if (_topMenuOpen == true)
+        {
+            _topMenuOpen = false;
+        }
+        
+        StateHasChanged();
+    }
 
 
     protected virtual void Dispose(bool disposing)

@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Routing;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Docs.Extensions;
 using MudBlazor.Docs.Models;
@@ -13,7 +14,7 @@ using MudBlazor.Docs.Services;
 
 namespace MudBlazor.Docs.Shared;
 
-public partial class Appbar
+public partial class Appbar : IDisposable
 {
     [Parameter] public bool DisplaySearchBar { get; set; }
 
@@ -29,6 +30,11 @@ public partial class Appbar
     private void OpenDialog() => _dialogOpen = true;
     private DialogOptions _dialogOptions = new() {Position = DialogPosition.TopCenter, NoHeader = true};
 
+    protected override void OnInitialized()
+    {
+        NavigationManager.LocationChanged += NavigationManagerOnLocationChanged;
+    }
+    private void NavigationManagerOnLocationChanged(object sender, LocationChangedEventArgs e) => StateHasChanged();
     private Task<IEnumerable<ApiLinkServiceEntry>> Search(string text)
     {
         if (string.IsNullOrWhiteSpace(text))
@@ -120,4 +126,9 @@ public partial class Appbar
     }
 
     private void ToggleDrawerState() => LayoutService.ToggleDrawer();
+
+    public void Dispose()
+    {
+        NavigationManager.LocationChanged -= NavigationManagerOnLocationChanged;
+    }
 }

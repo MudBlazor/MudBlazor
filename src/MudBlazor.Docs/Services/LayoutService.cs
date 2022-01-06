@@ -35,7 +35,19 @@ public class LayoutService
 
     public void SetDrawer(bool value)
     {
+        bool oldValue = DrawerIsOpen;
         DrawerIsOpen = value;
+        if (value != oldValue)
+        {
+            if (oldValue == true)
+            {
+                CloseDrawer();
+            }
+            else
+            {
+                OpenDrawer();
+            }
+        }
     }
 
     public void ToggleDrawer()
