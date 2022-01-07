@@ -35,6 +35,10 @@
   user-select: none;
 }
 
+.docs-text-dec{
+  text-decoration: underline dotted var(--mud-palette-primary);
+}
+
 .docs-footer{
   .mud-link {
     margin: 8px 0;
