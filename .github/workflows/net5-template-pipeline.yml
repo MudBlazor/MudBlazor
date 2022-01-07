@@ -1,0 +1,47 @@
+name: net5-template-pipeline
+
+on:
+  workflow_call:
+    inputs:
+      dotnet-version:
+        description: 'dotnet version to install'
+        required: false
+        type: string
+        default: '5.0.x'
+      dotnet-prerelease:
+        required: false
+        type: boolean
+        default: false
+
+jobs:
+  ci:
+    name: Build & Test
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./src
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Install eslint
+        run: npm i -g eslint
+
+      - name: Check JS is ES6 compliant
+        run: eslint --env 'es6' MudBlazor/TScripts
+
+      - name: Setup dotnet version
+        uses: actions/setup-dotnet@v1
+        with: 
+          dotnet-version: ${{ inputs.dotnet-version }}
+          include-prerelease: ${{ inputs.dotnet-prerelease }}
+
+      - name: Restore
+        run: dotnet restore
+
+      - name: Build
+        run: dotnet build -c Release --no-restore
+
+      - name: Test
+        run: dotnet test -c Release --no-build --no-restore --blame-hang --blame-hang-timeout 60s /property:GenerateFullPaths=true /consoleloggerparameters:NoSummary /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura /p:ExcludeByAttribute='ExcludeFromCodeCoverage' /p:Include='[MudBlazor]*' /p:SkipAutoProps=true /p:CoverletOutput='./TestResults/'

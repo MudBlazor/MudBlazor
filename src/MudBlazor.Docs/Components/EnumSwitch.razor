@@ -1,4 +1,4 @@
-﻿@typeparam T where T: Enum
+﻿@typeparam T
 
 <MudButtonGroup OverrideStyles="false">
     @foreach (int value in Enum.GetValues(Type))
@@ -8,7 +8,7 @@
                    DisableRipple
                    Variant="@(value == Convert.ToInt32(Value) ? Variant.Filled : Variant.Outlined)"
                    OnClick="() => Value = (T)Enum.ToObject(Type, value)">
-            @Enum.GetName(Type, value)
+            @(Enum.GetName(Type, value))
         </MudButton>
     }
 </MudButtonGroup>

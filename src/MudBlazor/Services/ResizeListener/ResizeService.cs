@@ -92,7 +92,6 @@ namespace MudBlazor.Services
                 {
                     await JsRuntime.InvokeVoidAsync($"mudResizeListenerFactory.listenForResize", DotNetRef, options, listenerId);
                 }
-                catch (JSDisconnectedException) { }
                 catch (TaskCanceledException) { }
 
                 return subscriptionId;

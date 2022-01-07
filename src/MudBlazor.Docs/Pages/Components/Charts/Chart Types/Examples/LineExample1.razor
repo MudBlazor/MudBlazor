@@ -38,7 +38,7 @@
 
     public void RandomizeLineWidths()
     {
-        chartOptions.LineStrokeWidth = random.NextInt64(1, 10);
+        chartOptions.LineStrokeWidth = random.Next(1, 10);
         StateHasChanged();
     }
 }

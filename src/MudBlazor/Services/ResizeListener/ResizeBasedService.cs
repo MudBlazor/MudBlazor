@@ -54,7 +54,6 @@ namespace MudBlazor.Services
                     {
                         await JsRuntime.InvokeVoidAsync($"mudResizeListenerFactory.cancelListener", info.Key);
                     }
-                    catch (JSDisconnectedException) { }
                     catch (TaskCanceledException) { }
                 }
 
@@ -84,7 +83,6 @@ namespace MudBlazor.Services
             {
                 await JsRuntime.InvokeVoidAsync($"mudResizeListenerFactory.cancelListeners", ids);
             }
-            catch (JSDisconnectedException) { }
             catch (TaskCanceledException) { }
 
             DotNetRef.Dispose();

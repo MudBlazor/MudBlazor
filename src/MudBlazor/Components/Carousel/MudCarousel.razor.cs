@@ -88,7 +88,7 @@ namespace MudBlazor
         /// Deprecated, use ShowBullets instead.
         /// </summary>
         [Category(CategoryTypes.Carousel.Behavior)]
-        [Obsolete($"Use {nameof(ShowBullets)} instead", false)]
+        [Obsolete("Use " + nameof(ShowBullets) + "instead", false)]
         [ExcludeFromCodeCoverage]
         [Parameter] public bool ShowDelimiters { get => ShowBullets; set => ShowBullets = value; }
 
@@ -97,7 +97,7 @@ namespace MudBlazor
         /// If not set, the color is determined based on the <see cref="MudCarouselItem.Color"/> property of the active child.
         /// Deprecated, use BulletsColor instead.
         /// </summary>
-        [Obsolete($"Use {nameof(BulletsColor)} instead", false)]
+        [Obsolete("Use " + nameof(BulletsColor) + "instead", false)]
         [Category(CategoryTypes.Carousel.Appearance)]
         [ExcludeFromCodeCoverage]
         [Parameter] public Color? DelimitersColor { get => BulletsColor; set => BulletsColor = value; }
@@ -162,7 +162,7 @@ namespace MudBlazor
         /// Deprecated, use BulletsClass instead.
         /// </summary>
         [Category(CategoryTypes.Carousel.Appearance)]
-        [Obsolete($"Use {nameof(BulletsClass)} instead", false)]
+        [Obsolete("Use " + nameof(BulletsClass) + "instead", false)]
         [ExcludeFromCodeCoverage]
         [Parameter] public string DelimitersClass { get => BulletsClass; set => BulletsClass = value; }
 
@@ -221,7 +221,7 @@ namespace MudBlazor
         /// Deprecated, use BulletsTemplate instead.
         /// </summary>
         [Category(CategoryTypes.Carousel.Appearance)]
-        [Obsolete($"Use {nameof(BulletTemplate)} instead", false)]
+        [Obsolete("Use " + nameof(BulletTemplate) + "instead", false)]
         [ExcludeFromCodeCoverage]
         [Parameter] public RenderFragment<bool> DelimiterTemplate { get => BulletTemplate; set => BulletTemplate = value; }
 

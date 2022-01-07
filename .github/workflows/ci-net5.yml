@@ -1,0 +1,18 @@
+name: ci-net5
+
+on:
+  push:
+    branches: [ net5 ]
+  pull_request:
+    branches: [ net5 ]
+    
+
+jobs:
+  pipeline:
+    name: net5 Pipeline
+    uses: MudBlazor/MudBlazor/.github/workflows/net5-template-pipeline.yml@net5
+    with:
+      dotnet-version: 5.0.x
+      dotnet-prerelease: true
+
+

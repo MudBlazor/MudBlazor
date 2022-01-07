@@ -196,7 +196,6 @@ namespace MudBlazor
             {
                 await Service.Unregister(_handler);
             }
-            catch (JSDisconnectedException) { }
             catch (TaskCanceledException) { }
         }
     }

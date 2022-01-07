@@ -268,10 +268,10 @@ namespace MudBlazor.UnitTests.Components
 
             Mock<IJSRuntime> _jsruntimeMock = new Mock<IJSRuntime>(MockBehavior.Strict);
 
-            _jsruntimeMock.Setup(x => x.InvokeAsync<IJSVoidResult>("mudResizeListenerFactory.listenForResize", It.IsAny<object[]>()))
-                .ReturnsAsync(Mock.Of<IJSVoidResult>(), TimeSpan.FromMilliseconds(200)).Verifiable();
-            _jsruntimeMock.Setup(x => x.InvokeAsync<IJSVoidResult>("mudResizeListenerFactory.cancelListeners", It.IsAny<object[]>()))
-    .ReturnsAsync(Mock.Of<IJSVoidResult>);
+            _jsruntimeMock.Setup(x => x.InvokeAsync<object>("mudResizeListenerFactory.listenForResize", It.IsAny<object[]>()))
+                .ReturnsAsync(Mock.Of<object>(), TimeSpan.FromMilliseconds(200)).Verifiable();
+            _jsruntimeMock.Setup(x => x.InvokeAsync<object>("mudResizeListenerFactory.cancelListeners", It.IsAny<object[]>()))
+    .ReturnsAsync(Mock.Of<object>);
 
             BreakpointService service = new BreakpointService(_jsruntimeMock.Object, sizeMock.Object);
 

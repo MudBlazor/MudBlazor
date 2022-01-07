@@ -172,13 +172,13 @@ namespace MudBlazor.UnitTests.Services
 
             foreach (var item in resolvedElements)
             {
-                _runtimeMock.Setup(x => x.InvokeAsync<IJSVoidResult>(
+                _runtimeMock.Setup(x => x.InvokeAsync<object>(
                 "mudResizeObserver.disconnect",
                 It.Is<object[]>(z =>
                     (Guid)z[0] == observerId &&
                     ids.Contains((Guid)z[1]) == true
                 )
-            )).ReturnsAsync(Mock.Of<IJSVoidResult>).Callback<String, Object[]>((x, y) => { ids.Remove((Guid)y[1]); }).Verifiable();
+            )).ReturnsAsync(Mock.Of<object>).Callback<String, Object[]>((x, y) => { ids.Remove((Guid)y[1]); }).Verifiable();
             }
 
             await _service.Observe(resolvedElements.Keys);

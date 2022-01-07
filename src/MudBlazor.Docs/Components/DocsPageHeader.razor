@@ -3,23 +3,23 @@
 @using Microsoft.AspNetCore.Components
 @using MudBlazor
 @using MudBlazor.Docs.Models
+@using Toolbelt.Blazor.HeadElement
 @using MudBlazor.Docs.Extensions
 @using System.Collections.Generic
 @using System.Text.RegularExpressions
 
 @*html head (for server prerendering)*@
-<PageTitle>@(GetTitle())</PageTitle>
-<HeadContent>
-    <meta Name="keywords" Content="@GetKeywords()" />
-    <meta Property="og:title" Content="@GetTitle()" />
-    <meta Name="twitter:title" Content="@GetTitle()" />
-    @if (!string.IsNullOrEmpty(SubTitle))
-    {
-        <meta Name="description" Content="@(SubTitle)" />
-        <meta Property="og:description" Content="@SubTitle" />
-        <meta Name="twitter:description" Content="@SubTitle" />
-    }
-</HeadContent>
+<Title>@(GetTitle())</Title>
+<meta Name="keywords" Content="@GetKeywords()" />
+<meta Property="og:title" Content="@GetTitle()" />
+<meta Name="twitter:title" Content="@GetTitle()" />
+@if (!string.IsNullOrEmpty(SubTitle))
+{
+    <meta Name="description" Content="@(SubTitle)" />
+    <meta Property="og:description" Content="@SubTitle" />
+    <meta Name="twitter:description" Content="@SubTitle" />
+}
+
 
 <div class="docs-page-header mb-12">
     <MudText Typo="@Typo.h3">@Title</MudText>

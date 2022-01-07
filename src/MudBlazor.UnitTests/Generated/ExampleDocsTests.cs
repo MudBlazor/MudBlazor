@@ -7,6 +7,7 @@ using MudBlazor.Docs.Services;
 using MudBlazor.Services;
 using MudBlazor.UnitTests.Mocks;
 using NUnit.Framework;
+using Toolbelt.Blazor.HeadElement;
 
 namespace MudBlazor.UnitTests.Components
 {
@@ -29,6 +30,7 @@ namespace MudBlazor.UnitTests.Components
             ctx.Services.AddTransient<IScrollManager, MockScrollManager>();
             ctx.Services.AddTransient<IScrollListener, MockScrollListener>();
             ctx.Services.AddTransient<IJsApiService, MockJsApiServices>();
+            ctx.Services.AddSingleton<IHeadElementHelper>(new MockHeadElementHelper());
             ctx.Services.AddTransient<IResizeObserver, MockResizeObserver>();
             ctx.Services.AddSingleton<IBrowserWindowSizeProvider>(new MockBrowserWindowSizeProvider());
             ctx.Services.AddTransient<IEventListener, EventListener>();
