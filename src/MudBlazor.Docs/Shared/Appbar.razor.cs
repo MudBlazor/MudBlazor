@@ -14,8 +14,9 @@ using MudBlazor.Docs.Services;
 
 namespace MudBlazor.Docs.Shared;
 
-public partial class Appbar : IDisposable
+public partial class Appbar
 {
+    [Parameter] public EventCallback<MouseEventArgs> DrawerToggleCallback { get; set; }
     [Parameter] public bool DisplaySearchBar { get; set; }
 
     [Inject] private NavigationManager NavigationManager { get; set; }
@@ -29,12 +30,19 @@ public partial class Appbar : IDisposable
     private bool _dialogOpen;
     private void OpenDialog() => _dialogOpen = true;
     private DialogOptions _dialogOptions = new() {Position = DialogPosition.TopCenter, NoHeader = true};
-
-    protected override void OnInitialized()
+    
+    private async void OnSearchResult(ApiLinkServiceEntry entry)
     {
-        NavigationManager.LocationChanged += NavigationManagerOnLocationChanged;
+        NavigationManager.NavigateTo(entry.Link);
+        await Task.Delay(1000);
+        await _searchAutocomplete.Clear();
     }
-    private void NavigationManagerOnLocationChanged(object sender, LocationChangedEventArgs e) => StateHasChanged();
+
+    private string GetActiveClass(DocsBasePage page)
+    {
+        return page == LayoutService.GetDocsBasePage(NavigationManager.Uri) ? "mud-chip-text mud-chip-color-primary mx-1 px-3" : "mx-1 px-3";
+    }
+    
     private Task<IEnumerable<ApiLinkServiceEntry>> Search(string text)
     {
         if (string.IsNullOrWhiteSpace(text))
@@ -111,24 +119,5 @@ public partial class Appbar : IDisposable
         }
 
         return ApiLinkService.Search(text);
-    }
-
-    private async void OnSearchResult(ApiLinkServiceEntry entry)
-    {
-        NavigationManager.NavigateTo(entry.Link);
-        await Task.Delay(1000);
-        await _searchAutocomplete.Clear();
-    }
-
-    private string GetActiveClass(DocsBasePage page)
-    {
-        return page == LayoutService.GetDocsBasePage(NavigationManager.Uri) ? "mud-chip-text mud-chip-color-primary mx-1 px-3" : "mx-1 px-3";
-    }
-
-    private void ToggleDrawerState() => LayoutService.ToggleDrawer();
-
-    public void Dispose()
-    {
-        NavigationManager.LocationChanged -= NavigationManagerOnLocationChanged;
     }
 }

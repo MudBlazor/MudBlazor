@@ -17,7 +17,6 @@ public class LayoutService
 
     public bool IsRTL { get; private  set; } = false;
     public bool IsDarkMode { get; private set; } = false;
-    public bool DrawerIsOpen { get; private set; } = true;
 
     public MudTheme CurrentTheme { get; private set; }
 
@@ -26,44 +25,7 @@ public class LayoutService
     {
         _userPreferencesService = userPreferencesService;
     }
-    
-    public event EventHandler OpenDrawerRequested;
-    public event EventHandler CloseDrawerRequested;
 
-    private void OpenDrawer() => OpenDrawerRequested?.Invoke(this, EventArgs.Empty);
-    private void CloseDrawer() => CloseDrawerRequested?.Invoke(this, EventArgs.Empty);
-
-    public void SetDrawer(bool value)
-    {
-        bool oldValue = DrawerIsOpen;
-        DrawerIsOpen = value;
-        if (value != oldValue)
-        {
-            if (oldValue == true)
-            {
-                CloseDrawer();
-            }
-            else
-            {
-                OpenDrawer();
-            }
-        }
-    }
-
-    public void ToggleDrawer()
-    {
-        DrawerIsOpen = !DrawerIsOpen;
-
-        if (DrawerIsOpen == false)
-        {
-            CloseDrawer();
-        }
-        else
-        {
-            OpenDrawer();
-        }
-    }
-    
     public void SetDarkMode(bool value)
     {
         IsDarkMode = value;

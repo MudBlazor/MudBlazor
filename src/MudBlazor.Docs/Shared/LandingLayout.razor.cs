@@ -8,38 +8,23 @@ using MudBlazor.Docs.Services;
 
 namespace MudBlazor.Docs.Shared
 {
-    public partial class LandingLayout : LayoutComponentBase, IDisposable
+    public partial class LandingLayout : LayoutComponentBase
     {
         [Inject] protected LayoutService LayoutService { get; set; }
         
+        private bool _drawerOpen = false;
+        
         protected override void OnInitialized()
         {
-            LayoutService.SetDrawer(false);
             LayoutService.SetBaseTheme(Theme.LandingPageTheme());
 
-            LayoutService.CloseDrawerRequested += LayoutServiceOnCloseDrawerRequested;
-            LayoutService.OpenDrawerRequested += LayoutServiceOnOpenDrawerRequested;
-        
             base.OnInitialized();
         }
         
-        private void LayoutServiceOnOpenDrawerRequested(object sender, EventArgs e) => StateHasChanged();
-        private void LayoutServiceOnCloseDrawerRequested(object sender, EventArgs e) => StateHasChanged();
-
-
-        protected virtual void Dispose(bool disposing)
+        private void ToggleDrawer()
         {
-            if (disposing)
-            {
-                LayoutService.CloseDrawerRequested -= LayoutServiceOnCloseDrawerRequested;
-                LayoutService.OpenDrawerRequested -= LayoutServiceOnOpenDrawerRequested;
-            }
+            _drawerOpen = !_drawerOpen;
         }
 
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
     }
 }
