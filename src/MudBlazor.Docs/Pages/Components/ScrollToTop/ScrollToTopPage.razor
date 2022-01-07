@@ -3,34 +3,34 @@
 <DocsPage>
     <DocsPageHeader Title="Scroll To Top" SubTitle="A ScrollToTop component is a component that allows the user to return to the top of the page easily." />
     <DocsPageContent>
+
         <DocsPageSection>
             <SectionHeader Title="Default value">
                 <Description>
                     If your website follows a normal flow and you have not limited the body or html height, <b>you will not need to do anything</b> to configure it, and the component will behave like the one you've probably already noticed on our website. If you put it at the layout level, it will run on all the pages of your site.
                 </Description>
             </SectionHeader>
-            <SectionSource ShowCode="true" Code="DefaultScrollToTopExample" GitHubFolderName="ScrollToTop" NoToolbar="true" />
+            <SectionContent Code="DefaultScrollToTopExample" />
         </DocsPageSection>
 
         <DocsPageSection>
             <SectionHeader Title="Setup">
                 <Description> If the element you want to scroll is not the root element, you can specify it with the <CodeInline>Selector</CodeInline> property. In this example, we are going to scroll in the container marked with the selector <CodeInline>#unique_id_scroll_section</CodeInline>. Notice how the button that appears at the bottom right of this container changes its color when you scroll.</Description>
             </SectionHeader>
-            <SectionContent FullWidth="true" Outlined="true" Class="pa-0">
+            <SectionContent ShowCode="false" Code="ScrollToTopExample">
                     <ScrollToTopExample />
             </SectionContent>
-            <SectionSource ShowCode="false" Code="ScrollToTopExample" GitHubFolderName="ScrollToTop" />
         </DocsPageSection>
 
         <DocsPageSection>
             <SectionHeader Title="Custom content">
                 <Description>In the example above, we have used a MudButton as a trigger for the back-to-top action, but we could have used pretty much anything. The root element of the component is just a transparent span element that allows you to use anything inside. In the next example, we show you how to use a custom button with custom transitions to show and hide.</Description>
             </SectionHeader>
-            <SectionContent FullWidth="true" Outlined="true" Class="pa-0">
+            <SectionContent Code="CustomScrollToTopExample">
                     <CustomScrollToTopExample />
             </SectionContent>
-            <SectionSource Code="CustomScrollToTopExample" GitHubFolderName="ScrollToTop" />
         </DocsPageSection>
+
     </DocsPageContent>
 </DocsPage>
 

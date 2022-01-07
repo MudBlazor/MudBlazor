@@ -1,10 +1,8 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
-<MudGrid Class="d-flex justify-space-between mud-width-full">
-    <MudIcon Class="ma-4" Icon="@selectedIcon" Color="Color.Primary" />
+<MudIcon Icon="@selectedIcon" Color="Color.Primary" />
+<MudButton Variant="Variant.Filled" OnClick="ChangeIcon" DisableElevation="true" Size="Size.Small">Change Icon</MudButton>
 
-    <MudButton Class="ma-4" Variant="Variant.Filled" Color="Color.Primary" OnClick="ChangeIcon">Change Icon</MudButton>
-</MudGrid>
 
 @code{
 
