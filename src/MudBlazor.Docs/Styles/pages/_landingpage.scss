@@ -618,6 +618,11 @@
         background: linear-gradient(0deg, var(--mud-palette-background-grey) 0%, rgba(249,250,252,0) 100%);
       }
     }
+    @media (max-width:600px) {
+      .mud-typography-h3{
+        font-size: 1.5rem;
+      }
+    }
   }
 }
 
