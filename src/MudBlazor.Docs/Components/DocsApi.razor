@@ -19,8 +19,11 @@
             <DocsPageSection>
                 <SectionHeader Title="Properties" />
                 <SectionContent Class="docs-content-api" FullWidth="true">
-                    <MudCheckBox Label="Group by class" @bind-Checked="@_arePropertiesGrouped" Style="float: right; margin-top: -30px;" Color="Color.Primary" Size="Size.Small" Dense />
-                    <MudTable Items="@Properties" Elevation="0" Class="mx-0" Breakpoint="@Breakpoint.Sm" GroupBy="@(_arePropertiesGrouped ? @_propertiesGroupDefinition : null)">
+                    <div style="float: right; margin-top: -10px; display: flex; flex-flow: row wrap; gap: 7px; align-items: center; white-space: nowrap;">
+                        <MudText>Group by:</MudText>
+                        <EnumSwitch T="Grouping" @bind-Value="@_propertiesGrouping" Color="Color.Primary" />
+                    </div>
+                    <MudTable Items="@Properties" Elevation="0" Class="mx-0" Breakpoint="@Breakpoint.Sm" GroupBy="@PropertiesGroupDefinition">
                         <HeaderContent>
                             <MudTh>Name</MudTh>
                             <MudTh>Type</MudTh>
@@ -28,17 +31,23 @@
                             <MudTh>Description</MudTh>
                         </HeaderContent>
                         <GroupHeaderTemplate>
-                            @if ((Type)context.Key != Type)
+                            @if (_propertiesGrouping == Grouping.Inheritance && (Type)context.Key != Type)
                             {
                                 <MudTh colspan="4">
                                     <MudText Typo="Typo.h6">@($"Inherited from {((Type)context.Key).ConvertToCSharpSource()}")</MudText>
+                                </MudTh>
+                            }
+                            else if (_propertiesGrouping == Grouping.Category)
+                            {
+                                <MudTh colspan="4">
+                                    <MudText Typo="Typo.h6">@context.Key</MudText>
                                 </MudTh>
                             }
                         </GroupHeaderTemplate>
                         <RowTemplate>
                             <MudTd Class="docs-content-api-cell" DataLabel="Name">
                                 <CodeInline>@context.Name</CodeInline>
-                                @if (_arePropertiesGrouped && IsOverridden(context.PropertyInfo))
+                                @if (_propertiesGrouping == Grouping.Inheritance && IsOverridden(context.PropertyInfo))
                                 {
                                     <MudChip Variant="Variant.Outlined" Color="Color.Secondary" Size="Size.Small">overridden</MudChip>
                                 }
@@ -155,7 +164,7 @@
                         Name = info.Name,
                         PropertyInfo = info,
                         Default = string.Empty,
-                        Description = GetDescription(Type, info),
+                        Description = DocStrings.GetMemberDescription(Type, info),
                         IsTwoWay = CheckIsTwoWayEventCallback(info),
                         Type = info.PropertyType,
                     };
@@ -186,7 +195,7 @@
                                 Return = info.ReturnParameter,
                                 Signature = info.GetSignature(),
                                 Parameters = info.GetParameters(),
-                                Documentation = info.GetDocumentation()
+                                Documentation = DocStrings.GetMemberDescription(Type, info)
                             };
                         }
                     }
@@ -200,7 +209,11 @@
         get
         {
             foreach (var info in Type.GetPropertyInfosWithAttribute<ParameterAttribute>()
-                                     .OrderByDescending(x => _arePropertiesGrouped ? NumberOfAncestorClasses(BaseDefinitionClass(x)) : 0)
+                                     .OrderBy(x => _propertiesGrouping switch {
+                                                        Grouping.Category => x.GetCustomAttribute<CategoryAttribute>()?.Order ?? int.MaxValue - 1,
+                                                        Grouping.Inheritance => -NumberOfAncestorClasses(BaseDefinitionClass(x)),
+                                                        _ => 0
+                                                    })
                                      .ThenBy(x => x.Name))
             {
                 if (info.GetCustomAttributes(typeof(System.ObsoleteAttribute), true).Length == 0 && !info.PropertyType.Name.Contains("EventCallback"))
@@ -211,7 +224,7 @@
                         PropertyInfo = info,
                         Default = GetDefaultValue(info),
                         IsTwoWay = CheckIsTwoWayProperty(info),
-                        Description = GetDescription(Type, info),
+                        Description = DocStrings.GetMemberDescription(Type, info),
                         Type = info.PropertyType
                     };
                 }
@@ -259,25 +272,12 @@
 
     private bool CheckIsTwoWayProperty(PropertyInfo propertyInfo)
     {
-        foreach (var info in Type.GetPropertyInfosWithAttribute<ParameterAttribute>().OrderBy(x => x.Name))
-        {
-            if (info.GetCustomAttributes(typeof(System.ObsoleteAttribute), true).Length == 0 && info.PropertyType.Name.Contains("EventCallback"))
-            {
-                if (info.Name == propertyInfo.Name + "Changed")
-                {
-                    return true;
-                }
-            }
-        }
+        PropertyInfo eventCallbackInfo = Type.GetProperty(propertyInfo.Name + "Changed");
 
-        return false;
-    }
-
-    private string GetDescription(Type type, PropertyInfo info)
-    {
-        var doc = DocStrings.GetPropertyDescription(type, info.Name);
-        doc = Regex.Replace(doc??"", @"</?.+?>", "");
-        return doc;
+        return eventCallbackInfo != null &&
+               eventCallbackInfo.PropertyType.Name.Contains("EventCallback") &&
+               eventCallbackInfo.GetCustomAttribute<ParameterAttribute>() != null &&
+               eventCallbackInfo.GetCustomAttribute<ObsoleteAttribute>() == null;
     }
 
     // used for default value getting
@@ -285,6 +285,8 @@
 
     RenderFragment RenderTheType()
     {
+        if (!Type.IsAssignableTo(typeof(IComponent)))
+            return null;
         return new RenderFragment(builder =>
         {
             builder.OpenComponent(0, Type);
@@ -337,11 +339,20 @@
     }
 
 
-    #region Grouping properties by inheritance
+    #region Grouping properties
 
-    private bool _arePropertiesGrouped = true;
+    private enum Grouping { Category, Inheritance, None }
 
-    private TableGroupDefinition<ApiProperty> _propertiesGroupDefinition = new() { Selector = (p) => BaseDefinitionClass(p.PropertyInfo) };
+    private Grouping _propertiesGrouping = Grouping.Inheritance;
+
+    private TableGroupDefinition<ApiProperty> PropertiesGroupDefinition => _propertiesGrouping switch
+    {
+        Grouping.Category => new() { Selector = (p) => p.PropertyInfo.GetCustomAttribute<CategoryAttribute>()?.Name ?? "Misc" },
+        Grouping.Inheritance => new() { Selector = (p) => BaseDefinitionClass(p.PropertyInfo) },
+        _ => null
+    };
+
+    // -- Grouping properties by inheritance ------------------------------------------------------------------------------------------
 
     private static Type BaseDefinitionClass(MethodInfo m) => m.GetBaseDefinition().DeclaringType;
 

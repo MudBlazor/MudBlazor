@@ -21,6 +21,22 @@ namespace MudBlazor.UnitTests
     [TestFixture]
     public class NumericFieldTests : BunitTest
     {
+        static object[] TypeCases =
+        {
+            new object[] { (byte)5 },
+            new object[] { (sbyte)5 },
+            new object[] { (short)5 },
+            new object[] { (ushort)5 },
+            new object[] { (int)5 },
+            new object[] { (uint)5 },
+            new object[] { (long)5 },
+            new object[] { (ulong)5 },
+            new object[] { (float)5 },
+            new object[] { (double)5 },
+            new object[] { (decimal)5 },
+            new object[] { (int?)5 }
+        };
+
         /// <summary>
         /// Initial Text for double should be 0, with F1 format it should be 0.0
         /// </summary>
@@ -298,30 +314,10 @@ namespace MudBlazor.UnitTests
         /// <typeparam name="T"></typeparam>
         /// <param name="value"></param>
         /// <returns></returns>
-        [Test]
-        [TestCase((byte)5)]
-        [TestCase((sbyte)5)]
-        [TestCase((short)5)]
-        [TestCase((ushort)5)]
-        [TestCase((int)5)]
-        [TestCase((uint)5)]
-        [TestCase((long)5)]
-        [TestCase((ulong)5)]
-        [TestCase((float)5.0f)]
-        [TestCase((double)5.0)]
+        [TestCaseSource(nameof(TypeCases))]
         public async Task NumericField_OfAnyType_Should_Render<T>(T value)
         {
             Assert.DoesNotThrow(() => Context.RenderComponent<MudNumericField<T>>(), $"{typeof(MudNumericField<>)}<{typeof(T)}> render failed.");
-        }
-
-        /// <summary>
-        /// NumericField with decimal type parameter should render.
-        /// </summary>
-        /// <returns></returns>
-        [Test]
-        public async Task NumericField_OfDecimal_Should_Render()
-        {
-            Assert.DoesNotThrow(() => Context.RenderComponent<MudNumericField<decimal>>(), $"{typeof(MudNumericField<>)}<{typeof(decimal)}> render failed.");
         }
 
         /// <summary>
@@ -540,17 +536,7 @@ namespace MudBlazor.UnitTests
             comp.WaitForAssertion(() => comp.Instance.FieldNotImmediate.Value.Should().Be(7000.99));
         }
 
-        [TestCase((byte)5)]
-        [TestCase((sbyte)5)]
-        [TestCase((short)5)]
-        [TestCase((ushort)5)]
-        [TestCase((int)5)]
-        [TestCase((uint)5)]
-        [TestCase(5L)]
-        [TestCase(5UL)]
-        [TestCase(5.0f)]
-        [TestCase(5.0)]
-        [TestCase(5.0)]
+        [TestCaseSource(nameof(TypeCases))]
         public async Task NumericField_Validation<T>(T value)
         {
             var comp = Context.RenderComponent<MudNumericField<T>>();
@@ -566,95 +552,14 @@ namespace MudBlazor.UnitTests
             numericField.Value.Should().Be(value);
         }
 
-        [Test]
-        public async Task NumericField_Validation_Decimal()
-        {
-            var value = 5M;
-            var comp = Context.RenderComponent<MudNumericField<decimal>>();
-            comp.SetParam(x => x.Max, value);
-            comp.SetParam(x => x.Min, value);
-            comp.SetParam(x => x.Value, value);
-            var numericField = comp.Instance;
-            numericField.Value.Should().Be(value);
-            await comp.InvokeAsync(() =>
-            {
-                numericField.Validate().Wait();
-            });
-            numericField.Value.Should().Be(value);
-        }
-
-        [Test]
-        public async Task NumericField_Validation_NullableInt()
-        {
-            int? value = 5;
-            var comp = Context.RenderComponent<MudNumericField<int?>>();
-            comp.SetParam(x => x.Max, value);
-            comp.SetParam(x => x.Min, value);
-            comp.SetParam(x => x.Value, value);
-            var numericField = comp.Instance;
-            numericField.Value.Should().Be(value);
-            await comp.InvokeAsync(() =>
-            {
-                numericField.Validate().Wait();
-            });
-            numericField.Value.Should().Be(value);
-        }
-
-        [TestCase((byte)5)]
-        [TestCase((sbyte)5)]
-        [TestCase((short)5)]
-        [TestCase((ushort)5)]
-        [TestCase((int)5)]
-        [TestCase((uint)5)]
-        [TestCase(5L)]
-        [TestCase(5UL)]
-        [TestCase(5.0f)]
-        [TestCase(5.0)]
+        [TestCaseSource(nameof(TypeCases))]
         public async Task NumericField_Increment_Decrement<T>(T value)
         {
             var comp = Context.RenderComponent<MudNumericField<T>>();
-            comp.SetParam(x => x.Max, 10);
-            comp.SetParam(x => x.Min, -10);
-            comp.SetParam(x => x.Step, value);
-            comp.SetParam(x => x.Value, value);
-            await comp.InvokeAsync(() => comp.Instance.Increment().Wait());
-            await comp.InvokeAsync(() => comp.Instance.Decrement().Wait());
-            comp.Instance.Value.Should().Be(value);
-            // setting min and max to value will cover the boundary checking code
-            comp.SetParam(x => x.Max, value);
-            comp.SetParam(x => x.Min, value);
-            await comp.InvokeAsync(() => comp.Instance.Increment().Wait());
-            await comp.InvokeAsync(() => comp.Instance.Decrement().Wait());
-            comp.Instance.Value.Should().Be(value);
-        }
-
-        [Test]
-        public async Task NumericField_Increment_Decrement_Decimal()
-        {
-            var value = 5M;
-            var comp = Context.RenderComponent<MudNumericField<decimal>>();
-            comp.SetParam(x => x.Max, 10);
-            comp.SetParam(x => x.Min, -10);
-            comp.SetParam(x => x.Step, value);
-            comp.SetParam(x => x.Value, value);
-            await comp.InvokeAsync(() => comp.Instance.Increment().Wait());
-            await comp.InvokeAsync(() => comp.Instance.Decrement().Wait());
-            comp.Instance.Value.Should().Be(value);
-            // setting min and max to value will cover the boundary checking code
-            comp.SetParam(x => x.Max, value);
-            comp.SetParam(x => x.Min, value);
-            await comp.InvokeAsync(() => comp.Instance.Increment().Wait());
-            await comp.InvokeAsync(() => comp.Instance.Decrement().Wait());
-            comp.Instance.Value.Should().Be(value);
-        }
-
-        [Test]
-        public async Task NumericField_Increment_Decrement_NullableInt()
-        {
-            int? value = 5;
-            var comp = Context.RenderComponent<MudNumericField<int?>>();
-            comp.SetParam(x => x.Max, 10);
-            comp.SetParam(x => x.Min, -10);
+            var max = Convert.ChangeType(10, typeof(T));
+            var min = Convert.ChangeType(0, typeof(T));
+            comp.SetParam(x => x.Max, max);
+            comp.SetParam(x => x.Min, min);
             comp.SetParam(x => x.Step, value);
             comp.SetParam(x => x.Value, value);
             await comp.InvokeAsync(() => comp.Instance.Increment().Wait());

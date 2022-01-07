@@ -12,7 +12,8 @@ jobs:
     name: Pipeline
     uses: MudBlazor/MudBlazor/.github/workflows/template-pipeline.yml@dev
     with:
-      dotnet-version: 5.0.x
+      dotnet-version: 6.0.x
+      dotnet-prerelease: true
       publish-coverage: true
       deploy-web-app: true
       deploy-condition: 'refs/heads/dev'

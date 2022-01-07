@@ -676,7 +676,7 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(() => select.Validate());
             select.ValidationErrors.Should().NotBeEmpty();
             select.ValidationErrors.Should().HaveCount(1);
-            select.ValidationErrors[0].Should().Equals("Should not be longer than 3");
+            select.ValidationErrors[0].Should().Be("Should not be longer than 3");
         }
 
         [Test]
@@ -1024,6 +1024,19 @@ namespace MudBlazor.UnitTests.Components
             icons[3].Attributes["d"].Value.Should().Be(@checked);
             icons[5].Attributes["d"].Value.Should().Be(@checked);
             icons[7].Attributes["d"].Value.Should().Be(@unchecked);
+        }
+
+        [Test]
+        public void Select_Item_Collection_Should_Match_Number_Of_Select_Options()
+        {
+            var comp = Context.RenderComponent<SelectTest1>();
+            var sut = comp.FindComponent<MudSelect<string>>();
+
+            var input = comp.Find("div.mud-input-control");
+            input.Click();
+            comp.WaitForAssertion(() => comp.FindAll("div.mud-list-item").Count.Should().BeGreaterThan(0));
+
+            sut.Instance.Items.Should().HaveCountGreaterOrEqualTo(4);
         }
     }
 }

@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Extensions;
+using MudBlazor.Services;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
@@ -61,27 +62,36 @@ namespace MudBlazor
         /// <summary>
         /// First view to show in the MudDatePicker.
         /// </summary>
-        [Parameter] public OpenTo OpenTo { get; set; } = OpenTo.Hours;
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.PickerBehavior)]
+        public OpenTo OpenTo { get; set; } = OpenTo.Hours;
 
         /// <summary>
         /// Choose the edition mode. By default, you can edit hours and minutes.
         /// </summary>
-        [Parameter] public TimeEditMode TimeEditMode { get; set; } = TimeEditMode.Normal;
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.PickerBehavior)]
+        public TimeEditMode TimeEditMode { get; set; } = TimeEditMode.Normal;
 
         /// <summary>
         /// Milliseconds to wait before closing the picker. This helps the user see that the time was selected before the popover disappears.
         /// </summary>
-        [Parameter] public int ClosingDelay { get; set; } = 200;
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.PickerBehavior)]
+        public int ClosingDelay { get; set; } = 200;
 
         /// <summary>
         /// If AutoClose is set to true and PickerActions are defined, the hour and the minutes can be defined without any action.
         /// </summary>
-        [Parameter] public bool AutoClose { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.PickerBehavior)]
+        public bool AutoClose { get; set; }
 
         /// <summary>
         /// If true, sets 12 hour selection clock.
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.FormComponent.Behavior)]
         public bool AmPm
         {
             get => _amPm;
@@ -106,6 +116,7 @@ namespace MudBlazor
         /// String Format for selected time view
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.FormComponent.Behavior)]
         public string TimeFormat
         {
             get => _timeFormat;
@@ -127,6 +138,7 @@ namespace MudBlazor
         /// The currently selected time (two-way bindable). If null, then nothing was selected.
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.FormComponent.Data)]
         public TimeSpan? Time
         {
             get => _value;
@@ -175,7 +187,7 @@ namespace MudBlazor
         {
             if (ReadOnly)
                 return;
-            Time = TimeIntermediate;
+            Time = TimeIntermediate;            
         }
 
         public override void Clear(bool close = true)
@@ -212,17 +224,20 @@ namespace MudBlazor
         private void OnHourClick()
         {
             _currentView = OpenTo.Hours;
+            FocusAsync().AndForget();
         }
 
         private void OnMinutesClick()
         {
             _currentView = OpenTo.Minutes;
+            FocusAsync().AndForget();
         }
 
         private void OnAmClicked()
         {
             _timeSet.Hour %= 12;  // "12:-- am" is "00:--" in 24h
             UpdateTime();
+            FocusAsync().AndForget();
         }
 
         private void OnPmClicked()
@@ -231,6 +246,7 @@ namespace MudBlazor
                 _timeSet.Hour += 12;
             _timeSet.Hour %= 24;
             UpdateTime();
+            FocusAsync().AndForget();
         }
 
         protected string ToolbarClass =>
@@ -449,6 +465,10 @@ namespace MudBlazor
             {
                 _currentView = OpenTo.Minutes;
             }
+            else if (TimeEditMode == TimeEditMode.OnlyHours)
+            {
+                SubmitAndClose();
+            }
         }
 
         /// <summary>
@@ -484,6 +504,157 @@ namespace MudBlazor
                     await Task.Delay(ClosingDelay);
                     Close(false);
                 }
+            }
+        }
+
+        protected internal override void HandleKeyDown(KeyboardEventArgs obj)
+        {
+            if (Disabled || ReadOnly)
+                return;
+            base.HandleKeyDown(obj);
+            switch (obj.Key)
+            {
+                case "ArrowRight":
+                    if (IsOpen)
+                    {
+                        if (obj.CtrlKey == true)
+                        {
+                            ChangeHour(1);
+                        }
+                        else if (obj.ShiftKey == true)
+                        {
+                            if (_timeSet.Minute > 55)
+                            {
+                                ChangeHour(1);
+                            }
+                            ChangeMinute(5);
+                        }
+                        else
+                        {
+                            if (_timeSet.Minute == 59)
+                            {
+                                ChangeHour(1);
+                            }
+                            ChangeMinute(1);
+                        }
+                    }
+                    break;
+                case "ArrowLeft":
+                    if (IsOpen)
+                    {
+                        if (obj.CtrlKey == true)
+                        {
+                            ChangeHour(-1);
+                        }
+                        else if (obj.ShiftKey == true)
+                        {
+                            if (_timeSet.Minute < 5)
+                            {
+                                ChangeHour(-1);
+                            }
+                            ChangeMinute(-5);
+                        }
+                        else
+                        {
+                            if (_timeSet.Minute == 0)
+                            {
+                                ChangeHour(-1);
+                            }
+                            ChangeMinute(-1);
+                        }
+                    }
+                    break;
+                case "ArrowUp":
+                    if (IsOpen == false && Editable == false)
+                    {
+                        IsOpen = true;
+                    }
+                    else if (obj.AltKey == true)
+                    {
+                        IsOpen = false;
+                    }
+                    else if (obj.ShiftKey == true)
+                    {
+                        ChangeHour(5);
+                    }
+                    else
+                    {
+                        ChangeHour(1);
+                    }
+                    break;
+                case "ArrowDown":
+                    if (IsOpen == false && Editable == false)
+                    {
+                        IsOpen = true;
+                    }
+                    else if (obj.ShiftKey == true)
+                    {
+                        ChangeHour(-5);
+                    }
+                    else
+                    {
+                        ChangeHour(-1);
+                    }
+                    break;
+                case "Escape":
+                    ReturnTimeBackUp();
+                    break;
+                case "Enter":
+                case "NumpadEnter":
+                    if (!IsOpen)
+                    {
+                        Open();
+                    }
+                    else
+                    {
+                        Submit();
+                        Close();
+                        _inputReference?.SetText(Text);
+                    }
+                    break;
+                case " ":
+                    if (!Editable)
+                    {
+                        if (!IsOpen)
+                        {
+                            Open();
+                        }
+                        else
+                        {
+                            Submit();
+                            Close();
+                            _inputReference?.SetText(Text);
+                        }
+                    }
+                    break;
+            }
+        }
+
+        protected void ChangeMinute(int val)
+        {
+            _currentView = OpenTo.Minutes;
+            _timeSet.Minute = (_timeSet.Minute + val + 60) % 60;
+            UpdateTime();
+        }
+
+        protected void ChangeHour(int val)
+        {
+            _currentView = OpenTo.Hours;
+            _timeSet.Hour = (_timeSet.Hour + val + 24) % 24;
+            UpdateTime();
+        }
+
+        protected void ReturnTimeBackUp()
+        {
+            if (Time == null)
+            {
+                TimeIntermediate = null;
+            }
+            else
+            {
+                _timeSet.Hour = Time.Value.Hours;
+                _timeSet.Minute = Time.Value.Minutes;
+                UpdateTime();
             }
         }
 

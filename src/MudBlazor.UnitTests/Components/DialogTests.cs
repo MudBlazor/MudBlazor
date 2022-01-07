@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Bunit;
 using FluentAssertions;
+using Microsoft.AspNetCore.Components.Web;
 using Microsoft.Extensions.DependencyInjection;
 using MudBlazor.UnitTests.TestComponents;
 using MudBlazor.UnitTests.TestComponents.Dialog;
@@ -108,6 +109,30 @@ namespace MudBlazor.UnitTests.Components
             Console.WriteLine("\nOpened dialog: " + comp.Markup);
             comp.Find("div.mud-overlay").Click();
             comp.WaitForAssertion(() => comp.Markup.Trim().Should().BeEmpty(), TimeSpan.FromSeconds(5));
+        }
+
+        /// <summary>
+        /// Based on bug report #3128
+        /// Dialog Class and Style parameters should be honored for inline dialog
+        /// </summary>
+        [Ignore("Sadly we can not get this test to work when it is run in bulk (local and CI). It passes when executed individually")]
+        [Test]
+        public async Task InlineDialogShouldHonorClassAndStyle()
+        {
+            var comp = Context.RenderComponent<MudDialogProvider>();
+            comp.Markup.Trim().Should().BeEmpty();
+            var service = Context.Services.GetService<IDialogService>() as DialogService;
+            service.Should().NotBe(null);
+            IDialogReference dialogReference = null;
+            // open simple test dialog
+            await comp.InvokeAsync(() => dialogReference = service?.Show<TestInlineDialog>());
+            dialogReference.Should().NotBe(null);
+            comp.Find("button").Click();
+            comp.Find("div.mud-dialog").ClassList.Should().Contain("test-class");
+            comp.Find("div.mud-dialog").Attributes["style"].Value.Should().Be("color: red;");
+            comp.Find("div.mud-dialog-content").Attributes["style"].Value.Should().Be("color: blue;");
+            comp.Find("div.mud-dialog-content").ClassList.Should().NotContain("test-class");
+            comp.Find("div.mud-dialog-content").ClassList.Should().Contain("content-class");
         }
 
         /// <summary>
@@ -284,6 +309,30 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("button")[1].Click();
             rv = await dialogReference.GetReturnValueAsync<string>();
             rv.Should().Be("Closed via OK");
+        }
+
+        [Test]
+        public async Task DialogKeyboardNavigation()
+        {
+            var comp = Context.RenderComponent<MudDialogProvider>();
+            comp.Markup.Trim().Should().BeEmpty();
+            var service = Context.Services.GetService<IDialogService>() as DialogService;
+            service.Should().NotBe(null);
+            IDialogReference dialogReference = null;
+            //dialog with clickable backdrop
+            await comp.InvokeAsync(() => dialogReference = service?.Show<DialogOkCancel>(string.Empty, new DialogOptions() { CloseOnEscapeKey = true }));
+            dialogReference.Should().NotBe(null);
+            var dialog1 = (DialogOkCancel)dialogReference.Dialog;
+            comp.Markup.Trim().Should().NotBeEmpty();
+            await comp.InvokeAsync(() => dialog1.MudDialog.HandleKeyDown(new KeyboardEventArgs() { Key = "Escape", Type = "keydown", }));
+            comp.Markup.Trim().Should().BeEmpty();
+            //dialog with disabled backdrop click
+            await comp.InvokeAsync(() => dialogReference = service?.Show<DialogOkCancel>(string.Empty, new DialogOptions() { CloseOnEscapeKey = false }));
+            dialogReference.Should().NotBe(null);
+            var dialog2 = (DialogOkCancel)dialogReference.Dialog;
+            comp.Markup.Trim().Should().NotBeEmpty();
+            await comp.InvokeAsync(() => dialog2.MudDialog.HandleKeyDown(new KeyboardEventArgs() { Key = "Escape", Type = "keydown", }));
+            comp.Markup.Trim().Should().NotBeEmpty();
         }
     }
 

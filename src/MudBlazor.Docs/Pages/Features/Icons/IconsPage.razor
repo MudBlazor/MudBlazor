@@ -17,7 +17,7 @@
                         <MudSelectItem Value="IconOrigin.Material">Material Icons</MudSelectItem>
                     </MudSelect>
                 </MudItem>
-                <MudItem xs="12">
+                <MudItem xs="12" Class="relative">
                     @if(SelectedIconOrigin == IconOrigin.Material)
                     {
                         <MudChipSet Filter="true" Mandatory="true">
@@ -39,22 +39,24 @@
                     }
                 </MudItem>
             </MudGrid>
-            <div class="docs-icon-container">
-                @if (DisplayedIcons != null)
-                {
-                    <Virtualize Items="@SelectedIcons" ItemSize="128" OverscanCount="128">
-                        <button class="docs-icon-panel" @onclick="@(() => SetIconDrawer(context))">
-                            <MudIcon Icon="@context.Code" Title="@context.Name" />
-                            <MudText Typo="Typo.caption">
-                                @context.Name
-                            </MudText>
-                        </button>
-                    </Virtualize>
-                }
-                else
-                {
-                    <MudText Typo="Typo.h5" Align="Align.Center">Loading...</MudText>
-                }
+            
+            <div class="relative" style="height:34000px;">
+                <div class="absolute" style="top:0px;width:100%;">
+                    <div @ref="killZone" style="@GetKillZoneStyle(false)"></div>
+                </div>
+                <Virtualize Items="@SelectedIcons" ItemSize="@_iconCardHeight">
+                    <div class="d-flex mud-width-full">
+                        @foreach(var icon in context.RowIcons)
+                        {
+                            <button class="docs-icon-panel" @onclick="@(() => SetIconDrawer(icon))">
+                                <MudIcon Icon="@icon.Code" Title="@icon.Name" />
+                                <MudText Typo="Typo.caption">
+                                    @icon.Name
+                                </MudText>
+                            </button>
+                        }
+                    </div>
+                </Virtualize>
             </div>
         </DocsPageSection>
     </DocsPageContent>

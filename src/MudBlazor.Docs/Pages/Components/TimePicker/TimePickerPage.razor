@@ -5,6 +5,7 @@
         <Description>Provides the user with a simple way to select time.</Description>
     </DocsPageHeader>
     <DocsPageContent>
+
         <DocsPageSection>
             <SectionHeader Title="Basic Usage">
                 <Description>
@@ -18,8 +19,9 @@
             <SectionContent Outlined="true">
                 <TimePickerBasicUsageExample />
             </SectionContent>
-            <SectionSource Code="TimePickerBasicUsageExample" GitHubFolderName="TimePicker" ShowCode="false" />
+            <SectionSource Code="TimePickerBasicUsageExample" GitHubFolderName="TimePicker" ShowCode="true" />
         </DocsPageSection>
+
         <DocsPageSection>
             <SectionHeader Title="Dialog Mode">
                 <Description></Description>
@@ -27,8 +29,9 @@
             <SectionContent Outlined="true">
                 <TimePickerDialogExample />
             </SectionContent>
-            <SectionSource Code="TimePickerDialogExample" GitHubFolderName="TimePicker" />
+            <SectionSource Code="TimePickerDialogExample" ShowCode="false" GitHubFolderName="TimePicker" />
         </DocsPageSection>
+
         <DocsPageSection>
             <SectionHeader Title="Static Mode">
                 <Description></Description>
@@ -36,8 +39,9 @@
             <SectionContent DarkenBackground="true" DisplayFlex="true">
                 <TimePickerStaticExample />
             </SectionContent>
-            <SectionSource Code="TimePickerStaticExample" GitHubFolderName="TimePicker" />
+            <SectionSource Code="TimePickerStaticExample" ShowCode="false" GitHubFolderName="TimePicker" />
         </DocsPageSection>
+
         <DocsPageSection>
             <SectionHeader Title="Open to Minutes">
                 <Description>By default, MudTimePicker opens the hours editor and then switches into the minutes editor. By setting <CodeInline>OpenTo="OpenTo.Minutes"</CodeInline>, it will open the minutes editor instead.</Description>
@@ -45,8 +49,9 @@
             <SectionContent Outlined="true">
                 <TimePickerViewsExample />
             </SectionContent>
-            <SectionSource Code="TimePickerViewsExample" GitHubFolderName="TimePicker" />
+            <SectionSource Code="TimePickerViewsExample" ShowCode="false" GitHubFolderName="TimePicker" />
         </DocsPageSection>
+
         <DocsPageSection>
             <SectionHeader Title="Edit Mode">
                 <Description>By setting the <CodeInline>TimeEditMode</CodeInline>, you can restrict editing of the time value to allow only changing hours or minutes.</Description>
@@ -56,6 +61,7 @@
             </SectionContent>
             <SectionSource Code="TimePickerTimeEditModeExample" GitHubFolderName="TimePicker" ShowCode="false" />
         </DocsPageSection>
+
         <DocsPageSection>
             <SectionHeader Title="Colors">
                 <Description></Description>
@@ -63,8 +69,9 @@
             <SectionContent DarkenBackground="true" DisplayFlex="true" Class="demo-datetime-margin">
                 <TimePickerColorExample />
             </SectionContent>
-            <SectionSource Code="TimePickerColorExample" GitHubFolderName="TimePicker" />
+            <SectionSource Code="TimePickerColorExample" ShowCode="false" GitHubFolderName="TimePicker" />
         </DocsPageSection>
+
         <DocsPageSection>
             <SectionHeader Title="Elevation">
                 <Description>You can change the elevation with the <CodeInline>Elevation</CodeInline> parameter. The default value is 0 for static and 8 for inline.</Description>
@@ -72,7 +79,29 @@
             <SectionContent DarkenBackground="true" DisplayFlex="true" Class="demo-datetime-margin">
                 <TimePickerElevationExample />
             </SectionContent>
-            <SectionSource Code="TimePickerElevationExample" GitHubFolderName="TimePicker" />
+            <SectionSource Code="TimePickerElevationExample" ShowCode="false" GitHubFolderName="TimePicker" />
         </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Keyboard Navigation">
+                <Description>
+                    <MudText>MudTimePicker accepts keys to keyboard navigation.</MudText>
+                    <br />
+                    <MudText><CodeInline>Escape</CodeInline> or <CodeInline>Alt+ArrowUp</CodeInline> keys to close dropdown</MudText>
+                    <MudText><CodeInline>Enter</CodeInline> or <CodeInline>NumpadEnter</CodeInline> or <CodeInline>ArrowDown</CodeInline> or <CodeInline>ArrowUp</CodeInline> keys to open dropdown</MudText>
+                    <MudText><CodeInline>Space</CodeInline> key to toggle open/close the picker (if it is not editable)</MudText>
+                    <MudText><CodeInline>ArrowUp</CodeInline> or <CodeInline>Ctrl+ArrowRight</CodeInline> keys to increase hour by 1</MudText>
+                    <MudText><CodeInline>ArrowDown</CodeInline> or <CodeInline>Ctrl+ArrowLeft</CodeInline> keys to decrease hour by 1</MudText>
+                    <MudText><CodeInline>ArrowRight</CodeInline> and <CodeInline>ArrowLeft</CodeInline> keys to increase/decrease minute by 1</MudText>
+                    <MudText><CodeInline>Shift+ArrowRight</CodeInline> and <CodeInline>Shift+ArrowLeft</CodeInline> keys to increase/decrease minute by 5</MudText>
+                    <MudText><CodeInline>Ctrl+Shift+Backspace</CodeInline> keys to reset (validation)</MudText>
+                </Description>
+            </SectionHeader>
+            <SectionContent Outlined="true" DisplayFlex="true" Class="demo-datetime-margin">
+                <TimePickerKeyboardNavigationExample />
+            </SectionContent>
+            <SectionSource Code="TimePickerKeyboardNavigationExample" ShowCode="false" GitHubFolderName="TimePicker" />
+        </DocsPageSection>
+
     </DocsPageContent>
 </DocsPage>
