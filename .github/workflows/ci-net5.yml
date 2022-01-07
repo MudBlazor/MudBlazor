@@ -6,13 +6,40 @@ on:
   pull_request:
     branches: [ net5 ]
     
-
 jobs:
-  pipeline:
-    name: net5 Pipeline
-    uses: MudBlazor/MudBlazor/.github/workflows/net5-template-pipeline.yml@net5
-    with:
-      dotnet-version: 6.0.x
-      dotnet-prerelease: true
+  ci:
+    name: Build & Test
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./src
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
 
+      - name: Install eslint
+        run: npm i -g eslint
+
+      - name: Check JS is ES6 compliant
+        run: eslint --env 'es6' MudBlazor/TScripts
+
+      - name: Setup dotnet version 5
+        uses: actions/setup-dotnet@v1
+        with: 
+          dotnet-version: 5.0.x
+
+      - name: Setup dotnet version 6
+        uses: actions/setup-dotnet@v1
+        with: 
+          dotnet-version: 6.0.x
+
+      - name: Restore
+        run: dotnet restore
+
+      - name: Build
+        run: dotnet build -c Release --no-restore
+
+      - name: Test
+        run: dotnet test -c Release --no-build --no-restore --blame-hang --blame-hang-timeout 60s /property:GenerateFullPaths=true /consoleloggerparameters:NoSummary /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura /p:ExcludeByAttribute='ExcludeFromCodeCoverage' /p:Include='[MudBlazor]*' /p:SkipAutoProps=true /p:CoverletOutput='./TestResults/'
 
