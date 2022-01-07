@@ -26,7 +26,13 @@
                                 <tr>
                                     <td>@Row.Name</td>
                                     <td>@Row.Type</td>
-                                    <td>@Row.Default</td>
+                                    <td>
+                                        <div class="d-flex align-center">
+                                            <MudPaper Outlined="true" Height="16px" Width="16px" Class="mr-2" Style="@($"background-color:{Row.Default}")"/>
+                                            @Row.Default
+                                        </div>
+                                        
+                                    </td>
                                     <td>@Row.CSSVariable</td>
                                     <td>@Row.CSSClass</td>
                                 </tr>
