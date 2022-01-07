@@ -6,7 +6,7 @@
     <MudOverlay OnClick="@(() => ToggleMiniDrawer())" @bind-Visible="@overlayVisible" Absolute="true" ZIndex="1" />
     <div class="@MiniDrawerClassNames" style="@GetDrawerWidth()">
         <div class="d-flex align-center px-4">
-            <MudBlazorLogo Class="mr-3" Style="width:36px;"/>
+            <MudBlazorLogo Class="me-3" Style="width:36px;"/>
             <MudText Typo="Typo.h6">Mud Mini</MudText>
         </div>
         <MudList Clickable="true" @bind-SelectedItem="selectedItem" @bind-SelectedValue="selectedValue" Class="py-6 mini-fake-nav">
@@ -66,7 +66,7 @@
                 <div class="flex-grow-1">
                     <MudText Typo="Typo.h6">Graphite on roof</MudText>
                     <div class="d-flex align-center my-1">
-                        <MudAvatar Class="mr-2 pa-4" Style="background-color: var(--mud-palette-primary-hover);" Size="Size.Small">
+                        <MudAvatar Class="me-2 pa-4" Style="background-color: var(--mud-palette-primary-hover);" Size="Size.Small">
                             <MudIcon Color="Color.Primary" Icon="@Icons.Material.Filled.TrendingDown" Size="Size.Small"/>
                         </MudAvatar>
                         <MudText Typo="Typo.subtitle2">+2.6%</MudText>
@@ -90,7 +90,7 @@
                 <div class="flex-grow-1">
                     <MudText Typo="Typo.h6">Global Spread</MudText>
                     <div class="d-flex align-center my-1">
-                        <MudAvatar Class="mr-2 pa-4" Style="background-color: var(--mud-palette-secondary-hover);" Size="Size.Small">
+                        <MudAvatar Class="me-2 pa-4" Style="background-color: var(--mud-palette-secondary-hover);" Size="Size.Small">
                             <MudIcon Color="Color.Secondary" Icon="@Icons.Material.Filled.TrendingUp" Size="Size.Small"/>
                         </MudAvatar>
                         <MudText Typo="Typo.subtitle2">+9.6%</MudText>
@@ -114,7 +114,7 @@
                 <div class="flex-grow-1">
                     <MudText Typo="Typo.h6">Roentgen</MudText>
                     <div class="d-flex align-center my-1">
-                        <MudAvatar Class="mr-2 pa-4" Style="background-color: var(--mud-palette-tertiary-hover);" Size="Size.Small">
+                        <MudAvatar Class="me-2 pa-4" Style="background-color: var(--mud-palette-tertiary-hover);" Size="Size.Small">
                             <MudIcon Color="Color.Tertiary" Icon="@Icons.Material.Filled.TrendingFlat" Size="Size.Small"/>
                         </MudAvatar>
                         <MudText Typo="Typo.subtitle2">~0.0%</MudText>
