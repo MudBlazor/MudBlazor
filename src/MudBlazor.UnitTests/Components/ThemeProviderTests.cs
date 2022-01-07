@@ -11,7 +11,7 @@ using NUnit.Framework;
 namespace MudBlazor.UnitTests.Components
 {
     [TestFixture]
-    public class MudThemeProviderTests : BunitTest
+    public class ThemeProviderTests : BunitTest
     {
         [Test]
         [TestCase("en-us")]
@@ -35,7 +35,7 @@ namespace MudBlazor.UnitTests.Components
 
             var expectedLines = new[] {
                 ":root{",
-                "--mud-palette-black: #000000ff;",
+                "--mud-palette-black: #272c34ff;",
                 "--mud-palette-white: #ffffffff;",
                 "--mud-palette-primary: #594ae2ff;",
                 "--mud-palette-primary-rgb: 89,74,226;",
