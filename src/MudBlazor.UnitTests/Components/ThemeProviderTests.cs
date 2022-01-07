@@ -11,7 +11,7 @@ using NUnit.Framework;
 namespace MudBlazor.UnitTests.Components
 {
     [TestFixture]
-    public class MudThemeProviderTests : BunitTest
+    public class ThemeProviderTests : BunitTest
     {
         [Test]
         [TestCase("en-us")]
