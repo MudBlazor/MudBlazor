@@ -36,7 +36,6 @@
     }
 </MudNavGroup>
  <MudNavGroup Title="Customization" Icon="@Icons.Material.Filled.Handyman" Expanded="@(_section == "customization")" ExpandIcon="@Icons.Material.Filled.ExpandMore">
-     <MudNavLink Href="customization/default-theme">Default Theme</MudNavLink>
      @foreach (var link in MenuService.Customization)
      {
          <MudNavLink Href="@link.Href">@link.Title</MudNavLink>
