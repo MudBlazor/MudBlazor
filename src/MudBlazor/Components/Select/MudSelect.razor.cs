@@ -83,6 +83,7 @@ namespace MudBlazor
             if (_items == null || _items.Count == 0)
                 return;
             var items = _items.Where(x => !x.Disabled);
+            var items2 = items;
             if (!string.IsNullOrWhiteSpace(startChar))
             {
                 // find first item that starts with the letter
@@ -110,7 +111,7 @@ namespace MudBlazor
                 HilightItem(item);
             }
             await _elementReference.SetText(Text);
-            await ScrollManager.ScrollToListItemAsync(item.ItemId, -1, true);
+            await ScrollManager.ScrollToListItemAsync(item.ItemId, (item == items2.FirstOrDefault() ? -1 : 1), true);
         }
 
         private async Task SelectLastItem()
