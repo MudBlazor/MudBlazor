@@ -1,4 +1,8 @@
-﻿#pragma warning disable CS1998 // async without await
+﻿// Copyright (c) MudBlazor 2022
+// MudBlazor licenses this file to you under the MIT license.
+// See the LICENSE file in the project root for more information.
+
+#pragma warning disable CS1998 // async without await
 #pragma warning disable BL0005 // Set parameter outside component
 
 using System;
@@ -16,7 +20,7 @@ using MudBlazor.UnitTests.TestComponents.NumericField;
 using NUnit.Framework;
 using static Bunit.ComponentParameterFactory;
 
-namespace MudBlazor.UnitTests
+namespace MudBlazor.UnitTests.Components
 {
     [TestFixture]
     public class NumericFieldTests : BunitTest
@@ -485,10 +489,10 @@ namespace MudBlazor.UnitTests
         }
 
         /// <summary>
-        /// NumericalField removes illegal chars
+        /// NumericalField will not accept illegal chars
         /// </summary>
         [Test]
-        public async Task NumericField_should_RemoveIllegalCharacters()
+        public async Task NumericField_should_RejectIllegalCharacters()
         {
             var comp = Context.RenderComponent<NumericFieldCultureTest>();
             //german
@@ -504,9 +508,17 @@ namespace MudBlazor.UnitTests
             // English
             comp.FindAll("input").First().Input("-12-34abc.56");
             comp.FindAll("input").First().Blur();
+            comp.WaitForAssertion(() => comp.Instance.FieldImmediate.Text.Should().Be(null));
+            comp.WaitForAssertion(() => comp.Instance.FieldImmediate.Value.Should().Be(null));
+            comp.FindAll("input").First().Input("-1234.56");
+            comp.FindAll("input").First().Blur();
             comp.WaitForAssertion(() => comp.Instance.FieldImmediate.Text.Should().Be("-1,234.56"));
             comp.WaitForAssertion(() => comp.Instance.FieldImmediate.Value.Should().Be(-1234.56));
             comp.FindAll("input").Last().Change("x+17,9y9z");
+            comp.FindAll("input").Last().Blur();
+            comp.WaitForAssertion(() => comp.Instance.FieldNotImmediate.Text.Should().Be(null));
+            comp.WaitForAssertion(() => comp.Instance.FieldNotImmediate.Value.Should().Be(null));
+            comp.FindAll("input").Last().Change("17,99");
             comp.FindAll("input").Last().Blur();
             comp.WaitForAssertion(() => comp.Instance.FieldNotImmediate.Text.Should().Be("17,99"));
             comp.WaitForAssertion(() => comp.Instance.FieldNotImmediate.Value.Should().Be(17.99));
@@ -571,6 +583,35 @@ namespace MudBlazor.UnitTests
             await comp.InvokeAsync(() => comp.Instance.Increment().Wait());
             await comp.InvokeAsync(() => comp.Instance.Decrement().Wait());
             comp.Instance.Value.Should().Be(value);
+        }
+
+        /// <summary>
+        /// Special format with currency format should not result in error
+        /// </summary>
+        [Test]
+        public async Task NumericFieldWithCurrencyFormat()
+        {
+            var comp = Context.RenderComponent<MudNumericField<int?>>();
+            comp.SetParam(x => x.Format, "€0");
+            comp.SetParam(x => x.Culture, CultureInfo.InvariantCulture);
+            // print the generated html
+            Console.WriteLine(comp.Markup);
+            // select elements needed for the test
+            var numericField = comp.Instance;
+            numericField.Value.Should().Be(null);
+            numericField.Text.Should().Be(null);
+            //
+            77.ToString("€0", CultureInfo.InvariantCulture).Should().Be("€77");
+            var conv = new DefaultConverter<int?>();
+            conv.Format = "€0";
+            conv.Culture = CultureInfo.InvariantCulture;
+            conv.Set(77).Should().Be("€77");
+            //
+            comp.FindAll("input").First().Change("1234");
+            comp.FindAll("input").First().Blur();
+            Console.WriteLine(numericField.ErrorText);
+            comp.WaitForAssertion(() => numericField.Text.Should().Be("€1234"));
+            comp.WaitForAssertion(() => numericField.Value.Should().Be(1234));
         }
     }
 }

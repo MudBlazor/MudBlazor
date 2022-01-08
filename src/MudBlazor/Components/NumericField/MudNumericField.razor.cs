@@ -1,4 +1,8 @@
-﻿using System;
+﻿// Copyright (c) MudBlazor 2022
+// MudBlazor licenses this file to you under the MIT license.
+// See the LICENSE file in the project root for more information.
+
+using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Text.RegularExpressions;
@@ -15,12 +19,6 @@ namespace MudBlazor
         public MudNumericField() : base()
         {
             Validation = new Func<T, Task<bool>>(ValidateInput);
-            _inputConverter = new NumericBoundariesConverter<T>((val) => ConstrainBoundaries(val).value)
-            {
-                FilterFunc = CleanText,
-                Culture = CultureInfo.CurrentUICulture,
-            };
-
             #region parameters default depending on T
 
             //sbyte
@@ -104,13 +102,6 @@ namespace MudBlazor
             #endregion parameters default depending on T
         }
 
-        protected override bool SetCulture(CultureInfo value)
-        {
-            var changed = base.SetCulture(value);
-            _inputConverter.Culture = value;
-            return changed;
-        }
-
         protected string Classname =>
             new CssBuilder("mud-input-input-control mud-input-number-control " +
                            (HideSpinButtons ? "mud-input-nospin" : "mud-input-showspin"))
@@ -123,8 +114,6 @@ namespace MudBlazor
         private string _elementId = "numericField_" + Guid.NewGuid().ToString().Substring(0, 8);
 
         private MudInput<string> _elementReference;
-
-        private Converter<string> _inputConverter;
 
         [ExcludeFromCodeCoverage]
         public override ValueTask FocusAsync()
@@ -372,22 +361,6 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         public override string Pattern { get; set; } = @"[0-9,.\-]";
-
-        protected string CleanText(string text)
-        {
-            if (string.IsNullOrEmpty(text))
-                return text;
-            var pattern = Pattern + "*";
-            var cleanedText = "";
-            foreach (Match m in Regex.Matches(text, pattern))
-            {
-                cleanedText += m.Captures[0].Value;
-            }
-
-            cleanedText = cleanedText[0] + cleanedText.Substring(1).Replace("-", string.Empty);
-
-            return cleanedText;
-        }
 
         private string GetCounterText() => Counter == null ? string.Empty : (Counter == 0 ? (string.IsNullOrEmpty(Text) ? "0" : $"{Text.Length}") : ((string.IsNullOrEmpty(Text) ? "0" : $"{Text.Length}") + $" / {Counter}"));
 
