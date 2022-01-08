@@ -1,6 +1,6 @@
 ﻿
 <MudMainContent Class="mudblazor-main-content">
-    <MudContainer MaxWidth="@MaxWidth">
+    <MudContainer MaxWidth="MaxWidth.Large">
         <div id="docspage" class="docs-page">
             <CascadingValue Value="this" IsFixed>
                 @ChildContent
@@ -12,7 +12,7 @@
     </MudContainer>
     @if (DisplayFooter)
     {
-        <MudContainer MaxWidth="@MaxWidth" Class="mt-16">
+        <MudContainer MaxWidth="MaxWidth.Large" Class="mt-16">
             <Footer />
         </MudContainer>
     }
