@@ -271,6 +271,8 @@ namespace MudBlazor
 
         private MudInput<string> _elementReference;
 
+        private MudTextField<string> _searchelementReference;
+
         /// <summary>
         /// Defines how values are displayed in the drop-down list
         /// </summary>
@@ -668,7 +670,14 @@ namespace MudBlazor
             _isOpen = true;
             UpdateIcon();
             StateHasChanged();
-            await HilightSelectedValue();
+
+            if (Searchable)
+            {
+                await WaitForRender();
+                await _searchelementReference.FocusAsync();
+            }
+            else
+                await HilightSelectedValue();
 
             //disable escape propagation: if selectmenu is open, only the select popover should close and underlying components should not handle escape key
             await _keyInterceptor.UpdateKey(new() { Key = "Escape", StopDown = "Key+none" });

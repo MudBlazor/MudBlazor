@@ -25,7 +25,7 @@
 				<MudPopover Open=@(_isOpen) MaxHeight="@MaxHeight" AnchorOrigin="@AnchorOrigin" TransformOrigin="@TransformOrigin" Class="@PopoverClass" RelativeWidth="true">
                     @if (Searchable)
                     {
-                        <MudTextField T="string" Clearable="true" @bind-Value="_searchValue" Variant="Variant.Outlined"  Margin="Margin.Dense" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" ></MudTextField>
+                        <MudTextField T="string" @bind-Value="_searchValue" Variant="Variant.Outlined" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" ReadOnly="false" @ref="_searchelementReference" ></MudTextField>
                     }
 					<CascadingValue Value="@((IMudSelect)this)" IsFixed="true">
 						<MudList Clickable="true" Dense="@Dense" @bind-SelectedValue="_activeItemId">
