@@ -120,5 +120,23 @@ namespace MudBlazor
             }
             UpdateAll();
         }
+
+        public void CloseAll()
+        {
+            foreach (var p in _panels)
+            {
+                p.Collapse(update_parent: false);
+            }
+            this.InvokeAsync(UpdateAll);
+        }
+
+        public void ExpandAll()
+        {
+            foreach (var p in _panels)
+            {
+                p.Expand(update_parent: false);
+            }
+            this.InvokeAsync(UpdateAll);
+        }
     }
 }
