@@ -20,6 +20,7 @@ namespace MudBlazor
         private HashSet<T> _selectedValues = new HashSet<T>();
         private IEqualityComparer<T> _comparer;
         private bool _dense;
+        private bool _searchable;
         private string multiSelectionText;
         private bool? _selectAllChecked;
 
@@ -291,6 +292,18 @@ namespace MudBlazor
             }
         }
 
+        /// <summary>
+        /// Should the list be filtered by an additional text uinput at the top of the list
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.ListBehavior)]
+        public bool Searchable
+        {
+            get { return _searchable; }
+            set { _searchable = value; }
+        }
+
+
         public MudSelect()
         {
             Adornment = Adornment.End;
@@ -521,6 +534,8 @@ namespace MudBlazor
         internal bool _isOpen;
 
         public string _currentIcon { get; set; }
+
+        public string _searchValue { get; set; }
 
         public async Task SelectOption(int index)
         {

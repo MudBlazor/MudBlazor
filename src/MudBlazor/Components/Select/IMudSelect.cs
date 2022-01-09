@@ -10,6 +10,8 @@ namespace MudBlazor
     {
         void CheckGenericTypeMatch(object select_item);
         bool MultiSelection { get; set; }
+        bool Searchable { get; set; }
+        string _searchValue { get; set; }
     }
 
     internal interface IMudShadowSelect
