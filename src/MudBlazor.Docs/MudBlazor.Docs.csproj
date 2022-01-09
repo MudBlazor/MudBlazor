@@ -1,4 +1,4 @@
-﻿<!--https://docs.microsoft.com/en-us/visualstudio/msbuild/msbuild-reference -->
+<!--https://docs.microsoft.com/en-us/visualstudio/msbuild/msbuild-reference -->
 <!--Use: dotnet msbuild -preprocess:<fileName>.xml to evaluate this project-->
 <Project Sdk="Microsoft.NET.Sdk.Razor">
 
