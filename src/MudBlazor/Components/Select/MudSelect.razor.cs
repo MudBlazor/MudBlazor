@@ -673,6 +673,7 @@ namespace MudBlazor
 
             if (Searchable)
             {
+                _searchValue = string.Empty;
                 await WaitForRender();
                 await _searchelementReference.SelectAsync();
             }
