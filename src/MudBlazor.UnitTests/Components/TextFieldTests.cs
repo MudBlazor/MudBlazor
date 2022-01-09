@@ -406,7 +406,7 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(() => textfield.Validate());
             textfield.ValidationErrors.Should().NotBeEmpty();
             textfield.ValidationErrors.Should().HaveCount(1);
-            textfield.ValidationErrors[0].Should().Equals("Should not be longer than 3");
+            textfield.ValidationErrors[0].Should().Be("Should not be longer than 3");
         }
 
         [Test]

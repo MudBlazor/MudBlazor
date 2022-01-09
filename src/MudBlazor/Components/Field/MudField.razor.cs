@@ -125,6 +125,13 @@ namespace MudBlazor
         public Adornment Adornment { get; set; } = Adornment.None;
 
         /// <summary>
+        /// The color of the adornment if used. It supports the theme colors.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Appearance)]
+        public Color AdornmentColor { get; set; } = Color.Default;
+
+        /// <summary>
         /// Sets the Icon Size.
         /// </summary>
         [Parameter]
