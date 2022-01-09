@@ -674,7 +674,7 @@ namespace MudBlazor
             if (Searchable)
             {
                 await WaitForRender();
-                await _searchelementReference.FocusAsync();
+                await _searchelementReference.SelectAsync();
             }
             else
                 await HilightSelectedValue();
