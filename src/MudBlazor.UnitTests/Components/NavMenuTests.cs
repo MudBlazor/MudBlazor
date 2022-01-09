@@ -18,7 +18,7 @@ namespace MudBlazor.UnitTests.Components
         public void NavMenuTests_DefaultValues()
         {
             var comp = Context.RenderComponent<MudNavMenu>();
-            Console.WriteLine(comp.Markup);
+            //Console.WriteLine(comp.Markup);
 
             comp.Instance.Bordered.Should().Be(false);
             comp.Instance.Color.Should().Be(Color.Default);
@@ -48,7 +48,7 @@ namespace MudBlazor.UnitTests.Components
                 x.Add(p => p.Rounded, true);
             });
             
-            Console.WriteLine(comp.Markup);
+            //Console.WriteLine(comp.Markup);
 
             comp.Markup.Should().Contain("mud-navmenu-bordered");
             comp.Markup.Should().Contain("mud-navmenu-success");

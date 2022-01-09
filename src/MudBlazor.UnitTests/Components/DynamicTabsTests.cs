@@ -56,7 +56,7 @@ namespace MudBlazor.UnitTests.Components
             Context.Services.Add(new ServiceDescriptor(typeof(IResizeObserver), new MockResizeObserver()));
 
             var comp = Context.RenderComponent<SimpleDynamicTabsTest>();
-            Console.WriteLine(comp.Markup);
+            //Console.WriteLine(comp.Markup);
 
             // three panels three close icons;
             var closeButtons = comp.FindAll(".my-close-icon-class");
@@ -95,7 +95,7 @@ namespace MudBlazor.UnitTests.Components
             Context.Services.Add(new ServiceDescriptor(typeof(IResizeObserver), new MockResizeObserver()));
 
             var comp = Context.RenderComponent<SimpleDynamicTabsTestWithToolTips>();
-            Console.WriteLine(comp.Markup);
+            //Console.WriteLine(comp.Markup);
 
             // three panels three close icons;
             var closeButtons = comp.FindAll(".my-close-icon-class");
@@ -160,7 +160,7 @@ namespace MudBlazor.UnitTests.Components
             Context.Services.Add(new ServiceDescriptor(typeof(IResizeObserver), new MockResizeObserver()));
             var comp = Context.RenderComponent<SimpleDynamicTabsInteractionTest>();
 
-            Console.WriteLine(comp.Markup);
+            //Console.WriteLine(comp.Markup);
 
             var addButton = comp.Find(".my-add-icon-class");
             addButton.Click();
@@ -175,7 +175,7 @@ namespace MudBlazor.UnitTests.Components
             Context.Services.Add(new ServiceDescriptor(typeof(IResizeObserver), new MockResizeObserver()));
             var comp = Context.RenderComponent<SimpleDynamicTabsInteractionTest>();
 
-            Console.WriteLine(comp.Markup);
+            //Console.WriteLine(comp.Markup);
 
             for (var i = 0; i < 3; i++)
             {

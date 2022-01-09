@@ -515,7 +515,7 @@ namespace MudBlazor.UnitTests.Components
             // check correct time
             underlyingPicker.TimeIntermediate.Value.Hours.Should().Be(13);
             underlyingPicker.TimeIntermediate.Value.Minutes.Should().Be(37);
-            Console.WriteLine($"{underlyingPicker.TimeIntermediate.Value.Hours}:{underlyingPicker.TimeIntermediate.Value.Minutes}");
+            //Console.WriteLine($"{underlyingPicker.TimeIntermediate.Value.Hours}:{underlyingPicker.TimeIntermediate.Value.Minutes}");
         }
 
         /// <summary>
@@ -550,18 +550,18 @@ namespace MudBlazor.UnitTests.Components
             // check correct time
             underlyingPicker.TimeIntermediate.Value.Hours.Should().Be(13);
             underlyingPicker.TimeIntermediate.Value.Minutes.Should().Be(37);
-            Console.WriteLine($"{underlyingPicker.TimeIntermediate.Value.Hours}:{underlyingPicker.TimeIntermediate.Value.Minutes}");
+            //Console.WriteLine($"{underlyingPicker.TimeIntermediate.Value.Hours}:{underlyingPicker.TimeIntermediate.Value.Minutes}");
         }
 
         [Test]
         public async Task Open_Programmatically_CheckOpen_Close_Programmatically_CheckClosed()
         {
             var comp = Context.RenderComponent<SimpleTimePickerTest>();
-            Console.WriteLine(comp.Markup + "\n");
+            //Console.WriteLine(comp.Markup + "\n");
             comp.FindAll("div.mud-picker-content").Count.Should().Be(0);
             // clicking the button should open the picker
             await comp.Instance.Open();
-            Console.WriteLine(comp.Markup);
+            //Console.WriteLine(comp.Markup);
             comp.FindAll("div.mud-picker-content").Count.Should().Be(1);
             // closing programmatically
             await comp.Instance.Close();
@@ -694,7 +694,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<SimpleTimePickerTest>();
 
-            Console.WriteLine(comp.Markup);
+            //Console.WriteLine(comp.Markup);
             var timePicker = comp.FindComponent<MudTimePicker>().Instance;
             var overlay = comp.FindComponent<MudOverlay>();
 

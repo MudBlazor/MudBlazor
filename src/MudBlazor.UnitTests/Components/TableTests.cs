@@ -22,7 +22,7 @@ namespace MudBlazor.UnitTests.Components
         public void TableRowClick()
         {
             var comp = Context.RenderComponent<TableRowClickTest>();
-            Console.WriteLine(comp.Markup);
+            //Console.WriteLine(comp.Markup);
             comp.Find("p").TextContent.Trim().Should().BeEmpty();
             var trs = comp.FindAll("tr");
             trs[1].Click();
@@ -181,7 +181,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<TableSingleSelectionTest1>();
             // print the generated html      
-            Console.WriteLine(comp.Markup);
+            //Console.WriteLine(comp.Markup);
             // select elements needed for the test
             var table = comp.FindComponent<MudTable<int?>>().Instance;
             table.SelectedItem.Should().BeNull();
@@ -208,7 +208,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<TableFilterTest1>();
             // print the generated html      
-            Console.WriteLine(comp.Markup);
+            //Console.WriteLine(comp.Markup);
             var table = comp.FindComponent<MudTable<string>>().Instance;
             var searchString = comp.Find("#searchString");
             // should return 3 items
@@ -240,7 +240,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<TablePagingTest1>();
             // print the generated html      
-            Console.WriteLine(comp.Markup);
+            //Console.WriteLine(comp.Markup);
             // after initial load
             comp.FindAll("tr.mud-table-row").Count.Should().Be(10);
             comp.FindAll("div.mud-table-pagination-caption")[^1].TextContent.Trim().Should().Be("1-10 of 59");
@@ -296,7 +296,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<TablePagingTest1>();
             // print the generated html      
-            Console.WriteLine(comp.Markup);
+            //Console.WriteLine(comp.Markup);
             // select elements needed for the test
             var table = comp.FindComponent<MudTable<string>>();
             //navigate to specified page
@@ -312,7 +312,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<TablePagingTest1>();
             // print the generated html      
-            Console.WriteLine(comp.Markup);
+            //Console.WriteLine(comp.Markup);
             // select elements needed for the test
             var table = comp.FindComponent<MudTable<string>>();
             var pager = comp.FindComponent<MudSelect<string>>().Instance;
@@ -353,7 +353,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<TableServerSideDataTest2>();
             // print the generated html
-            Console.WriteLine(comp.Markup);
+            //Console.WriteLine(comp.Markup);
             // select elements needed for the test
             var table = comp.FindComponent<MudTable<int>>();
             var pager = comp.FindComponent<MudSelect<string>>().Instance;
@@ -413,7 +413,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<TablePagingTest1>();
             // print the generated html      
-            Console.WriteLine(comp.Markup);
+            //Console.WriteLine(comp.Markup);
             // after initial load
             comp.FindAll("tr.mud-table-row").Count.Should().Be(10);
             comp.FindAll("div.mud-table-pagination-caption")[^1].TextContent.Trim().Should().Be("1-10 of 59");
@@ -444,7 +444,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<TableMultiSelectionTest1>();
             // print the generated html
-            Console.WriteLine(comp.Markup);
+            //Console.WriteLine(comp.Markup);
             // select elements needed for the test
             var table = comp.FindComponent<MudTable<int>>().Instance;
             table.SelectedItems.Count.Should().Be(0); // selected items should be empty
@@ -464,7 +464,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<TableMultiSelectionTest1>();
             // print the generated html
-            Console.WriteLine(comp.Markup);
+            //Console.WriteLine(comp.Markup);
             // select elements needed for the test
             var table = comp.FindComponent<MudTable<int>>().Instance;
             var tr = comp.FindAll("tr").ToArray();
@@ -495,7 +495,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<TableMultiSelectionTest2>();
             // print the generated html
-            Console.WriteLine(comp.Markup);
+            //Console.WriteLine(comp.Markup);
             // select elements needed for the test
             var table = comp.FindComponent<MudTable<int>>().Instance;
             var text = comp.FindComponent<MudText>();
@@ -529,7 +529,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<TableMultiSelectionTest2B>();
             // print the generated html
-            Console.WriteLine(comp.Markup);
+            //Console.WriteLine(comp.Markup);
             // select elements needed for the test
             var table = comp.FindComponent<MudTable<int>>().Instance;
             var text = comp.FindComponent<MudText>();
@@ -563,7 +563,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<TableMultiSelectionTest3>();
             // print the generated html
-            Console.WriteLine(comp.Markup);
+            //Console.WriteLine(comp.Markup);
             // select elements needed for the test
             var table = comp.FindComponent<MudTable<int>>().Instance;
             var text = comp.FindComponent<MudText>();
@@ -590,7 +590,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<TableMultiSelectionTest4>();
             // print the generated html
-            Console.WriteLine(comp.Markup);
+            //Console.WriteLine(comp.Markup);
             // select elements needed for the test
             var table = comp.FindComponent<MudTable<int>>().Instance;
             var text = comp.FindComponent<MudText>();
@@ -615,7 +615,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<TableMultiSelectionTest5>();
             // print the generated html
-            Console.WriteLine(comp.Markup);
+            //Console.WriteLine(comp.Markup);
             // select elements needed for the test
             var table = comp.FindComponent<MudTable<int>>().Instance;
             var text = comp.FindComponent<MudText>();
@@ -642,7 +642,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<TableMultiSelectionTest6>();
             // print the generated html
-            Console.WriteLine(comp.Markup);
+            //Console.WriteLine(comp.Markup);
             // select elements needed for the test
             var table = comp.FindComponent<MudTable<int>>().Instance;
             var text = comp.FindComponent<MudText>();
@@ -676,7 +676,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<TableMultiSelectionTest6B>();
             // print the generated html
-            Console.WriteLine(comp.Markup);
+            //Console.WriteLine(comp.Markup);
             // select elements needed for the test
             var table = comp.FindComponent<MudTable<int>>().Instance;
             var text = comp.FindComponent<MudText>();
@@ -725,7 +725,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<TablePaginationTest1>();
             await Task.Delay(200);
-            Console.WriteLine(comp.Markup);
+            //Console.WriteLine(comp.Markup);
             comp.FindAll("tr.mud-table-row").Count.Should().Be(11); // ten rows + header row
             comp.FindAll("div.mud-table-pagination-caption")[^1].TextContent.Trim().Should().Be("1-10 of 20");
         }
@@ -737,7 +737,7 @@ namespace MudBlazor.UnitTests.Components
         public async Task TableServerSideDataTest1()
         {
             var comp = Context.RenderComponent<TableServerSideDataTest1>();
-            Console.WriteLine(comp.Markup);
+            //Console.WriteLine(comp.Markup);
             comp.FindAll("tr").Count.Should().Be(4); // three rows + header row
             comp.FindAll("td")[0].TextContent.Trim().Should().Be("1");
             comp.FindAll("td")[1].TextContent.Trim().Should().Be("2");
@@ -751,7 +751,7 @@ namespace MudBlazor.UnitTests.Components
         public async Task TableServerSideDataTest2()
         {
             var comp = Context.RenderComponent<TableServerSideDataTest2>();
-            Console.WriteLine(comp.Markup);
+            //Console.WriteLine(comp.Markup);
             comp.FindAll("tr").Count.Should().Be(4); // three rows + header row
             comp.FindAll("td")[0].TextContent.Trim().Should().Be("1");
             comp.FindAll("td")[1].TextContent.Trim().Should().Be("2");
@@ -778,7 +778,7 @@ namespace MudBlazor.UnitTests.Components
         public async Task TableServerSideDataTest3()
         {
             var comp = Context.RenderComponent<TableServerSideDataTest3>();
-            Console.WriteLine(comp.Markup);
+            //Console.WriteLine(comp.Markup);
             comp.FindAll("tr").Count.Should().Be(4); // three rows + header row
             comp.FindAll("td")[0].TextContent.Trim().Should().Be("3");
             comp.FindAll("td")[1].TextContent.Trim().Should().Be("2");
@@ -801,7 +801,7 @@ namespace MudBlazor.UnitTests.Components
         public async Task TableServerSideDataTest4()
         {
             var comp = Context.RenderComponent<TableServerSideDataTest4>();
-            Console.WriteLine(comp.Markup);
+            //Console.WriteLine(comp.Markup);
             comp.WaitForAssertion(() => comp.FindAll("tr").Count.Should().Be(4)); // three rows + header row
             comp.WaitForAssertion(() => comp.FindAll("td")[0].TextContent.Trim().Should().Be("1"));
             comp.WaitForAssertion(() => comp.FindAll("td")[2].TextContent.Trim().Should().Be("2"));
@@ -821,7 +821,7 @@ namespace MudBlazor.UnitTests.Components
         public async Task TableServerSideDataTest4b()
         {
             var comp = Context.RenderComponent<TableServerSideDataTest4b>();
-            Console.WriteLine(comp.Markup);
+            //Console.WriteLine(comp.Markup);
             comp.FindAll("tr").Count.Should().Be(4); // three rows + header row
             comp.FindAll("td")[0].TextContent.Trim().Should().Be("1");
             comp.FindAll("td")[2].TextContent.Trim().Should().Be("2");
@@ -920,7 +920,7 @@ namespace MudBlazor.UnitTests.Components
         public async Task TableRowClassStyleTest()
         {
             var comp = Context.RenderComponent<TableRowClassStyleTest>();
-            Console.WriteLine(comp.Markup);
+            //Console.WriteLine(comp.Markup);
             var trs = comp.FindAll("tr");
             trs.Count.Should().Be(5); // four rows + header row
 
@@ -953,7 +953,7 @@ namespace MudBlazor.UnitTests.Components
             var validator = new TableRowValidatorTest();
             comp.Instance.Table.Validator = validator;
 
-            Console.WriteLine(comp.Markup);
+            //Console.WriteLine(comp.Markup);
 
             var trs = comp.FindAll("tr");
             trs.Count.Should().Be(4); // three rows + header row
@@ -1393,7 +1393,7 @@ namespace MudBlazor.UnitTests.Components
             var tableComponent = Context.RenderComponent<TablePagerInfoTextTest>();
 
             // print the generated html      
-            Console.WriteLine(tableComponent.Markup);
+            //Console.WriteLine(tableComponent.Markup);
 
             // assert correct info-text
             tableComponent.Find("div.mud-table-page-number-information").Text().Should().Be("1-10 of 59", "No filter applied yet.");
@@ -1434,7 +1434,7 @@ namespace MudBlazor.UnitTests.Components
                     rowsPerPage = int.Parse(s.ToString());
                 })
             );
-            Console.WriteLine(comp.Markup);
+            //Console.WriteLine(comp.Markup);
             //Check the component rendered correctly with the initial RowsPerPage
             var t = comp.Find("input.mud-select-input").GetAttribute("Value");
             int.Parse(t).Should().Be(rowsPerPage, "The component rendered correctly");

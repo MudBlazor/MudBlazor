@@ -36,7 +36,7 @@ namespace MudBlazor.UnitTests.Components
                 p.Add(x => x.Breakpoint, Breakpoint.Lg);
                 p.Add(x => x.Invert, invert);
             });
-            Console.WriteLine(comp.Markup);
+            //Console.WriteLine(comp.Markup);
 
             if (isHidden == true)
             {
@@ -101,7 +101,7 @@ namespace MudBlazor.UnitTests.Components
                 p.Add(x => x.Breakpoint, Breakpoint.Lg);
                 p.Add(x => x.Invert, false);
             });
-            Console.WriteLine(comp.Markup);
+            //Console.WriteLine(comp.Markup);
 
             comp.Find("p").TextContent.Should().Be("MudHidden content");
 
@@ -128,7 +128,7 @@ namespace MudBlazor.UnitTests.Components
                 p.Add(x => x.Breakpoint, Breakpoint.Lg);
                 p.Add(x => x.Invert, false);
             });
-            Console.WriteLine(comp.Markup);
+            //Console.WriteLine(comp.Markup);
 
             comp.Find("p").TextContent.Should().Be("MudHidden content");
 

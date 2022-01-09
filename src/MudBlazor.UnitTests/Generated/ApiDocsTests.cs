@@ -48,7 +48,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = ctx.RenderComponent<Docs.Pages.Components.Alert.AlertPage>();
             await ctx.Services.GetService<IRenderQueueService>().WaitUntilEmpty();
-            System.Console.WriteLine(comp.Markup);
+            //Console.WriteLine(comp.Markup);
         }
 
         [TearDown]

@@ -27,7 +27,7 @@ namespace MudBlazor.UnitTests.Components
                 yesNoCancel = service?.ShowMessageBox("Boom!", "I'm a pickle. What do you make of that?", "Great",
                     "Whatever", "Go away!");
             });
-            Console.WriteLine(comp.Markup);
+            //Console.WriteLine(comp.Markup);
             comp.Find("div.mud-dialog-container").Should().NotBe(null);
             comp.Find("div.mud-dialog-title").TrimmedText().Should().Contain("Boom!");
             comp.Find("div.mud-dialog-content").TrimmedText().Should().Contain("pickle");

@@ -192,7 +192,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<DataGridInlineEditTest>();
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridInlineEditTest.Model>>();
 
-            Console.WriteLine(dataGrid.Markup);
+            //Console.WriteLine(dataGrid.Markup);
 
             dataGrid.FindAll("td")[0].TextContent.Trim().Should().Be("John");
             dataGrid.FindAll("td")[1].TextContent.Trim().Should().Be("45");
@@ -314,7 +314,7 @@ namespace MudBlazor.UnitTests.Components
             // Fire RowClick, SelectedItemChanged, SelectedItemsChanged, and StartedEditingItem callbacks.
             dataGrid.FindAll(".mud-table-body tr")[0].Click();
 
-            Console.WriteLine(dataGrid.Markup);
+            //Console.WriteLine(dataGrid.Markup);
             // Fire StartedCommittingItemChanges callback.
             dataGrid.FindAll(".mud-table-body tr td button")[0].Click();
             // Go into edit mode once again. 
@@ -357,7 +357,7 @@ namespace MudBlazor.UnitTests.Components
 
             await comp.InvokeAsync(() => dataGrid.Instance.SetSortAsync(SortDirection.Descending, x => { return x.A; }, "A"));
 
-            Console.WriteLine(dataGrid.Markup);
+            //Console.WriteLine(dataGrid.Markup);
 
             // Check the values of rows - should be sorted descending by A.
             dataGrid.FindAll("td")[0].TextContent.Trim().Should().Be("3");
@@ -369,7 +369,7 @@ namespace MudBlazor.UnitTests.Components
 
             await comp.InvokeAsync(() => dataGrid.Instance.SetSortAsync(SortDirection.None, x => { return x.A; }, "A"));
 
-            Console.WriteLine(dataGrid.Markup);
+            //Console.WriteLine(dataGrid.Markup);
 
             // Check the values of rows - should be the default order of the items.
             dataGrid.FindAll("td")[0].TextContent.Trim().Should().Be("2");
@@ -568,7 +568,7 @@ namespace MudBlazor.UnitTests.Components
                 Value = 45
             };
             func = filterDefinition.GenerateFilterFunction();
-            Console.WriteLine(func.Invoke(new("Joe", 45)));
+            //Console.WriteLine(func.Invoke(new("Joe", 45)));
             // data type is an int
             Assert.IsFalse(func.Invoke(new("Sam", 46)));
             Assert.IsTrue(func.Invoke(new("Joe", 45)));
@@ -719,7 +719,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<DataGridHeaderTemplateTest>();
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridHeaderTemplateTest.Model>>();
 
-            Console.WriteLine(dataGrid.Markup);
+            //Console.WriteLine(dataGrid.Markup);
 
             dataGrid.Find("thead th").TextContent.Trim().Should().Be("test");
 
@@ -760,7 +760,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<DataGridFooterTemplateTest>();
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridFooterTemplateTest.Model>>();
 
-            Console.WriteLine(dataGrid.Markup);
+            //Console.WriteLine(dataGrid.Markup);
 
             dataGrid.FindAll("tfoot td").First().TextContent.Trim().Should().Be("Names: Sam,Alicia,Ira,John");
             dataGrid.FindAll("tfoot td").Last().TextContent.Trim().Should().Be("Total Records: 4");
@@ -791,7 +791,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<DataGridCellTemplateTest>();
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridCellTemplateTest.Model>>();
 
-            Console.WriteLine(dataGrid.Markup);
+            //Console.WriteLine(dataGrid.Markup);
 
             dataGrid.FindAll("td")[0].TextContent.Trim().Should().Be("John");
             dataGrid.FindAll("td")[1].TextContent.Trim().Should().Be("45");
