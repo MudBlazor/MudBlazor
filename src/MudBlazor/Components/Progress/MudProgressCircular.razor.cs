@@ -15,7 +15,6 @@ namespace MudBlazor
                 .AddClass($"mud-progress-{Size.ToDescriptionString()}")
                 .AddClass($"mud-progress-indeterminate", Indeterminate)
                 .AddClass($"mud-progress-static", !Indeterminate)
-                .AddClass("mud-progress-circular-rounded", Rounded)
                 .AddClass(Class)
                 .Build();
 
@@ -24,13 +23,6 @@ namespace MudBlazor
                 .AddClass($"mud-progress-indeterminate", Indeterminate)
                 .AddClass($"mud-progress-static", !Indeterminate)
                 .Build();
-
-        /// <summary>
-        /// Sets the stroke rounded or not.
-        /// </summary>
-        [Parameter]
-        [Category(CategoryTypes.ProgressCircular.Appearance)]
-        public bool Rounded { get; set; } = false;
 
         /// <summary>
         /// The color of the component. It supports the theme colors.
