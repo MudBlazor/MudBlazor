@@ -22,7 +22,7 @@
                         @GetSelectedValuePresenter()
                     }
                 </MudInput>
-				<MudPopover Open=@(_isOpen) MaxHeight="@MaxHeight" AnchorOrigin="@AnchorOrigin" TransformOrigin="@TransformOrigin" Class="@PopoverClass" RelativeWidth="true">
+				<MudPopover Open=@(_isOpen) MaxHeight="@MaxHeight" AnchorOrigin="@AnchorOrigin" TransformOrigin="@TransformOrigin" Class="@("d-flex flex-column " + PopoverClass)" RelativeWidth="true">
                     @if (Searchable)
                     {
                         <MudTextField T="string" @bind-Value="_searchValue" DebounceInterval="100" Variant="Variant.Outlined" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" ReadOnly="false" @ref="_searchelementReference" ></MudTextField>
