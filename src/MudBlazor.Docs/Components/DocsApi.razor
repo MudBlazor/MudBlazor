@@ -13,13 +13,20 @@
     <DocsPageHeader ComponentLink="@ApiLink.GetComponentLinkFor(Type)" Title="@($"{Type.ConvertToCSharpSource()} API")" />
     <DocsPageContent>
 
-        @if (Properties != null && Properties.Count() > 0)
+        @{
+           // cache lists to speed up displaying the page
+           var properties = getProperties().ToList();
+           var methods = getMethods().ToList();
+           var eventCallbacks = getEventCallbacks().ToList();
+        }
+
+        @if (properties.Count() > 0)
         {
             <DocsPageSection>
                 <SectionHeader Title="Properties" />
                 <SectionContent Class="docs-content-api" Outlined="false">
                     <EnumSwitch T="Grouping" @bind-Value="@_propertiesGrouping" Color="Color.Primary" />
-                    <MudTable Items="@Properties" Elevation="0" Class="ma-0 mud-width-full" Breakpoint="@Breakpoint.Sm" GroupBy="@PropertiesGroupDefinition">
+                    <MudTable Items="@properties" Elevation="0" Class="ma-0 mud-width-full" Breakpoint="@Breakpoint.Sm" GroupBy="@PropertiesGroupDefinition">
                         <HeaderContent>
                             <MudTh>Name</MudTh>
                             <MudTh>Type</MudTh>
@@ -77,12 +84,12 @@
             </DocsPageSection>
         }
 
-        @if (EventCallbacks != null && EventCallbacks.Count() > 0)
+        @if (eventCallbacks.Count() > 0)
         {
             <DocsPageSection>
                 <SectionHeader Title="EventCallbacks" />
                 <SectionContent Class="docs-content-api" Outlined="false">
-                    <MudTable Items="@EventCallbacks" Elevation="0" Class="ma-0 mud-width-full" Breakpoint="@Breakpoint.Sm">
+                    <MudTable Items="@eventCallbacks" Elevation="0" Class="ma-0 mud-width-full" Breakpoint="@Breakpoint.Sm">
                         <HeaderContent>
                             <MudTh>Name</MudTh>
                             <MudTh>Type</MudTh>
@@ -98,12 +105,12 @@
             </DocsPageSection>
         }
 
-        @if (Methods != null && Methods.Count() > 0)
+        @if (methods.Count() > 0)
         {
             <DocsPageSection>
                 <SectionHeader Title="Methods" />
                 <SectionContent Class="docs-content-api" Outlined="false">
-                    <MudTable Items="@Methods" Elevation="0" Class="ma-0 mud-width-full" Breakpoint="@Breakpoint.Sm">
+                    <MudTable Items="@methods" Elevation="0" Class="ma-0 mud-width-full" Breakpoint="@Breakpoint.Sm">
                         <HeaderContent>
                             <MudTh>Name</MudTh>
                             <MudTd>Parameters</MudTd>
@@ -152,83 +159,74 @@
     };
     [Parameter] public Type Type { get; set; }
 
-    private IEnumerable<ApiProperty> EventCallbacks
+    private IEnumerable<ApiProperty> getEventCallbacks()
     {
-        get
+        foreach (var info in Type.GetPropertyInfosWithAttribute<ParameterAttribute>().OrderBy(x => x.Name))
         {
-            foreach (var info in Type.GetPropertyInfosWithAttribute<ParameterAttribute>().OrderBy(x => x.Name))
+            if (info.GetCustomAttributes(typeof(System.ObsoleteAttribute), true).Length == 0 && info.PropertyType.Name.Contains("EventCallback"))
             {
-                if (info.GetCustomAttributes(typeof(System.ObsoleteAttribute), true).Length == 0 && info.PropertyType.Name.Contains("EventCallback"))
+                yield return new ApiProperty()
                 {
-                    yield return new ApiProperty()
-                    {
-                        Name = info.Name,
-                        PropertyInfo = info,
-                        Default = string.Empty,
-                        Description = DocStrings.GetMemberDescription(Type, info),
-                        IsTwoWay = CheckIsTwoWayEventCallback(info),
-                        Type = info.PropertyType,
-                    };
-                }
+                    Name = info.Name,
+                    PropertyInfo = info,
+                    Default = string.Empty,
+                    Description = DocStrings.GetMemberDescription(Type, info),
+                    IsTwoWay = CheckIsTwoWayEventCallback(info),
+                    Type = info.PropertyType,
+                };
             }
         }
     }
 
-    private IEnumerable<ApiMethod> Methods
+    private IEnumerable<ApiMethod> getMethods()
     {
-        get
+        if (Type.GetMethods(BindingFlags.Instance | BindingFlags.Public | BindingFlags.FlattenHierarchy | BindingFlags.Static) == null)
         {
-            if (Type.GetMethods(BindingFlags.Instance | BindingFlags.Public | BindingFlags.FlattenHierarchy | BindingFlags.Static) == null)
+            yield return null;
+        }
+        else
+        {
+            foreach (var info in Type.GetMethods(BindingFlags.Instance | BindingFlags.Public | BindingFlags.FlattenHierarchy | BindingFlags.Static).OrderBy(x => x.Name))
             {
-                yield return null;
-            }
-            else
-            {
-                foreach (var info in Type.GetMethods(BindingFlags.Instance | BindingFlags.Public | BindingFlags.FlattenHierarchy | BindingFlags.Static).OrderBy(x => x.Name))
+                if (!hiddenMethods.Any(x => x.Contains(info.Name)) && !info.Name.StartsWith("get_") && !info.Name.StartsWith("set_"))
                 {
-                    if (!hiddenMethods.Any(x => x.Contains(info.Name)) && !info.Name.StartsWith("get_") && !info.Name.StartsWith("set_"))
+                    if (info.GetCustomAttributes(typeof(System.ObsoleteAttribute), true).Length == 0)
                     {
-                        if (info.GetCustomAttributes(typeof(System.ObsoleteAttribute), true).Length == 0)
+                        yield return new ApiMethod()
                         {
-                            yield return new ApiMethod()
-                            {
-                                MethodInfo = info,
-                                Return = info.ReturnParameter,
-                                Signature = info.GetSignature(),
-                                Parameters = info.GetParameters(),
-                                Documentation = DocStrings.GetMemberDescription(Type, info)
-                            };
-                        }
+                            MethodInfo = info,
+                            Return = info.ReturnParameter,
+                            Signature = info.GetSignature(),
+                            Parameters = info.GetParameters(),
+                            Documentation = DocStrings.GetMemberDescription(Type, info)
+                        };
                     }
                 }
             }
         }
     }
 
-    private IEnumerable<ApiProperty> Properties
+    private IEnumerable<ApiProperty> getProperties()
     {
-        get
+        foreach (var info in Type.GetPropertyInfosWithAttribute<ParameterAttribute>()
+                                 .OrderBy(x => _propertiesGrouping switch {
+                                                   Grouping.Category => x.GetCustomAttribute<CategoryAttribute>()?.Order ?? int.MaxValue - 1,
+                                                   Grouping.Inheritance => -NumberOfAncestorClasses(BaseDefinitionClass(x)),
+                                                   _ => 0
+                                               })
+                                 .ThenBy(x => x.Name))
         {
-            foreach (var info in Type.GetPropertyInfosWithAttribute<ParameterAttribute>()
-                                     .OrderBy(x => _propertiesGrouping switch {
-                                                        Grouping.Category => x.GetCustomAttribute<CategoryAttribute>()?.Order ?? int.MaxValue - 1,
-                                                        Grouping.Inheritance => -NumberOfAncestorClasses(BaseDefinitionClass(x)),
-                                                        _ => 0
-                                                    })
-                                     .ThenBy(x => x.Name))
+            if (info.GetCustomAttributes(typeof(System.ObsoleteAttribute), true).Length == 0 && !info.PropertyType.Name.Contains("EventCallback"))
             {
-                if (info.GetCustomAttributes(typeof(System.ObsoleteAttribute), true).Length == 0 && !info.PropertyType.Name.Contains("EventCallback"))
+                yield return new ApiProperty()
                 {
-                    yield return new ApiProperty()
-                    {
-                        Name = info.Name,
-                        PropertyInfo = info,
-                        Default = GetDefaultValue(info),
-                        IsTwoWay = CheckIsTwoWayProperty(info),
-                        Description = DocStrings.GetMemberDescription(Type, info),
-                        Type = info.PropertyType
-                    };
-                }
+                    Name = info.Name,
+                    PropertyInfo = info,
+                    Default = GetDefaultValue(info),
+                    IsTwoWay = CheckIsTwoWayProperty(info),
+                    Description = DocStrings.GetMemberDescription(Type, info),
+                    Type = info.PropertyType
+                };
             }
         }
     }
