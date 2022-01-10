@@ -121,6 +121,9 @@ namespace MudBlazor
             UpdateAll();
         }
 
+        /// <summary>
+        /// Collapses all panels.
+        /// </summary>
         public void CloseAll()
         {
             foreach (var p in _panels)
@@ -130,6 +133,9 @@ namespace MudBlazor
             this.InvokeAsync(UpdateAll);
         }
 
+        /// <summary>
+        /// Expands all panels.
+        /// </summary>
         public void ExpandAll()
         {
             foreach (var p in _panels)
