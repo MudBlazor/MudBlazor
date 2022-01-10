@@ -25,7 +25,7 @@
             <DocsPageSection>
                 <SectionHeader Title="Properties" />
                 <SectionContent Class="docs-content-api" Outlined="false">
-                    <EnumSwitch T="Grouping" @bind-Value="@_propertiesGrouping" Color="Color.Primary" />
+                    <EnumSwitch T="Grouping" @bind-Value="@_propertiesGrouping" />
                     <MudTable Items="@properties" Elevation="0" Class="ma-0 mud-width-full" Breakpoint="@Breakpoint.Sm" GroupBy="@PropertiesGroupDefinition">
                         <HeaderContent>
                             <MudTh>Name</MudTh>
@@ -67,14 +67,15 @@
                                 </div>
                             </MudTd>
                             <MudTd Class="docs-content-api-cell" DataLabel="Default">
-                                @if (PresentDefaultValue(context.Default).Contains("<path"))
+                                @{ var def = PresentDefaultValue(context.Default); }
+                                @if (def.Contains("<path"))
                                 {
-                                    <MudIcon Icon="@PresentDefaultValue(context.Default).Substring(1, PresentDefaultValue(context.Default).Length - 1)" />
+                                    <MudIcon Icon="@def.Substring(1, def.Length - 1)" />
                                 }
                                 else
                                 {
-                                    <MudText Typo="Typo.body2">@PresentDefaultValue(context.Default)</MudText>
-                                }                           
+                                    <MudText Typo="Typo.body2">@def</MudText>
+                                }
                             </MudTd>
                             <MudTd Class="docs-content-api-cell docs-content-api-description" DataLabel="Description">@(HttpUtility.HtmlDecode(context.Description))</MudTd>
                         </RowTemplate>
@@ -180,27 +181,20 @@
 
     private IEnumerable<ApiMethod> getMethods()
     {
-        if (Type.GetMethods(BindingFlags.Instance | BindingFlags.Public | BindingFlags.FlattenHierarchy | BindingFlags.Static) == null)
+        foreach (var info in Type.GetMethods(BindingFlags.Instance | BindingFlags.Public | BindingFlags.FlattenHierarchy | BindingFlags.Static).OrderBy(x => x.Name))
         {
-            yield return null;
-        }
-        else
-        {
-            foreach (var info in Type.GetMethods(BindingFlags.Instance | BindingFlags.Public | BindingFlags.FlattenHierarchy | BindingFlags.Static).OrderBy(x => x.Name))
+            if (!hiddenMethods.Any(x => x.Contains(info.Name)) && !info.Name.StartsWith("get_") && !info.Name.StartsWith("set_"))
             {
-                if (!hiddenMethods.Any(x => x.Contains(info.Name)) && !info.Name.StartsWith("get_") && !info.Name.StartsWith("set_"))
+                if (info.GetCustomAttributes(typeof(System.ObsoleteAttribute), true).Length == 0)
                 {
-                    if (info.GetCustomAttributes(typeof(System.ObsoleteAttribute), true).Length == 0)
+                    yield return new ApiMethod()
                     {
-                        yield return new ApiMethod()
-                        {
-                            MethodInfo = info,
-                            Return = info.ReturnParameter,
-                            Signature = info.GetSignature(),
-                            Parameters = info.GetParameters(),
-                            Documentation = DocStrings.GetMemberDescription(Type, info)
-                        };
-                    }
+                        MethodInfo = info,
+                        Return = info.ReturnParameter,
+                        Signature = info.GetSignature(),
+                        Parameters = info.GetParameters(),
+                        Documentation = DocStrings.GetMemberDescription(Type, info)
+                    };
                 }
             }
         }
