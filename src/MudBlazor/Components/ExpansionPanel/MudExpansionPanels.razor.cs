@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Utilities;
@@ -111,6 +112,7 @@ namespace MudBlazor
         }
 
         [Obsolete("Use CollapseAllExcept instead.")]
+        [ExcludeFromCodeCoverage]
         public void CloseAllExcept(MudExpansionPanel panel)
         {
             CollapseAllExcept(panel);
