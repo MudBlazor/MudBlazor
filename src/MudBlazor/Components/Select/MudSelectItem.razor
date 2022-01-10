@@ -2,7 +2,7 @@
 @typeparam T
 @inherits MudBaseSelectItem
 
-@if (HideContent == false && (_parent.Searchable ? (string.IsNullOrEmpty(_parent._searchValue) ? true : DisplayString.Contains(_parent._searchValue,StringComparison.CurrentCultureIgnoreCase)) : true))
+@if (HideContent == false && _parent != null  && (_parent.Searchable ? (string.IsNullOrEmpty(_parent._searchValue) ? true : DisplayString.Contains(_parent._searchValue,StringComparison.CurrentCultureIgnoreCase)) : true))
 {
 	<MudListItem @attributes="UserAttributes" Value="@ItemId" id="@ItemId" @onclick="@OnClicked" Icon="@CheckBoxIcon" Disabled="@Disabled" Class="@GetCssClasses()" Style="@Style">
 		@if (ChildContent != null)
