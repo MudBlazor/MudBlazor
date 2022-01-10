@@ -1,5 +1,39 @@
 ﻿
+.explore-mudblazor{
+  font-family: 'Public Sans', 'Roboto','Arial','sans-serif';
+  font-weight: 600;
+}
+.explore-mudblazor-description{
+  font-family: 'Public Sans', 'Roboto','Arial','sans-serif';
+  font-weight: 500;
+  line-height: 1.75;
+  font-size: 1.1rem;
+  margin: 0 4px;
+}
 
+.explore-mudblazor-items {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px;
+}
+
+.explore-card-hover:hover{
+  background-color: var(--mud-palette-primary-hover);
+  cursor:pointer;
+  transition: all .2s ease-in;
+}
+
+
+.docs-sticky-info{
+  position: sticky;
+  top: 128px;
+
+  &.explore-text{
+    .mud-typography-h5{
+      font-weight: 500;
+    }
+  }
+}
 
 .docs-appbar-filter{
   backdrop-filter: blur(12px);
@@ -18,6 +52,13 @@
     text-transform: none;
   }
 }
+
+.mudblazor-docs, .mudblazor-landingpage {
+  .docs-single-link .mud-nav-link{
+    font-weight: 500 !important;
+  }
+}
+
 
 .landing-appbar{
   position: absolute !important;
