@@ -162,6 +162,8 @@
 
     private IEnumerable<ApiProperty> getEventCallbacks()
     {
+        string saveTypename = DocStrings.GetSaveTypename(Type);
+
         foreach (var info in Type.GetPropertyInfosWithAttribute<ParameterAttribute>().OrderBy(x => x.Name))
         {
             if (info.GetCustomAttributes(typeof(System.ObsoleteAttribute), true).Length == 0 && info.PropertyType.Name.Contains("EventCallback"))
@@ -171,7 +173,7 @@
                     Name = info.Name,
                     PropertyInfo = info,
                     Default = string.Empty,
-                    Description = DocStrings.GetMemberDescription(Type, info),
+                    Description = DocStrings.GetMemberDescription(saveTypename, info),
                     IsTwoWay = CheckIsTwoWayEventCallback(info),
                     Type = info.PropertyType,
                 };
@@ -181,6 +183,8 @@
 
     private IEnumerable<ApiMethod> getMethods()
     {
+        string saveTypename = DocStrings.GetSaveTypename(Type);
+
         foreach (var info in Type.GetMethods(BindingFlags.Instance | BindingFlags.Public | BindingFlags.FlattenHierarchy | BindingFlags.Static).OrderBy(x => x.Name))
         {
             if (!hiddenMethods.Any(x => x.Contains(info.Name)) && !info.Name.StartsWith("get_") && !info.Name.StartsWith("set_"))
@@ -193,7 +197,7 @@
                         Return = info.ReturnParameter,
                         Signature = info.GetSignature(),
                         Parameters = info.GetParameters(),
-                        Documentation = DocStrings.GetMemberDescription(Type, info)
+                        Documentation = DocStrings.GetMemberDescription(saveTypename, info)
                     };
                 }
             }
@@ -202,6 +206,8 @@
 
     private IEnumerable<ApiProperty> getProperties()
     {
+        string saveTypename = DocStrings.GetSaveTypename(Type);
+
         foreach (var info in Type.GetPropertyInfosWithAttribute<ParameterAttribute>()
                                  .OrderBy(x => _propertiesGrouping switch {
                                                    Grouping.Category => x.GetCustomAttribute<CategoryAttribute>()?.Order ?? int.MaxValue - 1,
@@ -218,7 +224,7 @@
                     PropertyInfo = info,
                     Default = GetDefaultValue(info),
                     IsTwoWay = CheckIsTwoWayProperty(info),
-                    Description = DocStrings.GetMemberDescription(Type, info),
+                    Description = DocStrings.GetMemberDescription(saveTypename, info),
                     Type = info.PropertyType
                 };
             }

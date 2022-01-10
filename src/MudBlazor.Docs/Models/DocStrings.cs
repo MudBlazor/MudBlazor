@@ -7,9 +7,13 @@ namespace MudBlazor.Docs.Models
     // this is needed for the api docs 
     public static partial class DocStrings
     {
-        public static string GetMemberDescription(Type t, MemberInfo member)
+        /* To speed up the method, run it in this way:
+         *   string saveTypename = DocStrings.GetSaveTypename(type);  // calculate it only once
+         *   DocStrings.GetMemberDescription(saveTypename, member);
+         */
+        public static string GetMemberDescription(string saveTypename, MemberInfo member)
         {
-            var name = GetSaveTypename(t);
+            var name = saveTypename;
 
             if (member is PropertyInfo property)
                 name += "_" + property.Name;
@@ -24,7 +28,7 @@ namespace MudBlazor.Docs.Models
             return (string)field.GetValue(null);
         }
 
-        private static string GetSaveTypename(Type t) => Regex.Replace(t.ConvertToCSharpSource(), @"[\.]", "_").Replace("<T>", "").TrimEnd('_');
+        public static string GetSaveTypename(Type t) => Regex.Replace(t.ConvertToCSharpSource(), @"[\.]", "_").Replace("<T>", "").TrimEnd('_');
 
         private static string GetSaveMethodIdentifier(MethodInfo method) => Regex.Replace(method.ToString().Replace("MudBlazor.Docs.Models.T", "T"), "[^A-Za-z0-9_]", "_");  // method signature
     }
