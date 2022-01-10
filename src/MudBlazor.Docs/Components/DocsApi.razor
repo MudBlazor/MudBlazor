@@ -10,7 +10,7 @@
 
 
 <DocsPage>
-    <DocsPageHeader ComponentLink="@ApiLink.GetComponentLinkFor(Type)" Title="@($"{Type.ConvertToCSharpSource()} API")" />
+    <DocsPageHeader ComponentLink="@ApiLink.GetComponentLinkFor(Type)" Title="@($"{Type.GetTypeDisplayName()} API")" />
     <DocsPageContent>
 
         @{
@@ -37,7 +37,7 @@
                             @if (_propertiesGrouping == Grouping.Inheritance && (Type)context.Key != Type)
                             {
                                 <MudTh colspan="4">
-                                    <MudText Typo="Typo.h6">@($"Inherited from {((Type)context.Key).ConvertToCSharpSource()}")</MudText>
+                                    <MudText Typo="Typo.h6">@($"Inherited from {((Type)context.Key).GetTypeDisplayName()}")</MudText>
                                 </MudTh>
                             }
                             else if (_propertiesGrouping == Grouping.Category)
@@ -98,7 +98,7 @@
                         </HeaderContent>
                         <RowTemplate>
                             <MudTd Class="docs-content-api-cell" DataLabel="Name"><CodeInline>@context.Name</CodeInline></MudTd>
-                            <MudTd Class="docs-content-api-cell" DataLabel="Type"><div style="display: flex; flex-direction: row; align-items: center; white-space: nowrap;">@context.Type.ConvertToCSharpSource()</div></MudTd>
+                            <MudTd Class="docs-content-api-cell" DataLabel="Type"><div style="display: flex; flex-direction: row; align-items: center; white-space: nowrap;">@context.Type.GetTypeDisplayName()</div></MudTd>
                             <MudTd Class="docs-content-api-cell docs-content-api-description" DataLabel="Description">@(HttpUtility.HtmlDecode(context.Description))</MudTd>
                         </RowTemplate>
                     </MudTable>
@@ -125,14 +125,14 @@
                             {
                                 foreach (var parameterInfo in context.Parameters)
                                 {
-                                    <div style="display: flex; flex-direction: row; align-items: center; white-space: nowrap;">@($"{MudBlazor.Docs.Extensions.MethodInfoExtensions.GetAliases(parameterInfo.ParameterType.ConvertToCSharpSource())} {parameterInfo.Name}{AnalyseMethodDocumentation(context.Documentation, "param", parameterInfo.Name)}")</div>
+                                    <div style="display: flex; flex-direction: row; align-items: center; white-space: nowrap;">@($"{parameterInfo.ParameterType.GetTypeDisplayName()} {parameterInfo.Name}{AnalyseMethodDocumentation(context.Documentation, "param", parameterInfo.Name)}")</div>
                                 }
                             }
                             </MudTd>
                             <MudTd Class="docs-content-api-cell" DataLabel="Return">
-                            @if (@context.Return != null && context.Return.ParameterType.ConvertToCSharpSource() != "Void")
+                            @if (@context.Return != null && context.Return.ParameterType.GetTypeDisplayName() != "void")
                             {
-                                <div style="display: flex; flex-direction: row; align-items: center; white-space: nowrap;">@($"{MudBlazor.Docs.Extensions.MethodInfoExtensions.GetAliases(context.Return.ParameterType.ConvertToCSharpSource())}{AnalyseMethodDocumentation(context.Documentation, "returns")}")</div>
+                                <div style="display: flex; flex-direction: row; align-items: center; white-space: nowrap;">@($"{context.Return.ParameterType.GetTypeDisplayName()}{AnalyseMethodDocumentation(context.Documentation, "returns")}")</div>
                             }
                             </MudTd>
                             <MudTd Class="docs-content-api-cell docs-content-api-description" DataLabel="Description">@(HttpUtility.HtmlDecode(AnalyseMethodDocumentation(context.Documentation, "summary")))</MudTd>

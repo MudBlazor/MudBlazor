@@ -1,7 +1,9 @@
-﻿@if (_nonnullableType.IsEnum)
+﻿@using MudBlazor.Docs.Extensions
+
+@if (_nonnullableType.IsEnum)
 {
     <MudTooltip>
-        <ChildContent>@Type.ConvertToCSharpSource()</ChildContent>
+        <ChildContent>@Type.GetTypeDisplayName()</ChildContent>
         <TooltipContent>
             enumeration type
             <MudText Align="Align.Left" Typo="Typo.body2">
@@ -15,7 +17,7 @@
 }
 else
 {
-    @Type.ConvertToCSharpSource()
+    @Type.GetTypeDisplayName()
 }
 
 @code {
