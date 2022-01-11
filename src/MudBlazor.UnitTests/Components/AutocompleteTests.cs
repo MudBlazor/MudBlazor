@@ -489,6 +489,45 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// When calling Clear(), menu should closed, Value and Text should be cleared.
+        /// </summary>
+        [Test]
+        public async Task Autocomplete_CheckTextValueCleared_OnClear()
+        {
+            // define some constant values
+            var alaskaString = "Alaska";
+            var listItemQuerySelector = "div.mud-list-item";
+
+            var selectedItemIndexPropertyInfo = typeof(MudAutocomplete<string>).GetField("_selectedListItemIndex", BindingFlags.NonPublic | BindingFlags.Instance) ?? throw new ArgumentException("Cannot find field named '_selectedListItemIndex' on type 'MudAutocomplete<T>'");
+            var onInputKeyUpMemberInfo = typeof(MudAutocomplete<string>).GetMethod("OnInputKeyUp", BindingFlags.Instance | BindingFlags.NonPublic) ?? throw new ArgumentException("Cannot find method named 'OnInputKeyUp' on type 'MudAutocomplete<T>'");
+
+            // create the component
+            var component = Context.RenderComponent<AutocompleteDisabledItemsTest>();
+
+            // get the elements needed for the test
+            var autocompleteComponent = component.FindComponent<MudAutocomplete<string>>();
+
+            // Set the clear function on value changed
+            autocompleteComponent.SetCallback(x => x.ValueChanged, async x => await autocompleteComponent.Instance.Clear());
+
+            // get the instance
+            var autocompleteInstance = autocompleteComponent.Instance;
+
+            // click to open the popup
+            autocompleteComponent.Find(TagNames.Input).Click();
+
+            // ensure popup is open
+            component.WaitForAssertion(() => autocompleteInstance.IsOpen.Should().BeTrue("Input has been focused and should open the popup"));
+
+            // get the matching states
+            var matchingStates = component.FindComponents<MudListItem>().ToArray();
+
+            // try clicking 'Alaska'
+            matchingStates.Single(s => s.Markup.Contains(alaskaString)).Find(listItemQuerySelector).Click();
+            component.WaitForAssertion(() => autocompleteInstance.Text.Should().Be(string.Empty));
+        }
+
+        /// <summary>
         /// When calling Reset(), menu should closed, Value and Text should be null.
         /// </summary>
         [Test]

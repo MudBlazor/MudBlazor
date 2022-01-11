@@ -245,6 +245,11 @@ namespace MudBlazor
 
         private string _currentIcon;
 
+        /// <summary>
+        /// This boolean will keep track if the clear function is called too keep the set text function to be called.
+        /// </summary>
+        private bool _isCleared;
+
         private MudInput<string> _elementReference;
 
         public MudAutocomplete()
@@ -259,11 +264,13 @@ namespace MudBlazor
             if (_items != null)
                 _selectedListItemIndex = Array.IndexOf(_items, value);
             var optionText = GetItemString(value);
-            await SetTextAsync(optionText, false);
+            if (!_isCleared)
+                await SetTextAsync(optionText, false);
             _timer?.Dispose();
             IsOpen = false;
             BeginValidate();
-            _elementReference?.SetText(optionText);
+            if (!_isCleared)
+                _elementReference?.SetText(optionText);
             _elementReference?.FocusAsync().AndForget();
             StateHasChanged();
         }
@@ -308,6 +315,12 @@ namespace MudBlazor
                 Text = text;
         }
 
+        protected override void OnAfterRender(bool firstRender)
+        {
+            _isCleared = false;
+            base.OnAfterRender(firstRender);
+        }
+
         private Timer _timer;
         private T[] _items;
         private int _selectedListItemIndex = 0;
@@ -316,6 +329,9 @@ namespace MudBlazor
         protected override Task UpdateTextPropertyAsync(bool updateValue)
         {
             _timer?.Dispose();
+            // This keeps the text from being set when clear() was called
+            if (_isCleared)
+                return Task.CompletedTask;
             return base.UpdateTextPropertyAsync(updateValue);
         }
 
@@ -379,6 +395,7 @@ namespace MudBlazor
         /// </summary>
         public async Task Clear()
         {
+            _isCleared = true;
             IsOpen = false;
             await SetTextAsync(string.Empty, updateValue: false);
             await CoerceValueToText();
