@@ -32,13 +32,11 @@
     }
 </MudCard>
 
-<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="OpenOverlay" EndIcon="@Icons.Material.Filled.Refresh">Refresh Data</MudButton>
-<MudButton Variant="Variant.Filled" OnClick="ResetExample">Reset Example</MudButton>
-
-
-
-
-
+<MudToolBar DisableGutters="true">
+    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="OpenOverlay" EndIcon="@Icons.Material.Filled.Refresh">Refresh Data</MudButton>
+    <MudSpacer/>
+    <MudButton Variant="Variant.Filled" OnClick="ResetExample">Reset Example</MudButton>
+</MudToolBar>
 
 @code { 
     private bool isVisible;

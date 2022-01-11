@@ -9,14 +9,12 @@ namespace MudBlazor.Docs.Services
     public interface IMenuService
     {
         //Menu sections
-        IEnumerable<DocsLink> GettingStarted { get; }
         IEnumerable<MudComponent> Components { get; }
         IEnumerable<MudComponent> Api { get; }
         MudComponent GetParent(Type type);
         MudComponent GetComponent(Type type);
         IEnumerable<DocsLink> Features { get; }
         IEnumerable<DocsLink> Customization { get; }
-        IEnumerable<DocsLink> About { get; }
     }
 
     /// <summary>
@@ -81,7 +79,7 @@ namespace MudBlazor.Docs.Services
             //GROUPS
 
             //Inputs
-            .AddNavGroup("Form Inputs & controls", false, new DocsComponents()
+            .AddNavGroup("Form & Inputs", false, new DocsComponents()
                 .AddItem("Radio", typeof(MudRadio<T>), typeof(MudRadioGroup<T>))
                 .AddItem("Checkbox", typeof(MudCheckBox<T>))
                 .AddItem("Select", typeof(MudSelect<T>), typeof(MudSelectItem<T>))
@@ -205,20 +203,6 @@ namespace MudBlazor.Docs.Services
 
         public IEnumerable<MudComponent> Api => DocsComponentsApi.Components;
 
-        //cached property
-        private IEnumerable<DocsLink> _gettingStarted;
-        /// <summary>
-        /// Getting started menu links
-        /// </summary>
-        public IEnumerable<DocsLink> GettingStarted => _gettingStarted ??= new List<DocsLink>
-            {
-                new DocsLink {Title = "Installation", Href = "getting-started/installation"},
-                new DocsLink {Title = "Layouts", Href = "getting-started/layouts"},
-                new DocsLink {Title = "Usage", Href = "getting-started/usage"},
-                new DocsLink {Title = "Wireframes", Href = "getting-started/wireframes"},
-            }.OrderBy(x => x.Title);
-
-
         private IEnumerable<DocsLink> _features;
         /// <summary>
         /// Features menu links
@@ -244,24 +228,11 @@ namespace MudBlazor.Docs.Services
         /// </summary>
         public IEnumerable<DocsLink> Customization => _customization ??= new List<DocsLink>()
         {
-            //new DocsLink{Title="Default theme", Href="customization/default-theme"},
-            new DocsLink {Title = "Overview", Href = "customization/theming/overview"},
-            new DocsLink {Title = "Palette", Href = "customization/theming/palette"},
-            new DocsLink {Title = "Typography", Href = "customization/theming/typography"},
-            new DocsLink {Title = "z-index", Href = "customization/theming/z-index"},
-        }.OrderBy(x => x.Title);
-
-
-        private IEnumerable<DocsLink> _about;
-        /// <summary>
-        /// About menu links
-        /// </summary>
-        public IEnumerable<DocsLink> About => _about ??= new List<DocsLink>
-        {
-            new DocsLink{ Title="Credits" , Href="project/credit" },
-            new DocsLink{Href="project/about", Title="How it started" },
-            new DocsLink{Href="project/team", Title="Team & Contributors" },
-            new DocsLink{Href="project/versions", Title="Versions" },
+            new DocsLink {Title="Default theme", Href="customization/default-theme"},
+            new DocsLink {Title = "Overview", Href = "customization/overview"},
+            new DocsLink {Title = "Palette", Href = "customization/palette"},
+            new DocsLink {Title = "Typography", Href = "customization/typography"},
+            new DocsLink {Title = "z-index", Href = "customization/z-index"},
         }.OrderBy(x => x.Title);
     }
 }
