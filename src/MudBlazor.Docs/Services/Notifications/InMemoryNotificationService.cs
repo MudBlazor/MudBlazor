@@ -88,29 +88,16 @@ public class InMemoryNotificationService : INotificationService
     public void Preload()
     {
         _messages.Add(new NotificationMessage(
-            "new-docs",
-            "New Docs Page for you",
-            "Here goes content to explain something",
+            "mudblazor-here-to-stay",
+            "MudBlazor is here to stay",
+            "We are paving the way for the future of Blazor",
             "Announcement",
-            new DateTime(2021, 12, 31),
-            "https://media.discordapp.net/attachments/814877828638179358/926959380115640330/Lory1-MERGED-WEB.jpg?width=491&height=687",
+            new DateTime(2022, 01, 13),
+            "_content/MudBlazor.Docs/images/announcements/mudblazor_heretostay.png",
             new[]
             {
-                new NotificationAuthor("The MudBlazor Team",
-                    "https://mudblazor.com/_content/MudBlazor.Docs/images/logo.png")
-            }, typeof(NewDocsPageNotificationContent)));
-
-        _messages.Add(new NotificationMessage(
-            "cool-stuff",
-            "cooler than yours",
-            "Here goes content to explain something",
-            "Announcement",
-            new DateTime(2022, 01, 02),
-            "https://media.discordapp.net/attachments/814877828638179358/926959380115640330/Lory1-MERGED-WEB.jpg?width=491&height=687",
-            new[]
-            {
-                new NotificationAuthor("The MudBlazor Team",
-                    "https://mudblazor.com/_content/MudBlazor.Docs/images/logo.png")
-            }, typeof(NewDocsPageNotificationContent)));
+                new NotificationAuthor("Jonny Larsson",
+                    "https://avatars.githubusercontent.com/u/10367109?v=4")
+            }, typeof(Announcement_MudBlazorIsHereToStay)));
     }
 }
