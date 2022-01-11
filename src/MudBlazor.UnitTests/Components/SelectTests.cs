@@ -1038,5 +1038,21 @@ namespace MudBlazor.UnitTests.Components
 
             sut.Instance.Items.Should().HaveCountGreaterOrEqualTo(4);
         }
+
+
+        [Test]
+        public void Select_SearchableMultiTest()
+        {
+            var comp = Context.RenderComponent<SelectSearchableTest>();
+            // select element needed for the test
+            var select = comp.FindComponent<MudSelect<string>>();
+            var menu = comp.Find("div.mud-popover");
+            var input = comp.Find("div.mud-input-control");
+            // Open the menu
+            input.Click();
+            menu.ClassList.Should().Contain("mud-popover-open");
+            //Check popover contains search input
+            comp.FindAll("div.mud-input-control").Should().HaveCount(2);
+        }
     }
 }
