@@ -1053,6 +1053,13 @@ namespace MudBlazor.UnitTests.Components
             menu.ClassList.Should().Contain("mud-popover-open");
             //Check popover contains search input
             comp.FindAll("div.mud-input-control").Should().HaveCount(2);
+
+            // now click an item and see the value change
+            comp.WaitForAssertion(() => comp.FindAll("div.mud-list-item").Count.Should().BeGreaterThan(0));
+            var items = comp.FindAll("div.mud-list-item").ToArray();
+            items[1].Click();
+            // menu should still be open now!!
+            menu.ClassList.Should().Contain("mud-popover-open");
         }
     }
 }
