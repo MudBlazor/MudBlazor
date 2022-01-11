@@ -1,9 +1,9 @@
-﻿
-.explore-mudblazor{
+﻿.docs-title{
   font-family: 'Public Sans', 'Roboto','Arial','sans-serif';
   font-weight: 600;
+  font-size: 3.75rem;
 }
-.explore-mudblazor-description{
+.docs-title-description{
   font-family: 'Public Sans', 'Roboto','Arial','sans-serif';
   font-weight: 500;
   line-height: 1.75;
@@ -11,18 +11,14 @@
   margin: 0 4px;
 }
 
-.explore-mudblazor-items {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 24px;
+@media (max-width:600px) {
+  .docs-title{
+    font-size: 2.5rem;
+  }
+  .docs-title-description{
+    font-size: .875rem;
+  }
 }
-
-.explore-card-hover:hover{
-  background-color: var(--mud-palette-primary-hover);
-  cursor:pointer;
-  transition: all .2s ease-in;
-}
-
 
 .docs-sticky-info{
   position: sticky;
