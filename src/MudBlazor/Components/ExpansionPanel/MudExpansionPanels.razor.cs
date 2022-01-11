@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Utilities;
@@ -91,7 +92,7 @@ namespace MudBlazor
         {
             if(MultiExpansion == false && panel.IsExpanded)
             {
-                CloseAllExcept(panel);
+                CollapseAllExcept(panel);
                 return;
             }
 
@@ -110,7 +111,18 @@ namespace MudBlazor
             StateHasChanged();
         }
 
+        [Obsolete("Use CollapseAllExcept instead.")]
+        [ExcludeFromCodeCoverage]
         public void CloseAllExcept(MudExpansionPanel panel)
+        {
+            CollapseAllExcept(panel);
+        }
+
+        /// <summary>
+        /// Collapses all panels except the given one.
+        /// </summary>
+        /// <param name="panel">The panel not to collapse.</param>
+        public void CollapseAllExcept(MudExpansionPanel panel)
         {
             foreach (var p in _panels)
             {
@@ -118,7 +130,31 @@ namespace MudBlazor
                     continue;
                 p.Collapse(update_parent: false);
             }
-            UpdateAll();
+            this.InvokeAsync(UpdateAll);
+        }
+
+        /// <summary>
+        /// Collapses all panels.
+        /// </summary>
+        public void CollapseAll()
+        {
+            foreach (var p in _panels)
+            {
+                p.Collapse(update_parent: false);
+            }
+            this.InvokeAsync(UpdateAll);
+        }
+
+        /// <summary>
+        /// Expands all panels.
+        /// </summary>
+        public void ExpandAll()
+        {
+            foreach (var p in _panels)
+            {
+                p.Expand(update_parent: false);
+            }
+            this.InvokeAsync(UpdateAll);
         }
     }
 }
