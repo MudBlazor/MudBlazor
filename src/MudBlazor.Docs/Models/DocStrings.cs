@@ -13,12 +13,12 @@ namespace MudBlazor.Docs.Models
          */
         public static string GetMemberDescription(string saveTypename, MemberInfo member)
         {
-            var name = saveTypename;
+            string name;
 
             if (member is PropertyInfo property)
-                name += "_" + property.Name;
+                name = saveTypename + "_" + property.Name;
             else if (member is MethodInfo method)
-                name += "_method_" + GetSaveMethodIdentifier(method);
+                name = saveTypename + "_method_" + GetSaveMethodIdentifier(method);
             else
                 throw new Exception("Implemented only for properties and methods.");
 

@@ -14,7 +14,7 @@
     <DocsPageContent>
 
         @{
-           // cache lists to speed up displaying the page
+           // save as lists to speed up displaying the page
            var properties = getProperties().ToList();
            var methods = getMethods().ToList();
            var eventCallbacks = getEventCallbacks().ToList();
@@ -98,7 +98,7 @@
                         </HeaderContent>
                         <RowTemplate>
                             <MudTd Class="docs-content-api-cell" DataLabel="Name"><CodeInline>@context.Name</CodeInline></MudTd>
-                            <MudTd Class="docs-content-api-cell" DataLabel="Type"><div style="display: flex; flex-direction: row; align-items: center; white-space: nowrap;">@context.Type.GetTypeDisplayName()</div></MudTd>
+                            <MudTd Class="docs-content-api-cell" DataLabel="Type">@context.Type.GetTypeDisplayName()</MudTd>
                             <MudTd Class="docs-content-api-cell docs-content-api-description" DataLabel="Description">@(HttpUtility.HtmlDecode(context.Description))</MudTd>
                         </RowTemplate>
                     </MudTable>
