@@ -342,7 +342,7 @@
 
     private enum Grouping { Categories, Inheritance, None }
 
-    private Grouping _propertiesGrouping = Grouping.Inheritance;
+    private Grouping _propertiesGrouping = Grouping.Categories;
 
     private TableGroupDefinition<ApiProperty> PropertiesGroupDefinition => _propertiesGrouping switch
     {
