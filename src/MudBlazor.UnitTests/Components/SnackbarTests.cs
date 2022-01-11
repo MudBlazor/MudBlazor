@@ -14,13 +14,13 @@ namespace MudBlazor.UnitTests.Components
         public async Task SimpleTest()
         {
             var comp = Context.RenderComponent<MudSnackbarProvider>();
-            Console.WriteLine(comp.Markup);
+            //Console.WriteLine(comp.Markup);
             comp.Find("#mud-snackbar-container").InnerHtml.Trim().Should().BeEmpty();
             var service = Context.Services.GetService<ISnackbar>() as SnackbarService;
             service.Should().NotBe(null);
             // shoot out a snackbar
             await comp.InvokeAsync(() => service?.Add("Boom, big reveal. Im a pickle!"));
-            Console.WriteLine(comp.Markup);
+            //Console.WriteLine(comp.Markup);
             comp.Find("#mud-snackbar-container").InnerHtml.Trim().Should().NotBeEmpty();
             comp.Find("div.mud-snackbar-content-message").TrimmedText().Should().Be("Boom, big reveal. Im a pickle!");
             // close by click on the snackbar
@@ -32,7 +32,7 @@ namespace MudBlazor.UnitTests.Components
         public async Task HtmlInMessages()
         {
             var comp = Context.RenderComponent<MudSnackbarProvider>();
-            Console.WriteLine(comp.Markup);
+            //Console.WriteLine(comp.Markup);
             comp.Find("#mud-snackbar-container").InnerHtml.Trim().Should().BeEmpty();
             var service = Context.Services.GetService<ISnackbar>() as SnackbarService;
             service.Should().NotBe(null);
@@ -46,7 +46,7 @@ namespace MudBlazor.UnitTests.Components
         public async Task DisposeTest()
         {
             var comp = Context.RenderComponent<MudSnackbarProvider>();
-            Console.WriteLine(comp.Markup);
+            //Console.WriteLine(comp.Markup);
             comp.Find("#mud-snackbar-container").InnerHtml.Trim().Should().BeEmpty();
             var service = Context.Services.GetService<ISnackbar>() as SnackbarService;
             service.Should().NotBe(null);
@@ -54,7 +54,7 @@ namespace MudBlazor.UnitTests.Components
             // shoot out a snackbar
             Snackbar snackbar = null;
             await comp.InvokeAsync(() => snackbar = service?.Add("Boom, big reveal. Im a pickle!"));
-            Console.WriteLine(comp.Markup);
+            //Console.WriteLine(comp.Markup);
 
             snackbar?.Dispose();
 
@@ -69,12 +69,12 @@ namespace MudBlazor.UnitTests.Components
         public async Task IconTest()
         {
             var comp = Context.RenderComponent<MudSnackbarProvider>();
-            Console.WriteLine(comp.Markup);
+            //Console.WriteLine(comp.Markup);
             comp.Find("#mud-snackbar-container").InnerHtml.Trim().Should().BeEmpty();
             var service = Context.Services.GetService<ISnackbar>() as SnackbarService;
             // shoot out a snackbar
             await comp.InvokeAsync(() => service?.Add("Boom, big reveal. Im a pickle!"));
-            Console.WriteLine(comp.Markup);
+            //Console.WriteLine(comp.Markup);
             // Test that the snackbar has an icon.
             comp.Find("#mud-snackbar-container .mud-snackbar .mud-snackbar-icon").InnerHtml.Trim().Should().NotBeEmpty();
             // close by click on the snackbar
@@ -86,12 +86,12 @@ namespace MudBlazor.UnitTests.Components
         public async Task HideIconTest()
         {
             var comp = Context.RenderComponent<MudSnackbarProvider>();
-            Console.WriteLine(comp.Markup);
+            //Console.WriteLine(comp.Markup);
             comp.Find("#mud-snackbar-container").InnerHtml.Trim().Should().BeEmpty();
             var service = Context.Services.GetService<ISnackbar>() as SnackbarService;
             // shoot out a snackbar
             await comp.InvokeAsync(() => service?.Add("Boom, big reveal. Im a pickle!", Severity.Success, config => { config.HideIcon = true; }));
-            Console.WriteLine(comp.Markup);
+            //Console.WriteLine(comp.Markup);
             // Test that the snackbar does NOT have an icon.
             var hasIcon = comp.Find("#mud-snackbar-container .mud-snackbar").FirstElementChild.ClassName.Contains("mud-snackbar-icon");
             Assert.IsFalse(hasIcon);

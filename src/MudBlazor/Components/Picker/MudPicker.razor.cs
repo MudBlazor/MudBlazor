@@ -269,7 +269,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.PickerBehavior)]
-        public RenderFragment PickerActions { get; set; }
+        public RenderFragment<MudPicker<T>> PickerActions { get; set; }
 
         /// <summary>
         ///  Will adjust vertical spacing.

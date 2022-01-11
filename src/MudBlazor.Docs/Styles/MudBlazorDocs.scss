@@ -2,13 +2,12 @@
 @import 'core/_carbon';
 @import 'core/_markdown';
 
-@import 'layout/_footer';
+@import 'layout/_mainlayout';
 
-@import 'pages/_home';
-@import 'pages/_credit';
-@import 'pages/_colors';
-@import 'pages/_spacing';
 @import 'pages/_wireframes';
+@import 'pages/_landingpage';
+@import 'pages/_releases';
+@import 'pages/_roadmap';
 
 @import 'components/_docspage';
 @import 'components/_docssection';

@@ -31,7 +31,7 @@ namespace MudBlazor.UnitTests.Components
             // open simple test dialog
             await comp.InvokeAsync(() => dialogReference = service?.Show<DialogOkCancel>());
             dialogReference.Should().NotBe(null);
-            Console.WriteLine(comp.Markup);
+            //Console.WriteLine(comp.Markup);
             comp.Find("div.mud-dialog-container").Should().NotBe(null);
             comp.Find("p.mud-typography").TrimmedText().Should().Be("Wabalabadubdub!");
             // close by click outside the dialog
@@ -69,10 +69,10 @@ namespace MudBlazor.UnitTests.Components
             // displaying the component with the inline dialog only renders the open button
             var comp1 = Context.RenderComponent<TestInlineDialog>();
             comp1.FindComponents<MudButton>().Count.Should().Be(1);
-            Console.WriteLine("Open button: " + comp1.Markup);
+            //Console.WriteLine("Open button: " + comp1.Markup);
             // open the dialog
             comp1.Find("button").Click();
-            Console.WriteLine("\nOpened dialog: " + comp.Markup);
+            //Console.WriteLine("\nOpened dialog: " + comp.Markup);
             comp.Find("div.mud-dialog-container").Should().NotBe(null);
             comp.Find("p.mud-typography").TrimmedText().Should().Be("Wabalabadubdub!");
             comp.Find("div.mud-dialog").GetAttribute("class").Should().Contain("mud-dialog-width-full");
@@ -97,7 +97,7 @@ namespace MudBlazor.UnitTests.Components
             var comp1 = Context.RenderComponent<InlineDialogIsVisibleStateTest>();
             // open the dialog
             comp1.Find("button").Click();
-            Console.WriteLine("\nOpened dialog: " + comp.Markup);
+            //Console.WriteLine("\nOpened dialog: " + comp.Markup);
             comp.Find("div.mud-dialog-container").Should().NotBe(null);
             // close by click outside
             comp.Find("div.mud-overlay").Click();
@@ -106,7 +106,7 @@ namespace MudBlazor.UnitTests.Components
             comp1.Find("button").Click();
             comp.WaitForAssertion(() => comp.Find("div.mud-dialog-container").Should().NotBe(null), TimeSpan.FromSeconds(5));
             // close again by click outside
-            Console.WriteLine("\nOpened dialog: " + comp.Markup);
+            //Console.WriteLine("\nOpened dialog: " + comp.Markup);
             comp.Find("div.mud-overlay").Click();
             comp.WaitForAssertion(() => comp.Markup.Trim().Should().BeEmpty(), TimeSpan.FromSeconds(5));
         }
@@ -152,7 +152,7 @@ namespace MudBlazor.UnitTests.Components
             // open simple test dialog
             await comp.InvokeAsync(() => dialogReference = service?.Show<DialogThatUpdatesItsTitle>());
             dialogReference.Should().NotBe(null);
-            Console.WriteLine(comp.Markup);
+            //Console.WriteLine(comp.Markup);
             //comp.Find("div.mud-dialog-container").Should().NotBe(null);
             comp.Find("div.mud-dialog-content").TrimmedText().Should().Be("Body:");
             comp.Find("div.mud-dialog-title").TrimmedText().Should().Be("Title:");
@@ -181,8 +181,8 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(() => dialogReference = service?.Show<DialogWithParameters>(string.Empty, parameters));
             dialogReference.Should().NotBe(null);
 
-            Console.WriteLine("----------------------------------------");
-            Console.WriteLine(comp.Markup);
+            //Console.WriteLine("----------------------------------------");
+            //Console.WriteLine(comp.Markup);
 
             var textField = comp.FindComponent<MudInput<string>>().Instance;
             textField.Text.Should().Be("test");
@@ -192,8 +192,8 @@ namespace MudBlazor.UnitTests.Components
             textField.Text.Should().Be("new_test");
 
             comp.FindAll("button")[0].Click();
-            Console.WriteLine("----------------------------------------");
-            Console.WriteLine(comp.Markup);
+            //Console.WriteLine("----------------------------------------");
+            //Console.WriteLine(comp.Markup);
 
             ((DialogWithParameters)dialogReference.Dialog).TestValue.Should().Be("new_test");
             textField.Text.Should().Be("new_test");
@@ -214,7 +214,7 @@ namespace MudBlazor.UnitTests.Components
             // open simple test dialog
             await comp.InvokeAsync(() => dialogReference = service?.Show<DialogOkCancel>());
             dialogReference.Should().NotBe(null);
-            Console.WriteLine(comp.Markup);
+            //Console.WriteLine(comp.Markup);
             comp.Find("div.mud-dialog").ClassList.Should().Contain("test-class");
             comp.Find("div.mud-dialog").Attributes["style"].Value.Should().Be("color: red;");
             comp.Find("div.mud-dialog-content").Attributes["style"].Value.Should().Be("color: blue;");
@@ -234,7 +234,7 @@ namespace MudBlazor.UnitTests.Components
             // open dialog
             testComp.Find("button").Click();
             // in the opened dialog find the text field
-            Console.WriteLine(comp.Markup);
+            //Console.WriteLine(comp.Markup);
             var tf = comp.FindComponent<MudTextField<string>>();
             tf.Find("input").Input("User input ...");
             // the user input should be passed out of the dialog into the outer component and displayed there.

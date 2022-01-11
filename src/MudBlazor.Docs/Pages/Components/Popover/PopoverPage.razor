@@ -12,10 +12,9 @@
 			<SectionHeader Title="Simple Popover">
 				<Description>The popover's open state is completely up to you, as well as the content of it.</Description>
 			</SectionHeader>
-			<SectionContent Outlined="true">
+			<SectionContent Code="PopoverSimpleExample">
 				<PopoverSimpleExample />
 			</SectionContent>
-			<SectionSource Code="PopoverSimpleExample" GitHubFolderName="Popover" ShowCode="false" />
 		</DocsPageSection>
 
 		<DocsPageSection>
@@ -25,10 +24,9 @@
 					Control where the popover should start from relative to the parent. Offset the popover to be located outside of the parent.
 				</Description>
 			</SectionHeader>
-			<SectionContent Outlined="true" DisplayFlex="true">
+			<SectionContent Code="PopoverLocationExample" ShowCode="false">
 				<PopoverLocationExample />
 			</SectionContent>
-			<SectionSource Code="PopoverLocationExample" GitHubFolderName="Popover" ShowCode="false" />
 		</DocsPageSection>
 
 		<DocsPageSection>
@@ -38,12 +36,10 @@
                     Resize your browser window slowly so the popover wont fit to see result in flip mode.
 				</Description>
 			</SectionHeader>
-			<SectionContent Outlined="true" DisplayFlex="true">
+			<SectionContent Code="PopoverOverflowBehaviorExample" ShowCode="false">
                 <PopoverOverflowBehaviorExample />
 			</SectionContent>
-			<SectionSource Code="PopoverOverflowBehaviorExample" GitHubFolderName="Popover" ShowCode="false" />
 		</DocsPageSection>
-
 
 		<DocsPageSection>
 			<SectionHeader Title="Complex Content">
@@ -51,11 +47,10 @@
 					You can have any content within a popover like with any other Blazor component. The position of the popover is updated automatically
 				</Description>
 			</SectionHeader>
-			<SectionContent Outlined="true" DisplayFlex="true">
-				<PopoverComplexContentExample />
-			</SectionContent>
-			<SectionSource Code="PopoverComplexContentExample" Code2="PopoverDynamicContentExample" ButtonTextCode1="Popover Code" ButtonTextCode2="DynamicContent Code" GitHubFolderName="Popover" />
-		</DocsPageSection>
+            <SectionContent Codes="@(new[] {new CodeFile("Page.razor", "PopoverComplexContentExample"), new CodeFile("Component.razor", "PopoverDynamicContentExample")})">
+                <PopoverComplexContentExample />
+            </SectionContent>
+        </DocsPageSection>
 
 		<DocsPageSection>
 			<SectionHeader Title="Popover Inception">
@@ -63,10 +58,9 @@
 					Popovers can be placed within elements that are using popover for itself. Like tooltips that are placed inside a menu.
 				</Description>
 			</SectionHeader>
-			<SectionContent Outlined="true" DisplayFlex="true">
+			<SectionContent Code="PopoverInceptionExampleExample">
 				<PopoverInceptionExampleExample />
 			</SectionContent>
-			<SectionSource Code="PopoverInceptionExampleExample" GitHubFolderName="Popover" />
 		</DocsPageSection>
 
 	</DocsPageContent>

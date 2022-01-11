@@ -6,26 +6,27 @@
             A toggleable implementation of <CodeInline>MudIconButton</CodeInline> where you can use its familiar API to define two different states which you can toggle between. For available icons, go to <MudLink Href="/components/icons">Icons.</MudLink>. Custom icons are passed as an SVG string.
         </Description>
     </DocsPageHeader>
+
     <DocsPageContent>
         <DocsPageSection>
             <SectionHeader Title="Basic usage">
                 <Description>Use two-way binding <CodeInline>@(@"@bind-Toggle=""...""")</CodeInline> to update a bound value in the parent component.</Description>
             </SectionHeader>
-            <SectionContent Outlined="true">
+            <SectionContent Code="ToggleIconButtonTwoWayBindingExample">
                 <ToggleIconButtonTwoWayBindingExample />
             </SectionContent>
-            <SectionSource Code="ToggleIconButtonTwoWayBindingExample" GitHubFolderName="ToggleIconButton" />
         </DocsPageSection>
     </DocsPageContent>
+
     <DocsPageContent>
         <DocsPageSection>
             <SectionHeader Title="Advanced usage">
                 <Description>You may act on the toggled state by using the <CodeInline>Toggled</CodeInline> EventCallback.</Description>
             </SectionHeader>
-            <SectionContent Outlined="true">
+            <SectionContent Code="ToggleIconButtonEventCallbackExample" ShowCode="false">
                 <ToggleIconButtonEventCallbackExample />
             </SectionContent>
-            <SectionSource Code="ToggleIconButtonEventCallbackExample" GitHubFolderName="ToggleIconButton" ShowCode="false" />
         </DocsPageSection>
     </DocsPageContent>
+
 </DocsPage>

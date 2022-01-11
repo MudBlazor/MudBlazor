@@ -52,6 +52,12 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
 
+      - name: Install eslint
+        run: npm i -g eslint
+
+      - name: Check JS is ES6 compliant
+        run: eslint --env 'es6' MudBlazor/TScripts
+
       - name: Setup dotnet version
         uses: actions/setup-dotnet@v1
         with: 

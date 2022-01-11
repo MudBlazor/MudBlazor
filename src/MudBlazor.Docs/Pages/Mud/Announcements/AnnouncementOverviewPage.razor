@@ -1,0 +1,30 @@
+﻿@page "/mud/announcements"
+
+<DocsPage DisplayFooter="true">
+    <DocsPageHeader Title="Announcements" SubTitle="Discover articles from MudBlazor team." />
+    <DocsPageContent>
+        @if (_messages == null)
+        {
+            <MudProgressCircular Color="Color.Default" Indeterminate="true"/>
+        }
+        else
+        {
+            <MudGrid>
+                @foreach (var (message, isRead) in _messages)
+                {
+                    <MudItem xs="12" md="6">
+                        <MudCard Outlined="true">
+                            <MudCardContent>
+                                <MudText>@message.Title</MudText>
+                                <MudText Typo="Typo.body2">@message.Except</MudText>
+                            </MudCardContent>
+                            <MudCardActions>
+                                <MudButton Variant="Variant.Text" Color="@(isRead == false ? Color.Secondary : Color.Primary)" Link="@($"/mud/announcements/{message.Id}")">Learn more</MudButton>
+                            </MudCardActions>
+                        </MudCard>
+                    </MudItem>
+                }
+            </MudGrid>
+        }
+    </DocsPageContent>
+</DocsPage>

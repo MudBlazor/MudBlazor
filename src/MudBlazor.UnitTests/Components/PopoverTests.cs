@@ -598,7 +598,7 @@ namespace MudBlazor.UnitTests.Components
         public async Task MudPopover_OpenAndClose()
         {
             var comp = Context.RenderComponent<PopoverTest>();
-            Console.WriteLine(comp.Markup);
+            //Console.WriteLine(comp.Markup);
 
             //popup is close, so only the popover-content should be there
             var provider = comp.Find(".mud-popover-provider");
@@ -630,7 +630,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<PopoverPropertyTest>(p => p.Add(x => x.MaxHeight, 100));
 
-            Console.WriteLine(comp.Markup);
+            //Console.WriteLine(comp.Markup);
 
             var popoverElement = comp.Find(".test-popover-content").ParentElement;
 
@@ -643,7 +643,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<PopoverPropertyTest>(p => p.Add(x => x.Duration, 100));
 
 
-            Console.WriteLine(comp.Markup);
+            //Console.WriteLine(comp.Markup);
 
             var popoverElement = comp.Find(".test-popover-content").ParentElement;
 
@@ -656,7 +656,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<PopoverPropertyTest>(p => p.Add(
                 x => x.Fixed, true));
 
-            Console.WriteLine(comp.Markup);
+            //Console.WriteLine(comp.Markup);
 
             var popoverElement = comp.Find(".test-popover-content").ParentElement;
 
@@ -669,7 +669,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<PopoverPropertyTest>(p => p.Add(
                 x => x.RelativeWidth, true));
 
-            Console.WriteLine(comp.Markup);
+            //Console.WriteLine(comp.Markup);
 
             var popoverElement = comp.Find(".test-popover-content").ParentElement;
 
@@ -682,7 +682,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<PopoverPropertyTest>(p => p.Add(
                 x => x.Paper, true));
 
-            Console.WriteLine(comp.Markup);
+            //Console.WriteLine(comp.Markup);
 
             var popoverElement = comp.Find(".test-popover-content").ParentElement;
 
@@ -699,7 +699,7 @@ namespace MudBlazor.UnitTests.Components
 
             });
 
-            Console.WriteLine(comp.Markup);
+            //Console.WriteLine(comp.Markup);
 
             var popoverElement = comp.Find(".test-popover-content").ParentElement;
 
@@ -716,7 +716,7 @@ namespace MudBlazor.UnitTests.Components
 
             });
 
-            Console.WriteLine(comp.Markup);
+            //Console.WriteLine(comp.Markup);
 
             var popoverElement = comp.Find(".test-popover-content").ParentElement;
             popoverElement.ClassList.Should().Contain(new[] { "mud-popover-open", "mud-paper", "mud-elevation-10", "my-custom-class" });
@@ -737,7 +737,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<PopoverPropertyTest>(p => p.Add(
                 x => x.TransformOrigin, transformOrigin));
 
-            Console.WriteLine(comp.Markup);
+            //Console.WriteLine(comp.Markup);
 
             var popoverElement = comp.Find(".test-popover-content").ParentElement;
 
@@ -759,7 +759,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<PopoverPropertyTest>(p => p.Add(
                 x => x.AnchorOrigin, anchorOrigin));
 
-            Console.WriteLine(comp.Markup);
+            //Console.WriteLine(comp.Markup);
 
             var popoverElement = comp.Find(".test-popover-content").ParentElement;
 
@@ -775,7 +775,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<PopoverPropertyTest>(p => p.Add(
                 x => x.OverflowBehavior, overflowBehavior));
 
-            Console.WriteLine(comp.Markup);
+            //Console.WriteLine(comp.Markup);
 
             var popoverElement = comp.Find(".test-popover-content").ParentElement;
 
@@ -787,7 +787,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<PopoverComplexContent>();
 
-            Console.WriteLine(comp.Markup);
+            //Console.WriteLine(comp.Markup);
 
             var dynamicContentElement = comp.Find(".dynamic-content");
             dynamicContentElement.ChildNodes.Should().BeEmpty();
@@ -821,7 +821,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<PopoverProviderTest>(p => p.Add(x => x.ProviderIsEnabled, true));
 
-            Console.WriteLine(comp.Markup);
+            //Console.WriteLine(comp.Markup);
             comp.Find("#my-content").TextContent.Should().Be("Popover content");
 
             for (int i = 0; i < 3; i++)
@@ -839,7 +839,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<PopoverProviderTest>(p => p.Add(x => x.ProviderIsEnabled, false));
 
-            Console.WriteLine(comp.Markup);
+            //Console.WriteLine(comp.Markup);
             Assert.Throws<ElementNotFoundException>(() => comp.Find("#my-content"));
         }
     }
