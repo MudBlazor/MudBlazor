@@ -245,6 +245,9 @@ namespace MudBlazor
 
         private string _currentIcon;
 
+        /// <summary>
+        /// This boolean will keep track if the clear function is called too keep the set text function to be called.
+        /// </summary>
         private bool _isCleared;
 
         private MudInput<string> _elementReference;
@@ -326,6 +329,7 @@ namespace MudBlazor
         protected override Task UpdateTextPropertyAsync(bool updateValue)
         {
             _timer?.Dispose();
+            // This keeps the text from being set when clear() was called
             if (_isCleared)
                 return Task.CompletedTask;
             return base.UpdateTextPropertyAsync(updateValue);
