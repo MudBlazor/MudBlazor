@@ -56,7 +56,7 @@
                                 }
                             </MudTd>
                             <MudTd Class="docs-content-api-cell" DataLabel="Type">
-                                <div style="display: flex; flex-direction: row; align-items: center; white-space: nowrap;">
+                                <div style="display: inline-flex; flex-direction: row; align-items: center; white-space: nowrap;">
                                     <DocsTypeInfo Type="@context.Type" />
                                     @if (context.IsTwoWay)
                                     {
@@ -74,7 +74,7 @@
                                 }
                                 else
                                 {
-                                    <MudText Typo="Typo.body2">@def</MudText>
+                                    @def
                                 }
                             </MudTd>
                             <MudTd Class="docs-content-api-cell docs-content-api-description" DataLabel="Description">@(HttpUtility.HtmlDecode(context.Description))</MudTd>
