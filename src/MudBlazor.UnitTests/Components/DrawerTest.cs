@@ -39,7 +39,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<DrawerTest1>(Parameter(nameof(DrawerTest1.Variant), DrawerVariant.Temporary));
 
-            Console.WriteLine(comp.Markup);
+            //Console.WriteLine(comp.Markup);
 
             comp.Find("button").Click();
             comp.FindAll("aside.mud-drawer--open.mud-drawer-temporary").Count.Should().Be(1);
@@ -57,7 +57,7 @@ namespace MudBlazor.UnitTests.Components
                 Parameter(nameof(DrawerTest1.Variant), DrawerVariant.Temporary),
                 Parameter(nameof(DrawerTest1.DisableOverlay), true));
 
-            Console.WriteLine(comp.Markup);
+            //Console.WriteLine(comp.Markup);
 
             comp.Find("button").Click();
             comp.FindAll("aside+mud-overlay-drawer").Count.Should().Be(0);
@@ -74,7 +74,7 @@ namespace MudBlazor.UnitTests.Components
                 Parameter(nameof(DrawerTest1.Variant), DrawerVariant.Temporary),
                 Parameter(nameof(DrawerTest1.ClipMode), DrawerClipMode.Always));
 
-            Console.WriteLine(comp.Markup);
+            //Console.WriteLine(comp.Markup);
 
             comp.Find("button").Click();
             comp.FindAll("aside.mud-drawer-clipped-always").Count.Should().Be(1);
@@ -89,7 +89,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<DrawerTest1>(Parameter(nameof(DrawerTest1.Variant), DrawerVariant.Persistent));
 
-            Console.WriteLine(comp.Markup);
+            //Console.WriteLine(comp.Markup);
 
             comp.Find("button").Click();
             comp.FindAll("aside.mud-drawer--open.mud-drawer-persistent").Count.Should().Be(1);
@@ -107,7 +107,7 @@ namespace MudBlazor.UnitTests.Components
                 Parameter(nameof(DrawerTest1.Variant),
                     DrawerVariant.Persistent), Parameter(nameof(DrawerTest1.ClipMode), DrawerClipMode.Always));
 
-            Console.WriteLine(comp.Markup);
+            //Console.WriteLine(comp.Markup);
 
             comp.Find("button").Click();
             comp.FindAll("aside.mud-drawer-clipped-always").Count.Should().Be(1);
@@ -122,7 +122,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<DrawerTest1>(Parameter(nameof(DrawerTest1.Variant), DrawerVariant.Mini));
 
-            Console.WriteLine(comp.Markup);
+            //Console.WriteLine(comp.Markup);
 
             comp.Find("button").Click();
             comp.FindAll("aside.mud-drawer--open.mud-drawer-mini").Count.Should().Be(1);
@@ -140,7 +140,7 @@ namespace MudBlazor.UnitTests.Components
                 Parameter(nameof(DrawerTest1.Variant), DrawerVariant.Mini),
                 Parameter(nameof(DrawerTest1.ClipMode), DrawerClipMode.Always));
 
-            Console.WriteLine(comp.Markup);
+            //Console.WriteLine(comp.Markup);
 
             comp.Find("button").Click();
             comp.FindAll("aside.mud-drawer-clipped-always").Count.Should().Be(1);
@@ -155,7 +155,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<DrawerResponsiveTest>();
 
-            Console.WriteLine(comp.Markup);
+            //Console.WriteLine(comp.Markup);
 
             comp.Find("button").Click();
             comp.FindAll("aside.mud-drawer--open.mud-drawer-responsive").Count.Should().Be(1);
@@ -174,7 +174,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<DrawerResponsiveTest>();
             await comp.InvokeAsync(() => _breakpointUpdateCallback(point));
 
-            Console.WriteLine(comp.Markup);
+            //Console.WriteLine(comp.Markup);
 
             comp.Find("button").Click();
             comp.FindAll("aside.mud-drawer--open.mud-drawer-responsive").Count.Should().Be(1);
@@ -195,7 +195,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<DrawerResponsiveTest>(Parameter(nameof(DrawerResponsiveTest.Breakpoint), breakpoint));
             await comp.InvokeAsync(() => _breakpointUpdateCallback(Breakpoint.Xl));
 
-            Console.WriteLine(comp.Markup);
+            //Console.WriteLine(comp.Markup);
 
             comp.Find("button").Click();
             comp.FindAll("aside.mud-drawer--open.mud-drawer-responsive").Count.Should().Be(1);
@@ -216,7 +216,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<DrawerResponsiveTest>(Parameter(nameof(DrawerResponsiveTest.Breakpoint), breakpoint));
             await comp.InvokeAsync(() => _breakpointUpdateCallback(Breakpoint.Xs));
 
-            Console.WriteLine(comp.Markup);
+            //Console.WriteLine(comp.Markup);
 
             comp.Find("button").Click();
             comp.FindAll("aside.mud-drawer--open.mud-drawer-responsive").Count.Should().Be(1);
@@ -233,7 +233,7 @@ namespace MudBlazor.UnitTests.Components
             var srv = Context.Services.GetService<IResizeListenerService>() as MockResizeListenerService;
 
             var comp = Context.RenderComponent<DrawerResponsiveTest>(Parameter(nameof(DrawerResponsiveTest.PreserveOpenState), true));
-            Console.WriteLine(comp.Markup);
+            //Console.WriteLine(comp.Markup);
 
             await comp.InvokeAsync(() => _breakpointUpdateCallback(Breakpoint.Lg));
 
@@ -285,7 +285,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<DrawerResponsiveTest>(Parameter(nameof(DrawerResponsiveTest.PreserveOpenState), true));
             await comp.InvokeAsync(() => _breakpointUpdateCallback(Breakpoint.Lg));
 
-            Console.WriteLine(comp.Markup);
+            //Console.WriteLine(comp.Markup);
 
             //open drawer
             comp.Find("button").Click();

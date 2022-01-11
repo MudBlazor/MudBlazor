@@ -49,7 +49,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<MudNumericField<double>>();
             // print the generated html
-            Console.WriteLine(comp.Markup);
+            //Console.WriteLine(comp.Markup);
             // select elements needed for the test
             var numericField = comp.Instance;
             numericField.Value.Should().Be(0.0);
@@ -72,7 +72,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<MudNumericField<double?>>();
             // print the generated html
-            Console.WriteLine(comp.Markup);
+            //Console.WriteLine(comp.Markup);
             // select elements needed for the test
             var numericField = comp.Instance;
             numericField.Value.Should().Be(null);
@@ -88,7 +88,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<MudNumericField<int?>>(ComponentParameter.CreateParameter("Value", 17));
             // print the generated html
-            Console.WriteLine(comp.Markup);
+            //Console.WriteLine(comp.Markup);
             comp.SetParametersAndRender(ComponentParameter.CreateParameter("Value", null));
             comp.Find("input").Blur();
             comp.FindAll("div.mud-input-error").Count.Should().Be(0);
@@ -109,7 +109,7 @@ namespace MudBlazor.UnitTests.Components
         //    //Console.WriteLine(comp.Markup);
         //    comp.Find("input").Change("seventeen");
         //    comp.Find("input").Blur();
-        //    Console.WriteLine(comp.Markup);
+        //    //Console.WriteLine(comp.Markup);
         //    comp.FindAll("p.mud-input-error").Count.Should().Be(1);
         //    comp.Find("p.mud-input-error").TextContent.Trim().Should().Be("Not a valid number");
         //}
@@ -213,7 +213,7 @@ namespace MudBlazor.UnitTests.Components
                 .Length(1, 100));
             var comp = Context.RenderComponent<MudNumericField<decimal>>(Parameter(nameof(MudNumericField<decimal>.Validation), validator.Validation), Parameter(nameof(MudNumericField<decimal>.Max), 100M));
             var numericField = comp.Instance;
-            Console.WriteLine(comp.Markup);
+            //Console.WriteLine(comp.Markup);
             // first try a valid value
             comp.Find("input").Change(99);
             numericField.Error.Should().BeFalse(because: "The value is < 100");
@@ -222,7 +222,7 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("input").Change("100.1");
             numericField.Error.Should().BeFalse(because: "The value should be set to Max (100)");
             numericField.Value.Should().Be(100M);
-            Console.WriteLine("Error message: " + numericField.ErrorText);
+            //Console.WriteLine("Error message: " + numericField.ErrorText);
             numericField.ErrorText.Should().BeNullOrEmpty();
         }
 
@@ -335,7 +335,7 @@ namespace MudBlazor.UnitTests.Components
             comp.SetParam(x => x.Format, "F2");
             comp.SetParam(x => x.Value, 1234.56);
             // print the generated html
-            Console.WriteLine(comp.Markup);
+            //Console.WriteLine(comp.Markup);
             // select elements needed for the test
             var numericField = comp.Instance;
             numericField.Value.Should().Be(1234.56);
@@ -595,7 +595,7 @@ namespace MudBlazor.UnitTests.Components
             comp.SetParam(x => x.Format, "€0");
             comp.SetParam(x => x.Culture, CultureInfo.InvariantCulture);
             // print the generated html
-            Console.WriteLine(comp.Markup);
+            //Console.WriteLine(comp.Markup);
             // select elements needed for the test
             var numericField = comp.Instance;
             numericField.Value.Should().Be(null);
@@ -609,7 +609,7 @@ namespace MudBlazor.UnitTests.Components
             //
             comp.FindAll("input").First().Change("1234");
             comp.FindAll("input").First().Blur();
-            Console.WriteLine(numericField.ErrorText);
+            //Console.WriteLine(numericField.ErrorText);
             comp.WaitForAssertion(() => numericField.Text.Should().Be("€1234"));
             comp.WaitForAssertion(() => numericField.Value.Should().Be(1234));
         }

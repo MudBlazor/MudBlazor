@@ -24,11 +24,6 @@ namespace MudBlazor
                 .AddClass($"mud-progress-static", !Indeterminate)
                 .Build();
 
-        protected string DivStyle =>
-            new StyleBuilder("transform", "rotate(-90deg)")
-            .AddStyle(Style)
-            .Build();
-
         /// <summary>
         /// The color of the component. It supports the theme colors.
         /// </summary>

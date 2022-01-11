@@ -26,7 +26,7 @@ namespace MudBlazor.UnitTests.Components
             CultureInfo.CurrentUICulture = culture;
 
             var comp = Context.RenderComponent<MudThemeProvider>();
-            Console.WriteLine(comp.Markup);
+            //Console.WriteLine(comp.Markup);
 
             var styleNodes = comp.Nodes.OfType<IHtmlStyleElement>().ToArray();
             styleNodes.Should().HaveCount(3);

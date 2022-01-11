@@ -16,7 +16,7 @@
                 @foreach (var release in _githubReleases)
                 {
                     <MudItem xs="12" md="4">
-                        <div class="docs-release-info">
+                        <div class="docs-sticky-info">
                             <MudText Typo="Typo.h5" Inline="true">Version </MudText>
                             <MudText Typo="Typo.h5" Inline="true" Color="Color.Primary"><b>@release.name</b></MudText>
                             <MudText Typo="Typo.subtitle1">Released on @release.published_at.ToString("MMMM MM, yyyy")</MudText>
