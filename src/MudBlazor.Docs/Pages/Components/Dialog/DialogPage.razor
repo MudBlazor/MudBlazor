@@ -1,6 +1,6 @@
 ﻿@page "/components/dialog"
 
-<DocsPage MaxWidth="MaxWidth.Large">
+<DocsPage>
     <DocsPageHeader Title="Dialog">
         <Description>A dialog will overlay your current app content, providing the user with either information, a choice, or other tasks.</Description>
     </DocsPageHeader>
@@ -24,10 +24,9 @@
                     You can pass parameters to your dialog on show which allow you to load the dialog with custom data.
                 </Description>
             </SectionHeader>
-            <SectionContent Outlined="true">
+            <SectionContent Codes="@(new[] {new CodeFile("Page.razor", "DialogUsageExample"), new CodeFile("Dialog.razor", "DialogUsageExample_Dialog")})">
                 <DialogUsageExample />
             </SectionContent>
-                <SectionSource Code="DialogUsageExample" Code2="DialogUsageExample_Dialog" ButtonTextCode1="Page" ButtonTextCode2="Dialog" GitHubFolderName="Dialog" />
         </DocsPageSection>
 
         <DocsPageSection>
@@ -36,61 +35,65 @@
                     The dialog's default behavior can be changed in two ways, either globally with parameters in the <CodeInline>&lt;MudDialogProvider/&gt;</CodeInline> or pass down the <CodeInline>DialogOptions</CodeInline> class when you open the dialog.
                 </Description>
             </SectionHeader>
-            <SectionHeader>
-                <SubTitle>1. Global Settings</SubTitle>
-                <Description>In the file where you added <CodeInline>&lt;MudDialogProvider/&gt;</CodeInline>, we can pass down different options as parameters. See <MudLink Href="/getting-started/installation">installation page</MudLink> for more information regarding this.</Description>
-            </SectionHeader>
-            <MarkdownDialogParameters />
-            <SectionHeader>
-                <SubTitle>2. Per Dialog (on open)</SubTitle>
-                <Description>
-                    Below we pass along the DialogOptions class when we open the dialog, this can be done per dialog or you can predefine a bunch of them that you use for specific cases in your system.<br />
-                </Description>
-            </SectionHeader>
-            <SectionContent Outlined="true">
-                <DialogOptionsExample />
-            </SectionContent>
-            <SectionSource Code="DialogOptionsExample" Code2="DialogUsageExample_Dialog" ButtonTextCode1="Page" ButtonTextCode2="Dialog" GitHubFolderName="Dialog" ShowCode="false" />
-            <SectionHeader>
-                <SubTitle>3. Per Dialog (from dialog)</SubTitle>
-                <Description>
-                    The title and the options can also be modified from the dialog component itself by calling <CodeInline>SetTitle</CodeInline> and <CodeInline>SetOptions</CodeInline> on the <CodeInline>MudDialogInstance</CodeInline> object.
-                </Description>
-            </SectionHeader>
-            <SectionContent Outlined="true">
-                <DialogSetOptionsExample />
-            </SectionContent>
-            <SectionSource Code="DialogSetOptionsExample" Code2="DialogSetOptionsExample_Dialog" ButtonTextCode1="Page" ButtonTextCode2="Dialog" GitHubFolderName="Dialog" />
+            <SectionSubGroups>
+                
+                <DocsPageSection>
+                    <SectionHeader Title="Global Settings">
+                        <Description>In the file where you added <CodeInline>&lt;MudDialogProvider/&gt;</CodeInline>, we can pass down different options as parameters. See <MudLink Href="/getting-started/installation">installation page</MudLink> for more information regarding this.</Description>
+                    </SectionHeader>
+                    <SectionContent Code="DialogConfigurationExample"/>
+                </DocsPageSection>
+
+                <DocsPageSection>
+                    <SectionHeader Title="Per Dialog">
+                        <Description>
+                            Below we pass along the DialogOptions class when we open the dialog, this can be done per dialog or you can predefine a bunch of them that you use for specific cases in your system.<br/>
+                        </Description>
+                    </SectionHeader>
+                    <SectionContent Codes="@(new[] {new CodeFile("Page.razor", "DialogOptionsExample"), new CodeFile("Dialog.razor", "DialogOptionsExample_Dialog")})">
+                        <DialogOptionsExample />
+                    </SectionContent>
+                </DocsPageSection>
+
+                <DocsPageSection>
+                    <SectionHeader Title="From dialog">
+                        <Description>
+                            The title and the options can also be modified from the dialog component itself by calling <CodeInline>SetTitle</CodeInline> and <CodeInline>SetOptions</CodeInline> on the <CodeInline>MudDialogInstance</CodeInline> object.
+                        </Description>
+                    </SectionHeader>
+                    <SectionContent Codes="@(new[] {new CodeFile("Page.razor", "DialogSetOptionsExample"), new CodeFile("Dialog.razor", "DialogSetOptionsExample_Dialog")})">
+                        <DialogSetOptionsExample />
+                    </SectionContent>
+                </DocsPageSection>
+                
+            </SectionSubGroups>
         </DocsPageSection>
 
         <DocsPageSection>
             <SectionHeader Title="Templating and Passing Simple Data">
                 <Description>In this section, we will demonstrate how you can build one dialog and reuse it for multiple purposes.</Description>
             </SectionHeader>
-            <SectionContent Outlined="true">
+            <SectionContent Codes="@(new[] {new CodeFile("Page.razor", "DialogTemplateExample"), new CodeFile("Dialog.razor", "DialogTemplateExample_Dialog")})">
                 <DialogTemplateExample />
             </SectionContent>
-            <SectionSource Code="DialogTemplateExample" Code2="DialogTemplateExample_Dialog" ButtonTextCode1="Page" ButtonTextCode2="Dialog" GitHubFolderName="Dialog" ShowCode="false" />
         </DocsPageSection>
 
         <DocsPageSection>
             <SectionHeader Title="Passing Data">
                 <Description>Here is a little more advanced use case. We will use the same dialog but feed it with different server data and then mimic a delete operation.</Description>
             </SectionHeader>
-            <SectionContent DarkenBackground="true">
+            <SectionContent Codes="@(new[] {new CodeFile("Page.razor", "DialogPassingDataExample"), new CodeFile("Dialog.razor", "DialogPassingDataExample_Dialog")})">
                 <DialogPassingDataExample />
             </SectionContent>
-            <SectionSource Code="DialogPassingDataExample" Code2="DialogPassingDataExample_Dialog" ButtonTextCode1="Page" ButtonTextCode2="Dialog" GitHubFolderName="Dialog" ShowCode="false" />
         </DocsPageSection>
 
         <DocsPageSection>
             <SectionHeader Title="Scrollable Dialog">
                 <Description>Quick example on how to give your dialog scrollable content.</Description>
             </SectionHeader>
-            <SectionContent Outlined="true">
+            <SectionContent Codes="@(new[] {new CodeFile("Page.razor", "DialogScrollableExample"), new CodeFile("Dialog.razor", "DialogScrollableExample_Dialog")})">
                 <DialogScrollableExample />
             </SectionContent>
-            <SectionSource Code="DialogScrollableExample" Code2="DialogScrollableExample_Dialog" ButtonTextCode1="Page" ButtonTextCode2="Dialog" GitHubFolderName="Dialog" ShowCode="false" />
         </DocsPageSection>
 
         <DocsPageSection>
@@ -102,25 +105,9 @@
                     This example also shows how to override the dialog title with a render fragment. 
                 </Description>
             </SectionHeader>
-            <SectionContent Outlined="true">
+            <SectionContent Code="DialogInlineExample">
                 <DialogInlineExample />
             </SectionContent>
-            <SectionSource Code="DialogInlineExample" GitHubFolderName="Dialog" ShowCode="false" />
-        </DocsPageSection>
-
-        <DocsPageSection>
-            <SectionHeader Title="Inlining Dialog">
-                <Description>
-                    You can inline <CodeInline>MudDialog</CodeInline> directly in another component which, of course, makes most sense for small dialogs that are not re-used somewhere else.
-                    The advantage is that you can easily share code and data between dialog and owning component via bindings.
-                    <br />
-                    This example also shows how to override the dialog title with a render fragment. 
-                </Description>
-            </SectionHeader>
-            <SectionContent Outlined="true">
-                <DialogInlineExample />
-            </SectionContent>
-            <SectionSource Code="DialogInlineExample" GitHubFolderName="Dialog" ShowCode="false" />
         </DocsPageSection>
 
         <DocsPageSection>
@@ -131,12 +118,9 @@
                     <MudText><CodeInline>Escape</CodeInline> key to close dialog. Closing a dialog by pressing escape has to be enabled by setting option <CodeInline>CloseOnEscapekey=true</CodeInline></MudText>
                 </Description>
             </SectionHeader>
-            <SectionContent Outlined="true">
-                <MudContainer>
-                    <DialogKeyboardNavigationExample />
-                </MudContainer>
+            <SectionContent Codes="@(new[] {new CodeFile("Page.razor", "DialogKeyboardNavigationExample"), new CodeFile("Dialog.razor", "DialogKeyboardNavigationExample_Dialog")})">
+                <DialogKeyboardNavigationExample />
             </SectionContent>
-            <SectionSource Code="DialogKeyboardNavigationExample" GitHubFolderName="Dialog" ShowCode="false" />
         </DocsPageSection>
 
     </DocsPageContent>

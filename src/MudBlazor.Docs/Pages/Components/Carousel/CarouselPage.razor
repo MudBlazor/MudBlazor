@@ -2,62 +2,55 @@
 
 <DocsPage>
 	<DocsPageHeader Title="Carousel" SubTitle="It's used to display large numbers of visual content on a rotating timer" />
-	<DocsPageContent>
-		<DocsPageSection>
-			<SectionHeader Title="Example">
-				<Description>Default implementation.</Description>
-			</SectionHeader>
-			<SectionContent Outlined="true" FullWidth="true" Class="demo-alert">
-				<MudBlazor.Docs.Examples.CarouselExample />
-			</SectionContent>
-			<SectionSource Code="CarouselExample" GitHubFolderName="Carousel" ShowCode="false" />
-		</DocsPageSection>
-	</DocsPageContent>
-	<DocsPageContent>
-		<DocsPageSection>
-			<SectionHeader Title="DataBinding">
-				<Description>
-					You can One-Way Bind any IEnumerable list to the <CodeInline>ItemsSource</CodeInline> attribute, and use a template to show the data.<br />
-					You can also Two-Way Bind the <CodeInline>SelectedIndex</CodeInline> to read or write the current position.
-				</Description>
-			</SectionHeader>
-			<SectionContent Outlined="true" FullWidth="true" Class="demo-alert">
-				<MudBlazor.Docs.Examples.CarouselBindingExample />
-			</SectionContent>
-			<SectionSource Code="CarouselBindingExample" GitHubFolderName="Carousel" ShowCode="false" />
-		</DocsPageSection>
-	</DocsPageContent>
-	<DocsPageContent>
-		<DocsPageSection>
-			<SectionHeader Title="Custom Transition">
-				<Description>You can use your own classes for items transition.</Description>
-			</SectionHeader>
-			<SectionContent Outlined="true" FullWidth="true" Class="demo-alert">
-				<MudBlazor.Docs.Examples.CarouselCustomTransitionExample />
-			</SectionContent>
-			<SectionSource Code="CarouselCustomTransitionExample" GitHubFolderName="Carousel" ShowCode="false" />
-		</DocsPageSection>
-	</DocsPageContent>
-	<DocsPageContent>
-		<DocsPageSection>
-			<SectionHeader Title="Transitions per page">
-				<Description>Transitions are set per page.</Description>
-			</SectionHeader>
-			<SectionContent Outlined="true" FullWidth="true" Class="demo-alert">
-				<MudBlazor.Docs.Examples.CarouselPerPageTransitionExample />
-			</SectionContent>
-			<SectionSource Code="CarouselPerPageTransitionExample" GitHubFolderName="Carousel" ShowCode="false" />
-		</DocsPageSection>
-	</DocsPageContent>
-	<DocsPageContent>
-		<DocsPageSection>
-			<SectionHeader Title="Elements Templates">
-				<Description>Custom arrows or delimiters templates:</Description>
-			</SectionHeader>
-			<SectionContent Outlined="true" FullWidth="true" Class="demo-alert">
-				<MudBlazor.Docs.Examples.CarouselTemplatesExample />
-			</SectionContent>
-			<SectionSource Code="CarouselTemplatesExample" GitHubFolderName="Carousel" ShowCode="false" />
-		</DocsPageSection>
-	</DocsPageContent>
+    <DocsPageContent>
+        
+        <DocsPageSection>
+            <SectionHeader Title="Example">
+                <Description>Default implementation.</Description>
+            </SectionHeader>
+            <SectionContent Code="CarouselExample" Block="true" FullWidth="true">
+                <CarouselExample/>
+            </SectionContent>
+        </DocsPageSection>
+        
+        <DocsPageSection>
+            <SectionHeader Title="DataBinding">
+                <Description>
+                    You can One-Way Bind any IEnumerable list to the <CodeInline>ItemsSource</CodeInline> attribute, and use a template to show the data.<br />
+                    You can also Two-Way Bind the <CodeInline>SelectedIndex</CodeInline> to read or write the current position.
+                </Description>
+            </SectionHeader>
+            <SectionContent Code="CarouselBindingExample" Block="true" FullWidth="true">
+                <CarouselBindingExample />
+            </SectionContent>
+        </DocsPageSection>
+        
+        <DocsPageSection>
+            <SectionHeader Title="Custom Transition">
+                <Description>You can use your own classes for items transition.</Description>
+            </SectionHeader>
+            <SectionContent Code="CarouselCustomTransitionExample" Block="true" FullWidth="true">
+                <CarouselCustomTransitionExample />
+            </SectionContent>
+        </DocsPageSection>
+        
+        <DocsPageSection>
+            <SectionHeader Title="Transitions per page">
+                <Description>Transitions are set per page.</Description>
+            </SectionHeader>
+            <SectionContent Code="CarouselPerPageTransitionExample" Block="true" FullWidth="true">
+                <CarouselPerPageTransitionExample />
+            </SectionContent>
+        </DocsPageSection>
+        
+        <DocsPageSection>
+            <SectionHeader Title="Elements Templates">
+                <Description>Custom arrows or bullets templates:</Description>
+            </SectionHeader>
+            <SectionContent Code="CarouselTemplatesExample" Block="true" FullWidth="true">
+                <CarouselTemplatesExample />
+            </SectionContent>
+        </DocsPageSection>
+        
+    </DocsPageContent>
 </DocsPage>

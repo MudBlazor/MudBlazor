@@ -1,21 +1,8 @@
-﻿
-<QueuedContent RenderImmediately="_renderImmediately">
-    <div @attributes="UserAttributes" class="docs-page-section">
-        @ChildContent
-    </div>
-</QueuedContent>
 
-@code {
-    [CascadingParameter] DocsPage DocsPage { get; set; }
-    [Parameter] public RenderFragment ChildContent { get; set; }
-    [Parameter(CaptureUnmatchedValues = true)]
-    public Dictionary<string, object> UserAttributes { get; set; } = new Dictionary<string, object>();
-    bool _renderImmediately = false;
-
-    protected override void OnInitialized()
-    {
-        base.OnInitialized();
-        var count=DocsPage.IncrementSectionCount();
-        _renderImmediately = count < 3;
-    }
-}
+<CascadingValue Value="this" IsFixed="true">
+    <QueuedContent RenderImmediately="_renderImmediately">
+        <div @attributes="UserAttributes" class="docs-page-section">
+            @ChildContent
+        </div>
+    </QueuedContent>
+</CascadingValue>

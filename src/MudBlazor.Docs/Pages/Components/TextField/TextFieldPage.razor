@@ -9,40 +9,63 @@
             <SectionHeader Title="Basic Text Field's">
                 <Description></Description>
             </SectionHeader>
-            <SectionContent Outlined="true">
+            <SectionContent Code="TextFieldBasicExample" ShowCode="false">
                 <TextFieldBasicExample />
             </SectionContent>
-            <SectionSource Code="TextFieldBasicExample" ShowCode="false" GitHubFolderName="TextField" />
         </DocsPageSection>
-
-        <DocsPageSection>
-            <SectionHeader Title="Dense">
-                <Description>With the <CodeInline>margin</CodeInline> prop you can reduce the text field height.</Description>
-            </SectionHeader>
-            <SectionContent Outlined="true">
-                <TextFieldDenseExample />
-            </SectionContent>
-            <SectionSource Code="TextFieldDenseExample" ShowCode="false" GitHubFolderName="TextField" />
-        </DocsPageSection>
-
+        
         <DocsPageSection>
             <SectionHeader Title="Form Props">
-                <Description>Required, Disabled, Type</Description>
+                <Description></Description>
             </SectionHeader>
-            <SectionContent Outlined="true">
-                <TextFieldFormPropsExample />
-            </SectionContent>
-            <SectionSource Code="TextFieldFormPropsExample" ShowCode="false" GitHubFolderName="TextField" />
+            <SectionSubGroups>
+                
+                <DocsPageSection>
+                    <SectionHeader Title="Dense">
+                        <Description>With the <CodeInline>margin</CodeInline> prop you can reduce the text field height.</Description>
+                    </SectionHeader>
+                    <SectionContent Code="TextFieldDenseExample" ShowCode="false">
+                        <TextFieldDenseExample/>
+                    </SectionContent>
+                </DocsPageSection>
+                
+                <DocsPageSection>
+                    <SectionHeader Title="Helper Text">
+                        <Description></Description>
+                    </SectionHeader>
+                    <SectionContent Code="TextFieldFormPropsHelperTextExample" ShowCode="false">
+                        <TextFieldFormPropsHelperTextExample/>
+                    </SectionContent>
+                </DocsPageSection>
+                
+                <DocsPageSection>
+                    <SectionHeader Title="Disabled">
+                        <Description></Description>
+                    </SectionHeader>
+                    <SectionContent Code="TextFieldFormPropsDisabledExample" ShowCode="false">
+                        <TextFieldFormPropsDisabledExample/>
+                    </SectionContent>
+                </DocsPageSection>
+                
+                <DocsPageSection>
+                    <SectionHeader Title="Read Only">
+                        <Description></Description>
+                    </SectionHeader>
+                    <SectionContent Code="TextFieldFormPropsReadOnlyExample" ShowCode="false">
+                        <TextFieldFormPropsReadOnlyExample/>
+                    </SectionContent>
+                </DocsPageSection>
+
+            </SectionSubGroups>
         </DocsPageSection>
 
         <DocsPageSection>
             <SectionHeader Title="Helper Text On Focus">
                 <Description>With the <CodeInline>HelperTextOnFocus</CodeInline> property set to true, the helper text will only display on focus.</Description>
             </SectionHeader>
-            <SectionContent Outlined="true">
+            <SectionContent Code="TextFieldHelperTextExample" ShowCode="false">
                 <TextFieldHelperTextExample />
             </SectionContent>
-            <SectionSource Code="TextFieldHelperTextExample" ShowCode="false" GitHubFolderName="TextField" />
         </DocsPageSection>
 
         <DocsPageSection>
@@ -53,30 +76,27 @@
                     Add <CodeInline>MaxLength</CodeInline> to force a max count directly on the input and use <CodeInline>Validation</CodeInline> to validate the data.
                 </Description>
             </SectionHeader>
-            <SectionContent Outlined="true" DisplayFlex="true">
+            <SectionContent Code="TextFieldCharacterCountExample" ShowCode="false">
                 <TextFieldCharacterCountExample />
             </SectionContent>
-            <SectionSource Code="TextFieldCharacterCountExample" ShowCode="false" GitHubFolderName="TextField" />
         </DocsPageSection>
 
         <DocsPageSection>
             <SectionHeader Title="Adornments">
                 <Description>This can be used to add a prefix or a suffix. Text, Icon or Icon Button.</Description>
             </SectionHeader>
-            <SectionContent Outlined="true">
+            <SectionContent Code="TextFieldAdornmentsExample" ShowCode="false" Block="true" FullWidth="true">
                 <TextFieldAdornmentsExample />
             </SectionContent>
-            <SectionSource Code="TextFieldAdornmentsExample" ShowCode="false" GitHubFolderName="TextField" />
         </DocsPageSection>
 
         <DocsPageSection>
             <SectionHeader Title="Adornment Color">
                 <Description>The color of the adornment can be changed separately from the textfield.</Description>
             </SectionHeader>
-            <SectionContent Outlined="true">
+            <SectionContent Code="TextFieldAdornmentColorExample" ShowCode="false">
                 <TextFieldAdornmentColorExample />
             </SectionContent>
-            <SectionSource Code="TextFieldAdornmentColorExample" ShowCode="false" GitHubFolderName="TextField" />
         </DocsPageSection>
 
         <DocsPageSection>
@@ -86,10 +106,9 @@
                     <MudAlert Severity="Severity.Info" Dense="true" Class="mt-3">Note: always use two-way bindings (<CodeInline>@("@bind-Value")</CodeInline>) with textfields.</MudAlert>
                 </Description>
             </SectionHeader>
-            <SectionContent Outlined="true">
+            <SectionContent Code="TextFieldBindingExample" ShowCode="false">
                 <TextFieldBindingExample />
             </SectionContent>
-            <SectionSource Code="TextFieldBindingExample" ShowCode="false" GitHubFolderName="TextField" />
         </DocsPageSection>
 
         <DocsPageSection>
@@ -100,10 +119,9 @@
                     So if you want your text fields to be empty as long as nothing has been entered yet, use the nullable version of that type (i.e. <CodeInline>int?</CodeInline>).
                 </Description>
             </SectionHeader>
-            <SectionContent Outlined="true">
+            <SectionContent Code="TextFieldBindingValueTypesExample" ShowCode="false">
                 <TextFieldBindingValueTypesExample />
             </SectionContent>
-            <SectionSource Code="TextFieldBindingValueTypesExample" ShowCode="false" GitHubFolderName="TextField" />
         </DocsPageSection>
 
         <DocsPageSection>
@@ -114,68 +132,83 @@
                     Notice how in this example the debounced text only updates 500 ms after you stop typing.
                 </Description>
             </SectionHeader>
-            <SectionContent Outlined="true" FullWidth="true">
+            <SectionContent Code="DebouncedTextFieldExample" ShowCode="false">
                 <DebouncedTextFieldExample />
             </SectionContent>
-            <SectionSource Code="DebouncedTextFieldExample" ShowCode="false" GitHubFolderName="TextField" />
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader Title="Clear button and special input types">
-                <Description>
-                    <CodeInline>MudTextField</CodeInline> can show a clear button and you can set the HTML5 input type. The input type can be important on mobile devices to show an appropriate keyboard.
-                </Description>
+            <SectionHeader Title="Clear button">
+                <Description></Description>
             </SectionHeader>
-            <SectionContent Outlined="true" FullWidth="true">
+            <SectionContent Code="TextFieldClearableAndInputTypeExample" ShowCode="false">
                 <TextFieldClearableAndInputTypeExample />
             </SectionContent>
-            <SectionSource Code="TextFieldClearableAndInputTypeExample" ShowCode="false" GitHubFolderName="TextField" />
         </DocsPageSection>
 
         <DocsPageSection>
             <SectionHeader Title="Multiline">
                 <Description></Description>
             </SectionHeader>
-            <SectionContent Outlined="true">
+            <SectionContent Code="TextFieldMultilineExample" ShowCode="false">
                 <TextFieldMultilineExample />
             </SectionContent>
-            <SectionSource Code="TextFieldMultilineExample" ShowCode="false" GitHubFolderName="TextField" />
         </DocsPageSection>
+
         <DocsPageSection>
             <SectionHeader Title="Focus">
                 <Description></Description>
             </SectionHeader>
-            <SectionContent Outlined="true">
+            <SectionContent Code="TextFieldFocusExample" ShowCode="false" Block="true" FullWidth="true">
                 <TextFieldFocusExample />
             </SectionContent>
-            <SectionSource Code="TextFieldFocusExample" ShowCode="false" GitHubFolderName="TextField" />
         </DocsPageSection>
+
         <DocsPageSection>
             <SectionHeader Title="Select">
                 <Description></Description>
             </SectionHeader>
-            <SectionContent Outlined="true">
+            <SectionContent Code="TextFieldSelectExample" ShowCode="false" Block="true" FullWidth="true">
                 <TextFieldSelectExample />
             </SectionContent>
-            <SectionSource Code="TextFieldSelectExample" ShowCode="false" GitHubFolderName="TextField" />
         </DocsPageSection>
+
         <DocsPageSection>
             <SectionHeader Title="Select Range">
                 <Description></Description>
             </SectionHeader>
-            <SectionContent Outlined="true">
+            <SectionContent Code="TextFieldSelectRangeExample" ShowCode="false" Block="true" FullWidth="true">
                 <TextFieldSelectRangeExample />
             </SectionContent>
-            <SectionSource Code="TextFieldSelectRangeExample" ShowCode="false" GitHubFolderName="TextField" />
         </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Input Types">
+                <Description>
+                    You can change the InputType of MudTextField to use the native browser implementation of the 
+                    <MudLink Href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input">HTML input element</MudLink>. 
+                    Note that any Placeholder will be ignored where the browser provides a default placeholder.       
+                    <br />
+                    <br />
+                    All inputs can be bound to <CodeInline>string</CodeInline> types; alternatively, input types <CodeInline>Date</CodeInline> and <CodeInline>DateTimeLocal</CodeInline>
+                    can be bound to a nullable <CodeInline>DateTime?</CodeInline>. When binding to a <CodeInline>DateTime?</CodeInline> you <strong>must</strong> set the <CodeInline>Format</CodeInline> property to <CodeInline>yyyy-MM-dd</CodeInline> for input type <CodeInline>Date</CodeInline>, and you 
+                    <strong>must</strong> set the <CodeInline>Format</CodeInline> property to <CodeInline>s</CodeInline> (<MudLink Href="https://docs.microsoft.com/en-us/dotnet/standard/base-types/standard-date-and-time-format-strings#Sortable">ISO 8601</MudLink>) for input type <CodeInline>DateTimeLocal</CodeInline>.
+
+                </Description>
+            </SectionHeader>
+            <SectionContent Code="TextFieldNativeInputsExample">
+                <TextFieldNativeInputsExample />
+            </SectionContent>
+        </DocsPageSection>
+        
         <DocsPageSection>
             <SectionHeader Title="Inputs">
                 <Description></Description>
             </SectionHeader>
-            <SectionContent Outlined="true">
+            <SectionContent Code="TextFieldInputsExample" ShowCode="false">
                 <TextFieldInputsExample />
             </SectionContent>
-            <SectionSource Code="TextFieldInputsExample" ShowCode="false" GitHubFolderName="TextField" />
         </DocsPageSection>
+
     </DocsPageContent>
 </DocsPage>

@@ -1,22 +1,13 @@
 ﻿@namespace MudBlazor.Docs.Examples
 @using System.Linq
 
-<MudGrid>
-    <MudItem xs="12" md="12">
-        <MudSelect T="string" Label="Felines" HelperText="Pick your favorite feline"
-                   MultiSelection="true" OffsetY="true" DelimitedStringSeparator="^" SelectAll="true" SelectAllText="Select all felines"
-                   @bind-Value="value" @bind-SelectedValues="options" AdornmentIcon="@Icons.Material.Filled.Search"
-                   MultiSelectionTextFunc="@(new Func<List<string>, string>(GetMultiSelectionText))">
-            @foreach (var feline in felines)
-            {
-                <MudSelectItem T="string" Value="@feline">@feline</MudSelectItem>
-            }
-        </MudSelect>
-    </MudItem>
-    <MudItem xs="12" md="6">
-        <MudText Typo="Typo.body2">MudSelect.Value: "@value"</MudText>
-    </MudItem>
-</MudGrid>
+
+<MudSelect T="string" MultiSelection="true" SelectAll="true" SelectAllText="Select all felines" HelperText="@value" @bind-Value="value" @bind-SelectedValues="options" MultiSelectionTextFunc="@(new Func<List<string>, string>(GetMultiSelectionText))" Label="Felines" AdornmentIcon="@Icons.Material.Filled.Search">
+    @foreach (var feline in felines)
+    {
+        <MudSelectItem T="string" Value="@feline">@feline</MudSelectItem>
+    }
+</MudSelect>
 
 @code { 
     private string value { get; set; } = "Nothing selected";
