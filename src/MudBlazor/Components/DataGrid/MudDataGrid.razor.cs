@@ -522,7 +522,6 @@ namespace MudBlazor
             if (ServerData == null)
                 return;
 
-            Loading = true;
             StateHasChanged();
             //var label = CurrentSortLabel;
 
@@ -539,7 +538,6 @@ namespace MudBlazor
             if (CurrentPage * RowsPerPage > _server_data.TotalItems)
                 CurrentPage = 0;
 
-            Loading = false;
             StateHasChanged();
             PagerStateHasChangedEvent?.Invoke();
         }
