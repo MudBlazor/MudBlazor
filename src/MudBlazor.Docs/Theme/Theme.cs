@@ -171,7 +171,8 @@ namespace MudBlazor.Docs
             DrawerIcon = "#92929f",
             DrawerText = "#92929f",
             DrawerBackground = "#151521",
-            OverlayLight = "#1e1e2d80"
+            OverlayLight = "#1e1e2d80",
+            Divider = "#5c5c6a"
         };
 
         private static readonly Shadow LandingPageShadows = new()
