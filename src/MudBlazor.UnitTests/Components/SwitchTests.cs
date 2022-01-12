@@ -37,5 +37,17 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(() => comp.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = "ArrowLeft", Type = "keydown", }));
             comp.WaitForAssertion(() => comp.Instance.Checked.Should().Be(true));
         }
+
+        [Test]
+        public void SwitchTest_ReverseLabel()
+        {
+            var comp = Context.RenderComponent<MudSwitch<bool>>();
+            //Console.WriteLine(comp.Markup);
+
+            comp.Find(".mud-switch").ClassList.Should().NotContain("flex-row-reverse", "Reverse should not be applied");
+
+            comp.SetParametersAndRender(ComponentParameter.CreateParameter("ReverseLabel", true));
+            comp.Find(".mud-switch").ClassList.Should().Contain("flex-row-reverse", "Reverse should be applied");
+        }
     }
 }

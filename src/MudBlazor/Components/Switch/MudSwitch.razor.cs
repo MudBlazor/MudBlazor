@@ -14,6 +14,7 @@ namespace MudBlazor
         new CssBuilder("mud-switch")
             .AddClass($"mud-disabled", Disabled)
             .AddClass($"mud-readonly", ReadOnly)
+            .AddClass($"flex-row-reverse", ReverseLabel)
           .AddClass(Class)
         .Build();
         protected string SwitchClassname =>
@@ -65,6 +66,13 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.FormComponent.Appearance)]
         public bool DisableRipple { get; set; }
+
+        /// <summary>
+        /// If true, reverses label direction
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Appearance)]
+        public bool ReverseLabel { get; set; }
 
         protected internal void HandleKeyDown(KeyboardEventArgs obj)
         {
