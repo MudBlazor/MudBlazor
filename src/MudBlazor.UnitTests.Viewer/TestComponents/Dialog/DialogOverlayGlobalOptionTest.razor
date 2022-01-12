@@ -1,0 +1,51 @@
+﻿@namespace MudBlazor.UnitTests.TestComponents
+
+<MudDialogProvider  DarkOverlayBackground="isDark" LightOverlayBackground="isLight"></MudDialogProvider>
+
+
+<MudButton Class="test-class-light-button" Variant="Variant.Filled" OnClick="MakeVisibleLight">Open Light Overlay</MudButton>
+
+<MudButton Class="test-class-dark-button" Variant="Variant.Filled" OnClick="MakeVisibleDark">Open Dark Overlay</MudButton>
+
+<MudDialog @bind-IsVisible="visible" Class="test-class" ClassContent="content-class">
+    <DialogContent>
+        <MudText>Wabalabadubdub!</MudText>
+    </DialogContent>
+    <DialogActions>
+        <MudButton  Class="test-class-close-button" Variant="Variant.Filled" OnClick="Close">Close</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter] public MudDialogInstance MudDialog { get; set; }
+
+    bool visible;
+
+    bool isLight = false;
+
+    bool isDark = true;
+
+    public void MakeVisibleLight()
+    {
+        isDark = false;
+        isLight = true;
+        visible = true;
+        StateHasChanged();
+    }
+
+    public void MakeVisibleDark()
+    {
+        isDark = true;
+        isLight = false;
+        visible = true;
+        StateHasChanged();
+    }
+
+    public void Close()
+    {
+        visible = false;
+        StateHasChanged();
+    }
+
+
+}

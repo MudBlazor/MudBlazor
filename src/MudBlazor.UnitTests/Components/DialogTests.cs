@@ -360,6 +360,41 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("div.mud-overlay-scrim").ClassList.Should().Contain("mud-overlay-dark");
             await comp.InvokeAsync(() => dialogReference.Close());
         }
+
+        [Test]
+        public async Task DialogOverlayLightAndDark_Global()
+        {
+            var comp = Context.RenderComponent<MudDialogProvider>(parameters => parameters
+            .Add(p => p.DarkOverlayBackground, false)
+            .Add(p => p.LightOverlayBackground, true));
+            comp.Render();
+            var service = Context.Services.GetService<IDialogService>() as DialogService;
+            service.Should().NotBe(null);
+            IDialogReference dialogReference = null;
+            // open simple test dialog
+            await comp.InvokeAsync(() => dialogReference = service?.Show<DialogOkCancel>());
+            dialogReference.Should().NotBe(null);
+            //Check BG is light
+            comp.FindComponent<MudOverlay>().Should().NotBeNull();
+            comp.FindComponent<MudOverlay>().Find("div.mud-overlay-scrim").ClassList.Should().Contain("mud-overlay-light");
+
+            comp.Dispose();
+            comp = null;
+
+            comp = Context.RenderComponent<MudDialogProvider>(parameters => parameters
+            .Add(p => p.DarkOverlayBackground, true)
+            .Add(p => p.LightOverlayBackground, false));
+            comp.Render();
+            service = Context.Services.GetService<IDialogService>() as DialogService;
+            service.Should().NotBe(null);
+            dialogReference = null;
+            // open simple test dialog
+            await comp.InvokeAsync(() => dialogReference = service?.Show<DialogOkCancel>());
+            dialogReference.Should().NotBe(null);
+            //Check BG is dark
+            comp.FindComponent<MudOverlay>().Should().NotBeNull();
+            comp.FindComponent<MudOverlay>().Find("div.mud-overlay-scrim").ClassList.Should().Contain("mud-overlay-dark");
+        }
     }
 
     internal class CustomDialogService : DialogService
