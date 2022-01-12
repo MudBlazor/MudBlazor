@@ -26,7 +26,7 @@
     private void OnDocsPageRendered(Stopwatch stopwatch)
     {
         _renderMs = stopwatch.ElapsedMilliseconds;
-        Console.WriteLine($"### {NavMan.ToBaseRelativePath(NavMan.Uri)} rendered in {_renderMs}ms");
+        //Console.WriteLine($"### {NavMan.ToBaseRelativePath(NavMan.Uri)} rendered in {_renderMs}ms");
         StateHasChanged();
     }
 }
