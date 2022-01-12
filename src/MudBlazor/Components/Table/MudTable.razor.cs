@@ -476,7 +476,6 @@ namespace MudBlazor
             if (ServerData == null)
                 return;
 
-            Loading = true;
             var label = Context.CurrentSortLabel;
 
             var state = new TableState
@@ -492,7 +491,6 @@ namespace MudBlazor
             if (CurrentPage * RowsPerPage > _server_data.TotalItems)
                 CurrentPage = 0;
 
-            Loading = false;
             StateHasChanged();
             Context?.PagerStateHasChanged?.Invoke();
         }
