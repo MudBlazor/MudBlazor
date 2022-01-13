@@ -17,6 +17,7 @@ namespace MudBlazor
         public Button Button { get; set; } = new Button();
         public Caption Caption { get; set; } = new Caption();
         public Overline Overline { get; set; } = new Overline();
+        public Input Input { get; set; } = new Input();
     }
 
     public class Default : BaseTypography
@@ -159,6 +160,17 @@ namespace MudBlazor
             FontWeight = 400;
             LineHeight = 2.66;
             LetterSpacing = ".08333em";
+        }
+    }
+
+    public class Input : BaseTypography
+    {
+        public Input()
+        {
+            FontSize = "1rem";
+            FontWeight = 400;
+            LineHeight = 1.1876;
+            LetterSpacing = ".00938em";
         }
     }
 

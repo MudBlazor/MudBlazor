@@ -3,12 +3,12 @@
     color: var(--mud-palette-text-primary);
     cursor: text;
     display: inline-flex;
-    font-size: 1rem;
+    font-size: var(--mud-typography-input-size);
     box-sizing: border-box;
     align-items: center;
-    font-weight: 400;
-    line-height: 1.1876em;
-    letter-spacing: 0.00938em;
+    font-weight: var(--mud-typography-input-weight);
+    line-height: var(--mud-typography-input-lineheight);
+    letter-spacing: var(--mud-typography-input-letterspacing);
 
     &.mud-input-full-width {
         width: 100%;
