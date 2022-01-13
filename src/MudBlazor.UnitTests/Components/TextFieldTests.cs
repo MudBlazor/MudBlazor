@@ -595,6 +595,34 @@ namespace MudBlazor.UnitTests.Components
             comp.WaitForAssertion(() => input.Instance.Value.Should().Be(""));
             comp.WaitForAssertion(() => input.Instance.Text.Should().Be(""));
         }
+        
+        /// <summary>
+        /// Setting OnlyValidateIfDirty to false must not validate on blur
+        /// </summary>
+        [Test]
+        public async Task TextField_OnlyValidateIfDirty_Is_True_Should_Not_Validate_OnBlur()
+        {
+            var comp = Context.RenderComponent<MudTextField<int?>>(
+                ComponentParameter.CreateParameter("Required", true),
+                ComponentParameter.CreateParameter("OnlyValidateIfDirty", true));
+            comp.Find("input").Blur();
+            
+            comp.FindAll("div.mud-input-error").Count.Should().Be(0);
+        }
+        
+        /// <summary>
+        /// Setting OnlyValidateIfDirty to true must validate on blur
+        /// </summary>
+        [Test]
+        public async Task TextField_OnlyValidateIfDirty_Is_False_Should_Validate_OnBlur()
+        {
+            var comp = Context.RenderComponent<MudTextField<int?>>(
+                ComponentParameter.CreateParameter("Required", true),
+                ComponentParameter.CreateParameter("OnlyValidateIfDirty", false));
+            comp.Find("input").Blur();
+            
+            comp.FindAll("div.mud-input-error").Count.Should().Be(2);
+        }
     }
 
 }
