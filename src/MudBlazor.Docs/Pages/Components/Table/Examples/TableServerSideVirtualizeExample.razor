@@ -1,10 +1,10 @@
 @using System.Net.Http.Json
 @using MudBlazor.Examples.Data.Models
+@using MudBlazor
 @namespace MudBlazor.Docs.Examples
 @inject HttpClient httpClient
-
 <MudTable ServerData="@(new Func<TableState, Task<TableData<Element>>>(ServerReload))"
-          Dense="true" Hover="true" @ref="table" 
+          Striped="true" Dense="true" Hover="true" @ref="table" 
           Virtualize="true" Height="350px" Breakpoint="Breakpoint.Sm" FixedHeader="true">
     <ToolBarContent>
         <MudText Typo="Typo.h6">Periodic Elements?</MudText>
@@ -20,7 +20,7 @@
         <MudTh><MudTableSortLabel SortLabel="mass_field" T="Element">Molar mass</MudTableSortLabel></MudTh>
     </HeaderContent>
     <RowTemplate>
-        <MudTd DataLabel="Nr">@context.Number</MudTd>
+        <MudTd DataLabel="Nrs">@context.Number</MudTd>
         <MudTd DataLabel="Sign">@context.Sign</MudTd>
         <MudTd DataLabel="Name">@context.Name</MudTd>
         <MudTd DataLabel="Position">@context.Position</MudTd>
@@ -33,7 +33,6 @@
         <MudText>Loading...</MudText>
     </LoadingContent>
 </MudTable>
-
 @code {
     private IEnumerable<Element> pagedData;
     private MudTable<Element> table;

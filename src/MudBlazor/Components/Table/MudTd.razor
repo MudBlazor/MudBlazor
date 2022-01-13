@@ -2,5 +2,12 @@
 @inherits MudComponentBase
 
 <td data-label="@DataLabel" style="@Style" class="@Classname" @attributes="@UserAttributes">
-    @ChildContent
+    @if (Mode == MudBaseColumn.Rendermode.PlaceHolder)
+    {
+        <MudSkeleton />
+    }
+    else
+    {
+        @ChildContent
+    }
 </td>

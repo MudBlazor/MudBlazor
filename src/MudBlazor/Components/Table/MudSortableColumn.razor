@@ -27,6 +27,10 @@
     {
         <MudTd DataLabel="@HeaderText"><MudTextField @bind-Value="InternalValue" /></MudTd>
     }
+    else if (Mode == Rendermode.PlaceHolder)
+    {
+        <MudTd><MudSkeleton /></MudTd>
+    }
     else if (Mode == Rendermode.Footer)
     {
         @if (_footerValueAvailable)

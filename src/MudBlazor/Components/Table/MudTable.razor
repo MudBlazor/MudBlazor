@@ -5,7 +5,7 @@
 <div @attributes="UserAttributes" class="@Classname" style="@Style">
 @if (Items != null || ServerData != null)
 {
-    <CascadingValue Value="TableContext" IsFixed="true">
+    <CascadingValue Value="@TableContext" IsFixed="true">
         @if (ToolBarContent != null)
         {
             <MudToolBar Class="mud-table-toolbar">
@@ -49,7 +49,7 @@
                                 
                                 @if (Columns != null)
                                 {
-                                    <CascadingValue Value="MudBaseColumn.Rendermode.Header" Name="Mode">
+                                    <CascadingValue Value="@(MudBaseColumn.Rendermode.Header)" Name="Mode">
                                         @Columns(Def)
                                     </CascadingValue>
                                 }
@@ -83,19 +83,19 @@
                             var rowIndex = 0;
                             <MudVirtualize IsEnabled="@Virtualize" Items="@CurrentPageItems?.ToList()" Context="item" ItemsProvider="@GetVirtualizeItemsProvider()" @ref="mudVirtualizeComponent">
                                 <Placeholder>
-                                    @{ var rowClass = new CssBuilder(RowClass).AddClass("grid-row-placeholder").AddClass(RowClassFunc?.Invoke(Def, rowIndex)).Build(); }
+                                    @{ var rowClass = new CssBuilder(RowClass).AddClass(RowClassFunc?.Invoke(Def, rowIndex)).Build(); }
                                     @{ var rowStyle = new StyleBuilder().AddStyle(RowStyle).AddStyle(RowStyleFunc?.Invoke(Def, rowIndex)).Build(); }
                                     <MudTr Class="@rowClass" Style="@rowStyle" IsCheckable="false" IsEditable="false">
-                                        @if (RowTemplate != null)
-                                        {
-                                            @RowTemplate(Def)
-                                        }
-                                        @if (Columns != null)
-                                        {
-                                            <CascadingValue Value="MudBaseColumn.Rendermode.Item" Name="Mode">
+                                        <CascadingValue Value="@(MudBaseColumn.Rendermode.PlaceHolder)" Name="Mode" IsFixed="true">
+                                            @if (RowTemplate != null)
+                                            {
+                                                @RowTemplate(Def)
+                                            }
+                                            @if (Columns != null)
+                                            {
                                                 @Columns(Def)
-                                            </CascadingValue>
-                                        }
+                                            }
+                                        </CascadingValue>
                                     </MudTr>
                                 </Placeholder>
                                 <ItemContent>
@@ -103,7 +103,6 @@
                                     @{ var rowStyle = new StyleBuilder().AddStyle(RowStyle).AddStyle(RowStyleFunc?.Invoke(item, rowIndex)).Build(); }
                                     <MudTr Class="@rowClass" Style="@rowStyle" Item="item" @key="item" IsCheckable="MultiSelection" IsEditable="IsEditable" 
                                             IsCheckedChanged="((value) => { var x = item; OnRowCheckboxChanged(value, x); })">
-
                                         @if ((!ReadOnly) && IsEditable && object.Equals(_editingItem, item))
                                         {
                                             <CascadingValue Value="@Validator" IsFixed="true">
@@ -113,7 +112,7 @@
 										        }
 										        @if (Columns != null)
 										        {
-											        <CascadingValue Value="MudBaseColumn.Rendermode.Edit" Name="Mode">
+											        <CascadingValue Value="@(MudBaseColumn.Rendermode.Edit)" Name="Mode">
 												        @Columns(item)
 											        </CascadingValue>
 										        }
@@ -127,7 +126,7 @@
 										    }
 										    @if (Columns != null)
 										    {
-											    <CascadingValue Value="MudBaseColumn.Rendermode.Item" Name="Mode">
+											    <CascadingValue Value="@(MudBaseColumn.Rendermode.Item)" Name="Mode">
 												    @Columns(item)
 											    </CascadingValue>
 										    }
@@ -177,7 +176,7 @@
                                 }
                                 @if (Columns != null)
                                 {
-                                    <CascadingValue Value="MudBaseColumn.Rendermode.Footer" Name="Mode">
+                                    <CascadingValue Value="@(MudBaseColumn.Rendermode.Footer)" Name="Mode">
                                         @Columns(Def)
                                     </CascadingValue>
                                 }
@@ -220,7 +219,7 @@
 							}
 							@if (Columns != null)
 							{
-								<CascadingValue Value="MudBaseColumn.Rendermode.Edit" Name="Mode">
+								<CascadingValue Value="@(MudBaseColumn.Rendermode.Edit)" Name="Mode">
 									@Columns(item)
 								</CascadingValue>
 							}
@@ -234,7 +233,7 @@
 						}
 						@if (Columns != null)
 						{
-							<CascadingValue Value="MudBaseColumn.Rendermode.Item" Name="Mode">
+							<CascadingValue Value="@(MudBaseColumn.Rendermode.Item)" Name="Mode">
 								@Columns(item)
 							</CascadingValue>
 						}

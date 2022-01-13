@@ -24,6 +24,13 @@ namespace MudBlazor
         public RenderFragment<T> RowTemplate { get; set; }
 
         /// <summary>
+        /// Defines how a table row looks like when it's loading. To be used with virtualization. Use MudTd to define the table cells and their content.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Table.Rows)]
+        public RenderFragment<T> VirtualizedRowTemplate { get; set; }
+
+        /// <summary>
         /// Row Child content of the component.
         /// </summary>
         [Parameter]

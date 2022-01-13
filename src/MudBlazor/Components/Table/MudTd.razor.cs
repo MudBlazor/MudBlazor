@@ -16,6 +16,9 @@ namespace MudBlazor
 
         [Parameter] public string DataLabel { get; set; }
 
+        [CascadingParameter(Name = "Mode")]
+        internal MudBaseColumn.Rendermode? Mode { get; set; }
+
         /// <summary>
         /// Hide cell when breakpoint is smaller than the defined value in table.
         /// </summary>
