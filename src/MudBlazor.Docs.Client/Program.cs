@@ -1,29 +1,31 @@
-﻿using System;
-using System.Net.Http;
-using System.Threading.Tasks;
-using Blazor.Analytics;
+﻿using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.Extensions.DependencyInjection;
+
+using System;
+using System.Net.Http;
+using Blazor.Analytics;
+using MudBlazor.Docs.Client;
 using MudBlazor.Docs.Extensions;
 using MudBlazor.Docs.Services;
-using Toolbelt.Blazor.Extensions.DependencyInjection;
+using MudBlazor.Docs.Services.Notifications;
 
-namespace MudBlazor.Docs.Client
+var builder = WebAssemblyHostBuilder.CreateDefault(args);
+builder.RootComponents.Add<App>("#app");
+builder.RootComponents.Add<HeadOutlet>("head::after");
+
+builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
+builder.Services.AddScoped<GitHubApiClient>();
+builder.Services.TryAddDocsViewServices();
+builder.Services.AddGoogleAnalytics("G-PRYNCB61NV");
+
+var build = builder.Build();
+
+var notificationService = build.Services.GetService<INotificationService>();
+if (notificationService is InMemoryNotificationService inmemoryService)
 {
-    public class Program
-    {
-        public static Task Main(string[] args)
-        {
-            var builder = WebAssemblyHostBuilder.CreateDefault(args);
-            builder.RootComponents.Add<App>("app");
-
-            builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
-            builder.Services.AddScoped<GitHubApiClient>();
-            builder.Services.TryAddDocsViewServices();
-            builder.Services.AddHeadElementHelper();
-            builder.Services.AddGoogleAnalytics("G-PRYNCB61NV");
-
-            return builder.Build().RunAsync();
-        }
-    }
+    inmemoryService.Preload();
 }
+
+
+await build.RunAsync();

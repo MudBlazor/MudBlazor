@@ -18,7 +18,9 @@ namespace MudBlazor
         /// <summary>
         /// Type of the input element. It should be a valid HTML5 input type.
         /// </summary>
-        [Parameter] public InputType InputType { get; set; } = InputType.Text;
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Behavior)]
+        public InputType InputType { get; set; } = InputType.Text;
 
         internal override InputType GetInputType() => InputType;
 
@@ -27,7 +29,9 @@ namespace MudBlazor
         /// <summary>
         /// Show clear button.
         /// </summary>
-        [Parameter] public bool Clearable { get; set; } = false;
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Behavior)]
+        public bool Clearable { get; set; } = false;
 
         /// <summary>
         /// Button click event for clear button. Called after text and value has been cleared.
@@ -57,8 +61,18 @@ namespace MudBlazor
         {
             await _elementReference.SetText(null);
         }
+
+        /// <summary>
+        /// Sets the input text from outside programmatically
+        /// </summary>
+        /// <param name="text"></param>
+        /// <returns></returns>
+        public Task SetText(string text)
+        {
+            return _elementReference?.SetText(text);
+        }
     }
 
-    [Obsolete]
+    [Obsolete("MudTextFieldString is no longer available.", true)]
     public class MudTextFieldString : MudTextField<string> { }
 }

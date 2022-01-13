@@ -1,38 +1,53 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Services;
 
 namespace MudBlazor
 {
 
-    public partial class MudHidden : MudComponentBase
+    public partial class MudHidden : MudComponentBase, IAsyncDisposable
     {
+        private Breakpoint _currentBreakpoint = Breakpoint.None;
+        private bool _serviceIsReady = false;
+        private Guid _breakpointServiceSubscriptionId;
 
-        [Inject] IResizeListenerService ResizeListener { get; set; }
+        [Inject] public IBreakpointService BreakpointService { get; set; }
+
+        [CascadingParameter] public Breakpoint CurrentBreakpointFromProvider { get; set; } = Breakpoint.None;
 
         /// <summary>
         /// The screen size(s) depending on which the ChildContent should not be rendered (or should be, if Invert is true)
         /// </summary>
-        [Parameter] public Breakpoint Breakpoint { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.Hidden.Behavior)]
+        public Breakpoint Breakpoint { get; set; }
 
         /// <summary>
         /// Inverts the Breakpoint, so that the ChildContent is only rendered when the breakpoint matches the screen size.
         /// </summary>
-        [Parameter] public bool Invert { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.Hidden.Behavior)]
+        public bool Invert { get; set; }
+
+        private bool _isHidden = true;
 
         /// <summary>
         /// True if the component is not visible (two-way bindable)
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.Hidden.Behavior)]
         public bool IsHidden
         {
-            get => _is_hidden;
+            get => _isHidden;
             set
             {
-                if (_is_hidden == value)
-                    return;
-                _is_hidden = value;
-                StateHasChanged();
+                if (_isHidden != value)
+                {
+                    _isHidden = value;
+                    IsHiddenChanged.InvokeAsync(_isHidden);
+
+                }
             }
         }
 
@@ -44,36 +59,62 @@ namespace MudBlazor
         /// <summary>
         /// Child content of component.
         /// </summary>
-        [Parameter] public RenderFragment ChildContent { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.Hidden.Behavior)]
+        public RenderFragment ChildContent { get; set; }
 
-        private bool _is_hidden = true;
+        protected void Update(Breakpoint currentBreakpoint)
+        {
+            if (CurrentBreakpointFromProvider != Breakpoint.None)
+            {
+                currentBreakpoint = CurrentBreakpointFromProvider;
+            }
+            else if (_serviceIsReady == false) { return; }
+
+            if (currentBreakpoint == Breakpoint.None) { return; }
+
+            _currentBreakpoint = currentBreakpoint;
+
+            var hidden = BreakpointService.IsMediaSize(Breakpoint, currentBreakpoint);
+            if (Invert == true)
+            {
+                hidden = !hidden;
+            }
+
+            IsHidden = hidden;
+        }
+
+        protected override void OnParametersSet()
+        {
+            base.OnParametersSet();
+            Update(_currentBreakpoint);
+        }
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
-            if (firstRender)
-            {
-                ResizeListener.OnBreakpointChanged += OnBreakpointChanged;
-                var breakpoint = await ResizeListener.GetBreakpoint();
-                Update(breakpoint);
-            }
             await base.OnAfterRenderAsync(firstRender);
+            if (firstRender == true)
+            {
+                if (CurrentBreakpointFromProvider == Breakpoint.None)
+                {
+                    var attachResult = await BreakpointService.Subscribe((x) =>
+                    {
+                        Update(x);
+                        InvokeAsync(StateHasChanged);
+                    });
+
+                    _serviceIsReady = true;
+                    _breakpointServiceSubscriptionId = attachResult.SubscriptionId;
+                    Update(attachResult.Breakpoint);
+                    StateHasChanged();
+                }
+                else
+                {
+                    _serviceIsReady = true;
+                }
+            }
         }
 
-        protected void Update(Breakpoint breakpoint)
-        {
-            var hidden = ResizeListener.IsMediaSize(Breakpoint, breakpoint);
-            if (Invert)
-                hidden = !hidden;
-            if (hidden == _is_hidden)
-                return;
-            _is_hidden = hidden;
-            _ = InvokeAsync(StateHasChanged);
-            _ = IsHiddenChanged.InvokeAsync(_is_hidden);
-        }
-
-        private void OnBreakpointChanged(object sender, Breakpoint breakpoint)
-        {
-            Update(breakpoint);
-        }
+        public async ValueTask DisposeAsync() => await BreakpointService.Unsubscribe(_breakpointServiceSubscriptionId);
     }
 }

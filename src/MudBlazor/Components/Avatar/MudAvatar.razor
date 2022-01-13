@@ -6,7 +6,14 @@
     <div @attributes="UserAttributes" class="@Classname" style="@Stylesname">
         @if (!String.IsNullOrEmpty(Image))
         {
-            <img src="@Image" class="mud-avatar-img" />
+            if (!String.IsNullOrEmpty(Alt))
+            {
+                <img src="@Image" alt="@Alt" class="mud-avatar-img" />
+            }
+            else
+            {
+                <img src="@Image" class="mud-avatar-img" />
+            }
         }
         else
         {

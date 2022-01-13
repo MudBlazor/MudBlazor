@@ -48,7 +48,7 @@ in your component and apply styles at component level.
 - Include a summary comment for every public property ([Summary documentation](https://docs.microsoft.com/de-de/dotnet/csharp/programming-guide/xmldoc/summary))
 - Use the `CssBuilder` for classes and styles
 - Add a doc page and examples which should be ordered from easy to more complex
-
+- Examples with more than 15 lines should be collapsed by default
 
 ## Project structure and where to find the most important files
 MudBlazor is divided in different projects. The most important ones are:

@@ -19,15 +19,21 @@
     /// <summary>
     /// Set the max-width to match the min-width of the current breakpoint. This is useful if you'd prefer to design for a fixed set of sizes instead of trying to accommodate a fully fluid viewport. It's fluid by default.
     /// </summary>
-    [Parameter] public bool Fixed { get; set; } = false;
+    [Parameter] 
+    [Category(CategoryTypes.Container.Behavior)]
+    public bool Fixed { get; set; } = false;
 
     /// <summary>
     /// Determine the max-width of the container. The container width grows with the size of the screen. Set to false to disable maxWidth.
     /// </summary>
-    [Parameter] public MaxWidth MaxWidth { get; set; } = MaxWidth.Large;
+    [Parameter] 
+    [Category(CategoryTypes.Container.Behavior)]
+    public MaxWidth MaxWidth { get; set; } = MaxWidth.Large;
 
     /// <summary>
     /// Child content of component.
     /// </summary>
-    [Parameter] public RenderFragment ChildContent { get; set; }
+    [Parameter]
+[   Category(CategoryTypes.Container.Behavior)]
+    public RenderFragment ChildContent { get; set; }
 }

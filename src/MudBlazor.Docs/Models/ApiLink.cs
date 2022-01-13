@@ -9,20 +9,12 @@ namespace MudBlazor.Docs.Models
     {
         public static string GetApiLinkFor(Type type)
         {
-            if (!s_specialCaseComponents.TryGetValue(type, out var component))
-                component = new string(type.ToString().Replace("MudBlazor.Mud", "").TakeWhile(c => c != '`').ToArray()).ToLowerInvariant();
-            var href = $"api/{component}";
-            return href;
+            return $"api/{GetComponentName(type)}";
         }
 
         public static string GetComponentLinkFor(Type type)
         {
-            if (!s_specialCaseComponents.TryGetValue(type, out var component))
-                component = new string(type.ToString().Replace("MudBlazor.Mud", "").TakeWhile(c => c != '`').ToArray()).ToLowerInvariant();
-            if (s_componentLinkTranslation.ContainsKey(component))
-                component = s_componentLinkTranslation[component];
-            var href = $"components/{component}";
-            return href;
+            return $"components/{GetComponentName(type)}";
         }
 
         /// <summary>
@@ -63,6 +55,17 @@ namespace MudBlazor.Docs.Models
             return null;
         }
 
+        private static string GetComponentName(Type type)
+        {
+            if (!s_specialCaseComponents.TryGetValue(type, out var component))
+            {
+                component = new string(type.ToString().Replace("MudBlazor.Mud", "").TakeWhile(c => c != '`').ToArray())
+                    .ToLowerInvariant();
+            }
+
+            return component;
+        }
+
         private static Dictionary<Type, string> s_specialCaseComponents =
             new()
             {
@@ -75,18 +78,12 @@ namespace MudBlazor.Docs.Models
                 [typeof(Donut)] = "donutchart",
                 [typeof(Line)] = "linechart",
                 [typeof(Pie)] = "piechart",
+                [typeof(MudChip)] = "chips",
+                [typeof(ChartOptions)] = "options"
             };
 
         // this is the inversion of above lookup
         private static Dictionary<string, Type> s_inverseSpecialCase =
             s_specialCaseComponents.ToDictionary(pair => pair.Value, pair => pair.Key);
-
-        private static Dictionary<string, string> s_componentLinkTranslation =
-            new()
-            {
-                ["icon"] = "icons",
-                ["chip"] = "chips",
-            };
-
     }
 }

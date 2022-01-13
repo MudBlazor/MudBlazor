@@ -2,8 +2,11 @@
 // Copyright (c) 2020 Adapted by Jonny Larsson, Meinrad Recheis and Contributors
 
 using System;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Extensions;
+using MudBlazor.Services;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
@@ -11,12 +14,15 @@ namespace MudBlazor
     public partial class MudDialogInstance : MudComponentBase
     {
         private DialogOptions _options = new();
+        private string _elementId = "dialog_" + Guid.NewGuid().ToString().Substring(0, 8);
 
+        [Inject] private IKeyInterceptor _keyInterceptor { get; set; }
         [CascadingParameter] public bool RightToLeft { get; set; }
         [CascadingParameter] private MudDialogProvider Parent { get; set; }
         [CascadingParameter] private DialogOptions GlobalDialogOptions { get; set; } = new DialogOptions();
 
         [Parameter]
+        [Category(CategoryTypes.Dialog.Misc)]  // Behavior and Appearance
         public DialogOptions Options
         {
             get
@@ -28,19 +34,33 @@ namespace MudBlazor
             set => _options = value;
         }
 
-        [Parameter] public string Title { get; set; }
-        [Parameter] public RenderFragment TitleContent { get; set; }
-        [Parameter] public RenderFragment Content { get; set; }
-        [Parameter] public Guid Id { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.Dialog.Behavior)]
+        public string Title { get; set; }
+
+        [Parameter]
+        [Category(CategoryTypes.Dialog.Behavior)]
+        public RenderFragment TitleContent { get; set; }
+
+        [Parameter]
+        [Category(CategoryTypes.Dialog.Behavior)]
+        public RenderFragment Content { get; set; }
+
+        [Parameter]
+        [Category(CategoryTypes.Dialog.Behavior)]
+        public Guid Id { get; set; }
 
         /// <summary>
         /// Custom close icon.
         /// </summary>
-        [Parameter] public string CloseIcon { get; set; } = Icons.Material.Filled.Close;
+        [Parameter]
+        [Category(CategoryTypes.Dialog.Appearance)]
+        public string CloseIcon { get; set; } = Icons.Material.Filled.Close;
 
         private string Position { get; set; }
         private string DialogMaxWidth { get; set; }
         private bool DisableBackdropClick { get; set; }
+        private bool CloseOnEscapeKey { get; set; }
         private bool NoHeader { get; set; }
         private bool CloseButton { get; set; }
         private bool FullScreen { get; set; }
@@ -50,6 +70,39 @@ namespace MudBlazor
         protected override void OnInitialized()
         {
             ConfigureInstance();
+        }
+
+        protected override async Task OnAfterRenderAsync(bool firstRender)
+        {
+            if (firstRender)
+            {
+                //Since CloseOnEscapeKey is the only thing to be handled, turn interceptor off
+                if (CloseOnEscapeKey)
+                {
+                    await _keyInterceptor.Connect(_elementId, new KeyInterceptorOptions()
+                    {
+                        TargetClass = "mud-dialog",
+                        Keys = {
+                            new KeyOptions { Key="Escape", SubscribeDown = true },
+                        },
+                    });
+                    _keyInterceptor.KeyDown += HandleKeyDown;
+                }
+            }
+            await base.OnAfterRenderAsync(firstRender);
+        }
+
+        internal void HandleKeyDown(KeyboardEventArgs args)
+        {
+             switch (args.Key)
+            {
+                case "Escape":
+                    if (CloseOnEscapeKey)
+                    {
+                        Cancel();
+                    }
+                    break;
+            }
         }
 
         public void SetOptions(DialogOptions options)
@@ -116,6 +169,7 @@ namespace MudBlazor
             FullWidth = SetFullWidth();
             FullScreen = SetFulScreen();
             DisableBackdropClick = SetDisableBackdropClick();
+            CloseOnEscapeKey = SetCloseOnEscapeKey();
         }
 
         private string SetPosition()
@@ -216,6 +270,17 @@ namespace MudBlazor
 
             if (GlobalDialogOptions.DisableBackdropClick.HasValue)
                 return GlobalDialogOptions.DisableBackdropClick.Value;
+
+            return false;
+        }
+
+        private bool SetCloseOnEscapeKey()
+        {
+            if (Options.CloseOnEscapeKey.HasValue)
+                return Options.CloseOnEscapeKey.Value;
+
+            if (GlobalDialogOptions.CloseOnEscapeKey.HasValue)
+                return GlobalDialogOptions.CloseOnEscapeKey.Value;
 
             return false;
         }

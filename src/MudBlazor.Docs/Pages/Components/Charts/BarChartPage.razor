@@ -1,17 +1,28 @@
 ﻿@page "/components/barchart"
+@page "/components/chart-types/barchart"
 
 <DocsPage>
-    <DocsPageHeader Title="Bar Chart" SubTitle="">
-    </DocsPageHeader>
+    <DocsPageHeader Title="Bar Chart" />
+    
     <DocsPageContent>
+
         <DocsPageSection>
             <SectionHeader>
                 <Description></Description>
             </SectionHeader>
-            <SectionContent Outlined="true" FullWidth="true">
+            <SectionContent ShowCode="false" Code="BarExample1">
                 <BarExample1 />
             </SectionContent>
-            <SectionSource ShowCode="false" Code="BarExample1" GitHubFolderName="Charts" />
         </DocsPageSection>
+        
+        <DocsPageSection>
+            <SectionHeader Title="Custom SVG Content">
+                <Description></Description>
+            </SectionHeader>
+            <SectionContent Code="BarCustomGraphicsExample">
+                <BarCustomGraphicsExample/>
+            </SectionContent>
+        </DocsPageSection>
+        
     </DocsPageContent>
 </DocsPage>

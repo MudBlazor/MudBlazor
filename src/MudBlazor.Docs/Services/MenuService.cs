@@ -9,13 +9,12 @@ namespace MudBlazor.Docs.Services
     public interface IMenuService
     {
         //Menu sections
-        IEnumerable<DocsLink> GettingStarted { get; }
         IEnumerable<MudComponent> Components { get; }
         IEnumerable<MudComponent> Api { get; }
         MudComponent GetParent(Type type);
+        MudComponent GetComponent(Type type);
         IEnumerable<DocsLink> Features { get; }
         IEnumerable<DocsLink> Customization { get; }
-        IEnumerable<DocsLink> About { get; }
     }
 
     /// <summary>
@@ -28,11 +27,12 @@ namespace MudBlazor.Docs.Services
         /// Add here the new menu elements without caring about the order.
         /// They will be reordered automatically
         /// </summary>
-        private readonly DocsComponents _docsComponents = new DocsComponents()
+        private readonly List<MudComponent> _docsComponents = new DocsComponents()
             //Individual elements
             .AddItem("Container", typeof(MudContainer))
             .AddItem("Grid", typeof(MudGrid), typeof(MudItem))
             .AddItem("Hidden", typeof(MudHidden))
+            .AddItem("Breakpoint Provider", typeof(MudBreakpointProvider))
             .AddItem("Chips", typeof(MudChip))
             .AddItem("ChipSet", typeof(MudChipSet))
             .AddItem("Badge", typeof(MudBadge))
@@ -57,6 +57,7 @@ namespace MudBlazor.Docs.Services
             .AddItem("Rating", typeof(MudRating), typeof(MudRatingItem))
             .AddItem("Skeleton", typeof(MudSkeleton))
             .AddItem("Table", typeof(MudTable<T>))
+            .AddItem("Data Grid", typeof(MudDataGrid<T>))
             .AddItem("Simple Table", typeof(MudSimpleTable))
             .AddItem("Tooltip", typeof(MudTooltip))
             .AddItem("Typography", typeof(MudText))
@@ -78,7 +79,7 @@ namespace MudBlazor.Docs.Services
             //GROUPS
 
             //Inputs
-            .AddNavGroup("Form Inputs & controls", false, new DocsComponents()
+            .AddNavGroup("Form & Inputs", false, new DocsComponents()
                 .AddItem("Radio", typeof(MudRadio<T>), typeof(MudRadioGroup<T>))
                 .AddItem("Checkbox", typeof(MudCheckBox<T>))
                 .AddItem("Select", typeof(MudSelect<T>), typeof(MudSelectItem<T>))
@@ -109,46 +110,68 @@ namespace MudBlazor.Docs.Services
 
             //Charts
             .AddNavGroup("Charts", false, new DocsComponents()
-                .AddItem("Donut chart", typeof(Donut))
-                .AddItem("Line chart", typeof(Line))
-                .AddItem("Pie chart", typeof(Pie))
-                .AddItem("Bar chart", typeof(Bar))
-            );
+                //.AddItem("Options", typeof(ChartOptions)) // <-- this does not work because ChartOptions is not a component!
+                .AddItem("Donut Chart", typeof(Donut))
+                .AddItem("Line Chart", typeof(Line))
+                .AddItem("Pie Chart", typeof(Pie))
+                .AddItem("Bar Chart", typeof(Bar))
+            )
+            // this must be last!
+            .GetComponentsSortedByName();
 
-        public IEnumerable<MudComponent> Components => _docsComponents.Elements;
+        public IEnumerable<MudComponent> Components => _docsComponents;
 
         private Dictionary<Type, MudComponent> _parents = new();
+        private Dictionary<Type, MudComponent> _componentLookup = new();
 
-        public MudComponent GetParent(Type child) => _parents[child];
+        public MudComponent GetParent(Type child) {
+            if (child == null)
+                return null;
+            if ( _parents.TryGetValue(child, out var parent))
+                return parent;
+            return null;
+        }
+
+        public MudComponent GetComponent(Type type)
+        {
+            if (type == null)
+                return null;
+            if (_componentLookup.ContainsKey(type))
+                return _componentLookup[type];
+            if (_parents.ContainsKey(type))
+                return _parents[type];
+            return null;
+        }
+        
 
         public MenuService()
         {
-            foreach (var item in Components)
+            foreach (var comp in Components)
             {
-                if (item.IsNavGroup)
+                if (comp.IsNavGroup)
                 {
-                    foreach (var apiItem in item.GroupItems.Elements)
+                    foreach (var groupComp in comp.GroupComponents)
                     {
-                        _parents.Add(apiItem.Component, item);
+                        _componentLookup.Add(groupComp.Type, groupComp);
+                        _parents.Add(groupComp.Type, comp);
                     }
                 }
                 else
                 {
-                    _parents.Add(item.Component, item);
-
-                    if (item.ChildComponents != null)
+                    _componentLookup.Add(comp.Type, comp);
+                    // top-level types refer to themself as parent ;)
+                    _parents.Add(comp.Type, comp);
+                    if (comp.ChildTypes != null)
                     {
-                        foreach (var childComponent in item.ChildComponents)
-                        {
-                            _parents.Add(childComponent, item);
-                        }
+                        foreach (var childType in comp.ChildTypes)
+                            _parents.Add(childType, comp);
                     }
                 }
             }
         }
 
-        private DocsComponents _docsComponentsApi;
-        //cached property
+        private DocsComponents _docsComponentsApi; //cached property
+
         /// <summary>
         /// This autogenerates the Menu for the API
         /// </summary>
@@ -157,42 +180,28 @@ namespace MudBlazor.Docs.Services
             get
             {
                 //caching property
-                if (_docsComponentsApi != null) return _docsComponentsApi;
-
+                if (_docsComponentsApi != null)
+                    return _docsComponentsApi;
                 _docsComponentsApi = new DocsComponents();
                 foreach (var item in Components)
                 {
                     if (item.IsNavGroup)
                     {
-                        foreach (var apiItem in item.GroupItems.Elements)
+                        foreach (var groupComp in item.GroupComponents)
                         {
-                            _docsComponentsApi.AddItem(apiItem.Name, apiItem.Component);
+                            _docsComponentsApi.AddItem(groupComp.Name, groupComp.Type);
                         }
                     }
                     else
                     {
-                        _docsComponentsApi.AddItem(item.Name, item.Component);
+                        _docsComponentsApi.AddItem(item.Name, item.Type);
                     }
                 }
-
                 return _docsComponentsApi;
             }
         }
-        public IEnumerable<MudComponent> Api => DocsComponentsApi.Elements;
 
-        //cached property
-        private IEnumerable<DocsLink> _gettingStarted;
-        /// <summary>
-        /// Getting started menu links
-        /// </summary>
-        public IEnumerable<DocsLink> GettingStarted => _gettingStarted ??= new List<DocsLink>
-            {
-                new DocsLink {Title = "Installation", Href = "getting-started/installation"},
-                new DocsLink {Title = "Layouts", Href = "getting-started/layouts"},
-                new DocsLink {Title = "Usage", Href = "getting-started/usage"},
-                new DocsLink {Title = "Wireframes", Href = "getting-started/wireframes"},
-            }.OrderBy(x => x.Title);
-
+        public IEnumerable<MudComponent> Api => DocsComponentsApi.Components;
 
         private IEnumerable<DocsLink> _features;
         /// <summary>
@@ -219,23 +228,11 @@ namespace MudBlazor.Docs.Services
         /// </summary>
         public IEnumerable<DocsLink> Customization => _customization ??= new List<DocsLink>()
         {
-            //new DocsLink{Title="Default theme", Href="customization/default-theme"},
-            new DocsLink {Title = "Overview", Href = "customization/theming/overview"},
-            new DocsLink {Title = "Palette", Href = "customization/theming/palette"},
-            new DocsLink {Title = "z-index", Href = "customization/theming/z-index"},
-        }.OrderBy(x => x.Title);
-
-
-        private IEnumerable<DocsLink> _about;
-        /// <summary>
-        /// About menu links
-        /// </summary>
-        public IEnumerable<DocsLink> About => _about ??= new List<DocsLink>
-        {
-            new DocsLink{ Title="Credits" , Href="project/credit" },
-            new DocsLink{Href="project/about", Title="How it started" },
-            new DocsLink{Href="project/team", Title="Team & Contributors" },
-            new DocsLink{Href="project/versions", Title="Versions" },
+            new DocsLink {Title="Default theme", Href="customization/default-theme"},
+            new DocsLink {Title = "Overview", Href = "customization/overview"},
+            new DocsLink {Title = "Palette", Href = "customization/palette"},
+            new DocsLink {Title = "Typography", Href = "customization/typography"},
+            new DocsLink {Title = "z-index", Href = "customization/z-index"},
         }.OrderBy(x => x.Title);
     }
 }

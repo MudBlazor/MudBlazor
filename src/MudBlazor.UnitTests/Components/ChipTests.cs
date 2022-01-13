@@ -21,7 +21,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<ChipOnClickTest>();
             // print the generated html
-            Console.WriteLine(comp.Markup);
+            //Console.WriteLine(comp.Markup);
             
             // chip should have mud-clickable and mud-ripple classes
             var chip = comp.Find("div.mud-chip");
@@ -42,7 +42,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<ChipOnClickTest>();
             // print the generated html
-            Console.WriteLine(comp.Markup);
+            //Console.WriteLine(comp.Markup);
             
             // chip should have mud-clickable and mud-ripple classes
             var chip = comp.Find("div.mud-chip");

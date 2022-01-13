@@ -19,27 +19,37 @@ namespace MudBlazor
         /// <summary>
         /// Defines how a table row looks like. Use MudTd to define the table cells and their content.
         /// </summary>
-        [Parameter] public RenderFragment<T> RowTemplate { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.Table.Rows)]
+        public RenderFragment<T> RowTemplate { get; set; }
 
         /// <summary>
         /// Row Child content of the component.
         /// </summary>
-        [Parameter] public RenderFragment<T> ChildRowContent { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.Table.Rows)]
+        public RenderFragment<T> ChildRowContent { get; set; }
 
         /// <summary>
         /// Defines how a table row looks like in edit mode (for selected row). Use MudTd to define the table cells and their content.
         /// </summary>
-        [Parameter] public RenderFragment<T> RowEditingTemplate { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.Table.Editing)]
+        public RenderFragment<T> RowEditingTemplate { get; set; }
 
         #region Code for column based approach
         /// <summary>
         /// Defines how a table column looks like. Columns components should inherit from MudBaseColumn
         /// </summary>
-        [Parameter] public RenderFragment<T> Columns { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.Table.Behavior)]
+        public RenderFragment<T> Columns { get; set; }
         /// <summary>
         /// Comma separated list of columns to show if there is no templates defined
         /// </summary>
-        [Parameter] public string QuickColumns { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.Table.Behavior)]
+        public string QuickColumns { get; set; }
 
         private MudVirtualize<T> mudVirtualizeComponent;
 
@@ -118,17 +128,23 @@ namespace MudBlazor
         /// <summary>
         /// Defines the table body content when there are no matching records found
         /// </summary>
-        [Parameter] public RenderFragment NoRecordsContent { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.Table.Data)]
+        public RenderFragment NoRecordsContent { get; set; }
 
         /// <summary>
         /// Defines the table body content  the table has no rows and is loading
         /// </summary>
-        [Parameter] public RenderFragment LoadingContent { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.Table.Data)]
+        public RenderFragment LoadingContent { get; set; }
 
         /// <summary>
         /// Defines if the table has a horizontal scrollbar.
         /// </summary>
-        [Parameter] public bool HorizontalScrollbar { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.Table.Behavior)]
+        public bool HorizontalScrollbar { get; set; }
 
         internal string GetHorizontalScrollbarStyle() => HorizontalScrollbar ? ";display: block; overflow-x: auto;" : string.Empty;
 
@@ -137,6 +153,7 @@ namespace MudBlazor
         /// </summary>
         /// 
         [Parameter]
+        [Category(CategoryTypes.Table.Data)]
         public IEnumerable<T> Items
         {
             get => _items;
@@ -153,7 +170,9 @@ namespace MudBlazor
         /// <summary>
         /// A function that returns whether or not an item should be displayed in the table. You can use this to implement your own search function.
         /// </summary>
-        [Parameter] public Func<T, bool> Filter { get; set; } = null;
+        [Parameter]
+        [Category(CategoryTypes.Table.Filtering)]
+        public Func<T, bool> Filter { get; set; } = null;
 
         /// <summary>
         /// Button click event.
@@ -180,18 +199,21 @@ namespace MudBlazor
         /// Returns the class that will get joined with RowClass. Takes the current item and row index.
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.Table.Rows)]
         public Func<T, int, string> RowClassFunc { get; set; }
 
         /// <summary>
         /// Returns the style that will get joined with RowStyle. Takes the current item and row index.
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.Table.Rows)]
         public Func<T, int, string> RowStyleFunc { get; set; }
 
         /// <summary>
         /// Returns the item which was last clicked on in single selection mode (that is, if MultiSelection is false)
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.Table.Selecting)]
         public T SelectedItem
         {
             get => _selectedItem;
@@ -215,6 +237,7 @@ namespace MudBlazor
         /// If MultiSelection is true, this returns the currently selected items. You can bind this property and the initial content of the HashSet you bind it to will cause these rows to be selected initially.
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.Table.Selecting)]
         public HashSet<T> SelectedItems
         {
             get
@@ -263,6 +286,7 @@ namespace MudBlazor
         /// Defines data grouping parameters. It can has N hierarchical levels
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.Table.Grouping)]
         public TableGroupDefinition<T> GroupBy
         {
             get => _groupBy;
@@ -277,32 +301,44 @@ namespace MudBlazor
         /// <summary>
         /// Defines how a table grouping row header looks like. It works only when GroupBy is not null. Use MudTd to define the table cells and their content.
         /// </summary>
-        [Parameter] public RenderFragment<TableGroupData<object, T>> GroupHeaderTemplate { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.Table.Grouping)]
+        public RenderFragment<TableGroupData<object, T>> GroupHeaderTemplate { get; set; }
 
         /// <summary>
         /// Defines custom CSS classes for using on Group Header's MudTr.
         /// </summary>
-        [Parameter] public string GroupHeaderClass { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.Table.Grouping)]
+        public string GroupHeaderClass { get; set; }
 
         /// <summary>
         /// Defines custom styles for using on Group Header's MudTr.
         /// </summary>
-        [Parameter] public string GroupHeaderStyle { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.Table.Grouping)]
+        public string GroupHeaderStyle { get; set; }
 
         /// <summary>
         /// Defines custom CSS classes for using on Group Footer's MudTr.
         /// </summary>
-        [Parameter] public string GroupFooterClass { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.Table.Grouping)]
+        public string GroupFooterClass { get; set; }
 
         /// <summary>
         /// Defines custom styles for using on Group Footer's MudTr.
         /// </summary>
-        [Parameter] public string GroupFooterStyle { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.Table.Grouping)]
+        public string GroupFooterStyle { get; set; }
 
         /// <summary>
         /// Defines how a table grouping row footer looks like. It works only when GroupBy is not null. Use MudTd to define the table cells and their content.
         /// </summary>
-        [Parameter] public RenderFragment<TableGroupData<object, T>> GroupFooterTemplate { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.Table.Grouping)]
+        public RenderFragment<TableGroupData<object, T>> GroupFooterTemplate { get; set; }
 
         private IEnumerable<T> _preEditSort { get; set; } = null;
         private bool _hasPreEditSort => _preEditSort != null;
@@ -311,7 +347,7 @@ namespace MudBlazor
         {
             get
             {
-                if (_isEditing && _hasPreEditSort)
+                if (IsEditing && _hasPreEditSort)
                     return _preEditSort;
                 if (ServerData != null)
                 {
@@ -467,7 +503,9 @@ namespace MudBlazor
         /// Table will await this func and update based on the returned TableData.
         /// Used only with ServerData
         /// </summary>
-        [Parameter] public Func<TableState, Task<TableData<T>>> ServerData { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.Table.Data)]
+        public Func<TableState, Task<TableData<T>>> ServerData { get; set; }
 
         internal override bool HasServerData => ServerData != null;
 

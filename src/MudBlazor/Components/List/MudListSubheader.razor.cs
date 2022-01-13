@@ -13,8 +13,16 @@ namespace MudBlazor
           .AddClass(Class)
         .Build();
 
-        [Parameter] public RenderFragment ChildContent { get; set; }
-        [Parameter] public bool DisableGutters { get; set; }
-        [Parameter] public bool Inset { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.List.Behavior)]
+        public RenderFragment ChildContent { get; set; }
+
+        [Parameter]
+        [Category(CategoryTypes.List.Appearance)]
+        public bool DisableGutters { get; set; }
+
+        [Parameter]
+        [Category(CategoryTypes.List.Appearance)]
+        public bool Inset { get; set; }
     }
 }

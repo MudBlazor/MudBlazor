@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using MudBlazor.Extensions;
 
 namespace MudBlazor
@@ -111,7 +112,7 @@ namespace MudBlazor
         public Func<T, object> SortBy { get; protected set; }
         public MudTableSortLabel<T> CurrentSortLabel { get; protected set; }
 
-        public void SetSortFunc(MudTableSortLabel<T> label, bool override_direction_none = false)
+        public async Task SetSortFunc(MudTableSortLabel<T> label, bool override_direction_none = false)
         {
             CurrentSortLabel = label;
             if (label.SortDirection == SortDirection.None && override_direction_none)
@@ -119,6 +120,7 @@ namespace MudBlazor
             SortDirection = label.SortDirection;
             SortBy = label.SortBy;
             UpdateSortLabels(label);
+
             if (Table.HasServerData)
                 Table.ReloadServerData();
             else

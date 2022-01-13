@@ -1,0 +1,67 @@
+﻿@namespace MudBlazor.UnitTests.TestComponents
+
+<MudDataGrid T="Item" Items="@_items" RowClick="@OnRowClick" SelectedItemChanged="@OnSelectedItemChanged"
+    SelectedItemsChanged="@OnSelectedItemsChanged" StartedEditingItem="@OnStartedEditingItem"
+    StartedCommittingItemChanges="@OnStartedCommittingItemChanges" EditingItemCancelled="@OnEditingItemCancelled">
+    <Columns>
+        <Column T="Item" Type="ColumnType.SelectionCheckBox" EnableFooterSelection="true" />
+        <Column T="Item" Field="@nameof(Item.Name)" />
+    </Columns>
+</MudDataGrid>
+
+@code {
+    private IEnumerable<Item> _items = new List<Item>()
+    {
+        new Item("A"), 
+        new Item("B"), 
+        new Item("C")
+    };
+
+    public bool RowClicked { get; set; }
+    public bool SelectedItemChanged { get; set; }
+    public bool SelectedItemsChanged { get; set; }
+    public bool StartedEditingItem { get; set; }
+    public bool StartedCommittingItemChanges { get; set; }
+    public bool EditingItemCancelled { get; set; }
+
+    private void OnRowClick(DataGridRowClickEventArgs<Item> args)
+    {
+        RowClicked = true;
+    }
+
+    private void OnSelectedItemChanged(Item item)
+    {
+        SelectedItemChanged = true;
+    }
+
+    private void OnSelectedItemsChanged(HashSet<Item> items)
+    {
+        SelectedItemsChanged = true;
+    }
+
+    private void OnStartedEditingItem(Item item)
+    {
+        StartedEditingItem = true;
+    }
+
+    private void OnStartedCommittingItemChanges(Item item)
+    {
+        StartedCommittingItemChanges = true;
+    }
+
+    private void OnEditingItemCancelled(Item item)
+    {
+        EditingItemCancelled = true;
+    }
+
+    public class Item
+    {
+        public string Name { get; set; }
+
+        public Item(string name)
+        {
+            Name = name;
+        }
+    }
+
+}
