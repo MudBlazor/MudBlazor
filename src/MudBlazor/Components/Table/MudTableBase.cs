@@ -157,7 +157,6 @@ namespace MudBlazor
             {
                 if (_rowsPerPage is null || _rowsPerPage != value)
                     SetRowsPerPage(value);
-                }
             }
         }
 

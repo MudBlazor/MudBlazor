@@ -122,7 +122,7 @@ namespace MudBlazor
             UpdateSortLabels(label);
 
             if (Table.HasServerData)
-                Table.ReloadServerData();
+                await Table.ReloadServerData();
             else
                 TableStateHasChanged();
         }
