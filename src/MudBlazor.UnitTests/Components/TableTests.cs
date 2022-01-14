@@ -713,8 +713,9 @@ namespace MudBlazor.UnitTests.Components
             var table = comp.FindComponent<MudTable<int>>().Instance;
             var inputs = comp.FindAll("input").ToArray();
             table.SelectedItems.Count.Should().Be(0); // selected items should be empty
-            inputs[1].Click(); // A single checkbox click adds 5 items through the callback method
-            table.SelectedItems.Count.Should().Be(6);
+            Action onclick = () => inputs[1].Click(); // OnRowClick is not called anymore, neither .GotClicked<>(), so selectedItems didn't add any element.
+            onclick.Should().Throw<Bunit.MissingEventHandlerException>().WithMessage("The element does not have an event handler for the event 'onclick'. It does however have event handlers for these events, 'onchange', 'onclick:stoppropagation'.");
+            table.SelectedItems.Count.Should().Be(0);
         }
 
         /// <summary>
