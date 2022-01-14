@@ -7,7 +7,15 @@
 
         <DocsPageSection>
             <SectionHeader Title="Variants">
-                <Description>Select comes in the variants Text, Filled and Outline.<br />Select is generic, meaning you can use values of any type with it. See the example code how that works.</Description>
+                <Description>
+                    Select comes in the variants Text, Filled and Outline. Select is generic, meaning you can use values of any type with it. See the example code how that works.<br />
+                    <br />
+                    <MudAlert Severity="Severity.Info">
+                        <b>Note:</b> If you use custom types as values, make sure they override <CodeInline>Equals</CodeInline> and <CodeInline>GetHashCode</CodeInline> as well as <CodeInline>ToString</CodeInline>. See the example below.
+                    </MudAlert>
+                    <br />
+                    <br />
+                </Description>
             </SectionHeader>
             <SectionContent ShowCode="false" Code="SelectVariantsExample">
                 <SelectVariantsExample />
