@@ -10,8 +10,33 @@
     <MudSelectItem T="double" Value="4.99"/>
     <MudSelectItem T="double" Value="3.60"/>
 </MudSelect>
-<MudSelect T="string" Label="Pies" Variant="Variant.Filled" AnchorOrigin="Origin.BottomCenter">
-    <MudSelectItem Value="@("Apple Pie")" />
-    <MudSelectItem Value="@("Blackberry Pie")" />
-    <MudSelectItem Value="@("Lemon Pie")" />
+<MudSelect T="Pizza" Label="Pizza" Variant="Variant.Filled" AnchorOrigin="Origin.BottomCenter">
+    <MudSelectItem Value="@(new Pizza("Cardinale"))" />
+    <MudSelectItem Value="@(new Pizza("Diavolo"))" />
+    <MudSelectItem Value="@(new Pizza("Margarita"))" />
+    <MudSelectItem Value="@(new Pizza("Spinaci"))" />
 </MudSelect>
+
+@code {
+    public class Pizza
+    {
+        public Pizza(string name)
+        {
+            Name = name;
+        }
+
+        public readonly string Name;
+
+        // Note: this is important so the MudSelect can compare pizzas
+        public override bool Equals(object o) {
+            var other = o as Pizza;
+            return other?.Name==Name;
+        }
+
+        // Note: this is important too!
+        public override int GetHashCode() => Name?.GetHashCode() ?? 0;
+
+        // Implement this for the Pizza to display correctly in MudSelect
+        public override string ToString() => Name;
+    }
+}
