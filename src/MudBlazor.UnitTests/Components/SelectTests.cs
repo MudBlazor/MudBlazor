@@ -55,6 +55,11 @@ namespace MudBlazor.UnitTests.Components
 
             items[0].Click();
             comp.WaitForAssertion(() => select.Instance.Value.Should().Be("1"));
+            //Check user on blur implementation works
+            var _switch = comp.FindComponent<MudSwitch<bool>>();
+            _switch.Instance.Checked = true;
+            comp.InvokeAsync(() => select.Instance.OnLostFocus(new FocusEventArgs())).AndForget();
+            _switch.Instance.Checked.Should().Be(false);
         }
 
         /// <summary>
