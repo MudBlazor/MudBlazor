@@ -986,7 +986,7 @@ namespace MudBlazor
             _shadowLookup.Remove(item.Value);
         }
 
-        private void OnLostFocus(FocusEventArgs obj)
+        internal void OnLostFocus(FocusEventArgs obj)
         {
             if (_isOpen)
             {
