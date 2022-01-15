@@ -1,4 +1,8 @@
-﻿.docs-page-content-navigation-drawer{
+﻿.docs-page-content{
+  min-height: calc(100vh - 600px);
+}
+
+.docs-page-content-navigation-drawer{
   .title{
     font-weight: 500;
   }

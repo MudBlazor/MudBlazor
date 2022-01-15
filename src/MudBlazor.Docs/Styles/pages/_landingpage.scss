@@ -69,7 +69,7 @@
             height: 100%;
             z-index: 2;
             background-color: var(--mud-palette-background);
-            border-right: 1px solid var(--mud-palette-table-lines);
+            border-right: 1px solid var(--mud-palette-divider);
             overflow: hidden;
             transition: width ease-in 0.1s;
         }
@@ -99,7 +99,7 @@
     .lp-device {
         overflow: hidden;
         position: absolute;
-        outline: rgba(255, 255, 255, 0.8) solid 1px;
+        outline: var(--mud-palette-divider) solid 1px;
         box-shadow: inset 0 1px 1px 0 hsla(0deg, 0%, 100%, 0.1), 0 50px 100px -20px rgba(50, 50, 93, 0.25), 0 30px 60px -30px rgba(0, 0, 0, 0.3);
         background: linear-gradient(0deg, rgba(0,0,0,0.2) 0%, rgba(255,255,255,0.2) 50%, rgba(0,0,0,0.2) 100%);
 
@@ -240,10 +240,13 @@
             left: 240px;
             width: calc(calc(2560px / 2) + 24px);
             height: calc(calc(1440px / 2) + 24px);
-            filter: blur(2px);
             border-radius: 12px;
             animation: spin 10s reverse infinite;
             background-image: linear-gradient(var(--rotate), rgba(89, 74, 226, 0.5), rgba(255, 64, 129, 0.5) 43%, rgba(116, 103, 239, 0.5));
+            //rotation animation doesn't work in firefox
+            @supports (-moz-appearance:none) {
+                background-image: linear-gradient(132deg, rgba(89, 74, 226, 0.5), rgba(255, 64, 129, 0.5) 43%, rgba(116, 103, 239, 0.5));
+            }
         }
 
         &.phone-shadow {
@@ -252,9 +255,12 @@
             width: calc(calc(1170px / 4) + 28px);
             height: calc(calc(2432px / 4) + 28px);
             border-radius: 46px;
-            filter: grayscale(1);
             animation: spin 20s linear infinite;
-            background-image: linear-gradient(var(--rotate), rgba(89, 74, 226, 0.5), rgba(255, 255, 255, 0.5) 43%, rgba(116, 103, 239, 0.5));
+            background-image: linear-gradient(var(--rotate), rgba(100, 100, 100, 0.5), rgba(255, 255, 255, 0.5) 43%, rgba(100, 100, 100, 0.5));
+            //rotation animation doesn't work in firefox
+            @supports (-moz-appearance:none) {
+                background-image: linear-gradient(rgba(100, 100, 100, 0.5), rgba(255, 255, 255, 0.5) 43%, rgba(100, 100, 100, 0.5));
+            }
         }
     }
 
