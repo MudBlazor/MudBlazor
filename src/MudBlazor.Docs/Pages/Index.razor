@@ -70,7 +70,7 @@
             </MudText>
         </MudItem>
     </MudGrid>
-    <div class="@GetTestimonailClass()">
+    <div class="@GetTestimonialClass()">
         <MudText Typo="Typo.h3" Align="Align.Center" Class="mt-16 mb-8">“Never had such a good time making a site“</MudText>
         <div class="absolute z-2 d-flex justify-center align-end mud-width-full mud-height-full">
             <MudButton OnClick="ToggleTestimonials" Color="Color.Primary" Variant="Variant.Filled" DisableElevation="true" Size="Size.Large" Class="mb-12">@(_showTestimonials? "Show less" : "Show more")</MudButton>
@@ -362,7 +362,7 @@
         _showTestimonials = !_showTestimonials;
     }
 
-    private string GetTestimonailClass()
+    private string GetTestimonialClass()
     {
         if (_showTestimonials)
         {
