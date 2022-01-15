@@ -8,7 +8,7 @@
     <MudSpacer/>
     @if (DisplaySearchBar)
     {
-        <MudIconButton Icon="@Icons.Rounded.Search" Color="Color.Inherit" Edge="Edge.End" OnClick="@(() => OpenDialog())"/>
+        <MudIconButton Icon="@Icons.Rounded.Search" Color="Color.Inherit" Edge="Edge.End" OnClick="@(() => OpenSearchDialog())"/>
     }
     else
     {
@@ -88,6 +88,10 @@
         </MudAutocomplete>
         <MudDivider FlexItem="true" Vertical="true" DividerType="DividerType.Middle" Class="mx-4 my-4"/>
     }
+    else
+    {
+        <MudIconButton Class="mr-0" Icon="@Icons.Rounded.Search" Color="Color.Inherit" Edge="Edge.End" OnClick="@(() => OpenSearchDialog())"/>
+    }
     <AppbarButtons/>
     <MudTooltip Duration="1000" Text="GitHub Repository">
         <MudIconButton Link="https://github.com/MudBlazor/MudBlazor/" Target="_blank" Icon="@Icons.Custom.Brands.GitHub" Color="Color.Inherit" Edge="Edge.End"/>
@@ -95,7 +99,7 @@
 </MudHidden>
 
 
-<MudDialog @bind-IsVisible="_dialogOpen" Options="_dialogOptions" Class="docs-gray-bg" ClassContent="docs-mobile-dialog-search">
+<MudDialog @bind-IsVisible="_searchDialogOpen" Options="_dialogOptions" Class="docs-gray-bg" ClassContent="docs-mobile-dialog-search">
     <DialogContent>
         <MudAutocomplete @ref="_searchAutocomplete" T="ApiLinkServiceEntry" PopoverClass="docs-mobile-dialog-search-popover" Placeholder="Search docs" SearchFunc="Search" ValueChanged="OnSearchResult" Clearable="true" Variant="Variant.Outlined" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search">
             <ItemTemplate Context="result">
