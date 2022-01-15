@@ -27,8 +27,8 @@ public partial class Appbar
     MudAutocomplete<ApiLinkServiceEntry> _searchAutocomplete;
 
     private string _badgeTextSoon = "coming soon";
-    private bool _dialogOpen;
-    private void OpenDialog() => _dialogOpen = true;
+    private bool _searchDialogOpen;
+    private void OpenSearchDialog() => _searchDialogOpen = true;
     private DialogOptions _dialogOptions = new() {Position = DialogPosition.TopCenter, NoHeader = true};
     
     private async void OnSearchResult(ApiLinkServiceEntry entry)
