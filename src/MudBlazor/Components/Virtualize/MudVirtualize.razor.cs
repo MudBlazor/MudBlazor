@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Components;
 
 namespace MudBlazor
 {
-    public partial class MudVirtualize<T> : ComponentBase
+    public partial class MudVirtualize<T> : IComponent
     {
         /// <summary>
         /// Set false to turn off virtualization

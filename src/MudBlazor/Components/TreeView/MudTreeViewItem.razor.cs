@@ -8,7 +8,7 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    public partial class MudTreeViewItem<T> : MudComponentBase
+    public partial class MudTreeViewItem<T> : MudIComponent
     {
         private string _text;
         private bool _disabled;

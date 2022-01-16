@@ -6,7 +6,7 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    public partial class MudRatingItem : MudComponentBase
+    public partial class MudRatingItem : MudIComponent
     {
         /// <summary>
         /// Space separated class names

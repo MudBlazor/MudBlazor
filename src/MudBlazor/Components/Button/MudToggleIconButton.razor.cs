@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Components;
 
 namespace MudBlazor
 {
-    public partial class MudToggleIconButton : MudComponentBase
+    public partial class MudToggleIconButton : MudIComponent
     {
         /// <summary>
         /// The toggled value.

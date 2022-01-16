@@ -7,7 +7,7 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    public partial class MudTableGroupRow<T> : MudComponentBase
+    public partial class MudTableGroupRow<T> : MudIComponent
     {
         protected string HeaderClassname => new CssBuilder("mud-table-row")
                                 .AddClass(HeaderClass)

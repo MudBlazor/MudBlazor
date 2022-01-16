@@ -5,7 +5,7 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    public partial class MudLink : MudComponentBase
+    public partial class MudLink : MudIComponent
     {
         protected string Classname =>
         new CssBuilder("mud-typography mud-link")

@@ -8,7 +8,7 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    public abstract class MudChartBase : MudComponentBase
+    public abstract class MudChartBase : MudIComponent
     {
         [Parameter]
         [Category(CategoryTypes.Chart.Behavior)]

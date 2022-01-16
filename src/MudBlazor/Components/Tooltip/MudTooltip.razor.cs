@@ -6,7 +6,7 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    public partial class MudTooltip : MudComponentBase
+    public partial class MudTooltip : MudIComponent
     {
         protected string ContainerClass => new CssBuilder("mud-tooltip-root")
             .AddClass("mud-tooltip-inline", Inline)

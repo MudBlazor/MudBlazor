@@ -3,7 +3,7 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    public partial class MudCardMedia : MudComponentBase
+    public partial class MudCardMedia : MudIComponent
     {
         protected string StyleString =>
             StyleBuilder.Default($"background-image:url(\"{Image}\");height: {Height}px;")

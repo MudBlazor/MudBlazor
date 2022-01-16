@@ -5,7 +5,7 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    public partial class MudSimpleTable : MudComponentBase
+    public partial class MudSimpleTable : MudIComponent
     {
         protected string Classname =>
         new CssBuilder("mud-table mud-simple-table")

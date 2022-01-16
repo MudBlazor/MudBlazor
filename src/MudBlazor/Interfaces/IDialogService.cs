@@ -16,15 +16,15 @@ namespace MudBlazor
         public event Action<IDialogReference> OnDialogInstanceAdded;
         public event Action<IDialogReference, DialogResult> OnDialogCloseRequested;
 
-        IDialogReference Show<TComponent>() where TComponent : ComponentBase;
+        IDialogReference Show<TComponent>() where TComponent : IComponent;
 
-        IDialogReference Show<TComponent>(string title) where TComponent : ComponentBase;
+        IDialogReference Show<TComponent>(string title) where TComponent : IComponent;
 
-        IDialogReference Show<TComponent>(string title, DialogOptions options) where TComponent : ComponentBase;
+        IDialogReference Show<TComponent>(string title, DialogOptions options) where TComponent : IComponent;
 
-        IDialogReference Show<TComponent>(string title, DialogParameters parameters) where TComponent : ComponentBase;
+        IDialogReference Show<TComponent>(string title, DialogParameters parameters) where TComponent : IComponent;
 
-        IDialogReference Show<TComponent>(string title, DialogParameters parameters = null, DialogOptions options = null) where TComponent : ComponentBase;
+        IDialogReference Show<TComponent>(string title, DialogParameters parameters = null, DialogOptions options = null) where TComponent : IComponent;
 
         IDialogReference Show(Type component);
 

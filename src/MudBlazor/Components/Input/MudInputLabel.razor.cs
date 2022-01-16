@@ -4,7 +4,7 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    public partial class MudInputLabel : MudComponentBase
+    public partial class MudInputLabel : MudIComponent
     {
         protected string Classname =>
        new CssBuilder()

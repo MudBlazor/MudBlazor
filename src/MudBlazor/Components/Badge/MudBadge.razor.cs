@@ -8,7 +8,7 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    public partial class MudBadge : MudComponentBase
+    public partial class MudBadge : MudIComponent
     {
         protected string Classname =>
         new CssBuilder("mud-badge-root")

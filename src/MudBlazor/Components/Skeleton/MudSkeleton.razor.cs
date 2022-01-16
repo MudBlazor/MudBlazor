@@ -4,7 +4,7 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    public partial class MudSkeleton : MudComponentBase
+    public partial class MudSkeleton : MudIComponent
     {
         protected string Classname =>
             new CssBuilder("mud-skeleton")

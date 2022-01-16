@@ -4,7 +4,7 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    public partial class MudButtonGroup : MudComponentBase
+    public partial class MudButtonGroup : MudIComponent
     {
         protected string Classname =>
         new CssBuilder("mud-button-group-root")

@@ -46,20 +46,20 @@ namespace MudBlazor
             Id = Guid.NewGuid();
         }
 
-        public void SetComponentBaseParameters(MudComponentBase componentBase, string @class, string style, bool showContent)
+        public void SetIComponentParameters(MudIComponent IComponent, string @class, string style, bool showContent)
         {
             Class = @class;
             Style = style;
-            Tag = componentBase.Tag;
-            UserAttributes = componentBase.UserAttributes;
+            Tag = IComponent.Tag;
+            UserAttributes = IComponent.UserAttributes;
             ShowContent = showContent;
         }
 
         public void UpdateFragment(RenderFragment fragment,
-            MudComponentBase componentBase, string @class, string style, bool showContent)
+            MudIComponent IComponent, string @class, string style, bool showContent)
         {
             Fragment = fragment;
-            SetComponentBaseParameters(componentBase, @class, @style, showContent);
+            SetIComponentParameters(IComponent, @class, @style, showContent);
             if (_locked == false)
             {
                 _locked = true;

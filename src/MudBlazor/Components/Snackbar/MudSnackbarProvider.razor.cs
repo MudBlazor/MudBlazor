@@ -10,7 +10,7 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    public partial class MudSnackbarProvider : MudComponentBase, IDisposable
+    public partial class MudSnackbarProvider : MudIComponent, IDisposable
     {
         [Inject] private ISnackbar Snackbars { get; set; }
 

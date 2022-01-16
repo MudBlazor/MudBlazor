@@ -6,7 +6,7 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    public partial class MudList : MudComponentBase, IDisposable
+    public partial class MudList : MudIComponent, IDisposable
     {
         protected string Classname =>
         new CssBuilder("mud-list")

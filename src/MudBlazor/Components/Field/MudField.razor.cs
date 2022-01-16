@@ -6,7 +6,7 @@ using MudBlazor.Utilities;
 namespace MudBlazor
 {
     //TODO Maybe can inherit from MudBaseInput?
-    public partial class MudField : MudComponentBase
+    public partial class MudField : MudIComponent
     {
         protected string Classname =>
             new CssBuilder("mud-input")

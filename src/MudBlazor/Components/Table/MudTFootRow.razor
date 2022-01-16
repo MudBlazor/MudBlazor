@@ -1,6 +1,6 @@
 ﻿@namespace MudBlazor
 @implements IDisposable
-@inherits MudComponentBase
+@inherits MudIComponent
 
 <tr class="@Classname" @onclick="@OnRowClick" style="@Style" @attributes="@UserAttributes">
     @if (IsExpandable || ((Context?.Table.MultiSelection ?? false) && !IgnoreCheckbox))

@@ -11,7 +11,7 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    public partial class MudDialogInstance : MudComponentBase
+    public partial class MudDialogInstance : MudIComponent
     {
         private DialogOptions _options = new();
         private string _elementId = "dialog_" + Guid.NewGuid().ToString().Substring(0, 8);

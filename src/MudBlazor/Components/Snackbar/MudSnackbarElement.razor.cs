@@ -8,7 +8,7 @@ using static System.String;
 
 namespace MudBlazor
 {
-    public partial class MudSnackbarElement : MudComponentBase, IDisposable
+    public partial class MudSnackbarElement : MudIComponent, IDisposable
     {
         [Parameter]
         public Snackbar Snackbar { get; set; }

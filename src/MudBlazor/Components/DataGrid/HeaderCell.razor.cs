@@ -12,7 +12,7 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    public partial class HeaderCell<T> : MudComponentBase, IDisposable
+    public partial class HeaderCell<T> : MudIComponent, IDisposable
     {
         [CascadingParameter] public MudDataGrid<T> DataGrid { get; set; }
         [CascadingParameter(Name = "IsOnlyHeader")] public bool IsOnlyHeader { get; set; } = false;

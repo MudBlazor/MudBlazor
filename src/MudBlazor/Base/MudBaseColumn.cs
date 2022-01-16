@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace MudBlazor
 {
-    public abstract class MudBaseColumn : ComponentBase
+    public abstract class MudBaseColumn : IComponent
     {
         public enum Rendermode
         {

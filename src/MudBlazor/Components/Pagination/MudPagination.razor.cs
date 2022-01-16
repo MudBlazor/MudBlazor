@@ -14,7 +14,7 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    public partial class MudPagination : MudComponentBase
+    public partial class MudPagination : MudIComponent
     {
         #region Css Classes
 

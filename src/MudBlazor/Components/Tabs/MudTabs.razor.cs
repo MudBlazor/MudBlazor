@@ -12,7 +12,7 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    public partial class MudTabs : MudComponentBase, IAsyncDisposable
+    public partial class MudTabs : MudIComponent, IAsyncDisposable
     {
         private bool _isDisposed;
         private int _activePanelIndex = 0;

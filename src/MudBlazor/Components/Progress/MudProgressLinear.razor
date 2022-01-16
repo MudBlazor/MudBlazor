@@ -1,6 +1,6 @@
 ﻿@namespace MudBlazor
 @using MudBlazor.Extensions
-@inherits MudComponentBase
+@inherits MudIComponent
 
 <div @attributes="UserAttributes" class="@DivClassname" style="@Style" role="progressbar" aria-valuenow="@_value.ToInvariantString()" aria-valuemin="@_min.ToInvariantString()" aria-valuemax="@_max.ToInvariantString()">
     @if(ChildContent != null)

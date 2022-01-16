@@ -3,7 +3,7 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    public partial class MudCardContent : MudComponentBase
+    public partial class MudCardContent : MudIComponent
     {
         protected string Classname =>
         new CssBuilder("mud-card-content")

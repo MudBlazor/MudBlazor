@@ -7,7 +7,7 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    public partial class MudExpansionPanels : MudComponentBase
+    public partial class MudExpansionPanels : MudIComponent
     {
         protected string Classname =>
         new CssBuilder("mud-expansion-panels")

@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Components.Web;
 
 namespace MudBlazor
 {
-    public abstract class MudBaseSelectItem : MudComponentBase
+    public abstract class MudBaseSelectItem : MudIComponent
     {
         /// <summary>
         /// If true, the input element will be disabled.

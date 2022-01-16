@@ -8,7 +8,7 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    public partial class MudPopover : MudComponentBase, IAsyncDisposable
+    public partial class MudPopover : MudIComponent, IAsyncDisposable
     {
         [Inject] public IMudPopoverService Service { get; set; }
 
@@ -167,7 +167,7 @@ namespace MudBlazor
         protected override void OnInitialized()
         {
             _handler = Service.Register(ChildContent ?? new RenderFragment((x) => { }));
-            _handler.SetComponentBaseParameters(this, PopoverClass, PopoverStyles, Open);
+            _handler.SetIComponentParameters(this, PopoverClass, PopoverStyles, Open);
             base.OnInitialized();
         }
 

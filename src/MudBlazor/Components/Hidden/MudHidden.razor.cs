@@ -6,7 +6,7 @@ using MudBlazor.Services;
 namespace MudBlazor
 {
 
-    public partial class MudHidden : MudComponentBase, IAsyncDisposable
+    public partial class MudHidden : MudIComponent, IAsyncDisposable
     {
         private Breakpoint _currentBreakpoint = Breakpoint.None;
         private bool _serviceIsReady = false;

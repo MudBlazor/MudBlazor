@@ -13,7 +13,7 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    public partial class Column<T> : MudComponentBase
+    public partial class Column<T> : MudIComponent
     {
         [CascadingParameter] public MudDataGrid<T> DataGrid { get; set; }
 

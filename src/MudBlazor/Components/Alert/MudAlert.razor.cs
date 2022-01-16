@@ -9,7 +9,7 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    public partial class MudAlert : MudComponentBase
+    public partial class MudAlert : MudIComponent
     {
         protected string Classname =>
         new CssBuilder("mud-alert")

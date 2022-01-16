@@ -4,7 +4,7 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    public partial class MudListSubheader : MudComponentBase
+    public partial class MudListSubheader : MudIComponent
     {
         protected string Classname =>
         new CssBuilder("mud-list-subheader")

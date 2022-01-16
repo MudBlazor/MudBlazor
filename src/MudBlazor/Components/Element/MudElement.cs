@@ -8,7 +8,7 @@ namespace MudBlazor
     /// Primitive component which allows rendering any HTML element we want
     /// through the HtmlTag property
     /// </summary>
-    public class MudElement : MudComponentBase
+    public class MudElement : MudIComponent
     {
         /// <summary>
         /// Child content

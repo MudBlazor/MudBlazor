@@ -9,7 +9,7 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    public partial class MudDataGridPager<T> : MudComponentBase, IDisposable
+    public partial class MudDataGridPager<T> : MudIComponent, IDisposable
     {
         [CascadingParameter] public MudDataGrid<T> DataGrid { get; set; }
 

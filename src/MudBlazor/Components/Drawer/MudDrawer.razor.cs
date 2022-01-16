@@ -10,7 +10,7 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    public partial class MudDrawer : MudComponentBase, IDisposable, INavigationEventReceiver
+    public partial class MudDrawer : MudIComponent, IDisposable, INavigationEventReceiver
     {
         private double _height;
         private ElementReference _contentRef, _drawerRef;

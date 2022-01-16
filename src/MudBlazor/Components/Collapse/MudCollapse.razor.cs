@@ -8,7 +8,7 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    public partial class MudCollapse : MudComponentBase, IDisposable
+    public partial class MudCollapse : MudIComponent, IDisposable
     {
         private enum CollapseState
         {

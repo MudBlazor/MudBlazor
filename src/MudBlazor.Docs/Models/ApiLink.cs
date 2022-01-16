@@ -36,7 +36,7 @@ namespace MudBlazor.Docs.Models
             if (s_inverseSpecialCase.TryGetValue(component, out var type))
                 return type;
 
-            var assembly = typeof(MudComponentBase).Assembly;
+            var assembly = typeof(MudIComponent).Assembly;
             foreach (var x in assembly.GetTypes())
             {
                 if (new string(x.Name.ToLowerInvariant().TakeWhile(c => c != '`').ToArray()) == $"mud{component}".ToLowerInvariant())

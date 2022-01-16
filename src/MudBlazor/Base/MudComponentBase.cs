@@ -3,27 +3,27 @@ using Microsoft.AspNetCore.Components;
 
 namespace MudBlazor
 {
-    public abstract class MudComponentBase : ComponentBase
+    public abstract class MudIComponent : IComponent
     {
         /// <summary>
         /// User class names, separated by space.
         /// </summary>
         [Parameter]
-        [Category(CategoryTypes.ComponentBase.Common)]
+        [Category(CategoryTypes.IComponent.Common)]
         public string Class { get; set; }
 
         /// <summary>
         /// User styles, applied on top of the component's own classes and styles.
         /// </summary>
         [Parameter]
-        [Category(CategoryTypes.ComponentBase.Common)]
+        [Category(CategoryTypes.IComponent.Common)]
         public string Style { get; set; }
 
         /// <summary>
         /// Use Tag to attach any user data object to the component for your convenience.
         /// </summary>
         [Parameter]
-        [Category(CategoryTypes.ComponentBase.Common)]
+        [Category(CategoryTypes.IComponent.Common)]
         public object Tag { get; set; }
 
         /// <summary>
@@ -31,7 +31,7 @@ namespace MudBlazor
         /// They will be splatted onto the underlying HTML tag.
         /// </summary>
         [Parameter(CaptureUnmatchedValues = true)]
-        [Category(CategoryTypes.ComponentBase.Common)]
+        [Category(CategoryTypes.IComponent.Common)]
         public Dictionary<string, object> UserAttributes { get; set; } = new Dictionary<string, object>();
     }
 }

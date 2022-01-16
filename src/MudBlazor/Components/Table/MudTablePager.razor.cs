@@ -5,7 +5,7 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    public partial class MudTablePager : MudComponentBase
+    public partial class MudTablePager : MudIComponent
     {
         protected string Classname =>
                     new CssBuilder("mud-table-pagination-toolbar")

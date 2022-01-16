@@ -10,7 +10,7 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    public partial class MudTimelineItem : MudComponentBase, IDisposable
+    public partial class MudTimelineItem : MudIComponent, IDisposable
 
     {
         protected string Classnames =>

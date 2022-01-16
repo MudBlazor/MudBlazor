@@ -4,7 +4,7 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    public partial class MudBreadcrumbs : MudComponentBase
+    public partial class MudBreadcrumbs : MudIComponent
     {
         /// <summary>
         /// A list of breadcrumb items/links.

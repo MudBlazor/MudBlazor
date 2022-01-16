@@ -9,7 +9,7 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    public partial class MudForm : MudComponentBase, IDisposable, IForm
+    public partial class MudForm : MudIComponent, IDisposable, IForm
     {
         protected string Classname =>
             new CssBuilder("mud-form")

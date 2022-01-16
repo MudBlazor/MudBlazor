@@ -5,7 +5,7 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    public partial class MudSlider<T> : MudComponentBase
+    public partial class MudSlider<T> : MudIComponent
     {
         protected string Classname =>
             new CssBuilder("mud-slider")

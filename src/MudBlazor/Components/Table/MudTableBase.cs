@@ -10,7 +10,7 @@ namespace MudBlazor
 {
     // note: the MudTable code is split. Everything that has nothing to do with the type parameter of MudTable<T> is here in MudTableBase
 
-    public abstract class MudTableBase : MudComponentBase
+    public abstract class MudTableBase : MudIComponent
     {
         internal object _editingItem = null;
         internal bool IsEditing => _editingItem != null;

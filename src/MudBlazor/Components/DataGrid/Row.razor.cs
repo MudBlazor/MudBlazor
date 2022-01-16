@@ -7,7 +7,7 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    public partial class Row : MudComponentBase
+    public partial class Row : MudIComponent
     {
         [Parameter] public RenderFragment ChildContent { get; set; }
 

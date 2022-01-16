@@ -5,7 +5,7 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    public partial class MudProgressCircular : MudComponentBase
+    public partial class MudProgressCircular : MudIComponent
     {
         private const int _magicNumber = 126; // weird, but required for the SVG to work
 

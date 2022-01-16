@@ -7,7 +7,7 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    public partial class MudChipSet : MudComponentBase, IDisposable
+    public partial class MudChipSet : MudIComponent, IDisposable
     {
 
         protected string Classname =>

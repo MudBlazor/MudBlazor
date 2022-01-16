@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Components.Web;
 
 namespace MudBlazor
 {
-    public partial class MudSwipeArea : MudComponentBase
+    public partial class MudSwipeArea : MudIComponent
     {
         private double? _xDown, _yDown;
 

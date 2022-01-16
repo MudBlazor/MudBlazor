@@ -3,7 +3,7 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    public partial class MudTd : MudComponentBase
+    public partial class MudTd : MudIComponent
     {
 
         protected string Classname =>

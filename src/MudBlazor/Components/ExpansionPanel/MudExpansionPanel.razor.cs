@@ -4,7 +4,7 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    public partial class MudExpansionPanel : MudComponentBase, IDisposable
+    public partial class MudExpansionPanel : MudIComponent, IDisposable
     {
         private bool _nextPanelExpanded;
         private bool _isExpanded;

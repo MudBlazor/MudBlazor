@@ -8,7 +8,7 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    public partial class MudDialog : MudComponentBase
+    public partial class MudDialog : MudIComponent
     {
         protected string ContentClass => new CssBuilder("mud-dialog-content")
           .AddClass($"mud-dialog-no-side-padding", DisableSidePadding)

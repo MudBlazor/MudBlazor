@@ -5,7 +5,7 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    public partial class MudTr : MudComponentBase
+    public partial class MudTr : MudIComponent
     {
         private bool hasBeenCanceled;
         private bool hasBeenCommitted;

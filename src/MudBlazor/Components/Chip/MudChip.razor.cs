@@ -8,7 +8,7 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    public partial class MudChip : MudComponentBase, IDisposable
+    public partial class MudChip : MudIComponent, IDisposable
     {
         private bool _isSelected;
         [Inject] public NavigationManager UriHelper { get; set; }

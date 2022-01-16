@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Components.Web;
 
 namespace MudBlazor
 {
-    public partial class MudMessageBox : MudComponentBase
+    public partial class MudMessageBox : MudIComponent
     {
         [Inject] private IDialogService DialogService { get; set; }
 

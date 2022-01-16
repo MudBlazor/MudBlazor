@@ -4,8 +4,8 @@ using Microsoft.AspNetCore.Components;
 
 namespace MudBlazor
 {
-    public abstract class MudBaseItemsControl<TChildComponent> : MudComponentBase
-            where TChildComponent : MudComponentBase
+    public abstract class MudBaseItemsControl<TChildComponent> : MudIComponent
+            where TChildComponent : MudIComponent
 
     {
         /// <summary>

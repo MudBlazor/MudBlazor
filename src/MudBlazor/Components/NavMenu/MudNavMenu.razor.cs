@@ -5,7 +5,7 @@ using MudBlazor.Extensions;
 
 namespace MudBlazor
 {
-    public partial class MudNavMenu : MudComponentBase
+    public partial class MudNavMenu : MudIComponent
     {
         protected string Classname =>
         new CssBuilder("mud-navmenu")

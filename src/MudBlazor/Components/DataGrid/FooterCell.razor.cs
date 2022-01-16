@@ -10,7 +10,7 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    public partial class FooterCell<T> : MudComponentBase, IDisposable
+    public partial class FooterCell<T> : MudIComponent, IDisposable
     {
         [CascadingParameter] public MudDataGrid<T> DataGrid { get; set; }
         [CascadingParameter(Name = "IsOnlyFooter")] public bool IsOnlyFooter { get; set; } = false;

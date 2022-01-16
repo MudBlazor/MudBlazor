@@ -13,7 +13,7 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    public partial class MudDataGrid<T> : MudComponentBase
+    public partial class MudDataGrid<T> : MudIComponent
     {
         private int _currentPage = 0;
         private int? _rowsPerPage;

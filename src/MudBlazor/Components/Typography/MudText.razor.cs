@@ -4,7 +4,7 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    public partial class MudText : MudComponentBase
+    public partial class MudText : MudIComponent
     {
         protected string Classname =>
         new CssBuilder("mud-typography")

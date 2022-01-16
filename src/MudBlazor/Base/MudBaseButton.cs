@@ -7,7 +7,7 @@ using static System.String;
 
 namespace MudBlazor
 {
-    public abstract class MudBaseButton : MudComponentBase
+    public abstract class MudBaseButton : MudIComponent
     {
         /// <summary>
         /// Potential activation target for this button. This enables RenderFragments with user-defined

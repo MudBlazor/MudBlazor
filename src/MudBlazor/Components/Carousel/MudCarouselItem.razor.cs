@@ -6,7 +6,7 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    public partial class MudCarouselItem : MudComponentBase, IDisposable
+    public partial class MudCarouselItem : MudIComponent, IDisposable
     {
         protected string Classname =>
                     new CssBuilder("mud-carousel-item")

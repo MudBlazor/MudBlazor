@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Components;
 namespace MudBlazor
 {
     public abstract class MudBaseBindableItemsControl<TChildComponent, TData> : MudBaseItemsControl<TChildComponent>
-        where TChildComponent : MudComponentBase
+        where TChildComponent : MudIComponent
     {
 
         /// <summary>

@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Components.Web;
 
 namespace MudBlazor
 {
-    public partial class MudMenuItem : MudComponentBase
+    public partial class MudMenuItem : MudIComponent
     {
         [CascadingParameter] public MudMenu MudMenu { get; set; }
 

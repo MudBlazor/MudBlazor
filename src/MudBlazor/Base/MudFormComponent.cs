@@ -14,7 +14,7 @@ using static System.String;
 
 namespace MudBlazor
 {
-    public abstract class MudFormComponent<T, U> : MudComponentBase, IFormComponent, IDisposable
+    public abstract class MudFormComponent<T, U> : MudIComponent, IFormComponent, IDisposable
     {
         private Converter<T, U> _converter;
 

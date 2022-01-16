@@ -8,7 +8,7 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    public class BaseMudThemeProvider : ComponentBase
+    public class BaseMudThemeProvider : IComponent
     {
         /// <summary>
         /// The theme used by the application.

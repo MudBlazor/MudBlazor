@@ -6,7 +6,7 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    public partial class MudProgressLinear : MudComponentBase
+    public partial class MudProgressLinear : MudIComponent
     {
         protected string DivClassname =>
             new CssBuilder("mud-progress-linear")

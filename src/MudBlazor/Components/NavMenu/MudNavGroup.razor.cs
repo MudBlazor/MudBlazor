@@ -3,7 +3,7 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    public partial class MudNavGroup : MudComponentBase
+    public partial class MudNavGroup : MudIComponent
     {
         protected string Classname =>
         new CssBuilder("mud-nav-group")

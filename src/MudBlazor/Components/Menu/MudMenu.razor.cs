@@ -10,7 +10,7 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    public partial class MudMenu : MudComponentBase, IActivatable
+    public partial class MudMenu : MudIComponent, IActivatable
     {
         protected string Classname =>
         new CssBuilder("mud-menu")

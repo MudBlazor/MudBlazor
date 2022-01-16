@@ -6,7 +6,7 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    public partial class MudOverlay : MudComponentBase, IDisposable
+    public partial class MudOverlay : MudIComponent, IDisposable
     {
         private bool _visible;
 

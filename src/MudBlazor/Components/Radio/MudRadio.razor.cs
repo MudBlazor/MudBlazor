@@ -8,7 +8,7 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    public partial class MudRadio<T> : MudComponentBase, IDisposable
+    public partial class MudRadio<T> : MudIComponent, IDisposable
     {
         [CascadingParameter] public bool RightToLeft { get; set; }
 

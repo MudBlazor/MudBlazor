@@ -7,7 +7,7 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    public partial class MudRTLProvider : MudComponentBase
+    public partial class MudRTLProvider : MudIComponent
     {
         protected string Classname =>
             new CssBuilder("mud-rtl-provider")

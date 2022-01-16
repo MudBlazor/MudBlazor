@@ -9,7 +9,7 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    public partial class MudTreeView<T> : MudComponentBase
+    public partial class MudTreeView<T> : MudIComponent
     {
         private MudTreeViewItem<T> _selectedValue;
         private HashSet<MudTreeViewItem<T>> _selectedValues;

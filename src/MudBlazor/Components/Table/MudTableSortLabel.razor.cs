@@ -6,7 +6,7 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    public partial class MudTableSortLabel<T> : MudComponentBase
+    public partial class MudTableSortLabel<T> : MudIComponent
     {
         protected string Classname => new CssBuilder("mud-button-root mud-table-sort-label")
             .AddClass(Class).Build();

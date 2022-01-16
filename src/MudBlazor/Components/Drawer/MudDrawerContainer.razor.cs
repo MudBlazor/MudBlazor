@@ -6,7 +6,7 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    public partial class MudDrawerContainer : MudComponentBase
+    public partial class MudDrawerContainer : MudIComponent
     {
         protected bool Fixed { get; set; } = false;
         private List<MudDrawer> _drawers = new();
