@@ -1,6 +1,6 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
-
+@*
 <MudGrid Class="justify-space-between">
     <MudItem xs="12" sm="6" md="4">
         <MudMaskField @ref="maskField" OnKeyDown="KeyDown" HelperText="@mask" HelperTextOnFocus="true" @bind-Value="@RawValue" @bind-Text="TextValue" Mask="@mask" Label="Text" Variant="Variant.Text" MaxLength="mask.Length"></MudMaskField>
@@ -23,4 +23,4 @@
 	{
 		pressedKey = e.Key.ToString();
 	}
-}
+}*@

@@ -8,7 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MudBlazor.Components.MaskField
+namespace MudBlazor
 {
     public class MaskChar
     {
