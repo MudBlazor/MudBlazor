@@ -1,0 +1,164 @@
+﻿// Copyright (c) MudBlazor 2021
+// MudBlazor licenses this file to you under the MIT license.
+// See the LICENSE file in the project root for more information.
+
+using System.Collections.Generic;
+using System.Linq;
+using System.Text.RegularExpressions;
+
+namespace MudBlazor;
+
+public abstract class BaseMask
+{
+    protected bool _initialized;
+    protected Dictionary<char, MaskChar> _maskDict;
+
+    protected MaskChar[] _maskChars = new MaskChar[]
+    {
+        MaskChar.Letter('a'), MaskChar.Digit('0'), MaskChar.LetterOrDigit('*'),
+        new MaskChar { Char = 'l', AddToValue = false, Regex = "[a-zıäöüßşçğ]" },
+        new MaskChar { Char = 'u', AddToValue = false, Regex = "[A-ZİÄÖÜŞÇĞ]" },
+    };
+    
+    // per definition (unless defined otherwise in subclasses) delimiters are chars
+    // in the mask which do not match any MaskChar
+    protected HashSet<char> _delimiters;
+
+    /// <summary>
+    /// Initialize all internal data structures. Can be called multiple times,
+    /// will initialize only once. To re-initialize set _initialized to false.
+    /// </summary>
+    protected void Init()
+    {
+        if (_initialized)
+            return;
+        _initialized = true;
+        InitInternals();
+    }
+
+    protected virtual void InitInternals()
+    {
+        _maskDict = _maskChars.ToDictionary(x => x.Char);
+        if (Mask == null)
+            _delimiters = new();
+        else 
+            _delimiters =
+                new HashSet<char>(Mask.Where(c => !_maskChars.Any(maskDef => Regex.IsMatch(c.ToString(), maskDef.Regex))));
+    }
+
+    public string Mask { get; protected set; }
+
+    public string Text { get; protected set; }
+
+    public int CaretPos { get; set; }
+
+    public (int, int)? Selection { get; set; }
+
+    public abstract void Insert(string input);
+
+    /// <summary>
+    /// Implements the effect of the Del key at the current cursor position
+    /// </summary>
+    public abstract void Delete();
+
+    /// <summary>
+    /// Implements the effect of the Backspace key at the current cursor position
+    /// </summary>
+    public abstract void Backspace();
+    
+    /// <summary>
+    /// Reset the mask as if the whole textfield was cleared
+    /// </summary>
+    public void Clear()
+    {
+        Init();
+        Text = "";
+        CaretPos = 0;
+        Selection = null;
+    }
+
+    protected abstract void DeleteSelection(bool align);
+
+    protected virtual bool IsDelimiter(char maskChar)
+    {
+        return _delimiters.Contains(maskChar);
+    }
+    
+    internal static (string, string) SplitAt(string text, int pos)
+    {
+        if (pos <= 0)
+            return ("", text);
+        if (pos >= text.Length)
+            return (text, "");
+        return (text.Substring(0, pos), text.Substring(pos));
+    }
+    
+    /// <summary>
+    /// Performs simple border checks and corrections to the caret position
+    /// </summary>
+    protected static int ConsolidateCaret(string text, int caretPos)
+    {
+        if (string.IsNullOrEmpty(text) || caretPos < 0)
+            return 0;
+        if (caretPos < text.Length)
+            return caretPos;
+        return text.Length;
+    }
+
+    /// <summary>
+    /// Performs simple border checks and corrections to the selection
+    /// and removes zero-width selections
+    /// </summary>
+    protected void ConsolidateSelection()
+    {
+        if (Selection == null)
+            return;
+        var sel = Selection.Value;
+        if (sel.Item1 == sel.Item2)
+        {
+            CaretPos = sel.Item1;
+            Selection = null;
+            return;
+        }
+        if (sel.Item1 < 0)
+            sel.Item1 = 0;
+        if (sel.Item2 >= Text.Length)
+            sel.Item2 = Text.Length;
+    }
+
+    protected static (string, string, string) SplitSelection(string text, (int, int) selection)
+    {
+        var start = ConsolidateCaret(text, selection.Item1);
+        var end = ConsolidateCaret(text, selection.Item2);
+        (var s1, var rest) = SplitAt(text, start);
+        (var s2, var s3) = SplitAt(rest, end - start);
+        return (s1, s2, s3);
+    }
+
+    /// <summary>
+    /// Prints a representation of the input including markers for caret and selection
+    /// Used heavily by the tests
+    /// </summary>
+    /// <returns></returns>
+    public override string ToString()
+    {
+        var text = Text ?? "";
+        ConsolidateSelection();
+        if (Selection == null)
+        {
+            var pos = ConsolidateCaret(text, CaretPos);
+            if (pos < text.Length)
+                return text.Insert(pos, "|");
+            return text + "|";
+        }
+        else
+        {
+            var sel = Selection.Value;
+            var start = ConsolidateCaret(text, sel.Item1);
+            var end = ConsolidateCaret(text, sel.Item2);
+            (var s1, var rest) = SplitAt(text, start);
+            (var s2, var s3) = SplitAt(rest, end - start);
+            return s1 + "[" + s2 + "]" + s3;
+        }
+    }
+}
