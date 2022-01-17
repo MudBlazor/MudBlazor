@@ -54,6 +54,52 @@ namespace MudBlazor
         [Category(CategoryTypes.FormComponent.ListAppearance)]
         public EventCallback<MouseEventArgs> OnClearButtonClick { get; set; }
 
+           protected override async Task OnAfterRenderAsync(bool firstRender)
+        {
+            if (firstRender)
+            {
+                await _jsEvent.Connect(_elementId, new JsEventOptions
+                {
+                    //EnableLogging = true,
+                    TargetClass = "mud-input-slot",
+                    TagName = "INPUT"
+                });
+                _jsEvent.CaretPositionChanged += OnCaretPositionChanged;
+                _jsEvent.Copy += OnCopy;
+                _jsEvent.Paste += OnPaste;
+                _jsEvent.Select += OnSelect;
+                await _keyInterceptor.Connect(_elementId, new KeyInterceptorOptions()
+                {
+                    EnableLogging = true,
+                    TargetClass = "mud-input-slot",
+                    Keys = {
+                        new KeyOptions { Key=" ", PreventDown = "key+none" }, //prevent scrolling page, toggle open/close
+                        new KeyOptions { Key="ArrowUp", PreventDown = "key+none" }, // prevent scrolling page,
+                        new KeyOptions { Key="ArrowDown", PreventDown = "key+none" }, // prevent scrolling page,
+                        //new KeyOptions { Key="ArrowLeft", PreventDown = "key+none" },
+                        //new KeyOptions { Key="ArrowRight", PreventDown = "key+none" },
+                        //new KeyOptions { Key="Home", PreventDown = "key+none" },
+                        //new KeyOptions { Key="End", PreventDown = "key+none" },
+                        new KeyOptions { Key="PageUp", PreventDown = "key+none" },
+                        new KeyOptions { Key="PageDown", PreventDown = "key+none" },
+                        // new KeyOptions { Key="Escape" },
+                        new KeyOptions { Key=@"/^.$/", PreventDown = "key+none|key+shift" },
+                        //new KeyOptions { Key="Enter", PreventDown = "key+none" },
+                        //new KeyOptions { Key="NumpadEnter", PreventDown = "key+none" },
+                        new KeyOptions { Key="/./", SubscribeDown = true },
+                        new KeyOptions { Key="Backspace", PreventDown = "key+none" },
+                        new KeyOptions { Key="Delete", PreventDown = "key+none" },
+                        // new KeyOptions { Key="Shift", PreventDown = "key+none" },
+                        // new KeyOptions { Key="[/-+_-*()%&]'/", PreventDown = "key+none" },
+                    },
+                });
+                _keyInterceptor.KeyDown += e => HandleKeyDown(e).AndForget();
+            }
+            // if (_isFocused && _mask.Selection == null)
+            //     await _elementReference.SelectRangeAsync(_mask.CaretPosition, _mask.CaretPosition);
+            await base.OnAfterRenderAsync(firstRender);
+        }
+           
         protected internal async Task HandleKeyDown(KeyboardEventArgs e)
         {
             if (e.CtrlKey || e.AltKey)
@@ -69,7 +115,7 @@ namespace MudBlazor
                     return;
                 //case "ArrowLeft"
             }
-            if (!Regex.IsMatch(e.Key, @"^.$"))
+            if (Regex.IsMatch(e.Key, @"^.$"))
                 Mask.Insert(e.Key);
             Console.WriteLine(Mask.ToString());
             await Update();
@@ -146,52 +192,7 @@ namespace MudBlazor
         {
             return _elementReference.SelectRangeAsync(pos1, pos2);
         }
-
-        protected override async Task OnAfterRenderAsync(bool firstRender)
-        {
-            if (firstRender)
-            {
-                await _jsEvent.Connect(_elementId, new JsEventOptions
-                {
-                    //EnableLogging = true,
-                    TargetClass = "mud-input-slot",
-                    TagName = "INPUT"
-                });
-                _jsEvent.CaretPositionChanged += OnCaretPositionChanged;
-                _jsEvent.Copy += OnCopy;
-                _jsEvent.Paste += OnPaste;
-                _jsEvent.Select += OnSelect;
-                await _keyInterceptor.Connect(_elementId, new KeyInterceptorOptions()
-                {
-                    //EnableLogging = true,
-                    TargetClass = "mud-input-slot",
-                    Keys = {
-                        new KeyOptions { Key=" ", PreventDown = "key+none" }, //prevent scrolling page, toggle open/close
-                        new KeyOptions { Key="ArrowUp", PreventDown = "key+none" }, // prevent scrolling page,
-                        new KeyOptions { Key="ArrowDown", PreventDown = "key+none" }, // prevent scrolling page,
-                        //new KeyOptions { Key="ArrowLeft", PreventDown = "key+none" },
-                        //new KeyOptions { Key="ArrowRight", PreventDown = "key+none" },
-                        //new KeyOptions { Key="Home", PreventDown = "key+none" },
-                        //new KeyOptions { Key="End", PreventDown = "key+none" },
-                        new KeyOptions { Key="PageUp", PreventDown = "key+none" },
-                        new KeyOptions { Key="PageDown", PreventDown = "key+none" },
-                        // new KeyOptions { Key="Escape" },
-                        new KeyOptions { Key=@"/^.$/", PreventDown = "key+none|key+shift" },
-                        //new KeyOptions { Key="Enter", PreventDown = "key+none" },
-                        //new KeyOptions { Key="NumpadEnter", PreventDown = "key+none" },
-                        new KeyOptions { Key="/./", SubscribeDown = true, SubscribeUp = true },
-                        new KeyOptions { Key="Backspace", PreventDown = "key+none" },
-                        new KeyOptions { Key="Delete", PreventDown = "key+none" },
-                        // new KeyOptions { Key="Shift", PreventDown = "key+none" },
-                        // new KeyOptions { Key="[/-+_-*()%&]'/", PreventDown = "key+none" },
-                    },
-                });
-            }
-            // if (_isFocused && _mask.Selection == null)
-            //     await _elementReference.SelectRangeAsync(_mask.CaretPosition, _mask.CaretPosition);
-            await base.OnAfterRenderAsync(firstRender);
-        }
-
+     
         internal void OnCaretPositionChanged(int pos)
         {
             Mask.Selection = null;

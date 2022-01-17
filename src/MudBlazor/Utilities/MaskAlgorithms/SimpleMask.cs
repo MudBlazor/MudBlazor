@@ -2,6 +2,7 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -23,6 +24,7 @@ public class SimpleMask : BaseMask
     /// <param name="input">One or multiple characters of input</param>
     public override void Insert(string input)
     {
+        Console.WriteLine("Inserting: " +input);
         Init();
         DeleteSelection(align: false);
         var text = Text ?? "";
