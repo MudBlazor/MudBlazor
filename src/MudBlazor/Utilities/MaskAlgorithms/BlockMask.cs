@@ -100,5 +100,21 @@ public class BlockMask : RegexMask
         s.Append("$");
         return s.ToString();
     }
-    
+
+    public override void UpdateFrom(BaseMask other)
+    {
+        base.UpdateFrom(other);
+        var o = other as BlockMask;
+        if (o == null)
+            return;
+        if (o.Blocks != null)
+        {
+            var blocks = new HashSet<Block>(Blocks ?? new Block[0]);
+            if (o.Blocks.Length != Blocks.Length || o.Blocks.Any(x => !blocks.Contains(x)))
+            {
+                Blocks = o.Blocks;
+                _initialized = false;
+            }
+        }        
+    }
 }

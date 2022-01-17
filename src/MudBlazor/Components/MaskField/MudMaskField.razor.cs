@@ -29,9 +29,14 @@ namespace MudBlazor
 
         private string _elementId = "maskfield_" + Guid.NewGuid().ToString().Substring(0, 8);
 
+        private BaseMask _mask = new SimpleMask("aaaa-0000");
+        
         [Parameter]
         [Category(CategoryTypes.General.Data)]
-        public BaseMask Mask { get; set; } = new SimpleMask("aaaa-0000");
+        public BaseMask Mask { 
+            get => _mask;
+            set => SetMask(value);
+        }
         
         /// <summary>
         /// Type of the input element. It should be a valid HTML5 input type.
@@ -197,7 +202,10 @@ namespace MudBlazor
                 return;
             Console.WriteLine($"SetTextAsync: '{text}' updateValue:{updateValue}");
             if (Mask.Text != text)
-                 Mask.SetText(text);
+            {
+                Console.WriteLine("########### SETTING Mask Text");
+                Mask.SetText(text);
+            }
             await base.SetTextAsync(text, updateValue);
         }
 
@@ -343,6 +351,19 @@ namespace MudBlazor
             Mask.Selection = null;
             Mask.CaretPos = pos;
             Console.WriteLine($"On Caret position change: '{Mask}' ({pos})");
+        }
+
+        private void SetMask(BaseMask other)
+        {
+            if (_mask == null || other == null || _mask?.GetType() != other?.GetType())
+            {
+                _mask = other;
+                if (_mask == null)
+                    _mask = new SimpleMask("aaaa-0000"); // maybe have some kind of NullMask with Text "No mask configured"?
+                return;
+            } 
+            // set new mask properties without loosing state
+            _mask.UpdateFrom(other);
         }
     }
 }

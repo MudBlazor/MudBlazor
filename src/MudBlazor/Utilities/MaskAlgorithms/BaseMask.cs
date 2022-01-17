@@ -16,8 +16,8 @@ public abstract class BaseMask
     protected MaskChar[] _maskChars = new MaskChar[]
     {
         MaskChar.Letter('a'), MaskChar.Digit('0'), MaskChar.LetterOrDigit('*'),
-        new MaskChar { Char = 'L', AddToValue = false, Regex = "[a-zıäöüßşçğ]" },
-        new MaskChar { Char = 'U', AddToValue = false, Regex = "[A-ZİÄÖÜŞÇĞ]" },
+        new MaskChar { Char = 'L', Regex = "[a-zıäöüßşçğ]" },
+        new MaskChar { Char = 'U', Regex = "[A-ZİÄÖÜŞÇĞ]" },
     };
     
     // per definition (unless defined otherwise in subclasses) delimiters are chars
@@ -141,6 +141,26 @@ public abstract class BaseMask
     protected virtual bool IsDelimiter(char maskChar)
     {
         return _delimiters.Contains(maskChar);
+    }
+    
+    public virtual void UpdateFrom(BaseMask other)
+    {
+        if (other == null)
+            return;
+        if (other.Mask != Mask)
+        {
+            Mask = other.Mask;
+            _initialized = false;
+        }
+        if (other.MaskChars != null)
+        {
+            var maskChars = new HashSet<MaskChar>(_maskChars??new MaskChar[0]);
+            if (other.MaskChars.Length != MaskChars.Length || other.MaskChars.Any(x => !maskChars.Contains(x)))
+            {
+                _maskChars = other.MaskChars;
+                _initialized = false;
+            }
+        }
     }
     
     internal static (string, string) SplitAt(string text, int pos)

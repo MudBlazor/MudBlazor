@@ -179,4 +179,13 @@ public class SimpleMask : BaseMask
         return Regex.IsMatch(textChar.ToString(), maskDef.Regex);
     }
 
+    public override void UpdateFrom(BaseMask other)
+    {
+        base.UpdateFrom(other);
+        var o = other as SimpleMask;
+        if (o == null)
+            return;
+        // no need to re-initialize, just update the placeholder.
+        Placeholder = o.Placeholder; 
+    }
 }

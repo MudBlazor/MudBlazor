@@ -148,4 +148,17 @@ public class RegexMask : BaseMask
         }
         return alignedText;
     }
+    
+    public override void UpdateFrom(BaseMask other)
+    {
+        base.UpdateFrom(other);
+        var o = other as RegexMask;
+        if (o == null)
+            return;
+        if (Delimiters != o.Delimiters)
+        {
+            Delimiters = o.Delimiters;
+            _initialized = false;
+        }
+    }
 }
