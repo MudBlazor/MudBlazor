@@ -16,8 +16,8 @@ namespace MudBlazor
         public string Regex { get; set; }
         public bool AddToValue { get; set; }
 
-        public static MaskChar Letter(char c) => new MaskChar { Char = c, Regex = @"^\p{L}$", AddToValue = false };
-        public static MaskChar Digit(char c) => new MaskChar { Char = c, Regex = @"^\d$", AddToValue = false };
-        public static MaskChar LetterOrDigit(char c) => new MaskChar { Char = c, Regex = @"^\p{L}|\d$", AddToValue = false };
+        public static MaskChar Letter(char c) => new MaskChar { Char = c, Regex = @"\p{L}", AddToValue = false };
+        public static MaskChar Digit(char c) => new MaskChar { Char = c, Regex = @"\d", AddToValue = false };
+        public static MaskChar LetterOrDigit(char c) => new MaskChar { Char = c, Regex = @"\p{L}|\d", AddToValue = false };
     }
 }

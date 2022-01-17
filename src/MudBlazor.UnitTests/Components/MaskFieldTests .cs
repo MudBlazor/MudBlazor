@@ -11,6 +11,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Globalization;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Bunit;
@@ -32,13 +33,12 @@ namespace MudBlazor.UnitTests.Components
         }
 
         private Dictionary<char, MaskChar> _maskDict;
+
         private MaskChar[] _maskChars = new MaskChar[]
         {
-            MaskChar.Letter('a'),
-            MaskChar.Digit('0'),
-            MaskChar.LetterOrDigit('*'),
-            new MaskChar { Char = 'l', AddToValue = false, Regex = "^[a-zıäöüßşçğ]$" },
-            new MaskChar { Char = 'u', AddToValue = false, Regex = "^[A-ZİÄÖÜŞÇĞ]$" },
+            MaskChar.Letter('a'), MaskChar.Digit('0'), MaskChar.LetterOrDigit('*'),
+            new MaskChar { Char = 'l', AddToValue = false, Regex = "[a-zıäöüßşçğ]" },
+            new MaskChar { Char = 'u', AddToValue = false, Regex = "[A-ZİÄÖÜŞÇĞ]" },
         };
 
         public string Mask { get; }
@@ -48,7 +48,7 @@ namespace MudBlazor.UnitTests.Components
         public int CaretPos { get; set; }
 
         public (int, int)? Selection { get; set; }
-        
+
         public char? Placeholder { get; set; }
 
         /// <summary>
@@ -57,7 +57,7 @@ namespace MudBlazor.UnitTests.Components
         /// <param name="input">One or multiple characters of input</param>
         public void Insert(string input)
         {
-            DeleteSelection(align:false);
+            DeleteSelection(align: false);
             var text = Text ?? "";
             var pos = ConsolidateCaret(text, CaretPos);
             (var beforeText, var afterText) = SplitAt(text, pos);
@@ -76,12 +76,12 @@ namespace MudBlazor.UnitTests.Components
             var start = ConsolidateCaret(Text, sel.Item1);
             var end = ConsolidateCaret(Text, sel.Item2);
             (var s1, var rest) = SplitAt(Text, start);
-            (_, var s3) = SplitAt(rest, end-start);
+            (_, var s3) = SplitAt(rest, end - start);
             Selection = null;
             CaretPos = sel.Item1;
             if (!align)
                 Text = s1 + s3;
-            else 
+            else
                 Text = s1 + AlignAgainstMask(s3, CaretPos);
         }
 
@@ -92,16 +92,17 @@ namespace MudBlazor.UnitTests.Components
         {
             if (Selection != null)
             {
-                DeleteSelection(align:true);
+                DeleteSelection(align: true);
                 return;
             }
+
             var text = Text ?? "";
             var pos = ConsolidateCaret(text, CaretPos);
             if (pos >= text.Length)
                 return;
             (var beforeText, var afterText) = SplitAt(text, pos);
             // delete as many delimiters as there are plus one char
-            var restText=new string(afterText.SkipWhile(IsTextCharDelimiter).Skip(1).ToArray());
+            var restText = new string(afterText.SkipWhile(IsTextCharDelimiter).Skip(1).ToArray());
             var alignedAfter = AlignAgainstMask(restText, pos);
             var numDeleted = afterText.Length - restText.Length;
             if (numDeleted > 1)
@@ -110,9 +111,10 @@ namespace MudBlazor.UnitTests.Components
                 // adjust the cursor position to after the delimiters
                 CaretPos += (numDeleted - 1);
             }
+
             Text = FillWithPlaceholder(beforeText + alignedAfter);
         }
-        
+
         /// <summary>
         /// Implements the effect of the Backspace key at the current cursor position
         /// </summary>
@@ -120,16 +122,17 @@ namespace MudBlazor.UnitTests.Components
         {
             if (Selection != null)
             {
-                DeleteSelection(align:true);
+                DeleteSelection(align: true);
                 return;
             }
+
             var text = Text ?? "";
             var pos = ConsolidateCaret(text, CaretPos);
             if (pos == 0)
                 return;
             (var beforeText, var afterText) = SplitAt(text, pos);
             // backspace as many delimiters as there are plus one char
-            var restText=new string(beforeText.Reverse().SkipWhile(IsTextCharDelimiter).Skip(1).Reverse().ToArray());
+            var restText = new string(beforeText.Reverse().SkipWhile(IsTextCharDelimiter).Skip(1).Reverse().ToArray());
             var numDeleted = beforeText.Length - restText.Length;
             CaretPos -= numDeleted;
             var alignedAfter = AlignAgainstMask(afterText, CaretPos);
@@ -157,9 +160,10 @@ namespace MudBlazor.UnitTests.Components
                 var maskChar = mask[maskIndex];
                 if (IsMaskCharDelimiter(maskChar))
                     filledText += maskChar;
-                else 
+                else
                     filledText += Placeholder.Value;
             }
+
             return filledText;
         }
 
@@ -196,13 +200,16 @@ namespace MudBlazor.UnitTests.Components
                     maskIndex++;
                     continue;
                 }
+
                 if (IsMatch(maskChar, textChar))
                 {
                     alignedText += textChar;
                     maskIndex++;
                 }
+
                 textIndex++;
             }
+
             // fill any delimiters if possible
             for (int i = maskIndex; i < mask.Length; i++)
             {
@@ -211,19 +218,20 @@ namespace MudBlazor.UnitTests.Components
                     break;
                 alignedText += maskChar;
             }
+
             return alignedText;
         }
-        
+
         private bool IsMaskCharDelimiter(char maskChar)
         {
             if (!_maskDict.TryGetValue(maskChar, out var maskDef))
                 return true;
             return false;
         }
-        
+
         private bool IsTextCharDelimiter(char textChar)
         {
-            var result= !_maskChars.Any(maskDef => Regex.IsMatch(textChar.ToString(), maskDef.Regex));
+            var result = !_maskChars.Any(maskDef => Regex.IsMatch(textChar.ToString(), maskDef.Regex));
             return result;
         }
 
@@ -261,12 +269,13 @@ namespace MudBlazor.UnitTests.Components
                 Selection = null;
                 return;
             }
+
             if (sel.Item1 < 0)
                 sel.Item1 = 0;
             if (sel.Item2 >= Text.Length)
                 sel.Item2 = Text.Length;
         }
-        
+
         public override string ToString()
         {
             var text = Text ?? "";
@@ -284,33 +293,111 @@ namespace MudBlazor.UnitTests.Components
                 var start = ConsolidateCaret(text, sel.Item1);
                 var end = ConsolidateCaret(text, sel.Item2);
                 (var s1, var rest) = SplitAt(text, start);
-                (var s2, var s3) = SplitAt(rest, end-start);
+                (var s2, var s3) = SplitAt(rest, end - start);
                 return s1 + "[" + s2 + "]" + s3;
             }
         }
     }
 
-    public class RegexMask
+
+    public record struct Block(char MaskChar, int Min = 1, int Max = 1);
+
+    public class BlockMask
     {
-        public RegexMask(string regex)
+        public BlockMask(string delimiters, params Block[] blocks)
         {
-            Mask = regex;
-            _regex = new Regex(regex);
-            _delimiters = new HashSet<char>(Delimiters ?? "");
+            if (blocks.Length == 0)
+                throw new ArgumentException("supply at least one block", nameof(blocks));
+            Delimiters = delimiters ?? "";
+            Blocks = blocks;
+            Init();
         }
 
-        private Regex _regex;
+        public Block[] Blocks { get; private set; }
+
+        private Dictionary<char, MaskChar> _maskDict;
+
+        private MaskChar[] _maskChars = new MaskChar[]
+        {
+            MaskChar.Letter('a'), MaskChar.Digit('0'), MaskChar.LetterOrDigit('*'),
+            new MaskChar { Char = 'l', AddToValue = false, Regex = "[a-zıäöüßşçğ]" },
+            new MaskChar { Char = 'u', AddToValue = false, Regex = "[A-ZİÄÖÜŞÇĞ]" },
+        };
+
+        private void Init()
+        {
+            _delimiters = new HashSet<char>(Delimiters ?? "");
+            _maskDict = _maskChars.ToDictionary(x => x.Char);
+            // this must be last
+            Mask = BuildRegex(Blocks ?? new Block[0]);
+            _regex = new Regex(Mask);
+            //_delimiterRegex = new Regex("[" + string.Join("", Delimiters.Select(x => Regex.Escape(x.ToString())).ToArray()) + "]");
+        }
+
+        private string BuildRegex(Block[] blocks)
+        {
+            var s = new StringBuilder();
+            int i = 0;
+            int blockIndex = 0;
+            s.Append("^");
+            foreach (var b in blocks)
+            {
+                for (int j = 0; j < b.Min; j++)
+                {
+                    if (i > 0)
+                        s.Append("(");
+                    if (_maskDict.TryGetValue(b.MaskChar, out var maskDef))
+                        s.Append(maskDef.Regex);
+                    else
+                        s.Append(Regex.Escape(b.MaskChar.ToString()));
+                }
+
+                i += b.Min;
+                if (b.Max > b.Min)
+                {
+                    for (int j = b.Min; j < b.Max; j++)
+                    {
+                        s.Append("(");
+                        if (_maskDict.TryGetValue(b.MaskChar, out var maskDef))
+                            s.Append(maskDef.Regex);
+                        else
+                            s.Append(Regex.Escape(b.MaskChar.ToString()));
+                    }
+
+                    for (int j = b.Min; j < b.Max; j++)
+                        s.Append(")?");
+                }
+
+                if (_delimiters.Count > 0 && blockIndex < blocks.Length - 1)
+                {
+                    s.Append("([");
+                    foreach (var d in _delimiters)
+                        s.Append(Regex.Escape(d.ToString()));
+                    s.Append("]");
+                    i++;
+                }
+
+                blockIndex++;
+            }
+
+            for (int j = 0; j < i - 1; j++)
+                s.Append(")?");
+            s.Append("$");
+            return s.ToString();
+        }
+
+        private Regex _regex; //, _delimiterRegex;
         private HashSet<char> _delimiters;
 
-        public string Mask { get; }
+        public string Mask { get; private set; }
 
         public string Text { get; private set; }
 
         public int CaretPos { get; set; }
 
         public (int, int)? Selection { get; set; }
-        
-        public string Delimiters { get; set; }
+
+        public string Delimiters { get; }
 
         /// <summary>
         /// Inserts given text at caret position
@@ -318,12 +405,13 @@ namespace MudBlazor.UnitTests.Components
         /// <param name="input">One or multiple characters of input</param>
         public void Insert(string input)
         {
-            DeleteSelection(align:false);
+            DeleteSelection(align: false);
             var text = Text ?? "";
             var pos = ConsolidateCaret(text, CaretPos);
             (var beforeText, var afterText) = SplitAt(text, pos);
-            var alignedInput = AlignAgainstMask(beforeText+input);
+            var alignedInput = AlignAgainstMask(beforeText + input);
             CaretPos = alignedInput.Length;
+            //Text = AlignAgainstMask(alignedInput + _delimiterRegex.Replace(afterText, ""));
             Text = AlignAgainstMask(alignedInput + afterText);
         }
 
@@ -336,12 +424,12 @@ namespace MudBlazor.UnitTests.Components
             var start = ConsolidateCaret(Text, sel.Item1);
             var end = ConsolidateCaret(Text, sel.Item2);
             (var s1, var rest) = SplitAt(Text, start);
-            (_, var s3) = SplitAt(rest, end-start);
+            (_, var s3) = SplitAt(rest, end - start);
             Selection = null;
             CaretPos = sel.Item1;
             if (!align)
                 Text = s1 + s3;
-            else 
+            else
                 Text = AlignAgainstMask(s1 + s3);
         }
 
@@ -352,17 +440,18 @@ namespace MudBlazor.UnitTests.Components
         {
             if (Selection != null)
             {
-                DeleteSelection(align:true);
+                DeleteSelection(align: true);
                 return;
             }
+
             var text = Text ?? "";
             var pos = ConsolidateCaret(text, CaretPos);
             if (pos >= text.Length)
                 return;
             (var beforeText, var afterText) = SplitAt(text, pos);
             // delete as many delimiters as there are plus one char
-            var restText=new string(afterText.SkipWhile(IsDelimiter).Skip(1).ToArray());
-            Text = AlignAgainstMask(beforeText+restText);
+            var restText = new string(afterText.SkipWhile(IsDelimiter).Skip(1).ToArray());
+            Text = AlignAgainstMask(beforeText + restText);
             var numDeleted = afterText.Length - restText.Length;
             if (numDeleted > 1)
             {
@@ -371,7 +460,7 @@ namespace MudBlazor.UnitTests.Components
                 CaretPos += (numDeleted - 1);
             }
         }
-        
+
         /// <summary>
         /// Implements the effect of the Backspace key at the current cursor position
         /// </summary>
@@ -379,19 +468,20 @@ namespace MudBlazor.UnitTests.Components
         {
             if (Selection != null)
             {
-                DeleteSelection(align:true);
+                DeleteSelection(align: true);
                 return;
             }
+
             var text = Text ?? "";
             var pos = ConsolidateCaret(text, CaretPos);
             if (pos == 0)
                 return;
             (var beforeText, var afterText) = SplitAt(text, pos);
             // backspace as many delimiters as there are plus one char
-            var restText=new string(beforeText.Reverse().SkipWhile(IsDelimiter).Skip(1).Reverse().ToArray());
+            var restText = new string(beforeText.Reverse().SkipWhile(IsDelimiter).Skip(1).Reverse().ToArray());
             var numDeleted = beforeText.Length - restText.Length;
             CaretPos -= numDeleted;
-            Text = AlignAgainstMask(restText+afterText);
+            Text = AlignAgainstMask(restText + afterText);
         }
 
         internal static (string, string) SplitAt(string text, int pos)
@@ -417,11 +507,18 @@ namespace MudBlazor.UnitTests.Components
                 var textChar = text[textIndex];
                 if (_regex.IsMatch(alignedText + textChar))
                     alignedText += textChar;
+                // try to skip over a delimiter (input of values only i.e. 31122021 => 31.12.2021)
+                else if (Delimiters.Length > 0 && _regex.IsMatch(alignedText + Delimiters[0] + textChar))
+                {
+                    alignedText += (Delimiters[0].ToString() + textChar);
+                }
+
                 textIndex++;
             }
+
             return alignedText;
         }
-        
+
         private bool IsDelimiter(char maskChar)
         {
             return _delimiters.Contains(maskChar);
@@ -454,12 +551,13 @@ namespace MudBlazor.UnitTests.Components
                 Selection = null;
                 return;
             }
+
             if (sel.Item1 < 0)
                 sel.Item1 = 0;
             if (sel.Item2 >= Text.Length)
                 sel.Item2 = Text.Length;
         }
-        
+
         public override string ToString()
         {
             var text = Text ?? "";
@@ -477,26 +575,103 @@ namespace MudBlazor.UnitTests.Components
                 var start = ConsolidateCaret(text, sel.Item1);
                 var end = ConsolidateCaret(text, sel.Item2);
                 (var s1, var rest) = SplitAt(text, start);
-                (var s2, var s3) = SplitAt(rest, end-start);
+                (var s2, var s3) = SplitAt(rest, end - start);
                 return s1 + "[" + s2 + "]" + s3;
             }
         }
     }
-    
-    
+
+
     [TestFixture]
     public class MaskFieldTests : BunitTest
     {
         [Test]
-        public async Task RegexMask_Insert()
+        public async Task BlockMask_Insert()
         {
-            var mask = new RegexMask(@"\d?\d\.\d?\d.\d{4}");
+            var mask = new BlockMask(".", new Block('0', 1, 2), new Block('0', 1, 2), new Block('0', 2, 4));
             mask.ToString().Should().Be("|");
-            mask.Insert("xx12.34xxx.5678");
+            mask.Insert("12.");
+            mask.ToString().Should().Be("12.|");
+            mask.Clear();
+            mask.Insert("xx12.34xx.5678");
             mask.Text.Should().Be("12.34.5678");
+            mask.Clear();
+            mask.Insert("1.1.99");
+            mask.ToString().Should().Be("1.1.99|");
+            mask.CaretPos = 0;
+            mask.Insert("0");
+            mask.ToString().Should().Be("0|1.1.99");
+            mask.Insert("0");
+            mask.ToString().Should().Be("00|.1.199");
+            mask.Insert("0");
+            mask.ToString().Should().Be("00.0|.1199");
+            mask.Insert("0");
+            mask.ToString().Should().Be("00.00|.1199");
+            // w/o separator
+            mask = new BlockMask("", new Block('0', 1, 2), new Block('a', 1, 2), new Block('0', 2, 4));
+            mask.Insert("xx12.34xx.5678");
+            mask.Text.Should().Be("12xx5678");
+            mask.Clear();
+            mask.Insert("1.x.99");
+            mask.ToString().Should().Be("1x99|");
+            mask.CaretPos = 0;
+            mask.Insert("0");
+            mask.ToString().Should().Be("0|1x99");
+            mask.Insert("0");
+            mask.ToString().Should().Be("00|x99");
+            mask.Insert("y");
+            mask.ToString().Should().Be("00y|x99");
+            mask.Insert("z");
+            mask.ToString().Should().Be("00yz|99");
+            mask.Insert("1");
+            mask.ToString().Should().Be("00yz1|99");
+        }
+
+        [Test]
+        public async Task BlockMask_Delete()
+        {
+            var mask = new BlockMask(".", new Block('0', 1, 2), new Block('0', 1, 2), new Block('0', 2, 4));
+            mask.ToString().Should().Be("|");
+            mask.Insert("12.34.5678");
+            mask.ToString().Should().Be("12.34.5678|");
+            mask.Delete();
+            mask.ToString().Should().Be("12.34.5678|");
+            mask.CaretPos = 0;
+            mask.Delete();
+            mask.ToString().Should().Be("|2.34.5678");
+            mask.Delete();
+            mask.ToString().Should().Be("|34.56.78");
         }
         
-        
+        [Test]
+        public async Task BlockMask_Backspace()
+        {
+            var mask = new BlockMask(".", new Block('0', 1, 2), new Block('0', 1, 2), new Block('0', 2, 4));
+            mask.ToString().Should().Be("|");
+            mask.Insert("12.34.5678");
+            mask.ToString().Should().Be("12.34.5678|");
+            mask.Backspace();
+            mask.ToString().Should().Be("12.34.567|");
+            mask.CaretPos = 3;
+            mask.ToString().Should().Be("12.|34.567");
+            mask.Backspace();
+            mask.ToString().Should().Be("1|3.4.567");
+            mask.Backspace();
+            mask.ToString().Should().Be("|3.4.567");
+            mask.Backspace();
+            mask.ToString().Should().Be("|3.4.567");
+        }
+
+        [Test]
+        public async Task BlockMask_Internals()
+        {
+            var mask = new BlockMask(".", new Block('('), new Block('0', 2, 2), new Block(')'));
+            mask.Mask.Should().Be(@"^\(([\.](\d(\d([\.](\))?)?)?)?)?$");
+            mask = new BlockMask(".", new Block('0', 1, 2), new Block('0', 1, 2), new Block('0', 2, 4));
+            mask.Mask.Should().Be(@"^\d(\d)?([\.](\d(\d)?([\.](\d(\d(\d(\d)?)?)?)?)?)?)?$");
+        }
+
+
         [Test]
         public async Task SimpleMask_Insert()
         {
@@ -557,11 +732,11 @@ namespace MudBlazor.UnitTests.Components
             mask.Text.Should().Be("---9---");
             mask.ToString().Should().Be("---9---|");
         }
-        
+
         [Test]
         public async Task SimpleMask_Placeholder()
         {
-            var mask = new SimpleMask("(+00) 000 0000") { Placeholder = '_'};
+            var mask = new SimpleMask("(+00) 000 0000") { Placeholder = '_' };
             mask.ToString().Should().Be("|");
             mask.Insert("43");
             mask.Text.Should().Be("(+43) ___ ____");
@@ -582,7 +757,7 @@ namespace MudBlazor.UnitTests.Components
             mask.Insert("430");
             mask.ToString().Should().Be("(+43) 0|12 3567");
         }
-        
+
         [Test]
         public async Task SimpleMask_Delete()
         {
@@ -607,7 +782,7 @@ namespace MudBlazor.UnitTests.Components
             mask.Insert("430");
             mask.ToString().Should().Be("(+43) 0|12 3567");
         }
-        
+
         [Test]
         public async Task SimpleMask_Backspace()
         {
@@ -633,7 +808,7 @@ namespace MudBlazor.UnitTests.Components
             mask.Insert("4309");
             mask.ToString().Should().Be("(+43) 09|1 2356");
         }
-        
+
         [Test]
         public async Task SimpleMask_Selection()
         {
@@ -642,32 +817,32 @@ namespace MudBlazor.UnitTests.Components
             mask.Insert("43abc1235678901234");
             mask.ToString().Should().Be("(+43) 123 5678|");
             // set selection
-            mask.Selection = (-1,111);
+            mask.Selection = (-1, 111);
             mask.ToString().Should().Be("[(+43) 123 5678]");
             mask.CaretPos = 0;
-            mask.Selection = (1,1);
+            mask.Selection = (1, 1);
             mask.ToString().Should().Be("(|+43) 123 5678");
-            mask.Selection = (3,11);
+            mask.Selection = (3, 11);
             mask.ToString().Should().Be("(+4[3) 123 5]678");
             // input with selection
             mask.Insert("9");
             mask.ToString().Should().Be("(+49) |678 ");
-            mask.Selection=(0,6);
+            mask.Selection = (0, 6);
             mask.ToString().Should().Be("[(+49) ]678 ");
             mask.Insert("01");
             mask.ToString().Should().Be("(+01) |678 ");
             // del with selection
-            mask.Selection=(0,6);
+            mask.Selection = (0, 6);
             mask.ToString().Should().Be("[(+01) ]678 ");
             mask.Delete();
             mask.ToString().Should().Be("|(+67) 8");
             // backspace with selection
-            mask.Selection=(0,6);
+            mask.Selection = (0, 6);
             mask.ToString().Should().Be("[(+67) ]8");
             mask.Backspace();
             mask.ToString().Should().Be("|(+8");
         }
-        
+
         [Test]
         public async Task SimpleMask_Internals()
         {
@@ -764,43 +939,52 @@ namespace MudBlazor.UnitTests.Components
             comp.WaitForAssertion(() => maskField.Instance.Value.Should().Be("abC120bc"));
             comp.WaitForAssertion(() => maskField.Instance.Mask.CaretPosition.Should().Be(12));
 
-            await comp.InvokeAsync(() => maskField.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = "Backspace" }));
+            await comp.InvokeAsync(
+                () => maskField.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = "Backspace" }));
             comp.WaitForAssertion(() => maskField.Instance.Text.Should().Be("(abC) 120-b_"));
             comp.WaitForAssertion(() => maskField.Instance.Value.Should().Be("abC120b"));
             comp.WaitForAssertion(() => maskField.Instance.Mask.CaretPosition.Should().Be(11));
 
-            await comp.InvokeAsync(() => maskField.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = "Backspace" }));
+            await comp.InvokeAsync(
+                () => maskField.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = "Backspace" }));
             comp.WaitForAssertion(() => maskField.Instance.Text.Should().Be("(abC) 120-__"));
             comp.WaitForAssertion(() => maskField.Instance.Value.Should().Be("abC120"));
 
-            await comp.InvokeAsync(() => maskField.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = "Backspace" }));
+            await comp.InvokeAsync(
+                () => maskField.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = "Backspace" }));
             comp.WaitForAssertion(() => maskField.Instance.Text.Should().Be("(abC) 12_-__"));
             comp.WaitForAssertion(() => maskField.Instance.Value.Should().Be("abC12"));
             comp.WaitForAssertion(() => maskField.Instance.Mask.CaretPosition.Should().Be(8));
 
-            await comp.InvokeAsync(() => maskField.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = "Backspace" }));
+            await comp.InvokeAsync(
+                () => maskField.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = "Backspace" }));
             comp.WaitForAssertion(() => maskField.Instance.Text.Should().Be("(abC) 1__-__"));
             comp.WaitForAssertion(() => maskField.Instance.Value.Should().Be("abC1"));
 
-            await comp.InvokeAsync(() => maskField.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = "Backspace" }));
+            await comp.InvokeAsync(
+                () => maskField.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = "Backspace" }));
             comp.WaitForAssertion(() => maskField.Instance.Text.Should().Be("(abC) ___-__"));
             comp.WaitForAssertion(() => maskField.Instance.Value.Should().Be("abC"));
 
-            await comp.InvokeAsync(() => maskField.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = "Backspace" }));
+            await comp.InvokeAsync(
+                () => maskField.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = "Backspace" }));
             comp.WaitForAssertion(() => maskField.Instance.Text.Should().Be("(ab_) ___-__"));
             comp.WaitForAssertion(() => maskField.Instance.Value.Should().Be("ab"));
             comp.WaitForAssertion(() => maskField.Instance.Mask.CaretPosition.Should().Be(3));
 
-            await comp.InvokeAsync(() => maskField.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = "Backspace" }));
+            await comp.InvokeAsync(
+                () => maskField.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = "Backspace" }));
             comp.WaitForAssertion(() => maskField.Instance.Text.Should().Be("(a__) ___-__"));
             comp.WaitForAssertion(() => maskField.Instance.Value.Should().Be("a"));
 
-            await comp.InvokeAsync(() => maskField.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = "Backspace" }));
+            await comp.InvokeAsync(
+                () => maskField.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = "Backspace" }));
             comp.WaitForAssertion(() => maskField.Instance.Text.Should().Be("(___) ___-__"));
             comp.WaitForAssertion(() => maskField.Instance.Value.Should().Be(""));
             comp.WaitForAssertion(() => maskField.Instance.Mask.CaretPosition.Should().Be(1));
             //Backspace should have no effect on empty value
-            await comp.InvokeAsync(() => maskField.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = "Backspace" }));
+            await comp.InvokeAsync(
+                () => maskField.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = "Backspace" }));
             comp.WaitForAssertion(() => maskField.Instance.Text.Should().Be("(___) ___-__"));
             comp.WaitForAssertion(() => maskField.Instance.Value.Should().Be(""));
             comp.WaitForAssertion(() => maskField.Instance.Mask.CaretPosition.Should().Be(1));
@@ -817,17 +1001,20 @@ namespace MudBlazor.UnitTests.Components
             comp.WaitForAssertion(() => maskField.Instance.Value.Should().Be("bc20c"));
             comp.WaitForAssertion(() => maskField.Instance.Mask.CaretPosition.Should().Be(1));
 
-            await comp.InvokeAsync(() => maskField.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = "Backspace" }));
+            await comp.InvokeAsync(
+                () => maskField.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = "Backspace" }));
             comp.WaitForAssertion(() => maskField.Instance.Text.Should().Be("(bc_) 20_-c_"));
             comp.WaitForAssertion(() => maskField.Instance.Value.Should().Be("bc20c"));
 
             await comp.InvokeAsync(() => maskField.Instance.SetCaretPosition(0));
-            await comp.InvokeAsync(() => maskField.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = "Backspace" }));
+            await comp.InvokeAsync(
+                () => maskField.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = "Backspace" }));
             comp.WaitForAssertion(() => maskField.Instance.Text.Should().Be("(bc_) 20_-c_"));
             comp.WaitForAssertion(() => maskField.Instance.Value.Should().Be("bc20c"));
 
             await comp.InvokeAsync(() => maskField.Instance.SetCaretPosition(7));
-            await comp.InvokeAsync(() => maskField.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = "Backspace" }));
+            await comp.InvokeAsync(
+                () => maskField.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = "Backspace" }));
             comp.WaitForAssertion(() => maskField.Instance.Text.Should().Be("(bc_) 0__-__"));
             comp.WaitForAssertion(() => maskField.Instance.Value.Should().Be("bc0"));
 
@@ -844,16 +1031,20 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(() => maskField.Instance.SetCaretPosition(impl.FindLastCaretLocation()));
             comp.WaitForAssertion(() => maskField.Instance.Mask.CaretPosition.Should().Be(11));
 
-            await comp.InvokeAsync(() => maskField.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = "ArrowLeft" }));
+            await comp.InvokeAsync(
+                () => maskField.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = "ArrowLeft" }));
             comp.WaitForAssertion(() => maskField.Instance.Mask.CaretPosition.Should().Be(10));
 
-            await comp.InvokeAsync(() => maskField.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = "ArrowLeft" }));
+            await comp.InvokeAsync(
+                () => maskField.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = "ArrowLeft" }));
             comp.WaitForAssertion(() => maskField.Instance.Mask.CaretPosition.Should().Be(8));
 
-            await comp.InvokeAsync(() => maskField.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = "ArrowRight" }));
+            await comp.InvokeAsync(() =>
+                maskField.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = "ArrowRight" }));
             comp.WaitForAssertion(() => maskField.Instance.Mask.CaretPosition.Should().Be(10));
 
-            await comp.InvokeAsync(() => maskField.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = "ArrowRight" }));
+            await comp.InvokeAsync(() =>
+                maskField.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = "ArrowRight" }));
             comp.WaitForAssertion(() => maskField.Instance.Mask.CaretPosition.Should().Be(11));
         }
 
@@ -885,17 +1076,20 @@ namespace MudBlazor.UnitTests.Components
             comp.WaitForAssertion(() => maskField.Instance.GetRawValue().Should().Be("123"));
             comp.WaitForAssertion(() => maskField.Instance.Value.Should().Be(123));
 
-            await comp.InvokeAsync(() => maskField.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = "Backspace" }));
+            await comp.InvokeAsync(
+                () => maskField.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = "Backspace" }));
             comp.WaitForAssertion(() => maskField.Instance.Text.Should().Be("(1)2-_"));
             comp.WaitForAssertion(() => maskField.Instance.GetRawValue().Should().Be("12"));
             comp.WaitForAssertion(() => maskField.Instance.Value.Should().Be(12));
 
-            await comp.InvokeAsync(() => maskField.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = "Backspace" }));
+            await comp.InvokeAsync(
+                () => maskField.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = "Backspace" }));
             comp.WaitForAssertion(() => maskField.Instance.Text.Should().Be("(1)_-_"));
             comp.WaitForAssertion(() => maskField.Instance.GetRawValue().Should().Be("1"));
             comp.WaitForAssertion(() => maskField.Instance.Value.Should().Be(1));
 
-            await comp.InvokeAsync(() => maskField.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = "Backspace" }));
+            await comp.InvokeAsync(
+                () => maskField.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = "Backspace" }));
             comp.WaitForAssertion(() => maskField.Instance.Text.Should().Be("(_)_-_"));
             comp.WaitForAssertion(() => maskField.Instance.Value.Should().Be(0));
         }
@@ -914,7 +1108,8 @@ namespace MudBlazor.UnitTests.Components
             comp.WaitForAssertion(() => maskField.Instance.Text.Should().Be("(a__) ___-__"));
             comp.WaitForAssertion(() => maskField.Instance.Value.Should().Be("a"));
 
-            await comp.InvokeAsync(() => maskField.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = "Backspace" }));
+            await comp.InvokeAsync(
+                () => maskField.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = "Backspace" }));
             comp.WaitForAssertion(() => maskField.Instance.Text.Should().Be(null));
             comp.WaitForAssertion(() => maskField.Instance.Value.Should().Be(""));
 
@@ -971,9 +1166,7 @@ namespace MudBlazor.UnitTests.Components
 
             await comp.InvokeAsync(() => maskField.Instance.Mask.MaskDefinition = new MaskChar[]
             {
-                MaskChar.Letter('b'),
-                MaskChar.Digit('9'),
-                MaskChar.LetterOrDigit('+'),
+                MaskChar.Letter('b'), MaskChar.Digit('9'), MaskChar.LetterOrDigit('+'),
                 new MaskChar { Char = 'l', AddToValue = false },
             });
 
@@ -1211,7 +1404,8 @@ namespace MudBlazor.UnitTests.Components
             comp.WaitForAssertion(() => maskField1.Instance.Value.Should().Be("abC12"));
 
             // input in maskField1
-            await comp.InvokeAsync(() => maskField1.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = "Backspace" }));
+            await comp.InvokeAsync(() =>
+                maskField1.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = "Backspace" }));
             comp.WaitForAssertion(() => maskField1.Instance.Text.Should().Be("(abC) 1__-__"));
             comp.WaitForAssertion(() => maskField1.Instance.Value.Should().Be("abC1"));
 
@@ -1220,7 +1414,8 @@ namespace MudBlazor.UnitTests.Components
             comp.WaitForAssertion(() => maskField2.Instance.Value.Should().Be("abC1"));
 
             // input in maskField2
-            await comp.InvokeAsync(() => maskField2.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = "Backspace" }));
+            await comp.InvokeAsync(() =>
+                maskField2.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = "Backspace" }));
             comp.WaitForAssertion(() => maskField2.Instance.Text.Should().Be("(abC) ___-__"));
             comp.WaitForAssertion(() => maskField2.Instance.Value.Should().Be("abC"));
 
@@ -1248,7 +1443,8 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(() => maskField.SetCaretPosition(impl.FindLastCaretLocation(true)));
             comp.WaitForAssertion(() => impl.CaretPosition.Should().Be(0));
 
-            await comp.InvokeAsync(() => maskField.SetCaretPosition(impl.FindPreviousCaretLocation(impl.CaretPosition)));
+            await comp.InvokeAsync(() =>
+                maskField.SetCaretPosition(impl.FindPreviousCaretLocation(impl.CaretPosition)));
             comp.WaitForAssertion(() => impl.CaretPosition.Should().Be(0));
 
             await comp.InvokeAsync(() => maskField.SetCaretPosition(impl.FindNextCaretLocation(impl.CaretPosition)));
@@ -1311,12 +1507,10 @@ namespace MudBlazor.UnitTests.Components
 
             maskField.Mask.MaskDefinition = new MaskChar[]
             {
-                MaskChar.Letter('a'),
-                MaskChar.Digit('0'),
-                MaskChar.LetterOrDigit('*'),
+                MaskChar.Letter('a'), MaskChar.Digit('0'), MaskChar.LetterOrDigit('*'),
                 new MaskChar { Char = 'l', AddToValue = false, Regex = "^[a-zıöüşçğ]$" },
                 new MaskChar { Char = 'u', AddToValue = false, Regex = "^[A-ZİÖÜŞÇĞ]$" },
-                new MaskChar { Char = ':', AddToValue = true},
+                new MaskChar { Char = ':', AddToValue = true },
             };
 
             maskField.Mask.Mask = "00:00";
