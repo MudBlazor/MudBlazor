@@ -51,7 +51,11 @@ class MudScrollManager {
 
             //check if we are jumping
             if (absIncrement > 1) {
-                dHeight = parent.querySelector(".mud-list-item-disabled")?.getBoundingClientRect().height ?? eHeight;
+                let listItem = parent.querySelector(".mud-list-item-disabled");
+                if (listItem)
+                    dHeight = listItem.getBoundingClientRect().height;
+                else
+                    dHeight = eHeight;
             }
 
             if (

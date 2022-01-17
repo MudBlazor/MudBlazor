@@ -3,15 +3,13 @@
 <DocsPage>
     <DocsPageHeader Title="Display" SubTitle="The display classes help you set the display type or change it upon viewport." />
     <DocsPageContent>
+
         <DocsPageSection>
             <SectionHeader Title="How it works">
                 <Description>
                     <MudText>Specify the element's <CodeInline>display</CodeInline> property, the classes can be used with all breakpoints from <CodeInline>xs</CodeInline> to <CodeInline>xxl</CodeInline>.</MudText>
                 </Description>
             </SectionHeader>
-            <div class="d-flex">
-
-            </div>
             <MudText Class="pt-6 pb-2">The <b>properties</b></MudText>
             <ul class="mud-typography-body1">
                 <li><CodeInline>.d-{value}</CodeInline> - for <CodeInline>xs</CodeInline></li>
@@ -41,22 +39,30 @@
                     </ul>
                 </MudItem>
             </MudGrid>
-            <MudText>When setting a specific breakpoint for a display helper class, it will apply to all screen widths from the designation and up.</MudText>
-            <MudTabs Rounded="true" Outlined="true" Class="mt-12">
-                <MudTabPanel Text="d-inline">
-                    <SectionContent Outlined="true" Class="mt-6" Style="height:130px;">
-                        <DisplayDinlineExample />
-                    </SectionContent>
-                    <SectionSource Code="DisplayDinlineExample" />
-                </MudTabPanel>
-                <MudTabPanel Text="d-block">
-                    <SectionContent Outlined="true" FullWidth="true" Class="mt-6" Style="height:130px;">
+            <MudText Class="pt-6">When setting a specific breakpoint for a display helper class, it will apply to all screen widths from the designation and up.</MudText>
+        </DocsPageSection>
+        
+        <DocsPageSection>
+            <SectionHeader Title="Basic Usage" />
+            <SectionSubGroups>
+                
+                <DocsPageSection>
+                    <SectionHeader Title="Block"/>
+                    <SectionContent Code="DisplayDblockExample">
                         <DisplayDblockExample />
                     </SectionContent>
-                    <SectionSource Code="DisplayDblockExample" />
-                </MudTabPanel>
-            </MudTabs>
+                </DocsPageSection>
+
+                <DocsPageSection>
+                    <SectionHeader Title="Inline"/>
+                    <SectionContent Code="DisplayDinlineExample">
+                        <DisplayDinlineExample />
+                    </SectionContent>
+                </DocsPageSection>
+
+            </SectionSubGroups>
         </DocsPageSection>
+
         <DocsPageSection>
             <SectionHeader Title="Visibility">
                 <Description>Display an element based on the current viewport. The same breakpoint classes apply from the bottom up. That means <CodeInline>.d-none</CodeInline> applies to all breakpoints, but <CodeInline>.d-md-none</CodeInline> will only apply to <CodeInline>md</CodeInline> and up.</Description>
@@ -82,10 +88,10 @@
                     <tr><td>Visible only on xxl</td> <td><CodeInline>.d-none .d-xxl-flex</CodeInline></td></tr>
                 </tbody>
             </MudSimpleTable>
-            <SectionContent DarkenBackground="true" DisplayFlex="true" Class="mt-6">
+            <SectionContent DarkenBackground="true" Class="mt-6" Code="DisplayVisibilyExample">
                 <DisplayVisibilyExample />
             </SectionContent>
-            <SectionSource Code="DisplayVisibilyExample" />
         </DocsPageSection>
+
     </DocsPageContent>
 </DocsPage>

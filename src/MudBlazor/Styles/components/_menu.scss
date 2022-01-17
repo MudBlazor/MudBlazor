@@ -1,5 +1,6 @@
 ﻿.mud-menu {
     display: inline-flex;
+    align-self: center;
     position: relative;
 
     & * {
@@ -12,5 +13,9 @@
         & * {
             cursor: default;
         }
+    }
+
+    & > div.mud-menu-activator {
+        display: contents;
     }
 }

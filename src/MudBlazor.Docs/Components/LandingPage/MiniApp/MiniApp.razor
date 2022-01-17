@@ -1,0 +1,225 @@
+﻿@using Microsoft.AspNetCore.Components
+@using MudBlazor.Utilities
+@namespace MudBlazor.Docs.Components.LandingPage
+
+<div class="d-flex mud-width-full mud-height-full">
+    <MudOverlay OnClick="@(() => ToggleMiniDrawer())" @bind-Visible="@overlayVisible" Absolute="true" ZIndex="1" />
+    <div class="@MiniDrawerClassNames" style="@GetDrawerWidth()">
+        <div class="d-flex align-center px-4">
+            <MudBlazorLogo Class="me-3" Style="width:36px;"/>
+            <MudText Typo="Typo.h6">Mud Mini</MudText>
+        </div>
+        <MudList Clickable="true" @bind-SelectedItem="selectedItem" @bind-SelectedValue="selectedValue" Class="py-6 mini-fake-nav">
+
+            <MudListSubheader Class="pt-6 pb-2">General</MudListSubheader>
+
+            <MudListItem Value="1" Icon="@Icons.Rounded.SpaceDashboard" Text="Dashboard" IconColor="Color.Inherit"/>
+            <MudListItem Value="2" Icon="@Icons.Rounded.ShoppingCart" Text="E-Commerce" IconColor="Color.Inherit"/>
+            <MudListItem Value="3" Icon="@Icons.Rounded.AccountBalance" Text="Banking" IconColor="Color.Inherit"/>
+            <MudListItem Value="4" Icon="@Icons.Rounded.Event" Text="Booking" IconColor="Color.Inherit"/>
+
+            <MudListSubheader Class="pt-6 pb-2">Applications</MudListSubheader>
+
+            <MudListItem Value="5" Icon="@Icons.Rounded.Email" Text="Mail" IconColor="Color.Inherit" />
+            <MudListItem Value="6" Icon="@Icons.Rounded.QuestionAnswer" Text="Chat" IconColor="Color.Inherit" />
+            <MudListItem Value="7" Icon="@Icons.Rounded.EventNote" Text="Calendar" IconColor="Color.Inherit" />
+            <MudListItem Value="8" Icon="@Icons.Rounded.ViewKanban" Text="Kanban" IconColor="Color.Inherit" />
+
+            <MudListSubheader Class="pt-6 pb-2">Manage</MudListSubheader>
+
+            <MudListItem Value="9" Icon="@Icons.Rounded.Person" Text="Users" />
+            <MudListItem Value="10" Icon="@Icons.Rounded.Group" Text="Groups" />
+            <MudListItem Value="11" Icon="@Icons.Rounded.ShoppingCart" Text="E-Commerce" InitiallyExpanded="false">
+                <NestedList>
+                    <MudListItem Value="12" Text="Analytics"/>
+                    <MudListItem Value="13" Text="Products"/>
+                    <MudListItem Value="14" Text="Orders"/>
+                    <MudListItem Value="15" Text="Invoice"/>
+                </NestedList>
+            </MudListItem>
+        </MudList>
+    </div>
+    <div class="@ContentClassNames">
+        <MudToolBar DisableGutters="true" Class="mud-text-secondary">
+            <MudIconButton OnClick="@(() => ToggleMiniDrawer())" Icon="@Icons.Rounded.MenuOpen" Color="Color.Inherit"/>
+            <MudIconButton Icon="@Icons.Outlined.Search" Color="Color.Inherit"/>
+            <MudSpacer/>
+            <MudIconButton Class="mud-text-secondary" Icon="@Icons.Outlined.Notifications"/>
+            <MudMenu AnchorOrigin="Origin.BottomRight" TransformOrigin="Origin.TopRight" PopoverClass="mudblazor-landingpage-scaled-menu mud-elevation-1">
+                <ActivatorContent>
+                    <MiniAppAvatar />
+                </ActivatorContent>
+                <ChildContent>
+                    <div class="px-4">
+                        <MudText Typo="Typo.subtitle2">Martin Mudsson</MudText>
+                        <MudText Class="mt-n2" Typo="Typo.body1">martin@mudsson.se</MudText>
+                    </div>
+                    <MudDivider Class="my-2"/>
+                    <MudListItem Dense="true" Icon="@Icons.Rounded.Person">Profile</MudListItem>
+                    <MudListItem Dense="true" Icon="@Icons.Rounded.Settings">Settings</MudListItem>
+                    <MudListItem Dense="true" Icon="@Icons.Rounded.Logout">Logout</MudListItem>
+                </ChildContent>
+            </MudMenu>
+        </MudToolBar>
+        <div class="lp-app-grid">
+            <MudPaper Class="py-4 px-6 rounded-lg d-flex align-center">
+                <div class="flex-grow-1">
+                    <MudText Typo="Typo.h6">Graphite on roof</MudText>
+                    <div class="d-flex align-center my-1">
+                        <MudAvatar Class="me-2 pa-4" Style="background-color: var(--mud-palette-primary-hover);" Size="Size.Small">
+                            <MudIcon Color="Color.Primary" Icon="@Icons.Material.Filled.TrendingDown" Size="Size.Small"/>
+                        </MudAvatar>
+                        <MudText Typo="Typo.subtitle2">+2.6%</MudText>
+                    </div>
+                    <MudText Typo="Typo.h4">149,567</MudText>
+                </div>
+                <div class="d-flex align-end justify-end mud-height-full py-8">
+                    <MudPaper Height="80%" Width="6px" Square="true" Class="mud-primary mr-1 rounded-t"/>
+                    <MudPaper Height="95%" Width="6px" Square="true" Class="mud-primary mr-1 rounded-t"/>
+                    <MudPaper Height="90%" Width="6px" Square="true" Class="mud-primary mr-1 rounded-t"/>
+                    <MudPaper Height="85%" Width="6px" Square="true" Class="mud-primary mr-1 rounded-t"/>
+                    <MudPaper Height="65%" Width="6px" Square="true" Class="mud-primary mr-1 rounded-t"/>
+                    <MudPaper Height="52%" Width="6px" Square="true" Class="mud-primary mr-1 rounded-t"/>
+                    <MudPaper Height="40%" Width="6px" Square="true" Class="mud-primary mr-1 rounded-t"/>
+                    <MudPaper Height="38%" Width="6px" Square="true" Class="mud-primary mr-1 rounded-t"/>
+                    <MudPaper Height="36%" Width="6px" Square="true" Class="mud-primary mr-1 rounded-t"/>
+                    <MudPaper Height="20%" Width="6px" Square="true" Class="mud-primary mr-1 rounded-t"/>
+                </div>
+            </MudPaper>
+            <MudPaper Class="py-4 px-6 rounded-lg d-flex align-center">
+                <div class="flex-grow-1">
+                    <MudText Typo="Typo.h6">Global Spread</MudText>
+                    <div class="d-flex align-center my-1">
+                        <MudAvatar Class="me-2 pa-4" Style="background-color: var(--mud-palette-secondary-hover);" Size="Size.Small">
+                            <MudIcon Color="Color.Secondary" Icon="@Icons.Material.Filled.TrendingUp" Size="Size.Small"/>
+                        </MudAvatar>
+                        <MudText Typo="Typo.subtitle2">+9.6%</MudText>
+                    </div>
+                    <MudText Typo="Typo.h4">12%</MudText>
+                </div>
+                <div class="d-flex align-end justify-end mud-height-full py-8">
+                    <MudPaper Height="15%" Width="6px" Square="true" Class="mud-secondary mr-1 rounded-t"/>
+                    <MudPaper Height="20%" Width="6px" Square="true" Class="mud-secondary mr-1 rounded-t"/>
+                    <MudPaper Height="53%" Width="6px" Square="true" Class="mud-secondary mr-1 rounded-t"/>
+                    <MudPaper Height="35%" Width="6px" Square="true" Class="mud-secondary mr-1 rounded-t"/>
+                    <MudPaper Height="45%" Width="6px" Square="true" Class="mud-secondary mr-1 rounded-t"/>
+                    <MudPaper Height="70%" Width="6px" Square="true" Class="mud-secondary mr-1 rounded-t"/>
+                    <MudPaper Height="58%" Width="6px" Square="true" Class="mud-secondary mr-1 rounded-t"/>
+                    <MudPaper Height="76%" Width="6px" Square="true" Class="mud-secondary mr-1 rounded-t"/>
+                    <MudPaper Height="85%" Width="6px" Square="true" Class="mud-secondary mr-1 rounded-t"/>
+                    <MudPaper Height="61%" Width="6px" Square="true" Class="mud-secondary mr-1 rounded-t"/>
+                </div>
+            </MudPaper>
+            <MudPaper Class="py-4 px-6 rounded-lg d-flex align-center">
+                <div class="flex-grow-1">
+                    <MudText Typo="Typo.h6">Roentgen</MudText>
+                    <div class="d-flex align-center my-1">
+                        <MudAvatar Class="me-2 pa-4" Style="background-color: var(--mud-palette-tertiary-hover);" Size="Size.Small">
+                            <MudIcon Color="Color.Tertiary" Icon="@Icons.Material.Filled.TrendingFlat" Size="Size.Small"/>
+                        </MudAvatar>
+                        <MudText Typo="Typo.subtitle2">~0.0%</MudText>
+                    </div>
+                    <MudText Typo="Typo.h4">3,6</MudText>
+                </div>
+                <div class="d-flex align-end justify-end mud-height-full py-8">
+                    <MudPaper Height="10%" Width="6px" Square="true" Class="mud-tertiary mr-1 rounded-t"/>
+                    <MudPaper Height="16%" Width="6px" Square="true" Class="mud-tertiary mr-1 rounded-t"/>
+                    <MudPaper Height="26%" Width="6px" Square="true" Class="mud-tertiary mr-1 rounded-t"/>
+                    <MudPaper Height="36%" Width="6px" Square="true" Class="mud-tertiary mr-1 rounded-t"/>
+                    <MudPaper Height="36%" Width="6px" Square="true" Class="mud-tertiary mr-1 rounded-t"/>
+                    <MudPaper Height="28%" Width="6px" Square="true" Class="mud-tertiary mr-1 rounded-t"/>
+                    <MudPaper Height="36%" Width="6px" Square="true" Class="mud-tertiary mr-1 rounded-t"/>
+                    <MudPaper Height="36%" Width="6px" Square="true" Class="mud-tertiary mr-1 rounded-t"/>
+                    <MudPaper Height="28%" Width="6px" Square="true" Class="mud-tertiary mr-1 rounded-t"/>
+                    <MudPaper Height="36%" Width="6px" Square="true" Class="mud-tertiary mr-1 rounded-t"/>
+                </div>
+            </MudPaper>
+        </div>
+    </div>
+</div>
+
+
+@*<MudPaper Class="pa-4 rounded-lg d-flex align-center">
+        <div class="flex-grow-1">
+            <MudText Typo="Typo.subtitle1">Graphite on roof</MudText>
+            <MudText Typo="Typo.h4">150,000</MudText>
+        </div>
+        <MudAvatar Rounded="true" Color="Color.Primary" Size="Size.Large">
+            <MudIcon Icon="@Icons.Filled.Token" Size="Size.Large" />
+        </MudAvatar>
+    </MudPaper>
+    <MudPaper Class="pa-4 rounded-lg d-flex align-center">
+        <div class="flex-grow-1">
+            <MudText Typo="Typo.subtitle1">Global Spread</MudText>
+            <MudText Typo="Typo.h4">12%</MudText>
+        </div>
+        <MudAvatar Rounded="true" Color="Color.Success" Size="Size.Large">
+            <MudIcon Icon="@Icons.Outlined.Public" Size="Size.Large" />
+        </MudAvatar>
+    </MudPaper>
+    <MudPaper Class="pa-4 rounded-lg d-flex align-center">
+        <div class="flex-grow-1">
+            <MudText Typo="Typo.subtitle1">Roentgen</MudText>
+        <MudText Typo="Typo.h4">3,6</MudText>
+        </div>
+        <MudAvatar Rounded="true" Color="Color.Warning" Size="Size.Large">
+            <MudIcon Icon="@Icons.Custom.Uncategorized.Radioactive" Color="Color.Dark" Size="Size.Large" />
+        </MudAvatar>
+    </MudPaper>*@
+
+@code {
+    [Parameter] public bool IsMobile { get; set; }
+
+    private bool miniDrawerOpen;
+    private bool overlayVisible { get; set; }
+
+    MudListItem selectedItem;
+    object selectedValue = 1;
+
+    private void ToggleMiniDrawer()
+    {
+        miniDrawerOpen = !miniDrawerOpen;
+        if (IsMobile && miniDrawerOpen)
+        {
+            overlayVisible = true;
+        }
+        else
+        {
+            overlayVisible = false;
+        }
+    }
+
+    protected string MiniDrawerClassNames =>
+        new CssBuilder("mini-drawer py-8 flex-grow-0 flex-shrink-0")
+          .AddClass("absolute", IsMobile)
+        .Build();
+    protected string ContentClassNames =>
+        new CssBuilder("flex-grow-1 flex-shrink-1")
+            .AddClass("pa-5", !IsMobile)
+            .AddClass("px-8", IsMobile)
+            .Build();
+
+    private string GetDrawerWidth()
+    {
+        if (miniDrawerOpen)
+        {
+            return "width:240px;";
+        }
+        else
+        {
+            return "width:0;opacity:0;";
+        }
+    }
+
+    protected override void OnParametersSet()
+    {
+        if (IsMobile)
+        {
+            miniDrawerOpen = false;
+        }
+        else
+        {
+            miniDrawerOpen = true;
+        }
+    }
+}

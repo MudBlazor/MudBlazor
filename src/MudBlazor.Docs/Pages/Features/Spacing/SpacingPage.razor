@@ -3,6 +3,7 @@
 <DocsPage>
     <DocsPageHeader Title="Spacing" SubTitle="Spacing is a way to modify padding or margin without creating new classes." />
     <DocsPageContent>
+
         <DocsPageSection>
             <SectionHeader Title="How it works">
                 <Description>
@@ -26,8 +27,14 @@
                 <li><CodeInline>y</CodeInline> - for <CodeInline>margin-top/padding-top</CodeInline> and <CodeInline>margin-bottom/padding-bottom</CodeInline></li>
                 <li><CodeInline>a</CodeInline> - for all 4 sides.</li>
             </ul>
-            <MudText Typo="Typo.h4" GutterBottom="true" Class="mt-12">Size</MudText>
-            <MudText Class="my-2">The <b>size</b> changes with an interval of 4 pixels.</MudText>
+        </DocsPageSection>
+        
+        <DocsPageSection>
+            <SectionHeader Title="Size">
+                <Description>
+                    The size changes with an interval of 4 pixels.
+                </Description>
+            </SectionHeader>
             <MudGrid>
                 <MudItem md="6">
                     <MudText Typo="Typo.h6" Color="Color.Primary">Positive</MudText>
@@ -75,38 +82,39 @@
                 </MudItem>
             </MudGrid>
         </DocsPageSection>
+
         <DocsPageSection>
             <SectionHeader Title="Examples">
             </SectionHeader>
-            <SectionContent DarkenBackground="true" DisplayFlex="true">
+            <SectionContent DarkenBackground="true" Code="SpacingExample">
                 <SpacingExample />
             </SectionContent>
-            <SectionSource Code="SpacingExample" />
         </DocsPageSection>
+
         <DocsPageSection>
             <SectionHeader Title="Breakpoints">
                 <Description>You can combine the spacing system with <MudLink Href="/features/breakpoints">MudBlazor's breakpoints</MudLink> to target specific screen sizes.</Description>
             </SectionHeader>
-            <SectionContent DarkenBackground="true" DisplayFlex="true">
+            <SectionContent DarkenBackground="true" Code="SpacingBreakpointExample">
                 <SpacingBreakpointExample />
             </SectionContent>
-            <SectionSource Code="SpacingBreakpointExample" />
         </DocsPageSection>
+
         <DocsPageSection>
             <SectionHeader Title="Centering Horizontal">
             </SectionHeader>
-            <SectionContent DarkenBackground="true">
+            <SectionContent DarkenBackground="true" Code="SpacingCenteringExample">
                 <SpacingCenteringExample />
             </SectionContent>
-            <SectionSource Code="SpacingCenteringExample" />
         </DocsPageSection>
+
         <DocsPageSection>
             <SectionHeader Title="Negative Margins">
             </SectionHeader>
-            <SectionContent DarkenBackground="true">
+            <SectionContent DarkenBackground="true" Code="SpacingNegativeExample" Block="true">
                 <SpacingNegativeExample />
             </SectionContent>
-            <SectionSource Code="SpacingNegativeExample" />
         </DocsPageSection>
+
     </DocsPageContent>
 </DocsPage>

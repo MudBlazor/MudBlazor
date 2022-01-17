@@ -261,7 +261,7 @@ window.mudpopoverHelper = {
 
                 if (classList.contains('mud-popover-overflow-flip-onopen')) {
                     if (!popoverContentNode.mudPopoverFliped) {
-                        popoverContentNode.mudPopoverFliped = selector ?? 'none';
+                        popoverContentNode.mudPopoverFliped = selector || 'none';
                     }
                 }
             }

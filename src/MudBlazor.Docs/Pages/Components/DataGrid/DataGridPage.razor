@@ -1,8 +1,9 @@
 ﻿@page "/components/datagrid"
 
-<DocsPage MaxWidth="MaxWidth.Large">
+<DocsPage>
     <DocsPageHeader Title="DataGrid - Experimental" SubTitle="A sortable, filterable data grid with multiselection and pagination" />
     <DocsPageContent>
+
         <DocsPageSection>
             <MudAlert Severity="Severity.Warning">
                 <b>Warning experimental component!</b>
@@ -20,10 +21,9 @@
                     simplest form, the data grid is a just a table, displaying data from a data source.
                 </Description>
             </SectionHeader>
-            <SectionContent DarkenBackground="true" FullWidth="true">
+            <SectionContent DarkenBackground="true" Code="DataGridBasicExample" ShowCode="false" Block="true" FullWidth="true">
                 <DataGridBasicExample />
             </SectionContent>
-            <SectionSource Code="DataGridBasicExample" ShowCode="false" GitHubFolderName="DataGrid" />
         </DocsPageSection>
 
         <DocsPageSection>
@@ -38,10 +38,9 @@
                     can override the default <CodeInline>SortBy</CodeInline> function for each column, seen in the Name column where we show how you can switch to a sort by the Name's length.
                 </Description>
             </SectionHeader>
-            <SectionContent DarkenBackground="true" FullWidth="true">
+            <SectionContent DarkenBackground="true" Code="DataGridAdvancedExample" ShowCode="false" Block="true" FullWidth="true">
                 <DataGridAdvancedExample />
             </SectionContent>
-            <SectionSource Code="DataGridAdvancedExample" ShowCode="false" GitHubFolderName="DataGrid" />
         </DocsPageSection>
 
         <DocsPageSection>
@@ -56,10 +55,9 @@
                     do not have the Func properties since they are not needed.
                 </Description>
             </SectionHeader>
-            <SectionContent DarkenBackground="true" FullWidth="true">
+            <SectionContent DarkenBackground="true" Code="DataGridVisualStylingExample" ShowCode="false" Block="true" FullWidth="true">
                 <DataGridVisualStylingExample />
             </SectionContent>
-            <SectionSource Code="DataGridVisualStylingExample" ShowCode="false" GitHubFolderName="DataGrid" />
         </DocsPageSection>
 
         <DocsPageSection>
@@ -75,10 +73,9 @@
 
                 </Description>
             </SectionHeader>
-            <SectionContent DarkenBackground="true" FullWidth="true">
+            <SectionContent DarkenBackground="true" Code="DataGridInlineEditingExample" ShowCode="false" Block="true" FullWidth="true">
                 <DataGridInlineEditingExample />
             </SectionContent>
-            <SectionSource Code="DataGridInlineEditingExample" ShowCode="false" GitHubFolderName="DataGrid" />
         </DocsPageSection>
 
     </DocsPageContent>

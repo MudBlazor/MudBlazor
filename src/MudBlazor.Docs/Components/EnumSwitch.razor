@@ -1,17 +1,13 @@
 ﻿@typeparam T where T: Enum
 
-<MudButtonGroup OverrideStyles="false">
-    @foreach (int value in Enum.GetValues(Type))
-    {
-        <MudButton Color="@Color"
-                   Size="Size.Small"
-                   DisableRipple
-                   Variant="@(value == Convert.ToInt32(Value) ? Variant.Filled : Variant.Outlined)"
-                   OnClick="() => Value = (T)Enum.ToObject(Type, value)">
-            @Enum.GetName(Type, value)
-        </MudButton>
-    }
-</MudButtonGroup>
+<div class="mud-width-full d-flex justify-end">
+    <MudButtonGroup OverrideStyles="false">
+        @foreach (int value in Enum.GetValues(Type))
+        {
+            <MudButton Color="Color.Primary" Size="Size.Small" DisableElevation="true" Variant="@(value == Convert.ToInt32(Value) ? Variant.Filled : Variant.Outlined)" OnClick="() => Value = (T)Enum.ToObject(Type, value)">@Enum.GetName(Type, value)</MudButton>
+        }
+    </MudButtonGroup>
+</div>
 
 @code {
     private T _value;
@@ -29,8 +25,6 @@
     }
 
     [Parameter] public EventCallback<T> ValueChanged { get; set; }
-
-    [Parameter] public Color Color { get; set; }
 
     private Type Type => typeof(T);
 }

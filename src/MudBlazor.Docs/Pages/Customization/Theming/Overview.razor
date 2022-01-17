@@ -1,9 +1,9 @@
-﻿@page "/customization/theming/overview"
+﻿@page "/customization/overview"
 
 <DocsPage>
-    <DocsPageHeader Title="Theming" SubTitle="Customize MudBlazor so that it suits your needs. Change colors, typography, shapes and more.">
-    </DocsPageHeader>
+    <DocsPageHeader Title="Theming" SubTitle="Customize MudBlazor so that it suits your needs. Change colors, typography, shapes and more." />
     <DocsPageContent>
+        
         <DocsPageSection>
             <SectionHeader Title="Theme Provider">
                 <Description>
@@ -11,38 +11,44 @@
                     No configuration or theme is needed, by default it will use MudBlazor's default theme.
                 </Description>
             </SectionHeader>
-            <SectionSource Code="OverviewThemesDefaultExample" NoToolbar="true" GitHubFolderName="Customization/Theming" />
+            <SectionContent Code="OverviewThemesDefaultExample" />
         </DocsPageSection>
+        
         <DocsPageSection>
             <SectionHeader Title="Variables">
                 <Description>At the moment, it's possible to change the following theme types.</Description>
             </SectionHeader>
             <ul class="docs-list mx-2">
-                <li><MudLink Href="/customization/theming/palette">Palette</MudLink></li>
+                <li><MudLink Href="/customization/palette">Palette</MudLink></li>
                 <li><MudText Inline="true">Shadows</MudText></li>
-                <li><MudLink Href="/customization/theming/typography">Typography</MudLink></li>
+                <li><MudLink Href="/customization/typography">Typography</MudLink></li>
                 <li><MudText Inline="true">Layout Properties</MudText></li>
-                <li><MudLink Href="/customization/theming/z-index">z-index</MudLink></li>
+                <li><MudLink Href="/customization/z-index">z-index</MudLink></li>
             </ul>
             <MudText Class="mt-4">You can find all the <MudLink Href="/customization/default-theme" Color="Color.Secondary">Default Theme</MudLink> values under customization.</MudText>
         </DocsPageSection>
+        
         <DocsPageSection>
             <SectionHeader Title="Scrollbar">
                 <Description>The MudBlazor styled scrollbar can be turned off in the themeprovider with the <CodeInline>DefaultScrollbar</CodeInline> property.</Description>
             </SectionHeader>
-            <SectionSource Code="OverviewThemesScrollbarExample" NoToolbar="true" GitHubFolderName="Customization/Theming" />
+            <SectionContent Code="OverviewThemesScrollbarExample" />
         </DocsPageSection>
 
         <DocsPageSection>
             <SectionHeader Title="Dark Palette">
                 <Description>Dark palettes are integrated in <CodeInline>MudTheme</CodeInline>. Just set <CodeInline>IsDarkMode</CodeInline> to  <CodeInline>true</CodeInline>.</Description>
             </SectionHeader>
-            <SectionContent FullWidth="true" Outlined="true" Class="pa-0">
-                <iframe src="/iframe/docs/examples/themeprovider/darkpalette" class="ma-0 rounded">
-                    <OverviewThemesDarkPaletteExample/>
-                </iframe>
+            <SectionContent Code="OverviewThemesDarkPaletteExampleSource">
+                <OverviewThemesDarkPaletteExample/>
             </SectionContent>
-            <SectionSource Code="OverviewThemesDarkPaletteExample" GitHubFolderName="Customization/OverviewThemesDarkPaletteExample"/>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="System preference">
+                <Description>With <CodeInline>GetSystemPreference()</CodeInline> you can get the user defined dark theme preference. Returns <CodeInline>true</CodeInline> if dark mode is preferred.</Description>
+            </SectionHeader>
+            <SectionContent Code="OverviewThemesSystemPreferenceExample"/>
         </DocsPageSection>
         
         <DocsPageSection>
@@ -51,10 +57,7 @@
                     <CodeInline>Palette</CodeInline> defines the color of the Light Palette. <CodeInline>PaletteDark</CodeInline> on the other hand defines the colors of
                     the Dark Palette.</Description>
             </SectionHeader>
-            <SectionSource Code="OverviewThemesCustomExample" NoToolbar="true" GitHubFolderName="Customization/Theming" />
-
-            <MudText Class="my-2">This way, you only need to change the stuff you don't like in our default theme, but you can replace all the defaults completely if you want to.</MudText>
+            <SectionContent Code="OverviewThemesCustomExample" />
         </DocsPageSection>
     </DocsPageContent>
 </DocsPage>
-<Footer />

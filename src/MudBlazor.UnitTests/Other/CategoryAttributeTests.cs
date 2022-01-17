@@ -60,7 +60,6 @@ namespace MudBlazor.UnitTests.Other
                 typeof(MudSparkLine),
 
                 typeof(MudRatingItem),  // TODO: remove it later; see also: https://github.com/MudBlazor/MudBlazor/discussions/3452
-                typeof(MudPicker<>),  // TODO: remove it later; see also: https://github.com/MudBlazor/MudBlazor/pull/3481
             };
 
             bool isTestOK = true;
@@ -80,7 +79,7 @@ namespace MudBlazor.UnitTests.Other
                         property.GetCustomAttribute<CategoryAttribute>() == null)     // property doesn't have a category
                     {
                         isTestOK = false;
-                        Console.WriteLine($"{component}.{property.Name} property doesn't have a category");
+                        //Console.WriteLine($"{component}.{property.Name} property doesn't have a category");
                     }
                 }
             }

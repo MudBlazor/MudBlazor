@@ -7,6 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using MudBlazor.Docs.Extensions;
 using MudBlazor.Docs.Services;
+using MudBlazor.Docs.Services.Notifications;
 using MudBlazor.Examples.Data;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -40,5 +41,11 @@ app.UseRouting();
 app.MapRazorPages();
 app.MapControllers();
 app.MapFallbackToFile("index.html");
+
+var notificationService = app.Services.GetService<INotificationService>();
+if (notificationService is InMemoryNotificationService inmemoryService)
+{
+    inmemoryService.Preload();
+}
 
 app.Run();
