@@ -20,6 +20,7 @@
       "commandName": "Project",
       "dotnetRunMessages": true,
       "launchBrowser": true,
+      "launchUrl": "components/maskfield/",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
         "APIBASE": "https://localhost:5001/"
