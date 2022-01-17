@@ -23,7 +23,7 @@ namespace MudBlazor.UnitTests.Components
         /// Click should open the Menu and selecting a value should update the bindable value.
         /// </summary>
         [Test]
-        public void SelectTest1()
+        public async Task SelectTest1()
         {
             var comp = Context.RenderComponent<SelectTest1>();
             // print the generated html
@@ -55,6 +55,11 @@ namespace MudBlazor.UnitTests.Components
 
             items[0].Click();
             comp.WaitForAssertion(() => select.Instance.Value.Should().Be("1"));
+            //Check user on blur implementation works
+            var @switch = comp.FindComponent<MudSwitch<bool>>();
+            @switch.Instance.Checked = true;
+            await comp.InvokeAsync(() => select.Instance.OnLostFocus(new FocusEventArgs()));
+            comp.WaitForAssertion(() => @switch.Instance.Checked.Should().Be(false));
         }
 
         /// <summary>
