@@ -54,6 +54,20 @@ public abstract class BaseMask
 
     public (int, int)? Selection { get; set; }
 
+    /// <summary>
+    /// The mask chars define the meaning of single mask characters such as 'a', '0'
+    /// </summary>
+    public MaskChar[] MaskChars
+    {
+        get => _maskChars;
+        set
+        {
+            _maskChars = value;
+            // force re-initialization
+            _initialized = false;
+        }
+    }
+
     public abstract void Insert(string input);
 
     /// <summary>
@@ -77,6 +91,18 @@ public abstract class BaseMask
         Selection = null;
     }
 
+    /// <summary>
+    /// Overwrite the mask text without losing caret position
+    /// </summary>
+    /// <param name="text"></param>
+    public void SetText(string text)
+    {
+        var caret = CaretPos;
+        Clear();
+        Insert( text);
+        CaretPos = ConsolidateCaret(Text, caret);
+    }
+    
     protected abstract void DeleteSelection(bool align);
 
     protected virtual bool IsDelimiter(char maskChar)
@@ -161,4 +187,5 @@ public abstract class BaseMask
             return s1 + "[" + s2 + "]" + s3;
         }
     }
+
 }
