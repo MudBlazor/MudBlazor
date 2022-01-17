@@ -2,19 +2,14 @@
 
 <MudGrid Class="justify-space-between">
     <MudItem xs="12" sm="6" md="4">
-        <MudMaskField @ref="maskField" Mask="@mask" Label="@mask.Mask" 
-                      @bind-Value="RawValue" @bind-Text="TextValue"  Variant="Variant.Text" />
+        <MudMaskField Mask="@(new SimpleMask("0000 0000 0000 0000"))" Label="Credit card number" 
+                      @bind-Value="text"  Variant="@Variant.Text" Clearable />
     </MudItem>
     <MudItem xs="12" sm="6" md="4">
-		<MudText>Text: <b>@TextValue</b></MudText>
-		<MudText>Value: <b>@RawValue</b></MudText>
+		Credit card number: <b>@text</b>
     </MudItem>
 </MudGrid>
 
 @code {
-    MudMaskField<string> maskField;
-    public string TextValue { get; set; }
-    public string RawValue { get; set; }
-    private SimpleMask mask = new SimpleMask("(aaa) 000-aa-aa");
-
+    public string text { get; set; }
 }

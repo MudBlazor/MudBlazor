@@ -24,7 +24,6 @@ public class SimpleMask : BaseMask
     /// <param name="input">One or multiple characters of input</param>
     public override void Insert(string input)
     {
-        Console.WriteLine("Inserting: " +input);
         Init();
         DeleteSelection(align: false);
         var text = Text ?? "";
@@ -33,7 +32,7 @@ public class SimpleMask : BaseMask
         var alignedInput = AlignAgainstMask(input, pos);
         CaretPos = pos += alignedInput.Length;
         var alignedAfter = AlignAgainstMask(afterText, pos);
-        Text = FillWithPlaceholder(beforeText + alignedInput + alignedAfter);
+        UpdateText( FillWithPlaceholder(beforeText + alignedInput + alignedAfter));
     }
 
     protected override void DeleteSelection(bool align)
@@ -46,9 +45,9 @@ public class SimpleMask : BaseMask
         Selection = null;
         CaretPos = sel.Item1;
         if (!align)
-            Text = s1 + s3;
+            UpdateText( s1 + s3);
         else
-            Text = s1 + AlignAgainstMask(s3, CaretPos);
+            UpdateText(  s1 + AlignAgainstMask(s3, CaretPos));
     }
 
     /// <summary>
@@ -77,7 +76,7 @@ public class SimpleMask : BaseMask
             // adjust the cursor position to after the delimiters
             CaretPos += (numDeleted - 1);
         }
-        Text = FillWithPlaceholder(beforeText + alignedAfter);
+        UpdateText( FillWithPlaceholder(beforeText + alignedAfter));
     }
 
     /// <summary>
@@ -101,7 +100,7 @@ public class SimpleMask : BaseMask
         var numDeleted = beforeText.Length - restText.Length;
         CaretPos -= numDeleted;
         var alignedAfter = AlignAgainstMask(afterText, CaretPos);
-        Text = FillWithPlaceholder(restText + alignedAfter);
+        UpdateText( FillWithPlaceholder(restText + alignedAfter));
     }
 
     /// <summary>
@@ -172,20 +171,12 @@ public class SimpleMask : BaseMask
         }
         return alignedText;
     }
-
-    // protected virtual bool IsMaskCharDelimiter(char maskChar)
-    // {
-    //     if (!_maskDict.TryGetValue(maskChar, out var maskDef))
-    //         return true;
-    //     return false;
-    // }
-
+    
     protected virtual bool IsMatch(char maskChar, char textChar)
     {
         if (!_maskDict.TryGetValue(maskChar, out var maskDef))
             return false;
         return Regex.IsMatch(textChar.ToString(), maskDef.Regex);
     }
-
 
 }

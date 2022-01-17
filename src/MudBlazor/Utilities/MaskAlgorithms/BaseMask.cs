@@ -16,8 +16,8 @@ public abstract class BaseMask
     protected MaskChar[] _maskChars = new MaskChar[]
     {
         MaskChar.Letter('a'), MaskChar.Digit('0'), MaskChar.LetterOrDigit('*'),
-        new MaskChar { Char = 'l', AddToValue = false, Regex = "[a-zıäöüßşçğ]" },
-        new MaskChar { Char = 'u', AddToValue = false, Regex = "[A-ZİÄÖÜŞÇĞ]" },
+        new MaskChar { Char = 'L', AddToValue = false, Regex = "[a-zıäöüßşçğ]" },
+        new MaskChar { Char = 'U', AddToValue = false, Regex = "[A-ZİÄÖÜŞÇĞ]" },
     };
     
     // per definition (unless defined otherwise in subclasses) delimiters are chars
@@ -46,12 +46,31 @@ public abstract class BaseMask
                 new HashSet<char>(Mask.Where(c => !_maskChars.Any(maskDef => Regex.IsMatch(c.ToString(), maskDef.Regex))));
     }
 
+    /// <summary>
+    /// The mask defining the structure of the accepted input. 
+    /// The mask format depends on the implementation.
+    /// </summary>
     public string Mask { get; protected set; }
 
-    public string Text { get; protected set; }
+    /// <summary>
+    /// The current text as it is displayed in the component
+    /// </summary>
+    public string Text { get; private set; } // must be private!
 
+    /// <summary>
+    /// The current cleaned text (if cleaning is enabled). Usually
+    /// delimiters will be removed, but it depends on the implementation.
+    /// </summary>
+    public string CleanText { get; private set; } // must be private!
+
+    /// <summary>
+    /// The current caret position
+    /// </summary>
     public int CaretPos { get; set; }
 
+    /// <summary>
+    /// The currently selected sub-section of the Text
+    /// </summary>
     public (int, int)? Selection { get; set; }
 
     /// <summary>
@@ -68,6 +87,10 @@ public abstract class BaseMask
         }
     }
 
+    /// <summary>
+    /// Implements user input at the current caret position (single key strokes or pasting longer text)
+    /// </summary>
+    /// <param name="input"></param>
     public abstract void Insert(string input);
 
     /// <summary>
@@ -92,7 +115,7 @@ public abstract class BaseMask
     }
 
     /// <summary>
-    /// Overwrite the mask text without losing caret position
+    /// Overwrite the mask text from the outside without losing caret position
     /// </summary>
     /// <param name="text"></param>
     public void SetText(string text)
@@ -101,6 +124,16 @@ public abstract class BaseMask
         Clear();
         Insert( text);
         CaretPos = ConsolidateCaret(Text, caret);
+    }
+
+    /// <summary>
+    /// Update Text and CleanText from the inside
+    /// </summary>
+    /// <param name="text"></param>
+    protected virtual void UpdateText(string text)
+    {
+        Text = text;
+        CleanText = text; // todo: cleaning
     }
     
     protected abstract void DeleteSelection(bool align);

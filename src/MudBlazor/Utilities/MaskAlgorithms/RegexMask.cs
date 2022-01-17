@@ -56,7 +56,7 @@ public class RegexMask : BaseMask
         (var beforeText, var afterText) = SplitAt(text, pos);
         var alignedInput = AlignAgainstMask(beforeText + input);
         CaretPos = alignedInput.Length;
-        Text = AlignAgainstMask(alignedInput + afterText);
+        UpdateText(AlignAgainstMask(alignedInput + afterText));
     }
 
     protected override void DeleteSelection(bool align)
@@ -69,9 +69,9 @@ public class RegexMask : BaseMask
         Selection = null;
         CaretPos = sel.Item1;
         if (!align)
-            Text = s1 + s3;
+            UpdateText(s1 + s3);
         else
-            Text = AlignAgainstMask(s1 + s3);
+            UpdateText(AlignAgainstMask(s1 + s3));
     }
 
     /// <summary>
@@ -92,7 +92,7 @@ public class RegexMask : BaseMask
         (var beforeText, var afterText) = SplitAt(text, pos);
         // delete as many delimiters as there are plus one char
         var restText = new string(afterText.SkipWhile(IsDelimiter).Skip(1).ToArray());
-        Text = AlignAgainstMask(beforeText + restText);
+        UpdateText( AlignAgainstMask(beforeText + restText));
         var numDeleted = afterText.Length - restText.Length;
         if (numDeleted > 1)
         {
@@ -122,7 +122,7 @@ public class RegexMask : BaseMask
         var restText = new string(beforeText.Reverse().SkipWhile(IsDelimiter).Skip(1).Reverse().ToArray());
         var numDeleted = beforeText.Length - restText.Length;
         CaretPos -= numDeleted;
-        Text = AlignAgainstMask(restText + afterText);
+        UpdateText(AlignAgainstMask(restText + afterText));
     }
     
     /// <summary>

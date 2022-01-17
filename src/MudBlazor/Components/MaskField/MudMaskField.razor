@@ -3,7 +3,19 @@
 @inherits MudBaseInput<T>
 
 <CascadingValue Name="Standalone" Value="@Standalone" IsFixed="true">
-    <MudInputControl id="@_elementId" Label="@Label" Variant="@Variant" HelperText="@HelperText" HelperTextOnFocus="@HelperTextOnFocus" CounterText="@GetCounterText()" FullWidth="@FullWidth" Class="@Classname" Error="@HasErrors" ErrorText="@GetErrorText()" Disabled="@Disabled" Margin="@Margin" Required="@Required">
+    <MudInputControl id="@_elementId" 
+                     Label="@Label" 
+                     Variant="@Variant" 
+                     HelperText="@HelperText" 
+                     HelperTextOnFocus="@HelperTextOnFocus" 
+                     CounterText="@GetCounterText()" 
+                     FullWidth="@FullWidth" 
+                     Class="@Classname" 
+                     Error="@HasErrors" 
+                     ErrorText="@GetErrorText()" 
+                     Disabled="@Disabled" 
+                     Margin="@Margin" 
+                     Required="@Required">
         <InputContent>
             <MudInput T="string" @ref="_elementReference"
 				@attributes="UserAttributes" 
@@ -28,12 +40,11 @@
                 Immediate="false" 
                 Margin="@Margin" 
                 OnBlur="@OnBlurred"  
-                OnKeyDown="HandleKeyDown" 
                 @onfocus="OnFocused"
                 HideSpinButtons="true" 
                 Clearable="@Clearable" 
-                OnClearButtonClick="@OnClearButtonClick" 
-                Pattern="@Pattern"/>
+                OnClearButtonClick="@HandleClearButton" 
+                />
         </InputContent>
     </MudInputControl>
 </CascadingValue>

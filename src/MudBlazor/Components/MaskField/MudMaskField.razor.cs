@@ -54,7 +54,7 @@ namespace MudBlazor
         [Category(CategoryTypes.FormComponent.ListAppearance)]
         public EventCallback<MouseEventArgs> OnClearButtonClick { get; set; }
 
-           protected override async Task OnAfterRenderAsync(bool firstRender)
+        protected override async Task OnAfterRenderAsync(bool firstRender)
         {
             if (firstRender)
             {
@@ -70,16 +70,16 @@ namespace MudBlazor
                 _jsEvent.Select += OnSelect;
                 await _keyInterceptor.Connect(_elementId, new KeyInterceptorOptions()
                 {
-                    EnableLogging = true,
+                    //EnableLogging = true,
                     TargetClass = "mud-input-slot",
                     Keys = {
                         new KeyOptions { Key=" ", PreventDown = "key+none" }, //prevent scrolling page, toggle open/close
-                        new KeyOptions { Key="ArrowUp", PreventDown = "key+none" }, // prevent scrolling page,
-                        new KeyOptions { Key="ArrowDown", PreventDown = "key+none" }, // prevent scrolling page,
-                        //new KeyOptions { Key="ArrowLeft", PreventDown = "key+none" },
-                        //new KeyOptions { Key="ArrowRight", PreventDown = "key+none" },
-                        //new KeyOptions { Key="Home", PreventDown = "key+none" },
-                        //new KeyOptions { Key="End", PreventDown = "key+none" },
+                        new KeyOptions { Key="ArrowUp", PreventDown = "key+none" }, // prevent scrolling page
+                        new KeyOptions { Key="ArrowDown", PreventDown = "key+none" }, // prevent scrolling page
+                        // new KeyOptions { Key="ArrowLeft", PreventDown = "key+none" }, // implement selection
+                        // new KeyOptions { Key="ArrowRight", PreventDown = "key+none" },  // implement selection
+                        // new KeyOptions { Key="Home", PreventDown = "key+none" },  // implement selection
+                        // new KeyOptions { Key="End", PreventDown = "key+none" },  // implement selection
                         new KeyOptions { Key="PageUp", PreventDown = "key+none" },
                         new KeyOptions { Key="PageDown", PreventDown = "key+none" },
                         // new KeyOptions { Key="Escape" },
@@ -89,81 +89,145 @@ namespace MudBlazor
                         new KeyOptions { Key="/./", SubscribeDown = true },
                         new KeyOptions { Key="Backspace", PreventDown = "key+none" },
                         new KeyOptions { Key="Delete", PreventDown = "key+none" },
-                        // new KeyOptions { Key="Shift", PreventDown = "key+none" },
-                        // new KeyOptions { Key="[/-+_-*()%&]'/", PreventDown = "key+none" },
+                        //new KeyOptions { Key="Shift", PreventDown = "key+none" },
                     },
                 });
                 _keyInterceptor.KeyDown += e => HandleKeyDown(e).AndForget();
             }
-            // if (_isFocused && _mask.Selection == null)
-            //     await _elementReference.SelectRangeAsync(_mask.CaretPosition, _mask.CaretPosition);
+            if (_isFocused && Mask.Selection == null)
+                 SetCaretPosition(_caret, _selection, render:false);
             await base.OnAfterRenderAsync(firstRender);
         }
            
         protected internal async Task HandleKeyDown(KeyboardEventArgs e)
         {
-            if (e.CtrlKey || e.AltKey)
-                return;
-            Console.WriteLine($"HandleKeyDown: '{e.Key}'");
-            switch (e.Key)
+            try
             {
-                case "Backspace":
-                    Mask.Backspace();
+                if (e.CtrlKey || e.AltKey)
                     return;
-                case "Delete":
-                    Mask.Delete();
-                    return;
-                //case "ArrowLeft"
+                Console.WriteLine($"HandleKeyDown: '{e.Key}'");
+                switch (e.Key)
+                {
+                    case "Backspace":
+                        Mask.Backspace();
+                        await Update();
+                        return;
+                    case "Delete":
+                        Mask.Delete();
+                        await Update();
+                        return;
+                    // case "ArrowLeft":
+                    //     if (e.ShiftKey)
+                    //         ChangeSelection(-1);
+                    //     else
+                    //         Mask.CaretPos -= 1;
+                    //     SetCaretPosition(Mask.CaretPos, Mask.Selection);
+                    //     return;
+                    // case "ArrowRight":
+                    //     if (e.ShiftKey)
+                    //         ChangeSelection(1);
+                    //     else
+                    //         Mask.CaretPos += 1;
+                    //     SetCaretPosition(Mask.CaretPos, Mask.Selection);
+                    //     return;
+                }
+                if (Regex.IsMatch(e.Key, @"^.$"))
+                {
+                    Mask.Insert(e.Key);
+                    Console.WriteLine(Mask.ToString());
+                    await Update();
+                }
             }
-            if (Regex.IsMatch(e.Key, @"^.$"))
-                Mask.Insert(e.Key);
-            Console.WriteLine(Mask.ToString());
-            await Update();
-            await OnKeyDown.InvokeAsync(e);
+            finally
+            {
+                // call user callback
+                await OnKeyDown.InvokeAsync(e);
+            }
         }
+        
+        // private void ChangeSelection(int direction)
+        // {
+        //     var sel = Mask.Selection ?? (Mask.CaretPos, Mask.CaretPos);
+        //     if (direction < 0)
+        //         Mask.Selection = (sel.Item1 + direction, sel.Item2);
+        //     else
+        //         Mask.Selection = (sel.Item1, sel.Item2+direction);
+        // }
 
+        private bool _updating;
+        
         private async Task Update()
         {
-            await SetTextAsync(Mask.Text, updateValue: false);
-            SetCaretPosition(Mask.CaretPos);
+            var caret = Mask.CaretPos;
+            var selection = Mask.Selection;
+            var text = Mask.Text;
+            var cleanText = Mask.CleanText;
+            _updating = true;
+            try
+            {
+                await base.SetTextAsync(text, updateValue: false);
+                var v=Converter.Get(cleanText);
+                Console.WriteLine("####### Value: " + v);
+                Value = v;
+                await ValueChanged.InvokeAsync(v);
+                //await base.SetValueAsync(Converter.Get(cleanText), updateText: false);
+                SetCaretPosition(caret, selection);
+            }
+            finally
+            {
+                _updating = false;
+            }
         }
 
-        private Task SetValue(string text)
+        private async void HandleClearButton(MouseEventArgs e)
         {
-            return SetValueAsync(Converter.Get(text), updateText: false);
+            Mask.Clear();
+            await Update();
+            await OnClearButtonClick.InvokeAsync(e);
         }
+        
+        // private Task SetValue(string text)
+        // {
+        //     return SetValueAsync(Converter.Get(text), updateText: false);
+        // }
 
         protected override async Task SetTextAsync(string text, bool updateValue = true)
         {
+            if (_updating)
+                return;
             Console.WriteLine($"SetTextAsync: '{text}' updateValue:{updateValue}");
             if (Mask.Text != text)
-                Mask.SetText(text);
+                 Mask.SetText(text);
             await base.SetTextAsync(text, updateValue);
         }
 
         protected override async Task SetValueAsync(T value, bool updateText = true)
         {
-            //Console.WriteLine($"SetValueAsync: '{value}' updateText:{updateText}");
-            // _rawValue = Converter.Set(value);
-            // if (updateText)
-            // {
-            //     //If value changed by user from outside
-            //     //if (_rawValue != null && Converter.Set(Value) != _rawValue)
-            //     //    _maskedText.SetRawValueDictionary(_rawValue);
-            //     await _mask.ImplementMask(null);
-            // }
-            // // never update text directly. we already did it
             await base.SetValueAsync(value, updateText: false);
+            //return Task.CompletedTask;
         }
 
-        protected override async Task UpdateTextPropertyAsync(bool updateValue)
+        protected override Task UpdateTextPropertyAsync(bool updateValue)
         {
-            var text = Converter.Set(Value);
-            if (Mask.Text==text)
-                 return;
-            Mask.SetText(text);
-            await Update();
+            // this causes problems with cursor:
+           
+            // // allow this only fia changes from the outside
+            // if (_settingText)
+            //     return;
+            // var text = Converter.Set(Value);
+            // if (Mask.Text==text)
+            //      return;
+            // Mask.SetText(text);
+            // await Update();
+            
+            return Task.CompletedTask;
         }
+
+        protected override Task UpdateValuePropertyAsync(bool updateText)
+        {
+            return Task.CompletedTask;
+        }
+
 
         internal override InputType GetInputType() => InputType;
 
@@ -191,13 +255,6 @@ namespace MudBlazor
         public override ValueTask SelectRangeAsync(int pos1, int pos2)
         {
             return _elementReference.SelectRangeAsync(pos1, pos2);
-        }
-     
-        internal void OnCaretPositionChanged(int pos)
-        {
-            Mask.Selection = null;
-            Mask.CaretPos = pos;
-            Console.WriteLine($"Caret position: {Mask}");
         }
 
         internal void OnCopy()
@@ -245,12 +302,47 @@ namespace MudBlazor
             _isFocused = false;
         }
 
-        public void SetCaretPosition(int caretPosition)
+        private int _caret;
+        private (int, int)? _selection;
+
+        public void SetCaretPosition(int caret, (int, int)? selection, bool render=true)
         {
             if (!_isFocused)
                 return;
-            _elementReference.SelectRangeAsync(caretPosition, caretPosition).AndForget();
-            StateHasChanged();
+            _caret = caret;
+            if (caret == 0)
+                _caret = 0;
+            _selection = selection;
+            if (selection == null)
+            {
+                Console.WriteLine("#Setting Caret Position: " + caret);
+                _elementReference.SelectRangeAsync(caret, caret).AndForget();
+            }
+            else
+            {
+                var sel = selection.Value;
+                Console.WriteLine($"#Setting Selection: ({sel.Item1}..{sel.Item2})");
+                _elementReference.SelectRangeAsync(sel.Item1, sel.Item2).AndForget();
+            }
+            if(render)
+                StateHasChanged();
+        }
+        
+        // from JS event     
+        internal void OnCaretPositionChanged(int pos)
+        {
+            if (Mask.Selection!=null)
+            {
+                // do not clear selection if pos change is at selection border
+                var sel = Mask.Selection.Value;
+                if (pos == sel.Item1 || pos == sel.Item2)
+                    return;
+            }
+            if (pos == Mask.CaretPos)
+                return;
+            Mask.Selection = null;
+            Mask.CaretPos = pos;
+            Console.WriteLine($"On Caret position change: '{Mask}' ({pos})");
         }
     }
 }
