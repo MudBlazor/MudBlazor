@@ -100,7 +100,7 @@ namespace MudBlazor.UnitTests.Components
             // open the dialog
             comp1.Find("button").Click();
             //Console.WriteLine("\nOpened dialog: " + comp.Markup);
-            comp.WaitForAssertion(()=> comp.Find("div.mud-dialog-container").Should().NotBe(null));
+            comp.WaitForAssertion(() => comp.Find("div.mud-dialog-container").Should().NotBe(null));
             // close by click outside
             comp.Find("div.mud-overlay").Click();
             comp.WaitForAssertion(() => comp.Markup.Trim().Should().BeEmpty(), TimeSpan.FromSeconds(5));
@@ -118,7 +118,6 @@ namespace MudBlazor.UnitTests.Components
         /// Based on bug report #3128
         /// Dialog Class and Style parameters should be honored for inline dialog
         /// </summary>
-        //[Ignore("Sadly we can not get this test to work when it is run in bulk (local and CI). It passes when executed individually")]
         [Test]
         public async Task InlineDialogShouldHonorClassAndStyle()
         {
@@ -126,16 +125,18 @@ namespace MudBlazor.UnitTests.Components
             comp.Markup.Trim().Should().BeEmpty();
             var service = Context.Services.GetService<IDialogService>() as DialogService;
             service.Should().NotBe(null);
-            IDialogReference dialogReference = null;
-            // open simple test dialog
-            await comp.InvokeAsync(() => dialogReference = service?.Show<TestInlineDialog>());
-            comp.WaitForAssertion(()=> dialogReference.Should().NotBe(null));
-            comp.Find("button").Click();
+            // displaying the component with the inline dialog only renders the open button
+            var comp1 = Context.RenderComponent<TestInlineDialog>();
+            // open the dialog
+            comp1.Find("button").Click();
             comp.WaitForAssertion(()=> comp.Find("div.mud-dialog").ClassList.Should().Contain("test-class"));
             comp.Find("div.mud-dialog").Attributes["style"].Value.Should().Be("color: red;");
             comp.Find("div.mud-dialog-content").Attributes["style"].Value.Should().Be("color: blue;");
             comp.Find("div.mud-dialog-content").ClassList.Should().NotContain("test-class");
             comp.Find("div.mud-dialog-content").ClassList.Should().Contain("content-class");
+            // check if tag is ok
+            var dialogInstance = comp.FindComponent<MudDialog>().Instance;
+            dialogInstance.Tag.Should().Be("test-tag");
         }
 
         /// <summary>
