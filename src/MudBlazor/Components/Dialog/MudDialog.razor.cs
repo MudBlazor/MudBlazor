@@ -93,6 +93,13 @@ namespace MudBlazor
                 if (_isVisible == value)
                     return;
                 _isVisible = value;
+                if (IsInline)
+                {
+                    if (_isVisible)
+                        Show();
+                    else
+                        Close();
+                }
                 IsVisibleChanged.InvokeAsync(value);
             }
         }
@@ -144,13 +151,14 @@ namespace MudBlazor
         {
             if (IsInline && _reference != null)
                 (_reference.Dialog as MudDialog)?.ForceUpdate(); // forward render update to instance
-            if (IsInline)
-            {
-                if (_isVisible)
-                    Show();
-                else
-                    Close();
-            }
+            // Note by Henon: this caused bug #3701
+            // if (IsInline)
+            // {
+            //     if (_isVisible)
+            //         Show();
+            //     else
+            //         Close();
+            // }
             base.OnAfterRender(firstRender);
         }
 
