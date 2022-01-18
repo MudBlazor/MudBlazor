@@ -58,11 +58,11 @@ public abstract class BaseMask
     public string Text { get; private set; } // must be private!
 
     /// <summary>
-    /// The current cleaned text (if cleaning is enabled). Usually
-    /// delimiters will be removed, but it depends on the implementation.
+    /// Get the Text without delimiters or placeholders. Depends on the implementation entirely.
+    /// Clean text will usually be used for the Value property of a mask field. 
     /// </summary>
-    public string CleanText { get; private set; } // must be private!
-
+    public virtual string GetCleanText() => Text;
+    
     /// <summary>
     /// The current caret position
     /// </summary>
@@ -127,13 +127,12 @@ public abstract class BaseMask
     }
 
     /// <summary>
-    /// Update Text and CleanText from the inside
+    /// Update Text from the inside
     /// </summary>
     /// <param name="text"></param>
     protected virtual void UpdateText(string text)
     {
         Text = text;
-        CleanText = text; // todo: cleaning
     }
     
     protected abstract void DeleteSelection(bool align);

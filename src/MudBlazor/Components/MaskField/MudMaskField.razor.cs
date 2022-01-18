@@ -166,7 +166,7 @@ namespace MudBlazor
             var caret = Mask.CaretPos;
             var selection = Mask.Selection;
             var text = Mask.Text;
-            var cleanText = Mask.CleanText;
+            var cleanText = Mask.GetCleanText();
             _updating = true;
             try
             {
@@ -215,20 +215,20 @@ namespace MudBlazor
             //return Task.CompletedTask;
         }
 
-        protected override Task UpdateTextPropertyAsync(bool updateValue)
+        protected override async Task UpdateTextPropertyAsync(bool updateValue)
         {
             // this causes problems with cursor:
            
-            // // allow this only fia changes from the outside
-            // if (_settingText)
-            //     return;
-            // var text = Converter.Set(Value);
-            // if (Mask.Text==text)
-            //      return;
-            // Mask.SetText(text);
-            // await Update();
+            // allow this only fia changes from the outside
+            if (_updating)
+                return;
+            var text = Converter.Set(Value);
+            if (Mask.Text==text)
+                 return;
+            Mask.SetText(text);
+            await Update();
             
-            return Task.CompletedTask;
+            //return Task.CompletedTask;
         }
 
         protected override Task UpdateValuePropertyAsync(bool updateText)
@@ -242,12 +242,13 @@ namespace MudBlazor
         private string GetCounterText() => Counter == null ? string.Empty : (Counter == 0 ? (string.IsNullOrEmpty(Text) ? "0" : $"{Text.Length}") : ((string.IsNullOrEmpty(Text) ? "0" : $"{Text.Length}") + $" / {Counter}"));
 
         /// <summary>
-        /// Clear the text field, set Value to default(T) and Text to null
+        /// Clear the text field. 
         /// </summary>
         /// <returns></returns>
         public Task Clear()
         {
-            return SetTextAsync(null, updateValue: true);
+            Mask.Clear();
+            return Update();
         }
 
         public override ValueTask FocusAsync()
@@ -275,7 +276,7 @@ namespace MudBlazor
         internal async void OnPaste(string text)
         {
             //Console.WriteLine($"Paste: {text}");
-            if (Text == null)
+            if (text == null)
                 return;
             Mask.Insert(text);
             await Update();
@@ -313,7 +314,7 @@ namespace MudBlazor
         private int _caret;
         private (int, int)? _selection;
 
-        public void SetCaretPosition(int caret, (int, int)? selection, bool render=true)
+        private void SetCaretPosition(int caret, (int, int)? selection=null, bool render=true)
         {
             if (!_isFocused)
                 return;

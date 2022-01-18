@@ -17,7 +17,7 @@ public class SimpleMask : BaseMask
     }
 
     public char? Placeholder { get; set; }
-
+    
     /// <summary>
     /// Inserts given text at caret position
     /// </summary>
@@ -179,6 +179,27 @@ public class SimpleMask : BaseMask
         return Regex.IsMatch(textChar.ToString(), maskDef.Regex);
     }
 
+    /// <summary>
+    /// If true, all characters which are not defined in the mask (delimiters) are stripped
+    /// from text. 
+    /// </summary>
+    public bool CleanDelimiters { get; set; } 
+    
+    /// <summary>
+    /// Return the Text without Placeholders. If CleanDelimiters is enabled, then also strip all
+    /// undefined characters. For instance, for a mask "0000 0000 0000 0000" the space would be
+    /// an undefined character (a delimiter) unless it were defined as a mask character in MaskChars.
+    /// </summary>
+    public override string GetCleanText()
+    {
+        var cleanText = Text;
+        if (CleanDelimiters)
+            cleanText=new string(cleanText.Where((c,i)=>_maskDict.ContainsKey(Mask[i])).ToArray());
+        if (Placeholder != null)
+            cleanText = cleanText.Replace(Placeholder.Value.ToString(), "");
+        return cleanText;
+    }
+
     public override void UpdateFrom(BaseMask other)
     {
         base.UpdateFrom(other);
@@ -186,6 +207,7 @@ public class SimpleMask : BaseMask
         if (o == null)
             return;
         // no need to re-initialize, just update the placeholder.
-        Placeholder = o.Placeholder; 
+        Placeholder = o.Placeholder;
+        CleanDelimiters = o.CleanDelimiters;
     }
 }

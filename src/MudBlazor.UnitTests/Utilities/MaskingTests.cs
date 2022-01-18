@@ -14,7 +14,7 @@ public class MaskingTests
     #region Base Mask Tests
     
     [Test]
-    public void SimpleMask_Internals()
+    public void BaseMask_Internals()
     {
         BaseMask.SplitAt("asdf", 1).Should().Be(("a", "sdf"));
         BaseMask.SplitAt("", 1).Should().Be(("", ""));
@@ -92,6 +92,13 @@ public class MaskingTests
     {
         var mask = new SimpleMask("(+00) 000 0000") { Placeholder = '_' };
         mask.ToString().Should().Be("|");
+        mask.Text.Should().BeNullOrEmpty();
+        mask.Insert("x");
+        mask.ToString().Should().Be("(+|__) ___ ____");
+        mask.Text.Should().Be("(+__) ___ ____");
+        mask.Clear();
+        mask.Text.Should().BeNullOrEmpty();
+        mask.ToString().Should().Be("|");
         mask.Insert("43");
         mask.Text.Should().Be("(+43) ___ ____");
         mask.ToString().Should().Be("(+43) |___ ____");
@@ -112,6 +119,21 @@ public class MaskingTests
         mask.ToString().Should().Be("(+43) 0|12 3567");
     }
 
+    [Test]
+    public void SimpleMask_CleaningPlaceholder()
+    {
+        var mask = new SimpleMask("(+00) 000 0000") { Placeholder = '_' };
+        mask.Insert("x");
+        mask.ToString().Should().Be("(+|__) ___ ____");
+        mask.Text.Should().Be("(+__) ___ ____");
+        mask.GetCleanText().Should().Be("(+)  ");
+        mask.CleanDelimiters = true;
+        mask.GetCleanText().Should().Be("");
+        mask.Insert("123456789");
+        mask.Text.Should().Be("(+12) 345 6789");
+        mask.GetCleanText().Should().Be("123456789");
+    }
+    
     [Test]
     public void SimpleMask_Delete()
     {
