@@ -109,6 +109,7 @@ namespace MudBlazor.UnitTests.Components
             comp.WaitForAssertion(() => comp.Find("div.mud-dialog-container").Should().NotBe(null), TimeSpan.FromSeconds(5));
             // close again by click outside
             //Console.WriteLine("\nOpened dialog: " + comp.Markup);
+            comp.WaitForAssertion(() => comp.Find("div.mud-overlay").Should().NotBeNull());
             comp.Find("div.mud-overlay").Click();
             comp.WaitForAssertion(() => comp.Markup.Trim().Should().BeEmpty(), TimeSpan.FromSeconds(5));
         }
