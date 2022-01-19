@@ -1,5 +1,8 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Blazored.LocalStorage;
+using Microsoft.Extensions.DependencyInjection;
 using MudBlazor.Docs.Services;
+using MudBlazor.Docs.Services.Notifications;
+using MudBlazor.Docs.Services.UserPreferences;
 using MudBlazor.Services;
 
 namespace MudBlazor.Docs.Extensions
@@ -23,7 +26,12 @@ namespace MudBlazor.Docs.Extensions
             services.AddSingleton<IApiLinkService, ApiLinkService>();
             services.AddSingleton<IMenuService, MenuService>();
             services.AddScoped<IDocsNavigationService, DocsNavigationService>();
+            services.AddBlazoredLocalStorage();
+            services.AddScoped<IUserPreferencesService, UserPreferencesService>();
+            services.AddScoped<INotificationService, InMemoryNotificationService>();
             services.AddSingleton<IRenderQueueService, RenderQueueService>();
+            services.AddScoped<LayoutService>();
+
         }
     }
 }

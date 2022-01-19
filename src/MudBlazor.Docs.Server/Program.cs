@@ -1,29 +1,22 @@
 ﻿using System;
 using System.Net.Http;
-using Blazor.Analytics;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using MudBlazor.Docs.Extensions;
 using MudBlazor.Docs.Services;
+using MudBlazor.Docs.Services.Notifications;
 using MudBlazor.Examples.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
-builder.Services.AddServerSideBlazor();
 builder.Services.AddScoped<IPeriodicTableService, PeriodicTableService>();
-builder.Services.AddScoped(sp => new HttpClient() { BaseAddress = new Uri(builder.Configuration["ApiBase"]) });
-builder.Services.AddScoped<GitHubApiClient>();
-builder.Services.TryAddDocsViewServices();
 builder.Services.AddApplicationInsightsTelemetry();
-builder.Services.AddGoogleAnalytics("G-PRYNCB61NV");
-if (builder.Configuration["Azure:SignalR:Enabled"] == "true")
-{
-    builder.Services.AddSignalR().AddAzureSignalR(builder.Configuration["Azure:SignalR:ConnectionString"]);
-}
 
 var app = builder.Build();
 
@@ -41,27 +34,18 @@ else
 
 app.UseHttpsRedirection();
 
-// serve the wasm site and finish the pipeline
-app.MapWhen(ctx => ctx.Request.Path.StartsWithSegments("/wasm"), wasm =>
-{
-    wasm.UseBlazorFrameworkFiles("/wasm");
-    wasm.UseStaticFiles("/wasm");
-    wasm.UseRouting();
-    wasm.UseEndpoints(endpoints =>
-    {
-        endpoints.MapControllers();
-        endpoints.MapFallbackToFile("wasm/{*path:nonfile}", "wasm/index.html");
-    });
-});
-
-// only reach here if path does not start /wasm
+app.UseBlazorFrameworkFiles();
 app.UseStaticFiles();
-
 app.UseRouting();
 
-
-app.MapBlazorHub();
+app.MapRazorPages();
 app.MapControllers();
-app.MapFallbackToPage("/_Host");
+app.MapFallbackToFile("index.html");
+
+var notificationService = app.Services.GetService<INotificationService>();
+if (notificationService is InMemoryNotificationService inmemoryService)
+{
+    inmemoryService.Preload();
+}
 
 app.Run();

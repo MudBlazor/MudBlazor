@@ -1,0 +1,12 @@
+﻿.explore-mudblazor-items {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px;
+}
+.explore-card-hover{
+  transition: all .2s ease-in;
+  &:hover{
+    background-color: var(--mud-palette-primary-hover);
+    cursor:pointer;
+  }
+}

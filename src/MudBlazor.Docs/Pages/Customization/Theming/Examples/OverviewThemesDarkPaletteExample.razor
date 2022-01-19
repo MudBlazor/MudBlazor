@@ -1,17 +1,30 @@
-﻿@layout IframeLayout
+﻿@using MudBlazor.Utilities;
 @namespace MudBlazor.Docs.Examples
-@page "/iframe/docs/examples/themeprovider/darkpalette"
 
-<MudThemeProvider Theme="_theme" />
-<MudSwitch Color="Color.Primary" Class="ma-4" T="bool" CheckedChanged="DarkMode" Label="Toggle Light/Dark Mode"/>
-
-<MudText Class="ma-4">This is an example text!</MudText>
+@{var DarkModeClass = new CssBuilder()
+.AddClass("mud-dark-palette-example-dark-mode", _darkMode)
+.AddClass("mud-dark-palette-example-light-mode", !_darkMode)
+.Build();}
+<MudPaper Width="500px" Class="@DarkModeClass">
+<MudSwitch Color="Color.Primary" Class="ma-4" T="bool" @bind-Checked="_darkMode" Label="Toggle Light/Dark Mode"/>
+    <MudText Class="ma-4">This is an example text!</MudText>
+</MudPaper>
 
 @code{
-
-    private MudTheme _theme = new();
-    
-    void DarkMode(bool value) {
-        _theme.IsDarkMode = value;
-    }
+    private bool _darkMode;
 }
+<style>
+    .mud-dark-palette-example-dark-mode.mud-paper {
+        background-color: #32333d;
+    }
+    .mud-dark-palette-example-dark-mode .mud-typography {
+        color: #ffffffb2;
+    }
+    
+    .mud-dark-palette-example-light-mode.mud-paper {
+            background-color: #ffffffff;
+    }
+    .mud-dark-palette-example-light-mode .mud-typography {
+            color: #424242ff;
+    }
+</style>

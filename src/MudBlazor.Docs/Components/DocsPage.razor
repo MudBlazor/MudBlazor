@@ -1,5 +1,6 @@
-﻿<MudMainContent Class="mudblazor-main-content">
-    <MudContainer MaxWidth="@MaxWidth">
+﻿
+<MudMainContent Class="mudblazor-main-content">
+    <MudContainer MaxWidth="MaxWidth.Large">
         <div id="docspage" class="docs-page">
             <CascadingValue Value="this" IsFixed>
                 @ChildContent
@@ -9,7 +10,36 @@
             <NavigationFooter Section=_section Previous="@_previous" Next="@_next" />
         </div>
     </MudContainer>
-    <MudDrawer @bind-Open="_contentDrawerOpen" Breakpoint="Breakpoint.Lg" Anchor="Anchor.End" ClipMode="DrawerClipMode.Always" Elevation="0" Color="Color.Transparent" Class="pt-6">
-        <MudPageContentNavigation SectionClassSelector="docs-section-header" @ref="_contentNavigation" ActivateFirstSectionAsDefault="true" />
+    @if (DisplayFooter)
+    {
+        <MudContainer MaxWidth="MaxWidth.Large" Class="mt-16">
+            <Footer />
+        </MudContainer>
+    }
+    <MudDrawer Class="docs-page-content-navigation-drawer" @bind-Open="_contentDrawerOpen" Breakpoint="Breakpoint.Lg" Anchor="Anchor.End" ClipMode="DrawerClipMode.Always" Elevation="0" Color="Color.Transparent">
+        @if (_displayView)
+        {
+            <MudText Typo="Typo.subtitle1" Class="title" GutterBottom="true">
+                Mode
+            </MudText>
+            <div class="d-flex px-2 mb-2">
+                <NavLink class="mode-links mr-2" href="@($"components/{_componentName}")" Match="NavLinkMatch.All">Overview</NavLink>
+                <NavLink class="mode-links ml-2" href="@($"api/{_componentName}")" Match="NavLinkMatch.All">API</NavLink>
+            </div>
+        }
+        <MudPageContentNavigation SectionClassSelector="docs-section-header" @ref="_contentNavigation" ActivateFirstSectionAsDefault="true"/>
+        <MudElement HtmlTag="a" href="https://v7sdw9q9qoe.typeform.com/to/D19AoutC" target="_blank" Class="mud-paper mud-elevation-0 mud-theme-primary px-4 py-2 mx-4 mt-4 relative">
+            <MudText Typo="Typo.subtitle2" Color="Color.Inherit" GutterBottom="true">
+                Developer Survey 2022
+            </MudText>
+            <MudIcon Icon="@Icons.Rounded.OpenInNew" Size="Size.Small" Class="absolute" Style="top:8px;right:8px;"/>
+            <MudText Typo="Typo.body2" Color="Color.Inherit">
+                Your voice matters!
+            </MudText>
+        </MudElement>
+        @if (_renderAds)
+        {
+            <MudElement HtmlTag="script" async type="text/javascript" src="//cdn.carbonads.com/carbon.js?serve=CESDLK3E&placement=mudblazorcom" id="_carbonads_js"></MudElement>
+        }
     </MudDrawer>
 </MudMainContent>

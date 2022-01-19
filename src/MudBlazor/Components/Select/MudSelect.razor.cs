@@ -83,6 +83,7 @@ namespace MudBlazor
             if (_items == null || _items.Count == 0)
                 return;
             var items = _items.Where(x => !x.Disabled);
+            var firstItem = items.FirstOrDefault();
             if (!string.IsNullOrWhiteSpace(startChar))
             {
                 // find first item that starts with the letter
@@ -110,7 +111,7 @@ namespace MudBlazor
                 HilightItem(item);
             }
             await _elementReference.SetText(Text);
-            await ScrollManager.ScrollToListItemAsync(item.ItemId, -1, true);
+            await ScrollManager.ScrollToListItemAsync(item.ItemId, (item == firstItem ? -1 : 1), true);
         }
 
         private async Task SelectLastItem()
@@ -991,7 +992,7 @@ namespace MudBlazor
             _shadowLookup.Remove(item.Value);
         }
 
-        private void OnLostFocus(FocusEventArgs obj)
+        internal void OnLostFocus(FocusEventArgs obj)
         {
             if (_isOpen)
             {
@@ -999,6 +1000,7 @@ namespace MudBlazor
                 // otherwise we can't receive key strokes any longer
                 _elementReference.FocusAsync().AndForget(TaskOption.Safe);
             }
+            base.OnBlur.InvokeAsync(obj);
         }
     }
 }

@@ -106,8 +106,32 @@ namespace MudBlazor
         [Category(CategoryTypes.Tooltip.Appearance)]
         public bool Inline { get; set; } = true;
 
-        private void HandleMouseOver() => _isVisible = true;
-        private void HandleMouseOut() => _isVisible = false;
+        /// <summary>
+        /// The visible state of the Tooltip.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Behavior)]
+        public bool IsVisible
+        {
+            get => _isVisible;
+            set
+            {
+                if (value == _isVisible)
+                    return;
+                _isVisible = value;
+                IsVisibleChanged.InvokeAsync(_isVisible).AndForget();
+            }
+        }
+
+        /// <summary>
+        /// An event triggered when the state of IsVisible has changed
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Behavior)]
+        public EventCallback<bool> IsVisibleChanged { get; set; }
+
+        private void HandleMouseOver() { IsVisible = true;}
+        private void HandleMouseOut() { IsVisible = false;}
 
         private Origin ConvertPlacement()
         {

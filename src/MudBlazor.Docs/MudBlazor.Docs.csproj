@@ -1,4 +1,4 @@
-﻿<!--https://docs.microsoft.com/en-us/visualstudio/msbuild/msbuild-reference -->
+<!--https://docs.microsoft.com/en-us/visualstudio/msbuild/msbuild-reference -->
 <!--Use: dotnet msbuild -preprocess:<fileName>.xml to evaluate this project-->
 <Project Sdk="Microsoft.NET.Sdk.Razor">
 
@@ -92,6 +92,7 @@
     <PackageReference Include="Microsoft.AspNetCore.Components" Version="6.0.1.*" />
     <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="6.0.1.*" />
     <PackageReference Include="Microsoft.AspNetCore.WebUtilities" Version="2.2.0" />
+    <PackageReference Include="Blazored.LocalStorage" Version="4.1.5" />
   </ItemGroup>
 
   <!--Project dependencies-->
@@ -124,6 +125,9 @@
   <ItemGroup>
     <Content Remove="compilerconfig.json" />
     <Content Remove="excubowebcompiler.json" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="wwwroot\images\landingpage" />
   </ItemGroup>
 
 </Project>

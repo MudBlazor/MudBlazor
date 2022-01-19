@@ -3,18 +3,18 @@
 @using Microsoft.AspNetCore.Components.Routing
 
 <div class="@GetPanelClass()" @attributes="UserAttributes">
-
     @if (_sections.Any() && _sections.Count() > 1)
     {
-        <MudText Typo="Typo.h6" GutterBottom="true">
+        <MudText Typo="Typo.subtitle1" Class="title" GutterBottom="true">
             @Headline
         </MudText>
         <MudNavMenu Class="pl-4">
-            @foreach (var docSection in _sections)
+            @foreach (var docSection in _sections.OrderBy(x => x.LevelSortingValue))
             {
-                <MudNavLink Match="NavLinkMatch.All" Class="@GetNavLinkClass(docSection.IsActive)" @onclick="@(e => OnNavLinkClick(docSection.Id))">
+                <MudNavLink @key="docSection.Id" Match="NavLinkMatch.All" Class="@GetNavLinkClass(docSection)" @onclick="@(e => OnNavLinkClick(docSection.Id))">
                     @docSection.Title
-                </MudNavLink>}
+                </MudNavLink>
+			}
         </MudNavMenu>
     }
 </div>

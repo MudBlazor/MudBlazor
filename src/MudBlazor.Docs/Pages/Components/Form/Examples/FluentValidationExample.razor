@@ -1,18 +1,11 @@
 ﻿@namespace MudBlazor.Docs.Examples
 @using FluentValidation
 
-<div style="max-width: 400px;">
-    <MudCard>
-        <MudCardContent>
-            <MudForm>
-                <MudTextField @bind-Value="creditCardNr"
-                              Validation="@ccValidator.Validation"
-                              Immediate="true"
-                              Label="Credit card nr" />
-            </MudForm>
-        </MudCardContent>
-    </MudCard>
-</div>
+<MudPaper Class="pa-4">
+    <MudForm>
+        <MudTextField @bind-Value="creditCardNr" Validation="@ccValidator.Validation" Immediate="true" Label="Credit card nr" />
+    </MudForm>
+</MudPaper>
 
 @code { 
     // This is a valid Visa test card number
