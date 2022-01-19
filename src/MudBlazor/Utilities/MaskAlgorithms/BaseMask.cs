@@ -132,6 +132,12 @@ public abstract class BaseMask
     /// <param name="text"></param>
     protected virtual void UpdateText(string text)
     {
+        // don't show a 
+        if (text.All(c => _delimiters.Contains(c)))
+        {
+            Text = "";
+            return;
+        }
         Text = text;
     }
     
@@ -160,6 +166,8 @@ public abstract class BaseMask
                 _initialized = false;
             }
         }
+        if (!_initialized)
+            SetText(Text);
     }
     
     internal static (string, string) SplitAt(string text, int pos)

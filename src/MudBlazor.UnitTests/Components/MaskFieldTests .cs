@@ -208,15 +208,15 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task MaskFieldTest_Int()
         {
-            var comp = Context.RenderComponent<MudMaskField<int>>();
+            var comp = Context.RenderComponent<MudMaskField<int?>>();
             comp.SetParam(x => x.Mask, new SimpleMask("(0)0-0)") { Placeholder = '_', CleanDelimiters = true });
             var maskField = comp;
 
             await comp.InvokeAsync(() => maskField.Instance.OnCaretPositionChanged(1));
-            comp.WaitForAssertion(() => maskField.Instance.Value.Should().Be(0));
+            comp.WaitForAssertion(() => maskField.Instance.Value.Should().Be(null));
             //Unmatched keys should have no effect
             await comp.InvokeAsync(() => maskField.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = "a" }));
-            comp.WaitForAssertion(() => maskField.Instance.Value.Should().Be(0));
+            comp.WaitForAssertion(() => maskField.Instance.Value.Should().Be(null));
 
             await comp.InvokeAsync(() => maskField.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = "1" }));
             comp.WaitForAssertion(() => maskField.Instance.Text.Should().Be("(1)_-_)"));
@@ -243,7 +243,7 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(
                 () => maskField.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = "Backspace" }));
             comp.WaitForAssertion(() => maskField.Instance.Text.Should().Be("(_)_-_)"));
-            comp.WaitForAssertion(() => maskField.Instance.Value.Should().Be(0));
+            comp.WaitForAssertion(() => maskField.Instance.Value.Should().Be(null));
         }
 
 
@@ -531,17 +531,18 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task MaskFieldTest_TimeSpan()
         {
-            var comp = Context.RenderComponent<MudMaskField<TimeSpan>>();
+            var comp = Context.RenderComponent<MudMaskField<TimeSpan?>>();
             comp.SetParam(x => x.Mask, new SimpleMask("00:00") { CleanDelimiters = false, });
             var maskField = comp.Instance;
 
+            await comp.InvokeAsync(() => maskField.OnFocused(new FocusEventArgs()));
             await comp.InvokeAsync(() => maskField.HandleKeyDown(new KeyboardEventArgs() { Key = "1" }));
             comp.WaitForAssertion(() => maskField.Text.Should().Be("1"));
             comp.WaitForAssertion(() => maskField.Value.Should().Be(TimeSpan.FromDays(1)));
 
             await comp.InvokeAsync(() => maskField.HandleKeyDown(new KeyboardEventArgs() { Key = "2" }));
             comp.WaitForAssertion(() => maskField.Text.Should().Be("12:"));
-            comp.WaitForAssertion(() => maskField.Value.Should().Be(TimeSpan.Zero));
+            comp.WaitForAssertion(() => maskField.Value.Should().Be(null));
 
             await comp.InvokeAsync(() => maskField.HandleKeyDown(new KeyboardEventArgs() { Key = "3" }));
             comp.WaitForAssertion(() => maskField.Text.Should().Be("12:3"));
@@ -558,7 +559,7 @@ namespace MudBlazor.UnitTests.Components
 
             await comp.InvokeAsync(() => maskField.HandleKeyDown(new KeyboardEventArgs() { Key = "Delete" }));
             comp.WaitForAssertion(() => maskField.Text.Should().Be("14:"));
-            comp.WaitForAssertion(() => maskField.Value.Should().Be(TimeSpan.Zero));
+            comp.WaitForAssertion(() => maskField.Value.Should().Be(null));
         }
 
         [Test]
@@ -608,7 +609,7 @@ namespace MudBlazor.UnitTests.Components
             // Param Mask is impossible to null out
             comp.SetParam("Mask", null);
             comp.WaitForAssertion(() => maskField.Mask.Should().NotBeNull());
-            comp.SetParam("Mask", new SimpleMask("*00 000") { Placeholder = '_', CleanDelimiters = true });
+            comp.SetParam("Mask", new SimpleMask("*00 000") { CleanDelimiters = true });
             
             // selection is not cleared by caret on edge of selection
             await comp.InvokeAsync(() => maskField.OnSelect(0, 1));

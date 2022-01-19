@@ -155,7 +155,7 @@ namespace MudBlazor
             }
         }
 
-        private async void HandleClearButton(MouseEventArgs e)
+        internal async void HandleClearButton(MouseEventArgs e)
         {
             Mask.Clear();
             await Update();
@@ -190,7 +190,8 @@ namespace MudBlazor
             if (_updating)
                 return;
             var text = Converter.Set(Value);
-            if (Mask.GetCleanText()==text)
+            var cleanText = Mask.GetCleanText();
+            if (cleanText==text || string.IsNullOrEmpty(cleanText)&&string.IsNullOrEmpty(text))
                  return;
             Mask.SetText(text);
             await Update();

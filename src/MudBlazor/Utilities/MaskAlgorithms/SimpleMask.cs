@@ -203,6 +203,13 @@ public class SimpleMask : BaseMask
         return cleanText;
     }
 
+    protected override void InitInternals()
+    {
+        base.InitInternals();
+        if (Placeholder!=null)
+            _delimiters.Add(Placeholder.Value);
+    }
+
     public override void UpdateFrom(BaseMask other)
     {
         base.UpdateFrom(other);
