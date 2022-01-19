@@ -140,6 +140,27 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// Based on bug report #3701 #3687
+        /// Dialog inline should not be closed after any event inside
+        /// </summary>
+        [Test]
+        public async Task InlineDialogShouldNotCloseAfterStateHasChanged()
+        {
+            var comp = Context.RenderComponent<MudDialogProvider>();
+            comp.Markup.Trim().Should().BeEmpty();
+            var service = Context.Services.GetService<IDialogService>() as DialogService;
+            service.Should().NotBe(null);
+            // displaying the component with the inline dialog only renders the open button
+            var comp1 = Context.RenderComponent<TestInlineDialog>();
+            // open the dialog
+            comp1.Find("button").Click();
+            // rate star
+            comp.Find("span.mud-rating-item").FirstElementChild.Click();
+            // check if is still opened
+            comp.WaitForAssertion(() => comp.Find("div.mud-dialog-container").Should().NotBe(null), TimeSpan.FromSeconds(5));
+        }
+
+        /// <summary>
         /// Based on bug report by Porkopek:
         /// Updating values that are referenced in TitleContent render fragment won't result in an update of the dialog title
         /// when they change. This is solved by allowing the user to call ForceRender() on DialogInstance
