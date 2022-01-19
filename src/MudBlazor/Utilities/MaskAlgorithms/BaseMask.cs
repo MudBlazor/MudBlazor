@@ -43,7 +43,7 @@ public abstract class BaseMask
             _delimiters = new();
         else 
             _delimiters =
-                new HashSet<char>(Mask.Where(c => !_maskChars.Any(maskDef => Regex.IsMatch(c.ToString(), maskDef.Regex))));
+                new HashSet<char>(Mask.Where(c => _maskChars.All(maskDef => maskDef.Char != c)));
     }
 
     /// <summary>

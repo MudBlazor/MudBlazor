@@ -47,7 +47,7 @@ public class SimpleMask : BaseMask
         if (!align)
             UpdateText( s1 + s3);
         else
-            UpdateText(  s1 + AlignAgainstMask(s3, CaretPos));
+            UpdateText( FillWithPlaceholder( s1 + AlignAgainstMask(s3, CaretPos)));
     }
 
     /// <summary>
@@ -192,7 +192,10 @@ public class SimpleMask : BaseMask
     /// </summary>
     public override string GetCleanText()
     {
+        Init();
         var cleanText = Text;
+        if (string.IsNullOrEmpty(cleanText))
+            return cleanText;
         if (CleanDelimiters)
             cleanText=new string(cleanText.Where((c,i)=>_maskDict.ContainsKey(Mask[i])).ToArray());
         if (Placeholder != null)

@@ -217,18 +217,14 @@ namespace MudBlazor
 
         protected override async Task UpdateTextPropertyAsync(bool updateValue)
         {
-            // this causes problems with cursor:
-           
             // allow this only fia changes from the outside
             if (_updating)
                 return;
             var text = Converter.Set(Value);
-            if (Mask.Text==text)
+            if (Mask.GetCleanText()==text)
                  return;
             Mask.SetText(text);
             await Update();
-            
-            //return Task.CompletedTask;
         }
 
         protected override Task UpdateValuePropertyAsync(bool updateText)

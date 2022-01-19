@@ -217,8 +217,32 @@ public class MaskingTests
         mask.ToString().Should().Be("[(+67) ]8");
         mask.Backspace();
         mask.ToString().Should().Be("|(+8");
+        mask = new SimpleMask("00 00") { Placeholder = '_' };
+        mask.Insert("1234");
+        mask.ToString().Should().Be("12 34|");
+        mask.Backspace();
+        mask.ToString().Should().Be("12 3|_");
+        mask.Selection = (0, 2);
+        mask.ToString().Should().Be("[12] 3_");
+        mask.Backspace();
+        mask.ToString().Should().Be("|3_ __");
     }
 
+    [Test]
+    public void SimpleMask_ChangeMaskChars()
+    {
+        var mask=new SimpleMask("(bb+) 999-bb")
+        {
+            MaskChars = new MaskChar[] { MaskChar.Letter('b'), MaskChar.Digit('9'), MaskChar.LetterOrDigit('+'), },
+        };
+        mask.Insert("xyz");
+        mask.ToString().Should().Be("(xyz) |");
+        mask.Backspace();
+        mask.ToString().Should().Be("(xy|");
+        mask.Insert("1234");
+        mask.ToString().Should().Be("(xy1) 234-|");
+    }
+    
     #endregion
 
     #region Block Mask Tests
