@@ -34,7 +34,7 @@ namespace MudBlazor
 
         private string _elementId = "maskfield_" + Guid.NewGuid().ToString().Substring(0, 8);
 
-        private BaseMask _mask = new SimpleMask("aaaa-0000");
+        private BaseMask _mask = new SimpleMask("** **-** **");
         
         [Parameter]
         [Category(CategoryTypes.General.Data)]
@@ -86,20 +86,12 @@ namespace MudBlazor
                         new KeyOptions { Key=" ", PreventDown = "key+none" }, //prevent scrolling page, toggle open/close
                         new KeyOptions { Key="ArrowUp", PreventDown = "key+none" }, // prevent scrolling page
                         new KeyOptions { Key="ArrowDown", PreventDown = "key+none" }, // prevent scrolling page
-                        // new KeyOptions { Key="ArrowLeft", PreventDown = "key+none" }, // implement selection
-                        // new KeyOptions { Key="ArrowRight", PreventDown = "key+none" },  // implement selection
-                        // new KeyOptions { Key="Home", PreventDown = "key+none" },  // implement selection
-                        // new KeyOptions { Key="End", PreventDown = "key+none" },  // implement selection
-                        new KeyOptions { Key="PageUp", PreventDown = "key+none" },
-                        new KeyOptions { Key="PageDown", PreventDown = "key+none" },
-                        // new KeyOptions { Key="Escape" },
+                        new KeyOptions { Key="PageUp", PreventDown = "key+none" }, // prevent scrolling page
+                        new KeyOptions { Key="PageDown", PreventDown = "key+none" }, // prevent scrolling page
                         new KeyOptions { Key=@"/^.$/", PreventDown = "key+none|key+shift" },
-                        //new KeyOptions { Key="Enter", PreventDown = "key+none" },
-                        //new KeyOptions { Key="NumpadEnter", PreventDown = "key+none" },
                         new KeyOptions { Key="/./", SubscribeDown = true },
                         new KeyOptions { Key="Backspace", PreventDown = "key+none" },
                         new KeyOptions { Key="Delete", PreventDown = "key+none" },
-                        //new KeyOptions { Key="Shift", PreventDown = "key+none" },
                     },
                 });
                 _keyInterceptor.KeyDown += e => HandleKeyDown(e).AndForget();
@@ -115,7 +107,7 @@ namespace MudBlazor
             {
                 if (e.CtrlKey || e.AltKey)
                     return;
-                Console.WriteLine($"HandleKeyDown: '{e.Key}'");
+                // Console.WriteLine($"HandleKeyDown: '{e.Key}'");
                 switch (e.Key)
                 {
                     case "Backspace":
@@ -126,25 +118,10 @@ namespace MudBlazor
                         Mask.Delete();
                         await Update();
                         return;
-                    // case "ArrowLeft":
-                    //     if (e.ShiftKey)
-                    //         ChangeSelection(-1);
-                    //     else
-                    //         Mask.CaretPos -= 1;
-                    //     SetCaretPosition(Mask.CaretPos, Mask.Selection);
-                    //     return;
-                    // case "ArrowRight":
-                    //     if (e.ShiftKey)
-                    //         ChangeSelection(1);
-                    //     else
-                    //         Mask.CaretPos += 1;
-                    //     SetCaretPosition(Mask.CaretPos, Mask.Selection);
-                    //     return;
                 }
                 if (Regex.IsMatch(e.Key, @"^.$"))
                 {
                     Mask.Insert(e.Key);
-                    Console.WriteLine(Mask.ToString());
                     await Update();
                 }
             }
@@ -154,15 +131,6 @@ namespace MudBlazor
                 await OnKeyDown.InvokeAsync(e);
             }
         }
-        
-        // private void ChangeSelection(int direction)
-        // {
-        //     var sel = Mask.Selection ?? (Mask.CaretPos, Mask.CaretPos);
-        //     if (direction < 0)
-        //         Mask.Selection = (sel.Item1 + direction, sel.Item2);
-        //     else
-        //         Mask.Selection = (sel.Item1, sel.Item2+direction);
-        // }
 
         private bool _updating;
         
@@ -177,10 +145,8 @@ namespace MudBlazor
             {
                 await base.SetTextAsync(text, updateValue: false);
                 var v=Converter.Get(cleanText);
-                Console.WriteLine("####### Value: " + v);
                 Value = v;
                 await ValueChanged.InvokeAsync(v);
-                //await base.SetValueAsync(Converter.Get(cleanText), updateText: false);
                 SetCaretPosition(caret, selection);
             }
             finally
@@ -195,22 +161,14 @@ namespace MudBlazor
             await Update();
             await OnClearButtonClick.InvokeAsync(e);
         }
-        
-        // private Task SetValue(string text)
-        // {
-        //     return SetValueAsync(Converter.Get(text), updateText: false);
-        // }
 
         protected override async Task SetTextAsync(string text, bool updateValue = true)
         {
             if (_updating)
                 return;
-            Console.WriteLine($"SetTextAsync: '{text}' updateValue:{updateValue}");
+            //Console.WriteLine($"SetTextAsync: '{text}' updateValue:{updateValue}");
             if (Mask.Text != text)
-            {
-                Console.WriteLine("########### SETTING Mask Text");
                 Mask.SetText(text);
-            }
             await base.SetTextAsync(text, updateValue);
         }
 
@@ -300,7 +258,7 @@ namespace MudBlazor
         public void OnSelect(int start, int end)
         {
             Mask.Selection = (start, end);
-            Console.WriteLine($"Select: {Mask}");
+            //Console.WriteLine($"Select: {Mask}");
         }
 
         internal void OnFocused(FocusEventArgs obj)
@@ -338,13 +296,13 @@ namespace MudBlazor
             _selection = selection;
             if (selection == null)
             {
-                Console.WriteLine("#Setting Caret Position: " + caret);
+                //Console.WriteLine("#Setting Caret Position: " + caret);
                 _elementReference.SelectRangeAsync(caret, caret).AndForget();
             }
             else
             {
                 var sel = selection.Value;
-                Console.WriteLine($"#Setting Selection: ({sel.Item1}..{sel.Item2})");
+                //Console.WriteLine($"#Setting Selection: ({sel.Item1}..{sel.Item2})");
                 _elementReference.SelectRangeAsync(sel.Item1, sel.Item2).AndForget();
             }
             if(render)
@@ -365,7 +323,7 @@ namespace MudBlazor
                 return;
             Mask.Selection = null;
             Mask.CaretPos = pos;
-            Console.WriteLine($"On Caret position change: '{Mask}' ({pos})");
+            //Console.WriteLine($"On Caret position change: '{Mask}' ({pos})");
         }
 
         private void SetMask(BaseMask other)
@@ -374,7 +332,7 @@ namespace MudBlazor
             {
                 _mask = other;
                 if (_mask == null)
-                    _mask = new SimpleMask("aaaa-0000"); // maybe have some kind of NullMask with Text "No mask configured"?
+                    _mask = new SimpleMask("** **-** **"); // maybe have some kind of NullMask with Text "No mask configured"?
                 return;
             } 
             // set new mask properties without loosing state

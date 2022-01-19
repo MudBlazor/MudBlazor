@@ -593,9 +593,40 @@ namespace MudBlazor.UnitTests.Components
             comp.SetParam("Text", "123");
             comp.WaitForAssertion(() => maskField.Text.Should().Be("123 ___"));
             comp.WaitForAssertion(() => maskField.Value.Should().Be("123"));
+            comp.SetParam("Text", "123 ___");
+            comp.WaitForAssertion(() => maskField.Text.Should().Be("123 ___"));
+            comp.WaitForAssertion(() => maskField.Value.Should().Be("123"));
             comp.SetParam("Value", "321");
             comp.WaitForAssertion(() => maskField.Text.Should().Be("321 ___"));
             comp.WaitForAssertion(() => maskField.Value.Should().Be("321"));
+            comp.SetParam("Value", "321");
+            comp.WaitForAssertion(() => maskField.Text.Should().Be("321 ___"));
+            comp.WaitForAssertion(() => maskField.Value.Should().Be("321"));
+            
+            comp.SetParam("Clearable", true);
+            maskField.Clearable.Should().Be(true);
+            // Param Mask is impossible to null out
+            comp.SetParam("Mask", null);
+            comp.WaitForAssertion(() => maskField.Mask.Should().NotBeNull());
+            comp.SetParam("Mask", new SimpleMask("*00 000") { Placeholder = '_', CleanDelimiters = true });
+            
+            // selection is not cleared by caret on edge of selection
+            await comp.InvokeAsync(() => maskField.OnSelect(0, 1));
+            await comp.InvokeAsync(() => maskField.OnCaretPositionChanged(0));
+            comp.WaitForAssertion(() => maskField.Mask.Selection.Should().NotBeNull());
+            // only if caret is moved outside
+            await comp.InvokeAsync(() => maskField.OnCaretPositionChanged(2));
+            comp.WaitForAssertion(() => maskField.Mask.Selection.Should().BeNull());
+            
+            // pasting null doesn't do anything
+            await comp.InvokeAsync(() => maskField.OnPaste("123"));
+            comp.WaitForAssertion(() => maskField.Mask.ToString().Should().Be("123 |"));
+            await comp.InvokeAsync(() => maskField.OnPaste(null));
+            comp.WaitForAssertion(() => maskField.Mask.ToString().Should().Be("123 |"));
+            // ctrl or alt doesn't do anything
+            await comp.InvokeAsync(() => maskField.HandleKeyDown(new KeyboardEventArgs() { Key = "1", CtrlKey = true}));
+            await comp.InvokeAsync(() => maskField.HandleKeyDown(new KeyboardEventArgs() { Key = "1", AltKey = true}));
+            comp.WaitForAssertion(() => maskField.Mask.ToString().Should().Be("123 |"));
         }
 
     }
