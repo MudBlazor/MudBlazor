@@ -16,6 +16,11 @@ namespace MudBlazor
 {
     public partial class MudMaskField<T> : MudBaseInput<T>
     {
+        public MudMaskField()
+        {
+            TextUpdateSuppression = false;
+        }
+
         protected string Classname =>
            new CssBuilder("mud-input-input-control")
            .AddClass(Class)
@@ -211,8 +216,14 @@ namespace MudBlazor
 
         protected override async Task SetValueAsync(T value, bool updateText = true)
         {
+            if (_updating)
+                return;
+            var text = Converter.Set(value);
+            if (Mask.GetCleanText()==text)
+                return;
+            Mask.SetText(text);
+            await Update();
             await base.SetValueAsync(value, updateText: false);
-            //return Task.CompletedTask;
         }
 
         protected override async Task UpdateTextPropertyAsync(bool updateValue)
@@ -227,9 +238,16 @@ namespace MudBlazor
             await Update();
         }
 
-        protected override Task UpdateValuePropertyAsync(bool updateText)
+        protected override async Task UpdateValuePropertyAsync(bool updateText)
         {
-            return Task.CompletedTask;
+            // allow this only fia changes from the outside
+            if (_updating)
+                return;
+            var text = Text;
+            if (Mask.Text==text)
+                return;
+            Mask.SetText(text);
+            await Update();
         }
 
 
