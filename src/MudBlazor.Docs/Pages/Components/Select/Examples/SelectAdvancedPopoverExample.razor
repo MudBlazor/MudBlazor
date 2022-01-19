@@ -1,22 +1,16 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
-<MudGrid>
-    <MudItem xs="12" sm="6" md="2">
-        <MudSelect T="string" Label="Search" Variant="Variant.Outlined" AnchorOrigin="Origin.CenterLeft" TransformOrigin="Origin.CenterRight" AdornmentIcon="@Icons.Material.Filled.Search" AdornmentColor="Color.Primary">
-            <MudSelectItem Value="@("foo")">Foo</MudSelectItem>
-            <MudSelectItem Value="@("bar")">Bar</MudSelectItem>
-        </MudSelect>
-    </MudItem>
-    <MudItem xs="12" sm="6" md="6">
-        <MudSelect T="string" Label="Open Warnings" Variant="Variant.Outlined" AnchorOrigin="Origin.CenterCenter" TransformOrigin="Origin.CenterCenter" AdornmentIcon="@Icons.Material.Filled.OpenWith" Adornment="Adornment.Start" AdornmentColor="Color.Warning">
-            <MudSelectItem Value="@("foo")">Foo</MudSelectItem>
-            <MudSelectItem Value="@("bar")">Bar</MudSelectItem>
-        </MudSelect>
-    </MudItem>
-    <MudItem xs="12" sm="6" md="4">
-        <MudSelect T="string" Label="Check Code" Variant="Variant.Outlined" AnchorOrigin="Origin.BottomLeft" TransformOrigin="Origin.TopRight" AdornmentIcon="@Icons.Material.Filled.Code" CloseIcon="@Icons.Material.Filled.SouthWest" Adornment="Adornment.Start" AdornmentColor="Color.Dark">
-            <MudSelectItem Value="@("foo")">Foo</MudSelectItem>
-            <MudSelectItem Value="@("bar")">Bar</MudSelectItem>
-        </MudSelect>
-    </MudItem>
-</MudGrid>
+<MudSelect T="string" Label="Search" AnchorOrigin="Origin.CenterLeft" TransformOrigin="Origin.CenterRight" Variant="Variant.Outlined" AdornmentIcon="@Icons.Material.Filled.Search" AdornmentColor="Color.Primary">
+    <MudSelectItem Value="@("foo")">Foo</MudSelectItem>
+    <MudSelectItem Value="@("bar")">Bar</MudSelectItem>
+</MudSelect>
+
+<MudSelect T="string" Label="Open Warnings" AnchorOrigin="Origin.CenterCenter" TransformOrigin="Origin.CenterCenter" Variant="Variant.Outlined" AdornmentIcon="@Icons.Material.Filled.OpenWith" Adornment="Adornment.Start" AdornmentColor="Color.Warning">
+    <MudSelectItem Value="@("foo")">Foo</MudSelectItem>
+    <MudSelectItem Value="@("bar")">Bar</MudSelectItem>
+</MudSelect>
+
+<MudSelect T="string" Label="Check Code" AnchorOrigin="Origin.BottomLeft" TransformOrigin="Origin.TopRight" Variant="Variant.Outlined" AdornmentIcon="@Icons.Material.Filled.Code" CloseIcon="@Icons.Material.Filled.SouthWest" Adornment="Adornment.Start" AdornmentColor="Color.Dark">
+    <MudSelectItem Value="@("foo")">Foo</MudSelectItem>
+    <MudSelectItem Value="@("bar")">Bar</MudSelectItem>
+</MudSelect>

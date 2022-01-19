@@ -16,12 +16,12 @@ namespace MudBlazor.UnitTests.Components
         public async Task SwitchTest_KeyboardNavigation()
         {
             var comp = Context.RenderComponent<MudSwitch<bool>>();
-            Console.WriteLine(comp.Markup);
+            //Console.WriteLine(comp.Markup);
 
             await comp.InvokeAsync(() => comp.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = "Enter", Type = "keydown", }));
             comp.WaitForAssertion(() => comp.Instance.Checked.Should().Be(true));
 
-            await comp.InvokeAsync(() => comp.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = "Escape", Type = "keydown", }));
+            await comp.InvokeAsync(() => comp.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = "Delete", Type = "keydown", }));
             comp.WaitForAssertion(() => comp.Instance.Checked.Should().Be(false));
 
             await comp.InvokeAsync(() => comp.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = "ArrowRight", Type = "keydown", }));

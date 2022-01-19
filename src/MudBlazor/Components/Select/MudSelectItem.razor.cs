@@ -82,7 +82,9 @@ namespace MudBlazor
         /// <summary>
         /// A user-defined option that can be selected
         /// </summary>
-        [Parameter] public T Value { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Behavior)]
+        public T Value { get; set; }
 
         /// <summary>
         /// Mirrors the MultiSelection status of the parent select

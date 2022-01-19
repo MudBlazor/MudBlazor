@@ -13,6 +13,7 @@ namespace MudBlazor
         /// Interval to be awaited in milliseconds before changing the Text value
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.FormComponent.Behavior)]
         public double DebounceInterval
         {
             get => _debounceInterval;

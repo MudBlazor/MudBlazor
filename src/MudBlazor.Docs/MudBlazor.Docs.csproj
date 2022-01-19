@@ -1,4 +1,4 @@
-﻿<!--https://docs.microsoft.com/en-us/visualstudio/msbuild/msbuild-reference -->
+<!--https://docs.microsoft.com/en-us/visualstudio/msbuild/msbuild-reference -->
 <!--Use: dotnet msbuild -preprocess:<fileName>.xml to evaluate this project-->
 <Project Sdk="Microsoft.NET.Sdk.Razor">
 
@@ -88,10 +88,11 @@
 
   <!--Packages-->
   <ItemGroup>
-    <PackageReference Include="FluentValidation" Version="10.3.4" />
-    <PackageReference Include="Microsoft.AspNetCore.Components" Version="6.0.0.*" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="6.0.0.*" />
+    <PackageReference Include="FluentValidation" Version="10.3.6" />
+    <PackageReference Include="Microsoft.AspNetCore.Components" Version="6.0.1.*" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="6.0.1.*" />
     <PackageReference Include="Microsoft.AspNetCore.WebUtilities" Version="2.2.0" />
+    <PackageReference Include="Blazored.LocalStorage" Version="4.1.5" />
   </ItemGroup>
 
   <!--Project dependencies-->
@@ -126,7 +127,7 @@
     <Content Remove="excubowebcompiler.json" />
   </ItemGroup>
   <ItemGroup>
-    <None Remove="Pages\Components\Menu\Code\MenuWithMenuItemIconExample.html" />
+    <Folder Include="wwwroot\images\landingpage" />
   </ItemGroup>
 
 </Project>

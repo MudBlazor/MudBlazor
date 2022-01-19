@@ -1,0 +1,16 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudTimePicker @ref="_picker" Label="With action buttons" AutoClose="@autoClose">
+    <PickerActions>
+        <MudButton Class="mr-auto align-self-start" OnClick="@(() => _picker.Clear())">Clear</MudButton>
+        <MudButton OnClick="@(() => _picker.Close(false))">Cancel</MudButton>
+        <MudButton Color="Color.Primary" OnClick="@(() => _picker.Close())">Ok</MudButton>
+    </PickerActions>
+</MudTimePicker>
+<MudSwitch @bind-Checked="@autoClose" Color="Color.Secondary">AutoClose</MudSwitch>
+
+@code{
+    MudTimePicker _picker;
+    TimeSpan? time = new TimeSpan(00, 45, 00);
+    private bool autoClose;
+}

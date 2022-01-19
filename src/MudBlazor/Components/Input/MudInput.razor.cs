@@ -10,11 +10,19 @@ namespace MudBlazor
     public partial class MudInput<T> : MudBaseInput<T>
     {
         protected string Classname => MudInputCssHelper.GetClassname(this,
-            () => !string.IsNullOrEmpty(Text) || Adornment == Adornment.Start || !string.IsNullOrWhiteSpace(Placeholder));
+            () => HasNativeHtmlPlaceholder() || !string.IsNullOrEmpty(Text) || Adornment == Adornment.Start || !string.IsNullOrWhiteSpace(Placeholder));
 
         protected string InputClassname => MudInputCssHelper.GetInputClassname(this);
 
         protected string AdornmentClassname => MudInputCssHelper.GetAdornmentClassname(this);
+
+        protected string ClearButtonClassname =>
+                    new CssBuilder()
+                    .AddClass("me-n1", Adornment == Adornment.End && HideSpinButtons == false)
+                    .AddClass("mud-icon-button-edge-end", Adornment == Adornment.End && HideSpinButtons == true)
+                    .AddClass("me-6", Adornment != Adornment.End && HideSpinButtons == false)
+                    .AddClass("mud-icon-button-edge-margin-end", Adornment != Adornment.End && HideSpinButtons == true)
+                    .Build();
 
         /// <summary>
         /// Type of the input element. It should be a valid HTML5 input type.
@@ -196,6 +204,14 @@ namespace MudBlazor
         {
             _internalText = text;
             return SetTextAsync(text);
+        }
+
+
+        // Certain HTML5 inputs (dates and color) have a native placeholder
+        private bool HasNativeHtmlPlaceholder()
+        {
+            return GetInputType() is InputType.Color or InputType.Date or InputType.DateTimeLocal or InputType.Month
+                or InputType.Time or InputType.Week;
         }
     }
 
