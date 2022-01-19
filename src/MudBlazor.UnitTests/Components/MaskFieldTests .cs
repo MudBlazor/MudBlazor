@@ -603,7 +603,8 @@ namespace MudBlazor.UnitTests.Components
             comp.SetParam("Value", "321");
             comp.WaitForAssertion(() => maskField.Text.Should().Be("321 ___"));
             comp.WaitForAssertion(() => maskField.Value.Should().Be("321"));
-            
+            await comp.InvokeAsync(() => maskField.OnBlurred(new FocusEventArgs()));
+
             comp.SetParam("Clearable", true);
             maskField.Clearable.Should().Be(true);
             // Param Mask is impossible to null out
@@ -628,6 +629,9 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(() => maskField.HandleKeyDown(new KeyboardEventArgs() { Key = "1", CtrlKey = true}));
             await comp.InvokeAsync(() => maskField.HandleKeyDown(new KeyboardEventArgs() { Key = "1", AltKey = true}));
             comp.WaitForAssertion(() => maskField.Mask.ToString().Should().Be("123 |"));
+            // clear via clear button
+            await comp.InvokeAsync(() => maskField.HandleClearButton(new MouseEventArgs()));
+            comp.WaitForAssertion(() => maskField.Mask.ToString().Should().Be("|"));
         }
 
     }

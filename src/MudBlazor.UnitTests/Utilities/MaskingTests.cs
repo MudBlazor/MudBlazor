@@ -52,8 +52,8 @@ public class MaskingTests
         mask.ToString().Should().Be("|");
         mask.Text.Should().Be("");
         mask.Insert("1");
-        mask.ToString().Should().Be("(|");
-        mask.Text.Should().Be("(");
+        mask.ToString().Should().Be("|");
+        mask.Text.Should().Be("");
         mask.Insert("x");
         mask.ToString().Should().Be("(x|");
         mask.Text.Should().Be("(x");
@@ -94,8 +94,8 @@ public class MaskingTests
         mask.ToString().Should().Be("|");
         mask.Text.Should().BeNullOrEmpty();
         mask.Insert("x");
-        mask.ToString().Should().Be("(+|__) ___ ____");
-        mask.Text.Should().Be("(+__) ___ ____");
+        mask.ToString().Should().Be("|");
+        mask.Text.Should().Be("");
         mask.Clear();
         mask.Text.Should().BeNullOrEmpty();
         mask.ToString().Should().Be("|");
@@ -124,9 +124,13 @@ public class MaskingTests
     {
         var mask = new SimpleMask("(+00) 000 0000") { Placeholder = '_' };
         mask.Insert("x");
-        mask.ToString().Should().Be("(+|__) ___ ____");
-        mask.Text.Should().Be("(+__) ___ ____");
-        mask.GetCleanText().Should().Be("(+)  ");
+        mask.ToString().Should().Be("|");
+        mask.Text.Should().Be("");
+        mask.GetCleanText().Should().Be("");
+        mask.Insert("123456789");
+        mask.Text.Should().Be("(+12) 345 6789");
+        mask.GetCleanText().Should().Be("(+12) 345 6789");
+        mask.Clear();
         mask.CleanDelimiters = true;
         mask.GetCleanText().Should().Be("");
         mask.Insert("123456789");

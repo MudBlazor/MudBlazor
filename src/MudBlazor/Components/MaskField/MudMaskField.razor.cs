@@ -162,28 +162,6 @@ namespace MudBlazor
             await OnClearButtonClick.InvokeAsync(e);
         }
 
-        protected override async Task SetTextAsync(string text, bool updateValue = true)
-        {
-            if (_updating)
-                return;
-            //Console.WriteLine($"SetTextAsync: '{text}' updateValue:{updateValue}");
-            if (Mask.Text != text)
-                Mask.SetText(text);
-            await base.SetTextAsync(text, updateValue);
-        }
-
-        protected override async Task SetValueAsync(T value, bool updateText = true)
-        {
-            if (_updating)
-                return;
-            var text = Converter.Set(value);
-            if (Mask.GetCleanText()==text)
-                return;
-            Mask.SetText(text);
-            await Update();
-            await base.SetValueAsync(value, updateText: false);
-        }
-
         protected override async Task UpdateTextPropertyAsync(bool updateValue)
         {
             // allow this only fia changes from the outside
@@ -253,7 +231,6 @@ namespace MudBlazor
                 return;
             Mask.Insert(text);
             await Update();
-            //await SetValueAsync(Converter.Get(_mask.GetRawValueFromDictionary()), false);
         }
 
         public void OnSelect(int start, int end)
@@ -265,22 +242,11 @@ namespace MudBlazor
         internal void OnFocused(FocusEventArgs obj)
         {
              _isFocused = true;
-        //     if (!string.IsNullOrEmpty(Converter.Set(Value)) || string.IsNullOrEmpty(Placeholder))
-        //     {
-        //         //This delay let click event fires first to set caret position proper (for only first click)
-        //         await Task.Delay(1);
-        //         await _mask.ImplementMask(null);
-        //         SetCaretPosition(_mask.FindFirstCaretLocation());
-        //     }
         }
 
         protected internal override void OnBlurred(FocusEventArgs obj)
         {
             base.OnBlurred(obj);
-            // if (string.IsNullOrEmpty(_rawValue))
-            // {
-            //     SetTextAsync("", updateValue: false).AndForget();
-            // }
             _isFocused = false;
         }
 
