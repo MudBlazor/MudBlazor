@@ -19,6 +19,7 @@ namespace MudBlazor
         private int? _rowsPerPage;
         private bool _isFirstRendered = false;
         private bool _filtersMenuVisible = false;
+        private bool _columnsPanelVisible = false;
         private IEnumerable<T> _items;
         private T _selectedItem;
         private SortDirection _direction = SortDirection.None;
@@ -66,6 +67,13 @@ namespace MudBlazor
         internal T _editingItem;
         internal T _previousEditingItem;
         internal string GetHorizontalScrollbarStyle() => HorizontalScrollbar ? ";display: block; overflow-x: auto;" : string.Empty;
+
+        // converters
+        Converter<bool, bool?> _oppositeBoolConverter = new Converter<bool, bool?>
+        {
+            SetFunc = value => value ? false : true,
+            GetFunc = value => value.HasValue ? !value.Value : true,
+        };
 
         #region Notify Children Delegates
 
@@ -124,6 +132,11 @@ namespace MudBlazor
         /// Controls whether data in the DataGrid can be filtered. This is overridable by each column.
         /// </summary>
         [Parameter] public bool Filterable { get; set; } = false;
+
+        /// <summary>
+        /// Controls whether columns in the DataGrid can be hidden. This is overridable by each column.
+        /// </summary>
+        [Parameter] public bool Hideable { get; set; } = false;
 
         /// <summary>
         /// Controls whether to hide or show the column options. This is overridable by each column.
@@ -787,6 +800,34 @@ namespace MudBlazor
         public void OpenFilters()
         {
             _filtersMenuVisible = true;
+            StateHasChanged();
+        }
+
+        internal void HideAllColumns()
+        {
+            foreach (var column in _columns)
+            {
+                if (column.Hideable ?? false)
+                    column.Hidden = true;
+            }
+
+            StateHasChanged();
+        }
+
+        internal void ShowAllColumns()
+        {
+            foreach (var column in _columns)
+            {
+                if (column.Hideable ?? false)
+                    column.Hidden = false;
+            }
+
+            StateHasChanged();
+        }
+
+        public void ShowColumnsPanel()
+        {
+            _columnsPanelVisible = true;
             StateHasChanged();
         }
 

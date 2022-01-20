@@ -39,6 +39,9 @@ namespace MudBlazor
         [Parameter] public SortDirection InitialDirection { get; set; } = SortDirection.None;
         [Parameter] public bool? Sortable { get; set; }
         [Parameter] public bool? Filterable { get; set; }
+        [Parameter] public bool? Hideable { get; set; }
+        [Parameter] public bool Hidden { get; set; }
+        [Parameter] public EventCallback<bool> HiddenChanged { get; set; }
         [Parameter] public bool? ShowColumnOptions { get; set; }
         [Parameter] public string HeaderClass { get; set; }
         [Parameter] public string HeaderStyle { get; set; }
@@ -78,6 +81,13 @@ namespace MudBlazor
             get
             {
                 return Filterable ?? DataGrid?.Filterable ?? true;
+            }
+        }
+        private bool hideable
+        {
+            get
+            {
+                return Hideable ?? DataGrid?.Hideable ?? false;
             }
         }
         private bool showColumnOptions
@@ -238,6 +248,12 @@ namespace MudBlazor
         private async Task CheckedChangedAsync(bool value)
         {
             await DataGrid?.SetSelectAllAsync(value);
+        }
+
+        internal async Task HideColumnAsync()
+        {
+            Hidden = true;
+            await HiddenChanged.InvokeAsync(Hidden);
         }
 
         #endregion

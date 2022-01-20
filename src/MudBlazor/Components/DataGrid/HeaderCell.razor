@@ -2,13 +2,13 @@
 @inherits MudComponentBase
 @typeparam T
 
-@if (IsOnlyHeader)
+@if (IsOnlyHeader && !Hidden)
 {
     <th scope="col" class="mud-table cell @_classname" style="@_style" colspan="@ColSpan" @attributes="@UserAttributes">
         @_content
     </th>
 }
-else
+else if (!Hidden)
 {
     <th scope="col" class="@_classname" style="@_style" colspan="@ColSpan" @attributes="@UserAttributes">
         @if (ColumnType == ColumnType.SelectionCheckBox)
@@ -55,6 +55,10 @@ else
                             @if (filterable)
                             {
                                 <MudMenuItem OnClick="@AddFilter">Filter</MudMenuItem>
+                            }
+                            @if (hideable)
+                            {
+                                <MudMenuItem OnClick="@HideColumnAsync">Hide</MudMenuItem>
                             }
                         </MudMenu>
                     }

@@ -13,6 +13,19 @@
             {
                 <MudToolBar Class="mud-table-toolbar">
                     @ToolBarContent
+                    <MudMenu Icon="@Icons.Material.Outlined.Settings" Size="Size.Small" Direction="Direction.Bottom" OffsetY="true" Dense="true">
+                        <MudMenuItem OnClick="@ShowColumnsPanel">Columns</MudMenuItem>
+                    </MudMenu>            
+                </MudToolBar>
+            }
+            else
+            {
+                @*Add the default toolbar.*@
+                <MudToolBar Class="mud-table-toolbar">
+                    <MudSpacer />
+                    <MudMenu Icon="@Icons.Material.Outlined.Settings" Size="Size.Small" Direction="Direction.Bottom" OffsetY="true" Dense="true">
+                        <MudMenuItem OnClick="@ShowColumnsPanel">Columns</MudMenuItem>
+                    </MudMenu>            
                 </MudToolBar>
             }
             <div class="mud-table-container" style="@_tableStyle @(GetHorizontalScrollbarStyle())">
@@ -36,14 +49,16 @@
                                     <HeaderCell T="T" Title="@column.Title" Field="@column.Field" Class="@column.headerClassname"
                                         SortIcon="@column.SortIcon" SortBy="@column.SortBy" HeaderTemplate="@column.HeaderTemplate"
                                         InitialDirection="@column.InitialDirection" Sortable="@column.Sortable" Style="@column.HeaderStyle"
-                                        Filterable="@column.Filterable" ColumnType="@column.Type" ColSpan="@column.HeaderColSpan"></HeaderCell>
+                                        Filterable="@column.Filterable" ColumnType="@column.Type" ColSpan="@column.HeaderColSpan"
+                                        Hideable="@column.Hideable" @bind-Hidden="column.Hidden"></HeaderCell>
                                 }
                                 else
                                 {
                                     <HeaderCell T="T" Title="@column.Title" Field="@column.Field" Class="@column.headerClassname"
                                         SortIcon="@column.SortIcon" SortBy="@column.SortBy"
                                         InitialDirection="@column.InitialDirection" Sortable="@column.Sortable" Style="@column.HeaderStyle"
-                                        Filterable="@column.Filterable" ColumnType="@column.Type" ColSpan="@column.HeaderColSpan"></HeaderCell>
+                                        Filterable="@column.Filterable" ColumnType="@column.Type" ColSpan="@column.HeaderColSpan"
+                                        Hideable="@column.Hideable" @bind-Hidden="column.Hidden"></HeaderCell>
                                 }
                             }
 
@@ -65,6 +80,27 @@
                                     }
                                 </MudGrid>
                                 <MudButton Class="mt-2" StartIcon="@Icons.Material.Filled.Add" OnClick="@AddFilter" Color="@Color.Primary">Add Filter</MudButton>
+                            </MudPaper>
+                        }
+                        @if (_columnsPanelVisible)
+                        {
+                            <MudOverlay  Visible="true" OnClick="@(() => _columnsPanelVisible = false)"></MudOverlay>
+                            <MudPaper Class="pa-2 columns-panel" Style="position:absolute;maxwidth:450px;z-index:var(--mud-zindex-drawer)" Elevation="4">
+                                <MudGrid Spacing="0">
+                                    @foreach (var column in _columns)
+                                    {
+                                        <MudItem xs="12">
+                                            <MudSwitch T="bool" Disabled="@(!(column.Hideable ?? false))" @bind-Checked="column.Hidden" Converter="_oppositeBoolConverter" Color="Color.Primary" Label="@(column.Title ?? @column.Field)" />
+                                        </MudItem>
+                                    }
+                                    <MudItem xs="6">
+                                        <MudButton OnClick="@HideAllColumns" Color="@Color.Primary">Hide All</MudButton>
+                                    </MudItem>
+                                    <MudItem xs="6" Class="d-flex justify-end">
+                                        <MudButton OnClick="@ShowAllColumns" Color="@Color.Primary">Show All</MudButton>
+                                    </MudItem>
+                                </MudGrid>
+                                
                             </MudPaper>
                         }
                     </thead>
@@ -89,11 +125,14 @@
                                     <CascadingValue Value="@Validator" IsFixed="true">
                                     @foreach (var column in @_columns)
                                     {
-                                        <Cell Item="@item" Title="@column.Title" Field="@column.Field" Class="@column.cellClassname"
-                                            CellTemplate="@column.CellTemplate" ColumnType="@column.Type" Style="@column.CellStyle"
-                                            IsEditable="@(column.IsEditable ?? true)" EditTemplate="@column.EditTemplate"
-                                            CellClass="@column.CellClass" CellClassFunc="@column.CellClassFunc"
-                                            CellStyle="@column.CellStyle" CellStyleFunc="@column.CellStyleFunc"></Cell>
+                                        if (!column.Hidden)
+                                        {
+                                            <Cell Item="@item" Title="@column.Title" Field="@column.Field" Class="@column.cellClassname"
+                                                CellTemplate="@column.CellTemplate" ColumnType="@column.Type" Style="@column.CellStyle"
+                                                IsEditable="@(column.IsEditable ?? true)" EditTemplate="@column.EditTemplate"
+                                                CellClass="@column.CellClass" CellClassFunc="@column.CellClassFunc"
+                                                CellStyle="@column.CellStyle" CellStyleFunc="@column.CellStyleFunc"></Cell>
+                                        }
                                     }
                                         
                                     @if (EditMode == DataGridEditMode.Inline)
