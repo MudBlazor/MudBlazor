@@ -34,11 +34,11 @@ namespace MudBlazor
 
         private string _elementId = "maskfield_" + Guid.NewGuid().ToString().Substring(0, 8);
 
-        private BaseMask _mask = new SimpleMask("** **-** **");
+        private IMask _mask = new SimpleMask("** **-** **");
         
         [Parameter]
         [Category(CategoryTypes.General.Data)]
-        public BaseMask Mask { 
+        public IMask Mask { 
             get => _mask;
             set => SetMask(value);
         }
@@ -293,7 +293,7 @@ namespace MudBlazor
             //Console.WriteLine($"On Caret position change: '{Mask}' ({pos})");
         }
 
-        private void SetMask(BaseMask other)
+        private void SetMask(IMask other)
         {
             if (_mask == null || other == null || _mask?.GetType() != other?.GetType())
             {

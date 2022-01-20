@@ -1,0 +1,34 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+
+<MudGrid Class="justify-space-between" Style="max-width: 800px;">
+    <MudItem xs="6">
+        <MudMaskField Mask="@mask1" Label="MAC Address"  HelperText="@mask1.Mask"
+                      @bind-Value="mac1"  Variant="@Variant.Text" Clearable />
+    </MudItem>
+    <MudItem xs="6">
+        <MudMaskField Mask="@mask2" Label="MAC Address (with Placeholder)" HelperText="@mask2.Mask"
+                      @bind-Value="mac2"  Variant="@Variant.Text" Clearable />
+    </MudItem>
+    <MudItem xs="6">
+        MAC Address: <b>@mac1</b>
+    </MudItem>
+    <MudItem xs="6">
+        Cleaned MAC Address: <b>@mac2</b>
+    </MudItem>
+</MudGrid>
+
+@code {
+    public string mac1, mac2;
+
+    public SimpleMask mask1 = new SimpleMask("##:##:##:##:##:##") { 
+        MaskChars = new[] { new MaskChar('#', @"[0-9a-fA-F]") } 
+    };
+
+    public SimpleMask mask2 = new SimpleMask("XX-XX-XX-XX-XX-XX") { 
+        MaskChars = new[] { new MaskChar('X', @"[0-9a-fA-F]") },
+        Placeholder = '_',
+        CleanDelimiters = true,
+    };
+
+}

@@ -11,12 +11,13 @@
         </MudAlert>
 
         <DocsPageSection>
-            <SectionHeader Title="Simple Mask">
+            <SectionHeader Title="SimpleMask">
                 <Description>
                     MaskField can be configured with different masking algorithms by setting its <CodeInline>Mask</CodeInline> property. The easiest to use is
-                    <CodeInline>SimpleMask</CodeInline> which allows you to specify the input structure with a handful of different placeholders.
-                    <br />
-                    In this example the mask is <CodeInline>0000 0000 0000 0000</CodeInline> prompting for blocks of digits.
+                    <CodeInline>SimpleMask</CodeInline> which allows you to specify the input structure with a simple format. 
+                    <br /><br/>
+                    In this example the mask is <CodeInline>0000 0000 0000 0000</CodeInline> prompting for blocks of digits and refusing invalid input. Note, how the cursor automatically
+                    jumps over delimiters so you don't have to type them. You can also try pasting the test credit card number <i>4543474002249996</i>.
                 </Description>
             </SectionHeader>
             <SectionContent FullWidth="true" Outlined="true" Code="MaskFieldBasicExample" ShowCode="false">
@@ -25,142 +26,38 @@
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader Title="Default Placeholders">
+            <SectionHeader Title="Defining Mask Characters">
                 <Description>
-                    The <CodeInline>Mask</CodeInline> parameter can be changed dynamically in runtime. New mask will be implement when user focus on Mask Field.
+                    When you use <CodeInline>SimpleMask</CodeInline> without setting its <CodeInline>MaskChars</CodeInline> property, you can use the following default masking characters.
+                    But you are not limited to these. You can re-define them or define your own.
                     <br />
-                    The default masking characters:
+                    <MaskCharacterTable/>
                     <br />
-                    <br />
-                    <MudSimpleTable Elevation="0" Hover="true">
-                        <thead>
-                            <tr>
-                                <th>Placeholder</th>
-                                <th>Description</th>
-                                <th>Regex</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td><CodeInline>a</CodeInline></td>
-                                <td>Letters, lower- and upper-case, both ASCII and Unicode</td>
-                                <td>\p{L}</td>
-                            </tr>
-                            <tr>
-                                <td><CodeInline>0</CodeInline></td>
-                                <td>Digits 0-9</td>
-                                <td>\d</td>
-                            </tr>
-                            <tr>
-                                <td><CodeInline>*</CodeInline></td>
-                                <td>Letters (Unicode) or digits</td>
-                                <td>\p{L}|\d</td>
-                            </tr>
-                            <tr>
-                                <td><CodeInline>L</CodeInline></td>
-                                <td>Lower-case letters only</td>
-                                <td>[a-zıäöüßşçğ]</td>
-                            </tr>
-                            <tr>
-                                <td><CodeInline>U</CodeInline></td>
-                                <td>Upper-case letters only</td>
-                                <td>[A-ZİÄÖÜŞÇĞ]</td>
-                            </tr>
-                        </tbody>
-                    </MudSimpleTable>
-
-                    <br />
-                    In this example, you can change the mask with the right text field and see the result on Mask Field.
+                    <MudAlert Class="my-3" Severity="Severity.Info">
+                        Note: undefined mask characters are automatically treated as delimiters.
+                    </MudAlert>                    
+                    The example below defines its own <CodeInline>MaskChars</CodeInline>. It also shows the features <CodeInline>Placeholder</CodeInline> which makes the user aware of the input format and <CodeInline>CleanDelimiters</CodeInline> 
+                    which removes delimiters from the resulting <CodeInline>Value</CodeInline>.
+                    <br /><br /> 
+                    You can also try pasting the fictional MAC <i>DC-12-CC-30-9C-23</i> into the field. 
                 </Description>
             </SectionHeader>
-            <SectionContent FullWidth="true" Outlined="true" Code="MaskFieldMaskExample">
-                <MaskFieldMaskExample />
+            <SectionContent FullWidth="true" Outlined="true" Code="MaskFieldCustomCharactersExample" ShowCode="false">
+                <MaskFieldCustomCharactersExample />
             </SectionContent>
         </DocsPageSection>
 
+        
         <DocsPageSection>
-            <SectionHeader Title="Mask With Placeholder">
+            <SectionHeader Title="MultiMask">
                 <Description>
-                    By default all mask will be shown on focus. But if Mask Field has placeholder, placeholder will remain until the first value input.
-                    <br />
-                    In this example, you can see the mask field with placeholder example.
+                    <CodeInline>MultiMask</CodeInline> is a powerful masking algorithm which can change its structure depending on partial input. It uses the same <CodeInline>MaskChars</CodeInline>
+                    as SimpleMask. Check out the example code to see how easy it is to set up. 
                 </Description>
             </SectionHeader>
-            <SectionContent FullWidth="true" Outlined="true" Code="MaskFieldWithPlaceholderExample">
-                <MaskFieldWithPlaceholderExample />
-            </SectionContent>
-        </DocsPageSection>
-
-        <DocsPageSection>
-            <SectionHeader Title="Change Placeholder Character">
-                <Description>
-                    Placeholder character can be controlled by <CodeInline>PlaceholderCharacter</CodeInline> parameter.
-                    <br />
-                    This example shows how to work different placeholder characters with same mask.
-                </Description>
-            </SectionHeader>
-            <SectionContent FullWidth="true" Outlined="true" Code="MaskFieldPlaceholderCharExample">
-                <MaskFieldPlaceholderCharExample />
-            </SectionContent>
-        </DocsPageSection>
-
-        <DocsPageSection>
-            <SectionHeader Title="Change Masking Characters">
-                <Description>
-                    Masking characters can be set in <CodeInline>MaskDefinition</CodeInline> parameter.
-                    <br />
-                    This example demonstrates how to change masking characters.
-                    <br />
-                    Note: <CodeInline>MaskDefinition</CodeInline> cannot be set partially, it overrides the default. Be sure to added all required characters.
-                </Description>
-            </SectionHeader>
-            <SectionContent FullWidth="true" Outlined="true" Code="MaskFieldChangeMaskCharactersExample">
-                <MaskFieldChangeMaskCharactersExample />
-            </SectionContent>
-        </DocsPageSection>
-
-        <DocsPageSection>
-            <SectionHeader Title="Keep Character Positions">
-                <Description>
-                    With <CodeInline>KeepCharacterPositions</CodeInline> parameter, different input approaches supported. By default (false), adding or removing characters forces other characters to move. Otherwise no character move their position.
-                    <br />
-                    In this example, you can see and control the two approaches.
-                </Description>
-            </SectionHeader>
-            <SectionContent FullWidth="true" Outlined="true" Code="MaskFieldKeepIndexExample">
-                <MaskFieldKeepIndexExample />
-            </SectionContent>
-        </DocsPageSection>
-
-        <DocsPageSection>
-            <SectionHeader Title="Add Punctuations to the Value">
-                <Description>
-                    Normally, value contains only user-inputted characters. However, characters that will automatically be added to the value can also be specified in MaskDefinition, <CodeInline>AddToValue</CodeInline> parameter. Once a character set add to value, it can not be used as mask or regex character.
-                    <br />
-                    This feature is especially useful when acquiring date value.
-                    <br />
-                    In this example, you can see the two dots are added to the value (if there is at least one inputted character).
-                </Description>
-            </SectionHeader>
-            <SectionContent FullWidth="true" Outlined="true" Code="MaskFieldAddToValueExample">
-                <MaskFieldAddToValueExample />
-            </SectionContent>
-        </DocsPageSection>
-
-        <DocsPageSection>
-            <SectionHeader Title="Regex Masking">
-                <Description>
-                    By <CodeInline>MaskDefinition</CodeInline> Regex masking is also possible with Mask Field.
-                    <br />
-                    By default <CodeInline>l</CodeInline> character is used to lowercase and <CodeInline>u</CodeInline> character is used to uppercase characters.
-                    You can add unlimited Regex definitions as mask character.
-                    <br />
-                    This example demonstrates how to do Regex masking.
-                </Description>
-            </SectionHeader>
-            <SectionContent FullWidth="true" Outlined="true" Code="MaskFieldRegexExample">
-                <MaskFieldRegexExample />
-            </SectionContent>
+            <SectionContent FullWidth="true" Outlined="true" Code="MaskFieldMultiMaskExample" ShowCode="false">
+                <MaskFieldMultiMaskExample />
+            </SectionContent>          
         </DocsPageSection>
 
     </DocsPageContent>

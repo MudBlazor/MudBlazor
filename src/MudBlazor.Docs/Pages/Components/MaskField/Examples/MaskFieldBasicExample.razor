@@ -1,11 +1,11 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
-<MudGrid Class="justify-space-between">
-    <MudItem xs="12" sm="6" md="4">
+<MudGrid Class="justify-space-between" Style="max-width: 400px;">
+    <MudItem xs="12">
         <MudMaskField Mask="@(new SimpleMask("0000 0000 0000 0000"))" Label="Credit card number" 
                       @bind-Value="text"  Variant="@Variant.Text" Clearable />
     </MudItem>
-    <MudItem xs="12" sm="6" md="4">
+    <MudItem xs="12">
 		Credit card number: <b>@text</b>
     </MudItem>
 </MudGrid>

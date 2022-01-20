@@ -1,0 +1,36 @@
+﻿<MudSimpleTable Elevation="0" Hover="true">
+    <thead>
+    <tr>
+        <th>Placeholder</th>
+        <th>Description</th>
+        <th>Regex</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td><CodeInline>a</CodeInline></td>
+        <td>Letters, lower- and upper-case, both ASCII and Unicode</td>
+        <td>\p{L}</td>
+    </tr>
+    <tr>
+        <td><CodeInline>0</CodeInline></td>
+        <td>Digits 0-9</td>
+        <td>\d</td>
+    </tr>
+    <tr>
+        <td><CodeInline>*</CodeInline></td>
+        <td>Letters (Unicode) or digits</td>
+        <td>\p{L}|\d</td>
+    </tr>
+    <tr>
+        <td><CodeInline>L</CodeInline></td>
+        <td>Lower-case letters only</td>
+        <td>[a-zıäöüßşçğ]</td>
+    </tr>
+    <tr>
+        <td><CodeInline>U</CodeInline></td>
+        <td>Upper-case letters only</td>
+        <td>[A-ZİÄÖÜŞÇĞ]</td>
+    </tr>
+    </tbody>
+</MudSimpleTable>

@@ -232,7 +232,7 @@ public class SimpleMask : BaseMask
         CaretPos = ConsolidateCaret(Text, CaretPos);
     }
 
-    public override void UpdateFrom(BaseMask other)
+    public override void UpdateFrom(IMask other)
     {
         base.UpdateFrom(other);
         var o = other as SimpleMask;

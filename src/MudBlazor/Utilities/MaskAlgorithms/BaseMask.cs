@@ -8,7 +8,7 @@ using System.Text.RegularExpressions;
 
 namespace MudBlazor;
 
-public abstract class BaseMask
+public abstract class BaseMask : IMask
 {
     protected bool _initialized;
     protected Dictionary<char, MaskChar> _maskDict;
@@ -147,8 +147,9 @@ public abstract class BaseMask
         return _delimiters.Contains(maskChar);
     }
     
-    public virtual void UpdateFrom(BaseMask other)
+    public virtual void UpdateFrom(IMask o)
     {
+        var other = o as BaseMask;
         if (other == null)
             return;
         if (other.Mask != Mask)

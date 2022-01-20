@@ -13,96 +13,7 @@ using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Utilities.Mask
 {
-    public record struct MaskOption(string Id, string Mask, string Regex);
-
-    public class MultiMask : SimpleMask
-    {
-        public MultiMask(string defaultMask, params MaskOption[] options) : base(defaultMask)
-        {
-            _defaultMask = defaultMask;
-            _options = options;
-        }
-
-        private string _defaultMask;
-        private MaskOption[] _options;
-        public event Action<MaskOption?, string> OptionDetected;
-
-        public MaskOption? DetectedOption { get; private set; } = null;
-
-        public override void Insert(string input)
-        {
-            DoCheckAndRedo(()=> base.Insert(input));
-        }
-
-        public override void Delete()
-        {
-            DoCheckAndRedo(base.Delete);
-        }
-
-        public override void Backspace()
-        {
-            DoCheckAndRedo(base.Backspace);
-        }
-
-        /// <summary>
-        /// This is a nifty trick to avoid writing three times the same code for Insert, Delete and Backspace.
-        /// This backs up the state. Executes the action, checks if option changed. If so, apply saved state and
-        /// re-apply the action.
-        /// </summary>
-        /// <param name="action"></param>
-        protected void DoCheckAndRedo(Action action)
-        {
-            // backup state
-            var text = Text;
-            var pos = CaretPos;
-            var sel = Selection;
-            // do it!
-            action();
-            var newOption = CheckOption();
-            if (newOption == DetectedOption)
-                return;
-            // detected a different option
-            DetectedOption = newOption;
-            // revert saved state
-            Text = text;
-            CaretPos = pos;
-            Selection = sel;
-            Mask = newOption != null ? newOption.Value.Mask : _defaultMask;
-            // when mask changes we need to re-initialize!
-            _initialized = false;
-            // do it again!
-            action();
-            OptionDetected?.Invoke(newOption, Text);
-        }
-
-        protected virtual MaskOption? CheckOption()
-        {
-            if (_options == null)
-                return null;
-            var text = Text ?? "";
-            foreach (var option in _options)
-            {
-                if (option.Regex == null)
-                    continue;
-                if (Regex.IsMatch(text, option.Regex))
-                    return option;
-            }
-            return null;
-        }
-
-        public override void UpdateFrom(BaseMask other)
-        {
-            var text = Text;
-            base.UpdateFrom(other);
-            var o = other as MultiMask;
-            if (o == null)
-                return;
-            // no need to re-initialize, just update the options
-            _defaultMask = o._defaultMask;
-            _options = o._options;
-            SetText(text);
-        }
-    }
+    
 
     [TestFixture]
     public class MultiMaskTests
@@ -119,9 +30,9 @@ namespace MudBlazor.UnitTests.Utilities.Mask
                 new MaskOption("MasterCard", "0000 0000 0000 0000", @"^(5[1-5]|2[2-7])"),
                 new MaskOption("Discover", "0000 0000 0000 0000", @"^(6011|65|64[4-9])")
             );
-            MaskOption? option=null;
+            MaskOption? option = null;
             int eventCount = 0;
-            mask.OptionDetected += (o,text) =>
+            mask.OptionDetected += (o, text) =>
             {
                 eventCount++;
                 option = o;

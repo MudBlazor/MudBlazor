@@ -12,6 +12,12 @@ namespace MudBlazor;
 
 public struct MaskChar
 {
+    public MaskChar(char c, string regex)
+    {
+        Char = c;
+        Regex = regex;
+    }
+
     public char Char { get; set; }
     public string Regex { get; set; }
 

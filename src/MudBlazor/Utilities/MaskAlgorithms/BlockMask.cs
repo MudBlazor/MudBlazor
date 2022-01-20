@@ -101,7 +101,7 @@ public class BlockMask : RegexMask
         return s.ToString();
     }
 
-    public override void UpdateFrom(BaseMask other)
+    public override void UpdateFrom(IMask other)
     {
         base.UpdateFrom(other);
         var o = other as BlockMask;
