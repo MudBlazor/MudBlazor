@@ -73,7 +73,9 @@ namespace MudBlazor.UnitTests.Components
             // open the dialog
             comp1.Find("button").Click();
             //Console.WriteLine("\nOpened dialog: " + comp.Markup);
-            comp.Find("div.mud-dialog-container").Should().NotBe(null);
+            comp1.WaitForAssertion(()=>
+                comp.Find("div.mud-dialog-container").Should().NotBe(null)
+            );
             comp.Find("p.mud-typography").TrimmedText().Should().Be("Wabalabadubdub!");
             comp.Find("div.mud-dialog").GetAttribute("class").Should().Contain("mud-dialog-width-full");
             // close by click on ok button
@@ -85,7 +87,7 @@ namespace MudBlazor.UnitTests.Components
         /// Click outside the dialog (or any other method) must update the IsVisible parameter two-way binding on close
         /// </summary>
         /// <returns></returns>
-        [Ignore("Sadly we can not get this test to work when it is run in bulk (local and CI). It passes when executed individually")]
+        //[Ignore("Sadly we can not get this test to work when it is run in bulk (local and CI). It passes when executed individually")]
         [Test]
         public async Task InlineDialog_Should_UpdateIsVisibleOnClose()
         {
@@ -98,7 +100,7 @@ namespace MudBlazor.UnitTests.Components
             // open the dialog
             comp1.Find("button").Click();
             //Console.WriteLine("\nOpened dialog: " + comp.Markup);
-            comp.Find("div.mud-dialog-container").Should().NotBe(null);
+            comp.WaitForAssertion(()=> comp.Find("div.mud-dialog-container").Should().NotBe(null));
             // close by click outside
             comp.Find("div.mud-overlay").Click();
             comp.WaitForAssertion(() => comp.Markup.Trim().Should().BeEmpty(), TimeSpan.FromSeconds(5));
@@ -107,6 +109,7 @@ namespace MudBlazor.UnitTests.Components
             comp.WaitForAssertion(() => comp.Find("div.mud-dialog-container").Should().NotBe(null), TimeSpan.FromSeconds(5));
             // close again by click outside
             //Console.WriteLine("\nOpened dialog: " + comp.Markup);
+            comp.WaitForAssertion(() => comp.Find("div.mud-overlay").Should().NotBeNull());
             comp.Find("div.mud-overlay").Click();
             comp.WaitForAssertion(() => comp.Markup.Trim().Should().BeEmpty(), TimeSpan.FromSeconds(5));
         }
@@ -115,7 +118,7 @@ namespace MudBlazor.UnitTests.Components
         /// Based on bug report #3128
         /// Dialog Class and Style parameters should be honored for inline dialog
         /// </summary>
-        [Ignore("Sadly we can not get this test to work when it is run in bulk (local and CI). It passes when executed individually")]
+        //[Ignore("Sadly we can not get this test to work when it is run in bulk (local and CI). It passes when executed individually")]
         [Test]
         public async Task InlineDialogShouldHonorClassAndStyle()
         {
@@ -126,9 +129,9 @@ namespace MudBlazor.UnitTests.Components
             IDialogReference dialogReference = null;
             // open simple test dialog
             await comp.InvokeAsync(() => dialogReference = service?.Show<TestInlineDialog>());
-            dialogReference.Should().NotBe(null);
+            comp.WaitForAssertion(()=> dialogReference.Should().NotBe(null));
             comp.Find("button").Click();
-            comp.Find("div.mud-dialog").ClassList.Should().Contain("test-class");
+            comp.WaitForAssertion(()=> comp.Find("div.mud-dialog").ClassList.Should().Contain("test-class"));
             comp.Find("div.mud-dialog").Attributes["style"].Value.Should().Be("color: red;");
             comp.Find("div.mud-dialog-content").Attributes["style"].Value.Should().Be("color: blue;");
             comp.Find("div.mud-dialog-content").ClassList.Should().NotContain("test-class");
