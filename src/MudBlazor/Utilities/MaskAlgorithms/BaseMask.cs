@@ -55,7 +55,7 @@ public abstract class BaseMask
     /// <summary>
     /// The current text as it is displayed in the component
     /// </summary>
-    public string Text { get; private set; } // must be private!
+    public string Text { get; protected set; }
 
     /// <summary>
     /// Get the Text without delimiters or placeholders. Depends on the implementation entirely.
@@ -120,10 +120,8 @@ public abstract class BaseMask
     /// <param name="text"></param>
     public void SetText(string text)
     {
-        var caret = CaretPos;
         Clear();
         Insert( text);
-        CaretPos = ConsolidateCaret(Text, caret);
     }
 
     /// <summary>
@@ -132,15 +130,16 @@ public abstract class BaseMask
     /// <param name="text"></param>
     protected virtual void UpdateText(string text)
     {
-        // don't show a 
+        // don't show a text consisting only of delimiters and placeholders (no actual input)
         if (text.All(c => _delimiters.Contains(c)))
         {
             Text = "";
             return;
         }
         Text = text;
+        CaretPos = ConsolidateCaret(Text, CaretPos);
     }
-    
+
     protected abstract void DeleteSelection(bool align);
 
     protected virtual bool IsDelimiter(char maskChar)
@@ -167,7 +166,11 @@ public abstract class BaseMask
             }
         }
         if (!_initialized)
+        {
+            var caret = CaretPos;
             SetText(Text);
+            CaretPos = ConsolidateCaret(Text, caret);
+        }
     }
     
     internal static (string, string) SplitAt(string text, int pos)

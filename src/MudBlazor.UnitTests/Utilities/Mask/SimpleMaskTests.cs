@@ -2,16 +2,14 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System.Threading.Tasks;
 using FluentAssertions;
 using NUnit.Framework;
 
-namespace MudBlazor.UnitTests.Utilities;
+namespace MudBlazor.UnitTests.Utilities.Mask;
 
 [TestFixture]
-public class MaskingTests
+public class SimpleMaskTests
 {
-    #region Base Mask Tests
     
     [Test]
     public void BaseMask_Internals()
@@ -21,10 +19,6 @@ public class MaskingTests
         BaseMask.SplitAt("asdf", -1).Should().Be(("", "asdf"));
         BaseMask.SplitAt("asdf", 10).Should().Be(("asdf", ""));
     }
-    
-    #endregion
-    
-    #region Simple Mask Tests
 
     [Test]
     public void SimpleMask_Insert()
@@ -247,97 +241,6 @@ public class MaskingTests
         mask.ToString().Should().Be("(xy1) 234-|");
     }
     
-    #endregion
 
-    #region Block Mask Tests
-    
-    [Test]
-    public void BlockMask_Insert()
-    {
-        var mask = new BlockMask(".", new Block('0', 1, 2), new Block('0', 1, 2), new Block('0', 2, 4));
-        mask.ToString().Should().Be("|");
-        mask.Insert("12.");
-        mask.ToString().Should().Be("12.|");
-        mask.Clear();
-        mask.Insert("xx12.34xx.5678");
-        mask.Text.Should().Be("12.34.5678");
-        mask.Clear();
-        mask.Insert("1.1.99");
-        mask.ToString().Should().Be("1.1.99|");
-        mask.CaretPos = 0;
-        mask.Insert("0");
-        mask.ToString().Should().Be("0|1.1.99");
-        mask.Insert("0");
-        mask.ToString().Should().Be("00|.1.199");
-        mask.Insert("0");
-        mask.ToString().Should().Be("00.0|.1199");
-        mask.Insert("0");
-        mask.ToString().Should().Be("00.00|.1199");
-        // w/o separator
-        mask = new BlockMask("", new Block('0', 1, 2), new Block('a', 1, 2), new Block('0', 2, 4));
-        mask.Insert("xx12.34xx.5678");
-        mask.Text.Should().Be("12xx5678");
-        mask.Clear();
-        mask.Insert("1.x.99");
-        mask.ToString().Should().Be("1x99|");
-        mask.CaretPos = 0;
-        mask.Insert("0");
-        mask.ToString().Should().Be("0|1x99");
-        mask.Insert("0");
-        mask.ToString().Should().Be("00|x99");
-        mask.Insert("y");
-        mask.ToString().Should().Be("00y|x99");
-        mask.Insert("z");
-        mask.ToString().Should().Be("00yz|99");
-        mask.Insert("1");
-        mask.ToString().Should().Be("00yz1|99");
-    }
 
-    [Test]
-    public void BlockMask_Delete()
-    {
-        var mask = new BlockMask(".", new Block('0', 1, 2), new Block('0', 1, 2), new Block('0', 2, 4));
-        mask.ToString().Should().Be("|");
-        mask.Insert("12.34.5678");
-        mask.ToString().Should().Be("12.34.5678|");
-        mask.Delete();
-        mask.ToString().Should().Be("12.34.5678|");
-        mask.CaretPos = 0;
-        mask.Delete();
-        mask.ToString().Should().Be("|2.34.5678");
-        mask.Delete();
-        mask.ToString().Should().Be("|34.56.78");
-    }
-
-    [Test]
-    public void BlockMask_Backspace()
-    {
-        var mask = new BlockMask(".", new Block('0', 1, 2), new Block('0', 1, 2), new Block('0', 2, 4));
-        mask.ToString().Should().Be("|");
-        mask.Insert("12.34.5678");
-        mask.ToString().Should().Be("12.34.5678|");
-        mask.Backspace();
-        mask.ToString().Should().Be("12.34.567|");
-        mask.CaretPos = 3;
-        mask.ToString().Should().Be("12.|34.567");
-        mask.Backspace();
-        mask.ToString().Should().Be("1|3.4.567");
-        mask.Backspace();
-        mask.ToString().Should().Be("|3.4.567");
-        mask.Backspace();
-        mask.ToString().Should().Be("|3.4.567");
-    }
-
-    [Test]
-    public void BlockMask_Internals()
-    {
-        var mask = new BlockMask(".", new Block('('), new Block('0', 2, 2), new Block(')'));
-        mask.Clear(); // make sure it is initialized
-        mask.Mask.Should().Be(@"^\(([\.](\d(\d([\.](\))?)?)?)?)?$");
-        mask = new BlockMask(".", new Block('0', 1, 2), new Block('0', 1, 2), new Block('0', 2, 4));
-        mask.Clear(); // make sure it is initialized
-        mask.Mask.Should().Be(@"^\d(\d)?([\.](\d(\d)?([\.](\d(\d(\d(\d)?)?)?)?)?)?)?$");
-    }
-    
-    #endregion
 }

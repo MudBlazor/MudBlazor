@@ -29,10 +29,18 @@ public class SimpleMask : BaseMask
         var text = Text ?? "";
         var pos = ConsolidateCaret(text, CaretPos);
         (var beforeText, var afterText) = SplitAt(text, pos);
+        var alignedBefore = AlignAgainstMask(beforeText, 0);
+        CaretPos = pos = alignedBefore.Length;
         var alignedInput = AlignAgainstMask(input, pos);
         CaretPos = pos += alignedInput.Length;
+        if (Placeholder != null)
+        {
+            var p = Placeholder.Value;
+            if (afterText.Take(alignedInput.Length).All(c => IsDelimiter(c) || c==p))
+                afterText = new string(afterText.Skip(alignedInput.Length).ToArray());
+        }
         var alignedAfter = AlignAgainstMask(afterText, pos);
-        UpdateText( FillWithPlaceholder(beforeText + alignedInput + alignedAfter));
+        UpdateText( FillWithPlaceholder(alignedBefore + alignedInput + alignedAfter));
     }
 
     protected override void DeleteSelection(bool align)
@@ -62,7 +70,7 @@ public class SimpleMask : BaseMask
             return;
         }
         var text = Text ?? "";
-        var pos = ConsolidateCaret(text, CaretPos);
+        var pos = CaretPos = ConsolidateCaret(text, CaretPos);
         if (pos >= text.Length)
             return;
         (var beforeText, var afterText) = SplitAt(text, pos);
@@ -91,7 +99,7 @@ public class SimpleMask : BaseMask
             return;
         }
         var text = Text ?? "";
-        var pos = ConsolidateCaret(text, CaretPos);
+        var pos = CaretPos = ConsolidateCaret(text, CaretPos);
         if (pos == 0)
             return;
         (var beforeText, var afterText) = SplitAt(text, pos);
@@ -154,7 +162,8 @@ public class SimpleMask : BaseMask
                 maskIndex++;
                 continue;
             }
-            if (IsMatch(maskChar, textChar))
+            var isPlaceholder = Placeholder != null && textChar == Placeholder.Value;
+            if (IsMatch(maskChar, textChar) || isPlaceholder)
             {
                 alignedText += textChar;
                 maskIndex++;
@@ -208,6 +217,19 @@ public class SimpleMask : BaseMask
         base.InitInternals();
         if (Placeholder!=null)
             _delimiters.Add(Placeholder.Value);
+    }
+
+    protected override void UpdateText(string text)
+    {
+        // don't show a text consisting only of delimiters and placeholders (no actual input)
+        if (text.All(c => _delimiters.Contains(c) || (Placeholder!=null && c==Placeholder.Value)))
+        {
+            Text = "";
+            CaretPos = 0;
+            return;
+        }
+        Text = text;
+        CaretPos = ConsolidateCaret(Text, CaretPos);
     }
 
     public override void UpdateFrom(BaseMask other)
