@@ -287,7 +287,6 @@ namespace MudBlazor
 
         private async Task ChangeMenu(bool open)
         {
-            IsOpen = open;
             if (open)
             {
                 await _elementReference.SelectAsync();
@@ -298,8 +297,9 @@ namespace MudBlazor
                 _timer?.Dispose();
                 RestoreScrollPosition();
                 await CoerceTextToValue();
+                IsOpen = false;
+                StateHasChanged();
             }
-            StateHasChanged();
         }
 
         private void UpdateIcon()
@@ -377,6 +377,8 @@ namespace MudBlazor
             _enabledItemIndices = _items.Select((item, idx) => (item, idx)).Where(tuple => ItemDisabledFunc?.Invoke(tuple.item) != true).Select(tuple => tuple.idx).ToList();
             _selectedListItemIndex = _enabledItemIndices.Any() ? _enabledItemIndices.First() : -1;
 
+            IsOpen = true;
+
             if (_items?.Length == 0)
             {
                 await CoerceValueToText();
@@ -384,7 +386,6 @@ namespace MudBlazor
                 return;
             }
 
-            IsOpen = true;
             StateHasChanged();
         }
 
@@ -567,18 +568,15 @@ namespace MudBlazor
         {
             if (CoerceText == false)
                 return Task.CompletedTask;
-            if (Value == null)
-            {
-                _timer?.Dispose();
-                //Below line's false parameter added for prevent opening popover again, it may break something else
-                return SetTextAsync(null, false);
-            }
-            var actualvalueStr = GetItemString(Value);
-            if (!Equals(actualvalueStr, Text))
-            {
-                _timer?.Dispose();
-                return SetTextAsync(actualvalueStr);
-            }
+
+            _timer?.Dispose();
+
+            var text = Value == null ? null : GetItemString(Value);
+
+            // Don't update the value to prevent the popover from opening again after coercion
+            if (text != Text)
+                return SetTextAsync(text, updateValue: false);
+
             return Task.CompletedTask;
         }
 
