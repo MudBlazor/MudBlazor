@@ -23,7 +23,7 @@ namespace MudBlazor
 
         private string _defaultMask;
         private MaskOption[] _options;
-        public event Action<MaskOption?, string> OptionDetected;
+        public Action<MaskOption?, string> OptionDetected { get; set; }
 
         public MaskOption? DetectedOption { get; private set; } = null;
 
@@ -98,6 +98,7 @@ namespace MudBlazor
             // no need to re-initialize, just update the options
             _defaultMask = o._defaultMask;
             _options = o._options;
+            OptionDetected = o.OptionDetected;
             SetText(text);
         }
     }

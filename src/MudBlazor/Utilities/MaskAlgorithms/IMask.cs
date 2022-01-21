@@ -61,13 +61,13 @@ namespace MudBlazor
         void Clear();
 
         /// <summary>
-        /// Overwrite the mask text from the outside without losing caret position
+        /// Overwrite the mask text without losing caret position
         /// </summary>
         /// <param name="text"></param>
         void SetText(string text);
 
         /// <summary>
-        /// Copy values from other mask but preserve own state.
+        /// Copy config from other mask but preserve own state.
         /// </summary>
         /// <param name="other"></param>
         void UpdateFrom(IMask other);
