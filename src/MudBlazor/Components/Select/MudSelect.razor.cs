@@ -137,13 +137,13 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Fired when dropdown open.
+        /// Fired when dropdown opens.
         /// </summary>
         [Category(CategoryTypes.FormComponent.Behavior)]
         [Parameter] public EventCallback OnOpen { get; set; }
 
         /// <summary>
-        /// Fired when dropdown close.
+        /// Fired when dropdown closes.
         /// </summary>
         [Category(CategoryTypes.FormComponent.Behavior)]
         [Parameter] public EventCallback OnClose { get; set; }
