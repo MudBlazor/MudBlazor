@@ -137,6 +137,18 @@ namespace MudBlazor
         }
 
         /// <summary>
+        /// Fired when dropdown open.
+        /// </summary>
+        [Category(CategoryTypes.FormComponent.Behavior)]
+        [Parameter] public EventCallback OnOpen { get; set; }
+
+        /// <summary>
+        /// Fired when dropdown close.
+        /// </summary>
+        [Category(CategoryTypes.FormComponent.Behavior)]
+        [Parameter] public EventCallback OnClose { get; set; }
+
+        /// <summary>
         /// Add the MudSelectItems here
         /// </summary>
         [Parameter]
@@ -655,9 +667,17 @@ namespace MudBlazor
             UpdateIcon();
             StateHasChanged();
             await HilightSelectedValue();
-
+            //Scroll the active item on each opening
+            if (_activeItemId != null)
+            {
+                var index = _items.FindIndex(x => x.ItemId == (string)_activeItemId);
+                var item = _items[index];
+                await ScrollManager.ScrollToListItemAsync(item.ItemId, 1, true);
+            }
             //disable escape propagation: if selectmenu is open, only the select popover should close and underlying components should not handle escape key
             await _keyInterceptor.UpdateKey(new() { Key = "Escape", StopDown = "Key+none" });
+
+            await OnOpen.InvokeAsync();
         }
 
         public async Task CloseMenu(bool focusAgain = true)
@@ -674,6 +694,8 @@ namespace MudBlazor
 
             //enable escape propagation: the select popover was closed, now underlying components are allowed to handle escape key
             await _keyInterceptor.UpdateKey(new() { Key = "Escape", StopDown = "none" });
+
+            await OnClose.InvokeAsync();
         }
 
         private void UpdateIcon()
