@@ -2,11 +2,17 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
     public partial class MudFocusTrap : IDisposable
     {
+        protected string Classname =>
+            new CssBuilder("outline-none")
+                .AddClass(Class)
+                .Build();
+        
         protected ElementReference _firstBumper;
         protected ElementReference _lastBumper;
         protected ElementReference _fallback;
