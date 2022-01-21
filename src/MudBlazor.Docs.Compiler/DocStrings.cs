@@ -38,8 +38,9 @@ namespace MudBlazor.Docs.Compiler
                     {
                         var doc = property.GetDocumentation() ?? "";
 
-                        // replace <see cref="TYPE_OR_MEMBER_QUALIFIED_NAME"/> tags by TYPE_OR_MEMBER_QUALIFIED_NAME without "MudBlazor." at the beginning
-                        doc = Regex.Replace(doc, "<see cref=\"[TFPME]:(MudBlazor.)?([^>]+)\" */>", match => {
+                        // Replace <see cref="TYPE_OR_MEMBER_QUALIFIED_NAME"/> tags by TYPE_OR_MEMBER_QUALIFIED_NAME without "MudBlazor." at the beginning.
+                        // It is a quick fix. It should be rather represented by <a href="...">...</a> but it is more difficult.
+                        doc = Regex.Replace(doc, "<see cref=\"[TFPME]:(MudBlazor\\.)?([^>]+)\" */>", match => {
                             string result = match.Groups[2].Value;     // get the name of Type or type member (Field, Property, Method, or Event)
                             result = Regex.Replace(result, "`1", "");  // remove `1 from generic type name
                             return result;
