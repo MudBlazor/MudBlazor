@@ -37,7 +37,17 @@ namespace MudBlazor.Docs.Compiler
                     foreach (var property in type.GetPropertyInfosWithAttribute<ParameterAttribute>())
                     {
                         var doc = property.GetDocumentation() ?? "";
+
+                        // replace <see cref="TYPE_OR_MEMBER_QUALIFIED_NAME"/> tags by TYPE_OR_MEMBER_QUALIFIED_NAME without "MudBlazor." at the beginning
+                        doc = Regex.Replace(doc, "<see cref=\"[TFPME]:(MudBlazor.)?([^>]+)\" */>", match => {
+                            string result = match.Groups[2].Value;     // get the name of Type or type member (Field, Property, Method, or Event)
+                            result = Regex.Replace(result, "`1", "");  // remove `1 from generic type name
+                            return result;
+                        });
+
+                        // remove all other XML tags
                         doc = Regex.Replace(doc, @"</?.+?>", "");
+
                         cb.AddLine($"public const string {GetSaveTypename(type)}_{property.Name} = @\"{EscapeDescription(doc).Trim()}\";\n");
                     }
 
