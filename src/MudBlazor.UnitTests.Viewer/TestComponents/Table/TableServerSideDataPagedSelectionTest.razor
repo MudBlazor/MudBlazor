@@ -1,0 +1,37 @@
+﻿@namespace MudBlazor.UnitTests.TestComponents
+
+<MudText>SelectedItems { @string.Join(", ", _selectedItems) }</MudText>
+
+<MudTable
+    @bind-SelectedItems="_selectedItems"
+    ServerData="@(new Func<TableState, Task<TableData<int>>>(ServerReload))"
+    MultiSelection="true"
+    Dense>
+    <HeaderContent>
+        <MudTh>Nr</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="Nr">@context</MudTd>
+    </RowTemplate>
+    <PagerContent>
+        <MudTablePager />
+    </PagerContent>
+</MudTable>
+
+@code {
+    public static string __description__ = "The server-side loaded table should allow for multi-selection with paging.";
+
+    public const int TotalItems = 99;
+
+    private HashSet<int> _selectedItems = new();
+    
+    private async Task<TableData<int>> ServerReload(TableState state)
+    {
+        await Task.Delay(1);
+
+        var offset = state.Page * state.PageSize;
+        var items = Enumerable.Range(offset + 1, state.PageSize).ToArray();
+
+        return new TableData<int> { TotalItems = TotalItems, Items = items };
+    }
+}

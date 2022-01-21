@@ -1494,5 +1494,84 @@ namespace MudBlazor.UnitTests.Components
             testComponent.WaitForAssertion(() => table.RowsPerPage.Should().Be(35));
         }
 
+        [Test]
+        public async Task Should_Support_Server_Paged_Selection()
+        {
+            var root = Context.RenderComponent<TableServerSideDataPagedSelectionTest>();
+            var table = root.FindComponent<MudTable<int>>();
+
+            var checkbox = table
+                .FindComponent<MudTHeadRow>()
+                .FindComponent<MudCheckBox<bool>>();
+
+            var checkboxInput = checkbox.Find("input");
+
+            table.WaitForAssertion(() => AssertFirstTableValue("1"));
+
+            checkboxInput.Change(true);
+
+            table.WaitForAssertion(() =>
+            {
+                checkbox.Instance.Checked
+                    .Should()
+                    .BeTrue("Header checkbox should be checked when all page items selected");
+
+                table.Instance.SelectedItems
+                    .Should()
+                    .BeEquivalentTo(
+                        Enumerable.Range(1, table.Instance.RowsPerPage),
+                        "Header checkbox should select all items on page");
+            });
+
+            table.SetParam(x => x.CurrentPage, table.Instance.CurrentPage + 1);
+
+            table.WaitForAssertion(() =>
+            {
+                AssertFirstTableValue($"{table.Instance.RowsPerPage + 1}");
+
+                checkbox.Instance.Checked
+                    .Should()
+                    .BeFalse("Header checkbox should be unchecked when navigating to a new page");
+
+                table.Instance.SelectedItems
+                    .Should()
+                    .BeEquivalentTo(
+                        Enumerable.Range(1, table.Instance.RowsPerPage),
+                        "Selection should persist when page is changed");
+            });
+
+            checkboxInput.Change(true);
+
+            table.WaitForAssertion(() =>
+            {
+                table.Instance.SelectedItems
+                    .Should()
+                    .BeEquivalentTo(
+                        Enumerable.Range(1, table.Instance.RowsPerPage * 2),
+                        "Header checkbox adds shown items to existing selection");
+            });
+
+            table.SetParam(x => x.CurrentPage, table.Instance.CurrentPage - 1);
+
+            table.WaitForAssertion(() => AssertFirstTableValue("1"));
+
+            checkboxInput.Change(false);
+
+            table.WaitForAssertion(() =>
+            {
+                table.Instance.SelectedItems
+                    .Should()
+                    .BeEquivalentTo(
+                        Enumerable.Range(table.Instance.RowsPerPage + 1, table.Instance.RowsPerPage),
+                        "Header checkbox removes shown items from selection");
+            });
+
+            void AssertFirstTableValue(string expected)
+            {
+                table.Find(@"td[data-label=""Nr""]").TextContent
+                    .Trim()
+                    .Should().Be(expected);
+            }
+        }
     }
 }

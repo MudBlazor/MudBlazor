@@ -436,7 +436,17 @@ namespace MudBlazor
         internal override void OnHeaderCheckboxClicked(bool value)
         {
             if (!value)
-                Context.Selection.Clear();
+            {
+                if (HasServerData)
+                {
+                    foreach (var item in FilteredItems)
+                        Context.Selection.Remove(item);
+                }
+                else
+                {
+                    Context.Selection.Clear();
+                }
+            }
             else
             {
                 foreach (var item in FilteredItems)
@@ -477,6 +487,10 @@ namespace MudBlazor
                 return;
 
             Loading = true;
+
+            // Required to show the loading indicator
+            StateHasChanged();
+
             var label = Context.CurrentSortLabel;
 
             var state = new TableState
@@ -487,14 +501,21 @@ namespace MudBlazor
                 SortLabel = label?.SortLabel
             };
 
-            _server_data = await ServerData(state);
+            var dataTask = ServerData(state);
+            var notifyAsync = dataTask.Status != TaskStatus.RanToCompletion;
+
+            _server_data = await dataTask;
 
             if (CurrentPage * RowsPerPage > _server_data.TotalItems)
                 CurrentPage = 0;
 
             Loading = false;
-            StateHasChanged();
-            Context?.PagerStateHasChanged?.Invoke();
+
+            // An additional notification is only needed if the task was async
+            if (notifyAsync)
+                StateHasChanged();
+
+            // The pager is a child in render tree, and will implicitly be re-rendered
         }
 
         protected override void OnAfterRender(bool firstRender)

@@ -57,15 +57,17 @@ namespace MudBlazor
             }
             if (HeaderRows.Count > 0 || FooterRows.Count > 0)
             {
-                var itemsCount = Table.GetFilteredItemsCount();
-                var b = Selection.Count == itemsCount && itemsCount != 0;
+                var allSelected = Table.HasServerData
+                    ? Rows.Values.DefaultIfEmpty().All(row => row?.IsChecked ?? false)
+                    : Table.GetFilteredItemsCount() is var count and > 0 && count == Selection.Count;
+
                 // update header checkbox
                 foreach (var header in HeaderRows)
-                    header.SetChecked(b, notify: false);
+                    header.SetChecked(allSelected, notify: false);
 
                 // update footer checkbox
                 foreach (var footer in FooterRows)
-                    footer.SetChecked(b, notify: false);
+                    footer.SetChecked(allSelected, notify: false);
             }
         }
 
