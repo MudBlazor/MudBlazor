@@ -671,8 +671,11 @@ namespace MudBlazor
             if (_activeItemId != null)
             {
                 var index = _items.FindIndex(x => x.ItemId == (string)_activeItemId);
-                var item = _items[index];
-                await ScrollManager.ScrollToListItemAsync(item.ItemId, 1, true);
+                if (index > 0)
+                {
+                    var item = _items[index];
+                    await ScrollManager.ScrollToListItemAsync(item.ItemId, 1, true);
+                }
             }
             //disable escape propagation: if selectmenu is open, only the select popover should close and underlying components should not handle escape key
             await _keyInterceptor.UpdateKey(new() { Key = "Escape", StopDown = "Key+none" });
