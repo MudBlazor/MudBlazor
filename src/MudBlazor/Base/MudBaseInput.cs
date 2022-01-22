@@ -447,12 +447,6 @@ namespace MudBlazor
             }
         }
 
-        protected override void RegisterAsFormComponent()
-        {
-            if (Standalone)
-                base.RegisterAsFormComponent();
-        }
-
         protected override void OnParametersSet()
         {
             if (Standalone)
