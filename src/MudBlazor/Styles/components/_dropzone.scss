@@ -1,0 +1,12 @@
+﻿
+.mud-drop-zone{
+  background-color: var(--mud-palette-action-default-hover);
+}
+
+.mud-drop-zone-can-drop{
+  background-color: var(--mud-palette-success-hover);
+}
+
+.mud-drop-zone-no-drop{
+  background-color: var(--mud-palette-error-hover);
+}
