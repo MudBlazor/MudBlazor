@@ -312,7 +312,11 @@ namespace MudBlazor.UnitTests.Components
         public async Task MaskFieldTest_ChangeMask2()
         {
             var comp = Context.RenderComponent<MudMaskField<string>>();
-            comp.SetParam(x => x.Mask, new SimpleMask("(LL) UU") { Placeholder = '_', CleanDelimiters = true });
+            comp.SetParam(x => x.Mask, new SimpleMask("(LL) UU") { Placeholder = '_', CleanDelimiters = true, MaskChars = new []
+            {
+                new MaskChar('L', "[a-z]"),
+                new MaskChar('U', "[A-Z]")
+            }});
             var maskField = comp.Instance;
 
             await comp.InvokeAsync(() => maskField.HandleKeyDown(new KeyboardEventArgs() { Key = "a" }));

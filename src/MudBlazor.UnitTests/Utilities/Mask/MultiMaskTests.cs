@@ -13,12 +13,9 @@ using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Utilities.Mask
 {
-    
-
     [TestFixture]
     public class MultiMaskTests
     {
-
         [Test]
         public void MultiMask_Test()
         {
@@ -32,7 +29,7 @@ namespace MudBlazor.UnitTests.Utilities.Mask
             );
             MaskOption? option = null;
             int eventCount = 0;
-            mask.OptionDetected += (o, text) =>
+            mask.OptionDetected = (o, text) =>
             {
                 eventCount++;
                 option = o;
@@ -42,6 +39,9 @@ namespace MudBlazor.UnitTests.Utilities.Mask
             mask.DetectedOption.Should().BeNull();
 
             mask.SetText("34123");
+            mask.Backspace();
+            mask.ToString().Should().Be("3412 |");
+            mask.Insert("3");
             mask.DetectedOption.Should().NotBeNull();
             mask.DetectedOption.Value.Id.Should().Be("American Express");
             option.Value.Id.Should().Be("American Express");
@@ -69,9 +69,21 @@ namespace MudBlazor.UnitTests.Utilities.Mask
             mask.Text.Should().Be("4123 4567 8901 ");
             option.Value.Id.Should().Be("VISA");
             eventCount.Should().Be(4);
-            mask.UpdateFrom(new MultiMask("000.000.000",
-                    new MaskOption("O1", "0-000.000.000", @"^4"),
-                    new MaskOption("O2", "00-00.00.00", @"^5")));
+            mask.UpdateFrom(new MultiMask("0000000000",
+                new MaskOption("O1", "0-000.000.000", @"^4"),
+                new MaskOption("O2", "00-00.00.00", @"^5"))
+            {
+                OptionDetected = (o, text) =>
+                {
+                    eventCount++;
+                    option = o;
+                }
+            });
+            mask.DetectedOption.Value.Id.Should().Be("O1");
+            mask.Text.Should().Be("4-123.456.789");
+            option.Value.Id.Should().Be("O1");
+            eventCount.Should().Be(5);
+            mask.UpdateFrom(null);
             mask.DetectedOption.Value.Id.Should().Be("O1");
             mask.Text.Should().Be("4-123.456.789");
             option.Value.Id.Should().Be("O1");

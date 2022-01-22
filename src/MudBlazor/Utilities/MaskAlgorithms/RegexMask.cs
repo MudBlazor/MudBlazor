@@ -11,18 +11,25 @@ namespace MudBlazor;
 
 public class RegexMask : BaseMask
 {
-    
     /// <summary>
-    /// The progressive regex to be used for input checking.
-    /// 
-    /// Note: a progressive regex must match even partial input successfully!
-    /// Note: the regex must start with ^ and end with $ to work correctly!
-    /// 
-    /// Example: to match input "abc" it must match "a" or "ab" or "abc". The
-    /// progressive regex would look like this: ^a(b(c)?)?$
-    /// It is best to generate the progressive regex automatically as crafting it
-    /// manually is a huge pain in the buttocks and very error-prone. 
+    /// Create a mask that uses a regex to restrict input.   
     /// </summary>
+    /// <param name="regex">
+    /// The general or progressive regex to be used for input checking.
+    /// 
+    /// Note: a general regex must match every possible input, i.e. ^[0-9]+$.
+    /// Note: a progressive regex must match even partial input successfully! The
+    /// progressive regex must start with ^ and end with $ to work correctly!
+    /// 
+    /// Example: to match input "abc" a progressive regex must match "a" or "ab" or "abc". The
+    /// progressive regex would look like this: ^a(b(c)?)?$ or like this ^(a|ab|abc)$
+    /// It is best to generate the progressive regex automatically like BlockMask does.
+    /// </param>
+    public RegexMask(string regex)
+    {
+        Mask=regex;
+    }
+    
     protected Regex _regex; 
     
     /// <summary>
@@ -34,7 +41,8 @@ public class RegexMask : BaseMask
     protected override void InitInternals()
     {
         base.InitInternals();
-        _delimiters = new HashSet<char>(Delimiters ?? "");
+        Delimiters ??= "";
+        _delimiters = new HashSet<char>(Delimiters);
         InitRegex();
     }
 
@@ -140,9 +148,16 @@ public class RegexMask : BaseMask
             if (_regex.IsMatch(alignedText + textChar))
                 alignedText += textChar;
             // try to skip over a delimiter (input of values only i.e. 31122021 => 31.12.2021)
-            else if (Delimiters.Length > 0 && _regex.IsMatch(alignedText + Delimiters[0] + textChar))
+            else if (Delimiters.Length > 0)
             {
-                alignedText += (Delimiters[0].ToString() + textChar);
+                foreach (var d in Delimiters)
+                {
+                    if (_regex.IsMatch(alignedText + d + textChar))
+                    {
+                        alignedText += (d.ToString() + textChar);
+                        break;
+                    }
+                }
             }
             textIndex++;
         }
@@ -160,5 +175,6 @@ public class RegexMask : BaseMask
             Delimiters = o.Delimiters;
             _initialized = false;
         }
+        Refresh();
     }
 }

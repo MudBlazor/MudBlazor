@@ -164,7 +164,7 @@ namespace MudBlazor
 
         protected override async Task UpdateTextPropertyAsync(bool updateValue)
         {
-            // allow this only fia changes from the outside
+            // allow this only via changes from the outside
             if (_updating)
                 return;
             var text = Converter.Set(Value);
@@ -177,7 +177,7 @@ namespace MudBlazor
 
         protected override async Task UpdateValuePropertyAsync(bool updateText)
         {
-            // allow this only fia changes from the outside
+            // allow this only via changes from the outside
             if (_updating)
                 return;
             var text = Text;
@@ -236,12 +236,13 @@ namespace MudBlazor
         public void OnSelect(int start, int end)
         {
             Mask.Selection = (start, end);
-            //Console.WriteLine($"Select: {Mask}");
+            Console.WriteLine($"OnSelect: {Mask}");
         }
 
         internal void OnFocused(FocusEventArgs obj)
         {
              _isFocused = true;
+             Console.WriteLine($"OnFocused: {Mask}");
         }
 
         protected internal override void OnBlurred(FocusEventArgs obj)
@@ -290,7 +291,7 @@ namespace MudBlazor
                 return;
             Mask.Selection = null;
             Mask.CaretPos = pos;
-            //Console.WriteLine($"On Caret position change: '{Mask}' ({pos})");
+            Console.WriteLine($"OnCaretPositionChanged: '{Mask}' ({pos})");
         }
 
         private void SetMask(IMask other)

@@ -18,7 +18,7 @@ namespace MudBlazor
         public MultiMask(string defaultMask, params MaskOption[] options) : base(defaultMask)
         {
             _defaultMask = defaultMask;
-            _options = options;
+            _options = options ?? new MaskOption[0];
         }
 
         private string _defaultMask;
@@ -75,14 +75,10 @@ namespace MudBlazor
 
         protected virtual MaskOption? CheckOption()
         {
-            if (_options == null)
-                return null;
             var text = Text ?? "";
             foreach (var option in _options)
             {
-                if (option.Regex == null)
-                    continue;
-                if (Regex.IsMatch(text, option.Regex))
+                if (option.Regex != null && Regex.IsMatch(text, option.Regex))
                     return option;
             }
             return null;
@@ -90,16 +86,15 @@ namespace MudBlazor
 
         public override void UpdateFrom(IMask other)
         {
-            var text = Text;
             base.UpdateFrom(other);
             var o = other as MultiMask;
             if (o == null)
                 return;
             // no need to re-initialize, just update the options
             _defaultMask = o._defaultMask;
-            _options = o._options;
+            _options = o._options ?? new MaskOption[0];
             OptionDetected = o.OptionDetected;
-            SetText(text);
+            Refresh();
         }
     }
 }

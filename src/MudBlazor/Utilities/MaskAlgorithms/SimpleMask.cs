@@ -16,8 +16,17 @@ public class SimpleMask : BaseMask
         Mask = mask;
     }
 
+    /// <summary>
+    /// If set, the mask will print placeholders for all non-delimiters that haven't yet been typed.
+    /// For instance a mask "000-000" with input "1" will show "1__-___" as Text.
+    /// </summary>
     public char? Placeholder { get; set; }
-    
+
+    /// <summary>
+    /// A function for changing input characters after they were typed, i.e. lower-case to upper-case, etc.
+    /// </summary>
+    public Func<char, char> Transformation { get; set; }
+
     /// <summary>
     /// Inserts given text at caret position
     /// </summary>
@@ -165,7 +174,8 @@ public class SimpleMask : BaseMask
             var isPlaceholder = Placeholder != null && textChar == Placeholder.Value;
             if (IsMatch(maskChar, textChar) || isPlaceholder)
             {
-                alignedText += textChar;
+                var c = Transformation == null ? textChar : Transformation(textChar);
+                alignedText += c;
                 maskIndex++;
             }
             textIndex++;
@@ -183,8 +193,7 @@ public class SimpleMask : BaseMask
     
     protected virtual bool IsMatch(char maskChar, char textChar)
     {
-        if (!_maskDict.TryGetValue(maskChar, out var maskDef))
-            return false;
+        var maskDef = _maskDict[maskChar];
         return Regex.IsMatch(textChar.ToString(), maskDef.Regex);
     }
 
@@ -238,8 +247,10 @@ public class SimpleMask : BaseMask
         var o = other as SimpleMask;
         if (o == null)
             return;
-        // no need to re-initialize, just update the placeholder.
         Placeholder = o.Placeholder;
         CleanDelimiters = o.CleanDelimiters;
+        Transformation = o.Transformation;
+        _initialized = false;
+        Refresh();
     }
 }

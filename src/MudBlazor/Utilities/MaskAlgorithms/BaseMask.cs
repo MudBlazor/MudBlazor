@@ -16,10 +16,8 @@ public abstract class BaseMask : IMask
     protected MaskChar[] _maskChars = new MaskChar[]
     {
         MaskChar.Letter('a'), MaskChar.Digit('0'), MaskChar.LetterOrDigit('*'),
-        new MaskChar { Char = 'L', Regex = "[a-zıäöüßşçğ]" },
-        new MaskChar { Char = 'U', Regex = "[A-ZİÄÖÜŞÇĞ]" },
     };
-    
+
     // per definition (unless defined otherwise in subclasses) delimiters are chars
     // in the mask which do not match any MaskChar
     protected HashSet<char> _delimiters;
@@ -41,7 +39,7 @@ public abstract class BaseMask : IMask
         _maskDict = _maskChars.ToDictionary(x => x.Char);
         if (Mask == null)
             _delimiters = new();
-        else 
+        else
             _delimiters =
                 new HashSet<char>(Mask.Where(c => _maskChars.All(maskDef => maskDef.Char != c)));
     }
@@ -62,7 +60,7 @@ public abstract class BaseMask : IMask
     /// Clean text will usually be used for the Value property of a mask field. 
     /// </summary>
     public virtual string GetCleanText() => Text;
-    
+
     /// <summary>
     /// The current caret position
     /// </summary>
@@ -102,7 +100,7 @@ public abstract class BaseMask : IMask
     /// Implements the effect of the Backspace key at the current cursor position
     /// </summary>
     public abstract void Backspace();
-    
+
     /// <summary>
     /// Reset the mask as if the whole textfield was cleared
     /// </summary>
@@ -121,7 +119,7 @@ public abstract class BaseMask : IMask
     public void SetText(string text)
     {
         Clear();
-        Insert( text);
+        Insert(text);
     }
 
     /// <summary>
@@ -146,7 +144,7 @@ public abstract class BaseMask : IMask
     {
         return _delimiters.Contains(maskChar);
     }
-    
+
     public virtual void UpdateFrom(IMask o)
     {
         var other = o as BaseMask;
@@ -159,21 +157,31 @@ public abstract class BaseMask : IMask
         }
         if (other.MaskChars != null)
         {
-            var maskChars = new HashSet<MaskChar>(_maskChars??new MaskChar[0]);
+            var maskChars = new HashSet<MaskChar>(_maskChars ?? new MaskChar[0]);
             if (other.MaskChars.Length != MaskChars.Length || other.MaskChars.Any(x => !maskChars.Contains(x)))
             {
                 _maskChars = other.MaskChars;
                 _initialized = false;
             }
         }
-        if (!_initialized)
-        {
-            var caret = CaretPos;
-            SetText(Text);
-            CaretPos = ConsolidateCaret(Text, caret);
-        }
+        Refresh();
     }
-    
+
+    /// <summary>
+    /// Re-applies parameters (i.e. after they changed) without loosing internal state
+    /// such as Text, CaretPos and Selection
+    /// </summary>
+    protected virtual void Refresh()
+    {
+        var caret = CaretPos;
+        var sel = Selection;
+        SetText(Text);
+        CaretPos = ConsolidateCaret(Text, caret);
+        Selection = sel;
+        if (sel != null)
+            ConsolidateSelection();
+    }
+
     internal static (string, string) SplitAt(string text, int pos)
     {
         if (pos <= 0)
@@ -182,7 +190,7 @@ public abstract class BaseMask : IMask
             return (text, "");
         return (text.Substring(0, pos), text.Substring(pos));
     }
-    
+
     /// <summary>
     /// Performs simple border checks and corrections to the caret position
     /// </summary>

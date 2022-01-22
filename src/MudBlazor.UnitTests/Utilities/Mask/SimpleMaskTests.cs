@@ -2,6 +2,7 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System;
 using FluentAssertions;
 using NUnit.Framework;
 
@@ -24,6 +25,8 @@ public class SimpleMaskTests
     public void SimpleMask_Insert()
     {
         var mask = new SimpleMask("(aa) 00-0");
+        mask.ToString().Should().Be("|");
+        mask.Insert("?");
         mask.ToString().Should().Be("|");
         mask.Insert("ab123");
         mask.Text.Should().Be("(ab) 12-3");
@@ -155,6 +158,12 @@ public class SimpleMaskTests
         mask.ToString().Should().Be("(+|12) 356 78");
         mask.Insert("430");
         mask.ToString().Should().Be("(+43) 0|12 3567");
+        mask.Selection = (2, 77);
+        mask.ToString().Should().Be("(+[43) 012 3567]");
+        mask.Delete();
+        mask.ToString().Should().Be("|");
+        mask.Text.Should().Be("");
+        mask.GetCleanText().Should().Be("");
     }
 
     [Test]
@@ -240,7 +249,49 @@ public class SimpleMaskTests
         mask.Insert("1234");
         mask.ToString().Should().Be("(xy1) 234-|");
     }
-    
 
+    [Test]
+    public void SimpleMask_TransformationFunc()
+    {
+        var mask = new SimpleMask("(aaa) 000")
+        {
+            Transformation = c => c.ToString().ToUpperInvariant()[0],
+            CleanDelimiters = true,
+        };
+        mask.Insert("xyä123");
+        mask.ToString().Should().Be("(XYÄ) 123|");
+        mask.GetCleanText().Should().Be("XYÄ123");
+        mask.SetText("ABß...");
+        mask.ToString().Should().Be("(ABß) |");
+        mask.GetCleanText().Should().Be("ABß");
+    }
+
+    [Test]
+    public void SimpleMask_UpdateFrom()
+    {
+        var mask = new SimpleMask("(aaa) 000");
+        mask.MaskChars.Length.Should().Be(3); // '0', 'a' and '*'
+        mask.CleanDelimiters.Should().BeFalse();
+        mask.Placeholder.Should().BeNull();
+        mask.SetText("abc12");
+        mask.Selection = (1, 2);
+        mask.ToString().Should().Be("([a]bc) 12");
+        mask.UpdateFrom(new SimpleMask("999") { Placeholder = '#', MaskChars = new []{ new MaskChar('9', "[0-9]")}, CleanDelimiters = true });
+        mask.MaskChars.Length.Should().Be(1); // '9'
+        mask.MaskChars[0].Char.Should().Be('9');
+        mask.MaskChars[0].Regex.Should().Be("[0-9]");
+        mask.CleanDelimiters.Should().BeTrue();
+        mask.Placeholder.Should().Be('#');
+        // state should be preserved (Text, Caret/Selection)
+        mask.ToString().Should().Be("1[2]#");
+        mask.UpdateFrom(null);
+        mask.MaskChars.Length.Should().Be(1); // '9'
+        mask.MaskChars[0].Char.Should().Be('9');
+        mask.MaskChars[0].Regex.Should().Be("[0-9]");
+        mask.CleanDelimiters.Should().BeTrue();
+        mask.Placeholder.Should().Be('#');
+        // state should be preserved (Text, Caret/Selection)
+        mask.ToString().Should().Be("1[2]#");
+    }
 
 }

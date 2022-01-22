@@ -14,25 +14,26 @@ public record struct Block(char MaskChar, int Min = 1, int Max = 1);
 
 public class BlockMask : RegexMask
 {
-    public BlockMask(params Block[] blocks)
+    public BlockMask(params Block[] blocks) : base(null)
     {
         if (blocks.Length == 0)
             throw new ArgumentException("supply at least one block", nameof(blocks));
         Blocks = blocks;
         Delimiters = "";
     }
-    
+
     public BlockMask(string delimiters, params Block[] blocks) : this(blocks)
     {
         Delimiters = delimiters ?? "";
     }
-    
+
     public Block[] Blocks { get; protected set; }
-    
+
     protected override void InitInternals()
     {
         base.InitInternals();
-        Mask = BuildRegex(Blocks ?? new Block[0]);
+        Blocks ??= new Block[0];
+        Mask = BuildRegex(Blocks);
         _regex = new Regex(Mask);
     }
 
@@ -107,14 +108,9 @@ public class BlockMask : RegexMask
         var o = other as BlockMask;
         if (o == null)
             return;
-        if (o.Blocks != null)
-        {
-            var blocks = new HashSet<Block>(Blocks ?? new Block[0]);
-            if (o.Blocks.Length != Blocks.Length || o.Blocks.Any(x => !blocks.Contains(x)))
-            {
-                Blocks = o.Blocks;
-                _initialized = false;
-            }
-        }        
+        Blocks = o.Blocks ?? new Block[0];
+        Delimiters = o.Delimiters;
+        _initialized = false;
+        Refresh();
     }
 }

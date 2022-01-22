@@ -2,13 +2,14 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System;
 using FluentAssertions;
 using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Utilities.Mask;
 
 [TestFixture]
-public class MaskingTests
+public class BlockMaskTests
 {
 
     [Test]
@@ -67,6 +68,15 @@ public class MaskingTests
         mask.ToString().Should().Be("|2.34.5678");
         mask.Delete();
         mask.ToString().Should().Be("|34.56.78");
+        mask.SetText("12.");
+        mask.Selection = (0, 2);
+        mask.Delete();
+        mask.ToString().Should().Be("|");
+        mask.Insert("12345");
+        mask.ToString().Should().Be("12.34.5|");
+        mask.CaretPos = 5;
+        mask.Delete();
+        mask.ToString().Should().Be("12.34|");
     }
 
     [Test]
@@ -86,6 +96,9 @@ public class MaskingTests
         mask.ToString().Should().Be("|3.4.567");
         mask.Backspace();
         mask.ToString().Should().Be("|3.4.567");
+        mask.Selection = (2, 3);
+        mask.Backspace();
+        mask.ToString().Should().Be("3.|56.7");
     }
 
     [Test]
@@ -97,6 +110,27 @@ public class MaskingTests
         mask = new BlockMask(".", new Block('0', 1, 2), new Block('0', 1, 2), new Block('0', 2, 4));
         mask.Clear(); // make sure it is initialized
         mask.Mask.Should().Be(@"^\d(\d)?([\.](\d(\d)?([\.](\d(\d(\d(\d)?)?)?)?)?)?)?$");
+        Assert.Throws<ArgumentException>(() => new BlockMask());
     }
 
+    [Test]
+    public void BlockMask_UpdateFrom()
+    {
+        var mask = new BlockMask(".", new Block('('), new Block('0', 2, 2), new Block(')'));
+        mask.Blocks.Length.Should().Be(3); 
+        mask.Delimiters.Should().Be(".");
+        mask.SetText("(1234)");
+        mask.ToString().Should().Be("(.12.)|");
+        mask.CaretPos = 1;
+        mask.UpdateFrom(new BlockMask(":", new Block('0', 1,1), new Block('0', 1, 1)));
+        mask.Blocks.Length.Should().Be(2);
+        mask.Delimiters.Should().Be(":");
+        // state should be preserved (Text, Caret/Selection)
+        mask.ToString().Should().Be("1|:2");
+        mask.UpdateFrom(null);
+        mask.Blocks.Length.Should().Be(2);
+        mask.Delimiters.Should().Be(":");
+        // state should be preserved (Text, Caret/Selection)
+        mask.ToString().Should().Be("1|:2");
+    }
 }
