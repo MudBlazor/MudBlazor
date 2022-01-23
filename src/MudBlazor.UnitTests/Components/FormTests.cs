@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
+using System.Reflection;
 using System.Threading.Tasks;
 using Bunit;
 using FluentAssertions;
@@ -1118,6 +1119,28 @@ namespace MudBlazor.UnitTests.Components
             var form = comp.FindComponent<MudFormTestable>().Instance;
 
             Assert.AreEqual(14, form.FormControls.Count);
+        }
+
+        /// <summary>
+        /// Test the cascading validaton parameter to override field validations or not depending of context.
+        /// </summary>
+        [Test]
+        public async Task MudForm_Validation_Should_OverrideFieldValidation()
+        {
+            var comp = Context.RenderComponent<FormValidationOverrideFieldValidationTest>();
+            var textFields = comp.FindComponents<MudTextField<string>>();
+            var numericFields = comp.FindComponents<MudNumericField<int>>();
+            var defaultValidation = "v";
+            
+            textFields[0].Instance.Validation.Should().Be(defaultValidation);
+            textFields[1].Instance.Validation.Should().Be(defaultValidation);
+            textFields[2].Instance.Validation.Should().Be(defaultValidation);
+            textFields[3].Instance.Validation.Should().Be("a");
+            
+            numericFields[0].Instance.Validation.Should().Be(defaultValidation);
+            numericFields[1].Instance.Validation.Should().NotBe(defaultValidation);
+            numericFields[2].Instance.Validation.Should().Be(defaultValidation);
+            numericFields[3].Instance.Validation.Should().Be("b");
         }
     }
 }
