@@ -38,7 +38,7 @@ namespace MudBlazor.Docs.Services
             .AddItem("Badge", typeof(MudBadge))
             .AddItem("AppBar", typeof(MudAppBar))
             .AddItem("Drop Zone", typeof(MudDrawer), typeof(MudDrawerHeader), typeof(MudDrawerContainer))
-            .AddItem("Drawer", typeof(MudDropZone), typeof(MudDropItem))
+            .AddItem("Drawer", typeof(MudDropZone<T>), typeof(MudDropItem<T>))
             .AddItem("Link", typeof(MudLink))
             .AddItem("Menu", typeof(MudMenu), typeof(MudMenuItem))
             .AddItem("Message Box", typeof(MudMessageBox))

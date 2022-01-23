@@ -1,6 +1,13 @@
 ﻿@namespace MudBlazor
 @inherits MudComponentBase
+@typeparam T
 
-<div class="@Classname" style="@Style" @attributes="UserAttributes">
+<div 
+	class="@Classname" style="@Style" 
+	ondragover="event.preventDefault();" ondragstart="event.dataTransfer.setData('', event.target.id);"
+        @ondrop="HandleDrop"
+        @ondragenter="HandleDragEnter"
+        @ondragleave="HandleDragLeave"
+@attributes="UserAttributes">
     @ChildContent
 </div>
