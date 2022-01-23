@@ -14,6 +14,7 @@ namespace MudBlazor
            .Build();
 
         private MudInput<string> _elementReference;
+        private MudMask _maskReference;
 
         /// <summary>
         /// Type of the input element. It should be a valid HTML5 input type.
@@ -40,26 +41,38 @@ namespace MudBlazor
 
         public override ValueTask FocusAsync()
         {
-            return _elementReference.FocusAsync();
+            if (_mask == null)
+                return _elementReference.FocusAsync();
+            else
+                return _maskReference.FocusAsync();
         }
 
         public override ValueTask SelectAsync()
         {
-            return _elementReference.SelectAsync();
+            if (_mask == null)
+                return _elementReference.SelectAsync();
+            else
+                return _maskReference.SelectAsync();
         }
 
         public override ValueTask SelectRangeAsync(int pos1, int pos2)
         {
-            return _elementReference.SelectRangeAsync(pos1, pos2);
+            if (_mask == null)
+                return _elementReference.SelectRangeAsync(pos1, pos2);
+            else
+                return _maskReference.SelectRangeAsync(pos1, pos2);
         }
 
         /// <summary>
         /// Clear the text field, set Value to default(T) and Text to null
         /// </summary>
         /// <returns></returns>
-        public async Task Clear()
+        public Task Clear()
         {
-            await _elementReference.SetText(null);
+            if (_mask == null)
+                return _elementReference.SetText(null);
+            else
+                return _maskReference.Clear();
         }
 
         /// <summary>
@@ -69,8 +82,36 @@ namespace MudBlazor
         /// <returns></returns>
         public Task SetText(string text)
         {
-            return _elementReference?.SetText(text);
+            if (_mask == null)
+                return _elementReference?.SetText(text);
+            else
+                return _maskReference.Clear().ContinueWith(t=> _maskReference.OnPaste(text));
         }
+
+
+        private IMask _mask = null;
+
+        /// <summary>
+        /// Provide a masking object. Built-in masks are SimpleMask, MultiMask, RegexMask and BlockMask
+        /// Note: when Mask is set, TextField will ignore some properties such as Lines, Pattern or HideSpinButtons.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.General.Data)]
+        public IMask Mask
+        {
+            get => _mask;
+            set
+            {
+                if (_mask == null || value == null || _mask?.GetType() != value?.GetType())
+                {
+                    _mask = value;
+                    return;
+                }
+                // set new mask properties without loosing internal state
+                _mask.UpdateFrom(value);
+            }
+        }
+
     }
 
     [Obsolete("MudTextFieldString is no longer available.", true)]

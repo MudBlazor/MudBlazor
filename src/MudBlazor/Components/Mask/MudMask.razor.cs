@@ -81,6 +81,9 @@ namespace MudBlazor
         [Category(CategoryTypes.General.Appearance)]
         public RenderFragment ChildContent { get; set; }
 
+        /// <summary>
+        /// Provide a masking object. Built-in masks are SimpleMask, MultiMask, RegexMask and BlockMask
+        /// </summary>
         [Parameter]
         [Category(CategoryTypes.General.Data)]
         public IMask Mask

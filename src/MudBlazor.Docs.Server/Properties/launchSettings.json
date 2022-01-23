@@ -11,7 +11,7 @@
     "MudBlazor.Docs.Server": {
       "commandName": "Project",
       "launchBrowser": true,
-      "launchUrl": "components/maskfield",
+      "launchUrl": "components/mask",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
         "APIBASE": "https://localhost:5001/"
@@ -23,7 +23,7 @@
     "IIS Express": {
       "commandName": "IISExpress",
       "launchBrowser": true,
-      "launchUrl": "components/maskfield/",
+      "launchUrl": "components/mask/",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
         "APIBASE": "https://localhost:44399/"

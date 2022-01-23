@@ -2,7 +2,7 @@
 
 <MudGrid Class="justify-space-between" Style="max-width: 400px;">
     <MudItem xs="12">
-        <MudMask Mask="@(new SimpleMask("0000 0000 0000 0000"))" Label="Credit card number" 
+        <MudTextField Mask="@(new SimpleMask("0000 0000 0000 0000"))" Label="Credit card number" 
                       @bind-Value="text"  Variant="@Variant.Outlined" Clearable />
     </MudItem>
     <MudItem xs="12">
