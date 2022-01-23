@@ -127,7 +127,6 @@
     <Content Remove="excubowebcompiler.json" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Pages\Features\Masking" />
     <Folder Include="wwwroot\images\landingpage" />
   </ItemGroup>
 
