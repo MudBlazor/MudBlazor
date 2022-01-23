@@ -9,40 +9,86 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using MudBlazor.Extensions;
 using MudBlazor.Services;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    public partial class MudMaskField<T> : MudBaseInput<T>
+    public partial class MudMask : MudBaseInput<string>
     {
-        public MudMaskField()
+        public MudMask()
         {
             TextUpdateSuppression = false;
         }
 
         protected string Classname =>
-           new CssBuilder("mud-input-input-control")
-           .AddClass(Class)
-           .Build();
+            new CssBuilder("mud-input")
+                .AddClass($"mud-input-{Variant.ToDescriptionString()}")
+                .AddClass($"mud-input-adorned-{Adornment.ToDescriptionString()}", Adornment != Adornment.None)
+                .AddClass($"mud-input-margin-{Margin.ToDescriptionString()}", when: () => Margin != Margin.None)
+                .AddClass("mud-input-underline", when: () => DisableUnderLine == false && Variant != Variant.Outlined)
+                .AddClass("mud-shrink",
+                    when: () => !string.IsNullOrEmpty(Text) || Adornment == Adornment.Start ||
+                                !string.IsNullOrWhiteSpace(Placeholder))
+                .AddClass("mud-disabled", Disabled)
+                .AddClass("mud-input-error", HasErrors)
+                .AddClass("mud-ltr", GetInputType() == InputType.Email || GetInputType() == InputType.Telephone)
+                .AddClass(Class)
+                .Build();
 
-        private MudInput<string> _elementReference;
+        protected string InputClassname =>
+            new CssBuilder("mud-input-slot")
+                .AddClass("mud-input-root")
+                .AddClass($"mud-input-root-{Variant.ToDescriptionString()}")
+                .AddClass($"mud-input-root-adorned-{Adornment.ToDescriptionString()}", Adornment != Adornment.None)
+                .AddClass($"mud-input-root-margin-{Margin.ToDescriptionString()}", when: () => Margin != Margin.None)
+                .AddClass(Class)
+                .Build();
+
+        protected string AdornmentClassname =>
+            new CssBuilder("mud-input-adornment")
+                .AddClass($"mud-input-adornment-{Adornment.ToDescriptionString()}", Adornment != Adornment.None)
+                .AddClass($"mud-text", !string.IsNullOrEmpty(AdornmentText))
+                .AddClass($"mud-input-root-filled-shrink", Variant == Variant.Filled)
+                .AddClass(Class)
+                .Build();
+
+        protected string ClearButtonClassname =>
+            new CssBuilder()
+                // .AddClass("me-n1", Adornment == Adornment.End && HideSpinButtons == false)
+                .AddClass("mud-icon-button-edge-end", Adornment == Adornment.End)
+                // .AddClass("me-6", Adornment != Adornment.End && HideSpinButtons == false)
+                .AddClass("mud-icon-button-edge-margin-end", Adornment != Adornment.End)
+                .Build();
+
+
+        private ElementReference _elementReference;
+        private ElementReference _elementReference1;
 
         [Inject] private IKeyInterceptor _keyInterceptor { get; set; }
         [Inject] private IJsEvent _jsEvent { get; set; }
         [Inject] private IJsApiService _jsApiService { get; set; }
 
-        private string _elementId = "maskfield_" + Guid.NewGuid().ToString().Substring(0, 8);
+        private string _elementId = "mask_" + Guid.NewGuid().ToString().Substring(0, 8);
 
         private IMask _mask = new SimpleMask("** **-** **");
-        
+
+        /// <summary>
+        /// ChildContent will only be displayed if InputType.Hidden and if its not null. Required for Select
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.General.Appearance)]
+        public RenderFragment ChildContent { get; set; }
+
         [Parameter]
         [Category(CategoryTypes.General.Data)]
-        public IMask Mask { 
+        public IMask Mask
+        {
             get => _mask;
             set => SetMask(value);
         }
-        
+
         /// <summary>
         /// Type of the input element. It should be a valid HTML5 input type.
         /// </summary>
@@ -57,6 +103,15 @@ namespace MudBlazor
         [Category(CategoryTypes.FormComponent.ListBehavior)]
         public bool Clearable { get; set; } = false;
 
+        private bool _showClearable;
+
+        private void UpdateClearable(object value)
+        {
+            var showClearable = Clearable && !string.IsNullOrWhiteSpace(Text);
+            if (_showClearable != showClearable)
+                _showClearable = showClearable;
+        }
+
         /// <summary>
         /// Button click event for clear button. Called after text and value has been cleared.
         /// </summary>
@@ -64,16 +119,19 @@ namespace MudBlazor
         [Category(CategoryTypes.FormComponent.ListAppearance)]
         public EventCallback<MouseEventArgs> OnClearButtonClick { get; set; }
 
+        /// <summary>
+        /// Custom clear icon.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.General.Appearance)]
+        public string ClearIcon { get; set; } = Icons.Material.Filled.Clear;
+
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
             if (firstRender)
             {
-                await _jsEvent.Connect(_elementId, new JsEventOptions
-                {
-                    //EnableLogging = true,
-                    TargetClass = "mud-input-slot",
-                    TagName = "INPUT"
-                });
+                await _jsEvent.Connect(_elementId,
+                    new JsEventOptions { EnableLogging = true, TargetClass = "mud-input-slot", TagName = "INPUT" });
                 _jsEvent.CaretPositionChanged += OnCaretPositionChanged;
                 _jsEvent.Copy += OnCopy;
                 _jsEvent.Paste += OnPaste;
@@ -82,25 +140,30 @@ namespace MudBlazor
                 {
                     //EnableLogging = true,
                     TargetClass = "mud-input-slot",
-                    Keys = {
-                        new KeyOptions { Key=" ", PreventDown = "key+none" }, //prevent scrolling page, toggle open/close
-                        new KeyOptions { Key="ArrowUp", PreventDown = "key+none" }, // prevent scrolling page
-                        new KeyOptions { Key="ArrowDown", PreventDown = "key+none" }, // prevent scrolling page
-                        new KeyOptions { Key="PageUp", PreventDown = "key+none" }, // prevent scrolling page
-                        new KeyOptions { Key="PageDown", PreventDown = "key+none" }, // prevent scrolling page
-                        new KeyOptions { Key=@"/^.$/", PreventDown = "key+none|key+shift" },
-                        new KeyOptions { Key="/./", SubscribeDown = true },
-                        new KeyOptions { Key="Backspace", PreventDown = "key+none" },
-                        new KeyOptions { Key="Delete", PreventDown = "key+none" },
+                    Keys =
+                    {
+                        new KeyOptions
+                        {
+                            Key = " ", PreventDown = "key+none"
+                        }, //prevent scrolling page, toggle open/close
+                        new KeyOptions { Key = "ArrowUp", PreventDown = "key+none" }, // prevent scrolling page
+                        new KeyOptions { Key = "ArrowDown", PreventDown = "key+none" }, // prevent scrolling page
+                        new KeyOptions { Key = "PageUp", PreventDown = "key+none" }, // prevent scrolling page
+                        new KeyOptions { Key = "PageDown", PreventDown = "key+none" }, // prevent scrolling page
+                        new KeyOptions { Key = @"/^.$/", PreventDown = "key+none|key+shift" },
+                        new KeyOptions { Key = "/./", SubscribeDown = true },
+                        new KeyOptions { Key = "Backspace", PreventDown = "key+none" },
+                        new KeyOptions { Key = "Delete", PreventDown = "key+none" },
                     },
                 });
                 _keyInterceptor.KeyDown += e => HandleKeyDown(e).AndForget();
             }
+
             if (_isFocused && Mask.Selection == null)
-                 SetCaretPosition(_caret, _selection, render:false);
+                SetCaretPosition(_caret, _selection, render: false);
             await base.OnAfterRenderAsync(firstRender);
         }
-           
+
         protected internal async Task HandleKeyDown(KeyboardEventArgs e)
         {
             try
@@ -119,6 +182,7 @@ namespace MudBlazor
                         await Update();
                         return;
                 }
+
                 if (Regex.IsMatch(e.Key, @"^.$"))
                 {
                     Mask.Insert(e.Key);
@@ -133,7 +197,7 @@ namespace MudBlazor
         }
 
         private bool _updating;
-        
+
         private async Task Update()
         {
             var caret = Mask.CaretPos;
@@ -144,7 +208,9 @@ namespace MudBlazor
             try
             {
                 await base.SetTextAsync(text, updateValue: false);
-                var v=Converter.Get(cleanText);
+                if (Clearable)
+                    UpdateClearable(Text);
+                var v = Converter.Get(cleanText);
                 Value = v;
                 await ValueChanged.InvokeAsync(v);
                 SetCaretPosition(caret, selection);
@@ -169,8 +235,8 @@ namespace MudBlazor
                 return;
             var text = Converter.Set(Value);
             var cleanText = Mask.GetCleanText();
-            if (cleanText==text || string.IsNullOrEmpty(cleanText)&&string.IsNullOrEmpty(text))
-                 return;
+            if (cleanText == text || string.IsNullOrEmpty(cleanText) && string.IsNullOrEmpty(text))
+                return;
             Mask.SetText(text);
             await Update();
         }
@@ -181,7 +247,7 @@ namespace MudBlazor
             if (_updating)
                 return;
             var text = Text;
-            if (Mask.Text==text)
+            if (Mask.Text == text)
                 return;
             Mask.SetText(text);
             await Update();
@@ -190,7 +256,11 @@ namespace MudBlazor
 
         internal override InputType GetInputType() => InputType;
 
-        private string GetCounterText() => Counter == null ? string.Empty : (Counter == 0 ? (string.IsNullOrEmpty(Text) ? "0" : $"{Text.Length}") : ((string.IsNullOrEmpty(Text) ? "0" : $"{Text.Length}") + $" / {Counter}"));
+        private string GetCounterText() => Counter == null
+            ? string.Empty
+            : (Counter == 0
+                ? (string.IsNullOrEmpty(Text) ? "0" : $"{Text.Length}")
+                : ((string.IsNullOrEmpty(Text) ? "0" : $"{Text.Length}") + $" / {Counter}"));
 
         /// <summary>
         /// Clear the text field. 
@@ -209,12 +279,12 @@ namespace MudBlazor
 
         public override ValueTask SelectAsync()
         {
-            return _elementReference.SelectAsync();
+            return _elementReference.MudSelectAsync();
         }
 
         public override ValueTask SelectRangeAsync(int pos1, int pos2)
         {
-            return _elementReference.SelectRangeAsync(pos1, pos2);
+            return _elementReference.MudSelectRangeAsync(pos1, pos2);
         }
 
         internal void OnCopy()
@@ -241,8 +311,8 @@ namespace MudBlazor
 
         internal void OnFocused(FocusEventArgs obj)
         {
-             _isFocused = true;
-             Console.WriteLine($"OnFocused: {Mask}");
+            _isFocused = true;
+            Console.WriteLine($"OnFocused: {Mask}");
         }
 
         protected internal override void OnBlurred(FocusEventArgs obj)
@@ -254,7 +324,7 @@ namespace MudBlazor
         private int _caret;
         private (int, int)? _selection;
 
-        private void SetCaretPosition(int caret, (int, int)? selection=null, bool render=true)
+        private void SetCaretPosition(int caret, (int, int)? selection = null, bool render = true)
         {
             if (!_isFocused)
                 return;
@@ -265,28 +335,30 @@ namespace MudBlazor
             if (selection == null)
             {
                 //Console.WriteLine("#Setting Caret Position: " + caret);
-                _elementReference.SelectRangeAsync(caret, caret).AndForget();
+                _elementReference.MudSelectRangeAsync(caret, caret).AndForget();
             }
             else
             {
                 var sel = selection.Value;
                 //Console.WriteLine($"#Setting Selection: ({sel.Item1}..{sel.Item2})");
-                _elementReference.SelectRangeAsync(sel.Item1, sel.Item2).AndForget();
+                _elementReference.MudSelectRangeAsync(sel.Item1, sel.Item2).AndForget();
             }
-            if(render)
+
+            if (render)
                 StateHasChanged();
         }
-        
+
         // from JS event     
         internal void OnCaretPositionChanged(int pos)
         {
-            if (Mask.Selection!=null)
+            if (Mask.Selection != null)
             {
                 // do not clear selection if pos change is at selection border
                 var sel = Mask.Selection.Value;
                 if (pos == sel.Item1 || pos == sel.Item2)
                     return;
             }
+
             if (pos == Mask.CaretPos)
                 return;
             Mask.Selection = null;
@@ -300,9 +372,11 @@ namespace MudBlazor
             {
                 _mask = other;
                 if (_mask == null)
-                    _mask = new SimpleMask("** **-** **"); // maybe have some kind of NullMask with Text "No mask configured"?
+                    _mask = new SimpleMask(
+                        "** **-** **"); // maybe have some kind of NullMask with Text "No mask configured"?
                 return;
-            } 
+            }
+
             // set new mask properties without loosing state
             _mask.UpdateFrom(other);
         }

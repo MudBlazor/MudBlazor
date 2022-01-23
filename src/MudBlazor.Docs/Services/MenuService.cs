@@ -86,7 +86,7 @@ namespace MudBlazor.Docs.Services
                 .AddItem("Slider", typeof(MudSlider<T>))
                 .AddItem("Switch", typeof(MudSwitch<T>))
                 .AddItem("Text Field", typeof(MudTextField<T>))
-                .AddItem("Mask Field", typeof(MudMaskField<T>))
+                .AddItem("Mask Field", typeof(MudMask))
                 .AddItem("Numeric Field", typeof(MudNumericField<T>))
                 .AddItem("Form", typeof(MudForm))
                 .AddItem("Autocomplete", typeof(MudAutocomplete<T>))

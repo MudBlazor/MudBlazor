@@ -1,4 +1,4 @@
-﻿@page "/components/maskfield"
+﻿@page "/components/Mask"
 
 
 <DocsPage>
@@ -13,15 +13,15 @@
         <DocsPageSection>
             <SectionHeader Title="SimpleMask">
                 <Description>
-                    MaskField can be configured with different masking algorithms by setting its <CodeInline>Mask</CodeInline> property. The easiest to use is
+                    MudMask can be configured with different masking algorithms by setting its <CodeInline>Mask</CodeInline> property. The easiest to use is
                     <CodeInline>SimpleMask</CodeInline> which allows you to specify the input structure with a simple format. 
                     <br /><br/>
                     In this example the mask is <CodeInline>0000 0000 0000 0000</CodeInline> prompting for blocks of digits and refusing invalid input. Note, how the cursor automatically
                     jumps over delimiters so you don't have to type them. You can also try pasting the test credit card number <i>4543474002249996</i>.
                 </Description>
             </SectionHeader>
-            <SectionContent FullWidth="true" Outlined="true" Code="MaskFieldBasicExample" ShowCode="false">
-                <MaskFieldBasicExample />
+            <SectionContent FullWidth="true" Outlined="true" Code="MaskBasicExample" ShowCode="false">
+                <MaskBasicExample />
             </SectionContent>          
         </DocsPageSection>
 
@@ -39,11 +39,11 @@
                     The example below defines its own <CodeInline>MaskChars</CodeInline>. It also shows the features <CodeInline>Placeholder</CodeInline> which makes the user aware of the input format and <CodeInline>CleanDelimiters</CodeInline> 
                     which removes delimiters from the resulting <CodeInline>Value</CodeInline>.
                     <br /><br /> 
-                    You can also try pasting the fictional MAC <i>DC-12-CC-30-9C-23</i> into the field. 
+                    You can also try pasting <i>DC 12 CC 30 9C 23</i> into the field. 
                 </Description>
             </SectionHeader>
-            <SectionContent FullWidth="true" Outlined="true" Code="MaskFieldCustomCharactersExample" ShowCode="false">
-                <MaskFieldCustomCharactersExample />
+            <SectionContent FullWidth="true" Outlined="true" Code="MaskCustomCharactersExample" ShowCode="false">
+                <MaskCustomCharactersExample />
             </SectionContent>
         </DocsPageSection>
 
@@ -55,8 +55,8 @@
                     as SimpleMask. Check out the example code to see how easy it is to set up. 
                 </Description>
             </SectionHeader>
-            <SectionContent FullWidth="true" Outlined="true" Code="MaskFieldMultiMaskExample" ShowCode="false">
-                <MaskFieldMultiMaskExample />
+            <SectionContent FullWidth="true" Outlined="true" Code="MaskMultiMaskExample" ShowCode="false">
+                <MaskMultiMaskExample />
             </SectionContent>          
         </DocsPageSection>
 
