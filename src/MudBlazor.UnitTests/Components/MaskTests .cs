@@ -5,6 +5,7 @@
 #pragma warning disable CS1998 // async without await
 #pragma warning disable BL0005 // Set parameter outside component
 
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Bunit;
@@ -196,46 +197,47 @@ namespace MudBlazor.UnitTests.Components
             comp.WaitForAssertion(() => maskField.Instance.Mask.CaretPos.Should().Be(2));
         }
 
-        // [Test]
-        // public async Task MaskTest_Int()
-        // {
-        //     var comp = Context.RenderComponent<MudMask<int?>>();
-        //     comp.SetParam(x => x.Mask, new SimpleMask("(0)0-0)") { Placeholder = '_', CleanDelimiters = true });
-        //     var maskField = comp;
-        //
-        //     await comp.InvokeAsync(() => maskField.Instance.OnCaretPositionChanged(1));
-        //     comp.WaitForAssertion(() => maskField.Instance.Value.Should().Be(null));
-        //     //Unmatched keys should have no effect
-        //     await comp.InvokeAsync(() => maskField.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = "a" }));
-        //     comp.WaitForAssertion(() => maskField.Instance.Value.Should().Be(null));
-        //
-        //     await comp.InvokeAsync(() => maskField.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = "1" }));
-        //     comp.WaitForAssertion(() => maskField.Instance.Text.Should().Be("(1)_-_)"));
-        //     comp.WaitForAssertion(() => maskField.Instance.Value.Should().Be(1));
-        //
-        //     await comp.InvokeAsync(() => maskField.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = "2" }));
-        //     comp.WaitForAssertion(() => maskField.Instance.Text.Should().Be("(1)2-_)"));
-        //     comp.WaitForAssertion(() => maskField.Instance.Value.Should().Be(12));
-        //
-        //     await comp.InvokeAsync(() => maskField.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = "3" }));
-        //     comp.WaitForAssertion(() => maskField.Instance.Text.Should().Be("(1)2-3)"));
-        //     comp.WaitForAssertion(() => maskField.Instance.Value.Should().Be(123));
-        //
-        //     await comp.InvokeAsync(
-        //         () => maskField.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = "Backspace" }));
-        //     comp.WaitForAssertion(() => maskField.Instance.Text.Should().Be("(1)2-_)"));
-        //     comp.WaitForAssertion(() => maskField.Instance.Value.Should().Be(12));
-        //
-        //     await comp.InvokeAsync(
-        //         () => maskField.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = "Backspace" }));
-        //     comp.WaitForAssertion(() => maskField.Instance.Text.Should().Be("(1)_-_)"));
-        //     comp.WaitForAssertion(() => maskField.Instance.Value.Should().Be(1));
-        //
-        //     await comp.InvokeAsync(
-        //         () => maskField.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = "Backspace" }));
-        //     comp.WaitForAssertion(() => maskField.Instance.Text.Should().Be(""));
-        //     comp.WaitForAssertion(() => maskField.Instance.Value.Should().Be(null));
-        // }
+        [Test]
+        public async Task MaskTest_Int()
+        {
+            var comp = Context.RenderComponent<MudTextField<int?>>();
+            comp.SetParam(x => x.Mask, new SimpleMask("(0)0-0)") { Placeholder = '_', CleanDelimiters = true });
+            var tf = comp.Instance;
+            var maskField = comp.FindComponent<MudMask>();
+
+            await comp.InvokeAsync(() => maskField.Instance.OnCaretPositionChanged(1));
+            comp.WaitForAssertion(() => tf.Value.Should().Be(null));
+            //Unmatched keys should have no effect
+            await comp.InvokeAsync(() => maskField.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = "a" }));
+            comp.WaitForAssertion(() => tf.Value.Should().Be(null));
+
+            await comp.InvokeAsync(() => maskField.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = "1" }));
+            comp.WaitForAssertion(() => maskField.Instance.Text.Should().Be("(1)_-_)"));
+            comp.WaitForAssertion(() => tf.Value.Should().Be(1));
+
+            await comp.InvokeAsync(() => maskField.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = "2" }));
+            comp.WaitForAssertion(() => maskField.Instance.Text.Should().Be("(1)2-_)"));
+            comp.WaitForAssertion(() => tf.Value.Should().Be(12));
+
+            await comp.InvokeAsync(() => maskField.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = "3" }));
+            comp.WaitForAssertion(() => maskField.Instance.Text.Should().Be("(1)2-3)"));
+            comp.WaitForAssertion(() => tf.Value.Should().Be(123));
+
+            await comp.InvokeAsync(
+                () => maskField.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = "Backspace" }));
+            comp.WaitForAssertion(() => maskField.Instance.Text.Should().Be("(1)2-_)"));
+            comp.WaitForAssertion(() => tf.Value.Should().Be(12));
+
+            await comp.InvokeAsync(
+                () => maskField.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = "Backspace" }));
+            comp.WaitForAssertion(() => maskField.Instance.Text.Should().Be("(1)_-_)"));
+            comp.WaitForAssertion(() => tf.Value.Should().Be(1));
+
+            await comp.InvokeAsync(
+                () => maskField.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = "Backspace" }));
+            comp.WaitForAssertion(() => maskField.Instance.Text.Should().Be(""));
+            comp.WaitForAssertion(() => tf.Value.Should().Be(null));
+        }
 
 
         [Test]
@@ -535,39 +537,40 @@ namespace MudBlazor.UnitTests.Components
             comp.WaitForAssertion(() => maskField2.Instance.Value.Should().Be("abC123"));
         }
 
-        // [Test]
-        // public async Task MaskTest_TimeSpan()
-        // {
-        //     var comp = Context.RenderComponent<MudMask<TimeSpan?>>();
-        //     comp.SetParam(x => x.Mask, new SimpleMask("00:00") { CleanDelimiters = false, });
-        //     var maskField = comp.Instance;
-        //
-        //     await comp.InvokeAsync(() => maskField.OnFocused(new FocusEventArgs()));
-        //     await comp.InvokeAsync(() => maskField.HandleKeyDown(new KeyboardEventArgs() { Key = "1" }));
-        //     comp.WaitForAssertion(() => maskField.Text.Should().Be("1"));
-        //     comp.WaitForAssertion(() => maskField.Value.Should().Be(TimeSpan.FromDays(1)));
-        //
-        //     await comp.InvokeAsync(() => maskField.HandleKeyDown(new KeyboardEventArgs() { Key = "2" }));
-        //     comp.WaitForAssertion(() => maskField.Text.Should().Be("12:"));
-        //     comp.WaitForAssertion(() => maskField.Value.Should().Be(null));
-        //
-        //     await comp.InvokeAsync(() => maskField.HandleKeyDown(new KeyboardEventArgs() { Key = "3" }));
-        //     comp.WaitForAssertion(() => maskField.Text.Should().Be("12:3"));
-        //     comp.WaitForAssertion(() => maskField.Value.Should().Be(new TimeSpan(12, 3, 00)));
-        //
-        //     await comp.InvokeAsync(() => maskField.HandleKeyDown(new KeyboardEventArgs() { Key = "4" }));
-        //     comp.WaitForAssertion(() => maskField.Text.Should().Be("12:34"));
-        //     comp.WaitForAssertion(() => maskField.Value.Should().Be(new TimeSpan(12, 34, 00)));
-        //
-        //     await comp.InvokeAsync(() => maskField.OnCaretPositionChanged(2));
-        //     await comp.InvokeAsync(() => maskField.HandleKeyDown(new KeyboardEventArgs() { Key = "Backspace" }));
-        //     comp.WaitForAssertion(() => maskField.Text.Should().Be("13:4"));
-        //     comp.WaitForAssertion(() => maskField.Value.Should().Be(new TimeSpan(13, 4, 00)));
-        //
-        //     await comp.InvokeAsync(() => maskField.HandleKeyDown(new KeyboardEventArgs() { Key = "Delete" }));
-        //     comp.WaitForAssertion(() => maskField.Text.Should().Be("14:"));
-        //     comp.WaitForAssertion(() => maskField.Value.Should().Be(null));
-        // }
+        [Test]
+        public async Task MaskTest_TimeSpan()
+        {
+            var comp = Context.RenderComponent<MudTextField<TimeSpan?>>();
+            comp.SetParam(x => x.Mask, new SimpleMask("00:00") { CleanDelimiters = false, });
+            var tf = comp.Instance;
+            var maskField = comp.FindComponent<MudMask>().Instance;
+
+            await comp.InvokeAsync(() => maskField.OnFocused(new FocusEventArgs()));
+            await comp.InvokeAsync(() => maskField.HandleKeyDown(new KeyboardEventArgs() { Key = "1" }));
+            comp.WaitForAssertion(() => maskField.Text.Should().Be("1"));
+            comp.WaitForAssertion(() => tf.Value.Should().Be(TimeSpan.FromDays(1)));
+
+            await comp.InvokeAsync(() => maskField.HandleKeyDown(new KeyboardEventArgs() { Key = "2" }));
+            comp.WaitForAssertion(() => maskField.Text.Should().Be("12:"));
+            comp.WaitForAssertion(() => tf.Value.Should().Be(null));
+
+            await comp.InvokeAsync(() => maskField.HandleKeyDown(new KeyboardEventArgs() { Key = "3" }));
+            comp.WaitForAssertion(() => maskField.Text.Should().Be("12:3"));
+            comp.WaitForAssertion(() => tf.Value.Should().Be(new TimeSpan(12, 3, 00)));
+
+            await comp.InvokeAsync(() => maskField.HandleKeyDown(new KeyboardEventArgs() { Key = "4" }));
+            comp.WaitForAssertion(() => maskField.Text.Should().Be("12:34"));
+            comp.WaitForAssertion(() => tf.Value.Should().Be(new TimeSpan(12, 34, 00)));
+
+            await comp.InvokeAsync(() => maskField.OnCaretPositionChanged(2));
+            await comp.InvokeAsync(() => maskField.HandleKeyDown(new KeyboardEventArgs() { Key = "Backspace" }));
+            comp.WaitForAssertion(() => maskField.Text.Should().Be("13:4"));
+            comp.WaitForAssertion(() => tf.Value.Should().Be(new TimeSpan(13, 4, 00)));
+
+            await comp.InvokeAsync(() => maskField.HandleKeyDown(new KeyboardEventArgs() { Key = "Delete" }));
+            comp.WaitForAssertion(() => maskField.Text.Should().Be("14:"));
+            comp.WaitForAssertion(() => tf.Value.Should().Be(null));
+        }
 
         [Test]
         public async Task MaskTest_MoreCoverage()
