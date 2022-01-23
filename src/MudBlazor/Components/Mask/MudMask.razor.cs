@@ -134,7 +134,12 @@ namespace MudBlazor
             if (firstRender)
             {
                 await _jsEvent.Connect(_elementId,
-                    new JsEventOptions { EnableLogging = true, TargetClass = "mud-input-slot", TagName = "INPUT" });
+                    new JsEventOptions
+                    {
+                        //EnableLogging = true,
+                        TargetClass = "mud-input-slot", 
+                        TagName = "INPUT"
+                    });
                 _jsEvent.CaretPositionChanged += OnCaretPositionChanged;
                 _jsEvent.Copy += OnCopy;
                 _jsEvent.Paste += OnPaste;
@@ -189,6 +194,7 @@ namespace MudBlazor
                 if (Regex.IsMatch(e.Key, @"^.$"))
                 {
                     Mask.Insert(e.Key);
+                    //Console.WriteLine("HandleKeyDown: " + Mask);
                     await Update();
                 }
             }
@@ -241,6 +247,7 @@ namespace MudBlazor
             if (cleanText == text || string.IsNullOrEmpty(cleanText) && string.IsNullOrEmpty(text))
                 return;
             Mask.SetText(text);
+            //Console.WriteLine("UpdateTextPropertyAsync: " + Mask);
             await Update();
         }
 
@@ -253,9 +260,9 @@ namespace MudBlazor
             if (Mask.Text == text)
                 return;
             Mask.SetText(text);
+            //Console.WriteLine("UpdateValuePropertyAsync: " + Mask);
             await Update();
         }
-
 
         internal override InputType GetInputType() => InputType;
 
@@ -309,13 +316,13 @@ namespace MudBlazor
         public void OnSelect(int start, int end)
         {
             Mask.Selection = (start, end);
-            Console.WriteLine($"OnSelect: {Mask}");
+            //Console.WriteLine($"OnSelect: {Mask}");
         }
 
         internal void OnFocused(FocusEventArgs obj)
         {
             _isFocused = true;
-            Console.WriteLine($"OnFocused: {Mask}");
+            //Console.WriteLine($"OnFocused: {Mask}");
         }
 
         protected internal override void OnBlurred(FocusEventArgs obj)
@@ -366,7 +373,7 @@ namespace MudBlazor
                 return;
             Mask.Selection = null;
             Mask.CaretPos = pos;
-            Console.WriteLine($"OnCaretPositionChanged: '{Mask}' ({pos})");
+            //Console.WriteLine($"OnCaretPositionChanged: '{Mask}' ({pos})");
         }
 
         private void SetMask(IMask other)
