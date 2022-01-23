@@ -13,7 +13,7 @@ namespace MudBlazor
 {
     public record struct MaskOption(string Id, string Mask, string Regex);
 
-    public class MultiMask : SimpleMask
+    public class MultiMask : PatternMask
     {
         public MultiMask(string defaultMask, params MaskOption[] options) : base(defaultMask)
         {

@@ -5,7 +5,7 @@
      Label="Input" 
      Variant="Variant.Outlined"
      Required="true"
-	 Mask="@(new SimpleMask("(aaa) 000-aa") { CleanDelimiters = true })"
+	 Mask="@(new PatternMask("(aaa) 000-aa") { CleanDelimiters = true })"
 />
 
 <MudMask
@@ -13,7 +13,7 @@
      Label="Input" 
      Variant="Variant.Outlined"
      Required="true"
-	 Mask="@(new SimpleMask("(aaa) 000-aa") { CleanDelimiters = true })"
+	 Mask="@(new PatternMask("(aaa) 000-aa") { CleanDelimiters = true })"
 />
    
 @code {

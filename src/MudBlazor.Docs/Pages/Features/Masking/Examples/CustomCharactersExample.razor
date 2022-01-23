@@ -21,11 +21,11 @@
 @code {
     public string mac1, mac2;
 
-    public SimpleMask mask1 = new SimpleMask("##:##:##:##:##:##") { 
+    public PatternMask mask1 = new PatternMask("##:##:##:##:##:##") { 
         MaskChars = new[] { new MaskChar('#', @"[0-9a-fA-F]") } 
     };
 
-    public SimpleMask mask2 = new SimpleMask("XX-XX-XX-XX-XX-XX") { 
+    public PatternMask mask2 = new PatternMask("XX-XX-XX-XX-XX-XX") { 
         MaskChars = new[] { new MaskChar('X', @"[0-9a-fA-F]") },
         Placeholder = '_',
         CleanDelimiters = true,

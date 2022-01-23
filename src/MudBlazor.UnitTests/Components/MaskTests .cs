@@ -27,7 +27,7 @@ namespace MudBlazor.UnitTests.Components
         public async Task MaskTest_Fundamentals1()
         {
             var comp = Context.RenderComponent<MudMask>();
-            comp.SetParam(x => x.Mask, new SimpleMask("(aaa) 000-aa") { Placeholder = '_', CleanDelimiters = true });
+            comp.SetParam(x => x.Mask, new PatternMask("(aaa) 000-aa") { Placeholder = '_', CleanDelimiters = true });
             var maskField = comp;
             comp.WaitForAssertion(() => maskField.Instance.Value.Should().BeNullOrEmpty());
             //Unmatched keys should have no effect
@@ -163,7 +163,7 @@ namespace MudBlazor.UnitTests.Components
         public async Task MaskTest_Fundamentals2()
         {
             var comp = Context.RenderComponent<MudMask>();
-            comp.SetParam(x => x.Mask, new SimpleMask("(aaa) 000-aa") { Placeholder = '_', CleanDelimiters = true });
+            comp.SetParam(x => x.Mask, new PatternMask("(aaa) 000-aa") { Placeholder = '_', CleanDelimiters = true });
             var maskField = comp;
 
             await comp.InvokeAsync(() => maskField.Instance.OnFocused(new FocusEventArgs()));
@@ -201,7 +201,7 @@ namespace MudBlazor.UnitTests.Components
         public async Task MaskTest_Int()
         {
             var comp = Context.RenderComponent<MudTextField<int?>>();
-            comp.SetParam(x => x.Mask, new SimpleMask("(0)0-0)") { Placeholder = '_', CleanDelimiters = true });
+            comp.SetParam(x => x.Mask, new PatternMask("(0)0-0)") { Placeholder = '_', CleanDelimiters = true });
             var tf = comp.Instance;
             var maskField = comp.FindComponent<MudMask>();
 
@@ -244,7 +244,7 @@ namespace MudBlazor.UnitTests.Components
         public async Task MaskTest_InsertCharactersIntoMiddle()
         {
             var comp = Context.RenderComponent<MudMask>();
-            comp.SetParam(x => x.Mask, new SimpleMask("(aaa) 000-aa") { Placeholder = '_', CleanDelimiters = true });
+            comp.SetParam(x => x.Mask, new PatternMask("(aaa) 000-aa") { Placeholder = '_', CleanDelimiters = true });
             var maskField = comp;
 
             await comp.InvokeAsync(() => maskField.Instance.Mask.ToString().Should().Be("|"));
@@ -278,14 +278,14 @@ namespace MudBlazor.UnitTests.Components
         public async Task MaskTest_ChangeMask1()
         {
             var comp = Context.RenderComponent<MudMask>();
-            comp.SetParam(x => x.Mask, new SimpleMask("(aaa) 000-aa") { Placeholder = '_', CleanDelimiters = true });
+            comp.SetParam(x => x.Mask, new PatternMask("(aaa) 000-aa") { Placeholder = '_', CleanDelimiters = true });
             var maskField = comp;
 
             await comp.InvokeAsync(() => maskField.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = "a" }));
             comp.WaitForAssertion(() => maskField.Instance.Mask.ToString().Should().Be("(a|__) ___-__"));
             // change the mask
             comp.SetParam(x => x.Mask,
-                new SimpleMask("(bb+) 999-bb")
+                new PatternMask("(bb+) 999-bb")
                 {
                     MaskChars = new MaskChar[]
                     {
@@ -305,7 +305,7 @@ namespace MudBlazor.UnitTests.Components
         public async Task MaskTest_ChangeMask2()
         {
             var comp = Context.RenderComponent<MudMask>();
-            comp.SetParam(x => x.Mask, new SimpleMask("(LL) UU") { Placeholder = '_', CleanDelimiters = true, MaskChars = new []
+            comp.SetParam(x => x.Mask, new PatternMask("(LL) UU") { Placeholder = '_', CleanDelimiters = true, MaskChars = new []
             {
                 new MaskChar('L', "[a-z]"),
                 new MaskChar('U', "[A-Z]")
@@ -339,7 +339,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<MudMask>();
             var maskField = comp.Instance;
 
-            await comp.InvokeAsync(() => comp.SetParam("Mask", new SimpleMask("(aaa) 000-aa") {Placeholder = '_', CleanDelimiters = true }));
+            await comp.InvokeAsync(() => comp.SetParam("Mask", new PatternMask("(aaa) 000-aa") {Placeholder = '_', CleanDelimiters = true }));
 
             await comp.InvokeAsync(() => maskField.OnCaretPositionChanged(1));
             await comp.InvokeAsync(() => maskField.HandleKeyDown(new KeyboardEventArgs() { Key = "a" }));
@@ -382,7 +382,7 @@ namespace MudBlazor.UnitTests.Components
         public async Task MaskTest_Paste()
         {
             var comp = Context.RenderComponent<MudMask>();
-            comp.SetParam(x => x.Mask, new SimpleMask("(aaa) 000-aa") { Placeholder = '_', CleanDelimiters = true });
+            comp.SetParam(x => x.Mask, new PatternMask("(aaa) 000-aa") { Placeholder = '_', CleanDelimiters = true });
             var maskField = comp;
 
             await comp.InvokeAsync(() => maskField.Instance.OnPaste("abc"));
@@ -412,7 +412,7 @@ namespace MudBlazor.UnitTests.Components
         public async Task MaskTest_Selection()
         {
             var comp = Context.RenderComponent<MudMask>();
-            comp.SetParam(x => x.Mask, new SimpleMask("0000 0000 000") { Placeholder = '_', CleanDelimiters = true });
+            comp.SetParam(x => x.Mask, new PatternMask("0000 0000 000") { Placeholder = '_', CleanDelimiters = true });
             var maskField = comp.Instance;
 
             await comp.InvokeAsync(() => maskField.OnPaste("1234567899"));
@@ -541,7 +541,7 @@ namespace MudBlazor.UnitTests.Components
         public async Task MaskTest_TimeSpan()
         {
             var comp = Context.RenderComponent<MudTextField<TimeSpan?>>();
-            comp.SetParam(x => x.Mask, new SimpleMask("00:00") { CleanDelimiters = false, });
+            comp.SetParam(x => x.Mask, new PatternMask("00:00") { CleanDelimiters = false, });
             var tf = comp.Instance;
             var maskField = comp.FindComponent<MudMask>().Instance;
 
@@ -583,7 +583,7 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(() => maskField.OnCaretPositionChanged(2));
             comp.WaitForAssertion(() => impl.CaretPos.Should().Be(2));
 
-            comp.SetParam("Mask", new SimpleMask("*00 000") { Placeholder = '_', CleanDelimiters = true });
+            comp.SetParam("Mask", new PatternMask("*00 000") { Placeholder = '_', CleanDelimiters = true });
 
             await comp.InvokeAsync(() => maskField.OnCopy());
             await comp.InvokeAsync(() => maskField.FocusAsync());
@@ -620,7 +620,7 @@ namespace MudBlazor.UnitTests.Components
             // Param Mask is impossible to null out
             comp.SetParam("Mask", null);
             comp.WaitForAssertion(() => maskField.Mask.Should().NotBeNull());
-            comp.SetParam("Mask", new SimpleMask("*00 000") { CleanDelimiters = true });
+            comp.SetParam("Mask", new PatternMask("*00 000") { CleanDelimiters = true });
             
             // selection is not cleared by caret on edge of selection
             await comp.InvokeAsync(() => maskField.OnSelect(0, 1));

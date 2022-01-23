@@ -9,7 +9,7 @@ using NUnit.Framework;
 namespace MudBlazor.UnitTests.Utilities.Mask;
 
 [TestFixture]
-public class SimpleMaskTests
+public class PatternMaskTests
 {
     
     [Test]
@@ -22,9 +22,9 @@ public class SimpleMaskTests
     }
 
     [Test]
-    public void SimpleMask_Insert()
+    public void PatternMask_Insert()
     {
-        var mask = new SimpleMask("(aa) 00-0");
+        var mask = new PatternMask("(aa) 00-0");
         mask.ToString().Should().Be("|");
         mask.Insert("?");
         mask.ToString().Should().Be("|");
@@ -67,9 +67,9 @@ public class SimpleMaskTests
     }
 
     [Test]
-    public void SimpleMask_AutoFilling()
+    public void PatternMask_AutoFilling()
     {
-        var mask = new SimpleMask("---0---");
+        var mask = new PatternMask("---0---");
         mask.ToString().Should().Be("|");
         mask.Insert("1");
         mask.Text.Should().Be("---1---");
@@ -85,9 +85,9 @@ public class SimpleMaskTests
     }
 
     [Test]
-    public void SimpleMask_Placeholder()
+    public void PatternMask_Placeholder()
     {
-        var mask = new SimpleMask("(+00) 000 0000") { Placeholder = '_' };
+        var mask = new PatternMask("(+00) 000 0000") { Placeholder = '_' };
         mask.ToString().Should().Be("|");
         mask.Text.Should().BeNullOrEmpty();
         mask.Insert("x");
@@ -117,9 +117,9 @@ public class SimpleMaskTests
     }
 
     [Test]
-    public void SimpleMask_CleaningPlaceholder()
+    public void PatternMask_CleaningPlaceholder()
     {
-        var mask = new SimpleMask("(+00) 000 0000") { Placeholder = '_' };
+        var mask = new PatternMask("(+00) 000 0000") { Placeholder = '_' };
         mask.Insert("x");
         mask.ToString().Should().Be("|");
         mask.Text.Should().Be("");
@@ -136,9 +136,9 @@ public class SimpleMaskTests
     }
     
     [Test]
-    public void SimpleMask_Delete()
+    public void PatternMask_Delete()
     {
-        var mask = new SimpleMask("(+00) 000 0000"); // no placeholder
+        var mask = new PatternMask("(+00) 000 0000"); // no placeholder
         mask.ToString().Should().Be("|");
         mask.Insert("43");
         mask.Text.Should().Be("(+43) ");
@@ -167,9 +167,9 @@ public class SimpleMaskTests
     }
 
     [Test]
-    public void SimpleMask_Backspace()
+    public void PatternMask_Backspace()
     {
-        var mask = new SimpleMask("(+00) 000 0000"); // no placeholder
+        var mask = new PatternMask("(+00) 000 0000"); // no placeholder
         mask.ToString().Should().Be("|");
         mask.Insert("43abc1235678901234");
         mask.ToString().Should().Be("(+43) 123 5678|");
@@ -193,9 +193,9 @@ public class SimpleMaskTests
     }
 
     [Test]
-    public void SimpleMask_Selection()
+    public void PatternMask_Selection()
     {
-        var mask = new SimpleMask("(+00) 000 0000"); // no placeholder
+        var mask = new PatternMask("(+00) 000 0000"); // no placeholder
         mask.ToString().Should().Be("|");
         mask.Insert("43abc1235678901234");
         mask.ToString().Should().Be("(+43) 123 5678|");
@@ -224,7 +224,7 @@ public class SimpleMaskTests
         mask.ToString().Should().Be("[(+67) ]8");
         mask.Backspace();
         mask.ToString().Should().Be("|(+8");
-        mask = new SimpleMask("00 00") { Placeholder = '_' };
+        mask = new PatternMask("00 00") { Placeholder = '_' };
         mask.Insert("1234");
         mask.ToString().Should().Be("12 34|");
         mask.Backspace();
@@ -236,9 +236,9 @@ public class SimpleMaskTests
     }
 
     [Test]
-    public void SimpleMask_ChangeMaskChars()
+    public void PatternMask_ChangeMaskChars()
     {
-        var mask=new SimpleMask("(bb+) 999-bb")
+        var mask=new PatternMask("(bb+) 999-bb")
         {
             MaskChars = new MaskChar[] { MaskChar.Letter('b'), MaskChar.Digit('9'), MaskChar.LetterOrDigit('+'), },
         };
@@ -251,9 +251,9 @@ public class SimpleMaskTests
     }
 
     [Test]
-    public void SimpleMask_TransformationFunc()
+    public void PatternMask_TransformationFunc()
     {
-        var mask = new SimpleMask("(aaa) 000")
+        var mask = new PatternMask("(aaa) 000")
         {
             Transformation = c => c.ToString().ToUpperInvariant()[0],
             CleanDelimiters = true,
@@ -267,16 +267,16 @@ public class SimpleMaskTests
     }
 
     [Test]
-    public void SimpleMask_UpdateFrom()
+    public void PatternMask_UpdateFrom()
     {
-        var mask = new SimpleMask("(aaa) 000");
+        var mask = new PatternMask("(aaa) 000");
         mask.MaskChars.Length.Should().Be(3); // '0', 'a' and '*'
         mask.CleanDelimiters.Should().BeFalse();
         mask.Placeholder.Should().BeNull();
         mask.SetText("abc12");
         mask.Selection = (1, 2);
         mask.ToString().Should().Be("([a]bc) 12");
-        mask.UpdateFrom(new SimpleMask("999") { Placeholder = '#', MaskChars = new []{ new MaskChar('9', "[0-9]")}, CleanDelimiters = true });
+        mask.UpdateFrom(new PatternMask("999") { Placeholder = '#', MaskChars = new []{ new MaskChar('9', "[0-9]")}, CleanDelimiters = true });
         mask.MaskChars.Length.Should().Be(1); // '9'
         mask.MaskChars[0].Char.Should().Be('9');
         mask.MaskChars[0].Regex.Should().Be("[0-9]");

@@ -9,9 +9,9 @@ using System.Text.RegularExpressions;
 
 namespace MudBlazor;
 
-public class SimpleMask : BaseMask
+public class PatternMask : BaseMask
 {
-    public SimpleMask(string mask)
+    public PatternMask(string mask)
     {
         Mask = mask;
     }
@@ -244,7 +244,7 @@ public class SimpleMask : BaseMask
     public override void UpdateFrom(IMask other)
     {
         base.UpdateFrom(other);
-        var o = other as SimpleMask;
+        var o = other as PatternMask;
         if (o == null)
             return;
         Placeholder = o.Placeholder;

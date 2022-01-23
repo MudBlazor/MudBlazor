@@ -72,7 +72,7 @@ namespace MudBlazor
 
         private string _elementId = "mask_" + Guid.NewGuid().ToString().Substring(0, 8);
 
-        private IMask _mask = new SimpleMask("** **-** **");
+        private IMask _mask = new PatternMask("** **-** **");
 
         /// <summary>
         /// ChildContent will only be displayed if InputType.Hidden and if its not null. Required for Select
@@ -82,7 +82,7 @@ namespace MudBlazor
         public RenderFragment ChildContent { get; set; }
 
         /// <summary>
-        /// Provide a masking object. Built-in masks are SimpleMask, MultiMask, RegexMask and BlockMask
+        /// Provide a masking object. Built-in masks are PatternMask, MultiMask, RegexMask and BlockMask
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.General.Data)]
@@ -379,7 +379,7 @@ namespace MudBlazor
             {
                 _mask = other;
                 if (_mask == null)
-                    _mask = new SimpleMask("null ********"); // warn the user that the mask parameter is missing
+                    _mask = new PatternMask("null ********"); // warn the user that the mask parameter is missing
                 return;
             }
 

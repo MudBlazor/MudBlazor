@@ -92,7 +92,7 @@ namespace MudBlazor
         private IMask _mask = null;
 
         /// <summary>
-        /// Provide a masking object. Built-in masks are SimpleMask, MultiMask, RegexMask and BlockMask
+        /// Provide a masking object. Built-in masks are PatternMask, MultiMask, RegexMask and BlockMask
         /// Note: when Mask is set, TextField will ignore some properties such as Lines, Pattern or HideSpinButtons.
         /// </summary>
         [Parameter]
