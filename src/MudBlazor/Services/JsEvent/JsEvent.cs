@@ -78,7 +78,7 @@ namespace MudBlazor.Services
             _isObserving = false;
         }
 
-        private void Subscribe(string eventName)
+        internal void Subscribe(string eventName)
         {
             if (_elementId == null)
                 throw new InvalidOperationException("Call Connect(...) before attaching events!");
@@ -93,7 +93,7 @@ namespace MudBlazor.Services
             catch (TaskCanceledException) { }
         }
 
-        private async Task Unsubscribe(string eventName)
+        internal async Task Unsubscribe(string eventName)
         {
             if (_elementId == null)
                 return;
@@ -105,7 +105,7 @@ namespace MudBlazor.Services
             _subscribedEvents.Remove(eventName);
         }
 
-        private async Task UnsubscribeAll()
+        internal async Task UnsubscribeAll()
         {
             if (_elementId == null)
                 return;

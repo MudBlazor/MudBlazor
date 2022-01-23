@@ -25,7 +25,13 @@ namespace MudBlazor.UnitTests.Services
             Assert.Throws<InvalidOperationException>(() => jsevent.Copy += () => Console.WriteLine());
             Assert.Throws<InvalidOperationException>(() => jsevent.Paste += x => Console.WriteLine(x));
             Assert.Throws<InvalidOperationException>(() => jsevent.CaretPositionChanged += x => Console.WriteLine(x));
-            Assert.Throws<InvalidOperationException>(() => jsevent.Select += (x,y) => Console.WriteLine());
+            Assert.Throws<InvalidOperationException>(() => jsevent.Select += (x, y) => Console.WriteLine());
+            Assert.Throws<InvalidOperationException>(() => jsevent.Subscribe("copy"));
+            // unsubscribing before connection is ignored
+            await jsevent.Unsubscribe("copy");
+            await jsevent.Disconnect();
+            await jsevent.UnsubscribeAll();
+            jsevent.Dispose();
         }
 
         [Test]
@@ -33,14 +39,20 @@ namespace MudBlazor.UnitTests.Services
         {
             var jsevent = new JsEvent(new Mock<IJSRuntime>().Object);
             await jsevent.Connect("asdf", new JsEventOptions { });
-            
+            // second connect is ignored
+            await jsevent.Connect("asdf", new JsEventOptions { });
+
             // copy
             var copyCount = 0;
             var copyHandler = new Action(() => copyCount++);
             jsevent.Copy += copyHandler;
+            // subscribing twice is ignored
+            jsevent.Subscribe("copy");
             jsevent.OnCopy();
             copyCount.Should().Be(1);
             jsevent._subscribedEvents.Should().Contain("copy");
+            jsevent.Copy -= copyHandler;
+            // second remove is ignored
             jsevent.Copy -= copyHandler;
             jsevent.OnCopy();
             copyCount.Should().Be(1);
@@ -55,6 +67,8 @@ namespace MudBlazor.UnitTests.Services
             pasteData.Should().Be("Muad`Dib");
             pasteCount.Should().Be(1);
             jsevent._subscribedEvents.Should().Contain("paste");
+            jsevent.Paste -= pasteHandler;
+            // second remove is ignored
             jsevent.Paste -= pasteHandler;
             jsevent.OnPaste("Fremen");
             pasteData.Should().Be("Muad`Dib");
@@ -72,6 +86,8 @@ namespace MudBlazor.UnitTests.Services
             jsevent._subscribedEvents.Should().Contain("click");
             jsevent._subscribedEvents.Should().Contain("keyup");
             jsevent.CaretPositionChanged -= caretPositionChangedHandler;
+            // second remove is ignored
+            jsevent.CaretPositionChanged -= caretPositionChangedHandler;
             jsevent.OnCaretPositionChanged(99);
             caretPositionChangedData.Should().Be(17);
             caretPositionChangedCount.Should().Be(1);
@@ -80,12 +96,14 @@ namespace MudBlazor.UnitTests.Services
             // select
             var selectCount = 0;
             (int, int)? selectData = null;
-            var selectHandler = new Action<int, int>((x,y) => { selectCount++; selectData = (x,y); });
+            var selectHandler = new Action<int, int>((x, y) => { selectCount++; selectData = (x, y); });
             jsevent.Select += selectHandler;
             jsevent.OnSelect(77, 78);
             selectData.Should().Be((77, 78));
             selectCount.Should().Be(1);
             jsevent._subscribedEvents.Should().Contain("select");
+            jsevent.Select -= selectHandler;
+            // second remove is ignored
             jsevent.Select -= selectHandler;
             jsevent.OnSelect(99, 100);
             selectData.Should().Be((77, 78));
@@ -97,6 +115,8 @@ namespace MudBlazor.UnitTests.Services
             jsevent.CaretPositionChanged += caretPositionChangedHandler;
             jsevent.Paste += pasteHandler;
             jsevent.Copy += copyHandler;
+            jsevent.Dispose();
+            // second dispose is ignored
             jsevent.Dispose();
             jsevent._subscribedEvents.Should().BeEmpty();
         }
