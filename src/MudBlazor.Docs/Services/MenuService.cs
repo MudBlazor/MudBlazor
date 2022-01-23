@@ -86,7 +86,6 @@ namespace MudBlazor.Docs.Services
                 .AddItem("Slider", typeof(MudSlider<T>))
                 .AddItem("Switch", typeof(MudSwitch<T>))
                 .AddItem("Text Field", typeof(MudTextField<T>))
-                .AddItem("Mask Field", typeof(MudMask))
                 .AddItem("Numeric Field", typeof(MudNumericField<T>))
                 .AddItem("Form", typeof(MudForm))
                 .AddItem("Autocomplete", typeof(MudAutocomplete<T>))
@@ -218,6 +217,7 @@ namespace MudBlazor.Docs.Services
                 new DocsLink {Title = "Elevation", Href = "features/elevation"},
                 new DocsLink {Title = "Flex", Href = "features/flex"},
                 new DocsLink {Title = "Icons", Href = "features/icons"},
+                new DocsLink {Title = "Masking", Href = "features/masking"},
                 new DocsLink {Title = "Spacing", Href = "features/spacing"},
                 new DocsLink {Title = "RTL Languages", Href = "features/rtl-languages"},
             }.OrderBy(x => x.Title);

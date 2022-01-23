@@ -29,6 +29,10 @@
         MaskChars = new[] { new MaskChar('X', @"[0-9a-fA-F]") },
         Placeholder = '_',
         CleanDelimiters = true,
+        Transformation = AllUpperCase
     };
+    
+    // transform lower-case chars into upper-case chars
+    private static char AllUpperCase(char c) => c.ToString().ToUpperInvariant()[0];
 
 }

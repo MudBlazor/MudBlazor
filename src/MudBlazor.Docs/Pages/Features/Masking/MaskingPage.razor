@@ -1,27 +1,22 @@
-﻿@page "/components/mask"
+﻿@page "/features/masking"
 
 
 <DocsPage>
-    <MudChip Class="me-n2" Color="Color.Primary">Experimental</MudChip>
-    <DocsPageHeader Title="Mask Field" SubTitle="The Mask field component formats structured user input." />
+    <DocsPageHeader Title="Masking" SubTitle="Input masking allows conforming user input to a specific format while typing." />
     <DocsPageContent>
-        <MudAlert Class="mt-4" Severity="Severity.Error">
-            This component is under active development and breaking changes might occur even in minor patch releases.<br />
-            <b>DO NOT</b> use this component if you are not prepared to adapt to changes.<br />
-        </MudAlert>
 
         <DocsPageSection>
             <SectionHeader Title="SimpleMask">
                 <Description>
-                    MudMask can be configured with different masking algorithms by setting its <CodeInline>Mask</CodeInline> property. The easiest to use is
-                    <CodeInline>SimpleMask</CodeInline> which allows you to specify the input structure with a simple format. 
+                    <CodeInline Tag>MudTextField</CodeInline> can be configured to apply a masking algorithms to user input while typing by setting its <CodeInline>Mask</CodeInline> property. 
+                    The easiest to use Mask is <CodeInline>SimpleMask</CodeInline> which allows you to specify the input structure with a masking string. 
                     <br /><br/>
-                    In this example the mask is <CodeInline>0000 0000 0000 0000</CodeInline> prompting for blocks of digits and refusing invalid input. Note, how the cursor automatically
+                    In this example the mask string is <CodeInline>"0000 0000 0000 0000"</CodeInline> prompting for blocks of digits and refusing invalid input. Note how the cursor automatically
                     jumps over delimiters so you don't have to type them. You can also try pasting the test credit card number <i>4543474002249996</i>.
                 </Description>
             </SectionHeader>
-            <SectionContent FullWidth="true" Outlined="true" Code="MaskBasicExample" ShowCode="false">
-                <MaskBasicExample />
+            <SectionContent FullWidth="true" Outlined="true" Code="SimpleMaskExample" ShowCode="false">
+                <SimpleMaskExample />
             </SectionContent>          
         </DocsPageSection>
 
@@ -37,8 +32,7 @@
                         Note: undefined mask characters are automatically treated as delimiters.
                     </MudAlert>                    
                     The example below defines its own <CodeInline>MaskChars</CodeInline>. It also shows the features <CodeInline>Placeholder</CodeInline> which makes the user aware of the input format and <CodeInline>CleanDelimiters</CodeInline> 
-                    which removes delimiters from the resulting <CodeInline>Value</CodeInline>.
-                    <br /><br /> 
+                    which removes delimiters from the resulting <CodeInline>Value</CodeInline>. Last but not least the second mask also transforms all lower-case input into upper-case.
                     You can also try pasting <i>DC 12 CC 30 9C 23</i> into the field. 
                 </Description>
             </SectionHeader>
