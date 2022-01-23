@@ -33,7 +33,20 @@ namespace MudBlazor.Docs.Services
                 return new GithubContributors[0];
             }
         }
-        
+        public async Task<GithubContributors[]> GetContributors100200Async()
+        {
+            try
+            {
+                var result = await _http.GetFromJsonAsync<GithubContributors[]>("https://api.github.com:443/repos/MudBlazor/MudBlazor/contributors?per_page=100&page=2");
+                return result;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                return new GithubContributors[0];
+            }
+        }
+
         public async Task<GitHubReleases[]> GetReleasesAsync()
         {
             try
@@ -45,6 +58,20 @@ namespace MudBlazor.Docs.Services
             {
                 Console.WriteLine(e.Message);
                 return new GitHubReleases[0];
+            }
+        }
+
+        public async Task<GitHubRoot> GetMainAsync()
+        {
+            try
+            {
+                var result = await _http.GetFromJsonAsync<GitHubRoot>("https://api.github.com/repos/MudBlazor/MudBlazor");
+                return result;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                return new GitHubRoot();
             }
         }
     }

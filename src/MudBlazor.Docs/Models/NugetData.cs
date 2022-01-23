@@ -1,0 +1,74 @@
+﻿// Copyright (c) MudBlazor 2021
+// MudBlazor licenses this file to you under the MIT license.
+// See the LICENSE file in the project root for more information.
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Text.Json;
+using System.Text.Json.Serialization;
+
+namespace MudBlazor.Docs.Models
+{
+    // Root myDeserializedClass = JsonConvert.DeserializeObject<Root>(myJsonResponse);
+    // Root myDeserializedClass = JsonConvert.DeserializeObject<Root>(myJsonResponse);
+    public class Context
+    {
+        [JsonPropertyName("@vocab")]
+        public string Vocab { get; set; }
+
+        [JsonPropertyName("@base")]
+        public string Base { get; set; }
+    }
+
+    public class PackageType
+    {
+        public string name { get; set; }
+    }
+
+    public class Version
+    {
+        public string version { get; set; }
+        public int downloads { get; set; }
+
+        [JsonPropertyName("@id")]
+        public string Id { get; set; }
+    }
+
+    public class Datum
+    {
+        [JsonPropertyName("@id")]
+        public string Id { get; set; }
+
+        [JsonPropertyName("@type")]
+        public string Type { get; set; }
+        public string registration { get; set; }
+        public string id { get; set; }
+        public string version { get; set; }
+        public string description { get; set; }
+        public string summary { get; set; }
+        public string title { get; set; }
+        public string iconUrl { get; set; }
+        public string licenseUrl { get; set; }
+        public string projectUrl { get; set; }
+        public List<string> tags { get; set; }
+        public List<string> authors { get; set; }
+        public List<string> owners { get; set; }
+        public int totalDownloads { get; set; }
+        public bool verified { get; set; }
+        public List<PackageType> packageTypes { get; set; }
+        public List<Version> versions { get; set; }
+    }
+
+    public class Root
+    {
+        [JsonPropertyName("@context")]
+        public Context Context { get; set; }
+        public int totalHits { get; set; }
+        public List<Datum> data { get; set; }
+    }
+
+
+}
