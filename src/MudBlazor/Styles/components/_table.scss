@@ -303,7 +303,6 @@
 .mud-table-pagination-information {
     white-space: nowrap;
     direction: initial;
-    margin-top: 6px;
 }
 
 .mud-table-page-number-information {
@@ -343,6 +342,7 @@
 }
 
 .mud-table-pagination-caption {
+    display: flex;
     flex-shrink: 0;
     align-items: center;
     padding-left: 10px;
