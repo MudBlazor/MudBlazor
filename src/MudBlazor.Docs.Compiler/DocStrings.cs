@@ -37,7 +37,8 @@ namespace MudBlazor.Docs.Compiler
                     foreach (var property in type.GetPropertyInfosWithAttribute<ParameterAttribute>())
                     {
                         var doc = property.GetDocumentation() ?? "";
-                        doc = Regex.Replace(doc, @"</?.+?>", "");
+                        doc = convertSeeTags(doc);
+                        doc = Regex.Replace(doc, @"</?.+?>", "");  // remove all other XML tags
                         cb.AddLine($"public const string {GetSaveTypename(type)}_{property.Name} = @\"{EscapeDescription(doc).Trim()}\";\n");
                     }
 
@@ -89,6 +90,18 @@ namespace MudBlazor.Docs.Compiler
         private static string GetSaveMethodIdentifier(MethodInfo method) => Regex.Replace(method.ToString(), "[^A-Za-z0-9_]", "_");
 
         private static Type GetBaseDefinitionClass(MethodInfo m) => m.GetBaseDefinition().DeclaringType;
+
+        /* Replace <see cref="TYPE_OR_MEMBER_QUALIFIED_NAME"/> tags by TYPE_OR_MEMBER_QUALIFIED_NAME without "MudBlazor." at the beginning.
+         * It is a quick fix. It should be rather represented by <a href="...">...</a> but it is more difficult.
+         */
+        private static string convertSeeTags(string doc)
+        {
+            return Regex.Replace(doc, "<see cref=\"[TFPME]:(MudBlazor\\.)?([^>]+)\" */>", match => {
+                string result = match.Groups[2].Value;     // get the name of Type or type member (Field, Property, Method, or Event)
+                result = Regex.Replace(result, "`1", "");  // remove `1 from generic type name
+                return result;
+            });
+        }
 
         private static string EscapeDescription(string doc)
         {
