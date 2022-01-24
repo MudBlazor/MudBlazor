@@ -2,14 +2,30 @@
 
 <MudGrid Class="justify-space-between" Style="max-width: 400px;">
     <MudItem xs="12">
-        <MudTextField Mask="@(new PatternMask("0000 0000 0000 0000"))" Label="Credit card number" 
+        <MudTextField Mask="@(new PatternMask("0000 0000 0000 0000"))" Label="Credit Card Number" 
                       @bind-Value="text"  Variant="@Variant.Outlined" Clearable />
     </MudItem>
+	<MudItem xs="12">
+        <MudTextField Mask="@(new PatternMask("00/00"))" Label="Expire Date" 
+                      @bind-Value="text2"  Variant="@Variant.Outlined" Clearable />
+    </MudItem>
+	<MudItem xs="12">
+        <MudTextField Mask="@(new PatternMask("000"))" Label="CVC" 
+                      @bind-Value="text3"  Variant="@Variant.Outlined" Clearable />
+    </MudItem>
     <MudItem xs="12">
-		Credit card number: <b>@text</b>
+		Credit Card Number: <b>@text</b>
+    </MudItem>
+	<MudItem xs="12">
+		Expire Date: <b>@text2</b>
+    </MudItem>
+	<MudItem xs="12">
+		CVC: <b>@text3</b>
     </MudItem>
 </MudGrid>
 
 @code {
     public string text { get; set; }
+	public string text2 { get; set; }
+	public string text3 { get; set; }
 }
