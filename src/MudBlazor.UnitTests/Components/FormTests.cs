@@ -146,6 +146,90 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(() => form.ResetValidation());
             form.IsTouched.Should().Be(true);
         }
+        
+        /// <summary>
+        /// Changing the nested form fields value should set IsTouched 
+        /// </summary>
+        [Test]
+        public async Task FormIsTouchedAndNestedFormIsNotTouchedWhenParentFormFieldIsTouchedTest()
+        {
+            var comp = Context.RenderComponent<FormIsTouchedNestedTest>();
+            Console.WriteLine(comp.Markup);
+            var formsComp = comp.FindComponents<MudForm>();
+            var textCompFields = comp.FindComponents<MudTextField<string>>();
+            var dateCompFields = comp.FindComponents<MudDatePicker>();
+            var form = formsComp[0].Instance;
+            var textField = textCompFields[0].Instance;
+            var dateField = dateCompFields[0].Instance;
+            var nestedForm = formsComp[1].Instance;
+            var nestedFormTextField = textCompFields[1].Instance;
+            var nestedFormDateField = dateCompFields[1].Instance;
+
+            // check initial state: form should not be touched 
+            form.IsTouched.Should().Be(false);
+            nestedForm.IsTouched.Should().Be(false);
+            // input a date, istouched should be true
+            textCompFields[0].Find("input").Change("2001-01-31");
+            form.IsTouched.Should().Be(true);
+            nestedForm.IsTouched.Should().Be(false);
+
+            //reset should set touched to false
+            await comp.InvokeAsync(() => form.Reset());
+            form.IsTouched.Should().Be(false);
+            nestedForm.IsTouched.Should().Be(false);
+
+            // clear value to null
+            textCompFields[0].Find("input").Change("value is changed");
+            form.IsTouched.Should().Be(true);
+            nestedForm.IsTouched.Should().Be(false);
+
+            //reset validation should not reset touched state
+            await comp.InvokeAsync(() => form.ResetValidation());
+            form.IsTouched.Should().Be(true);
+            nestedForm.IsTouched.Should().Be(false);
+        }
+
+        /// <summary>
+        /// Changing the nested form fields value should set IsTouched to true on parent form
+        /// </summary>
+        [Test]
+        public async Task FormIsUnTouchedWhenNestedFormTouchedTest()
+        {
+            var comp = Context.RenderComponent<FormIsTouchedNestedTest>();
+            Console.WriteLine(comp.Markup);
+            var formsComp = comp.FindComponents<MudForm>();
+            var textCompFields = comp.FindComponents<MudTextField<string>>();
+            var dateCompFields = comp.FindComponents<MudDatePicker>();
+            var form = formsComp[0].Instance;
+            var textField = textCompFields[0].Instance;
+            var dateField = dateCompFields[0].Instance;
+            var nestedForm = formsComp[1].Instance;
+            var nestedFormTextField = textCompFields[1].Instance;
+            var nestedFormDateField = dateCompFields[1].Instance;
+
+            // check initial state: form should not be touched 
+            form.IsTouched.Should().Be(false);
+            nestedForm.IsTouched.Should().Be(false);
+            // input a date, istouched should be true
+            textCompFields[1].Find("input").Change("2001-01-31");
+            form.IsTouched.Should().Be(true);
+            nestedForm.IsTouched.Should().Be(true);
+
+            //reset should set touched to false
+            await comp.InvokeAsync(() => form.Reset());
+            form.IsTouched.Should().Be(false);
+            nestedForm.IsTouched.Should().Be(false);
+
+            // clear value to null
+            textCompFields[3].Find("input").Change("value is changed");
+            form.IsTouched.Should().Be(false);
+            nestedForm.IsTouched.Should().Be(true);
+
+            //reset validation should not reset touched state
+            await comp.InvokeAsync(() => nestedFormDateField.ResetValidation());
+            form.IsTouched.Should().Be(false);
+            nestedForm.IsTouched.Should().Be(true);
+        }
 
         /// <summary>
         /// Custom validation func should be called to determine whether or not a form value is good
@@ -741,8 +825,8 @@ namespace MudBlazor.UnitTests.Components
             textfields[7].Instance.ErrorText.Should().NotBeNullOrEmpty();
             numericFields[1].Instance.HasErrors.Should().BeTrue();
             numericFields[1].Instance.ErrorText.Should().NotBeNullOrEmpty();
-        }
-
+        } 
+        
         /// <summary>
         /// Testing the functionality of the MudForm example from the docs.
         /// Root MudForm is invalid and nested MudForm is valid
