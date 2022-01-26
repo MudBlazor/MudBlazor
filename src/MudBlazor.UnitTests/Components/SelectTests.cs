@@ -68,53 +68,59 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task MultiSelectTest1()
         {
-            var comp = Context.RenderComponent<MultiSelectTest1>();
-            // print the generated html
-            //Console.WriteLine(comp.Markup);
-            // select elements needed for the test
-            var select = comp.FindComponent<MudSelect<string>>();
-            var menu = comp.Find("div.mud-popover");
-            var input = comp.Find("div.mud-input-control");
-            // check initial state
-            select.Instance.Value.Should().BeNullOrEmpty();
-            comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().NotContain("mud-popover-open"));
-            // click and check if it has toggled the menu
-            input.Click();
-            menu.ClassList.Should().Contain("mud-popover-open");
-            // now click an item and see the value change
-            comp.WaitForAssertion(() => comp.FindAll("div.mud-list-item").Count.Should().BeGreaterThan(0));
-            var items = comp.FindAll("div.mud-list-item").ToArray();
-            items[1].Click();
-            // menu should still be open now!!
-            menu.ClassList.Should().Contain("mud-popover-open");
-            comp.WaitForAssertion(() => select.Instance.Text.Should().Be("2"));
-            items[0].Click();
-            comp.WaitForAssertion(() => select.Instance.Text.Should().Be("2, 1"));
-            items[2].Click();
-            comp.WaitForAssertion(() => select.Instance.Text.Should().Be("2, 1, 3"));
-            items[0].Click();
-            comp.WaitForAssertion(() => select.Instance.Text.Should().Be("2, 3"));
-            select.Instance.SelectedValues.Count().Should().Be(2);
-            select.Instance.SelectedValues.Should().Contain("2");
-            select.Instance.SelectedValues.Should().Contain("3");
-            //Console.WriteLine(comp.Markup);
-            const string @unchecked =
-                "M19 5v14H5V5h14m0-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z";
-            const string @checked =
-                "M19 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.11 0 2-.9 2-2V5c0-1.1-.89-2-2-2zm-9 14l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z";
-            // check that the correct items are checked
-            comp.WaitForAssertion(() => comp.FindAll("div.mud-list-item path")[1].Attributes["d"].Value.Should().Be(@unchecked));
-            comp.FindAll("div.mud-list-item path")[3].Attributes["d"].Value.Should().Be(@checked);
-            comp.FindAll("div.mud-list-item path")[5].Attributes["d"].Value.Should().Be(@checked);
-            // now check how setting the SelectedValues makes items checked or unchecked
-            await comp.InvokeAsync(() =>
+            await ImproveChanceOfSuccess(async () =>
             {
-                select.Instance.SelectedValues = new HashSet<string>() { "1", "2" };
+                var comp = Context.RenderComponent<MultiSelectTest1>();
+                // print the generated html
+                //Console.WriteLine(comp.Markup);
+                // select elements needed for the test
+                var select = comp.FindComponent<MudSelect<string>>();
+                var menu = comp.Find("div.mud-popover");
+                var input = comp.Find("div.mud-input-control");
+                // check initial state
+                select.Instance.Value.Should().BeNullOrEmpty();
+                comp.WaitForAssertion(() =>
+                    comp.Find("div.mud-popover").ClassList.Should().NotContain("mud-popover-open"));
+                // click and check if it has toggled the menu
+                input.Click();
+                menu.ClassList.Should().Contain("mud-popover-open");
+                // now click an item and see the value change
+                comp.WaitForAssertion(() => comp.FindAll("div.mud-list-item").Count.Should().BeGreaterThan(0));
+                var items = comp.FindAll("div.mud-list-item").ToArray();
+                items[1].Click();
+                // menu should still be open now!!
+                menu.ClassList.Should().Contain("mud-popover-open");
+                comp.WaitForAssertion(() => select.Instance.Text.Should().Be("2"));
+                items[0].Click();
+                comp.WaitForAssertion(() => select.Instance.Text.Should().Be("2, 1"));
+                items[2].Click();
+                comp.WaitForAssertion(() => select.Instance.Text.Should().Be("2, 1, 3"));
+                items[0].Click();
+                comp.WaitForAssertion(() => select.Instance.Text.Should().Be("2, 3"));
+                select.Instance.SelectedValues.Count().Should().Be(2);
+                select.Instance.SelectedValues.Should().Contain("2");
+                select.Instance.SelectedValues.Should().Contain("3");
+                //Console.WriteLine(comp.Markup);
+                const string @unchecked =
+                    "M19 5v14H5V5h14m0-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z";
+                const string @checked =
+                    "M19 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.11 0 2-.9 2-2V5c0-1.1-.89-2-2-2zm-9 14l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z";
+                // check that the correct items are checked
+                comp.WaitForAssertion(() =>
+                    comp.FindAll("div.mud-list-item path")[1].Attributes["d"].Value.Should().Be(@unchecked));
+                comp.FindAll("div.mud-list-item path")[3].Attributes["d"].Value.Should().Be(@checked);
+                comp.FindAll("div.mud-list-item path")[5].Attributes["d"].Value.Should().Be(@checked);
+                // now check how setting the SelectedValues makes items checked or unchecked
+                await comp.InvokeAsync(() =>
+                {
+                    select.Instance.SelectedValues = new HashSet<string>() { "1", "2" };
+                });
+                comp.WaitForAssertion(() =>
+                    comp.FindAll("div.mud-list-item path")[1].Attributes["d"].Value.Should().Be(@checked));
+                comp.FindAll("div.mud-list-item path")[3].Attributes["d"].Value.Should().Be(@checked);
+                comp.FindAll("div.mud-list-item path")[5].Attributes["d"].Value.Should().Be(@unchecked);
+                //Console.WriteLine(comp.Markup);
             });
-            comp.WaitForAssertion(() => comp.FindAll("div.mud-list-item path")[1].Attributes["d"].Value.Should().Be(@checked));
-            comp.FindAll("div.mud-list-item path")[3].Attributes["d"].Value.Should().Be(@checked);
-            comp.FindAll("div.mud-list-item path")[5].Attributes["d"].Value.Should().Be(@unchecked);
-            //Console.WriteLine(comp.Markup);
         }
 
         /// <summary>
@@ -409,42 +415,46 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task MultiSelect_ShouldCallValidationFunc()
         {
-            var comp = Context.RenderComponent<MultiSelectTest1>();
-            // print the generated html
-            //Console.WriteLine(comp.Markup);
-            // select elements needed for the test
-            var select = comp.FindComponent<MudSelect<string>>();
-            string validatedValue = null;
-            select.SetParam(x => x.Validation, new Func<string, bool>(value =>
-              {
-                  validatedValue = value; // NOTE: select does only update the value for T string
-                  return true;
-              }));
-            var menu = comp.Find("div.mud-popover");
-            var input = comp.Find("div.mud-input-control");
-            // check initial state
-            select.Instance.Value.Should().BeNullOrEmpty();
-            comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().NotContain("mud-popover-open"));
-            // click and check if it has toggled the menu
-            input.Click();
-            comp.WaitForAssertion(() => comp.FindAll("div.mud-list-item").Count.Should().BeGreaterThan(0));
-            comp.WaitForAssertion(() => menu.ClassList.Should().Contain("mud-popover-open"));
-            // now click an item and see the value change
-            var items = comp.FindAll("div.mud-list-item").ToArray();
-            items[1].Click();
-            // menu should still be open now!!
-            comp.WaitForAssertion(() => menu.ClassList.Should().Contain("mud-popover-open"));
-            comp.WaitForAssertion(() => select.Instance.Text.Should().Be("2"));
-            validatedValue.Should().Be("2");
-            items[0].Click();
-            comp.WaitForAssertion(() => select.Instance.Text.Should().Be("2, 1"));
-            validatedValue.Should().Be("2, 1");
-            items[2].Click();
-            comp.WaitForAssertion(() => select.Instance.Text.Should().Be("2, 1, 3"));
-            validatedValue.Should().Be("2, 1, 3");
-            items[0].Click();
-            comp.WaitForAssertion(() => select.Instance.Text.Should().Be("2, 3"));
-            validatedValue.Should().Be("2, 3");
+            await ImproveChanceOfSuccess(async () =>
+            {
+                var comp = Context.RenderComponent<MultiSelectTest1>();
+                // print the generated html
+                //Console.WriteLine(comp.Markup);
+                // select elements needed for the test
+                var select = comp.FindComponent<MudSelect<string>>();
+                string validatedValue = null;
+                select.SetParam(x => x.Validation, new Func<string, bool>(value =>
+                {
+                    validatedValue = value; // NOTE: select does only update the value for T string
+                    return true;
+                }));
+                var menu = comp.Find("div.mud-popover");
+                var input = comp.Find("div.mud-input-control");
+                // check initial state
+                select.Instance.Value.Should().BeNullOrEmpty();
+                comp.WaitForAssertion(() =>
+                    comp.Find("div.mud-popover").ClassList.Should().NotContain("mud-popover-open"));
+                // click and check if it has toggled the menu
+                input.Click();
+                comp.WaitForAssertion(() => comp.FindAll("div.mud-list-item").Count.Should().BeGreaterThan(0));
+                comp.WaitForAssertion(() => menu.ClassList.Should().Contain("mud-popover-open"));
+                // now click an item and see the value change
+                var items = comp.FindAll("div.mud-list-item").ToArray();
+                items[1].Click();
+                // menu should still be open now!!
+                comp.WaitForAssertion(() => menu.ClassList.Should().Contain("mud-popover-open"));
+                comp.WaitForAssertion(() => select.Instance.Text.Should().Be("2"));
+                validatedValue.Should().Be("2");
+                items[0].Click();
+                comp.WaitForAssertion(() => select.Instance.Text.Should().Be("2, 1"));
+                validatedValue.Should().Be("2, 1");
+                items[2].Click();
+                comp.WaitForAssertion(() => select.Instance.Text.Should().Be("2, 1, 3"));
+                validatedValue.Should().Be("2, 1, 3");
+                items[0].Click();
+                comp.WaitForAssertion(() => select.Instance.Text.Should().Be("2, 3"));
+                validatedValue.Should().Be("2, 3");
+            });
         }
 
         [Test]
