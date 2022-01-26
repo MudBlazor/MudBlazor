@@ -33,6 +33,20 @@ namespace MudBlazor
         [Parameter] public RenderFragment HeaderTemplate { get; set; }
         [Parameter] public RenderFragment<T> CellTemplate { get; set; }
         [Parameter] public RenderFragment FooterTemplate { get; set; }
+        [Parameter] public RenderFragment<GroupDefinition<T>> GroupTemplate { get; set; }
+        [Parameter]
+        public Func<T, object> GroupBy
+        {
+            get
+            {
+                CompileGroupBy();
+                return _groupBy;
+            }
+            set
+            {
+                _groupBy = value;
+            }
+        }
 
         #region HeaderCell Properties
 
@@ -60,6 +74,14 @@ namespace MudBlazor
         [Parameter] public Func<T, object> SortBy { get; set; }// = x => { return null; };
         [Parameter] public SortDirection InitialDirection { get; set; } = SortDirection.None;
         [Parameter] public string SortIcon { get; set; } = Icons.Material.Filled.ArrowUpward;
+        /// <summary>
+        /// Specifies whether the column can be grouped.
+        /// </summary>
+        [Parameter] public bool? Groupable { get; set; }
+        /// <summary>
+        /// Specifies whether the column is grouped.
+        /// </summary>
+        [Parameter] public bool Grouping { get; set; }
 
         #endregion
 
@@ -102,12 +124,68 @@ namespace MudBlazor
                 .AddClass(Class)
             .Build();
 
+        internal bool grouping;
+
+        #region Computed Properties
+
+        internal string computedTitle
+        {
+            get
+            {
+                return Title ?? Field;
+            }
+        }
+
+        internal bool groupable
+        {
+            get
+            {
+                return Groupable ?? DataGrid?.Groupable ?? false;
+            }
+        }
+
+        #endregion
+
+        private Func<T, object> _groupBy;
+
         protected override void OnInitialized()
         {
             DataGrid?.AddColumn(this);
 
             if (!Hideable.HasValue)
                 Hideable = DataGrid?.Hideable;
+
+            if (groupable && Grouping)
+                grouping = Grouping;
+        }
+
+        internal void CompileGroupBy()
+        {
+            if (_groupBy == null)
+            {
+                // set the default GroupBy
+                var parameter = Expression.Parameter(typeof(T), "x");
+                var field = Expression.Convert(Expression.Property(parameter, typeof(T).GetProperty(Field)), typeof(object));
+                _groupBy = Expression.Lambda<Func<T, object>>(field, parameter).Compile();
+            }
+        }
+
+        // Allows child components to change column grouping.
+        internal void SetGrouping(bool g)
+        {
+            if (groupable)
+            {
+                grouping = g;
+                DataGrid?.ChangedGrouping(this);
+            }
+        }
+
+        /// <summary>
+        /// This method's sole purpose is for the DataGrid to remove grouping in mass.
+        /// </summary>
+        internal void RemoveGrouping()
+        {
+            grouping = false;
         }
     }
 }

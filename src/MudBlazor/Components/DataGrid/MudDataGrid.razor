@@ -13,9 +13,7 @@
             {
                 <MudToolBar Class="mud-table-toolbar">
                     @ToolBarContent
-                    <MudMenu Icon="@Icons.Material.Outlined.Settings" Size="Size.Small" Direction="Direction.Bottom" OffsetY="true" Dense="true">
-                        <MudMenuItem OnClick="@ShowColumnsPanel">Columns</MudMenuItem>
-                    </MudMenu>            
+                    @ToolbarMenu(this)           
                 </MudToolBar>
             }
             else
@@ -23,9 +21,7 @@
                 @*Add the default toolbar.*@
                 <MudToolBar Class="mud-table-toolbar">
                     <MudSpacer />
-                    <MudMenu Icon="@Icons.Material.Outlined.Settings" Size="Size.Small" Direction="Direction.Bottom" OffsetY="true" Dense="true">
-                        <MudMenuItem OnClick="@ShowColumnsPanel">Columns</MudMenuItem>
-                    </MudMenu>            
+                    @ToolbarMenu(this) 
                 </MudToolBar>
             }
             <div class="mud-table-container" style="@_tableStyle @(GetHorizontalScrollbarStyle())">
@@ -46,19 +42,19 @@
                                 @*This is necessary on .net6.0-preview4 and below.*@
                                 if (column.HeaderTemplate != null)
                                 {
-                                    <HeaderCell T="T" Title="@column.Title" Field="@column.Field" Class="@column.headerClassname"
+                                    <HeaderCell T="T" Column="@column" Title="@column.Title" Field="@column.Field" Class="@column.headerClassname"
                                         SortIcon="@column.SortIcon" SortBy="@column.SortBy" HeaderTemplate="@column.HeaderTemplate"
                                         InitialDirection="@column.InitialDirection" Sortable="@column.Sortable" Style="@column.HeaderStyle"
                                         Filterable="@column.Filterable" ColumnType="@column.Type" ColSpan="@column.HeaderColSpan"
-                                        Hideable="@column.Hideable" @bind-Hidden="column.Hidden"></HeaderCell>
+                                        Hideable="@column.Hideable" @bind-Hidden="column.Hidden" Groupable="@column.groupable" Grouping="@column.grouping"></HeaderCell>
                                 }
                                 else
                                 {
-                                    <HeaderCell T="T" Title="@column.Title" Field="@column.Field" Class="@column.headerClassname"
+                                    <HeaderCell T="T" Column="@column" Title="@column.Title" Field="@column.Field" Class="@column.headerClassname"
                                         SortIcon="@column.SortIcon" SortBy="@column.SortBy"
                                         InitialDirection="@column.InitialDirection" Sortable="@column.Sortable" Style="@column.HeaderStyle"
                                         Filterable="@column.Filterable" ColumnType="@column.Type" ColSpan="@column.HeaderColSpan"
-                                        Hideable="@column.Hideable" @bind-Hidden="column.Hidden"></HeaderCell>
+                                        Hideable="@column.Hideable" @bind-Hidden="column.Hidden" Groupable="@column.groupable" Grouping="@column.grouping"></HeaderCell>
                                 }
                             }
 
@@ -85,7 +81,7 @@
                         @if (_columnsPanelVisible)
                         {
                             <MudOverlay  Visible="true" OnClick="@(() => _columnsPanelVisible = false)"></MudOverlay>
-                            <MudPaper Class="pa-2 columns-panel" Style="position:absolute;maxwidth:450px;z-index:var(--mud-zindex-drawer)" Elevation="4">
+                            <MudPaper Class="pa-2 columns-panel" Style="position:absolute;max-width:450px;z-index:var(--mud-zindex-drawer)" Elevation="4">
                                 <MudGrid Spacing="0">
                                     @foreach (var column in _columns)
                                     {
@@ -116,38 +112,104 @@
 
                         @if (CurrentPageItems != null && CurrentPageItems.Count() > 0)
                         {
-                            var rowIndex = 0;
-                            <MudVirtualize IsEnabled="@Virtualize" Items="@CurrentPageItems?.ToList()" Context="item">
-                                @{ var rowClass = new CssBuilder(RowClass).AddClass(RowClassFunc?.Invoke(item, rowIndex)).Build(); }
-                                @{ var rowStyle = new StyleBuilder().AddStyle(RowStyle).AddStyle(RowStyleFunc?.Invoke(item, rowIndex)).Build(); }
-                                @{ var tmpRowIndex = rowIndex; }
-                                <tr class="mud-table-row @rowClass" Style="@rowStyle" @key="item" @onclick="@((args) => OnRowClickedAsync(args, item, tmpRowIndex))">  
-                                    <CascadingValue Value="@Validator" IsFixed="true">
-                                    @foreach (var column in @_columns)
-                                    {
-                                        if (!column.Hidden)
-                                        {
-                                            <Cell Item="@item" Title="@column.Title" Field="@column.Field" Class="@column.cellClassname"
-                                                CellTemplate="@column.CellTemplate" ColumnType="@column.Type" Style="@column.CellStyle"
-                                                IsEditable="@(column.IsEditable ?? true)" EditTemplate="@column.EditTemplate"
-                                                CellClass="@column.CellClass" CellClassFunc="@column.CellClassFunc"
-                                                CellStyle="@column.CellStyle" CellStyleFunc="@column.CellStyleFunc"></Cell>
-                                        }
-                                    }
-                                        
-                                    @if (EditMode == DataGridEditMode.Inline)
-                                    {
-                                        @*Add the inline edit controls.*@
-                                        <Cell Item="@item" ColumnType="@ColumnType.InlineEditCommand" IsEditable="false"></Cell>
-                                    }
-                                    </CascadingValue>
-                                </tr>                                   
-                                @if (ChildRowContent != null)
+                            @if (GroupedColumn != null)
+                            {
+                                foreach (var g in _groups)
                                 {
-                                    @ChildRowContent(item)
-                                }                                    
-                                @{ rowIndex++; }
-                            </MudVirtualize>
+                                    <tr class="mud-table-row">
+                                        <td class="mud-table-cell @GroupClass" colspan="1000" style="background-color:var(--mud-palette-background-grey);@GroupStyle">
+                                            <MudIconButton 
+                                                Class="mud-table-row-expander" 
+                                                Icon="@(g.IsExpanded ? Icons.Material.Filled.ExpandMore : Icons.Material.Filled.ChevronRight)" 
+                                                OnClick="@(() => ToggleGroupExpansion(g))" />
+
+                                            @if (GroupedColumn.GroupTemplate == null)
+                                            {
+                                                <span style="font-weight:bold">@GroupedColumn.computedTitle: @g.Grouping.Key</span>
+                                            }
+                                            else
+                                            {
+                                                @GroupedColumn.GroupTemplate(@g)
+                                            }
+                                        </td>
+                                    </tr>
+                                    var rowIndex = 0;
+
+                                    @if (g.IsExpanded)
+                                    {
+                                        <MudVirtualize IsEnabled="@Virtualize" Items="@g.Grouping.ToList()" Context="item">
+                                            @{ var rowClass = new CssBuilder(RowClass).AddClass(RowClassFunc?.Invoke(item, rowIndex)).Build(); }
+                                            @{ var rowStyle = new StyleBuilder().AddStyle(RowStyle).AddStyle(RowStyleFunc?.Invoke(item, rowIndex)).Build(); }
+                                            @{ var tmpRowIndex = rowIndex; }
+                                            <tr class="mud-table-row @rowClass" Style="@rowStyle" @key="item" @onclick="@((args) => OnRowClickedAsync(args, item, tmpRowIndex))">  
+                                                <CascadingValue Value="@Validator" IsFixed="true">
+                                                @foreach (var column in @_columns)
+                                                {
+                                                    if (!column.Hidden)
+                                                    {
+                                                        <Cell Item="@item" Title="@column.Title" Field="@column.Field" Class="@column.cellClassname"
+                                                            CellTemplate="@column.CellTemplate" ColumnType="@column.Type" Style="@column.CellStyle"
+                                                            IsEditable="@(column.IsEditable ?? true)" EditTemplate="@column.EditTemplate"
+                                                            CellClass="@column.CellClass" CellClassFunc="@column.CellClassFunc"
+                                                            CellStyle="@column.CellStyle" CellStyleFunc="@column.CellStyleFunc"></Cell>
+                                                    }
+                                                }
+                                        
+                                                @if (EditMode == DataGridEditMode.Inline)
+                                                {
+                                                    @*Add the inline edit controls.*@
+                                                    <Cell Item="@item" ColumnType="@ColumnType.InlineEditCommand" IsEditable="false"></Cell>
+                                                }
+                                                </CascadingValue>
+                                            </tr>                                   
+                                            @if (ChildRowContent != null)
+                                            {
+                                                @ChildRowContent(item)
+                                            }                                    
+                                            @{ rowIndex++; }
+                                        </MudVirtualize>
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                var rowIndex = 0;
+                                <MudVirtualize IsEnabled="@Virtualize" Items="@CurrentPageItems?.ToList()" Context="item">
+                                    @{ var rowClass = new CssBuilder(RowClass).AddClass(RowClassFunc?.Invoke(item, rowIndex)).Build(); }
+                                    @{ var rowStyle = new StyleBuilder().AddStyle(RowStyle).AddStyle(RowStyleFunc?.Invoke(item, rowIndex)).Build(); }
+                                    @{ var tmpRowIndex = rowIndex; }
+                                    <tr class="mud-table-row @rowClass" Style="@rowStyle" @key="item" @onclick="@((args) => OnRowClickedAsync(args, item, tmpRowIndex))">  
+                                        <CascadingValue Value="@Validator" IsFixed="true">
+                                        @foreach (var column in @_columns)
+                                        {
+                                            if (column.grouping)
+                                            {
+                                            
+                                            }
+                                            else if (!column.Hidden)
+                                            {
+                                                <Cell Item="@item" Title="@column.Title" Field="@column.Field" Class="@column.cellClassname"
+                                                    CellTemplate="@column.CellTemplate" ColumnType="@column.Type" Style="@column.CellStyle"
+                                                    IsEditable="@(column.IsEditable ?? true)" EditTemplate="@column.EditTemplate"
+                                                    CellClass="@column.CellClass" CellClassFunc="@column.CellClassFunc"
+                                                    CellStyle="@column.CellStyle" CellStyleFunc="@column.CellStyleFunc"></Cell>
+                                            }
+                                        }
+                                        
+                                        @if (EditMode == DataGridEditMode.Inline)
+                                        {
+                                            @*Add the inline edit controls.*@
+                                            <Cell Item="@item" ColumnType="@ColumnType.InlineEditCommand" IsEditable="false"></Cell>
+                                        }
+                                        </CascadingValue>
+                                    </tr>                                   
+                                    @if (ChildRowContent != null)
+                                    {
+                                        @ChildRowContent(item)
+                                    }                                    
+                                    @{ rowIndex++; }
+                                </MudVirtualize>
+                            }
                         }
                         else if(Loading ? LoadingContent != null : NoRecordsContent != null)
                         {
@@ -198,3 +260,20 @@
         }
     </div>
 </CascadingValue>
+
+@code {
+    internal RenderFragment ToolbarMenu(MudDataGrid<T> __this)
+    {
+        return
+        @<text>
+        <MudMenu Icon="@Icons.Material.Outlined.Settings" Size="Size.Small" Direction="Direction.Bottom" OffsetY="true" Dense="true">
+            <MudMenuItem OnClick="@__this.ShowColumnsPanel">Columns</MudMenuItem>
+            @if (__this.Groupable)
+            {
+                <MudMenuItem OnClick="@__this.ExpandAllGroups">Expand All Groups</MudMenuItem>
+                <MudMenuItem OnClick="@__this.CollapseAllGroups">Collapse All Groups</MudMenuItem>
+            }
+        </MudMenu>
+        </text>;
+    }
+}

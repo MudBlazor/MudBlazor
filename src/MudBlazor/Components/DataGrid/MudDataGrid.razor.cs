@@ -24,6 +24,8 @@ namespace MudBlazor
         private T _selectedItem;
         private SortDirection _direction = SortDirection.None;
         private Func<T, object> _sortBy = null;
+        private HashSet<object> _groupExpansions = new HashSet<object>();
+        private List<GroupDefinition<T>> _groups = new List<GroupDefinition<T>>();
 
         protected string _classname =>
             new CssBuilder("mud-table")
@@ -447,6 +449,40 @@ namespace MudBlazor
             }
         }
 
+        /// <summary>
+        /// Determines whether grouping of columns is allowe in the data grid.
+        /// </summary>
+        [Parameter]
+        public bool Groupable
+        {
+            get { return _groupable; }
+            set
+            {
+                if (_groupable != value)
+                {
+                    _groupable = value;
+                    _groups.Clear();
+                    _groupExpansions.Clear();
+
+                    foreach (var column in _columns)
+                        column.RemoveGrouping();
+                }
+            }
+        }
+        private bool _groupable = false;
+        /// <summary>
+        /// If set, a grouped column will be expanded by default.
+        /// </summary>
+        [Parameter] public bool GroupExpanded { get; set; }
+        /// <summary>
+        /// CSS class for the groups.
+        /// </summary>
+        [Parameter] public string GroupClass { get; set; }
+        /// <summary>
+        /// CSS styles for the groups.
+        /// </summary>
+        [Parameter] public string GroupStyle { get; set; }
+
         #endregion
 
         #region Properties
@@ -499,6 +535,13 @@ namespace MudBlazor
             }
         }
         public Interfaces.IForm Validator { get; set; } = new DataGridRowValidator();
+        internal Column<T> GroupedColumn
+        {
+            get
+            {
+                return _columns.FirstOrDefault(x => x.grouping);
+            }
+        }
 
         #endregion
 
@@ -507,6 +550,7 @@ namespace MudBlazor
             if (firstRender)
             {
                 _isFirstRendered = true;
+                GroupItems();
                 await InvokeServerLoadFunc();
             }
             else
@@ -690,6 +734,8 @@ namespace MudBlazor
                     CurrentPage = Math.Max(0, CurrentPage - 1);
                     break;
             }
+
+            GroupItems();
         }
 
         /// <summary>
@@ -829,6 +875,84 @@ namespace MudBlazor
         {
             _columnsPanelVisible = true;
             StateHasChanged();
+        }
+
+        internal void OutsideStateHasChanged()
+        {
+            StateHasChanged();
+        }
+
+        public void GroupItems()
+        {
+            if (GroupedColumn == null)
+            {
+                _groups = new List<GroupDefinition<T>>();
+                StateHasChanged();
+                return;
+            }
+
+            var groupings = CurrentPageItems.GroupBy(GroupedColumn.GroupBy);
+
+            if (_groupExpansions.Count == 0)
+            {
+                if (GroupExpanded)
+                {
+                    // We need to initially expand all groups.
+                    foreach (var group in groupings)
+                    {
+                        _groupExpansions.Add(group.Key);
+                    }
+                }
+
+                _groupExpansions.Add("__initial__");
+            }
+
+            // construct the groups
+            _groups = groupings.Select(x => new GroupDefinition<T>(x,
+                _groupExpansions.Contains(x.Key))).ToList();
+
+            StateHasChanged();
+        }
+
+        internal void ChangedGrouping(Column<T> column)
+        {
+            foreach (var c in _columns)
+            {
+                if (c.Field != column.Field)
+                    c.RemoveGrouping();
+            }
+
+            GroupItems();       
+        }
+
+        internal void ToggleGroupExpansion(GroupDefinition<T> g)
+        {
+            if (_groupExpansions.Contains(g.Grouping.Key))
+            {
+                _groupExpansions.Remove(g.Grouping.Key);
+            }
+            else
+            {
+                _groupExpansions.Add(g.Grouping.Key);
+            }
+
+            GroupItems();
+        }
+
+        public void ExpandAllGroups()
+        {
+            foreach (var group in _groups)
+            {
+                group.IsExpanded = true;
+            }
+        }
+
+        public void CollapseAllGroups()
+        {
+            foreach (var group in _groups)
+            {
+                group.IsExpanded = false;
+            }
         }
 
         #endregion

@@ -60,6 +60,17 @@ else if (!Hidden)
                             {
                                 <MudMenuItem OnClick="@HideColumnAsync">Hide</MudMenuItem>
                             }
+                            @if (groupable)
+                            {
+                                if (Column?.grouping ?? false)
+                                {
+                                    <MudMenuItem OnClick="@UngroupColumn">Ungroup</MudMenuItem>
+                                }
+                                else
+                                {
+                                    <MudMenuItem OnClick="@GroupColumn">Group</MudMenuItem>
+                                }
+                            }
                         </MudMenu>
                     }
                 </span>

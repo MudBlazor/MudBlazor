@@ -17,6 +17,7 @@ namespace MudBlazor
         [CascadingParameter] public MudDataGrid<T> DataGrid { get; set; }
         [CascadingParameter(Name = "IsOnlyHeader")] public bool IsOnlyHeader { get; set; } = false;
 
+        [Parameter] public Column<T> Column { get; set; }
         [Parameter] public string Title { get; set; }
         [Parameter] public string Field { get; set; }
         [Parameter] public RenderFragment HeaderTemplate { get; set; }
@@ -88,6 +89,13 @@ namespace MudBlazor
             get
             {
                 return Hideable ?? DataGrid?.Hideable ?? false;
+            }
+        }
+        private bool groupable
+        {
+            get
+            {
+                return Column?.Groupable ?? DataGrid?.Groupable ?? false;
             }
         }
         private bool showColumnOptions
@@ -254,6 +262,16 @@ namespace MudBlazor
         {
             Hidden = true;
             await HiddenChanged.InvokeAsync(Hidden);
+        }
+
+        internal void GroupColumn()
+        {
+            Column.SetGrouping(true);
+        }
+
+        internal void UngroupColumn()
+        {
+            Column.SetGrouping(false);
         }
 
         #endregion
