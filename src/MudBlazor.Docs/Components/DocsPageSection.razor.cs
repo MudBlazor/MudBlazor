@@ -4,6 +4,7 @@
 
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Components;
+using MudBlazor.Docs.Services;
 
 namespace MudBlazor.Docs.Components;
 
@@ -14,7 +15,10 @@ public partial class DocsPageSection
     [CascadingParameter] public DocsPageSection ParentSection { get; protected set; }
 
     [Parameter] public RenderFragment ChildContent { get; set; }
-    
+
+    [Inject] public IRenderQueueService QueueService { get; set; }
+
+
     [Parameter(CaptureUnmatchedValues = true)]
     public Dictionary<string, object> UserAttributes { get; set; } = new Dictionary<string, object>();
     
@@ -26,7 +30,7 @@ public partial class DocsPageSection
     {
         base.OnInitialized();
         var count = DocsPage.IncrementSectionCount();
-        _renderImmediately = count < 3;
+        _renderImmediately = count < QueueService.Capacity;
 
         Level = (ParentSection?.Level ?? -1) + 1; 
     }
