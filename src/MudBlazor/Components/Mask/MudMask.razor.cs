@@ -141,7 +141,6 @@ namespace MudBlazor
                         TagName = "INPUT"
                     });
                 _jsEvent.CaretPositionChanged += OnCaretPositionChanged;
-                _jsEvent.Copy += OnCopy;
                 _jsEvent.Paste += OnPaste;
                 _jsEvent.Select += OnSelect;
                 await _keyInterceptor.Connect(_elementId, new KeyInterceptorOptions()

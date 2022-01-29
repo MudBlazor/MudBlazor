@@ -22,7 +22,6 @@ namespace MudBlazor.UnitTests.Services
         public async Task NoSubscriptionWithoutConnectTest()
         {
             var jsevent = new JsEvent(new Mock<IJSRuntime>().Object);
-            Assert.Throws<InvalidOperationException>(() => jsevent.Copy += () => Console.WriteLine());
             Assert.Throws<InvalidOperationException>(() => jsevent.Paste += x => Console.WriteLine(x));
             Assert.Throws<InvalidOperationException>(() => jsevent.CaretPositionChanged += x => Console.WriteLine(x));
             Assert.Throws<InvalidOperationException>(() => jsevent.Select += (x, y) => Console.WriteLine());
@@ -41,22 +40,6 @@ namespace MudBlazor.UnitTests.Services
             await jsevent.Connect("asdf", new JsEventOptions { });
             // second connect is ignored
             await jsevent.Connect("asdf", new JsEventOptions { });
-
-            // copy
-            var copyCount = 0;
-            var copyHandler = new Action(() => copyCount++);
-            jsevent.Copy += copyHandler;
-            // subscribing twice is ignored
-            jsevent.Subscribe("copy");
-            jsevent.OnCopy();
-            copyCount.Should().Be(1);
-            jsevent._subscribedEvents.Should().Contain("copy");
-            jsevent.Copy -= copyHandler;
-            // second remove is ignored
-            jsevent.Copy -= copyHandler;
-            jsevent.OnCopy();
-            copyCount.Should().Be(1);
-            jsevent._subscribedEvents.Should().BeEmpty();
 
             // paste
             var pasteCount = 0;
@@ -114,7 +97,6 @@ namespace MudBlazor.UnitTests.Services
             jsevent.Select += selectHandler;
             jsevent.CaretPositionChanged += caretPositionChangedHandler;
             jsevent.Paste += pasteHandler;
-            jsevent.Copy += copyHandler;
             jsevent.Dispose();
             // second dispose is ignored
             jsevent.Dispose();

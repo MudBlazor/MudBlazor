@@ -185,15 +185,15 @@ class MudJsEvent {
         }
     }
 
-    oncopy(self, e) {
-        const invoke = self._subscribedEvents["copy"];
-        if (invoke) {
-            //self.logger('[MudBlazor | JsEvent] copy (preventing default and stopping propagation)');
-            e.preventDefault();
-            e.stopPropagation();
-            self._dotNetRef.invokeMethodAsync('OnCopy');
-        }
-    }
+    //oncopy(self, e) {
+    //    const invoke = self._subscribedEvents["copy"];
+    //    if (invoke) {
+    //        //self.logger('[MudBlazor | JsEvent] copy (preventing default and stopping propagation)');
+    //        e.preventDefault();
+    //        e.stopPropagation();
+    //        self._dotNetRef.invokeMethodAsync('OnCopy');
+    //    }
+    //}
 
     onpaste(self, e) {
         const invoke = self._subscribedEvents["paste"];

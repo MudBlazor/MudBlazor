@@ -20,7 +20,6 @@ namespace MudBlazor.Services
         Task Disconnect();
         event Action<int> CaretPositionChanged;
         event Action<string> Paste;
-        event Action Copy;
         event Action<int, int> Select;
     }
 
@@ -191,41 +190,6 @@ namespace MudBlazor.Services
             foreach (var handler in _pasteHandlers)
             {
                 handler.Invoke(text);
-            }
-        }
-
-        List<Action> _copyHandlers = new List<Action>();
-
-        /// <summary>
-        /// Subscribe this event to get notified about paste actions
-        /// </summary>
-        public event Action Copy
-        {
-            add
-            {
-                if (_copyHandlers.Count == 0)
-                    Subscribe("copy");
-                _copyHandlers.Add(value);
-            }
-            remove
-            {
-                if (_copyHandlers.Count == 0)
-                    return;
-                if (_copyHandlers.Count == 1)
-                    Unsubscribe("copy").Wait();
-                _copyHandlers.Remove(value);
-            }
-        }
-
-        /// <summary>
-        /// To be invoked only by JS
-        /// </summary>
-        [JSInvokable]
-        public void OnCopy()
-        {
-            foreach (var handler in _copyHandlers)
-            {
-                handler.Invoke();
             }
         }
 
