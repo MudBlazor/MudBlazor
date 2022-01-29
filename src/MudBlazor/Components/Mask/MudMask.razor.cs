@@ -131,7 +131,6 @@ namespace MudBlazor
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
-            //Console.WriteLine("OnAfterRenderAsync");
             if (firstRender)
             {
                 await _jsEvent.Connect(_elementId,
@@ -194,7 +193,6 @@ namespace MudBlazor
                 if (Regex.IsMatch(e.Key, @"^.$"))
                 {
                     Mask.Insert(e.Key);
-                    Console.WriteLine("HandleKeyDown: " + Mask);
                     await Update();
                 }
             }
@@ -247,7 +245,7 @@ namespace MudBlazor
             if (cleanText == text || string.IsNullOrEmpty(cleanText) && string.IsNullOrEmpty(text))
                 return;
             Mask.SetText(text);
-            Console.WriteLine("UpdateTextPropertyAsync: " + Mask);
+            //Console.WriteLine("UpdateTextPropertyAsync: " + Mask);
             await Update();
         }
 
@@ -260,7 +258,7 @@ namespace MudBlazor
             if (Mask.Text == text)
                 return;
             Mask.SetText(text);
-            Console.WriteLine("UpdateValuePropertyAsync: " + Mask);
+            //Console.WriteLine("UpdateValuePropertyAsync: " + Mask);
             await Update();
         }
 
@@ -301,6 +299,10 @@ namespace MudBlazor
         {
             //Console.WriteLine($"Copy: {text}");
             var text = Text;
+            if (Mask.Selection != null)
+            {
+                (_, text, _)=BaseMask.SplitSelection(text, Mask.Selection.Value);
+            }
             _jsApiService.CopyToClipboardAsync(text);
         }
 
@@ -316,13 +318,13 @@ namespace MudBlazor
         public void OnSelect(int start, int end)
         {
             Mask.Selection = _selection = (start, end);
-            Console.WriteLine($"OnSelect: {Mask}");
+            //Console.WriteLine($"OnSelect: {Mask}");
         }
 
         internal void OnFocused(FocusEventArgs obj)
         {
             _isFocused = true;
-            Console.WriteLine($"OnFocused: {Mask}");
+            //Console.WriteLine($"OnFocused: {Mask}");
         }
 
         protected internal override void OnBlurred(FocusEventArgs obj)
@@ -344,13 +346,13 @@ namespace MudBlazor
             _selection = selection;
             if (selection == null)
             {
-                Console.WriteLine("#Setting Caret Position: " + caret);
+                //Console.WriteLine("#Setting Caret Position: " + caret);
                 _elementReference.MudSelectRangeAsync(caret, caret).AndForget();
             }
             else
             {
                 var sel = selection.Value;
-                Console.WriteLine($"#Setting Selection: ({sel.Item1}..{sel.Item2})");
+                //Console.WriteLine($"#Setting Selection: ({sel.Item1}..{sel.Item2})");
                 _elementReference.MudSelectRangeAsync(sel.Item1, sel.Item2).AndForget();
             }
         }
@@ -370,7 +372,7 @@ namespace MudBlazor
                 return;
             Mask.Selection = null;
             Mask.CaretPos = pos;
-            Console.WriteLine($"OnCaretPositionChanged: '{Mask}' ({pos})");
+            //Console.WriteLine($"OnCaretPositionChanged: '{Mask}' ({pos})");
         }
 
         private void SetMask(IMask other)
@@ -392,7 +394,7 @@ namespace MudBlazor
             if (_selection!=null)
                 Mask.Delete();
             await Update();
-            Console.WriteLine($"OnCut: '{Mask}'");
+            //Console.WriteLine($"OnCut: '{Mask}'");
         }
     }
 }

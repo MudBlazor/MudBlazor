@@ -650,7 +650,6 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<MaskedTextFieldTwoWayBindingTest>();
             var tfs=comp.FindComponents<MudTextField<string>>().Select(x=>x.Instance).ToArray();
             var masks = comp.FindComponents<MudMask>().Select(x=>x.Instance).ToArray();
-            Console.WriteLine("##### inputting 123456");
             await comp.InvokeAsync(() => masks[0].OnPaste("123456"));
             masks[0].Mask.ToString().Should().Be("123-456|");
             comp.WaitForAssertion(()=>masks[1].Mask.ToString().Should().Be("12/34/56|"));

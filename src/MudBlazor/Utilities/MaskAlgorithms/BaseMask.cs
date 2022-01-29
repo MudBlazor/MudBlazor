@@ -224,7 +224,7 @@ public abstract class BaseMask : IMask
             sel.Item2 = Text.Length;
     }
 
-    protected static (string, string, string) SplitSelection(string text, (int, int) selection)
+    internal static (string, string, string) SplitSelection(string text, (int, int) selection)
     {
         var start = ConsolidateCaret(text, selection.Item1);
         var end = ConsolidateCaret(text, selection.Item2);
