@@ -85,7 +85,7 @@ namespace MudBlazor
             if (_mask == null)
                 return _elementReference?.SetText(text);
             else
-                return _maskReference.Clear().ContinueWith(t=> _maskReference.OnPaste(text));
+                return _maskReference.Clear().ContinueWith(t => _maskReference.OnPaste(text));
         }
 
 
@@ -93,25 +93,45 @@ namespace MudBlazor
 
         /// <summary>
         /// Provide a masking object. Built-in masks are PatternMask, MultiMask, RegexMask and BlockMask
-        /// Note: when Mask is set, TextField will ignore some properties such as Lines, Pattern or HideSpinButtons.
+        /// Note: when Mask is set, TextField will ignore some properties such as Lines, Pattern or HideSpinButtons, OnKeyDown and OnKeyUp, etc.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.General.Data)]
         public IMask Mask
         {
-            get => _mask;
+            get => _maskReference?.Mask ?? _mask; // this might look strange, but it is absolutely necessary due to how MudMask works.
             set
             {
-                if (_mask == null || value == null || _mask?.GetType() != value?.GetType())
-                {
-                    _mask = value;
-                    return;
-                }
-                // set new mask properties without loosing internal state
-                _mask.UpdateFrom(value);
+                _mask = value;
             }
         }
 
+        protected override Task SetValueAsync(T value, bool updateText = true)
+        {
+            if (_mask != null)
+            {
+                var textValue = Converter.Set(value);
+                _mask.SetText(textValue);
+                textValue=Mask.GetCleanText();
+                value = Converter.Get(textValue);
+            }
+            return base.SetValueAsync(value, updateText);
+        }
+
+        protected override Task SetTextAsync(string text, bool updateValue = true)
+        {
+            if (_mask != null)
+            {
+                _mask.SetText(text);
+                text = _mask.Text;
+            }
+            return base.SetTextAsync(text, updateValue);
+        }
+
+        private async Task OnMaskedValueChanged(string s)
+        {
+            await SetTextAsync(s);
+        }
     }
 
     [Obsolete("MudTextFieldString is no longer available.", true)]

@@ -131,7 +131,7 @@ namespace MudBlazor
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
-            Console.WriteLine("OnAfterRenderAsync");
+            //Console.WriteLine("OnAfterRenderAsync");
             if (firstRender)
             {
                 await _jsEvent.Connect(_elementId,
