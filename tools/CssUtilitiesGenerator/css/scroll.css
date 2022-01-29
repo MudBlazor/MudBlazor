@@ -1,0 +1,53 @@
+.scroll-locked {
+  padding-right: 8px;
+  overflow: hidden;
+}
+.scroll-locked .mud-layout .mud-appbar {
+  padding-right: 8px;
+}
+.scroll-locked .mud-layout .mud-main-content .mud-scroll-to-top {
+  padding-right: 8px;
+}
+
+@-moz-document url-prefix() {
+  .scroll-locked {
+    padding-right: 17px;
+  }
+  .scroll-locked .mud-layout .mud-appbar {
+    padding-right: 17px;
+  }
+  .scroll-locked .mud-layout .mud-main-content .mud-scroll-to-top {
+    padding-right: 17px;
+  }
+}
+.mud-scroll-to-top {
+  position: fixed;
+  cursor: pointer;
+  z-index: 100;
+}
+.mud-scroll-to-top.visible {
+  bottom: 16px;
+  right: 16px;
+  opacity: 1;
+  transition: transform 0.5s;
+  flex: 1;
+}
+.mud-scroll-to-top.hidden {
+  bottom: 16px;
+  right: 16px;
+  opacity: 0;
+  transition: all 0.5s;
+  visibility: hidden;
+  transform: scale(0) rotate(180deg);
+  flex: 0;
+}
+.mud-scroll-to-top:after {
+  content: "";
+  background: transparent;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  position: absolute;
+  z-index: var(--mud-zindex-tooltip);
+}
