@@ -211,12 +211,15 @@
 </DocsPageSection>
 
 <DocsPageSection>
-    <SectionHeader Title="Input Mask">
+    <SectionHeader Title="Mask">
         <Description>
             If you set the <CodeInline>Mask</CodeInline> property, the text field will apply formatting rules or input restrictions on-the-fly 
-            while the user is typing. 
-            Check out the <MudLink Href="features/masking">Masking</MudLink> page for more examples. 
-            <br /><br/>
+            while the user is typing.             
+
+            <MudAlert  Class="my-3" Severity="Severity.Info">
+                Check out the <MudLink Href="features/masking">Masking</MudLink> page for more info and examples. 
+            </MudAlert>
+
             In this example we apply a <CodeInline>PatternMask</CodeInline> with a mask string of 
             <CodeInline>"0000 0000 0000 0000"</CodeInline> prompting for blocks of digits and 
             refusing invalid input. Note how the cursor automatically
