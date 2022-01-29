@@ -1,0 +1,60 @@
+﻿<h3>DropZoneKanbanExample</h3>
+
+<MudItemDropContainer T="KanbanTaskItem" Items="_tasks" ItemsSelector="@((item,column) => item.Status == column)" ItemDropped="TaskUpdated">
+	<ChildContent>
+		@foreach (var item in _columns)
+		{
+			<MudText Typo="Typo.h5">@item</MudText>
+			<MudItemDropZone T="KanbanTaskItem" />
+		}
+	</ChildContent>
+	<ItemRenderer>
+		<MudPaper>@context.Name</MudPaper>
+	</ItemRenderer>
+</MudItemDropContainer>
+
+
+<MudTextField @bind-Value="_newColumnName" Label="New Column" />
+<MudButton OnClick="AddColumn">Add Column</MudButton>
+
+<MudTextField @bind-Value="_newTaskName" Label="New Column" />
+<MudButton OnClick="AddTask">Add Task</MudButton>
+@code {
+
+	/* Setup for the canvas */
+	private List<String> _columns = new() { "Todo", "InProgress", "Done" };
+	public class KanbanTaskItem
+	{
+		public String Name { get; init; }
+		public String Status { get; set; }
+
+		public KanbanTaskItem(String name, String status)
+		{
+			Name = name;
+			Status = status;
+		}
+	}
+
+	private List<KanbanTaskItem> _tasks = new();
+
+	private void TaskUpdated(MudItemDropInfo<KanbanTaskItem> info)
+	{
+		info.Item.Status = info.DropzoneIdentifier;
+	}
+
+	private string _newColumnName;
+	private string _newTaskName;
+
+	private void AddColumn()
+	{
+		_columns.Add(_newColumnName);
+		_newColumnName = String.Empty;
+	}
+
+	private void AddTask()
+	{
+		_tasks.Add(new KanbanTaskItem(_newTaskName, _columns[0]));
+		_newTaskName = String.Empty;
+	}
+
+}
