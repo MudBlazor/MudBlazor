@@ -1,112 +1,60 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
-@inject ISnackbar SnackBar
-
-<style>
-	.drag-active {
-		color: var(--mud-palette-warning);
-	}
-
-	.hidden {
-		display: none;
-	}
-
-	.drop-allowed {
-		background: var(--mud-palette-success-lighten);
-	}
-
-	.drop-not-allowed {
-		background: var(--mud-palette-error-lighten);
-	}
-</style>
-
-<MudDropContainer T="SkyDiver" Class="d-flex flex-row justify-space-around" Style="flex: 1 1 100%">
-	<MudPaper Height="200px" Class="pa-4 d-flex flex-column justify-center align-center">
-		<MudText Typo="Typo.h6">Airbase</MudText>
-		@*<MudDropZone T="SkyDiver" Class="pa-2 mt-2 rounded flex-grow-1">*@
-			@foreach (var item in _skyDiversInBase)
-			{
-				<MudDropItem Item="item" T="SkyDiver"
-						 DraggingClass="drag-active"
-						 HideOnDrag="@_hideOnDrag"
-						 DropGroup="@item.Alliance"
-						 OnDragFinished="RemoveFromSkyBase"
-						 OnDropFailed="RaiseViolationFeedback"
-						 OnDragCancelled="RaiseFeedback">
-					<MudIcon Icon="@Icons.Outlined.Paragliding" />
-				</MudDropItem>
-			}
-		@*</MudDropZone>*@
-	</MudPaper>
-	<MudPaper Height="200px" Class="pa-4 d-flex flex-column justify-center align-center">
-		<MudText Typo="Typo.h6">Denmark</MudText>
-		<MudDropZone T="SkyDiver"
-				
-					 CanDropClass="drop-allowed" NoDropClass="drop-not-allowed"
-					 Class="pa-2 mt-2 rounded flex-grow-1"
-		
-		>
-			@foreach (var item in _denmarksSkyDiver)
-			{
-				<MudChip>@item.Name</MudChip>
-			}
-		</MudDropZone>
-	</MudPaper>
-
-	<MudPaper Height="200px" Class="pa-4 d-flex flex-column justify-center align-center">
-		<MudText Typo="Typo.h6">Finland</MudText>
-		<MudDropZone T="SkyDiver" Class="pa-2 mt-2 rounded flex-grow-1"
-					 CanDropClass="drop-allowed" NoDropClass="drop-not-allowed"
-					 CanDropGroups="@(new []{ "Red" })" ItemDropped="AddSkyDiverToFinland">
-			<MudList>
-				@foreach (var item in _finlandsSkyDiver)
-				{
-					<MudListItem>@item.Name</MudListItem>
-				}
-			</MudList>
-		</MudDropZone>
-	</MudPaper>
+<MudDropContainer T="string" Class="mud-width-full">
+    <MudGrid Spacing="10">
+        <MudItem xs="6">
+            <MudText Typo="Typo.h6">To do</MudText>
+            <MudDropZone T="string" ItemDropped="AddToToDo">
+                @foreach (var item in _todo)
+                {
+                    <MudDropItem Item="item">
+                        <MudPaper Elevation="25" Class="pa-4 my-1">
+                            <MudText>@item</MudText>
+                        </MudPaper>
+                    </MudDropItem>
+                }
+            </MudDropZone>
+        </MudItem>
+        <MudItem xs="6">
+           <MudText Typo="Typo.h6">Done</MudText>
+           <MudDropZone T="string" ItemDropped="AddToDone">
+               @foreach (var item in _done)
+               {
+                   <MudDropItem Item="item">
+                       <MudPaper Elevation="25" Class="pa-4 my-1">
+                           <MudText>@item</MudText>
+                       </MudPaper>
+                   </MudDropItem>
+               }
+           </MudDropZone>     
+        </MudItem>
+    </MudGrid>
 </MudDropContainer>
 
-<MudCheckBox @bind-Checked="_hideOnDrag" Label="Hide during drag" />
-
 @code {
+    private List<string> _done = new();
+    private List<string> _todo = new()
+    {
+        "Fix Bugs", "Read GitHub notifications", "Finish roadmap"
+    };
 
-	private bool _hideOnDrag = false;
+    private void RemoveFromDone(string item)
+    {
+        _done.Remove(item);
+    }
+    
+    private void RemoveFromToDo(string item)
+    {
+        _todo.Remove(item);
+    }
+    
+    private void AddToDone(string item)
+    {
+        _done.Add(item);
+    }
 
-	public record SkyDiver(string Name, string Alliance, int NumberOfJumps);
-
-	private List<SkyDiver> _skyDiversInBase = new()
-		{
-			new SkyDiver("Jonny", "Red", 10),
-			new SkyDiver("Benno", "Green", 0),
-			new SkyDiver("Mike", "Green", 25)
-		};
-
-	private List<SkyDiver> _denmarksSkyDiver = new();
-	private List<SkyDiver> _finlandsSkyDiver = new();
-
-	private void RemoveFromSkyBase(SkyDiver diver) => _skyDiversInBase.Remove(diver);
-	private void AddSkyDiverToDenmark(SkyDiver diver)
-	{
-		_denmarksSkyDiver.Add(diver);
-		SnackBar.Add($"{diver.Name} arrived at Denmark", Severity.Success);
-	}
-
-	private void AddSkyDiverToFinland(SkyDiver diver)
-	{
-		SnackBar.Add($"{diver.Name} arrived at Finland", Severity.Success);
-		_finlandsSkyDiver.Add(diver);
-	}
-
-	private void RaiseFeedback(SkyDiver diver)
-	{
-		SnackBar.Add($"{diver.Name} hasn't reached their goal", Severity.Warning);
-	}
-
-	private void RaiseViolationFeedback(SkyDiver diver)
-	{
-		SnackBar.Add($"{diver.Name} tried to enter forbidden area", Severity.Error);
-	}
-
+    private void AddToToDo(string item)
+    {
+        _todo.Add(item);
+    }
 }
