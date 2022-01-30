@@ -1,11 +1,17 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
+<style>
+	.blub23 {
+		opacity: 0;
+	}
+</style>
+
 <MudItemDropContainer T="DropItem" Items="_items" ItemsSelector="@((item,dropzone) => item.Identifier == dropzone)" ItemDropped="ItemUpdated" Class="d-flex">
     <ChildContent>
-        <MudItemDropZone T="DropItem" Identifier="Drop Zone 1" Class="mx-8">
+        <MudItemDropZone T="DropItem" Identifier="Drop Zone 1" Class="mx-8" HideItemOnDrag="true">
             <MudText Typo="Typo.h6" Class="mb-4">Drop Zone 1</MudText>
         </MudItemDropZone>
-        <MudItemDropZone T="DropItem" Identifier="Drop Zone 2" Class="mx-8">
+        <MudItemDropZone T="DropItem" Identifier="Drop Zone 2" Class="mx-8" HideItemOnDrag="true">
             <MudText Typo="Typo.h6" Class="mb-4">Drop Zone 2</MudText>
         </MudItemDropZone>
     </ChildContent>

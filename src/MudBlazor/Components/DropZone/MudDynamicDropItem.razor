@@ -2,11 +2,10 @@
 @inherits MudComponentBase
 @typeparam T
 
-<div 
-	class="@Classname" style="@Style"
-	draggable="true"
-    @ondragstart="DragStarted"
-	@ondragend="DragEnded"
-	@attributes="UserAttributes">
-    @ChildContent
+<div @key="_id" class="@Classname" style="@Style"
+	 @attributes="UserAttributes">
+	<div  draggable="true" @ondragstart="DragStarted"
+		 @ondragend="DragEnded">
+		@ChildContent
+	</div>
 </div>

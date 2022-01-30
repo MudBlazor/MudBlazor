@@ -50,7 +50,14 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Button.Appearance)]
-        public string DraggingClass { get; set; }
+        public string DraggingClass2 { get; set; }
+
+        /// <summary>
+        /// A additional class that is applied, when an item from this dropzone is dragged
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Button.Appearance)]
+        public string ItemDraggingClass { get; set; }
 
         private IEnumerable<T> GetItems()
         {
@@ -72,11 +79,39 @@ namespace MudBlazor
         private bool _canDrop = false;
         private bool _itemOnDropZone = false;
 
+        private String GetDragginClass()
+        {
+            if(String.IsNullOrEmpty(DraggingClass2) == true)
+            {
+                return Container?.DraggingClass ?? String.Empty;
+            }
+
+            return DraggingClass2;
+        }
+
+        private String GetItemDraggingClass()
+        {
+            if (String.IsNullOrEmpty(ItemDraggingClass) == true)
+            {
+                return Container?.ItemDraggingClass ?? String.Empty;
+            }
+
+            return DraggingClass2;
+        }
+
+        [Parameter]
+        public String MyBetterDraggingClass { get; set; }
+
+
+        [Parameter]
+        public Boolean ApplyDropClassesOnDragStarted { get; set; } = true;
+
+
         protected string Classname =>
             new CssBuilder("mud-drop-zone")
                 .AddClass(CanDropClass, _canDrop == true && _itemOnDropZone == true)
                 .AddClass(NoDropClass, _canDrop == false && _itemOnDropZone == true)
-            .AddClass(DraggingClass ?? Container?.DraggingClass, _dragInProgress == true)
+                .AddClass(GetDragginClass(), _dragInProgress == true)
                 .AddClass(Class)
                 .Build();
 
@@ -167,7 +202,20 @@ namespace MudBlazor
 
         private bool _dragInProgress = false;
 
-        private void FinishedDragOperation() => _dragInProgress = false;
-        private void DragOperationStarted() => _dragInProgress = true;
+        private void FinishedDragOperation()
+        {
+            Console.WriteLine("DragOperationFinished");
+            _dragInProgress = false;
+        }
+
+        private void DragOperationStarted()
+        {
+            Console.WriteLine($"DragOperationStarted: {GetDragginClass()}");
+            Console.WriteLine($"DraggingClass: {DraggingClass2}");
+            Console.WriteLine($"ContainerClass: {Container?.DraggingClass}");
+
+            _dragInProgress = true;
+        }
+
     }
 }

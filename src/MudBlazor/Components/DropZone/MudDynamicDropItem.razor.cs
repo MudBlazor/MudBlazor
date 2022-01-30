@@ -18,7 +18,7 @@ public partial class MudDynamicDropItem<T> : MudComponentBase
     protected string Classname =>
         new CssBuilder("mud-drop-item")
             .AddClass(DraggingClass, string.IsNullOrWhiteSpace(DraggingClass) == false && _dragOperationIsInProgress == true)
-            .AddClass("hidden", HideOnDrag == true && _dragOperationIsInProgress == true)
+            .AddClass("blub23", HideOnDrag == true && _dragOperationIsInProgress == true)
             .AddClass(Class)
             .Build();
 
@@ -59,7 +59,7 @@ public partial class MudDynamicDropItem<T> : MudComponentBase
 
     [Parameter]
     [Category(CategoryTypes.Button.Behavior)]
-    public EventCallback<T> OnDragFinished { get; set; }
+    public EventCallback<T> OnDragSuccess { get; set; }
 
     [Parameter]
     [Category(CategoryTypes.Button.Behavior)]
@@ -71,21 +71,27 @@ public partial class MudDynamicDropItem<T> : MudComponentBase
 
     [Parameter]
     [Category(CategoryTypes.Button.Behavior)]
+    public EventCallback<T> OnDragEnded { get; set; }
+
+    [Parameter]
+    [Category(CategoryTypes.Button.Behavior)]
     public string DropGroup { get; set; }
 
-    private void DragStarted()
+    private async Task DragStarted()
     {
         if (Container == null) { return; }
 
         _dragOperationIsInProgress = true;
         Container.StartTransaction(Item, DropGroup ?? string.Empty, OnDroppedSucceeded, OnDroppedCanceled);
+        await OnDragStarted.InvokeAsync();
     }
 
     private async Task OnDroppedSucceeded()
     {
         _dragOperationIsInProgress = false;
 
-        await OnDragFinished.InvokeAsync(this.Item);
+        await OnDragSuccess.InvokeAsync(Item);
+        await OnDragEnded.InvokeAsync(Item);
         StateHasChanged();
     }
 
@@ -94,16 +100,22 @@ public partial class MudDynamicDropItem<T> : MudComponentBase
         _dragOperationIsInProgress = false;
 
         await OnDropFailed.InvokeAsync(this.Item);
+        await OnDragEnded.InvokeAsync(Item);
         StateHasChanged();
     }
 
     private async Task DragEnded(DragEventArgs e)
     {
-        if (_dragOperationIsInProgress == false) { return; }
-
-        _dragOperationIsInProgress = false;
-
-        await OnDragCancelled.InvokeAsync(Item);
-        StateHasChanged();
+        if (_dragOperationIsInProgress == true)
+        {
+            _dragOperationIsInProgress = false;
+            await OnDragCancelled.InvokeAsync();
+        }
+        else
+        {
+            await OnDragEnded.InvokeAsync(Item);
+        }
     }
+
+    private Guid _id = Guid.NewGuid();
 }

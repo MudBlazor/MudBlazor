@@ -114,5 +114,12 @@ namespace MudBlazor
             await context.Commit();
             await ItemDropped.InvokeAsync(new MudItemDropInfo<T>(context.Item, dropzoneIdentifier));
         }
+
+        /// <summary>
+        /// A additional class that is applied, when an item from this dropzone is dragged
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Button.Appearance)]
+        public string ItemDraggingClass { get; set; }
     }
 }
