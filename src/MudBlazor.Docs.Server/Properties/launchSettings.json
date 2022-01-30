@@ -11,7 +11,7 @@
     "MudBlazor.Docs.Server": {
       "commandName": "Project",
       "launchBrowser": true,
-      "launchUrl": "/docs/overview",
+      "launchUrl": "docs/overview",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
         "APIBASE": "https://localhost:5001/"
@@ -23,6 +23,7 @@
     "IIS Express": {
       "commandName": "IISExpress",
       "launchBrowser": true,
+      "launchUrl": "docs/overview",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
         "APIBASE": "https://localhost:44399/"

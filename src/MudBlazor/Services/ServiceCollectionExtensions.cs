@@ -134,6 +134,17 @@ namespace MudBlazor.Services
         }
 
         /// <summary>
+        /// Adds JsEvent as a Transient instance.
+        /// </summary>
+        /// <param name="services">IServiceCollection</param>
+        /// <returns>Continues the IServiceCollection chain.</returns>
+        public static IServiceCollection AddMudBlazorJsEvent(this IServiceCollection services)
+        {
+            services.TryAddTransient<IJsEvent, JsEvent>();
+            return services;
+        }
+
+        /// <summary>
         /// Adds ScrollManager as a transient instance.
         /// </summary>
         /// <param name="services">IServiceCollection</param>
@@ -227,6 +238,7 @@ namespace MudBlazor.Services
                 .AddMudBlazorResizeObserver(configuration.ResizeObserverOptions)
                 .AddMudBlazorResizeObserverFactory()
                 .AddMudBlazorKeyInterceptor()
+                .AddMudBlazorJsEvent()
                 .AddMudBlazorScrollManager()
                 .AddMudBlazorScrollListener()
                 .AddMudBlazorJsApi()
@@ -254,6 +266,7 @@ namespace MudBlazor.Services
                 .AddMudBlazorResizeObserver(options.ResizeObserverOptions)
                 .AddMudBlazorResizeObserverFactory()
                 .AddMudBlazorKeyInterceptor()
+                .AddMudBlazorJsEvent()
                 .AddMudBlazorScrollManager()
                 .AddMudBlazorScrollListener()
                 .AddMudBlazorJsApi()

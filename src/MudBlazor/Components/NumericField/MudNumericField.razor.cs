@@ -140,7 +140,7 @@ namespace MudBlazor
             return base.SetValueAsync(value, valueChanged || updateText);
         }
 
-        protected override async void OnBlurred(FocusEventArgs obj)
+        protected internal override async void OnBlurred(FocusEventArgs obj)
         {
             base.OnBlurred(obj);
             await UpdateValuePropertyAsync(true); //Required to set the value after a blur before the debounce period has elapsed
