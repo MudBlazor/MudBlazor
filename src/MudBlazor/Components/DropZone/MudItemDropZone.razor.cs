@@ -27,6 +27,10 @@ namespace MudBlazor
         [Category(CategoryTypes.Button.Behavior)]
         public RenderFragment<T> ItemRenderer { get; set; }
 
+        [Parameter]
+        [Category(CategoryTypes.Button.Behavior)]
+        public RenderFragment ChildContent { get; set; }
+
         /// <summary>
         /// The method is used to determinate if an item can be dropped within a drop zone
         /// </summary>
@@ -42,7 +46,7 @@ namespace MudBlazor
                 predicate = ItemsSelector;
             }
 
-            predicate = (item) => Container.ItemsSelector(item, Identifier);
+            predicate = (item) => Container.ItemsSelector(item, Identifier ?? String.Empty);
 
             return Container.Items.Where(predicate).ToArray();
         }
@@ -136,7 +140,7 @@ namespace MudBlazor
             _itemOnDropZone = false;
         }
 
-        private void HandleDrop()
+        private async Task HandleDrop()
         {
             var (context, isValidZone) = ItemCanBeDropped();
             if (context == null)
@@ -152,7 +156,7 @@ namespace MudBlazor
                 return;
             }
 
-             context.Commit();
+            await Container.CommitTransaction(context, Identifier);
         }
 
     }

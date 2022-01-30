@@ -35,8 +35,14 @@ namespace MudBlazor
 
     public class MudItemDropInfo<T>
     {
-        public T Item { get; set; }
-        public string DropzoneIdentifier { get; set; }
+        public T Item { get; private set; }
+        public string DropzoneIdentifier { get; private set; }
+
+        public MudItemDropInfo(T item, String identifier)
+        {
+            Item = item;
+            DropzoneIdentifier = identifier;
+        }
     }
 
     public partial class MudItemDropContainer<T> : MudComponentBase
@@ -96,5 +102,12 @@ namespace MudBlazor
 
         public bool TransactionInProgress() => _transaction != null;
 
+        internal async Task CommitTransaction(DragAndDropItemTransaction<T> context, string dropzoneIdentifier)
+        {
+            context.Commit();
+            await ItemDropped.InvokeAsync(new MudItemDropInfo<T>(context.Item, dropzoneIdentifier));
+
+
+        }
     }
 }

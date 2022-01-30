@@ -1,27 +1,43 @@
-﻿<h3>DropZoneKanbanExample</h3>
+﻿@namespace MudBlazor.Docs.Examples
 
-<MudItemDropContainer T="KanbanTaskItem" Items="_tasks" ItemsSelector="@((item,column) => item.Status == column)" ItemDropped="TaskUpdated">
-	<ChildContent>
-		@foreach (var item in _columns)
-		{
-			<MudText Typo="Typo.h5">@item</MudText>
-			<MudItemDropZone T="KanbanTaskItem" />
-		}
-	</ChildContent>
-	<ItemRenderer>
-		<MudPaper>@context.Name</MudPaper>
-	</ItemRenderer>
-</MudItemDropContainer>
+<div class="d-flex flex-column" style="width: 100%;">
+	<MudItemDropContainer T="KanbanTaskItem" Items="_tasks" ItemsSelector="@((item,column) => item.Status == column)" ItemDropped="TaskUpdated" Class="d-flex flex-row justify-space-around" Style="flex: 1 1 100%">
+		<ChildContent>
+			@foreach (var item in _columns)
+			{
+				<MudPaper Height="200px" Class="pa-4 d-flex">
+					<MudItemDropZone T="KanbanTaskItem" Identifier="@item">
+						<MudText Typo="Typo.h5">@item</MudText>
+					</MudItemDropZone>
+				</MudPaper>
+			}
+		</ChildContent>
+		<ItemRenderer>
+			<MudPaper>@context.Name</MudPaper>
+		</ItemRenderer>
+	</MudItemDropContainer>
+	<MudGrid>
+		<MudItem xs="12" md="6">
+			<MudTextField @bind-Value="_newColumnName" Label="New Column Name" />
+			<MudButton OnClick="AddColumn">Add Column</MudButton>
+		</MudItem>
+		<MudItem xs="12" md="6">
+			<MudTextField @bind-Value="_newTaskName" Label="New Task Name" />
+			<MudButton OnClick="AddTask">Add Task</MudButton>
+		</MudItem>
+	</MudGrid>
+</div>
 
 
-<MudTextField @bind-Value="_newColumnName" Label="New Column" />
-<MudButton OnClick="AddColumn">Add Column</MudButton>
-
-<MudTextField @bind-Value="_newTaskName" Label="New Column" />
-<MudButton OnClick="AddTask">Add Task</MudButton>
 @code {
 
-	/* Setup for the canvas */
+	/* handling board events */
+	private void TaskUpdated(MudItemDropInfo<KanbanTaskItem> info)
+	{
+		info.Item.Status = info.DropzoneIdentifier;
+	}
+
+	/* Setup for board  */
 	private List<String> _columns = new() { "Todo", "InProgress", "Done" };
 	public class KanbanTaskItem
 	{
@@ -35,12 +51,14 @@
 		}
 	}
 
-	private List<KanbanTaskItem> _tasks = new();
+	private List<KanbanTaskItem> _tasks = new()
+		{
+			new KanbanTaskItem("Write unit test", "Todo"),
+			new KanbanTaskItem("Some docu stuff", "Todo"),
+			new KanbanTaskItem("Walking the dog", "Todo"),
+		};
 
-	private void TaskUpdated(MudItemDropInfo<KanbanTaskItem> info)
-	{
-		info.Item.Status = info.DropzoneIdentifier;
-	}
+
 
 	private string _newColumnName;
 	private string _newTaskName;

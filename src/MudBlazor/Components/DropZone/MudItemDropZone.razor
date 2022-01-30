@@ -2,24 +2,26 @@
 @inherits MudComponentBase
 @typeparam T
 
-<div 
-	class="@Classname" style="@Style" 
-	ondragover="event.preventDefault();" ondragstart="event.dataTransfer.setData('', event.target.id);"
-        @ondrop="HandleDrop"
-        @ondragenter="HandleDragEnter"
-        @ondragleave="HandleDragLeave"
-@attributes="UserAttributes">
-   @foreach(var item in GetItems())
-   {
-		<MudDynamicDropItem T=T Item="item">
+<div class="@Classname" style="@Style"
+	 ondragover="event.preventDefault();" ondragstart="event.dataTransfer.setData('', event.target.id);"
+	 @ondrop="HandleDrop"
+	 @ondragenter="HandleDragEnter"
+	 @ondragleave="HandleDragLeave"
+	 @attributes="UserAttributes">
+
+	@ChildContent
+	
+	@foreach (var item in GetItems())
+	{
+		<MudDynamicDropItem T="T" Item="item">
 			@{
 				var renderer = GetItemTemplate();
 			}
 
-			@renderer(item);
+			@renderer(item)
 
 		</MudDynamicDropItem>
-   }
+	}
 </div>
 
 @code {
