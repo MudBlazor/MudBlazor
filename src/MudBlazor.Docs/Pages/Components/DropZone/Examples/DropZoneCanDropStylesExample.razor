@@ -1,0 +1,37 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudItemDropContainer T="DropItem" Items="_items" ItemsSelector="@((item,dropzone) => item.Identifier == dropzone)" ItemDropped="ItemUpdated" Class="d-flex">
+    <ChildContent>
+        <MudItemDropZone T="DropItem" Identifier="Fridge" Class="mx-8 pa-4 docs-gray-bg rounded">
+            <MudText Typo="Typo.h6" Class="mb-4">Fridge</MudText>
+        </MudItemDropZone>
+        <MudItemDropZone T="DropItem" Identifier="Trash" ItemsSelector="@((item) => item.Rotten == false)" CanDropClass="mud-theme-success" NoDropClass="mud-theme-error" Class="mx-8 pa-4 docs-gray-bg rounded">
+            <MudText Typo="Typo.h6" Class="mb-4">Trash</MudText>
+        </MudItemDropZone>
+    </ChildContent>
+    <ItemRenderer>
+        <MudPaper Elevation="25" Class="pa-4 my-2">
+            <MudText Color="@(context.Rotten? Color.Success : Color.Default)">@context.Name</MudText>
+        </MudPaper>
+    </ItemRenderer>
+</MudItemDropContainer>
+
+@code {
+    private void ItemUpdated(MudItemDropInfo<DropItem> dropItem)
+    {
+        dropItem.Item.Identifier = dropItem.DropzoneIdentifier;
+    }
+    
+    private List<DropItem> _items = new()
+    {
+        new DropItem(){ Name = "Tomato", Rotten = false, Identifier = "Fridge" },
+        new DropItem(){ Name = "Tomato", Rotten = true, Identifier = "Fridge" },
+    };
+    
+    public class DropItem
+    {
+        public string Name { get; init; }
+        public bool Rotten { get; set; }
+        public string Identifier { get; set; }
+    }
+}

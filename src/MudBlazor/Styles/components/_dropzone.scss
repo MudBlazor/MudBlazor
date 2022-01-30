@@ -1,6 +1,6 @@
 ﻿
 .mud-drop-zone{
-  background-color: var(--mud-palette-action-default-hover);
+  
 }
 
 .mud-drop-zone-can-drop{
@@ -9,4 +9,12 @@
 
 .mud-drop-zone-no-drop{
   background-color: var(--mud-palette-error-hover);
+}
+
+.mud-drop-item{
+  cursor: grab;
+  
+  &:active{
+    cursor: grabbing;
+  }
 }

@@ -2,10 +2,10 @@
 
 <MudItemDropContainer T="DropItem" Items="_items" ItemsSelector="@((item,dropzone) => item.Identifier == dropzone)" ItemDropped="ItemUpdated" Class="d-flex">
     <ChildContent>
-        <MudItemDropZone T="DropItem" Identifier="Drop Zone 1" Class="mx-8 pa-4 docs-gray-bg rounded">
+        <MudItemDropZone T="DropItem" Identifier="Drop Zone 1" Class="mx-8">
             <MudText Typo="Typo.h6" Class="mb-4">Drop Zone 1</MudText>
         </MudItemDropZone>
-        <MudItemDropZone T="DropItem" Identifier="Drop Zone 2" Class="mx-8 pa-4 docs-gray-bg rounded">
+        <MudItemDropZone T="DropItem" Identifier="Drop Zone 2" Class="mx-8">
             <MudText Typo="Typo.h6" Class="mb-4">Drop Zone 2</MudText>
         </MudItemDropZone>
     </ChildContent>
@@ -22,9 +22,7 @@
     
     private List<DropItem> _items = new()
     {
-        new DropItem(){ Name = "Drag me!", Identifier = "Drop Zone 1" },
-        new DropItem(){ Name = "Or me!", Identifier = "Drop Zone 2" },
-        new DropItem(){ Name = "Just Mud", Identifier = "Drop Zone 1" },
+        new DropItem(){ Name = "I will disappear on drag!", Identifier = "Drop Zone 1" },
     };
     
     public class DropItem

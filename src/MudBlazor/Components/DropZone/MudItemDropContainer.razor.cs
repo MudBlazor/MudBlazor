@@ -48,7 +48,7 @@ namespace MudBlazor
     public partial class MudItemDropContainer<T> : MudComponentBase
     {
         protected string Classname =>
-        new CssBuilder("mud-drop-cotainer")
+        new CssBuilder("mud-drop-container")
             .AddClass(Class)
             .Build();
 
