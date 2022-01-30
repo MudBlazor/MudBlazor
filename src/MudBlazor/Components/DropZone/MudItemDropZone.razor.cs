@@ -38,6 +38,20 @@ namespace MudBlazor
         [Category(CategoryTypes.Button.Behavior)]
         public Func<T, bool> ItemsSelector { get; set; }
 
+        /// <summary>
+        /// The method is used to determinate if an item can be dropped within a drop zone
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Button.Appearance)]
+        public bool HideItemOnDrag { get; set; }
+
+        /// <summary>
+        /// A additional class that is applied, when an item from this dropzone is dragged
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Button.Appearance)]
+        public string DraggingClass { get; set; }
+
         private IEnumerable<T> GetItems()
         {
             Func<T, bool> predicate = null;
@@ -62,8 +76,16 @@ namespace MudBlazor
             new CssBuilder("mud-drop-zone")
                 .AddClass(CanDropClass, _canDrop == true && _itemOnDropZone == true)
                 .AddClass(NoDropClass, _canDrop == false && _itemOnDropZone == true)
+            .AddClass(DraggingClass ?? Container?.DraggingClass, _dragInProgress == true)
                 .AddClass(Class)
                 .Build();
+
+        /// <summary>
+        /// The method is used to determinate if an item can be dropped within a drop zone
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Button.Behavior)]
+        public Func<T, bool> CanDrop { get; set; }
 
         /// <summary>
         /// The CSS class to use if valid drop.
@@ -79,15 +101,6 @@ namespace MudBlazor
         [Category(CategoryTypes.DropZone.Appearance)]
         public string NoDropClass { get; set; }
 
-        /// <summary>
-        /// The CSS class to use if an item from this zone is being dragged.
-        /// </summary>
-        [Parameter]
-        [Category(CategoryTypes.DropZone.Appearance)]
-        public string DraggingClass { get; set; }
-
-
-
         private (DragAndDropItemTransaction<T>, bool) ItemCanBeDropped()
         {
             if (Container == null || Container.TransactionInProgress() == false)
@@ -96,20 +109,13 @@ namespace MudBlazor
             }
 
             var context = Container.GetContext();
-            //if (string.IsNullOrEmpty(context.DropGroup) == false)
-            //{
-            //    var groups = CanDropGroups ?? Array.Empty<string>();
-            //    if (groups.Any() == true)
-            //    {
-            //        if (groups.Any(x => x == context.DropGroup) == false)
-            //        {
-            //            return (context, false);
-            //        }
-            //    }
-            //}
 
             var result = true;
-            if (Container.CanDrop != null)
+            if (CanDrop != null)
+            {
+                result = CanDrop(context.Item);
+            }
+            else if (Container.CanDrop != null)
             {
                 result = Container.CanDrop(context.Item, Identifier);
             }
@@ -152,12 +158,16 @@ namespace MudBlazor
 
             if (isValidZone == false)
             {
-                context.Cancel();
+                await context.Cancel();
                 return;
             }
 
             await Container.CommitTransaction(context, Identifier);
         }
 
+        private bool _dragInProgress = false;
+
+        private void FinishedDragOperation() => _dragInProgress = false;
+        private void DragOperationStarted() => _dragInProgress = true;
     }
 }

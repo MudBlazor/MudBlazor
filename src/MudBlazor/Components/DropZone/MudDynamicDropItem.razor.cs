@@ -53,17 +53,21 @@ public partial class MudDynamicDropItem<T> : MudComponentBase
     [Category(CategoryTypes.Button.Behavior)]
     public T Item { get; set; }
 
-    //[Parameter]
-    //[Category(CategoryTypes.Button.Behavior)]
-    //public EventCallback<T> OnDragFinished { get; set; }
+    [Parameter]
+    [Category(CategoryTypes.Button.Behavior)]
+    public EventCallback<T> OnDragStarted { get; set; }
 
-    //[Parameter]
-    //[Category(CategoryTypes.Button.Behavior)]
-    //public EventCallback<T> OnDragCancelled { get; set; }
+    [Parameter]
+    [Category(CategoryTypes.Button.Behavior)]
+    public EventCallback<T> OnDragFinished { get; set; }
 
-    //[Parameter]
-    //[Category(CategoryTypes.Button.Behavior)]
-    //public EventCallback<T> OnDropFailed { get; set; }
+    [Parameter]
+    [Category(CategoryTypes.Button.Behavior)]
+    public EventCallback<T> OnDragCancelled { get; set; }
+
+    [Parameter]
+    [Category(CategoryTypes.Button.Behavior)]
+    public EventCallback<T> OnDropFailed { get; set; }
 
     [Parameter]
     [Category(CategoryTypes.Button.Behavior)]
@@ -77,29 +81,29 @@ public partial class MudDynamicDropItem<T> : MudComponentBase
         Container.StartTransaction(Item, DropGroup ?? string.Empty, OnDroppedSucceeded, OnDroppedCanceled);
     }
 
-    private void OnDroppedSucceeded()
+    private async Task OnDroppedSucceeded()
     {
         _dragOperationIsInProgress = false;
 
-        //await OnDragFinished.InvokeAsync(this.Item);
+        await OnDragFinished.InvokeAsync(this.Item);
         StateHasChanged();
     }
 
-    private void OnDroppedCanceled()
+    private async Task OnDroppedCanceled()
     {
         _dragOperationIsInProgress = false;
 
-        //await OnDropFailed.InvokeAsync(this.Item);
+        await OnDropFailed.InvokeAsync(this.Item);
         StateHasChanged();
     }
 
-    private void DragEnded(DragEventArgs e)
+    private async Task DragEnded(DragEventArgs e)
     {
         if (_dragOperationIsInProgress == false) { return; }
 
         _dragOperationIsInProgress = false;
 
-        //await OnDragCancelled.InvokeAsync(Item);
+        await OnDragCancelled.InvokeAsync(Item);
         StateHasChanged();
     }
 }

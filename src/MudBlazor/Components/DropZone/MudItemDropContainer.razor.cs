@@ -14,13 +14,13 @@ namespace MudBlazor
 {
     public class DragAndDropItemTransaction<T>
     {
-        private Action _commitCallback;
-        private Action _cancelCallback;
+        private Func<Task> _commitCallback;
+        private Func<Task> _cancelCallback;
 
         public T Item { get; set; }
         public string DropGroup { get; set; }
 
-        public DragAndDropItemTransaction(T item, string dropGroup, Action commitCallback, Action cancelCallback)
+        public DragAndDropItemTransaction(T item, string dropGroup, Func<Task> commitCallback, Func<Task> cancelCallback)
         {
             Item = item;
             DropGroup = dropGroup;
@@ -29,8 +29,8 @@ namespace MudBlazor
             _cancelCallback = cancelCallback;
         }
 
-        public void Cancel() => _cancelCallback.Invoke();
-        public void Commit() => _commitCallback.Invoke();
+        public async Task Cancel() => await _cancelCallback.Invoke();
+        public async Task Commit() => await _commitCallback.Invoke();
     }
 
     public class MudItemDropInfo<T>
@@ -91,9 +91,16 @@ namespace MudBlazor
         [Category(CategoryTypes.Button.Behavior)]
         public Func<T, string, bool> ItemsSelector { get; set; }
 
+        /// <summary>
+        /// A additional class that is applied, when an item from this dropzone is dragged
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Button.Appearance)]
+        public string DraggingClass { get; set; }
+
         private DragAndDropItemTransaction<T> _transaction;
 
-        public void StartTransaction(T item, string dropGroup, Action commitCallback, Action cancelCallback)
+        public void StartTransaction(T item, string dropGroup, Func<Task> commitCallback, Func<Task> cancelCallback)
         {
             _transaction = new DragAndDropItemTransaction<T>(item, dropGroup, commitCallback, cancelCallback);
         }
@@ -104,10 +111,8 @@ namespace MudBlazor
 
         internal async Task CommitTransaction(DragAndDropItemTransaction<T> context, string dropzoneIdentifier)
         {
-            context.Commit();
+            await context.Commit();
             await ItemDropped.InvokeAsync(new MudItemDropInfo<T>(context.Item, dropzoneIdentifier));
-
-
         }
     }
 }
