@@ -1,0 +1,40 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudItemDropContainer T="FileItem" ItemIsDisbaled="@( (item) => item.IsReadOnly == true)"  Items="_items" ItemsSelector="@((item,dropzone) => item.TransferSlot == dropzone)"  ItemDropped="ItemUpdated" Class="d-flex">
+	<ChildContent>
+		<MudItemDropZone T="FileItem" Identifier="My" Class="mx-8 pa-4 docs-gray-bg rounded">
+			<MudText Typo="Typo.h6" Class="mb-4">My files</MudText>
+		</MudItemDropZone>
+		<MudItemDropZone T="FileItem" Identifier="Remote" Class="mx-8 pa-4 docs-gray-bg rounded">
+			<MudText Typo="Typo.h6" Class="mb-4">Remote Files</MudText>
+		</MudItemDropZone>
+	</ChildContent>
+	<ItemRenderer>
+		<MudPaper Elevation="25" Class="pa-4 my-2">
+			<MudText Color="@(context.IsReadOnly? Color.Success : Color.Default)">@context.Name</MudText>
+		</MudPaper>
+	</ItemRenderer>
+</MudItemDropContainer>
+
+
+@code {
+
+	private void ItemUpdated(MudItemDropInfo<FileItem> dropItem)
+	{
+		dropItem.Item.TransferSlot = dropItem.DropzoneIdentifier;
+	}
+
+	private List<FileItem> _items = new()
+		{
+			new FileItem() { Name = "File1.txt", IsReadOnly = false, TransferSlot = "My" },
+			new FileItem() { Name = "File2.txt", IsReadOnly = false, TransferSlot = "Remote" },
+			new FileItem() { Name = "File3.txt", IsReadOnly = true, TransferSlot = "My" },
+		};
+
+	public class FileItem
+	{
+		public string Name { get; init; }
+		public bool IsReadOnly { get; set; }
+		public string TransferSlot { get; set; }
+	}
+}

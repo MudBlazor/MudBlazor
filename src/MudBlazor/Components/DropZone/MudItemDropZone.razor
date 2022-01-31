@@ -19,6 +19,7 @@
 			OnDragStarted="DragOperationStarted" 
 			OnDragEnded="FinishedDragOperation"
 			ZoneIdentifier="@Identifier"
+			Disabled="@GetItemDisabledStatus(item)"
 		>
 			@{
 				var renderer = GetItemTemplate();

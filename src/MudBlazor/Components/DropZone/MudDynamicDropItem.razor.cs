@@ -72,7 +72,10 @@ public partial class MudDynamicDropItem<T> : MudComponentBase
     [Parameter]
     [Category(CategoryTypes.Button.Behavior)]
     public string ZoneIdentifier { get; set; }
-    
+
+    [Parameter]
+    [Category(CategoryTypes.Button.Behavior)]
+    public bool Disabled { get; set; }
 
     private async Task DragStarted()
     {

@@ -153,5 +153,9 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.DropZone.Appearance)]
         public string NoDropClass { get; set; }
+
+        [Parameter]
+        [Category(CategoryTypes.DropZone.Appearance)]
+        public Func<T,bool> ItemIsDisbaled { get; set; }
     }
 }

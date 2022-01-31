@@ -134,6 +134,22 @@ namespace MudBlazor
         [Category(CategoryTypes.DropZone.Appearance)]
         public string NoDropClass { get; set; }
 
+        [Parameter]
+        [Category(CategoryTypes.DropZone.Appearance)]
+        public Func<T, bool> ItemIsDisbaled { get; set; }
+
+        private bool GetItemDisabledStatus(T item)
+        {
+            var result = false;
+            var predicate = ItemIsDisbaled ?? Container?.ItemIsDisbaled;
+            if (predicate != null)
+            {
+                result = predicate(item);
+            }
+
+            return result;
+        }
+
         private bool _containerIsInitilized;
 
         protected override void OnParametersSet()
@@ -252,6 +268,7 @@ namespace MudBlazor
                 _disposedValue = true;
             }
         }
+
 
         public void Dispose()
         {
