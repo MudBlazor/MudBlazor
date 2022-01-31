@@ -63,10 +63,6 @@ public partial class MudDynamicDropItem<T> : MudComponentBase
 
     [Parameter]
     [Category(CategoryTypes.Button.Behavior)]
-    public EventCallback<T> OnDragCancelled { get; set; }
-
-    [Parameter]
-    [Category(CategoryTypes.Button.Behavior)]
     public EventCallback<T> OnDropFailed { get; set; }
 
     [Parameter]
@@ -109,7 +105,7 @@ public partial class MudDynamicDropItem<T> : MudComponentBase
         if (_dragOperationIsInProgress == true)
         {
             _dragOperationIsInProgress = false;
-            await OnDragCancelled.InvokeAsync();
+            await Container?.CancelTransaction();
         }
         else
         {

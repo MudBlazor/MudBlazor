@@ -100,19 +100,32 @@ namespace MudBlazor
 
         private DragAndDropItemTransaction<T> _transaction;
 
+        public event EventHandler<DragAndDropItemTransaction<T>> TransactionStarted;
+        public event EventHandler TransactionEnded;
+
         public void StartTransaction(T item, string dropGroup, Func<Task> commitCallback, Func<Task> cancelCallback)
         {
             _transaction = new DragAndDropItemTransaction<T>(item, dropGroup, commitCallback, cancelCallback);
+            TransactionStarted?.Invoke(this, _transaction);
         }
 
         public DragAndDropItemTransaction<T> GetContext() => _transaction;
 
         public bool TransactionInProgress() => _transaction != null;
 
-        internal async Task CommitTransaction(DragAndDropItemTransaction<T> context, string dropzoneIdentifier)
+        internal async Task CommitTransaction(string dropzoneIdentifier)
         {
-            await context.Commit();
-            await ItemDropped.InvokeAsync(new MudItemDropInfo<T>(context.Item, dropzoneIdentifier));
+            await _transaction.Commit();
+            await ItemDropped.InvokeAsync(new MudItemDropInfo<T>(_transaction.Item, dropzoneIdentifier));
+            TransactionEnded?.Invoke(this, EventArgs.Empty);
+            _transaction = null;
+        }
+
+        internal async Task CancelTransaction()
+        {
+            await _transaction.Cancel();
+            TransactionEnded?.Invoke(this, EventArgs.Empty);
+            _transaction = null;
         }
 
         /// <summary>
@@ -121,5 +134,23 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.Button.Appearance)]
         public string ItemDraggingClass { get; set; }
+
+        [Parameter]
+        [Category(CategoryTypes.Button.Behavior)]
+        public bool ApplyDropClassesOnDragStarted { get; set; } = false;
+
+        /// <summary>
+        /// The CSS class to use if valid drop.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.DropZone.Appearance)]
+        public string CanDropClass { get; set; }
+
+        /// <summary>
+        /// The CSS class to use if not valid drop.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.DropZone.Appearance)]
+        public string NoDropClass { get; set; }
     }
 }

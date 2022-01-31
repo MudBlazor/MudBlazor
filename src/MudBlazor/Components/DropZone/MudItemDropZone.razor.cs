@@ -12,7 +12,7 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    public partial class MudItemDropZone<T> : MudComponentBase
+    public partial class MudItemDropZone<T> : MudComponentBase, IDisposable
     {
         [CascadingParameter]
         protected MudItemDropContainer<T> Container { get; set; }
@@ -81,7 +81,7 @@ namespace MudBlazor
 
         private String GetDragginClass()
         {
-            if(String.IsNullOrEmpty(DraggingClass2) == true)
+            if (String.IsNullOrEmpty(DraggingClass2) == true)
             {
                 return Container?.DraggingClass ?? String.Empty;
             }
@@ -100,17 +100,15 @@ namespace MudBlazor
         }
 
         [Parameter]
-        public String MyBetterDraggingClass { get; set; }
+        [Category(CategoryTypes.Button.Behavior)]
+        public bool? ApplyDropClassesOnDragStarted { get; set; }
 
-
-        [Parameter]
-        public Boolean ApplyDropClassesOnDragStarted { get; set; } = true;
-
+        private bool GetApplyDropClassesOnDragStarted() => (ApplyDropClassesOnDragStarted ?? Container?.ApplyDropClassesOnDragStarted) ?? false;
 
         protected string Classname =>
             new CssBuilder("mud-drop-zone")
-                .AddClass(CanDropClass, _canDrop == true && _itemOnDropZone == true)
-                .AddClass(NoDropClass, _canDrop == false && _itemOnDropZone == true)
+                .AddClass(CanDropClass ?? Container.CanDropClass, Container.TransactionInProgress() == true && _canDrop == true && (_itemOnDropZone == true || GetApplyDropClassesOnDragStarted() == true))
+                .AddClass(NoDropClass ?? Container.NoDropClass, Container.TransactionInProgress() == true && _canDrop == false && (_itemOnDropZone == true || GetApplyDropClassesOnDragStarted() == true))
                 .AddClass(GetDragginClass(), _dragInProgress == true)
                 .AddClass(Class)
                 .Build();
@@ -135,6 +133,39 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.DropZone.Appearance)]
         public string NoDropClass { get; set; }
+
+        private bool _containerIsInitilized;
+
+        protected override void OnParametersSet()
+        {
+            if (Container != null && _containerIsInitilized == false)
+            {
+                _containerIsInitilized = true;
+                Container.TransactionStarted += Container_TransactionStarted;
+                Container.TransactionEnded += Container_TransactionEnded;
+            }
+
+            base.OnParametersSet();
+        }
+
+        private void Container_TransactionEnded(object sender, EventArgs e)
+        {
+            _itemOnDropZone = false;
+
+            if (GetApplyDropClassesOnDragStarted() == false) { return; }
+
+            _canDrop = false;
+            StateHasChanged();
+        }
+
+        private void Container_TransactionStarted(object sender, DragAndDropItemTransaction<T> e)
+        {
+            if (GetApplyDropClassesOnDragStarted() == false) { return; }
+
+            var dropResult = ItemCanBeDropped();
+            _canDrop = dropResult.Item2;
+            StateHasChanged();
+        }
 
         private (DragAndDropItemTransaction<T>, bool) ItemCanBeDropped()
         {
@@ -178,6 +209,8 @@ namespace MudBlazor
                 return;
             }
 
+            Console.WriteLine();
+
             _itemOnDropZone = false;
         }
 
@@ -193,29 +226,37 @@ namespace MudBlazor
 
             if (isValidZone == false)
             {
-                await context.Cancel();
+                await Container.CancelTransaction();
                 return;
             }
 
-            await Container.CommitTransaction(context, Identifier);
+            await Container.CommitTransaction(Identifier);
         }
 
         private bool _dragInProgress = false;
+        private bool _disposedValue;
 
-        private void FinishedDragOperation()
+        private void FinishedDragOperation() => _dragInProgress = false;
+        private void DragOperationStarted() => _dragInProgress = true;
+
+        protected virtual void Dispose(bool disposing)
         {
-            Console.WriteLine("DragOperationFinished");
-            _dragInProgress = false;
+            if (!_disposedValue)
+            {
+                if (disposing)
+                {
+                    Container.TransactionStarted -= Container_TransactionStarted;
+                    Container.TransactionEnded -= Container_TransactionEnded;
+                }
+
+                _disposedValue = true;
+            }
         }
 
-        private void DragOperationStarted()
+        public void Dispose()
         {
-            Console.WriteLine($"DragOperationStarted: {GetDragginClass()}");
-            Console.WriteLine($"DraggingClass: {DraggingClass2}");
-            Console.WriteLine($"ContainerClass: {Container?.DraggingClass}");
-
-            _dragInProgress = true;
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
         }
-
     }
 }
