@@ -1,7 +1,7 @@
 ﻿@page "/components/image"
 
 <DocsPage>
-    <DocsPageHeader Title="Image" SubTitle="A simple component that represent the HTML <img> tag">
+    <DocsPageHeader Title="Image" SubTitle="A simple component that represent the HTML img tag">
         <Description>
         </Description>
     </DocsPageHeader>
@@ -11,20 +11,34 @@
         <DocsPageSection>
             <SectionHeader Title="Usage">
                 <Description>
-                    <CodeInLine>MudImage</CodeInLine> is used to embed an image in an HTML page. Images are not technically inserted into a page, but are linked to a file. <CodeInLine>MudImage</CodeInLine> represent the <CodeInLine><img>img&#62;</CodeInLine> tag  and creates a holding space for the referenced image.
+                    <CodeInline>MudImage</CodeInline> is used to embed an image in an HTML page. Images are not technically inserted into a page, but are linked to a file.<br/>
+                    <CodeInline>MudImage</CodeInline> represent the <CodeInline>&#60;img&#62;</CodeInline> tag  and creates a holding space for the referenced image.
                 </Description>
             </SectionHeader>
             <SectionContent DarkenBackground="true" Code="ImageUsageExample">
                 <ImageUsageExample />
             </SectionContent>
         </DocsPageSection>
+        
+        <DocsPageSection>
+            <SectionHeader Title="Image Fit">
+                <Description>
+                    Use <CodeInline>ObjectFit</CodeInline> to controll how a image should be resized.
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="ImageFitExample" Block="true" ShowCode="false">
+                <ImageFitExample />
+            </SectionContent>
+        </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader Title="Variants">
-                <Description>If you need an outlined surface or a square, use the <CodeInline>Outlined</CodeInline> and <CodeInline>Square</CodeInline> properties.</Description>
+            <SectionHeader Title="Image Position">
+                <Description>
+                    With the <CodeInline>ObjectPosition</CodeInline> property you can specify how a image should be positioned within its container.
+                </Description>
             </SectionHeader>
-            <SectionContent DarkenBackground="true" Code="ImageUsageExample">
-                <ImageUsageExample />
+            <SectionContent DarkenBackground="true" Code="ImagePositionExample" Block="true" ShowCode="false">
+                <ImagePositionExample />
             </SectionContent>
         </DocsPageSection>
 
