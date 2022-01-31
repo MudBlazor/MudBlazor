@@ -243,7 +243,10 @@ namespace MudBlazor
             var cleanText = Mask.GetCleanText();
             if (cleanText == text || string.IsNullOrEmpty(cleanText) && string.IsNullOrEmpty(text))
                 return;
+            var maskText = Mask.Text;
             Mask.SetText(text);
+            if (maskText == Mask.Text)
+                return; // no change, stop update loop
             //Console.WriteLine("UpdateTextPropertyAsync: " + Mask);
             await Update();
         }
@@ -256,7 +259,10 @@ namespace MudBlazor
             var text = Text;
             if (Mask.Text == text)
                 return;
+            var maskText = Mask.Text;
             Mask.SetText(text);
+            if (maskText == Mask.Text)
+                return; // no change, stop update loop
             //Console.WriteLine("UpdateValuePropertyAsync: " + Mask);
             await Update();
         }
