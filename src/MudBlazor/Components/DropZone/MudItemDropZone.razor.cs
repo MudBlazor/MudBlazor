@@ -107,8 +107,8 @@ namespace MudBlazor
 
         protected string Classname =>
             new CssBuilder("mud-drop-zone")
-                .AddClass(CanDropClass ?? Container.CanDropClass, Container.TransactionInProgress() == true && _canDrop == true && (_itemOnDropZone == true || GetApplyDropClassesOnDragStarted() == true))
-                .AddClass(NoDropClass ?? Container.NoDropClass, Container.TransactionInProgress() == true && _canDrop == false && (_itemOnDropZone == true || GetApplyDropClassesOnDragStarted() == true))
+                .AddClass(CanDropClass ?? Container.CanDropClass, Container.TransactionInProgress() == true && Container.GetTransactionOrignZoneIdentiifer() != Identifier && _canDrop == true && (_itemOnDropZone == true || GetApplyDropClassesOnDragStarted() == true))
+                .AddClass(NoDropClass ?? Container.NoDropClass, Container.TransactionInProgress() == true && Container.GetTransactionOrignZoneIdentiifer() != Identifier && _canDrop == false && (_itemOnDropZone == true || GetApplyDropClassesOnDragStarted() == true))
                 .AddClass(GetDragginClass(), _dragInProgress == true)
                 .AddClass(Class)
                 .Build();

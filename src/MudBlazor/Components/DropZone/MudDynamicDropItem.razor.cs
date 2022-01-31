@@ -71,14 +71,15 @@ public partial class MudDynamicDropItem<T> : MudComponentBase
 
     [Parameter]
     [Category(CategoryTypes.Button.Behavior)]
-    public string DropGroup { get; set; }
+    public string ZoneIdentifier { get; set; }
+    
 
     private async Task DragStarted()
     {
         if (Container == null) { return; }
 
         _dragOperationIsInProgress = true;
-        Container.StartTransaction(Item, DropGroup ?? string.Empty, OnDroppedSucceeded, OnDroppedCanceled);
+        Container.StartTransaction(Item, ZoneIdentifier ?? string.Empty, OnDroppedSucceeded, OnDroppedCanceled);
         await OnDragStarted.InvokeAsync();
     }
 

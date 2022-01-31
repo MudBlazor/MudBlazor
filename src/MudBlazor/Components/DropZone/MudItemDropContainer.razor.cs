@@ -17,13 +17,13 @@ namespace MudBlazor
         private Func<Task> _commitCallback;
         private Func<Task> _cancelCallback;
 
-        public T Item { get; set; }
-        public string DropGroup { get; set; }
+        public T Item { get; init; }
+        public string ZoneIdentifier { get; init; }
 
-        public DragAndDropItemTransaction(T item, string dropGroup, Func<Task> commitCallback, Func<Task> cancelCallback)
+        public DragAndDropItemTransaction(T item, string identifier, Func<Task> commitCallback, Func<Task> cancelCallback)
         {
             Item = item;
-            DropGroup = dropGroup;
+            ZoneIdentifier = identifier;
 
             _commitCallback = commitCallback;
             _cancelCallback = cancelCallback;
@@ -103,15 +103,16 @@ namespace MudBlazor
         public event EventHandler<DragAndDropItemTransaction<T>> TransactionStarted;
         public event EventHandler TransactionEnded;
 
-        public void StartTransaction(T item, string dropGroup, Func<Task> commitCallback, Func<Task> cancelCallback)
+        public void StartTransaction(T item, string identifier, Func<Task> commitCallback, Func<Task> cancelCallback)
         {
-            _transaction = new DragAndDropItemTransaction<T>(item, dropGroup, commitCallback, cancelCallback);
+            _transaction = new DragAndDropItemTransaction<T>(item, identifier, commitCallback, cancelCallback);
             TransactionStarted?.Invoke(this, _transaction);
         }
 
         public DragAndDropItemTransaction<T> GetContext() => _transaction;
 
         public bool TransactionInProgress() => _transaction != null;
+        public string GetTransactionOrignZoneIdentiifer() => _transaction?.ZoneIdentifier ?? string.Empty;
 
         internal async Task CommitTransaction(string dropzoneIdentifier)
         {

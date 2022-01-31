@@ -13,7 +13,13 @@
 	
 	@foreach (var item in GetItems())
 	{
-		<MudDynamicDropItem @key="@(item.GetHashCode())" T="T" DraggingClass="@GetItemDraggingClass()" Item="item" HideOnDrag="HideItemOnDrag" OnDragStarted="DragOperationStarted" OnDragEnded="FinishedDragOperation">
+		<MudDynamicDropItem 
+			@key="@(item.GetHashCode())" T="T" DraggingClass="@GetItemDraggingClass()" 
+			Item="item" HideOnDrag="HideItemOnDrag" 
+			OnDragStarted="DragOperationStarted" 
+			OnDragEnded="FinishedDragOperation"
+			ZoneIdentifier="@Identifier"
+		>
 			@{
 				var renderer = GetItemTemplate();
 			}
