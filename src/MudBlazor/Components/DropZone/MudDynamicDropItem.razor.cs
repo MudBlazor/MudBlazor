@@ -13,7 +13,7 @@ namespace MudBlazor;
 public partial class MudDynamicDropItem<T> : MudComponentBase
 {
     [CascadingParameter]
-    protected MudItemDropContainer<T> Container { get; set; }
+    protected MudDropContainer<T> Container { get; set; }
 
     protected string Classname =>
         new CssBuilder("mud-drop-item")

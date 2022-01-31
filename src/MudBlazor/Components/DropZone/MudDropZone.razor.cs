@@ -5,136 +5,279 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Utilities;
 
-namespace MudBlazor;
-
-public partial class MudDropZone<T> : MudComponentBase
+namespace MudBlazor
 {
-    private bool _canDrop = false;
-    private bool _itemOnDropZone = false;
-
-    [CascadingParameter]
-    protected MudDropContainer<T> Container { get; set; }
-
-    protected string Classname =>
-        new CssBuilder("mud-drop-zone")
-            .AddClass(CanDropClass, _canDrop == true && _itemOnDropZone == true)
-            .AddClass(NoDropClass, _canDrop == false && _itemOnDropZone == true)
-            .AddClass(Class)
-            .Build();
-
-    /// <summary>
-    /// The CSS class to use if valid drop.
-    /// </summary>
-    [Parameter]
-    [Category(CategoryTypes.DropZone.Appearance)]
-    public string CanDropClass { get; set; }
-
-    /// <summary>
-    /// The CSS class to use if not valid drop.
-    /// </summary>
-    [Parameter]
-    [Category(CategoryTypes.DropZone.Appearance)]
-    public string NoDropClass { get; set; }
-
-    /// <summary>
-    /// The CSS class to use if an item from this zone is being dragged.
-    /// </summary>
-    [Parameter]
-    [Category(CategoryTypes.DropZone.Appearance)]
-    public string DraggingClass { get; set; }
-
-    /// <summary>
-    /// Child content of component.
-    /// </summary>
-    [Parameter]
-    [Category(CategoryTypes.Button.Behavior)]
-    public RenderFragment ChildContent { get; set; }
-
-    [Parameter]
-    [Category(CategoryTypes.Button.Behavior)]
-    public Func<T, Task<bool>> CanDrop { get; set; }
-
-    [Parameter]
-    [Category(CategoryTypes.Button.Behavior)]
-    public EventCallback<T> ItemDropped { get; set; }
-
-    [Parameter]
-    [Category(CategoryTypes.Button.Behavior)]
-    public IEnumerable<string> CanDropGroups { get; set; } = Array.Empty<string>();
-
-    private async Task<(DragAndDropTransaction<T>, bool)> ItemCanBeDropped()
+    public partial class MudDropZone<T> : MudComponentBase, IDisposable
     {
-        if (Container == null || Container.TransactionInProgress() == false)
+        [CascadingParameter]
+        protected MudDropContainer<T> Container { get; set; }
+
+        [Parameter]
+        public string Identifier { get; set; }
+
+        /// <summary>
+        /// The items that can be drag and dropped within the container
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Button.Behavior)]
+        public RenderFragment<T> ItemRenderer { get; set; }
+
+        [Parameter]
+        [Category(CategoryTypes.Button.Behavior)]
+        public RenderFragment ChildContent { get; set; }
+
+        /// <summary>
+        /// The method is used to determinate if an item can be dropped within a drop zone
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Button.Behavior)]
+        public Func<T, bool> ItemsSelector { get; set; }
+
+        /// <summary>
+        /// The method is used to determinate if an item can be dropped within a drop zone
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Button.Appearance)]
+        public bool HideItemOnDrag { get; set; }
+
+        /// <summary>
+        /// A additional class that is applied, when an item from this dropzone is dragged
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Button.Appearance)]
+        public string DraggingClass2 { get; set; }
+
+        /// <summary>
+        /// A additional class that is applied, when an item from this dropzone is dragged
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Button.Appearance)]
+        public string ItemDraggingClass { get; set; }
+
+        private IEnumerable<T> GetItems()
         {
-            return (null, false);
+            Func<T, bool> predicate = null;
+            if (ItemsSelector != null)
+            {
+                predicate = ItemsSelector;
+            }
+
+            predicate = (item) => Container.ItemsSelector(item, Identifier ?? String.Empty);
+
+            return Container.Items.Where(predicate).ToArray();
         }
 
-        var context = Container.GetContext();
-        if (string.IsNullOrEmpty(context.DropGroup) == false)
+
+        private RenderFragment<T> GetItemTemplate() => ItemRenderer ?? Container?.ItemRenderer;
+
+
+        private bool _canDrop = false;
+        private bool _itemOnDropZone = false;
+
+        private String GetDragginClass()
         {
-            var groups = CanDropGroups ?? Array.Empty<string>();
-            if(groups.Any() == true)
+            if (String.IsNullOrEmpty(DraggingClass2) == true)
             {
-                if(groups.Any(x => x == context.DropGroup) == false)
+                return Container?.DraggingClass ?? String.Empty;
+            }
+
+            return DraggingClass2;
+        }
+
+        private String GetItemDraggingClass()
+        {
+            if (String.IsNullOrEmpty(ItemDraggingClass) == true)
+            {
+                return Container?.ItemDraggingClass ?? String.Empty;
+            }
+
+            return DraggingClass2;
+        }
+
+        [Parameter]
+        [Category(CategoryTypes.Button.Behavior)]
+        public bool? ApplyDropClassesOnDragStarted { get; set; }
+
+        private bool GetApplyDropClassesOnDragStarted() => (ApplyDropClassesOnDragStarted ?? Container?.ApplyDropClassesOnDragStarted) ?? false;
+
+        protected string Classname =>
+            new CssBuilder("mud-drop-zone")
+                .AddClass(CanDropClass ?? Container.CanDropClass, Container.TransactionInProgress() == true && Container.GetTransactionOrignZoneIdentiifer() != Identifier && _canDrop == true && (_itemOnDropZone == true || GetApplyDropClassesOnDragStarted() == true))
+                .AddClass(NoDropClass ?? Container.NoDropClass, Container.TransactionInProgress() == true && Container.GetTransactionOrignZoneIdentiifer() != Identifier && _canDrop == false && (_itemOnDropZone == true || GetApplyDropClassesOnDragStarted() == true))
+                .AddClass(GetDragginClass(), _dragInProgress == true)
+                .AddClass(Class)
+                .Build();
+
+        /// <summary>
+        /// The method is used to determinate if an item can be dropped within a drop zone
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Button.Behavior)]
+        public Func<T, bool> CanDrop { get; set; }
+
+        /// <summary>
+        /// The CSS class to use if valid drop.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.DropZone.Appearance)]
+        public string CanDropClass { get; set; }
+
+        /// <summary>
+        /// The CSS class to use if not valid drop.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.DropZone.Appearance)]
+        public string NoDropClass { get; set; }
+
+        [Parameter]
+        [Category(CategoryTypes.DropZone.Appearance)]
+        public Func<T, bool> ItemIsDisbaled { get; set; }
+
+        [Parameter]
+        [Category(CategoryTypes.Button.Behavior)]
+        public string DisabledClass { get; set; }
+
+        private bool GetItemDisabledStatus(T item)
+        {
+            var result = false;
+            var predicate = ItemIsDisbaled ?? Container?.ItemIsDisbaled;
+            if (predicate != null)
+            {
+                result = predicate(item);
+            }
+
+            return result;
+        }
+
+        private bool _containerIsInitilized;
+
+        protected override void OnParametersSet()
+        {
+            if (Container != null && _containerIsInitilized == false)
+            {
+                _containerIsInitilized = true;
+                Container.TransactionStarted += Container_TransactionStarted;
+                Container.TransactionEnded += Container_TransactionEnded;
+            }
+
+            base.OnParametersSet();
+        }
+
+        private void Container_TransactionEnded(object sender, EventArgs e)
+        {
+            _itemOnDropZone = false;
+
+            if (GetApplyDropClassesOnDragStarted() == false) { return; }
+
+            _canDrop = false;
+            StateHasChanged();
+        }
+
+        private void Container_TransactionStarted(object sender, DragAndDropItemTransaction<T> e)
+        {
+            if (GetApplyDropClassesOnDragStarted() == false) { return; }
+
+            var dropResult = ItemCanBeDropped();
+            _canDrop = dropResult.Item2;
+            StateHasChanged();
+        }
+
+        private (DragAndDropItemTransaction<T>, bool) ItemCanBeDropped()
+        {
+            if (Container == null || Container.TransactionInProgress() == false)
+            {
+                return (null, false);
+            }
+
+            var context = Container.GetContext();
+
+            var result = true;
+            if (CanDrop != null)
+            {
+                result = CanDrop(context.Item);
+            }
+            else if (Container.CanDrop != null)
+            {
+                result = Container.CanDrop(context.Item, Identifier);
+            }
+
+            return (context, result);
+        }
+
+        private void HandleDragEnter()
+        {
+            var (context, isValidZone) = ItemCanBeDropped();
+            if (context == null)
+            {
+                return;
+            }
+
+            _itemOnDropZone = true;
+            _canDrop = isValidZone;
+        }
+
+        private void HandleDragLeave()
+        {
+            var (context, _) = ItemCanBeDropped();
+            if (context == null)
+            {
+                return;
+            }
+
+            Console.WriteLine();
+
+            _itemOnDropZone = false;
+        }
+
+        private async Task HandleDrop()
+        {
+            var (context, isValidZone) = ItemCanBeDropped();
+            if (context == null)
+            {
+                return;
+            }
+
+            _itemOnDropZone = false;
+
+            if (isValidZone == false)
+            {
+                await Container.CancelTransaction();
+                return;
+            }
+
+            await Container.CommitTransaction(Identifier);
+        }
+
+        private bool _dragInProgress = false;
+        private bool _disposedValue;
+
+        private void FinishedDragOperation() => _dragInProgress = false;
+        private void DragOperationStarted() => _dragInProgress = true;
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!_disposedValue)
+            {
+                if (disposing)
                 {
-                    return (context, false);
+                    Container.TransactionStarted -= Container_TransactionStarted;
+                    Container.TransactionEnded -= Container_TransactionEnded;
                 }
+
+                _disposedValue = true;
             }
         }
 
-        var result = true;
-        if (CanDrop != null)
+
+        public void Dispose()
         {
-            result = await CanDrop(context.Item);
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
         }
-
-        return (context, result);
-    }
-
-    private async Task HandleDragEnter()
-    {
-        var (context, isValidZone) = await ItemCanBeDropped();
-        if (context == null)
-        {
-            return;
-        }
-
-        _itemOnDropZone = true;
-        _canDrop = isValidZone;
-    }
-
-    private async Task HandleDragLeave()
-    {
-        var (context, _) = await ItemCanBeDropped();
-        if (context == null)
-        {
-            return;
-        }
-
-        _itemOnDropZone = false;
-    }
-
-    private async Task HandleDrop()
-    {
-        var (context, isValidZone) = await ItemCanBeDropped();
-        if (context == null)
-        {
-            return;
-        }
-        
-        _itemOnDropZone = false;
-
-        if (isValidZone == false)
-        {
-            await context.Cancel();
-            return;
-        }
-
-        await context.Commit();
-        await ItemDropped.InvokeAsync(context.Item);
     }
 }

@@ -1,23 +1,23 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
-<MudItemDropContainer T="DropItem" ApplyDropClassesOnDragStarted="_applyDropClassesOnDragStarted" Items="_items" ItemsSelector="@((item,dropzone) => item.Place == dropzone)" CanDropClass="mud-theme-success" NoDropClass="mud-theme-error" ItemDropped="ItemUpdated" Class="d-flex">
+<MudDropContainer T="DropItem" ApplyDropClassesOnDragStarted="_applyDropClassesOnDragStarted" Items="_items" ItemsSelector="@((item,dropzone) => item.Place == dropzone)" CanDropClass="mud-theme-success" NoDropClass="mud-theme-error" ItemDropped="ItemUpdated" Class="d-flex">
 	<ChildContent>
-		<MudItemDropZone T="DropItem" Identifier="Basket" Class="mx-8 pa-4 docs-gray-bg rounded" CanDrop="@( (item) => false )">
+		<MudDropZone T="DropItem" Identifier="Basket" Class="mx-8 pa-4 docs-gray-bg rounded" CanDrop="@( (item) => false )">
 			<MudText Typo="Typo.h6" Class="mb-4">Basket</MudText>
-		</MudItemDropZone>
-		<MudItemDropZone T="DropItem" Identifier="Fridge" Class="mx-8 pa-4 docs-gray-bg rounded" CanDrop="@( (item) => item.IsPicked == false && item.IsRotten == false )">
+		</MudDropZone>
+		<MudDropZone T="DropItem" Identifier="Fridge" Class="mx-8 pa-4 docs-gray-bg rounded" CanDrop="@( (item) => item.IsPicked == false && item.IsRotten == false )">
 			<MudText Typo="Typo.h6" Class="mb-4">Fridge</MudText>
-		</MudItemDropZone>
-		<MudItemDropZone T="DropItem" Identifier="Trash" CanDrop="@( (item) => item.IsPicked == false && item.IsRotten == true)" Class="mx-8 pa-4 docs-gray-bg rounded">
+		</MudDropZone>
+		<MudDropZone T="DropItem" Identifier="Trash" CanDrop="@( (item) => item.IsPicked == false && item.IsRotten == true)" Class="mx-8 pa-4 docs-gray-bg rounded">
 			<MudText Typo="Typo.h6" Class="mb-4">Trash</MudText>
-		</MudItemDropZone>
+		</MudDropZone>
 	</ChildContent>
 	<ItemRenderer>
 		<MudPaper Elevation="25" Class="pa-4 my-2">
 			<MudText Color="@(context.IsRotten? Color.Success : Color.Default)">@context.Name</MudText>
 		</MudPaper>
 	</ItemRenderer>
-</MudItemDropContainer>
+</MudDropContainer>
 
 <MudCheckBox @bind-Checked="_applyDropClassesOnDragStarted" Label="Apply Drop Classes On Drag Started" />
 <MudButton OnClick="Reset">Reset</MudButton>

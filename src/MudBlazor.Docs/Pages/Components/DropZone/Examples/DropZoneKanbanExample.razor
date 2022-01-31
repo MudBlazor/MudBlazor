@@ -1,21 +1,21 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
 <div class="d-flex flex-column" style="width: 100%;">
-	<MudItemDropContainer T="KanbanTaskItem" Items="_tasks" ItemsSelector="@((item,column) => item.Status == column)" ItemDropped="TaskUpdated" Class="d-flex flex-row justify-space-around" Style="flex: 1 1 100%">
+	<MudDropContainer T="KanbanTaskItem" Items="_tasks" ItemsSelector="@((item,column) => item.Status == column)" ItemDropped="TaskUpdated" Class="d-flex flex-row justify-space-around" Style="flex: 1 1 100%">
 		<ChildContent>
 			@foreach (var item in _columns)
 			{
 				<MudPaper Height="200px" Class="pa-4 d-flex">
-					<MudItemDropZone T="KanbanTaskItem" Identifier="@item">
+					<MudDropZone T="KanbanTaskItem" Identifier="@item">
 						<MudText Typo="Typo.h5">@item</MudText>
-					</MudItemDropZone>
+					</MudDropZone>
 				</MudPaper>
 			}
 		</ChildContent>
 		<ItemRenderer>
 			<MudPaper>@context.Name</MudPaper>
 		</ItemRenderer>
-	</MudItemDropContainer>
+	</MudDropContainer>
 	<MudGrid>
 		<MudItem xs="12" md="6">
 			<MudTextField @bind-Value="_newColumnName" Label="New Column Name" />
