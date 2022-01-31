@@ -178,7 +178,7 @@ namespace MudBlazor
             StateHasChanged();
         }
 
-        private void Container_TransactionStarted(object sender, DragAndDropItemTransaction<T> e)
+        private void Container_TransactionStarted(object sender, MudDragAndDropItemTransaction<T> e)
         {
             if (GetApplyDropClassesOnDragStarted() == false) { return; }
 
@@ -187,7 +187,7 @@ namespace MudBlazor
             StateHasChanged();
         }
 
-        private (DragAndDropItemTransaction<T>, bool) ItemCanBeDropped()
+        private (MudDragAndDropItemTransaction<T>, bool) ItemCanBeDropped()
         {
             if (Container == null || Container.TransactionInProgress() == false)
             {

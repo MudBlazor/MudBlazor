@@ -12,7 +12,7 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    public class DragAndDropItemTransaction<T>
+    public class MudDragAndDropItemTransaction<T>
     {
         private Func<Task> _commitCallback;
         private Func<Task> _cancelCallback;
@@ -20,7 +20,7 @@ namespace MudBlazor
         public T Item { get; init; }
         public string ZoneIdentifier { get; init; }
 
-        public DragAndDropItemTransaction(T item, string identifier, Func<Task> commitCallback, Func<Task> cancelCallback)
+        public MudDragAndDropItemTransaction(T item, string identifier, Func<Task> commitCallback, Func<Task> cancelCallback)
         {
             Item = item;
             ZoneIdentifier = identifier;
@@ -33,20 +33,12 @@ namespace MudBlazor
         public async Task Commit() => await _commitCallback.Invoke();
     }
 
-    public class MudItemDropInfo<T>
-    {
-        public T Item { get; private set; }
-        public string DropzoneIdentifier { get; private set; }
-
-        public MudItemDropInfo(T item, String identifier)
-        {
-            Item = item;
-            DropzoneIdentifier = identifier;
-        }
-    }
+    public record MudItemDropInfo<T>(T Item, string DropzoneIdentifier);
 
     public partial class MudDropContainer<T> : MudComponentBase
     {
+        private MudDragAndDropItemTransaction<T> _transaction;
+
         protected string Classname =>
         new CssBuilder("mud-drop-container")
             .AddClass(Class)
@@ -78,7 +70,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Button.Behavior)]
-        public Func<T, string, bool> CanDrop { get; set; }
+        public Func<T, string, bool> ItemsSelector { get; set; }
 
         [Parameter]
         [Category(CategoryTypes.Button.Behavior)]
@@ -89,7 +81,40 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Button.Behavior)]
-        public Func<T, string, bool> ItemsSelector { get; set; }
+        public Func<T, string, bool> CanDrop { get; set; }
+
+        /// <summary>
+        /// The CSS class to use if valid drop.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.DropZone.Appearance)]
+        public string CanDropClass { get; set; }
+
+        [Parameter]
+        [Category(CategoryTypes.Button.Behavior)]
+        public bool ApplyDropClassesOnDragStarted { get; set; } = false;
+
+        /// <summary>
+        /// The CSS class to use if not valid drop.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.DropZone.Appearance)]
+        public string NoDropClass { get; set; }
+
+        [Parameter]
+        [Category(CategoryTypes.DropZone.Appearance)]
+        public Func<T, bool> ItemIsDisbaled { get; set; }
+
+        [Parameter]
+        [Category(CategoryTypes.Button.Behavior)]
+        public string DisabledClass { get; set; } = "disabled";
+
+        /// <summary>
+        /// A additional class that is applied, when an item from this dropzone is dragged
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Button.Appearance)]
+        public string ItemDraggingClass { get; set; }
 
         /// <summary>
         /// A additional class that is applied, when an item from this dropzone is dragged
@@ -98,18 +123,16 @@ namespace MudBlazor
         [Category(CategoryTypes.Button.Appearance)]
         public string DraggingClass { get; set; }
 
-        private DragAndDropItemTransaction<T> _transaction;
-
-        public event EventHandler<DragAndDropItemTransaction<T>> TransactionStarted;
+        public event EventHandler<MudDragAndDropItemTransaction<T>> TransactionStarted;
         public event EventHandler TransactionEnded;
 
         public void StartTransaction(T item, string identifier, Func<Task> commitCallback, Func<Task> cancelCallback)
         {
-            _transaction = new DragAndDropItemTransaction<T>(item, identifier, commitCallback, cancelCallback);
+            _transaction = new MudDragAndDropItemTransaction<T>(item, identifier, commitCallback, cancelCallback);
             TransactionStarted?.Invoke(this, _transaction);
         }
 
-        public DragAndDropItemTransaction<T> GetContext() => _transaction;
+        public MudDragAndDropItemTransaction<T> GetContext() => _transaction;
 
         public bool TransactionInProgress() => _transaction != null;
         public string GetTransactionOrignZoneIdentiifer() => _transaction?.ZoneIdentifier ?? string.Empty;
@@ -129,37 +152,6 @@ namespace MudBlazor
             _transaction = null;
         }
 
-        /// <summary>
-        /// A additional class that is applied, when an item from this dropzone is dragged
-        /// </summary>
-        [Parameter]
-        [Category(CategoryTypes.Button.Appearance)]
-        public string ItemDraggingClass { get; set; }
 
-        [Parameter]
-        [Category(CategoryTypes.Button.Behavior)]
-        public bool ApplyDropClassesOnDragStarted { get; set; } = false;
-
-        /// <summary>
-        /// The CSS class to use if valid drop.
-        /// </summary>
-        [Parameter]
-        [Category(CategoryTypes.DropZone.Appearance)]
-        public string CanDropClass { get; set; }
-
-        /// <summary>
-        /// The CSS class to use if not valid drop.
-        /// </summary>
-        [Parameter]
-        [Category(CategoryTypes.DropZone.Appearance)]
-        public string NoDropClass { get; set; }
-
-        [Parameter]
-        [Category(CategoryTypes.DropZone.Appearance)]
-        public Func<T,bool> ItemIsDisbaled { get; set; }
-
-        [Parameter]
-        [Category(CategoryTypes.Button.Behavior)]
-        public string DisabledClass { get; set; } = "disabled";
     }
 }
