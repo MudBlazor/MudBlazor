@@ -3,6 +3,7 @@
 
 using System;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Bunit;
 using FluentAssertions;
@@ -73,7 +74,7 @@ namespace MudBlazor.UnitTests.Components
             // open the dialog
             comp1.Find("button").Click();
             //Console.WriteLine("\nOpened dialog: " + comp.Markup);
-            comp1.WaitForAssertion(()=>
+            comp1.WaitForAssertion(() =>
                 comp.Find("div.mud-dialog-container").Should().NotBe(null)
             );
             comp.Find("p.mud-typography").TrimmedText().Should().Be("Wabalabadubdub!");
@@ -87,31 +88,34 @@ namespace MudBlazor.UnitTests.Components
         /// Click outside the dialog (or any other method) must update the IsVisible parameter two-way binding on close
         /// </summary>
         /// <returns></returns>
-        //[Ignore("Sadly we can not get this test to work when it is run in bulk (local and CI). It passes when executed individually")]
         [Test]
         public async Task InlineDialog_Should_UpdateIsVisibleOnClose()
         {
-            var comp = Context.RenderComponent<MudDialogProvider>();
-            comp.Markup.Trim().Should().BeEmpty();
-            var service = Context.Services.GetService<IDialogService>() as DialogService;
-            service.Should().NotBe(null);
-            // displaying the component with the inline dialog only renders the open button
-            var comp1 = Context.RenderComponent<InlineDialogIsVisibleStateTest>();
-            // open the dialog
-            comp1.Find("button").Click();
-            //Console.WriteLine("\nOpened dialog: " + comp.Markup);
-            comp.WaitForAssertion(()=> comp.Find("div.mud-dialog-container").Should().NotBe(null));
-            // close by click outside
-            comp.Find("div.mud-overlay").Click();
-            comp.WaitForAssertion(() => comp.Markup.Trim().Should().BeEmpty(), TimeSpan.FromSeconds(5));
-            // open again
-            comp1.Find("button").Click();
-            comp.WaitForAssertion(() => comp.Find("div.mud-dialog-container").Should().NotBe(null), TimeSpan.FromSeconds(5));
-            // close again by click outside
-            //Console.WriteLine("\nOpened dialog: " + comp.Markup);
-            comp.WaitForAssertion(() => comp.Find("div.mud-overlay").Should().NotBeNull());
-            comp.Find("div.mud-overlay").Click();
-            comp.WaitForAssertion(() => comp.Markup.Trim().Should().BeEmpty(), TimeSpan.FromSeconds(5));
+            await ImproveChanceOfSuccess(async () =>
+            {
+                var comp = Context.RenderComponent<MudDialogProvider>();
+                comp.Markup.Trim().Should().BeEmpty();
+                var service = Context.Services.GetService<IDialogService>() as DialogService;
+                service.Should().NotBe(null);
+                // displaying the component with the inline dialog only renders the open button
+                var comp1 = Context.RenderComponent<InlineDialogIsVisibleStateTest>();
+                // open the dialog
+                comp1.Find("button").Click();
+                //Console.WriteLine("\nOpened dialog: " + comp.Markup);
+                comp.WaitForAssertion(() => comp.Find("div.mud-dialog-container").Should().NotBe(null));
+                // close by click outside
+                comp.Find("div.mud-overlay").Click();
+                comp.WaitForAssertion(() => comp.Markup.Trim().Should().BeEmpty(), TimeSpan.FromSeconds(5));
+                // open again
+                comp1.Find("button").Click();
+                comp.WaitForAssertion(() => comp.Find("div.mud-dialog-container").Should().NotBe(null),
+                    TimeSpan.FromSeconds(5));
+                // close again by click outside
+                //Console.WriteLine("\nOpened dialog: " + comp.Markup);
+                comp.WaitForAssertion(() => comp.Find("div.mud-overlay").Should().NotBeNull());
+                comp.Find("div.mud-overlay").Click();
+                comp.WaitForAssertion(() => comp.Markup.Trim().Should().BeEmpty(), TimeSpan.FromSeconds(5));
+            });
         }
 
         /// <summary>
@@ -129,9 +133,9 @@ namespace MudBlazor.UnitTests.Components
             IDialogReference dialogReference = null;
             // open simple test dialog
             await comp.InvokeAsync(() => dialogReference = service?.Show<TestInlineDialog>());
-            comp.WaitForAssertion(()=> dialogReference.Should().NotBe(null));
+            comp.WaitForAssertion(() => dialogReference.Should().NotBe(null));
             comp.Find("button").Click();
-            comp.WaitForAssertion(()=> comp.Find("div.mud-dialog").ClassList.Should().Contain("test-class"));
+            comp.WaitForAssertion(() => comp.Find("div.mud-dialog").ClassList.Should().Contain("test-class"));
             comp.Find("div.mud-dialog").Attributes["style"].Value.Should().Be("color: red;");
             comp.Find("div.mud-dialog-content").Attributes["style"].Value.Should().Be("color: blue;");
             comp.Find("div.mud-dialog-content").ClassList.Should().NotContain("test-class");
