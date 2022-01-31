@@ -3,11 +3,21 @@
 // See the LICENSE file in the project root for more information.
 
 using Microsoft.AspNetCore.Components;
+using MudBlazor.Extensions;
+using MudBlazor.Utilities;
 
 namespace MudBlazor;
 
 public partial class MudImage : MudComponentBase
 {
+    protected string Classname =>
+        new CssBuilder()
+            .AddClass($"object-{ObjectFit.ToDescriptionString()}")
+            .AddClass($"object-{ObjectPosition.ToDescriptionString()}")
+            .AddClass($"mud-elevation-{Elevation.ToString()}", Elevation > 0)
+            .AddClass(Class)
+            .Build();
+    
     /// <summary>
     /// Specifies the path to the image.
     /// </summary>
@@ -35,4 +45,25 @@ public partial class MudImage : MudComponentBase
     [Parameter] 
     [Category(CategoryTypes.Image.Appearance)]
     public string Width { get; set; }
+    
+    /// <summary>
+    /// The higher the number, the heavier the drop-shadow.
+    /// </summary>
+    [Parameter]
+    [Category(CategoryTypes.Image.Appearance)]
+    public int Elevation { set; get; }
+
+    /// <summary>
+    /// Controls how the image should be resized.
+    /// </summary>
+    [Parameter]
+    [Category(CategoryTypes.Image.Appearance)]
+    public ObjectFit ObjectFit { set; get; } = ObjectFit.Fill;
+    
+    /// <summary>
+    /// Controls how the image should positioned within its container.
+    /// </summary>
+    [Parameter]
+    [Category(CategoryTypes.Image.Appearance)]
+    public ObjectPosition ObjectPosition { set; get; } = ObjectPosition.Center;
 }
