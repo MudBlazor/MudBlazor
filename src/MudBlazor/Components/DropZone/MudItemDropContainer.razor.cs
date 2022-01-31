@@ -157,5 +157,9 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.DropZone.Appearance)]
         public Func<T,bool> ItemIsDisbaled { get; set; }
+
+        [Parameter]
+        [Category(CategoryTypes.Button.Behavior)]
+        public string DisabledClass { get; set; } = "disabled";
     }
 }

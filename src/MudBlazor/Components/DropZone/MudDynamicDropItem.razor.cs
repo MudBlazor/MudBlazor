@@ -19,6 +19,7 @@ public partial class MudDynamicDropItem<T> : MudComponentBase
         new CssBuilder("mud-drop-item")
             .AddClass(DraggingClass, string.IsNullOrWhiteSpace(DraggingClass) == false && _dragOperationIsInProgress == true)
             .AddClass("blub23", HideOnDrag == true && _dragOperationIsInProgress == true)
+            .AddClass(DisabledClass, Disabled == true)
             .AddClass(Class)
             .Build();
 
@@ -76,6 +77,10 @@ public partial class MudDynamicDropItem<T> : MudComponentBase
     [Parameter]
     [Category(CategoryTypes.Button.Behavior)]
     public bool Disabled { get; set; }
+
+    [Parameter]
+    [Category(CategoryTypes.Button.Behavior)]
+    public string DisabledClass { get; set; }
 
     private async Task DragStarted()
     {
