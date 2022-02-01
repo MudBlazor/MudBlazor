@@ -1,4 +1,4 @@
-﻿// Copyright (c) MudBlazor 2021
+// Copyright (c) MudBlazor 2021
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
@@ -50,7 +50,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Button.Appearance)]
-        public string DraggingClass2 { get; set; }
+        public string DraggingClass { get; set; }
 
         /// <summary>
         /// A additional class that is applied, when an item from this dropzone is dragged
@@ -81,12 +81,12 @@ namespace MudBlazor
 
         private String GetDragginClass()
         {
-            if (String.IsNullOrEmpty(DraggingClass2) == true)
+            if (String.IsNullOrEmpty(DraggingClass) == true)
             {
                 return Container?.DraggingClass ?? String.Empty;
             }
 
-            return DraggingClass2;
+            return DraggingClass;
         }
 
         private String GetItemDraggingClass()
@@ -96,7 +96,7 @@ namespace MudBlazor
                 return Container?.ItemDraggingClass ?? String.Empty;
             }
 
-            return DraggingClass2;
+            return DraggingClass;
         }
 
         [Parameter]
