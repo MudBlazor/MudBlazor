@@ -10,18 +10,16 @@
 	 @attributes="UserAttributes">
 
 	@ChildContent
-	
+
 	@foreach (var item in GetItems())
 	{
-		<MudDynamicDropItem 
-			@key="@(item.GetHashCode())" T="T" DraggingClass="@GetItemDraggingClass()" 
-			Item="item" HideOnDrag="HideItemOnDrag" 
-			OnDragStarted="DragOperationStarted" 
-			OnDragEnded="FinishedDragOperation"
-			ZoneIdentifier="@Identifier"
-			Disabled="@GetItemDisabledStatus(item)"
-			DisabledClass=@(DisabledClass ?? Container?.DisabledClass)
-		>
+		<MudDynamicDropItem @key="@(item.GetHashCode())" T="T" DraggingClass="@GetItemDraggingClass()"
+						Item="item"
+						OnDragStarted="DragOperationStarted"
+						OnDragEnded="FinishedDragOperation"
+						ZoneIdentifier="@Identifier"
+						Disabled="@GetItemDisabledStatus(item)"
+						DisabledClass="@(DisabledClass ?? Container?.DisabledClass)">
 			@{
 				var renderer = GetItemTemplate();
 			}

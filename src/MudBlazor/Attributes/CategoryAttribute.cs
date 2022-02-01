@@ -262,8 +262,12 @@ namespace MudBlazor
         
         public static class DropZone
         {
-            public const string Behavior = "Behavior";
             public const string Appearance = "Appearance";
+            public const string Behavior = "Behavior";
+            public const string Disabled = "Disable";
+            public const string DraggingClasss = "DraggingClasss";
+            public const string DropRules = "DropRules";
+            public const string Items = "Items";
         }
 
         public static class Element

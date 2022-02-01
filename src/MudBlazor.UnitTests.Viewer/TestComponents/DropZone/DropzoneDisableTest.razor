@@ -3,14 +3,14 @@
 <MudDropContainer T="SimpleDropItem"
 				  Items="_items" ItemsSelector="@((item,dropzone) => item.ZoneIdentifier == dropzone)"
 				  Class="d-flex"
-				  DraggingClass="my-special-dragging-class" ItemDraggingClass="my-special-item-dragging-class"
+				  DisabledClass="my-custom-disabled-class-from-container" ItemIsDisbaled="@( (item) => item.Name == "First Item" || item.Name == "Third Item")"
 				  ItemDropped="ItemUpdated">
 	<ChildContent>
-		<MudDropZone T="SimpleDropItem" Identifier="Column 1" Class="first-drop-zone">
+		<MudDropZone T="SimpleDropItem" Identifier="Column 1" Class="first-drop-zone"
+					 ItemIsDisbaled="@( (item) => item.Name == "Fourth Item")" DisabledClass="my-zone-based-custom-disabled">
 			<MudText Typo="Typo.h6" Class="mb-4">Drop Zone 1</MudText>
 		</MudDropZone>
-		<MudDropZone T="SimpleDropItem" Identifier="Column 2" Class="second-drop-zone"
-					 DraggingClass="my-special-drop-zone-dragging-class" ItemDraggingClass="my-special-item-drop-zone-dragging-class">
+		<MudDropZone T="SimpleDropItem" Identifier="Column 2" Class="second-drop-zone">
 			<MudText Typo="Typo.h6" Class="mb-4">Drop Zone 2</MudText>
 		</MudDropZone>
 	</ChildContent>
@@ -38,10 +38,12 @@
 	}
 
 	private IEnumerable<SimpleDropItem> _items = new[]
-		{
+			{
 		new SimpleDropItem("First Item", "Column 1"),
 		new SimpleDropItem("Second Item", "Column 2"),
 		new SimpleDropItem("Third Item", "Column 2"),
+		new SimpleDropItem("Fourth Item", "Column 1"),
+
 	};
 
 }

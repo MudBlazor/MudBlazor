@@ -3,14 +3,19 @@
 <MudDropContainer T="SimpleDropItem"
 				  Items="_items" ItemsSelector="@((item,dropzone) => item.ZoneIdentifier == dropzone)"
 				  Class="d-flex"
-				  DraggingClass="my-special-dragging-class" ItemDraggingClass="my-special-item-dragging-class"
-				  ItemDropped="ItemUpdated">
+				  CanDropClass="can-drop-from-container" NoDropClass="no-drop-class-from-container"
+				  CanDrop="@( (item,columnIdentifier) => item.ZoneIdentifier != columnIdentifier)"
+				  ItemDropped="ItemUpdated" ApplyDropClassesOnDragStarted="@ApplyDropClassesOnDragStarted">
 	<ChildContent>
 		<MudDropZone T="SimpleDropItem" Identifier="Column 1" Class="first-drop-zone">
 			<MudText Typo="Typo.h6" Class="mb-4">Drop Zone 1</MudText>
 		</MudDropZone>
 		<MudDropZone T="SimpleDropItem" Identifier="Column 2" Class="second-drop-zone"
-					 DraggingClass="my-special-drop-zone-dragging-class" ItemDraggingClass="my-special-item-drop-zone-dragging-class">
+					 ApplyDropClassesOnDragStarted="@SecondColumnAppliesClassesOnDragStarted"
+					 CanDropClass="can-drop-from-zone" NoDropClass="no-drop-class-from-zone">
+			<MudText Typo="Typo.h6" Class="mb-4">Drop Zone 2</MudText>
+		</MudDropZone>
+		<MudDropZone T="SimpleDropItem" Identifier="Column 3" Class="third-drop-zone" CanDrop=@( (item) => false)>
 			<MudText Typo="Typo.h6" Class="mb-4">Drop Zone 2</MudText>
 		</MudDropZone>
 	</ChildContent>
@@ -32,6 +37,12 @@
 		}
 	}
 
+	[Parameter]
+	public bool ApplyDropClassesOnDragStarted { get; set; } = false;
+
+	[Parameter]
+	public bool? SecondColumnAppliesClassesOnDragStarted { get; set; } = null;
+
 	private void ItemUpdated(MudItemDropInfo<SimpleDropItem> dropItem)
 	{
 		dropItem.Item.ZoneIdentifier = dropItem.DropzoneIdentifier;
@@ -40,8 +51,8 @@
 	private IEnumerable<SimpleDropItem> _items = new[]
 		{
 		new SimpleDropItem("First Item", "Column 1"),
-		new SimpleDropItem("Second Item", "Column 2"),
-		new SimpleDropItem("Third Item", "Column 2"),
+		new SimpleDropItem("Second Item", "Column 1"),
+		new SimpleDropItem("Third Item", "Column 1"),
 	};
 
 }

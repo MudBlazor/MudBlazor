@@ -14,50 +14,100 @@ namespace MudBlazor
 {
     public partial class MudDropZone<T> : MudComponentBase, IDisposable
     {
+        private bool _containerIsInitilized = false;
+        private bool _canDrop = false;
+        private bool _itemOnDropZone = false;
+        private bool _dragInProgress = false;
+        private bool _disposedValue = false;
+
         [CascadingParameter]
         protected MudDropContainer<T> Container { get; set; }
 
-        [Parameter]
-        public string Identifier { get; set; }
-
         /// <summary>
-        /// The items that can be drag and dropped within the container
+        /// Child content of component
         /// </summary>
         [Parameter]
-        [Category(CategoryTypes.Button.Behavior)]
-        public RenderFragment<T> ItemRenderer { get; set; }
-
-        [Parameter]
-        [Category(CategoryTypes.Button.Behavior)]
+        [Category(CategoryTypes.DropZone.Appearance)]
         public RenderFragment ChildContent { get; set; }
 
         /// <summary>
-        /// The method is used to determinate if an item can be dropped within a drop zone
+        /// The unique identifier of this drop zone. It is used within transaction to 
         /// </summary>
         [Parameter]
-        [Category(CategoryTypes.Button.Behavior)]
+        [Category(CategoryTypes.DropZone.Appearance)]
+        public string Identifier { get; set; }
+
+        /// <summary>
+        /// The render fragment (template) that should be used to render the items within a drop zone. Overrides value provided by drop container
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.DropZone.Items)]
+        public RenderFragment<T> ItemRenderer { get; set; }
+
+        /// <summary>
+        /// The method is used to determinate if an item can be dropped within a drop zone. Overrides value provided by drop container
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.DropZone.Items)]
         public Func<T, bool> ItemsSelector { get; set; }
 
         /// <summary>
-        /// The method is used to determinate if an item can be dropped within a drop zone
+        /// The method is used to determinate if an item can be dropped within a drop zone. Overrides value provided by drop container
         /// </summary>
         [Parameter]
-        [Category(CategoryTypes.Button.Appearance)]
-        public bool HideItemOnDrag { get; set; }
+        [Category(CategoryTypes.DropZone.DropRules)]
+        public Func<T, bool> CanDrop { get; set; }
 
         /// <summary>
-        /// A additional class that is applied, when an item from this dropzone is dragged
+        /// The CSS class(es), that is applied to drop zones that are a valid target for drag and drop transaction. Overrides value provided by drop container
         /// </summary>
         [Parameter]
-        [Category(CategoryTypes.Button.Appearance)]
-        public string DraggingClass2 { get; set; }
+        [Category(CategoryTypes.DropZone.DropRules)]
+        public string CanDropClass { get; set; }
 
         /// <summary>
-        /// A additional class that is applied, when an item from this dropzone is dragged
+        /// The CSS class(es), that is applied to drop zones that are NOT valid target for drag and drop transaction. Overrides value provided by drop container
         /// </summary>
         [Parameter]
-        [Category(CategoryTypes.Button.Appearance)]
+        [Category(CategoryTypes.DropZone.DropRules)]
+        public string NoDropClass { get; set; }
+
+        /// <summary>
+        /// If true, drop classes CanDropClass <see cref="CanDropClass"/>  or NoDropClass <see cref="NoDropClass"/> or applied as soon, as a transaction has started. Overrides value provided by drop container
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.DropZone.DropRules)]
+        public bool? ApplyDropClassesOnDragStarted { get; set; }
+
+        /// <summary>
+        /// The method is used to determinate if an item should be disabled for dragging. Defaults to allow all items. Overrides value provided by drop container
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.DropZone.Disabled)]
+        public Func<T, bool> ItemIsDisbaled { get; set; }
+
+        /// <summary>
+        /// If a drop item is disabled (determinate by <see cref="ItemIsDisbaled"/>). This class is applied to the element. Overrides value provided by drop container
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.DropZone.Disabled)]
+        public string DisabledClass { get; set; }
+
+        /// <summary>
+        /// An additional class that is applied to the drop zone where a drag operation started
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.DropZone.DraggingClasss)]
+        public string DraggingClass { get; set; }
+
+        /// <summary>
+        /// An additional class that is applied to an drop item, when it is dragged
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.DropZone.DraggingClasss)]
         public string ItemDraggingClass { get; set; }
+
+        #region view helper
 
         private IEnumerable<T> GetItems()
         {
@@ -67,7 +117,7 @@ namespace MudBlazor
                 predicate = ItemsSelector;
             }
 
-            predicate = (item) => Container.ItemsSelector(item, Identifier ?? String.Empty);
+            predicate = (item) => Container.ItemsSelector(item, Identifier ?? string.Empty);
 
             return Container.Items.Where(predicate).ToArray();
         }
@@ -76,71 +126,27 @@ namespace MudBlazor
         private RenderFragment<T> GetItemTemplate() => ItemRenderer ?? Container?.ItemRenderer;
 
 
-        private bool _canDrop = false;
-        private bool _itemOnDropZone = false;
-
-        private String GetDragginClass()
+        private string GetDragginClass()
         {
-            if (String.IsNullOrEmpty(DraggingClass2) == true)
+            if (string.IsNullOrEmpty(DraggingClass) == true)
             {
-                return Container?.DraggingClass ?? String.Empty;
+                return Container?.DraggingClass ?? string.Empty;
             }
 
-            return DraggingClass2;
+            return DraggingClass;
         }
 
-        private String GetItemDraggingClass()
+        private string GetItemDraggingClass()
         {
-            if (String.IsNullOrEmpty(ItemDraggingClass) == true)
+            if (string.IsNullOrEmpty(ItemDraggingClass) == false)
             {
-                return Container?.ItemDraggingClass ?? String.Empty;
+                return ItemDraggingClass;
             }
 
-            return DraggingClass2;
+            return Container?.ItemDraggingClass ?? string.Empty;
         }
-
-        [Parameter]
-        [Category(CategoryTypes.Button.Behavior)]
-        public bool? ApplyDropClassesOnDragStarted { get; set; }
 
         private bool GetApplyDropClassesOnDragStarted() => (ApplyDropClassesOnDragStarted ?? Container?.ApplyDropClassesOnDragStarted) ?? false;
-
-        protected string Classname =>
-            new CssBuilder("mud-drop-zone")
-                .AddClass(CanDropClass ?? Container.CanDropClass, Container.TransactionInProgress() == true && Container.GetTransactionOrignZoneIdentiifer() != Identifier && _canDrop == true && (_itemOnDropZone == true || GetApplyDropClassesOnDragStarted() == true))
-                .AddClass(NoDropClass ?? Container.NoDropClass, Container.TransactionInProgress() == true && Container.GetTransactionOrignZoneIdentiifer() != Identifier && _canDrop == false && (_itemOnDropZone == true || GetApplyDropClassesOnDragStarted() == true))
-                .AddClass(GetDragginClass(), _dragInProgress == true)
-                .AddClass(Class)
-                .Build();
-
-        /// <summary>
-        /// The method is used to determinate if an item can be dropped within a drop zone
-        /// </summary>
-        [Parameter]
-        [Category(CategoryTypes.Button.Behavior)]
-        public Func<T, bool> CanDrop { get; set; }
-
-        /// <summary>
-        /// The CSS class to use if valid drop.
-        /// </summary>
-        [Parameter]
-        [Category(CategoryTypes.DropZone.Appearance)]
-        public string CanDropClass { get; set; }
-
-        /// <summary>
-        /// The CSS class to use if not valid drop.
-        /// </summary>
-        [Parameter]
-        [Category(CategoryTypes.DropZone.Appearance)]
-        public string NoDropClass { get; set; }
-
-        [Parameter]
-        [Category(CategoryTypes.DropZone.Appearance)]
-        public Func<T, bool> ItemIsDisbaled { get; set; }
-
-        [Parameter]
-        [Category(CategoryTypes.Button.Behavior)]
-        public string DisabledClass { get; set; }
 
         private bool GetItemDisabledStatus(T item)
         {
@@ -154,19 +160,43 @@ namespace MudBlazor
             return result;
         }
 
-        private bool _containerIsInitilized;
+        protected string Classname =>
+            new CssBuilder("mud-drop-zone")
+                .AddClass(CanDropClass ?? Container.CanDropClass, Container.TransactionInProgress() == true && Container.GetTransactionOrignZoneIdentiifer() != Identifier && _canDrop == true && (_itemOnDropZone == true || GetApplyDropClassesOnDragStarted() == true))
+                .AddClass(NoDropClass ?? Container.NoDropClass, Container.TransactionInProgress() == true && Container.GetTransactionOrignZoneIdentiifer() != Identifier && _canDrop == false && (_itemOnDropZone == true || GetApplyDropClassesOnDragStarted() == true))
+                .AddClass(GetDragginClass(), _dragInProgress == true)
+                .AddClass(Class)
+                .Build();
 
-        protected override void OnParametersSet()
+        #endregion
+
+        #region helper
+
+        private (T, bool) ItemCanBeDropped()
         {
-            if (Container != null && _containerIsInitilized == false)
+            if (Container == null || Container.TransactionInProgress() == false)
             {
-                _containerIsInitilized = true;
-                Container.TransactionStarted += Container_TransactionStarted;
-                Container.TransactionEnded += Container_TransactionEnded;
+                return (default(T), false);
             }
 
-            base.OnParametersSet();
+            var item = Container.GetTransactionItem();
+
+            var result = true;
+            if (CanDrop != null)
+            {
+                result = CanDrop(item);
+            }
+            else if (Container.CanDrop != null)
+            {
+                result = Container.CanDrop(item, Identifier);
+            }
+
+            return (item, result);
         }
+
+        #endregion
+
+        #region container event handling
 
         private void Container_TransactionEnded(object sender, EventArgs e)
         {
@@ -186,28 +216,10 @@ namespace MudBlazor
             _canDrop = dropResult.Item2;
             StateHasChanged();
         }
+        
+        #endregion
 
-        private (MudDragAndDropItemTransaction<T>, bool) ItemCanBeDropped()
-        {
-            if (Container == null || Container.TransactionInProgress() == false)
-            {
-                return (null, false);
-            }
-
-            var context = Container.GetContext();
-
-            var result = true;
-            if (CanDrop != null)
-            {
-                result = CanDrop(context.Item);
-            }
-            else if (Container.CanDrop != null)
-            {
-                result = Container.CanDrop(context.Item, Identifier);
-            }
-
-            return (context, result);
-        }
+        #region handling event callbacks
 
         private void HandleDragEnter()
         {
@@ -228,8 +240,6 @@ namespace MudBlazor
             {
                 return;
             }
-
-            Console.WriteLine();
 
             _itemOnDropZone = false;
         }
@@ -253,11 +263,24 @@ namespace MudBlazor
             await Container.CommitTransaction(Identifier);
         }
 
-        private bool _dragInProgress = false;
-        private bool _disposedValue;
-
         private void FinishedDragOperation() => _dragInProgress = false;
         private void DragOperationStarted() => _dragInProgress = true;
+
+        #endregion
+
+        #region life cycle
+
+        protected override void OnParametersSet()
+        {
+            if (Container != null && _containerIsInitilized == false)
+            {
+                _containerIsInitilized = true;
+                Container.TransactionStarted += Container_TransactionStarted;
+                Container.TransactionEnded += Container_TransactionEnded;
+            }
+
+            base.OnParametersSet();
+        }
 
         protected virtual void Dispose(bool disposing)
         {
@@ -273,11 +296,12 @@ namespace MudBlazor
             }
         }
 
-
         public void Dispose()
         {
             Dispose(disposing: true);
             GC.SuppressFinalize(this);
         }
+
+        #endregion
     }
 }

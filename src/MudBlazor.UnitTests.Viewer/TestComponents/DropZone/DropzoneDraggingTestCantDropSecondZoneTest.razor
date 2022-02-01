@@ -10,7 +10,7 @@
 			<MudText Typo="Typo.h6" Class="mb-4">Drop Zone 1</MudText>
 		</MudDropZone>
 		<MudDropZone T="SimpleDropItem" Identifier="Column 2" Class="second-drop-zone"
-					 DraggingClass="my-special-drop-zone-dragging-class" ItemDraggingClass="my-special-item-drop-zone-dragging-class">
+					 CanDrop=@( (x) => false)>
 			<MudText Typo="Typo.h6" Class="mb-4">Drop Zone 2</MudText>
 		</MudDropZone>
 	</ChildContent>
@@ -38,7 +38,7 @@
 	}
 
 	private IEnumerable<SimpleDropItem> _items = new[]
-		{
+				{
 		new SimpleDropItem("First Item", "Column 1"),
 		new SimpleDropItem("Second Item", "Column 2"),
 		new SimpleDropItem("Third Item", "Column 2"),

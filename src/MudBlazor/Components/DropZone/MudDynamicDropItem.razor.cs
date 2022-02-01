@@ -12,75 +12,68 @@ namespace MudBlazor;
 
 public partial class MudDynamicDropItem<T> : MudComponentBase
 {
+    private bool _dragOperationIsInProgress = false;
+
     [CascadingParameter]
     protected MudDropContainer<T> Container { get; set; }
 
-    protected string Classname =>
-        new CssBuilder("mud-drop-item")
-            .AddClass(DraggingClass, string.IsNullOrWhiteSpace(DraggingClass) == false && _dragOperationIsInProgress == true)
-            .AddClass("blub23", HideOnDrag == true && _dragOperationIsInProgress == true)
-            .AddClass(DisabledClass, Disabled == true)
-            .AddClass(Class)
-            .Build();
-
-    private bool _dragOperationIsInProgress = false;
+    /// <summary>
+    /// The zone identifier of the corresponding drop zone
+    /// </summary>
+    [Parameter]
+    [Category(CategoryTypes.DropZone.Behavior)]
+    public string ZoneIdentifier { get; set; }
 
     /// <summary>
-    /// The CSS class to use if the item is being dragged, note that is only applies to the item inside the starting zone.
+    /// the data item that is represneted by this item
+    /// </summary>
+    [Parameter]
+    [Category(CategoryTypes.DropZone.Behavior)]
+    public T Item { get; set; }
+
+    /// <summary>
+    /// Child content of component
     /// </summary>
     [Parameter]
     [Category(CategoryTypes.DropZone.Appearance)]
+    public RenderFragment ChildContent { get; set; }
+
+    /// <summary>
+    /// An additional class that is applied to this element when a drag operation is in progress
+    /// </summary>
+    [Parameter]
+    [Category(CategoryTypes.DropZone.DraggingClasss)]
     public string DraggingClass { get; set; }
 
     /// <summary>
-    /// If true, the item will be hidden ones a drag event starts from its original drop zone.
+    /// An event callback set fires, when a drag operation has been started
     /// </summary>
     [Parameter]
-    [Category(CategoryTypes.Button.Behavior)]
-    public bool HideOnDrag { get; set; }
-
-    /// <summary>
-    /// Child content of component.
-    /// </summary>
-    [Parameter]
-    [Category(CategoryTypes.Button.Behavior)]
-    public RenderFragment ChildContent { get; set; }
-
-    //[Parameter]
-    //[Category(CategoryTypes.Button.Behavior)]
-    //public bool Disable { get; set; }
-
-    [Parameter]
-    [Category(CategoryTypes.Button.Behavior)]
-    public T Item { get; set; }
-
-    [Parameter]
-    [Category(CategoryTypes.Button.Behavior)]
+    [Category(CategoryTypes.DropZone.Behavior)]
     public EventCallback<T> OnDragStarted { get; set; }
 
+    /// <summary>
+    /// An event callback set fires, when a drag operation has been eneded. This included also a cancelled transaction
+    /// </summary>
     [Parameter]
-    [Category(CategoryTypes.Button.Behavior)]
-    public EventCallback<T> OnDragSuccess { get; set; }
-
-    [Parameter]
-    [Category(CategoryTypes.Button.Behavior)]
-    public EventCallback<T> OnDropFailed { get; set; }
-
-    [Parameter]
-    [Category(CategoryTypes.Button.Behavior)]
+    [Category(CategoryTypes.DropZone.Behavior)]
     public EventCallback<T> OnDragEnded { get; set; }
 
+    /// <summary>
+    /// When true, the item can't be dragged. defaults to false
+    /// </summary>
     [Parameter]
-    [Category(CategoryTypes.Button.Behavior)]
-    public string ZoneIdentifier { get; set; }
+    [Category(CategoryTypes.DropZone.Disabled)]
+    public bool Disabled { get; set; } = false;
 
+    /// <summary>
+    /// The class that is applied when disabled <see cref="Disabled"/> is set to true
+    /// </summary>
     [Parameter]
-    [Category(CategoryTypes.Button.Behavior)]
-    public bool Disabled { get; set; }
-
-    [Parameter]
-    [Category(CategoryTypes.Button.Behavior)]
+    [Category(CategoryTypes.DropZone.Disabled)]
     public string DisabledClass { get; set; }
+
+    #region Event handling and callbacks
 
     private async Task DragStarted()
     {
@@ -95,7 +88,6 @@ public partial class MudDynamicDropItem<T> : MudComponentBase
     {
         _dragOperationIsInProgress = false;
 
-        await OnDragSuccess.InvokeAsync(Item);
         await OnDragEnded.InvokeAsync(Item);
         StateHasChanged();
     }
@@ -104,7 +96,6 @@ public partial class MudDynamicDropItem<T> : MudComponentBase
     {
         _dragOperationIsInProgress = false;
 
-        await OnDropFailed.InvokeAsync(this.Item);
         await OnDragEnded.InvokeAsync(Item);
         StateHasChanged();
     }
@@ -122,5 +113,13 @@ public partial class MudDynamicDropItem<T> : MudComponentBase
         }
     }
 
-    private Guid _id = Guid.NewGuid();
+    #endregion
+
+    protected string Classname =>
+    new CssBuilder("mud-drop-item")
+        .AddClass(DraggingClass, string.IsNullOrWhiteSpace(DraggingClass) == false && _dragOperationIsInProgress == true)
+        .AddClass(DisabledClass, Disabled == true)
+        .AddClass(Class)
+        .Build();
+
 }
