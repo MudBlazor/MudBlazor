@@ -1,50 +1,95 @@
-﻿@namespace MudBlazor.Docs.Examples
+﻿@using Microsoft.AspNetCore.Components
+@using System.ComponentModel.DataAnnotations
+@namespace MudBlazor.Docs.Examples
 
-<div class="d-flex flex-column" style="width: 100%;">
-	<MudDropContainer T="KanbanTaskItem" Items="_tasks" ItemsSelector="@((item,column) => item.Status == column)" ItemDropped="TaskUpdated" Class="d-flex flex-row justify-space-around" Style="flex: 1 1 100%">
-		<ChildContent>
-			@foreach (var item in _columns)
-			{
-				<MudPaper Height="200px" Class="pa-4 d-flex">
-					<MudDropZone T="KanbanTaskItem" Identifier="@item">
-						<MudText Typo="Typo.h5">@item</MudText>
-					</MudDropZone>
-				</MudPaper>
-			}
-		</ChildContent>
-		<ItemRenderer>
-			<MudPaper>@context.Name</MudPaper>
-		</ItemRenderer>
-	</MudDropContainer>
-	<MudGrid>
-		<MudItem xs="12" md="6">
-			<MudTextField @bind-Value="_newColumnName" Label="New Column Name" />
-			<MudButton OnClick="AddColumn">Add Column</MudButton>
-		</MudItem>
-		<MudItem xs="12" md="6">
-			<MudTextField @bind-Value="_newTaskName" Label="New Task Name" />
-			<MudButton OnClick="AddTask">Add Task</MudButton>
-		</MudItem>
-	</MudGrid>
-</div>
+@foreach (var test in _tasks)
+{
+    <MudText>@test.Name : @test.Status</MudText>
+}
 
+<MudDropContainer T="KanbanTaskItem" Items="@_tasks" ItemsSelector="@((item,column) => item.Status == column)" ItemDropped="TaskUpdated" Class="d-flex flex-row">
+	<ChildContent>
+		@foreach (var item in _sections)
+		{
+			<MudPaper Elevation="0" Width="224px" MinHeight="400px" Class="pa-4 ma-4 d-flex flex-column mud-background-gray rounded-lg">
+                <MudToolBar DisableGutters="true">
+                    <MudText Typo="Typo.subtitle1"><b>@item.Name</b></MudText>
+                    <MudSpacer/>
+                    <MudMenu Icon="@Icons.Material.Rounded.MoreHoriz" AnchorOrigin="Origin.BottomRight" TransformOrigin="Origin.TopRight" ListClass="pa-2 d-flex flex-column" PopoverClass="mud-elevation-25">
+                        <MudButton Size="Size.Small" Color="Color.Error" StartIcon="@Icons.Outlined.Delete">Delete Section</MudButton>
+                        <MudButton Size="Size.Small" Color="Color.Default" StartIcon="@Icons.Rounded.Edit">Rename Section</MudButton>
+                    </MudMenu>
+                </MudToolBar>
+                <MudDropZone T="KanbanTaskItem" Identifier="@item.Name" Class="mud-height-full" />
+                @if (item.NewTaskOpen)
+                {
+                    <MudPaper Elevation="25" Class="pa-2 rounded-lg">
+                        <MudTextField @bind-Value="item.NewTaskName" Placeholder="New Task" DisableUnderLine="true" Margin="Margin.Dense" Class="mx-2 mt-n2"></MudTextField>
+                        <MudButton OnClick="@(() => AddTask(item))" Size="Size.Small" Color="Color.Primary" FullWidth="true">Add Task</MudButton>
+                    </MudPaper>
+                }
+                else
+                {
+                    <MudButton OnClick="@(() => item.NewTaskOpen = !item.NewTaskOpen)" StartIcon="@Icons.Filled.Add" FullWidth="true" Class="rounded-lg py-2">Add Task</MudButton>
+                }
+            </MudPaper>
+		}
+        <MudPaper Class="pa-4" Elevation="0" Width="224px">
+            @if (_addSectionOpen)
+            {
+                <MudPaper Elevation="0" Width="224px" Class="pa-4 d-flex flex-column mud-background-gray rounded-lg">
+                    <EditForm Model="@newSectionModel" OnValidSubmit="OnValidSectionSubmit">
+                        <DataAnnotationsValidator/>
+                        <MudTextField @bind-Value="newSectionModel.Name" For="@(() => newSectionModel.Name)" Placeholder="New Section" DisableUnderLine="true"></MudTextField>
+                    </EditForm>
+                </MudPaper>
+            }
+            else
+            {
+                <MudButton OnClick="OpenAddNewSection" Variant="Variant.Outlined" StartIcon="@Icons.Filled.Add" Color="Color.Primary" Class="rounded-lg py-2" FullWidth="true">Add Section</MudButton>
+            }
+        </MudPaper>
+	</ChildContent>
+	<ItemRenderer>
+		<MudPaper Elevation="25" Class="pa-4 rounded-lg my-3">@context.Name</MudPaper>
+	</ItemRenderer>
+</MudDropContainer>
 
 @code {
-
-	/* handling board events */
+    private bool _addSectionOpen;
+    /* handling board events */
 	private void TaskUpdated(MudItemDropInfo<KanbanTaskItem> info)
 	{
 		info.Item.Status = info.DropzoneIdentifier;
 	}
 
 	/* Setup for board  */
-	private List<String> _columns = new() { "Todo", "InProgress", "Done" };
+	private List<KanBanSections> _sections = new()
+	{
+	    new KanBanSections("To Do", false, String.Empty),
+	    new KanBanSections("In Process", false, String.Empty),
+	    new KanBanSections("Done", false, String.Empty),
+	};
+
+    public class KanBanSections
+    {
+        public string Name { get; init; }
+        public bool NewTaskOpen { get; set; }
+        public string NewTaskName { get; set; }
+
+        public KanBanSections(string name, bool newTaskOpen, string newTaskName)
+        {
+            Name = name;
+            NewTaskOpen = newTaskOpen;
+            NewTaskName = newTaskName;
+        }
+    }
 	public class KanbanTaskItem
 	{
-		public String Name { get; init; }
-		public String Status { get; set; }
+		public string Name { get; init; }
+		public string Status { get; set; }
 
-		public KanbanTaskItem(String name, String status)
+	    public KanbanTaskItem(string name, string status)
 		{
 			Name = name;
 			Status = status;
@@ -52,27 +97,39 @@
 	}
 
 	private List<KanbanTaskItem> _tasks = new()
-		{
-			new KanbanTaskItem("Write unit test", "Todo"),
-			new KanbanTaskItem("Some docu stuff", "Todo"),
-			new KanbanTaskItem("Walking the dog", "Todo"),
-		};
-
-
-
-	private string _newColumnName;
-	private string _newTaskName;
-
-	private void AddColumn()
 	{
-		_columns.Add(_newColumnName);
-		_newColumnName = String.Empty;
-	}
+		new KanbanTaskItem("Write unit test", "To Do"),
+		new KanbanTaskItem("Some docu stuff", "To Do"),
+		new KanbanTaskItem("Walking the dog", "To Do"),
+	};
 
-	private void AddTask()
-	{
-		_tasks.Add(new KanbanTaskItem(_newTaskName, _columns[0]));
-		_newTaskName = String.Empty;
-	}
+    KanBanNewForm newSectionModel = new KanBanNewForm();
 
+    public class KanBanNewForm
+    {
+        [Required]
+        [StringLength(10, ErrorMessage = "Name length can't be more than 8.")]
+        public string Name { get; set; }
+    }
+    
+    private void OnValidSectionSubmit(EditContext context)
+    {
+        _sections.Add(new KanBanSections(newSectionModel.Name, false, String.Empty));
+        newSectionModel.Name = string.Empty;
+        _addSectionOpen = false;
+        StateHasChanged();
+    }
+
+    private void OpenAddNewSection()
+    {
+        _addSectionOpen = true;
+    }
+
+    private void AddTask(KanBanSections section)
+    {
+        _tasks.Add(new KanbanTaskItem(section.NewTaskName, section.Name));
+        section.NewTaskName = string.Empty;
+        section.NewTaskOpen = false;
+        StateHasChanged();
+    }
 }
