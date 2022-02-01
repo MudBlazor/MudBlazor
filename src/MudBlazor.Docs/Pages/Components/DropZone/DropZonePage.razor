@@ -5,49 +5,75 @@
 	</DocsPageHeader>
 
 	<DocsPageContent>
-		<DocsPageSection>
-			<SectionHeader Title="Basic Usage">
-				<Description>
+        <DocsPageSection>
+            <SectionHeader Title="Basic Usage">
+                <Description>
 
-				</Description>
-			</SectionHeader>
-			<SectionContent ShowCode="false" Code="DropZoneUsageExample">
-				<DropZoneUsageExample />
-			</SectionContent>
-		</DocsPageSection>
+                </Description>
+            </SectionHeader>
+            <SectionContent ShowCode="false" Code="DropZoneUsageExample">
+                <DropZoneUsageExample />
+            </SectionContent>
+        </DocsPageSection>
+        
+        <DocsPageSection>
+            <SectionHeader Title="Transfer items between Drop Zones">
+                <Description>
+                    The <CodeInline>MudDropContainer</CodeInline> supports transferring dragged items between its drop zones.<br/>
+                    You can connect one or more <CodeInline>MudDropZone</CodeInline> together by using a List&#60;T&#62; on the container <CodeInline>Items</CodeInline> property and the same object on the <CodeInline>T</CodeInline> property on all dropzones and the container.
+                </Description>
+            </SectionHeader>
+            <SectionSubGroups>
+                <DocsPageSection>
+                    <SectionHeader Title="Drop Item Selector">
+                        <Description>
+                            Both <CodeInline>MudDropContainer</CodeInline> and <CodeInline>MudDropZone</CodeInline> has an <CodeInline SecondaryColor="true">Identifier</CodeInline> that is used to select what items should be rendered within the zone.
+                            With the <CodeInline>ItemsSelector</CodeInline> property on the container you can specify what property in your object should determen what zone it belongs to. 
+                        </Description>
+                    </SectionHeader>
+                    <SectionContent DarkenBackground="true" ShowCode="false" Code="DropZoneItemSelectorExample">
+                        <DropZoneItemSelectorExample />
+                    </SectionContent>
+                </DocsPageSection>
+            </SectionSubGroups>
+        </DocsPageSection>
+        
 
-		<DocsPageSection>
-			<SectionHeader Title="Props">
-				<Description>
+        <DocsPageSection>
+            <SectionHeader Title="Drop Rules">
+                <Description>
+                    If a draggable item can be dropped or not can be controlled with the <CodeInline>CanDrop</CodeInline> function, either globally in the <CodeInline>MudDropContainer</CodeInline> or per <CodeInline>MudDropZone</CodeInline>.
+                </Description>
+            </SectionHeader>
+            @*<SectionContent ShowCode="false" Code="DropZoneDropRulesExample">
+                <DropZoneDropRulesExample />
+            </SectionContent>*@
+            <SectionSubGroups>
+                <DocsPageSection>
+                    <SectionHeader Title="Drop Rule Styling">
+                        <Description>
+                            The cursor will change if a item can or cannot be dropped but it's also possible to effect the whole drop zone.<br/>
+                            Add one of our or one of your own CSS class to <CodeInline>CanDropClass</CodeInline> and <CodeInline>NoDropClass</CodeInline> to change the styling of eatch behavior.
+                        </Description>
+                    </SectionHeader>
+                    @*<SectionContent ShowCode="false" Code="DropZoneDraggingStyleExample">
+                        <DropZoneDraggingStyleExample />
+                    </SectionContent>*@
+                </DocsPageSection>
+            </SectionSubGroups>
+        </DocsPageSection>
+        
+        <DocsPageSection>
+            <SectionHeader Title="test">
+                <Description>
+                </Description>
+            </SectionHeader>
+            <SectionContent ShowCode="false" Code="DropZoneCanDropStylesExample">
+                <DropZoneCanDropStylesExample />
+            </SectionContent>
+        </DocsPageSection>
 
-				</Description>
-			</SectionHeader>
-			<SectionSubGroups>
-
-				<DocsPageSection>
-					<SectionHeader Title="Dragging style">
-						<Description>
-							
-						</Description>
-					</SectionHeader>
-					<SectionContent ShowCode="false" Code="DropZoneDraggingStyleExample">
-						<DropZoneDraggingStyleExample />
-					</SectionContent>
-				</DocsPageSection>
-				<DocsPageSection>
-					<SectionHeader Title="Can drop styles">
-						<Description>
-							
-						</Description>
-					</SectionHeader>
-					<SectionContent ShowCode="false" Code="DropZoneCanDropStylesExample">
-						<DropZoneCanDropStylesExample />
-					</SectionContent>
-				</DocsPageSection>
-			</SectionSubGroups>
-		</DocsPageSection>
-
-		<DocsPageSection>
+        <DocsPageSection>
 			<SectionHeader Title="Dragging style">
 				<Description>
 					
