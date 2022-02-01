@@ -111,20 +111,16 @@ namespace MudBlazor
 
         private IEnumerable<T> GetItems()
         {
-            Func<T, bool> predicate = null;
+            Func<T, bool> predicate = (item) => Container.ItemsSelector(item, Identifier ?? string.Empty);
             if (ItemsSelector != null)
             {
                 predicate = ItemsSelector;
             }
 
-            predicate = (item) => Container.ItemsSelector(item, Identifier ?? string.Empty);
-
             return (Container?.Items ?? Array.Empty<T>()).Where(predicate).ToArray();
         }
 
-
         private RenderFragment<T> GetItemTemplate() => ItemRenderer ?? Container?.ItemRenderer;
-
 
         private string GetDragginClass()
         {
