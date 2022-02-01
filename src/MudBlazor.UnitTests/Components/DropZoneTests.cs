@@ -60,6 +60,13 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public void DropZone_DisposeWork()
+        {
+            var container = new MudDropZone<object>();
+            container.Dispose();
+        }
+
+        [Test]
         public void GenerelView()
         {
             var comp = Context.RenderComponent<DropzoneBasicTest>();
