@@ -289,8 +289,11 @@ namespace MudBlazor
             {
                 if (disposing)
                 {
-                    Container.TransactionStarted -= Container_TransactionStarted;
-                    Container.TransactionEnded -= Container_TransactionEnded;
+                    if (Container != null)
+                    {
+                        Container.TransactionStarted -= Container_TransactionStarted;
+                        Container.TransactionEnded -= Container_TransactionEnded;
+                    }
                 }
 
                 _disposedValue = true;
