@@ -1,22 +1,24 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
-<MudDropContainer T="DropItem" Items="_items" DraggingClass="mud-theme-success" ItemDraggingClass="mud-theme-info" CanDropClass="mud-border-info" NoDropClass="mud-border-error" ItemsSelector="@((item,dropzone) => item.Identifier == dropzone)" ItemDropped="ItemUpdated" Class="border-1 border-solid mud-border-lines-default">
+<MudDropContainer T="DropItem" Items="_items" Item ItemsSelector="@((item,dropzone) => item.Identifier == dropzone)" ItemDropped="ItemUpdated" Class="d-flex flex-column flex-grow-1">
     <ChildContent>
-        @for(int r = 0; r < 8; r++)
-        {
-            var row = r.ToString();
-            <div class="d-flex">
-                @for (int c = 0; c < 8; c++)
-                {
-                    var col = c.ToString();
-                    <MudDropZone T="DropItem" Identifier="@($"{row}{col}")" Class="mud-width-full mud-height-full d-flex justify-center align-center border-1 border-solid docs-gray-bg mud-border-lines-default" Style="height:64px;width:64px;"/>
-                }
-            </div>
-        }
+        <div class="d-flex flex-column flex-grow-1">
+            <MudListSubheader Class="mt-4 pb-2">Folders</MudListSubheader>
+            <MudDropZone T="DropItem" ItemDraggingClass="mud-info-text" Identifier="Folders" Class="d-flex flex-wrap flex-grow-1 pa-2 rounded" />
+        </div>
+        <div class="d-flex flex-column flex-grow-1">
+            <MudListSubheader Class="mt-4 pb-2">Files</MudListSubheader>
+            <MudDropZone T="DropItem" DraggingClass="mud-alert-text-normal" Identifier="Files" Class="d-flex flex-wrap flex-grow-1 pa-2 rounded" />
+        </div>
+        <div class="d-flex flex-column flex-grow-1">
+            <MudListSubheader Class="mt-4 pb-2">MudBlazor Secrets</MudListSubheader>
+            <MudDropZone T="DropItem" DraggingClass="mud-alert-text-error" ItemDraggingClass="mud-error-text" Identifier="MudBlazor" Class="d-flex flex-wrap flex-grow-1 pa-2 rounded" />
+        </div>
     </ChildContent>
     <ItemRenderer>
-        <div class="d-flex justify-center align-center flex-grow-1">
-            <MudIcon Icon="@context.Icon" Size="Size.Large" Class="@context.Color" />
+        <div Class="rounded mud-paper-outlined d-flex align-center pa-3 ma-2">
+            <MudIcon Icon="@(context.Identifier == "Folders" ? Icons.Custom.Uncategorized.Folder : Icons.Custom.FileFormats.FileDocument)" Color="Color.Inherit" Class="mr-2"/>
+            @context.Name
         </div>
     </ItemRenderer>
 </MudDropContainer>
@@ -26,48 +28,26 @@
     {
         dropItem.Item.Identifier = dropItem.DropzoneIdentifier;
     }
-
+    
     private List<DropItem> _items = new()
     {
-        new DropItem(){ Icon = @Icons.Custom.Uncategorized.ChessRook, Color = "grey-text text-darken-4", Identifier = "00" },
-        new DropItem(){ Icon = @Icons.Custom.Uncategorized.ChessKnight, Color = "grey-text text-darken-4", Identifier = "01" },
-        new DropItem(){ Icon = @Icons.Custom.Uncategorized.ChessBishop, Color = "grey-text text-darken-4", Identifier = "02" },
-        new DropItem(){ Icon = @Icons.Custom.Uncategorized.ChessQueen, Color = "grey-text text-darken-4", Identifier = "03" },
-        new DropItem(){ Icon = @Icons.Custom.Uncategorized.ChessKing, Color = "grey-text text-darken-4", Identifier = "04" },
-        new DropItem(){ Icon = @Icons.Custom.Uncategorized.ChessBishop, Color = "grey-text text-darken-4", Identifier = "05" },
-        new DropItem(){ Icon = @Icons.Custom.Uncategorized.ChessKnight, Color = "grey-text text-darken-4", Identifier = "06" },
-        new DropItem(){ Icon = @Icons.Custom.Uncategorized.ChessRook, Color = "grey-text text-darken-4", Identifier = "07" },
-        new DropItem(){ Icon = @Icons.Custom.Uncategorized.ChessPawn, Color = "grey-text text-darken-4", Identifier = "10" },
-        new DropItem(){ Icon = @Icons.Custom.Uncategorized.ChessPawn, Color = "grey-text text-darken-4", Identifier = "11" },
-        new DropItem(){ Icon = @Icons.Custom.Uncategorized.ChessPawn, Color = "grey-text text-darken-4", Identifier = "12" },
-        new DropItem(){ Icon = @Icons.Custom.Uncategorized.ChessPawn, Color = "grey-text text-darken-4", Identifier = "13" },
-        new DropItem(){ Icon = @Icons.Custom.Uncategorized.ChessPawn, Color = "grey-text text-darken-4", Identifier = "14" },
-        new DropItem(){ Icon = @Icons.Custom.Uncategorized.ChessPawn, Color = "grey-text text-darken-4", Identifier = "15" },
-        new DropItem(){ Icon = @Icons.Custom.Uncategorized.ChessPawn, Color = "grey-text text-darken-4", Identifier = "16" },
-        new DropItem(){ Icon = @Icons.Custom.Uncategorized.ChessPawn, Color = "grey-text text-darken-4", Identifier = "17" },
-        
-        new DropItem(){ Icon = @Icons.Custom.Uncategorized.ChessPawn, Color = "shades-text text-white", Identifier = "60" },
-        new DropItem(){ Icon = @Icons.Custom.Uncategorized.ChessPawn, Color = "shades-text text-white", Identifier = "61" },
-        new DropItem(){ Icon = @Icons.Custom.Uncategorized.ChessPawn, Color = "shades-text text-white", Identifier = "62" },
-        new DropItem(){ Icon = @Icons.Custom.Uncategorized.ChessPawn, Color = "shades-text text-white", Identifier = "63" },
-        new DropItem(){ Icon = @Icons.Custom.Uncategorized.ChessPawn, Color = "shades-text text-white", Identifier = "64" },
-        new DropItem(){ Icon = @Icons.Custom.Uncategorized.ChessPawn, Color = "shades-text text-white", Identifier = "65" },
-        new DropItem(){ Icon = @Icons.Custom.Uncategorized.ChessPawn, Color = "shades-text text-white", Identifier = "66" },
-        new DropItem(){ Icon = @Icons.Custom.Uncategorized.ChessPawn, Color = "shades-text text-white", Identifier = "67" },
-        new DropItem(){ Icon = @Icons.Custom.Uncategorized.ChessRook, Color = "shades-text text-white", Identifier = "70" },
-        new DropItem(){ Icon = @Icons.Custom.Uncategorized.ChessKnight, Color = "shades-text text-white", Identifier = "71" },
-        new DropItem(){ Icon = @Icons.Custom.Uncategorized.ChessBishop, Color = "shades-text text-white", Identifier = "72" },
-        new DropItem(){ Icon = @Icons.Custom.Uncategorized.ChessQueen, Color = "shades-text text-white", Identifier = "73" },
-        new DropItem(){ Icon = @Icons.Custom.Uncategorized.ChessKing, Color = "shades-text text-white", Identifier = "74" },
-        new DropItem(){ Icon = @Icons.Custom.Uncategorized.ChessBishop, Color = "shades-text text-white", Identifier = "75" },
-        new DropItem(){ Icon = @Icons.Custom.Uncategorized.ChessKnight, Color = "shades-text text-white", Identifier = "76" },
-        new DropItem(){ Icon = @Icons.Custom.Uncategorized.ChessRook, Color = "shades-text text-white", Identifier = "77" },
+        new DropItem(){ Name = "Wallpapers", Identifier = "Folders" },
+        new DropItem(){ Name = "Propaganda", Identifier = "Folders" },
+        new DropItem(){ Name = "Funny, Dank, Meme", Identifier = "Folders" },
+        new DropItem(){ Name = "Work", Identifier = "Folders" },
+        new DropItem(){ Name = "Photos", Identifier = "Folders" },
+        new DropItem(){ Name = "Untitled spreadsheet", Identifier = "Files" },
+        new DropItem(){ Name = "LoseLips.txt", Identifier = "Files" },
+        new DropItem(){ Name = "Untitled document", Identifier = "Files" },
+        new DropItem(){ Name = "GoonSwarmBestSwarm.png", Identifier = "Files" },
+        new DropItem(){ Name = "co2traitors.txt", Identifier = "Files" },
+        new DropItem(){ Name = "import.csv", Identifier = "Files" },
+        new DropItem(){ Name = "planned_components_2022-2023.txt", Identifier = "MudBlazor" },
     };
-
+    
     public class DropItem
     {
-        public string Icon { get; init; }
-        public string Color { get; init; }
+        public string Name { get; init; }
         public string Identifier { get; set; }
     }
 }

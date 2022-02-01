@@ -13,10 +13,10 @@
                 <MudText Typo="Typo.button" Class="ma-2">Trash Bin</MudText>
             </MudDropZone>
         </div>
-        <MudDropZone T="DropItem" Identifier="Street" CanDrop="@((item) => false)" Class="rounded-lg mud-alert-text-normal mt-6 mx-4 flex-grow-1 d-flex flex-wrap"/>
+        <MudDropZone T="DropItem" Identifier="Street" CanDrop="@((item) => false)" Class="rounded-lg mud-alert-text-normal pa-4 mt-6 mx-4 flex-grow-1 d-flex flex-wrap"/>
     </ChildContent>
     <ItemRenderer>
-        <MudPaper Elevation="25" Class="pa-4 ma-4">@context.Name</MudPaper>
+        <MudPaper Elevation="25" Class="pa-4 ma-2">@context.Name</MudPaper>
     </ItemRenderer>
 </MudDropContainer>
 

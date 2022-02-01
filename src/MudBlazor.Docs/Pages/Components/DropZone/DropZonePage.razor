@@ -62,50 +62,70 @@
 				</DocsPageSection>
 			</SectionSubGroups>
 		</DocsPageSection>
-
-		<DocsPageSection>
-			<SectionHeader Title="Override Values per Dropzone">
-				<Description>
-					Like the selector functions, the container also provides other values, like <CodeInline>DraggingClass</CodeInline>, that act as default values for all drop zones but can be overridden by the drop zone itself.
-				</Description>
-			</SectionHeader>
-			<SectionContent ShowCode="false" Code="DropZoneUsageExample">
-				<DropZoneUsageExample />
-			</SectionContent>
-		</DocsPageSection>
         
 		<DocsPageSection>
-			<SectionHeader Title="Dragging Style">
-				<Description>
+            <SectionHeader Title="Dragging Styles">
+                <Description>
+                    Its possible to style the drop zone from which the dragged item starts from as well as the item itself with the <CodeInline>DraggingClass</CodeInline> parameter and the <CodeInline>ItemDraggingClass</CodeInline> property.
+                </Description>
+            </SectionHeader>
+            <SectionContent ShowCode="false" Code="DropZoneDraggingStyleExample">
+            	<DropZoneDraggingStyleExample />
+            </SectionContent>
+            <SectionSubGroups>
+                
+                <DocsPageSection>
+                    <SectionHeader Title="Override Values">
+                        <Description>
+                            Like the selector functions, the container also provides other values, like <CodeInline>DraggingClass</CodeInline>, that act as default values for all drop zones but can be overridden by the drop zone itself.
+                        </Description>
+                    </SectionHeader>
+                    <SectionContent ShowCode="false" Code="DropZoneOverrideExample">
+                        <DropZoneOverrideExample />
+                    </SectionContent>
+                </DocsPageSection>
+                
+            </SectionSubGroups>
+        </DocsPageSection>
 
-				</Description>
-			</SectionHeader>
-			<SectionContent ShowCode="false" Code="DropZoneDraggingStyleExample">
-				<DropZoneDraggingStyleExample />
-			</SectionContent>
-		</DocsPageSection>
+        <DocsPageSection>
+            <SectionHeader Title="Disabled items">
+                <Description>
+                    Drop items can be preveted from being draged by using the <CodeInline>ItemIsDisbaled</CodeInline> property.
+                </Description>
+            </SectionHeader>
+            <SectionContent ShowCode="false" Code="DropZoneDisabledExample">
+                <DropZoneDisabledExample />
+            </SectionContent>
+        </DocsPageSection>
+        
+        <DocsPageSection>
+            <SectionHeader Title="Mics">
+                <Description>
+        
+                </Description>
+            </SectionHeader>
+            <SectionSubGroups>
+                
+                <DocsPageSection>
+                    <SectionHeader Title="Kanban">
+                        <Description></Description>
+                    </SectionHeader>
+                    <SectionContent Code="DropZoneKanbanExample">
+                        <DropZoneKanbanExample/>
+                    </SectionContent>
+                </DocsPageSection>
 
-		<DocsPageSection>
-			<SectionHeader Title="Disabled items">
-				<Description>
-
-				</Description>
-			</SectionHeader>
-			<SectionContent ShowCode="false" Code="DropZoneDisabledExample">
-				<DropZoneDisabledExample />
-			</SectionContent>
-		</DocsPageSection>
-
-		<DocsPageSection>
-			<SectionHeader Title="Simple Kanban Board">
-				<Description>
-
-				</Description>
-			</SectionHeader>
-			<SectionContent DarkenBackground="true" Code="DropZoneKanbanExample">
-				<DropZoneKanbanExample />
-			</SectionContent>
-		</DocsPageSection>
-
-	</DocsPageContent>
+                <DocsPageSection>
+                    <SectionHeader Title="Chess Board">
+                        <Description></Description>
+                    </SectionHeader>
+                    <SectionContent Code="DropZoneChessBoardExample">
+                        <DropZoneChessBoardExample/>
+                    </SectionContent>
+                </DocsPageSection>
+                
+            </SectionSubGroups>
+        </DocsPageSection>
+    </DocsPageContent>
 </DocsPage>
