@@ -55,6 +55,10 @@ namespace MudBlazor
             ["Selecting"] = 205,
             ["Editing"] = 206,
             ["Click action"] = 207,
+            ["Items"] = 208,
+            ["Disable"] = 209,
+            ["DraggingClasss"] = 210,
+            ["DropRules"] = 211,
 
             ["Appearance"] = 300, // general category
 

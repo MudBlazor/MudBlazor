@@ -3,7 +3,8 @@
 @typeparam T
 
 <CascadingValue Value="this" IsFixed="true">
-	<div style="@Style"
+	<div @attributes="UserAttributes"
+		 style="@Style"
 		 class="@Classname">
 		@ChildContent
 	</div>
