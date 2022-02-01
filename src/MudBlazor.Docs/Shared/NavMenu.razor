@@ -12,14 +12,14 @@
             <MudNavGroup Title="@item.Name" Expanded="@(IsSubGroupExpanded(item))" ExpandIcon="@Icons.Material.Filled.ExpandMore">
                 @foreach (var subItem in item.GroupComponents)
                 {
-                    string href = $"components/{subItem.Link}";
+                    string href = $"components/{subItem.Link}".ToUpper().ToLowerInvariant();
                     <MudNavLink Href="@href">@subItem.Name</MudNavLink>
                 }
             </MudNavGroup>
         }
         else
         {
-            string href = $"components/{item.Link}";
+            string href = $"components/{item.Link}".ToUpper().ToLowerInvariant();
             <MudNavLink Href="@href">@item.Name</MudNavLink>
         }
     }
