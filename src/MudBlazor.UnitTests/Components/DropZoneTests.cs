@@ -124,10 +124,19 @@ namespace MudBlazor.UnitTests.Components
             firstDropZone.Children.Should().HaveCount(2);
 
             var secondDropZone = container.Children[1];
-
             var firstDropItem = firstDropZone.Children[1];
 
+            firstDropZone.ClassList.Should().NotContain("mud-drop-zone-drag-block");
+            secondDropZone.ClassList.Should().NotContain("mud-drop-zone-drag-block");
+
             await firstDropItem.DragStartAsync(new DragEventArgs());
+
+            firstDropZone = comp.Find(".first-drop-zone");
+            firstDropZone.ClassList.Should().NotContain("mud-drop-zone-drag-block");
+
+            secondDropZone = comp.Find(".second-drop-zone");
+            secondDropZone.ClassList.Should().Contain("mud-drop-zone-drag-block");
+
             await secondDropZone.DropAsync(new DragEventArgs());
 
             //updating the container reference to reflect changes
@@ -143,6 +152,11 @@ namespace MudBlazor.UnitTests.Components
             secondDropZone.Children[3].TextContent.Should().Be("Third Item");
 
             secondDropZone.Children[1].DragEnd();
+
+            firstDropZone = comp.Find(".first-drop-zone");
+            secondDropZone = comp.Find(".second-drop-zone");
+            firstDropZone.ClassList.Should().NotContain("mud-drop-zone-drag-block");
+            secondDropZone.ClassList.Should().NotContain("mud-drop-zone-drag-block");
         }
 
         [Test]

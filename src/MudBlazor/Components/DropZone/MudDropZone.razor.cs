@@ -199,21 +199,25 @@ namespace MudBlazor
         {
             _itemOnDropZone = false;
 
-            if (GetApplyDropClassesOnDragStarted() == false) { return; }
+            if (GetApplyDropClassesOnDragStarted() == true)
+            {
+                _canDrop = false;
+            }
 
-            _canDrop = false;
             StateHasChanged();
         }
 
         private void Container_TransactionStarted(object sender, MudDragAndDropItemTransaction<T> e)
         {
-            if (GetApplyDropClassesOnDragStarted() == false) { return; }
+            if (GetApplyDropClassesOnDragStarted() == true)
+            {
+                var dropResult = ItemCanBeDropped();
+                _canDrop = dropResult.Item2;
+            }
 
-            var dropResult = ItemCanBeDropped();
-            _canDrop = dropResult.Item2;
             StateHasChanged();
         }
-        
+
         #endregion
 
         #region handling event callbacks
