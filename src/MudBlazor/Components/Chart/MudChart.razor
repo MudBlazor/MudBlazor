@@ -20,6 +20,10 @@
         {
             <Bar ChartSeries="@ChartSeries" @bind-SelectedIndex="@SelectedIndex" XAxisLabels="@XAxisLabels"></Bar>
         }
+        @if (ChartType == ChartType.Scatter)
+        {
+            <Scatter XYChartSeries="@XYChartSeries" @bind-SelectedIndex="@SelectedIndex"></Scatter>
+        }
     </div>
 </CascadingValue>
 

@@ -1,0 +1,48 @@
+﻿@namespace MudBlazor.Charts
+@using System.Globalization;
+@inherits MudChartBase
+
+<svg @attributes="UserAttributes" class="mud-chart-scatter mud-ltr" width="@MudChartParent?.Width" height="@MudChartParent?.Height" viewBox="0 0 650 350">
+    <g class="mud-charts-grid">
+        <g class="mud-charts-gridlines-yaxis">
+            @foreach (var horizontalLine in _horizontalLines)
+            {
+                <path stroke="gray" stroke-width="0.3" d="@horizontalLine.Data"></path>
+            }
+        </g>
+        <g class="mud-charts-gridlines-xaxis">
+            @foreach (var verticalLine in _verticalLines)
+            {
+                <path stroke="gray" stroke-width="0.3" d="@verticalLine.Data"></path>
+            }
+        </g>
+
+    </g>
+    <g class="mud-charts-yaxis">
+        @foreach (var horizontalLineValue in _horizontalValues)
+        {
+            @((MarkupString)$"<text x='{horizontalLineValue.X.ToString(CultureInfo.InvariantCulture)}' y='{horizontalLineValue.Y.ToString(CultureInfo.InvariantCulture)}' font-size='12px'  text-anchor='middle'>{horizontalLineValue.Value.ToString(CultureInfo.InvariantCulture)}</text>")
+        }
+    </g>
+    <g class="mud-charts-xaxis">
+        @foreach (var verticalLineValue in _verticalValues)
+        {
+            @((MarkupString)$"<text x='{verticalLineValue.X.ToString(CultureInfo.InvariantCulture)}' y='{verticalLineValue.Y.ToString(CultureInfo.InvariantCulture)}' font-size='12px' text-anchor='middle'>{verticalLineValue.Value.ToString(CultureInfo.InvariantCulture)}</text>")
+        }
+    </g>
+    <g class="mud-charts-scatter-series">
+        @foreach (var item in _chartDots.ToList())
+        {
+            <circle class="mud-chart-scatter" @onclick="() => SelectedIndex = item.Index"  stroke="@(MudChartParent.XYChartOptions.ChartPalette.GetValue(item.Index % XYChartOptions.ChartPalette.Count()))" fill="@(MudChartParent.XYChartOptions.ChartPalette.GetValue(item.Index % XYChartOptions.ChartPalette.Count()))"
+                    cx="@ToS(item.CX)"
+                    cy="@ToS(item.CY)"
+                    r="@ToS(item.Radius)"
+                    stroke-dasharray="@item.StrokeDashArray"
+                    stroke-dashoffset="@ToS(item.StrokeDashOffset)">
+            </circle>
+        }
+    </g>
+
+	@MudChartParent?.CustomGraphics
+</svg>
+<Legend Data="@_legends" />
