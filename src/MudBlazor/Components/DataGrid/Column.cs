@@ -3,10 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Linq.Expressions;
-using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Utilities;
@@ -35,18 +32,7 @@ namespace MudBlazor
         [Parameter] public RenderFragment FooterTemplate { get; set; }
         [Parameter] public RenderFragment<GroupDefinition<T>> GroupTemplate { get; set; }
         [Parameter]
-        public Func<T, object> GroupBy
-        {
-            get
-            {
-                CompileGroupBy();
-                return _groupBy;
-            }
-            set
-            {
-                _groupBy = value;
-            }
-        }
+        public Func<T, object> GroupBy { get; set; }
 
         #region HeaderCell Properties
 
@@ -146,27 +132,47 @@ namespace MudBlazor
 
         #endregion
 
-        private Func<T, object> _groupBy;
+        internal Func<T, object> groupBy;
+        private bool initialGroupBySet;
 
         protected override void OnInitialized()
         {
-            DataGrid?.AddColumn(this);
-
             if (!Hideable.HasValue)
                 Hideable = DataGrid?.Hideable;
 
+            groupBy = GroupBy;
+            CompileGroupBy();
+
             if (groupable && Grouping)
                 grouping = Grouping;
+
+            DataGrid?.AddColumn(this);
+        }
+
+        protected override void OnParametersSet()
+        {
+            // This needs to be removed but without it, the initial grouping is not set... Need to figure this out.
+            if (!initialGroupBySet && grouping)
+            {
+                initialGroupBySet = true;
+                Task.Run(async () =>
+                {
+                    await Task.Delay(300);
+                    groupBy = GroupBy;
+                    CompileGroupBy();
+                    DataGrid?.ChangedGrouping(this);
+                });
+            }
         }
 
         internal void CompileGroupBy()
         {
-            if (_groupBy == null)
+            if (groupBy == null)
             {
                 // set the default GroupBy
                 var parameter = Expression.Parameter(typeof(T), "x");
                 var field = Expression.Convert(Expression.Property(parameter, typeof(T).GetProperty(Field)), typeof(object));
-                _groupBy = Expression.Lambda<Func<T, object>>(field, parameter).Compile();
+                groupBy = Expression.Lambda<Func<T, object>>(field, parameter).Compile();
             }
         }
 

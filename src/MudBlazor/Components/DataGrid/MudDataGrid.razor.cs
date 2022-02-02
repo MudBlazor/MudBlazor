@@ -450,7 +450,7 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Determines whether grouping of columns is allowe in the data grid.
+        /// Determines whether grouping of columns is allowed in the data grid.
         /// </summary>
         [Parameter]
         public bool Groupable
@@ -461,11 +461,15 @@ namespace MudBlazor
                 if (_groupable != value)
                 {
                     _groupable = value;
-                    _groups.Clear();
-                    _groupExpansions.Clear();
 
-                    foreach (var column in _columns)
-                        column.RemoveGrouping();
+                    if (!_groupable)
+                    {
+                        _groups.Clear();
+                        _groupExpansions.Clear();
+
+                        foreach (var column in _columns)
+                            column.RemoveGrouping();
+                    }
                 }
             }
         }
@@ -891,7 +895,7 @@ namespace MudBlazor
                 return;
             }
 
-            var groupings = CurrentPageItems.GroupBy(GroupedColumn.GroupBy);
+            var groupings = CurrentPageItems.GroupBy(GroupedColumn.groupBy);
 
             if (_groupExpansions.Count == 0)
             {
@@ -910,6 +914,8 @@ namespace MudBlazor
             // construct the groups
             _groups = groupings.Select(x => new GroupDefinition<T>(x,
                 _groupExpansions.Contains(x.Key))).ToList();
+
+            Console.WriteLine(JsonSerializer.Serialize(_groups));
 
             StateHasChanged();
         }

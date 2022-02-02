@@ -112,7 +112,7 @@
 
                         @if (CurrentPageItems != null && CurrentPageItems.Count() > 0)
                         {
-                            @if (GroupedColumn != null)
+                            if (GroupedColumn != null)
                             {
                                 foreach (var g in _groups)
                                 {
@@ -182,11 +182,7 @@
                                         <CascadingValue Value="@Validator" IsFixed="true">
                                         @foreach (var column in @_columns)
                                         {
-                                            if (column.grouping)
-                                            {
-                                            
-                                            }
-                                            else if (!column.Hidden)
+                                            if (!column.Hidden)
                                             {
                                                 <Cell Item="@item" Title="@column.Title" Field="@column.Field" Class="@column.cellClassname"
                                                     CellTemplate="@column.CellTemplate" ColumnType="@column.Type" Style="@column.CellStyle"
