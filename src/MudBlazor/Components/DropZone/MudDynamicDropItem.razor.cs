@@ -42,7 +42,7 @@ public partial class MudDynamicDropItem<T> : MudComponentBase
     /// An additional class that is applied to this element when a drag operation is in progress
     /// </summary>
     [Parameter]
-    [Category(CategoryTypes.DropZone.DraggingClasss)]
+    [Category(CategoryTypes.DropZone.DraggingClass)]
     public string DraggingClass { get; set; }
 
     /// <summary>

@@ -84,10 +84,10 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.DropZone.Disabled)]
-        public Func<T, bool> ItemIsDisbaled { get; set; }
+        public Func<T, bool> ItemIsDisabled { get; set; }
 
         /// <summary>
-        /// If a drop item is disabled (determinate by <see cref="ItemIsDisbaled"/>). This class is applied to the element. Overrides value provided by drop container
+        /// If a drop item is disabled (determinate by <see cref="ItemIsDisabled"/>). This class is applied to the element. Overrides value provided by drop container
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.DropZone.Disabled)]
@@ -97,14 +97,14 @@ namespace MudBlazor
         /// An additional class that is applied to the drop zone where a drag operation started
         /// </summary>
         [Parameter]
-        [Category(CategoryTypes.DropZone.DraggingClasss)]
+        [Category(CategoryTypes.DropZone.DraggingClass)]
         public string DraggingClass { get; set; }
 
         /// <summary>
         /// An additional class that is applied to an drop item, when it is dragged
         /// </summary>
         [Parameter]
-        [Category(CategoryTypes.DropZone.DraggingClasss)]
+        [Category(CategoryTypes.DropZone.DraggingClass)]
         public string ItemDraggingClass { get; set; }
 
         #region view helper
@@ -147,7 +147,7 @@ namespace MudBlazor
         private bool GetItemDisabledStatus(T item)
         {
             var result = false;
-            var predicate = ItemIsDisbaled ?? Container?.ItemIsDisbaled;
+            var predicate = ItemIsDisabled ?? Container?.ItemIsDisabled;
             if (predicate != null)
             {
                 result = predicate(item);
