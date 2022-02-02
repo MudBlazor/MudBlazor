@@ -218,6 +218,8 @@ namespace MudBlazor
             StateHasChanged();
         }
 
+        private void Container_RefreshRequested(object sender, EventArgs e) => InvokeAsync(StateHasChanged);
+
         #endregion
 
         #region handling event callbacks
@@ -278,10 +280,12 @@ namespace MudBlazor
                 _containerIsInitilized = true;
                 Container.TransactionStarted += Container_TransactionStarted;
                 Container.TransactionEnded += Container_TransactionEnded;
+                Container.RefreshRequested += Container_RefreshRequested;
             }
 
             base.OnParametersSet();
         }
+
 
         protected virtual void Dispose(bool disposing)
         {
@@ -293,6 +297,7 @@ namespace MudBlazor
                     {
                         Container.TransactionStarted -= Container_TransactionStarted;
                         Container.TransactionEnded -= Container_TransactionEnded;
+                        Container.RefreshRequested -= Container_RefreshRequested;
                     }
                 }
 

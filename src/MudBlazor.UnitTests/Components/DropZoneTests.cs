@@ -629,5 +629,40 @@ namespace MudBlazor.UnitTests.Components
             thirdDropItem.GetAttribute("draggable").Should().Be("false");
 
         }
+
+        [Test]
+        public async Task DynamicItemsChanges()
+        {
+            var comp = Context.RenderComponent<DropzoneDynamicItemCollectionTest>();
+
+            var firstDropZone = comp.Find(".first-drop-zone");
+            var secondDropZone = comp.Find(".second-drop-zone");
+
+            firstDropZone.Children.Should().HaveCount(2);
+            secondDropZone.Children.Should().HaveCount(1);
+
+            comp.Instance.AddItem();
+
+            //no new items, since no update
+            secondDropZone.Children.Should().HaveCount(1);
+
+            //invoking update
+            await comp.Instance.InvokeRefresh();
+
+            //items should have been rendered
+            secondDropZone.Children.Should().HaveCount(2);
+
+            //removing item
+            comp.Instance.RemoveLastItem();
+
+            //not updated yet
+            secondDropZone.Children.Should().HaveCount(2);
+
+            //invoking update
+            await comp.Instance.InvokeRefresh();
+
+            //items should have been rendered
+            secondDropZone.Children.Should().HaveCount(1);
+        }
     }
 }

@@ -174,6 +174,7 @@ namespace MudBlazor
 
         public event EventHandler<MudDragAndDropItemTransaction<T>> TransactionStarted;
         public event EventHandler TransactionEnded;
+        public event EventHandler RefreshRequested;
 
         public void StartTransaction(T item, string identifier, Func<Task> commitCallback, Func<Task> cancelCallback)
         {
@@ -200,5 +201,10 @@ namespace MudBlazor
             TransactionEnded?.Invoke(this, EventArgs.Empty);
             _transaction = null;
         }
+
+        /// <summary>
+        /// Refreshes the dropzone and all items within. This is neded in case of adding items to the collection or changed values of items
+        /// </summary>
+        public void Refresh() => RefreshRequested?.Invoke(this, EventArgs.Empty);
     }
 }
