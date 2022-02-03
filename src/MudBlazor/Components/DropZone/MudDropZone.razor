@@ -2,8 +2,9 @@
 @inherits MudComponentBase
 @typeparam T
 
+
 <div class="@Classname" style="@Style"
-	 ondragover="event.preventDefault();" ondragstart="event.dataTransfer.setData('', event.target.id);"
+     id="@($"mud-drop-zone-{_id}")"
 	 @ondrop="HandleDrop"
 	 @ondragenter="HandleDragEnter"
 	 @ondragleave="HandleDragLeave"

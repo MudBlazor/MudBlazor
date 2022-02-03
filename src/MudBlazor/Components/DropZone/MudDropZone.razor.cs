@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
+using Microsoft.JSInterop;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
@@ -19,6 +20,9 @@ namespace MudBlazor
         private bool _itemOnDropZone = false;
         private bool _dragInProgress = false;
         private bool _disposedValue = false;
+        private Guid _id = Guid.NewGuid();
+
+        [Inject] private IJSRuntime JsRuntime { get; set; }
 
         [CascadingParameter]
         protected MudDropContainer<T> Container { get; set; }
@@ -284,6 +288,16 @@ namespace MudBlazor
             }
 
             base.OnParametersSet();
+        }
+
+        protected override async Task OnAfterRenderAsync(bool firstRender)
+        {
+            if (firstRender == true)
+            {
+                await JsRuntime.InvokeVoidAsync("mudDragAndDrop.initDropZone",_id.ToString());
+            }
+
+            await base.OnAfterRenderAsync(firstRender);
         }
 
 
