@@ -167,7 +167,7 @@ namespace MudBlazor
 
         internal void CompileGroupBy()
         {
-            if (groupBy == null)
+            if (groupBy == null && !string.IsNullOrWhiteSpace(Field))
             {
                 // set the default GroupBy
                 var parameter = Expression.Parameter(typeof(T), "x");
