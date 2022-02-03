@@ -21,6 +21,29 @@
         </DocsPageSection>
         
         <DocsPageSection>
+            <SectionHeader Title="Size">
+                <Description>Size can be directly set on the image with the <CodeInline>Width</CodeInline> and <CodeInline>Height</CodeInline> property, it can also be useful to set this even if you want a responsive image, setting them will make the image take up set space even before they are loaded which can be useful if your pictures takes long time to load.</Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="ImageSizeExample">
+                <ImageSizeExample />
+            </SectionContent>
+        </DocsPageSection>
+                
+        <DocsPageSection>
+            <SectionHeader Title="Responsive Images">
+                <Description>
+                    To get responsive images set the <CodeInline>Fluid</CodeInline> property to true. This applies <CodeInline SecondaryColor="true">max-width: 100%; and height: auto;</CodeInline> so the image scales with the parent's width.<br/>
+                    Resize the example bellow to see how the image scales with the parents with.
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="ImageResponsiveExample" Block="true" FullWidth="true">
+                <DocsImagePageResizer>
+                    <ImageResponsiveExample/>
+                </DocsImagePageResizer>
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
             <SectionHeader Title="Image Fit">
                 <Description>
                     Use <CodeInline>ObjectFit</CodeInline> to controll how a image should be resized.
@@ -41,7 +64,7 @@
                 <ImagePositionExample />
             </SectionContent>
         </DocsPageSection>
-        
+ 
         <DocsPageSection>
             <SectionHeader Title="Playground">
                 <Description></Description>

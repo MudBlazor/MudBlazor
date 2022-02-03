@@ -2,7 +2,7 @@
 
 <MudGrid>
     <MudItem xs="12" md="8" Class="d-flex justify-center align-center" Style="height:500px;">
-        <MudImage ObjectFit="ImageFit" Height="@(SetHeight ? ImageHeight : null)" Width="@(SetWidth ? ImageWidth : null)" Src="@($"_content/MudBlazor.Docs/images/content/{Image}")" Alt="Mony the dog" Elevation="25" Class="rounded-lg"/>
+        <MudImage ObjectFit="ImageFit" Height="@(SetHeight ? ImageHeight : null)" Width="@(SetWidth ? ImageWidth : null)" Src="@($"_content/MudBlazor.Docs/images/{Image}")" Alt="Mony the dog" Elevation="25" Class="rounded-lg"/>
     </MudItem>
     <MudItem xs="12" md="4">
         <MudPaper Class="pa-4 mt-6 mt-lg-16" Elevation="0">
@@ -13,6 +13,7 @@
                 <MudSelectItem T="string" Value="@("castle.jpg")">Castle</MudSelectItem>
                 <MudSelectItem T="string" Value="@("iceland.jpg")">Iceland</MudSelectItem>
                 <MudSelectItem T="string" Value="@("pilars.jpg")">Pilars</MudSelectItem>
+                <MudSelectItem T="string" Value="@("sweden.jpg")">Sweden</MudSelectItem>
             </MudSelect>
             <MudSelect Label="Image Fit" AnchorOrigin="Origin.BottomCenter" Dense="true" Margin="Margin.Dense" @bind-Value="ImageFit" Class="mt-4">
                 <MudSelectItem T="ObjectFit" Value="ObjectFit.None">None</MudSelectItem>
