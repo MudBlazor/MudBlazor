@@ -11,13 +11,20 @@ namespace MudBlazor;
 public partial class MudImage : MudComponentBase
 {
     protected string Classname =>
-        new CssBuilder()
-            .AddClass("mud-image")
+        new CssBuilder("mud-image")
+            .AddClass("fluid", Fluid)
             .AddClass($"object-{ObjectFit.ToDescriptionString()}")
             .AddClass($"object-{ObjectPosition.ToDescriptionString()}")
             .AddClass($"mud-elevation-{Elevation}", Elevation > 0)
             .AddClass(Class)
             .Build();
+    
+    /// <summary>
+    /// Applies the fluid class so the image scales with the parent width.
+    /// </summary>
+    [Parameter]
+    [Category(CategoryTypes.Image.Behavior)]
+    public bool Fluid { get; set; }
     
     /// <summary>
     /// Specifies the path to the image.

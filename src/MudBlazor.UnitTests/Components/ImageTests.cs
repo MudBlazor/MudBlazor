@@ -18,10 +18,11 @@ namespace MudBlazor.UnitTests.Components
         {
             var image = new MudImage();
 
+            image.Fluid.Should().BeFalse();
             image.Src.Should().BeNullOrEmpty();
             image.Alt.Should().BeNullOrEmpty();
-            image.Height.Should().BeNullOrEmpty();
-            image.Width.Should().BeNullOrEmpty();
+            image.Height.Should().BeNull();
+            image.Width.Should().BeNull();
             image.Elevation.Should().Be(0);
             image.ObjectFit.Should().Be(ObjectFit.Fill);
             image.ObjectPosition.Should().Be(ObjectPosition.Center);
@@ -33,10 +34,11 @@ namespace MudBlazor.UnitTests.Components
 
             var comp = Context.RenderComponent<MudImage>(p =>
             {
+                p.Add(x => x.Fluid, true);
                 p.Add(x => x.Src, "https://myimgsource.com/image.png");
                 p.Add(x => x.Alt, "my description");
-                p.Add(x => x.Height, "20px");
-                p.Add(x => x.Width, "120px");
+                p.Add(x => x.Height, 20);
+                p.Add(x => x.Width, 120);
                 p.Add(x => x.Elevation, 25);
                 p.Add(x => x.ObjectFit, ObjectFit.Cover);
                 p.Add(x => x.ObjectPosition, ObjectPosition.Bottom);
@@ -51,7 +53,7 @@ namespace MudBlazor.UnitTests.Components
             img.GetAttribute("width").Should().Be("120px");
             img.GetAttribute("style").Should().Be("background:gray");
 
-            img.ClassList.Should().BeEquivalentTo(new[] { "my-custom-class", "mud-elevation-25", "object-bottom", "object-cover", "mud-image" });
+            img.ClassList.Should().BeEquivalentTo(new[] { "my-custom-class", "mud-elevation-25", "object-bottom", "object-cover", "mud-image", "fluid" });
         }
 
         [Test]
