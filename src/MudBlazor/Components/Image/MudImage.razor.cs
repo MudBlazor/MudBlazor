@@ -37,14 +37,14 @@ public partial class MudImage : MudComponentBase
     /// </summary>
     [Parameter] 
     [Category(CategoryTypes.Image.Appearance)]
-    public string Height { get; set; }
+    public int? Height { get; set; }
 
     /// <summary>
     /// Specifies the width of the image in px.
     /// </summary>
     [Parameter] 
     [Category(CategoryTypes.Image.Appearance)]
-    public string Width { get; set; }
+    public int? Width { get; set; }
     
     /// <summary>
     /// The higher the number, the heavier the drop-shadow.
