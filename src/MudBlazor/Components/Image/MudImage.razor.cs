@@ -12,9 +12,10 @@ public partial class MudImage : MudComponentBase
 {
     protected string Classname =>
         new CssBuilder()
+            .AddClass("mud-image")
             .AddClass($"object-{ObjectFit.ToDescriptionString()}")
             .AddClass($"object-{ObjectPosition.ToDescriptionString()}")
-            .AddClass($"mud-elevation-{Elevation.ToString()}", Elevation > 0)
+            .AddClass($"mud-elevation-{Elevation}", Elevation > 0)
             .AddClass(Class)
             .Build();
     
