@@ -5,6 +5,10 @@ using System.Threading.Tasks;
 using Bunit;
 using FluentAssertions;
 using Microsoft.AspNetCore.Components.Web;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.JSInterop;
+using Microsoft.JSInterop.Infrastructure;
+using Moq;
 using MudBlazor.UnitTests.TestComponents;
 using NUnit.Framework;
 
@@ -67,7 +71,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void GenerelView()
+        public void DropZone_GenerelView()
         {
             var comp = Context.RenderComponent<DropzoneBasicTest>();
 
@@ -97,7 +101,22 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void DropzoneOverrideContainerRendered()
+        public void DropZone_TestJsCalls()
+        {
+            Mock<IJSRuntime> _jsruntimeMock = new Mock<IJSRuntime>(MockBehavior.Strict);
+
+            Context.Services.AddSingleton(typeof(IJSRuntime), _jsruntimeMock.Object);
+
+            _jsruntimeMock.Setup(x => x.InvokeAsync<IJSVoidResult>("mudDragAndDrop.initDropZone", It.Is<object[]>(y => y.Length == 1 && Guid.Parse(y[0].ToString()) != Guid.Empty)))
+                .ReturnsAsync(Mock.Of<IJSVoidResult>(), TimeSpan.FromMilliseconds(200)).Verifiable();
+
+            var comp = Context.RenderComponent<DropzoneBasicTest>();
+
+            _jsruntimeMock.Verify();
+        }
+
+        [Test]
+        public void DropZone_DropzoneOverrideContainerRendered()
         {
             var comp = Context.RenderComponent<DropzoneCustomItemSelectorTest>();
 
@@ -120,7 +139,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task SimpleDragAndDrop()
+        public async Task DropZone_SimpleDragAndDrop()
         {
             var comp = Context.RenderComponent<DropzoneBasicTest>();
 
@@ -167,7 +186,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task DragAndDropDraggingClass_DragCancelled()
+        public async Task DropZone_DragAndDropDraggingClass_DragCancelled()
         {
             var comp = Context.RenderComponent<DropzoneBasicTest>();
 
@@ -232,7 +251,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task DragAndDropDraggingClass_DragFinished()
+        public async Task DropZone_DragAndDropDraggingClass_DragFinished()
         {
             var comp = Context.RenderComponent<DropzoneBasicTest>();
 
@@ -270,7 +289,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task DragAndDropDraggingClass_DragFinished_DropNotAllowed()
+        public async Task DropZone_DragAndDropDraggingClass_DragFinished_DropNotAllowed()
         {
             var comp = Context.RenderComponent<DropzoneDraggingTestCantDropSecondZoneTest>();
 
@@ -308,7 +327,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task DropNotTrackedItem()
+        public async Task DropZone_DropNotTrackedItem()
         {
             var comp = Context.RenderComponent<DropzoneBasicTest>();
             {
@@ -326,7 +345,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task CheckDropClasses_NotApplyOnDragStarted()
+        public async Task DropZone_CheckDropClasses_NotApplyOnDragStarted()
         {
             var comp = Context.RenderComponent<DropzoneCanDropTest>();
 
@@ -373,7 +392,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task CheckDropClasses_TransactionNotStarted()
+        public async Task DropZone_CheckDropClasses_TransactionNotStarted()
         {
             var comp = Context.RenderComponent<DropzoneCanDropTest>();
 
@@ -410,7 +429,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task CheckDropClasses_ApplyOnDrag_OnlySecondZone()
+        public async Task DropZone_CheckDropClasses_ApplyOnDrag_OnlySecondZone()
         {
             var comp = Context.RenderComponent<DropzoneCanDropTest>(
                 p => p.Add(x => x.SecondColumnAppliesClassesOnDragStarted, true));
@@ -469,7 +488,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task CheckDropClasses_ApplyClassesOnDragStarted()
+        public async Task DropZone_CheckDropClasses_ApplyClassesOnDragStarted()
         {
             var comp = Context.RenderComponent<DropzoneCanDropTest>(p =>
             {
@@ -592,7 +611,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void CheckDropClasses_DisabledItems()
+        public void DropZone_CheckDropClasses_DisabledItems()
         {
             var comp = Context.RenderComponent<DropzoneDisableTest>();
 
@@ -631,7 +650,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task DynamicItemsChanges()
+        public async Task DropZone_DynamicItemsChanges()
         {
             var comp = Context.RenderComponent<DropzoneDynamicItemCollectionTest>();
 
