@@ -317,6 +317,12 @@ namespace MudBlazor
             public const string Appearance = "Appearance";
         }
 
+        public static class Image
+        {
+            public const string Behavior = "Behavior";
+            public const string Appearance = "Appearance";
+        }
+
         public static class Item
         {
             public const string Behavior = "Behavior";
