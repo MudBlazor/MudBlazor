@@ -1,0 +1,11 @@
+﻿@namespace MudBlazor
+@inherits MudComponentBase
+@typeparam T
+
+<div class="@Classname" style="@Style"
+	 @attributes="UserAttributes"
+	 draggable="@(Disabled == false ? "true" : "false")"
+	 @ondragstart="DragStarted"
+	 @ondragend="DragEnded">
+	@ChildContent
+</div>

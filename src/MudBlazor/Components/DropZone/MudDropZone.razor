@@ -1,0 +1,32 @@
+﻿@namespace MudBlazor
+@inherits MudComponentBase
+@typeparam T
+
+
+<div class="@Classname" style="@Style"
+     id="@($"mud-drop-zone-{_id}")"
+	 @ondrop="HandleDrop"
+	 @ondragenter="HandleDragEnter"
+	 @ondragleave="HandleDragLeave"
+	 @attributes="UserAttributes">
+
+	@ChildContent
+
+	@foreach (var item in GetItems())
+	{
+		<MudDynamicDropItem @key="@(item.GetHashCode())" T="T" DraggingClass="@GetItemDraggingClass()"
+						Item="item"
+						OnDragStarted="DragOperationStarted"
+						OnDragEnded="FinishedDragOperation"
+						ZoneIdentifier="@Identifier"
+						Disabled="@GetItemDisabledStatus(item)"
+						DisabledClass="@(DisabledClass ?? Container?.DisabledClass)">
+			@{
+				var renderer = GetItemTemplate();
+			}
+
+			@renderer(item)
+
+		</MudDynamicDropItem>
+	}
+</div>
