@@ -49,8 +49,8 @@ namespace MudBlazor.UnitTests.Components
             var img = comp.Find("img");
             img.GetAttribute("src").Should().Be("https://myimgsource.com/image.png");
             img.GetAttribute("alt").Should().Be("my description");
-            img.GetAttribute("height").Should().Be("20px");
-            img.GetAttribute("width").Should().Be("120px");
+            img.GetAttribute("height").Should().Be("20");
+            img.GetAttribute("width").Should().Be("120");
             img.GetAttribute("style").Should().Be("background:gray");
 
             img.ClassList.Should().BeEquivalentTo(new[] { "my-custom-class", "mud-elevation-25", "object-bottom", "object-cover", "mud-image", "fluid" });
