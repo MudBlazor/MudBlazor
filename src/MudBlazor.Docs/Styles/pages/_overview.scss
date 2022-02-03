@@ -2,7 +2,6 @@
   display: flex;
   flex-wrap: wrap;
   gap: 24px;
-  justify-content: center;
 }
 
 .explore-card {
@@ -21,5 +20,8 @@
   .explore-card{
     height: 138px;
     width: 138px;
+  }
+  .explore-mudblazor-items {
+    justify-content: center;
   }
 }
