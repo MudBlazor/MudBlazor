@@ -149,10 +149,10 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.DropZone.Disabled)]
-        public Func<T, bool> ItemIsDisbaled { get; set; }
+        public Func<T, bool> ItemIsDisabled { get; set; }
 
         /// <summary>
-        /// If a drop item is disabled (determinate by <see cref="ItemIsDisbaled"/>). This class is applied to the element
+        /// If a drop item is disabled (determinate by <see cref="ItemIsDisabled"/>). This class is applied to the element
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.DropZone.Disabled)]
@@ -162,14 +162,14 @@ namespace MudBlazor
         /// An additional class that is applied to the drop zone where a drag operation started
         /// </summary>
         [Parameter]
-        [Category(CategoryTypes.DropZone.DraggingClasss)]
+        [Category(CategoryTypes.DropZone.DraggingClass)]
         public string DraggingClass { get; set; }
 
         /// <summary>
         /// An additional class that is applied to an drop item, when it is dragged
         /// </summary>
         [Parameter]
-        [Category(CategoryTypes.DropZone.DraggingClasss)]
+        [Category(CategoryTypes.DropZone.DraggingClass)]
         public string ItemDraggingClass { get; set; }
 
         public event EventHandler<MudDragAndDropItemTransaction<T>> TransactionStarted;

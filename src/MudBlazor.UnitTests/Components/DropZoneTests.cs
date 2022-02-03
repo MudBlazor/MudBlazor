@@ -25,7 +25,7 @@ namespace MudBlazor.UnitTests.Components
             container.DisabledClass.Should().Be("disabled");
             container.DraggingClass.Should().BeNullOrEmpty();
             container.ItemDraggingClass.Should().BeNullOrEmpty();
-            container.ItemIsDisbaled.Should().BeNull();
+            container.ItemIsDisabled.Should().BeNull();
             container.Items.Should().BeNull();
             container.ItemsSelector.Should().BeNull();
             container.NoDropClass.Should().BeNullOrEmpty();
@@ -42,7 +42,7 @@ namespace MudBlazor.UnitTests.Components
             container.DisabledClass.Should().BeNullOrEmpty();
             container.DraggingClass.Should().BeNullOrEmpty();
             container.ItemDraggingClass.Should().BeNullOrEmpty();
-            container.ItemIsDisbaled.Should().BeNull();
+            container.ItemIsDisabled.Should().BeNull();
             container.ItemsSelector.Should().BeNull();
             container.NoDropClass.Should().BeNullOrEmpty();
         }

@@ -1,6 +1,6 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
-<MudDropContainer T="FileItem" ItemIsDisbaled="@( (item) => item.IsLocked == true)"  Items="_items" ItemsSelector="@((item,dropzone) => item.TransferSlot == dropzone)"  ItemDropped="ItemUpdated" Class="d-flex flex-wrap">
+<MudDropContainer T="FileItem" ItemIsDisabled="@( (item) => item.IsLocked == true)"  Items="_items" ItemsSelector="@((item,dropzone) => item.TransferSlot == dropzone)"  ItemDropped="ItemUpdated" Class="d-flex flex-wrap">
     <ChildContent>
         <MudPaper Class="ma-4" Height="400px" Width="300px">
             <MudList Clickable="true" Class="mud-height-full">
