@@ -55,6 +55,10 @@ namespace MudBlazor
             ["Selecting"] = 205,
             ["Editing"] = 206,
             ["Click action"] = 207,
+            ["Items"] = 208,
+            ["Disable"] = 209,
+            ["DraggingClass"] = 210,
+            ["DropRules"] = 211,
 
             ["Appearance"] = 300, // general category
 
@@ -258,6 +262,16 @@ namespace MudBlazor
         {
             public const string Behavior = "Behavior";
             public const string Appearance = "Appearance";
+        }
+        
+        public static class DropZone
+        {
+            public const string Appearance = "Appearance";
+            public const string Behavior = "Behavior";
+            public const string Disabled = "Disable";
+            public const string DraggingClass = "DraggingClass";
+            public const string DropRules = "DropRules";
+            public const string Items = "Items";
         }
 
         public static class Element
