@@ -25,11 +25,18 @@ namespace MudBlazor
         public RenderFragment TitleContent { get; set; }
 
         /// <summary>
-        /// The message box title. If null or empty, title will be hidden
+        /// The message box message as string.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.MessageBox.Behavior)]
         public string Message { get; set; }
+
+        /// <summary>
+        /// The message box message as markup string.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.MessageBox.Behavior)]
+        public MarkupString MarkupMessage { get; set; }
 
         /// <summary>
         /// Define the message box body as a renderfragment (overrides Message)
@@ -147,6 +154,7 @@ namespace MudBlazor
                 [nameof(Title)] = Title,
                 [nameof(TitleContent)] = TitleContent,
                 [nameof(Message)] = Message,
+                [nameof(MarkupMessage)] = MarkupMessage,
                 [nameof(MessageContent)] = MessageContent,
                 [nameof(CancelText)] = CancelText,
                 [nameof(CancelButton)] = CancelButton,

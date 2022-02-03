@@ -38,6 +38,7 @@ namespace MudBlazor.Docs.Services
             .AddItem("Badge", typeof(MudBadge))
             .AddItem("AppBar", typeof(MudAppBar))
             .AddItem("Drawer", typeof(MudDrawer), typeof(MudDrawerHeader), typeof(MudDrawerContainer))
+            .AddItem("Drop Zone", typeof(MudDropZone<T>), typeof(MudDropContainer<T>), typeof(MudDynamicDropItem<T>))
             .AddItem("Link", typeof(MudLink))
             .AddItem("Menu", typeof(MudMenu), typeof(MudMenuItem))
             .AddItem("Message Box", typeof(MudMessageBox))
@@ -51,6 +52,7 @@ namespace MudBlazor.Docs.Services
             .AddItem("Card", typeof(MudCard), typeof(MudCardActions), typeof(MudCardContent), typeof(MudCardHeader), typeof(MudCardMedia))
             .AddItem("Divider", typeof(MudDivider))
             .AddItem("Expansion Panels", typeof(MudExpansionPanels), typeof(MudExpansionPanel))
+            .AddItem("Image", typeof(MudImage))
             .AddItem("Icons", typeof(MudIcon))
             .AddItem("List", typeof(MudList), typeof(MudListItem), typeof(MudListSubheader))
             .AddItem("Paper", typeof(MudPaper))
@@ -217,6 +219,7 @@ namespace MudBlazor.Docs.Services
                 new DocsLink {Title = "Elevation", Href = "features/elevation"},
                 new DocsLink {Title = "Flex", Href = "features/flex"},
                 new DocsLink {Title = "Icons", Href = "features/icons"},
+                new DocsLink {Title = "Masking", Href = "features/masking"},
                 new DocsLink {Title = "Spacing", Href = "features/spacing"},
                 new DocsLink {Title = "RTL Languages", Href = "features/rtl-languages"},
             }.OrderBy(x => x.Title);

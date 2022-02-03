@@ -1,0 +1,53 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudDropContainer T="DropItem" Items="_items" ItemsSelector="@((item,dropzone) => item.Place == dropzone)" ItemDropped="ItemUpdated" Class="d-flex flex-column flex-grow-1">
+    <ChildContent>
+        <div class="d-flex flex-wrap justify-space-between">
+            <MudDropZone T="DropItem" Identifier="Compost" CanDrop="@((item) => item.Type == ItemType.Compost)" Class="rounded-lg mud-alert-text-success pa-4 ma-4 flex-grow-1">
+                <MudText Typo="Typo.button" Class="ma-2">Compost Bin</MudText>
+            </MudDropZone>
+            <MudDropZone T="DropItem" Identifier="Recycle" CanDrop="@((item) => item.Type == ItemType.Recycle)" Class="rounded-lg mud-alert-text-warning pa-4 ma-4 flex-grow-1">
+                <MudText Typo="Typo.button" Class="ma-2">Recycle Bin</MudText>
+            </MudDropZone>
+            <MudDropZone T="DropItem" Identifier="Trash" CanDrop="@((item) => item.Type == ItemType.Trash)" Class="rounded-lg mud-alert-text-info pa-4 ma-4 flex-grow-1">
+                <MudText Typo="Typo.button" Class="ma-2">Trash Bin</MudText>
+            </MudDropZone>
+        </div>
+        <MudDropZone T="DropItem" Identifier="Street" CanDrop="@((item) => false)" Class="rounded-lg mud-alert-text-normal pa-4 mt-6 mx-4 flex-grow-1 d-flex flex-wrap"/>
+    </ChildContent>
+    <ItemRenderer>
+        <MudPaper Elevation="25" Class="pa-4 ma-2">@context.Name</MudPaper>
+    </ItemRenderer>
+</MudDropContainer>
+
+@code {
+    private void ItemUpdated(MudItemDropInfo<DropItem> dropItem)
+    {
+        dropItem.Item.Place = dropItem.DropzoneIdentifier;
+    }
+    
+    private List<DropItem> _items = new()
+    {
+        new DropItem(){ Name = "Apple Core", Type = ItemType.Compost, Place = "Street" },
+        new DropItem(){ Name = "Banana Peel", Type = ItemType.Compost, Place = "Street" },
+        new DropItem(){ Name = "Old Battery", Type = ItemType.Trash, Place = "Street" },
+        new DropItem(){ Name = "Pizza Box", Type = ItemType.Recycle, Place = "Street" },
+        new DropItem(){ Name = "Moldy Bread", Type = ItemType.Compost, Place = "Street" },
+        new DropItem(){ Name = "Paper Bag", Type = ItemType.Recycle, Place = "Street" },
+        new DropItem(){ Name = "Uranium-235", Type = ItemType.Trash, Place = "Street" },
+    };
+    
+    public class DropItem
+    {
+        public string Name { get; set; }
+        public ItemType Type { get; set; }
+        public string Place { get; set; }
+    }
+
+    public enum ItemType
+    {
+        Compost,
+        Recycle,
+        Trash
+    }
+}
