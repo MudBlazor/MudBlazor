@@ -117,7 +117,7 @@ public partial class MudDynamicDropItem<T> : MudComponentBase
 
     protected string Classname =>
     new CssBuilder("mud-drop-item")
-        .AddClass(DraggingClass, string.IsNullOrWhiteSpace(DraggingClass) == false && _dragOperationIsInProgress == true)
+        .AddClass(DraggingClass, _dragOperationIsInProgress == true)
         .AddClass(DisabledClass, Disabled == true)
         .AddClass(Class)
         .Build();
