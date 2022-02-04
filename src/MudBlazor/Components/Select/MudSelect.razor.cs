@@ -809,11 +809,25 @@ namespace MudBlazor
         public string CheckedIcon { get; set; } = Icons.Material.Filled.CheckBox;
 
         /// <summary>
+        /// Custom checked icon color.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.ListAppearance)]
+        public Color CheckedIconColor { get; set; } = Color.Inherit;
+
+        /// <summary>
         /// Custom unchecked icon.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.ListAppearance)]
         public string UncheckedIcon { get; set; } = Icons.Material.Filled.CheckBoxOutlineBlank;
+
+        /// <summary>
+        /// Custom unchecked icon color.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.ListAppearance)]
+        public Color UncheckedIconColor { get; set; } = Color.Inherit;
 
         /// <summary>
         /// Custom indeterminate icon.
@@ -823,6 +837,13 @@ namespace MudBlazor
         public string IndeterminateIcon { get; set; } = Icons.Material.Filled.IndeterminateCheckBox;
 
         /// <summary>
+        /// Custom indeterminate icon color.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.ListAppearance)]
+        public Color IndeterminateIconColor { get; set; } = Color.Inherit;
+
+        /// <summary>
         /// The checkbox icon reflects the select all option's state
         /// </summary>
         protected string SelectAllCheckBoxIcon
@@ -830,6 +851,14 @@ namespace MudBlazor
             get
             {
                 return _selectAllChecked.HasValue ? _selectAllChecked.Value ? CheckedIcon : UncheckedIcon : IndeterminateIcon;
+            }
+        }
+
+        protected Color SelectAllCheckBoxIconColor
+        {
+            get
+            {
+                return _selectAllChecked.HasValue ? _selectAllChecked.Value ? CheckedIconColor : UncheckedIconColor : IndeterminateIconColor;
             }
         }
 
