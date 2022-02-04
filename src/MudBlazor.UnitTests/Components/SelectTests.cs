@@ -610,6 +610,27 @@ namespace MudBlazor.UnitTests.Components
             value.Should().Be("Selected values: FirstA, SecondA");
         }
 
+        /// <summary>
+        /// MudSelect with changed the multiselect checked and unchecked icons.
+        /// </summary>
+        /// <returns></returns>
+        [Test]
+        public async Task MultiSelectCheckedIcon()
+        {
+            var comp = Context.RenderComponent<MultiSelectCheckedIconTest>();
+            var menu = comp.Find("div.mud-popover");
+            var input = comp.Find("div.mud-input-control");
+            // Open the menu
+            input.Click();
+            menu.ClassList.Should().Contain("mud-popover-open");
+
+            var item = comp.FindComponent<MudListItem>();
+
+            item.Instance.Icon.Should().Be(Icons.Filled.StarBorder); // Unchecked
+            comp.Find(".mud-list-item-clickable").Click();
+            item.Instance.Icon.Should().Be(Icons.Filled.Star); // Checked
+        }
+
         [Test]
         public async Task SelectClearableTest()
         {
