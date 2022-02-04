@@ -87,6 +87,34 @@ namespace MudBlazor
         public T Value { get; set; }
 
         /// <summary>
+        /// Icon displayed if this item is selected
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.ListAppearance)]
+        public string CheckedIcon { get; set; } = Icons.Material.Filled.CheckBox;
+
+        /// <summary>
+        /// Color of icon displayed when this item is selected
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.ListAppearance)]
+        public Color CheckedIconColor { get; set; } = Color.Inherit;
+
+        /// <summary>
+        /// Icon displayed if this item is not selected
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.ListAppearance)]
+        public string UncheckedIcon { get; set; } = Icons.Material.Filled.CheckBoxOutlineBlank;
+
+        /// <summary>
+        /// Color of icon displayed when this item is not selected
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.ListAppearance)]
+        public Color UncheckedIconColor { get; set; } = Color.Inherit;
+
+        /// <summary>
         /// Mirrors the MultiSelection status of the parent select
         /// </summary>
         protected bool MultiSelection
@@ -120,9 +148,11 @@ namespace MudBlazor
             {
                 if (!MultiSelection)
                     return null;
-                return IsSelected ? Icons.Material.Filled.CheckBox : Icons.Material.Filled.CheckBoxOutlineBlank;
+                return IsSelected ? CheckedIcon : UncheckedIcon;
             }
         }
+
+        protected Color CheckBoxIconColor => IsSelected ? CheckedIconColor : UncheckedIconColor;
 
         protected string DisplayString
         {
