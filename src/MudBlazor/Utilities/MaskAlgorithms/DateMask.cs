@@ -130,38 +130,47 @@ public class DateMask : PatternMask
     /// </summary>
     protected override string ModifyFinalText(string text)
     {
-        var yyyy = new string(_y, 4);
-        var yy = new string(_y, 2);
-        var dd = new string(_d, 2);
-        var MM = new string(_M, 2);
-        var maskHasDay = Mask.Contains(dd);
-        var maskHasMonth = Mask.Contains(MM);
-        var maskHasYear = Mask.Contains(yy) || Mask.Contains(yyyy);
-        var (dayString, dayIndex) = Extract(dd, Mask, 0, text);
-        var (monthString, monthIndex) = Extract(MM, Mask, 0, text);
-        var dayFound = dayIndex >= 0;
-        var dayComplete = dayString?.Length == 2;
-        var monthFound = monthIndex >= 0;
-        var monthComplete = monthString?.Length == 2;
-        var y = ExtractYear(Mask, text, 0);
-        //if (maskHasYear && y < 0 || maskHasMonth && (!monthFound || !monthComplete) || maskHasDay && (!dayFound || !dayComplete))
-        //    return text; // we have incomplete input, no final check necessary/possible
-        int.TryParse(dayString ?? "", out var d);
-        int.TryParse(monthString ?? "", out var m);
-        if (!maskHasYear)
-            y = 0;
-        if (y < 0)
-            y = _year;
-        if (maskHasMonth && (monthFound || monthComplete))
+        try
         {
-            var m1 = FixMonth(m);
-            if (m1 != m)
-                text = text.Remove(monthIndex, 2).Insert(monthIndex, $"{m1:D2}");
+            var yyyy = new string(_y, 4);
+            var yy = new string(_y, 2);
+            var dd = new string(_d, 2);
+            var MM = new string(_M, 2);
+            var maskHasDay = Mask.Contains(dd);
+            var maskHasMonth = Mask.Contains(MM);
+            var maskHasYear = Mask.Contains(yy) || Mask.Contains(yyyy);
+            var (dayString, dayIndex) = Extract(dd, Mask, 0, text);
+            var (monthString, monthIndex) = Extract(MM, Mask, 0, text);
+            var dayFound = dayIndex >= 0;
+            var dayComplete = dayString?.Length == 2;
+            var monthFound = monthIndex >= 0;
+            var monthComplete = monthString?.Length == 2;
+            var y = ExtractYear(Mask, text, 0);
+            //if (maskHasYear && y < 0 || maskHasMonth && (!monthFound || !monthComplete) || maskHasDay && (!dayFound || !dayComplete))
+            //    return text; // we have incomplete input, no final check necessary/possible
+            int.TryParse(dayString ?? "", out var d);
+            int.TryParse(monthString ?? "", out var m);
+            if (!maskHasYear)
+                y = 0;
+            if (y < 0)
+                y = _year;
+            if (maskHasMonth && (monthFound || monthComplete))
+            {
+                var m1 = FixMonth(m);
+                if (m1 != m)
+                    text = text.Remove(monthIndex, 2).Insert(monthIndex, $"{m1:D2}");
+            }
+
+            if (maskHasDay && (dayFound || dayComplete))
+            {
+                var d1 = FixDay(y, m, d);
+                text = text.Remove(dayIndex, 2).Insert(dayIndex, $"{d1:D2}");
+            }
         }
-        if (maskHasDay && (dayFound || dayComplete))
+        catch (Exception e)
         {
-            var d1 = FixDay(y, m, d);
-            text = text.Remove(dayIndex, 2).Insert(dayIndex, $"{d1:D2}");
+            Console.WriteLine("Error in ModifyFinalText: " +e.Message);
+            return text;
         }
         return text;
     }
