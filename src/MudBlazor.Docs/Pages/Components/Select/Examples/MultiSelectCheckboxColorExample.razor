@@ -1,0 +1,57 @@
+﻿@namespace MudBlazor.Docs.Examples
+@using System.Linq
+
+<MudGrid>
+    <MudItem xs="12">
+        <MudSelect MultiSelection="true" SelectAll="@false" @bind-SelectedValues="selectedProgrammingLanguages" T="string" Label="Your favorite programming languages" AdornmentIcon="@Icons.Material.Filled.Code" AnchorOrigin="Origin.BottomCenter">
+            @foreach (var programmingLanguage in programmingLanguages)
+            {
+                <MudSelectItem T="string" Value="@programmingLanguage" CheckedIcon="@Icons.Filled.Star" CheckedIconColor="@Color.Warning" UncheckedIcon="@Icons.Filled.StarBorder" Disabled="@(programmingLanguage == "HTML")">
+                    @programmingLanguage
+                </MudSelectItem>
+            }
+        </MudSelect>
+    </MudItem>
+
+    <MudItem xs="12">
+        <MudSelect MultiSelection="true" SelectAll="@true" @bind-SelectedValues="selectedCountries" T="string" Label="Countries where you have been" AdornmentIcon="@Icons.Material.Filled.Flight" AnchorOrigin="Origin.BottomCenter" CheckedIcon="@Icons.Filled.Check" CheckedIconColor="@Color.Success" UncheckedIconColor="@Color.Transparent">
+            @foreach (var country in countries)
+            {
+                <MudSelectItem T="string" Value="@country" CheckedIcon="@Icons.Filled.FlightLand" CheckedIconColor="@Color.Info" UncheckedIcon="@Icons.Filled.FlightTakeoff" UncheckedIconColor="@Color.Dark">
+                    @country
+                </MudSelectItem>
+            }
+        </MudSelect>
+    </MudItem>
+
+    <MudItem xs="12">
+        <MudSelect MultiSelection="true" SelectAll="@true" @bind-SelectedValues="selectedSports" T="string" Label="Sports you like" AdornmentIcon="@Icons.Material.Filled.Sports" AnchorOrigin="Origin.BottomCenter" CheckedIcon="@Icons.Filled.Check" CheckedIconColor="@Color.Success" UncheckedIconColor="@Color.Transparent">
+            @foreach (var sport in sports)
+            {
+                <MudSelectItem T="string" Value="@sport" CheckedIcon="@Icons.Filled.ThumbUp" CheckedIconColor="@Color.Tertiary" UncheckedIcon="@Icons.Filled.ThumbDown" UncheckedIconColor="@Color.Tertiary">
+                    @sport
+                </MudSelectItem>
+            }
+        </MudSelect>
+    </MudItem>
+</MudGrid>
+
+@code {
+    private IEnumerable<string> selectedProgrammingLanguages { get; set; } = new HashSet<string>() { "C#" };
+    private string[] programmingLanguages =
+    {
+        "C#", "Java", "JavaScript", "Python", "Ruby", "PHP", "HTML"
+    };
+
+    private IEnumerable<string> selectedCountries { get; set; } = new HashSet<string>();
+    private string[] countries =
+    {
+        "US", "Canada", "Mexico", "Spain", "Germany", "India"
+    };
+
+    private IEnumerable<string> selectedSports { get; set; } = new HashSet<string> { "Football" };
+    private string[] sports =
+    {
+        "Football", "Basketball", "Baseball", "Tennis", "Golf"            
+    };
+}
