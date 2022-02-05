@@ -4,7 +4,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
-using System.Reflection;
 using System.Threading.Tasks;
 using Bunit;
 using FluentAssertions;
@@ -1079,6 +1078,7 @@ namespace MudBlazor.UnitTests.Components
             numericField.Value.Should().BeNull();
             numericField.Text.Should().BeNullOrEmpty();
             // input some text
+
             numericFieldComp.Find("input").Input(20);
             numericField.Value.Should().Be(20);
             numericField.Text.Should().Be("20");
@@ -1142,5 +1142,6 @@ namespace MudBlazor.UnitTests.Components
             numericFields[2].Instance.Validation.Should().Be(defaultValidation);
             numericFields[3].Instance.Validation.Should().Be("b");
         }
+
     }
 }
