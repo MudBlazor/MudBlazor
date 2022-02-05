@@ -586,7 +586,10 @@ namespace MudBlazor
 
         protected virtual void RegisterAsFormComponent()
         {
-            Form?.Add(this);
+            if (Standalone)
+            {
+                Form?.Add(this);
+            }
         }
 
         /// <summary>

@@ -960,13 +960,12 @@ namespace MudBlazor.UnitTests.Components
             trs.Count.Should().Be(4); // three rows + header row
 
             trs[1].Click();
-            //every item will be add twice - see MudTextField.razor
-            validator.ControlCount.Should().Be(2);
+            validator.ControlCount.Should().Be(1);
             for (var i = 0; i < 10; ++i)
             {
                 trs[i % 3 + 1].Click();
             }
-            validator.ControlCount.Should().Be(2);
+            validator.ControlCount.Should().Be(1);
         }
 
         [Test]

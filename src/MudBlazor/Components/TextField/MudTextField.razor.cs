@@ -63,6 +63,12 @@ namespace MudBlazor
                 return _maskReference.SelectRangeAsync(pos1, pos2);
         }
 
+        protected override void ResetValue()
+        {
+            _elementReference.Reset();
+            base.ResetValue();
+        }
+
         /// <summary>
         /// Clear the text field, set Value to default(T) and Text to null
         /// </summary>
