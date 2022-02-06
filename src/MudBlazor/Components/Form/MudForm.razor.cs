@@ -106,6 +106,30 @@ namespace MudBlazor
         protected HashSet<string> _errors = new();
 
         /// <summary>
+        /// A default validation func or a validation attribute to use for form controls that don't have one.
+        /// Supported types are:
+        /// <para>Func&lt;T, bool&gt; ... will output the standard error message "Invalid" if false</para>
+        /// <para>Func&lt;T, string&gt; ... outputs the result as error message, no error if null </para>
+        /// <para>Func&lt;T, IEnumerable&lt; string &gt;&gt; ... outputs all the returned error messages, no error if empty</para>
+        /// <para>Func&lt;object, string, IEnumerable&lt; string &gt;&gt; input Form.Model, Full Path of Member ... outputs all the returned error messages, no error if empty</para>
+        /// <para>Func&lt;T, Task&lt; bool &gt;&gt; ... will output the standard error message "Invalid" if false</para>
+        /// <para>Func&lt;T, Task&lt; string &gt;&gt; ... outputs the result as error message, no error if null</para>
+        /// <para>Func&lt;T, Task&lt;IEnumerable&lt; string &gt;&gt;&gt; ... outputs all the returned error messages, no error if empty</para>
+        /// <para>Func&lt;object, string, Task&lt;IEnumerable&lt; string &gt;&gt;&gt; input Form.Model, Full Path of Member ... outputs all the returned error messages, no error if empty</para>
+        /// <para>System.ComponentModel.DataAnnotations.ValidationAttribute instances</para>
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Validation)]
+        public object Validation { get; set; }
+
+        /// <summary>
+        /// If a field already has a validation, override it with <see cref="Validation"/>.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Validation)]
+        public bool? OverrideFieldValidation { get; set; }
+
+        /// <summary>
         /// Validation error messages.
         /// </summary>
         [Parameter]
@@ -264,8 +288,26 @@ namespace MudBlazor
                     // let's set this right
                     SetIsValid(valid);
                 }
+
+                SetDefaultControlValidation(Validation, OverrideFieldValidation ?? true);
             }
             return base.OnAfterRenderAsync(firstRender);
+        }
+
+        private void SetDefaultControlValidation(object validation, bool overrideFieldValidation)
+        {
+            if (validation == null)
+            {
+                return;
+            }
+            
+            foreach (var formControl in _formControls)
+            {
+                if (formControl.Validation == null || overrideFieldValidation)
+                {
+                    formControl.Validation = validation;
+                }
+            }
         }
 
         protected override void OnInitialized()
