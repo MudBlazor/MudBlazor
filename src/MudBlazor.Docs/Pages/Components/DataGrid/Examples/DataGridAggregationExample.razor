@@ -3,7 +3,7 @@
 @namespace MudBlazor.Docs.Examples
 @inject HttpClient httpClient
 
-<MudDataGrid Items="@_items">
+<MudDataGrid Items="@_items" Groupable="true">
     <Columns>
         <Column T="Model" Field="@nameof(Model.Name)">
             <FooterTemplate>
@@ -34,7 +34,11 @@
         new Model("Sam", 56, Severity.Normal, 50_000.00M), 
         new Model("Alicia", 54, Severity.Info, 75_000.00M), 
         new Model("Ira", 27, Severity.Success, 102_000.00M),
-        new Model("John", 32, Severity.Warning, 132_000.00M)
+        new Model("John", 32, Severity.Warning, 132_000.00M),
+        new Model("Fred", 65, Severity.Warning, 87_000.00M), 
+        new Model("Tabitha", 33, Severity.Info, 157_000.00M), 
+        new Model("Hunter", 22, Severity.Success, 43_000.00M),
+        new Model("Esme", 55, Severity.Warning, 149_000.00M)
     };
 
     AggregateDefinition<Model> _ageAggregation = new AggregateDefinition<Model>

@@ -66,7 +66,7 @@
                     The <CodeInline>&lt;MudDataGrid></CodeInline> allows editing the data passed into it. Setting the <CodeInline>ReadOnly</CodeInline> property
                     to <CodeInline>false</CodeInline> and the <CodeInline>EditMode</CodeInline> property to <CodeInline>DataGridEditMode.Inline</CodeInline> turns 
                     on row level editing. To disable editing on a column, set its <CodeInline>IsEditable</CodeInline> property to <CodeInline>false</CodeInline>.
-
+                    <br><br>
                     By default, the built in editing in the data grid automatically supplies the proper input component for each cell. However, this can be overidden
                     by supplying an <CodeInline>&lt;EditTemplate></CodeInline>. Inside the template, you have full control over the editing. Take a look at the Position
                     column below.
@@ -102,6 +102,8 @@
                     <CodeInline>AggregationType.Custom</CodeInline> and supply your own function which will return a formatted string to display. Lastly, for 
                     complete control over the data aggregation including the look and feel, you use <CodeInline>&lt;FooterTemplate></CodeInline> which has it's
                     context set to the <CodeInline>CurrentPageItems</CodeInline>.
+                    <br><br>
+                    Aggregation is automatically applied to groups when the data grid is grouped by a column. Try it out by grouping the Status column!
                 </Description>
             </SectionHeader>
             <SectionContent DarkenBackground="true" Code="DataGridAggregationExample" ShowCode="false" Block="true" FullWidth="true">

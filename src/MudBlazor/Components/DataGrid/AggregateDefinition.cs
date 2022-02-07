@@ -22,6 +22,11 @@ namespace MudBlazor
 
         public string GetValue(string field, IEnumerable<T> items)
         {
+            if (items == null || items.Count() == 0)
+            {
+                return DisplayFormat.Replace("{value}", "0");
+            }
+
             object value = null;
 
             if (_cachedType != Type)

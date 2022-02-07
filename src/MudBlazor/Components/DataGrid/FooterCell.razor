@@ -19,11 +19,11 @@ else
         }
         else if (AggregateDefinition != null)
         {
-            @AggregateDefinition.GetValue(Column?.Field, DataGrid?.CurrentPageItems)
+            @AggregateDefinition.GetValue(Column?.Field, CurrentItems)
         }
         else if (FooterTemplate != null)
         {
-            @FooterTemplate(DataGrid?.CurrentPageItems)
+            @FooterTemplate(CurrentItems)
         }
     </td>
 @*}*@

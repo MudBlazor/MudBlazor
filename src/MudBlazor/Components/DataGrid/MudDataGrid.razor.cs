@@ -549,7 +549,7 @@ namespace MudBlazor
         {
             get
             {
-                return _columns.Any(x => x.Type != ColumnType.SelectionCheckBox && (x.FooterTemplate != null /*|| column has aggregate*/));
+                return _columns.Any(x => x.Type != ColumnType.SelectionCheckBox && (x.FooterTemplate != null || x.AggregateDefinition != null));
             }
         }
 

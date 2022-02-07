@@ -168,6 +168,33 @@
                                             }                                    
                                             @{ rowIndex++; }
                                         </MudVirtualize>
+                                        @*Group Footer*@
+                                        <tr class="mud-table-row">
+                                            @foreach (var column in @_columns)
+                                            {
+                                                if (column.Type == ColumnType.SelectionCheckBox && MultiSelection && column.EnableFooterSelection)
+                                                {
+                                                    <FooterCell T="T" Class="@column.footerClassname" ColumnType="@ColumnType.SelectionCheckBox" ColSpan="@column.FooterColSpan"
+                                                        Style="@column.FooterStyle"></FooterCell>
+                                                }
+                                                else if (column.AggregateDefinition != null)
+                                                {
+                                                    <FooterCell T="T" Class="@column.footerClassname" ColumnType="@column.Type" AggregateDefinition="@column.AggregateDefinition"
+                                                        ColSpan="@column.FooterColSpan" Style="@column.FooterStyle" Column="@column" CurrentItems="@g.Grouping.ToList()"></FooterCell>
+                                                }
+                                                else if (column.Type != ColumnType.SelectionCheckBox && column.FooterTemplate != null)
+                                                {
+                                                    <FooterCell T="T" Class="@column.footerClassname" ColumnType="@column.Type" FooterTemplate="@column.FooterTemplate"
+                                                        ColSpan="@column.FooterColSpan" Style="@column.FooterStyle" CurrentItems="@g.Grouping.ToList()"></FooterCell>
+                                                }
+                                                else if (hasFooter)
+                                                {
+                                                    // Since we have at least one column with a footer, we need to add FooterCell for each column.
+                                                    <FooterCell T="T" Class="@column.footerClassname"
+                                                        ColSpan="@column.FooterColSpan" Style="@column.FooterStyle"></FooterCell>
+                                                }
+                                            }
+                                        </tr>
                                     }
                                 }
                             }
@@ -226,12 +253,6 @@
                         }
                     </tbody>
                     <tfoot class="@_footClassname">
-                        @*@if (Footer != null)
-                        {
-                            <CascadingValue Name="IsOnlyFooter" IsFixed="true" Value="true">
-                                @Footer(CurrentPageItems)
-                            </CascadingValue>
-                        }*@
                         <tr class="mud-table-row">
                             @foreach (var column in @_columns)
                             {
@@ -243,12 +264,12 @@
                                 else if (column.AggregateDefinition != null)
                                 {
                                     <FooterCell T="T" Class="@column.footerClassname" ColumnType="@column.Type" AggregateDefinition="@column.AggregateDefinition"
-                                        ColSpan="@column.FooterColSpan" Style="@column.FooterStyle" Column="@column"></FooterCell>
+                                        ColSpan="@column.FooterColSpan" Style="@column.FooterStyle" Column="@column" CurrentItems="@CurrentPageItems"></FooterCell>
                                 }
                                 else if (column.Type != ColumnType.SelectionCheckBox && column.FooterTemplate != null)
                                 {
                                     <FooterCell T="T" Class="@column.footerClassname" ColumnType="@column.Type" FooterTemplate="@column.FooterTemplate"
-                                        ColSpan="@column.FooterColSpan" Style="@column.FooterStyle"></FooterCell>
+                                        ColSpan="@column.FooterColSpan" Style="@column.FooterStyle" CurrentItems="@CurrentPageItems"></FooterCell>
                                 }
                                 else if (hasFooter)
                                 {

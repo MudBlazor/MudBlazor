@@ -102,7 +102,7 @@ namespace MudBlazor
         {
             get
             {
-                if (!sortable && !filterable)
+                if (!sortable && !filterable && !groupable)
                     return false;
 
                 return ShowColumnOptions ?? DataGrid?.ShowColumnOptions ?? true;

@@ -23,6 +23,7 @@ namespace MudBlazor
         [Parameter] public string FooterClass { get; set; }
         [Parameter] public string FooterStyle { get; set; }
         [Parameter] public AggregateDefinition<T> AggregateDefinition { get; set; }
+        [Parameter] public IEnumerable<T> CurrentItems { get; set; } = new List<T>();
 
         private bool _isSelected;
         private string _classname =>
