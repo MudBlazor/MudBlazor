@@ -1,13 +1,14 @@
 Clear-Host
 
 $dir = Split-Path -Parent $PSCommandPath
-$dir_utilities = $dir.Replace("tools\CSS Razor", "src\MudBlazor\Styles\utilities")
+$dir_utilities = $dir.Replace("tools\CssUtilitiesGenerator", "src\MudBlazor\Styles\utilities")
 $dir_generated_css = "$dir\css\"
 $dir_generated_output = "$dir\output\"
 
 $utilities = @()
 
 Get-ChildItem -Path $dir_utilities | ForEach-Object { $utilities += $_.Name.Replace("_","").Replace(".scss","");}
+
 
 if(Test-Path -Path $dir_generated_css -IsValid)
 {
