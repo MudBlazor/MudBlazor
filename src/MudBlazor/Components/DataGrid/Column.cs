@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using System;
+using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
@@ -29,7 +30,7 @@ namespace MudBlazor
         [Parameter] public RenderFragment ChildContent { get; set; }
         [Parameter] public RenderFragment HeaderTemplate { get; set; }
         [Parameter] public RenderFragment<T> CellTemplate { get; set; }
-        [Parameter] public RenderFragment FooterTemplate { get; set; }
+        [Parameter] public RenderFragment<IEnumerable<T>> FooterTemplate { get; set; }
         [Parameter] public RenderFragment<GroupDefinition<T>> GroupTemplate { get; set; }
         [Parameter]
         public Func<T, object> GroupBy { get; set; }
@@ -89,6 +90,7 @@ namespace MudBlazor
         [Parameter] public string FooterStyle { get; set; }
         [Parameter] public Func<T, string> FooterStyleFunc { get; set; }
         [Parameter] public bool EnableFooterSelection { get; set; }
+        [Parameter] public AggregateDefinition<T> AggregateDefinition { get; set; }
 
         #endregion
 

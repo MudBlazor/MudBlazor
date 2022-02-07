@@ -1,10 +1,23 @@
-﻿@namespace MudBlazor.UnitTests.TestComponents
+﻿@using System.Net.Http.Json
+@using MudBlazor.Examples.Data.Models
+@namespace MudBlazor.Docs.Examples
+@inject HttpClient httpClient
 
 <MudDataGrid Items="@_items">
     <Columns>
         <Column T="Model" Field="@nameof(Model.Name)">
             <FooterTemplate>
-                Names: @(string.Join(", ", @context.Select(x => x.Name)))
+                @{ int index = 1, count = @context.Count(); }
+                People: 
+                @foreach (var person in @context)
+                {
+                    <MudAvatar Color="@((Color)index)" Variant="Variant.Outlined" Size="Size.Small" Class="mr-1">@person.Name.First()</MudAvatar>@person.Name.Substring(1)
+                    if (index < count)
+                    {
+                        @(", ")
+                    }
+                    index++;
+                }
             </FooterTemplate>
         </Column>
         <Column T="Model" Field="@nameof(Model.Age)" AggregateDefinition="_ageAggregation" />
@@ -13,7 +26,7 @@
     </Columns>
 </MudDataGrid>
 
-@code {
+@code { 
     public record Model (string Name, int Age, Severity Status, decimal Salary);
 
     IEnumerable<Model> _items = new List<Model>()

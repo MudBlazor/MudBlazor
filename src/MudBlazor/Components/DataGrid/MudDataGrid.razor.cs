@@ -327,12 +327,6 @@ namespace MudBlazor
         [Parameter] public RenderFragment Columns { get; set; }
 
         /// <summary>
-        /// Allows adding a custom footer beyond that specified in the Column component. Add FooterCell 
-        /// components to add a custom footer.
-        /// </summary>
-        [Parameter] public RenderFragment Footer { get; set; }
-
-        /// <summary>
         /// Row Child content of the component.
         /// </summary>
         [Parameter] public RenderFragment<T> ChildRowContent { get; set; }
@@ -544,6 +538,18 @@ namespace MudBlazor
             get
             {
                 return _columns.FirstOrDefault(x => x.grouping);
+            }
+        }
+
+        #endregion
+
+        #region Computed Properties
+
+        bool hasFooter
+        {
+            get
+            {
+                return _columns.Any(x => x.Type != ColumnType.SelectionCheckBox && (x.FooterTemplate != null /*|| column has aggregate*/));
             }
         }
 

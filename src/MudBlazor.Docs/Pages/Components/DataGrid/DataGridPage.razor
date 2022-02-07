@@ -92,5 +92,22 @@
             </SectionContent>
         </DocsPageSection>
 
+        <DocsPageSection>
+            <SectionHeader Title="Data Aggregation">
+                <Description>
+                    The <CodeInline>&lt;MudDataGrid></CodeInline> allows you to aggregate data in several different ways. Data aggregation happens in the 
+                    footer of the grid for the most part. By setting an <CodeInline>AggregateDefinition</CodeInline>, you can easily add a quick built-in aggregate
+                    or choose to tailor the display to your needs. There are 6 different <CodeInline>AggregateTypes</CodeInline> that can be used with the 
+                    <CodeInline>AggregateDefinition</CodeInline>: Avg, Count, Custom, Max, Min and Sum. For more control over the data aggregation, you can choose the
+                    <CodeInline>AggregationType.Custom</CodeInline> and supply your own function which will return a formatted string to display. Lastly, for 
+                    complete control over the data aggregation including the look and feel, you use <CodeInline>&lt;FooterTemplate></CodeInline> which has it's
+                    context set to the <CodeInline>CurrentPageItems</CodeInline>.
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="DataGridAggregationExample" ShowCode="false" Block="true" FullWidth="true">
+                <DataGridAggregationExample />
+            </SectionContent>
+        </DocsPageSection>
+
     </DocsPageContent>
 </DocsPage>

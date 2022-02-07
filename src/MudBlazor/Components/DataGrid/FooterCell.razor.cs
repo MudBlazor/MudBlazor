@@ -13,14 +13,16 @@ namespace MudBlazor
     public partial class FooterCell<T> : MudComponentBase, IDisposable
     {
         [CascadingParameter] public MudDataGrid<T> DataGrid { get; set; }
-        [CascadingParameter(Name = "IsOnlyFooter")] public bool IsOnlyFooter { get; set; } = false;
+        //[CascadingParameter(Name = "IsOnlyFooter")] public bool IsOnlyFooter { get; set; } = false;
 
+        [Parameter] public Column<T> Column { get; set; }
         [Parameter] public int ColSpan { get; set; }
         [Parameter] public ColumnType ColumnType { get; set; } = ColumnType.Text;
-        [Parameter] public RenderFragment FooterTemplate { get; set; }
+        [Parameter] public RenderFragment<IEnumerable<T>> FooterTemplate { get; set; }
         [Parameter] public RenderFragment ChildContent { get; set; }
         [Parameter] public string FooterClass { get; set; }
         [Parameter] public string FooterStyle { get; set; }
+        [Parameter] public AggregateDefinition<T> AggregateDefinition { get; set; }
 
         private bool _isSelected;
         private string _classname =>
@@ -31,6 +33,7 @@ namespace MudBlazor
             new StyleBuilder()
                 .AddStyle(FooterStyle)
                 .AddStyle(Style)
+                .AddStyle("font-weight", "600")
             .Build();
 
         protected override void OnInitialized()
