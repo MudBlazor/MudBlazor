@@ -2,28 +2,19 @@
 @inherits MudComponentBase
 @typeparam T
 
-@*@if (IsOnlyFooter)
-{
-    <td class="mud-table-cell @_classname" style="@_style" colspan="@ColSpan" @attributes="@UserAttributes">
-        @ChildContent
-    </td>
-}
-else
-{*@
-    <td class="@_classname" style="@_style" colspan="@ColSpan" @attributes="@UserAttributes">
-        @if (ColumnType == ColumnType.SelectionCheckBox)
-        {
-            <div class="d-flex">
-                <MudCheckBox T="bool" Checked="@_isSelected" CheckedChanged="@CheckedChangedAsync"></MudCheckBox>
-            </div>
-        }
-        else if (AggregateDefinition != null)
-        {
-            @AggregateDefinition.GetValue(Column?.Field, CurrentItems)
-        }
-        else if (FooterTemplate != null)
-        {
-            @FooterTemplate(CurrentItems)
-        }
-    </td>
-@*}*@
+<td class="@_classname" style="@_style" colspan="@Column?.FooterColSpan" @attributes="@UserAttributes">
+    @if (Column?.Type == ColumnType.SelectionCheckBox)
+    {
+        <div class="d-flex">
+            <MudCheckBox T="bool" Checked="@_isSelected" CheckedChanged="@CheckedChangedAsync"></MudCheckBox>
+        </div>
+    }
+    else if (Column?.AggregateDefinition != null)
+    {
+        @Column?.AggregateDefinition.GetValue(Column?.Field, CurrentItems)
+    }
+    else if (Column?.FooterTemplate != null)
+    {
+        @Column?.FooterTemplate(CurrentItems)
+    }
+</td>

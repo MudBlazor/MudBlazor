@@ -16,23 +16,24 @@ namespace MudBlazor
         //[CascadingParameter(Name = "IsOnlyFooter")] public bool IsOnlyFooter { get; set; } = false;
 
         [Parameter] public Column<T> Column { get; set; }
-        [Parameter] public int ColSpan { get; set; }
-        [Parameter] public ColumnType ColumnType { get; set; } = ColumnType.Text;
-        [Parameter] public RenderFragment<IEnumerable<T>> FooterTemplate { get; set; }
+        //[Parameter] public int ColSpan { get; set; }
+        //[Parameter] public ColumnType ColumnType { get; set; } = ColumnType.Text;
+        //[Parameter] public RenderFragment<IEnumerable<T>> FooterTemplate { get; set; }
         [Parameter] public RenderFragment ChildContent { get; set; }
-        [Parameter] public string FooterClass { get; set; }
-        [Parameter] public string FooterStyle { get; set; }
-        [Parameter] public AggregateDefinition<T> AggregateDefinition { get; set; }
+        //[Parameter] public string FooterClass { get; set; }
+        //[Parameter] public string FooterStyle { get; set; }
+        //[Parameter] public AggregateDefinition<T> AggregateDefinition { get; set; }
         [Parameter] public IEnumerable<T> CurrentItems { get; set; } = new List<T>();
 
         private bool _isSelected;
         private string _classname =>
-            new CssBuilder(FooterClass)
+            new CssBuilder(Column?.FooterClass)
+                .AddClass(Column?.footerClassname)
                 .AddClass(Class)
             .Build();
         private string _style =>
             new StyleBuilder()
-                .AddStyle(FooterStyle)
+                .AddStyle(Column?.FooterStyle)
                 .AddStyle(Style)
                 .AddStyle("font-weight", "600")
             .Build();
