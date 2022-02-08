@@ -92,7 +92,7 @@
     <PackageReference Include="Microsoft.AspNetCore.Components" Version="6.0.1.*" />
     <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="6.0.1.*" />
     <PackageReference Include="Microsoft.AspNetCore.WebUtilities" Version="2.2.0" />
-    <PackageReference Include="Blazored.LocalStorage" Version="4.1.5" />
+    <PackageReference Include="Blazored.LocalStorage" Version="4.2.0" />
   </ItemGroup>
 
   <!--Project dependencies-->
