@@ -27,36 +27,50 @@ foreach ($utility in $utilities)
 
     sass "$dir_utilities\_$utility.scss" $generated_file --no-source-map 
 
-    #((Get-Content -Path $generated_file -Raw) -Replace "@media[^{]+\{([\s\S]+?})\s*}","") | Set-Content -Path $generated_file
+    ((Get-Content -Path $generated_file -Raw) -Replace "@media[^{]+\{([\s\S]+?})\s*}","") | Set-Content -Path $generated_file
 
     $razorOutput = "<table><tbody>"
     
+
+    $classDictonary = @{}
+    $currentSelection = New-Object System.Collections.Generic.List[string]
+
     foreach($class in Get-Content -Path $generated_file){
         if($class.Length -gt 1)
         {
             $className = $class
-            
             if($className.StartsWith(".") -and $className.EndsWith(","))
             {
-                $razorOutput += "<tr>"
-                $className = $className.Replace(".","").Replace(",","")
-                $razorOutput += "<td>$className</td>"
+                $currentSelection.Add($className.Replace(".","").Replace(",",""));
             }
             elseif($className.StartsWith(".") -and $className.EndsWith(" {"))
             {
-                $razorOutput += "<tr>"
-                $className = $className.Replace(".","").Replace(" {","")
-                $razorOutput += "<td>$className</td>"
+                $currentSelection.Add($className.Replace(".","").Replace("{",""));
+
             }
             else{
-                $value = $className.Replace(" !important;",";")
-                $razorOutput += "<td>$value</td>"
+                foreach ($header in $currentSelection){
+                    if (!$classDictonary.ContainsKey($header)){
+                        $classDictonary[$header] = New-Object System.Collections.Generic.List[string]
+                    }
+            
+                    $classDictonary[$header].Add($className.Replace(" !important;",";")); 
+                }
             }
         }
         if($class.StartsWith("}")){
-            $razorOutput += "</tr>"
+            $currentSelection = New-Object System.Collections.Generic.List[string]
         }
     }
+
+    foreach($class in $classDictonary.GetEnumerator() | Where-Object {!$_.Name.StartsWith("mud-") } | Sort-Object -Property Name){
+        $razorOutput += "<tr><td>$($class.Name)</td>"
+        foreach ($property in $class.Value){
+            $razorOutput += "<td>$property</td>"
+        }
+        $razorOutput += "</tr>"
+    }
+
     $razorOutput += "</tbody></table>"
     $razorOutput | Out-File "$dir_generated_output\$utility.html"
 }
