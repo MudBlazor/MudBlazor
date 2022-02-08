@@ -19,6 +19,12 @@ namespace MudBlazor
             public static readonly Sharp Sharp = new();
             public static readonly TwoTone TwoTone = new();
         }
+        public static class Remix
+        {
+            public static readonly RemixFilled Filled = new();
+            public static readonly RemixOutlined Outlined = new();
+            public static readonly RemixOther Other = new();
+        }
 
         public static readonly Filled Filled = new();
         public static readonly Outlined Outlined = new();
