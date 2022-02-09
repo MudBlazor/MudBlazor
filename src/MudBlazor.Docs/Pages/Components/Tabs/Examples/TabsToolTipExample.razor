@@ -7,7 +7,13 @@
     <MudTabPanel Text="Item Two" ToolTip="ToolTip Two">
         <MudText>Item Two</MudText>
     </MudTabPanel>
-    <MudTabPanel Text="Item Three" ToolTip="ToolTip Three">
-        <MudText>Item Three</MudText>
+    <MudTabPanel Text="Item Three">
+        <ChildContent>
+            <MudText>Item Three</MudText>
+        </ChildContent>
+        <TooltipContent>
+            <MudText Typo="Typo.h6">HTML Content</MudText>
+            <MudText Typo="Typo.body2">ToolTip Three</MudText>
+        </TooltipContent>
     </MudTabPanel>
 </MudTabs>
