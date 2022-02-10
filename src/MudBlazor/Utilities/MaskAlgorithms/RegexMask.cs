@@ -25,12 +25,19 @@ public class RegexMask : BaseMask
     /// progressive regex would look like this: ^a(b(c)?)?$ or like this ^(a|ab|abc)$
     /// It is best to generate the progressive regex automatically like BlockMask does.
     /// </param>
-    public RegexMask(string regex)
+    /// <param name="mask">
+    /// The mask defining the structure of the accepted input.
+    /// 
+    /// Note: if not included the regex will be the mask.   
+    /// </param>
+    public RegexMask(string regex, string mask = null)
     {
-        Mask=regex;
+        _regexPattern = regex;
+        Mask = mask ?? regex;
     }
-    
-    protected Regex _regex; 
+
+    protected string _regexPattern;
+    protected Regex  _regex; 
     
     /// <summary>
     /// Optional delimiter chars which will be jumped over if the caret is
@@ -48,7 +55,7 @@ public class RegexMask : BaseMask
 
     protected virtual void InitRegex()
     {
-        _regex = new Regex(Mask);
+        _regex = new Regex(_regexPattern);
     }
 
     /// <summary>
@@ -176,5 +183,61 @@ public class RegexMask : BaseMask
             _initialized = false;
         }
         Refresh();
+    }
+
+    /// <summary>
+    /// Creates a predefined RegexMask for an IPv4 Address with or without port masking.
+    /// </summary>
+    /// <param includePort="bool">
+    /// /// Set to true to include port to the mask.
+    /// </param>
+    public static RegexMask IPv4(bool includePort = false)
+    {
+        const string Octet = "(25[0-5]|2[0-4][0-9]|[0-1]?[0-9]{0,2})";
+        var ipv4 = $"({Octet})(\\.|\\.{Octet}){{0,3}}";
+        var mask = "000.000.000.000";
+        var delimiters = ".";
+        if (includePort)
+        {
+            const string IP_Port = "(:|:(6553[0-5]|655[0-2][0-9]|65[0-4][0-9]{2}|6[0-4][0-9]{3}|[1-5][0-9]{4}|[1-9][0-9]{0,3}))?";
+            ipv4 = $"{ipv4}{IP_Port}";
+            mask = $"{mask}:00000";
+            delimiters += ":";
+        }
+        var regex = $"^{ipv4}$";
+        var regexMask = new RegexMask(regex, mask)
+        {
+            Delimiters = delimiters
+        };
+        return regexMask;
+    }
+
+    /// <summary>
+    /// Creates a predefined RegexMask for an IPv6 Address with or without port masking.
+    /// </summary>
+    /// <param includePort="bool">
+    /// /// Set to true to include port to the mask.
+    /// </param>
+    public static RegexMask IPv6(bool includePort = false)
+    {
+        const string Hex = "[0-9A-Fa-f]{0,4}";
+        const string IPv6Filter = "(?!.*?[:]{2}?:)";
+        var ipv6 = $"{Hex}(:{Hex}){{0,7}}";
+        var mask = "XXXX:XXXX:XXXX:XXXX:XXXX:XXXX:XXXX:XXXX";
+        var delimiters = ":";
+        if (includePort)
+        {
+            const string IP_Port = "(\\]|\\]:|\\]:(6553[0-5]|655[0-2][0-9]|65[0-4][0-9]{2}|6[0-4][0-9]{3}|[1-5][0-9]{4}|[1-9][0-9]{0,3}))?";
+            ipv6 = $"((\\[{ipv6}){IP_Port})";
+            mask = $"[{mask}]:00000";
+            delimiters += "[]";
+        }
+        var regex = $"^{IPv6Filter}{ipv6}$";
+        var regexMask = new RegexMask(regex, mask)
+        {
+            Delimiters = delimiters,
+            AllowOnlyDelimiters = true
+        };
+        return regexMask;
     }
 }
