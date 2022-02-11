@@ -11,7 +11,6 @@ namespace MudBlazor
 {
     public partial class MudPicker<T> : MudFormComponent<T, string>
     {
-
         public MudPicker() : base(new Converter<T, string>()) { }
         protected MudPicker(Converter<T, string> converter) : base(converter) { }
 
@@ -31,7 +30,7 @@ namespace MudBlazor
                 .AddClass($"mud-picker-input-text", Editable && PickerVariant != PickerVariant.Static)
                 .AddClass($"mud-disabled", Disabled && PickerVariant != PickerVariant.Static)
                 .AddClass(Class)
-            .Build();
+                .Build();
 
         protected string PickerPaperClass =>
             new CssBuilder("mud-picker")
@@ -40,25 +39,26 @@ namespace MudBlazor
                 .AddClass("mud-picker-open", IsOpen && PickerVariant == PickerVariant.Inline)
                 .AddClass("mud-picker-popover-paper", PickerVariant == PickerVariant.Inline)
                 .AddClass("mud-dialog", PickerVariant == PickerVariant.Dialog)
-            .Build();
+                .Build();
 
         protected string PickerInlineClass =>
             new CssBuilder("mud-picker-inline-paper")
-            .Build();
+                .Build();
 
         protected string PickerContainerClass =>
             new CssBuilder("mud-picker-container")
                 .AddClass("mud-paper-square", _pickerSquare)
-                .AddClass("mud-picker-container-landscape", Orientation == Orientation.Landscape && PickerVariant == PickerVariant.Static)
-            .Build();
+                .AddClass("mud-picker-container-landscape",
+                    Orientation == Orientation.Landscape && PickerVariant == PickerVariant.Static)
+                .Build();
 
         protected string PickerInputClass =>
             new CssBuilder("mud-input-input-control").AddClass(Class)
-            .Build();
+                .Build();
 
         protected string ActionClass => new CssBuilder("mud-picker-actions")
-          .AddClass(ClassActions)
-        .Build();
+            .AddClass(ClassActions)
+            .Build();
 
         /// <summary>
         /// Sets the icon of the input text field
@@ -96,12 +96,14 @@ namespace MudBlazor
         /// <summary>
         /// Fired when the dropdown / dialog opens
         /// </summary>
-        [Parameter] public EventCallback PickerOpened { get; set; }
+        [Parameter]
+        public EventCallback PickerOpened { get; set; }
 
         /// <summary>
         /// Fired when the dropdown / dialog closes
         /// </summary>
-        [Parameter] public EventCallback PickerClosed { get; set; }
+        [Parameter]
+        public EventCallback PickerClosed { get; set; }
 
         /// <summary>
         /// The higher the number, the heavier the drop-shadow. 0 for no shadow set to 8 by default in inline mode and 0 in static mode.
@@ -238,12 +240,14 @@ namespace MudBlazor
         /// Changes the cursor appearance.
         /// </summary>
         [Obsolete("This is enabled now by default when you use Editable=true. You can remove the parameter.", false)]
-        [Parameter] public bool AllowKeyboardInput { get; set; }
+        [Parameter]
+        public bool AllowKeyboardInput { get; set; }
 
         /// <summary>
         /// Fired when the text changes.
         /// </summary>
-        [Parameter] public EventCallback<string> TextChanged { get; set; }
+        [Parameter]
+        public EventCallback<string> TextChanged { get; set; }
 
         /// <summary>
         /// The currently selected string value (two-way bindable)
@@ -255,6 +259,7 @@ namespace MudBlazor
             get => _text;
             set => SetTextAsync(value, true).AndForget();
         }
+
         private string _text;
 
         /// <summary>
@@ -277,6 +282,19 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.FormComponent.Appearance)]
         public Margin Margin { get; set; } = Margin.None;
+
+        /// <summary>
+        /// A mask for structured input of the date (requires Editable to be true).
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Behavior)]
+        public IMask Mask
+        {
+            get => _mask;
+            set => _mask = value;
+        }
+
+        protected IMask _mask = null;
 
         protected async Task SetTextAsync(string value, bool callback)
         {
@@ -344,7 +362,8 @@ namespace MudBlazor
 
         public virtual ValueTask SelectAsync() => _inputReference?.SelectAsync() ?? ValueTask.CompletedTask;
 
-        public virtual ValueTask SelectRangeAsync(int pos1, int pos2) => _inputReference?.SelectRangeAsync(pos1, pos2) ?? ValueTask.CompletedTask;
+        public virtual ValueTask SelectRangeAsync(int pos1, int pos2) =>
+            _inputReference?.SelectRangeAsync(pos1, pos2) ?? ValueTask.CompletedTask;
 
         private bool _pickerSquare;
         private int _pickerElevation;
@@ -363,6 +382,7 @@ namespace MudBlazor
                 {
                     _pickerElevation = Elevation;
                 }
+
                 if (!Rounded)
                 {
                     _pickerSquare = true;
@@ -383,17 +403,19 @@ namespace MudBlazor
                 {
                     //EnableLogging = true,
                     TargetClass = "mud-input-slot",
-                    Keys = {
-                        new KeyOptions { Key=" ", PreventDown = "key+none" },
-                        new KeyOptions { Key="ArrowUp", PreventDown = "key+none" },
-                        new KeyOptions { Key="ArrowDown", PreventDown = "key+none" },
-                        new KeyOptions { Key="Enter", PreventDown = "key+none" },
-                        new KeyOptions { Key="NumpadEnter", PreventDown = "key+none" },
-                        new KeyOptions { Key="/./", SubscribeDown = true, SubscribeUp = true }, // for our users
+                    Keys =
+                    {
+                        new KeyOptions { Key = " ", PreventDown = "key+none" },
+                        new KeyOptions { Key = "ArrowUp", PreventDown = "key+none" },
+                        new KeyOptions { Key = "ArrowDown", PreventDown = "key+none" },
+                        new KeyOptions { Key = "Enter", PreventDown = "key+none" },
+                        new KeyOptions { Key = "NumpadEnter", PreventDown = "key+none" },
+                        new KeyOptions { Key = "/./", SubscribeDown = true, SubscribeUp = true }, // for our users
                     },
                 });
                 _keyInterceptor.KeyDown += HandleKeyDown;
             }
+
             await base.OnAfterRenderAsync(firstRender);
         }
 
@@ -456,6 +478,7 @@ namespace MudBlazor
                         _value = default(T);
                         Reset();
                     }
+
                     break;
                 case "Escape":
                 case "Tab":

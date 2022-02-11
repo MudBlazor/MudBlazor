@@ -169,6 +169,7 @@ public class PatternMask : BaseMask
             {
                 alignedText += maskChar;
                 maskIndex++;
+                ModifyPartiallyAlignedMask(mask, text, maskOffset, ref textIndex, ref maskIndex, ref alignedText);
                 continue;
             }
             var isPlaceholder = Placeholder != null && textChar == Placeholder.Value;
@@ -179,6 +180,7 @@ public class PatternMask : BaseMask
                 maskIndex++;
             }
             textIndex++;
+            ModifyPartiallyAlignedMask(mask, text, maskOffset, ref textIndex, ref maskIndex, ref alignedText);
         }
         // fill any delimiters if possible
         for (int i = maskIndex; i < mask.Length; i++)
@@ -190,7 +192,12 @@ public class PatternMask : BaseMask
         }
         return alignedText;
     }
-    
+
+    protected virtual void ModifyPartiallyAlignedMask(string mask, string text, int maskOffset, ref int textIndex, ref int maskIndex, ref string alignedText)
+    {
+        /* this is an override hook for more specialized mask implementations deriving from this*/
+    }
+
     protected virtual bool IsMatch(char maskChar, char textChar)
     {
         var maskDef = _maskDict[maskChar];
@@ -237,8 +244,14 @@ public class PatternMask : BaseMask
             CaretPos = 0;
             return;
         }
-        Text = text;
+        Text = ModifyFinalText(text);
         CaretPos = ConsolidateCaret(Text, CaretPos);
+    }
+
+    protected virtual string ModifyFinalText(string text)
+    {
+        /* this  can be overridden in derived classes to apply any necessary changes to the resulting text */
+        return text;
     }
 
     public override void UpdateFrom(IMask other)
