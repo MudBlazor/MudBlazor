@@ -65,7 +65,10 @@ namespace MudBlazor
 
         protected override void ResetValue()
         {
-            _elementReference.Reset();
+            if(_mask == null)            
+                _elementReference.Reset();            
+            else            
+                _maskReference.Reset();            
             base.ResetValue();
         }
 
