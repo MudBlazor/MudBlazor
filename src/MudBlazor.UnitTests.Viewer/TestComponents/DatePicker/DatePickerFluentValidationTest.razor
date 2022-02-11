@@ -1,0 +1,49 @@
+@using FluentValidation
+<MudForm
+    Model="@Model"
+    @ref="@_form" >
+    <MudDatePicker
+        @ref="_picker"
+        @bind-Date="Model.Date"
+        Validation="@(_orderValidator.ValidateValue)"
+        For="@(() => Model.Date)"
+        Label="Date" />
+</MudForm>
+
+@code {
+
+    MudForm _form;
+
+    private MudDatePicker _picker;
+
+    [Parameter]
+    public OrderModel Model { get; set; }
+
+    readonly OrderModelFluentValidator _orderValidator = new();
+
+    public class OrderModel
+    {
+        public DateTime? Date { get; set; }
+    }
+
+    public class OrderModelFluentValidator : AbstractValidator<OrderModel>
+    {
+        public OrderModelFluentValidator()
+        {
+            RuleFor(x => x.Date)
+                .NotEmpty()
+                .GreaterThanOrEqualTo(DateTime.Today)
+                .WithMessage("Invalid");
+        }
+
+
+        public Func<object, string, Task<IEnumerable<string>>> ValidateValue => async (model, propertyName) =>
+        {
+            var result = await ValidateAsync(ValidationContext<OrderModel>.CreateWithOptions((OrderModel) model, x => x.IncludeProperties(propertyName)));
+            return result.IsValid
+                       ? Array.Empty<string>()
+                       : result.Errors.Select(e => e.ErrorMessage);
+        };
+    }
+
+}

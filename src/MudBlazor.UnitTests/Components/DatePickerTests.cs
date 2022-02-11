@@ -772,5 +772,54 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(() => datePicker.ToggleState());
             comp.WaitForAssertion(() => comp.FindAll("div.mud-picker-open").Count.Should().Be(1));
         }
+
+
+        [Test]
+        public void DatePickerWithFluentValidation_WithValidDate_IsValidOnRender()
+        {
+            var model = new DatePickerFluentValidationTest.OrderModel {Date = DateTime.Today,};
+            var comp = Context.RenderComponent<DatePickerFluentValidationTest>(Parameter("Model", model));
+            var picker = comp.FindComponent<MudDatePicker>().Instance;
+            Assert.Multiple(
+                () =>
+                {
+                    picker.Error.Should().BeFalse();
+                    picker.ErrorText.Should().BeNullOrEmpty();
+                }
+            );
+        }
+
+
+        [Test]
+        public void DatePickerWithFluentValidation_WithValidNull_IsValidOnRender()
+        {
+            var model = new DatePickerFluentValidationTest.OrderModel {Date = null,};
+            var comp = Context.RenderComponent<DatePickerFluentValidationTest>(Parameter("Model", model));
+            var picker = comp.FindComponent<MudDatePicker>().Instance;
+            Assert.Multiple(
+                () =>
+                {
+                    picker.Error.Should().BeFalse();
+                    picker.ErrorText.Should().BeNullOrEmpty();
+                }
+            );
+        }
+
+
+        [Test]
+        public void DatePickerWithFluentValidation_WithInvalidModel_HasProperErrorOnRender()
+        {
+            var model = new DatePickerFluentValidationTest.OrderModel {Date = null,};
+            var comp = Context.RenderComponent<DatePickerFluentValidationTest>(Parameter("Model", model));
+            var picker = comp.FindComponent<MudDatePicker>().Instance;
+            Assert.Multiple(
+                () =>
+                {
+                    picker.Error.Should().BeTrue();
+                    picker.ErrorText.Should().Be("Invalid");
+                }
+            );
+        }
+
     }
 }
