@@ -3,11 +3,13 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Bunit;
 using FluentAssertions;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Docs.Examples;
 using MudBlazor.UnitTests.TestComponents;
 using MudBlazor.UnitTests.TestComponents.Form;
@@ -1030,6 +1032,54 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// Calling form.Reset() should clear the masked text field
+        /// </summary>
+        [Test]
+        public async Task FormReset_Should_ClearMaskedTextField()
+        {
+            var comp = Context.RenderComponent<FormResetTest>();
+            var form = comp.FindComponent<MudForm>();
+            var textField = comp.FindComponents<MudTextField<string>>().First();
+            var maskComp = textField.FindComponent<MudMask>();
+            var mask = maskComp.Instance;
+
+            // input some text
+            await comp.InvokeAsync(() => mask.HandleKeyDown(new KeyboardEventArgs() { Key = "1" }));
+            await comp.InvokeAsync(() => mask.HandleKeyDown(new KeyboardEventArgs() { Key = "2" }));
+            await comp.InvokeAsync(() => mask.HandleKeyDown(new KeyboardEventArgs() { Key = "3" }));
+            await comp.InvokeAsync(() => mask.HandleKeyDown(new KeyboardEventArgs() { Key = "4" }));
+            await comp.InvokeAsync(() => mask.HandleKeyDown(new KeyboardEventArgs() { Key = "5" }));
+            await comp.InvokeAsync(() => mask.HandleKeyDown(new KeyboardEventArgs() { Key = "6" }));
+            await comp.InvokeAsync(() => mask.HandleKeyDown(new KeyboardEventArgs() { Key = "7" }));
+            await comp.InvokeAsync(() => mask.HandleKeyDown(new KeyboardEventArgs() { Key = "8" }));
+            await comp.InvokeAsync(() => mask.HandleKeyDown(new KeyboardEventArgs() { Key = "9" }));
+            await comp.InvokeAsync(() => mask.HandleKeyDown(new KeyboardEventArgs() { Key = "0" }));
+            mask.Value.Should().Be("(123) 456-7890");
+            mask.Text.Should().Be("(123) 456-7890");
+            // call reset directly
+            await comp.InvokeAsync(() => form.Instance.Reset());
+            mask.Value.Should().BeNullOrEmpty();
+            mask.Text.Should().BeNullOrEmpty();
+            // input some text
+            await comp.InvokeAsync(() => mask.HandleKeyDown(new KeyboardEventArgs() { Key = "1" }));
+            await comp.InvokeAsync(() => mask.HandleKeyDown(new KeyboardEventArgs() { Key = "2" }));
+            await comp.InvokeAsync(() => mask.HandleKeyDown(new KeyboardEventArgs() { Key = "3" }));
+            await comp.InvokeAsync(() => mask.HandleKeyDown(new KeyboardEventArgs() { Key = "4" }));
+            await comp.InvokeAsync(() => mask.HandleKeyDown(new KeyboardEventArgs() { Key = "5" }));
+            await comp.InvokeAsync(() => mask.HandleKeyDown(new KeyboardEventArgs() { Key = "6" }));
+            await comp.InvokeAsync(() => mask.HandleKeyDown(new KeyboardEventArgs() { Key = "7" }));
+            await comp.InvokeAsync(() => mask.HandleKeyDown(new KeyboardEventArgs() { Key = "8" }));
+            await comp.InvokeAsync(() => mask.HandleKeyDown(new KeyboardEventArgs() { Key = "9" }));
+            await comp.InvokeAsync(() => mask.HandleKeyDown(new KeyboardEventArgs() { Key = "0" }));
+            mask.Value.Should().Be("(123) 456-7890");
+            mask.Text.Should().Be("(123) 456-7890");
+            // hit reset button
+            comp.Find("button.reset").Click();
+            mask.Value.Should().BeNullOrEmpty();
+            mask.Text.Should().BeNullOrEmpty();
+        }
+
+        /// <summary>
         /// Calling form.Reset() should clear the text field
         /// </summary>
         [Test]
@@ -1037,7 +1087,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<FormResetTest>();
             var form = comp.FindComponent<MudForm>();
-            var textFieldComp = comp.FindComponent<MudTextField<string>>();
+            var textFieldComp = comp.FindComponents<MudTextField<string>>().Last();
             var textField = textFieldComp.Instance;
 
             // input some text
