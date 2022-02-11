@@ -8,10 +8,34 @@
 {
 
     protected virtual RenderFragment InputContent =>
-        @<MudTextField @ref="_inputReference" @attributes="UserAttributes" Label="@Label" @bind-Text="@Text" HelperText="@HelperText" HelperTextOnFocus="@HelperTextOnFocus" Variant="@Variant" ReadOnly="@(!Editable || ReadOnly)" T="string" Style="@Style"
-                    @onclick="(() => { if (!Editable) ToggleState(); })" OnAdornmentClick="ToggleState" Disabled="@Disabled" Adornment="@Adornment"
-                    AdornmentIcon="@AdornmentIcon" AdornmentColor="@AdornmentColor" IconSize="@IconSize" Margin="@Margin" Placeholder="@Placeholder"
-                    Required="@Required" RequiredError="@RequiredError" Error="@Error" ErrorText="@ErrorText" @onkeydown="HandleKeyDown" />;
+        // note: Mask needs to remain before Text!
+        @<MudTextField 
+             T="string" 
+             @ref="_inputReference" 
+             @attributes="UserAttributes" 
+             Style="@Style"
+             Label="@Label" 
+             Mask="@_mask"
+             @bind-Value="@Text" 
+             Placeholder="@Placeholder"
+             HelperText="@HelperText" 
+             HelperTextOnFocus="@HelperTextOnFocus" 
+             Variant="@Variant" 
+             ReadOnly="@(!Editable || ReadOnly)" 
+             Disabled="@Disabled"
+             OnAdornmentClick="ToggleState" 
+             Adornment="@Adornment"
+             AdornmentIcon="@AdornmentIcon" 
+             AdornmentColor="@AdornmentColor" 
+             IconSize="@IconSize" 
+             Margin="@Margin" 
+             Required="@Required" 
+             RequiredError="@RequiredError" 
+             Error="@Error" 
+             ErrorText="@ErrorText" 
+             @onclick="@(() => { if (!Editable) ToggleState(); })" 
+             @onkeydown="HandleKeyDown" 
+             />;
 
     protected virtual RenderFragment PickerContent => null;
 

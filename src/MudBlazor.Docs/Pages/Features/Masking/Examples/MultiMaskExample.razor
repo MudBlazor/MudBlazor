@@ -47,9 +47,9 @@
 }
 
 @* Note: MudElement is used here to limit the render-update to this html tree  *@
-<MudElement HtmlTag="div" @ref="element" Style="max-width: 800px;" Class="mud-width-full px-3">
+<MudElement HtmlTag="div" @ref="element" Style="max-width: 800px;" Class="mud-width-full">
     <MudGrid Class="justify-space-between">
-        <MudItem xs="6">
+        <MudItem xs="12" sm="6">
             <MudAlert Variant="@variants["American Express"]" NoIcon Dense Class="mb-2">
                 American Express: starts with 34/37<br/>
                 <pre>34&#183;&#183; &#183;&#183;&#183;&#183;&#183;&#183; &#183;&#183;&#183;&#183;&#183;</pre>
@@ -63,7 +63,7 @@
                 <pre>35&#183;&#183; &#183;&#183;&#183;&#183; &#183;&#183;&#183;&#183; &#183;&#183;&#183;&#183;</pre>
             </MudAlert>
         </MudItem>
-        <MudItem xs="6">
+        <MudItem xs="12" sm="6">
             <MudAlert Variant="@variants["VISA"]" NoIcon Dense Class="mb-2">
                 VISA: starts with 4<br/>
                 <pre>4&#183;&#183;&#183; &#183;&#183;&#183;&#183; &#183;&#183;&#183;&#183; &#183;&#183;&#183;&#183;</pre>

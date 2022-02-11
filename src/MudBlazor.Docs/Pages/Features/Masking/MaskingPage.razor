@@ -59,6 +59,21 @@
         </DocsPageSection>
         
         <DocsPageSection>
+            <SectionHeader Title="DateMask">
+                <Description>
+                    <CodeInline>DateMask</CodeInline> is an auto-correcting calendar-aware date input mask with customizable format. There are some restrictions though. 
+                    Day and month must be dual digit blocks like <CodeInline>dd</CodeInline> and <CodeInline>MM</CodeInline>. The year can either be denoted by 
+                    <CodeInline>yy</CodeInline> or by <CodeInline>yyyy</CodeInline>. The characters for the day, month and year blocks are customizable. You can align 
+                    the three blocks in any order and add any delimiters you want or none at all. The day block can be left out. Year and month blocks must be used or yields undefined
+                    results as will multiple usage of a block.
+                </Description>
+            </SectionHeader>
+            <SectionContent FullWidth="true" Outlined="true" Code="DateMaskExample" ShowCode="false">
+                <DateMaskExample />
+            </SectionContent>          
+        </DocsPageSection>
+
+        <DocsPageSection>
             <SectionHeader Title="RegexMask">
                 <Description>
                     <CodeInline>RegexMask</CodeInline> is very different from the other algorithms, because it does not use mask characters. 

@@ -6,7 +6,7 @@
                       @bind-Value="creditCard"  Variant="@Variant.Text" Clearable />
     </MudItem>
 	<MudItem xs="4">
-        <MudTextField Mask="@(new PatternMask("00/00"))" Label="Expires" 
+        <MudTextField Mask="@(new DateMask("MM/YY", 'Y', 'M'))" Label="Expires" 
                       @bind-Value="expiration"  Variant="@Variant.Text" />
     </MudItem>
     <MudItem xs="4"/>
