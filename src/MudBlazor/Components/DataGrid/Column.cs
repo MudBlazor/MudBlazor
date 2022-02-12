@@ -29,7 +29,7 @@ namespace MudBlazor
         [Parameter] public ColumnType Type { get; set; } = ColumnType.Text;
         [Parameter] public RenderFragment ChildContent { get; set; }
         [Parameter] public RenderFragment HeaderTemplate { get; set; }
-        [Parameter] public RenderFragment<T> CellTemplate { get; set; }
+        [Parameter] public RenderFragment<CellContext<T>> CellTemplate { get; set; }
         [Parameter] public RenderFragment<IEnumerable<T>> FooterTemplate { get; set; }
         [Parameter] public RenderFragment<GroupDefinition<T>> GroupTemplate { get; set; }
         [Parameter]
@@ -53,12 +53,25 @@ namespace MudBlazor
         /// Determines whether this column can be hidden. This overrides the Hideable parameter on the DataGrid.
         /// </summary>
         [Parameter] public bool? Hideable { get; set; }
-        public bool Hidden { get; set; }
+        [Parameter] public bool Hidden { get; set; }
+        [Parameter] public EventCallback<bool> HiddenChanged { get; set; }
         /// <summary>
         /// Determines whether to show or hide column options. This overrides the ShowColumnOptions parameter on the DataGrid.
         /// </summary>
         [Parameter] public bool? ShowColumnOptions { get; set; }
-        [Parameter] public Func<T, object> SortBy { get; set; }// = x => { return null; };
+        [Parameter]
+        public Func<T, object> SortBy
+        {
+            get
+            {
+                CompileSortBy();
+                return _sortBy;
+            }
+            set
+            {
+                _sortBy = value;
+            }
+        }
         [Parameter] public SortDirection InitialDirection { get; set; } = SortDirection.None;
         [Parameter] public string SortIcon { get; set; } = Icons.Material.Filled.ArrowUpward;
         /// <summary>
@@ -78,8 +91,8 @@ namespace MudBlazor
         [Parameter] public Func<T, string> CellClassFunc { get; set; }
         [Parameter] public string CellStyle { get; set; }
         [Parameter] public Func<T, string> CellStyleFunc { get; set; }
-        [Parameter] public bool? IsEditable { get; set; }
-        [Parameter] public RenderFragment<T> EditTemplate { get; set; }
+        [Parameter] public bool IsEditable { get; set; } = true;
+        [Parameter] public RenderFragment<CellContext<T>> EditTemplate { get; set; }
 
         #endregion
 
@@ -116,6 +129,23 @@ namespace MudBlazor
 
         #region Computed Properties
 
+        internal Type dataType
+        {
+            get
+            {
+                if (Field == null)
+                    return typeof(object);
+
+                return typeof(T).GetProperty(Field).PropertyType;
+            }
+        }
+        internal bool isNumber
+        {
+            get
+            {
+                return FilterOperator.NumericTypes.Contains(dataType);
+            }
+        }
         internal string computedTitle
         {
             get
@@ -123,7 +153,6 @@ namespace MudBlazor
                 return Title ?? Field;
             }
         }
-
         internal bool groupable
         {
             get
@@ -134,6 +163,7 @@ namespace MudBlazor
 
         #endregion
 
+        internal Func<T, object> _sortBy;
         internal Func<T, object> groupBy;
         private bool initialGroupBySet;
 
@@ -159,11 +189,22 @@ namespace MudBlazor
                 initialGroupBySet = true;
                 Task.Run(async () =>
                 {
-                    await Task.Delay(300);
+                    await Task.Delay(1000);
                     groupBy = GroupBy;
                     CompileGroupBy();
                     DataGrid?.ChangedGrouping(this);
                 });
+            }
+        }
+
+        internal void CompileSortBy()
+        {
+            if (_sortBy == null)
+            {
+                // set the default SortBy
+                var parameter = Expression.Parameter(typeof(T), "x");
+                var field = Expression.Convert(Expression.Property(parameter, typeof(T).GetProperty(Field)), typeof(object));
+                _sortBy = Expression.Lambda<Func<T, object>>(field, parameter).Compile();
             }
         }
 
@@ -195,5 +236,21 @@ namespace MudBlazor
         {
             grouping = false;
         }
+
+        internal void Hide()
+        {
+            Hidden = true;
+        }
+
+        internal void Show()
+        {
+            Hidden = false;
+        }
+
+        internal void Toggle()
+        {
+            Hidden = !Hidden;
+        }
+
     }
 }

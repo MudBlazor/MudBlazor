@@ -53,8 +53,9 @@ namespace MudBlazor.UnitTests.Components
 
             await comp.InvokeAsync(() => dataGrid.Instance.SetSortAsync(SortDirection.None, x => { return x.Name; }, "Name"));
 
-            var headerCell = dataGrid.FindComponent<HeaderCell<DataGridSortableTest.Item>>();
-            await comp.InvokeAsync(() => headerCell.Instance.SortBy = x => { return x.Name; });
+            var column = dataGrid.FindComponent<Column<DataGridSortableTest.Item>>();
+            await comp.InvokeAsync(() => column.Instance.SortBy = x => { return x.Name; });
+            await comp.InvokeAsync(() => column.Instance.CompileSortBy());
 
             // Check the values of rows - should not be sorted and should be in the original order.
             dataGrid.FindAll("td")[0].TextContent.Trim().Should().Be("B");
@@ -69,8 +70,8 @@ namespace MudBlazor.UnitTests.Components
             dataGrid.FindAll("td")[2].TextContent.Trim().Should().Be("C");
 
             // test other sort methods
+            var headerCell = dataGrid.FindComponent<HeaderCell<DataGridSortableTest.Item>>();
             await comp.InvokeAsync(() => headerCell.Instance.SortChangedAsync());
-            await comp.InvokeAsync(() => headerCell.Instance.CompileSortBy());
             await comp.InvokeAsync(() => headerCell.Instance.GetDataType());
             await comp.InvokeAsync(() => headerCell.Instance.RemoveSortAsync());
             await comp.InvokeAsync(() => headerCell.Instance.AddFilter());
@@ -122,15 +123,6 @@ namespace MudBlazor.UnitTests.Components
 
             dataGrid.Instance.SelectedItems.Count.Should().Be(0);
             dataGrid.FindAll("input")[0].Change(true);
-            dataGrid.Instance.SelectedItems.Count.Should().Be(3);
-
-            var cells = dataGrid.FindComponents<Cell<DataGridMultiSelectionTest.Item>>();
-
-            cells.Count.Should().Be(6);
-
-            await comp.InvokeAsync(async () => await cells[0].Instance.CellCheckedChangedAsync(false, cells[0].Instance.Item));
-            dataGrid.Instance.SelectedItems.Count.Should().Be(2);
-            await comp.InvokeAsync(async () => await cells[0].Instance.CellCheckedChangedAsync(true, cells[0].Instance.Item));
             dataGrid.Instance.SelectedItems.Count.Should().Be(3);
 
             // deselect an item programmatically
@@ -191,8 +183,8 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task DataGridInlineEditTest()
         {
-            var comp = Context.RenderComponent<DataGridInlineEditTest>();
-            var dataGrid = comp.FindComponent<MudDataGrid<DataGridInlineEditTest.Model>>();
+            var comp = Context.RenderComponent<DataGridCellEditTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridCellEditTest.Model>>();
 
             //Console.WriteLine(dataGrid.Markup);
 
@@ -230,8 +222,8 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task DataGridInlineEditWithTemplateTest()
         {
-            var comp = Context.RenderComponent<DataGridInlineEditWithTemplateTest>();
-            var dataGrid = comp.FindComponent<MudDataGrid<DataGridInlineEditWithTemplateTest.Model>>();
+            var comp = Context.RenderComponent<DataGridCellEditWithTemplateTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridCellEditWithTemplateTest.Model>>();
 
             dataGrid.FindAll("td")[0].TextContent.Trim().Should().Be("John");
             dataGrid.FindAll("td")[1].TextContent.Trim().Should().Be("45");
@@ -295,14 +287,13 @@ namespace MudBlazor.UnitTests.Components
             dataGrid.Instance.SelectedItemChanged.HasDelegate.Should().Be(true);
             dataGrid.Instance.SelectedItemsChanged.HasDelegate.Should().Be(true);
             dataGrid.Instance.StartedEditingItem.HasDelegate.Should().Be(true);
-            dataGrid.Instance.StartedCommittingItemChanges.HasDelegate.Should().Be(true);
-            dataGrid.Instance.EditingItemCancelled.HasDelegate.Should().Be(true);
+            dataGrid.Instance.CancelledEditingItem.HasDelegate.Should().Be(true);
 
             // Set some parameters manually so that they are covered.
             var parameters = new List<ComponentParameter>();
             parameters.Add(ComponentParameter.CreateParameter(nameof(dataGrid.Instance.MultiSelection), true));
             parameters.Add(ComponentParameter.CreateParameter(nameof(dataGrid.Instance.ReadOnly), false));
-            parameters.Add(ComponentParameter.CreateParameter(nameof(dataGrid.Instance.EditMode), DataGridEditMode.Inline));
+            parameters.Add(ComponentParameter.CreateParameter(nameof(dataGrid.Instance.EditMode), DataGridEditMode.Cell));
             dataGrid.SetParametersAndRender(parameters.ToArray());
 
             // Make sure that the callbacks have not been fired yet.

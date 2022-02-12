@@ -5,6 +5,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
@@ -26,6 +27,7 @@ namespace MudBlazor
         private Func<T, object> _sortBy = null;
         private HashSet<object> _groupExpansions = new HashSet<object>();
         private List<GroupDefinition<T>> _groups = new List<GroupDefinition<T>>();
+        private PropertyInfo[] _properties = typeof(T).GetProperties();
 
         protected string _classname =>
             new CssBuilder("mud-table")
@@ -67,7 +69,9 @@ namespace MudBlazor
 
         internal readonly List<Column<T>> _columns = new List<Column<T>>();
         internal T _editingItem;
+        internal int editingItemHash;
         internal T _previousEditingItem;
+        internal bool isEditFormOpen;
         internal string GetHorizontalScrollbarStyle() => HorizontalScrollbar ? ";display: block; overflow-x: auto;" : string.Empty;
 
         // converters
@@ -84,7 +88,6 @@ namespace MudBlazor
         internal Action<bool> SelectedAllItemsChangedEvent { get; set; }
         internal Action StartedEditingItemEvent { get; set; }
         internal Action EditingCancelledEvent { get; set; }
-        internal Action<T> StartedCommittingItemChangesEvent { get; set; }
         public Action PagerStateHasChangedEvent { get; set; }
 
         #endregion
@@ -114,12 +117,12 @@ namespace MudBlazor
         /// <summary>
         /// Callback is called when the process of editing an item has been cancelled. Returns the item which was previously in edit mode.
         /// </summary>
-        [Parameter] public EventCallback<T> EditingItemCancelled { get; set; }
+        [Parameter] public EventCallback<T> CancelledEditingItem { get; set; }
 
         /// <summary>
-        /// Callback is called when the changes to the editing item are being committed. Returns the item whose changes are being committed.
+        /// Callback is called when the changes to an item are committed. Returns the item whose changes were committed.
         /// </summary>
-        [Parameter] public EventCallback<T> StartedCommittingItemChanges { get; set; }
+        [Parameter] public EventCallback<T> CommittedItemChanges { get; set; }
 
         #endregion
 
@@ -247,9 +250,19 @@ namespace MudBlazor
         [Parameter] public bool MultiSelection { get; set; }
 
         /// <summary>
-        /// When the grid is not read only, you can specify what tyoe of editing mode to use.
+        /// When the grid is not read only, you can specify what type of editing mode to use.
         /// </summary>
         [Parameter] public DataGridEditMode? EditMode { get; set; }
+
+        /// <summary>
+        /// Allows you to specify the action that will trigger an edit when the EditMode is Form.
+        /// </summary>
+        [Parameter] public DataGridEditTrigger? EditTrigger { get; set; } = DataGridEditTrigger.Manual;
+
+        /// <summary>
+        /// Fine tune the edit dialog.
+        /// </summary>
+        [Parameter] public DialogOptions EditDialogOptions { get; set; }
 
         /// <summary>
         /// The data to display in the table. MudTable will render one row per item
@@ -688,15 +701,45 @@ namespace MudBlazor
         internal void ClearEditingItem()
         {
             _editingItem = default(T);
-            StateHasChanged();
         }
 
+        /// <summary>
+        /// This method notifies the consumer that changes to the data have been committed
+        /// and what those changes are. This variation of the method is only used by the Cell
+        /// when the EditMode is set to cell.
+        /// </summary>
+        /// <param name="item"></param>
+        /// <returns></returns>
         internal async Task CommitItemChangesAsync(T item)
         {
-            StartedCommittingItemChangesEvent?.Invoke(item);
             // Here, we need to validate at the cellular level...
-            await StartedCommittingItemChanges.InvokeAsync(item);
-            ClearEditingItem();
+            await CommittedItemChanges.InvokeAsync(item);
+        }
+
+        /// <summary>
+        /// This method notifies the consumer that changes to the data have been committed
+        /// and what those changes are. This variation of the method is used when the EditMode 
+        /// is anything but Cell since the _editingItem is used.
+        /// </summary>
+        /// <returns></returns>
+        internal async Task CommitItemChangesAsync()
+        {
+            // Here, we need to validate at the cellular level...
+            var found = CurrentPageItems.FirstOrDefault(x => x.GetHashCode() == editingItemHash);
+
+            if (found != null)
+            {
+                foreach (var property in _properties)
+                {
+                    property.SetValue(found, property.GetValue(_editingItem));
+                }
+
+                Console.WriteLine(JsonSerializer.Serialize(found));
+
+                await CommittedItemChanges.InvokeAsync(found);
+                ClearEditingItem();
+                isEditFormOpen = false;
+            }
         }
 
         internal async Task OnRowClickedAsync(MouseEventArgs args, T item, int rowIndex)
@@ -708,7 +751,9 @@ namespace MudBlazor
                 RowIndex = rowIndex
             });
 
-            await SetEditingItemAsync(item);
+            if (EditMode != DataGridEditMode.Cell && EditTrigger == DataGridEditTrigger.OnRowClick)
+                await SetEditingItemAsync(item);
+
             await SetSelectedItemAsync(item);
         }
 
@@ -813,14 +858,15 @@ namespace MudBlazor
         /// <returns></returns>
         public async Task SetEditingItemAsync(T item)
         {
-            if (!ReferenceEquals(_editingItem, item))
-            {
-                EditingCancelledEvent?.Invoke();
-                _previousEditingItem = _editingItem;
-                _editingItem = item;
-                StartedEditingItemEvent?.Invoke();
-                await StartedEditingItem.InvokeAsync(item);
-            }
+            if (ReadOnly) return;
+
+            editingItemHash = item.GetHashCode();
+            EditingCancelledEvent?.Invoke();
+            _previousEditingItem = _editingItem;
+            _editingItem = JsonSerializer.Deserialize<T>(JsonSerializer.Serialize(item));
+            StartedEditingItemEvent?.Invoke();
+            await StartedEditingItem.InvokeAsync(_editingItem);
+            isEditFormOpen = true;
         }
 
         /// <summary>
@@ -829,8 +875,9 @@ namespace MudBlazor
         public async Task CancelEditingItemAsync()
         {
             EditingCancelledEvent?.Invoke();
-            await EditingItemCancelled.InvokeAsync(_editingItem);
+            await CancelledEditingItem.InvokeAsync(_editingItem);
             ClearEditingItem();
+            isEditFormOpen = false;
         }
 
         /// <summary>
@@ -864,7 +911,7 @@ namespace MudBlazor
             foreach (var column in _columns)
             {
                 if (column.Hideable ?? false)
-                    column.Hidden = true;
+                    column.Hide();
             }
 
             StateHasChanged();
@@ -875,7 +922,7 @@ namespace MudBlazor
             foreach (var column in _columns)
             {
                 if (column.Hideable ?? false)
-                    column.Hidden = false;
+                    column.Show();
             }
 
             StateHasChanged();
@@ -887,7 +934,7 @@ namespace MudBlazor
             StateHasChanged();
         }
 
-        internal void OutsideStateHasChanged()
+        internal void ExternalStateHasChanged()
         {
             StateHasChanged();
         }
@@ -920,8 +967,6 @@ namespace MudBlazor
             // construct the groups
             _groups = groupings.Select(x => new GroupDefinition<T>(x,
                 _groupExpansions.Contains(x.Key))).ToList();
-
-            Console.WriteLine(JsonSerializer.Serialize(_groups));
 
             StateHasChanged();
         }

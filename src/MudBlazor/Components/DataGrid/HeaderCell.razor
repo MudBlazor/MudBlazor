@@ -2,16 +2,16 @@
 @inherits MudComponentBase
 @typeparam T
 
-@if (IsOnlyHeader && !Hidden)
+@if (IsOnlyHeader && !Column.Hidden)
 {
-    <th scope="col" class="mud-table cell @_classname" style="@_style" colspan="@ColSpan" @attributes="@UserAttributes">
+    <th scope="col" class="mud-table cell @_classname" style="@_style" colspan="@Column.HeaderColSpan" @attributes="@UserAttributes">
         @_content
     </th>
 }
-else if (!Hidden)
+else if (!Column.Hidden)
 {
-    <th scope="col" class="@_classname" style="@_style" colspan="@ColSpan" @attributes="@UserAttributes">
-        @if (ColumnType == ColumnType.SelectionCheckBox)
+    <th scope="col" class="@_classname" style="@_style" colspan="@Column.HeaderColSpan" @attributes="@UserAttributes">
+        @if (Column.Type == ColumnType.SelectionCheckBox)
         {
             <div class="d-flex">
                 <MudCheckBox T="bool" Checked="@_isSelected" CheckedChanged="@CheckedChangedAsync"></MudCheckBox>
@@ -35,11 +35,11 @@ else if (!Hidden)
                     {
                         if (_initialDirection == SortDirection.None)
                         {
-                            <MudIconButton Icon="@SortIcon" Class="@sortIconClass" Size="@Size.Small" OnClick="@SortChangedAsync"></MudIconButton>
+                            <MudIconButton Icon="@Column.SortIcon" Class="@sortIconClass" Size="@Size.Small" OnClick="@SortChangedAsync"></MudIconButton>
                         }
                         else
                         {
-                            <MudIconButton Icon="@SortIcon" Class="@sortIconClass" Size="@Size.Small" OnClick="@SortChangedAsync"></MudIconButton>
+                            <MudIconButton Icon="@Column.SortIcon" Class="@sortIconClass" Size="@Size.Small" OnClick="@SortChangedAsync"></MudIconButton>
                         }
                     }
 

@@ -42,26 +42,12 @@
                                 @*This is necessary on .net6.0-preview4 and below.*@
                                 if (column.HeaderTemplate != null)
                                 {
-                                    <HeaderCell T="T" Column="@column" Title="@column.Title" Field="@column.Field" Class="@column.headerClassname"
-                                        SortIcon="@column.SortIcon" SortBy="@column.SortBy" HeaderTemplate="@column.HeaderTemplate"
-                                        InitialDirection="@column.InitialDirection" Sortable="@column.Sortable" Style="@column.HeaderStyle"
-                                        Filterable="@column.Filterable" ColumnType="@column.Type" ColSpan="@column.HeaderColSpan"
-                                        Hideable="@column.Hideable" @bind-Hidden="column.Hidden" Groupable="@column.groupable" Grouping="@column.grouping"></HeaderCell>
+                                    <HeaderCell T="T" Column="@column"></HeaderCell>
                                 }
                                 else
                                 {
-                                    <HeaderCell T="T" Column="@column" Title="@column.Title" Field="@column.Field" Class="@column.headerClassname"
-                                        SortIcon="@column.SortIcon" SortBy="@column.SortBy"
-                                        InitialDirection="@column.InitialDirection" Sortable="@column.Sortable" Style="@column.HeaderStyle"
-                                        Filterable="@column.Filterable" ColumnType="@column.Type" ColSpan="@column.HeaderColSpan"
-                                        Hideable="@column.Hideable" @bind-Hidden="column.Hidden" Groupable="@column.groupable" Grouping="@column.grouping"></HeaderCell>
+                                    <HeaderCell T="T" Column="@column"></HeaderCell>
                                 }
-                            }
-
-                            @if (EditMode == DataGridEditMode.Inline)
-                            {
-                                @*Add the column header for the edit controls.*@
-                                <th scope="col" class="mud-table-cell"></th>
                             }
                         </tr>
                         @if (_filtersMenuVisible)
@@ -86,7 +72,7 @@
                                     @foreach (var column in _columns)
                                     {
                                         <MudItem xs="12">
-                                            <MudSwitch T="bool" Disabled="@(!(column.Hideable ?? false))" @bind-Checked="column.Hidden" Converter="_oppositeBoolConverter" Color="Color.Primary" Label="@(column.Title ?? @column.Field)" />
+                                            <MudSwitch T="bool" Disabled="@(!(column.Hideable ?? false))" Checked="@column.Hidden" CheckedChanged="@column.Toggle" Converter="_oppositeBoolConverter" Color="Color.Primary" Label="@(column.Title ?? @column.Field)" />
                                         </MudItem>
                                     }
                                     <MudItem xs="6">
@@ -147,19 +133,9 @@
                                                 {
                                                     if (!column.Hidden)
                                                     {
-                                                        <Cell Item="@item" Title="@column.Title" Field="@column.Field" Class="@column.cellClassname"
-                                                            CellTemplate="@column.CellTemplate" ColumnType="@column.Type" Style="@column.CellStyle"
-                                                            IsEditable="@(column.IsEditable ?? true)" EditTemplate="@column.EditTemplate"
-                                                            CellClass="@column.CellClass" CellClassFunc="@column.CellClassFunc"
-                                                            CellStyle="@column.CellStyle" CellStyleFunc="@column.CellStyleFunc"></Cell>
+                                                        @Cell(column, item)
                                                     }
-                                                }
-                                        
-                                                @if (EditMode == DataGridEditMode.Inline)
-                                                {
-                                                    @*Add the inline edit controls.*@
-                                                    <Cell Item="@item" ColumnType="@ColumnType.InlineEditCommand" IsEditable="false"></Cell>
-                                                }
+                                                }                                     
                                                 </CascadingValue>
                                             </tr>                                   
                                             @if (ChildRowContent != null)
@@ -170,26 +146,6 @@
                                         </MudVirtualize>
                                         @*Group Footer*@
                                         <tr class="mud-table-row">
-                                            @*@foreach (var column in @_columns)
-                                            {
-                                                if (column.Type == ColumnType.SelectionCheckBox && MultiSelection && column.EnableFooterSelection)
-                                                {
-                                                    <FooterCell T="T" ColumnType="@ColumnType.SelectionCheckBox" Column="@column"></FooterCell>
-                                                }
-                                                else if (column.AggregateDefinition != null)
-                                                {
-                                                    <FooterCell T="T" Column="@column" CurrentItems="@CurrentPageItems"></FooterCell>
-                                                }
-                                                else if (column.Type != ColumnType.SelectionCheckBox && column.FooterTemplate != null)
-                                                {
-                                                    <FooterCell T="T" Column="@column" CurrentItems="@CurrentPageItems"></FooterCell>
-                                                }
-                                                else if (hasFooter)
-                                                {
-                                                    // Since we have at least one column with a footer, we need to add FooterCell for each column.
-                                                    <FooterCell T="T" Column="@column"></FooterCell>
-                                                }
-                                            }*@
                                             @FooterCells(g.Grouping.ToList())
                                         </tr>
                                     }
@@ -208,19 +164,9 @@
                                         {
                                             if (!column.Hidden)
                                             {
-                                                <Cell Item="@item" Title="@column.Title" Field="@column.Field" Class="@column.cellClassname"
-                                                    CellTemplate="@column.CellTemplate" ColumnType="@column.Type" Style="@column.CellStyle"
-                                                    IsEditable="@(column.IsEditable ?? true)" EditTemplate="@column.EditTemplate"
-                                                    CellClass="@column.CellClass" CellClassFunc="@column.CellClassFunc"
-                                                    CellStyle="@column.CellStyle" CellStyleFunc="@column.CellStyleFunc"></Cell>
+                                                @Cell(column, item)
                                             }
-                                        }
-                                        
-                                        @if (EditMode == DataGridEditMode.Inline)
-                                        {
-                                            @*Add the inline edit controls.*@
-                                            <Cell Item="@item" ColumnType="@ColumnType.InlineEditCommand" IsEditable="false"></Cell>
-                                        }
+                                        }                                       
                                         </CascadingValue>
                                     </tr>                                   
                                     @if (ChildRowContent != null)
@@ -251,26 +197,6 @@
                     </tbody>
                     <tfoot class="@_footClassname">
                         <tr class="mud-table-row">
-                            @*@foreach (var column in @_columns)
-                            {
-                                if (column.Type == ColumnType.SelectionCheckBox && MultiSelection && column.EnableFooterSelection)
-                                {
-                                    <FooterCell T="T" ColumnType="@ColumnType.SelectionCheckBox" Column="@column"></FooterCell>
-                                }
-                                else if (column.AggregateDefinition != null)
-                                {
-                                    <FooterCell T="T" Column="@column" CurrentItems="@CurrentPageItems"></FooterCell>
-                                }
-                                else if (column.Type != ColumnType.SelectionCheckBox && column.FooterTemplate != null)
-                                {
-                                    <FooterCell T="T" Column="@column" CurrentItems="@CurrentPageItems"></FooterCell>
-                                }
-                                else if (hasFooter)
-                                {
-                                    // Since we have at least one column with a footer, we need to add FooterCell for each column.
-                                    <FooterCell T="T" Column="@column"></FooterCell>
-                                }
-                            }*@
                             @FooterCells(CurrentPageItems)
                         </tr>
                     </tfoot>
@@ -284,6 +210,43 @@
             }
         }
     </div>
+    <MudDialog @bind-IsVisible="isEditFormOpen" Options="EditDialogOptions">
+        <TitleContent>
+            <MudText Typo="Typo.h6">
+                Edit
+            </MudText>
+        </TitleContent>
+        <DialogContent>
+            <MudForm>
+                @foreach (var column in @_columns)
+                {
+                    var cell = new Cell<T>(this, column, _editingItem);
+
+                    if (column.EditTemplate != null)
+                    {
+                        @column.EditTemplate(cell.cellContext)
+                    }
+                    else
+                    {
+                        if (column.dataType == typeof(string))
+                        {
+                            <MudTextField T="string" Label="@column.computedTitle" Value="@cell.valueString" ValueChanged="@cell.StringValueChangedAsync" Margin="@Margin.Dense"
+                                Required="true" Variant="@Variant.Outlined" Disabled="@(!column.IsEditable || ReadOnly)" Class="mt-4" />
+                        }
+                        else if (column.isNumber)
+                        {
+                            <MudNumericField T="double" Label="@column.computedTitle" Value="@cell.valueNumber" ValueChanged="@cell.NumberValueChangedAsync" Margin="@Margin.Dense"
+                                Required="true" Variant="@Variant.Outlined" Disabled="@(!column.IsEditable || ReadOnly)" Class="mt-4" />
+                        }
+                    }
+                }
+            </MudForm>
+        </DialogContent>
+        <DialogActions>
+            <MudButton Variant="Variant.Filled" Color="Color.Default" OnClick="@CancelEditingItemAsync" Class="px-10">Cancel</MudButton>
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@CommitItemChangesAsync" Class="px-10">Save</MudButton>
+        </DialogActions>
+    </MudDialog>
 </CascadingValue>
 
 @code {
@@ -299,8 +262,7 @@
                 <MudMenuItem OnClick="@__this.CollapseAllGroups">Collapse All Groups</MudMenuItem>
             }
         </MudMenu>
-        </text>
-    ;
+        </text>;
     }
 
     internal RenderFragment FooterCells(IEnumerable<T> currentItems)
@@ -330,4 +292,76 @@
         </text>
     ;
     }
+
+    internal RenderFragment Cell(Column<T> column, T item)
+    {
+        return
+        @<text>
+        @{
+            var cell = new Cell<T>(this, column, item);
+        }
+        <td data-label="@column.computedTitle" class="@cell.computedClass" style="@cell.computedStyle">
+            @if (column.IsEditable && !ReadOnly && DataGridEditMode.Cell == EditMode)
+            {
+                if (column.EditTemplate != null)
+                {
+                    @column.EditTemplate(cell.cellContext)
+                }
+                else
+                {
+                    if (column.dataType == typeof(string))
+                    {
+                        <MudTextField T="string" Value="@cell.valueString" ValueChanged="@cell.StringValueChangedAsync" Margin="@Margin.Dense" Style="margin-top:0"
+                            Required="true" Variant="@Variant.Text" />
+                    }
+                    else if (column.isNumber)
+                    {
+                        <MudNumericField T="double" Value="@cell.valueNumber" ValueChanged="@cell.NumberValueChangedAsync" Margin="@Margin.Dense" Style="margin-top:0"
+                            Required="true" Variant="@Variant.Text" />
+                    }
+                }
+            }
+            else
+            {
+                if (column.CellTemplate != null)
+                {
+                    @column.CellTemplate(cell.cellContext)
+                }
+                else
+                {
+                    @cell.ComputedValue
+                }
+            }
+        </td>
+        </text>;
+    }
+
+    //internal RenderFragment EditableCell(T item)
+    //{
+    //    return
+    //    @<text>
+    //    @{
+    //        bool IsEditing() 
+    //        { 
+    //            return !ReadOnly && Equals(_editingItem, item); 
+    //        }
+    //    }
+    //    <td class="mud-table-cell">
+    //        @if (IsEditing())
+    //        {
+    //            <div style="display: flex;">
+    //                <MudTooltip Text="Save">
+    //                    <MudIconButton Class="pa-0" Icon="@Icons.Material.Filled.Done" Size="@Size.Small" OnClick="@(() => CommitItemChangesAsync(item))" Disabled="@(!(Validator?.IsValid ?? false))" />
+    //                </MudTooltip>
+    //                @if (CanCancelEdit)
+    //                {
+    //                    <MudTooltip Text="Cancel">
+    //                        <MudIconButton Class="pa-0 ml-4" Icon="@Icons.Material.Filled.Close" OnClick="@(() => CancelEditingItemAsync(item))" Size="@Size.Small"  />
+    //                    </MudTooltip>
+    //                }
+    //            </div>
+    //        }
+    //    </td>
+    //    </text>;
+    //}
 }

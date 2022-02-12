@@ -2,7 +2,7 @@
 
 <MudDataGrid T="Item" Items="@_items" RowClick="@OnRowClick" SelectedItemChanged="@OnSelectedItemChanged"
     SelectedItemsChanged="@OnSelectedItemsChanged" StartedEditingItem="@OnStartedEditingItem"
-    StartedCommittingItemChanges="@OnStartedCommittingItemChanges" EditingItemCancelled="@OnEditingItemCancelled">
+    CancelledEditingItem="@OnCancelledEditingItem">
     <Columns>
         <Column T="Item" Type="ColumnType.SelectionCheckBox" EnableFooterSelection="true" />
         <Column T="Item" Field="@nameof(Item.Name)" />
@@ -22,7 +22,7 @@
     public bool SelectedItemsChanged { get; set; }
     public bool StartedEditingItem { get; set; }
     public bool StartedCommittingItemChanges { get; set; }
-    public bool EditingItemCancelled { get; set; }
+    public bool CancelledEditingItem { get; set; }
 
     private void OnRowClick(DataGridRowClickEventArgs<Item> args)
     {
@@ -49,9 +49,9 @@
         StartedCommittingItemChanges = true;
     }
 
-    private void OnEditingItemCancelled(Item item)
+    private void OnCancelledEditingItem(Item item)
     {
-        EditingItemCancelled = true;
+        CancelledEditingItem = true;
     }
 
     public class Item
