@@ -60,6 +60,13 @@ public partial class MudDynamicDropItem<T> : MudComponentBase
     public EventCallback<T> OnDragEnded { get; set; }
 
     /// <summary>
+    /// Event callback for when the dragged item is dropped on another item, overriding DragEnded
+    /// </summary>
+    [Parameter]
+    [Category(CategoryTypes.DropZone.Behavior)]
+    public EventCallback<T> OnDropOnItem { get; set; }
+
+    /// <summary>
     /// When true, the item can't be dragged. defaults to false
     /// </summary>
     [Parameter]
@@ -97,6 +104,14 @@ public partial class MudDynamicDropItem<T> : MudComponentBase
         _dragOperationIsInProgress = false;
 
         await OnDragEnded.InvokeAsync(Item);
+        StateHasChanged();
+    }
+
+    private async Task DropOnItem(DragEventArgs e)
+    {
+        _dragOperationIsInProgress = false;
+
+        await OnDropOnItem.InvokeAsync(Item);
         StateHasChanged();
     }
 

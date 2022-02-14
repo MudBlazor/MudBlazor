@@ -66,7 +66,8 @@ namespace MudBlazor
     /// <typeparam name="T">Type of dragged item</typeparam>
     /// <param name="Item">The dragged item during the transaction</param>
     /// <param name="DropzoneIdentifier">Identifier of the zone where the transaction started</param>
-    public record MudItemDropInfo<T>(T Item, string DropzoneIdentifier);
+    /// <param name="Index">Identifier of the index where the item was dropped</param>
+    public record MudItemDropInfo<T>(T Item, string DropzoneIdentifier, int Index);
 
     /// <summary>
     /// The container of a drag and drop zones
@@ -187,10 +188,10 @@ namespace MudBlazor
         public bool TransactionInProgress() => _transaction != null;
         public string GetTransactionOrignZoneIdentiifer() => _transaction?.SourceZoneIdentifier ?? string.Empty;
 
-        public async Task CommitTransaction(string dropzoneIdentifier)
+        public async Task CommitTransaction(string dropzoneIdentifier, int index)
         {
             await _transaction.Commit();
-            await ItemDropped.InvokeAsync(new MudItemDropInfo<T>(_transaction.Item, dropzoneIdentifier));
+            await ItemDropped.InvokeAsync(new MudItemDropInfo<T>(_transaction.Item, dropzoneIdentifier, index));
             TransactionEnded?.Invoke(this, EventArgs.Empty);
             _transaction = null;
         }

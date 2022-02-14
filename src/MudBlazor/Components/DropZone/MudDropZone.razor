@@ -8,6 +8,7 @@
 	 @ondrop="HandleDrop"
 	 @ondragenter="HandleDragEnter"
 	 @ondragleave="HandleDragLeave"
+     @ondragover="HandleDragOver"
 	 @attributes="UserAttributes">
 
 	@ChildContent
@@ -18,6 +19,7 @@
 						Item="item"
 						OnDragStarted="DragOperationStarted"
 						OnDragEnded="FinishedDragOperation"
+                        OnDropOnItem="HandleItemDropOnItem"
 						ZoneIdentifier="@Identifier"
 						Disabled="@GetItemDisabledStatus(item)"
 						DisabledClass="@(DisabledClass ?? Container?.DisabledClass)">

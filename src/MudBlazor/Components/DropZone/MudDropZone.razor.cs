@@ -240,6 +240,18 @@ namespace MudBlazor
             _canDrop = isValidZone;
         }
 
+        public void HandleDragOver()
+        {
+            var (context, isValidZone) = ItemCanBeDropped();
+            if (context == null)
+            {
+                return;
+            }
+
+            _itemOnDropZone = true;
+            _canDrop = isValidZone;
+        }
+
         private void HandleDragLeave()
         {
             var (context, _) = ItemCanBeDropped();
@@ -249,6 +261,25 @@ namespace MudBlazor
             }
 
             _itemOnDropZone = false;
+        }
+
+        public async Task HandleItemDropOnItem(T item)
+        {
+            var (context, isValidZone) = ItemCanBeDropped();
+            if (context == null)
+            {
+                return;
+            }
+
+            _itemOnDropZone = false;
+
+            if (isValidZone == false)
+            {
+                await Container.CancelTransaction();
+                return;
+            }
+            var index = GetDropIndex(item);
+            await Container.CommitTransaction(Identifier, index);
         }
 
         private async Task HandleDrop()
@@ -266,8 +297,14 @@ namespace MudBlazor
                 await Container.CancelTransaction();
                 return;
             }
+            
+            await Container.CommitTransaction(Identifier, 0);
+        }
 
-            await Container.CommitTransaction(Identifier);
+        private int GetDropIndex(T landingItem)
+        {
+            return GetItems().ToList().IndexOf(landingItem);
+
         }
 
         private void FinishedDragOperation() => _dragInProgress = false;

@@ -6,6 +6,7 @@
 	 @attributes="UserAttributes"
 	 draggable="@(Disabled == false ? "true" : "false")"
 	 @ondragstart="DragStarted"
+     @ondrop="DropOnItem"
 	 @ondragend="DragEnded">
 	@ChildContent
 </div>
