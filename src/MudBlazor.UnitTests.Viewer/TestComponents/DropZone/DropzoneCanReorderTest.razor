@@ -1,0 +1,68 @@
+﻿@namespace MudBlazor.UnitTests.TestComponents
+
+<MudDropContainer @ref="_container" T="SimpleDropItem" Items="_items" Item ItemsSelector="@((item,dropzone) => item.ZoneIdentifier == dropzone)" ItemDropped="ItemUpdated" Class="d-flex flex-column flex-grow-1">
+    <ChildContent>
+        <div class="d-flex flex-column flex-grow-1">
+            <MudListSubheader Class="mt-4 pb-2">Folders</MudListSubheader>
+            <MudDropZone T="SimpleDropItem" ItemDraggingClass="mud-info-text" Identifier="Column 1" Class="d-flex flex-wrap flex-grow-1 pa-2 rounded first-drop-zone" />
+        </div>
+    </ChildContent>
+    <ItemRenderer>
+        <div Class="rounded mud-paper-outlined d-flex align-center pa-3 ma-2">
+            <MudIcon Icon="@Icons.Custom.FileFormats.FileDocument" Color="Color.Inherit" Class="mr-2"/>
+            @context.Name
+        </div>
+    </ItemRenderer>
+</MudDropContainer>
+
+@code {
+    public class SimpleDropItem
+    {
+        public string Name { get; set; }
+        public string ZoneIdentifier { get; set; }
+
+        public SimpleDropItem(string name, string zoneIdentifier)
+        {
+            Name = name;
+            ZoneIdentifier = zoneIdentifier;
+        }
+    }
+
+    [Parameter]
+    public bool ApplyDropClassesOnDragStarted { get; set; } = false;
+
+    [Parameter]
+    public bool? SecondColumnAppliesClassesOnDragStarted { get; set; } = null;
+
+    private void ItemUpdated(MudItemDropInfo<SimpleDropItem> dropItem)
+    {
+        // remove item from current list
+        _items.Remove(dropItem.Item);
+        // filter by dropped zone identifier
+        var newList = _items.Where(x => x.ZoneIdentifier == dropItem.DropzoneIdentifier).ToList();
+
+        // insert at given index
+        newList.Insert(dropItem.Index, dropItem.Item);
+
+        // rebuild the list (I'm VERY certain theres a better way to do this)
+        _items.RemoveAll(x => x.ZoneIdentifier == dropItem.DropzoneIdentifier);
+        _items.AddRange(newList);
+        dropItem.Item.ZoneIdentifier = dropItem.DropzoneIdentifier;
+    }
+
+    private List<SimpleDropItem> _items = new()
+		{
+		new SimpleDropItem("First Item", "Column 1"),
+		new SimpleDropItem("Second Item", "Column 1"),
+		new SimpleDropItem("Third Item", "Column 1"),
+	};
+	private MudDropContainer<SimpleDropItem> _container;
+
+    public async Task InvokeRefresh() => await InvokeAsync(_container.Refresh);
+
+    public void DragTopToBottom() 
+    {
+        ItemUpdated(new MudItemDropInfo<SimpleDropItem>( _items.First(), "Column 1", _items.Count - 1));
+    }
+
+}

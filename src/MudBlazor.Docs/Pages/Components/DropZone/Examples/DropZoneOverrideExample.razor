@@ -23,6 +23,17 @@
 @code {
     private void ItemUpdated(MudItemDropInfo<DropItem> dropItem)
     {
+        // remove item from current list
+        _items.Remove(dropItem.Item);
+        // filter by dropped zone identifier
+        var newList = _items.Where(x => x.Identifier == dropItem.DropzoneIdentifier).ToList();
+
+        // insert at given index
+        newList.Insert(dropItem.Index, dropItem.Item);
+        
+        // rebuild the list (I'm VERY certain theres a better way to do this)
+        _items.RemoveAll(x => x.Identifier == dropItem.DropzoneIdentifier);
+        _items.AddRange(newList);
         dropItem.Item.Identifier = dropItem.DropzoneIdentifier;
     }
     

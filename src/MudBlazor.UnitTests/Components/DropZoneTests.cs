@@ -139,6 +139,36 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task DropZone_DropItemOnItem()
+        {
+            var comp = Context.RenderComponent<DropzoneCanReorderTest>();
+
+            var firstDropZone = comp.Find(".first-drop-zone");
+
+            // should have three children
+            firstDropZone.Children.Should().HaveCount(3);
+
+            // First child should be the "First Item"
+            firstDropZone.Children[0].InnerHtml.Should().Contain("First Item");
+
+            // start dragging
+            await firstDropZone.Children[0].DragStartAsync(new DragEventArgs());
+
+
+            // drop on last child
+            await firstDropZone.Children[2].DropAsync(new DragEventArgs());
+
+
+            // Invoke refresh
+            await comp.Instance.InvokeRefresh();
+
+            // Ensure that each element is in the right place
+            firstDropZone.Children[0].InnerHtml.Should().Contain("Second Item");
+            firstDropZone.Children[1].InnerHtml.Should().Contain("Third Item");
+            firstDropZone.Children[2].InnerHtml.Should().Contain("First Item");
+        }
+
+        [Test]
         public async Task DropZone_SimpleDragAndDrop()
         {
             var comp = Context.RenderComponent<DropzoneBasicTest>();
@@ -682,6 +712,33 @@ namespace MudBlazor.UnitTests.Components
 
             //items should have been rendered
             secondDropZone.Children.Should().HaveCount(1);
+        }
+
+
+        [Test]
+        public async Task DropZone_ReorderTest()
+        {
+            var comp = Context.RenderComponent<DropzoneCanReorderTest>();
+
+            var firstDropZone = comp.Find(".first-drop-zone");
+
+            // should have three children
+            firstDropZone.Children.Should().HaveCount(3);
+
+            // First child should be the "First Item"
+            firstDropZone.Children[0].InnerHtml.Should().Contain("First Item");
+
+            // Move top dropitem to the bottom
+            comp.Instance.DragTopToBottom();
+
+            // Invoke refresh
+            await comp.Instance.InvokeRefresh();
+
+            // Ensure that each element is in the right place
+            firstDropZone.Children[0].InnerHtml.Should().Contain("Second Item");
+            firstDropZone.Children[1].InnerHtml.Should().Contain("Third Item");
+            firstDropZone.Children[2].InnerHtml.Should().Contain("First Item");
+
         }
     }
 }
