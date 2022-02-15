@@ -89,7 +89,7 @@
   <!--Packages-->
   <ItemGroup>
     <PackageReference Include="FluentValidation" Version="10.3.6" />
-    <PackageReference Include="Microsoft.AspNetCore.Components" Version="6.0.1.*" />
+    <PackageReference Include="Microsoft.AspNetCore.Components" Version="6.0.2.*" />
     <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="6.0.1.*" />
     <PackageReference Include="Microsoft.AspNetCore.WebUtilities" Version="2.2.0" />
     <PackageReference Include="Blazored.LocalStorage" Version="4.2.0" />
