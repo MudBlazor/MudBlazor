@@ -661,5 +661,26 @@ namespace MudBlazor.UnitTests.Components
             tfs[0].Text.Should().Be("123-45");
             tfs[1].Text.Should().Be("12/34/5");
         }
+
+        /// <summary>
+        /// Calling form.Reset() should clear the masked text field
+        /// </summary>
+        [Test]
+        public async Task FormReset_Should_ClearMaskedField()
+        {
+            var comp = Context.RenderComponent<FormResetMaskTest>();
+            var form = comp.FindComponent<MudForm>().Instance;
+            var textField = comp.FindComponent<MudTextField<string>>().Instance;
+            var mask = comp.FindComponent<MudMask>().Instance;
+            await comp.InvokeAsync(() => mask.OnPaste("1234567890"));
+            mask.Mask.ToString().Should().Be("(123) 456-7890|");
+            textField.Text.Should().Be("(123) 456-7890");
+            textField.Value.Should().Be("(123) 456-7890");
+
+            await comp.InvokeAsync(() => form.Reset());
+            mask.Mask.ToString().Should().Be("|");
+            textField.Text.Should().BeNullOrEmpty();
+            textField.Value.Should().BeNullOrEmpty();
+        }
     }
 }
