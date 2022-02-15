@@ -250,6 +250,7 @@ namespace MudBlazor
         internal void Toggle()
         {
             Hidden = !Hidden;
+            DataGrid.ExternalStateHasChanged();
         }
 
     }

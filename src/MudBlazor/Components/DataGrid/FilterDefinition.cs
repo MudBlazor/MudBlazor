@@ -21,7 +21,6 @@ namespace MudBlazor
                 if (Field == null) return typeof(object);
 
                 return typeof(T).GetProperty(Field).PropertyType;
-                //return Nullable.GetUnderlyingType(t) ?? t;
             }
         }
 
@@ -180,15 +179,31 @@ namespace MudBlazor
                         if (Value == null)
                             return alwaysTrue;
 
-                        comparison = Expression.AndAlso(isnotnull, 
+                        if (IsNullableEnum(dataType))
+                        {
+                            comparison = Expression.AndAlso(isnotnull,
                             Expression.Equal(field, valueEnumConstant));
+                        }
+                        else
+                        {
+                            comparison = Expression.Equal(field, valueEnumConstant);
+                        }
+
                         break;
                     case FilterOperator.Enum.IsNot:
                         if (Value == null)
                             return alwaysTrue;
 
-                        comparison = Expression.OrElse(isnull, 
-                            Expression.NotEqual(field, valueEnumConstant));
+                        if (IsNullableEnum(dataType))
+                        {
+                            comparison = Expression.OrElse(isnull,
+                                Expression.NotEqual(field, valueEnumConstant));
+                        }
+                        else
+                        {
+                            comparison = Expression.NotEqual(field, valueEnumConstant);
+                        }
+
                         break;
 
                     default:
@@ -291,5 +306,11 @@ namespace MudBlazor
         }
 
         private Func<T, bool> alwaysTrue = (x) => true;
+
+        private bool IsNullableEnum(Type t)
+        {
+            Type u = Nullable.GetUnderlyingType(t);
+            return (u != null) && u.IsEnum;
+        }
     }
 }

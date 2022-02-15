@@ -269,24 +269,27 @@
     {
         return
         @<text>
-        @foreach (var column in _columns)
+        @if (currentItems != null)
         {
-            if (column.Type == ColumnType.SelectionCheckBox && MultiSelection && column.EnableFooterSelection)
+            foreach (var column in _columns)
             {
-                <FooterCell T="T" ColumnType="@ColumnType.SelectionCheckBox" Column="@column"></FooterCell>
-            }
-            else if (column.AggregateDefinition != null)
-            {
-                <FooterCell T="T" Column="@column" CurrentItems="@currentItems"></FooterCell>
-            }
-            else if (column.Type != ColumnType.SelectionCheckBox && column.FooterTemplate != null)
-            {
-                <FooterCell T="T" Column="@column" CurrentItems="@currentItems"></FooterCell>
-            }
-            else if (hasFooter)
-            {
-                // Since we have at least one column with a footer, we need to add FooterCell for each column.
-                <FooterCell T="T" Column="@column"></FooterCell>
+                if (column.Type == ColumnType.SelectionCheckBox && MultiSelection && column.EnableFooterSelection)
+                {
+                    <FooterCell T="T" ColumnType="@ColumnType.SelectionCheckBox" Column="@column"></FooterCell>
+                }
+                else if (column.AggregateDefinition != null)
+                {
+                    <FooterCell T="T" Column="@column" CurrentItems="@currentItems"></FooterCell>
+                }
+                else if (column.Type != ColumnType.SelectionCheckBox && column.FooterTemplate != null)
+                {
+                    <FooterCell T="T" Column="@column" CurrentItems="@currentItems"></FooterCell>
+                }
+                else if (hasFooter)
+                {
+                    // Since we have at least one column with a footer, we need to add FooterCell for each column.
+                    <FooterCell T="T" Column="@column"></FooterCell>
+                }
             }
         }
         </text>

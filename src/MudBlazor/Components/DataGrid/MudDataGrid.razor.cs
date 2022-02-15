@@ -63,6 +63,7 @@ namespace MudBlazor
                 if (ServerData != null)
                     return (int)Math.Ceiling(_server_data.TotalItems / (double)RowsPerPage);
 
+                Console.WriteLine("numPages");
                 return (int)Math.Ceiling(FilteredItems.Count() / (double)RowsPerPage);
             }
         }
@@ -503,7 +504,9 @@ namespace MudBlazor
             get
             {
                 if (@PagerContent == null)
+                {
                     return FilteredItems; // we have no pagination
+                }
                 if (ServerData == null)
                 {
                     var filteredItemCount = GetFilteredItemsCount();
@@ -947,7 +950,7 @@ namespace MudBlazor
                 StateHasChanged();
                 return;
             }
-
+            
             var groupings = CurrentPageItems.GroupBy(GroupedColumn.groupBy);
 
             if (_groupExpansions.Count == 0)
