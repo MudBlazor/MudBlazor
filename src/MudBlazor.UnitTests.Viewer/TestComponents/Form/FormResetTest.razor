@@ -1,10 +1,8 @@
 ﻿<MudForm @ref="form" ValidationDelay="0">
-    <MudTextField Label="Phone" T="string" Required Immediate @bind-Value="@phone" Mask="PhoneMask" />
     <MudTextField Label="Name" T="string" Required Immediate @bind-Value="@name" />
     <MudNumericField Label="Age" T="int?" Required Immediate @bind-Value="@age"></MudNumericField>
 </MudForm>
 <br><br>
-<span>Phone: @phone</span>
 <span>Name: @name</span>
 <span>Age: @age</span>
 <br><br>
@@ -14,7 +12,6 @@
 {
     public static string __description__ = "Calling Form.Reset() should clear the text field.";
     private MudForm form;
-    private string phone;
     private string name;
     private int? age;
 
@@ -23,9 +20,4 @@
         form.Reset();
         StateHasChanged();
     }
-
-    public PatternMask PhoneMask = new PatternMask("(###) ###-####")
-    {
-        MaskChars = new[] { new MaskChar('#', @"[0-9]") }
-    };
 }
