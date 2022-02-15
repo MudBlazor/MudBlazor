@@ -36,9 +36,15 @@
         <MudNavLink Href="@link.Href">@link.Title</MudNavLink>
     }
 </MudNavGroup>
- <MudNavGroup Title="Customization" Expanded="@(_section == "customization")" ExpandIcon="@Icons.Material.Filled.ExpandMore">
-     @foreach (var link in MenuService.Customization)
-     {
-         <MudNavLink Href="@link.Href">@link.Title</MudNavLink>
-     }
- </MudNavGroup>
+<MudNavGroup Title="Customization" Expanded="@(_section == "customization")" ExpandIcon="@Icons.Material.Filled.ExpandMore">
+    @foreach (var link in MenuService.Customization)
+    {
+        <MudNavLink Href="@link.Href">@link.Title</MudNavLink>
+    }
+</MudNavGroup>
+<MudNavGroup Title="CSS Utilities" Expanded="@(_section == "css-utilities")" ExpandIcon="@Icons.Material.Filled.ExpandMore">
+    @foreach (var link in MenuService.CssUtilities)
+    {
+        <MudNavLink Href="@link.Href">@link.Title</MudNavLink>
+    }
+</MudNavGroup>

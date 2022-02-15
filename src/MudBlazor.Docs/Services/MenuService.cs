@@ -15,6 +15,7 @@ namespace MudBlazor.Docs.Services
         MudComponent GetComponent(Type type);
         IEnumerable<DocsLink> Features { get; }
         IEnumerable<DocsLink> Customization { get; }
+        IEnumerable<DocsLink> CssUtilities { get; }
     }
 
     /// <summary>
@@ -210,14 +211,9 @@ namespace MudBlazor.Docs.Services
         public IEnumerable<DocsLink> Features => _features ??= new List<DocsLink>
             {
                 new DocsLink {Title = "Breakpoints", Href = "features/breakpoints"},
-                new DocsLink {Title = "Border Radius", Href = "features/border-radius"},
                 new DocsLink {Title = "Colors", Href = "features/colors"},
                 new DocsLink {Title = "Converters", Href = "features/converters"},
-                new DocsLink {Title = "Display", Href = "features/display"},
-                new DocsLink {Title = "Elevation", Href = "features/elevation"},
-                new DocsLink {Title = "Flex", Href = "features/flex"},
                 new DocsLink {Title = "Icons", Href = "features/icons"},
-                new DocsLink {Title = "Spacing", Href = "features/spacing"},
                 new DocsLink {Title = "RTL Languages", Href = "features/rtl-languages"},
             }.OrderBy(x => x.Title);
 
@@ -233,6 +229,19 @@ namespace MudBlazor.Docs.Services
             new DocsLink {Title = "Palette", Href = "customization/palette"},
             new DocsLink {Title = "Typography", Href = "customization/typography"},
             new DocsLink {Title = "z-index", Href = "customization/z-index"},
+        }.OrderBy(x => x.Title);
+        
+        private IEnumerable<DocsLink> _cssUtilities;
+        /// <summary>
+        /// CSS Utilities menu links
+        /// </summary>
+        public IEnumerable<DocsLink> CssUtilities => _cssUtilities ??= new List<DocsLink>()
+        {
+            new DocsLink {Title = "Border Radius", Href = "features/border-radius"},
+            new DocsLink {Title = "Display", Href = "features/display"},
+            new DocsLink {Title = "Elevation", Href = "features/elevation"},
+            new DocsLink {Title = "Flex", Href = "features/flex"},
+            new DocsLink {Title = "Spacing", Href = "features/spacing"},
         }.OrderBy(x => x.Title);
     }
 }
