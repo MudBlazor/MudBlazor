@@ -50,13 +50,13 @@
         }
 
         & .enum {
-          color: #00c853;
-          background-color: var(--mud-palette-grey-light);
+            color: #00c853;
+            background-color: var(--mud-palette-grey-light);
         }
 
         & .enumValue, .sharpVariable {
-          color: var(--mud-palette-text-primary);
-          background-color: var(--mud-palette-grey-light);
+            color: var(--mud-palette-text-primary);
+            background-color: var(--mud-palette-grey-light);
         }
 
         & .keyword {
@@ -65,8 +65,8 @@
         }
 
         & .atSign {
-          color: var(--mud-palette-text-primary);
-          background-color: var(--mud-palette-grey-light);
+            color: var(--mud-palette-text-primary);
+            background-color: var(--mud-palette-grey-light);
         }
 
         & .comment {
@@ -76,8 +76,8 @@
 
     & .csharp {
         & .atSign {
-          color: #353535;
-          background-color: var(--mud-palette-grey-light);
+            color: var(--mud-palette-text-primary);
+            background-color: var(--mud-palette-grey-light);
         }
 
         & .keyword {
