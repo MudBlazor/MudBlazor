@@ -76,7 +76,7 @@
 
                 <DocsPageSection>
                     <SectionHeader Title="Add font and style references">
-                        <Description>Add the following to your HTML head section, it's either <CodeInline>index.html</CodeInline> or <CodeInline>_Host.cshtml</CodeInline> depending on whether you're running WebAssembly or Server.</Description>
+                        <Description>Add the following to your HTML head section, it's either <CodeInline>index.html</CodeInline> or <CodeInline>_Layout.cshtml</CodeInline>/<CodeInline>_Host.cshtml</CodeInline> depending on whether you're running WebAssembly or Server.</Description>
                     </SectionHeader>
                     <SectionContent Code="InstallationManualCssFontsExample"/>
                 </DocsPageSection>
@@ -86,6 +86,15 @@
                         <Description>In the same file but located in the end of it add the MudBlazor js file, it should be in the same location as the default blazor script.</Description>
                     </SectionHeader>
                     <SectionContent Code="InstallScriptManual"/>
+                </DocsPageSection>
+                
+                <DocsPageSection>
+                    <SectionHeader Title="Removing references">
+                        <Description>
+                            In the same file as above, the default blazor template load's bootstrap, this is no longer needed and can be removed. Delete the bootstrap and open-iconic folder as well if you decidce to get rid of bootstrap from your project.
+                            The <CodeInline>site.css</CodeInline> file you can either remove or keep but make sure you clear it out of any content.
+                        </Description>
+                    </SectionHeader>
                 </DocsPageSection>
 
                 <DocsPageSection>
