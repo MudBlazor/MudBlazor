@@ -3,13 +3,12 @@ name: mudbot
 on:
   pull_request:
     
-
 jobs:
   pr-check:
     name: PR Check
     runs-on: ubuntu-latest
     steps:
-    - uses: MudBlazor/MudBot@main
+    - uses: MudBlazor/MudBot@v1.0
       with:
         token: ${{ secrets.GITHUB_TOKEN }}
 
