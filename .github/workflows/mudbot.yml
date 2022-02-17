@@ -2,6 +2,8 @@ name: mudbot
 
 on:
   pull_request:
+    types:
+      - opened
     
 jobs:
   pr-check:
