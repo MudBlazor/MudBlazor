@@ -15,5 +15,6 @@ jobs:
       deploy-web-app-name: mudblazor-dev
       check-eslint: 'MudBlazor/TScripts'
       publish-coverage: true
+      publish-directory: './MudBlazor.Docs.Server'
     secrets:
       publish-profile: ${{ secrets.PUBLISH_MUDBLAZOR_DEV }}
