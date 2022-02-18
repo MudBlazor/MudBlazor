@@ -220,8 +220,8 @@ namespace MudBlazor
                 if (a.HasValue)
                 {
                     a = new DateTime(a.Value.Year, a.Value.Month, 1);
+                    PickerMonth = a;
                 }
-                PickerMonth = a;
             }
             if (OpenTo == OpenTo.Date && FixDay.HasValue)
             {
