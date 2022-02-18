@@ -719,6 +719,25 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task DatePickerTest_Editable()
+        {
+            var comp = Context.RenderComponent<SimpleMudDatePickerTest>();
+
+            CultureInfo cultureInfo = new CultureInfo("en-US");
+
+            var datePicker = comp.FindComponent<MudDatePicker>().Instance;
+            datePicker.Editable = true;
+            datePicker.Culture = cultureInfo;
+
+            await comp.InvokeAsync(() => comp.Find("input").Change("10/10/2020"));
+            comp.WaitForAssertion(() => datePicker.Date.Should().Be(new DateTime(2020, 10, 10)));
+            comp.WaitForAssertion(() => datePicker.PickerMonth.Should().Be(null));
+
+            await comp.InvokeAsync(() => datePicker.Open());
+            comp.WaitForAssertion(() => datePicker.PickerMonth.Should().Be(new DateTime(2020, 10, 01)));
+        }
+
+        [Test]
         public async Task DatePickerTest_KeyboardNavigation()
         {
             var comp = Context.RenderComponent<SimpleMudDatePickerTest>();
