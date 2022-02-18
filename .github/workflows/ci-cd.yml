@@ -1,0 +1,19 @@
+name: ci-cd
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  pipeline:
+    name: pipeline
+    uses: MudBlazor/Workflows/.github/workflows/template-pipeline.yml@main
+    with:
+      dotnet-version: 6.0.x
+      deploy-web-app: true
+      deploy-condition: 'refs/heads/dev'
+      deploy-web-app-name: mudblazor-dev
+      check-eslint: 'MudBlazor/TScripts'
+      publish-coverage: true
+    secrets:
+      publish-profile: ${{ secrets.PUBLISH_MUDBLAZOR_DEV }}
