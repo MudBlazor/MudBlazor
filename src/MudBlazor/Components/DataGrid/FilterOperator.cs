@@ -146,5 +146,23 @@ namespace MudBlazor
             Type u = Nullable.GetUnderlyingType(type);
             return (u != null) && u.IsEnum;
         }
+
+        internal static bool IsDateTime(Type type)
+        {
+            if (type == typeof(System.DateTime))
+                return true;
+
+            Type u = Nullable.GetUnderlyingType(type);
+            return (u != null) && u == typeof(System.DateTime);
+        }
+
+        internal static bool IsBoolean(Type type)
+        {
+            if (type == typeof(System.Boolean))
+                return true;
+
+            Type u = Nullable.GetUnderlyingType(type);
+            return (u != null) && u == typeof(System.Boolean);
+        }
     }
 }

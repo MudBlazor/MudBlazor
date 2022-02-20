@@ -660,7 +660,7 @@ namespace MudBlazor
         internal void RemoveFilter(Guid id)
         {
             FilterDefinitions.RemoveAll(x => x.Id == id);
-            StateHasChanged();
+            GroupItems();
         }
 
         internal async Task SetSelectedItemAsync(bool value, T item)

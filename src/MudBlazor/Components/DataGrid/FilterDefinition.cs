@@ -23,7 +23,6 @@ namespace MudBlazor
                 return typeof(T).GetProperty(Field).PropertyType;
             }
         }
-
         private bool isNumber
         {
             get
@@ -31,12 +30,25 @@ namespace MudBlazor
                 return FilterOperator.IsNumber(dataType);
             }
         }
-
         private bool isEnum
         {
             get
             {
                 return FilterOperator.IsEnum(dataType);
+            }
+        }
+        private bool isDateTime
+        {
+            get
+            {
+                return FilterOperator.IsDateTime(dataType);
+            }
+        }
+        private bool isBoolean
+        {
+            get
+            {
+                return FilterOperator.IsBoolean(dataType);
             }
         }
 
@@ -210,7 +222,7 @@ namespace MudBlazor
                         return alwaysTrue;
                 }
             }
-            else if (dataType == typeof(bool?))
+            else if (isBoolean)
             {
                 var field = Expression.Convert(Expression.Property(parameter, typeof(T).GetProperty(Field)), typeof(bool?));
                 bool? valueBool = Value == null ? null : Convert.ToBoolean(Value);
@@ -231,7 +243,7 @@ namespace MudBlazor
                         return alwaysTrue;
                 }
             }
-            else if (dataType == typeof(DateTime?))
+            else if (isDateTime)
             {
                 var field = Expression.Convert(Expression.Property(parameter, typeof(T).GetProperty(Field)), typeof(DateTime?));
                 DateTime? valueDateTime = Value == null ? null : (DateTime)Value;

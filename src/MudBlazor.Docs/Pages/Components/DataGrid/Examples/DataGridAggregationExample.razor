@@ -23,22 +23,28 @@
         <Column T="Model" Field="@nameof(Model.Age)" AggregateDefinition="_ageAggregation" />
         <Column T="Model" Field="@nameof(Model.Status)" ></Column>
         <Column T="Model" Field="@nameof(Model.Salary)" AggregateDefinition="_salaryAggregation" />
+        <Column T="Model" Field="HireDate" Title="Hired">
+            <CellTemplate>
+                @context.Item.HireDate.ToString("MM/dd/yyyy")
+            </CellTemplate>
+        </Column>
+        <Column T="Model" Field="IsManager" Title="Manager" />
     </Columns>
 </MudDataGrid>
 
 @code { 
-    public record Model (string Name, int Age, Severity Status, decimal Salary);
+    public record Model (string Name, int Age, Severity Status, decimal Salary, DateTime HireDate, bool IsManager);
 
     IEnumerable<Model> _items = new List<Model>()
     {
-        new Model("Sam", 56, Severity.Normal, 50_000.00M), 
-        new Model("Alicia", 54, Severity.Info, 75_000.00M), 
-        new Model("Ira", 27, Severity.Success, 102_000.00M),
-        new Model("John", 32, Severity.Warning, 132_000.00M),
-        new Model("Fred", 65, Severity.Warning, 87_000.00M), 
-        new Model("Tabitha", 33, Severity.Info, 157_000.00M), 
-        new Model("Hunter", 22, Severity.Success, 43_000.00M),
-        new Model("Esme", 55, Severity.Warning, 149_000.00M)
+        new Model("Sam", 56, Severity.Normal, 50_000.00M, DateTime.Parse("3/5/2005"), false), 
+        new Model("Alicia", 54, Severity.Info, 75_000.00M, DateTime.Parse("1/17/2010"), false), 
+        new Model("Ira", 27, Severity.Success, 102_000.00M, DateTime.Parse("6/15/2017"), true),
+        new Model("John", 32, Severity.Warning, 132_000.00M, DateTime.Parse("12/23/2021"), true),
+        new Model("Fred", 65, Severity.Warning, 87_000.00M, DateTime.Parse("7/3/2003"), false), 
+        new Model("Tabitha", 33, Severity.Info, 157_000.00M, DateTime.Parse("2/12/2015"), true), 
+        new Model("Hunter", 22, Severity.Success, 43_000.00M, DateTime.Parse("9/20/2017"), false),
+        new Model("Esme", 55, Severity.Warning, 149_000.00M, DateTime.Parse("8/1/2017"), true)
     };
 
     AggregateDefinition<Model> _ageAggregation = new AggregateDefinition<Model>

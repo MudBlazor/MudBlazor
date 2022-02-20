@@ -110,24 +110,28 @@ namespace MudBlazor
         {
             _valueString = value;
             ValueChanged.InvokeAsync(value);
+            DataGrid.GroupItems();
         }
 
         internal void NumberValueChanged(double? value)
         {
             _valueNumber = value;
             ValueChanged.InvokeAsync(value);
+            DataGrid.GroupItems();
         }
 
         internal void EnumValueChanged(Enum value)
         {
             _valueEnum = value;
             ValueChanged.InvokeAsync(value);
+            DataGrid.GroupItems();
         }
 
         internal void BoolValueChanged(bool? value)
         {
             _valueBool = value;
             ValueChanged.InvokeAsync(value);
+            DataGrid.GroupItems();
         }
 
         internal void DateValueChanged(DateTime? value)
@@ -148,6 +152,8 @@ namespace MudBlazor
             }
             else
                 ValueChanged.InvokeAsync(value);
+
+            DataGrid.GroupItems();
         }
 
         internal void TimeValueChanged(TimeSpan? value)
@@ -167,6 +173,8 @@ namespace MudBlazor
 
                 ValueChanged.InvokeAsync(date);
             }
+
+            DataGrid.GroupItems();
         }
 
         internal void RemoveFilter()
