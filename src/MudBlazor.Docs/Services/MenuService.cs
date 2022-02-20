@@ -15,7 +15,7 @@ namespace MudBlazor.Docs.Services
         MudComponent GetComponent(Type type);
         IEnumerable<DocsLink> Features { get; }
         IEnumerable<DocsLink> Customization { get; }
-        IEnumerable<DocsLink> CssUtilities { get; }
+        IEnumerable<DocsLink> Utilities { get; }
     }
 
     /// <summary>
@@ -214,6 +214,7 @@ namespace MudBlazor.Docs.Services
             {
                 new DocsLink {Title = "Breakpoints", Href = "features/breakpoints"},
                 new DocsLink {Title = "Colors", Href = "features/colors"},
+                new DocsLink {Title = "Elevation", Href = "features/elevation"},
                 new DocsLink {Title = "Converters", Href = "features/converters"},
                 new DocsLink {Title = "Icons", Href = "features/icons"},
                 new DocsLink {Title = "Masking", Href = "features/masking"},
@@ -234,17 +235,16 @@ namespace MudBlazor.Docs.Services
             new DocsLink {Title = "z-index", Href = "customization/z-index"},
         }.OrderBy(x => x.Title);
         
-        private IEnumerable<DocsLink> _cssUtilities;
+        private IEnumerable<DocsLink> _utilities;
         /// <summary>
         /// CSS Utilities menu links
         /// </summary>
-        public IEnumerable<DocsLink> CssUtilities => _cssUtilities ??= new List<DocsLink>()
+        public IEnumerable<DocsLink> Utilities => _utilities ??= new List<DocsLink>()
         {
-            new DocsLink {Title = "Border Radius", Href = "features/border-radius"},
-            new DocsLink {Title = "Display", Href = "features/display"},
-            new DocsLink {Title = "Elevation", Href = "features/elevation"},
-            new DocsLink {Title = "Flex", Href = "features/flex"},
-            new DocsLink {Title = "Spacing", Href = "features/spacing"},
+            new DocsLink {Title = "Border Radius", Href = "utilities/border-radius"},
+            new DocsLink {Title = "Display", Href = "utilities/display"},
+            new DocsLink {Title = "Flex", Href = "utilities/flex"},
+            new DocsLink {Title = "Spacing", Href = "utilities/spacing"},
         }.OrderBy(x => x.Title);
     }
 }

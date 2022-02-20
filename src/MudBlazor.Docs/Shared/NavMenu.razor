@@ -42,8 +42,8 @@
         <MudNavLink Href="@link.Href">@link.Title</MudNavLink>
     }
 </MudNavGroup>
-<MudNavGroup Title="CSS Utilities" Expanded="@(_section == "css-utilities")" ExpandIcon="@Icons.Material.Filled.ExpandMore">
-    @foreach (var link in MenuService.CssUtilities)
+<MudNavGroup Title="CSS Utilities" Expanded="@(_section == "utilities")" ExpandIcon="@Icons.Material.Filled.ExpandMore">
+    @foreach (var link in MenuService.Utilities)
     {
         <MudNavLink Href="@link.Href">@link.Title</MudNavLink>
     }
