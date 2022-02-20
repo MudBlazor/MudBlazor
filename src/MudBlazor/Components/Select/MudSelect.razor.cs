@@ -74,10 +74,10 @@ namespace MudBlazor
                 }
             }
             await _elementReference.SetText(Text);
-            if (item != null)
-                await ScrollManager.ScrollToListItemAsync(item.ItemId, direction, true);
+            await ScrollToItemAsync(item);
         }
-
+        private ValueTask ScrollToItemAsync(MudSelectItem<T> item)
+            =>item != null? ScrollManager.ScrollToListItemAsync(item.ItemId): ValueTask.CompletedTask;
         private async Task SelectFirstItem(string startChar = null)
         {
             if (_items == null || _items.Count == 0)
@@ -111,7 +111,7 @@ namespace MudBlazor
                 HilightItem(item);
             }
             await _elementReference.SetText(Text);
-            await ScrollManager.ScrollToListItemAsync(item.ItemId, (item == firstItem ? -1 : 1), true);
+            await ScrollToItemAsync(item);
         }
 
         private async Task SelectLastItem()
@@ -133,7 +133,7 @@ namespace MudBlazor
                 HilightItem(item);
             }
             await _elementReference.SetText(Text);
-            await ScrollManager.ScrollToListItemAsync(item.ItemId, 1, true);
+            await ScrollToItemAsync(item);
         }
 
         /// <summary>
@@ -674,7 +674,7 @@ namespace MudBlazor
                 if (index > 0)
                 {
                     var item = _items[index];
-                    await ScrollManager.ScrollToListItemAsync(item.ItemId, 1, true);
+                    await ScrollToItemAsync(item);
                 }
             }
             //disable escape propagation: if selectmenu is open, only the select popover should close and underlying components should not handle escape key
