@@ -29,7 +29,7 @@ foreach ($utility in $utilities)
 
     ((Get-Content -Path $generated_file -Raw) -Replace "@media[^{]+\{([\s\S]+?})\s*}","") | Set-Content -Path $generated_file
 
-    $razorOutput = "<table><tbody>"
+    $razorOutput = ""
     
 
     $classDictonary = @{}
@@ -64,14 +64,13 @@ foreach ($utility in $utilities)
     }
 
     foreach($class in $classDictonary.GetEnumerator() | Where-Object {!$_.Name.StartsWith("mud-") } | Sort-Object -Property Name){
-        $razorOutput += "<tr><td>$($class.Name)</td>"
+        $razorOutput += "<tr><td>$($class.Name)</td><td>"
         foreach ($property in $class.Value){
-            $razorOutput += "<td>$property</td>"
+            $razorOutput += $property
         }
-        $razorOutput += "</tr>"
+        $razorOutput += "</td></tr>"
     }
 
-    $razorOutput += "</tbody></table>"
     $razorOutput | Out-File "$dir_generated_output\$utility.html"
 }
 
