@@ -31,8 +31,8 @@
 
 @code {
     private string stringValue { get; set; }
-    private Drink enumValue { get; set; }
-    public enum Drink { Tee, SparklingWater, SoftDrink, Cider, Beer, Wine, Moonshine }
+    private Drink enumValue { get; set; } = Drink.HotWater;
+    public enum Drink { Tea, SparklingWater, SoftDrink, Cider, Beer, Wine, Moonshine, Wodka, Cola, GreeTea, FruitJuice, Lemonade, HotWater, SpringWater, IceWater,  }
     private CultureInfo cultureValue { get; set; }
     private Func<CultureInfo, string> convertFunc = ci => ci?.DisplayName;
 }
