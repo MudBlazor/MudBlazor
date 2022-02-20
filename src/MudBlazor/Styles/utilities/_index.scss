@@ -1,19 +1,21 @@
-﻿@import 'flex';
-@import 'float';
-@import 'object';
-@import 'align';
-@import 'spacing';
-@import 'border-radius';
-@import 'border-style';
-@import 'border-width';
-@import 'dimensions';
-@import 'display';
-@import 'scroll';
-@import 'position';
-@import 'visibility';
-@import 'rtl';
-@import 'zindex';
-@import 'cursor';
-@import 'overflow';
-@import 'outline';
-@import 'pointerevents';
+﻿@import 'borders/border-radius';
+@import 'borders/border-style';
+@import 'borders/border-width';
+@import 'borders/outline';
+
+@import 'flexbox/flex';
+
+@import 'interactivity/cursor';
+@import 'interactivity/pointerevents';
+
+@import 'layout/display';
+@import 'layout/object-fit';
+@import 'layout/object-position';
+@import 'layout/overflow';
+@import 'layout/position';
+@import 'layout/visibility';
+@import 'layout/zindex';
+
+@import 'spacing/spacing';
+
+@import 'obsolete';
