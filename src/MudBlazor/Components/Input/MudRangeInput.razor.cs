@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Extensions;
 
@@ -15,7 +16,7 @@ namespace MudBlazor
         }
 
         protected string Classname => MudInputCssHelper.GetClassname(this,
-            () => !string.IsNullOrEmpty(Text) || Adornment == Adornment.Start || !string.IsNullOrWhiteSpace(PlaceholderStart) || !string.IsNullOrWhiteSpace(PlaceholderEnd));
+            () => !string.IsNullOrEmpty(Text) || Adornment == Adornment.Start || !string.IsNullOrWhiteSpace(Placeholder));
 
         /// <summary>
         /// Type of the input element. It should be a valid HTML5 input type.
@@ -31,12 +32,12 @@ namespace MudBlazor
         /// <summary>
         /// The short hint displayed in the start input before the user enters a value.
         /// </summary>
-        [Parameter] public string PlaceholderStart { get; set; }
+        [Parameter, Obsolete("Use Placeholder instead", false)] public string PlaceholderStart { get; set; }
 
         /// <summary>
         /// The short hint displayed in the end input before the user enters a value.
         /// </summary>
-        [Parameter] public string PlaceholderEnd { get; set; }
+        [Parameter, Obsolete("Use Placeholder instead", false)] public string PlaceholderEnd { get; set; }
 
         protected string InputTypeString => InputType.ToDescriptionString();
 
