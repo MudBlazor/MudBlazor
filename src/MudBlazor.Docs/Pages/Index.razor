@@ -78,7 +78,7 @@
     </MudGrid>
     <div class="@GetTestimonialClass()">
         <MudText Typo="Typo.h3" Align="Align.Center" Class="mt-16 mb-8">“Never had such a good time making a site“</MudText>
-        <div class="absolute z-2 d-flex justify-center align-end mud-width-full mud-height-full">
+        <div class="absolute z-20 d-flex justify-center align-end mud-width-full mud-height-full">
             <MudButton OnClick="ToggleTestimonials" Color="Color.Primary" Variant="Variant.Filled" DisableElevation="true" Size="Size.Large" Class="mb-12">@(_showTestimonials? "Show less" : "Show more")</MudButton>
         </div>
         <MudGrid Spacing="4">
@@ -185,7 +185,7 @@
     </div>
 </LandingSection>
 
-<LandingSection SectionClass="dark-section-text z-1" BackgroundClass="mud-dark">
+<LandingSection SectionClass="dark-section-text z-10" BackgroundClass="mud-dark">
     <MudGrid>
         <MudItem xs="12" sm="12" md="6">
             <MudGrid>
@@ -214,7 +214,7 @@
         <MudItem xs="12" sm="12" md="6">
             <div class="code-animation-container">
                 <CodeEditor/>
-                <MudCard Elevation="3" Class="code-change-card w-max z-2 mt-n12 ml-16">
+                <MudCard Elevation="3" Class="code-change-card w-max z-20 mt-n12 ml-16">
                     <MudCardMedia Image="_content/MudBlazor.Docs/images/door.jpg" Height="0"/>
                     <MudCardContent>
                         <MudText>Old Paint</MudText>
