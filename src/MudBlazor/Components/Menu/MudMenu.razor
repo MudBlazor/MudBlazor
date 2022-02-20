@@ -2,10 +2,11 @@
 @using MudBlazor.Interfaces
 @inherits MudComponentBase
 
-<MudElement HtmlTag="div" @attributes="UserAttributes" Class="@Classname" Style="@Style" 
-     @onmouseenter="@(ActivationEvent== MouseEvent.MouseOver ? OpenMenu : null)"
-     @onmouseleave="@MouseLeave"
-     oncontextmenu="@(ActivationEvent == MouseEvent.RightClick ? "return false;" : null)">
+
+<div @attributes="UserAttributes" Class="@Classname" Style="@Style" 
+        @onmouseenter="@(ActivationEvent== MouseEvent.MouseOver ? OpenMenu : null)"
+        @onmouseleave="@MouseLeave"
+        oncontextmenu="@(ActivationEvent == MouseEvent.RightClick ? "return false;" : null)" @oncontextmenu:preventDefault="@(ActivationEvent == MouseEvent.RightClick ? true : false)">
     @if (ActivatorContent != null)
     {
         <CascadingValue Value="@((IActivatable) this)" IsFixed="true">
@@ -17,16 +18,16 @@
     else if (String.IsNullOrEmpty(Icon))
     {
         <MudButton StartIcon="@StartIcon"
-                   EndIcon="@EndIcon"
-                   IconColor="@IconColor"
-                   Color="@Color"
-                   Size="@Size"
-                   Variant="@Variant"
-                   Disabled="@Disabled"
-                   DisableRipple="@DisableRipple"
-                   DisableElevation="@DisableElevation"
-                   OnClick="@ToggleMenu"
-                   @oncontextmenu="@(ActivationEvent==MouseEvent.RightClick ? ToggleMenu : null)">
+                EndIcon="@EndIcon"
+                IconColor="@IconColor"
+                Color="@Color"
+                Size="@Size"
+                Variant="@Variant"
+                Disabled="@Disabled"
+                DisableRipple="@DisableRipple"
+                DisableElevation="@DisableElevation"
+                OnClick="@ToggleMenu"
+                @oncontextmenu="@(ActivationEvent==MouseEvent.RightClick ? ToggleMenu : null)">
             @Label
         </MudButton>
     }
@@ -38,13 +39,11 @@
     <MudPopover Open="@_isOpen" Class="@PopoverClass" MaxHeight="@MaxHeight" AnchorOrigin="@AnchorOrigin" TransformOrigin="@TransformOrigin" RelativeWidth="@FullWidth" oncontextmenu="@(ActivationEvent == MouseEvent.RightClick ? "return false;" : null)" Style="@PopoverStyle">
         <CascadingValue Value="@this">
             <MudList Class="@ListClass" Clickable="true" Dense="@Dense"  
-              @onmouseenter="@PopoverMouseEnter"
-              @onmouseleave="@(ActivationEvent== MouseEvent.MouseOver ? CloseMenu : null)">
+                @onmouseenter="@PopoverMouseEnter"
+                @onmouseleave="@(ActivationEvent== MouseEvent.MouseOver ? CloseMenu : null)">
                 @ChildContent
             </MudList>
         </CascadingValue>
     </MudPopover>
     <MudOverlay Visible="@(_isOpen && ActivationEvent!=MouseEvent.MouseOver)" OnClick="@ToggleMenu" LockScroll="LockScroll" />
-</MudElement>
-
-
+</div>

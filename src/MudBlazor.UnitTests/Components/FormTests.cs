@@ -4,7 +4,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
-using System.Reflection;
 using System.Threading.Tasks;
 using Bunit;
 using FluentAssertions;
@@ -1037,27 +1036,112 @@ namespace MudBlazor.UnitTests.Components
         public async Task FormReset_Should_ClearTextField()
         {
             var comp = Context.RenderComponent<FormResetTest>();
-            //Console.WriteLine(comp.Markup);
             var form = comp.FindComponent<MudForm>();
-            var tf = comp.FindComponent<MudTextField<string>>();
+            var textFieldComp = comp.FindComponent<MudTextField<string>>();
+            var textField = textFieldComp.Instance;
+
             // input some text
-            comp.Find("input").Input("asdf");
-            tf.Instance.Value.Should().Be("asdf");
-            tf.Instance.Text.Should().Be("asdf");
+            textFieldComp.Find("input").Input("asdf");
+            textField.Value.Should().Be("asdf");
+            textField.Text.Should().Be("asdf");
             // call reset directly
             await comp.InvokeAsync(() => form.Instance.Reset());
-            tf.Instance.Value.Should().BeNullOrEmpty();
-            tf.Instance.Text.Should().BeNullOrEmpty();
+            textField.Value.Should().BeNullOrEmpty();
+            textField.Text.Should().BeNullOrEmpty();
             // input some text
-            comp.Find("input").Input("asdf");
-            tf.Instance.Value.Should().Be("asdf");
-            tf.Instance.Text.Should().Be("asdf");
+            textFieldComp.Find("input").Input("asdf");
+            textField.Value.Should().Be("asdf");
+            textField.Text.Should().Be("asdf");
             // hit reset button
-            comp.FindComponent<MudButton>().Find("button").Click();
-            tf.Instance.Value.Should().BeNullOrEmpty();
-            tf.Instance.Text.Should().BeNullOrEmpty();
+            comp.Find("button.reset").Click();
+            textField.Value.Should().BeNullOrEmpty();
+            textField.Text.Should().BeNullOrEmpty();
+        }
+
+        /// <summary>
+        /// Calling form.Reset() should clear the numeric field
+        /// </summary>
+        [Test]
+        public async Task FormReset_Should_ClearNumericField()
+        {
+            var comp = Context.RenderComponent<FormResetTest>();
+            var form = comp.FindComponent<MudForm>().Instance;
+            var numericFieldComp = comp.FindComponent<MudNumericField<int?>>();
+            var numericField = numericFieldComp.Instance;
+
+            // input some text
+            numericFieldComp.Find("input").Input(10);
+            numericField.Value.Should().Be(10);
+            numericField.Text.Should().Be("10");
+            // call reset directly
+            await comp.InvokeAsync(() => form.Reset());
+            numericField.Value.Should().BeNull();
+            numericField.Text.Should().BeNullOrEmpty();
+            // input some text
+
+            numericFieldComp.Find("input").Input(20);
+            numericField.Value.Should().Be(20);
+            numericField.Text.Should().Be("20");
+            // hit reset button
+            comp.Find("button.reset").Click();
+            numericField.Value.Should().BeNull();
+            numericField.Text.Should().BeNullOrEmpty();
+        }
+
+        /// <summary>
+        /// Reset() should reset the form's state
+        /// </summary>
+        [Test]
+        public async Task FormReset_Should_ResetFormStateForFieldsThatWrapMudInput()
+        {
+            var comp = Context.RenderComponent<FormResetTest>();
+            var form = comp.FindComponent<MudForm>().Instance;
+            var textFieldComp = comp.FindComponent<MudTextField<string>>();
+            var numericFieldComp = comp.FindComponent<MudNumericField<int?>>();
+
+            form.IsValid.Should().Be(false);
+            textFieldComp.Find("input").Input("Some value");
+            form.IsValid.Should().Be(false);
+            numericFieldComp.Find("input").Input("1");
+            form.IsValid.Should().Be(true);
+            
+            await comp.InvokeAsync(() => form.Reset());
+            form.IsValid.Should().Be(false); // required fields
+        }
+
+        /// <summary>
+        /// Only the top standalone fields should be registered inside the form.
+        /// </summary>
+        [Test]
+        public async Task MudForm_Should_RegisterOnlyTopStandaloneFormControls()
+        {
+            var comp = Context.RenderComponent<FormShouldRegisterOnlyTopStandaloneFormControlsTest>();
+            var form = comp.FindComponent<MudFormTestable>().Instance;
+
+            Assert.AreEqual(14, form.FormControls.Count);
+        }
+
+        /// <summary>
+        /// Test the cascading validaton parameter to override field validations or not depending of context.
+        /// </summary>
+        [Test]
+        public async Task MudForm_Validation_Should_OverrideFieldValidation()
+        {
+            var comp = Context.RenderComponent<FormValidationOverrideFieldValidationTest>();
+            var textFields = comp.FindComponents<MudTextField<string>>();
+            var numericFields = comp.FindComponents<MudNumericField<int>>();
+            var defaultValidation = "v";
+            
+            textFields[0].Instance.Validation.Should().Be(defaultValidation);
+            textFields[1].Instance.Validation.Should().Be(defaultValidation);
+            textFields[2].Instance.Validation.Should().Be(defaultValidation);
+            textFields[3].Instance.Validation.Should().Be("a");
+            
+            numericFields[0].Instance.Validation.Should().Be(defaultValidation);
+            numericFields[1].Instance.Validation.Should().NotBe(defaultValidation);
+            numericFields[2].Instance.Validation.Should().Be(defaultValidation);
+            numericFields[3].Instance.Validation.Should().Be("b");
         }
 
     }
 }
-
