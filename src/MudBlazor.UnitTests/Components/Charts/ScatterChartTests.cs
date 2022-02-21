@@ -10,6 +10,7 @@ using MudBlazor.Charts;
 using MudBlazor.UnitTests.Components;
 using NUnit.Framework;
 using Bunit;
+using System.Globalization;
 
 namespace MudBlazor.UnitTests.Charts
 {
@@ -40,9 +41,18 @@ namespace MudBlazor.UnitTests.Charts
             comp.Markup.Should().Contain("mud-chart-scatter");
         }
 
-        [Theory]
-        public void ScatterChartExampleData()
+        [Test]
+        [TestCase("en-us")]
+        [TestCase("de-DE")]
+        [TestCase("he-IL")]
+        [TestCase("ar-ER")]
+        public void ScatterChartExampleData(string cultureString)
         {
+            var culture = new CultureInfo(cultureString, false);
+
+            CultureInfo.CurrentCulture = culture;
+            CultureInfo.CurrentUICulture = culture;
+
             List<XYChartSeries> xychartSeries = new List<XYChartSeries>()
             {
                 new XYChartSeries() { 
@@ -83,8 +93,6 @@ namespace MudBlazor.UnitTests.Charts
             comp.Markup.Should().Contain("cx=\"83.63636363636364\" cy=\"297.72727272727275\" r=\"5\"");
             comp.Markup.Should().Contain("cx=\"190.9090909090909\" cy=\"243.1818181818182\" r=\"5\"");
             
-
-
             comp.SetParametersAndRender(parameters => parameters
                 .Add(p => p.XYChartOptions, new XYChartOptions(){ChartPalette = _modifiedPalette}));
 
