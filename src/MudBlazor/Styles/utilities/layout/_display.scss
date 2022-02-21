@@ -1,4 +1,4 @@
-﻿@import '../abstracts/variables';
+﻿@import '../../abstracts/variables';
 
 @mixin display-mixin ($breakpoint) {
     .d-#{$breakpoint}none {
