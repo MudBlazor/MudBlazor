@@ -236,25 +236,30 @@ namespace MudBlazor.Docs.Services
         }.OrderBy(x => x.Title);
         
         private IEnumerable<DocsLink> _utilities;
+
         /// <summary>
         /// CSS Utilities menu links
         /// </summary>
         public IEnumerable<DocsLink> Utilities => _utilities ??= new List<DocsLink>()
         {
-            new DocsLink {Title = "Border Radius", Href = "utilities/border-radius"},
-            new DocsLink {Title = "Border Style", Href = "utilities/border-style"},
-            new DocsLink {Title = "Border Width", Href = "utilities/border-width"},
-            new DocsLink {Title = "Display", Href = "utilities/display"},
-            new DocsLink {Title = "Flex", Href = "utilities/flex"},
-            new DocsLink {Title = "Spacing", Href = "utilities/spacing"},
-            new DocsLink {Title = "Z-Index", Href = "utilities/z-index"},
-            new DocsLink {Title = "Overflow", Href = "utilities/overflow"},
-            new DocsLink {Title = "Cursor", Href = "utilities/cursor"},
-            new DocsLink {Title = "Pointer Events", Href = "utilities/pointer-events"},
-            new DocsLink {Title = "Position", Href = "utilities/position"},
-            new DocsLink {Title = "Visibility", Href = "utilities/visibility"},
-            new DocsLink {Title = "Object Fit", Href = "utilities/object-fit"},
-            new DocsLink {Title = "Object Position", Href = "utilities/object-position"},
-        }.OrderBy(x => x.Title);
+            new DocsLink {Group = "Layout", Title = "Display", Href = "utilities/display"},
+            new DocsLink {Group = "Layout", Title = "Z-Index", Href = "utilities/z-index"},
+            new DocsLink {Group = "Layout", Title = "Overflow", Href = "utilities/overflow"},
+            new DocsLink {Group = "Layout", Title = "Visibility", Href = "utilities/visibility"},
+            new DocsLink {Group = "Layout", Title = "Object Fit", Href = "utilities/object-fit"},
+            new DocsLink {Group = "Layout", Title = "Object Position", Href = "utilities/object-position"},
+            new DocsLink {Group = "Layout", Title = "Position", Href = "utilities/position"},
+            
+            new DocsLink {Group = "Flexbox", Title = "Flex", Href = "utilities/flex"},
+            
+            new DocsLink {Group = "Spacing", Title = "Spacing", Href = "utilities/spacing"},
+            
+            new DocsLink {Group = "Borders", Title = "Border Radius", Href = "utilities/border-radius"},
+            new DocsLink {Group = "Borders", Title = "Border Style", Href = "utilities/border-style"},
+            new DocsLink {Group = "Borders", Title = "Border Width", Href = "utilities/border-width"},
+            
+            new DocsLink {Group = "Interactivity", Title = "Cursor", Href = "utilities/cursor"},
+            new DocsLink {Group = "Interactivity", Title = "Pointer Events", Href = "utilities/pointer-events"},
+        };
     }
 }
