@@ -1,46 +1,15 @@
-﻿@page "/features/display"
+﻿@page "/utilities/display"
+@page "/features/display"
 
 <DocsPage>
     <DocsPageHeader Title="Display" SubTitle="The display classes help you set the display type or change it upon viewport." />
     <DocsPageContent>
 
         <DocsPageSection>
-            <SectionHeader Title="How it works">
-                <Description>
-                    <MudText>Specify the element's <CodeInline>display</CodeInline> property, the classes can be used with all breakpoints from <CodeInline>xs</CodeInline> to <CodeInline>xxl</CodeInline>.</MudText>
-                </Description>
-            </SectionHeader>
-            <MudText Class="pt-6 pb-2">The <b>properties</b></MudText>
-            <ul class="mud-typography-body1">
-                <li><CodeInline>.d-{value}</CodeInline> - for <CodeInline>xs</CodeInline></li>
-                <li><CodeInline>.d-{breakpoint}-{value}</CodeInline> - for <CodeInline>sm</CodeInline>, <CodeInline>md</CodeInline>, <CodeInline>lg</CodeInline>, <CodeInline>xl</CodeInline> and <CodeInline>xxl</CodeInline></li>
-            </ul>
-            <MudText Class="pt-6 pb-2">The <b>value</b> property is one of these</MudText>
-            <MudGrid>
-                <MudItem>
-                    <ul class="mud-typography-body1">
-                        <li><CodeInline>none</CodeInline></li>
-                        <li><CodeInline>inline</CodeInline></li>
-                        <li><CodeInline>inline-block</CodeInline></li>
-                    </ul>
-                </MudItem>
-                <MudItem>
-                    <ul class="mud-typography-body1">
-                        <li><CodeInline>block</CodeInline></li>
-                        <li><CodeInline>table</CodeInline></li>
-                        <li><CodeInline>table-cell</CodeInline></li>
-                    </ul>
-                </MudItem>
-                <MudItem>
-                    <ul class="mud-typography-body1">
-                        <li><CodeInline>table-row</CodeInline></li>
-                        <li><CodeInline>flex</CodeInline></li>
-                        <li><CodeInline>inline-flex</CodeInline></li>
-                    </ul>
-                </MudItem>
-            </MudGrid>
-            <MudText Class="pt-6">When setting a specific breakpoint for a display helper class, it will apply to all screen widths from the designation and up.</MudText>
+            <SectionHeader Title="Class Reference" HideTitle="true" />
+            <DocsAutoGen_Layout_Display/>
         </DocsPageSection>
+        
         
         <DocsPageSection>
             <SectionHeader Title="Basic Usage" />

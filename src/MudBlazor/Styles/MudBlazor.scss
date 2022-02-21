@@ -73,30 +73,15 @@
 @import 'components/_treeview';
 @import 'components/_datagrid';
 
-@import 'utilities/_flex';
-@import 'utilities/_float';
-@import 'utilities/_object';
-@import 'utilities/_align';
-@import 'utilities/_spacing';
-@import 'utilities/_borders';
-@import 'utilities/_dimensions';
-@import 'utilities/_display';
-@import 'utilities/_scroll';
-@import 'utilities/_position';
-@import 'utilities/_visibility';
-@import 'utilities/_rtl';
-@import 'utilities/_zindex';
-@import 'utilities/_cursor';
-@import 'utilities/_overflow';
-@import 'utilities/_outline';
-@import 'utilities/_pointerevents';
-
+@import 'utilities';
 
 @import 'layout/_appbar';
 @import 'layout/_drawer';
 @import 'layout/_main';
 @import 'layout/_container';
+@import 'layout/_scroll';
 
 
 @import 'core/_colors';
 @import 'core/_ripple';
+@import 'core/_rtl';
