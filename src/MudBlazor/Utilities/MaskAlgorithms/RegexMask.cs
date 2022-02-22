@@ -252,7 +252,6 @@ public class RegexMask : BaseMask
         const string Regex = "^(?>[\\w\\-\\+]+\\.?)+(@?|@(?:\\w+\\.)*)(?<!(\\.@))(\\w+)?$";
         const string Delimiters = "@.";
 
-        
         var regexMask = new RegexMask(Regex, mask)
         {
             Delimiters = Delimiters
