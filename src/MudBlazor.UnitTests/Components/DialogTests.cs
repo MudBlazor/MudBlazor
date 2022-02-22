@@ -38,7 +38,6 @@ namespace MudBlazor.UnitTests.Components
                 var result2 = await dialogReference.Result;
             });
             DialogRender.OnInitializedCount.Should().Be(2);
-            DialogRender.OnParametersSetCount.Should().Be(2);
         }
 
         /// <summary>
