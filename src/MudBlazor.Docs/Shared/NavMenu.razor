@@ -13,7 +13,7 @@
             <MudNavGroup Title="@item.Name" Expanded="@(IsSubGroupExpanded(item))" ExpandIcon="@Icons.Material.Filled.ExpandMore">
                 @foreach (var subItem in item.GroupComponents)
                 {
-                    string href = $"components/{subItem.Link}".ToUpper().ToLowerInvariant();
+                    string href = $"components/{subItem.Link}";
                     byte[] tempBytes;
                     tempBytes = System.Text.Encoding.GetEncoding("ISO-8859-8").GetBytes(href);
                     string asciiStr = System.Text.Encoding.UTF8.GetString(tempBytes);
