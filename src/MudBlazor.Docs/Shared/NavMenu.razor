@@ -14,9 +14,6 @@
                 @foreach (var subItem in item.GroupComponents)
                 {
                     string href = $"components/{subItem.Link}";
-                    byte[] tempBytes;
-                    tempBytes = System.Text.Encoding.GetEncoding("ISO-8859-8").GetBytes(href);
-                    string asciiStr = System.Text.Encoding.UTF8.GetString(tempBytes);
                     <MudNavLink Href="@href">@subItem.Name</MudNavLink>
                 }
             </MudNavGroup>
@@ -24,11 +21,7 @@
         else
         {
             string href = $"components/{item.Link}";
-            byte[] tempBytes;
-            tempBytes = System.Text.Encoding.GetEncoding("ISO-8859-8").GetBytes(href);
-            string asciiStr = System.Text.Encoding.UTF8.GetString(tempBytes);
-            
-            <MudNavLink Href="@asciiStr">@item.Name</MudNavLink>
+            <MudNavLink Href="@href">@item.Name</MudNavLink>
         }
     }
 </MudNavGroup>

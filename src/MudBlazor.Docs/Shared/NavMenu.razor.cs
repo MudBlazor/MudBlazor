@@ -20,7 +20,7 @@ namespace MudBlazor.Docs.Shared
 
         protected override void OnInitialized()
         {
-            Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+            //Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
             Refresh();
             base.OnInitialized();
         }
