@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using System.Text;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Docs.Extensions;
 using MudBlazor.Docs.Models;
@@ -19,6 +20,7 @@ namespace MudBlazor.Docs.Shared
 
         protected override void OnInitialized()
         {
+            Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
             Refresh();
             base.OnInitialized();
         }
