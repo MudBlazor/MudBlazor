@@ -249,7 +249,7 @@ public class RegexMask : BaseMask
     /// </param>
     public static RegexMask Email(string mask = "Ex. user@domain.com")
     {
-        const string Regex = "^(?>[\\w\\-\\+]+\\.?)+(@?|@(?:\\w+\\.)*)(?<!(\\.@))(\\w+)?$";
+        const string Regex = "^(?>[\\w\\-\\+]+\\.?)+(?>@?|@)(?<!(\\.@))(?>\\w+\\.)*(\\w+)?$";
         const string Delimiters = "@.";
 
         var regexMask = new RegexMask(Regex, mask)
