@@ -2,7 +2,6 @@
 @using System.Text.RegularExpressions
 @using MudBlazor.Docs.Extensions
 
-
 <MudText Typo="Typo.subtitle1" Class="mt-1 mb-2 ml-2 d-flex d-md-none"><b>Docs</b></MudText>
 <MudNavLink Href="docs/overview" Class="docs-single-link">Overview</MudNavLink>
 <MudNavGroup Title="Components" Expanded="@(_section == "components")" ExpandIcon="@Icons.Material.Filled.ExpandMore">
@@ -13,14 +12,14 @@
             <MudNavGroup Title="@item.Name" Expanded="@(IsSubGroupExpanded(item))" ExpandIcon="@Icons.Material.Filled.ExpandMore">
                 @foreach (var subItem in item.GroupComponents)
                 {
-                    string href = $"components/{subItem.Link}".ToUpper().ToLowerInvariant();
+                    string href = $"components/{subItem.Link}";
                     <MudNavLink Href="@href">@subItem.Name</MudNavLink>
                 }
             </MudNavGroup>
         }
         else
         {
-            string href = $"components/{item.Link}".ToUpper().ToLowerInvariant();
+            string href = $"components/{item.Link}";
             <MudNavLink Href="@href">@item.Name</MudNavLink>
         }
     }
