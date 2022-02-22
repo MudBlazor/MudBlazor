@@ -144,32 +144,44 @@
     internal RenderFragment RenderRows(IEnumerable<T> source, string customClass = null, bool isExpandable = false)
     {
         var rowIndex = 0;
-        return
+        RenderFragment rootRender =
         @<text>
-            @foreach (T item in source)
-            {
-                var rowClass = new CssBuilder(RowClass).AddClass(RowClassFunc?.Invoke(item, rowIndex)).AddClass(customClass, ! string.IsNullOrEmpty("mud-table-row-group-indented-1")).Build();
-                var rowStyle = new StyleBuilder().AddStyle(RowStyle).AddStyle(RowStyleFunc?.Invoke(item, rowIndex)).Build();
-                <MudTr Class="@rowClass" Style="@rowStyle" Item="item" @key="item" IsCheckable="MultiSelection" IsEditable="RowEditingTemplate != null" IsExpandable="isExpandable"
-                        IsCheckedChanged="((value) => { var x = item; OnRowCheckboxChanged(value, x); })">
+            <MudVirtualize IsEnabled="@Virtualize" Items="@source?.ToList()" Context="item2" ChildContent="@child()">              
+            </MudVirtualize>
+    </text>
+    ;
 
-                    @if ((!ReadOnly) && RowEditingTemplate != null && object.Equals(_editingItem, item))
-                    {
-                        <CascadingValue Value="Validator" IsFixed="true">
-                            @RowEditingTemplate(item)
-                        </CascadingValue>
-                    }
-                    else
-                    {
-                        @RowTemplate(item)
-                    }
-                </MudTr>
-                @if (ChildRowContent != null)
-                {
-                    @ChildRowContent(item)
-                }
-                rowIndex++;
+        RenderFragment<T> child() => item2 =>
+    @<text>
+            @{
+                var rowClass = new CssBuilder(RowClass).AddClass(RowClassFunc?.Invoke(item2, rowIndex)).AddClass(customClass, !string.IsNullOrEmpty("mud-table-row-group-indented-1")).Build();
             }
+            @{
+                var rowStyle = new StyleBuilder().AddStyle(RowStyle).AddStyle(RowStyleFunc?.Invoke(item2, rowIndex)).Build();
+            }
+            <MudTr Class="@rowClass" Style="@rowStyle" Item="item2" @key="item2" IsCheckable="MultiSelection" IsEditable="RowEditingTemplate != null" IsExpandable="isExpandable"
+                        IsCheckedChanged="((value) => { var x = item2; OnRowCheckboxChanged(value, x); })">
+
+                @if ((!ReadOnly) && RowEditingTemplate != null && object.Equals(_editingItem, item2))
+                {
+                    <CascadingValue Value="Validator" IsFixed="true">
+                        @RowEditingTemplate(item2)
+                    </CascadingValue>
+                }
+                else
+                {
+                    @RowTemplate(item2)
+                }
+            </MudTr>
+            @if (ChildRowContent != null)
+            {
+                @ChildRowContent(item2)
+            }
+            @{
+                rowIndex++;
+            }   
         </text>;
-     }
+
+        return rootRender;
+    }
 }
