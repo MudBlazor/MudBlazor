@@ -202,17 +202,17 @@
             <MudTr Class="@rowClass" Style="@rowStyle" Item="item2" @key="item2" IsCheckable="MultiSelection" IsEditable="RowEditingTemplate != null" IsExpandable="isExpandable"
                         IsCheckedChanged="((value) => { var x = item2; OnRowCheckboxChanged(value, x); })">
 
-			       @if ((!ReadOnly) && IsEditable && object.Equals(_editingItem, item))
+			       @if ((!ReadOnly) && IsEditable && object.Equals(_editingItem, item2))
               {
                   <CascadingValue Value="@Validator" IsFixed="true">
                    @if(RowEditingTemplate != null)
 							     {
-								      @RowEditingTemplate(item)
+								      @RowEditingTemplate(item2)
 							      }
 							@if (Columns != null)
 							{
 								<CascadingValue Value="MudBaseColumn.Rendermode.Edit" Name="Mode">
-									@Columns(item)
+									@Columns(item2)
 								</CascadingValue>
 							}
                         </CascadingValue>
@@ -221,12 +221,12 @@
                     {
                         if (RowTemplate != null)
 						{
-							@RowTemplate(item)
+							@RowTemplate(item2)
 						}
 						@if (Columns != null)
 						{
 							<CascadingValue Value="MudBaseColumn.Rendermode.Item" Name="Mode">
-								@Columns(item)
+								@Columns(item2)
 							</CascadingValue>
 						}
                     }
