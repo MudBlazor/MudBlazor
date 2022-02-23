@@ -1,4 +1,5 @@
-﻿@namespace MudBlazor
+﻿@using MudBlazor.Extensions
+@namespace MudBlazor
 @inherits MudBaseBindableItemsControl<MudCarouselItem, TData>
 @implements IAsyncDisposable
 @typeparam TData
@@ -30,32 +31,32 @@
             {
                 @if (PreviousButtonTemplate == null)
                 {
-                    <MudIconButton tabindex="1" aria-label="Go to previous" Class="@NavigationButtonsClassName" Style="z-index:3;opacity:0.75" Icon="@Icons.Material.Filled.NavigateBefore" OnClick="Previous" Color="Color.Inherit" />
+                    <MudIconButton tabindex="1" aria-label="Go to previous" Class="@NavigationButtonsClassName" Style="z-index:3;opacity:0.75" Icon="@PreviousIcon" OnClick="Previous" Color="Color.Inherit" />
                 }
                 else
                 {
-                <div @onclick="Previous" tabindex="1" aria-label="Go to previous" class="@NavigationButtonsClassName" style="z-index:3;opacity:0.75">
+                <div @onclick="Previous" tabindex="1" aria-label="Go to previous" class="@NavigationButtonsClassName" style="z-index:3">
                     @PreviousButtonTemplate
                 </div>
                 }
             }
 
-            @*Delimiters*@
-            <div class="flex-grow-1 align-self-end" style="z-index:3">
-                @if (ShowDelimiters)
+            @*Bullets*@
+            <div class="@($"flex-grow-1 align-self-{ConvertPosition(BulletsPosition).ToDescriptionString()}")" style="z-index:3">
+                @if (ShowBullets)
                 {
                     <div class="d-flex justify-center">
                         @for (int i = 0; i < Items.Count; i++)
                         {
                             int current = i;
-                            if (DelimiterTemplate == null)
+                            if (BulletTemplate == null)
                             {
-                                <MudIconButton tabindex="@(i+3)" aria-label="@(i+1)" Class="@DelimitersButtonsClassName" Style="z-index:3;opacity:0.75" Icon="@(current == SelectedIndex ? Icons.Material.Filled.RadioButtonChecked : Icons.Material.Filled.RadioButtonUnchecked)" OnClick="(() => MoveTo(current))" Color="Color.Inherit" />
+                                <MudIconButton tabindex="@(i+3)" aria-label="@(i+1)" Class="@BulletsButtonsClassName" Style="z-index:3;opacity:0.75" Icon="@(current == SelectedIndex ? CheckedIcon : UncheckedIcon)" OnClick="(() => MoveTo(current))" Color="Color.Inherit" />
                             }
                             else
                             {
-                                <div @onclick="() => MoveTo(current)" class="@DelimitersButtonsClassName" style="z-index:3;opacity:0.75">
-                                    @DelimiterTemplate(current == SelectedIndex)
+                                <div @onclick="() => MoveTo(current)" class="@BulletsButtonsClassName" style="z-index:3">
+                                    @BulletTemplate(current == SelectedIndex)
                                 </div>
                             }
                         }
@@ -68,11 +69,11 @@
             {
                 @if (NextButtonTemplate == null)
                 {
-                    <MudIconButton tabindex="2" aria-label="Go to next" Class="@NavigationButtonsClassName" Style="z-index:3;opacity:0.75" Icon="@Icons.Material.Filled.NavigateNext" OnClick="Next" Color="Color.Inherit" />
+                    <MudIconButton tabindex="2" aria-label="Go to next" Class="@NavigationButtonsClassName" Style="z-index:3;opacity:0.75" Icon="@NextIcon" OnClick="Next" Color="Color.Inherit" />
                 }
                 else
                 {
-                    <div @onclick="Next" tabindex="2" aria-label="Go to next" class="@NavigationButtonsClassName" style="z-index:3;opacity:0.75">
+                    <div @onclick="Next" tabindex="2" aria-label="Go to next" class="@NavigationButtonsClassName" style="z-index:3">
                         @NextButtonTemplate
                     </div>
                 }

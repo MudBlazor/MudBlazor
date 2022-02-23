@@ -1,0 +1,151 @@
+﻿@namespace MudBlazor
+@using System.Globalization;
+@using MudBlazor.Utilities
+@inherits MudPicker<MudColor>
+
+@Render
+
+@code {
+
+    protected override RenderFragment PickerContent=> 
+    @<CascadingValue Value="@this" IsFixed="true">
+         <MudPickerToolbar DisableToolbar="@DisableToolbar" Class="mud-picker-color-toolbar">
+             @if(PickerVariant != PickerVariant.Static)
+             { 
+                <MudIconButton Class="pa-1 mud-close-picker-button" Size="Size.Small" Color="Color.Inherit" Icon="@CloseIcon" OnClick="@GetEventCallback()" />
+             }
+             <MudSpacer />
+             <MudIconButton Class="pa-1" Size="Size.Small" Color="GetButtonColor(ColorPickerView.Spectrum)" Icon="@SpectrumIcon" OnClick="(() => ChangeView(ColorPickerView.Spectrum))" />
+             <MudIconButton Class="pa-1 mx-1" Size="Size.Small" Color="GetButtonColor(ColorPickerView.Grid)" Icon="@GridIcon" OnClick="(() => ChangeView(ColorPickerView.Grid))" />
+             <MudIconButton Class="pa-1" Size="Size.Small" Color="GetButtonColor(ColorPickerView.Palette)" Icon="@PaletteIcon" OnClick="(() => ChangeView(ColorPickerView.Palette))" />
+         </MudPickerToolbar>
+        <MudPickerContent Class="mud-picker-color-content">
+            @if(!DisableColorField)
+            {
+                <div class="mud-picker-color-picker">
+                    @if(ColorPickerView == ColorPickerView.Spectrum)
+                    {
+                        <div class="mud-picker-color-overlay" style="@($"background-color: {_baseColor.ToString(MudColorOutputFormats.RGB)}")">
+                            <div class="mud-picker-color-overlay mud-picker-color-overlay-white">
+                                <div class="mud-picker-color-overlay mud-picker-color-overlay-black">
+                                    <div class="mud-picker-color-overlay" id="@_id" @onclick="OnColorOverlayClick">
+                                        <svg class="mud-picker-color-selector" height="26" width="26" style="transform: @GetSelectorLocation()" @onclick="OnSelectorClicked" @onclick:stopPropagation="true">
+                                            <defs>
+                                                <filter id="mud-picker-color-selector-shadow" x="-50%" y="-50%" width="200%" height="200%">
+                                                    <feGaussianBlur in="SourceAlpha" stdDeviation="1" />
+                                                    <feOffset dx="0" dy="5" result="offsetblur" />
+                                                    <feOffset dx="0" dy="-5" result="offsetblur" />
+                                                    <feMerge><feMergeNode /><feMergeNode in="SourceGraphic" /></feMerge>
+                                                </filter>
+                                            </defs>
+                                            <circle r="10" cx="13" cy="13" stroke="white" stroke-width="1" fill="transparent" style="filter: url(#mud-picker-color-selector-shadow)" />
+                                            <circle r="11" cx="13" cy="13" stroke="white" stroke-width="1.5" fill="transparent" />
+                                        </svg>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                    @if(ColorPickerView is ColorPickerView.Grid or ColorPickerView.GridCompact)
+                    {
+                        <div class="mud-picker-color-grid">
+                            @foreach (var item in _gridList)
+                            {
+                                <div class="@GetColorDotClass(item)" style="@($"background: {item.ToString(MudColorOutputFormats.RGBA)};")" @onclick="@GetSelectPaletteColorCallback(item)"></div>
+                            }
+                        </div>
+                    }
+                </div>
+            }
+            @if (ColorPickerView != ColorPickerView.GridCompact)
+            {
+                @if (!DisableSliders || !DisableInputs || !DisablePreview)
+                {
+                    <div class="mud-picker-color-controls">
+                        @if (!DisableSliders || !DisablePreview)
+                        {
+                            <div class="mud-picker-color-controls-row">
+                                @if (!DisablePreview)
+                                {
+                                    <div class="mud-picker-color-dot mud-picker-color-dot-current mud-ripple" @onclick="ToggleCollection">
+                                        <div class="mud-picker-color-fill" style="@($"background: {_color.ToString(MudColorOutputFormats.RGBA)};")"></div>
+                                    </div>
+                                }
+                                @if (!DisableSliders && !_collectionOpen)
+                                {
+                                    <div class="mud-picker-color-sliders">
+                                        @if (ColorPickerView != ColorPickerView.Grid)
+                                        {
+                                            <MudSlider Class="mud-picker-color-slider hue" dir="ltr" T="int" Value="(int)_color.H" ValueChanged="UpdateBaseColorSlider" Step="1" Min="0" Max="360" />
+                                        }
+                                        @if (!DisableAlpha)
+                                        {
+                                            <MudSlider Class="mud-picker-color-slider alpha" Value="_color.A" ValueChanged="SetAlpha" T="int"  Min="0" Max="255" Step="1" Style="@AlphaSliderStyle"  />
+                                        }
+                                    </div>
+                                }
+                                @if (_collectionOpen)
+                                {
+                                    <div class="mud-picker-color-collection">
+                                        @foreach (var item in Palette.Take(5))
+                                        {
+                                            <div class="@GetColorDotClass(item)" style="@($"background: {item.ToString(MudColorOutputFormats.RGBA)};")" @onclick="@GetSelectPaletteColorCallback(item)"></div>
+                                        }
+                                    </div>
+                                }
+                            </div>
+                        }
+                        @if (!DisableInputs)
+                        {
+                            <div class="mud-picker-color-controls-row">
+                                <div class="mud-picker-color-inputs">
+                                    @switch (ColorPickerMode)
+                                    {
+                                        case ColorPickerMode.RGB:
+                                            <MudNumericField Value="_color.R" T="int" ValueChanged="SetR" Class="mud-picker-color-inputfield" HelperText="R" Min="0" Max="255" Variant="Variant.Outlined" HideSpinButtons="true" />
+                                            <MudNumericField Value="_color.G" T="int" ValueChanged="SetG" Class="mud-picker-color-inputfield" HelperText="G" Min="0" Max="255" Variant="Variant.Outlined" HideSpinButtons="true" />
+                                            <MudNumericField Value="_color.B" T="int" ValueChanged="SetB" Class="mud-picker-color-inputfield" HelperText="B" Min="0" Max="255" Variant="Variant.Outlined" HideSpinButtons="true" />
+                                            break;
+                                        case ColorPickerMode.HSL:
+                                            <MudNumericField Value="@_color.H" T="double" ValueChanged="SetH" Class="mud-picker-color-inputfield" HelperText="H" Step="1" Min="0" Max="360" Variant="Variant.Outlined" HideSpinButtons="true" />
+                                            <MudNumericField Value="@_color.S" T="double" ValueChanged="SetS" Class="mud-picker-color-inputfield" HelperText="S" Step="0.01" Min="0" Max="100" Variant="Variant.Outlined" HideSpinButtons="true" />
+                                            <MudNumericField Value="@_color.L" T="double"  ValueChanged="SetL" Class="mud-picker-color-inputfield" HelperText="L"Step="0.01"  Min="0" Max="100" Variant="Variant.Outlined" HideSpinButtons="true" />
+                                            break;
+                                        case ColorPickerMode.HEX:
+                                            <MudTextField Value="@GetColorTextValue()" ValueChanged="SetInputString" T="string" Class="mud-picker-color-inputfield" Variant="Variant.Outlined" HelperText="HEX" />
+                                            break;
+                                        default:
+                                            break;
+                                    }
+                        
+                                    @if (!DisableAlpha && ColorPickerMode != ColorPickerMode.HEX)
+                                    {
+                                        <MudNumericField Value="@(  Math.Round(_color.A / 255.0, 2))" T="double" ValueChanged="SetAlpha" Class="mud-picker-color-inputfield input-field-alpha" HelperText="A" Min="0" Max="1" Step="0.01" Variant="Variant.Outlined" HideSpinButtons="true" />
+                                    }
+                                </div>
+                                @if (!DisableModeSwitch)
+                                {
+                                    <div class="mud-picker-control-switch">
+                                        <MudIconButton OnClick="ChangeMode" Icon="@ImportExportIcon" Class="pa-1 me-n1"></MudIconButton>
+                                    </div>
+                                }
+                            </div>
+                        }
+                    </div>
+                }
+                @if (ColorPickerView == ColorPickerView.Palette)
+                {
+                    <div class="mud-picker-color-view">
+                        <div class="mud-picker-color-view-collection">
+                            @foreach (var item in Palette)
+                            {
+                                <div class="@GetColorDotClass(item)" style="@($"background: {item.ToString(MudColorOutputFormats.RGBA)};")" @onclick="@GetSelectPaletteColorCallback(item)"></div>
+                            }
+                        </div>
+                    </div>
+                }
+            }
+        </MudPickerContent>
+    </CascadingValue>;
+    
+}

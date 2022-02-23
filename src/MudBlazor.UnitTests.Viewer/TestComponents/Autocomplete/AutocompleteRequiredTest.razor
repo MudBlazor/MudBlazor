@@ -1,5 +1,7 @@
 ﻿@namespace MudBlazor.UnitTests.TestComponents
 
+<MudPopoverProvider></MudPopoverProvider>
+
 <MudAutocomplete @bind-Value="value" SearchFunc="@Search" Label="RequiredTest" Required="true"/>
 
 @code
@@ -27,10 +29,9 @@
         "Washington", "West Virginia", "Wisconsin", "Wyoming",
     };
 
-    private async Task<IEnumerable<string>> Search(string value)
+    private Task<IEnumerable<string>> Search(string value)
     {
-        await Task.CompletedTask;
-
-        return string.IsNullOrEmpty(value) ? states : states.Where(x => x.Contains(value, StringComparison.InvariantCultureIgnoreCase));
+        var result = string.IsNullOrEmpty(value) ? states : states.Where(x => x.Contains(value, StringComparison.InvariantCultureIgnoreCase));
+        return Task.FromResult(result);
     }
 }

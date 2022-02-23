@@ -24,7 +24,7 @@ namespace MudBlazor.Docs.Extensions
             if (callable == false)
             {
                 // Append return type
-                stringBuilder.Append(Cleaning(TypeName(method.ReturnType)));
+                stringBuilder.Append(RemoveNamespace(TypeName(method.ReturnType)));
                 stringBuilder.Append(' ');
             }
 
@@ -130,11 +130,11 @@ namespace MudBlazor.Docs.Extensions
                     {
                         if (type != null)
                         {
-                            return string.IsNullOrWhiteSpace(type.FullName) ? Cleaning(type.Name) : Cleaning(type.FullName);
+                            return string.IsNullOrWhiteSpace(type.FullName) ? RemoveNamespace(type.Name) : RemoveNamespace(type.FullName);
                         }
                         else
                         {
-                            return value.Replace("System.Threading.Tasks.", "").Replace("System.", "").Replace("MudBlazor.", "");
+                            return RemoveNamespace(value);
                         }
                     }
             }
@@ -152,7 +152,7 @@ namespace MudBlazor.Docs.Extensions
 
             if (nullableType != null)
             {
-                return Cleaning(nullableType.Name + "?");
+                return RemoveNamespace(nullableType.Name + "?");
             }
 
             if (!(type.IsGenericType && type.Name.Contains('`')))
@@ -175,12 +175,12 @@ namespace MudBlazor.Docs.Extensions
             stringBuilder.Append('>');
 
             // Return result
-            return Cleaning(stringBuilder.ToString());
+            return RemoveNamespace(stringBuilder.ToString());
         }
 
-        private static string Cleaning(string value)
+        private static string RemoveNamespace(string value)
         {
-            return value.Replace("System.Threading.Tasks.", "").Replace("System.", "").Replace("MudBlazor.", "");
+            return value.Split('.')[value.Split('.').Length - 1];
         }
     }
 }

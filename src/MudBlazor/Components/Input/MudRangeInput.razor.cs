@@ -17,6 +17,13 @@ namespace MudBlazor
         protected string Classname => MudInputCssHelper.GetClassname(this,
             () => !string.IsNullOrEmpty(Text) || Adornment == Adornment.Start || !string.IsNullOrWhiteSpace(PlaceholderStart) || !string.IsNullOrWhiteSpace(PlaceholderEnd));
 
+        /// <summary>
+        /// Type of the input element. It should be a valid HTML5 input type.
+        /// </summary>
+        [Parameter] public InputType InputType { get; set; } = InputType.Text;
+
+        internal override InputType GetInputType() => InputType;
+
         protected string InputClassname => MudInputCssHelper.GetInputClassname(this);
 
         protected string AdornmentClassname => MudInputCssHelper.GetAdornmentClassname(this);
@@ -39,6 +46,11 @@ namespace MudBlazor
         [Parameter] public RenderFragment ChildContent { get; set; }
 
         private ElementReference _elementReferenceStart, _elementReferenceEnd;
+
+        /// <summary>
+        /// Custom separator icon, leave null for default.
+        /// </summary>
+        [Parameter] public string SeparatorIcon { get; set; } = Icons.Material.Filled.ArrowRightAlt;
 
         /// <summary>
         /// Focuses the start input of MudRangeInput

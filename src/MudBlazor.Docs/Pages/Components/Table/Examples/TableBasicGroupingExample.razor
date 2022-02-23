@@ -24,12 +24,12 @@
     <ColGroup>
         @if (_multiSelect)
         {
-<col style="width: 60px;" />
-}
+            <col style="width: 60px;" />
+        }
         @if (_groupDefinition.Expandable)
         {
-<col style="width: 60px;" />
-}
+            <col style="width: 60px;" />
+        }
         <col />
         <col />
         <col />
@@ -57,6 +57,7 @@
         <MudTh Class="mud-table-cell-custom-group mud-table-cell-custom-group-footer" colspan="5">Total Mass: @context.Items.Sum((e) => e.Molar)</MudTh>
     </GroupFooterTemplate>
 </MudTable>
+
 <MudSwitch @bind-Checked="_dense" Color="Color.Primary">Dense</MudSwitch>
 <MudSwitch @bind-Checked="_multiSelect" Color="Color.Primary">MultiSelect</MudSwitch>
 <MudSwitch @bind-Checked="_groupDefinition.Indentation" Color="Color.Primary">Indentation</MudSwitch>

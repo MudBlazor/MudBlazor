@@ -1,0 +1,14 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudTextField T="string" Counter="25" HelperText="This field uses Counter prop" Immediate="true" Validation="@(new Func<string, IEnumerable<string>>(MaxCharacters))" Label="Regular" Variant="Variant.Text" />
+<MudTextField T="string" Counter="25" MaxLength="25" HelperText="This field uses Counter and MaxLength prop" Immediate="true" Validation="@(new Func<string, IEnumerable<string>>(MaxCharacters))" Label="Limited" Variant="Variant.Text" />
+<MudTextField T="string" Counter="0" HelperText="This field has Counter set to 0" Immediate="true" Label="Counter" Variant="Variant.Text" />
+<MudTextField T="string" MaxLength="10" HelperText="This field uses MaxLength prop" Immediate="true" Label="Max Length" Variant="Variant.Text" />
+
+@code {
+    private IEnumerable<string> MaxCharacters(string ch)
+    {
+        if (!string.IsNullOrEmpty(ch) && 25 < ch?.Length)
+            yield return "Max 25 characters";
+    }
+}

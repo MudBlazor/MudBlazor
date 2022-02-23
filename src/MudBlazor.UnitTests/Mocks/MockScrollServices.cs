@@ -36,11 +36,13 @@ namespace MudBlazor.UnitTests.Mocks
 
         public ValueTask ScrollToFragmentAsync(string id, ScrollBehavior behavior) => ValueTask.CompletedTask;
 
-        public ValueTask ScrollToListItemAsync(string elementId, int increment, bool onEdges) => ValueTask.CompletedTask;
+        public ValueTask ScrollToListItemAsync(string elementId) => ValueTask.CompletedTask;
 
         public Task ScrollToTop(ScrollBehavior scrollBehavior = ScrollBehavior.Auto) => Task.CompletedTask;
-
+        
         public ValueTask ScrollToTopAsync(string id, ScrollBehavior scrollBehavior = ScrollBehavior.Auto) => ValueTask.CompletedTask;
+
+        public ValueTask ScrollToBottomAsync(string id, ScrollBehavior scrollBehavior = ScrollBehavior.Auto) => ValueTask.CompletedTask;
 
         public ValueTask ScrollToYearAsync(string elementId) => ValueTask.CompletedTask;
 

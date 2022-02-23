@@ -1,5 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Extensions;
@@ -110,14 +109,13 @@ namespace MudBlazor
         }
 
         // rating item lose hover
-        private async Task HandleMouseOut(MouseEventArgs e)
+        private Task HandleMouseOut(MouseEventArgs e)
         {
-            if (Disabled) return;
-            if (Rating == null)
-                return;
+            if (Disabled || Rating == null) 
+                return Task.CompletedTask;
 
             IsActive = false;
-            await ItemHovered.InvokeAsync(null);
+            return ItemHovered.InvokeAsync(null);
         }
 
         private void HandleMouseOver(MouseEventArgs e)

@@ -1,35 +1,46 @@
 ﻿@page "/components/linechart"
+@page "/components/chart-types/linechart"
 
 <DocsPage>
     <DocsPageHeader Title="Line Chart" SubTitle="">
     </DocsPageHeader>
     <DocsPageContent>
+
         <DocsPageSection>
-            <SectionHeader>
+            <SectionHeader Title="Basic Usage">
                 <Description></Description>
             </SectionHeader>
-            <SectionContent Outlined="true" FullWidth="true">
+            <SectionContent ShowCode="false" Code="LineExample1">
                 <LineExample1 />
             </SectionContent>
-            <SectionSource ShowCode="false" Code="LineExample1" GitHubFolderName="Charts" />
         </DocsPageSection>
+        
         <DocsPageSection>
-            <SectionHeader>
+            <SectionHeader Title="Line Widths">
                 <Description></Description>
             </SectionHeader>
-            <SectionContent Outlined="true" FullWidth="true">
+            <SectionContent ShowCode="false" Code="LineWidthExample">
+                <LineWidthExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Y Axis ticks">
+                <Description></Description>
+            </SectionHeader>
+            <SectionContent ShowCode="false" Code="LineExample2">
                 <LineExample2 />
             </SectionContent>
-            <SectionSource ShowCode="false" Code="LineExample2" GitHubFolderName="Charts" />
         </DocsPageSection>
+
         <DocsPageSection>
-            <SectionHeader>
+            <SectionHeader Title="Interpolation">
                 <Description></Description>
             </SectionHeader>
-            <SectionContent Outlined="true" FullWidth="true">
+            <SectionContent ShowCode="false" Code="LineExample3">
                 <LineExample3 />
             </SectionContent>
-            <SectionSource ShowCode="false" Code="LineExample3" GitHubFolderName="Charts" />
         </DocsPageSection>
+
     </DocsPageContent>
 </DocsPage>

@@ -1,7 +1,6 @@
 ﻿using System;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
-using MudBlazor.Interop;
 
 namespace MudBlazor
 {
@@ -10,9 +9,11 @@ namespace MudBlazor
         private double? _xDown, _yDown;
 
         [Parameter]
+        [Category(CategoryTypes.SwipeArea.Behavior)]
         public RenderFragment ChildContent { get; set; }
 
         [Parameter]
+        [Category(CategoryTypes.SwipeArea.Behavior)]
         public Action<SwipeDirection> OnSwipe { get; set; }
 
         private void OnTouchStart(TouchEventArgs arg)

@@ -39,16 +39,24 @@ namespace MudBlazor
         /// <summary>
         /// Icon to use if set.
         /// </summary>
-        [Parameter] public string Icon { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.NavMenu.Behavior)]
+        public string Icon { get; set; }
 
         /// <summary>
         /// The color of the icon. It supports the theme colors, default value uses the themes drawer icon color.
         /// </summary>
-        [Parameter] public Color IconColor { get; set; } = Color.Default;
+        [Parameter]
+        [Category(CategoryTypes.NavMenu.Appearance)]
+        public Color IconColor { get; set; } = Color.Default;
 
-        [Parameter] public NavLinkMatch Match { get; set; } = NavLinkMatch.Prefix;
+        [Parameter]
+        [Category(CategoryTypes.NavMenu.Behavior)]
+        public NavLinkMatch Match { get; set; } = NavLinkMatch.Prefix;
 
-        [Parameter] public string Target { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.NavMenu.ClickAction)]
+        public string Target { get; set; }
 
         [CascadingParameter] INavigationEventReceiver NavigationEventReceiver { get; set; }
 
@@ -58,17 +66,6 @@ namespace MudBlazor
             {
                 return NavigationEventReceiver.OnNavigation();
             }
-
-            return Task.CompletedTask;
-        }
-
-        private Task HandleClick(MouseEventArgs args)
-        {
-            if (!Disabled)
-            {
-                return OnClick.InvokeAsync(args);
-            }
-
             return Task.CompletedTask;
         }
     }

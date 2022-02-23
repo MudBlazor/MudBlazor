@@ -1,31 +1,67 @@
 ﻿@page "/components/popover"
 
 <DocsPage>
-    <DocsPageHeader Title="Popover" SubTitle="A Popover can be used to display some content on top of another." />
-    <DocsPageContent>
-        <DocsPageSection>
-            <MudAlert Severity="Severity.Warning"><b>Note:</b> When using this component it can be good to have some CSS knowledge it might not serve all types of content out of the box.</MudAlert>
-        </DocsPageSection>
-        <DocsPageSection>
-            <SectionHeader Title="Simple Popover">
-                <Description>The popover's open state is completely up to you, as well as the content of it.</Description>
-            </SectionHeader>
-            <SectionContent Outlined="true">
-                <PopoverSimpleExample />
+	<DocsPageHeader Title="Popover" SubTitle="A Popover can be used to display some content on top of another." />
+	<DocsPageContent>
+
+		<DocsPageSection>
+			<MudAlert Severity="Severity.Warning"><b>Note:</b> When using this component it can be good to have some CSS knowledge it might not serve all types of content out of the box.</MudAlert>
+		</DocsPageSection>
+
+		<DocsPageSection>
+			<SectionHeader Title="Simple Popover">
+				<Description>The popover's open state is completely up to you, as well as the content of it.</Description>
+			</SectionHeader>
+			<SectionContent Code="PopoverSimpleExample">
+				<PopoverSimpleExample />
+			</SectionContent>
+		</DocsPageSection>
+
+		<DocsPageSection>
+			<SectionHeader Title="Direction and Location">
+				<Description>
+					<MudAlert Severity="Severity.Info" Dense="true" Class="mt-3">Note: the location can be set with custom css or using the style tag.</MudAlert>
+					Control where the popover should start from relative to the parent. Offset the popover to be located outside of the parent.
+				</Description>
+			</SectionHeader>
+			<SectionContent Code="PopoverLocationExample" ShowCode="false">
+				<PopoverLocationExample />
+			</SectionContent>
+		</DocsPageSection>
+
+		<DocsPageSection>
+			<SectionHeader Title="Overflow Behavior">
+				<Description>
+					You can set the overflow behavior of the popover to either <CodeInline>FlipNever</CodeInline>, <CodeInline>FilpOnOpen</CodeInline> or <CodeInline>FlipAlways</CodeInline><br/>
+                    Resize your browser window slowly so the popover wont fit to see result in flip mode.
+				</Description>
+			</SectionHeader>
+			<SectionContent Code="PopoverOverflowBehaviorExample" ShowCode="false">
+                <PopoverOverflowBehaviorExample />
+			</SectionContent>
+		</DocsPageSection>
+
+		<DocsPageSection>
+			<SectionHeader Title="Complex Content">
+				<Description>
+					You can have any content within a popover like with any other Blazor component. The position of the popover is updated automatically
+				</Description>
+			</SectionHeader>
+            <SectionContent Codes="@(new[] {new CodeFile("Page.razor", "PopoverComplexContentExample"), new CodeFile("Component.razor", "PopoverDynamicContentExample")})">
+                <PopoverComplexContentExample />
             </SectionContent>
-            <SectionSource Code="PopoverSimpleExample" GitHubFolderName="Popover" />
         </DocsPageSection>
-        <DocsPageSection>
-            <SectionHeader Title="Direction and Location">
-                <Description>
-                    <MudAlert Severity="Severity.Info" Dense="true" Class="mt-3">Note: the location can be set with custom css or using the style tag.</MudAlert>
-                    Control where the popover should start from relative to the parent. Offset the popover to be located outside of the parent.
-                </Description>
-            </SectionHeader>
-            <SectionContent Outlined="true" FullWidth="true">
-                <PopoverLocationExample />
-            </SectionContent>
-            <SectionSource Code="PopoverLocationExample" GitHubFolderName="Popover" />
-        </DocsPageSection>
-    </DocsPageContent>
+
+		<DocsPageSection>
+			<SectionHeader Title="Popover Inception">
+				<Description>
+					Popovers can be placed within elements that are using popover for itself. Like tooltips that are placed inside a menu.
+				</Description>
+			</SectionHeader>
+			<SectionContent Code="PopoverInceptionExampleExample">
+				<PopoverInceptionExampleExample />
+			</SectionContent>
+		</DocsPageSection>
+
+	</DocsPageContent>
 </DocsPage>

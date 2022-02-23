@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
@@ -9,6 +10,7 @@ using MudBlazor.Interop;
 
 namespace MudBlazor
 {
+    [ExcludeFromCodeCoverage]
     public static class ElementReferenceExtensions
     {
         private static readonly PropertyInfo jsRuntimeProperty =
@@ -48,6 +50,28 @@ namespace MudBlazor
         public static ValueTask<BoundingClientRect> MudGetBoundingClientRectAsync(this ElementReference elementReference) =>
             elementReference.GetJSRuntime()?.InvokeAsync<BoundingClientRect>("mudElementRef.getBoundingClientRect", elementReference) ?? ValueTask.FromResult(new BoundingClientRect());
 
+        /// <summary>
+        /// Gets the client rect of the element 
+        /// </summary>
+        public static ValueTask<BoundingClientRect> MudGetClientRectFromParentAsync(this ElementReference elementReference) =>
+           elementReference.GetJSRuntime()?.InvokeAsync<BoundingClientRect>("mudElementRef.getClientRectFromParent", elementReference) ?? ValueTask.FromResult(new BoundingClientRect());
+
+        /// <summary>
+        /// Gets the client rect of the first child of the element.
+        /// Useful when you want to know the dimensions of a render fragment and for that you wrap it into a div
+        /// </summary>
+        public static ValueTask<BoundingClientRect> MudGetClientRectFromFirstChildAsync(this ElementReference elementReference) =>
+           elementReference.GetJSRuntime()?.InvokeAsync<BoundingClientRect>("mudElementRef.getClientRectFromFirstChild", elementReference) ?? ValueTask.FromResult(new BoundingClientRect());
+
+        /// <summary>
+        /// Returns true if the element has an ancestor with style position == "fixed"
+        /// </summary>
+        /// <param name="elementReference"></param>
+        public static ValueTask<bool> MudHasFixedAncestorsAsync(this ElementReference elementReference) =>
+            elementReference.GetJSRuntime()?
+            .InvokeAsync<bool>("mudElementRef.hasFixedAncestors", elementReference) ?? ValueTask.FromResult(false);
+
+
         public static ValueTask MudChangeCssVariableAsync(this ElementReference elementReference, string variableName, int value) =>
             elementReference.GetJSRuntime()?.InvokeVoidAsync("mudElementRef.changeCssVariable", elementReference, variableName, value) ?? ValueTask.CompletedTask;
 
@@ -57,7 +81,7 @@ namespace MudBlazor
             if (parameters != null)
             {
                 var parameterSpecs = new object[parameters.Count()];
-                for (int i = 0; i < parameters.Count(); ++i)
+                for (var i = 0; i < parameters.Count(); ++i)
                 {
                     parameterSpecs[i] = GetSerializationSpec(parameters.ElementAt(i));
                 }

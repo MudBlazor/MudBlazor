@@ -1,5 +1,5 @@
 ﻿// Copyright (c) 2019 Blazored (https://github.com/Blazored)
-// Copyright (c) 2020 Jonny Larsson (https://github.com/Garderoben/MudBlazor)
+// Copyright (c) 2020 Jonny Larsson (https://github.com/MudBlazor/MudBlazor)
 // Copyright (c) 2021 improvements by Meinrad Recheis
 // See https://github.com/Blazored
 // License: MIT
@@ -39,6 +39,9 @@ namespace MudBlazor
         IDialogReference CreateReference();
 
         Task<bool?> ShowMessageBox(string title, string message, string yesText = "OK",
+            string noText = null, string cancelText = null, DialogOptions options = null);
+
+        Task<bool?> ShowMessageBox(string title, MarkupString markupMessage, string yesText = "OK",
             string noText = null, string cancelText = null, DialogOptions options = null);
 
         Task<bool?> ShowMessageBox(MessageBoxOptions mboxOptions, DialogOptions options = null);

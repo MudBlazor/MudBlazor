@@ -1,0 +1,17 @@
+﻿<MudTextField @bind-Value="value" Immediate="true" OnKeyDown="OnKeyDown" Label="Hit Enter to Clear" TextUpdateSuppression="false">
+</MudTextField>
+<br>
+<span>value: @(value)</span>
+
+@code {
+    public static string __description__ = "After hitting Enter both the value and the textfield should clear.";
+    string value;
+
+    async void OnKeyDown(KeyboardEventArgs args) {
+        if (args.Key=="Enter") {
+            await Task.Delay(100);
+            value = "";
+            StateHasChanged();
+        }
+    }
+}

@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Microsoft.AspNetCore.Components;
-using MudBlazor;
 using MudBlazor.Charts.SVG.Models;
 using MudBlazor.Components.Chart;
 using MudBlazor.Components.Chart.Interpolation;
-using static MudBlazor.ChartOptions;
 
 namespace MudBlazor.Charts
 {
@@ -15,16 +12,16 @@ namespace MudBlazor.Charts
 
         [CascadingParameter] public MudChart MudChartParent { get; set; }
 
-        private List<SvgPath> _horizontalLines = new List<SvgPath>();
-        private List<SvgText> _horizontalValues = new List<SvgText>();
+        private List<SvgPath> _horizontalLines = new();
+        private List<SvgText> _horizontalValues = new();
 
-        private List<SvgPath> _verticalLines = new List<SvgPath>();
-        private List<SvgText> _verticalValues = new List<SvgText>();
+        private List<SvgPath> _verticalLines = new();
+        private List<SvgText> _verticalValues = new();
 
-        private List<SvgLegend> _legends = new List<SvgLegend>();
-        private List<ChartSeries> _series = new List<ChartSeries>();
+        private List<SvgLegend> _legends = new();
+        private List<ChartSeries> _series = new();
 
-        private List<SvgPath> _chartLines = new List<SvgPath>();
+        private List<SvgPath> _chartLines = new();
 
         protected override void OnParametersSet()
         {

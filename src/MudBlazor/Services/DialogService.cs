@@ -1,5 +1,5 @@
 ﻿// Copyright (c) 2019 Blazored (https://github.com/Blazored)
-// Copyright (c) 2020 Jonny Larsson (https://github.com/Garderoben/MudBlazor)
+// Copyright (c) 2020 Jonny Larsson (https://github.com/MudBlazor/MudBlazor)
 // Copyright (c) 2021 improvements by Meinrad Recheis
 // See https://github.com/Blazored
 // License: MIT
@@ -120,12 +120,26 @@ namespace MudBlazor
             }, options);
         }
 
+        public Task<bool?> ShowMessageBox(string title, MarkupString markupMessage, string yesText = "OK",
+            string noText = null, string cancelText = null, DialogOptions options = null)
+        {
+            return this.ShowMessageBox(new MessageBoxOptions
+            {
+                Title = title,
+                MarkupMessage = markupMessage,
+                YesText = yesText,
+                NoText = noText,
+                CancelText = cancelText,
+            }, options);
+        }
+
         public async Task<bool?> ShowMessageBox(MessageBoxOptions mboxOptions, DialogOptions options = null)
         {
             var parameters = new DialogParameters()
             {
                 [nameof(MessageBoxOptions.Title)] = mboxOptions.Title,
                 [nameof(MessageBoxOptions.Message)] = mboxOptions.Message,
+                [nameof(MessageBoxOptions.MarkupMessage)] = mboxOptions.MarkupMessage,
                 [nameof(MessageBoxOptions.CancelText)] = mboxOptions.CancelText,
                 [nameof(MessageBoxOptions.NoText)] = mboxOptions.NoText,
                 [nameof(MessageBoxOptions.YesText)] = mboxOptions.YesText,
@@ -158,6 +172,7 @@ namespace MudBlazor
     {
         public string Title { get; set; }
         public string Message { get; set; }
+        public MarkupString MarkupMessage { get; set; }
         public string YesText { get; set; } = "OK";
         public string NoText { get; set; }
         public string CancelText { get; set; }

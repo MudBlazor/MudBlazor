@@ -17,6 +17,22 @@ namespace MudBlazor
         [Description("search")]
         Search,
         [Description("tel")]
-        Telephone
+        Telephone,
+        [Description("url")]
+        Url,
+        [Description("color")]
+        Color,
+        [Description("date")]
+        Date,
+        [Description("datetime-local")]
+        DateTimeLocal,
+        [Description("month")]
+        Month,
+        [Description("time")]
+        Time,
+        [Description("week")]
+        Week
+
+
     }
 }

@@ -4,88 +4,151 @@
 
 using System;
 using System.Collections.Generic;
-using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Routing;
-using MudBlazor.Docs.Models;
-using MudBlazor.Docs.Extensions;
-using MudBlazor.Services;
 using System.Threading.Tasks;
 using System.Linq;
-using Microsoft.JSInterop;
+using System.Diagnostics;
+using Microsoft.AspNetCore.Components;
+using MudBlazor.Docs.Models;
+using MudBlazor.Docs.Services;
+using Microsoft.AspNetCore.Components.Routing;
 
 namespace MudBlazor.Docs.Components
 {
-    public partial class DocsPage : ComponentBase, IAsyncDisposable
+    public partial class DocsPage : ComponentBase
     {
-        [Inject] IScrollSpy ScrollSpy { get; set; }
+        [Parameter] public bool DisplayFooter { get; set; }
+        
+        private Queue<DocsSectionLink> _bufferedSections = new();
+        private MudPageContentNavigation _contentNavigation;
+        private NavigationFooterLink _previous;
+        private NavigationFooterLink _next;
+        private NavigationSection? _section = null;
+        private Stopwatch _stopwatch = Stopwatch.StartNew();
+        private string _anchor = null;
+        private bool _displayView;
+        private string _componentName;
+        private bool _renderAds;
         [Inject] NavigationManager NavigationManager { get; set; }
 
-        [Parameter] public MaxWidth MaxWidth { get; set; } = MaxWidth.Medium;
+        [Inject] private IDocsNavigationService DocsService { get; set; }
+        [Inject] private IRenderQueueService RenderQueue { get; set; }
         [Parameter] public RenderFragment ChildContent { get; set; }
 
-        private List<DocsSectionLink> _sections = new();
+        private bool _contentDrawerOpen = true;
+        public event Action<Stopwatch> Rendered;
+        private Dictionary<DocsPageSection, MudPageContentSection> _sectionMapper = new();
 
+        int _sectionCount;
 
-        protected override async Task OnAfterRenderAsync(bool firstRender)
+        public int SectionCount
         {
+            get
+            {
+                lock (this)
+                    return _sectionCount;
+            }
+        }
+
+        public int IncrementSectionCount()
+        {
+            lock (this)
+                return _sectionCount++;
+        }
+
+        protected override void OnInitialized()
+        {
+            base.OnInitialized();
+            RenderQueue.Clear();
+            var relativePath = NavigationManager.ToBaseRelativePath(NavigationManager.Uri);
+            if (relativePath.Contains("#") == true)
+            {
+                _anchor = relativePath.Split(new[] {"#"}, StringSplitOptions.RemoveEmptyEntries)[1];
+            }
+        }
+
+        protected override void OnParametersSet()
+        {
+            _stopwatch = Stopwatch.StartNew();
+            _sectionCount = 0;
+            _previous = DocsService.Previous;
+            _next = DocsService.Next;
+            _section = DocsService.Section;
+            
+            /*for after this release is done*/
+            _displayView = false;
+            _componentName = "temp";
+            /*if (NavigationManager.Uri.ToString().Contains("/api/") ||
+                NavigationManager.Uri.ToString().Contains("/components/"))
+            {
+                _componentName = NavigationManager.Uri.ToString().Split('/', StringSplitOptions.RemoveEmptyEntries)
+                    .LastOrDefault();
+                _displayView = true;
+            }*/
+        }
+
+        protected override void OnAfterRender(bool firstRender)
+        {
+            if (_stopwatch.IsRunning)
+            {
+                _stopwatch.Stop();
+                Rendered?.Invoke(_stopwatch);
+            }
             if (firstRender)
             {
-                ScrollSpy.ScrollSectionSectionCentered += ScrollSpy_ScrollSectionSectionCentered;
-
-                await ScrollSpy.ScrollToSection(new Uri(NavigationManager.Uri));
-                await ScrollSpy.StartSpying("docs-section-header");
-                SelectActiveSection(ScrollSpy.CenteredSection);
+                _renderAds = true;
+                StateHasChanged();
             }
         }
 
-        internal void AddSection(DocsSectionLink section)
+        public string GetParentTitle(DocsPageSection section)
         {
-            _sections.Add(section);
-            if (section.Id == ScrollSpy.CenteredSection)
+            if (section == null) { return string.Empty; }
+
+            if (section == null || section.ParentSection == null ||
+                _sectionMapper.ContainsKey(section.ParentSection) == false) { return string.Empty; }
+
+            var item = _sectionMapper[section.ParentSection];
+
+            return item.Title;
+        }
+
+        internal async void AddSection(DocsSectionLink sectionLinkInfo, DocsPageSection section)
+        {
+            _bufferedSections.Enqueue(sectionLinkInfo);
+
+            if (_contentNavigation != null)
             {
-                section.Active = true;
+                while (_bufferedSections.Count > 0)
+                {
+                    var item = _bufferedSections.Dequeue();
+
+                    if (_contentNavigation.Sections.FirstOrDefault(x => x.Id == sectionLinkInfo.Id) == default)
+                    {
+                        MudPageContentSection parentInfo = null;
+                        if (section.ParentSection != null && _sectionMapper.ContainsKey(section.ParentSection) == true)
+                        {
+                            parentInfo = _sectionMapper[section.ParentSection];
+                        }
+
+                        var info =
+                            new MudPageContentSection(sectionLinkInfo.Title, sectionLinkInfo.Id, section.Level,
+                                parentInfo);
+                        _sectionMapper.Add(section, info);
+                        _contentNavigation.AddSection(info, false);
+                    }
+                }
+
+                _contentNavigation.Update();
+                
+                if (_anchor != null)
+                {
+                    if (sectionLinkInfo.Id == _anchor)
+                    {
+                        await _contentNavigation.ScrollToSection(new Uri(NavigationManager.Uri));
+                        _anchor = null;
+                    }
+                }
             }
-
-            StateHasChanged();
-        }
-
-        private void SelectActiveSection(string id)
-        {
-            if (string.IsNullOrEmpty(id)) 
-              return;
-            var activelink = _sections.FirstOrDefault(x => x.Id == id);
-            if (activelink == null) 
-              return; 
-            _sections.ToList().ForEach(item => item.Active = false);
-            activelink.Active = true;
-            StateHasChanged();
-        }
-
-        private void ScrollSpy_ScrollSectionSectionCentered(object sender, ScrollSectionCenteredEventArgs e)
-        {
-            SelectActiveSection(e.Id);
-        }
-
-        private async Task OnNavLinkClick(string id)
-        {
-            _sections.ToList().ForEach(item => item.Active = false);
-            var activelink = _sections.FirstOrDefault(item => item.Id == id);
-            activelink.Active = true;
-            await ScrollSpy.ScrollToSection(id);
-        }
-
-        public async ValueTask DisposeAsync()
-        {
-            ScrollSpy.ScrollSectionSectionCentered -= ScrollSpy_ScrollSectionSectionCentered;
-            await ScrollSpy.DisposeAsync();
-        }
-
-        private string GetNavLinkClass(bool active)
-        {
-            if (active)
-                return $"docs-contents-navlink active";
-            else
-                return $"docs-contents-navlink";
         }
     }
 }

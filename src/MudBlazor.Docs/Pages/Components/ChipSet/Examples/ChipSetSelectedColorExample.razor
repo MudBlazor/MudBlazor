@@ -1,0 +1,30 @@
+﻿@namespace MudBlazor.Docs.Examples
+<MudChipSet MultiSelection="true" Filter="filter">
+    <MudChip Text="Brunsås" Variant="Variant.Text" Color="Color.Default" SelectedColor="Color.Primary"></MudChip>
+    <MudChip Text="Eggs" Variant="Variant.Text" Color="Color.Primary" SelectedColor="Color.Secondary"></MudChip>
+    <MudChip Text="Cornflakes" Variant="Variant.Text" Color="Color.Dark" SelectedColor="Color.Warning"></MudChip>
+    <MudChip Text="Salad" Variant="Variant.Text" Color="Color.Info" SelectedColor="Color.Error"></MudChip>
+    <MudChip Text="Apples" Variant="Variant.Text" Color="Color.Success" SelectedColor="Color.Error"></MudChip>
+</MudChipSet>
+<MudChipSet MultiSelection="true" Filter="filter">
+    <MudChip Text="Brunsås" Variant="Variant.Outlined" Color="Color.Default" SelectedColor="Color.Primary"></MudChip>
+    <MudChip Text="Eggs" Variant="Variant.Outlined" Color="Color.Primary" SelectedColor="Color.Secondary"></MudChip>
+    <MudChip Text="Cornflakes" Variant="Variant.Outlined" Color="Color.Dark" SelectedColor="Color.Warning"></MudChip>
+    <MudChip Text="Salad" Variant="Variant.Outlined" Color="Color.Info" SelectedColor="Color.Error"></MudChip>
+    <MudChip Text="Apples" Variant="Variant.Outlined" Color="Color.Success" SelectedColor="Color.Error"></MudChip>
+</MudChipSet>
+<MudChipSet MultiSelection="true" Filter="filter">
+    <MudChip Text="Brunsås" Variant="Variant.Filled" Color="Color.Default" SelectedColor="Color.Primary"></MudChip>
+    <MudChip Text="Eggs" Variant="Variant.Filled" Color="Color.Primary" SelectedColor="Color.Secondary"></MudChip>
+    <MudChip Text="Cornflakes" Variant="Variant.Filled" Color="Color.Dark" SelectedColor="Color.Warning"></MudChip>
+    <MudChip Text="Salad" Variant="Variant.Filled" Color="Color.Info" SelectedColor="Color.Error"></MudChip>
+    <MudChip Text="Apples" Variant="Variant.Filled" Color="Color.Success" SelectedColor="Color.Error"></MudChip>
+</MudChipSet>
+<MudCheckBox @bind-Checked="filter">Filter</MudCheckBox>
+
+
+@code
+{
+    bool filter = true;
+}
+

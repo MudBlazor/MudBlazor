@@ -4,7 +4,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
-using MudBlazor.Extensions;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
@@ -25,9 +24,9 @@ namespace MudBlazor
 
         protected string Stylename =>
             new StyleBuilder()
-            .AddStyle("max-height", $"{MaxHeight?.ToString("#.##", CultureInfo.InvariantCulture)}px", MaxHeight != null)
+            .AddStyle("max-height", MaxHeight.ToPx(), MaxHeight != null)
             .AddStyle("height", "auto", _state == CollapseState.Entered)
-            .AddStyle("height", $"{_height.ToString("#.##", CultureInfo.InvariantCulture)}px", _state == CollapseState.Entering || _state == CollapseState.Exiting)
+            .AddStyle("height", _height.ToPx(), _state is CollapseState.Entering or CollapseState.Exiting)
             .AddStyle("animation-duration", $"{CalculatedAnimationDuration.ToString("#.##", CultureInfo.InvariantCulture)}s", _state == CollapseState.Entering)
             .AddStyle(Style)
             .Build();
@@ -51,18 +50,19 @@ namespace MudBlazor
             {
                 if (_expanded == value)
                     return;
-
                 _expanded = value;
+
                 if (_isRendered)
                 {
                     _state = _expanded ? CollapseState.Entering : CollapseState.Exiting;
                     _ = UpdateHeight();
-                    _updateHeight = _height == 0;
+                    _updateHeight = true;
                 }
                 else if (_expanded)
                 {
                     _state = CollapseState.Entered;
                 }
+
                 _ = ExpandedChanged.InvokeAsync(_expanded);
             }
         }
@@ -131,7 +131,7 @@ namespace MudBlazor
                 await UpdateHeight();
                 _listenerId = await _container.MudAddEventListenerAsync(_dotNetRef, "animationend", nameof(AnimationEnd));
             }
-            else if (_updateHeight && (_state == CollapseState.Entering || _state == CollapseState.Exiting))
+            else if (_updateHeight && _state is CollapseState.Entering or CollapseState.Exiting)
             {
                 _updateHeight = false;
                 await UpdateHeight();

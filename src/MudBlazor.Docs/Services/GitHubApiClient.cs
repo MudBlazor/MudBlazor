@@ -24,13 +24,27 @@ namespace MudBlazor.Docs.Services
         {
             try
             {
-                var result = await _http.GetFromJsonAsync<GithubContributors[]>("https://api.github.com:443/repos/Garderoben/MudBlazor/contributors");
+                var result = await _http.GetFromJsonAsync<GithubContributors[]>("https://api.github.com:443/repos/MudBlazor/MudBlazor/contributors?per_page=100");
                 return result;
             }
             catch (Exception e)
             {
                 Console.WriteLine(e.Message);
                 return new GithubContributors[0];
+            }
+        }
+        
+        public async Task<GitHubReleases[]> GetReleasesAsync()
+        {
+            try
+            {
+                var result = await _http.GetFromJsonAsync<GitHubReleases[]>("https://api.github.com:443/repos/MudBlazor/MudBlazor/releases?per_page=100");
+                return result;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                return new GitHubReleases[0];
             }
         }
     }

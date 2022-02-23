@@ -8,6 +8,8 @@ namespace MudBlazor
     {
         private bool _nextPanelExpanded;
         private bool _isExpanded;
+        private bool _collapseIsExpanded;
+
         [CascadingParameter] private MudExpansionPanels Parent { get; set; }
 
         protected string Classname =>
@@ -29,42 +31,63 @@ namespace MudBlazor
         /// <summary>
         /// Explicitly sets the height for the Collapse element to override the css default.
         /// </summary>
-        [Parameter] public int? MaxHeight { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.ExpansionPanel.Appearance)]
+        public int? MaxHeight { get; set; }
 
         /// <summary>
         /// RenderFragment to be displayed in the expansion panel which will override header text if defined.
         /// </summary>
-        [Parameter] public RenderFragment TitleContent { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.ExpansionPanel.Behavior)]
+        public RenderFragment TitleContent { get; set; }
 
         /// <summary>
         /// The text to be displayed in the expansion panel.
         /// </summary>
-        [Parameter] public string Text { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.ExpansionPanel.Behavior)]
+        public string Text { get; set; }
 
         /// <summary>
         /// If true, expand icon will not show
         /// </summary>
-        [Parameter] public bool HideIcon { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.ExpansionPanel.Appearance)]
+        public bool HideIcon { get; set; }
+
+        /// <summary>
+        /// Custom hide icon.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.ExpansionPanel.Appearance)]
+        public string Icon { get; set; } = Icons.Material.Filled.ExpandMore;
 
         /// <summary>
         /// If true, removes vertical padding from childcontent.
         /// </summary>
-        [Parameter] public bool Dense { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.ExpansionPanel.Appearance)]
+        public bool Dense { get; set; }
 
         /// <summary>
         /// If true, the left and right padding is removed from childcontent.
         /// </summary>
-        [Parameter] public bool DisableGutters { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.ExpansionPanel.Appearance)]
+        public bool DisableGutters { get; set; }
 
         /// <summary>
         /// Raised when IsExpanded changes.
         /// </summary>
         [Parameter] public EventCallback<bool> IsExpandedChanged { get; set; }
 
+        internal event Action<MudExpansionPanel> NotifyIsExpandedChanged;
         /// <summary>
         /// Expansion state of the panel (two-way bindable)
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.ExpansionPanel.Behavior)]
         public bool IsExpanded
         {
             get => _isExpanded;
@@ -73,12 +96,16 @@ namespace MudBlazor
                 if (_isExpanded == value)
                     return;
                 _isExpanded = value;
-                if (Parent?.MultiExpansion == true)
-                    Parent?.UpdateAll();
-                else
-                    Parent?.CloseAllExcept(this);
-                //InvokeAsync(StateHasChanged);
-                IsExpandedChanged.InvokeAsync(_isExpanded);
+
+                NotifyIsExpandedChanged?.Invoke(this);
+                IsExpandedChanged.InvokeAsync(_isExpanded).ContinueWith(t =>
+                {
+                    if (_collapseIsExpanded != _isExpanded)
+                    {
+                        _collapseIsExpanded = _isExpanded;
+                        InvokeAsync(() => StateHasChanged());
+                    }
+                });
             }
         }
 
@@ -86,17 +113,23 @@ namespace MudBlazor
         /// Sets the initial expansion state. Do not use in combination with IsExpanded.
         /// Combine with MultiExpansion to have more than one panel start open.
         /// </summary>
-        [Parameter] public bool IsInitiallyExpanded { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.ExpansionPanel.Behavior)]
+        public bool IsInitiallyExpanded { get; set; }
 
         /// <summary>
         /// If true, the component will be disabled.
         /// </summary>
-        [Parameter] public bool Disabled { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.ExpansionPanel.Behavior)]
+        public bool Disabled { get; set; }
 
         /// <summary>
         /// Child content of component.
         /// </summary>
-        [Parameter] public RenderFragment ChildContent { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.ExpansionPanel.Behavior)]
+        public RenderFragment ChildContent { get; set; }
 
         public bool NextPanelExpanded
         {
@@ -106,22 +139,18 @@ namespace MudBlazor
                 if (_nextPanelExpanded == value)
                     return;
                 _nextPanelExpanded = value;
-                InvokeAsync(StateHasChanged);
+                //InvokeAsync(StateHasChanged);
             }
         }
 
         public void ToggleExpansion()
         {
             if (Disabled)
+            {
                 return;
-            if (Parent?.MultiExpansion == true)
-            {
-                IsExpanded = !IsExpanded;
             }
-            else
-            {
-                IsExpanded = !IsExpanded;
-            }
+
+            IsExpanded = !IsExpanded;
         }
 
         public void Expand(bool update_parent = true)
@@ -131,6 +160,7 @@ namespace MudBlazor
             else
             {
                 _isExpanded = true;
+                _collapseIsExpanded = true;
                 IsExpandedChanged.InvokeAsync(_isExpanded);
             }
         }
@@ -142,6 +172,7 @@ namespace MudBlazor
             else
             {
                 _isExpanded = false;
+                _collapseIsExpanded = false;
                 IsExpandedChanged.InvokeAsync(_isExpanded);
             }
         }
@@ -152,7 +183,12 @@ namespace MudBlazor
             //if (Parent == null)
             //    throw new ArgumentNullException(nameof(Parent), "ExpansionPanel must exist within a ExpansionPanels component");
             base.OnInitialized();
-            IsExpanded = IsInitiallyExpanded;
+            if (!IsExpanded && IsInitiallyExpanded)
+            {
+                _isExpanded = true;
+                _collapseIsExpanded = true;
+            }
+
             Parent?.AddPanel(this);
         }
 

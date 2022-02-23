@@ -1,5 +1,4 @@
-﻿using System;
-using Microsoft.AspNetCore.Components;
+﻿using Microsoft.AspNetCore.Components;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
@@ -14,6 +13,8 @@ namespace MudBlazor
         /// <summary>
         /// Child content of the component.
         /// </summary>
-        [Parameter] public RenderFragment ChildContent { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.Card.Behavior)]
+        public RenderFragment ChildContent { get; set; }
     }
 }

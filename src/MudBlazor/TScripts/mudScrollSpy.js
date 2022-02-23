@@ -1,4 +1,8 @@
-﻿//Functions related to the scroll spy  
+﻿// Copyright (c) MudBlazor 2021
+// MudBlazor licenses this file to you under the MIT license.
+// See the LICENSE file in the project root for more information.
+
+//Functions related to the scroll spy
 class MudScrollSpy {
 
     constructor() {
@@ -45,7 +49,10 @@ class MudScrollSpy {
                 minDifference = diff;
                 elementId = element.id;
             }
+        }
 
+        if (document.getElementById(elementId).getBoundingClientRect().top < window.innerHeight * 0.8 === false) {
+            return;
         }
 
         if (this.scrollToSectionRequested != null) {
@@ -62,10 +69,17 @@ class MudScrollSpy {
         }
 
         if (elementId != this.lastKnowElement) {
-
             this.lastKnowElement = elementId;
             history.replaceState(null, '', window.location.pathname + "#" + elementId);
             dotnetReference.invokeMethodAsync('SectionChangeOccured', elementId);
+        }
+    }
+
+    activateSection(sectionId) {
+        const element = document.getElementById(sectionId);
+        if (element) {
+            this.lastKnowElement = sectionId;
+            history.replaceState(null, '', window.location.pathname + "#" + sectionId);
         }
     }
 
@@ -73,7 +87,6 @@ class MudScrollSpy {
         if (sectionId) {
             let element = document.getElementById(sectionId);
             if (element) {
-
                 this.scrollToSectionRequested = sectionId;
 
                 element.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'start' });
@@ -81,6 +94,7 @@ class MudScrollSpy {
         }
         else {
             window.scrollTo({ top: 0, behavior: 'smooth' });
+
             this.scrollToSectionRequested = ' ';
         }
     }

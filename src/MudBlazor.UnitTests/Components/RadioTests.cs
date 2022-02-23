@@ -1,36 +1,22 @@
-﻿#pragma warning disable CS1998 // async without await
-#pragma warning disable IDE1006 // leading underscore
-
+﻿
 using System;
 using System.Linq;
 using Bunit;
 using FluentAssertions;
+using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.UnitTests.TestComponents;
 using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Components
 {
-
     [TestFixture]
-    public class RadioTests
+    public class RadioTests : BunitTest
     {
-        private Bunit.TestContext ctx;
-
-        [SetUp]
-        public void Setup()
-        {
-            ctx = new Bunit.TestContext();
-            ctx.AddTestServices();
-        }
-
-        [TearDown]
-        public void TearDown() => ctx.Dispose();
-
         [Test]
         public void RadioGroupTest1()
         {
-            var comp = ctx.RenderComponent<RadioGroupTest1>();
-            Console.WriteLine(comp.Markup);
+            var comp = Context.RenderComponent<RadioGroupTest1>();
+            //Console.WriteLine(comp.Markup);
             // select elements needed for the test
             var group = comp.FindComponent<MudRadioGroup<string>>();
             var inputs = comp.FindAll("input").ToArray();
@@ -73,8 +59,8 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void RadioGroupTest2()
         {
-            var comp = ctx.RenderComponent<RadioGroupTest2>();
-            Console.WriteLine(comp.Markup);
+            var comp = Context.RenderComponent<RadioGroupTest2>();
+            //Console.WriteLine(comp.Markup);
             // select elements needed for the test
             var group = comp.FindComponent<MudRadioGroup<string>>();
             var spans = comp.FindAll("span.mud-radio-icons").ToArray();
@@ -88,8 +74,8 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void RadioGroupTest3()
         {
-            var comp = ctx.RenderComponent<RadioGroupTest3>();
-            Console.WriteLine(comp.Markup);
+            var comp = Context.RenderComponent<RadioGroupTest3>();
+            //Console.WriteLine(comp.Markup);
             // select elements needed for the test
             var groups = comp.FindComponents<MudRadioGroup<string>>();
             var inputs = comp.FindAll("input").ToArray();
@@ -124,8 +110,8 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void RadioGroupTest4()
         {
-            var comp = ctx.RenderComponent<RadioGroupTest4>();
-            Console.WriteLine(comp.Markup);
+            var comp = Context.RenderComponent<RadioGroupTest4>();
+            //Console.WriteLine(comp.Markup);
             // select elements needed for the test
             var groups = comp.FindComponents<MudRadioGroup<string>>();
             var inputs = comp.FindAll("input").ToArray();
@@ -160,8 +146,8 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void RadioGroupTest5()
         {
-            var comp = ctx.RenderComponent<RadioGroupTest5>();
-            Console.WriteLine(comp.Markup);
+            var comp = Context.RenderComponent<RadioGroupTest5>();
+            //Console.WriteLine(comp.Markup);
             // select elements needed for the test
             var group = comp.FindComponent<MudRadioGroup<string>>();
             var inputs = comp.FindAll("input").ToArray();
@@ -190,8 +176,8 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void RadioGroupTest6()
         {
-            var comp = ctx.RenderComponent<RadioGroupTest6>();
-            Console.WriteLine(comp.Markup);
+            var comp = Context.RenderComponent<RadioGroupTest6>();
+            //Console.WriteLine(comp.Markup);
             // select elements needed for the test
             var group = comp.FindComponent<MudRadioGroup<string>>();
             var buttons = comp.FindAll("label > span").ToArray();
@@ -210,6 +196,25 @@ namespace MudBlazor.UnitTests.Components
             svgs[5].ClassList.Should().Contain("mud-icon-size-medium");
             svgs[6].ClassList.Should().Contain("mud-icon-size-large");
             svgs[7].ClassList.Should().Contain("mud-icon-size-large");
+        }
+
+        [Test]
+        public void RadioTest_KeyboardInput()
+        {
+            var comp = Context.RenderComponent<RadioGroupTest1>();
+            // print the generated html
+            //Console.WriteLine(comp.Markup);
+            // select elements needed for the test
+            var radio = comp.FindComponent<MudRadioGroup<string>>();
+            radio.Instance.SelectedOption.Should().Be(null);
+
+            comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = "Enter", Type = "keydown", });
+            comp.WaitForAssertion(() => radio.Instance.SelectedOption.Should().Be("1"));
+
+            comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = "Backspace", Type = "keydown", });
+            comp.WaitForAssertion(() => radio.Instance.SelectedOption.Should().Be(null));
+
+            //Can't tabbed around the radios in test.
         }
     }
 }

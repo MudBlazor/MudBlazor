@@ -1,29 +1,51 @@
-﻿.docs-page {
-    .mud-typography-h4 {
-        margin-top: 52px;
-    }
+﻿.docs-page-content{
+  min-height: calc(100vh - 600px);
 }
 
-.docs-page-header {
-
-    & .mud-typography-h3 {
-        font-size: 40px;
-        margin-bottom: 16px;
+.docs-page-content-navigation-drawer{
+  .title{
+    font-weight: 500;
+  }
+  
+  .navigation-level{
+    &-0{
+      .mud-nav-link-text{
+        padding-inline-start: 0;
+      }
     }
-
-    & .mud-typography-h4 {
-        margin-top: 0px;
+    &-1{
+      .mud-nav-link-text{
+        padding-inline-start: 14px;
+      }
     }
+    &-2{
+      .mud-nav-link-text{
 
-    margin-bottom: 50px;
-}
+      }
+    }
+    &-3{
+      .mud-nav-link-text{
 
-.docs-page-content {
-
-}
-
-.docs-page-section {
-    margin-bottom: 50px;
+      }
+    }
+  }
+  
+  .mode-links{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 10px 20px;
+    border-radius: 4px;
+    font-weight: 500;
+    width: 100%;
+    color: var(--mud-palette-text-secondary);
+    background-color: var(--mud-palette-background-grey);
+    
+    &.active{
+      color: var(--mud-palette-primary);
+      background-color: var(--mud-palette-primary-hover);
+    }
+  }
 }
 
 .docs-code {
@@ -75,53 +97,6 @@
             height: 100%;
             overflow: auto;
             flex-direction: column;
-        }
-    }
-}
-
-.docs-contents {
-    display: none;
-
-    .docs-contents-navlink {
-        &.active {
-            .mud-nav-link {
-                color: var(--mud-palette-primary);
-                border-color: var(--mud-palette-primary);
-                background-color: transparent;
-            }
-        }
-
-        .mud-nav-link {
-            padding: 4px 16px 4px 16px;
-            color: var(--mud-palette-text-disabled);
-            border-left: 2px solid var(--mud-palette-action-disabled-background);
-
-            &.active {
-                color: var(--mud-palette-primary);
-                border-color: var(--mud-palette-primary);
-                background-color: transparent;
-            }
-
-            .mud-nav-link-text {
-                margin-left: 0px;
-                margin-inline-start: 0px;
-            }
-        }
-    }
-}
-
-@media only screen and (min-width: 1640px) {
-    .mud-container-maxwidth-md {
-        .docs-contents {
-            display: block;
-        }
-    }
-}
-
-@media only screen and (min-width: 1940px) {
-    .mud-container-maxwidth-lg {
-        .docs-contents {
-            display: block;
         }
     }
 }

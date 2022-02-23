@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
-using System.Reflection;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -29,8 +28,7 @@ namespace MudBlazor.Services
         /// <returns>Continues the IServiceCollection chain.</returns>
         public static IServiceCollection AddMudBlazorSnackbar(this IServiceCollection services, SnackbarConfiguration configuration = null)
         {
-            if (configuration == null)
-                configuration = new SnackbarConfiguration();
+            configuration ??= new SnackbarConfiguration();
 
             services.TryAddScoped<ISnackbar>(builder =>
                 new SnackbarService(builder.GetService<NavigationManager>(), configuration));
@@ -60,8 +58,7 @@ namespace MudBlazor.Services
         /// <returns>Continues the IServiceCollection chain.</returns>
         public static IServiceCollection AddMudBlazorResizeListener(this IServiceCollection services, ResizeOptions options = null)
         {
-            if (options == null)
-                options = new ResizeOptions();
+            options ??= new ResizeOptions();
             services.AddMudBlazorResizeListener(o =>
             {
                 o = options;
@@ -79,6 +76,8 @@ namespace MudBlazor.Services
         {
             services.TryAddScoped<IResizeListenerService, ResizeListenerService>();
             services.TryAddScoped<IBrowserWindowSizeProvider, BrowserWindowSizeProvider>();
+            services.TryAddScoped<IResizeService, ResizeService>();
+            services.TryAddScoped<IBreakpointService, BreakpointService>();
             services.Configure(options);
             return services;
         }
@@ -104,8 +103,7 @@ namespace MudBlazor.Services
         /// <returns>Continues the IServiceCollection chain.</returns>
         public static IServiceCollection AddMudBlazorResizeObserver(this IServiceCollection services, ResizeObserverOptions options = null)
         {
-            if (options == null)
-                options = new ResizeObserverOptions();
+            options ??= new ResizeObserverOptions();
             services.AddMudBlazorResizeObserver(o =>
             {
                 o = options;
@@ -125,12 +123,61 @@ namespace MudBlazor.Services
         }
 
         /// <summary>
+        /// Adds IKeyInterceptor as a Transient instance.
+        /// </summary>
+        /// <param name="services">IServiceCollection</param>
+        /// <returns>Continues the IServiceCollection chain.</returns>
+        public static IServiceCollection AddMudBlazorKeyInterceptor(this IServiceCollection services)
+        {
+            services.TryAddTransient<IKeyInterceptor, KeyInterceptor>();
+            return services;
+        }
+
+        /// <summary>
+        /// Adds JsEvent as a Transient instance.
+        /// </summary>
+        /// <param name="services">IServiceCollection</param>
+        /// <returns>Continues the IServiceCollection chain.</returns>
+        public static IServiceCollection AddMudBlazorJsEvent(this IServiceCollection services)
+        {
+            services.TryAddTransient<IJsEvent, JsEvent>();
+            return services;
+        }
+
+        /// <summary>
         /// Adds ScrollManager as a transient instance.
         /// </summary>
         /// <param name="services">IServiceCollection</param>
         public static IServiceCollection AddMudBlazorScrollManager(this IServiceCollection services)
         {
             services.TryAddTransient<IScrollManager, ScrollManager>();
+            return services;
+        }
+
+        /// <summary>
+        /// Adds ScrollManager as a transient instance.
+        /// </summary>
+        /// <param name="services">IServiceCollection</param>
+        /// <param name="options">Defines PopoverOptions for the application/user</param>
+        public static IServiceCollection AddMudPopoverService(this IServiceCollection services, Action<PopoverOptions> options)
+        {
+            services.Configure(options);
+            services.TryAddScoped<IMudPopoverService, MudPopoverService>();
+            return services;
+        }
+
+        /// <summary>
+        /// Adds ScrollManager as a transient instance.
+        /// </summary>
+        /// <param name="services">IServiceCollection</param>
+        /// <param name="options">Defines PopoverOptions for the application/user</param>
+        public static IServiceCollection AddMudPopoverService(this IServiceCollection services, PopoverOptions options)
+        {
+            options ??= new PopoverOptions();
+            services.AddMudPopoverService(o =>
+            {
+                o = options;
+            });
             return services;
         }
 
@@ -166,6 +213,16 @@ namespace MudBlazor.Services
         }
 
         /// <summary>
+        /// Adds IEventListener as a transient instance.
+        /// </summary>
+        /// <param name="services">IServiceCollection</param>
+        public static IServiceCollection AddMudEventManager(this IServiceCollection services)
+        {
+            services.TryAddTransient<IEventListener, EventListener>();
+            return services;
+        }
+
+        /// <summary>
         /// Adds common services required by MudBlazor components
         /// </summary>
         /// <param name="services">IServiceCollection</param>
@@ -173,18 +230,21 @@ namespace MudBlazor.Services
         /// <returns>Continues the IServiceCollection chain.</returns>
         public static IServiceCollection AddMudServices(this IServiceCollection services, MudServicesConfiguration configuration = null)
         {
-            if (configuration == null)
-                configuration = new MudServicesConfiguration();
+            configuration ??= new MudServicesConfiguration();
             return services
                 .AddMudBlazorDialog()
                 .AddMudBlazorSnackbar(configuration.SnackbarConfiguration)
                 .AddMudBlazorResizeListener(configuration.ResizeOptions)
                 .AddMudBlazorResizeObserver(configuration.ResizeObserverOptions)
                 .AddMudBlazorResizeObserverFactory()
+                .AddMudBlazorKeyInterceptor()
+                .AddMudBlazorJsEvent()
                 .AddMudBlazorScrollManager()
                 .AddMudBlazorScrollListener()
+                .AddMudBlazorJsApi()
                 .AddMudBlazorScrollSpy()
-                .AddMudBlazorJsApi();
+                .AddMudPopoverService(configuration.PopoverOptions)
+                .AddMudEventManager();
         }
 
         /// <summary>
@@ -205,10 +265,14 @@ namespace MudBlazor.Services
                 .AddMudBlazorResizeListener(options.ResizeOptions)
                 .AddMudBlazorResizeObserver(options.ResizeObserverOptions)
                 .AddMudBlazorResizeObserverFactory()
+                .AddMudBlazorKeyInterceptor()
+                .AddMudBlazorJsEvent()
                 .AddMudBlazorScrollManager()
                 .AddMudBlazorScrollListener()
+                .AddMudBlazorJsApi()
+                .AddMudPopoverService(options.PopoverOptions)
                 .AddMudBlazorScrollSpy()
-                .AddMudBlazorJsApi();
+                .AddMudEventManager();
         }
     }
 }

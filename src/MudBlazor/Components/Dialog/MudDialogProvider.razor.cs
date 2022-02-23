@@ -1,6 +1,6 @@
 ﻿// Copyright (c) 2020 Jonny Larsson
 // License: MIT
-// See https://github.com/Garderoben/MudBlazor
+// See https://github.com/MudBlazor/MudBlazor
 // Modified version of Blazored Modal
 // Copyright (c) 2019 Blazored
 // License: MIT
@@ -19,15 +19,16 @@ namespace MudBlazor
         [Inject] private IDialogService DialogService { get; set; }
         [Inject] private NavigationManager NavigationManager { get; set; }
 
-        [Parameter] public bool? NoHeader { get; set; }
-        [Parameter] public bool? CloseButton { get; set; }
-        [Parameter] public bool? DisableBackdropClick { get; set; }
-        [Parameter] public bool? FullWidth { get; set; }
-        [Parameter] public DialogPosition? Position { get; set; }
-        [Parameter] public MaxWidth? MaxWidth { get; set; }
+        [Parameter] [Category(CategoryTypes.Dialog.Behavior)] public bool? NoHeader { get; set; }
+        [Parameter] [Category(CategoryTypes.Dialog.Behavior)] public bool? CloseButton { get; set; }
+        [Parameter] [Category(CategoryTypes.Dialog.Behavior)] public bool? DisableBackdropClick { get; set; }
+        [Parameter] [Category(CategoryTypes.Dialog.Behavior)] public bool? CloseOnEscapeKey { get; set; }
+        [Parameter] [Category(CategoryTypes.Dialog.Appearance)] public bool? FullWidth { get; set; }
+        [Parameter] [Category(CategoryTypes.Dialog.Appearance)] public DialogPosition? Position { get; set; }
+        [Parameter] [Category(CategoryTypes.Dialog.Appearance)] public MaxWidth? MaxWidth { get; set; }
 
-        private readonly Collection<IDialogReference> _dialogs = new Collection<IDialogReference>();
-        private readonly DialogOptions _globalDialogOptions = new DialogOptions();
+        private readonly Collection<IDialogReference> _dialogs = new();
+        private readonly DialogOptions _globalDialogOptions = new();
 
         protected override void OnInitialized()
         {
@@ -36,6 +37,7 @@ namespace MudBlazor
             NavigationManager.LocationChanged += LocationChanged;
 
             _globalDialogOptions.DisableBackdropClick = DisableBackdropClick;
+            _globalDialogOptions.CloseOnEscapeKey = CloseOnEscapeKey;
             _globalDialogOptions.CloseButton = CloseButton;
             _globalDialogOptions.NoHeader = NoHeader;
             _globalDialogOptions.Position = Position;

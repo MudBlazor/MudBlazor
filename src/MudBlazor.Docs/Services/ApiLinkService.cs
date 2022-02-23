@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using MudBlazor.Docs.Models;
 
@@ -16,17 +15,16 @@ namespace MudBlazor.Docs.Services
 
     public class ApiLinkService : IApiLinkService
     {
-        private Dictionary<string, ApiLinkServiceEntry> _lookup = new Dictionary<string, ApiLinkServiceEntry>();
+        private Dictionary<string, ApiLinkServiceEntry> _lookup = new();
 
         //constructor with DI
         public ApiLinkService(IMenuService menuService)
         {
 
             Register(menuService.Api);//this also registers components
-            Register(menuService.GettingStarted);
             Register(menuService.Customization);
             Register(menuService.Features);
-            Register(menuService.About);
+            Register(menuService.Utilities);
 
         }
 
@@ -46,7 +44,12 @@ namespace MudBlazor.Docs.Services
                 return Task.FromResult<IEnumerable<ApiLinkServiceEntry>>(null);
             var s = text.ToLowerInvariant();
             return Task.FromResult<IEnumerable<ApiLinkServiceEntry>>(
-                _lookup.Where(x => IsMatch(x, s)).Select(x => x.Value).Distinct().ToArray()
+                _lookup
+                .Where(x => IsMatch(x, s))
+                .Select(x => x.Value)
+                .Distinct()
+                .OrderByDescending(e => e.Title.ToLowerInvariant().StartsWith(s))
+                .ToArray()
             );
         }
 
@@ -76,7 +79,7 @@ namespace MudBlazor.Docs.Services
                 RegisterPage(
                 title: item.Name,
                 subtitle: $"{item.ComponentName} usage examples",
-                componentType: item.Component,
+                componentType: item.Type,
                 link: $"components/{item.Link}"
                 );
 
@@ -84,8 +87,8 @@ namespace MudBlazor.Docs.Services
                 RegisterPage(
                     title: item.ComponentName,
                     subtitle: $"API documentation",
-                    componentType: item.Component,
-                    link: ApiLink.GetApiLinkFor(item.Component)
+                    componentType: item.Type,
+                    link: ApiLink.GetApiLinkFor(item.Type)
                     );
             }
 

@@ -1,4 +1,8 @@
-﻿class MudElementReference {
+﻿// Copyright (c) MudBlazor 2021
+// MudBlazor licenses this file to you under the MIT license.
+// See the LICENSE file in the project root for more information.
+
+class MudElementReference {
     constructor() {
         this.listenerId = 0;
         this.eventListeners = {};
@@ -75,17 +79,54 @@
             element.select();
         }
     }
-
-    getBoundingClientRect (element) {
-        if (element)
-        {
-            return element.getBoundingClientRect();
-        }
-        else
-        {
-            return null;
-        }
+    /**
+     * gets the client rect of the parent of the element
+     * @param {HTMLElement} element
+     */
+    getClientRectFromParent(element) {
+        if (!element) return;
+        let parent = element.parentElement;
+        if (!parent) return;
+        return this.getBoundingClientRect(parent);
     }
+
+    /**
+     * Gets the client rect of the first child of the element
+     * @param {any} element
+     */
+
+    getClientRectFromFirstChild(element) {
+        if (!element) return;
+        let child = element.children && element.children[0];
+        if (!child) return;
+        return this.getBoundingClientRect(child);
+    }
+
+
+    getBoundingClientRect(element) {
+        if (!element) return;
+
+        var rect = JSON.parse(JSON.stringify(element.getBoundingClientRect()));
+
+        rect.scrollY = window.scrollY || document.documentElement.scrollTop;
+        rect.scrollX = window.scrollX || document.documentElement.scrollLeft;
+
+        rect.windowHeight = window.innerHeight;
+        rect.windowWidth = window.innerWidth;
+        return rect;
+    }
+
+    /**
+     * Returns true if the element has any ancestor with style position==="fixed"
+     * @param {Element} element
+     */
+    hasFixedAncestors(element) {
+        for (; element && element !== document; element = element.parentNode) {
+            if (window.getComputedStyle(element).getPropertyValue("position") === "fixed")
+                return true;
+        }
+        return false
+    };
 
     changeCss (element, css) {
         if (element)

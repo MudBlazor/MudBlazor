@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 
@@ -13,6 +12,7 @@ namespace MudBlazor
         /// Collection of T
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.General.Data)]
         public RenderFragment ChildContent { get; set; }
 
         /// <summary>
@@ -20,12 +20,12 @@ namespace MudBlazor
         /// </summary>
         public List<TChildComponent> Items { get; } = new List<TChildComponent>();
 
-        private TChildComponent _lastContainer = null;
         private int _selectedIndexField = -1;
         /// <summary>
-        /// Selected MudCarouselItem's index
+        /// Selected Item's index
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.General.Behavior)]
         public int SelectedIndex
         {
             get => _selectedIndexField;
@@ -34,8 +34,9 @@ namespace MudBlazor
                 if (SelectedIndex == value)
                     return;
 
-                _lastContainer = _selectedIndexField >= 0 ? SelectedContainer : null;
+                LastContainer = _selectedIndexField >= 0 ? SelectedContainer : null;
                 _selectedIndexField = value;
+                SelectionChanged();
                 StateHasChanged();
                 SelectedIndexChanged.InvokeAsync(value);
             }
@@ -47,10 +48,7 @@ namespace MudBlazor
         /// <summary>
         /// Gets the Selected TChildComponent
         /// </summary>
-        public TChildComponent LastContainer
-        {
-            get => _lastContainer;
-        }
+        public TChildComponent LastContainer { get; private set; } = null;
 
         /// <summary>
         /// Gets the Selected TChildComponent
@@ -110,31 +108,9 @@ namespace MudBlazor
                 SelectedIndex = index;
             }
         }
-    }
 
-    public abstract class MudBaseBindableItemsControl<TChildComponent, TData> : MudBaseItemsControl<TChildComponent>
-        where TChildComponent : MudComponentBase
-    {
+        protected virtual void SelectionChanged() { }
 
-        /// <summary>
-        /// Items Collection - For databinding usage
-        /// </summary>
-        [Parameter]
-        public IEnumerable<TData> ItemsSource { get; set; }
-
-        /// <summary>
-        /// Template for each Item in ItemsSource collection
-        /// </summary>
-        [Parameter]
-        public RenderFragment<TData> ItemTemplate { get; set; }
-
-        /// <summary>
-        /// Gets the Selected Item from ItemsSource, or Selected TChildComponent, when it's null
-        /// </summary>
-        public object SelectedItem
-        {
-            get => ItemsSource == null ? Items[SelectedIndex] : ItemsSource.ElementAtOrDefault(SelectedIndex);
-        }
-
+        public virtual void AddItem(TChildComponent item) { }
     }
 }

@@ -1,0 +1,34 @@
+﻿@namespace MudBlazor
+@typeparam T
+@inherits MudBaseColumn
+
+@if (Visible)
+{
+    @if (Mode == Rendermode.Header)
+    {
+        <MudTh>@HeaderText</MudTh>
+    }
+    else if (Mode == Rendermode.Item || (ReadOnly && Mode == Rendermode.Edit))
+    {
+        <MudTd DataLabel="@HeaderText">@GetFormattedString(Value)</MudTd>
+    }
+    else if (Mode == Rendermode.Edit)
+    {
+        <MudTd DataLabel="@HeaderText"><MudTextField @bind-Value="InternalValue" /></MudTd>
+    }
+    else if (Mode == Rendermode.Footer)
+    {
+        @if (_footerValueAvailable)
+        {
+            <MudTd>
+                @GetFormattedString(FooterValue)
+            </MudTd>
+        }
+        else
+        {
+            <MudTd>
+                 @FooterText
+            </MudTd>
+        }
+    }
+}

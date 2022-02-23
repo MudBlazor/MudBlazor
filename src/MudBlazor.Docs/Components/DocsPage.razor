@@ -1,25 +1,36 @@
-﻿<MudContainer MaxWidth="@MaxWidth">
-    <div id="docspage" class="docs-page">
-        <CascadingValue Value="this" IsFixed="true">
-            @ChildContent
-        </CascadingValue>
-    </div>
-    @if(_sections != null)
+﻿
+<MudMainContent Class="mudblazor-main-content">
+    <MudContainer MaxWidth="MaxWidth.Large">
+        <div id="docspage" class="docs-page">
+            <CascadingValue Value="this" IsFixed>
+                @ChildContent
+            </CascadingValue>
+        </div>
+        <div class="docs-navigation-footer">
+            <NavigationFooter Section=_section Previous="@_previous" Next="@_next" />
+        </div>
+    </MudContainer>
+    @if (DisplayFooter)
+    {
+        <MudContainer MaxWidth="MaxWidth.Large" Class="mt-16">
+            <Footer />
+        </MudContainer>
+    }
+    <MudDrawer Class="docs-page-content-navigation-drawer" @bind-Open="_contentDrawerOpen" Breakpoint="Breakpoint.Lg" Anchor="Anchor.End" ClipMode="DrawerClipMode.Always" Elevation="0" Color="Color.Transparent">
+        @if (_displayView)
         {
-            <div class="docs-contents">
-                <MudDrawer Open="true" Anchor="Anchor.End" Variant="DrawerVariant.Temporary" DisableOverlay="true" ClipMode="DrawerClipMode.Always" Elevation="0" Color="Color.Transparent" Class="pt-6" Width="220px">
-                    <MudText Typo="Typo.h6" GutterBottom="true">
-                        Contents
-                    </MudText>
-                    <MudNavMenu Class="pl-4">
-                        @foreach(var section in _sections)
-                        {
-                            <MudNavLink Match="NavLinkMatch.All" Class="@GetNavLinkClass(section.Active)" @onclick="@(e => OnNavLinkClick(section.Id))">
-                                @section.Title
-                            </MudNavLink>
-                        }
-                    </MudNavMenu>
-                </MudDrawer>
+            <MudText Typo="Typo.subtitle1" Class="title" GutterBottom="true">
+                Mode
+            </MudText>
+            <div class="d-flex px-2 mb-2">
+                <NavLink class="mode-links mr-2" href="@($"components/{_componentName}")" Match="NavLinkMatch.All">Overview</NavLink>
+                <NavLink class="mode-links ml-2" href="@($"api/{_componentName}")" Match="NavLinkMatch.All">API</NavLink>
             </div>
         }
-</MudContainer>
+        <MudPageContentNavigation SectionClassSelector="docs-section-header" @ref="_contentNavigation" ActivateFirstSectionAsDefault="true"/>
+        @if (_renderAds)
+        {
+            <MudElement HtmlTag="script" async type="text/javascript" src="//cdn.carbonads.com/carbon.js?serve=CESDLK3E&placement=mudblazorcom" id="_carbonads_js"></MudElement>
+        }
+    </MudDrawer>
+</MudMainContent>

@@ -1,21 +1,22 @@
 ﻿using System;
 using System.Globalization;
-using MudColor = System.Drawing.Color;
-
+using System.Diagnostics.CodeAnalysis;
 
 namespace MudBlazor.Utilities
 {
+    [ExcludeFromCodeCoverage]
+    [Obsolete("Use MudColor instead.", true)]
     public class ColorManager
     {
-        public static MudColor FromHex(string hex)
+        public static System.Drawing.Color FromHex(string hex)
         {
             FromHex(hex, out var a, out var r, out var g, out var b);
 
-            return MudColor.FromArgb(a, r, g, b);
+            return System.Drawing.Color.FromArgb(a, r, g, b);
         }
 
         // amount is between 0.0 and 1.0
-        public static MudColor ColorLighten(MudColor rgbColor, double amount)
+        public static System.Drawing.Color ColorLighten(System.Drawing.Color rgbColor, double amount)
         {
             var hsl = ColorTransformation.RgBtoHsl(rgbColor);
             hsl.L = Math.Max(0, Math.Min(1, hsl.L + amount));
@@ -23,7 +24,7 @@ namespace MudBlazor.Utilities
         }
 
         // amount is between 0.0 and 1.0
-        public static MudColor ColorDarken(MudColor rgbColor, double amount)
+        public static System.Drawing.Color ColorDarken(System.Drawing.Color rgbColor, double amount)
         {
             var hsl = ColorTransformation.RgBtoHsl(rgbColor);
             hsl.L = Math.Max(0, Math.Min(1, hsl.L - amount));
@@ -65,7 +66,7 @@ namespace MudBlazor.Utilities
                 return hex + "FF";
             }
 
-            if (hex.Length < 3 || hex.Length > 4)
+            if (hex.Length is < 3 or > 4)
             {
                 return null;
             }

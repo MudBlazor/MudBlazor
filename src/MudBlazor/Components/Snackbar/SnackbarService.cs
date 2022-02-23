@@ -7,7 +7,6 @@ using System.Linq;
 using System.Threading;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Routing;
-using Microsoft.Extensions.Options;
 
 namespace MudBlazor
 {
@@ -24,8 +23,7 @@ namespace MudBlazor
         public SnackbarService(NavigationManager navigationManager, SnackbarConfiguration configuration = null)
         {
             _navigationManager = navigationManager;
-            if (configuration == null)
-                configuration = new SnackbarConfiguration();
+            configuration ??= new SnackbarConfiguration();
 
             Configuration = configuration;
             Configuration.OnUpdate += ConfigurationUpdated;
@@ -51,7 +49,7 @@ namespace MudBlazor
             }
         }
 
-        [Obsolete]
+        [Obsolete("Use Add instead.", true)]
         public Snackbar AddNew(Severity severity, string message, Action<SnackbarOptions> configure)
         {
             return Add(message, severity, configure);

@@ -1,0 +1,9 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudTextField @bind-Value="_string" Label="Clearable Standard" Variant="Variant.Text" Clearable="true" Adornment="Adornment.End" AdornmentIcon="@Icons.Custom.Brands.MudBlazor" AdornmentColor="Color.Primary" Immediate="true" />
+<MudTextField @bind-Value="_string" Label="Clearable Filled" Variant="Variant.Filled" Clearable="true" Immediate="true" />
+<MudTextField @bind-Value="_string" Label="Clearable Outlined" Variant="Variant.Outlined" Clearable="true" />
+
+@code {
+    string _string;
+}

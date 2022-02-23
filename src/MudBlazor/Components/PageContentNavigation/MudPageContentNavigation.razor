@@ -1,0 +1,22 @@
+﻿@namespace MudBlazor
+@inherits MudComponentBase
+@using Microsoft.AspNetCore.Components.Routing
+
+<div class="@GetPanelClass()" @attributes="UserAttributes">
+    @if (_sections.Any() && _sections.Count() > 1)
+    {
+        <MudText Typo="Typo.subtitle1" Class="title" GutterBottom="true">
+            @Headline
+        </MudText>
+        <MudNavMenu Class="pl-4">
+            @foreach (var docSection in _sections.OrderBy(x => x.LevelSortingValue))
+            {
+                <MudNavLink @key="docSection.Id" Match="NavLinkMatch.All" Class="@GetNavLinkClass(docSection)" @onclick="@(e => OnNavLinkClick(docSection.Id))">
+                    @docSection.Title
+                </MudNavLink>
+			}
+        </MudNavMenu>
+    }
+</div>
+
+    @code { }

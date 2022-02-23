@@ -29,17 +29,11 @@
     }
 
     @each $breakpoint in map-keys($breakpoints) {
-        &.mud-drawer-mini.mud-drawer-#{$breakpoint} {
-            @media (max-width: map-get($breakpoints, $breakpoint) - 1px) {
-                z-index: calc(var(--mud-zindex-appbar) + 2);
-            }
-        }
-
-        &.mud-drawer-responsive.mud-drawer-#{$breakpoint} {
+        &.mud-drawer-mini.mud-drawer-#{$breakpoint}:not(.mud-drawer--closed), &.mud-drawer-responsive.mud-drawer-#{$breakpoint} {
             @media (max-width: map-get($breakpoints, $breakpoint) - 1px) {
                 z-index: calc(var(--mud-zindex-appbar) + 2);
 
-                &.mud-drawer--initial {
+                &.mud-drawer--initial:not(.mud-drawer-mini) {
                     display: none !important;
                 }
             }
@@ -62,6 +56,7 @@
             }
 
             &.mud-drawer--closed {
+                box-shadow: none;
                 left: calc(-1 * var(--mud-drawer-width, var(--mud-drawer-width-left)));
 
                 &:not(.mud-drawer--initial) {
@@ -83,6 +78,7 @@
             }
 
             &.mud-drawer--closed {
+                box-shadow: none;
                 right: calc(-1 * var(--mud-drawer-width, var(--mud-drawer-width-right)));
 
                 &:not(.mud-drawer--initial) {
@@ -247,31 +243,31 @@
 
 .mud-drawer-header {
     display: flex;
-    min-height: var(--mud-appbar-min-height);
+    min-height: var(--mud-appbar-height);
     padding: 12px 24px 12px 24px;
 
     &.mud-drawer-header-dense {
-        min-height: calc(var(--mud-appbar-min-height) - 16px);
+        min-height: calc(var(--mud-appbar-height) - var(--mud-appbar-height) / 4);
         padding: 8px 24px 8px 24px;
     }
 }
 
 .mud-drawer-fixed {
-    &.mud-drawer-mini:not(.mud-drawer-clipped-never),
+    &.mud-drawer-mini.mud-drawer-clipped-always,
     &.mud-drawer-persistent:not(.mud-drawer-clipped-never),
     &.mud-drawer-responsive.mud-drawer-clipped-always,
     &.mud-drawer-temporary.mud-drawer-clipped-always {
-        top: var(--mud-appbar-min-height);
-        height: calc(100% - var(--mud-appbar-min-height));
+        top: var(--mud-appbar-height);
+        height: calc(100% - var(--mud-appbar-height));
 
         @media (max-width:$breakpoint-sm - 1px) and (orientation: landscape) {
-            top: calc(var(--mud-appbar-min-height) - 16px);
-            height: calc(100% - var(--mud-appbar-min-height) + 16px);
+            top: calc(var(--mud-appbar-height) - var(--mud-appbar-height) / 4);
+            height: calc(100% - calc(var(--mud-appbar-height) - var(--mud-appbar-height)/4));
         }
 
         @media (max-width:$breakpoint-sm - 1px) and (orientation: portrait) {
-            top: 56px;
-            height: calc(100% - 56px);
+            top: calc(var(--mud-appbar-height) - var(--mud-appbar-height) / 8);
+            height: calc(100% - calc(var(--mud-appbar-height) - var(--mud-appbar-height)/8));
         }
     }
 
@@ -279,37 +275,37 @@
         &.mud-drawer-mini.mud-drawer-clipped-docked.mud-drawer-#{$breakpoint},
         &.mud-drawer-responsive.mud-drawer-clipped-docked.mud-drawer-#{$breakpoint} {
             @media (min-width: map-get($breakpoints, $breakpoint)) {
-                top: var(--mud-appbar-min-height);
-                height: calc(100% - var(--mud-appbar-min-height));
+                top: var(--mud-appbar-height);
+                height: calc(100% - var(--mud-appbar-height));
 
                 @media (max-width:$breakpoint-sm - 1px) and (orientation: landscape) {
-                    top: calc(var(--mud-appbar-min-height) - 16px);
-                    height: calc(100% - var(--mud-appbar-min-height) + 16px);
+                    top: calc(var(--mud-appbar-height) - var(--mud-appbar-height) - var(--mud-appbar-height) / 4);
+                    height: calc(100% - var(--mud-appbar-height) + var(--mud-appbar-height) - var(--mud-appbar-height) / 4);
                 }
 
                 @media (max-width:$breakpoint-sm - 1px) and (orientation: portrait) {
-                    top: 56px;
-                    height: calc(100% - 56px);
+                    top: calc(var(--mud-appbar-height) - var(--mud-appbar-height) / 8);
+                    height: calc(100% - var(--mud-appbar-height) / 8);
                 }
             }
         }
     }
 }
 
-.mud-appbar-dense + .mud-drawer-fixed {
+.mud-appbar-dense ~ .mud-drawer-fixed {
     &.mud-drawer-mini:not(.mud-drawer-clipped-never),
     &.mud-drawer-persistent:not(.mud-drawer-clipped-never),
     &.mud-drawer-responsive.mud-drawer-clipped-always,
     &.mud-drawer-temporary.mud-drawer-clipped-always {
-        top: calc(var(--mud-appbar-min-height) - 16px);
-        height: calc(100% - var(--mud-appbar-min-height) + 16px);
+        top: calc(var(--mud-appbar-height) - var(--mud-appbar-height) / 4);
+        height: calc(100% - var(--mud-appbar-height) + var(--mud-appbar-height) / 4);
     }
 
     @each $breakpoint in map-keys($breakpoints) {
         @media (min-width: map-get($breakpoints, $breakpoint)) {
             &.mud-drawer-responsive.mud-drawer-clipped-docked.mud-drawer-#{$breakpoint} {
-                top: calc(var(--mud-appbar-min-height) - 16px);
-                height: calc(100% - var(--mud-appbar-min-height) + 16px);
+                top: calc(var(--mud-appbar-height) - var(--mud-appbar-height) / 4);
+                height: calc(100% - var(--mud-appbar-height) + var(--mud-appbar-height) / 4);
             }
         }
     }

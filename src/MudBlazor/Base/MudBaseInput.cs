@@ -3,6 +3,7 @@ using System.Globalization;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
@@ -13,58 +14,87 @@ namespace MudBlazor
         /// <summary>
         /// If true, the input element will be disabled.
         /// </summary>
-        [Parameter] public bool Disabled { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Behavior)]
+        public bool Disabled { get; set; }
 
         /// <summary>
         /// If true, the input will be read-only.
         /// </summary>
-        [Parameter] public bool ReadOnly { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Behavior)]
+        public bool ReadOnly { get; set; }
 
         /// <summary>
         /// If true, the input will take up the full width of its container.
         /// </summary>
-        [Parameter] public bool FullWidth { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Appearance)]
+        public bool FullWidth { get; set; }
 
         /// <summary>
         /// If true, the input will update the Value immediately on typing.
         /// If false, the Value is updated only on Enter.
         /// </summary>
-        [Parameter] public bool Immediate { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Behavior)]
+        public bool Immediate { get; set; }
 
         /// <summary>
         /// If true, the input will not have an underline.
         /// </summary>
-        [Parameter] public bool DisableUnderLine { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Appearance)]
+        public bool DisableUnderLine { get; set; }
 
         /// <summary>
         /// The HelperText will be displayed below the text field.
         /// </summary>
-        [Parameter] public string HelperText { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Behavior)]
+        public string HelperText { get; set; }
+
+        /// <summary>
+        /// If true, the helper text will only be visible on focus.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Behavior)]
+        public bool HelperTextOnFocus { get; set; }
 
         /// <summary>
         /// Icon that will be used if Adornment is set to Start or End.
         /// </summary>
-        [Parameter] public string AdornmentIcon { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Behavior)]
+        public string AdornmentIcon { get; set; }
 
         /// <summary>
         /// Text that will be used if Adornment is set to Start or End, the Text overrides Icon.
         /// </summary>
-        [Parameter] public string AdornmentText { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Behavior)]
+        public string AdornmentText { get; set; }
 
         /// <summary>
-        /// Sets Start or End Adornment if not set to None.
+        /// The Adornment if used. By default, it is set to None.
         /// </summary>
-        [Parameter] public Adornment Adornment { get; set; } = Adornment.None;
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Behavior)]
+        public Adornment Adornment { get; set; } = Adornment.None;
 
         /// <summary>
         /// The color of the adornment if used. It supports the theme colors.
         /// </summary>
-        [Parameter] public Color AdornmentColor { get; set; } = Color.Default;
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Appearance)]
+        public Color AdornmentColor { get; set; } = Color.Default;
 
         /// <summary>
-        /// Sets the Icon Size.
+        /// The Icon Size.
         /// </summary>
-        [Parameter] public Size IconSize { get; set; } = Size.Small;
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Appearance)]
+        public Size IconSize { get; set; } = Size.Medium;
 
         /// <summary>
         /// Button click event if set and Adornment used.
@@ -72,44 +102,99 @@ namespace MudBlazor
         [Parameter] public EventCallback<MouseEventArgs> OnAdornmentClick { get; set; }
 
         /// <summary>
-        /// Show clear button.
-        /// </summary>
-        [Parameter] public bool Clearable { get; set; } = false;
-
-        /// <summary>
-        /// Button click event for clear button. Called after text and value has been cleared.
-        /// </summary>
-        [Parameter] public EventCallback<MouseEventArgs> OnClearButtonClick { get; set; }
-
-        /// <summary>
-        /// Type of the input element. It should be a valid HTML5 input type.
-        /// </summary>
-        [Parameter] public InputType InputType { get; set; } = InputType.Text;
-
-        /// <summary>
         /// Variant to use.
         /// </summary>
-        [Parameter] public Variant Variant { get; set; } = Variant.Text;
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Appearance)]
+        public Variant Variant { get; set; } = Variant.Text;
 
         /// <summary>
         ///  Will adjust vertical spacing.
         /// </summary>
-        [Parameter] public Margin Margin { get; set; } = Margin.None;
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Appearance)]
+        public Margin Margin { get; set; } = Margin.None;
 
         /// <summary>
-        /// If true the input will focus automatically
+        /// The short hint displayed in the input before the user enters a value.
         /// </summary>
-        [Parameter] public bool AutoFocus { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Behavior)]
+        public string Placeholder { get; set; }
+
+        /// <summary>
+        /// If set, will display the counter, value 0 will display current count but no stop count.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Validation)]
+        public int? Counter { get; set; }
+
+        /// <summary>
+        /// Maximum number of characters that the input will accept
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Validation)]
+        public int MaxLength { get; set; } = 524288;
+
+        /// <summary>
+        /// If string has value the label text will be displayed in the input, and scaled down at the top if the input has value.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Behavior)]
+        public string Label { get; set; }
+
+        /// <summary>
+        /// If true the input will focus automatically.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Behavior)]
+        public bool AutoFocus { get; set; }
 
         /// <summary>
         ///  A multiline input (textarea) will be shown, if set to more than one line.
         /// </summary>
-        [Parameter] public int Lines { get; set; } = 1;
-
         [Parameter]
+        [Category(CategoryTypes.FormComponent.Behavior)]
+        public int Lines { get; set; } = 1;
+
+        /// <summary>
+        ///  The text to be displayed.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Data)]
         public string Text { get; set; }
 
-        protected async Task SetTextAsync(string text, bool updateValue = true)
+        /// <summary>
+        /// When TextUpdateSuppression is true (which is default) the text can not be updated by bindings while the component is focused in BSS (not WASM).
+        /// This solves issue #1012: Textfield swallowing chars when typing rapidly
+        /// If you need to update the input's text while it is focused you can set this parameter to false.
+        /// Note: on WASM text update suppression is not active, so this parameter has no effect.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Behavior)]
+        public bool TextUpdateSuppression { get; set; } = true;
+
+        /// <summary>
+        ///  Hints at the type of data that might be entered by the user while editing the input
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Behavior)]
+        public virtual InputMode InputMode { get; set; } = InputMode.text;
+
+        /// <summary>
+        /// The pattern attribute, when specified, is a regular expression which the input's value must match in order for the value to pass constraint validation. It must be a valid JavaScript regular expression
+        /// Not Supported in multline input
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Validation)]
+        public virtual string Pattern { get; set; }
+
+        /// <summary>
+        /// Derived classes need to override this if they can be something other than text
+        /// </summary>
+        internal virtual InputType GetInputType() { return InputType.Text; }
+
+        protected virtual async Task SetTextAsync(string text, bool updateValue = true)
         {
             if (Text != text)
             {
@@ -140,41 +225,53 @@ namespace MudBlazor
 
         public virtual ValueTask SelectRangeAsync(int pos1, int pos2) { return new ValueTask(); }
 
+        /// <summary>
+        /// Fired when the text value changes.
+        /// </summary>
         [Parameter] public EventCallback<string> TextChanged { get; set; }
 
+        /// <summary>
+        /// Fired when the element loses focus.
+        /// </summary>
         [Parameter] public EventCallback<FocusEventArgs> OnBlur { get; set; }
 
+        /// <summary>
+        /// Fired when the element changes internally its text value.
+        /// </summary>
         [Parameter]
         public EventCallback<ChangeEventArgs> OnInternalInputChanged { get; set; }
 
         protected bool _isFocused;
 
-        protected bool _shouldRenderBeForced;
-        //if you press Enter or Arrows, the input should re-render, because
-        //the user is accepting a value
-        private static bool ShouldRenderBeForced(string key) => key == "Enter"
-                                                             || key == "ArrowDown"
-                                                             || key == "ArrowUp"
-                                                             || key == "Tab";
-
-        protected virtual void OnBlurred(FocusEventArgs obj)
+        protected internal virtual void OnBlurred(FocusEventArgs obj)
         {
             _isFocused = false;
             Touched = true;
             BeginValidateAfter(OnBlur.InvokeAsync(obj));
         }
 
+        /// <summary>
+        /// Fired on the KeyDown event.
+        /// </summary>
         [Parameter] public EventCallback<KeyboardEventArgs> OnKeyDown { get; set; }
 
         protected virtual void InvokeKeyDown(KeyboardEventArgs obj)
         {
             _isFocused = true;
-            _shouldRenderBeForced = ShouldRenderBeForced(obj.Key);
             OnKeyDown.InvokeAsync(obj).AndForget();
         }
 
-        [Parameter] public bool KeyDownPreventDefault { get; set; }
+        /// <summary>
+        /// Prevent the default action for the KeyDown event.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Behavior)]
+        public bool KeyDownPreventDefault { get; set; }
 
+
+        /// <summary>
+        /// Fired on the KeyPress event.
+        /// </summary>
         [Parameter] public EventCallback<KeyboardEventArgs> OnKeyPress { get; set; }
 
         protected virtual void InvokeKeyPress(KeyboardEventArgs obj)
@@ -182,18 +279,30 @@ namespace MudBlazor
             OnKeyPress.InvokeAsync(obj).AndForget();
         }
 
-        [Parameter] public bool KeyPressPreventDefault { get; set; }
+        /// <summary>
+        /// Prevent the default action for the KeyPress event.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Behavior)]
+        public bool KeyPressPreventDefault { get; set; }
 
+        /// <summary>
+        /// Fired on the KeyUp event.
+        /// </summary>
         [Parameter] public EventCallback<KeyboardEventArgs> OnKeyUp { get; set; }
 
         protected virtual void InvokeKeyUp(KeyboardEventArgs obj)
         {
             _isFocused = true;
-            _shouldRenderBeForced = ShouldRenderBeForced(obj.Key);
             OnKeyUp.InvokeAsync(obj).AndForget();
         }
 
-        [Parameter] public bool KeyUpPreventDefault { get; set; }
+        /// <summary>
+        /// Prevent the default action for the KeyUp event.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Behavior)]
+        public bool KeyUpPreventDefault { get; set; }
 
         /// <summary>
         /// Fired when the Value property changes.
@@ -202,9 +311,10 @@ namespace MudBlazor
         public EventCallback<T> ValueChanged { get; set; }
 
         /// <summary>
-        /// The value of this input element. This property is two-way bindable.
+        /// The value of this input element.
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.FormComponent.Data)]
         public T Value
         {
             get => _value;
@@ -253,6 +363,7 @@ namespace MudBlazor
         /// Conversion format parameter for ToString(), can be used for formatting primitive types, DateTimes and TimeSpans
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.FormComponent.Behavior)]
         public string Format
         {
             get => ((Converter<T>)Converter).Format;
@@ -270,10 +381,12 @@ namespace MudBlazor
             return changed;
         }
 
-        protected override async Task ValidateValue()
+        protected override Task ValidateValue()
         {
             if (Standalone)
-                await base.ValidateValue();
+                return base.ValidateValue();
+
+            return Task.CompletedTask;
         }
 
         protected override async Task OnInitializedAsync()
@@ -285,6 +398,15 @@ namespace MudBlazor
             if (typeof(T) != typeof(string))
                 await UpdateTextPropertyAsync(false);
         }
+
+        public virtual void ForceRender(bool forceTextUpdate)
+        {
+            _forceTextUpdate = true;
+            UpdateTextPropertyAsync(false).AndForget();
+            StateHasChanged();
+        }
+
+        protected bool _forceTextUpdate;
 
         public override async Task SetParametersAsync(ParameterView parameters)
         {
@@ -299,7 +421,21 @@ namespace MudBlazor
 
             // Refresh Text from Value
             if (hasValue && !hasText)
-                await UpdateTextPropertyAsync(false);
+            {
+                var updateText = true;
+                if (_isFocused && !_forceTextUpdate)
+                {
+                    // Text update suppression, only in BSS (not in WASM).
+                    // This is a fix for #1012
+                    if (RuntimeLocation.IsServerSide && TextUpdateSuppression)
+                        updateText = false;
+                }
+                if (updateText)
+                {
+                    _forceTextUpdate = false;
+                    await UpdateTextPropertyAsync(false);
+                }
+            }
         }
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -311,12 +447,6 @@ namespace MudBlazor
             }
         }
 
-        protected override void RegisterAsFormComponent()
-        {
-            if (Standalone)
-                base.RegisterAsFormComponent();
-        }
-
         protected override void OnParametersSet()
         {
             if (Standalone)
@@ -325,7 +455,7 @@ namespace MudBlazor
 
         protected override void ResetValue()
         {
-            Text = null;
+            SetTextAsync(null, updateValue: true).AndForget();
             base.ResetValue();
         }
     }
