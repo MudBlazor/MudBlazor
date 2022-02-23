@@ -149,6 +149,13 @@ namespace MudBlazor
         public bool ResetValueOnEmptyText { get; set; } = false;
 
         /// <summary>
+        /// If true, clicking the text field will not select (highlight) its contents.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Behavior)]
+        public bool DisableSelectOnClick { get; set; } = false;
+
+        /// <summary>
         /// Debounce interval in milliseconds.
         /// </summary>
         [Parameter]
@@ -290,7 +297,8 @@ namespace MudBlazor
             IsOpen = open;
             if (open)
             {
-                await _elementReference.SelectAsync();
+                if (!DisableSelectOnClick)
+                    await _elementReference.SelectAsync();
                 await OnSearchAsync();
             }
             else
