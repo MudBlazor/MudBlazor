@@ -5,7 +5,14 @@
 <div class="@Class">
     @if (!string.IsNullOrWhiteSpace(Text))
     {
-        <MudText Color="@Color" tabindex="-1">@Text</MudText>
+        @if (AdornmentClick.HasDelegate)
+        {
+            <MudButton Size="@Size" Color="@Color" OnClick="@AdornmentClick" tabindex="-1">@Text</MudText>            
+        }
+        else
+        {
+             <MudText Color="@Color" tabindex="-1">@Text</MudText>
+        }       
     }
     else if (!string.IsNullOrWhiteSpace(Icon))
     {
