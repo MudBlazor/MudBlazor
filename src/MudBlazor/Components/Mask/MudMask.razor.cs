@@ -174,7 +174,7 @@ namespace MudBlazor
                 _keyInterceptor.KeyDown += e => HandleKeyDown(e).AndForget();
             }
             if (_isFocused && Mask.Selection == null)
-                SetCaretPosition(_caret, _selection, render: false);
+                SetCaretPosition(Mask.CaretPos, _selection, render: false);
             await base.OnAfterRenderAsync(firstRender);
         }
 
