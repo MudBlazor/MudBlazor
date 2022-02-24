@@ -156,7 +156,7 @@ namespace MudBlazor
             Close(dialog, DialogResult.Ok<object>(null));
         }
 
-        public void Close(DialogReference dialog, DialogResult result)
+        public virtual void Close(DialogReference dialog, DialogResult result)
         {
             OnDialogCloseRequested?.Invoke(dialog, result);
         }

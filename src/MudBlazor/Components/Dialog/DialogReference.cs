@@ -35,9 +35,7 @@ namespace MudBlazor
 
         public virtual bool Dismiss(DialogResult result)
         {
-            _resultCompletion.TrySetResult(result);
-
-            return true;
+            return _resultCompletion.TrySetResult(result);
         }
 
         public Guid Id { get; }
