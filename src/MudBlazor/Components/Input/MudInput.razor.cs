@@ -68,7 +68,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public RenderFragment ChildContent { get; set; }
 
-        private ElementReference _elementReference;
+        public ElementReference ElementReference { get; private set; }
         private ElementReference _elementReference1;
 
         public override async ValueTask FocusAsync()
@@ -78,7 +78,7 @@ namespace MudBlazor
                 if (InputType == InputType.Hidden && ChildContent != null)
                     await _elementReference1.FocusAsync();
                 else
-                    await _elementReference.FocusAsync();
+                    await ElementReference.FocusAsync();
             }
             catch (Exception e)
             {
@@ -88,12 +88,12 @@ namespace MudBlazor
 
         public override ValueTask SelectAsync()
         {
-            return _elementReference.MudSelectAsync();
+            return ElementReference.MudSelectAsync();
         }
 
         public override ValueTask SelectRangeAsync(int pos1, int pos2)
         {
-            return _elementReference.MudSelectRangeAsync(pos1, pos2);
+            return ElementReference.MudSelectRangeAsync(pos1, pos2);
         }
 
         /// <summary>
