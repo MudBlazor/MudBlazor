@@ -618,6 +618,15 @@ namespace MudBlazor.UnitTests.Components
             comp.WaitForAssertion(() => input.Instance.Value.Should().Be(""));
             comp.WaitForAssertion(() => input.Instance.Text.Should().Be(""));
         }
+        
+        [Test]
+        public async Task TextField_ElementReferenceId_ShouldNot_BeEmpty()
+        {
+            var comp = Context.RenderComponent<MudTextField<string>>();
+            var inputId = comp.Instance.InputReference.ElementReference.Id;
+
+            Assert.IsNotEmpty(inputId);
+        }
     }
 
 }
