@@ -13,7 +13,7 @@ namespace MudBlazor
            .AddClass(Class)
            .Build();
 
-        private MudInput<string> _elementReference;
+        public MudInput<string> InputReference { get; private set; }
         private MudMask _maskReference;
 
         /// <summary>
@@ -42,7 +42,7 @@ namespace MudBlazor
         public override ValueTask FocusAsync()
         {
             if (_mask == null)
-                return _elementReference.FocusAsync();
+                return InputReference.FocusAsync();
             else
                 return _maskReference.FocusAsync();
         }
@@ -50,7 +50,7 @@ namespace MudBlazor
         public override ValueTask SelectAsync()
         {
             if (_mask == null)
-                return _elementReference.SelectAsync();
+                return InputReference.SelectAsync();
             else
                 return _maskReference.SelectAsync();
         }
@@ -58,7 +58,7 @@ namespace MudBlazor
         public override ValueTask SelectRangeAsync(int pos1, int pos2)
         {
             if (_mask == null)
-                return _elementReference.SelectRangeAsync(pos1, pos2);
+                return InputReference.SelectRangeAsync(pos1, pos2);
             else
                 return _maskReference.SelectRangeAsync(pos1, pos2);
         }
@@ -66,7 +66,7 @@ namespace MudBlazor
         protected override void ResetValue()
         {
             if(_mask == null)            
-                _elementReference.Reset();            
+                InputReference.Reset();            
             else            
                 _maskReference.Reset();            
             base.ResetValue();
@@ -79,7 +79,7 @@ namespace MudBlazor
         public Task Clear()
         {
             if (_mask == null)
-                return _elementReference.SetText(null);
+                return InputReference.SetText(null);
             else
                 return _maskReference.Clear();
         }
@@ -92,7 +92,7 @@ namespace MudBlazor
         public Task SetText(string text)
         {
             if (_mask == null)
-                return _elementReference?.SetText(text);
+                return InputReference?.SetText(text);
             else
                 return _maskReference.Clear().ContinueWith(t => _maskReference.OnPaste(text));
         }
