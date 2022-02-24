@@ -188,7 +188,7 @@ public class RegexMask : BaseMask
     /// <summary>
     /// Creates a predefined RegexMask for an IPv4 Address with or without port masking.
     /// </summary>
-    /// <param includePort="bool">
+    /// <param name="includePort">
     /// /// Set to true to include port to the mask.
     /// </param>
     public static RegexMask IPv4(bool includePort = false)
@@ -199,8 +199,8 @@ public class RegexMask : BaseMask
         var delimiters = ".";
         if (includePort)
         {
-            const string IP_Port = "(:|:(6553[0-5]|655[0-2][0-9]|65[0-4][0-9]{2}|6[0-4][0-9]{3}|[1-5][0-9]{4}|[1-9][0-9]{0,3}))?";
-            ipv4 = $"{ipv4}{IP_Port}";
+            const string IpPort = "(:|:(6553[0-5]|655[0-2][0-9]|65[0-4][0-9]{2}|6[0-4][0-9]{3}|[1-5][0-9]{4}|[1-9][0-9]{0,3}))?";
+            ipv4 = $"{ipv4}{IpPort}";
             mask = $"{mask}:00000";
             delimiters += ":";
         }
@@ -215,7 +215,7 @@ public class RegexMask : BaseMask
     /// <summary>
     /// Creates a predefined RegexMask for an IPv6 Address with or without port masking.
     /// </summary>
-    /// <param includePort="bool">
+    /// <param name="includePort">
     /// /// Set to true to include port to the mask.
     /// </param>
     public static RegexMask IPv6(bool includePort = false)
@@ -227,8 +227,8 @@ public class RegexMask : BaseMask
         var delimiters = ":";
         if (includePort)
         {
-            const string IP_Port = "(\\]|\\]:|\\]:(6553[0-5]|655[0-2][0-9]|65[0-4][0-9]{2}|6[0-4][0-9]{3}|[1-5][0-9]{4}|[1-9][0-9]{0,3}))?";
-            ipv6 = $"((\\[{ipv6}){IP_Port})";
+            const string IpPort = "(\\]|\\]:|\\]:(6553[0-5]|655[0-2][0-9]|65[0-4][0-9]{2}|6[0-4][0-9]{3}|[1-5][0-9]{4}|[1-9][0-9]{0,3}))?";
+            ipv6 = $"((\\[{ipv6}){IpPort})";
             mask = $"[{mask}]:00000";
             delimiters += "[]";
         }
@@ -237,6 +237,24 @@ public class RegexMask : BaseMask
         {
             Delimiters = delimiters,
             AllowOnlyDelimiters = true
+        };
+        return regexMask;
+    }
+
+    /// <summary>
+    /// Creates a predefined RegexMask for Email Address.
+    /// </summary>
+    /// <param name="mask">
+    /// /// Set the email mask. Default is "Ex. user@domain.com"
+    /// </param>
+    public static RegexMask Email(string mask = "Ex. user@domain.com")
+    {
+        const string Regex = "^(?>[\\w\\-\\+]+\\.?)+(?>@?|@)(?<!(\\.@))(?>\\w+\\.)*(\\w+)?$";
+        const string Delimiters = "@.";
+
+        var regexMask = new RegexMask(Regex, mask)
+        {
+            Delimiters = Delimiters
         };
         return regexMask;
     }
