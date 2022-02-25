@@ -250,12 +250,18 @@ namespace MudBlazor.Docs.Services
             new DocsLink {Group = "Layout", Title = "Object Position", Href = "utilities/object-position"},
             new DocsLink {Group = "Layout", Title = "Position", Href = "utilities/position"},
             
+            new DocsLink {Group = "Flexbox", Title = "Enable Flexbox", Href = "utilities/enable-flex"},
             new DocsLink {Group = "Flexbox", Title = "Flex Direction", Href = "utilities/flex-direction"},
+            new DocsLink {Group = "Flexbox", Title = "Flex Wrap", Href = "utilities/flex-wrap"},
             new DocsLink {Group = "Flexbox", Title = "Flex", Href = "utilities/flex"},
             new DocsLink {Group = "Flexbox", Title = "Flex Grow", Href = "utilities/flex-grow"},
             new DocsLink {Group = "Flexbox", Title = "Flex Shrink", Href = "utilities/flex-shrink"},
             new DocsLink {Group = "Flexbox", Title = "Order", Href = "utilities/order"},
             new DocsLink {Group = "Flexbox", Title = "Gap", Href = "utilities/gap"},
+            new DocsLink {Group = "Flexbox", Title = "Justify Content", Href = "utilities/justify-content"},
+            new DocsLink {Group = "Flexbox", Title = "Align Content", Href = "utilities/align-content"},
+            new DocsLink {Group = "Flexbox", Title = "Align Items", Href = "utilities/align-items"},
+            new DocsLink {Group = "Flexbox", Title = "Align Self", Href = "utilities/align-self"},
             
             new DocsLink {Group = "Spacing", Title = "Spacing", Href = "utilities/spacing"},
             
