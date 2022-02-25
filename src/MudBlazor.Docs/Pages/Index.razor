@@ -73,31 +73,7 @@
             </MudText>
         </MudItem>
     </MudGrid>
-</LandingSection>
 
-<LandingSection Straight="true" BackgroundClass="sweet" Class="mb-16">
-    <MudText Typo="Typo.h6" Color="Color.Primary">Choose your style</MudText>
-    <MudText Typo="Typo.h5">So much more than just Material</MudText>
-    <MudGrid>
-        <MudItem xs="12" sm="6">
-            <MudText Typo="Typo.subtitle1" Class="mud-text-secondary">
-                MudBlazor was built around the idea that that it should be able to look like anything without any custom CSS or rely on any other framework. Express your own style with MudTheme, just in C#.
-            </MudText>
-            <MudChipSet Filter="true" Mandatory="true" Class="mt-12">
-                <MudChip Text="Landing Page" OnClick="@(() => SetDemoTheme(""))" Variant="Variant.Text" SelectedColor="Color.Primary" Class="z-20" Default="true" />
-                <MudChip Text="Default MudBlazor" OnClick="@(() => SetDemoTheme("default-mudblazor"))" Variant="Variant.Text" SelectedColor="Color.Primary" Class="z-20" />
-                <MudChip Text="Enterprise" OnClick="@(() => SetDemoTheme("enterprise"))" Variant="Variant.Text" SelectedColor="Color.Primary" Class="z-20" />
-                <MudChip Text="Smooth" OnClick="@(() => SetDemoTheme("smooth"))" Variant="Variant.Text" SelectedColor="Color.Primary" Class="z-20" />
-                <MudChip Text="Playful" OnClick="@(() => SetDemoTheme("playful"))" Variant="Variant.Text" SelectedColor="Color.Primary" Class="z-20" />
-            </MudChipSet>
-        </MudItem>
-        <MudItem xs="12">
-            <ThemingDemo ThemeClass="@_demoThemeClass"/>
-        </MudItem>
-    </MudGrid>
-</LandingSection>
-    
-<LandingSection Straight="true" BackgroundClass="sweet">
     <div class="@GetTestimonialClass()">
         <MudText Typo="Typo.h3" Align="Align.Center" Class="mt-16 mb-8">“Never had such a good time making a site“</MudText>
         <div class="absolute z-20 d-flex justify-center align-end mud-width-full mud-height-full">
@@ -400,13 +376,6 @@
         {
             return $"lp-testimonials hide-testimonials";
         }
-    }
-
-    private string _demoThemeClass = "";
-
-    private void SetDemoTheme(string value)
-    {
-        _demoThemeClass = value;
     }
 
 }
