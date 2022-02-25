@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using MudBlazor.Charts;
@@ -252,6 +252,7 @@ namespace MudBlazor.Docs.Services
             
             new DocsLink {Group = "Flexbox", Title = "Flex", Href = "utilities/flex"},
             new DocsLink {Group = "Flexbox", Title = "Flex Grow", Href = "utilities/flex-grow"},
+            new DocsLink {Group = "Flexbox", Title = "Flex Shrink", Href = "utilities/flex-shrink"},
             new DocsLink {Group = "Flexbox", Title = "Order", Href = "utilities/order"},
             new DocsLink {Group = "Flexbox", Title = "Gap", Href = "utilities/gap"},
             
