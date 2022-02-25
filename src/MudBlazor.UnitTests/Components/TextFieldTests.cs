@@ -626,7 +626,72 @@ namespace MudBlazor.UnitTests.Components
             var inputId = comp.Instance.InputReference.ElementReference.Id;
 
             Assert.IsNotEmpty(inputId);
+        }    
+
+        class TestDataAnnotationModel
+        {
+            [Required(ErrorMessage = "The {0} field is required.")]
+            public string Foo1 { get; set; }
+
+            [Required(ErrorMessage = "The {0} field is required.")]
+            [Display(Name = FooTwoDisplayName)]
+            [Compare(nameof(Foo1), ErrorMessage = "'{0}' and '{1}' do not match.")]
+            public string Foo2 { get; set; }
+
+            public const string FooTwoDisplayName = "Foo two";
+        }
+
+        [Test]
+        public async Task TextField_Data_Annotation_Resolve_Name_Of_Field()
+        {
+            var model = new TestDataAnnotationModel();
+            var comp = Context.RenderComponent<MudTextField<string>>(ComponentParameter.CreateParameter("For", (Expression<Func<string>>)(() => model.Foo1)));
+            await comp.InvokeAsync(() => comp.Instance.Validate());
+            comp.Instance.Error.Should().BeTrue();
+            comp.Instance.ValidationErrors.Should().HaveCount(1);
+            comp.Instance.ValidationErrors[0].Should().Be($"The {nameof(TestDataAnnotationModel.Foo1)} field is required.");
+            comp.Instance.GetErrorText().Should().Be($"The {nameof(TestDataAnnotationModel.Foo1)} field is required.");
+            await comp.InvokeAsync(() =>
+            {
+                comp.Instance.Value = "Foo";
+                comp.Instance.Validate();
+            });
+            comp.Instance.Error.Should().BeFalse();
+            comp.Instance.ValidationErrors.Should().HaveCount(0);
+        }
+
+        [Test]
+        public async Task TextField_Data_Annotation_Resolve_Display_Name_Of_Field()
+        {
+            var model = new TestDataAnnotationModel();
+            var comp = Context.RenderComponent<MudTextField<string>>(ComponentParameter.CreateParameter("For", (Expression<Func<string>>)(() => model.Foo2)));
+            await comp.InvokeAsync(() => comp.Instance.Validate());
+            comp.Instance.Error.Should().BeTrue();
+            comp.Instance.ValidationErrors.Should().HaveCount(1);
+            comp.Instance.ValidationErrors[0].Should().Be($"The {TestDataAnnotationModel.FooTwoDisplayName} field is required.");
+            comp.Instance.GetErrorText().Should().Be($"The {TestDataAnnotationModel.FooTwoDisplayName} field is required.");
+        }
+
+        [Test]
+        public async Task TextField_Data_Annotation_Compare()
+        {
+            var model = new TestDataAnnotationModel();
+            var value = "Foo";
+            var comp = Context.RenderComponent<MudTextField<string>>(
+                ComponentParameter.CreateParameter("For", (Expression<Func<string>>)(() => model.Foo2)),
+                ComponentParameter.CreateParameter("Value", value));
+            await comp.InvokeAsync(() => comp.Instance.Validate());
+            comp.Instance.Error.Should().BeTrue();
+            comp.Instance.ValidationErrors.Should().HaveCount(1);
+            comp.Instance.ValidationErrors[0].Should().Be($"'{TestDataAnnotationModel.FooTwoDisplayName}' and '{nameof(TestDataAnnotationModel.Foo1)}' do not match.");
+            comp.Instance.GetErrorText().Should().Be($"'{TestDataAnnotationModel.FooTwoDisplayName}' and '{nameof(TestDataAnnotationModel.Foo1)}' do not match.");
+            model.Foo1 = value;
+            await comp.InvokeAsync(() =>
+            {
+                comp.Instance.Validate();
+            });
+            comp.Instance.Error.Should().BeFalse();
+            comp.Instance.ValidationErrors.Should().HaveCount(0);
         }
     }
-
 }
