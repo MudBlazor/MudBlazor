@@ -111,7 +111,8 @@
     }
   
     &.utility-table{
-      height: 300px;
+      max-height: 300px;
+      overflow: auto;
       tbody tr{
         td {
           font-weight: 600;
