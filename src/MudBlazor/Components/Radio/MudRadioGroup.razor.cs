@@ -15,9 +15,13 @@ namespace MudBlazor
 
         private HashSet<MudRadio<T>> _radios = new();
 
-        [Parameter] public RenderFragment ChildContent { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.Radio.Behavior)]
+        public RenderFragment ChildContent { get; set; }
 
-        [Parameter] public string Name { get; set; } = Guid.NewGuid().ToString();
+        [Parameter]
+        [Category(CategoryTypes.Radio.Behavior)]
+        public string Name { get; set; } = Guid.NewGuid().ToString();
 
         public void CheckGenericTypeMatch(object select_item)
         {
@@ -27,6 +31,7 @@ namespace MudBlazor
         }
 
         [Parameter]
+        [Category(CategoryTypes.Radio.Data)]
         public T SelectedOption
         {
             get => _value;

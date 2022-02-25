@@ -1,27 +1,20 @@
-﻿#mudads {
-    margin-bottom: 50px;
-    min-height: 100px;
-}
-
-#carbonads * {
+﻿#carbonads * {
     margin: initial;
     padding: initial;
 }
 
 #carbonads {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Ubuntu, Cantarell, 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  margin: 16px;
+  padding: 16px;
+  z-index: 100;
+  max-width: 176px;
+  margin-right: auto;
+  animation: mud-animation-fadein ease .15s;
+  border-radius: var(--mud-default-borderradius);
+  background-color: var(--mud-palette-background-grey);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Ubuntu, Cantarell, 'Helvetica Neue', Helvetica, Arial, sans-serif;
 }
 
-#carbonads {
-    display: flex;
-    width: 100%;
-    max-width: 400px;
-    background-color: var(--mud-palette-surface);
-    box-shadow: 0 1px 3px hsla(0, 0%, 0%, .10);
-    border-radius: var(--mud-default-borderradius);
-    z-index: 100;
-    animation: mud-animation-fadein ease .15s;
-}
 
 // hide doubled ad
 #carbonads_1 {
@@ -45,39 +38,42 @@
 
 #carbonads .carbon-wrap {
     display: flex;
+    flex-direction: column;
 }
 
 #carbonads .carbon-img {
     display: block;
-    margin: 0;
     line-height: 1;
+    margin-bottom: .5rem;
 }
 
 #carbonads .carbon-img img {
-    display: block;
-    border-bottom-left-radius: var(--mud-default-borderradius);
-    border-top-left-radius: var(--mud-default-borderradius);
+  display: block;
+  width: 100%;
+  max-width: 160px !important;
+  height: auto;
+  border-radius: var(--mud-default-borderradius);
 }
 
 #carbonads .carbon-text {
-    font-size: 13px;
-    padding: 10px;
-    margin-bottom: 16px;
-    line-height: 1.5;
-    text-align: left;
+  display: block;
+  flex: 1 1 0%;
+  font-size: .875rem;
+  line-height: 1.625;
+  margin: 0;
+  text-align: left;
+  width: 100%;
+}
+
+#carbonads .carbon-text:hover{
+  color: #000;
 }
 
 #carbonads .carbon-poweredby {
-    display: block;
-    padding: 6px 8px;
-    text-align: center;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    font-weight: 600;
-    font-size: 8px;
-    line-height: 1;
-    border-top-left-radius: 3px;
-    position: absolute;
-    bottom: 0;
-    right: 0;
+  display: block;
+  font-size: .75rem;
+  line-height: 1rem;
+  margin-left: .5rem;
+  padding-top: .5rem;
+  text-align: right;
 }

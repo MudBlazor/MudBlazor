@@ -75,6 +75,10 @@
                 }
             </div>
         </div>
+		@if(PrePanelContent != null)
+		{
+			@PrePanelContent(ActivePanel)
+		}
         <div class="@PanelsClassnames">
             @ChildContent
         </div>

@@ -9,14 +9,13 @@ namespace MudBlazor.Docs.Services
     public interface IMenuService
     {
         //Menu sections
-        IEnumerable<DocsLink> GettingStarted { get; }
         IEnumerable<MudComponent> Components { get; }
         IEnumerable<MudComponent> Api { get; }
         MudComponent GetParent(Type type);
         MudComponent GetComponent(Type type);
         IEnumerable<DocsLink> Features { get; }
         IEnumerable<DocsLink> Customization { get; }
-        IEnumerable<DocsLink> About { get; }
+        IEnumerable<DocsLink> Utilities { get; }
     }
 
     /// <summary>
@@ -40,6 +39,7 @@ namespace MudBlazor.Docs.Services
             .AddItem("Badge", typeof(MudBadge))
             .AddItem("AppBar", typeof(MudAppBar))
             .AddItem("Drawer", typeof(MudDrawer), typeof(MudDrawerHeader), typeof(MudDrawerContainer))
+            .AddItem("Drop Zone", typeof(MudDropZone<T>), typeof(MudDropContainer<T>), typeof(MudDynamicDropItem<T>))
             .AddItem("Link", typeof(MudLink))
             .AddItem("Menu", typeof(MudMenu), typeof(MudMenuItem))
             .AddItem("Message Box", typeof(MudMessageBox))
@@ -53,12 +53,14 @@ namespace MudBlazor.Docs.Services
             .AddItem("Card", typeof(MudCard), typeof(MudCardActions), typeof(MudCardContent), typeof(MudCardHeader), typeof(MudCardMedia))
             .AddItem("Divider", typeof(MudDivider))
             .AddItem("Expansion Panels", typeof(MudExpansionPanels), typeof(MudExpansionPanel))
+            .AddItem("Image", typeof(MudImage))
             .AddItem("Icons", typeof(MudIcon))
             .AddItem("List", typeof(MudList), typeof(MudListItem), typeof(MudListSubheader))
             .AddItem("Paper", typeof(MudPaper))
             .AddItem("Rating", typeof(MudRating), typeof(MudRatingItem))
             .AddItem("Skeleton", typeof(MudSkeleton))
             .AddItem("Table", typeof(MudTable<T>))
+            .AddItem("Data Grid", typeof(MudDataGrid<T>))
             .AddItem("Simple Table", typeof(MudSimpleTable))
             .AddItem("Tooltip", typeof(MudTooltip))
             .AddItem("Typography", typeof(MudText))
@@ -80,7 +82,7 @@ namespace MudBlazor.Docs.Services
             //GROUPS
 
             //Inputs
-            .AddNavGroup("Form Inputs & controls", false, new DocsComponents()
+            .AddNavGroup("Form & Inputs", false, new DocsComponents()
                 .AddItem("Radio", typeof(MudRadio<T>), typeof(MudRadioGroup<T>))
                 .AddItem("Checkbox", typeof(MudCheckBox<T>))
                 .AddItem("Select", typeof(MudSelect<T>), typeof(MudSelectItem<T>))
@@ -204,20 +206,6 @@ namespace MudBlazor.Docs.Services
 
         public IEnumerable<MudComponent> Api => DocsComponentsApi.Components;
 
-        //cached property
-        private IEnumerable<DocsLink> _gettingStarted;
-        /// <summary>
-        /// Getting started menu links
-        /// </summary>
-        public IEnumerable<DocsLink> GettingStarted => _gettingStarted ??= new List<DocsLink>
-            {
-                new DocsLink {Title = "Installation", Href = "getting-started/installation"},
-                new DocsLink {Title = "Layouts", Href = "getting-started/layouts"},
-                new DocsLink {Title = "Usage", Href = "getting-started/usage"},
-                new DocsLink {Title = "Wireframes", Href = "getting-started/wireframes"},
-            }.OrderBy(x => x.Title);
-
-
         private IEnumerable<DocsLink> _features;
         /// <summary>
         /// Features menu links
@@ -225,14 +213,11 @@ namespace MudBlazor.Docs.Services
         public IEnumerable<DocsLink> Features => _features ??= new List<DocsLink>
             {
                 new DocsLink {Title = "Breakpoints", Href = "features/breakpoints"},
-                new DocsLink {Title = "Border Radius", Href = "features/border-radius"},
                 new DocsLink {Title = "Colors", Href = "features/colors"},
-                new DocsLink {Title = "Converters", Href = "features/converters"},
-                new DocsLink {Title = "Display", Href = "features/display"},
                 new DocsLink {Title = "Elevation", Href = "features/elevation"},
-                new DocsLink {Title = "Flex", Href = "features/flex"},
+                new DocsLink {Title = "Converters", Href = "features/converters"},
                 new DocsLink {Title = "Icons", Href = "features/icons"},
-                new DocsLink {Title = "Spacing", Href = "features/spacing"},
+                new DocsLink {Title = "Masking", Href = "features/masking"},
                 new DocsLink {Title = "RTL Languages", Href = "features/rtl-languages"},
             }.OrderBy(x => x.Title);
 
@@ -243,24 +228,49 @@ namespace MudBlazor.Docs.Services
         /// </summary>
         public IEnumerable<DocsLink> Customization => _customization ??= new List<DocsLink>()
         {
-            //new DocsLink{Title="Default theme", Href="customization/default-theme"},
-            new DocsLink {Title = "Overview", Href = "customization/theming/overview"},
-            new DocsLink {Title = "Palette", Href = "customization/theming/palette"},
-            new DocsLink {Title = "Typography", Href = "customization/theming/typography"},
-            new DocsLink {Title = "z-index", Href = "customization/theming/z-index"},
+            new DocsLink {Title="Default theme", Href="customization/default-theme"},
+            new DocsLink {Title = "Overview", Href = "customization/overview"},
+            new DocsLink {Title = "Palette", Href = "customization/palette"},
+            new DocsLink {Title = "Typography", Href = "customization/typography"},
+            new DocsLink {Title = "z-index", Href = "customization/z-index"},
         }.OrderBy(x => x.Title);
+        
+        private IEnumerable<DocsLink> _utilities;
 
-
-        private IEnumerable<DocsLink> _about;
         /// <summary>
-        /// About menu links
+        /// CSS Utilities menu links
         /// </summary>
-        public IEnumerable<DocsLink> About => _about ??= new List<DocsLink>
+        public IEnumerable<DocsLink> Utilities => _utilities ??= new List<DocsLink>()
         {
-            new DocsLink{ Title="Credits" , Href="project/credit" },
-            new DocsLink{Href="project/about", Title="How it started" },
-            new DocsLink{Href="project/team", Title="Team & Contributors" },
-            new DocsLink{Href="project/versions", Title="Versions" },
-        }.OrderBy(x => x.Title);
+            new DocsLink {Group = "Layout", Title = "Display", Href = "utilities/display"},
+            new DocsLink {Group = "Layout", Title = "Z-Index", Href = "utilities/z-index"},
+            new DocsLink {Group = "Layout", Title = "Overflow", Href = "utilities/overflow"},
+            new DocsLink {Group = "Layout", Title = "Visibility", Href = "utilities/visibility"},
+            new DocsLink {Group = "Layout", Title = "Object Fit", Href = "utilities/object-fit"},
+            new DocsLink {Group = "Layout", Title = "Object Position", Href = "utilities/object-position"},
+            new DocsLink {Group = "Layout", Title = "Position", Href = "utilities/position"},
+            
+            new DocsLink {Group = "Flexbox", Title = "Enable Flexbox", Href = "utilities/enable-flex"},
+            new DocsLink {Group = "Flexbox", Title = "Flex Direction", Href = "utilities/flex-direction"},
+            new DocsLink {Group = "Flexbox", Title = "Flex Wrap", Href = "utilities/flex-wrap"},
+            new DocsLink {Group = "Flexbox", Title = "Flex", Href = "utilities/flex"},
+            new DocsLink {Group = "Flexbox", Title = "Flex Grow", Href = "utilities/flex-grow"},
+            new DocsLink {Group = "Flexbox", Title = "Flex Shrink", Href = "utilities/flex-shrink"},
+            new DocsLink {Group = "Flexbox", Title = "Order", Href = "utilities/order"},
+            new DocsLink {Group = "Flexbox", Title = "Gap", Href = "utilities/gap"},
+            new DocsLink {Group = "Flexbox", Title = "Justify Content", Href = "utilities/justify-content"},
+            new DocsLink {Group = "Flexbox", Title = "Align Content", Href = "utilities/align-content"},
+            new DocsLink {Group = "Flexbox", Title = "Align Items", Href = "utilities/align-items"},
+            new DocsLink {Group = "Flexbox", Title = "Align Self", Href = "utilities/align-self"},
+            
+            new DocsLink {Group = "Spacing", Title = "Spacing", Href = "utilities/spacing"},
+            
+            new DocsLink {Group = "Borders", Title = "Border Radius", Href = "utilities/border-radius"},
+            new DocsLink {Group = "Borders", Title = "Border Style", Href = "utilities/border-style"},
+            new DocsLink {Group = "Borders", Title = "Border Width", Href = "utilities/border-width"},
+            
+            new DocsLink {Group = "Interactivity", Title = "Cursor", Href = "utilities/cursor"},
+            new DocsLink {Group = "Interactivity", Title = "Pointer Events", Href = "utilities/pointer-events"},
+        };
     }
 }

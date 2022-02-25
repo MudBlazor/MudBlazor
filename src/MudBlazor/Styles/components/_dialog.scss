@@ -77,6 +77,7 @@
     }
     
     & .mud-dialog-title {
+        z-index: +1;
         flex: 0 0 auto;
         margin: 0;
         padding: 16px 24px;        

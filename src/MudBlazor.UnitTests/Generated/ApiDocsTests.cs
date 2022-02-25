@@ -37,6 +37,7 @@ namespace MudBlazor.UnitTests.Components
             ctx.Services.AddSingleton<IMenuService, MenuService>();
             ctx.Services.AddSingleton<IMudPopoverService, MockPopoverService>();
             ctx.Services.AddTransient<IKeyInterceptor, MockKeyInterceptorService>();
+            ctx.Services.AddTransient<IJsEvent, MockJsEvent>();
             ctx.Services.AddSingleton<IRenderQueueService, RenderQueueService>();
             ctx.Services.AddScoped(sp => new HttpClient());
         }
@@ -48,7 +49,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = ctx.RenderComponent<Docs.Pages.Components.Alert.AlertPage>();
             await ctx.Services.GetService<IRenderQueueService>().WaitUntilEmpty();
-            System.Console.WriteLine(comp.Markup);
+            //Console.WriteLine(comp.Markup);
         }
 
         [TearDown]

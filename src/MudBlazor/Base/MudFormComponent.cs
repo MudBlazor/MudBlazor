@@ -36,27 +36,36 @@ namespace MudBlazor
         /// <summary>
         /// If true, this form input is required to be filled out.
         /// </summary>
-        [Parameter] public bool Required { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Validation)]
+        public bool Required { get; set; }
 
         /// <summary>
         /// The error text that will be displayed if the input is not filled out but required.
         /// </summary>
-        [Parameter] public string RequiredError { get; set; } = "Required";
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Validation)]
+        public string RequiredError { get; set; } = "Required";
 
         /// <summary>
         /// The ErrorText that will be displayed if Error true.
         /// </summary>
-        [Parameter] public string ErrorText { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Validation)]
+        public string ErrorText { get; set; }
 
         /// <summary>
         /// If true, the label will be displayed in an error state.
         /// </summary>
-        [Parameter] public bool Error { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Validation)]
+        public bool Error { get; set; }
 
         /// <summary>
         /// The generic converter of the component.
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.FormComponent.Behavior)]
         public Converter<T, U> Converter
         {
             get => _converter;
@@ -78,6 +87,7 @@ namespace MudBlazor
         /// The culture of the component.
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.FormComponent.Behavior)]
         public CultureInfo Culture
         {
             get => _converter.Culture;
@@ -166,6 +176,7 @@ namespace MudBlazor
         /// <para>System.ComponentModel.DataAnnotations.ValidationAttribute instances</para>
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.FormComponent.Validation)]
         public object Validation { get; set; }
 
         /// <summary>
@@ -364,21 +375,17 @@ namespace MudBlazor
         {
             try
             {
-                if (Form==null)
+                if (Form?.Model == null)
                 {
-                    errors.Add("Form is null, unable to validate with model!");
                     return;
                 }
-                if (Form.Model == null)
-                {
-                    errors.Add("Form.Model is null, unable to validate with model!");
-                    return;
-                }
+                
                 if (For == null)
                 {
                     errors.Add($"For is null, please set parameter For on the form input component of type {GetType().Name}");
                     return;
                 }
+
                 foreach (var error in func(Form.Model, For.GetFullPathOfMember()))
                     errors.Add(error);
             }
@@ -432,6 +439,17 @@ namespace MudBlazor
         {
             try
             {
+                if (Form?.Model == null)
+                {
+                    return;
+                }
+                
+                if (For == null)
+                {
+                    errors.Add($"For is null, please set parameter For on the form input component of type {GetType().Name}");
+                    return;
+                }
+                
                 foreach (var error in await func(Form.Model, For.GetFullPathOfMember()))
                     errors.Add(error);
             }
@@ -497,6 +515,7 @@ namespace MudBlazor
         /// </summary>
 #nullable enable
         [Parameter]
+        [Category(CategoryTypes.FormComponent.Validation)]
         public Expression<Func<T>>? For { get; set; }
 #nullable disable
 
@@ -542,10 +561,11 @@ namespace MudBlazor
             if (For != null && For != _currentFor)
             {
                 // Extract validation attributes
-                // Sourced from https://stackoverflow.com/a/43076222/4839162
+                // Sourced from https://stackoverflow.com/a/43076222/4839162 
+                // and also https://stackoverflow.com/questions/59407225/getting-a-custom-attribute-from-a-property-using-an-expression
                 var expression = (MemberExpression)For.Body;
-                var propertyInfo = (PropertyInfo)expression.Member;
-                _validationAttrsFor = propertyInfo.GetCustomAttributes(typeof(ValidationAttribute), true).Cast<ValidationAttribute>();
+                var propertyInfo = (PropertyInfo)expression.Expression?.Type.GetProperty(expression.Member.Name);
+                _validationAttrsFor = propertyInfo?.GetCustomAttributes(typeof(ValidationAttribute), true).Cast<ValidationAttribute>();
 
                 _fieldIdentifier = FieldIdentifier.Create(For);
                 _currentFor = For;
@@ -576,7 +596,10 @@ namespace MudBlazor
 
         protected virtual void RegisterAsFormComponent()
         {
-            Form?.Add(this);
+            if (Standalone)
+            {
+                Form?.Add(this);
+            }
         }
 
         /// <summary>

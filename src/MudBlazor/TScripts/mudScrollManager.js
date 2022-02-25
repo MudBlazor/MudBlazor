@@ -1,6 +1,10 @@
-﻿class MudScrollManager {
+﻿// Copyright (c) MudBlazor 2021
+// MudBlazor licenses this file to you under the MIT license.
+// See the LICENSE file in the project root for more information.
+
+class MudScrollManager {
     //scrolls to an Id. Useful for navigation to fragments
-    scrollToFragment (elementId, behavior) {
+    scrollToFragment(elementId, behavior) {
         let element = document.getElementById(elementId);
 
         if (element) {
@@ -9,7 +13,7 @@
     }
 
     //scrolls to year in MudDatePicker
-    scrollToYear (elementId, offset) {
+    scrollToYear(elementId, offset) {
         let element = document.getElementById(elementId);
 
         if (element) {
@@ -17,55 +21,20 @@
         }
     }
 
-    // scrolls down or up in a select input
-    //increment is 1 if moving dow and -1 if moving up
-    //onEdges is a boolean. If true, it waits to reach the bottom or the top
-    //of the container to scroll.   
-    scrollToListItem (elementId, increment, onEdges) {
+    // sets the scroll position of the elements container, 
+    // to the position of the element with the given element id
+    scrollToListItem(elementId) {
         let element = document.getElementById(elementId);
         if (element) {
-
-            //this is the scroll container
             let parent = element.parentElement;
-            //reset the scroll position when close the menu
-            if (increment == 0) {
-                parent.scrollTop = 0;
-                return;
-            }
-
-            //position of the elements relative to the screen, so we can compare
-            //one with the other
-            //e:element; p:parent of the element; For example:eBottom is the element bottom
-            let { bottom: eBottom, height: eHeight, top: eTop } = element.getBoundingClientRect();
-            let { bottom: pBottom, top: pTop } = parent.getBoundingClientRect();
-
-            //define the height of an disabled item
-            let dHeight = eHeight;
-
-            //get the absolute increment
-            const absIncrement = Math.abs(increment);
-
-            //check if we are jumping
-            if (absIncrement > 1) {
-                dHeight = parent.querySelector(".mud-list-item-disabled")?.getBoundingClientRect().height ?? eHeight;
-            }
-
-            if (
-                //if element reached bottom and direction is down
-                ((pBottom - eBottom <= 0) && increment > 0)
-                //or element reached top and direction is up
-                || ((eTop - pTop <= 0) && increment < 0)
-                // or scroll is not constrained to the Edges
-                || !onEdges
-            ) {
-                const multiplicator = increment / absIncrement; // will always be 1 or -1
-                parent.scrollTop += (eHeight + ((absIncrement-1)*dHeight)) * multiplicator;
+            if (parent) {
+                parent.scrollTop = element.offsetTop;
             }
         }
     }
 
     //scrolls to the selected element. Default is documentElement (i.e., html element)
-    scrollTo (selector, left, top, behavior) {
+    scrollTo(selector, left, top, behavior) {
         let element = document.querySelector(selector) || document.documentElement;
         element.scrollTo({ left, top, behavior });
     }
@@ -79,7 +48,7 @@
     }
 
     //locks the scroll of the selected element. Default is body
-    lockScroll (selector, lockclass) {
+    lockScroll(selector, lockclass) {
         let element = document.querySelector(selector) || document.body;
 
         //if the body doesn't have a scroll bar, don't add the lock class
@@ -90,7 +59,7 @@
     }
 
     //unlocks the scroll. Default is body
-    unlockScroll (selector, lockclass) {
+    unlockScroll(selector, lockclass) {
         let element = document.querySelector(selector) || document.body;
         element.classList.remove(lockclass);
     }

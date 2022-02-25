@@ -20,6 +20,7 @@ namespace MudBlazor
         /// If true, changes the layout to RightToLeft.
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.RTLProvider.Behavior)]
         public bool RightToLeft
         {
             get => _rtl;
@@ -34,6 +35,7 @@ namespace MudBlazor
         /// Child content of the component.
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.RTLProvider.Behavior)]
         public RenderFragment ChildContent { get; set; }
     }
 }

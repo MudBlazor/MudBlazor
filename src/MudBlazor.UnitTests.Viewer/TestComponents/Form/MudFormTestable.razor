@@ -1,0 +1,11 @@
+﻿@inherits MudForm
+@namespace MudBlazor.UnitTests.TestComponents
+@using MudBlazor.Interfaces
+
+<CascadingValue Value="this" IsFixed="true">
+    @ChildContent
+</CascadingValue>
+
+@code {
+    public HashSet<IFormComponent> FormControls => _formControls;
+}
