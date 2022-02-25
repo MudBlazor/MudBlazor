@@ -17,10 +17,6 @@
     align-self: center !important;
   }
 
-  .align-self-#{$breakpoint}baseline {
-    align-self: baseline !important;
-  }
-
   .align-self-#{$breakpoint}stretch {
     align-self: stretch !important;
   }
