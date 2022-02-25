@@ -50,7 +50,7 @@
         </div>
         @foreach (var link in MenuService.Utilities.Where(x => x.Group == title))
         {
-            <MudNavLink Href="@link.Href">@link.Title</MudNavLink>
+            <MudNavLink Href="@link.Href" Match="NavLinkMatch.All">@link.Title</MudNavLink>
         }
     }
 </MudNavGroup>
