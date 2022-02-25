@@ -1,0 +1,17 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudGrid Class="justify-space-between" Style="max-width: 400px;">
+    <MudItem xs="12">
+        <MudTextField Mask="@mask" Label="Flight number" 
+                      @bind-Value="text"  Variant="@Variant.Outlined" Clearable />
+    </MudItem>
+    <MudItem xs="12">
+		Flight number: <b>@text</b>
+    </MudItem>
+</MudGrid>
+
+@code {
+    public string text { get; set; }
+
+    IMask mask = new BlockMask(delimiters:" ", new Block('a', 1,3), new Block('0', 1,4));
+}

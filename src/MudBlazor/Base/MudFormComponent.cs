@@ -373,21 +373,17 @@ namespace MudBlazor
         {
             try
             {
-                if (Form==null)
+                if (Form?.Model == null)
                 {
-                    errors.Add("Form is null, unable to validate with model!");
                     return;
                 }
-                if (Form.Model == null)
-                {
-                    errors.Add("Form.Model is null, unable to validate with model!");
-                    return;
-                }
+                
                 if (For == null)
                 {
                     errors.Add($"For is null, please set parameter For on the form input component of type {GetType().Name}");
                     return;
                 }
+
                 foreach (var error in func(Form.Model, For.GetFullPathOfMember()))
                     errors.Add(error);
             }
@@ -441,6 +437,17 @@ namespace MudBlazor
         {
             try
             {
+                if (Form?.Model == null)
+                {
+                    return;
+                }
+                
+                if (For == null)
+                {
+                    errors.Add($"For is null, please set parameter For on the form input component of type {GetType().Name}");
+                    return;
+                }
+                
                 foreach (var error in await func(Form.Model, For.GetFullPathOfMember()))
                     errors.Add(error);
             }
@@ -552,10 +559,11 @@ namespace MudBlazor
             if (For != null && For != _currentFor)
             {
                 // Extract validation attributes
-                // Sourced from https://stackoverflow.com/a/43076222/4839162
+                // Sourced from https://stackoverflow.com/a/43076222/4839162 
+                // and also https://stackoverflow.com/questions/59407225/getting-a-custom-attribute-from-a-property-using-an-expression
                 var expression = (MemberExpression)For.Body;
-                var propertyInfo = (PropertyInfo)expression.Member;
-                _validationAttrsFor = propertyInfo.GetCustomAttributes(typeof(ValidationAttribute), true).Cast<ValidationAttribute>();
+                var propertyInfo = (PropertyInfo)expression.Expression?.Type.GetProperty(expression.Member.Name);
+                _validationAttrsFor = propertyInfo?.GetCustomAttributes(typeof(ValidationAttribute), true).Cast<ValidationAttribute>();
 
                 _fieldIdentifier = FieldIdentifier.Create(For);
                 _currentFor = For;
@@ -586,7 +594,10 @@ namespace MudBlazor
 
         protected virtual void RegisterAsFormComponent()
         {
-            Form?.Add(this);
+            if (Standalone)
+            {
+                Form?.Add(this);
+            }
         }
 
         /// <summary>

@@ -303,7 +303,6 @@
 .mud-table-pagination-information {
     white-space: nowrap;
     direction: initial;
-    margin-top: 6px;
 }
 
 .mud-table-page-number-information {
@@ -343,6 +342,7 @@
 }
 
 .mud-table-pagination-caption {
+    display: flex;
     flex-shrink: 0;
     align-items: center;
     padding-left: 10px;
@@ -353,7 +353,7 @@
     cursor: pointer;
     margin-left: 10px !important;
     margin-right: 10px !important;
-    margin-top: 3px !important;
+    margin-top: 0px !important;
     min-width: 52px;
 
     & .mud-select-input {
@@ -379,7 +379,6 @@
     margin-left: 10px;
     margin-inline-start: 10px;
     margin-inline-end: unset;
-    margin-bottom: 3px !important;
 }
 
 .mud-table-smalldevices-sortselect {

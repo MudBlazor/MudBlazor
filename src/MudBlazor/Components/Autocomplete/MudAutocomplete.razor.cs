@@ -149,6 +149,13 @@ namespace MudBlazor
         public bool ResetValueOnEmptyText { get; set; } = false;
 
         /// <summary>
+        /// If true, clicking the text field will select (highlight) its contents.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Behavior)]
+        public bool SelectOnClick { get; set; } = true;
+
+        /// <summary>
         /// Debounce interval in milliseconds.
         /// </summary>
         [Parameter]
@@ -245,6 +252,11 @@ namespace MudBlazor
 
         private string _currentIcon;
 
+        /// <summary>
+        /// This boolean will keep track if the clear function is called too keep the set text function to be called.
+        /// </summary>
+        private bool _isCleared;
+
         private MudInput<string> _elementReference;
 
         public MudAutocomplete()
@@ -259,11 +271,13 @@ namespace MudBlazor
             if (_items != null)
                 _selectedListItemIndex = Array.IndexOf(_items, value);
             var optionText = GetItemString(value);
-            await SetTextAsync(optionText, false);
+            if (!_isCleared)
+                await SetTextAsync(optionText, false);
             _timer?.Dispose();
             IsOpen = false;
             BeginValidate();
-            _elementReference?.SetText(optionText);
+            if (!_isCleared)
+                _elementReference?.SetText(optionText);
             _elementReference?.FocusAsync().AndForget();
             StateHasChanged();
         }
@@ -280,10 +294,10 @@ namespace MudBlazor
 
         private async Task ChangeMenu(bool open)
         {
-            IsOpen = open;
             if (open)
             {
-                await _elementReference.SelectAsync();
+                if (SelectOnClick)
+                    await _elementReference.SelectAsync();
                 await OnSearchAsync();
             }
             else
@@ -291,8 +305,9 @@ namespace MudBlazor
                 _timer?.Dispose();
                 RestoreScrollPosition();
                 await CoerceTextToValue();
+                IsOpen = false;
+                StateHasChanged();
             }
-            StateHasChanged();
         }
 
         private void UpdateIcon()
@@ -308,6 +323,12 @@ namespace MudBlazor
                 Text = text;
         }
 
+        protected override void OnAfterRender(bool firstRender)
+        {
+            _isCleared = false;
+            base.OnAfterRender(firstRender);
+        }
+
         private Timer _timer;
         private T[] _items;
         private int _selectedListItemIndex = 0;
@@ -316,6 +337,9 @@ namespace MudBlazor
         protected override Task UpdateTextPropertyAsync(bool updateValue)
         {
             _timer?.Dispose();
+            // This keeps the text from being set when clear() was called
+            if (_isCleared)
+                return Task.CompletedTask;
             return base.UpdateTextPropertyAsync(updateValue);
         }
 
@@ -361,6 +385,8 @@ namespace MudBlazor
             _enabledItemIndices = _items.Select((item, idx) => (item, idx)).Where(tuple => ItemDisabledFunc?.Invoke(tuple.item) != true).Select(tuple => tuple.idx).ToList();
             _selectedListItemIndex = _enabledItemIndices.Any() ? _enabledItemIndices.First() : -1;
 
+            IsOpen = true;
+
             if (_items?.Length == 0)
             {
                 await CoerceValueToText();
@@ -368,7 +394,6 @@ namespace MudBlazor
                 return;
             }
 
-            IsOpen = true;
             StateHasChanged();
         }
 
@@ -379,6 +404,7 @@ namespace MudBlazor
         /// </summary>
         public async Task Clear()
         {
+            _isCleared = true;
             IsOpen = false;
             await SetTextAsync(string.Empty, updateValue: false);
             await CoerceValueToText();
@@ -486,13 +512,13 @@ namespace MudBlazor
             base.InvokeKeyUp(args);
         }
 
-        private async Task SelectNextItem(int increment)
+        private ValueTask SelectNextItem(int increment)
         {
-            if (_items == null || _items.Length == 0 || !_enabledItemIndices.Any())
-                return;
-            _selectedListItemIndex = Math.Max(0, Math.Min(_items.Length - 1, _selectedListItemIndex + increment));
-            await ScrollToListItem(_selectedListItemIndex, increment);
-            StateHasChanged();
+            if (increment == 0 || _items == null || _items.Length == 0 || !_enabledItemIndices.Any())
+                return ValueTask.CompletedTask;
+            // if we are at the end, or the beginning we just do an rollover
+            _selectedListItemIndex = Math.Clamp(value: (10 * _items.Length + _selectedListItemIndex + increment) % _items.Length, min: 0, max: _items.Length-1);
+            return ScrollToListItem(_selectedListItemIndex);
         }
 
         /// <summary>
@@ -500,25 +526,33 @@ namespace MudBlazor
         /// </summary>
         private readonly string _componentId = Guid.NewGuid().ToString();
 
+
         /// <summary>
-        /// Scroll to a specific item in the Autocomplete list of items.
+        /// Scroll to a specific item index in the Autocomplete list of items.
         /// </summary>
-        public async Task ScrollToListItem(int index, int increment)
+        /// <param name="index">the index to scroll to</param>
+        /// <param name="increment">not used</param>
+        /// <returns>ValueTask</returns>
+        [Obsolete("Use ScrollToListItem without increment parameter instead")]
+        public Task ScrollToListItem(int index, int increment)
+            => ScrollToListItem(index).AsTask();
+
+        /// <summary>
+        /// Scroll to a specific item index in the Autocomplete list of items.
+        /// </summary>
+        /// <param name="index">the index to scroll to</param>
+        public ValueTask ScrollToListItem(int index)
         {
             var id = GetListItemId(index);
             //id of the scrolled element
-            //increment 1 down; -1 up
-            //onEdges, last param, boolean. If true, only scrolls when elements reaches top or bottom of container.
-            //If false, scrolls always
-            await ScrollManager.ScrollToListItemAsync(id, increment, true);
-            StateHasChanged();
+            return ScrollManager.ScrollToListItemAsync(id);
         }
 
         //This restores the scroll position after closing the menu and element being 0
         private void RestoreScrollPosition()
         {
             if (_selectedListItemIndex != 0) return;
-            ScrollManager.ScrollToListItemAsync(GetListItemId(0), 0, false);
+            ScrollManager.ScrollToListItemAsync(GetListItemId(0));
         }
 
         private string GetListItemId(in int index)
@@ -550,18 +584,15 @@ namespace MudBlazor
         {
             if (CoerceText == false)
                 return Task.CompletedTask;
-            if (Value == null)
-            {
-                _timer?.Dispose();
-                //Below line's false parameter added for prevent opening popover again, it may break something else
-                return SetTextAsync(null, false);
-            }
-            var actualvalueStr = GetItemString(Value);
-            if (!Equals(actualvalueStr, Text))
-            {
-                _timer?.Dispose();
-                return SetTextAsync(actualvalueStr);
-            }
+
+            _timer?.Dispose();
+
+            var text = Value == null ? null : GetItemString(Value);
+
+            // Don't update the value to prevent the popover from opening again after coercion
+            if (text != Text)
+                return SetTextAsync(text, updateValue: false);
+
             return Task.CompletedTask;
         }
 

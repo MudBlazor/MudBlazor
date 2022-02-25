@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Bunit;
 using FluentAssertions;
@@ -277,6 +278,72 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task MudPopoverHandler_InitializeAndDetachConcurrent_DetachDoesNotRunAtSameTimeAsInitialize()
+        {
+            var connectTcs = new TaskCompletionSource<IJSVoidResult>();
+
+            var mock = new Mock<IJSRuntime>();
+            var handler = new MudPopoverHandler(_ => { }, mock.Object, () => { });
+
+            mock.Setup(x => x.InvokeAsync<IJSVoidResult>("mudPopover.connect", It.Is<object[]>(y => y.Length == 1 && (Guid)y[0] == handler.Id)))
+                .Returns(new ValueTask<IJSVoidResult>(connectTcs.Task))
+                .Verifiable();
+
+            _ = handler.Initialize();
+            var task2 = handler.Detach();
+
+            var completedTask = await Task.WhenAny(Task.Delay(50), task2);
+
+            completedTask.Should().NotBe(task2);
+
+            mock.Verify();
+            mock.VerifyNoOtherCalls();
+        }
+
+        [Test]
+        public async Task MudPopoverHandler_InitializeAndDetachConcurrent_DetachRunsAfterInitialize()
+        {
+            var connectTcs = new TaskCompletionSource<IJSVoidResult>();
+
+            var mock = new Mock<IJSRuntime>();
+            var handler = new MudPopoverHandler(_ => { }, mock.Object, () => { });
+
+            mock.Setup(x => x.InvokeAsync<IJSVoidResult>("mudPopover.connect", It.Is<object[]>(y => y.Length == 1 && (Guid)y[0] == handler.Id)))
+                .Returns(new ValueTask<IJSVoidResult>(connectTcs.Task))
+                .Verifiable();
+
+            mock.Setup(x => x.InvokeAsync<IJSVoidResult>("mudPopover.disconnect", It.Is<object[]>(y => y.Length == 1 && (Guid)y[0] == handler.Id)))
+                .ReturnsAsync(Mock.Of<IJSVoidResult>())
+                .Verifiable();
+
+            var task1 = handler.Initialize();
+            var task2 = handler.Detach();
+
+            connectTcs.SetResult(Mock.Of<IJSVoidResult>());
+
+            await Task.WhenAll(task1, task2);
+
+            mock.Verify();
+            mock.VerifyNoOtherCalls();
+        }
+
+        [Test]
+        public async Task MudPopoverHandler_DetachCalledBeforeInitialize_NoInteropShouldOccur()
+        {
+            var mock = new Mock<IJSRuntime>();
+
+            var handler = new MudPopoverHandler(_ => { }, mock.Object, () => { });
+
+            await handler.Detach();
+            handler.IsConnected.Should().BeFalse();
+
+            await handler.Initialize();
+            handler.IsConnected.Should().BeFalse();
+
+            mock.VerifyNoOtherCalls();
+        }
+
+        [Test]
         public void MudPopoverService_Constructor_NoJsInterop()
         {
             Assert.Throws<ArgumentNullException>(() => new MudPopoverService(null));
@@ -527,7 +594,7 @@ namespace MudBlazor.UnitTests.Components
             var handler = service.Register(fragment);
             var result = await service.Unregister(handler);
 
-            result.Should().BeFalse();
+            result.Should().BeTrue();
         }
 
         [Test]
@@ -598,7 +665,7 @@ namespace MudBlazor.UnitTests.Components
         public async Task MudPopover_OpenAndClose()
         {
             var comp = Context.RenderComponent<PopoverTest>();
-            Console.WriteLine(comp.Markup);
+            //Console.WriteLine(comp.Markup);
 
             //popup is close, so only the popover-content should be there
             var provider = comp.Find(".mud-popover-provider");
@@ -630,7 +697,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<PopoverPropertyTest>(p => p.Add(x => x.MaxHeight, 100));
 
-            Console.WriteLine(comp.Markup);
+            //Console.WriteLine(comp.Markup);
 
             var popoverElement = comp.Find(".test-popover-content").ParentElement;
 
@@ -643,7 +710,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<PopoverPropertyTest>(p => p.Add(x => x.Duration, 100));
 
 
-            Console.WriteLine(comp.Markup);
+            //Console.WriteLine(comp.Markup);
 
             var popoverElement = comp.Find(".test-popover-content").ParentElement;
 
@@ -656,7 +723,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<PopoverPropertyTest>(p => p.Add(
                 x => x.Fixed, true));
 
-            Console.WriteLine(comp.Markup);
+            //Console.WriteLine(comp.Markup);
 
             var popoverElement = comp.Find(".test-popover-content").ParentElement;
 
@@ -669,7 +736,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<PopoverPropertyTest>(p => p.Add(
                 x => x.RelativeWidth, true));
 
-            Console.WriteLine(comp.Markup);
+            //Console.WriteLine(comp.Markup);
 
             var popoverElement = comp.Find(".test-popover-content").ParentElement;
 
@@ -682,7 +749,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<PopoverPropertyTest>(p => p.Add(
                 x => x.Paper, true));
 
-            Console.WriteLine(comp.Markup);
+            //Console.WriteLine(comp.Markup);
 
             var popoverElement = comp.Find(".test-popover-content").ParentElement;
 
@@ -699,7 +766,7 @@ namespace MudBlazor.UnitTests.Components
 
             });
 
-            Console.WriteLine(comp.Markup);
+            //Console.WriteLine(comp.Markup);
 
             var popoverElement = comp.Find(".test-popover-content").ParentElement;
 
@@ -716,7 +783,7 @@ namespace MudBlazor.UnitTests.Components
 
             });
 
-            Console.WriteLine(comp.Markup);
+            //Console.WriteLine(comp.Markup);
 
             var popoverElement = comp.Find(".test-popover-content").ParentElement;
             popoverElement.ClassList.Should().Contain(new[] { "mud-popover-open", "mud-paper", "mud-elevation-10", "my-custom-class" });
@@ -737,7 +804,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<PopoverPropertyTest>(p => p.Add(
                 x => x.TransformOrigin, transformOrigin));
 
-            Console.WriteLine(comp.Markup);
+            //Console.WriteLine(comp.Markup);
 
             var popoverElement = comp.Find(".test-popover-content").ParentElement;
 
@@ -759,7 +826,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<PopoverPropertyTest>(p => p.Add(
                 x => x.AnchorOrigin, anchorOrigin));
 
-            Console.WriteLine(comp.Markup);
+            //Console.WriteLine(comp.Markup);
 
             var popoverElement = comp.Find(".test-popover-content").ParentElement;
 
@@ -775,7 +842,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<PopoverPropertyTest>(p => p.Add(
                 x => x.OverflowBehavior, overflowBehavior));
 
-            Console.WriteLine(comp.Markup);
+            //Console.WriteLine(comp.Markup);
 
             var popoverElement = comp.Find(".test-popover-content").ParentElement;
 
@@ -787,7 +854,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<PopoverComplexContent>();
 
-            Console.WriteLine(comp.Markup);
+            //Console.WriteLine(comp.Markup);
 
             var dynamicContentElement = comp.Find(".dynamic-content");
             dynamicContentElement.ChildNodes.Should().BeEmpty();
@@ -821,7 +888,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<PopoverProviderTest>(p => p.Add(x => x.ProviderIsEnabled, true));
 
-            Console.WriteLine(comp.Markup);
+            //Console.WriteLine(comp.Markup);
             comp.Find("#my-content").TextContent.Should().Be("Popover content");
 
             for (int i = 0; i < 3; i++)
@@ -839,7 +906,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<PopoverProviderTest>(p => p.Add(x => x.ProviderIsEnabled, false));
 
-            Console.WriteLine(comp.Markup);
+            //Console.WriteLine(comp.Markup);
             Assert.Throws<ElementNotFoundException>(() => comp.Find("#my-content"));
         }
     }

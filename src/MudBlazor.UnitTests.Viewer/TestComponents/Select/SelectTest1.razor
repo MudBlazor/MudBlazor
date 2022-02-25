@@ -1,15 +1,28 @@
 ﻿@namespace MudBlazor.UnitTests.TestComponents
 <MudPopoverProvider></MudPopoverProvider>
 
-<MudSelect @bind-Value="value" PopoverClass="select-popover-class" IsPreRendered>
+<MudSelect @bind-Value="value" PopoverClass="select-popover-class" IsPreRendered onfocus="Focused" OnBlur="Blurred">
     <MudSelectItem Value="@("1")"/>
     <MudSelectItem Value="@("2")"/>
     <MudSelectItem Value="@("3")"/>
     <MudSelectItem Value="@("4")" Disabled="true"/>
 </MudSelect>
 
-@code {
-    public static string __description__ = "Click should open the Menu and selecting a value should update the bindable value.";
+<MudSwitch @bind-Checked="@_focused" />
 
-    string value=null;
+@code {
+	public static string __description__ = "Click should open the Menu and selecting a value should update the bindable value.";
+
+	string value = null;
+	bool _focused = false;
+
+	private void Focused()
+	{
+		_focused = true;
+	}
+
+	private void Blurred()
+	{
+		_focused = false;
+	}
 }
