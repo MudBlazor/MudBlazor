@@ -22,6 +22,7 @@ jobs:
       deploy-condition: 'refs/heads/master'
       deploy-web-app-name: mudblazor
       deploy-web-app-slot-name: staging
+      working-directory: ./src/MudBlazor.Docs.Server
     secrets:
       publish-profile: ${{ secrets.PUBLISH_MUDBLAZOR }}
       
