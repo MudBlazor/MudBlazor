@@ -72,6 +72,11 @@ public abstract class BaseMask : IMask
     public (int, int)? Selection { get; set; }
 
     /// <summary>
+    /// Allow showing a text consisting only of delimiters
+    /// </summary>
+    public bool AllowOnlyDelimiters { get; set; }
+
+    /// <summary>
     /// The mask chars define the meaning of single mask characters such as 'a', '0'
     /// </summary>
     public MaskChar[] MaskChars
@@ -129,7 +134,7 @@ public abstract class BaseMask : IMask
     protected virtual void UpdateText(string text)
     {
         // don't show a text consisting only of delimiters and placeholders (no actual input)
-        if (text.All(c => _delimiters.Contains(c)))
+        if (!AllowOnlyDelimiters && text.All(c => _delimiters.Contains(c)))
         {
             Text = "";
             return;

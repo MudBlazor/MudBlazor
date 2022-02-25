@@ -129,6 +129,14 @@ namespace MudBlazor
         [Category(CategoryTypes.General.Appearance)]
         public string ClearIcon { get; set; } = Icons.Material.Filled.Clear;
 
+        protected override async Task OnInitializedAsync()
+        {
+            //Console.WriteLine($"OnInitialized Text:{Text}, Value:{Value}, Mask:{Mask}");
+            if (Text != Mask.Text)
+                await SetTextAsync(Mask.Text, updateValue: false);
+            await base.OnInitializedAsync();
+        }
+
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
             if (firstRender)
@@ -166,7 +174,7 @@ namespace MudBlazor
                 _keyInterceptor.KeyDown += e => HandleKeyDown(e).AndForget();
             }
             if (_isFocused && Mask.Selection == null)
-                SetCaretPosition(_caret, _selection, render: false);
+                SetCaretPosition(Mask.CaretPos, _selection, render: false);
             await base.OnAfterRenderAsync(firstRender);
         }
 

@@ -19,6 +19,28 @@ namespace MudBlazor.UnitTests.Components
     public class DialogTests : BunitTest
     {
         /// <summary>
+        /// Testing lifecycle of dialogs in dialogprovider
+        /// </summary>
+        [Test]
+        public async Task LifecycleTest()
+        {
+            var comp = Context.RenderComponent<MudDialogProvider>();
+            var service = Context.Services.GetService<IDialogService>() as DialogService;
+            service.Should().NotBe(null);
+            IDialogReference dialogReference = null;
+            await comp.InvokeAsync(async () =>
+            {
+                dialogReference = service?.Show<DialogRender>();
+                var result1 = await dialogReference.Result;
+                //The second Dialog is added here, but the first dialog is still in the _dialogs collection of the dialogprovider, as only the result task was set to completion.
+                //So DialogProvider will render again with 2 dialogs, but 1 is completed. This one needs to be excluded from rendering to prevent double initialize with no params.
+                dialogReference = service?.Show<DialogRender>();
+                var result2 = await dialogReference.Result;
+            });
+            DialogRender.OnInitializedCount.Should().Be(2);
+        }
+
+        /// <summary>
         /// Opening and closing a simple dialog
         /// </summary>
         [Test]
@@ -122,7 +144,6 @@ namespace MudBlazor.UnitTests.Components
         /// Based on bug report #3128
         /// Dialog Class and Style parameters should be honored for inline dialog
         /// </summary>
-        //[Ignore("Sadly we can not get this test to work when it is run in bulk (local and CI). It passes when executed individually")]
         [Test]
         public async Task InlineDialogShouldHonorClassAndStyle()
         {
@@ -140,6 +161,30 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("div.mud-dialog-content").Attributes["style"].Value.Should().Be("color: blue;");
             comp.Find("div.mud-dialog-content").ClassList.Should().NotContain("test-class");
             comp.Find("div.mud-dialog-content").ClassList.Should().Contain("content-class");
+            // check if tag is ok
+            var dialogInstance = comp.FindComponent<MudDialog>().Instance;
+            dialogInstance.Tag.Should().Be("test-tag");
+        }
+
+        /// <summary>
+        /// Based on bug report #3701 #3687
+        /// Dialog inline should not be closed after any event inside
+        /// </summary>
+        [Test]
+        public async Task InlineDialogShouldNotCloseAfterStateHasChanged()
+        {
+            var comp = Context.RenderComponent<MudDialogProvider>();
+            comp.Markup.Trim().Should().BeEmpty();
+            var service = Context.Services.GetService<IDialogService>() as DialogService;
+            service.Should().NotBe(null);
+            // displaying the component with the inline dialog only renders the open button
+            var comp1 = Context.RenderComponent<TestInlineDialog>();
+            // open the dialog
+            comp1.Find("button").Click();
+            // rate star
+            comp.Find("span.mud-rating-item").FirstElementChild.Click();
+            // check if is still opened
+            comp.WaitForAssertion(() => comp.Find("div.mud-dialog-container").Should().NotBe(null), TimeSpan.FromSeconds(5));
         }
 
         /// <summary>

@@ -1,0 +1,17 @@
+﻿
+
+<div class="d-flex relative flex-grow-1">
+    <MudPaper Class="mr-4" Width="@($"{value}%")" Elevation="0">
+        @ChildContent
+    </MudPaper>
+    <div class="absolute d-flex align-center mr-n4" style="top:0; right: 0;width: 50%;">
+        <input @bind-value="@value" @bind-value:event="oninput" class="docs-width-slider" type="range" id="volume" name="volume" min="50" max="100">
+    </div>
+</div>
+
+
+@code {
+    private int value = 100;
+    
+    [Parameter] public RenderFragment ChildContent { get; set; }
+}

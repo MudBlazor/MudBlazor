@@ -19,7 +19,7 @@
 	@if (Lines > 1)
 	{
 	    <textarea class="@InputClassname"
-                @ref="_elementReference" 
+                @ref="ElementReference" 
                 rows="@Lines" 
                 @attributes="UserAttributes"
                 type="@InputTypeString"                  
@@ -50,7 +50,7 @@
 	else
 	{
 	    <input class="@InputClassname"
-                @ref="_elementReference" 
+                @ref="ElementReference" 
                 @attributes="UserAttributes" 
                 type="@InputTypeString"                  
                 value="@_internalText" 

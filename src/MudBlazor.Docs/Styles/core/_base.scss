@@ -68,49 +68,88 @@
   filter: grayscale(1) opacity(0.05);
 }
 
+.docs-css-utility-header{
+  margin-top: 8px;
+  font-weight: 500;
+  font-size: 0.875rem;
+  color: var(--mud-palette-action-default);
+  padding-left: 34px;
+  margin-bottom: 2px;
+}
+
 .docs-class-table {
-  height: 400px;
-  table{
-    table-layout: fixed;
-    position: relative;
-    width: 100%;
-  }
-  td{
-    font-family: Consolas,"Liberation Mono",Menlo,Courier,monospace;
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-    user-select: all;
-  }
-  tbody tr th{
-    background-color: var(--mud-palette-surface);
-    color: var(--mud-palette-primary);
-    position: sticky;
-    z-index: 2;
-    top: 37px;
-  }
+    table {
+        table-layout: fixed;
+        position: relative;
+        width: 100%;
+    }
+
+    td {
+        font-family: Consolas,"Liberation Mono",Menlo,Courier,monospace;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        user-select: all;
+    }
+
+    tbody tr th {
+        background-color: var(--mud-palette-surface);
+        color: var(--mud-palette-primary);
+        position: sticky;
+        z-index: 2;
+        top: 37px;
+    }
+
+    td, th {
+      &:first-child {
+        padding-left: 0 !important;
+      }
+
+      &:last-child {
+        padding-right: 0 !important;
+      }
+    }
   
-  td, th{
-    &:first-child{
-      padding-left: 0 !important;
+    &.utility-table{
+      max-height: 300px;
+      overflow: auto;
+      tbody tr{
+        td {
+          font-weight: 600;
+          &:nth-child(1) {
+            color:var(--mud-palette-primary);
+          }
+
+          &:nth-child(2) {
+            color:var(--mud-palette-secondary);
+          }
+        }
+      }
     }
-    &:last-child{
-      padding-right: 0 !important;
+
+    &.default-theme {
+      height: 400px;
+        td, th {
+          
+            &:nth-child(1) {
+                width: 20%;
+            }
+
+            &:nth-child(2) {
+                width: 10%;
+            }
+
+            &:nth-child(3) {
+                width: 25%;
+            }
+
+            &:nth-child(4) {
+                width: 25%;
+            }
+
+            &:nth-child(5) {
+                width: 20%;
+            }
+        }
     }
-    &:nth-child(1){
-      width: 20%;
-    }
-    &:nth-child(2){
-      width: 10%;
-    }
-    &:nth-child(3){
-      width: 25%;
-    }
-    &:nth-child(4){
-      width: 25%;
-    }
-    &:nth-child(5){
-      width: 20%;
-    }
-  }
 }

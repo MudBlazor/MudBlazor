@@ -433,13 +433,13 @@ namespace MudBlazor.UnitTests.Components
             protected override ValidationResult IsValid(object value,
                 ValidationContext validationContext)
             {
-                return new ValidationResult("TEST ERROR");
+                return new ValidationResult(ErrorMessage);
             }
         }
         class TestFailingModel
         {
-            [CustomFailingValidation]
-            public string Foo { get; set; }
+            [CustomFailingValidation(ErrorMessage = "Foo")]
+            public virtual string Foo { get; set; }
         }
         [Test]
         public async Task TextField_Should_HaveCorrectMessageWithCustomAttr_Failing()
@@ -449,8 +449,31 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(() => comp.Instance.Validate());
             comp.Instance.Error.Should().BeTrue();
             comp.Instance.ValidationErrors.Should().HaveCount(1);
-            comp.Instance.ValidationErrors[0].Should().Be("TEST ERROR");
-            comp.Instance.GetErrorText().Should().Be("TEST ERROR");
+            comp.Instance.ValidationErrors[0].Should().Be("Foo");
+            comp.Instance.GetErrorText().Should().Be("Foo");
+        }
+
+        class TestFailingModel2 : TestFailingModel
+        {
+            [CustomFailingValidation(ErrorMessage = "Bar")]
+            public override string Foo { get; set; }
+        }
+        /// <summary>
+        /// This test checks specifically the case where validation is made on a child class, but linq expression returns the property of the parent.
+        /// </summary>
+        [Test]
+        public async Task TextField_Should_HaveCorrectMessageWithCustomAttr_Override_Failing()
+        {
+            TestFailingModel model = new TestFailingModel2();
+            var comp = Context.RenderComponent<MudTextField<string>>(
+                ComponentParameter.CreateParameter("For", (Expression<Func<string>>)(() => (model as TestFailingModel2).Foo))
+                //ComponentParameter.CreateParameter("ForModel", typeof(TestFailingModel2)) // Explicitly set the `For` class
+            );
+            await comp.InvokeAsync(() => comp.Instance.Validate());
+            comp.Instance.Error.Should().BeTrue();
+            comp.Instance.ValidationErrors.Should().HaveCount(1);
+            comp.Instance.ValidationErrors[0].Should().Be("Bar");
+            comp.Instance.GetErrorText().Should().Be("Bar");
         }
 
 
@@ -594,6 +617,15 @@ namespace MudBlazor.UnitTests.Components
             comp.WaitForAssertion(() => comp.Find("span").TrimmedText().Should().Be("value:"));
             comp.WaitForAssertion(() => input.Instance.Value.Should().Be(""));
             comp.WaitForAssertion(() => input.Instance.Text.Should().Be(""));
+        }
+        
+        [Test]
+        public async Task TextField_ElementReferenceId_ShouldNot_BeEmpty()
+        {
+            var comp = Context.RenderComponent<MudTextField<string>>();
+            var inputId = comp.Instance.InputReference.ElementReference.Id;
+
+            Assert.IsNotEmpty(inputId);
         }
     }
 
