@@ -27,7 +27,15 @@
     protected override void OnParametersSet()
     {
         _mediumClass = Utility;
-        _regularClass = Utility.Replace("-md", "");
+        if (Utility.Contains("-md"))
+        {
+            _regularClass = Utility.Replace("-md", "");
+        }
+        else
+        {
+            throw new InvalidOperationException("Example class must be of type medium, example: pa-md-16");
+        }
+        
     }
 
 }
