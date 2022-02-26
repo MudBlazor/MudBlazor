@@ -36,7 +36,7 @@ namespace MudBlazor
         public ChartOptions ChartOptions { get; set; } = new();
 
         /// <summary>
-        /// RenderFragment for costumization inside the chart's svg.
+        /// RenderFragment for customization inside the chart's svg.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Chart.Appearance)]
@@ -44,25 +44,31 @@ namespace MudBlazor
         
         [Parameter]
         [Category(CategoryTypes.Chart.Appearance)]
-        public RenderFragment TooltipTemplate { get; set; }
+        public RenderFragment<(string label, double value)> TooltipTemplate { get; set; }
         
         public bool TooltipVisible { get; private set; }
-        
+
         [Parameter]
-        public bool ToolTipEnabled { get; set; }
+        [Category(CategoryTypes.Chart.Appearance)]
+        public bool ToolTipEnabled { get; set; } = true;
 
         public int HoverIndex { get; private set; }
         
         private int _tooltipX;
         private int _tooltipY;
+        private int _lastHoverRenderIndex = -1;
 
+        /// <summary>
+        /// This methods is called when the mouse is over the chart item, and renders the tooltip.
+        /// </summary>
+        /// <returns></returns>
         private RenderFragment RenderTooltip()
         {
+            var data = InputData[HoverIndex];
+            var label = InputLabels[HoverIndex];
+            
             return builder =>
             {
-                var data = InputData[HoverIndex];
-                var label = InputLabels[HoverIndex];
-                
                 builder.OpenComponent<MudChartTooltip>(0);
                 builder.AddAttribute(1, nameof(MudChartTooltip.X), _tooltipX);
                 builder.AddAttribute(2, nameof(MudChartTooltip.Y), _tooltipY);
@@ -77,42 +83,42 @@ namespace MudBlazor
 
         protected void OnMouseHover(MouseEventArgs args, SvgPath svgPath)
         {
+            //Set the index of the item that is hovered
             HoverIndex = svgPath.Index;
-
+            //Set the tooltip position and make it visible
             TooltipVisible = true;
-            _tooltipX = (int) args.ClientX;
-            _tooltipY = (int) args.ClientY;
 
+            //Only render the tooltip if the index has changed
+            if (_lastHoverRenderIndex == HoverIndex)
+            {
+                return;
+            }
+
+            //Updates the last rendered index
+            _lastHoverRenderIndex = HoverIndex;
+            //Render the tooltip
             _tooltip = RenderTooltip();
-            
-            Console.WriteLine($"Hover {svgPath.Index} X:{args.ClientX} Y:{args.ClientY} OffsetX:{args.OffsetX} OffsetY:{args.OffsetY} Visible:{TooltipVisible}");
-            
-            StateHasChanged();
         }
         
         protected void OnMouseOut(MouseEventArgs args, SvgPath svgPath)
         {
+            //Hide the tooltip
             TooltipVisible = false;
-            Console.WriteLine($"Out {svgPath.Index} Visible:{TooltipVisible}");
-            
-            StateHasChanged();
         }
-
-
-        private int lastMouseMove = Environment.TickCount;
+        
         protected void OnMouseMove(MouseEventArgs args, SvgPath svgPath)
         {
-            if(lastMouseMove + 800 > Environment.TickCount)
+            var x = (int)args.ClientX;
+            var y = (int)args.ClientY;
+            
+            //So we dont render anything new if the position is the same
+            if(_tooltipX == x && _tooltipY == y)
+            {
                 return;
+            }
             
-            lastMouseMove = Environment.TickCount;
-            
-            _tooltipX = (int) args.ClientX;
-            _tooltipY = (int) args.ClientY;
-            
-            _tooltip = RenderTooltip();   
-            
-            StateHasChanged();
+            _tooltipX = x;
+            _tooltipY = y;
         }
 
         protected string Classname =>

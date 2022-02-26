@@ -32,8 +32,6 @@ namespace MudBlazor.Charts
                 var centerX = (startx + endx) / 2;
                 var centerY = (starty + endy) / 2;
                 
-                Console.WriteLine($"{centerX},{centerY}");
-
                 var largeArcFlag = data > 0.5 ? 1 : 0;
                 var path = new SvgPath
                 {
