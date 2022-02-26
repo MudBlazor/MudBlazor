@@ -16,6 +16,9 @@ namespace MudBlazor.Charts
 
         protected override void OnParametersSet()
         {
+            //This value is not coming from the parent component automatically
+            TooltipTemplate = MudChartParent.TooltipTemplate;
+            
             _circles.Clear();
             _legends.Clear();
             double counterClockwiseOffset = 25;

@@ -90,7 +90,7 @@ namespace MudBlazor
 
         protected RenderFragment _tooltip;
 
-        protected void OnMouseHover(MouseEventArgs args, SvgPath svgPath)
+        protected void OnMouseHover(MouseEventArgs args, BaseSvg svgPath)
         {
             //Set the index of the item that is hovered
             HoverIndex = svgPath.Index;
@@ -112,13 +112,13 @@ namespace MudBlazor
             _tooltip = RenderTooltip();
         }
         
-        protected void OnMouseOut(MouseEventArgs args, SvgPath svgPath)
+        protected void OnMouseOut(MouseEventArgs args, BaseSvg svgPath)
         {
             //Hide the tooltip
             TooltipVisible = false;
         }
         
-        protected void OnMouseMove(MouseEventArgs args, SvgPath svgPath)
+        protected void OnMouseMove(MouseEventArgs args, BaseSvg svgPath)
         {
             var x = (int)args.ClientX;
             var y = (int)args.ClientY;

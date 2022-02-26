@@ -11,6 +11,9 @@
                 cx="@ToS(item.CX)"
                 cy="@ToS(item.CY)"
                 r="@ToS(item.Radius)"
+                @onmouseout="args => OnMouseOut(args, item)"
+                @onmouseover="args => OnMouseHover(args, item)"
+                @onmousemove="args => OnMouseMove(args, item)"
                 stroke-dasharray="@item.StrokeDashArray"
                 stroke-dashoffset="@ToS(item.StrokeDashOffset)">
         </circle>
@@ -20,3 +23,8 @@
 	@MudChartParent?.CustomGraphics
 </svg>
 <Legend Data="@_legends" />
+
+@if (TooltipVisible)
+{
+    @_tooltip
+}

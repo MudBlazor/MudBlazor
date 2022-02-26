@@ -1,9 +1,8 @@
 ﻿
 namespace MudBlazor.Charts.SVG.Models
 {
-    public class SvgCircle
+    public class SvgCircle : BaseSvg
     {
-        public int Index { get; set; }
         public double CX { get; set; }
         public double CY { get; set; }
         public double Radius { get; set; }

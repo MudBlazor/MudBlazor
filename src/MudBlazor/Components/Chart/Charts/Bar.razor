@@ -35,7 +35,15 @@
     <g class="mud-charts-bar-series">
         @foreach (var bar in _bars)
         {
-            <path class="mud-chart-bar" @onclick="() => SelectedIndex = bar.Index"  fill="@(MudChartParent.ChartOptions.ChartPalette.GetValue(bar.Index % ChartOptions.ChartPalette.Count()))" stroke="@(MudChartParent.ChartOptions.ChartPalette.GetValue(bar.Index % ChartOptions.ChartPalette.Count()))" stroke-width="8" d="@bar.Data"></path>
+            <path 
+                class="mud-chart-bar" 
+                @onclick="() => SelectedIndex = bar.Index" 
+                @onmouseout="args => OnMouseOut(args, bar)"
+                @onmouseover="args => OnMouseHover(args, bar)"
+                @onmousemove="args => OnMouseMove(args, bar)"
+                fill="@(MudChartParent.ChartOptions.ChartPalette.GetValue(bar.Index % ChartOptions.ChartPalette.Count()))"
+                stroke="@(MudChartParent.ChartOptions.ChartPalette.GetValue(bar.Index % ChartOptions.ChartPalette.Count()))" 
+                stroke-width="8" d="@bar.Data"></path>
         }
     </g>
 
@@ -43,3 +51,8 @@
 	@MudChartParent?.CustomGraphics
 </svg>
 <Legend Data="@_legends" />
+
+@if (TooltipVisible)
+{
+    @_tooltip
+}
