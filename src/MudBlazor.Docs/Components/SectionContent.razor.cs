@@ -112,9 +112,21 @@ public partial class SectionContent
             {
                 var read = reader.ReadToEnd();
                 
-                if (!String.IsNullOrEmpty(HighLight))
+                if (!string.IsNullOrEmpty(HighLight))
                 {
-                    read = Regex.Replace(read, $"{HighLight}(?=\\s|\")", $"<mark>$&</mark>");
+                    if (HighLight.Contains(","))
+                    {
+                        var highlights = HighLight.Split(",");
+                        
+                        foreach (var value in highlights)
+                        {
+                            read = Regex.Replace(read, $"{value}(?=\\s|\")", $"<mark>$&</mark>");
+                        }
+                    }
+                    else
+                    {
+                        read = Regex.Replace(read, $"{HighLight}(?=\\s|\")", $"<mark>$&</mark>");
+                    }
                 }
 
                 builder.AddMarkupContent(0, read);
