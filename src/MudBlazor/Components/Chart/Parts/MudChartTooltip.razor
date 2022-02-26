@@ -6,19 +6,10 @@
     left: @(X)px; 
     top: @(Y)px; 
     pointer-events: none; 
-    background: white; 
-    border: 2px solid black; 
-    border-radius: 4px; 
     transition: 0.4s;
     transform-origin: center;
-    transform: translate(10px, -11px);
-">
-    <div  style="@Style">
-        <div>@Title</div>
-        <label>@($"{Label}:")
-            <strong>@Value</strong>
-        </label>
-    </div>
+    transform: translate(15px, -50%);">
+    @ChildContent
 </div>
 
 @code
@@ -46,24 +37,6 @@
     /// </summary>
     [Parameter]
     public int Y { get; set; }
-
-    /// <summary>
-    /// 
-    /// </summary>
-    [Parameter]
-    public string Title { get; set; }
-
-    /// <summary>
-    /// 
-    /// </summary>
-    [Parameter]
-    public string Value { get; set; }
-
-    /// <summary>
-    /// 
-    /// </summary>
-    [Parameter]
-    public string Label { get; set; }
 
     /// <summary>
     /// 

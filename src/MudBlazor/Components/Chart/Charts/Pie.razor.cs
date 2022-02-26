@@ -14,6 +14,9 @@ namespace MudBlazor.Charts
 
         protected override void OnParametersSet()
         {
+            //This value is not coming from the parent component automatically
+            TooltipTemplate = MudChartParent.TooltipTemplate;
+            
             _paths.Clear();
             _legends.Clear();
             double startx, starty, endx, endy;

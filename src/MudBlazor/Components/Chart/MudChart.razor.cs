@@ -44,7 +44,16 @@ namespace MudBlazor
         
         [Parameter]
         [Category(CategoryTypes.Chart.Appearance)]
-        public RenderFragment<(string label, double value)> TooltipTemplate { get; set; }
+        public RenderFragment<(string Label, double Value)> TooltipTemplate { get; set; }
+        
+        private readonly RenderFragment<(string Label, double Value)> _defaultToolTip = args => builder =>
+        {
+            builder.OpenComponent<MudChartTooltipContent>(0);
+            builder.AddAttribute(1, nameof(MudChartTooltipContent.Label), args.Label);
+            builder.AddAttribute(2, nameof(MudChartTooltipContent.Value), ToS(args.Value));
+
+            builder.CloseComponent();
+        };
         
         public bool TooltipVisible { get; private set; }
 
@@ -66,14 +75,14 @@ namespace MudBlazor
         {
             var data = InputData[HoverIndex];
             var label = InputLabels[HoverIndex];
-            
+
+            //Default tooltip
             return builder =>
             {
                 builder.OpenComponent<MudChartTooltip>(0);
                 builder.AddAttribute(1, nameof(MudChartTooltip.X), _tooltipX);
                 builder.AddAttribute(2, nameof(MudChartTooltip.Y), _tooltipY);
-                builder.AddAttribute(3, nameof(MudChartTooltip.Label), label);
-                builder.AddAttribute(4, nameof(MudChartTooltip.Value), ToS(data));
+                builder.AddAttribute(3, nameof(MudChartTooltip.ChildContent), TooltipTemplate != null ? TooltipTemplate((label, data)) : _defaultToolTip((label, data)));
 
                 builder.CloseComponent();
             };
@@ -87,11 +96,14 @@ namespace MudBlazor
             HoverIndex = svgPath.Index;
             //Set the tooltip position and make it visible
             TooltipVisible = true;
+            //This is only needed for the tooltip not derp around on the first render
+            _tooltipX = (int)args.ClientX;
+            _tooltipY = (int)args.ClientY;
 
             //Only render the tooltip if the index has changed
             if (_lastHoverRenderIndex == HoverIndex)
             {
-                return;
+                //return;
             }
 
             //Updates the last rendered index
@@ -204,7 +216,7 @@ namespace MudBlazor
             return InputData.Select(x => Math.Abs(x) / total).ToArray();
         }
 
-        protected string ToS(double d, string format = null)
+        protected static string ToS(double d, string format = null)
         {
             if (string.IsNullOrEmpty(format))
                 return d.ToString(CultureInfo.InvariantCulture);

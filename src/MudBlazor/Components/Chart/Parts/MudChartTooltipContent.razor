@@ -1,0 +1,37 @@
+﻿@using MudBlazor.Utilities
+@namespace MudBlazor.Charts
+
+<div class="@MudChartTooltipContentClass" style="@Style">
+    <label>@($"{Label}:")
+        <strong>@Value</strong>
+    </label>
+</div>
+
+@code
+{
+    /// <summary>
+    /// 
+    /// </summary>
+    [Parameter]
+    public string Style { get; set; }
+    
+    /// <summary>
+    /// 
+    /// </summary>
+    [Parameter]
+    public string Value { get; set; }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    [Parameter]
+    public string Label { get; set; }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    [Parameter]
+    public string Class { get; set; }
+    
+    private string MudChartTooltipContentClass => new CssBuilder(Class).Build();
+}
