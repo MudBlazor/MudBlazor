@@ -38,8 +38,7 @@ namespace MudBlazor.Docs.Services
         /// </summary>
         public NavigationFooterLink Next => GetNavigationLink(NavigationOrder.Next);
 
-
-        /// TODO add "get-started" and remaining sections
+        
         /// <summary>
         /// The section of the menu: components or api
         /// </summary>
@@ -54,6 +53,7 @@ namespace MudBlazor.Docs.Services
                     "api" => NavigationSection.Api,
                     "features" => NavigationSection.Features,
                     "customization" => NavigationSection.Customization,
+                    "utilities" => NavigationSection.Utilities,
                     _ => null,
                 };
             }
@@ -159,6 +159,9 @@ namespace MudBlazor.Docs.Services
                 case NavigationSection.Customization:
                     thisSection = NavigationSection.Customization;
                     break;
+                case NavigationSection.Utilities:
+                    thisSection = NavigationSection.Utilities;
+                    break;
             }
 
             return thisSection;
@@ -169,7 +172,7 @@ namespace MudBlazor.Docs.Services
 
     public enum NavigationOrder { Previous, Next }
 
-    public enum NavigationSection { Api, Components, Features, Customization, Unspecified }
+    public enum NavigationSection { Api, Components, Features, Customization, Utilities, Unspecified }
 
     #endregion
 }
