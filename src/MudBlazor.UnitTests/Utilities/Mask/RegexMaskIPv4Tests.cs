@@ -18,6 +18,8 @@ public class RegexMaskIPv4Tests
         mask.ToString().Should().Be("|");
         mask.Insert("255255255255");
         mask.Mask.Should().Be("000.000.000.000");
+        mask = RegexMask.IPv4(maskChar: '_');
+        mask.Mask.Should().Be("___.___.___.___");
     }
 
     [Test]
@@ -56,6 +58,11 @@ public class RegexMaskIPv4Tests
         mask.Selection = (2, 1);
         mask.Insert("267");
         mask.ToString().Should().Be("0.26.7|0.00");
+        mask = RegexMask.IPv4();
+        mask.ToString().Should().Be("|");
+        mask.Insert("255255255255\n");
+        mask.ToString().Should().Be("255.255.255.255|");
+        mask.Text.IndexOf('\n').Should().Be(-1);
     }
 
     [Test]
@@ -96,6 +103,8 @@ public class RegexMaskIPv4Tests
         mask.ToString().Should().Be("|");
         mask.Insert("25525525525525525");
         mask.Mask.Should().Be("000.000.000.000:00000");
+        mask = RegexMask.IPv4(true, '_');
+        mask.Mask.Should().Be("___.___.___.___:_____");
     }
 
     [Test]
@@ -134,6 +143,11 @@ public class RegexMaskIPv4Tests
         mask.Selection = (2, 1);
         mask.Insert("267");
         mask.ToString().Should().Be("0.26.7|0.00");
+        mask = RegexMask.IPv4(true);
+        mask.ToString().Should().Be("|");
+        mask.Insert("255255255255\n");
+        mask.ToString().Should().Be("255.255.255.255|");
+        mask.Text.IndexOf('\n').Should().Be(-1);
 
         mask = RegexMask.IPv4(true);
         mask.Insert("25525525525525525");
@@ -158,6 +172,11 @@ public class RegexMaskIPv4Tests
         mask.Selection = (9, 1);
         mask.Insert(":267");
         mask.ToString().Should().Be("0.26.70.0:267|01");
+        mask = RegexMask.IPv4(true);
+        mask.ToString().Should().Be("|");
+        mask.Insert("25525525525512345\n");
+        mask.ToString().Should().Be("255.255.255.255:12345|");
+        mask.Text.IndexOf('\n').Should().Be(-1);
     }
 
     [Test]
@@ -188,7 +207,7 @@ public class RegexMaskIPv4Tests
         mask = RegexMask.IPv4(true);
         mask.SetText("265245245245246");
         mask.CaretPos = 1;
-        mask.Backspace();               
+        mask.Backspace();
         mask.ToString().Should().Be("|6.52.45.245:24524");
     }
 
