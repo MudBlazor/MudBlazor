@@ -134,6 +134,7 @@ namespace MudBlazor.Docs.Services
                 {
                     NavigationSection.Customization => _menuService.Customization,
                     NavigationSection.Features => _menuService.Features,
+                    NavigationSection.Utilities => _menuService.Utilities,
                     _ => Array.Empty<DocsLink>()
                 };
 
