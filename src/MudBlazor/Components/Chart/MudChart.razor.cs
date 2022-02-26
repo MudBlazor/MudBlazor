@@ -2,7 +2,12 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Web;
+using MudBlazor.Charts;
+using MudBlazor.Charts.SVG.Models;
+using MudBlazor.Components.Chart;
 using MudBlazor.Extensions;
 using MudBlazor.Utilities;
 
@@ -36,6 +41,79 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.Chart.Appearance)]
         public RenderFragment CustomGraphics { get; set; }
+        
+        [Parameter]
+        [Category(CategoryTypes.Chart.Appearance)]
+        public RenderFragment TooltipTemplate { get; set; }
+        
+        public bool TooltipVisible { get; private set; }
+        
+        [Parameter]
+        public bool ToolTipEnabled { get; set; }
+
+        public int HoverIndex { get; private set; }
+        
+        private int _tooltipX;
+        private int _tooltipY;
+
+        private RenderFragment RenderTooltip()
+        {
+            return builder =>
+            {
+                var data = InputData[HoverIndex];
+                var label = InputLabels[HoverIndex];
+                
+                builder.OpenComponent<MudChartTooltip>(0);
+                builder.AddAttribute(1, nameof(MudChartTooltip.X), _tooltipX);
+                builder.AddAttribute(2, nameof(MudChartTooltip.Y), _tooltipY);
+                builder.AddAttribute(3, nameof(MudChartTooltip.Label), label);
+                builder.AddAttribute(4, nameof(MudChartTooltip.Value), ToS(data));
+
+                builder.CloseComponent();
+            };
+        }
+
+        protected RenderFragment _tooltip;
+
+        protected void OnMouseHover(MouseEventArgs args, SvgPath svgPath)
+        {
+            HoverIndex = svgPath.Index;
+
+            TooltipVisible = true;
+            _tooltipX = (int) args.ClientX;
+            _tooltipY = (int) args.ClientY;
+
+            _tooltip = RenderTooltip();
+            
+            Console.WriteLine($"Hover {svgPath.Index} X:{args.ClientX} Y:{args.ClientY} OffsetX:{args.OffsetX} OffsetY:{args.OffsetY} Visible:{TooltipVisible}");
+            
+            StateHasChanged();
+        }
+        
+        protected void OnMouseOut(MouseEventArgs args, SvgPath svgPath)
+        {
+            TooltipVisible = false;
+            Console.WriteLine($"Out {svgPath.Index} Visible:{TooltipVisible}");
+            
+            StateHasChanged();
+        }
+
+
+        private int lastMouseMove = Environment.TickCount;
+        protected void OnMouseMove(MouseEventArgs args, SvgPath svgPath)
+        {
+            if(lastMouseMove + 800 > Environment.TickCount)
+                return;
+            
+            lastMouseMove = Environment.TickCount;
+            
+            _tooltipX = (int) args.ClientX;
+            _tooltipY = (int) args.ClientY;
+            
+            _tooltip = RenderTooltip();   
+            
+            StateHasChanged();
+        }
 
         protected string Classname =>
         new CssBuilder("mud-chart")

@@ -3,22 +3,24 @@
 @inherits MudChartBase
 
 <CascadingValue Value="@this" IsFixed="true">
-    <div @attributes="UserAttributes" class="@Classname" style="@Style" dir="ltr">
-        @if (ChartType == ChartType.Donut)
+    <div @attributes="@UserAttributes" class="@Classname" style="@Style" dir="ltr">
+        @switch (ChartType)
         {
-            <Donut InputData="@InputData" @bind-SelectedIndex="@SelectedIndex" InputLabels="@InputLabels"></Donut>
-        }
-        @if (ChartType == ChartType.Pie)
-        {
-            <Pie InputData="@InputData" @bind-SelectedIndex="@SelectedIndex" InputLabels="@InputLabels"></Pie>
-        }
-        @if (ChartType == ChartType.Line)
-        {
-            <Line ChartSeries="@ChartSeries" @bind-SelectedIndex="@SelectedIndex" XAxisLabels="@XAxisLabels"></Line>
-        }
-        @if (ChartType == ChartType.Bar)
-        {
-            <Bar ChartSeries="@ChartSeries" @bind-SelectedIndex="@SelectedIndex" XAxisLabels="@XAxisLabels"></Bar>
+            case ChartType.Donut:
+                <Donut InputData="@InputData" @bind-SelectedIndex="@SelectedIndex" InputLabels="@InputLabels"></Donut>
+                break;
+            case ChartType.Line:
+                <Line ChartSeries="@ChartSeries" @bind-SelectedIndex="@SelectedIndex" XAxisLabels="@XAxisLabels"></Line>
+                break;
+            case ChartType.Pie:
+                <Pie InputData="@InputData" @bind-SelectedIndex="@SelectedIndex" InputLabels="@InputLabels"></Pie>
+                break;
+            case ChartType.Bar:
+                <Bar ChartSeries="@ChartSeries" @bind-SelectedIndex="@SelectedIndex" XAxisLabels="@XAxisLabels"></Bar>
+                break;
+            default:
+                <MudText Color="Color.Error">The chart type:<bold>@ChartType</bold> does not exists.</MudText>
+                break;
         }
     </div>
 </CascadingValue>

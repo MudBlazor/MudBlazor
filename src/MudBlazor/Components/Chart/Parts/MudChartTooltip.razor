@@ -1,0 +1,75 @@
+﻿@using MudBlazor.Utilities
+@namespace MudBlazor.Charts
+
+<div class="@MudChartTooltipClass" style="
+    position: absolute; 
+    left: @(X)px; 
+    top: @(Y)px; 
+    pointer-events: none; 
+    background: white; 
+    border: 2px solid black; 
+    border-radius: 4px; 
+    transition: 0.8s;
+    transform-origin: center;
+    transform: translate(10px, -11px);
+">
+    <div  style="@Style">
+        <div>@Title</div>
+        <label>@($"{Label}:")
+            <strong>@Value</strong>
+        </label>
+    </div>
+</div>
+
+@code
+{
+    /// <summary>
+    /// 
+    /// </summary>
+    [Parameter]
+    public string Style { get; set; }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    [Parameter]
+    public int X { get; set; }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    [Parameter]
+    public int Y { get; set; }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    [Parameter]
+    public string Title { get; set; }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    [Parameter]
+    public string Value { get; set; }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    [Parameter]
+    public string Label { get; set; }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    [Parameter]
+    public string Class { get; set; }
+    
+    private string MudChartTooltipClass => new CssBuilder(Class).Build();
+}

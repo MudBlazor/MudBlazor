@@ -19,6 +19,7 @@ namespace MudBlazor.Charts
             double startx, starty, endx, endy;
             var ndata = GetNormalizedData();
             double cumulativeRadians = 0;
+            
             for (var i = 0; i < ndata.Length; i++)
             {
                 var data = ndata[i];
@@ -27,11 +28,19 @@ namespace MudBlazor.Charts
                 cumulativeRadians += 2 * Math.PI * data;
                 endx = Math.Cos(cumulativeRadians);
                 endy = Math.Sin(cumulativeRadians);
+                
+                var centerX = (startx + endx) / 2;
+                var centerY = (starty + endy) / 2;
+                
+                Console.WriteLine($"{centerX},{centerY}");
+
                 var largeArcFlag = data > 0.5 ? 1 : 0;
-                var path = new SvgPath()
+                var path = new SvgPath
                 {
                     Index = i,
-                    Data = $"M {ToS(startx)} {ToS(starty)} A 1 1 0 {ToS(largeArcFlag)} 1 {ToS(endx)} {ToS(endy)} L 0 0"
+                    Data = $"M {ToS(startx)} {ToS(starty)} A 1 1 0 {ToS(largeArcFlag)} 1 {ToS(endx)} {ToS(endy)} L 0 0",
+                    CenterX = centerX,
+                    CenterY = centerY
                 };
                 _paths.Add(path);
             }
@@ -45,7 +54,7 @@ namespace MudBlazor.Charts
                 {
                     labels = InputLabels[counter];
                 }
-                var legend = new SvgLegend()
+                var legend = new SvgLegend
                 {
                     Index = counter,
                     Labels = labels,
