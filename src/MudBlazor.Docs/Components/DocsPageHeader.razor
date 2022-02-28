@@ -53,7 +53,7 @@ else
                     @foreach (var childType in _component.ChildTypes)
                     {
                         <li>
-                            <MudLink Href="@($"api/{childType.Name.Replace("`1", "").ToLower().Replace("mud","")}")" Class="ms-1">
+                            <MudLink Href="@($"api/{childType.Name.Replace("`1", "").ToLowerInvariant().Replace("mud","")}")" Class="ms-1">
                                 - <CodeInline>@($"<{childType.Name.Replace("`1", "")}>")</CodeInline>
                             </MudLink>
                         </li>

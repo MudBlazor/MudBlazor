@@ -18,7 +18,7 @@
     {
         if (String.IsNullOrEmpty(Link))
         {
-            return $"/components/{Title.Replace(" ", "").ToLower()}";
+            return $"/components/{Title.Replace(" ", "").ToLowerInvariant()}";
         }
         else
         {
