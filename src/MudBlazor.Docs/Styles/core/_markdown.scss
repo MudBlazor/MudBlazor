@@ -22,7 +22,15 @@
 
 .mud-codeblock {
     & .html, .codearea {
-
+        mark {
+          font-weight: 600;
+          color: var(--mud-palette-primary);
+          background-color: var(--mud-palette-action-default-hover);
+          border-radius: 2px;
+          padding: 1px 3px;
+          margin: 0 0 0 2px;
+          user-select: all;
+        }
         & .htmlTagDelimiter {
             color: #979797;
         }
