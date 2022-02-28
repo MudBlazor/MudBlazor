@@ -12,6 +12,11 @@ namespace MudBlazor;
 public class RegexMask : BaseMask
 {
     /// <summary>
+    ///     Add this filter to the end of a mask to block any space, tab or newline character.
+    /// </summary>
+    private const string WhiteSpaceFilter = "(?!\\s)";
+
+    /// <summary>
     /// Create a mask that uses a regex to restrict input.   
     /// </summary>
     /// <param name="regex">
@@ -189,26 +194,30 @@ public class RegexMask : BaseMask
     /// Creates a predefined RegexMask for an IPv4 Address with or without port masking.
     /// </summary>
     /// <param name="includePort">
-    /// /// Set to true to include port to the mask.
+    /// Set to true to include port to the mask.
     /// </param>
-    public static RegexMask IPv4(bool includePort = false)
+    /// <param name="maskChar">
+    /// Set the IPv4 maskChar. Default is '0'
+    /// </param>
+    public static RegexMask IPv4(bool includePort = false, char maskChar = '0')
     {
-        const string Octet = "(25[0-5]|2[0-4][0-9]|[0-1]?[0-9]{0,2})";
-        var ipv4 = $"({Octet})(\\.|\\.{Octet}){{0,3}}";
-        var mask = "000.000.000.000";
+        const string Octet = "25[0-5]|2[0-4][0-9]|[0-1]?[0-9]{0,2}";
+
+        var ipv4 = $"(?:{Octet})(?:\\.(?:{Octet})){{0,3}}";
         var delimiters = ".";
+        var octetMask = new string(maskChar, 3);
+        var mask = string.Join(delimiters, Enumerable.Repeat(octetMask, 4));
         if (includePort)
         {
-            const string IpPort = "(:|:(6553[0-5]|655[0-2][0-9]|65[0-4][0-9]{2}|6[0-4][0-9]{3}|[1-5][0-9]{4}|[1-9][0-9]{0,3}))?";
+            const string IpPort =
+                "(:|:(6553[0-5]|655[0-2][0-9]|65[0-4][0-9]{2}|6[0-4][0-9]{3}|[1-5][0-9]{4}|[1-9][0-9]{0,3}))?";
             ipv4 = $"{ipv4}{IpPort}";
-            mask = $"{mask}:00000";
+            mask = $"{mask}:{new string(maskChar, 5)}";
             delimiters += ":";
         }
-        var regex = $"^{ipv4}$";
-        var regexMask = new RegexMask(regex, mask)
-        {
-            Delimiters = delimiters
-        };
+
+        var regex = $"^{ipv4}{WhiteSpaceFilter}$";
+        var regexMask = new RegexMask(regex, mask) { Delimiters = delimiters };
         return regexMask;
     }
 
@@ -216,28 +225,33 @@ public class RegexMask : BaseMask
     /// Creates a predefined RegexMask for an IPv6 Address with or without port masking.
     /// </summary>
     /// <param name="includePort">
-    /// /// Set to true to include port to the mask.
+    /// Set to true to include port to the mask.
     /// </param>
-    public static RegexMask IPv6(bool includePort = false)
+    /// <param name="maskChar">
+    /// Set the IPv6 maskChar. Default is 'X'
+    /// </param>
+    /// <param name="portMaskChar">
+    /// Set the IPv6 portMask. Default is '0'
+    /// </param>
+    public static RegexMask IPv6(bool includePort = false, char maskChar = 'X', char portMaskChar = '0')
     {
         const string Hex = "[0-9A-Fa-f]{0,4}";
         const string IPv6Filter = "(?!.*?[:]{2}?:)";
         var ipv6 = $"{Hex}(:{Hex}){{0,7}}";
-        var mask = "XXXX:XXXX:XXXX:XXXX:XXXX:XXXX:XXXX:XXXX";
         var delimiters = ":";
+        var hexMask = new string(maskChar, 4);
+        var mask = string.Join(delimiters, Enumerable.Repeat(hexMask, 8));
         if (includePort)
         {
-            const string IpPort = "(\\]|\\]:|\\]:(6553[0-5]|655[0-2][0-9]|65[0-4][0-9]{2}|6[0-4][0-9]{3}|[1-5][0-9]{4}|[1-9][0-9]{0,3}))?";
+            const string IpPort =
+                "(\\]|\\]:|\\]:(6553[0-5]|655[0-2][0-9]|65[0-4][0-9]{2}|6[0-4][0-9]{3}|[1-5][0-9]{4}|[1-9][0-9]{0,3}))?";
             ipv6 = $"((\\[{ipv6}){IpPort})";
-            mask = $"[{mask}]:00000";
+            mask = $"[{mask}]:{new(portMaskChar, 5)}";
             delimiters += "[]";
         }
-        var regex = $"^{IPv6Filter}{ipv6}$";
-        var regexMask = new RegexMask(regex, mask)
-        {
-            Delimiters = delimiters,
-            AllowOnlyDelimiters = true
-        };
+
+        var regex = $"^{IPv6Filter}{ipv6}{WhiteSpaceFilter}$";
+        var regexMask = new RegexMask(regex, mask) { Delimiters = delimiters, AllowOnlyDelimiters = true };
         return regexMask;
     }
 
@@ -245,17 +259,13 @@ public class RegexMask : BaseMask
     /// Creates a predefined RegexMask for Email Address.
     /// </summary>
     /// <param name="mask">
-    /// /// Set the email mask. Default is "Ex. user@domain.com"
+    /// Set the email mask. Default is "Ex. user@domain.com"
     /// </param>
     public static RegexMask Email(string mask = "Ex. user@domain.com")
     {
-        const string Regex = "^(?>[\\w\\-\\+]+\\.?)+(?>@?|@)(?<!(\\.@))(?>\\w+\\.)*(\\w+)?$";
+        const string Regex = $"^(?>[\\w\\-\\+]+\\.?)+(?>@?|@)(?<!(\\.@))(?>\\w+\\.)*(\\w+)?{WhiteSpaceFilter}$";
         const string Delimiters = "@.";
-
-        var regexMask = new RegexMask(Regex, mask)
-        {
-            Delimiters = Delimiters
-        };
+        var regexMask = new RegexMask(Regex, mask) { Delimiters = Delimiters };
         return regexMask;
     }
 }

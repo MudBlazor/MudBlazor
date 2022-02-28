@@ -18,6 +18,8 @@ public class RegexMaskIPv6Tests
         mask.ToString().Should().Be("|");
         mask.Insert("255255255255");
         mask.Mask.Should().Be("XXXX:XXXX:XXXX:XXXX:XXXX:XXXX:XXXX:XXXX");
+        mask = RegexMask.IPv6(maskChar: '_');
+        mask.Mask.Should().Be("____:____:____:____:____:____:____:____");
     }
 
     [Test]
@@ -66,6 +68,11 @@ public class RegexMaskIPv6Tests
         mask.Selection = (14, 1);
         mask.Insert("0db8");
         mask.ToString().Should().Be("0:0:0:0:0:0:0:0db8|");
+        mask = RegexMask.IPv6();
+        mask.ToString().Should().Be("|");
+        mask.Insert("0:0:0:0:0:0:0:0\n");
+        mask.ToString().Should().Be("0:0:0:0:0:0:0:0|");
+        mask.Text.IndexOf('\n').Should().Be(-1);
     }
 
     [Test]
@@ -106,6 +113,10 @@ public class RegexMaskIPv6Tests
         mask.ToString().Should().Be("|");
         mask.Insert("255255255255");
         mask.Mask.Should().Be("[XXXX:XXXX:XXXX:XXXX:XXXX:XXXX:XXXX:XXXX]:00000");
+        mask = RegexMask.IPv6(true, '_');
+        mask.Mask.Should().Be("[____:____:____:____:____:____:____:____]:00000");
+        mask = RegexMask.IPv6(true, '_', '_');
+        mask.Mask.Should().Be("[____:____:____:____:____:____:____:____]:_____");
     }
 
     [Test]
@@ -154,6 +165,11 @@ public class RegexMaskIPv6Tests
         mask.Selection = (15, 1);
         mask.Insert("0db8");
         mask.ToString().Should().Be("[0:0:0:0:0:0:0:0db8|");
+        mask = RegexMask.IPv6(true);
+        mask.ToString().Should().Be("|");
+        mask.Insert("0:0:0:0:0:0:0:0\n");
+        mask.ToString().Should().Be("[0:0:0:0:0:0:0:0|");
+        mask.Text.IndexOf('\n').Should().Be(-1);
 
         mask = RegexMask.IPv6(true);
         mask.Insert("00000000000000000000000000000000:1");
@@ -167,6 +183,11 @@ public class RegexMaskIPv6Tests
         mask.Selection = (15, 1);
         mask.Insert("0db8");
         mask.ToString().Should().Be("[0:0:0:0:0:0:0:0db8|]:1");
+        mask = RegexMask.IPv6(true);
+        mask.ToString().Should().Be("|");
+        mask.Insert("0:0:0:0:0:0:0:0:1\n");
+        mask.ToString().Should().Be("[0:0:0:0:0:0:0:0]:1|");
+        mask.Text.IndexOf('\n').Should().Be(-1);
     }
 
     [Test]
