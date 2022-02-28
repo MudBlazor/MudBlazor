@@ -72,7 +72,7 @@
                         @foreach (var color in MaterialColors)
                         {
                             <MudItem md="6" lg="4" xs="12">
-                                <MudPaper Square="true" Elevation="0" Class="@($"pa-4 rounded-t d-flex shades-text text-white {GetColorClass(color.Color.ToLower())}")">
+                                <MudPaper Square="true" Elevation="0" Class="@($"pa-4 rounded-t d-flex shades-text text-white {GetColorClass(color.Color.ToLowerInvariant())}")">
                                     <MudText Typo="Typo.h6">@color.Color</MudText>
                                 </MudPaper>
                                 @foreach (var shade in MaterialColorShades.Where(i => i.Color == color.Color))
@@ -82,7 +82,7 @@
                                     {
                                         IsLightColor = true;
                                     }
-                                    <MudPaper Square="true" Elevation="0" Class="@($"pa-4 d-flex align-center justify-space-between {GetColorClass(color.Color.ToLower())} {GetShadeClass(shade.Name.ToLower())} {(IsLightColor ? "grey-text text-darken-3" : "shades-text text-white")}")">
+                                    <MudPaper Square="true" Elevation="0" Class="@($"pa-4 d-flex align-center justify-space-between {GetColorClass(color.Color.ToLowerInvariant())} {GetShadeClass(shade.Name.ToLowerInvariant())} {(IsLightColor ? "grey-text text-darken-3" : "shades-text text-white")}")">
                                         <MudText>@shade.Name</MudText>
                                         <MudText>@shade.Value</MudText>
                                     </MudPaper>
