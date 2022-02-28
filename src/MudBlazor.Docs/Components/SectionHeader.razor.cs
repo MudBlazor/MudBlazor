@@ -48,7 +48,7 @@ public partial class SectionHeader
             parentTitle += '-';
         }
 
-        var id = (parentTitle + Title).Replace(" ", "-").ToLower();
+        var id = (parentTitle + Title).Replace(" ", "-").ToLowerInvariant();
 
         SectionInfo = new DocsSectionLink {Id = id, Title = Title,};
     }
