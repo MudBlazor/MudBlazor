@@ -55,6 +55,10 @@ public class RegexMaskEmailTests
         mask.Selection = (2, 1);
         mask.Insert("267");
         mask.ToString().Should().Be("us267|ername@gmail.com");
+        mask.Clear();
+        mask.Insert("username@gmail.com\n");
+        mask.ToString().Should().Be("username@gmail.com|");
+        mask.Text.IndexOf('\n').Should().Be(-1);
     }
 
     [Test]
