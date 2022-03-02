@@ -103,6 +103,14 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public EventCallback<bool> IsVisibleChanged { get; set; }
 
+
+        /// <summary>
+        /// Define the dialog title as a renderfragment (overrides Title)
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Dialog.Behavior)]
+        public DefaultFocus DefaultFocus { get; set; }
+
         private bool IsInline => DialogInstance == null;
 
         private IDialogReference _reference;
