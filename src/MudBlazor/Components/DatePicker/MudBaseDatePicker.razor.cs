@@ -420,22 +420,34 @@ namespace MudBlazor
             {
                 return;
             }
-            PickerMonth = GetMonthStart(0).AddDays(-1).StartOfMonth(Culture);
+            if (!(MinDate.HasValue) || (MinDate.HasValue && PickerMonth.HasValue && PickerMonth.Value.AddMonths(-1) >= MinDate.Value.StartOfMonth(CultureInfo.CurrentCulture)))
+            {
+                PickerMonth = GetMonthStart(0).AddDays(-1).StartOfMonth(Culture);
+            }
         }
 
         private void OnNextMonthClick()
         {
-            PickerMonth = GetMonthEnd(0).AddDays(1);
+            if (!(MaxDate.HasValue) || (MaxDate.HasValue && PickerMonth.HasValue && MaxDate.Value >= PickerMonth.Value.AddMonths(1)))
+            {
+                PickerMonth = GetMonthEnd(0).AddDays(1);
+            }
         }
 
         private void OnPreviousYearClick()
         {
-            PickerMonth = GetMonthStart(0).AddYears(-1);
+            if (!(MinDate.HasValue) || (MinDate.HasValue && PickerMonth.HasValue && PickerMonth.Value.AddYears(-1) >= MinDate.Value))
+            {
+                PickerMonth = GetMonthStart(0).AddYears(-1);
+            }
         }
 
         private void OnNextYearClick()
         {
-            PickerMonth = GetMonthStart(0).AddYears(1);
+            if (!(MaxDate.HasValue) || (MaxDate.HasValue && PickerMonth.HasValue && MaxDate.Value >= PickerMonth.Value.AddYears(1)))
+            {
+                PickerMonth = GetMonthStart(0).AddYears(1);
+            }
         }
 
         private void OnYearClick()

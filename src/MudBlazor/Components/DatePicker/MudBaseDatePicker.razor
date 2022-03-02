@@ -65,7 +65,7 @@
                             <div class="mud-picker-month-container">
                                 @foreach (var month in GetAllMonths())
                                 {
-                                    <button type="button" aria-label="@GetMonthName(month)" class="mud-picker-month" @onclick="(() => OnMonthSelected(month))" @onclick:stopPropagation="true">
+                                    <button type="button" aria-label="@GetMonthName(month)" class="mud-picker-month" @onclick="(() => OnMonthSelected(month))" @onclick:stopPropagation="true" disabled="@((MinDate >= month.AddMonths(+1)) || (month >= MaxDate))">
                                         <MudText Typo="@GetMonthTypo(month)" Class="@GetMonthClasses(month)">@GetAbbreviatedMonthName(month)</MudText>
                                     </button>
                                 }
