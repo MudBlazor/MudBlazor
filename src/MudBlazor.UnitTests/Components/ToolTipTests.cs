@@ -266,6 +266,19 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task Tooltip_On_Focus()
+        {
+            var comp = Context.RenderComponent<ToolTipPlacementPropertyTest>();
+
+            var button = comp.Find("button");
+            await button.ParentElement.TriggerEventAsync("onfocusin", new FocusEventArgs());
+
+            var popoverContentNode = comp.Find("#my-tooltip-content").ParentElement;
+
+            popoverContentNode.Should().NotBeNull();
+        }
+
+        [Test]
         [TestCase(true)]
         [TestCase(false)]        
         public async Task Visible_ByDefault(bool usingFocusout)
