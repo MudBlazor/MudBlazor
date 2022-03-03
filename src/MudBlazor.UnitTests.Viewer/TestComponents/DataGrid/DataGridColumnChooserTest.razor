@@ -1,6 +1,6 @@
 ﻿@namespace MudBlazor.UnitTests.TestComponents
 
-<MudDataGrid @ref="_dataGrid" Items="@_items" Hideable="true">
+<MudDataGrid Items="@_items" Hideable="true">
     <Columns>
         <Column T="Model" Field="@nameof(Model.Name)" />
         <Column T="Model" Field="@nameof(Model.Age)" />
@@ -18,11 +18,4 @@
         new Model("Johanna", 23), 
         new Model("Steve", 32)
     };
-
-    private MudDataGrid<Model> _dataGrid;
-
-    void HideColumn()
-    {
-        _dataGrid.ShowColumnsPanel();
-    }
 }
