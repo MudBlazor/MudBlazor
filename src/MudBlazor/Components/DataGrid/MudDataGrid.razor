@@ -273,27 +273,16 @@
         {
             foreach (var column in _columns)
             {
-                if (column.Type == ColumnType.SelectionCheckBox && MultiSelection && column.EnableFooterSelection)
+                if (!column.Hidden)
                 {
-                    <FooterCell T="T" ColumnType="@ColumnType.SelectionCheckBox" Column="@column"></FooterCell>
-                }
-                else if (column.AggregateDefinition != null)
-                {
-                    <FooterCell T="T" Column="@column" CurrentItems="@currentItems"></FooterCell>
-                }
-                else if (column.Type != ColumnType.SelectionCheckBox && column.FooterTemplate != null)
-                {
-                    <FooterCell T="T" Column="@column" CurrentItems="@currentItems"></FooterCell>
-                }
-                else if (hasFooter)
-                {
-                    // Since we have at least one column with a footer, we need to add FooterCell for each column.
-                    <FooterCell T="T" Column="@column"></FooterCell>
+                    if (column.AggregateDefinition != null || column.FooterTemplate != null || hasFooter)
+                    {
+                        <FooterCell T="T" Column="@column"></FooterCell>
+                    }
                 }
             }
         }
-        </text>
-    ;
+        </text>;
     }
 
     internal RenderFragment Cell(Column<T> column, T item)
@@ -338,33 +327,4 @@
         </td>
         </text>;
     }
-
-    //internal RenderFragment EditableCell(T item)
-    //{
-    //    return
-    //    @<text>
-    //    @{
-    //        bool IsEditing() 
-    //        { 
-    //            return !ReadOnly && Equals(_editingItem, item); 
-    //        }
-    //    }
-    //    <td class="mud-table-cell">
-    //        @if (IsEditing())
-    //        {
-    //            <div style="display: flex;">
-    //                <MudTooltip Text="Save">
-    //                    <MudIconButton Class="pa-0" Icon="@Icons.Material.Filled.Done" Size="@Size.Small" OnClick="@(() => CommitItemChangesAsync(item))" Disabled="@(!(Validator?.IsValid ?? false))" />
-    //                </MudTooltip>
-    //                @if (CanCancelEdit)
-    //                {
-    //                    <MudTooltip Text="Cancel">
-    //                        <MudIconButton Class="pa-0 ml-4" Icon="@Icons.Material.Filled.Close" OnClick="@(() => CancelEditingItemAsync(item))" Size="@Size.Small"  />
-    //                    </MudTooltip>
-    //                }
-    //            </div>
-    //        }
-    //    </td>
-    //    </text>;
-    //}
 }

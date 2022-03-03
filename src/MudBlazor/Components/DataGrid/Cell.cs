@@ -71,9 +71,11 @@ namespace MudBlazor
             // Create the CellContext
             cellContext = new CellContext<T>
             {
+                selection = _dataGrid.Selection,
                 Item = _item,
                 Actions = new CellContext<T>.CellActions
                 {
+                    SetSelectedItem = async (x) => await _dataGrid.SetSelectedItemAsync(x, _item),
                     StartEditingItem = async () => await _dataGrid.SetEditingItemAsync(_item),
                     CancelEditingItem = async () => await _dataGrid.CancelEditingItemAsync(),
                 }
@@ -93,7 +95,7 @@ namespace MudBlazor
         public async Task NumberValueChangedAsync(double value)
         {
             var property = _item.GetType().GetProperties().SingleOrDefault(x => x.Name == _column.Field);
-            property.SetValue(_item, value);
+            property.SetValue(_item, Convert.ChangeType(value, property.PropertyType));
 
             // If the edit mode is Cell, we update immediately.
             if (_dataGrid.EditMode == DataGridEditMode.Cell)

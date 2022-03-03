@@ -1,0 +1,23 @@
+﻿@using System.Net.Http.Json
+@using MudBlazor.Examples.Data.Models
+@namespace MudBlazor.Docs.Examples
+@inject HttpClient httpClient
+
+<MudDataGrid Items="@Elements.Take(4)">
+    <Columns>
+        <Column T="Element" Field="Number" Title="Nr" />
+        <Column T="Element" Field="Sign" />
+        <Column T="Element" Field="Name" />
+        <Column T="Element" Field="Position" />
+        <Column T="Element" Field="Molar" Title="Molar mass" />
+    </Columns>
+</MudDataGrid>
+
+@code { 
+    private IEnumerable<Element> Elements = new List<Element>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        Elements = await httpClient.GetFromJsonAsync<List<Element>>("webapi/periodictable");
+    }
+}

@@ -246,7 +246,7 @@ namespace MudBlazor
         [Parameter] public Func<T, int, string> RowStyleFunc { get; set; }
 
         /// <summary>
-        /// Set to true to enable selection of multiple rows with check boxes. 
+        /// Set to true to enable selection of multiple rows. 
         /// </summary>
         [Parameter] public bool MultiSelection { get; set; }
 
@@ -565,7 +565,7 @@ namespace MudBlazor
         {
             get
             {
-                return _columns.Any(x => x.Type != ColumnType.SelectionCheckBox && (x.FooterTemplate != null || x.AggregateDefinition != null));
+                return _columns.Any(x => !x.Hidden && (x.FooterTemplate != null || x.AggregateDefinition != null));
             }
         }
 
@@ -629,7 +629,10 @@ namespace MudBlazor
 
         internal void AddColumn(Column<T> column)
         {
-            _columns.Add(column);
+            if (column.Tag?.ToString() == "select-column")
+                _columns.Insert(0, column);
+            else
+                _columns.Add(column);
         }
 
         /// <summary>
@@ -934,6 +937,12 @@ namespace MudBlazor
         public void ShowColumnsPanel()
         {
             _columnsPanelVisible = true;
+            StateHasChanged();
+        }
+
+        public void HideColumnsPanel()
+        {
+            _columnsPanelVisible = false;
             StateHasChanged();
         }
 

@@ -7,9 +7,9 @@
     <Columns>
         <Column T="Model" Field="@nameof(Model.Name)">
             <FooterTemplate>
-                @{ int index = 1, count = @context.Count(); }
+                @{ int index = 1, count = @context.Items.Count(); }
                 People: 
-                @foreach (var person in @context)
+                @foreach (var person in @context.Items)
                 {
                     <MudAvatar Color="@((Color)index)" Variant="Variant.Outlined" Size="Size.Small" Class="mr-1">@person.Name.First()</MudAvatar>@person.Name.Substring(1)
                     if (index < count)

@@ -4,7 +4,7 @@
     <Columns>
         <Column T="Model" Field="@nameof(Model.Name)">
             <FooterTemplate>
-                Names: @(string.Join(", ", @context.Select(x => x.Name)))
+                Names: @(string.Join(", ", @context.Items.Select(x => x.Name)))
             </FooterTemplate>
         </Column>
         <Column T="Model" Field="@nameof(Model.Age)" AggregateDefinition="_ageAggregation" />

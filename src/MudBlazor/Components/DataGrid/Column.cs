@@ -26,14 +26,12 @@ namespace MudBlazor
         [Parameter] public bool HideSmall { get; set; }
         [Parameter] public int FooterColSpan { get; set; } = 1;
         [Parameter] public int HeaderColSpan { get; set; } = 1;
-        [Parameter] public ColumnType Type { get; set; } = ColumnType.Text;
         [Parameter] public RenderFragment ChildContent { get; set; }
-        [Parameter] public RenderFragment HeaderTemplate { get; set; }
+        [Parameter] public RenderFragment<HeaderContext<T>> HeaderTemplate { get; set; }
         [Parameter] public RenderFragment<CellContext<T>> CellTemplate { get; set; }
-        [Parameter] public RenderFragment<IEnumerable<T>> FooterTemplate { get; set; }
+        [Parameter] public RenderFragment<FooterContext<T>> FooterTemplate { get; set; }
         [Parameter] public RenderFragment<GroupDefinition<T>> GroupTemplate { get; set; }
-        [Parameter]
-        public Func<T, object> GroupBy { get; set; }
+        [Parameter] public Func<T, object> GroupBy { get; set; }
 
         #region HeaderCell Properties
 
@@ -165,6 +163,8 @@ namespace MudBlazor
 
         internal Func<T, object> _sortBy;
         internal Func<T, object> groupBy;
+        internal HeaderContext<T> headerContext;
+        internal FooterContext<T> footerContext;
         private bool initialGroupBySet;
 
         protected override void OnInitialized()
@@ -179,6 +179,25 @@ namespace MudBlazor
                 grouping = Grouping;
 
             DataGrid?.AddColumn(this);
+
+            // Add the HeaderContext
+            headerContext = new HeaderContext<T>
+            {
+                dataGrid = DataGrid,
+                Actions = new HeaderContext<T>.HeaderActions
+                {
+                    SetSelectAll = async (x) => await DataGrid.SetSelectAllAsync(x),
+                }
+            };
+            // Add the FooterContext
+            footerContext = new FooterContext<T>
+            {
+                dataGrid = DataGrid,
+                Actions = new FooterContext<T>.FooterActions
+                {
+                    SetSelectAll = async (x) => await DataGrid.SetSelectAllAsync(x),
+                }
+            };
         }
 
         protected override void OnParametersSet()
@@ -237,17 +256,17 @@ namespace MudBlazor
             grouping = false;
         }
 
-        internal void Hide()
+        public void Hide()
         {
             Hidden = true;
         }
 
-        internal void Show()
+        public void Show()
         {
             Hidden = false;
         }
 
-        internal void Toggle()
+        public void Toggle()
         {
             Hidden = !Hidden;
             DataGrid.ExternalStateHasChanged();

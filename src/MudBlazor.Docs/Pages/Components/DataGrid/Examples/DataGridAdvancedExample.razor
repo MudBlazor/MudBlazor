@@ -4,7 +4,7 @@
 @inject HttpClient httpClient
 
 <MudDataGrid T="Element" MultiSelection="true" Items="@Elements" Sortable="true" Filterable="true" QuickFilter="@_quickFilter"
-    Hideable="true" RowClick="@RowClicked" SelectedItemChanged="@SelectedItemChanged">
+    Hideable="true" RowClick="@RowClicked" SelectedItemsChanged="@SelectedItemsChanged">
     <ToolBarContent>
         <MudText Typo="Typo.h6">Periodic Elements</MudText>
         <MudSpacer />
@@ -12,6 +12,7 @@
             AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
     </ToolBarContent>
     <Columns>
+        <SelectColumn T="Element" />
         <Column T="Element" Field="Number" Title="Nr" Sortable="false" Filterable="false" />
         <Column T="Element" Field="Sign" />
         <Column T="Element" Field="Name" SortBy="@_sortBy" />
@@ -86,8 +87,8 @@
         _events.Insert(0, $"Event = RowClick, Index = {args.RowIndex}, Data = {System.Text.Json.JsonSerializer.Serialize(args.Item)}");
     }
 
-    void SelectedItemChanged(Element item)
+    void SelectedItemsChanged(HashSet<Element> items)
     {
-        _events.Insert(0, $"Event = SelectedItemChanged, Data = {System.Text.Json.JsonSerializer.Serialize(item)}");
+        _events.Insert(0, $"Event = SelectedItemsChanged, Data = {System.Text.Json.JsonSerializer.Serialize(items)}");
     }
 }

@@ -2,19 +2,16 @@
 @inherits MudComponentBase
 @typeparam T
 
-<td class="@_classname" style="@_style" colspan="@Column?.FooterColSpan" @attributes="@UserAttributes">
-    @if (Column?.Type == ColumnType.SelectionCheckBox)
-    {
-        <div class="d-flex">
-            <MudCheckBox T="bool" Checked="@_isSelected" CheckedChanged="@CheckedChangedAsync"></MudCheckBox>
-        </div>
-    }
-    else if (Column?.AggregateDefinition != null)
-    {
-        @Column?.AggregateDefinition.GetValue(Column?.Field, CurrentItems)
-    }
-    else if (Column?.FooterTemplate != null)
-    {
-        @Column?.FooterTemplate(CurrentItems)
-    }
-</td>
+@if (Column != null)
+{
+    <td class="@_classname" style="@_style" colspan="@Column.FooterColSpan" @attributes="@UserAttributes">
+        @if (Column.AggregateDefinition != null)
+        {
+            @Column.AggregateDefinition?.GetValue(Column.Field, DataGrid.CurrentPageItems)
+        }
+        else if (Column.FooterTemplate != null)
+        {
+            @Column.FooterTemplate(Column.footerContext)
+        }
+    </td>
+}

@@ -186,37 +186,21 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<DataGridCellEditTest>();
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridCellEditTest.Model>>();
 
-            //Console.WriteLine(dataGrid.Markup);
-
-            dataGrid.FindAll("td")[0].TextContent.Trim().Should().Be("John");
-            dataGrid.FindAll("td")[1].TextContent.Trim().Should().Be("45");
-            dataGrid.FindAll("td")[3].TextContent.Trim().Should().Be("Johanna");
-            dataGrid.FindAll("td")[4].TextContent.Trim().Should().Be("23");
-            dataGrid.FindAll("td")[6].TextContent.Trim().Should().Be("Steve");
-            dataGrid.FindAll("td")[7].TextContent.Trim().Should().Be("32");
-            dataGrid.FindAll(".mud-table-body tr")[0].Click();
-            dataGrid.FindAll(".mud-table-body tr input")[0].Change("Jonathan");
-            dataGrid.FindAll(".mud-table-body tr input")[1].Change("52");
-            dataGrid.FindAll(".mud-table-body tr td:nth-child(3) button")[0].Click();
-            dataGrid.FindAll(".mud-table-body tr td")[0].TextContent.Trim().Should().Be("Jonathan");
-            dataGrid.FindAll(".mud-table-body tr td")[1].TextContent.Trim().Should().Be("52");
+            dataGrid.FindAll("td input")[0].GetAttribute("value").Trim().Should().Be("John");
+            dataGrid.FindAll("td input")[1].GetAttribute("value").Trim().Should().Be("45");
+            dataGrid.FindAll("td input")[2].GetAttribute("value").Trim().Should().Be("Johanna");
+            dataGrid.FindAll("td input")[3].GetAttribute("value").Trim().Should().Be("23");
+            dataGrid.FindAll("td input")[4].GetAttribute("value").Trim().Should().Be("Steve");
+            dataGrid.FindAll("td input")[5].GetAttribute("value").Trim().Should().Be("32");
+            dataGrid.FindAll(".mud-table-body tr td input")[0].Change("Jonathan");
+            dataGrid.FindAll(".mud-table-body tr td input")[1].Change(52d);
+            dataGrid.FindAll(".mud-table-body tr td input")[0].GetAttribute("value").Trim().Should().Be("Jonathan");
+            dataGrid.FindAll(".mud-table-body tr td input")[1].GetAttribute("value").Trim().Should().Be("52");
 
             var name = dataGrid.Instance.Items.First().Name;
             var age = dataGrid.Instance.Items.First().Age;
             name.Should().Be("Jonathan");
             age.Should().Be(52);
-
-            // cancel edit
-            dataGrid.FindAll(".mud-table-body tr")[0].Click();
-            dataGrid.FindAll(".mud-table-body tr input")[0].Change("John");
-            dataGrid.FindAll(".mud-table-body tr input")[1].Change("45");
-            dataGrid.FindAll(".mud-table-body tr td:nth-child(3) button")[1].Click();
-
-            name = dataGrid.Instance.Items.First().Name;
-            age = dataGrid.Instance.Items.First().Age;
-            name.Should().Be("Jonathan");
-            age.Should().Be(52);
-
         }
 
         [Test]
@@ -225,23 +209,23 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<DataGridCellEditWithTemplateTest>();
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridCellEditWithTemplateTest.Model>>();
 
-            dataGrid.FindAll("td")[0].TextContent.Trim().Should().Be("John");
-            dataGrid.FindAll("td")[1].TextContent.Trim().Should().Be("45");
-            dataGrid.FindAll("td")[2].TextContent.Trim().Should().Be("False");
-            dataGrid.FindAll("td")[4].TextContent.Trim().Should().Be("Johanna");
-            dataGrid.FindAll("td")[5].TextContent.Trim().Should().Be("23");
-            dataGrid.FindAll("td")[6].TextContent.Trim().Should().Be("True");
-            dataGrid.FindAll("td")[8].TextContent.Trim().Should().Be("Steve");
-            dataGrid.FindAll("td")[9].TextContent.Trim().Should().Be("32");
-            dataGrid.FindAll("td")[10].TextContent.Trim().Should().Be("False");
-            dataGrid.FindAll(".mud-table-body tr")[0].Click();
-            dataGrid.FindAll(".mud-table-body tr input")[0].Change("Jonathan");
-            dataGrid.FindAll(".mud-table-body tr input")[1].Change("52");
-            dataGrid.FindAll(".mud-table-body tr input")[2].Change(true);
-            dataGrid.FindAll(".mud-table-body tr td:nth-child(4) button")[0].Click();
-            dataGrid.FindAll(".mud-table-body tr td")[0].TextContent.Trim().Should().Be("Jonathan");
-            dataGrid.FindAll(".mud-table-body tr td")[1].TextContent.Trim().Should().Be("52");
-            dataGrid.FindAll(".mud-table-body tr td")[2].TextContent.Trim().Should().Be("True");
+            //Console.WriteLine(dataGrid.FindAll("td input")[2].HasAttribute("checked"));
+
+            dataGrid.FindAll("td input")[0].GetAttribute("value").Trim().Should().Be("John");
+            dataGrid.FindAll("td input")[1].GetAttribute("value").Trim().Should().Be("45");
+            dataGrid.FindAll("td input")[2].HasAttribute("checked").Should().Be(false);
+            dataGrid.FindAll("td input")[3].GetAttribute("value").Trim().Should().Be("Johanna");
+            dataGrid.FindAll("td input")[4].GetAttribute("value").Trim().Should().Be("23");
+            dataGrid.FindAll("td input")[5].HasAttribute("checked").Should().Be(true);
+            dataGrid.FindAll("td input")[6].GetAttribute("value").Trim().Should().Be("Steve");
+            dataGrid.FindAll("td input")[7].GetAttribute("value").Trim().Should().Be("32");
+            dataGrid.FindAll("td input")[8].HasAttribute("value").Should().Be(false);
+            dataGrid.FindAll("td input")[0].Change("Jonathan");
+            dataGrid.FindAll("td input")[1].Change(52d);
+            dataGrid.FindAll("td input")[2].Change(true);
+            dataGrid.FindAll("td input")[0].GetAttribute("value").Trim().Should().Be("Jonathan");
+            dataGrid.FindAll("td input")[1].GetAttribute("value").Trim().Should().Be("52");
+            dataGrid.FindAll("td input")[2].HasAttribute("checked").Should().Be(true);
 
             var name = dataGrid.Instance.Items.First().Name;
             var age = dataGrid.Instance.Items.First().Age;
@@ -249,21 +233,6 @@ namespace MudBlazor.UnitTests.Components
             name.Should().Be("Jonathan");
             age.Should().Be(52);
             hired.Should().Be(true);
-
-            // cancel edit
-            dataGrid.FindAll(".mud-table-body tr")[0].Click();
-            dataGrid.FindAll(".mud-table-body tr input")[0].Change("John");
-            dataGrid.FindAll(".mud-table-body tr input")[1].Change("45");
-            dataGrid.FindAll(".mud-table-body tr input")[2].Change(false);
-            dataGrid.FindAll(".mud-table-body tr td:nth-child(4) button")[1].Click();
-
-            name = dataGrid.Instance.Items.First().Name;
-            age = dataGrid.Instance.Items.First().Age;
-            hired = dataGrid.Instance.Items.First().Hired;
-            name.Should().Be("Jonathan");
-            age.Should().Be(52);
-            hired.Should().Be(true);
-
         }
 
         [Test]
@@ -285,43 +254,32 @@ namespace MudBlazor.UnitTests.Components
             // Include callbacks in test coverage.
             dataGrid.Instance.RowClick.HasDelegate.Should().Be(true);
             dataGrid.Instance.SelectedItemChanged.HasDelegate.Should().Be(true);
-            dataGrid.Instance.SelectedItemsChanged.HasDelegate.Should().Be(true);
-            dataGrid.Instance.StartedEditingItem.HasDelegate.Should().Be(true);
-            dataGrid.Instance.CancelledEditingItem.HasDelegate.Should().Be(true);
+            dataGrid.Instance.CommittedItemChanges.HasDelegate.Should().Be(true);
 
             // Set some parameters manually so that they are covered.
             var parameters = new List<ComponentParameter>();
             parameters.Add(ComponentParameter.CreateParameter(nameof(dataGrid.Instance.MultiSelection), true));
             parameters.Add(ComponentParameter.CreateParameter(nameof(dataGrid.Instance.ReadOnly), false));
             parameters.Add(ComponentParameter.CreateParameter(nameof(dataGrid.Instance.EditMode), DataGridEditMode.Cell));
+            parameters.Add(ComponentParameter.CreateParameter(nameof(dataGrid.Instance.EditTrigger), DataGridEditTrigger.OnRowClick));
             dataGrid.SetParametersAndRender(parameters.ToArray());
 
             // Make sure that the callbacks have not been fired yet.
             comp.Instance.RowClicked.Should().Be(false);
             comp.Instance.SelectedItemChanged.Should().Be(false);
-            comp.Instance.SelectedItemsChanged.Should().Be(false);
-            comp.Instance.StartedEditingItem.Should().Be(false);
-            comp.Instance.StartedCommittingItemChanges.Should().Be(false);
-            comp.Instance.EditingItemCancelled.Should().Be(false);
+            comp.Instance.CommittedItemChanges.Should().Be(false);
 
             // Fire RowClick, SelectedItemChanged, SelectedItemsChanged, and StartedEditingItem callbacks.
             dataGrid.FindAll(".mud-table-body tr")[0].Click();
 
             //Console.WriteLine(dataGrid.Markup);
-            // Fire StartedCommittingItemChanges callback.
-            dataGrid.FindAll(".mud-table-body tr td button")[0].Click();
-            // Go into edit mode once again. 
-            dataGrid.FindAll(".mud-table-body tr")[0].Click();
-            // Fire EditingItemCancelled callback.
-            dataGrid.FindAll(".mud-table-body tr td button")[1].Click();
+            // Edit an item.
+            dataGrid.FindAll(".mud-table-body tr td input")[0].Change("A test");
 
             // Make sure that the callbacks have been fired.
             comp.Instance.RowClicked.Should().Be(true);
             comp.Instance.SelectedItemChanged.Should().Be(true);
-            comp.Instance.SelectedItemsChanged.Should().Be(true);
-            comp.Instance.StartedEditingItem.Should().Be(true);
-            comp.Instance.StartedCommittingItemChanges.Should().Be(true);
-            comp.Instance.EditingItemCancelled.Should().Be(true);
+            comp.Instance.CommittedItemChanges.Should().Be(true);
         }
 
         [Test]
@@ -1277,7 +1235,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<DataGridHeaderTemplateTest>();
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridHeaderTemplateTest.Model>>();
 
-            //Console.WriteLine(dataGrid.Markup);
+            Console.WriteLine(dataGrid.Markup);
 
             dataGrid.Find("thead th").TextContent.Trim().Should().Be("test");
 
@@ -1320,8 +1278,8 @@ namespace MudBlazor.UnitTests.Components
 
             //Console.WriteLine(dataGrid.Markup);
 
-            dataGrid.FindAll("tfoot td").First().TextContent.Trim().Should().Be("Names: Sam,Alicia,Ira,John");
-            dataGrid.FindAll("tfoot td").Last().TextContent.Trim().Should().Be("Total Records: 4");
+            dataGrid.FindAll("tfoot td").First().TextContent.Trim().Should().Be("Names: Sam, Alicia, Ira, John");
+            dataGrid.FindAll("tfoot td").Last().TextContent.Trim().Should().Be("Highest: $132,000 | 2 Over $100,000");
         }
 
         [Test]
@@ -1353,6 +1311,39 @@ namespace MudBlazor.UnitTests.Components
 
             dataGrid.FindAll("td")[0].TextContent.Trim().Should().Be("John");
             dataGrid.FindAll("td")[1].TextContent.Trim().Should().Be("45");
+        }
+
+        [Test]
+        public async Task DataGridColumnChooserTest()
+        {
+            var comp = Context.RenderComponent<DataGridColumnChooserTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridColumnChooserTest.Model>>();
+
+            //Console.WriteLine(dataGrid.FindAll(".mud-table-head th").ToMarkup());
+
+            dataGrid.FindAll(".mud-table-head th").Count.Should().Be(2);
+            await comp.InvokeAsync(() =>
+            {
+                dataGrid.Instance._columns[0].Hide();
+                dataGrid.Instance.ExternalStateHasChanged();
+            });
+            dataGrid.FindAll(".mud-table-head th").Count.Should().Be(1);
+            await comp.InvokeAsync(() =>
+            {
+                dataGrid.Instance._columns[0].Show();
+                dataGrid.Instance.ExternalStateHasChanged();
+            });
+            dataGrid.FindAll(".mud-table-head th").Count.Should().Be(2);
+
+            await comp.InvokeAsync(() => dataGrid.Instance.ShowColumnsPanel());
+            dataGrid.FindAll(".mud-paper.columns-panel").Count.Should().Be(1);
+            await comp.InvokeAsync(() => dataGrid.Instance.HideColumnsPanel());
+            dataGrid.FindAll(".mud-paper.columns-panel").Count.Should().Be(0);
+
+            await comp.InvokeAsync(() => dataGrid.Instance.HideAllColumns());
+            dataGrid.FindAll(".mud-table-head th").Count.Should().Be(0);
+            await comp.InvokeAsync(() => dataGrid.Instance.ShowAllColumns());
+            dataGrid.FindAll(".mud-table-head th").Count.Should().Be(2);
         }
     }
 }

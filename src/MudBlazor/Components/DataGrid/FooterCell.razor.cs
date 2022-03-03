@@ -10,7 +10,7 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    public partial class FooterCell<T> : MudComponentBase, IDisposable
+    public partial class FooterCell<T> : MudComponentBase
     {
         [CascadingParameter] public MudDataGrid<T> DataGrid { get; set; }
         //[CascadingParameter(Name = "IsOnlyFooter")] public bool IsOnlyFooter { get; set; } = false;
@@ -23,9 +23,8 @@ namespace MudBlazor
         //[Parameter] public string FooterClass { get; set; }
         //[Parameter] public string FooterStyle { get; set; }
         //[Parameter] public AggregateDefinition<T> AggregateDefinition { get; set; }
-        [Parameter] public IEnumerable<T> CurrentItems { get; set; } = new List<T>();
 
-        private bool _isSelected;
+        //private bool _isSelected;
         private string _classname =>
             new CssBuilder(Column?.FooterClass)
                 .AddClass(Column?.footerClassname)
@@ -38,39 +37,30 @@ namespace MudBlazor
                 .AddStyle("font-weight", "600")
             .Build();
 
-        protected override void OnInitialized()
-        {
-            if (DataGrid != null)
-            {
-                DataGrid.SelectedAllItemsChangedEvent += OnSelectedAllItemsChanged;
-                DataGrid.SelectedItemsChangedEvent += OnSelectedItemsChanged;
-            }
-        }
+        //private void OnSelectedAllItemsChanged(bool value)
+        //{
+        //    _isSelected = value;
+        //    StateHasChanged();
+        //}
 
-        private void OnSelectedAllItemsChanged(bool value)
-        {
-            _isSelected = value;
-            StateHasChanged();
-        }
+        //private void OnSelectedItemsChanged(HashSet<T> items)
+        //{
+        //    _isSelected = items.Count == DataGrid.GetFilteredItemsCount();
+        //    StateHasChanged();
+        //}
 
-        private void OnSelectedItemsChanged(HashSet<T> items)
-        {
-            _isSelected = items.Count == DataGrid.GetFilteredItemsCount();
-            StateHasChanged();
-        }
+        //private async Task CheckedChangedAsync(bool value)
+        //{
+        //    await DataGrid?.SetSelectAllAsync(value);
+        //}
 
-        private async Task CheckedChangedAsync(bool value)
-        {
-            await DataGrid?.SetSelectAllAsync(value);
-        }
-
-        public void Dispose()
-        {
-            if (DataGrid != null)
-            {
-                DataGrid.SelectedAllItemsChangedEvent -= OnSelectedAllItemsChanged;
-                DataGrid.SelectedItemsChangedEvent -= OnSelectedItemsChanged;
-            }
-        }
+        //public void Dispose()
+        //{
+        //    if (DataGrid != null)
+        //    {
+        //        DataGrid.SelectedAllItemsChangedEvent -= OnSelectedAllItemsChanged;
+        //        DataGrid.SelectedItemsChangedEvent -= OnSelectedItemsChanged;
+        //    }
+        //}
     }
 }
