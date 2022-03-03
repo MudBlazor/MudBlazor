@@ -11,7 +11,7 @@ namespace MudBlazor
     public partial class MudTreeViewItem<T> : MudComponentBase
     {
         private string _text;
-        private bool _disabled;
+        private bool _disabled, _ignoreServerData;
         private bool _isChecked, _isSelected, _isServerLoaded;
         private Converter<T> _converter = new DefaultConverter<T>();
         private readonly List<MudTreeViewItem<T>> _childItems = new();
@@ -117,6 +117,17 @@ namespace MudBlazor
         {
             get => _disabled || (MudTreeRoot?.Disabled ?? false);
             set => _disabled = value;
+        }
+
+        /// <summary>
+        /// If true, ServerData will be ignored
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.TreeView.Behavior)]
+        public bool IgnoreServerData
+        {
+            get => _ignoreServerData;
+            set => _ignoreServerData = value;
         }
 
         /// <summary>
@@ -258,8 +269,8 @@ namespace MudBlazor
         public bool Loading { get; set; }
 
         bool HasChild => ChildContent != null ||
-            (MudTreeRoot != null && Items != null && Items.Count != 0) ||
-            (MudTreeRoot?.ServerData != null && !_isServerLoaded && (Items == null || Items.Count == 0));
+             (MudTreeRoot != null && Items != null && Items.Count != 0) ||
+             (MudTreeRoot?.ServerData != null && !_ignoreServerData && !_isServerLoaded && (Items == null || Items.Count == 0));
 
         protected bool IsChecked
         {
@@ -384,7 +395,7 @@ namespace MudBlazor
 
         internal async void TryInvokeServerLoadFunc()
         {
-            if (Expanded && (Items == null || Items.Count == 0) && MudTreeRoot?.ServerData != null)
+            if (Expanded && (Items == null || Items.Count == 0) && !_ignoreServerData && MudTreeRoot?.ServerData != null)
             {
                 Loading = true;
                 StateHasChanged();

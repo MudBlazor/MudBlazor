@@ -2,7 +2,7 @@
 
 <MudTreeView ExpandOnClick="true" ServerData="LoadServerData" Items="TreeItems" Width="350px">
     <ItemTemplate>
-        <MudTreeViewItem Value="@context" Icon="@context.Icon" Text="@context.Title" EndText="@context.Number?.ToString()" EndTextTypo="@Typo.caption" />
+        <MudTreeViewItem Value="@context" Icon="@context.Icon" IgnoreServerData="@context.IgnoreServerLoading" Text="@context.Title" EndText="@context.Number?.ToString()" EndTextTypo="@Typo.caption" />
     </ItemTemplate>
 </MudTreeView>
 
@@ -17,13 +17,16 @@
 
         public int? Number { get; set; }
 
+        public bool IgnoreServerLoading { get; set; }
+
         public HashSet<TreeItemData> TreeItems { get; set; }
 
-        public TreeItemData(string title, string icon, int? number = null)
+        public TreeItemData(string title, string icon, int? number = null, bool ignoreServerLoading = false)
         {
             Title = title;
             Icon = icon;
             Number = number;
+            IgnoreServerLoading = ignoreServerLoading;
         }
     }
 
@@ -41,7 +44,7 @@
                 new TreeItemData("Promotions", Icons.Filled.LocalOffer, 733)
             }
         });
-        TreeItems.Add(new TreeItemData("History", Icons.Filled.Label));
+        TreeItems.Add(new TreeItemData("History", Icons.Filled.Label, null, true));
     }
 
     public Task<HashSet<TreeItemData>> LoadServerData(TreeItemData parentNode)
