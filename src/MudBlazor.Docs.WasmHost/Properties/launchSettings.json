@@ -8,7 +8,7 @@
     }
   },
   "profiles": {
-    "MudBlazor.Docs.Server": {
+    "MudBlazor.Docs.WasmHost": {
       "commandName": "Project",
       "launchBrowser": true,
       "launchUrl": "docs/overview",

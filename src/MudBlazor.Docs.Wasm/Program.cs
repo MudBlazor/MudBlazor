@@ -5,7 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Net.Http;
 using Blazor.Analytics;
-using MudBlazor.Docs.Client;
+using MudBlazor.Docs.Wasm;
 using MudBlazor.Docs.Extensions;
 using MudBlazor.Docs.Services;
 using MudBlazor.Docs.Services.Notifications;
