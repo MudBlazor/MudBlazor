@@ -88,6 +88,7 @@
 
   <!--Packages-->
   <ItemGroup>
+    <PackageReference Include="Blazor-Analytics" Version="3.10.0" />
     <PackageReference Include="FluentValidation" Version="10.3.6" />
     <PackageReference Include="Microsoft.AspNetCore.Components" Version="6.0.2.*" />
     <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="6.0.2.*" />

@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 
-namespace MudBlazor.Docs.Server.Prerender
+namespace MudBlazor.Docs.WasmHost.Prerender
 {
     public class PrerenderMiddleware
     {
