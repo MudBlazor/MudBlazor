@@ -35,7 +35,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Button.ClickAction)]
-        public string Link { get; set; }
+        public string Href { get; set; }
 
         /// <summary>
         /// The target attribute specifies where to open the link, if Link is specified. Possible values: _blank | _self | _parent | _top | <i>framename</i>
@@ -113,13 +113,13 @@ namespace MudBlazor
             if (Disabled)
             {
                 HtmlTag = "button";
-                Link = null;
+                Href = null;
                 Target = null;
                 return;
             }
 
             // Render an anchor element if Link property is set and is not disabled
-            if (!IsNullOrWhiteSpace(Link))
+            if (!IsNullOrWhiteSpace(Href))
             {
                 HtmlTag = "a";
             }
