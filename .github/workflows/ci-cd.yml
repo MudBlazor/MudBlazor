@@ -1,6 +1,8 @@
 name: ci-cd
 
 on:
+  push:
+    branches: [ dev ]
   pull_request:
 
 jobs:
