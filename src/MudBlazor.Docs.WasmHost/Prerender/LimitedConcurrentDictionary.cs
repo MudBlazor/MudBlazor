@@ -6,7 +6,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Linq;
 
-namespace MudBlazor.Docs.Server.Prerender
+namespace MudBlazor.Docs.WasmHost.Prerender
 {
     public class LimitedConcurrentDictionary<TKey, TValue> 
     {
