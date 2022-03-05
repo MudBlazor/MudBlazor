@@ -1,9 +1,11 @@
 ﻿using Blazored.LocalStorage;
+using Blazor.Analytics;
 using Microsoft.Extensions.DependencyInjection;
 using MudBlazor.Docs.Services;
 using MudBlazor.Docs.Services.Notifications;
 using MudBlazor.Docs.Services.UserPreferences;
 using MudBlazor.Services;
+using MudBlazor.Examples.Data;
 
 namespace MudBlazor.Docs.Extensions
 {
@@ -23,14 +25,17 @@ namespace MudBlazor.Docs.Extensions
                 config.SnackbarConfiguration.SnackbarVariant = Variant.Filled;
             });
 
+            services.AddScoped<GitHubApiClient>();
             services.AddSingleton<IApiLinkService, ApiLinkService>();
             services.AddSingleton<IMenuService, MenuService>();
             services.AddScoped<IDocsNavigationService, DocsNavigationService>();
             services.AddBlazoredLocalStorage();
             services.AddScoped<IUserPreferencesService, UserPreferencesService>();
             services.AddScoped<INotificationService, InMemoryNotificationService>();
+            services.AddScoped<IPeriodicTableService, PeriodicTableService>();
             services.AddSingleton<IRenderQueueService, RenderQueueService>();
             services.AddScoped<LayoutService>();
+            services.AddGoogleAnalytics("G-PRYNCB61NV");
 
         }
     }

@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace MudBlazor.Docs.Server.Pages
+namespace MudBlazor.Docs.WasmHost.Pages
 {
     public class HostModel : PageModel
     {
