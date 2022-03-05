@@ -6,7 +6,7 @@
         @($"Status: {_submitStatus ?? "Not yet submitted/validated"}")
     </MudPaper>
     
-    <MudDateRangePicker @ref="@(_picker)" @bind-DateRange="@(_dateRange)" Label="Select Date Range" Required="true" RequiredError="This field is required!">
+    <MudDateRangePicker id="dateRangeLabelTest" @ref="@(_picker)" @bind-DateRange="@(_dateRange)" Label="Select Date Range" Required="true" RequiredError="This field is required!">
         <PickerActions>
             <MudButton Class="mr-auto align-self-start" OnClick="@(() => _picker.Clear())">Clear</MudButton>
             <MudButton OnClick="@(() => _picker.Close(false))">Cancel</MudButton>
