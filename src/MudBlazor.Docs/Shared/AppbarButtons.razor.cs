@@ -18,7 +18,7 @@ public partial class AppbarButtons
 {
     [Inject] private INotificationService NotificationService { get; set; }
     [Inject] private LayoutService LayoutService { get; set; }
-    private IDictionary<NotificationMessage,bool> _messages = null;
+    private IDictionary<NotificationMessage, bool> _messages = null;
     private bool _newNotificationsAvailable = false;
 
     private async Task MarkNotificationAsRead()
@@ -29,10 +29,10 @@ public partial class AppbarButtons
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        if(firstRender == true)
-        { 
-        _newNotificationsAvailable = await NotificationService.AreNewNotificationsAvailable();
-        _messages = await NotificationService.GetNotifications();
+        if (firstRender == true)
+        {
+            _newNotificationsAvailable = await NotificationService.AreNewNotificationsAvailable();
+            _messages = await NotificationService.GetNotifications();
             StateHasChanged();
         }
 
