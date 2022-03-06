@@ -1,4 +1,4 @@
-﻿#pragma warning disable CS1998 // async without await
+#pragma warning disable CS1998 // async without await
 #pragma warning disable BL0005 // Set parameter outside component
 
 using System;
@@ -1279,7 +1279,7 @@ namespace MudBlazor.UnitTests.Components
             //Console.WriteLine(dataGrid.Markup);
 
             dataGrid.FindAll("tfoot td").First().TextContent.Trim().Should().Be("Names: Sam, Alicia, Ira, John");
-            dataGrid.FindAll("tfoot td").Last().TextContent.Trim().Should().Be("Highest: $132,000 | 2 Over $100,000");
+            dataGrid.FindAll("tfoot td").Last().TextContent.Trim().Should().Be($"Highest: {132000:C0} | 2 Over {100000:C0}");
         }
 
         [Test]
