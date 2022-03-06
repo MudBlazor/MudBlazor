@@ -714,7 +714,7 @@ namespace MudBlazor.UnitTests.Components
             var inputs = comp.FindAll("input").ToArray();
             table.SelectedItems.Count.Should().Be(0); // selected items should be empty
             Action onclick = () => inputs[1].Click(); // OnRowClick is not called anymore, neither .GotClicked<>(), so selectedItems didn't add any element.
-            onclick.Should().Throw<Bunit.MissingEventHandlerException>().WithMessage("The element does not have an event handler for the event 'onclick'. It does however have event handlers for these events, 'onchange', 'onclick:stoppropagation'.");
+            onclick.Should().Throw<Bunit.MissingEventHandlerException>().WithMessage("The element does not have an event handler for the event 'onclick'. It does however have an event handler for the 'onchange' event.");
             table.SelectedItems.Count.Should().Be(0);
         }
 
@@ -960,13 +960,12 @@ namespace MudBlazor.UnitTests.Components
             trs.Count.Should().Be(4); // three rows + header row
 
             trs[1].Click();
-            //every item will be add twice - see MudTextField.razor
-            validator.ControlCount.Should().Be(2);
+            validator.ControlCount.Should().Be(1);
             for (var i = 0; i < 10; ++i)
             {
                 trs[i % 3 + 1].Click();
             }
-            validator.ControlCount.Should().Be(2);
+            validator.ControlCount.Should().Be(1);
         }
 
         [Test]
