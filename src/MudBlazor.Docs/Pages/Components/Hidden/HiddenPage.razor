@@ -1,30 +1,42 @@
 ﻿@page "/components/hidden"
 
 <DocsPage>
-    <DocsPageHeader Title="Hidden" SubTitle="Hiding parts of the UI with MudHidden" />
+    <DocsPageHeader Title="Hidden" SubTitle="Make UI responsive by conditionally rendering different UI on certain display sizes" />
     <DocsPageContent>
-        <MudText>All elements are rendered unless <b>they are explicitly hidden.</b> You can use <MudLink Href="/features/breakpoints">MudBlazor's breakpoints</MudLink> combined with MudHidden to hide any content.</MudText>
+        <MudText>
+            <CodeInline Tag>MudHidden</CodeInline> is configured with a <MudLink Href="/features/breakpoints">breakpoint</MudLink> which tells it under which screen size to refrain from rendering its content. 
+            So if the breakpoint is for instance set to <CodeInline>Breakpoint.Lg</CodeInline> it means the content is rendered on smaller screens (XS, SM and MD) but hidden on LG XL and bigger.  
+            You can test <CodeInline Tag>MudHidden</CodeInline>'s behavior by resizing the browser window or by using a developer browser extension which allows you to simulate different screen sizes. 
+            <MudAlert Class="my-3" Severity="Severity.Info">
+                Note: MudHidden uses JavaScript under the hood to listen for browser window size changes. If you want a pure CSS solution please look at the <MudLink Href="/features/display">responsive display classes</MudLink>
+            </MudAlert> 
+            When to use <CodeInline Tag>MudHidden</CodeInline> and when to use CSS instead?<br/>
+            The rule of thumb is to use the responsive display classes because they are cleaner and don't require you to wrap your content in an extra container. But if you have multiple complex UI trees 
+            for different screen sizes it could make your page slow because the content needs to be rendered multiple times even if most is rendered with <CodeInline>display:none</CodeInline>. 
+            In this case you'd want to use <CodeInline Tag>MudHidden</CodeInline> instead because it will not render its content at all when the breakpoint is reached. 
+        </MudText>
     </DocsPageContent>
     <DocsPageContent>
+
         <DocsPageSection>
             <SectionHeader Title="How it works">
-                <Description>The following example shows all breakpoint options only if they match the screensize. Because it is more intuitive for this example, we inverted all the breakpoints so that you can see them only if they match.</Description>
+                <Description>The following example shows all breakpoint options only if they match the screen size. Because it is more intuitive for this example, we inverted all the breakpoints so that you can see them only if they match.</Description>
             </SectionHeader>
-            <SectionContent DarkenBackground="true" DisplayFlex="true">
+            <SectionContent DarkenBackground="true" Code="HiddenExample" ShowCode="false">
                 <HiddenExample />
             </SectionContent>
-            <SectionSource Code="HiddenExample" GitHubFolderName="Hidden" ShowCode="false" />
         </DocsPageSection>
+
         <DocsPageSection>
             <SectionHeader Title="Listening to browser window resize events">
                 <Description>
                     <MudText>Directly listening to the screen size change events is the most expensive way to adapt to a resizing browser window. Use this only if the other breakpoint methods don't work for you.</MudText>
                 </Description>
             </SectionHeader>
-            <SectionContent DarkenBackground="true">
+            <SectionContent DarkenBackground="true" Code="BrowserResizeEventExample" ShowCode="false">
                 <BrowserResizeEventExample />
             </SectionContent>
-            <SectionSource Code="BrowserResizeEventExample" ShowCode="false" />
         </DocsPageSection>
+
     </DocsPageContent>
 </DocsPage>

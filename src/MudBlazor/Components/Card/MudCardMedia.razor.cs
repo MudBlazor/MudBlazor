@@ -15,8 +15,25 @@ namespace MudBlazor
                 .AddClass(Class)
                 .Build();
 
-        [Parameter] public string Title { get; set; }
-        [Parameter] public string Image { get; set; }
-        [Parameter] public int Height { get; set; } = 300;
+        /// <summary>
+        /// Title of the image used for accessibility.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Card.Behavior)]
+        public string Title { get; set; }
+        
+        /// <summary>
+        /// Specifies the path to the image.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Card.Behavior)]
+        public string Image { get; set; }
+        
+        /// <summary>
+        /// Specifies the height of the image in px.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Card.Behavior)]
+        public int Height { get; set; } = 300;
     }
 }

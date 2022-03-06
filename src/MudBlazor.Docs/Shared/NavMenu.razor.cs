@@ -8,7 +8,7 @@ namespace MudBlazor.Docs.Shared
 {
     public partial class NavMenu
     {
-        [Inject] IMenuService MenuService { get; set; }
+        [Inject] IMenuService MenuService { get; set; } 
         [Inject] NavigationManager NavMan { get; set; }
 
         //sections are "getting-started","components", "api", ...
@@ -42,7 +42,7 @@ namespace MudBlazor.Docs.Shared
             //radio, select...
             //this route `/components/autocomplete` should open the subgroup "form inputs..."
             #endregion
-            return item.GroupItems.Elements.Any(i => i.Link == _componentLink);
+            return item.GroupComponents.Any(i => i.Link == _componentLink);
         }
     }
 }

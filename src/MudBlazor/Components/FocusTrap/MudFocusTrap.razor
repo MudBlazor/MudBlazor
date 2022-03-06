@@ -1,33 +1,33 @@
 ﻿@namespace MudBlazor
 @inherits MudComponentBase;
 
-<div @ref="_root" @attributes="UserAttributes" class="@Class" style="@("outline-style: none;" + Style)" @onkeydown="OnRootKeyDown" @onkeyup="OnRootKeyUp" @onfocus="OnRootFocusAsync" tabindex="-1">
+<div @ref="_root" @attributes="UserAttributes" class="@Classname" style="@Style" @onkeydown="OnRootKeyDown" @onkeyup="OnRootKeyUp" @onfocus="OnRootFocusAsync" tabindex="-1">
 
-    <div style="pointer-events:none; position:fixed;"
+    <div class="fixed pointer-events-none"
          tabindex="@TrapTabIndex"
          @onfocus="OnTopFocusAsync">
     </div>
 
     <div @ref="_firstBumper"
-         style="pointer-events:none; position:fixed;"
+         class="fixed pointer-events-none"
          tabindex="@TrapTabIndex"
          @onfocus="OnBumperFocusAsync">
     </div>
 
     <div @ref="_fallback"
-         style="pointer-events:none; position:fixed;"
+         class="fixed pointer-events-none"
          tabindex="-1">
     </div>
 
     @ChildContent
 
     <div @ref="_lastBumper"
-         style="pointer-events:none; position:fixed;"
+         class="fixed pointer-events-none"
          tabindex="@TrapTabIndex"
          @onfocus="OnBumperFocusAsync">
     </div>
 
-    <div style="pointer-events:none; position:fixed;"
+    <div sclass="fixed pointer-events-none"
          tabindex="@TrapTabIndex"
          @onfocus="OnBottomFocusAsync">
     </div>

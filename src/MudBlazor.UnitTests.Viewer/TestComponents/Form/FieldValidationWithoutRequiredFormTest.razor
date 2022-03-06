@@ -1,0 +1,12 @@
+﻿<MudDatePicker @bind-Date="BirthDate" Validation="ValidateValueAsync"/>
+<MudDatePicker @bind-Date="BirthDate" Validation="ValidateValue"/>
+
+@code {
+    DateTime? BirthDate { get; set; } = DateTime.Now;
+
+    private Func<object, string, Task<IEnumerable<string>>> ValidateValueAsync => (model, propertyName) => 
+        Task.FromResult<IEnumerable<string>>(Array.Empty<string>());
+    
+    private Func<object, string, IEnumerable<string>> ValidateValue => (model, propertyName) => 
+        Array.Empty<string>();
+}

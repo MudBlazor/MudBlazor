@@ -5,74 +5,109 @@
         <Description>Provides the user with a simple way to select time.</Description>
     </DocsPageHeader>
     <DocsPageContent>
+
         <DocsPageSection>
             <SectionHeader Title="Basic Usage">
                 <Description>
                     <MudAlert Severity="Severity.Info" Dense="true" Class="mt-3">Note: Always use the two-way binding <CodeInline>@@bind-Time</CodeInline> to bind to a field of type <CodeInline>TimeSpan?</CodeInline></MudAlert>
-                    <MudText Class="py-6">
-                        If <CodeInline>AutoClose</CodeInline> is set to true and PickerActions are defined, the hour and the minutes can be selected and the drop-down will close without having to click any of the action buttons.
-                        If <CodeInline>ReadOnly</CodeInline> is set to true, the TimePicker can be used but the value will remain unchanged regardless of the actions performed or the values entered.
-                    </MudText>
                 </Description>
             </SectionHeader>
-            <SectionContent Outlined="true">
+            <SectionContent Code="TimePickerBasicUsageExample" ShowCode="true">
                 <TimePickerBasicUsageExample />
             </SectionContent>
-            <SectionSource Code="TimePickerBasicUsageExample" GitHubFolderName="TimePicker" ShowCode="false" />
         </DocsPageSection>
+        
+        <DocsPageSection>
+            <SectionHeader Title="Read Only">
+                <Description>If <CodeInline>ReadOnly</CodeInline> is set to true, the TimePicker can be used but the value will remain unchanged regardless of the actions performed or the values entered.</Description>
+            </SectionHeader>
+            <SectionContent Code="TimePickerReadOnlyExample" ShowCode="false">
+                <TimePickerReadOnlyExample />
+            </SectionContent>
+        </DocsPageSection>
+                
+        <DocsPageSection>
+            <SectionHeader Title="Action Buttons">
+                <Description>You can add buttons by using the <CodeInline>PickerActions</CodeInline> render fragment. If <CodeInline>AutoClose</CodeInline> is set to true and PickerActions are defined, the hour and the minutes can be selected and the drop-down will close without having to click any of the action buttons.</Description>
+            </SectionHeader>
+            <SectionContent Code="TimePickerActionButtonsExample" ShowCode="false">
+                <TimePickerActionButtonsExample />
+            </SectionContent>
+        </DocsPageSection>
+
         <DocsPageSection>
             <SectionHeader Title="Dialog Mode">
                 <Description></Description>
             </SectionHeader>
-            <SectionContent Outlined="true">
+            <SectionContent Code="TimePickerDialogExample" ShowCode="false">
                 <TimePickerDialogExample />
             </SectionContent>
-            <SectionSource Code="TimePickerDialogExample" GitHubFolderName="TimePicker" />
         </DocsPageSection>
+
         <DocsPageSection>
             <SectionHeader Title="Static Mode">
                 <Description></Description>
             </SectionHeader>
-            <SectionContent DarkenBackground="true" DisplayFlex="true">
+            <SectionContent DarkenBackground="true" Code="TimePickerStaticExample" ShowCode="false">
                 <TimePickerStaticExample />
             </SectionContent>
-            <SectionSource Code="TimePickerStaticExample" GitHubFolderName="TimePicker" />
         </DocsPageSection>
+
         <DocsPageSection>
             <SectionHeader Title="Open to Minutes">
                 <Description>By default, MudTimePicker opens the hours editor and then switches into the minutes editor. By setting <CodeInline>OpenTo="OpenTo.Minutes"</CodeInline>, it will open the minutes editor instead.</Description>
             </SectionHeader>
-            <SectionContent Outlined="true">
+            <SectionContent Code="TimePickerViewsExample" ShowCode="false">
                 <TimePickerViewsExample />
             </SectionContent>
-            <SectionSource Code="TimePickerViewsExample" GitHubFolderName="TimePicker" />
         </DocsPageSection>
+
         <DocsPageSection>
             <SectionHeader Title="Edit Mode">
                 <Description>By setting the <CodeInline>TimeEditMode</CodeInline>, you can restrict editing of the time value to allow only changing hours or minutes.</Description>
             </SectionHeader>
-            <SectionContent Outlined="true">
+            <SectionContent Code="TimePickerTimeEditModeExample" ShowCode="false">
                 <TimePickerTimeEditModeExample />
             </SectionContent>
-            <SectionSource Code="TimePickerTimeEditModeExample" GitHubFolderName="TimePicker" ShowCode="false" />
         </DocsPageSection>
+
         <DocsPageSection>
             <SectionHeader Title="Colors">
                 <Description></Description>
             </SectionHeader>
-            <SectionContent DarkenBackground="true" DisplayFlex="true" Class="demo-datetime-margin">
+            <SectionContent DarkenBackground="true" Class="demo-datetime-margin" Code="TimePickerColorExample" ShowCode="false">
                 <TimePickerColorExample />
             </SectionContent>
-            <SectionSource Code="TimePickerColorExample" GitHubFolderName="TimePicker" />
         </DocsPageSection>
+
         <DocsPageSection>
             <SectionHeader Title="Elevation">
                 <Description>You can change the elevation with the <CodeInline>Elevation</CodeInline> parameter. The default value is 0 for static and 8 for inline.</Description>
             </SectionHeader>
-            <SectionContent DarkenBackground="true" DisplayFlex="true" Class="demo-datetime-margin">
+            <SectionContent DarkenBackground="true" Class="demo-datetime-margin" Code="TimePickerElevationExample" ShowCode="false">
                 <TimePickerElevationExample />
             </SectionContent>
-            <SectionSource Code="TimePickerElevationExample" GitHubFolderName="TimePicker" />
         </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Keyboard Navigation">
+                <Description>
+                    <MudText>MudTimePicker accepts keys to keyboard navigation.</MudText>
+                    <br />
+                    <MudText><CodeInline>Escape</CodeInline> or <CodeInline>Alt+ArrowUp</CodeInline> keys to close dropdown</MudText>
+                    <MudText><CodeInline>Enter</CodeInline> or <CodeInline>NumpadEnter</CodeInline> or <CodeInline>ArrowDown</CodeInline> or <CodeInline>ArrowUp</CodeInline> keys to open dropdown</MudText>
+                    <MudText><CodeInline>Space</CodeInline> key to toggle open/close the picker (if it is not editable)</MudText>
+                    <MudText><CodeInline>ArrowUp</CodeInline> or <CodeInline>Ctrl+ArrowRight</CodeInline> keys to increase hour by 1</MudText>
+                    <MudText><CodeInline>ArrowDown</CodeInline> or <CodeInline>Ctrl+ArrowLeft</CodeInline> keys to decrease hour by 1</MudText>
+                    <MudText><CodeInline>ArrowRight</CodeInline> and <CodeInline>ArrowLeft</CodeInline> keys to increase/decrease minute by 1</MudText>
+                    <MudText><CodeInline>Shift+ArrowRight</CodeInline> and <CodeInline>Shift+ArrowLeft</CodeInline> keys to increase/decrease minute by 5</MudText>
+                    <MudText><CodeInline>Ctrl+Shift+Backspace</CodeInline> keys to reset (validation)</MudText>
+                </Description>
+            </SectionHeader>
+            <SectionContent Class="demo-datetime-margin" Code="TimePickerKeyboardNavigationExample" ShowCode="false">
+                <TimePickerKeyboardNavigationExample />
+            </SectionContent>
+        </DocsPageSection>
+
     </DocsPageContent>
 </DocsPage>

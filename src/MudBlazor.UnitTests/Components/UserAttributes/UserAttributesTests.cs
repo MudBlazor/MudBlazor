@@ -46,9 +46,12 @@ namespace MudBlazor.UnitTests.UserAttributes
             mudComponentTypes.Should().NotBeEmpty();
             foreach (var componentType in mudComponentTypes)
             {
-                //this components doesn't need to have markup
-                if (componentType == typeof(MudPopover)
-                    ) { continue; }
+                // these components do not need to have markup
+                if (componentType == typeof(MudPopover) || componentType.Name == "Column`1" || componentType.Name == "FooterCell`1"
+                    || componentType.Name == "HeaderCell`1" || componentType.Name == "SelectColumn`1")
+                { 
+                    continue; 
+                }
 
                 var component = componentFactory.Create(componentType, testContext);
 

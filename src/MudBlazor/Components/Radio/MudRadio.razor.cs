@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Extensions;
+using MudBlazor.Services;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
@@ -75,42 +77,58 @@ namespace MudBlazor
         /// <summary>
         /// The color of the component. It supports the theme colors.
         /// </summary>
-        [Parameter] public Color Color { get; set; } = Color.Default;
+        [Parameter]
+        [Category(CategoryTypes.Radio.Appearance)]
+        public Color Color { get; set; } = Color.Default;
 
         /// <summary>
         /// The position of the child content.
         /// </summary>
-        [Parameter] public Placement Placement { get; set; } = Placement.Right;
+        [Parameter]
+        [Category(CategoryTypes.Radio.Behavior)]
+        public Placement Placement { get; set; } = Placement.Right;
 
         /// <summary>
         /// The value to associate to the button.
         /// </summary>
-        [Parameter] public T Option { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.Radio.Behavior)]
+        public T Option { get; set; }
 
         /// <summary>
         /// If true, compact padding will be applied.
         /// </summary>
-        [Parameter] public bool Dense { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.Radio.Appearance)]
+        public bool Dense { get; set; }
 
         /// <summary>
         /// The Size of the component.
         /// </summary>
-        [Parameter] public Size Size { get; set; } = Size.Medium;
+        [Parameter]
+        [Category(CategoryTypes.Radio.Appearance)]
+        public Size Size { get; set; } = Size.Medium;
 
         /// <summary>
         /// If true, disables ripple effect.
         /// </summary>
-        [Parameter] public bool DisableRipple { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.Radio.Appearance)]
+        public bool DisableRipple { get; set; }
 
         /// <summary>
         /// If true, the button will be disabled.
         /// </summary>
-        [Parameter] public bool Disabled { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.Radio.Behavior)]
+        public bool Disabled { get; set; }
 
         /// <summary>
         /// Child content of component.
         /// </summary>
-        [Parameter] public RenderFragment ChildContent { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.Radio.Behavior)]
+        public RenderFragment ChildContent { get; set; }
 
         internal bool Checked { get; private set; }
 
@@ -136,6 +154,23 @@ namespace MudBlazor
             return Task.CompletedTask;
         }
 
+        protected internal void HandleKeyDown(KeyboardEventArgs obj)
+        {
+            if (Disabled)
+                return;
+            switch (obj.Key)
+            {
+                case "Enter":
+                case "NumpadEnter":
+                case " ":
+                    Select();
+                    break;
+                case "Backspace":
+                    MudRadioGroup.Reset();
+                    break;
+            }
+        }
+
         protected override async Task OnInitializedAsync()
         {
             await base.OnInitializedAsync();
@@ -147,6 +182,29 @@ namespace MudBlazor
         public void Dispose()
         {
             MudRadioGroup?.UnregisterRadio(this);
+        }
+
+        [Inject] private IKeyInterceptor _keyInterceptor { get; set; }
+
+        private string _elementId = "radio" + Guid.NewGuid().ToString().Substring(0, 8);
+
+        protected override async Task OnAfterRenderAsync(bool firstRender)
+        {
+            if (firstRender)
+            {
+                await _keyInterceptor.Connect(_elementId, new KeyInterceptorOptions()
+                {
+                    //EnableLogging = true,
+                    TargetClass = "mud-button-root",
+                    Keys = {
+                        new KeyOptions { Key=" ", PreventDown = "key+none", PreventUp = "key+none" }, // prevent scrolling page
+                        new KeyOptions { Key="Enter", PreventDown = "key+none" },
+                        new KeyOptions { Key="NumpadEnter", PreventDown = "key+none" },
+                        new KeyOptions { Key="Backspace", PreventDown = "key+none" },
+                    },
+                });
+            }
+            await base.OnAfterRenderAsync(firstRender);
         }
     }
 }

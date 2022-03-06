@@ -2,20 +2,28 @@
 @using MudBlazor.Extensions
 @inherits MudComponentBase
 
-<div @attributes="UserAttributes" class="@DivClassname" style="@Style" role="progressbar" aria-valuenow="@_value" aria-valuemin="@_min" aria-valuemax="@_max">
-    @if (Indeterminate)
+<div @attributes="UserAttributes" class="@DivClassname" style="@Style" role="progressbar" aria-valuenow="@_value.ToInvariantString()" aria-valuemin="@_min.ToInvariantString()" aria-valuemax="@_max.ToInvariantString()">
+    <div class="mud-progress-linear-bars">
+        @if (Indeterminate)
+        {
+            <div class="mud-progress-linear-bar"></div>
+            <div class="mud-progress-linear-bar"></div>
+        }
+        else if (Buffer)
+        {
+            <div class="mud-progress-linear-bar"></div>
+            <div class="mud-progress-linear-bar" style="@GetStyledBar1Transform()"></div>
+            <div class="mud-progress-linear-bar last" style="@GetStyledBar2Transform()"></div>
+        }
+        else
+        {
+            <div class="mud-progress-linear-bar" style="@GetStyledBar1Transform()"></div>
+        }
+    </div>
+    @if(ChildContent != null)
     {
-        <div class="@LinearClassname mud-progress-linear-1-indeterminate"></div>
-        <div class="@LinearClassname mud-progress-linear-2-indeterminate"></div>
-    }
-    else if (Buffer)
-    {
-        <div class="@BufferClassname"></div>
-        <div class="mud-progress-linear-bar mud-@Color.ToDescriptionString() mud-progress-linear-bar-1-buffer" style="transform: translateX(-@((int)Math.Round(100-ValuePercent))%);"></div>
-        <div class="mud-progress-linear-bar mud-progress-linear-color-@Color.ToDescriptionString() mud-progress-linear-bar-2-buffer" style="transform: translateX(-@((int)Math.Round(100-BufferPercent))%);"></div>
-    }
-    else
-    {
-        <div class="@LinearClassname" style="transform: translateX(-@((int)Math.Round(100-ValuePercent))%);"></div>
+        <div class="mud-progress-linear-content">
+            @ChildContent
+        </div>
     }
 </div>

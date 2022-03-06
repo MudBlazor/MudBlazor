@@ -1,0 +1,91 @@
+@import '../abstracts/variables';
+
+.mud-data-grid {
+    .mud-table-cell {
+        &.edit-mode-cell {
+            //padding: 0 !important;
+
+            .mud-input-control {
+                margin: 0 !important;
+            }
+
+            .mud-input {
+                font-size: inherit;
+
+                &:before {
+                    content: none;
+                }
+
+                &after {
+                    content: none;
+                }
+
+                .mud-input-outlined-border {
+                    border: none;
+                }
+            }
+        }
+
+        .mud-input-text {
+            margin-top: 0 !important;
+        }
+
+        .column-header {
+            display: flex;
+            justify-content: space-between;
+
+            .sortable-column-header {
+                cursor: pointer;
+            }
+
+            &:hover {
+                .column-options .sort-direction-icon, .column-options .column-options-icon {
+                    opacity: 0.8;
+                    color: var(--mud-palette-action-default);
+                }
+
+                .column-options .mud-menu .mud-icon-button-label {
+                    opacity: 1.0;
+                    color: var(--mud-palette-action-default);
+                }
+            }
+
+            .column-options {
+                cursor: pointer;
+                display: inline-flex;
+                align-items: center;
+                flex-direction: inherit;
+                justify-content: flex-start;
+            }
+
+            .sort-direction-icon {
+                font-size: 18px;
+                margin-left: 4px;
+                margin-left: 4px;
+                margin-inline-start: 4px;
+                margin-inline-end: unset;
+                user-select: none;
+                transition: opacity 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,transform 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+                opacity: 0;
+
+                &.mud-direction-desc {
+                    opacity: 1;
+                    transform: rotate(180deg);
+                }
+
+                &.mud-direction-asc {
+                    opacity: 1;
+                    transform: rotate(0deg);
+                }
+            }
+
+            .column-options .mud-menu .mud-icon-button-label {
+                /*font-size: 18px;*/
+                user-select: none;
+                /*margin-right: 4px;*/
+                transition: opacity 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,transform 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+                opacity: 0;
+            }
+        }
+    }
+}

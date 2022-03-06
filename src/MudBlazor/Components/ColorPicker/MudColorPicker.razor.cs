@@ -65,6 +65,7 @@ namespace MudBlazor
         /// If true, Alpha options will not be displayed and color output will be RGB, HSL or HEX and not RGBA, HSLA or HEXA.
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.FormComponent.PickerBehavior)]
         public bool DisableAlpha
         {
             get => _disableAlpha;
@@ -87,32 +88,44 @@ namespace MudBlazor
         /// <summary>
         /// If true, the color field will not be displayed.
         /// </summary>
-        [Parameter] public bool DisableColorField { get; set; } = false;
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.PickerBehavior)]
+        public bool DisableColorField { get; set; } = false;
 
         /// <summary>
         /// If true, the switch to change color mode will not be displayed.
         /// </summary>
-        [Parameter] public bool DisableModeSwitch { get; set; } = false;
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.PickerBehavior)]
+        public bool DisableModeSwitch { get; set; } = false;
 
         /// <summary>
         /// If true, textfield inputs and color mode switch will not be displayed.
         /// </summary>
-        [Parameter] public bool DisableInputs { get; set; } = false;
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.PickerBehavior)]
+        public bool DisableInputs { get; set; } = false;
 
         /// <summary>
         /// If true, hue and alpha sliders will not be displayed.
         /// </summary>
-        [Parameter] public bool DisableSliders { get; set; } = false;
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.PickerBehavior)]
+        public bool DisableSliders { get; set; } = false;
 
         /// <summary>
         /// If true, the preview color box will not be displayed, note that the preview color functions as a button as well for collection colors.
         /// </summary>
-        [Parameter] public bool DisablePreview { get; set; } = false;
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.PickerBehavior)]
+        public bool DisablePreview { get; set; } = false;
 
         /// <summary>
         /// The initial mode (RGB, HSL or HEX) the picker should open. Defaults to RGB 
         /// </summary>
-        [Parameter] public ColorPickerMode ColorPickerMode { get; set; } = ColorPickerMode.RGB;
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.PickerBehavior)]
+        public ColorPickerMode ColorPickerMode { get; set; } = ColorPickerMode.RGB;
 
         private ColorPickerView _colorPickerView = ColorPickerView.Spectrum;
 
@@ -120,6 +133,7 @@ namespace MudBlazor
         /// The initial view of the picker. Views can be changed if toolbar is enabled. 
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.FormComponent.PickerBehavior)]
         public ColorPickerView ColorPickerView
         {
             get => _colorPickerView;
@@ -148,12 +162,15 @@ namespace MudBlazor
         /// <summary>
         /// If true, binding changes occurred also when HSL values changed without a corresponding RGB change 
         /// </summary>
-        [Parameter] public bool UpdateBindingIfOnlyHSLChanged { get; set; } = false;
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Behavior)]
+        public bool UpdateBindingIfOnlyHSLChanged { get; set; } = false;
 
         /// <summary>
         /// A two-way bindable property representing the selected value. MudColor is a utility class that can be used to get the value as RGB, HSL, hex or other value
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.FormComponent.Data)]
         public MudColor Value
         {
             get => _color;
@@ -191,6 +208,7 @@ namespace MudBlazor
         /// MudColor list of predefined colors. The first five colors will show up as the quick colors on preview dot click.
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.FormComponent.PickerBehavior)]
         public IEnumerable<MudColor> Palette { get; set; } = new MudColor[]
         { "#424242", "#2196f3", "#00c853", "#ff9800", "#f44336",
           "#f6f9fb", "#9df1fa", "#bdffcf", "#fff0a3", "#ffd254",
@@ -220,32 +238,44 @@ namespace MudBlazor
         /// Under some conditions like long latency the visual representation might not reflect the user behaviour anymore. So, it can be disabled 
         /// Enabled by default
         /// </summary>
-        [Parameter] public bool DisableDragEffect { get; set; } = false;
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.PickerBehavior)]
+        public bool DisableDragEffect { get; set; } = false;
 
         /// <summary>
         /// Custom close icon.
         /// </summary>
-        [Parameter] public string CloseIcon { get; set; } = Icons.Material.Filled.Close;
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.PickerAppearance)]
+        public string CloseIcon { get; set; } = Icons.Material.Filled.Close;
 
         /// <summary>
         /// Custom spectrum icon.
         /// </summary>
-        [Parameter] public string SpectrumIcon { get; set; } = Icons.Material.Filled.Tune;
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.PickerAppearance)]
+        public string SpectrumIcon { get; set; } = Icons.Material.Filled.Tune;
 
         /// <summary>
         /// Custom grid icon.
         /// </summary>
-        [Parameter] public string GridIcon { get; set; } = Icons.Material.Filled.Apps;
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.PickerAppearance)]
+        public string GridIcon { get; set; } = Icons.Material.Filled.Apps;
 
         /// <summary>
         /// Custom palette icon.
         /// </summary>
-        [Parameter] public string PaletteIcon { get; set; } = Icons.Material.Filled.Palette;
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.PickerAppearance)]
+        public string PaletteIcon { get; set; } = Icons.Material.Filled.Palette;
 
         /// <summary>
         /// Custom import/export icont.
         /// </summary>
-        [Parameter] public string ImportExportIcon { get; set; } = Icons.Material.Filled.ImportExport;
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.PickerAppearance)]
+        public string ImportExportIcon { get; set; } = Icons.Material.Filled.ImportExport;
 
         #endregion
 

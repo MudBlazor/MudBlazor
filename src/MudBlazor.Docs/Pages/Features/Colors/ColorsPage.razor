@@ -1,5 +1,6 @@
 ﻿@page "/features/colors"
 @using System.Reflection
+@using System.Text.RegularExpressions
 
 <DocsPage>
     <DocsPageHeader Title="Colors">
@@ -9,78 +10,88 @@
         </Description>
     </DocsPageHeader>
     <DocsPageContent>
+
         <DocsPageSection>
-            <SectionHeader Title="Theme Palette colors">
+            <SectionHeader Title="Theme Palette Colors">
                 <Description>
                     Each palette color gets converted to a class with the color as background and its contrast, but also separate classes for only background or text color. The CSS class is bound to the MudBlazor theme and updated if you change the theme dynamicly. <br /><br />
-                    You can read more about theming <MudLink Href="/customization/theming/overview">MudBlazor here.</MudLink>
+                    You can read more about theming <MudLink Href="/customization/overview">MudBlazor here.</MudLink>
                 </Description>
             </SectionHeader>
+            <SectionSubGroups>
+                <DocsPageSection>
+                    <SectionHeader Title="CSS and Theme colors">
+                        <Description>Here we add each class to the divs to change the background color, text color and both background and text color with one class only one class.</Description>
+                    </SectionHeader>
+                    <SectionContent DarkenBackground="true" ShowCode="true" Code="ColorsMudBlazorExample">
+                        <ColorsMudBlazorExample />
+                    </SectionContent>
+                </DocsPageSection>
+                <DocsPageSection>
+                    <SectionHeader Title="CSharp and Theme colors">
+                        <Description>You can also access the colors with blazor directly like we do in this example.</Description>
+                    </SectionHeader>
+                    <SectionContent DarkenBackground="true" ShowCode="true" Code="ColorsMudBlazorCodeExample">
+                        <ColorsMudBlazorCodeExample />
+                    </SectionContent>
+                </DocsPageSection>
+            </SectionSubGroups>
         </DocsPageSection>
+        
         <DocsPageSection>
-            <SectionHeader Title="Using the Palette colors">
-                <Description>Here we add each class to the divs to change the background color, text color and both background and text color with one class only one class.</Description>
-            </SectionHeader>
-            <SectionContent DarkenBackground="true" DisplayFlex="true">
-                <ColorsMudBlazorExample />
-            </SectionContent>
-            <SectionSource ShowCode="true" Code="ColorsMudBlazorExample" />
-            <SectionHeader>
-                <Description>You can also access the colors with blazor directly like we do in this example.</Description>
-            </SectionHeader>
-            <SectionContent DarkenBackground="true" DisplayFlex="true">
-                <ColorsMudBlazorCodeExample />
-            </SectionContent>
-            <SectionSource ShowCode="true" Code="ColorsMudBlazorCodeExample" />
-        </DocsPageSection>
-        <DocsPageSection>
-            <SectionHeader Title="Using Material colors">
+            <SectionHeader Title="Material Colors">
                 <Description>
-                    All Material colors, as well as background and text variants, are available for use in your application.
+                   All Material colors, as well as background and text variants, are available for use in your application.
                 </Description>
             </SectionHeader>
-            <SectionContent DarkenBackground="true" DisplayFlex="true">
-                <ColorsMaterialExample />
-            </SectionContent>
-            <SectionSource ShowCode="false" Code="ColorsMaterialExample" />
-            <SectionHeader>
-                <Description>You can also access the material colors with blazor directly like we did above with the MudBlazor palette colors.</Description>
-            </SectionHeader>
-            <SectionContent DarkenBackground="true" DisplayFlex="true">
-                <ColorsMaterialCodeExample />
-            </SectionContent>
-            <SectionSource ShowCode="true" Code="ColorsMaterialCodeExample" />
-        </DocsPageSection>
-        <DocsPageSection>
-            <SectionHeader Title="Material colors">
-                <Description>
-                    Below is a list of the Material design color palette grouped by primary color
-                </Description>
-            </SectionHeader>
-            <SectionContent FullWidth="true" Class="pa-0">
-                <MudGrid Spacing="4">
-                    @foreach (var color in MaterialColors)
-                    {
-                        <MudItem md="6" lg="4" xs="12">
-                            <div class="mud-paper mud-paper-square docs-color-card" style="background-color:@color.Value;color:#fff">
-                                <MudText Align="Align.Left" Typo="Typo.h6">@color.Color</MudText>
-                            </div>
-                            @foreach (var shade in MaterialColorShades.Where(i => i.Color == color.Color))
-                            {
-                                IsLightColor = false;
-                                if (shade.Name.Contains("Lighten5") || shade.Name.Contains("Lighten4") || shade.Name.Contains("Lighten3") || shade.Name.Contains("White") || shade.Name.Contains("Transparent"))
+            <SectionSubGroups>
+                
+                <DocsPageSection>
+                    <SectionHeader Title="CSS and Material colors">
+                        <Description>Here we add each class to the divs to change the background color, text color and both background and text color with one class only one class.</Description>
+                    </SectionHeader>
+                    <SectionContent DarkenBackground="true" ShowCode="false" Code="ColorsMaterialExample">
+                        <ColorsMaterialExample/>
+                    </SectionContent>
+                </DocsPageSection>
+
+                <DocsPageSection>
+                    <SectionHeader Title="CSharp and Material colors">
+                        <Description>You can also access the material colors with blazor directly like we did above with the MudBlazor palette colors.</Description>
+                    </SectionHeader>
+                    <SectionContent DarkenBackground="true" ShowCode="true" Code="ColorsMaterialCodeExample">
+                        <ColorsMaterialCodeExample/>
+                    </SectionContent>
+                </DocsPageSection>
+
+                <DocsPageSection>
+                    <SectionHeader Title="List of Material Colors">
+                        <Description>Below is a list of the Material design color palette grouped by primary color</Description>
+                    </SectionHeader>
+                    <MudGrid Spacing="4">
+                        @foreach (var color in MaterialColors)
+                        {
+                            <MudItem md="6" lg="4" xs="12">
+                                <MudPaper Square="true" Elevation="0" Class="@($"pa-4 rounded-t d-flex shades-text text-white {GetColorClass(color.Color.ToLowerInvariant())}")">
+                                    <MudText Typo="Typo.h6">@color.Color</MudText>
+                                </MudPaper>
+                                @foreach (var shade in MaterialColorShades.Where(i => i.Color == color.Color))
                                 {
-                                    IsLightColor = true;
+                                    IsLightColor = false;
+                                    if (shade.Name.Contains("Lighten5") || shade.Name.Contains("Lighten4") || shade.Name.Contains("Lighten3") || shade.Name.Contains("White") || shade.Name.Contains("Transparent"))
+                                    {
+                                        IsLightColor = true;
+                                    }
+                                    <MudPaper Square="true" Elevation="0" Class="@($"pa-4 d-flex align-center justify-space-between {GetColorClass(color.Color.ToLowerInvariant())} {GetShadeClass(shade.Name.ToLowerInvariant())} {(IsLightColor ? "grey-text text-darken-3" : "shades-text text-white")}")">
+                                        <MudText>@shade.Name</MudText>
+                                        <MudText>@shade.Value</MudText>
+                                    </MudPaper>
                                 }
-                                <div class="mud-paper mud-paper-square docs-color-card py-6" style="background-color:@shade.Value;@(IsLightColor? "color:#444" : "color:#fff")">
-                                    <MudText Align="Align.Left">@shade.Name</MudText>
-                                    <MudText Align="Align.Right">@shade.Value</MudText>
-                                </div>
-                            }
-                        </MudItem>
-                    }
-                </MudGrid>
-            </SectionContent>
+                            </MudItem>
+                        }
+                    </MudGrid>
+                </DocsPageSection>
+            </SectionSubGroups>
         </DocsPageSection>
     </DocsPageContent>
 </DocsPage>
@@ -95,6 +106,35 @@
     protected override void OnInitialized()
     {
         LoadColors();
+    }
+    
+    private string GetColorClass(string value)
+    {
+        if (value.StartsWith("deep"))
+        {
+            return value.Replace("deep", "deep-");
+        }
+        else if(value.StartsWith("light"))
+        {
+            return value.Replace("light", "light-");
+        }
+        else if(value.StartsWith("bluegrey"))
+        {
+            return value.Replace("bluegrey", "blue-grey");
+        }
+        else if(value.StartsWith("shades"))
+        {
+            return value.Replace("shades", "black shades-text text-white");
+        }
+        else
+        {
+            return value;
+        }
+    }
+
+    private string GetShadeClass(string value)
+    {
+        return Regex.Replace(value, "[0-9]", "-$&");
     }
 
     public void LoadColors()

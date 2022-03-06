@@ -21,24 +21,10 @@
                 int localindex = i;
                 
                 <MudItem xs="@breaks[localindex]">
-                    <MudPaper Class="d-flex align-center justify-center mud-width-full py-8">
-                        <table>
-                            <tr>
-                                <td>
-                                    <MudIconButton Icon="@Icons.Material.Filled.KeyboardArrowUp" OnClick="(()=>UpdateBreaks(localindex,1))" Size="Size.Small"></MudIconButton>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <MudText Typo="Typo.h6" Style="margin:2px 4px 2px 4px;" Align="Align.Center">@breaks[localindex]</MudText>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <MudIconButton Icon="@Icons.Material.Filled.KeyboardArrowDown" OnClick="(()=>UpdateBreaks(localindex,-1))" Size="Size.Small"></MudIconButton>
-                                </td>
-                            </tr>
-                        </table>
+                    <MudPaper Class="d-flex flex-column align-center justify-center mud-width-full py-8">
+                        <MudIconButton Icon="@Icons.Material.Filled.KeyboardArrowUp" OnClick="(()=>UpdateBreaks(localindex,1))" Size="Size.Small" />
+                        <MudText Typo="Typo.h6" Align="Align.Center">@breaks[localindex]</MudText>
+                        <MudIconButton Icon="@Icons.Material.Filled.KeyboardArrowDown" OnClick="(()=>UpdateBreaks(localindex,-1))" Size="Size.Small" />
                     </MudPaper>
                 </MudItem>
              }
@@ -78,8 +64,8 @@
     void UpdateBreaks(int index,int changeamount)
     {
         List<int> newbreaks = breaks.ToList();
-
-        newbreaks[index] = newbreaks[index] += changeamount;
+        if (newbreaks[index] + changeamount > 12 || newbreaks[index] + changeamount < 1) return; //don't go above 12 or below 1
+        newbreaks[index] += changeamount;
 
         breaks = newbreaks.ToArray();
 

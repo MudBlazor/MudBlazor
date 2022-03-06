@@ -1,7 +1,8 @@
-﻿<MudMainContent Class="mudblazor-main-content">
-    <MudContainer MaxWidth="@MaxWidth">
+﻿
+<MudMainContent Class="mudblazor-main-content">
+    <MudContainer MaxWidth="MaxWidth.Large">
         <div id="docspage" class="docs-page">
-            <CascadingValue Value="this" IsFixed="true">
+            <CascadingValue Value="this" IsFixed>
                 @ChildContent
             </CascadingValue>
         </div>
@@ -9,7 +10,27 @@
             <NavigationFooter Section=_section Previous="@_previous" Next="@_next" />
         </div>
     </MudContainer>
-    <MudDrawer @bind-Open="_contentDrawerOpen" Breakpoint="Breakpoint.Lg" Anchor="Anchor.End" ClipMode="DrawerClipMode.Always" Elevation="0" Color="Color.Transparent" Class="pt-6">
-        <MudPageContentNavigation SectionClassSelector="docs-section-header" @ref="_contentNavigation" ActivateFirstSectionAsDefault="true" />
+    @if (DisplayFooter)
+    {
+        <MudContainer MaxWidth="MaxWidth.Large" Class="mt-16">
+            <Footer />
+        </MudContainer>
+    }
+    <MudDrawer Class="docs-page-content-navigation-drawer" @bind-Open="_contentDrawerOpen" Breakpoint="Breakpoint.Lg" Anchor="Anchor.End" ClipMode="DrawerClipMode.Always" Elevation="0" Color="Color.Transparent">
+        @if (_displayView)
+        {
+            <MudText Typo="Typo.subtitle1" Class="title" GutterBottom="true">
+                Mode
+            </MudText>
+            <div class="d-flex px-2 mb-2">
+                <NavLink class="mode-links mr-2" href="@($"components/{_componentName}")" Match="NavLinkMatch.All">Overview</NavLink>
+                <NavLink class="mode-links ml-2" href="@($"api/{_componentName}")" Match="NavLinkMatch.All">API</NavLink>
+            </div>
+        }
+        <MudPageContentNavigation SectionClassSelector="docs-section-header" @ref="_contentNavigation" ActivateFirstSectionAsDefault="true"/>
+        @if (_renderAds)
+        {
+            <MudElement HtmlTag="script" async type="text/javascript" src="//cdn.carbonads.com/carbon.js?serve=CESDLK3E&placement=mudblazorcom" id="_carbonads_js"></MudElement>
+        }
     </MudDrawer>
 </MudMainContent>

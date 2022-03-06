@@ -1,4 +1,8 @@
-﻿using System;
+﻿// Copyright (c) MudBlazor 2022
+// MudBlazor licenses this file to you under the MIT license.
+// See the LICENSE file in the project root for more information.
+
+using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Text.RegularExpressions;
@@ -15,12 +19,6 @@ namespace MudBlazor
         public MudNumericField() : base()
         {
             Validation = new Func<T, Task<bool>>(ValidateInput);
-            _inputConverter = new NumericBoundariesConverter<T>((val) => ConstrainBoundaries(val).value)
-            {
-                FilterFunc = CleanText,
-                Culture = CultureInfo.CurrentUICulture,
-            };
-
             #region parameters default depending on T
 
             //sbyte
@@ -104,13 +102,6 @@ namespace MudBlazor
             #endregion parameters default depending on T
         }
 
-        protected override bool SetCulture(CultureInfo value)
-        {
-            var changed = base.SetCulture(value);
-            _inputConverter.Culture = value;
-            return changed;
-        }
-
         protected string Classname =>
             new CssBuilder("mud-input-input-control mud-input-number-control " +
                            (HideSpinButtons ? "mud-input-nospin" : "mud-input-showspin"))
@@ -123,8 +114,6 @@ namespace MudBlazor
         private string _elementId = "numericField_" + Guid.NewGuid().ToString().Substring(0, 8);
 
         private MudInput<string> _elementReference;
-
-        private Converter<string> _inputConverter;
 
         [ExcludeFromCodeCoverage]
         public override ValueTask FocusAsync()
@@ -151,10 +140,11 @@ namespace MudBlazor
             return base.SetValueAsync(value, valueChanged || updateText);
         }
 
-        protected override async void OnBlurred(FocusEventArgs obj)
+        protected internal override async void OnBlurred(FocusEventArgs obj)
         {
             base.OnBlurred(obj);
-            await UpdateTextPropertyAsync(false);
+            await UpdateValuePropertyAsync(true); //Required to set the value after a blur before the debounce period has elapsed
+            await UpdateTextPropertyAsync(false); //Required to update the string formatting after a blur before the debouce period has elapsed
         }
 
         protected async Task<bool> ValidateInput(T value)
@@ -165,6 +155,13 @@ namespace MudBlazor
                 await SetValueAsync(value, true);
             return true; //Don't show errors
         }
+
+        /// <summary>
+        /// Show clear button.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Behavior)]
+        public bool Clearable { get; set; } = false;
 
         /// <summary>
         /// Decrements or increments depending on factor
@@ -257,7 +254,7 @@ namespace MudBlazor
 
         protected async Task OnMouseWheel(WheelEventArgs obj)
         {
-            if (!obj.ShiftKey)
+            if (!obj.ShiftKey || Disabled || ReadOnly)
                 return;
             if (obj.DeltaY < 0)
             {
@@ -281,6 +278,7 @@ namespace MudBlazor
         /// Reverts mouse wheel up and down events, if true.
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.FormComponent.Behavior)]
         public bool InvertMouseWheel { get; set; } = false;
 
         private T _minDefault;
@@ -291,6 +289,7 @@ namespace MudBlazor
         /// The minimum value for the input.
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.FormComponent.Validation)]
         public T Min
         {
             get => _minHasValue ? _min : _minDefault;
@@ -309,6 +308,7 @@ namespace MudBlazor
         /// The maximum value for the input.
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.FormComponent.Validation)]
         public T Max
         {
             get => _maxHasValue ? _max : _maxDefault;
@@ -327,6 +327,7 @@ namespace MudBlazor
         /// The increment added/subtracted by the spin buttons.
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.FormComponent.Behavior)]
         public T Step
         {
             get => _stepHasValue ? _step : _stepDefault;
@@ -341,6 +342,7 @@ namespace MudBlazor
         /// Hides the spin buttons, the user can still change value with keyboard arrows and manual update.
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.FormComponent.Appearance)]
         public bool HideSpinButtons { get; set; }
 
         /// <summary>
@@ -359,22 +361,6 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         public override string Pattern { get; set; } = @"[0-9,.\-]";
-
-        protected string CleanText(string text)
-        {
-            if (string.IsNullOrEmpty(text))
-                return text;
-            var pattern = Pattern + "*";
-            var cleanedText = "";
-            foreach (Match m in Regex.Matches(text, pattern))
-            {
-                cleanedText += m.Captures[0].Value;
-            }
-
-            cleanedText = cleanedText[0] + cleanedText.Substring(1).Replace("-", string.Empty);
-
-            return cleanedText;
-        }
 
         private string GetCounterText() => Counter == null ? string.Empty : (Counter == 0 ? (string.IsNullOrEmpty(Text) ? "0" : $"{Text.Length}") : ((string.IsNullOrEmpty(Text) ? "0" : $"{Text.Length}") + $" / {Counter}"));
 

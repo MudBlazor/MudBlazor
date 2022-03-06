@@ -29,16 +29,22 @@ else
     /// <summary>
     /// If true, compact padding will be used, same as the Appbar.
     /// </summary>
-    [Parameter] public bool Dense { get; set; }
+    [Parameter]
+    [Category(CategoryTypes.Drawer.Appearance)]
+    public bool Dense { get; set; }
 
     /// <summary>
     /// Child content of component.
     /// </summary>
-    [Parameter] public RenderFragment ChildContent { get; set; }
+    [Parameter] 
+    [Category(CategoryTypes.Drawer.Behavior)]
+    public RenderFragment ChildContent { get; set; }
 
     /// <summary>
     /// If true, the component will link to index page with an a element instead of div.
     /// </summary>
-    [Parameter] public bool LinkToIndex { get; set; }
+    [Parameter] 
+    [Category(CategoryTypes.Drawer.Behavior)]
+    public bool LinkToIndex { get; set; }
 
 }

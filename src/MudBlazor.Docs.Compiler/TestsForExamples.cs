@@ -45,6 +45,9 @@ namespace MudBlazor.Docs.Compiler
                     var componentName = Path.GetFileNameWithoutExtension(filename);
                     if (!filename.Contains(Paths.ExampleDiscriminator))
                         continue;
+                    // skip over table/data grid virutalization since it takes too long.
+                    if (filename == "TableVirtualizationExample.razor" || filename == "DataGridVirtualizationExample.razor")
+                        continue;
                     cb.AddLine("[Test]");
                     cb.AddLine($"public void {componentName}_Test()");
                     cb.AddLine("{");
