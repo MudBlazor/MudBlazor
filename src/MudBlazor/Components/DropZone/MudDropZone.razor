@@ -14,11 +14,25 @@
 
 	@{
 		int index = 0;
+		var transactionIndex = Container?.GetTransactionIndex() ?? -1;
+		var items = GetItems();
 	}
 
-	@foreach (var item in GetItems())
+	@if (items.Any() == false)
+	{
+		<div class="@PlaceholderClassname" style="@PlaceholderStyle">
+		</div>
+	}
+
+	@foreach (var item in items)
 	{
 		var indexCopy = index;
+
+		if (transactionIndex == indexCopy)
+		{
+			<div class="@PlaceholderClassname" style="@PlaceholderStyle">
+			</div>
+		}
 
 		<MudDynamicDropItem @key="@(item.GetHashCode())" T="T" DraggingClass="@GetItemDraggingClass()"
 						Item="item"
@@ -39,6 +53,4 @@
 		index++;
 	}
 
-	<div class="@PlaceholderClassname" style="@PlaceholderStyle">
-	</div>
 </div>

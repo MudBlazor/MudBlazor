@@ -77,11 +77,6 @@ public partial class MudDynamicDropItem<T> : MudComponentBase
     [Category(CategoryTypes.DropZone.Sorting)]
     public int Index { get; set; } = -1;
 
-    protected string ItemStyle =>
-        new StyleBuilder("order", (Index * 10).ToString())
-        .AddStyle(Style)
-        .Build();
-
     #region Event handling and callbacks
 
     private async Task DragStarted()

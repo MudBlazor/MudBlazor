@@ -165,8 +165,6 @@ namespace MudBlazor
 
         protected string Classname =>
             new CssBuilder("mud-drop-zone")
-                .AddClass("d-flex")
-                .AddClass("flex-column")
                 //.AddClass("mud-drop-zone-drag-block", Container?.TransactionInProgress() == true && Container.GetTransactionOrignZoneIdentiifer() != Identifier)
                 .AddClass(CanDropClass ?? Container?.CanDropClass, Container?.TransactionInProgress() == true && Container.GetTransactionOrignZoneIdentiifer() != Identifier && _canDrop == true && (_dragCounter > 0 || GetApplyDropClassesOnDragStarted() == true))
                 .AddClass(NoDropClass ?? Container?.NoDropClass, Container?.TransactionInProgress() == true && Container.GetTransactionOrignZoneIdentiifer() != Identifier && _canDrop == false && (_dragCounter > 0 || GetApplyDropClassesOnDragStarted() == true))
@@ -181,7 +179,6 @@ namespace MudBlazor
 
         protected string PlaceholderStyle =>
             new StyleBuilder("height", "30px")
-            .AddStyle("order", (Container?.GetTransactionIndex() * 10 - 5).ToString(), Container?.TransactionInProgress() == true && Container.GetTransactionCurrentZoneIdentiifer() == Identifier)
             .Build();
 
         #endregion
@@ -293,6 +290,7 @@ namespace MudBlazor
 
         private void FinishedDragOperation() => _dragInProgress = false;
         private void DragOperationStarted() => _dragInProgress = true;
+
 
         #endregion
 
