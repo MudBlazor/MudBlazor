@@ -4,10 +4,13 @@
 
 namespace MudBlazor
 {
-    public enum ColumnType
+    public enum AggregateType
     {
-        InlineEditCommand,
-        SelectionCheckBox,
-        Text,
+        Avg,
+        Count,
+        Custom,
+        Max,
+        Min,
+        Sum
     }
 }

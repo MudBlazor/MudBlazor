@@ -1,21 +1,30 @@
 ﻿@namespace MudBlazor.UnitTests.TestComponents
 
-<MudDataGrid Items="@_items" MultiSelection="true" @bind-bind-SelectedItems="_selectedItems">
+<MudDataGrid Items="@_items" MultiSelection="true" @bind-SelectedItems="_selectedItems" Sortable="true"
+    Bordered="true">
     <Columns>
-        <Column T="Item" Type="@ColumnType.SelectionCheckBox" EnableFooterSelection="true" />
+        <SelectColumn T="Item"/>
         <Column T="Item" Field="@nameof(Item.Name)" />
     </Columns>
 </MudDataGrid>
 
-@code {
-    private IEnumerable<Item> _items = new List<Item>()
-    {
-        new Item("A"), 
-        new Item("B"), 
-        new Item("C"),
-    };
+<div>
+    @string.Join(",", _selectedItems.Select(x => x.Name))
+</div>
 
-    private HashSet<Item> _selectedItems;
+@code {
+    private List<Item> _items = new List<Item>();
+
+    private HashSet<Item> _selectedItems = new();
+
+    protected override void OnInitialized()
+    {
+        var letters = "ABC";
+        foreach (var c in letters)
+        {
+            _items.Add(new Item(c.ToString()));
+        }
+    }
 
     public class Item
     {
@@ -26,5 +35,4 @@
             Name = name;
         }
     }
-
 }

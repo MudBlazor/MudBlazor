@@ -37,7 +37,11 @@ namespace MudBlazor.UnitTests.Other
                 typeof(HeaderCell<>),
                 typeof(FooterCell<>),
                 typeof(Cell<>),
+                typeof(HeaderContext<>),
+                typeof(FooterContext<>),
+                typeof(CellContext<>),
                 typeof(MudDataGridPager<>),
+                typeof(SelectColumn<>),
 
                 typeof(MudTHeadRow),
                 typeof(MudTFootRow),

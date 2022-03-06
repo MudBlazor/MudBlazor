@@ -61,22 +61,56 @@
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader Title="Inline Editing">
+            <SectionHeader Title="Editing">
                 <Description>
                     The <CodeInline>&lt;MudDataGrid></CodeInline> allows editing the data passed into it. Setting the <CodeInline>ReadOnly</CodeInline> property
-                    to <CodeInline>false</CodeInline> and the <CodeInline>EditMode</CodeInline> property to <CodeInline>DataGridEditMode.Inline</CodeInline> turns 
-                    on row level editing. To disable editing on a column, set its <CodeInline>IsEditable</CodeInline> property to <CodeInline>false</CodeInline>.
-
+                    to <CodeInline>false</CodeInline> and the <CodeInline>EditMode</CodeInline> property to turns editing. There are two different edit modes:
+                    <CodeInline>Cell and Form</CodeInline>. <CodeInline>Form</CodeInline> displays a form in a popup when editing. <CodeInline>Cell</CodeInline> is more like 
+                    excel where each cell is ready to edit and as you make edits, they are applied to the data source. To disable editing on a column, set its 
+                    <CodeInline>IsEditable</CodeInline> property to <CodeInline>false</CodeInline>.
+                    <br><br>
                     By default, the built in editing in the data grid automatically supplies the proper input component for each cell. However, this can be overidden
                     by supplying an <CodeInline>&lt;EditTemplate></CodeInline>. Inside the template, you have full control over the editing. Take a look at the Position
                     column below.
 
                 </Description>
             </SectionHeader>
-            <SectionContent DarkenBackground="true" Code="DataGridInlineEditingExample" ShowCode="false" Block="true" FullWidth="true">
-                <DataGridInlineEditingExample />
+            <SectionContent DarkenBackground="true" Code="DataGridEditingExample" ShowCode="false" Block="true" FullWidth="true">
+                <DataGridEditingExample />
             </SectionContent>
         </DocsPageSection>
 
+        <DocsPageSection>
+            <SectionHeader Title="Grouping">
+                <Description>
+                    The <CodeInline>&lt;MudDataGrid></CodeInline> allows you to group data by column. Setting the <CodeInline>Grouping</CodeInline> property
+                    to <CodeInline>true</CodeInline> will turn on grouping which will add a menu item in the column options to toggle grouping of that column. 
+                    To disable editing on a column, set its <CodeInline>IsEditable</CodeInline> property to <CodeInline>false</CodeInline>.
+
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="DataGridGroupingExample" ShowCode="false" Block="true" FullWidth="true">
+                <DataGridGroupingExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Data Aggregation">
+                <Description>
+                    The <CodeInline>&lt;MudDataGrid></CodeInline> allows you to aggregate data in several different ways. Data aggregation happens in the 
+                    footer of the grid for the most part. By setting an <CodeInline>AggregateDefinition</CodeInline>, you can easily add a quick built-in aggregate
+                    or choose to tailor the display to your needs. There are 6 different <CodeInline>AggregateTypes</CodeInline> that can be used with the 
+                    <CodeInline>AggregateDefinition</CodeInline>: Avg, Count, Custom, Max, Min and Sum. For more control over the data aggregation, you can choose the
+                    <CodeInline>AggregationType.Custom</CodeInline> and supply your own function which will return a formatted string to display. Lastly, for 
+                    complete control over the data aggregation including the look and feel, you use <CodeInline>&lt;FooterTemplate></CodeInline> which has it's
+                    context set to the <CodeInline>CurrentPageItems</CodeInline>.
+                    <br><br>
+                    Aggregation is automatically applied to groups when the data grid is grouped by a column. Try it out by grouping the Status column!
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="DataGridAggregationExample" ShowCode="false" Block="true" FullWidth="true">
+                <DataGridAggregationExample />
+            </SectionContent>
+        </DocsPageSection>
     </DocsPageContent>
 </DocsPage>

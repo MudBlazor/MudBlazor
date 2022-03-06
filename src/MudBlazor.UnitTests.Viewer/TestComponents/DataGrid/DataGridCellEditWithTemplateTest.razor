@@ -1,12 +1,12 @@
 ﻿@namespace MudBlazor.UnitTests.TestComponents
 
-<MudDataGrid Items="@_items" ReadOnly="false" EditMode="@DataGridEditMode.Inline">
+<MudDataGrid Items="@_items" ReadOnly="false" EditMode="@DataGridEditMode.Cell">
     <Columns>
         <Column T="Model" Field="@nameof(Model.Name)" />
         <Column T="Model" Field="@nameof(Model.Age)" />
         <Column T="Model" Field="@nameof(Model.Hired)">
             <EditTemplate>
-                <MudCheckBox T="bool" @bind-Checked="context.Hired" Label="Hired" Required />
+                <MudCheckBox T="bool" @bind-Checked="context.Item.Hired" Label="Hired" Required />
             </EditTemplate>
         </Column>
     </Columns>
