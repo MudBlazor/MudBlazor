@@ -214,6 +214,15 @@ namespace MudBlazor
         protected override void OnPickerOpened()
         {
             base.OnPickerOpened();
+            if (Editable == true && Text != null)
+            {
+                DateTime? a = Converter.Get(Text);
+                if (a.HasValue)
+                {
+                    a = new DateTime(a.Value.Year, a.Value.Month, 1);
+                    PickerMonth = a;
+                }
+            }
             if (OpenTo == OpenTo.Date && FixDay.HasValue)
             {
                 OpenTo = OpenTo.Month;

@@ -1,6 +1,6 @@
 @using System.Linq
+@using System.Text.RegularExpressions
 @using MudBlazor.Docs.Extensions
-
 
 <MudText Typo="Typo.subtitle1" Class="mt-1 mb-2 ml-2 d-flex d-md-none"><b>Docs</b></MudText>
 <MudNavLink Href="docs/overview" Class="docs-single-link">Overview</MudNavLink>
@@ -36,9 +36,21 @@
         <MudNavLink Href="@link.Href">@link.Title</MudNavLink>
     }
 </MudNavGroup>
- <MudNavGroup Title="Customization" Expanded="@(_section == "customization")" ExpandIcon="@Icons.Material.Filled.ExpandMore">
-     @foreach (var link in MenuService.Customization)
-     {
-         <MudNavLink Href="@link.Href">@link.Title</MudNavLink>
-     }
- </MudNavGroup>
+<MudNavGroup Title="Customization" Expanded="@(_section == "customization")" ExpandIcon="@Icons.Material.Filled.ExpandMore">
+    @foreach (var link in MenuService.Customization)
+    {
+        <MudNavLink Href="@link.Href">@link.Title</MudNavLink>
+    }
+</MudNavGroup>
+<MudNavGroup Title="CSS Utilities" Expanded="@(_section == "utilities")" ExpandIcon="@Icons.Material.Filled.ExpandMore">
+    @foreach (var title in MenuService.Utilities.GroupBy(x => x.Group).Select(x => x.Key))
+    {
+        <div class="docs-css-utility-header">
+            @title
+        </div>
+        @foreach (var link in MenuService.Utilities.Where(x => x.Group == title))
+        {
+            <MudNavLink Href="@link.Href" Match="NavLinkMatch.All">@link.Title</MudNavLink>
+        }
+    }
+</MudNavGroup>

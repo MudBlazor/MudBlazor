@@ -194,7 +194,7 @@ namespace MudBlazor
         /// </summary>
         internal virtual InputType GetInputType() { return InputType.Text; }
 
-        protected async Task SetTextAsync(string text, bool updateValue = true)
+        protected virtual async Task SetTextAsync(string text, bool updateValue = true)
         {
             if (Text != text)
             {
@@ -243,7 +243,7 @@ namespace MudBlazor
 
         protected bool _isFocused;
 
-        protected virtual void OnBlurred(FocusEventArgs obj)
+        protected internal virtual void OnBlurred(FocusEventArgs obj)
         {
             _isFocused = false;
             Touched = true;
@@ -445,12 +445,6 @@ namespace MudBlazor
             {
                 await FocusAsync();
             }
-        }
-
-        protected override void RegisterAsFormComponent()
-        {
-            if (Standalone)
-                base.RegisterAsFormComponent();
         }
 
         protected override void OnParametersSet()

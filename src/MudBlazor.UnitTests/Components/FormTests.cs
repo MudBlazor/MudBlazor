@@ -4,7 +4,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
-using System.Reflection;
 using System.Threading.Tasks;
 using Bunit;
 using FluentAssertions;
@@ -145,6 +144,90 @@ namespace MudBlazor.UnitTests.Components
             //reset validation should not reset touched state
             await comp.InvokeAsync(() => form.ResetValidation());
             form.IsTouched.Should().Be(true);
+        }
+        
+        /// <summary>
+        /// Changing the nested form fields value should set IsTouched 
+        /// </summary>
+        [Test]
+        public async Task FormIsTouchedAndNestedFormIsNotTouchedWhenParentFormFieldIsTouchedTest()
+        {
+            var comp = Context.RenderComponent<FormIsTouchedNestedTest>();
+            Console.WriteLine(comp.Markup);
+            var formsComp = comp.FindComponents<MudForm>();
+            var textCompFields = comp.FindComponents<MudTextField<string>>();
+            var dateCompFields = comp.FindComponents<MudDatePicker>();
+            var form = formsComp[0].Instance;
+            var textField = textCompFields[0].Instance;
+            var dateField = dateCompFields[0].Instance;
+            var nestedForm = formsComp[1].Instance;
+            var nestedFormTextField = textCompFields[1].Instance;
+            var nestedFormDateField = dateCompFields[1].Instance;
+
+            // check initial state: form should not be touched 
+            form.IsTouched.Should().Be(false);
+            nestedForm.IsTouched.Should().Be(false);
+            // input a date, istouched should be true
+            textCompFields[0].Find("input").Change("2001-01-31");
+            form.IsTouched.Should().Be(true);
+            nestedForm.IsTouched.Should().Be(false);
+
+            //reset should set touched to false
+            await comp.InvokeAsync(() => form.Reset());
+            form.IsTouched.Should().Be(false);
+            nestedForm.IsTouched.Should().Be(false);
+
+            // clear value to null
+            textCompFields[0].Find("input").Change("value is changed");
+            form.IsTouched.Should().Be(true);
+            nestedForm.IsTouched.Should().Be(false);
+
+            //reset validation should not reset touched state
+            await comp.InvokeAsync(() => form.ResetValidation());
+            form.IsTouched.Should().Be(true);
+            nestedForm.IsTouched.Should().Be(false);
+        }
+
+        /// <summary>
+        /// Changing the nested form fields value should set IsTouched to true on parent form
+        /// </summary>
+        [Test]
+        public async Task FormIsUnTouchedWhenNestedFormTouchedTest()
+        {
+            var comp = Context.RenderComponent<FormIsTouchedNestedTest>();
+            Console.WriteLine(comp.Markup);
+            var formsComp = comp.FindComponents<MudForm>();
+            var textCompFields = comp.FindComponents<MudTextField<string>>();
+            var dateCompFields = comp.FindComponents<MudDatePicker>();
+            var form = formsComp[0].Instance;
+            var textField = textCompFields[0].Instance;
+            var dateField = dateCompFields[0].Instance;
+            var nestedForm = formsComp[1].Instance;
+            var nestedFormTextField = textCompFields[1].Instance;
+            var nestedFormDateField = dateCompFields[1].Instance;
+
+            // check initial state: form should not be touched 
+            form.IsTouched.Should().Be(false);
+            nestedForm.IsTouched.Should().Be(false);
+            // input a date, istouched should be true
+            textCompFields[1].Find("input").Change("2001-01-31");
+            form.IsTouched.Should().Be(true);
+            nestedForm.IsTouched.Should().Be(true);
+
+            //reset should set touched to false
+            await comp.InvokeAsync(() => form.Reset());
+            form.IsTouched.Should().Be(false);
+            nestedForm.IsTouched.Should().Be(false);
+
+            // clear value to null
+            textCompFields[3].Find("input").Change("value is changed");
+            form.IsTouched.Should().Be(false);
+            nestedForm.IsTouched.Should().Be(true);
+
+            //reset validation should not reset touched state
+            await comp.InvokeAsync(() => nestedFormDateField.ResetValidation());
+            form.IsTouched.Should().Be(false);
+            nestedForm.IsTouched.Should().Be(true);
         }
 
         /// <summary>
@@ -741,8 +824,8 @@ namespace MudBlazor.UnitTests.Components
             textfields[7].Instance.ErrorText.Should().NotBeNullOrEmpty();
             numericFields[1].Instance.HasErrors.Should().BeTrue();
             numericFields[1].Instance.ErrorText.Should().NotBeNullOrEmpty();
-        }
-
+        } 
+        
         /// <summary>
         /// Testing the functionality of the MudForm example from the docs.
         /// Root MudForm is invalid and nested MudForm is valid
@@ -847,36 +930,6 @@ namespace MudBlazor.UnitTests.Components
 
         /// <summary>
         /// Testing error handling of MudFormComponent.ValidateModelWithFullPathOfMember
-        /// We have no form, error should reflect that
-        /// </summary>
-        [Test]
-        public async Task MudFormComponent_ValidationWithModel_UnexpectedErrorInValidationFunc1()
-        {
-            var comp = Context.RenderComponent<MudTextField<string>>();
-            comp.SetParam(nameof(MudTextField<string>.Validation), new Func<object, string, IEnumerable<string>>((obj, property) => new[] { "Error1", "Error2" }));
-            await comp.InvokeAsync(comp.Instance.Validate);
-            comp.Instance.Error.Should().Be(true);
-            comp.Instance.ErrorText.Should().Be("Form is null, unable to validate with model!");
-        }
-
-        /// <summary>
-        /// Testing error handling of MudFormComponent.ValidateModelWithFullPathOfMember
-        /// We have not set a form model, error should reflect that
-        /// </summary>
-        [Test]
-        public async Task MudFormComponent_ValidationWithModel_UnexpectedErrorInValidationFunc2()
-        {
-            var comp = Context.RenderComponent<FormWithSingleTextField>();
-            var tf = comp.FindComponent<MudTextField<string>>();
-            var validationFunc = new Func<object, string, IEnumerable<string>>((obj, property) => new string[] { });
-            tf.SetParam(nameof(MudTextField<string>.Validation), validationFunc);
-            await comp.InvokeAsync(tf.Instance.Validate);
-            tf.Instance.Error.Should().Be(true);
-            tf.Instance.ErrorText.Should().Be("Form.Model is null, unable to validate with model!");
-        }
-
-        /// <summary>
-        /// Testing error handling of MudFormComponent.ValidateModelWithFullPathOfMember
         /// Validation func throws an error, the error should contain the exception message
         /// </summary>
         [Test]
@@ -904,7 +957,7 @@ namespace MudBlazor.UnitTests.Components
         /// We have set no For expression, error should reflect that
         /// </summary>
         [Test]
-        public async Task MudFormComponent_ValidationWithModel_UnexpectedErrorInValidationFunc4()
+        public async Task MudFormComponent_ValidationWithModelWithNoFor_ShouldShow_ExpectedError()
         {
             var comp = Context.RenderComponent<FormWithSingleTextField>();
             var form = comp.FindComponent<MudForm>();
@@ -912,6 +965,28 @@ namespace MudBlazor.UnitTests.Components
             form.SetParam(nameof(MudForm.Model), model);
             var tf = comp.FindComponent<MudTextField<string>>();
             var validationFunc = new Func<object, string, IEnumerable<string>>((obj, property) =>
+            {
+                throw new InvalidOperationException("User error");
+            });
+            tf.SetParam(nameof(MudTextField<string>.Validation), validationFunc);
+            await comp.InvokeAsync(tf.Instance.Validate);
+            tf.Instance.Error.Should().Be(true);
+            tf.Instance.ErrorText.Should().Be("For is null, please set parameter For on the form input component of type MudTextField`1");
+        }
+        
+        /// <summary>
+        /// Testing error handling of MudFormComponent.ValidateModelWithFullPathOfMember
+        /// We have set no For expression, error should reflect that
+        /// </summary>
+        [Test]
+        public async Task MudFormComponent_AsyncValidationWithModelWithNoFor_ShouldShow_ExpectedError()
+        {
+            var comp = Context.RenderComponent<FormWithSingleTextField>();
+            var form = comp.FindComponent<MudForm>();
+            var model = new { data = "asdf" };
+            form.SetParam(nameof(MudForm.Model), model);
+            var tf = comp.FindComponent<MudTextField<string>>();
+            var validationFunc = new Func<object, string, Task<IEnumerable<string>>>((obj, property) =>
             {
                 throw new InvalidOperationException("User error");
             });
@@ -953,27 +1028,123 @@ namespace MudBlazor.UnitTests.Components
         public async Task FormReset_Should_ClearTextField()
         {
             var comp = Context.RenderComponent<FormResetTest>();
-            //Console.WriteLine(comp.Markup);
             var form = comp.FindComponent<MudForm>();
-            var tf = comp.FindComponent<MudTextField<string>>();
+            var textFieldComp = comp.FindComponent<MudTextField<string>>();
+            var textField = textFieldComp.Instance;
+
             // input some text
-            comp.Find("input").Input("asdf");
-            tf.Instance.Value.Should().Be("asdf");
-            tf.Instance.Text.Should().Be("asdf");
+            textFieldComp.Find("input").Input("asdf");
+            textField.Value.Should().Be("asdf");
+            textField.Text.Should().Be("asdf");
             // call reset directly
             await comp.InvokeAsync(() => form.Instance.Reset());
-            tf.Instance.Value.Should().BeNullOrEmpty();
-            tf.Instance.Text.Should().BeNullOrEmpty();
+            textField.Value.Should().BeNullOrEmpty();
+            textField.Text.Should().BeNullOrEmpty();
             // input some text
-            comp.Find("input").Input("asdf");
-            tf.Instance.Value.Should().Be("asdf");
-            tf.Instance.Text.Should().Be("asdf");
+            textFieldComp.Find("input").Input("asdf");
+            textField.Value.Should().Be("asdf");
+            textField.Text.Should().Be("asdf");
             // hit reset button
-            comp.FindComponent<MudButton>().Find("button").Click();
-            tf.Instance.Value.Should().BeNullOrEmpty();
-            tf.Instance.Text.Should().BeNullOrEmpty();
+            comp.Find("button.reset").Click();
+            textField.Value.Should().BeNullOrEmpty();
+            textField.Text.Should().BeNullOrEmpty();
         }
 
+        /// <summary>
+        /// Calling form.Reset() should clear the numeric field
+        /// </summary>
+        [Test]
+        public async Task FormReset_Should_ClearNumericField()
+        {
+            var comp = Context.RenderComponent<FormResetTest>();
+            var form = comp.FindComponent<MudForm>().Instance;
+            var numericFieldComp = comp.FindComponent<MudNumericField<int?>>();
+            var numericField = numericFieldComp.Instance;
+
+            // input some text
+            numericFieldComp.Find("input").Input(10);
+            numericField.Value.Should().Be(10);
+            numericField.Text.Should().Be("10");
+            // call reset directly
+            await comp.InvokeAsync(() => form.Reset());
+            numericField.Value.Should().BeNull();
+            numericField.Text.Should().BeNullOrEmpty();
+            // input some text
+
+            numericFieldComp.Find("input").Input(20);
+            numericField.Value.Should().Be(20);
+            numericField.Text.Should().Be("20");
+            // hit reset button
+            comp.Find("button.reset").Click();
+            numericField.Value.Should().BeNull();
+            numericField.Text.Should().BeNullOrEmpty();
+        }
+
+        /// <summary>
+        /// Reset() should reset the form's state
+        /// </summary>
+        [Test]
+        public async Task FormReset_Should_ResetFormStateForFieldsThatWrapMudInput()
+        {
+            var comp = Context.RenderComponent<FormResetTest>();
+            var form = comp.FindComponent<MudForm>().Instance;
+            var textFieldComp = comp.FindComponent<MudTextField<string>>();
+            var numericFieldComp = comp.FindComponent<MudNumericField<int?>>();
+
+            form.IsValid.Should().Be(false);
+            textFieldComp.Find("input").Input("Some value");
+            form.IsValid.Should().Be(false);
+            numericFieldComp.Find("input").Input("1");
+            form.IsValid.Should().Be(true);
+            
+            await comp.InvokeAsync(() => form.Reset());
+            form.IsValid.Should().Be(false); // required fields
+        }
+
+        /// <summary>
+        /// Only the top standalone fields should be registered inside the form.
+        /// </summary>
+        [Test]
+        public async Task MudForm_Should_RegisterOnlyTopStandaloneFormControls()
+        {
+            var comp = Context.RenderComponent<FormShouldRegisterOnlyTopStandaloneFormControlsTest>();
+            var form = comp.FindComponent<MudFormTestable>().Instance;
+
+            Assert.AreEqual(14, form.FormControls.Count);
+        }
+
+        /// <summary>
+        /// Test the cascading validaton parameter to override field validations or not depending of context.
+        /// </summary>
+        [Test]
+        public async Task MudForm_Validation_Should_OverrideFieldValidation()
+        {
+            var comp = Context.RenderComponent<FormValidationOverrideFieldValidationTest>();
+            var textFields = comp.FindComponents<MudTextField<string>>();
+            var numericFields = comp.FindComponents<MudNumericField<int>>();
+            var defaultValidation = "v";
+            
+            textFields[0].Instance.Validation.Should().Be(defaultValidation);
+            textFields[1].Instance.Validation.Should().Be(defaultValidation);
+            textFields[2].Instance.Validation.Should().Be(defaultValidation);
+            textFields[3].Instance.Validation.Should().Be("a");
+            
+            numericFields[0].Instance.Validation.Should().Be(defaultValidation);
+            numericFields[1].Instance.Validation.Should().NotBe(defaultValidation);
+            numericFields[2].Instance.Validation.Should().Be(defaultValidation);
+            numericFields[3].Instance.Validation.Should().Be("b");
+        }
+
+        /// <summary>
+        /// When the field is initialised from cache, the value can be set before the cascading parameter "Form",
+        /// triggering validation. Validations requiring "Form" or "For" properties should not crash. 
+        /// </summary>
+        [Test]
+        public async Task FieldValidationWithoutRequiredForm_ShouldNot_Validate()
+        {
+            var comp = Context.RenderComponent<FieldValidationWithoutRequiredFormTest>();
+
+            Assert.Throws<ElementNotFoundException>(() => comp.Find(".mud-input-error"));
+        }
     }
 }
-

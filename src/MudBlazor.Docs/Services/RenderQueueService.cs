@@ -13,6 +13,8 @@ namespace MudBlazor.Docs.Services
 {
     public interface IRenderQueueService
     {
+        int Capacity { get; }
+
         void Enqueue(QueuedContent component);
         Task WaitUntilEmpty();
         void Clear();
@@ -22,6 +24,13 @@ namespace MudBlazor.Docs.Services
     {
         private Queue<QueuedContent> _queue = new();
         private TaskCompletionSource _tcs;
+
+        public int Capacity { get; init; }
+
+        public RenderQueueService()
+        {
+            Capacity = 3;
+        }
 
         public void Clear() {
             lock (_queue)

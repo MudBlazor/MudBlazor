@@ -22,7 +22,15 @@
 
 .mud-codeblock {
     & .html, .codearea {
-
+        mark {
+          font-weight: 600;
+          color: var(--mud-palette-primary);
+          background-color: var(--mud-palette-action-default-hover);
+          border-radius: 2px;
+          padding: 1px 3px;
+          margin: 0 0 0 2px;
+          user-select: all;
+        }
         & .htmlTagDelimiter {
             color: #979797;
         }
@@ -50,13 +58,13 @@
         }
 
         & .enum {
-          color: #00c853;
-          background-color: var(--mud-palette-grey-light);
+            color: #00c853;
+            background-color: var(--mud-palette-grey-light);
         }
 
         & .enumValue, .sharpVariable {
-          color: var(--mud-palette-text-primary);
-          background-color: var(--mud-palette-grey-light);
+            color: var(--mud-palette-text-primary);
+            background-color: var(--mud-palette-grey-light);
         }
 
         & .keyword {
@@ -65,8 +73,8 @@
         }
 
         & .atSign {
-          color: var(--mud-palette-text-primary);
-          background-color: var(--mud-palette-grey-light);
+            color: var(--mud-palette-text-primary);
+            background-color: var(--mud-palette-grey-light);
         }
 
         & .comment {
@@ -76,8 +84,8 @@
 
     & .csharp {
         & .atSign {
-          color: #353535;
-          background-color: var(--mud-palette-grey-light);
+            color: var(--mud-palette-text-primary);
+            background-color: var(--mud-palette-grey-light);
         }
 
         & .keyword {

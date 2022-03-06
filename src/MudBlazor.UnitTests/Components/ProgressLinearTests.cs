@@ -211,13 +211,7 @@ namespace MudBlazor.UnitTests.Components
             container.GetAttribute("role").Should().Be("progressbar");
 
             container.ChildElementCount.Should().Be(2);
-            var contentContainer = container.Children[0];
-
-            contentContainer.ClassList.Should().Contain("mud-progress-linear-content");
-            contentContainer.ChildElementCount.Should().Be(1);
-            contentContainer.TextContent.Should().Be("my content");
-
-            var barContainer = container.Children[1];
+            var barContainer = container.Children[0];
 
             barContainer.ClassList.Should().Contain("mud-progress-linear-bars");
             barContainer.ChildElementCount.Should().Be(2);
@@ -227,6 +221,12 @@ namespace MudBlazor.UnitTests.Components
 
             var secondBarElement = barContainer.Children[1];
             firstBarElement.ClassList.Should().Contain("mud-progress-linear-bar");
+
+            var contentContainer = container.Children[1];
+
+            contentContainer.ClassList.Should().Contain("mud-progress-linear-content");
+            contentContainer.ChildElementCount.Should().Be(1);
+            contentContainer.TextContent.Should().Be("my content");
         }
 
         [Test]

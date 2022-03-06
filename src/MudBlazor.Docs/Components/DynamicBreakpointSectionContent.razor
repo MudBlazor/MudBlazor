@@ -1,0 +1,41 @@
+﻿<DocsPageSection>
+    <SectionHeader Title="Breakpoints">
+        <Description>
+            You can use the utility class to target media queries like responsive breakpoints.
+            For example, use <CodeInline>@_mediumClass</CodeInline> to apply the <CodeInline>@_regularClass</CodeInline> utility at only medium screen sizes and above.
+        </Description>
+    </SectionHeader>
+    <div class="docs-section-source outlined show-code">
+        <div class="docs-section-source-container">
+            <div class="mud-codeblock">
+                <div class="html"><pre>
+<span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">div</span> <span class="htmlAttributeName">class</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="htmlAttributeValue">...<mark>@_mediumClass</mark></span><span class="quot">&quot;</span><span class="htmlTagDelimiter">&gt;</span>
+  ...
+<span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">div</span><span class="htmlTagDelimiter">&gt;</span>
+</pre></div>
+            </div>
+        </div>
+    </div>
+    <MudText Class="mt-5">To learn more, check out the documentation on <MudLink Href="/features/breakpoints">Breakpoints and other modifiers you can use.</MudLink></MudText>
+</DocsPageSection>
+
+@code {
+    [Parameter] public string Utility { get; set; }
+    private string _mediumClass;
+    private string _regularClass;
+
+    protected override void OnParametersSet()
+    {
+        _mediumClass = Utility;
+        if (Utility.Contains("-md"))
+        {
+            _regularClass = Utility.Replace("-md", "");
+        }
+        else
+        {
+            throw new InvalidOperationException("Example class must be of type medium, example: pa-md-16");
+        }
+        
+    }
+
+}
