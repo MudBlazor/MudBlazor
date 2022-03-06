@@ -1,4 +1,4 @@
-﻿@namespace MudBlazor.UnitTests.TestComponents
+@namespace MudBlazor.UnitTests.TestComponents
 
 <MudDataGrid Items="@_items">
     <Columns>
@@ -37,7 +37,7 @@
         {
             var highestSalary = x.Max(z => z.Salary);
             var countOver100Grand = x.Count(z => z.Salary > 100_000);
-            return $"Highest: {highestSalary.ToString("C0")} | {countOver100Grand} Over $100,000";
+            return $"Highest: {highestSalary.ToString("C0")} | {countOver100Grand} Over {100000:C0}";
         }
     };
 }
