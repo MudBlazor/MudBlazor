@@ -292,6 +292,23 @@ namespace MudBlazor
                 OpenMenu(args);
         }
 
+        public void ToggleMenuTouch(TouchEventArgs args)
+        {
+            if (Disabled)
+            {
+                return;
+            }
+
+            if (_isOpen)
+            {
+                CloseMenu();
+            }
+            else
+            {
+                OpenMenu(args);
+            }
+        }
+
         /// <summary>
         /// Implementation of IActivatable.Activate, toggles the menu.
         /// </summary>
