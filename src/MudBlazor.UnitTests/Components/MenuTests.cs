@@ -12,13 +12,19 @@ namespace MudBlazor.UnitTests.Components
     public class MenuTests : BunitTest
     {
         [Test]
-        public void OpenMenu_ClickFirstItem_CheckClosed()
+        public async Task OpenMenu_ClickFirstItem_CheckClosed()
         {
             var comp = Context.RenderComponent<MenuTest1>();
             comp.FindAll("button.mud-button-root")[0].Click();
             comp.FindAll("div.mud-list-item").Count.Should().Be(3);
             comp.FindAll("div.mud-list-item")[0].Click();
             comp.FindAll("div.mud-popover-open").Count.Should().Be(0);
+
+            comp.FindAll("button.mud-button-root")[0].Click();
+            comp.FindAll("div.mud-list-item").Count.Should().Be(3);
+            var menuItems = comp.FindComponents<MudMenuItem>();
+            await comp.InvokeAsync(() => menuItems[0].Instance.OnTouchHandler(new TouchEventArgs()));
+            comp.WaitForAssertion(() => comp.FindAll("div.mud-popover-open").Count.Should().Be(0));
         }
 
         [Test]

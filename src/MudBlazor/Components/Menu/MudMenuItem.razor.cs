@@ -47,7 +47,7 @@ namespace MudBlazor
             }
         }
 
-        protected async Task OnTouchHandler(TouchEventArgs ev)
+        protected internal async Task OnTouchHandler(TouchEventArgs ev)
         {
             if (Disabled)
                 return;
