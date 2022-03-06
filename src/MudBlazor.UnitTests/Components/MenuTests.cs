@@ -25,6 +25,19 @@ namespace MudBlazor.UnitTests.Components
             var menuItems = comp.FindComponents<MudMenuItem>();
             await comp.InvokeAsync(() => menuItems[0].Instance.OnTouchHandler(new TouchEventArgs()));
             comp.WaitForAssertion(() => comp.FindAll("div.mud-popover-open").Count.Should().Be(0));
+
+            comp.FindAll("button.mud-button-root")[0].Click();
+            menuItems = comp.FindComponents<MudMenuItem>();
+            await comp.InvokeAsync(() => menuItems[1].Instance.OnTouchHandler(new TouchEventArgs()));
+            comp.WaitForAssertion(() => comp.FindAll("div.mud-popover-open").Count.Should().Be(0));
+
+            //Disabled item's click ot touch should not close popover
+            comp.FindAll("button.mud-button-root")[0].Click();
+            menuItems = comp.FindComponents<MudMenuItem>();
+#pragma warning disable BL0005
+            await comp.InvokeAsync(() => menuItems[2].Instance.Disabled = true);
+            await comp.InvokeAsync(() => menuItems[2].Instance.OnTouchHandler(new TouchEventArgs()));
+            comp.WaitForAssertion(() => comp.FindAll("div.mud-popover-open").Count.Should().Be(1));
         }
 
         [Test]
