@@ -77,15 +77,24 @@ namespace MudBlazor
         [Category(CategoryTypes.Slider.Behavior)]
         public Converter<T> Converter { get; set; } = new DefaultConverter<T>() { Culture = CultureInfo.InvariantCulture };
 
-        [Parameter] public EventCallback<T> ValueChanged { get; set; }
+        [Parameter]
+        public EventCallback<T> ValueChanged { get; set; }
 
-        [Parameter] public SliderOrientation Orientation { get; set; } = SliderOrientation.Horizontal;
+        [Parameter]
+        [Category(CategoryTypes.Slider.Appearance)]
+        public SliderOrientation Orientation { get; set; } = SliderOrientation.Horizontal;
 
-        [Parameter] public bool TickMark { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.Slider.Appearance)]
+        public bool TickMark { get; set; }
 
-        [Parameter] public int? TickMarkCount { get; set; } = 0;
+        [Parameter]
+        [Category(CategoryTypes.Slider.Appearance)]
+        public int? TickMarkCount { get; set; } = 0;
 
-        [Parameter] public Size Size { get; set; } = Size.Small;
+        [Parameter]
+        [Category(CategoryTypes.Slider.Appearance)]
+        public Size Size { get; set; } = Size.Small;
 
         [Parameter]
         [Category(CategoryTypes.Slider.Data)]
