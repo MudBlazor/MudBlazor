@@ -67,14 +67,14 @@ namespace MudBlazor.UnitTests.Components
                 new BreadcrumbItem("Link 5", "link5", disabled: true)
             }));
 
+            comp.WaitForAssertion(() => comp.Instance.Collapsed.Should().BeTrue());
             await comp.InvokeAsync(() => comp.Instance.Expand());
             comp.WaitForAssertion(() => comp.Instance.Collapsed.Should().BeFalse());
 
             await comp.InvokeAsync(() => comp.Instance.Expand());
             comp.WaitForAssertion(() => comp.Instance.Collapsed.Should().BeFalse());
 
-            //TO DO: Check get item class name, this is not working
-            //comp.WaitForAssertion(() => comp.Instance.GetItemClassname(new BreadcrumbItem("a", "b")).Should().Be("mud-breadcrumb-item"));
+            comp.WaitForAssertion(() => MudBreadcrumbs.GetItemClassname(comp.Instance.Items[1]).Should().Be("mud-breadcrumb-item"));
         }
     }
 }
