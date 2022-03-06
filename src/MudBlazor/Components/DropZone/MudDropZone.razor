@@ -20,8 +20,7 @@
 
 	@if (items.Any() == false)
 	{
-		<div class="@PlaceholderClassname" style="@PlaceholderStyle">
-		</div>
+		<div class="@PlaceholderClassname"></div>
 	}
 
 	@foreach (var item in items)
@@ -48,10 +47,8 @@
 
 		if (transactionIndex == indexCopy)
 		{
-			<div class="@PlaceholderClassname" style="@PlaceholderStyle">
-			</div>
+			<div class="@PlaceholderClassname"></div>
 		}
-
 
 		index++;
 	}

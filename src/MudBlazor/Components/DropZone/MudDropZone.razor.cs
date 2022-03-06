@@ -173,13 +173,9 @@ namespace MudBlazor
                 .Build();
 
         protected string PlaceholderClassname =>
-            new CssBuilder("mud-theme-primary")
+            new CssBuilder("border-2 mud-border-primary border-dashed mud-chip-text mud-chip-color-primary pa-4")
                 .AddClass("d-none", ShowPreview == false || (Container?.TransactionInProgress() == false || Container.GetTransactionCurrentZoneIdentiifer() != Identifier))
                 .Build();
-
-        protected string PlaceholderStyle =>
-            new StyleBuilder("height", "30px")
-            .Build();
 
         #endregion
 
