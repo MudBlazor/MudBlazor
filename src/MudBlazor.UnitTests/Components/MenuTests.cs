@@ -15,6 +15,7 @@ namespace MudBlazor.UnitTests.Components
         public async Task OpenMenu_ClickFirstItem_CheckClosed()
         {
             var comp = Context.RenderComponent<MenuTest1>();
+            var menu = comp.FindComponent<MudMenu>();
             comp.FindAll("button.mud-button-root")[0].Click();
             comp.FindAll("div.mud-list-item").Count.Should().Be(3);
             comp.FindAll("div.mud-list-item")[0].Click();
@@ -37,6 +38,11 @@ namespace MudBlazor.UnitTests.Components
 #pragma warning disable BL0005
             await comp.InvokeAsync(() => menuItems[2].Instance.Disabled = true);
             await comp.InvokeAsync(() => menuItems[2].Instance.OnTouchHandler(new TouchEventArgs()));
+            comp.WaitForAssertion(() => comp.FindAll("div.mud-popover-open").Count.Should().Be(1));
+
+            await comp.InvokeAsync(() => menu.Instance.ToggleMenuTouch(new TouchEventArgs()));
+            comp.WaitForAssertion(() => comp.FindAll("div.mud-popover-open").Count.Should().Be(0));
+            await comp.InvokeAsync(() => menu.Instance.ToggleMenuTouch(new TouchEventArgs()));
             comp.WaitForAssertion(() => comp.FindAll("div.mud-popover-open").Count.Should().Be(1));
         }
 
