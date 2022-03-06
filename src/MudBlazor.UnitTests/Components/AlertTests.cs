@@ -39,13 +39,13 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void AlertTest_Click()
+        public async Task AlertTest_Click()
         {
             var comp = Context.RenderComponent<AlertClickTest>();
             var alert = comp.FindComponent<MudAlert>();
             var numeric = comp.FindComponent<MudNumericField<int>>();
             comp.WaitForAssertion(() => numeric.Instance.Value.Should().Be(0));
-            comp.Find("div.mud-alert").Click();
+            await comp.InvokeAsync(() => alert.Instance.OnCloseIconClickAsync());
             comp.WaitForAssertion(() => numeric.Instance.Value.Should().Be(1));
         }
 

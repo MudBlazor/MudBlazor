@@ -143,6 +143,8 @@ namespace MudBlazor
             return Task.CompletedTask;
         }
 
+        //If we can check this exception can include the coverage again
+        [ExcludeFromCodeCoverage]
         protected override void OnParametersSet()
         {
             if (!string.IsNullOrEmpty(Icon))
