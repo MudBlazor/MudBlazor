@@ -133,7 +133,7 @@ namespace MudBlazor
 
         protected string _icon;
 
-        private Task OnCloseIconClickAsync()
+        internal Task OnCloseIconClickAsync()
         {
             if (CloseIconClicked.HasDelegate)
             {
