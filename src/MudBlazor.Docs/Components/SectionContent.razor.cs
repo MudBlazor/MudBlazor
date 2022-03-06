@@ -54,6 +54,7 @@ public partial class SectionContent
     [Parameter] public bool Block { get; set; }
     [Parameter] public bool FullWidth { get; set; }
     [Parameter] public string Code { get; set; }
+    [Parameter] public string HighLight { get; set; }
     [Parameter] public IEnumerable<CodeFile> Codes { get; set; }
     [Parameter] public RenderFragment ChildContent { get; set; }
     
@@ -109,7 +110,26 @@ public partial class SectionContent
             using (var stream = typeof(SectionContent).Assembly.GetManifestResourceStream(key))
             using (var reader = new StreamReader(stream))
             {
-                builder.AddMarkupContent(0, reader.ReadToEnd());
+                var read = reader.ReadToEnd();
+                
+                if (!string.IsNullOrEmpty(HighLight))
+                {
+                    if (HighLight.Contains(","))
+                    {
+                        var highlights = HighLight.Split(",");
+                        
+                        foreach (var value in highlights)
+                        {
+                            read = Regex.Replace(read, $"{value}(?=\\s|\")", $"<mark>$&</mark>");
+                        }
+                    }
+                    else
+                    {
+                        read = Regex.Replace(read, $"{HighLight}(?=\\s|\")", $"<mark>$&</mark>");
+                    }
+                }
+
+                builder.AddMarkupContent(0, read);
             }
         }
         catch (Exception)

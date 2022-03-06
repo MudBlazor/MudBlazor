@@ -13,7 +13,7 @@ namespace MudBlazor.Docs.Models
             var componentItem = new MudComponent
             {
                 Name = name,
-                Link = name.ToLower().Replace(" ", ""),
+                Link = name.ToLowerInvariant().Replace(" ", ""),
                 Type = component,
                 ChildTypes = childcomponents,
                 IsNavGroup = false

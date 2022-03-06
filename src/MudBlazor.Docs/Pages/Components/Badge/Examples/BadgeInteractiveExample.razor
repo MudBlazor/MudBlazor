@@ -16,7 +16,7 @@
             </MudSelect>
         </MudPaper>
     </MudItem>
-    <MudItem md="6" Class="mud-text-align-center my-auto">
+    <MudItem md="6" Class="d-flex align-center justify-center my-auto">
         <MudBadge Origin="@Origin" Content="@BadgeContent" Color="Color.Primary" Overlap="@Overlap" Dot="@Dot" Bordered="@Bordered" Icon="@BadgeIcon">
             @if (SelectedTestComponent == "MudIcon")
             {
@@ -36,7 +36,7 @@
             }
             else if(SelectedTestComponent == "MudAvatar")
             {
-                <MudAvatar Image="_content/MudBlazor.Docs/images/mony.png" Size="Size.Large" Class="ma-2" />
+                <MudAvatar Image="images/mony.jpg" Size="Size.Large" Class="ma-2" />
             }
             else if(SelectedTestComponent == "MudChip")
             {

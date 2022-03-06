@@ -36,12 +36,18 @@
     <MudText Typo="Typo.subtitle2" Align="Align.Center" Class="mb-16" Style="color: #8898aa;">
         The continued development and maintenance of MudBlazor is secured by our sponsors
     </MudText>
-    <MudGrid Spacing="5">
+    <MudGrid Spacing="5" Justify="Justify.Center">
         <MudItem xs="6" md="3">
             <Sponsor LandingPage="true" Name="TimeStatement" Image="TimeStatement.png" Website="https://timestatement.com/"/>
         </MudItem>
+        <MudItem xs="6" md="4">
+            <Sponsor LandingPage="true" Name="AlexanderHagemann" Image="AlexanderHagemann.png" Website="https://alexanderhagemann.de/"/>
+        </MudItem>
         <MudItem xs="6" md="3">
             <Sponsor LandingPage="true" Name="Adaris" Image="Adaris.png" Website="https://www.adaris.ch/"/>
+        </MudItem>
+        <MudItem xs="6" md="3">
+            <Sponsor LandingPage="true" Name="Lithe Software Consulting" Image="Lithe.png"/>
         </MudItem>
         <MudItem xs="6" md="3">
             <Sponsor LandingPage="true" Name="JetBrains" Image="JetBrains.png" Website="https://www.jetbrains.com/?from=MudBlazor"/>
@@ -58,21 +64,19 @@
     <MudGrid>
         <MudItem xs="12" sm="6">
             <MudText Typo="Typo.subtitle1" Class="mud-text-secondary">
-                The tools and utilities that we provide transform working with Blazor into an experience you love. It is your foundation to build amazing Blazor applications that scale from mobile to desktop and are native to the web.
-            </MudText>
-            <MudText Typo="Typo.subtitle1" Class="mud-text-secondary my-6">
-                We are proud of MudBlazor, but we also know that a component library is just a part of delivering the best possible Blazor experience. MudBlazor soon will be much, much more.
+                We bring togheter everything that's required to build amazing Blazor applications that scale from desktop to mobile. Apart from the library itself we also provide <MudText Typo="Typo.subtitle1" Inline="true" Color="Color.Primary">templates, a learning platform, theme manager, demo and example projects as well as a online code editor</MudText> integrated with our documentation and issue tracking. With more to come.
             </MudText>
         </MudItem>
         <MudItem xs="12" sm="6">
             <MudText Typo="Typo.subtitle1" Class="mud-text-secondary">
-                We are heading to create an entire ecosystem—a system where knowledge, components, themes, and templates can be shared and promoted.
+                We help companies build <MudText Typo="Typo.subtitle1" Inline="true" Color="Color.Primary">amazing apps in record time</MudText> and let them focus on their business instead of buttons, <MudText Typo="Typo.subtitle1" Inline="true" Color="Color.Primary">MudBlazor is battle-tested and one of the fastest-imporving platforms</MudText>, and much more.
             </MudText>
         </MudItem>
     </MudGrid>
+
     <div class="@GetTestimonialClass()">
         <MudText Typo="Typo.h3" Align="Align.Center" Class="mt-16 mb-8">“Never had such a good time making a site“</MudText>
-        <div class="absolute z-2 d-flex justify-center align-end mud-width-full mud-height-full">
+        <div class="absolute z-20 d-flex justify-center align-end mud-width-full mud-height-full">
             <MudButton OnClick="ToggleTestimonials" Color="Color.Primary" Variant="Variant.Filled" DisableElevation="true" Size="Size.Large" Class="mb-12">@(_showTestimonials? "Show less" : "Show more")</MudButton>
         </div>
         <MudGrid Spacing="4">
@@ -179,7 +183,7 @@
     </div>
 </LandingSection>
 
-<LandingSection SectionClass="dark-section-text z-1" BackgroundClass="mud-dark">
+<LandingSection SectionClass="dark-section-text z-10" BackgroundClass="mud-dark">
     <MudGrid>
         <MudItem xs="12" sm="12" md="6">
             <MudGrid>
@@ -208,8 +212,8 @@
         <MudItem xs="12" sm="12" md="6">
             <div class="code-animation-container">
                 <CodeEditor/>
-                <MudCard Elevation="3" Class="code-change-card w-max z-2 mt-n12 ml-16">
-                    <MudCardMedia Image="_content/MudBlazor.Docs/images/content-template-door.png" Height="0"/>
+                <MudCard Elevation="3" Class="code-change-card w-max z-20 mt-n12 ml-16">
+                    <MudCardMedia Image="images/door.jpg" Height="0"/>
                     <MudCardContent>
                         <MudText>Old Paint</MudText>
                         <MudText Typo="Typo.body2">Old paint found on a stone house door.</MudText>
@@ -354,7 +358,7 @@
     private string lpGitHub = "<path d=\"M9.46762 18.4784C4.47686 18.4784 2.22177 13.9188 2.11087 13.7289C1.85209 13.1589 2.0739 12.475 2.59146 12.209C3.14599 11.943 3.81142 12.171 4.0702 12.7029C4.14414 12.8549 5.9556 16.3886 9.7264 16.1986C10.3549 16.1606 10.8724 16.6546 10.8724 17.3005C10.9094 17.9465 10.4288 18.4784 9.80033 18.4784C9.7264 18.4784 9.61549 18.4784 9.46762 18.4784Z\" fill=\"#66EDE5\"/><path d=\"M16.3068 23H9.83731C9.20884 23 8.72825 22.506 8.72825 21.8601V17.3385C8.72825 16.6546 8.87612 16.0086 9.1349 15.4387C6.10348 14.2988 4.10718 11.905 4.10718 9.24525C4.10718 7.99136 4.51383 6.81347 5.29017 5.78756C4.99442 4.79965 4.92049 3.54577 4.99442 2.1019C5.06836 1.45596 5.54895 1 6.14045 1C6.47317 1 9.28278 1.038 10.9094 2.51986C12.3142 2.25389 13.7929 2.25389 15.2347 2.51986C16.8244 1.038 19.634 1 20.0037 1C20.5952 1 21.0758 1.45596 21.1127 2.0639C21.2236 3.50777 21.1127 4.76166 20.817 5.74957C21.5933 6.81347 22 7.99136 22 9.20725C22 11.867 20.0037 14.2608 16.9722 15.4007C17.231 16.0086 17.3789 16.6546 17.3789 17.3005V21.8221C17.4159 22.468 16.8983 23 16.3068 23ZM10.9464 20.7202H15.1978V17.3385C15.1978 16.6926 14.902 16.0846 14.4214 15.6667C14.0887 15.4007 13.9408 14.9447 14.0517 14.4888C14.1626 14.0708 14.4953 13.7288 14.902 13.6528C17.7856 13.0829 19.7819 11.2591 19.7819 9.20725C19.7819 8.10535 19.1904 7.26943 18.7098 6.73748C18.377 6.39551 18.3031 5.90155 18.5249 5.4456C18.6728 5.14162 18.8946 4.49568 18.8946 3.35579C17.9704 3.50777 16.8983 3.81174 16.4917 4.41969C16.2329 4.79965 15.7523 4.98964 15.3087 4.87565C13.8299 4.49568 12.2403 4.49568 10.7615 4.87565C10.3179 4.98964 9.87428 4.79965 9.57853 4.41969C9.17187 3.81174 8.09978 3.50777 7.17557 3.35579C7.21254 4.49568 7.39738 5.14162 7.54526 5.4456C7.7301 5.86356 7.65616 6.39551 7.36041 6.73748C6.87982 7.26943 6.28832 8.10535 6.28832 9.20725C6.28832 11.2591 8.28463 13.0449 11.1682 13.6528C11.5748 13.7288 11.9075 14.0708 12.0185 14.4888C12.1294 14.9067 11.9815 15.3627 11.6488 15.6667C11.1682 16.0846 10.8724 16.6926 10.8724 17.3385V20.7202H10.9464Z\" fill=\"#5E5BF0\"/>";
     private string lpContributors = "<g clip-path=\"url(#clip0_95_575)\"><path d=\"M2.1 23C1.47667 23 1 22.5233 1 21.9V18.7467C1 15.08 3.01667 13.0633 6.68333 13.0633H13.1C16.7667 13.0633 18.7833 15.08 18.7833 18.7467V21.9C18.7833 22.5233 18.3067 23 17.6833 23C17.06 23 16.5833 22.5233 16.5833 21.9V18.7467C16.5833 16.29 15.52 15.2633 13.1 15.2633H6.68333C4.22667 15.2633 3.2 16.3267 3.2 18.7467V21.9C3.2 22.4867 2.72333 23 2.1 23Z\" fill=\"#5E5BF0\"/><path d=\"M9.87332 12.1467C6.79332 12.1467 4.29999 9.65333 4.29999 6.57333C4.29999 3.49333 6.79332 1 9.87332 1C12.9533 1 15.4467 3.49333 15.4467 6.57333C15.4467 9.65333 12.9533 12.1467 9.87332 12.1467ZM9.87332 3.2C8.00332 3.2 6.49999 4.70333 6.49999 6.57333C6.49999 8.44333 8.00332 9.94667 9.87332 9.94667C11.7433 9.94667 13.2467 8.44333 13.2467 6.57333C13.2467 4.70333 11.7433 3.2 9.87332 3.2Z\" fill=\"#66EDE5\"/><path d=\"M21.9 23C21.2767 23 20.8 22.5233 20.8 21.9V18.7467C20.8 16.5833 19.9567 15.9233 19.2967 15.63C18.7467 15.3733 18.5267 14.7133 18.7833 14.1633C19.04 13.6133 19.7 13.3933 20.25 13.65C21.4967 14.2367 23 15.63 23 18.7467V21.9C23 22.4866 22.4867 23 21.9 23Z\" fill=\"#66EDE5\"/><path d=\"M15.74 11.8167C15.3 11.8167 14.8966 11.56 14.7133 11.12C14.4933 10.57 14.75 9.91 15.3366 9.69C16.62 9.17667 17.4633 7.96667 17.4633 6.57333C17.4633 5.18 16.62 3.97 15.3366 3.45667C14.7866 3.23667 14.4933 2.57667 14.7133 2.02667C14.9333 1.47667 15.5933 1.18333 16.1433 1.40333C18.27 2.24667 19.6266 4.26333 19.6266 6.57333C19.6266 8.88333 18.27 10.8633 16.1433 11.7433C15.9966 11.78 15.8866 11.8167 15.74 11.8167Z\" fill=\"#5E5BF0\"/></g><defs><clipPath id=\"clip0_95_575\"><rect width=\"22\" height=\"22\" fill=\"white\" transform=\"translate(1 1)\"/></clipPath></defs>";
     private string lpDiscord = "<path d=\"M9.37,4.77C9.18,3.57,8.09,3.9,7,4.19A8.39,8.39,0,0,0,4.24,5.53c-1,.72-1.78,3.75-2.12,5.26a19.35,19.35,0,0,0-.66,5.37c.08.69,1.12,1.46,2.62,2.21A6,6,0,0,0,7,19c.47-.14,1-1.4,1.17-1.82\" style=\"fill:none;stroke:#5e5bf0;stroke-miterlimit:10;stroke-width:1.5px\"/><path d=\"M14.31,4.77c.19-1.2,1.28-.87,2.4-.58a6.79,6.79,0,0,1,2.73,1.34c.89.82,1.79,3.75,2.12,5.26a19.35,19.35,0,0,1,.66,5.37c-.08.69-1.12,1.46-2.62,2.21a6,6,0,0,1-2.91.59c-.48-.14-1-1.4-1.17-1.82\" style=\"fill:none;stroke:#5e5bf0;stroke-miterlimit:10;stroke-width:1.5px\"/><ellipse cx=\"8.82\" cy=\"12.31\" rx=\"1.72\" ry=\"2.01\" style=\"fill:none;stroke:#66ede5;stroke-miterlimit:10;stroke-width:1.2px\"/><ellipse cx=\"15.04\" cy=\"12.22\" rx=\"1.72\" ry=\"2.01\" style=\"fill:none;stroke:#66ede5;stroke-miterlimit:10;stroke-width:1.2px\"/><path d=\"M4.35,15.05a.8.8,0,0,1,1.1-.15,11.93,11.93,0,0,0,12.65,0,.8.8,0,0,1,1.1.15.78.78,0,0,1-.31,1.11,13.39,13.39,0,0,1-14.23,0A.79.79,0,0,1,4.35,15.05Z\" style=\"fill:#5e5bf0\"/><path d=\"M5.24,7.3a.78.78,0,0,1,.32-1.11,12.06,12.06,0,0,1,12.65,0,.78.78,0,0,1,.33,1.11.83.83,0,0,1-1.11.16,10.55,10.55,0,0,0-11.09,0A.83.83,0,0,1,5.24,7.3Z\" style=\"fill:#5e5bf0\"/>";
-    
+
     private bool _showTestimonials { get; set; }
 
     private void ToggleTestimonials()

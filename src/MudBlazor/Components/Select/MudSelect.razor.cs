@@ -74,10 +74,10 @@ namespace MudBlazor
                 }
             }
             await _elementReference.SetText(Text);
-            if (item != null)
-                await ScrollManager.ScrollToListItemAsync(item.ItemId, direction, true);
+            await ScrollToItemAsync(item);
         }
-
+        private ValueTask ScrollToItemAsync(MudSelectItem<T> item)
+            =>item != null? ScrollManager.ScrollToListItemAsync(item.ItemId): ValueTask.CompletedTask;
         private async Task SelectFirstItem(string startChar = null)
         {
             if (_items == null || _items.Count == 0)
@@ -111,7 +111,7 @@ namespace MudBlazor
                 HilightItem(item);
             }
             await _elementReference.SetText(Text);
-            await ScrollManager.ScrollToListItemAsync(item.ItemId, (item == firstItem ? -1 : 1), true);
+            await ScrollToItemAsync(item);
         }
 
         private async Task SelectLastItem()
@@ -133,8 +133,20 @@ namespace MudBlazor
                 HilightItem(item);
             }
             await _elementReference.SetText(Text);
-            await ScrollManager.ScrollToListItemAsync(item.ItemId, 1, true);
+            await ScrollToItemAsync(item);
         }
+
+        /// <summary>
+        /// Fired when dropdown opens.
+        /// </summary>
+        [Category(CategoryTypes.FormComponent.Behavior)]
+        [Parameter] public EventCallback OnOpen { get; set; }
+
+        /// <summary>
+        /// Fired when dropdown closes.
+        /// </summary>
+        [Category(CategoryTypes.FormComponent.Behavior)]
+        [Parameter] public EventCallback OnClose { get; set; }
 
         /// <summary>
         /// Add the MudSelectItems here
@@ -655,9 +667,20 @@ namespace MudBlazor
             UpdateIcon();
             StateHasChanged();
             await HilightSelectedValue();
-
+            //Scroll the active item on each opening
+            if (_activeItemId != null)
+            {
+                var index = _items.FindIndex(x => x.ItemId == (string)_activeItemId);
+                if (index > 0)
+                {
+                    var item = _items[index];
+                    await ScrollToItemAsync(item);
+                }
+            }
             //disable escape propagation: if selectmenu is open, only the select popover should close and underlying components should not handle escape key
             await _keyInterceptor.UpdateKey(new() { Key = "Escape", StopDown = "Key+none" });
+
+            await OnOpen.InvokeAsync();
         }
 
         public async Task CloseMenu(bool focusAgain = true)
@@ -674,6 +697,8 @@ namespace MudBlazor
 
             //enable escape propagation: the select popover was closed, now underlying components are allowed to handle escape key
             await _keyInterceptor.UpdateKey(new() { Key = "Escape", StopDown = "none" });
+
+            await OnClose.InvokeAsync();
         }
 
         private void UpdateIcon()

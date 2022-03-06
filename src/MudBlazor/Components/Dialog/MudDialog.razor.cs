@@ -93,13 +93,6 @@ namespace MudBlazor
                 if (_isVisible == value)
                     return;
                 _isVisible = value;
-                if (IsInline)
-                {
-                    if (_isVisible)
-                        Show();
-                    else
-                        Close();
-                }
                 IsVisibleChanged.InvokeAsync(value);
             }
         }
@@ -109,6 +102,14 @@ namespace MudBlazor
         /// Raised when the inline dialog's display status changes.
         /// </summary>
         [Parameter] public EventCallback<bool> IsVisibleChanged { get; set; }
+
+
+        /// <summary>
+        /// Define the dialog title as a renderfragment (overrides Title)
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Dialog.Behavior)]
+        public DefaultFocus DefaultFocus { get; set; }
 
         private bool IsInline => DialogInstance == null;
 
@@ -137,6 +138,7 @@ namespace MudBlazor
                 [nameof(DisableSidePadding)] = DisableSidePadding,
                 [nameof(ClassContent)] = ClassContent,
                 [nameof(ClassActions)] = ClassActions,
+                [nameof(ContentStyle)] = ContentStyle,
             };
             _reference = DialogService.Show<MudDialog>(title, parameters, options ?? Options);
             _reference.Result.ContinueWith(t =>
@@ -149,16 +151,20 @@ namespace MudBlazor
 
         protected override void OnAfterRender(bool firstRender)
         {
-            if (IsInline && _reference != null)
-                (_reference.Dialog as MudDialog)?.ForceUpdate(); // forward render update to instance
-            // Note by Henon: this caused bug #3701
-            // if (IsInline)
-            // {
-            //     if (_isVisible)
-            //         Show();
-            //     else
-            //         Close();
-            // }
+            if (IsInline)
+            {
+                if (_isVisible && _reference == null)
+                {
+                    Show(); // if isVisible and we don't have any reference we need to call Show
+                }
+                else if (_reference != null)
+                {
+                    if (IsVisible)
+                        (_reference.Dialog as MudDialog)?.ForceUpdate(); // forward render update to instance
+                    else
+                        Close(); // if we still have reference but it's not visible call Close
+                }
+            }
             base.OnAfterRender(firstRender);
         }
 

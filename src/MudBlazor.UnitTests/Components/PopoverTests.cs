@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Bunit;
 using FluentAssertions;
@@ -277,6 +278,72 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task MudPopoverHandler_InitializeAndDetachConcurrent_DetachDoesNotRunAtSameTimeAsInitialize()
+        {
+            var connectTcs = new TaskCompletionSource<IJSVoidResult>();
+
+            var mock = new Mock<IJSRuntime>();
+            var handler = new MudPopoverHandler(_ => { }, mock.Object, () => { });
+
+            mock.Setup(x => x.InvokeAsync<IJSVoidResult>("mudPopover.connect", It.Is<object[]>(y => y.Length == 1 && (Guid)y[0] == handler.Id)))
+                .Returns(new ValueTask<IJSVoidResult>(connectTcs.Task))
+                .Verifiable();
+
+            _ = handler.Initialize();
+            var task2 = handler.Detach();
+
+            var completedTask = await Task.WhenAny(Task.Delay(50), task2);
+
+            completedTask.Should().NotBe(task2);
+
+            mock.Verify();
+            mock.VerifyNoOtherCalls();
+        }
+
+        [Test]
+        public async Task MudPopoverHandler_InitializeAndDetachConcurrent_DetachRunsAfterInitialize()
+        {
+            var connectTcs = new TaskCompletionSource<IJSVoidResult>();
+
+            var mock = new Mock<IJSRuntime>();
+            var handler = new MudPopoverHandler(_ => { }, mock.Object, () => { });
+
+            mock.Setup(x => x.InvokeAsync<IJSVoidResult>("mudPopover.connect", It.Is<object[]>(y => y.Length == 1 && (Guid)y[0] == handler.Id)))
+                .Returns(new ValueTask<IJSVoidResult>(connectTcs.Task))
+                .Verifiable();
+
+            mock.Setup(x => x.InvokeAsync<IJSVoidResult>("mudPopover.disconnect", It.Is<object[]>(y => y.Length == 1 && (Guid)y[0] == handler.Id)))
+                .ReturnsAsync(Mock.Of<IJSVoidResult>())
+                .Verifiable();
+
+            var task1 = handler.Initialize();
+            var task2 = handler.Detach();
+
+            connectTcs.SetResult(Mock.Of<IJSVoidResult>());
+
+            await Task.WhenAll(task1, task2);
+
+            mock.Verify();
+            mock.VerifyNoOtherCalls();
+        }
+
+        [Test]
+        public async Task MudPopoverHandler_DetachCalledBeforeInitialize_NoInteropShouldOccur()
+        {
+            var mock = new Mock<IJSRuntime>();
+
+            var handler = new MudPopoverHandler(_ => { }, mock.Object, () => { });
+
+            await handler.Detach();
+            handler.IsConnected.Should().BeFalse();
+
+            await handler.Initialize();
+            handler.IsConnected.Should().BeFalse();
+
+            mock.VerifyNoOtherCalls();
+        }
+
+        [Test]
         public void MudPopoverService_Constructor_NoJsInterop()
         {
             Assert.Throws<ArgumentNullException>(() => new MudPopoverService(null));
@@ -527,7 +594,7 @@ namespace MudBlazor.UnitTests.Components
             var handler = service.Register(fragment);
             var result = await service.Unregister(handler);
 
-            result.Should().BeFalse();
+            result.Should().BeTrue();
         }
 
         [Test]

@@ -5,7 +5,7 @@
 @*this makes dialog inlineable, it will only render inside a MudDialogInstance*@
 @if (!IsInline)
 {
-    <MudFocusTrap>
+    <MudFocusTrap DefaultFocus="DefaultFocus">
 
         <div @attributes="UserAttributes" class="@ContentClass" style="@ContentStyle">
             @DialogContent
