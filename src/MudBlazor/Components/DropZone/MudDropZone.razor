@@ -4,7 +4,7 @@
 
 
 <div class="@Classname" style="@Style"
-     id="@($"mud-drop-zone-{_id}")"
+	 id="@($"mud-drop-zone-{_id}")"
 	 @ondrop="HandleDrop"
 	 @ondragenter="HandleDragEnter"
 	 @ondragleave="HandleDragLeave"
@@ -12,14 +12,21 @@
 
 	@ChildContent
 
+	@{
+		int index = 0;
+	}
+
 	@foreach (var item in GetItems())
 	{
+		var indexCopy = index;
+
 		<MudDynamicDropItem @key="@(item.GetHashCode())" T="T" DraggingClass="@GetItemDraggingClass()"
 						Item="item"
 						OnDragStarted="DragOperationStarted"
 						OnDragEnded="FinishedDragOperation"
 						ZoneIdentifier="@Identifier"
 						Disabled="@GetItemDisabledStatus(item)"
+						Index="indexCopy"
 						DisabledClass="@(DisabledClass ?? Container?.DisabledClass)">
 			@{
 				var renderer = GetItemTemplate();
@@ -28,5 +35,10 @@
 			@renderer(item)
 
 		</MudDynamicDropItem>
+
+		index++;
 	}
+
+	<div class="@PlaceholderClassname" style="@PlaceholderStyle">
+	</div>
 </div>

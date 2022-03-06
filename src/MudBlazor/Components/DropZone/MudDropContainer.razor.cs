@@ -12,6 +12,20 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
+    public class MudDragAndDropIndexChangedEventArgs : EventArgs
+    {
+        public MudDragAndDropIndexChangedEventArgs(string zoneIdentifier, string oldZoneIdentifier, int index)
+        {
+            ZoneIdentifier = zoneIdentifier;
+            Index = index;
+            OldZoneIdentifier = oldZoneIdentifier;
+        }
+
+        public string ZoneIdentifier { get; }
+        public int Index { get; }
+        public string OldZoneIdentifier { get; }
+    }
+
     /// <summary>
     /// Used to encapsulate data for a drag and drop transaction
     /// </summary>
@@ -27,21 +41,31 @@ namespace MudBlazor
         public T Item { get; init; }
 
         /// <summary>
+        /// The index of the item in the current drop zone
+        /// </summary>
+        public int Index { get; private set; }
+
+        /// <summary>
         /// Identifier for drop zone where the transaction started
         /// </summary>
         public string SourceZoneIdentifier { get; init; }
+
+        public string CurrentZone { get; private set; }
 
         /// <summary>
         /// create a new instance of a drag and drop transaction encapsulating the item and source
         /// </summary>
         /// <param name="item">The item of this transaction</param>
         /// <param name="identifier">The identifier of the drop zone, where the transaction started</param>
+        /// <param name="index">The source index</param>
         /// <param name="commitCallback">A callback that is invokde when the transaction has been successful</param>
         /// <param name="cancelCallback">A callback that is inviked when the transaction has been cancelled</param>
-        public MudDragAndDropItemTransaction(T item, string identifier, Func<Task> commitCallback, Func<Task> cancelCallback)
+        public MudDragAndDropItemTransaction(T item, string identifier, int index, Func<Task> commitCallback, Func<Task> cancelCallback)
         {
             Item = item;
             SourceZoneIdentifier = identifier;
+            CurrentZone = identifier;
+            Index = index;
 
             _commitCallback = commitCallback;
             _cancelCallback = cancelCallback;
@@ -58,6 +82,22 @@ namespace MudBlazor
         /// </summary>
         /// <returns></returns>
         public async Task Commit() => await _commitCallback.Invoke();
+
+        internal bool UpdateIndex(int index)
+        {
+            if (Index == index) { return false; }
+
+            Index = index;
+            return true;
+        }
+
+        internal bool UpdateZone(string idenfifer)
+        {
+            if (CurrentZone == idenfifer) { return false; }
+
+            CurrentZone = idenfifer;
+            return true;
+        }
     }
 
     /// <summary>
@@ -173,12 +213,14 @@ namespace MudBlazor
         public string ItemDraggingClass { get; set; }
 
         public event EventHandler<MudDragAndDropItemTransaction<T>> TransactionStarted;
+        public event EventHandler<MudDragAndDropIndexChangedEventArgs> TransactionIndexChanged;
+
         public event EventHandler TransactionEnded;
         public event EventHandler RefreshRequested;
 
-        public void StartTransaction(T item, string identifier, Func<Task> commitCallback, Func<Task> cancelCallback)
+        public void StartTransaction(T item, string identifier, int index, Func<Task> commitCallback, Func<Task> cancelCallback)
         {
-            _transaction = new MudDragAndDropItemTransaction<T>(item, identifier, commitCallback, cancelCallback);
+            _transaction = new MudDragAndDropItemTransaction<T>(item, identifier, index, commitCallback, cancelCallback);
             TransactionStarted?.Invoke(this, _transaction);
         }
 
@@ -186,6 +228,9 @@ namespace MudBlazor
 
         public bool TransactionInProgress() => _transaction != null;
         public string GetTransactionOrignZoneIdentiifer() => _transaction?.SourceZoneIdentifier ?? string.Empty;
+        public string GetTransactionCurrentZoneIdentiifer() => _transaction?.CurrentZone ?? string.Empty;
+
+        public int GetTransactionIndex() => _transaction?.Index ?? -1;
 
         public async Task CommitTransaction(string dropzoneIdentifier)
         {
@@ -202,9 +247,28 @@ namespace MudBlazor
             _transaction = null;
         }
 
+        public void UpdateTransactionIndex(int index)
+        {
+            var changed = _transaction.UpdateIndex(index);
+            if (changed == false) { return; }
+
+            TransactionIndexChanged?.Invoke(this, new MudDragAndDropIndexChangedEventArgs(_transaction.CurrentZone, _transaction.CurrentZone, _transaction.Index));
+        }
+
+        internal void UpdateTransactionZone(string identifier)
+        {
+            var oldValue = _transaction.CurrentZone;
+            var changed = _transaction.UpdateZone(identifier);
+            if (changed == false) { return; }
+
+            TransactionIndexChanged?.Invoke(this, new MudDragAndDropIndexChangedEventArgs(_transaction.CurrentZone, oldValue, _transaction.Index));
+        }
+
         /// <summary>
         /// Refreshes the dropzone and all items within. This is neded in case of adding items to the collection or changed values of items
         /// </summary>
         public void Refresh() => RefreshRequested?.Invoke(this, EventArgs.Empty);
+
+
     }
 }
