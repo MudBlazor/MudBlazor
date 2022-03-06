@@ -1,5 +1,6 @@
 ﻿
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Bunit;
 using FluentAssertions;
 using NUnit.Framework;
@@ -52,6 +53,28 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("li.mud-breadcrumb-item").Should().HaveCount(2);
             comp.FindAll("li.mud-breadcrumb-separator").Should().HaveCount(2);
             comp.Find("li.mud-breadcrumbs-expander").Should().NotBeNull();
+        }
+
+        [Test]
+        public async Task MudBreadcrumbs_Other()
+        {
+            var comp = Context.RenderComponent<MudBreadcrumbs>(Parameter("MaxItems", (byte)5), Parameter("Items", new List<BreadcrumbItem>
+            {
+                new BreadcrumbItem("Link 1", "link1"),
+                new BreadcrumbItem("Link 2", "link2"),
+                new BreadcrumbItem("Link 3", "link3"),
+                new BreadcrumbItem("Link 4", "link4"),
+                new BreadcrumbItem("Link 5", "link5", disabled: true)
+            }));
+
+            await comp.InvokeAsync(() => comp.Instance.Expand());
+            comp.WaitForAssertion(() => comp.Instance.Collapsed.Should().BeFalse());
+
+            await comp.InvokeAsync(() => comp.Instance.Expand());
+            comp.WaitForAssertion(() => comp.Instance.Collapsed.Should().BeFalse());
+
+            //TO DO: Check get item class name, this is not working
+            //comp.WaitForAssertion(() => comp.Instance.GetItemClassname(new BreadcrumbItem("a", "b")).Should().Be("mud-breadcrumb-item"));
         }
     }
 }
