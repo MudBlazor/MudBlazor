@@ -2,6 +2,30 @@
 
 .mud-data-grid {
     .mud-table-cell {
+        &.edit-mode-cell {
+            //padding: 0 !important;
+
+            .mud-input-control {
+                margin: 0 !important;
+            }
+
+            .mud-input {
+                font-size: inherit;
+
+                &:before {
+                    content: none;
+                }
+
+                &after {
+                    content: none;
+                }
+
+                .mud-input-outlined-border {
+                    border: none;
+                }
+            }
+        }
+
         .mud-input-text {
             margin-top: 0 !important;
         }
