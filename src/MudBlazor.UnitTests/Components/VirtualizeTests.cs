@@ -19,8 +19,9 @@ namespace MudBlazor.UnitTests.Components
         public void VirtualizeRenderTest()
         {
             var comp = Context.RenderComponent<VirtualizeTest>();
-            var virtualize = comp.FindComponent<MudVirtualize<MudNumericField<int>>>();
+            var virtualize = comp.FindComponent<MudVirtualize<string>>();
             virtualize.Instance.ChildContent.Should().NotBeNull();
+            comp.FindComponents<MudText>().Count.Should().Be(1);
         }
     }
 }
