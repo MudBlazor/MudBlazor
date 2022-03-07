@@ -26,9 +26,14 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(() => comp.Instance.AnimationEnd());
             comp.WaitForAssertion(() => comp.Instance._height.Should().Be(0));
 
+            //MaxHeight acceptes minus value?
             _ = comp.Instance._state = CollapseState.Entering;
+            await comp.InvokeAsync(() => comp.Instance._disposeCount = 1);
+#pragma warning disable BL0005
+            await comp.InvokeAsync(() => comp.Instance.MaxHeight = -1);
             await comp.InvokeAsync(() => comp.Instance.AnimationEnd());
-            comp.WaitForAssertion(() => comp.Instance._height.Should().Be(0));
+            await comp.InvokeAsync(() => comp.Instance.UpdateHeight());
+            comp.WaitForAssertion(() => comp.Instance._height.Should().Be(-1));
         }
     }
 }
