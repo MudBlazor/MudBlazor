@@ -853,11 +853,6 @@ namespace MudBlazor.UnitTests.Components
             Assert.IsTrue(func.Invoke(new("Joe", 45, null)));
         }
 
-        /// <summary>
-        /// For XCOPY,i dident understand this tests, and thought it better that i comment them out rather than making them pass on things it should not.
-        /// If anyone else reads this and its past 2022-04-01 this needs to be looked at.
-        /// </summary>
-
         [Test]
         public async Task FilterDefinitionDateTimeTest()
         {
