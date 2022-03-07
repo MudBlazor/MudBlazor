@@ -1,10 +1,12 @@
 ﻿@namespace MudBlazor.UnitTests.TestComponents
 
 <MudCard>
-    <ChildContent>
-        <MudNumericField @bind-Value="_value" />
-        <MudButton OnClick="TestClick">Click</MudButton>
-    </ChildContent>
+    <MudCardHeader>
+        <ChildContent>
+            <MudNumericField @bind-Value="_value" />
+            <MudButton OnClick="TestClick">Click</MudButton>
+        </ChildContent>
+    </MudCardHeader>
 </MudCard>
 
 
