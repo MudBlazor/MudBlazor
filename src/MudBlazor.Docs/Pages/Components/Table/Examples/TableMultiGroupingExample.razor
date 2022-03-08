@@ -16,7 +16,6 @@
 
 <MudTable Hover="true" Breakpoint="Breakpoint.Sm" Height="500px" FixedHeader="true"
           Items="@Elements"
-          Virtualize="@_virtualize"
           GroupBy="@_groupDefinition"
           GroupHeaderStyle="background-color:var(--mud-palette-background-grey)"
           GroupFooterClass="mb-4"
@@ -47,7 +46,6 @@
 </MudTable>
 <MudSwitch @bind-Checked="_dense" Color="Color.Primary">Dense</MudSwitch>
 <MudSwitch @bind-Checked="_multiSelect" Color="Color.Primary">MultiSelect</MudSwitch>
-<MudSwitch @bind-Checked="_virtualize" Color="Color.Primary">Virtualize</MudSwitch>
 <MudSwitch @bind-Checked="_groupDefinition.Indentation" Color="Color.Primary">Indentation</MudSwitch>
 <MudSwitch @bind-Checked="_groupDefinition.Expandable" Color="Color.Primary">Expandable (Root Level)</MudSwitch>
 <MudSwitch @bind-Checked="_groupDefinition.InnerGroup.Expandable" Color="Color.Primary">Expandable (Second Level)</MudSwitch>
@@ -55,8 +53,6 @@
 @code {
     private bool _dense = false;
     private bool _multiSelect = true;
-    private bool _virtualize = false;    
-
 
     private TableGroupDefinition<Element> _groupDefinition = new TableGroupDefinition<Element>()
     {
