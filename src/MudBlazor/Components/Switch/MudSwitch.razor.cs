@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
@@ -25,6 +26,8 @@ namespace MudBlazor
             .AddClass($"mud-checked", BoolValue)
         .Build();
 
+        //Excluded because not used
+        [ExcludeFromCodeCoverage]
         protected string SpanClassname =>
         new CssBuilder("mud-switch-span mud-flip-x-rtl")
         .Build();
