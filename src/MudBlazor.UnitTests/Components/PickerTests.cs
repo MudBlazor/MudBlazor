@@ -22,6 +22,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<SimplePickerTest>();
             var picker = comp.FindComponent<MudPicker<DateTime?>>();
+            
 
             await comp.InvokeAsync(() => picker.Instance.SelectAsync());
             await comp.InvokeAsync(() => picker.Instance.SelectRangeAsync(0, 0));
