@@ -234,5 +234,19 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = "Enter", Type = "keydown", });
             comp.WaitForAssertion(() => group.Instance.SelectedOption.Should().Be(null));
         }
+
+
+        [Test]
+        public void RadioTest_TypeException()
+        {
+            try
+            {
+                var comp = Context.RenderComponent<RadioGroupExceptionTest>();
+            }
+            catch (Exception ex)
+            {
+                ex.Message.Should().Be("Unable to set property 'IMudRadioGroup' on object of type 'MudBlazor.MudRadio`1[[System.String, System.Private.CoreLib, Version=6.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'. The error was: MudRadioGroup<Char> has a child MudRadio<System.String> with mismatching generic type.");
+            }
+        }
     }
 }
