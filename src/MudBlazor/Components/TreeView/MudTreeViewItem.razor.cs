@@ -267,7 +267,7 @@ namespace MudBlazor
             set { _ = SelectItem(value, this); }
         }
 
-        protected bool ArrowExpanded
+        protected internal bool ArrowExpanded
         {
             get => Expanded;
             set
