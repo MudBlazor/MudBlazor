@@ -123,6 +123,12 @@ namespace MudBlazor.UnitTests.Components
             comp.WaitForAssertion(() => item.Instance.ArrowExpanded.Should().BeFalse());
             await comp.InvokeAsync(() => item.Instance.ArrowExpanded = true);
             comp.WaitForAssertion(() => item.Instance.ArrowExpanded.Should().BeTrue());
+
+            comp.WaitForAssertion(() => item.Instance.Expanded.Should().BeTrue());
+            await comp.InvokeAsync(() => item.Instance.OnItemExpanded(true));
+            comp.WaitForAssertion(() => item.Instance.Expanded.Should().BeTrue());
+
+            await comp.InvokeAsync(() => item.Instance.SelectItem(true));
         }
     }
 }
