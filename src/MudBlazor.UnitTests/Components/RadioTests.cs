@@ -1,6 +1,7 @@
 ﻿
 using System;
 using System.Linq;
+using System.Threading.Tasks;
 using Bunit;
 using FluentAssertions;
 using Microsoft.AspNetCore.Components.Web;
@@ -215,6 +216,23 @@ namespace MudBlazor.UnitTests.Components
             comp.WaitForAssertion(() => radio.Instance.SelectedOption.Should().Be(null));
 
             //Can't tabbed around the radios in test.
+        }
+
+        [Test]
+        public async Task RadioTest_Other()
+        {
+            var comp = Context.RenderComponent<RadioGroupTest1>();
+            var group = comp.FindComponent<MudRadioGroup<string>>();
+            var radio = comp.FindComponent<MudRadio<string>>();
+
+            await comp.InvokeAsync(() => radio.Instance.IMudRadioGroup = null);
+            await comp.InvokeAsync(() => radio.Instance.OnClick());
+#pragma warning disable BL0005
+            await comp.InvokeAsync(() => radio.Instance.Disabled = true);
+            comp.WaitForAssertion(() => group.Instance.SelectedOption.Should().Be(null));
+
+            comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = "Enter", Type = "keydown", });
+            comp.WaitForAssertion(() => group.Instance.SelectedOption.Should().Be(null));
         }
     }
 }

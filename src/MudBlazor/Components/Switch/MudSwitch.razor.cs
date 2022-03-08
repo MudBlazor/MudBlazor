@@ -71,7 +71,6 @@ namespace MudBlazor
 
         protected internal void HandleKeyDown(KeyboardEventArgs obj)
         {
-            //Space key works by default, so we didn't write it again.
             if (Disabled || ReadOnly)
                 return;
             switch (obj.Key)
