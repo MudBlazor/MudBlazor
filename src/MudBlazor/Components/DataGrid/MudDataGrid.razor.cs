@@ -48,14 +48,18 @@ namespace MudBlazor
                .AddClass($"mud-elevation-{Elevation}", !Outlined)
               .AddClass(Class)
             .Build();
+
         protected string _tableStyle =>
             new StyleBuilder()
             .AddStyle($"height", Height, !string.IsNullOrWhiteSpace(Height))
             .Build();
+
         protected string _headClassname => new CssBuilder("mud-table-head")
             .AddClass(HeaderClass).Build();
+
         protected string _footClassname => new CssBuilder("mud-table-foot")
             .AddClass(FooterClass).Build();
+
         protected int numPages
         {
             get
@@ -73,10 +77,11 @@ namespace MudBlazor
         internal int editingItemHash;
         internal T _previousEditingItem;
         internal bool isEditFormOpen;
+
         internal string GetHorizontalScrollbarStyle() => HorizontalScrollbar ? ";display: block; overflow-x: auto;" : string.Empty;
 
         // converters
-        Converter<bool, bool?> _oppositeBoolConverter = new Converter<bool, bool?>
+        private Converter<bool, bool?> _oppositeBoolConverter = new Converter<bool, bool?>
         {
             SetFunc = value => value ? false : true,
             GetFunc = value => value.HasValue ? !value.Value : true,
@@ -215,7 +220,7 @@ namespace MudBlazor
 
         /// <summary>
         /// The list of FilterDefinitions that have been added to the data grid. FilterDefinitions are managed by the data
-        /// grid automatically when using the built in filter UI. You can also programmatically manage these definitions 
+        /// grid automatically when using the built in filter UI. You can also programmatically manage these definitions
         /// through this collection.
         /// </summary>
         [Parameter] public List<FilterDefinition<T>> FilterDefinitions { get; set; } = new List<FilterDefinition<T>>();
@@ -246,7 +251,7 @@ namespace MudBlazor
         [Parameter] public Func<T, int, string> RowStyleFunc { get; set; }
 
         /// <summary>
-        /// Set to true to enable selection of multiple rows. 
+        /// Set to true to enable selection of multiple rows.
         /// </summary>
         [Parameter] public bool MultiSelection { get; set; }
 
@@ -268,7 +273,7 @@ namespace MudBlazor
         /// <summary>
         /// The data to display in the table. MudTable will render one row per item
         /// </summary>
-        /// 
+        ///
         [Parameter]
         public IEnumerable<T> Items
         {
@@ -315,7 +320,7 @@ namespace MudBlazor
 
         /// <summary>
         /// Setting a height will allow to scroll the table. If not set, it will try to grow in height. You can set this to any CSS value that the
-        /// attribute 'height' accepts, i.e. 500px. 
+        /// attribute 'height' accepts, i.e. 500px.
         /// </summary>
         [Parameter] public string Height { get; set; }
 
@@ -330,7 +335,7 @@ namespace MudBlazor
         [Parameter] public Func<T, bool> QuickFilter { get; set; } = null;
 
         /// <summary>
-        /// Allows adding a custom header beyond that specified in the Column component. Add HeaderCell 
+        /// Allows adding a custom header beyond that specified in the Column component. Add HeaderCell
         /// components to add a custom header.
         /// </summary>
         [Parameter] public RenderFragment Header { get; set; }
@@ -481,15 +486,19 @@ namespace MudBlazor
                 }
             }
         }
+
         private bool _groupable = false;
+
         /// <summary>
         /// If set, a grouped column will be expanded by default.
         /// </summary>
         [Parameter] public bool GroupExpanded { get; set; }
+
         /// <summary>
         /// CSS class for the groups.
         /// </summary>
         [Parameter] public string GroupClass { get; set; }
+
         /// <summary>
         /// CSS styles for the groups.
         /// </summary>
@@ -521,9 +530,11 @@ namespace MudBlazor
                 return GetItemsOfPage(CurrentPage, RowsPerPage);
             }
         }
+
         public HashSet<T> Selection { get; set; } = new HashSet<T>();
         public bool HasPager { get; set; }
-        GridData<T> _server_data = new GridData<T>() { TotalItems = 0, Items = Array.Empty<T>() };
+        private GridData<T> _server_data = new GridData<T>() { TotalItems = 0, Items = Array.Empty<T>() };
+
         public IEnumerable<T> FilteredItems
         {
             get
@@ -548,7 +559,9 @@ namespace MudBlazor
                 return Sort(items);
             }
         }
+
         public Interfaces.IForm Validator { get; set; } = new DataGridRowValidator();
+
         internal Column<T> GroupedColumn
         {
             get
@@ -561,7 +574,7 @@ namespace MudBlazor
 
         #region Computed Properties
 
-        bool hasFooter
+        private bool hasFooter
         {
             get
             {
@@ -614,7 +627,9 @@ namespace MudBlazor
                 Page = CurrentPage,
                 PageSize = RowsPerPage,
                 SortBy = _sortBy,
-                SortDirection = _direction
+                SortDirection = _direction,
+                // Additional ToList() here to decouple clients from internal list avoiding runtime issues
+                FilterDefinitions = FilterDefinitions.ToList()
             };
 
             _server_data = await ServerData(state);
@@ -724,7 +739,7 @@ namespace MudBlazor
 
         /// <summary>
         /// This method notifies the consumer that changes to the data have been committed
-        /// and what those changes are. This variation of the method is used when the EditMode 
+        /// and what those changes are. This variation of the method is used when the EditMode
         /// is anything but Cell since the _editingItem is used.
         /// </summary>
         /// <returns></returns>
@@ -785,12 +800,15 @@ namespace MudBlazor
                 case Page.First:
                     CurrentPage = 0;
                     break;
+
                 case Page.Last:
                     CurrentPage = Math.Max(0, numPages - 1);
                     break;
+
                 case Page.Next:
                     CurrentPage = Math.Min(numPages - 1, CurrentPage + 1);
                     break;
+
                 case Page.Previous:
                     CurrentPage = Math.Max(0, CurrentPage - 1);
                     break;
@@ -959,7 +977,7 @@ namespace MudBlazor
                 StateHasChanged();
                 return;
             }
-            
+
             var groupings = CurrentPageItems.GroupBy(GroupedColumn.groupBy);
 
             if (_groupExpansions.Count == 0)
@@ -991,7 +1009,7 @@ namespace MudBlazor
                     c.RemoveGrouping();
             }
 
-            GroupItems();       
+            GroupItems();
         }
 
         internal void ToggleGroupExpansion(GroupDefinition<T> g)
@@ -1025,6 +1043,5 @@ namespace MudBlazor
         }
 
         #endregion
-
     }
 }

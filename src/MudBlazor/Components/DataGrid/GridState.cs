@@ -16,12 +16,13 @@ namespace MudBlazor
         public Func<T, object> SortBy { get; set; }
 
         public SortDirection SortDirection { get; set; }
+
+        public ICollection<FilterDefinition<T>> FilterDefinitions { get; set; }
     }
 
     public class GridData<T>
     {
         public IEnumerable<T> Items { get; set; }
         public int TotalItems { get; set; }
-
     }
 }
