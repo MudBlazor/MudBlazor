@@ -185,13 +185,20 @@
     internal RenderFragment RenderRows(IEnumerable<T> source, string customClass = null, bool isExpandable = false)
     {
         var rowIndex = 0;
-        return
-        @<text>
-            @foreach (T item in source)
-            {
+
+         RenderFragment rootNode =
+            @<text>
+                <MudVirtualize IsEnabled="@Virtualize" Items="@source?.ToList()" Context="item" ChildContent="@child()">              
+                </MudVirtualize>
+            </text>;
+
+         RenderFragment<T> child() => item =>
+             @<text>
+             @{
                 var rowClass = new CssBuilder(RowClass).AddClass(RowClassFunc?.Invoke(item, rowIndex)).AddClass(customClass, ! string.IsNullOrEmpty("mud-table-row-group-indented-1")).Build();
                 var rowStyle = new StyleBuilder().AddStyle(RowStyle).AddStyle(RowStyleFunc?.Invoke(item, rowIndex)).Build();
-                <MudTr Class="@rowClass" Style="@rowStyle" Item="item" @key="item" IsCheckable="MultiSelection" IsEditable="IsEditable" IsExpandable="isExpandable"
+             } 
+             <MudTr Class="@rowClass" Style="@rowStyle" Item="item" @key="item" IsCheckable="MultiSelection" IsEditable="IsEditable" IsExpandable="isExpandable"
                         IsCheckedChanged="((value) => { var x = item; OnRowCheckboxChanged(value, x); })">
 
                     @if ((!ReadOnly) && IsEditable && object.Equals(_editingItem, item))
@@ -227,8 +234,11 @@
                 {
                     @ChildRowContent(item)
                 }
-                rowIndex++;
-            }
-        </text>;
-     }
+                @{rowIndex++;}
+        </text>
+    ;
+
+
+        return rootNode;
+    }
 }
