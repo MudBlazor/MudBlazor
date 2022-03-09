@@ -26,8 +26,6 @@ namespace MudBlazor
                 
                 if (dataGrid.Selection != null && Items != null)
                 {
-                    Console.WriteLine(dataGrid.Selection.Count);
-                    Console.WriteLine(Items.Count());
                     return dataGrid.Selection.Count == Items.Count();
                 }
 
