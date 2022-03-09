@@ -18,6 +18,7 @@ namespace MudBlazor
         public MudDateRangePicker()
         {
             DisplayMonths = 2;
+            AdornmentAriaLabel = "Open Date Range Picker";
         }
 
         /// <summary>

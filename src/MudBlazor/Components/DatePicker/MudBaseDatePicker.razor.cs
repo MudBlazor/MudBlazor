@@ -17,7 +17,9 @@ namespace MudBlazor
             Format = CultureInfo.CurrentCulture.DateTimeFormat.ShortDatePattern,
             Culture = CultureInfo.CurrentCulture
         })
-        { }
+        {
+            AdornmentAriaLabel = "Open Date Picker";
+        }
 
         [Inject] protected IScrollManager ScrollManager { get; set; }
 

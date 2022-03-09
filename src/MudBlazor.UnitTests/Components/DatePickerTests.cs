@@ -21,6 +21,14 @@ namespace MudBlazor.UnitTests.Components
     public class DatePickerTests : BunitTest
     {
         [Test]
+        public void DatePickerOpenButtonAriaLabel()
+        {
+            var comp = Context.RenderComponent<DatePickerValidationTest>();
+            var openButton = comp.Find(".mud-input-adornment button");
+            openButton.Attributes.GetNamedItem("aria-label")?.Value.Should().Be("Open Date Picker");
+        }
+        
+        [Test]
         [Ignore("Unignore for performance measurements, not needed for code coverage")]
         public void DatePicker_Render_Performance()
         {

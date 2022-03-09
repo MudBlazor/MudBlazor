@@ -150,6 +150,14 @@ namespace MudBlazor.UnitTests.Components
         private IHtmlInputElement GetColorInput(IRenderedComponent<SimpleColorPickerTest> comp, int index, int expectedCount = 4) => GetColorInputs(comp, expectedCount)[index];
 
         [Test]
+        public void ColorPickerOpenButtonAriaLabel()
+        {
+            var comp = Context.RenderComponent<MudColorPicker>();
+            var openButton = comp.Find(".mud-input-adornment button");
+            openButton.Attributes.GetNamedItem("aria-label")?.Value.Should().Be("Open Color Picker");
+        }
+        
+        [Test]
         public async Task Default()
         {
             var comp = Context.RenderComponent<MudColorPicker>();

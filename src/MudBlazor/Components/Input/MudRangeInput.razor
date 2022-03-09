@@ -6,7 +6,7 @@
 <div class="@Classname" style="@Style">
     @if (Adornment == Adornment.Start)
     {
-        <MudInputAdornment Class="@AdornmentClassname" Icon="@AdornmentIcon" Color="@AdornmentColor" Size="@IconSize" Text="@AdornmentText" Edge="@Edge.Start" AdornmentClick="@OnAdornmentClick" />
+        <MudInputAdornment Class="@AdornmentClassname" Icon="@AdornmentIcon" Color="@AdornmentColor" Size="@IconSize" Text="@AdornmentText" Edge="@Edge.Start" AdornmentClick="@OnAdornmentClick" AriaLabel="@AdornmentAriaLabel" />
     }
 
     @if (InputType == InputType.Hidden && ChildContent != null)
@@ -24,7 +24,7 @@
 
     @if (Adornment == Adornment.End)
     {
-        <MudInputAdornment Class="@AdornmentClassname" Icon="@AdornmentIcon" Color="@AdornmentColor" Size="@IconSize" Text="@AdornmentText" Edge="@Edge.End" AdornmentClick="@OnAdornmentClick" />
+        <MudInputAdornment Class="@AdornmentClassname" Icon="@AdornmentIcon" Color="@AdornmentColor" Size="@IconSize" Text="@AdornmentText" Edge="@Edge.End" AdornmentClick="@OnAdornmentClick" AriaLabel="@AdornmentAriaLabel" />
     }
 
     @if (Variant == Variant.Outlined)
