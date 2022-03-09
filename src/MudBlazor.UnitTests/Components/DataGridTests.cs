@@ -853,262 +853,239 @@ namespace MudBlazor.UnitTests.Components
             Assert.IsTrue(func.Invoke(new("Joe", 45, null)));
         }
 
-        /// <summary>
-        /// For XCOPY,i dident understand this tests, and thought it better that i comment them out rather than making them pass on things it should not.
-        /// If anyone else reads this and its past 2022-04-01 this needs to be looked at.
-        /// </summary>
-        //
-        //[Test]
-        //public async Task FilterDefinitionDateTimeTest()
-        //{
-        //    var utcnow = DateTime.UtcNow;
-        //    var now = DateTime.Now;
+        [Test]
+        public async Task FilterDefinitionDateTimeTest()
+        {
+            var utcnow = DateTime.UtcNow;
 
-        //    #region FilterOperator.DateTime.Is
+            #region FilterOperator.DateTime.Is
 
-        //    var filterDefinition = new FilterDefinition<TestModel2>
-        //    {
-        //        Id = Guid.NewGuid(),
-        //        Field = "Date",
-        //        Operator = FilterOperator.DateTime.Is,
-        //        Value = utcnow
-        //    };
-        //    var func = filterDefinition.GenerateFilterFunction();
-        //    Assert.IsTrue(func.Invoke(new("Sam", 45, utcnow)));
-        //    Assert.IsFalse(func.Invoke(new("Joe", 45, now)));
-        //    Assert.IsFalse(func.Invoke(new("Joe", 45, null)));
+            var filterDefinition = new FilterDefinition<TestModel2>
+            {
+                Id = Guid.NewGuid(),
+                Field = "Date",
+                Operator = FilterOperator.DateTime.Is,
+                Value = utcnow
+            };
+            var func = filterDefinition.GenerateFilterFunction();
+            Assert.IsTrue(func.Invoke(new("Sam", 45, utcnow)));
+            Assert.IsFalse(func.Invoke(new("Joe", 45, null)));
 
-        //    // null value
-        //    filterDefinition = new FilterDefinition<TestModel2>
-        //    {
-        //        Id = Guid.NewGuid(),
-        //        Field = "Date",
-        //        Operator = FilterOperator.DateTime.Is,
-        //        Value = null
-        //    };
-        //    func = filterDefinition.GenerateFilterFunction();
-        //    Assert.IsTrue(func.Invoke(new("Sam", 45, utcnow)));
-        //    Assert.IsTrue(func.Invoke(new("Joe", 45, utcnow)));
-        //    Assert.IsTrue(func.Invoke(new("Joe", 45, null)));
+            // null value
+            filterDefinition = new FilterDefinition<TestModel2>
+            {
+                Id = Guid.NewGuid(),
+                Field = "Date",
+                Operator = FilterOperator.DateTime.Is,
+                Value = null
+            };
+            func = filterDefinition.GenerateFilterFunction();
+            Assert.IsTrue(func.Invoke(new("Sam", 45, utcnow)));
+            Assert.IsTrue(func.Invoke(new("Joe", 45, null)));
 
-        //    #endregion
+            #endregion
 
-        //    #region FilterOperator.DateTime.IsNot
+            #region FilterOperator.DateTime.IsNot
 
-        //    filterDefinition = new FilterDefinition<TestModel2>
-        //    {
-        //        Id = Guid.NewGuid(),
-        //        Field = "Date",
-        //        Operator = FilterOperator.DateTime.IsNot,
-        //        Value = utcnow
-        //    };
-        //    func = filterDefinition.GenerateFilterFunction();
-        //    Assert.IsFalse(func.Invoke(new("Sam", 45, utcnow)));
-        //    Assert.IsTrue(func.Invoke(new("Joe", 45, now)));
-        //    Assert.IsTrue(func.Invoke(new("Joe", 45, null)));
+            filterDefinition = new FilterDefinition<TestModel2>
+            {
+                Id = Guid.NewGuid(),
+                Field = "Date",
+                Operator = FilterOperator.DateTime.IsNot,
+                Value = utcnow
+            };
+            func = filterDefinition.GenerateFilterFunction();
+            Assert.IsFalse(func.Invoke(new("Sam", 45, utcnow)));
+            Assert.IsTrue(func.Invoke(new("Joe", 45, null)));
 
-        //    // null value
-        //    filterDefinition = new FilterDefinition<TestModel2>
-        //    {
-        //        Id = Guid.NewGuid(),
-        //        Field = "Date",
-        //        Operator = FilterOperator.DateTime.IsNot,
-        //        Value = null
-        //    };
-        //    func = filterDefinition.GenerateFilterFunction();
-        //    Assert.IsTrue(func.Invoke(new("Sam", 45, utcnow)));
-        //    Assert.IsTrue(func.Invoke(new("Joe", 45, utcnow)));
-        //    Assert.IsTrue(func.Invoke(new("Joe", 45, null)));
+            // null value
+            filterDefinition = new FilterDefinition<TestModel2>
+            {
+                Id = Guid.NewGuid(),
+                Field = "Date",
+                Operator = FilterOperator.DateTime.IsNot,
+                Value = null
+            };
+            func = filterDefinition.GenerateFilterFunction();
+            Assert.IsTrue(func.Invoke(new("Sam", 45, utcnow)));
+            Assert.IsTrue(func.Invoke(new("Joe", 45, null)));
 
-        //    #endregion
+            #endregion
 
-        //    #region FilterOperator.DateTime.After
+            #region FilterOperator.DateTime.After
 
-        //    filterDefinition = new FilterDefinition<TestModel2>
-        //    {
-        //        Id = Guid.NewGuid(),
-        //        Field = "Date",
-        //        Operator = FilterOperator.DateTime.After,
-        //        Value = utcnow
-        //    };
-        //    func = filterDefinition.GenerateFilterFunction();
-        //    Assert.IsFalse(func.Invoke(new("Sam", 45, utcnow)));
-        //    Assert.IsFalse(func.Invoke(new("Joe", 45, now)));
-        //    Assert.IsFalse(func.Invoke(new("Joe", 45, null)));
+            filterDefinition = new FilterDefinition<TestModel2>
+            {
+                Id = Guid.NewGuid(),
+                Field = "Date",
+                Operator = FilterOperator.DateTime.After,
+                Value = utcnow
+            };
+            func = filterDefinition.GenerateFilterFunction();
+            Assert.IsFalse(func.Invoke(new("Sam", 45, utcnow)));
+            Assert.IsFalse(func.Invoke(new("Joe", 45, null)));
 
-        //    // null value
-        //    filterDefinition = new FilterDefinition<TestModel2>
-        //    {
-        //        Id = Guid.NewGuid(),
-        //        Field = "Date",
-        //        Operator = FilterOperator.DateTime.After,
-        //        Value = null
-        //    };
-        //    func = filterDefinition.GenerateFilterFunction();
-        //    Assert.IsTrue(func.Invoke(new("Sam", 45, utcnow)));
-        //    Assert.IsTrue(func.Invoke(new("Joe", 45, utcnow)));
-        //    Assert.IsTrue(func.Invoke(new("Joe", 45, null)));
+            // null value
+            filterDefinition = new FilterDefinition<TestModel2>
+            {
+                Id = Guid.NewGuid(),
+                Field = "Date",
+                Operator = FilterOperator.DateTime.After,
+                Value = null
+            };
+            func = filterDefinition.GenerateFilterFunction();
+            Assert.IsTrue(func.Invoke(new("Sam", 45, utcnow)));
+            Assert.IsTrue(func.Invoke(new("Joe", 45, null)));
 
-        //    #endregion
+            #endregion
 
-        //    #region FilterOperator.DateTime.OnOrAfter
+            #region FilterOperator.DateTime.OnOrAfter
 
-        //    filterDefinition = new FilterDefinition<TestModel2>
-        //    {
-        //        Id = Guid.NewGuid(),
-        //        Field = "Date",
-        //        Operator = FilterOperator.DateTime.OnOrAfter,
-        //        Value = utcnow
-        //    };
-        //    func = filterDefinition.GenerateFilterFunction();
-        //    Assert.IsTrue(func.Invoke(new("Sam", 45, utcnow)));
-        //    Assert.IsFalse(func.Invoke(new("Joe", 45, now)));
-        //    Assert.IsFalse(func.Invoke(new("Joe", 45, null)));
+            filterDefinition = new FilterDefinition<TestModel2>
+            {
+                Id = Guid.NewGuid(),
+                Field = "Date",
+                Operator = FilterOperator.DateTime.OnOrAfter,
+                Value = utcnow
+            };
+            func = filterDefinition.GenerateFilterFunction();
+            Assert.IsTrue(func.Invoke(new("Sam", 45, utcnow)));
+            Assert.IsFalse(func.Invoke(new("Joe", 45, null)));
 
-        //    // null value
-        //    filterDefinition = new FilterDefinition<TestModel2>
-        //    {
-        //        Id = Guid.NewGuid(),
-        //        Field = "Date",
-        //        Operator = FilterOperator.DateTime.OnOrAfter,
-        //        Value = null
-        //    };
-        //    func = filterDefinition.GenerateFilterFunction();
-        //    Assert.IsTrue(func.Invoke(new("Sam", 45, utcnow)));
-        //    Assert.IsTrue(func.Invoke(new("Joe", 45, utcnow)));
-        //    Assert.IsTrue(func.Invoke(new("Joe", 45, null)));
+            // null value
+            filterDefinition = new FilterDefinition<TestModel2>
+            {
+                Id = Guid.NewGuid(),
+                Field = "Date",
+                Operator = FilterOperator.DateTime.OnOrAfter,
+                Value = null
+            };
+            func = filterDefinition.GenerateFilterFunction();
+            Assert.IsTrue(func.Invoke(new("Sam", 45, utcnow)));
+            Assert.IsTrue(func.Invoke(new("Joe", 45, null)));
 
-        //    #endregion
+            #endregion
 
-        //    #region FilterOperator.DateTime.Before
+            #region FilterOperator.DateTime.Before
 
-        //    filterDefinition = new FilterDefinition<TestModel2>
-        //    {
-        //        Id = Guid.NewGuid(),
-        //        Field = "Date",
-        //        Operator = FilterOperator.DateTime.Before,
-        //        Value = utcnow
-        //    };
-        //    func = filterDefinition.GenerateFilterFunction();
-        //    Assert.IsFalse(func.Invoke(new("Sam", 45, utcnow)));
-        //    Assert.IsTrue(func.Invoke(new("Joe", 45, now)));
-        //    Assert.IsFalse(func.Invoke(new("Joe", 45, null)));
+            filterDefinition = new FilterDefinition<TestModel2>
+            {
+                Id = Guid.NewGuid(),
+                Field = "Date",
+                Operator = FilterOperator.DateTime.Before,
+                Value = utcnow
+            };
+            func = filterDefinition.GenerateFilterFunction();
+            Assert.IsFalse(func.Invoke(new("Sam", 45, utcnow)));
+            Assert.IsFalse(func.Invoke(new("Joe", 45, null)));
 
-        //    // null value
-        //    filterDefinition = new FilterDefinition<TestModel2>
-        //    {
-        //        Id = Guid.NewGuid(),
-        //        Field = "Date",
-        //        Operator = FilterOperator.DateTime.Before,
-        //        Value = null
-        //    };
-        //    func = filterDefinition.GenerateFilterFunction();
-        //    Assert.IsTrue(func.Invoke(new("Sam", 45, utcnow)));
-        //    Assert.IsTrue(func.Invoke(new("Joe", 45, utcnow)));
-        //    Assert.IsTrue(func.Invoke(new("Joe", 45, null)));
+            // null value
+            filterDefinition = new FilterDefinition<TestModel2>
+            {
+                Id = Guid.NewGuid(),
+                Field = "Date",
+                Operator = FilterOperator.DateTime.Before,
+                Value = null
+            };
+            func = filterDefinition.GenerateFilterFunction();
+            Assert.IsTrue(func.Invoke(new("Sam", 45, utcnow)));
+            Assert.IsTrue(func.Invoke(new("Joe", 45, null)));
 
-        //    #endregion
+            #endregion
 
-        //    #region FilterOperator.DateTime.OnOrBefore
+            #region FilterOperator.DateTime.OnOrBefore
 
-        //    filterDefinition = new FilterDefinition<TestModel2>
-        //    {
-        //        Id = Guid.NewGuid(),
-        //        Field = "Date",
-        //        Operator = FilterOperator.DateTime.OnOrBefore,
-        //        Value = utcnow
-        //    };
-        //    func = filterDefinition.GenerateFilterFunction();
-        //    Assert.IsTrue(func.Invoke(new("Sam", 45, utcnow)));
-        //    Assert.IsTrue(func.Invoke(new("Joe", 45, now)));
-        //    Assert.IsFalse(func.Invoke(new("Joe", 45, null)));
+            filterDefinition = new FilterDefinition<TestModel2>
+            {
+                Id = Guid.NewGuid(),
+                Field = "Date",
+                Operator = FilterOperator.DateTime.OnOrBefore,
+                Value = utcnow
+            };
+            func = filterDefinition.GenerateFilterFunction();
+            Assert.IsTrue(func.Invoke(new("Sam", 45, utcnow)));
+            Assert.IsFalse(func.Invoke(new("Joe", 45, null)));
 
-        //    // null value
-        //    filterDefinition = new FilterDefinition<TestModel2>
-        //    {
-        //        Id = Guid.NewGuid(),
-        //        Field = "Date",
-        //        Operator = FilterOperator.DateTime.OnOrBefore,
-        //        Value = null
-        //    };
-        //    func = filterDefinition.GenerateFilterFunction();
-        //    Assert.IsTrue(func.Invoke(new("Sam", 45, utcnow)));
-        //    Assert.IsTrue(func.Invoke(new("Joe", 45, utcnow)));
-        //    Assert.IsTrue(func.Invoke(new("Joe", 45, null)));
+            // null value
+            filterDefinition = new FilterDefinition<TestModel2>
+            {
+                Id = Guid.NewGuid(),
+                Field = "Date",
+                Operator = FilterOperator.DateTime.OnOrBefore,
+                Value = null
+            };
+            func = filterDefinition.GenerateFilterFunction();
+            Assert.IsTrue(func.Invoke(new("Sam", 45, utcnow)));
+            Assert.IsTrue(func.Invoke(new("Joe", 45, null)));
 
-        //    #endregion
+            #endregion
 
-        //    #region FilterOperator.DateTime.Empty
+            #region FilterOperator.DateTime.Empty
 
-        //    filterDefinition = new FilterDefinition<TestModel2>
-        //    {
-        //        Id = Guid.NewGuid(),
-        //        Field = "Date",
-        //        Operator = FilterOperator.DateTime.Empty,
-        //        Value = utcnow
-        //    };
-        //    func = filterDefinition.GenerateFilterFunction();
-        //    Assert.IsFalse(func.Invoke(new("Sam", 45, utcnow)));
-        //    Assert.IsFalse(func.Invoke(new("Joe", 45, now)));
-        //    Assert.IsTrue(func.Invoke(new("Joe", 45, null)));
+            filterDefinition = new FilterDefinition<TestModel2>
+            {
+                Id = Guid.NewGuid(),
+                Field = "Date",
+                Operator = FilterOperator.DateTime.Empty,
+                Value = utcnow
+            };
+            func = filterDefinition.GenerateFilterFunction();
+            Assert.IsFalse(func.Invoke(new("Sam", 45, utcnow)));
+            Assert.IsTrue(func.Invoke(new("Joe", 45, null)));
 
-        //    // null value
-        //    filterDefinition = new FilterDefinition<TestModel2>
-        //    {
-        //        Id = Guid.NewGuid(),
-        //        Field = "Date",
-        //        Operator = FilterOperator.DateTime.Empty,
-        //        Value = null
-        //    };
-        //    func = filterDefinition.GenerateFilterFunction();
-        //    Assert.IsFalse(func.Invoke(new("Sam", 45, utcnow)));
-        //    Assert.IsFalse(func.Invoke(new("Joe", 45, utcnow)));
-        //    Assert.IsTrue(func.Invoke(new("Joe", 45, null)));
+            // null value
+            filterDefinition = new FilterDefinition<TestModel2>
+            {
+                Id = Guid.NewGuid(),
+                Field = "Date",
+                Operator = FilterOperator.DateTime.Empty,
+                Value = null
+            };
+            func = filterDefinition.GenerateFilterFunction();
+            Assert.IsFalse(func.Invoke(new("Sam", 45, utcnow)));
+            Assert.IsTrue(func.Invoke(new("Joe", 45, null)));
 
-        //    #endregion
+            #endregion
 
-        //    #region FilterOperator.DateTime.NotEmpty
+            #region FilterOperator.DateTime.NotEmpty
 
-        //    filterDefinition = new FilterDefinition<TestModel2>
-        //    {
-        //        Id = Guid.NewGuid(),
-        //        Field = "Date",
-        //        Operator = FilterOperator.DateTime.NotEmpty,
-        //        Value = utcnow
-        //    };
-        //    func = filterDefinition.GenerateFilterFunction();
-        //    Assert.IsTrue(func.Invoke(new("Sam", 45, utcnow)));
-        //    Assert.IsTrue(func.Invoke(new("Joe", 45, now)));
-        //    Assert.IsFalse(func.Invoke(new("Joe", 45, null)));
+            filterDefinition = new FilterDefinition<TestModel2>
+            {
+                Id = Guid.NewGuid(),
+                Field = "Date",
+                Operator = FilterOperator.DateTime.NotEmpty,
+                Value = utcnow
+            };
+            func = filterDefinition.GenerateFilterFunction();
+            Assert.IsTrue(func.Invoke(new("Sam", 45, utcnow)));
+            Assert.IsFalse(func.Invoke(new("Joe", 45, null)));
 
-        //    // null value
-        //    filterDefinition = new FilterDefinition<TestModel2>
-        //    {
-        //        Id = Guid.NewGuid(),
-        //        Field = "Date",
-        //        Operator = FilterOperator.DateTime.NotEmpty,
-        //        Value = null
-        //    };
-        //    func = filterDefinition.GenerateFilterFunction();
-        //    Assert.IsTrue(func.Invoke(new("Sam", 45, utcnow)));
-        //    Assert.IsTrue(func.Invoke(new("Joe", 45, utcnow)));
-        //    Assert.IsFalse(func.Invoke(new("Joe", 45, null)));
+            // null value
+            filterDefinition = new FilterDefinition<TestModel2>
+            {
+                Id = Guid.NewGuid(),
+                Field = "Date",
+                Operator = FilterOperator.DateTime.NotEmpty,
+                Value = null
+            };
+            func = filterDefinition.GenerateFilterFunction();
+            Assert.IsTrue(func.Invoke(new("Sam", 45, utcnow)));
+            Assert.IsFalse(func.Invoke(new("Joe", 45, null)));
 
-        //    #endregion
+            #endregion
 
-        //    // null operator
-        //    filterDefinition = new FilterDefinition<TestModel2>
-        //    {
-        //        Id = Guid.NewGuid(),
-        //        Field = "Date",
-        //        Operator = null,
-        //        Value = utcnow
-        //    };
-        //    func = filterDefinition.GenerateFilterFunction();
-        //    Assert.IsTrue(func.Invoke(new("Sam", 45, utcnow)));
-        //    Assert.IsTrue(func.Invoke(new("Joe", 45, now)));
-        //    Assert.IsTrue(func.Invoke(new("Joe", 45, null)));
-        //}
+            // null operator
+            filterDefinition = new FilterDefinition<TestModel2>
+            {
+                Id = Guid.NewGuid(),
+                Field = "Date",
+                Operator = null,
+                Value = utcnow
+            };
+            func = filterDefinition.GenerateFilterFunction();
+            Assert.IsTrue(func.Invoke(new("Sam", 45, utcnow)));
+            Assert.IsTrue(func.Invoke(new("Joe", 45, null)));
+        }
 
         [Test]
         public async Task DataGridFiltersTest()

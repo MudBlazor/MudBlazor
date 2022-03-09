@@ -25,7 +25,7 @@
         <Column T="Model" Field="@nameof(Model.Salary)" AggregateDefinition="_salaryAggregation" />
         <Column T="Model" Field="HireDate" Title="Hired">
             <CellTemplate>
-                @context.Item.HireDate.ToString("MM/dd/yyyy")
+                @context.Item.HireDate.ToString("d")
             </CellTemplate>
         </Column>
         <Column T="Model" Field="IsManager" Title="Manager" />
@@ -37,14 +37,14 @@
 
     IEnumerable<Model> _items = new List<Model>()
     {
-        new Model("Sam", 56, Severity.Normal, 50_000.00M, DateTime.Parse("3/5/2005"), false), 
-        new Model("Alicia", 54, Severity.Info, 75_000.00M, DateTime.Parse("1/17/2010"), false), 
-        new Model("Ira", 27, Severity.Success, 102_000.00M, DateTime.Parse("6/15/2017"), true),
-        new Model("John", 32, Severity.Warning, 132_000.00M, DateTime.Parse("12/23/2021"), true),
-        new Model("Fred", 65, Severity.Warning, 87_000.00M, DateTime.Parse("7/3/2003"), false), 
-        new Model("Tabitha", 33, Severity.Info, 157_000.00M, DateTime.Parse("2/12/2015"), true), 
-        new Model("Hunter", 22, Severity.Success, 43_000.00M, DateTime.Parse("9/20/2017"), false),
-        new Model("Esme", 55, Severity.Warning, 149_000.00M, DateTime.Parse("8/1/2017"), true)
+        new Model("Sam", 56, Severity.Normal, 50_000.00M, new DateTime(2005, 3, 5), false), 
+        new Model("Alicia", 54, Severity.Info, 75_000.00M, new DateTime(2010, 1, 17), false), 
+        new Model("Ira", 27, Severity.Success, 102_000.00M, new DateTime(2017, 6, 15), true),
+        new Model("John", 32, Severity.Warning, 132_000.00M, new DateTime(2021, 12, 23), true),
+        new Model("Fred", 65, Severity.Warning, 87_000.00M, new DateTime(2003, 7, 3), false), 
+        new Model("Tabitha", 33, Severity.Info, 157_000.00M, new DateTime(2015, 2, 12), true), 
+        new Model("Hunter", 22, Severity.Success, 43_000.00M, new DateTime(2017, 9, 20), false),
+        new Model("Esme", 55, Severity.Warning, 149_000.00M, new DateTime(2017, 8, 1), true)
     };
 
     AggregateDefinition<Model> _ageAggregation = new AggregateDefinition<Model>
@@ -60,7 +60,7 @@
         {
             var highestSalary = x.Max(z => z.Salary);
             var countOver100Grand = x.Count(z => z.Salary > 100_000);
-            return $"Highest: {highestSalary.ToString("C0")} | {countOver100Grand} Over $100,000";
+            return $"Highest: {highestSalary.ToString("C0")} | {countOver100Grand} Over {100000:C0}";
         }
     };
 }
