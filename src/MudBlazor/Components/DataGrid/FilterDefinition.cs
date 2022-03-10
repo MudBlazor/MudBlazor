@@ -23,6 +23,7 @@ namespace MudBlazor
                 return typeof(T).GetProperty(Field).PropertyType;
             }
         }
+
         private bool isNumber
         {
             get
@@ -30,6 +31,7 @@ namespace MudBlazor
                 return FilterOperator.IsNumber(dataType);
             }
         }
+
         private bool isEnum
         {
             get
@@ -37,6 +39,7 @@ namespace MudBlazor
                 return FilterOperator.IsEnum(dataType);
             }
         }
+
         private bool isDateTime
         {
             get
@@ -44,6 +47,7 @@ namespace MudBlazor
                 return FilterOperator.IsDateTime(dataType);
             }
         }
+
         private bool isBoolean
         {
             get
@@ -52,274 +56,210 @@ namespace MudBlazor
             }
         }
 
-        internal Func<T, bool> GenerateFilterFunction()
+        public Func<T, bool> GenerateFilterFunction()
         {
-            // short circuit
-            //if (Value == null)
-            //    return new Func<T, bool>(x => true);
+            var expression = GenerateFilterExpression();
 
+            return expression.Compile();
+        }
+
+        public Expression<Func<T, bool>> GenerateFilterExpression()
+        {
             var parameter = Expression.Parameter(typeof(T), "x");
-
-            Expression comparison = Expression.Empty();
+            Expression expression;
 
             if (dataType == typeof(string))
             {
-                var field = Expression.Property(parameter, typeof(T).GetProperty(Field));
-                var valueString = Value?.ToString();
-                var trim = Expression.Call(field, dataType.GetMethod("Trim", Type.EmptyTypes));
-                var isnull = Expression.Equal(field, Expression.Constant(null));
-                var isnotnull = Expression.NotEqual(field, Expression.Constant(null));
-
-                switch (Operator)
-                {
-                    case FilterOperator.String.Contains:
-                        if (Value == null)
-                            return alwaysTrue;
-
-                        comparison = Expression.AndAlso(isnotnull, 
-                            Expression.Call(field, dataType.GetMethod("Contains", new[] { dataType }), Expression.Constant(valueString)));
-                        break;
-                    case FilterOperator.String.Equal:
-                        if (Value == null)
-                            return alwaysTrue;
-
-                        comparison = Expression.AndAlso(isnotnull,
-                            Expression.Equal(field, Expression.Constant(valueString)));
-                        break;
-                    case FilterOperator.String.StartsWith:
-                        if (Value == null)
-                            return alwaysTrue;
-
-                        comparison = Expression.AndAlso(isnotnull, 
-                            Expression.Call(field, dataType.GetMethod("StartsWith", new[] { dataType }), Expression.Constant(valueString)));
-                        break;
-                    case FilterOperator.String.EndsWith:
-                        if (Value == null)
-                            return alwaysTrue;
-
-                        comparison = Expression.AndAlso(isnotnull, 
-                            Expression.Call(field, dataType.GetMethod("EndsWith", new[] { dataType }), Expression.Constant(valueString)));
-                        break;
-                    case FilterOperator.String.Empty:
-                        comparison = Expression.OrElse(isnull,
-                            Expression.Equal(trim, Expression.Constant(string.Empty, dataType)));
-                        break;
-                    case FilterOperator.String.NotEmpty:
-                        comparison = Expression.AndAlso(isnotnull,
-                            Expression.NotEqual(trim, Expression.Constant(string.Empty, dataType)));
-                        break;
-                    default:
-                        return alwaysTrue;
-                }
+                expression = GenerateFilterExpressionForStringType(parameter);
             }
             else if (isNumber)
             {
-                var field = Expression.Convert(Expression.Property(parameter, typeof(T).GetProperty(Field)), typeof(double?));
-                double? valueNumber = Value == null ? null : Convert.ToDouble(Value);
-                var isnotnull = Expression.IsTrue(Expression.Property(field, "HasValue"));
-                var isnull = Expression.IsFalse(Expression.Property(field, "HasValue"));
-                var notNullNumber = Expression.Convert(field, typeof(double));
-                var valueNumberConstant = Expression.Constant(valueNumber);
-
-                switch (Operator)
-                {
-                    case FilterOperator.Number.Equal:
-                        if (Value == null)
-                            return alwaysTrue;
-
-                        comparison = Expression.AndAlso(isnotnull,
-                            Expression.Equal(notNullNumber, valueNumberConstant));
-                        break;
-                    case FilterOperator.Number.NotEqual:
-                        if (Value == null)
-                            return alwaysTrue;
-
-                        comparison = Expression.OrElse(isnull, 
-                            Expression.NotEqual(notNullNumber, valueNumberConstant));
-                        break;
-                    case FilterOperator.Number.GreaterThan:
-                        if (Value == null)
-                            return alwaysTrue;
-
-                        comparison = Expression.AndAlso(isnotnull, 
-                            Expression.GreaterThan(notNullNumber, valueNumberConstant));
-                        break;
-                    case FilterOperator.Number.GreaterThanOrEqual:
-                        if (Value == null)
-                            return alwaysTrue;
-
-                        comparison = Expression.AndAlso(isnotnull, 
-                            Expression.GreaterThanOrEqual(notNullNumber, valueNumberConstant));
-                        break;
-                    case FilterOperator.Number.LessThan:
-                        if (Value == null)
-                            return alwaysTrue;
-
-                        comparison = Expression.AndAlso(isnotnull, 
-                            Expression.LessThan(notNullNumber, valueNumberConstant));
-                        break;
-                    case FilterOperator.Number.LessThanOrEqual:
-                        if (Value == null)
-                            return alwaysTrue;
-
-                        comparison = Expression.AndAlso(isnotnull, 
-                            Expression.LessThanOrEqual(notNullNumber, valueNumberConstant));
-                        break;
-                    case FilterOperator.Number.Empty:
-                        comparison = isnull;
-                        break;
-                    case FilterOperator.Number.NotEmpty:
-                        comparison = isnotnull;
-                        break;
-
-                    default:
-                        return alwaysTrue;
-                }
+                expression = GenerateFilterExpressionForNumericTypes(parameter);
             }
             else if (isEnum)
             {
-                var field = Expression.Convert(Expression.Property(parameter, typeof(T).GetProperty(Field)), dataType);
-                var valueEnum = Value == null ? null : (Enum)Value;
-                var _null = Expression.Convert(Expression.Constant(null), dataType);
-                var isnull = Expression.Equal(field, _null);
-                var isnotnull = Expression.NotEqual(field, _null);
-                var valueEnumConstant = Expression.Convert(Expression.Constant(valueEnum), dataType);
-
-                switch (Operator)
-                {
-                    case FilterOperator.Enum.Is:
-                        if (Value == null)
-                            return alwaysTrue;
-
-                        if (IsNullableEnum(dataType))
-                        {
-                            comparison = Expression.AndAlso(isnotnull,
-                            Expression.Equal(field, valueEnumConstant));
-                        }
-                        else
-                        {
-                            comparison = Expression.Equal(field, valueEnumConstant);
-                        }
-
-                        break;
-                    case FilterOperator.Enum.IsNot:
-                        if (Value == null)
-                            return alwaysTrue;
-
-                        if (IsNullableEnum(dataType))
-                        {
-                            comparison = Expression.OrElse(isnull,
-                                Expression.NotEqual(field, valueEnumConstant));
-                        }
-                        else
-                        {
-                            comparison = Expression.NotEqual(field, valueEnumConstant);
-                        }
-
-                        break;
-
-                    default:
-                        return alwaysTrue;
-                }
+                expression = GenerateFilterExpressionForEnumTypes(parameter);
             }
             else if (isBoolean)
             {
-                var field = Expression.Convert(Expression.Property(parameter, typeof(T).GetProperty(Field)), typeof(bool?));
-                bool? valueBool = Value == null ? null : Convert.ToBoolean(Value);
-                var isnotnull = Expression.IsTrue(Expression.Property(field, "HasValue"));
-                var notNullBool = Expression.Convert(field, typeof(bool));
-
-                switch (Operator)
-                {
-                    case FilterOperator.Enum.Is:
-                        if (Value == null)
-                            return alwaysTrue;
-
-                        comparison = Expression.AndAlso(isnotnull, 
-                            Expression.Equal(notNullBool, Expression.Constant(valueBool)));
-                        break;
-
-                    default:
-                        return alwaysTrue;
-                }
+                expression = GenerateFilterExpressionForBooleanTypes(parameter);
             }
             else if (isDateTime)
             {
-                var field = Expression.Convert(Expression.Property(parameter, typeof(T).GetProperty(Field)), typeof(DateTime?));
-                DateTime? valueDateTime = Value == null ? null : (DateTime)Value;
-                var isnotnull = Expression.IsTrue(Expression.Property(field, "HasValue"));
-                var isnull = Expression.IsFalse(Expression.Property(field, "HasValue"));
-                var notNullDateTime = Expression.Convert(field, typeof(DateTime));
-                var valueDateTimeConstant = Expression.Constant(valueDateTime);
-
-                switch (Operator)
-                {
-                    case FilterOperator.DateTime.Is:
-                        if (Value == null)
-                            return alwaysTrue;
-
-                        comparison = Expression.AndAlso(isnotnull,
-                            Expression.Equal(notNullDateTime, valueDateTimeConstant));
-                        break;
-                    case FilterOperator.DateTime.IsNot:
-                        if (Value == null)
-                            return alwaysTrue;
-
-                        comparison = Expression.OrElse(isnull,
-                            Expression.NotEqual(notNullDateTime, valueDateTimeConstant));
-                        break;
-                    case FilterOperator.DateTime.After:
-                        if (Value == null)
-                            return alwaysTrue;
-
-                        comparison = Expression.AndAlso(isnotnull,
-                            Expression.GreaterThan(notNullDateTime, valueDateTimeConstant));
-                        break;
-                    case FilterOperator.DateTime.OnOrAfter:
-                        if (Value == null)
-                            return alwaysTrue;
-
-                        comparison = Expression.AndAlso(isnotnull,
-                            Expression.GreaterThanOrEqual(notNullDateTime, valueDateTimeConstant));
-                        break;
-
-                    case FilterOperator.DateTime.Before:
-                        if (Value == null)
-                            return alwaysTrue;
-
-                        comparison = Expression.AndAlso(isnotnull,
-                            Expression.LessThan(notNullDateTime, valueDateTimeConstant));
-                        break;
-                    case FilterOperator.DateTime.OnOrBefore:
-                        if (Value == null)
-                            return alwaysTrue;
-
-                        comparison = Expression.AndAlso(isnotnull,
-                            Expression.LessThanOrEqual(notNullDateTime, valueDateTimeConstant));
-                        break;
-                    case FilterOperator.DateTime.Empty:
-                        comparison = isnull;
-                        break;
-                    case FilterOperator.DateTime.NotEmpty:
-                        comparison = isnotnull;
-                        break;
-
-                    default:
-                        return alwaysTrue;
-                }
+                expression = GenerateFilterExpressionForDateTimeTypes(parameter);
             }
             else
             {
-                return alwaysTrue;
+                expression = Expression.Constant(true, typeof(bool));
             }
 
-            var ex = Expression.Lambda<Func<T, bool>>(comparison, parameter);
-            return ex.Compile();
+            return Expression.Lambda<Func<T, bool>>(expression, parameter);
         }
 
-        private Func<T, bool> alwaysTrue = (x) => true;
+        private Expression GenerateFilterExpressionForDateTimeTypes(ParameterExpression parameter)
+        {
+            var field = Expression.Convert(Expression.Property(parameter, typeof(T).GetProperty(Field)), typeof(DateTime?));
+            DateTime? valueDateTime = Value == null ? null : (DateTime)Value;
+            var isnotnull = Expression.IsTrue(Expression.Property(field, "HasValue"));
+            var isnull = Expression.IsFalse(Expression.Property(field, "HasValue"));
+            var notNullDateTime = Expression.Convert(field, typeof(DateTime));
+            var valueDateTimeConstant = Expression.Constant(valueDateTime);
 
-        private bool IsNullableEnum(Type t)
+            return Operator switch
+            {
+                FilterOperator.DateTime.Is when null != Value =>
+                    Expression.AndAlso(isnotnull,
+                        Expression.Equal(notNullDateTime, valueDateTimeConstant)),
+
+                FilterOperator.DateTime.IsNot when null != Value =>
+                    Expression.OrElse(isnull,
+                        Expression.NotEqual(notNullDateTime, valueDateTimeConstant)),
+
+                FilterOperator.DateTime.After when null != Value =>
+                    Expression.AndAlso(isnotnull,
+                        Expression.GreaterThan(notNullDateTime, valueDateTimeConstant)),
+
+                FilterOperator.DateTime.OnOrAfter when null != Value =>
+                    Expression.AndAlso(isnotnull,
+                        Expression.GreaterThanOrEqual(notNullDateTime, valueDateTimeConstant)),
+
+                FilterOperator.DateTime.Before when null != Value =>
+                    Expression.AndAlso(isnotnull,
+                        Expression.LessThan(notNullDateTime, valueDateTimeConstant)),
+
+                FilterOperator.DateTime.OnOrBefore when null != Value =>
+                    Expression.AndAlso(isnotnull,
+                        Expression.LessThanOrEqual(notNullDateTime, valueDateTimeConstant)),
+
+                FilterOperator.DateTime.Empty => isnull,
+                FilterOperator.DateTime.NotEmpty => isnotnull,
+
+                _ => Expression.Constant(true, typeof(bool))
+            };
+        }
+
+        private Expression GenerateFilterExpressionForBooleanTypes(ParameterExpression parameter)
+        {
+            var field = Expression.Convert(Expression.Property(parameter, typeof(T).GetProperty(Field)), typeof(bool?));
+            bool? valueBool = Value == null ? null : Convert.ToBoolean(Value);
+            var isnotnull = Expression.IsTrue(Expression.Property(field, "HasValue"));
+            var notNullBool = Expression.Convert(field, typeof(bool));
+
+            return Operator switch
+            {
+                FilterOperator.Enum.Is when Value != null => Expression.AndAlso(isnotnull,
+                    Expression.Equal(notNullBool, Expression.Constant(valueBool))),
+
+                _ => Expression.Constant(true, typeof(bool))
+            };
+        }
+
+        private Expression GenerateFilterExpressionForEnumTypes(ParameterExpression parameter)
+        {
+            var field = Expression.Convert(Expression.Property(parameter, typeof(T).GetProperty(Field)), dataType);
+            var valueEnum = Value == null ? null : (Enum)Value;
+            var _null = Expression.Convert(Expression.Constant(null), dataType);
+            var isnull = Expression.Equal(field, _null);
+            var isnotnull = Expression.NotEqual(field, _null);
+            var valueEnumConstant = Expression.Convert(Expression.Constant(valueEnum), dataType);
+
+            return Operator switch
+            {
+                FilterOperator.Enum.Is when Value != null =>
+                    IsNullableEnum(dataType) ? Expression.AndAlso(isnotnull,
+                            Expression.Equal(field, valueEnumConstant))
+                        : Expression.Equal(field, valueEnumConstant),
+
+                FilterOperator.Enum.IsNot when Value != null =>
+                    IsNullableEnum(dataType) ? Expression.OrElse(isnull,
+                            Expression.NotEqual(field, valueEnumConstant))
+                        : Expression.NotEqual(field, valueEnumConstant),
+
+                _ => Expression.Constant(true, typeof(bool))
+            };
+        }
+
+        private Expression GenerateFilterExpressionForNumericTypes(ParameterExpression parameter)
+        {
+            var field = Expression.Convert(Expression.Property(parameter, typeof(T).GetProperty(Field)), typeof(double?));
+            double? valueNumber = Value == null ? null : Convert.ToDouble(Value);
+            var isnotnull = Expression.IsTrue(Expression.Property(field, "HasValue"));
+            var isnull = Expression.IsFalse(Expression.Property(field, "HasValue"));
+            var notNullNumber = Expression.Convert(field, typeof(double));
+            var valueNumberConstant = Expression.Constant(valueNumber);
+
+            return Operator switch
+            {
+                FilterOperator.Number.Equal when Value != null =>
+                    Expression.AndAlso(isnotnull,
+                        Expression.Equal(notNullNumber, valueNumberConstant)),
+
+                FilterOperator.Number.NotEqual when Value != null =>
+                    Expression.OrElse(isnull,
+                        Expression.NotEqual(notNullNumber, valueNumberConstant)),
+
+                FilterOperator.Number.GreaterThan when Value != null =>
+                    Expression.AndAlso(isnotnull,
+                        Expression.GreaterThan(notNullNumber, valueNumberConstant)),
+
+                FilterOperator.Number.GreaterThanOrEqual when Value != null =>
+                    Expression.AndAlso(isnotnull,
+                        Expression.GreaterThanOrEqual(notNullNumber, valueNumberConstant)),
+
+                FilterOperator.Number.LessThan when Value != null =>
+                    Expression.AndAlso(isnotnull,
+                        Expression.LessThan(notNullNumber, valueNumberConstant)),
+
+                FilterOperator.Number.LessThanOrEqual when Value != null =>
+                    Expression.AndAlso(isnotnull,
+                        Expression.LessThanOrEqual(notNullNumber, valueNumberConstant)),
+
+                FilterOperator.Number.Empty => isnull,
+                FilterOperator.Number.NotEmpty => isnotnull,
+
+                _ => Expression.Constant(true, typeof(bool))
+            };
+        }
+
+        private Expression GenerateFilterExpressionForStringType(ParameterExpression parameter)
+        {
+            var field = Expression.Property(parameter, typeof(T).GetProperty(Field));
+            var valueString = Value?.ToString();
+            var trim = Expression.Call(field, dataType.GetMethod("Trim", Type.EmptyTypes));
+            var isnull = Expression.Equal(field, Expression.Constant(null));
+            var isnotnull = Expression.NotEqual(field, Expression.Constant(null));
+
+            return Operator switch
+            {
+                FilterOperator.String.Contains when Value != null =>
+                    Expression.AndAlso(isnotnull,
+                        Expression.Call(field, dataType.GetMethod("Contains", new[] { dataType }), Expression.Constant(valueString))),
+
+                FilterOperator.String.Equal when Value != null =>
+                    Expression.AndAlso(isnotnull,
+                        Expression.Equal(field, Expression.Constant(valueString))),
+
+                FilterOperator.String.StartsWith when Value != null =>
+                    Expression.AndAlso(isnotnull,
+                        Expression.Call(field, dataType.GetMethod("StartsWith", new[] { dataType }), Expression.Constant(valueString))),
+
+                FilterOperator.String.EndsWith when Value != null =>
+                    Expression.AndAlso(isnotnull,
+                        Expression.Call(field, dataType.GetMethod("EndsWith", new[] { dataType }), Expression.Constant(valueString))),
+
+                FilterOperator.String.Empty =>
+                    Expression.OrElse(isnull,
+                        Expression.Equal(trim, Expression.Constant(string.Empty, dataType))),
+
+                FilterOperator.String.NotEmpty =>
+                    Expression.AndAlso(isnotnull,
+                        Expression.NotEqual(trim, Expression.Constant(string.Empty, dataType))),
+
+                _ => Expression.Constant(true, typeof(bool))
+            };
+        }
+
+        private static bool IsNullableEnum(Type t)
         {
             Type u = Nullable.GetUnderlyingType(t);
             return (u != null) && u.IsEnum;
