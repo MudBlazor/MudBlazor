@@ -20,6 +20,17 @@ namespace MudBlazor.UnitTests.Components
     public class SelectTests : BunitTest
     {
         /// <summary>
+        /// Select id should propagate to label for attribute
+        /// </summary>
+        [Test]
+        public void SelectLabelFor()
+        {
+            var comp = Context.RenderComponent<SelectRequiredTest>();
+            var label = comp.FindAll(".mud-input-label");
+            label[0].Attributes.GetNamedItem("for")?.Value.Should().Be("selectLabelTest");
+        }
+
+        /// <summary>
         /// Click should open the Menu and selecting a value should update the bindable value.
         /// </summary>
         [Test]

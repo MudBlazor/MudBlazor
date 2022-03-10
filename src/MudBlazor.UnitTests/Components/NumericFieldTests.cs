@@ -42,6 +42,17 @@ namespace MudBlazor.UnitTests.Components
         };
 
         /// <summary>
+        /// Numeric Field id should propagate to label for attribute
+        /// </summary>
+        [Test]
+        public void NumericFieldLabelFor()
+        {
+            var comp = Context.RenderComponent<NumericFieldTest>();
+            var label = comp.FindAll(".mud-input-label");
+            label[0].Attributes.GetNamedItem("for")?.Value.Should().Be("numericFieldLabelTest");
+        }
+        
+        /// <summary>
         /// Initial Text for double should be 0, with F1 format it should be 0.0
         /// </summary>
         [Test]

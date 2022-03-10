@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Microsoft.AspNetCore.Components;
 
 namespace MudBlazor
@@ -33,5 +34,10 @@ namespace MudBlazor
         [Parameter(CaptureUnmatchedValues = true)]
         [Category(CategoryTypes.ComponentBase.Common)]
         public Dictionary<string, object> UserAttributes { get; set; } = new Dictionary<string, object>();
+
+        /// <summary>
+        /// If the UserAttributes contain an ID make it accessible for WCAG labelling of input fields
+        /// </summary>
+        public string FieldId => (UserAttributes?.ContainsKey("id") == true ? UserAttributes["id"].ToString() : $"mudinput-{Guid.NewGuid()}");
     }
 }
