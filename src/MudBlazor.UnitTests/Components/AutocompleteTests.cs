@@ -102,6 +102,17 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// Autocomplete id should propagate to label for attribute
+        /// </summary>
+        [Test]
+        public void AutocompleteLabelFor()
+        {
+            var comp = Context.RenderComponent<AutocompleteTest1>();
+            var label = comp.FindAll(".mud-input-label");
+            label[0].Attributes.GetNamedItem("for")?.Value.Should().Be("autocompleteLabelTest");
+        }
+
+        /// <summary>
         /// Autocomplete should show 'Assam' (using state.ToString())
         /// </summary>
         [Test]

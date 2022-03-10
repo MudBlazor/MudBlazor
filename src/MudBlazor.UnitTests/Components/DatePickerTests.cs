@@ -29,6 +29,14 @@ namespace MudBlazor.UnitTests.Components
         }
         
         [Test]
+        public void DatePickerLabelFor()
+        {
+            var comp = Context.RenderComponent<DatePickerValidationTest>();
+            var label = comp.Find(".mud-input-label");
+            label.Attributes.GetNamedItem("for")?.Value.Should().Be("datePickerLabelTest");
+        }
+        
+        [Test]
         [Ignore("Unignore for performance measurements, not needed for code coverage")]
         public void DatePicker_Render_Performance()
         {
