@@ -36,7 +36,7 @@
     </PackageReference>
     <PackageReference Include="FluentAssertions" Version="6.5.1" />
     <PackageReference Include="FluentValidation" Version="10.3.6" />
-    <PackageReference Include="Moq" Version="4.17.1" />
+    <PackageReference Include="Moq" Version="4.17.2" />
     <PackageReference Include="nunit" Version="3.13.2" />
     <PackageReference Include="NUnit3TestAdapter" Version="4.2.1" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.1.0" />
