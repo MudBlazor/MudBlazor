@@ -21,6 +21,8 @@ namespace MudBlazor
         private bool _disposedValue = false;
         private Guid _id = Guid.NewGuid();
 
+        private Dictionary<T, int> _indicies = new();
+
         [Inject] private IJSRuntime JsRuntime { get; set; }
 
         [CascadingParameter]
@@ -116,6 +118,16 @@ namespace MudBlazor
 
         #region view helper
 
+        private int GetItemIndex(T item)
+        {
+            if (_indicies.ContainsKey(item) == false)
+            {
+                _indicies.Add(item, _indicies.Count);
+            }
+
+            return _indicies[item];
+        }
+
         private IEnumerable<T> GetItems()
         {
             Func<T, bool> predicate = (item) => Container.ItemsSelector(item, Identifier ?? string.Empty);
@@ -124,7 +136,7 @@ namespace MudBlazor
                 predicate = ItemsSelector;
             }
 
-            return (Container?.Items ?? Array.Empty<T>()).Where(predicate).ToArray();
+            return (Container?.Items ?? Array.Empty<T>()).Where(predicate).OrderBy(x => GetItemIndex(x)).ToArray();
         }
 
         private RenderFragment<T> GetItemTemplate() => ItemRenderer ?? Container?.ItemRenderer;
@@ -207,13 +219,28 @@ namespace MudBlazor
 
         #region container event handling
 
-        private void Container_TransactionEnded(object sender, EventArgs e)
+        private void Container_TransactionEnded(object sender, MudDragAndDropTransactionFinishedEventArgs<T> e)
         {
             _dragCounter = 0;
 
             if (GetApplyDropClassesOnDragStarted() == true)
             {
                 _canDrop = false;
+            }
+
+            if (e.OriginatedDropzoneIdentifier == Identifier && e.DestinationDropzoneIdentifier != e.OriginatedDropzoneIdentifier)
+            {
+                _indicies.Remove(e.Item);
+            }
+
+            if (e.OriginatedDropzoneIdentifier == Identifier || e.DestinationDropzoneIdentifier == Identifier)
+            {
+                int index = 0;
+
+                foreach (var item in _indicies.OrderBy(x => x.Value).ToArray())
+                {
+                    _indicies[item.Key] = index++;
+                }
             }
 
             StateHasChanged();
@@ -279,6 +306,28 @@ namespace MudBlazor
             {
                 await Container.CancelTransaction();
                 return;
+            }
+
+            var newIndex = Container.GetTransactionIndex() + 1;
+            if (Container.IsTransactionOriginatedFromOutside(this.Identifier) == false)
+            {
+                if (_indicies.Any(x => x.Value == newIndex) == true)
+                {
+                    var oldItem = _indicies.First(x => x.Value == newIndex);
+                    _indicies[oldItem.Key] = _indicies[context];
+                }
+
+                _indicies[context] = newIndex;
+            }
+            else
+            {
+                foreach (var item in _indicies.Where(x => x.Value >= newIndex).ToArray())
+                {
+                    _indicies[item.Key] = item.Value + 1;
+                }
+
+                _indicies.Add(context, newIndex);
+
             }
 
             await Container.CommitTransaction(Identifier);
