@@ -21,6 +21,7 @@ namespace MudBlazor
             DisableToolbar = true;
             Value = "#594ae2"; //MudBlazor Blue
             Text = GetColorTextValue();
+            AdornmentAriaLabel = "Open Color Picker";
         }
 
         #region Fields

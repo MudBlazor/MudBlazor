@@ -15,7 +15,8 @@
                      ErrorId="@ErrorId"
                      Disabled="@Disabled"
                      Margin="@Margin"
-                     Required="@Required">
+                     Required="@Required"
+                     ForId="@FieldId">
         <InputContent>
             <CascadingValue Name="Standalone" Value="false" IsFixed="true">
                 @if (_mask == null)
@@ -39,6 +40,7 @@
                               AdornmentText="@AdornmentText"
                               AdornmentIcon="@AdornmentIcon"
                               AdornmentColor="@AdornmentColor"
+                              AdornmentAriaLabel="@AdornmentAriaLabel"
                               IconSize="@IconSize"
                               OnAdornmentClick="@OnAdornmentClick"
                               Error="@Error"
