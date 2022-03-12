@@ -114,7 +114,7 @@ namespace MudBlazor
 
         [Parameter]
         [Category(CategoryTypes.DropZone.DraggingClass)]
-        public bool ShowPreview { get; set; }
+        public bool AllowReorder { get; set; }
 
         /// <summary>
         /// If true, will only act as a dropable zone and not render any items.
@@ -193,7 +193,7 @@ namespace MudBlazor
 
         protected string PlaceholderClassname =>
             new CssBuilder("border-2 mud-border-primary border-dashed mud-chip-text mud-chip-color-primary pa-4")
-                .AddClass("d-none", ShowPreview == false || (Container?.TransactionInProgress() == false || Container.GetTransactionCurrentZoneIdentiifer() != Identifier))
+                .AddClass("d-none", AllowReorder == false || (Container?.TransactionInProgress() == false || Container.GetTransactionCurrentZoneIdentiifer() != Identifier))
                 .Build();
 
         #endregion

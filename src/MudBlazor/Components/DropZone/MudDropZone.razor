@@ -18,26 +18,26 @@
 		var transactionIndex = Container?.GetTransactionIndex() ?? -1;
 		var items = GetItems();
 
-		@if (ShowPreview == true)
+		@if (AllowReorder == true)
 		{
-			@if (items.Any() == false)
-			{
-				<div class="@PlaceholderClassname"></div>
-			}
-			else
-			{
-				if (transactionIndex == -1)
-				{
-					<div class="@PlaceholderClassname"></div>
-				}
-				<MudDynamicDropItem @key="_id" T="T"
-						Item="default"
-						ZoneIdentifier="@Identifier"
-						Disabled="true" HideContent="false"
-						Class="mud-drop-item-preview-start" />
+		    @if (items.Any() == false)
+		    {
+		        <div class="@PlaceholderClassname"></div>
+		    }
+		    else
+		    {
+		        if (transactionIndex == -1)
+		        {
+		            <div class="@PlaceholderClassname"></div>
+		        }
+		        <MudDynamicDropItem @key="_id" T="T"
+                                    Item="default"
+                                    ZoneIdentifier="@Identifier"
+                                    Disabled="true" HideContent="false"
+                                    Class="mud-drop-item-preview-start"/>
+		    }
 		}
-
-		@foreach (var item in items)
+	    @foreach (var item in items)
 		{
 			var indexCopy = index;
 
