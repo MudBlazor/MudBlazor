@@ -77,6 +77,10 @@ public partial class MudDynamicDropItem<T> : MudComponentBase
     [Category(CategoryTypes.DropZone.Sorting)]
     public int Index { get; set; } = -1;
 
+    [Parameter]
+    [Category(CategoryTypes.DropZone.Sorting)]
+    public bool HideContent { get; set; }
+
     #region Event handling and callbacks
 
     private async Task DragStarted()

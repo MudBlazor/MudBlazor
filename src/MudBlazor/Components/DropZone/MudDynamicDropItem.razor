@@ -8,7 +8,9 @@
 	 @ondragstart="DragStarted"
 	 @ondragend="DragEnded"
 	 @ondragenter="HandleDragEnter"
-	 @ondragleave="HandleDragLeave"
->
-	@ChildContent
+	 @ondragleave="HandleDragLeave">
+	@if (HideContent == false)
+	{
+		@ChildContent
+	}
 </div>
