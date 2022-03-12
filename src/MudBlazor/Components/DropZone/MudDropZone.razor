@@ -12,45 +12,43 @@
 
 	@ChildContent
 
-	@{
+    @if(OnlyZone != true)
+    {
 		int index = 0;
 		var transactionIndex = Container?.GetTransactionIndex() ?? -1;
 		var items = GetItems();
-	}
 
-	@if (items.Any() == false)
-	{
-		<div class="@PlaceholderClassname"></div>
-	}
+	    @if (items.Any() == false)
+	    {
+		    <div class="@PlaceholderClassname"></div>
+	    }
 
-	@foreach (var item in items)
-	{
-		var indexCopy = index;
+	    @foreach (var item in items)
+	    {
+		    var indexCopy = index;
 
-		<MudDynamicDropItem @key="@(item.GetHashCode())" T="T" DraggingClass="@GetItemDraggingClass()"
-						Item="item"
-						OnDragStarted="DragOperationStarted"
-						OnDragEnded="FinishedDragOperation"
-						ZoneIdentifier="@Identifier"
-						Disabled="@GetItemDisabledStatus(item)"
-						Index="indexCopy"
-						DisabledClass="@(DisabledClass ?? Container?.DisabledClass)">
-			@{
-				var renderer = GetItemTemplate();
-			}
+		    <MudDynamicDropItem @key="@(item.GetHashCode())" T="T" DraggingClass="@GetItemDraggingClass()"
+						    Item="item"
+						    OnDragStarted="DragOperationStarted"
+						    OnDragEnded="FinishedDragOperation"
+						    ZoneIdentifier="@Identifier"
+						    Disabled="@GetItemDisabledStatus(item)"
+						    Index="indexCopy"
+						    DisabledClass="@(DisabledClass ?? Container?.DisabledClass)">
+			    @{
+				    var renderer = GetItemTemplate();
+			    }
 
-			@renderer(item)
+			    @renderer(item)
 
+		    </MudDynamicDropItem>
 
+		    if (transactionIndex == indexCopy)
+		    {
+			    <div class="@PlaceholderClassname"></div>
+		    }
 
-		</MudDynamicDropItem>
-
-		if (transactionIndex == indexCopy)
-		{
-			<div class="@PlaceholderClassname"></div>
-		}
-
-		index++;
-	}
-
+		    index++;
+	    }
+    }
 </div>

@@ -116,6 +116,13 @@ namespace MudBlazor
         [Category(CategoryTypes.DropZone.DraggingClass)]
         public bool ShowPreview { get; set; }
 
+        /// <summary>
+        /// If true, will only act as a dropable zone and not render any items.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.DropZone.Behavior)]
+        public bool OnlyZone { get; set; }
+
         #region view helper
 
         private int GetItemIndex(T item)
