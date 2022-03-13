@@ -15,7 +15,7 @@ namespace MudBlazor
         [Inject] public NavigationManager UriHelper { get; set; }
         [Inject] public IJsApiService JsApiService { get; set; }
 
-        [Parameter] [Category(CategoryTypes.Menu.ClickAction)] public string Link { get; set; }
+        [Parameter] [Category(CategoryTypes.Menu.ClickAction)] public string Href { get; set; }
         [Parameter] [Category(CategoryTypes.Menu.ClickAction)] public string Target { get; set; }
         [Parameter] [Category(CategoryTypes.Menu.ClickAction)] public bool ForceLoad { get; set; }
         [Parameter] [Category(CategoryTypes.Menu.ClickAction)] public ICommand Command { get; set; }
@@ -29,12 +29,12 @@ namespace MudBlazor
                 return;
             MudMenu.CloseMenu();
 
-            if (Link != null)
+            if (Href != null)
             {
                 if (string.IsNullOrWhiteSpace(Target))
-                    UriHelper.NavigateTo(Link, ForceLoad);
+                    UriHelper.NavigateTo(Href, ForceLoad);
                 else
-                    await JsApiService.Open(Link, Target);
+                    await JsApiService.Open(Href, Target);
             }
             else
             {

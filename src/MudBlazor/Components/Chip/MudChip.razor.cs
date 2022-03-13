@@ -160,7 +160,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Chip.ClickAction)]
-        public string Link { get; set; }
+        public string Href { get; set; }
 
         /// <summary>
         /// The target attribute specifies where to open the link, if Link is specified. Possible values: _blank | _self | _parent | _top | <i>framename</i>
@@ -267,13 +267,13 @@ namespace MudBlazor
             {
                 _ = ChipSet.OnChipClicked(this);
             }
-            if (Link != null)
+            if (Href != null)
             {
                 // TODO: use MudElement to render <a> and this code can be removed. we know that it has potential problems on iOS
                 if (string.IsNullOrWhiteSpace(Target))
-                    UriHelper.NavigateTo(Link, ForceLoad);
+                    UriHelper.NavigateTo(Href, ForceLoad);
                 else
-                    await JsApiService.Open(Link, Target);
+                    await JsApiService.Open(Href, Target);
             }
             else
             {

@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using System.Windows.Input;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
@@ -36,6 +37,15 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.Button.ClickAction)]
         public string Href { get; set; }
+        /// <summary>
+        /// If set to a URL, clicking the button will open the referenced document. Use Target to specify where (Obsolete replaced by Href)
+        /// </summary>
+        [Obsolete("Use Href Instead.", true)]
+        public string Link
+        {
+            get => Href;
+            set => Href = value;
+        }
 
         /// <summary>
         /// The target attribute specifies where to open the link, if Link is specified. Possible values: _blank | _self | _parent | _top | <i>framename</i>
