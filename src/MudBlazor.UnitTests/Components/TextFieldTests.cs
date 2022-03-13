@@ -14,6 +14,8 @@ using FluentValidation;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.UnitTests.TestComponents;
+using MudBlazor.UnitTests.TestComponents.Field;
+using MudBlazor.UnitTests.TestComponents.Form;
 using MudBlazor.UnitTests.TestComponents.TextField;
 using NUnit.Framework;
 using static Bunit.ComponentParameterFactory;
@@ -23,6 +25,31 @@ namespace MudBlazor.UnitTests.Components
     [TestFixture]
     public class TextFieldTests : BunitTest
     {
+        /// <summary>
+        /// Text Field id should propagate to label for attribute
+        /// </summary>
+        [Test]
+        public void TestFieldLabelFor()
+        {
+            var comp = Context.RenderComponent<FormIsValidTest3>();
+            var label = comp.FindAll(".mud-input-label");
+            label[0].Attributes.GetNamedItem("for")?.Value.Should().Be("textFieldLabelTest");
+            label[1].Attributes.GetNamedItem("for")?.Value.Should().StartWith("mudinput-");
+        }
+        
+        /// <summary>
+        /// Initial Text for double should be 0, with F1 format it should be 0.0
+        /// </summary>
+        [Test]
+        public async Task TextFieldLabelFor()
+        {
+            var comp = Context.RenderComponent<FieldTest>();
+            var label = comp.FindAll(".mud-input-label");
+            label[0].Attributes.GetNamedItem("for")?.Value.Should().StartWith("mudinput-");
+            label[1].Attributes.GetNamedItem("for")?.Value.Should().StartWith("mudinput-");
+            label[2].Attributes.GetNamedItem("for")?.Value.Should().Be("fieldLabelTest");
+        }
+        
         /// <summary>
         /// Initial Text for double should be 0, with F1 format it should be 0.0
         /// </summary>

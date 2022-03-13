@@ -52,6 +52,51 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// Tests the aria-labels for the control buttons
+        /// </summary>
+        /// <param name="controlButton">The type of the control button. Page.First for the navigate-to-first-page button.</param>
+        /// <param name="expectedButtonAriaLabel">The expected value in the aria-label.</param>
+        [TestCase(Page.First, "First page")]
+        [TestCase(Page.Previous, "Previous page")]
+        [TestCase(Page.Next, "Next page")]
+        [TestCase(Page.Last, "Last page")]
+        [Test]
+        public void PaginationControlButtonAriaLabelTest(Page controlButton, string expectedButtonAriaLabel)
+        {
+            var comp = Context.RenderComponent<PaginationButtonTest>();
+            //Console.WriteLine(comp.Markup);
+
+            //get control button
+            var button = FindControlButton(comp, controlButton);
+
+            //Expected values
+            button.Attributes.GetNamedItem("aria-label")?.Value.Should().Be(expectedButtonAriaLabel);
+        }
+
+        /// <summary>
+        /// Tests the aria-labels for the page buttons. . . note the index's aren't sequential because there are elements of "..."
+        /// </summary>
+        /// <param name="index">The index of the control button. first page button has index 2.</param>
+        /// <param name="label">The expected value in the aria-label.</param>
+        [TestCase(2, "Page 1")]
+        [TestCase(3, "Page 2")]
+        [TestCase(5, "Current page 6")]
+        [TestCase(7, "Page 10")]
+        [TestCase(8, "Page 11")]
+        [Test]
+        public void PaginationPageButtonAriaLabelTest(int index, string label)
+        {
+            var comp = Context.RenderComponent<PaginationButtonTest>();
+            var buttons = comp.FindAll(".mud-pagination-item button");
+            var button = buttons[index];
+            button.Attributes.GetNamedItem("aria-label")?.Value.Should().Be(label);
+            if (index == 5)
+            {
+                button.Attributes.GetNamedItem("aria-current")?.Value.Should().Be("page");
+            }
+        }
+        
+        /// <summary>
         /// Tests the event callbacks of control button click events
         /// </summary>
         /// <param name="controlButton">The type of the control button. Page.First for the navigate-to-first-page button.</param>

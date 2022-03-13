@@ -22,6 +22,7 @@ namespace MudBlazor
         [Parameter] [Category(CategoryTypes.Menu.ClickAction)] public object CommandParameter { get; set; }
 
         [Parameter] public EventCallback<MouseEventArgs> OnClick { get; set; }
+        [Parameter] public EventCallback<TouchEventArgs> OnTouch { get; set; }
 
         protected async Task OnClickHandler(MouseEventArgs ev)
         {
@@ -39,6 +40,29 @@ namespace MudBlazor
             else
             {
                 await OnClick.InvokeAsync(ev);
+                if (Command?.CanExecute(CommandParameter) ?? false)
+                {
+                    Command.Execute(CommandParameter);
+                }
+            }
+        }
+
+        protected internal async Task OnTouchHandler(TouchEventArgs ev)
+        {
+            if (Disabled)
+                return;
+            MudMenu.CloseMenu();
+
+            if (Link != null)
+            {
+                if (string.IsNullOrWhiteSpace(Target))
+                    UriHelper.NavigateTo(Link, ForceLoad);
+                else
+                    await JsApiService.Open(Link, Target);
+            }
+            else
+            {
+                await OnTouch.InvokeAsync(ev);
                 if (Command?.CanExecute(CommandParameter) ?? false)
                 {
                     Command.Execute(CommandParameter);
