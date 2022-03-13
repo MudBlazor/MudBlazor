@@ -4,62 +4,82 @@
 
 @if (IsOnlyHeader)
 {
-    <th scope="col" class="mud-table cell @_classname" style="@_style" colspan="@ColSpan" @attributes="@UserAttributes">
-        @_content
+    <th scope="col" class="mud-table cell @_classname" style="" @attributes="@UserAttributes">
+        @ChildContent
     </th>
 }
-else
+else if (Column != null && !Column.Hidden)
 {
-    <th scope="col" class="@_classname" style="@_style" colspan="@ColSpan" @attributes="@UserAttributes">
-        @if (ColumnType == ColumnType.SelectionCheckBox)
-        {
-            <div class="d-flex">
-                <MudCheckBox T="bool" Checked="@_isSelected" CheckedChanged="@CheckedChangedAsync"></MudCheckBox>
-            </div>        
-        }
-        else
-        {
-            <span class="column-header">
-                @if (sortable)
-                {
-                    <span class="sortable-column-header" @onclick="SortChangedAsync">
-                        @_content
-                    </span>
-                }
-                else
-                { 
-                    @_content
-                }
-                <span class="column-options">
-                    @if (sortable)
+    <th scope="col" class="@_classname" style="@_style" colspan="@Column.HeaderColSpan" @attributes="@UserAttributes">
+        <span class="column-header">
+            @if (sortable)
+            {
+                <span class="sortable-column-header" @onclick="SortChangedAsync">
+                    @if (Column.HeaderTemplate != null)
                     {
-                        if (_initialDirection == SortDirection.None)
-                        {
-                            <MudIconButton Icon="@SortIcon" Class="@sortIconClass" Size="@Size.Small" OnClick="@SortChangedAsync"></MudIconButton>
-                        }
-                        else
-                        {
-                            <MudIconButton Icon="@SortIcon" Class="@sortIconClass" Size="@Size.Small" OnClick="@SortChangedAsync"></MudIconButton>
-                        }
+                        @Column.HeaderTemplate(Column.headerContext)
                     }
-
-                    @if (hasFilter)
+                    else 
                     {
-                        <MudIconButton Icon="@Icons.Material.Filled.FilterAlt" Size="@Size.Small" OnClick="@OpenFilters"></MudIconButton>
-                    }
-
-                    @if (showColumnOptions)
-                    {
-                        <MudMenu Icon="@Icons.Material.Filled.MoreVert" Size="Size.Small" Direction="Direction.Bottom" OffsetY="true" Dense="true">
-                            <MudMenuItem Disabled="@(_initialDirection == SortDirection.None)" OnClick="@RemoveSortAsync">Unsort</MudMenuItem>
-                            @if (filterable)
-                            {
-                                <MudMenuItem OnClick="@AddFilter">Filter</MudMenuItem>
-                            }
-                        </MudMenu>
+                        @computedTitle
                     }
                 </span>
+            }
+            else
+            { 
+                @if (Column.HeaderTemplate != null)
+                {
+                    @Column.HeaderTemplate(Column.headerContext)
+                }
+                else 
+                {
+                    @computedTitle
+                }
+            }
+            <span class="column-options">
+                @if (sortable)
+                {
+                    if (_initialDirection == SortDirection.None)
+                    {
+                        <MudIconButton Icon="@Column.SortIcon" Class="@sortIconClass" Size="@Size.Small" OnClick="@SortChangedAsync"></MudIconButton>
+                    }
+                    else
+                    {
+                        <MudIconButton Icon="@Column.SortIcon" Class="@sortIconClass" Size="@Size.Small" OnClick="@SortChangedAsync"></MudIconButton>
+                    }
+                }
+
+                @if (hasFilter)
+                {
+                    <MudIconButton Icon="@Icons.Material.Filled.FilterAlt" Size="@Size.Small" OnClick="@OpenFilters"></MudIconButton>
+                }
+
+                @if (showColumnOptions)
+                {
+                    <MudMenu Icon="@Icons.Material.Filled.MoreVert" Size="Size.Small" Direction="Direction.Bottom" OffsetY="true" Dense="true">
+                        <MudMenuItem Disabled="@(_initialDirection == SortDirection.None)" OnClick="@RemoveSortAsync">Unsort</MudMenuItem>
+                        @if (filterable)
+                        {
+                            <MudMenuItem OnClick="@AddFilter">Filter</MudMenuItem>
+                        }
+                        @if (hideable)
+                        {
+                            <MudMenuItem OnClick="@HideColumnAsync">Hide</MudMenuItem>
+                        }
+                        @if (groupable)
+                        {
+                            if (Column?.grouping ?? false)
+                            {
+                                <MudMenuItem OnClick="@UngroupColumn">Ungroup</MudMenuItem>
+                            }
+                            else
+                            {
+                                <MudMenuItem OnClick="@GroupColumn">Group</MudMenuItem>
+                            }
+                        }
+                    </MudMenu>
+                }
             </span>
-        }
+        </span>
     </th>
 }

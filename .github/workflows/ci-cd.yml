@@ -2,6 +2,7 @@ name: ci-cd
 
 on:
   push:
+    branches: [ dev ]
   pull_request:
 
 jobs:
@@ -15,6 +16,6 @@ jobs:
       deploy-web-app-name: mudblazor-dev
       check-eslint: 'MudBlazor/TScripts'
       publish-coverage: true
-      publish-directory: './MudBlazor.Docs.Server'
+      publish-directory: './MudBlazor.Docs.WasmHost'
     secrets:
       publish-profile: ${{ secrets.PUBLISH_MUDBLAZOR_DEV }}
