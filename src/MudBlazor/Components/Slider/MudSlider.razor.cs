@@ -1,4 +1,6 @@
-﻿using System.Globalization;
+﻿using System;
+using System.Collections.Generic;
+using System.Globalization;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Extensions;
 using MudBlazor.Utilities;
@@ -9,7 +11,13 @@ namespace MudBlazor
     {
         protected string Classname =>
             new CssBuilder("mud-slider")
+                .AddClass("mud-slider-vertical", Vertical)
                 .AddClass(Class)
+                .Build();
+
+        protected string InputClassName =>
+            new CssBuilder("mud-slider-input")
+                .AddClass($"mud-slider-{Color.ToDescriptionString()}")
                 .Build();
 
         protected string _value;
@@ -95,8 +103,6 @@ namespace MudBlazor
         [Category(CategoryTypes.Slider.Appearance)]
         public Color Color { get; set; } = Color.Primary;
 
-        protected string InputClassName => $"mud-slider-{Color.ToDescriptionString()}";
-
         protected string Text
         {
             get => _value;
@@ -117,12 +123,34 @@ namespace MudBlazor
         [Category(CategoryTypes.Slider.Behavior)]
         public bool Immediate { get; set; } = true;
 
-        //protected static string ToFpS(double value)
-        //{
-        //    var s = ToS(value);
-        //    if (!s.Contains('.'))
-        //        return s + ".0";
-        //    return s;
-        //}
+        /// <summary>
+        /// If true, displays the slider vertical.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Slider.Appearance)]
+        public bool Vertical { get; set; }
+
+        /// <summary>
+        /// If true, displays tick marks on the track.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Slider.Appearance)]
+        public bool TickMarks { get; set; }
+
+        /// <summary>
+        /// Labels for tick marks, will attempt to map the labels to each step in index order.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Slider.Appearance)]
+        public string[] TickMarkLabels { get; set; }
+
+        private int _tickMarkCount = 0;
+        protected override void OnParametersSet()
+        {
+            if (TickMarks)
+            {
+                _tickMarkCount = Convert.ToInt32(double.Parse(Converter.Set(Max)) / double.Parse(Converter.Set(Step))) + 1;
+            }
+        }
     }
 }

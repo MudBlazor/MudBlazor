@@ -10,7 +10,13 @@
         margin-top: 10px;
     }
 
-    & > input {
+    &.mud-slider-vertical {
+        transform: rotate(270deg);
+        height: 100%;
+        width: unset;
+    }
+
+    .mud-slider-input {
         -webkit-appearance: none;
         -moz-appearance: none;
         position: relative;
@@ -35,10 +41,10 @@
             -webkit-appearance: none;
             border: none;
             border-radius: 50%;
+            transition: box-shadow 0.2s;
             height: 2px;
             width: 2px;
             transform: scale(6, 6);
-            transition: box-shadow 0.2s;
         }
 
         @each $color in $mud-palette-colors {
@@ -84,5 +90,39 @@
                 }
             }
         }
+    }
+
+    .mud-slider-container {
+        position: relative;
+        width: 100%;
+    }
+
+    .mud-slider-tickmarks-container {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+    }
+
+    .mud-slider-tickmarks {
+        display: flex;
+        justify-content: space-between;
+        flex-grow: 1;
+    }
+
+    .mud-slider-track-tick {
+        width: 2px;
+        height: 2px;
+        background-color: var(--mud-palette-text-secondary);
+    }
+
+    .mud-slider-track-tick-label {
+        position: absolute;
+        top: 0;
+        left: 0;
+        transform: translateX(-50%) translateY(50%);
     }
 }
