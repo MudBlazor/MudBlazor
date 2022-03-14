@@ -330,14 +330,14 @@ namespace MudBlazor
                         {
                             newIndex -= 1;
 
-                            foreach (var item in _indicies.Where(x => x.Value > oldIndex).ToArray())
+                            foreach (var item in _indicies.Where(x => x.Value >= oldIndex + 1 && x.Value <= newIndex).ToArray())
                             {
                                 _indicies[item.Key] -= 1;
                             }
                         }
                         else
                         {
-                            foreach (var item in _indicies.Where(x => x.Value < oldIndex).ToArray())
+                            foreach (var item in _indicies.Where(x => x.Value >= newIndex && x.Value < oldIndex).ToArray())
                             {
                                 _indicies[item.Key] += 1;
                             }

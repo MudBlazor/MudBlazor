@@ -19,10 +19,13 @@
 </MudDropContainer>
 
 @code {
-    private void ItemUpdated(MudItemDropInfo<DropItem> dropItem)
-    {
-        dropItem.Item.Selector = dropItem.DropzoneIdentifier;
-    }
+	private void ItemUpdated(MudItemDropInfo<DropItem> dropItem)
+	{
+		dropItem.Item.Selector = dropItem.DropzoneIdentifier;
+		IndexHistory.Add(dropItem.Index);
+	}
+
+	public List<int> IndexHistory { get; set; } = new();
 
     private List<DropItem> _items = new()
     {

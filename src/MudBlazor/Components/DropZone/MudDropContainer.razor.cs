@@ -102,6 +102,7 @@ namespace MudBlazor
             if (CurrentZone == idenfifer) { return false; }
 
             CurrentZone = idenfifer;
+            Index = -1;
             return true;
         }
     }
@@ -300,7 +301,16 @@ namespace MudBlazor
         public async Task CommitTransaction(string dropzoneIdentifier, bool reorderIsAllowed)
         {
             await _transaction.Commit();
-            await ItemDropped.InvokeAsync(new MudItemDropInfo<T>(_transaction.Item, dropzoneIdentifier, reorderIsAllowed == false ? -1 : _transaction.Index));
+            var index = -1;
+            if (reorderIsAllowed == true)
+            {
+                index = GetTransactionIndex() + 1;
+                if (_transaction.SourceZoneIdentifier == _transaction.CurrentZone && IsItemMovedDownwards() == true)
+                {
+                    index -= 1;
+                }
+            }
+            await ItemDropped.InvokeAsync(new MudItemDropInfo<T>(_transaction.Item, dropzoneIdentifier, index));
             TransactionEnded?.Invoke(this, new MudDragAndDropTransactionFinishedEventArgs<T>(dropzoneIdentifier, true, _transaction));
             _transaction = null;
         }
