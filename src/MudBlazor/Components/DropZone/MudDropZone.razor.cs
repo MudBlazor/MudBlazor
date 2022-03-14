@@ -222,6 +222,8 @@ namespace MudBlazor
             return (item, result);
         }
 
+        private bool IsOrign(int index) => Container.IsOrign(index, Identifier);
+
         #endregion
 
         #region container event handling
@@ -287,7 +289,6 @@ namespace MudBlazor
             Container.UpdateTransactionZone(Identifier);
         }
 
-
         private void HandleDragLeave()
         {
             _dragCounter--;
@@ -315,42 +316,56 @@ namespace MudBlazor
                 return;
             }
 
-            if (Container.HasTransactionIndexChanged() == true)
+            if (AllowReorder == true)
             {
-                var newIndex = Container.GetTransactionIndex() + 1;
-
-                if (Container.IsTransactionOriginatedFromOutside(this.Identifier) == false)
+                if (Container.HasTransactionIndexChanged() == true)
                 {
-                    if (Container.IsItemMovedDownwards() == true)
-                    {
-                        newIndex += -1;
-                    }
+                    var newIndex = Container.GetTransactionIndex() + 1;
 
-                    if (_indicies.Any(x => x.Value == newIndex) == true)
+                    if (Container.IsTransactionOriginatedFromInside(this.Identifier) == true)
                     {
-                        var oldItem = _indicies.First(x => x.Value == newIndex);
-                        _indicies[oldItem.Key] = _indicies[context];
-                    }
+                        var oldIndex = _indicies[context];
 
-                    _indicies[context] = newIndex;
-                }
-                else
-                {
-                    foreach (var item in _indicies.Where(x => x.Value >= newIndex).ToArray())
+                        if (Container.IsItemMovedDownwards() == true)
+                        {
+                            newIndex -= 1;
+
+                            foreach (var item in _indicies.Where(x => x.Value > oldIndex).ToArray())
+                            {
+                                _indicies[item.Key] -= 1;
+                            }
+                        }
+                        else
+                        {
+                            foreach (var item in _indicies.Where(x => x.Value < oldIndex).ToArray())
+                            {
+                                _indicies[item.Key] += 1;
+                            }
+                        }
+
+                        _indicies[context] = newIndex;
+                    }
+                    else
                     {
-                        _indicies[item.Key] = item.Value + 1;
-                    }
+                        foreach (var item in _indicies.Where(x => x.Value >= newIndex).ToArray())
+                        {
+                            _indicies[item.Key] = item.Value + 1;
+                        }
 
-                    _indicies.Add(context, newIndex);
+                        _indicies.Add(context, newIndex);
+                    }
                 }
             }
+            else
+            {
+                _indicies.Clear();
+            }
 
-            await Container.CommitTransaction(Identifier);
+            await Container.CommitTransaction(Identifier, AllowReorder);
         }
 
         private void FinishedDragOperation() => _dragInProgress = false;
         private void DragOperationStarted() => _dragInProgress = true;
-
 
         #endregion
 
@@ -369,7 +384,6 @@ namespace MudBlazor
 
             base.OnParametersSet();
         }
-
 
         private void Container_TransactionIndexChanged(object sender, MudDragAndDropIndexChangedEventArgs e)
         {

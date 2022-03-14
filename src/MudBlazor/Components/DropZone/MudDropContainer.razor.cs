@@ -263,13 +263,13 @@ namespace MudBlazor
         public bool TransactionInProgress() => _transaction != null;
         public string GetTransactionOrignZoneIdentiifer() => _transaction?.SourceZoneIdentifier ?? string.Empty;
         public string GetTransactionCurrentZoneIdentiifer() => _transaction?.CurrentZone ?? string.Empty;
-        public bool IsTransactionOriginatedFromOutside(string identifier) => _transaction.SourceZoneIdentifier != identifier;
+        public bool IsTransactionOriginatedFromInside(string identifier) => _transaction.SourceZoneIdentifier == identifier;
 
         public int GetTransactionIndex() => _transaction?.Index ?? -1;
         public bool IsItemMovedDownwards() => _transaction.Index > _transaction.SourceIndex;
         public bool HasTransactionIndexChanged()
         {
-            if(_transaction == null)
+            if (_transaction == null)
             {
                 return false;
             }
@@ -282,10 +282,25 @@ namespace MudBlazor
             return _transaction.Index != _transaction.SourceIndex;
         }
 
-        public async Task CommitTransaction(string dropzoneIdentifier)
+        public bool IsOrign(int index, string identifier)
+        {
+            if (_transaction == null)
+            {
+                return false;
+            }
+
+            if (identifier != _transaction.SourceZoneIdentifier)
+            {
+                return false;
+            }
+
+            return _transaction.SourceIndex == index || _transaction.SourceIndex - 1 == index;
+        }
+
+        public async Task CommitTransaction(string dropzoneIdentifier, bool reorderIsAllowed)
         {
             await _transaction.Commit();
-            await ItemDropped.InvokeAsync(new MudItemDropInfo<T>(_transaction.Item, dropzoneIdentifier, _transaction.Index));
+            await ItemDropped.InvokeAsync(new MudItemDropInfo<T>(_transaction.Item, dropzoneIdentifier, reorderIsAllowed == false ? -1 : _transaction.Index));
             TransactionEnded?.Invoke(this, new MudDragAndDropTransactionFinishedEventArgs<T>(dropzoneIdentifier, true, _transaction));
             _transaction = null;
         }
