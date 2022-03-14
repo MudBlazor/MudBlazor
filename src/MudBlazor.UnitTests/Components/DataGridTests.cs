@@ -1,4 +1,4 @@
-﻿#pragma warning disable CS1998 // async without await
+#pragma warning disable CS1998 // async without await
 #pragma warning disable BL0005 // Set parameter outside component
 
 using System;
@@ -857,7 +857,6 @@ namespace MudBlazor.UnitTests.Components
         public async Task FilterDefinitionDateTimeTest()
         {
             var utcnow = DateTime.UtcNow;
-            var now = DateTime.Now;
 
             #region FilterOperator.DateTime.Is
 
@@ -870,7 +869,6 @@ namespace MudBlazor.UnitTests.Components
             };
             var func = filterDefinition.GenerateFilterFunction();
             Assert.IsTrue(func.Invoke(new("Sam", 45, utcnow)));
-            Assert.IsFalse(func.Invoke(new("Joe", 45, now)));
             Assert.IsFalse(func.Invoke(new("Joe", 45, null)));
 
             // null value
@@ -883,7 +881,6 @@ namespace MudBlazor.UnitTests.Components
             };
             func = filterDefinition.GenerateFilterFunction();
             Assert.IsTrue(func.Invoke(new("Sam", 45, utcnow)));
-            Assert.IsTrue(func.Invoke(new("Joe", 45, utcnow)));
             Assert.IsTrue(func.Invoke(new("Joe", 45, null)));
 
             #endregion
@@ -899,7 +896,6 @@ namespace MudBlazor.UnitTests.Components
             };
             func = filterDefinition.GenerateFilterFunction();
             Assert.IsFalse(func.Invoke(new("Sam", 45, utcnow)));
-            Assert.IsTrue(func.Invoke(new("Joe", 45, now)));
             Assert.IsTrue(func.Invoke(new("Joe", 45, null)));
 
             // null value
@@ -912,7 +908,6 @@ namespace MudBlazor.UnitTests.Components
             };
             func = filterDefinition.GenerateFilterFunction();
             Assert.IsTrue(func.Invoke(new("Sam", 45, utcnow)));
-            Assert.IsTrue(func.Invoke(new("Joe", 45, utcnow)));
             Assert.IsTrue(func.Invoke(new("Joe", 45, null)));
 
             #endregion
@@ -928,7 +923,6 @@ namespace MudBlazor.UnitTests.Components
             };
             func = filterDefinition.GenerateFilterFunction();
             Assert.IsFalse(func.Invoke(new("Sam", 45, utcnow)));
-            Assert.IsFalse(func.Invoke(new("Joe", 45, now)));
             Assert.IsFalse(func.Invoke(new("Joe", 45, null)));
 
             // null value
@@ -941,7 +935,6 @@ namespace MudBlazor.UnitTests.Components
             };
             func = filterDefinition.GenerateFilterFunction();
             Assert.IsTrue(func.Invoke(new("Sam", 45, utcnow)));
-            Assert.IsTrue(func.Invoke(new("Joe", 45, utcnow)));
             Assert.IsTrue(func.Invoke(new("Joe", 45, null)));
 
             #endregion
@@ -957,7 +950,6 @@ namespace MudBlazor.UnitTests.Components
             };
             func = filterDefinition.GenerateFilterFunction();
             Assert.IsTrue(func.Invoke(new("Sam", 45, utcnow)));
-            Assert.IsFalse(func.Invoke(new("Joe", 45, now)));
             Assert.IsFalse(func.Invoke(new("Joe", 45, null)));
 
             // null value
@@ -970,7 +962,6 @@ namespace MudBlazor.UnitTests.Components
             };
             func = filterDefinition.GenerateFilterFunction();
             Assert.IsTrue(func.Invoke(new("Sam", 45, utcnow)));
-            Assert.IsTrue(func.Invoke(new("Joe", 45, utcnow)));
             Assert.IsTrue(func.Invoke(new("Joe", 45, null)));
 
             #endregion
@@ -986,7 +977,6 @@ namespace MudBlazor.UnitTests.Components
             };
             func = filterDefinition.GenerateFilterFunction();
             Assert.IsFalse(func.Invoke(new("Sam", 45, utcnow)));
-            Assert.IsTrue(func.Invoke(new("Joe", 45, now)));
             Assert.IsFalse(func.Invoke(new("Joe", 45, null)));
 
             // null value
@@ -999,7 +989,6 @@ namespace MudBlazor.UnitTests.Components
             };
             func = filterDefinition.GenerateFilterFunction();
             Assert.IsTrue(func.Invoke(new("Sam", 45, utcnow)));
-            Assert.IsTrue(func.Invoke(new("Joe", 45, utcnow)));
             Assert.IsTrue(func.Invoke(new("Joe", 45, null)));
 
             #endregion
@@ -1015,7 +1004,6 @@ namespace MudBlazor.UnitTests.Components
             };
             func = filterDefinition.GenerateFilterFunction();
             Assert.IsTrue(func.Invoke(new("Sam", 45, utcnow)));
-            Assert.IsTrue(func.Invoke(new("Joe", 45, now)));
             Assert.IsFalse(func.Invoke(new("Joe", 45, null)));
 
             // null value
@@ -1028,7 +1016,6 @@ namespace MudBlazor.UnitTests.Components
             };
             func = filterDefinition.GenerateFilterFunction();
             Assert.IsTrue(func.Invoke(new("Sam", 45, utcnow)));
-            Assert.IsTrue(func.Invoke(new("Joe", 45, utcnow)));
             Assert.IsTrue(func.Invoke(new("Joe", 45, null)));
 
             #endregion
@@ -1044,7 +1031,6 @@ namespace MudBlazor.UnitTests.Components
             };
             func = filterDefinition.GenerateFilterFunction();
             Assert.IsFalse(func.Invoke(new("Sam", 45, utcnow)));
-            Assert.IsFalse(func.Invoke(new("Joe", 45, now)));
             Assert.IsTrue(func.Invoke(new("Joe", 45, null)));
 
             // null value
@@ -1057,7 +1043,6 @@ namespace MudBlazor.UnitTests.Components
             };
             func = filterDefinition.GenerateFilterFunction();
             Assert.IsFalse(func.Invoke(new("Sam", 45, utcnow)));
-            Assert.IsFalse(func.Invoke(new("Joe", 45, utcnow)));
             Assert.IsTrue(func.Invoke(new("Joe", 45, null)));
 
             #endregion
@@ -1073,7 +1058,6 @@ namespace MudBlazor.UnitTests.Components
             };
             func = filterDefinition.GenerateFilterFunction();
             Assert.IsTrue(func.Invoke(new("Sam", 45, utcnow)));
-            Assert.IsTrue(func.Invoke(new("Joe", 45, now)));
             Assert.IsFalse(func.Invoke(new("Joe", 45, null)));
 
             // null value
@@ -1086,7 +1070,6 @@ namespace MudBlazor.UnitTests.Components
             };
             func = filterDefinition.GenerateFilterFunction();
             Assert.IsTrue(func.Invoke(new("Sam", 45, utcnow)));
-            Assert.IsTrue(func.Invoke(new("Joe", 45, utcnow)));
             Assert.IsFalse(func.Invoke(new("Joe", 45, null)));
 
             #endregion
@@ -1101,7 +1084,6 @@ namespace MudBlazor.UnitTests.Components
             };
             func = filterDefinition.GenerateFilterFunction();
             Assert.IsTrue(func.Invoke(new("Sam", 45, utcnow)));
-            Assert.IsTrue(func.Invoke(new("Joe", 45, now)));
             Assert.IsTrue(func.Invoke(new("Joe", 45, null)));
         }
 
@@ -1279,7 +1261,7 @@ namespace MudBlazor.UnitTests.Components
             //Console.WriteLine(dataGrid.Markup);
 
             dataGrid.FindAll("tfoot td").First().TextContent.Trim().Should().Be("Names: Sam, Alicia, Ira, John");
-            dataGrid.FindAll("tfoot td").Last().TextContent.Trim().Should().Be("Highest: $132,000 | 2 Over $100,000");
+            dataGrid.FindAll("tfoot td").Last().TextContent.Trim().Should().Be($"Highest: {132000:C0} | 2 Over {100000:C0}");
         }
 
         [Test]
