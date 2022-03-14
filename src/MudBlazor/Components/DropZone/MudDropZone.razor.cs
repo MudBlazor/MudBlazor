@@ -113,7 +113,7 @@ namespace MudBlazor
         public string ItemDraggingClass { get; set; }
 
         [Parameter]
-        [Category(CategoryTypes.DropZone.DraggingClass)]
+        [Category(CategoryTypes.DropZone.Behavior)]
         public bool AllowReorder { get; set; }
 
         /// <summary>
@@ -192,7 +192,7 @@ namespace MudBlazor
                 .Build();
 
         protected string PlaceholderClassname =>
-            new CssBuilder("border-2 mud-border-primary border-dashed mud-chip-text mud-chip-color-primary pa-4")
+            new CssBuilder("border-2 mud-border-primary border-dashed mud-chip-text mud-chip-color-primary pa-4 mud-dropitem-placeholder")
                 .AddClass("d-none", AllowReorder == false || (Container?.TransactionInProgress() == false || Container.GetTransactionCurrentZoneIdentiifer() != Identifier))
                 .Build();
 
@@ -315,26 +315,34 @@ namespace MudBlazor
                 return;
             }
 
-            var newIndex = Container.GetTransactionIndex() + 1;
-            if (Container.IsTransactionOriginatedFromOutside(this.Identifier) == false)
+            if (Container.HasTransactionIndexChanged() == true)
             {
-                if (_indicies.Any(x => x.Value == newIndex) == true)
+                var newIndex = Container.GetTransactionIndex() + 1;
+
+                if (Container.IsTransactionOriginatedFromOutside(this.Identifier) == false)
                 {
-                    var oldItem = _indicies.First(x => x.Value == newIndex);
-                    _indicies[oldItem.Key] = _indicies[context];
-                }
+                    if (Container.IsItemMovedDownwards() == true)
+                    {
+                        newIndex += -1;
+                    }
 
-                _indicies[context] = newIndex;
-            }
-            else
-            {
-                foreach (var item in _indicies.Where(x => x.Value >= newIndex).ToArray())
+                    if (_indicies.Any(x => x.Value == newIndex) == true)
+                    {
+                        var oldItem = _indicies.First(x => x.Value == newIndex);
+                        _indicies[oldItem.Key] = _indicies[context];
+                    }
+
+                    _indicies[context] = newIndex;
+                }
+                else
                 {
-                    _indicies[item.Key] = item.Value + 1;
+                    foreach (var item in _indicies.Where(x => x.Value >= newIndex).ToArray())
+                    {
+                        _indicies[item.Key] = item.Value + 1;
+                    }
+
+                    _indicies.Add(context, newIndex);
                 }
-
-                _indicies.Add(context, newIndex);
-
             }
 
             await Container.CommitTransaction(Identifier);

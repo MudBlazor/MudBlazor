@@ -266,6 +266,21 @@ namespace MudBlazor
         public bool IsTransactionOriginatedFromOutside(string identifier) => _transaction.SourceZoneIdentifier != identifier;
 
         public int GetTransactionIndex() => _transaction?.Index ?? -1;
+        public bool IsItemMovedDownwards() => _transaction.Index > _transaction.SourceIndex;
+        public bool HasTransactionIndexChanged()
+        {
+            if(_transaction == null)
+            {
+                return false;
+            }
+
+            if (_transaction.CurrentZone != _transaction.SourceZoneIdentifier)
+            {
+                return true;
+            }
+
+            return _transaction.Index != _transaction.SourceIndex;
+        }
 
         public async Task CommitTransaction(string dropzoneIdentifier)
         {
