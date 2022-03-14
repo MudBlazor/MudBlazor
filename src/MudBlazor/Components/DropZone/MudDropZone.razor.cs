@@ -266,7 +266,11 @@ namespace MudBlazor
             StateHasChanged();
         }
 
-        private void Container_RefreshRequested(object sender, EventArgs e) => InvokeAsync(StateHasChanged);
+        private void Container_RefreshRequested(object sender, EventArgs e)
+        {
+            _indicies.Clear();
+            InvokeAsync(StateHasChanged);
+        }
 
         #endregion
 
