@@ -92,5 +92,9 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public bool Disabled { get; set; }
 
+        /// <summary>
+        /// If string has value the label "for" attribute will be added.
+        /// </summary>
+        [Parameter] public string ForId { get; set; } = string.Empty;
     }
 }

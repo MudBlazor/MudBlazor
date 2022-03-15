@@ -97,7 +97,7 @@ namespace MudBlazor.UnitTests.Components
                     x.Add(y => y.Vertical, isVertical);
                 });
 
-            Console.WriteLine(comp.Markup);
+            //Console.WriteLine(comp.Markup);
 
             var container = comp.Find(".my-custom-class");
             container.GetAttribute("role").Should().Be("progressbar");
@@ -128,7 +128,7 @@ namespace MudBlazor.UnitTests.Components
                 x.Add(y => y.Indeterminate, true);
             });
 
-            Console.WriteLine(comp.Markup);
+            //Console.WriteLine(comp.Markup);
 
             var container = comp.Find(".my-custom-class");
             container.GetAttribute("role").Should().Be("progressbar");
@@ -162,7 +162,7 @@ namespace MudBlazor.UnitTests.Components
                 x.Add(y => y.Vertical, isVertical);
             });
 
-            Console.WriteLine(comp.Markup);
+            //Console.WriteLine(comp.Markup);
 
             var container = comp.Find(".my-custom-class");
             container.GetAttribute("role").Should().Be("progressbar");
@@ -205,19 +205,13 @@ namespace MudBlazor.UnitTests.Components
                 x.Add(y => y.ChildContent, "<p>my content</p>");
             });
 
-            Console.WriteLine(comp.Markup);
+            //Console.WriteLine(comp.Markup);
 
             var container = comp.Find(".my-custom-class");
             container.GetAttribute("role").Should().Be("progressbar");
 
             container.ChildElementCount.Should().Be(2);
-            var contentContainer = container.Children[0];
-
-            contentContainer.ClassList.Should().Contain("mud-progress-linear-content");
-            contentContainer.ChildElementCount.Should().Be(1);
-            contentContainer.TextContent.Should().Be("my content");
-
-            var barContainer = container.Children[1];
+            var barContainer = container.Children[0];
 
             barContainer.ClassList.Should().Contain("mud-progress-linear-bars");
             barContainer.ChildElementCount.Should().Be(2);
@@ -227,6 +221,12 @@ namespace MudBlazor.UnitTests.Components
 
             var secondBarElement = barContainer.Children[1];
             firstBarElement.ClassList.Should().Contain("mud-progress-linear-bar");
+
+            var contentContainer = container.Children[1];
+
+            contentContainer.ClassList.Should().Contain("mud-progress-linear-content");
+            contentContainer.ChildElementCount.Should().Be(1);
+            contentContainer.TextContent.Should().Be("my content");
         }
 
         [Test]
@@ -380,7 +380,7 @@ namespace MudBlazor.UnitTests.Components
                 x.Add(y => y.Class, "my-custom-class");
             });
 
-            Console.WriteLine(comp.Markup);
+            //Console.WriteLine(comp.Markup);
 
             var container = comp.Find(".my-custom-class");
             container.GetAttribute("role").Should().Be("progressbar");

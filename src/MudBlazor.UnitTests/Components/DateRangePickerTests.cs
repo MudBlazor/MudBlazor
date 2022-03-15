@@ -18,6 +18,22 @@ namespace MudBlazor.UnitTests.Components
     public class DateRangePickerTests : BunitTest
     {
         [Test]
+        public void DateRangePickerOpenButtonAriaLabel()
+        {
+            var comp = Context.RenderComponent<MudDateRangePicker>();
+            var openButton = comp.Find(".mud-input-adornment button");
+            openButton.Attributes.GetNamedItem("aria-label")?.Value.Should().Be("Open Date Range Picker");
+        }
+        
+        [Test]
+        public void DateRangePickerLabelFor()
+        {
+            var comp = Context.RenderComponent<DateRangePickerValidationTest>();
+            var label = comp.Find(".mud-input-label");
+            label.Attributes.GetNamedItem("for")?.Value.Should().Be("dateRangeLabelTest");
+        }
+        
+        [Test]
         [Ignore("Unignore for performance measurements, not needed for code coverage")]
         public void RenderDateRangePicker_10000_Times_CheckPerformance()
         {
@@ -28,7 +44,7 @@ namespace MudBlazor.UnitTests.Components
             for (var i = 0; i < 10000; i++)
                 Context.RenderComponent<MudDateRangePicker>();
             watch.Stop();
-            Console.WriteLine("Elapsed: " + watch.Elapsed);
+            //Console.WriteLine("Elapsed: " + watch.Elapsed);
             watch.Elapsed.Should().BeLessThan(TimeSpan.FromSeconds(10));
         }
 
@@ -47,7 +63,7 @@ namespace MudBlazor.UnitTests.Components
                 await comp.InvokeAsync(() => datepicker.Close());
             }
             watch.Stop();
-            Console.WriteLine("Elapsed: " + watch.Elapsed);
+            //Console.WriteLine("Elapsed: " + watch.Elapsed);
             watch.Elapsed.Should().BeLessThan(TimeSpan.FromSeconds(10));
         }
 
@@ -320,11 +336,11 @@ namespace MudBlazor.UnitTests.Components
         public async Task Open_Programmatically_CheckOpen_Close_Programmatically_CheckClosed()
         {
             var comp = Context.RenderComponent<SimpleMudMudDateRangePickerTest>();
-            Console.WriteLine(comp.Markup + "\n");
+            //Console.WriteLine(comp.Markup + "\n");
             comp.FindAll("div.mud-picker-content").Count.Should().Be(0);
             // open programmatically
             await comp.Instance.Open();
-            Console.WriteLine(comp.Markup);
+            //Console.WriteLine(comp.Markup);
             comp.FindAll("div.mud-picker-content").Count.Should().Be(1);
             // closing programmatically
             await comp.Instance.Close();

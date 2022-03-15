@@ -10,7 +10,7 @@ namespace MudBlazor
     public partial class MudInput<T> : MudBaseInput<T>
     {
         protected string Classname => MudInputCssHelper.GetClassname(this,
-            () => !string.IsNullOrEmpty(Text) || Adornment == Adornment.Start || !string.IsNullOrWhiteSpace(Placeholder));
+            () => HasNativeHtmlPlaceholder() || !string.IsNullOrEmpty(Text) || Adornment == Adornment.Start || !string.IsNullOrWhiteSpace(Placeholder));
 
         protected string InputClassname => MudInputCssHelper.GetInputClassname(this);
 
@@ -68,7 +68,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public RenderFragment ChildContent { get; set; }
 
-        private ElementReference _elementReference;
+        public ElementReference ElementReference { get; private set; }
         private ElementReference _elementReference1;
 
         public override async ValueTask FocusAsync()
@@ -78,7 +78,7 @@ namespace MudBlazor
                 if (InputType == InputType.Hidden && ChildContent != null)
                     await _elementReference1.FocusAsync();
                 else
-                    await _elementReference.FocusAsync();
+                    await ElementReference.FocusAsync();
             }
             catch (Exception e)
             {
@@ -88,12 +88,12 @@ namespace MudBlazor
 
         public override ValueTask SelectAsync()
         {
-            return _elementReference.MudSelectAsync();
+            return ElementReference.MudSelectAsync();
         }
 
         public override ValueTask SelectRangeAsync(int pos1, int pos2)
         {
-            return _elementReference.MudSelectRangeAsync(pos1, pos2);
+            return ElementReference.MudSelectRangeAsync(pos1, pos2);
         }
 
         /// <summary>
@@ -204,6 +204,14 @@ namespace MudBlazor
         {
             _internalText = text;
             return SetTextAsync(text);
+        }
+
+
+        // Certain HTML5 inputs (dates and color) have a native placeholder
+        private bool HasNativeHtmlPlaceholder()
+        {
+            return GetInputType() is InputType.Color or InputType.Date or InputType.DateTimeLocal or InputType.Month
+                or InputType.Time or InputType.Week;
         }
     }
 

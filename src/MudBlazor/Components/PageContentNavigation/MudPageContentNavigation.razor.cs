@@ -38,6 +38,16 @@ namespace MudBlazor
         [Parameter] public string SectionClassSelector { get; set; } = string.Empty;
 
         /// <summary>
+        /// If there are mutliple levels, this can specified to make a mapping between a level class likw "second-level" and the level in the hierarchy
+        /// </summary>
+        [Parameter] public IDictionary<string, int> HierarchyMapper { get; set; } = new Dictionary<string, int>();
+
+        /// <summary>
+        /// If there are multiple levels, this property controls they visibility of them.
+        /// </summary>
+        [Parameter] public ContentNavigationExpandBehaviour ExpandBehaviour { get; set; } = ContentNavigationExpandBehaviour.Always;
+
+        /// <summary>
         /// If this option is true the first added section will become active when there is no other indication of an active session. Default value is false  
         /// </summary>
         [Parameter] public bool ActivateFirstSectionAsDefault { get; set; } = false;
@@ -70,7 +80,11 @@ namespace MudBlazor
             StateHasChanged();
         }
 
-        private string GetNavLinkClass(bool active) => new CssBuilder("page-content-navigation-navlink").AddClass("active", active).Build();
+        private string GetNavLinkClass(MudPageContentSection section) => new CssBuilder("page-content-navigation-navlink")
+            .AddClass("active", section.IsActive)
+            .AddClass($"navigation-level-{section.Level}")
+            .Build();
+        
         private string GetPanelClass() => new CssBuilder("page-content-navigation").AddClass(Class).Build();
 
         /// <summary>
@@ -88,6 +102,8 @@ namespace MudBlazor
         /// <param name="forceUpdate">If true, StateHasChanged is called, forcing a rerender of the component</param>
         public void AddSection(string sectionName, string sectionId, bool forceUpdate) => AddSection(new(sectionName, sectionId), forceUpdate);
 
+        private Dictionary<MudPageContentSection, MudPageContentSection> _parentMapper = new();
+
         /// <summary>
         /// Add a section to the content navigation
         /// </summary>
@@ -96,6 +112,14 @@ namespace MudBlazor
         public void AddSection(MudPageContentSection section, bool forceUpdate)
         {
             _sections.Add(section);
+
+            int diffRootLevel = 1_000_000;
+            int counter = 0;
+            foreach (var item in _sections.Where(x => x.Parent == null))
+            {
+                item.SetLevelStructure(counter, diffRootLevel);
+                counter += diffRootLevel;
+            }
 
             if (section.Id == ScrollSpy.CenteredSection)
             {

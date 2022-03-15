@@ -1,10 +1,11 @@
-﻿@page "/components/Icons"
+﻿@page "/components/icons"
 @using System.Reflection
 
 <DocsPage>
     <DocsPageHeader Title="Icons" SubTitle="Guidance and suggestions for using icons with MudBlazor.">
     </DocsPageHeader>
     <DocsPageContent>
+
         <DocsPageSection>
             <SectionHeader Title="Icons">
                 <Description>
@@ -17,48 +18,43 @@
             <SectionHeader Title="Usage">
                 <Description>The MudIcon component shows the specified icon with the chosen style. You can use the <CodeInline>Title</CodeInline> attribute to improve accessibility with screen readers and show a tooltip on mouse over.</Description>
             </SectionHeader>
-            <SectionContent Outlined="true">
+            <SectionContent Code="IconsUsageExample">
                 <IconsUsageExample />
             </SectionContent>
-            <SectionSource Code="IconsUsageExample" GitHubFolderName="Icons" />
         </DocsPageSection>
 
         <DocsPageSection>
             <SectionHeader Title="Color">
             </SectionHeader>
-            <SectionContent Outlined="true">
+            <SectionContent Code="IconsColorExample">
                 <IconsColorExample />
             </SectionContent>
-            <SectionSource Code="IconsColorExample" GitHubFolderName="Icons" />
         </DocsPageSection>
 
         <DocsPageSection>
             <SectionHeader Title="Size">
             </SectionHeader>
-            <SectionContent Outlined="true">
+            <SectionContent Code="IconsSizeExample">
                 <IconsSizeExample />
             </SectionContent>
-            <SectionSource Code="IconsSizeExample" GitHubFolderName="Icons" />
         </DocsPageSection>
 
         <DocsPageSection>
             <SectionHeader Title="Material Variants">
                 <Description>Material icons that comes loaded with MudBlazor by default is available in Filled, Outlined, Rounded, Sharp and TwoToned.</Description>
             </SectionHeader>
-            <SectionContent Outlined="true">
+            <SectionContent Code="IconsMaterialVariantsExample">
                 <IconsMaterialVariantsExample />
             </SectionContent>
-            <SectionSource Code="IconsMaterialVariantsExample" GitHubFolderName="Icons" />
         </DocsPageSection>
 
         <DocsPageSection>
             <SectionHeader Title="Font Icons">
                 <Description>The MudIcon component will display any icon font that supports ligatures.<br />For example, you can use <MudLink Color="Color.Secondary" Href="https://fontawesome.com/">Font Awesome</MudLink>.</Description>
             </SectionHeader>
-            <SectionContent Outlined="true">
+            <SectionContent Code="IconsFontAwesomeExample">
                 <IconsFontAwesomeExample />
             </SectionContent>
-            <SectionSource Code="IconsFontAwesomeExample" GitHubFolderName="Icons" />
         </DocsPageSection>
 
         <DocsPageSection>
@@ -66,10 +62,10 @@
                 <Description>The icon parameter of the other components are determined as strings. 
                 So changing the icon is as easy as assigning a new string.</Description>
             </SectionHeader>
-            <SectionContent Outlined="true">
+            <SectionContent Code="ChangeIconByProgrammaticallyExample">
                 <ChangeIconByProgrammaticallyExample />
             </SectionContent>
-            <SectionSource Code="ChangeIconByProgrammaticallyExample" GitHubFolderName="Icons" ShowCode="false" />
         </DocsPageSection>
+
     </DocsPageContent>
 </DocsPage>

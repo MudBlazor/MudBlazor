@@ -17,7 +17,9 @@ namespace MudBlazor
             Format = CultureInfo.CurrentCulture.DateTimeFormat.ShortDatePattern,
             Culture = CultureInfo.CurrentCulture
         })
-        { }
+        {
+            AdornmentAriaLabel = "Open Date Picker";
+        }
 
         [Inject] protected IScrollManager ScrollManager { get; set; }
 
@@ -214,6 +216,15 @@ namespace MudBlazor
         protected override void OnPickerOpened()
         {
             base.OnPickerOpened();
+            if (Editable == true && Text != null)
+            {
+                DateTime? a = Converter.Get(Text);
+                if (a.HasValue)
+                {
+                    a = new DateTime(a.Value.Year, a.Value.Month, 1);
+                    PickerMonth = a;
+                }
+            }
             if (OpenTo == OpenTo.Date && FixDay.HasValue)
             {
                 OpenTo = OpenTo.Month;

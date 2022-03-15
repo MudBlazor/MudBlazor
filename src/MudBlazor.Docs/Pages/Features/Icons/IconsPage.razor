@@ -2,9 +2,10 @@
 @using System.Reflection
 @using Microsoft.AspNetCore.Components.Web.Virtualization
 
-<DocsPage MaxWidth="MaxWidth.Large">
+<DocsPage>
     <DocsPageHeader Title="MudBlazor Icons" DisableApiHeader="true" SubTitle="Over 1800 Material Design icons and a few custom ones." />
     <DocsPageContent>
+
         <DocsPageSection>
             <SectionHeader Title="Icons" />
             <MudGrid Class="my-4">
@@ -59,10 +60,11 @@
                 </Virtualize>
             </div>
         </DocsPageSection>
+
     </DocsPageContent>
 </DocsPage>
 
-<MudDrawer @bind-Open="@iconDrawerOpen" ClipMode="DrawerClipMode.Always" Anchor="Anchor.End" DisableOverlay="true" Elevation="25" Width="260px" Class="mud-icondrawer" Variant="@DrawerVariant.Temporary">
+<MudDrawer @bind-Open="@iconDrawerOpen" ClipMode="DrawerClipMode.Always" Anchor="Anchor.End" DisableOverlay="true" Elevation="0" Width="260px" Class="mud-icondrawer" Variant="@DrawerVariant.Temporary">
     <MudToolBar Dense="true" DisableGutters="true" Class="pl-4 py-8">
         <MudIcon Size="Size.Large" Icon="@SelectedIcon.Code" Class="mr-4"/>
         <MudText Typo="Typo.subtitle1">@SelectedIcon.Name</MudText>

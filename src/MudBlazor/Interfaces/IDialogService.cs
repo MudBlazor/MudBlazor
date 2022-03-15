@@ -41,6 +41,9 @@ namespace MudBlazor
         Task<bool?> ShowMessageBox(string title, string message, string yesText = "OK",
             string noText = null, string cancelText = null, DialogOptions options = null);
 
+        Task<bool?> ShowMessageBox(string title, MarkupString markupMessage, string yesText = "OK",
+            string noText = null, string cancelText = null, DialogOptions options = null);
+
         Task<bool?> ShowMessageBox(MessageBoxOptions mboxOptions, DialogOptions options = null);
 
         void Close(DialogReference dialog);

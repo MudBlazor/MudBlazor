@@ -21,17 +21,22 @@
     }
 </HeadContent>
 
-<div class="docs-page-header mb-12">
-    <MudText Typo="@Typo.h3">@Title</MudText>
-    <MudText>@GetSubTitle() @Description</MudText>
-    <DocsRenderBenchmark />
-</div>
-<div id="mudads">
-    @if (_renderAds)
-    {
-        <MudElement HtmlTag="script" async type="text/javascript" src="//cdn.carbonads.com/carbon.js?serve=CESDLK3E&placement=mudblazorcom" id="_carbonads_js"></MudElement>
-    }
-</div>
+@if (SpecialHeaderContent != null)
+{
+    <div class="docs-page-header my-16">
+        @SpecialHeaderContent
+        <DocsRenderBenchmark/>
+    </div>
+}
+else
+{
+    <div class="docs-page-header mt-6 mb-12">
+        <MudText Typo="@Typo.h3">@Title</MudText>
+        <MudText>@GetSubTitle() @Description</MudText>
+        <DocsRenderBenchmark/>
+    </div>
+}
+
 @if (!_isApiPage && _componentTypeName != null && !DisableApiHeader)
 {
     <DocsPageSection api-link-section>
@@ -48,7 +53,7 @@
                     @foreach (var childType in _component.ChildTypes)
                     {
                         <li>
-                            <MudLink Href="@($"api/{childType.Name.Replace("`1", "").ToLower().Replace("mud","")}")" Class="ms-1">
+                            <MudLink Href="@($"api/{childType.Name.Replace("`1", "").ToLowerInvariant().Replace("mud","")}")" Class="ms-1">
                                 - <CodeInline>@($"<{childType.Name.Replace("`1", "")}>")</CodeInline>
                             </MudLink>
                         </li>
@@ -85,8 +90,8 @@
     [Parameter] public string Keywords { get; set; }
     [Parameter] public bool DisableApiHeader { get; set; }
     [Parameter] public RenderFragment Description { get; set; }
+    [Parameter] public RenderFragment SpecialHeaderContent { get; set; }
     [Parameter] public string ComponentLink { get; set; }
-    public bool _renderAds;
     public Type _componentType;
     public MudComponent _parentComponent;
     public MudComponent _component;
@@ -107,16 +112,7 @@
         _componentTypeName = _componentType?.Name.Replace("`1", "");
         _apiLink = $"api/{_componentName}";
         _componentPage = (_component?.Type == null) ? _parentComponent?.Name : _component?.Name;
-    }
-
-    protected override void OnAfterRender(bool firstRender)
-    {
-        if (firstRender)
-        {
-            _renderAds = true;
-            StateHasChanged();
-        }
-    }    
+    }   
 
     private string GetComponentLink()
     {
