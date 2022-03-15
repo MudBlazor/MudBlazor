@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using System.Windows.Input;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
@@ -14,8 +15,11 @@ namespace MudBlazor
 
         [Inject] public NavigationManager UriHelper { get; set; }
         [Inject] public IJsApiService JsApiService { get; set; }
-
-        [Parameter] [Category(CategoryTypes.Menu.ClickAction)] public string Link { get; set; }
+        /// <summary>
+        /// If set to a URL, clicking the button will open the referenced document. Use Target to specify where (Obsolete replaced by Href)
+        /// </summary>
+        [Obsolete("Use Href Instead.", false)] public string Link { get => Href; set => Href = value; }
+        [Parameter] [Category(CategoryTypes.Menu.ClickAction)] public string Href { get; set; }
         [Parameter] [Category(CategoryTypes.Menu.ClickAction)] public string Target { get; set; }
         [Parameter] [Category(CategoryTypes.Menu.ClickAction)] public bool ForceLoad { get; set; }
         [Parameter] [Category(CategoryTypes.Menu.ClickAction)] public ICommand Command { get; set; }
@@ -30,12 +34,12 @@ namespace MudBlazor
                 return;
             MudMenu.CloseMenu();
 
-            if (Link != null)
+            if (Href != null)
             {
                 if (string.IsNullOrWhiteSpace(Target))
-                    UriHelper.NavigateTo(Link, ForceLoad);
+                    UriHelper.NavigateTo(Href, ForceLoad);
                 else
-                    await JsApiService.Open(Link, Target);
+                    await JsApiService.Open(Href, Target);
             }
             else
             {
@@ -53,12 +57,12 @@ namespace MudBlazor
                 return;
             MudMenu.CloseMenu();
 
-            if (Link != null)
+            if (Href != null)
             {
                 if (string.IsNullOrWhiteSpace(Target))
-                    UriHelper.NavigateTo(Link, ForceLoad);
+                    UriHelper.NavigateTo(Href, ForceLoad);
                 else
-                    await JsApiService.Open(Link, Target);
+                    await JsApiService.Open(Href, Target);
             }
             else
             {
