@@ -53,12 +53,12 @@ namespace MudBlazor
                 return;
             MudMenu.CloseMenu();
 
-            if (Link != null)
+            if (Href != null)
             {
                 if (string.IsNullOrWhiteSpace(Target))
-                    UriHelper.NavigateTo(Link, ForceLoad);
+                    UriHelper.NavigateTo(Href, ForceLoad);
                 else
-                    await JsApiService.Open(Link, Target);
+                    await JsApiService.Open(Href, Target);
             }
             else
             {
