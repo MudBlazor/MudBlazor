@@ -1,4 +1,5 @@
 ﻿@namespace MudBlazor.Docs.Examples
+@using MudBlazor.Utilities
 
 <div class="d-flex flex-column mud-width-full mud-height-full">
 	<MudToolBar>
@@ -32,30 +33,30 @@
 	private void ItemUpdated(MudItemDropInfo<DropItem> dropItem)
 	{
 		dropItem.Item.Selector = dropItem.DropzoneIdentifier;
-		var newOrder = dropItem.Index * 10;
-		var existingItem = _serverData.FirstOrDefault(x => x.Order == newOrder);
-		if (existingItem != null)
-		{
-			existingItem.Order = newOrder + 1;
-		}
 
-		dropItem.Item.Order = newOrder;
+		var indexOffset = dropItem.DropzoneIdentifier switch
+		{
+			"2"  => _serverData.Count(x => x.Selector == "2"),
+			_ => 0,
+		};
+
+		_serverData.UpdateOrder(dropItem, item => item.Order, indexOffset);
 	}
 
 	private List<DropItem> _dropzoneItems = new();
 
 	private List<DropItem> _serverData = new()
 		{
-			new DropItem() { Order = 1, Name = "Item 1", Selector = "1" },
-			new DropItem() { Order = 11, Name = "Item 2", Selector = "1" },
-			new DropItem() { Order = 21, Name = "Item 3", Selector = "1" },
-			new DropItem() { Order = 31, Name = "Item 4", Selector = "1" },
-			new DropItem() { Order = 41, Name = "Item 5", Selector = "1" },
-			new DropItem() { Order = 51, Name = "Item 6", Selector = "1" },
-			new DropItem() { Order = 0, Name = "Item 7", Selector = "2" },
-			new DropItem() { Order = 11, Name = "Item 8", Selector = "2" },
-			new DropItem() { Order = 21, Name = "Item 9", Selector = "2" },
-			new DropItem() { Order = 31, Name = "Item 10", Selector = "2" },
+			new DropItem() { Order = 0, Name = "Item 1", Selector = "1" },
+			new DropItem() { Order = 1, Name = "Item 2", Selector = "1" },
+			new DropItem() { Order = 2, Name = "Item 3", Selector = "1" },
+			new DropItem() { Order = 3, Name = "Item 4", Selector = "1" },
+			new DropItem() { Order = 4, Name = "Item 5", Selector = "1" },
+			new DropItem() { Order = 5, Name = "Item 6", Selector = "1" },
+			new DropItem() { Order = 6, Name = "Item 7", Selector = "2" },
+			new DropItem() { Order = 7, Name = "Item 8", Selector = "2" },
+			new DropItem() { Order = 8, Name = "Item 9", Selector = "2" },
+			new DropItem() { Order = 9, Name = "Item 10", Selector = "2" },
 		};
 
 	private void RefreshContainer()
@@ -87,16 +88,16 @@
 		_dropzoneItems = new();
 		_serverData = new()
 			{
-				new DropItem() { Order = 1, Name = "Item 1", Selector = "1" },
-				new DropItem() { Order = 11, Name = "Item 2", Selector = "1" },
-				new DropItem() { Order = 21, Name = "Item 3", Selector = "1" },
-				new DropItem() { Order = 31, Name = "Item 4", Selector = "1" },
-				new DropItem() { Order = 41, Name = "Item 5", Selector = "1" },
-				new DropItem() { Order = 51, Name = "Item 6", Selector = "1" },
-				new DropItem() { Order = 0, Name = "Item 7", Selector = "2" },
-				new DropItem() { Order = 11, Name = "Item 8", Selector = "2" },
-				new DropItem() { Order = 21, Name = "Item 9", Selector = "2" },
-				new DropItem() { Order = 31, Name = "Item 10", Selector = "2" },
+				new DropItem() { Order = 0, Name = "Item 1", Selector = "1" },
+				new DropItem() { Order = 1, Name = "Item 2", Selector = "1" },
+				new DropItem() { Order = 2, Name = "Item 3", Selector = "1" },
+				new DropItem() { Order = 3, Name = "Item 4", Selector = "1" },
+				new DropItem() { Order = 4, Name = "Item 5", Selector = "1" },
+				new DropItem() { Order = 5, Name = "Item 6", Selector = "1" },
+				new DropItem() { Order = 6, Name = "Item 7", Selector = "2" },
+				new DropItem() { Order = 7, Name = "Item 8", Selector = "2" },
+				new DropItem() { Order = 8, Name = "Item 9", Selector = "2" },
+				new DropItem() { Order = 9, Name = "Item 10", Selector = "2" },
 			};
 
 		RefreshContainer();

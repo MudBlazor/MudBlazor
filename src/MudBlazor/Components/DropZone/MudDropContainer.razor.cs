@@ -113,8 +113,8 @@ namespace MudBlazor
     /// <typeparam name="T">Type of dragged item</typeparam>
     /// <param name="Item">The dragged item during the transaction</param>
     /// <param name="DropzoneIdentifier">Identifier of the zone where the transaction started</param>
-    /// <param name="Index">The index of the item within in the dropzone</param>
-    public record MudItemDropInfo<T>(T Item, string DropzoneIdentifier, int Index);
+    /// <param name="IndexInZone">The index of the item within in the dropzone</param>
+    public record MudItemDropInfo<T>(T Item, string DropzoneIdentifier, int IndexInZone);
 
     public class MudDragAndDropTransactionFinishedEventArgs<T> : EventArgs
     {
@@ -310,6 +310,7 @@ namespace MudBlazor
                     index -= 1;
                 }
             }
+
             await ItemDropped.InvokeAsync(new MudItemDropInfo<T>(_transaction.Item, dropzoneIdentifier, index));
             TransactionEnded?.Invoke(this, new MudDragAndDropTransactionFinishedEventArgs<T>(dropzoneIdentifier, true, _transaction));
             _transaction = null;
