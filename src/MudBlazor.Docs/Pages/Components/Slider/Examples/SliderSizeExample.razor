@@ -1,0 +1,14 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudSlider Size="Size.Small" Step="25" Value="@value"/>
+<MudSlider Size="Size.Medium" Step="25" Value="@value"/>
+<MudSlider Size="Size.Large" Step="25" Value="@value"/>
+<MudDivider Class="my-4"></MudDivider>
+<MudSlider Size="Size.Small" TickMarks="true" TickMarkLabels="labels" Step="25" Value="@value"/>
+<MudSlider Size="Size.Medium" TickMarks="true" TickMarkLabels="labels" Step="25" Value="@value"/>
+<MudSlider Size="Size.Large" TickMarks="true" TickMarkLabels="labels" Step="25" Value="@value"/>
+
+@code {
+    int value = 50;
+    string[] labels = new string[] { "Korv", "Fisk", "Äpple", "Groda", "Köttbullar", "Pizza" };
+}

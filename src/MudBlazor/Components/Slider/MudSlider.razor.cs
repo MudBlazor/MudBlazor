@@ -11,12 +11,14 @@ namespace MudBlazor
     {
         protected string Classname =>
             new CssBuilder("mud-slider")
+                .AddClass($"mud-slider-{Size.ToDescriptionString()}")
                 .AddClass("mud-slider-vertical", Vertical)
                 .AddClass(Class)
                 .Build();
 
         protected string InputClassName =>
             new CssBuilder("mud-slider-input")
+                .AddClass($"mud-slider-input-{Size.ToDescriptionString()}")
                 .AddClass($"mud-slider-{Color.ToDescriptionString()}")
                 .Build();
 
@@ -144,6 +146,20 @@ namespace MudBlazor
         [Category(CategoryTypes.Slider.Appearance)]
         public string[] TickMarkLabels { get; set; }
 
+        /// <summary>
+        /// Labels for tick marks, will attempt to map the labels to each step in index order.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Slider.Appearance)]
+        public Size Size { get; set; } = Size.Small;
+
+        /// <summary>
+        /// The variant to use.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Button.Appearance)]
+        public Variant Variant { get; set; } = Variant.Text;
+
         private int _tickMarkCount = 0;
         protected override void OnParametersSet()
         {
@@ -151,6 +167,11 @@ namespace MudBlazor
             {
                 _tickMarkCount = Convert.ToInt32(double.Parse(Converter.Set(Max)) / double.Parse(Converter.Set(Step))) + 1;
             }
+        }
+
+        private double CalculatePosition()
+        {
+            return 100 * Convert.ToDouble(Value) / Convert.ToDouble(Max) - Convert.ToDouble(Min);
         }
     }
 }
