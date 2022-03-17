@@ -22,7 +22,7 @@
 	private void ItemUpdated(MudItemDropInfo<DropItem> dropItem)
 	{
 		dropItem.Item.Selector = dropItem.DropzoneIdentifier;
-		IndexHistory.Add(dropItem.Index);
+		IndexHistory.Add(dropItem.IndexInZone);
 	}
 
 	public List<int> IndexHistory { get; set; } = new();
