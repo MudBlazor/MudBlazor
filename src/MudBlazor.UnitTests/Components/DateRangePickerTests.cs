@@ -18,6 +18,22 @@ namespace MudBlazor.UnitTests.Components
     public class DateRangePickerTests : BunitTest
     {
         [Test]
+        public void DateRangePickerOpenButtonAriaLabel()
+        {
+            var comp = Context.RenderComponent<MudDateRangePicker>();
+            var openButton = comp.Find(".mud-input-adornment button");
+            openButton.Attributes.GetNamedItem("aria-label")?.Value.Should().Be("Open Date Range Picker");
+        }
+        
+        [Test]
+        public void DateRangePickerLabelFor()
+        {
+            var comp = Context.RenderComponent<DateRangePickerValidationTest>();
+            var label = comp.Find(".mud-input-label");
+            label.Attributes.GetNamedItem("for")?.Value.Should().Be("dateRangeLabelTest");
+        }
+        
+        [Test]
         [Ignore("Unignore for performance measurements, not needed for code coverage")]
         public void RenderDateRangePicker_10000_Times_CheckPerformance()
         {
