@@ -79,7 +79,7 @@ namespace MudBlazor
         public Variant Variant { get; set; } = Variant.Filled;
 
         /// <summary>
-        /// The selected color to use when selected, only works togheter with ChipSet, Color.Inherit for default value.
+        /// The selected color to use when selected, only works together with ChipSet, Color.Inherit for default value.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Chip.Appearance)]
