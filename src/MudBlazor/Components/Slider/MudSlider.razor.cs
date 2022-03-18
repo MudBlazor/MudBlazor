@@ -16,11 +16,6 @@ namespace MudBlazor
                 .AddClass("mud-slider-vertical", Vertical)
                 .AddClass(Class)
                 .Build();
-        protected string InputClassName =>
-    new CssBuilder("mud-slider-input")
-        .AddClass($"mud-slider-input-{Size.ToDescriptionString()}")
-        .AddClass($"mud-slider-{Color.ToDescriptionString()}")
-        .Build();
 
         protected string _value;
         protected string _min = "0";

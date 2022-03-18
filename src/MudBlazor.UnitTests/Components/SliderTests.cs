@@ -76,8 +76,8 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<MudSlider<int>>(x => x.Add(p => p.Size, size));
 
-            var slider = comp.Find(".mud-slider-input");
-            slider.ClassList.Should().ContainInOrder(new[] { "mud-slider-input", $"mud-slider-input-{expectedSizeClass}", "mud-slider-primary" });
+            var slider = comp.Find(".mud-slider");
+            slider.ClassList.Should().ContainInOrder(new[] { "mud-slider", $"mud-slider-{expectedSizeClass}", "mud-slider-primary" });
         }
 
         [Test]
@@ -93,12 +93,12 @@ namespace MudBlazor.UnitTests.Components
         [TestCase(Color.Transparent, "transparent")]
         [TestCase(Color.Inherit, "inherit")]
         [TestCase(Color.Surface, "surface")]
-        public void CheckInputColorCssClass(Color color, string expectedColorClass)
+        public void CheckColorCssClass(Color color, string expectedColorClass)
         {
             var comp = Context.RenderComponent<MudSlider<int>>(x => x.Add(p => p.Color, color));
 
-            var slider = comp.Find(".mud-slider-input");
-            slider.ClassList.Should().ContainInOrder(new[] { "mud-slider-input", "mud-slider-input-small", $"mud-slider-{expectedColorClass}" });
+            var slider = comp.Find(".mud-slider");
+            slider.ClassList.Should().ContainInOrder(new[] { "mud-slider", "mud-slider-small", $"mud-slider-{expectedColorClass}" });
         }
 
         [Test]
@@ -123,10 +123,9 @@ namespace MudBlazor.UnitTests.Components
             var container = rootElement.Children.First();
             container.ClassList.Should().Contain("mud-slider-container");
 
-            container.Children.Should().HaveCount(2);
+            container.Children.Should().HaveCount(1);
 
-            container.Children.ElementAt(0).ClassList.Should().Contain("mud-slider-thumb");
-            var input = container.Children.ElementAt(1);
+            var input = container.Children.ElementAt(0);
 
             input.ClassList.Should().Contain("mud-slider-input");
             (input as IHtmlInputElement).Value.Should().Be("120");
@@ -166,10 +165,9 @@ namespace MudBlazor.UnitTests.Components
             var container = rootElement.Children.ElementAt(1);
             container.ClassList.Should().Contain("mud-slider-container");
 
-            container.Children.Should().HaveCount(2);
+            container.Children.Should().HaveCount(1);
 
-            container.Children.ElementAt(0).ClassList.Should().Contain("mud-slider-thumb");
-            container.Children.ElementAt(1).ClassList.Should().Contain("mud-slider-input");
+            container.Children.ElementAt(0).ClassList.Should().Contain("mud-slider-input");
         }
 
         [Test]
@@ -191,17 +189,15 @@ namespace MudBlazor.UnitTests.Components
             var container = rootElement.Children.First();
             container.ClassList.Should().Contain("mud-slider-container");
 
-            container.Children.Should().HaveCount(3);
+            container.Children.Should().HaveCount(2);
 
-            container.Children.ElementAt(0).ClassList.Should().Contain("mud-slider-thumb");
-            var filling = container.Children.ElementAt(1);
+            var containerInner = container.Children.ElementAt(0);
+            containerInner.ClassList.Should().Contain("mud-slider-inner-container");
 
-            filling.ClassList.Should().Contain("mud-slider-inner-container");
-            filling.Children.Should().ContainSingle();
+            var filling = containerInner.Children.ElementAt(0);
+            filling.ClassList.Should().Contain("mud-slider-filled");
 
-            filling.Children.First().ClassList.Should().Contain("mud-slider-filled");
-
-            container.Children.ElementAt(2).ClassList.Should().Contain("mud-slider-input");
+            container.Children.ElementAt(1).ClassList.Should().Contain("mud-slider-input");
         }
 
         [Test]
@@ -224,10 +220,9 @@ namespace MudBlazor.UnitTests.Components
             var container = rootElement.Children.First();
             container.ClassList.Should().Contain("mud-slider-container");
 
-            container.Children.Should().HaveCount(3);
+            container.Children.Should().HaveCount(2);
 
-            container.Children.ElementAt(0).ClassList.Should().Contain("mud-slider-thumb");
-            var filling = container.Children.ElementAt(1);
+            var filling = container.Children.ElementAt(0);
 
             filling.ClassList.Should().Contain("mud-slider-inner-container");
             filling.Children.Should().ContainSingle();
@@ -244,7 +239,7 @@ namespace MudBlazor.UnitTests.Components
                 item.Children.First().ClassList.Should().Contain("mud-slider-track-tick");
             }
 
-            container.Children.ElementAt(2).ClassList.Should().Contain("mud-slider-input");
+            container.Children.ElementAt(1).ClassList.Should().Contain("mud-slider-input");
         }
 
         [Test]
@@ -270,10 +265,9 @@ namespace MudBlazor.UnitTests.Components
             var container = rootElement.Children.First();
             container.ClassList.Should().Contain("mud-slider-container");
 
-            container.Children.Should().HaveCount(3);
+            container.Children.Should().HaveCount(2);
 
-            container.Children.ElementAt(0).ClassList.Should().Contain("mud-slider-thumb");
-            var filling = container.Children.ElementAt(1);
+            var filling = container.Children.ElementAt(0);
 
             filling.ClassList.Should().Contain("mud-slider-inner-container");
             filling.Children.Should().ContainSingle();
@@ -295,7 +289,7 @@ namespace MudBlazor.UnitTests.Components
                 content.TextContent.Should().Be(labels[itemCounter++]);
             }
 
-            container.Children.ElementAt(2).ClassList.Should().Contain("mud-slider-input");
+            container.Children.ElementAt(1).ClassList.Should().Contain("mud-slider-input");
         }
 
         [Test]
@@ -368,9 +362,10 @@ namespace MudBlazor.UnitTests.Components
                     x.Add(p => p.Min, min);
                     x.Add(p => p.Value, value);
                     x.Add(p => p.Variant, Variant.Filled);
+                    x.Add(p => p.ValueLabel, true);
                 });
 
-                var thumb = comp.Find(".mud-slider-thumb");
+                var thumb = comp.Find(".mud-slider-value-label");
                 thumb.GetAttribute("style").Should().Be($"left:{expectedPercentage}%;");
 
                 var filling = comp.Find(".mud-slider-filled");
