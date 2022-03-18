@@ -269,6 +269,7 @@ namespace MudBlazor
             public const string Appearance = "Appearance";
             public const string Behavior = "Behavior";
             public const string Disabled = "Disable";
+            public const string Sorting = "Sorting";
             public const string DraggingClass = "DraggingClass";
             public const string DropRules = "DropRules";
             public const string Items = "Items";

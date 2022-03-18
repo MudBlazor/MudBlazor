@@ -73,6 +73,14 @@ public partial class MudDynamicDropItem<T> : MudComponentBase
     [Category(CategoryTypes.DropZone.Disabled)]
     public string DisabledClass { get; set; }
 
+    [Parameter]
+    [Category(CategoryTypes.DropZone.Sorting)]
+    public int Index { get; set; } = -1;
+
+    [Parameter]
+    [Category(CategoryTypes.DropZone.Sorting)]
+    public bool HideContent { get; set; }
+
     #region Event handling and callbacks
 
     private async Task DragStarted()
@@ -80,7 +88,7 @@ public partial class MudDynamicDropItem<T> : MudComponentBase
         if (Container == null) { return; }
 
         _dragOperationIsInProgress = true;
-        Container.StartTransaction(Item, ZoneIdentifier ?? string.Empty, OnDroppedSucceeded, OnDroppedCanceled);
+        Container.StartTransaction(Item, ZoneIdentifier ?? string.Empty, Index, OnDroppedSucceeded, OnDroppedCanceled);
         await OnDragStarted.InvokeAsync();
     }
 
@@ -111,6 +119,15 @@ public partial class MudDynamicDropItem<T> : MudComponentBase
         {
             await OnDragEnded.InvokeAsync(Item);
         }
+    }
+
+    private void HandleDragEnter()
+    {
+        Container.UpdateTransactionIndex(Index);
+    }
+
+    private void HandleDragLeave()
+    {
     }
 
     #endregion
