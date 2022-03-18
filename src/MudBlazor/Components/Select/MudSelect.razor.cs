@@ -1017,15 +1017,17 @@ namespace MudBlazor
             _shadowLookup.Remove(item.Value);
         }
 
-        internal void OnLostFocus(FocusEventArgs obj)
+        internal async void OnLostFocus(FocusEventArgs obj)
         {
+            await CloseMenu(false);
+            
             if (_isOpen)
             {
                 // when the menu is open we immediately get back the focus if we lose it (i.e. because of checkboxes in multi-select)
                 // otherwise we can't receive key strokes any longer
                 _elementReference.FocusAsync().AndForget(TaskOption.Safe);
             }
-            base.OnBlur.InvokeAsync(obj);
+            await base.OnBlur.InvokeAsync(obj);
         }
     }
 }

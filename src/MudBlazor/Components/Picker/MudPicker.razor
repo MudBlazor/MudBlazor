@@ -36,6 +36,7 @@
              ErrorText="@ErrorText" 
              @onclick="@(() => { if (!Editable) ToggleState(); })" 
              @onkeydown="HandleKeyDown" 
+             OnBlur="OnBlurred"
              />;
 
     protected virtual RenderFragment PickerContent => null;
@@ -108,7 +109,7 @@
         </div>
         @if (PickerVariant == PickerVariant.Inline)
         {
-            <MudOverlay Visible="IsOpen" OnClick="CloseOverlay" LockScroll="false" />
+
         }
     </CascadingValue>;
 }
