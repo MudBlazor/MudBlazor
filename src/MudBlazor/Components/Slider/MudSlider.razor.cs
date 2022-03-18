@@ -68,7 +68,7 @@ namespace MudBlazor
         /// 
         [Parameter]
         [Category(CategoryTypes.Slider.Behavior)]
-        public bool Disabled { get; set; }
+        public bool Disabled { get; set; } = false;
 
         /// <summary>
         /// Child content of component.
@@ -130,14 +130,14 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Slider.Appearance)]
-        public bool Vertical { get; set; }
+        public bool Vertical { get; set; } = false;
 
         /// <summary>
         /// If true, displays tick marks on the track.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Slider.Appearance)]
-        public bool TickMarks { get; set; }
+        public bool TickMarks { get; set; } = false;
 
         /// <summary>
         /// Labels for tick marks, will attempt to map the labels to each step in index order.
@@ -165,13 +165,24 @@ namespace MudBlazor
         {
             if (TickMarks)
             {
-                _tickMarkCount = Convert.ToInt32(double.Parse(Converter.Set(Max)) / double.Parse(Converter.Set(Step))) + 1;
+                var min = Convert.ToDouble(Min);
+                var max = Convert.ToDouble(Max);
+                var step = Convert.ToDouble(Step);
+
+                _tickMarkCount = 1 + (int)((max - min) / step);
             }
         }
 
         private double CalculatePosition()
         {
-            return 100 * Convert.ToDouble(Value) / Convert.ToDouble(Max) - Convert.ToDouble(Min);
+            var min = Convert.ToDouble(Min);
+            var max = Convert.ToDouble(Max);
+            var value = Convert.ToDouble(Value);
+            var result = 100.0 * (value - min) / (max - min);
+
+            result = Math.Min(Math.Max(0, result), 100);
+
+            return Math.Round(result, 2);
         }
     }
 }
