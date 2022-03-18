@@ -29,49 +29,17 @@
             outline: none;
         }
 
+        &:hover {
+            & + .mud-slider-value-label {
+                visibility: visible;
+            }
+        }
+
         @include slider-track {
             border-radius: var(--mud-default-borderradius);
             width: 100%;
         }
 
-        &.mud-slider-input-small {
-            @include slider-track {
-                height: 2px;
-                margin: 10px 0;
-            }
-
-            @include slider-thumb {
-                height: 2px;
-                width: 2px;
-                transform: scale(6, 6);
-            }
-        }
-
-        &.mud-slider-input-medium {
-            @include slider-track {
-                height: 4px;
-                margin: 12px 0;
-            }
-
-            @include slider-thumb {
-                height: 4px;
-                width: 4px;
-                transform: scale(4, 4);
-            }
-        }
-
-        &.mud-slider-input-large {
-            @include slider-track {
-                height: 6px;
-                margin: 14px 0;
-            }
-
-            @include slider-thumb {
-                height: 6px;
-                width: 6px;
-                transform: scale(4, 4);
-            }
-        }
 
         @include slider-thumb {
             appearance: none;
@@ -79,17 +47,6 @@
             border: none;
             border-radius: 50%;
             transition: box-shadow 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
-            z-index: 2;
-        }
-
-        @each $color in $mud-palette-colors {
-            &.mud-slider-#{$color} {
-                @include slider-track {
-                    background-color: rgba(var(--mud-palette-#{$color}-rgb), 0.30);
-                }
-
-                
-            }
         }
 
         &:disabled {
@@ -113,6 +70,88 @@
         }
     }
 
+    @each $color in $mud-palette-colors {
+        &.mud-slider-#{$color} {
+            .mud-slider-filled {
+                background-color: var(--mud-palette-#{$color});
+            }
+
+            .mud-slider-track-tick {
+                background-color: var(--mud-palette-#{$color});
+            }
+
+            .mud-slider-value-label {
+                color: var(--mud-palette-#{$color}-text);
+                background-color: var(--mud-palette-#{$color});
+            }
+
+
+            .mud-slider-input {
+                @include slider-track {
+                    background-color: rgba(var(--mud-palette-#{$color}-rgb), 0.30);
+                }
+
+                @include slider-thumb {
+                    background-color: var(--mud-palette-#{$color});
+                    box-shadow: 0px 1px 2px -1px rgba(var(--mud-palette-#{$color}-rgb),0.3);
+                }
+
+                @include slider-thumb {
+                    &:hover {
+                        box-shadow: 0px 1px 2px -1px rgba(var(--mud-palette-#{$color}-rgb),0.3),0 0 0 2px rgba(var(--mud-palette-#{$color}-rgb), 0.24);
+                    }
+                }
+
+                @include slider-thumb {
+                    &:active, &:focus-visible {
+                        box-shadow: 0px 1px 2px -1px rgba(var(--mud-palette-#{$color}-rgb),0.3),0 0 0 4px rgba(var(--mud-palette-#{$color}-rgb), 0.24);
+                    }
+                }
+            }
+        }
+    }
+
+    $slider-sizes: ("small": 2, "medium": 4, "large": 6);
+    $tickcount: 50;
+    $margincount: 10;
+    $thumbscale: 6;
+
+    @each $size, $value in $slider-sizes {
+        &.mud-slider-#{$size} {
+            .mud-slider-filled {
+                height: #{$value}px;
+            }
+
+            .mud-slider-track-tick {
+                width: #{$value}px;
+                height: #{$value}px;
+            }
+
+            .mud-slider-track-tick-label {
+                transform: translateX(-50%) translateY(#{$tickcount + "%"});
+            }
+
+            .mud-slider-input {
+                @include slider-track {
+                    height: #{$value}px;
+                    margin: #{$margincount}px 0;
+                }
+
+                @include slider-thumb {
+                    height: #{$value}px;
+                    width: #{$value}px;
+                    transform: scale(#{$thumbscale}, #{$thumbscale});
+                }
+            }
+        }
+
+        $tickcount: $tickcount + 30;
+        $margincount: $margincount + 2;
+        $thumbscale: $thumbscale - 1;
+    }
+
+
+
     .mud-slider-container {
         position: relative;
         width: 100%;
@@ -120,32 +159,8 @@
         align-content: center;
     }
 
-    .mud-slider-thumb {
-        position: absolute;
-        top: 50%;
-        width: 20px;
-        height: 20px;
-        border-radius: 9999%;
-        background-color: red;
-        transition: left 50ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
-        transform: translate(-50%, -50%)
-    }
-
     .mud-slider-filled {
-        background-color: var(--mud-palette-primary);
-        transition: width 50ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
-    }
-
-    &.mud-slider-small .mud-slider-filled {
-        height: 2px;
-    }
-
-    &.mud-slider-medium .mud-slider-filled {
-        height: 4px;
-    }
-
-    &.mud-slider-large .mud-slider-filled {
-        height: 6px;
+        border-radius: var(--mud-default-borderradius);
     }
 
     .mud-slider-inner-container {
@@ -156,8 +171,20 @@
         height: 100%;
         display: flex;
         align-items: center;
-        padding-left: 1px;
-        padding-right: 1px;
+    }
+
+    .mud-slider-value-label {
+        position: absolute;
+        top: 0;
+        transform: translateX(-50%) translateY(-125%);
+        padding: 4px 8px;
+        text-align: center;
+        align-items: center;
+        justify-content: center;
+        font-size: 12px;
+        border-radius: 2px;
+        line-height: normal;
+        visibility: hidden;
     }
 
     .mud-slider-tickmarks {
@@ -175,38 +202,5 @@
         position: absolute;
         top: 0;
         left: 0;
-    }
-
-    &.mud-slider-small {
-        .mud-slider-track-tick {
-            width: 2px;
-            height: 2px;
-        }
-
-        .mud-slider-track-tick-label {
-            transform: translateX(-50%) translateY(50%);
-        }
-    }
-
-    &.mud-slider-medium {
-        .mud-slider-track-tick {
-            width: 2px;
-            height: 2px;
-        }
-
-        .mud-slider-track-tick-label {
-            transform: translateX(-50%) translateY(80%);
-        }
-    }
-
-    &.mud-slider-large {
-        .mud-slider-track-tick {
-            width: 4px;
-            height: 4px;
-        }
-
-        .mud-slider-track-tick-label {
-            transform: translateX(-50%) translateY(100%);
-        }
     }
 }

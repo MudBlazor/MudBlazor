@@ -1,25 +1,32 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
-<MudSlider Variant="Variant.Text" Size="Size.Small" Value="@value"/>
-<MudSlider Variant="Variant.Text" Size="Size.Medium" Value="@value"/>
-<MudSlider Variant="Variant.Text" Size="Size.Large" Value="@value"/>
-<MudSlider Variant="Variant.Text" Size="Size.Small" TickMarks="true" TickMarkLabels="labels" Step="25" Value="@value"/>
-<MudSlider Variant="Variant.Text" Size="Size.Medium" TickMarks="true" TickMarkLabels="labels" Step="25" Value="@value"/>
-<MudSlider Variant="Variant.Text" Size="Size.Large" TickMarks="true" TickMarkLabels="labels" Step="25" Value="@value"/>
+<MudSlider Color="Color.Primary" ValueLabel="true" Variant="Variant.Text" Size="Size.Small" Value="@value"/>
+<MudSlider Color="Color.Secondary" ValueLabel="true" Variant="Variant.Text" Size="Size.Medium" Value="@value"/>
+<MudSlider Color="Color.Tertiary" ValueLabel="true" Variant="Variant.Text" Size="Size.Large" Value="@value"/>
+<MudSlider Color="Color.Success" ValueLabel="true" Variant="Variant.Text" Size="Size.Small" TickMarks="true" TickMarkLabels="labels" Step="25" Value="@value"/>
+<MudSlider Color="Color.Warning" ValueLabel="true" Variant="Variant.Text" Size="Size.Medium" TickMarks="true" TickMarkLabels="labels" Step="25" Value="@value"/>
+<MudSlider Color="Color.Error" ValueLabel="true" Variant="Variant.Text" Size="Size.Large" TickMarks="true" TickMarkLabels="labels" Step="25" Value="@value"/>
 <MudDivider Class="my-4"></MudDivider>
-<MudSlider Variant="Variant.Filled" Size="Size.Small" Value="@value"/>
-<MudSlider Variant="Variant.Filled" Size="Size.Medium"Value="@value"/>
-<MudSlider Variant="Variant.Filled" Size="Size.Large" Value="@value"/>
-<MudSlider Variant="Variant.Filled" Size="Size.Small" TickMarks="true" TickMarkLabels="labels" Step="25" Value="@value"/>
-<MudSlider Variant="Variant.Filled" Size="Size.Medium" TickMarks="true" TickMarkLabels="labels" Step="25" Value="@value"/>
-<MudSlider Variant="Variant.Filled" Size="Size.Large" TickMarks="true" TickMarkLabels="labels" Step="25" Value="@value"/>
+<MudSlider Color="Color.Error" Variant="Variant.Text" Size="Size.Small" Value="@value"/>
+<MudSlider Color="Color.Warning" Variant="Variant.Text" Size="Size.Medium" Value="@value"/>
+<MudSlider Color="Color.Success" Variant="Variant.Text" Size="Size.Large" Value="@value"/>
+<MudSlider Color="Color.Tertiary" Variant="Variant.Text" Size="Size.Small" TickMarks="true" TickMarkLabels="labels" Step="25" Value="@value"/>
+<MudSlider Color="Color.Secondary" Variant="Variant.Text" Size="Size.Medium" TickMarks="true" TickMarkLabels="labels" Step="25" Value="@value"/>
+<MudSlider Color="Color.Primary" Variant="Variant.Text" Size="Size.Large" TickMarks="true" TickMarkLabels="labels" Step="25" Value="@value"/>
 <MudDivider Class="my-4"></MudDivider>
-<MudSlider Variant="Variant.Outlined" Size="Size.Small" Value="@value"/>
-<MudSlider Variant="Variant.Outlined" Size="Size.Medium" Value="@value"/>
-<MudSlider Variant="Variant.Outlined" Size="Size.Large" Value="@value"/>
-<MudSlider Variant="Variant.Outlined" Size="Size.Small" TickMarks="true" TickMarkLabels="labels" Step="25" Value="@value"/>
-<MudSlider Variant="Variant.Outlined" Size="Size.Medium" TickMarks="true" TickMarkLabels="labels" Step="25" Value="@value"/>
-<MudSlider Variant="Variant.Outlined" Size="Size.Large" TickMarks="true" TickMarkLabels="labels" Step="25" Value="@value"/>
+<MudSlider Color="Color.Success" Variant="Variant.Filled" Size="Size.Small" Value="@value"/>
+<MudSlider Color="Color.Primary" Variant="Variant.Filled" Size="Size.Medium"Value="@value"/>
+<MudSlider Color="Color.Tertiary" Variant="Variant.Filled" Size="Size.Large" Value="@value"/>
+<MudSlider Color="Color.Primary" Variant="Variant.Filled" Size="Size.Small" TickMarks="true" TickMarkLabels="labels" Step="25" Value="@value"/>
+<MudSlider Color="Color.Error" Variant="Variant.Filled" Size="Size.Medium" TickMarks="true" TickMarkLabels="labels" Step="25" Value="@value"/>
+<MudSlider Color="Color.Primary" Variant="Variant.Filled" Size="Size.Large" TickMarks="true" TickMarkLabels="labels" Step="25" Value="@value"/>
+<MudDivider Class="my-4"></MudDivider>
+<MudSlider Color="Color.Primary" Variant="Variant.Outlined" Size="Size.Small" Value="@value"/>
+<MudSlider Color="Color.Error" Variant="Variant.Outlined" Size="Size.Medium" Value="@value"/>
+<MudSlider Color="Color.Tertiary" Variant="Variant.Outlined" Size="Size.Large" Value="@value"/>
+<MudSlider Color="Color.Primary" Variant="Variant.Outlined" Size="Size.Small" TickMarks="true" TickMarkLabels="labels" Step="25" Value="@value"/>
+<MudSlider Color="Color.Warning" Variant="Variant.Outlined" Size="Size.Medium" TickMarks="true" TickMarkLabels="labels" Step="25" Value="@value"/>
+<MudSlider Color="Color.Primary" Variant="Variant.Outlined" Size="Size.Large" TickMarks="true" TickMarkLabels="labels" Step="25" Value="@value"/>
 @code {
     int value = 50;
     string[] labels = new string[] { "Korv", "Fisk", "Äpple", "Groda", "Köttbullar", "Pizza" };
