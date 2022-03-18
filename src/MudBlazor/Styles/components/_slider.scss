@@ -29,9 +29,9 @@
             outline: none;
         }
 
-        &:hover {
+        &:active {
             & + .mud-slider-value-label {
-                visibility: visible;
+                opacity: 1;
             }
         }
 
@@ -46,6 +46,7 @@
             -webkit-appearance: none;
             border: none;
             border-radius: 50%;
+            cursor: pointer;
             transition: box-shadow 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
         }
 
@@ -98,13 +99,14 @@
 
                 @include slider-thumb {
                     &:hover {
-                        box-shadow: 0px 1px 2px -1px rgba(var(--mud-palette-#{$color}-rgb),0.3),0 0 0 2px rgba(var(--mud-palette-#{$color}-rgb), 0.24);
+                        box-shadow: 0px 1px 2px -1px rgba(var(--mud-palette-#{$color}-rgb),0.3),0 0 0 1px rgba(var(--mud-palette-#{$color}-rgb), 0.24);
                     }
                 }
 
-                @include slider-thumb {
-                    &:active, &:focus-visible {
-                        box-shadow: 0px 1px 2px -1px rgba(var(--mud-palette-#{$color}-rgb),0.3),0 0 0 4px rgba(var(--mud-palette-#{$color}-rgb), 0.24);
+
+                &:active, &:focus-visible {
+                    @include slider-thumb {
+                        box-shadow: 0px 1px 2px -1px rgba(var(--mud-palette-#{$color}-rgb),0.3),0 0 0 2px rgba(var(--mud-palette-#{$color}-rgb), 0.24);
                     }
                 }
             }
@@ -184,7 +186,10 @@
         font-size: 12px;
         border-radius: 2px;
         line-height: normal;
-        visibility: hidden;
+        opacity: 0;
+        transition: opacity .2s ease-in-out;
+        pointer-events: none;
+        user-select: none;
     }
 
     .mud-slider-tickmarks {
