@@ -17,10 +17,11 @@ namespace MudBlazor
     {
         private bool _containerIsInitilized = false;
         private bool _canDrop = false;
-        private bool _itemOnDropZone = false;
         private bool _dragInProgress = false;
         private bool _disposedValue = false;
         private Guid _id = Guid.NewGuid();
+
+        private Dictionary<T, int> _indicies = new();
 
         [Inject] private IJSRuntime JsRuntime { get; set; }
 
@@ -111,7 +112,28 @@ namespace MudBlazor
         [Category(CategoryTypes.DropZone.DraggingClass)]
         public string ItemDraggingClass { get; set; }
 
+        [Parameter]
+        [Category(CategoryTypes.DropZone.Behavior)]
+        public bool AllowReorder { get; set; }
+
+        /// <summary>
+        /// If true, will only act as a dropable zone and not render any items.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.DropZone.Behavior)]
+        public bool OnlyZone { get; set; }
+
         #region view helper
+
+        private int GetItemIndex(T item)
+        {
+            if (_indicies.ContainsKey(item) == false)
+            {
+                _indicies.Add(item, _indicies.Count);
+            }
+
+            return _indicies[item];
+        }
 
         private IEnumerable<T> GetItems()
         {
@@ -121,7 +143,7 @@ namespace MudBlazor
                 predicate = ItemsSelector;
             }
 
-            return (Container?.Items ?? Array.Empty<T>()).Where(predicate).ToArray();
+            return (Container?.Items ?? Array.Empty<T>()).Where(predicate).OrderBy(x => GetItemIndex(x)).ToArray();
         }
 
         private RenderFragment<T> GetItemTemplate() => ItemRenderer ?? Container?.ItemRenderer;
@@ -162,11 +184,16 @@ namespace MudBlazor
 
         protected string Classname =>
             new CssBuilder("mud-drop-zone")
-                .AddClass("mud-drop-zone-drag-block", Container?.TransactionInProgress() == true && Container.GetTransactionOrignZoneIdentiifer() != Identifier)
-                .AddClass(CanDropClass ?? Container?.CanDropClass, Container?.TransactionInProgress() == true && Container.GetTransactionOrignZoneIdentiifer() != Identifier && _canDrop == true && (_itemOnDropZone == true || GetApplyDropClassesOnDragStarted() == true))
-                .AddClass(NoDropClass ?? Container?.NoDropClass, Container?.TransactionInProgress() == true && Container.GetTransactionOrignZoneIdentiifer() != Identifier && _canDrop == false && (_itemOnDropZone == true || GetApplyDropClassesOnDragStarted() == true))
+                //.AddClass("mud-drop-zone-drag-block", Container?.TransactionInProgress() == true && Container.GetTransactionOrignZoneIdentiifer() != Identifier)
+                .AddClass(CanDropClass ?? Container?.CanDropClass, Container?.TransactionInProgress() == true && Container.GetTransactionOrignZoneIdentiifer() != Identifier && _canDrop == true && (_dragCounter > 0 || GetApplyDropClassesOnDragStarted() == true))
+                .AddClass(NoDropClass ?? Container?.NoDropClass, Container?.TransactionInProgress() == true && Container.GetTransactionOrignZoneIdentiifer() != Identifier && _canDrop == false && (_dragCounter > 0 || GetApplyDropClassesOnDragStarted() == true))
                 .AddClass(GetDragginClass(), _dragInProgress == true)
                 .AddClass(Class)
+                .Build();
+
+        protected string PlaceholderClassname =>
+            new CssBuilder("border-2 mud-border-primary border-dashed mud-chip-text mud-chip-color-primary pa-4 mud-dropitem-placeholder")
+                .AddClass("d-none", AllowReorder == false || (Container?.TransactionInProgress() == false || Container.GetTransactionCurrentZoneIdentiifer() != Identifier))
                 .Build();
 
         #endregion
@@ -195,17 +222,34 @@ namespace MudBlazor
             return (item, result);
         }
 
+        private bool IsOrign(int index) => Container.IsOrign(index, Identifier);
+
         #endregion
 
         #region container event handling
 
-        private void Container_TransactionEnded(object sender, EventArgs e)
+        private void Container_TransactionEnded(object sender, MudDragAndDropTransactionFinishedEventArgs<T> e)
         {
-            _itemOnDropZone = false;
+            _dragCounter = 0;
 
             if (GetApplyDropClassesOnDragStarted() == true)
             {
                 _canDrop = false;
+            }
+
+            if (e.OriginatedDropzoneIdentifier == Identifier && e.DestinationDropzoneIdentifier != e.OriginatedDropzoneIdentifier)
+            {
+                _indicies.Remove(e.Item);
+            }
+
+            if (e.OriginatedDropzoneIdentifier == Identifier || e.DestinationDropzoneIdentifier == Identifier)
+            {
+                int index = 0;
+
+                foreach (var item in _indicies.OrderBy(x => x.Value).ToArray())
+                {
+                    _indicies[item.Key] = index++;
+                }
             }
 
             StateHasChanged();
@@ -222,33 +266,42 @@ namespace MudBlazor
             StateHasChanged();
         }
 
-        private void Container_RefreshRequested(object sender, EventArgs e) => InvokeAsync(StateHasChanged);
+        private void Container_RefreshRequested(object sender, EventArgs e)
+        {
+            _indicies.Clear();
+            InvokeAsync(StateHasChanged);
+        }
 
         #endregion
 
         #region handling event callbacks
 
+        private int _dragCounter = 0;
+
         private void HandleDragEnter()
         {
+            _dragCounter++;
+
             var (context, isValidZone) = ItemCanBeDropped();
             if (context == null)
             {
                 return;
             }
 
-            _itemOnDropZone = true;
             _canDrop = isValidZone;
+
+            Container.UpdateTransactionZone(Identifier);
         }
 
         private void HandleDragLeave()
         {
+            _dragCounter--;
+
             var (context, _) = ItemCanBeDropped();
             if (context == null)
             {
                 return;
             }
-
-            _itemOnDropZone = false;
         }
 
         private async Task HandleDrop()
@@ -259,7 +312,7 @@ namespace MudBlazor
                 return;
             }
 
-            _itemOnDropZone = false;
+            _dragCounter = 0;
 
             if (isValidZone == false)
             {
@@ -267,7 +320,52 @@ namespace MudBlazor
                 return;
             }
 
-            await Container.CommitTransaction(Identifier);
+            if (AllowReorder == true)
+            {
+                if (Container.HasTransactionIndexChanged() == true)
+                {
+                    var newIndex = Container.GetTransactionIndex() + 1;
+
+                    if (Container.IsTransactionOriginatedFromInside(this.Identifier) == true)
+                    {
+                        var oldIndex = _indicies[context];
+
+                        if (Container.IsItemMovedDownwards() == true)
+                        {
+                            newIndex -= 1;
+
+                            foreach (var item in _indicies.Where(x => x.Value >= oldIndex + 1 && x.Value <= newIndex).ToArray())
+                            {
+                                _indicies[item.Key] -= 1;
+                            }
+                        }
+                        else
+                        {
+                            foreach (var item in _indicies.Where(x => x.Value >= newIndex && x.Value < oldIndex).ToArray())
+                            {
+                                _indicies[item.Key] += 1;
+                            }
+                        }
+
+                        _indicies[context] = newIndex;
+                    }
+                    else
+                    {
+                        foreach (var item in _indicies.Where(x => x.Value >= newIndex).ToArray())
+                        {
+                            _indicies[item.Key] = item.Value + 1;
+                        }
+
+                        _indicies.Add(context, newIndex);
+                    }
+                }
+            }
+            else
+            {
+                _indicies.Clear();
+            }
+
+            await Container.CommitTransaction(Identifier, AllowReorder);
         }
 
         private void FinishedDragOperation() => _dragInProgress = false;
@@ -285,9 +383,17 @@ namespace MudBlazor
                 Container.TransactionStarted += Container_TransactionStarted;
                 Container.TransactionEnded += Container_TransactionEnded;
                 Container.RefreshRequested += Container_RefreshRequested;
+                Container.TransactionIndexChanged += Container_TransactionIndexChanged;
             }
 
             base.OnParametersSet();
+        }
+
+        private void Container_TransactionIndexChanged(object sender, MudDragAndDropIndexChangedEventArgs e)
+        {
+            if (e.ZoneIdentifier != Identifier && e.OldZoneIdentifier != Identifier) { return; }
+
+            StateHasChanged();
         }
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -300,7 +406,6 @@ namespace MudBlazor
             await base.OnAfterRenderAsync(firstRender);
         }
 
-
         protected virtual void Dispose(bool disposing)
         {
             if (!_disposedValue)
@@ -312,6 +417,8 @@ namespace MudBlazor
                         Container.TransactionStarted -= Container_TransactionStarted;
                         Container.TransactionEnded -= Container_TransactionEnded;
                         Container.RefreshRequested -= Container_RefreshRequested;
+                        Container.TransactionIndexChanged -= Container_TransactionIndexChanged;
+
                     }
                 }
 
