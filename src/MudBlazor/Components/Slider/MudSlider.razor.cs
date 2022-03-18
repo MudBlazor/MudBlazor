@@ -12,14 +12,9 @@ namespace MudBlazor
         protected string Classname =>
             new CssBuilder("mud-slider")
                 .AddClass($"mud-slider-{Size.ToDescriptionString()}")
+                .AddClass($"mud-slider-{Color.ToDescriptionString()}")
                 .AddClass("mud-slider-vertical", Vertical)
                 .AddClass(Class)
-                .Build();
-
-        protected string InputClassName =>
-            new CssBuilder("mud-slider-input")
-                .AddClass($"mud-slider-input-{Size.ToDescriptionString()}")
-                .AddClass($"mud-slider-{Color.ToDescriptionString()}")
                 .Build();
 
         protected string _value;
@@ -159,6 +154,13 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.Button.Appearance)]
         public Variant Variant { get; set; } = Variant.Text;
+
+        /// <summary>
+        /// Displays the value over the slider thumb.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Button.Appearance)]
+        public bool ValueLabel { get; set; }
 
         private int _tickMarkCount = 0;
         protected override void OnParametersSet()
