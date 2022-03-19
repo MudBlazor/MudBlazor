@@ -1,0 +1,15 @@
+﻿@namespace MudBlazor.UnitTests.TestComponents
+
+<MudBadge Content="3" Overlap="true" Class="mx-6 my-4" OnClick="TestClick">
+    <MudNumericField @bind-Value="_value" />
+</MudBadge>
+
+@code
+{
+    public static string __description__ = "Badge test";
+    private int _value = 0;
+    private void TestClick()
+    {
+        _value = 1;
+    }
+}

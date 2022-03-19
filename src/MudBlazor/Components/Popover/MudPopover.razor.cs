@@ -35,7 +35,7 @@ namespace MudBlazor
             .AddStyle(Style)
             .Build();
 
-        private Direction ConvertDirection(Direction direction)
+        internal Direction ConvertDirection(Direction direction)
         {
             return direction switch
             {
@@ -196,6 +196,7 @@ namespace MudBlazor
             await base.OnAfterRenderAsync(firstRender);
         }
 
+        [ExcludeFromCodeCoverage]
         public async ValueTask DisposeAsync()
         {
             try

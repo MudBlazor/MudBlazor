@@ -206,7 +206,16 @@ namespace MudBlazor.UnitTests.Components
             // select elements needed for the test
             var checkbox = comp.Instance;
             checkbox.Checked.Should().Be(null);
-            
+
+            comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = " ", Type = "keydown", });
+            comp.WaitForAssertion(() => checkbox.Checked.Should().Be(true));
+
+            comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = " ", Type = "keydown", });
+            comp.WaitForAssertion(() => checkbox.Checked.Should().Be(false));
+
+            comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = " ", Type = "keydown", });
+            comp.WaitForAssertion(() => checkbox.Checked.Should().Be(null));
+
             comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = "Delete", Type = "keydown", });
             comp.WaitForAssertion(() => checkbox.Checked.Should().Be(false));
 
@@ -223,8 +232,16 @@ namespace MudBlazor.UnitTests.Components
             comp.SetParam(x => x.TriState, false);
             comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = "Backspace", Type = "keydown", });
             comp.WaitForAssertion(() => checkbox.Checked.Should().Be(true));
+            //Check tristate space key
+            comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = " ", Type = "keydown", });
+            comp.WaitForAssertion(() => checkbox.Checked.Should().Be(false));
 
-            //Space key works by default (OnKeyUp), we didn't set or override it, so we cannot test the key.
+            comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = " ", Type = "keydown", });
+            comp.WaitForAssertion(() => checkbox.Checked.Should().Be(true));
+
+            comp.SetParam("Disabled", true);
+            comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = " ", Type = "keydown", });
+            comp.WaitForAssertion(() => checkbox.Checked.Should().Be(true));
         }
     }
 }

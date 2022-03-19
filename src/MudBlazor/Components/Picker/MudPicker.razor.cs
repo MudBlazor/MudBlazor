@@ -353,7 +353,7 @@ namespace MudBlazor
 
         private void CloseOverlay() => Close(PickerActions == null);
 
-        protected virtual void Submit() { }
+        protected internal virtual void Submit() { }
 
         public virtual void Clear(bool close = true)
         {
