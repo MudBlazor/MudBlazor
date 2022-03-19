@@ -29,6 +29,15 @@ namespace MudBlazor.UnitTests.Components
                 .StartWith("<button")
                 .And
                 .Contain("stopPropagation");
+
+            comp.Instance.FocusAsync();
+
+            comp.Markup
+                .Replace(" ", string.Empty)
+                .Should()
+                .StartWith("<button")
+                .And
+                .Contain("stopPropagation");
         }
 
         /// <summary>

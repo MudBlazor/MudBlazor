@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Microsoft.AspNetCore.Components;
@@ -37,9 +38,11 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.Button.ClickAction)]
         public string Href { get; set; }
+        
         /// <summary>
         /// If set to a URL, clicking the button will open the referenced document. Use Target to specify where (Obsolete replaced by Href)
         /// </summary>
+        [ExcludeFromCodeCoverage]
         [Obsolete("Use Href Instead.", false)]
         public string Link
         {
