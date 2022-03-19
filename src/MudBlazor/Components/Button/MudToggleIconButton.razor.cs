@@ -106,7 +106,7 @@ namespace MudBlazor
             return SetToggledAsync(!Toggled);
         }
 
-        protected async Task SetToggledAsync(bool toggled)
+        protected internal async Task SetToggledAsync(bool toggled)
         {
             if (Disabled)
                 return;

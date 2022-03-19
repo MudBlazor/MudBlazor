@@ -41,7 +41,7 @@ namespace MudBlazor
             return await JsRuntime.InvokeAsync<bool>("darkModeChange", _dotNetRef);
         }
 
-        private bool _isDarkMode;
+        internal bool _isDarkMode;
 
         /// <summary>
         /// The active palette of the theme.
