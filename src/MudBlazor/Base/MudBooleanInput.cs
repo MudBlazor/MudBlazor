@@ -58,7 +58,7 @@ namespace MudBlazor
             return SetCheckedAsync(Converter.Get(value));
         }
 
-        protected async Task SetCheckedAsync(T value)
+        protected internal async Task SetCheckedAsync(T value)
         {
             if (Disabled)
                 return;

@@ -242,6 +242,9 @@ namespace MudBlazor.UnitTests.Components
             comp.SetParam("Disabled", true);
             comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = " ", Type = "keydown", });
             comp.WaitForAssertion(() => checkbox.Checked.Should().Be(true));
+
+            comp.Instance.SetCheckedAsync(false).AndForget();
+            comp.WaitForAssertion(() => checkbox.Checked.Should().Be(true));
         }
     }
 }
