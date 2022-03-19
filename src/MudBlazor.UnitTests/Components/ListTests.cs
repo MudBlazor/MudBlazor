@@ -5,6 +5,7 @@ using System;
 using System.Threading.Tasks;
 using Bunit;
 using FluentAssertions;
+using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.UnitTests.TestComponents;
 using NUnit.Framework;
 
@@ -24,6 +25,9 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<ListSelectionTest>();
             //Console.WriteLine(comp.Markup);
             var list = comp.FindComponent<MudList>().Instance;
+            var item1 = comp.FindComponents<MudListItem>()[1].Instance;
+            var item4 = comp.FindComponents<MudListItem>()[4].Instance;
+            var item8 = comp.FindComponents<MudListItem>()[8].Instance;
             list.SelectedItem.Should().Be(null);
             // we have seven choices, none is active
             comp.FindAll("div.mud-list-item").Count.Should().Be(9); // 7 choices, 2 groups
@@ -43,6 +47,19 @@ namespace MudBlazor.UnitTests.Components
             list.SelectedItem.Text.Should().Be("Cafe Latte");
             comp.FindAll("div.mud-selected-item").Count.Should().Be(1);
             comp.FindComponents<MudListItem>()[8].Markup.Should().Contain("mud-selected-item");
+
+            await comp.InvokeAsync(() => item8.OnClickHandler(new MouseEventArgs()));
+            comp.FindComponents<MudListItem>()[8].Markup.Should().Contain("mud-selected-item");
+
+            await comp.InvokeAsync(() => item1.OnClickHandler(new MouseEventArgs()));
+            comp.FindComponents<MudListItem>()[8].Markup.Should().Contain("mud-selected-item");
+#pragma warning disable BL0005
+            await comp.InvokeAsync(() => item1.Expanded = true);
+            item1.Expanded.Should().BeTrue();
+
+            await comp.InvokeAsync(() => list.SelectedItem = item4);
+            //This doesn't work, need to check
+            //comp.WaitForAssertion(() => comp.FindComponents<MudListItem>()[4].Markup.Should().Contain("mud-selected-item"));
         }
 
         /// <summary>
