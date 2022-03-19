@@ -85,7 +85,7 @@ namespace MudBlazor
         /// Modified Animation duration that scales with height parameter.
         /// Basic implementation for now but should be a math formula to allow it to scale between 0.1s and 1s for the effect to be consistently smooth.
         /// </summary>
-        private double CalculatedAnimationDuration
+        internal double CalculatedAnimationDuration
         {
             get
             {
@@ -142,7 +142,7 @@ namespace MudBlazor
 
         internal int _disposeCount;
 
-        protected virtual void Dispose(bool disposing)
+        protected internal virtual void Dispose(bool disposing)
         {
             if (Interlocked.Increment(ref _disposeCount) == 1)
             {
