@@ -36,6 +36,7 @@ namespace MudBlazor.UnitTests.Components
             var expectedEvent = comp.Find("#chip-click-test-expected-value");
             expectedEvent.InnerHtml.Should().Be("OnClick");
         }
+
         /// <summary>
         /// Clicks on the close button and tests if the OnClose event works
         /// </summary>
@@ -58,7 +59,6 @@ namespace MudBlazor.UnitTests.Components
             expectedEvent.InnerHtml.Should().Be("OnClose");
         }
 
-        [Ignore("TODO: this needs to be investigated")]
         [Test]
         public async Task Chip_Link_Test()
         {
