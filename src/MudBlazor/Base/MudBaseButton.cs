@@ -40,7 +40,10 @@ namespace MudBlazor
         /// <summary>
         /// If set to a URL, clicking the button will open the referenced document. Use Target to specify where (Obsolete replaced by Href)
         /// </summary>
+        
         [Obsolete("Use Href Instead.", false)]
+        [Parameter]
+        [Category(CategoryTypes.Button.ClickAction)]
         public string Link
         {
             get => Href;
