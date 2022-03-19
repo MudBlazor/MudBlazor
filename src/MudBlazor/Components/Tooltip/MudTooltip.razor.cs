@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Extensions;
@@ -71,6 +72,7 @@ namespace MudBlazor
         /// Changes the default transition delay in seconds.
         /// </summary>
         [Obsolete("Use Delay instead.", true)]
+        [ExcludeFromCodeCoverage]
         [Parameter]
         public double Delayed
         {

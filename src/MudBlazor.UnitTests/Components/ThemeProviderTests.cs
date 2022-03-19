@@ -242,9 +242,16 @@ namespace MudBlazor.UnitTests.Components
             var styleLines = rootStyleNode.InnerHtml.Split('\n', StringSplitOptions.RemoveEmptyEntries);
 
             styleLines.Should().BeEquivalentTo(expectedLines);
+        }
 
-
-
+        [Test]
+        public void DarkMode_Test()
+        {
+            var comp = Context.RenderComponent<MudThemeProvider>();
+            comp.Should().NotBeNull();
+#pragma warning disable BL0005
+            comp.Instance.IsDarkMode = true;
+            comp.Instance._isDarkMode.Should().BeTrue();
         }
     }
 }
