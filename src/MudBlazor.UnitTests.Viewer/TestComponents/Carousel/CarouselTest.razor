@@ -1,6 +1,6 @@
 ﻿@namespace MudBlazor.UnitTests.TestComponents
 
-<MudCarousel Style="height:200px;" ShowArrows="true" ArrowsPosition="Position.Top" BulletsPosition="Position.Start" ShowDelimiters="true" AutoCycle="false" AutoCycleTime="TimeSpan.FromMilliseconds(500)" TData="object">
+<MudCarousel Style="height:200px;" ShowArrows="true" ShowBullets="true" ArrowsPosition="Position.Top" BulletsPosition="Position.Start" ShowDelimiters="true" AutoCycle="false" AutoCycleTime="TimeSpan.FromMilliseconds(500)" TData="object">
     <MudCarouselItem Class="fake-class-item1">
         <div class="d-flex" style="background-color:#594AE2; height:100%">
             <MudIcon Class="mx-auto my-auto" Icon="@Icons.Custom.Brands.MudBlazor" Size="@Size.Large" />
@@ -16,4 +16,31 @@
             <MudIcon Class="mx-auto my-auto" Icon="@Icons.Custom.Brands.MudBlazor" Color="@Color.Primary" Size="@Size.Large" />
         </div>
     </MudCarouselItem>
+</MudCarousel>
+
+<MudCarousel Style="height:200px;" ShowArrows="true" ShowBullets="true" ArrowsPosition="Position.Top" BulletsPosition="Position.Start" ShowDelimiters="true" AutoCycle="false" AutoCycleTime="TimeSpan.FromMilliseconds(500)" TData="object">
+    <BulletTemplate Context="selected">
+        <div Class="mud-button-root mud-icon-button mud-icon-button-color-inherit mud-ripple mud-ripple-icon">
+            <span class="mud-icon-button-label">
+                <MudIcon Icon="@(selected ? Icons.Material.Filled.CheckCircle : Icons.Material.Filled.Circle)" Color="@Color.Inherit" />
+            </span>
+        </div>
+    </BulletTemplate>
+    <ChildContent>
+        <MudCarouselItem Class="fake-class-item1">
+            <div class="d-flex" style="background-color:#594AE2; height:100%">
+                <MudIcon Class="mx-auto my-auto" Icon="@Icons.Custom.Brands.MudBlazor" Size="@Size.Large" />
+            </div>
+        </MudCarouselItem>
+        <MudCarouselItem Class="fake-class-item2">
+            <div class="d-flex" style="background-color:#FF4081; height:100%">
+                <MudIcon Class="mx-auto my-auto" Icon="@Icons.Custom.Brands.MudBlazor" Size="@Size.Large" />
+            </div>
+        </MudCarouselItem>
+        <MudCarouselItem Class="fake-class-item3">
+            <div class="d-flex" style="background-color:lightgray; height:100%">
+                <MudIcon Class="mx-auto my-auto" Icon="@Icons.Custom.Brands.MudBlazor" Color="@Color.Primary" Size="@Size.Large" />
+            </div>
+        </MudCarouselItem>
+    </ChildContent>
 </MudCarousel>
