@@ -1,4 +1,5 @@
 ﻿
+using System.Threading.Tasks;
 using Bunit;
 using FluentAssertions;
 using NUnit.Framework;
@@ -180,6 +181,16 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("button span.mud-icon-button-label").InnerHtml.Trim().Should().StartWith("<span")
                 .And.Contain("customicon")
                 .And.Contain($"title=\"{title}\"");
+        }
+
+        [Test]
+        public async Task MudToggleIconTest()
+        {
+            var comp = Context.RenderComponent<MudToggleIconButton>();
+#pragma warning disable BL0005
+            await comp.InvokeAsync(() => comp.Instance.Disabled = true);
+            await comp.InvokeAsync(() => comp.Instance.SetToggledAsync(true));
+            comp.WaitForAssertion(() => comp.Instance.Toggled.Should().BeFalse());
         }
     }
 }

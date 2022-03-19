@@ -719,6 +719,11 @@ namespace MudBlazor.UnitTests.Components
             });
             comp.Instance.Error.Should().BeFalse();
             comp.Instance.ValidationErrors.Should().HaveCount(0);
+
+            comp.WaitForAssertion(() => comp.Instance.GetInputType().Should().Be(InputType.Text));
+            await comp.InvokeAsync(() => comp.Instance.SelectAsync());
+            await comp.InvokeAsync(() => comp.Instance.SelectRangeAsync(0, 1));
+            comp.WaitForAssertion(() => comp.Instance.ValidationErrors.Should().HaveCount(0));
         }
     }
 }

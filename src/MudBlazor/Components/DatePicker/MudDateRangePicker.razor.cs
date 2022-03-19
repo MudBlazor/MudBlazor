@@ -260,7 +260,7 @@ namespace MudBlazor
             base.OnOpened();
         }
 
-        protected override async void Submit()
+        protected internal override async void Submit()
         {
             if (ReadOnly)
                 return;

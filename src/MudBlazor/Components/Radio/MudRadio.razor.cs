@@ -146,7 +146,7 @@ namespace MudBlazor
             MudRadioGroup?.SetSelectedRadioAsync(this).AndForget();
         }
 
-        private Task OnClick()
+        internal Task OnClick()
         {
             if (MudRadioGroup != null)
                 return MudRadioGroup.SetSelectedRadioAsync(this);

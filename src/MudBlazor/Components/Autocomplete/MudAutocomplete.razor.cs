@@ -560,7 +560,7 @@ namespace MudBlazor
             return $"{_componentId}_item{index}";
         }
 
-        private Task OnEnterKey()
+        internal Task OnEnterKey()
         {
             if (IsOpen == false)
                 return Task.CompletedTask;

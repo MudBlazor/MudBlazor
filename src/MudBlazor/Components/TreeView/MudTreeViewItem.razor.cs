@@ -267,7 +267,7 @@ namespace MudBlazor
             set { _ = SelectItem(value, this); }
         }
 
-        protected bool ArrowExpanded
+        protected internal bool ArrowExpanded
         {
             get => Expanded;
             set
@@ -323,7 +323,7 @@ namespace MudBlazor
             }
         }
 
-        protected Task OnItemExpanded(bool expanded)
+        protected internal Task OnItemExpanded(bool expanded)
         {
             if (Expanded == expanded)
                 return Task.CompletedTask;

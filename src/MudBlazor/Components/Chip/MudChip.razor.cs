@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Microsoft.AspNetCore.Components;
@@ -28,6 +29,8 @@ namespace MudBlazor
           .AddClass(Class)
         .Build();
 
+        //Cannot test the get variant (last line)
+        [ExcludeFromCodeCoverage]
         private Variant GetVariant()
         {
             return Variant switch
@@ -267,7 +270,7 @@ namespace MudBlazor
                 Value = this;
         }
 
-        protected async Task OnClickHandler(MouseEventArgs ev)
+        protected internal async Task OnClickHandler(MouseEventArgs ev)
         {
             if (ChipSet?.ReadOnly == true)
             {
@@ -314,7 +317,8 @@ namespace MudBlazor
 
         internal void ForceRerender() => StateHasChanged();
 
-
+        //Exclude because we don't test to catching exception yet
+        [ExcludeFromCodeCoverage]
         public void Dispose()
         {
             try
