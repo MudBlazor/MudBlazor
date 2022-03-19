@@ -689,8 +689,8 @@ namespace MudBlazor.UnitTests.Components
             comp.WaitForAssertion(() => textField.Value.Should().Be(null));
 
             //This gives error
-            //await comp.InvokeAsync(() => textField.SetText("123"));
-            //comp.WaitForAssertion(() => textField.Value.Should().Be("(123)"));
+            await comp.InvokeAsync(() => textField.SetText("123"));
+            comp.WaitForAssertion(() => textField.Value.Should().Be("(123) "));
         }
     }
 }
