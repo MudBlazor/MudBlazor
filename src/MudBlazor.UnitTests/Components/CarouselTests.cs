@@ -29,11 +29,11 @@ namespace MudBlazor.UnitTests.Components
             var carousel = comp.FindComponent<MudCarousel<object>>().Instance;
             //// validating some renders
             carousel.Should().NotBeNull();
-            comp.WaitForAssertion(() => comp.FindAll("div.mud-carousel-item").Count.Should().Be(1));
-            comp.FindAll("div.fake-class-item1").Count.Should().Be(1);
+            comp.WaitForAssertion(() => comp.FindAll("div.mud-carousel-item").Count.Should().Be(2));
+            comp.FindAll("div.fake-class-item1").Count.Should().Be(2);
             comp.FindAll("div.fake-class-item2").Count.Should().Be(0);
             comp.FindAll("div.fake-class-item3").Count.Should().Be(0);
-            comp.FindAll("button.mud-icon-button").Count.Should().Be(5); //left + right + 3 pages
+            comp.FindAll("button.mud-icon-button").Count.Should().Be(7); //left + right + 3 pages
             carousel.LastContainer.Should().BeNull();
             //// changing current index from 0 to 1
             carousel.SelectedIndex.Should().Be(0);
@@ -44,7 +44,7 @@ namespace MudBlazor.UnitTests.Components
             carousel.SelectedContainer.Should().Be(carousel.Items[1]);
             carousel.SelectedItem.Should().Be(carousel.Items[1]);
             carousel.LastContainer.Should().Be(last);
-            comp.FindAll("div.fake-class-item1").Count.Should().Be(1); //last item continues on DOM because it need's to act with transition effect
+            comp.FindAll("div.fake-class-item1").Count.Should().Be(2); //last item continues on DOM because it need's to act with transition effect
             comp.FindAll("div.fake-class-item2").Count.Should().Be(1);
             comp.FindAll("div.fake-class-item3").Count.Should().Be(0);
             //// changing current index from 1 to 0
@@ -54,7 +54,7 @@ namespace MudBlazor.UnitTests.Components
             carousel.SelectedContainer.Should().Be(carousel.Items[0]);
             carousel.SelectedItem.Should().Be(carousel.Items[0]);
             carousel.LastContainer.Should().Be(last);
-            comp.FindAll("div.fake-class-item1").Count.Should().Be(1);
+            comp.FindAll("div.fake-class-item1").Count.Should().Be(2);
             comp.FindAll("div.fake-class-item2").Count.Should().Be(1);
             comp.FindAll("div.fake-class-item3").Count.Should().Be(0);
             //// changing current index from 0 to 2 with MoveTo()
@@ -64,7 +64,7 @@ namespace MudBlazor.UnitTests.Components
             carousel.SelectedContainer.Should().Be(carousel.Items[2]);
             carousel.SelectedItem.Should().Be(carousel.Items[2]);
             carousel.LastContainer.Should().Be(last);
-            comp.FindAll("div.fake-class-item1").Count.Should().Be(1);
+            comp.FindAll("div.fake-class-item1").Count.Should().Be(2);
             comp.FindAll("div.fake-class-item2").Count.Should().Be(0);
             comp.FindAll("div.fake-class-item3").Count.Should().Be(1);
             //// changing current index from 2 to 0 with Next()
@@ -74,7 +74,7 @@ namespace MudBlazor.UnitTests.Components
             carousel.SelectedContainer.Should().Be(carousel.Items[0]);
             carousel.SelectedItem.Should().Be(carousel.Items[0]);
             carousel.LastContainer.Should().Be(last);
-            comp.FindAll("div.fake-class-item1").Count.Should().Be(1);
+            comp.FindAll("div.fake-class-item1").Count.Should().Be(2);
             comp.FindAll("div.fake-class-item2").Count.Should().Be(0);
             comp.FindAll("div.fake-class-item3").Count.Should().Be(1);
             //// changing current index from 0 to 2 with Previous()
@@ -84,7 +84,7 @@ namespace MudBlazor.UnitTests.Components
             carousel.SelectedContainer.Should().Be(carousel.Items[2]);
             carousel.SelectedItem.Should().Be(carousel.Items[2]);
             carousel.LastContainer.Should().Be(last);
-            comp.FindAll("div.fake-class-item1").Count.Should().Be(1);
+            comp.FindAll("div.fake-class-item1").Count.Should().Be(2);
             comp.FindAll("div.fake-class-item2").Count.Should().Be(0);
             comp.FindAll("div.fake-class-item3").Count.Should().Be(1);
             //// changing current index from 1 to 2 with Next() - rendering test
@@ -96,7 +96,7 @@ namespace MudBlazor.UnitTests.Components
             carousel.SelectedIndex.Should().Be(2);
             carousel.SelectedContainer.Should().Be(carousel.Items[2]);
             carousel.SelectedItem.Should().Be(carousel.Items[2]);
-            comp.FindAll("div.fake-class-item1").Count.Should().Be(0);
+            comp.FindAll("div.fake-class-item1").Count.Should().Be(1);
             comp.FindAll("div.fake-class-item2").Count.Should().Be(1);
             comp.FindAll("div.fake-class-item3").Count.Should().Be(1);
             //// Forcing SelectedIndex value by setter (for binding purposes)
@@ -106,7 +106,7 @@ namespace MudBlazor.UnitTests.Components
             carousel.SelectedContainer.Should().Be(carousel.Items[0]);
             carousel.SelectedItem.Should().Be(carousel.Items[0]);
             carousel.LastContainer.Should().Be(last);
-            comp.FindAll("div.fake-class-item1").Count.Should().Be(1);
+            comp.FindAll("div.fake-class-item1").Count.Should().Be(2);
             comp.FindAll("div.fake-class-item2").Count.Should().Be(0);
             comp.FindAll("div.fake-class-item3").Count.Should().Be(1);
             ////Swipe from right to left
@@ -120,7 +120,7 @@ namespace MudBlazor.UnitTests.Components
             carousel.SelectedContainer.Should().Be(carousel.Items[1]);
             carousel.SelectedItem.Should().Be(carousel.Items[1]);
             carousel.LastContainer.Should().Be(last);
-            comp.FindAll("div.fake-class-item1").Count.Should().Be(1);
+            comp.FindAll("div.fake-class-item1").Count.Should().Be(2);
             comp.FindAll("div.fake-class-item2").Count.Should().Be(1);
             comp.FindAll("div.fake-class-item3").Count.Should().Be(0);
             ////Swipe from left to right
@@ -133,7 +133,7 @@ namespace MudBlazor.UnitTests.Components
             carousel.SelectedContainer.Should().Be(carousel.Items[0]);
             carousel.SelectedItem.Should().Be(carousel.Items[0]);
             carousel.LastContainer.Should().Be(last);
-            comp.FindAll("div.fake-class-item1").Count.Should().Be(1);
+            comp.FindAll("div.fake-class-item1").Count.Should().Be(2);
             comp.FindAll("div.fake-class-item2").Count.Should().Be(1);
             comp.FindAll("div.fake-class-item3").Count.Should().Be(0);
         }
