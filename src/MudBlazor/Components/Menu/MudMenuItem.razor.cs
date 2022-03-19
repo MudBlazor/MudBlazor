@@ -15,11 +15,22 @@ namespace MudBlazor
 
         [Inject] public NavigationManager UriHelper { get; set; }
         [Inject] public IJsApiService JsApiService { get; set; }
+
         /// <summary>
         /// If set to a URL, clicking the button will open the referenced document. Use Target to specify where (Obsolete replaced by Href)
         /// </summary>
-        [Obsolete("Use Href Instead.", false)] public string Link { get => Href; set => Href = value; }
-        [Parameter] [Category(CategoryTypes.Menu.ClickAction)] public string Href { get; set; }
+        [Obsolete("Use Href Instead.", false)]
+        [Parameter]
+        [Category(CategoryTypes.Menu.ClickAction)]
+        public string Link { get => Href; set => Href = value; }
+
+        /// <summary>
+        /// If set to a URL, clicking the button will open the referenced document. Use Target to specify where
+        /// </summary>
+        [Parameter] 
+        [Category(CategoryTypes.Menu.ClickAction)] 
+        public string Href { get; set; }
+
         [Parameter] [Category(CategoryTypes.Menu.ClickAction)] public string Target { get; set; }
         [Parameter] [Category(CategoryTypes.Menu.ClickAction)] public bool ForceLoad { get; set; }
         [Parameter] [Category(CategoryTypes.Menu.ClickAction)] public ICommand Command { get; set; }

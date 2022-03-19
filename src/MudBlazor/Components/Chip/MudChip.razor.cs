@@ -162,6 +162,8 @@ namespace MudBlazor
         /// If set to a URL, clicking the button will open the referenced document. Use Target to specify where (Obsolete replaced by Href)
         /// </summary>
         [Obsolete("Use Href Instead.", false)]
+        [Parameter]
+        [Category(CategoryTypes.Chip.ClickAction)]
         public string Link
         {
             get => Href;
@@ -176,7 +178,7 @@ namespace MudBlazor
         public string Href { get; set; }
 
         /// <summary>
-        /// The target attribute specifies where to open the link, if Link is specified. Possible values: _blank | _self | _parent | _top | <i>framename</i>
+        /// The target attribute specifies where to open the link, if Href is specified. Possible values: _blank | _self | _parent | _top | <i>framename</i>
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Chip.ClickAction)]
