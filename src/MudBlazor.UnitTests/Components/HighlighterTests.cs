@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Bunit;
 using FluentAssertions;
+using MudBlazor.Components.Highlighter;
 using NUnit.Framework;
 using static Bunit.ComponentParameterFactory;
 using static MudBlazor.Components.Highlighter.Splitter;
@@ -20,6 +21,8 @@ namespace MudBlazor.UnitTests.Components
             var result = GetFragments(TEXT, highlightedText);
             result.Should().HaveCount(2);
             result.Should().BeEquivalentTo(new List<string> { "This is the first ", "item" });
+
+            GetFragments(TEXT, null).Should().NotBeNull();
         }
 
         [Test]

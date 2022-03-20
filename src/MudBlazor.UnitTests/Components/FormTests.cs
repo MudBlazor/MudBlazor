@@ -59,6 +59,9 @@ namespace MudBlazor.UnitTests.Components
             form.Errors.Length.Should().Be(0);
             textField.Error.Should().BeFalse();
             textField.ErrorText.Should().BeNullOrEmpty();
+#pragma warning disable BL0005
+            form.SuppressRenderingOnValidation = true;
+            form.GetShouldRender().Should().BeTrue();
         }
 
         /// <summary>

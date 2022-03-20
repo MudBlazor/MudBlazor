@@ -219,6 +219,12 @@ namespace MudBlazor
             }
         }
 
+        //for test issues
+        internal bool GetShouldRender()
+        {
+            return ShouldRender();
+        }
+
         protected override bool ShouldRender()
         {
             if (!SuppressRenderingOnValidation)
