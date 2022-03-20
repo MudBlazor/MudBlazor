@@ -1,10 +1,7 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
-<MudSlider TickMarks="true" TickMarkLabels="labels" Step="10" Value="@value">Volume</MudSlider>
-<MudSlider TickMarks="true" TickMarkLabels="labels" Step="25" Value="@value"/>
-
+<MudSlider TickMarks="true" Step="10" Value="@value" />
 
 @code {
     int value = 50;
-    string[] labels = new string[] { "Korv", "Fisk", "Äpple", "Groda", "Köttbullar", "Pizza" };
 }
