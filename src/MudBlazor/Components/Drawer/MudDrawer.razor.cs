@@ -69,7 +69,7 @@ namespace MudBlazor
         [CascadingParameter] MudDrawerContainer DrawerContainer { get; set; }
 
         [CascadingParameter]
-        bool RightToLeft
+        internal bool RightToLeft
         {
             get => _rtl;
             set
@@ -328,7 +328,7 @@ namespace MudBlazor
             }
         }
 
-        private void CloseDrawer()
+        internal void CloseDrawer()
         {
             if (Open)
             {
@@ -345,7 +345,7 @@ namespace MudBlazor
             }
         }
 
-        private void ResizeListener_OnBreakpointChanged(object sender, Breakpoint breakpoint)
+        internal void ResizeListener_OnBreakpointChanged(object sender, Breakpoint breakpoint)
         {
             if (!_isRendered)
                 return;
@@ -358,7 +358,7 @@ namespace MudBlazor
             _height = (await _contentRef.MudGetBoundingClientRectAsync())?.Height ?? 0;
         }
 
-        private async void UpdateBreakpointState(Breakpoint breakpoint)
+        internal async void UpdateBreakpointState(Breakpoint breakpoint)
         {
             var isStateChanged = false;
             if (breakpoint == Breakpoint.None)
