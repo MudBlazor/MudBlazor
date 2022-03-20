@@ -228,7 +228,7 @@ namespace MudBlazor
             await base.OnAfterRenderAsync(firstRender);
         }
 
-        protected async Task HandleKeydown(KeyboardEventArgs obj)
+        protected internal async Task HandleKeydown(KeyboardEventArgs obj)
         {
             if (Disabled || ReadOnly)
                 return;
@@ -244,7 +244,7 @@ namespace MudBlazor
             OnKeyDown.InvokeAsync(obj).AndForget();
         }
 
-        protected Task HandleKeyUp(KeyboardEventArgs obj)
+        protected internal Task HandleKeyUp(KeyboardEventArgs obj)
         {
             if (Disabled || ReadOnly)
                 return Task.CompletedTask;

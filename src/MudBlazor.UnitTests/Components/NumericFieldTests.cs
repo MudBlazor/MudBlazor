@@ -594,6 +594,11 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(() => comp.Instance.Increment().Wait());
             await comp.InvokeAsync(() => comp.Instance.Decrement().Wait());
             comp.Instance.Value.Should().Be(value);
+
+            comp.Instance.Disabled = true;
+            await comp.InvokeAsync(() => comp.Instance.HandleKeydown(new KeyboardEventArgs() { Key = "ArrowUp" }));
+            await comp.InvokeAsync(() => comp.Instance.HandleKeyUp(new KeyboardEventArgs() { Key = "ArrowUp" }));
+            comp.WaitForAssertion(() => comp.Instance.Value.Should().Be(value));
         }
 
         /// <summary>
