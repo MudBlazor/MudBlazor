@@ -21,6 +21,7 @@ namespace MudBlazor
         internal bool _shiftDown;
         private bool _disabled;
         private bool _initialized;
+        private bool _shouldRender = true;
 
         /// <summary>
         /// Child content of the component.
@@ -96,7 +97,7 @@ namespace MudBlazor
             return FocusFirstAsync();
         }
 
-        private Task InitializeFocusAsync()
+        internal Task InitializeFocusAsync()
         {
             _initialized = true;
 
@@ -144,14 +145,18 @@ namespace MudBlazor
             return _root.MudSaveFocusAsync().AsTask();
         }
 
-        internal bool _shouldRender = true;
-
         protected override bool ShouldRender()
         {
             if (_shouldRender)
                 return true;
             _shouldRender = true; // auto-reset _shouldRender to true
             return false;
+        }
+
+        //For testing issues
+        internal bool GetShouldRender()
+        {
+            return ShouldRender();
         }
 
         public void Dispose()

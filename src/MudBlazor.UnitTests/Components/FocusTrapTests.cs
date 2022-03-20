@@ -33,8 +33,15 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.OnRootKeyDown(new KeyboardEventArgs() { Key = "Tab" });
             comp.Instance.OnRootKeyUp(new KeyboardEventArgs() { Key = "Tab" });
 
-            comp.Instance._shouldRender = false;
+            comp.Instance.GetShouldRender().Should().BeFalse();
+            comp.Instance.GetShouldRender().Should().BeTrue();
             comp.Instance._shiftDown.Should().BeFalse();
+
+            comp.Instance.DefaultFocus = DefaultFocus.Element;
+            comp.Instance.InitializeFocusAsync();
+
+            comp.Instance.DefaultFocus = DefaultFocus.LastChild;
+            comp.Instance.InitializeFocusAsync();
         }
 
     }
