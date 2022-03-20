@@ -126,6 +126,7 @@ namespace MudBlazor
         /// If true, instead of positioning the menu at the left upper corner, position at the exact cursor location.
         /// This makes sense for larger activators
         /// </summary>
+        [ExcludeFromCodeCoverage]
         [Obsolete("Use PositionAtCursor instead.",true)]
         [Parameter]
         public bool PositionAtCurser
@@ -272,7 +273,7 @@ namespace MudBlazor
         }
 
         // Sets the popover style ONLY when there is an activator
-        private void SetPopoverStyle(MouseEventArgs args)
+        internal void SetPopoverStyle(MouseEventArgs args)
         {
             AnchorOrigin = Origin.TopLeft;
             PopoverStyle = $"margin-top: {args?.OffsetY.ToPx()}; margin-left: {args?.OffsetX.ToPx()};";

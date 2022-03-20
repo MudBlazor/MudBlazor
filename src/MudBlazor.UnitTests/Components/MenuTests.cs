@@ -1,4 +1,5 @@
 ﻿
+using System;
 using System.Threading.Tasks;
 using Bunit;
 using FluentAssertions;
@@ -16,6 +17,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<MenuTest1>();
             var menu = comp.FindComponent<MudMenu>();
+            
             comp.FindAll("button.mud-button-root")[0].Click();
             comp.FindAll("div.mud-list-item").Count.Should().Be(3);
             comp.FindAll("div.mud-list-item")[0].Click();
@@ -32,7 +34,7 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(() => menuItems[1].Instance.OnTouchHandler(new TouchEventArgs()));
             comp.WaitForAssertion(() => comp.FindAll("div.mud-popover-open").Count.Should().Be(0));
 
-            //Disabled item's click ot touch should not close popover
+            //Disabled item's click or touch should not close popover
             comp.FindAll("button.mud-button-root")[0].Click();
             menuItems = comp.FindComponents<MudMenuItem>();
 #pragma warning disable BL0005
@@ -44,6 +46,36 @@ namespace MudBlazor.UnitTests.Components
             comp.WaitForAssertion(() => comp.FindAll("div.mud-popover-open").Count.Should().Be(0));
             await comp.InvokeAsync(() => menu.Instance.ToggleMenuTouch(new TouchEventArgs()));
             comp.WaitForAssertion(() => comp.FindAll("div.mud-popover-open").Count.Should().Be(1));
+            menuItems = comp.FindComponents<MudMenuItem>();
+            await comp.InvokeAsync(() => menuItems[2].Instance.Disabled = false);
+            await comp.InvokeAsync(() => menuItems[2].Instance.OnTouchHandler(new TouchEventArgs()));
+            comp.WaitForAssertion(() => comp.FindAll("div.mud-popover-open").Count.Should().Be(0));
+
+            await comp.InvokeAsync(() => menu.Instance.Disabled = true);
+            await comp.InvokeAsync(() => menu.Instance.OpenMenu(new EventArgs()));
+            await comp.InvokeAsync(() => menu.Instance.ToggleMenu(new MouseEventArgs()));
+            await comp.InvokeAsync(() => menu.Instance.ToggleMenuTouch(new TouchEventArgs()));
+            comp.WaitForAssertion(() => comp.FindAll("div.mud-popover-open").Count.Should().Be(0));
+            await comp.InvokeAsync(() => menu.Instance.Disabled = false);
+            await comp.InvokeAsync(() => menu.Instance.ToggleMenuTouch(new TouchEventArgs()));
+            comp.WaitForAssertion(() => comp.FindAll("div.mud-popover-open").Count.Should().Be(1));
+
+            await comp.InvokeAsync(() => menu.Instance.ActivationEvent = MouseEvent.MouseOver);
+            await comp.InvokeAsync(() => menu.Instance.MouseLeave());
+            //Didn't work need investigate
+            //comp.WaitForAssertion(() => comp.FindAll("div.mud-popover-open").Count.Should().Be(0));
+            var item = comp.FindComponent<MudMenuItem>();
+            await comp.InvokeAsync(() => item.Instance.Disabled = true);
+            await comp.InvokeAsync(() => item.Instance.OnClickHandler(new MouseEventArgs()));
+        }
+
+        [Test]
+        public void MenuTest_Other()
+        {
+            var comp = Context.RenderComponent<MenuTest1>();
+            var menu = comp.FindComponent<MudMenu>();
+
+            menu.Instance.SetPopoverStyle(new MouseEventArgs());
         }
 
         [Test]
