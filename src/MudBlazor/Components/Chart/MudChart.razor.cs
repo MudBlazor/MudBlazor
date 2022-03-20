@@ -74,7 +74,7 @@ namespace MudBlazor
         [Category(CategoryTypes.Chart.Appearance)]
         public Position LegendPosition { get; set; } = Position.Bottom;
 
-        private Position ConvertLegendPosition(Position position)
+        internal Position ConvertLegendPosition(Position position)
         {
             return position switch
             {
@@ -112,7 +112,7 @@ namespace MudBlazor
         /// <summary>
         /// Scales the input data to the range between 0 and 1
         /// </summary>
-        protected double[] GetNormalizedData()
+        protected internal double[] GetNormalizedData()
         {
             if (InputData == null)
                 return Array.Empty<double>();

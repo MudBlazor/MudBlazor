@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Bunit;
 using FluentAssertions;
+using MudBlazor.Components.Chart;
 using MudBlazor.Docs.Examples;
 using MudBlazor.UnitTests.TestComponents;
 using MudBlazor.UnitTests.TestComponents.Charts;
@@ -63,6 +64,7 @@ namespace MudBlazor.UnitTests.Components
         public void BarChartSelectionTest()
         {
             var comp = Context.RenderComponent<BarExample1>();
+            var chart = comp.FindComponent<MudChart>();
             // print the generated html
             //Console.WriteLine(comp.Markup);
             comp.Find("h6").InnerHtml.Trim().Should().Be("Selected portion of the chart: -1");
@@ -71,6 +73,21 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("h6").InnerHtml.Trim().Should().Be("Selected portion of the chart: 0");
             comp.FindAll("path.mud-chart-bar")[10].Click();
             comp.Find("h6").InnerHtml.Trim().Should().Be("Selected portion of the chart: 1");
+
+            chart.Instance.ConvertLegendPosition(Position.Start).Should().Be(Position.Left);
+            chart.Instance.ConvertLegendPosition(Position.End).Should().Be(Position.Right);
+            chart.Instance.ConvertLegendPosition(Position.Bottom).Should().Be(Position.Bottom);
+#pragma warning disable BL0005
+            chart.Instance.InputData = null;
+            chart.Instance.GetNormalizedData().Should().NotBeNull();
+        }
+
+        [Test]
+        public void Chart_MatrixTest()
+        {
+            var m = new Matrix(30);
+            var ms = new MatrixSolver(20, m);
+            ms.SwitchRows(2);
         }
 
         [Test]

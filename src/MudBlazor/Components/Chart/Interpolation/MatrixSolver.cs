@@ -21,7 +21,7 @@ namespace MudBlazor.Components.Chart
             m = mi;
         }
 
-        void SwitchRows(int n)
+        public void SwitchRows(int n)
         {
             double tempD;
             int i, j;
