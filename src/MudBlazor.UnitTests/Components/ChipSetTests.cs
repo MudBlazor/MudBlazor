@@ -278,6 +278,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<ChipSetTest>();
             var chipSet = comp.FindComponent<MudChipSet>();
             var chip = comp.FindComponents<MudChip>().FirstOrDefault();
+            var chip1 = new MudChip();
 
             comp.WaitForAssertion(() => chipSet.Instance.SelectedChips.Length.Should().Be(0));
             await comp.InvokeAsync(() => chipSet.Instance.SelectedChip = (MudChip)chip.Instance.Value);
@@ -290,6 +291,13 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(() => chipSet.Instance.SelectedChip = null);
             await comp.InvokeAsync(() => chipSet.Instance.SetSelectedValues(null));
             comp.WaitForAssertion(() => chipSet.Instance.SelectedChips.Length.Should().Be(0));
+
+            await comp.InvokeAsync(() => chipSet.Instance.Filter = true);
+            await comp.InvokeAsync(() => chipSet.Instance.SetSelectedValues(new string[] {"a", "b"}));
+
+            await comp.InvokeAsync(() => chipSet.Instance.MultiSelection = true);
+            await comp.InvokeAsync(() => chip1.DefaultProcessed = true);
+            await comp.InvokeAsync(() => chipSet.Instance.CheckDefault(chip1));
         }
     }
 
