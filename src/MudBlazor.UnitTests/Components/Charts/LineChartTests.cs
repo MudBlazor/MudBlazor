@@ -62,7 +62,7 @@ namespace MudBlazor.UnitTests.Charts
                 .Add(p => p.Width, "100%")
                 .Add(p => p.ChartSeries, chartSeries)
                 .Add(p => p.XAxisLabels, xAxisLabels)
-                .Add(p => p.ChartOptions, new ChartOptions { ChartPalette = _baseChartPalette, InterpolationOption = opt}));
+                .Add(p => p.ChartOptions, new ChartOptions { ChartPalette = _baseChartPalette, InterpolationOption = opt, XAxisLines = true, YAxisTicks = 0}));
 
             comp.Instance.ChartSeries.Should().NotBeEmpty();
             

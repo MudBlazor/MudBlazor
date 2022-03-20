@@ -54,7 +54,7 @@ namespace MudBlazor.UnitTests.Charts
                 .Add(p => p.ChartType, ChartType.Bar)
                 .Add(p => p.Height, "350px")
                 .Add(p => p.Width, "100%")
-                .Add(p => p.ChartOptions, new ChartOptions {ChartPalette = _baseChartPalette})
+                .Add(p => p.ChartOptions, new ChartOptions {ChartPalette = _baseChartPalette, XAxisLines = true})
                 .Add(p => p.ChartSeries, chartSeries)
                 .Add(p => p.XAxisLabels, xAxisLabels));
 
