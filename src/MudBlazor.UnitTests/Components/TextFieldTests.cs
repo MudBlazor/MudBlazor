@@ -645,7 +645,7 @@ namespace MudBlazor.UnitTests.Components
             comp.WaitForAssertion(() => input.Instance.Value.Should().Be(""));
             comp.WaitForAssertion(() => input.Instance.Text.Should().Be(""));
         }
-        
+
         [Test]
         public async Task TextField_ElementReferenceId_ShouldNot_BeEmpty()
         {
@@ -653,7 +653,21 @@ namespace MudBlazor.UnitTests.Components
             var inputId = comp.Instance.InputReference.ElementReference.Id;
 
             Assert.IsNotEmpty(inputId);
-        }    
+        }
+
+        [Test]
+        public void TextField_Debounce()
+        {
+            var comp = Context.RenderComponent<MudTextField<string>>();
+            comp.SetParam("DebounceInterval", 5d);
+            comp.SetParam("DebounceInterval", 0d);
+            comp.SetParam("DebounceInterval", 50d);
+
+            comp.Instance.OnChange();
+            comp.Instance._timer.Enabled = true;
+            comp.Instance.ClearTimer();
+            comp.Instance._timer.Should().BeNull();
+        }
 
         class TestDataAnnotationModel
         {
