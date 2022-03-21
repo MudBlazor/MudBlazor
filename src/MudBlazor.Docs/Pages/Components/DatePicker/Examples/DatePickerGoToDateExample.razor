@@ -8,7 +8,7 @@
 
 <div class="d-flex flex-column gap-4">
     <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="CurrentDate">Move To Current Date</MudButton>
-    <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="MudRelease">When Mud 1.0 Released?</MudButton>
+    <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="MudRelease">When First Mud Released?</MudButton>
     <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="GoMaxDateWithoutSubmit">Go To Max Date Without Submit</MudButton>
 </div>
 
@@ -37,7 +37,7 @@
 
     private async Task MudRelease()
     {
-        await _picker.GoToDate(new DateTime(2020, 09, 11));
+        await _picker.GoToDate(new DateTime(2020, 10, 18));
     }
 
     private async Task GoMaxDateWithoutSubmit()
