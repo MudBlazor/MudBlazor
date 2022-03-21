@@ -21,27 +21,27 @@
     {
         if (firstRender)
         {
-            _picker.MoveToDate();
+            _picker.GoToDate();
         }
     }
 
     private async Task Today()
     {
-        await _picker.MoveToDate(DateTime.Today);
+        await _picker.GoToDate(DateTime.Today);
     }
 
     private void CurrentDate()
     {
-        _picker.MoveToDate();
+        _picker.GoToDate();
     }
 
     private async Task MudRelease()
     {
-        await _picker.MoveToDate(new DateTime(2020, 09, 11));
+        await _picker.GoToDate(new DateTime(2020, 09, 11));
     }
 
     private async Task GoMaxDateWithoutSubmit()
     {
-        await _picker.MoveToDate(maxDate.Value, false);
+        await _picker.GoToDate(maxDate.Value, false);
     }
 }

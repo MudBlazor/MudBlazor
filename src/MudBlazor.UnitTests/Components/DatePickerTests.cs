@@ -809,22 +809,22 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task DatePickerTest_MoveToDate()
+        public async Task DatePickerTest_GoToDate()
         {
             var comp = Context.RenderComponent<SimpleMudDatePickerTest>();
 
             var datePicker = comp.FindComponent<MudDatePicker>().Instance;
 
-            await comp.InvokeAsync(() => datePicker.MoveToDate(new DateTime(2022, 03, 20)));
+            await comp.InvokeAsync(() => datePicker.GoToDate(new DateTime(2022, 03, 20)));
             comp.WaitForAssertion(() => datePicker.Date.Should().Be(new DateTime(2022, 03, 20)));
 
-            await comp.InvokeAsync(() => datePicker.MoveToDate(new DateTime(2023, 04, 21), false));
+            await comp.InvokeAsync(() => datePicker.GoToDate(new DateTime(2023, 04, 21), false));
             comp.WaitForAssertion(() => datePicker.Date.Should().Be(new DateTime(2022, 03, 20)));
 
-            await comp.InvokeAsync(() => datePicker.MoveToDate(new DateTime(2023, 04, 21)));
+            await comp.InvokeAsync(() => datePicker.GoToDate(new DateTime(2023, 04, 21)));
             comp.WaitForAssertion(() => datePicker.Date.Should().Be(new DateTime(2023, 04, 21)));
 
-            await comp.InvokeAsync(() => datePicker.MoveToDate());
+            await comp.InvokeAsync(() => datePicker.GoToDate());
             comp.WaitForAssertion(() => datePicker.Date.Should().Be(new DateTime(2023, 04, 21)));
         }
     }

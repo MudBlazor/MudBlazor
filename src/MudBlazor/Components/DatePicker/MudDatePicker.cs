@@ -291,7 +291,7 @@ namespace MudBlazor
         /// <summary>
         /// Scrolls to the date.
         /// </summary>
-        public void MoveToDate()
+        public void GoToDate()
         {
             if (Date.HasValue)
             {
@@ -303,7 +303,7 @@ namespace MudBlazor
         /// <summary>
         /// Scrolls to the defined date.
         /// </summary>
-        public async Task MoveToDate(DateTime date, bool submitDate = true)
+        public async Task GoToDate(DateTime date, bool submitDate = true)
         {
             PickerMonth = new DateTime(date.Year, date.Month, 1);
             if (submitDate)
