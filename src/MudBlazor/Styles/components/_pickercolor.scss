@@ -71,7 +71,7 @@
                 min-width: 224px;
                 border-radius: var(--mud-default-borderradius);
 
-                & > input {
+                & .mud-slider-input {
                     height: 10px;
                     border-radius: var(--mud-default-borderradius);
 
@@ -101,11 +101,11 @@
                     margin-top: 18px;
                 }
 
-                &.hue > input {
+                &.hue .mud-slider-input {
                     background: linear-gradient( 90deg, #FF0000, #ff0 16.66%, #0f0 33.33%,#0ff 50%, #00f 66.66%, #f0f 83.33%, #FF0000);
                 }
 
-                &.alpha > input {
+                &.alpha .mud-slider-input {
                     background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAGElEQVQYlWNgYGCQwoKxgqGgcJA5h3yFAAs8BRWVSwooAAAAAElFTkSuQmCC) repeat;
                 }
             }
@@ -138,8 +138,9 @@
 
                 .mud-input-helper-text {
                     text-align: center;
+
                     & div div {
-                        margin:auto;
+                        margin: auto;
                     }
                 }
             }
