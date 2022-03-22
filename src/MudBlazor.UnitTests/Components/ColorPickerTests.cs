@@ -123,7 +123,7 @@ namespace MudBlazor.UnitTests.Components
 
             ((IHtmlInputElement)alphaSlider[0]).Value.Should().Be(((int)expectedColor.A).ToString());
 
-            var alphaSliderStyleAttritbute = ((IHtmlElement)alphaSlider[0].Parent).GetAttribute("style");
+            var alphaSliderStyleAttritbute = ((IHtmlElement)alphaSlider[0].Parent.Parent).GetAttribute("style");
 
             if (isRtl == false)
             {
