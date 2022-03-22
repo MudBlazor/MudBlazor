@@ -287,5 +287,30 @@ namespace MudBlazor
         {
             Close();
         }
+
+        /// <summary>
+        /// Scrolls to the date.
+        /// </summary>
+        public void GoToDate()
+        {
+            if (Date.HasValue)
+            {
+                PickerMonth = new DateTime(Date.Value.Year, Date.Value.Month, 1);
+                ScrollToYear();
+            }
+        }
+
+        /// <summary>
+        /// Scrolls to the defined date.
+        /// </summary>
+        public async Task GoToDate(DateTime date, bool submitDate = true)
+        {
+            PickerMonth = new DateTime(date.Year, date.Month, 1);
+            if (submitDate)
+            {
+                await SetDateAsync(date, true);
+                ScrollToYear();
+            }
+        }
     }
 }
