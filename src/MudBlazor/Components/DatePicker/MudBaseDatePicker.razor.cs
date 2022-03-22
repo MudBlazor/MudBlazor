@@ -542,7 +542,7 @@ namespace MudBlazor
             return Typo.subtitle1;
         }
 
-
+        
 
         protected override void OnInitialized()
         {

@@ -807,5 +807,25 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(() => datePicker.ToggleState());
             comp.WaitForAssertion(() => comp.FindAll("div.mud-picker-open").Count.Should().Be(1));
         }
+
+        [Test]
+        public async Task DatePickerTest_GoToDate()
+        {
+            var comp = Context.RenderComponent<SimpleMudDatePickerTest>();
+
+            var datePicker = comp.FindComponent<MudDatePicker>().Instance;
+
+            await comp.InvokeAsync(() => datePicker.GoToDate(new DateTime(2022, 03, 20)));
+            comp.WaitForAssertion(() => datePicker.Date.Should().Be(new DateTime(2022, 03, 20)));
+
+            await comp.InvokeAsync(() => datePicker.GoToDate(new DateTime(2023, 04, 21), false));
+            comp.WaitForAssertion(() => datePicker.Date.Should().Be(new DateTime(2022, 03, 20)));
+
+            await comp.InvokeAsync(() => datePicker.GoToDate(new DateTime(2023, 04, 21)));
+            comp.WaitForAssertion(() => datePicker.Date.Should().Be(new DateTime(2023, 04, 21)));
+
+            await comp.InvokeAsync(() => datePicker.GoToDate());
+            comp.WaitForAssertion(() => datePicker.Date.Should().Be(new DateTime(2023, 04, 21)));
+        }
     }
 }
