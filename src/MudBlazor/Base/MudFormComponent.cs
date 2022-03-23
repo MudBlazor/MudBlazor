@@ -320,7 +320,8 @@ namespace MudBlazor
                 if (validationContext.MemberName is null && _fieldIdentifier.FieldName is not null)
                     validationContext.MemberName = _fieldIdentifier.FieldName;
                 var validationResult = attr.GetValidationResult(value, validationContext);
-                if (validationResult != ValidationResult.Success)
+                if (validationResult != null &&
+                    validationResult != ValidationResult.Success)
                     errors.Add(validationResult.ErrorMessage);
             }
             catch (Exception e)
