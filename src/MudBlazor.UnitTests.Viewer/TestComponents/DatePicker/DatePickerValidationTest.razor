@@ -2,7 +2,7 @@
 @namespace MudBlazor.UnitTests.TestComponents
 
 <MudForm @bind-IsValid="fIsValid">
-    <MudDatePicker Label="Cheese it" Required="true" RequiredError="Please provide a date" @bind-Date="@(theDate)" />
+    <MudDatePicker id="datePickerLabelTest" Label="Cheese it" Required="true" RequiredError="Please provide a date" @bind-Date="@(theDate)" />
 </MudForm>
 
 Valid: @fIsValid

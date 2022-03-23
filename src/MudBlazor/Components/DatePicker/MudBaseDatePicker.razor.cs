@@ -17,7 +17,9 @@ namespace MudBlazor
             Format = CultureInfo.CurrentCulture.DateTimeFormat.ShortDatePattern,
             Culture = CultureInfo.CurrentCulture
         })
-        { }
+        {
+            AdornmentAriaLabel = "Open Date Picker";
+        }
 
         private bool _exceedMinDateDateView = false;
         private bool _exceedMaxDateDateView = false;
@@ -546,7 +548,7 @@ namespace MudBlazor
             return Typo.subtitle1;
         }
 
-
+        
 
         protected override void OnInitialized()
         {

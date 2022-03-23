@@ -6,7 +6,7 @@ namespace MudBlazor
 {
     public partial class MudSwipeArea : MudComponentBase
     {
-        private double? _xDown, _yDown;
+        internal double? _xDown, _yDown;
 
         [Parameter]
         [Category(CategoryTypes.SwipeArea.Behavior)]
@@ -22,7 +22,7 @@ namespace MudBlazor
             _yDown = arg.Touches[0].ClientY;
         }
 
-        private void OnTouchEnd(TouchEventArgs arg)
+        internal void OnTouchEnd(TouchEventArgs arg)
         {
             if (_xDown == null || _yDown == null)
                 return;
@@ -62,7 +62,7 @@ namespace MudBlazor
             _xDown = _yDown = null;
         }
 
-        private void OnTouchCancel(TouchEventArgs arg)
+        internal void OnTouchCancel(TouchEventArgs arg)
         {
             _xDown = _yDown = null;
         }
