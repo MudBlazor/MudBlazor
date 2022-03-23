@@ -909,21 +909,5 @@ namespace MudBlazor.UnitTests.Components
             //Console.WriteLine(comp.Markup);
             Assert.Throws<ElementNotFoundException>(() => comp.Find("#my-content"));
         }
-
-        [Test]
-        public void MudPopover_Direction()
-        {
-            var comp = Context.RenderComponent<PopoverPropertyTest>();
-            var popover = comp.FindComponent<MudPopover>();
-
-            popover.Instance.ConvertDirection(Direction.Left).Should().Be(Direction.Left);
-            popover.Instance.ConvertDirection(Direction.Right).Should().Be(Direction.Right);
-            popover.Instance.ConvertDirection(Direction.Top).Should().Be(Direction.Top);
-
-            popover.Instance.RightToLeft = true;
-
-            popover.Instance.ConvertDirection(Direction.Start).Should().Be(Direction.Right);
-            popover.Instance.ConvertDirection(Direction.End).Should().Be(Direction.Left);
-        }
     }
 }
