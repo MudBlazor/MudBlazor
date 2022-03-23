@@ -303,8 +303,8 @@ namespace MudBlazor
 
         protected virtual bool HasValue(T value)
         {
-            if (typeof(T) == typeof(string))
-                return !IsNullOrWhiteSpace(value as string);
+            if (value is string stringValue)
+                return !IsNullOrWhiteSpace(stringValue);
 
             return value != null;
         }
