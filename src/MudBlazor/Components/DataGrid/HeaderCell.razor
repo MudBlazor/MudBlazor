@@ -56,7 +56,7 @@ else if (Column != null && !Column.Hidden)
 
                 @if (showColumnOptions)
                 {
-                    <MudMenu Icon="@Icons.Material.Filled.MoreVert" Size="Size.Small" Direction="Direction.Bottom" OffsetY="true" Dense="true">
+                    <MudMenu Icon="@Icons.Material.Filled.MoreVert" Size="Size.Small" AnchorOrigin="Origin.BottomCenter" Dense="true">
                         <MudMenuItem Disabled="@(_initialDirection == SortDirection.None)" OnClick="@RemoveSortAsync">Unsort</MudMenuItem>
                         @if (filterable)
                         {
