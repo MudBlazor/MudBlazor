@@ -164,27 +164,6 @@ namespace MudBlazor
         public Origin TransformOrigin { get; set; } = Origin.TopLeft;
 
         /// <summary>
-        /// Sets the direction the select menu will start from relative to its parent.
-        /// </summary>
-        [ExcludeFromCodeCoverage]
-        [Obsolete("Use AnchorOrigin or TransformOrigin instead.", true)]
-        [Parameter] public Direction Direction { get; set; } = Direction.Bottom;
-
-        /// <summary>
-        /// If true, the select menu will open either before or after the input depending on the direction.
-        /// </summary>
-        [ExcludeFromCodeCoverage]
-        [Obsolete("Use AnchorOrigin or TransformOrigin instead.", true)]
-        [Parameter] public bool OffsetY { get; set; }
-
-        /// <summary>
-        /// If true, the select menu will open either above or bellow the input depending on the direction.
-        /// </summary>
-        [ExcludeFromCodeCoverage]
-        [Obsolete("Use AnchorOrigin or TransformOrigin instead.", true)]
-        [Parameter] public bool OffsetX { get; set; }
-
-        /// <summary>
         /// Set to true if you want to prevent page from scrolling when the menu is open
         /// </summary>
         [Parameter]

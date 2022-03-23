@@ -5,7 +5,7 @@
     <MudSelect T="string" Variant="Variant.Text"
                IsPreRendered="true"
                @bind-Value="fruit"
-               Direction="Direction.Bottom" Dense="true" OffsetY="true"
+               AnchorOrigin="Origin.BottomCenter" Dense="true"
                SelectedValuesChanged="@(() => FruitChanged(null))">
 
         <MudSelectItem Value="@("Apple")">Apple</MudSelectItem>

@@ -35,16 +35,6 @@ namespace MudBlazor
             .AddStyle(Style)
             .Build();
 
-        internal Direction ConvertDirection(Direction direction)
-        {
-            return direction switch
-            {
-                Direction.Start => RightToLeft ? Direction.Right : Direction.Left,
-                Direction.End => RightToLeft ? Direction.Left : Direction.Right,
-                _ => direction
-            };
-        }
-
         [CascadingParameter] public bool RightToLeft { get; set; }
 
         /// <summary>
@@ -104,13 +94,6 @@ namespace MudBlazor
         public double Delay { get; set; } = 0;
 
         /// <summary>
-        /// Sets the direction the popover will start from relative to its parent.
-        /// </summary>
-        /// 
-        [Obsolete("Use AnchorOrigin and TransformOrigin instead.", true)]
-        [Parameter] public Direction Direction { get; set; } = Direction.Bottom;
-
-        /// <summary>
         /// Set the anchor point on the element of the popover.
         /// The anchor point will determinate where the popover will be placed.
         /// </summary>
@@ -134,19 +117,6 @@ namespace MudBlazor
         [Category(CategoryTypes.Popover.Appearance)]
         public OverflowBehavior OverflowBehavior { get; set; } = OverflowBehavior.FilpOnOpen;
 
-        /// <summary>
-        /// If true, the select menu will open either above or bellow the input depending on the direction.
-        /// </summary>
-        [ExcludeFromCodeCoverage]
-        [Obsolete("Use AnchorOrigin and TransformOrigin instead.", true)]
-        [Parameter] public bool OffsetX { get; set; }
-
-        /// <summary>
-        /// If true, the select menu will open either before or after the input depending on the direction.
-        /// </summary>
-        [ExcludeFromCodeCoverage]
-        [Obsolete("Use AnchorOrigin and TransformOrigin instead.", true)]
-        [Parameter] public bool OffsetY { get; set; }
 
         /// <summary>
         /// If true, the popover will have the same width at its parent element, default to false
