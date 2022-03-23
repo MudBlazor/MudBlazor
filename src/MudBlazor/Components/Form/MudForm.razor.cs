@@ -151,7 +151,7 @@ namespace MudBlazor
         public object? Model { get; set; }
 #nullable disable
 
-        private HashSet<MudForm> ChildForms { get; set; } = new HashSet<MudForm>();
+        private HashSet<MudForm> ChildForms { get; set; } = new();
 
         [CascadingParameter] private MudForm ParentMudForm { get; set; }
 
