@@ -379,7 +379,7 @@ namespace MudBlazor
                 {
                     return;
                 }
-                
+
                 if (For == null)
                 {
                     errors.Add($"For is null, please set parameter For on the form input component of type {GetType().Name}");
@@ -443,13 +443,13 @@ namespace MudBlazor
                 {
                     return;
                 }
-                
+
                 if (For == null)
                 {
                     errors.Add($"For is null, please set parameter For on the form input component of type {GetType().Name}");
                     return;
                 }
-                
+
                 foreach (var error in await func(Form.Model, For.GetFullPathOfMember()))
                     errors.Add(error);
             }
