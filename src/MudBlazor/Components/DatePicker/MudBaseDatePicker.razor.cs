@@ -19,6 +19,11 @@ namespace MudBlazor
         })
         { }
 
+        private bool _exceedMinDateDateView = false;
+        private bool _exceedMaxDateDateView = false;
+        private bool _exceedMinDateMonthView = false;
+        private bool _exceedMaxDateMonthView = false;
+
         [Inject] protected IScrollManager ScrollManager { get; set; }
 
         /// <summary>
@@ -104,6 +109,7 @@ namespace MudBlazor
                 if (value == _picker_month)
                     return;
                 _picker_month = value;
+                UpdateMinMaxDateExceedStatus();
                 InvokeAsync(StateHasChanged);
                 PickerMonthChanged.InvokeAsync(value);
             }
@@ -420,34 +426,22 @@ namespace MudBlazor
             {
                 return;
             }
-            if (!(MinDate.HasValue) || (MinDate.HasValue && PickerMonth.HasValue && PickerMonth.Value.AddMonths(-1) >= MinDate.Value.StartOfMonth(CultureInfo.CurrentCulture)))
-            {
-                PickerMonth = GetMonthStart(0).AddDays(-1).StartOfMonth(Culture);
-            }
+            PickerMonth = GetMonthStart(0).AddDays(-1).StartOfMonth(Culture);
         }
 
         private void OnNextMonthClick()
         {
-            if (!(MaxDate.HasValue) || (MaxDate.HasValue && PickerMonth.HasValue && MaxDate.Value >= PickerMonth.Value.AddMonths(1)))
-            {
-                PickerMonth = GetMonthEnd(0).AddDays(1);
-            }
+            PickerMonth = GetMonthEnd(0).AddDays(1);
         }
 
         private void OnPreviousYearClick()
         {
-            if (!(MinDate.HasValue) || (MinDate.HasValue && PickerMonth.HasValue && PickerMonth.Value.AddYears(-1) >= MinDate.Value))
-            {
-                PickerMonth = GetMonthStart(0).AddYears(-1);
-            }
+            PickerMonth = GetMonthStart(0).AddYears(-1);
         }
 
         private void OnNextYearClick()
         {
-            if (!(MaxDate.HasValue) || (MaxDate.HasValue && PickerMonth.HasValue && MaxDate.Value >= PickerMonth.Value.AddYears(1)))
-            {
-                PickerMonth = GetMonthStart(0).AddYears(1);
-            }
+            PickerMonth = GetMonthStart(0).AddYears(1);
         }
 
         private void OnYearClick()
@@ -565,6 +559,7 @@ namespace MudBlazor
             if (firstRender)
             {
                 _picker_month ??= GetCalendarStartOfMonth();
+                UpdateMinMaxDateExceedStatus();
             }
 
             if (firstRender && CurrentView == OpenTo.Year)
@@ -583,6 +578,46 @@ namespace MudBlazor
         private int GetCalendarDayOfMonth(DateTime date)
         {
             return Culture.Calendar.GetDayOfMonth(date);
+        }
+
+        private void UpdateMinMaxDateExceedStatus()
+        {
+            if (!(MinDate.HasValue) || !(PickerMonth.HasValue) || (MinDate.HasValue && PickerMonth.HasValue && PickerMonth.Value.AddMonths(-1) >= MinDate.Value.StartOfMonth(CultureInfo.CurrentCulture)))
+            {
+                _exceedMinDateDateView = false;
+            }
+            else
+            {
+                _exceedMinDateDateView = true;
+            }
+
+            if (!(MinDate.HasValue) || !(PickerMonth.HasValue) || MinDate.HasValue && PickerMonth.HasValue && new DateTime(PickerMonth.Value.Year, 01, 01) >= MinDate.Value)
+            {
+                _exceedMinDateMonthView = false;
+            }
+            else
+            {
+                _exceedMinDateMonthView = true;
+            }
+
+            if (!(MaxDate.HasValue) || !(PickerMonth.HasValue) || (MaxDate.HasValue && PickerMonth.HasValue && MaxDate.Value >= PickerMonth.Value.AddMonths(1)))
+            {
+                _exceedMaxDateDateView = false;
+                
+            }
+            else
+            {
+                _exceedMaxDateDateView = true;
+            }
+
+            if (!(MaxDate.HasValue) || !(PickerMonth.HasValue) || (MaxDate.HasValue && PickerMonth.HasValue && MaxDate.Value >= new DateTime(PickerMonth.Value.Year, 12, 31)))
+            {
+                _exceedMaxDateMonthView = false;
+            }
+            else
+            {
+                _exceedMaxDateMonthView = true;
+            }
         }
 
         /// <summary>
