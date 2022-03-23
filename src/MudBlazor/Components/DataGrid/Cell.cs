@@ -5,7 +5,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 using MudBlazor.Utilities;
@@ -30,6 +29,33 @@ namespace MudBlazor
             {
                 if (_item == null || _column.Field == null)
                     return null;
+
+                // Handle case where T is IDictionary.
+                if (typeof(T) == typeof(IDictionary<string, object>))
+                {
+                    if (_column.FieldType == null)
+                        throw new ArgumentNullException(nameof(_column.FieldType));
+
+                    if (_column.FieldType.IsEnum)
+                    {
+                        var o = ((IDictionary<string, object>)_item)[_column.Field];
+
+                        if (o == null)
+                            return null;
+
+                        if (o.GetType() == typeof(JsonElement))
+                        {
+                            var json = (JsonElement)o;
+                            return Enum.ToObject(_column.FieldType, json.GetInt32());
+                        }
+                        else
+                        {
+                            return Enum.ToObject(_column.FieldType, o);
+                        }
+                    }
+
+                    return ((IDictionary<string, object>)_item)[_column.Field];
+                }
 
                 var property = _item.GetType().GetProperties().SingleOrDefault(x => x.Name == _column.Field);
                 return property.GetValue(_item);
@@ -107,13 +133,27 @@ namespace MudBlazor
 
             if (ComputedValue != null)
             {
-                if (_column.dataType == typeof(string))
+                if (ComputedValue.GetType() == typeof(JsonElement))
                 {
-                    valueString = (string)ComputedValue;
+                    if (_column.dataType == typeof(string))
+                    {
+                        valueString = ((JsonElement)ComputedValue).GetString();
+                    }
+                    else if (_column.isNumber)
+                    {
+                        valueNumber = ((JsonElement)ComputedValue).GetDouble();
+                    }
                 }
-                else if (_column.isNumber)
+                else
                 {
-                    valueNumber = Convert.ToDouble(ComputedValue);
+                    if (_column.dataType == typeof(string))
+                    {
+                        valueString = (string)ComputedValue;
+                    }
+                    else if (_column.isNumber)
+                    {
+                        valueNumber = Convert.ToDouble(ComputedValue);
+                    }
                 }
             }
         }

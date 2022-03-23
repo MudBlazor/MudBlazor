@@ -39,15 +39,7 @@
                         <tr class="mud-table-row">
                             @foreach (var column in _columns)
                             {
-                                @*This is necessary on .net6.0-preview4 and below.*@
-                                if (column.HeaderTemplate != null)
-                                {
-                                    <HeaderCell T="T" Column="@column"></HeaderCell>
-                                }
-                                else
-                                {
-                                    <HeaderCell T="T" Column="@column"></HeaderCell>
-                                }
+                                <HeaderCell T="T" Column="@column"></HeaderCell>
                             }
                         </tr>
                         @if (_filtersMenuVisible)
@@ -56,8 +48,8 @@
                             <MudPaper Class="pa-2 filters-panel" Style="position:absolute;width:auto;min-width:700px;z-index:var(--mud-zindex-drawer)" Elevation="4">
                                 <MudGrid Spacing="0">
                                     @foreach (var f in FilterDefinitions)
-                                    { 
-                                        <Filter T="T" @bind-Field="f.Field" @bind-Operator="f.Operator" @bind-Value="f.Value"
+                                    {
+                                        <Filter T="T" @bind-Field="f.Field" FieldType="@f.FieldType" @bind-Title="f.Title" @bind-Operator="f.Operator" @bind-Value="f.Value"
                                             Id="@f.Id"></Filter>
                                     }
                                 </MudGrid>

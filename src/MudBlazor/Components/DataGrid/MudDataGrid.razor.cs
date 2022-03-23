@@ -552,6 +552,7 @@ namespace MudBlazor
 
                 foreach (var f in FilterDefinitions)
                 {
+                    f.DataGrid = this;
                     var filterFunc = f.GenerateFilterFunction();
                     items = items.Where(filterFunc);
                 }
@@ -655,10 +656,13 @@ namespace MudBlazor
         /// </summary>
         internal void AddFilter()
         {
+            var column = _columns?.FirstOrDefault();
             FilterDefinitions.Add(new FilterDefinition<T>
             {
                 Id = Guid.NewGuid(),
-                Field = _columns?.FirstOrDefault().Field,
+                Field = column?.Field,
+                Title = column?.Title,
+                FieldType = column?.FieldType
             });
             _filtersMenuVisible = true;
             StateHasChanged();
@@ -666,10 +670,13 @@ namespace MudBlazor
 
         internal void AddFilter(Guid id, string field)
         {
+            var column = _columns?.FirstOrDefault(x => x.Field == field);
             FilterDefinitions.Add(new FilterDefinition<T>
             {
                 Id = id,
                 Field = field,
+                Title = column?.Title,
+                FieldType = column?.FieldType,
             });
             _filtersMenuVisible = true;
             StateHasChanged();

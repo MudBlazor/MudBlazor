@@ -3,14 +3,20 @@
 // See the LICENSE file in the project root for more information.
 
 using System;
+using System.Collections.Generic;
 using System.Linq.Expressions;
+using System.Text.Json;
 
 namespace MudBlazor
 {
     public class FilterDefinition<T>
     {
+        internal MudDataGrid<T> DataGrid { get; set; }
+
         public Guid Id { get; set; }
         public string Field { get; set; }
+        public string Title { get; set; }
+        public Type FieldType { get; set; }
         public string Operator { get; set; }
         public object Value { get; set; }
 
@@ -18,7 +24,14 @@ namespace MudBlazor
         {
             get
             {
-                if (Field == null) return typeof(object);
+                if (FieldType != null)
+                    return FieldType;
+
+                if (Field == null)
+                    return typeof(object);
+
+                if (typeof(T) == typeof(IDictionary<string, object>) && FieldType == null)
+                    throw new ArgumentNullException(nameof(FieldType));
 
                 return typeof(T).GetProperty(Field).PropertyType;
             }
@@ -58,9 +71,39 @@ namespace MudBlazor
 
         public Func<T, bool> GenerateFilterFunction()
         {
-            var expression = GenerateFilterExpression();
+            // Handle case where we have an IDictionary.
+            if (typeof(T) == typeof(IDictionary<string, object>))
+            {
 
-            return expression.Compile();
+                if (dataType == typeof(string))
+                {
+                    return GenerateFilterForStringTypeInIDictionary();
+                }
+                else if (isNumber)
+                {
+                    return GenerateFilterForNumericTypesInIDictionary();
+                }
+                else if (isEnum)
+                {
+                    return GenerateFilterForEnumTypesInIDictionary();
+                }
+                else if (isBoolean)
+                {
+                    return GenerateFilterForBooleanTypeInIDictionary();
+                }
+                else if (isDateTime)
+                {
+                    return GenerateFilterForDateTimeTypeInIDictionary();
+                }
+
+                return x => true;
+            }
+            else
+            {
+                var expression = GenerateFilterExpression();
+
+                return expression.Compile();
+            }
         }
 
         public Expression<Func<T, bool>> GenerateFilterExpression()
@@ -259,10 +302,333 @@ namespace MudBlazor
             };
         }
 
+        #region IDictionary Filters
+
+        private Func<T, bool> GenerateFilterForStringTypeInIDictionary()
+        {
+            var valueString = Value?.ToString();
+
+            return Operator switch
+            {
+                FilterOperator.String.Contains when Value != null => x =>
+                {
+                    string v = GetStringFromObject(((IDictionary<string, object>)x)[Field]);
+
+                    return v != null && v.Contains(valueString);
+                }
+                ,
+
+                FilterOperator.String.Equal when Value != null => x =>
+                {
+                    string v = GetStringFromObject(((IDictionary<string, object>)x)[Field]);
+
+                    return object.Equals(v, Value);
+                }
+                ,
+
+                FilterOperator.String.StartsWith when Value != null => x =>
+                {
+                    string v = GetStringFromObject(((IDictionary<string, object>)x)[Field]);
+
+                    return v != null && v.StartsWith(valueString);
+                }
+                ,
+
+                FilterOperator.String.EndsWith when Value != null => x =>
+                {
+                    string v = GetStringFromObject(((IDictionary<string, object>)x)[Field]);
+
+                    return v != null && v.EndsWith(valueString);
+                }
+                ,
+
+                FilterOperator.String.Empty => x =>
+                {
+                    string v = GetStringFromObject(((IDictionary<string, object>)x)[Field]);
+
+                    return string.IsNullOrWhiteSpace(v);
+                }
+                ,
+
+                FilterOperator.String.NotEmpty => x =>
+                {
+                    string v = GetStringFromObject(((IDictionary<string, object>)x)[Field]);
+
+                    return !string.IsNullOrWhiteSpace(v);
+                }
+                ,
+
+                _ => x => true
+            };
+        }
+
+        private Func<T, bool> GenerateFilterForNumericTypesInIDictionary()
+        {
+            double? valueNumber = Value == null ? null : Convert.ToDouble(Value);
+
+            return Operator switch
+            {
+                FilterOperator.Number.Equal when Value != null => x =>
+                {
+                    double? v = GetDoubleFromObject(((IDictionary<string, object>)x)[Field]);
+
+                    return v == valueNumber;
+                }
+                ,
+
+                FilterOperator.Number.NotEqual when Value != null => x =>
+                {
+                    double? v = GetDoubleFromObject(((IDictionary<string, object>)x)[Field]);
+
+                    return v != valueNumber;
+                }
+                ,
+
+                FilterOperator.Number.GreaterThan when Value != null => x =>
+                {
+                    double? v = GetDoubleFromObject(((IDictionary<string, object>)x)[Field]);
+
+                    return v > valueNumber;
+                }
+                ,
+
+                FilterOperator.Number.GreaterThanOrEqual when Value != null => x =>
+                {
+                    double? v = GetDoubleFromObject(((IDictionary<string, object>)x)[Field]);
+
+                    return v >= valueNumber;
+                }
+                ,
+
+                FilterOperator.Number.LessThan when Value != null => x =>
+                {
+                    double? v = GetDoubleFromObject(((IDictionary<string, object>)x)[Field]);
+
+                    return v < valueNumber;
+                }
+                ,
+
+                FilterOperator.Number.LessThanOrEqual when Value != null => x =>
+                {
+                    double? v = GetDoubleFromObject(((IDictionary<string, object>)x)[Field]);
+
+                    return v <= valueNumber;
+                }
+                ,
+
+                FilterOperator.Number.Empty => x =>
+                {
+                    double? v = GetDoubleFromObject(((IDictionary<string, object>)x)[Field]);
+
+                    return v == null;
+                }
+                ,
+
+                FilterOperator.Number.NotEmpty => x =>
+                {
+                    double? v = GetDoubleFromObject(((IDictionary<string, object>)x)[Field]);
+
+                    return v != null;
+                }
+                ,
+
+                _ => x => true
+            };
+        }
+
+        private Func<T, bool> GenerateFilterForEnumTypesInIDictionary()
+        {
+            return Operator switch
+            {
+                FilterOperator.Enum.Is when Value != null => x =>
+                {
+                    var v = GetEnumFromObject(((IDictionary<string, object>)x)[Field]);
+
+                    return object.Equals(v, Value);
+                }
+                ,
+
+                FilterOperator.Enum.IsNot when Value != null => x =>
+                {
+                    var v = GetEnumFromObject(((IDictionary<string, object>)x)[Field]);
+
+                    return !object.Equals(v, Value);
+                }
+                ,
+
+                _ => x => true
+            };
+        }
+
+        private Func<T, bool> GenerateFilterForBooleanTypeInIDictionary()
+        {
+            return Operator switch
+            {
+                FilterOperator.Enum.Is when Value != null => x =>
+                {
+                    var v = GetBoolFromObject(((IDictionary<string, object>)x)[Field]);
+
+                    return object.Equals(v, Value);
+                }
+                ,
+
+                _ => x => true
+            };
+        }
+
+        private Func<T, bool> GenerateFilterForDateTimeTypeInIDictionary()
+        {
+            DateTime? valueDateTime = Value == null ? null : (DateTime)Value;
+
+            return Operator switch
+            {
+                FilterOperator.DateTime.Is when Value != null => x =>
+                {
+                    var v = GetDateTimeFromObject(((IDictionary<string, object>)x)[Field]);
+
+                    return v == valueDateTime;
+                }
+                ,
+
+                FilterOperator.DateTime.IsNot when Value != null => x =>
+                {
+                    var v = GetDateTimeFromObject(((IDictionary<string, object>)x)[Field]);
+
+                    return v != valueDateTime;
+                }
+                ,
+
+                FilterOperator.DateTime.After when Value != null => x =>
+                {
+                    var v = GetDateTimeFromObject(((IDictionary<string, object>)x)[Field]);
+
+                    return v > valueDateTime;
+                }
+                ,
+
+                FilterOperator.DateTime.OnOrAfter when Value != null => x =>
+                {
+                    var v = GetDateTimeFromObject(((IDictionary<string, object>)x)[Field]);
+
+                    return v >= valueDateTime;
+                }
+                ,
+
+                FilterOperator.DateTime.Before when Value != null => x =>
+                {
+                    var v = GetDateTimeFromObject(((IDictionary<string, object>)x)[Field]);
+
+                    return v < valueDateTime;
+                }
+                ,
+
+                FilterOperator.DateTime.OnOrBefore when Value != null => x =>
+                {
+                    var v = GetDateTimeFromObject(((IDictionary<string, object>)x)[Field]);
+
+                    return v < valueDateTime;
+                }
+                ,
+
+                FilterOperator.DateTime.Empty => x =>
+                {
+                    var v = GetDateTimeFromObject(((IDictionary<string, object>)x)[Field]);
+
+                    return v == null;
+                }
+                ,
+
+                FilterOperator.DateTime.NotEmpty => x =>
+                {
+                    var v = GetDateTimeFromObject(((IDictionary<string, object>)x)[Field]);
+
+                    return v != null;
+                }
+                ,
+
+                _ => x => true
+            };
+        }
+
+        #endregion
+
         private static bool IsNullableEnum(Type t)
         {
             Type u = Nullable.GetUnderlyingType(t);
             return (u != null) && u.IsEnum;
         }
+
+        private string GetStringFromObject(object o)
+        {
+            if (o.GetType() == typeof(JsonElement))
+            {
+                return ((JsonElement)o).GetString();
+            }
+            else
+            {
+                return (string)o;
+            }
+        }
+
+        private double? GetDoubleFromObject(object o)
+        {
+            if (o == null)
+                return null;
+
+            if (o.GetType() == typeof(JsonElement))
+            {
+                return ((JsonElement)o).GetDouble();
+            }
+            else
+            {
+                return Convert.ToDouble(o);
+            }
+        }
+
+        private Enum GetEnumFromObject(object o)
+        {
+            if (o == null)
+                return null;
+
+            if (o.GetType() == typeof(JsonElement))
+            {
+                return (Enum)Enum.ToObject(FieldType, ((JsonElement)o).GetInt32());
+            }
+            else
+            {
+                return (Enum)Enum.ToObject(FieldType, o);
+            }
+        }
+
+        private bool? GetBoolFromObject(object o)
+        {
+            if (o == null)
+                return null;
+
+            if (o.GetType() == typeof(JsonElement))
+            {
+                return ((JsonElement)o).GetBoolean();
+            }
+            else
+            {
+                return Convert.ToBoolean(o);
+            }
+        }
+
+        private DateTime? GetDateTimeFromObject(object o)
+        {
+            if (o == null)
+                return null;
+
+            if (o.GetType() == typeof(JsonElement))
+            {
+                return ((JsonElement)o).GetDateTime();
+            }
+            else
+            {
+                return Convert.ToDateTime(o);
+            }
+        }
+
     }
 }

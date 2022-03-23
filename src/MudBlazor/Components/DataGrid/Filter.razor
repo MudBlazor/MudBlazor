@@ -10,7 +10,7 @@
         {
             @foreach (var column in DataGrid?._columns)
             {
-                <MudSelectItem Value="@column.Field">@column.Field</MudSelectItem>
+                <MudSelectItem Value="@column.Field">@computedTitle</MudSelectItem>
             }
         }
     </MudSelect>
@@ -61,4 +61,4 @@
             </MudItem>
         </MudGrid>
     }
-    </MudItem>
+</MudItem>

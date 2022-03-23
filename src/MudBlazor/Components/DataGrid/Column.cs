@@ -4,7 +4,9 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Utilities;
@@ -22,6 +24,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public bool Visible { get; set; } = true;
         [Parameter] public string Field { get; set; }
+        [Parameter] public Type FieldType { get; set; }
         [Parameter] public string Title { get; set; }
         [Parameter] public bool HideSmall { get; set; }
         [Parameter] public int FooterColSpan { get; set; } = 1;
@@ -131,10 +134,41 @@ namespace MudBlazor
         {
             get
             {
+                if (FieldType != null)
+                    return FieldType;
+
                 if (Field == null)
                     return typeof(object);
 
+                if (typeof(T) == typeof(IDictionary<string, object>) && FieldType == null)
+                    throw new ArgumentNullException(nameof(FieldType));
+
                 return typeof(T).GetProperty(Field).PropertyType;
+            }
+        }
+        // This returns the data type for an object when T is an IDictionary<string, object>.
+        internal Type innerDataType
+        {
+            get
+            {
+                // Handle case where T is IDictionary.
+                if (typeof(T) == typeof(IDictionary<string, object>))
+                {
+                    // We need to get the actual type here so we need to look at actual data.
+                    // get the first item where we have a non-null value in the field to be filtered.
+                    var first = DataGrid.Items.FirstOrDefault(x => ((IDictionary<string, object>)x)[Field] != null);
+
+                    if (first != null)
+                    {
+                        return ((IDictionary<string, object>)first)[Field].GetType();
+                    }
+                    else
+                    {
+                        return typeof(object);
+                    }
+                }
+
+                return dataType;
             }
         }
         internal bool isNumber
@@ -220,10 +254,41 @@ namespace MudBlazor
         {
             if (_sortBy == null)
             {
+                var type = typeof(T);
+
                 // set the default SortBy
-                var parameter = Expression.Parameter(typeof(T), "x");
-                var field = Expression.Convert(Expression.Property(parameter, typeof(T).GetProperty(Field)), typeof(object));
-                _sortBy = Expression.Lambda<Func<T, object>>(field, parameter).Compile();
+                if (type == typeof(IDictionary<string, object>))
+                {
+                    if (FieldType == null)
+                        throw new ArgumentNullException(nameof(FieldType));
+
+                    var innerType = innerDataType;
+
+                    if (innerType == typeof(JsonElement))
+                    {
+                        _sortBy = x =>
+                        {
+                            var json = (JsonElement)(x as IDictionary<string, object>)[Field];
+
+                            if (FieldType == typeof(string))
+                                return json.GetString();
+                            else if (isNumber)
+                                return json.GetDouble();
+                            else
+                                return json.GetRawText();
+                        };
+                    }
+                    else
+                    {
+                        _sortBy = x => Convert.ChangeType((x as IDictionary<string, object>)[Field], FieldType);
+                    }
+                }
+                else
+                {
+                    var parameter = Expression.Parameter(type, "x");
+                    var field = Expression.Convert(Expression.Property(parameter, type.GetProperty(Field)), typeof(object));
+                    _sortBy = Expression.Lambda<Func<T, object>>(field, parameter).Compile();
+                }
             }
         }
 
@@ -231,10 +296,19 @@ namespace MudBlazor
         {
             if (groupBy == null && !string.IsNullOrWhiteSpace(Field))
             {
+                var type = typeof(T);
+
                 // set the default GroupBy
-                var parameter = Expression.Parameter(typeof(T), "x");
-                var field = Expression.Convert(Expression.Property(parameter, typeof(T).GetProperty(Field)), typeof(object));
-                groupBy = Expression.Lambda<Func<T, object>>(field, parameter).Compile();
+                if (type == typeof(IDictionary<string, object>))
+                {
+                    groupBy = x => (x as IDictionary<string, object>)[Field];
+                }
+                else
+                {
+                    var parameter = Expression.Parameter(type, "x");
+                    var field = Expression.Convert(Expression.Property(parameter, type.GetProperty(Field)), typeof(object));
+                    groupBy = Expression.Lambda<Func<T, object>>(field, parameter).Compile();
+                }
             }
         }
 
