@@ -317,7 +317,7 @@ namespace MudBlazor
                 // Complex validation with fields references (like `CompareAttribute`) should use an EditContext or For when not using EditContext.
                 var validationContextSubject = EditContext?.Model ?? _fieldIdentifier.Model ?? this;
                 var validationContext = new ValidationContext(validationContextSubject);
-                if (validationContext.MemberName is null && _fieldIdentifier.FieldName is not null)
+                if (validationContext.MemberName is null)
                     validationContext.MemberName = _fieldIdentifier.FieldName;
                 var validationResult = attr.GetValidationResult(value, validationContext);
                 if (validationResult != null &&
