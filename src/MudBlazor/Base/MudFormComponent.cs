@@ -161,7 +161,7 @@ namespace MudBlazor
 
         #region MudForm Validation
 
-        public List<string> ValidationErrors { get; set; } = new List<string>();
+        public List<string> ValidationErrors { get; set; } = new();
 
         /// <summary>
         /// A validation func or a validation attribute. Supported types are:
@@ -189,7 +189,7 @@ namespace MudBlazor
         // async code was executed to avoid race condition which could lead to incorrect validation results.
         protected void BeginValidateAfter(Task task)
         {
-            Func<Task> execute = async () =>
+            var execute = async () =>
             {
                 var value = _value;
 
@@ -207,7 +207,7 @@ namespace MudBlazor
 
         protected void BeginValidate()
         {
-            Func<Task> execute = async () =>
+            var execute = async () =>
             {
                 var value = _value;
 
