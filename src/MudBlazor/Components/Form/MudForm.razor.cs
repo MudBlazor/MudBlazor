@@ -13,8 +13,8 @@ namespace MudBlazor
     {
         protected string Classname =>
             new CssBuilder("mud-form")
-            .AddClass(Class)
-       .Build();
+                .AddClass(Class)
+                .Build();
 
         /// <summary>
         /// Child content of component.
@@ -84,7 +84,7 @@ namespace MudBlazor
         /// </summary>
         /// <remarks>
         /// https://www.w3.org/TR/2018/SPSD-html5-20180327/forms.html#implicit-submission
-        /// Usually this is not wanted, as it can cause a page refresh in the middle of editing a form. 
+        /// Usually this is not wanted, as it can cause a page refresh in the middle of editing a form.
         /// When the form is in a dialog this will cause the dialog to close. So by default we suppress it.
         /// </remarks>
         [Parameter]
@@ -170,7 +170,7 @@ namespace MudBlazor
         private Timer _timer;
 
         /// <summary>
-        /// Called by any input of the form to signal that its value changed. 
+        /// Called by any input of the form to signal that its value changed.
         /// </summary>
         /// <param name="formControl"></param>
         void IForm.Update(IFormComponent formControl)
@@ -300,7 +300,7 @@ namespace MudBlazor
             {
                 return;
             }
-            
+
             foreach (var formControl in _formControls)
             {
                 if (formControl.Validation == null || overrideFieldValidation)
