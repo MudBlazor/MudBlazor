@@ -60,7 +60,8 @@ namespace MudBlazor
 
         public void OnRowClicked(MouseEventArgs args)
         {
-            if (Context?.Table.IsEditable == true && Context?.Table.IsEditing == true && Context?.Table.IsEditRowSwitchingBlocked == true) return;
+            if (Context == null || (Context?.Table.IsEditable == true && Context?.Table.IsEditing == true && Context?.Table.IsEditRowSwitchingBlocked == true)) 
+                return;
 
             // Manage any previous edited row
             Context.ManagePreviousEditedRow(this);
