@@ -243,28 +243,28 @@ namespace MudBlazor
                 if (ConversionError)
                     errors.Add(ConversionErrorMessage);
                 // validation errors
-                if (Validation is ValidationAttribute)
-                    ValidateWithAttribute(Validation as ValidationAttribute, _value, errors);
-                else if (Validation is Func<T, bool>)
-                    ValidateWithFunc(Validation as Func<T, bool>, _value, errors);
-                else if (Validation is Func<T, string>)
-                    ValidateWithFunc(Validation as Func<T, string>, _value, errors);
-                else if (Validation is Func<T, IEnumerable<string>>)
-                    ValidateWithFunc(Validation as Func<T, IEnumerable<string>>, _value, errors);
-                else if (Validation is Func<object, string, IEnumerable<string>>)
-                    ValidateModelWithFullPathOfMember(Validation as Func<object, string, IEnumerable<string>>, errors);
+                if (Validation is ValidationAttribute validationAttribute)
+                    ValidateWithAttribute(validationAttribute, _value, errors);
+                else if (Validation is Func<T, bool> funcBool)
+                    ValidateWithFunc(funcBool, _value, errors);
+                else if (Validation is Func<T, string> funcString)
+                    ValidateWithFunc(funcString, _value, errors);
+                else if (Validation is Func<T, IEnumerable<string>> funcStrings)
+                    ValidateWithFunc(funcStrings, _value, errors);
+                else if (Validation is Func<object, string, IEnumerable<string>> funcPathStrings)
+                    ValidateModelWithFullPathOfMember(funcPathStrings, errors);
                 else
                 {
                     var value = _value;
 
-                    if (Validation is Func<T, Task<bool>>)
-                        await ValidateWithFunc(Validation as Func<T, Task<bool>>, _value, errors);
-                    else if (Validation is Func<T, Task<string>>)
-                        await ValidateWithFunc(Validation as Func<T, Task<string>>, _value, errors);
-                    else if (Validation is Func<T, Task<IEnumerable<string>>>)
-                        await ValidateWithFunc(Validation as Func<T, Task<IEnumerable<string>>>, _value, errors);
-                    else if (Validation is Func<object, string, Task<IEnumerable<string>>>)
-                        await ValidateModelWithFullPathOfMember(Validation as Func<object, string, Task<IEnumerable<string>>>, errors);
+                    if (Validation is Func<T, Task<bool>> taskBool)
+                        await ValidateWithFunc(taskBool, _value, errors);
+                    else if (Validation is Func<T, Task<string>> taskString)
+                        await ValidateWithFunc(taskString, _value, errors);
+                    else if (Validation is Func<T, Task<IEnumerable<string>>> taskStrings)
+                        await ValidateWithFunc(taskStrings, _value, errors);
+                    else if (Validation is Func<object, string, Task<IEnumerable<string>>> taskPathStrings)
+                        await ValidateModelWithFullPathOfMember(taskPathStrings, errors);
 
                     changed = !EqualityComparer<T>.Default.Equals(value, _value);
                 }
