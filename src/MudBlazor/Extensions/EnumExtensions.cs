@@ -7,7 +7,7 @@ namespace MudBlazor.Extensions;
 
 public static class EnumExtensions
 {
-    public static string? ToDescriptionString<T>(this T val)
+    public static string ToDescriptionString<T>(this T val)
         where T : Enum
     {
         var field = typeof(T).GetField(val.ToString())!;
