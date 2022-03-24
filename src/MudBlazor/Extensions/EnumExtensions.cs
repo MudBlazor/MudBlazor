@@ -1,17 +1,20 @@
-﻿using System;
+﻿#nullable enable
+using System;
 using System.ComponentModel;
+using System.Reflection;
 
-namespace MudBlazor.Extensions
+namespace MudBlazor.Extensions;
+
+public static class EnumExtensions
 {
-    public static class EnumExtensions
+    public static string? ToDescriptionString<T>(this T val)
+        where T : Enum
     {
-        public static string ToDescriptionString(this Enum val)
-        {
-            var attributes = (DescriptionAttribute[])val.GetType().GetField(val.ToString()).GetCustomAttributes(typeof(DescriptionAttribute), false);
+        var field = typeof(T).GetField(val.ToString())!;
+        var attribute = field.GetCustomAttribute<DescriptionAttribute>(false);
 
-            return attributes.Length > 0
-                ? attributes[0].Description
-                : val.ToString().ToLower();
-        }
+        return attribute != null
+            ? attribute.Description
+            : val.ToString().ToLower();
     }
 }
