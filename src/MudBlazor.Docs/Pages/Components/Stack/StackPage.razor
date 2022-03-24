@@ -26,10 +26,55 @@
 
         <DocsPageSection>
             <SectionHeader Title="Spacing">
+                <Description>The default spacing can be changed by setting any number between 0 and 16 with the <CodeInline>Spacing property.</CodeInline></Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="StackSpacingExample" ShowCode="false">
+                <StackSpacingExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Item Placement" />
+            <SectionSubGroups>
+                <DocsPageSection>
+                    <SectionHeader Title="Justify">
+                        <Description>With the <CodeInline>Justify</CodeInline> property you can define how the space between and around items along the main-axis of the <CodeInline>MudStack</CodeInline></Description>
+                    </SectionHeader>
+                    <SectionContent FullWidth="true" Block="true" Code="StackJustifyExample" ShowCode="false">
+                        <StackJustifyExample />
+                    </SectionContent>
+                </DocsPageSection>
+
+                <DocsPageSection>
+                    <SectionHeader Title="Align">
+                        <Description>With the <CodeInline>AlignItems</CodeInline> property you can control the alignment of items on the cross axis of the <CodeInline>MudStack</CodeInline></Description>
+                    </SectionHeader>
+                    <SectionContent Block="true" Code="StackAlignExample" ShowCode="false">
+                        <StackAlignExample />
+                    </SectionContent>
+                </DocsPageSection>
+
+                <DocsPageSection>
+                    <SectionHeader Title="Combined">
+                        <Description>
+                            If <CodeInline>MudStack</CodeInline> is in <CodeInline>Row</CodeInline> mode or not, the behavior of <CodeInline>Justify</CodeInline> and <CodeInline>AlignItems</CodeInline> can almost be described as they switched as the axis they control are changed.<br/>
+                            In the example bellow swap between column and row and see how <CodeInline>Justify</CodeInline> and <CodeInline>AlignItems</CodeInline> behaves differently.
+                        </Description>
+                    </SectionHeader>
+                    <SectionContent Block="true" Code="StackCombinedExample" ShowCode="false">
+                        <StackCombinedExample />
+                    </SectionContent>
+                </DocsPageSection>
+
+            </SectionSubGroups>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Interactive">
                 <Description></Description>
             </SectionHeader>
-            <SectionContent DarkenBackground="true" Code="StackSpacingExample">
-                <StackSpacingExample />
+            <SectionContent Block="true" FullWidth="true" Code="StackInteractiveExample">
+                <StackInteractiveExample />
             </SectionContent>
         </DocsPageSection>
 

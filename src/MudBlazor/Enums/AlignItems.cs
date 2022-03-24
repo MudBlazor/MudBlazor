@@ -8,9 +8,9 @@ namespace MudBlazor
         Baseline,
         [Description("center")]
         Center,
-        [Description("flex-start")]
+        [Description("start")]
         Start,
-        [Description("flex-end")]
+        [Description("end")]
         End,
         [Description("stretch")]
         Stretch

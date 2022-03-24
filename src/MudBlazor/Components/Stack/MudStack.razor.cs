@@ -4,6 +4,7 @@
 
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Utilities;
+using MudBlazor.Extensions;
 
 namespace MudBlazor;
 
@@ -12,6 +13,8 @@ public partial class MudStack : MudComponentBase
     protected string Classname =>
     new CssBuilder("d-flex")
       .AddClass($"flex-{(Row ? "row" : "column")}{(Reverse ? "-reverse" : string.Empty)}")
+      .AddClass($"justify-{Justify?.ToDescriptionString()}", Justify != null)
+      .AddClass($"align-{AlignItems?.ToDescriptionString()}", AlignItems != null)
       .AddClass($"gap-{Spacing}")
       .AddClass(Class)
     .Build();
@@ -42,7 +45,14 @@ public partial class MudStack : MudComponentBase
     /// </summary>
     [Parameter]
     [Category(CategoryTypes.Stack.Behavior)]
-    public Justify Justify { get; set; } = Justify.FlexStart;
+    public Justify? Justify { get; set; }
+
+    /// <summary>
+    /// Defines the spacing between its items.
+    /// </summary>
+    [Parameter]
+    [Category(CategoryTypes.Stack.Behavior)]
+    public AlignItems? AlignItems { get; set; }
 
     /// <summary>
     /// Child content of the component.
