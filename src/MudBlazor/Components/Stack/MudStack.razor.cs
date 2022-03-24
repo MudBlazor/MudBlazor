@@ -38,6 +38,13 @@ public partial class MudStack : MudComponentBase
     public int Spacing { get; set; } = 3;
 
     /// <summary>
+    /// Defines the spacing between its items.
+    /// </summary>
+    [Parameter]
+    [Category(CategoryTypes.Stack.Behavior)]
+    public Justify Justify { get; set; } = Justify.FlexStart;
+
+    /// <summary>
     /// Child content of the component.
     /// </summary>
     [Parameter]
