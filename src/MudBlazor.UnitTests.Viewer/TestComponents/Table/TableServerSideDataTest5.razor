@@ -3,7 +3,7 @@
 <span id="counter">@reloadCounter</span>
 <button id="reseter" @onclick="() => reloadCounter = 0">Reset</button>
 
-<MudTable ServerData="@(new Func<TableState, Task<TableData<int>>>(ServerReload))">
+<MudTable ServerData="ServerReload">
     <HeaderContent>
         <MudTh><MudTableSortLabel SortLabel="No." InitialDirection="SortDirection.Descending" T="int">Nr</MudTableSortLabel></MudTh>
     </HeaderContent>
