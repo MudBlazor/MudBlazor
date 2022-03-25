@@ -26,6 +26,7 @@ namespace MudBlazor
             .AddClass($"mud-radio-dense", Dense)
             .AddClass($"mud-disabled", Disabled)
             .AddClass($"mud-checked", Checked)
+            .AddClass("mud-radio-error", MudRadioGroup.HasErrors)
             .Build();
 
         protected string RadioIconsClassNames =>
@@ -41,6 +42,12 @@ namespace MudBlazor
         protected string CheckedIconClassName =>
         new CssBuilder("mud-icon-root mud-svg-icon mud-radio-icon-checked")
             .AddClass($"mud-icon-size-{Size.ToDescriptionString()}")
+            .Build();
+
+        protected string ChildSpanClassName =>
+        new CssBuilder("")
+            .AddClass("mud-radio-error", MudRadioGroup.HasErrors)
+            .AddClass("mud-radio-content mud-typography mud-typography-body1")
             .Build();
 
         private IMudRadioGroup _parent;
