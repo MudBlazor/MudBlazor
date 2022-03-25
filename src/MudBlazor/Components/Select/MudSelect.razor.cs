@@ -574,8 +574,7 @@ namespace MudBlazor
             else
             {
                 // single selection
-                _isOpen = false;
-                UpdateIcon();
+                await CloseMenu();
 
                 if (EqualityComparer<T>.Default.Equals(Value, value))
                 {
