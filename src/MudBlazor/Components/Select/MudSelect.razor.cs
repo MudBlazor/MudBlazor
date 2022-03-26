@@ -772,6 +772,11 @@ namespace MudBlazor
         /// </summary>
         protected async ValueTask SelectClearButtonClickHandlerAsync(MouseEventArgs e)
         {
+            if (ReadOnly)
+            {
+                return;
+            }
+
             await SetValueAsync(default, false);
             await SetTextAsync(default, false);
             _selectedValues.Clear();
