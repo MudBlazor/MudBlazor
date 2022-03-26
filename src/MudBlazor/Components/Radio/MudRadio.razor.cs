@@ -26,7 +26,7 @@ namespace MudBlazor
             .AddClass($"mud-radio-dense", Dense)
             .AddClass($"mud-disabled", Disabled)
             .AddClass($"mud-checked", Checked)
-            .AddClass("mud-radio-error", MudRadioGroup.HasErrors)
+            .AddClass("mud-radio-error", MudRadioGroup?.HasErrors)
             .Build();
 
         protected string RadioIconsClassNames =>
