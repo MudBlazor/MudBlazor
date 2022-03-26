@@ -800,6 +800,8 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(() => timePicker.HandleKeyDown(new KeyboardEventArgs() { Key = "Backspace", CtrlKey = true, ShiftKey = true, Type = "keydown", }));
             comp.WaitForAssertion(() => timePicker.TimeIntermediate.Should().Be(null));
             comp.WaitForAssertion(() => timePicker.Time.Should().Be(null));
+
+            await comp.InvokeAsync(() => timePicker.HandleKeyDown(new KeyboardEventArgs() { Key = "Escape", Type = "keydown", }));
             //When its disabled, keys should not work
             timePicker.Disabled = true;
             timePicker.FocusAsync().AndForget();
