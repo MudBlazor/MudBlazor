@@ -11,10 +11,14 @@ namespace MudBlazor
     public partial class MudCheckBox<T> : MudBooleanInput<T>
     {
         protected string Classname =>
+        new CssBuilder("mud-input-control-boolean-input")
+            .AddClass(Class)
+            .Build();
+
+        protected string LabelClassname =>
         new CssBuilder("mud-checkbox")
             .AddClass($"mud-disabled", Disabled)
             .AddClass($"mud-readonly", ReadOnly)
-          .AddClass(Class)
         .Build();
 
         protected string CheckBoxClassname =>

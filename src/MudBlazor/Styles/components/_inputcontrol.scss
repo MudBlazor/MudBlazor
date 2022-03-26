@@ -25,7 +25,8 @@
     }
 
     &.mud-input-control-boolean-input {
-        flex: 0 1 auto;
+        flex: none;
+        display: inline-flex;
     }
 
     & > .mud-input-control-input-container {

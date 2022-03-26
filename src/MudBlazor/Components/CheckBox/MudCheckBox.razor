@@ -2,9 +2,9 @@
 @inherits MudBooleanInput<T>
 @typeparam T
 
-<MudInputControl Class="mud-input-control-boolean-input" Error="@HasErrors" ErrorText="@GetErrorText()" Required="@Required">
+<MudInputControl Class="@Classname" Error="@HasErrors" ErrorText="@GetErrorText()" Required="@Required">
     <InputContent>
-        <label class="@Classname" style="@Style" id="@_elementId" @onkeydown="HandleKeyDown" @onclick:stopPropagation="@StopClickPropagation">
+        <label class="@LabelClassname" style="@Style" id="@_elementId" @onkeydown="HandleKeyDown" @onclick:stopPropagation="@StopClickPropagation">
             <span tabindex="0" class="@CheckBoxClassname">
                 @*note: stopping the click propagation is important here. otherwise checking the checkbox results in click events on its parent (i.e. table row), which is generally not what you would want*@
                 <input tabindex="-1" @attributes="UserAttributes" type="checkbox" class="mud-checkbox-input" checked="@BoolValue" @onchange="@OnChange" disabled="@Disabled" @onclick:preventDefault="@ReadOnly" />

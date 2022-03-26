@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
+using MudBlazor.Utilities;
 using MudBlazor.Utilities.Exceptions;
 
 namespace MudBlazor
@@ -14,6 +15,11 @@ namespace MudBlazor
         private MudRadio<T> _selectedRadio;
 
         private HashSet<MudRadio<T>> _radios = new();
+
+        protected string Classname =>
+        new CssBuilder("mud-input-control-boolean-input")
+            .AddClass(Class)
+            .Build();
 
         [Parameter]
         [Category(CategoryTypes.Radio.Behavior)]
