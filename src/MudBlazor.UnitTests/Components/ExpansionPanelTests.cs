@@ -124,6 +124,20 @@ namespace MudBlazor.UnitTests.Components
             panels.Count.Should().Be(0);
         }
 
+        [Test]
+        public async Task MudExpansionPanel_Other()
+        {
+            var comp = Context.RenderComponent<ExpansionPanelStartExpandedTest>();
+            var panel = comp.FindComponent<MudExpansionPanel>();
+#pragma warning disable BL0005
+            await comp.InvokeAsync(() => panel.Instance.Disabled = true);
+            await comp.InvokeAsync(() => panel.Instance.ToggleExpansion());
+            await comp.InvokeAsync(() => panel.Instance.Expand());
+            comp.WaitForAssertion(() => panel.Instance.IsExpanded.Should().BeTrue());
+            await comp.InvokeAsync(() => panel.Instance.Collapse());
+            comp.WaitForAssertion(() => panel.Instance.IsExpanded.Should().BeFalse());
+        }
+
         /// <summary>
         /// Tests that ExpandAll method expands all panels.
         /// </summary>

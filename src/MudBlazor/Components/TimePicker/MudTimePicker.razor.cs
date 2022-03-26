@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -21,6 +22,7 @@ namespace MudBlazor
             Converter.SetFunc = OnSet;
             ((DefaultConverter<TimeSpan?>)Converter).Format = format24Hours;
             AdornmentIcon = Icons.Material.Filled.AccessTime;
+            AdornmentAriaLabel = "Open Time Picker";
         }
 
         private string OnSet(TimeSpan? timespan)
@@ -171,6 +173,8 @@ namespace MudBlazor
             return SetTimeAsync(Converter.Get(value), false);
         }
 
+        //The last line cannot be tested
+        [ExcludeFromCodeCoverage]
         protected override void OnPickerOpened()
         {
             base.OnPickerOpened();
@@ -183,11 +187,11 @@ namespace MudBlazor
             };
         }
 
-        protected override void Submit()
+        protected internal override void Submit()
         {
             if (ReadOnly)
                 return;
-            Time = TimeIntermediate;            
+            Time = TimeIntermediate;
         }
 
         public override void Clear(bool close = true)

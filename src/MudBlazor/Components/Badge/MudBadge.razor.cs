@@ -144,7 +144,7 @@ namespace MudBlazor
 
         private string _content;
 
-        private Task HandleBadgeClick(MouseEventArgs e)
+        internal Task HandleBadgeClick(MouseEventArgs e)
         {
             if (OnClick.HasDelegate)
                 return OnClick.InvokeAsync(e);

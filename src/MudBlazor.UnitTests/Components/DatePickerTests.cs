@@ -21,6 +21,22 @@ namespace MudBlazor.UnitTests.Components
     public class DatePickerTests : BunitTest
     {
         [Test]
+        public void DatePickerOpenButtonAriaLabel()
+        {
+            var comp = Context.RenderComponent<DatePickerValidationTest>();
+            var openButton = comp.Find(".mud-input-adornment button");
+            openButton.Attributes.GetNamedItem("aria-label")?.Value.Should().Be("Open Date Picker");
+        }
+        
+        [Test]
+        public void DatePickerLabelFor()
+        {
+            var comp = Context.RenderComponent<DatePickerValidationTest>();
+            var label = comp.Find(".mud-input-label");
+            label.Attributes.GetNamedItem("for")?.Value.Should().Be("datePickerLabelTest");
+        }
+        
+        [Test]
         [Ignore("Unignore for performance measurements, not needed for code coverage")]
         public void DatePicker_Render_Performance()
         {
@@ -790,6 +806,26 @@ namespace MudBlazor.UnitTests.Components
 
             await comp.InvokeAsync(() => datePicker.ToggleState());
             comp.WaitForAssertion(() => comp.FindAll("div.mud-picker-open").Count.Should().Be(1));
+        }
+
+        [Test]
+        public async Task DatePickerTest_GoToDate()
+        {
+            var comp = Context.RenderComponent<SimpleMudDatePickerTest>();
+
+            var datePicker = comp.FindComponent<MudDatePicker>().Instance;
+
+            await comp.InvokeAsync(() => datePicker.GoToDate(new DateTime(2022, 03, 20)));
+            comp.WaitForAssertion(() => datePicker.Date.Should().Be(new DateTime(2022, 03, 20)));
+
+            await comp.InvokeAsync(() => datePicker.GoToDate(new DateTime(2023, 04, 21), false));
+            comp.WaitForAssertion(() => datePicker.Date.Should().Be(new DateTime(2022, 03, 20)));
+
+            await comp.InvokeAsync(() => datePicker.GoToDate(new DateTime(2023, 04, 21)));
+            comp.WaitForAssertion(() => datePicker.Date.Should().Be(new DateTime(2023, 04, 21)));
+
+            await comp.InvokeAsync(() => datePicker.GoToDate());
+            comp.WaitForAssertion(() => datePicker.Date.Should().Be(new DateTime(2023, 04, 21)));
         }
     }
 }
