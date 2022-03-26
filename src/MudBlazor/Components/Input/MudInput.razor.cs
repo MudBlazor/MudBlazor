@@ -168,14 +168,9 @@ namespace MudBlazor
                 UpdateClearable(Value);
         }
 
-        protected virtual async Task ClearButtonClickHandlerAsync(MouseEventArgs e)
+        protected override async Task ClearButtonClickHandlerAsync(MouseEventArgs e)
         {
-            if (ReadOnly)
-            {
-                return;
-            }
-
-            await SetTextAsync(string.Empty, updateValue: true);
+            await base.ClearButtonClickHandlerAsync(e);
             await OnClearButtonClick.InvokeAsync(e);
         }
 
