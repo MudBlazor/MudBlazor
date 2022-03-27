@@ -370,11 +370,12 @@ namespace MudBlazor.UnitTests.Components
             // valid time
             comp.Find("input").Change("23:02");
             picker.TimeIntermediate.Should().Be(new TimeSpan(23, 2, 0));
+            // empty string equals null TimeSpan?
+            comp.Find("input").Change("");
+            picker.TimeIntermediate.Should().BeNull();
+            picker.Error.Should().BeFalse();
             // invalid time
             comp.Find("input").Change("25:06");
-            picker.TimeIntermediate.Should().BeNull();
-            // invalid time
-            comp.Find("input").Change("");
             picker.TimeIntermediate.Should().BeNull();
         }
 
