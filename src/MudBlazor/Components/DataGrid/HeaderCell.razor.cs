@@ -17,43 +17,20 @@ namespace MudBlazor
         [CascadingParameter] public MudDataGrid<T> DataGrid { get; set; }
         [CascadingParameter(Name = "IsOnlyHeader")] public bool IsOnlyHeader { get; set; } = false;
 
-        [Parameter] public string Title { get; set; }
-        [Parameter] public string Field { get; set; }
-        [Parameter] public RenderFragment HeaderTemplate { get; set; }
+        [Parameter] public Column<T> Column { get; set; }
         [Parameter] public RenderFragment ChildContent { get; set; }
-        [Parameter] public int ColSpan { get; set; }
-        [Parameter] public ColumnType ColumnType { get; set; } = ColumnType.Text;
-        [Parameter] public Func<T, object> SortBy 
-        { 
-            get
-            {
-                CompileSortBy();
-                return _sortBy;
-            }
-            set
-            {
-                _sortBy = value;
-            }
-        }
-        [Parameter] public string SortIcon { get; set; } = Icons.Material.Filled.ArrowUpward;
-        [Parameter] public SortDirection InitialDirection { get; set; } = SortDirection.None;
-        [Parameter] public bool? Sortable { get; set; }
-        [Parameter] public bool? Filterable { get; set; }
-        [Parameter] public bool? ShowColumnOptions { get; set; }
-        [Parameter] public string HeaderClass { get; set; }
-        [Parameter] public string HeaderStyle { get; set; }
 
         private SortDirection _initialDirection;
-        private Func<T, object> _sortBy;
         private Type _dataType;
         private bool _isSelected;
         private string _classname =>
-            new CssBuilder(HeaderClass)
+            new CssBuilder(Column?.HeaderClass)
+                .AddClass(Column?.headerClassname)
                 .AddClass(Class)
             .Build();
         private string _style =>
             new StyleBuilder()
-                .AddStyle(HeaderStyle)
+                .AddStyle(Column?.HeaderStyle)
                 .AddStyle(Style)
             .Build();
 
@@ -63,31 +40,45 @@ namespace MudBlazor
         {
             get
             {
-                return Title ?? Field;
+                return Column.Title ?? Column.Field;
             }
         }
         private bool sortable
         {
             get
             {
-                return Sortable ?? DataGrid?.Sortable ?? true;
+                return Column?.Sortable ?? DataGrid?.Sortable ?? true;
             }
         }
         private bool filterable
         {
             get
             {
-                return Filterable ?? DataGrid?.Filterable ?? true;
+                return Column?.Filterable ?? DataGrid?.Filterable ?? true;
+            }
+        }
+        private bool hideable
+        {
+            get
+            {
+                return Column?.Hideable ?? DataGrid?.Hideable ?? false;
+            }
+        }
+        private bool groupable
+        {
+            get
+            {
+                return Column?.Groupable ?? DataGrid?.Groupable ?? false;
             }
         }
         private bool showColumnOptions
         {
             get
             {
-                if (!sortable && !filterable)
+                if (!sortable && !filterable && !groupable)
                     return false;
 
-                return ShowColumnOptions ?? DataGrid?.ShowColumnOptions ?? true;
+                return Column?.ShowColumnOptions ?? DataGrid?.ShowColumnOptions ?? true;
             }
         }
         private string sortIconClass
@@ -115,46 +106,20 @@ namespace MudBlazor
                 if (DataGrid == null)
                     return false;
 
-                return DataGrid.FilterDefinitions.Any(x => x.Field == Field && x.Operator != null && x.Value != null);
+                return DataGrid.FilterDefinitions.Any(x => x.Field == Column.Field && x.Operator != null && x.Value != null);
             }
         }
 
         #endregion
 
-        /// <summary>
-        /// The main content for the HeaderCell. We use a RenderFragment here so the code 
-        /// does not have to be repeated in the razor file.
-        /// </summary>
-        private RenderFragment _content
-        {
-            get
-            {
-                return (builder =>
-                {
-                    if (IsOnlyHeader)
-                    {
-                        builder.AddContent(0, ChildContent);
-                    }
-                    else if (HeaderTemplate != null)
-                    {
-                        builder.AddContent(0, HeaderTemplate);
-                    }
-                    else
-                    {
-                        builder.AddContent(0, computedTitle);
-                    }
-                });
-            }
-        }
-
         protected override async Task OnInitializedAsync()
         {
-            _initialDirection = InitialDirection;
+            _initialDirection = Column?.InitialDirection ?? SortDirection.None;
 
             if (_initialDirection != SortDirection.None)
             {
                 // set initial sort
-                await InvokeAsync(() => DataGrid.SetSortAsync(_initialDirection, SortBy, Field));
+                await InvokeAsync(() => DataGrid.SetSortAsync(_initialDirection, Column.SortBy, Column.Field));
             }
 
             if (DataGrid != null)
@@ -165,20 +130,9 @@ namespace MudBlazor
             }
         }
 
-        internal void CompileSortBy()
-        {
-            if (_sortBy == null)
-            {
-                // set the default SortBy
-                var parameter = Expression.Parameter(typeof(T), "x");
-                var field = Expression.Convert(Expression.Property(parameter, typeof(T).GetProperty(Field)), typeof(object));
-                _sortBy = Expression.Lambda<Func<T, object>>(field, parameter).Compile();
-            }
-        }
-
         internal void GetDataType()
         {
-            var p = typeof(T).GetProperty(Field);
+            var p = typeof(T).GetProperty(Column?.Field);
             _dataType = p.GetType();
         }
 
@@ -191,7 +145,7 @@ namespace MudBlazor
         /// <param name="field">The field that is the currently set sort.</param>
         private void ClearSort(string field)
         {
-            if (Field != field)
+            if (Column?.Field != field)
                 _initialDirection = SortDirection.None;
         }
 
@@ -216,18 +170,18 @@ namespace MudBlazor
             else if (_initialDirection == SortDirection.Descending)
                 _initialDirection = SortDirection.None;
 
-            await InvokeAsync(() => DataGrid.SetSortAsync(_initialDirection, SortBy, Field));
+            await InvokeAsync(() => DataGrid.SetSortAsync(_initialDirection, Column?.SortBy, Column?.Field));
         }
 
         internal async Task RemoveSortAsync()
         {
             _initialDirection = SortDirection.None;
-            await InvokeAsync(() => DataGrid.SetSortAsync(SortDirection.None, SortBy, Field));
+            await InvokeAsync(() => DataGrid.SetSortAsync(SortDirection.None, Column?.SortBy, Column?.Field));
         }
 
         internal void AddFilter()
         {
-            DataGrid.AddFilter(Guid.NewGuid(), Field);
+            DataGrid.AddFilter(Guid.NewGuid(), Column?.Field);
         }
 
         internal void OpenFilters()
@@ -238,6 +192,26 @@ namespace MudBlazor
         private async Task CheckedChangedAsync(bool value)
         {
             await DataGrid?.SetSelectAllAsync(value);
+        }
+
+        internal async Task HideColumnAsync()
+        {
+            if (Column != null)
+            {
+                Column.Hide();
+                await Column.HiddenChanged.InvokeAsync(Column.Hidden);
+                DataGrid.ExternalStateHasChanged();
+            }
+        }
+
+        internal void GroupColumn()
+        {
+            Column?.SetGrouping(true);
+        }
+
+        internal void UngroupColumn()
+        {
+            Column?.SetGrouping(false);
         }
 
         #endregion

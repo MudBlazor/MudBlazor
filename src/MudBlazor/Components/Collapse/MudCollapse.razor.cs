@@ -10,16 +10,16 @@ namespace MudBlazor
 {
     public partial class MudCollapse : MudComponentBase, IDisposable
     {
-        private enum CollapseState
+        internal enum CollapseState
         {
             Entering, Entered, Exiting, Exited
         }
 
-        private double _height;
+        internal double _height;
         private int _listenerId;
         private bool _expanded, _isRendered, _updateHeight;
         private ElementReference _container, _wrapper;
-        private CollapseState _state = CollapseState.Exited;
+        internal CollapseState _state = CollapseState.Exited;
         private DotNetObjectReference<MudCollapse> _dotNetRef;
 
         protected string Stylename =>
@@ -101,7 +101,7 @@ namespace MudBlazor
             set { }
         }
 
-        private async Task UpdateHeight()
+        internal async Task UpdateHeight()
         {
             if (_disposeCount > 0)
             {
@@ -140,7 +140,7 @@ namespace MudBlazor
             await base.OnAfterRenderAsync(firstRender);
         }
 
-        int _disposeCount;
+        internal int _disposeCount;
 
         protected virtual void Dispose(bool disposing)
         {

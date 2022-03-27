@@ -6,6 +6,7 @@ namespace MudBlazor
 {
     public enum DataGridEditMode
     {
-        Inline
+        Cell,
+        Form
     }
 }

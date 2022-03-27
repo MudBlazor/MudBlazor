@@ -12,12 +12,11 @@
         <DocsPageSection>
             <SectionHeader Title="Basic Usage" />
             <SectionSubGroups>
-                        
                 <DocsPageSection>
                     <SectionHeader Title="Grow">
                         <Description></Description>
                     </SectionHeader>
-                    <SectionContent DarkenBackground="true" Code="FlexGrowExample">
+                    <SectionContent DarkenBackground="true" Code="FlexGrowExample" HighLight="flex-grow-1">
                         <DocsWidthSlider>
                             <FlexGrowExample/>
                         </DocsWidthSlider>
@@ -28,16 +27,21 @@
                     <SectionHeader Title="No grow">
                         <Description></Description>
                     </SectionHeader>
-                    <SectionContent DarkenBackground="true" Code="FlexNoGrowExample">
+                    <SectionContent DarkenBackground="true" Code="FlexNoGrowExample" HighLight="flex-grow-0">
                         <DocsWidthSlider>
                             <FlexNoGrowExample/>
                         </DocsWidthSlider>
                     </SectionContent>
                 </DocsPageSection>
-                
             </SectionSubGroups>
         </DocsPageSection>
         
+        <DocsPageSection>
+            <SectionHeader Title="Applying conditionally"/>
+            <SectionSubGroups>
+                <DynamicBreakpointSectionContent Utility="flex-md-grow-1"/>
+            </SectionSubGroups>
+        </DocsPageSection>
 
     </DocsPageContent>
 </DocsPage>

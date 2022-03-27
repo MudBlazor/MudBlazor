@@ -50,14 +50,14 @@ namespace MudBlazor
 
         public bool Collapsed { get; private set; } = true;
 
-        private static string GetItemClassname(BreadcrumbItem item)
+        internal static string GetItemClassname(BreadcrumbItem item)
         {
             return new CssBuilder("mud-breadcrumb-item")
                 .AddClass("mud-disabled", item.Disabled)
                 .Build();
         }
 
-        private void Expand()
+        internal void Expand()
         {
             if (!Collapsed)
                 return;

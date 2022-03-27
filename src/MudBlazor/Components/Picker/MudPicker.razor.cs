@@ -87,6 +87,13 @@ namespace MudBlazor
         public string AdornmentIcon { get; set; } = Icons.Material.Filled.Event;
 
         /// <summary>
+        /// Sets the aria-label of the input text field icon
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Appearance)]
+        public string AdornmentAriaLabel { get; set; } = string.Empty;
+
+        /// <summary>
         /// The short hint displayed in the input before the user enters a value.
         /// </summary>
         [Parameter]
@@ -346,7 +353,7 @@ namespace MudBlazor
 
         private void CloseOverlay() => Close(PickerActions == null);
 
-        protected virtual void Submit() { }
+        protected internal virtual void Submit() { }
 
         public virtual void Clear(bool close = true)
         {

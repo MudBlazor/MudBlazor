@@ -17,7 +17,7 @@
                     <SectionHeader Title="Shrink">
                         <Description></Description>
                     </SectionHeader>
-                    <SectionContent DarkenBackground="true" Code="FlexShrinkExample">
+                    <SectionContent DarkenBackground="true" Code="FlexShrinkExample" HighLight="flex-shrink-1">
                         <DocsWidthSlider>
                             <FlexShrinkExample/>
                         </DocsWidthSlider>
@@ -28,7 +28,7 @@
                     <SectionHeader Title="No shrink">
                         <Description></Description>
                     </SectionHeader>
-                    <SectionContent DarkenBackground="true" Code="FlexNoShrinkExample">
+                    <SectionContent DarkenBackground="true" Code="FlexNoShrinkExample" HighLight="flex-shrink-0">
                         <DocsWidthSlider>
                             <FlexNoShrinkExample/>
                         </DocsWidthSlider>
@@ -38,6 +38,12 @@
             </SectionSubGroups>
         </DocsPageSection>
         
+        <DocsPageSection>
+            <SectionHeader Title="Applying conditionally"/>
+            <SectionSubGroups>
+                <DynamicBreakpointSectionContent Utility="flex-md-shrink-1"/>
+            </SectionSubGroups>
+        </DocsPageSection>
 
     </DocsPageContent>
 </DocsPage>

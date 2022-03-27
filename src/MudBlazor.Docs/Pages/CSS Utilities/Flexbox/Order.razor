@@ -11,11 +11,22 @@
         
         <DocsPageSection>
             <SectionHeader Title="Basic Usage" />
-            <SectionContent Code="OrderBasicExample">
-                <OrderBasicExample/>
-            </SectionContent>
+            <SectionSubGroups>
+                <DocsPageSection>
+                    <SectionHeader Title="Order" />
+                    <SectionContent Code="OrderBasicExample" HighLight="order-1,order-2,order-3">
+                        <OrderBasicExample/>
+                    </SectionContent>
+                </DocsPageSection>
+            </SectionSubGroups>
         </DocsPageSection>
         
-
+        <DocsPageSection>
+            <SectionHeader Title="Applying conditionally"/>
+            <SectionSubGroups>
+                <DynamicBreakpointSectionContent Utility="order-md-2"/>
+            </SectionSubGroups>
+        </DocsPageSection>
+        
     </DocsPageContent>
 </DocsPage>
