@@ -2,15 +2,29 @@
 
 <MudSlider @bind-Value="spacing" Min="0" Max="10" Color="Color.Info" Class="mb-6">Spacing: @spacing.ToString()</MudSlider>
 
-<MudGrid Spacing="@spacing" Justify="Justify.Center">
-    <MudItem>
-        <MudPaper Height="140px" Width="140px"/>
+<MudGrid Spacing="@spacing">
+    <MudItem xs="4" class="d-flex">
+        <MudPaper class="flex-grow-1" Height="100px"/>
+    </MudItem >
+    <MudItem xs="4" class="d-flex">
+        <MudPaper class="flex-grow-1" Height="100px"/>
     </MudItem>
-    <MudItem>
-        <MudPaper Height="140px" Width="140px"/>
+    <MudItem xs="4" class="d-flex">
+        <MudPaper class="flex-grow-1" Height="100px" />
     </MudItem>
-    <MudItem>
-        <MudPaper Height="140px" Width="140px" />
+    <MudItem class="d-flex">
+        <MudPaper class="flex-grow-1 d-flex align-center justify-center" Height="100px" > 
+            xs=12(default) 
+        </MudPaper>
+    </MudItem>
+    <MudItem xs="4" class="d-flex">
+        <MudPaper class="flex-grow-1" Height="100px"/>
+    </MudItem >
+    <MudItem xs="4" class="d-flex">
+        <MudPaper class="flex-grow-1" Height="100px"/>
+    </MudItem>
+    <MudItem xs="4" class="d-flex">
+        <MudPaper class="flex-grow-1" Height="100px" />
     </MudItem>
 </MudGrid>
 
