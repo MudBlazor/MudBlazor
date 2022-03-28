@@ -574,7 +574,8 @@ namespace MudBlazor
             else
             {
                 // single selection
-                await CloseMenu();
+                // CloseMenu(true) doesn't close popover in BSS
+                await CloseMenu(false);
 
                 if (EqualityComparer<T>.Default.Equals(Value, value))
                 {
@@ -592,7 +593,7 @@ namespace MudBlazor
             await SelectedValuesChanged.InvokeAsync(SelectedValues);
             if (MultiSelection && typeof(T) == typeof(string))
                 await SetValueAsync((T)(object)Text, updateText: false);
-            StateHasChanged();
+            await InvokeAsync(StateHasChanged);
         }
 
         private async void HilightItemForValue(T value)
