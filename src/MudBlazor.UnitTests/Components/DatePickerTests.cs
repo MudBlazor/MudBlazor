@@ -551,6 +551,7 @@ namespace MudBlazor.UnitTests.Components
                 .Should().OnlyContain(disabled => disabled == false);
         }
 
+        [Test]
         public async Task CheckAutoCloseDatePickerTest()
         {
             // Define a date for comparison
@@ -585,6 +586,13 @@ namespace MudBlazor.UnitTests.Components
             // The date of the datepicker remains equal to now 
             await comp.InvokeAsync(() => datePicker.Instance.Close(false));
 
+            await comp.InvokeAsync(() => datePicker.Instance.Open());
+            comp.WaitForAssertion(() => comp.FindAll("div.mud-popover").Count.Should().Be(1));
+
+            await comp.InvokeAsync(() => datePicker.Instance.Clear());
+            comp.WaitForAssertion(() => comp.FindAll("div.mud-popover").Count.Should().Be(1));
+            await comp.InvokeAsync(() => datePicker.Instance.Close(false));
+
             // Change the value of autoclose
             datePicker.Instance.AutoClose = true;
 
@@ -612,6 +620,12 @@ namespace MudBlazor.UnitTests.Components
             {
                 datePicker.Instance.Date.Should().Be(new DateTime(now.Year, now.Month, 19));
             }
+
+            await comp.InvokeAsync(() => datePicker.Instance.Open());
+            comp.WaitForAssertion(() => comp.FindAll("div.mud-popover").Count.Should().Be(1));
+
+            await comp.InvokeAsync(() => datePicker.Instance.Clear());
+            comp.WaitForAssertion(() => comp.FindAll("div.mud-popover").Count.Should().Be(0));
         }
 
         [Test]

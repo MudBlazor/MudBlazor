@@ -197,11 +197,15 @@ namespace MudBlazor
             Time = TimeIntermediate;
         }
 
-        public override void Clear(bool close = true)
+        public override async void Clear(bool close = true)
         {
-            Time = null;
             TimeIntermediate = null;
-            base.Clear();
+            await SetTimeAsync(null, true);
+
+            if (AutoClose == true)
+            {
+                Close(false);
+            }
         }
 
         private string GetHourString()

@@ -337,11 +337,12 @@ namespace MudBlazor
             IsOpen = false;
 
             if (submit)
+            {
                 Submit();
-
-            StateHasChanged();
+            }
 
             OnClosed();
+            StateHasChanged();
         }
 
         public void Open()
