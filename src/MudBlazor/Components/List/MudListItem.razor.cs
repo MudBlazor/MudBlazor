@@ -23,6 +23,8 @@ namespace MudBlazor
 
         [CascadingParameter] protected MudList MudList { get; set; }
 
+        private bool _onClickHandlerPreventDefault = false;
+
         /// <summary>
         /// The text to display
         /// </summary>
@@ -196,6 +198,14 @@ namespace MudBlazor
         [Category(CategoryTypes.List.Behavior)]
         public RenderFragment ChildContent { get; set; }
 
+        [Parameter]
+        [Category(CategoryTypes.List.Behavior)]
+        public bool OnClickHandlerPreventDefault
+        {
+            get => _onClickHandlerPreventDefault;
+            set => _onClickHandlerPreventDefault = value;
+        }
+
         /// <summary>
         /// Add child list items here to create a nested list.
         /// </summary>
@@ -211,7 +221,7 @@ namespace MudBlazor
 
         protected void OnClickHandler(MouseEventArgs ev)
         {
-            if (Disabled)
+            if (Disabled || _onClickHandlerPreventDefault)
                 return;
             if (NestedList != null)
             {

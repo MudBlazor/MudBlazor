@@ -586,9 +586,9 @@ namespace MudBlazor
                 _elementReference.SetText(Text).AndForget();
                 _selectedValues.Clear();
                 _selectedValues.Add(value);
-                HilightItemForValue(value);
             }
 
+            HilightItemForValue(value);
             await SelectedValuesChanged.InvokeAsync(SelectedValues);
             if (MultiSelection && typeof(T) == typeof(string))
                 await SetValueAsync((T)(object)Text, updateText: false);
