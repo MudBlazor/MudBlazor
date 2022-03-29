@@ -23,6 +23,8 @@ namespace MudBlazor
 
         [CascadingParameter] protected MudList MudList { get; set; }
 
+        private bool _onClickHandlerPreventDefault = false;
+
         /// <summary>
         /// The text to display
         /// </summary>
@@ -196,6 +198,14 @@ namespace MudBlazor
         [Category(CategoryTypes.List.Behavior)]
         public RenderFragment ChildContent { get; set; }
 
+        [Parameter]
+        [Category(CategoryTypes.List.Behavior)]
+        public bool OnClickHandlerPreventDefault
+        {
+            get => _onClickHandlerPreventDefault;
+            set => _onClickHandlerPreventDefault = value;
+        }
+
         /// <summary>
         /// Add child list items here to create a nested list.
         /// </summary>
@@ -213,24 +223,31 @@ namespace MudBlazor
         {
             if (Disabled)
                 return;
-            if (NestedList != null)
+            if (!_onClickHandlerPreventDefault)
             {
-                Expanded = !Expanded;
-            }
-            else if (Href != null)
-            {
-                MudList?.SetSelectedValue(this.Value);
-                OnClick.InvokeAsync(ev);
-                UriHelper.NavigateTo(Href, ForceLoad);
+                if (NestedList != null)
+                {
+                    Expanded = !Expanded;
+                }
+                else if (Href != null)
+                {
+                    MudList?.SetSelectedValue(this.Value);
+                    OnClick.InvokeAsync(ev);
+                    UriHelper.NavigateTo(Href, ForceLoad);
+                }
+                else
+                {
+                    MudList?.SetSelectedValue(this.Value);
+                    OnClick.InvokeAsync(ev);
+                    if (Command?.CanExecute(CommandParameter) ?? false)
+                    {
+                        Command.Execute(CommandParameter);
+                    }
+                }
             }
             else
             {
-                MudList?.SetSelectedValue(this.Value);
                 OnClick.InvokeAsync(ev);
-                if (Command?.CanExecute(CommandParameter) ?? false)
-                {
-                    Command.Execute(CommandParameter);
-                }
             }
         }
 
