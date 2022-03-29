@@ -6,7 +6,7 @@
         <Column T="Model" Field="@nameof(Model.Age)" />
         <Column T="Model" Field="@nameof(Model.Hired)">
             <CellTemplate>
-                @if (context.Hired)
+                @if (context.Item.Hired)
                 {
                     <MudIcon Icon="@Icons.Filled.Check" />
                 }

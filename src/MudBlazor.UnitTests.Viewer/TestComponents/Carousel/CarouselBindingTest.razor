@@ -1,6 +1,6 @@
 ﻿@namespace MudBlazor.UnitTests.TestComponents
 
-<MudCarousel @ref="_carousel" ItemsSource="@_source" Style="height:200px;" ShowArrows="@_arrows" ShowDelimiters="@_delimiters" AutoCycle="@_autocycle">
+<MudCarousel @ref="_carousel" ItemsSource="@_source" ArrowsPosition="Position.End" Style="height:200px;" ShowBullets="true" ShowArrows="@_arrows" ShowDelimiters="@_delimiters" AutoCycle="@_autocycle">
     <ItemTemplate>
         <div class="d-flex flex-column flex-column justify-center" style="height:100%">
             <MudIcon Class="mx-auto" Icon="@Icons.Custom.Brands.MudBlazor" Size="@Size.Large" />
