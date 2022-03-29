@@ -16,7 +16,7 @@ namespace MudBlazor
     {
         private bool _isDisposed;
 
-        private int _activePanelIndex = 0;
+        private int _activePanelIndex = -1;
         private int _scrollIndex = 0;
 
         private bool _isRendered = false;
@@ -288,19 +288,30 @@ namespace MudBlazor
         {
             if (firstRender)
             {
+                var disableSliderAnimationState = _disableSliderAnimation;
                 var items = _panels.Select(x => x.PanelRef).ToList();
                 items.Add(_tabsContentSize);
 
                 if (_panels.Count > 0)
                 {
-                    if (GetItemFromUri() is { } item)
+                    //If there are any NavLink tabs...
+                    if (Panels.Any(t => t is MudTabNavLink))
                     {
-                        _activePanelIndex = _panels.IndexOf(item);
-                        ActivePanel = item;
+                        //...and the current Uri is assigned to one item
+                        if (GetItemFromUri() is { } item)
+                        {
+                            _disableSliderAnimation = true;
+                            //...set this item as the active one
+                            _activePanelIndex = _panels.IndexOf(item);
+                            ActivePanel = item;
+                        }
+                        //if the uri is not assigned to anyone, no panel shall be set as active
                     }
-                    else
+                    else //if there is no NavLink tabs (e.g. only 'normal' TabPanels) then set the previous selected panel as the active one
                     {
-                        ActivePanel = _panels[_activePanelIndex];
+                        ActivePanel = _activePanelIndex < 0
+                            ? _panels[0]
+                            : _panels[_activePanelIndex];
                     }
                 }
 
@@ -311,11 +322,12 @@ namespace MudBlazor
 
                 Rerender();
                 StateHasChanged();
+                _disableSliderAnimation = disableSliderAnimationState;
 
                 _isRendered = true;
             }
         }
-        
+
         private MudTabPanel GetItemFromUri()
         {
             var relative = NavManager.ToBaseRelativePath(NavManager.Uri);
@@ -331,6 +343,7 @@ namespace MudBlazor
 
             return null;
         }
+
         public async ValueTask DisposeAsync()
         {
             if (_isDisposed == true)
@@ -347,7 +360,7 @@ namespace MudBlazor
         internal void AddPanel(MudTabPanel tabPanel)
         {
             _panels.Add(tabPanel);
-            if (_panels.Count == 1)
+            if (tabPanel is not MudTabNavLink && _panels.Count == 1)
                 ActivePanel = tabPanel;
 
             StateHasChanged();
@@ -419,8 +432,8 @@ namespace MudBlazor
             {
                 ActivePanelIndex = _panels.IndexOf(panel);
 
-                if (ev != null)
-                    ActivePanel.OnClick.InvokeAsync(ev);
+                if (ev is not null)
+                    ActivePanel?.OnClick.InvokeAsync(ev);
 
                 CenterScrollPositionAroundSelectedItem();
                 SetSliderState();
@@ -712,6 +725,8 @@ namespace MudBlazor
 
         private void CenterScrollPositionAroundSelectedItem()
         {
+            if (ActivePanel is null)
+                return;
             MudTabPanel panelToStart = ActivePanel;
             var length = GetPanelLength(panelToStart);
             if (length >= _toolbarContentSize)
