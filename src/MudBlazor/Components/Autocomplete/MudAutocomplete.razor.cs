@@ -250,6 +250,13 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public EventCallback<MouseEventArgs> OnClearButtonClick { get; set; }
 
+        /// <summary>
+        /// If true, prevent scrolling while dropdown is open.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.ListBehavior)]
+        public bool LockScroll { get; set; } = false;
+
         private string _currentIcon;
 
         /// <summary>
@@ -274,7 +281,16 @@ namespace MudBlazor
             if (!_isCleared)
                 await SetTextAsync(optionText, false);
             _timer?.Dispose();
+            // Not proud of this task delays, but there is no other option for now. This needs to close popover properly on server side.
+            if (RuntimeLocation.IsServerSide)
+            {
+                await Task.Delay(1);
+            }
             IsOpen = false;
+            if (RuntimeLocation.IsServerSide)
+            {
+                await Task.Delay(1);
+            }
             BeginValidate();
             if (!_isCleared)
                 _elementReference?.SetText(optionText);

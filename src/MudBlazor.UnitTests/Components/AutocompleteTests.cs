@@ -633,8 +633,10 @@ namespace MudBlazor.UnitTests.Components
 
             // define the event-args for arrow-down
             var arrowDownKeyboardEventArgs = new KeyboardEventArgs { Key = Key.Down.Value, Type = "keyup" };
-
+            
+            component.WaitForAssertion(() => autocompleteInstance.IsOpen.Should().BeFalse());
             // invoke directly (but twice)
+            onInputKeyUpMemberInfo.Invoke(autocompleteInstance, new[] { arrowDownKeyboardEventArgs }); //first one is for open popover
             onInputKeyUpMemberInfo.Invoke(autocompleteInstance, new[] { arrowDownKeyboardEventArgs });
             onInputKeyUpMemberInfo.Invoke(autocompleteInstance, new[] { arrowDownKeyboardEventArgs });
 
