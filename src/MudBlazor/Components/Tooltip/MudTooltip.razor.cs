@@ -122,6 +122,13 @@ namespace MudBlazor
         public string RootClass { get; set; }
 
         /// <summary>
+        /// Determines on which events the tooltip will act
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Tooltip.Appearance)]
+        public TooltipBehavior ReactWith { get; set; } = TooltipBehavior.All;
+
+        /// <summary>
         /// The visible state of the Tooltip.
         /// </summary>
         [Parameter]
@@ -145,8 +152,43 @@ namespace MudBlazor
         [Category(CategoryTypes.FormComponent.Behavior)]
         public EventCallback<bool> IsVisibleChanged { get; set; }
 
-        private void HandleMouseOver() { IsVisible = true;}
-        private void HandleMouseOut() { IsVisible = false;}
+
+        private void HandleMouseEnter()
+        {
+            if (ReactWith == TooltipBehavior.All || ReactWith == TooltipBehavior.Hover)
+            {
+                IsVisible = true;
+            }
+        }
+
+        private void HandleMouseLeave()
+        {
+            if (ReactWith == TooltipBehavior.All || ReactWith == TooltipBehavior.Hover)
+            {
+                IsVisible = false;
+            }
+        }
+
+        private void HandleFocusIn()
+        {
+            if (ReactWith == TooltipBehavior.All || ReactWith == TooltipBehavior.Focus)
+            {
+                IsVisible = true;
+            }
+        }
+
+        private void HandleFocusOut()
+        {
+            if (ReactWith == TooltipBehavior.All || ReactWith == TooltipBehavior.Focus)
+            {
+                IsVisible = false;
+            }
+        }
+
+        private void HandleMouseClick()
+        {
+            IsVisible = false;
+        }
 
         private Origin ConvertPlacement()
         {

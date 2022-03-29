@@ -1,0 +1,40 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<div class="d-flex flex-column align-center">
+    <MudButton Class="mb-4" tabindex="-1" OnClick="@(() => _iconButton1.FocusAsync())">Focus</MudButton>
+    <MudText Class="mt-4" Align="Align.Center">All</MudText>
+    <MudTooltip ReactWith="TooltipBehavior.All" Text="Delete">
+        <MudIconButton @ref="_iconButton1" Icon="@Icons.Material.Filled.Delete" Size="Size.Large" />
+    </MudTooltip>
+</div>
+
+<div class="d-flex flex-column align-center">
+    <MudButton Class="mb-4" tabindex="-1" OnClick="@(() => _iconButton2.FocusAsync())">Focus</MudButton>
+    <MudText Class="mt-4" Align="Align.Center">Only Focus</MudText>
+    <MudTooltip ReactWith="TooltipBehavior.Focus" Text="Delete">
+        <MudIconButton @ref="_iconButton2"  Icon="@Icons.Material.Filled.Delete" Size="Size.Large" />
+    </MudTooltip>
+</div>
+
+<div class="d-flex flex-column align-center">
+    <MudButton Class="mb-4" tabindex="-1" OnClick="@(() => _iconButton3.FocusAsync())">Focus</MudButton>
+    <MudText Class="mt-4" Align="Align.Center">Only Hover</MudText>
+    <MudTooltip ReactWith="TooltipBehavior.Hover" Text="Delete">
+        <MudIconButton @ref="_iconButton3" Icon="@Icons.Material.Filled.Delete" Size="Size.Large" />
+    </MudTooltip>
+</div>
+
+<div class="d-flex flex-column align-center">
+    <MudButton Class="mb-4" tabindex="-1" OnClick="@(() => _iconButton4.FocusAsync())">Focus</MudButton>
+    <MudText Class="mt-4" Align="Align.Center">None</MudText>
+    <MudTooltip ReactWith="TooltipBehavior.None" Text="Delete">
+        <MudIconButton @ref="_iconButton4" Icon="@Icons.Material.Filled.Delete" Size="Size.Large" />
+    </MudTooltip>
+</div>
+
+@code {
+    MudIconButton _iconButton1;
+    MudIconButton _iconButton2;
+    MudIconButton _iconButton3;
+    MudIconButton _iconButton4;
+}
