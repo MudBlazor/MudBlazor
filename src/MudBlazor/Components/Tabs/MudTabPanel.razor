@@ -20,7 +20,7 @@ else
 
     private Boolean _disposed;
 
-    [CascadingParameter] private MudTabs Parent { get; set; }
+    [CascadingParameter] protected MudTabs Parent { get; set; }
 
     public ElementReference PanelRef;
 
@@ -112,7 +112,7 @@ else
         Parent?.AddPanel(this);
     }
 
-    public async ValueTask DisposeAsync()
+    public virtual async ValueTask DisposeAsync()
     {
         if(_disposed == true) { return;  }
 

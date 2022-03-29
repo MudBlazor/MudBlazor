@@ -292,9 +292,20 @@ namespace MudBlazor
                 items.Add(_tabsContentSize);
 
                 if (_panels.Count > 0)
-                    ActivePanel = _panels[_activePanelIndex];
+                {
+                    if (GetItemFromUri() is { } item)
+                    {
+                        _activePanelIndex = _panels.IndexOf(item);
+                        ActivePanel = item;
+                    }
+                    else
+                    {
+                        ActivePanel = _panels[_activePanelIndex];
+                    }
+                }
 
                 await _resizeObserver.Observe(items);
+
 
                 _resizeObserver.OnResized += OnResized;
 
@@ -304,7 +315,22 @@ namespace MudBlazor
                 _isRendered = true;
             }
         }
+        
+        private MudTabPanel GetItemFromUri()
+        {
+            var relative = NavManager.ToBaseRelativePath(NavManager.Uri);
+            foreach (var item in Panels.OfType<MudTabNavGroup>().Where(g => relative.StartsWith(g.LinkBase)))
+            {
+                return item;
+            }
 
+            foreach (var item in Panels.OfType<MudTabNavLink>().Where(l => relative == l.Href.TrimStart('/')))
+            {
+                return item;
+            }
+
+            return null;
+        }
         public async ValueTask DisposeAsync()
         {
             if (_isDisposed == true)
@@ -405,77 +431,102 @@ namespace MudBlazor
 
         #endregion
 
+        #region Navigation Managment
+
+        [Inject] private NavigationManager NavManager { get; set; }
+
+        private void HandleNavigation(MudTabPanel panel, MouseEventArgs ev = null, MudTabNavGroup group = null)
+        {
+            if (panel.Disabled || panel is not MudTabNavLink link)
+                return;
+
+            NavManager.NavigateTo(link.Href);
+            if (group is null)
+                ActivatePanel(link, ev);
+            else
+                ActivatePanel(group, ev);
+        }
+
+        #endregion
+
         #region Style and classes
+
         protected string TabsClassnames =>
             new CssBuilder("mud-tabs")
-            .AddClass($"mud-tabs-rounded", ApplyEffectsToContainer && Rounded)
-            .AddClass($"mud-paper-outlined", ApplyEffectsToContainer && Outlined)
-            .AddClass($"mud-elevation-{Elevation}", ApplyEffectsToContainer && Elevation != 0)
-            .AddClass($"mud-tabs-reverse", Position == Position.Bottom)
-            .AddClass($"mud-tabs-vertical", IsVerticalTabs())
-            .AddClass($"mud-tabs-vertical-reverse", Position == Position.Right && !RightToLeft || (Position == Position.Left) && RightToLeft || Position == Position.End)
-            .AddClass(InternalClassName)
-            .AddClass(Class)
-            .Build();
+                .AddClass($"mud-tabs-rounded", ApplyEffectsToContainer && Rounded)
+                .AddClass($"mud-paper-outlined", ApplyEffectsToContainer && Outlined)
+                .AddClass($"mud-elevation-{Elevation}", ApplyEffectsToContainer && Elevation != 0)
+                .AddClass($"mud-tabs-reverse", Position == Position.Bottom)
+                .AddClass($"mud-tabs-vertical", IsVerticalTabs())
+                .AddClass($"mud-tabs-vertical-reverse",
+                    Position == Position.Right && !RightToLeft || (Position == Position.Left) && RightToLeft || Position == Position.End)
+                .AddClass(InternalClassName)
+                .AddClass(Class)
+                .Build();
 
         protected string ToolbarClassnames =>
             new CssBuilder("mud-tabs-toolbar")
-            .AddClass($"mud-tabs-rounded", !ApplyEffectsToContainer && Rounded)
-            .AddClass($"mud-tabs-vertical", IsVerticalTabs())
-            .AddClass($"mud-tabs-toolbar-{Color.ToDescriptionString()}", Color != Color.Default)
-            .AddClass($"mud-tabs-border-{ConvertPosition(Position).ToDescriptionString()}", Border)
-            .AddClass($"mud-paper-outlined", !ApplyEffectsToContainer && Outlined)
-            .AddClass($"mud-elevation-{Elevation}", !ApplyEffectsToContainer && Elevation != 0)
-            .Build();
+                .AddClass($"mud-tabs-rounded", !ApplyEffectsToContainer && Rounded)
+                .AddClass($"mud-tabs-vertical", IsVerticalTabs())
+                .AddClass($"mud-tabs-toolbar-{Color.ToDescriptionString()}", Color != Color.Default)
+                .AddClass($"mud-tabs-border-{ConvertPosition(Position).ToDescriptionString()}", Border)
+                .AddClass($"mud-paper-outlined", !ApplyEffectsToContainer && Outlined)
+                .AddClass($"mud-elevation-{Elevation}", !ApplyEffectsToContainer && Elevation != 0)
+                .Build();
 
         protected string WrapperClassnames =>
             new CssBuilder("mud-tabs-toolbar-wrapper")
-            .AddClass($"mud-tabs-centered", Centered)
-            .AddClass($"mud-tabs-vertical", IsVerticalTabs())
-            .Build();
+                .AddClass($"mud-tabs-centered", Centered)
+                .AddClass($"mud-tabs-vertical", IsVerticalTabs())
+                .Build();
 
         protected string WrapperScrollStyle =>
-        new StyleBuilder()
-            .AddStyle("transform", $"translateX({ (-1 * _scrollPosition).ToString(CultureInfo.InvariantCulture)}px)", Position is Position.Top or Position.Bottom)
-            .AddStyle("transform", $"translateY({ (-1 * _scrollPosition).ToString(CultureInfo.InvariantCulture)}px)", IsVerticalTabs())
-            .Build();
+            new StyleBuilder()
+                .AddStyle("transform", $"translateX({(-1 * _scrollPosition).ToString(CultureInfo.InvariantCulture)}px)",
+                    Position is Position.Top or Position.Bottom)
+                .AddStyle("transform", $"translateY({(-1 * _scrollPosition).ToString(CultureInfo.InvariantCulture)}px)", IsVerticalTabs())
+                .Build();
 
         protected string PanelsClassnames =>
             new CssBuilder("mud-tabs-panels")
-            .AddClass($"mud-tabs-vertical", IsVerticalTabs())
-            .AddClass(PanelClass)
-            .Build();
+                .AddClass($"mud-tabs-vertical", IsVerticalTabs())
+                .AddClass(PanelClass)
+                .Build();
 
         protected string SliderClass =>
             new CssBuilder("mud-tab-slider")
-            .AddClass($"mud-{SliderColor.ToDescriptionString()}", SliderColor != Color.Inherit)
-            .AddClass($"mud-tab-slider-horizontal", Position is Position.Top or Position.Bottom)
-            .AddClass($"mud-tab-slider-vertical", IsVerticalTabs())
-            .AddClass($"mud-tab-slider-horizontal-reverse", Position == Position.Bottom)
-            .AddClass($"mud-tab-slider-vertical-reverse", Position == Position.Right || Position == Position.Start && RightToLeft || Position == Position.End && !RightToLeft)
-            .Build();
+                .AddClass($"mud-{SliderColor.ToDescriptionString()}", SliderColor != Color.Inherit)
+                .AddClass($"mud-tab-slider-horizontal", Position is Position.Top or Position.Bottom)
+                .AddClass($"mud-tab-slider-vertical", IsVerticalTabs())
+                .AddClass($"mud-tab-slider-horizontal-reverse", Position == Position.Bottom)
+                .AddClass($"mud-tab-slider-vertical-reverse",
+                    Position == Position.Right || Position == Position.Start && RightToLeft || Position == Position.End && !RightToLeft)
+                .Build();
 
         protected string MaxHeightStyles =>
             new StyleBuilder()
-            .AddStyle("max-height", MaxHeight.ToPx(), MaxHeight != null)
-            .Build();
+                .AddStyle("max-height", MaxHeight.ToPx(), MaxHeight != null)
+                .Build();
 
-        protected string SliderStyle => RightToLeft ?
-            new StyleBuilder()
-            .AddStyle("width", _size.ToPx(), Position is Position.Top or Position.Bottom)
-            .AddStyle("right", _position.ToPx(), Position is Position.Top or Position.Bottom)
-            .AddStyle("transition", _disableSliderAnimation ? "none" : "right .3s cubic-bezier(.64,.09,.08,1);", Position is Position.Top or Position.Bottom)
-            .AddStyle("transition", _disableSliderAnimation ? "none" : "top .3s cubic-bezier(.64,.09,.08,1);", IsVerticalTabs())
-            .AddStyle("height", _size.ToPx(), IsVerticalTabs())
-            .AddStyle("top", _position.ToPx(), IsVerticalTabs())
-            .Build() : new StyleBuilder()
-            .AddStyle("width", _size.ToPx(), Position is Position.Top or Position.Bottom)
-            .AddStyle("left", _position.ToPx(), Position is Position.Top or Position.Bottom)
-            .AddStyle("transition", _disableSliderAnimation ? "none" : "left .3s cubic-bezier(.64,.09,.08,1);", Position is Position.Top or Position.Bottom)
-            .AddStyle("transition", _disableSliderAnimation ? "none" : "top .3s cubic-bezier(.64,.09,.08,1);", IsVerticalTabs())
-            .AddStyle("height", _size.ToPx(), IsVerticalTabs())
-            .AddStyle("top", _position.ToPx(), IsVerticalTabs())
-            .Build();
+        protected string SliderStyle => RightToLeft
+            ? new StyleBuilder()
+                .AddStyle("width", _size.ToPx(), Position is Position.Top or Position.Bottom)
+                .AddStyle("right", _position.ToPx(), Position is Position.Top or Position.Bottom)
+                .AddStyle("transition", _disableSliderAnimation ? "none" : "right .3s cubic-bezier(.64,.09,.08,1);",
+                    Position is Position.Top or Position.Bottom)
+                .AddStyle("transition", _disableSliderAnimation ? "none" : "top .3s cubic-bezier(.64,.09,.08,1);", IsVerticalTabs())
+                .AddStyle("height", _size.ToPx(), IsVerticalTabs())
+                .AddStyle("top", _position.ToPx(), IsVerticalTabs())
+                .Build()
+            : new StyleBuilder()
+                .AddStyle("width", _size.ToPx(), Position is Position.Top or Position.Bottom)
+                .AddStyle("left", _position.ToPx(), Position is Position.Top or Position.Bottom)
+                .AddStyle("transition", _disableSliderAnimation ? "none" : "left .3s cubic-bezier(.64,.09,.08,1);",
+                    Position is Position.Top or Position.Bottom)
+                .AddStyle("transition", _disableSliderAnimation ? "none" : "top .3s cubic-bezier(.64,.09,.08,1);", IsVerticalTabs())
+                .AddStyle("height", _size.ToPx(), IsVerticalTabs())
+                .AddStyle("top", _position.ToPx(), IsVerticalTabs())
+                .Build();
 
         private bool IsVerticalTabs()
         {
@@ -495,12 +546,12 @@ namespace MudBlazor
         string GetTabClass(MudTabPanel panel)
         {
             var tabClass = new CssBuilder("mud-tab")
-              .AddClass($"mud-tab-active", when: () => panel == ActivePanel)
-              .AddClass($"mud-disabled", panel.Disabled)
-              .AddClass($"mud-ripple", !DisableRipple)
-              .AddClass(TabPanelClass)
-              .AddClass(panel.Class)
-              .Build();
+                .AddClass($"mud-tab-active", when: () => panel == ActivePanel)
+                .AddClass($"mud-disabled", panel.Disabled)
+                .AddClass($"mud-ripple", !DisableRipple)
+                .AddClass(TabPanelClass)
+                .AddClass(panel.Class)
+                .Build();
 
             return tabClass;
         }
@@ -520,8 +571,8 @@ namespace MudBlazor
         string GetTabStyle(MudTabPanel panel)
         {
             var tabStyle = new StyleBuilder()
-            .AddStyle(panel.Style)
-            .Build();
+                .AddStyle(panel.Style)
+                .Build();
 
             return tabStyle;
         }
@@ -601,7 +652,7 @@ namespace MudBlazor
 
         #endregion
 
-        #region scrolling 
+        #region scrolling
 
         private void SetScrollButtonVisibility()
         {
@@ -630,7 +681,7 @@ namespace MudBlazor
         {
             var x = 0D;
             var count = 0;
-            
+
             var toolbarContentSize = GetRelevantSize(_tabsContentSize);
 
             foreach (var panel in _panels)
