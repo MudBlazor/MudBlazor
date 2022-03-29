@@ -183,6 +183,10 @@
                 border-radius: var(--mud-default-borderradius) 0px 0px 0px;
             }
 
+            & * .mud-table-cell:last-child {
+                border-radius: 0px var(--mud-default-borderradius) 0px 0px;
+            }
+
             & * .mud-table-cell {
                 background-color: var(--mud-palette-surface);
                 position: sticky;

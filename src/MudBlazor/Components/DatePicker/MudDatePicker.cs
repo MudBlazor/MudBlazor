@@ -171,11 +171,15 @@ namespace MudBlazor
             _selectedDate = null;
         }
 
-        public override void Clear(bool close = true)
+        public override async void Clear(bool close = true)
         {
-            Date = null;
             _selectedDate = null;
-            base.Clear();
+            await SetDateAsync(null, true);
+
+            if (AutoClose == true)
+            {
+                Close(false);
+            }
         }
 
         protected override string GetTitleDateString()
