@@ -1,5 +1,11 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
+<div d-flex align-start>
+    <MudTooltip ClickBehavior="TooltipClickBehavior.ClickToShow" ReactWith="TooltipBehavior.None" Text="Press focus button to focus below button">
+        <MudIconButton Icon="@Icons.Material.Filled.Info" Size="Size.Small" Color="Color.Info" />
+    </MudTooltip>
+</div>
+
 <div class="d-flex flex-column align-center">
     <MudButton Class="mb-4" tabindex="-1" OnClick="@(() => _iconButton1.FocusAsync())">Focus</MudButton>
     <MudText Class="mt-4" Align="Align.Center">All</MudText>
@@ -25,7 +31,10 @@
 </div>
 
 <div class="d-flex flex-column align-center">
-    <MudButton Class="mb-4" tabindex="-1" OnClick="@(() => _iconButton4.FocusAsync())">Focus</MudButton>
+    <div>
+        <MudButton Class="mb-4" tabindex="-1" OnClick="@(() => _iconButton4.FocusAsync())">Focus</MudButton>
+    </div>
+
     <MudText Class="mt-4" Align="Align.Center">None</MudText>
     <MudTooltip ReactWith="TooltipBehavior.None" Text="Delete">
         <MudIconButton @ref="_iconButton4" Icon="@Icons.Material.Filled.Delete" Size="Size.Large" />

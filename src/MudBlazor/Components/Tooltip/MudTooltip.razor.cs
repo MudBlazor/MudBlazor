@@ -128,6 +128,10 @@ namespace MudBlazor
         [Category(CategoryTypes.Tooltip.Appearance)]
         public TooltipBehavior ReactWith { get; set; } = TooltipBehavior.All;
 
+        [Parameter]
+        [Category(CategoryTypes.Tooltip.Appearance)]
+        public TooltipClickBehavior ClickBehavior { get; set; } = TooltipClickBehavior.None;
+
         /// <summary>
         /// The visible state of the Tooltip.
         /// </summary>
@@ -179,15 +183,22 @@ namespace MudBlazor
 
         private void HandleFocusOut()
         {
-            if (ReactWith == TooltipBehavior.All || ReactWith == TooltipBehavior.Focus)
+            if (ReactWith == TooltipBehavior.All || ReactWith == TooltipBehavior.Focus || ClickBehavior == TooltipClickBehavior.ClickToShow)
             {
                 IsVisible = false;
             }
         }
 
-        private void HandleMouseClick()
+        private void HandleMouseUp()
         {
-            IsVisible = false;
+            if (ClickBehavior == TooltipClickBehavior.ClickToHide)
+            {
+                IsVisible = false;
+            }
+            else if (ClickBehavior == TooltipClickBehavior.ClickToShow)
+            {
+                IsVisible = !IsVisible;
+            }
         }
 
         private Origin ConvertPlacement()
