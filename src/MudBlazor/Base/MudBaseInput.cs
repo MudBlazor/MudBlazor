@@ -388,6 +388,16 @@ namespace MudBlazor
             return changed;
         }
 
+        protected virtual async Task ClearButtonClickHandlerAsync(MouseEventArgs e)
+        {
+            if (ReadOnly)
+            {
+                return;
+            }
+
+            await SetTextAsync(string.Empty, updateValue: true);
+        }
+
         protected override Task ValidateValue()
         {
             if (Standalone)
