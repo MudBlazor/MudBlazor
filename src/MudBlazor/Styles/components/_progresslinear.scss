@@ -72,14 +72,11 @@
     .mud-progress-linear-bar {
         top: 0;
         left: 0;
-        right: 0;
+        width: 100%;
         bottom: 0;
         position: absolute;
-        transition-property: top, right;
-        transition-duration: 0.2s;
-        transition-timing-function: linear;
-        transform-origin: left center;
-        transform: rotateX(-180deg);
+        transition: transform 0.2s linear;
+        transform-origin: left;
 
         &.mud-progress-linear-1-indeterminate {
             &.horizontal {
@@ -129,10 +126,7 @@
             }
 
             .mud-progress-linear-bar:last-child {
-                transition-property: top, right;
-                transition-duration: 0.4s;
-                transition-timing-function: linear;
-                transform-origin: left center;
+                transition: transform .4s linear;
 
                 &::before {
                     content: '';
@@ -175,10 +169,7 @@
                 }
 
                 .mud-progress-linear-bar:last-child {
-                    transition-property: top, right;
-                    transition-duration: 0.4s;
-                    transition-timing-function: linear;
-                    transform-origin: left center;
+                    transition: transform .4s linear;
 
                     &::before {
                         content: '';
@@ -232,10 +223,7 @@
 
         .mud-progress-linear-bar:nth-child(2) {
             z-index: 1;
-            transition-property: top, right;
-            transition-duration: 0.4s;
-            transition-timing-function: linear;
-            transform-origin: left center;
+            transition: transform .4s linear;
         }
 
         &.horizontal {
@@ -253,28 +241,12 @@
 
     &.mud-progress-linear-striped {
         .mud-progress-linear-bar {
-            overflow: hidden;
-
-
-            &::before {
-                position: absolute;
-                content: "";
-                top: -40px;
-                left: -40px;
-                height: calc(100% + 40px);
-                width: calc(100% + 40px);
-                background-image: linear-gradient( 135deg,hsla(0,0%,100%,.25) 25%,transparent 0,transparent 50%,hsla(0,0%,100%,.25) 0,hsla(0,0%,100%,.25) 75%,transparent 0,transparent);
-                background-size: 40px 40px;
-                background-repeat: repeat;
-                animation: mud-progress-linear-striped-loading 1.25s linear infinite;
-            }
+            background-image: linear-gradient( 135deg,hsla(0,0%,100%,.25) 25%,transparent 0,transparent 50%,hsla(0,0%,100%,.25) 0,hsla(0,0%,100%,.25) 75%,transparent 0,transparent);
+            background-size: 40px 40px;
+            background-repeat: repeat;
+            animation: mud-progress-linear-striped-loading 10s linear infinite;
         }
     }
-
-    &.mud-progress-linear-striped.reverse .mud-progress-linear-bar:before {
-        animation-name: mud-progress-linear-striped-reverse-loading;
-    }
-
 
     &.mud-progress-linear-rounded {
         border-radius: var(--mud-default-borderradius);
