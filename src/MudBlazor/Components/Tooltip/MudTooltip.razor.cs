@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Extensions;
 using MudBlazor.Utilities;
@@ -27,6 +28,9 @@ namespace MudBlazor
 
 
         private bool _isVisible;
+        private bool _touchState;
+        private bool _mouseEnterState;
+        private bool _rendered;
 
         private Origin _anchorOrigin;
         private Origin _transformOrigin;
@@ -146,6 +150,7 @@ namespace MudBlazor
                     return;
                 _isVisible = value;
                 IsVisibleChanged.InvokeAsync(_isVisible).AndForget();
+                //InvokeAsync(StateHasChanged).AndForget();
             }
         }
 
@@ -159,22 +164,50 @@ namespace MudBlazor
 
         private void HandleMouseEnter()
         {
+            if (_rendered == false)
+            {
+                return;
+            }
+
             if (ReactWith == TooltipBehavior.All || ReactWith == TooltipBehavior.Hover)
             {
                 IsVisible = true;
             }
+
+
+            _mouseEnterState = true;
+
+            
         }
 
         private void HandleMouseLeave()
         {
-            if (ReactWith == TooltipBehavior.All || ReactWith == TooltipBehavior.Hover)
+            if (ReactWith != TooltipBehavior.None)
             {
                 IsVisible = false;
             }
+
+            if (_mouseEnterState)
+                _mouseEnterState = false;
+        }
+
+        private void HandleTouchStart()
+        {
+            _touchState = true;
+        }
+
+        private void HandleTouchEnd()
+        {
+            _touchState = false;
         }
 
         private void HandleFocusIn()
         {
+            if (_rendered == false || _touchState == true)
+            {
+                return;
+            }
+
             if (ReactWith == TooltipBehavior.All || ReactWith == TooltipBehavior.Focus)
             {
                 IsVisible = true;
@@ -183,6 +216,12 @@ namespace MudBlazor
 
         private void HandleFocusOut()
         {
+            if (!_mouseEnterState && _touchState)
+            {
+                IsVisible = false;
+                return;
+            }
+
             if (ReactWith == TooltipBehavior.All || ReactWith == TooltipBehavior.Focus || ClickBehavior == TooltipClickBehavior.ClickToShow)
             {
                 IsVisible = false;
@@ -230,6 +269,15 @@ namespace MudBlazor
             else
             {
                 return Origin.BottomCenter;
+            }
+        }
+
+        protected override void OnAfterRender(bool firstRender)
+        {
+            if (firstRender)
+            {
+                _rendered = true;
+                StateHasChanged();
             }
         }
     }
