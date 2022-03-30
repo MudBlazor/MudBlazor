@@ -166,7 +166,7 @@ namespace MudBlazor
         public double GetBufferPercent() => GetPercentage(_bufferValue);
 
         private string GetStyleBarTransform(double input) =>
-        Vertical? $"top: {(int)Math.Round(100 - input)}%;" : $"right: {(int)Math.Round(100 -input)}%;";
+            Vertical == true ? $"transform: translateY({(int)Math.Round(100 - input)}%);" : $"transform: translateX(-{(int)Math.Round(100 - input)}%);";
 
         public string GetStyledBar1Transform() => GetStyleBarTransform(ValuePercent);
         public string GetStyledBar2Transform() => GetStyleBarTransform(BufferPercent);
