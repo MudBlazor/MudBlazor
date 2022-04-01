@@ -27,22 +27,29 @@ namespace MudBlazor.UnitTests.Components
             list.SelectedItem.Should().Be(null);
             // we have seven choices, none is active
             comp.FindAll("div.mud-list-item").Count.Should().Be(9); // 7 choices, 2 groups
-            comp.FindAll("div.mud-selected-item").Count.Should().Be(0);
+            comp.FindAll("div.mud-list-item-selected-default").Count.Should().Be(0);
             // click water
             comp.FindAll("div.mud-list-item")[0].Click();
             list.SelectedItem.Text.Should().Be("Sparkling Water");
-            comp.FindAll("div.mud-selected-item").Count.Should().Be(1);
-            comp.FindComponents<MudListItem>()[0].Markup.Should().Contain("mud-selected-item");
+            comp.FindAll("div.mud-list-item-selected-default").Count.Should().Be(1);
+            comp.FindComponents<MudListItem>()[0].Markup.Should().Contain("mud-list-item-selected-default");
             // click Pu'er, a heavily fermented Chinese tea that tastes like an old leather glove
             comp.FindAll("div.mud-list-item")[4].Click();
             list.SelectedItem.Text.Should().Be("Pu'er");
-            comp.FindAll("div.mud-selected-item").Count.Should().Be(1);
-            comp.FindComponents<MudListItem>()[4].Markup.Should().Contain("mud-selected-item");
+            comp.FindAll("div.mud-list-item-selected-default").Count.Should().Be(1);
+            comp.FindComponents<MudListItem>()[4].Markup.Should().Contain("mud-list-item-selected-default");
             // click Cafe Latte
             comp.FindAll("div.mud-list-item")[8].Click();
             list.SelectedItem.Text.Should().Be("Cafe Latte");
-            comp.FindAll("div.mud-selected-item").Count.Should().Be(1);
-            comp.FindComponents<MudListItem>()[8].Markup.Should().Contain("mud-selected-item");
+            comp.FindAll("div.mud-list-item-selected-default").Count.Should().Be(1);
+            comp.FindComponents<MudListItem>()[8].Markup.Should().Contain("mud-list-item-selected-default");
+
+            //now give color
+#pragma warning disable BL0005
+            list.Color = Color.Primary;
+            comp.Render();
+            comp.FindAll("div.mud-list-item-selected-default").Count.Should().Be(0);
+            comp.FindAll("div.mud-list-item-selected-primary").Count.Should().Be(1);
         }
 
         /// <summary>
@@ -59,26 +66,26 @@ namespace MudBlazor.UnitTests.Components
             list.SelectedItem.Text.Should().Be("Sparkling Water");
             // we have seven choices, 1 is active because of the initial value of SelectedValue
             comp.FindAll("div.mud-list-item").Count.Should().Be(9); // 7 choices, 2 groups
-            comp.FindAll("div.mud-selected-item").Count.Should().Be(1);
+            comp.FindAll("div.mud-list-item-selected-default").Count.Should().Be(1);
             // set Pu'er, a heavily fermented Chinese tea that tastes like an old leather glove
             await comp.InvokeAsync(()=>comp.Instance.SetSelecedValue(4));
             list.SelectedItem.Text.Should().Be("Pu'er");
-            comp.FindAll("div.mud-selected-item").Count.Should().Be(1);
-            comp.FindComponents<MudListItem>()[4].Markup.Should().Contain("mud-selected-item");
+            comp.FindAll("div.mud-list-item-selected-default").Count.Should().Be(1);
+            comp.FindComponents<MudListItem>()[4].Markup.Should().Contain("mud-list-item-selected-default");
             // set Cafe Latte via changing SelectedValue
             await comp.InvokeAsync(() => comp.Instance.SetSelecedValue(7));
             list.SelectedItem.Text.Should().Be("Cafe Latte");
-            comp.FindAll("div.mud-selected-item").Count.Should().Be(1);
-            comp.FindComponents<MudListItem>()[8].Markup.Should().Contain("mud-selected-item");
+            comp.FindAll("div.mud-list-item-selected-default").Count.Should().Be(1);
+            comp.FindComponents<MudListItem>()[8].Markup.Should().Contain("mud-list-item-selected-default");
             // set water
             await comp.InvokeAsync(() => comp.Instance.SetSelecedValue(1));
             list.SelectedItem.Text.Should().Be("Sparkling Water");
-            comp.FindAll("div.mud-selected-item").Count.Should().Be(1);
-            comp.FindComponents<MudListItem>()[0].Markup.Should().Contain("mud-selected-item");
+            comp.FindAll("div.mud-list-item-selected-default").Count.Should().Be(1);
+            comp.FindComponents<MudListItem>()[0].Markup.Should().Contain("mud-list-item-selected-default");
             // set nothing
             await comp.InvokeAsync(() => comp.Instance.SetSelecedValue(null));
             list.SelectedItem.Should().Be(null);
-            comp.FindAll("div.mud-selected-item").Count.Should().Be(0);
+            comp.FindAll("div.mud-list-item-selected-default").Count.Should().Be(0);
         }
     }
 }

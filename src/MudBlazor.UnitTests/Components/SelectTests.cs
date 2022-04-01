@@ -755,7 +755,7 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("div.mud-input-control").Click();
             comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open"));
             // no option should be hilited
-            comp.WaitForAssertion(() => comp.FindAll("div.mud-selected-item").Count.Should().Be(0));
+            comp.WaitForAssertion(() => comp.FindAll("div.mud-list-item-selected-default").Count.Should().Be(0));
             // now click an item and see the value change
             comp.FindAll("div.mud-list-item")[1].Click();
             comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().NotContain("mud-popover-open"));
@@ -764,13 +764,13 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("div.mud-input-control").Click();
             comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open"));
             // Nr 2 should be hilited
-            comp.WaitForAssertion(() => comp.FindAll("div.mud-selected-item").Count.Should().Be(1));
-            comp.FindAll("div.mud-list-item")[1].ToMarkup().Should().Contain("mud-selected-item");
+            comp.WaitForAssertion(() => comp.FindAll("div.mud-list-item-selected-default").Count.Should().Be(1));
+            comp.FindAll("div.mud-list-item")[1].ToMarkup().Should().Contain("mud-list-item-selected-default");
             await comp.InvokeAsync(() => select.Instance.CloseMenu());
             select.SetParam(nameof(MudSelect<string>.Value), null);
             await comp.InvokeAsync(() => select.Instance.OpenMenu());
             // no option should be hilited
-            comp.WaitForAssertion(() => comp.FindAll("div.mud-selected-item").Count.Should().Be(0));
+            comp.WaitForAssertion(() => comp.FindAll("div.mud-list-item-selected-default").Count.Should().Be(0));
         }
 
         /// <summary>
@@ -791,8 +791,8 @@ namespace MudBlazor.UnitTests.Components
             //Console.WriteLine(comp.Markup);
             comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open"));
             // Nr 2 should be hilited
-            comp.WaitForAssertion(()=>comp.FindAll("div.mud-selected-item").Count.Should().Be(1));
-            comp.FindAll("div.mud-list-item")[1].ToMarkup().Should().Contain("mud-selected-item");
+            comp.WaitForAssertion(()=>comp.FindAll("div.mud-list-item-selected-default").Count.Should().Be(1));
+            comp.FindAll("div.mud-list-item")[1].ToMarkup().Should().Contain("mud-list-item-selected-default");
             // now click an item and see the value change
             comp.FindAll("div.mud-list-item")[0].Click();
             comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().NotContain("mud-popover-open"));
@@ -801,8 +801,8 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("div.mud-input-control").Click();
             comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open"));
             // Nr 1 should be hilited
-            comp.WaitForAssertion(() => comp.FindAll("div.mud-selected-item").Count.Should().Be(1));
-            comp.FindAll("div.mud-list-item")[0].ToMarkup().Should().Contain("mud-selected-item");
+            comp.WaitForAssertion(() => comp.FindAll("div.mud-list-item-selected-default").Count.Should().Be(1));
+            comp.FindAll("div.mud-list-item")[0].ToMarkup().Should().Contain("mud-list-item-selected-default");
             comp.Find("div.mud-input-control").Click();
             comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().NotContain("mud-popover-open"));
         }
