@@ -19,10 +19,12 @@ namespace MudBlazor
 
         [Parameter] public T Value { get; set; }
         [Parameter] public EventCallback<T> ValueChanged { get; set; }
+
         /// <summary>
         /// Specifies the name of the object's property bound to the column
         /// </summary>
         [Parameter] public bool Visible { get; set; } = true;
+
         [Parameter] public string Field { get; set; }
         [Parameter] public Type FieldType { get; set; }
         [Parameter] public string Title { get; set; }
@@ -42,51 +44,48 @@ namespace MudBlazor
         [Parameter] public Func<T, string> HeaderClassFunc { get; set; }
         [Parameter] public string HeaderStyle { get; set; }
         [Parameter] public Func<T, string> HeaderStyleFunc { get; set; }
+
         /// <summary>
         /// Determines whether this columns data can be sorted. This overrides the Sortable parameter on the DataGrid.
         /// </summary>
         [Parameter] public bool? Sortable { get; set; }
+
         /// <summary>
         /// Determines whether this columns data can be filtered. This overrides the Filterable parameter on the DataGrid.
         /// </summary>
         [Parameter] public bool? Filterable { get; set; }
+
         /// <summary>
         /// Determines whether this column can be hidden. This overrides the Hideable parameter on the DataGrid.
         /// </summary>
         [Parameter] public bool? Hideable { get; set; }
+
         [Parameter] public bool Hidden { get; set; }
         [Parameter] public EventCallback<bool> HiddenChanged { get; set; }
+
         /// <summary>
         /// Determines whether to show or hide column options. This overrides the ShowColumnOptions parameter on the DataGrid.
         /// </summary>
         [Parameter] public bool? ShowColumnOptions { get; set; }
-        [Parameter]
-        public Func<T, object> SortBy
-        {
-            get
-            {
-                CompileSortBy();
-                return _sortBy;
-            }
-            set
-            {
-                _sortBy = value;
-            }
-        }
+
         [Parameter] public SortDirection InitialDirection { get; set; } = SortDirection.None;
         [Parameter] public string SortIcon { get; set; } = Icons.Material.Filled.ArrowUpward;
+
         /// <summary>
         /// Specifies whether the column can be grouped.
         /// </summary>
         [Parameter] public bool? Groupable { get; set; }
+
         /// <summary>
         /// Specifies whether the column is grouped.
         /// </summary>
         [Parameter] public bool Grouping { get; set; }
+
         /// <summary>
         /// Specifies whether the column is sticky.
         /// </summary>
         [Parameter] public bool StickyLeft { get; set; }
+
         [Parameter] public bool StickyRight { get; set; }
 
         #endregion
@@ -122,6 +121,7 @@ namespace MudBlazor
                 .AddClass("sticky-right", StickyRight)
                 .AddClass(Class)
             .Build();
+
         internal string cellClassname;
         //internal string cellClassname =>
         //    new CssBuilder("mud-table-cell")
@@ -129,6 +129,7 @@ namespace MudBlazor
         //        .AddClass("sticky-right", StickyRight)
         //        .AddClass(Class)
         //    .Build();
+
         internal string footerClassname =>
             new CssBuilder("mud-table-cell")
                 .AddClass("mud-table-cell-hide", HideSmall)
@@ -155,6 +156,7 @@ namespace MudBlazor
                 return typeof(T).GetProperty(Field).PropertyType;
             }
         }
+
         // This returns the data type for an object when T is an IDictionary<string, object>.
         internal Type innerDataType
         {
@@ -180,6 +182,7 @@ namespace MudBlazor
                 return dataType;
             }
         }
+
         internal bool isNumber
         {
             get
@@ -187,6 +190,7 @@ namespace MudBlazor
                 return FilterOperator.NumericTypes.Contains(dataType);
             }
         }
+
         internal string computedTitle
         {
             get
@@ -194,6 +198,7 @@ namespace MudBlazor
                 return Title ?? Field;
             }
         }
+
         internal bool groupable
         {
             get
@@ -204,7 +209,8 @@ namespace MudBlazor
 
         #endregion
 
-        internal Func<T, object> _sortBy;
+        internal int SortIndex { get; set; } = -1;
+        private Func<T, object> _sortBy;
         internal Func<T, object> groupBy;
         internal HeaderContext<T> headerContext;
         internal FooterContext<T> footerContext;
@@ -245,9 +251,9 @@ namespace MudBlazor
             }
         }
 
-        internal void CompileSortBy()
+        internal Func<T, object> GetLocalSortFunc()
         {
-            if (_sortBy == null)
+            if (null == _sortBy)
             {
                 var type = typeof(T);
 
@@ -285,6 +291,8 @@ namespace MudBlazor
                     _sortBy = Expression.Lambda<Func<T, object>>(field, parameter).Compile();
                 }
             }
+
+            return _sortBy;
         }
 
         internal void CompileGroupBy()
@@ -340,6 +348,5 @@ namespace MudBlazor
             Hidden = !Hidden;
             DataGrid.ExternalStateHasChanged();
         }
-
     }
 }

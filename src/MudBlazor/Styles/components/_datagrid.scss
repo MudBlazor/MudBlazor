@@ -48,6 +48,7 @@
 
             .sortable-column-header {
                 cursor: pointer;
+                width: 100%;
             }
 
             &:hover {
@@ -89,6 +90,10 @@
                     opacity: 1;
                     transform: rotate(0deg);
                 }
+            }
+
+            .mud-sort-index {
+                transform: scale(0.9) translate(-2px, -2px);
             }
 
             .column-options .mud-menu .mud-icon-button-label {
