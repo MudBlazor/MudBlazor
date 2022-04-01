@@ -31,6 +31,13 @@ namespace MudBlazor
         public bool Clickable { get; set; }
 
         /// <summary>
+        /// The color of the active List Item.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.NavMenu.Appearance)]
+        public Color Color { get; set; } = Color.Default;
+
+        /// <summary>
         /// If true, vertical padding will be removed from the list.
         /// </summary>
         [Parameter]

@@ -1,4 +1,6 @@
-﻿.mud-list {
+﻿@import '../abstracts/variables';
+
+.mud-list {
     margin: 0;
     padding: 0;
     position: relative;
@@ -36,6 +38,8 @@
             color: var(--mud-palette-action-disabled) !important;
         }
     }
+
+
 }
 
 .mud-list-item-clickable {
@@ -53,11 +57,31 @@
     transition: background-color 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
 
     &:hover {
-        background-color: var(--mud-palette-action-default-hover);
+        @each $color in $mud-palette-colors {
+            &.mud-clickable-#{$color} {
+                background-color: rgba(var(--mud-palette-#{$color}-rgb), 0.12);
+            }
+        }
     }
 
-    &:focus:not(.mud-selected-item) {
+    &.mud-list-item-selected-default {
+        color: var(--mud-palette-primary);
         background-color: var(--mud-palette-action-default-hover);
+
+        &:hover, &:focus-visible {
+            background-color: var(--mud-palette-action-default-hover);
+        }
+    }
+
+    @each $color in $mud-palette-colors {
+        &.mud-list-item-selected-#{$color} {
+            color: var(--mud-palette-#{$color});
+            background-color: rgba(var(--mud-palette-#{$color}-rgb), 0.08);
+
+            &:hover, &:focus-visible {
+                background-color: rgba(var(--mud-palette-#{$color}-rgb), 0.12);
+            }
+        }
     }
 }
 

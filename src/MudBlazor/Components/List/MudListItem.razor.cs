@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Threading.Tasks;
 using System.Windows.Input;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using MudBlazor.Extensions;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
@@ -14,12 +16,15 @@ namespace MudBlazor
           .AddClass("mud-list-item-gutters", !DisableGutters && !(MudList?.DisableGutters == true))
           .AddClass("mud-list-item-clickable", MudList?.Clickable)
           .AddClass("mud-ripple", MudList?.Clickable == true && !DisableRipple && !Disabled)
-          .AddClass("mud-selected-item", _selected && !Disabled)
+          .AddClass($"mud-list-item-selected-{_listColor.ToDescriptionString()}", _selected && !Disabled)
+          .AddClass($"mud-clickable-{_listColor.ToDescriptionString()}", !Disabled)
           .AddClass("mud-list-item-disabled", Disabled)
           .AddClass(Class)
         .Build();
 
         [Inject] protected NavigationManager UriHelper { get; set; }
+
+        private Color _listColor = Color.Default;
 
         [CascadingParameter] protected MudList MudList { get; set; }
 
@@ -258,6 +263,7 @@ namespace MudBlazor
             {
                 MudList.Register(this);
                 OnListParametersChanged();
+                _listColor = (Color)(MudList?.Color);
                 MudList.ParametersChanged += OnListParametersChanged;
             }
         }
@@ -273,6 +279,7 @@ namespace MudBlazor
             {
                 _textTypo = Typo.body1;
             }
+            _listColor = (Color)(MudList?.Color);
             StateHasChanged();
         }
 
