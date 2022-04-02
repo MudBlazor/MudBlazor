@@ -23,6 +23,14 @@ namespace MudBlazor
         [Category(CategoryTypes.List.Behavior)]
         public RenderFragment ChildContent { get; set; }
 
+        [Parameter]
+        [Category(CategoryTypes.List.Behavior)]
+        public RenderFragment ListActions { get; set; }
+
+        [Parameter]
+        [Category(CategoryTypes.List.Behavior)]
+        public bool MultiSelection { get; set; } = false;
+
         /// <summary>
         /// Set true to make the list items clickable. This is also the precondition for list selection to work.
         /// </summary>
@@ -95,10 +103,46 @@ namespace MudBlazor
             }
         }
 
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Data)]
+        public IEnumerable<object> SelectedValues
+        {
+            get
+            {
+                if (_selectedValues == null)
+                    _selectedValues = new();
+                return _selectedValues;
+            }
+            set
+            {
+                if (!MultiSelection)
+                {
+                    SetSelectedValue(_selectedValues.FirstOrDefault());
+                }
+                else
+                {
+                    _selectedValues.Clear();
+                    foreach (var item in _items)
+                    {
+                        if (item.IsSelected)
+                        {
+                            _selectedValues.Add(item.Value);
+                        }
+                    }
+                }
+                SelectedValuesChanged.InvokeAsync();
+            }
+        }
+
         /// <summary>
         /// Called whenever the selection changed
         /// </summary>
         [Parameter] public EventCallback<object> SelectedValueChanged { get; set; }
+
+        /// <summary>
+        /// Fires when SelectedValues changes.
+        /// </summary>
+        [Parameter] public EventCallback<IEnumerable<object>> SelectedValuesChanged { get; set; }
 
         protected override void OnInitialized()
         {
@@ -124,7 +168,9 @@ namespace MudBlazor
         private HashSet<MudListItem> _items = new();
         private HashSet<MudList> _childLists = new();
         private MudListItem _selectedItem;
+        //private List<MudListItem> _selectedItems;
         private object _selectedValue;
+        private List<object> _selectedValues = new();
 
         internal void Register(MudListItem item)
         {
@@ -158,24 +204,28 @@ namespace MudBlazor
                 return;
             if (object.Equals(_selectedValue, value))
                 return;
-            _selectedValue = value;
-            SelectedValueChanged.InvokeAsync(value).AndForget();
-            _selectedItem = null; // <-- for now, we'll see which item matches the value below
-            foreach (var listItem in _items.ToArray())
+
+            if (!MultiSelection)
             {
-                var isSelected = value!=null && object.Equals(value, listItem.Value);
-                listItem.SetSelected(isSelected);
-                if (isSelected)
-                    _selectedItem = listItem;
+                _selectedValue = value;
+                SelectedValueChanged.InvokeAsync(value).AndForget();
+                _selectedItem = null; // <-- for now, we'll see which item matches the value below
+                foreach (var listItem in _items.ToArray())
+                {
+                    var isSelected = value != null && object.Equals(value, listItem.Value);
+                    listItem.SetSelected(isSelected);
+                    if (isSelected)
+                        _selectedItem = listItem;
+                }
+                foreach (var childList in _childLists.ToArray())
+                {
+                    childList.SetSelectedValue(value);
+                    if (childList.SelectedItem != null)
+                        _selectedItem = childList.SelectedItem;
+                }
+                SelectedItemChanged.InvokeAsync(_selectedItem).AndForget();
+                ParentList?.SetSelectedValue(value);
             }
-            foreach (var childList in _childLists.ToArray())
-            {
-                childList.SetSelectedValue(value);
-                if (childList.SelectedItem != null)
-                    _selectedItem= childList.SelectedItem;
-            }
-            SelectedItemChanged.InvokeAsync(_selectedItem).AndForget();
-            ParentList?.SetSelectedValue(value);
         }
 
         internal bool CanSelect { get; private set; }

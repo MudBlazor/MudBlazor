@@ -147,6 +147,19 @@ namespace MudBlazor
         [Category(CategoryTypes.List.Appearance)]
         public bool DisableGutters { get; set; }
 
+
+        /// <summary>
+        /// Selected state of the option. Only works if the parent is a mulit-select
+        /// </summary>
+        internal bool IsSelected
+        {
+            get => _selected;
+            set
+            {
+                _selected = value;
+            }
+        }
+
         /// <summary>
         /// Expand or collapse nested list. Two-way bindable. Note: if you directly set this to
         /// true or false (instead of using two-way binding) it will force the nested list's expansion state.
@@ -237,7 +250,18 @@ namespace MudBlazor
                 }
                 else
                 {
-                    MudList?.SetSelectedValue(this.Value);
+                    if (MudList?.Clickable == true)
+                    {
+                        if (MudList?.MultiSelection == false)
+                        {
+                            MudList?.SetSelectedValue(this.Value);
+                        }
+                        else if (MudList?.MultiSelection == true)
+                        {
+                            IsSelected = !IsSelected;
+                        }
+                        
+                    }
                     OnClick.InvokeAsync(ev);
                     if (Command?.CanExecute(CommandParameter) ?? false)
                     {

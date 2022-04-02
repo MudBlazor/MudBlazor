@@ -2,6 +2,15 @@
 @inherits MudComponentBase
 
 <div tabindex="0" @attributes="UserAttributes" class="@Classname" @onclick="OnClickHandler" @onclick:stopPropagation="true" style="@Style">
+
+
+    @if (NestedList == null && MudList?.MultiSelection == true)
+    {
+        <div>
+            <MudCheckBox @bind-Checked="_selected" />
+        </div>
+    }
+
     @if (!string.IsNullOrWhiteSpace(Avatar))
     {
         <div class="mud-list-item-avatar">
@@ -28,16 +37,37 @@
             }
         </MudText>
     </div>
+
+    @if (NestedList == null && MudList?.ListActions != null)
+    {
+        <div class="mud-list-item-icon" @onclick:stopPropagation>
+            @MudList.ListActions
+        </div>
+    }
+    
     @if (NestedList != null)
     {
         <MudIcon Icon="@($"{(_expanded ? ExpandLessIcon : ExpandMoreIcon)}")" Size="@IconSize" Color="@AdornmentColor" />
     }
 </div>
+
 @if (NestedList != null)
 {
     <MudCollapse Expanded="@Expanded">
-        <MudList Clickable="@MudList.Clickable" DisablePadding="true" Class="mud-nested-list" Disabled="@Disabled">
-            @NestedList
+        <MudList Clickable="@MudList.Clickable" MultiSelection="@MudList.MultiSelection" DisablePadding="true" Class="mud-nested-list" Disabled="@Disabled">
+            <ListActions>
+                @if (MudList?.ListActions != null)
+                {
+                    <div class="mud-list-item-icon" @onclick:stopPropagation>
+                        @MudList.ListActions
+                    </div>
+                }
+            </ListActions>
+
+            <ChildContent>
+                @NestedList
+            </ChildContent>
+
         </MudList>
     </MudCollapse>
 }
