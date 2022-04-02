@@ -6,7 +6,7 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    public partial class MudList : MudComponentBase, IDisposable
+    public partial class MudList<T> : MudComponentBase, IDisposable
     {
         protected string Classname =>
         new CssBuilder("mud-list")
@@ -14,7 +14,7 @@ namespace MudBlazor
           .AddClass(Class)
         .Build();
 
-        [CascadingParameter] protected MudList ParentList { get; set; }
+        [CascadingParameter] protected MudList<T> ParentList { get; set; }
 
         /// <summary>
         /// Child content of component.
@@ -72,21 +72,21 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.List.Selecting)]
-        public MudListItem SelectedItem
+        public MudListItem<T> SelectedItem
         {
             get => _selectedItem;
             set
             {
                 if (_selectedItem == value)
                     return;
-                SetSelectedValue(_selectedItem?.Value, force: true);
+                SelectedItemChanged.InvokeAsync(_selectedItem).AndForget();
             }
         }
 
         /// <summary>
         /// Called whenever the selection changed
         /// </summary>
-        [Parameter] public EventCallback<MudListItem> SelectedItemChanged { get; set; }
+        [Parameter] public EventCallback<MudListItem<T>> SelectedItemChanged { get; set; }
 
         /// <summary>
         /// The current selected value.
@@ -94,18 +94,19 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.List.Selecting)]
-        public object SelectedValue
+        public T SelectedValue
         {
             get => _selectedValue;
             set
             {
-                SetSelectedValue(value, force: true);
+                _selectedValue = value;
+                SelectedValueChanged.InvokeAsync(value).AndForget();
             }
         }
 
         [Parameter]
         [Category(CategoryTypes.FormComponent.Data)]
-        public IEnumerable<object> SelectedValues
+        public IEnumerable<T> SelectedValues
         {
             get
             {
@@ -115,34 +116,20 @@ namespace MudBlazor
             }
             set
             {
-                if (!MultiSelection)
-                {
-                    SetSelectedValue(_selectedValues.FirstOrDefault());
-                }
-                else
-                {
-                    _selectedValues.Clear();
-                    foreach (var item in _items)
-                    {
-                        if (item.IsSelected)
-                        {
-                            _selectedValues.Add(item.Value);
-                        }
-                    }
-                }
-                SelectedValuesChanged.InvokeAsync();
+                _selectedValues = (HashSet<T>)value;
+                SelectedValuesChanged.InvokeAsync().AndForget();
             }
         }
 
         /// <summary>
         /// Called whenever the selection changed
         /// </summary>
-        [Parameter] public EventCallback<object> SelectedValueChanged { get; set; }
+        [Parameter] public EventCallback<T> SelectedValueChanged { get; set; }
 
         /// <summary>
         /// Fires when SelectedValues changes.
         /// </summary>
-        [Parameter] public EventCallback<IEnumerable<object>> SelectedValuesChanged { get; set; }
+        [Parameter] public EventCallback<IEnumerable<T>> SelectedValuesChanged { get; set; }
 
         protected override void OnInitialized()
         {
@@ -165,40 +152,40 @@ namespace MudBlazor
             ParametersChanged?.Invoke();
         }
 
-        private HashSet<MudListItem> _items = new();
-        private HashSet<MudList> _childLists = new();
-        private MudListItem _selectedItem;
+        private HashSet<MudListItem<T>> _items = new();
+        private HashSet<MudList<T>> _childLists = new();
+        private MudListItem<T> _selectedItem = new();
         //private List<MudListItem> _selectedItems;
-        private object _selectedValue;
-        private List<object> _selectedValues = new();
+        private T _selectedValue;
+        private HashSet<T> _selectedValues = new();
 
-        internal void Register(MudListItem item)
+        internal void Register(MudListItem<T> item)
         {
             _items.Add(item);
-            if (CanSelect && SelectedValue!=null && object.Equals(item.Value, SelectedValue))
+            if (CanSelect && SelectedValue != null && object.Equals(item.Value, SelectedValue))
             {
                 item.SetSelected(true);
-                _selectedItem = item;
-                SelectedItemChanged.InvokeAsync(item);
+                //_selectedItem = item;
+                //SelectedItemChanged.InvokeAsync(item);
             }
         }
 
-        internal void Unregister(MudListItem item)
+        internal void Unregister(MudListItem<T> item)
         {
             _items.Remove(item);
         }
 
-        internal void Register(MudList child)
+        internal void Register(MudList<T> child)
         {
             _childLists.Add(child);
         }
 
-        internal void Unregister(MudList child)
+        internal void Unregister(MudList<T> child)
         {
             _childLists.Remove(child);
         }
 
-        internal void SetSelectedValue(object value, bool force = false)
+        internal void SetSelectedValue(T value, bool force = false)
         {
             if ((!CanSelect || !Clickable) && !force)
                 return;
@@ -207,24 +194,73 @@ namespace MudBlazor
 
             if (!MultiSelection)
             {
-                _selectedValue = value;
-                SelectedValueChanged.InvokeAsync(value).AndForget();
-                _selectedItem = null; // <-- for now, we'll see which item matches the value below
-                foreach (var listItem in _items.ToArray())
+
+                foreach (var listItem in _items)
                 {
-                    var isSelected = value != null && object.Equals(value, listItem.Value);
-                    listItem.SetSelected(isSelected);
-                    if (isSelected)
-                        _selectedItem = listItem;
+                    if (listItem.Value.ToString() != value.ToString())
+                    {
+                        listItem.SetSelected(false);
+                    }
                 }
-                foreach (var childList in _childLists.ToArray())
+                foreach (var childList in _childLists)
                 {
-                    childList.SetSelectedValue(value);
-                    if (childList.SelectedItem != null)
-                        _selectedItem = childList.SelectedItem;
+                    foreach (var listItem in childList._items)
+                    {
+                        if (listItem.Value.ToString() != value.ToString())
+                        {
+                            listItem.SetSelected(false);
+                        }
+                    }
                 }
-                SelectedItemChanged.InvokeAsync(_selectedItem).AndForget();
-                ParentList?.SetSelectedValue(value);
+
+                //ParentList?.SetSelectedValue(value);
+            }
+        }
+
+        internal void SetSelectedValue(MudListItem<T> item, bool force = false)
+        {
+            if ((!CanSelect || !Clickable) && !force)
+                return;
+            if (Equals(_selectedItem, item))
+                return;
+
+            SelectedItem = item;
+            SelectedValue = item.Value;
+
+            if (!MultiSelection)
+            {
+
+                foreach (var listItem in _items)
+                {
+                    if (listItem.Value.ToString() !=  item.Value.ToString())
+                    {
+                        listItem.SetSelected(false);
+                    }
+                }
+                foreach (var childList in _childLists)
+                {
+                    foreach (var listItem in childList._items)
+                    {
+                        if (listItem.Value.ToString() != item.Value.ToString())
+                        {
+                            listItem.SetSelected(false);
+                        }
+                    }
+                }
+
+                //if (ParentList != null)
+                //{
+                //    foreach (var listItem in ParentList._items.ToArray())
+                //    {
+                //        if (listItem.Value.ToString() != item.Value.ToString())
+                //        {
+                //            listItem.SetSelected(false);
+                //        }
+                //    }
+                //}
+
+
+                ParentList?.SetSelectedValue(item.Value);
             }
         }
 

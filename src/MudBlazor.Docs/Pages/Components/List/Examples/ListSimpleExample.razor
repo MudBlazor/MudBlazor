@@ -1,11 +1,11 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
 <MudPaper Width="300px">
-    <MudList Clickable="true">
-        <MudListItem Text="Inbox" Icon="@Icons.Material.Filled.Inbox" />
-        <MudListItem Text="Sent" Icon="@Icons.Material.Filled.Send" />
+    <MudList T="string" Clickable="true">
+        <MudListItem T="string" Text="Inbox" Icon="@Icons.Material.Filled.Inbox" />
+        <MudListItem T="string" Text="Sent" Icon="@Icons.Material.Filled.Send" />
         <MudDivider />
-        <MudListItem Text="Trash" />
-        <MudListItem Text="Spam" />
+        <MudListItem T="string" Text="Trash" />
+        <MudListItem T="string" Text="Spam" />
     </MudList>
 </MudPaper>

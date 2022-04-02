@@ -42,7 +42,7 @@ namespace MudBlazor
         {
             if (_items == null || _items.Count == 0)
                 return;
-            var index = _items.FindIndex(x => x.ItemId == (string)_activeItemId);
+            var index = _items.FindIndex(x => x.ItemId == Converter.Set(_activeItemId));
             if (direction < 0 && index < 0)
                 index = 0;
             MudSelectItem<T> item = null;
@@ -87,7 +87,7 @@ namespace MudBlazor
             if (!string.IsNullOrWhiteSpace(startChar))
             {
                 // find first item that starts with the letter
-                var currentItem = items.FirstOrDefault(x => x.ItemId == (string)_activeItemId);
+                var currentItem = items.FirstOrDefault(x => x.ItemId == Converter.Set(_activeItemId));
                 if (currentItem != null &&
                     Converter.Set(currentItem.Value)?.ToLowerInvariant().StartsWith(startChar) == true)
                 {
@@ -428,7 +428,7 @@ namespace MudBlazor
         protected Dictionary<T, MudSelectItem<T>> _shadowLookup = new();
 
         // note: this must be object to satisfy MudList
-        private object _activeItemId = null;
+        private T _activeItemId = default(T);
 
         internal bool Add(MudSelectItem<T> item)
         {
@@ -610,7 +610,7 @@ namespace MudBlazor
 
         private async void HilightItem(MudSelectItem<T> item)
         {
-            _activeItemId = item?.ItemId;
+            _activeItemId = Converter.Get(item?.ItemId);
             // we need to make sure we are just after a render here or else there will be race conditions
             await WaitForRender();
             // Note: this is a hack but I found no other way to make the list hilight the currently hilighted item
@@ -670,7 +670,7 @@ namespace MudBlazor
             //Scroll the active item on each opening
             if (_activeItemId != null)
             {
-                var index = _items.FindIndex(x => x.ItemId == (string)_activeItemId);
+                var index = _items.FindIndex(x => x.ItemId == Converter.Set(_activeItemId));
                 if (index > 0)
                 {
                     var item = _items[index];
@@ -894,7 +894,7 @@ namespace MudBlazor
                     break;
                 case "Enter":
                 case "NumpadEnter":
-                    var index = _items.FindIndex(x => x.ItemId == (string)_activeItemId);
+                    var index = _items.FindIndex(x => x.ItemId == Converter.Set(_activeItemId));
                     if (!MultiSelection)
                     {
                         if (!_isOpen)

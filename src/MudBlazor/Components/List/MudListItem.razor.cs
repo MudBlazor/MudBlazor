@@ -6,7 +6,7 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    public partial class MudListItem : MudComponentBase, IDisposable
+    public partial class MudListItem<T> : MudComponentBase, IDisposable
     {
         protected string Classname =>
         new CssBuilder("mud-list-item")
@@ -21,7 +21,7 @@ namespace MudBlazor
 
         [Inject] protected NavigationManager UriHelper { get; set; }
 
-        [CascadingParameter] protected MudList MudList { get; set; }
+        [CascadingParameter] protected MudList<T> MudList { get; set; }
 
         private bool _onClickHandlerPreventDefault = false;
 
@@ -34,7 +34,7 @@ namespace MudBlazor
 
         [Parameter]
         [Category(CategoryTypes.List.Selecting)]
-        public object Value { get; set; }
+        public T Value { get; set; }
 
         /// <summary>
         /// Avatar to use if set.
@@ -244,7 +244,7 @@ namespace MudBlazor
                 }
                 else if (Href != null)
                 {
-                    MudList?.SetSelectedValue(this.Value);
+                    MudList?.SetSelectedValue(this);
                     OnClick.InvokeAsync(ev);
                     UriHelper.NavigateTo(Href, ForceLoad);
                 }
@@ -252,15 +252,9 @@ namespace MudBlazor
                 {
                     if (MudList?.Clickable == true)
                     {
-                        if (MudList?.MultiSelection == false)
-                        {
-                            MudList?.SetSelectedValue(this.Value);
-                        }
-                        else if (MudList?.MultiSelection == true)
-                        {
-                            IsSelected = !IsSelected;
-                        }
-                        
+                        IsSelected = true;
+                        MudList?.SetSelectedValue(this);
+
                     }
                     OnClick.InvokeAsync(ev);
                     if (Command?.CanExecute(CommandParameter) ?? false)

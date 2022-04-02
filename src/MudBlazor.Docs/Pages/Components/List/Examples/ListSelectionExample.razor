@@ -5,18 +5,18 @@
         <MudListSubheader>
             Your drink:
             <MudChip Color="Color.Secondary">
-                @(selectedItem?.Text ?? "You are dry") (@(selectedValue?.ToString() ?? "0"))
+                @(selectedItem?.Text ?? "You are dry") (@(selectedValue.ToString()))
             </MudChip>
         </MudListSubheader>
-        <MudListItem Text="Sparkling Water" Value="1"/>
-        <MudListItem Text="Teas">
+        <MudListItem T="int" Text="Sparkling Water" Value="1"/>
+        <MudListItem T="int" Text="Teas">
             <NestedList>
                 <MudListItem Text="Earl Grey" Value="2" />
                 <MudListItem Text="Matcha"  Value="3"/>
                 <MudListItem Text="Pu'er"  Value="4"/>
             </NestedList>
         </MudListItem>
-        <MudListItem Text="Coffees">
+        <MudListItem T="int" Text="Coffees">
             <NestedList>
                 <MudListItem Text="Irish Coffee"  Value="5"/>
                 <MudListItem Text="Double Espresso"  Value="6"/>
@@ -29,6 +29,6 @@
 
 @code
 {
-    MudListItem selectedItem;
-    object selectedValue = 1;
+    MudListItem<int> selectedItem;
+    int selectedValue = 1;
 }

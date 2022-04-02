@@ -1,13 +1,13 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
 <MudPaper Width="300px">
-    <MudList>
+    <MudList T="string">
         <ChildContent>
-            <MudListItem Text="Wifi" Icon="@Icons.Material.Filled.Wifi" />
-            <MudListItem Text="Bluetooth" Icon="@Icons.Filled.Bluetooth" />
+            <MudListItem T="string" Text="Wifi" Icon="@Icons.Material.Filled.Wifi" />
+            <MudListItem T="string" Text="Bluetooth" Icon="@Icons.Filled.Bluetooth" />
             <MudDivider />
-            <MudListItem Text="Location" Icon="@Icons.Filled.LocationOn" />
-            <MudListItem Text="High Security" Icon="@Icons.Filled.Security" />
+            <MudListItem T="string" Text="Location" Icon="@Icons.Filled.LocationOn" />
+            <MudListItem T="string" Text="High Security" Icon="@Icons.Filled.Security" />
         </ChildContent>
         <ListActions>
             <MudSwitch T="bool" Color="Color.Primary" />

@@ -10,7 +10,7 @@
             <MudBlazorLogo Class="me-3" Style="width:36px;"/>
             <MudText Typo="Typo.h6">Mud Mini</MudText>
         </div>
-        <MudList Clickable="true" @bind-SelectedItem="selectedItem" @bind-SelectedValue="selectedValue" Class="py-6 mini-fake-nav">
+        <MudList T="int" Clickable="true" @bind-SelectedItem="selectedItem" @bind-SelectedValue="selectedValue" Class="py-6 mini-fake-nav">
 
             <MudListSubheader Class="pt-6 pb-2">General</MudListSubheader>
 
@@ -56,9 +56,9 @@
                         <MudText Class="mt-n2" Typo="Typo.body1">martin@mudsson.se</MudText>
                     </div>
                     <MudDivider Class="my-2"/>
-                    <MudListItem Dense="true" Icon="@Icons.Rounded.Person">Profile</MudListItem>
-                    <MudListItem Dense="true" Icon="@Icons.Rounded.Settings">Settings</MudListItem>
-                    <MudListItem Dense="true" Icon="@Icons.Rounded.Logout">Logout</MudListItem>
+                    <MudListItem T="string" Dense="true" Icon="@Icons.Rounded.Person">Profile</MudListItem>
+                    <MudListItem T="string" Dense="true" Icon="@Icons.Rounded.Settings">Settings</MudListItem>
+                    <MudListItem T="string" Dense="true" Icon="@Icons.Rounded.Logout">Logout</MudListItem>
                 </ChildContent>
             </MudMenu>
         </MudToolBar>
@@ -298,8 +298,8 @@
     private bool overlayVisible { get; set; }
     private double sliderValue = 50.0;
     private bool expansionPanel1 = true;
-    MudListItem selectedItem;
-    object selectedValue = 1;
+    MudListItem<int> selectedItem;
+    int selectedValue = 1;
 
     private void ToggleMiniDrawer()
     {
