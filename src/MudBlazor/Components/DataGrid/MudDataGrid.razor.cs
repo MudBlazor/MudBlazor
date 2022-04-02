@@ -495,6 +495,12 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public string GroupStyle { get; set; }
 
+        /// <summary>
+        /// For hiding Menu Icon from ToolBar
+        /// If ToolBarContent content is null then it will hide toolbar
+        /// </summary>
+        [Parameter] public bool HideMenuIcon { get; set; } = false;
+
         #endregion
 
         #region Properties

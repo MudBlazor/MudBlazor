@@ -1,4 +1,4 @@
-#pragma warning disable CS1998 // async without await
+﻿#pragma warning disable CS1998 // async without await
 #pragma warning disable BL0005 // Set parameter outside component
 
 using System;
@@ -1326,6 +1326,18 @@ namespace MudBlazor.UnitTests.Components
             dataGrid.FindAll(".mud-table-head th").Count.Should().Be(0);
             await comp.InvokeAsync(() => dataGrid.Instance.ShowAllColumns());
             dataGrid.FindAll(".mud-table-head th").Count.Should().Be(2);
+        }
+
+        [Test]
+        public async Task DataGridHideMenuIconTest()
+        {
+            var comp = Context.RenderComponent<DataGridHideMenuIconTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridHideMenuIconTest.Item>>();
+            dataGrid.FindAll(".mud-menu").Should().BeEmpty();
+            var parameters = new List<ComponentParameter>();
+            parameters.Add(ComponentParameter.CreateParameter(nameof(dataGrid.Instance.HideMenuIcon), false));
+            dataGrid.SetParametersAndRender(parameters.ToArray());
+            dataGrid.FindAll(".mud-menu").Should().NotBeEmpty();
         }
     }
 }
