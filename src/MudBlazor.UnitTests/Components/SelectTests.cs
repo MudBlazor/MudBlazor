@@ -336,8 +336,8 @@ namespace MudBlazor.UnitTests.Components
             select.Instance.Text.Should().Be("1");
             text.Should().Be("1");
             string.Join(",", selectedValues).Should().Be("1");
-            selectedValuesChangedCount.Should().Be(3);
-            textChangedCount.Should().Be(2);
+            comp.WaitForAssertion(() => selectedValuesChangedCount.Should().Be(3));
+            comp.WaitForAssertion(() => textChangedCount.Should().Be(2));
         }
 
         /// <summary>
