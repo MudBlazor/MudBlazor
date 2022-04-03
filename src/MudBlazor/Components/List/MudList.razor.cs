@@ -107,7 +107,7 @@ namespace MudBlazor
         }
 
         [Parameter]
-        [Category(CategoryTypes.FormComponent.Data)]
+        [Category(CategoryTypes.List.Selecting)]
         public IEnumerable<T> SelectedValues
         {
             get

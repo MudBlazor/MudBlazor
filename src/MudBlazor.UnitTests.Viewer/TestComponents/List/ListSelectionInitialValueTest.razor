@@ -1,6 +1,6 @@
 ﻿@namespace MudBlazor.UnitTests.TestComponents
 
-<MudList T="int" Clickable="true" @bind-SelectedItem="selectedItem" @bind-SelectedValue="selectedValue">
+<MudList T="int?" Clickable="true" @bind-SelectedItem="selectedItem" @bind-SelectedValue="selectedValue">
     <MudListSubheader>
         Your drink:
         <MudChip Color="Color.Secondary">
@@ -8,14 +8,14 @@
         </MudChip>
     </MudListSubheader>
     <MudListItem Text="Sparkling Water" Value="1"/>
-    <MudListItem T="int" Text="Teas">
+    <MudListItem T="int?" Text="Teas">
         <NestedList>
             <MudListItem Text="Earl Grey"  Value="2"/>
             <MudListItem Text="Matcha"  Value="3"/>
             <MudListItem Text="Pu'er"  Value="4"/>
         </NestedList>
     </MudListItem>
-    <MudListItem T="int" Text="Coffees">
+    <MudListItem T="int?" Text="Coffees">
         <NestedList>
             <MudListItem Text="Irish Coffee"  Value="5"/>
             <MudListItem Text="Double Espresso"  Value="6"/>
@@ -27,10 +27,10 @@
 @code
 {
     public static string __description__ = "Sparkling Water should be selected initially.";
-    MudListItem<int> selectedItem;
-    int selectedValue = 1;
+    MudListItem<int?> selectedItem;
+    int? selectedValue = 1;
 
-    public void SetSelecedValue(int value)
+    public void SetSelecedValue(int? value)
     {
         selectedValue = value;
         StateHasChanged();

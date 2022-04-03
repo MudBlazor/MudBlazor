@@ -48,7 +48,7 @@ namespace MudBlazor.UnitTests.Components
 
             comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open"));
             //Console.WriteLine(comp.Markup);
-            var items = comp.FindComponents<MudListItem>().ToArray();
+            var items = comp.FindComponents<MudListItem<string>>().ToArray();
             items.Length.Should().Be(1);
             items.First().Markup.Should().Contain("California");
             // click on California!
@@ -447,7 +447,7 @@ namespace MudBlazor.UnitTests.Components
             // now let's type a different state to see the popup open
             autocompletecomp.Find("input").Input("Calif");
             comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open"));
-            var items = comp.FindComponents<MudListItem>().ToArray();
+            var items = comp.FindComponents<MudListItem<string>>().ToArray();
             items.Length.Should().Be(1);
             items.First().Markup.Should().Contain("California");
 
@@ -487,7 +487,7 @@ namespace MudBlazor.UnitTests.Components
             autocompletecomp.Find("input").Input("Calif");
             comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open"));
             //Console.WriteLine(comp.Markup);
-            var items = comp.FindComponents<MudListItem>().ToArray();
+            var items = comp.FindComponents<MudListItem<string>>().ToArray();
             items.Length.Should().Be(1);
             items.First().Markup.Should().Contain("California");
 
@@ -530,7 +530,7 @@ namespace MudBlazor.UnitTests.Components
             component.WaitForAssertion(() => autocompleteInstance.IsOpen.Should().BeTrue("Input has been focused and should open the popup"));
 
             // get the matching states
-            var matchingStates = component.FindComponents<MudListItem>().ToArray();
+            var matchingStates = component.FindComponents<MudListItem<string>>().ToArray();
 
             // try clicking 'Alaska'
             matchingStates.Single(s => s.Markup.Contains(alaskaString)).Find(listItemQuerySelector).Click();
@@ -568,7 +568,7 @@ namespace MudBlazor.UnitTests.Components
             autocompletecomp.Find("input").Input("Calif");
             comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open"));
             //Console.WriteLine(comp.Markup);
-            var items = comp.FindComponents<MudListItem>().ToArray();
+            var items = comp.FindComponents<MudListItem<string>>().ToArray();
             items.Length.Should().Be(1);
             items.First().Markup.Should().Contain("California");
 
@@ -609,7 +609,7 @@ namespace MudBlazor.UnitTests.Components
             component.WaitForAssertion(() => autocompleteInstance.IsOpen.Should().BeTrue("Input has been focused and should open the popup"));
 
             // get the matching states
-            var matchingStates = component.FindComponents<MudListItem>().ToArray();
+            var matchingStates = component.FindComponents<MudListItem<string>>().ToArray();
 
             // try clicking 'American Samoa'
             matchingStates.Single(s => s.Markup.Contains(americanSamoaString)).Find(listItemQuerySelector).Click();
@@ -626,7 +626,7 @@ namespace MudBlazor.UnitTests.Components
             component.WaitForAssertion(() => autocompleteInstance.IsOpen.Should().BeTrue());
 
             // update found elements
-            matchingStates = component.FindComponents<MudListItem>().ToArray();
+            matchingStates = component.FindComponents<MudListItem<string>>().ToArray();
 
             // ensure alabama is selected
             component.WaitForAssertion(() => matchingStates.Single(s => s.Markup.Contains(alabamaString)).Find(listItemQuerySelector).ClassList.Should().Contain(selectedItemClassName, $"{alabamaString} should be selected/highlighted"));
@@ -787,7 +787,7 @@ namespace MudBlazor.UnitTests.Components
                 popover.Instance.Open.Should().BeTrue("Should be open once clicked");
 
                 popoverProvider
-                    .FindComponents<MudListItem>().Count
+                    .FindComponents<MudListItem<string>>().Count
                     .Should().Be(AutocompleteSyncTest.Items.Length, "Should show the expected items");
             });
         }
