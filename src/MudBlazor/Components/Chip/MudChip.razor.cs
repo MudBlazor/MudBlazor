@@ -9,7 +9,7 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    public partial class MudChip : MudComponentBase, IDisposable
+    public partial class MudChip<T> : MudComponentBase, IDisposable
     {
         private bool _isSelected;
         [Inject] public NavigationManager UriHelper { get; set; }
@@ -58,7 +58,7 @@ namespace MudBlazor
             }
         }
 
-        [CascadingParameter] MudChipSet ChipSet { get; set; }
+        [CascadingParameter] MudChipSet<T> ChipSet { get; set; }
 
         /// <summary>
         /// The color of the component.
@@ -197,7 +197,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Chip.Behavior)]
-        public object Value { get; set; }
+        public T Value { get; set; }
 
         /// <summary>
         /// If true, force browser to redirect outside component router-space.
@@ -235,7 +235,7 @@ namespace MudBlazor
         /// <summary>
         /// Chip delete event, if set the delete icon will be visible.
         /// </summary>
-        [Parameter] public EventCallback<MudChip> OnClose { get; set; }
+        [Parameter] public EventCallback<MudChip<T>> OnClose { get; set; }
 
         /// <summary>
         /// Set by MudChipSet
@@ -269,7 +269,7 @@ namespace MudBlazor
         {
             base.OnInitialized();
             if (Value == null)
-                Value = this;
+                Value = this.Value;
         }
 
         protected internal async Task OnClickHandler(MouseEventArgs ev)

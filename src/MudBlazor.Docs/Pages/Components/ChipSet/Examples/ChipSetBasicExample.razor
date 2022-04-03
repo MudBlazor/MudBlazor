@@ -1,14 +1,14 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
 <MudChipSet @bind-SelectedChip="selected" Filter="true" Mandatory="@mandatory">
-    <MudChip Text="grey">Default</MudChip>
-    <MudChip Text="purple" Color="Color.Primary">Primary</MudChip>
-    <MudChip Text="pink" Color="Color.Secondary">Secondary</MudChip>
-    <MudChip Text="blue" Color="Color.Info">Info</MudChip>
-    <MudChip Text="green" Color="Color.Success">Success</MudChip>
-    <MudChip Text="orange" Color="Color.Warning">Warning</MudChip>
-    <MudChip Text="red" Color="Color.Error">Error</MudChip>
-    <MudChip Text="black" Color="Color.Dark">Dark</MudChip>
+    <MudChip T="string" Text="grey">Default</MudChip>
+    <MudChip T="string" Text="purple" Color="Color.Primary">Primary</MudChip>
+    <MudChip T="string" Text="pink" Color="Color.Secondary">Secondary</MudChip>
+    <MudChip T="string" Text="blue" Color="Color.Info">Info</MudChip>
+    <MudChip T="string" Text="green" Color="Color.Success">Success</MudChip>
+    <MudChip T="string" Text="orange" Color="Color.Warning">Warning</MudChip>
+    <MudChip T="string" Text="red" Color="Color.Error">Error</MudChip>
+    <MudChip T="string" Text="black" Color="Color.Dark">Dark</MudChip>
 </MudChipSet>
 
 <div class="d-flex flex-column align-center">
@@ -22,6 +22,6 @@
 @code
 {
     bool mandatory = true;
-    MudChip selected;
+    MudChip<string> selected;
 }
 

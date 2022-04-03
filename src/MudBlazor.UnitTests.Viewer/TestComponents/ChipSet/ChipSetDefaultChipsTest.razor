@@ -1,13 +1,13 @@
 ﻿@namespace MudBlazor.UnitTests.TestComponents
 
-<MudChipSet @bind-SelectedChips="selected" MultiSelection="@MultiSelection" Filter="filter">
-    <MudChip Text="Milk"></MudChip>
-    <MudChip Text="Eggs" Default="true"></MudChip>
-    <MudChip Text="Soap"></MudChip>
-    <MudChip Text="Corn flakes"></MudChip>
-    <MudChip Text="Salad" Default="true"></MudChip>
-    <MudChip Text="Apples"></MudChip>
-    <MudChip Text="Red wine"></MudChip>
+<MudChipSet T="string" @bind-SelectedChips="selected" MultiSelection="@MultiSelection" Filter="filter">
+    <MudChip T="string" Text="Milk"></MudChip>
+    <MudChip T="string" Text="Eggs" Default="true"></MudChip>
+    <MudChip T="string" Text="Soap"></MudChip>
+    <MudChip T="string" Text="Corn flakes"></MudChip>
+    <MudChip T="string" Text="Salad" Default="true"></MudChip>
+    <MudChip T="string" Text="Apples"></MudChip>
+    <MudChip T="string" Text="Red wine"></MudChip>
 </MudChipSet>
 
 
@@ -24,5 +24,5 @@ else
 {
     [Parameter] public bool MultiSelection { get; set; }
     bool filter = false;
-    MudChip[] selected;
+    MudChip<string>[] selected;
 }

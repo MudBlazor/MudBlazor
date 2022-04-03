@@ -4,7 +4,7 @@
     <MudList Clickable="true" @bind-SelectedItem="selectedItem" @bind-SelectedValue="selectedValue">
         <MudListSubheader>
             Your drink:
-            <MudChip Color="Color.Secondary">
+            <MudChip T="string" Color="Color.Secondary">
                 @(selectedItem?.Text ?? "You are dry") (@(selectedValue?.ToString() ?? "0"))
             </MudChip>
         </MudListSubheader>

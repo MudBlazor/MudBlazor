@@ -9,7 +9,7 @@
     <MudText Typo="Typo.h6">Drag and drop files here or click</MudText>
     @foreach (var file in fileNames)
     {
-        <MudChip Color="Color.Dark" Text="@file" />
+        <MudChip T="string" Color="Color.Dark" Text="@file" />
     }
 </MudPaper>
 <MudToolBar DisableGutters="true" Class="gap-4">

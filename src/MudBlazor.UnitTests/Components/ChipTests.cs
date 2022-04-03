@@ -63,7 +63,7 @@ namespace MudBlazor.UnitTests.Components
         public async Task Chip_Link_Test()
         {
             var comp = Context.RenderComponent<ChipLinkTest>();
-            var chip = comp.FindComponent<MudChip>();
+            var chip = comp.FindComponent<MudChip<string>>();
             
             await comp.InvokeAsync(() => chip.Instance.ForceRerender());
             await comp.InvokeAsync(() => chip.Instance.OnClickHandler(new MouseEventArgs()));
