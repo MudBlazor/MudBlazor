@@ -1064,5 +1064,25 @@ namespace MudBlazor.UnitTests.Components
 
             sut.Instance.Items.Should().HaveCountGreaterOrEqualTo(4);
         }
+        /// <summary>
+        /// When MultiSelection and Required are True with no selected values, required validation should fail.
+        /// </summary>
+        [Test]
+        public async Task MultiSelectWithRequiredValue()
+        {
+            //Check on String type
+            var comp = Context.RenderComponent<MultiSelectTestRequiredValue>();
+            var select = comp.FindComponent<MudSelect<string>>().Instance;
+            select.Required.Should().BeTrue();
+            await comp.InvokeAsync(() => select.Validate());
+            select.ValidationErrors.First().Should().Be("Required");
+
+            //Check on T type - MultiSelect of T(e.g. class object) 
+            comp = Context.RenderComponent<MultiSelectTestRequiredValue>();
+            var selectWithT = comp.FindComponent<MudSelect<MultiSelectTestRequiredValue.TestClass>>().Instance;
+            selectWithT.Required.Should().BeTrue();
+            await comp.InvokeAsync(() => select.Validate());
+            select.ValidationErrors.First().Should().Be("Required");
+        }
     }
 }
