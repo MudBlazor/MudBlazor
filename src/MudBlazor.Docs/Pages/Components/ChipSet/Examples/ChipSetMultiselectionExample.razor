@@ -1,12 +1,12 @@
 ﻿@namespace MudBlazor.Docs.Examples
-<MudChipSet T="string" @bind-SelectedChips="selected" MultiSelection="true" Filter="filter">
-    <MudChip T="string" Text="Milk"></MudChip>
-    <MudChip T="string" Text="Eggs"></MudChip>
-    <MudChip T="string" Text="Soap"></MudChip>
-    <MudChip T="string" Text="Cornflakes"></MudChip>
-    <MudChip T="string" Text="Salad"></MudChip>
-    <MudChip T="string" Text="Apples"></MudChip>
-    <MudChip T="string" Text="Red wine"></MudChip>
+<MudChipSet T="int" @bind-SelectedChips="selected" MultiSelection="true" Filter="filter">
+    <MudChip Text="Milk" Value="0"></MudChip>
+    <MudChip Text="Eggs" Value="1"></MudChip>
+    <MudChip Text="Soap" Value="2"></MudChip>
+    <MudChip Text="Cornflakes" Value="3"></MudChip>
+    <MudChip Text="Salad" Value="4"></MudChip>
+    <MudChip Text="Apples" Value="5"></MudChip>
+    <MudChip Text="Red wine" Value="6"></MudChip>
 </MudChipSet>
 
 <div class="d-flex flex-column align-center">
@@ -24,6 +24,6 @@
 @code
 {
     bool filter = true;
-    MudChip<string>[] selected;
+    MudChip<int>[] selected;
 }
 

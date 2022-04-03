@@ -268,8 +268,6 @@ namespace MudBlazor
         protected override void OnInitialized()
         {
             base.OnInitialized();
-            if (Value == null)
-                Value = this.Value;
         }
 
         protected internal async Task OnClickHandler(MouseEventArgs ev)
