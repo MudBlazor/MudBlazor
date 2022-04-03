@@ -244,7 +244,7 @@ namespace MudBlazor
                 }
                 else if (Href != null)
                 {
-                    MudList?.SetSelectedValue(this);
+                    MudList?.SetSelectedValue(this.Value);
                     OnClick.InvokeAsync(ev);
                     UriHelper.NavigateTo(Href, ForceLoad);
                 }
@@ -252,15 +252,14 @@ namespace MudBlazor
                 {
                     if (MudList?.Clickable == true)
                     {
-                        IsSelected = true;
-                        MudList?.SetSelectedValue(this);
-
+                        //IsSelected = true;
+                        MudList?.SetSelectedValue(this.Value);
                     }
                     OnClick.InvokeAsync(ev);
-                    if (Command?.CanExecute(CommandParameter) ?? false)
-                    {
-                        Command.Execute(CommandParameter);
-                    }
+                    //if (Command?.CanExecute(CommandParameter) ?? false)
+                    //{
+                    //    Command.Execute(CommandParameter);
+                    //}
                 }
             }
             else

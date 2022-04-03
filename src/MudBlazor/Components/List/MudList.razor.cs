@@ -79,6 +79,7 @@ namespace MudBlazor
             {
                 if (_selectedItem == value)
                     return;
+                _selectedItem = value;
                 SelectedItemChanged.InvokeAsync(_selectedItem).AndForget();
             }
         }
@@ -100,6 +101,7 @@ namespace MudBlazor
             set
             {
                 _selectedValue = value;
+                SetSelectedValue(value);
                 SelectedValueChanged.InvokeAsync(value).AndForget();
             }
         }
@@ -165,7 +167,7 @@ namespace MudBlazor
             if (CanSelect && SelectedValue != null && object.Equals(item.Value, SelectedValue))
             {
                 item.SetSelected(true);
-                //_selectedItem = item;
+                //SelectedItem = item;
                 //SelectedItemChanged.InvokeAsync(item);
             }
         }
@@ -201,6 +203,10 @@ namespace MudBlazor
                     {
                         listItem.SetSelected(false);
                     }
+                    else
+                    {
+                        listItem.SetSelected(true);
+                    }
                 }
                 foreach (var childList in _childLists)
                 {
@@ -210,10 +216,14 @@ namespace MudBlazor
                         {
                             listItem.SetSelected(false);
                         }
+                        else
+                        {
+                            listItem.SetSelected(true);
+                        }
                     }
                 }
 
-                //ParentList?.SetSelectedValue(value);
+                ParentList?.SetSelectedValue(value);
             }
         }
 
@@ -247,18 +257,6 @@ namespace MudBlazor
                         }
                     }
                 }
-
-                //if (ParentList != null)
-                //{
-                //    foreach (var listItem in ParentList._items.ToArray())
-                //    {
-                //        if (listItem.Value.ToString() != item.Value.ToString())
-                //        {
-                //            listItem.SetSelected(false);
-                //        }
-                //    }
-                //}
-
 
                 ParentList?.SetSelectedValue(item.Value);
             }
