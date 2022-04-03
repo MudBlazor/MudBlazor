@@ -644,5 +644,29 @@ namespace MudBlazor
             await SetTextAsync(text, true);
         }
 
+        private bool _touchState = false;
+
+        private async Task ListItemOnClick(T item)
+        {
+            //Touchend works before click, so prevent the SelectOption method run twice
+            if (_touchState)
+            {
+                _touchState = false;
+                return;
+            }
+            await SelectOption(item);
+        }
+
+        private async Task ListItemTouchEnd(T item)
+        {
+            //In WASM we should prevent this method and continue with classic click method, otherwise it bubbles to other elements
+            if (RuntimeLocation.IsClientSide)
+            {
+                return;
+            }
+            _touchState = true;
+            await SelectOption(item);
+        }
+
     }
 }

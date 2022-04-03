@@ -174,11 +174,12 @@ namespace MudBlazor
         protected override void OnParametersSet()
         {
             base.OnParametersSet();
-            
-            // Only update the fragment if the popover is currently shown or will show
-            // This prevents unnecessary renders and popover handle locking
-            if (!_handler.ShowContent && !Open)
-                return;
+
+            // henon: this change by PR #3776 caused problems on BSS (#4303)
+            //// Only update the fragment if the popover is currently shown or will show
+            //// This prevents unnecessary renders and popover handle locking
+            //if (!_handler.ShowContent && !Open)
+            //    return;
 
             _handler.UpdateFragment(ChildContent, this, PopoverClass, PopoverStyles, Open);
         }
