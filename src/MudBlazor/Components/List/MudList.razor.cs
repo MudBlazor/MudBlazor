@@ -191,8 +191,8 @@ namespace MudBlazor
         {
             if ((!CanSelect || !Clickable) && !force)
                 return;
-            if (object.Equals(_selectedValue, value))
-                return;
+            //if (object.Equals(_selectedValue, value))
+            //    return;
 
             if (!MultiSelection)
             {
