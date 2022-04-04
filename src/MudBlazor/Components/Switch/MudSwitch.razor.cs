@@ -19,7 +19,7 @@ namespace MudBlazor
         .Build();
         protected string SwitchClassname =>
         new CssBuilder("mud-button-root mud-icon-button mud-switch-base")
-            .AddClass($"mud-ripple mud-ripple-switch", !DisableRipple && !ReadOnly)
+            .AddClass($"mud-ripple mud-ripple-switch", !DisableRipple && !ReadOnly && !Disabled)
             .AddClass($"mud-switch-{Color.ToDescriptionString()}")
             .AddClass($"mud-switch-disabled", Disabled)
             .AddClass($"mud-readonly", ReadOnly)
