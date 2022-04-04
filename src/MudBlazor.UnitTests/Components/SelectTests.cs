@@ -1064,12 +1064,14 @@ namespace MudBlazor.UnitTests.Components
 
             sut.Instance.Items.Should().HaveCountGreaterOrEqualTo(4);
         }
+
         /// <summary>
         /// When MultiSelection and Required are True with no selected values, required validation should fail.
         /// </summary>
         [Test]
         public async Task MultiSelectWithRequiredValue()
         {
+            //1a. Check When SelectedItems is empty - Validation Should Fail
             //Check on String type
             var comp = Context.RenderComponent<MultiSelectTestRequiredValue>();
             var select = comp.FindComponent<MudSelect<string>>().Instance;
@@ -1077,12 +1079,29 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(() => select.Validate());
             select.ValidationErrors.First().Should().Be("Required");
 
-            //Check on T type - MultiSelect of T(e.g. class object) 
-            comp = Context.RenderComponent<MultiSelectTestRequiredValue>();
+            //1b. Check on T type - MultiSelect of T(e.g. class object) 
             var selectWithT = comp.FindComponent<MudSelect<MultiSelectTestRequiredValue.TestClass>>().Instance;
             selectWithT.Required.Should().BeTrue();
+            await comp.InvokeAsync(() => selectWithT.Validate());
+            selectWithT.ValidationErrors.First().Should().Be("Required");
+
+            //2a. Now check when SelectedItems is greater than one - Validation Should Pass
+            var inputs = comp.FindAll("div.mud-input-control");
+            Console.WriteLine(comp.Markup);
+            inputs[0].Click();//The 2nd one is the 
+            var items = comp.FindAll("div.mud-list-item").ToArray();
+            items[1].Click();
             await comp.InvokeAsync(() => select.Validate());
-            select.ValidationErrors.First().Should().Be("Required");
+            select.ValidationErrors.Count.Should().Be(0);
+            
+            //2b.
+            inputs[1].Click();//selectWithT 
+            //wait for render and it will find 5 items from the component
+            comp.WaitForState(() => comp.FindAll("div.mud-list-item").Count == 5);
+            items = comp.FindAll("div.mud-list-item").ToArray();
+            items[3].Click();
+            await comp.InvokeAsync(() => selectWithT.Validate());
+            selectWithT.ValidationErrors.Count.Should().Be(0);
         }
     }
 }
