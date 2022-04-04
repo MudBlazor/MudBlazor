@@ -13,16 +13,22 @@
             {
                 <MudToolBar Class="mud-table-toolbar">
                     @ToolBarContent
-                    @ToolbarMenu(this)           
+                    @if (!HideMenuIcon)
+                    {
+                        @ToolbarMenu(this)   
+                    }
                 </MudToolBar>
             }
             else
             {
-                @*Add the default toolbar.*@
-                <MudToolBar Class="mud-table-toolbar">
+                @if (!HideMenuIcon)
+                {
+                    @*Add the default toolbar.*@
+                    <MudToolBar Class="mud-table-toolbar">
                     <MudSpacer />
                     @ToolbarMenu(this) 
-                </MudToolBar>
+                    </MudToolBar>
+                 }
             }
             <div class="mud-table-container" style="@_tableStyle @(GetHorizontalScrollbarStyle())">
                 <table class="mud-table-root">
