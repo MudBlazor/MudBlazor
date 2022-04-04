@@ -31,7 +31,7 @@
                                 var item = _items[index];
                                 bool is_selected = index == _selectedListItemIndex;
                                 bool is_disabled = !_enabledItemIndices.Contains(index);
-                                <MudListItem @key="@item" id="@GetListItemId(index)" Disabled="@(is_disabled)" OnClick="@(() => SelectOption(item))" Class="@(is_selected ? "mud-selected-item" : "")">
+                                <MudListItem @key="@item" id="@GetListItemId(index)" Disabled="@(is_disabled)" OnClick="@(async() => await ListItemOnClick(item))" @ontouchend="@(async() => await ListItemTouchEnd(item))" OnClickHandlerPreventDefault="true" Class="@(is_selected ? "mud-selected-item" : "")">
                                     @if (ItemTemplate == null)
                                     {
                                         @GetItemString(item)
@@ -61,4 +61,4 @@
     </div>
 </CascadingValue>
 
-<MudOverlay Visible="IsOpen" OnClick="@ToggleMenu" LockScroll="false" />
+<MudOverlay Visible="IsOpen" OnClick="@ToggleMenu" @ontouchstart="@ToggleMenu" LockScroll="false" />
