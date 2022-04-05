@@ -122,6 +122,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        [Ignore("Locking is not testable any more because it was disabled for BSS and tests run in BSS mode")]
         public void MudPopoverHandler_DontUpdateWhenLockIsEnabled()
         {
             RenderFragment initialRenderFragement = (tree) => { };
@@ -150,6 +151,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        [Ignore("Locking is not testable any more because it was disabled for BSS and tests run in BSS mode")]
         public void MudPopoverHandler_UpdateAndLockCycle()
         {
             RenderFragment initialRenderFragement = (tree) => { };
@@ -175,7 +177,7 @@ namespace MudBlazor.UnitTests.Components
             }
             updateCounter.Should().Be(1);
 
-            handler.Release();
+            //handler.Release();
 
             handler.UpdateFragment(newRenderFragement, comp.Instance, "my-new-extra-class", "my-new-extra-style:2px", true);
 

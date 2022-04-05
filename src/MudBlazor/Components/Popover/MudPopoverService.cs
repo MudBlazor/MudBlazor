@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Options;
 using Microsoft.JSInterop;
+using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
@@ -63,11 +64,18 @@ namespace MudBlazor
         {
             Fragment = fragment;
             SetComponentBaseParameters(componentBase, @class, @style, showContent);
-            if (_locked == false)
+            // on BSS we have a race condition with the render cycle where locking causes issue #3640
+            // that's why we lock only on WASM
+            if (RuntimeLocation.IsClientSide)
             {
-                _locked = true;
-                _updater.Invoke();
+                if (_locked == false)
+                {
+                    _locked = true;
+                    _updater.Invoke();
+                }
             }
+            else
+                _updater.Invoke();
         }
 
         public async Task Initialize()
