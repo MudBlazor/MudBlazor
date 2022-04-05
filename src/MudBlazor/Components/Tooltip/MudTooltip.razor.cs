@@ -28,9 +28,6 @@ namespace MudBlazor
 
 
         private bool _isVisible;
-        private bool _touchState;
-        private bool _mouseEnterState;
-        private bool _rendered;
 
         private Origin _anchorOrigin;
         private Origin _transformOrigin;
@@ -164,20 +161,10 @@ namespace MudBlazor
 
         private void HandleMouseEnter()
         {
-            if (_rendered == false)
-            {
-                return;
-            }
-
             if (ReactWith == TooltipBehavior.All || ReactWith == TooltipBehavior.Hover)
             {
                 IsVisible = true;
             }
-
-
-            _mouseEnterState = true;
-
-            
         }
 
         private void HandleMouseLeave()
@@ -186,45 +173,25 @@ namespace MudBlazor
             {
                 IsVisible = false;
             }
-
-            if (_mouseEnterState)
-                _mouseEnterState = false;
         }
 
-        private void HandleTouchStart()
+        private async Task HandleFocusIn()
         {
-            _touchState = true;
-        }
-
-        private void HandleTouchEnd()
-        {
-            _touchState = false;
-        }
-
-        private void HandleFocusIn()
-        {
-            if (_rendered == false || _touchState == true)
-            {
-                return;
-            }
-
             if (ReactWith == TooltipBehavior.All || ReactWith == TooltipBehavior.Focus)
             {
+                await Task.Delay(1); //Without this, popover even didn't show
                 IsVisible = true;
+                await Task.Delay(1); //Withuot this, popover didn't close (%10 probability)
             }
         }
 
-        private void HandleFocusOut()
+        private async Task HandleFocusOut()
         {
-            if (!_mouseEnterState && _touchState)
-            {
-                IsVisible = false;
-                return;
-            }
-
             if (ReactWith == TooltipBehavior.All || ReactWith == TooltipBehavior.Focus || ClickBehavior == TooltipClickBehavior.ClickToShow)
             {
+                await Task.Delay(1);
                 IsVisible = false;
+                await Task.Delay(1);
             }
         }
 
@@ -269,15 +236,6 @@ namespace MudBlazor
             else
             {
                 return Origin.BottomCenter;
-            }
-        }
-
-        protected override void OnAfterRender(bool firstRender)
-        {
-            if (firstRender)
-            {
-                _rendered = true;
-                StateHasChanged();
             }
         }
     }
