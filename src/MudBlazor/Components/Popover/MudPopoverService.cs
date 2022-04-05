@@ -18,7 +18,7 @@ namespace MudBlazor
     public interface IMudPopoverService
     {
         MudPopoverHandler Register(RenderFragment fragment);
-        Task<bool> Unregister(MudPopoverHandler handler);
+        Task<bool> Unregister(MudPopoverHandler hanlder);
         IEnumerable<MudPopoverHandler> Handlers { get; }
         Task InitializeIfNeeded();
         event EventHandler FragmentsChanged;
@@ -29,6 +29,7 @@ namespace MudBlazor
         private readonly SemaphoreSlim _semaphore = new(1, 1);
         private readonly IJSRuntime _runtime;
         private readonly Action _updater;
+        private bool _locked;
         private bool _detached;
 
         public Guid Id { get; }
@@ -48,27 +49,25 @@ namespace MudBlazor
             Id = Guid.NewGuid();
         }
 
-        /// <summary>
-        /// returns true if any of the parameters changed so the caller knows if an update is necessary!
-        /// </summary>
-        public bool SetComponentBaseParameters(MudComponentBase componentBase, string @class, string style, bool showContent)
+        public void SetComponentBaseParameters(MudComponentBase componentBase, string @class, string style, bool showContent)
         {
-            var rv = Class != @class || Style != style || ShowContent != showContent;
             Class = @class;
             Style = style;
             Tag = componentBase.Tag;
             UserAttributes = componentBase.UserAttributes;
             ShowContent = showContent;
-            return rv;
         }
 
         public void UpdateFragment(RenderFragment fragment,
             MudComponentBase componentBase, string @class, string style, bool showContent)
         {
             Fragment = fragment;
-            var hasChanges = SetComponentBaseParameters(componentBase, @class, @style, showContent);
-            if (hasChanges)
+            SetComponentBaseParameters(componentBase, @class, @style, showContent);
+            if (_locked == false)
+            {
+                _locked = true;
                 _updater.Invoke();
+            }
         }
 
         public async Task Initialize()
@@ -114,6 +113,7 @@ namespace MudBlazor
             }
         }
 
+        public void Release() => _locked = false;
     }
 
     public class MudPopoverService : IMudPopoverService, IAsyncDisposable
