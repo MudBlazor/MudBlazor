@@ -83,6 +83,11 @@ namespace MudBlazor
         /// Specifies whether the column is grouped.
         /// </summary>
         [Parameter] public bool Grouping { get; set; }
+        /// <summary>
+        /// Specifies whether the column is sticky.
+        /// </summary>
+        [Parameter] public bool StickyLeft { get; set; }
+        [Parameter] public bool StickyRight { get; set; }
 
         #endregion
 
@@ -113,13 +118,17 @@ namespace MudBlazor
         internal string headerClassname =>
             new CssBuilder("mud-table-cell")
                 .AddClass("mud-table-cell-hide", HideSmall)
+                .AddClass("sticky-left", StickyLeft)
+                .AddClass("sticky-right", StickyRight)
                 .AddClass(Class)
             .Build();
-        internal string cellClassname =>
-            new CssBuilder("mud-table-cell")
-                .AddClass("mud-table-cell-hide", HideSmall)
-                .AddClass(Class)
-            .Build();
+        internal string cellClassname;
+        //internal string cellClassname =>
+        //    new CssBuilder("mud-table-cell")
+        //        .AddClass("mud-table-cell-hide", HideSmall)
+        //        .AddClass("sticky-right", StickyRight)
+        //        .AddClass(Class)
+        //    .Build();
         internal string footerClassname =>
             new CssBuilder("mud-table-cell")
                 .AddClass("mud-table-cell-hide", HideSmall)

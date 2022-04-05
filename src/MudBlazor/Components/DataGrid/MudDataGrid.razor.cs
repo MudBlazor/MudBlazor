@@ -74,7 +74,8 @@ namespace MudBlazor
 
         internal readonly List<Column<T>> _columns = new List<Column<T>>();
         internal T _editingItem;
-        internal int editingItemHash;
+        //internal int editingItemHash;
+        internal T editingSourceItem;
         internal T _previousEditingItem;
         internal bool isEditFormOpen;
 
@@ -728,7 +729,8 @@ namespace MudBlazor
 
         internal void ClearEditingItem()
         {
-            _editingItem = default(T);
+            _editingItem = default;
+            editingSourceItem = default;
         }
 
         /// <summary>
@@ -753,18 +755,17 @@ namespace MudBlazor
         internal async Task CommitItemChangesAsync()
         {
             // Here, we need to validate at the cellular level...
-            var found = CurrentPageItems.FirstOrDefault(x => x.GetHashCode() == editingItemHash);
 
-            if (found != null)
+            if (editingSourceItem != null)
             {
                 foreach (var property in _properties)
                 {
-                    property.SetValue(found, property.GetValue(_editingItem));
+                    property.SetValue(editingSourceItem, property.GetValue(_editingItem));
                 }
 
-                Console.WriteLine(JsonSerializer.Serialize(found));
+                Console.WriteLine(JsonSerializer.Serialize(editingSourceItem));
 
-                await CommittedItemChanges.InvokeAsync(found);
+                await CommittedItemChanges.InvokeAsync(editingSourceItem);
                 ClearEditingItem();
                 isEditFormOpen = false;
             }
@@ -891,7 +892,7 @@ namespace MudBlazor
         {
             if (ReadOnly) return;
 
-            editingItemHash = item.GetHashCode();
+            editingSourceItem = item;
             EditingCancelledEvent?.Invoke();
             _previousEditingItem = _editingItem;
             _editingItem = JsonSerializer.Deserialize<T>(JsonSerializer.Serialize(item));

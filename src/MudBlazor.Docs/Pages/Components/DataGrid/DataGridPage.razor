@@ -132,5 +132,23 @@
             </SectionContent>
         </DocsPageSection>
 
+        <DocsPageSection>
+            <SectionHeader Title="Sticky Columns">
+                <Description>
+                    The <CodeInline>&lt;MudDataGrid></CodeInline> allows you to make a column stick to the left or right. Setting the <CodeInline>StickyLeft</CodeInline> or <CodeInline>StickyRight</CodeInline> properties
+                    to <CodeInline>true</CodeInline> will make those columns "sticky". You must turn on <CodeInline>HorizontalScrollbar</CodeInline> to see the columns stick to either side.
+                    <br><br>
+                    There are a couple of things to keep in mind with sticky columns. First, if there are not enough columns and data to force the data grid to scroll, you will not see 
+                    the columns stick, and that is by design and simply how sticky works in CSS. Secondly, there is nothing stopping you from making multiple columns sticky, but it will 
+                    not have the effect you presumably intend. Instead, each column will be sticky when it reached the left or right side of the data grid and will overlap the sticky column
+                    before it.
+
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="DataGridStickyColumnsExample" ShowCode="false" Block="true" FullWidth="true">
+                <DataGridStickyColumnsExample />
+            </SectionContent>
+        </DocsPageSection>
+
     </DocsPageContent>
 </DocsPage>

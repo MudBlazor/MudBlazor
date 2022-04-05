@@ -26,6 +26,18 @@
             }
         }
 
+        &.sticky-left {
+            left: 0px;
+            position: sticky;
+            background-color: var(--mud-palette-background-grey);
+        }
+
+        &.sticky-right {
+            right: 0px;
+            position: sticky;
+            background-color: var(--mud-palette-background-grey);
+        }
+
         .mud-input-text {
             margin-top: 0 !important;
         }
