@@ -30,7 +30,6 @@ namespace MudBlazor
         private readonly SemaphoreSlim _semaphore = new(1, 1);
         private readonly IJSRuntime _runtime;
         private readonly Action _updater;
-        private bool _locked;
         private bool _detached;
 
         public Guid Id { get; }
@@ -64,18 +63,8 @@ namespace MudBlazor
         {
             Fragment = fragment;
             SetComponentBaseParameters(componentBase, @class, @style, showContent);
-            // on BSS we have a race condition with the render cycle where locking causes issue #3640
-            // that's why we lock only on WASM
-            if (RuntimeLocation.IsClientSide)
-            {
-                if (_locked == false)
-                {
-                    _locked = true;
-                    _updater.Invoke();
-                }
-            }
-            else
-                _updater.Invoke();
+            // this basically calls StateHasChanged on the Popover
+            _updater.Invoke();
         }
 
         public async Task Initialize()
@@ -121,7 +110,6 @@ namespace MudBlazor
             }
         }
 
-        public void Release() => _locked = false;
     }
 
     public class MudPopoverService : IMudPopoverService, IAsyncDisposable
