@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Components;
+using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
@@ -19,6 +20,23 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.ComponentBase.Common)]
         public string Style { get; set; }
+
+        private bool _visibled = true;
+
+        /// <summary>
+        /// If false, set the visibility to hidden
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.ComponentBase.Common)]
+        public bool Visibled
+        {
+            get => _visibled;
+            set
+            {
+                Class = new CssBuilder().AddClass("invisible", !value).AddClass(Class).Build();
+                _visibled = value;
+            }
+        }
 
         /// <summary>
         /// Use Tag to attach any user data object to the component for your convenience.
