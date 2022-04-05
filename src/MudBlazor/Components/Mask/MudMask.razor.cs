@@ -239,6 +239,7 @@ namespace MudBlazor
         {
             Mask.Clear();
             await Update();
+            await _elementReference.FocusAsync();
             await OnClearButtonClick.InvokeAsync(e);
         }
 
