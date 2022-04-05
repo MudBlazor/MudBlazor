@@ -34,7 +34,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.ScrollToTop.Behavior)]
-        public bool Visible { get; set; }
+        public override bool Visible { get; set; }
 
         /// <summary>
         /// CSS class for the Visible state. Here, apply some transitions and animations that will happen when the component becomes visible

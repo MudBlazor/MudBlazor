@@ -21,22 +21,29 @@ namespace MudBlazor
         [Category(CategoryTypes.ComponentBase.Common)]
         public string Style { get; set; }
 
-        private bool _visibled = true;
+        private bool _visibility = true;
 
         /// <summary>
         /// If false, set the visibility to hidden
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.ComponentBase.Common)]
-        public bool Visibled
+        public virtual bool Visible
         {
-            get => _visibled;
+            get => _visibility;
             set
             {
                 Class = new CssBuilder().AddClass("invisible", !value).AddClass(Class).Build();
-                _visibled = value;
+                _visibility = value;
+                VisibilityChanged.InvokeAsync(_visibility).AndForget();
             }
         }
+
+        /// <summary>
+        /// Fires when Visible changes
+        /// </summary>
+        [Parameter]
+        public EventCallback<bool> VisibilityChanged { get; set; }
 
         /// <summary>
         /// Use Tag to attach any user data object to the component for your convenience.

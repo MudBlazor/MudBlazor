@@ -48,7 +48,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Overlay.Behavior)]
-        public bool Visible
+        public override bool Visible
         {
             get => _visible;
             set
