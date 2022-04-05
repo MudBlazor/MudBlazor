@@ -349,7 +349,7 @@ namespace MudBlazor
         /// <summary>
         /// Row Child content of the component.
         /// </summary>
-        [Parameter] public RenderFragment<T> ChildRowContent { get; set; }
+        [Parameter] public RenderFragment<CellContext<T>> ChildRowContent { get; set; }
 
         /// <summary>
         /// Defines the table body content when there are no matching records found

@@ -97,17 +97,7 @@ namespace MudBlazor
             OnStartedEditingItem();
 
             // Create the CellContext
-            cellContext = new CellContext<T>
-            {
-                selection = _dataGrid.Selection,
-                Item = _item,
-                Actions = new CellContext<T>.CellActions
-                {
-                    SetSelectedItem = async (x) => await _dataGrid.SetSelectedItemAsync(x, _item),
-                    StartEditingItem = async () => await _dataGrid.SetEditingItemAsync(_item),
-                    CancelEditingItem = async () => await _dataGrid.CancelEditingItemAsync(),
-                }
-            };
+            cellContext = new CellContext<T>(_dataGrid, _item);
         }
 
         public async Task StringValueChangedAsync(string value)

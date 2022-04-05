@@ -224,23 +224,9 @@ namespace MudBlazor
             DataGrid?.AddColumn(this);
 
             // Add the HeaderContext
-            headerContext = new HeaderContext<T>
-            {
-                dataGrid = DataGrid,
-                Actions = new HeaderContext<T>.HeaderActions
-                {
-                    SetSelectAll = async (x) => await DataGrid.SetSelectAllAsync(x),
-                }
-            };
+            headerContext = new HeaderContext<T>(DataGrid);
             // Add the FooterContext
-            footerContext = new FooterContext<T>
-            {
-                dataGrid = DataGrid,
-                Actions = new FooterContext<T>.FooterActions
-                {
-                    SetSelectAll = async (x) => await DataGrid.SetSelectAllAsync(x),
-                }
-            };
+            footerContext = new FooterContext<T>(DataGrid);
         }
 
         protected override void OnParametersSet()

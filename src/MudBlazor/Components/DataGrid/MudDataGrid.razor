@@ -138,7 +138,7 @@
                                             </tr>                                   
                                             @if (ChildRowContent != null)
                                             {
-                                                @ChildRowContent(item)
+                                                @ChildRowContent(new CellContext<T>(this, item))
                                             }                                    
                                             @{ rowIndex++; }
                                         </MudVirtualize>
@@ -169,7 +169,7 @@
                                     </tr>                                   
                                     @if (ChildRowContent != null)
                                     {
-                                        @ChildRowContent(item)
+                                        @ChildRowContent(new CellContext<T>(this, item))
                                     }                                    
                                     @{ rowIndex++; }
                                 </MudVirtualize>
