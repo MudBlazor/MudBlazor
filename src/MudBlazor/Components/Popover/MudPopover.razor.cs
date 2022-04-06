@@ -192,8 +192,6 @@ namespace MudBlazor
                 await Service.InitializeIfNeeded();
             }
 
-            _handler.Release();
-
             await base.OnAfterRenderAsync(firstRender);
         }
 
