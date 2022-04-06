@@ -68,6 +68,19 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public bool? ShowColumnOptions { get; set; }
 
+        [Parameter]
+        public Func<T, object> SortBy
+        {
+            get
+            {
+                return GetLocalSortFunc();
+            }
+            set
+            {
+                _sortBy = value;
+            }
+        }
+
         [Parameter] public SortDirection InitialDirection { get; set; } = SortDirection.None;
         [Parameter] public string SortIcon { get; set; } = Icons.Material.Filled.ArrowUpward;
 

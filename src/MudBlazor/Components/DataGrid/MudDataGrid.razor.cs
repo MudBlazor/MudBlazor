@@ -632,7 +632,6 @@ namespace MudBlazor
 
             Loading = true;
             StateHasChanged();
-            //var label = CurrentSortLabel;
 
             var state = new GridState<T>
             {
