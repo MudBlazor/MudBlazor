@@ -328,13 +328,9 @@ namespace MudBlazor
             }
         }
 
-        private MudTabPanel GetItemFromUri()
+        private MudTabNavLink GetItemFromUri()
         {
             var relative = NavManager.ToBaseRelativePath(NavManager.Uri);
-            foreach (var item in Panels.OfType<MudTabNavGroup>().Where(g => relative.StartsWith(g.LinkBase)))
-            {
-                return item;
-            }
 
             foreach (var item in Panels.OfType<MudTabNavLink>().Where(l => relative == l.Href.TrimStart('/')))
             {
@@ -448,16 +444,14 @@ namespace MudBlazor
 
         [Inject] private NavigationManager NavManager { get; set; }
 
-        private void HandleNavigation(MudTabPanel panel, MouseEventArgs ev = null, MudTabNavGroup group = null)
+        private void HandleNavigation(MudTabPanel panel, MouseEventArgs ev = null)
         {
             if (panel.Disabled || panel is not MudTabNavLink link)
                 return;
 
             NavManager.NavigateTo(link.Href);
-            if (group is null)
-                ActivatePanel(link, ev);
-            else
-                ActivatePanel(group, ev);
+
+            ActivatePanel(link, ev);
         }
 
         #endregion

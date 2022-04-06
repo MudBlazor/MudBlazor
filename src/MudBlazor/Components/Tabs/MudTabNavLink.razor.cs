@@ -14,10 +14,7 @@ public partial class MudTabNavLink : MudTabPanel
 {
     private bool _disposed;
 
-    [CascadingParameter] 
-    private MudTabNavGroup ParentGroup { get; set; }
-    
-    [Parameter] 
+    [Parameter]
     [Category(CategoryTypes.General.ClickAction)]
     public string Href { get; set; }
 
@@ -37,10 +34,8 @@ public partial class MudTabNavLink : MudTabPanel
         //    throw new ArgumentNullException(nameof(Parent), "TabPanel must exist within a Tabs component");
         // base.OnInitialized();
 
-        if (ParentGroup is null)
-            Parent?.AddPanel(this);
-        else
-            ParentGroup.AddPanel(this);
+
+        Parent?.AddPanel(this);
     }
 
     public override async ValueTask DisposeAsync()
@@ -51,9 +46,7 @@ public partial class MudTabNavLink : MudTabPanel
         }
 
         _disposed = true;
-        if (ParentGroup is null)
-            await (Parent?.RemovePanel(this) ?? Task.CompletedTask);
-        else
-            ParentGroup?.RemovePanel(this);
+
+        await (Parent?.RemovePanel(this) ?? Task.CompletedTask);
     }
 }
