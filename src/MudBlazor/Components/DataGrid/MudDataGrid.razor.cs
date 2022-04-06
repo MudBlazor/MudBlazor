@@ -506,10 +506,9 @@ namespace MudBlazor
         [Parameter] public string GroupStyle { get; set; }
 
         /// <summary>
-        /// For hiding Menu Icon from ToolBar
-        /// If ToolBarContent content is null then it will hide toolbar
+        /// When true, displays the built-in menu icon in the header of the data grid.
         /// </summary>
-        [Parameter] public bool HideMenuIcon { get; set; } = false;
+        [Parameter] public bool ShowMenuIcon { get; set; } = false;
 
         #endregion
 

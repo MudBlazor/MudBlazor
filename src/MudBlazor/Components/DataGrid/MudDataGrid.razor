@@ -13,7 +13,7 @@
             {
                 <MudToolBar Class="mud-table-toolbar">
                     @ToolBarContent
-                    @if (!HideMenuIcon)
+                    @if (ShowMenuIcon)
                     {
                         @ToolbarMenu(this)   
                     }
@@ -21,7 +21,7 @@
             }
             else
             {
-                @if (!HideMenuIcon)
+                @if (ShowMenuIcon)
                 {
                     @*Add the default toolbar.*@
                     <MudToolBar Class="mud-table-toolbar">
