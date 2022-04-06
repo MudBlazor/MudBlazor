@@ -122,7 +122,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void MudPopoverHandler_DontUpdateWhenLockIsEnabled()
+        public void MudPopoverHandler_UpdaterInvokationTest()
         {
             RenderFragment initialRenderFragement = (tree) => { };
             var mock = Mock.Of<IJSRuntime>();
@@ -145,41 +145,11 @@ namespace MudBlazor.UnitTests.Components
             {
                 handler.UpdateFragment(newRenderFragement, comp.Instance, "my-extra-class", "my-extra-style:2px", i % 2 == 0);
             }
-
-            updateCounter.Should().Be(1);
-        }
-
-        [Test]
-        public void MudPopoverHandler_UpdateAndLockCycle()
-        {
-            RenderFragment initialRenderFragement = (tree) => { };
-            var mock = Mock.Of<IJSRuntime>();
-
-            var updateCounter = 0;
-            Action updater = () => { updateCounter++; };
-
-            var handler = new MudPopoverHandler(initialRenderFragement, mock, updater);
-
-            var comp = Context.RenderComponent<MudBadge>(p =>
-            {
-                p.Add(x => x.UserAttributes, new Dictionary<string, object> { { "myprop1", "myValue1" } });
-                p.Add(x => x.Tag, "my tag");
-
-            });
-
-            RenderFragment newRenderFragement = (tree) => { };
-
-            for (int i = 0; i < 4; i++)
-            {
-                handler.UpdateFragment(newRenderFragement, comp.Instance, "my-extra-class", "my-extra-style:2px", i % 2 == 0);
-            }
-            updateCounter.Should().Be(1);
-
-            handler.Release();
+            updateCounter.Should().Be(4);
 
             handler.UpdateFragment(newRenderFragement, comp.Instance, "my-new-extra-class", "my-new-extra-style:2px", true);
 
-            updateCounter.Should().Be(2);
+            updateCounter.Should().Be(5);
 
             handler.Class.Should().Be("my-new-extra-class");
             handler.Style.Should().Be("my-new-extra-style:2px");
