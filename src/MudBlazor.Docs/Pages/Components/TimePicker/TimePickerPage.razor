@@ -16,7 +16,19 @@
                 <TimePickerBasicUsageExample />
             </SectionContent>
         </DocsPageSection>
-        
+
+        <DocsPageSection>
+            <SectionHeader Title="Direction and Location">
+                <Description>
+                    <MudAlert Severity="Severity.Info" Dense="true" Class="mt-3">Note: the location can be set with custom css or using the style tag.</MudAlert>
+                    Control where the popover should start from relative to the parent. Offset the popover to be located outside of the parent.
+                </Description>
+            </SectionHeader>
+            <SectionContent Code="TimePickerLocationExample" ShowCode="false">
+                <TimePickerLocationExample />
+            </SectionContent>
+        </DocsPageSection>
+
         <DocsPageSection>
             <SectionHeader Title="Read Only">
                 <Description>If <CodeInline>ReadOnly</CodeInline> is set to true, the TimePicker can be used but the value will remain unchanged regardless of the actions performed or the values entered.</Description>
@@ -25,7 +37,7 @@
                 <TimePickerReadOnlyExample />
             </SectionContent>
         </DocsPageSection>
-                
+
         <DocsPageSection>
             <SectionHeader Title="Action Buttons">
                 <Description>You can add buttons by using the <CodeInline>PickerActions</CodeInline> render fragment. If <CodeInline>AutoClose</CodeInline> is set to true and PickerActions are defined, the hour and the minutes can be selected and the drop-down will close without having to click any of the action buttons.</Description>
