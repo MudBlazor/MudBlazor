@@ -23,8 +23,6 @@ namespace MudBlazor
         private bool _columnsPanelVisible = false;
         private IEnumerable<T> _items;
         private T _selectedItem;
-        private SortDirection _direction = SortDirection.None;
-        private Func<T, object> _sortBy = null;
         private HashSet<object> _groupExpansions = new HashSet<object>();
         private List<GroupDefinition<T>> _groups = new List<GroupDefinition<T>>();
         private PropertyInfo[] _properties = typeof(T).GetProperties();
@@ -90,7 +88,7 @@ namespace MudBlazor
 
         #region Notify Children Delegates
 
-        internal Action<string> SortChangedEvent { get; set; }
+        internal Action<Dictionary<string, SortDefinition<T>>, HashSet<string>> SortChangedEvent { get; set; }
         internal Action<HashSet<T>> SelectedItemsChangedEvent { get; set; }
         internal Action<bool> SelectedAllItemsChangedEvent { get; set; }
         internal Action StartedEditingItemEvent { get; set; }
@@ -138,7 +136,7 @@ namespace MudBlazor
         /// <summary>
         /// Controls whether data in the DataGrid can be sorted. This is overridable by each column.
         /// </summary>
-        [Parameter] public bool Sortable { get; set; } = false;
+        [Parameter] public SortMode SortMode { get; set; } = SortMode.Multiple;
 
         /// <summary>
         /// Controls whether data in the DataGrid can be filtered. This is overridable by each column.
@@ -225,6 +223,13 @@ namespace MudBlazor
         /// through this collection.
         /// </summary>
         [Parameter] public List<FilterDefinition<T>> FilterDefinitions { get; set; } = new List<FilterDefinition<T>>();
+
+        /// <summary>
+        /// The list of SortDefinitions that have been added to the data grid. SortDefinitions are managed by the data
+        /// grid automatically when using the built in filter UI. You can also programmatically manage these definitions
+        /// through this collection.
+        /// </summary>
+        [Parameter] public Dictionary<string, SortDefinition<T>> SortDefinitions { get; set; } = new Dictionary<string, SortDefinition<T>>();
 
         /// <summary>
         /// If true, the results are displayed in a Virtualize component, allowing a boost in rendering speed.
@@ -607,6 +612,15 @@ namespace MudBlazor
             await base.OnAfterRenderAsync(firstRender);
         }
 
+        public override async Task SetParametersAsync(ParameterView parameters)
+        {
+            var sortModeBefore = SortMode;
+            await base.SetParametersAsync(parameters);
+
+            if (parameters.TryGetValue(nameof(SortMode), out SortMode sortMode) && sortMode != sortModeBefore)
+                await ClearCurrentSortings();
+        }
+
         #region Methods
 
         protected IEnumerable<T> GetItemsOfPage(int n, int pageSize)
@@ -627,14 +641,12 @@ namespace MudBlazor
 
             Loading = true;
             StateHasChanged();
-            //var label = CurrentSortLabel;
 
             var state = new GridState<T>
             {
                 Page = CurrentPage,
                 PageSize = RowsPerPage,
-                SortBy = _sortBy,
-                SortDirection = _direction,
+                SortDefinitions = SortDefinitions.Values.OrderBy(sd => sd.Index).ToList(),
                 // Additional ToList() here to decouple clients from internal list avoiding runtime issues
                 FilterDefinitions = FilterDefinitions.ToList()
             };
@@ -721,15 +733,25 @@ namespace MudBlazor
 
         internal IEnumerable<T> Sort(IEnumerable<T> items)
         {
-            if (Items == null)
+            if (null == items || !items.Any())
                 return items;
 
-            if (_sortBy == null || _direction == SortDirection.None)
+            if (null == SortDefinitions || 0 == SortDefinitions.Count)
                 return items;
-            if (_direction == SortDirection.Ascending)
-                return items.OrderBy(item => _sortBy(item));
-            else
-                return items.OrderByDescending(item => _sortBy(item));
+
+            IOrderedEnumerable<T> orderedEnumerable = null;
+
+            foreach (var sortDefinition in SortDefinitions.Values.Where(sd => null != sd.SortFunc).OrderBy(sd => sd.Index))
+            {
+                if (null == orderedEnumerable)
+                    orderedEnumerable = sortDefinition.Descending ? items.OrderByDescending(item => sortDefinition.SortFunc(item))
+                        : items.OrderBy(item => sortDefinition.SortFunc(item));
+                else
+                    orderedEnumerable = sortDefinition.Descending ? orderedEnumerable.ThenByDescending(item => sortDefinition.SortFunc(item))
+                        : orderedEnumerable.ThenBy(item => sortDefinition.SortFunc(item));
+            }
+
+            return orderedEnumerable ?? items;
         }
 
         internal void ClearEditingItem()
@@ -850,15 +872,66 @@ namespace MudBlazor
         /// <summary>
         /// Sets the sort on the data grid.
         /// </summary>
-        /// <param name="direction"></param>
-        /// <param name="sortBy"></param>
-        /// <param name="field"></param>
-        /// <returns></returns>
-        public async Task SetSortAsync(SortDirection direction, Func<T, object> sortBy, string field)
+        /// <param name="field">The field.</param>
+        /// <param name="direction">The direction.</param>
+        /// <param name="sortFunc">The sort function.</param>
+        public async Task SetSortAsync(string field, SortDirection direction, Func<T, object> sortFunc)
         {
-            _direction = direction;
-            _sortBy = sortBy;
-            SortChangedEvent?.Invoke(field);
+            var removedSortDefinitions = new HashSet<string>(SortDefinitions.Keys);
+            SortDefinitions.Clear();
+
+            var newDefinition = new SortDefinition<T>(field, direction == SortDirection.Descending, 0, sortFunc);
+            SortDefinitions[field] = newDefinition;
+
+            // In case sort is just updated make sure to not mark the field as removed
+            removedSortDefinitions.Remove(field);
+
+            await InvokeSortUpdates(SortDefinitions, removedSortDefinitions);
+        }
+
+        public async Task ExtendSortAsync(string field, SortDirection direction, Func<T, object> sortFunc)
+        {
+            // If SortMode is not multiple, use the default set approach and don't extend.
+            if (SortMode != SortMode.Multiple)
+            {
+                await SetSortAsync(field, direction, sortFunc);
+                return;
+            }
+
+            // in case it already exists, just update the current entry
+            if (SortDefinitions.TryGetValue(field, out var sortDefinition))
+                SortDefinitions[field] = sortDefinition with { Descending = direction == SortDirection.Descending, SortFunc = sortFunc };
+            else
+            {
+                var newDefinition = new SortDefinition<T>(field, direction == SortDirection.Descending, SortDefinitions.Count, sortFunc);
+                SortDefinitions[field] = newDefinition;
+            }
+
+            await InvokeSortUpdates(SortDefinitions, null);
+        }
+
+        public async Task RemoveSortAsync(string field)
+        {
+            if (!string.IsNullOrWhiteSpace(field) && SortDefinitions.TryGetValue(field, out var definition))
+            {
+                SortDefinitions.Remove(field);
+                foreach (var defToUpdate in SortDefinitions.Where(kvp => kvp.Value.Index > definition.Index).ToList())
+                    SortDefinitions[defToUpdate.Key] = defToUpdate.Value with { Index = defToUpdate.Value.Index - 1 };
+
+                await InvokeSortUpdates(SortDefinitions, new HashSet<string>() { field });
+            }
+        }
+
+        private async Task ClearCurrentSortings()
+        {
+            var removedSortDefinitions = new HashSet<string>(SortDefinitions.Keys);
+            SortDefinitions.Clear();
+            await InvokeSortUpdates(SortDefinitions, removedSortDefinitions);
+        }
+
+        private async Task InvokeSortUpdates(Dictionary<string, SortDefinition<T>> activeSortDefinitions, HashSet<string> removedSortDefinitions)
+        {
+            SortChangedEvent?.Invoke(activeSortDefinitions, removedSortDefinitions);
             await InvokeServerLoadFunc();
             StateHasChanged();
         }

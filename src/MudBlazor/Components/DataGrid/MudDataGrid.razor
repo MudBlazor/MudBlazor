@@ -94,7 +94,8 @@
                             </tr>
                         }
 
-                        @if (CurrentPageItems != null && CurrentPageItems.Count() > 0)
+                        @{var resolvedPageItems = CurrentPageItems.ToList();}
+                        @if (resolvedPageItems != null && resolvedPageItems.Count > 0)
                         {
                             if (GroupedColumn != null)
                             {
@@ -152,7 +153,7 @@
                             else
                             {
                                 var rowIndex = 0;
-                                <MudVirtualize IsEnabled="@Virtualize" Items="@CurrentPageItems?.ToList()" Context="item">
+                                <MudVirtualize IsEnabled="@Virtualize" Items="@resolvedPageItems" Context="item">
                                     @{ var rowClass = new CssBuilder(RowClass).AddClass(RowClassFunc?.Invoke(item, rowIndex)).Build(); }
                                     @{ var rowStyle = new StyleBuilder().AddStyle(RowStyle).AddStyle(RowStyleFunc?.Invoke(item, rowIndex)).Build(); }
                                     @{ var tmpRowIndex = rowIndex; }
@@ -195,7 +196,7 @@
                     </tbody>
                     <tfoot class="@_footClassname">
                         <tr class="mud-table-row">
-                            @FooterCells(CurrentPageItems)
+                            @FooterCells(resolvedPageItems)
                         </tr>
                     </tfoot>
                 </table>
