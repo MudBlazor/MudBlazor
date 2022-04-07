@@ -244,8 +244,6 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<DataGridCellEditWithTemplateTest>();
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridCellEditWithTemplateTest.Model>>();
 
-            //Console.WriteLine(dataGrid.FindAll("td input")[2].HasAttribute("checked"));
-
             dataGrid.FindAll("td input")[0].GetAttribute("value").Trim().Should().Be("John");
             dataGrid.FindAll("td input")[1].GetAttribute("value").Trim().Should().Be("45");
             dataGrid.FindAll("td input")[2].HasAttribute("checked").Should().Be(false);
@@ -1373,15 +1371,15 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task DataGridHideMenuIconTest()
+        public async Task DataGridShowMenuIconTest()
         {
-            var comp = Context.RenderComponent<DataGridHideMenuIconTest>();
-            var dataGrid = comp.FindComponent<MudDataGrid<DataGridHideMenuIconTest.Item>>();
-            dataGrid.FindAll(".mud-menu").Should().BeEmpty();
+            var comp = Context.RenderComponent<DataGridShowMenuIconTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridShowMenuIconTest.Item>>();
+            dataGrid.FindAll(".mud-table-toolbar .mud-menu").Should().BeEmpty();
             var parameters = new List<ComponentParameter>();
-            parameters.Add(ComponentParameter.CreateParameter(nameof(dataGrid.Instance.HideMenuIcon), false));
+            parameters.Add(ComponentParameter.CreateParameter(nameof(dataGrid.Instance.ShowMenuIcon), true));
             dataGrid.SetParametersAndRender(parameters.ToArray());
-            dataGrid.FindAll(".mud-menu").Should().NotBeEmpty();
+            dataGrid.FindAll(".mud-table-toolbar .mud-menu").Should().NotBeEmpty();
         }
     }
 }
