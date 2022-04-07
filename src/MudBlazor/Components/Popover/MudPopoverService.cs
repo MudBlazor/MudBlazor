@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -11,6 +12,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Options;
 using Microsoft.JSInterop;
+using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
@@ -28,7 +30,6 @@ namespace MudBlazor
         private readonly SemaphoreSlim _semaphore = new(1, 1);
         private readonly IJSRuntime _runtime;
         private readonly Action _updater;
-        private bool _locked;
         private bool _detached;
 
         public Guid Id { get; }
@@ -62,11 +63,8 @@ namespace MudBlazor
         {
             Fragment = fragment;
             SetComponentBaseParameters(componentBase, @class, @style, showContent);
-            if (_locked == false)
-            {
-                _locked = true;
-                _updater.Invoke();
-            }
+            // this basically calls StateHasChanged on the Popover
+            _updater.Invoke();
         }
 
         public async Task Initialize()
@@ -112,7 +110,6 @@ namespace MudBlazor
             }
         }
 
-        public void Release() => _locked = false;
     }
 
     public class MudPopoverService : IMudPopoverService, IAsyncDisposable
@@ -175,6 +172,8 @@ namespace MudBlazor
             return true;
         }
 
+        //TO DO add js test
+        [ExcludeFromCodeCoverage]
         public async ValueTask DisposeAsync()
         {
             if (_isInitilized == false) { return; }

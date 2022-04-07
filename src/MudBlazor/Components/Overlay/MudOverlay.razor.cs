@@ -128,7 +128,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         public EventCallback<MouseEventArgs> OnClick { get; set; }
-        protected void OnClickHandler(MouseEventArgs ev)
+        protected internal void OnClickHandler(MouseEventArgs ev)
         {
             if (AutoClose)
                 Visible = false;

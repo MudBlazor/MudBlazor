@@ -65,10 +65,10 @@ namespace MudBlazor
 
         protected override void ResetValue()
         {
-            if(_mask == null)            
-                InputReference.Reset();            
-            else            
-                _maskReference.Reset();            
+            if (_mask == null)
+                InputReference.Reset();
+            else
+                _maskReference.Reset();
             base.ResetValue();
         }
 
@@ -89,12 +89,16 @@ namespace MudBlazor
         /// </summary>
         /// <param name="text"></param>
         /// <returns></returns>
-        public Task SetText(string text)
+        public async Task SetText(string text)
         {
             if (_mask == null)
-                return InputReference?.SetText(text);
-            else
-                return _maskReference.Clear().ContinueWith(t => _maskReference.OnPaste(text));
+            {
+                if (InputReference != null)
+                    await InputReference.SetText(text);
+                return;
+            }
+            await _maskReference.Clear();
+            _maskReference.OnPaste(text);
         }
 
 

@@ -1,4 +1,5 @@
 ﻿@using Microsoft.AspNetCore.Components
+@using MudBlazor.Examples.Data.Models
 @using MudBlazor.Utilities
 @namespace MudBlazor.Docs.Components.LandingPage
 
@@ -135,6 +136,129 @@
                 </div>
             </MudPaper>
         </div>
+        <div class="my-6 d-flex gap-6 flex-wrap">
+            <MudPaper Class="py-4 px-6 rounded-lg d-flex flex-column">
+                    <MudText Typo="Typo.h6">Uranium-235</MudText>
+                    <div class="d-flex align-center gap-4">
+                        <MudRating ReadOnly="true" SelectedValue="4" />
+                        <MudText Typo="Typo.subtitle2" Color="Color.Primary">See all 137 reviews</MudText>
+                    </div>
+                    <MudText>This is the type of uranium used in the RBMK reactors.</MudText>
+                    <MudDivider Class="my-3"/>
+                    <MudText Typo="Typo.subtitle2" GutterBottom="true">Reactor Type</MudText>
+                    <div class="mx-n2 mb-2">
+                        <MudChip Color="Color.Primary">RBMK-1000</MudChip><MudChip>RBMK-1500</MudChip><MudChip>RBMKP-2400</MudChip>
+                    </div>
+                    <div>
+                        <MudButton Variant="Variant.Text" Color="Color.Primary" Class="ml-n2 mb-n2">Read More</MudButton>
+                    </div>
+            </MudPaper>
+            @if(IsMobile == false)
+            {
+                <MudSimpleTable Dense="true" Hover="true" Class="flex-grow-1">
+                    <thead>
+                        <tr>
+                            <th>Nr</th>
+                            <th>Sign</th>
+                            <th>Name</th>
+                            <th>Position</th>
+                            <th>Molar mass</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Elements)
+                        {
+                            <tr>
+                                <td>@item.Number</td>
+                                <td>@item.Sign</td>
+                                <td>@item.Name</td>
+                                <td>@item.Position</td>
+                                <td>@item.Molar</td>
+                            </tr>
+                        }
+                    </tbody>
+                </MudSimpleTable>
+            }
+        </div>
+        @if(IsMobile == false)
+        {
+        <div class="lp-app-grid">
+            <MudPaper Class="rounded-lg">
+                <MudDatePicker PickerVariant="PickerVariant.Static" Orientation="Orientation.Landscape" Date="@(DateTime.Today.AddDays(1))" Class="rounded-lg" />
+            </MudPaper>
+            <MudPaper Class="rounded-lg d-flex flex-column">
+                <div class="d-flex align-center px-4 pt-4 pb-3 gap-4">
+                    <MudIcon Icon="@Icons.Custom.Brands.MudBlazor" Color="Color.Primary" />
+                    <MudText Typo="Typo.subtitle2">MudPay</MudText>
+                </div>
+                <MudDivider/>
+                <div class="d-flex flex-column pa-4 gap-4">
+                    <MudTextField T="string" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Rounded.CreditCard" Mask="@(new PatternMask("0000 0000 0000 0000"))" Label="Card Number" Placeholder="0000 0000 0000 0000"  Variant="@Variant.Text" />
+                    <div class="d-flex gap-4">
+                        <MudTextField T="string" Mask="@(new DateMask("MM/YY", 'Y', 'M'))" Label="Expiration" Placeholder="MM/YY"  Variant="@Variant.Text" />
+                        <MudTextField T="string" Mask="@(new PatternMask("000"))" Label="CVC" Placeholder="000" Variant="@Variant.Text" />
+                    </div>
+                </div>
+                <div class="d-flex align-end flex-grow-1 pa-4">
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" FullWidth="true" DisableElevation="true">Pay now</MudButton>
+                </div>
+            </MudPaper>
+            <div class="d-flex flex-column gap-6">
+                <MudTabs Elevation="1" Rounded="true" Color="@Color.Primary">
+                    <MudTabPanel Text="One" />
+                    <MudTabPanel Text="Two" />
+                    <MudTabPanel Text="Three" />
+                    <MudTabPanel Text="Four" />
+                </MudTabs>
+                <div class="d-flex gap-6 flex-grow-1">
+                    <MudPaper Class="d-flex flex-column align-center py-2">
+                        <MudText Typo="Typo.body2">100°C</MudText>
+                        <div class="mud-height-full my-n6">
+                            <MudSlider Value="@sliderValue" Vertical="true" Class="d-flex mx-n8"/>
+                        </div>
+                        <MudText Typo="Typo.body2">0°C</MudText>
+                    </MudPaper>
+                    <div class="d-flex flex-column gap-6">
+                        <MudPaper Class="d-flex">
+                            <MudIconButton Icon="@Icons.Material.Filled.FormatAlignRight" Class="rounded-0 rounded-l" />
+                            <MudIconButton Icon="@Icons.Material.Filled.FormatAlignCenter" Class="rounded-0" />
+                            <MudIconButton Icon="@Icons.Material.Filled.FormatAlignLeft" Class="rounded-0" />
+                            <MudDivider Vertical="true" FlexItem="true" Class="mx-2" />
+                            <MudIconButton Icon="@Icons.Material.Filled.FormatBold" Class="rounded-0" />
+                            <MudIconButton Icon="@Icons.Material.Filled.FormatItalic" Class="rounded-0" />
+                            <MudIconButton Icon="@Icons.Material.Filled.FormatUnderlined" Class="rounded-0 rounded-r" />
+                        </MudPaper>
+                        <div class="relative">
+                            <MudExpansionPanels>
+                                <MudExpansionPanel>
+                                    <TitleContent>
+                                        <div class="d-flex gap-4">
+                                            <MudIcon Icon="@Icons.Material.Filled.Folder"/>
+                                            <MudText>MudBlazor News</MudText>
+                                        </div>
+                                    </TitleContent>
+                                    <ChildContent>
+                                        Nope :)
+                                    </ChildContent>
+                                </MudExpansionPanel>
+                                <MudExpansionPanel @bind-IsExpanded="@expansionPanel1">
+                                    <TitleContent>
+                                        <div class="d-flex gap-4">
+                                            <MudIcon Icon="@Icons.Material.Filled.Folder"/>
+                                            <MudText>Scraped Ideas</MudText>
+                                        </div>
+                                    </TitleContent>
+                                    <ChildContent>
+                                        MudReactor
+                                    </ChildContent>
+                                </MudExpansionPanel>
+                            </MudExpansionPanels>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        }
     </div>
 </div>
 
@@ -172,7 +296,8 @@
 
     private bool miniDrawerOpen;
     private bool overlayVisible { get; set; }
-
+    private double sliderValue = 50.0;
+    private bool expansionPanel1 = true;
     MudListItem selectedItem;
     object selectedValue = 1;
 
@@ -222,4 +347,14 @@
             miniDrawerOpen = true;
         }
     }
+
+    private IEnumerable<Element> Elements = new List<Element>()
+    {
+        new Element() { Number = 1, Sign = "H", Name = "Hydrogen", Position = 0, Molar = 1.00794},
+        new Element() { Number = 2, Sign = "He", Name = "Helium", Position = 17, Molar = 4.002602},
+        new Element() { Number = 3, Sign = "Li", Name = "Lithium", Position = 0, Molar = 6.941},
+        new Element() { Number = 4, Sign = "Be", Name = "Beryllium", Position = 1, Molar = 9.012182},
+        new Element() { Number = 5, Sign = "C", Name = "Carbon", Position = 13, Molar = 12.0107},
+        new Element() { Number = 6, Sign = "O", Name = "Oxygen", Position = 15, Molar = 15.9994},
+    };
 }

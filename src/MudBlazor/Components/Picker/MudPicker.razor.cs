@@ -337,11 +337,12 @@ namespace MudBlazor
             IsOpen = false;
 
             if (submit)
+            {
                 Submit();
-
-            StateHasChanged();
+            }
 
             OnClosed();
+            StateHasChanged();
         }
 
         public void Open()
@@ -353,7 +354,7 @@ namespace MudBlazor
 
         private void CloseOverlay() => Close(PickerActions == null);
 
-        protected virtual void Submit() { }
+        protected internal virtual void Submit() { }
 
         public virtual void Clear(bool close = true)
         {

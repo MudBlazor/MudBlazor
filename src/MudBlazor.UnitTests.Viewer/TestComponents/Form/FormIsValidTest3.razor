@@ -1,6 +1,6 @@
 ﻿<div style="max-width: 400px;">
     <MudForm @ref="form1" @bind-IsValid="@valid" @bind-IsTouched="@touched" ValidationDelay="0" >
-        <MudTextField T="string" Label="First Name" />
+        <MudTextField id="textFieldLabelTest" T="string" Label="First Name"/>
         <MudTextField T="string" Required="true" Label="Last Name" />
     </MudForm>
     <div class="d-flex mt-5">

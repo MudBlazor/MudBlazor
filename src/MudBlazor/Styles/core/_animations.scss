@@ -240,10 +240,20 @@
 
 @keyframes mud-progress-linear-striped-loading {
     0% {
-        background-position: 0 0;
+        transform: translateX(0);
     }
 
     100% {
-        background-position: 300px 0;
+        transform: translateX(40px);
+    }
+}
+
+@keyframes mud-progress-linear-striped-reverse-loading {
+    0% {
+        transform: translateX(40px);
+    }
+
+    100% {
+        transform: translateX(0);
     }
 }

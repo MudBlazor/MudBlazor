@@ -6,6 +6,11 @@
 	 @attributes="UserAttributes"
 	 draggable="@(Disabled == false ? "true" : "false")"
 	 @ondragstart="DragStarted"
-	 @ondragend="DragEnded">
-	@ChildContent
+	 @ondragend="DragEnded"
+	 @ondragenter="HandleDragEnter"
+	 @ondragleave="HandleDragLeave">
+	@if (HideContent == false)
+	{
+		@ChildContent
+	}
 </div>

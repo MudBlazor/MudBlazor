@@ -1,4 +1,5 @@
 ﻿
+using System.Threading.Tasks;
 using Bunit;
 using FluentAssertions;
 using NUnit.Framework;
@@ -36,7 +37,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void MudButtonShouldRenderAnAnchorIfLinkIsSetAndIsNotDisabled()
         {
-            var link = Parameter(nameof(MudButton.Link), "https://www.google.com");
+            var link = Parameter(nameof(MudButton.Href), "https://www.google.com");
             var target = Parameter(nameof(MudButton.Target), "_blank");
             var disabled = Parameter(nameof(MudButton.Disabled), true);
             var comp = Context.RenderComponent<MudButton>(link, target);
@@ -88,7 +89,7 @@ namespace MudBlazor.UnitTests.Components
         public void MudIconButtonShouldRenderAnAnchorIfLinkIsSet()
         {
             using var ctx = new Bunit.TestContext();
-            var link = Parameter(nameof(MudIconButton.Link), "https://www.google.com");
+            var link = Parameter(nameof(MudIconButton.Href), "https://www.google.com");
             var target = Parameter(nameof(MudIconButton.Target), "_blank");
             var comp = ctx.RenderComponent<MudIconButton>(link, target);
             //Link property is set, so it has to render an anchor element
@@ -132,7 +133,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void MudFabShouldRenderAnAnchorIfLinkIsSet()
         {
-            var link = Parameter(nameof(MudFab.Link), "https://www.google.com");
+            var link = Parameter(nameof(MudFab.Href), "https://www.google.com");
             var target = Parameter(nameof(MudFab.Target), "_blank");
             var comp = Context.RenderComponent<MudFab>(link, target);
             //Link property is set, so it has to render an anchor element
@@ -180,6 +181,16 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("button span.mud-icon-button-label").InnerHtml.Trim().Should().StartWith("<span")
                 .And.Contain("customicon")
                 .And.Contain($"title=\"{title}\"");
+        }
+
+        [Test]
+        public async Task MudToggleIconTest()
+        {
+            var comp = Context.RenderComponent<MudToggleIconButton>();
+#pragma warning disable BL0005
+            await comp.InvokeAsync(() => comp.Instance.Disabled = true);
+            await comp.InvokeAsync(() => comp.Instance.SetToggledAsync(true));
+            comp.WaitForAssertion(() => comp.Instance.Toggled.Should().BeFalse());
         }
     }
 }
