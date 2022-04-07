@@ -136,7 +136,7 @@ namespace MudBlazor
         /// <summary>
         /// Controls whether data in the DataGrid can be sorted. This is overridable by each column.
         /// </summary>
-        [Parameter] public bool Sortable { get; set; } = false;
+        [Parameter] public SortMode SortMode { get; set; } = SortMode.Multiple;
 
         /// <summary>
         /// Controls whether data in the DataGrid can be filtered. This is overridable by each column.
@@ -612,6 +612,15 @@ namespace MudBlazor
             await base.OnAfterRenderAsync(firstRender);
         }
 
+        public override async Task SetParametersAsync(ParameterView parameters)
+        {
+            var sortModeBefore = SortMode;
+            await base.SetParametersAsync(parameters);
+
+            if (parameters.TryGetValue(nameof(SortMode), out SortMode sortMode) && sortMode != sortModeBefore)
+                await ClearCurrentSortings();
+        }
+
         #region Methods
 
         protected IEnumerable<T> GetItemsOfPage(int n, int pageSize)
@@ -882,6 +891,13 @@ namespace MudBlazor
 
         public async Task ExtendSortAsync(string field, SortDirection direction, Func<T, object> sortFunc)
         {
+            // If SortMode is not multiple, use the default set approach and don't extend.
+            if (SortMode != SortMode.Multiple)
+            {
+                await SetSortAsync(field, direction, sortFunc);
+                return;
+            }
+
             // in case it already exists, just update the current entry
             if (SortDefinitions.TryGetValue(field, out var sortDefinition))
                 SortDefinitions[field] = sortDefinition with { Descending = direction == SortDirection.Descending, SortFunc = sortFunc };
@@ -904,6 +920,13 @@ namespace MudBlazor
 
                 await InvokeSortUpdates(SortDefinitions, new HashSet<string>() { field });
             }
+        }
+
+        private async Task ClearCurrentSortings()
+        {
+            var removedSortDefinitions = new HashSet<string>(SortDefinitions.Keys);
+            SortDefinitions.Clear();
+            await InvokeSortUpdates(SortDefinitions, removedSortDefinitions);
         }
 
         private async Task InvokeSortUpdates(Dictionary<string, SortDefinition<T>> activeSortDefinitions, HashSet<string> removedSortDefinitions)

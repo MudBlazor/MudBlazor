@@ -50,7 +50,7 @@ namespace MudBlazor
         {
             get
             {
-                return Column?.Sortable ?? DataGrid?.Sortable ?? true;
+                return Column?.Sortable ?? DataGrid?.SortMode != SortMode.None;
             }
         }
 
@@ -155,6 +155,9 @@ namespace MudBlazor
         /// <param name="removedSorts">The removed sorts.</param>
         private void OnGridSortChanged(Dictionary<string, SortDefinition<T>> activeSorts, HashSet<string> removedSorts)
         {
+            if ((Column.Sortable.HasValue && !Column.Sortable.Value) || string.IsNullOrWhiteSpace(Column.Field))
+                return;
+
             if (null != removedSorts && removedSorts.Contains(Column.Field))
                 MarkAsUnsorted();
             else if (activeSorts.TryGetValue(Column.Field, out var sortDefinition))
@@ -189,7 +192,7 @@ namespace MudBlazor
                 _ => SortDirection.Ascending
             };
 
-            if (args.CtrlKey)
+            if (args.CtrlKey && DataGrid.SortMode == SortMode.Multiple)
                 await InvokeAsync(() => DataGrid.ExtendSortAsync(Column.Field, _initialDirection, Column.GetLocalSortFunc()));
             else
                 await InvokeAsync(() => DataGrid.SetSortAsync(Column.Field, _initialDirection, Column.GetLocalSortFunc()));

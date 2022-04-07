@@ -112,7 +112,7 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(() => headerCell.Instance.AddFilter());
             await comp.InvokeAsync(() => headerCell.Instance.OpenFilters());
 
-            await comp.InvokeAsync(() => dataGrid.Instance.Sortable = false);
+            await comp.InvokeAsync(() => dataGrid.Instance.SortMode = SortMode.None);
             dataGrid.Render();
             // Since Sortable is now false, the click handler (and element holding it) should no longer exist.
             dataGrid.FindAll(".column-header .sortable-column-header").Should().BeEmpty();
@@ -374,7 +374,7 @@ namespace MudBlazor.UnitTests.Components
             cells[15].TextContent.Should().Be("C"); cells[16].TextContent.Should().Be("44"); cells[17].TextContent.Should().Be("1111111");
             cells[18].TextContent.Should().Be("C"); cells[19].TextContent.Should().Be("55"); cells[20].TextContent.Should().Be("222222");
 
-            await comp.InvokeAsync(() => dataGrid.Instance.Sortable = false);
+            await comp.InvokeAsync(() => dataGrid.Instance.SortMode = SortMode.None);
             dataGrid.Render();
 
             // Since Sortable is now false, the click handler (and element holding it) should no longer exist.
