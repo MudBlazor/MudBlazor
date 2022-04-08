@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Components.Web;
+﻿using System.Globalization;
+
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -15,8 +17,14 @@ builder.RootComponents.Add<HeadOutlet>("head::after");
 
 builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
 builder.Services.TryAddDocsViewServices();
+builder.Services.AddLocalization();
 
 var build = builder.Build();
+
+CultureInfo culture = new CultureInfo("pl-PL");
+
+CultureInfo.DefaultThreadCurrentCulture = culture;
+CultureInfo.DefaultThreadCurrentUICulture = culture;
 
 var notificationService = build.Services.GetService<INotificationService>();
 if (notificationService is InMemoryNotificationService inmemoryService)

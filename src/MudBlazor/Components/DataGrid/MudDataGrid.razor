@@ -213,7 +213,7 @@
     <MudDialog @bind-IsVisible="isEditFormOpen" Options="EditDialogOptions">
         <TitleContent>
             <MudText Typo="Typo.h6">
-                Edit
+                @MudBlazorResource.Edit
             </MudText>
         </TitleContent>
         <DialogContent>
@@ -255,7 +255,7 @@
         return
         @<text>
         <MudMenu Icon="@Icons.Material.Outlined.Settings" Size="Size.Small" AnchorOrigin="Origin.BottomCenter" Dense="true">
-            <MudMenuItem OnClick="@__this.ShowColumnsPanel">Columns</MudMenuItem>
+            <MudMenuItem OnClick="@__this.ShowColumnsPanel">@MudBlazorResource.Columns</MudMenuItem>
             @if (__this.Groupable)
             {
                 <MudMenuItem OnClick="@__this.ExpandAllGroups">Expand All Groups</MudMenuItem>
