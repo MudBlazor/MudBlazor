@@ -6,12 +6,9 @@
 </MudItem>
 <MudItem xs="4">
     <MudSelect T="string" Value="@Field" ValueChanged="@FieldChangedAsync" FullWidth="true" Label="Column" Dense="true" Margin="@Margin.Dense">
-        @if (DataGrid?._columns != null)
+        @foreach (var column in DataGrid?.RenderedColumns)
         {
-            @foreach (var column in DataGrid?._columns)
-            {
-                <MudSelectItem Value="@column.Field">@computedTitle</MudSelectItem>
-            }
+            <MudSelectItem Value="@column.Field">@computedTitle</MudSelectItem>
         }
     </MudSelect>
 </MudItem>

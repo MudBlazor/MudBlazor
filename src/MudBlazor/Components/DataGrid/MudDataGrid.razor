@@ -43,7 +43,7 @@
                             @Header
                         </CascadingValue>
                         <tr class="mud-table-row">
-                            @foreach (var column in _columns)
+                            @foreach (var column in RenderedColumns)
                             {
                                 <HeaderCell T="T" Column="@column"></HeaderCell>
                             }
@@ -67,7 +67,7 @@
                             <MudOverlay  Visible="true" OnClick="@(() => _columnsPanelVisible = false)"></MudOverlay>
                             <MudPaper Class="pa-2 columns-panel" Style="position:absolute;max-width:450px;z-index:var(--mud-zindex-drawer)" Elevation="4">
                                 <MudGrid Spacing="0">
-                                    @foreach (var column in _columns)
+                                    @foreach (var column in RenderedColumns)
                                     {
                                         <MudItem xs="12">
                                             <MudSwitch T="bool" Disabled="@(!(column.Hideable ?? false))" Checked="@column.Hidden" CheckedChanged="@column.Toggle" Converter="_oppositeBoolConverter" Color="Color.Primary" Label="@(column.Title ?? @column.Field)" />
@@ -128,7 +128,7 @@
                                             @{ var tmpRowIndex = rowIndex; }
                                             <tr class="mud-table-row @rowClass" Style="@rowStyle" @key="item" @onclick="@((args) => OnRowClickedAsync(args, item, tmpRowIndex))">  
                                                 <CascadingValue Value="@Validator" IsFixed="true">
-                                                @foreach (var column in @_columns)
+                                                @foreach (var column in RenderedColumns)
                                                 {
                                                     if (!column.Hidden)
                                                     {
@@ -159,7 +159,7 @@
                                     @{ var tmpRowIndex = rowIndex; }
                                     <tr class="mud-table-row @rowClass" Style="@rowStyle" @key="item" @onclick="@((args) => OnRowClickedAsync(args, item, tmpRowIndex))">  
                                         <CascadingValue Value="@Validator" IsFixed="true">
-                                        @foreach (var column in @_columns)
+                                        @foreach (var column in RenderedColumns)
                                         {
                                             if (!column.Hidden)
                                             {
@@ -217,7 +217,7 @@
         </TitleContent>
         <DialogContent>
             <MudForm>
-                @foreach (var column in @_columns)
+                @foreach (var column in RenderedColumns)
                 {
                     var cell = new Cell<T>(this, column, _editingItem);
 
@@ -270,7 +270,7 @@
         @<text>
         @if (currentItems != null)
         {
-            foreach (var column in _columns)
+            foreach (var column in RenderedColumns)
             {
                 if (!column.Hidden)
                 {

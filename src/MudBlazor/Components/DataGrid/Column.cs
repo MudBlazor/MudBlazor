@@ -20,11 +20,11 @@ namespace MudBlazor
         [Parameter] public T Value { get; set; }
         [Parameter] public EventCallback<T> ValueChanged { get; set; }
 
+        //[Parameter] public bool Visible { get; set; } = true;
+
         /// <summary>
         /// Specifies the name of the object's property bound to the column
         /// </summary>
-        [Parameter] public bool Visible { get; set; } = true;
-
         [Parameter] public string Field { get; set; }
         [Parameter] public Type FieldType { get; set; }
         [Parameter] public string Title { get; set; }

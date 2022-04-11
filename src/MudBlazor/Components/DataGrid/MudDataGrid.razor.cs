@@ -65,12 +65,11 @@ namespace MudBlazor
                 if (ServerData != null)
                     return (int)Math.Ceiling(_server_data.TotalItems / (double)RowsPerPage);
 
-                Console.WriteLine("numPages");
                 return (int)Math.Ceiling(FilteredItems.Count() / (double)RowsPerPage);
             }
         }
 
-        internal readonly List<Column<T>> _columns = new List<Column<T>>();
+        public readonly List<Column<T>> RenderedColumns = new List<Column<T>>();
         internal T _editingItem;
         //internal int editingItemHash;
         internal T editingSourceItem;
@@ -486,7 +485,7 @@ namespace MudBlazor
                         _groups.Clear();
                         _groupExpansions.Clear();
 
-                        foreach (var column in _columns)
+                        foreach (var column in RenderedColumns)
                             column.RemoveGrouping();
                     }
                 }
@@ -578,7 +577,7 @@ namespace MudBlazor
         {
             get
             {
-                return _columns.FirstOrDefault(x => x.grouping);
+                return RenderedColumns.FirstOrDefault(x => x.grouping);
             }
         }
 
@@ -590,7 +589,7 @@ namespace MudBlazor
         {
             get
             {
-                return _columns.Any(x => !x.Hidden && (x.FooterTemplate != null || x.AggregateDefinition != null));
+                return RenderedColumns.Any(x => !x.Hidden && (x.FooterTemplate != null || x.AggregateDefinition != null));
             }
         }
 
@@ -664,9 +663,9 @@ namespace MudBlazor
         internal void AddColumn(Column<T> column)
         {
             if (column.Tag?.ToString() == "select-column")
-                _columns.Insert(0, column);
+                RenderedColumns.Insert(0, column);
             else
-                _columns.Add(column);
+                RenderedColumns.Add(column);
         }
 
         /// <summary>
@@ -674,7 +673,7 @@ namespace MudBlazor
         /// </summary>
         internal void AddFilter()
         {
-            var column = _columns?.FirstOrDefault();
+            var column = RenderedColumns.FirstOrDefault();
             FilterDefinitions.Add(new FilterDefinition<T>
             {
                 Id = Guid.NewGuid(),
@@ -688,7 +687,7 @@ namespace MudBlazor
 
         internal void AddFilter(Guid id, string field)
         {
-            var column = _columns?.FirstOrDefault(x => x.Field == field);
+            var column = RenderedColumns.FirstOrDefault(x => x.Field == field);
             FilterDefinitions.Add(new FilterDefinition<T>
             {
                 Id = id,
@@ -789,8 +788,6 @@ namespace MudBlazor
                 {
                     property.SetValue(editingSourceItem, property.GetValue(_editingItem));
                 }
-
-                Console.WriteLine(JsonSerializer.Serialize(editingSourceItem));
 
                 await CommittedItemChanges.InvokeAsync(editingSourceItem);
                 ClearEditingItem();
@@ -1018,7 +1015,7 @@ namespace MudBlazor
 
         internal void HideAllColumns()
         {
-            foreach (var column in _columns)
+            foreach (var column in RenderedColumns)
             {
                 if (column.Hideable ?? false)
                     column.Hide();
@@ -1029,7 +1026,7 @@ namespace MudBlazor
 
         internal void ShowAllColumns()
         {
-            foreach (var column in _columns)
+            foreach (var column in RenderedColumns)
             {
                 if (column.Hideable ?? false)
                     column.Show();
@@ -1089,7 +1086,7 @@ namespace MudBlazor
 
         internal void ChangedGrouping(Column<T> column)
         {
-            foreach (var c in _columns)
+            foreach (var c in RenderedColumns)
             {
                 if (c.Field != column.Field)
                     c.RemoveGrouping();
