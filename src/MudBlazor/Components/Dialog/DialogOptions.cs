@@ -45,7 +45,7 @@ namespace MudBlazor
         BottomLeft,
         [Description("bottomright")]
         BottomRight,
-        [Description("center")]
+        [Description("custom")]
         Custom
     }
 }
