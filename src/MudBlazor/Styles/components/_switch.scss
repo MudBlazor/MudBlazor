@@ -10,13 +10,13 @@
     -webkit-tap-highlight-color: transparent;
 
     &.mud-disabled {
-        color: var(--mud-palette-text-disabled);
+        color: var(--mud-palette-text-disabled) !important;
         cursor: default;
     }
 
     &.mud-readonly, .mud-readonly:hover {
         cursor: default;
-        background-color: transparent;
+        background-color: transparent !important;
     }
 }
 
@@ -65,15 +65,15 @@
     }
 
     &.mud-switch-disabled {
-        color: var(--mud-palette-grey-default);
+        color: var(--mud-palette-grey-default) !important;
 
         & + .mud-switch-track {
-            opacity: 0.12;
+            opacity: 0.12 !important;
         }
 
         &:hover, &:focus-visible {
             cursor: default;
-            background-color: transparent;
+            background-color: transparent !important;
         }
     }
 }
