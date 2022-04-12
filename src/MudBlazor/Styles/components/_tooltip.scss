@@ -8,6 +8,7 @@
 }
 
 .mud-tooltip {
+    padding: 4px 8px;
     text-align: center;
     align-items: center;
     justify-content: center;
@@ -16,10 +17,6 @@
     line-height: 1.4em;
     border-radius: var(--mud-default-borderradius);
     z-index: var(--mud-zindex-tooltip);
-
-    &.mud-popover-open {
-        padding: 4px 8px;
-    }
 
     &.mud-tooltip-default {
         color: var(--mud-palette-dark-text);
