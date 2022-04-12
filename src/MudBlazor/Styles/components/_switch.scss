@@ -1,6 +1,4 @@
-﻿@import '../abstracts/variables';
-
-.mud-switch {
+﻿.mud-switch {
     cursor: pointer;
     display: inline-flex;
     align-items: center;
@@ -44,8 +42,6 @@
         background-color: var(--mud-palette-black);
     }
 }
-
-
 
 .mud-switch-base {
     padding: 9px;
@@ -106,22 +102,5 @@
         box-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2), 0px 1px 1px 0px rgba(0,0,0,0.14), 0px 1px 3px 0px rgba(0,0,0,0.12);
         border-radius: 50%;
         background-color: currentColor;
-    }
-}
-
-
-@each $color in $mud-palette-colors {
-    .mud-switch-#{$color} {
-        &.mud-checked {
-            color: var(--mud-palette-#{$color});
-
-            &:hover, &:focus-visible {
-                background-color: var(--mud-palette-#{$color}-hover);
-            }
-
-            & + .mud-switch-track {
-                background-color: var(--mud-palette-#{$color});
-            }
-        }
     }
 }
