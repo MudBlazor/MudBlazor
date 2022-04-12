@@ -1,6 +1,4 @@
-﻿@import '../abstracts/variables';
-
-.mud-checkbox {
+﻿.mud-checkbox {
     cursor: pointer;
     display: inline-flex;
     align-items: center;
@@ -9,7 +7,7 @@
 
     &.mud-disabled, .mud-disabled:hover, .mud-disabled:focus-visible {
         cursor: default;
-        background-color: transparent;
+        background-color: transparent !important;
 
         & * {
             cursor: default;

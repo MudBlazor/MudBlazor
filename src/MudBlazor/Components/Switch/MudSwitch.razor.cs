@@ -20,10 +20,17 @@ namespace MudBlazor
         protected string SwitchClassname =>
         new CssBuilder("mud-button-root mud-icon-button mud-switch-base")
             .AddClass($"mud-ripple mud-ripple-switch", !DisableRipple && !ReadOnly && !Disabled)
-            .AddClass($"mud-switch-{Color.ToDescriptionString()}")
+            .AddClass($"mud-{Color.ToDescriptionString()}-text hover:mud-{Color.ToDescriptionString()}-hover", BoolValue == true)
+            .AddClass($"mud-{UnCheckedColor.ToDescriptionString()}-text hover:mud-{UnCheckedColor.ToDescriptionString()}-hover", BoolValue == false)
             .AddClass($"mud-switch-disabled", Disabled)
             .AddClass($"mud-readonly", ReadOnly)
             .AddClass($"mud-checked", BoolValue)
+        .Build();
+
+        protected string TrackClassname =>
+        new CssBuilder("mud-switch-track")
+            .AddClass($"mud-{Color.ToDescriptionString()}", BoolValue == true)
+            .AddClass($"mud-{UnCheckedColor.ToDescriptionString()}", BoolValue == false)
         .Build();
 
         //Excluded because not used
@@ -40,6 +47,13 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.FormComponent.Appearance)]
         public Color Color { get; set; } = Color.Default;
+
+        /// <summary>
+        /// The base color of the component in its none active/unchecked state. It supports the theme colors.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Radio.Appearance)]
+        public Color UnCheckedColor { get; set; } = Color.Default;
 
         /// <summary>
         /// The text/label will be displayed next to the switch if set.
