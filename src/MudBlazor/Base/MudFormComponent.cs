@@ -4,7 +4,6 @@ using System.ComponentModel.DataAnnotations;
 using System.Globalization;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Reflection;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
@@ -74,7 +73,7 @@ namespace MudBlazor
 
         protected virtual bool SetConverter(Converter<T, U> value)
         {
-            var changed = (_converter != value);
+            var changed = _converter != value;
             if (changed)
             {
                 _converter = value ?? throw new ArgumentNullException(nameof(value));   // converter is mandatory at all times
@@ -96,7 +95,7 @@ namespace MudBlazor
 
         protected virtual bool SetCulture(CultureInfo value)
         {
-            var changed = (_converter.Culture != value);
+            var changed = _converter.Culture != value;
             if (changed)
             {
                 _converter.Culture = value;
@@ -161,7 +160,7 @@ namespace MudBlazor
 
         #region MudForm Validation
 
-        public List<string> ValidationErrors { get; set; } = new List<string>();
+        public List<string> ValidationErrors { get; set; } = new();
 
         /// <summary>
         /// A validation func or a validation attribute. Supported types are:
@@ -189,7 +188,7 @@ namespace MudBlazor
         // async code was executed to avoid race condition which could lead to incorrect validation results.
         protected void BeginValidateAfter(Task task)
         {
-            Func<Task> execute = async () =>
+            var execute = async () =>
             {
                 var value = _value;
 
@@ -207,7 +206,7 @@ namespace MudBlazor
 
         protected void BeginValidate()
         {
-            Func<Task> execute = async () =>
+            var execute = async () =>
             {
                 var value = _value;
 
@@ -243,28 +242,28 @@ namespace MudBlazor
                 if (ConversionError)
                     errors.Add(ConversionErrorMessage);
                 // validation errors
-                if (Validation is ValidationAttribute)
-                    ValidateWithAttribute(Validation as ValidationAttribute, _value, errors);
-                else if (Validation is Func<T, bool>)
-                    ValidateWithFunc(Validation as Func<T, bool>, _value, errors);
-                else if (Validation is Func<T, string>)
-                    ValidateWithFunc(Validation as Func<T, string>, _value, errors);
-                else if (Validation is Func<T, IEnumerable<string>>)
-                    ValidateWithFunc(Validation as Func<T, IEnumerable<string>>, _value, errors);
-                else if (Validation is Func<object, string, IEnumerable<string>>)
-                    ValidateModelWithFullPathOfMember(Validation as Func<object, string, IEnumerable<string>>, errors);
+                if (Validation is ValidationAttribute validationAttribute)
+                    ValidateWithAttribute(validationAttribute, _value, errors);
+                else if (Validation is Func<T, bool> funcBool)
+                    ValidateWithFunc(funcBool, _value, errors);
+                else if (Validation is Func<T, string> funcString)
+                    ValidateWithFunc(funcString, _value, errors);
+                else if (Validation is Func<T, IEnumerable<string>> funcStrings)
+                    ValidateWithFunc(funcStrings, _value, errors);
+                else if (Validation is Func<object, string, IEnumerable<string>> funcPathStrings)
+                    ValidateModelWithFullPathOfMember(funcPathStrings, errors);
                 else
                 {
                     var value = _value;
 
-                    if (Validation is Func<T, Task<bool>>)
-                        await ValidateWithFunc(Validation as Func<T, Task<bool>>, _value, errors);
-                    else if (Validation is Func<T, Task<string>>)
-                        await ValidateWithFunc(Validation as Func<T, Task<string>>, _value, errors);
-                    else if (Validation is Func<T, Task<IEnumerable<string>>>)
-                        await ValidateWithFunc(Validation as Func<T, Task<IEnumerable<string>>>, _value, errors);
-                    else if (Validation is Func<object, string, Task<IEnumerable<string>>>)
-                        await ValidateModelWithFullPathOfMember(Validation as Func<object, string, Task<IEnumerable<string>>>, errors);
+                    if (Validation is Func<T, Task<bool>> taskBool)
+                        await ValidateWithFunc(taskBool, _value, errors);
+                    else if (Validation is Func<T, Task<string>> taskString)
+                        await ValidateWithFunc(taskString, _value, errors);
+                    else if (Validation is Func<T, Task<IEnumerable<string>>> taskStrings)
+                        await ValidateWithFunc(taskStrings, _value, errors);
+                    else if (Validation is Func<object, string, Task<IEnumerable<string>>> taskPathStrings)
+                        await ValidateModelWithFullPathOfMember(taskPathStrings, errors);
 
                     changed = !EqualityComparer<T>.Default.Equals(value, _value);
                 }
@@ -303,8 +302,8 @@ namespace MudBlazor
 
         protected virtual bool HasValue(T value)
         {
-            if (typeof(T) == typeof(string))
-                return !IsNullOrWhiteSpace(value as string);
+            if (value is string stringValue)
+                return !IsNullOrWhiteSpace(stringValue);
 
             return value != null;
         }
@@ -315,12 +314,12 @@ namespace MudBlazor
             {
                 // The validation context is applied either on the `EditContext.Model`, '_fieldIdentifier.Model', or `this` as a stub subject.
                 // Complex validation with fields references (like `CompareAttribute`) should use an EditContext or For when not using EditContext.
-                var validationContextSubject = EditContext?.Model ?? _fieldIdentifier.Model ?? this;
+                var validationContextSubject = EditContext?.Model ?? _fieldIdentifier.Model;
                 var validationContext = new ValidationContext(validationContextSubject);
-                if (validationContext.MemberName is null && _fieldIdentifier.FieldName is not null)
-                    validationContext.MemberName = _fieldIdentifier.FieldName;
+                validationContext.MemberName ??= _fieldIdentifier.FieldName;
                 var validationResult = attr.GetValidationResult(value, validationContext);
-                if (validationResult != ValidationResult.Success)
+                if (validationResult != null &&
+                    validationResult != ValidationResult.Success)
                     errors.Add(validationResult.ErrorMessage);
             }
             catch (Exception e)
@@ -379,7 +378,7 @@ namespace MudBlazor
                 {
                     return;
                 }
-                
+
                 if (For == null)
                 {
                     errors.Add($"For is null, please set parameter For on the form input component of type {GetType().Name}");
@@ -443,13 +442,13 @@ namespace MudBlazor
                 {
                     return;
                 }
-                
+
                 if (For == null)
                 {
                     errors.Add($"For is null, please set parameter For on the form input component of type {GetType().Name}");
                     return;
                 }
-                
+
                 foreach (var error in await func(Form.Model, For.GetFullPathOfMember()))
                     errors.Add(error);
             }
@@ -532,7 +531,7 @@ namespace MudBlazor
             {
                 var error_msgs = EditContext.GetValidationMessages(_fieldIdentifier).ToArray();
                 Error = error_msgs.Length > 0;
-                ErrorText = (Error ? error_msgs[0] : null);
+                ErrorText = Error ? error_msgs[0] : null;
                 StateHasChanged();
             }
         }
@@ -561,10 +560,10 @@ namespace MudBlazor
             if (For != null && For != _currentFor)
             {
                 // Extract validation attributes
-                // Sourced from https://stackoverflow.com/a/43076222/4839162 
+                // Sourced from https://stackoverflow.com/a/43076222/4839162
                 // and also https://stackoverflow.com/questions/59407225/getting-a-custom-attribute-from-a-property-using-an-expression
                 var expression = (MemberExpression)For.Body;
-                var propertyInfo = (PropertyInfo)expression.Expression?.Type.GetProperty(expression.Member.Name);
+                var propertyInfo = expression.Expression?.Type.GetProperty(expression.Member.Name);
                 _validationAttrsFor = propertyInfo?.GetCustomAttributes(typeof(ValidationAttribute), true).Cast<ValidationAttribute>();
 
                 _fieldIdentifier = FieldIdentifier.Create(For);
