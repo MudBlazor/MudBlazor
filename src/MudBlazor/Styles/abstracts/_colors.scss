@@ -9,6 +9,16 @@
         color: var(--mud-palette-#{$color}) !important;
     }
 
+    .mud-#{$color}-hover {
+        background-color: var(--mud-palette-#{$color}-hover) !important;
+    }
+
+    .hover\:mud-#{$color}-hover {
+        &:hover, &:focus-visible {
+            background-color: var(--mud-palette-#{$color}-hover) !important;
+        }
+    }
+
     .mud-border-#{$color} {
         border-color: var(--mud-palette-#{$color}) !important;
     }
