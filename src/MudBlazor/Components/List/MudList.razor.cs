@@ -17,6 +17,13 @@ namespace MudBlazor
         [CascadingParameter] protected MudList ParentList { get; set; }
 
         /// <summary>
+        /// The color of the selected List Item.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.List.Appearance)]
+        public Color Color { get; set; } = Color.Primary;
+
+        /// <summary>
         /// Child content of component.
         /// </summary>
         [Parameter]
