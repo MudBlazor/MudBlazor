@@ -1,0 +1,42 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudStack Row="true">
+    <MudPaper Width="300px">
+        <MudList Clickable="true" @bind-SelectedItem="selectedItem" @bind-SelectedValue="selectedValue" Color="_color">
+            <MudListSubheader>
+                Select Your Character:
+            </MudListSubheader>
+            <MudListItem Text="Neutral" Value="1" />
+            <MudListItem Text="Good">
+                <NestedList>
+                    <MudListItem Text="Frodo Baggins" Value="2" />
+                    <MudListItem Text="Harry Potter" Value="3" />
+                </NestedList>
+            </MudListItem>
+            <MudListItem Text="Evil">
+                <NestedList>
+                    <MudListItem Text="Sauron" Value="5" />
+                    <MudListItem Text="Voldemort" Value="6" />
+                    <MudListItem Text="Mckaragoz" Value="7" />
+                </NestedList>
+            </MudListItem>
+            <MudListItem Disabled="true" Text="Im not hero" Value="7" />
+        </MudList>
+    </MudPaper>
+    <MudPaper Class="pe-4">
+        <MudRadioGroup T="Color" @bind-SelectedOption="_color" Class="d-flex flex-column">
+            <MudRadio Option="Color.Primary" Color="Color.Primary">Primary</MudRadio>
+            <MudRadio Option="Color.Secondary" Color="Color.Secondary">Secondary</MudRadio>
+            <MudRadio Option="Color.Tertiary" Color="Color.Tertiary">Tertiary</MudRadio>
+            <MudRadio Option="Color.Info" Color="Color.Info">Info</MudRadio>
+            <MudRadio Option="Color.Success" Color="Color.Success">Success</MudRadio>
+            <MudRadio Option="Color.Warning" Color="Color.Warning">Warning</MudRadio>
+        </MudRadioGroup>
+    </MudPaper>
+</MudStack>
+
+@code{
+    MudListItem selectedItem;
+    object selectedValue = 1;
+    Color _color = Color.Primary;
+}
