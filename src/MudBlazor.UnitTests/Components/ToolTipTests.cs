@@ -26,6 +26,7 @@ namespace MudBlazor.UnitTests.Components
             toolTip.Delay.Should().Be(0);
             toolTip.Placement.Should().Be(Placement.Bottom);
             toolTip.Inline.Should().BeTrue();
+            toolTip.ShowOnFocus.Should().BeFalse();
         }
 
         [Test]
@@ -46,7 +47,7 @@ namespace MudBlazor.UnitTests.Components
 
             button.ParentElement.ClassList.Should().Contain("mud-tooltip-root");
 
-            //the button [0] and [1] the popover npde
+            //the button [0] and [1] the popover node
             button.ParentElement.Children.Should().HaveCount(2);
 
             var popoverNode = button.ParentElement.Children[1];
@@ -266,21 +267,31 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task Tooltip_On_Focus()
+        [TestCase(true, true)]
+        [TestCase(false, false)]
+        public async Task Tooltip_On_Focus(bool showOnFocus, bool shouldBeVisible)
         {
-            var comp = Context.RenderComponent<ToolTipPlacementPropertyTest>();
+            var comp = Context.RenderComponent<ToolTipPlacementPropertyTest>(p => p
+                .Add(x => x.ShowOnFocus, showOnFocus));
 
             var button = comp.Find("button");
             await button.ParentElement.TriggerEventAsync("onfocusin", new FocusEventArgs());
 
-            var popoverContentNode = comp.Find("#my-tooltip-content").ParentElement;
+            var popoverContentNode = comp.FindAll("#my-tooltip-content").FirstOrDefault()?.ParentElement;
 
-            popoverContentNode.Should().NotBeNull();
+            if (shouldBeVisible)
+            {
+                popoverContentNode.Should().NotBeNull();
+            }
+            else
+            {
+                popoverContentNode.Should().BeNull();
+            }
         }
 
         [Test]
         [TestCase(true)]
-        [TestCase(false)]        
+        [TestCase(false)]
         public async Task Visible_ByDefault(bool usingFocusout)
         {
             var comp = Context.RenderComponent<TooltipVisiblePropTest>(p =>

@@ -3,7 +3,7 @@
 <MudPopoverProvider></MudPopoverProvider>
 
 <MudRTLProvider RightToLeft="@RightToLeft">
-	<MudTooltip Placement="@Placement">
+	<MudTooltip Placement="@Placement" ShowOnFocus="@ShowOnFocus">
 		<ChildContent>
 			<MudButton>My Buttion</MudButton>
 		</ChildContent>
@@ -19,5 +19,6 @@
 @code {
 	[Parameter] public Placement Placement { get; set; } = Placement.Bottom;
 	[Parameter] public bool RightToLeft { get; set; } = false;
+	[Parameter] public bool ShowOnFocus { get; set; } = false;
 
 }

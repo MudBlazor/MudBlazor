@@ -139,14 +139,24 @@ namespace MudBlazor
         }
 
         /// <summary>
+        /// When true, also shows the tooltip onfocusin and hides it onfocusout
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Tooltip.Behavior)]
+        public bool ShowOnFocus { get; set; }
+
+        /// <summary>
         /// An event triggered when the state of IsVisible has changed
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
         public EventCallback<bool> IsVisibleChanged { get; set; }
 
-        private void HandleMouseOver() { IsVisible = true;}
-        private void HandleMouseOut() { IsVisible = false;}
+        private void HandleMouseOver() { IsVisible = true; }
+        private void HandleMouseOut() { IsVisible = false; }
+
+        private void HandleFocusIn() { if (ShowOnFocus) IsVisible = true; }
+        private void HandleFocusOut() { if (ShowOnFocus) IsVisible = false; }
 
         private Origin ConvertPlacement()
         {
