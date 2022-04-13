@@ -386,6 +386,26 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(() => dialog2.MudDialog.HandleKeyDown(new KeyboardEventArgs() { Key = "Escape", Type = "keydown", }));
             comp.Markup.Trim().Should().NotBeEmpty();
         }
+        
+        [Test]
+        public async Task DialogHandlesOnBackdropClickEvent()
+        {
+            var comp = Context.RenderComponent<MudDialogProvider>();
+            comp.Markup.Trim().Should().BeEmpty();
+            
+            var service = Context.Services.GetService<IDialogService>() as DialogService;
+            service.Should().NotBe(null);
+            IDialogReference dialogReference = null;
+
+            await comp.InvokeAsync(() => dialogReference = service?.Show<DialogWithOnBackdropClickEvent>());
+            dialogReference.Should().NotBe(null);
+            comp.Find("div.mud-dialog-title").TrimmedText().Should().Be("Title:");
+            
+            //Click on backdrop
+            comp.Find("div.mud-overlay").Click();
+            
+            comp.Find("div.mud-dialog-title").TrimmedText().Should().Be("Title: Backdrop clicked");
+        }
     }
 
     internal class CustomDialogService : DialogService
