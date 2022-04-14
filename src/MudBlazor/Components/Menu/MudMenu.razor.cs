@@ -266,11 +266,6 @@ namespace MudBlazor
             StateHasChanged();
         }
 
-        public void PopoverMouseEnter()
-        {
-            _isMouseOver = true;
-        }
-
         // Sets the popover style ONLY when there is an activator
         private void SetPopoverStyle(MouseEventArgs args)
         {
@@ -319,9 +314,22 @@ namespace MudBlazor
             ToggleMenu(args);
         }
 
+        public void MouseEnter(EventArgs args)
+        {
+            _isMouseOver = true;
+
+            if (ActivationEvent == MouseEvent.MouseOver)
+            {
+                OpenMenu(args);
+            }
+        }
+
         public async void MouseLeave()
         {
+            _isMouseOver = false;
+
             await Task.Delay(100);
+
             if (ActivationEvent == MouseEvent.MouseOver && _isMouseOver == false)
             {
                 CloseMenu();
