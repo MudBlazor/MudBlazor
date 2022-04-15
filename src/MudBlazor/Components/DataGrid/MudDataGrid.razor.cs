@@ -1013,23 +1013,23 @@ namespace MudBlazor
             StateHasChanged();
         }
 
-        internal void HideAllColumns()
+        internal async Task HideAllColumnsAsync()
         {
             foreach (var column in RenderedColumns)
             {
                 if (column.Hideable ?? false)
-                    column.Hide();
+                    await column.HideAsync();
             }
 
             StateHasChanged();
         }
 
-        internal void ShowAllColumns()
+        internal async Task ShowAllColumnsAsync()
         {
             foreach (var column in RenderedColumns)
             {
                 if (column.Hideable ?? false)
-                    column.Show();
+                    await column.ShowAsync();
             }
 
             StateHasChanged();
