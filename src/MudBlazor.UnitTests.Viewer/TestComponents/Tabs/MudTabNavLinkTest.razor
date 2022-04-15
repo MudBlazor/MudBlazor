@@ -1,0 +1,12 @@
+﻿@namespace MudBlazor.UnitTests.TestComponents
+
+<MudTabs @ref="Tabs">
+    <MudTabNavLink Href="#home" Icon="@Icons.Filled.Face">Home</MudTabNavLink>
+    <MudTabNavLink Href="#counter" BadgeData='"2"' BadgeColor="Color.Dark">Counter</MudTabNavLink>
+    <MudTabNavLink Href="#fetch-data">Fetch Data</MudTabNavLink>
+</MudTabs>
+
+@code {
+    public MudTabs Tabs;
+    public static string __description__ = "Navigation testing for tabs";
+}
