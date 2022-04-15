@@ -28,6 +28,8 @@ namespace MudBlazor
 
         public bool HideIcon => Options.HideIcon;
         public string Icon => Options.Icon;
+        public Color IconColor => Options.IconColor;
+        public Size IconSize => Options.IconSize;
 
         public string ProgressBarStyle
         {

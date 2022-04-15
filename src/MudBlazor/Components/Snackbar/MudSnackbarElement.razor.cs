@@ -34,6 +34,8 @@ namespace MudBlazor
 
         protected bool HideIcon => Snackbar?.State.HideIcon == true;
         protected string Icon => Snackbar?.State.Icon;
+        protected Color IconColor => Snackbar?.State.Options.IconColor ?? Color.Inherit;
+        protected Size IconSize => Snackbar?.State.Options.IconSize ?? Size.Medium;
 
         protected void ActionClicked() => Snackbar?.Clicked(false);
         protected void CloseIconClicked() => Snackbar?.Clicked(true);
