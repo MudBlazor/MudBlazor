@@ -50,6 +50,13 @@ namespace MudBlazor
         public string Text { get; set; }
 
         /// <summary>
+        /// Sets the stop propagation value on click event.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.ExpansionPanel.Behavior)]
+        public bool OnClickStopPropagation { get; set; }
+
+        /// <summary>
         /// If true, expand icon will not show
         /// </summary>
         [Parameter]

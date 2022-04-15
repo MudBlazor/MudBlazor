@@ -42,6 +42,13 @@ namespace MudBlazor
         [Inject] private IKeyInterceptor _keyInterceptor { get; set; }
 
         /// <summary>
+        /// Sets the stop propagation value on click event.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Behavior)]
+        public bool OnClickStopPropagation { get; set; }
+
+        /// <summary>
         /// The color of the component. It supports the theme colors.
         /// </summary>
         [Parameter]

@@ -76,6 +76,13 @@ namespace MudBlazor
         public bool ShowCloseIcon { get; set; }
 
         /// <summary>
+        /// Sets the stop propagation value on click event.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Alert.Behavior)]
+        public bool OnClickStopPropagation { get; set; }
+
+        /// <summary>
         /// The higher the number, the heavier the drop-shadow. 0 for no shadow.
         /// </summary>
         [Parameter]

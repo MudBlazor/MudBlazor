@@ -18,6 +18,11 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public string CloseIcon { get; set; } = Icons.Material.Filled.Close;
 
+        /// <summary>
+        /// Sets the stop propagation value on click event.
+        /// </summary>
+        [Parameter] public bool OnClickStopPropagation { get; set; }
+
         protected RenderFragment Css;
 
         protected string AnimationStyle => Snackbar?.State.AnimationStyle + Style;

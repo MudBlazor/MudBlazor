@@ -109,7 +109,7 @@ namespace MudBlazor
 
 
         /// <summary>
-        /// Define the dialog title as a renderfragment (overrides Title)
+        /// Define the focus behavior.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Dialog.Behavior)]

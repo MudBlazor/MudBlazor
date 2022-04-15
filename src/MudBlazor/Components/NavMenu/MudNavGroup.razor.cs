@@ -47,6 +47,13 @@ namespace MudBlazor
         public Color IconColor { get; set; } = Color.Default;
 
         /// <summary>
+        /// Sets the stop propagation value on click event.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.NavMenu.Behavior)]
+        public bool OnClickStopPropagation { get; set; }
+
+        /// <summary>
         /// If true, the button will be disabled.
         /// </summary>
         [Parameter]

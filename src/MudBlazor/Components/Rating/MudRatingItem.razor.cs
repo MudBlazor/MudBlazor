@@ -49,6 +49,13 @@ namespace MudBlazor
         [Parameter] public Color Color { get; set; } = Color.Default;
 
         /// <summary>
+        /// Sets the stop propagation value on click event.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Rating.Behavior)]
+        public bool OnClickStopPropagation { get; set; }
+
+        /// <summary>
         /// If true, disables ripple effect.
         /// </summary>
         [Parameter] public bool DisableRipple { get; set; }

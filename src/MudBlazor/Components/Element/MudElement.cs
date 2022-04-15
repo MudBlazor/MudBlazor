@@ -31,6 +31,13 @@ namespace MudBlazor
         [Category(CategoryTypes.Element.Misc)]
         public ElementReference? Ref { get; set; }
 
+        /// <summary>
+        /// Sets the stop propagation value on click event.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Element.Misc)]
+        public bool OnClickStopPropagation { get; set; }
+
         [Parameter] public EventCallback<ElementReference> RefChanged { get; set; }
 
         /// <summary>
@@ -61,7 +68,7 @@ namespace MudBlazor
 
             // StopPropagation
             // the order matters. This has to be before content is added
-            if (HtmlTag == "button")
+            if (HtmlTag == "button" || OnClickStopPropagation == true)
                 builder.AddEventStopPropagationAttribute(5, "onclick", true);
 
             //Reference capture

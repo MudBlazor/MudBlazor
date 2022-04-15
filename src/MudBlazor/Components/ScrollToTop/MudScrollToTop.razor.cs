@@ -37,6 +37,13 @@ namespace MudBlazor
         public bool Visible { get; set; }
 
         /// <summary>
+        /// Sets the stop propagation value on click event.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.ScrollToTop.Behavior)]
+        public bool OnClickStopPropagation { get; set; }
+
+        /// <summary>
         /// CSS class for the Visible state. Here, apply some transitions and animations that will happen when the component becomes visible
         /// </summary>
         [Parameter]

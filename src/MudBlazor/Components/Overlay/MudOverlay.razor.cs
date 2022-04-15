@@ -44,6 +44,13 @@ namespace MudBlazor
         public EventCallback<bool> VisibleChanged { get; set; }
 
         /// <summary>
+        /// Sets the stop propagation value on click event. The default value is true.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Overlay.Behavior)]
+        public bool OnClickStopPropagation { get; set; } = true;
+
+        /// <summary>
         /// If true overlay will be visible. Two-way bindable.
         /// </summary>
         [Parameter]

@@ -13,7 +13,7 @@
         {
             <BreadcrumbLink Item="Items[0]"></BreadcrumbLink>
             <BreadcrumbSeparator></BreadcrumbSeparator>
-            <li class="mud-breadcrumbs-expander" @onclick="Expand">
+            <li class="mud-breadcrumbs-expander" @onclick="Expand" @onclick:stopPropagation="OnClickStopPropagation">
                 <MudIcon Icon="@ExpanderIcon" Size="Size.Small"></MudIcon>
             </li>
             <BreadcrumbSeparator></BreadcrumbSeparator>

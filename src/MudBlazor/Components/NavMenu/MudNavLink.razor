@@ -2,10 +2,10 @@
 @inherits MudBaseSelectItem
 @using Microsoft.AspNetCore.Components.Routing
 
-<div @attributes="UserAttributes" class="@Classname" disabled="@Disabled" style="@Style">
+<div @attributes="UserAttributes" class="@Classname" disabled="@Disabled" style="@Style" @onclick:stopPropagation="OnClickStopPropagation">
     @if (!OnClick.HasDelegate && Command == null)
     { 
-        <NavLink @onclick="@HandleNavigation" 
+        <NavLink @onclick="@HandleNavigation"
                  class="@LinkClassname" 
                  @attributes="@Attributes"
                  Match="@Match" 

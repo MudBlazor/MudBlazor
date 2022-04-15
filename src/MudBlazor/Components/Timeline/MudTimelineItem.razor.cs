@@ -41,6 +41,13 @@ namespace MudBlazor
         public string Icon { get; set; }
 
         /// <summary>
+        /// Sets the stop propagation value on click event.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Timeline.Behavior)]
+        public bool OnClickStopPropagation { get; set; }
+
+        /// <summary>
         /// Variant of the dot.
         /// </summary>
         [Parameter]

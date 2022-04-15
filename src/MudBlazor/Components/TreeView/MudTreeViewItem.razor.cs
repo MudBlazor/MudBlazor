@@ -52,6 +52,13 @@ namespace MudBlazor
         public string UncheckedIcon { get; set; } = Icons.Material.Filled.CheckBoxOutlineBlank;
 
         /// <summary>
+        /// Sets the stop propagation value on click event.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.TreeView.Behavior)]
+        public bool OnClickStopPropagation { get; set; } = true;
+
+        /// <summary>
         /// Value of the treeviewitem. Acts as the displayed text if no text is set.
         /// </summary>
         [Parameter]

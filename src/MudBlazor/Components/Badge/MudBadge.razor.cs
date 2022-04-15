@@ -61,6 +61,13 @@ namespace MudBlazor
         public Color Color { get; set; } = Color.Default;
 
         /// <summary>
+        /// Sets the stop propagation value on click event.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Badge.Behavior)]
+        public bool OnClickStopPropagation { get; set; }
+
+        /// <summary>
         /// Aligns the badge to bottom.
         /// </summary>
         [ExcludeFromCodeCoverage]

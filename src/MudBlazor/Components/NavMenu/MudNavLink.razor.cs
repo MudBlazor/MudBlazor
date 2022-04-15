@@ -58,6 +58,13 @@ namespace MudBlazor
         [Category(CategoryTypes.NavMenu.ClickAction)]
         public string Target { get; set; }
 
+        /// <summary>
+        /// Sets the stop propagation value on click event.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.NavMenu.Behavior)]
+        public bool OnClickStopPropagation { get; set; }
+
         [CascadingParameter] INavigationEventReceiver NavigationEventReceiver { get; set; }
 
         private Task HandleNavigation()

@@ -89,6 +89,13 @@ namespace MudBlazor
         public Color SelectedColor { get; set; } = Color.Inherit;
 
         /// <summary>
+        /// Sets the stop propagation value on click event.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Chip.Behavior)]
+        public bool OnClickStopPropagation { get; set; }
+
+        /// <summary>
         /// Avatar Icon, Overrides the regular Icon if set.
         /// </summary>
         [Parameter]

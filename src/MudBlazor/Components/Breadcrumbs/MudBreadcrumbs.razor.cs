@@ -14,6 +14,13 @@ namespace MudBlazor
         public List<BreadcrumbItem> Items { get; set; }
 
         /// <summary>
+        /// Sets the stop propagation value on click event.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Breadcrumbs.Behavior)]
+        public bool OnClickStopPropagation { get; set; }
+
+        /// <summary>
         /// Specifies the separator between the items.
         /// </summary>
         [Parameter]
