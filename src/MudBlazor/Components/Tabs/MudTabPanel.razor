@@ -87,10 +87,18 @@ else
     public RenderFragment ChildContent { get; set; }
 
     /// <summary>
+    /// Tab content of component.
+    /// </summary>
+    [Parameter] 
+    [Category(CategoryTypes.Tabs.Behavior)]
+    public RenderFragment TabContent { get; set; }
+
+    /// <summary>
     /// TabPanel Tooltip
     /// </summary>
     [Parameter]
     [Category(CategoryTypes.Tabs.Behavior)]
+    [ObsoleteAttribute("Use the MudToolTip component inside <TabContent> instead.")]
     public string ToolTip { get; set; }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
