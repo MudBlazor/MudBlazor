@@ -1342,19 +1342,48 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<DataGridColumnChooserTest>();
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridColumnChooserTest.Model>>();
+            var popoverProvider = comp.FindComponent<MudPopoverProvider>();
+            var popover = dataGrid.FindComponent<MudPopover>();
 
             //Console.WriteLine(dataGrid.FindAll(".mud-table-head th").ToMarkup());
 
             dataGrid.FindAll(".mud-table-head th").Count.Should().Be(2);
             await comp.InvokeAsync(() =>
             {
+                var columnHamburger = dataGrid.FindAll("button.mud-button-root.mud-icon-button.mud-ripple.mud-ripple-icon.mud-icon-button-size-small");
+                columnHamburger[2].Click();
+
+                var listItems = popoverProvider.FindComponents<MudListItem>();
+                listItems.Count.Should().Be(2);
+                var clickablePopover = listItems[1].Find(".mud-list-item");
+                clickablePopover.Click();
+
                 //dataGrid.Instance._columns[0].Hide();
                 dataGrid.Instance.ExternalStateHasChanged();
             });
             dataGrid.FindAll(".mud-table-head th").Count.Should().Be(1);
             await comp.InvokeAsync(() =>
             {
-                //dataGrid.Instance._columns[0].Show();
+                var columnsButton = dataGrid.Find("button.mud-button-root.mud-icon-button.mud-ripple.mud-ripple-icon.mud-icon-button-size-small");
+                columnsButton.Click();
+
+                popover.Instance.Open.Should().BeTrue("Should be open once clicked");
+                var listItems = popoverProvider.FindComponents<MudListItem>();
+                listItems.Count.Should().Be(1);
+                var clickablePopover = listItems[0].Find(".mud-list-item");
+                clickablePopover.Click();
+
+                // at this point, the column picker should be open
+                var switches = dataGrid.FindComponents<MudSwitch<bool>>();
+                switches.Count.Should().Be(2);
+
+                var buttons = dataGrid.FindComponents<MudButton>();
+                // this is the show all button
+                buttons[1].Find("button").Click();
+                // 2 columns, 0 hidden
+                dataGrid.FindAll(".mud-table-head th").Count.Should().Be(2);
+
+                //dataGrid.Instance._columns[0].Hide();
                 dataGrid.Instance.ExternalStateHasChanged();
             });
             dataGrid.FindAll(".mud-table-head th").Count.Should().Be(2);
