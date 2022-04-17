@@ -94,11 +94,10 @@ else
     public RenderFragment TabContent { get; set; }
 
     /// <summary>
-    /// TabPanel Tooltip
+    /// TabPanel Tooltip. It will be ignored if TabContent is provided
     /// </summary>
     [Parameter]
     [Category(CategoryTypes.Tabs.Behavior)]
-    [ObsoleteAttribute("Use the MudToolTip component inside <TabContent> instead.")]
     public string ToolTip { get; set; }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
