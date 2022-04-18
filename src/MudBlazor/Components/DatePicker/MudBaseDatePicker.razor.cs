@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
+using MudBlazor.Enums;
 using MudBlazor.Extensions;
 using MudBlazor.Utilities;
 
@@ -208,6 +209,13 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.FormComponent.PickerBehavior)]
         public int? FixDay { get; set; }
+
+        /// <summary>
+        /// Order by for years
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.PickerAppearance)]
+        public OrderBy YearsOrderBy { get; set; }
 
         protected virtual bool IsRange { get; } = false;
 

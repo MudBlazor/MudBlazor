@@ -35,12 +35,25 @@
                         @if (tempMonth == 0 && CurrentView == OpenTo.Year)
                         {
                             <div id="pickerYears" class="mud-picker-year-container">
-                                @for (int i = GetMinYear(); i <= GetMaxYear(); i++)
+                                @if(YearsOrderBy == Enums.OrderBy.Desc)
                                 {
+                                    @for (int i = GetMaxYear(); i >= GetMinYear(); i--)
+                                    {
                                     var year = i;
                                     <div class="mud-picker-year" id="@(_componentId + year)" @onclick="(() => OnYearClicked(year))" @onclick:stopPropagation="true">
                                         <MudText Typo="@GetYearTypo(year)" Class="@GetYearClasses(year)">@GetCalendarYear(year)</MudText>
                                     </div>
+                                    }
+                                }
+                                else
+                                {
+                                    @for (int i = GetMinYear(); i <= GetMaxYear(); i++)
+                                    {
+                                    var year = i;
+                                    <div class="mud-picker-year" id="@(_componentId + year)" @onclick="(() => OnYearClicked(year))" @onclick:stopPropagation="true">
+                                        <MudText Typo="@GetYearTypo(year)" Class="@GetYearClasses(year)">@GetCalendarYear(year)</MudText>
+                                    </div>
+                                    }
                                 }
                             </div>
                         }
