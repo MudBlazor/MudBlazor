@@ -272,6 +272,25 @@ namespace MudBlazor
                 Value = this;
         }
 
+        protected void HandleKeyDown(KeyboardEventArgs obj)
+        {
+            if (Disabled)
+                return;
+            if (ChipSet?.ReadOnly == true)
+            {
+                return;
+            }
+            switch (obj.Key)
+            {
+                case " ":
+                    if (ChipSet != null)
+                    {
+                        _ = ChipSet.OnChipClicked(this);
+                    }
+                    break;
+            }
+        }
+
         protected internal async Task OnClickHandler(MouseEventArgs ev)
         {
             if (ChipSet?.ReadOnly == true)
