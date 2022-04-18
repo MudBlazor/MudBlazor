@@ -31,7 +31,7 @@ namespace MudBlazor
         public DateTime? MaxDate { get; set; }
 
         /// <summary>
-        /// Max selectable date.
+        /// Min selectable date.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Validation)]
