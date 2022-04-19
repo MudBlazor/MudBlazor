@@ -94,6 +94,13 @@ else
     public RenderFragment TabContent { get; set; }
 
     /// <summary>
+    /// Tab content wrapper of component. It is used with TabContent to entirely wrap the content of a tab heading
+    /// </summary>
+    [Parameter] 
+    [Category(CategoryTypes.Tabs.Behavior)]
+    public RenderFragment<RenderFragment> TabWrapperContent { get; set; }
+
+    /// <summary>
     /// TabPanel Tooltip. It will be ignored if TabContent is provided
     /// </summary>
     [Parameter]

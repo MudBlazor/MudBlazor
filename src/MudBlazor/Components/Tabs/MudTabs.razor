@@ -21,7 +21,7 @@
                     <div class="@WrapperClassnames" style="@WrapperScrollStyle">
                         @foreach (MudTabPanel panel in _panels)
                         {
-                            @if(panel.TabContent == null)
+                            @if (panel.TabContent == null)
                             {
                                 <MudTooltip Placement="@GetTooltipPlacement()" Text="@panel.ToolTip">
                                     @RenderTab(panel)
@@ -29,10 +29,19 @@
                             }
                             else
                             {
-                                <div class="d-inline-block" style="width: fit-content;">
-                                    @RenderTab(panel)
-                                </div>
-                            }                            
+                                if (panel.TabWrapperContent == null)
+                                {
+                                    <div class="d-inline-block" style="width: fit-content;">
+                                        @RenderTab(panel)
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="d-inline-block" style="width: fit-content;">
+                                        @panel.TabWrapperContent(RenderTab(panel))
+                                    </div>
+                                }
+                            }
                         }
                         @if (!HideSlider)
                         {
