@@ -6,7 +6,7 @@
     }
 
     .mud-#{$color}-text {
-        color: var(--mud-palette-#{$color}) !important;
+        color: var(--mud-palette-#{$color}-text) !important;
     }
 
     .mud-#{$color}-hover {
