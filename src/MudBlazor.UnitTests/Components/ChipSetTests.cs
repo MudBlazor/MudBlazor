@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Bunit;
 using FluentAssertions;
+using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.UnitTests.TestComponents;
 using MudBlazor.UnitTests.TestComponents.ChipSet;
 using NUnit.Framework;
@@ -167,7 +168,6 @@ namespace MudBlazor.UnitTests.Components
             string.Join(", ", chipset.Instance.SelectedChips.Select(x => x.Text).OrderBy(x => x)).Should().Be("Corn flakes, Salad");
         }
 
-
         [Test]
         public async Task ChipSet_MultiSelection_LateDefaultChipsShouldBeInitiallySelected()
         {
@@ -290,6 +290,22 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(() => chipSet.Instance.SelectedChip = null);
             await comp.InvokeAsync(() => chipSet.Instance.SetSelectedValues(null));
             comp.WaitForAssertion(() => chipSet.Instance.SelectedChips.Length.Should().Be(0));
+        }
+
+        [Test]
+        public async Task ChipSet_KeyboardInput()
+        {
+            var comp = Context.RenderComponent<ChipSetSpacebarSelectionTest>();
+            // select elements needed for the test
+            var chipset = comp.FindComponent<MudChipSet>();
+            // select cornflakes
+            comp.FindAll("div.mud-chip")[3].KeyDown(new KeyboardEventArgs() { Key = " ", Type = "keydown", });
+            comp.FindAll("p")[0].TrimmedText().Should().Be("Corn flakes, Eggs, Salad");
+            string.Join(", ", chipset.Instance.SelectedChips.Select(x => x.Text).OrderBy(x => x)).Should().Be("Corn flakes, Eggs, Salad");
+            // de-select cornflakes
+            comp.FindAll("div.mud-chip")[3].KeyDown(new KeyboardEventArgs() { Key = " ", Type = "keydown", });
+            comp.FindAll("p")[0].TrimmedText().Should().Be("Eggs, Salad");
+            string.Join(", ", chipset.Instance.SelectedChips.Select(x => x.Text).OrderBy(x => x)).Should().Be("Eggs, Salad");
         }
     }
 
