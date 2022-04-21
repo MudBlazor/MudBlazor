@@ -87,7 +87,23 @@ else
     public RenderFragment ChildContent { get; set; }
 
     /// <summary>
-    /// TabPanel Tooltip
+    /// Tab content of component.
+    /// </summary>
+    [Parameter] 
+    [Category(CategoryTypes.Tabs.Behavior)]
+    public RenderFragment TabContent { get; set; }
+
+    /// <summary>
+    /// Tab content wrapper of component. It is used to wrap the content of a tab heading in a user supplied div or component. 
+    /// Use @context in the TabWrapperContent to render the tab header within your custom wrapper. 
+    /// This is most useful with tooltips, which must wrap the entire content they refer to.
+    /// </summary>
+    [Parameter] 
+    [Category(CategoryTypes.Tabs.Behavior)]
+    public RenderFragment<RenderFragment> TabWrapperContent { get; set; }
+
+    /// <summary>
+    /// TabPanel Tooltip. It will be ignored if TabContent is provided.
     /// </summary>
     [Parameter]
     [Category(CategoryTypes.Tabs.Behavior)]
