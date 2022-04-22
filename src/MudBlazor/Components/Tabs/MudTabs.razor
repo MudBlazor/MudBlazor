@@ -22,22 +22,7 @@
                         @foreach (MudTabPanel panel in _panels)
                         {
                             <MudTooltip Placement="@GetTooltipPlacement()" Text="@panel.ToolTip">
-                                @if (panel is MudTabNavGroup group)
-                                {
-                                    <MudMenu ActivationEvent="@group.ActivationEvent" AnchorOrigin="Origin.BottomLeft">
-                                        <ActivatorContent>
-                                            <div @ref="@group.PanelRef" class="@GetTabClass(group)" style="@GetTabStyle(panel)">@group.Title</div>
-                                        </ActivatorContent>
-                                        <ChildContent>
-                                            @foreach (var p in group.Panels)
-                                            {
-                                                <MudMenuItem OnClick="e => HandleNavigation(p,e, group)">@p.ChildContent</MudMenuItem>
-                                            }
-                                        </ChildContent>
-
-                                    </MudMenu>
-                                }
-                                else if (panel is MudTabNavLink link)
+                                @if (panel is MudTabNavLink link)
                                 {
                                     <a @ref="panel.PanelRef" @onclick="@(e => HandleNavigation(panel,e))"
                                        href="@link.Href"
@@ -76,7 +61,6 @@
 
                                     </a>
                                 }
-                                
                                 else
                                 {
                                     <div @ref="panel.PanelRef" class="@GetTabClass(panel)" style="@GetTabStyle(panel)" @onclick=@( e => ActivatePanel(panel, e, false) )>
