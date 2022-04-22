@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Extensions;
+using MudBlazor.Interfaces;
 using MudBlazor.Interop;
 using MudBlazor.Services;
 using MudBlazor.Utilities;
@@ -443,15 +444,20 @@ namespace MudBlazor
         #region Navigation Managment
 
         [Inject] private NavigationManager NavManager { get; set; }
+        
+        [CascadingParameter] INavigationEventReceiver NavigationEventReceiver { get; set; }
 
-        private void HandleNavigation(MudTabPanel panel, MouseEventArgs ev = null)
+        private Task HandleNavigation(MudTabPanel panel, MouseEventArgs ev = null)
         {
             if (panel.Disabled || panel is not MudTabNavLink link)
-                return;
+                return Task.CompletedTask;
 
             NavManager.NavigateTo(link.Href);
-
             ActivatePanel(link, ev);
+
+            return NavigationEventReceiver is not null 
+                ? NavigationEventReceiver.OnNavigation() 
+                : Task.CompletedTask;
         }
 
         #endregion
