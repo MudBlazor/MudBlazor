@@ -5,12 +5,14 @@
     <div class="mud-popover-provider">
 	    @foreach (var handler in Service.Handlers)
 	    {
-		    <div @key="handler.Id" id="@($"popovercontent-{handler.Id}")" @attributes="@handler.UserAttributes" class="@handler.Class" style="@handler.Style">
-			    @if (handler.ShowContent == true)
-			    {
-				    @handler.Fragment
-			    }
-		    </div>
+            <MudRender @ref="handler.ElementReference">
+		        <div @key="handler.Id" id="@($"popovercontent-{handler.Id}")" @attributes="@handler.UserAttributes" class="@handler.Class" style="@handler.Style">
+			        @if (handler.ShowContent == true)
+			        {
+				        @handler.Fragment
+			        }
+		        </div>
+            </MudRender>
 	    }
     </div>
 }

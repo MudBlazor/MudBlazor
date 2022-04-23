@@ -40,6 +40,7 @@ namespace MudBlazor
         public object Tag { get; private set; }
         public bool ShowContent { get; private set; }
         public Dictionary<string, object> UserAttributes { get; set; } = new Dictionary<string, object>();
+        public MudRender ElementReference { get; set; }
 
         public MudPopoverHandler(RenderFragment fragment, IJSRuntime jsInterop, Action updater)
         {
@@ -63,8 +64,10 @@ namespace MudBlazor
         {
             Fragment = fragment;
             SetComponentBaseParameters(componentBase, @class, @style, showContent);
+            //Console.WriteLine("PopoverHandler.UpdateFragment");
             // this basically calls StateHasChanged on the Popover
-            _updater.Invoke();
+            ElementReference?.ForceRender();
+            _updater?.Invoke(); // <-- this doesn't do anything anymore except making unit tests happy 
         }
 
         public async Task Initialize()
@@ -152,7 +155,7 @@ namespace MudBlazor
 
         public MudPopoverHandler Register(RenderFragment fragment)
         {
-            var handler = new MudPopoverHandler(fragment, _jsRuntime, () => FragmentsChanged?.Invoke(this, EventArgs.Empty));
+            var handler = new MudPopoverHandler(fragment, _jsRuntime, () => { /*not doing anything on purpose for now*/ });
             _handlers.Add(handler.Id, handler);
 
             FragmentsChanged?.Invoke(this, EventArgs.Empty);
