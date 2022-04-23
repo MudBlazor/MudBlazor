@@ -234,7 +234,7 @@
                         }
                         else if (column.isNumber)
                         {
-                            <MudNumericField T="double" Label="@column.computedTitle" Value="@cell.valueNumber" ValueChanged="@cell.NumberValueChangedAsync" Margin="@Margin.Dense"
+                            <MudNumericField T="double?" Label="@column.computedTitle" Value="@cell.valueNumber" ValueChanged="@cell.NumberValueChangedAsync" Margin="@Margin.Dense"
                                 Required="true" Variant="@Variant.Outlined" Disabled="@(!column.IsEditable || ReadOnly)" Class="mt-4" />
                         }
                     }
@@ -307,7 +307,7 @@
                     }
                     else if (column.isNumber)
                     {
-                        <MudNumericField T="double" Value="@cell.valueNumber" ValueChanged="@cell.NumberValueChangedAsync" Margin="@Margin.Dense" Style="margin-top:0"
+                        <MudNumericField T="double?" Value="@cell.valueNumber" ValueChanged="@cell.NumberValueChangedAsync" Margin="@Margin.Dense" Style="margin-top:0"
                             Required="true" Variant="@Variant.Text" />
                     }
                 }

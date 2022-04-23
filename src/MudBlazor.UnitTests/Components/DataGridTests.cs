@@ -239,6 +239,29 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task DataGridInlineEditWithNullableTest()
+        {
+            var comp = Context.RenderComponent<DataGridCellEditWithNullableTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridCellEditWithNullableTest.Model>>();
+
+            dataGrid.FindAll("td input")[0].GetAttribute("value").Trim().Should().Be("John");
+            dataGrid.FindAll("td input")[1].GetAttribute("value").Trim().Should().Be("45");
+            dataGrid.FindAll("td input")[2].GetAttribute("value").Trim().Should().Be("Johanna");
+            dataGrid.FindAll("td input")[3].GetAttribute("value").Trim().Should().Be("23");
+            dataGrid.FindAll("td input")[4].GetAttribute("value").Trim().Should().Be("Steve");
+            Assert.IsNull(dataGrid.FindAll("td input")[5].GetAttribute("value"));
+            dataGrid.FindAll(".mud-table-body tr td input")[0].Change("Jonathan");
+            dataGrid.FindAll(".mud-table-body tr td input")[1].Change(52d);
+            dataGrid.FindAll(".mud-table-body tr td input")[0].GetAttribute("value").Trim().Should().Be("Jonathan");
+            dataGrid.FindAll(".mud-table-body tr td input")[1].GetAttribute("value").Trim().Should().Be("52");
+
+            var name = dataGrid.Instance.Items.First().Name;
+            var age = dataGrid.Instance.Items.First().Age;
+            name.Should().Be("Jonathan");
+            age.Should().Be(52);
+        }
+
+        [Test]
         public async Task DataGridInlineEditWithTemplateTest()
         {
             var comp = Context.RenderComponent<DataGridCellEditWithTemplateTest>();

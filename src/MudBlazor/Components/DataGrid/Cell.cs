@@ -17,7 +17,7 @@ namespace MudBlazor
         private readonly Column<T> _column;
         internal T _item;
         internal string valueString;
-        internal double valueNumber;
+        internal double? valueNumber;
         internal bool isEditing;
         internal CellContext<T> cellContext;
 
@@ -110,10 +110,10 @@ namespace MudBlazor
                 await _dataGrid.CommitItemChangesAsync(_item);
         }
 
-        public async Task NumberValueChangedAsync(double value)
+        public async Task NumberValueChangedAsync(double? value)
         {
             var property = _item.GetType().GetProperties().SingleOrDefault(x => x.Name == _column.Field);
-            property.SetValue(_item, Convert.ChangeType(value, property.PropertyType));
+            property.SetValue(_item, ChangeType(value, property.PropertyType));
 
             // If the edit mode is Cell, we update immediately.
             if (_dataGrid.EditMode == DataGridEditMode.Cell)
@@ -148,6 +148,23 @@ namespace MudBlazor
                     }
                 }
             }
+        }
+
+        private object ChangeType(object value, Type conversion)
+        {
+            var t = conversion;
+
+            if (t.IsGenericType && t.GetGenericTypeDefinition().Equals(typeof(Nullable<>)))
+            {
+                if (value == null)
+                {
+                    return null;
+                }
+
+                t = Nullable.GetUnderlyingType(t);
+            }
+
+            return Convert.ChangeType(value, t);
         }
     }
 }
