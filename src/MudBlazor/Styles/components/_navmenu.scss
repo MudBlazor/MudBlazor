@@ -144,8 +144,8 @@
   &.mud-navmenu-bordered{
     .mud-nav-link{
       &.active:not(.mud-nav-link-disabled) {
-        border-right-style: solid;
-        border-right-width: 2px;
+        border-inline-end-style: solid;
+        border-inline-end-width: 2px;
       }
     }
   }
