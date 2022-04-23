@@ -281,6 +281,7 @@ window.mudpopoverHelper = {
 
             if (window.getComputedStyle(popoverNode).getPropertyValue('z-index') != 'auto') {
                 popoverContentNode.style['z-index'] = window.getComputedStyle(popoverNode).getPropertyValue('z-index');
+                popoverContentNode.skipZIndex = true;
             }
         }
     },
@@ -357,6 +358,10 @@ class MudPopover {
                         const childNode = parent.children[i];
                         const tickValue = parseInt(childNode.getAttribute('data-ticks'));
                         if (tickValue == 0) {
+                            continue;
+                        }
+
+                        if (childNode.skipZIndex == true) {
                             continue;
                         }
 
