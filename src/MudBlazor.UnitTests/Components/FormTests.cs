@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Bunit;
 using FluentAssertions;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Docs.Examples;
 using MudBlazor.UnitTests.TestComponents;
 using MudBlazor.UnitTests.TestComponents.Form;
@@ -59,6 +60,22 @@ namespace MudBlazor.UnitTests.Components
             form.Errors.Length.Should().Be(0);
             textField.Error.Should().BeFalse();
             textField.ErrorText.Should().BeNullOrEmpty();
+        }
+
+        [Test]
+        public async Task FormEnterKeyTest()
+        {
+            var comp = Context.RenderComponent<FormIsValidTest>();
+            //Console.WriteLine(comp.Markup);
+            var form = comp.FindComponent<MudForm>().Instance;
+            await comp.InvokeAsync(() => form.HandleKeyDown(new KeyboardEventArgs() { Key = "Enter" }));
+            comp.WaitForAssertion(() => form.IsValid.Should().Be(false));
+            comp.WaitForAssertion(() => form.Errors.Length.Should().Be(0));
+#pragma warning disable BL0005
+            await comp.InvokeAsync(() => form.SubmitOnEnter = true);
+            await comp.InvokeAsync(() => form.HandleKeyDown(new KeyboardEventArgs() { Key = "Enter" }));
+            comp.WaitForAssertion(() => form.IsValid.Should().Be(false));
+            comp.WaitForAssertion(() => form.Errors.Length.Should().Be(1));
         }
 
         /// <summary>

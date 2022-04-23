@@ -2,7 +2,7 @@
 @inherits MudComponentBase
 
 
-<form @attributes="UserAttributes" class="@Classname" style="@Style">
+<form @attributes="UserAttributes" class="@Classname" style="@Style" @onkeydown="HandleKeyDown" tabindex="-1">
     @if (SuppressImplicitSubmission)
     {
         <!-- Prevent implicit submission of the form -->

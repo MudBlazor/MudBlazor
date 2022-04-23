@@ -1,9 +1,10 @@
 ﻿@namespace MudBlazor.UnitTests.TestComponents
 
-<MudForm ValidationDelay="0">
+<MudForm @ref="_form" ValidationDelay="0" OnEnterKey="@(async() => await _form.Validate())">
     <MudTextField T="string" Required="true" RequiredError="Enter a rock star"></MudTextField>
 </MudForm>
 
 @code {
     public static string __description__ = "Clearing the value of a required textfield should set form's isvalid to false.";
+    MudForm _form;
 }

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Interfaces;
 using MudBlazor.Utilities;
 
@@ -14,7 +15,7 @@ namespace MudBlazor
         protected string Classname =>
             new CssBuilder("mud-form")
             .AddClass(Class)
-       .Build();
+            .Build();
 
         /// <summary>
         /// Child content of component.
@@ -22,6 +23,17 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.Form.ValidatedData)]
         public RenderFragment ChildContent { get; set; }
+
+        /// <summary>
+        /// Child content of component.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Form.ValidationResult)]
+        public bool SubmitOnEnter { get; set; }
+
+        [Parameter]
+        [Category(CategoryTypes.Form.ValidationResult)]
+        public EventCallback OnEnterKey { get; set; }
 
         /// <summary>
         /// Validation status. True if the form is valid and without errors. This parameter is two-way bindable.
@@ -318,6 +330,20 @@ namespace MudBlazor
             }
 
             base.OnInitialized();
+        }
+
+        internal async Task HandleKeyDown(KeyboardEventArgs arg)
+        {
+            switch (arg.Key)
+            {
+                case "Enter":
+                case "NumpadEnter":
+                    if (SubmitOnEnter == true)
+                    {
+                        await OnEnterKey.InvokeAsync();
+                    }
+                    break;
+            }
         }
 
         public void Dispose()
