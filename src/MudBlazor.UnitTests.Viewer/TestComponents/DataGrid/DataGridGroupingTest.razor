@@ -1,0 +1,30 @@
+﻿@namespace MudBlazor.UnitTests.TestComponents
+
+<MudIconButton Icon="@Icons.Outlined.Add" OnClick="@AddPerson"/>
+
+<MudDataGrid @ref="grid" T="Model" Items="@_items" Groupable="true">
+    <Columns>
+        <Column T="Model" Field="@nameof(Model.Name)" />
+        <Column T="Model" Field="@nameof(Model.Age)" />
+        <Column T="Model" Field="@nameof(Model.Gender)" />
+    </Columns>
+</MudDataGrid>
+
+@code {
+    private MudDataGrid<Model> grid;
+    private List<Model> _items = new List<Model>()
+    {
+        new Model("John", 45, "Male"), 
+        new Model("Johanna", 23, "Female"), 
+        new Model("Steve", 32, "Male")
+    };
+
+    public record Model(string Name, int Age, string Gender);
+
+    private void AddPerson()
+    {
+        _items.Add(new Model("Someone", 42, "Female"));
+
+        grid.GroupItems();
+    }
+}
