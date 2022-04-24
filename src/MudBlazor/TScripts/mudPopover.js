@@ -325,7 +325,6 @@ class MudPopover {
                 }
                 else if (mutation.attributeName == 'data-ticks') {
                     const tickAttribute = target.getAttribute('data-ticks');
-                    console.log(target.id + " | " + tickAttribute);
 
                     const parent = target.parentElement;
                     const tickValues = [];
