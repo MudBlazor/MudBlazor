@@ -281,6 +281,7 @@ window.mudpopoverHelper = {
 
             if (window.getComputedStyle(popoverNode).getPropertyValue('z-index') != 'auto') {
                 popoverContentNode.style['z-index'] = window.getComputedStyle(popoverNode).getPropertyValue('z-index');
+                popoverContentNode.skipZIndex = true;
             }
         }
     },
@@ -308,18 +309,65 @@ class MudPopover {
         this.contentObserver = null;
         this.mainContainerClass = null;
     }
-
+    
     callback(id, mutationsList, observer) {
         for (const mutation of mutationsList) {
             if (mutation.type === 'attributes') {
                 const target = mutation.target
-                if (target.classList.contains('mud-popover-overflow-flip-onopen') &&
-                    target.classList.contains('mud-popover-open') == false) {
-                    target.mudPopoverFliped = null;
-                    target.removeAttribute('data-mudpopover-flip');
-                }
+                if (mutation.attributeName == 'class') {
+                    if (target.classList.contains('mud-popover-overflow-flip-onopen') &&
+                        target.classList.contains('mud-popover-open') == false) {
+                        target.mudPopoverFliped = null;
+                        target.removeAttribute('data-mudpopover-flip');
+                    }
 
-                window.mudpopoverHelper.placePopoverByNode(target);
+                    window.mudpopoverHelper.placePopoverByNode(target);
+                }
+                else if (mutation.attributeName == 'data-ticks') {
+                    const tickAttribute = target.getAttribute('data-ticks');
+                    console.log(target.id + " | " + tickAttribute);
+
+                    const parent = target.parentElement;
+                    const tickValues = [];
+                    let max = -1;
+                    for (let i = 0; i < parent.children.length; i++) {
+                        const childNode = parent.children[i];
+                        const tickValue = parseInt(childNode.getAttribute('data-ticks'));
+                        if (tickValue == 0) {
+                            continue;
+                        }
+
+                        if (tickValues.indexOf(tickValue) >= 0) {
+                            continue;
+                        }
+
+                        tickValues.push(tickValue);
+
+                        if (tickValue > max) {
+                            max = tickValue;
+                        }
+                    }
+
+                    if (tickValues.length == 0) {
+                        continue;
+                    }
+
+                    const sortedTickValues = tickValues.sort((x, y) => x - y);
+
+                    for (let i = 0; i < parent.children.length; i++) {
+                        const childNode = parent.children[i];
+                        const tickValue = parseInt(childNode.getAttribute('data-ticks'));
+                        if (tickValue == 0) {
+                            continue;
+                        }
+
+                        if (childNode.skipZIndex == true) {
+                            continue;
+                        }
+
+                        childNode.style['z-index'] = 'calc(var(--mud-zindex-popover) + ' + (sortedTickValues.indexOf(tickValue) + 3).toString() + ')';
+                    }
+                }
             }
         }
     }
@@ -360,7 +408,7 @@ class MudPopover {
 
             window.mudpopoverHelper.placePopover(popoverNode);
 
-            const config = { attributeFilter: ['class'] };
+            const config = { attributeFilter: ['class', 'data-ticks'] };
 
             const observer = new MutationObserver(this.callback.bind(this, id));
 
@@ -385,6 +433,8 @@ class MudPopover {
                 for (let entry of entries) {
                     var target = entry.target;
                     window.mudpopoverHelper.placePopoverByNode(target);
+
+
                 }
             });
 
@@ -439,4 +489,3 @@ window.addEventListener('scroll', () => {
 window.addEventListener('resize', () => {
     window.mudpopoverHelper.placePopoverByClassSelector();
 });
-

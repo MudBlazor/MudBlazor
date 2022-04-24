@@ -529,9 +529,9 @@ namespace MudBlazor.UnitTests.Components
                 p.Add(x => x.Tag, "my tag");
 
             });
-
             handler.UpdateFragment(changedFragment, comp.Instance, "my-class", "my-style", true);
-            fragmentChangedCounter.Should().Be(2);
+            // counter doesn't change because UpdateFragment now only re-renders the updated fragment, without raising the FragmentsChanged event
+            fragmentChangedCounter.Should().Be(1);
         }
 
         [Test]
