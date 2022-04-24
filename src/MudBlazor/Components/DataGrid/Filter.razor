@@ -8,7 +8,7 @@
     <MudSelect T="string" Value="@Field" ValueChanged="@FieldChangedAsync" FullWidth="true" Label="Column" Dense="true" Margin="@Margin.Dense">
         @foreach (var column in DataGrid?.RenderedColumns)
         {
-            <MudSelectItem Value="@column.Field">@computedTitle</MudSelectItem>
+            <MudSelectItem Value="@column.Field">@column.computedTitle</MudSelectItem>
         }
     </MudSelect>
 </MudItem>
