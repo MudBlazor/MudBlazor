@@ -29,6 +29,10 @@
     }
 }
 
+.mud-inherit-text {
+  color: inherit !important;
+}
+
 .mud-border-lines-default{
   border-color: var(--mud-palette-lines-default);
 }
@@ -79,8 +83,4 @@
 
 .black-text {
     color: #000000 !important;
-}
-
-.mud-inherit-text {
-    color: inherit !important;
 }
