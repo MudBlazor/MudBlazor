@@ -60,8 +60,7 @@ namespace MudBlazor
 
         private void Service_FragmentsChanged(object sender, EventArgs e)
         {
-            //Console.WriteLine("Rendering Popoverprovider");
-            StateHasChanged();
+            InvokeAsync(StateHasChanged);
         }
 
     }
