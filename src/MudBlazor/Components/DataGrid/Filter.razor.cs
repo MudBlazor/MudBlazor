@@ -82,13 +82,6 @@ namespace MudBlazor
                 return FilterOperator.IsEnum(dataType);
             }
         }
-        internal string computedTitle
-        {
-            get
-            {
-                return Title ?? Field;
-            }
-        }
 
         #endregion
 
