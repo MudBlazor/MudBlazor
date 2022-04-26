@@ -14,7 +14,7 @@
     </MudItem>
     <br />
     <p class="sel">
-        Selection: @(string.Join(", ", (selectedChips??new MudChip[0]).OrderBy(chip=> chip.Text).Select(chip=> chip.Text)))
+        Selection: @string.Join(", ", (selectedChips??Array.Empty<MudChip>()).OrderBy(chip=> chip.Text).Select(chip=> chip.Text))
     </p>
 </MudGrid>
 

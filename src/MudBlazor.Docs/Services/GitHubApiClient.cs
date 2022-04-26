@@ -30,7 +30,7 @@ namespace MudBlazor.Docs.Services
             catch (Exception e)
             {
                 Console.WriteLine(e.Message);
-                return new GithubContributors[0];
+                return Array.Empty<GithubContributors>();
             }
         }
         
@@ -44,7 +44,7 @@ namespace MudBlazor.Docs.Services
             catch (Exception e)
             {
                 Console.WriteLine(e.Message);
-                return new GitHubReleases[0];
+                return Array.Empty<GitHubReleases>();
             }
         }
     }

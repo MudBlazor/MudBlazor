@@ -2,6 +2,7 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -162,7 +163,7 @@ public abstract class BaseMask : IMask
         }
         if (other.MaskChars != null)
         {
-            var maskChars = new HashSet<MaskChar>(_maskChars ?? new MaskChar[0]);
+            var maskChars = new HashSet<MaskChar>(_maskChars ?? Array.Empty<MaskChar>());
             if (other.MaskChars.Length != MaskChars.Length || other.MaskChars.Any(x => !maskChars.Contains(x)))
             {
                 _maskChars = other.MaskChars;
