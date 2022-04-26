@@ -11,9 +11,9 @@ namespace MudBlazor
         protected string DivClassname =>
             new CssBuilder("mud-progress-linear")
                 .AddClass("mud-progress-linear-rounded", Rounded)
-                .AddClass($"mud-progress-linear-striped", Striped)
-                .AddClass($"mud-progress-indeterminate", Indeterminate)
-                .AddClass($"mud-progress-linear-buffer", Buffer && !Indeterminate)
+                .AddClass("mud-progress-linear-striped", Striped)
+                .AddClass("mud-progress-indeterminate", Indeterminate)
+                .AddClass("mud-progress-linear-buffer", Buffer && !Indeterminate)
                 .AddClass($"mud-progress-linear-{Size.ToDescriptionString()}")
                 .AddClass($"mud-progress-linear-color-{Color.ToDescriptionString()}")
                 .AddClass("horizontal", !Vertical)

@@ -43,7 +43,7 @@ namespace MudBlazor
                     .AddClass(_column.CellClass)
                     .AddClass("mud-table-cell")
                     .AddClass("mud-table-cell-hide", _column.HideSmall)
-                    .AddClass($"edit-mode-cell", _dataGrid.EditMode == DataGridEditMode.Cell && _column.IsEditable)
+                    .AddClass("edit-mode-cell", _dataGrid.EditMode == DataGridEditMode.Cell && _column.IsEditable)
                     .Build();
             }
         }

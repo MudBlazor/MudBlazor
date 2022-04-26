@@ -71,7 +71,7 @@ namespace MudBlazor.Services
             await UnsubscribeAll();
             try
             {                
-                await _jsRuntime.InvokeVoidAsync($"mudJsEvent.disconnect", _elementId);
+                await _jsRuntime.InvokeVoidAsync("mudJsEvent.disconnect", _elementId);
             }
             catch (Exception) {  /*ignore*/ }
             _isObserving = false;
@@ -98,7 +98,7 @@ namespace MudBlazor.Services
                 return;
             try
             {
-                await _jsRuntime.InvokeVoidAsync($"mudJsEvent.unsubscribe", _elementId, eventName);
+                await _jsRuntime.InvokeVoidAsync("mudJsEvent.unsubscribe", _elementId, eventName);
             }
             catch (Exception) {  /*ignore*/ }
             _subscribedEvents.Remove(eventName);
@@ -111,7 +111,7 @@ namespace MudBlazor.Services
             try
             {
                 foreach(var eventName in _subscribedEvents)
-                    await _jsRuntime.InvokeVoidAsync($"mudJsEvent.unsubscribe", _elementId, eventName);
+                    await _jsRuntime.InvokeVoidAsync("mudJsEvent.unsubscribe", _elementId, eventName);
             }
             catch (Exception) {  /*ignore*/ }
             _subscribedEvents.Clear();

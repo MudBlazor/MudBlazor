@@ -49,8 +49,8 @@ namespace MudBlazor
         protected string AdornmentClassname =>
             new CssBuilder("mud-input-adornment")
                 .AddClass($"mud-input-adornment-{Adornment.ToDescriptionString()}", Adornment != Adornment.None)
-                .AddClass($"mud-text", !string.IsNullOrEmpty(AdornmentText))
-                .AddClass($"mud-input-root-filled-shrink", Variant == Variant.Filled)
+                .AddClass("mud-text", !string.IsNullOrEmpty(AdornmentText))
+                .AddClass("mud-input-root-filled-shrink", Variant == Variant.Filled)
                 .AddClass(Class)
                 .Build();
 

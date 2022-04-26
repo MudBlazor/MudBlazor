@@ -56,7 +56,7 @@ namespace MudBlazor.UnitTests.Components
             Task<bool?> yesNoCancel = null;
             await comp.InvokeAsync(() =>
             {
-                yesNoCancel = service?.ShowMessageBox("Boom!", (MarkupString) $"I'm a pickle. What do you make of that?", "Great",
+                yesNoCancel = service?.ShowMessageBox("Boom!", (MarkupString) "I'm a pickle. What do you make of that?", "Great",
                     "Whatever", "Go away!");
             });
             //Console.WriteLine(comp.Markup);

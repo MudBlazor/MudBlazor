@@ -63,7 +63,7 @@ namespace MudBlazor.Services
         /// <param name="mediaQuery"></param>
         /// <returns>Returns true if matched.</returns>
         public async ValueTask<bool> MatchMedia(string mediaQuery) =>
-            await _jsRuntime.InvokeAsync<bool>($"mudResizeListener.matchMedia", mediaQuery);
+            await _jsRuntime.InvokeAsync<bool>("mudResizeListener.matchMedia", mediaQuery);
 
         public static Dictionary<Breakpoint, int> DefaultBreakpointDefinitions { get; set; } = new Dictionary<Breakpoint, int>()
         {
@@ -161,7 +161,7 @@ namespace MudBlazor.Services
 
                     try
                     {
-                        await JsRuntime.InvokeVoidAsync($"mudResizeListenerFactory.listenForResize", DotNetRef, options, listenerId);
+                        await JsRuntime.InvokeVoidAsync("mudResizeListenerFactory.listenForResize", DotNetRef, options, listenerId);
                         if (_breakpoint == Breakpoint.None)
                         {
                             _breakpoint = await GetBreakpoint();

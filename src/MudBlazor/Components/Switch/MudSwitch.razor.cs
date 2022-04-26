@@ -13,18 +13,18 @@ namespace MudBlazor
     {
         protected string Classname =>
         new CssBuilder("mud-switch")
-            .AddClass($"mud-disabled", Disabled)
-            .AddClass($"mud-readonly", ReadOnly)
+            .AddClass("mud-disabled", Disabled)
+            .AddClass("mud-readonly", ReadOnly)
           .AddClass(Class)
         .Build();
         protected string SwitchClassname =>
         new CssBuilder("mud-button-root mud-icon-button mud-switch-base")
-            .AddClass($"mud-ripple mud-ripple-switch", !DisableRipple && !ReadOnly && !Disabled)
+            .AddClass("mud-ripple mud-ripple-switch", !DisableRipple && !ReadOnly && !Disabled)
             .AddClass($"mud-{Color.ToDescriptionString()}-text hover:mud-{Color.ToDescriptionString()}-hover", BoolValue == true)
             .AddClass($"mud-{UnCheckedColor.ToDescriptionString()}-text hover:mud-{UnCheckedColor.ToDescriptionString()}-hover", BoolValue == false)
-            .AddClass($"mud-switch-disabled", Disabled)
-            .AddClass($"mud-readonly", ReadOnly)
-            .AddClass($"mud-checked", BoolValue)
+            .AddClass("mud-switch-disabled", Disabled)
+            .AddClass("mud-readonly", ReadOnly)
+            .AddClass("mud-checked", BoolValue)
         .Build();
 
         protected string TrackClassname =>

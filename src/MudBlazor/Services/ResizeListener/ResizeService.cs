@@ -90,7 +90,7 @@ namespace MudBlazor.Services
 
                 try
                 {
-                    await JsRuntime.InvokeVoidAsync($"mudResizeListenerFactory.listenForResize", DotNetRef, options, listenerId);
+                    await JsRuntime.InvokeVoidAsync("mudResizeListenerFactory.listenForResize", DotNetRef, options, listenerId);
                 }
                 catch (JSDisconnectedException) { }
                 catch (TaskCanceledException) { }

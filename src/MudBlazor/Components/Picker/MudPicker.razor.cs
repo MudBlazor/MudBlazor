@@ -22,13 +22,13 @@ namespace MudBlazor
 
         protected string PickerClass =>
             new CssBuilder("mud-picker")
-                .AddClass($"mud-picker-inline", PickerVariant != PickerVariant.Static)
-                .AddClass($"mud-picker-static", PickerVariant == PickerVariant.Static)
-                .AddClass($"mud-rounded", PickerVariant == PickerVariant.Static && !_pickerSquare)
+                .AddClass("mud-picker-inline", PickerVariant != PickerVariant.Static)
+                .AddClass("mud-picker-static", PickerVariant == PickerVariant.Static)
+                .AddClass("mud-rounded", PickerVariant == PickerVariant.Static && !_pickerSquare)
                 .AddClass($"mud-elevation-{_pickerElevation}", PickerVariant == PickerVariant.Static)
-                .AddClass($"mud-picker-input-button", !Editable && PickerVariant != PickerVariant.Static)
-                .AddClass($"mud-picker-input-text", Editable && PickerVariant != PickerVariant.Static)
-                .AddClass($"mud-disabled", Disabled && PickerVariant != PickerVariant.Static)
+                .AddClass("mud-picker-input-button", !Editable && PickerVariant != PickerVariant.Static)
+                .AddClass("mud-picker-input-text", Editable && PickerVariant != PickerVariant.Static)
+                .AddClass("mud-disabled", Disabled && PickerVariant != PickerVariant.Static)
                 .AddClass(Class)
                 .Build();
 

@@ -12,8 +12,8 @@ namespace MudBlazor
     {
         protected string Classname =>
         new CssBuilder("mud-checkbox")
-            .AddClass($"mud-disabled", Disabled)
-            .AddClass($"mud-readonly", ReadOnly)
+            .AddClass("mud-disabled", Disabled)
+            .AddClass("mud-readonly", ReadOnly)
           .AddClass(Class)
         .Build();
 
@@ -21,10 +21,10 @@ namespace MudBlazor
         new CssBuilder("mud-button-root mud-icon-button")
             .AddClass($"mud-{Color.ToDescriptionString()}-text hover:mud-{Color.ToDescriptionString()}-hover", UnCheckedColor == null || (UnCheckedColor != null && BoolValue == true))
             .AddClass($"mud-{UnCheckedColor?.ToDescriptionString()}-text hover:mud-{UnCheckedColor?.ToDescriptionString()}-hover", UnCheckedColor != null && BoolValue == false)
-            .AddClass($"mud-checkbox-dense", Dense)
-            .AddClass($"mud-ripple mud-ripple-checkbox", !DisableRipple && !ReadOnly && !Disabled)
-            .AddClass($"mud-disabled", Disabled)
-            .AddClass($"mud-readonly", ReadOnly)
+            .AddClass("mud-checkbox-dense", Dense)
+            .AddClass("mud-ripple mud-ripple-checkbox", !DisableRipple && !ReadOnly && !Disabled)
+            .AddClass("mud-disabled", Disabled)
+            .AddClass("mud-readonly", ReadOnly)
         .Build();
 
         /// <summary>

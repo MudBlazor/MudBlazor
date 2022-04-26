@@ -532,7 +532,7 @@ namespace MudBlazor.UnitTests.Components
             toolbarWrapper.HasAttribute("style").Should().Be(true);
             var styleAttr = toolbarWrapper.GetAttribute("style");
 
-            styleAttr.Should().Be($"transform:translateX(-400px);");
+            styleAttr.Should().Be("transform:translateX(-400px);");
         }
 
         [Test]
@@ -565,7 +565,7 @@ namespace MudBlazor.UnitTests.Components
             toolbarWrapper.Should().NotBeNull();
             toolbarWrapper.HasAttribute("style").Should().Be(true);
             var styleAttr = toolbarWrapper.GetAttribute("style");
-            styleAttr.Should().Be($"transform:translateX(-100px);");
+            styleAttr.Should().Be("transform:translateX(-100px);");
 
             var sliderValue = GetSliderValue(comp);
             GetSliderValue(comp).Should().Be(1 * 100.0);
@@ -595,7 +595,7 @@ namespace MudBlazor.UnitTests.Components
                 toolbarWrapper.Should().NotBeNull();
                 toolbarWrapper.HasAttribute("style").Should().Be(true);
                 var styleAttr = toolbarWrapper.GetAttribute("style");
-                styleAttr.Should().Be($"transform:translateX(-100px);");
+                styleAttr.Should().Be("transform:translateX(-100px);");
                 GetSliderValue(comp).Should().Be(2 * 100.0);
             }
 
@@ -608,7 +608,7 @@ namespace MudBlazor.UnitTests.Components
                 toolbarWrapper.Should().NotBeNull();
                 toolbarWrapper.HasAttribute("style").Should().Be(true);
                 var styleAttr = toolbarWrapper.GetAttribute("style");
-                styleAttr.Should().Be($"transform:translateX(-100px);");
+                styleAttr.Should().Be("transform:translateX(-100px);");
                 GetSliderValue(comp).Should().Be(2 * 100.0);
             }
         }

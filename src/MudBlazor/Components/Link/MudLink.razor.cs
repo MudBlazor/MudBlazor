@@ -12,7 +12,7 @@ namespace MudBlazor
            .AddClass($"mud-{Color.ToDescriptionString()}-text")
           .AddClass($"mud-link-underline-{Underline.ToDescriptionString()}")
           .AddClass($"mud-typography-{Typo.ToDescriptionString()}")
-          .AddClass($"mud-link-disabled", Disabled)
+          .AddClass("mud-link-disabled", Disabled)
           .AddClass(Class)
         .Build();
 

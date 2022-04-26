@@ -60,7 +60,7 @@ namespace MudBlazor.Services
         /// <param name="option">Define KeyOption to update</param>
         public async Task UpdateKey(KeyOptions option)
         {
-            await _jsRuntime.InvokeVoidAsync($"mudKeyInterceptor.updatekey", _elementId, option);
+            await _jsRuntime.InvokeVoidAsync("mudKeyInterceptor.updatekey", _elementId, option);
         }
 
         /// <summary>
@@ -70,7 +70,7 @@ namespace MudBlazor.Services
         {
             try
             {
-                await _jsRuntime.InvokeVoidAsync($"mudKeyInterceptor.disconnect", _elementId);
+                await _jsRuntime.InvokeVoidAsync("mudKeyInterceptor.disconnect", _elementId);
             } catch (Exception) {  /*ignore*/ }
             _isObserving = false;
         }

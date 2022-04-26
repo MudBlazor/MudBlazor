@@ -11,7 +11,7 @@ namespace MudBlazor
     public partial class MudDialog : MudComponentBase
     {
         protected string ContentClass => new CssBuilder("mud-dialog-content")
-          .AddClass($"mud-dialog-no-side-padding", DisableSidePadding)
+          .AddClass("mud-dialog-no-side-padding", DisableSidePadding)
           .AddClass(ClassContent)
         .Build();
 

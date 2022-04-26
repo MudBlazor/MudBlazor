@@ -12,8 +12,8 @@ public partial class MudPaper : MudComponentBase
 {
     protected string Classname =>
     new CssBuilder("mud-paper")
-      .AddClass($"mud-paper-outlined", Outlined)
-      .AddClass($"mud-paper-square", Square)
+      .AddClass("mud-paper-outlined", Outlined)
+      .AddClass("mud-paper-square", Square)
       .AddClass($"mud-elevation-{Elevation.ToString()}", !Outlined)
       .AddClass(Class)
     .Build();

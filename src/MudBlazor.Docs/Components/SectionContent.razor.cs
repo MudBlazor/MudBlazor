@@ -21,29 +21,29 @@ public partial class SectionContent
 
     protected string Classname =>
         new CssBuilder("docs-section-content")
-            .AddClass($"outlined", Outlined && ChildContent != null )
-            .AddClass($"darken", DarkenBackground)
+            .AddClass("outlined", Outlined && ChildContent != null )
+            .AddClass("darken", DarkenBackground)
             .AddClass("show-code", _hasCode && ShowCode)
             .AddClass(Class)
             .Build();
     protected string ToolbarClassname =>
         new CssBuilder("docs-section-content-toolbar")
-            .AddClass($"outlined", Outlined && ChildContent != null)
+            .AddClass("outlined", Outlined && ChildContent != null)
             .AddClass("darken", ChildContent == null && Codes != null)
             .Build();
 
     protected string InnerClassname =>
         new CssBuilder("docs-section-content-inner")
-            .AddClass($"relative d-flex flex-grow-1 flex-wrap justify-center align-center", !Block)
-            .AddClass($"d-block mx-auto", Block)
-            .AddClass($"mud-width-full", Block && FullWidth)
+            .AddClass("relative d-flex flex-grow-1 flex-wrap justify-center align-center", !Block)
+            .AddClass("d-block mx-auto", Block)
+            .AddClass("mud-width-full", Block && FullWidth)
             .AddClass("pa-8", !_hasCode)
             .AddClass("px-8 pb-8 pt-2", _hasCode)
             .Build();
     
     protected string SourceClassname =>
         new CssBuilder("docs-section-source")
-            .AddClass($"outlined", Outlined && ChildContent != null)
+            .AddClass("outlined", Outlined && ChildContent != null)
             .AddClass("show-code", _hasCode && ShowCode)
             .Build();
 
@@ -120,12 +120,12 @@ public partial class SectionContent
                         
                         foreach (var value in highlights)
                         {
-                            read = Regex.Replace(read, $"{value}(?=\\s|\")", $"<mark>$&</mark>");
+                            read = Regex.Replace(read, $"{value}(?=\\s|\")", "<mark>$&</mark>");
                         }
                     }
                     else
                     {
-                        read = Regex.Replace(read, $"{HighLight}(?=\\s|\")", $"<mark>$&</mark>");
+                        read = Regex.Replace(read, $"{HighLight}(?=\\s|\")", "<mark>$&</mark>");
                     }
                 }
 

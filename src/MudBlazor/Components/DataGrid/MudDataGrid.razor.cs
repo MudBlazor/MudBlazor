@@ -50,7 +50,7 @@ namespace MudBlazor
             .Build();
         protected string _tableStyle =>
             new StyleBuilder()
-            .AddStyle($"height", Height, !string.IsNullOrWhiteSpace(Height))
+            .AddStyle("height", Height, !string.IsNullOrWhiteSpace(Height))
             .Build();
         protected string _headClassname => new CssBuilder("mud-table-head")
             .AddClass(HeaderClass).Build();

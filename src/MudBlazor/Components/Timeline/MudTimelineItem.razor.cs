@@ -27,7 +27,7 @@ namespace MudBlazor
 
         protected string DotInnerClassnames =>
         new CssBuilder("mud-timeline-item-dot-inner")
-          .AddClass($"mud-timeline-dot-fill", Variant == Variant.Filled)
+          .AddClass("mud-timeline-dot-fill", Variant == Variant.Filled)
           .AddClass($"mud-timeline-dot-{Color.ToDescriptionString()}")
         .Build();
 

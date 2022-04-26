@@ -12,18 +12,18 @@ namespace MudBlazor
     {
         protected string Classname =>
         new CssBuilder("mud-nav-item")
-          .AddClass($"mud-ripple", !DisableRipple && !Disabled)
+          .AddClass("mud-ripple", !DisableRipple && !Disabled)
           .AddClass(Class)
           .Build();
 
         protected string LinkClassname =>
         new CssBuilder("mud-nav-link")
-          .AddClass($"mud-nav-link-disabled", Disabled)
+          .AddClass("mud-nav-link-disabled", Disabled)
           .Build();
 
         protected string IconClassname =>
         new CssBuilder("mud-nav-link-icon")
-          .AddClass($"mud-nav-link-icon-default", IconColor == Color.Default)
+          .AddClass("mud-nav-link-icon-default", IconColor == Color.Default)
           .Build();
 
         private Dictionary<string, object> Attributes
