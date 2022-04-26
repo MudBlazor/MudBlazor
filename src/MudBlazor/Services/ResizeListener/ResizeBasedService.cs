@@ -5,7 +5,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.JSInterop;
@@ -52,7 +51,7 @@ namespace MudBlazor.Services
 
                     try
                     {
-                        await JsRuntime.InvokeVoidAsync($"mudResizeListenerFactory.cancelListener", info.Key);
+                        await JsRuntime.InvokeVoidAsync("mudResizeListenerFactory.cancelListener", info.Key);
                     }
                     catch (JSDisconnectedException) { }
                     catch (TaskCanceledException) { }
@@ -82,7 +81,7 @@ namespace MudBlazor.Services
 
             try
             {
-                await JsRuntime.InvokeVoidAsync($"mudResizeListenerFactory.cancelListeners", ids);
+                await JsRuntime.InvokeVoidAsync("mudResizeListenerFactory.cancelListeners", ids);
             }
             catch (JSDisconnectedException) { }
             catch (TaskCanceledException) { }

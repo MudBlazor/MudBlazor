@@ -14,7 +14,7 @@
     {
         bool? result = await DialogService.ShowMessageBox(
             "Secure The Ring", 
-            (MarkupString) $"You <br /> Shall <br /> not <br /> <b>Pass!<b/>",
+            (MarkupString) "You <br /> Shall <br /> not <br /> <b>Pass!<b/>",
             yesText:"Fire Whip!", cancelText:"Smash Ground");
         state= result==null ? "Returned to Moria" : "Fighting With Gandalf!";
         StateHasChanged();

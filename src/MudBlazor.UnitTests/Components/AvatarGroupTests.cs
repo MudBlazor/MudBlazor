@@ -1,6 +1,4 @@
-﻿
-using System;
-using System.Linq;
+﻿using System.Linq;
 using Bunit;
 using FluentAssertions;
 using MudBlazor.UnitTests.TestComponents;

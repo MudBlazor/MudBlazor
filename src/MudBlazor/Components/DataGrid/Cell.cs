@@ -3,10 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Text.Json;
 using System.Threading.Tasks;
 using MudBlazor.Utilities;
 
@@ -43,7 +40,7 @@ namespace MudBlazor
                     .AddClass(_column.CellClass)
                     .AddClass("mud-table-cell")
                     .AddClass("mud-table-cell-hide", _column.HideSmall)
-                    .AddClass($"edit-mode-cell", _dataGrid.EditMode == DataGridEditMode.Cell && _column.IsEditable)
+                    .AddClass("edit-mode-cell", _dataGrid.EditMode == DataGridEditMode.Cell && _column.IsEditable)
                     .Build();
             }
         }

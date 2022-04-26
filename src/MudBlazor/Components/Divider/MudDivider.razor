@@ -9,10 +9,10 @@
 
     protected string Classname =>
     new CssBuilder("mud-divider")
-      .AddClass($"mud-divider-absolute" , Absolute)
-      .AddClass($"mud-divider-flexitem", FlexItem)
-      .AddClass($"mud-divider-light", Light)
-      .AddClass($"mud-divider-vertical", Vertical)
+      .AddClass("mud-divider-absolute" , Absolute)
+      .AddClass("mud-divider-flexitem", FlexItem)
+      .AddClass("mud-divider-light", Light)
+      .AddClass("mud-divider-vertical", Vertical)
       .AddClass($"mud-divider-{DividerType.ToDescriptionString()}", when: () => DividerType != DividerType.FullWidth)
       .AddClass(Class)
     .Build();

@@ -262,42 +262,42 @@ namespace MudBlazor
 
         protected string ToolbarClass =>
         new CssBuilder("mud-picker-timepicker-toolbar")
-          .AddClass($"mud-picker-timepicker-toolbar-landscape", Orientation == Orientation.Landscape && PickerVariant == PickerVariant.Static)
+          .AddClass("mud-picker-timepicker-toolbar-landscape", Orientation == Orientation.Landscape && PickerVariant == PickerVariant.Static)
           .AddClass(Class)
         .Build();
 
         protected string HoursButtonClass =>
         new CssBuilder("mud-timepicker-button")
-          .AddClass($"mud-timepicker-toolbar-text", _currentView == OpenTo.Minutes)
+          .AddClass("mud-timepicker-toolbar-text", _currentView == OpenTo.Minutes)
         .Build();
 
         protected string MinuteButtonClass =>
         new CssBuilder("mud-timepicker-button")
-          .AddClass($"mud-timepicker-toolbar-text", _currentView == OpenTo.Hours)
+          .AddClass("mud-timepicker-toolbar-text", _currentView == OpenTo.Hours)
         .Build();
 
         protected string AmButtonClass =>
         new CssBuilder("mud-timepicker-button")
-          .AddClass($"mud-timepicker-toolbar-text", !IsAm) // gray it out
+          .AddClass("mud-timepicker-toolbar-text", !IsAm) // gray it out
         .Build();
 
         protected string PmButtonClass =>
         new CssBuilder("mud-timepicker-button")
-          .AddClass($"mud-timepicker-toolbar-text", !IsPm) // gray it out
+          .AddClass("mud-timepicker-toolbar-text", !IsPm) // gray it out
         .Build();
 
         private string HourDialClass =>
         new CssBuilder("mud-time-picker-hour")
-          .AddClass($"mud-time-picker-dial")
-          .AddClass($"mud-time-picker-dial-out", _currentView != OpenTo.Hours)
-          .AddClass($"mud-time-picker-dial-hidden", _currentView != OpenTo.Hours)
+          .AddClass("mud-time-picker-dial")
+          .AddClass("mud-time-picker-dial-out", _currentView != OpenTo.Hours)
+          .AddClass("mud-time-picker-dial-hidden", _currentView != OpenTo.Hours)
         .Build();
 
         private string MinuteDialClass =>
         new CssBuilder("mud-time-picker-minute")
-          .AddClass($"mud-time-picker-dial")
-          .AddClass($"mud-time-picker-dial-out", _currentView != OpenTo.Minutes)
-          .AddClass($"mud-time-picker-dial-hidden", _currentView != OpenTo.Minutes)
+          .AddClass("mud-time-picker-dial")
+          .AddClass("mud-time-picker-dial-out", _currentView != OpenTo.Minutes)
+          .AddClass("mud-time-picker-dial-hidden", _currentView != OpenTo.Minutes)
         .Build();
 
         private bool IsAm => _timeSet.Hour >= 00 && _timeSet.Hour < 12; // am is 00:00 to 11:59 
@@ -343,7 +343,7 @@ namespace MudBlazor
             {
                 return $"mud-clock-number mud-theme-{Color.ToDescriptionString()}";
             }
-            return $"mud-clock-number";
+            return "mud-clock-number";
         }
 
         private double GetDeg()

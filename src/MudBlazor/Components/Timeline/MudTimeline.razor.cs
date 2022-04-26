@@ -51,10 +51,10 @@ namespace MudBlazor
             new CssBuilder("mud-timeline")
                 .AddClass($"mud-timeline-{TimelineOrientation.ToDescriptionString()}")
                 .AddClass($"mud-timeline-position-{ConvertTimelinePosition().ToDescriptionString()}")
-                .AddClass($"mud-timeline-reverse", Reverse && TimelinePosition == TimelinePosition.Alternate)
+                .AddClass("mud-timeline-reverse", Reverse && TimelinePosition == TimelinePosition.Alternate)
                 .AddClass($"mud-timeline-align-{TimelineAlign.ToDescriptionString()}")
-                .AddClass($"mud-timeline-modifiers", !DisableModifiers)
-                .AddClass($"mud-timeline-rtl", RightToLeft)
+                .AddClass("mud-timeline-modifiers", !DisableModifiers)
+                .AddClass("mud-timeline-rtl", RightToLeft)
                 .AddClass(Class)
                 .Build();
 

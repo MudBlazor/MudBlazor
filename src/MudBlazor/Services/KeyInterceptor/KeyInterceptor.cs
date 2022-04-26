@@ -3,14 +3,9 @@
 // See the LICENSE file in the project root for more information.
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
-using Microsoft.Extensions.Options;
 using Microsoft.JSInterop;
-using MudBlazor.Interop;
 
 namespace MudBlazor.Services
 {
@@ -60,7 +55,7 @@ namespace MudBlazor.Services
         /// <param name="option">Define KeyOption to update</param>
         public async Task UpdateKey(KeyOptions option)
         {
-            await _jsRuntime.InvokeVoidAsync($"mudKeyInterceptor.updatekey", _elementId, option);
+            await _jsRuntime.InvokeVoidAsync("mudKeyInterceptor.updatekey", _elementId, option);
         }
 
         /// <summary>
@@ -70,7 +65,7 @@ namespace MudBlazor.Services
         {
             try
             {
-                await _jsRuntime.InvokeVoidAsync($"mudKeyInterceptor.disconnect", _elementId);
+                await _jsRuntime.InvokeVoidAsync("mudKeyInterceptor.disconnect", _elementId);
             } catch (Exception) {  /*ignore*/ }
             _isObserving = false;
         }

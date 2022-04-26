@@ -8,14 +8,14 @@ namespace MudBlazor
     {
         protected string Classname =>
         new CssBuilder("mud-button-group-root")
-          .AddClass($"mud-button-group-override-styles", OverrideStyles)
+          .AddClass("mud-button-group-override-styles", OverrideStyles)
           .AddClass($"mud-button-group-{Variant.ToDescriptionString()}")
           .AddClass($"mud-button-group-{Variant.ToDescriptionString()}-{Color.ToDescriptionString()}")
           .AddClass($"mud-button-group-{Variant.ToDescriptionString()}-size-{Size.ToDescriptionString()}")
-          .AddClass($"mud-button-group-vertical", VerticalAlign)
-          .AddClass($"mud-button-group-horizontal", !VerticalAlign)
-          .AddClass($"mud-button-group-disable-elevation", DisableElevation)
-          .AddClass($"mud-button-group-rtl", RightToLeft)
+          .AddClass("mud-button-group-vertical", VerticalAlign)
+          .AddClass("mud-button-group-horizontal", !VerticalAlign)
+          .AddClass("mud-button-group-disable-elevation", DisableElevation)
+          .AddClass("mud-button-group-rtl", RightToLeft)
           .AddClass(Class)
         .Build();
 

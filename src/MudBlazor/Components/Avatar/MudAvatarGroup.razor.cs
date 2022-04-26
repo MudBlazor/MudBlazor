@@ -11,7 +11,7 @@ namespace MudBlazor
 
         protected string Classname =>
         new CssBuilder("mud-avatar-group")
-            .AddClass($"mud-avatar-group-outlined", Outlined)
+            .AddClass("mud-avatar-group-outlined", Outlined)
             .AddClass($"mud-avatar-group-outlined-{OutlineColor.ToDescriptionString()}", Outlined)
           .AddClass(Class)
         .Build();

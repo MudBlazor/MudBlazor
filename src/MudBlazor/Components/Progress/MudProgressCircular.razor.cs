@@ -14,15 +14,15 @@ namespace MudBlazor
             new CssBuilder("mud-progress-circular")
                 .AddClass($"mud-{Color.ToDescriptionString()}-text")
                 .AddClass($"mud-progress-{Size.ToDescriptionString()}")
-                .AddClass($"mud-progress-indeterminate", Indeterminate)
-                .AddClass($"mud-progress-static", !Indeterminate)
+                .AddClass("mud-progress-indeterminate", Indeterminate)
+                .AddClass("mud-progress-static", !Indeterminate)
                 .AddClass(Class)
                 .Build();
 
         protected string SvgClassname =>
             new CssBuilder("mud-progress-circular-circle")
-                .AddClass($"mud-progress-indeterminate", Indeterminate)
-                .AddClass($"mud-progress-static", !Indeterminate)
+                .AddClass("mud-progress-indeterminate", Indeterminate)
+                .AddClass("mud-progress-static", !Indeterminate)
                 .Build();
 
         /// <summary>

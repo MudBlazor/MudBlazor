@@ -9,7 +9,6 @@ using FluentAssertions;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.UnitTests.TestComponents;
 using NUnit.Framework;
-using static Bunit.ComponentParameterFactory;
 
 namespace MudBlazor.UnitTests.Components
 {
@@ -402,7 +401,7 @@ namespace MudBlazor.UnitTests.Components
                 await input.InputAsync(eventArgs);
             }
 
-            filling.GetAttribute("style").Should().Be($"width:80%;");
+            filling.GetAttribute("style").Should().Be("width:80%;");
         }
     }
 }

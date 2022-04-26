@@ -1,6 +1,4 @@
-﻿using System.Linq;
-
-namespace MudBlazor
+﻿namespace MudBlazor
 {
     public class RangeConverter<T> : Converter<Range<T>>
     {

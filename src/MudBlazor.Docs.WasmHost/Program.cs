@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Net.Http;
-using Blazor.Analytics;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -10,7 +8,6 @@ using MudBlazor.Docs.Extensions;
 using MudBlazor.Docs.WasmHost.Prerender;
 using MudBlazor.Docs.Services;
 using MudBlazor.Docs.Services.Notifications;
-using MudBlazor.Examples.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 

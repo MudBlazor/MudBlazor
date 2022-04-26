@@ -41,7 +41,7 @@
 
 	private MudDropContainer<SimpleDropItem> _container;
 
-	public void AddItem() => _items.Add(new SimpleDropItem($"{_items.Count + 1}",$"Column 2"));
+	public void AddItem() => _items.Add(new SimpleDropItem($"{_items.Count + 1}","Column 2"));
 	public void RemoveLastItem() => _items.RemoveAt(_items.Count - 1);
 
 	public async Task InvokeRefresh() => await InvokeAsync(_container.Refresh);

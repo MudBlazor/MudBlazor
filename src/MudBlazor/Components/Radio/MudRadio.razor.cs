@@ -14,24 +14,24 @@ namespace MudBlazor
 
         protected string Classname =>
         new CssBuilder("mud-radio")
-            .AddClass($"mud-disabled", Disabled)
+            .AddClass("mud-disabled", Disabled)
             .AddClass($"mud-radio-content-placement-{ConvertPlacement(Placement).ToDescriptionString()}")
             .AddClass(Class)
             .Build();
 
         protected string ButtonClassname =>
         new CssBuilder("mud-button-root mud-icon-button")
-            .AddClass($"mud-ripple mud-ripple-radio", !DisableRipple && !Disabled)
+            .AddClass("mud-ripple mud-ripple-radio", !DisableRipple && !Disabled)
             .AddClass($"mud-{Color.ToDescriptionString()}-text hover:mud-{Color.ToDescriptionString()}-hover", UnCheckedColor == null || (UnCheckedColor != null && Checked == true))
             .AddClass($"mud-{UnCheckedColor?.ToDescriptionString()}-text hover:mud-{UnCheckedColor?.ToDescriptionString()}-hover", UnCheckedColor != null && Checked == false)
-            .AddClass($"mud-radio-dense", Dense)
-            .AddClass($"mud-disabled", Disabled)
-            .AddClass($"mud-checked", Checked)
+            .AddClass("mud-radio-dense", Dense)
+            .AddClass("mud-disabled", Disabled)
+            .AddClass("mud-checked", Checked)
             .Build();
 
         protected string RadioIconsClassNames =>
         new CssBuilder("mud-radio-icons")
-            .AddClass($"mud-checked", Checked)
+            .AddClass("mud-checked", Checked)
             .Build();
 
         protected string IconClassName =>

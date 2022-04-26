@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
-using MudBlazor.Docs.Services.UserPreferences;
-using MudBlazor.Docs.Models;
 using MudBlazor.Docs.Services;
 
 namespace MudBlazor.Docs.Shared

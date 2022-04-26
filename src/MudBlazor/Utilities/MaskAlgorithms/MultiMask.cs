@@ -3,11 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
 namespace MudBlazor
 {
@@ -18,7 +14,7 @@ namespace MudBlazor
         public MultiMask(string defaultMask, params MaskOption[] options) : base(defaultMask)
         {
             _defaultMask = defaultMask;
-            _options = options ?? new MaskOption[0];
+            _options = options ?? Array.Empty<MaskOption>();
         }
 
         private string _defaultMask;
@@ -92,7 +88,7 @@ namespace MudBlazor
                 return;
             // no need to re-initialize, just update the options
             _defaultMask = o._defaultMask;
-            _options = o._options ?? new MaskOption[0];
+            _options = o._options ?? Array.Empty<MaskOption>();
             OptionDetected = o.OptionDetected;
             Refresh();
         }

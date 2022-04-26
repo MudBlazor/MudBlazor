@@ -1,6 +1,4 @@
-﻿
-using System;
-using Bunit;
+﻿using Bunit;
 using FluentAssertions;
 using MudBlazor.UnitTests.TestComponents;
 using NUnit.Framework;

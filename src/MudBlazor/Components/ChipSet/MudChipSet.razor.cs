@@ -76,7 +76,7 @@ namespace MudBlazor
         [Category(CategoryTypes.ChipSet.Behavior)]
         public MudChip SelectedChip
         {
-            get { return _chips.OfType<MudChip>().FirstOrDefault(x => x.IsSelected); }
+            get { return _chips.FirstOrDefault(x => x.IsSelected); }
             set
             {
                 if (value == null)
@@ -110,7 +110,7 @@ namespace MudBlazor
         [Category(CategoryTypes.ChipSet.Behavior)]
         public MudChip[] SelectedChips
         {
-            get { return _chips.OfType<MudChip>().Where(x => x.IsSelected).ToArray(); }
+            get { return _chips.Where(x => x.IsSelected).ToArray(); }
             set
             {
                 if (value == null || value.Length == 0)
@@ -179,7 +179,7 @@ namespace MudBlazor
             set
             {
                 if (value == null)
-                    SetSelectedValues(new object[0]);
+                    SetSelectedValues(Array.Empty<object>());
                 else
                     SetSelectedValues(value.ToArray()).AndForget();
             }
@@ -194,7 +194,7 @@ namespace MudBlazor
         {
             HashSet<object> newValues = null;
             if (values == null)
-                values = new object[0];
+                values = Array.Empty<object>();
             if (MultiSelection)
                 newValues = new HashSet<object>(values, _comparer);
             else

@@ -65,7 +65,7 @@
 
         // if text is null or empty, don't return values (drop-down will not open)
         if (string.IsNullOrEmpty(value))
-            return new string[0];
+            return Array.Empty<string>();
         return states.Where(x => x.Contains(value, StringComparison.InvariantCultureIgnoreCase));
     }
 }

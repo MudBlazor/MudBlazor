@@ -69,7 +69,7 @@ namespace MudBlazor.Services
             if (elementId == default) { return; }
 
             //if the ubobserve happen during a component teardown, the try-catch is a safe guard to prevent a "pseudo" exception
-            try { await _jsRuntime.InvokeVoidAsync($"mudResizeObserver.disconnect", _id, elementId); } catch (Exception) { }
+            try { await _jsRuntime.InvokeVoidAsync("mudResizeObserver.disconnect", _id, elementId); } catch (Exception) { }
 
             _cachedValueIds.Remove(elementId);
             _cachedValues.Remove(element);
@@ -120,7 +120,7 @@ namespace MudBlazor.Services
                 _cachedValues.Clear();
 
                 //in a fire and forget manner, we just "trying" to cancel the listener. So, we are not interested in an potential error 
-                try { _ = _jsRuntime.InvokeVoidAsync($"mudResizeObserver.cancelListener", _id); } catch (Exception) { }
+                try { _ = _jsRuntime.InvokeVoidAsync("mudResizeObserver.cancelListener", _id); } catch (Exception) { }
             }
         }
 
@@ -141,7 +141,7 @@ namespace MudBlazor.Services
             _cachedValues.Clear();
 
             //in a fire and forget manner, we just "trying" to cancel the listener. So, we are not interested in an potential error 
-            try { await _jsRuntime.InvokeVoidAsync($"mudResizeObserver.cancelListener", _id); } catch (Exception) { }
+            try { await _jsRuntime.InvokeVoidAsync("mudResizeObserver.cancelListener", _id); } catch (Exception) { }
         }
     }
 }

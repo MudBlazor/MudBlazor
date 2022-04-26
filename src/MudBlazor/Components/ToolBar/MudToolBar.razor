@@ -11,8 +11,8 @@
 
     protected string Classname =>
     new CssBuilder("mud-toolbar")
-      .AddClass($"mud-toolbar-dense", Dense)
-      .AddClass($"mud-toolbar-gutters", !DisableGutters)
+      .AddClass("mud-toolbar-dense", Dense)
+      .AddClass("mud-toolbar-gutters", !DisableGutters)
       .AddClass(Class)
     .Build();
 

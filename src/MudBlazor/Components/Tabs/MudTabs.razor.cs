@@ -408,30 +408,30 @@ namespace MudBlazor
         #region Style and classes
         protected string TabsClassnames =>
             new CssBuilder("mud-tabs")
-            .AddClass($"mud-tabs-rounded", ApplyEffectsToContainer && Rounded)
-            .AddClass($"mud-paper-outlined", ApplyEffectsToContainer && Outlined)
+            .AddClass("mud-tabs-rounded", ApplyEffectsToContainer && Rounded)
+            .AddClass("mud-paper-outlined", ApplyEffectsToContainer && Outlined)
             .AddClass($"mud-elevation-{Elevation}", ApplyEffectsToContainer && Elevation != 0)
-            .AddClass($"mud-tabs-reverse", Position == Position.Bottom)
-            .AddClass($"mud-tabs-vertical", IsVerticalTabs())
-            .AddClass($"mud-tabs-vertical-reverse", Position == Position.Right && !RightToLeft || (Position == Position.Left) && RightToLeft || Position == Position.End)
+            .AddClass("mud-tabs-reverse", Position == Position.Bottom)
+            .AddClass("mud-tabs-vertical", IsVerticalTabs())
+            .AddClass("mud-tabs-vertical-reverse", Position == Position.Right && !RightToLeft || (Position == Position.Left) && RightToLeft || Position == Position.End)
             .AddClass(InternalClassName)
             .AddClass(Class)
             .Build();
 
         protected string ToolbarClassnames =>
             new CssBuilder("mud-tabs-toolbar")
-            .AddClass($"mud-tabs-rounded", !ApplyEffectsToContainer && Rounded)
-            .AddClass($"mud-tabs-vertical", IsVerticalTabs())
+            .AddClass("mud-tabs-rounded", !ApplyEffectsToContainer && Rounded)
+            .AddClass("mud-tabs-vertical", IsVerticalTabs())
             .AddClass($"mud-tabs-toolbar-{Color.ToDescriptionString()}", Color != Color.Default)
             .AddClass($"mud-tabs-border-{ConvertPosition(Position).ToDescriptionString()}", Border)
-            .AddClass($"mud-paper-outlined", !ApplyEffectsToContainer && Outlined)
+            .AddClass("mud-paper-outlined", !ApplyEffectsToContainer && Outlined)
             .AddClass($"mud-elevation-{Elevation}", !ApplyEffectsToContainer && Elevation != 0)
             .Build();
 
         protected string WrapperClassnames =>
             new CssBuilder("mud-tabs-toolbar-wrapper")
-            .AddClass($"mud-tabs-centered", Centered)
-            .AddClass($"mud-tabs-vertical", IsVerticalTabs())
+            .AddClass("mud-tabs-centered", Centered)
+            .AddClass("mud-tabs-vertical", IsVerticalTabs())
             .Build();
 
         protected string WrapperScrollStyle =>
@@ -442,17 +442,17 @@ namespace MudBlazor
 
         protected string PanelsClassnames =>
             new CssBuilder("mud-tabs-panels")
-            .AddClass($"mud-tabs-vertical", IsVerticalTabs())
+            .AddClass("mud-tabs-vertical", IsVerticalTabs())
             .AddClass(PanelClass)
             .Build();
 
         protected string SliderClass =>
             new CssBuilder("mud-tab-slider")
             .AddClass($"mud-{SliderColor.ToDescriptionString()}", SliderColor != Color.Inherit)
-            .AddClass($"mud-tab-slider-horizontal", Position is Position.Top or Position.Bottom)
-            .AddClass($"mud-tab-slider-vertical", IsVerticalTabs())
-            .AddClass($"mud-tab-slider-horizontal-reverse", Position == Position.Bottom)
-            .AddClass($"mud-tab-slider-vertical-reverse", Position == Position.Right || Position == Position.Start && RightToLeft || Position == Position.End && !RightToLeft)
+            .AddClass("mud-tab-slider-horizontal", Position is Position.Top or Position.Bottom)
+            .AddClass("mud-tab-slider-vertical", IsVerticalTabs())
+            .AddClass("mud-tab-slider-horizontal-reverse", Position == Position.Bottom)
+            .AddClass("mud-tab-slider-vertical-reverse", Position == Position.Right || Position == Position.Start && RightToLeft || Position == Position.End && !RightToLeft)
             .Build();
 
         protected string MaxHeightStyles =>
@@ -495,9 +495,9 @@ namespace MudBlazor
         string GetTabClass(MudTabPanel panel)
         {
             var tabClass = new CssBuilder("mud-tab")
-              .AddClass($"mud-tab-active", when: () => panel == ActivePanel)
-              .AddClass($"mud-disabled", panel.Disabled)
-              .AddClass($"mud-ripple", !DisableRipple)
+              .AddClass("mud-tab-active", when: () => panel == ActivePanel)
+              .AddClass("mud-disabled", panel.Disabled)
+              .AddClass("mud-ripple", !DisableRipple)
               .AddClass(TabPanelClass)
               .AddClass(panel.Class)
               .Build();

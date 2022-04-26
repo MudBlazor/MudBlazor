@@ -1,5 +1,4 @@
-﻿using System;
-using Bunit;
+﻿using Bunit;
 using FluentAssertions;
 using NUnit.Framework;
 using static Bunit.ComponentParameterFactory;

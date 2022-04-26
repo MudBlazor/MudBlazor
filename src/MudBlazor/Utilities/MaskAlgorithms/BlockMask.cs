@@ -3,8 +3,6 @@
 // See the LICENSE file in the project root for more information.
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -32,7 +30,7 @@ public class BlockMask : RegexMask
     protected override void InitInternals()
     {
         base.InitInternals();
-        Blocks ??= new Block[0];
+        Blocks ??= Array.Empty<Block>();
         Mask = BuildRegex(Blocks);
         _regex = new Regex(Mask);
     }
@@ -108,7 +106,7 @@ public class BlockMask : RegexMask
         var o = other as BlockMask;
         if (o == null)
             return;
-        Blocks = o.Blocks ?? new Block[0];
+        Blocks = o.Blocks ?? Array.Empty<Block>();
         Delimiters = o.Delimiters;
         _initialized = false;
         Refresh();

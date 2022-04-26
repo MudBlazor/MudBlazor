@@ -14,8 +14,8 @@ namespace MudBlazor
         protected string Classname =>
         new CssBuilder("mud-alert")
           .AddClass($"mud-alert-{Variant.ToDescriptionString()}-{Severity.ToDescriptionString()}")
-          .AddClass($"mud-dense", Dense)
-          .AddClass($"mud-square", Square)
+          .AddClass("mud-dense", Dense)
+          .AddClass("mud-square", Square)
           .AddClass($"mud-elevation-{Elevation}")
           .AddClass(Class)
         .Build();

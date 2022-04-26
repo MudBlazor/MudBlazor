@@ -491,7 +491,7 @@ namespace MudBlazor
 
         protected string TableStyle
             => new StyleBuilder()
-                .AddStyle($"height", Height, !string.IsNullOrWhiteSpace(Height))
+                .AddStyle("height", Height, !string.IsNullOrWhiteSpace(Height))
                 .Build();
 
         internal abstract bool HasServerData { get; }

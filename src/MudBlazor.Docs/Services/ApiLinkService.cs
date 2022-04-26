@@ -86,7 +86,7 @@ namespace MudBlazor.Docs.Services
                 //api
                 RegisterPage(
                     title: item.ComponentName,
-                    subtitle: $"API documentation",
+                    subtitle: "API documentation",
                     componentType: item.Type,
                     link: ApiLink.GetApiLinkFor(item.Type)
                     );

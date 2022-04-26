@@ -1,7 +1,6 @@
 ﻿
 #pragma warning disable CS1998 // async without await
 
-using System;
 using System.Threading.Tasks;
 using Bunit;
 using FluentAssertions;

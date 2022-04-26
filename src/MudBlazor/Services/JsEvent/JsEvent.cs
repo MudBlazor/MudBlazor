@@ -4,13 +4,8 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Web;
-using Microsoft.Extensions.Options;
 using Microsoft.JSInterop;
-using MudBlazor.Interop;
 
 namespace MudBlazor.Services
 {
@@ -71,7 +66,7 @@ namespace MudBlazor.Services
             await UnsubscribeAll();
             try
             {                
-                await _jsRuntime.InvokeVoidAsync($"mudJsEvent.disconnect", _elementId);
+                await _jsRuntime.InvokeVoidAsync("mudJsEvent.disconnect", _elementId);
             }
             catch (Exception) {  /*ignore*/ }
             _isObserving = false;
@@ -98,7 +93,7 @@ namespace MudBlazor.Services
                 return;
             try
             {
-                await _jsRuntime.InvokeVoidAsync($"mudJsEvent.unsubscribe", _elementId, eventName);
+                await _jsRuntime.InvokeVoidAsync("mudJsEvent.unsubscribe", _elementId, eventName);
             }
             catch (Exception) {  /*ignore*/ }
             _subscribedEvents.Remove(eventName);
@@ -111,7 +106,7 @@ namespace MudBlazor.Services
             try
             {
                 foreach(var eventName in _subscribedEvents)
-                    await _jsRuntime.InvokeVoidAsync($"mudJsEvent.unsubscribe", _elementId, eventName);
+                    await _jsRuntime.InvokeVoidAsync("mudJsEvent.unsubscribe", _elementId, eventName);
             }
             catch (Exception) {  /*ignore*/ }
             _subscribedEvents.Clear();

@@ -8,9 +8,9 @@ namespace MudBlazor
     {
         protected string Classname =>
             new CssBuilder("mud-appbar")
-                .AddClass($"mud-appbar-dense", Dense)
-                .AddClass($"mud-appbar-fixed-top", Fixed && !Bottom)
-                .AddClass($"mud-appbar-fixed-bottom", Fixed && Bottom)
+                .AddClass("mud-appbar-dense", Dense)
+                .AddClass("mud-appbar-fixed-top", Fixed && !Bottom)
+                .AddClass("mud-appbar-fixed-bottom", Fixed && Bottom)
                 .AddClass($"mud-elevation-{Elevation}")
                 .AddClass($"mud-theme-{Color.ToDescriptionString()}", Color != Color.Default)
                 .AddClass(Class)

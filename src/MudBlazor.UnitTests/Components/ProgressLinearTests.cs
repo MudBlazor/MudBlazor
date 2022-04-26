@@ -1,6 +1,4 @@
-﻿
-using System;
-using System.Globalization;
+﻿using System.Globalization;
 using Bunit;
 using FluentAssertions;
 using NUnit.Framework;
@@ -113,7 +111,7 @@ namespace MudBlazor.UnitTests.Components
 
             barElement.GetAttribute("style").Should().Be(
                 isVertical == true ?
-                $"top: 90%;" : $"right: 90%;");
+                "top: 90%;" : "right: 90%;");
         }
 
         [Test]
@@ -182,14 +180,14 @@ namespace MudBlazor.UnitTests.Components
 
             secondBarElement.GetAttribute("style").Should().Be(
                 isVertical == true ?
-                $"top: 90%;" : $"right: 90%;");
+                "top: 90%;" : "right: 90%;");
 
             var thirdBarElement = barContainer.Children[2];
             thirdBarElement.ClassList.Should().Contain("mud-progress-linear-bar", "last");
 
             thirdBarElement.GetAttribute("style").Should().Be(
                 isVertical == true ?
-                $"top: 60%;" : $"right: 60%;");
+                "top: 60%;" : "right: 60%;");
         }
 
         [Test]

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
@@ -90,7 +89,7 @@ namespace MudBlazor.Services
 
                 try
                 {
-                    await JsRuntime.InvokeVoidAsync($"mudResizeListenerFactory.listenForResize", DotNetRef, options, listenerId);
+                    await JsRuntime.InvokeVoidAsync("mudResizeListenerFactory.listenForResize", DotNetRef, options, listenerId);
                 }
                 catch (JSDisconnectedException) { }
                 catch (TaskCanceledException) { }

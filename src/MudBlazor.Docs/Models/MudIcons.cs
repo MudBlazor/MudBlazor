@@ -1,6 +1,4 @@
 ﻿
-using System.Collections.Generic;
-
 namespace MudBlazor.Docs.Models
 {
     public class MudIcons
