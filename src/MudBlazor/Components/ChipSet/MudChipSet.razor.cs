@@ -76,7 +76,7 @@ namespace MudBlazor
         [Category(CategoryTypes.ChipSet.Behavior)]
         public MudChip SelectedChip
         {
-            get { return _chips.OfType<MudChip>().FirstOrDefault(x => x.IsSelected); }
+            get { return _chips.FirstOrDefault(x => x.IsSelected); }
             set
             {
                 if (value == null)
@@ -110,7 +110,7 @@ namespace MudBlazor
         [Category(CategoryTypes.ChipSet.Behavior)]
         public MudChip[] SelectedChips
         {
-            get { return _chips.OfType<MudChip>().Where(x => x.IsSelected).ToArray(); }
+            get { return _chips.Where(x => x.IsSelected).ToArray(); }
             set
             {
                 if (value == null || value.Length == 0)
