@@ -4,7 +4,6 @@
 
 using System;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Components;
 using MudBlazor.Services;
 
 namespace MudBlazor.UnitTests.Mocks

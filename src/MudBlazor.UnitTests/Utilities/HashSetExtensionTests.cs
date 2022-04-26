@@ -1,7 +1,6 @@
 ﻿
 using System.Collections.Generic;
 using FluentAssertions;
-using MudBlazor.Docs.Extensions;
 using MudBlazor.Utilities;
 using NUnit.Framework;
 
