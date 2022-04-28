@@ -60,6 +60,11 @@
                                     }
                                 </MudGrid>
                                 <MudButton Class="mt-2" StartIcon="@Icons.Material.Filled.Add" OnClick="@AddFilter" Color="@Color.Primary">Add Filter</MudButton>
+                                @if(ServerData != null)
+                                {
+                                    <MudButton Class="mt-2" StartIcon="@Icons.Material.Filled.Add" OnClick="@ApplyFilters" Color="@Color.Primary">Apply</MudButton>
+                                }
+                                <MudButton Class="mt-2" StartIcon="@Icons.Material.Filled.Add" OnClick="@ClearFilters" Color="@Color.Primary">Clear</MudButton>
                             </MudPaper>
                         }
                         @if (_columnsPanelVisible)
@@ -259,6 +264,10 @@
             {
                 <MudMenuItem OnClick="@__this.ExpandAllGroups">Expand All Groups</MudMenuItem>
                 <MudMenuItem OnClick="@__this.CollapseAllGroups">Collapse All Groups</MudMenuItem>
+            }
+            @if(__this.ServerData != null)
+            {
+                <MudMenuItem OnClick="@__this.InvokeServerLoadFunc">Refresh Data</MudMenuItem>
             }
         </MudMenu>
         </text>;
