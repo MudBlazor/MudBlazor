@@ -447,8 +447,8 @@ namespace MudBlazor.UnitTests.Components
                 Value = "Joe"
             };
             func = filterDefinition.GenerateFilterFunction();
-            Assert.IsFalse(func.Invoke(new("Does not contain", 45)));
-            Assert.IsTrue(func.Invoke(new("Joe", 45)));
+            Assert.IsTrue(func.Invoke(new("Does not contain", 45)));
+            Assert.IsFalse(func.Invoke(new("Joe", 45)));
             Assert.IsFalse(func.Invoke(new(null, 45)));
 
             // null value
@@ -505,9 +505,9 @@ namespace MudBlazor.UnitTests.Components
                 Value = "Joe"
             };
             func = filterDefinition.GenerateFilterFunction();
-            Assert.IsFalse(func.Invoke(new("Not Joe", 45)));
+            Assert.IsTrue(func.Invoke(new("Not Joe", 45)));
             Assert.IsFalse(func.Invoke(new(null, 45)));
-            Assert.IsTrue(func.Invoke(new("Joe", 45)));
+            Assert.IsFalse(func.Invoke(new("Joe", 45)));
 
             // null value
             filterDefinition = new FilterDefinition<TestModel1>
