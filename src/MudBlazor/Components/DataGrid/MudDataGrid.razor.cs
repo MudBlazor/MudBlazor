@@ -17,7 +17,7 @@ namespace MudBlazor
     public partial class MudDataGrid<T> : MudComponentBase
     {
         private int _currentPage = 0;
-        private int? _rowsPerPage;
+        internal int? _rowsPerPage;
         private bool _isFirstRendered = false;
         private bool _filtersMenuVisible = false;
         private bool _columnsPanelVisible = false;
