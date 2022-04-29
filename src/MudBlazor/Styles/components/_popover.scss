@@ -18,6 +18,7 @@
     }
 
     &:not(.mud-popover-open ) {
+        pointer-events: none;
         transition-duration:0ms !important;
         transition-delay:0ms !important;
     }

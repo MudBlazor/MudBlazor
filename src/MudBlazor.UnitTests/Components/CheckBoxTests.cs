@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Bunit;
 using FluentAssertions;
 using Microsoft.AspNetCore.Components.Web;
+using MudBlazor.Extensions;
 using MudBlazor.UnitTests.TestComponents;
 using NUnit.Framework;
 
@@ -242,6 +243,34 @@ namespace MudBlazor.UnitTests.Components
             comp.SetParam("Disabled", true);
             comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = " ", Type = "keydown", });
             comp.WaitForAssertion(() => checkbox.Checked.Should().Be(true));
+        }
+
+        [Test]
+        [TestCase(Color.Default, Color.Primary)]
+        [TestCase(Color.Primary, Color.Secondary)]
+        [TestCase(Color.Secondary, Color.Info)]
+        [TestCase(Color.Tertiary, Color.Success)]
+        [TestCase(Color.Info, Color.Warning)]
+        [TestCase(Color.Success, Color.Error)]
+        [TestCase(Color.Warning, Color.Dark)]
+        [TestCase(Color.Error, Color.Primary)]
+        [TestCase(Color.Dark, Color.Primary)]
+        public void CheckBoxColorTest(Color color, Color uncheckedcolor)
+        {
+            var comp = Context.RenderComponent<MudCheckBox<bool>>(x => x.Add(c => c.Color, color).Add(b => b.UnCheckedColor, uncheckedcolor));
+
+            var box = comp.Instance;
+            var input = comp.Find("input");
+
+            var checkboxClasses = comp.Find(".mud-button-root.mud-icon-button");
+            // check initial state
+            box.Checked.Should().Be(false);
+            checkboxClasses.ClassList.Should().ContainInOrder(new[] { $"mud-{uncheckedcolor.ToDescriptionString()}-text", $"hover:mud-{uncheckedcolor.ToDescriptionString()}-hover" });
+
+            // click and check if it has new color
+            input.Change(true);
+            box.Checked.Should().Be(true);
+            checkboxClasses.ClassList.Should().ContainInOrder(new[] { $"mud-{color.ToDescriptionString()}-text", $"hover:mud-{color.ToDescriptionString()}-hover" });
         }
     }
 }

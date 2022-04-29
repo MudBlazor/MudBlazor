@@ -19,9 +19,10 @@ namespace MudBlazor
 
         protected string CheckBoxClassname =>
         new CssBuilder("mud-button-root mud-icon-button")
-            .AddClass($"mud-icon-button-color-{Color.ToDescriptionString()}")
+            .AddClass($"mud-{Color.ToDescriptionString()}-text hover:mud-{Color.ToDescriptionString()}-hover", UnCheckedColor == null || (UnCheckedColor != null && BoolValue == true))
+            .AddClass($"mud-{UnCheckedColor?.ToDescriptionString()}-text hover:mud-{UnCheckedColor?.ToDescriptionString()}-hover", UnCheckedColor != null && BoolValue == false)
             .AddClass($"mud-checkbox-dense", Dense)
-            .AddClass($"mud-ripple mud-ripple-checkbox", !DisableRipple)
+            .AddClass($"mud-ripple mud-ripple-checkbox", !DisableRipple && !ReadOnly && !Disabled)
             .AddClass($"mud-disabled", Disabled)
             .AddClass($"mud-readonly", ReadOnly)
         .Build();
@@ -32,6 +33,13 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.FormComponent.Appearance)]
         public Color Color { get; set; } = Color.Default;
+
+        /// <summary>
+        /// The base color of the component in its none active/unchecked state. It supports the theme colors.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Radio.Appearance)]
+        public Color? UnCheckedColor { get; set; } = null;
 
         /// <summary>
         /// If applied the text will be added to the component.

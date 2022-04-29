@@ -1,0 +1,91 @@
+﻿@page "/components/stack"
+
+<DocsPage>
+    <DocsPageHeader Title="Stack" SubTitle="Manages layout of its childitems along the vertical or horizontal axis.">
+    </DocsPageHeader>
+
+    <DocsPageContent>
+
+        <DocsPageSection>
+            <SectionHeader Title="Basic Usage">
+                <Description>The default <CodeInline>MudStack</CodeInline> displays its items vertically in a column.</Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="StackBasicExample">
+                <StackBasicExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Direction">
+                <Description>With the <CodeInline>Row</CodeInline> property set to true the items will be displayed horizontally in a row.</Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="StackDirectionExample">
+                <StackDirectionExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Spacing">
+                <Description>The default spacing can be changed by setting any number between 0 and 16 with the <CodeInline>Spacing property.</CodeInline></Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="StackSpacingExample" ShowCode="false">
+                <StackSpacingExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Usage Examples">
+                <Description>Here is two simple examples to demonstrate what <CodeInline>MudStack</CodeInline> can be used for.</Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="StackUsageFormExample" ShowCode="false">
+                <StackUsageFormExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Item Placement" />
+            <SectionSubGroups>
+                <DocsPageSection>
+                    <SectionHeader Title="Justify">
+                        <Description>With the <CodeInline>Justify</CodeInline> property you can define how the space between and around items along the main-axis of the <CodeInline>MudStack</CodeInline></Description>
+                    </SectionHeader>
+                    <SectionContent FullWidth="true" Block="true" DarkenBackground="true" Code="StackJustifyExample" ShowCode="false">
+                        <StackJustifyExample />
+                    </SectionContent>
+                </DocsPageSection>
+
+                <DocsPageSection>
+                    <SectionHeader Title="Align">
+                        <Description>With the <CodeInline>AlignItems</CodeInline> property you can control the alignment of items on the cross axis of the <CodeInline>MudStack</CodeInline></Description>
+                    </SectionHeader>
+                    <SectionContent Block="true" Code="StackAlignExample" ShowCode="false" DarkenBackground="true">
+                        <StackAlignExample />
+                    </SectionContent>
+                </DocsPageSection>
+
+                <DocsPageSection>
+                    <SectionHeader Title="Combined">
+                        <Description>
+                            If <CodeInline>MudStack</CodeInline> is in <CodeInline>Row</CodeInline> mode or not, the behavior of <CodeInline>Justify</CodeInline> and <CodeInline>AlignItems</CodeInline> can almost be described as they switched as the axis they control are changed.<br/>
+                            In the example bellow swap between column and row and see how <CodeInline>Justify</CodeInline> and <CodeInline>AlignItems</CodeInline> behaves differently.
+                        </Description>
+                    </SectionHeader>
+                    <SectionContent Block="true" Code="StackCombinedExample" ShowCode="false" DarkenBackground="true">
+                        <StackCombinedExample />
+                    </SectionContent>
+                </DocsPageSection>
+
+            </SectionSubGroups>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Interactive">
+                <Description></Description>
+            </SectionHeader>
+            <SectionContent Block="true" FullWidth="true" DarkenBackground="true" Code="StackInteractiveExample" ShowCode="false">
+                <StackInteractiveExample />
+            </SectionContent>
+        </DocsPageSection>
+
+    </DocsPageContent>
+</DocsPage>

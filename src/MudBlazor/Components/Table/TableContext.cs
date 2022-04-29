@@ -98,7 +98,8 @@ namespace MudBlazor
             var t = item.As<T>();
             if (t is null)
                 return;
-            Rows.Remove(t);
+            if (Rows[t] == row) // Verify the row we wish to remove is the row stored for the key
+                Rows.Remove(t);
         }
 
         #region --> Sorting

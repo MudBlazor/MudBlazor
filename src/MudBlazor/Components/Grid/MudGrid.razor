@@ -14,7 +14,7 @@
     protected string Classname =>
     new CssBuilder("mud-grid")
       .AddClass($"mud-grid-spacing-xs-{Spacing.ToString()}")
-      .AddClass($"mud-grid-justify-xs-{Justify.ToDescriptionString()}")
+      .AddClass($"justify-{Justify.ToDescriptionString()}")
       .AddClass(Class)
     .Build();
 

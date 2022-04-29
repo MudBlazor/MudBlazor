@@ -9,7 +9,7 @@ namespace MudBlazor
         protected string Classname =>
         new CssBuilder("mud-button-root mud-icon-button")
           .AddClass("mud-button", when: AsButton)
-          .AddClass($"mud-icon-button-color-{Color.ToDescriptionString()}", !AsButton && Color != Color.Default)
+          .AddClass($"mud-{Color.ToDescriptionString()}-text hover:mud-{Color.ToDescriptionString()}-hover", !AsButton && Color != Color.Default)
           .AddClass($"mud-button-{Variant.ToDescriptionString()}", AsButton)
           .AddClass($"mud-button-{Variant.ToDescriptionString()}-{Color.ToDescriptionString()}", AsButton)
           .AddClass($"mud-button-{Variant.ToDescriptionString()}-size-{Size.ToDescriptionString()}", AsButton)
