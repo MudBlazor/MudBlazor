@@ -15,7 +15,8 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<MudInput<string>>();
 
-            comp.Instance.OnInput(new ChangeEventArgs());
+            comp.FindAll("input")[0].Change("abc");
+            comp.Instance.Value.Should().Be("abc");
             comp.Find("input").PasteAsync(new Microsoft.AspNetCore.Components.Web.ClipboardEventArgs());
         }
 

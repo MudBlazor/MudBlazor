@@ -69,7 +69,7 @@ namespace MudBlazor
         [CascadingParameter] MudDrawerContainer DrawerContainer { get; set; }
 
         [CascadingParameter]
-        internal bool RightToLeft
+        bool RightToLeft
         {
             get => _rtl;
             set
@@ -328,7 +328,7 @@ namespace MudBlazor
             }
         }
 
-        internal void CloseDrawer()
+        private void CloseDrawer()
         {
             if (Open)
             {
@@ -345,7 +345,7 @@ namespace MudBlazor
             }
         }
 
-        internal void ResizeListener_OnBreakpointChanged(object sender, Breakpoint breakpoint)
+        private void ResizeListener_OnBreakpointChanged(object sender, Breakpoint breakpoint)
         {
             if (!_isRendered)
                 return;

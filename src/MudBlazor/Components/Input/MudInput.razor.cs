@@ -33,7 +33,7 @@ namespace MudBlazor
 
         protected string InputTypeString => InputType.ToDescriptionString();
 
-        protected internal Task OnInput(ChangeEventArgs args)
+        protected Task OnInput(ChangeEventArgs args)
         {
             if (!Immediate)
                 return Task.CompletedTask;

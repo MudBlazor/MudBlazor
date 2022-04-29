@@ -239,7 +239,7 @@ namespace MudBlazor
             }
         }
 
-        internal async Task CheckDefault(MudChip chip)
+        private async Task CheckDefault(MudChip chip)
         {
             if (!MultiSelection)
                 return;

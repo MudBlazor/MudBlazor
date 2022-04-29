@@ -18,7 +18,7 @@ namespace MudBlazor
         protected ElementReference _fallback;
         protected ElementReference _root;
 
-        internal bool _shiftDown;
+        private bool _shiftDown;
         private bool _disabled;
         private bool _initialized;
         private bool _shouldRender = true;
@@ -67,32 +67,32 @@ namespace MudBlazor
                 await InitializeFocusAsync();
         }
 
-        internal Task OnBottomFocusAsync(FocusEventArgs args)
+        private Task OnBottomFocusAsync(FocusEventArgs args)
         {
             return FocusLastAsync();
         }
 
-        internal Task OnBumperFocusAsync(FocusEventArgs args)
+        private Task OnBumperFocusAsync(FocusEventArgs args)
         {
             return _shiftDown ? FocusLastAsync() : FocusFirstAsync();
         }
 
-        internal Task OnRootFocusAsync(FocusEventArgs args)
+        private Task OnRootFocusAsync(FocusEventArgs args)
         {
             return FocusFallbackAsync();
         }
 
-        internal void OnRootKeyDown(KeyboardEventArgs args)
+        private void OnRootKeyDown(KeyboardEventArgs args)
         {
             HandleKeyEvent(args);
         }
 
-        internal void OnRootKeyUp(KeyboardEventArgs args)
+        private void OnRootKeyUp(KeyboardEventArgs args)
         {
             HandleKeyEvent(args);
         }
 
-        internal Task OnTopFocusAsync(FocusEventArgs args)
+        private Task OnTopFocusAsync(FocusEventArgs args)
         {
             return FocusFirstAsync();
         }

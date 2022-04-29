@@ -209,7 +209,7 @@ namespace MudBlazor
         [Parameter]
         public EventCallback<MouseEventArgs> OnClick { get; set; }
 
-        protected internal void OnClickHandler(MouseEventArgs ev)
+        protected void OnClickHandler(MouseEventArgs ev)
         {
             if (Disabled)
                 return;

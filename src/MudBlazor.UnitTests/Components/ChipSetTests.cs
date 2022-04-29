@@ -297,7 +297,6 @@ namespace MudBlazor.UnitTests.Components
 
             await comp.InvokeAsync(() => chipSet.Instance.MultiSelection = true);
             await comp.InvokeAsync(() => chip1.DefaultProcessed = true);
-            await comp.InvokeAsync(() => chipSet.Instance.CheckDefault(chip1));
         }
     }
 

@@ -6,7 +6,7 @@ namespace MudBlazor
 {
     public abstract class MudDebouncedInput<T> : MudBaseInput<T>
     {
-        internal System.Timers.Timer _timer;
+        private System.Timers.Timer _timer;
         private double _debounceInterval;
 
         /// <summary>
@@ -38,7 +38,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public EventCallback<string> OnDebounceIntervalElapsed { get; set; }
 
-        protected internal Task OnChange()
+        protected Task OnChange()
         {
             if (DebounceInterval > 0 && _timer != null)
             {
@@ -78,7 +78,7 @@ namespace MudBlazor
                 Immediate = true;
         }
 
-        internal void SetTimer()
+        private void SetTimer()
         {
             if (_timer == null)
             {
@@ -100,7 +100,7 @@ namespace MudBlazor
             await OnDebounceIntervalElapsed.InvokeAsync(Text);
         }
 
-        internal void ClearTimer(bool suppressTick = false)
+        private void ClearTimer(bool suppressTick = false)
         {
             if (_timer == null)
                 return;

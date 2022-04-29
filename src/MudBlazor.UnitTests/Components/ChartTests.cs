@@ -73,13 +73,6 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("h6").InnerHtml.Trim().Should().Be("Selected portion of the chart: 0");
             comp.FindAll("path.mud-chart-bar")[10].Click();
             comp.Find("h6").InnerHtml.Trim().Should().Be("Selected portion of the chart: 1");
-
-            chart.Instance.ConvertLegendPosition(Position.Start).Should().Be(Position.Left);
-            chart.Instance.ConvertLegendPosition(Position.End).Should().Be(Position.Right);
-            chart.Instance.ConvertLegendPosition(Position.Bottom).Should().Be(Position.Bottom);
-#pragma warning disable BL0005
-            chart.Instance.InputData = null;
-            chart.Instance.GetNormalizedData().Should().NotBeNull();
         }
 
         [Test]

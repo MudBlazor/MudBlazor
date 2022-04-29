@@ -39,7 +39,7 @@ namespace MudBlazor
         [Parameter] public EventCallback<MouseEventArgs> OnClick { get; set; }
         [Parameter] public EventCallback<TouchEventArgs> OnTouch { get; set; }
 
-        protected internal async Task OnClickHandler(MouseEventArgs ev)
+        protected async Task OnClickHandler(MouseEventArgs ev)
         {
             if (Disabled)
                 return;
@@ -62,7 +62,7 @@ namespace MudBlazor
             }
         }
 
-        protected internal async Task OnTouchHandler(TouchEventArgs ev)
+        protected async Task OnTouchHandler(TouchEventArgs ev)
         {
             if (Disabled)
                 return;

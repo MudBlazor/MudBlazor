@@ -656,17 +656,16 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void TextField_Debounce()
+        public async Task TextField_Debounce()
         {
             var comp = Context.RenderComponent<MudTextField<string>>();
-            comp.SetParam("DebounceInterval", 5d);
-            comp.SetParam("DebounceInterval", 0d);
             comp.SetParam("DebounceInterval", 50d);
 
-            comp.Instance.OnChange();
-            comp.Instance._timer.Enabled = true;
-            comp.Instance.ClearTimer();
-            comp.Instance._timer.Should().BeNull();
+            comp.FindAll("input")[0].Input("abc");
+            comp.Instance.Value.Should().Be(null);
+
+            await Task.Delay(50);
+            comp.Instance.Value.Should().Be("abc");
         }
 
         class TestDataAnnotationModel

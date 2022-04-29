@@ -50,25 +50,6 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task DrawerTest_Other()
-        {
-            var comp = Context.RenderComponent<DrawerTest1>(Parameter(nameof(DrawerTest1.Variant), DrawerVariant.Temporary));
-            var drawer = comp.FindComponent<MudDrawer>();
-
-            await comp.InvokeAsync(() => drawer.Instance.RightToLeft = true);
-#pragma warning disable BL0005
-            await comp.InvokeAsync(() => drawer.Instance.Breakpoint = Breakpoint.Sm);
-            await comp.InvokeAsync(() => drawer.Instance.Anchor = Anchor.Top);
-            await comp.InvokeAsync(() => drawer.Instance.Fixed = true);
-            await comp.InvokeAsync(() => drawer.Instance.Open = true);
-            await comp.InvokeAsync(() => drawer.Instance.CloseDrawer());
-            await comp.InvokeAsync(() => drawer.Instance.ClipMode = DrawerClipMode.Docked);
-            await comp.InvokeAsync(() => drawer.Instance.OnNavigation());
-            await comp.InvokeAsync(() => drawer.Instance.ResizeListener_OnBreakpointChanged(drawer, Breakpoint.Sm));
-            await comp.InvokeAsync(() => drawer.Instance.UpdateBreakpointState(Breakpoint.None));
-        }
-
-            [Test]
         public async Task TemporaryClosedWithoutOverlay_Open_CheckOverlay()
         {
             var comp = Context.RenderComponent<DrawerTest1>(
@@ -166,7 +147,7 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("button").Click();
             comp.FindAll("aside.mud-drawer--closed.mud-drawer-mini").Count.Should().Be(1);
             comp.Instance.Drawer.Open.Should().BeFalse();
-
+#pragma warning disable BL0005
             await comp.InvokeAsync(() => drawer.Instance.OpenMiniOnHover = true);
             await comp.InvokeAsync(() => drawer.Instance.OnMouseEnter());
             comp.WaitForAssertion(() => drawer.Instance.Open.Should().BeTrue());

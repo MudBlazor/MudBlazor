@@ -34,8 +34,6 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(() => comp.Instance.AnimationEnd());
             await comp.InvokeAsync(() => comp.Instance.UpdateHeight());
             comp.WaitForAssertion(() => comp.Instance._height.Should().Be(-1));
-
-            await comp.InvokeAsync(() => comp.Instance.CalculatedAnimationDuration = 1);
         }
     }
 }

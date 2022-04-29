@@ -85,7 +85,7 @@ namespace MudBlazor
         /// Modified Animation duration that scales with height parameter.
         /// Basic implementation for now but should be a math formula to allow it to scale between 0.1s and 1s for the effect to be consistently smooth.
         /// </summary>
-        internal double CalculatedAnimationDuration
+        double CalculatedAnimationDuration
         {
             get
             {

@@ -273,7 +273,7 @@ namespace MudBlazor
         }
 
         // Sets the popover style ONLY when there is an activator
-        internal void SetPopoverStyle(MouseEventArgs args)
+        private void SetPopoverStyle(MouseEventArgs args)
         {
             AnchorOrigin = Origin.TopLeft;
             PopoverStyle = $"margin-top: {args?.OffsetY.ToPx()}; margin-left: {args?.OffsetX.ToPx()};";

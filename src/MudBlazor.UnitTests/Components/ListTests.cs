@@ -48,10 +48,10 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("div.mud-selected-item").Count.Should().Be(1);
             comp.FindComponents<MudListItem>()[8].Markup.Should().Contain("mud-selected-item");
 
-            await comp.InvokeAsync(() => item8.OnClickHandler(new MouseEventArgs()));
+            await comp.InvokeAsync(() => comp.FindAll("div.mud-list-item")[8].Click());
             comp.FindComponents<MudListItem>()[8].Markup.Should().Contain("mud-selected-item");
 
-            await comp.InvokeAsync(() => item1.OnClickHandler(new MouseEventArgs()));
+            await comp.InvokeAsync(() => comp.FindAll("div.mud-list-item")[1].Click());
             comp.FindComponents<MudListItem>()[8].Markup.Should().Contain("mud-selected-item");
 #pragma warning disable BL0005
             await comp.InvokeAsync(() => item1.Expanded = true);
