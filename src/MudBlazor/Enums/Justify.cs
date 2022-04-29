@@ -4,11 +4,11 @@ namespace MudBlazor
 {
     public enum Justify
     {
-        [Description("flex-start")]
+        [Description("start")]
         FlexStart,
         [Description("center")]
         Center,
-        [Description("flex-end")]
+        [Description("end")]
         FlexEnd,
         [Description("space-between")]
         SpaceBetween,

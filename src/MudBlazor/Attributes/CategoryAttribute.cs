@@ -451,6 +451,12 @@ namespace MudBlazor
             public const string Appearance = "Appearance";
         }
 
+        public static class Stack
+        {
+            public const string Behavior = "Behavior";
+            public const string Appearance = "Appearance";
+        }
+
         public static class Slider
         {
             public const string Data = "Data";

@@ -574,8 +574,8 @@ namespace MudBlazor
             else
             {
                 // single selection
-                _isOpen = false;
-                UpdateIcon();
+                // CloseMenu(true) doesn't close popover in BSS
+                await CloseMenu(false);
 
                 if (EqualityComparer<T>.Default.Equals(Value, value))
                 {
@@ -587,13 +587,13 @@ namespace MudBlazor
                 _elementReference.SetText(Text).AndForget();
                 _selectedValues.Clear();
                 _selectedValues.Add(value);
-                HilightItemForValue(value);
             }
 
+            HilightItemForValue(value);
             await SelectedValuesChanged.InvokeAsync(SelectedValues);
             if (MultiSelection && typeof(T) == typeof(string))
                 await SetValueAsync((T)(object)Text, updateText: false);
-            StateHasChanged();
+            await InvokeAsync(StateHasChanged);
         }
 
         private async void HilightItemForValue(T value)
@@ -1026,6 +1026,20 @@ namespace MudBlazor
                 _elementReference.FocusAsync().AndForget(TaskOption.Safe);
             }
             base.OnBlur.InvokeAsync(obj);
+        }
+
+        /// <summary>
+        /// Fixes issue #4328
+        /// Returns true when MultiSelection is true and it has selected values(Since Value property is not used when MultiSelection=true
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns>True when component has a value</returns>
+        protected override bool HasValue(T value)
+        {
+            if (MultiSelection)
+                return SelectedValues?.Count() > 0;
+            else
+                return base.HasValue(value);
         }
     }
 }

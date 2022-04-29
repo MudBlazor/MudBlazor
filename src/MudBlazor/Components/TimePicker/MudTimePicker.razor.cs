@@ -37,6 +37,9 @@ namespace MudBlazor
 
         private TimeSpan? OnGet(string value)
         {
+            if (string.IsNullOrEmpty(value))
+                return null;
+
             if (DateTime.TryParseExact(value, ((DefaultConverter<TimeSpan?>)Converter).Format, Culture, DateTimeStyles.None, out var time))
             {
                 return time.TimeOfDay;
@@ -194,11 +197,15 @@ namespace MudBlazor
             Time = TimeIntermediate;
         }
 
-        public override void Clear(bool close = true)
+        public override async void Clear(bool close = true)
         {
-            Time = null;
             TimeIntermediate = null;
-            base.Clear();
+            await SetTimeAsync(null, true);
+
+            if (AutoClose == true)
+            {
+                Close(false);
+            }
         }
 
         private string GetHourString()
