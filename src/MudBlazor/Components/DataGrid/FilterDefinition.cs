@@ -278,9 +278,17 @@ namespace MudBlazor
                     Expression.AndAlso(isnotnull,
                         Expression.Call(field, dataType.GetMethod("Contains", new[] { dataType }), Expression.Constant(valueString))),
 
+                FilterOperator.String.NotContains when Value != null =>
+                    Expression.AndAlso(isnotnull,
+                        Expression.Not(Expression.Call(field, dataType.GetMethod("Contains", new[] { dataType }), Expression.Constant(valueString)))),
+
                 FilterOperator.String.Equal when Value != null =>
                     Expression.AndAlso(isnotnull,
                         Expression.Equal(field, Expression.Constant(valueString))),
+
+                FilterOperator.String.NotEqual when Value != null =>
+                    Expression.AndAlso(isnotnull,
+                    Expression.Not(Expression.Equal(field, Expression.Constant(valueString)))),
 
                 FilterOperator.String.StartsWith when Value != null =>
                     Expression.AndAlso(isnotnull,
@@ -318,11 +326,27 @@ namespace MudBlazor
                 }
                 ,
 
+                FilterOperator.String.NotContains when Value != null => x =>
+                {
+                    string v = GetStringFromObject(((IDictionary<string, object>)x)[Field]);
+
+                    return v != null && !v.Contains(valueString);
+                }
+                ,
+
                 FilterOperator.String.Equal when Value != null => x =>
                 {
                     string v = GetStringFromObject(((IDictionary<string, object>)x)[Field]);
 
                     return object.Equals(v, Value);
+                }
+                ,
+
+                FilterOperator.String.NotEqual when Value != null => x =>
+                {
+                    string v = GetStringFromObject(((IDictionary<string, object>)x)[Field]);
+
+                    return !object.Equals(v, Value);
                 }
                 ,
 
