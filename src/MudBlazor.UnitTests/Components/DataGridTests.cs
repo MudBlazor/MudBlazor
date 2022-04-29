@@ -437,6 +437,35 @@ namespace MudBlazor.UnitTests.Components
 
             #endregion
 
+            #region FilterOperator.String.NotContains
+
+            filterDefinition = new FilterDefinition<TestModel1>
+            {
+                Id = Guid.NewGuid(),
+                Field = "Name",
+                Operator = FilterOperator.String.NotContains,
+                Value = "Joe"
+            };
+            func = filterDefinition.GenerateFilterFunction();
+            Assert.IsTrue(func.Invoke(new("Does not contain", 45)));
+            Assert.IsFalse(func.Invoke(new("Joe", 45)));
+            Assert.IsFalse(func.Invoke(new(null, 45)));
+
+            // null value
+            filterDefinition = new FilterDefinition<TestModel1>
+            {
+                Id = Guid.NewGuid(),
+                Field = "Name",
+                Operator = FilterOperator.String.NotContains,
+                Value = null
+            };
+            func = filterDefinition.GenerateFilterFunction();
+            Assert.IsTrue(func.Invoke(new("Does not contain", 45)));
+            Assert.IsTrue(func.Invoke(new("Joe", 45)));
+            Assert.IsTrue(func.Invoke(new(null, 45)));
+
+            #endregion
+
             #region FilterOperator.String.Equal
 
             filterDefinition = new FilterDefinition<TestModel1>
@@ -457,6 +486,35 @@ namespace MudBlazor.UnitTests.Components
                 Id = Guid.NewGuid(),
                 Field = "Name",
                 Operator = FilterOperator.String.Equal,
+                Value = null
+            };
+            func = filterDefinition.GenerateFilterFunction();
+            Assert.IsTrue(func.Invoke(new("Joe Not", 45)));
+            Assert.IsTrue(func.Invoke(new("Joe", 45)));
+            Assert.IsTrue(func.Invoke(new(null, 45)));
+
+            #endregion
+
+            #region FilterOperator.String.NotEqual
+
+            filterDefinition = new FilterDefinition<TestModel1>
+            {
+                Id = Guid.NewGuid(),
+                Field = "Name",
+                Operator = FilterOperator.String.NotEqual,
+                Value = "Joe"
+            };
+            func = filterDefinition.GenerateFilterFunction();
+            Assert.IsTrue(func.Invoke(new("Not Joe", 45)));
+            Assert.IsFalse(func.Invoke(new(null, 45)));
+            Assert.IsFalse(func.Invoke(new("Joe", 45)));
+
+            // null value
+            filterDefinition = new FilterDefinition<TestModel1>
+            {
+                Id = Guid.NewGuid(),
+                Field = "Name",
+                Operator = FilterOperator.String.NotEqual,
                 Value = null
             };
             func = filterDefinition.GenerateFilterFunction();
