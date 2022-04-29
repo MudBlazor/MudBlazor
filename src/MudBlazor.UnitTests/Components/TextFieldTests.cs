@@ -655,18 +655,18 @@ namespace MudBlazor.UnitTests.Components
             Assert.IsNotEmpty(inputId);
         }
 
-        [Test]
-        public async Task TextField_Debounce()
-        {
-            var comp = Context.RenderComponent<MudTextField<string>>();
-            comp.SetParam("DebounceInterval", 50d);
+        //[Test]
+        //public async Task TextField_Debounce()
+        //{
+        //    var comp = Context.RenderComponent<MudTextField<string>>();
+        //    comp.SetParam("DebounceInterval", 50d);
 
-            comp.FindAll("input")[0].Input("abc");
-            comp.Instance.Value.Should().Be(null);
+        //    comp.FindAll("input")[0].Input("abc");
+        //    comp.Instance.Value.Should().Be(null);
 
-            await Task.Delay(50);
-            comp.Instance.Value.Should().Be("abc");
-        }
+        //    await Task.Delay(50);
+        //    comp.Instance.Value.Should().Be("abc");
+        //}
 
         class TestDataAnnotationModel
         {
