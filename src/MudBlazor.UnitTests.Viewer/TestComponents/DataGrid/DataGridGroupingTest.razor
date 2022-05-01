@@ -7,13 +7,12 @@
     <Columns>
         <Column T="Model" Field="@nameof(Model.Name)" />
         <Column T="Model" Field="@nameof(Model.Age)" />
-        <Column T="Model" Field="@nameof(Model.Gender)" />
+        <Column T="Model" Field="@nameof(Model.Gender)" Grouping="true" />
     </Columns>
 </MudDataGrid>
 
 @code {
-    private IEnumerable<Model> _items = Enumerable.Empty<Model>();
-    private List<Model> _modifiableItems = new List<Model>()
+    private ObservableCollection<Model> _items = new ObservableCollection<Model>()
     {
         new Model("John", 45, "Male"), 
         new Model("Johanna", 23, "Female"), 
@@ -22,16 +21,8 @@
 
     public record Model(string Name, int Age, string Gender);
 
-    protected override void OnInitialized()
-    {
-        _items = _modifiableItems;
-    }
-
     private void AddPerson()
     {
-        _modifiableItems.Add(new Model("Someone", 42, "Female"));
-        _items = _modifiableItems.AsEnumerable();
-
-        //grid.GroupItems();
+        _items.Add(new Model("Someone", 42, "Female"));
     }
 }
