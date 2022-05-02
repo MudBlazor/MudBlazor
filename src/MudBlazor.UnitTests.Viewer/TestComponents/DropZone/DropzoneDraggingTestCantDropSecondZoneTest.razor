@@ -6,7 +6,8 @@
 				  DraggingClass="my-special-dragging-class" ItemDraggingClass="my-special-item-dragging-class"
 				  ItemDropped="ItemUpdated">
 	<ChildContent>
-		<MudDropZone T="SimpleDropItem" Identifier="Column 1" Class="first-drop-zone">
+        <MudDropZone T="SimpleDropItem" Identifier="Column 1" Class="first-drop-zone"
+                     CanDrop=@( (x) => false)>
 			<MudText Typo="Typo.h6" Class="mb-4">Drop Zone 1</MudText>
 		</MudDropZone>
 		<MudDropZone T="SimpleDropItem" Identifier="Column 2" Class="second-drop-zone"
