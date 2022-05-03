@@ -31,9 +31,12 @@ namespace MudBlazor
         /// <param name="key">The unique event identifier</param>
         /// <returns>true for if the event listener was detached, false if not</returns>
         Task<bool> Unsubscribe(Guid key);
+
+        ValueTask DisposeAsync(); // Transient services can't be IDisposable but the service must still be (manually) deallocated
+        void Dispose(); // Transient services can't be IDisposable but the service must still be (manually) deallocated
     }
 
-    public class EventListener : IEventListener, IAsyncDisposable, IDisposable
+    public class EventListener : IEventListener
     {
         private readonly IJSRuntime _jsRuntime;
         private readonly DotNetObjectReference<EventListener> _dotNetRef;

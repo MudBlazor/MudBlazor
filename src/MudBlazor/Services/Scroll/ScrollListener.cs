@@ -12,9 +12,10 @@ namespace MudBlazor
         string Selector { get; set; }
 
         event EventHandler<ScrollEventArgs> OnScroll;
+        void Dispose(); // Transient services can't be IDisposable but the service must still be (manually) deallocated
     }
 
-    internal class ScrollListener : IScrollListener, IDisposable
+    internal class ScrollListener : IScrollListener
     {
         private readonly IJSRuntime _js;
         private DotNetObjectReference<ScrollListener> _dotNetRef;
@@ -30,6 +31,7 @@ namespace MudBlazor
         }
 
         private EventHandler<ScrollEventArgs> _onScroll;
+        private bool _isDisposed;
 
         /// <summary>
         /// OnScroll event. Fired when a element is scrolled
@@ -95,9 +97,22 @@ namespace MudBlazor
             catch { /* ignore */ }
         }
 
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (_isDisposed || !disposing)
+                return;
+
+            Cancel().AndForget(TaskOption.Safe);
+            _dotNetRef?.Dispose();
+            _isDisposed = true;
+        }
+
         public void Dispose()
         {
-            _dotNetRef?.Dispose();
+            // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
         }
     }
 }

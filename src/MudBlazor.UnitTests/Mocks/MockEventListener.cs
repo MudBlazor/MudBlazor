@@ -42,5 +42,11 @@ namespace MudBlazor.UnitTests.Mocks
                 item.Invoke(args);
             }
         }
+
+        public void Dispose()
+        {
+        }
+
+        public ValueTask DisposeAsync() => ValueTask.CompletedTask;
     }
 }

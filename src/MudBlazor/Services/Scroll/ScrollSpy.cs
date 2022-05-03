@@ -18,7 +18,7 @@ namespace MudBlazor
         public string Id { get; init; }
     }
 
-    public interface IScrollSpy : IAsyncDisposable
+    public interface IScrollSpy
     {
         /// <summary>
         /// Start spying for scroll events for elements with the specified classes
@@ -53,6 +53,8 @@ namespace MudBlazor
         /// Get the current position of the centered section
         /// </summary>
         string CenteredSection { get; }
+
+        ValueTask DisposeAsync(); // Transient services can't be IDisposable but the service must still be (manually) deallocated
     }
 
     public class ScrollSpy : IScrollSpy

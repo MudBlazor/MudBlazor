@@ -570,6 +570,7 @@ namespace MudBlazor
         public async ValueTask DisposeAsync()
         {
             await ThrottledEventManager.Unsubscribe(_throttledMouseOverEventId);
+            await ThrottledEventManager.DisposeAsync();
         }
 
         #endregion

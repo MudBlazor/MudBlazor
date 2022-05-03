@@ -309,6 +309,7 @@ namespace MudBlazor
         {
             if (_isDisposed == true)
                 return;
+
             _isDisposed = true;
             _resizeObserver.OnResized -= OnResized;
             await _resizeObserver.DisposeAsync();
@@ -630,7 +631,7 @@ namespace MudBlazor
         {
             var x = 0D;
             var count = 0;
-            
+
             var toolbarContentSize = GetRelevantSize(_tabsContentSize);
 
             foreach (var panel in _panels)

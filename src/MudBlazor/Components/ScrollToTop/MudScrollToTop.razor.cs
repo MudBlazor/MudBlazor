@@ -124,6 +124,7 @@ namespace MudBlazor
         public void Dispose()
         {
             ScrollListener.OnScroll -= ScrollListener_OnScroll;
+            ScrollListener?.Dispose();
         }
     }
 }

@@ -21,12 +21,13 @@ namespace MudBlazor.Services
         event Action<int> CaretPositionChanged;
         event Action<string> Paste;
         event Action<int, int> Select;
+        void Dispose(); // Transient services can't be IDisposable but the service must still be (manually) deallocated
     }
 
     /// <summary>
     /// Subscribe JS events of any element by html id
     /// </summary>
-    public class JsEvent : IJsEvent, IDisposable
+    public class JsEvent : IJsEvent
     {
         private bool _isDisposed = false;
 
@@ -70,7 +71,7 @@ namespace MudBlazor.Services
                 return;
             await UnsubscribeAll();
             try
-            {                
+            {
                 await _jsRuntime.InvokeVoidAsync($"mudJsEvent.disconnect", _elementId);
             }
             catch (Exception) {  /*ignore*/ }
@@ -110,7 +111,7 @@ namespace MudBlazor.Services
                 return;
             try
             {
-                foreach(var eventName in _subscribedEvents)
+                foreach (var eventName in _subscribedEvents)
                     await _jsRuntime.InvokeVoidAsync($"mudJsEvent.unsubscribe", _elementId, eventName);
             }
             catch (Exception) {  /*ignore*/ }
