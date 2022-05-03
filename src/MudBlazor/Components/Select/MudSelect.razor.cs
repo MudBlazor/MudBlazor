@@ -77,7 +77,7 @@ namespace MudBlazor
             await ScrollToItemAsync(item);
         }
         private ValueTask ScrollToItemAsync(MudSelectItem<T> item)
-            =>item != null? ScrollManager.ScrollToListItemAsync(item.ItemId): ValueTask.CompletedTask;
+            => item != null ? ScrollManager.ScrollToListItemAsync(item.ItemId) : ValueTask.CompletedTask;
         private async Task SelectFirstItem(string startChar = null)
         {
             if (_items == null || _items.Count == 0)
@@ -1040,6 +1040,14 @@ namespace MudBlazor
                 return SelectedValues?.Count() > 0;
             else
                 return base.HasValue(value);
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+                _keyInterceptor?.Dispose();
+
+            base.Dispose(disposing);
         }
     }
 }

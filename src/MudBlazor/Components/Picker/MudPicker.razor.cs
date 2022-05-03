@@ -508,5 +508,13 @@ namespace MudBlazor
                     break;
             }
         }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+                _keyInterceptor?.Dispose();
+
+            base.Dispose(disposing);
+        }
     }
 }

@@ -14,15 +14,15 @@ namespace MudBlazor.Services
 
     public delegate void KeyboardEvent(KeyboardEventArgs args);
 
-    public interface IKeyInterceptor : IDisposable
+    public interface IKeyInterceptor
     {
         Task Connect(string elementId, KeyInterceptorOptions options);
         Task Disconnect();
         Task UpdateKey(KeyOptions option);
+        void Dispose(); // Transient services can't be IDisposable but the service must still be (manually) deallocated
 
         event KeyboardEvent KeyDown;
         event KeyboardEvent KeyUp;
-
     }
 
 }

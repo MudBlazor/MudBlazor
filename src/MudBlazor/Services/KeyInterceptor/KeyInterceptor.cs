@@ -19,7 +19,7 @@ namespace MudBlazor.Services
     /// It can call preventDefault or stopPropagation directly on the JavaScript side for single key strokes / key combinations as per configuration.
     /// Furthermore, you can precisely subscribe single keystrokes or combinations and only the subscribed ones will be forwarded into .NET
     /// </summary>
-    public class KeyInterceptor : IKeyInterceptor, IDisposable
+    public class KeyInterceptor : IKeyInterceptor
     {
         private bool _isDisposed = false;
 
@@ -71,20 +71,21 @@ namespace MudBlazor.Services
             try
             {
                 await _jsRuntime.InvokeVoidAsync($"mudKeyInterceptor.disconnect", _elementId);
-            } catch (Exception) {  /*ignore*/ }
+            }
+            catch (Exception) {  /*ignore*/ }
             _isObserving = false;
         }
 
         [JSInvokable]
         public void OnKeyDown(KeyboardEventArgs args)
         {
-            KeyDown?.Invoke( args);
+            KeyDown?.Invoke(args);
         }
 
         [JSInvokable]
         public void OnKeyUp(KeyboardEventArgs args)
         {
-            KeyUp?.Invoke( args);
+            KeyUp?.Invoke(args);
         }
 
         public event KeyboardEvent KeyDown;

@@ -187,14 +187,10 @@ namespace MudBlazor
                 await MudRadioGroup.RegisterRadioAsync(this);
         }
 
-        public void Dispose()
-        {
-            MudRadioGroup?.UnregisterRadio(this);
-        }
-
         [Inject] private IKeyInterceptor _keyInterceptor { get; set; }
 
         private string _elementId = "radio" + Guid.NewGuid().ToString().Substring(0, 8);
+        private bool _isDisposed;
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
@@ -213,6 +209,23 @@ namespace MudBlazor
                 });
             }
             await base.OnAfterRenderAsync(firstRender);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (_isDisposed || !disposing)
+                return;
+
+            _keyInterceptor?.Dispose();
+            MudRadioGroup?.UnregisterRadio(this);
+            _isDisposed = true;
+        }
+
+        public void Dispose()
+        {
+            // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
         }
     }
 }

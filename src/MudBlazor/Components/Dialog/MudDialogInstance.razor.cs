@@ -11,7 +11,7 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    public partial class MudDialogInstance : MudComponentBase
+    public partial class MudDialogInstance : MudComponentBase, IDisposable
     {
         private DialogOptions _options = new();
         private string _elementId = "dialog_" + Guid.NewGuid().ToString().Substring(0, 8);
@@ -94,7 +94,7 @@ namespace MudBlazor
 
         internal void HandleKeyDown(KeyboardEventArgs args)
         {
-             switch (args.Key)
+            switch (args.Key)
             {
                 case "Escape":
                     if (CloseOnEscapeKey)
@@ -300,6 +300,8 @@ namespace MudBlazor
         }
 
         private MudDialog _dialog;
+        private bool _isDisposed;
+
         public void Register(MudDialog dialog)
         {
             if (dialog == null)
@@ -314,6 +316,23 @@ namespace MudBlazor
         public void ForceRender()
         {
             StateHasChanged();
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposing || _isDisposed)
+                return;
+
+            _keyInterceptor?.Dispose();
+            _isDisposed = true;
+        }
+
+
+        public void Dispose()
+        {
+            // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
         }
     }
 }

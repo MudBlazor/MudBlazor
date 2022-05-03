@@ -208,5 +208,13 @@ namespace MudBlazor
             }
             await base.OnAfterRenderAsync(firstRender);
         }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+                _keyInterceptor.Dispose();
+
+            base.Dispose(disposing);
+        }
     }
 }

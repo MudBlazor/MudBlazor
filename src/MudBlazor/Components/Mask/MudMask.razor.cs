@@ -145,7 +145,7 @@ namespace MudBlazor
                     new JsEventOptions
                     {
                         //EnableLogging = true,
-                        TargetClass = "mud-input-slot", 
+                        TargetClass = "mud-input-slot",
                         TagName = "INPUT"
                     });
                 _jsEvent.CaretPositionChanged += OnCaretPositionChanged;
@@ -315,7 +315,7 @@ namespace MudBlazor
             var text = Text;
             if (Mask.Selection != null)
             {
-                (_, text, _)=BaseMask.SplitSelection(text, Mask.Selection.Value);
+                (_, text, _) = BaseMask.SplitSelection(text, Mask.Selection.Value);
             }
             _jsApiService.CopyToClipboardAsync(text);
         }
@@ -405,10 +405,18 @@ namespace MudBlazor
 
         private async void OnCut(ClipboardEventArgs obj)
         {
-            if (_selection!=null)
+            if (_selection != null)
                 Mask.Delete();
             await Update();
             //Console.WriteLine($"OnCut: '{Mask}'");
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+                _keyInterceptor?.Dispose();
+
+            base.Dispose(disposing);
         }
     }
 }
