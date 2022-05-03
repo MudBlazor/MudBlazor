@@ -289,7 +289,14 @@ namespace MudBlazor
         {
             if (DisableBackdropClick)
                 return;
-            Cancel();
+
+            if (_dialog.OnBackdropClick == null)
+            {
+                Cancel();
+                return;
+            }
+
+            _dialog.OnBackdropClick.Invoke();
         }
 
         private MudDialog _dialog;

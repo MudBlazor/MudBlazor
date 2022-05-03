@@ -70,5 +70,12 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.Button.Behavior)]
         public string Label { get; set; }
+
+        /// <summary>
+        /// Title of the icon used for accessibility.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Button.Behavior)]
+        public string Title { get; set; }
     }
 }
