@@ -229,7 +229,7 @@ namespace MudBlazor
         internal FooterContext<T> footerContext;
         private bool initialGroupBySet;
 
-        protected override void OnInitialized()
+        protected override async Task OnInitializedAsync()
         {
             if (!Hideable.HasValue)
                 Hideable = DataGrid?.Hideable;
@@ -246,19 +246,12 @@ namespace MudBlazor
             headerContext = new HeaderContext<T>(DataGrid);
             // Add the FooterContext
             footerContext = new FooterContext<T>(DataGrid);
-        }
 
-        protected override void OnParametersSet()
-        {
-            // This needs to be removed but without it, the initial grouping is not set... Need to figure this out.
             if (!initialGroupBySet && grouping)
             {
-                initialGroupBySet = true;
-                Task.Run(async () =>
+                await Task.Run(() =>
                 {
-                    await Task.Delay(1000);
-                    groupBy = GroupBy;
-                    CompileGroupBy();
+                    initialGroupBySet = true;
                     DataGrid?.ChangedGrouping(this);
                 });
             }

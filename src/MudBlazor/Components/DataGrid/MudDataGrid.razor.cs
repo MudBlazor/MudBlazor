@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reflection;
 using System.Text.Json;
@@ -17,7 +18,7 @@ namespace MudBlazor
     public partial class MudDataGrid<T> : MudComponentBase
     {
         private int _currentPage = 0;
-        private int? _rowsPerPage;
+        internal int? _rowsPerPage;
         private bool _isFirstRendered = false;
         private bool _filtersMenuVisible = false;
         private bool _columnsPanelVisible = false;
@@ -287,9 +288,21 @@ namespace MudBlazor
             {
                 if (_items == value)
                     return;
+
                 _items = value;
+
                 if (PagerStateHasChangedEvent != null)
                     InvokeAsync(PagerStateHasChangedEvent);
+
+                // Setup ObservableCollection functionality.
+                if (_items is ObservableCollection<T>)
+                {
+                    (_items as ObservableCollection<T>).CollectionChanged += (s, e) =>
+                    {
+                        if (Groupable)
+                            GroupItems();
+                    };
+                }
             }
         }
 

@@ -1,18 +1,18 @@
 ﻿@namespace MudBlazor.UnitTests.TestComponents
+@using System.Collections.ObjectModel
 
 <MudIconButton Icon="@Icons.Outlined.Add" OnClick="@AddPerson"/>
 
-<MudDataGrid @ref="grid" T="Model" Items="@_items" Groupable="true">
+<MudDataGrid T="Model" Items="@_items" Groupable="true">
     <Columns>
         <Column T="Model" Field="@nameof(Model.Name)" />
         <Column T="Model" Field="@nameof(Model.Age)" />
-        <Column T="Model" Field="@nameof(Model.Gender)" />
+        <Column T="Model" Field="@nameof(Model.Gender)" Grouping="true" />
     </Columns>
 </MudDataGrid>
 
 @code {
-    private MudDataGrid<Model> grid;
-    private List<Model> _items = new List<Model>()
+    private ObservableCollection<Model> _items = new ObservableCollection<Model>()
     {
         new Model("John", 45, "Male"), 
         new Model("Johanna", 23, "Female"), 
@@ -24,7 +24,5 @@
     private void AddPerson()
     {
         _items.Add(new Model("Someone", 42, "Female"));
-
-        grid.GroupItems();
     }
 }
