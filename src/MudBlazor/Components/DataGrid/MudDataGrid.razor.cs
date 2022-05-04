@@ -1174,7 +1174,7 @@ namespace MudBlazor
         }
 
         internal async Task<bool> StartResizeColumn(HeaderCell<T> headerCell, double clientX)
-            => await ResizeService.StartResizeColumn(headerCell, clientX, _columns, ColumnResizeMode);
+            => await ResizeService.StartResizeColumn(headerCell, clientX, RenderedColumns, ColumnResizeMode);
 
         internal async Task<double> GetActualHeight()
         {
