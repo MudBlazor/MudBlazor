@@ -17,6 +17,8 @@ namespace MudBlazor
     {
         [CascadingParameter] public MudDataGrid<T> DataGrid { get; set; }
 
+        //[CascadingParameter(Name = "HeaderCell")] public HeaderCell<T> HeaderCell { get; set; }
+
         [Parameter] public T Value { get; set; }
         [Parameter] public EventCallback<T> ValueChanged { get; set; }
 
@@ -49,6 +51,8 @@ namespace MudBlazor
         /// Determines whether this columns data can be sorted. This overrides the Sortable parameter on the DataGrid.
         /// </summary>
         [Parameter] public bool? Sortable { get; set; }
+
+        [Parameter] public bool? Resizable { get; set; }
 
         /// <summary>
         /// Determines whether this columns data can be filtered. This overrides the Filterable parameter on the DataGrid.
@@ -223,6 +227,8 @@ namespace MudBlazor
         #endregion
 
         internal int SortIndex { get; set; } = -1;
+        internal HeaderCell<T> HeaderCell { get; set; }
+
         private Func<T, object> _sortBy;
         internal Func<T, object> groupBy;
         internal HeaderContext<T> headerContext;

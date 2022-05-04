@@ -33,8 +33,27 @@ namespace MudBlazor
         private string _style =>
             new StyleBuilder()
                 .AddStyle(Column?.HeaderStyle)
+                .AddStyle("width", _width?.ToPx(), when: _width.HasValue)
                 .AddStyle(Style)
             .Build();
+
+        private string _resizerStyle =>
+            new StyleBuilder()
+                .AddStyle("height", _resizerHeight?.ToPx() ?? "100%")
+                .AddStyle(Style)
+            .Build();
+
+        private string _resizerClass =>
+            new CssBuilder()
+                .AddClass("mud-resizing", when: _isResizing)
+                .AddClass("mud-resizer")
+            .Build();
+
+        private ElementReference _headerElement;
+
+        private double? _width;
+        private double? _resizerHeight;
+        private bool _isResizing;
 
         #region Computed Properties and Functions
 
@@ -51,6 +70,14 @@ namespace MudBlazor
             get
             {
                 return Column?.Sortable ?? DataGrid?.SortMode != SortMode.None;
+            }
+        }
+
+        private bool resizable
+        {
+            get
+            {
+                return Column?.Resizable ?? DataGrid.ColumnResizeMode != ResizeMode.None;
             }
         }
 
@@ -137,6 +164,11 @@ namespace MudBlazor
                 DataGrid.SelectedAllItemsChangedEvent += OnSelectedAllItemsChanged;
                 DataGrid.SelectedItemsChangedEvent += OnSelectedItemsChanged;
             }
+
+            if (null != Column)
+            {
+                Column.HeaderCell = this;
+            }
         }
 
         internal void GetDataType()
@@ -174,6 +206,55 @@ namespace MudBlazor
         {
             _isSelected = items.Count == DataGrid.GetFilteredItemsCount();
             StateHasChanged();
+        }
+
+        private async Task OnResizerMouseDown(MouseEventArgs args)
+        {
+            if (!resizable)
+                return;
+
+            if (args.Detail > 1) // Double click clears the width, hence setting it to minimum size.
+            {
+                _width = null;
+                return;
+            }
+
+            _isResizing = await DataGrid.StartResizeColumn(this, args.ClientX);
+        }
+
+        private async Task OnResizerMouseOver()
+        {
+            if (!_isResizing)
+                _resizerHeight = await DataGrid?.GetActualHeight();
+        }
+
+        private void OnResizerMouseLeave()
+        {
+            if (!_isResizing)
+                _resizerHeight = null;
+        }
+
+        internal async Task<double> UpdateColumnWidth(double targetWidth, double gridHeight, bool finishResize)
+        {
+            if (targetWidth > 0)
+            {
+                _resizerHeight = gridHeight;
+                _width = targetWidth;
+                if (finishResize)
+                {
+                    _isResizing = false;
+                }
+
+                await InvokeAsync(StateHasChanged);
+            }
+
+            return await GetCurrentCellWidth();
+        }
+
+        internal async Task<double> GetCurrentCellWidth()
+        {
+            var boundingRect = await _headerElement.MudGetBoundingClientRectAsync();
+            return boundingRect.Width;
         }
 
         internal async Task SortChangedAsync(MouseEventArgs args)

@@ -10,7 +10,7 @@
 }
 else if (Column != null && !Column.Hidden)
 {
-    <th scope="col" class="@_classname" style="@_style" colspan="@Column.HeaderColSpan" @attributes="@UserAttributes">
+    <th @ref=@_headerElement scope="col" class="@_classname" style="@_style" colspan="@Column.HeaderColSpan" @attributes="@UserAttributes">
         <span class="column-header">
             @if (sortable)
             {
@@ -85,5 +85,10 @@ else if (Column != null && !Column.Hidden)
                 }
             </span>
         </span>
+        @if (resizable)
+        {
+            <div @onmousedown=OnResizerMouseDown @onmouseover=OnResizerMouseOver @onmouseleave=OnResizerMouseLeave
+                class="@_resizerClass" style="@_resizerStyle" />
+        }
     </th>
 }
