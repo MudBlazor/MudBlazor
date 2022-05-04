@@ -117,13 +117,14 @@
         <DocsPageSection>
             <SectionHeader Title="Resizing">
                 <Description>
-                    The <CodeInline>&lt;MudDataGrid></CodeInline> allows you to resize columns interactively when <br />
+                    The <CodeInline>&lt;MudDataGrid></CodeInline> allows you to resize columns interactively when
                     <CodeInline>ColumnResizeMode</CodeInline> is not set to <CodeInline>None</CodeInline>, which is the default.
-                    <br />
-                    .....
+                    There are two modes for resizing: <CodeInline>ResizeMode.Container</CodeInline> and <CodeInline>ResizeMode.Column</CodeInline>.
+                    <CodeInline>ResizeMode.Container</CodeInline> resizes the entire data grid while <CodeInline>ResizeMode.Column</CodeInline> only resizes
+                    columns using available space within the data grid.
                 </Description>
             </SectionHeader>
-            <SectionContent DarkenBackground="true" Code="DataGridSortingExample" ShowCode="false" Block="true" FullWidth="true">
+            <SectionContent DarkenBackground="true" Code="DataGridResizeExample" ShowCode="false" Block="true" FullWidth="true">
                 <DataGridResizeExample />
             </SectionContent>
         </DocsPageSection>

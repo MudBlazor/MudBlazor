@@ -12,7 +12,7 @@ namespace MudBlazor
         None,
 
         [Description("column")]
-        Colummn,
+        Column,
 
         [Description("container")]
         Container

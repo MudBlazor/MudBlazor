@@ -24,7 +24,7 @@ namespace MudBlazor
         private bool _columnsPanelVisible = false;
         private IEnumerable<T> _items;
         private T _selectedItem;
-        private HashSet<object> _groupExpansions = new HashSet<object>();
+        internal HashSet<object> _groupExpansions = new HashSet<object>();
         private List<GroupDefinition<T>> _groups = new List<GroupDefinition<T>>();
         private PropertyInfo[] _properties = typeof(T).GetProperties();
 
@@ -301,6 +301,12 @@ namespace MudBlazor
 
                 if (PagerStateHasChangedEvent != null)
                     InvokeAsync(PagerStateHasChangedEvent);
+
+                // set initial grouping
+                if (Groupable)
+                {
+                    GroupItems();
+                }
 
                 // Setup ObservableCollection functionality.
                 if (_items is ObservableCollection<T>)

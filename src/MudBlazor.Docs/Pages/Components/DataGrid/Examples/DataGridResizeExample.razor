@@ -3,10 +3,10 @@
 @namespace MudBlazor.Docs.Examples
 @inject HttpClient httpClient
 
-<SectionHeader> 
+@*<SectionHeader> 
     <SubTitle>Resizing the whole grid with ResizeMode.Container</SubTitle>
-</SectionHeader>
-<MudDataGrid T="Element" Items="@Elements" ColumnResizeMode=ResizeMode.Container RowsPerPage=5>
+</SectionHeader>*@
+<MudDataGrid T="Element" Items="@Elements" ColumnResizeMode="@(_resizeColumn ? ResizeMode.Column : ResizeMode.Container)" RowsPerPage="5">
     <Columns>
         <Column T="Element" Field="Number" Title="Nr" Resizable="false" />
         <Column T="Element" Field="Sign" />
@@ -20,7 +20,14 @@
     </PagerContent>
 </MudDataGrid>
 
-<SectionHeader> 
+<div class="d-flex flex-wrap mt-4">
+    <div class="d-flex justify-start align-center">
+        <p class="mud-typography mud-typography-body1 mud-inherit-text mr-2">ResizeMode.Container</p>
+        <MudSwitch @bind-Checked="@_resizeColumn">ResizeMode.Column</MudSwitch>
+    </div>
+</div>
+
+@*<SectionHeader> 
     <SubTitle>Resizing individual columns without affecting the grid size. ResizeMode.Column</SubTitle>
 </SectionHeader>
 <MudDataGrid T="Element" Items="@Elements" ColumnResizeMode=ResizeMode.Colummn RowsPerPage=5>
@@ -35,10 +42,11 @@
     <PagerContent>
         <MudDataGridPager T="Element" PageSizeOptions=@(new int[] {5, 10, 20}) />
     </PagerContent>
-</MudDataGrid>
+</MudDataGrid>*@
 
 @code {
     private IEnumerable<Element> Elements = new List<Element>();
+    private bool _resizeColumn;
 
     protected override async Task OnInitializedAsync()
     {

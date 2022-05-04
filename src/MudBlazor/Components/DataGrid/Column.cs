@@ -233,9 +233,8 @@ namespace MudBlazor
         internal Func<T, object> groupBy;
         internal HeaderContext<T> headerContext;
         internal FooterContext<T> footerContext;
-        private bool initialGroupBySet;
 
-        protected override async Task OnInitializedAsync()
+        protected override void OnInitialized()
         {
             if (!Hideable.HasValue)
                 Hideable = DataGrid?.Hideable;
@@ -246,21 +245,12 @@ namespace MudBlazor
             if (groupable && Grouping)
                 grouping = Grouping;
 
-            DataGrid?.AddColumn(this);
+            DataGrid.AddColumn(this);
 
             // Add the HeaderContext
             headerContext = new HeaderContext<T>(DataGrid);
             // Add the FooterContext
             footerContext = new FooterContext<T>(DataGrid);
-
-            if (!initialGroupBySet && grouping)
-            {
-                await Task.Run(() =>
-                {
-                    initialGroupBySet = true;
-                    DataGrid?.ChangedGrouping(this);
-                });
-            }
         }
 
         internal Func<T, object> GetLocalSortFunc()
