@@ -51,7 +51,6 @@
             justify-content: space-between;
 
             .sortable-column-header {
-                cursor: pointer;
                 width: 100%;
             }
 
@@ -68,7 +67,6 @@
             }
 
             .column-options {
-                cursor: pointer;
                 display: inline-flex;
                 align-items: center;
                 flex-direction: inherit;

@@ -61,6 +61,11 @@ namespace MudBlazor
                 .AddStyle("display", "block", when: HorizontalScrollbar)
             .Build();
 
+        protected string _tableClass =>
+            new CssBuilder("mud-table-container")
+                .AddClass("cursor-col-resize", when: IsResizing)
+            .Build();
+
         protected string _headClassname => new CssBuilder("mud-table-head")
             .AddClass(HeaderClass).Build();
 
@@ -1162,6 +1167,7 @@ namespace MudBlazor
         #region Resize feature
 
         [Inject] private IEventListener EventListener { get; set; }
+        internal bool IsResizing { get; set; }
 
         private ElementReference _gridElement;
         private DataGridColumnResizeService<T> _resizeService;

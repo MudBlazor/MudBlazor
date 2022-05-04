@@ -49,6 +49,18 @@ namespace MudBlazor
                 .AddClass("mud-resizer")
             .Build();
 
+        private string _sortHeaderClass =>
+            new CssBuilder()
+                .AddClass("sortable-column-header")
+                .AddClass("cursor-pointer", when: !_isResizing)
+            .Build();
+
+        private string _optionsClass =>
+            new CssBuilder()
+                .AddClass("column-options")
+                .AddClass("cursor-pointer", when: !_isResizing)
+            .Build();
+
         private ElementReference _headerElement;
 
         private double? _width;
