@@ -48,9 +48,17 @@ namespace MudBlazor
               .AddClass(Class)
             .Build();
 
+        protected string _style =>
+            new StyleBuilder()
+                .AddStyle("overflow-x", "auto", when: HorizontalScrollbar || ColumnResizeMode == ResizeMode.Container)
+                .AddStyle(Style)
+            .Build();
+
         protected string _tableStyle =>
             new StyleBuilder()
-            .AddStyle($"height", Height, !string.IsNullOrWhiteSpace(Height))
+                .AddStyle("height", Height, !string.IsNullOrWhiteSpace(Height))
+                .AddStyle("width", "max-content", when: HorizontalScrollbar || ColumnResizeMode == ResizeMode.Container)
+                .AddStyle("display", "block", when: HorizontalScrollbar)
             .Build();
 
         protected string _headClassname => new CssBuilder("mud-table-head")
@@ -72,12 +80,12 @@ namespace MudBlazor
 
         public readonly List<Column<T>> RenderedColumns = new List<Column<T>>();
         internal T _editingItem;
+
         //internal int editingItemHash;
         internal T editingSourceItem;
+
         internal T _previousEditingItem;
         internal bool isEditFormOpen;
-
-        internal string GetHorizontalScrollbarStyle() => HorizontalScrollbar ? ";display: block; overflow-x: auto;" : string.Empty;
 
         // converters
         private Converter<bool, bool?> _oppositeBoolConverter = new Converter<bool, bool?>
@@ -330,6 +338,11 @@ namespace MudBlazor
         /// Defines if the table has a horizontal scrollbar.
         /// </summary>
         [Parameter] public bool HorizontalScrollbar { get; set; }
+
+        /// <summary>
+        /// Defines if columns of the grid can be resized.
+        /// </summary>
+        [Parameter] public ResizeMode ColumnResizeMode { get; set; }
 
         /// <summary>
         /// Add a class to the thead tag
@@ -1136,6 +1149,38 @@ namespace MudBlazor
             {
                 group.IsExpanded = false;
             }
+        }
+
+        #endregion
+
+        #region Resize feature
+
+        [Inject] private IEventListener EventListener { get; set; }
+
+        private ElementReference _gridElement;
+        private DataGridColumnResizeService<T> _resizeService;
+
+        internal DataGridColumnResizeService<T> ResizeService
+        {
+            get
+            {
+                if (null == _resizeService)
+                {
+                    _resizeService = new DataGridColumnResizeService<T>(this, EventListener);
+                }
+
+                return _resizeService;
+            }
+        }
+
+        internal async Task<bool> StartResizeColumn(HeaderCell<T> headerCell, double clientX)
+            => await ResizeService.StartResizeColumn(headerCell, clientX, RenderedColumns, ColumnResizeMode);
+
+        internal async Task<double> GetActualHeight()
+        {
+            var gridRect = await _gridElement.MudGetBoundingClientRectAsync();
+            var gridHeight = gridRect.Height;
+            return gridHeight;
         }
 
         #endregion

@@ -6,7 +6,7 @@
 <CascadingValue IsFixed="true" Value="this">@Columns</CascadingValue>
 
 <CascadingValue IsFixed="true" Value="this">
-    <div @attributes="UserAttributes" class="@_classname" style="@Style">
+    <div @attributes="UserAttributes" class="@_classname" style="@_style">
         @if (Items != null || ServerData != null)
         {
             @if (ToolBarContent != null)
@@ -30,7 +30,7 @@
                     </MudToolBar>
                  }
             }
-            <div class="mud-table-container" style="@_tableStyle @(GetHorizontalScrollbarStyle())">
+            <div @ref=_gridElement class="mud-table-container" style="@_tableStyle">
                 <table class="mud-table-root">
                     @if (ColGroup != null)
                     {
