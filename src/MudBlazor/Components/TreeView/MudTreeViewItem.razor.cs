@@ -135,7 +135,7 @@ namespace MudBlazor
 
         [Parameter]
         [Category(CategoryTypes.TreeView.Data)]
-        public HashSet<T> Items { get; set; }
+        public ICollection<T> Items { get; set; }
 
         /// <summary>
         /// Command executed when the user clicks on the CommitEdit Button.

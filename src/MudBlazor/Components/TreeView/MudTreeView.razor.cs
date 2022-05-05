@@ -131,9 +131,12 @@ namespace MudBlazor
         [Category(CategoryTypes.TreeView.Behavior)]
         public bool Disabled { get; set; }
 
+        /// <summary>
+        /// Collection of items to render using ItemTemplate
+        /// </summary>
         [Parameter]
         [Category(CategoryTypes.TreeView.Data)]
-        public HashSet<T> Items { get; set; }
+        public ICollection<T> Items { get; set; }
 
         [ExcludeFromCodeCoverage]
         [Obsolete("Use SelectedValueChanged instead.", true)]
@@ -171,7 +174,7 @@ namespace MudBlazor
 
         [Parameter]
         [Category(CategoryTypes.TreeView.Data)]
-        public Func<T, Task<HashSet<T>>> ServerData { get; set; }
+        public Func<T, Task<ICollection<T>>> ServerData { get; set; }
 
         public MudTreeView()
         {
