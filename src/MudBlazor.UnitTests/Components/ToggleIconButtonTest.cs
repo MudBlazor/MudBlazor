@@ -65,11 +65,11 @@ namespace MudBlazor.UnitTests.Components
             var titleParam = Parameter(nameof(MudToggleIconButton.Title), title);
             var toggledTitleParam = Parameter(nameof(MudToggleIconButton.ToggledTitle), toggledTitle);
             var comp = Context.RenderComponent<MudToggleIconButton>(icon, toggledIcon, titleParam, toggledTitleParam);
-            comp.Find("svg Title").TextContent.Should().Be(title);
+            comp.Find($"button[title=\"{title}\"]");
             comp.Find("button").Click();
-            comp.Find("svg Title").TextContent.Should().Be(toggledTitle);
+            comp.Find($"button[title=\"{toggledTitle}\"]");
             comp.Find("button").Click();
-            comp.Find("svg Title").TextContent.Should().Be(title);
+            comp.Find($"button[title=\"{title}\"]");
         }
     }
 }

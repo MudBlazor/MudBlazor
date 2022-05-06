@@ -10,7 +10,7 @@ namespace MudBlazor
             new CssBuilder("mud-icon-root")
                 .AddClass($"mud-icon-default", Color == Color.Default)
                 .AddClass($"mud-svg-icon", !string.IsNullOrEmpty(Icon) && Icon.Trim().StartsWith(("<")))
-                .AddClass($"mud-{Color.ToDescriptionString()}-text", Color != Color.Default)
+                .AddClass($"mud-{Color.ToDescriptionString()}-text", Color != Color.Default && Color != Color.Inherit)
                 .AddClass($"mud-icon-size-{Size.ToDescriptionString()}")
                 .AddClass(Class)
                 .Build();
