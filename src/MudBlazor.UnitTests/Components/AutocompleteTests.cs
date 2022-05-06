@@ -233,8 +233,8 @@ namespace MudBlazor.UnitTests.Components
             inputControl.Click();
             comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open"));
 
-            var mudText = comp.Find("p.mud-typography");
-            mudText.InnerHtml.Should().Contain("Not all items are shown"); //ensure the text is shown
+            var mudText = comp.FindAll("p.mud-typography");
+            mudText[mudText.Count - 1].InnerHtml.Should().Contain("Not all items are shown"); //ensure the text is shown
         }
 
         /// <summary>
