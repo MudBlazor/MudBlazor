@@ -78,6 +78,11 @@ namespace MudBlazor
         public bool DisableGutters { get; set; }
 
         /// <summary>
+        /// Raised when IsExpanded change starts.
+        /// </summary>
+        [Parameter] public EventCallback<bool> IsExpandedChangeStarted { get; set; }
+
+        /// <summary>
         /// Raised when IsExpanded changes.
         /// </summary>
         [Parameter] public EventCallback<bool> IsExpandedChanged { get; set; }
@@ -93,9 +98,12 @@ namespace MudBlazor
             get => _isExpanded;
             set
             {
+
                 if (_isExpanded == value)
                     return;
                 _isExpanded = value;
+
+                IsExpandedChangeStarted.InvokeAsync(_isExpanded);
 
                 NotifyIsExpandedChanged?.Invoke(this);
                 IsExpandedChanged.InvokeAsync(_isExpanded).ContinueWith(t =>
