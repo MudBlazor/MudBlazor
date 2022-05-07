@@ -14,7 +14,7 @@ else if (Column != null && !Column.Hidden)
         <span class="column-header">
             @if (sortable)
             {
-                <span class="sortable-column-header" @onclick="SortChangedAsync">
+                <span class="@_sortHeaderClass" @onclick="SortChangedAsync">
                     @if (Column.HeaderTemplate != null)
                     {
                         @Column.HeaderTemplate(Column.headerContext)
@@ -36,7 +36,7 @@ else if (Column != null && !Column.Hidden)
                     @computedTitle
                 }
             }
-            <span class="column-options">
+            <span class="@_optionsClass">
                 @if (sortable)
                 {
                     if (_initialDirection == SortDirection.None)

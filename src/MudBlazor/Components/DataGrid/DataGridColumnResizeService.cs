@@ -60,6 +60,8 @@ namespace MudBlazor
             _mouseMoveSubscriptionId = await _eventListener.SubscribeGlobal<MouseEventArgs>(EventMouseMove, 0, OnApplicationMouseMove);
             _mouseUpSubscriptionId = await _eventListener.SubscribeGlobal<MouseEventArgs>(EventMouseUp, 0, OnApplicationMouseUp);
 
+            _dataGrid.IsResizing = true;
+            _dataGrid.ExternalStateHasChanged();
             return true;
         }
 
@@ -72,6 +74,8 @@ namespace MudBlazor
         {
             var requiresUpdate = _mouseMoveSubscriptionId != default || _mouseUpSubscriptionId != default;
 
+            _dataGrid.IsResizing = false;
+            _dataGrid.ExternalStateHasChanged();
             await UnsubscribeApplicationEvents();
 
             if (requiresUpdate)
