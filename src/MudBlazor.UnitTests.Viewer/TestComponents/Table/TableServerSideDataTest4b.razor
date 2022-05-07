@@ -2,7 +2,7 @@
 
 <MudPopoverProvider></MudPopoverProvider>
 
-<MudTable ServerData="@(new Func<TableState, Task<TableData<TestModel>>>(ServerReload))" SortLabel="Sort by">
+<MudTable ServerData="ServerReload" SortLabel="Sort by">
     <HeaderContent>
         <MudTh><MudTableSortLabel SortLabel="a" T="TestModel">a</MudTableSortLabel></MudTh>
         <MudTh><MudTableSortLabel SortLabel="b" T="TestModel">b</MudTableSortLabel></MudTh>
