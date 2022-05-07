@@ -722,6 +722,17 @@ namespace MudBlazor
             StateHasChanged();
         }
 
+        internal void ApplyFilters()
+        {
+            _filtersMenuVisible = false;
+            InvokeServerLoadFunc().AndForget();
+        }
+
+        internal void ClearFilters()
+        {
+            FilterDefinitions.Clear();
+        }
+
         internal void AddFilter(Guid id, string field)
         {
             var column = RenderedColumns.FirstOrDefault(x => x.Field == field);
