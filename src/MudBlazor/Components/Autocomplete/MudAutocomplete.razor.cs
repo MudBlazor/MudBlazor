@@ -408,7 +408,8 @@ namespace MudBlazor
             IsOpen = false;
             await SetTextAsync(string.Empty, updateValue: false);
             await CoerceValueToText();
-            await _elementReference.SetText("");
+            if (_elementReference != null)
+                await _elementReference.SetText("");
             _timer?.Dispose();
             StateHasChanged();
         }
@@ -517,7 +518,7 @@ namespace MudBlazor
             if (increment == 0 || _items == null || _items.Length == 0 || !_enabledItemIndices.Any())
                 return ValueTask.CompletedTask;
             // if we are at the end, or the beginning we just do an rollover
-            _selectedListItemIndex = Math.Clamp(value: (10 * _items.Length + _selectedListItemIndex + increment) % _items.Length, min: 0, max: _items.Length-1);
+            _selectedListItemIndex = Math.Clamp(value: (10 * _items.Length + _selectedListItemIndex + increment) % _items.Length, min: 0, max: _items.Length - 1);
             return ScrollToListItem(_selectedListItemIndex);
         }
 
