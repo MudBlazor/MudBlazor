@@ -642,6 +642,11 @@ namespace MudBlazor.UnitTests.Components
             // clear via clear button
             await comp.InvokeAsync(() => maskField.HandleClearButton(new MouseEventArgs()));
             comp.WaitForAssertion(() => maskField.Mask.ToString().Should().Be("|"));
+            // ctrl + backspace clears input
+            await comp.InvokeAsync(() => maskField.OnPaste("123"));
+            comp.WaitForAssertion(() => maskField.Mask.ToString().Should().Be("123 |"));
+            await comp.InvokeAsync(() => maskField.HandleKeyDown(new KeyboardEventArgs() { Key = "Backspace", CtrlKey = true }));
+            comp.WaitForAssertion(() => maskField.Mask.ToString().Should().Be("|"));
         }
 
         [Test]
@@ -673,14 +678,33 @@ namespace MudBlazor.UnitTests.Components
             var textField = comp.FindComponent<MudTextField<string>>().Instance;
             var mask = comp.FindComponent<MudMask>().Instance;
             await comp.InvokeAsync(() => mask.OnPaste("1234567890"));
-            mask.Mask.ToString().Should().Be("(123) 456-7890|");
-            textField.Text.Should().Be("(123) 456-7890");
-            textField.Value.Should().Be("(123) 456-7890");
+            comp.WaitForAssertion(() => mask.Mask.ToString().Should().Be("(123) 456-7890|"));
+            comp.WaitForAssertion(() => textField.Text.Should().Be("(123) 456-7890"));
+            comp.WaitForAssertion(() => textField.Value.Should().Be("(123) 456-7890"));
 
             await comp.InvokeAsync(() => form.Reset());
-            mask.Mask.ToString().Should().Be("|");
-            textField.Text.Should().BeNullOrEmpty();
-            textField.Value.Should().BeNullOrEmpty();
+            comp.WaitForAssertion(() => mask.Mask.ToString().Should().Be("|"));
+            comp.WaitForAssertion(() => textField.Text.Should().BeNullOrEmpty());
+            comp.WaitForAssertion(() => textField.Value.Should().BeNullOrEmpty());
+
+            await comp.InvokeAsync(() => textField.FocusAsync());
+            await comp.InvokeAsync(() => textField.SelectAsync());
+            await comp.InvokeAsync(() => textField.SelectRangeAsync(0, 1));
+            await comp.InvokeAsync(() => textField.Clear());
+            comp.WaitForAssertion(() => textField.Value.Should().Be(null));
+
+            //This gives error
+            await comp.InvokeAsync(() => textField.SetText("123"));
+            comp.WaitForAssertion(() => textField.Value.Should().Be("(123) "));
+
+            //ctrl+backspace
+            await comp.InvokeAsync(() => form.Reset());
+            await comp.InvokeAsync(() => mask.OnPaste("1234567890"));
+            comp.WaitForAssertion(() => mask.Mask.ToString().Should().Be("(123) 456-7890|"));
+            comp.WaitForAssertion(() => textField.Text.Should().Be("(123) 456-7890"));
+            comp.WaitForAssertion(() => textField.Value.Should().Be("(123) 456-7890"));
+            await comp.InvokeAsync(() => mask.HandleKeyDown(new KeyboardEventArgs() { Key = "Backspace", CtrlKey = true }));
+            comp.WaitForAssertion(() => textField.Value.Should().Be(""));
         }
     }
 }

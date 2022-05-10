@@ -109,6 +109,10 @@
                 border-radius: var(--mud-default-borderradius) 0 0 0;
             }
 
+            & * th:last-child {
+                border-radius: 0 var(--mud-default-borderradius) 0 0;
+            }
+
             & * th {
                 background-color: var(--mud-palette-surface);
                 position: sticky;

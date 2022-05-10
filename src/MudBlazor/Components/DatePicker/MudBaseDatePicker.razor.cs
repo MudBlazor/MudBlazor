@@ -31,7 +31,7 @@ namespace MudBlazor
         public DateTime? MaxDate { get; set; }
 
         /// <summary>
-        /// Max selectable date.
+        /// Min selectable date.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Validation)]
@@ -442,9 +442,12 @@ namespace MudBlazor
 
         private void OnYearClick()
         {
-            CurrentView = OpenTo.Year;
-            StateHasChanged();
-            _scrollToYearAfterRender = true;
+            if (!FixYear.HasValue)
+            {
+                CurrentView = OpenTo.Year;
+                StateHasChanged();
+                _scrollToYearAfterRender = true;
+            }
         }
 
         /// <summary>
@@ -542,7 +545,7 @@ namespace MudBlazor
             return Typo.subtitle1;
         }
 
-
+        
 
         protected override void OnInitialized()
         {

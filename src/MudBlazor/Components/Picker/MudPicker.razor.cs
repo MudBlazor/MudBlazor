@@ -301,6 +301,20 @@ namespace MudBlazor
             set => _mask = value;
         }
 
+        /// <summary>
+        /// Gets or sets the origin of the popover's anchor. Defaults to <see cref="Origin.TopLeft"/>
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Popover.Appearance)]
+        public Origin AnchorOrigin { get; set; } = Origin.TopLeft;
+
+        /// <summary>
+        /// Gets or sets the origin of the popover's transform. Defaults to <see cref="Origin.TopLeft"/>
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Popover.Appearance)]
+        public Origin TransformOrigin { get; set; } = Origin.TopLeft;
+
         protected IMask _mask = null;
 
         protected async Task SetTextAsync(string value, bool callback)
@@ -337,11 +351,12 @@ namespace MudBlazor
             IsOpen = false;
 
             if (submit)
+            {
                 Submit();
-
-            StateHasChanged();
+            }
 
             OnClosed();
+            StateHasChanged();
         }
 
         public void Open()
@@ -353,7 +368,7 @@ namespace MudBlazor
 
         private void CloseOverlay() => Close(PickerActions == null);
 
-        protected virtual void Submit() { }
+        protected internal virtual void Submit() { }
 
         public virtual void Clear(bool close = true)
         {

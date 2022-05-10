@@ -397,7 +397,7 @@ namespace MudBlazor.UnitTests.Components
             for (var i = 0; i < 2; i++)
             {
                 scrollButtons.Last().Find("button").Click();
-                expectedTranslation += 200;
+                expectedTranslation += observer.PanelSize;
 
                 var toolbarWrapper = comp.Find(".mud-tabs-toolbar-wrapper");
                 toolbarWrapper.Should().NotBeNull();
@@ -405,20 +405,6 @@ namespace MudBlazor.UnitTests.Components
                 var styleAttr = toolbarWrapper.GetAttribute("style");
 
                 styleAttr.Should().Be($"transform:translateX(-{expectedTranslation.ToString(CultureInfo.InvariantCulture)}px);");
-                GetSliderValue(comp).Should().Be(0);
-            }
-
-            // clicking the button more often should change something
-            for (var i = 0; i < 3; i++)
-            {
-                scrollButtons.Last().Find("button").Click();
-
-                var toolbarWrapper = comp.Find(".mud-tabs-toolbar-wrapper");
-                toolbarWrapper.Should().NotBeNull();
-                toolbarWrapper.HasAttribute("style").Should().Be(true);
-                var styleAttr = toolbarWrapper.GetAttribute("style");
-
-                styleAttr.Should().Be($"transform:translateX(-400px);");
                 GetSliderValue(comp).Should().Be(0);
             }
         }
@@ -446,7 +432,7 @@ namespace MudBlazor.UnitTests.Components
             for (var i = 0; i < 2; i++)
             {
                 scrollButtons.First().Find("button").Click();
-                expectedTranslation -= 200;
+                expectedTranslation -= observer.PanelSize;
 
                 var toolbarWrapper = comp.Find(".mud-tabs-toolbar-wrapper");
                 toolbarWrapper.Should().NotBeNull();
@@ -454,20 +440,6 @@ namespace MudBlazor.UnitTests.Components
                 var styleAttr = toolbarWrapper.GetAttribute("style");
 
                 styleAttr.Should().Be($"transform:translateX(-{expectedTranslation.ToString(CultureInfo.InvariantCulture)}px);");
-                GetSliderValue(comp).Should().Be(5 * 100.0);
-            }
-
-            // clicking the button more often should change something
-            for (var i = 0; i < 3; i++)
-            {
-                scrollButtons.First().Find("button").Click();
-
-                var toolbarWrapper = comp.Find(".mud-tabs-toolbar-wrapper");
-                toolbarWrapper.Should().NotBeNull();
-                toolbarWrapper.HasAttribute("style").Should().Be(true);
-                var styleAttr = toolbarWrapper.GetAttribute("style");
-
-                styleAttr.Should().Be($"transform:translateX(-0px);");
                 GetSliderValue(comp).Should().Be(5 * 100.0);
             }
         }
@@ -495,7 +467,7 @@ namespace MudBlazor.UnitTests.Components
 
             observer.UpdateTotalPanelSize(200.0);
 
-            scrollButtons.First().Instance.Disabled.Should().BeFalse();
+            scrollButtons.First().Instance.Disabled.Should().BeTrue();
             GetSliderValue(comp).Should().Be(1 * 100.0);
         }
 
@@ -521,7 +493,7 @@ namespace MudBlazor.UnitTests.Components
 
             observer.UpdatePanelSize(0, 200.0);
 
-            scrollButtons.First().Instance.Disabled.Should().BeFalse();
+            scrollButtons.First().Instance.Disabled.Should().BeTrue();
             GetSliderValue(comp).Should().Be(200.0);
         }
 
@@ -587,13 +559,13 @@ namespace MudBlazor.UnitTests.Components
 
             await comp.Instance.RemovePanel(0);
 
-            scrollButtons.First().Instance.Disabled.Should().BeTrue();
+            scrollButtons.First().Instance.Disabled.Should().BeFalse();
 
             var toolbarWrapper = comp.Find(".mud-tabs-toolbar-wrapper");
             toolbarWrapper.Should().NotBeNull();
             toolbarWrapper.HasAttribute("style").Should().Be(true);
             var styleAttr = toolbarWrapper.GetAttribute("style");
-            styleAttr.Should().Be($"transform:translateX(-0px);");
+            styleAttr.Should().Be($"transform:translateX(-100px);");
 
             var sliderValue = GetSliderValue(comp);
             GetSliderValue(comp).Should().Be(1 * 100.0);

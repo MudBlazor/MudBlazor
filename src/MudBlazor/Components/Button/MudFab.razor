@@ -9,19 +9,20 @@
             @attributes="UserAttributes"
             @onclick="OnClickHandler"
             type="@ButtonType.ToDescriptionString()"
-            href="@Link"
+            href="@Href"
             target="@Target"
             rel="@(Target=="_blank"?"noopener":null)"
-            disabled="@Disabled">
+            disabled="@Disabled"
+			title="@Title">
     <span class="mud-fab-label">
         @if (!string.IsNullOrWhiteSpace(StartIcon))
         {
-            <MudIcon Icon="@StartIcon" Color="@IconColor" Size="@IconSize"></MudIcon>
+            <MudIcon Icon="@StartIcon" Color="@IconColor" Size="@IconSize" />
         }
         @Label
         @if (!string.IsNullOrWhiteSpace(EndIcon))
         {
-            <MudIcon Icon="@EndIcon" Color="@IconColor" Size="@IconSize"></MudIcon>
+            <MudIcon Icon="@EndIcon" Color="@IconColor" Size="@IconSize" />
         }
     </span>
 </MudElement>

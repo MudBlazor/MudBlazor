@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -11,6 +12,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Options;
 using Microsoft.JSInterop;
+using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
@@ -28,7 +30,6 @@ namespace MudBlazor
         private readonly SemaphoreSlim _semaphore = new(1, 1);
         private readonly IJSRuntime _runtime;
         private readonly Action _updater;
-        private bool _locked;
         private bool _detached;
 
         public Guid Id { get; }
@@ -38,7 +39,9 @@ namespace MudBlazor
         public string Style { get; private set; }
         public object Tag { get; private set; }
         public bool ShowContent { get; private set; }
+        public DateTime? ActivationDate { get; private set; }
         public Dictionary<string, object> UserAttributes { get; set; } = new Dictionary<string, object>();
+        public MudRender ElementReference { get; set; }
 
         public MudPopoverHandler(RenderFragment fragment, IJSRuntime jsInterop, Action updater)
         {
@@ -55,6 +58,14 @@ namespace MudBlazor
             Tag = componentBase.Tag;
             UserAttributes = componentBase.UserAttributes;
             ShowContent = showContent;
+            if(showContent == true)
+            {
+                ActivationDate = DateTime.Now;
+            }
+            else
+            {
+                ActivationDate = null;
+            }
         }
 
         public void UpdateFragment(RenderFragment fragment,
@@ -62,11 +73,9 @@ namespace MudBlazor
         {
             Fragment = fragment;
             SetComponentBaseParameters(componentBase, @class, @style, showContent);
-            if (_locked == false)
-            {
-                _locked = true;
-                _updater.Invoke();
-            }
+            // this basically calls StateHasChanged on the Popover
+            ElementReference?.ForceRender();
+            _updater?.Invoke(); // <-- this doesn't do anything anymore except making unit tests happy 
         }
 
         public async Task Initialize()
@@ -112,7 +121,6 @@ namespace MudBlazor
             }
         }
 
-        public void Release() => _locked = false;
     }
 
     public class MudPopoverService : IMudPopoverService, IAsyncDisposable
@@ -155,7 +163,7 @@ namespace MudBlazor
 
         public MudPopoverHandler Register(RenderFragment fragment)
         {
-            var handler = new MudPopoverHandler(fragment, _jsRuntime, () => FragmentsChanged?.Invoke(this, EventArgs.Empty));
+            var handler = new MudPopoverHandler(fragment, _jsRuntime, () => { /*not doing anything on purpose for now*/ });
             _handlers.Add(handler.Id, handler);
 
             FragmentsChanged?.Invoke(this, EventArgs.Empty);
@@ -175,6 +183,8 @@ namespace MudBlazor
             return true;
         }
 
+        //TO DO add js test
+        [ExcludeFromCodeCoverage]
         public async ValueTask DisposeAsync()
         {
             if (_isInitilized == false) { return; }
