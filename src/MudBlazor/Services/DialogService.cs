@@ -5,6 +5,7 @@
 // License: MIT
 
 using System;
+using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
@@ -15,6 +16,8 @@ namespace MudBlazor
     {
         public event Action<IDialogReference> OnDialogInstanceAdded;
         public event Action<IDialogReference, DialogResult> OnDialogCloseRequested;
+
+        public Collection<IDialogReference> Dialogs { get; private set; } = new();
 
         public IDialogReference Show<T>() where T : ComponentBase
         {
@@ -159,6 +162,11 @@ namespace MudBlazor
         public virtual void Close(DialogReference dialog, DialogResult result)
         {
             OnDialogCloseRequested?.Invoke(dialog, result);
+        }
+
+        public bool IsOpen(IDialogReference dialogReference)
+        {
+            return Dialogs.Contains(dialogReference);
         }
 
         public virtual IDialogReference CreateReference()
