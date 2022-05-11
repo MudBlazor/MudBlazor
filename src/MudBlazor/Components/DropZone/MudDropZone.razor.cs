@@ -237,7 +237,7 @@ namespace MudBlazor
                 _canDrop = false;
             }
 
-            if (e.Success)
+            if (e.Success == true)
             {
                 if (e.OriginatedDropzoneIdentifier == Identifier && e.DestinationDropzoneIdentifier != e.OriginatedDropzoneIdentifier)
                 {
