@@ -328,20 +328,18 @@ namespace MudBlazor.UnitTests.Components
         public async Task DropZone_DropItem_DragEnterNotTrackedItem()
         {
             var comp = Context.RenderComponent<DropzoneBasicTest>();
-            {
-                var tempContainer = comp.Find(".mud-drop-container");
-                tempContainer.Children.Should().HaveCount(2);
+            
+            var tempContainer = comp.Find(".mud-drop-container");
+            tempContainer.Children.Should().HaveCount(2);
 
-                var firstDropZone = tempContainer.Children[0];
-                var firstDropItem = firstDropZone.Children[1];
-                
-                await firstDropItem.DragEnterAsync(new DragEventArgs());
-            }
-
-            var container = comp.Find(".mud-drop-container");
-            container.Children.Should().HaveCount(2);
-            container.Children[0].Children.Should().HaveCount(2);
-            container.Children[1].Children.Should().HaveCount(3);
+            var firstDropZone = tempContainer.Children[0];
+            var firstDropItem = firstDropZone.Children[1];
+            
+            await firstDropItem.DragEnterAsync(new DragEventArgs());
+            
+            tempContainer.Children.Should().HaveCount(2);
+            tempContainer.Children[0].Children.Should().HaveCount(2);
+            tempContainer.Children[1].Children.Should().HaveCount(3);
         }
         
         [Test]
