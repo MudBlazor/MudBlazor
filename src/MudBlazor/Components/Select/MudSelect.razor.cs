@@ -1,4 +1,4 @@
-﻿// Copyright (c) MudBlazor 2021
+// Copyright (c) MudBlazor 2021
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
@@ -1026,6 +1026,15 @@ namespace MudBlazor
                 _elementReference.FocusAsync().AndForget(TaskOption.Safe);
             }
             base.OnBlur.InvokeAsync(obj);
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                _keyInterceptor.Dispose();
+            }
+            base.Dispose(disposing);
         }
 
         /// <summary>
