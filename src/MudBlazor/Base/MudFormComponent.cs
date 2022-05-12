@@ -62,7 +62,7 @@ namespace MudBlazor
         public bool Error { get; set; }
 
         /// <summary>
-        /// If error, used by aria-describedby.
+        /// The ErrorId that will be used by aria-describedby if Error true
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Validation)]
