@@ -95,6 +95,8 @@ namespace MudBlazor.Services
             if (!disposing || _isDisposed)
                 return;
             _isDisposed = true;
+            KeyDown = null;
+            KeyUp = null;
             Disconnect().AndForget();
             _dotNetRef.Dispose();
         }
