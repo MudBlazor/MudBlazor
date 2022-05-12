@@ -20,9 +20,11 @@
                     <MudIconButton aria-label="close" Icon="@CloseIcon" @onclick="Cancel"/>
                 }
             </div>
-         }
+         }<MudFocusTrap>
+             
         <CascadingValue Value="this" IsFixed="true">
             @Content
         </CascadingValue>
+        </MudFocusTrap>
     </div>
 </div>

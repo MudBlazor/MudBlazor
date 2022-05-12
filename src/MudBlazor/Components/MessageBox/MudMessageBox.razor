@@ -23,6 +23,7 @@
         }
     </DialogContent>
     <DialogActions>
+        <MudFocusTrap>
         @if (CancelButton != null)
         {
             <CascadingValue Value="@_cancelCallback">
@@ -53,5 +54,6 @@
         {
             <MudButton Color="Color.Primary" OnClick="OnYesClicked">@YesText</MudButton>
         }
+        </MudFocusTrap>
     </DialogActions>
 </MudDialog>
