@@ -1144,5 +1144,36 @@ namespace MudBlazor.UnitTests.Components
             firstDropZone.Children[3].TextContent.Should().Be("Item 3");
             firstDropZone.Children[4].TextContent.Should().Be("Item 4");
         }
+        
+        [Test]
+        public async Task DropZone_DragFinished_DropNotAllowed_KeepOrder()
+        {
+            var comp = Context.RenderComponent<DropzoneDraggingTestCantDropSecondZoneTest>();
+        
+            var container = comp.Find(".mud-drop-container");
+            container.Children.Should().HaveCount(2);
+        
+            var firstDropZone = container.Children[0];
+            var secondDropZone = container.Children[1];
+        
+            secondDropZone.Children.Should().HaveCount(3);
+            var secondDropItem = secondDropZone.Children[1];
+            var secondDropItemText = secondDropItem.Children[0].TextContent;
+            
+            secondDropItemText.Should().Be("Second Item");
+            
+            await secondDropItem.DragStartAsync(new DragEventArgs());
+        
+            //drop item in first zone
+            await firstDropZone.DropAsync(new DragEventArgs());
+        
+            //reload DOM references
+            container = comp.Find(".mud-drop-container");
+            secondDropZone = container.Children[1];
+            secondDropItem = secondDropZone.Children[1];
+            secondDropItemText = secondDropItem.Children[0].TextContent;
+            
+            secondDropItemText.Should().Be("Second Item");
+        }
     }
 }
