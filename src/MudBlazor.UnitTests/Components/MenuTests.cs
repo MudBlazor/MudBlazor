@@ -98,6 +98,27 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task MenuMouseLeave_MenuMouseEnter_CheckOpen()
+        {
+            var comp = Context.RenderComponent<MenuTestMouseOver>();
+            var pop = comp.FindComponent<MudPopover>();
+
+            // Mouse over to menu to open popover
+            var menu = comp.Find(".mud-menu");
+            await menu.TriggerEventAsync("onmouseenter", new MouseEventArgs());
+
+            // Popover open, captures mouse
+            await menu.TriggerEventAsync("onmouseleave", new MouseEventArgs());
+            await comp.FindAll("div.mud-list")[0].TriggerEventAsync("onmouseenter", new MouseEventArgs());
+
+            // Mouse moves to menu, still need to open
+            await comp.FindAll("div.mud-list")[0].TriggerEventAsync("onmouseleave", new MouseEventArgs());
+            await menu.TriggerEventAsync("onmouseenter", new MouseEventArgs());
+
+            comp.WaitForAssertion(() => pop.Instance.Open.Should().BeTrue());
+        }
+
+        [Test]
         public void ActivatorContent_Disabled_CheckDisabled()
         {
             var comp = Context.RenderComponent<MenuTestDisabledCustomActivator>();

@@ -13,7 +13,7 @@ namespace MudBlazor
 {
     public partial class MudPopoverProvider : IDisposable
     {
-        private bool _isConnectedToSerivce = false;
+        private bool _isConnectedToService = false;
 
         [Inject] public IMudPopoverService Service { get; set; }
 
@@ -38,22 +38,23 @@ namespace MudBlazor
             }
 
             Service.FragmentsChanged += Service_FragmentsChanged;
-            _isConnectedToSerivce = true;
+            _isConnectedToService = true;
         }
 
         protected override void OnParametersSet()
         {
             base.OnParametersSet();
 
-            if (IsEnabled == false && _isConnectedToSerivce == true)
+            if (IsEnabled == false && _isConnectedToService == true)
             {
                 Service.FragmentsChanged -= Service_FragmentsChanged;
-                _isConnectedToSerivce = false;
+                _isConnectedToService = false;
             }
-            else if(IsEnabled == true && _isConnectedToSerivce == false)
+            else if (IsEnabled == true && _isConnectedToService == false)
             {
+                Service.FragmentsChanged -= Service_FragmentsChanged; // make sure to avoid multiple registration
                 Service.FragmentsChanged += Service_FragmentsChanged;
-                _isConnectedToSerivce = true;
+                _isConnectedToService = true;
             }
         }
 
@@ -61,5 +62,6 @@ namespace MudBlazor
         {
             InvokeAsync(StateHasChanged);
         }
+
     }
 }

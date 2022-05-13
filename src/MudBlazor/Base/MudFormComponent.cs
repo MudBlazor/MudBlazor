@@ -62,6 +62,13 @@ namespace MudBlazor
         public bool Error { get; set; }
 
         /// <summary>
+        /// The ErrorId that will be used by aria-describedby if Error true
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Validation)]
+        public string ErrorId { get; set; }
+
+        /// <summary>
         /// The generic converter of the component.
         /// </summary>
         [Parameter]
@@ -292,9 +299,11 @@ namespace MudBlazor
                 {
                     // this must be called in any case, because even if Validation is null the user might have set Error and ErrorText manually
                     // if Error and ErrorText are set by the user, setting them here will have no effect.
+                    // if Error, create an error id that can be used by aria-describedby on input control
                     ValidationErrors = errors;
                     Error = errors.Count > 0;
                     ErrorText = errors.FirstOrDefault();
+                    ErrorId = HasErrors ? Guid.NewGuid().ToString() : null;
                     Form?.Update(this);
                     StateHasChanged();
                 }

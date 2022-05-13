@@ -312,15 +312,17 @@ namespace MudBlazor
             }
 
             await ItemDropped.InvokeAsync(new MudItemDropInfo<T>(_transaction.Item, dropzoneIdentifier, index));
-            TransactionEnded?.Invoke(this, new MudDragAndDropTransactionFinishedEventArgs<T>(dropzoneIdentifier, true, _transaction));
+            var transactionFinishedEventArgs = new MudDragAndDropTransactionFinishedEventArgs<T>(dropzoneIdentifier, true, _transaction);
             _transaction = null;
+            TransactionEnded?.Invoke(this, transactionFinishedEventArgs);
         }
 
         public async Task CancelTransaction()
         {
             await _transaction.Cancel();
-            TransactionEnded?.Invoke(this, new MudDragAndDropTransactionFinishedEventArgs<T>(_transaction));
+            var transactionFinishedEventArgs = new MudDragAndDropTransactionFinishedEventArgs<T>(_transaction);
             _transaction = null;
+            TransactionEnded?.Invoke(this, transactionFinishedEventArgs);
         }
 
         public void UpdateTransactionIndex(int index)
