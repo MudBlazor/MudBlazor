@@ -323,7 +323,25 @@ namespace MudBlazor.UnitTests.Components
             firstDropZone.ClassList.Should().NotContain("my-special-dragging-class");
             firstDropItem.ClassList.Should().NotContain("my-special-item-dragging-class");
         }
+        
+        [Test]
+        public async Task DropZone_DropItem_DragEnterNotTrackedItem()
+        {
+            var comp = Context.RenderComponent<DropzoneBasicTest>();
+            
+            var tempContainer = comp.Find(".mud-drop-container");
+            tempContainer.Children.Should().HaveCount(2);
 
+            var firstDropZone = tempContainer.Children[0];
+            var firstDropItem = firstDropZone.Children[1];
+            
+            await firstDropItem.DragEnterAsync(new DragEventArgs());
+            
+            tempContainer.Children.Should().HaveCount(2);
+            tempContainer.Children[0].Children.Should().HaveCount(2);
+            tempContainer.Children[1].Children.Should().HaveCount(3);
+        }
+        
         [Test]
         public async Task DropZone_DropNotTrackedItem()
         {
