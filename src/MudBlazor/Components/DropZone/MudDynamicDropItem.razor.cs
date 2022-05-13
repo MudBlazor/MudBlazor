@@ -123,6 +123,8 @@ public partial class MudDynamicDropItem<T> : MudComponentBase
 
     private void HandleDragEnter()
     {
+        if (Container == null || Container.TransactionInProgress() == false) { return; }
+        
         Container.UpdateTransactionIndex(Index);
     }
 
