@@ -1,0 +1,58 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudDropContainer T="DropItem" Items="_items" ItemsSelector="@((item, dropzone) => item.ParentId.ToString() == dropzone)" ItemDropped="ItemUpdated">
+    <ChildContent>
+        <MudStack >
+            <MudText Typo="Typo.h6" Class="mb-2">First DropZone</MudText>
+            <MudDropZone T="DropItem" Identifier="@Guid.Empty.ToString()" AllowReorder="true" Class=" d-flex flex-row rounded mud-background-gray pa-2 ma-2">
+
+            </MudDropZone>
+        </MudStack>
+    </ChildContent>
+    <ItemRenderer>
+        <MudPaper Elevation="25" Class="pa-2 ma-2">
+            <MudStack >
+                <MudText Typo="Typo.h6" Class="mb-2">@context.Name</MudText>
+                <MudDropZone T="DropItem" Identifier="@context.Id.ToString()" AllowReorder="true" Class="rounded mud-background-gray pa-2 ma-2">
+
+                </MudDropZone>
+            </MudStack>
+        </MudPaper>
+    </ItemRenderer>
+</MudDropContainer>
+
+@code {
+
+    private static Guid _level1 = Guid.NewGuid();
+    private static Guid _level2 = Guid.NewGuid();
+    private static Guid _level3 = Guid.NewGuid();
+
+    private void ItemUpdated(MudItemDropInfo<DropItem> dropItem)
+    {
+        dropItem.Item.ParentId = Guid.Parse(dropItem.DropzoneIdentifier);
+    }
+
+    private List<DropItem> _items = new()
+    {
+        new DropItem() {Id = _level1, Name = "Drag me!"},
+        new DropItem() {Id = _level2, Name = "Or me!"},
+        new DropItem() {Id = _level3, Name = "Just Mud"},
+        new DropItem() {ParentId = _level1, Name = "Drag me! - child 1"},
+        new DropItem() {ParentId = _level2, Name = "Or me! - child 1"},
+        new DropItem() {ParentId = _level3, Name = "Just Mud - child 1"},
+        new DropItem() {ParentId = _level1, Name = "Drag me! - child 2"},
+        new DropItem() {ParentId = _level2, Name = "Or me! - child 2"},
+        new DropItem() {ParentId = _level3, Name = "Just Mud - child 2"},
+        new DropItem() {ParentId = _level1, Name = "Drag me! - child 3"},
+        new DropItem() {ParentId = _level2, Name = "Or me! - child 3"},
+        new DropItem() {ParentId = _level3, Name = "Just Mud - child 3"},
+    };
+
+    public class DropItem
+    {
+        public Guid Id { get; set; } = Guid.NewGuid();
+        public Guid ParentId { get; set; } = Guid.Empty;
+        public string Name { get; init; }
+    }
+
+}
