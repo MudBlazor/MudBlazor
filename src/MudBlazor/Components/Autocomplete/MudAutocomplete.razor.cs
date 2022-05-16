@@ -387,9 +387,9 @@ namespace MudBlazor
             {
                 Console.WriteLine("The search function failed to return results: " + e.Message);
             }
+            _itemsReturned = searched_items.Count();
             if (MaxItems.HasValue)
             {
-                _itemsReturned = searched_items.Count();
                 searched_items = searched_items.Take(MaxItems.Value);
             }
             _items = searched_items.ToArray();
