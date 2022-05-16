@@ -312,9 +312,9 @@ namespace MudBlazor
                     DrawerContainer?.Remove(this);
 
                     if (_mouseEnterListenerId != 0)
-                        _ = _drawerRef.MudRemoveEventListenerAsync("mouseenter", _mouseEnterListenerId);
+                        _drawerRef.MudRemoveEventListenerAsync("mouseenter", _mouseEnterListenerId).AndForget(TaskOption.Safe);
                     if (_mouseLeaveListenerId != 0)
-                        _ = _drawerRef.MudRemoveEventListenerAsync("mouseleave", _mouseLeaveListenerId);
+                        _drawerRef.MudRemoveEventListenerAsync("mouseleave", _mouseLeaveListenerId).AndForget(TaskOption.Safe);
 
                     var toDispose = _dotNetRef;
                     _dotNetRef = null;

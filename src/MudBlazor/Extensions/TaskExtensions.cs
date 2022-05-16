@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Threading.Tasks;
 
 namespace MudBlazor
@@ -32,8 +33,8 @@ namespace MudBlazor
             {
                 if (option != TaskOption.Safe)
                     throw;
-
-                Console.WriteLine(ex);
+                
+                Debug.WriteLine(ex);
             }
         }
 
@@ -58,8 +59,8 @@ namespace MudBlazor
             {
                 if (option != TaskOption.Safe)
                     throw;
-
-                Console.WriteLine(ex);
+                
+                Debug.WriteLine(ex);
             }
         }
     }
