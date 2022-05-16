@@ -22,6 +22,7 @@ namespace MudBlazor
         [Parameter] public string Title { get; set; }
         [Parameter] public string Operator { get; set; }
         [Parameter] public object Value { get; set; }
+        [Parameter] public Column<T> Column { get; set; }
         [Parameter] public EventCallback<string> FieldChanged { get; set; }
         [Parameter] public EventCallback<string> TitleChanged { get; set; }
         [Parameter] public EventCallback<string> OperatorChanged { get; set; }
@@ -54,6 +55,9 @@ namespace MudBlazor
         {
             get
             {
+                if (Column != null)
+                    return Column.dataType;
+
                 if (FieldType != null)
                     return FieldType;
 
@@ -88,6 +92,9 @@ namespace MudBlazor
         protected override void OnInitialized()
         {
             __operator = Operator;
+
+            if (DataGrid == null)
+                DataGrid = Column?.DataGrid;
 
             if (dataType == typeof(string))
                 _valueString = Value == null ? null : Value.ToString();

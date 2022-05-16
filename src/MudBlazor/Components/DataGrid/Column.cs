@@ -59,6 +59,8 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public bool? Filterable { get; set; }
 
+        [Parameter] public bool? ShowFilterIcon { get; set; }
+
         /// <summary>
         /// Determines whether this column can be hidden. This overrides the Hideable parameter on the DataGrid.
         /// </summary>
@@ -104,6 +106,8 @@ namespace MudBlazor
         [Parameter] public bool StickyLeft { get; set; }
 
         [Parameter] public bool StickyRight { get; set; }
+
+        [Parameter] public RenderFragment<FilterContext<T>> FilterTemplate { get; set; }
 
         #endregion
 
@@ -170,7 +174,8 @@ namespace MudBlazor
                 if (typeof(T) == typeof(IDictionary<string, object>) && FieldType == null)
                     throw new ArgumentNullException(nameof(FieldType));
 
-                return typeof(T).GetProperty(Field).PropertyType;
+                var t = typeof(T).GetProperty(Field).PropertyType;
+                return Nullable.GetUnderlyingType(t) ?? t;
             }
         }
 
@@ -224,6 +229,14 @@ namespace MudBlazor
             }
         }
 
+        internal bool filterable
+        {
+            get
+            {
+                return Filterable ?? DataGrid?.Filterable ?? false;
+            }
+        }
+
         #endregion
 
         internal int SortIndex { get; set; } = -1;
@@ -232,6 +245,7 @@ namespace MudBlazor
         private Func<T, object> _sortBy;
         internal Func<T, object> groupBy;
         internal HeaderContext<T> headerContext;
+        internal FilterContext<T> filterContext;
         internal FooterContext<T> footerContext;
 
         protected override void OnInitialized()
@@ -249,8 +263,24 @@ namespace MudBlazor
 
             // Add the HeaderContext
             headerContext = new HeaderContext<T>(DataGrid);
+
+            // Add the FilterContext
+            if (filterable)
+            {
+                filterContext = new FilterContext<T>(DataGrid);
+                var operators = FilterOperator.GetOperatorByDataType(dataType);
+                filterContext.FilterDefinition = new FilterDefinition<T>()
+                {
+                    Field = Field,
+                    FieldType = FieldType,
+                    Title = Title,
+                    Operator = operators.First()
+                };
+            }
+
             // Add the FooterContext
             footerContext = new FooterContext<T>(DataGrid);
+
         }
 
         internal Func<T, object> GetLocalSortFunc()

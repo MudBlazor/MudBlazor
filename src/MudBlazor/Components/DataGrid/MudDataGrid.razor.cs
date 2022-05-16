@@ -230,6 +230,12 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public bool FixedFooter { get; set; }
 
+        [Parameter] public bool ShowFilterIcon { get; set; } = true;
+
+        [Parameter] public DataGridFilterMode FilterMode { get; set; }
+
+        [Parameter] public RenderFragment<List<FilterDefinition<T>>> FilterTemplate { get; set; }
+
         /// <summary>
         /// The list of FilterDefinitions that have been added to the data grid. FilterDefinitions are managed by the data
         /// grid automatically when using the built in filter UI. You can also programmatically manage these definitions

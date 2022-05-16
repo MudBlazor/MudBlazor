@@ -48,23 +48,30 @@
                                 <HeaderCell T="T" Column="@column"></HeaderCell>
                             }
                         </tr>
-                        @if (_filtersMenuVisible)
+                        @if (_filtersMenuVisible && FilterMode == DataGridFilterMode.Simple)
                         {
-                            <MudOverlay  Visible="true" OnClick="@(() => _filtersMenuVisible = false)"></MudOverlay>
+                            <MudOverlay Visible="true" OnClick="@(() => _filtersMenuVisible = false)"></MudOverlay>
                             <MudPaper Class="pa-2 filters-panel" Style="position:absolute;width:auto;min-width:700px;z-index:var(--mud-zindex-drawer)" Elevation="4">
-                                <MudGrid Spacing="0">
-                                    @foreach (var f in FilterDefinitions)
+                                @if (FilterTemplate == null)
+                                { 
+                                    <MudGrid Spacing="0">
+                                        @foreach (var f in FilterDefinitions)
+                                        {
+                                            <Filter T="T" @bind-Field="f.Field" FieldType="@f.FieldType" @bind-Title="f.Title" @bind-Operator="f.Operator" @bind-Value="f.Value"
+                                                Id="@f.Id"></Filter>
+                                        }
+                                    </MudGrid>
+                                    <MudButton Class="mt-2" StartIcon="@Icons.Material.Filled.Add" OnClick="@AddFilter" Color="@Color.Primary">Add Filter</MudButton>
+                                    @if (ServerData != null)
                                     {
-                                        <Filter T="T" @bind-Field="f.Field" FieldType="@f.FieldType" @bind-Title="f.Title" @bind-Operator="f.Operator" @bind-Value="f.Value"
-                                            Id="@f.Id"></Filter>
+                                        <MudButton Class="mt-2" StartIcon="@Icons.Material.Filled.Add" OnClick="@ApplyFilters" Color="@Color.Primary">Apply</MudButton>
                                     }
-                                </MudGrid>
-                                <MudButton Class="mt-2" StartIcon="@Icons.Material.Filled.Add" OnClick="@AddFilter" Color="@Color.Primary">Add Filter</MudButton>
-                                @if(ServerData != null)
-                                {
-                                    <MudButton Class="mt-2" StartIcon="@Icons.Material.Filled.Add" OnClick="@ApplyFilters" Color="@Color.Primary">Apply</MudButton>
+                                    <MudButton Class="mt-2" StartIcon="@Icons.Material.Filled.Remove" OnClick="@ClearFilters" Color="@Color.Primary">Clear</MudButton>
                                 }
-                                <MudButton Class="mt-2" StartIcon="@Icons.Material.Filled.Add" OnClick="@ClearFilters" Color="@Color.Primary">Clear</MudButton>
+                                else
+                                {
+                                    @FilterTemplate(FilterDefinitions)
+                                }
                             </MudPaper>
                         }
                         @if (_columnsPanelVisible)
@@ -87,6 +94,15 @@
                                 </MudGrid>
                                 
                             </MudPaper>
+                        }
+                        @if (Filterable && FilterMode == DataGridFilterMode.ColumnFilterRow)
+                        {
+                            <tr class="mud-table-row">
+                                @foreach (var column in RenderedColumns)
+                                {
+                                    <FilterHeaderCell T="T" Column="@column" />
+                                }
+                            </tr>
                         }
                     </thead>
                     <tbody class="mud-table-body">

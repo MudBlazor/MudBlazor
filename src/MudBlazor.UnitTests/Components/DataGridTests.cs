@@ -1539,5 +1539,22 @@ namespace MudBlazor.UnitTests.Components
             dataGrid.SetParametersAndRender(parameters.ToArray());
             dataGrid.FindAll(".mud-table-toolbar .mud-menu").Should().NotBeEmpty();
         }
+
+        [Test]
+        public async Task DataGridColumnPopupFilteringTest()
+        {
+            var comp = Context.RenderComponent<DataGridColumnPopupFilteringTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridColumnPopupFilteringTest.Model>>();
+
+            dataGrid.FindAll("tbody tr").Count.Should().Be(4);     
+            dataGrid.FindAll(".column-header .filter-button")[0].Click();
+            comp.Find(".column-filter-popup").Should().NotBeNull();
+            comp.Find(".column-filter-popup .filter-input input").Should().NotBeNull();
+            comp.Find(".column-filter-popup .filter-input input").Change("Sam");
+            comp.Find(".column-filter-popup .apply-filter-button").Click();
+            Console.WriteLine(dataGrid.Markup);
+
+            //dataGrid.FindAll("tbody tr").Count.Should().Be(1);
+        }
     }
 }

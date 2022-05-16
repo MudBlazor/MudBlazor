@@ -13,12 +13,13 @@ namespace MudBlazor
     {
         internal MudDataGrid<T> DataGrid { get; set; }
 
-        public Guid Id { get; set; }
+        public Guid Id { get; set; } = Guid.NewGuid();
         public string Field { get; set; }
         public string Title { get; set; }
         public Type FieldType { get; set; }
         public string Operator { get; set; }
         public object Value { get; set; }
+        public Func<T, bool> FilterFunction { get; set; }
 
         private Type dataType
         {
@@ -71,6 +72,9 @@ namespace MudBlazor
 
         public Func<T, bool> GenerateFilterFunction()
         {
+            if (FilterFunction != null)
+                return FilterFunction;
+
             // Handle case where we have an IDictionary.
             if (typeof(T) == typeof(IDictionary<string, object>))
             {

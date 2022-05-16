@@ -66,6 +66,7 @@ namespace MudBlazor
         private double? _width;
         private double? _resizerHeight;
         private bool _isResizing;
+        private bool _filtersMenuVisible;
 
         #region Computed Properties and Functions
 
@@ -99,6 +100,17 @@ namespace MudBlazor
             {
                 return Column?.Filterable ?? DataGrid?.Filterable ?? true;
             }
+        }
+
+        private bool showFilterIcon
+        {
+            get
+            {
+                if (!filterable)
+                    return false;
+
+                return Column?.ShowFilterIcon ?? DataGrid?.ShowFilterIcon ?? true;
+            }              
         }
 
         private bool hideable
@@ -180,6 +192,11 @@ namespace MudBlazor
             if (null != Column)
             {
                 Column.HeaderCell = this;
+
+                if (Column.filterable)
+                {
+                    Column.filterContext._headerCell = this;
+                }
             }
         }
 
@@ -299,12 +316,59 @@ namespace MudBlazor
 
         internal void AddFilter()
         {
-            DataGrid.AddFilter(Guid.NewGuid(), Column?.Field);
+            if (DataGrid.FilterMode == DataGridFilterMode.Simple)
+                DataGrid.AddFilter(Guid.NewGuid(), Column?.Field);
+            else if (DataGrid.FilterMode == DataGridFilterMode.ColumnFilterMenu)
+                _filtersMenuVisible = true;
         }
 
         internal void OpenFilters()
         {
-            DataGrid.OpenFilters();
+            if (DataGrid.FilterMode == DataGridFilterMode.Simple)
+                DataGrid.OpenFilters();
+            else if (DataGrid.FilterMode == DataGridFilterMode.ColumnFilterMenu)
+                _filtersMenuVisible = true;
+        }
+
+        internal void ApplyFilter()
+        {
+            DataGrid.FilterDefinitions.Add(Column.filterContext.FilterDefinition);
+            DataGrid.ExternalStateHasChanged();
+            _filtersMenuVisible = false;
+        }
+
+        internal void ApplyFilter(FilterDefinition<T> filterDefinition)
+        {
+            DataGrid.FilterDefinitions.Add(filterDefinition);
+            DataGrid.ExternalStateHasChanged();
+            _filtersMenuVisible = false;
+        }
+
+        internal void ApplyFilters(IEnumerable<FilterDefinition<T>> filterDefinitions)
+        {
+            DataGrid.FilterDefinitions.AddRange(filterDefinitions);
+            DataGrid.ExternalStateHasChanged();
+            _filtersMenuVisible = false;
+        }
+
+        internal void ClearFilter()
+        {
+            DataGrid.RemoveFilter(Column.filterContext.FilterDefinition.Id);
+            Column.filterContext.FilterDefinition.Value = null;
+            _filtersMenuVisible = false;
+        }
+
+        internal void ClearFilter(FilterDefinition<T> filterDefinition)
+        {
+            DataGrid.RemoveFilter(filterDefinition.Id);
+            _filtersMenuVisible = false;
+        }
+
+        internal void ClearFilters(IEnumerable<FilterDefinition<T>> filterDefinitions)
+        {
+            DataGrid.FilterDefinitions.RemoveAll(x => filterDefinitions.Any(y => y.Id == x.Id));
+            DataGrid.ExternalStateHasChanged();
+            _filtersMenuVisible = false;
         }
 
         private async Task CheckedChangedAsync(bool value)
