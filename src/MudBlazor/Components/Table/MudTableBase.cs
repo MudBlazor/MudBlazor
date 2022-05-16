@@ -463,6 +463,8 @@ namespace MudBlazor
 
         public abstract int GetFilteredItemsCount();
 
+        public abstract int GetFilteredSelectableItemsCount();
+
         public abstract void SetSelectedItem(object item);
 
         public abstract void SetEditingItem(object item);

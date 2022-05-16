@@ -26,6 +26,11 @@ namespace MudBlazor
 
         [Parameter] public object Item { get; set; }
 
+        /// <summary>
+        /// If true, disables the Checkbox. Has no effect if IsCheckable is false
+        /// </summary>
+        [Parameter] public bool DisableCheckbox { get; set; }
+
         [Parameter] public bool IsCheckable { get; set; }
 
         [Parameter] public bool IsEditable { get; set; }

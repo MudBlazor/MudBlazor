@@ -57,7 +57,7 @@ namespace MudBlazor
             }
             if (HeaderRows.Count > 0 || FooterRows.Count > 0)
             {
-                var itemsCount = Table.GetFilteredItemsCount();
+                var itemsCount = Table.GetFilteredSelectableItemsCount();
                 var b = Selection.Count == itemsCount && itemsCount != 0;
                 // update header checkbox
                 foreach (var header in HeaderRows)

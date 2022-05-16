@@ -163,6 +163,13 @@ namespace MudBlazor
         }
 
         /// <summary>
+        /// A function that returns whether or not an item should be selectable when MultiSelection is true.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Table.Selecting)]
+        public Func<T, bool> SelectItem { get; set; } = x => true;
+
+        /// <summary>
         /// A function that returns whether or not an item should be displayed in the table. You can use this to implement your own search function.
         /// </summary>
         [Parameter]
@@ -400,6 +407,13 @@ namespace MudBlazor
             return FilteredItems.Count();
         }
 
+        public override int GetFilteredSelectableItemsCount()
+        {
+            if (ServerData != null)
+                return _server_data.TotalItems;
+            return FilteredItems.Where(SelectItem).Count();
+        }
+
         public override void SetSelectedItem(object item)
         {
             SelectedItem = item.As<T>();
@@ -439,7 +453,7 @@ namespace MudBlazor
                 Context.Selection.Clear();
             else
             {
-                foreach (var item in FilteredItems)
+                foreach (var item in FilteredItems.Where(SelectItem))
                     Context.Selection.Add(item);
             }
             Context.UpdateRowCheckBoxes(false);
