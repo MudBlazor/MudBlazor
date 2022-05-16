@@ -9,7 +9,7 @@
             <InputContent>
                 <MudInput @ref="_elementReference" @key="_elementKey" InputType="InputType.Text"
                           Class="mud-select-input" Margin="@Margin"
-                          Variant="@Variant" 
+                          Variant="@Variant"
                           TextUpdateSuppression="@TextUpdateSuppression"
                           Value="@Text" DisableUnderLine="@DisableUnderLine"
                           Disabled="@Disabled" ReadOnly="@ReadOnly" Error="@Error"
@@ -52,6 +52,12 @@
                                         @ItemTemplate(item)
                                     }
                                 </MudListItem>
+                            }
+                            @if (MoreItemsTemplate != null && _itemsReturned > MaxItems)
+                            {
+                                <div class="pa-1">
+                                    @MoreItemsTemplate
+                                </div>
                             }
                         </MudList>
                     }
