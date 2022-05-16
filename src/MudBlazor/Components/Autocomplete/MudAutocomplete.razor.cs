@@ -184,6 +184,13 @@ namespace MudBlazor
         public RenderFragment<T> ItemDisabledTemplate { get; set; }
 
         /// <summary>
+        /// Optional template when more items were returned from the Search function than the MaxItems limit
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.ListBehavior)]
+        public RenderFragment MoreItemsTemplate { get; set; }
+
+        /// <summary>
         /// On drop-down close override Text with selected Value. This makes it clear to the user
         /// which list value is currently selected and disallows incomplete values in Text.
         /// </summary>
@@ -356,6 +363,8 @@ namespace MudBlazor
 
         private void OnTimerComplete(object stateInfo) => InvokeAsync(OnSearchAsync);
 
+        private int _itemsReturned; //the number of items returned by the search function
+
         /// <remarks>
         /// This async method needs to return a task and be awaited in order for
         /// unit tests that trigger this method to work correctly.
@@ -378,8 +387,11 @@ namespace MudBlazor
             {
                 Console.WriteLine("The search function failed to return results: " + e.Message);
             }
+            _itemsReturned = searched_items.Count();
             if (MaxItems.HasValue)
+            {
                 searched_items = searched_items.Take(MaxItems.Value);
+            }
             _items = searched_items.ToArray();
 
             _enabledItemIndices = _items.Select((item, idx) => (item, idx)).Where(tuple => ItemDisabledFunc?.Invoke(tuple.item) != true).Select(tuple => tuple.idx).ToList();

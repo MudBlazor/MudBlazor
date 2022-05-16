@@ -222,6 +222,22 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// MoreItemsTemplate should render when there are more items than the MaxItems limit
+        /// </summary>
+        [Test]
+        public async Task AutocompleteTest6()
+        {
+            var comp = Context.RenderComponent<AutocompleteTest6>();
+
+            var inputControl = comp.Find("div.mud-input-control");
+            inputControl.Click();
+            comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open"));
+
+            var mudText = comp.FindAll("p.mud-typography");
+            mudText[mudText.Count - 1].InnerHtml.Should().Contain("Not all items are shown"); //ensure the text is shown
+        }
+
+        /// <summary>
         /// After press Enter key down, the selected value should be shown in the input value
         /// </summary>
 
@@ -655,7 +671,8 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task Autocomplete_ChangeBoundValue()
         {
-            await ImproveChanceOfSuccess(async () => { 
+            await ImproveChanceOfSuccess(async () =>
+            {
                 var comp = Context.RenderComponent<AutocompleteChangeBoundObjectTest>();
                 var autocompletecomp = comp.FindComponent<MudAutocomplete<string>>();
                 var autocomplete = autocompletecomp.Instance;
