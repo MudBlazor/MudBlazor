@@ -6,9 +6,9 @@
 
 @foreach (var fragment in fragments)
 {
-    if (!string.IsNullOrWhiteSpace(HighlightedText)
+    if (!string.IsNullOrWhiteSpace(regex)
         && Regex.IsMatch(fragment,
-           Regex.Escape(HighlightedText), //escape until add a property to accept regex
+            regex,
             CaseSensitive
                 ? RegexOptions.None
                 : RegexOptions.IgnoreCase))
@@ -24,6 +24,7 @@
 @code
 {
     IEnumerable<string> fragments;
+    string regex;
 
     /// <summary>
     /// The whole text in which a fragment will be highlighted
@@ -38,6 +39,13 @@
     [Parameter] 
     [Category(CategoryTypes.Highlighter.Behavior)]
     public string HighlightedText { get; set; }
+
+    /// <summary>
+    /// The fragments of text to be highlighted
+    /// </summary>
+    [Parameter]
+    [Category(CategoryTypes.Highlighter.Behavior)]
+    public IEnumerable<string> HighlightedTexts { get; set; }
 
     /// <summary>
     /// Whether or not the highlighted text is case sensitive
@@ -61,6 +69,6 @@
 
     protected override void OnParametersSet()
     {
-        fragments = GetFragments(Text, HighlightedText, CaseSensitive, UntilNextBoundary);
+        fragments = GetFragments(Text, HighlightedText, HighlightedTexts, out regex, CaseSensitive, UntilNextBoundary);
     }
 }
