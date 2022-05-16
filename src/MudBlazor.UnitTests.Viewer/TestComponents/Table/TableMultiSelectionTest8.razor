@@ -1,0 +1,20 @@
+﻿@namespace MudBlazor.UnitTests.TestComponents
+
+<MudText>SelectedItems { @string.Join(", ", selectedItems) }</MudText>
+<MudTable Items="items" @bind-SelectedItems="selectedItems" MultiSelection="true" SelectItem="SelectItemFunc">
+    <HeaderContent>
+        <MudTh>#</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd>@context</MudTd>
+    </RowTemplate>
+</MudTable>
+
+@code {
+    public static string __description__ = "Selecting all items from the header should only select items that are enabled";
+
+    private Func<int, bool> SelectItemFunc = x => x % 2 == 0;
+
+    int[] items = new int[] { 0, 1, 2, 3, 4, 5, 6 };
+    HashSet<int> selectedItems = new HashSet<int>();
+}
