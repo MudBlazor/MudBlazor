@@ -29,7 +29,7 @@ namespace MudBlazor.UnitTests.Components
             ctx.Services.AddTransient<IScrollManager, MockScrollManager>();
             ctx.Services.AddTransient<IScrollListener, MockScrollListener>();
             ctx.Services.AddTransient<IJsApiService, MockJsApiServices>();
-            ctx.Services.AddTransient<IResizeObserver, MockResizeObserver>();
+            ctx.Services.AddTransient<IResizeObserverFactory, MockResizeObserverFactory>();
             ctx.Services.AddSingleton<IBrowserWindowSizeProvider>(new MockBrowserWindowSizeProvider());
             ctx.Services.AddTransient<IEventListener, EventListener>();
             ctx.Services.AddTransient<IKeyInterceptor, MockKeyInterceptorService>();

@@ -91,6 +91,7 @@ namespace MudBlazor.Services
         public static IServiceCollection AddMudBlazorResizeObserver(this IServiceCollection services, Action<ResizeObserverOptions> options)
         {
             services.TryAddTransient<IResizeObserver, ResizeObserver>();
+            services.TryAddScoped<IResizeObserverFactory, ResizeObserverFactory>();
             services.Configure(options);
             return services;
         }
