@@ -219,6 +219,7 @@ namespace MudBlazor.Services
         public static IServiceCollection AddMudBlazorScrollSpy(this IServiceCollection services)
         {
             services.TryAddTransient<IScrollSpy, ScrollSpy>();
+            services.TryAddScoped<IScrollSpyFactory, ScrollSpyFactory>();
             return services;
         }
 

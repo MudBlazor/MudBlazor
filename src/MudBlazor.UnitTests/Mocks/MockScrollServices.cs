@@ -5,6 +5,7 @@ namespace MudBlazor.UnitTests.Mocks
 {
     public class MockScrollListenerFactory : IScrollListenerFactory
     {
+
         public IScrollListener Create(string selector) =>
             new MockScrollListener()
             {
