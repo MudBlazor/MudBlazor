@@ -575,6 +575,8 @@ namespace MudBlazor
 
         public async ValueTask DisposeAsync()
         {
+           if(_throttledEventManager == null) { return; }
+
             await _throttledEventManager.Unsubscribe(_throttledMouseOverEventId);
         }
 

@@ -148,6 +148,8 @@ namespace MudBlazor.Services
         public static IServiceCollection AddMudBlazorKeyInterceptor(this IServiceCollection services)
         {
             services.TryAddTransient<IKeyInterceptor, KeyInterceptor>();
+            services.TryAddScoped<IKeyInterceptorFactory, KeyInterceptorFactory>();
+
             return services;
         }
 
@@ -159,6 +161,8 @@ namespace MudBlazor.Services
         public static IServiceCollection AddMudBlazorJsEvent(this IServiceCollection services)
         {
             services.TryAddTransient<IJsEvent, JsEvent>();
+            services.TryAddScoped<IJsEventFactory, JsEventFactory>();
+
             return services;
         }
 

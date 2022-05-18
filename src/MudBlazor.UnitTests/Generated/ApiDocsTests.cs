@@ -36,8 +36,8 @@ namespace MudBlazor.UnitTests.Components
             ctx.Services.AddSingleton<IDocsNavigationService, DocsNavigationService>();
             ctx.Services.AddSingleton<IMenuService, MenuService>();
             ctx.Services.AddSingleton<IMudPopoverService, MockPopoverService>();
-            ctx.Services.AddTransient<IKeyInterceptor, MockKeyInterceptorService>();
-            ctx.Services.AddTransient<IJsEvent, MockJsEvent>();
+            ctx.Services.AddTransient<IKeyInterceptorFactory, MockKeyInterceptorServiceFactory>();
+            ctx.Services.AddTransient<IJsEventFactory, MockJsEventFactory>();
             ctx.Services.AddSingleton<IRenderQueueService, RenderQueueService>();
             ctx.Services.AddScoped(sp => new HttpClient());
         }
