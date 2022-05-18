@@ -9,6 +9,23 @@ using Microsoft.AspNetCore.Components.Web;
 
 namespace MudBlazor.UnitTests.Mocks
 {
+    public class MockEventListenerFactory : IEventListenerFactory
+    {
+        private readonly MockEventListener _listener;
+
+        public MockEventListenerFactory(MockEventListener listener)
+        {
+            _listener = listener;
+        }
+
+        public MockEventListenerFactory()
+        {
+
+        }
+
+        public IEventListener Create() => _listener ?? new MockEventListener();
+    }
+
     public class MockEventListener : IEventListener
     {
         public Dictionary<Guid, Func<object, Task>> Callbacks { get; private set; } = new();

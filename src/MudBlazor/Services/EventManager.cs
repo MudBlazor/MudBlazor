@@ -7,10 +7,29 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.JSInterop;
 
 namespace MudBlazor
 {
+    public interface IEventListenerFactory
+    {
+        IEventListener Create();
+    }
+
+    public class EventListenerFactory : IEventListenerFactory
+    {
+        private readonly IServiceProvider _provider;
+
+        public EventListenerFactory(IServiceProvider provider)
+        {
+            _provider = provider;
+        }
+
+        public IEventListener Create() =>
+            new EventListener(_provider.GetRequiredService<IJSRuntime>());
+    }
+
     public interface IEventListener
     {
         /// <summary>

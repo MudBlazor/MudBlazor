@@ -240,6 +240,8 @@ namespace MudBlazor.Services
         public static IServiceCollection AddMudEventManager(this IServiceCollection services)
         {
             services.TryAddTransient<IEventListener, EventListener>();
+            services.TryAddScoped<IEventListenerFactory, EventListenerFactory>();
+
             return services;
         }
 
