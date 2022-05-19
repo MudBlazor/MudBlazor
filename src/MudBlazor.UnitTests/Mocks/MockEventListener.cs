@@ -32,6 +32,13 @@ namespace MudBlazor.UnitTests.Mocks
 
         public Dictionary<Guid, string> ElementIdMapper { get; private set; } = new();
 
+        public ValueTask DisposeAsync()
+        {
+            Callbacks.Clear();
+            ElementIdMapper.Clear();
+            return ValueTask.CompletedTask;
+        }
+
         public Task<Guid> Subscribe<T>(string eventName, string elementId, string projection, int throttleInterval, Func<object, Task> callback)
         {
             var id = Guid.NewGuid();

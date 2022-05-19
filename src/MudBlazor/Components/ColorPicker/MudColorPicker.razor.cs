@@ -577,7 +577,7 @@ namespace MudBlazor
         {
            if(_throttledEventManager == null) { return; }
 
-            await _throttledEventManager.Unsubscribe(_throttledMouseOverEventId);
+            await _throttledEventManager.DisposeAsync();
         }
 
         #endregion

@@ -30,7 +30,7 @@ namespace MudBlazor
             new EventListener(_provider.GetRequiredService<IJSRuntime>());
     }
 
-    public interface IEventListener
+    public interface IEventListener : IAsyncDisposable
     {
         /// <summary>
         /// Listing to a javascript event
