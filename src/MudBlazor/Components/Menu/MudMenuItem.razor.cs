@@ -29,7 +29,14 @@ namespace MudBlazor
         /// </summary>
         [Parameter] 
         [Category(CategoryTypes.Menu.ClickAction)] 
-        public string Href { get; set; }
+        public string Href { get; set; }        
+        
+        /// <summary>
+        /// Icon to be used for this menu entry
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.List.Behavior)]
+        public string Icon { get; set; }
 
         [Parameter] [Category(CategoryTypes.Menu.ClickAction)] public string Target { get; set; }
         [Parameter] [Category(CategoryTypes.Menu.ClickAction)] public bool ForceLoad { get; set; }
