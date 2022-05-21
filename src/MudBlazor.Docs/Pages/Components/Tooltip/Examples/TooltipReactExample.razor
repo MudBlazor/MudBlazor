@@ -1,49 +1,31 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
-<div d-flex align-start>
-    <MudTooltip ClickBehavior="TooltipClickBehavior.ClickToShow" ReactWith="TooltipBehavior.None" Text="Press focus buttons to focus each below button">
-        <MudIconButton Icon="@Icons.Material.Filled.Info" Size="Size.Small" Color="Color.Info" />
-    </MudTooltip>
-</div>
+<MudGrid>
+    <MudItem xs="12" sm="6" md="9" Class="d-flex flex-column align-center justify-center">
+        <MudButton Class="mb-4" tabindex="-1" Variant="Variant.Outlined" OnClick="@(async() => await _iconButton1.FocusAsync())">Focus The Element</MudButton>
+        <MudTooltip ClickBehavior="_tooltipClickBehavior" ShowOnFocus="_showOnFocus" ShowOnHover="_showOnHover" Text="Im Mud Tooltip">
+            <MudIconButton @ref="_iconButton1" Icon="@Icons.Custom.Brands.MudBlazor" Color="Color.Primary" Size="Size.Large" />
+        </MudTooltip>
+    </MudItem>
 
-<div class="d-flex flex-column align-center">
-    <MudButton Class="mb-4" tabindex="-1" OnClick="@(() => _iconButton1.FocusAsync())">Focus</MudButton>
-    <MudText Class="mt-4" Align="Align.Center">All</MudText>
-    <MudTooltip ReactWith="TooltipBehavior.All" Text="Delete">
-        <MudIconButton @ref="_iconButton1" Icon="@Icons.Material.Filled.Delete" Size="Size.Large" />
-    </MudTooltip>
-</div>
+    <MudItem xs="12" sm="6" md="3">
+        <MudCheckBox @bind-Checked="_showOnFocus" Label="Show On Focus" Color="Color.Primary" />
+        <MudCheckBox @bind-Checked="_showOnHover" Label="Show On Hover" Color="Color.Primary" />
+        <MudSelect T="TooltipClickBehavior" @bind-Value="_tooltipClickBehavior" Variant="Variant.Outlined" Label="Click Behavior" Dense="true">
+            @foreach (TooltipClickBehavior clickBehavior in Enum.GetValues(typeof(TooltipClickBehavior)))
+            {
+                <MudSelectItem Value="clickBehavior">@clickBehavior.ToDescriptionString()</MudSelectItem>
+            }
+        </MudSelect>
+    </MudItem>
+</MudGrid>
 
-<div class="d-flex flex-column align-center">
-    <MudButton Class="mb-4" tabindex="-1" OnClick="@(() => _iconButton2.FocusAsync())">Focus</MudButton>
-    <MudText Class="mt-4" Align="Align.Center">Only Focus</MudText>
-    <MudTooltip ReactWith="TooltipBehavior.Focus" Text="Delete">
-        <MudIconButton @ref="_iconButton2"  Icon="@Icons.Material.Filled.Delete" Size="Size.Large" />
-    </MudTooltip>
-</div>
-
-<div class="d-flex flex-column align-center">
-    <MudButton Class="mb-4" tabindex="-1" OnClick="@(() => _iconButton3.FocusAsync())">Focus</MudButton>
-    <MudText Class="mt-4" Align="Align.Center">Only Hover</MudText>
-    <MudTooltip ReactWith="TooltipBehavior.Hover" Text="Delete">
-        <MudIconButton @ref="_iconButton3" Icon="@Icons.Material.Filled.Delete" Size="Size.Large" />
-    </MudTooltip>
-</div>
-
-<div class="d-flex flex-column align-center">
-    <div>
-        <MudButton Class="mb-4" tabindex="-1" OnClick="@(() => _iconButton4.FocusAsync())">Focus</MudButton>
-    </div>
-
-    <MudText Class="mt-4" Align="Align.Center">None</MudText>
-    <MudTooltip ReactWith="TooltipBehavior.None" Text="Delete">
-        <MudIconButton @ref="_iconButton4" Icon="@Icons.Material.Filled.Delete" Size="Size.Large" />
-    </MudTooltip>
-</div>
 
 @code {
+
+    TooltipClickBehavior _tooltipClickBehavior = TooltipClickBehavior.None;
+    bool _showOnHover = true;
+    bool _showOnFocus = true;
+
     MudIconButton _iconButton1;
-    MudIconButton _iconButton2;
-    MudIconButton _iconButton3;
-    MudIconButton _iconButton4;
 }

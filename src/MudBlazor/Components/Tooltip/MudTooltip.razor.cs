@@ -127,11 +127,18 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Tooltip.Appearance)]
-        public TooltipBehavior ReactWith { get; set; } = TooltipBehavior.All;
+        public bool ShowOnHover { get; set; } = true;
+
+        /// <summary>
+        /// Determines on which events the tooltip will act
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Tooltip.Appearance)]
+        public bool ShowOnFocus { get; set; } = true;
 
         [Parameter]
         [Category(CategoryTypes.Tooltip.Appearance)]
-        public TooltipClickBehavior ClickBehavior { get; set; } = TooltipClickBehavior.None;
+        public TooltipClickBehavior ClickBehavior { get; set; } = TooltipClickBehavior.ClickToHide;
 
         /// <summary>
         /// The visible state of the Tooltip.
@@ -147,7 +154,6 @@ namespace MudBlazor
                     return;
                 _isVisible = value;
                 IsVisibleChanged.InvokeAsync(_isVisible).AndForget();
-                //InvokeAsync(StateHasChanged).AndForget();
             }
         }
 
@@ -161,7 +167,7 @@ namespace MudBlazor
 
         private void HandleMouseEnter()
         {
-            if (ReactWith == TooltipBehavior.All || ReactWith == TooltipBehavior.Hover)
+            if (ShowOnHover && ClickBehavior != TooltipClickBehavior.ClickToShow)
             {
                 IsVisible = true;
             }
@@ -169,30 +175,27 @@ namespace MudBlazor
 
         private void HandleMouseLeave()
         {
-            if (ReactWith != TooltipBehavior.None)
+            if (ClickBehavior != TooltipClickBehavior.ClickToShow)
             {
                 IsVisible = false;
             }
         }
 
-        private async Task HandleFocusIn()
+        private void HandleFocusIn()
         {
-            if (ReactWith == TooltipBehavior.All || ReactWith == TooltipBehavior.Focus)
+            if (ShowOnFocus && ClickBehavior != TooltipClickBehavior.ClickToShow)
             {
-                await Task.Delay(1); //Without this, popover even didn't show
                 IsVisible = true;
-                await Task.Delay(1); //Withuot this, popover didn't close (%10 probability)
             }
         }
 
-        private async Task HandleFocusOut()
+        private void HandleFocusOut()
         {
-            if (ReactWith == TooltipBehavior.All || ReactWith == TooltipBehavior.Focus || ClickBehavior == TooltipClickBehavior.ClickToShow)
+            if (ClickBehavior == TooltipClickBehavior.ClickToShow && ShowOnFocus == false)
             {
-                await Task.Delay(1);
-                IsVisible = false;
-                await Task.Delay(1);
+                return;
             }
+            IsVisible = false;
         }
 
         private void HandleMouseUp()
