@@ -56,16 +56,16 @@ namespace MudBlazor.Docs.Pages.Features.Icons
             return iconlist.Chunk(CardsPerRow).Select(row => new MudVirtualizedIcons(row)).ToList();
         }
 
-        private readonly IDictionary<string, object> IconTypes = new Dictionary<string, object>()
+        private readonly IconStorage IconTypes = new()
         {
-            { IconType.Filled, new MudBlazor.Icons.Material.Filled()},
-            { IconType.Outlined, new MudBlazor.Icons.Material.Outlined()},
-            { IconType.Rounded, new MudBlazor.Icons.Material.Rounded()},
-            { IconType.Sharp, new MudBlazor.Icons.Material.Sharp()},
-            { IconType.TwoTone, new MudBlazor.Icons.Material.TwoTone()},
-            { IconType.Brands, new MudBlazor.Icons.Custom.Brands()},
-            { IconType.FileFormats, new MudBlazor.Icons.Custom.FileFormats()},
-            { IconType.Uncategorized, new MudBlazor.Icons.Custom.Uncategorized()}
+            { IconType.Filled, typeof(MudBlazor.Icons.Material.Filled) },
+            { IconType.Outlined, typeof(MudBlazor.Icons.Material.Outlined) },
+            { IconType.Rounded, typeof(MudBlazor.Icons.Material.Rounded) },
+            { IconType.Sharp, typeof(MudBlazor.Icons.Material.Sharp) },
+            { IconType.TwoTone, typeof(MudBlazor.Icons.Material.TwoTone) },
+            { IconType.Brands, typeof(MudBlazor.Icons.Custom.Brands) },
+            { IconType.FileFormats, typeof(MudBlazor.Icons.Custom.FileFormats) },
+            { IconType.Uncategorized, typeof(MudBlazor.Icons.Custom.Uncategorized) }
         };
 
         protected override async Task OnInitializedAsync()
@@ -110,12 +110,13 @@ namespace MudBlazor.Docs.Pages.Features.Icons
         {
             var result = new List<MudIcons>();
             var icons = IconTypes[type];
+            var iconsInstance = Activator.CreateInstance(icons);
 
-            foreach (var prop in icons.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetProperty))
+            foreach (var prop in icons.GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetProperty))
             {
-                result.Add(new MudIcons(prop.Name, prop.GetValue(icons).ToString(), type));
+                result.Add(new MudIcons(prop.Name, prop.GetValue(iconsInstance).ToString(), type));
             }
-            foreach (var prop in icons.GetType().GetFields(BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy))
+            foreach (var prop in icons.GetFields(BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy))
             {
                 result.Add(new MudIcons(prop.Name, prop.GetRawConstantValue().ToString(), type));
             }
