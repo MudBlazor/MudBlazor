@@ -51,7 +51,13 @@
 
         <DocsPageSection>
             <SectionHeader Title="Playground For Event Reactions">
-                <Description>With <CodeInline>ReactWith</CodeInline> parameter, it is possible to choose which events the tooltip will react to.</Description>
+                <Description>
+                    With <CodeInline>ShowOnHover</CodeInline> <CodeInline>ShowOnFocus</CodeInline> and <CodeInline>ClickBehavior</CodeInline> parameters, it is possible to choose which events the tooltip will react to.
+                    <br />
+                    Note: if you set <CodeInline>ClickBehavior="TooltipClickBehavior.ClickToShow"</CodeInline>, it overrides and disables hover event reactions.
+                    <br />
+                    Note 2: if you set <CodeInline>ClickBehavior="TooltipClickBehavior.ClickToShow"</CodeInline> and set false to <CodeInline>ShowOnFocus</CodeInline>, tooltip only closes with another click on the item. (Can be useful for some info buttons.)
+                </Description>
             </SectionHeader>
             <SectionContent Code="TooltipReactExample" FullWidth="true" ShowCode="false">
                 <TooltipReactExample />
