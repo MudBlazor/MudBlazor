@@ -1,4 +1,4 @@
-﻿// Copyright (c) MudBlazor 2021
+// Copyright (c) MudBlazor 2021
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
@@ -1026,6 +1026,29 @@ namespace MudBlazor
                 _elementReference.FocusAsync().AndForget(TaskOption.Safe);
             }
             base.OnBlur.InvokeAsync(obj);
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                _keyInterceptor.Dispose();
+            }
+            base.Dispose(disposing);
+        }
+
+        /// <summary>
+        /// Fixes issue #4328
+        /// Returns true when MultiSelection is true and it has selected values(Since Value property is not used when MultiSelection=true
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns>True when component has a value</returns>
+        protected override bool HasValue(T value)
+        {
+            if (MultiSelection)
+                return SelectedValues?.Count() > 0;
+            else
+                return base.HasValue(value);
         }
     }
 }

@@ -4,7 +4,7 @@
 
 
 <div @attributes="UserAttributes" Class="@Classname" Style="@Style" 
-        @onmouseenter="@(ActivationEvent== MouseEvent.MouseOver ? OpenMenu : null)"
+        @onmouseenter="@MouseEnter"
         @onmouseleave="@MouseLeave"
         @oncontextmenu:preventDefault="@(ActivationEvent == MouseEvent.RightClick ? true : false)">
     @if (ActivatorContent != null)
@@ -40,8 +40,8 @@
     <MudPopover Open="@_isOpen" Class="@PopoverClass" MaxHeight="@MaxHeight" AnchorOrigin="@AnchorOrigin" TransformOrigin="@TransformOrigin" RelativeWidth="@FullWidth" Style="@PopoverStyle">
         <CascadingValue Value="@this">
             <MudList Class="@ListClass" Clickable="true" Dense="@Dense"  
-                @onmouseenter="@PopoverMouseEnter"
-                @onmouseleave="@(ActivationEvent== MouseEvent.MouseOver ? CloseMenu : null)">
+                @onmouseenter="@MouseEnter"
+                @onmouseleave="@MouseLeave">
                 @ChildContent
             </MudList>
         </CascadingValue>

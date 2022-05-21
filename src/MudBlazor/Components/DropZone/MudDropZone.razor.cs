@@ -237,21 +237,24 @@ namespace MudBlazor
                 _canDrop = false;
             }
 
-            if (e.OriginatedDropzoneIdentifier == Identifier && e.DestinationDropzoneIdentifier != e.OriginatedDropzoneIdentifier)
+            if (e.Success == true)
             {
-                _indicies.Remove(e.Item);
-            }
-
-            if (e.OriginatedDropzoneIdentifier == Identifier || e.DestinationDropzoneIdentifier == Identifier)
-            {
-                int index = 0;
-
-                foreach (var item in _indicies.OrderBy(x => x.Value).ToArray())
+                if (e.OriginatedDropzoneIdentifier == Identifier && e.DestinationDropzoneIdentifier != e.OriginatedDropzoneIdentifier)
                 {
-                    _indicies[item.Key] = index++;
+                    _indicies.Remove(e.Item);
+                }
+
+                if (e.OriginatedDropzoneIdentifier == Identifier || e.DestinationDropzoneIdentifier == Identifier)
+                {
+                    int index = 0;
+
+                    foreach (var item in _indicies.OrderBy(x => x.Value).ToArray())
+                    {
+                        _indicies[item.Key] = index++;
+                    }
                 }
             }
-
+            
             StateHasChanged();
         }
 

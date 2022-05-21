@@ -182,12 +182,18 @@ namespace MudBlazor
         {
             try
             {
-                if (e.CtrlKey || e.AltKey)
-                    return;
+                if ((e.CtrlKey && e.Key != "Backspace") || e.AltKey)
+                        return;
                 // Console.WriteLine($"HandleKeyDown: '{e.Key}'");
                 switch (e.Key)
                 {
                     case "Backspace":
+                        if (e.CtrlKey)
+                        {
+                            Mask.Clear();
+                            await Update();
+                            return;
+                        }
                         Mask.Backspace();
                         await Update();
                         return;
@@ -239,6 +245,7 @@ namespace MudBlazor
         {
             Mask.Clear();
             await Update();
+            await _elementReference.FocusAsync();
             await OnClearButtonClick.InvokeAsync(e);
         }
 

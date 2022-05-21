@@ -23,7 +23,6 @@ namespace MudBlazor.Services
         private IBrowserWindowSizeProvider _browserWindowSizeProvider;
         private BrowserWindowSize _windowSize;
         private Breakpoint _breakpoint = Breakpoint.None;
-        private SemaphoreSlim _subscribeSemaphore = new SemaphoreSlim(1, 1);
 
         /// <summary>
         /// 
@@ -145,11 +144,12 @@ namespace MudBlazor.Services
                 DotNetRef = DotNetObjectReference.Create(this);
             }
 
-            var existingOptionId = Listeners.Where(x => x.Value.Option == options).Select(x => x.Key).FirstOrDefault();
 
             try
             {
-                await _subscribeSemaphore.WaitAsync();
+                await Semaphore.WaitAsync();
+
+                var existingOptionId = Listeners.Where(x => x.Value.Option == options).Select(x => x.Key).FirstOrDefault();
 
                 if (existingOptionId == default)
                 {
@@ -188,7 +188,7 @@ namespace MudBlazor.Services
             }
             finally
             {
-                _subscribeSemaphore.Release();
+                Semaphore.Release();
             }
         }
     }
