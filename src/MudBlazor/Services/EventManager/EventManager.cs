@@ -87,7 +87,7 @@ namespace MudBlazor
             }
         }
 
-        public async Task<Guid> Subscribe<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] T>(string eventName, string elementId, string projectionName, int throotleInterval, Func<object, Task> callback)
+        public async Task<Guid> Subscribe<T>(string eventName, string elementId, string projectionName, int throotleInterval, Func<object, Task> callback)
         {
             var key = Guid.NewGuid();
             var type = typeof(T);
