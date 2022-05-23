@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
 using System.Text.Json;
@@ -14,6 +15,7 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
+    [RequiresUnreferencedCode(CodeMessage.SerializationUnreferencedCodeMessage)]
     public partial class MudDataGrid<T> : MudComponentBase
     {
         private int _currentPage = 0;
@@ -571,6 +573,7 @@ namespace MudBlazor
 
         #endregion
 
+        [UnconditionalSuppressMessage("Trimming", "IL2046: 'RequiresUnreferencedCodeAttribute' annotations must match across all interface implementations or overrides.", Justification = "Suppressing because we annotating the whole component with RequiresUnreferencedCodeAttribute for information that generic type must be preserved.")]
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
             if (firstRender)
@@ -740,7 +743,7 @@ namespace MudBlazor
                     property.SetValue(found, property.GetValue(_editingItem));
                 }
 
-                Console.WriteLine(JsonSerializer.Serialize(found));
+                //Console.WriteLine(JsonSerializer.Serialize(found));
 
                 await CommittedItemChanges.InvokeAsync(found);
                 ClearEditingItem();
