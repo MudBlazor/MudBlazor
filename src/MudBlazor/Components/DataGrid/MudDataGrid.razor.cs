@@ -528,10 +528,9 @@ namespace MudBlazor
         {
             get
             {
-                if (ServerData != null)
-                    return _server_data.Items;
-
-                var items = Items;
+                var items = ServerData != null 
+                    ? _server_data.Items 
+                    : Items;
 
                 // Quick filtering
                 if (QuickFilter != null)
