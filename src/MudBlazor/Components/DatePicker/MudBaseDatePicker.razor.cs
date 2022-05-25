@@ -177,6 +177,12 @@ namespace MudBlazor
         private Func<DateTime, bool> _isDateDisabledFunc = _ => false;
 
         /// <summary>
+        /// Function to conditionally apply new classes to specific days
+        /// </summary>
+        [Parameter]
+        public Func<DateTime, string> AdditiondalDateClassesFunc { get; set; }
+
+        /// <summary>
         /// Custom previous icon.
         /// </summary>
         [Parameter]
