@@ -180,7 +180,7 @@ namespace MudBlazor
         /// Function to conditionally apply new classes to specific days
         /// </summary>
         [Parameter]
-        public Func<DateTime, string> AdditiondalDateClassesFunc { get; set; }
+        public Func<DateTime, string> AdditionalDateClassesFunc { get; set; }
 
         /// <summary>
         /// Custom previous icon.
