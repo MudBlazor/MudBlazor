@@ -1,7 +1,7 @@
 ﻿@namespace MudBlazor.UnitTests.TestComponents
 <MudPopoverProvider></MudPopoverProvider>
 
-<MudDataGrid Filterable="true" ServerData="this.ServerDataFunc">
+<MudDataGrid T="Item" Filterable="true" ServerData="this.ServerDataFunc">
     <Columns>
         <Column T="Item" Field="@nameof(Item.Name)" Filterable="true" />
     </Columns>
