@@ -21,8 +21,9 @@ namespace MudBlazor
 
         protected string ButtonClassname =>
         new CssBuilder("mud-button-root mud-icon-button")
-            .AddClass($"mud-ripple mud-ripple-radio", !DisableRipple)
-            .AddClass($"mud-icon-button-color-{Color.ToDescriptionString()}")
+            .AddClass($"mud-ripple mud-ripple-radio", !DisableRipple && !Disabled)
+            .AddClass($"mud-{Color.ToDescriptionString()}-text hover:mud-{Color.ToDescriptionString()}-hover", UnCheckedColor == null || (UnCheckedColor != null && Checked == true))
+            .AddClass($"mud-{UnCheckedColor?.ToDescriptionString()}-text hover:mud-{UnCheckedColor?.ToDescriptionString()}-hover", UnCheckedColor != null && Checked == false)
             .AddClass($"mud-radio-dense", Dense)
             .AddClass($"mud-disabled", Disabled)
             .AddClass($"mud-checked", Checked)
@@ -80,6 +81,13 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.Radio.Appearance)]
         public Color Color { get; set; } = Color.Default;
+
+        /// <summary>
+        /// The base color of the component in its none active/unchecked state. It supports the theme colors.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Radio.Appearance)]
+        public Color? UnCheckedColor { get; set; } = null;
 
         /// <summary>
         /// The position of the child content.
@@ -182,9 +190,11 @@ namespace MudBlazor
         public void Dispose()
         {
             MudRadioGroup?.UnregisterRadio(this);
+            _keyInterceptor?.Dispose();
         }
 
-        [Inject] private IKeyInterceptor _keyInterceptor { get; set; }
+        private IKeyInterceptor _keyInterceptor;
+        [Inject] private IKeyInterceptorFactory _keyInterceptorFactory { get; set; }
 
         private string _elementId = "radio" + Guid.NewGuid().ToString().Substring(0, 8);
 
@@ -192,6 +202,7 @@ namespace MudBlazor
         {
             if (firstRender)
             {
+                _keyInterceptor = _keyInterceptorFactory.Create();
                 await _keyInterceptor.Connect(_elementId, new KeyInterceptorOptions()
                 {
                     //EnableLogging = true,
@@ -206,5 +217,6 @@ namespace MudBlazor
             }
             await base.OnAfterRenderAsync(firstRender);
         }
+
     }
 }

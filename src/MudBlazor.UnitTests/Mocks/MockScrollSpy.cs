@@ -4,6 +4,23 @@ using System.Threading.Tasks;
 
 namespace MudBlazor.UnitTests.Mocks
 {
+    public class MockScrollSpyFactory : IScrollSpyFactory
+    {
+        private readonly MockScrollSpy _spy;
+
+        public MockScrollSpyFactory(MockScrollSpy spy)
+        {
+            _spy = spy;
+        }
+
+        public MockScrollSpyFactory()
+        {
+
+        }
+
+        public IScrollSpy Create() => _spy ?? new MockScrollSpy();
+    }
+
     /// <summary>
     /// Mock for scroll spy
     /// </summary>
