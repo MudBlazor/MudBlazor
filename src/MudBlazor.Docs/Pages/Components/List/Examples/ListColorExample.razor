@@ -7,13 +7,13 @@
                 Select Your Character:
             </MudListSubheader>
             <MudListItem Text="Neutral" Value="1" />
-            <MudListItem Text="Good">
+            <MudListItem T="int" Text="Good">
                 <NestedList>
                     <MudListItem Text="Frodo Baggins" Value="2" />
                     <MudListItem Text="Harry Potter" Value="3" />
                 </NestedList>
             </MudListItem>
-            <MudListItem Text="Evil">
+            <MudListItem T="int" Text="Evil">
                 <NestedList>
                     <MudListItem Text="Sauron" Value="5" />
                     <MudListItem Text="Voldemort" Value="6" />
@@ -36,7 +36,7 @@
 </MudStack>
 
 @code{
-    MudListItem selectedItem;
-    object selectedValue = 1;
+    MudListItem<int> selectedItem = new();
+    int selectedValue = 1;
     Color _color = Color.Primary;
 }
