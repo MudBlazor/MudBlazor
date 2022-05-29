@@ -190,9 +190,11 @@ namespace MudBlazor
         public void Dispose()
         {
             MudRadioGroup?.UnregisterRadio(this);
+            _keyInterceptor?.Dispose();
         }
 
-        [Inject] private IKeyInterceptor _keyInterceptor { get; set; }
+        private IKeyInterceptor _keyInterceptor;
+        [Inject] private IKeyInterceptorFactory _keyInterceptorFactory { get; set; }
 
         private string _elementId = "radio" + Guid.NewGuid().ToString().Substring(0, 8);
 
@@ -200,6 +202,7 @@ namespace MudBlazor
         {
             if (firstRender)
             {
+                _keyInterceptor = _keyInterceptorFactory.Create();
                 await _keyInterceptor.Connect(_elementId, new KeyInterceptorOptions()
                 {
                     //EnableLogging = true,
@@ -214,5 +217,6 @@ namespace MudBlazor
             }
             await base.OnAfterRenderAsync(firstRender);
         }
+
     }
 }

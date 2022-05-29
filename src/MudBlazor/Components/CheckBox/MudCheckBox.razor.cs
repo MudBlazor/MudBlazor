@@ -185,7 +185,8 @@ namespace MudBlazor
             }
         }
 
-        [Inject] private IKeyInterceptor _keyInterceptor { get; set; }
+        private IKeyInterceptor _keyInterceptor;
+        [Inject] private IKeyInterceptorFactory _keyInterceptorFactory { get; set; }
 
         private string _elementId = "checkbox" + Guid.NewGuid().ToString().Substring(0, 8);
 
@@ -193,6 +194,8 @@ namespace MudBlazor
         {
             if (firstRender)
             {
+                _keyInterceptor = _keyInterceptorFactory.Create();
+
                 await _keyInterceptor.Connect(_elementId, new KeyInterceptorOptions()
                 {
                     //EnableLogging = true,
@@ -207,6 +210,16 @@ namespace MudBlazor
                 _keyInterceptor.KeyDown += HandleKeyDown;
             }
             await base.OnAfterRenderAsync(firstRender);
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            base.Dispose(disposing);
+
+            if (disposing == true)
+            {
+                _keyInterceptor?.Dispose();
+            }
         }
     }
 }

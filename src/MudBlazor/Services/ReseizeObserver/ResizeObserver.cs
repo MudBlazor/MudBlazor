@@ -52,7 +52,7 @@ namespace MudBlazor.Services
                 _cachedValueIds.Add(id, item);
             }
 
-            var result = await _jsRuntime.InvokeAsync<IEnumerable<BoundingClientRect>>("mudResizeObserver.connect", _id, _dotNetRef, filteredElements, elementIds, _options);
+            var result = await _jsRuntime.InvokeAsync<IEnumerable<BoundingClientRect>>("mudResizeObserver.connect", _id, _dotNetRef, filteredElements, elementIds, _options) ?? Array.Empty<BoundingClientRect>();
             var counter = 0;
             foreach (var item in result)
             {

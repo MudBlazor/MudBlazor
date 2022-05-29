@@ -14,7 +14,7 @@ using MudBlazor.Interop;
 
 namespace MudBlazor.Services
 {
-    public interface IJsEvent
+    public interface IJsEvent : IDisposable
     {
         Task Connect(string elementId, JsEventOptions options);
         Task Disconnect();
@@ -26,7 +26,7 @@ namespace MudBlazor.Services
     /// <summary>
     /// Subscribe JS events of any element by html id
     /// </summary>
-    public class JsEvent : IJsEvent, IDisposable
+    public class JsEvent : IJsEvent
     {
         private bool _isDisposed = false;
 

@@ -9,6 +9,24 @@ using MudBlazor.Services;
 
 namespace MudBlazor.UnitTests.Mocks
 {
+    public class MockResizeObserverFactory : IResizeObserverFactory
+    {
+        private MockResizeObserver _observer;
+
+        public MockResizeObserverFactory()
+        {
+
+        }
+
+        public MockResizeObserverFactory(MockResizeObserver observer)
+        {
+            _observer = observer;
+        }
+
+        public IResizeObserver Create(ResizeObserverOptions options) => _observer ?? new MockResizeObserver();
+        public IResizeObserver Create() => Create(new ResizeObserverOptions());
+    }
+
     public class MockResizeObserver : IResizeObserver, IDisposable
     {
         private Dictionary<ElementReference, BoundingClientRect> _cachedValues = new();

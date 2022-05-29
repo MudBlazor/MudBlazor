@@ -52,7 +52,8 @@ namespace MudBlazor
         private readonly Guid _id = Guid.NewGuid();
         private Guid _throttledMouseOverEventId;
 
-        [Inject] IEventListener ThrottledEventManager { get; set; }
+        private IEventListener _throttledEventManager;
+        [Inject] IEventListenerFactory ThrottledEventManagerFactory { get; set; }
 
         #endregion
 
@@ -551,8 +552,13 @@ namespace MudBlazor
         {
             if (DisableDragEffect == true) { return; }
 
+            if(_throttledEventManager == null)
+            {
+                _throttledEventManager = ThrottledEventManagerFactory.Create();
+            }
+
             _throttledMouseOverEventId = await
-                ThrottledEventManager.Subscribe<MouseEventArgs>("mousemove", _id.ToString(), "mudEventProjections.correctOffset", 10, async (x) =>
+                _throttledEventManager.Subscribe<MouseEventArgs>("mousemove", _id.ToString(), "mudEventProjections.correctOffset", 10, async (x) =>
                 {
                     var e = x as MouseEventArgs;
                     await InvokeAsync(() => OnMouseOver(e));
@@ -564,12 +570,14 @@ namespace MudBlazor
         {
             if (_throttledMouseOverEventId == default) { return Task.CompletedTask; }
 
-            return ThrottledEventManager.Unsubscribe(_throttledMouseOverEventId);
+            return _throttledEventManager.Unsubscribe(_throttledMouseOverEventId);
         }
 
         public async ValueTask DisposeAsync()
         {
-            await ThrottledEventManager.Unsubscribe(_throttledMouseOverEventId);
+           if(_throttledEventManager == null) { return; }
+
+            await _throttledEventManager.DisposeAsync();
         }
 
         #endregion

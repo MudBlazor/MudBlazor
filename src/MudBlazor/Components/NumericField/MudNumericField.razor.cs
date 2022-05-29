@@ -16,6 +16,8 @@ namespace MudBlazor
 {
     public partial class MudNumericField<T> : MudDebouncedInput<T>
     {
+        private IKeyInterceptor _keyInterceptor;
+
         public MudNumericField() : base()
         {
             Validation = new Func<T, Task<bool>>(ValidateInput);
@@ -109,7 +111,7 @@ namespace MudBlazor
                 .Build();
 
 
-        [Inject] private IKeyInterceptor _keyInterceptor { get; set; }
+        [Inject] private IKeyInterceptorFactory _keyInterceptorFactory { get; set; }
 
         private string _elementId = "numericField_" + Guid.NewGuid().ToString().Substring(0, 8);
 
@@ -213,6 +215,7 @@ namespace MudBlazor
         {
             if (firstRender)
             {
+                _keyInterceptor = _keyInterceptorFactory.Create();
                 await _keyInterceptor.Connect(_elementId, new KeyInterceptorOptions()
                 {
                     //EnableLogging = true,
@@ -379,6 +382,16 @@ namespace MudBlazor
                 return f.ToString(TagFormat, CultureInfo.InvariantCulture.NumberFormat);
             else
                 return null;
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            base.Dispose(disposing);
+
+            if (disposing == true)
+            {
+                _keyInterceptor?.Dispose();
+            }
         }
     }
 }
