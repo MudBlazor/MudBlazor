@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.JSInterop;
 
 namespace MudBlazor
 {
-    public interface IScrollListener
+
+
+    public interface IScrollListener : IDisposable
     {
         /// <summary>
         /// The CSS selector to which the scroll event will be attached
@@ -24,9 +27,14 @@ namespace MudBlazor
         /// </summary>
         public string Selector { get; set; } = null;
 
-        public ScrollListener(IJSRuntime js)
+        public ScrollListener(IJSRuntime js) : this(string.Empty, js)
+        {
+        }
+
+        public ScrollListener(string selector, IJSRuntime js)
         {
             _js = js;
+            Selector = selector;
         }
 
         private EventHandler<ScrollEventArgs> _onScroll;
