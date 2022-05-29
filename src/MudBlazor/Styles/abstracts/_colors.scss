@@ -9,6 +9,16 @@
         color: var(--mud-palette-#{$color}) !important;
     }
 
+    .mud-#{$color}-hover {
+        background-color: var(--mud-palette-#{$color}-hover) !important;
+    }
+
+    .hover\:mud-#{$color}-hover {
+        &:hover, &:focus-visible {
+            background-color: var(--mud-palette-#{$color}-hover) !important;
+        }
+    }
+
     .mud-border-#{$color} {
         border-color: var(--mud-palette-#{$color}) !important;
     }
@@ -17,6 +27,10 @@
         color: var(--mud-palette-#{$color}-text) !important;
         background-color: var(--mud-palette-#{$color}) !important;
     }
+}
+
+.mud-inherit-text {
+  color: inherit !important;
 }
 
 .mud-border-lines-default{
@@ -70,4 +84,3 @@
 .black-text {
     color: #000000 !important;
 }
-

@@ -11,10 +11,12 @@ namespace MudBlazor
 {
     public partial class MudPicker<T> : MudFormComponent<T, string>
     {
+        private IKeyInterceptor _keyInterceptor;
+
         public MudPicker() : base(new Converter<T, string>()) { }
         protected MudPicker(Converter<T, string> converter) : base(converter) { }
 
-        [Inject] private IKeyInterceptor _keyInterceptor { get; set; }
+        [Inject] private IKeyInterceptorFactory _keyInterceptorFactory { get; set; }
 
         private string _elementId = "picker" + Guid.NewGuid().ToString().Substring(0, 8);
 
@@ -301,6 +303,20 @@ namespace MudBlazor
             set => _mask = value;
         }
 
+        /// <summary>
+        /// Gets or sets the origin of the popover's anchor. Defaults to <see cref="Origin.TopLeft"/>
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Popover.Appearance)]
+        public Origin AnchorOrigin { get; set; } = Origin.TopLeft;
+
+        /// <summary>
+        /// Gets or sets the origin of the popover's transform. Defaults to <see cref="Origin.TopLeft"/>
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Popover.Appearance)]
+        public Origin TransformOrigin { get; set; } = Origin.TopLeft;
+
         protected IMask _mask = null;
 
         protected async Task SetTextAsync(string value, bool callback)
@@ -407,6 +423,8 @@ namespace MudBlazor
         {
             if (firstRender)
             {
+                _keyInterceptor = _keyInterceptorFactory.Create();
+
                 await _keyInterceptor.Connect(_elementId, new KeyInterceptorOptions()
                 {
                     //EnableLogging = true,
@@ -460,7 +478,7 @@ namespace MudBlazor
         {
             OnPickerClosed();
 
-            _keyInterceptor.UpdateKey(new() { Key = "Escape", StopDown = "none" });
+            _keyInterceptor?.UpdateKey(new() { Key = "Escape", StopDown = "none" });
         }
 
         protected virtual void OnPickerOpened()
@@ -494,5 +512,16 @@ namespace MudBlazor
                     break;
             }
         }
+
+        protected override void Dispose(bool disposing)
+        {
+            base.Dispose(disposing);
+
+            if (disposing == true)
+            {
+                _keyInterceptor?.Dispose();
+            }
+        }
+
     }
 }

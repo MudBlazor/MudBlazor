@@ -9,7 +9,7 @@
             <InputContent>
                 <MudInput @ref="_elementReference" @key="_elementKey" InputType="InputType.Text"
                           Class="mud-select-input" Margin="@Margin"
-                          Variant="@Variant" 
+                          Variant="@Variant"
                           TextUpdateSuppression="@TextUpdateSuppression"
                           Value="@Text" DisableUnderLine="@DisableUnderLine"
                           Disabled="@Disabled" ReadOnly="@ReadOnly" Error="@Error"
@@ -32,6 +32,7 @@
                                 bool is_selected = index == _selectedListItemIndex;
                                 bool is_disabled = !_enabledItemIndices.Contains(index);
                                 <MudListItem T="T" @key="@item" id="@GetListItemId(index)" Disabled="@(is_disabled)" OnClick="@(() => SelectOption(item))" Class="@(is_selected ? "mud-selected-item" : "")">
+
                                     @if (ItemTemplate == null)
                                     {
                                         @GetItemString(item)
@@ -53,6 +54,12 @@
                                     }
                                 </MudListItem>
                             }
+                            @if (MoreItemsTemplate != null && _itemsReturned > MaxItems)
+                            {
+                                <div class="pa-1">
+                                    @MoreItemsTemplate
+                                </div>
+                            }
                         </MudList>
                     }
                 </MudPopover>
@@ -61,4 +68,4 @@
     </div>
 </CascadingValue>
 
-<MudOverlay Visible="IsOpen" OnClick="@ToggleMenu" LockScroll="false" />
+<MudOverlay Visible="IsOpen" OnClick="@ToggleMenu" @ontouchstart="@ToggleMenu" LockScroll="false" />

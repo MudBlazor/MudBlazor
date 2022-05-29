@@ -4,7 +4,7 @@
 
 
 <div @attributes="UserAttributes" Class="@Classname" Style="@Style" 
-        @onmouseenter="@(ActivationEvent== MouseEvent.MouseOver ? OpenMenu : null)"
+        @onmouseenter="@MouseEnter"
         @onmouseleave="@MouseLeave"
         @oncontextmenu:preventDefault="@(ActivationEvent == MouseEvent.RightClick ? true : false)">
     @if (ActivatorContent != null)

@@ -22,14 +22,14 @@ namespace MudBlazor
         private bool _dense;
         private string multiSelectionText;
         private bool? _selectAllChecked;
+        private IKeyInterceptor _keyInterceptor;
 
         protected string Classname =>
             new CssBuilder("mud-select")
             .AddClass(Class)
             .Build();
 
-        [Inject] private IKeyInterceptor _keyInterceptor { get; set; }
-
+        [Inject] private IKeyInterceptorFactory KeyInterceptorFactory { get; set; }
         [Inject] IScrollManager ScrollManager { get; set; }
 
         private string _elementId = "select_" + Guid.NewGuid().ToString().Substring(0, 8);
@@ -722,6 +722,8 @@ namespace MudBlazor
         {
             if (firstRender)
             {
+                _keyInterceptor = KeyInterceptorFactory.Create();
+
                 await _keyInterceptor.Connect(_elementId, new KeyInterceptorOptions()
                 {
                     //EnableLogging = true,
@@ -1026,6 +1028,30 @@ namespace MudBlazor
                 _elementReference.FocusAsync().AndForget(TaskOption.Safe);
             }
             base.OnBlur.InvokeAsync(obj);
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            base.Dispose(disposing);
+
+            if (disposing == true)
+            {
+                _keyInterceptor?.Dispose();
+            }
+        }
+
+        /// <summary>
+        /// Fixes issue #4328
+        /// Returns true when MultiSelection is true and it has selected values(Since Value property is not used when MultiSelection=true
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns>True when component has a value</returns>
+        protected override bool HasValue(T value)
+        {
+            if (MultiSelection)
+                return SelectedValues?.Count() > 0;
+            else
+                return base.HasValue(value);
         }
     }
 }

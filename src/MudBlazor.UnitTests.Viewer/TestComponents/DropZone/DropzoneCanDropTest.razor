@@ -43,8 +43,11 @@
 	[Parameter]
 	public bool? SecondColumnAppliesClassesOnDragStarted { get; set; } = null;
 
-	private void ItemUpdated(MudItemDropInfo<SimpleDropItem> dropItem)
+	private async Task ItemUpdated(MudItemDropInfo<SimpleDropItem> dropItem)
 	{
+	    // simulate async/await and force re-rendering
+	    await Task.Delay(1);
+	    
 		dropItem.Item.ZoneIdentifier = dropItem.DropzoneIdentifier;
 	}
 
