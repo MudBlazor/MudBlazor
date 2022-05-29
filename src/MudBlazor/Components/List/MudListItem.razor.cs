@@ -244,7 +244,7 @@ namespace MudBlazor
                 }
                 else if (Href != null)
                 {
-                    MudList?.SetSelectedValue(this.Value);
+                    MudList?.SetSelectedValue(this);
                     OnClick.InvokeAsync(ev);
                     UriHelper.NavigateTo(Href, ForceLoad);
                 }
@@ -252,8 +252,8 @@ namespace MudBlazor
                 {
                     if (MudList?.Clickable == true)
                     {
-                        //IsSelected = true;
-                        MudList?.SetSelectedValue(this.Value);
+                        IsSelected = true;
+                        MudList?.SetSelectedValue(this);
                     }
                     OnClick.InvokeAsync(ev);
                     //if (Command?.CanExecute(CommandParameter) ?? false)

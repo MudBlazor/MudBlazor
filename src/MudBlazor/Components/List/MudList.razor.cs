@@ -100,9 +100,12 @@ namespace MudBlazor
             get => _selectedValue;
             set
             {
+                if (_selectedValue == null)
+                    return;
+                if (_selectedValue.Equals(value))
+                    return;
                 _selectedValue = value;
-                SetSelectedValue(value);
-                SelectedValueChanged.InvokeAsync(value).AndForget();
+                SelectedValueChanged.InvokeAsync(_selectedValue).AndForget();
             }
         }
 
@@ -242,23 +245,33 @@ namespace MudBlazor
 
                 foreach (var listItem in _items)
                 {
-                    if (listItem.Value.ToString() !=  item.Value.ToString())
+                    if (listItem.FieldId != item.FieldId)
                     {
                         listItem.SetSelected(false);
                     }
+                    else
+                    {
+                        listItem.SetSelected(true);
+                    }
+                   
+                    
                 }
                 foreach (var childList in _childLists)
                 {
                     foreach (var listItem in childList._items)
                     {
-                        if (listItem.Value.ToString() != item.Value.ToString())
+                        if (listItem.FieldId != item.FieldId)
                         {
                             listItem.SetSelected(false);
+                        }
+                        else
+                        {
+                            listItem.SetSelected(true);
                         }
                     }
                 }
 
-                ParentList?.SetSelectedValue(item.Value);
+                ParentList?.SetSelectedValue(item);
             }
         }
 
