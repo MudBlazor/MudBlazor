@@ -248,19 +248,18 @@ namespace MudBlazor
                     OnClick.InvokeAsync(ev);
                     UriHelper.NavigateTo(Href, ForceLoad);
                 }
-                else
-                {
-                    if (MudList?.Clickable == true)
+                else if (MudList?.Clickable == true)
                     {
-                        IsSelected = true;
-                        MudList?.SetSelectedValue(this);
+                    this.SetSelected(!_selected);
+                    MudList?.SetSelectedValue(this);
+                        OnClick.InvokeAsync(ev);
                     }
-                    OnClick.InvokeAsync(ev);
+                    
                     //if (Command?.CanExecute(CommandParameter) ?? false)
                     //{
                     //    Command.Execute(CommandParameter);
                     //}
-                }
+                
             }
             else
             {

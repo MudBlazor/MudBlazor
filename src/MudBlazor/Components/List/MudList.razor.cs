@@ -105,7 +105,7 @@ namespace MudBlazor
                 if (_selectedValue.Equals(value))
                     return;
                 _selectedValue = value;
-                SelectedValueChanged.InvokeAsync(_selectedValue).AndForget();
+                SelectedValueChanged.InvokeAsync(value).AndForget();
             }
         }
 
@@ -150,15 +150,15 @@ namespace MudBlazor
         }
 
         internal event Action ParametersChanged;
-
+        
         protected override void OnParametersSet()
         {
             base.OnParametersSet();
             ParametersChanged?.Invoke();
         }
 
-        private HashSet<MudListItem<T>> _items = new();
-        private HashSet<MudList<T>> _childLists = new();
+        private List<MudListItem<T>> _items = new();
+        private List<MudList<T>> _childLists = new();
         private MudListItem<T> _selectedItem = new();
         //private List<MudListItem> _selectedItems;
         private T _selectedValue;
@@ -234,9 +234,9 @@ namespace MudBlazor
         {
             if ((!CanSelect || !Clickable) && !force)
                 return;
-            if (Equals(_selectedItem, item))
-                return;
-
+            if (item.Equals(_selectedItem))
+            return;
+            
             SelectedItem = item;
             SelectedValue = item.Value;
 
@@ -245,7 +245,7 @@ namespace MudBlazor
 
                 foreach (var listItem in _items)
                 {
-                    if (listItem.FieldId != item.FieldId)
+                    if (item.Equals(listItem) == false)
                     {
                         listItem.SetSelected(false);
                     }
@@ -253,14 +253,14 @@ namespace MudBlazor
                     {
                         listItem.SetSelected(true);
                     }
-                   
-                    
+
+
                 }
                 foreach (var childList in _childLists)
                 {
                     foreach (var listItem in childList._items)
                     {
-                        if (listItem.FieldId != item.FieldId)
+                        if (!item.Equals(_selectedItem))
                         {
                             listItem.SetSelected(false);
                         }
@@ -268,10 +268,10 @@ namespace MudBlazor
                         {
                             listItem.SetSelected(true);
                         }
+
                     }
                 }
 
-                ParentList?.SetSelectedValue(item);
             }
         }
 
