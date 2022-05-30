@@ -1,4 +1,4 @@
-#pragma warning disable CS1998 // async without await
+﻿#pragma warning disable CS1998 // async without await
 #pragma warning disable BL0005 // Set parameter outside component
 
 using System;
@@ -100,6 +100,38 @@ namespace MudBlazor.UnitTests.Components
 
             // Add a FilterDefinition to filter where the Name = "C".
             dataGrid.Instance.FilterDefinitions.Add(new FilterDefinition<DataGridFilterableTest.Item>
+            {
+                Id = Guid.NewGuid(),
+                Field = "Name",
+                Operator = FilterOperator.String.Equal,
+                Value = "C"
+            });
+            dataGrid.Render();
+
+            // Check the values of rows
+            dataGrid.FindAll("td")[0].TextContent.Trim().Should().Be("C");
+            dataGrid.FindAll("td")[1].TextContent.Trim().Should().Be("C");
+
+            dataGrid.Instance.Filterable = false;
+        }
+
+        [Test]
+        public async Task DataGridFilterableServerDataTest()
+        {
+            var comp = Context.RenderComponent<DataGridFilterableServerDataTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridFilterableServerDataTest.Item>>();
+
+            // Count the number of rows including header.
+            dataGrid.FindAll("tr").Count.Should().Be(6); // header row + four rows + footer row
+
+            // Check the values of rows
+            dataGrid.FindAll("td")[0].TextContent.Trim().Should().Be("B");
+            dataGrid.FindAll("td")[1].TextContent.Trim().Should().Be("A");
+            dataGrid.FindAll("td")[2].TextContent.Trim().Should().Be("C");
+            dataGrid.FindAll("td")[3].TextContent.Trim().Should().Be("C");
+
+            // Add a FilterDefinition to filter where the Name = "C".
+            dataGrid.Instance.FilterDefinitions.Add(new FilterDefinition<DataGridFilterableServerDataTest.Item>
             {
                 Id = Guid.NewGuid(),
                 Field = "Name",
