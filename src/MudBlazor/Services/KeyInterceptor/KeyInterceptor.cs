@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
@@ -28,6 +29,12 @@ namespace MudBlazor.Services
         private bool _isObserving;
         private string _elementId;
 
+        [DynamicDependency(nameof(OnKeyDown))]
+        [DynamicDependency(nameof(OnKeyUp))]
+        [DynamicDependency(DynamicallyAccessedMemberTypes.All, typeof(KeyboardEvent))]
+        [DynamicDependency(DynamicallyAccessedMemberTypes.All, typeof(KeyboardEventArgs))]
+        [DynamicDependency(DynamicallyAccessedMemberTypes.All, typeof(KeyOptions))]
+        [DynamicDependency(DynamicallyAccessedMemberTypes.All, typeof(KeyInterceptorOptions))]
         public KeyInterceptor(IJSRuntime jsRuntime)
         {
             _dotNetRef = DotNetObjectReference.Create(this);

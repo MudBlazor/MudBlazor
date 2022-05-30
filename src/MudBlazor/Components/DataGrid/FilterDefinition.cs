@@ -114,10 +114,11 @@ namespace MudBlazor
             }
             else if (isNumber)
             {
-                var field = Expression.Convert(Expression.Property(parameter, typeof(T).GetProperty(Field)), typeof(double?));
+                var nullableDoubleType = typeof(double?);
+                var field = Expression.Convert(Expression.Property(parameter, typeof(T).GetProperty(Field)), nullableDoubleType);
                 double? valueNumber = Value == null ? null : Convert.ToDouble(Value);
-                var isnotnull = Expression.IsTrue(Expression.Property(field, "HasValue"));
-                var isnull = Expression.IsFalse(Expression.Property(field, "HasValue"));
+                var isnotnull = Expression.IsTrue(Expression.Property(field, nullableDoubleType, "HasValue"));
+                var isnull = Expression.IsFalse(Expression.Property(field, nullableDoubleType, "HasValue"));
                 var notNullNumber = Expression.Convert(field, typeof(double));
                 var valueNumberConstant = Expression.Constant(valueNumber);
 
@@ -224,9 +225,10 @@ namespace MudBlazor
             }
             else if (isBoolean)
             {
-                var field = Expression.Convert(Expression.Property(parameter, typeof(T).GetProperty(Field)), typeof(bool?));
+                var nullableBoolType = typeof(bool?);
+                var field = Expression.Convert(Expression.Property(parameter, typeof(T).GetProperty(Field)), nullableBoolType);
                 bool? valueBool = Value == null ? null : Convert.ToBoolean(Value);
-                var isnotnull = Expression.IsTrue(Expression.Property(field, "HasValue"));
+                var isnotnull = Expression.IsTrue(Expression.Property(field, nullableBoolType, "HasValue"));
                 var notNullBool = Expression.Convert(field, typeof(bool));
 
                 switch (Operator)
@@ -245,10 +247,11 @@ namespace MudBlazor
             }
             else if (isDateTime)
             {
-                var field = Expression.Convert(Expression.Property(parameter, typeof(T).GetProperty(Field)), typeof(DateTime?));
+                var nullableDateTimeType = typeof(DateTime?);
+                var field = Expression.Convert(Expression.Property(parameter, typeof(T).GetProperty(Field)), nullableDateTimeType);
                 DateTime? valueDateTime = Value == null ? null : (DateTime)Value;
-                var isnotnull = Expression.IsTrue(Expression.Property(field, "HasValue"));
-                var isnull = Expression.IsFalse(Expression.Property(field, "HasValue"));
+                var isnotnull = Expression.IsTrue(Expression.Property(field, nullableDateTimeType, "HasValue"));
+                var isnull = Expression.IsFalse(Expression.Property(field, nullableDateTimeType, "HasValue"));
                 var notNullDateTime = Expression.Convert(field, typeof(DateTime));
                 var valueDateTimeConstant = Expression.Constant(valueDateTime);
 

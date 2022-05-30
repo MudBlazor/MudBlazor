@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
@@ -36,6 +37,10 @@ namespace MudBlazor.Services
         private bool _isObserving;
         internal HashSet<string> _subscribedEvents = new HashSet<string>();
 
+        [DynamicDependency(nameof(OnCaretPositionChanged))]
+        [DynamicDependency(nameof(OnPaste))]
+        [DynamicDependency(nameof(OnSelect))]
+        [DynamicDependency(DynamicallyAccessedMemberTypes.All, typeof(JsEventOptions))]
         public JsEvent(IJSRuntime jsRuntime)
         {
             _dotNetRef = DotNetObjectReference.Create(this);

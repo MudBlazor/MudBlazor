@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -30,6 +31,7 @@ namespace MudBlazor.Services
         /// <param name="jsRuntime"></param>
         /// <param name="browserWindowSizeProvider"></param>
         /// <param name="options"></param>
+        [DynamicDependency(nameof(RaiseOnResized))]
         public BreakpointService(IJSRuntime jsRuntime, IBrowserWindowSizeProvider browserWindowSizeProvider, IOptions<ResizeOptions> options = null)
             : base(jsRuntime)
         {

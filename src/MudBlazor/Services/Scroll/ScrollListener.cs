@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.JSInterop;
@@ -27,6 +28,8 @@ namespace MudBlazor
         /// </summary>
         public string Selector { get; set; } = null;
 
+        [DynamicDependency(nameof(RaiseOnScroll))]
+        [DynamicDependency(DynamicallyAccessedMemberTypes.All, typeof(ScrollEventArgs))]
         public ScrollListener(IJSRuntime js) : this(string.Empty, js)
         {
         }
