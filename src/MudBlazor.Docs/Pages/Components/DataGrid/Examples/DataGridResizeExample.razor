@@ -3,9 +3,6 @@
 @namespace MudBlazor.Docs.Examples
 @inject HttpClient httpClient
 
-@*<SectionHeader> 
-    <SubTitle>Resizing the whole grid with ResizeMode.Container</SubTitle>
-</SectionHeader>*@
 <MudDataGrid T="Element" Items="@Elements" ColumnResizeMode="@(_resizeColumn ? ResizeMode.Column : ResizeMode.Container)" RowsPerPage="5">
     <Columns>
         <Column T="Element" Field="Number" Title="Nr" Resizable="false" />
@@ -26,23 +23,6 @@
         <MudSwitch @bind-Checked="@_resizeColumn">ResizeMode.Column</MudSwitch>
     </div>
 </div>
-
-@*<SectionHeader> 
-    <SubTitle>Resizing individual columns without affecting the grid size. ResizeMode.Column</SubTitle>
-</SectionHeader>
-<MudDataGrid T="Element" Items="@Elements" ColumnResizeMode=ResizeMode.Colummn RowsPerPage=5>
-    <Columns>
-        <Column T="Element" Field="Number" Title="Nr" Resizable="false" />
-        <Column T="Element" Field="Sign" />
-        <Column T="Element" Field="Name" />
-        <Column T="Element" Field="Position" />
-        <Column T="Element" Field="Molar" Title="Molar mass" />
-        <Column T="Element" Field="Group" Title="Category" />
-    </Columns>
-    <PagerContent>
-        <MudDataGridPager T="Element" PageSizeOptions=@(new int[] {5, 10, 20}) />
-    </PagerContent>
-</MudDataGrid>*@
 
 @code {
     private IEnumerable<Element> Elements = new List<Element>();

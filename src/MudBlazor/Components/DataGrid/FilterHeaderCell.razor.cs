@@ -21,6 +21,7 @@ namespace MudBlazor
             new CssBuilder(Column?.HeaderClass)
                 .AddClass(Column?.headerClassname)
                 .AddClass(Class)
+                .AddClass("filter-header-cell")
             .Build();
         private string _style =>
             new StyleBuilder()
@@ -183,7 +184,9 @@ namespace MudBlazor
 
         internal void ApplyFilter(FilterDefinition<T> filterDefinition)
         {
-            DataGrid.FilterDefinitions.Add(filterDefinition);
+            if (!DataGrid.FilterDefinitions.Any(x => x.Id == filterDefinition.Id))
+                DataGrid.FilterDefinitions.Add(filterDefinition);
+
             DataGrid.GroupItems();
             DataGrid.ExternalStateHasChanged();
         }

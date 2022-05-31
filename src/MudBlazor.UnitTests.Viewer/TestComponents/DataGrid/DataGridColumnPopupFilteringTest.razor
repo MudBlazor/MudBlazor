@@ -21,27 +21,4 @@
         new Model("Ira", 27, Severity.Success, true, new DateTime(2011, 1, 2)),
         new Model("John", 32, Severity.Warning, false, null)
     };
-
-    private bool _filterHired = false;
-
-    void FilterHiredToggled(bool value, List<FilterDefinition<Model>> filters)
-    {
-        _filterHired = value;
-
-        if (_filterHired)
-        {
-            filters.Add(new FilterDefinition<Model>
-            {
-                Field = nameof(Model.Hired),
-                Operator = FilterOperator.Boolean.Is,
-                Value = true
-            });
-        }
-        else
-        {
-            filters.Clear();
-        }
-
-        StateHasChanged();
-    }
 }

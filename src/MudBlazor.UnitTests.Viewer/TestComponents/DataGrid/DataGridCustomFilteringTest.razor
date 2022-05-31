@@ -10,7 +10,7 @@
         <Column T="Model" Field="@nameof(Model.HiredOn)" />
     </Columns>
     <FilterTemplate>
-        <MudSwitch T="bool" Color="@Color.Primary" Checked="_filterHired" Label="Show Hired" CheckedChanged="@((value) => FilterHiredToggled(value, context))"></MudSwitch>
+        <MudSwitch T="bool" Color="@Color.Primary" Checked="FilterHired" Label="Show Hired" CheckedChanged="@((value) => FilterHiredToggled(value, context))"></MudSwitch>
     </FilterTemplate>
 </MudDataGrid>
 
@@ -25,13 +25,13 @@
         new Model("John", 32, Severity.Warning, false, null)
     };
 
-    private bool _filterHired = false;
+    public bool FilterHired = false;
 
-    void FilterHiredToggled(bool value, List<FilterDefinition<Model>> filters)
+    public void FilterHiredToggled(bool value, List<FilterDefinition<Model>> filters)
     {
-        _filterHired = value;
+        FilterHired = value;
 
-        if (_filterHired)
+        if (FilterHired)
         {
             filters.Add(new FilterDefinition<Model>
             {

@@ -9,8 +9,8 @@
         <Column T="Model" Field="@nameof(Model.Hired)">
             <FilterTemplate>
                 <MudStack>
-                    <MudSwitch T="bool" Color="@Color.Primary" @bind-Checked="_filterHired" Label="Show Hired"></MudSwitch>
-                    <MudButton Class="align-self-end" Color="@Color.Primary" OnClick="@(() => ApplyFilter(context))">@(_filterHired ? "Filter" : "Remove Filter")</MudButton>
+                    <MudSwitch T="bool" Color="@Color.Primary" @bind-Checked="FilterHired" Label="Show Hired"></MudSwitch>
+                    <MudButton Class="align-self-end" Color="@Color.Primary" OnClick="@(() => ApplyFilter(context))">@(FilterHired ? "Filter" : "Remove Filter")</MudButton>
                 </MudStack>
             </FilterTemplate>
         </Column>
@@ -29,7 +29,7 @@
         new Model("John", 32, Severity.Warning, false, null)
     };
 
-    bool _filterHired;
+    public bool FilterHired;
     FilterDefinition<Model> _filterDefinition = new FilterDefinition<Model>
     {
         Field = nameof(Model.Hired),
@@ -37,9 +37,9 @@
         Value = true
     };
 
-    private void ApplyFilter(FilterContext<Model> context)
+    public void ApplyFilter(FilterContext<Model> context)
     {
-        if (_filterHired)
+        if (FilterHired)
             context.Actions.ApplyFilter(_filterDefinition);
         else
             context.Actions.ClearFilter(_filterDefinition);

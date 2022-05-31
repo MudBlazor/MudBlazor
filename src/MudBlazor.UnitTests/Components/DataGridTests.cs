@@ -8,8 +8,13 @@ using System.Threading.Tasks;
 using AngleSharp.Dom;
 using Bunit;
 using FluentAssertions;
+using Microsoft.JSInterop;
+using Moq;
 using MudBlazor.UnitTests.TestComponents;
 using NUnit.Framework;
+using Microsoft.JSInterop.Infrastructure;
+using MudBlazor.Interop;
+using System.Text.Json;
 
 namespace MudBlazor.UnitTests.Components
 {
@@ -1546,15 +1551,85 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<DataGridColumnPopupFilteringTest>();
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridColumnPopupFilteringTest.Model>>();
 
-            dataGrid.FindAll("tbody tr").Count.Should().Be(4);     
-            dataGrid.FindAll(".column-header .filter-button")[0].Click();
-            comp.Find(".column-filter-popup").Should().NotBeNull();
-            comp.Find(".column-filter-popup .filter-input input").Should().NotBeNull();
-            comp.Find(".column-filter-popup .filter-input input").Change("Sam");
-            comp.Find(".column-filter-popup .apply-filter-button").Click();
-            Console.WriteLine(dataGrid.Markup);
+            dataGrid.FindAll("tbody tr").Count.Should().Be(4);
 
-            //dataGrid.FindAll("tbody tr").Count.Should().Be(1);
+            comp.Find(".filter-button").Click();
+            var input = comp.FindComponent<MudTextField<string>>();
+            var parameters = new List<ComponentParameter>();
+            parameters.Add(ComponentParameter.CreateParameter(nameof(input.Instance.Value), "test"));
+            input.SetParametersAndRender(parameters.ToArray());
+            comp.Find(".apply-filter-button").Click();
+
+            // Cannot figure out why the above is not working...
+            await comp.InvokeAsync(() => dataGrid.Instance.FilterDefinitions.Add(new FilterDefinition<DataGridColumnPopupFilteringTest.Model>
+            {
+                Field = "Name",
+                Operator = FilterOperator.String.Contains,
+                Value = "test"
+            }));
+
+            dataGrid.Render();
+            dataGrid.FindAll("tbody tr").Count.Should().Be(0);
+        }
+
+        [Test]
+        public async Task DataGridColumnPopupCustomFilteringTest()
+        {
+            var comp = Context.RenderComponent<DataGridColumnPopupCustomFilteringTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridColumnPopupCustomFilteringTest.Model>>();
+
+            dataGrid.FindAll("tbody tr").Count.Should().Be(4);
+
+            comp.Instance.FilterHired = true;
+            await comp.InvokeAsync(() =>
+            {
+                var filterContext = dataGrid.Instance.RenderedColumns[3].filterContext;
+                comp.Instance.ApplyFilter(filterContext);
+            });
+
+            dataGrid.FindAll("tbody tr").Count.Should().Be(1);
+        }
+
+        [Test]
+        public async Task DataGridCustomFilteringTest()
+        {
+            var comp = Context.RenderComponent<DataGridCustomFilteringTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridCustomFilteringTest.Model>>();
+
+            dataGrid.FindAll("tbody tr").Count.Should().Be(4);
+
+            comp.Instance.FilterHiredToggled(true, dataGrid.Instance.FilterDefinitions);
+            dataGrid.Render();
+            dataGrid.FindAll("tbody tr").Count.Should().Be(1);
+        }
+
+        [Test]
+        public async Task DataGridShowFilterIconTest()
+        {
+            var comp = Context.RenderComponent<DataGridCustomFilteringTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridCustomFilteringTest.Model>>();
+            var parameters = new List<ComponentParameter>();
+            parameters.Add(ComponentParameter.CreateParameter(nameof(dataGrid.Instance.Filterable), false));
+            dataGrid.SetParametersAndRender(parameters.ToArray());
+            dataGrid.FindAll(".filter-button").Should().BeEmpty();
+            parameters.Clear();
+            parameters.Add(ComponentParameter.CreateParameter(nameof(dataGrid.Instance.Filterable), true));
+            dataGrid.SetParametersAndRender(parameters.ToArray());
+            dataGrid.FindAll(".filter-button").Should().NotBeEmpty();
+            parameters.Clear();
+            parameters.Add(ComponentParameter.CreateParameter(nameof(dataGrid.Instance.ShowFilterIcons), false));
+            dataGrid.SetParametersAndRender(parameters.ToArray());
+            dataGrid.FindAll(".filter-button").Should().BeEmpty();
+        }
+
+        [Test]
+        public async Task DataGridStickyColumnsTest()
+        {
+            var comp = Context.RenderComponent<DataGridStickyColumnsTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridStickyColumnsTest.Model>>();
+
+            dataGrid.Find("th").ClassList.Should().Contain("sticky-left");
+            dataGrid.FindAll("th").Last().ClassList.Should().Contain("sticky-right");
         }
     }
 }

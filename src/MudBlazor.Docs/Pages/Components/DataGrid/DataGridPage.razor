@@ -34,8 +34,10 @@
                     column filters, enabling a more robust filtration.
                     <br><br>
                     In this example, we turn sorting and filtering off for the Nr column using the boolean <CodeInline>Sortable</CodeInline> and <CodeInline>Filterable</CodeInline> properties
-                    as well as hide the column options icon button by setting the <CodeInline>ShowColumnOptions</CodeInline> property to <CodeInline>false</CodeInline>. Additionally, we 
+                    as well as hide the column options icon button by setting the <CodeInline>ShowColumnOptions</CodeInline> property to <CodeInline>false</CodeInline> (which is hidden by default). Additionally, we 
                     can override the default <CodeInline>SortBy</CodeInline> function for each column, seen in the Name column where we show how you can switch to a sort by the Name's length.
+                    <br><br>
+                    To hide the filter icons unless a column is currently filtered, you can set the <CodeInline>ShowFilterIcons</CodeInline> property to false.
                 </Description>
             </SectionHeader>
             <SectionContent DarkenBackground="true" Code="DataGridAdvancedExample" ShowCode="false" Block="true" FullWidth="true">
@@ -111,6 +113,32 @@
             </SectionHeader>
             <SectionContent DarkenBackground="true" Code="DataGridSortingExample" ShowCode="false" Block="true" FullWidth="true">
                 <DataGridSortingExample />
+            </SectionContent>
+        </DocsPageSection>
+
+         <DocsPageSection>
+            <SectionHeader Title="Filtering">
+                <Description>
+                    The <CodeInline>&lt;MudDataGrid></CodeInline> supports filtering with several different <CodeInline>DataGridFilterMode</CodeInline>s by setting the <CodeInline>FilterMode</CodeInline> property.
+                    <CodeInline>DataGridFilterMode.Simple</CodeInline> is the default where all filters are managed in one popover in the data grid. It allows you to
+                    set multiple filters at one time for multiple different columns. In <CodeInline>DataGridFilterMode.ColumnFilterMenu</CodeInline> mode, there is a dedicated popover for 
+                    each column. Lastly, <CodeInline>DataGridFilterMode.ColumnFilterRow</CodeInline> allows you to inline the filtering behavior directly into the data grid.
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="DataGridFilteringExample" ShowCode="false" Block="true" FullWidth="true">
+                <DataGridFilteringExample />
+            </SectionContent>
+        </DocsPageSection>
+
+         <DocsPageSection>
+            <SectionHeader Title="Advanced Filtering">
+                <Description>
+                    It is possible to customize filtering by utilizing the <CodeInline>&lt;FilterTemplate</CodeInline> available on the <CodeInline>&lt;MudDataGrid></CodeInline>
+                    as well as each <CodeInline>&lt;Column></CodeInline>. In the example below, the Sign column is customized.
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="DataGridAdvancedFilteringExample" ShowCode="false" Block="true" FullWidth="true">
+                <DataGridAdvancedFilteringExample />
             </SectionContent>
         </DocsPageSection>
 

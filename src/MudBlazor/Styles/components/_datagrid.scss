@@ -30,16 +30,24 @@
             }
         }
 
+        &.filter-header-cell {
+            padding: 6px 24px 6px 16px;
+            padding-inline-start: 16px;
+            padding-inline-end: 24px;
+        }
+
         &.sticky-left {
             left: 0px;
             position: sticky;
             background-color: var(--mud-palette-background-grey);
+            z-index: 1;
         }
 
         &.sticky-right {
             right: 0px;
             position: sticky;
             background-color: var(--mud-palette-background-grey);
+            z-index: 1;
         }
 
         .mud-input-text {

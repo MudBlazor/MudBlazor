@@ -109,7 +109,7 @@ namespace MudBlazor
                 if (!filterable)
                     return false;
 
-                return Column?.ShowFilterIcon ?? DataGrid?.ShowFilterIcon ?? true;
+                return Column?.ShowFilterIcon ?? DataGrid?.ShowFilterIcons ?? true;
             }              
         }
 

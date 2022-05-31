@@ -51,13 +51,14 @@ namespace MudBlazor
         protected string _style =>
             new StyleBuilder()
                 .AddStyle("overflow-x", "auto", when: HorizontalScrollbar || ColumnResizeMode == ResizeMode.Container)
+                .AddStyle("position", "relative", when: hasStickyColumns)
                 .AddStyle(Style)
             .Build();
 
         protected string _tableStyle =>
             new StyleBuilder()
                 .AddStyle("height", Height, !string.IsNullOrWhiteSpace(Height))
-                .AddStyle("width", "max-content", when: HorizontalScrollbar || ColumnResizeMode == ResizeMode.Container)
+                .AddStyle("width", "max-content", when: (HorizontalScrollbar || ColumnResizeMode == ResizeMode.Container) && !hasStickyColumns)
                 .AddStyle("display", "block", when: HorizontalScrollbar)
             .Build();
 
@@ -230,10 +231,10 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public bool FixedFooter { get; set; }
 
-        [Parameter] public bool ShowFilterIcon { get; set; } = true;
+        [Parameter] public bool ShowFilterIcons { get; set; } = true;
 
         [Parameter] public DataGridFilterMode FilterMode { get; set; }
-
+        
         [Parameter] public RenderFragment<List<FilterDefinition<T>>> FilterTemplate { get; set; }
 
         /// <summary>
@@ -633,6 +634,14 @@ namespace MudBlazor
             get
             {
                 return RenderedColumns.Any(x => !x.Hidden && (x.FooterTemplate != null || x.AggregateDefinition != null));
+            }
+        }
+
+        private bool hasStickyColumns
+        {
+            get
+            {
+                return RenderedColumns.Any(x => x.StickyLeft || x.StickyRight);
             }
         }
 
