@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text.Json;
@@ -13,6 +14,7 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
+    [RequiresUnreferencedCode(CodeMessage.SerializationUnreferencedCodeMessage)]
     public partial class Column<T> : MudComponentBase
     {
         [CascadingParameter] public MudDataGrid<T> DataGrid { get; set; }
@@ -248,6 +250,7 @@ namespace MudBlazor
         internal FilterContext<T> filterContext;
         internal FooterContext<T> footerContext;
 
+        [UnconditionalSuppressMessage("Trimming", "IL2046: 'RequiresUnreferencedCodeAttribute' annotations must match across all interface implementations or overrides.", Justification = "Suppressing because we annotating the whole component with RequiresUnreferencedCodeAttribute for information that generic type must be preserved.")]
         protected override void OnInitialized()
         {
             if (!Hideable.HasValue)

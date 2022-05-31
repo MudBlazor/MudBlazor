@@ -4,11 +4,14 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq.Expressions;
 using System.Text.Json;
+using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
+    [RequiresUnreferencedCode(CodeMessage.SerializationUnreferencedCodeMessage)]
     public class FilterDefinition<T>
     {
         internal MudDataGrid<T> DataGrid { get; set; }
@@ -458,13 +461,23 @@ namespace MudBlazor
 
                     return v != null;
                 }
-            }
-            else if (isBoolean)
+                ,
+
+                _ => x => true
+            };
+        }
+
+        private Func<T, bool> GenerateFilterForEnumTypesInIDictionary()
+        {
+            return Operator switch
             {
-                var field = Expression.Convert(Expression.Property(parameter, typeof(T).GetProperty(Field)), typeof(bool?));
-                bool? valueBool = Value == null ? null : Convert.ToBoolean(Value);
-                var isnotnull = Expression.IsTrue(Expression.Property(field, "HasValue"));
-                var notNullBool = Expression.Convert(field, typeof(bool));
+                FilterOperator.Enum.Is when Value != null => x =>
+                {
+                    var v = GetEnumFromObject(((IDictionary<string, object>)x)[Field]);
+
+                    return object.Equals(v, Value);
+                }
+                ,
 
                 FilterOperator.Enum.IsNot when Value != null => x =>
                 {
@@ -488,15 +501,25 @@ namespace MudBlazor
 
                     return object.Equals(v, Value);
                 }
-            }
-            else if (isDateTime)
+                ,
+
+                _ => x => true
+            };
+        }
+
+        private Func<T, bool> GenerateFilterForDateTimeTypeInIDictionary()
+        {
+            DateTime? valueDateTime = Value == null ? null : (DateTime)Value;
+
+            return Operator switch
             {
-                var field = Expression.Convert(Expression.Property(parameter, typeof(T).GetProperty(Field)), typeof(DateTime?));
-                DateTime? valueDateTime = Value == null ? null : (DateTime)Value;
-                var isnotnull = Expression.IsTrue(Expression.Property(field, "HasValue"));
-                var isnull = Expression.IsFalse(Expression.Property(field, "HasValue"));
-                var notNullDateTime = Expression.Convert(field, typeof(DateTime));
-                var valueDateTimeConstant = Expression.Constant(valueDateTime);
+                FilterOperator.DateTime.Is when Value != null => x =>
+                {
+                    var v = GetDateTimeFromObject(((IDictionary<string, object>)x)[Field]);
+
+                    return v == valueDateTime;
+                }
+                ,
 
                 FilterOperator.DateTime.IsNot when Value != null => x =>
                 {
