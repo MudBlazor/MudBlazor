@@ -11,12 +11,14 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    public partial class MudDialogInstance : MudComponentBase
+    public partial class MudDialogInstance : MudComponentBase, IDisposable
     {
         private DialogOptions _options = new();
         private string _elementId = "dialog_" + Guid.NewGuid().ToString().Substring(0, 8);
+        private IKeyInterceptor _keyInterceptor;
 
-        [Inject] private IKeyInterceptor _keyInterceptor { get; set; }
+        [Inject] private IKeyInterceptorFactory _keyInterceptorFactory { get; set; }
+
         [CascadingParameter] public bool RightToLeft { get; set; }
         [CascadingParameter] private MudDialogProvider Parent { get; set; }
         [CascadingParameter] private DialogOptions GlobalDialogOptions { get; set; } = new DialogOptions();
@@ -79,6 +81,8 @@ namespace MudBlazor
                 //Since CloseOnEscapeKey is the only thing to be handled, turn interceptor off
                 if (CloseOnEscapeKey)
                 {
+                    _keyInterceptor = _keyInterceptorFactory.Create();
+
                     await _keyInterceptor.Connect(_elementId, new KeyInterceptorOptions()
                     {
                         TargetClass = "mud-dialog",
@@ -290,16 +294,18 @@ namespace MudBlazor
             if (DisableBackdropClick)
                 return;
 
-            if (_dialog.OnBackdropClick == null)
+            if (_dialog?.OnBackdropClick == null)
             {
                 Cancel();
                 return;
             }
 
-            _dialog.OnBackdropClick.Invoke();
+            _dialog?.OnBackdropClick.Invoke();
         }
 
         private MudDialog _dialog;
+        private bool _disposedValue;
+
         public void Register(MudDialog dialog)
         {
             if (dialog == null)
@@ -314,6 +320,25 @@ namespace MudBlazor
         public void ForceRender()
         {
             StateHasChanged();
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!_disposedValue)
+            {
+                if (disposing)
+                {
+                    _keyInterceptor?.Dispose();
+                }
+
+                _disposedValue = true;
+            }
+        }
+
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
         }
     }
 }

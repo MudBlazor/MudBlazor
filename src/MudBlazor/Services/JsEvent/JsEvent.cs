@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
@@ -14,7 +15,7 @@ using MudBlazor.Interop;
 
 namespace MudBlazor.Services
 {
-    public interface IJsEvent
+    public interface IJsEvent : IDisposable
     {
         Task Connect(string elementId, JsEventOptions options);
         Task Disconnect();
@@ -26,7 +27,7 @@ namespace MudBlazor.Services
     /// <summary>
     /// Subscribe JS events of any element by html id
     /// </summary>
-    public class JsEvent : IJsEvent, IDisposable
+    public class JsEvent : IJsEvent
     {
         private bool _isDisposed = false;
 
@@ -36,6 +37,10 @@ namespace MudBlazor.Services
         private bool _isObserving;
         internal HashSet<string> _subscribedEvents = new HashSet<string>();
 
+        [DynamicDependency(nameof(OnCaretPositionChanged))]
+        [DynamicDependency(nameof(OnPaste))]
+        [DynamicDependency(nameof(OnSelect))]
+        [DynamicDependency(DynamicallyAccessedMemberTypes.All, typeof(JsEventOptions))]
         public JsEvent(IJSRuntime jsRuntime)
         {
             _dotNetRef = DotNetObjectReference.Create(this);

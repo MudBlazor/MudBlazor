@@ -24,6 +24,12 @@
     <RepositoryUrl>https://github.com/MudBlazor/MudBlazor</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
   </PropertyGroup>
+  
+  <PropertyGroup>
+    <IsTrimmable>true</IsTrimmable>
+    <TrimMode>link</TrimMode>
+    <EnableTrimAnalyzer>true</EnableTrimAnalyzer>
+  </PropertyGroup>
 
   <PropertyGroup>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
@@ -53,8 +59,8 @@
   </Target>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.Components" Version="6.0.4.*" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="6.0.4.*" />
+    <PackageReference Include="Microsoft.AspNetCore.Components" Version="6.0.5.*" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="6.0.5.*" />
   </ItemGroup>
 
   <Target Name="ToolRestore">

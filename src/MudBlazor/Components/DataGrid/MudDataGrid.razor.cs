@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reflection;
@@ -15,6 +16,7 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
+    [RequiresUnreferencedCode(CodeMessage.SerializationUnreferencedCodeMessage)]
     public partial class MudDataGrid<T> : MudComponentBase
     {
         private int _currentPage = 0;
@@ -593,10 +595,9 @@ namespace MudBlazor
         {
             get
             {
-                if (ServerData != null)
-                    return _server_data.Items;
-
-                var items = Items;
+                var items = ServerData != null 
+                    ? _server_data.Items 
+                    : Items;
 
                 // Quick filtering
                 if (QuickFilter != null)
@@ -647,6 +648,7 @@ namespace MudBlazor
 
         #endregion
 
+        [UnconditionalSuppressMessage("Trimming", "IL2046: 'RequiresUnreferencedCodeAttribute' annotations must match across all interface implementations or overrides.", Justification = "Suppressing because we annotating the whole component with RequiresUnreferencedCodeAttribute for information that generic type must be preserved.")]
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
             if (firstRender)
@@ -1026,6 +1028,7 @@ namespace MudBlazor
         /// </summary>
         /// <param name="item"></param>
         /// <returns></returns>
+        [UnconditionalSuppressMessage("Trimming", "IL2026: Using member 'System.Text.Json.JsonSerializer.Deserialize<T>(string, System.Text.Json.JsonSerializerOptions?)' which has 'RequiresUnreferencedCodeAttribute' can break functionality when trimming application code. JSON serialization and deserialization might require types that cannot be statically analyzed. Use the overload that takes a JsonTypeInfo or JsonSerializerContext, or make sure all of the required types are preserved.", Justification = "Suppressing because T is a type supplied by the user and it is unlikely that it is not referenced by their code.")]
         public async Task SetEditingItemAsync(T item)
         {
             if (ReadOnly) return;

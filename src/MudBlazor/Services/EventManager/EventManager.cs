@@ -4,14 +4,34 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.JSInterop;
 
 namespace MudBlazor
 {
-    public interface IEventListener
+    public interface IEventListenerFactory
+    {
+        IEventListener Create();
+    }
+
+    public class EventListenerFactory : IEventListenerFactory
+    {
+        private readonly IServiceProvider _provider;
+
+        public EventListenerFactory(IServiceProvider provider)
+        {
+            _provider = provider;
+        }
+
+        public IEventListener Create() =>
+            new EventListener(_provider.GetRequiredService<IJSRuntime>());
+    }
+
+    public interface IEventListener : IAsyncDisposable
     {
         /// <summary>
         /// Listing to a javascript event
@@ -51,6 +71,7 @@ namespace MudBlazor
 
         private Dictionary<Guid, (Type eventType, Func<object, Task> callback)> _callbackResolver = new();
 
+        [DynamicDependency(nameof(OnEventOccur))]
         public EventListener(IJSRuntime runtime)
         {
             _jsRuntime = runtime;
@@ -64,11 +85,11 @@ namespace MudBlazor
 
             var element = _callbackResolver[key];
 
-            var @event = JsonSerializer.Deserialize(eventData, element.eventType, new JsonSerializerOptions
+            var @event = JsonSerializer.Deserialize(eventData, element.eventType, new WebEventJsonContext(new JsonSerializerOptions
             {
                 PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
                 PropertyNameCaseInsensitive = true,
-            });
+            }));
 
             if (element.callback != null)
             {
@@ -141,6 +162,7 @@ namespace MudBlazor
                 }
                 catch (Exception)
                 {
+                    //ignore
                 }
             }
 
@@ -164,6 +186,7 @@ namespace MudBlazor
                         }
                         catch (Exception)
                         {
+                            //ignore
                         }
                     }
                 }
