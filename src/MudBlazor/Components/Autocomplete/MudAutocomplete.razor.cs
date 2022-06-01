@@ -184,11 +184,18 @@ namespace MudBlazor
         public RenderFragment<T> ItemDisabledTemplate { get; set; }
 
         /// <summary>
-        /// Optional template when more items were returned from the Search function than the MaxItems limit
+        /// Optional presentation template for when more items were returned from the Search function than the MaxItems limit
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.ListBehavior)]
         public RenderFragment MoreItemsTemplate { get; set; }
+
+        /// <summary>
+        /// Optional presentation template for when no items were returned from the Search function
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.ListBehavior)]
+        public RenderFragment NoItemsTemplate { get; set; }
 
         /// <summary>
         /// On drop-down close override Text with selected Value. This makes it clear to the user

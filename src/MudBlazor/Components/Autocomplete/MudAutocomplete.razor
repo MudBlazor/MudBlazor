@@ -46,6 +46,7 @@
                                             @ItemTemplate(item)
                                         else
                                             @ItemSelectedTemplate(item)
+
                                     }
                                     else
                                     {
@@ -60,6 +61,12 @@
                                 </div>
                             }
                         </MudList>
+                    }
+                    else if (NoItemsTemplate != null)
+                    {
+                        <div class="pa-1">
+                            @NoItemsTemplate
+                        </div>
                     }
                 </MudPopover>
             </InputContent>
