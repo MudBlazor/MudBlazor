@@ -238,6 +238,22 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// NoItemsTemplate should render when there are no items
+        /// </summary>
+        [Test]
+        public async Task AutocompleteTest7()
+        {
+            var comp = Context.RenderComponent<AutocompleteTest7>();
+
+            var inputControl = comp.Find("div.mud-input-control");
+            inputControl.Click();
+            comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open"));
+
+            var mudText = comp.FindAll("p.mud-typography");
+            mudText[mudText.Count - 1].InnerHtml.Should().Contain("No items found, try another search"); //ensure the text is shown
+        }
+
+        /// <summary>
         /// After press Enter key down, the selected value should be shown in the input value
         /// </summary>
 
