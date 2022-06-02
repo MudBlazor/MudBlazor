@@ -242,43 +242,22 @@ namespace MudBlazor
             if ((!CanSelect || !Clickable) && !force)
                 return;
             if (item.Equals(_selectedItem))
-            return;
-            
+                return;
+
             SelectedItem = item;
             SelectedValue = item.Value;
 
             if (!MultiSelection)
             {
 
-                foreach (var listItem in _items)
+                var items = CollectAllMudListItems();
+                if (!MultiSelection)
                 {
-                    if (item.Equals(listItem) == false)
-                    {
-                        listItem.SetSelected(false);
-                    }
-                    else
-                    {
-                        listItem.SetSelected(true);
-                    }
+                    DeSelectValues(items);
+                    items.FirstOrDefault(x => x.Value.Equals(item.Value)).SetSelected(true);
 
-
+                    ParentList?.SetSelectedValue(item);
                 }
-                foreach (var childList in _childLists)
-                {
-                    foreach (var listItem in childList._items)
-                    {
-                        if (!item.Equals(_selectedItem))
-                        {
-                            listItem.SetSelected(false);
-                        }
-                        else
-                        {
-                            listItem.SetSelected(true);
-                        }
-
-                    }
-                }
-
             }
         }
 
@@ -289,6 +268,20 @@ namespace MudBlazor
             ParametersChanged = null;
             ParentList?.Unregister(this);
         }
+        private void DeSelectValues(List<MudListItem<T>> items)
+        {
+            foreach (var listItem in items)
+                listItem?.SetSelected(false);
+        }
 
+        private List<MudListItem<T>> CollectAllMudListItems()
+        {
+            var items = _items.ToList();
+            foreach (var list in _childLists)
+                items.AddRange(list._items);
+            if (ParentList != null)
+                items.AddRange(ParentList._items);
+            return items;
+        }
     }
 }

@@ -250,11 +250,10 @@ namespace MudBlazor
                     UriHelper.NavigateTo(Href, ForceLoad);
                 }
                 else if (MudList?.Clickable == true)
-                    {
-                    this.SetSelected(!_selected);
+                {                    
                     MudList?.SetSelectedValue(this);
-                        OnClick.InvokeAsync(ev);
-                    }
+                    OnClick.InvokeAsync(ev);
+                }
                     
                     //if (Command?.CanExecute(CommandParameter) ?? false)
                     //{
