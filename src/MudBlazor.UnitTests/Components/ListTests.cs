@@ -98,7 +98,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<ListSelectionInitialValueTest>(x => x.Add(c => c.Color, color));
 
-            var list = comp.FindComponent<MudList>().Instance;
+            var list = comp.FindComponent<MudList<int>>().Instance;
             list.SelectedItem.Text.Should().Be("Sparkling Water");
 
             var listItemClasses = comp.Find(".mud-selected-item");
