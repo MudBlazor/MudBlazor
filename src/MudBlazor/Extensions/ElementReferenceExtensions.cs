@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
@@ -49,6 +49,12 @@ namespace MudBlazor
 
         public static ValueTask<BoundingClientRect> MudGetBoundingClientRectAsync(this ElementReference elementReference) =>
             elementReference.GetJSRuntime()?.InvokeAsync<BoundingClientRect>("mudElementRef.getBoundingClientRect", elementReference) ?? ValueTask.FromResult(new BoundingClientRect());
+
+        public static ValueTask<ulong> MudGetSelectionStart(this ElementReference elementReference) =>
+            elementReference.GetJSRuntime()?.InvokeAsync<ulong>("mudElementRef.getSelectionStart", elementReference) ?? ValueTask.FromResult(0ul);
+
+        public static ValueTask<ulong> MudGetSelectionEnd(this ElementReference elementReference) =>
+            elementReference.GetJSRuntime()?.InvokeAsync<ulong>("mudElementRef.getSelectionEnd", elementReference) ?? ValueTask.FromResult(0ul);
 
         /// <summary>
         /// Gets the client rect of the element 

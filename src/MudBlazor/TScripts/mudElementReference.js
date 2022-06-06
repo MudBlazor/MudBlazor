@@ -1,4 +1,4 @@
-﻿// Copyright (c) MudBlazor 2021
+// Copyright (c) MudBlazor 2021
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
@@ -114,6 +114,18 @@ class MudElementReference {
         rect.windowHeight = window.innerHeight;
         rect.windowWidth = window.innerWidth;
         return rect;
+    }
+
+    getSelectionStart(element) {
+        if (!element) return 0;
+        // The index of the beginning of selected text. When nothing is selected,
+        // this is also the caret position inside of the < input > element.
+        return element.selectionStart || 0;
+    }
+
+    getSelectionEnd(element) {
+        if (!element) return 0;
+        return element.selectionEnd || 0;
     }
 
     /**
