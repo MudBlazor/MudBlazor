@@ -330,9 +330,7 @@ namespace MudBlazor
                     string v = GetStringFromObject(((IDictionary<string, object>)x)[Field]);
 
                     return v != null && v.Contains(valueString);
-                }
-                ,
-
+                },
                 FilterOperator.String.NotContains when Value != null => x =>
                 {
                     string v = GetStringFromObject(((IDictionary<string, object>)x)[Field]);
@@ -557,7 +555,7 @@ namespace MudBlazor
                 {
                     var v = GetDateTimeFromObject(((IDictionary<string, object>)x)[Field]);
 
-                    return v < valueDateTime;
+                    return v <= valueDateTime;
                 }
                 ,
 
@@ -591,7 +589,9 @@ namespace MudBlazor
 
         private string GetStringFromObject(object o)
         {
-            if (o.GetType() == typeof(JsonElement))
+            if (o == null)
+                return null;
+            else if (o.GetType() == typeof(JsonElement))
             {
                 return ((JsonElement)o).GetString();
             }

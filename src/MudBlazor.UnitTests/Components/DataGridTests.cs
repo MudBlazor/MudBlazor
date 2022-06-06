@@ -696,6 +696,279 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task FilterDefinitionStringForIDictionaryTest()
+        {
+            var filterDefinition = new FilterDefinition<IDictionary<string, object>>();
+            Func<IDictionary<string, object>, bool> func = null;
+
+            #region FilterOperator.String.Contains
+
+            filterDefinition = new FilterDefinition<IDictionary<string, object>>
+            {
+                Id = Guid.NewGuid(),
+                Field = "Name",
+                Operator = FilterOperator.String.Contains,
+                Value = "Joe",
+                FieldType = typeof(string)
+            };
+            func = filterDefinition.GenerateFilterFunction();
+            Assert.IsFalse(func.Invoke(new Dictionary<string, object> { { "Name", "Does not contain" }, { "Age", 45} }));
+            Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Joe" }, { "Age", 45 } }));
+            Assert.IsFalse(func.Invoke(new Dictionary<string, object> { { "Name", null }, { "Age", 45 } }));
+
+            // null value
+            filterDefinition = new FilterDefinition<IDictionary<string, object>>
+            {
+                Id = Guid.NewGuid(),
+                Field = "Name",
+                Operator = FilterOperator.String.Contains,
+                Value = null,
+                FieldType = typeof(string)
+            };
+            func = filterDefinition.GenerateFilterFunction();
+            Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Does not contain" }, { "Age", 45 } }));
+            Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Joe" }, { "Age", 45 } }));
+            Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", null }, { "Age", 45 } }));
+
+            #endregion
+
+            #region FilterOperator.String.NotContains
+
+            filterDefinition = new FilterDefinition<IDictionary<string, object>>
+            {
+                Id = Guid.NewGuid(),
+                Field = "Name",
+                Operator = FilterOperator.String.NotContains,
+                Value = "Joe",
+                FieldType = typeof(string)
+            };
+            func = filterDefinition.GenerateFilterFunction();
+            Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Does not contain" }, { "Age", 45 } }));
+            Assert.IsFalse(func.Invoke(new Dictionary<string, object> { { "Name", "Joe" }, { "Age", 45 } }));
+            Assert.IsFalse(func.Invoke(new Dictionary<string, object> { { "Name", null }, { "Age", 45 } }));
+
+            // null value
+            filterDefinition = new FilterDefinition<IDictionary<string, object>>
+            {
+                Id = Guid.NewGuid(),
+                Field = "Name",
+                Operator = FilterOperator.String.NotContains,
+                Value = null,
+                FieldType = typeof(string)
+            };
+            func = filterDefinition.GenerateFilterFunction();
+            Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Does not contain" }, { "Age", 45 } }));
+            Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Joe" }, { "Age", 45 } }));
+            Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", null }, { "Age", 45 } }));
+
+            #endregion
+
+            #region FilterOperator.String.Equal
+
+            filterDefinition = new FilterDefinition<IDictionary<string, object>>
+            {
+                Id = Guid.NewGuid(),
+                Field = "Name",
+                Operator = FilterOperator.String.Equal,
+                Value = "Joe",
+                FieldType = typeof(string)
+            };
+            func = filterDefinition.GenerateFilterFunction();
+            Assert.IsFalse(func.Invoke(new Dictionary<string, object> { { "Name", "Not Joe" }, { "Age", 45 } }));
+            Assert.IsFalse(func.Invoke(new Dictionary<string, object> { { "Name", null }, { "Age", 45 } }));
+            Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Joe" }, { "Age", 45 } }));
+
+            // null value
+            filterDefinition = new FilterDefinition<IDictionary<string, object>>
+            {
+                Id = Guid.NewGuid(),
+                Field = "Name",
+                Operator = FilterOperator.String.Equal,
+                Value = null,
+                FieldType = typeof(string)
+            };
+            func = filterDefinition.GenerateFilterFunction();
+            Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Joe Not" }, { "Age", 45 } }));
+            Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Joe" }, { "Age", 45 } }));
+            Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", null }, { "Age", 45 } }));
+
+            #endregion
+
+            #region FilterOperator.String.NotEqual
+
+            filterDefinition = new FilterDefinition<IDictionary<string, object>>
+            {
+                Id = Guid.NewGuid(),
+                Field = "Name",
+                Operator = FilterOperator.String.NotEqual,
+                Value = "Joe",
+                FieldType = typeof(string)
+            };
+            func = filterDefinition.GenerateFilterFunction();
+            Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Not Joe" }, { "Age", 45 } }));
+            Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", null }, { "Age", 45 } }));
+            Assert.IsFalse(func.Invoke(new Dictionary<string, object> { { "Name", "Joe" }, { "Age", 45 } }));
+
+            // null value
+            filterDefinition = new FilterDefinition<IDictionary<string, object>>
+            {
+                Id = Guid.NewGuid(),
+                Field = "Name",
+                Operator = FilterOperator.String.NotEqual,
+                Value = null,
+                FieldType = typeof(string)
+            };
+            func = filterDefinition.GenerateFilterFunction();
+            Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Joe Not" }, { "Age", 45 } }));
+            Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Joe" }, { "Age", 45 } }));
+            Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", null }, { "Age", 45 } }));
+
+            #endregion
+
+            #region FilterOperator.String.StartsWith
+
+            filterDefinition = new FilterDefinition<IDictionary<string, object>>
+            {
+                Id = Guid.NewGuid(),
+                Field = "Name",
+                Operator = FilterOperator.String.StartsWith,
+                Value = "Joe",
+                FieldType = typeof(string)
+            };
+            func = filterDefinition.GenerateFilterFunction();
+            Assert.IsFalse(func.Invoke(new Dictionary<string, object> { { "Name", "Not Joe" }, { "Age", 45 } }));
+            Assert.IsFalse(func.Invoke(new Dictionary<string, object> { { "Name", null }, { "Age", 45 } }));
+            Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Joe" }, { "Age", 45 } }));
+
+            // null value
+            filterDefinition = new FilterDefinition<IDictionary<string, object>>
+            {
+                Id = Guid.NewGuid(),
+                Field = "Name",
+                Operator = FilterOperator.String.StartsWith,
+                Value = null,
+                FieldType = typeof(string)
+            };
+            func = filterDefinition.GenerateFilterFunction();
+            Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Not Joe" }, { "Age", 45 } }));
+            Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", null }, { "Age", 45 } }));
+            Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Joe" }, { "Age", 45 } }));
+
+            #endregion
+
+            #region FilterOperator.String.EndsWith
+
+            filterDefinition = new FilterDefinition<IDictionary<string, object>>
+            {
+                Id = Guid.NewGuid(),
+                Field = "Name",
+                Operator = FilterOperator.String.EndsWith,
+                Value = "Joe",
+                FieldType = typeof(string)
+            };
+            func = filterDefinition.GenerateFilterFunction();
+            Assert.IsFalse(func.Invoke(new Dictionary<string, object> { { "Name", "Joe Not" }, { "Age", 45 } }));
+            Assert.IsFalse(func.Invoke(new Dictionary<string, object> { { "Name", null }, { "Age", 45 } }));
+            Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Joe" }, { "Age", 45 } }));
+
+            // null value
+            filterDefinition = new FilterDefinition<IDictionary<string, object>>
+            {
+                Id = Guid.NewGuid(),
+                Field = "Name",
+                Operator = FilterOperator.String.EndsWith,
+                Value = null,
+                FieldType = typeof(string)
+            };
+            func = filterDefinition.GenerateFilterFunction();
+            Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Joe Not" }, { "Age", 45 } }));
+            Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", null }, { "Age", 45 } }));
+            Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Joe" }, { "Age", 45 } }));
+
+            #endregion
+
+            #region FilterOperator.String.Empty
+
+            filterDefinition = new FilterDefinition<IDictionary<string, object>>
+            {
+                Id = Guid.NewGuid(),
+                Field = "Name",
+                Operator = FilterOperator.String.Empty,
+                Value = null,
+                FieldType = typeof(string)
+            };
+            func = filterDefinition.GenerateFilterFunction();
+            Assert.IsFalse(func.Invoke(new Dictionary<string, object> { { "Name", "Joe Not" }, { "Age", 45 } }));
+            Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "" }, { "Age", 45 } }));
+            Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", null }, { "Age", 45 } }));
+            Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", String.Empty }, { "Age", 45 } }));
+
+            // null value
+            filterDefinition = new FilterDefinition<IDictionary<string, object>>
+            {
+                Id = Guid.NewGuid(),
+                Field = "Name",
+                Operator = FilterOperator.String.NotEmpty,
+                Value = null,
+                FieldType = typeof(string)
+            };
+            func = filterDefinition.GenerateFilterFunction();
+            Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Joe Not" }, { "Age", 45 } }));
+            Assert.IsFalse(func.Invoke(new Dictionary<string, object> { { "Name", "" }, { "Age", 45 } }));
+            Assert.IsFalse(func.Invoke(new Dictionary<string, object> { { "Name", null }, { "Age", 45 } }));
+            Assert.IsFalse(func.Invoke(new Dictionary<string, object> { { "Name", String.Empty }, { "Age", 45 } }));
+
+            #endregion
+
+            #region FilterOperator.String.NotEmpty
+
+            filterDefinition = new FilterDefinition<IDictionary<string, object>>
+            {
+                Id = Guid.NewGuid(),
+                Field = "Name",
+                Operator = FilterOperator.String.NotEmpty,
+                Value = null,
+                FieldType = typeof(string)
+            };
+            func = filterDefinition.GenerateFilterFunction();
+            Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Joe Not" }, { "Age", 45 } }));
+            Assert.IsFalse(func.Invoke(new Dictionary<string, object> { { "Name", "" }, { "Age", 45 } }));
+            Assert.IsFalse(func.Invoke(new Dictionary<string, object> { { "Name", null }, { "Age", 45 } }));
+            Assert.IsFalse(func.Invoke(new Dictionary<string, object> { { "Name", String.Empty }, { "Age", 45 } }));
+
+            // null value
+            filterDefinition = new FilterDefinition<IDictionary<string, object>>
+            {
+                Id = Guid.NewGuid(),
+                Field = "Name",
+                Operator = FilterOperator.String.NotEmpty,
+                Value = null,
+                FieldType = typeof(string)
+            };
+            func = filterDefinition.GenerateFilterFunction();
+            Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Joe Not" }, { "Age", 45 } }));
+            Assert.IsFalse(func.Invoke(new Dictionary<string, object> { { "Name", "" }, { "Age", 45 } }));
+            Assert.IsFalse(func.Invoke(new Dictionary<string, object> { { "Name", null }, { "Age", 45 } }));
+            Assert.IsFalse(func.Invoke(new Dictionary<string, object> { { "Name", String.Empty }, { "Age", 45 } }));
+
+            #endregion
+
+            // handle null operator
+            filterDefinition = new FilterDefinition<IDictionary<string, object>>
+            {
+                Id = Guid.NewGuid(),
+                Field = "Name",
+                Operator = null,
+                Value = "Joe",
+                FieldType = typeof(string)
+            };
+            func = filterDefinition.GenerateFilterFunction();
+            Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Joe Not" }, { "Age", 45 } }));
+            Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", null }, { "Age", 45 } }));
+            Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Joe" }, { "Age", 45 } }));
+        }
+
+        [Test]
         public async Task FilterDefinitionNumberTest()
         {
             var filterDefinition = new FilterDefinition<TestModel1>();
@@ -893,6 +1166,214 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task FilterDefinitionNumberForDictionaryTest()
+        {
+            var filterDefinition = new FilterDefinition<IDictionary<string, object>>();
+            Func<IDictionary<string, object>, bool> func = null;
+
+            #region FilterOperator.Number.Equal
+
+            filterDefinition = new FilterDefinition<IDictionary<string, object>>
+            {
+                Id = Guid.NewGuid(),
+                Field = "Age",
+                Operator = FilterOperator.Number.Equal,
+                Value = 45,
+                FieldType = typeof(int)
+            };
+            func = filterDefinition.GenerateFilterFunction();
+            Assert.IsFalse(func.Invoke(new Dictionary<string, object> { { "Name", "Sam" }, { "Age", 456 } }));
+            Assert.IsFalse(func.Invoke(new Dictionary<string, object> { { "Name", "Sam" }, { "Age", null } }));
+            Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Joe" }, { "Age", 45 } }));
+
+            // null value
+            filterDefinition = new FilterDefinition<IDictionary<string, object>>
+            {
+                Id = Guid.NewGuid(),
+                Field = "Age",
+                Operator = FilterOperator.Number.Equal,
+                Value = null,
+                FieldType = typeof(int)
+            };
+            func = filterDefinition.GenerateFilterFunction();
+            // data type is an int
+            Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Sam" }, { "Age", 456 } }));
+            Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Sam" }, { "Age", null } }));
+            Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Joe" }, { "Age", 45 } }));
+
+            #endregion
+
+            #region FilterOperator.Number.NotEqual
+
+            filterDefinition = new FilterDefinition<IDictionary<string, object>>
+            {
+                Id = Guid.NewGuid(),
+                Field = "Age",
+                Operator = FilterOperator.Number.NotEqual,
+                Value = 45,
+                FieldType = typeof(int)
+            };
+            func = filterDefinition.GenerateFilterFunction();
+            Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Sam" }, { "Age", 456 } }));
+            Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Sam" }, { "Age", null } }));
+            Assert.IsFalse(func.Invoke(new Dictionary<string, object> { { "Name", "Joe" }, { "Age", 45 } }));
+
+            // null value
+            filterDefinition = new FilterDefinition<IDictionary<string, object>>
+            {
+                Id = Guid.NewGuid(),
+                Field = "Age",
+                Operator = FilterOperator.Number.NotEqual,
+                Value = null,
+                FieldType = typeof(int)
+            };
+            func = filterDefinition.GenerateFilterFunction();
+            Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Sam" }, { "Age", 456 } }));
+            Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Sam" }, { "Age", null } }));
+            Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Joe" }, { "Age", 45 } }));
+
+            #endregion
+
+            #region FilterOperator.Number.GreaterThan
+
+            filterDefinition = new FilterDefinition<IDictionary<string, object>>
+            {
+                Id = Guid.NewGuid(),
+                Field = "Age",
+                Operator = FilterOperator.Number.GreaterThan,
+                Value = 45,
+                FieldType = typeof(int)
+            };
+            func = filterDefinition.GenerateFilterFunction();
+            Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Sam" }, { "Age", 456 } }));
+            Assert.IsFalse(func.Invoke(new Dictionary<string, object> { { "Name", "Sam" }, { "Age", 45 } }));
+            Assert.IsFalse(func.Invoke(new Dictionary<string, object> { { "Name", "Sam" }, { "Age", null } }));
+
+            // null value
+            filterDefinition = new FilterDefinition<IDictionary<string, object>>
+            {
+                Id = Guid.NewGuid(),
+                Field = "Age",
+                Operator = FilterOperator.Number.GreaterThan,
+                Value = null,
+                FieldType = typeof(int)
+            };
+            func = filterDefinition.GenerateFilterFunction();
+            Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Sam" }, { "Age", 456 } }));
+            Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Sam" }, { "Age", 45 } }));
+            Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Sam" }, { "Age", null } }));
+
+            #endregion
+
+            #region FilterOperator.Number.LessThan
+
+            filterDefinition = new FilterDefinition<IDictionary<string, object>>
+            {
+                Id = Guid.NewGuid(),
+                Field = "Age",
+                Operator = FilterOperator.Number.LessThan,
+                Value = 45,
+                FieldType = typeof(int)
+            };
+            func = filterDefinition.GenerateFilterFunction();
+            Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Sam" }, { "Age", 4 } }));
+            Assert.IsFalse(func.Invoke(new Dictionary<string, object> { { "Name", "Sam" }, { "Age", 45 } }));
+            Assert.IsFalse(func.Invoke(new Dictionary<string, object> { { "Name", "Sam" }, { "Age", null } }));
+
+            // null value
+            filterDefinition = new FilterDefinition<IDictionary<string, object>>
+            {
+                Id = Guid.NewGuid(),
+                Field = "Age",
+                Operator = FilterOperator.Number.LessThan,
+                Value = null,
+                FieldType = typeof(int)
+            };
+            func = filterDefinition.GenerateFilterFunction();
+            Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Sam" }, { "Age", 4 } }));
+            Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Sam" }, { "Age", 45 } }));
+            Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Sam" }, { "Age", null } }));
+
+            #endregion
+
+            #region FilterOperator.Number.GreaterThanOrEqual
+
+            filterDefinition = new FilterDefinition<IDictionary<string, object>>
+            {
+                Id = Guid.NewGuid(),
+                Field = "Age",
+                Operator = FilterOperator.Number.GreaterThanOrEqual,
+                Value = 45,
+                FieldType = typeof(int)
+            };
+            func = filterDefinition.GenerateFilterFunction();
+            Assert.IsFalse(func.Invoke(new Dictionary<string, object> { { "Name", "Sam" }, { "Age", 4 } }));
+            Assert.IsFalse(func.Invoke(new Dictionary<string, object> { { "Name", "Sam" }, { "Age", null } }));
+            Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Sam" }, { "Age", 45 } }));
+
+            // null value
+            filterDefinition = new FilterDefinition<IDictionary<string, object>>
+            {
+                Id = Guid.NewGuid(),
+                Field = "Age",
+                Operator = FilterOperator.Number.GreaterThanOrEqual,
+                Value = null,
+                FieldType = typeof(int)
+            };
+            func = filterDefinition.GenerateFilterFunction();
+            Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Sam" }, { "Age", 4 } }));
+            Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Sam" }, { "Age", null } }));
+            Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Sam" }, { "Age", 45 } }));
+
+            #endregion
+
+            #region FilterOperator.Number.LessThanOrEqual
+
+            filterDefinition = new FilterDefinition<IDictionary<string, object>>
+            {
+                Id = Guid.NewGuid(),
+                Field = "Age",
+                Operator = FilterOperator.Number.LessThanOrEqual,
+                Value = 45,
+                FieldType = typeof(int)
+            };
+            func = filterDefinition.GenerateFilterFunction();
+            Assert.IsFalse(func.Invoke(new Dictionary<string, object> { { "Name", "Sam" }, { "Age", 46 } }));
+            Assert.IsFalse(func.Invoke(new Dictionary<string, object> { { "Name", "Sam" }, { "Age", null } }));
+            Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Sam" }, { "Age", 45 } }));
+
+            // null value
+            filterDefinition = new FilterDefinition<IDictionary<string, object>>
+            {
+                Id = Guid.NewGuid(),
+                Field = "Age",
+                Operator = FilterOperator.Number.LessThanOrEqual,
+                Value = null,
+                FieldType = typeof(int)
+            };
+            func = filterDefinition.GenerateFilterFunction();
+            Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Sam" }, { "Age", 46 } }));
+            Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Sam" }, { "Age", null } }));
+            Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Sam" }, { "Age", 45 } }));
+
+            #endregion
+
+            // null operator
+            filterDefinition = new FilterDefinition<IDictionary<string, object>>
+            {
+                Id = Guid.NewGuid(),
+                Field = "Age",
+                Operator = null,
+                Value = 45,
+                FieldType = typeof(int)
+            };
+            func = filterDefinition.GenerateFilterFunction();
+            Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Sam" }, { "Age", 456 } }));
+            Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Sam" }, { "Age", null } }));
+            Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Sam" }, { "Age", 45 } }));
+        }
+
+        [Test]
         public async Task FilterDefinitionBoolTest()
         {
             #region FilterOperator.Boolean.Is
@@ -936,6 +1417,55 @@ namespace MudBlazor.UnitTests.Components
             Assert.IsTrue(func.Invoke(new("Sam", 45, false)));
             Assert.IsTrue(func.Invoke(new("Joe", 45, true)));
             Assert.IsTrue(func.Invoke(new("Joe", 45, null)));
+        }
+
+        [Test]
+        public async Task FilterDefinitionBoolForDictionaryTest()
+        {
+            #region FilterOperator.Boolean.Is
+
+            var filterDefinition = new FilterDefinition<IDictionary<string, object>>
+            {
+                Id = Guid.NewGuid(),
+                Field = "Hired",
+                Operator = FilterOperator.Boolean.Is,
+                Value = true,
+                FieldType = typeof(bool)
+            };
+            var func = filterDefinition.GenerateFilterFunction();
+            Assert.IsFalse(func.Invoke(new Dictionary<string, object> { { "Name", "Sam" }, { "Age", 45 }, { "Hired", false } }));
+            Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Sam" }, { "Age", 45 }, { "Hired", true } }));
+            Assert.IsFalse(func.Invoke(new Dictionary<string, object> { { "Name", "Sam" }, { "Age", 45 }, { "Hired", null } }));
+
+            // null value
+            filterDefinition = new FilterDefinition<IDictionary<string, object>>
+            {
+                Id = Guid.NewGuid(),
+                Field = "Hired",
+                Operator = FilterOperator.Boolean.Is,
+                Value = null,
+                FieldType = typeof(bool)
+            };
+            func = filterDefinition.GenerateFilterFunction();
+            Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Sam" }, { "Age", 45 }, { "Hired", false } }));
+            Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Sam" }, { "Age", 45 }, { "Hired", true } }));
+            Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Sam" }, { "Age", 45 }, { "Hired", null } }));
+
+            #endregion
+
+            // null operator
+            filterDefinition = new FilterDefinition<IDictionary<string, object>>
+            {
+                Id = Guid.NewGuid(),
+                Field = "Hired",
+                Operator = null,
+                Value = true,
+                FieldType = typeof(bool)
+            };
+            func = filterDefinition.GenerateFilterFunction();
+            Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Sam" }, { "Age", 45 }, { "Hired", false } }));
+            Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Sam" }, { "Age", 45 }, { "Hired", true } }));
+            Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Sam" }, { "Age", 45 }, { "Hired", null } }));
         }
 
         [Test]
@@ -1011,6 +1541,86 @@ namespace MudBlazor.UnitTests.Components
             Assert.IsTrue(func.Invoke(new("Sam", 456, Severity.Normal)));
             Assert.IsTrue(func.Invoke(new("Joe", 45, Severity.Info)));
             Assert.IsTrue(func.Invoke(new("Joe", 45, null)));
+        }
+
+        [Test]
+        public async Task FilterDefinitionEnumForDictionaryTest()
+        {
+            #region FilterOperator.Enum.Is
+
+            var filterDefinition = new FilterDefinition<IDictionary<string, object>>
+            {
+                Id = Guid.NewGuid(),
+                Field = "Status",
+                Operator = FilterOperator.Enum.Is,
+                Value = Severity.Normal,
+                FieldType = typeof(Severity)
+            };
+            var func = filterDefinition.GenerateFilterFunction();
+            Assert.IsFalse(func.Invoke(new Dictionary<string, object> { { "Name", "Sam" }, { "Age", 45 }, { "Status", Severity.Info } }));
+            Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Sam" }, { "Age", 45 }, { "Status", Severity.Normal } }));
+            Assert.IsFalse(func.Invoke(new Dictionary<string, object> { { "Name", "Sam" }, { "Age", 45 }, { "Status", null } }));
+
+            // null value
+            filterDefinition = new FilterDefinition<IDictionary<string, object>>
+            {
+                Id = Guid.NewGuid(),
+                Field = "Status",
+                Operator = FilterOperator.Enum.Is,
+                Value = null,
+                FieldType = typeof(Severity)
+            };
+            func = filterDefinition.GenerateFilterFunction();
+            Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Sam" }, { "Age", 45 }, { "Status", Severity.Info } }));
+            Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Sam" }, { "Age", 45 }, { "Status", Severity.Normal } }));
+            Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Sam" }, { "Age", 45 }, { "Status", null } }));
+
+            #endregion
+
+            #region FilterOperator.Enum.IsNot
+
+            filterDefinition = new FilterDefinition<IDictionary<string, object>>
+            {
+                Id = Guid.NewGuid(),
+                Field = "Status",
+                Operator = FilterOperator.Enum.IsNot,
+                Value = Severity.Normal,
+                FieldType = typeof(Severity)
+            };
+            func = filterDefinition.GenerateFilterFunction();
+            Assert.IsFalse(func.Invoke(new Dictionary<string, object> { { "Name", "Sam" }, { "Age", 45 }, { "Status", Severity.Normal } }));
+            Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Sam" }, { "Age", 45 }, { "Status", Severity.Info } }));
+            Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Sam" }, { "Age", 45 }, { "Status", null } }));
+
+            // null value
+            filterDefinition = new FilterDefinition<IDictionary<string, object>>
+            {
+                Id = Guid.NewGuid(),
+                Field = "Status",
+                Operator = FilterOperator.Enum.IsNot,
+                Value = null,
+                FieldType = typeof(Severity)
+            };
+            func = filterDefinition.GenerateFilterFunction();
+            Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Sam" }, { "Age", 45 }, { "Status", Severity.Normal } }));
+            Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Sam" }, { "Age", 45 }, { "Status", Severity.Info } }));
+            Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Sam" }, { "Age", 45 }, { "Status", null } }));
+
+            #endregion
+
+            // null operator
+            filterDefinition = new FilterDefinition<IDictionary<string, object>>
+            {
+                Id = Guid.NewGuid(),
+                Field = "Status",
+                Operator = null,
+                Value = Severity.Normal,
+                FieldType = typeof(Severity)
+            };
+            func = filterDefinition.GenerateFilterFunction();
+            Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Sam" }, { "Age", 45 }, { "Status", Severity.Normal } }));
+            Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Sam" }, { "Age", 45 }, { "Status", Severity.Info } }));
+            Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Sam" }, { "Age", 45 }, { "Status", null } }));
         }
 
         [Test]
@@ -1248,6 +1858,257 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task FilterDefinitionDateTimeForDictionaryTest()
+        {
+            var utcnow = DateTime.UtcNow;
+
+            #region FilterOperator.DateTime.Is
+
+            var filterDefinition = new FilterDefinition<IDictionary<string, object>>
+            {
+                Id = Guid.NewGuid(),
+                Field = "Date",
+                Operator = FilterOperator.DateTime.Is,
+                Value = utcnow,
+                FieldType = typeof(DateTime)
+            };
+            var func = filterDefinition.GenerateFilterFunction();
+            Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Sam" }, { "Age", 45 }, { "Date", utcnow } }));
+            Assert.IsFalse(func.Invoke(new Dictionary<string, object> { { "Name", "Sam" }, { "Age", 45 }, { "Date", null } }));
+
+            // null value
+            filterDefinition = new FilterDefinition<IDictionary<string, object>>
+            {
+                Id = Guid.NewGuid(),
+                Field = "Date",
+                Operator = FilterOperator.DateTime.Is,
+                Value = null,
+                FieldType = typeof(DateTime)
+            };
+            func = filterDefinition.GenerateFilterFunction();
+            Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Sam" }, { "Age", 45 }, { "Date", utcnow } }));
+            Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Sam" }, { "Age", 45 }, { "Date", null } }));
+
+            #endregion
+
+            #region FilterOperator.DateTime.IsNot
+
+            filterDefinition = new FilterDefinition<IDictionary<string, object>>
+            {
+                Id = Guid.NewGuid(),
+                Field = "Date",
+                Operator = FilterOperator.DateTime.IsNot,
+                Value = utcnow,
+                FieldType = typeof(DateTime)
+            };
+            func = filterDefinition.GenerateFilterFunction();
+            Assert.IsFalse(func.Invoke(new Dictionary<string, object> { { "Name", "Sam" }, { "Age", 45 }, { "Date", utcnow } }));
+            Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Sam" }, { "Age", 45 }, { "Date", null } }));
+
+            // null value
+            filterDefinition = new FilterDefinition<IDictionary<string, object>>
+            {
+                Id = Guid.NewGuid(),
+                Field = "Date",
+                Operator = FilterOperator.DateTime.IsNot,
+                Value = null,
+                FieldType = typeof(DateTime)
+            };
+            func = filterDefinition.GenerateFilterFunction();
+            Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Sam" }, { "Age", 45 }, { "Date", utcnow } }));
+            Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Sam" }, { "Age", 45 }, { "Date", null } }));
+
+            #endregion
+
+            #region FilterOperator.DateTime.After
+
+            filterDefinition = new FilterDefinition<IDictionary<string, object>>
+            {
+                Id = Guid.NewGuid(),
+                Field = "Date",
+                Operator = FilterOperator.DateTime.After,
+                Value = utcnow,
+                FieldType = typeof(DateTime)
+            };
+            func = filterDefinition.GenerateFilterFunction();
+            Assert.IsFalse(func.Invoke(new Dictionary<string, object> { { "Name", "Sam" }, { "Age", 45 }, { "Date", utcnow } }));
+            Assert.IsFalse(func.Invoke(new Dictionary<string, object> { { "Name", "Sam" }, { "Age", 45 }, { "Date", null } }));
+
+            // null value
+            filterDefinition = new FilterDefinition<IDictionary<string, object>>
+            {
+                Id = Guid.NewGuid(),
+                Field = "Date",
+                Operator = FilterOperator.DateTime.After,
+                Value = null,
+                FieldType = typeof(DateTime)
+            };
+            func = filterDefinition.GenerateFilterFunction();
+            Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Sam" }, { "Age", 45 }, { "Date", utcnow } }));
+            Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Sam" }, { "Age", 45 }, { "Date", null } }));
+
+            #endregion
+
+            #region FilterOperator.DateTime.OnOrAfter
+
+            filterDefinition = new FilterDefinition<IDictionary<string, object>>
+            {
+                Id = Guid.NewGuid(),
+                Field = "Date",
+                Operator = FilterOperator.DateTime.OnOrAfter,
+                Value = utcnow,
+                FieldType = typeof(DateTime)
+            };
+            func = filterDefinition.GenerateFilterFunction();
+            Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Sam" }, { "Age", 45 }, { "Date", utcnow } }));
+            Assert.IsFalse(func.Invoke(new Dictionary<string, object> { { "Name", "Sam" }, { "Age", 45 }, { "Date", null } }));
+
+            // null value
+            filterDefinition = new FilterDefinition<IDictionary<string, object>>
+            {
+                Id = Guid.NewGuid(),
+                Field = "Date",
+                Operator = FilterOperator.DateTime.OnOrAfter,
+                Value = null,
+                FieldType = typeof(DateTime)
+            };
+            func = filterDefinition.GenerateFilterFunction();
+            Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Sam" }, { "Age", 45 }, { "Date", utcnow } }));
+            Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Sam" }, { "Age", 45 }, { "Date", null } }));
+
+            #endregion
+
+            #region FilterOperator.DateTime.Before
+
+            filterDefinition = new FilterDefinition<IDictionary<string, object>>
+            {
+                Id = Guid.NewGuid(),
+                Field = "Date",
+                Operator = FilterOperator.DateTime.Before,
+                Value = utcnow,
+                FieldType = typeof(DateTime)
+            };
+            func = filterDefinition.GenerateFilterFunction();
+            Assert.IsFalse(func.Invoke(new Dictionary<string, object> { { "Name", "Sam" }, { "Age", 45 }, { "Date", utcnow } }));
+            Assert.IsFalse(func.Invoke(new Dictionary<string, object> { { "Name", "Sam" }, { "Age", 45 }, { "Date", null } }));
+
+            // null value
+            filterDefinition = new FilterDefinition<IDictionary<string, object>>
+            {
+                Id = Guid.NewGuid(),
+                Field = "Date",
+                Operator = FilterOperator.DateTime.Before,
+                Value = null,
+                FieldType = typeof(DateTime)
+            };
+            func = filterDefinition.GenerateFilterFunction();
+            Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Sam" }, { "Age", 45 }, { "Date", utcnow } }));
+            Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Sam" }, { "Age", 45 }, { "Date", null } }));
+
+            #endregion
+
+            #region FilterOperator.DateTime.OnOrBefore
+
+            filterDefinition = new FilterDefinition<IDictionary<string, object>>
+            {
+                Id = Guid.NewGuid(),
+                Field = "Date",
+                Operator = FilterOperator.DateTime.OnOrBefore,
+                Value = utcnow,
+                FieldType = typeof(DateTime)
+            };
+            func = filterDefinition.GenerateFilterFunction();
+            Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Sam" }, { "Age", 45 }, { "Date", utcnow } }));
+            Assert.IsFalse(func.Invoke(new Dictionary<string, object> { { "Name", "Sam" }, { "Age", 45 }, { "Date", null } }));
+
+            // null value
+            filterDefinition = new FilterDefinition<IDictionary<string, object>>
+            {
+                Id = Guid.NewGuid(),
+                Field = "Date",
+                Operator = FilterOperator.DateTime.OnOrBefore,
+                Value = null,
+                FieldType = typeof(DateTime)
+            };
+            func = filterDefinition.GenerateFilterFunction();
+            Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Sam" }, { "Age", 45 }, { "Date", utcnow } }));
+            Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Sam" }, { "Age", 45 }, { "Date", null } }));
+
+            #endregion
+
+            #region FilterOperator.DateTime.Empty
+
+            filterDefinition = new FilterDefinition<IDictionary<string, object>>
+            {
+                Id = Guid.NewGuid(),
+                Field = "Date",
+                Operator = FilterOperator.DateTime.Empty,
+                Value = utcnow,
+                FieldType = typeof(DateTime)
+            };
+            func = filterDefinition.GenerateFilterFunction();
+            Assert.IsFalse(func.Invoke(new Dictionary<string, object> { { "Name", "Sam" }, { "Age", 45 }, { "Date", utcnow } }));
+            Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Sam" }, { "Age", 45 }, { "Date", null } }));
+
+            // null value
+            filterDefinition = new FilterDefinition<IDictionary<string, object>>
+            {
+                Id = Guid.NewGuid(),
+                Field = "Date",
+                Operator = FilterOperator.DateTime.Empty,
+                Value = null,
+                FieldType = typeof(DateTime)
+            };
+            func = filterDefinition.GenerateFilterFunction();
+            Assert.IsFalse(func.Invoke(new Dictionary<string, object> { { "Name", "Sam" }, { "Age", 45 }, { "Date", utcnow } }));
+            Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Sam" }, { "Age", 45 }, { "Date", null } }));
+
+            #endregion
+
+            #region FilterOperator.DateTime.NotEmpty
+
+            filterDefinition = new FilterDefinition<IDictionary<string, object>>
+            {
+                Id = Guid.NewGuid(),
+                Field = "Date",
+                Operator = FilterOperator.DateTime.NotEmpty,
+                Value = utcnow,
+                FieldType = typeof(DateTime)
+            };
+            func = filterDefinition.GenerateFilterFunction();
+            Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Sam" }, { "Age", 45 }, { "Date", utcnow } }));
+            Assert.IsFalse(func.Invoke(new Dictionary<string, object> { { "Name", "Sam" }, { "Age", 45 }, { "Date", null } }));
+
+            // null value
+            filterDefinition = new FilterDefinition<IDictionary<string, object>>
+            {
+                Id = Guid.NewGuid(),
+                Field = "Date",
+                Operator = FilterOperator.DateTime.NotEmpty,
+                Value = null,
+                FieldType = typeof(DateTime)
+            };
+            func = filterDefinition.GenerateFilterFunction();
+            Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Sam" }, { "Age", 45 }, { "Date", utcnow } }));
+            Assert.IsFalse(func.Invoke(new Dictionary<string, object> { { "Name", "Sam" }, { "Age", 45 }, { "Date", null } }));
+
+            #endregion
+
+            // null operator
+            filterDefinition = new FilterDefinition<IDictionary<string, object>>
+            {
+                Id = Guid.NewGuid(),
+                Field = "Date",
+                Operator = null,
+                Value = utcnow,
+                FieldType = typeof(DateTime)
+            };
+            func = filterDefinition.GenerateFilterFunction();
+            Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Sam" }, { "Age", 45 }, { "Date", utcnow } }));
+            Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Sam" }, { "Age", 45 }, { "Date", null } }));
+        }
+
+        [Test]
         public async Task DataGridFiltersTest()
         {
             var comp = Context.RenderComponent<DataGridFiltersTest>();
@@ -1360,6 +2221,69 @@ namespace MudBlazor.UnitTests.Components
             // toggle the filters menu (should be closed after this)
             await comp.InvokeAsync(() => dataGrid.Instance.ToggleFiltersMenu());
             dataGrid.FindAll(".filters-panel").Count.Should().Be(0);
+        }
+
+        [Test]
+        public async Task DataGridIDictionaryFiltersTest()
+        {
+            var comp = Context.RenderComponent<DataGridIDictionaryFiltersTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<IDictionary<string, object>>>();
+
+            // test filter definition on the Name property (string contains)
+            var filterDefinition = new FilterDefinition<IDictionary<string, object>>
+            {
+                Id = Guid.NewGuid(),
+                Field = "Name",
+                Operator = "contains",
+                Value = "John"
+            };
+            // test filter definition on the Age property (int >)
+            var filterDefinition2 = new FilterDefinition<IDictionary<string, object>>
+            {
+                Id = Guid.NewGuid(),
+                Field = "Age",
+                Operator = ">",
+                Value = 30
+            };
+            // test filter definition on the Status property (Enum is)
+            var filterDefinition3 = new FilterDefinition<IDictionary<string, object>>
+            {
+                Id = Guid.NewGuid(),
+                Field = "Status",
+                Operator = "is",
+                Value = Severity.Normal
+            };
+
+            await comp.InvokeAsync(() => dataGrid.Instance.FilterDefinitions.Add(filterDefinition));
+            await comp.InvokeAsync(() => dataGrid.Instance.FilterDefinitions.Add(filterDefinition2));
+            await comp.InvokeAsync(() => dataGrid.Instance.FilterDefinitions.Add(filterDefinition3));
+            await comp.InvokeAsync(() => dataGrid.Instance.OpenFilters());
+
+            var filters = dataGrid.Instance.FilterDefinitions;
+
+            // assertions for string
+            Assert.AreEqual(filterDefinition.Id, filters[0].Id);
+            Assert.AreEqual(filterDefinition.Field, filters[0].Field);
+            Assert.AreEqual(filterDefinition.Operator, filters[0].Operator);
+            Assert.AreEqual(filterDefinition.Value, filters[0].Value);
+            filters[0].Value = "Not Joe";
+            Assert.AreEqual(filterDefinition.Value, "Not Joe");
+
+            // assertions for int
+            Assert.AreEqual(filterDefinition2.Id, filters[1].Id);
+            Assert.AreEqual(filterDefinition2.Field, filters[1].Field);
+            Assert.AreEqual(filterDefinition2.Operator, filters[1].Operator);
+            Assert.AreEqual(filterDefinition2.Value, filters[1].Value);
+            filters[1].Value = 45;
+            Assert.AreEqual(filterDefinition2.Value, 45);
+
+            // assertions for Enum
+            Assert.AreEqual(filterDefinition3.Id, filters[2].Id);
+            Assert.AreEqual(filterDefinition3.Field, filters[2].Field);
+            Assert.AreEqual(filterDefinition3.Operator, filters[2].Operator);
+            Assert.AreEqual(filterDefinition3.Value, filters[2].Value);
+            filters[2].Value = Severity.Error;
+            Assert.AreEqual(filterDefinition3.Value, Severity.Error);
         }
 
         [Test]
@@ -1662,6 +2586,22 @@ namespace MudBlazor.UnitTests.Components
 
             dataGrid.Find("th").ClassList.Should().Contain("sticky-left");
             dataGrid.FindAll("th").Last().ClassList.Should().Contain("sticky-right");
+        }
+
+        [Test]
+        public async Task DataGridCellContextTest()
+        {
+            var comp = Context.RenderComponent<DataGridCellContextTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridCellContextTest.Model>>();
+
+            var item = dataGrid.Instance.Items.FirstOrDefault();
+
+            var column = dataGrid.Instance.RenderedColumns.First();
+            var cell = new Cell<DataGridCellContextTest.Model>(dataGrid.Instance, column, item);
+
+            cell.cellContext.IsSelected.Should().Be(false);
+            cell.cellContext.Actions.SetSelectedItem(true);
+            cell.cellContext.IsSelected.Should().Be(true);
         }
     }
 }

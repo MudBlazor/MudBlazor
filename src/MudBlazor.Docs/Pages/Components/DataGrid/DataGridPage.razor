@@ -133,8 +133,15 @@
          <DocsPageSection>
             <SectionHeader Title="Advanced Filtering">
                 <Description>
-                    It is possible to customize filtering by utilizing the <CodeInline>&lt;FilterTemplate</CodeInline> available on the <CodeInline>&lt;MudDataGrid></CodeInline>
+                    It is possible to customize filtering by utilizing the <CodeInline>&lt;FilterTemplate></CodeInline> available on the <CodeInline>&lt;MudDataGrid></CodeInline>
                     as well as each <CodeInline>&lt;Column></CodeInline>. In the example below, the Sign column is customized.
+                    <br><br>
+                    Inside of the <CodeInline>&lt;FilterTemplate></CodeInline> on the data grid while using <CodeInline>DataGridFilterMode.Simple</CodeInline>, the context is set to the 
+                    data grid's FilterDefinitions to allow for customizing the filtering behavior.
+                    <br><br>
+                    When using the <CodeInline>&lt;FilterTemplate></CodeInline> in the column specific filter modes, the context is a <CodeInline>DataGridFilterMode.Simple</CodeInline>
+                    which gives access to several helpful properties and actions. For example, the current <CodeInline>FilterDefinition</CodeInline> related to the column is available as well
+                    as several actions to make it easier to implement custom filter behavior such as <CodeInline>ApplyFilter</CodeInline> and <CodeInline>ClearFilter</CodeInline>.
                 </Description>
             </SectionHeader>
             <SectionContent DarkenBackground="true" Code="DataGridAdvancedFilteringExample" ShowCode="false" Block="true" FullWidth="true">
