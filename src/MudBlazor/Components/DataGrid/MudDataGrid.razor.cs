@@ -530,8 +530,8 @@ namespace MudBlazor
         {
             get
             {
-                var items = ServerData != null 
-                    ? _server_data.Items 
+                var items = ServerData != null
+                    ? _server_data.Items
                     : Items;
 
                 // Quick filtering
@@ -597,7 +597,11 @@ namespace MudBlazor
                 return Array.Empty<T>();
 
             if (ServerData != null)
-                return _server_data.Items;
+            {
+                return QuickFilter != null
+                    ? _server_data.Items.Where(QuickFilter)
+                    : _server_data.Items;
+            }
 
             return FilteredItems.Skip(n * pageSize).Take(pageSize);
         }
