@@ -90,11 +90,32 @@ namespace MudBlazor
                 SelectedItemChanged.InvokeAsync(_selectedItem).AndForget();
             }
         }
-
         /// <summary>
         /// Called whenever the selection changed
         /// </summary>
         [Parameter] public EventCallback<MudListItem<T>> SelectedItemChanged { get; set; }
+        /// <summary>
+        /// The current selected listitems.
+        /// Note: make the list Clickable for item selection to work.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.List.Selecting)]
+        public IEnumerable<MudListItem<T>> SelectedItems
+        {
+            get => _selectedItems;
+            set
+            {
+                if (_selectedItems == value)
+                    return;
+                _selectedItems = value.ToList();
+                SelectedItemsChanged.InvokeAsync(_selectedItems).AndForget();
+            }
+        }
+
+        /// <summary>
+        /// Called whenever the selection changed
+        /// </summary>
+        [Parameter] public EventCallback<List<MudListItem<T>>> SelectedItemsChanged { get; set; }
 
         /// <summary>
         /// The current selected value.
@@ -128,7 +149,7 @@ namespace MudBlazor
             }
             set
             {
-                _selectedValues = (HashSet<T>)value;
+                _selectedValues = value.ToList();
                 SelectedValuesChanged.InvokeAsync().AndForget();
             }
         }
@@ -167,9 +188,9 @@ namespace MudBlazor
         private List<MudListItem<T>> _items = new();
         private List<MudList<T>> _childLists = new();
         private MudListItem<T> _selectedItem = new();
-        //private List<MudListItem> _selectedItems;
-        private T _selectedValue;
-        private HashSet<T> _selectedValues = new();
+        private List<MudListItem<T>> _selectedItems = new();
+        private T _selectedValue; 
+        private List<T> _selectedValues = new();
 
         internal void Register(MudListItem<T> item)
         {
@@ -177,11 +198,12 @@ namespace MudBlazor
             if (CanSelect && SelectedValue != null && object.Equals(item.Value, SelectedValue))
             {
                 item.SetSelected(true);
+                //TODO check if item is the selectable for a nested list, and deselect this.
                 //SelectedItem = item;
                 //SelectedItemChanged.InvokeAsync(item);
             }
         }
-
+        
         internal void Unregister(MudListItem<T> item)
         {
             _items.Remove(item);
@@ -197,68 +219,64 @@ namespace MudBlazor
             _childLists.Remove(child);
         }
 
-        internal void SetSelectedValue(T value, bool force = false)
+        
+
+        internal void SetSelectedItem(MudListItem<T> item, bool force = false)
         {
             if ((!CanSelect || !Clickable) && !force)
                 return;
-            //if (object.Equals(_selectedValue, value))
+            //deselect, clear last value
+            //if (item.Equals(_selectedItem))
+            //{
+            //    ClearSelectedItem(item);
             //    return;
-
-            if (!MultiSelection)
-            {
-
-                foreach (var listItem in _items)
-                {
-                    if (listItem.Value.ToString() != value.ToString())
-                    {
-                        listItem.SetSelected(false);
-                    }
-                    else
-                    {
-                        listItem.SetSelected(true);
-                    }
-                }
-                foreach (var childList in _childLists)
-                {
-                    foreach (var listItem in childList._items)
-                    {
-                        if (listItem.Value.ToString() != value.ToString())
-                        {
-                            listItem.SetSelected(false);
-                        }
-                        else
-                        {
-                            listItem.SetSelected(true);
-                        }
-                    }
-                }
-
-                ParentList?.SetSelectedValue(value);
-            }
-        }
-
-        internal void SetSelectedValue(MudListItem<T> item, bool force = false)
-        {
-            if ((!CanSelect || !Clickable) && !force)
-                return;
-            if (item.Equals(_selectedItem))
-                return;
-
+            //}
+            
             SelectedItem = item;
             SelectedValue = item.Value;
 
+            //create a list of all MudListItems to use for selecting the right item
+            var items = CollectAllMudListItems();
+            
             if (!MultiSelection)
             {
-
-                var items = CollectAllMudListItems();
-                if (!MultiSelection)
-                {
-                    DeSelectValues(items);
-                    items.FirstOrDefault(x => x.Value.Equals(item.Value)).SetSelected(true);
-
-                    ParentList?.SetSelectedValue(item);
-                }
+                RemoveSelectedCSS(items);
+                
+                var selectedItem = items.FirstOrDefault(x => x.Value.Equals(item.Value));
+                if (selectedItem != null)
+                    selectedItem.SetSelected(true);
             }
+            else
+            {
+                if (item.IsSelected)
+                {
+                    item.SetSelected(false);
+                    SelectedItems = SelectedItems.Where(x => !x.Equals(item));
+                    SelectedValues = SelectedValues.Where(x => !x.Equals(item.Value));
+                }
+                else
+                {
+                    item.SetSelected(true);
+                    SelectedItems = SelectedItems.Append(item);
+                    SelectedValues = SelectedValues.Append(item.Value);
+                }
+
+                RemoveSelectedCSS(items.Where(x => !x.IsSelected).ToList());
+                
+            }
+            if (ParentList != null && ParentList.SelectedItem != SelectedItem)
+                ParentList?.SetSelectedItem(item);
+
+            foreach (var list in _childLists)
+            {
+                list.SetSelectedItem(item);
+            }
+        }
+        internal void ClearSelectedItem(MudListItem<T> item, bool force = false)
+        {
+            item.SetSelected(false);
+            SelectedItem = null;
+            SelectedValue = default(T);
         }
 
         internal bool CanSelect { get; private set; }
@@ -268,7 +286,8 @@ namespace MudBlazor
             ParametersChanged = null;
             ParentList?.Unregister(this);
         }
-        private void DeSelectValues(List<MudListItem<T>> items)
+        
+        private void RemoveSelectedCSS(List<MudListItem<T>> items)
         {
             foreach (var listItem in items)
                 listItem?.SetSelected(false);

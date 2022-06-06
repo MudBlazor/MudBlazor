@@ -1,11 +1,12 @@
 ﻿@namespace MudBlazor.Docs.Examples
+@inject ISnackbar Snackbar
 
 <MudPaper Width="300px">
-    <MudList T="int" Clickable="true" @bind-SelectedItem="selectedItem" @bind-SelectedValue="selectedValue" MultiSelection="true">
+    <MudList T="int" Clickable="true" SelectedValuesChanged="GetSelectedValues" MultiSelection="true">
         <MudListSubheader>
             Your drink:
             <MudChip Color="Color.Secondary">
-                @(selectedItem?.Text ?? "You are dry") (@(selectedValue.ToString()))
+                
             </MudChip>
         </MudListSubheader>
         <MudListItem Text="Sparkling Water" Value="1" />
@@ -26,9 +27,16 @@
     </MudList>
 </MudPaper>
 
-
+<MudText>Selected Values: @_values</MudText>
 @code
 {
-    MudListItem<int> selectedItem;
-    int selectedValue = 1;
+    //MudListItem<int> selectedItem;
+    string _values = "";
+    IEnumerable<int> selectedValue = new HashSet<int>();
+
+    private void GetSelectedValues()
+    {
+        Snackbar.Add("Method invoke");
+        _values = string.Join(", ", selectedValue);
+    }
 }

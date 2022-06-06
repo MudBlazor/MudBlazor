@@ -245,21 +245,15 @@ namespace MudBlazor
                 }
                 else if (Href != null)
                 {
-                    MudList?.SetSelectedValue(this);
+                    MudList?.SetSelectedItem(this);
                     OnClick.InvokeAsync(ev);
                     UriHelper.NavigateTo(Href, ForceLoad);
                 }
                 else if (MudList?.Clickable == true)
-                {                    
-                    MudList?.SetSelectedValue(this);
+                {
+                    MudList?.SetSelectedItem(this);
                     OnClick.InvokeAsync(ev);
                 }
-                    
-                    //if (Command?.CanExecute(CommandParameter) ?? false)
-                    //{
-                    //    Command.Execute(CommandParameter);
-                    //}
-                
             }
             else
             {
