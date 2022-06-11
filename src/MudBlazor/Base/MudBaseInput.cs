@@ -11,6 +11,8 @@ namespace MudBlazor
     {
         protected MudBaseInput() : base(new DefaultConverter<T>()) { }
 
+        string _backUpText;
+
         /// <summary>
         /// If true, the input element will be disabled.
         /// </summary>
@@ -448,9 +450,13 @@ namespace MudBlazor
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
             //Only focus automatically after the first render cycle!
-            if (firstRender && AutoFocus)
+            if (firstRender)
             {
-                await FocusAsync();
+                _backUpText = Text;
+                if (AutoFocus)
+                {
+                    await FocusAsync();
+                }
             }
         }
 
@@ -462,7 +468,7 @@ namespace MudBlazor
 
         protected override void ResetValue()
         {
-            SetTextAsync(null, updateValue: true).AndForget();
+            SetTextAsync(_backUpText, updateValue: true).AndForget();
             base.ResetValue();
         }
     }
