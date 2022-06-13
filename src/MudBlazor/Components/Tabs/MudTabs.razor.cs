@@ -262,6 +262,13 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.Tabs.Behavior)]
         public TabHeaderPosition TabPanelHeaderPosition { get; set; } = TabHeaderPosition.After;
+        
+        /// <summary>
+        /// Fired when a panel gets activated. Returned boolean controls wether activation should be canceled or not.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Tabs.Behavior)]
+        public Func<int, Task<bool>> OnPanelActivation { get; set; }
 
         /// <summary>
         /// Can be used in derived class to add a class to the main container. If not overwritten return an empty string
@@ -399,14 +406,18 @@ namespace MudBlazor
                 ActivatePanel(panel, null, ignoreDisabledState);
         }
 
-        private void ActivatePanel(MudTabPanel panel, MouseEventArgs ev, bool ignoreDisabledState = false)
+        private async void ActivatePanel(MudTabPanel panel, MouseEventArgs ev, bool ignoreDisabledState = false)
         {
             if (!panel.Disabled || ignoreDisabledState)
             {
-                ActivePanelIndex = _panels.IndexOf(panel);
+                var index = _panels.IndexOf(panel);
+                
+                if (OnPanelActivation != null && await OnPanelActivation.Invoke(index)) return;
+                
+                ActivePanelIndex = index;
 
                 if (ev != null)
-                    ActivePanel.OnClick.InvokeAsync(ev);
+                    await ActivePanel.OnClick.InvokeAsync(ev);
 
                 CenterScrollPositionAroundSelectedItem();
                 SetSliderState();
