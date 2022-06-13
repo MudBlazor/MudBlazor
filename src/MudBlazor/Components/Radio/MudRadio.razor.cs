@@ -16,6 +16,7 @@ namespace MudBlazor
         new CssBuilder("mud-radio")
             .AddClass($"mud-disabled", Disabled)
             .AddClass($"mud-radio-content-placement-{ConvertPlacement(Placement).ToDescriptionString()}")
+            .AddClass($"mud-checked", Checked)
             .AddClass(Class)
             .Build();
 
