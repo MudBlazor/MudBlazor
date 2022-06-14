@@ -1,0 +1,40 @@
+﻿@namespace MudBlazor
+@using MudBlazor.Utilities
+@inherits MudComponentBase
+
+<div @attributes="UserAttributes" class="@Classname" style="@Style">
+    @ChildContent
+</div>
+
+@code {
+    protected string Classname =>
+    new CssBuilder("mud-section")
+        .AddClass($"mud-section-col-start-{Column.ToString()}")
+        .AddClass($"mud-section-col-end-{(Column + ColSpan).ToString()}")
+        .AddClass($"mud-section-row-start-{Row.ToString()}")
+        .AddClass($"mud-section-row-end-{(Row + RowSpan).ToString()}")
+        .AddClass(Class)
+    .Build();
+
+    [Parameter]
+    [Category(CategoryTypes.Item.Appearance)]
+    public RenderFragment ChildContent { get; set; }
+
+    [Parameter]
+    [Category(CategoryTypes.Item.Appearance)]
+    public int Column { get; set; } = 1;
+
+    [Parameter]
+    [Category(CategoryTypes.Item.Appearance)]
+    public int ColSpan { get; set; } = 1;
+
+    [Parameter]
+    [Category(CategoryTypes.Item.Appearance)]
+    public int Row { get; set; } = 1;
+
+    [Parameter]
+    [Category(CategoryTypes.Item.Appearance)]
+    public int RowSpan { get; set; } = 1;
+
+}
+

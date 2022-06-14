@@ -1,0 +1,36 @@
+﻿@namespace MudBlazor
+@using MudBlazor.Utilities
+@inherits MudComponentBase
+
+
+<div @attributes="UserAttributes" class="@Classname" style="@Style">
+    @ChildContent
+</div>
+
+
+@code {
+
+    protected string Classname =>
+    new CssBuilder("mud-page")
+        .AddClass($"mud-page-column-{Column.ToString()}")
+        .AddClass($"mud-page-row-{Row.ToString()}")
+        .AddClass(Class)
+    .Build();
+
+    [Parameter]
+    [Category(CategoryTypes.Item.Appearance)]
+    public RenderFragment ChildContent { get; set; }
+
+    [Parameter]
+    [Category(CategoryTypes.Item.Appearance)]
+    public int Column { get; set; } = 4;
+
+    [Parameter]
+    [Category(CategoryTypes.Item.Appearance)]
+    public int Row { get; set; } = 4;
+
+    [Parameter]
+    [Category(CategoryTypes.Item.Appearance)]
+    public Height Height { get; set; } = Height.Custom;
+
+}

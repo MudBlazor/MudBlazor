@@ -128,6 +128,12 @@
     <Content Remove="excubowebcompiler.json" />
   </ItemGroup>
   <ItemGroup>
+    <None Remove="Pages\Components\Page\Code\GridBasicExampleCode.html" />
+    <None Remove="Pages\Components\Page\Code\GridBuilderExampleCode.html" />
+    <None Remove="Pages\Components\Page\Code\GridSpacingExampleCode.html" />
+    <None Remove="Pages\Components\Page\Code\GridWithBreakpointsExampleCode.html" />
+  </ItemGroup>
+  <ItemGroup>
     <Folder Include="wwwroot\images\landingpage" />
   </ItemGroup>
 

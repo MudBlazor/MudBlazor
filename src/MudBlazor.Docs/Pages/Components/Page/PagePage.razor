@@ -1,0 +1,39 @@
+﻿@page "/components/page"
+
+<DocsPage>
+    <DocsPageHeader Title="Page" SubTitle="The Page component uses the power of CSS grid and helps build layout quickly.">
+        <Description>            
+            MudPage supports up to 12 column and row layout.<br /><br />
+        </Description>
+    </DocsPageHeader>
+    <DocsPageContent>
+
+        <DocsPageSection>
+            <SectionHeader Title="Usage">
+                <Description>MudPage designed as the outer layout.</Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="PageBasicExample" ShowCode="false">
+                <PageBasicExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="ColSpan and RowSpan">
+                <Description>You can extend sections with <CodeInline>ColSpan</CodeInline> and/or <CodeInline>RowSpan</CodeInline></Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="PageSpanExample" ShowCode="false">
+                <PageSpanExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Playground">
+                <Description>Try the MudPage!</Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="PagePlaygroundExample" ShowCode="false">
+                <PagePlaygroundExample />
+            </SectionContent>
+        </DocsPageSection>
+
+    </DocsPageContent>
+</DocsPage>
