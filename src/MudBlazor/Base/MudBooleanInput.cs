@@ -8,8 +8,6 @@ namespace MudBlazor
     {
         public MudBooleanInput() : base(new BoolConverter<T>()) { }
 
-        T _backUpValue;
-
         /// <summary>
         /// If true, the input will be disabled.
         /// </summary>
@@ -87,21 +85,6 @@ namespace MudBlazor
         protected override bool HasValue(T value)
         {
             return (BoolValue == true);
-        }
-
-        protected override Task OnAfterRenderAsync(bool firstRender)
-        {
-            if (firstRender)
-            {
-                _backUpValue = _value;
-            }
-            return base.OnAfterRenderAsync(firstRender);
-        }
-
-        protected override void ResetValue()
-        {
-            SetBoolValueAsync(Converter.Set(_backUpValue)).AndForget();
-            base.ResetValue();
         }
 
     }
