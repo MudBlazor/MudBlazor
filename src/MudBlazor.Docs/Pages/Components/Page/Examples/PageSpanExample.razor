@@ -1,7 +1,7 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
-<MudPage Row="7" Column="7" Style="height: 300px">
-    <MudSection Column="1" ColSpan="7">
+<MudPage Column="_pageColumn" Row="_pageRow" Style="height: 300px">
+    <MudSection Column="1" ColSpan="_pageColumn">
         <MudPaper Class="d-flex align-center justify-center mud-theme-primary">Header</MudPaper>
     </MudSection>
 
@@ -13,7 +13,12 @@
         <MudPaper Class="d-flex align-center justify-center mud-theme-tertiary">Content</MudPaper>
     </MudSection>
 
-    <MudSection Column="1" ColSpan="7" Row="6" RowSpan="2">
+    <MudSection Column="1" ColSpan="_pageColumn" Row="@(_pageRow - 1)" RowSpan="2">
         <MudPaper Class="d-flex align-center justify-center mud-theme-primary">Footer</MudPaper>
     </MudSection>
 </MudPage>
+
+@code{
+    int _pageColumn = 7;
+    int _pageRow = 7;
+}

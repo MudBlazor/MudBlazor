@@ -2,15 +2,15 @@
 
 <DocsPage>
     <DocsPageHeader Title="Page" SubTitle="The Page component uses the power of CSS grid and helps build layout quickly.">
-        <Description>            
-            MudPage supports up to 12 column and row layout.<br /><br />
+        <Description>
+
         </Description>
     </DocsPageHeader>
     <DocsPageContent>
 
         <DocsPageSection>
             <SectionHeader Title="Usage">
-                <Description>MudPage designed as the outer layout.</Description>
+                <Description>MudPage divides the area inside it into equal parts at the specified number ratio. Supports up to 12 <CodeInline>Column</CodeInline> and <CodeInline>Row</CodeInline>.</Description>
             </SectionHeader>
             <SectionContent DarkenBackground="true" Code="PageBasicExample" ShowCode="false">
                 <PageBasicExample />
@@ -19,10 +19,39 @@
 
         <DocsPageSection>
             <SectionHeader Title="ColSpan and RowSpan">
-                <Description>You can extend sections with <CodeInline>ColSpan</CodeInline> and/or <CodeInline>RowSpan</CodeInline></Description>
+                <Description>
+                    MudPage and MudSection can perfectly define your page layout as a blueprint.<br /><br />
+                    You can extend sections with <CodeInline>ColSpan</CodeInline> and/or <CodeInline>RowSpan</CodeInline>.<br /><br />
+                    This example shows how you can create dynamic header and footer sections.
+                </Description>
             </SectionHeader>
             <SectionContent DarkenBackground="true" Code="PageSpanExample" ShowCode="false">
                 <PageSpanExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Nested Sections">
+                <Description>
+                    MudPage supports nested sections even it has colspan or rowspan. Each sub-section adjusts itself according to page Column and Row parameters.<br /><br />
+                    This example shows the sections (blue bordered) and the sub-sections (red bordered).
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="PageNestedExample" ShowCode="false">
+                <PageNestedExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Page Height">
+                <Description>
+                    In this example, the vertical blue line demonstrates a full (browser content) screen height.<br />
+                    While you can give a fixed or proportional value with the <CodeInline>Height</CodeInline> parameter, you can directly activate the full page feature with the <CodeInline>FullScreen</CodeInline> parameter.<br /><br />
+                    Note: FullScreen sets a min-height. This means FullScreen parameter overrides Height if height value is smaller than fullscreen, otherwise height overrides fullscreen.
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="PageHeightExample" ShowCode="false">
+                <PageHeightExample />
             </SectionContent>
         </DocsPageSection>
 

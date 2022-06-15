@@ -2,10 +2,10 @@
 
 namespace MudBlazor
 {
-    public enum Height
+    public enum FullScreen
     {
-        [Description("custom")]
-        Custom,
+        [Description("none")]
+        None,
         [Description("full")]
         Full,
         [Description("full-without-appbar")]

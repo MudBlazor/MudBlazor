@@ -2,6 +2,7 @@
 
 .mud-page {
     display: grid;
+    box-sizing: border-box;
     width: 100%;
 
     &.mud-page-height-full {
