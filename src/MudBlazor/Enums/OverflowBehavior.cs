@@ -7,7 +7,7 @@ namespace MudBlazor
         [Description("flip-never")]
         FlipNever,
         [Description("flip-onopen")]
-        FilpOnOpen,
+        FlipOnOpen,
         [Description("flip-always")]
         FlipAlways,
     }
