@@ -7,25 +7,30 @@
 // See https://github.com/Blazored
 
 using System;
+using System.Threading.Tasks;
 using System.Collections.ObjectModel;
 using System.Linq;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Routing;
+using Microsoft.AspNetCore.Components.Web;
+using MudBlazor.Services;
 
 namespace MudBlazor
 {
-    public partial class MudDialogProvider : IDisposable
+    public partial class MudDialogProvider : IDisposable, IAsyncDisposable
     {
+        private string _elementId = "dialogs_" + Guid.NewGuid().ToString().Substring(0, 8);
         [Inject] private IDialogService DialogService { get; set; }
         [Inject] private NavigationManager NavigationManager { get; set; }
 
-        [Parameter] [Category(CategoryTypes.Dialog.Behavior)] public bool? NoHeader { get; set; }
-        [Parameter] [Category(CategoryTypes.Dialog.Behavior)] public bool? CloseButton { get; set; }
-        [Parameter] [Category(CategoryTypes.Dialog.Behavior)] public bool? DisableBackdropClick { get; set; }
-        [Parameter] [Category(CategoryTypes.Dialog.Behavior)] public bool? CloseOnEscapeKey { get; set; }
-        [Parameter] [Category(CategoryTypes.Dialog.Appearance)] public bool? FullWidth { get; set; }
-        [Parameter] [Category(CategoryTypes.Dialog.Appearance)] public DialogPosition? Position { get; set; }
-        [Parameter] [Category(CategoryTypes.Dialog.Appearance)] public MaxWidth? MaxWidth { get; set; }
+        [Parameter][Category(CategoryTypes.Dialog.Behavior)] public bool? NoHeader { get; set; }
+        [Parameter][Category(CategoryTypes.Dialog.Behavior)] public bool? CloseButton { get; set; }
+        [Parameter][Category(CategoryTypes.Dialog.Behavior)] public bool? DisableBackdropClick { get; set; }
+        [Parameter][Category(CategoryTypes.Dialog.Behavior)] public bool? CloseOnEscapeKey { get; set; }
+        [Parameter][Category(CategoryTypes.Dialog.Appearance)] public bool? FullWidth { get; set; }
+        [Parameter][Category(CategoryTypes.Dialog.Appearance)] public DialogPosition? Position { get; set; }
+        [Parameter][Category(CategoryTypes.Dialog.Appearance)] public MaxWidth? MaxWidth { get; set; }
+        [Inject] private IKeyInterceptor _keyInterceptor { get; set; }
 
         private readonly Collection<IDialogReference> _dialogs = new();
         private readonly DialogOptions _globalDialogOptions = new();
@@ -43,6 +48,33 @@ namespace MudBlazor
             _globalDialogOptions.Position = Position;
             _globalDialogOptions.FullWidth = FullWidth;
             _globalDialogOptions.MaxWidth = MaxWidth;
+        }
+
+        protected override async Task OnAfterRenderAsync(bool firstRender)
+        {
+            if (firstRender)
+            {
+                //Since CloseOnEscapeKey is the only thing to be handled, turn interceptor off
+                await _keyInterceptor.Connect(_elementId, new KeyInterceptorOptions()
+                {
+                    TargetClass = "mud-dialog",
+                    Keys = {
+                            new KeyOptions { Key="Escape", SubscribeDown = true },
+                        },
+                });
+                _keyInterceptor.KeyDown += HandleKeyDown;
+            }
+            await base.OnAfterRenderAsync(firstRender);
+        }
+
+        internal void HandleKeyDown(KeyboardEventArgs args)
+        {
+            // get top level dialog instance
+            var topLevelDialog = _dialogs.LastOrDefault()?.Instance;
+            // check if the top level dialog handles keyboard events
+            var topDialogKeyboardHandler = topLevelDialog as IDialogKeyboardHandler;
+            // if yes, forward keyboard events
+            topDialogKeyboardHandler?.HandleKeyDown(args);
         }
 
         internal void DismissInstance(Guid id, DialogResult result)
@@ -91,6 +123,16 @@ namespace MudBlazor
             {
                 DialogService.OnDialogInstanceAdded -= AddInstance;
                 DialogService.OnDialogCloseRequested -= DismissInstance;
+            }
+        }
+
+        public async ValueTask DisposeAsync()
+        {
+            if (_keyInterceptor != null)
+            {
+                _keyInterceptor.KeyDown -= HandleKeyDown;
+                await _keyInterceptor.Disconnect();
+                _keyInterceptor = null;
             }
         }
     }

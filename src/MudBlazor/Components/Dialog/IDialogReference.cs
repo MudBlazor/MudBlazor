@@ -24,6 +24,14 @@ namespace MudBlazor
 
         bool Dismiss(DialogResult result);
 
+        /// <summary>
+        /// Reference to the MudDialogInstance
+        /// </summary>
+        object Instance { get; set; }
+
+        /// <summary>
+        /// Reference to the MudDialog component
+        /// </summary>
         object Dialog { get; }
 
         void InjectRenderFragment(RenderFragment rf);

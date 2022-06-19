@@ -99,6 +99,7 @@ namespace MudBlazor
                 builder.AddAttribute(2, "Title", title);
                 builder.AddAttribute(3, "Content", dialogContent);
                 builder.AddAttribute(4, "Id", dialogReference.Id);
+                builder.AddComponentReferenceCapture(5, inst => dialogReference.Instance = inst);
                 builder.CloseComponent();
             });
             dialogReference.InjectRenderFragment(dialogInstance);

@@ -11,12 +11,9 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    public partial class MudDialogInstance : MudComponentBase
+    public partial class MudDialogInstance : MudComponentBase, IDialogKeyboardHandler
     {
         private DialogOptions _options = new();
-        private string _elementId = "dialog_" + Guid.NewGuid().ToString().Substring(0, 8);
-
-        [Inject] private IKeyInterceptor _keyInterceptor { get; set; }
         [CascadingParameter] public bool RightToLeft { get; set; }
         [CascadingParameter] private MudDialogProvider Parent { get; set; }
         [CascadingParameter] private DialogOptions GlobalDialogOptions { get; set; } = new DialogOptions();
@@ -72,27 +69,7 @@ namespace MudBlazor
             ConfigureInstance();
         }
 
-        protected override async Task OnAfterRenderAsync(bool firstRender)
-        {
-            if (firstRender)
-            {
-                //Since CloseOnEscapeKey is the only thing to be handled, turn interceptor off
-                if (CloseOnEscapeKey)
-                {
-                    await _keyInterceptor.Connect(_elementId, new KeyInterceptorOptions()
-                    {
-                        TargetClass = "mud-dialog",
-                        Keys = {
-                            new KeyOptions { Key="Escape", SubscribeDown = true },
-                        },
-                    });
-                    _keyInterceptor.KeyDown += HandleKeyDown;
-                }
-            }
-            await base.OnAfterRenderAsync(firstRender);
-        }
-
-        internal void HandleKeyDown(KeyboardEventArgs args)
+        public void HandleKeyDown(KeyboardEventArgs args)
         {
              switch (args.Key)
             {

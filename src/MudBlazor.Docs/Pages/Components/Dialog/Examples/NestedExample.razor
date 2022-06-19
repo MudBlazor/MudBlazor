@@ -1,0 +1,10 @@
+﻿@namespace MudBlazor.Docs.Examples
+@inject IDialogService DialogService
+<MudButton OnClick="OpenDialog" Variant="Variant.Filled" Color="Color.Primary">
+    Nested Dialog Demo
+</MudButton>
+<MudSwitch @bind-Checked=@closeOnEscapeKey>CloseOnEscapeKey</MudSwitch>
+@code {
+    bool closeOnEscapeKey = true;
+    Task OpenDialog() => NestedExample_Dialog.ShowNested(DialogService, level: 1, closeOnEscapeKey: closeOnEscapeKey);
+}

@@ -1,0 +1,38 @@
+﻿@namespace MudBlazor.Docs.Examples
+@inject IDialogService DialogService
+<MudDialog DefaultFocus="DefaultFocus.LastChild">
+    <DialogContent>
+        @ValueText
+        <MudSwitch @bind-Checked=@CloseOnEscapeKey>CloseOnEscapeKey</MudSwitch>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">Cancel</MudButton>
+        <MudButton Color="Color.Primary" OnClick="ShowNested">Show Nested</MudButton>
+    </DialogActions>
+</MudDialog>
+@code {
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+    [Parameter] public string Value { get; set; }
+    [Parameter] public int Level { get; set; }
+    [Parameter] public bool CloseOnEscapeKey { get; set; }
+    string ValueText => Value?.ToString() ?? "NULL";
+    Task ShowNested() => ShowNested(DialogService, Level + 1, CloseOnEscapeKey);
+    public static async Task ShowNested(IDialogService DialogService, int level, bool closeOnEscapeKey)
+    {
+        var value = $"hello level {level}";
+        await DialogService.Show<NestedExample_Dialog>(
+            title: $"Nested Dialog {level}"
+            , options: new DialogOptions
+                {
+                    CloseOnEscapeKey = closeOnEscapeKey,
+                }
+            , parameters: new DialogParameters
+                {
+                    [nameof(Level)] = level,
+                    [nameof(Value)] = value,
+                    [nameof(CloseOnEscapeKey)] = closeOnEscapeKey,
+                }
+        ).Result;
+    }
+    void Cancel() => MudDialog.Cancel();
+}

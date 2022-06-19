@@ -1,10 +1,11 @@
 ﻿@namespace MudBlazor
-
-<CascadingValue Value="this" IsFixed="true">
-    <CascadingValue Value="_globalDialogOptions">
-        @foreach (var dialogReference in _dialogs.Where(x => !x.Result.IsCompleted))
-        {
-            @dialogReference.RenderFragment
-        }
+<div id="@_elementId">
+    <CascadingValue Value="this" IsFixed="true">
+        <CascadingValue Value="_globalDialogOptions">
+            @foreach (var dialogReference in _dialogs.Where(x => !x.Result.IsCompleted))
+            {
+                @dialogReference.RenderFragment
+            }
+        </CascadingValue>
     </CascadingValue>
-</CascadingValue>
+</div>

@@ -43,6 +43,7 @@ namespace MudBlazor
         public object Dialog { get; private set; }
         public RenderFragment RenderFragment { get; set; }
 
+        public object Instance { get; set; }
         public Task<DialogResult> Result => _resultCompletion.Task;
 
         public bool AreParametersRendered { get; set; }
