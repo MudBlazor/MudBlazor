@@ -20,6 +20,8 @@ namespace MudBlazor
     public partial class MudDialogProvider : IDisposable, IAsyncDisposable
     {
         private string _elementId = "dialogs_" + Guid.NewGuid().ToString().Substring(0, 8);
+        private IKeyInterceptor _keyInterceptor;
+        [Inject] private IKeyInterceptorFactory _keyInterceptorFactory { get; set; }
         [Inject] private IDialogService DialogService { get; set; }
         [Inject] private NavigationManager NavigationManager { get; set; }
 
@@ -30,7 +32,6 @@ namespace MudBlazor
         [Parameter][Category(CategoryTypes.Dialog.Appearance)] public bool? FullWidth { get; set; }
         [Parameter][Category(CategoryTypes.Dialog.Appearance)] public DialogPosition? Position { get; set; }
         [Parameter][Category(CategoryTypes.Dialog.Appearance)] public MaxWidth? MaxWidth { get; set; }
-        [Inject] private IKeyInterceptor _keyInterceptor { get; set; }
 
         private readonly Collection<IDialogReference> _dialogs = new();
         private readonly DialogOptions _globalDialogOptions = new();
@@ -54,7 +55,7 @@ namespace MudBlazor
         {
             if (firstRender)
             {
-                //Since CloseOnEscapeKey is the only thing to be handled, turn interceptor off
+                _keyInterceptor = _keyInterceptorFactory.Create();
                 await _keyInterceptor.Connect(_elementId, new KeyInterceptorOptions()
                 {
                     TargetClass = "mud-dialog",
