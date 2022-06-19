@@ -18,7 +18,7 @@ namespace MudBlazor.UnitTests.Components
         public async Task MessageBox_Should_ReturnTrue(int clickButtonIndex, bool? expectedResult)
         {
             var comp = Context.RenderComponent<MudDialogProvider>();
-            comp.Markup.Trim().Should().BeEmpty();
+            comp.Markup.Trim().Should().Match("<div id=\"dialogs_*\"></div>");
             var service = Context.Services.GetService<IDialogService>() as DialogService;
             service.Should().NotBe(null);
             // open mbox
@@ -38,7 +38,7 @@ namespace MudBlazor.UnitTests.Components
 
             // close by click on Great
             comp.FindAll("button")[clickButtonIndex].Click();
-            comp.Markup.Trim().Should().BeEmpty();
+            comp.Markup.Trim().Should().Match("<div id=\"dialogs_*\"></div>");
             yesNoCancel.Result.Should().Be(expectedResult);
         }
 
@@ -49,7 +49,7 @@ namespace MudBlazor.UnitTests.Components
         public async Task MessageBox_Should_ReturnTruewithMarkupVariant(int clickButtonIndex, bool? expectedResult)
         {
             var comp = Context.RenderComponent<MudDialogProvider>();
-            comp.Markup.Trim().Should().BeEmpty();
+            comp.Markup.Trim().Should().Match("<div id=\"dialogs_*\"></div>");
             var service = Context.Services.GetService<IDialogService>() as DialogService;
             service.Should().NotBe(null);
             // open mbox
@@ -69,7 +69,7 @@ namespace MudBlazor.UnitTests.Components
 
             // close by click on Great
             comp.FindAll("button")[clickButtonIndex].Click();
-            comp.Markup.Trim().Should().BeEmpty();
+            comp.Markup.Trim().Should().Match("<div id=\"dialogs_*\"></div>");
             yesNoCancel.Result.Should().Be(expectedResult);
         }
     }
