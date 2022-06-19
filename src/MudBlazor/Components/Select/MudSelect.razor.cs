@@ -1,4 +1,4 @@
-// Copyright (c) MudBlazor 2021
+﻿// Copyright (c) MudBlazor 2021
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
@@ -22,14 +22,14 @@ namespace MudBlazor
         private bool _dense;
         private string multiSelectionText;
         private bool? _selectAllChecked;
+        private IKeyInterceptor _keyInterceptor;
 
         protected string Classname =>
             new CssBuilder("mud-select")
             .AddClass(Class)
             .Build();
 
-        [Inject] private IKeyInterceptor _keyInterceptor { get; set; }
-
+        [Inject] private IKeyInterceptorFactory KeyInterceptorFactory { get; set; }
         [Inject] IScrollManager ScrollManager { get; set; }
 
         private string _elementId = "select_" + Guid.NewGuid().ToString().Substring(0, 8);
@@ -722,6 +722,8 @@ namespace MudBlazor
         {
             if (firstRender)
             {
+                _keyInterceptor = KeyInterceptorFactory.Create();
+
                 await _keyInterceptor.Connect(_elementId, new KeyInterceptorOptions()
                 {
                     //EnableLogging = true,
@@ -1030,11 +1032,12 @@ namespace MudBlazor
 
         protected override void Dispose(bool disposing)
         {
-            if (disposing)
-            {
-                _keyInterceptor.Dispose();
-            }
             base.Dispose(disposing);
+
+            if (disposing == true)
+            {
+                _keyInterceptor?.Dispose();
+            }
         }
 
         /// <summary>

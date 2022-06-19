@@ -71,7 +71,7 @@ namespace MudBlazor
 
         public void HandleKeyDown(KeyboardEventArgs args)
         {
-             switch (args.Key)
+            switch (args.Key)
             {
                 case "Escape":
                     if (CloseOnEscapeKey)
@@ -277,6 +277,7 @@ namespace MudBlazor
         }
 
         private MudDialog _dialog;
+
         public void Register(MudDialog dialog)
         {
             if (dialog == null)

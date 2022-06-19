@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
@@ -22,6 +23,8 @@ namespace MudBlazor.Services
         private Guid _id = Guid.NewGuid();
         private ResizeObserverOptions _options;
 
+        [DynamicDependency(nameof(OnSizeChanged))]
+        [DynamicDependency(DynamicallyAccessedMemberTypes.All, typeof(SizeChangeUpdateInfo))]
         public ResizeObserver(IJSRuntime jsRuntime, ResizeObserverOptions options)
         {
             _dotNetRef = DotNetObjectReference.Create(this);
@@ -52,7 +55,7 @@ namespace MudBlazor.Services
                 _cachedValueIds.Add(id, item);
             }
 
-            var result = await _jsRuntime.InvokeAsync<IEnumerable<BoundingClientRect>>("mudResizeObserver.connect", _id, _dotNetRef, filteredElements, elementIds, _options);
+            var result = await _jsRuntime.InvokeAsync<IEnumerable<BoundingClientRect>>("mudResizeObserver.connect", _id, _dotNetRef, filteredElements, elementIds, _options) ?? Array.Empty<BoundingClientRect>();
             var counter = 0;
             foreach (var item in result)
             {
