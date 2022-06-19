@@ -47,7 +47,7 @@ namespace MudBlazor.UnitTests.Components
         public async Task SimpleTest()
         {
             var comp = Context.RenderComponent<MudDialogProvider>();
-            comp.Markup.Trim().Should().BeEmpty();
+            comp.Markup.Trim().Should().Match("<div id=\"dialogs_*\"></div>");
             var service = Context.Services.GetService<IDialogService>() as DialogService;
             service.Should().NotBe(null);
             IDialogReference dialogReference = null;
@@ -59,7 +59,7 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("p.mud-typography").TrimmedText().Should().Be("Wabalabadubdub!");
             // close by click outside the dialog
             comp.Find("div.mud-overlay").Click();
-            comp.Markup.Trim().Should().BeEmpty();
+            comp.Markup.Trim().Should().Match("<div id=\"dialogs_*\"></div>");
             var result = await dialogReference.Result;
             result.Cancelled.Should().BeTrue();
             // open simple test dialog
@@ -86,7 +86,7 @@ namespace MudBlazor.UnitTests.Components
         public async Task InlineDialogTest()
         {
             var comp = Context.RenderComponent<MudDialogProvider>();
-            comp.Markup.Trim().Should().BeEmpty();
+            comp.Markup.Trim().Should().Match("<div id=\"dialogs_*\"></div>");
             var service = Context.Services.GetService<IDialogService>() as DialogService;
             service.Should().NotBe(null);
             // displaying the component with the inline dialog only renders the open button
@@ -103,7 +103,7 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("div.mud-dialog").GetAttribute("class").Should().Contain("mud-dialog-width-full");
             // close by click on ok button
             comp.Find("button").Click();
-            comp.Markup.Trim().Should().BeEmpty();
+            comp.Markup.Trim().Should().Match("<div id=\"dialogs_*\"></div>");
         }
 
         /// <summary>
@@ -116,7 +116,7 @@ namespace MudBlazor.UnitTests.Components
             await ImproveChanceOfSuccess(async () =>
             {
                 var comp = Context.RenderComponent<MudDialogProvider>();
-                comp.Markup.Trim().Should().BeEmpty();
+                comp.Markup.Trim().Should().Match("<div id=\"dialogs_*\"></div>");
                 var service = Context.Services.GetService<IDialogService>() as DialogService;
                 service.Should().NotBe(null);
                 // displaying the component with the inline dialog only renders the open button
@@ -127,7 +127,7 @@ namespace MudBlazor.UnitTests.Components
                 comp.WaitForAssertion(() => comp.Find("div.mud-dialog-container").Should().NotBe(null));
                 // close by click outside
                 comp.Find("div.mud-overlay").Click();
-                comp.WaitForAssertion(() => comp.Markup.Trim().Should().BeEmpty(), TimeSpan.FromSeconds(5));
+                comp.WaitForAssertion(() => comp.Markup.Trim().Should().Match("<div id=\"dialogs_*\"></div>"), TimeSpan.FromSeconds(5));
                 // open again
                 comp1.Find("button").Click();
                 comp.WaitForAssertion(() => comp.Find("div.mud-dialog-container").Should().NotBe(null),
@@ -136,7 +136,7 @@ namespace MudBlazor.UnitTests.Components
                 //Console.WriteLine("\nOpened dialog: " + comp.Markup);
                 comp.WaitForAssertion(() => comp.Find("div.mud-overlay").Should().NotBeNull());
                 comp.Find("div.mud-overlay").Click();
-                comp.WaitForAssertion(() => comp.Markup.Trim().Should().BeEmpty(), TimeSpan.FromSeconds(5));
+                comp.WaitForAssertion(() => comp.Markup.Trim().Should().Match("<div id=\"dialogs_*\"></div>"), TimeSpan.FromSeconds(5));
             });
         }
 
@@ -148,7 +148,7 @@ namespace MudBlazor.UnitTests.Components
         public async Task InlineDialogShouldHonorClassAndStyle()
         {
             var comp = Context.RenderComponent<MudDialogProvider>();
-            comp.Markup.Trim().Should().BeEmpty();
+            comp.Markup.Trim().Should().Match("<div id=\"dialogs_*\"></div>");
             var service = Context.Services.GetService<IDialogService>() as DialogService;
             service.Should().NotBe(null);
             IDialogReference dialogReference = null;
@@ -174,7 +174,7 @@ namespace MudBlazor.UnitTests.Components
         public async Task InlineDialogShouldNotCloseAfterStateHasChanged()
         {
             var comp = Context.RenderComponent<MudDialogProvider>();
-            comp.Markup.Trim().Should().BeEmpty();
+            comp.Markup.Trim().Should().Match("<div id=\"dialogs_*\"></div>");
             var service = Context.Services.GetService<IDialogService>() as DialogService;
             service.Should().NotBe(null);
             // displaying the component with the inline dialog only renders the open button
@@ -197,7 +197,7 @@ namespace MudBlazor.UnitTests.Components
         public async Task DialogShouldUpdateTitleContent()
         {
             var comp = Context.RenderComponent<MudDialogProvider>();
-            comp.Markup.Trim().Should().BeEmpty();
+            comp.Markup.Trim().Should().Match("<div id=\"dialogs_*\"></div>");
             var service = Context.Services.GetService<IDialogService>() as DialogService;
             service.Should().NotBe(null);
             IDialogReference dialogReference = null;
@@ -221,7 +221,7 @@ namespace MudBlazor.UnitTests.Components
         public async Task DialogShouldNotOverwriteParameters()
         {
             var comp = Context.RenderComponent<MudDialogProvider>();
-            comp.Markup.Trim().Should().BeEmpty();
+            comp.Markup.Trim().Should().Match("<div id=\"dialogs_*\"></div>");
             var service = Context.Services.GetService<IDialogService>() as DialogService;
             service.Should().NotBe(null);
             IDialogReference dialogReference = null;
@@ -259,7 +259,7 @@ namespace MudBlazor.UnitTests.Components
         public async Task DialogShouldHonorClassAndStyle()
         {
             var comp = Context.RenderComponent<MudDialogProvider>();
-            comp.Markup.Trim().Should().BeEmpty();
+            comp.Markup.Trim().Should().Match("<div id=\"dialogs_*\"></div>");
             var service = Context.Services.GetService<IDialogService>() as DialogService;
             service.Should().NotBe(null);
             IDialogReference dialogReference = null;
@@ -278,7 +278,7 @@ namespace MudBlazor.UnitTests.Components
         public async Task PassingEventCallbackToDialogViaParameters()
         {
             var comp = Context.RenderComponent<MudDialogProvider>();
-            comp.Markup.Trim().Should().BeEmpty();
+            comp.Markup.Trim().Should().Match("<div id=\"dialogs_*\"></div>");
             var service = Context.Services.GetService<IDialogService>() as DialogService;
             service.Should().NotBe(null);
 
@@ -306,7 +306,7 @@ namespace MudBlazor.UnitTests.Components
 
             //Render our dialog provider and make sure everything is fine
             var comp = Context.RenderComponent<MudDialogProvider>();
-            comp.Markup.Trim().Should().BeEmpty();
+            comp.Markup.Trim().Should().Match("<div id=\"dialogs_*\"></div>");
 
             //Try to get the current service instance for the type IDialogService and make sure it is our custom implementation
             var service = Context.Services.GetService<IDialogService>();
@@ -334,7 +334,7 @@ namespace MudBlazor.UnitTests.Components
 
             //Dialog should now be closable through backdrop click
             comp.Find("div.mud-overlay").Click();
-            comp.WaitForAssertion(() => comp.Markup.Trim().Should().BeEmpty(), TimeSpan.FromSeconds(5));
+            comp.WaitForAssertion(() => comp.Markup.Trim().Should().Match("<div id=\"dialogs_*\"></div>"), TimeSpan.FromSeconds(5));
         }
 
         /// <summary>
@@ -344,7 +344,7 @@ namespace MudBlazor.UnitTests.Components
         public async Task DialogShouldReturnTheReturnValue()
         {
             var comp = Context.RenderComponent<MudDialogProvider>();
-            comp.Markup.Trim().Should().BeEmpty();
+            comp.Markup.Trim().Should().Match("<div id=\"dialogs_*\"></div>");
             var service = Context.Services.GetService<IDialogService>() as DialogService;
             service.Should().NotBe(null);
             IDialogReference dialogReference = null;
@@ -366,33 +366,39 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task DialogKeyboardNavigation()
         {
-            var comp = Context.RenderComponent<MudDialogProvider>();
-            comp.Markup.Trim().Should().BeEmpty();
+            var comp = Context.RenderComponent<MudDialogProvider>();            
+            comp.Markup.Trim().Should().Match("<div id=\"dialogs_*\"></div>");
             var service = Context.Services.GetService<IDialogService>() as DialogService;
             service.Should().NotBe(null);
-            IDialogReference dialogReference = null;
+            IDialogReference dialogReference1 = null;
+            IDialogReference dialogReference2 = null;
             //dialog with clickable backdrop
-            await comp.InvokeAsync(() => dialogReference = service?.Show<DialogOkCancel>(string.Empty, new DialogOptions() { CloseOnEscapeKey = true }));
-            dialogReference.Should().NotBe(null);
-            var dialog1 = (DialogOkCancel)dialogReference.Dialog;
+            await comp.InvokeAsync(() => dialogReference1 = service?.Show<DialogOkCancel>("Title 1", new DialogOptions() { CloseOnEscapeKey = true }));
+            comp.Markup.Trim().Should().NotMatch("<div id=\"dialogs_*\"></div>");
+            await comp.InvokeAsync(() => dialogReference2 = service?.Show<DialogOkCancel>("Title 2", new DialogOptions() { CloseOnEscapeKey = true }));
+            comp.Markup.Trim().Should().NotMatch("<div id=\"dialogs_*\"></div>");
             comp.Markup.Trim().Should().NotBeEmpty();
-            await comp.InvokeAsync(() => dialog1.MudDialog.HandleKeyDown(new KeyboardEventArgs() { Key = "Escape", Type = "keydown", }));
-            comp.Markup.Trim().Should().BeEmpty();
-            //dialog with disabled backdrop click
-            await comp.InvokeAsync(() => dialogReference = service?.Show<DialogOkCancel>(string.Empty, new DialogOptions() { CloseOnEscapeKey = false }));
-            dialogReference.Should().NotBe(null);
-            var dialog2 = (DialogOkCancel)dialogReference.Dialog;
-            comp.Markup.Trim().Should().NotBeEmpty();
-            await comp.InvokeAsync(() => dialog2.MudDialog.HandleKeyDown(new KeyboardEventArgs() { Key = "Escape", Type = "keydown", }));
-            comp.Markup.Trim().Should().NotBeEmpty();
+            // close dialog 2
+            await comp.InvokeAsync(() => comp.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = "Escape", Type = "keydown", }));
+            // close dialog 1
+            await comp.InvokeAsync(() => comp.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = "Escape", Type = "keydown", }));
+            // all dialogs are closed
+            comp.Markup.Trim().Should().Match("<div id=\"dialogs_*\"></div>");
+            //dialog with disabled CloseOnEscapeKey click
+            IDialogReference dialogReference3 = null;
+            await comp.InvokeAsync(() => dialogReference3 = service?.Show<DialogOkCancel>("Title 3", new DialogOptions() { CloseOnEscapeKey = false }));
+            dialogReference3.Should().NotBe(null);
+            comp.Markup.Trim().Should().NotMatch("<div id=\"dialogs_*\"></div>");
+            await comp.InvokeAsync(() => comp.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = "Escape", Type = "keydown", }));
+            comp.Markup.Trim().Should().NotMatch("<div id=\"dialogs_*\"></div>");
         }
-        
+
         [Test]
         public async Task DialogHandlesOnBackdropClickEvent()
         {
             var comp = Context.RenderComponent<MudDialogProvider>();
-            comp.Markup.Trim().Should().BeEmpty();
-            
+            comp.Markup.Trim().Should().Match("<div id=\"dialogs_*\"></div>");
+
             var service = Context.Services.GetService<IDialogService>() as DialogService;
             service.Should().NotBe(null);
             IDialogReference dialogReference = null;
