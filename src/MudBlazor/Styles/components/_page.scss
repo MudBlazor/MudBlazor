@@ -104,6 +104,7 @@
 
 .mud-section {
     display: inline-grid;
+    overflow: auto;
 
     &.mud-section-col-start-1 {
         grid-column-start: 1;
