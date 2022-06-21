@@ -150,8 +150,8 @@ namespace MudBlazor
         {
             var field = Expression.Convert(Expression.Property(parameter, typeof(T).GetProperty(Field)), typeof(DateTime?));
             DateTime? valueDateTime = Value == null ? null : (DateTime)Value;
-            var isnotnull = Expression.IsTrue(Expression.Property(field, "HasValue"));
-            var isnull = Expression.IsFalse(Expression.Property(field, "HasValue"));
+            var isnotnull = Expression.IsTrue(Expression.Property(field, typeof(bool?), "HasValue"));
+            var isnull = Expression.IsFalse(Expression.Property(field, typeof(bool?), "HasValue"));
             var notNullDateTime = Expression.Convert(field, typeof(DateTime));
             var valueDateTimeConstant = Expression.Constant(valueDateTime);
 
@@ -192,7 +192,7 @@ namespace MudBlazor
         {
             var field = Expression.Convert(Expression.Property(parameter, typeof(T).GetProperty(Field)), typeof(bool?));
             bool? valueBool = Value == null ? null : Convert.ToBoolean(Value);
-            var isnotnull = Expression.IsTrue(Expression.Property(field, "HasValue"));
+            var isnotnull = Expression.IsTrue(Expression.Property(field, typeof(bool?), "HasValue"));
             var notNullBool = Expression.Convert(field, typeof(bool));
 
             return Operator switch
@@ -233,8 +233,8 @@ namespace MudBlazor
         {
             var field = Expression.Convert(Expression.Property(parameter, typeof(T).GetProperty(Field)), typeof(double?));
             double? valueNumber = Value == null ? null : Convert.ToDouble(Value);
-            var isnotnull = Expression.IsTrue(Expression.Property(field, "HasValue"));
-            var isnull = Expression.IsFalse(Expression.Property(field, "HasValue"));
+            var isnotnull = Expression.IsTrue(Expression.Property(field, typeof(bool?), "HasValue"));
+            var isnull = Expression.IsFalse(Expression.Property(field, typeof(bool?), "HasValue"));
             var notNullNumber = Expression.Convert(field, typeof(double));
             var valueNumberConstant = Expression.Constant(valueNumber);
 
