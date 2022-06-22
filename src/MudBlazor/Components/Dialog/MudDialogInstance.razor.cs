@@ -322,6 +322,14 @@ namespace MudBlazor
             StateHasChanged();
         }
 
+        /// <summary>
+        /// Cancels all dialogs in dialog provider collection.
+        /// </summary>
+        public void CancelAll()
+        {
+            Parent?.DismissAll();
+        }
+
         protected virtual void Dispose(bool disposing)
         {
             if (!_disposedValue)
