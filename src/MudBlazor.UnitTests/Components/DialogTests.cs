@@ -40,16 +40,6 @@ namespace MudBlazor.UnitTests.Components
             DialogRender.OnInitializedCount.Should().Be(2);
         }
 
-        [Test]
-        public async Task LifecycleTest2()
-        {
-            var service = Context.Services.GetService<IDialogService>() as DialogService;
-            service.Should().NotBe(null);
-            var comp1 = Context.RenderComponent<DialogRender>();
-            DialogRender.OnInitializedCount.Should().Be(1);
-            comp1.Instance.MudDialog?.CancelAll();
-        }
-
         /// <summary>
         /// Opening and closing a simple dialog
         /// </summary>
