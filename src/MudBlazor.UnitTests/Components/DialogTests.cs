@@ -40,6 +40,16 @@ namespace MudBlazor.UnitTests.Components
             DialogRender.OnInitializedCount.Should().Be(2);
         }
 
+        [Test]
+        public async Task LifecycleTest2()
+        {
+            var service = Context.Services.GetService<IDialogService>() as DialogService;
+            service.Should().NotBe(null);
+            var comp1 = Context.RenderComponent<DialogRender>();
+            DialogRender.OnInitializedCount.Should().Be(1);
+            comp1.Instance.MudDialog?.CancelAll();
+        }
+
         /// <summary>
         /// Opening and closing a simple dialog
         /// </summary>
@@ -74,6 +84,15 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("button")[1].Click();
             result = await dialogReference.Result;
             result.Cancelled.Should().BeFalse();
+
+            //create 2 instances and dismiss all
+            await comp.InvokeAsync(() => dialogReference = service?.Show<DialogOkCancel>());
+            await comp.InvokeAsync(() => dialogReference = service?.Show<DialogOkCancel>());
+            var cont = comp.FindAll("div.mud-dialog-container");
+            cont.Count.Should().Be(2);
+            await comp.InvokeAsync(() => comp.Instance.DismissAll());
+            cont = comp.FindAll("div.mud-dialog-container");
+            cont.Count.Should().Be(0);
         }
 
         /// <summary>
