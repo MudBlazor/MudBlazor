@@ -200,7 +200,7 @@ namespace MudBlazor
 
         private void OnCancelClicked() => DialogInstance.Close(DialogResult.Cancel());
 
-        private void HandleKeyDown(KeyboardEventArgs args)
+        internal void HandleKeyDown(KeyboardEventArgs args)
         {
             if (args.Key == "Escape")
             {
