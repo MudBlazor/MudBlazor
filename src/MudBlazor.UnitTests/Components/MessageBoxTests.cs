@@ -42,8 +42,6 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("button")[clickButtonIndex].Click();
             comp.Markup.Trim().Should().BeEmpty();
             yesNoCancel.Result.Should().Be(expectedResult);
-
-            
         }
 
         [Test, Timeout(3000)]
@@ -101,6 +99,7 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll(".mud-dialog-actions div")[0].KeyDown(Key.Escape);
 
             comp.FindAll("button").Should().BeEmpty();
+            yesNoCancel.Result.Should().Be(null);
         }
 
     }
