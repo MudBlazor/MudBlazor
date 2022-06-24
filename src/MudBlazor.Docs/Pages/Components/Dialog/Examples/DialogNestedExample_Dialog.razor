@@ -1,0 +1,25 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+@inject IDialogService DialogService
+
+<MudDialog>
+    <DialogContent>
+        Dialog Content
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">Cancel</MudButton>
+        <MudButton Color="Color.Primary" OnClick="OpenSecondDialog">Open Second Dialog</MudButton>
+    </DialogActions>
+</MudDialog>
+
+
+@code {
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+
+    void Cancel() => MudDialog.Cancel();
+
+    private void OpenSecondDialog()
+    {
+        DialogService.Show<DialogNestedExample_Dialog2>("Second Level Dialog");
+    }
+}
