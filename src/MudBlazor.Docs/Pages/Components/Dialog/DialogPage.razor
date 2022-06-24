@@ -111,6 +111,19 @@
         </DocsPageSection>
 
         <DocsPageSection>
+            <SectionHeader Title="Nested Dialog and Cancel All">
+                <Description>
+                    It is possible to open multiple dialogs at the same time.
+                    <br />
+                    This example also shows how to open a second dialog and cancel all dialogs at once.
+                </Description>
+            </SectionHeader>
+            <SectionContent Codes="@(new[] {new CodeFile("Page.razor", "DialogNestedExample"), new CodeFile("Dialog.razor", "DialogNestedExample_Dialog"), new CodeFile("Dialog2.razor", "DialogNestedExample_Dialog2")})">
+                <DialogNestedExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
             <SectionHeader Title="Keyboard Navigation">
                 <Description>
                     <MudText>MudDialog accepts keys to keyboard navigation.</MudText>
