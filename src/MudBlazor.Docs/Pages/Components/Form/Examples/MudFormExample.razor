@@ -5,7 +5,7 @@
 <MudGrid>
     <MudItem xs="12" sm="7">
         <MudPaper Class="pa-4">
-            <MudForm @ref="form" @bind-IsValid="@success" @bind-Errors="@errors" FieldChanged="((e) => Console.WriteLine(e.NewValue))">
+            <MudForm @ref="form" @bind-IsValid="@success" @bind-Errors="@errors">
                     <MudTextField T="string" Label="Username" Required="true" RequiredError="User name is required!"/>
                     <MudTextField T="string" Label="Email" Required="true" RequiredError="Email is required!"
                                   Validation="@(new EmailAddressAttribute() {ErrorMessage = "The email address is invalid"})"/>
