@@ -1359,5 +1359,20 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(() => dataGrid.Instance.ShowAllColumns());
             dataGrid.FindAll(".mud-table-head th").Count.Should().Be(2);
         }
+
+        [Test]
+        public async Task DataGridToolbarHiderTest()
+        {
+            // If DisableToolbar="true" we do not expect a mud-menu
+            var comp = Context.RenderComponent<DataGridToolbarHiderTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridToolbarHiderTest.Model>>();
+            dataGrid.FindAll(".mud-menu").Count.Should().Be(0);
+
+            // If DisableToolbar="false" we expect a mud-menu
+            var comp2 = Context.RenderComponent<DataGridColumnChooserTest>();
+            var dataGrid2 = comp2.FindComponent<MudDataGrid<DataGridColumnChooserTest.Model>>();
+            dataGrid2.FindAll(".mud-menu").Count.Should().Be(1);
+
+        }
     }
 }
