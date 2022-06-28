@@ -9,20 +9,23 @@
     <div @attributes="UserAttributes" class="@_classname" style="@Style">
         @if (Items != null || ServerData != null)
         {
-            @if (ToolBarContent != null)
+            @if (!DisableToolbar)
             {
-                <MudToolBar Class="mud-table-toolbar">
-                    @ToolBarContent
-                    @ToolbarMenu(this)           
-                </MudToolBar>
-            }
-            else
-            {
+                @if (ToolBarContent != null)
+                {
+                    <MudToolBar Class="mud-table-toolbar">
+                        @ToolBarContent
+                        @ToolbarMenu(this)           
+                    </MudToolBar>
+                }
+                else
+                {
                 @*Add the default toolbar.*@
-                <MudToolBar Class="mud-table-toolbar">
-                    <MudSpacer />
-                    @ToolbarMenu(this) 
-                </MudToolBar>
+                    <MudToolBar Class="mud-table-toolbar">
+                        <MudSpacer />
+                        @ToolbarMenu(this) 
+                    </MudToolBar>
+                }
             }
             <div class="mud-table-container" style="@_tableStyle @(GetHorizontalScrollbarStyle())">
                 <table class="mud-table-root">

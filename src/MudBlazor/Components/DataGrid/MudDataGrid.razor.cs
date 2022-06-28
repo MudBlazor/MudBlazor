@@ -496,6 +496,10 @@ namespace MudBlazor
         /// CSS styles for the groups.
         /// </summary>
         [Parameter] public string GroupStyle { get; set; }
+        /// <summary>
+        /// If enabled, the Toolbar of the MudDataGrid will be disabled.
+        /// </summary>
+        [Parameter] public bool DisableToolbar { get; set; }
 
         #endregion
 
