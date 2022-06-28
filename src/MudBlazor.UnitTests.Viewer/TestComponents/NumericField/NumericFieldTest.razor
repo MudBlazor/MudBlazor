@@ -55,9 +55,16 @@
 				 Margin="Margin.Dense" />
 <br/>
 <MudNumericField T="decimal?"
-				 Label="decimal?"
-				 Variant="Variant.Outlined"
-				 Margin="Margin.Dense" />
+                 Label="decimal?"
+                 Variant="Variant.Outlined"
+                 Margin="Margin.Dense" />
+<br/>
+<MudNumericField T="int?"
+                 Label="int? clearable with min/max"
+                 Variant="Variant.Outlined"
+                 Margin="Margin.Dense"
+                 Clearable="true"
+                 Min="1" Max="10" />
 
 @code {
 	public static string __description__ = "The textfield should be changed by up/down arrows";

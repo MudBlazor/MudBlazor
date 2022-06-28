@@ -624,5 +624,23 @@ namespace MudBlazor.UnitTests.Components
             comp.WaitForAssertion(() => numericField.Text.Should().Be("€1234"));
             comp.WaitForAssertion(() => numericField.Value.Should().Be(1234));
         }
+
+        /// <summary>
+        /// NumericField with min/max set and nullable int can be cleared
+        /// </summary>
+        [TestCase(10, 20, 15)]
+        [TestCase(-20, -10, -15)]
+        public async Task NumericFieldCanBeCleared(int min, int max, int value)
+        {
+            var comp = Context.RenderComponent<MudNumericField<int?>>();
+            comp.SetParam(x => x.Min, min);
+            comp.SetParam(x => x.Max, max);
+            comp.SetParam(x => x.Value, value);
+            
+            comp.Find("input").Change("");
+            comp.Find("input").Blur();
+
+            comp.WaitForAssertion(() => comp.Instance.Value.Should().BeNull());
+        }
     }
 }

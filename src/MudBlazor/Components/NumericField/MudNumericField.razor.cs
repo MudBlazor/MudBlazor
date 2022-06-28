@@ -194,19 +194,17 @@ namespace MudBlazor
         /// <returns>Returns a valid value and if it has been changed.</returns>
         protected (T value, bool changed) ConstrainBoundaries(T v)
         {
+            if (v is null)
+                return (default, false);
+
             var value = Num.From(v);
             var max = Num.From(Max);
             var min = Num.From(Min);
             //check if Max/Min has value, if not use MaxValue/MinValue for that data type
             if (value > max)
                 return (Max, true);
-            else if (value < min)
+            if (value < min)
                 return (Min, true);
-            //return T default (null) when there is no value
-            else if (v == null)
-            {
-                return (default(T), true);
-            }
 
             return (Num.To<T>(value), false);
         }
