@@ -50,7 +50,7 @@ namespace MudBlazor
                 await SelectedOptionChanged.InvokeAsync(_value);
 
                 BeginValidate();
-                Form?.FieldChanged(this, _value);
+                FieldChanged(_value);
             }
         }
 

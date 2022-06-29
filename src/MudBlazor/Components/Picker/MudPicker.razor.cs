@@ -327,7 +327,7 @@ namespace MudBlazor
                 if (callback)
                     await StringValueChanged(_text);
                 await TextChanged.InvokeAsync(_text);
-                Form?.FieldChanged(this, _text);
+                FieldChanged(_text);
             }
         }
 
