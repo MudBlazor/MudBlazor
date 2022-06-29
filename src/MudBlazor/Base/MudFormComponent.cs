@@ -471,6 +471,15 @@ namespace MudBlazor
         }
 
         /// <summary>
+        /// Notify the Form that a field has changed if Standalone is true
+        /// </summary>
+        protected void FieldChanged(object newValue)
+        {
+            if (Standalone)
+                Form?.FieldChanged(this, newValue);
+        }
+
+        /// <summary>
         /// Reset the value and the validation.
         /// </summary>
         public void Reset()
