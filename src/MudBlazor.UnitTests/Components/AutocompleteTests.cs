@@ -18,6 +18,7 @@ using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.UnitTests.TestComponents;
 using NUnit.Framework;
 using static MudBlazor.UnitTests.TestComponents.AutocompleteSetParametersInitialization;
+using static Bunit.ComponentParameterFactory;
 
 namespace MudBlazor.UnitTests.Components
 {
@@ -823,6 +824,32 @@ namespace MudBlazor.UnitTests.Components
                     .FindComponents<MudListItem>().Count
                     .Should().Be(AutocompleteSyncTest.Items.Length, "Should show the expected items");
             });
+        }
+
+        /// <summary>
+        /// The adornment icon should change live without having to re-open the autocomplete
+        /// This test a bugfix where changing the icon property would not cause the icon to visually change until the autocomplete was opened or closed
+        /// </summary>
+        [Test]
+        public async Task Autocomplete_Should_ChangeAdornmentIcon()
+        {
+            var icon = Parameter(nameof(AutocompleteAdornmentChange.Icon), Icons.Filled.Abc);
+            var comp = Context.RenderComponent<AutocompleteAdornmentChange>(icon);
+            var instance = comp.Instance;
+
+            var autocompletecomp = comp.FindComponent<MudAutocomplete<string>>();
+            var autocomplete = autocompletecomp.Instance;
+
+            var markupBefore = comp.Find("svg.mud-icon-root").Children.ToMarkup().Trim();
+
+            // change icon and render again
+            instance.Icon = Icons.Filled.Remove;
+
+            comp.Render();
+
+            // check the initial icon
+            var markupAfter = comp.Find("svg.mud-icon-root").Children.ToMarkup().Trim();
+            markupAfter.Should().NotBe(markupBefore);
         }
     }
 }
