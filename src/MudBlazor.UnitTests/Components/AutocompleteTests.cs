@@ -18,6 +18,7 @@ using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.UnitTests.TestComponents;
 using NUnit.Framework;
 using static MudBlazor.UnitTests.TestComponents.AutocompleteSetParametersInitialization;
+using static Bunit.ComponentParameterFactory;
 
 namespace MudBlazor.UnitTests.Components
 {
@@ -219,6 +220,38 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("div.mud-input-adornment")[0].Click();
             //Console.WriteLine(comp.Markup);
             comp.WaitForAssertion(() => comp.FindAll("div.mud-popover-open").Count.Should().Be(0));
+        }
+
+        /// <summary>
+        /// MoreItemsTemplate should render when there are more items than the MaxItems limit
+        /// </summary>
+        [Test]
+        public async Task AutocompleteTest6()
+        {
+            var comp = Context.RenderComponent<AutocompleteTest6>();
+
+            var inputControl = comp.Find("div.mud-input-control");
+            inputControl.Click();
+            comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open"));
+
+            var mudText = comp.FindAll("p.mud-typography");
+            mudText[mudText.Count - 1].InnerHtml.Should().Contain("Not all items are shown"); //ensure the text is shown
+        }
+
+        /// <summary>
+        /// NoItemsTemplate should render when there are no items
+        /// </summary>
+        [Test]
+        public async Task AutocompleteTest7()
+        {
+            var comp = Context.RenderComponent<AutocompleteTest7>();
+
+            var inputControl = comp.Find("div.mud-input-control");
+            inputControl.Click();
+            comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open"));
+
+            var mudText = comp.FindAll("p.mud-typography");
+            mudText[mudText.Count - 1].InnerHtml.Should().Contain("No items found, try another search"); //ensure the text is shown
         }
 
         /// <summary>
@@ -655,7 +688,8 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task Autocomplete_ChangeBoundValue()
         {
-            await ImproveChanceOfSuccess(async () => { 
+            await ImproveChanceOfSuccess(async () =>
+            {
                 var comp = Context.RenderComponent<AutocompleteChangeBoundObjectTest>();
                 var autocompletecomp = comp.FindComponent<MudAutocomplete<string>>();
                 var autocomplete = autocompletecomp.Instance;
@@ -790,6 +824,32 @@ namespace MudBlazor.UnitTests.Components
                     .FindComponents<MudListItem>().Count
                     .Should().Be(AutocompleteSyncTest.Items.Length, "Should show the expected items");
             });
+        }
+
+        /// <summary>
+        /// The adornment icon should change live without having to re-open the autocomplete
+        /// This test a bugfix where changing the icon property would not cause the icon to visually change until the autocomplete was opened or closed
+        /// </summary>
+        [Test]
+        public async Task Autocomplete_Should_ChangeAdornmentIcon()
+        {
+            var icon = Parameter(nameof(AutocompleteAdornmentChange.Icon), Icons.Filled.Abc);
+            var comp = Context.RenderComponent<AutocompleteAdornmentChange>(icon);
+            var instance = comp.Instance;
+
+            var autocompletecomp = comp.FindComponent<MudAutocomplete<string>>();
+            var autocomplete = autocompletecomp.Instance;
+
+            var markupBefore = comp.Find("svg.mud-icon-root").Children.ToMarkup().Trim();
+
+            // change icon and render again
+            instance.Icon = Icons.Filled.Remove;
+
+            comp.Render();
+
+            // check the initial icon
+            var markupAfter = comp.Find("svg.mud-icon-root").Children.ToMarkup().Trim();
+            markupAfter.Should().NotBe(markupBefore);
         }
     }
 }

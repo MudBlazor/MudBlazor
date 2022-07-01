@@ -11,10 +11,12 @@ namespace MudBlazor
 {
     public partial class MudPicker<T> : MudFormComponent<T, string>
     {
+        private IKeyInterceptor _keyInterceptor;
+
         public MudPicker() : base(new Converter<T, string>()) { }
         protected MudPicker(Converter<T, string> converter) : base(converter) { }
 
-        [Inject] private IKeyInterceptor _keyInterceptor { get; set; }
+        [Inject] private IKeyInterceptorFactory _keyInterceptorFactory { get; set; }
 
         private string _elementId = "picker" + Guid.NewGuid().ToString().Substring(0, 8);
 
@@ -325,6 +327,7 @@ namespace MudBlazor
                 if (callback)
                     await StringValueChanged(_text);
                 await TextChanged.InvokeAsync(_text);
+                FieldChanged(_text);
             }
         }
 
@@ -421,6 +424,8 @@ namespace MudBlazor
         {
             if (firstRender)
             {
+                _keyInterceptor = _keyInterceptorFactory.Create();
+
                 await _keyInterceptor.Connect(_elementId, new KeyInterceptorOptions()
                 {
                     //EnableLogging = true,
@@ -474,7 +479,7 @@ namespace MudBlazor
         {
             OnPickerClosed();
 
-            _keyInterceptor.UpdateKey(new() { Key = "Escape", StopDown = "none" });
+            _keyInterceptor?.UpdateKey(new() { Key = "Escape", StopDown = "none" });
         }
 
         protected virtual void OnPickerOpened()
@@ -508,5 +513,16 @@ namespace MudBlazor
                     break;
             }
         }
+
+        protected override void Dispose(bool disposing)
+        {
+            base.Dispose(disposing);
+
+            if (disposing == true)
+            {
+                _keyInterceptor?.Dispose();
+            }
+        }
+
     }
 }

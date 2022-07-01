@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
 using System.Linq.Expressions;
@@ -60,6 +61,13 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.FormComponent.Validation)]
         public bool Error { get; set; }
+
+        /// <summary>
+        /// The ErrorId that will be used by aria-describedby if Error true
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Validation)]
+        public string ErrorId { get; set; }
 
         /// <summary>
         /// The generic converter of the component.
@@ -292,9 +300,11 @@ namespace MudBlazor
                 {
                     // this must be called in any case, because even if Validation is null the user might have set Error and ErrorText manually
                     // if Error and ErrorText are set by the user, setting them here will have no effect.
+                    // if Error, create an error id that can be used by aria-describedby on input control
                     ValidationErrors = errors;
                     Error = errors.Count > 0;
                     ErrorText = errors.FirstOrDefault();
+                    ErrorId = HasErrors ? Guid.NewGuid().ToString() : null;
                     Form?.Update(this);
                     StateHasChanged();
                 }
@@ -309,6 +319,7 @@ namespace MudBlazor
             return value != null;
         }
 
+        [UnconditionalSuppressMessage("Trimming", "IL2026:Members annotated with 'RequiresUnreferencedCodeAttribute' require dynamic access otherwise can break functionality when trimming application code", Justification = "In the context of EditContext.Model / FieldIdentifier.Model they won't get trimmed.")]
         protected virtual void ValidateWithAttribute(ValidationAttribute attr, T value, List<string> errors)
         {
             try
@@ -457,6 +468,15 @@ namespace MudBlazor
             {
                 errors.Add("Error in validation func: " + e.Message);
             }
+        }
+
+        /// <summary>
+        /// Notify the Form that a field has changed if Standalone is true
+        /// </summary>
+        protected void FieldChanged(object newValue)
+        {
+            if (Standalone)
+                Form?.FieldChanged(this, newValue);
         }
 
         /// <summary>

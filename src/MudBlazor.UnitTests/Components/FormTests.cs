@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Bunit;
@@ -11,6 +12,7 @@ using Microsoft.AspNetCore.Components;
 using MudBlazor.Docs.Examples;
 using MudBlazor.UnitTests.TestComponents;
 using MudBlazor.UnitTests.TestComponents.Form;
+using MudBlazor.Utilities;
 using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Components
@@ -1145,6 +1147,49 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<FieldValidationWithoutRequiredFormTest>();
 
             Assert.Throws<ElementNotFoundException>(() => comp.Find(".mud-input-error"));
+        }
+
+        /// <summary>
+        /// When changing field values, the FieldChanged event should fire with the correct IFormComponent and new value
+        /// </summary>
+        [Test]
+        public async Task FieldChangedEventShouldTrigger()
+        {
+            var comp = Context.RenderComponent<FormFieldChangedTest>();
+            var formsComp = comp.FindComponents<MudForm>();
+            var textCompFields = comp.FindComponents<MudTextField<string>>();
+            var textField1 = textCompFields[0].Instance;
+            var textField2 = textCompFields[0].Instance;
+            var radioGroup = comp.FindComponent<MudRadioGroup<string>>().Instance;
+            var numeric = comp.FindComponent<MudNumericField<int>>().Instance;
+
+            var eventArgs = comp.Instance.FormFieldChangedEventArgs; //the args from the field changed event
+
+            eventArgs.Should().BeNull();
+
+            //in all below cases, the event args should switch to an instance of the field changed and contain the new value that was set
+
+            await comp.InvokeAsync(() => textField1.SetText("new value"));
+            comp.Instance.FormFieldChangedEventArgs.NewValue.Should().Be("new value");
+            comp.Instance.FormFieldChangedEventArgs.Field.Equals(textField1);
+
+            await comp.InvokeAsync(() => textField2.SetText("new value2"));
+            comp.Instance.FormFieldChangedEventArgs.NewValue.Should().Be("new value2");
+            comp.Instance.FormFieldChangedEventArgs.Field.Equals(textField2);
+
+            var inputs = comp.FindAll("input").ToArray();
+            // check initial state
+            radioGroup.SelectedOption.Should().Be(null);
+            // click radio 1
+            inputs[3].Click();
+            radioGroup.SelectedOption.Should().Be("1");
+            comp.Instance.FormFieldChangedEventArgs.NewValue.Should().Be("1");
+            comp.Instance.FormFieldChangedEventArgs.Field.Equals(radioGroup);
+
+            numeric.Value.Should().Be(0);
+            await comp.InvokeAsync(() => numeric.Increment());
+            comp.Instance.FormFieldChangedEventArgs.NewValue.Should().Be(1);
+            comp.Instance.FormFieldChangedEventArgs.Field.Equals(numeric);
         }
     }
 }

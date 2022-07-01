@@ -1,0 +1,22 @@
+﻿@namespace MudBlazor.UnitTests.TestComponents
+@using MudBlazor.Utilities
+@using System.Text.RegularExpressions
+@using System.ComponentModel.DataAnnotations
+
+<MudForm @ref="form" FieldChanged="((v) => FormFieldChangedEventArgs = v)">
+    <MudTextField T="string" Label="Username" />
+    <MudTextField T="string" Label="Email" />
+    <MudNumericField T="int" />
+    <div class="d-flex">
+        <MudRadioGroup T="string" Required="true" RequiredError="Account type is required!">
+            <MudRadio Option="@("1")">Personal</MudRadio>
+            <MudRadio Option="@("2")">Professional</MudRadio>
+        </MudRadioGroup>
+    </div>
+</MudForm>
+
+@code {
+    MudForm form;
+
+    public FormFieldChangedEventArgs FormFieldChangedEventArgs;
+}
