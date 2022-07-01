@@ -54,7 +54,7 @@ namespace MudBlazor.Services
         /// <param name="options">Define here the descendant(s) by setting TargetClass and the keystrokes to be monitored</param>
         public async Task Connect(string elementId, JsEventOptions options)
         {
-            if (_isObserving)
+            if (_isObserving || _isDisposed)
                 return;
             _elementId = elementId;
             try
@@ -75,7 +75,7 @@ namespace MudBlazor.Services
                 return;
             await UnsubscribeAll();
             try
-            {                
+            {
                 await _jsRuntime.InvokeVoidAsync($"mudJsEvent.disconnect", _elementId);
             }
             catch (Exception) {  /*ignore*/ }
@@ -86,7 +86,7 @@ namespace MudBlazor.Services
         {
             if (_elementId == null)
                 throw new InvalidOperationException("Call Connect(...) before attaching events!");
-            if (_subscribedEvents.Contains(eventName))
+            if (_subscribedEvents.Contains(eventName) || _isDisposed)
                 return;
             try
             {
