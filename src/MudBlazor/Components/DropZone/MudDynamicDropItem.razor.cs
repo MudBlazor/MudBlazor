@@ -6,6 +6,7 @@ using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using Microsoft.JSInterop;
 using MudBlazor.Utilities;
 
 namespace MudBlazor;
@@ -13,6 +14,13 @@ namespace MudBlazor;
 public partial class MudDynamicDropItem<T> : MudComponentBase
 {
     private bool _dragOperationIsInProgress = false;
+    private Guid _id = Guid.NewGuid();
+    private double _onTouchStartX;
+    private double _onTouchStartY;
+    private double _onTouchLastX;
+    private double _onTouchLastY;
+
+    [Inject] private IJSRuntime JsRuntime { get; set; }
 
     [CascadingParameter]
     protected MudDropContainer<T> Container { get; set; }
@@ -92,6 +100,21 @@ public partial class MudDynamicDropItem<T> : MudComponentBase
         await OnDragStarted.InvokeAsync();
     }
 
+    private async Task TouchStarted(TouchEventArgs e)
+    {
+        _onTouchStartX = e.ChangedTouches[0].ClientX;
+        _onTouchStartY = e.ChangedTouches[0].ClientY;
+        _onTouchLastX = _onTouchStartX;
+        _onTouchLastY = _onTouchStartY;
+
+        if (Container == null) { return; }
+
+        _dragOperationIsInProgress = true;
+        await JsRuntime.InvokeVoidAsync("mudDragAndDrop.makeDropZonesNotRelative");
+        Container.StartTransaction(Item, ZoneIdentifier ?? string.Empty, Index, OnDroppedSucceeded, OnDroppedCanceled);
+        await OnDragStarted.InvokeAsync();
+    }
+
     private async Task OnDroppedSucceeded()
     {
         _dragOperationIsInProgress = false;
@@ -113,6 +136,36 @@ public partial class MudDynamicDropItem<T> : MudComponentBase
         if (_dragOperationIsInProgress == true)
         {
             _dragOperationIsInProgress = false;
+            await Container?.CancelTransaction();
+        }
+        else
+        {
+            await OnDragEnded.InvokeAsync(Item);
+        }
+    }
+    private async void TouchMoved(TouchEventArgs e)
+    {
+        //Calculate change from last Move event
+        var x = e.ChangedTouches[0].ClientX - _onTouchLastX;
+        var y = e.ChangedTouches[0].ClientY - _onTouchLastY;
+
+        _onTouchLastX = e.ChangedTouches[0].ClientX;
+        _onTouchLastY = e.ChangedTouches[0].ClientY;
+
+        //Send to JS to move DOM element
+        await JsRuntime.InvokeVoidAsync("mudDragAndDrop.moveItemByDifference", _id.ToString(), x, y);
+
+
+        //JS.InvokeVoidAsync("draggableTouch");
+    }
+
+    private async Task TouchEnded(TouchEventArgs e)
+    {
+        if (_dragOperationIsInProgress == true)
+        {
+            _dragOperationIsInProgress = false;
+            await JsRuntime.InvokeVoidAsync("mudDragAndDrop.resetItem", _id.ToString());
+            await JsRuntime.InvokeVoidAsync("mudDragAndDrop.makeDropZonesRelative");
             await Container?.CancelTransaction();
         }
         else
