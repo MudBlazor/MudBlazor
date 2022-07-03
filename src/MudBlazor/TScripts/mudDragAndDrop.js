@@ -10,6 +10,11 @@ window.mudDragAndDrop = {
         elem.addEventListener('dragstart', () => event.dataTransfer.setData('', event.target.id));
     },
     makeDropZonesNotRelative: () => {
+        var firstDropItems = Array.from(document.getElementsByClassName('mud-drop-item')).filter(x => x.getAttribute('index') == "-1");
+        for (let dropItem of firstDropItems) {
+            dropItem.style.position = 'static';
+        }
+
         const dropZones = document.getElementsByClassName('mud-drop-zone');
         for (let dropZone of dropZones) {
             dropZone.style.position = 'unset';
@@ -25,7 +30,10 @@ window.mudDragAndDrop = {
         return "";
     },
     getDropIndexOnPosition: (x, y, id) => {
+        //const selfItem = document.getElementById('mud-drop-item-' + id);
+
         const elems = document.elementsFromPoint(x, y);
+
         const dropItems = elems.filter(e => e.classList.contains('mud-drop-item') && e.id != ('mud-drop-item-' + id))
         const dropItem = dropItems[0];
         if (dropItem) {
@@ -37,6 +45,10 @@ window.mudDragAndDrop = {
         const dropZones = document.getElementsByClassName('mud-drop-zone');
         for (let dropZone of dropZones) {
             dropZone.style.position = 'relative';
+        }
+        var firstDropItems = Array.from(document.getElementsByClassName('mud-drop-item')).filter(x => x.getAttribute('index') == "-1");
+        for (let dropItem of firstDropItems) {
+            dropItem.style.position = 'relative';
         }
     },
     moveItemByDifference: (id, dx, dy) => {
