@@ -102,6 +102,9 @@ public partial class MudDynamicDropItem<T> : MudComponentBase
 
     private async Task TouchStarted(TouchEventArgs e)
     {
+        if (Index == -1) return; //the -1 item shoudn't be ever moved.
+        if (Disabled) return; //disabled items shouldn't be moved.
+
         _onTouchStartX = e.ChangedTouches[0].ClientX;
         _onTouchStartY = e.ChangedTouches[0].ClientY;
         _onTouchLastX = _onTouchStartX;
@@ -145,6 +148,8 @@ public partial class MudDynamicDropItem<T> : MudComponentBase
     }
     private async void TouchMoved(TouchEventArgs e)
     {
+        if (Index == -1 || Disabled) return;
+
         //Calculate change from last Move event
         var x = e.ChangedTouches[0].ClientX - _onTouchLastX;
         var y = e.ChangedTouches[0].ClientY - _onTouchLastY;
@@ -166,6 +171,8 @@ public partial class MudDynamicDropItem<T> : MudComponentBase
 
     private async Task TouchEnded(TouchEventArgs e)
     {
+        if (Index == -1 || Disabled) return;
+
         if (_dragOperationIsInProgress == true)
         {
             _onTouchLastX = e.ChangedTouches[0].ClientX;
@@ -187,7 +194,7 @@ public partial class MudDynamicDropItem<T> : MudComponentBase
                 StateHasChanged();
             }
         }
-        await JsRuntime.InvokeVoidAsync("mudDragAndDrop.makeDropZonesRelative");
+        //await JsRuntime.InvokeVoidAsync("mudDragAndDrop.makeDropZonesRelative");
     }
     /// <summary>
     /// This allows us to know if an item can be dropped on a given drop zone.
