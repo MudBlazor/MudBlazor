@@ -4,6 +4,7 @@
 
 <div class="@Classname" style="@($"{Style};touch-action:none;transform: translate3d(0px, 0px, 0px);")"
      id="@($"mud-drop-item-{_id}")"
+     index="@Index"
 	 @attributes="UserAttributes"
 	 draggable="@(Disabled == false ? "true" : "false")"
 

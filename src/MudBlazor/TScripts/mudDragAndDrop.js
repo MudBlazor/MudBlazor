@@ -24,6 +24,15 @@ window.mudDragAndDrop = {
         }
         return "";
     },
+    getDropIndexOnPosition: (x, y, id) => {
+        const elems = document.elementsFromPoint(x, y);
+        const dropItems = elems.filter(e => e.classList.contains('mud-drop-item') && e.id != ('mud-drop-item-' + id))
+        const dropItem = dropItems[0];
+        if (dropItem) {
+            return dropItem.getAttribute('index') || "";
+        }
+        return "";
+    },
     makeDropZonesRelative: () => {
         const dropZones = document.getElementsByClassName('mud-drop-zone');
         for (let dropZone of dropZones) {

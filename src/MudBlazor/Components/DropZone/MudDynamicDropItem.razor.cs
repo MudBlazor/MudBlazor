@@ -155,7 +155,12 @@ public partial class MudDynamicDropItem<T> : MudComponentBase
         //Send to JS to move DOM element
         await JsRuntime.InvokeVoidAsync("mudDragAndDrop.moveItemByDifference", _id.ToString(), x, y);
 
+        if (Container == null || Container.TransactionInProgress() == false) { return; }
 
+        if (int.TryParse(await JsRuntime.InvokeAsync<string>("mudDragAndDrop.getDropIndexOnPosition", _onTouchLastX, _onTouchLastY, _id), out var dropIndex))
+        {
+            Container.UpdateTransactionIndex(dropIndex);
+        }
         //JS.InvokeVoidAsync("draggableTouch");
     }
 
