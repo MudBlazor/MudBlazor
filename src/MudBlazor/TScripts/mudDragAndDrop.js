@@ -15,6 +15,15 @@ window.mudDragAndDrop = {
             dropZone.style.position = 'unset';
         }
     },
+    getDropZoneIdentifierOnPosition: (x, y) => {
+        const elems = document.elementsFromPoint(x, y);
+        const dropZones = elems.filter(e => e.classList.contains('mud-drop-zone'))
+        const dropZone = dropZones[0];
+        if (dropZone) {
+            return dropZone.getAttribute('identifier') || "";
+        }
+        return "";
+    },
     makeDropZonesRelative: () => {
         const dropZones = document.getElementsByClassName('mud-drop-zone');
         for (let dropZone of dropZones) {
@@ -42,11 +51,14 @@ window.mudDragAndDrop = {
     },
     resetItem: (id) => {
         const elem = document.getElementById('mud-drop-item-' + id);
-        // translate the element
-        elem.style.webkitTransform =
-            elem.style.transform = '';
-        // update the posiion attributes
-        elem.setAttribute('data-x', 0);
-        elem.setAttribute('data-y', 0);
+        if (elem) {
+            // translate the element
+            elem.style.webkitTransform =
+                elem.style.transform = '';
+            // update the posiion attributes
+            elem.setAttribute('data-x', 0);
+            elem.setAttribute('data-y', 0);
+        }
+        
     }
 };

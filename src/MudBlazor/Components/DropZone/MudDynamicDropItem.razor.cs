@@ -118,7 +118,7 @@ public partial class MudDynamicDropItem<T> : MudComponentBase
     private async Task OnDroppedSucceeded()
     {
         _dragOperationIsInProgress = false;
-
+        await JsRuntime.InvokeVoidAsync("mudDragAndDrop.resetItem", _id.ToString());
         await OnDragEnded.InvokeAsync(Item);
         StateHasChanged();
     }
@@ -126,7 +126,7 @@ public partial class MudDynamicDropItem<T> : MudComponentBase
     private async Task OnDroppedCanceled()
     {
         _dragOperationIsInProgress = false;
-
+        await JsRuntime.InvokeVoidAsync("mudDragAndDrop.resetItem", _id.ToString());
         await OnDragEnded.InvokeAsync(Item);
         StateHasChanged();
     }
@@ -163,15 +163,54 @@ public partial class MudDynamicDropItem<T> : MudComponentBase
     {
         if (_dragOperationIsInProgress == true)
         {
-            _dragOperationIsInProgress = false;
-            await JsRuntime.InvokeVoidAsync("mudDragAndDrop.resetItem", _id.ToString());
-            await JsRuntime.InvokeVoidAsync("mudDragAndDrop.makeDropZonesRelative");
-            await Container?.CancelTransaction();
+            _onTouchLastX = e.ChangedTouches[0].ClientX;
+            _onTouchLastY = e.ChangedTouches[0].ClientY;
+            var dropZoneIdentifier = await JsRuntime.InvokeAsync<string>("mudDragAndDrop.getDropZoneIdentifierOnPosition", _onTouchLastX, _onTouchLastY);
+
+            var (context, isValidZone) = ItemCanBeDropped(dropZoneIdentifier);
+            if (isValidZone)
+            {
+                Container.UpdateTransactionZone(dropZoneIdentifier);
+                var dropZone = Container.GetDropZone(dropZoneIdentifier);
+                await dropZone.HandleDrop();
+            }
+            else
+            {
+                _dragOperationIsInProgress = false;
+                await Container?.CancelTransaction();
+                
+                StateHasChanged();
+            }
         }
-        else
+        await JsRuntime.InvokeVoidAsync("mudDragAndDrop.makeDropZonesRelative");
+    }
+    /// <summary>
+    /// This allows us to know if an item can be dropped on a given drop zone.
+    /// </summary>
+    /// <param name="identifier"></param>
+    /// <returns></returns>
+    private (T, bool) ItemCanBeDropped(string identifier)
+    {
+        var dropZone = Container.GetDropZone(identifier);
+        if (dropZone is null || Container is null || Container.TransactionInProgress() == false)
         {
-            await OnDragEnded.InvokeAsync(Item);
+            return (default(T), false);
         }
+
+        var item = Container.GetTransactionItem();
+        
+
+        var result = true;
+        if (dropZone.CanDrop != null)
+        {
+            result = dropZone.CanDrop(item);
+        }
+        else if (Container.CanDrop != null)
+        {
+            result = Container.CanDrop(item, identifier);
+        }
+
+        return (item, result);
     }
 
     private void HandleDragEnter()

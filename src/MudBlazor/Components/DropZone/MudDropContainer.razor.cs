@@ -151,6 +151,8 @@ namespace MudBlazor
     {
         private MudDragAndDropItemTransaction<T> _transaction;
 
+        internal Dictionary<string, MudDropZone<T>> MudDropZones { get; set; } = new Dictionary<string, MudDropZone<T>>();
+
         protected string Classname =>
         new CssBuilder("mud-drop-container")
             .AddClass(Class)
@@ -342,6 +344,18 @@ namespace MudBlazor
             TransactionIndexChanged?.Invoke(this, new MudDragAndDropIndexChangedEventArgs(_transaction.CurrentZone, oldValue, _transaction.Index));
         }
 
+        internal bool RegisterDropZone(MudDropZone<T> dropZone)
+        {
+            return MudDropZones.TryAdd(dropZone.Identifier, dropZone);
+        }
+        internal void RemoveDropZone(string identifier)
+        {
+            MudDropZones.Remove(identifier);
+        }
+        internal MudDropZone<T> GetDropZone(string identifier)
+        {
+            return MudDropZones.TryGetValue(identifier, out var dropZone) ? dropZone : null;
+        }
 
         /// <summary>
         /// Refreshes the dropzone and all items within. This is neded in case of adding items to the collection or changed values of items
