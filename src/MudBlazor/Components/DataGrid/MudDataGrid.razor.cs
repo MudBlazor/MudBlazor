@@ -759,10 +759,13 @@ namespace MudBlazor
                 RowIndex = rowIndex
             });
 
-            if (EditMode != DataGridEditMode.Cell && EditTrigger == DataGridEditTrigger.OnRowClick)
-                await SetEditingItemAsync(item);
+            if (EditMode != DataGridEditMode.Cell)
+            {
+                if (EditTrigger == DataGridEditTrigger.OnRowClick)
+                    await SetEditingItemAsync(item);
 
-            await SetSelectedItemAsync(item);
+                await SetSelectedItemAsync(item);
+            }
         }
 
         /// <summary>
