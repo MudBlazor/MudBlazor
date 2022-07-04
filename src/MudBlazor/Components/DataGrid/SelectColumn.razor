@@ -12,6 +12,9 @@
     <CellTemplate>
         <MudCheckBox T="bool" Size="@Size" Checked="@context.IsSelected" CheckedChanged="@context.Actions.SetSelectedItem" />
     </CellTemplate>
+    <EditTemplate>
+        <MudCheckBox T="bool" Size="@Size" Checked="@context.IsSelected" CheckedChanged="@context.Actions.SetSelectedItem" />
+    </EditTemplate>
     <FooterTemplate>
         @if (ShowInFooter)
         {
