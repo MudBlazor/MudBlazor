@@ -41,13 +41,13 @@
                     <SectionHeader Title="Global Settings">
                         <Description>In the file where you added <CodeInline>&lt;MudDialogProvider/&gt;</CodeInline>, we can pass down different options as parameters. See <MudLink Href="/getting-started/installation">installation page</MudLink> for more information regarding this.</Description>
                     </SectionHeader>
-                    <SectionContent Code="DialogConfigurationExample"/>
+                    <SectionContent Code="DialogConfigurationExample" />
                 </DocsPageSection>
 
                 <DocsPageSection>
                     <SectionHeader Title="Per Dialog">
                         <Description>
-                            Below we pass along the DialogOptions class when we open the dialog, this can be done per dialog or you can predefine a bunch of them that you use for specific cases in your system.<br/>
+                            Below we pass along the DialogOptions class when we open the dialog, this can be done per dialog or you can predefine a bunch of them that you use for specific cases in your system.<br />
                         </Description>
                     </SectionHeader>
                     <SectionContent Codes="@(new[] {new CodeFile("Page.razor", "DialogOptionsExample"), new CodeFile("Dialog.razor", "DialogOptionsExample_Dialog")})">
@@ -142,7 +142,7 @@
                     Dialog uses the FocusTrap-Component to keep the keyboard-focus within. By default, the first element is focused With <CodeInline>DefaultFocus</CodeInline> you can change the behaviour to, for example, focus the last element.
                 </Description>
             </SectionHeader>
-            <SectionContent Outlined="true" Code="DialogFocusExample">
+            <SectionContent Outlined="true" Codes="@(new[] {new CodeFile("Page.razor", "DialogFocusExample"), new CodeFile("Dialog.razor", "DialogFocusExample_Dialog")})">
                 <MudContainer>
                     <DialogFocusExample />
                 </MudContainer>
@@ -150,7 +150,7 @@
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader Title="Nested dialog">
+            <SectionHeader Title=" Nested dialog">
                 <Description>
                     Demonstrates the problems with nested dialogs and <pre>CloseOnEscape=true</pre>
                 </Description>
