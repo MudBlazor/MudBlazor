@@ -14,7 +14,7 @@ namespace MudBlazor.Utilities
 {
     public static class SortingAssistent
     {
-        public static void UpdateOrder<T>(this IEnumerable<T> items, MudItemDropInfo<T> dropInfo, Expression<Func<T, int>> valueUpdater, int zoneOffset = 0)
+        public static void UpdateOrder<T>(this IEnumerable<T> items, MudItemDropInfo<T> dropInfo, Expression<Func<T, int>> valueUpdater, int zoneOffset = 0, int startIndex = 0)
         {
             var memberSelectorExpression = valueUpdater.Body as MemberExpression;
             if (memberSelectorExpression == null) { throw new InvalidOperationException(); }
@@ -23,11 +23,11 @@ namespace MudBlazor.Utilities
 
             if (property == null) { throw new InvalidOperationException(); }
 
-            var newIndex = dropInfo.IndexInZone + zoneOffset;
+            var newIndex = dropInfo.IndexInZone + zoneOffset + startIndex;
 
             var item = dropInfo.Item;
 
-            int index = 0;
+            int index = 0 + startIndex;
             foreach (var _item in items.OrderBy(x => (int)property.GetValue(x)))
             {
                 if (_item.Equals(item) == true)
