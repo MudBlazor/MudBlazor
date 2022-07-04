@@ -79,7 +79,7 @@ namespace MudBlazor.UnitTests.Components
         public async Task MessageBox_KeyNavTest()
         {
             var comp = Context.RenderComponent<MudDialogProvider>();
-            comp.Markup.Trim().Should().BeEmpty();
+            comp.Markup.Trim().Should().Match("<div id=\"dialogs_*\"></div>");
             var service = Context.Services.GetService<IDialogService>() as DialogService;
             service.Should().NotBe(null);
             // open mbox
