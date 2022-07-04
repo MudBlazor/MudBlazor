@@ -73,9 +73,9 @@ namespace MudBlazor
             // get top level dialog instance
             var topLevelDialog = _dialogs.LastOrDefault()?.Instance;
             // check if the top level dialog handles keyboard events
-            var topDialogKeyboardHandler = topLevelDialog as IDialogKeyboardHandler;
+            var dialogInstance = topLevelDialog as MudDialogInstance;
             // if yes, forward keyboard events
-            topDialogKeyboardHandler?.HandleKeyDown(args);
+            dialogInstance?.HandleKeyDown(args);
         }
 
         internal void DismissInstance(Guid id, DialogResult result)

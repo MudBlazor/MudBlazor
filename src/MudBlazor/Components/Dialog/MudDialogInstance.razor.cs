@@ -11,7 +11,7 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    public partial class MudDialogInstance : MudComponentBase, IDialogKeyboardHandler
+    public partial class MudDialogInstance : MudComponentBase
     {
         private DialogOptions _options = new();
         [CascadingParameter] public bool RightToLeft { get; set; }
@@ -293,5 +293,13 @@ namespace MudBlazor
         {
             StateHasChanged();
         }
+        /// <summary>
+        /// Cancels all dialogs in dialog provider collection.
+        /// </summary>
+        public void CancelAll()
+        {
+            Parent?.DismissAll();
+        }
+
     }
 }

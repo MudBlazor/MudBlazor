@@ -48,7 +48,7 @@ namespace MudBlazor.Services
         /// <param name="options">Define here the descendant(s) by setting TargetClass and the keystrokes to be monitored / suppressed</param>
         public async Task Connect(string elementId, KeyInterceptorOptions options)
         {
-            if (_isObserving)
+            if (_isObserving || _isDisposed)
                 return;
             _elementId = elementId;
             try
@@ -56,6 +56,7 @@ namespace MudBlazor.Services
                 await _jsRuntime.InvokeVoidAsync("mudKeyInterceptor.connect", _dotNetRef, elementId, options);
                 _isObserving = true;
             }
+            catch (JSException) { } //navigating quickly can throw "element not found" errors
             catch (JSDisconnectedException) { }
             catch (TaskCanceledException) { }
         }
