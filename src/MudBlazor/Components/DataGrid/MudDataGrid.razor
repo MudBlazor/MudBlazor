@@ -254,14 +254,17 @@
     {
         return
         @<text>
-        <MudMenu Icon="@Icons.Material.Outlined.Settings" Size="Size.Small" AnchorOrigin="Origin.BottomCenter" Dense="true">
-            <MudMenuItem OnClick="@__this.ShowColumnsPanel">Columns</MudMenuItem>
-            @if (__this.Groupable)
-            {
-                <MudMenuItem OnClick="@__this.ExpandAllGroups">Expand All Groups</MudMenuItem>
-                <MudMenuItem OnClick="@__this.CollapseAllGroups">Collapse All Groups</MudMenuItem>
-            }
-        </MudMenu>
+        @if (__this.ShowColumnOptions)
+        {
+            <MudMenu Icon="@Icons.Material.Outlined.Settings" Size="Size.Small" AnchorOrigin="Origin.BottomCenter" Dense="true">
+                <MudMenuItem OnClick="@__this.ShowColumnsPanel">Columns</MudMenuItem>
+                @if (__this.Groupable)
+                {
+                    <MudMenuItem OnClick="@__this.ExpandAllGroups">Expand All Groups</MudMenuItem>
+                    <MudMenuItem OnClick="@__this.CollapseAllGroups">Collapse All Groups</MudMenuItem>
+                }
+                </MudMenu>
+        }
         </text>;
     }
 
