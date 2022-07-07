@@ -338,6 +338,16 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public void DatePickerStaticWithPickerActionsDayClick_Test()
+        {
+            var comp = Context.RenderComponent<DatePickerStaticTest>();
+            var picker = comp.FindComponent<MudDatePicker>();
+            comp.FindAll("button.mud-picker-calendar-day")
+                .Where(x => x.TrimmedText().Equals("23")).First().Click();
+            picker.Instance.Date.Should().Be(new DateTime(DateTime.Now.Year, DateTime.Now.Month, 23));
+        }
+
+        [Test]
         public void OpenTo12thMonth_NavigateBack_CheckMonth()
         {
             var comp = OpenTo12thMonth();

@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using System.Text.Json;
@@ -12,6 +13,7 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
+    [RequiresUnreferencedCode(CodeMessage.SerializationUnreferencedCodeMessage)]
     internal class Cell<T>
     {
         private readonly MudDataGrid<T> _dataGrid;

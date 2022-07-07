@@ -11,10 +11,14 @@ namespace MudBlazor
     public partial class MudCheckBox<T> : MudBooleanInput<T>
     {
         protected string Classname =>
+        new CssBuilder("mud-input-control-boolean-input")
+            .AddClass(Class)
+            .Build();
+
+        protected string LabelClassname =>
         new CssBuilder("mud-checkbox")
             .AddClass($"mud-disabled", Disabled)
             .AddClass($"mud-readonly", ReadOnly)
-          .AddClass(Class)
         .Build();
 
         protected string CheckBoxClassname =>
@@ -185,7 +189,8 @@ namespace MudBlazor
             }
         }
 
-        [Inject] private IKeyInterceptor _keyInterceptor { get; set; }
+        private IKeyInterceptor _keyInterceptor;
+        [Inject] private IKeyInterceptorFactory _keyInterceptorFactory { get; set; }
 
         private string _elementId = "checkbox" + Guid.NewGuid().ToString().Substring(0, 8);
 
@@ -193,6 +198,8 @@ namespace MudBlazor
         {
             if (firstRender)
             {
+                _keyInterceptor = _keyInterceptorFactory.Create();
+
                 await _keyInterceptor.Connect(_elementId, new KeyInterceptorOptions()
                 {
                     //EnableLogging = true,
@@ -207,6 +214,16 @@ namespace MudBlazor
                 _keyInterceptor.KeyDown += HandleKeyDown;
             }
             await base.OnAfterRenderAsync(firstRender);
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            base.Dispose(disposing);
+
+            if (disposing == true)
+            {
+                _keyInterceptor?.Dispose();
+            }
         }
     }
 }

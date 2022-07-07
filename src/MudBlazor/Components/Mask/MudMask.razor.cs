@@ -15,7 +15,7 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    public partial class MudMask : MudBaseInput<string>
+    public partial class MudMask : MudBaseInput<string>, IDisposable
     {
         public MudMask()
         {
@@ -65,9 +65,12 @@ namespace MudBlazor
 
         private ElementReference _elementReference;
         private ElementReference _elementReference1;
+        private IJsEvent _jsEvent;
+        private IKeyInterceptor _keyInterceptor;
+        
+        [Inject] private IKeyInterceptorFactory _keyInterceptorFactory { get; set; }
 
-        [Inject] private IKeyInterceptor _keyInterceptor { get; set; }
-        [Inject] private IJsEvent _jsEvent { get; set; }
+        [Inject] private IJsEventFactory _jsEventFactory { get; set; }
         [Inject] private IJsApiService _jsApiService { get; set; }
 
         private string _elementId = "mask_" + Guid.NewGuid().ToString().Substring(0, 8);
@@ -141,6 +144,8 @@ namespace MudBlazor
         {
             if (firstRender)
             {
+                _jsEvent = _jsEventFactory.Create();
+
                 await _jsEvent.Connect(_elementId,
                     new JsEventOptions
                     {
@@ -151,6 +156,9 @@ namespace MudBlazor
                 _jsEvent.CaretPositionChanged += OnCaretPositionChanged;
                 _jsEvent.Paste += OnPaste;
                 _jsEvent.Select += OnSelect;
+
+                _keyInterceptor = _keyInterceptorFactory.Create();
+
                 await _keyInterceptor.Connect(_elementId, new KeyInterceptorOptions()
                 {
                     //EnableLogging = true,
@@ -182,12 +190,18 @@ namespace MudBlazor
         {
             try
             {
-                if (e.CtrlKey || e.AltKey)
-                    return;
+                if ((e.CtrlKey && e.Key != "Backspace") || e.AltKey)
+                        return;
                 // Console.WriteLine($"HandleKeyDown: '{e.Key}'");
                 switch (e.Key)
                 {
                     case "Backspace":
+                        if (e.CtrlKey)
+                        {
+                            Mask.Clear();
+                            await Update();
+                            return;
+                        }
                         Mask.Backspace();
                         await Update();
                         return;
@@ -409,6 +423,17 @@ namespace MudBlazor
                 Mask.Delete();
             await Update();
             //Console.WriteLine($"OnCut: '{Mask}'");
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            base.Dispose(disposing);
+
+            if (disposing == true)
+            {
+                _jsEvent?.Dispose();
+                _keyInterceptor?.Dispose();
+            }
         }
     }
 }

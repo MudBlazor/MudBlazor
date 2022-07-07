@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
@@ -28,6 +29,12 @@ namespace MudBlazor.Services
         private bool _isObserving;
         private string _elementId;
 
+        [DynamicDependency(nameof(OnKeyDown))]
+        [DynamicDependency(nameof(OnKeyUp))]
+        [DynamicDependency(DynamicallyAccessedMemberTypes.All, typeof(KeyboardEvent))]
+        [DynamicDependency(DynamicallyAccessedMemberTypes.All, typeof(KeyboardEventArgs))]
+        [DynamicDependency(DynamicallyAccessedMemberTypes.All, typeof(KeyOptions))]
+        [DynamicDependency(DynamicallyAccessedMemberTypes.All, typeof(KeyInterceptorOptions))]
         public KeyInterceptor(IJSRuntime jsRuntime)
         {
             _dotNetRef = DotNetObjectReference.Create(this);
@@ -41,7 +48,7 @@ namespace MudBlazor.Services
         /// <param name="options">Define here the descendant(s) by setting TargetClass and the keystrokes to be monitored / suppressed</param>
         public async Task Connect(string elementId, KeyInterceptorOptions options)
         {
-            if (_isObserving)
+            if (_isObserving || _isDisposed)
                 return;
             _elementId = elementId;
             try
@@ -49,6 +56,7 @@ namespace MudBlazor.Services
                 await _jsRuntime.InvokeVoidAsync("mudKeyInterceptor.connect", _dotNetRef, elementId, options);
                 _isObserving = true;
             }
+            catch (JSException) { } //navigating quickly can throw "element not found" errors
             catch (JSDisconnectedException) { }
             catch (TaskCanceledException) { }
         }
@@ -95,6 +103,8 @@ namespace MudBlazor.Services
             if (!disposing || _isDisposed)
                 return;
             _isDisposed = true;
+            KeyDown = null;
+            KeyUp = null;
             Disconnect().AndForget();
             _dotNetRef.Dispose();
         }
