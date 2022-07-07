@@ -28,7 +28,8 @@
                 DisableElevation="@DisableElevation"
                 OnClick="@ToggleMenu"
                 @ontouchend="@(ActivationEvent == MouseEvent.RightClick ? ToggleMenuTouch : null)"
-                @oncontextmenu="@(ActivationEvent==MouseEvent.RightClick ? ToggleMenu : null)">
+                @oncontextmenu="@(ActivationEvent==MouseEvent.RightClick ? ToggleMenu : null)"
+                Class="@ButtonClass">
             @Label
         </MudButton>
     }

@@ -27,6 +27,10 @@ namespace MudBlazor
 
         [Parameter]
         [Category(CategoryTypes.Menu.Behavior)]
+        public string ButtonClass { get; set; }
+
+        [Parameter]
+        [Category(CategoryTypes.Menu.Behavior)]
         public string Label { get; set; }
 
         /// <summary>
