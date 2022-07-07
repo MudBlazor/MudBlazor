@@ -5,12 +5,15 @@
     <MudIconButton Icon="@Icons.Material.Filled.Close" OnClick="@RemoveFilter" Size="@Size.Small" Style="align-self:flex-end"></MudIconButton>
 </MudItem>
 <MudItem xs="4">
-    <MudSelect T="string" Value="@Field" ValueChanged="@FieldChangedAsync" FullWidth="true" Label="Column" Dense="true" Margin="@Margin.Dense">
+    <MudSelect T="string" @bind-Value="@_field" FullWidth="true" Label="Column" Dense="true" Margin="@Margin.Dense">
         @if (DataGrid?._columns != null)
         {
             @foreach (var column in DataGrid?._columns)
             {
-                <MudSelectItem Value="@column.Field">@column.Field</MudSelectItem>
+                if (column.Filterable == null || (column.Filterable.HasValue && column.Filterable.Value))
+                {
+                    <MudSelectItem Value="@column.Field">@(String.IsNullOrEmpty(column.Title) ? column.Field : column.Title)</MudSelectItem>
+                }
             }
         }
     </MudSelect>
@@ -32,10 +35,25 @@
     {
         <MudNumericField T="double?" Value="@_valueNumber" ValueChanged="@NumberValueChanged" FullWidth="true" Label="Value" Placeholder="Filter value" Margin="@Margin.Dense" Immediate="true"></MudNumericField>
     }
+    else if (IsEnumFlags)
+    {
+        <MudSelect T="Enum" SelectedValuesChanged="@EnumFlagsValueChanged" FullWidth="true" Dense="true" Margin="@Margin.Dense" MultiSelection=true>
+            @if (dataType != null && dataType.IsEnum)
+            {
+                foreach (var item in Enum.GetValues(dataType))
+                {
+                    if (Convert.ToUInt64(item) != 0)
+                    {
+                        <MudSelectItem T="Enum" Value="@((Enum)item)">@item</MudSelectItem>
+                    }
+                }
+            }
+        </MudSelect>
+    }
     else if (isEnum)
     {
         <MudSelect T="Enum" Value="@_valueEnum" ValueChanged="@EnumValueChanged" FullWidth="true" Dense="true" Margin="@Margin.Dense">
-            <MudSelectItem T="Enum" Value="@(null)"></MudSelectItem>
+            <MudSelectItem T="Enum" Value="@(null)">@("<null>")</MudSelectItem>
             @foreach (var item in Enum.GetValues(dataType))
             {
                 <MudSelectItem T="Enum" Value="@((Enum)item)">@item</MudSelectItem>
@@ -45,7 +63,7 @@
     else if (dataType == typeof(bool))
     {
         <MudSelect T="bool?" Value="@_valueBool" ValueChanged="@BoolValueChanged" FullWidth="true" Dense="true" Margin="@Margin.Dense">
-            <MudSelectItem T="bool?" Value="@(null)"></MudSelectItem>
+            <MudSelectItem T="bool?" Value="@(null)">@("<null>")</MudSelectItem>
             <MudSelectItem T="bool?" Value="@(true)">true</MudSelectItem>
             <MudSelectItem T="bool?" Value="@(false)">false</MudSelectItem>
         </MudSelect>

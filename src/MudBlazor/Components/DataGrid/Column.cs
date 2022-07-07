@@ -233,7 +233,9 @@ namespace MudBlazor
             {
                 // set the default GroupBy
                 var parameter = Expression.Parameter(typeof(T), "x");
-                var field = Expression.Convert(Expression.Property(parameter, typeof(T).GetProperty(Field)), typeof(object));
+                var type = typeof(T).GetProperty(Field);
+                var property = Expression.Property(parameter, type);
+                var field = Expression.Convert(property, typeof(object));
                 groupBy = Expression.Lambda<Func<T, object>>(field, parameter).Compile();
             }
         }

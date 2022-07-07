@@ -3,7 +3,12 @@
 // See the LICENSE file in the project root for more information.
 
 using System;
+using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using System.Linq.Expressions;
+using System.Reflection;
+using System.Runtime.CompilerServices;
 
 namespace MudBlazor
 {
@@ -37,6 +42,13 @@ namespace MudBlazor
                 return FilterOperator.IsEnum(dataType);
             }
         }
+        private bool IsEnumFlags
+        {
+            get
+            {
+                return FilterOperator.IsEnumFlags(dataType);
+            }
+        }
         private bool isDateTime
         {
             get
@@ -50,6 +62,19 @@ namespace MudBlazor
             {
                 return FilterOperator.IsBoolean(dataType);
             }
+        }
+
+        [UnconditionalSuppressMessage("Trimming", "IL2026:Members annotated with 'RequiresUnreferencedCodeAttribute' require dynamic access otherwise can break functionality when trimming application code", Justification = "<Pending>")]
+        static IEnumerable<MethodInfo> GetExtensionMethods(Assembly assembly, Type extendedType)
+        {
+            var query = from type in assembly.GetTypes()
+                        where type.IsSealed && !type.IsGenericType && !type.IsNested
+                        from method in type.GetMethods(BindingFlags.Static
+                            | BindingFlags.Public | BindingFlags.NonPublic)
+                        where method.IsDefined(typeof(ExtensionAttribute), false)
+                        where method.GetParameters()[0].ParameterType == extendedType
+                        select method;
+            return query;
         }
 
         internal Func<T, bool> GenerateFilterFunction()
@@ -173,6 +198,55 @@ namespace MudBlazor
                         comparison = isnotnull;
                         break;
 
+                    default:
+                        return alwaysTrue;
+                }
+            }
+            else if (IsEnumFlags)
+            {
+                var field = Expression.Convert(Expression.Property(parameter, typeof(T).GetProperty(Field)), typeof(Enum));
+                var valueEnumFlags = Value == null ? null : (Enum)Value;
+                var _null = Expression.Convert(Expression.Constant(null), typeof(Enum));
+                var isnotnull = Expression.NotEqual(field, _null);
+                var method = typeof(Enum).GetMethod("HasFlag");
+
+                switch (Operator)
+                {
+                    case FilterOperator.EnumFlags.Contains:
+                        if (Value == null)
+                            return alwaysTrue;
+                        if (IsNullableEnum(dataType))
+                        {
+                            var left = isnotnull;
+                            var right = Expression.Call(field, method, Expression.Constant(valueEnumFlags, typeof(Enum)));
+                            comparison = Expression.AndAlso(left, right);
+                        }
+                        else
+                        {
+                            comparison = Expression.Call(field, method, Expression.Constant(valueEnumFlags, typeof(Enum)));
+                        }
+                        break;
+                    case FilterOperator.EnumFlags.Is:
+                        if (Value == null)
+                            return alwaysTrue;
+
+                        List<Enum> selectedValues = new List<Enum>();
+                        foreach (Enum item in Enum.GetValues(dataType))
+                            if (valueEnumFlags.HasFlag(item) && Convert.ToUInt64(item) != 0)
+                                selectedValues.Add(item);
+
+                        var overload = typeof(List<Enum>).GetMethod("Contains", new[] { typeof(Enum) });
+                        if (IsNullableEnum(dataType))
+                        {
+                            var left = isnotnull;
+                            var right = Expression.Call(Expression.Constant(selectedValues), overload, field);
+                            comparison = Expression.AndAlso(left, right);
+                        }
+                        else
+                        {
+                            comparison = Expression.Call(Expression.Constant(selectedValues), overload, field);
+                        }
+                        break;
                     default:
                         return alwaysTrue;
                 }

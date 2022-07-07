@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Numerics;
+using System.Reflection;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 
@@ -37,9 +38,30 @@ namespace MudBlazor
                 OperatorChanged.InvokeAsync(Operator);
             }
         }
+        private string __field;
+        private string _field
+        {
+            get
+            {
+                return __field;
+            }
+            set
+            {
+                __field = value;
+                var operators = FilterOperator.GetOperatorByDataType(dataType);
+                Operator = operators.FirstOrDefault();
+                __operator = Operator;
+                Value = null;
+                OperatorChanged.InvokeAsync(Operator);
+                ValueChanged.InvokeAsync(Value);
+                FieldChanged.InvokeAsync(__field);
+                StateHasChanged();
+            }
+        }
         private string _valueString;
         private double? _valueNumber;
         private Enum _valueEnum = null;
+        private Enum _valueEnumFlags;
         private bool? _valueBool;
         private DateTime? _valueDate;
         private TimeSpan? _valueTime;
@@ -50,9 +72,9 @@ namespace MudBlazor
         {
             get
             {
-                if (Field == null) return typeof(object);
+                if (__field == null) return typeof(object);
 
-                var t = typeof(T).GetProperty(Field).PropertyType;
+                var t = typeof(T).GetProperty(__field).PropertyType;
                 return Nullable.GetUnderlyingType(t) ?? t;
             }
         }
@@ -73,16 +95,27 @@ namespace MudBlazor
             }
         }
 
+        private bool IsEnumFlags
+        {
+            get
+            {
+                return FilterOperator.IsEnumFlags(dataType);
+            }
+        }
+
         #endregion
 
         protected override void OnInitialized()
         {
             __operator = Operator;
+            __field = Field;
 
             if (dataType == typeof(string))
                 _valueString = Value == null ? null : Value.ToString();
             else if (isNumber)
                 _valueNumber = Value == null ? null : Convert.ToDouble(Value);
+            else if (IsEnumFlags)
+                _valueEnumFlags = Value == null ? null : (Enum)Value;
             else if (isEnum)
                 _valueEnum = Value == null ? null : (Enum)Value;
             else if (dataType == typeof(bool))
@@ -93,17 +126,6 @@ namespace MudBlazor
                 _valueDate = Value == null ? null : dateTime;
                 _valueTime = Value == null ? null : dateTime.TimeOfDay;
             }
-        }
-
-        internal async Task FieldChangedAsync(string field)
-        {
-            Field = field;
-            var operators = FilterOperator.GetOperatorByDataType(dataType);
-            Operator = operators.FirstOrDefault();
-            Value = null;
-            await OperatorChanged.InvokeAsync(Operator);
-            await ValueChanged.InvokeAsync(Value);
-            await FieldChanged.InvokeAsync(Field);
         }
 
         internal void StringValueChanged(string value)
@@ -124,6 +146,21 @@ namespace MudBlazor
         {
             _valueEnum = value;
             ValueChanged.InvokeAsync(value);
+            DataGrid.GroupItems();
+        }
+
+        internal void EnumFlagsValueChanged(IEnumerable<Enum> values)
+        {
+            var count = values.Count();
+            if (count == 0)
+                _valueEnumFlags = null;
+            else
+            {
+                _valueEnumFlags = values.First();
+                for (int i = 1; i < count; i++)
+                    _valueEnumFlags = _valueEnumFlags.Or(values.ElementAt(i));
+            }
+            ValueChanged.InvokeAsync(_valueEnumFlags);
             DataGrid.GroupItems();
         }
 
@@ -181,5 +218,31 @@ namespace MudBlazor
         {
             DataGrid.RemoveFilter(Id);
         }
+    }
+}
+
+public static class Extensions
+{
+    public static Enum Or(this Enum a, Enum b)
+    {
+        // consider adding argument validation here
+        if (Enum.GetUnderlyingType(a.GetType()) != typeof(ulong))
+            return (Enum)Enum.ToObject(a.GetType(), Convert.ToInt64(a) | Convert.ToInt64(b));
+        else
+            return (Enum)Enum.ToObject(a.GetType(), Convert.ToUInt64(a) | Convert.ToUInt64(b));
+    }
+
+    public static Enum And(this Enum a, Enum b)
+    {
+        // consider adding argument validation here
+        if (Enum.GetUnderlyingType(a.GetType()) != typeof(ulong))
+            return (Enum)Enum.ToObject(a.GetType(), Convert.ToInt64(a) & Convert.ToInt64(b));
+        else
+            return (Enum)Enum.ToObject(a.GetType(), Convert.ToUInt64(a) & Convert.ToUInt64(b));
+    }
+    public static Enum Not(this Enum a)
+    {
+        // consider adding argument validation here
+        return (Enum)Enum.ToObject(a.GetType(), ~Convert.ToInt64(a));
     }
 }

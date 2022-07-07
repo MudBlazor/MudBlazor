@@ -45,6 +45,14 @@ namespace MudBlazor
             internal static string[] Values = GetFields(typeof(Enum));
         }
 
+        public static class EnumFlags
+        {
+            public const string Contains = "contains";
+            public const string Is = "is";
+
+            internal static string[] Values = GetFields(typeof(EnumFlags));
+        }
+
         public static class Boolean
         {
             public const string Is = "is";
@@ -75,6 +83,10 @@ namespace MudBlazor
             if (IsNumber(type))
             {
                 return Number.Values;
+            }
+            if (IsEnumFlags(type))
+            {
+                return EnumFlags.Values;
             }
             if (IsEnum(type))
             {
@@ -138,6 +150,15 @@ namespace MudBlazor
             return NumericTypes.Contains(type);
         }
 
+        internal static bool IsEnumFlags(Type type)
+        {
+            if (type.IsEnum && type.CustomAttributes.Any(x => x.AttributeType.Name.Equals("FlagsAttribute")))
+                return true;
+
+            Type u = Nullable.GetUnderlyingType(type);
+            return (u != null) && u.IsEnum && u.CustomAttributes.Any(x => x.AttributeType.Name.Equals("FlagsAttribute"));
+        }
+
         internal static bool IsEnum(Type type)
         {
             if (type.IsEnum)
@@ -145,6 +166,15 @@ namespace MudBlazor
 
             Type u = Nullable.GetUnderlyingType(type);
             return (u != null) && u.IsEnum;
+        }
+
+        internal static bool IsArray(Type type)
+        {
+            if (type.IsArray)
+                return true;
+
+            Type u = Nullable.GetUnderlyingType(type);
+            return (u != null) && u.IsArray;
         }
 
         internal static bool IsDateTime(Type type)

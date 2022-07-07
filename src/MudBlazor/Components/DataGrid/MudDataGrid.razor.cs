@@ -645,10 +645,9 @@ namespace MudBlazor
             FilterDefinitions.Add(new FilterDefinition<T>
             {
                 Id = Guid.NewGuid(),
-                Field = _columns?.FirstOrDefault().Field,
+                Field = _columns?.FirstOrDefault(x => string.IsNullOrEmpty(x.Field)).Field,
             });
-            _filtersMenuVisible = true;
-            StateHasChanged();
+            OpenFilters();
         }
 
         internal void AddFilter(Guid id, string field)
@@ -658,8 +657,7 @@ namespace MudBlazor
                 Id = id,
                 Field = field,
             });
-            _filtersMenuVisible = true;
-            StateHasChanged();
+            OpenFilters();
         }
 
         internal void RemoveFilter(Guid id)
