@@ -120,7 +120,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\MoveIt.PSFrameworkCSharp\MoveIt.WebServices\MoveIt.WebServices.csproj" />
+    <ProjectReference Include="..\..\..\MoveIt.WebServices\MoveIt.WebServices.csproj" />
   </ItemGroup>
 
 </Project>
