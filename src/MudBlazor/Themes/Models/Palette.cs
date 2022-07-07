@@ -173,6 +173,7 @@ namespace MudBlazor
             palette.Divider = "rgba(255,255,255, 0.12)";
             palette.DividerLight = "rgba(255,255,255, 0.06)";
             palette.TableLines = "rgba(255,255,255, 0.12)";
+            palette.TableStriped = "rgba(255,255,255, 0.2)";
             palette.LinesDefault = "rgba(255,255,255, 0.12)";
             palette.LinesInputs = "rgba(255,255,255, 0.3)";
             palette.TextDisabled = "rgba(255,255,255, 0.2)";
