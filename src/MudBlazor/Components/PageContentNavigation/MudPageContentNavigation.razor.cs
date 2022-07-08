@@ -138,16 +138,22 @@ namespace MudBlazor
             }
         }
 
+
+        public void Update() => StateHasChanged();
+        
+        protected override void OnInitialized()
+        {
+            _scrollSpy = ScrollSpyFactory.Create();
+        }
+        
         /// <summary>
         /// Rerender the component
         /// </summary>
-        public void Update() => StateHasChanged();
-
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
             if (firstRender)
             {
-                _scrollSpy = ScrollSpyFactory.Create();
+                
                 _scrollSpy.ScrollSectionSectionCentered += ScrollSpy_ScrollSectionSectionCentered;
 
                 if (string.IsNullOrEmpty(SectionClassSelector) == false)
