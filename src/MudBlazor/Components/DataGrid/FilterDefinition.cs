@@ -102,28 +102,28 @@ namespace MudBlazor
                             return alwaysTrue;
 
                         comparison = Expression.AndAlso(isnotnull, 
-                            Expression.Call(field, dataType.GetMethod("Contains", new[] { dataType }), Expression.Constant(valueString)));
+                            Expression.Call(field, dataType.GetMethod("Contains", new[] { dataType, typeof(StringComparison) }), Expression.Constant(valueString), Expression.Constant(StringComparison.CurrentCultureIgnoreCase)));
                         break;
                     case FilterOperator.String.Equal:
                         if (Value == null)
                             return alwaysTrue;
 
                         comparison = Expression.AndAlso(isnotnull,
-                            Expression.Equal(field, Expression.Constant(valueString)));
+                            Expression.Call(field, dataType.GetMethod("Equals", new[] { dataType, typeof(StringComparison) }), Expression.Constant(valueString), Expression.Constant(StringComparison.CurrentCultureIgnoreCase)));
                         break;
                     case FilterOperator.String.StartsWith:
                         if (Value == null)
                             return alwaysTrue;
 
                         comparison = Expression.AndAlso(isnotnull, 
-                            Expression.Call(field, dataType.GetMethod("StartsWith", new[] { dataType }), Expression.Constant(valueString)));
+                            Expression.Call(field, dataType.GetMethod("StartsWith", new[] { dataType, typeof(StringComparison) }), Expression.Constant(valueString), Expression.Constant(StringComparison.CurrentCultureIgnoreCase)));
                         break;
                     case FilterOperator.String.EndsWith:
                         if (Value == null)
                             return alwaysTrue;
 
                         comparison = Expression.AndAlso(isnotnull, 
-                            Expression.Call(field, dataType.GetMethod("EndsWith", new[] { dataType }), Expression.Constant(valueString)));
+                            Expression.Call(field, dataType.GetMethod("EndsWith", new[] { dataType, typeof(StringComparison) }), Expression.Constant(valueString), Expression.Constant(StringComparison.CurrentCultureIgnoreCase)));
                         break;
                     case FilterOperator.String.Empty:
                         comparison = Expression.OrElse(isnull,

@@ -52,12 +52,12 @@
                         </tr>
                         @if (_filtersMenuVisible)
                         {
-                            <MudOverlay  Visible="true" OnClick="@(() => _filtersMenuVisible = false)"></MudOverlay>
+                            <MudOverlay Visible="true" OnClick="@(() => _filtersMenuVisible = false)"></MudOverlay>
                             <MudPaper Class="pa-2 filters-panel" Style="position:absolute;width:auto;min-width:700px;z-index:var(--mud-zindex-drawer)" Elevation="4">
                                 <MudGrid Spacing="0">
                                     @foreach (var f in FilterDefinitions)
                                     { 
-                                        <Filter T="T" @bind-Field="f.Field" @bind-Operator="f.Operator" @bind-Value="f.Value"
+                                        <Filter T="T" @bind-Field="@f.Field" @bind-Operator="@f.Operator" @bind-Value="@f.Value"
                                             Id="@f.Id"></Filter>
                                     }
                                 </MudGrid>

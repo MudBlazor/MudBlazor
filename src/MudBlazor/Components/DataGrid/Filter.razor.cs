@@ -61,7 +61,7 @@ namespace MudBlazor
         private string _valueString;
         private double? _valueNumber;
         private Enum _valueEnum = null;
-        private Enum _valueEnumFlags;
+        private Enum _valueEnumFlags = null;
         private bool? _valueBool;
         private DateTime? _valueDate;
         private TimeSpan? _valueTime;
@@ -106,6 +106,17 @@ namespace MudBlazor
         #endregion
 
         protected override void OnInitialized()
+        {
+            loadFilterUI();
+        }
+
+        protected override void OnParametersSet()
+        {
+            if (Field != null && __field != Field)
+                loadFilterUI();
+        }
+
+        private void loadFilterUI()
         {
             __operator = Operator;
             __field = Field;
