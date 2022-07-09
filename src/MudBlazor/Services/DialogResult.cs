@@ -14,13 +14,15 @@ namespace MudBlazor
     {
         public object Data { get; }
         public Type DataType { get; }
-        public bool Cancelled { get; }
+        public bool Canceled { get; }
+        [Obsolete("Use Canceled instead", false)]
+        public bool Cancelled => Canceled;
 
-        protected internal DialogResult(object data, Type resultType, bool cancelled)
+        protected internal DialogResult(object data, Type resultType, bool canceled)
         {
             Data = data;
             DataType = resultType;
-            Cancelled = cancelled;
+            Canceled = canceled;
         }
 
         public static DialogResult Ok<T>(T result) => Ok(result, default);

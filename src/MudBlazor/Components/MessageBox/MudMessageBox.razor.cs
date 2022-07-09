@@ -165,7 +165,7 @@ namespace MudBlazor
             };
             _reference = await DialogService.ShowAsync<MudMessageBox>(parameters: parameters, options: options, title: Title);
             var result = await _reference.Result;
-            if (result.Cancelled || result.Data is not bool data)
+            if (result.Canceled || result.Data is not bool data)
                 return null;
             return data;
         }
