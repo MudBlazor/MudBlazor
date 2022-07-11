@@ -1297,6 +1297,15 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task DataGridServerDataQuickFilterTest()
+        {
+            var comp = Context.RenderComponent<DataGridServerDataQuickFilterTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridServerDataQuickFilterTest.Item>>();
+
+            dataGrid.FindAll("tr").Count.Should().Be(3);
+        }
+
+        [Test]
         public async Task DataGridServerPaginationTest()
         {
             var comp = Context.RenderComponent<DataGridServerPaginationTest>();
