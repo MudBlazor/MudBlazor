@@ -139,6 +139,9 @@ namespace MudBlazor
         }
 
 
+        /// <summary>
+        /// Rerender the component
+        /// </summary>
         public void Update() => StateHasChanged();
         
         protected override void OnInitialized()
@@ -146,9 +149,7 @@ namespace MudBlazor
             _scrollSpy = ScrollSpyFactory.Create();
         }
         
-        /// <summary>
-        /// Rerender the component
-        /// </summary>
+
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
             if (firstRender)
