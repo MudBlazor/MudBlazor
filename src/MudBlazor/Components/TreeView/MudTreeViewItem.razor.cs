@@ -69,9 +69,13 @@ namespace MudBlazor
         [Category(CategoryTypes.TreeView.Behavior)]
         public string Text
         {
-            get => string.IsNullOrEmpty(_text) ? _converter.Set(Value) : _text;
+            get => string.IsNullOrEmpty(_text) ? (DetailContent == null ? _converter.Set(Value) : null) : _text;
             set => _text = value;
         }
+
+        [Parameter]
+        [Category(CategoryTypes.TreeView.Behavior)]
+        public RenderFragment DetailContent { get; set; }
 
         /// <summary>
         /// Tyopography for the text.

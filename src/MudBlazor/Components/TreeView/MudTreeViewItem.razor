@@ -23,10 +23,18 @@
                     <MudIcon Icon="@Icon" Color="@IconColor" />
                 </div>
             }
-            
-            <MudText Typo="@TextTypo" Class="@TextClassname">
-                @Text
-            </MudText>  
+
+            @if (!string.IsNullOrEmpty(Text))
+            {
+                <MudText Typo="@TextTypo" Class="@TextClassname">
+                    @Text
+                </MudText>  
+            }
+
+            @if (DetailContent != null)
+            {
+                @DetailContent
+            }
 
             @if (!string.IsNullOrEmpty(EndText))
             {            
