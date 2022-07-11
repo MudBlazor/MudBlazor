@@ -120,6 +120,40 @@ namespace MudBlazor
         }
 
         /// <summary>
+        /// Whether to show the progress indicator. 
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Behavior)]
+        public bool ShowProgressIndicator { get; set; } = false;
+
+        /// <summary>
+        /// The position of the progress indicator. 
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Behavior)]
+        public ProgressIndicatorType ProgressIndicatorType { get; set; } = ProgressIndicatorType.Circular;
+
+        /// <summary>
+        /// The color of the loading indicator. 
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Appearance)]
+        public Color ProgressIndicatorColor { get; set; } = Color.Default;
+
+        private bool IsLoading { get; set; }
+
+        /// <summary>
+        /// Func that returns a list of items matching the typed text. Provides a cancellation token that
+        /// is marked as cancelled when the user changes the search text or selects a value from the list. 
+        /// This can be used to cancel expensive asynchronous work occuring within the SearchFunc itself.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.ListBehavior)]
+        public Func<string, CancellationToken, Task<IEnumerable<T>>> SearchFuncWithCancel { get; set; }
+
+        private CancellationTokenSource CancellationTokenSrc { get; set; }
+
+        /// <summary>
         /// The SearchFunc returns a list of items matching the typed text
         /// </summary>
         [Parameter]
@@ -235,7 +269,7 @@ namespace MudBlazor
                 if (value == _isOpen)
                     return;
                 _isOpen = value;
-                
+
                 IsOpenChanged.InvokeAsync(_isOpen).AndForget();
             }
         }
@@ -277,10 +311,12 @@ namespace MudBlazor
         {
             Adornment = Adornment.End;
             IconSize = Size.Medium;
+            CancellationTokenSrc = new CancellationTokenSource();
         }
 
         public async Task SelectOption(T value)
         {
+            CancelToken();
             await SetValueAsync(value);
             if (_items != null)
                 _selectedListItemIndex = Array.IndexOf(_items, value);
@@ -365,6 +401,12 @@ namespace MudBlazor
 
         private void OnTimerComplete(object stateInfo) => InvokeAsync(OnSearchAsync);
 
+        private void CancelToken()
+        {
+            CancellationTokenSrc.Cancel();
+            CancellationTokenSrc = new CancellationTokenSource();
+        }
+
         private int _itemsReturned; //the number of items returned by the search function
 
         /// <remarks>
@@ -381,14 +423,35 @@ namespace MudBlazor
             }
 
             IEnumerable<T> searched_items = Array.Empty<T>();
+            CancelToken();
+
             try
             {
-                searched_items = (await SearchFunc(Text)) ?? Array.Empty<T>();
+                IsLoading = true;
+
+                if (ShowProgressIndicator)
+                {
+                    StateHasChanged();
+                }
+                
+                if (SearchFuncWithCancel != null)
+                {
+                    searched_items = (await SearchFuncWithCancel(Text, CancellationTokenSrc.Token)) ?? Array.Empty<T>();
+                }
+                else
+                {
+                    searched_items = (await SearchFunc(Text)) ?? Array.Empty<T>();
+                }
             }
             catch (Exception e)
             {
                 Console.WriteLine("The search function failed to return results: " + e.Message);
             }
+            finally
+            {
+                IsLoading = false;
+            }
+
             _itemsReturned = searched_items.Count();
             if (MaxItems.HasValue)
             {
