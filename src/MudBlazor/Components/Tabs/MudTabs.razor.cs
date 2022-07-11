@@ -200,6 +200,13 @@ namespace MudBlazor
         [Category(CategoryTypes.Tabs.Appearance)]
         public string PanelClass { get; set; }
 
+        /// <summary>
+        /// Custom class/classes for the Toolbar
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Tabs.Appearance)]
+        public string ToolbarClass { get; set; }
+
         public MudTabPanel ActivePanel { get; private set; }
 
         /// <summary>
@@ -438,6 +445,7 @@ namespace MudBlazor
             .AddClass($"mud-tabs-border-{ConvertPosition(Position).ToDescriptionString()}", Border)
             .AddClass($"mud-paper-outlined", !ApplyEffectsToContainer && Outlined)
             .AddClass($"mud-elevation-{Elevation}", !ApplyEffectsToContainer && Elevation != 0)
+            .AddClass(ToolbarClass)
             .Build();
 
         protected string WrapperClassnames =>
