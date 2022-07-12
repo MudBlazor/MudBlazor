@@ -15,7 +15,7 @@ namespace MudBlazor
 {
     public partial class MudDropZone<T> : MudComponentBase, IDisposable
     {
-        private bool _containerIsInitilized = false;
+        private bool _containerIsInitialized = false;
         private bool _canDrop = false;
         private bool _dragInProgress = false;
         private bool _disposedValue = false;
@@ -380,9 +380,9 @@ namespace MudBlazor
 
         protected override void OnParametersSet()
         {
-            if (Container != null && _containerIsInitilized == false)
+            if (Container != null && _containerIsInitialized == false)
             {
-                _containerIsInitilized = true;
+                _containerIsInitialized = true;
                 Container.TransactionStarted += Container_TransactionStarted;
                 Container.TransactionEnded += Container_TransactionEnded;
                 Container.RefreshRequested += Container_RefreshRequested;
