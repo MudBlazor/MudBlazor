@@ -530,8 +530,8 @@ namespace MudBlazor
         {
             get
             {
-                var items = ServerData != null 
-                    ? _server_data.Items 
+                var items = ServerData != null
+                    ? _server_data.Items
                     : Items;
 
                 // Quick filtering
@@ -591,15 +591,19 @@ namespace MudBlazor
 
         #region Methods
 
-        protected IEnumerable<T> GetItemsOfPage(int n, int pageSize)
+        protected IEnumerable<T> GetItemsOfPage(int page, int pageSize)
         {
-            if (n < 0 || pageSize <= 0)
+            if (page < 0 || pageSize <= 0)
                 return Array.Empty<T>();
 
             if (ServerData != null)
-                return _server_data.Items;
+            {
+                return QuickFilter != null
+                    ? _server_data.Items.Where(QuickFilter)
+                    : _server_data.Items;
+            }
 
-            return FilteredItems.Skip(n * pageSize).Take(pageSize);
+            return FilteredItems.Skip(page * pageSize).Take(pageSize);
         }
 
         internal async Task InvokeServerLoadFunc()

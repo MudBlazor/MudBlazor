@@ -134,7 +134,7 @@ namespace MudBlazor.Utilities
         }
 
         /// <summary>
-        /// initilize a new MudColor with new RGB values but keeps the hue value from the color
+        /// initialize a new MudColor with new RGB values but keeps the hue value from the color
         /// </summary>
         /// <param name="r">R</param>
         /// <param name="g">G</param>
