@@ -8,6 +8,7 @@
 
 using System;
 using System.Threading.Tasks;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using Microsoft.AspNetCore.Components;
@@ -35,7 +36,11 @@ namespace MudBlazor
 
         private readonly Collection<IDialogReference> _dialogs = new();
         private readonly DialogOptions _globalDialogOptions = new();
-
+        /// <summary>
+        /// Mainly for testing
+        /// </summary>
+        public IEnumerable<IDialogReference> VisibleDialogs => _dialogs.Where(x => !x.Result.IsCompleted);
+        public IDialogReference TopmostDialog => VisibleDialogs.LastOrDefault();
         protected override void OnInitialized()
         {
             DialogService.OnDialogInstanceAdded += AddInstance;
