@@ -15,8 +15,6 @@ namespace MudBlazor
         Guid Id { get; }
         RenderFragment RenderFragment { get; set; }
 
-        bool AreParametersRendered { get; set; }
-
         Task<DialogResult> Result { get; }
 
         void Close();

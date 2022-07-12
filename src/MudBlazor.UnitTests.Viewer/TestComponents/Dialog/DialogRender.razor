@@ -22,8 +22,8 @@
     protected override async Task OnInitializedAsync()
     {
         await Task.Delay(10);
-
         OnInitializedCount++;
+        Console.WriteLine($"OnInitializedAsync {MudDialog.Id} OnInitializedCount={OnInitializedCount}");
     }
 
     protected override async Task OnParametersSetAsync()
@@ -39,7 +39,7 @@
             return;
 
         await Task.Delay(10);
-
+        Console.WriteLine($"OnAfterRenderAsync {MudDialog.Id}");
         MudDialog.Close(DialogResult.Ok(true));
     }
 }

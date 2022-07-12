@@ -27,16 +27,14 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<MudDialogProvider>();
             var service = Context.Services.GetService<IDialogService>() as DialogService;
             service.Should().NotBe(null);
-            IDialogReference dialogReference = null;
             await comp.InvokeAsync(async () =>
             {
-                dialogReference = service?.Show<DialogRender>();
-                var result1 = await dialogReference.Result;
+                var result1 = await service.Show<DialogRender>().Result;
                 //The second Dialog is added here, but the first dialog is still in the _dialogs collection of the dialogprovider, as only the result task was set to completion.
                 //So DialogProvider will render again with 2 dialogs, but 1 is completed. This one needs to be excluded from rendering to prevent double initialize with no params.
-                dialogReference = service?.Show<DialogRender>();
-                var result2 = await dialogReference.Result;
+                var result2 = await service.Show<DialogRender>().Result;
             });
+            Console.WriteLine($"DialogRender.OnInitializedCount={DialogRender.OnInitializedCount}");
             DialogRender.OnInitializedCount.Should().Be(2);
         }
 

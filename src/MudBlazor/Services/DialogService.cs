@@ -71,24 +71,17 @@ namespace MudBlazor
 
             var dialogContent = new RenderFragment(builder =>
             {
-                var i = 0;
-                builder.OpenComponent(i++, contentComponent);
+                builder.OpenComponent(1, contentComponent);
 
-                if (!dialogReference.AreParametersRendered)
+                if (dialogReference.Dialog==null)
                 {
                     foreach (var parameter in parameters)
                     {
-                        builder.AddAttribute(i++, parameter.Key, parameter.Value);
+                        builder.AddAttribute(2, parameter.Key, parameter.Value);
                     }
-
-                    dialogReference.AreParametersRendered = true;
-                }
-                else
-                {
-                    i += parameters.Count;
+                    builder.AddComponentReferenceCapture(3, inst => dialogReference.InjectDialog(inst));
                 }
 
-                builder.AddComponentReferenceCapture(i++, inst => { dialogReference.InjectDialog(inst); });
                 builder.CloseComponent();
             });
             var dialogInstance = new RenderFragment(builder =>
