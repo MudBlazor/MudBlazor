@@ -421,6 +421,41 @@ namespace MudBlazor.UnitTests.Components
             
             comp.Find("div.mud-dialog-title").TrimmedText().Should().Be("Title: Backdrop clicked");
         }
+
+
+        /// <summary>
+        /// Open Inline Dialog and the from the inline dialog another normal dialog
+        /// while closing the inline dialog.
+        /// This currently reproduces issue
+        /// https://github.com/MudBlazor/MudBlazor/issues/4871
+        /// </summary>
+        [Test]
+        public async Task InlineDialogBug4871Test()
+        {
+            var comp = Context.RenderComponent<MudDialogProvider>();
+            comp.Markup.Trim().Should().Match("<div id=\"dialogs_*\"></div>");
+            var service = Context.Services.GetService<IDialogService>() as DialogService;
+            service.Should().NotBe(null);
+            // displaying the component with the inline dialog only renders the open button
+            var comp1 = Context.RenderComponent<TestInlineDialog>();
+            comp1.FindComponents<MudButton>().Count.Should().Be(1);
+            //Console.WriteLine("Open button: " + comp1.Markup);
+            // open the dialog
+            comp1.Find("button").Click();
+            //Console.WriteLine("\nOpened dialog: " + comp.Markup);
+            comp1.WaitForAssertion(() =>
+                comp.Find("div.mud-dialog-container").Should().NotBe(null)
+            );
+            comp.Find("p.mud-typography").TrimmedText().Should().Be("Wabalabadubdub!");
+            comp.Find("div.mud-dialog").GetAttribute("class").Should().Contain("mud-dialog-width-full");
+            // close by click on ok button
+            comp.FindAll("button").Last().Click();
+            // now we should watch un
+            comp.WaitForAssertion(() => comp.Instance.TopmostDialog.Dialog.Should().BeOfType<MudMessageBox>());
+            var messageBox = comp.Instance.TopmostDialog.Dialog as MudMessageBox;
+            messageBox.Should().NotBeNull();
+            messageBox.YesText.Should().Be("BUG4871");
+        }
     }
 
     internal class CustomDialogService : DialogService

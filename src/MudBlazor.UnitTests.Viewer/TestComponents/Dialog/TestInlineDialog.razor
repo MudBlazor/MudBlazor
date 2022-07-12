@@ -1,4 +1,5 @@
 ﻿@namespace MudBlazor.UnitTests.TestComponents
+@inject IDialogService DialogService
 
 <MudButton Variant="Variant.Filled" OnClick="()=>visible=true">Open</MudButton>
 
@@ -9,6 +10,7 @@
     </DialogContent>
     <DialogActions>
         <MudButton Color="Color.Primary" OnClick="()=>visible=false">Close</MudButton>
+        <MudButton Color="Color.Primary" OnClick="CloseAndOpen">Close and open</MudButton>
     </DialogActions>
 </MudDialog>
 
@@ -17,6 +19,11 @@
 
     bool visible;
     private int rating;
+
+    Task CloseAndOpen() {
+        visible=false;
+        return DialogService.ShowMessageBox(title: "hello from inline", message: "BUG4871", yesText: "BUG4871");
+    }
 
     private DialogOptions inlineOptions = new() { FullWidth = true };
 }
