@@ -72,26 +72,30 @@ namespace MudBlazor
             var dialogContent = new RenderFragment(builder =>
             {
                 builder.OpenComponent(1, contentComponent);
-
-                if (dialogReference.Dialog==null)
+                // the next line is extremly important here, otherwise the rendering engine get's confused
+                // if multiple dialog instances are in place and one of them is removed
+                // this leads to an unreuired reinstanciation of the same dialog, with new initial parameters
+                // previously this was avoided, by storing if the parameters where set in "AreParametersRendered"
+                // but this is just a "bad" work around and does not solve the problem, that the same dialog might be rendered
+                // multiple times.
+                // https://docs.microsoft.com/en-us/aspnet/core/blazor/components/?view=aspnetcore-6.0#use-key-to-control-the-preservation-of-elements-and-components
+                // also sequence numbers should not be given by counters, but be fixed e.g. by line number and in accending order
+                builder.SetKey(dialogReference.Id);
+                foreach (var parameter in parameters)
                 {
-                    foreach (var parameter in parameters)
-                    {
-                        builder.AddAttribute(2, parameter.Key, parameter.Value);
-                    }
-                    builder.AddComponentReferenceCapture(3, inst => dialogReference.InjectDialog(inst));
+                    builder.AddAttribute(2, parameter.Key, parameter.Value);
                 }
-
+                builder.AddComponentReferenceCapture(3, inst => dialogReference.InjectDialog(inst));
                 builder.CloseComponent();
             });
             var dialogInstance = new RenderFragment(builder =>
             {
                 builder.OpenComponent<MudDialogInstance>(0);
                 builder.SetKey(dialogReference.Id);
-                builder.AddAttribute(1, "Options", options);
-                builder.AddAttribute(2, "Title", title);
-                builder.AddAttribute(3, "Content", dialogContent);
-                builder.AddAttribute(4, "Id", dialogReference.Id);
+                builder.AddAttribute(1, nameof(MudDialogInstance.Options), options);
+                builder.AddAttribute(2, nameof(MudDialogInstance.Title), title);
+                builder.AddAttribute(3, nameof(MudDialogInstance.Content), dialogContent);
+                builder.AddAttribute(4, nameof(MudDialogInstance.Id), dialogReference.Id);
                 builder.AddComponentReferenceCapture(5, inst => dialogReference.Instance = inst);
                 builder.CloseComponent();
             });
