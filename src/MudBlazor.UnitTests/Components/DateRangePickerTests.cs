@@ -546,5 +546,61 @@ namespace MudBlazor.UnitTests.Components
             dateRangePickerInstance.Error.Should().BeTrue("Value has been cleared and should be handled as invalid");
             dateRangePickerInstance.ErrorText.Should().Be(errorMessage);
         }
+
+        [Test]
+        public void CheckAutoCloseDateRangePicker_DoNotCloseWhenValueIsOff()
+        {
+            // Define a date range for comparison
+            var initialDateRange = new DateRange(
+               new DateTime(DateTime.Now.Year, DateTime.Now.Month, 01),
+                new DateTime(DateTime.Now.Year, DateTime.Now.Month, 02));
+
+            // Get access to the date range picker of the instance
+            var comp = Context.RenderComponent<AutoCloseDateRangePickerTest>(
+                Parameter(nameof(AutoCloseDateRangePickerTest.DateRange), initialDateRange));
+
+            // Open the date range picker
+            comp.Find("input").Click();
+
+            // Clicking day buttons to select a date range
+            comp.FindAll("button.mud-picker-calendar-day")
+                .Where(x => x.TrimmedText().Equals("10")).First().Click();
+            comp.FindAll("button.mud-picker-calendar-day")
+                .Where(x => x.TrimmedText().Equals("11")).First().Click();
+
+            // Check that the date range should remain the same because autoclose is false even when actions are defined
+            comp.Instance.DateRange.Should().Be(initialDateRange);
+            comp.WaitForAssertion(() => comp.FindAll("div.mud-popover").Count.Should().Be(1));
+        }
+
+        [Test]
+        public void CheckAutoCloseDateRangePicker_CloseWhenValueIsOn()
+        {
+            // Define a date range for comparison
+            var initialDateRange = new DateRange(
+                new DateTime(DateTime.Now.Year, DateTime.Now.Month, 01),
+                  new DateTime(DateTime.Now.Year, DateTime.Now.Month, 02));
+
+            // Get access to the date range picker of the instance
+            var comp = Context.RenderComponent<AutoCloseDateRangePickerTest>(
+                Parameter(nameof(AutoCloseDateRangePickerTest.DateRange), initialDateRange),
+                Parameter(nameof(AutoCloseDateRangePickerTest.AutoClose), true));
+
+            // Open the date range picker
+            comp.Find("input").Click();
+
+            // Clicking day buttons to select a date range
+            comp.FindAll("button.mud-picker-calendar-day")
+               .Where(x => x.TrimmedText().Equals("10")).First().Click();
+            comp.FindAll("button.mud-picker-calendar-day")
+                .Where(x => x.TrimmedText().Equals("11")).First().Click();
+
+            // Check that the date range is changed because autoclose is true even when actions are defined
+            comp.Instance.DateRange.Should().NotBe(initialDateRange);
+            comp.Instance.DateRange.Should().Be(new DateRange(
+                new DateTime(DateTime.Now.Year, DateTime.Now.Month, 10),
+                  new DateTime(DateTime.Now.Year, DateTime.Now.Month, 11)));
+            comp.WaitForAssertion(() => comp.FindAll("div.mud-popover").Count.Should().Be(0));
+        }
     }
 }
