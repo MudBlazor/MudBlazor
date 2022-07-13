@@ -8,7 +8,7 @@
     </Columns>
     <ChildRowContent>
         <tr>
-            <td colspan="3">@($"uid = {context.Name}|{context.Age}|{context.Status}|{Guid.NewGuid()}")</td>
+            <td colspan="3">@($"uid = {context.Item.Name}|{context.Item.Age}|{context.Item.Status}|{Guid.NewGuid()}")</td>
         </tr>
     </ChildRowContent>
 </MudDataGrid>

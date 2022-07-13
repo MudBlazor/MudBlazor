@@ -46,6 +46,16 @@ namespace MudBlazor
         Task<Guid> Subscribe<T>(string eventName, string elementId, string projectionName, int throotleInterval, Func<object, Task> callback);
 
         /// <summary>
+        /// Listing to a javascript event on the document itself
+        /// </summary>
+        /// <typeparam name="T">The type of the event args for instance MouseEventArgs for mousemove</typeparam>
+        /// <param name="eventName">Name of the DOM event without "on"</param>
+        /// <param name="throotleInterval">The delay between the last time the event occurred and the callback is fired. Set to zero, if no delay is requested</param>
+        /// <param name="callback">The method that is invoked, if the DOM element is fired. Object will be of type T</param>
+        /// <returns>A unique identifier for the event subscription. Should be used to cancel the subscription</returns>
+        Task<Guid> SubscribeGlobal<T>(string eventName, int throotleInterval, Func<object, Task> callback);
+
+        /// <summary>
         /// Cancel (unsubscribe) the listening to a DOM event, previous connected by Subscribe
         /// </summary>
         /// <param name="key">The unique event identifier</param>
@@ -89,14 +99,20 @@ namespace MudBlazor
 
         public async Task<Guid> Subscribe<T>(string eventName, string elementId, string projectionName, int throotleInterval, Func<object, Task> callback)
         {
-            var key = Guid.NewGuid();
-            var type = typeof(T);
-
-            _callbackResolver.Add(key, (type, callback));
-
-            var properties = type.GetProperties().Select(x => char.ToLower(x.Name[0]) + x.Name.Substring(1)).ToArray();
+            var (type, properties) = GetTypeInformation<T>();
+            var key = RegisterCallBack(type, callback);
 
             await _jsRuntime.InvokeVoidAsync("mudThrottledEventManager.subscribe", eventName, elementId, projectionName, throotleInterval, key, properties, _dotNetRef);
+
+            return key;
+        }
+
+        public async Task<Guid> SubscribeGlobal<T>(string eventName, int throotleInterval, Func<object, Task> callback)
+        {
+            var (type, properties) = GetTypeInformation<T>();
+            var key = RegisterCallBack(type, callback);
+
+            await _jsRuntime.InvokeVoidAsync("mudThrottledEventManager.subscribeGlobal", eventName, throotleInterval, key, properties, _dotNetRef);
 
             return key;
         }
@@ -114,6 +130,22 @@ namespace MudBlazor
             {
                 return false;
             }
+        }
+
+        private (Type Type, string[] Properties) GetTypeInformation<T>()
+        {
+            var type = typeof(T);
+            var properties = type.GetProperties().Select(x => char.ToLower(x.Name[0]) + x.Name.Substring(1)).ToArray();
+
+            return (type, properties);
+        }
+
+        private Guid RegisterCallBack(Type type, Func<object, Task> callback)
+        {
+            var key = Guid.NewGuid();
+            _callbackResolver.Add(key, (type, callback));
+
+            return key;
         }
 
         #region disposing
@@ -170,6 +202,5 @@ namespace MudBlazor
         }
 
         #endregion
-
     }
 }
