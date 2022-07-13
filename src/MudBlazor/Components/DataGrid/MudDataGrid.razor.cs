@@ -4,8 +4,8 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Collections.ObjectModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
 using System.Text.Json;
@@ -236,7 +236,7 @@ namespace MudBlazor
         [Parameter] public bool ShowFilterIcons { get; set; } = true;
 
         [Parameter] public DataGridFilterMode FilterMode { get; set; }
-        
+
         [Parameter] public RenderFragment<List<FilterDefinition<T>>> FilterTemplate { get; set; }
 
         /// <summary>
@@ -595,8 +595,8 @@ namespace MudBlazor
         {
             get
             {
-                var items = ServerData != null 
-                    ? _server_data.Items 
+                var items = ServerData != null
+                    ? _server_data.Items
                     : Items;
 
                 // Quick filtering
@@ -778,9 +778,9 @@ namespace MudBlazor
             else
                 Selection.Remove(item);
 
-            SelectedItemsChangedEvent.Invoke(SelectedItems);
+            await InvokeAsync(() => SelectedItemsChangedEvent.Invoke(SelectedItems));
             await SelectedItemsChanged.InvokeAsync(SelectedItems);
-            StateHasChanged();
+            await InvokeAsync(StateHasChanged);
         }
 
         internal async Task SetSelectAllAsync(bool value)

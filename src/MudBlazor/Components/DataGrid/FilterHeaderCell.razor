@@ -2,8 +2,8 @@
 @inherits MudComponentBase
 @typeparam T
 
-<th scope="col" class="@_classname" style="@_style" colspan="@Column.HeaderColSpan" @attributes="@UserAttributes">
-    @if (Column.filterable)
+<th scope="col" class="@_classname" style="@_style" colspan="@Column?.HeaderColSpan" @attributes="@UserAttributes">
+    @if (null != Column && Column.filterable)
     {
         @if (Column.FilterTemplate != null)
         {

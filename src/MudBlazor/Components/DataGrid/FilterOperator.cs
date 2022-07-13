@@ -142,6 +142,9 @@ namespace MudBlazor
 
         internal static bool IsEnum(Type type)
         {
+            if (null == type)
+                return false;
+
             if (type.IsEnum)
                 return true;
 

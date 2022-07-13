@@ -9,7 +9,7 @@
     <MudItem xs="4">
         <MudSelect T="string" Value="@Field" ValueChanged="@FieldChangedAsync" FullWidth="true" Label="Column" Dense="true" Margin="@Margin.Dense"
             Class="filter-field">
-            @foreach (var column in DataGrid?.RenderedColumns)
+            @foreach (var column in DataGrid?.RenderedColumns ?? Enumerable.Empty<Column<T>>())
             {
                 <MudSelectItem Value="@column.Field">@column.computedTitle</MudSelectItem>
             }

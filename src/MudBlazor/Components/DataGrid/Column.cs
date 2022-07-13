@@ -30,6 +30,7 @@ namespace MudBlazor
         /// Specifies the name of the object's property bound to the column
         /// </summary>
         [Parameter] public string Field { get; set; }
+
         [Parameter] public Type FieldType { get; set; }
         [Parameter] public string Title { get; set; }
         [Parameter] public bool HideSmall { get; set; }
@@ -262,7 +263,8 @@ namespace MudBlazor
             if (groupable && Grouping)
                 grouping = Grouping;
 
-            DataGrid.AddColumn(this);
+            if (null != DataGrid)
+                DataGrid.AddColumn(this);
 
             // Add the HeaderContext
             headerContext = new HeaderContext<T>(DataGrid);
@@ -283,7 +285,6 @@ namespace MudBlazor
 
             // Add the FooterContext
             footerContext = new FooterContext<T>(DataGrid);
-
         }
 
         internal Func<T, object> GetLocalSortFunc()

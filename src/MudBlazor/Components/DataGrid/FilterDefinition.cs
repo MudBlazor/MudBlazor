@@ -81,7 +81,6 @@ namespace MudBlazor
             // Handle case where we have an IDictionary.
             if (typeof(T) == typeof(IDictionary<string, object>))
             {
-
                 if (dataType == typeof(string))
                 {
                     return GenerateFilterForStringTypeInIDictionary();
@@ -150,8 +149,8 @@ namespace MudBlazor
         {
             var field = Expression.Convert(Expression.Property(parameter, typeof(T).GetProperty(Field)), typeof(DateTime?));
             DateTime? valueDateTime = Value == null ? null : (DateTime)Value;
-            var isnotnull = Expression.IsTrue(Expression.Property(field, typeof(bool?), "HasValue"));
-            var isnull = Expression.IsFalse(Expression.Property(field, typeof(bool?), "HasValue"));
+            var isnotnull = Expression.IsTrue(Expression.Property(field, typeof(DateTime?), "HasValue"));
+            var isnull = Expression.IsFalse(Expression.Property(field, typeof(DateTime?), "HasValue"));
             var notNullDateTime = Expression.Convert(field, typeof(DateTime));
             var valueDateTimeConstant = Expression.Constant(valueDateTime);
 
@@ -233,8 +232,8 @@ namespace MudBlazor
         {
             var field = Expression.Convert(Expression.Property(parameter, typeof(T).GetProperty(Field)), typeof(double?));
             double? valueNumber = Value == null ? null : Convert.ToDouble(Value);
-            var isnotnull = Expression.IsTrue(Expression.Property(field, typeof(bool?), "HasValue"));
-            var isnull = Expression.IsFalse(Expression.Property(field, typeof(bool?), "HasValue"));
+            var isnotnull = Expression.IsTrue(Expression.Property(field, typeof(double?), "HasValue"));
+            var isnull = Expression.IsFalse(Expression.Property(field, typeof(double?), "HasValue"));
             var notNullNumber = Expression.Convert(field, typeof(double));
             var valueNumberConstant = Expression.Constant(valueNumber);
 
@@ -330,7 +329,8 @@ namespace MudBlazor
                     string v = GetStringFromObject(((IDictionary<string, object>)x)[Field]);
 
                     return v != null && v.Contains(valueString);
-                },
+                }
+                ,
                 FilterOperator.String.NotContains when Value != null => x =>
                 {
                     string v = GetStringFromObject(((IDictionary<string, object>)x)[Field]);
@@ -660,6 +660,5 @@ namespace MudBlazor
                 return Convert.ToDateTime(o);
             }
         }
-
     }
 }
