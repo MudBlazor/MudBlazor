@@ -32,6 +32,7 @@ namespace MudBlazor.UnitTests.Components
             ctx.Services.AddTransient<IResizeObserverFactory, MockResizeObserverFactory>();
             ctx.Services.AddTransient<IScrollSpyFactory, MockScrollSpyFactory>();
             ctx.Services.AddTransient<IEventListenerFactory, MockEventListenerFactory>();
+            ctx.Services.AddTransient<IEventListener, MockEventListener>();
             ctx.Services.AddSingleton<IBrowserWindowSizeProvider>(new MockBrowserWindowSizeProvider());
             ctx.Services.AddSingleton<IDocsNavigationService, DocsNavigationService>();
             ctx.Services.AddSingleton<IMenuService, MenuService>();
@@ -42,7 +43,7 @@ namespace MudBlazor.UnitTests.Components
             ctx.Services.AddScoped(sp => new HttpClient());
         }
 
-        // This shows how to test a docs page with incremental rendering. 
+        // This shows how to test a docs page with incremental rendering.
         // We are not (yet) testing all docs pages (just the examples), but if we wanted to, this would be the way.
         [Test]
         public async Task AlertPage_Test()
