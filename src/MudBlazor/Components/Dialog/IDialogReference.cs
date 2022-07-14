@@ -15,7 +15,8 @@ namespace MudBlazor
         Guid Id { get; }
         RenderFragment RenderFragment { get; set; }
 
-        bool AreParametersRendered { get; set; }
+        [Obsolete("This will always return true")]
+        bool AreParametersRendered { get => true; set { } }
 
         Task<DialogResult> Result { get; }
 
