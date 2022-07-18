@@ -224,8 +224,6 @@ namespace MudBlazor
                         else
                         {
                             ActivePanel = null;
-                            System.Diagnostics.Debug.WriteLine("ActivePanel = null 我触发了");
-
                         }
                     }
                         
