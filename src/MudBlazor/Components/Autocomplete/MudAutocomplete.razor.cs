@@ -21,6 +21,17 @@ namespace MudBlazor
             .AddClass(Class)
             .Build();
 
+        protected string AutocompleteClassname =>
+            new CssBuilder("mud-select")
+            .AddClass("autocomplete")
+            .AddClass("mud-autocomplete--with-progress", ShowProgressIndicator && IsLoading)
+            .Build();
+
+        protected string CircularProgressClassname =>
+            new CssBuilder("progress-indicator-circular")
+            .AddClass("progress-indicator-circular--with-adornment", Adornment == Adornment.End)
+            .Build();
+
         /// <summary>
         /// User class names for the popover, separated by space
         /// </summary>
@@ -433,7 +444,7 @@ namespace MudBlazor
                 {
                     StateHasChanged();
                 }
-                
+
                 if (SearchFuncWithCancel != null)
                 {
                     searched_items = (await SearchFuncWithCancel(Text, CancellationTokenSrc.Token)) ?? Array.Empty<T>();

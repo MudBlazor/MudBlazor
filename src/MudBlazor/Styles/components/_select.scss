@@ -44,6 +44,12 @@
         & .progress-indicator-circular--with-adornment {
             padding-right: 3rem;
         }
+
+        & .mud-progress-linear {
+            position: absolute;
+            bottom: -1px;
+            height: 2px;
+        }
     }
 
     .mud-select-input {
