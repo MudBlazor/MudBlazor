@@ -1,6 +1,8 @@
 ﻿@namespace MudBlazor.UnitTests.TestComponents
 
-<MudDataGrid Items="@_items" Hideable="true">
+<MudPopoverProvider />
+
+<MudDataGrid Items="@_items" Hideable="true" ShowMenuIcon="true" >
     <Columns>
         <Column T="Model" Field="@nameof(Model.Name)" />
         <Column T="Model" Field="@nameof(Model.Age)" />

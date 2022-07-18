@@ -34,8 +34,10 @@
                     column filters, enabling a more robust filtration.
                     <br><br>
                     In this example, we turn sorting and filtering off for the Nr column using the boolean <CodeInline>Sortable</CodeInline> and <CodeInline>Filterable</CodeInline> properties
-                    as well as hide the column options icon button by setting the <CodeInline>ShowColumnOptions</CodeInline> property to <CodeInline>false</CodeInline>. Additionally, we 
+                    as well as hide the column options icon button by setting the <CodeInline>ShowColumnOptions</CodeInline> property to <CodeInline>false</CodeInline> (which is hidden by default). Additionally, we 
                     can override the default <CodeInline>SortBy</CodeInline> function for each column, seen in the Name column where we show how you can switch to a sort by the Name's length.
+                    <br><br>
+                    To hide the filter icons unless a column is currently filtered, you can set the <CodeInline>ShowFilterIcons</CodeInline> property to false.
                 </Description>
             </SectionHeader>
             <SectionContent DarkenBackground="true" Code="DataGridAdvancedExample" ShowCode="false" Block="true" FullWidth="true">
@@ -94,6 +96,74 @@
             </SectionContent>
         </DocsPageSection>
 
+         <DocsPageSection>
+            <SectionHeader Title="Sorting">
+                <Description>
+                    The <CodeInline>&lt;MudDataGrid></CodeInline> allows you to either disable sorting entirely, sort by single column or by multiple columns via
+                    the <CodeInline>SortMode</CodeInline> property. The default (<CodeInline>SortMode.Multiple</CodeInline>) allows sorting on more than one column (Hold <CodeInline>Ctrl-Key</CodeInline>) while clicking
+                    on a header column to extend the sort operation to another column.<br />
+                    Clicking on the column header while <CodeInline>Alt-Key</CodeInline> is pressed, will un-sort a column (or remove it from the set of sorted columns) when multiple sorting
+                    is enabled. In the case of multiple sorting, a small index-number next to the sort direction arrow will indicate the order in which columns are sorted.<br />
+                    When mode is set to <CodeInline>SortMode.Single</CodeInline>, only a single column can be used for sorting at a time. Using another column for sorting will automatically 
+                    un-sort any former sorted column. In single mode, the number indicator next to the direction arrow will not be shown.<br/><br/>
+                    In both <i>active</i> modes, single columns can be excluded from sorting by setting the <CodeInline>Sortable</CodeInline> property to false for that column.
+                    When SortMode is set to <CodeInline>SortMode.None</CodeInline> sorting is disabled globally and setting the <CodeInline>Sortable</CodeInline> property on a column has no effect.
+                    <MudAlert Severity="Severity.Info" Dense="true" Class="my-1">Changing the SortMode at runtime will reset any former sort orders on all columns.</MudAlert>
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="DataGridSortingExample" ShowCode="false" Block="true" FullWidth="true">
+                <DataGridSortingExample />
+            </SectionContent>
+        </DocsPageSection>
+
+         <DocsPageSection>
+            <SectionHeader Title="Filtering">
+                <Description>
+                    The <CodeInline>&lt;MudDataGrid></CodeInline> supports filtering with several different <CodeInline>DataGridFilterMode</CodeInline>s by setting the <CodeInline>FilterMode</CodeInline> property.
+                    <CodeInline>DataGridFilterMode.Simple</CodeInline> is the default where all filters are managed in one popover in the data grid. It allows you to
+                    set multiple filters at one time for multiple different columns. In <CodeInline>DataGridFilterMode.ColumnFilterMenu</CodeInline> mode, there is a dedicated popover for 
+                    each column. Lastly, <CodeInline>DataGridFilterMode.ColumnFilterRow</CodeInline> allows you to inline the filtering behavior directly into the data grid.
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="DataGridFilteringExample" ShowCode="false" Block="true" FullWidth="true">
+                <DataGridFilteringExample />
+            </SectionContent>
+        </DocsPageSection>
+
+         <DocsPageSection>
+            <SectionHeader Title="Advanced Filtering">
+                <Description>
+                    It is possible to customize filtering by utilizing the <CodeInline>&lt;FilterTemplate></CodeInline> available on the <CodeInline>&lt;MudDataGrid></CodeInline>
+                    as well as each <CodeInline>&lt;Column></CodeInline>. In the example below, the Sign column is customized.
+                    <br><br>
+                    Inside of the <CodeInline>&lt;FilterTemplate></CodeInline> on the data grid while using <CodeInline>DataGridFilterMode.Simple</CodeInline>, the context is set to the 
+                    data grid's FilterDefinitions to allow for customizing the filtering behavior.
+                    <br><br>
+                    When using the <CodeInline>&lt;FilterTemplate></CodeInline> in the column specific filter modes, the context is a <CodeInline>DataGridFilterMode.Simple</CodeInline>
+                    which gives access to several helpful properties and actions. For example, the current <CodeInline>FilterDefinition</CodeInline> related to the column is available as well
+                    as several actions to make it easier to implement custom filter behavior such as <CodeInline>ApplyFilter</CodeInline> and <CodeInline>ClearFilter</CodeInline>.
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="DataGridAdvancedFilteringExample" ShowCode="false" Block="true" FullWidth="true">
+                <DataGridAdvancedFilteringExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Resizing">
+                <Description>
+                    The <CodeInline>&lt;MudDataGrid></CodeInline> allows you to resize columns interactively when
+                    <CodeInline>ColumnResizeMode</CodeInline> is not set to <CodeInline>None</CodeInline>, which is the default.
+                    There are two modes for resizing: <CodeInline>ResizeMode.Container</CodeInline> and <CodeInline>ResizeMode.Column</CodeInline>.
+                    <CodeInline>ResizeMode.Container</CodeInline> resizes the entire data grid while <CodeInline>ResizeMode.Column</CodeInline> only resizes
+                    columns using available space within the data grid.
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="DataGridResizeExample" ShowCode="false" Block="true" FullWidth="true">
+                <DataGridResizeExample />
+            </SectionContent>
+        </DocsPageSection>
+
         <DocsPageSection>
             <SectionHeader Title="Data Aggregation">
                 <Description>
@@ -112,5 +182,43 @@
                 <DataGridAggregationExample />
             </SectionContent>
         </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Advanced Data Grid Using IDictionary">
+                <Description>
+                    This example uses a <CodeInline>List&lt;IDictionary&lt;string, object>></CodeInline> for the <CodeInline>Items</CodeInline> data source.
+                    <br><br>
+                    In a more advanced scenario, the data grid offers sorting, filtering, pagination and selection. There are two ways to filter the data 
+                    fed into the data grid. A <CodeInline>QuickFilter</CodeInline> function allows filtering the items in the grid globally. Data can also be filtered by specifying 
+                    column filters, enabling a more robust filtration.
+                    <br><br>
+                    In this example, we turn sorting and filtering off for the Nr column using the boolean <CodeInline>Sortable</CodeInline> and <CodeInline>Filterable</CodeInline> properties
+                    as well as hide the column options icon button by setting the <CodeInline>ShowColumnOptions</CodeInline> property to <CodeInline>false</CodeInline>. Additionally, we 
+                    can override the default <CodeInline>SortBy</CodeInline> function for each column, seen in the Name column where we show how you can switch to a sort by the Name's length.
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="DataGridAdvancedIDictionaryExample" ShowCode="false" Block="true" FullWidth="true">
+                <DataGridAdvancedIDictionaryExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Sticky Columns">
+                <Description>
+                    The <CodeInline>&lt;MudDataGrid></CodeInline> allows you to make a column stick to the left or right. Setting the <CodeInline>StickyLeft</CodeInline> or <CodeInline>StickyRight</CodeInline> properties
+                    to <CodeInline>true</CodeInline> will make those columns "sticky". You must turn on <CodeInline>HorizontalScrollbar</CodeInline> to see the columns stick to either side.
+                    <br><br>
+                    There are a couple of things to keep in mind with sticky columns. First, if there are not enough columns and data to force the data grid to scroll, you will not see 
+                    the columns stick, and that is by design and simply how sticky works in CSS. Secondly, there is nothing stopping you from making multiple columns sticky, but it will 
+                    not have the effect you presumably intend. Instead, each column will be sticky when it reached the left or right side of the data grid and will overlap the sticky column
+                    before it.
+
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="DataGridStickyColumnsExample" ShowCode="false" Block="true" FullWidth="true">
+                <DataGridStickyColumnsExample />
+            </SectionContent>
+        </DocsPageSection>
+
     </DocsPageContent>
 </DocsPage>
