@@ -216,7 +216,19 @@ namespace MudBlazor
                 {
                     _activePanelIndex = value;
                     if (_isRendered)
-                        ActivePanel = _panels[_activePanelIndex];
+                    {
+                        if (_activePanelIndex < _panels.Count)
+                        {
+                            ActivePanel = _panels[_activePanelIndex];
+                        }
+                        else
+                        {
+                            ActivePanel = null;
+                            System.Diagnostics.Debug.WriteLine("ActivePanel = null 我触发了");
+
+                        }
+                    }
+                        
                     ActivePanelIndexChanged.InvokeAsync(value);
                 }
             }
@@ -335,7 +347,10 @@ namespace MudBlazor
             _panels.Add(tabPanel);
             if (_panels.Count == 1)
                 ActivePanel = tabPanel;
-
+            if (_activePanelIndex < _panels.Count)
+            {
+                ActivePanel = _panels[_activePanelIndex];
+            }
             StateHasChanged();
         }
 
