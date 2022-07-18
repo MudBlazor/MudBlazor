@@ -919,7 +919,7 @@ namespace MudBlazor.UnitTests.Components
             var autocompletecomp = comp.FindComponent<MudAutocomplete<string>>();
 
             autocompletecomp.SetParam(p => p.ShowProgressInPopover, false);
-            autocompletecomp.SetParam(p => p.ProgressInPopverMessage, "Loading...");
+            autocompletecomp.SetParam(p => p.ProgressInPopoverMessage, "Loading...");
             autocompletecomp.SetParam(p => p.DebounceInterval, 0);
 
             var autocomplete = autocompletecomp.Instance;
@@ -937,7 +937,7 @@ namespace MudBlazor.UnitTests.Components
             var autocompletecomp = comp.FindComponent<MudAutocomplete<string>>();
 
             autocompletecomp.SetParam(p => p.ShowProgressInPopover, true);
-            autocompletecomp.SetParam(p => p.ProgressInPopverMessage, "Loading...");
+            autocompletecomp.SetParam(p => p.ProgressInPopoverMessage, "Loading...");
             autocompletecomp.SetParam(p => p.DebounceInterval, 0);
 
             var autocomplete = autocompletecomp.Instance;

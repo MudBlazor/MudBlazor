@@ -149,7 +149,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.ListBehavior)]
-        public string ProgressInPopverMessage { get; set; }
+        public string ProgressInPopoverMessage { get; set; }
 
         /// <summary>
         /// The position of the progress indicator. 
