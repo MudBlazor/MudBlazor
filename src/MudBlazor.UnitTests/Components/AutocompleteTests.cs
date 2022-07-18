@@ -855,6 +855,8 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task Autocomplete_Should_ShowCircularProgressIndicator()
         {
+            var markup = string.Empty;
+
             var comp = Context.RenderComponent<MudAutocomplete<string>>();
 
             comp.SetParam(p => p.ProgressIndicatorType, ProgressIndicatorType.Circular);
@@ -862,15 +864,19 @@ namespace MudBlazor.UnitTests.Components
             comp.SetParam(p => p.DebounceInterval, 0);
             comp.SetParam(p => p.SearchFunc, new Func<string, Task<IEnumerable<string>>>(async s =>
             {
-                comp.Markup.Should().Contain("mud-progress-circular");
+                markup = comp.Markup;
                 return new List<string> { "Foo", "Bar" };
             }));
             comp.SetParam(a => a.Text, "Foo");
+
+            markup.Should().Contain("mud-progress-circular");
         }
 
         [Test]
         public async Task Autocomplete_Should_ShowLinearProgressIndicator()
         {
+            var markup = string.Empty;
+
             var comp = Context.RenderComponent<MudAutocomplete<string>>();
 
             comp.SetParam(p => p.ProgressIndicatorType, ProgressIndicatorType.Linear);
@@ -878,25 +884,67 @@ namespace MudBlazor.UnitTests.Components
             comp.SetParam(p => p.DebounceInterval, 0);
             comp.SetParam(p => p.SearchFunc, new Func<string, Task<IEnumerable<string>>>(async s =>
             {
-                comp.Markup.Should().Contain("mud-progress-linear");
+                markup = comp.Markup;
                 return new List<string> { "Foo", "Bar" };
             }));
             comp.SetParam(a => a.Text, "Foo");
+
+            markup.Should().Contain("mud-progress-linear");
         }
 
         [Test]
         public async Task Autocomplete_ShouldNot_ShowProgressIndicator()
         {
+            var markup = string.Empty;
+
             var comp = Context.RenderComponent<MudAutocomplete<string>>();
 
             comp.SetParam(p => p.ShowProgressIndicator, false);
             comp.SetParam(p => p.DebounceInterval, 0);
             comp.SetParam(p => p.SearchFunc, new Func<string, Task<IEnumerable<string>>>(async s =>
             {
-                comp.Markup.Should().NotContain("mud-progress-circular");
+                markup = comp.Markup;
                 return new List<string> { "Foo", "Bar" };
             }));
             comp.SetParam(a => a.Text, "Foo");
+
+            markup.Should().NotContain("mud-progress-circular");
+        }
+        
+        [Test]
+        public async Task Autocomplete_ShouldNot_ShowProgressInPopoverMessage()
+        {
+            var comp = Context.RenderComponent<AutocompleteTest1>();
+
+            var autocompletecomp = comp.FindComponent<MudAutocomplete<string>>();
+
+            autocompletecomp.SetParam(p => p.ShowProgressInPopover, false);
+            autocompletecomp.SetParam(p => p.ProgressInPopverMessage, "Loading...");
+            autocompletecomp.SetParam(p => p.DebounceInterval, 0);
+
+            var autocomplete = autocompletecomp.Instance;
+
+            await comp.InvokeAsync(() => autocomplete.FocusAsync());
+
+            comp.Markup.Should().NotContain("Loading...");
+        }
+
+        [Test]
+        public async Task Autocomplete_Should_ShowProgressInPopoverMessage()
+        {
+            var comp = Context.RenderComponent<AutocompleteTest1>();
+
+            var autocompletecomp = comp.FindComponent<MudAutocomplete<string>>();
+
+            autocompletecomp.SetParam(p => p.ShowProgressInPopover, true);
+            autocompletecomp.SetParam(p => p.ProgressInPopverMessage, "Loading...");
+            autocompletecomp.SetParam(p => p.DebounceInterval, 0);
+
+            var autocomplete = autocompletecomp.Instance;
+
+            await comp.InvokeAsync(() => autocomplete.FocusAsync());
+        
+            comp.Markup.Should().NotContain("Loading..."); 
         }
 
         [Test]
@@ -931,7 +979,7 @@ namespace MudBlazor.UnitTests.Components
 
             var comp = Context.RenderComponent<MudAutocomplete<string>>();
 
-            comp.SetParam(p => p.ShowProgressIndicator, false);
+            comp.SetParam(p => p.ShowProgressIndicator, true);
             comp.SetParam(p => p.DebounceInterval, 0);
             comp.SetParam(p => p.SearchFuncWithCancel, new Func<string, System.Threading.CancellationToken, Task<IEnumerable<string>>>(async (s, cancellationToken) =>
             {

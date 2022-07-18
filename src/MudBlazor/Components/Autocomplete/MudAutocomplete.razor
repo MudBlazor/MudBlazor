@@ -38,7 +38,15 @@
                 }
 
                 <MudPopover Open="@IsOpen" MaxHeight="@MaxHeight" AnchorOrigin="@AnchorOrigin" TransformOrigin="@TransformOrigin" Class="@PopoverClass" RelativeWidth="true">
-                    @if (_items != null && _items.Length != 0)
+                    @if(ShowProgressInPopover && IsLoading)
+                    {
+                        <MudList Clickable="false">
+                            <MudListItem>
+                                @ProgressInPopverMessage
+                            </MudListItem>
+                        </MudList>
+                    } 
+                    else if (_items != null && _items.Length != 0)
                     {
                         <MudList Clickable="true" Dense="@Dense">
                             @for (var index = 0; index < _items.Length; index++)

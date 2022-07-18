@@ -138,6 +138,20 @@ namespace MudBlazor
         public bool ShowProgressIndicator { get; set; } = false;
 
         /// <summary>
+        /// Whether to show the progress indicator inside the popover. 
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Behavior)]
+        public bool ShowProgressInPopover { get; set; } = false;
+
+        /// <summary>
+        /// Optional message for when the search function is fetching data.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.ListBehavior)]
+        public string ProgressInPopverMessage { get; set; }
+
+        /// <summary>
         /// The position of the progress indicator. 
         /// </summary>
         [Parameter]
@@ -440,7 +454,12 @@ namespace MudBlazor
             {
                 IsLoading = true;
 
-                if (ShowProgressIndicator)
+                if (ShowProgressInPopover)
+                {
+                    IsOpen = true;
+                }
+
+                if (ShowProgressIndicator || ShowProgressInPopover)
                 {
                     StateHasChanged();
                 }
