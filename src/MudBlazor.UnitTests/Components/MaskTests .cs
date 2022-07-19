@@ -12,6 +12,7 @@ using Bunit;
 using FluentAssertions;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.UnitTests.TestComponents;
+using MudBlazor.UnitTests.TestComponents.Mask;
 using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Components
@@ -705,6 +706,41 @@ namespace MudBlazor.UnitTests.Components
             comp.WaitForAssertion(() => textField.Value.Should().Be("(123) 456-7890"));
             await comp.InvokeAsync(() => mask.HandleKeyDown(new KeyboardEventArgs() { Key = "Backspace", CtrlKey = true }));
             comp.WaitForAssertion(() => textField.Value.Should().Be(""));
+        }
+
+        /// <summary>
+        /// A readonly masked text should not react to any edit/delete event
+        /// </summary>
+        [Test]
+        public async Task MaskTest_Readonly()
+        {
+            var comp = Context.RenderComponent<ReadonlyMaskedTextFieldTest>();
+            var textField = comp.FindComponent<MudTextField<string>>().Instance;
+            var mask = comp.FindComponent<MudMask>().Instance;
+            var originalValue = textField.Text;
+
+            originalValue.Should().Be("1234 1234 1234 1234");
+
+            // paste
+            await comp.InvokeAsync(() => {
+                mask.OnSelect(0, mask.Text.Length - 1);
+                mask.OnPaste("1234567890");
+            });
+            comp.WaitForAssertion(() => textField.Value.Should().Be(originalValue));
+            // backspace
+            await comp.InvokeAsync(() => mask.HandleKeyDown(new KeyboardEventArgs() { Key = "Backspace" }));
+            comp.WaitForAssertion(() => textField.Value.Should().Be(originalValue));
+
+            comp.SetParam(p => p.ReadOnly, false);
+            // paste
+            await comp.InvokeAsync(async () => {
+                mask.OnSelect(0, mask.Text.Length - 1);
+                mask.OnPaste("2222 2222 2222 2222");
+            });
+            comp.WaitForAssertion(() => textField.Value.Should().Be("2222 2222 2222 2222"));
+            // backspace
+            await comp.InvokeAsync(() => mask.HandleKeyDown(new KeyboardEventArgs() { Key = "Backspace" }));
+            comp.WaitForAssertion(() => textField.Value.Should().Be("2222 2222 2222 222"));
         }
     }
 }
