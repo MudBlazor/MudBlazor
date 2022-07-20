@@ -706,5 +706,25 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(() => mask.HandleKeyDown(new KeyboardEventArgs() { Key = "Backspace", CtrlKey = true }));
             comp.WaitForAssertion(() => textField.Value.Should().Be(""));
         }
+
+         [Test]
+        public async Task MaskTest_ReadOnly()
+        {
+            // Load the component
+            var comp = Context.RenderComponent<MudMask>();
+            comp.SetParam(x => x.Mask, new PatternMask("00.00.00"));
+            comp.SetParam(x => x.Text, "00.00.0");
+            comp.Instance.Text.Should().Be("00.00.0");
+
+            // Set ReadOnly true and try to modify the text
+            comp.SetParam(x => x.ReadOnly, true );
+            await comp.InvokeAsync(() => comp.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = "Backspace" }));
+            await comp.InvokeAsync(() =>comp.Instance.OnPaste("0"));
+            /// await comp.InvonkeAsync()...  -> Test the OnCut function.
+            comp.Instance.Text.Should().Be("00.00.0");
+
+
+
+        }
     }
 }

@@ -1,0 +1,10 @@
+<MudText Typo="Typo.h6">Example of Mask</MudText>
+
+<MudSwitch @bind-Checked="_readOnly" Label="Read Only" />
+<MudTextField @bind-Value="@Date" Mask="@(new PatternMask("00.00.00"))" Label="Date" ReadOnly="_readOnly" />
+
+@code {
+    public static string __description__ = "If ReadOnly true, date should not be editable.";
+    public string Date { get; set; } = string.Empty;
+    private bool _readOnly = false;
+}
