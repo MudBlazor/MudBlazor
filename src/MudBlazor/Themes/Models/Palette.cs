@@ -144,11 +144,11 @@ namespace MudBlazor
 
         public double HoverOpacity { get; set; } = 0.06;
 
-        public string GrayDefault { get; set; } = Colors.Grey.Default;
-        public string GrayLight { get; set; } = Colors.Grey.Lighten1;
-        public string GrayLighter { get; set; } = Colors.Grey.Lighten2;
-        public string GrayDark { get; set; } = Colors.Grey.Darken1;
-        public string GrayDarker { get; set; } = Colors.Grey.Darken2;
+        public string GreyDefault { get; set; } = Colors.Grey.Default;
+        public string GreyLight { get; set; } = Colors.Grey.Lighten1;
+        public string GreyLighter { get; set; } = Colors.Grey.Lighten2;
+        public string GreyDark { get; set; } = Colors.Grey.Darken1;
+        public string GreyDarker { get; set; } = Colors.Grey.Darken2;
 
         public string OverlayDark { get; set; } = new MudColor("#212121").SetAlpha(0.5).ToString(MudColorOutputFormats.RGBA);
         public string OverlayLight { get; set; } = new MudColor(Colors.Shades.White).SetAlpha(0.5).ToString(MudColorOutputFormats.RGBA);

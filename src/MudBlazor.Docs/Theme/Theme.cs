@@ -47,8 +47,8 @@ namespace MudBlazor.Docs
             AppbarText = "#424242",
             AppbarBackground = "rgba(255,255,255,0.8)",
             DrawerBackground = "#ffffff",
-            GrayLight = "#e8e8e8",
-            GrayLighter = "#f9f9f9"
+            GreyLight = "#e8e8e8",
+            GreyLighter = "#f9f9f9"
         };
 
         private static readonly Palette DocsDarkPalette  = new()
@@ -68,8 +68,8 @@ namespace MudBlazor.Docs
             TextDisabled = "#ffffff33",
             DrawerIcon = "#92929f",
             DrawerText = "#92929f",
-            GrayLight = "#2a2833",
-            GrayLighter = "#1e1e2d",
+            GreyLight = "#2a2833",
+            GreyLighter = "#1e1e2d",
             Info = "#4a86ff",
             Success = "#3dcb6c",
             Warning = "#ffb545",
@@ -151,9 +151,9 @@ namespace MudBlazor.Docs
             TextSecondary = "#425466",
             Dark = "#110E2D",
             DarkLighten = "#1A1643",
-            GrayDefault = "#4B5563",
-            GrayLight = "#9CA3AF",
-            GrayLighter = "#adbdccff"
+            GreyDefault = "#4B5563",
+            GreyLight = "#9CA3AF",
+            GreyLighter = "#adbdccff"
         };
         private static readonly Palette LandingPageDarkPalette = new()
         {

@@ -215,11 +215,11 @@ namespace MudBlazor
             theme.AppendLine($"--{Palette}-divider: {palette.Divider};");
             theme.AppendLine($"--{Palette}-divider-light: {palette.DividerLight};");
 
-            theme.AppendLine($"--{Palette}-grey-default: {palette.GrayDefault};");
-            theme.AppendLine($"--{Palette}-grey-light: {palette.GrayLight};");
-            theme.AppendLine($"--{Palette}-grey-lighter: {palette.GrayLighter};");
-            theme.AppendLine($"--{Palette}-grey-dark: {palette.GrayDark};");
-            theme.AppendLine($"--{Palette}-grey-darker: {palette.GrayDarker};");
+            theme.AppendLine($"--{Palette}-grey-default: {palette.GreyDefault};");
+            theme.AppendLine($"--{Palette}-grey-light: {palette.GreyLight};");
+            theme.AppendLine($"--{Palette}-grey-lighter: {palette.GreyLighter};");
+            theme.AppendLine($"--{Palette}-grey-dark: {palette.GreyDark};");
+            theme.AppendLine($"--{Palette}-grey-darker: {palette.GreyDarker};");
 
             theme.AppendLine($"--{Palette}-overlay-dark: {palette.OverlayDark};");
             theme.AppendLine($"--{Palette}-overlay-light: {palette.OverlayLight};");
