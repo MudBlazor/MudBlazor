@@ -12,6 +12,7 @@ using Bunit;
 using FluentAssertions;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.UnitTests.TestComponents;
+using MudBlazor.UnitTests.TestComponents.Mask;
 using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Components
@@ -707,24 +708,54 @@ namespace MudBlazor.UnitTests.Components
             comp.WaitForAssertion(() => textField.Value.Should().Be(""));
         }
 
-         [Test]
-        public async Task MaskTest_ReadOnly()
+        /// <summary>
+        /// A readonly masked text should not react to any edit/delete event
+        /// </summary>
+        [Test]
+        public async Task MaskTest_Readonly()
         {
-            // Load the component
-            var comp = Context.RenderComponent<MudMask>();
-            comp.SetParam(x => x.Mask, new PatternMask("00.00.00"));
-            comp.SetParam(x => x.Text, "00.00.0");
-            comp.Instance.Text.Should().Be("00.00.0");
+            var comp = Context.RenderComponent<ReadonlyMaskedTextFieldTest>();
+            var textField = comp.FindComponent<MudTextField<string>>().Instance;
+            var mask = comp.FindComponent<MudMask>().Instance;
+            var maskInput = comp.Find("input");
+            var originalValue = textField.Text;
 
-            // Set ReadOnly true and try to modify the text
-            comp.SetParam(x => x.ReadOnly, true );
-            await comp.InvokeAsync(() => comp.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = "Backspace" }));
-            await comp.InvokeAsync(() =>comp.Instance.OnPaste("0"));
-            /// await comp.InvonkeAsync()...  -> Test the OnCut function.
-            comp.Instance.Text.Should().Be("00.00.0");
+            originalValue.Should().Be("1234 1234 1234 1234");
 
+            // paste
+            await comp.InvokeAsync(() => {
+                mask.OnSelect(0, mask.Text.Length);
+                mask.OnPaste("1234567890");
+            });
+            comp.WaitForAssertion(() => textField.Value.Should().Be(originalValue));
+            // backspace
+            await comp.InvokeAsync(() => mask.HandleKeyDown(new KeyboardEventArgs() { Key = "Backspace" }));
+            comp.WaitForAssertion(() => textField.Value.Should().Be(originalValue));
+            // cut
+            await comp.InvokeAsync(() =>
+            {
+                mask.OnSelect(0, mask.Text.Length);
+                maskInput.CutAsync(new ClipboardEventArgs { Type = "cut" });
+            });
+            comp.WaitForAssertion(() => textField.Value.Should().Be(originalValue));
 
-
+            comp.SetParam(p => p.ReadOnly, false);
+            // paste
+            await comp.InvokeAsync(async () => {
+                mask.OnSelect(0, mask.Text.Length);
+                mask.OnPaste("2222 2222 2222 2222");
+            });
+            comp.WaitForAssertion(() => textField.Value.Should().Be("2222 2222 2222 2222"));
+            // backspace
+            await comp.InvokeAsync(() => mask.HandleKeyDown(new KeyboardEventArgs() { Key = "Backspace" }));
+            comp.WaitForAssertion(() => textField.Value.Should().Be("2222 2222 2222 222"));
+            // cut
+            await comp.InvokeAsync(() =>
+            {
+                mask.OnSelect(0, textField.Value.Length);
+                maskInput.Cut(new ClipboardEventArgs { Type = "cut" });
+            });
+            comp.WaitForAssertion(() => textField.Value.Should().Be(""));
         }
     }
 }

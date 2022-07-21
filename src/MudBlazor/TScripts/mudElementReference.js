@@ -15,6 +15,12 @@ class MudElementReference {
         }
     }
 
+    blur(element) {
+        if (element) {
+            element.blur();
+        }
+    }
+
     focusFirst (element, skip = 0, min = 0) {
         if (element)
         {

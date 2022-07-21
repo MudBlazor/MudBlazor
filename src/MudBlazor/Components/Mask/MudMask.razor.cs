@@ -419,14 +419,11 @@ namespace MudBlazor
 
         private async void OnCut(ClipboardEventArgs obj)
         {
-              if(ReadOnly)
-            {
+            if (ReadOnly)
                 return;
-            }
-            else if (_selection!=null)
-            {
-                   Mask.Delete();
-            }
+            
+            if (_selection!=null)
+                Mask.Delete();
             await Update();
             //Console.WriteLine($"OnCut: '{Mask}'");
         }
