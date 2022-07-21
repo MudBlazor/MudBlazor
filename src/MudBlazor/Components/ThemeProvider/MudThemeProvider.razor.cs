@@ -198,7 +198,7 @@ namespace MudBlazor
 
             theme.AppendLine($"--{Palette}-surface: {palette.Surface};");
             theme.AppendLine($"--{Palette}-background: {palette.Background};");
-            theme.AppendLine($"--{Palette}-background-grey: {palette.BackgroundGrey};");
+            theme.AppendLine($"--{Palette}-background-grey: {palette.BackgroundGray};");
             theme.AppendLine($"--{Palette}-drawer-background: {palette.DrawerBackground};");
             theme.AppendLine($"--{Palette}-drawer-text: {palette.DrawerText};");
             theme.AppendLine($"--{Palette}-drawer-icon: {palette.DrawerIcon};");
