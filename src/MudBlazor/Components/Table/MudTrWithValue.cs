@@ -5,14 +5,4 @@
 namespace MudBlazor
 {
     public record MudTrWithValue<T>(T Value, MudTr Row);
-    //{
-    //    public MudTrWithValue(T value, MudTr row)
-    //    {
-    //        Value = value;
-    //        Row = row;
-    //    }
-
-    //    public T Value { get; set; }
-    //    public MudTr Row { get; set; }
-    //}
 }
