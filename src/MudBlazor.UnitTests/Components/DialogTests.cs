@@ -432,10 +432,8 @@ namespace MudBlazor.UnitTests.Components
             // displaying the component with the inline dialog only renders the open button
             var comp1 = Context.RenderComponent<TestInlineDialog>();
             comp1.FindComponents<MudButton>().Count.Should().Be(1);
-            //Console.WriteLine("Open button: " + comp1.Markup);
             // open the dialog
             comp1.Find("button").Click();
-            //Console.WriteLine("\nOpened dialog: " + comp.Markup);
             comp1.WaitForAssertion(() =>
                 comp.Find("div.mud-dialog-container").Should().NotBe(null)
             );

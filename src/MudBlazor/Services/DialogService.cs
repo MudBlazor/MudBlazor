@@ -32,10 +32,6 @@ namespace MudBlazor
                         _renderHandle.Render(_renderFragment);
                     }
                 }
-                else
-                {
-                    //Console.WriteLine("Prevented overwriting parameters!");
-                }
                 return Task.CompletedTask;
             }
             public static RenderFragment Wrap(RenderFragment renderFragment)
