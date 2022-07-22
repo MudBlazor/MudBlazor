@@ -7,6 +7,7 @@
 using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
+using System.Diagnostics.CodeAnalysis;
 
 namespace MudBlazor
 {
@@ -15,7 +16,7 @@ namespace MudBlazor
         Guid Id { get; }
         RenderFragment RenderFragment { get; set; }
 
-        [Obsolete("This will always return true")]
+        [Obsolete("This will always return true"), ExcludeFromCodeCoverage]
         bool AreParametersRendered { get => true; set { } }
 
         Task<DialogResult> Result { get; }
