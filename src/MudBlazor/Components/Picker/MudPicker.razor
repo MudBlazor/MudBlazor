@@ -34,7 +34,7 @@
              RequiredError="@RequiredError" 
              Error="@Error" 
              ErrorText="@ErrorText"
-             Clearable="@Clearable"
+             Clearable="@(ReadOnly ? false : Clearable)"
              OnClearButtonClick="@(() => Clear())"
              @onclick="@(() => { if (!Editable) ToggleState(); })" 
              @onkeydown="HandleKeyDown" 
