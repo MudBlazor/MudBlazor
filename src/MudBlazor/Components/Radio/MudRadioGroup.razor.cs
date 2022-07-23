@@ -21,6 +21,20 @@ namespace MudBlazor
             .AddClass(Class)
             .Build();
 
+        /// <summary>
+        /// User class names for the input, separated by space
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Radio.Appearance)]
+        public string InputClass { get; set; }
+
+        /// <summary>
+        /// User style definitions for the input
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Radio.Appearance)]
+        public string InputStyle { get; set; }
+
         [Parameter]
         [Category(CategoryTypes.Radio.Behavior)]
         public RenderFragment ChildContent { get; set; }
