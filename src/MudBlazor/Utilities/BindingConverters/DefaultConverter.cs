@@ -47,56 +47,56 @@ namespace MudBlazor
                 // sbyte
                 else if (typeof(T) == typeof(sbyte) || typeof(T) == typeof(sbyte?))
                 {
-                    if (sbyte.TryParse(value, NumberStyles.Integer, Culture, out var parsedValue))
+                    if (sbyte.TryParse(value, NumberStyles.Integer | NumberStyles.AllowThousands, Culture, out var parsedValue))
                         return (T)(object)parsedValue;
                     UpdateGetError("Not a valid number");
                 }
                 // byte
                 else if (typeof(T) == typeof(byte) || typeof(T) == typeof(byte?))
                 {
-                    if (byte.TryParse(value, NumberStyles.Integer, Culture, out var parsedValue))
+                    if (byte.TryParse(value, NumberStyles.Integer | NumberStyles.AllowThousands, Culture, out var parsedValue))
                         return (T)(object)parsedValue;
                     UpdateGetError("Not a valid number");
                 }
                 // short
                 else if (typeof(T) == typeof(short) || typeof(T) == typeof(short?))
                 {
-                    if (short.TryParse(value, NumberStyles.Integer, Culture, out var parsedValue))
+                    if (short.TryParse(value, NumberStyles.Integer | NumberStyles.AllowThousands, Culture, out var parsedValue))
                         return (T)(object)parsedValue;
                     UpdateGetError("Not a valid number");
                 }
                 // ushort
                 else if (typeof(T) == typeof(ushort) || typeof(T) == typeof(ushort?))
                 {
-                    if (ushort.TryParse(value, NumberStyles.Integer, Culture, out var parsedValue))
+                    if (ushort.TryParse(value, NumberStyles.Integer | NumberStyles.AllowThousands, Culture, out var parsedValue))
                         return (T)(object)parsedValue;
                     UpdateGetError("Not a valid number");
                 }
                 // int
                 else if (typeof(T) == typeof(int) || typeof(T) == typeof(int?))
                 {
-                    if (int.TryParse(value, NumberStyles.Integer, Culture, out var parsedValue))
+                    if (int.TryParse(value, NumberStyles.Integer | NumberStyles.AllowThousands, Culture, out var parsedValue))
                         return (T)(object)parsedValue;
                     UpdateGetError("Not a valid number");
                 }
                 // uint
                 else if (typeof(T) == typeof(uint) || typeof(T) == typeof(uint?))
                 {
-                    if (uint.TryParse(value, NumberStyles.Integer, Culture, out var parsedValue))
+                    if (uint.TryParse(value, NumberStyles.Integer | NumberStyles.AllowThousands, Culture, out var parsedValue))
                         return (T)(object)parsedValue;
                     UpdateGetError("Not a valid number");
                 }
                 // long
                 else if (typeof(T) == typeof(long) || typeof(T) == typeof(long?))
                 {
-                    if (long.TryParse(value, NumberStyles.Integer, Culture, out var parsedValue))
+                    if (long.TryParse(value, NumberStyles.Integer | NumberStyles.AllowThousands, Culture, out var parsedValue))
                         return (T)(object)parsedValue;
                     UpdateGetError("Not a valid number");
                 }
                 // ulong
                 else if (typeof(T) == typeof(ulong) || typeof(T) == typeof(ulong?))
                 {
-                    if (ulong.TryParse(value, NumberStyles.Integer, Culture, out var parsedValue))
+                    if (ulong.TryParse(value, NumberStyles.Integer | NumberStyles.AllowThousands, Culture, out var parsedValue))
                         return (T)(object)parsedValue;
                     UpdateGetError("Not a valid number");
                 }
