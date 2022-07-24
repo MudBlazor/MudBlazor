@@ -164,6 +164,13 @@ namespace MudBlazor
         public string Label { get; set; }
 
         /// <summary>
+        /// Show clear button.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Behavior)]
+        public bool Clearable { get; set; } = false;
+
+        /// <summary>
         /// If true, the picker will be disabled.
         /// </summary>
         [Parameter]
