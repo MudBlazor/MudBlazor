@@ -426,13 +426,26 @@ namespace MudBlazor
         {
             if (firstRender)
             {
-                _keyInterceptor = _keyInterceptorFactory.Create();
+                await ConnectKeyInterceptor();
+            }
 
-                await _keyInterceptor.Connect(_elementId, new KeyInterceptorOptions()
-                {
-                    //EnableLogging = true,
-                    TargetClass = "mud-input-slot",
-                    Keys =
+            await base.OnAfterRenderAsync(firstRender);
+        }
+
+        private async Task ConnectKeyInterceptor()
+        {
+            if (_keyInterceptor != null)
+            {
+                return;
+            }
+
+            _keyInterceptor = _keyInterceptorFactory.Create();
+
+            await _keyInterceptor.Connect(_elementId, new KeyInterceptorOptions()
+            {
+                //EnableLogging = true,
+                TargetClass = "mud-input-slot",
+                Keys =
                     {
                         new KeyOptions { Key = " ", PreventDown = "key+none" },
                         new KeyOptions { Key = "ArrowUp", PreventDown = "key+none" },
@@ -441,11 +454,8 @@ namespace MudBlazor
                         new KeyOptions { Key = "NumpadEnter", PreventDown = "key+none" },
                         new KeyOptions { Key = "/./", SubscribeDown = true, SubscribeUp = true }, // for our users
                     },
-                });
-                _keyInterceptor.KeyDown += HandleKeyDown;
-            }
-
-            await base.OnAfterRenderAsync(firstRender);
+            });
+            _keyInterceptor.KeyDown += HandleKeyDown;
         }
 
         protected internal void ToggleState()
@@ -474,6 +484,7 @@ namespace MudBlazor
                 await _pickerInlineRef.MudChangeCssAsync(PickerInlineClass);
             }
 
+            await ConnectKeyInterceptor();
             await _keyInterceptor.UpdateKey(new() { Key = "Escape", StopDown = "key+none" });
         }
 
