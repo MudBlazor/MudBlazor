@@ -851,5 +851,58 @@ namespace MudBlazor.UnitTests.Components
             var markupAfter = comp.Find("svg.mud-icon-root").Children.ToMarkup().Trim();
             markupAfter.Should().NotBe(markupBefore);
         }
+
+        /// <summary>
+        /// Setting InputClass should add the class(es) to the element in addition to the existing "mud-input" class
+        /// </summary>
+        [Test]
+        public async Task Autocomplete_Should_AppendInputClassToExistingInputClass()
+        {
+            var comp = Context.RenderComponent<AutocompleteTest1>();
+            var autocompletecomp = comp.FindComponent<MudAutocomplete<string>>();
+            var autocomplete = autocompletecomp.Instance;
+            await comp.InvokeAsync(() => autocomplete.FocusAsync());
+
+            // check initial state
+            comp.Find("input").ClassList.Should().Contain("mud-input-root");
+
+            // add a class
+            autocompletecomp.SetParametersAndRender(parameters => parameters.Add(p => p.InputClass, "px-6"));
+
+            // check if classlist now contains newly added class
+            comp.WaitForAssertion(() => comp.Find("input").ClassList.Should().Contain("px-6"));
+
+            // check if classlist still contains default "mud-input-root" (did not overwrite)
+            comp.Find("input").ClassList.Should().Contain("mud-input-root");
+
+        }
+
+        /// <summary>
+        /// Setting InputStyle should add the style(s) to the element in addition to the existing "mud-select-input" style
+        /// </summary>
+        [Test]
+        public async Task Autocomplete_Should_AppendInputStyleToExistingInputStyle()
+        {
+            var comp = Context.RenderComponent<AutocompleteTest1>();
+            var autocompletecomp = comp.FindComponent<MudAutocomplete<string>>();
+            var autocomplete = autocompletecomp.Instance;
+            await comp.InvokeAsync(() => autocomplete.FocusAsync());
+
+            // check initial state
+            var inputElement = comp.Find("input");
+            var styles = inputElement.ComputeCurrentStyle();
+
+            var curColor = styles.FirstOrDefault(x => x.Name == "color");
+            var curCursor = styles.FirstOrDefault(x => x.Name == "cursor");
+
+            autocompletecomp.SetParametersAndRender(parameters => parameters.Add(p => p.InputStyle, "color: red"));
+
+
+            // check if style now has new color and still retains existing cursor
+            comp.WaitForAssertion(() => comp.Find("input").Attributes.FirstOrDefault(x => x.Name == "color")?.Value.Should().Be("red"));
+            comp.WaitForAssertion(() => comp.Find("input").Attributes.FirstOrDefault(x => x.Name == "cursor")?.Value.Should().Be(curCursor.Value));
+        }
+
+
     }
 }
