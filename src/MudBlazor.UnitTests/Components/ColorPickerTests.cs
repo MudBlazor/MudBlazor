@@ -15,6 +15,7 @@ using Microsoft.AspNetCore.Components.Web;
 using Microsoft.Extensions.DependencyInjection;
 using MudBlazor.UnitTests.Mocks;
 using MudBlazor.UnitTests.TestComponents;
+using MudBlazor.UnitTests.TestComponents.ColorPicker;
 using MudBlazor.Utilities;
 using NUnit.Framework;
 
@@ -775,7 +776,6 @@ namespace MudBlazor.UnitTests.Components
             {
                 buttons[item.Key].Click();
 
-                comp.Instance.ColorPickerView.Should().Be(item.Value.Item1);
                 _ = comp.Find(item.Value.Item2);
             }
         }
@@ -1308,6 +1308,39 @@ namespace MudBlazor.UnitTests.Components
                 "mud-popover-anchor-top-left",
                 "mud-popover-overflow-flip-onopen",
             });
+        }
+
+        //https://github.com/MudBlazor/MudBlazor/issues/4899
+        [Test]
+        public void DistingishBetweenInternalAndExternalView()
+        {
+            var comp = Context.RenderComponent<PickerWithFixedView>();
+
+            //open the color picker
+            var inputField = comp.Find(".mud-input-slot");
+            inputField.Click();
+
+            //asset that the picker is open in grid mode
+            var grid = comp.Find(".mud-picker-color-grid");
+
+            //find spectrum button and click
+            var spectrumButton = comp.FindAll(_mudToolbarButtonsCssSelector)[1];
+            spectrumButton.Click();
+
+            //find the overlay and click any position
+            var overlay = comp.Find(CssSelector);
+            overlay.Click(new MouseEventArgs { OffsetX = 10.5, OffsetY = 10.5 });
+
+            //ensure that the spectrum mode is still open and not the color grid
+            _ = comp.Find(".mud-picker-color-overlay");
+            Assert.Throws<ElementNotFoundException>(() => comp.Find(".mud-picker-color-grid"));
+
+            //change the view per paramter
+            comp.SetParametersAndRender(x => x.Add(y => y.ColorPickerView, ColorPickerView.GridCompact));
+
+            //now the grid view should be visible
+            Assert.Throws<ElementNotFoundException>(() => comp.Find(".mud-picker-color-overlay"));
+            _ = comp.Find(".mud-picker-color-grid");
         }
     }
 }

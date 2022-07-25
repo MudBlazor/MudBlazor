@@ -1,0 +1,10 @@
+﻿<MudPopoverProvider />
+
+<MudColorPicker ColorPickerMode="ColorPickerMode.HEX" ColorPickerView="@ColorPickerView" DisableToolbar="false" Label="Basic Color Picker" Placeholder="Select Color" @bind-Value="@_colorValue" />
+
+@code {
+	private MudBlazor.Utilities.MudColor _colorValue;
+
+	[Parameter]
+	public ColorPickerView ColorPickerView { get; set; } = ColorPickerView.Grid;
+}
