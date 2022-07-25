@@ -86,7 +86,10 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Appearance)]
-        public string InputStyle { get; set; }
+        public string InputStyle { get; set; } =
+            new StyleBuilder()
+            .AddStyle("mud-select-input")
+            .Build();
 
         /// <summary>
         /// The underlying Input element Class
