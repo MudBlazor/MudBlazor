@@ -3,20 +3,13 @@
 <MudGrid>
     <MudItem xs="12" sm="6" md="4">
         <MudAutocomplete T="string" Label="US States" @bind-Value="value1" SearchFunc="@Search1"
-                         ResetValueOnEmptyText="@resetValueOnEmptyText"
+                         ResetValueOnEmptyText="@resetValueOnEmptyText" MaxItems="100000"
                          CoerceText="@coerceText" CoerceValue="@coerceValue"
-                         Virtualize="true" />
-    </MudItem>
-    <MudItem xs="12" sm="6" md="4">
-        <MudAutocomplete T="string" Label="US States" @bind-Value="value2" SearchFunc="@Search2"
-                         ResetValueOnEmptyText="@resetValueOnEmptyText"
-                         CoerceText="@coerceText" CoerceValue="@coerceValue"
-                         AdornmentIcon="@Icons.Material.Filled.Search" AdornmentColor="Color.Primary"
                          Virtualize="true" />
     </MudItem>
     <MudItem xs="12" md="12">
         <MudText Class="mb-n3" Typo="Typo.body2">
-            <MudChip>@(value1 ?? "Not selected")</MudChip><MudChip>@(value2 ?? "Not selected")</MudChip>
+            <MudChip>@(value1 ?? "Not selected")</MudChip>
         </MudText>
     </MudItem>
     <MudItem xs="12" md="12" class="flex-column">
@@ -30,7 +23,7 @@
     private bool resetValueOnEmptyText;
     private bool coerceText;
     private bool coerceValue;
-    private string value1, value2;
+    private string value1;
     private string[] states =
     {
         "Alabama", "Alaska", "American Samoa", "Arizona",
@@ -69,17 +62,6 @@
         // if text is null or empty, show complete list
         if (string.IsNullOrEmpty(value))
             return GetALotOfStates();
-        return GetALotOfStates().Where(x => x.Contains(value, StringComparison.InvariantCultureIgnoreCase));
-    }
-
-    private async Task<IEnumerable<string>> Search2(string value)
-    {
-        // In real life use an asynchronous function for fetching data from an api.
-        await Task.Delay(5);
-
-        // if text is null or empty, don't return values (drop-down will not open)
-        if (string.IsNullOrEmpty(value))
-            return new string[0];
         return GetALotOfStates().Where(x => x.Contains(value, StringComparison.InvariantCultureIgnoreCase));
     }
 }
