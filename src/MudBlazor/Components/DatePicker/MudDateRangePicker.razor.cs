@@ -37,13 +37,6 @@ namespace MudBlazor
             set => SetDateRangeAsync(value, true).AndForget();
         }
 
-        /// <summary>
-        /// If AutoClose is set to true and PickerActions are defined, selecting a day will close the MudDatePicker.
-        /// </summary>
-        [Parameter]
-        [Category(CategoryTypes.FormComponent.PickerBehavior)]
-        public bool AutoClose { get; set; }
-
         protected async Task SetDateRangeAsync(DateRange range, bool updateValue)
         {
             if (_dateRange != range)

@@ -21,6 +21,29 @@ namespace MudBlazor.UnitTests.Components
     public class DatePickerTests : BunitTest
     {
         [Test]
+        public void Default()
+        {
+            var comp = Context.RenderComponent<MudDatePicker>();
+            var picker = comp.Instance;
+            
+            picker.Text.Should().Be(null);
+            picker.Date.Should().Be(null);
+            picker.MaxDate.Should().Be(null);
+            picker.MinDate.Should().Be(null);
+            picker.OpenTo.Should().Be(OpenTo.Date);
+            picker.FirstDayOfWeek.Should().Be(null);
+            picker.ClosingDelay.Should().Be(100);
+            picker.DisplayMonths.Should().Be(1);
+            picker.MaxMonthColumns.Should().Be(null);
+            picker.StartMonth.Should().Be(null);
+            picker.ShowWeekNumbers.Should().BeFalse();
+            picker.AutoClose.Should().BeFalse();
+            picker.FixYear.Should().Be(null);
+            picker.FixMonth.Should().Be(null);
+            picker.FixDay.Should().Be(null);
+        }
+
+        [Test]
         public void DatePickerOpenButtonAriaLabel()
         {
             var comp = Context.RenderComponent<DatePickerValidationTest>();
