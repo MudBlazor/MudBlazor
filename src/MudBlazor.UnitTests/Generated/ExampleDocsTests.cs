@@ -32,6 +32,7 @@ namespace MudBlazor.UnitTests.Components
             ctx.Services.AddTransient<IResizeObserverFactory, MockResizeObserverFactory>();
             ctx.Services.AddSingleton<IBrowserWindowSizeProvider>(new MockBrowserWindowSizeProvider());
             ctx.Services.AddTransient<IEventListenerFactory, MockEventListenerFactory>();
+            ctx.Services.AddTransient<IEventListener, MockEventListener>();
             ctx.Services.AddTransient<IKeyInterceptorFactory, MockKeyInterceptorServiceFactory>();
             ctx.Services.AddTransient<IJsEventFactory, MockJsEventFactory>();
             ctx.Services.AddSingleton<IMudPopoverService, MockPopoverService>();
@@ -48,8 +49,7 @@ namespace MudBlazor.UnitTests.Components
             {
                 ctx.Dispose();
             }
-            catch(Exception) { /*ignore, may fail because of dispose in the middle of a (second) render pass*/ }
+            catch (Exception) { /*ignore, may fail because of dispose in the middle of a (second) render pass*/ }
         }
     }
 }
-
