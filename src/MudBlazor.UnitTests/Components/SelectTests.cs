@@ -1103,5 +1103,23 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(() => selectWithT.Validate());
             selectWithT.ValidationErrors.Count.Should().Be(0);
         }
+
+        /// <summary>
+        /// When MultiSelect attribute goes after SelectedValues, text should contain all selected values.
+        /// </summary>
+        [Test]
+        public async Task MultiSelectAttributesOrder()
+        {
+            var comp = Context.RenderComponent<MultiSelectTest5>();
+            var select = comp.FindComponent<MudSelect<string>>().Instance;
+            select.SelectedValues.Count().Should().Be(2);
+            select.Text.Should().Be("Programista, test");
+            await comp.InvokeAsync(() =>
+            {
+                select.SelectedValues = new List<string> { "test" };
+            });
+            select.SelectedValues.Count().Should().Be(1);
+            select.Text.Should().Be("test");
+        }
     }
 }

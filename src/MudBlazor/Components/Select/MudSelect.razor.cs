@@ -411,12 +411,24 @@ namespace MudBlazor
 
         internal event Action<ICollection<T>> SelectionChangedFromOutside;
 
+        private bool _multiSelection;
         /// <summary>
         /// If true, multiple values can be selected via checkboxes which are automatically shown in the dropdown
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.ListBehavior)]
-        public bool MultiSelection { get; set; }
+        public bool MultiSelection
+        {
+            get => _multiSelection;
+            set
+            {
+                if (value != _multiSelection)
+                {
+                    _multiSelection = value;
+                    UpdateTextPropertyAsync(false).AndForget();
+                }
+            }
+        }
 
         /// <summary>
         /// The collection of items within this select
