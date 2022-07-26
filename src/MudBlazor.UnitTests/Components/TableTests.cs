@@ -1541,5 +1541,19 @@ namespace MudBlazor.UnitTests.Components
             testComponent.WaitForAssertion(() => table.RowsPerPage.Should().Be(35));
         }
 
+        [Test]
+        public async Task TableContextRecordTest()
+        {
+            var comp = Context.RenderComponent<TableContextRecordTest>();
+            var table = comp.Instance.MudTableRef;
+            table.Context.Rows.Count.Should().Be(4);
+
+            var rows = table.Context.Rows.OrderBy(x => x.Value.Value).ToList(); //get a sorted list with the first two items
+
+            rows.Count.Should().Be(4);
+
+            rows[0].Value.Should().Be(rows[1].Value); //row values should match
+            rows[0].Should().NotBe(rows[1]); //but the presence of the row means the containing record is unique
+        }
     }
 }

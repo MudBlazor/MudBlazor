@@ -156,6 +156,25 @@ namespace MudBlazor.UnitTests.Components
             picker.Text.Should().Be("26 10 2020");
         }
 
+        [Test]        
+        public async Task DatePicker_Should_Clear()
+        {
+            var comp = Context.RenderComponent<MudDatePicker>();
+            // select elements needed for the test
+            var picker = comp.Instance;
+            picker.Text.Should().Be(null);
+            picker.Date.Should().Be(null);
+            comp.SetParam(p => p.Clearable, true);
+            comp.SetParam(p => p.Date, new DateTime(2020, 10, 26));
+            picker.Date.Should().Be(new DateTime(2020, 10, 26));
+            picker.Text.Should().Be(new DateTime(2020, 10, 26).ToShortDateString());
+
+            comp.Find("button").Click(); //clear the input
+
+            picker.Text.Should().Be(""); //ensure the text and date are reset. Note this is an empty string rather than null due to how the reset works internally
+            picker.Date.Should().Be(null);
+        }
+
         [Test]
         public void Check_Intial_Date_Format()
         {

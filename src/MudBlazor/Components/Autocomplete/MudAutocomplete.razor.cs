@@ -635,6 +635,14 @@ namespace MudBlazor
         }
 
         /// <summary>
+        /// Blur from the input in the Autocomplete component.
+        /// </summary>
+        public override ValueTask BlurAsync()
+        {
+            return _elementReference.BlurAsync();
+        }
+
+        /// <summary>
         /// Select all text within the Autocomplete input.
         /// </summary>
         public override ValueTask SelectAsync()

@@ -190,7 +190,7 @@ namespace MudBlazor
         {
             try
             {
-                if ((e.CtrlKey && e.Key != "Backspace") || e.AltKey)
+                if ((e.CtrlKey && e.Key != "Backspace") || e.AltKey || ReadOnly)
                         return;
                 // Console.WriteLine($"HandleKeyDown: '{e.Key}'");
                 switch (e.Key)
@@ -337,7 +337,7 @@ namespace MudBlazor
         internal async void OnPaste(string text)
         {
             //Console.WriteLine($"Paste: {text}");
-            if (text == null)
+            if (text == null || ReadOnly)
                 return;
             Mask.Insert(text);
             await Update();
@@ -419,6 +419,9 @@ namespace MudBlazor
 
         private async void OnCut(ClipboardEventArgs obj)
         {
+            if (ReadOnly)
+                return;
+            
             if (_selection!=null)
                 Mask.Delete();
             await Update();
