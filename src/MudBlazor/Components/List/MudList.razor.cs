@@ -241,6 +241,7 @@ namespace MudBlazor
             //    return;
             //}
 
+            //Make sure its the most parent one before continue method
             if (ParentList != null)
             {
                 ParentList?.SetSelectedItem(item);
@@ -262,7 +263,7 @@ namespace MudBlazor
             if (!MultiSelection)
             {
                 RemoveSelectedCSS(items);
-                
+
                 var selectedItem = items.FirstOrDefault(x => x.Value.Equals(item.Value));
                 if (selectedItem != null)
                     selectedItem.SetSelected(true);
@@ -283,9 +284,9 @@ namespace MudBlazor
                 }
 
                 RemoveSelectedCSS(items.Where(x => !x.IsSelected).ToList());
-                
+
             }
-            
+
 
 
         }

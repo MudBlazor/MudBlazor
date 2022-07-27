@@ -10,11 +10,11 @@
         <div>
             @if (MudList?.MultiSelectionComponent == MultiSelectionComponent.CheckBox)
             {
-                <MudCheckBox @bind-Checked="_selected" @onclick="OnClickHandler" />
+                <MudCheckBox Color="@MudList.Color" Disabled="@Disabled" @bind-Checked="_selected" @onclick="OnClickHandler" />
             }
             else if (MudList?.MultiSelectionComponent == MultiSelectionComponent.Switch)
             {
-                <MudSwitch @bind-Checked="_selected" @onclick="OnClickHandler" />
+                <MudSwitch Color="@MudList.Color" Disabled="@Disabled" @bind-Checked="_selected" @onclick="OnClickHandler" />
             }
             
         </div>
@@ -52,11 +52,11 @@
         <div>
             @if (MudList?.MultiSelectionComponent == MultiSelectionComponent.CheckBox)
             {
-                <MudCheckBox @bind-Checked="_selected" />
+                <MudCheckBox Color="@MudList.Color" Disabled="@Disabled" @bind-Checked="_selected" />
             }
             else if (MudList?.MultiSelectionComponent == MultiSelectionComponent.Switch)
             {
-                <MudSwitch @bind-Checked="_selected" />
+                <MudSwitch Color="@MudList.Color" Disabled="@Disabled" @bind-Checked="_selected" />
             }
         </div>
     }
@@ -70,7 +70,7 @@
 @if (NestedList != null)
 {
     <MudCollapse Expanded="@Expanded">
-        <MudList T="T" Clickable="@MudList.Clickable" MultiSelection="@MudList.MultiSelection" DisablePadding="true" Class="mud-nested-list" Disabled="@Disabled">
+        <MudList T="T" Clickable="@MudList.Clickable" Color="@MudList.Color" MultiSelection="@MudList.MultiSelection" DisablePadding="true" Class="mud-nested-list" Disabled="@Disabled">
             <ChildContent>
                 @NestedList
             </ChildContent>
