@@ -240,13 +240,25 @@ namespace MudBlazor
             //    ClearSelectedItem(item);
             //    return;
             //}
-            
+
+            if (ParentList != null)
+            {
+                ParentList?.SetSelectedItem(item);
+                return;
+            }
+
             SelectedItem = item;
             SelectedValue = item.Value;
 
             //create a list of all MudListItems to use for selecting the right item
             var items = CollectAllMudListItems();
-            
+
+            //foreach (var list in _childLists)
+            //{
+            //    list.SetSelectedItem(item);
+            //}
+
+
             if (!MultiSelection)
             {
                 RemoveSelectedCSS(items);
@@ -273,13 +285,9 @@ namespace MudBlazor
                 RemoveSelectedCSS(items.Where(x => !x.IsSelected).ToList());
                 
             }
-            if (ParentList != null && ParentList.SelectedItem != SelectedItem)
-                ParentList?.SetSelectedItem(item);
+            
 
-            foreach (var list in _childLists)
-            {
-                list.SetSelectedItem(item);
-            }
+
         }
         internal void ClearSelectedItem(MudListItem<T> item, bool force = false)
         {
