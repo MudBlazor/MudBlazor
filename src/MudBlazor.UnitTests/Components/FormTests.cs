@@ -1083,6 +1083,37 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// Calling form.Reset() should clear the datepicker
+        /// </summary>
+        [Test]
+        public async Task FormReset_Should_ClearDatePicker()
+        {
+            var comp = Context.RenderComponent<FormResetTest>();
+            var form = comp.FindComponent<MudForm>().Instance;
+            var datePickerComp = comp.FindComponent<MudDatePicker>();
+            var datePicker = datePickerComp.Instance;
+
+            Console.WriteLine(comp.Find("input").ClassName);
+            // input a date
+            await comp.InvokeAsync(() => comp.Find("input").Change("05/24/2020"));
+            datePicker.Date.Should().Be(Convert.ToDateTime("05/24/2020"));
+            datePicker.Text.Should().Be("05/24/2020");
+            // call reset directly
+            await comp.InvokeAsync(() => form.Reset());
+            datePicker.Date.Should().BeNull();
+            datePicker.Text.Should().BeNullOrEmpty();
+            
+            // input a date
+            await comp.InvokeAsync(() => comp.Find("input").Change("05/24/2020"));
+            datePicker.Date.Should().Be(Convert.ToDateTime("05/24/2020"));
+            datePicker.Text.Should().Be("05/24/2020");
+            // hit reset button
+            comp.Find("button.reset").Click();
+            datePicker.Date.Should().BeNull();
+            datePicker.Text.Should().BeNullOrEmpty();
+        }
+
+        /// <summary>
         /// Reset() should reset the form's state
         /// </summary>
         [Test]
