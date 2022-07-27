@@ -101,6 +101,11 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public EventCallback<bool> IsTouchedChanged { get; set; }
 
+        /// <summary>
+        /// Raised when a contained IFormComponent changes its value
+        /// </summary>
+        [Parameter] public EventCallback<FormFieldChangedEventArgs> FieldChanged { get; set; }
+
         // keeps track of validation. if the input was validated at least once the value will be true
         protected HashSet<IFormComponent> _formControls = new();
         protected HashSet<string> _errors = new();
@@ -154,6 +159,11 @@ namespace MudBlazor
         private HashSet<MudForm> ChildForms { get; set; } = new HashSet<MudForm>();
 
         [CascadingParameter] private MudForm ParentMudForm { get; set; }
+
+        void IForm.FieldChanged(IFormComponent formControl, object newValue)
+        {
+            FieldChanged.InvokeAsync(new FormFieldChangedEventArgs { Field = formControl, NewValue = newValue }).AndForget();
+        }
 
         void IForm.Add(IFormComponent formControl)
         {

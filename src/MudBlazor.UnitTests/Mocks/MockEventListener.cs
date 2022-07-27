@@ -47,6 +47,14 @@ namespace MudBlazor.UnitTests.Mocks
             return Task.FromResult(id);
         }
 
+        public Task<Guid> SubscribeGlobal<T>(string eventName, int throotleInterval, Func<object, Task> callback)
+        {
+            var id = Guid.NewGuid();
+            ElementIdMapper.Add(id, "document");
+            Callbacks.Add(id, callback);
+            return Task.FromResult(id);
+        }
+
         public Task<bool> Unsubscribe(Guid key)
         {
             var result = Callbacks.ContainsKey(key);

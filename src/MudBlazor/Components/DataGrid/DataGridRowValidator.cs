@@ -32,6 +32,12 @@ namespace MudBlazor
 
         protected HashSet<string> _errors = new HashSet<string>();
 
+
+        void IForm.FieldChanged(IFormComponent formControl, object newValue)
+        {
+            //implement in future for DataGrid
+        }
+
         void IForm.Add(IFormComponent formControl)
         {
             _formControls.Add(formControl);

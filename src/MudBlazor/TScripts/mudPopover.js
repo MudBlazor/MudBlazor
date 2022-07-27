@@ -371,7 +371,7 @@ class MudPopover {
         }
     }
 
-    initilize(containerClass, flipMargin) {
+    initialize(containerClass, flipMargin) {
         const mainContent = document.getElementsByClassName(containerClass);
         if (mainContent.length == 0) {
             return;
@@ -399,7 +399,7 @@ class MudPopover {
     }
 
     connect(id) {
-        this.initilize(this.mainContainerClass);
+        this.initialize(this.mainContainerClass);
 
         const popoverNode = document.getElementById('popover-' + id);
         const popoverContentNode = document.getElementById('popovercontent-' + id);

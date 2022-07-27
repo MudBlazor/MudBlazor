@@ -32,8 +32,7 @@ namespace MudBlazor
         private MudTr editedRow;
 
         public HashSet<T> Selection { get; set; } = new HashSet<T>();
-
-        public Dictionary<T, MudTr> Rows { get; set; } = new Dictionary<T, MudTr>();
+        public HashSet<MudTrWithValue<T>> Rows { get; set; } = new HashSet<MudTrWithValue<T>>();
         public List<MudTableGroupRow<T>> GroupRows { get; set; } = new List<MudTableGroupRow<T>>();
 
         public List<MudTableSortLabel<T>> SortLabels { get; set; } = new List<MudTableSortLabel<T>>();
@@ -45,8 +44,8 @@ namespace MudBlazor
             // update row checkboxes
             foreach (var pair in Rows.ToArray())
             {
-                var row = pair.Value;
-                var item = pair.Key;
+                var row = pair.Row;
+                var item = pair.Value;
                 row.SetChecked(Selection.Contains(item), notify: notify);
             }
             //update group checkboxes
@@ -90,7 +89,7 @@ namespace MudBlazor
             var t = item.As<T>();
             if (t is null)
                 return;
-            Rows[t] = row;
+            Rows.Add(new MudTrWithValue<T>(t, row));
         }
 
         public override void Remove(MudTr row, object item)
@@ -98,8 +97,7 @@ namespace MudBlazor
             var t = item.As<T>();
             if (t is null)
                 return;
-            if (Rows[t] == row) // Verify the row we wish to remove is the row stored for the key
-                Rows.Remove(t);
+            Rows.Remove(new MudTrWithValue<T>(t, row));
         }
 
         #region --> Sorting

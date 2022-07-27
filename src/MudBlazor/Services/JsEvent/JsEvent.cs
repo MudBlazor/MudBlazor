@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
@@ -36,6 +37,10 @@ namespace MudBlazor.Services
         private bool _isObserving;
         internal HashSet<string> _subscribedEvents = new HashSet<string>();
 
+        [DynamicDependency(nameof(OnCaretPositionChanged))]
+        [DynamicDependency(nameof(OnPaste))]
+        [DynamicDependency(nameof(OnSelect))]
+        [DynamicDependency(DynamicallyAccessedMemberTypes.All, typeof(JsEventOptions))]
         public JsEvent(IJSRuntime jsRuntime)
         {
             _dotNetRef = DotNetObjectReference.Create(this);
@@ -49,7 +54,7 @@ namespace MudBlazor.Services
         /// <param name="options">Define here the descendant(s) by setting TargetClass and the keystrokes to be monitored</param>
         public async Task Connect(string elementId, JsEventOptions options)
         {
-            if (_isObserving)
+            if (_isObserving || _isDisposed)
                 return;
             _elementId = elementId;
             try
@@ -70,7 +75,7 @@ namespace MudBlazor.Services
                 return;
             await UnsubscribeAll();
             try
-            {                
+            {
                 await _jsRuntime.InvokeVoidAsync($"mudJsEvent.disconnect", _elementId);
             }
             catch (Exception) {  /*ignore*/ }
@@ -81,7 +86,7 @@ namespace MudBlazor.Services
         {
             if (_elementId == null)
                 throw new InvalidOperationException("Call Connect(...) before attaching events!");
-            if (_subscribedEvents.Contains(eventName))
+            if (_subscribedEvents.Contains(eventName) || _isDisposed)
                 return;
             try
             {

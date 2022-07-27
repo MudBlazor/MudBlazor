@@ -14,7 +14,9 @@ namespace MudBlazor
         public static class String
         {
             public const string Contains = "contains";
+            public const string NotContains = "not contains";
             public const string Equal = "equals";
+            public const string NotEqual = "not equals";
             public const string StartsWith = "starts with";
             public const string EndsWith = "ends with";
             public const string Empty = "is empty";
@@ -140,6 +142,9 @@ namespace MudBlazor
 
         internal static bool IsEnum(Type type)
         {
+            if (null == type)
+                return false;
+
             if (type.IsEnum)
                 return true;
 

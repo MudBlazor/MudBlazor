@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Utilities;
@@ -54,14 +55,14 @@ namespace MudBlazor
             await DataGrid?.SetRowsPerPageAsync(int.Parse(size));
         }
 
-        protected override void OnInitialized()
+        protected override async Task OnInitializedAsync()
         {
-            base.OnInitialized();
-
             if (DataGrid != null)
             {
                 DataGrid.HasPager = true;
                 DataGrid.PagerStateHasChangedEvent += StateHasChanged;
+                var size = DataGrid._rowsPerPage ?? PageSizeOptions.First();
+                await DataGrid.SetRowsPerPageAsync(size);
             }
         }
 
