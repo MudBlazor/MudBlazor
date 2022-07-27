@@ -111,10 +111,10 @@
 }
 
 .mud-list-subheader-sticky {
-    top: 0;
+    top: -8px;
     z-index: 1;
     position: sticky;
-    background-color: inherit;
+    background-color: var(--mud-palette-background-grey);
 }
 
 

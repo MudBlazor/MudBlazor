@@ -2404,7 +2404,7 @@ namespace MudBlazor.UnitTests.Components
                 var columnHamburger = dataGrid.FindAll("button.mud-button-root.mud-icon-button.mud-ripple.mud-ripple-icon.mud-icon-button-size-small");
                 columnHamburger[2].Click();
 
-                var listItems = popoverProvider.FindComponents<MudListItem>();
+                var listItems = popoverProvider.FindComponents<MudListItem<string>>();
                 listItems.Count.Should().Be(2);
                 var clickablePopover = listItems[1].Find(".mud-list-item");
                 clickablePopover.Click();
@@ -2419,7 +2419,7 @@ namespace MudBlazor.UnitTests.Components
                 columnsButton.Click();
 
                 popover.Instance.Open.Should().BeTrue("Should be open once clicked");
-                var listItems = popoverProvider.FindComponents<MudListItem>();
+                var listItems = popoverProvider.FindComponents<MudListItem<string>>();
                 listItems.Count.Should().Be(1);
                 var clickablePopover = listItems[0].Find(".mud-list-item");
                 clickablePopover.Click();
@@ -2468,7 +2468,7 @@ namespace MudBlazor.UnitTests.Components
             columnsButton.Click();
 
             popover.Instance.Open.Should().BeTrue("Should be open once clicked");
-            var listItems = popoverProvider.FindComponents<MudListItem>();
+            var listItems = popoverProvider.FindComponents<MudListItem<string>>();
             listItems.Count.Should().Be(1);
             var clickablePopover = listItems[0].Find(".mud-list-item");
             clickablePopover.Click();

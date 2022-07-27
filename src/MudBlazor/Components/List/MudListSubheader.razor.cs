@@ -8,9 +8,10 @@ namespace MudBlazor
     {
         protected string Classname =>
         new CssBuilder("mud-list-subheader")
-           .AddClass("mud-list-subheader-gutters", !DisableGutters)
-           .AddClass("mud-list-subheader-inset", Inset)
-          .AddClass(Class)
+            .AddClass("mud-list-subheader-gutters", !DisableGutters)
+            .AddClass("mud-list-subheader-inset", Inset)
+            .AddClass("mud-list-subheader-sticky", Sticky)
+            .AddClass(Class)
         .Build();
 
         [Parameter]
@@ -24,5 +25,9 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.List.Appearance)]
         public bool Inset { get; set; }
+
+        [Parameter]
+        [Category(CategoryTypes.List.Appearance)]
+        public bool Sticky { get; set; }
     }
 }
