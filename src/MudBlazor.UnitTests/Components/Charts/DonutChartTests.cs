@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using MudBlazor.UnitTests.Components;
+using System;
 using System.Linq;
 using FluentAssertions;
 using MudBlazor.Charts;
@@ -87,6 +88,39 @@ namespace MudBlazor.UnitTests.Charts
                 .Add(p => p.ChartOptions, new ChartOptions(){ChartPalette = _modifiedPalette}));
 
             comp.Markup.Should().Contain(_modifiedPalette[0]);
+        }
+
+        [Test]
+        [TestCase(new double[]{50, 25, 20, 5 })]
+        [TestCase(new double[]{50, 25, 20, 5 , 12})]
+        public void DonutCirclePosition(double[] data)
+        {
+            string[] labels = { "Fossil", "Nuclear", "Solar", "Wind", "Oil", "Coal", "Gas", "Biomass",
+                "Hydro", "Geothermal", "Fossil", "Nuclear", "Solar", "Wind", "Oil",
+                "Coal", "Gas", "Biomass", "Hydro", "Geothermal" };
+            
+            var comp = Context.RenderComponent<MudChart>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.Donut)
+                .Add(p => p.Height, "300px")
+                .Add(p => p.Width, "300px")
+                .Add(p => p.InputData, data)
+                .Add(p => p.ChartOptions, new ChartOptions {ChartPalette = _baseChartPalette})
+                .Add(p => p.InputLabels,labels));
+            
+            var svgViewBox = comp.Find("svg").GetAttribute("viewBox")?.Split(" ")?.Select(s => Int32.Parse(s))?.ToArray();
+            var circles = comp.FindAll("circle");
+
+            svgViewBox.Should().NotBeNullOrEmpty("must have a valid viewbox", svgViewBox);
+
+            foreach (var c in circles)
+            {
+                var cx = Int32.Parse(c.GetAttribute("cx") ?? "0");
+                var cy = Int32.Parse(c.GetAttribute("cy") ?? "0");
+
+                cx.Should().Be(svgViewBox[2]/2);
+
+                cx.Should().Be(svgViewBox[3]/2);
+            }
         }
     }
 }

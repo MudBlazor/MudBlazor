@@ -124,6 +124,12 @@ namespace MudBlazor
         }
 
         [ExcludeFromCodeCoverage]
+        public override ValueTask BlurAsync()
+        {
+            return _elementReference.BlurAsync();
+        }
+
+        [ExcludeFromCodeCoverage]
         public override ValueTask SelectAsync()
         {
             return _elementReference.SelectAsync();

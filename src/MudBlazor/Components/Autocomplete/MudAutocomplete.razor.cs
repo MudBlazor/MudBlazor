@@ -184,11 +184,18 @@ namespace MudBlazor
         public RenderFragment<T> ItemDisabledTemplate { get; set; }
 
         /// <summary>
-        /// Optional template when more items were returned from the Search function than the MaxItems limit
+        /// Optional presentation template for when more items were returned from the Search function than the MaxItems limit
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.ListBehavior)]
         public RenderFragment MoreItemsTemplate { get; set; }
+
+        /// <summary>
+        /// Optional presentation template for when no items were returned from the Search function
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.ListBehavior)]
+        public RenderFragment NoItemsTemplate { get; set; }
 
         /// <summary>
         /// On drop-down close override Text with selected Value. This makes it clear to the user
@@ -228,7 +235,7 @@ namespace MudBlazor
                 if (value == _isOpen)
                     return;
                 _isOpen = value;
-                UpdateIcon();
+                
                 IsOpenChanged.InvokeAsync(_isOpen).AndForget();
             }
         }
@@ -257,7 +264,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public EventCallback<MouseEventArgs> OnClearButtonClick { get; set; }
 
-        private string _currentIcon;
+        private string CurrentIcon => !string.IsNullOrWhiteSpace(AdornmentIcon) ? AdornmentIcon : _isOpen ? CloseIcon : OpenIcon;
 
         /// <summary>
         /// This boolean will keep track if the clear function is called too keep the set text function to be called.
@@ -317,14 +324,9 @@ namespace MudBlazor
             }
         }
 
-        private void UpdateIcon()
-        {
-            _currentIcon = !string.IsNullOrWhiteSpace(AdornmentIcon) ? AdornmentIcon : _isOpen ? CloseIcon : OpenIcon;
-        }
 
         protected override void OnInitialized()
         {
-            UpdateIcon();
             var text = GetItemString(Value);
             if (!string.IsNullOrWhiteSpace(text))
                 Text = text;
@@ -630,6 +632,14 @@ namespace MudBlazor
         public override ValueTask FocusAsync()
         {
             return _elementReference.FocusAsync();
+        }
+
+        /// <summary>
+        /// Blur from the input in the Autocomplete component.
+        /// </summary>
+        public override ValueTask BlurAsync()
+        {
+            return _elementReference.BlurAsync();
         }
 
         /// <summary>

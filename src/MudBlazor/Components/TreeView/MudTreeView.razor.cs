@@ -76,6 +76,13 @@ namespace MudBlazor
         public bool ExpandOnClick { get; set; }
 
         /// <summary>
+        /// If true, double clicking anywhere on the item will expand it, if it has childs.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.TreeView.ClickAction)]
+        public bool ExpandOnDoubleClick { get; set; }
+
+        /// <summary>
         /// Hover effect for item's on mouse-over.
         /// </summary>
         [Parameter]

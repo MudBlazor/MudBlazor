@@ -167,13 +167,13 @@ namespace MudBlazor
         {
             Position = SetPosition();
             DialogMaxWidth = SetMaxWidth();
-            Class = Classname;
             NoHeader = SetHideHeader();
             CloseButton = SetCloseButton();
             FullWidth = SetFullWidth();
             FullScreen = SetFulScreen();
             DisableBackdropClick = SetDisableBackdropClick();
             CloseOnEscapeKey = SetCloseOnEscapeKey();
+            Class = Classname;
         }
 
         private string SetPosition()
@@ -242,7 +242,7 @@ namespace MudBlazor
                 .AddClass("mud-dialog-width-full", FullWidth && !FullScreen)
                 .AddClass("mud-dialog-fullscreen", FullScreen)
                 .AddClass("mud-dialog-rtl", RightToLeft)
-                .AddClass(Class)
+                .AddClass(_dialog?.Class)
             .Build();
 
         private bool SetHideHeader()
@@ -320,6 +320,14 @@ namespace MudBlazor
         public void ForceRender()
         {
             StateHasChanged();
+        }
+
+        /// <summary>
+        /// Cancels all dialogs in dialog provider collection.
+        /// </summary>
+        public void CancelAll()
+        {
+            Parent?.DismissAll();
         }
 
         protected virtual void Dispose(bool disposing)

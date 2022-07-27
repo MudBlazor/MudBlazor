@@ -126,7 +126,7 @@ namespace MudBlazor
     public class MudPopoverService : IMudPopoverService, IAsyncDisposable
     {
         private Dictionary<Guid, MudPopoverHandler> _handlers = new();
-        private bool _isInitilized = false;
+        private bool _isInitialized = false;
         private readonly IJSRuntime _jsRuntime;
         private readonly PopoverOptions _options;
         private SemaphoreSlim _semaphoreSlim = new(1, 1);
@@ -143,15 +143,15 @@ namespace MudBlazor
 
         public async Task InitializeIfNeeded()
         {
-            if (_isInitilized == true) { return; }
+            if (_isInitialized == true) { return; }
 
             try
             {
                 await _semaphoreSlim.WaitAsync();
-                if (_isInitilized == true) { return; }
+                if (_isInitialized == true) { return; }
 
-                await _jsRuntime.InvokeVoidAsync("mudPopover.initilize", _options.ContainerClass, _options.FlipMargin);
-                _isInitilized = true;
+                await _jsRuntime.InvokeVoidAsync("mudPopover.initialize", _options.ContainerClass, _options.FlipMargin);
+                _isInitialized = true;
             }
             catch (JSDisconnectedException) { }
             catch (TaskCanceledException) { }
@@ -187,7 +187,7 @@ namespace MudBlazor
         [ExcludeFromCodeCoverage]
         public async ValueTask DisposeAsync()
         {
-            if (_isInitilized == false) { return; }
+            if (_isInitialized == false) { return; }
 
             try
             {

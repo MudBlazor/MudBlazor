@@ -2,7 +2,6 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
 using System.Collections.Generic;
 
 namespace MudBlazor
@@ -13,15 +12,14 @@ namespace MudBlazor
 
         public int PageSize { get; set; }
 
-        public Func<T, object> SortBy { get; set; }
+        public ICollection<SortDefinition<T>> SortDefinitions { get; set; }
 
-        public SortDirection SortDirection { get; set; }
+        public ICollection<FilterDefinition<T>> FilterDefinitions { get; set; }
     }
 
     public class GridData<T>
     {
         public IEnumerable<T> Items { get; set; }
         public int TotalItems { get; set; }
-
     }
 }

@@ -24,6 +24,11 @@
         width: 100%;
     }
 
+    &.mud-input-control-boolean-input {
+        flex: none;
+        margin: 0;
+    }
+
     & > .mud-input-control-input-container {
         position: relative;
         display: flex;
@@ -92,6 +97,7 @@
                     padding-inline-end: 20px;
                 }
             }
+
             &.mud-input-text input {
                 padding-inline-start: 0;
 
