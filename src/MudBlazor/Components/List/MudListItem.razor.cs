@@ -17,6 +17,7 @@ namespace MudBlazor
           .AddClass("mud-ripple", MudList?.Clickable == true && !DisableRipple && !Disabled)
           .AddClass($"mud-selected-item mud-{MudList?.Color.ToDescriptionString()}-text mud-{MudList?.Color.ToDescriptionString()}-hover", _selected && !Disabled && NestedList == null)
           .AddClass("mud-list-item-disabled", Disabled)
+          .AddClass("mud-list-item-nested-background", SecondaryBackgroundColorForNestedItem)
           .AddClass(Class)
         .Build();
 
@@ -84,6 +85,13 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.List.Appearance)]
         public bool DisableRipple { get; set; }
+
+        /// <summary>
+        /// If true, disables ripple effect.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.List.Appearance)]
+        public bool SecondaryBackgroundColorForNestedItem { get; set; }
 
         /// <summary>
         /// Icon to use if set.
@@ -249,7 +257,7 @@ namespace MudBlazor
                     OnClick.InvokeAsync(ev);
                     UriHelper.NavigateTo(Href, ForceLoad);
                 }
-                else if ((MudList?.Clickable == true || MudList?.MultiSelection == true))
+                else if (MudList?.Clickable == true || MudList?.MultiSelection == true)
                 {
                     MudList?.SetSelectedItem(this);
                     OnClick.InvokeAsync(ev);

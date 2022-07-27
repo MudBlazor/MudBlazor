@@ -6,14 +6,14 @@
             <MudList @ref="_list" T="int" Clickable="_clickable" MultiSelection="_multiSelection" @bind-SelectedValue="_value" SelectedValuesChanged="GetSelectedValues">
                 <MudListItem T="int" Text="Sparkling Water (1)" Value="1" />
                 <MudListItem T="int" Text="Still Water (2)" Value="2" />
-                <MudListItem T="int" Text="Teas">
+                <MudListItem T="int" Text="Teas" InitiallyExpanded="true" SecondaryBackgroundColorForNestedItem="_secondaryBackground">
                     <NestedList>
                         <MudListItem Text="Earl Grey (3)" Value="3" />
                         <MudListItem Text="Matcha (4)" Value="4" />
                         <MudListItem Text="Pu'er (5)" Value="5" />
                     </NestedList>
                 </MudListItem>
-                <MudListItem T="int" Text="Coffees">
+                <MudListItem T="int" Text="Coffees" SecondaryBackgroundColorForNestedItem="_secondaryBackground">
                     <NestedList>
                         <MudListItem Text="Irish Coffee (6)" Value="6" />
                         <MudListItem Text="Double Espresso (7)" Value="7" />
@@ -27,6 +27,7 @@
     <MudItem xs="12" sm="4">
         <MudCheckBox @bind-Checked="_clickable" Color="Color.Primary" Label="Clickable" />
         <MudCheckBox @bind-Checked="_multiSelection" Color="Color.Primary" Label="MultiSelection" />
+        <MudCheckBox @bind-Checked="_secondaryBackground" Color="Color.Primary" Label="Secondary Background For Nested Item Header" />
         <MudDivider />
         <MudText Class="ma-4">Selected Value: @_value</MudText>
         <MudText Class="ma-4">Selected Values: @_values</MudText>
@@ -36,6 +37,7 @@
 @code{
     bool _clickable = false;
     bool _multiSelection = false;
+    bool _secondaryBackground = false;
     int _value;
     MudList<int> _list;
     string _values = "";

@@ -55,10 +55,6 @@
     &:hover {
         background-color: var(--mud-palette-action-default-hover);
     }
-
-    &:focus:not(.mud-selected-item) {
-        background-color: var(--mud-palette-action-default-hover);
-    }
 }
 
 .mud-list-item-gutters {
@@ -95,8 +91,8 @@
     box-sizing: border-box;
     list-style: none;
     font-weight: 500;
-    padding-top: 8px;
-    padding-bottom: 20px;
+    padding-top: 16px;
+    padding-bottom: 16px;
 }
 
 .mud-list-subheader-gutters {
@@ -121,6 +117,10 @@
 .mud-list-item-avatar {
     min-width: 56px;
     flex-shrink: 0;
+}
+
+.mud-list-item-nested-background {
+    background-color: var(--mud-palette-background-grey);
 }
 
 .mud-nested-list {
