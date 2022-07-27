@@ -2,7 +2,7 @@
 @typeparam T
 @inherits MudComponentBase
 
-<div tabindex="0" @attributes="UserAttributes" class="@Classname" @onclick="OnClickHandler" @onclick:stopPropagation="true" style="@Style">
+<div tabindex="0" @attributes="UserAttributes" class="@Classname" @onclick="@(MudList?.Clickable == true ? OnClickHandler : null)" @onclick:stopPropagation="true" style="@Style">
 
 
     @if (NestedList == null && MudList?.MultiSelection == true && MudList?.MultiSelectionAlign == Align.Start)
@@ -10,7 +10,7 @@
         <div>
             @if (MudList?.MultiSelectionComponent == MultiSelectionComponent.CheckBox)
             {
-                <MudCheckBox Color="@MudList.Color" Disabled="@Disabled" @bind-Checked="_selected" @onclick="OnClickHandler" />
+                <MudCheckBox Class="me-2" Color="@MudList.Color" Disabled="@Disabled" @bind-Checked="_selected" @onclick="OnClickHandler" Dense="true" />
             }
             else if (MudList?.MultiSelectionComponent == MultiSelectionComponent.Switch)
             {
@@ -52,7 +52,7 @@
         <div>
             @if (MudList?.MultiSelectionComponent == MultiSelectionComponent.CheckBox)
             {
-                <MudCheckBox Color="@MudList.Color" Disabled="@Disabled" @bind-Checked="_selected" />
+                <MudCheckBox Color="@MudList.Color" Disabled="@Disabled" @bind-Checked="_selected" Dense="true" />
             }
             else if (MudList?.MultiSelectionComponent == MultiSelectionComponent.Switch)
             {

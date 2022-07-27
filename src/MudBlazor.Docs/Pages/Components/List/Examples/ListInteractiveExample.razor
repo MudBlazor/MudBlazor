@@ -3,13 +3,13 @@
 <MudGrid>
     <MudItem xs="12" md="12">
         <MudCheckBox @bind-Checked="@Dense" Label="Dense" Color="Color.Default" />
-        <MudCheckBox @bind-Checked="@Clickable" Label="Clickable" Color="Color.Primary" />
+        <MudCheckBox @bind-Checked="@Padding" Label="Disable Padding" Color="Color.Primary" />
         <MudCheckBox @bind-Checked="@Gutters" Label="Disable Gutters" Color="Color.Secondary" />
     </MudItem>
     <MudItem xs="12" md="6">
         <MudText Typo="Typo.h6" GutterBottom="true">Text only</MudText>
         <MudPaper Width="100%">
-            <MudList T="string" Clickable="@Clickable" Dense="@Dense" DisableGutters="@Gutters">
+            <MudList T="string" Dense="@Dense" DisableGutters="@Gutters" DisablePadding="@Padding">
                 <MudListItem T="string" Text="Single List Item" />
                 <MudListItem T="string" Text="Single List Item" />
                 <MudListItem T="string" Text="Single List Item" />
@@ -19,7 +19,7 @@
     <MudItem xs="12" md="6">
         <MudText Typo="Typo.h6" GutterBottom="true">Icons with text</MudText>
         <MudPaper Width="100%">
-            <MudList T="string" Clickable="@Clickable"  Dense="@Dense" DisableGutters="@Gutters">
+            <MudList T="string" Dense="@Dense" DisableGutters="@Gutters" DisablePadding="@Padding">
                 <MudListItem T="string" Text="Single List Item" Icon="@Icons.Filled.Bookmark" />
                 <MudListItem T="string" Text="Single List Item" Icon="@Icons.Filled.Bookmark" IconColor="Color.Primary" />
                 <MudListItem T="string" Text="Single List Item" Icon="@Icons.Filled.Bookmark" IconColor="Color.Secondary" />
@@ -29,7 +29,7 @@
     <MudItem xs="12" md="6">
         <MudText Typo="Typo.h6" GutterBottom="true">Avatar with text</MudText>
         <MudPaper Width="100%">
-            <MudList T="string" Clickable="@Clickable" Dense="@Dense"  DisableGutters="@Gutters">
+            <MudList T="string" Dense="@Dense"  DisableGutters="@Gutters" DisablePadding="@Padding">
                 <MudListItem T="string" Text="Single List Item" Avatar="@Icons.Filled.Image" />
                 <MudListItem T="string" Text="Single List Item" Avatar="@Icons.Filled.Image" IconColor="Color.Dark" />
                 <MudListItem T="string" Text="Single List Item" Avatar="@Icons.Filled.Image" IconColor="Color.Error" />
@@ -42,7 +42,7 @@
 
 @code {
     public bool Dense { get; set; }
-    public bool Clickable { get; set; }
+    public bool Padding { get; set; }
     public bool Gutters { get; set; }
 
     MudListItem<string> selectedItem = new();

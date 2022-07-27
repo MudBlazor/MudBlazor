@@ -7,8 +7,8 @@
     <DocsPageContent>
 
         <DocsPageSection>
-            <SectionHeader Title="Simple List">
-                <Description></Description>
+            <SectionHeader Title="Simple List, Icon and Avatar">
+                <Description>You can create list items with icon or avatar easily.</Description>
             </SectionHeader>
             <SectionContent DarkenBackground="true" Code="ListSimpleExample">
                 <ListSimpleExample/>
@@ -25,11 +25,18 @@
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader Title="Avatar List">
-                <Description></Description>
+            <SectionHeader Title="List Variants">
+                <Description>
+                    Lists can be varianted with <CodeInline>Clickable</CodeInline> and <CodeInline>MultiSelection</CodeInline> parameters.<br />
+                    There are 4 variants:<br />
+                    <b>(1)</b> A simple list without any interactivibility<br />
+                    <b>(2)</b> Selectable list with <CodeInline>Clickable</CodeInline> parameter<br />
+                    <b>(3)</b> Multi selectable list with both <CodeInline>MultiSelection</CodeInline> and <CodeInline>Clickable</CodeInline> parameters<br />
+                    <b>(4)</b> Multi selectable, but not clickable list with only <CodeInline>MultiSelection</CodeInline> parameter. With this variant, selection can only be possible with clicking checkbox (or equivalent component), not the item itself.<br />
+                </Description>
             </SectionHeader>
-            <SectionContent DarkenBackground="true" Code="ListFolderExample">
-                <ListFolderExample/>
+            <SectionContent DarkenBackground="true" ShowCode="false" Code="ListVariantExample">
+                <ListVariantExample />
             </SectionContent>
         </DocsPageSection>
 
@@ -43,13 +50,14 @@
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader Title="List Actions">
+            <SectionHeader Title="Customize Multiselection">
                 <Description>
-                    <CodeInline>ListActions</CodeInline> provides options for each list item.
+                    With <CodeInline>MultiSelectionAlign</CodeInline> parameter, the selection component's placement can be selected.<br />
+                    With <CodeInline>MultiSelectionComponent</CodeInline> parameter, users can select the selection component: Checkbox or switch.
                 </Description>
             </SectionHeader>
-            <SectionContent DarkenBackground="true" ShowCode="false" Code="ListActionsExample">
-                <ListActionsExample />
+            <SectionContent DarkenBackground="true" ShowCode="false" Code="ListCustomizeMultiSelectionExample">
+                <ListCustomizeMultiSelectionExample />
             </SectionContent>
         </DocsPageSection>
         

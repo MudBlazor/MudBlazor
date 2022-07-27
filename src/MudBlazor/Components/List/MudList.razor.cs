@@ -178,12 +178,12 @@ namespace MudBlazor
             if (ParentList != null)
             {
                 ParentList.Register(this);
-                CanSelect = ParentList.CanSelect;
+                //CanSelect = ParentList.CanSelect;
             }
-            else
-            {
-                CanSelect = SelectedItemChanged.HasDelegate || SelectedValueChanged.HasDelegate || SelectedValue != null;
-            }
+            //else
+            //{
+            //    CanSelect = SelectedItemChanged.HasDelegate || SelectedValueChanged.HasDelegate || SelectedValue != null;
+            //}
         }
 
         internal event Action ParametersChanged;
@@ -204,7 +204,7 @@ namespace MudBlazor
         internal void Register(MudListItem<T> item)
         {
             _items.Add(item);
-            if (CanSelect && SelectedValue != null && object.Equals(item.Value, SelectedValue))
+            if (SelectedValue != null && object.Equals(item.Value, SelectedValue))
             {
                 item.SetSelected(true);
                 //TODO check if item is the selectable for a nested list, and deselect this.
@@ -232,7 +232,7 @@ namespace MudBlazor
 
         internal void SetSelectedItem(MudListItem<T> item, bool force = false)
         {
-            if ((!CanSelect || !Clickable) && !force)
+            if ((!Clickable && !MultiSelection) && !force)
                 return;
             //deselect, clear last value
             //if (item.Equals(_selectedItem))
@@ -273,8 +273,8 @@ namespace MudBlazor
                 if (item.IsSelected)
                 {
                     item.SetSelected(false);
-                    SelectedItems = SelectedItems.Where(x => !x.Equals(item));
-                    SelectedValues = SelectedValues.Where(x => !x.Equals(item.Value));
+                    SelectedItems = SelectedItems?.Where(x => !x.Equals(item));
+                    SelectedValues = SelectedValues?.Where(x => x==null ? false : !x.Equals(item.Value));
                 }
                 else
                 {
@@ -283,7 +283,7 @@ namespace MudBlazor
                     SelectedValues = SelectedValues.Append(item.Value);
                 }
 
-                RemoveSelectedCSS(items.Where(x => !x.IsSelected).ToList());
+                //RemoveSelectedCSS(items.Where(x => !x.IsSelected).ToList());
 
             }
 
@@ -297,7 +297,7 @@ namespace MudBlazor
             SelectedValue = default(T);
         }
 
-        internal bool CanSelect { get; private set; }
+        //internal bool CanSelect { get; private set; }
 
         public void Dispose()
         {
