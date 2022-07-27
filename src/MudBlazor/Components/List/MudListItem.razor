@@ -5,10 +5,18 @@
 <div tabindex="0" @attributes="UserAttributes" class="@Classname" @onclick="OnClickHandler" @onclick:stopPropagation="true" style="@Style">
 
 
-    @if (NestedList == null && MudList?.MultiSelection == true)
+    @if (NestedList == null && MudList?.MultiSelection == true && MudList?.MultiSelectionAlign == Align.Start)
     {
         <div>
-            <MudCheckBox @bind-Checked="_selected" />
+            @if (MudList?.MultiSelectionComponent == MultiSelectionComponent.CheckBox)
+            {
+                <MudCheckBox @bind-Checked="_selected" @onclick="OnClickHandler" />
+            }
+            else if (MudList?.MultiSelectionComponent == MultiSelectionComponent.Switch)
+            {
+                <MudSwitch @bind-Checked="_selected" @onclick="OnClickHandler" />
+            }
+            
         </div>
     }
 
@@ -39,10 +47,17 @@
         </MudText>
     </div>
 
-    @if (NestedList == null && MudList?.ListActions != null)
+    @if (NestedList == null && MudList?.MultiSelection == true && MudList?.MultiSelectionAlign == Align.End)
     {
-        <div class="mud-list-item-icon" @onclick:stopPropagation>
-            @MudList.ListActions
+        <div>
+            @if (MudList?.MultiSelectionComponent == MultiSelectionComponent.CheckBox)
+            {
+                <MudCheckBox @bind-Checked="_selected" />
+            }
+            else if (MudList?.MultiSelectionComponent == MultiSelectionComponent.Switch)
+            {
+                <MudSwitch @bind-Checked="_selected" />
+            }
         </div>
     }
     
@@ -56,15 +71,6 @@
 {
     <MudCollapse Expanded="@Expanded">
         <MudList T="T" Clickable="@MudList.Clickable" MultiSelection="@MudList.MultiSelection" DisablePadding="true" Class="mud-nested-list" Disabled="@Disabled">
-            <ListActions>
-                @if (MudList?.ListActions != null)
-                {
-                    <div class="mud-list-item-icon" @onclick:stopPropagation>
-                        @MudList.ListActions
-                    </div>
-                }
-            </ListActions>
-
             <ChildContent>
                 @NestedList
             </ChildContent>

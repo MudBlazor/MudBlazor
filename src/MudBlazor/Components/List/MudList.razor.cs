@@ -30,13 +30,21 @@ namespace MudBlazor
         [Category(CategoryTypes.List.Behavior)]
         public RenderFragment ChildContent { get; set; }
 
-        [Parameter]
-        [Category(CategoryTypes.List.Behavior)]
-        public RenderFragment ListActions { get; set; }
+        //[Parameter]
+        //[Category(CategoryTypes.List.Behavior)]
+        //public RenderFragment ListActions { get; set; }
 
         [Parameter]
         [Category(CategoryTypes.List.Behavior)]
         public bool MultiSelection { get; set; } = false;
+
+        [Parameter]
+        [Category(CategoryTypes.List.Behavior)]
+        public Align MultiSelectionAlign { get; set; } = Align.Start;
+
+        [Parameter]
+        [Category(CategoryTypes.List.Behavior)]
+        public MultiSelectionComponent MultiSelectionComponent { get; set; } = MultiSelectionComponent.CheckBox;
 
         /// <summary>
         /// Set true to make the list items clickable. This is also the precondition for list selection to work.
@@ -94,6 +102,7 @@ namespace MudBlazor
         /// Called whenever the selection changed
         /// </summary>
         [Parameter] public EventCallback<MudListItem<T>> SelectedItemChanged { get; set; }
+
         /// <summary>
         /// The current selected listitems.
         /// Note: make the list Clickable for item selection to work.

@@ -1,17 +1,40 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
 <MudPaper Width="300px">
-    <MudList T="string">
+    <MudList T="string" MultiSelection="true" MultiSelectionAlign="_listAlign" MultiSelectionComponent="_listSelectionComponent">
         <ChildContent>
-            <MudListItem T="string" Text="Wifi" Icon="@Icons.Material.Filled.Wifi" />
+            <MudListItem T="string" Text="Wifi" Icon="@Icons.Filled.Wifi" />
             <MudListItem T="string" Text="Bluetooth" Icon="@Icons.Filled.Bluetooth" />
             <MudDivider />
             <MudListItem T="string" Text="Location" Icon="@Icons.Filled.LocationOn" />
             <MudListItem T="string" Text="High Security" Icon="@Icons.Filled.Security" />
         </ChildContent>
-        <ListActions>
-            <MudSwitch T="bool" Color="Color.Primary" />
-        </ListActions>
-        
     </MudList>
 </MudPaper>
+
+<MudPaper Width="300px">
+    <MudCheckBox @ref="_checkboxAlign" T="bool" CheckedChanged="AlignChanged" Label="Align End" />
+    <MudSelect T="MultiSelectionComponent" @bind-Value="_listSelectionComponent" AnchorOrigin="Origin.BottomCenter" TransformOrigin="Origin.TopCenter" Variant="Variant.Outlined">
+        @foreach  (MultiSelectionComponent comp in Enum.GetValues(typeof(MultiSelectionComponent)))
+        {
+            <MudSelectItem T="MultiSelectionComponent" Value="@comp">@comp</MudSelectItem>
+        }
+    </MudSelect>
+</MudPaper>
+
+@code{
+    Align _listAlign = Align.Start;
+    MultiSelectionComponent _listSelectionComponent = MultiSelectionComponent.CheckBox;
+    MudCheckBox<bool> _checkboxAlign;
+    private void AlignChanged()
+    {
+        if (_checkboxAlign.Checked == false)
+        {
+            _listAlign = Align.Start;
+        }
+        else
+        {
+            _listAlign = Align.End;
+        }
+    }
+}

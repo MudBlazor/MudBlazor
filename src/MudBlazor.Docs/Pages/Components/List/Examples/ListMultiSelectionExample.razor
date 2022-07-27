@@ -2,7 +2,7 @@
 @inject ISnackbar Snackbar
 
 <MudPaper Width="300px">
-    <MudList T="int" Clickable="true" SelectedValuesChanged="GetSelectedValues" MultiSelection="true">
+    <MudList @ref="_list" T="int" Clickable="true" SelectedValuesChanged="GetSelectedValues" MultiSelection="true">
         <MudListSubheader>
             Your drink:
             <MudChip Color="Color.Secondary">
@@ -10,6 +10,7 @@
             </MudChip>
         </MudListSubheader>
         <MudListItem Text="Sparkling Water" Value="1" />
+        <MudListItem Text="Still Water" Value="11" />
         <MudListItem T="int" Text="Teas">
             <NestedList>
                 <MudListItem Text="Earl Grey" Value="2" />
@@ -31,12 +32,14 @@
 @code
 {
     //MudListItem<int> selectedItem;
+    MudList<int> _list;
     string _values = "";
     IEnumerable<int> selectedValue = new HashSet<int>();
 
     private void GetSelectedValues()
     {
         Snackbar.Add("Method invoke");
-        _values = string.Join(", ", selectedValue);
+        _values = string.Join(", ", _list.SelectedValues);
+        StateHasChanged();
     }
 }
