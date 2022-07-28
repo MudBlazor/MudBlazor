@@ -3,6 +3,7 @@
     padding: 0;
     position: relative;
     list-style: none;
+    outline: none;
 
     &.mud-list-padding {
         padding-top: 8px;
@@ -21,6 +22,7 @@
     padding-bottom: 8px;
     justify-content: flex-start;
     text-decoration: none;
+    outline: none;
 
     &.mud-list-item-dense {
         padding-top: 4px;

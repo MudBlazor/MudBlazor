@@ -1,13 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Web;
+using MudBlazor.Services;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
     public partial class MudList<T> : MudComponentBase, IDisposable
     {
+        [Inject] private IKeyInterceptorFactory KeyInterceptorFactory { get; set; }
+
+        private IKeyInterceptor _keyInterceptor;
+        private string _elementId = "list_" + Guid.NewGuid().ToString().Substring(0, 8);
+
         protected string Classname =>
         new CssBuilder("mud-list")
            .AddClass("mud-list-padding", !DisablePadding)
@@ -193,6 +201,34 @@ namespace MudBlazor
             ParametersChanged?.Invoke();
         }
 
+        protected override async Task OnAfterRenderAsync(bool firstRender)
+        {
+            if (firstRender)
+            {
+                _keyInterceptor = KeyInterceptorFactory.Create();
+
+                await _keyInterceptor.Connect(_elementId, new KeyInterceptorOptions()
+                {
+                    //EnableLogging = true,
+                    TargetClass = "mud-list-item",
+                    Keys = {
+                        new KeyOptions { Key=" ", PreventDown = "key+none" }, //prevent scrolling page, toggle open/close
+                        new KeyOptions { Key="ArrowUp", PreventDown = "key+none" }, // prevent scrolling page, instead hilight previous item
+                        new KeyOptions { Key="ArrowDown", PreventDown = "key+none" }, // prevent scrolling page, instead hilight next item
+                        new KeyOptions { Key="Home", PreventDown = "key+none" },
+                        new KeyOptions { Key="End", PreventDown = "key+none" },
+                        new KeyOptions { Key="Escape" },
+                        new KeyOptions { Key="Enter", PreventDown = "key+none" },
+                        new KeyOptions { Key="NumpadEnter", PreventDown = "key+none" },
+                        new KeyOptions { Key="a", PreventDown = "key+ctrl" }, // select all items instead of all page text
+                        new KeyOptions { Key="A", PreventDown = "key+ctrl" }, // select all items instead of all page text
+                        new KeyOptions { Key="/./", SubscribeDown = true, SubscribeUp = true }, // for our users
+                    },
+                });
+            }
+            await base.OnAfterRenderAsync(firstRender);
+        }
+
         private List<MudListItem<T>> _items = new();
         private List<MudList<T>> _childLists = new();
         private MudListItem<T> _selectedItem = new();
@@ -318,6 +354,30 @@ namespace MudBlazor
             if (ParentList != null)
                 items.AddRange(ParentList._items);
             return items;
+        }
+
+        internal void HandleKeyDown(KeyboardEventArgs obj)
+        {
+            if (Disabled)
+                return;
+            var key = obj.Key.ToLowerInvariant();
+
+            switch (obj.Key)
+            {
+                case "ArrowUp":
+                    ActivePreviousItem();
+                    break;
+                case "ArrowDown":
+                    ActiveNextItem();
+                    break;
+                case "Home":
+                    ActiveFirstItem();
+                    break;
+                case "End":
+                    ActiveLastItem();
+                    break;
+            }
+
         }
 
         public int GetActiveItemIndex()
