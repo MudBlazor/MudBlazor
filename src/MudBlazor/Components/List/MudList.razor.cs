@@ -197,7 +197,7 @@ namespace MudBlazor
         private List<MudList<T>> _childLists = new();
         private MudListItem<T> _selectedItem = new();
         private List<MudListItem<T>> _selectedItems = new();
-        private T _selectedValue; 
+        private T _selectedValue;
         private List<T> _selectedValues = new();
 
         internal void Register(MudListItem<T> item)
@@ -318,6 +318,72 @@ namespace MudBlazor
             if (ParentList != null)
                 items.AddRange(ParentList._items);
             return items;
+        }
+
+        public int GetActiveItemIndex()
+        {
+            return _items.FindIndex(x => x.IsActive == true);
+        }
+
+        private void DeactiveAllItems()
+        {
+            foreach (var item in _items)
+            {
+                item.SetActive(false);
+            }
+        }
+
+        public void ActiveFirstItem()
+        {
+            if (_items == null || _items.Count == 0)
+            {
+                return;
+            }
+            DeactiveAllItems();
+            _items[0].SetActive(true);
+            StateHasChanged();
+        }
+
+        public void ActiveNextItem()
+        {
+            _items = CollectAllMudListItems().Where(x => x.NestedList == null).ToList();
+            if (_items == null || _items.Count == 0)
+            {
+                return;
+            }
+            int index = GetActiveItemIndex();
+            if (index + 1 >= _items.Count)
+            {
+                return;
+            }
+            DeactiveAllItems();
+            _items[index + 1].SetActive(true);
+        }
+
+        public void ActivePreviousItem()
+        {
+            _items = CollectAllMudListItems();
+            if (_items == null || _items.Count == 0)
+            {
+                return;
+            }
+            int index = GetActiveItemIndex();
+            if (0 > index - 1)
+            {
+                return;
+            }
+            DeactiveAllItems();
+            _items[index - 1].SetActive(true);
+        }
+
+        public void ActiveLastItem()
+        {
+            if (_items == null || _items.Count == 0)
+            {
+                return;
+            }
+            DeactiveAllItems();
+            _items[_items.Count - 1].SetActive(true);
         }
     }
 }

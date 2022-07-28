@@ -16,6 +16,7 @@ namespace MudBlazor
           .AddClass("mud-list-item-clickable", MudList?.Clickable)
           .AddClass("mud-ripple", MudList?.Clickable == true && !DisableRipple && !Disabled)
           .AddClass($"mud-selected-item mud-{MudList?.Color.ToDescriptionString()}-text mud-{MudList?.Color.ToDescriptionString()}-hover", _selected && !Disabled && NestedList == null)
+          .AddClass("mud-list-item-hilight", _active && !Disabled && NestedList == null)
           .AddClass("mud-list-item-disabled", Disabled)
           .AddClass("mud-list-item-nested-background", SecondaryBackgroundColorForNestedItem)
           .AddClass(Class)
@@ -295,6 +296,12 @@ namespace MudBlazor
         }
 
         private bool _selected;
+        private bool _active;
+
+        internal bool IsActive
+        {
+            get => _active;
+        }
 
         internal void SetSelected(bool selected)
         {
@@ -303,6 +310,16 @@ namespace MudBlazor
             if (_selected == selected)
                 return;
             _selected = selected;
+            StateHasChanged();
+        }
+
+        internal void SetActive(bool active)
+        {
+            if (Disabled)
+                return;
+            if (_active == active)
+                return;
+            _active = active;
             StateHasChanged();
         }
 
