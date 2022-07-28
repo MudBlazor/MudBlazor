@@ -236,6 +236,26 @@ namespace MudBlazor.UnitTests.Components
             //Console.WriteLine("Error message: " + numericField.ErrorText);
             numericField.ErrorText.Should().BeNullOrEmpty();
         }
+        
+        /// <summary>
+        /// Validate handling of decimal support & precision kept
+        /// </summary>
+        [Test]
+        public async Task NumericField_HandleDecimalPrecisionAndValues()
+        {
+            var comp = Context.RenderComponent<MudNumericField<decimal>>();
+            var numericField = comp.Instance;
+
+            // first try set max decimal value
+            comp.Find("input").Change(decimal.MaxValue);
+            numericField.Value.Should().Be(decimal.MaxValue);
+            numericField.ErrorText.Should().BeNullOrEmpty();
+
+            // next try set minimum decimal value
+            comp.Find("input").Change(decimal.MinValue);
+            numericField.Value.Should().Be(decimal.MinValue);
+            numericField.ErrorText.Should().BeNullOrEmpty();
+        }
 
         /// <summary>
         /// An unstable converter should not cause an infinite update loop. This test must complete in under 1 sec!
@@ -594,6 +614,27 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(() => comp.Instance.Increment().Wait());
             await comp.InvokeAsync(() => comp.Instance.Decrement().Wait());
             comp.Instance.Value.Should().Be(value);
+        }
+
+        [TestCaseSource(nameof(TypeCases))]
+        public async Task NumericField_Increment_Decrement_OverflowHandled<T>(T value)
+        {
+            var comp = Context.RenderComponent<MudNumericField<T>>();
+            var max = Convert.ChangeType(10, typeof(T));
+            var min = Convert.ChangeType(0, typeof(T));
+            comp.SetParam(x => x.Max, max);
+            comp.SetParam(x => x.Min, min);
+            comp.SetParam(x => x.Step, value);
+            
+            // test max overflow
+            comp.SetParam(x => x.Value, max);
+            await comp.InvokeAsync(() => comp.Instance.Increment().Wait());
+            comp.Instance.Value.Should().Be(max);
+
+            // test min overflow
+            comp.SetParam(x => x.Value, min);
+            await comp.InvokeAsync(() => comp.Instance.Decrement().Wait());
+            comp.Instance.Value.Should().Be(min);
         }
 
         /// <summary>

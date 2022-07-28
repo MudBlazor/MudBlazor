@@ -177,16 +177,25 @@ namespace MudBlazor
         /// <param name="factor">Multiplication factor (1 or -1) will be applied to the step</param>
         private async Task Change(double factor = 1)
         {
-            var value = Num.To<T>(Num.From(Value) + Num.From(Step) * factor);
-            await SetValueAsync(ConstrainBoundaries(value).value);
-            _elementReference.SetText(Text).AndForget();
+            try
+            {
+                var nextValue = typeof(T) == typeof(decimal) || typeof(T) == typeof(decimal?)
+                    ? (T)(object)Convert.ToDecimal(FromDecimal(Value) + FromDecimal(Step) * (decimal)factor)
+                    : Num.To<T>(Num.From(Value) + Num.From(Step) * factor);
+                await SetValueAsync(ConstrainBoundaries(nextValue).value);
+                _elementReference.SetText(Text).AndForget();
+            }
+            catch (OverflowException)
+            {
+                // if next value overflows the primitive type, lets set it to Min or Max depending if factor is positive or negative
+                await SetValueAsync(factor > 0 ? Max : Min, true);
+            }
         }
 
         /// <summary>
         /// Adds a Step to the Value
         /// </summary>
         public Task Increment() => Change(factor: 1);
-
 
         /// <summary>
         /// Substracts a Step from the Value
@@ -200,21 +209,54 @@ namespace MudBlazor
         /// <returns>Returns a valid value and if it has been changed.</returns>
         protected (T value, bool changed) ConstrainBoundaries(T v)
         {
+            if (typeof(T) == typeof(decimal) || typeof(T) == typeof(decimal?))
+                return ConstrainBoundariesDecimal(v);
+
+            return ConstrainBoundariesDouble(v);
+        }
+
+        /// <summary>
+        /// Check boundaries for this instance with double primitive data type
+        /// </summary>
+        /// <param name="v">see <see cref="ConstrainBoundaries"/></param>
+        /// <returns>see <see cref="ConstrainBoundaries"/></returns>
+        private (T value, bool changed) ConstrainBoundariesDouble(T v)
+        {
             var value = Num.From(v);
             var max = Num.From(Max);
             var min = Num.From(Min);
+        
             //check if Max/Min has value, if not use MaxValue/MinValue for that data type
             if (value > max)
                 return (Max, true);
             else if (value < min)
                 return (Min, true);
-            //return T default (null) when there is no value
             else if (v == null)
-            {
                 return (default(T), true);
-            }
 
             return (Num.To<T>(value), false);
+        }
+
+        /// <summary>
+        /// Check boundaries for this instance with decimal primitive data type
+        /// </summary>
+        /// <param name="v">see <see cref="ConstrainBoundaries"/></param>
+        /// <returns>see <see cref="ConstrainBoundaries"/></returns>
+        private (T value, bool changed) ConstrainBoundariesDecimal(T v)
+        {
+            var value = FromDecimal(v);
+            var max = Convert.ToDecimal(Max);
+            var min = Convert.ToDecimal(Min);
+
+            //check if Max/Min has value, if not use MaxValue/MinValue for that data type
+            if (value > max)
+                return (Max, true);
+            else if (value < min)
+                return (Min, true);
+            else if (v == null)
+                return (default(T), true);
+
+            return ((T)(object)Convert.ToDecimal(value), false);
         }
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -388,6 +430,15 @@ namespace MudBlazor
                 return f.ToString(TagFormat, CultureInfo.InvariantCulture.NumberFormat);
             else
                 return null;
+        }
+
+        private decimal FromDecimal(T v)
+        {
+            if (typeof(T) == typeof(decimal))
+                return Convert.ToDecimal((decimal)(object)v);
+            if (typeof(T) == typeof(decimal?))
+                return Convert.ToDecimal((decimal?)(object)v);
+            return default;
         }
 
         protected override void Dispose(bool disposing)
