@@ -270,6 +270,11 @@ namespace MudBlazor
             }
         }
 
+        protected void OnlyOnClick(MouseEventArgs ev)
+        {
+            OnClick.InvokeAsync(ev);
+        }
+
         protected override void OnInitialized()
         {
             _expanded = InitiallyExpanded;
