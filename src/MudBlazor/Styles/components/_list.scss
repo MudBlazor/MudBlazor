@@ -111,6 +111,9 @@
     z-index: 1;
     position: sticky;
     background-color: var(--mud-palette-background-grey);
+    &.mud-list-subheader-sticky-dense {
+        top: 0;
+    }
 }
 
 

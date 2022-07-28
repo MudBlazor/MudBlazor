@@ -2,26 +2,26 @@
 
 
 <MudPaper Width="300px">
-    <MudList T="string" Clickable="true" MultiSelection="true" Style="max-height:400px; overflow-y: auto;">
-        <MudListSubheader Sticky="true">England</MudListSubheader>
+    <MudList T="string" Clickable="true" MultiSelection="true" Style="max-height:400px; overflow-y: auto;" DisablePadding="true">
+        <MudListSubheader T="string" Sticky="true">England</MudListSubheader>
         @foreach (string club in _englishClubs)
         {
             <MudListItem Value="@club">@club</MudListItem>
         }
 
-        <MudListSubheader Sticky="true">Spain</MudListSubheader>
+        <MudListSubheader T="string" Sticky="true">Spain</MudListSubheader>
         @foreach (string club in _spanishClubs)
         {
             <MudListItem Value="@club">@club</MudListItem>
         }
 
-        <MudListSubheader Sticky="true">Germany</MudListSubheader>
+        <MudListSubheader T="string" Sticky="true">Germany</MudListSubheader>
         @foreach (string club in _germanClubs)
         {
             <MudListItem Value="@club">@club</MudListItem>
         }
 
-        <MudListSubheader Sticky="true">Turkey</MudListSubheader>
+        <MudListSubheader T="string" Sticky="true">Turkey</MudListSubheader>
         @foreach (string club in _turkishClubs)
         {
             <MudListItem Value="@club">@club</MudListItem>

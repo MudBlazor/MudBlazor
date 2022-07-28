@@ -12,21 +12,21 @@
         </div>
         <MudList T="int" Clickable="true" @bind-SelectedItem="selectedItem" @bind-SelectedValue="selectedValue" Class="py-6 mini-fake-nav">
 
-            <MudListSubheader Class="pt-6 pb-2">General</MudListSubheader>
+            <MudListSubheader T="string" Class="pt-6 pb-2">General</MudListSubheader>
 
             <MudListItem Value="1" Icon="@Icons.Rounded.SpaceDashboard" Text="Dashboard" IconColor="Color.Inherit"/>
             <MudListItem Value="2" Icon="@Icons.Rounded.ShoppingCart" Text="E-Commerce" IconColor="Color.Inherit"/>
             <MudListItem Value="3" Icon="@Icons.Rounded.AccountBalance" Text="Banking" IconColor="Color.Inherit"/>
             <MudListItem Value="4" Icon="@Icons.Rounded.Event" Text="Booking" IconColor="Color.Inherit"/>
 
-            <MudListSubheader Class="pt-6 pb-2">Applications</MudListSubheader>
+            <MudListSubheader T="string" Class="pt-6 pb-2">Applications</MudListSubheader>
 
             <MudListItem Value="5" Icon="@Icons.Rounded.Email" Text="Mail" IconColor="Color.Inherit" />
             <MudListItem Value="6" Icon="@Icons.Rounded.QuestionAnswer" Text="Chat" IconColor="Color.Inherit" />
             <MudListItem Value="7" Icon="@Icons.Rounded.EventNote" Text="Calendar" IconColor="Color.Inherit" />
             <MudListItem Value="8" Icon="@Icons.Rounded.ViewKanban" Text="Kanban" IconColor="Color.Inherit" />
 
-            <MudListSubheader Class="pt-6 pb-2">Manage</MudListSubheader>
+            <MudListSubheader T="string" Class="pt-6 pb-2">Manage</MudListSubheader>
 
             <MudListItem Value="9" Icon="@Icons.Rounded.Person" Text="Users" />
             <MudListItem Value="10" Icon="@Icons.Rounded.Group" Text="Groups" />

@@ -5,7 +5,7 @@
     <ChildContent>
         <MudPaper MinHeight="500px" Class="d-flex flex-1">
             <MudList Clickable="true" Dense="true" @bind-SelectedValue="_selectedFolder">
-                <MudListSubheader>MailBox</MudListSubheader>
+                <MudListSubheader T="string">MailBox</MudListSubheader>
                 <MudDropZone T="DropItem" Identifier="Inbox" OnlyZone="true">
                     <MudListItem Text="Inbox" Value="@("Inbox")" Icon="@Icons.Filled.Inbox"/>
                 </MudDropZone>

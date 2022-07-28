@@ -25,7 +25,7 @@
     <MudButton Href="/mud/introduction" Color="Color.Inherit" Variant="Variant.Text" Class="@GetActiveClass(DocsBasePage.DiscoverMore)">Discover More</MudButton>
     <MudMenu Color="Color.Inherit" Variant="Variant.Text" Class="mx-1 px-3" PopoverClass="docs-layout-menu-shadow" ListClass="d-flex px-4 pb-2 docs-appbar-special-menu" LockScroll="true" Label="Products" EndIcon="@Icons.Filled.KeyboardArrowDown" AnchorOrigin="Origin.BottomCenter" TransformOrigin="Origin.TopCenter">
         <MudList T="string" Clickable="true">
-            <MudListSubheader>
+            <MudListSubheader T="string">
                 Products
             </MudListSubheader>
             <MudListItem T="string" Href="https://mudblazor.com/">
@@ -54,7 +54,7 @@
             </MudListItem>
         </MudList>
         <MudList T="string" Clickable="true" Class="relative">
-            <MudListSubheader>
+            <MudListSubheader T="string">
                 Other
             </MudListSubheader>
             <MudOverlay Visible="true" LightBackground="true" Absolute="true" Class="docs-menu-overlay" />

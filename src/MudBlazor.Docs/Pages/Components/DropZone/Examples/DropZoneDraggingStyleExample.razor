@@ -3,15 +3,15 @@
 <MudDropContainer T="DropItem" Items="_items" Item ItemsSelector="@((item,dropzone) => item.Identifier == dropzone)" ItemDropped="ItemUpdated" Class="d-flex flex-column flex-grow-1">
     <ChildContent>
         <div class="d-flex flex-column flex-grow-1">
-            <MudListSubheader Class="mt-4 pb-2">Folders</MudListSubheader>
+            <MudListSubheader T="string" Class="mt-4 pb-2">Folders</MudListSubheader>
             <MudDropZone T="DropItem" ItemDraggingClass="mud-info-text" Identifier="Folders" Class="d-flex flex-wrap flex-grow-1 pa-2 rounded" />
         </div>
         <div class="d-flex flex-column flex-grow-1">
-            <MudListSubheader Class="mt-4 pb-2">Files</MudListSubheader>
+            <MudListSubheader T="string" Class="mt-4 pb-2">Files</MudListSubheader>
             <MudDropZone T="DropItem" DraggingClass="mud-alert-text-normal" Identifier="Files" Class="d-flex flex-wrap flex-grow-1 pa-2 rounded" />
         </div>
         <div class="d-flex flex-column flex-grow-1">
-            <MudListSubheader Class="mt-4 pb-2">MudBlazor Secrets</MudListSubheader>
+            <MudListSubheader T="string" Class="mt-4 pb-2">MudBlazor Secrets</MudListSubheader>
             <MudDropZone T="DropItem" DraggingClass="mud-alert-text-error" ItemDraggingClass="mud-error-text" Identifier="MudBlazor" Class="d-flex flex-wrap flex-grow-1 pa-2 rounded" />
         </div>
     </ChildContent>
