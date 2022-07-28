@@ -30,10 +30,9 @@ namespace MudBlazor
         [Category(CategoryTypes.List.Behavior)]
         public RenderFragment ChildContent { get; set; }
 
-        //[Parameter]
-        //[Category(CategoryTypes.List.Behavior)]
-        //public RenderFragment ListActions { get; set; }
-
+        /// <summary>
+        /// Allows multi selection and adds MultiSelectionComponent for each list item.
+        /// </summary>
         [Parameter]
         [Category(CategoryTypes.List.Behavior)]
         public bool MultiSelection { get; set; } = false;

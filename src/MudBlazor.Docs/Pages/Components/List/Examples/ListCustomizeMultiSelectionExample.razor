@@ -1,26 +1,30 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
-<MudPaper Width="300px">
-    <MudList T="string" Clickable="true" MultiSelection="true" MultiSelectionAlign="_listAlign" MultiSelectionComponent="_listSelectionComponent">
-        <ChildContent>
-            <MudListItem T="string" Text="Wifi" Icon="@Icons.Filled.Wifi" />
-            <MudListItem T="string" Text="Bluetooth" Icon="@Icons.Filled.Bluetooth" />
-            <MudDivider />
-            <MudListItem T="string" Text="Location" Icon="@Icons.Filled.LocationOn" />
-            <MudListItem T="string" Text="High Security" Icon="@Icons.Filled.Security" />
-        </ChildContent>
-    </MudList>
-</MudPaper>
+<MudGrid>
+    <MudItem xs="12" sm="8" Class="d-flex align-center justify-center">
+        <MudPaper Width="300px">
+            <MudList T="string" Clickable="true" MultiSelection="true" MultiSelectionAlign="_listAlign" MultiSelectionComponent="_listSelectionComponent">
+                <ChildContent>
+                    <MudListItem T="string" Text="Wifi" Icon="@Icons.Filled.Wifi" />
+                    <MudListItem T="string" Text="Bluetooth" Icon="@Icons.Filled.Bluetooth" />
+                    <MudDivider />
+                    <MudListItem T="string" Text="Location" Icon="@Icons.Filled.LocationOn" />
+                    <MudListItem T="string" Text="High Security" Icon="@Icons.Filled.Security" />
+                </ChildContent>
+            </MudList>
+        </MudPaper>
+    </MudItem>
 
-<MudPaper Width="300px">
-    <MudCheckBox @ref="_checkboxAlign" T="bool" CheckedChanged="AlignChanged" Label="Align End" />
-    <MudSelect T="MultiSelectionComponent" @bind-Value="_listSelectionComponent" AnchorOrigin="Origin.BottomCenter" TransformOrigin="Origin.TopCenter" Variant="Variant.Outlined">
-        @foreach  (MultiSelectionComponent comp in Enum.GetValues(typeof(MultiSelectionComponent)))
-        {
-            <MudSelectItem T="MultiSelectionComponent" Value="@comp">@comp</MudSelectItem>
-        }
-    </MudSelect>
-</MudPaper>
+    <MudItem xs="12" sm="4">
+        <MudCheckBox @ref="_checkboxAlign" T="bool" CheckedChanged="AlignChanged" Color="Color.Primary" Label="Align End" />
+        <MudSelect T="MultiSelectionComponent" @bind-Value="_listSelectionComponent" AnchorOrigin="Origin.BottomCenter" TransformOrigin="Origin.TopCenter" Variant="Variant.Outlined">
+            @foreach (MultiSelectionComponent comp in Enum.GetValues(typeof(MultiSelectionComponent)))
+            {
+                <MudSelectItem T="MultiSelectionComponent" Value="@comp">@comp</MudSelectItem>
+            }
+        </MudSelect>
+    </MudItem>
+</MudGrid>
 
 @code{
     Align _listAlign = Align.Start;

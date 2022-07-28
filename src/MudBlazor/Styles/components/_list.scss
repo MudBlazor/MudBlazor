@@ -93,6 +93,11 @@
     font-weight: 500;
     padding-top: 16px;
     padding-bottom: 16px;
+    background-color: var(--mud-palette-background);
+}
+
+.mud-list-subheader-secondary-background {
+    background-color: var(--mud-palette-background-grey);
 }
 
 .mud-list-subheader-gutters {
@@ -110,7 +115,7 @@
     top: -8px;
     z-index: 1;
     position: sticky;
-    background-color: var(--mud-palette-background-grey);
+
     &.mud-list-subheader-sticky-dense {
         top: 0;
     }
