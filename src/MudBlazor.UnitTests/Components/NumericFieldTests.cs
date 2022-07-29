@@ -38,7 +38,17 @@ namespace MudBlazor.UnitTests.Components
             new object[] { (float)5 },
             new object[] { (double)5 },
             new object[] { (decimal)5 },
-            new object[] { (int?)5 }
+            new object[] { (byte?)5 },
+            new object[] { (sbyte?)5 },
+            new object[] { (short?)5 },
+            new object[] { (ushort?)5 },
+            new object[] { (int?)5 },
+            new object[] { (uint?)5 },
+            new object[] { (long?)5 },
+            new object[] { (ulong?)5 },
+            new object[] { (float?)5 },
+            new object[] { (double?)5 },
+            new object[] { (decimal?)5 }
         };
 
         /// <summary>
