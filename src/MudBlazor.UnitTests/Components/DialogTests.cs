@@ -50,10 +50,12 @@ namespace MudBlazor.UnitTests.Components
             comp.Markup.Trim().Should().BeEmpty();
             var service = Context.Services.GetService<IDialogService>() as DialogService;
             service.Should().NotBe(null);
+            service.Dialogs.Should().NotBeNull();
             IDialogReference dialogReference = null;
             // open simple test dialog
             await comp.InvokeAsync(() => dialogReference = service?.Show<DialogOkCancel>());
             dialogReference.Should().NotBe(null);
+            service.IsOpen(dialogReference).Should().BeTrue();
             //Console.WriteLine(comp.Markup);
             comp.Find("div.mud-dialog-container").Should().NotBe(null);
             comp.Find("p.mud-typography").TrimmedText().Should().Be("Wabalabadubdub!");
@@ -62,6 +64,7 @@ namespace MudBlazor.UnitTests.Components
             comp.Markup.Trim().Should().BeEmpty();
             var result = await dialogReference.Result;
             result.Cancelled.Should().BeTrue();
+            service.IsOpen(dialogReference).Should().BeFalse();
             // open simple test dialog
             await comp.InvokeAsync(() => dialogReference = service?.Show<DialogOkCancel>());
             // close by click on cancel button

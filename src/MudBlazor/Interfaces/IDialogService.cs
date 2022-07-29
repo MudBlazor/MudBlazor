@@ -6,6 +6,7 @@
 
 
 using System;
+using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 
@@ -15,6 +16,8 @@ namespace MudBlazor
     {
         public event Action<IDialogReference> OnDialogInstanceAdded;
         public event Action<IDialogReference, DialogResult> OnDialogCloseRequested;
+
+        Collection<IDialogReference> Dialogs { get; }
 
         IDialogReference Show<TComponent>() where TComponent : ComponentBase;
 
@@ -49,5 +52,7 @@ namespace MudBlazor
         void Close(DialogReference dialog);
 
         void Close(DialogReference dialog, DialogResult result);
+
+        bool IsOpen(IDialogReference dialogReference);
     }
 }
