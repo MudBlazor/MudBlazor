@@ -20,6 +20,12 @@ namespace MudBlazor
         [Parameter] public bool DisableRowsPerPage { get; set; }
 
         /// <summary>
+        /// Set true to disable user interaction with the backward/forward buttons
+        /// and the part of the pager which allows to change the page size.
+        /// </summary>
+        [Parameter] public bool Disabled { get; set; }
+
+        /// <summary>
         /// Define a list of available page size options for the user to choose from
         /// </summary>
         [Parameter] public int[] PageSizeOptions { get; set; } = new int[] { 10, 25, 50, 100 };
@@ -41,9 +47,9 @@ namespace MudBlazor
             .Replace("{last_item}", $"{Math.Min((DataGrid.CurrentPage + 1) * DataGrid.RowsPerPage, DataGrid.GetFilteredItemsCount())}")
             .Replace("{all_items}", $"{DataGrid.GetFilteredItemsCount()}");
 
-        private bool BackButtonsDisabled => DataGrid == null ? false : DataGrid.CurrentPage == 0;
+        private bool BackButtonsDisabled => Disabled || (DataGrid == null ? false : DataGrid.CurrentPage == 0);
 
-        private bool ForwardButtonsDisabled => DataGrid == null ? false : (DataGrid.CurrentPage + 1) * DataGrid.RowsPerPage >= DataGrid.GetFilteredItemsCount();
+        private bool ForwardButtonsDisabled => Disabled || (DataGrid == null ? false : (DataGrid.CurrentPage + 1) * DataGrid.RowsPerPage >= DataGrid.GetFilteredItemsCount());
 
         protected string Classname =>
             new CssBuilder("mud-table-pagination-toolbar")
