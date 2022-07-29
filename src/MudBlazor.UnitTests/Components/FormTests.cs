@@ -1031,7 +1031,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<FormResetTest>();
             var form = comp.FindComponent<MudForm>();
-            var textFieldComp = comp.FindComponent<MudTextField<string>>();
+            var textFieldComp = comp.FindComponents<MudTextField<string>>()[1]; //the picker includes a MudTextField, so the MudTextField we want is the second in the DOM
             var textField = textFieldComp.Instance;
 
             // input some text
@@ -1093,9 +1093,8 @@ namespace MudBlazor.UnitTests.Components
             var datePickerComp = comp.FindComponent<MudDatePicker>();
             var datePicker = datePickerComp.Instance;
 
-            Console.WriteLine(comp.Find("input").ClassName);
             // input a date
-            await comp.InvokeAsync(() => comp.Find("input").Change("05/24/2020"));
+            datePickerComp.Find("input").Change("05/24/2020");
             datePicker.Date.Should().Be(Convert.ToDateTime("05/24/2020"));
             datePicker.Text.Should().Be("05/24/2020");
             // call reset directly
@@ -1104,7 +1103,7 @@ namespace MudBlazor.UnitTests.Components
             datePicker.Text.Should().BeNullOrEmpty();
             
             // input a date
-            await comp.InvokeAsync(() => comp.Find("input").Change("05/24/2020"));
+            datePickerComp.Find("input").Change("05/24/2020");
             datePicker.Date.Should().Be(Convert.ToDateTime("05/24/2020"));
             datePicker.Text.Should().Be("05/24/2020");
             // hit reset button
@@ -1121,9 +1120,12 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<FormResetTest>();
             var form = comp.FindComponent<MudForm>().Instance;
-            var textFieldComp = comp.FindComponent<MudTextField<string>>();
+            var datePickerComp = comp.FindComponent<MudDatePicker>();
+            var textFieldComp = comp.FindComponents<MudTextField<string>>()[1]; //the picker includes a MudTextField, so the MudTextField we want is the second in the DOM
             var numericFieldComp = comp.FindComponent<MudNumericField<int?>>();
 
+            form.IsValid.Should().Be(false);
+            datePickerComp.Find("input").Change("07/29/2022");
             form.IsValid.Should().Be(false);
             textFieldComp.Find("input").Input("Some value");
             form.IsValid.Should().Be(false);
