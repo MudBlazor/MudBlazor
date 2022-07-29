@@ -69,11 +69,13 @@
 
 @if (NestedList != null)
 {
-    <MudCollapse Expanded="@Expanded">
-        <MudList T="T" Clickable="@MudList.Clickable" Color="@MudList.Color" MultiSelection="@MudList.MultiSelection" DisablePadding="true" Class="mud-nested-list" Disabled="@Disabled">
-            <ChildContent>
-                @NestedList
-            </ChildContent>
-        </MudList>
-    </MudCollapse>
+    <CascadingValue Value="this" IsFixed="true">
+        <MudCollapse Expanded="@Expanded">
+            <MudList T="T" Clickable="@MudList.Clickable" Color="@MudList.Color" MultiSelection="@MudList.MultiSelection" DisablePadding="true" Class="mud-nested-list" Disabled="@Disabled">
+                <ChildContent>
+                    @NestedList
+                </ChildContent>
+            </MudList>
+        </MudCollapse>
+    </CascadingValue>
 }

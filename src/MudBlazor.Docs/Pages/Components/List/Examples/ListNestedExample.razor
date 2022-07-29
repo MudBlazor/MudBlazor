@@ -1,26 +1,29 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
+<MudGrid>
+    <MudItem xs="12" sm="8" Class="d-flex align-center justify-center">
+        <MudPaper Width="300px">
+            <MudList T="string" Clickable="true" SecondaryBackgroundColorForNestedItemHeader="_secondaryBackground">
+                <MudListSubheader T="string">Nested List Items</MudListSubheader>
+                
+                <MudListItem T="string" Icon="@Icons.Filled.Send">Sent mail</MudListItem>
+                <MudListItem T="string" Icon="@Icons.Filled.Drafts">Drafts</MudListItem>
+                
+                <MudListItem T="string" Icon="@Icons.Filled.Inbox" Text="Inbox" InitiallyExpanded="true">
+                    <NestedList>
+                        <MudListItem T="string" Icon="@Icons.Filled.StarRate">Starred</MudListItem>
+                        <MudListItem T="string" Icon="@Icons.Filled.WatchLater">Snoozed</MudListItem>
+                    </NestedList>
+                </MudListItem>
+            </MudList>
+        </MudPaper>
+    </MudItem>
 
-<MudPaper Width="300px">
-    <MudList T="string" Clickable="true">
-        <MudListSubheader T="string">
-            Nested List Items
-        </MudListSubheader>
-        <MudListItem T="string" Icon="@Icons.Filled.Send">
-            Sent mail
-        </MudListItem>
-        <MudListItem T="string" Icon="@Icons.Filled.Drafts">
-            Drafts
-        </MudListItem>
-        <MudListItem T="string" Icon="@Icons.Filled.Inbox" Text="Inbox" InitiallyExpanded="true">
-            <NestedList>
-                <MudListItem T="string" Icon="@Icons.Filled.StarRate">
-                    Starred
-                </MudListItem>
-                <MudListItem T="string" Icon="@Icons.Filled.WatchLater">
-                    Snoozed
-                </MudListItem>
-            </NestedList>
-        </MudListItem>
-    </MudList>
-</MudPaper>
+    <MudItem xs="12" sm="4">
+        <MudCheckBox @bind-Checked="_secondaryBackground" Color="Color.Primary" Label="Secondary Background For Nested Item Header" />
+    </MudItem>
+</MudGrid>
+
+@code {
+    bool _secondaryBackground;
+}

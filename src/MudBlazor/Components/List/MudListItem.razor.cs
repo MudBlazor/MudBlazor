@@ -18,13 +18,14 @@ namespace MudBlazor
           .AddClass($"mud-selected-item mud-{MudList?.Color.ToDescriptionString()}-text mud-{MudList?.Color.ToDescriptionString()}-hover", _selected && !Disabled && NestedList == null)
           .AddClass("mud-list-item-hilight", _active && !Disabled && NestedList == null)
           .AddClass("mud-list-item-disabled", Disabled)
-          .AddClass("mud-list-item-nested-background", SecondaryBackgroundColorForNestedItem)
+          .AddClass("mud-list-item-nested-background", MudList != null && MudList.SecondaryBackgroundColorForNestedItemHeader && NestedList != null)
           .AddClass(Class)
         .Build();
 
         [Inject] protected NavigationManager UriHelper { get; set; }
 
         [CascadingParameter] protected MudList<T> MudList { get; set; }
+        [CascadingParameter] internal MudListItem<T> ParentListItem { get; set; }
 
         private bool _onClickHandlerPreventDefault = false;
 
@@ -86,13 +87,6 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.List.Appearance)]
         public bool DisableRipple { get; set; }
-
-        /// <summary>
-        /// If true, disables ripple effect.
-        /// </summary>
-        [Parameter]
-        [Category(CategoryTypes.List.Appearance)]
-        public bool SecondaryBackgroundColorForNestedItem { get; set; }
 
         /// <summary>
         /// Icon to use if set.

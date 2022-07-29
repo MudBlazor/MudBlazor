@@ -2,7 +2,7 @@
 @typeparam T
 @inherits MudComponentBase
 
-<div @attributes="UserAttributes" id="@_elementId" class="@Classname" style="@Style" tabindex="-1" @onkeydown="HandleKeyDown">
+<div @attributes="UserAttributes" id="@_elementId" class="@Classname" style="@Style" tabindex="-1" @onkeydown="HandleKeyDown" @onfocusout="OnFocusOut">
     <CascadingValue Value="@this" IsFixed="true">
         @ChildContent
     </CascadingValue>

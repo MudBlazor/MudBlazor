@@ -83,17 +83,6 @@
             </SectionContent>
         </DocsPageSection>
 
-        @*<DocsPageSection>
-            <SectionHeader Title="Multi Selection">
-                <Description>
-                    List also supports Multi Selection.
-                </Description>
-            </SectionHeader>
-            <SectionContent DarkenBackground="true" ShowCode="false" Code="ListMultiSelectionExample">
-                <ListMultiSelectionExample/>
-            </SectionContent>
-        </DocsPageSection>*@
-
         <DocsPageSection>
             <SectionHeader Title="Color">
                 <Description>
@@ -102,6 +91,29 @@
             </SectionHeader>
             <SectionContent DarkenBackground="true" ShowCode="false" Code="ListColorExample">
                 <ListColorExample/>
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Keyboard Navigation">
+                <Description>
+                    List supports keyboard navigation once you get focus with clicking or pressing <CodeInline>Tab</CodeInline>.
+                    <br />
+                    <MudText><CodeInline>ArrowUp</CodeInline> key to select/navigate previous item</MudText>
+                    <MudText><CodeInline>ArrowDown</CodeInline> key to select/navigate next item</MudText>
+                    <MudText><CodeInline>Home</CodeInline> key to select/navigate first item</MudText>
+                    <MudText><CodeInline>End</CodeInline> key to select/navigate last item</MudText>
+                    <MudText><CodeInline>Enter</CodeInline> or <CodeInline>NumpadEnter</CodeInline> keys to select item</MudText>
+                    <MudText><CodeInline>Ctrl+A</CodeInline> key to toggle select all/clear all items (MultiSelect only)</MudText>
+                    <br />
+                    <br />
+                    Note 1: Keyboard navigation only works if list is Clickable or MultiSelection
+                    <br />
+                    Note 2: If you use arrow keys to navigate a collapsed item it will be automatically expanded.
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" ShowCode="false" Code="ListKeyboardNavigationExample">
+                <ListKeyboardNavigationExample />
             </SectionContent>
         </DocsPageSection>
 
