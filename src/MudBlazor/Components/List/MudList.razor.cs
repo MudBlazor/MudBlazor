@@ -12,6 +12,7 @@ namespace MudBlazor
     public partial class MudList<T> : MudComponentBase, IDisposable
     {
         [Inject] private IKeyInterceptorFactory KeyInterceptorFactory { get; set; }
+        [Inject] IScrollManager ScrollManager { get; set; }
 
         private IKeyInterceptor _keyInterceptor;
         private string _elementId = "list_" + Guid.NewGuid().ToString().Substring(0, 8);
@@ -23,6 +24,12 @@ namespace MudBlazor
         .Build();
 
         [CascadingParameter] protected MudList<T> ParentList { get; set; }
+
+        private ValueTask ScrollToItemAsync(MudListItem<T> item)
+            => item != null ? ScrollManager.ScrollToListItemAsync(item.ItemId) : ValueTask.CompletedTask;
+
+        private ValueTask ScrollToMiddleAsync(MudListItem<T> item)
+            => ScrollManager.ScrollToMiddleAsync(_elementId, item.ItemId);
 
         /// <summary>
         /// The color of the selected List Item.
@@ -366,7 +373,7 @@ namespace MudBlazor
             return items;
         }
 
-        internal void HandleKeyDown(KeyboardEventArgs obj)
+        internal async Task HandleKeyDown(KeyboardEventArgs obj)
         {
             if (Disabled || (Clickable == false && MultiSelection == false))
                 return;
@@ -375,16 +382,16 @@ namespace MudBlazor
             switch (obj.Key)
             {
                 case "ArrowUp":
-                    ActivePreviousItem();
+                    await ActivePreviousItem();
                     break;
                 case "ArrowDown":
-                    ActiveNextItem();
+                    await ActiveNextItem();
                     break;
                 case "Home":
-                    ActiveFirstItem();
+                    await ActiveFirstItem();
                     break;
                 case "End":
-                    ActiveLastItem();
+                    await ActiveLastItem();
                     break;
                 case "Enter":
                 case "NumpadEnter":
@@ -456,7 +463,7 @@ namespace MudBlazor
             }
         }
 
-        public void ActiveFirstItem()
+        public async Task ActiveFirstItem()
         {
             var items = CollectAllMudListItems().Where(x => x.NestedList == null).ToList();
             if (items == null || items.Count == 0)
@@ -466,10 +473,10 @@ namespace MudBlazor
             DeactiveAllItems();
             items[0].SetActive(true);
             _lastActivatedItem = items[0];
-            StateHasChanged();
+            await ScrollToMiddleAsync(items[0]);
         }
 
-        public void ActiveNextItem()
+        public async Task ActiveNextItem()
         {
             var items = CollectAllMudListItems().Where(x => x.NestedList == null).ToList();
             if (items == null || items.Count == 0)
@@ -490,9 +497,11 @@ namespace MudBlazor
 #pragma warning disable BL0005
                 items[index + 1].ParentListItem.Expanded = true;
             }
+
+            await ScrollToMiddleAsync(items[index + 1]);
         }
 
-        public void ActivePreviousItem()
+        public async Task ActivePreviousItem()
         {
             var items = CollectAllMudListItems().Where(x => x.NestedList == null).ToList();
             if (items == null || items.Count == 0)
@@ -512,9 +521,11 @@ namespace MudBlazor
             {
                 items[index - 1].ParentListItem.Expanded = true;
             }
+
+            await ScrollToMiddleAsync(items[index - 1]);
         }
 
-        public void ActiveLastItem()
+        public async Task ActiveLastItem()
         {
             var items = CollectAllMudListItems().Where(x => x.NestedList == null).ToList();
             if (items == null || items.Count == 0)
@@ -524,6 +535,8 @@ namespace MudBlazor
             DeactiveAllItems();
             items[items.Count - 1].SetActive(true);
             _lastActivatedItem = items[items.Count - 1];
+
+            await ScrollToMiddleAsync(items[items.Count - 1]);
         }
     }
 }

@@ -28,6 +28,7 @@ namespace MudBlazor
         [CascadingParameter] internal MudListItem<T> ParentListItem { get; set; }
 
         private bool _onClickHandlerPreventDefault = false;
+        internal string ItemId { get; } = "_" + Guid.NewGuid().ToString().Substring(0, 8);
 
         /// <summary>
         /// The text to display
