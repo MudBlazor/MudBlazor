@@ -222,7 +222,11 @@ namespace MudBlazor
 
             if (disposing == true)
             {
-                _keyInterceptor?.Dispose();
+                if(_keyInterceptor != null)
+                {
+                    _keyInterceptor.KeyDown -= HandleKeyDown;
+                    _keyInterceptor.Dispose();
+                }
             }
         }
     }

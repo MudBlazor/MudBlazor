@@ -11,7 +11,7 @@ namespace MudBlazor
 {
     public partial class MudPicker<T> : MudFormComponent<T, string>
     {
-        private IKeyInterceptor _keyInterceptor;
+        protected IKeyInterceptor _keyInterceptor;
 
         public MudPicker() : base(new Converter<T, string>()) { }
         protected MudPicker(Converter<T, string> converter) : base(converter) { }
@@ -429,9 +429,9 @@ namespace MudBlazor
             }
         }
 
-        protected override async Task OnAfterRenderAsync(bool firstRender)
+        private async Task EnsureKeyInterceptor()
         {
-            if (firstRender)
+            if (_keyInterceptor == null)
             {
                 _keyInterceptor = _keyInterceptorFactory.Create();
 
@@ -450,6 +450,14 @@ namespace MudBlazor
                     },
                 });
                 _keyInterceptor.KeyDown += HandleKeyDown;
+            }
+        }
+
+        protected override async Task OnAfterRenderAsync(bool firstRender)
+        {
+           if(firstRender == true)
+            {
+                await EnsureKeyInterceptor();
             }
 
             await base.OnAfterRenderAsync(firstRender);
@@ -481,13 +489,15 @@ namespace MudBlazor
                 await _pickerInlineRef.MudChangeCssAsync(PickerInlineClass);
             }
 
+            await EnsureKeyInterceptor();
             await _keyInterceptor.UpdateKey(new() { Key = "Escape", StopDown = "key+none" });
         }
 
-        protected virtual void OnClosed()
+        protected virtual async void OnClosed()
         {
             OnPickerClosed();
 
+            await EnsureKeyInterceptor();
             _keyInterceptor?.UpdateKey(new() { Key = "Escape", StopDown = "none" });
         }
 
@@ -529,7 +539,12 @@ namespace MudBlazor
 
             if (disposing == true)
             {
-                _keyInterceptor?.Dispose();
+                if(_keyInterceptor != null)
+                {
+                    _keyInterceptor.KeyDown -= HandleKeyDown;
+                    _keyInterceptor.Dispose();
+                }
+        
             }
         }
 

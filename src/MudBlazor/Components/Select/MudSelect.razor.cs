@@ -743,8 +743,9 @@ namespace MudBlazor
                     },
                 });
                 _keyInterceptor.KeyDown += HandleKeyDown;
-                _keyInterceptor.KeyUp += HandleKeyUp;
+                _keyInterceptor.KeyUp += HandleKeyUp;    
             }
+
             await base.OnAfterRenderAsync(firstRender);
         }
 
@@ -1041,7 +1042,13 @@ namespace MudBlazor
 
             if (disposing == true)
             {
-                _keyInterceptor?.Dispose();
+                if (_keyInterceptor != null)
+                {
+                    _keyInterceptor.KeyDown -= HandleKeyDown;
+                    _keyInterceptor.KeyUp -= HandleKeyUp;
+
+                    _keyInterceptor.Dispose();
+                }
             }
         }
 
