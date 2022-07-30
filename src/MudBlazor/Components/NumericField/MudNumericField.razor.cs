@@ -179,9 +179,15 @@ namespace MudBlazor
         {
             try
             {
-                var nextValue = typeof(T) == typeof(decimal) || typeof(T) == typeof(decimal?)
-                    ? (T)(object)Convert.ToDecimal(FromDecimal(Value) + FromDecimal(Step) * (decimal)factor)
-                    : Num.To<T>(Num.From(Value) + Num.From(Step) * factor);
+                var nextValue = GetNextValue(factor);
+                if (nextValue is IComparable<T> comparable)
+                {
+                    if (factor > 0 && comparable.CompareTo(Value) < 0)
+                        nextValue = Max;
+                    else if (factor < 0 && comparable.CompareTo(Value) > 0)
+                        nextValue = Min;
+                }
+                
                 await SetValueAsync(ConstrainBoundaries(nextValue).value);
                 _elementReference.SetText(Text).AndForget();
             }
@@ -190,6 +196,17 @@ namespace MudBlazor
                 // if next value overflows the primitive type, lets set it to Min or Max depending if factor is positive or negative
                 await SetValueAsync(factor > 0 ? Max : Min, true);
             }
+        }
+
+        private T GetNextValue(double factor)
+        {
+            if (typeof(T) == typeof(decimal) || typeof(T) == typeof(decimal?))
+                return (T)(object)Convert.ToDecimal(FromDecimal(Value) + FromDecimal(Step) * (decimal)factor);
+            if (typeof(T) == typeof(long) || typeof(T) == typeof(long?))
+                return (T)(object)Convert.ToInt64(FromInt64(Value) + FromInt64(Step) * factor);
+            if (typeof(T) == typeof(ulong) || typeof(T) == typeof(ulong?))
+                return (T)(object)Convert.ToUInt64(FromUInt64(Value) + FromUInt64(Step) * factor);
+            return Num.To<T>(Num.From(Value) + Num.From(Step) * factor);
         }
 
         /// <summary>
@@ -205,58 +222,22 @@ namespace MudBlazor
         /// <summary>
         /// Checks if the value respects the boundaries set for this instance.
         /// </summary>
-        /// <param name="v">Value to check.</param>
+        /// <param name="value">Value to check.</param>
         /// <returns>Returns a valid value and if it has been changed.</returns>
-        protected (T value, bool changed) ConstrainBoundaries(T v)
+        protected (T value, bool changed) ConstrainBoundaries(T value)
         {
-            if (typeof(T) == typeof(decimal) || typeof(T) == typeof(decimal?))
-                return ConstrainBoundariesDecimal(v);
-
-            return ConstrainBoundariesDouble(v);
-        }
-
-        /// <summary>
-        /// Check boundaries for this instance with double primitive data type
-        /// </summary>
-        /// <param name="v">see <see cref="ConstrainBoundaries"/></param>
-        /// <returns>see <see cref="ConstrainBoundaries"/></returns>
-        private (T value, bool changed) ConstrainBoundariesDouble(T v)
-        {
-            var value = Num.From(v);
-            var max = Num.From(Max);
-            var min = Num.From(Min);
-        
-            //check if Max/Min has value, if not use MaxValue/MinValue for that data type
-            if (value > max)
-                return (Max, true);
-            else if (value < min)
-                return (Min, true);
-            else if (v == null)
+            // check if Max/Min has value, if not use MaxValue/MinValue for that data type
+            if (value is IComparable<T> comparable)
+            {
+                if (comparable.CompareTo(Max) > 0)
+                    return (Max, true);
+                else if (comparable.CompareTo(Min) < 0)
+                    return (Min, true);
+            }
+            else if (value == null)
                 return (default(T), true);
 
-            return (Num.To<T>(value), false);
-        }
-
-        /// <summary>
-        /// Check boundaries for this instance with decimal primitive data type
-        /// </summary>
-        /// <param name="v">see <see cref="ConstrainBoundaries"/></param>
-        /// <returns>see <see cref="ConstrainBoundaries"/></returns>
-        private (T value, bool changed) ConstrainBoundariesDecimal(T v)
-        {
-            var value = FromDecimal(v);
-            var max = Convert.ToDecimal(Max);
-            var min = Convert.ToDecimal(Min);
-
-            //check if Max/Min has value, if not use MaxValue/MinValue for that data type
-            if (value > max)
-                return (Max, true);
-            else if (value < min)
-                return (Min, true);
-            else if (v == null)
-                return (default(T), true);
-
-            return ((T)(object)Convert.ToDecimal(value), false);
+            return (value, false);
         }
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -433,14 +414,12 @@ namespace MudBlazor
         }
 
         private decimal FromDecimal(T v)
-        {
-            if (typeof(T) == typeof(decimal))
-                return Convert.ToDecimal((decimal)(object)v);
-            if (typeof(T) == typeof(decimal?))
-                return Convert.ToDecimal((decimal?)(object)v);
-            return default;
-        }
-
+            => Convert.ToDecimal((decimal?)(object)v);
+        private long FromInt64(T v)
+            => Convert.ToInt64((long?)(object)v);
+        private ulong FromUInt64(T v)
+            => Convert.ToUInt64((ulong?)(object)v);
+    
         protected override void Dispose(bool disposing)
         {
             base.Dispose(disposing);
