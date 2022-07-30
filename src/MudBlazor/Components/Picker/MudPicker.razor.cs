@@ -455,7 +455,7 @@ namespace MudBlazor
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
-           if(firstRender == true)
+            if (firstRender == true)
             {
                 await EnsureKeyInterceptor();
             }
@@ -498,7 +498,7 @@ namespace MudBlazor
             OnPickerClosed();
 
             await EnsureKeyInterceptor();
-            _keyInterceptor?.UpdateKey(new() { Key = "Escape", StopDown = "none" });
+            await _keyInterceptor.UpdateKey(new() { Key = "Escape", StopDown = "none" });
         }
 
         protected virtual void OnPickerOpened()
@@ -539,12 +539,12 @@ namespace MudBlazor
 
             if (disposing == true)
             {
-                if(_keyInterceptor != null)
+                if (_keyInterceptor != null)
                 {
                     _keyInterceptor.KeyDown -= HandleKeyDown;
                     _keyInterceptor.Dispose();
                 }
-        
+
             }
         }
 
