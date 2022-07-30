@@ -179,11 +179,16 @@ namespace MudBlazor
                         new KeyOptions { Key = "Delete", PreventDown = "key+none" },
                     },
                 });
-                _keyInterceptor.KeyDown += e => HandleKeyDown(e).AndForget();
+                _keyInterceptor.KeyDown += HandleKeyDownInternally;
             }
             if (_isFocused && Mask.Selection == null)
                 SetCaretPosition(Mask.CaretPos, _selection, render: false);
             await base.OnAfterRenderAsync(firstRender);
+        }
+
+        private async void HandleKeyDownInternally(KeyboardEventArgs args)
+        {
+            await HandleKeyDown(args);
         }
 
         protected internal async Task HandleKeyDown(KeyboardEventArgs e)
@@ -435,6 +440,13 @@ namespace MudBlazor
             if (disposing == true)
             {
                 _jsEvent?.Dispose();
+
+                if (_keyInterceptor != null)
+                {
+                    _keyInterceptor.KeyDown -= HandleKeyDownInternally;
+                    _keyInterceptor.Dispose();
+                }
+
                 _keyInterceptor?.Dispose();
             }
         }
