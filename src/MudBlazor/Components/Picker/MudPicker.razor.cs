@@ -388,6 +388,12 @@ namespace MudBlazor
             }
         }
 
+        protected override void ResetValue()
+        {
+            _inputReference?.Reset();
+            base.ResetValue();
+        }
+
         protected internal MudTextField<string> _inputReference;
 
         public virtual ValueTask FocusAsync() => _inputReference?.FocusAsync() ?? ValueTask.CompletedTask;
