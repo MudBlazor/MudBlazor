@@ -3,21 +3,21 @@
 <MudGrid>
     <MudItem xs="12" sm="8" Class="d-flex align-center justify-center">
         <MudPaper Width="300px">
-            <MudList @ref="_list" T="int" Clickable="_clickable" MultiSelection="_multiSelection" @bind-SelectedValue="_value" SelectedValuesChanged="GetSelectedValues">
-                <MudListItem T="int" Text="Sparkling Water (1)" Value="1" />
-                <MudListItem T="int" Text="Still Water (2)" Value="2" />
-                <MudListItem T="int" Text="Teas" InitiallyExpanded="true">
+            <MudList @ref="_list" T="int?" Clickable="_clickable" MultiSelection="_multiSelection" @bind-SelectedItem="_selectedItem" @bind-SelectedItems="_selectedItems" @bind-SelectedValue="_value" SelectedValuesChanged="GetSelectedValues">
+                <MudListItem T="int?" Text="Sparkling Water (1)" Value="1" />
+                <MudListItem T="int?" Text="Still Water (2)" Value="2" />
+                <MudListItem T="int?" Text="Teas" InitiallyExpanded="true">
                     <NestedList>
-                        <MudListItem Text="Earl Grey (3)" Value="3" />
-                        <MudListItem Text="Matcha (4)" Value="4" />
-                        <MudListItem Text="Pu'er (5)" Value="5" />
+                        <MudListItem T="int?" Text="Earl Grey (3)" Value="3" />
+                        <MudListItem T="int?" Text="Matcha (4)" Value="4" />
+                        <MudListItem T="int?" Text="Pu'er (5)" Value="5" />
                     </NestedList>
                 </MudListItem>
-                <MudListItem T="int" Text="Coffees">
+                <MudListItem T="int?" Text="Coffees">
                     <NestedList>
-                        <MudListItem Text="Irish Coffee (6)" Value="6" />
-                        <MudListItem Text="Double Espresso (7)" Value="7" />
-                        <MudListItem Text="Cafe Latte (8)" Value="8" />
+                        <MudListItem T="int?" Text="Irish Coffee (6)" Value="6" />
+                        <MudListItem T="int?" Text="Double Espresso (7)" Value="7" />
+                        <MudListItem T="int?" Text="Cafe Latte (8)" Value="8" />
                     </NestedList>
                 </MudListItem>
             </MudList>
@@ -28,21 +28,28 @@
         <MudCheckBox @bind-Checked="_clickable" Color="Color.Primary" Label="Clickable" />
         <MudCheckBox @bind-Checked="_multiSelection" Color="Color.Primary" Label="MultiSelection" />
         <MudDivider />
+        <MudTextField @bind-Value="_value" Clearable="true" />
         <MudText Class="ma-4">Selected Value: @_value</MudText>
         <MudText Class="ma-4">Selected Values: @_values</MudText>
+        <MudText Class="ma-4">Selected Item Text: @_selectedItem?.Text</MudText>
+        <MudText Class="ma-4">Selected Items Texts: @_texts</MudText>
     </MudItem>
 </MudGrid>
 
 @code{
-    bool _clickable = false;
+    bool _clickable = true;
     bool _multiSelection = false;
-    int _value;
-    MudList<int> _list;
+    int? _value = 1;
+    MudList<int?> _list;
+    MudListItem<int?> _selectedItem = new();
+    List<MudListItem<int?>> _selectedItems = new();
     string _values = "";
+    string _texts = "";
 
     private void GetSelectedValues()
     {
         _values = string.Join(", ", _list.SelectedValues);
+        _texts = string.Join(", ", _selectedItems.Select(x => x.Text).ToList());
         StateHasChanged();
     }
 }

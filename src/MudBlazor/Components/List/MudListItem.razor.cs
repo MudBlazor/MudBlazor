@@ -154,15 +154,11 @@ namespace MudBlazor
 
 
         /// <summary>
-        /// Selected state of the option. Only works if the parent is a mulit-select
+        /// Selected state of the option. Readonly. Use SetSelected for selecting.
         /// </summary>
         internal bool IsSelected
         {
             get => _selected;
-            set
-            {
-                _selected = value;
-            }
         }
 
         /// <summary>
@@ -303,7 +299,7 @@ namespace MudBlazor
             get => _active;
         }
 
-        internal void SetSelected(bool selected)
+        public void SetSelected(bool selected)
         {
             if (Disabled)
                 return;

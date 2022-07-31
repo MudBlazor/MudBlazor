@@ -1,25 +1,25 @@
 ﻿@namespace MudBlazor.UnitTests.TestComponents
 
-<MudList T="int?" Clickable="true" @bind-SelectedItem="selectedItem" @bind-SelectedValue="selectedValue">
-    <MudListSubheader T="string">
+<MudList @ref="_list" T="int?" Clickable="true" @bind-SelectedItem="selectedItem" @bind-SelectedValue="selectedValue">
+    <MudListSubheader T="int?">
         Your drink:
         <MudChip Color="Color.Secondary">
             @(selectedItem?.Text ?? "You are dry")
         </MudChip>
     </MudListSubheader>
-    <MudListItem Text="Sparkling Water" Value="1"/>
+    <MudListItem T="int?" Text="Sparkling Water" Value="1"/>
     <MudListItem T="int?" Text="Teas">
         <NestedList>
-            <MudListItem Text="Earl Grey"  Value="2"/>
-            <MudListItem Text="Matcha"  Value="3"/>
-            <MudListItem Text="Pu'er"  Value="4"/>
+            <MudListItem T="int?" Text="Earl Grey"  Value="2"/>
+            <MudListItem T="int?" Text="Matcha"  Value="3"/>
+            <MudListItem T="int?" Text="Pu'er"  Value="4"/>
         </NestedList>
     </MudListItem>
     <MudListItem T="int?" Text="Coffees">
         <NestedList>
-            <MudListItem Text="Irish Coffee"  Value="5"/>
-            <MudListItem Text="Double Espresso"  Value="6"/>
-            <MudListItem Text="Cafe Latte"  Value="7"/>
+            <MudListItem T="int?" Text="Irish Coffee"  Value="5"/>
+            <MudListItem T="int?" Text="Double Espresso"  Value="6"/>
+            <MudListItem T="int?" Text="Cafe Latte"  Value="7"/>
         </NestedList>
     </MudListItem>
 </MudList>
@@ -27,13 +27,24 @@
 @code
 {
     [Parameter] public Color Color { get; set; } = Color.Primary;
+    MudList<int?> _list;
     public static string __description__ = "Sparkling Water should be selected initially.";
-    MudListItem<int?> selectedItem;
+    MudListItem<int?> selectedItem = new();
     int? selectedValue = 1;
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (firstRender)
+        {
+            selectedItem = _list.AllItems.FirstOrDefault(x => x.Value == selectedValue);
+        }
+    }
 
     public void SetSelectedValue(int? value)
     {
         selectedValue = value;
+        //StateHasChanged();
+        //_list.UpdateSelectedItem();
         StateHasChanged();
     }
 }

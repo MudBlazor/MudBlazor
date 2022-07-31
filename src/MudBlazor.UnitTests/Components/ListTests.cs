@@ -20,9 +20,7 @@ namespace MudBlazor.UnitTests.Components
         /// In this test no item is selected to begin with
         /// </summary>
         [Test]
-
-        
-        public async Task ListSelectionTest()
+        public void ListSelectionTest()
         {
             var comp = Context.RenderComponent<ListSelectionTest>();
             //Console.WriteLine(comp.Markup);
@@ -58,30 +56,31 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<ListSelectionInitialValueTest>();
             //Console.WriteLine(comp.Markup);
-            var list = comp.FindComponent<MudList<string>>().Instance;
-            list.SelectedItem.Text.Should().Be("Sparkling Water");
+            var list = comp.FindComponent<MudList<int?>>().Instance;
+            comp.WaitForAssertion(() => list.SelectedItem.Text.Should().Be("Sparkling Water"));
             // we have seven choices, 1 is active because of the initial value of SelectedValue
-            comp.FindAll("div.mud-list-item").Count.Should().Be(9); // 7 choices, 2 groups
-            comp.FindAll("div.mud-selected-item").Count.Should().Be(1);
+            comp.WaitForAssertion(() => comp.FindAll("div.mud-list-item").Count.Should().Be(9)); // 7 choices, 2 groups
+            comp.WaitForAssertion(() => comp.FindAll("div.mud-selected-item").Count.Should().Be(1));
             // set Pu'er, a heavily fermented Chinese tea that tastes like an old leather glove
-            await comp.InvokeAsync(()=>comp.Instance.SetSelectedValue(4));
-            list.SelectedItem.Text.Should().Be("Pu'er");
-            comp.FindAll("div.mud-selected-item").Count.Should().Be(1);
-            comp.FindComponents<MudListItem<string>>()[4].Markup.Should().Contain("mud-selected-item");
+            await comp.InvokeAsync(()=> comp.Instance.SetSelectedValue(4));
+            comp.WaitForAssertion(() => list.SelectedValue.Should().Be(4));
+            comp.WaitForAssertion(() => list.SelectedItem.Text.Should().Be("Pu'er"));
+            comp.WaitForAssertion(() => comp.FindAll("div.mud-selected-item").Count.Should().Be(1));
+            comp.WaitForAssertion(() => comp.FindComponents<MudListItem<int?>>()[4].Markup.Should().Contain("mud-selected-item"));
             // set Cafe Latte via changing SelectedValue
             await comp.InvokeAsync(() => comp.Instance.SetSelectedValue(7));
-            list.SelectedItem.Text.Should().Be("Cafe Latte");
-            comp.FindAll("div.mud-selected-item").Count.Should().Be(1);
-            comp.FindComponents<MudListItem<string>>()[8].Markup.Should().Contain("mud-selected-item");
+            comp.WaitForAssertion(() => list.SelectedItem.Text.Should().Be("Cafe Latte"));
+            comp.WaitForAssertion(() => comp.FindAll("div.mud-selected-item").Count.Should().Be(1));
+            comp.WaitForAssertion(() => comp.FindComponents<MudListItem<int?>>()[8].Markup.Should().Contain("mud-selected-item"));
             // set water
             await comp.InvokeAsync(() => comp.Instance.SetSelectedValue(1));
-            list.SelectedItem.Text.Should().Be("Sparkling Water");
-            comp.FindAll("div.mud-selected-item").Count.Should().Be(1);
-            comp.FindComponents<MudListItem<string>>()[0].Markup.Should().Contain("mud-selected-item");
+            comp.WaitForAssertion(() => list.SelectedItem.Text.Should().Be("Sparkling Water"));
+            comp.WaitForAssertion(() => comp.FindAll("div.mud-selected-item").Count.Should().Be(1));
+            comp.WaitForAssertion(() => comp.FindComponents<MudListItem<int?>>()[0].Markup.Should().Contain("mud-selected-item"));
             // set nothing
             await comp.InvokeAsync(() => comp.Instance.SetSelectedValue(null));
-            list.SelectedItem.Should().Be(null);
-            comp.FindAll("div.mud-selected-item").Count.Should().Be(0);
+            comp.WaitForAssertion(() => list.SelectedItem.Should().Be(null));
+            comp.WaitForAssertion(() => comp.FindAll("div.mud-selected-item").Count.Should().Be(0));
         }
 
         [Test]
@@ -98,7 +97,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<ListSelectionInitialValueTest>(x => x.Add(c => c.Color, color));
 
-            var list = comp.FindComponent<MudList<int>>().Instance;
+            var list = comp.FindComponent<MudList<int?>>().Instance;
             list.SelectedItem.Text.Should().Be("Sparkling Water");
 
             var listItemClasses = comp.Find(".mud-selected-item");
