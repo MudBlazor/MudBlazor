@@ -69,6 +69,14 @@ namespace MudBlazor
             internal static string[] Values = GetFields(typeof(DateTime));
         }
 
+        public static class Guid
+        {
+            public const string Equal = "equals";
+            public const string NotEqual = "not equals";
+
+            internal static string[] Values = GetFields(typeof(Guid));
+        }
+
         internal static string[] GetOperatorByDataType(Type type)
         {
             if (type == typeof(string))
@@ -90,6 +98,10 @@ namespace MudBlazor
             if (type == typeof(System.DateTime))
             {
                 return DateTime.Values;
+            }
+            if (type == typeof(System.Guid))
+            {
+                return Guid.Values;
             }
 
             // default
@@ -169,6 +181,15 @@ namespace MudBlazor
 
             Type u = Nullable.GetUnderlyingType(type);
             return (u != null) && u == typeof(bool);
+        }
+
+        internal static bool IsGuid(Type type)
+        {
+            if (type == typeof(System.Guid))
+                return true;
+
+            Type u = Nullable.GetUnderlyingType(type);
+            return (u != null) && u == typeof(System.Guid);
         }
     }
 }
