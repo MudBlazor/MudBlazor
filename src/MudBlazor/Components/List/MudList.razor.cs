@@ -117,15 +117,16 @@ namespace MudBlazor
         [Category(CategoryTypes.List.Selecting)]
         public IEnumerable<T> SelectedValues
         {
-            get
-            {
-                if (_selectedValues == null)
-                    _selectedValues = new();
-                return _selectedValues;
-            }
+            get => _selectedValues;
+
             set
             {
-                _selectedValues = value.ToList();
+                if ((_selectedValues != null && _selectedValues.Equals(value)) || (_selectedValues == null && value == null))
+                {
+                    return;
+                }
+
+                _selectedValues = value == null ? null : value.ToList();
                 if (MultiSelection)
                 {
                     UpdateSelectedItem();
@@ -191,7 +192,7 @@ namespace MudBlazor
             {
                 if (_selectedItems == value)
                     return;
-                _selectedItems = value.ToList();
+                _selectedItems = value == null ? null : value.ToList();
                 SelectedItemsChanged.InvokeAsync(_selectedItems).AndForget();
             }
         }
@@ -227,7 +228,7 @@ namespace MudBlazor
             }
             else
             {
-                items.Where(x => SelectedValues.Contains(x.Value)).ToList().ForEach(x => x.SetSelected(true));
+                items.Where(x => SelectedValues != null && SelectedValues.Contains(x.Value)).ToList().ForEach(x => x.SetSelected(true));
             }
             
             StateHasChanged();
@@ -434,14 +435,15 @@ namespace MudBlazor
                 {
                     item.SetSelected(true);
                     SelectedItems = SelectedItems.Append(item);
+                    if (SelectedValues == null)
+                    {
+                        SelectedValues = new List<T>();
+                    }
                     SelectedValues = SelectedValues.Append(item.Value);
                 }
 
                 //RemoveSelectedCSS(items.Where(x => !x.IsSelected).ToList());
-
             }
-
-
             _lastActivatedItem = item;
         }
 
