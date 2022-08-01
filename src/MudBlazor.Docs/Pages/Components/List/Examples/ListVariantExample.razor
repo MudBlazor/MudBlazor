@@ -3,7 +3,7 @@
 <MudGrid>
     <MudItem xs="12" sm="8" Class="d-flex align-center justify-center">
         <MudPaper Width="300px">
-            <MudList @ref="_list" T="int?" Clickable="_clickable" MultiSelection="_multiSelection" @bind-SelectedItem="_selectedItem" @bind-SelectedValue="_value" @bind-SelectedItems="_selectedItems" SelectedValuesChanged="GetSelectedValues">
+            <MudList @ref="_list" T="int?" Clickable="_clickable" MultiSelection="_multiSelection" @bind-SelectedValue="_selectedValue" @bind-SelectedItem="_selectedItem" @bind-SelectedValues="_selectedValues" @bind-SelectedItems="_selectedItems">
                 <MudListItem T="int?" Text="Sparkling Water (1)" Value="1" />
                 <MudListItem T="int?" Text="Still Water (2)" Value="2" />
                 <MudListItem T="int?" Text="Teas" InitiallyExpanded="true">
@@ -28,37 +28,40 @@
         <MudCheckBox @bind-Checked="_clickable" Color="Color.Primary" Label="Clickable" />
         <MudCheckBox @bind-Checked="_multiSelection" Color="Color.Primary" Label="MultiSelection" />
         <MudDivider />
-        <MudTextField @bind-Value="_value" Clearable="true" />
+        <MudTextField @bind-Value="_selectedValue" Clearable="true" />
 @*        <MudSelect @ref="_select" T="int?" MultiSelection="true" >
             @foreach (var item in _list.AllItems)
             {
                 <MudSelectItem Value="item.Value">@item.Text</MudSelectItem>
             }
         </MudSelect>*@
-        <MudText Class="ma-4">Selected Value: @_value</MudText>
-        <MudText Class="ma-4">Selected Values: @_values</MudText>
+        <MudButton OnClick="@(() => _selectedValue = 2)">Select 2</MudButton>
+        <MudButton OnClick="@(() => _selectedValues = new List<int?>() { 2, 4 })">Select 2 and 4</MudButton>
+        <MudButton OnClick="@(() => _list.Clear())">Clear</MudButton>
+        <MudText Class="ma-4">Selected Value: @_selectedValue</MudText>
+        <MudText Class="ma-4">Selected Values: @string.Join(", ", _selectedValues ?? new List<int?>())</MudText>
         <MudText Class="ma-4">Selected Item Text: @_selectedItem?.Text</MudText>
-        <MudText Class="ma-4">Selected Items Texts: @_texts</MudText>
+        <MudText Class="ma-4">Selected Items Texts: @string.Join(", ", _selectedItems == null ? new List<string>() : _selectedItems.Select(x => x.Text))</MudText>
     </MudItem>
 </MudGrid>
 
 @code{
     bool _clickable = true;
     bool _multiSelection = false;
-    int? _value = 1;
+    int? _selectedValue = 1;
     //MudSelect<int?> _select;
     MudList<int?> _list;
     MudListItem<int?> _selectedItem = new();
     List<MudListItem<int?>> _selectedItems = new();
-    string _values = "";
-    string _texts = "";
+    //string _values = "";
+    //string _texts = "";
     IEnumerable<int?> _selectedValues = new List<int?>();
 
-    private void GetSelectedValues()
-    {
-        _selectedValues = _list.SelectedValues;
-        _values = string.Join(", ", _list.SelectedValues);
-        _texts = string.Join(", ", _selectedItems.Select(x => x.Text).ToList());
-        StateHasChanged();
-    }
+    //private void GetSelectedValues()
+    //{
+    //    //_selectedValues = _list.SelectedValues;
+    //    _values = string.Join(", ", _list.SelectedValues);
+    //    _texts = string.Join(", ", _selectedItems.Select(x => x.Text).ToList());
+    //    StateHasChanged();
+    //}
 }

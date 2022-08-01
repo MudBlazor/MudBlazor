@@ -16,6 +16,7 @@ namespace MudBlazor
 
         private IKeyInterceptor _keyInterceptor;
         private string _elementId = "list_" + Guid.NewGuid().ToString().Substring(0, 8);
+        private bool _multiSelection = false;
 
         protected string Classname =>
         new CssBuilder("mud-list")
@@ -50,7 +51,24 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.List.Behavior)]
-        public bool MultiSelection { get; set; } = false;
+        public bool MultiSelection
+        {
+            get => _multiSelection;
+
+            set
+            {
+                if (_multiSelection == value)
+                { 
+                    return;
+                }
+                _multiSelection = value;
+                if (_multiSelection == false)
+                {
+                    HandleCentralValueCommander("MultiSelectionOff").AndForget();
+                    UpdateSelectedStyles();
+                }
+            }
+        }
 
         [Parameter]
         [Category(CategoryTypes.List.Behavior)]
@@ -113,25 +131,31 @@ namespace MudBlazor
             get => CollectAllMudListItems();
         }
 
-        [Parameter]
-        [Category(CategoryTypes.List.Selecting)]
-        public IEnumerable<T> SelectedValues
+
+        public async Task HandleCentralValueCommander(string changedValueType)
         {
-            get => _selectedValues;
-
-            set
+            await Task.Delay(1);
+            if (changedValueType == "SelectedValue")
             {
-                if ((_selectedValues != null && _selectedValues.Equals(value)) || (_selectedValues == null && value == null))
+                if (!MultiSelection)
                 {
-                    return;
-                }
-
-                _selectedValues = value == null ? null : value.ToList();
-                if (MultiSelection)
-                {
+                    SelectedValues = new List<T>() { SelectedValue };
                     UpdateSelectedItem();
                 }
-                SelectedValuesChanged.InvokeAsync().AndForget();
+            }
+            else if (changedValueType == "SelectedValues")
+            {
+                if (MultiSelection)
+                {
+                    SelectedValue = SelectedValues == null ? default(T) : SelectedValues.FirstOrDefault();
+                    UpdateSelectedItem();
+                }
+            }
+            else if (changedValueType == "MultiSelectionOff")
+            {
+                var items = CollectAllMudListItems();
+                SelectedValues = new List<T>() { SelectedValue };
+                SelectedItems = items.Where(x => SelectedValues.Contains(x.Value)).ToList();
             }
         }
 
@@ -146,14 +170,41 @@ namespace MudBlazor
             get => _selectedValue;
             set
             {
-                if ((_selectedValue != null && _selectedValue.Equals(value)) || (_selectedValue == null && value == null))
+                if ((_selectedValue != null && _selectedValue.ToString() == value.ToString()) || (_selectedValue == null && value == null))
                     return;
                 _selectedValue = value;
-                if (!MultiSelection)
+                HandleCentralValueCommander("SelectedValue").AndForget();
+
+                SelectedValueChanged.InvokeAsync(_selectedValue).AndForget();
+                UpdateSelectedStyles();
+            }
+        }
+
+        [Parameter]
+        [Category(CategoryTypes.List.Selecting)]
+        public IEnumerable<T> SelectedValues
+        {
+            get
+            {
+                if (_selectedValues == null)
                 {
-                    UpdateSelectedItem();
+                    return new List<T>();
                 }
-                SelectedValueChanged.InvokeAsync(value).AndForget();
+                return _selectedValues;
+            }
+
+            set
+            {
+                if ((_selectedValues != null && value != null && _selectedValues == value) || (_selectedValues == null && value == null))
+                {
+                    return;
+                }
+
+                _selectedValues = value == null ? null : value.ToList();
+                HandleCentralValueCommander("SelectedValues").AndForget();
+
+                SelectedValuesChanged.InvokeAsync(_selectedValues).AndForget();
+                UpdateSelectedStyles();
             }
         }
 
@@ -170,6 +221,7 @@ namespace MudBlazor
             {
                 if (_selectedItem == value)
                     return;
+
                 _selectedItem = value;
                 SelectedItemChanged.InvokeAsync(_selectedItem).AndForget();
             }
@@ -192,6 +244,7 @@ namespace MudBlazor
             {
                 if (_selectedItems == value)
                     return;
+
                 _selectedItems = value == null ? null : value.ToList();
                 SelectedItemsChanged.InvokeAsync(_selectedItems).AndForget();
             }
@@ -202,53 +255,37 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public EventCallback<List<MudListItem<T>>> SelectedItemsChanged { get; set; }
 
-        
+        private void UpdateSelectedValues(bool once = false)
+        {
+            SelectedValues = new List<T>() { SelectedValue };
+        }
 
-        internal void UpdateSelectedItem(bool fromOnAfterRender = false)
+        internal void UpdateSelectedItem()
         {
             var items = CollectAllMudListItems();
 
-            if (SelectedValue == null)
+            if (MultiSelection && SelectedValues == null)
             {
                 SelectedItem = null;
-                RemoveSelectedCSS(items);
-                return;
-            }
-
-            if (SelectedValues == null)
-            {
                 SelectedItems = null;
                 return;
             }
 
-
-            SelectedItem = items.FirstOrDefault(x => x.Value.Equals(_selectedValue));
-            //SelectedItems = items.Where(x => SelectedValues.Contains(x.Value));
-
-            if (fromOnAfterRender)
-            {
-                return;
-            }
-
-            RemoveSelectedCSS(items);
-            if (!MultiSelection)
-            {
-                
-                items.FirstOrDefault(x => SelectedValue.Equals(x.Value))?.SetSelected(true);
-            }
-            else
-            {
-                items.Where(x => SelectedValues.Contains(x.Value)).ToList().ForEach(x => x.SetSelected(true));
-            }
-            
-            StateHasChanged();
+            SelectedItem = items.FirstOrDefault(x => x.Value?.ToString() == SelectedValue?.ToString());
+            SelectedItems = items.Where(x => SelectedValues.Contains(x.Value)).ToList();
         }
 
         private void GetSelectedItem()
         {
             var items = CollectAllMudListItems();
-            SelectedItem = items.FirstOrDefault(x => x.Value != null && x.Value.Equals(_selectedValue));
-            SelectedItems = items.Where(x => SelectedValues != null && SelectedValues.Contains(x.Value));
+            if (!MultiSelection)
+            {
+                SelectedItem = items.FirstOrDefault(x => x.Value != null && x.Value.Equals(_selectedValue));
+            }
+            else
+            {
+                SelectedItems = items.Where(x => SelectedValues != null && SelectedValues.Contains(x.Value));
+            }
         }
         
 
@@ -308,7 +345,7 @@ namespace MudBlazor
                         new KeyOptions { Key="/./", SubscribeDown = true, SubscribeUp = true }, // for our users
                     },
                 });
-                GetSelectedItem();
+                //GetSelectedItem();
             }
             
         }
@@ -403,7 +440,7 @@ namespace MudBlazor
         //    _lastActivatedItem = currentItem;
         //}
 
-        internal void SetSelectedItem(MudListItem<T> item, bool force = false)
+        internal void SetSelectedValue(MudListItem<T> item, bool force = false)
         {
             if ((!Clickable && !MultiSelection) && !force)
                 return;
@@ -411,63 +448,90 @@ namespace MudBlazor
             //Make sure its the most parent one before continue method
             if (ParentList != null)
             {
-                ParentList?.SetSelectedItem(item);
+                ParentList?.SetSelectedValue(item);
                 return;
             }
-
-            SelectedItem = item;
-            SelectedValue = item.Value;
 
             //create a list of all MudListItems to use for selecting the right item
             var items = CollectAllMudListItems();
 
-            //foreach (var list in _childLists)
-            //{
-            //    list.SetSelectedItem(item);
-            //}
+
+            //SelectedItem = item;
+            SelectedValue = item.Value;
 
             if (!MultiSelection)
             {
-                RemoveSelectedCSS(items);
-
-                var selectedItem = items.FirstOrDefault(x => x.Value.Equals(item.Value));
-                if (selectedItem != null)
-                    selectedItem.SetSelected(true);
+                SelectedValues = new List<T>() { SelectedValue };
             }
             else
             {
                 if (item.IsSelected)
                 {
-                    item.SetSelected(false);
-                    SelectedItems = SelectedItems?.Where(x => !x.Equals(item));
+                    //item.SetSelected(false);
+                    //SelectedItems = SelectedItems?.Where(x => !x.Equals(item));
                     SelectedValues = SelectedValues?.Where(x => x == null ? false : !x.Equals(item.Value));
                 }
                 else
                 {
-                    item.SetSelected(true);
-                    if (SelectedItems == null)
-                    {
-                        SelectedItems = new List<MudListItem<T>>();
-                    }
-                    SelectedItems = SelectedItems.Append(item);
-                    if (SelectedValues == null)
-                    {
-                        SelectedValues = new List<T>();
-                    }
+                    //item.SetSelected(true);
+                    //SelectedItems = SelectedItems.Append(item);
                     SelectedValues = SelectedValues.Append(item.Value);
                 }
-
-                //RemoveSelectedCSS(items.Where(x => !x.IsSelected).ToList());
             }
+
+            //UpdateSelectedStyles();
             _lastActivatedItem = item;
         }
 
-
-        internal void ClearSelectedItem(MudListItem<T> item, bool force = false)
+        protected void UpdateSelectedStyles()
         {
-            item.SetSelected(false);
-            SelectedItem = null;
-            SelectedValue = default(T);
+            var items = CollectAllMudListItems();
+            DeselectAllItems(items);
+
+            if (!IsSelectable())
+            {
+                return;
+            }
+
+            if (!MultiSelection)
+            {
+                items.FirstOrDefault(x => SelectedValue?.ToString() == x.Value?.ToString())?.SetSelected(true);
+            }
+            else
+            {
+                items.Where(x => SelectedValues.Contains(x.Value)).ToList().ForEach(x => x.SetSelected(true));
+            }
+
+            StateHasChanged();
+        }
+
+        private bool IsSelectable()
+        {
+            if (Clickable || MultiSelection)
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        public void Clear()
+        {
+            var items = CollectAllMudListItems();
+            if (!MultiSelection)
+            {
+                SelectedValue = default(T);
+            }
+            else
+            {
+                SelectedValues = null;
+            }
+            
+            
+            //SelectedItem = null;
+            //SelectedItems = null;
+            DeselectAllItems(items);
+            DeactiveAllItems();
         }
 
         //internal bool CanSelect { get; private set; }
@@ -478,7 +542,7 @@ namespace MudBlazor
             ParentList?.Unregister(this);
         }
         
-        private void RemoveSelectedCSS(List<MudListItem<T>> items)
+        private void DeselectAllItems(List<MudListItem<T>> items)
         {
             foreach (var listItem in items)
                 listItem?.SetSelected(false);
@@ -520,7 +584,7 @@ namespace MudBlazor
                     {
                         return;
                     }
-                    SetSelectedItem(_lastActivatedItem);
+                    SetSelectedValue(_lastActivatedItem);
                     break;
                 case "a":
                 case "A":
