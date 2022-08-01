@@ -26,6 +26,18 @@ namespace MudBlazor
             }
         }
 
+        public CellContext(MudDataGrid<T> dataGrid, T item)
+        {
+            selection = dataGrid.Selection;
+            Item = item;
+            Actions = new CellContext<T>.CellActions
+            {
+                SetSelectedItem = async (x) => await dataGrid.SetSelectedItemAsync(x, item),
+                StartEditingItem = async () => await dataGrid.SetEditingItemAsync(item),
+                CancelEditingItem = async () => await dataGrid.CancelEditingItemAsync(),
+            };
+        }
+
         public class CellActions
         {
             public Action<bool> SetSelectedItem { get; internal set; }

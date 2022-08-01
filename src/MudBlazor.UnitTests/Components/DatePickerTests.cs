@@ -156,6 +156,25 @@ namespace MudBlazor.UnitTests.Components
             picker.Text.Should().Be("26 10 2020");
         }
 
+        [Test]        
+        public async Task DatePicker_Should_Clear()
+        {
+            var comp = Context.RenderComponent<MudDatePicker>();
+            // select elements needed for the test
+            var picker = comp.Instance;
+            picker.Text.Should().Be(null);
+            picker.Date.Should().Be(null);
+            comp.SetParam(p => p.Clearable, true);
+            comp.SetParam(p => p.Date, new DateTime(2020, 10, 26));
+            picker.Date.Should().Be(new DateTime(2020, 10, 26));
+            picker.Text.Should().Be(new DateTime(2020, 10, 26).ToShortDateString());
+
+            comp.Find("button").Click(); //clear the input
+
+            picker.Text.Should().Be(""); //ensure the text and date are reset. Note this is an empty string rather than null due to how the reset works internally
+            picker.Date.Should().Be(null);
+        }
+
         [Test]
         public void Check_Intial_Date_Format()
         {
@@ -338,6 +357,16 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public void DatePickerStaticWithPickerActionsDayClick_Test()
+        {
+            var comp = Context.RenderComponent<DatePickerStaticTest>();
+            var picker = comp.FindComponent<MudDatePicker>();
+            comp.FindAll("button.mud-picker-calendar-day")
+                .Where(x => x.TrimmedText().Equals("23")).First().Click();
+            picker.Instance.Date.Should().Be(new DateTime(DateTime.Now.Year, DateTime.Now.Month, 23));
+        }
+
+        [Test]
         public void OpenTo12thMonth_NavigateBack_CheckMonth()
         {
             var comp = OpenTo12thMonth();
@@ -377,7 +406,8 @@ namespace MudBlazor.UnitTests.Components
         public void Open_FixYear_Click2ndMonth_Click3_CheckDate()
         {
             var comp = OpenPicker(ComponentParameter.CreateParameter("FixYear", 2021));
-            comp.FindAll("div.mud-picker-datepicker-toolbar > button.mud-button-year").Count.Should().Be(0);
+            comp.Find("div.mud-picker-datepicker-toolbar > button.mud-button-year").Click();
+            comp.FindAll("div.mud-picker-calendar-container > div.mud-picker-year-container").Count.Should().Be(0);
             comp.Find("div.mud-picker-calendar-container > .mud-picker-calendar-header > .mud-picker-calendar-header-switch > .mud-button-month").Click();
             comp.FindAll("div.mud-picker-month-container").Count.Should().Be(1);
             comp.FindAll("div.mud-picker-calendar-container > div.mud-picker-month-container > button.mud-picker-month")[1].Click();
@@ -420,7 +450,9 @@ namespace MudBlazor.UnitTests.Components
         public void Open_FixYear_FixMonth_Click3_CheckDate()
         {
             var comp = OpenPicker(new ComponentParameter[] { ComponentParameter.CreateParameter("FixMonth", 1), ComponentParameter.CreateParameter("FixYear", 2022) });
-            comp.FindAll("div.mud-picker-datepicker-toolbar > button.mud-button-year").Count().Should().Be(0);
+            comp.FindAll("div.mud-picker-calendar-container > div.mud-picker-year-container").Count.Should().Be(0);
+            comp.Find("div.mud-picker-datepicker-toolbar > button.mud-button-year").Click();
+            comp.FindAll("div.mud-picker-calendar-container > div.mud-picker-year-container").Count.Should().Be(0);
             comp.FindAll("div.mud-picker-calendar-container > .mud-picker-calendar-header > .mud-picker-calendar-header-switch > .mud-button-month").Count().Should().Be(0);
             comp.FindAll("div.mud-picker-calendar-container > div.mud-picker-calendar-header").Count.Should().Be(1);
             comp.FindAll("button.mud-picker-calendar-day")
@@ -444,7 +476,8 @@ namespace MudBlazor.UnitTests.Components
         public void Open_FixYear_FixDay_Click3rdMonth_CheckDate()
         {
             var comp = OpenPicker(new ComponentParameter[] { ComponentParameter.CreateParameter("OpenTo", OpenTo.Month), ComponentParameter.CreateParameter("FixYear", 2022), ComponentParameter.CreateParameter("FixDay", 1) });
-            comp.FindAll("div.mud-picker-datepicker-toolbar > button.mud-button-year").Count().Should().Be(0);
+            comp.Find("div.mud-picker-datepicker-toolbar > button.mud-button-year").Click();
+            comp.FindAll("div.mud-picker-calendar-container > div.mud-picker-year-container").Count.Should().Be(0);
             comp.FindAll("div.mud-picker-month-container").Count.Should().Be(1);
             comp.FindAll("div.mud-picker-calendar-container > div.mud-picker-month-container > button.mud-picker-month")[2].Click();
             comp.Instance.Date.Value.Date.Should().Be(new DateTime(2022, 3, 1));

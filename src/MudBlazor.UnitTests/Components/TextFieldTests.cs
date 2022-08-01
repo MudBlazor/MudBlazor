@@ -118,7 +118,7 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("input").Change("seventeen");
             comp.Find("input").Blur();
             //Console.WriteLine(comp.Markup);
-            comp.FindAll("div.mud-input-error").Count.Should().Be(1);
+            comp.FindAll("div.mud-input-error").Count.Should().Be(2);
             comp.Find("div.mud-input-error").TextContent.Trim().Should().Be("Not a valid number");
         }
 

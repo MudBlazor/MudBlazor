@@ -323,7 +323,25 @@ namespace MudBlazor.UnitTests.Components
             firstDropZone.ClassList.Should().NotContain("my-special-dragging-class");
             firstDropItem.ClassList.Should().NotContain("my-special-item-dragging-class");
         }
+        
+        [Test]
+        public async Task DropZone_DropItem_DragEnterNotTrackedItem()
+        {
+            var comp = Context.RenderComponent<DropzoneBasicTest>();
+            
+            var tempContainer = comp.Find(".mud-drop-container");
+            tempContainer.Children.Should().HaveCount(2);
 
+            var firstDropZone = tempContainer.Children[0];
+            var firstDropItem = firstDropZone.Children[1];
+            
+            await firstDropItem.DragEnterAsync(new DragEventArgs());
+            
+            tempContainer.Children.Should().HaveCount(2);
+            tempContainer.Children[0].Children.Should().HaveCount(2);
+            tempContainer.Children[1].Children.Should().HaveCount(3);
+        }
+        
         [Test]
         public async Task DropZone_DropNotTrackedItem()
         {
@@ -606,6 +624,77 @@ namespace MudBlazor.UnitTests.Components
             //third zone, should have classes applied
             thirdDropZone.ClassList.Should().NotContain("can-drop-from-container");
             thirdDropZone.ClassList.Should().Contain("no-drop-class-from-container");
+        }
+        
+        [Test]
+        public async Task DropZone_CheckDropClasses_ApplyClassesOnDragStarted_DragFinished()
+        {
+            var comp = Context.RenderComponent<DropzoneCanDropTest>(p =>
+            {
+                p.Add(x => x.SecondColumnAppliesClassesOnDragStarted, false);
+                p.Add(x => x.ApplyDropClassesOnDragStarted, true);
+            });
+
+            var firstDropZone = comp.Find(".first-drop-zone");
+            var secondDropZone = comp.Find(".second-drop-zone");
+            var thirdDropZone = comp.Find(".third-drop-zone");
+
+            var dragItem = firstDropZone.Children[1];
+
+            //start dragging
+            await dragItem.DragStartAsync(new DragEventArgs());
+            
+            //enter second drop zone
+            await secondDropZone.DragEnterAsync(new DragEventArgs());
+            
+            //drop to second drop zone
+            await secondDropZone.DropAsync(new DragEventArgs());
+
+            //first zone, as source, should not have classes applied
+            firstDropZone.ClassList.Should().NotContain("can-drop-from-container");
+            firstDropZone.ClassList.Should().NotContain("no-drop-class-from-container");
+
+            //second zone, should not have styles because it is explicit set to false
+            secondDropZone.ClassList.Should().NotContain("can-drop-from-zone");
+            secondDropZone.ClassList.Should().NotContain("no-drop-class-from-zone");
+
+            //third zone, should not have classes applied after drop
+            thirdDropZone.ClassList.Should().NotContain("can-drop-from-container");
+            thirdDropZone.ClassList.Should().NotContain("no-drop-class-from-container");
+        }
+        
+        [Test]
+        public async Task DropZone_CheckDropClasses_ApplyClassesOnDragStarted_DragCancelled()
+        {
+            var comp = Context.RenderComponent<DropzoneCanDropTest>(p =>
+            {
+                p.Add(x => x.SecondColumnAppliesClassesOnDragStarted, false);
+                p.Add(x => x.ApplyDropClassesOnDragStarted, true);
+            });
+
+            var firstDropZone = comp.Find(".first-drop-zone");
+            var secondDropZone = comp.Find(".second-drop-zone");
+            var thirdDropZone = comp.Find(".third-drop-zone");
+
+            var dragItem = firstDropZone.Children[1];
+
+            //start dragging
+            await dragItem.DragStartAsync(new DragEventArgs());
+            
+            //cancel drag transaction
+            await dragItem.DragEndAsync(new DragEventArgs());
+
+            //first zone, as source, should not have classes applied
+            firstDropZone.ClassList.Should().NotContain("can-drop-from-container");
+            firstDropZone.ClassList.Should().NotContain("no-drop-class-from-container");
+
+            //second zone, should not have styles because it is explicit set to false
+            secondDropZone.ClassList.Should().NotContain("can-drop-from-zone");
+            secondDropZone.ClassList.Should().NotContain("no-drop-class-from-zone");
+
+            //third zone, should not have classes applied after cancellation
+            thirdDropZone.ClassList.Should().NotContain("can-drop-from-container");
+            thirdDropZone.ClassList.Should().NotContain("no-drop-class-from-container");
         }
 
         [Test]
@@ -1054,6 +1143,37 @@ namespace MudBlazor.UnitTests.Components
             firstDropZone.Children[2].TextContent.Should().Be("Item 2");
             firstDropZone.Children[3].TextContent.Should().Be("Item 3");
             firstDropZone.Children[4].TextContent.Should().Be("Item 4");
+        }
+        
+        [Test]
+        public async Task DropZone_DragFinished_DropNotAllowed_KeepOrder()
+        {
+            var comp = Context.RenderComponent<DropzoneDraggingTestCantDropSecondZoneTest>();
+        
+            var container = comp.Find(".mud-drop-container");
+            container.Children.Should().HaveCount(2);
+        
+            var firstDropZone = container.Children[0];
+            var secondDropZone = container.Children[1];
+        
+            secondDropZone.Children.Should().HaveCount(3);
+            var secondDropItem = secondDropZone.Children[1];
+            var secondDropItemText = secondDropItem.Children[0].TextContent;
+            
+            secondDropItemText.Should().Be("Second Item");
+            
+            await secondDropItem.DragStartAsync(new DragEventArgs());
+        
+            //drop item in first zone
+            await firstDropZone.DropAsync(new DragEventArgs());
+        
+            //reload DOM references
+            container = comp.Find(".mud-drop-container");
+            secondDropZone = container.Children[1];
+            secondDropItem = secondDropZone.Children[1];
+            secondDropItemText = secondDropItem.Children[0].TextContent;
+            
+            secondDropItemText.Should().Be("Second Item");
         }
     }
 }

@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Bunit;
@@ -11,6 +12,7 @@ using Microsoft.AspNetCore.Components;
 using MudBlazor.Docs.Examples;
 using MudBlazor.UnitTests.TestComponents;
 using MudBlazor.UnitTests.TestComponents.Form;
+using MudBlazor.Utilities;
 using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Components
@@ -1032,7 +1034,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<FormResetTest>();
             var form = comp.FindComponent<MudForm>();
-            var textFieldComp = comp.FindComponent<MudTextField<string>>();
+            var textFieldComp = comp.FindComponents<MudTextField<string>>()[1]; //the picker includes a MudTextField, so the MudTextField we want is the second in the DOM
             var textField = textFieldComp.Instance;
 
             // input some text
@@ -1084,6 +1086,36 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// Calling form.Reset() should clear the datepicker
+        /// </summary>
+        [Test]
+        public async Task FormReset_Should_ClearDatePicker()
+        {
+            var comp = Context.RenderComponent<FormResetTest>();
+            var form = comp.FindComponent<MudForm>().Instance;
+            var datePickerComp = comp.FindComponent<MudDatePicker>();
+            var datePicker = datePickerComp.Instance;
+
+            // input a date
+            datePickerComp.Find("input").Change("05/24/2020");
+            datePicker.Date.Should().Be(Convert.ToDateTime("05/24/2020"));
+            datePicker.Text.Should().Be("05/24/2020");
+            // call reset directly
+            await comp.InvokeAsync(() => form.Reset());
+            datePicker.Date.Should().BeNull();
+            datePicker.Text.Should().BeNullOrEmpty();
+            
+            // input a date
+            datePickerComp.Find("input").Change("05/24/2020");
+            datePicker.Date.Should().Be(Convert.ToDateTime("05/24/2020"));
+            datePicker.Text.Should().Be("05/24/2020");
+            // hit reset button
+            comp.Find("button.reset").Click();
+            datePicker.Date.Should().BeNull();
+            datePicker.Text.Should().BeNullOrEmpty();
+        }
+
+        /// <summary>
         /// Reset() should reset the form's state
         /// </summary>
         [Test]
@@ -1091,9 +1123,12 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<FormResetTest>();
             var form = comp.FindComponent<MudForm>().Instance;
-            var textFieldComp = comp.FindComponent<MudTextField<string>>();
+            var datePickerComp = comp.FindComponent<MudDatePicker>();
+            var textFieldComp = comp.FindComponents<MudTextField<string>>()[1]; //the picker includes a MudTextField, so the MudTextField we want is the second in the DOM
             var numericFieldComp = comp.FindComponent<MudNumericField<int?>>();
 
+            form.IsValid.Should().Be(false);
+            datePickerComp.Find("input").Change("07/29/2022");
             form.IsValid.Should().Be(false);
             textFieldComp.Find("input").Input("Some value");
             form.IsValid.Should().Be(false);
@@ -1148,6 +1183,49 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<FieldValidationWithoutRequiredFormTest>();
 
             Assert.Throws<ElementNotFoundException>(() => comp.Find(".mud-input-error"));
+        }
+
+        /// <summary>
+        /// When changing field values, the FieldChanged event should fire with the correct IFormComponent and new value
+        /// </summary>
+        [Test]
+        public async Task FieldChangedEventShouldTrigger()
+        {
+            var comp = Context.RenderComponent<FormFieldChangedTest>();
+            var formsComp = comp.FindComponents<MudForm>();
+            var textCompFields = comp.FindComponents<MudTextField<string>>();
+            var textField1 = textCompFields[0].Instance;
+            var textField2 = textCompFields[0].Instance;
+            var radioGroup = comp.FindComponent<MudRadioGroup<string>>().Instance;
+            var numeric = comp.FindComponent<MudNumericField<int>>().Instance;
+
+            var eventArgs = comp.Instance.FormFieldChangedEventArgs; //the args from the field changed event
+
+            eventArgs.Should().BeNull();
+
+            //in all below cases, the event args should switch to an instance of the field changed and contain the new value that was set
+
+            await comp.InvokeAsync(() => textField1.SetText("new value"));
+            comp.Instance.FormFieldChangedEventArgs.NewValue.Should().Be("new value");
+            comp.Instance.FormFieldChangedEventArgs.Field.Equals(textField1);
+
+            await comp.InvokeAsync(() => textField2.SetText("new value2"));
+            comp.Instance.FormFieldChangedEventArgs.NewValue.Should().Be("new value2");
+            comp.Instance.FormFieldChangedEventArgs.Field.Equals(textField2);
+
+            var inputs = comp.FindAll("input").ToArray();
+            // check initial state
+            radioGroup.SelectedOption.Should().Be(null);
+            // click radio 1
+            inputs[3].Click();
+            radioGroup.SelectedOption.Should().Be("1");
+            comp.Instance.FormFieldChangedEventArgs.NewValue.Should().Be("1");
+            comp.Instance.FormFieldChangedEventArgs.Field.Equals(radioGroup);
+
+            numeric.Value.Should().Be(0);
+            await comp.InvokeAsync(() => numeric.Increment());
+            comp.Instance.FormFieldChangedEventArgs.NewValue.Should().Be(1);
+            comp.Instance.FormFieldChangedEventArgs.Field.Equals(numeric);
         }
     }
 }

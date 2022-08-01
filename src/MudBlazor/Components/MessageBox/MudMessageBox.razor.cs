@@ -199,7 +199,14 @@ namespace MudBlazor
         private void OnNoClicked() => DialogInstance.Close(DialogResult.Ok(false));
 
         private void OnCancelClicked() => DialogInstance.Close(DialogResult.Cancel());
+
+        private void HandleKeyDown(KeyboardEventArgs args)
+        {
+            if (args.Key == "Escape")
+            {
+                OnCancelClicked();
+            }
+        }
+
     }
-
-
 }

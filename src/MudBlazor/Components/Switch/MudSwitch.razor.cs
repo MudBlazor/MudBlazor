@@ -39,7 +39,8 @@ namespace MudBlazor
         new CssBuilder("mud-switch-span mud-flip-x-rtl")
         .Build();
 
-        [Inject] private IKeyInterceptor _keyInterceptor { get; set; }
+        private IKeyInterceptor _keyInterceptor;
+        [Inject] private IKeyInterceptorFactory KeyInterceptorFactory { get; set; }
 
         /// <summary>
         /// The color of the component. It supports the theme colors.
@@ -117,6 +118,8 @@ namespace MudBlazor
         {
             if (firstRender)
             {
+                _keyInterceptor = KeyInterceptorFactory.Create();
+
                 await _keyInterceptor.Connect(_elementId, new KeyInterceptorOptions()
                 {
                     //EnableLogging = true,
@@ -127,9 +130,24 @@ namespace MudBlazor
                         new KeyOptions { Key=" ", PreventDown = "key+none", PreventUp = "key+none" },
                     },
                 });
+
                 _keyInterceptor.KeyDown += HandleKeyDown;
             }
             await base.OnAfterRenderAsync(firstRender);
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            base.Dispose(disposing);
+
+            if (disposing == true)
+            {
+                if(_keyInterceptor != null)
+                {
+                    _keyInterceptor.KeyDown -= HandleKeyDown;
+                    _keyInterceptor.Dispose();
+                }
+            }
         }
     }
 }

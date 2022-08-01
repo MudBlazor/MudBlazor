@@ -14,8 +14,9 @@ namespace MudBlazor
     public partial class MudPageContentNavigation : IAsyncDisposable
     {
         private List<MudPageContentSection> _sections = new();
+        private IScrollSpy _scrollSpy;
 
-        [Inject] IScrollSpy ScrollSpy { get; set; }
+        [Inject] IScrollSpyFactory ScrollSpyFactory { get; set; }
 
         /// <summary>
         /// The displayed section within the MudPageContentNavigation
@@ -55,7 +56,7 @@ namespace MudBlazor
         private Task OnNavLinkClick(string id)
         {
             SelectActiveSection(id);
-            return ScrollSpy.ScrollToSection(id);
+            return _scrollSpy.ScrollToSection(id);
         }
 
         private void ScrollSpy_ScrollSectionSectionCentered(object sender, ScrollSectionCenteredEventArgs e) =>
@@ -92,7 +93,7 @@ namespace MudBlazor
         /// </summary>
         /// <param name="uri">The uri containing the fragment to scroll</param>
         /// <returns>A task that completes when the viewport has scrolled</returns>
-        public Task ScrollToSection(Uri uri) => ScrollSpy.ScrollToSection(uri);
+        public Task ScrollToSection(Uri uri) => _scrollSpy.ScrollToSection(uri);
 
         /// <summary>
         /// Add a section to the content navigation
@@ -121,14 +122,14 @@ namespace MudBlazor
                 counter += diffRootLevel;
             }
 
-            if (section.Id == ScrollSpy.CenteredSection)
+            if (section.Id == _scrollSpy.CenteredSection)
             {
                 section.Activate();
             }
             else if (_sections.Count == 1 && ActivateFirstSectionAsDefault == true)
             {
                 section.Activate();
-                ScrollSpy.SetSectionAsActive(section.Id).AndForget();
+                _scrollSpy.SetSectionAsActive(section.Id).AndForget();
             }
 
             if (forceUpdate == true)
@@ -137,30 +138,40 @@ namespace MudBlazor
             }
         }
 
+
         /// <summary>
         /// Rerender the component
         /// </summary>
         public void Update() => StateHasChanged();
+        
+        protected override void OnInitialized()
+        {
+            _scrollSpy = ScrollSpyFactory.Create();
+        }
+        
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
             if (firstRender)
             {
-                ScrollSpy.ScrollSectionSectionCentered += ScrollSpy_ScrollSectionSectionCentered;
+                
+                _scrollSpy.ScrollSectionSectionCentered += ScrollSpy_ScrollSectionSectionCentered;
 
                 if (string.IsNullOrEmpty(SectionClassSelector) == false)
                 {
-                    await ScrollSpy.StartSpying(SectionClassSelector);
+                    await _scrollSpy.StartSpying(SectionClassSelector);
                 }
 
-                SelectActiveSection(ScrollSpy.CenteredSection);
+                SelectActiveSection(_scrollSpy.CenteredSection);
             }
         }
 
         public ValueTask DisposeAsync()
         {
-            ScrollSpy.ScrollSectionSectionCentered -= ScrollSpy_ScrollSectionSectionCentered;
-            return ScrollSpy.DisposeAsync();
+            if (_scrollSpy == null) { return ValueTask.CompletedTask; }
+
+            _scrollSpy.ScrollSectionSectionCentered -= ScrollSpy_ScrollSectionSectionCentered;
+            return _scrollSpy.DisposeAsync();
         }
     }
 }

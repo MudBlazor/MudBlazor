@@ -86,6 +86,12 @@ namespace MudBlazor
         {
             if (NavigationManager != null)
                 NavigationManager.LocationChanged -= LocationChanged;
+
+            if (DialogService != null)
+            {
+                DialogService.OnDialogInstanceAdded -= AddInstance;
+                DialogService.OnDialogCloseRequested -= DismissInstance;
+            }
         }
     }
 }
