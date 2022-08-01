@@ -207,6 +207,7 @@ namespace MudBlazor
         internal void UpdateSelectedItem(bool fromOnAfterRender = false)
         {
             var items = CollectAllMudListItems();
+
             if (SelectedValue == null)
             {
                 SelectedItem = null;
@@ -214,7 +215,15 @@ namespace MudBlazor
                 return;
             }
 
+            if (SelectedValues == null)
+            {
+                SelectedItems = null;
+                return;
+            }
+
+
             SelectedItem = items.FirstOrDefault(x => x.Value.Equals(_selectedValue));
+            //SelectedItems = items.Where(x => SelectedValues.Contains(x.Value));
 
             if (fromOnAfterRender)
             {
@@ -224,11 +233,12 @@ namespace MudBlazor
             RemoveSelectedCSS(items);
             if (!MultiSelection)
             {
+                
                 items.FirstOrDefault(x => SelectedValue.Equals(x.Value))?.SetSelected(true);
             }
             else
             {
-                items.Where(x => SelectedValues != null && SelectedValues.Contains(x.Value)).ToList().ForEach(x => x.SetSelected(true));
+                items.Where(x => SelectedValues.Contains(x.Value)).ToList().ForEach(x => x.SetSelected(true));
             }
             
             StateHasChanged();
@@ -238,6 +248,7 @@ namespace MudBlazor
         {
             var items = CollectAllMudListItems();
             SelectedItem = items.FirstOrDefault(x => x.Value != null && x.Value.Equals(_selectedValue));
+            SelectedItems = items.Where(x => SelectedValues != null && SelectedValues.Contains(x.Value));
         }
         
 
@@ -429,11 +440,15 @@ namespace MudBlazor
                 {
                     item.SetSelected(false);
                     SelectedItems = SelectedItems?.Where(x => !x.Equals(item));
-                    SelectedValues = SelectedValues?.Where(x => x==null ? false : !x.Equals(item.Value));
+                    SelectedValues = SelectedValues?.Where(x => x == null ? false : !x.Equals(item.Value));
                 }
                 else
                 {
                     item.SetSelected(true);
+                    if (SelectedItems == null)
+                    {
+                        SelectedItems = new List<MudListItem<T>>();
+                    }
                     SelectedItems = SelectedItems.Append(item);
                     if (SelectedValues == null)
                     {
