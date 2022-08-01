@@ -21,6 +21,11 @@ namespace MudBlazor
             .AddClass(Class)
             .Build();
 
+        private string GetInputClass() =>
+        new CssBuilder("mud-radio-group")
+            .AddClass(InputClass)
+            .Build();
+
         /// <summary>
         /// User class names for the input, separated by space
         /// </summary>
