@@ -21,9 +21,14 @@ namespace MudBlazor
             .AddClass(PaginationClass)
             .Build();
 
-        /// <summary>
-        /// User class names, separated by space.
-        /// </summary>
+        protected string PagerClassname =>
+            new CssBuilder("mud-table-pagination-actions")
+            .AddClass(PagerClass)
+            .Build();
+
+        [Parameter]
+        public string PagerClass { get; set; }
+
         [Parameter]
         public string PaginationClass { get; set; }
 

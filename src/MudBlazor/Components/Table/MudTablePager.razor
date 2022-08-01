@@ -31,7 +31,7 @@
     }
     @if (!HidePagination)
     {
-        <div class="mud-table-pagination-actions">
+        <div class="@PagerClassname">
             <MudIconButton Class="mud-flip-x-rtl" Icon="@FirstIcon" Disabled="@BackButtonsDisabled" @onclick="@(() => Table.NavigateTo(Page.First))" />
             <MudIconButton Class="mud-flip-x-rtl" Icon="@BeforeIcon" Disabled="@BackButtonsDisabled" @onclick="@(() => Table.NavigateTo(Page.Previous))" />
             <MudIconButton Class="mud-flip-x-rtl" Icon="@NextIcon" Disabled="@ForwardButtonsDisabled" @onclick="@(() => Table.NavigateTo(Page.Next))" />
