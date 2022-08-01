@@ -22,7 +22,7 @@ namespace MudBlazor
             .Build();
 
         protected string ActionsClassname =>
-            new CssBuilder(UseDefaultActionsClass ? "mud-table-pagination-actions" : "")
+            new CssBuilder(!OverrideDefaultActionsClass ? "mud-table-pagination-actions" : "")
             .AddClass(ActionsClass)
             .Build();
 
@@ -30,7 +30,7 @@ namespace MudBlazor
         public string ActionsClass { get; set; }
 
         [Parameter]
-        public bool UseDefaultActionsClass { get; set; }
+        public bool OverrideDefaultActionsClass { get; set; }
 
         [Parameter]
         public string PaginationClass { get; set; }
