@@ -415,6 +415,26 @@ namespace MudBlazor.UnitTests.Components
             
             comp.Find("div.mud-dialog-title").TrimmedText().Should().Be("Title: Backdrop clicked");
         }
+
+        [Test]
+        public async Task DialogToggleFullscreenOptions()
+        {
+            var comp = Context.RenderComponent<MudDialogProvider>();
+            comp.Markup.Trim().Should().BeEmpty();
+            
+            var service = Context.Services.GetService<IDialogService>() as DialogService;
+            service.Should().NotBe(null);
+            IDialogReference dialogReference = null;
+
+            await comp.InvokeAsync(() => dialogReference = service?.Show<DialogToggleFullscreen>());
+            dialogReference.Should().NotBe(null);
+
+            comp.Find("div.mud-dialog").GetAttribute("class").Should().Be("mud-dialog mud-dialog-width-sm");
+            comp.Find("button").Click();
+            comp.Find("div.mud-dialog").GetAttribute("class").Should().Be("mud-dialog mud-dialog-fullscreen");
+            comp.Find("button").Click();
+            comp.Find("div.mud-dialog").GetAttribute("class").Should().Be("mud-dialog mud-dialog-width-sm");
+        }
     }
 
     internal class CustomDialogService : DialogService

@@ -760,6 +760,11 @@ namespace MudBlazor
             return _elementReference.FocusAsync();
         }
 
+        public override ValueTask BlurAsync()
+        {
+            return _elementReference.BlurAsync();
+        }
+
         public override ValueTask SelectAsync()
         {
             return _elementReference.SelectAsync();

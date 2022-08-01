@@ -3,7 +3,7 @@
 @namespace MudBlazor.Docs.Examples
 @inject HttpClient httpClient
 
-<MudDataGrid T="Element" MultiSelection="true" Items="@Elements" Sortable="true" Filterable="true" QuickFilter="@_quickFilter"
+<MudDataGrid T="Element" MultiSelection="true" Items="@Elements" SortMode="SortMode.Multiple" Filterable="true" QuickFilter="@_quickFilter"
     Hideable="true" RowClick="@RowClicked" SelectedItemsChanged="@SelectedItemsChanged">
     <ToolBarContent>
         <MudText Typo="Typo.h6">Periodic Elements</MudText>

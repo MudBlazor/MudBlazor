@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Numerics;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 
@@ -17,9 +18,13 @@ namespace MudBlazor
 
         [Parameter] public Guid Id { get; set; }
         [Parameter] public string Field { get; set; }
+        [Parameter] public Type FieldType { get; set; }
+        [Parameter] public string Title { get; set; }
         [Parameter] public string Operator { get; set; }
         [Parameter] public object Value { get; set; }
+        [Parameter] public Column<T> Column { get; set; }
         [Parameter] public EventCallback<string> FieldChanged { get; set; }
+        [Parameter] public EventCallback<string> TitleChanged { get; set; }
         [Parameter] public EventCallback<string> OperatorChanged { get; set; }
         [Parameter] public EventCallback<object> ValueChanged { get; set; }
 
@@ -50,7 +55,17 @@ namespace MudBlazor
         {
             get
             {
-                if (Field == null) return typeof(object);
+                if (Column != null)
+                    return Column.dataType;
+
+                if (FieldType != null)
+                    return FieldType;
+
+                if (Field == null)
+                    return typeof(object);
+
+                if (typeof(T) == typeof(IDictionary<string, object>) && FieldType == null)
+                    throw new ArgumentNullException(nameof(FieldType));
 
                 var t = typeof(T).GetProperty(Field).PropertyType;
                 return Nullable.GetUnderlyingType(t) ?? t;
@@ -64,7 +79,6 @@ namespace MudBlazor
                 return FilterOperator.IsNumber(dataType);
             }
         }
-
         private bool isEnum
         {
             get
@@ -78,6 +92,9 @@ namespace MudBlazor
         protected override void OnInitialized()
         {
             __operator = Operator;
+
+            if (DataGrid == null)
+                DataGrid = Column?.DataGrid;
 
             if (dataType == typeof(string))
                 _valueString = Value == null ? null : Value.ToString();
@@ -104,6 +121,11 @@ namespace MudBlazor
             await OperatorChanged.InvokeAsync(Operator);
             await ValueChanged.InvokeAsync(Value);
             await FieldChanged.InvokeAsync(Field);
+        }
+
+        internal void TitleChangedAsync(string field)
+        {
+            Field = field;
         }
 
         internal void StringValueChanged(string value)
