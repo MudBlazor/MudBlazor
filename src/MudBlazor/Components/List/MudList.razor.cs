@@ -262,9 +262,9 @@ namespace MudBlazor
 
         internal void UpdateSelectedItem()
         {
-            var items = CollectAllMudListItems();
+            var items = CollectAllMudListItems().Where(x => x.NestedList == null);
 
-            if (MultiSelection && SelectedValues == null)
+            if (MultiSelection && (SelectedValues == null || SelectedValues.Count() == 0))
             {
                 SelectedItem = null;
                 SelectedItems = null;
