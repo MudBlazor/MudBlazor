@@ -48,6 +48,13 @@ namespace MudBlazor
         public Variant Variant { get; set; } = Variant.Outlined;
 
         /// <summary>
+        /// User styles, applied to the lineItem dot.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Timeline.Dot)]
+        public string DotStyle { get; set; }
+
+        /// <summary>
         /// Color of the dot.
         /// </summary>
         [Parameter]
