@@ -132,7 +132,7 @@ namespace MudBlazor
         }
 
 
-        public async Task HandleCentralValueCommander(string changedValueType)
+        internal async Task HandleCentralValueCommander(string changedValueType)
         {
             await Task.Delay(1);
             if (changedValueType == "SelectedValue")
