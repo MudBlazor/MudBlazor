@@ -29,12 +29,12 @@
         <MudCheckBox @bind-Checked="_multiSelection" Color="Color.Primary" Label="MultiSelection" />
         <MudDivider />
         <MudTextField @bind-Value="_selectedValue" Clearable="true" />
-@*        <MudSelect @ref="_select" T="int?" MultiSelection="true" >
-            @foreach (var item in _list.AllItems)
+        <MudSelect T="int?" @bind-SelectedValues="_selectedValues" MultiSelection="true" Variant="Variant.Filled" Label="Selected Values">
+            @foreach (var item in _list.AllItems.Where(x => x.NestedList == null))
             {
                 <MudSelectItem Value="item.Value">@item.Text</MudSelectItem>
             }
-        </MudSelect>*@
+        </MudSelect>
         <MudButton OnClick="@(() => _selectedValue = 2)">Select 2</MudButton>
         <MudButton OnClick="@(() => _selectedValues = new List<int?>() { 2, 4 })">Select 2 and 4</MudButton>
         <MudButton OnClick="@(() => _list.Clear())">Clear</MudButton>

@@ -147,7 +147,7 @@ namespace MudBlazor
             {
                 if (MultiSelection)
                 {
-                    SelectedValue = SelectedValues == null ? default(T) : SelectedValues.FirstOrDefault();
+                    SelectedValue = SelectedValues == null ? default(T) : SelectedValues.LastOrDefault();
                     UpdateSelectedItem();
                 }
             }
@@ -170,7 +170,7 @@ namespace MudBlazor
             get => _selectedValue;
             set
             {
-                if ((_selectedValue != null && _selectedValue.ToString() == value.ToString()) || (_selectedValue == null && value == null))
+                if ((_selectedValue != null && value != null && _selectedValue.ToString() == value.ToString()) || (_selectedValue == null && value == null))
                     return;
                 _selectedValue = value;
                 HandleCentralValueCommander("SelectedValue").AndForget();
