@@ -11,7 +11,7 @@ namespace MudBlazor
     /// </summary>
     public partial class MudSelectItem<T> : MudBaseSelectItem, IDisposable
     {
-        private String GetCssClasses() =>  new CssBuilder()
+        private String GetCssClasses() => new CssBuilder()
             .AddClass(Class)
             .Build();
 
@@ -46,26 +46,26 @@ namespace MudBlazor
             }
         }
 
-        private IMudShadowSelect  _shadowParent;
+        //private IMudShadowSelect  _shadowParent;
         private bool _isSelected;
 
-        [CascadingParameter]
-        internal IMudShadowSelect IMudShadowSelect
-        {
-            get => _shadowParent;
-            set
-            {
-                _shadowParent = value;
-                ((MudSelect<T>)_shadowParent)?.RegisterShadowItem(this);
-            }
-        }
+        //[CascadingParameter]
+        //internal IMudShadowSelect IMudShadowSelect
+        //{
+        //    get => _shadowParent;
+        //    set
+        //    {
+        //        _shadowParent = value;
+        //        ((MudSelect<T>)_shadowParent)?.RegisterShadowItem(this);
+        //    }
+        //}
 
         /// <summary>
         /// Select items with HideContent==true are only there to register their RenderFragment with the select but
         /// wont render and have no other purpose!
         /// </summary>
-        [CascadingParameter(Name = "HideContent")]
-        internal bool HideContent { get; set; }
+        //[CascadingParameter(Name = "HideContent")]
+        //internal bool HideContent { get; set; }
 
         internal MudSelect<T> MudSelect => (MudSelect<T>)IMudSelect;
 
@@ -107,6 +107,8 @@ namespace MudBlazor
             get => _isSelected;
             set
             {
+                if (_isSelected == value)
+                    return;
                 _isSelected = value;
             }
         }
@@ -114,15 +116,15 @@ namespace MudBlazor
         /// <summary>
         /// The checkbox icon reflects the multi-select option's state
         /// </summary>
-        protected string CheckBoxIcon
-        {
-            get
-            {
-                if (!MultiSelection)
-                    return null;
-                return IsSelected ? Icons.Material.Filled.CheckBox : Icons.Material.Filled.CheckBoxOutlineBlank;
-            }
-        }
+        //protected string CheckBoxIcon
+        //{
+        //    get
+        //    {
+        //        if (!MultiSelection)
+        //            return null;
+        //        return IsSelected ? Icons.Material.Filled.CheckBox : Icons.Material.Filled.CheckBoxOutlineBlank;
+        //    }
+        //}
 
         protected string DisplayString
         {
@@ -137,8 +139,8 @@ namespace MudBlazor
 
         private void OnClicked()
         {
-            if (MultiSelection)
-                IsSelected = !IsSelected;
+            //if (MultiSelection)
+            //    IsSelected = !IsSelected;
 
             MudSelect?.SelectOption(Value);
             InvokeAsync(StateHasChanged);
@@ -149,7 +151,7 @@ namespace MudBlazor
             try
             {
                 MudSelect?.Remove(this);
-                ((MudSelect<T>)_shadowParent)?.UnregisterShadowItem(this);
+                //((MudSelect<T>)_shadowParent)?.UnregisterShadowItem(this);
             }
             catch (Exception) { }
         }

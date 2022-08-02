@@ -195,10 +195,14 @@ namespace MudBlazor
 
             set
             {
+                var set = value ?? new List<T>();
                 if ((_selectedValues != null && value != null && _selectedValues == value) || (_selectedValues == null && value == null))
                 {
                     return;
                 }
+
+                if (SelectedValues.Count() == set.Count() && _selectedValues.All(x => set.Contains(x)))
+                    return;
 
                 _selectedValues = value == null ? null : value.ToList();
                 HandleCentralValueCommander("SelectedValues").AndForget();
