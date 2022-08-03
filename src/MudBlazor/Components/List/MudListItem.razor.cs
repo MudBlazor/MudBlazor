@@ -22,6 +22,12 @@ namespace MudBlazor
           .AddClass(Class)
         .Build();
 
+        protected string MultiSelectClassName =>
+        new CssBuilder()
+            .AddClass("mud-list-item-multiselect")
+            .AddClass("mud-list-item-multiselect-checkbox", MudList?.MultiSelectionComponent == MultiSelectionComponent.CheckBox || OverrideMultiSelectionComponent == MultiSelectionComponent.CheckBox)
+            .Build();
+
         [Inject] protected NavigationManager UriHelper { get; set; }
 
         [CascadingParameter] protected MudList<T> MudList { get; set; }
@@ -61,6 +67,13 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.List.ClickAction)]
         public bool ForceLoad { get; set; }
+
+        /// <summary>
+        /// Overrided component for multiselection. Keep it null to have default one that MudList has.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.List.ClickAction)]
+        public MultiSelectionComponent? OverrideMultiSelectionComponent { get; set; } = null;
 
         /// <summary>
         /// Avatar CSS Class to apply if Avatar is set.

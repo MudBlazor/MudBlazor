@@ -27,7 +27,7 @@
 						<MudList @ref="@_list" T="T" Clickable="true" MultiSelection="@MultiSelection" Dense="@Dense" @bind-SelectedValue="@SelectedValue" @bind-SelectedValues="@SelectedValues">
                             @if (MultiSelection && SelectAll)
 							{
-								<MudListItem T="T" Icon="@SelectAllCheckBoxIcon" Text="@SelectAllText" OnClick="SelectAllClickAsync" OnClickHandlerPreventDefault="true" Dense="@Dense" Class="mb-2" />
+								<MudListItem T="T" Icon="@SelectAllCheckBoxIcon" IconColor="_list.Color" Text="@SelectAllText" OverrideMultiSelectionComponent="MultiSelectionComponent.None" OnClick="SelectAllClickAsync" OnClickHandlerPreventDefault="true" Dense="@Dense" Class="mb-2" />
                                 <MudDivider />
 							}
 							@ChildContent

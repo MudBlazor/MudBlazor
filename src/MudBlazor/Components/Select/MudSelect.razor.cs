@@ -343,12 +343,12 @@ namespace MudBlazor
         protected override void OnAfterRender(bool firstRender)
         {
             base.OnAfterRender(firstRender);
-            if (firstRender && Value != null)
-            {
-                // we need to render the initial Value which is not possible without the items
-                // which supply the RenderFragment. So in this case, a second render is necessary
-                StateHasChanged();
-            }
+            //if (firstRender && Value != null)
+            //{
+            //    // we need to render the initial Value which is not possible without the items
+            //    // which supply the RenderFragment. So in this case, a second render is necessary
+            //    StateHasChanged();
+            //}
             //UpdateSelectAllChecked();
             //lock (this)
             //{
@@ -361,19 +361,19 @@ namespace MudBlazor
         }
 
 
-        private Task WaitForRender()
-        {
-            Task t = null;
-            lock (this)
-            {
-                if (_renderComplete != null)
-                    return _renderComplete.Task;
-                _renderComplete = new TaskCompletionSource();
-                t = _renderComplete.Task;
-            }
-            StateHasChanged();
-            return t;
-        }
+        //private Task WaitForRender()
+        //{
+        //    Task t = null;
+        //    lock (this)
+        //    {
+        //        if (_renderComplete != null)
+        //            return _renderComplete.Task;
+        //        _renderComplete = new TaskCompletionSource();
+        //        t = _renderComplete.Task;
+        //    }
+        //    StateHasChanged();
+        //    return t;
+        //}
 
         private TaskCompletionSource _renderComplete;
 
@@ -707,6 +707,10 @@ namespace MudBlazor
                 }
 
             }
+            else
+            {
+                _list.UpdateSelectedStyles();
+            }
             //await HilightSelectedValue();
             ////Scroll the active item on each opening
             //if (_activeItemId != null)
@@ -886,19 +890,12 @@ namespace MudBlazor
         {
             if (Disabled || ReadOnly)
                 return;
-            //var key = obj.Key.ToLowerInvariant();
 
             if (_list != null)
             {
                 await _list.HandleKeyDown(obj);
             }
 
-            // TODO implement it to MudList
-            //if (_isOpen && key.Length == 1 && key != " " && !(obj.CtrlKey || obj.ShiftKey || obj.AltKey || obj.MetaKey))
-            //{
-            //    //await SelectFirstItem(key);
-            //    return;
-            //}
             switch (obj.Key)
             {
                 case "Tab":
@@ -932,7 +929,6 @@ namespace MudBlazor
                     break;
                 case "Enter":
                 case "NumpadEnter":
-                    //var index = _items.FindIndex(x => x.ItemId == Converter.Set(_selectedValue));
                     if (!MultiSelection)
                     {
                         if (!_isOpen)
@@ -940,10 +936,7 @@ namespace MudBlazor
                             await OpenMenu();
                             return;
                         }
-                        // this also closes the menu
-                        //await SelectOption(index);
                         await CloseMenu();
-                        //StateHasChanged();
                         break;
                     }
                     else
@@ -955,7 +948,6 @@ namespace MudBlazor
                         }
                         else
                         {
-                            //await SelectOption(index);
                             await _elementReference.SetText(Text);
                             break;
                         }

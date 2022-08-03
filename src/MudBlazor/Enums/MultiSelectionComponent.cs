@@ -4,11 +4,13 @@ namespace MudBlazor
 {
     public enum MultiSelectionComponent
     {
+        [Description("none")]
+        None,
         [Description("checkbox")]
         CheckBox,
         [Description("switch")]
         Switch,
-        [Description("tooglebutton")]
-        ToogleButton
+        [Description("togglebutton")]
+        ToggleButton
     }
 }
