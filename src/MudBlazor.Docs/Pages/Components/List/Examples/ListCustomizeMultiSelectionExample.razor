@@ -3,13 +3,13 @@
 <MudGrid>
     <MudItem xs="12" sm="8" Class="d-flex align-center justify-center">
         <MudPaper Width="300px">
-            <MudList T="string" Clickable="true" MultiSelection="true" MultiSelectionAlign="_listAlign" MultiSelectionComponent="_listSelectionComponent">
+            <MudList T="string" Clickable="true" MultiSelection="true" MultiSelectionAlign="_listAlign" MultiSelectionComponent="_listSelectionComponent" DisableSelectedStyle="_disableSelectedStyle">
                 <ChildContent>
-                    <MudListItem T="string" Text="Wifi" Icon="@Icons.Filled.Wifi" />
-                    <MudListItem T="string" Text="Bluetooth" Icon="@Icons.Filled.Bluetooth" />
+                    <MudListItem Value="@("Wifi")" Text="Wifi" Icon="@Icons.Filled.Wifi" />
+                    <MudListItem Value="@("Bluetooth")" Text="Bluetooth" Icon="@Icons.Filled.Bluetooth" />
                     <MudDivider />
-                    <MudListItem T="string" Text="Location" Icon="@Icons.Filled.LocationOn" />
-                    <MudListItem T="string" Text="High Security" Icon="@Icons.Filled.Security" />
+                    <MudListItem Value="@("Location")" Text="Location" Icon="@Icons.Filled.LocationOn" />
+                    <MudListItem Value="@("High Security")" Text="High Security" Icon="@Icons.Filled.Security" />
                 </ChildContent>
             </MudList>
         </MudPaper>
@@ -17,6 +17,7 @@
 
     <MudItem xs="12" sm="4">
         <MudCheckBox @ref="_checkboxAlign" T="bool" CheckedChanged="AlignChanged" Color="Color.Primary" Label="Align End" />
+        <MudCheckBox @bind-Checked="_disableSelectedStyle" Color="Color.Primary" Label="Disable Selected Style" />
         <MudSelect T="MultiSelectionComponent" @bind-Value="_listSelectionComponent" AnchorOrigin="Origin.BottomCenter" TransformOrigin="Origin.TopCenter" Variant="Variant.Outlined">
             @foreach (MultiSelectionComponent comp in Enum.GetValues(typeof(MultiSelectionComponent)))
             {
@@ -30,6 +31,7 @@
     Align _listAlign = Align.Start;
     MultiSelectionComponent _listSelectionComponent = MultiSelectionComponent.CheckBox;
     MudCheckBox<bool> _checkboxAlign;
+    bool _disableSelectedStyle = false;
     private void AlignChanged()
     {
         if (_checkboxAlign.Checked == false)

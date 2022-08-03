@@ -10,7 +10,5 @@ namespace MudBlazor
         CheckBox,
         [Description("switch")]
         Switch,
-        [Description("togglebutton")]
-        ToggleButton
     }
 }

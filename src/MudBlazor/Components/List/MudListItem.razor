@@ -13,9 +13,9 @@
             {
                 <MudCheckBox Color="@MudList.Color" Disabled="@Disabled" @bind-Checked="_selected" @onclick="OnClickHandler" Dense="true" />
             }
-            else if (MudList?.MultiSelectionComponent == MultiSelectionComponent.Switch)
+            else if (OverrideMultiSelectionComponent == null ? MudList?.MultiSelectionComponent == MultiSelectionComponent.Switch : OverrideMultiSelectionComponent.Value == MultiSelectionComponent.Switch)
             {
-                <MudSwitch Color="@MudList.Color" Disabled="@Disabled" @bind-Checked="_selected" @onclick="OnClickHandler" />
+                <MudSwitch Color="@MudList.Color" Disabled="@Disabled" @bind-Checked="_selected" @onclick="OnClickHandler" OnClickStopPropagation="true" />
             }
             
         </div>
@@ -48,16 +48,17 @@
         </MudText>
     </div>
 
-    @if (NestedList == null && MudList?.MultiSelection == true && MudList?.MultiSelectionAlign == Align.End)
+    @if (NestedList == null && MudList.MultiSelection == true && MudList.MultiSelectionAlign == Align.End && 
+        (OverrideMultiSelectionComponent != MultiSelectionComponent.None || (MudList.MultiSelectionComponent == MultiSelectionComponent.None && (OverrideMultiSelectionComponent != null || OverrideMultiSelectionComponent != MultiSelectionComponent.None))))
     {
         <div class="@MultiSelectClassName">
-            @if (MudList?.MultiSelectionComponent == MultiSelectionComponent.CheckBox)
+            @if (OverrideMultiSelectionComponent == null ? MudList?.MultiSelectionComponent == MultiSelectionComponent.CheckBox : OverrideMultiSelectionComponent.Value == MultiSelectionComponent.CheckBox)
             {
-                <MudCheckBox Color="@MudList.Color" Disabled="@Disabled" @bind-Checked="_selected" Dense="true" />
+                <MudCheckBox Color="@MudList.Color" Disabled="@Disabled" @bind-Checked="_selected" @onclick="OnClickHandler" Dense="true" />
             }
-            else if (MudList?.MultiSelectionComponent == MultiSelectionComponent.Switch)
+            else if (OverrideMultiSelectionComponent == null ? MudList?.MultiSelectionComponent == MultiSelectionComponent.Switch : OverrideMultiSelectionComponent.Value == MultiSelectionComponent.Switch)
             {
-                <MudSwitch Color="@MudList.Color" Disabled="@Disabled" @bind-Checked="_selected" />
+                <MudSwitch Color="@MudList.Color" Disabled="@Disabled" @bind-Checked="_selected" @onclick="OnClickHandler" OnClickStopPropagation="true" />
             }
         </div>
     }

@@ -63,6 +63,10 @@ namespace MudBlazor
         [Category(CategoryTypes.FormComponent.Behavior)]
         public string Label { get; set; }
 
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Behavior)]
+        public bool OnClickStopPropagation { get; set; }
+
         /// <summary>
         /// Shows an icon on Switch's thumb.
         /// </summary>

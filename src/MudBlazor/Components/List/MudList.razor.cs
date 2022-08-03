@@ -107,6 +107,13 @@ namespace MudBlazor
         public bool DisablePadding { get; set; }
 
         /// <summary>
+        /// If true, selected items doesn't have a selected background color.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.List.Appearance)]
+        public bool DisableSelectedStyle { get; set; }
+
+        /// <summary>
         /// If true, compact vertical padding will be applied to all list items.
         /// </summary>
         [Parameter]
@@ -598,18 +605,34 @@ namespace MudBlazor
                     }
                     SetSelectedValue(_lastActivatedItem);
                     break;
-                case "a":
-                case "A":
-                    if (obj.CtrlKey == true)
-                    {
-                        if (MultiSelection)
-                        {
-                            SelectAllItems(_allSelected);
-                        }
-                    }
-                    break;
+                //case "a":
+                //case "A":
+                //    if (obj.CtrlKey == true)
+                //    {
+                //        if (MultiSelection)
+                //        {
+                //            SelectAllItems(_allSelected);
+                //        }
+                //    }
+                //    break;
             }
-            OnKeyDown.InvokeAsync(obj).AndForget();
+            await OnKeyDown.InvokeAsync(obj);
+        }
+
+        protected internal void UpdateSelectAllChecked()
+        {
+            if (MultiSelection)
+            {
+                var oldState = _allSelected;
+                if (CollectAllMudListItems().Where(x => x.NestedList == null).Count() == _selectedItems.Count)
+                {
+                    _allSelected = true;
+                }
+                else
+                {
+                    _allSelected = false;
+                }
+            }
         }
 
         private void OnFocusOut()

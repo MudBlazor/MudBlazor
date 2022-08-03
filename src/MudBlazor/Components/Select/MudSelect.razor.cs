@@ -375,7 +375,7 @@ namespace MudBlazor
         //    return t;
         //}
 
-        private TaskCompletionSource _renderComplete;
+        //private TaskCompletionSource _renderComplete;
 
         /// <summary>
         /// Returns whether or not the Value can be found in items. If not, the Select will display it as a string.
@@ -398,7 +398,12 @@ namespace MudBlazor
             {
                 if (Value == null)
                     return false;
-                return _shadowLookup.TryGetValue(Value, out var _);
+                //return _shadowLookup.TryGetValue(Value, out var _);
+                if (SelectedValues.Contains(Value))
+                {
+                    return true;
+                }
+                return false;
             }
         }
 
@@ -605,7 +610,7 @@ namespace MudBlazor
             {
                 // single selection
                 // CloseMenu(true) doesn't close popover in BSS
-                await CloseMenu(false);
+                await CloseMenu();
 
                 if (EqualityComparer<T>.Default.Equals(Value, value))
                 {
@@ -684,7 +689,7 @@ namespace MudBlazor
             if (Disabled || ReadOnly)
                 return;
             if (_isOpen)
-                await CloseMenu(true);
+                await CloseMenu();
             else
                 await OpenMenu();
         }
@@ -709,6 +714,7 @@ namespace MudBlazor
             }
             else
             {
+                _list.UpdateSelectAllChecked();
                 _list.UpdateSelectedStyles();
             }
             //await HilightSelectedValue();
@@ -723,12 +729,12 @@ namespace MudBlazor
             //    }
             //}
             ////disable escape propagation: if selectmenu is open, only the select popover should close and underlying components should not handle escape key
-            //await _keyInterceptor.UpdateKey(new() { Key = "Escape", StopDown = "Key+none" });
+            await _keyInterceptor.UpdateKey(new() { Key = "Escape", StopDown = "Key+none" });
 
             await OnOpen.InvokeAsync();
         }
 
-        public async Task CloseMenu(bool focusAgain = true)
+        public async Task CloseMenu()
         {
             _isOpen = false;
             UpdateIcon();
@@ -741,8 +747,8 @@ namespace MudBlazor
             //    StateHasChanged();
             //}
 
-            ////enable escape propagation: the select popover was closed, now underlying components are allowed to handle escape key
-            //await _keyInterceptor.UpdateKey(new() { Key = "Escape", StopDown = "none" });
+            //enable escape propagation: the select popover was closed, now underlying components are allowed to handle escape key
+            await _keyInterceptor.UpdateKey(new() { Key = "Escape", StopDown = "none" });
 
             await OnClose.InvokeAsync();
         }
@@ -899,7 +905,7 @@ namespace MudBlazor
             switch (obj.Key)
             {
                 case "Tab":
-                    await CloseMenu(false);
+                    await CloseMenu();
                     break;
                 case "ArrowUp":
                     if (obj.AltKey == true)
@@ -925,7 +931,7 @@ namespace MudBlazor
                     await ToggleMenu();
                     break;
                 case "Escape":
-                    await CloseMenu(true);
+                    await CloseMenu();
                     break;
                 case "Enter":
                 case "NumpadEnter":
@@ -952,30 +958,30 @@ namespace MudBlazor
                             break;
                         }
                     }
-                //case "a":
-                //case "A":
-                //    if (obj.CtrlKey == true)
-                //    {
-                //        if (MultiSelection)
-                //        {
-                //            await SelectAllClickAsync();
-                //            //If we didn't add delay, it won't work.
-                //            await WaitForRender();
-                //            await Task.Delay(1);
-                //            StateHasChanged();
-                //            //It only works when selecting all, not render unselect all.
-                //            //UpdateSelectAllChecked();
-                //        }
-                //    }
-                //    break;
+                case "a":
+                case "A":
+                    if (obj.CtrlKey == true)
+                    {
+                        if (MultiSelection)
+                        {
+                            await SelectAllClickAsync();
+                            ////If we didn't add delay, it won't work.
+                            //await WaitForRender();
+                            //await Task.Delay(1);
+                            //StateHasChanged();
+                            //It only works when selecting all, not render unselect all.
+                            //UpdateSelectAllChecked();
+                        }
+                    }
+                    break;
             }
-            OnKeyDown.InvokeAsync(obj).AndForget();
+            await OnKeyDown.InvokeAsync(obj);
 
         }
 
-        internal void HandleKeyUp(KeyboardEventArgs obj)
+        internal async void HandleKeyUp(KeyboardEventArgs obj)
         {
-            OnKeyUp.InvokeAsync(obj).AndForget();
+            await OnKeyUp.InvokeAsync(obj);
         }
 
         [ExcludeFromCodeCoverage]
