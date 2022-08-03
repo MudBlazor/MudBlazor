@@ -17,6 +17,8 @@ namespace MudBlazor
 {
     public partial class MudSelect<T> : MudBaseInput<T>, IMudSelect
     {
+        private MudList<T> _list;
+        private T _selectedValue;
         private HashSet<T> _selectedValues = new HashSet<T>();
         private IEqualityComparer<T> _comparer;
         private bool _dense;
@@ -266,6 +268,22 @@ namespace MudBlazor
             }
         }
 
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Data)]
+        public T SelectedValue
+        {
+            get => _selectedValue;
+
+            set
+            {
+                if (Converter.Set(_selectedValue) == Converter.Set(value))
+                {
+                    return;
+                }
+                _selectedValue = value;
+            }
+        }
+
         /// <summary>
         /// The Comparer to use for comparing selected values internally.
         /// </summary>
@@ -434,7 +452,7 @@ namespace MudBlazor
         protected Dictionary<T, MudSelectItem<T>> _shadowLookup = new();
 
         // note: this must be object to satisfy MudList
-        private T _activeItemId = default(T);
+        //private T _activeItemId = default(T);
 
         internal bool Add(MudSelectItem<T> item)
         {
@@ -907,7 +925,7 @@ namespace MudBlazor
                     break;
                 case "Enter":
                 case "NumpadEnter":
-                    var index = _items.FindIndex(x => x.ItemId == Converter.Set(_activeItemId));
+                    var index = _items.FindIndex(x => x.ItemId == Converter.Set(_selectedValue));
                     if (!MultiSelection)
                     {
                         if (!_isOpen)

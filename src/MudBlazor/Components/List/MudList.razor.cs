@@ -58,7 +58,7 @@ namespace MudBlazor
             set
             {
                 if (_multiSelection == value)
-                { 
+                {
                     return;
                 }
                 _multiSelection = value;
@@ -201,10 +201,10 @@ namespace MudBlazor
                     return;
                 }
 
-                if (SelectedValues.Count() == set.Count() && _selectedValues.All(x => set.Contains(x)))
+                if (SelectedValues.Count() == set.Count() && _selectedValues != null && _selectedValues.All(x => set.Contains(x)))
                     return;
 
-                _selectedValues = value == null ? null : value.ToList();
+                _selectedValues = value == null ? null : value.ToHashSet();
                 HandleCentralValueCommander("SelectedValues").AndForget();
 
                 SelectedValuesChanged.InvokeAsync(_selectedValues).AndForget();
@@ -359,7 +359,7 @@ namespace MudBlazor
         private MudListItem<T> _selectedItem = new();
         private List<MudListItem<T>> _selectedItems = new();
         private T _selectedValue;
-        private List<T> _selectedValues = new();
+        private HashSet<T> _selectedValues = new();
         private MudListItem<T> _lastActivatedItem;
 
         bool _allSelected = false;
@@ -487,7 +487,7 @@ namespace MudBlazor
             _lastActivatedItem = item;
         }
 
-        protected void UpdateSelectedStyles()
+        internal void UpdateSelectedStyles()
         {
             var items = CollectAllMudListItems();
             DeselectAllItems(items);
