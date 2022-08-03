@@ -312,5 +312,34 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("aside.mud-drawer--open.mud-drawer-responsive").Count.Should().Be(1);
             comp.Instance.Drawer.Open.Should().BeTrue();
         }
+
+        /// <summary>
+        /// Resize screen from small to big. Once the screen is large enough, the drawer should open automatically.
+        /// </summary>
+        /// <returns></returns>
+        [Test]
+        public async Task Responsive_ResizeFromSmall_ToLarge_CheckStates()
+        {
+            var comp = Context.RenderComponent<DrawerResponsiveTest>(
+                Parameter(nameof(DrawerResponsiveTest.PreserveOpenState), true),
+                Parameter(nameof(DrawerResponsiveTest.Open), true));
+            await comp.InvokeAsync(() => _breakpointUpdateCallback(Breakpoint.Xs));
+            
+            //drawer should be closed
+            comp.FindAll("aside.mud-drawer--closed.mud-drawer-responsive").Count.Should().Be(1);
+            comp.Instance.Drawer.Open.Should().BeFalse();
+
+            //resize to small, drawer should stay closed
+            await comp.InvokeAsync(() => _breakpointUpdateCallback(Breakpoint.Sm));
+            
+            comp.FindAll("aside.mud-drawer--closed.mud-drawer-responsive").Count.Should().Be(1);
+            comp.Instance.Drawer.Open.Should().BeFalse();
+
+            //resize above breakpoint - drawer should open
+            await comp.InvokeAsync(() => _breakpointUpdateCallback(Breakpoint.Lg));
+
+            comp.FindAll("aside.mud-drawer--open.mud-drawer-responsive").Count.Should().Be(1);
+            comp.Instance.Drawer.Open.Should().BeTrue();
+        }
     }
 }
