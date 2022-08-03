@@ -632,13 +632,13 @@ namespace MudBlazor.UnitTests.Components
         public async Task NumericFieldThousandsSeparator()
         {
             var comp = Context.RenderComponent<MudNumericField<int?>>();
-            comp.SetParam(x => x.Culture, CultureInfo.InvariantCulture);
-
             var numericField = comp.Instance;
+
             numericField.Value.Should().Be(null);
             numericField.Text.Should().Be(null);
 
             // comma separator
+            comp.SetParam(x => x.Culture, CultureInfo.InvariantCulture);
             comp.FindAll("input").First().Change("1,000");
             comp.FindAll("input").First().Blur();
             comp.WaitForAssertion(() => numericField.Text.Should().Be("1000"));
