@@ -7,25 +7,25 @@
                 <MudListSubheader T="string" Sticky="_sticky" SecondaryBackground="_secondaryBackground">England</MudListSubheader>
                 @foreach (string club in _englishClubs)
                 {
-                    <MudListItem Value="@club">@club</MudListItem>
+                    <MudListItem Value="@club" Text="@club" />
                 }
 
                 <MudListSubheader T="string" Sticky="_sticky" SecondaryBackground="_secondaryBackground">Spain</MudListSubheader>
                 @foreach (string club in _spanishClubs)
                 {
-                    <MudListItem Value="@club">@club</MudListItem>
+                    <MudListItem Value="@club" Text="@club" />
                 }
 
                 <MudListSubheader T="string" Sticky="_sticky" SecondaryBackground="_secondaryBackground">Germany</MudListSubheader>
                 @foreach (string club in _germanClubs)
                 {
-                    <MudListItem Value="@club">@club</MudListItem>
+                    <MudListItem Value="@club" Text="@club" />
                 }
 
                 <MudListSubheader T="string" Sticky="_sticky" SecondaryBackground="_secondaryBackground">Turkey</MudListSubheader>
                 @foreach (string club in _turkishClubs)
                 {
-                    <MudListItem Value="@club">@club</MudListItem>
+                    <MudListItem Value="@club" Text="@club" />
                 }
             </MudList>
         </MudPaper>
