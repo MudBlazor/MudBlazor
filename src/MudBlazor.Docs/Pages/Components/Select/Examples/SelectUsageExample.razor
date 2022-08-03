@@ -2,20 +2,20 @@
 @using System.Globalization;
 @namespace MudBlazor.Docs.Examples
 
-<MudSelect @bind-Value="stringValue" Label="Select fast-food" HelperText="String" Placeholder="Please Select" AdornmentIcon="@Icons.Material.Filled.Fastfood" AdornmentColor="Color.Primary">
+<MudSelect @bind-Value="stringValue" Label="Select fast-food" HelperText="String" Placeholder="Please Select" AdornmentIcon="@Icons.Filled.Fastfood" AdornmentColor="Color.Primary">
     <MudSelectItem Value="@("Pizza")" Disabled="true">Pizza (Disabled)</MudSelectItem>
     <MudSelectItem Value="@("Burger")">Burger</MudSelectItem>
     <MudSelectItem Value="@("Hotdog")">Hot Dog</MudSelectItem>
 </MudSelect>
 
-<MudSelect @bind-Value="enumValue" Label="Select drink" HelperText="Enum" OpenIcon="@Icons.Material.Filled.LocalDrink" AdornmentColor="Color.Secondary">
+<MudSelect @bind-SelectedValue="enumValue" Label="Select drink" HelperText="Enum" OpenIcon="@Icons.Filled.LocalDrink" AdornmentColor="Color.Secondary">
     @foreach (Drink item in Enum.GetValues(typeof(Drink)))
     {
         <MudSelectItem Value="@item">@item</MudSelectItem>
     }
 </MudSelect>
 
-<MudSelect Placeholder="Select culture" @bind-Value="cultureValue" HelperText="CultureInfo" ToStringFunc="@convertFunc" CloseIcon="@Icons.Material.Filled.Flag" AdornmentColor="Color.Tertiary">
+<MudSelect Placeholder="Select culture" @bind-Value="cultureValue" HelperText="CultureInfo" ToStringFunc="@convertFunc" CloseIcon="@Icons.Filled.Flag" AdornmentColor="Color.Tertiary">
     <MudSelectItem Value="@(CultureInfo.GetCultureInfo("en-US"))" />
     <MudSelectItem Value="@(CultureInfo.GetCultureInfo("de-AT"))" />
     <MudSelectItem Value="@(CultureInfo.GetCultureInfo("pt-BR"))" />

@@ -56,23 +56,23 @@ The selected value is : @selectedValue
         Snackbar.Add(_list.GetActiveItemIndex().ToString());
     }
 
-    private void HilightFirst()
+    private async void HilightFirst()
     {
-        _list.ActiveFirstItem();
+        await _list.ActiveFirstItem();
     }
 
-    private void HilightNext()
+    private async void HilightNext()
     {
-        _list.ActiveNextItem();
+        await _list.ActiveAdjacentItem(1);
     }
 
-    private void HilightPrevious()
+    private async void HilightPrevious()
     {
-        _list.ActivePreviousItem();
+        await _list.ActiveAdjacentItem(-1);
     }
 
-    private void HilightLast()
+    private async void HilightLast()
     {
-        _list.ActiveLastItem();
+        await _list.ActiveLastItem();
     }
 }

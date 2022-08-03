@@ -204,6 +204,11 @@ namespace MudBlazor
         public string SelectAllText { get; set; } = "Select all";
 
         /// <summary>
+        /// Fires when SelectedValue changes.
+        /// </summary>
+        [Parameter] public EventCallback<T> SelectedValueChanged { get; set; }
+
+        /// <summary>
         /// Fires when SelectedValues changes.
         /// </summary>
         [Parameter] public EventCallback<IEnumerable<T>> SelectedValuesChanged { get; set; }
@@ -281,6 +286,7 @@ namespace MudBlazor
                     return;
                 }
                 _selectedValue = value;
+                SelectedValueChanged.InvokeAsync(_selectedValue).AndForget();
             }
         }
 
@@ -689,7 +695,18 @@ namespace MudBlazor
                 return;
             _isOpen = true;
             UpdateIcon();
-            //StateHasChanged();
+            StateHasChanged();
+            // TODO remove this delay but removed this makes _list null because code reach _list before popover render.
+            await Task.Delay(1);
+            if (!MultiSelection)
+            {
+                _list.UpdateLastActivatedItem(SelectedValue);
+                if (_list._lastActivatedItem != null)
+                {
+                    await _list.ScrollToMiddleAsync(_list._lastActivatedItem);
+                }
+
+            }
             //await HilightSelectedValue();
             ////Scroll the active item on each opening
             //if (_activeItemId != null)
@@ -711,6 +728,7 @@ namespace MudBlazor
         {
             _isOpen = false;
             UpdateIcon();
+            StateHasChanged();
             //if (focusAgain == true)
             //{
             //    StateHasChanged();
@@ -868,12 +886,19 @@ namespace MudBlazor
         {
             if (Disabled || ReadOnly)
                 return;
-            var key = obj.Key.ToLowerInvariant();
-            if (_isOpen && key.Length == 1 && key != " " && !(obj.CtrlKey || obj.ShiftKey || obj.AltKey || obj.MetaKey))
+            //var key = obj.Key.ToLowerInvariant();
+
+            if (_list != null)
             {
-                //await SelectFirstItem(key);
-                return;
+                await _list.HandleKeyDown(obj);
             }
+
+            // TODO implement it to MudList
+            //if (_isOpen && key.Length == 1 && key != " " && !(obj.CtrlKey || obj.ShiftKey || obj.AltKey || obj.MetaKey))
+            //{
+            //    //await SelectFirstItem(key);
+            //    return;
+            //}
             switch (obj.Key)
             {
                 case "Tab":
@@ -883,49 +908,31 @@ namespace MudBlazor
                     if (obj.AltKey == true)
                     {
                         await CloseMenu();
-                        break;
                     }
                     else if (_isOpen == false)
                     {
                         await OpenMenu();
-                        break;
                     }
-                    else
-                    {
-                        //await SelectPreviousItem();
-                        break;
-                    }
+                    break;
                 case "ArrowDown":
                     if (obj.AltKey == true)
                     {
                         await OpenMenu();
-                        break;
                     }
                     else if (_isOpen == false)
                     {
                         await OpenMenu();
-                        break;
                     }
-                    else
-                    {
-                        //await SelectNextItem();
-                        break;
-                    }
+                    break;
                 case " ":
                     await ToggleMenu();
                     break;
                 case "Escape":
                     await CloseMenu(true);
                     break;
-                case "Home":
-                    //await SelectFirstItem();
-                    break;
-                case "End":
-                    //await SelectLastItem();
-                    break;
                 case "Enter":
                 case "NumpadEnter":
-                    var index = _items.FindIndex(x => x.ItemId == Converter.Set(_selectedValue));
+                    //var index = _items.FindIndex(x => x.ItemId == Converter.Set(_selectedValue));
                     if (!MultiSelection)
                     {
                         if (!_isOpen)
@@ -934,7 +941,9 @@ namespace MudBlazor
                             return;
                         }
                         // this also closes the menu
-                        await SelectOption(index);
+                        //await SelectOption(index);
+                        await CloseMenu();
+                        //StateHasChanged();
                         break;
                     }
                     else
@@ -946,27 +955,27 @@ namespace MudBlazor
                         }
                         else
                         {
-                            await SelectOption(index);
+                            //await SelectOption(index);
                             await _elementReference.SetText(Text);
                             break;
                         }
                     }
-                case "a":
-                case "A":
-                    if (obj.CtrlKey == true)
-                    {
-                        if (MultiSelection)
-                        {
-                            await SelectAllClickAsync();
-                            //If we didn't add delay, it won't work.
-                            await WaitForRender();
-                            await Task.Delay(1);
-                            StateHasChanged();
-                            //It only works when selecting all, not render unselect all.
-                            //UpdateSelectAllChecked();
-                        }
-                    }
-                    break;
+                //case "a":
+                //case "A":
+                //    if (obj.CtrlKey == true)
+                //    {
+                //        if (MultiSelection)
+                //        {
+                //            await SelectAllClickAsync();
+                //            //If we didn't add delay, it won't work.
+                //            await WaitForRender();
+                //            await Task.Delay(1);
+                //            StateHasChanged();
+                //            //It only works when selecting all, not render unselect all.
+                //            //UpdateSelectAllChecked();
+                //        }
+                //    }
+                //    break;
             }
             OnKeyDown.InvokeAsync(obj).AndForget();
 
