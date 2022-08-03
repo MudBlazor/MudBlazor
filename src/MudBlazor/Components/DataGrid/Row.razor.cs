@@ -13,6 +13,5 @@ namespace MudBlazor
 
         protected string Classname => new CssBuilder("mud-table-row")
             .AddClass(Class).Build();
-
     }
 }

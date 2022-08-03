@@ -228,6 +228,8 @@ namespace MudBlazor
         /// <returns>The ValueTask</returns>
         public virtual ValueTask FocusAsync() { return new ValueTask(); }
 
+        public virtual ValueTask BlurAsync() { return new ValueTask(); }
+
         public virtual ValueTask SelectAsync() { return new ValueTask(); }
 
         public virtual ValueTask SelectRangeAsync(int pos1, int pos2) { return new ValueTask(); }
@@ -337,6 +339,7 @@ namespace MudBlazor
                     await UpdateTextPropertyAsync(false);
                 await ValueChanged.InvokeAsync(Value);
                 BeginValidate();
+                FieldChanged(Value);
             }
         }
 

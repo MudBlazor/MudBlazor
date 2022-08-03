@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using Microsoft.JSInterop;
 
@@ -61,6 +62,7 @@ namespace MudBlazor
         private readonly IJSRuntime _js;
         private DotNetObjectReference<ScrollSpy> _dotNetRef;
 
+        [DynamicDependency(nameof(SectionChangeOccured))]
         public ScrollSpy(IJSRuntime js)
         {
             _js = js;

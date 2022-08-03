@@ -13,7 +13,7 @@
                           TextUpdateSuppression="@TextUpdateSuppression"
                           Value="@Text" DisableUnderLine="@DisableUnderLine"
                           Disabled="@Disabled" ReadOnly="@ReadOnly" Error="@Error"
-                          OnAdornmentClick="@OnAdornmentClick" AdornmentIcon="@_currentIcon" Adornment="@Adornment" AdornmentColor="@AdornmentColor" IconSize="@IconSize" AdornmentText="@AdornmentText"
+                          OnAdornmentClick="@OnAdornmentClick" AdornmentIcon="@CurrentIcon" Adornment="@Adornment" AdornmentColor="@AdornmentColor" IconSize="@IconSize" AdornmentText="@AdornmentText"
                           Clearable="@Clearable" OnClearButtonClick="@OnClearButtonClick"
                           @attributes="UserAttributes"
                           TextChanged="OnTextChanged" OnBlur="OnInputBlurred"
@@ -46,6 +46,7 @@
                                             @ItemTemplate(item)
                                         else
                                             @ItemSelectedTemplate(item)
+
                                     }
                                     else
                                     {
@@ -60,6 +61,12 @@
                                 </div>
                             }
                         </MudList>
+                    }
+                    else if (NoItemsTemplate != null)
+                    {
+                        <div class="pa-1">
+                            @NoItemsTemplate
+                        </div>
                     }
                 </MudPopover>
             </InputContent>

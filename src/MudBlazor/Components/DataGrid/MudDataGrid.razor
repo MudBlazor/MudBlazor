@@ -6,25 +6,31 @@
 <CascadingValue IsFixed="true" Value="this">@Columns</CascadingValue>
 
 <CascadingValue IsFixed="true" Value="this">
-    <div @attributes="UserAttributes" class="@_classname" style="@Style">
+    <div @attributes="UserAttributes" class="@_classname" style="@_style">
         @if (Items != null || ServerData != null)
         {
             @if (ToolBarContent != null)
             {
                 <MudToolBar Class="mud-table-toolbar">
                     @ToolBarContent
-                    @ToolbarMenu(this)           
+                    @if (ShowMenuIcon)
+                    {
+                        @ToolbarMenu(this)   
+                    }
                 </MudToolBar>
             }
             else
             {
-                @*Add the default toolbar.*@
-                <MudToolBar Class="mud-table-toolbar">
+                @if (ShowMenuIcon)
+                {
+                    @*Add the default toolbar.*@
+                    <MudToolBar Class="mud-table-toolbar">
                     <MudSpacer />
                     @ToolbarMenu(this) 
-                </MudToolBar>
+                    </MudToolBar>
+                 }
             }
-            <div class="mud-table-container" style="@_tableStyle @(GetHorizontalScrollbarStyle())">
+            <div @ref=_gridElement class="@_tableClass" style="@_tableStyle">
                 <table class="mud-table-root">
                     @if (ColGroup != null)
                     {
@@ -37,31 +43,35 @@
                             @Header
                         </CascadingValue>
                         <tr class="mud-table-row">
-                            @foreach (var column in _columns)
+                            @foreach (var column in RenderedColumns)
                             {
-                                @*This is necessary on .net6.0-preview4 and below.*@
-                                if (column.HeaderTemplate != null)
-                                {
-                                    <HeaderCell T="T" Column="@column"></HeaderCell>
+                                <HeaderCell T="T" Column="@column"></HeaderCell>
+                            }
+                        </tr>
+                        @if (_filtersMenuVisible && FilterMode == DataGridFilterMode.Simple)
+                        {
+                            <MudOverlay Visible="true" OnClick="@(() => _filtersMenuVisible = false)"></MudOverlay>
+                            <MudPaper Class="pa-2 filters-panel" Style="position:absolute;width:auto;min-width:700px;z-index:var(--mud-zindex-drawer)" Elevation="4">
+                                @if (FilterTemplate == null)
+                                { 
+                                    <MudGrid Spacing="0">
+                                        @foreach (var f in FilterDefinitions)
+                                        {
+                                            <Filter T="T" @bind-Field="f.Field" FieldType="@f.FieldType" @bind-Title="f.Title" @bind-Operator="f.Operator" @bind-Value="f.Value"
+                                                Id="@f.Id"></Filter>
+                                        }
+                                    </MudGrid>
+                                    <MudButton Class="mt-2" StartIcon="@Icons.Material.Filled.Add" OnClick="@AddFilter" Color="@Color.Primary">Add Filter</MudButton>
+                                    @if (ServerData != null)
+                                    {
+                                        <MudButton Class="mt-2" StartIcon="@Icons.Material.Filled.Add" OnClick="@ApplyFilters" Color="@Color.Primary">Apply</MudButton>
+                                    }
+                                    <MudButton Class="mt-2" StartIcon="@Icons.Material.Filled.Remove" OnClick="@ClearFilters" Color="@Color.Primary">Clear</MudButton>
                                 }
                                 else
                                 {
-                                    <HeaderCell T="T" Column="@column"></HeaderCell>
+                                    @FilterTemplate(FilterDefinitions)
                                 }
-                            }
-                        </tr>
-                        @if (_filtersMenuVisible)
-                        {
-                            <MudOverlay  Visible="true" OnClick="@(() => _filtersMenuVisible = false)"></MudOverlay>
-                            <MudPaper Class="pa-2 filters-panel" Style="position:absolute;width:auto;min-width:700px;z-index:var(--mud-zindex-drawer)" Elevation="4">
-                                <MudGrid Spacing="0">
-                                    @foreach (var f in FilterDefinitions)
-                                    { 
-                                        <Filter T="T" @bind-Field="f.Field" @bind-Operator="f.Operator" @bind-Value="f.Value"
-                                            Id="@f.Id"></Filter>
-                                    }
-                                </MudGrid>
-                                <MudButton Class="mt-2" StartIcon="@Icons.Material.Filled.Add" OnClick="@AddFilter" Color="@Color.Primary">Add Filter</MudButton>
                             </MudPaper>
                         }
                         @if (_columnsPanelVisible)
@@ -69,21 +79,30 @@
                             <MudOverlay  Visible="true" OnClick="@(() => _columnsPanelVisible = false)"></MudOverlay>
                             <MudPaper Class="pa-2 columns-panel" Style="position:absolute;max-width:450px;z-index:var(--mud-zindex-drawer)" Elevation="4">
                                 <MudGrid Spacing="0">
-                                    @foreach (var column in _columns)
+                                    @foreach (var column in RenderedColumns)
                                     {
                                         <MudItem xs="12">
-                                            <MudSwitch T="bool" Disabled="@(!(column.Hideable ?? false))" Checked="@column.Hidden" CheckedChanged="@column.Toggle" Converter="_oppositeBoolConverter" Color="Color.Primary" Label="@(column.Title ?? @column.Field)" />
+                                            <MudSwitch T="bool" Disabled="@(!(column.Hideable ?? false))" Checked="@column.Hidden" CheckedChanged="@column.ToggleAsync" Converter="_oppositeBoolConverter" Color="Color.Primary" Label="@(column.Title ?? @column.Field)" />
                                         </MudItem>
                                     }
                                     <MudItem xs="6">
-                                        <MudButton OnClick="@HideAllColumns" Color="@Color.Primary">Hide All</MudButton>
+                                        <MudButton OnClick="@HideAllColumnsAsync" Color="@Color.Primary">Hide All</MudButton>
                                     </MudItem>
                                     <MudItem xs="6" Class="d-flex justify-end">
-                                        <MudButton OnClick="@ShowAllColumns" Color="@Color.Primary">Show All</MudButton>
+                                        <MudButton OnClick="@ShowAllColumnsAsync" Color="@Color.Primary">Show All</MudButton>
                                     </MudItem>
                                 </MudGrid>
                                 
                             </MudPaper>
+                        }
+                        @if (Filterable && FilterMode == DataGridFilterMode.ColumnFilterRow)
+                        {
+                            <tr class="mud-table-row">
+                                @foreach (var column in RenderedColumns)
+                                {
+                                    <FilterHeaderCell T="T" Column="@column" />
+                                }
+                            </tr>
                         }
                     </thead>
                     <tbody class="mud-table-body">
@@ -96,7 +115,8 @@
                             </tr>
                         }
 
-                        @if (CurrentPageItems != null && CurrentPageItems.Count() > 0)
+                        @{var resolvedPageItems = CurrentPageItems.ToList();}
+                        @if (resolvedPageItems != null && resolvedPageItems.Count > 0)
                         {
                             if (GroupedColumn != null)
                             {
@@ -129,7 +149,7 @@
                                             @{ var tmpRowIndex = rowIndex; }
                                             <tr class="mud-table-row @rowClass" Style="@rowStyle" @key="item" @onclick="@((args) => OnRowClickedAsync(args, item, tmpRowIndex))">  
                                                 <CascadingValue Value="@Validator" IsFixed="true">
-                                                @foreach (var column in @_columns)
+                                                @foreach (var column in RenderedColumns)
                                                 {
                                                     if (!column.Hidden)
                                                     {
@@ -140,7 +160,7 @@
                                             </tr>                                   
                                             @if (ChildRowContent != null)
                                             {
-                                                @ChildRowContent(item)
+                                                @ChildRowContent(new CellContext<T>(this, item))
                                             }                                    
                                             @{ rowIndex++; }
                                         </MudVirtualize>
@@ -154,13 +174,13 @@
                             else
                             {
                                 var rowIndex = 0;
-                                <MudVirtualize IsEnabled="@Virtualize" Items="@CurrentPageItems?.ToList()" Context="item">
+                                <MudVirtualize IsEnabled="@Virtualize" Items="@resolvedPageItems" Context="item">
                                     @{ var rowClass = new CssBuilder(RowClass).AddClass(RowClassFunc?.Invoke(item, rowIndex)).Build(); }
                                     @{ var rowStyle = new StyleBuilder().AddStyle(RowStyle).AddStyle(RowStyleFunc?.Invoke(item, rowIndex)).Build(); }
                                     @{ var tmpRowIndex = rowIndex; }
                                     <tr class="mud-table-row @rowClass" Style="@rowStyle" @key="item" @onclick="@((args) => OnRowClickedAsync(args, item, tmpRowIndex))">  
                                         <CascadingValue Value="@Validator" IsFixed="true">
-                                        @foreach (var column in @_columns)
+                                        @foreach (var column in RenderedColumns)
                                         {
                                             if (!column.Hidden)
                                             {
@@ -171,7 +191,7 @@
                                     </tr>                                   
                                     @if (ChildRowContent != null)
                                     {
-                                        @ChildRowContent(item)
+                                        @ChildRowContent(new CellContext<T>(this, item))
                                     }                                    
                                     @{ rowIndex++; }
                                 </MudVirtualize>
@@ -197,7 +217,7 @@
                     </tbody>
                     <tfoot class="@_footClassname">
                         <tr class="mud-table-row">
-                            @FooterCells(CurrentPageItems)
+                            @FooterCells(resolvedPageItems)
                         </tr>
                     </tfoot>
                 </table>
@@ -218,7 +238,7 @@
         </TitleContent>
         <DialogContent>
             <MudForm>
-                @foreach (var column in @_columns)
+                @foreach (var column in RenderedColumns)
                 {
                     var cell = new Cell<T>(this, column, _editingItem);
 
@@ -235,7 +255,7 @@
                         }
                         else if (column.isNumber)
                         {
-                            <MudNumericField T="double" Label="@column.computedTitle" Value="@cell.valueNumber" ValueChanged="@cell.NumberValueChangedAsync" Margin="@Margin.Dense"
+                            <MudNumericField T="double?" Label="@column.computedTitle" Value="@cell.valueNumber" ValueChanged="@cell.NumberValueChangedAsync" Margin="@Margin.Dense"
                                 Required="true" Variant="@Variant.Outlined" Disabled="@(!column.IsEditable || ReadOnly)" Class="mt-4" />
                         }
                     }
@@ -261,6 +281,10 @@
                 <MudMenuItem OnClick="@__this.ExpandAllGroups">Expand All Groups</MudMenuItem>
                 <MudMenuItem OnClick="@__this.CollapseAllGroups">Collapse All Groups</MudMenuItem>
             }
+            @if(__this.ServerData != null)
+            {
+                <MudMenuItem OnClick="@__this.InvokeServerLoadFunc">Refresh Data</MudMenuItem>
+            }
         </MudMenu>
         </text>;
     }
@@ -271,7 +295,7 @@
         @<text>
         @if (currentItems != null)
         {
-            foreach (var column in _columns)
+            foreach (var column in RenderedColumns)
             {
                 if (!column.Hidden)
                 {
@@ -308,7 +332,7 @@
                     }
                     else if (column.isNumber)
                     {
-                        <MudNumericField T="double" Value="@cell.valueNumber" ValueChanged="@cell.NumberValueChangedAsync" Margin="@Margin.Dense" Style="margin-top:0"
+                        <MudNumericField T="double?" Value="@cell.valueNumber" ValueChanged="@cell.NumberValueChangedAsync" Margin="@Margin.Dense" Style="margin-top:0"
                             Required="true" Variant="@Variant.Text" />
                     }
                 }

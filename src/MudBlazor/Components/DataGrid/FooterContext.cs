@@ -10,12 +10,12 @@ namespace MudBlazor
 {
     public class FooterContext<T>
     {
-        internal MudDataGrid<T> dataGrid;
+        internal MudDataGrid<T> _dataGrid;
         public IEnumerable<T> Items
         {
             get
             {
-                return dataGrid.Items;
+                return _dataGrid.Items;
             }
         }
         public FooterActions Actions { get; internal set; }
@@ -24,15 +24,23 @@ namespace MudBlazor
             get
             {
                 
-                if (dataGrid.Selection != null && Items != null)
+                if (_dataGrid.Selection != null && Items != null)
                 {
-                    return dataGrid.Selection.Count == Items.Count();
+                    return _dataGrid.Selection.Count == Items.Count();
                 }
 
                 return false;
             }
         }
 
+        public FooterContext(MudDataGrid<T> dataGrid)
+        {
+            _dataGrid = dataGrid;
+            Actions = new FooterContext<T>.FooterActions
+            {
+                SetSelectAll = async (x) => await _dataGrid.SetSelectAllAsync(x),
+            };
+        }
 
         public class FooterActions
         {

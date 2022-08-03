@@ -1,0 +1,52 @@
+﻿@namespace MudBlazor.UnitTests.TestComponents
+
+<MudDataGrid Items="@_items" HorizontalScrollbar="true" Bordered="true">
+    <Columns>
+        <Column T="Model" Field="@nameof(Model.Column1)" StickyLeft="true" />
+        <Column T="Model" Field="@nameof(Model.Column2)" />
+        <Column T="Model" Field="@nameof(Model.Column3)" />
+        <Column T="Model" Field="@nameof(Model.Column4)" />
+        <Column T="Model" Field="@nameof(Model.Column5)" />
+        <Column T="Model" Field="@nameof(Model.Column6)" />
+        <Column T="Model" Field="@nameof(Model.Column7)" />
+        <Column T="Model" Field="@nameof(Model.Column8)" />
+        <Column T="Model" Field="@nameof(Model.Column9)" />
+        <Column T="Model" Field="@nameof(Model.Column10)" />
+        <Column T="Model" Field="@nameof(Model.Column11)" />
+        <Column T="Model" Field="@nameof(Model.Column12)" />
+        <Column T="Model" Field="@nameof(Model.Column13)" />
+        <Column T="Model" Field="@nameof(Model.Column14)" />
+        <Column T="Model" Field="@nameof(Model.Column15)" />
+        <Column T="Model" Field="@nameof(Model.Column16)" />
+        <Column T="Model" Field="@nameof(Model.Column17)" />
+        <Column T="Model" Field="@nameof(Model.Column18)" />
+        <Column T="Model" Field="@nameof(Model.Column19)" />
+        <Column T="Model" Field="@nameof(Model.Column20)" />
+        <Column T="Model" Field="@nameof(Model.Column21)" />
+        <Column T="Model" Field="@nameof(Model.Column22)" />
+        <Column T="Model" Field="@nameof(Model.Column23)" />
+        <Column T="Model" Field="@nameof(Model.Column24)" StickyRight="true" />
+    </Columns>
+</MudDataGrid>
+
+@code {
+    private IEnumerable<Model> _items = new List<Model>()
+    {
+        new Model("Column1", "Column2", "Column3", "Column4", "Column5", "Column6", "Column7", "Column8", "Column9", "Column10", "Column11", "Column12",
+            "Column13", "Column14", "Column15", "Column16", "Column17", "Column18", "Column19", "Column20", "Column21", "Column22", "Column23", "Column24"), 
+        new Model("Column1", "Column2", "Column3", "Column4", "Column5", "Column6", "Column7", "Column8", "Column9", "Column10", "Column11", "Column12",
+            "Column13", "Column14", "Column15", "Column16", "Column17", "Column18", "Column19", "Column20", "Column21", "Column22", "Column23", "Column24"), 
+        new Model("Column1", "Column2", "Column3", "Column4", "Column5", "Column6", "Column7", "Column8", "Column9", "Column10", "Column11", "Column12",
+            "Column13", "Column14", "Column15", "Column16", "Column17", "Column18", "Column19", "Column20", "Column21", "Column22", "Column23", "Column24"), 
+        new Model("Column1", "Column2", "Column3", "Column4", "Column5", "Column6", "Column7", "Column8", "Column9", "Column10", "Column11", "Column12",
+            "Column13", "Column14", "Column15", "Column16", "Column17", "Column18", "Column19", "Column20", "Column21", "Column22", "Column23", "Column24"), 
+        new Model("Column1", "Column2", "Column3", "Column4", "Column5", "Column6", "Column7", "Column8", "Column9", "Column10", "Column11", "Column12",
+            "Column13", "Column14", "Column15", "Column16", "Column17", "Column18", "Column19", "Column20", "Column21", "Column22", "Column23", "Column24"), 
+        new Model("Column1", "Column2", "Column3", "Column4", "Column5", "Column6", "Column7", "Column8", "Column9", "Column10", "Column11", "Column12",
+            "Column13", "Column14", "Column15", "Column16", "Column17", "Column18", "Column19", "Column20", "Column21", "Column22", "Column23", "Column24"), 
+    };
+
+    public record Model(string Column1, string Column2, string Column3, string Column4, string Column5, string Column6, string Column7, 
+        string Column8, string Column9, string Column10, string Column11, string Column12, string Column13, string Column14, string Column15, 
+        string Column16, string Column17, string Column18, string Column19, string Column20, string Column21, string Column22, string Column23, string Column24);
+}
