@@ -21,15 +21,14 @@ namespace MudBlazor.UnitTests.Components
             var inputControl = comp.FindComponent<MudInputControl>();
             inputControl.Instance.InputContent.Should().NotBeNull();
 
-            comp.Markup.Should().Contain("mud-radio-group");
-            comp.FindAll("div.mud-radio-group").Count.Should().Be(1);
-            comp.FindAll("div.some-main-class").Count.Should().Be(1);
-            comp.FindAll("div.some-input-class").Count.Should().Be(1);
-            comp.FindAll(".some-main-class .some-input-class").Count.Should().Be(1);
+            comp.FindAll("div.mud-radio-group").Should().ContainSingle();
+            comp.FindAll("div.some-main-class").Should().ContainSingle();
+            comp.FindAll("div.some-input-class").Should().ContainSingle();
+            comp.FindAll(".some-main-class .some-input-class").Should().ContainSingle();
             comp.FindAll(".mud-radio").Count.Should().Be(3);
             // Input content should not have main class (Classname), but should have input class (InputClass)
-            comp.Markup.Should().NotContain("mud-radio-group some-main-class");
-            comp.Markup.Should().Contain("mud-radio-group some-input-class");
+            comp.FindAll(".mud-radio-group.some-main-class").Should().BeEmpty();
+            comp.FindAll(".mud-radio-group.some-input-class").Should().ContainSingle();
         }
 
         [Test]
