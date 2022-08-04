@@ -183,6 +183,13 @@ namespace MudBlazor
         public string OpenIcon { get; set; } = Icons.Filled.ArrowDropDown;
 
         /// <summary>
+        /// Dropdown color of select. Supports theme colors.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Appearance)]
+        public Color Color { get; set; } = Color.Primary;
+
+        /// <summary>
         /// The Close Select Icon
         /// </summary>
         [Parameter]

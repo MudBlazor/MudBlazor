@@ -1,0 +1,57 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudSelect Dense="true" T="string" Label="Coffee" Variant="Variant.Text" Color="_color" AnchorOrigin="Origin.BottomCenter">
+    <MudSelectItem Value="@("Tyrannosaur")" />
+    <MudSelectItem Value="@("Triceratops")" />
+    <MudSelectItem Value="@("Mike Rex")" />
+</MudSelect>
+<MudSelect Dense="true" T="string" Label="Coffee" Variant="Variant.Outlined" Color="_color" AnchorOrigin="Origin.BottomCenter">
+    <MudSelectItem Value="@("Tyrannosaur")" />
+    <MudSelectItem Value="@("Triceratops")" />
+    <MudSelectItem Value="@("Henon Rex")" />
+</MudSelect>
+<MudSelect Dense="true" T="string" Label="Coffee" Variant="Variant.Filled" Color="_color" AnchorOrigin="Origin.BottomCenter">
+    <MudSelectItem Value="@("Tyrannosaur")" />
+    <MudSelectItem Value="@("Triceratops")" />
+    <MudSelectItem Value="@("Benno Rex")" />
+</MudSelect>
+<MudSelect T="string" Label="US States" MultiSelection="true" Color="_color">
+    @foreach (var state in states)
+    {
+        <MudSelectItem T="string" Value="@state">@state</MudSelectItem>
+    }
+</MudSelect>
+
+    <MudItem xs="12" sm="4">
+        <MudRadioGroup T="Color" @bind-SelectedOption="_color" Class="d-flex flex-column">
+            <MudRadio Option="Color.Primary" Color="Color.Primary">Primary</MudRadio>
+            <MudRadio Option="Color.Secondary" Color="Color.Secondary">Secondary</MudRadio>
+            <MudRadio Option="Color.Tertiary" Color="Color.Tertiary">Tertiary</MudRadio>
+            <MudRadio Option="Color.Info" Color="Color.Info">Info</MudRadio>
+            <MudRadio Option="Color.Success" Color="Color.Success">Success</MudRadio>
+            <MudRadio Option="Color.Warning" Color="Color.Warning">Warning</MudRadio>
+            <MudRadio Option="Color.Error" Color="Color.Error">Error</MudRadio>
+        </MudRadioGroup>
+    </MudItem>
+
+@code{
+    Color _color = Color.Primary;
+
+    private string[] states =
+    {
+        "Alabama", "Alaska", "American Samoa", "Arizona",
+        "Arkansas", "California", "Colorado", "Connecticut",
+        "Delaware", "District of Columbia", "Federated States of Micronesia",
+        "Florida", "Georgia", "Guam", "Hawaii", "Idaho",
+        "Illinois", "Indiana", "Iowa", "Kansas", "Kentucky",
+        "Louisiana", "Maine", "Marshall Islands", "Maryland",
+        "Massachusetts", "Michigan", "Minnesota", "Mississippi",
+        "Missouri", "Montana", "Nebraska", "Nevada",
+        "New Hampshire", "New Jersey", "New Mexico", "New York",
+        "North Carolina", "North Dakota", "Northern Mariana Islands", "Ohio",
+        "Oklahoma", "Oregon", "Palau", "Pennsylvania", "Puerto Rico",
+        "Rhode Island", "South Carolina", "South Dakota", "Tennessee",
+        "Texas", "Utah", "Vermont", "Virgin Island", "Virginia",
+        "Washington", "West Virginia", "Wisconsin", "Wyoming",
+    };
+}
