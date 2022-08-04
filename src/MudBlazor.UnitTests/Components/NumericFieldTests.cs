@@ -645,7 +645,7 @@ namespace MudBlazor.UnitTests.Components
             comp.WaitForAssertion(() => numericField.Value.Should().Be(1000));
 
             // period separator
-            comp.SetParam(x => x.Culture, new CultureInfo("de-DE"));
+            comp.SetParam(x => x.Culture, new CultureInfo("de-DE", false));
             comp.FindAll("input").First().Change("1.000");
             comp.FindAll("input").First().Blur();
             comp.WaitForAssertion(() => numericField.Text.Should().Be("1000"));
