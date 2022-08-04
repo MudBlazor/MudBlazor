@@ -137,6 +137,19 @@
         </DocsPageSection>
 
         <DocsPageSection>
+            <SectionHeader Title="Record Type Support">
+                <Description>
+                    By default, mutable <CodeInline>record</CodeInline> types do not work with multi-selection or editing. This is due to the way record equality works. To support multi-selection or editing of records in a <CodeInline>MudTable</CodeInline>,
+                    you must define a custom <CodeInline>Comparer</CodeInline> that implements <CodeInline>IEqualityComparer&lt;T&gt;</CodeInline>.
+                    The example below demonstrates multi-selection and paging while modifying a <CodeInline>record</CodeInline> type on <CodeInline>SelectedItemsChanged</CodeInline>.
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="TableRecordComparer" ShowCode="false" Block="true" FullWidth="true">
+                <TableRecordComparer />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
             <SectionHeader Title="Header and Footer">
                 <Description>
                     By default, you can put a list of <CodeInline>&lt;MudTh></CodeInline> inside <CodeInline>&lt;HeaderContent></CodeInline> and <CodeInline>&lt;MudTd></CodeInline> inside <CodeInline>&lt;FooterContent></CodeInline>, MudTable will automatically manage the table row for you, including the select-all column and adding an empty column for editable tables.<br />
