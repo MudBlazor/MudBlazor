@@ -31,8 +31,20 @@ namespace MudBlazor
     {
         private MudTr editedRow;
 
+        public IEqualityComparer<T> Comparer //when the comparer value is setup, update the collections with the new comparer
+        {
+            get => _comparer; 
+            set
+            {
+                _comparer = value;
+                Selection = new HashSet<T>(Selection, _comparer);
+                Rows = new Dictionary<T, MudTr>(Rows, _comparer);
+            }
+        }
+        private IEqualityComparer<T> _comparer;
+
         public HashSet<T> Selection { get; set; } = new HashSet<T>();
-        public HashSet<MudTrWithValue<T>> Rows { get; set; } = new HashSet<MudTrWithValue<T>>();
+        public Dictionary<T, MudTr> Rows { get; set; } = new Dictionary<T, MudTr>();
         public List<MudTableGroupRow<T>> GroupRows { get; set; } = new List<MudTableGroupRow<T>>();
 
         public List<MudTableSortLabel<T>> SortLabels { get; set; } = new List<MudTableSortLabel<T>>();
@@ -44,8 +56,8 @@ namespace MudBlazor
             // update row checkboxes
             foreach (var pair in Rows.ToArray())
             {
-                var row = pair.Row;
-                var item = pair.Value;
+                var row = pair.Value;
+                var item = pair.Key;
                 row.SetChecked(Selection.Contains(item), notify: notify);
             }
             //update group checkboxes
@@ -89,7 +101,7 @@ namespace MudBlazor
             var t = item.As<T>();
             if (t is null)
                 return;
-            Rows.Add(new MudTrWithValue<T>(t, row));
+            Rows[t] = row;
         }
 
         public override void Remove(MudTr row, object item)
@@ -97,7 +109,8 @@ namespace MudBlazor
             var t = item.As<T>();
             if (t is null)
                 return;
-            Rows.Remove(new MudTrWithValue<T>(t, row));
+            if (Rows[t] == row)
+                Rows.Remove(t);
         }
 
         #region --> Sorting

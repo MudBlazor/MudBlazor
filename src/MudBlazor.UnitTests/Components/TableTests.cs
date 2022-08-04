@@ -1521,7 +1521,7 @@ namespace MudBlazor.UnitTests.Components
             // Make sure number of items has updated
             tableInstance.GetFilteredItemsCount().Should().Be(1);
         }
-        
+
         /// Issue #3033
         /// Tests changing RowsPerPage Parameter from code - Table should re-render new RowsPerPage parameter and parameter value should be set
         /// </summary>
@@ -1541,19 +1541,70 @@ namespace MudBlazor.UnitTests.Components
             testComponent.WaitForAssertion(() => table.RowsPerPage.Should().Be(35));
         }
 
+        /// <summary>
+        /// Tests whether record type table items are kept track of when edited
+        /// </summary>
+        /// <returns></returns>
         [Test]
-        public async Task TableContextRecordTest()
+        public async Task TableRecordEditingMultiSelectTest()
         {
-            var comp = Context.RenderComponent<TableContextRecordTest>();
-            var table = comp.Instance.MudTableRef;
-            table.Context.Rows.Count.Should().Be(4);
+            var comp = Context.RenderComponent<TableRecordComparerTest>();
+            var table = comp.FindComponent<MudTable<TableRecordComparerTest.Element>>().Instance;
 
-            var rows = table.Context.Rows.OrderBy(x => x.Value.Value).ToList(); //get a sorted list with the first two items
+            var checkboxes = comp.FindComponents<MudCheckBox<bool>>().Select(x => x.Instance).ToArray();
 
-            rows.Count.Should().Be(4);
+            var inputs = comp.FindAll("input").ToArray();
+            inputs.Length.Should().Be(4); // one checkbox per row + one for the header
+            table.SelectedItems.Count.Should().Be(0); // selected items should be empty
+            // click header checkbox
+            inputs[0].Change(true);
+            table.SelectedItems.Count.Should().Be(3);
 
-            rows[0].Value.Should().Be(rows[1].Value); //row values should match
-            rows[0].Should().NotBe(rows[1]); //but the presence of the row means the containing record is unique
+            checkboxes.Sum(x => x.Checked ? 1 : 0).Should().Be(4); //there should be 4 items
+            comp.Find("p").TextContent.Should().Be("Elements { A, B, C }");
+
+            // Click on the second row
+            var trs = comp.FindAll("tr");
+            trs[2].Click();
+
+            // Change row two data
+            var input = comp.Find(("#Id2"));
+            input.Change("Change");
+
+            table.SelectedItems.Count.Should().Be(3);
+
+            checkboxes.Sum(x => x.Checked ? 1 : 0).Should().Be(4); //there should be 4 items
+            comp.Find("p").TextContent.Should().Be("Elements { A, Change, C }");
+
+            // Uncheck and verify that all items are removed
+            inputs[0].Change(false);
+            table.SelectedItems.Count.Should().Be(0);
+            checkboxes.Sum(x => x.Checked ? 1 : 0).Should().Be(0); //there should be 4 items
+            comp.Find("p").TextContent.Should().Be("Elements {  }");
+        }
+
+        /// <summary>
+        /// Setting a comparer should be reflected in all layers of the table
+        /// </summary>
+        /// <returns></returns>
+        [Test]
+        public async Task TableComparerContextTest()
+        {
+            var comp = Context.RenderComponent<TableComparerContextTest>();
+            var table = comp.FindComponent<MudTable<TableComparerContextTest.Element>>().Instance;
+
+            // Comparer is null by default
+            var context = table.Context;
+            table.Comparer.Should().Be(null);
+            context.Comparer.Should().Be(null);
+
+            await comp.InvokeAsync(() => comp.Instance.SetComparer());
+
+            // All comparer values should match
+            table.Comparer.Should().Be(comp.Instance.Comparer);
+            context.Comparer.Should().Be(comp.Instance.Comparer);
+            context.Selection.Comparer.Should().Be(comp.Instance.Comparer); //check comparer is set in HashSet and Dictionary
+            context.Rows.Comparer.Should().Be(comp.Instance.Comparer);
         }
     }
 }
