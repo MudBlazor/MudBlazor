@@ -624,5 +624,32 @@ namespace MudBlazor.UnitTests.Components
             comp.WaitForAssertion(() => numericField.Text.Should().Be("€1234"));
             comp.WaitForAssertion(() => numericField.Value.Should().Be(1234));
         }
+
+        /// <summary>
+        /// Test that thousands separator is parsed properly
+        /// </summary>
+        [Test]
+        public async Task NumericFieldThousandsSeparator()
+        {
+            var comp = Context.RenderComponent<MudNumericField<int?>>();
+            var numericField = comp.Instance;
+
+            numericField.Value.Should().Be(null);
+            numericField.Text.Should().Be(null);
+
+            // comma separator
+            comp.SetParam(x => x.Culture, CultureInfo.InvariantCulture);
+            comp.FindAll("input").First().Change("1,000");
+            comp.FindAll("input").First().Blur();
+            comp.WaitForAssertion(() => numericField.Text.Should().Be("1000"));
+            comp.WaitForAssertion(() => numericField.Value.Should().Be(1000));
+
+            // period separator
+            comp.SetParam(x => x.Culture, new CultureInfo("de-DE", false));
+            comp.FindAll("input").First().Change("1.000");
+            comp.FindAll("input").First().Blur();
+            comp.WaitForAssertion(() => numericField.Text.Should().Be("1000"));
+            comp.WaitForAssertion(() => numericField.Value.Should().Be(1000));
+        }
     }
 }
