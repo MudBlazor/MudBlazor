@@ -1521,7 +1521,7 @@ namespace MudBlazor.UnitTests.Components
             // Make sure number of items has updated
             tableInstance.GetFilteredItemsCount().Should().Be(1);
         }
-        
+
         /// Issue #3033
         /// Tests changing RowsPerPage Parameter from code - Table should re-render new RowsPerPage parameter and parameter value should be set
         /// </summary>
@@ -1581,6 +1581,30 @@ namespace MudBlazor.UnitTests.Components
             table.SelectedItems.Count.Should().Be(0);
             checkboxes.Sum(x => x.Checked ? 1 : 0).Should().Be(0); //there should be 4 items
             comp.Find("p").TextContent.Should().Be("Elements {  }");
+        }
+
+        /// <summary>
+        /// Setting a comparer should be reflected in all layers of the table
+        /// </summary>
+        /// <returns></returns>
+        [Test]
+        public async Task TableComparerContextTest()
+        {
+            var comp = Context.RenderComponent<TableComparerContextTest>();
+            var table = comp.FindComponent<MudTable<TableComparerContextTest.Element>>().Instance;
+
+            // Comparer is null by default
+            var context = table.Context;
+            table.Comparer.Should().Be(null);
+            context.Comparer.Should().Be(null);
+
+            await comp.InvokeAsync(() => comp.Instance.SetComparer());
+
+            // All comparer values should match
+            table.Comparer.Should().Be(comp.Instance.Comparer);
+            context.Comparer.Should().Be(comp.Instance.Comparer);
+            context.Selection.Comparer.Should().Be(comp.Instance.Comparer); //check comparer is set in HashSet and Dictionary
+            context.Rows.Comparer.Should().Be(comp.Instance.Comparer);
         }
     }
 }
