@@ -37,6 +37,13 @@ namespace MudBlazor
         internal string ItemId { get; } = "_" + Guid.NewGuid().ToString().Substring(0, 8);
 
         /// <summary>
+        /// If true, 
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.List.Behavior)]
+        public bool Exceptional { get; set; }
+
+        /// <summary>
         /// The text to display
         /// </summary>
         [Parameter]

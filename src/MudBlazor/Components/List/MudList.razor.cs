@@ -65,6 +65,11 @@ namespace MudBlazor
 
             set
             {
+                if (ParentList != null)
+                {
+                    _multiSelection = ParentList.MultiSelection;
+                    return;
+                }
                 if (_multiSelection == value)
                 {
                     return;
@@ -174,9 +179,10 @@ namespace MudBlazor
             }
             else if (changedValueType == "MultiSelectionOff")
             {
-                var items = CollectAllMudListItems();
-                SelectedValues = new List<T>() { SelectedValue };
-                SelectedItems = items.Where(x => SelectedValues.Contains(x.Value)).ToList();
+                SelectedValue = SelectedValues.FirstOrDefault();
+                //var items = CollectAllMudListItems(true);
+                //SelectedValues = new List<T>() { SelectedValue };
+                //SelectedItems = items.Where(x => SelectedValues.Contains(x.Value)).ToList();
             }
         }
 
@@ -191,6 +197,10 @@ namespace MudBlazor
             get => _selectedValue;
             set
             {
+                if (ParentList != null)
+                {
+                    return;
+                }
                 if ((_selectedValue != null && value != null && _selectedValue.ToString() == value.ToString()) || (_selectedValue == null && value == null))
                     return;
                 _selectedValue = value;
@@ -216,6 +226,10 @@ namespace MudBlazor
 
             set
             {
+                if (ParentList != null)
+                {
+                    return;
+                }
                 var set = value ?? new List<T>();
                 if ((_selectedValues != null && value != null && _selectedValues == value) || (_selectedValues == null && value == null))
                 {
@@ -287,7 +301,7 @@ namespace MudBlazor
 
         internal void UpdateSelectedItem()
         {
-            var items = CollectAllMudListItems().Where(x => x.NestedList == null);
+            var items = CollectAllMudListItems(true);
 
             if (MultiSelection && (SelectedValues == null || SelectedValues.Count() == 0))
             {
@@ -300,18 +314,18 @@ namespace MudBlazor
             SelectedItems = items.Where(x => SelectedValues.Contains(x.Value)).ToList();
         }
 
-        private void GetSelectedItem()
-        {
-            var items = CollectAllMudListItems();
-            if (!MultiSelection)
-            {
-                SelectedItem = items.FirstOrDefault(x => x.Value != null && x.Value.Equals(_selectedValue));
-            }
-            else
-            {
-                SelectedItems = items.Where(x => SelectedValues != null && SelectedValues.Contains(x.Value));
-            }
-        }
+        //private void GetSelectedItem()
+        //{
+        //    var items = CollectAllMudListItems(true);
+        //    if (!MultiSelection)
+        //    {
+        //        SelectedItem = items.FirstOrDefault(x => x.Value != null && x.Value.Equals(_selectedValue));
+        //    }
+        //    else
+        //    {
+        //        SelectedItems = items.Where(x => SelectedValues != null && SelectedValues.Contains(x.Value));
+        //    }
+        //}
         
 
         /// <summary>
@@ -402,58 +416,36 @@ namespace MudBlazor
             _childLists.Remove(child);
         }
 
-        //internal void SetSelectedValue(T value, bool force = false, bool changeValue = true)
-        //{
-        //    if ((!Clickable && !MultiSelection) && !force)
-        //        return;
+        internal void SetSelectedValue(T value, bool force = false)
+        {
+            if ((!Clickable && !MultiSelection) && !force)
+                return;
 
-        //    //Make sure its the most parent one before continue method
-        //    if (ParentList != null)
-        //    {
-        //        ParentList?.SetSelectedValue(value);
-        //        return;
-        //    }
+            //Make sure its the most parent one before continue method
+            if (ParentList != null)
+            {
+                ParentList?.SetSelectedValue(value);
+                return;
+            }
 
-        //    var items = CollectAllMudListItems();
-
-        //    SelectedItem = items.FirstOrDefault(x => x.Value.Equals(value));
-        //    if (changeValue)
-        //    {
-        //        SelectedValue = value;
-        //    }
-
-        //    var currentItem = items.FirstOrDefault(x => x.Value.Equals(value));
-
-        //    if (!MultiSelection)
-        //    {
-        //        RemoveSelectedCSS(items);
-
-        //        var selectedItem = items.FirstOrDefault(x => x.Value.Equals(value));
-        //        if (selectedItem != null)
-        //            selectedItem.SetSelected(true);
-        //    }
-        //    else
-        //    {
-        //        if (SelectedValues.Contains(value))
-        //        {
-        //            currentItem?.SetSelected(false);
-        //            SelectedItems = SelectedItems?.Where(x => !x.Equals(currentItem));
-        //            SelectedValues = SelectedValues?.Where(x => x == null ? false : !x.Equals(value));
-        //        }
-        //        else
-        //        {
-        //            currentItem?.SetSelected(true);
-        //            SelectedItems = SelectedItems.Append(currentItem);
-        //            SelectedValues = SelectedValues.Append(value);
-        //        }
-
-        //        //RemoveSelectedCSS(items.Where(x => !x.IsSelected).ToList());
-
-        //    }
-
-
-        //    _lastActivatedItem = currentItem;
-        //}
+            if (!MultiSelection)
+            {
+                SelectedValue = value;
+            }
+            else
+            {
+                if (SelectedValues.Contains(value))
+                {
+                    SelectedValues = SelectedValues?.Where(x => x == null ? false : !x.Equals(value));
+                }
+                else
+                {
+                    SelectedValues = SelectedValues.Append(value);
+                }
+            }
+            UpdateLastActivatedItem(value);
+            //_lastActivatedItem = item;
+        }
 
         internal void SetSelectedValue(MudListItem<T> item, bool force = false)
         {
@@ -466,17 +458,17 @@ namespace MudBlazor
                 ParentList?.SetSelectedValue(item);
                 return;
             }
-
             //create a list of all MudListItems to use for selecting the right item
-            var items = CollectAllMudListItems();
+            //var items = CollectAllMudListItems(true);
 
 
             //SelectedItem = item;
-            SelectedValue = item.Value;
+
 
             if (!MultiSelection)
             {
-                SelectedValues = new List<T>() { SelectedValue };
+                //SelectedValues = new List<T>() { SelectedValue };
+                SelectedValue = item.Value;
             }
             else
             {
@@ -495,12 +487,13 @@ namespace MudBlazor
             }
 
             //UpdateSelectedStyles();
+            //UpdateLastActivatedItem(SelectedValue);
             _lastActivatedItem = item;
         }
 
         internal void UpdateSelectedStyles()
         {
-            var items = CollectAllMudListItems();
+            var items = CollectAllMudListItems(true);
             DeselectAllItems(items);
 
             if (!IsSelectable())
@@ -563,20 +556,43 @@ namespace MudBlazor
                 listItem?.SetSelected(false);
         }
 
-        private List<MudListItem<T>> CollectAllMudListItems()
+        public List<MudListItem<T>> CollectAllMudListItems(bool exceptNestedAndExceptional = false)
         {
-            var items = _items.ToList();
-            foreach (var list in _childLists)
-                items.AddRange(list._items);
+            var items = new List<MudListItem<T>>();
+            
             if (ParentList != null)
+            {
                 items.AddRange(ParentList._items);
-            return items;
+                foreach (var list in ParentList._childLists)
+                    items.AddRange(list._items);
+            }
+            else
+            {
+                items.AddRange(_items);
+                foreach (var list in _childLists)
+                    items.AddRange(list._items);
+            }
+
+            if (exceptNestedAndExceptional == false)
+            {
+                return items;
+            }
+            else
+            {
+                return items.Where(x => x.NestedList == null && x.Exceptional == false).ToList();
+            }
+            
         }
 
         internal async Task HandleKeyDown(KeyboardEventArgs obj)
         {
             if (Disabled || (Clickable == false && MultiSelection == false))
                 return;
+            if (ParentList != null)
+            {
+                //await ParentList.HandleKeyDown(obj);
+                return;
+            }
             var key = obj.Key.ToLowerInvariant();
             if (key.Length == 1 && key != " " && !(obj.CtrlKey || obj.ShiftKey || obj.AltKey || obj.MetaKey))
             {
@@ -624,7 +640,7 @@ namespace MudBlazor
             if (MultiSelection)
             {
                 var oldState = _allSelected;
-                if (CollectAllMudListItems().Where(x => x.NestedList == null).Count() == _selectedItems.Count)
+                if (CollectAllMudListItems(true).Count() == _selectedItems.Count)
                 {
                     _allSelected = true;
                 }
@@ -637,12 +653,16 @@ namespace MudBlazor
 
         private void OnFocusOut()
         {
+            //if (ParentList != null)
+            //{
+            //    DeactiveAllItems();
+            //}
             DeactiveAllItems();
         }
 
         protected void SelectAllItems(bool deselect = false)
         {
-            var items = CollectAllMudListItems().Where(x => x.NestedList == null).ToList();
+            var items = CollectAllMudListItems(true);
             if (deselect == true)
             {
                 foreach (var item in items)
@@ -665,14 +685,29 @@ namespace MudBlazor
 
         public int GetActiveItemIndex()
         {
-            var items = CollectAllMudListItems().Where(x => x.NestedList == null).ToList();
+            var items = CollectAllMudListItems(true);
             if (_lastActivatedItem == null)
             {
-                return items.FindIndex(x => x.IsActive == true);
+                var a = items.FindIndex(x => x.IsActive == true);
+                return a;
             }
             else
             {
-                return items.FindIndex(x => x == _lastActivatedItem);
+                var a = items.FindIndex(x => x.Value?.ToString() == _lastActivatedItem.Value.ToString());
+                return a;
+            }
+        }
+
+        public T GetActiveItemValue()
+        {
+            var items = CollectAllMudListItems(true);
+            if (_lastActivatedItem == null)
+            {
+                return items.FirstOrDefault(x => x.IsActive == true).Value;
+            }
+            else
+            {
+                return _lastActivatedItem.Value;
             }
         }
 
@@ -683,13 +718,13 @@ namespace MudBlazor
                 _lastActivatedItem = null;
                 return;
             }
-            var items = CollectAllMudListItems().Where(x => x.NestedList == null).ToList();
-            _lastActivatedItem = items.FirstOrDefault(x => x.Value.ToString() == value.ToString());
+            var items = CollectAllMudListItems(true);
+            _lastActivatedItem = items.FirstOrDefault(x => x.Value?.ToString() == value.ToString());
         }
 
         private void DeactiveAllItems()
         {
-            var items = CollectAllMudListItems().Where(x => x.NestedList == null).ToList();
+            var items = CollectAllMudListItems(true);
             foreach (var item in items)
             {
                 item.SetActive(false);
@@ -698,7 +733,7 @@ namespace MudBlazor
 
         public async Task ActiveFirstItem(string startChar = null)
         {
-            var items = CollectAllMudListItems().Where(x => x.NestedList == null).ToList();
+            var items = CollectAllMudListItems(true);
             if (items == null || items.Count == 0 || items[0].Disabled == true)
             {
                 return;
@@ -748,7 +783,7 @@ namespace MudBlazor
 
         public async Task ActiveAdjacentItem(int changeCount)
         {
-            var items = CollectAllMudListItems().Where(x => x.NestedList == null).ToList();
+            var items = CollectAllMudListItems(true);
             if (items == null || items.Count == 0)
             {
                 return;
@@ -779,7 +814,7 @@ namespace MudBlazor
 
         public async Task ActivePreviousItem()
         {
-            var items = CollectAllMudListItems().Where(x => x.NestedList == null).ToList();
+            var items = CollectAllMudListItems(true);
             if (items == null || items.Count == 0)
             {
                 return;
@@ -803,7 +838,7 @@ namespace MudBlazor
 
         public async Task ActiveLastItem()
         {
-            var items = CollectAllMudListItems().Where(x => x.NestedList == null).ToList();
+            var items = CollectAllMudListItems(true);
             if (items == null || items.Count == 0 || items[items.Count - 1].Disabled == true)
             {
                 return;

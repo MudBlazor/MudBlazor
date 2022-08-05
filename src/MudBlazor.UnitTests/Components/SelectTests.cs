@@ -940,7 +940,7 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(() => select.HandleKeyDown(new KeyboardEventArgs() { Key = "ArrowDown", Type = "keydown", }));
             await comp.InvokeAsync(() => select.HandleKeyDown(new KeyboardEventArgs() { Key = "Enter", Type = "keydown", }));
             comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().NotContain("mud-popover-open"));
-            //comp.WaitForAssertion(() => select.SelectedValue.Should().Be("3"));
+            comp.WaitForAssertion(() => select.SelectedValue.Should().Be("3"));
 
             await comp.InvokeAsync(() => select.HandleKeyDown(new KeyboardEventArgs() { Key = "Enter", Type = "keydown", }));
             await comp.InvokeAsync(() => select.HandleKeyDown(new KeyboardEventArgs() { Key = "ArrowDown", Type = "keydown", }));

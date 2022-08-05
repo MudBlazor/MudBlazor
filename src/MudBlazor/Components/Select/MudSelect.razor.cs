@@ -350,8 +350,9 @@ namespace MudBlazor
         protected override void OnAfterRender(bool firstRender)
         {
             base.OnAfterRender(firstRender);
-            //if (firstRender && Value != null)
+            //if (firstRender && _selectedValues.Any())
             //{
+            //    SetTextAsync(_selectedValues.FirstOrDefault().ToString()).AndForget();
             //    // we need to render the initial Value which is not possible without the items
             //    // which supply the RenderFragment. So in this case, a second render is necessary
             //    StateHasChanged();
@@ -710,20 +711,17 @@ namespace MudBlazor
             StateHasChanged();
             // TODO remove this delay but removed this makes _list null because code reach _list before popover render.
             await Task.Delay(1);
-            if (!MultiSelection)
-            {
-                _list.UpdateLastActivatedItem(SelectedValue);
-                if (_list._lastActivatedItem != null)
-                {
-                    await _list.ScrollToMiddleAsync(_list._lastActivatedItem);
-                }
-
-            }
-            else
+            if (MultiSelection)
             {
                 _list.UpdateSelectAllChecked();
                 _list.UpdateSelectedStyles();
             }
+            _list.UpdateLastActivatedItem(SelectedValue);
+            if (_list._lastActivatedItem != null)
+            {
+                await _list.ScrollToMiddleAsync(_list._lastActivatedItem);
+            }
+
             //await HilightSelectedValue();
             ////Scroll the active item on each opening
             //if (_activeItemId != null)

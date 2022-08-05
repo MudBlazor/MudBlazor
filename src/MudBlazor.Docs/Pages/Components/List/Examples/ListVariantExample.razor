@@ -3,7 +3,7 @@
 <MudGrid>
     <MudItem xs="12" sm="8" Class="d-flex align-center justify-center">
         <MudPaper Width="300px">
-            <MudList @ref="_list" T="int?" Clickable="_clickable" MultiSelection="_multiSelection" @bind-SelectedValue="_selectedValue" @bind-SelectedItem="_selectedItem" @bind-SelectedValues="_selectedValues" @bind-SelectedItems="_selectedItems">
+            <MudList @ref="_list" T="int?" Clickable="_clickable" @onmouseup="ListClick" @onkeyup="ListKeyUp" MultiSelection="_multiSelection" @bind-SelectedValue="_selectedValue" @bind-SelectedItem="_selectedItem" @bind-SelectedValues="_selectedValues" @bind-SelectedItems="_selectedItems">
                 <MudListItem T="int?" Text="Sparkling Water (1)" Value="1" />
                 <MudListItem T="int?" Text="Still Water (2)" Value="2" />
                 <MudListItem T="int?" Text="Teas" InitiallyExpanded="true">
@@ -38,10 +38,14 @@
         <MudButton OnClick="@(() => _selectedValue = 2)">Select 2</MudButton>
         <MudButton OnClick="@(() => _selectedValues = new List<int?>() { 2, 4 })">Select 2 and 4</MudButton>
         <MudButton OnClick="@(() => _list.Clear())">Clear</MudButton>
+        <MudButton OnClick="GetItemCount">Item Count</MudButton>
         <MudText Class="ma-4">Selected Value: @_selectedValue</MudText>
         <MudText Class="ma-4">Selected Values: @string.Join(", ", _selectedValues ?? new List<int?>())</MudText>
         <MudText Class="ma-4">Selected Item Text: @_selectedItem?.Text</MudText>
         <MudText Class="ma-4">Selected Items Texts: @string.Join(", ", _selectedItems == null ? new List<string>() : _selectedItems.Select(x => x.Text))</MudText>
+        <MudText>@_itemCount</MudText>
+        <MudText>@string.Join(", ", _texts)</MudText>
+        <MudText>@_lai?.Text</MudText>
     </MudItem>
 </MudGrid>
 
@@ -49,13 +53,35 @@
     bool _clickable = true;
     bool _multiSelection = false;
     int? _selectedValue = 1;
+    string _itemCount;
     //MudSelect<int?> _select;
     MudList<int?> _list;
     MudListItem<int?> _selectedItem = new();
     List<MudListItem<int?>> _selectedItems = new();
+    List<MudListItem<int?>> _testItems = new();
     //string _values = "";
-    //string _texts = "";
+    List<string> _texts = new();
     IEnumerable<int?> _selectedValues = new List<int?>();
+    MudListItem<int?> _lai = new();
+
+    private void GetItemCount()
+    {
+        _itemCount = _list.AllItems[4].Value.ToString();
+    }
+
+    private void ListClick()
+    {
+        _testItems = _list.CollectAllMudListItems(true);
+        _texts.Clear();
+        _testItems.ForEach(x => _texts.Add(x.Text));
+        _lai = _list._lastActivatedItem;
+        StateHasChanged();
+    }
+
+    private void ListKeyUp()
+    {
+        _lai = _list._lastActivatedItem;
+    }
 
     //private void GetSelectedValues()
     //{
