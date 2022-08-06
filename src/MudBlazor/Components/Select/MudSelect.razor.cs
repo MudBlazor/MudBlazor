@@ -308,7 +308,7 @@ namespace MudBlazor
                 {
                     Value = value;
                 }
-                SetValueAsync(value, false).AndForget();
+                //SetValueAsync(value, false).AndForget();
                 SelectedValueChanged.InvokeAsync(_selectedValue).AndForget();
             }
         }
@@ -328,11 +328,11 @@ namespace MudBlazor
                     return;
                 }
                 _selectedListItem = value;
-                //if (_selectedListItem == null)
-                //{
-                //    SelectedItem = null;
-                //    return;
-                //}
+                if (_selectedListItem == null)
+                {
+                    SelectedItem = null;
+                    return;
+                }
                 SelectedItem = Items.FirstOrDefault(x => Converter.Set(x.Value) == Converter.Set(_selectedListItem.Value));
             }
         }

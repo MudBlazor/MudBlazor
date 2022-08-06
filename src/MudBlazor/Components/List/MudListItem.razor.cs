@@ -23,10 +23,10 @@ namespace MudBlazor
           .AddClass("mud-list-item-gutters", !DisableGutters && !(MudList?.DisableGutters == true))
           .AddClass("mud-list-item-clickable", MudList?.Clickable)
           .AddClass("mud-ripple", MudList?.Clickable == true && !DisableRipple && !Disabled)
-          .AddClass($"mud-selected-item mud-{MudList?.Color.ToDescriptionString()}-text mud-{MudList?.Color.ToDescriptionString()}-hover", _selected && !Disabled && NestedList == null && !MudList.DisableSelectedStyle)
-          .AddClass("mud-list-item-hilight", _active && !Disabled && NestedList == null)
+          .AddClass($"mud-selected-item mud-{MudList?.Color.ToDescriptionString()}-text mud-{MudList?.Color.ToDescriptionString()}-hover", _selected && !Disabled && NestedList == null && !MudList.DisableSelectedBackground)
+          .AddClass("mud-list-item-hilight", _active && !Disabled && NestedList == null && Exceptional == false)
           .AddClass("mud-list-item-disabled", Disabled)
-          .AddClass("mud-list-item-nested-background", MudList != null && MudList.SecondaryBackgroundColorForNestedItemHeader && NestedList != null)
+          .AddClass("mud-list-item-nested-background", MudList != null && MudList.SecondaryBackgroundForNestedItemHeader && NestedList != null)
           .AddClass(Class)
         .Build();
 

@@ -112,7 +112,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.List.Appearance)]
-        public bool DisableSelectedStyle { get; set; }
+        public bool DisableSelectedBackground { get; set; }
 
         /// <summary>
         /// If true, compact vertical padding will be applied to all list items.
@@ -154,7 +154,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.List.Appearance)]
-        public bool SecondaryBackgroundColorForNestedItemHeader { get; set; }
+        public bool SecondaryBackgroundForNestedItemHeader { get; set; }
 
         /// <summary>
         /// Fired on the KeyDown event.

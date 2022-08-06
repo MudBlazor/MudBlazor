@@ -1,4 +1,6 @@
-﻿.mud-list {
+﻿@import '../abstracts/variables';
+
+.mud-list {
     margin: 0;
     padding: 0;
     position: relative;
@@ -138,7 +140,7 @@
 }
 
 .mud-list-item-hilight {
-    background-color: yellow;
+    background-color: var(--mud-palette-background-grey);
 }
 
 .mud-list-item-avatar {
