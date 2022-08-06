@@ -6,6 +6,7 @@
 
 using System;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 
@@ -57,9 +58,9 @@ namespace MudBlazor
             RenderFragment = rf;
         }
 
-        public async Task<T> GetReturnValueAsync<T>()
+        public async Task<T> GetReturnValueAsync<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] T>()
         {
-            var result=await Result;
+            var result = await Result;
             try
             {
                 return (T)result.Data;
