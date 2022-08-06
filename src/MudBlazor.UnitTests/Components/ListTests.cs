@@ -102,5 +102,24 @@ namespace MudBlazor.UnitTests.Components
             var listItemClasses = comp.Find(".mud-selected-item");
             listItemClasses.ClassList.Should().ContainInOrder(new[] { $"mud-{color.ToDescriptionString()}-text", $"mud-{color.ToDescriptionString()}-hover" });
         }
+
+        /// <summary>
+        /// The child lists should honor the Dense property of their parent list if not overriden.
+        /// </summary>
+        [Test]
+        [TestCase(true, null, 9)]
+        [TestCase(false, null, 0)]
+        [TestCase(true, true, 9)]
+        [TestCase(false, false, 0)]
+        [TestCase(true, false, 5)]
+        [TestCase(false, true, 4)]
+        public async Task ListDenseInheritanceTest(bool dense, bool? innerListDense, int expectedDenseClassCount)
+        {
+            var comp = Context.RenderComponent<ListDenseInheritanceTest>(x => x.Add(c => c.Dense, dense).Add(c => c.InnerListDense, innerListDense));
+            var list = comp.FindComponent<MudList>().Instance;
+
+            comp.FindAll("div.mud-list-item").Count.Should().Be(9); // 7 choices, 2 groups
+            comp.FindAll("div.mud-list-item-dense").Count.Should().Be(expectedDenseClassCount); // 7 choices, 2 groups
+        }
     }
 }
