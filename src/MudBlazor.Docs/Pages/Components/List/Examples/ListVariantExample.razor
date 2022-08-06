@@ -1,14 +1,14 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
 <MudGrid>
-    <MudItem xs="12" sm="8" Class="d-flex align-center justify-center">
+    <MudItem xs="12" sm="8" Class="d-flex align-start justify-center">
         <MudPaper Width="300px">
-            <MudList @ref="_list" T="int?" Clickable="_clickable" @onmouseup="ListClick" @onkeyup="ListKeyUp" MultiSelection="_multiSelection" @bind-SelectedValue="_selectedValue" @bind-SelectedItem="_selectedItem" @bind-SelectedValues="_selectedValues" @bind-SelectedItems="_selectedItems">
+            <MudList @ref="_list" T="int?" Clickable="_clickable" @onmouseup="ListClick" @onkeyup="ListKeyUp" MultiSelection="_multiSelection" SelectAll="_selectAll" @bind-SelectedValue="_selectedValue" @bind-SelectedItem="_selectedItem" @bind-SelectedValues="_selectedValues" @bind-SelectedItems="_selectedItems">
                 <MudListItem T="int?" Text="Sparkling Water (1)" Value="1" />
                 <MudListItem T="int?" Text="Still Water (2)" Value="2" />
                 <MudListItem T="int?" Text="Teas" InitiallyExpanded="true">
                     <NestedList>
-                        <MudListItem T="int?" Text="Earl Grey (3)" Value="3" />
+                        <MudListItem T="int?" Exceptional="true" Text="Earl Grey (3)" Value="3" />
                         <MudListItem T="int?" Text="Matcha (4)" Value="4" />
                         <MudListItem T="int?" Text="Pu'er (5)" Value="5" />
                     </NestedList>
@@ -27,6 +27,7 @@
     <MudItem xs="12" sm="4">
         <MudCheckBox @bind-Checked="_clickable" Color="Color.Primary" Label="Clickable" />
         <MudCheckBox @bind-Checked="_multiSelection" Color="Color.Primary" Label="MultiSelection" />
+        <MudCheckBox @bind-Checked="_selectAll" Color="Color.Primary" Label="Select All" />
         <MudDivider />
         <MudTextField @bind-Value="_selectedValue" Clearable="true" />
         <MudSelect T="int?" @bind-SelectedValues="_selectedValues" MultiSelection="true" Variant="Variant.Filled" Label="Selected Values">
@@ -52,6 +53,7 @@
 @code{
     bool _clickable = true;
     bool _multiSelection = false;
+    bool _selectAll = false;
     int? _selectedValue = 1;
     string _itemCount;
     //MudSelect<int?> _select;
@@ -71,16 +73,16 @@
 
     private void ListClick()
     {
-        _testItems = _list.CollectAllMudListItems(true);
-        _texts.Clear();
-        _testItems.ForEach(x => _texts.Add(x.Text));
-        _lai = _list._lastActivatedItem;
-        StateHasChanged();
+        //_testItems = _list.CollectAllMudListItems(true);
+        //_texts.Clear();
+        //_testItems.ForEach(x => _texts.Add(x.Text));
+        ////_lai = _list._lastActivatedItem;
+        //StateHasChanged();
     }
 
     private void ListKeyUp()
     {
-        _lai = _list._lastActivatedItem;
+        //_lai = _list._lastActivatedItem;
     }
 
     //private void GetSelectedValues()

@@ -9,6 +9,14 @@ namespace MudBlazor
 {
     public partial class MudListItem<T> : MudComponentBase, IDisposable
     {
+
+        #region Parameters, Fields, Injected Services
+
+        [Inject] protected NavigationManager UriHelper { get; set; }
+
+        [CascadingParameter] protected MudList<T> MudList { get; set; }
+        [CascadingParameter] internal MudListItem<T> ParentListItem { get; set; }
+
         protected string Classname =>
         new CssBuilder("mud-list-item")
           .AddClass("mud-list-item-dense", Dense || MudList?.Dense == true)
@@ -28,16 +36,10 @@ namespace MudBlazor
             .AddClass("mud-list-item-multiselect-checkbox", MudList?.MultiSelectionComponent == MultiSelectionComponent.CheckBox || OverrideMultiSelectionComponent == MultiSelectionComponent.CheckBox)
             .Build();
 
-        [Inject] protected NavigationManager UriHelper { get; set; }
-
-        [CascadingParameter] protected MudList<T> MudList { get; set; }
-        [CascadingParameter] internal MudListItem<T> ParentListItem { get; set; }
-
-        private bool _onClickHandlerPreventDefault = false;
         internal string ItemId { get; } = "_" + Guid.NewGuid().ToString().Substring(0, 8);
 
         /// <summary>
-        /// If true, 
+        /// Exceptional items can not count on Items list (they count on AllItems), cannot be subject of keyboard navigation and selection.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.List.Behavior)]
@@ -149,14 +151,14 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.List.Expanding)]
-        public string ExpandLessIcon { get; set; } = Icons.Material.Filled.ExpandLess;
+        public string ExpandLessIcon { get; set; } = Icons.Filled.ExpandLess;
 
         /// <summary>
         /// Custom expand more icon.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.List.Expanding)]
-        public string ExpandMoreIcon { get; set; } = Icons.Material.Filled.ExpandMore;
+        public string ExpandMoreIcon { get; set; } = Icons.Filled.ExpandMore;
 
         /// <summary>
         /// If true, the List Subheader will be indented.
@@ -179,15 +181,55 @@ namespace MudBlazor
         [Category(CategoryTypes.List.Appearance)]
         public bool DisableGutters { get; set; }
 
+        /// <summary>
+        /// Command parameter.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.List.ClickAction)]
+        public object CommandParameter { get; set; }
 
         /// <summary>
-        /// Selected state of the option. Readonly. Use SetSelected for selecting.
+        /// Command executed when the user clicks on an element.
         /// </summary>
-        internal bool IsSelected
-        {
-            get => _selected;
-        }
+        [Parameter]
+        [Category(CategoryTypes.List.ClickAction)]
+        public ICommand Command { get; set; }
 
+        /// <summary>
+        /// Display content of this list item. If set, overrides Text.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.List.Behavior)]
+        public RenderFragment ChildContent { get; set; }
+
+        /// <summary>
+        /// Prevent default behavior when click on MudSelectItem. Default behavior is selecting the item and style adjustments.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.List.Behavior)]
+        public bool OnClickHandlerPreventDefault { get; set; }
+
+        /// <summary>
+        /// Add child list items here to create a nested list.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.List.Behavior)]
+        public RenderFragment NestedList { get; set; }
+
+        /// <summary>
+        /// List click event.
+        /// </summary>
+        [Parameter]
+        public EventCallback<MouseEventArgs> OnClick { get; set; }
+
+        /// <summary>
+        /// If true, expands the nested list on first display.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.List.Expanding)]
+        public bool InitiallyExpanded { get; set; }
+
+        private bool _expanded;
         /// <summary>
         /// Expand or collapse nested list. Two-way bindable. Note: if you directly set this to
         /// true or false (instead of using two-way binding) it will force the nested list's expansion state.
@@ -206,65 +248,88 @@ namespace MudBlazor
             }
         }
 
-        private bool _expanded;
-
+        /// <summary>
+        /// Called when expanded state change.
+        /// </summary>
         [Parameter]
         public EventCallback<bool> ExpandedChanged { get; set; }
 
-        /// <summary>
-        /// If true, expands the nested list on first display
-        /// </summary>
-        [Parameter]
-        [Category(CategoryTypes.List.Expanding)]
-        public bool InitiallyExpanded { get; set; }
+        #endregion
 
-        /// <summary>
-        /// Command parameter.
-        /// </summary>
-        [Parameter]
-        [Category(CategoryTypes.List.ClickAction)]
-        public object CommandParameter { get; set; }
 
-        /// <summary>
-        /// Command executed when the user clicks on an element.
-        /// </summary>
-        [Parameter]
-        [Category(CategoryTypes.List.ClickAction)]
-        public ICommand Command { get; set; }
+        #region Lifecycle Methods
 
-        /// <summary>
-        /// Display content of this list item. If set, this overrides Text
-        /// </summary>
-        [Parameter]
-        [Category(CategoryTypes.List.Behavior)]
-        public RenderFragment ChildContent { get; set; }
-
-        [Parameter]
-        [Category(CategoryTypes.List.Behavior)]
-        public bool OnClickHandlerPreventDefault
+        protected override void OnInitialized()
         {
-            get => _onClickHandlerPreventDefault;
-            set => _onClickHandlerPreventDefault = value;
+            _expanded = InitiallyExpanded;
+            if (MudList != null)
+            {
+                MudList.Register(this);
+                OnListParametersChanged();
+                MudList.ParametersChanged += OnListParametersChanged;
+            }
         }
 
-        /// <summary>
-        /// Add child list items here to create a nested list.
-        /// </summary>
-        [Parameter]
-        [Category(CategoryTypes.List.Behavior)]
-        public RenderFragment NestedList { get; set; }
+        #endregion
+
+
+        #region Select & Active
+
+        private bool _selected;
+        private bool _active;
 
         /// <summary>
-        /// List click event.
+        /// Selected state of the option. Readonly. Use SetSelected for selecting.
         /// </summary>
-        [Parameter]
-        public EventCallback<MouseEventArgs> OnClick { get; set; }
+        public bool IsSelected
+        {
+            get => _selected;
+        }
+
+        internal bool IsActive
+        {
+            get => _active;
+        }
+
+        public void SetSelected(bool selected, bool forceRender = true)
+        {
+            if (Disabled)
+                return;
+            if (_selected == selected)
+                return;
+            _selected = selected;
+            if (forceRender)
+            {
+                StateHasChanged();
+            }
+        }
+
+        internal void SetActive(bool active, bool forceRender = true)
+        {
+            if (Disabled)
+                return;
+            if (_active == active)
+                return;
+            _active = active;
+            if (forceRender)
+            {
+                StateHasChanged();
+            }
+        }
+
+        #endregion
+
+
+        public void ForceRender()
+        {
+            StateHasChanged();
+        }
 
         protected void OnClickHandler(MouseEventArgs ev)
         {
             if (Disabled)
                 return;
-            if (!_onClickHandlerPreventDefault)
+            if (!OnClickHandlerPreventDefault)
             {
                 if (NestedList != null)
                 {
@@ -293,17 +358,6 @@ namespace MudBlazor
             OnClick.InvokeAsync(ev);
         }
 
-        protected override void OnInitialized()
-        {
-            _expanded = InitiallyExpanded;
-            if (MudList != null)
-            {
-                MudList.Register(this);
-                OnListParametersChanged();
-                MudList.ParametersChanged += OnListParametersChanged;
-            }
-        }
-
         private Typo _textTypo;
         private void OnListParametersChanged()
         {
@@ -315,34 +369,6 @@ namespace MudBlazor
             {
                 _textTypo = Typo.body1;
             }
-            StateHasChanged();
-        }
-
-        private bool _selected;
-        private bool _active;
-
-        internal bool IsActive
-        {
-            get => _active;
-        }
-
-        public void SetSelected(bool selected)
-        {
-            if (Disabled)
-                return;
-            if (_selected == selected)
-                return;
-            _selected = selected;
-            StateHasChanged();
-        }
-
-        internal void SetActive(bool active)
-        {
-            if (Disabled)
-                return;
-            if (_active == active)
-                return;
-            _active = active;
             StateHasChanged();
         }
 

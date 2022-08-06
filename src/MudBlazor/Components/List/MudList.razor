@@ -4,6 +4,11 @@
 
 <div @attributes="UserAttributes" id="@_elementId" class="@Classname" style="@Style" tabindex="-1" @onkeydown="HandleKeyDown" @onfocusout="OnFocusOut">
     <CascadingValue Value="@this" IsFixed="true">
+        @if (MultiSelection && SelectAll && ParentList == null)
+        {
+            <MudListItem T="T" Exceptional="true" Icon="@SelectAllCheckBoxIcon" IconColor="@Color" Text="@SelectAllText" OverrideMultiSelectionComponent="MultiSelectionComponent.None" OnClick="@(() => SelectAllItems(_allSelected))" OnClickHandlerPreventDefault="true" Dense="@Dense" Class="mb-2" />
+            <MudDivider />
+        }
         @ChildContent
     </CascadingValue>
 </div>

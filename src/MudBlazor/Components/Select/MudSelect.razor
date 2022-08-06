@@ -24,17 +24,18 @@
                 </MudInput>
 				<MudPopover Open=@(_isOpen) MaxHeight="@MaxHeight" AnchorOrigin="@AnchorOrigin" TransformOrigin="@TransformOrigin" Class="@PopoverClass" RelativeWidth="true">
 					<CascadingValue Value="@((IMudSelect)this)" IsFixed="true">
-						<MudList @ref="@_list" T="T" Clickable="true" MultiSelection="@MultiSelection" Color="@Color" Dense="@Dense" @bind-SelectedValue="@SelectedValue" @bind-SelectedValues="@SelectedValues">
-                            @if (MultiSelection && SelectAll)
+						<MudList @ref="@_list" T="T" Clickable="true" MultiSelection="@MultiSelection" Color="@Color" Dense="@Dense" SelectAll="@SelectAll" SelectAllText="@SelectAllText"
+                            @bind-SelectedValue="@SelectedValue" @bind-SelectedValues="@SelectedValues" @bind-SelectedItem="@SelectedListItem">
+@*                            @if (MultiSelection && SelectAll)
 							{
 								<MudListItem T="T" Icon="@SelectAllCheckBoxIcon" IconColor="_list.Color" Text="@SelectAllText" OverrideMultiSelectionComponent="MultiSelectionComponent.None" OnClick="SelectAllClickAsync" OnClickHandlerPreventDefault="true" Dense="@Dense" Class="mb-2" />
                                 <MudDivider />
-							}
-							@ChildContent
+							}*@
+                            @ChildContent
 						</MudList>
 					</CascadingValue>
 				</MudPopover>
-			</InputContent>
+			</InputContent>        
 		</MudInputControl>
 	</div>
     @*Shadow select items for IsValueInList and CanRenderValue*@

@@ -220,6 +220,10 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public EventCallback<IEnumerable<T>> SelectedValuesChanged { get; set; }
 
+        [Parameter] public EventCallback<MudSelectItem<T>> SelectedItemChanged { get; set; }
+
+        [Parameter] public EventCallback<IEnumerable<MudSelectItem<T>>> SelectedItemsChanged { get; set; }
+
         /// <summary>
         /// Function to define a customized multiselection text.
         /// </summary>
@@ -293,7 +297,60 @@ namespace MudBlazor
                     return;
                 }
                 _selectedValue = value;
+                if (_firstRendered == false)
+                {
+                    Value = value;
+                }
                 SelectedValueChanged.InvokeAsync(_selectedValue).AndForget();
+            }
+        }
+
+        private MudListItem<T> _selectedListItem = new();
+        private MudSelectItem<T> _selectedItem = new();
+
+        internal MudListItem<T> SelectedListItem
+        {
+            get => _selectedListItem;
+
+            set
+            {
+                SelectedItem = Items.FirstOrDefault(x => Converter.Set(x.Value) == Converter.Set(_selectedListItem.Value));
+            }
+        }
+
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Data)]
+        public MudSelectItem<T> SelectedItem
+        {
+            get => _selectedItem;
+
+            set
+            {
+                if (_selectedItem == value)
+                {
+                    return;
+                }
+                _selectedItem = value;
+                SelectedItemChanged.InvokeAsync(_selectedItem).AndForget();
+            }
+        }
+
+        HashSet<MudSelectItem<T>> _selectedItems = new(); 
+
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Data)]
+        public IEnumerable<MudSelectItem<T>> SelectedItems
+        {
+            get => _selectedItems;
+
+            set
+            {
+                if (_selectedItems == value)
+                {
+                    return;
+                }
+                _selectedItems = value.ToHashSet();
+                SelectedItemsChanged.InvokeAsync(_selectedItems).AndForget();
             }
         }
 
@@ -347,9 +404,14 @@ namespace MudBlazor
             IconSize = Size.Medium;
         }
 
+        bool _firstRendered = false;
         protected override void OnAfterRender(bool firstRender)
         {
             base.OnAfterRender(firstRender);
+            if (firstRender)
+            {
+                _firstRendered = true;
+            }
             //if (firstRender && _selectedValues.Any())
             //{
             //    SetTextAsync(_selectedValues.FirstOrDefault().ToString()).AndForget();
@@ -713,11 +775,11 @@ namespace MudBlazor
             await Task.Delay(1);
             if (MultiSelection)
             {
-                _list.UpdateSelectAllChecked();
+                _list.UpdateSelectAllState();
                 _list.UpdateSelectedStyles();
             }
             _list.UpdateLastActivatedItem(SelectedValue);
-            if (_list._lastActivatedItem != null)
+            if (_list._lastActivatedItem != null && !(MultiSelection && _list._allSelected == true))
             {
                 await _list.ScrollToMiddleAsync(_list._lastActivatedItem);
             }
@@ -963,22 +1025,22 @@ namespace MudBlazor
                             break;
                         }
                     }
-                case "a":
-                case "A":
-                    if (obj.CtrlKey == true)
-                    {
-                        if (MultiSelection)
-                        {
-                            await SelectAllClickAsync();
-                            ////If we didn't add delay, it won't work.
-                            //await WaitForRender();
-                            //await Task.Delay(1);
-                            //StateHasChanged();
-                            //It only works when selecting all, not render unselect all.
-                            //UpdateSelectAllChecked();
-                        }
-                    }
-                    break;
+                //case "a":
+                //case "A":
+                //    if (obj.CtrlKey == true)
+                //    {
+                //        if (MultiSelection)
+                //        {
+                //            await SelectAllClickAsync();
+                //            ////If we didn't add delay, it won't work.
+                //            //await WaitForRender();
+                //            //await Task.Delay(1);
+                //            //StateHasChanged();
+                //            //It only works when selecting all, not render unselect all.
+                //            //UpdateSelectAllChecked();
+                //        }
+                //    }
+                //    break;
             }
             await OnKeyDown.InvokeAsync(obj);
 
@@ -1006,45 +1068,45 @@ namespace MudBlazor
             await SelectedValuesChanged.InvokeAsync(_selectedValues);
         }
 
-        private async Task SelectAllClickAsync()
-        {
-            // Manage the fake tri-state of a checkbox
-            if (!_selectAllChecked.HasValue)
-                _selectAllChecked = true;
-            else if (_selectAllChecked.Value)
-                _selectAllChecked = false;
-            else
-                _selectAllChecked = true;
-            // Define the items selection
-            if (_selectAllChecked.Value == true)
-                await SelectAllItems();
-            else
-                await Clear();
-        }
+        //private async Task SelectAllClickAsync()
+        //{
+        //    // Manage the fake tri-state of a checkbox
+        //    if (!_selectAllChecked.HasValue)
+        //        _selectAllChecked = true;
+        //    else if (_selectAllChecked.Value)
+        //        _selectAllChecked = false;
+        //    else
+        //        _selectAllChecked = true;
+        //    // Define the items selection
+        //    if (_selectAllChecked.Value == true)
+        //        await SelectAllItems();
+        //    else
+        //        await Clear();
+        //}
 
-        private async Task SelectAllItems()
-        {
-            if (!MultiSelection)
-                return;
-            var selectedValues = new HashSet<T>(_items.Where(x => !x.Disabled && x.Value != null).Select(x => x.Value), _comparer);
-            _selectedValues = new HashSet<T>(selectedValues, _comparer);
-            if (MultiSelectionTextFunc != null)
-            {
-                await SetCustomizedTextAsync(string.Join(Delimiter, SelectedValues.Select(x => Converter.Set(x))),
-                    selectedConvertedValues: SelectedValues.Select(x => Converter.Set(x)).ToList(),
-                    multiSelectionTextFunc: MultiSelectionTextFunc);
-            }
-            else
-            {
-                await SetTextAsync(string.Join(Delimiter, SelectedValues.Select(x => Converter.Set(x))), updateValue: false);
-            }
-            UpdateSelectAllChecked();
-            _selectedValues = selectedValues; // need to force selected values because Blazor overwrites it under certain circumstances due to changes of Text or Value
-            BeginValidate();
-            await SelectedValuesChanged.InvokeAsync(SelectedValues);
-            if (MultiSelection && typeof(T) == typeof(string))
-                SetValueAsync((T)(object)Text, updateText: false).AndForget();
-        }
+        //private async Task SelectAllItems()
+        //{
+        //    if (!MultiSelection)
+        //        return;
+        //    var selectedValues = new HashSet<T>(_items.Where(x => !x.Disabled && x.Value != null).Select(x => x.Value), _comparer);
+        //    _selectedValues = new HashSet<T>(selectedValues, _comparer);
+        //    if (MultiSelectionTextFunc != null)
+        //    {
+        //        await SetCustomizedTextAsync(string.Join(Delimiter, SelectedValues.Select(x => Converter.Set(x))),
+        //            selectedConvertedValues: SelectedValues.Select(x => Converter.Set(x)).ToList(),
+        //            multiSelectionTextFunc: MultiSelectionTextFunc);
+        //    }
+        //    else
+        //    {
+        //        await SetTextAsync(string.Join(Delimiter, SelectedValues.Select(x => Converter.Set(x))), updateValue: false);
+        //    }
+        //    UpdateSelectAllChecked();
+        //    _selectedValues = selectedValues; // need to force selected values because Blazor overwrites it under certain circumstances due to changes of Text or Value
+        //    BeginValidate();
+        //    await SelectedValuesChanged.InvokeAsync(SelectedValues);
+        //    if (MultiSelection && typeof(T) == typeof(string))
+        //        SetValueAsync((T)(object)Text, updateText: false).AndForget();
+        //}
 
         //public void RegisterShadowItem(MudSelectItem<T> item)
         //{

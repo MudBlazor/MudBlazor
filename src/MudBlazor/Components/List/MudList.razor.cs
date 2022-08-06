@@ -11,6 +11,8 @@ namespace MudBlazor
 {
     public partial class MudList<T> : MudComponentBase, IDisposable
     {
+        #region Parameters, Fields, Injected Services
+
         [Inject] private IKeyInterceptorFactory KeyInterceptorFactory { get; set; }
         [Inject] IScrollManager ScrollManager { get; set; }
 
@@ -24,7 +26,7 @@ namespace MudBlazor
         private T _selectedValue;
         private HashSet<T> _selectedValues = new();
         internal MudListItem<T> _lastActivatedItem;
-        bool _allSelected = false;
+        internal bool? _allSelected = false;
 
         protected string Classname =>
         new CssBuilder("mud-list")
@@ -33,12 +35,6 @@ namespace MudBlazor
         .Build();
 
         [CascadingParameter] protected MudList<T> ParentList { get; set; }
-
-        private ValueTask ScrollToItemAsync(MudListItem<T> item)
-            => item != null ? ScrollManager.ScrollToListItemAsync(item.ItemId) : ValueTask.CompletedTask;
-
-        protected internal ValueTask ScrollToMiddleAsync(MudListItem<T> item)
-            => ScrollManager.ScrollToMiddleAsync(_elementId, item.ItemId);
 
         /// <summary>
         /// The color of the selected List Item.
@@ -140,6 +136,20 @@ namespace MudBlazor
         public bool Disabled { get; set; }
 
         /// <summary>
+        /// If set to true and the MultiSelection option is set to true, a "select all" checkbox is added at the top of the list of items.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.ListBehavior)]
+        public bool SelectAll { get; set; }
+
+        /// <summary>
+        /// Define the text of the Select All option.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.ListAppearance)]
+        public string SelectAllText { get; set; } = "Select all";
+
+        /// <summary>
         /// If true, change background color to secondary for all nested item headers.
         /// </summary>
         [Parameter]
@@ -151,12 +161,10 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public EventCallback<KeyboardEventArgs> OnKeyDown { get; set; }
 
+        #endregion
 
-        public List<MudListItem<T>> AllItems
-        {
-            get => CollectAllMudListItems();
-        }
 
+        #region Values & Items
 
         internal async Task HandleCentralValueCommander(string changedValueType)
         {
@@ -186,9 +194,29 @@ namespace MudBlazor
             }
         }
 
+        private void UpdateSelectedValues(bool once = false)
+        {
+            SelectedValues = new List<T>() { SelectedValue };
+        }
+
+        internal void UpdateSelectedItem()
+        {
+            var items = CollectAllMudListItems(true);
+
+            if (MultiSelection && (SelectedValues == null || SelectedValues.Count() == 0))
+            {
+                SelectedItem = null;
+                SelectedItems = null;
+                return;
+            }
+
+            SelectedItem = items.FirstOrDefault(x => x.Value?.ToString() == SelectedValue?.ToString());
+            SelectedItems = items.Where(x => SelectedValues.Contains(x.Value)).ToList();
+        }
+
         /// <summary>
         /// The current selected value.
-        /// Note: make the list Clickable for item selection to work.
+        /// Note: Make the list Clickable or set MultiSelection true for item selection to work.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.List.Selecting)]
@@ -265,10 +293,6 @@ namespace MudBlazor
                 SelectedItemChanged.InvokeAsync(_selectedItem).AndForget();
             }
         }
-        /// <summary>
-        /// Called whenever the selection changed
-        /// </summary>
-        [Parameter] public EventCallback<MudListItem<T>> SelectedItemChanged { get; set; }
 
         /// <summary>
         /// The current selected listitems.
@@ -290,53 +314,39 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Called whenever the selection changed
-        /// </summary>
-        [Parameter] public EventCallback<List<MudListItem<T>>> SelectedItemsChanged { get; set; }
-
-        private void UpdateSelectedValues(bool once = false)
-        {
-            SelectedValues = new List<T>() { SelectedValue };
-        }
-
-        internal void UpdateSelectedItem()
-        {
-            var items = CollectAllMudListItems(true);
-
-            if (MultiSelection && (SelectedValues == null || SelectedValues.Count() == 0))
-            {
-                SelectedItem = null;
-                SelectedItems = null;
-                return;
-            }
-
-            SelectedItem = items.FirstOrDefault(x => x.Value?.ToString() == SelectedValue?.ToString());
-            SelectedItems = items.Where(x => SelectedValues.Contains(x.Value)).ToList();
-        }
-
-        //private void GetSelectedItem()
-        //{
-        //    var items = CollectAllMudListItems(true);
-        //    if (!MultiSelection)
-        //    {
-        //        SelectedItem = items.FirstOrDefault(x => x.Value != null && x.Value.Equals(_selectedValue));
-        //    }
-        //    else
-        //    {
-        //        SelectedItems = items.Where(x => SelectedValues != null && SelectedValues.Contains(x.Value));
-        //    }
-        //}
-        
-
-        /// <summary>
-        /// Called whenever the selection changed
+        /// Called whenever the selection changed. Can also be called even MultiSelection is true.
         /// </summary>
         [Parameter] public EventCallback<T> SelectedValueChanged { get; set; }
 
         /// <summary>
-        /// Fires when SelectedValues changes.
+        /// Called whenever selected values changes. Can also be called even MultiSelection is false.
         /// </summary>
         [Parameter] public EventCallback<IEnumerable<T>> SelectedValuesChanged { get; set; }
+
+        /// <summary>
+        /// Called whenever the selected item changed. Can also be called even MultiSelection is true.
+        /// </summary>
+        [Parameter] public EventCallback<MudListItem<T>> SelectedItemChanged { get; set; }
+
+        /// <summary>
+        /// Called whenever the selected items changed. Can also be called even MultiSelection is false.
+        /// </summary>
+        [Parameter] public EventCallback<List<MudListItem<T>>> SelectedItemsChanged { get; set; }
+
+        public List<MudListItem<T>> AllItems
+        {
+            get => CollectAllMudListItems();
+        }
+
+        public List<MudListItem<T>> Items
+        {
+            get => CollectAllMudListItems(true);
+        }
+
+        #endregion
+
+
+        #region Lifecycle Methods & Register
 
         protected override void OnInitialized()
         {
@@ -352,7 +362,6 @@ namespace MudBlazor
         }
 
         internal event Action ParametersChanged;
-
         protected override void OnParametersSet()
         {
             base.OnParametersSet();
@@ -386,7 +395,7 @@ namespace MudBlazor
                 });
                 //GetSelectedItem();
             }
-   
+
         }
 
         internal void Register(MudListItem<T> item)
@@ -400,7 +409,7 @@ namespace MudBlazor
                 //SelectedItemChanged.InvokeAsync(item);
             }
         }
-        
+
         internal void Unregister(MudListItem<T> item)
         {
             _items.Remove(item);
@@ -415,6 +424,76 @@ namespace MudBlazor
         {
             _childLists.Remove(child);
         }
+
+        #endregion
+
+
+        #region Events (Key, Focus)
+
+        internal async Task HandleKeyDown(KeyboardEventArgs obj)
+        {
+            if (Disabled || (Clickable == false && MultiSelection == false))
+                return;
+            if (ParentList != null)
+            {
+                //await ParentList.HandleKeyDown(obj);
+                return;
+            }
+            var key = obj.Key.ToLowerInvariant();
+            if (key.Length == 1 && key != " " && !(obj.CtrlKey || obj.ShiftKey || obj.AltKey || obj.MetaKey))
+            {
+                await ActiveFirstItem(key);
+                return;
+            }
+            switch (obj.Key)
+            {
+                case "ArrowUp":
+                    await ActiveAdjacentItem(-1);
+                    break;
+                case "ArrowDown":
+                    await ActiveAdjacentItem(1);
+                    break;
+                case "Home":
+                    await ActiveFirstItem();
+                    break;
+                case "End":
+                    await ActiveLastItem();
+                    break;
+                case "Enter":
+                case "NumpadEnter":
+                    if (_lastActivatedItem == null)
+                    {
+                        return;
+                    }
+                    SetSelectedValue(_lastActivatedItem);
+                    break;
+                case "a":
+                case "A":
+                    if (obj.CtrlKey == true)
+                    {
+                        if (MultiSelection)
+                        {
+                            SelectAllItems(_allSelected);
+                        }
+                    }
+                    break;
+            }
+            await OnKeyDown.InvokeAsync(obj);
+        }
+
+        private void OnFocusOut()
+        {
+            //if (ParentList != null)
+            //{
+            //    DeactiveAllItems();
+            //}
+            DeactiveAllItems();
+        }
+
+        #endregion
+
+
+        #region Select
 
         internal void SetSelectedValue(T value, bool force = false)
         {
@@ -488,8 +567,11 @@ namespace MudBlazor
 
             //UpdateSelectedStyles();
             //UpdateLastActivatedItem(SelectedValue);
+            UpdateSelectAllState();
             _lastActivatedItem = item;
         }
+
+        //internal bool CanSelect { get; private set; }
 
         internal void UpdateSelectedStyles()
         {
@@ -523,33 +605,6 @@ namespace MudBlazor
             return false;
         }
 
-        public void Clear()
-        {
-            var items = CollectAllMudListItems();
-            if (!MultiSelection)
-            {
-                SelectedValue = default(T);
-            }
-            else
-            {
-                SelectedValues = null;
-            }
-            
-            
-            //SelectedItem = null;
-            //SelectedItems = null;
-            DeselectAllItems(items);
-            DeactiveAllItems();
-        }
-
-        //internal bool CanSelect { get; private set; }
-
-        public void Dispose()
-        {
-            ParametersChanged = null;
-            ParentList?.Unregister(this);
-        }
-        
         private void DeselectAllItems(List<MudListItem<T>> items)
         {
             foreach (var listItem in items)
@@ -581,93 +636,75 @@ namespace MudBlazor
             {
                 return items.Where(x => x.NestedList == null && x.Exceptional == false).ToList();
             }
-            
         }
 
-        internal async Task HandleKeyDown(KeyboardEventArgs obj)
-        {
-            if (Disabled || (Clickable == false && MultiSelection == false))
-                return;
-            if (ParentList != null)
-            {
-                //await ParentList.HandleKeyDown(obj);
-                return;
-            }
-            var key = obj.Key.ToLowerInvariant();
-            if (key.Length == 1 && key != " " && !(obj.CtrlKey || obj.ShiftKey || obj.AltKey || obj.MetaKey))
-            {
-                await ActiveFirstItem(key);
-                return;
-            }
-            switch (obj.Key)
-            {
-                case "ArrowUp":
-                    await ActiveAdjacentItem(-1);
-                    break;
-                case "ArrowDown":
-                    await ActiveAdjacentItem(1);
-                    break;
-                case "Home":
-                    await ActiveFirstItem();
-                    break;
-                case "End":
-                    await ActiveLastItem();
-                    break;
-                case "Enter":
-                case "NumpadEnter":
-                    if (_lastActivatedItem == null)
-                    {
-                        return;
-                    }
-                    SetSelectedValue(_lastActivatedItem);
-                    break;
-                //case "a":
-                //case "A":
-                //    if (obj.CtrlKey == true)
-                //    {
-                //        if (MultiSelection)
-                //        {
-                //            SelectAllItems(_allSelected);
-                //        }
-                //    }
-                //    break;
-            }
-            await OnKeyDown.InvokeAsync(obj);
-        }
+        #endregion
 
-        protected internal void UpdateSelectAllChecked()
+
+        #region SelectAll
+
+        protected internal void UpdateSelectAllState()
         {
-            if (MultiSelection)
+            if (MultiSelection && SelectAll)
             {
                 var oldState = _allSelected;
-                if (CollectAllMudListItems(true).Count() == _selectedItems.Count)
+                if (_selectedValues == null || !_selectedValues.Any())
+                {
+                    _allSelected = false;
+                }
+                else if (CollectAllMudListItems(true).Count() == _selectedValues.Count)
                 {
                     _allSelected = true;
                 }
                 else
                 {
-                    _allSelected = false;
+                    _allSelected = null;
                 }
             }
         }
 
-        private void OnFocusOut()
+        protected string SelectAllCheckBoxIcon
         {
-            //if (ParentList != null)
-            //{
-            //    DeactiveAllItems();
-            //}
-            DeactiveAllItems();
+            get
+            {
+                return _allSelected.HasValue ? _allSelected.Value ? CheckedIcon : UncheckedIcon : IndeterminateIcon;
+            }
         }
 
-        protected void SelectAllItems(bool deselect = false)
+        /// <summary>
+        /// Custom checked icon.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.ListAppearance)]
+        public string CheckedIcon { get; set; } = Icons.Filled.CheckBox;
+
+        /// <summary>
+        /// Custom unchecked icon.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.ListAppearance)]
+        public string UncheckedIcon { get; set; } = Icons.Filled.CheckBoxOutlineBlank;
+
+        /// <summary>
+        /// Custom indeterminate icon.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.ListAppearance)]
+        public string IndeterminateIcon { get; set; } = Icons.Filled.IndeterminateCheckBox;
+
+
+
+        protected void SelectAllItems(bool? deselect = false)
         {
             var items = CollectAllMudListItems(true);
             if (deselect == true)
             {
                 foreach (var item in items)
                 {
-                    item.SetSelected(false);
+                    if (item.IsSelected == true)
+                    {
+                        item.SetSelected(false, false);
+                    }
                 }
                 _allSelected = false;
             }
@@ -675,13 +712,22 @@ namespace MudBlazor
             {
                 foreach (var item in items)
                 {
-                    item.SetSelected(true);
+                    if (item.IsSelected == false)
+                    {
+                        item.SetSelected(true, false);
+                    }
                 }
                 _allSelected = true;
             }
 
-            SelectedValues = items.Select(x => x.Value).ToHashSet();
+            SelectedValues = items.Where(x => x.IsSelected == true).Select(y => y.Value).ToHashSet();
+            //StateHasChanged();
         }
+
+        #endregion
+
+
+        #region Active (Hilight)
 
         public int GetActiveItemIndex()
         {
@@ -848,6 +894,54 @@ namespace MudBlazor
             _lastActivatedItem = items[items.Count - 1];
 
             await ScrollToMiddleAsync(items[items.Count - 1]);
+        }
+
+        #endregion
+
+
+        public void Clear()
+        {
+            var items = CollectAllMudListItems();
+            if (!MultiSelection)
+            {
+                SelectedValue = default(T);
+            }
+            else
+            {
+                SelectedValues = null;
+            }
+
+
+            //SelectedItem = null;
+            //SelectedItems = null;
+            DeselectAllItems(items);
+            DeactiveAllItems();
+            UpdateSelectAllState();
+        }
+
+        //private ValueTask ScrollToItemAsync(MudListItem<T> item)
+        //    => item != null ? ScrollManager.ScrollToListItemAsync(item.ItemId) : ValueTask.CompletedTask;
+
+        protected internal ValueTask ScrollToMiddleAsync(MudListItem<T> item)
+            => ScrollManager.ScrollToMiddleAsync(_elementId, item.ItemId);
+
+        //private void GetSelectedItem()
+        //{
+        //    var items = CollectAllMudListItems(true);
+        //    if (!MultiSelection)
+        //    {
+        //        SelectedItem = items.FirstOrDefault(x => x.Value != null && x.Value.Equals(_selectedValue));
+        //    }
+        //    else
+        //    {
+        //        SelectedItems = items.Where(x => SelectedValues != null && SelectedValues.Contains(x.Value));
+        //    }
+        //}
+
+        public void Dispose()
+        {
+            ParametersChanged = null;
+            ParentList?.Unregister(this);
         }
     }
 }
