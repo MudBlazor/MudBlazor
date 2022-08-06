@@ -180,5 +180,18 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("button.mud-button-root")[5].Click();
             comp.FindAll("div.mud-popover-open").Count.Should().Be(0);
         }
+
+        [Test]
+        public void MenuItem_Should_SupportIcons()
+        {
+            var comp = Context.RenderComponent<MenuItemIconTest>();
+            comp.FindAll("button.mud-button-root")[0].Click();
+            comp.FindAll("div.mud-list-item").Count.Should().Be(1);
+            var listItem = comp.Find("div.mud-list-item");
+            var icon = listItem.QuerySelector("div.mud-list-item-icon");
+            Assert.IsNotNull(icon);
+            var svg = icon!.QuerySelector("svg");
+            Assert.IsNotNull(svg);
+        }
     }
 }

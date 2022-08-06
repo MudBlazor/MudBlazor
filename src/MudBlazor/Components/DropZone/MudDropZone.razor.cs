@@ -15,7 +15,7 @@ namespace MudBlazor
 {
     public partial class MudDropZone<T> : MudComponentBase, IDisposable
     {
-        private bool _containerIsInitilized = false;
+        private bool _containerIsInitialized = false;
         private bool _canDrop = false;
         private bool _dragInProgress = false;
         private bool _disposedValue = false;
@@ -237,21 +237,24 @@ namespace MudBlazor
                 _canDrop = false;
             }
 
-            if (e.OriginatedDropzoneIdentifier == Identifier && e.DestinationDropzoneIdentifier != e.OriginatedDropzoneIdentifier)
+            if (e.Success == true)
             {
-                _indicies.Remove(e.Item);
-            }
-
-            if (e.OriginatedDropzoneIdentifier == Identifier || e.DestinationDropzoneIdentifier == Identifier)
-            {
-                int index = 0;
-
-                foreach (var item in _indicies.OrderBy(x => x.Value).ToArray())
+                if (e.OriginatedDropzoneIdentifier == Identifier && e.DestinationDropzoneIdentifier != e.OriginatedDropzoneIdentifier)
                 {
-                    _indicies[item.Key] = index++;
+                    _indicies.Remove(e.Item);
+                }
+
+                if (e.OriginatedDropzoneIdentifier == Identifier || e.DestinationDropzoneIdentifier == Identifier)
+                {
+                    int index = 0;
+
+                    foreach (var item in _indicies.OrderBy(x => x.Value).ToArray())
+                    {
+                        _indicies[item.Key] = index++;
+                    }
                 }
             }
-
+            
             StateHasChanged();
         }
 
@@ -377,9 +380,9 @@ namespace MudBlazor
 
         protected override void OnParametersSet()
         {
-            if (Container != null && _containerIsInitilized == false)
+            if (Container != null && _containerIsInitialized == false)
             {
-                _containerIsInitilized = true;
+                _containerIsInitialized = true;
                 Container.TransactionStarted += Container_TransactionStarted;
                 Container.TransactionEnded += Container_TransactionEnded;
                 Container.RefreshRequested += Container_RefreshRequested;

@@ -70,7 +70,7 @@ namespace MudBlazor.UnitTests.Components
         {
             _eventListener = new MockEventListener();
             base.Setup();
-            Context.Services.AddSingleton<IEventListener>(_eventListener);
+            Context.Services.AddSingleton<IEventListenerFactory>(new MockEventListenerFactory(_eventListener));
         }
 
         private void CheckColorRelatedValues(IRenderedComponent<SimpleColorPickerTest> comp, double expectedX, double expectedY, MudColor expectedColor, ColorPickerMode mode, bool checkInstanceValue = true, bool isRtl = false)

@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -23,7 +24,6 @@ namespace MudBlazor.Services
         private IBrowserWindowSizeProvider _browserWindowSizeProvider;
         private BrowserWindowSize _windowSize;
         private Breakpoint _breakpoint = Breakpoint.None;
-        private SemaphoreSlim _subscribeSemaphore = new SemaphoreSlim(1, 1);
 
         /// <summary>
         /// 
@@ -31,6 +31,7 @@ namespace MudBlazor.Services
         /// <param name="jsRuntime"></param>
         /// <param name="browserWindowSizeProvider"></param>
         /// <param name="options"></param>
+        [DynamicDependency(nameof(RaiseOnResized))]
         public BreakpointService(IJSRuntime jsRuntime, IBrowserWindowSizeProvider browserWindowSizeProvider, IOptions<ResizeOptions> options = null)
             : base(jsRuntime)
         {
@@ -145,11 +146,12 @@ namespace MudBlazor.Services
                 DotNetRef = DotNetObjectReference.Create(this);
             }
 
-            var existingOptionId = Listeners.Where(x => x.Value.Option == options).Select(x => x.Key).FirstOrDefault();
 
             try
             {
-                await _subscribeSemaphore.WaitAsync();
+                await Semaphore.WaitAsync();
+
+                var existingOptionId = Listeners.Where(x => x.Value.Option == options).Select(x => x.Key).FirstOrDefault();
 
                 if (existingOptionId == default)
                 {
@@ -188,7 +190,7 @@ namespace MudBlazor.Services
             }
             finally
             {
-                _subscribeSemaphore.Release();
+                Semaphore.Release();
             }
         }
     }

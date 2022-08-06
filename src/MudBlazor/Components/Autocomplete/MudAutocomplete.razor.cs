@@ -184,6 +184,20 @@ namespace MudBlazor
         public RenderFragment<T> ItemDisabledTemplate { get; set; }
 
         /// <summary>
+        /// Optional presentation template for when more items were returned from the Search function than the MaxItems limit
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.ListBehavior)]
+        public RenderFragment MoreItemsTemplate { get; set; }
+
+        /// <summary>
+        /// Optional presentation template for when no items were returned from the Search function
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.ListBehavior)]
+        public RenderFragment NoItemsTemplate { get; set; }
+
+        /// <summary>
         /// On drop-down close override Text with selected Value. This makes it clear to the user
         /// which list value is currently selected and disallows incomplete values in Text.
         /// </summary>
@@ -221,7 +235,7 @@ namespace MudBlazor
                 if (value == _isOpen)
                     return;
                 _isOpen = value;
-                UpdateIcon();
+                
                 IsOpenChanged.InvokeAsync(_isOpen).AndForget();
             }
         }
@@ -250,7 +264,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public EventCallback<MouseEventArgs> OnClearButtonClick { get; set; }
 
-        private string _currentIcon;
+        private string CurrentIcon => !string.IsNullOrWhiteSpace(AdornmentIcon) ? AdornmentIcon : _isOpen ? CloseIcon : OpenIcon;
 
         /// <summary>
         /// This boolean will keep track if the clear function is called too keep the set text function to be called.
@@ -310,14 +324,9 @@ namespace MudBlazor
             }
         }
 
-        private void UpdateIcon()
-        {
-            _currentIcon = !string.IsNullOrWhiteSpace(AdornmentIcon) ? AdornmentIcon : _isOpen ? CloseIcon : OpenIcon;
-        }
 
         protected override void OnInitialized()
         {
-            UpdateIcon();
             var text = GetItemString(Value);
             if (!string.IsNullOrWhiteSpace(text))
                 Text = text;
@@ -356,6 +365,8 @@ namespace MudBlazor
 
         private void OnTimerComplete(object stateInfo) => InvokeAsync(OnSearchAsync);
 
+        private int _itemsReturned; //the number of items returned by the search function
+
         /// <remarks>
         /// This async method needs to return a task and be awaited in order for
         /// unit tests that trigger this method to work correctly.
@@ -378,8 +389,11 @@ namespace MudBlazor
             {
                 Console.WriteLine("The search function failed to return results: " + e.Message);
             }
+            _itemsReturned = searched_items.Count();
             if (MaxItems.HasValue)
+            {
                 searched_items = searched_items.Take(MaxItems.Value);
+            }
             _items = searched_items.ToArray();
 
             _enabledItemIndices = _items.Select((item, idx) => (item, idx)).Where(tuple => ItemDisabledFunc?.Invoke(tuple.item) != true).Select(tuple => tuple.idx).ToList();
@@ -408,7 +422,8 @@ namespace MudBlazor
             IsOpen = false;
             await SetTextAsync(string.Empty, updateValue: false);
             await CoerceValueToText();
-            await _elementReference.SetText("");
+            if (_elementReference != null)
+                await _elementReference.SetText("");
             _timer?.Dispose();
             StateHasChanged();
         }
@@ -517,7 +532,7 @@ namespace MudBlazor
             if (increment == 0 || _items == null || _items.Length == 0 || !_enabledItemIndices.Any())
                 return ValueTask.CompletedTask;
             // if we are at the end, or the beginning we just do an rollover
-            _selectedListItemIndex = Math.Clamp(value: (10 * _items.Length + _selectedListItemIndex + increment) % _items.Length, min: 0, max: _items.Length-1);
+            _selectedListItemIndex = Math.Clamp(value: (10 * _items.Length + _selectedListItemIndex + increment) % _items.Length, min: 0, max: _items.Length - 1);
             return ScrollToListItem(_selectedListItemIndex);
         }
 
@@ -620,6 +635,14 @@ namespace MudBlazor
         }
 
         /// <summary>
+        /// Blur from the input in the Autocomplete component.
+        /// </summary>
+        public override ValueTask BlurAsync()
+        {
+            return _elementReference.BlurAsync();
+        }
+
+        /// <summary>
         /// Select all text within the Autocomplete input.
         /// </summary>
         public override ValueTask SelectAsync()
@@ -644,27 +667,8 @@ namespace MudBlazor
             await SetTextAsync(text, true);
         }
 
-        private bool _touchState = false;
-
         private async Task ListItemOnClick(T item)
         {
-            //Touchend works before click, so prevent the SelectOption method run twice
-            if (_touchState)
-            {
-                _touchState = false;
-                return;
-            }
-            await SelectOption(item);
-        }
-
-        private async Task ListItemTouchEnd(T item)
-        {
-            //In WASM we should prevent this method and continue with classic click method, otherwise it bubbles to other elements
-            if (RuntimeLocation.IsClientSide)
-            {
-                return;
-            }
-            _touchState = true;
             await SelectOption(item);
         }
 

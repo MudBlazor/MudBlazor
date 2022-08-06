@@ -39,7 +39,9 @@ namespace MudBlazor
         public string Style { get; private set; }
         public object Tag { get; private set; }
         public bool ShowContent { get; private set; }
+        public DateTime? ActivationDate { get; private set; }
         public Dictionary<string, object> UserAttributes { get; set; } = new Dictionary<string, object>();
+        public MudRender ElementReference { get; set; }
 
         public MudPopoverHandler(RenderFragment fragment, IJSRuntime jsInterop, Action updater)
         {
@@ -56,6 +58,14 @@ namespace MudBlazor
             Tag = componentBase.Tag;
             UserAttributes = componentBase.UserAttributes;
             ShowContent = showContent;
+            if(showContent == true)
+            {
+                ActivationDate = DateTime.Now;
+            }
+            else
+            {
+                ActivationDate = null;
+            }
         }
 
         public void UpdateFragment(RenderFragment fragment,
@@ -64,7 +74,8 @@ namespace MudBlazor
             Fragment = fragment;
             SetComponentBaseParameters(componentBase, @class, @style, showContent);
             // this basically calls StateHasChanged on the Popover
-            _updater.Invoke();
+            ElementReference?.ForceRender();
+            _updater?.Invoke(); // <-- this doesn't do anything anymore except making unit tests happy 
         }
 
         public async Task Initialize()
@@ -115,7 +126,7 @@ namespace MudBlazor
     public class MudPopoverService : IMudPopoverService, IAsyncDisposable
     {
         private Dictionary<Guid, MudPopoverHandler> _handlers = new();
-        private bool _isInitilized = false;
+        private bool _isInitialized = false;
         private readonly IJSRuntime _jsRuntime;
         private readonly PopoverOptions _options;
         private SemaphoreSlim _semaphoreSlim = new(1, 1);
@@ -132,15 +143,15 @@ namespace MudBlazor
 
         public async Task InitializeIfNeeded()
         {
-            if (_isInitilized == true) { return; }
+            if (_isInitialized == true) { return; }
 
             try
             {
                 await _semaphoreSlim.WaitAsync();
-                if (_isInitilized == true) { return; }
+                if (_isInitialized == true) { return; }
 
-                await _jsRuntime.InvokeVoidAsync("mudPopover.initilize", _options.ContainerClass, _options.FlipMargin);
-                _isInitilized = true;
+                await _jsRuntime.InvokeVoidAsync("mudPopover.initialize", _options.ContainerClass, _options.FlipMargin);
+                _isInitialized = true;
             }
             catch (JSDisconnectedException) { }
             catch (TaskCanceledException) { }
@@ -152,7 +163,7 @@ namespace MudBlazor
 
         public MudPopoverHandler Register(RenderFragment fragment)
         {
-            var handler = new MudPopoverHandler(fragment, _jsRuntime, () => FragmentsChanged?.Invoke(this, EventArgs.Empty));
+            var handler = new MudPopoverHandler(fragment, _jsRuntime, () => { /*not doing anything on purpose for now*/ });
             _handlers.Add(handler.Id, handler);
 
             FragmentsChanged?.Invoke(this, EventArgs.Empty);
@@ -176,7 +187,7 @@ namespace MudBlazor
         [ExcludeFromCodeCoverage]
         public async ValueTask DisposeAsync()
         {
-            if (_isInitilized == false) { return; }
+            if (_isInitialized == false) { return; }
 
             try
             {

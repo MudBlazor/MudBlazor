@@ -10,7 +10,6 @@ namespace MudBlazor.UnitTests.Other
     [TestFixture]
     public class CategoryAttributeTests
     {
-
         [Test]
         public void CategoryTypesClassConstantsAreCorrect()
         {
@@ -27,11 +26,11 @@ namespace MudBlazor.UnitTests.Other
         [Test]
         public void AllComponentPropertiesHaveCategories()
         {
-
             // Currently, these classes inheriting from MudComponentBase have uncategorized properties.
             // If you want you can categorize them, and then remove from this list.
             Type[] exceptions = {
                 typeof(MudDataGrid<>),  // TODO: remove it later
+                typeof(FilterHeaderCell<>),
                 typeof(Column<>),
                 typeof(Row),
                 typeof(HeaderCell<>),

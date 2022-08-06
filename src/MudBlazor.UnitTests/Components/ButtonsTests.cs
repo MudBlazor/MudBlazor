@@ -174,13 +174,11 @@ namespace MudBlazor.UnitTests.Components
             var icon = Parameter(nameof(MudIconButton.Icon), Icons.Filled.Add);
             var titleParam = Parameter(nameof(MudIconButton.Title), title);
             var comp = Context.RenderComponent<MudIconButton>(icon, titleParam);
-            comp.Find("svg Title").TextContent.Should().Be(title);
+            comp.Find($"button[title=\"{title}\"]");
 
             icon = Parameter(nameof(MudIconButton.Icon), "customicon");
             comp.SetParametersAndRender(icon, titleParam);
-            comp.Find("button span.mud-icon-button-label").InnerHtml.Trim().Should().StartWith("<span")
-                .And.Contain("customicon")
-                .And.Contain($"title=\"{title}\"");
+            comp.Find($"button[title=\"{title}\"]");
         }
 
         [Test]
