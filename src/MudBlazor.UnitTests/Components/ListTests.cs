@@ -6,6 +6,7 @@ using System;
 using System.Threading.Tasks;
 using Bunit;
 using FluentAssertions;
+using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Extensions;
 using MudBlazor.UnitTests.TestComponents;
 using NUnit.Framework;
@@ -135,6 +136,72 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task List_KeyboardNavigationTest()
+        {
+            var comp = Context.RenderComponent<ListEnhancedTest>();
+            //Console.WriteLine(comp.Markup);
+            var list = comp.FindComponent<MudList<int>>().Instance;
+
+            await comp.InvokeAsync(() => list.HandleKeyDown(new KeyboardEventArgs() { Key = "ArrowDown" }));
+            comp.WaitForAssertion(() => comp.FindComponents<MudListItem<int>>()[0].Instance.IsActive.Should().BeTrue());
+            comp.WaitForAssertion(() => list.SelectedValues.Should().BeEmpty());
+
+            await comp.InvokeAsync(() => list.HandleKeyDown(new KeyboardEventArgs() { Key = "Enter" }));
+            comp.WaitForAssertion(() => comp.FindComponents<MudListItem<int>>()[0].Instance.IsActive.Should().BeTrue());
+            comp.WaitForAssertion(() => list.SelectedValues.Should().ContainSingle());
+            //Second item is exceptional, should skip.
+            await comp.InvokeAsync(() => list.HandleKeyDown(new KeyboardEventArgs() { Key = "ArrowDown" }));
+            comp.WaitForAssertion(() => comp.FindComponents<MudListItem<int>>()[0].Instance.IsActive.Should().BeFalse());
+            comp.WaitForAssertion(() => comp.FindComponents<MudListItem<int>>()[2].Instance.IsActive.Should().BeTrue());
+            comp.WaitForAssertion(() => list.SelectedValues.Should().ContainSingle());
+
+            await comp.InvokeAsync(() => list.HandleKeyDown(new KeyboardEventArgs() { Key = "NumpadEnter" }));
+            comp.WaitForAssertion(() => comp.FindComponents<MudListItem<int>>()[2].Instance.IsActive.Should().BeTrue());
+            comp.WaitForAssertion(() => list.SelectedValues.Should().Contain(3));
+
+            await comp.InvokeAsync(() => list.HandleKeyDown(new KeyboardEventArgs() { Key = "ArrowDown" }));
+            await comp.InvokeAsync(() => list.HandleKeyDown(new KeyboardEventArgs() { Key = "ArrowDown" }));
+            await comp.InvokeAsync(() => list.HandleKeyDown(new KeyboardEventArgs() { Key = "Enter" }));
+            comp.WaitForAssertion(() => comp.FindComponents<MudListItem<int>>()[2].Instance.IsActive.Should().BeFalse());
+            comp.WaitForAssertion(() => comp.FindComponents<MudListItem<int>>()[5].Instance.IsActive.Should().BeTrue());
+            comp.WaitForAssertion(() => list.SelectedValues.Should().HaveCount(3));
+            comp.WaitForAssertion(() => list.SelectedValues.Should().Contain(5));
+
+            await comp.InvokeAsync(() => list.HandleKeyDown(new KeyboardEventArgs() { Key = "Enter" }));
+            comp.WaitForAssertion(() => comp.FindComponents<MudListItem<int>>()[5].Instance.IsActive.Should().BeTrue());
+            comp.WaitForAssertion(() => list.SelectedValues.Should().HaveCount(2));
+            comp.WaitForAssertion(() => list.SelectedValues.Should().Contain(3));
+            //Last disabled item should not be active
+            await comp.InvokeAsync(() => list.HandleKeyDown(new KeyboardEventArgs() { Key = "End" }));
+            comp.WaitForAssertion(() => comp.FindComponents<MudListItem<int>>()[5].Instance.IsActive.Should().BeTrue());
+
+            await comp.InvokeAsync(() => list.HandleKeyDown(new KeyboardEventArgs() { Key = "Home" }));
+            await comp.InvokeAsync(() => list.HandleKeyDown(new KeyboardEventArgs() { Key = "Enter" }));
+            comp.WaitForAssertion(() => comp.FindComponents<MudListItem<int>>()[0].Instance.IsActive.Should().BeTrue());
+            comp.WaitForAssertion(() => list.SelectedValues.Should().HaveCount(1));
+            comp.WaitForAssertion(() => list.SelectedValues.Should().NotContain(1));
+
+            await comp.InvokeAsync(() => list.HandleKeyDown(new KeyboardEventArgs() { Key = "a", CtrlKey = true }));
+            comp.WaitForAssertion(() => comp.FindComponents<MudListItem<int>>()[0].Instance.IsActive.Should().BeTrue());
+            comp.WaitForAssertion(() => list.SelectedValues.Should().HaveCount(7));
+            comp.WaitForAssertion(() => list.SelectedValues.Should().NotContain(2));
+
+            await comp.InvokeAsync(() => list.HandleKeyDown(new KeyboardEventArgs() { Key = "A", CtrlKey = true }));
+            comp.WaitForAssertion(() => comp.FindComponents<MudListItem<int>>()[0].Instance.IsActive.Should().BeTrue());
+            comp.WaitForAssertion(() => list.SelectedValues.Should().HaveCount(0));
+
+            await comp.InvokeAsync(() => comp.FindAll("div.mud-list-item")[5].Click());
+            comp.WaitForAssertion(() => list.SelectedValues.Should().HaveCount(1));
+            comp.WaitForAssertion(() => list.SelectedValues.Should().Contain(5));
+
+            await comp.InvokeAsync(() => list.HandleKeyDown(new KeyboardEventArgs() { Key = "ArrowDown" }));
+            await comp.InvokeAsync(() => list.HandleKeyDown(new KeyboardEventArgs() { Key = "Enter" }));
+            comp.WaitForAssertion(() => comp.FindComponents<MudListItem<int>>()[6].Instance.IsActive.Should().BeTrue());
+            comp.WaitForAssertion(() => list.SelectedValues.Should().HaveCount(2));
+            comp.WaitForAssertion(() => list.SelectedValues.Should().Contain(6));
+        }
+
+        [Test]
         [TestCase(Color.Default)]
         [TestCase(Color.Primary)]
         [TestCase(Color.Secondary)]
@@ -147,7 +214,7 @@ namespace MudBlazor.UnitTests.Components
         public void ListColorTest(Color color)
         {
             var comp = Context.RenderComponent<ListSelectionInitialValueTest>(x => x.Add(c => c.Color, color));
-
+            comp.SetParam("Color", color);
             var list = comp.FindComponent<MudList<int?>>().Instance;
             list.SelectedItem.Text.Should().Be("Sparkling Water");
 
