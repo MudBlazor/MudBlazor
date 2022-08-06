@@ -1,34 +1,37 @@
 ﻿@namespace MudBlazor.Docs.Examples
 @using System.Linq
 
-<MudSelect MultiSelectionTextFunc="@(new Func<List<string>, string>(GetMultiSelectionText))" MultiSelection="true" @bind-Value="value" @bind-SelectedValues="options" T="string" Label="US States" AdornmentIcon="@Icons.Material.Filled.Search" AnchorOrigin="Origin.BottomCenter">
+<MudSelect MultiSelectionTextFunc="@(new Func<List<string>, string>(GetMultiSelectionText))" MultiSelection="true" ValuePresenter="_valuePresenter" @bind-Value="value" @bind-SelectedValues="options" T="string" Label="US States" AdornmentIcon="@Icons.Filled.Search" AnchorOrigin="Origin.BottomCenter">
     @foreach (var state in states)
     {
         <MudSelectItem T="string" Value="@state">@state</MudSelectItem>
     }
-</MudSelect>
+    </MudSelect>
 
-<MudSwitch @bind-Checked="multiselectionTextChoice" Class="mud-width-full" Color="Color.Primary">MultiSelection Text choice</MudSwitch>  
+    <MudSwitch @bind-Checked="multiselectionTextChoice" Class="mud-width-full" Color="Color.Primary">MultiSelection Text Choice</MudSwitch>
+    <MudSwitch @ref="_switch" T="bool" CheckedChanged="PresenterChanged" Class="mud-width-full" Color="Color.Primary">Chip</MudSwitch>
 
-<MudGrid Class="mt-3 px-4">
-    <MudItem xs="6">
-        <MudText Typo="Typo.subtitle2">Value:</MudText>
-        <MudText Typo="Typo.subtitle2">"</MudText>
-        <MudText Typo="Typo.body2" Class="pl-4">@value</MudText>
-        <MudText Typo="Typo.subtitle2">"</MudText>
-    </MudItem>
-    <MudItem xs="6">
-        <MudText Typo="Typo.subtitle2">SelectedValues: HashSet&lt;string&gt;</MudText>
-        <MudText Typo="Typo.subtitle2">{</MudText>
-        <MudText Typo="Typo.body2" Class="pl-4">@(string.Join(", ", options.Select(x=>$"\"{x}\"")))</MudText>
-        <MudText Typo="Typo.subtitle2">}</MudText>
-    </MudItem>
-</MudGrid>
+    <MudGrid Class="mt-3 px-4">
+        <MudItem xs="6">
+            <MudText Typo="Typo.subtitle2">Value:</MudText>
+            <MudText Typo="Typo.subtitle2">"</MudText>
+            <MudText Typo="Typo.body2" Class="pl-4">@value</MudText>
+            <MudText Typo="Typo.subtitle2">"</MudText>
+        </MudItem>
+        <MudItem xs="6">
+            <MudText Typo="Typo.subtitle2">SelectedValues: HashSet&lt;string&gt;</MudText>
+            <MudText Typo="Typo.subtitle2">{</MudText>
+            <MudText Typo="Typo.body2" Class="pl-4">@(string.Join(", ", options.Select(x=>$"\"{x}\"")))</MudText>
+            <MudText Typo="Typo.subtitle2">}</MudText>
+        </MudItem>
+    </MudGrid>
 
 @code {
-    private bool multiselectionTextChoice;
-    private string value { get; set; } = "Nothing selected";
-    private IEnumerable<string> options { get; set; } = new HashSet<string>() { "Alaska" };
+    MudSwitch<bool> _switch;
+    bool multiselectionTextChoice;
+    ValuePresenter _valuePresenter = ValuePresenter.Text; 
+    string value { get; set; } = "Nothing selected";
+    IEnumerable<string> options { get; set; } = new HashSet<string>() { "Alaska" };
 
     private string[] states =
     {
@@ -56,7 +59,19 @@
         }
         else
         {
-            return $"{selectedValues.Count} state{(selectedValues.Count > 1 ? "s have":" has")} been selected";
+            return $"{selectedValues.Count} state{(selectedValues.Count > 1 ? "s have" : " has")} been selected";
+        }
+    }
+
+    private void PresenterChanged()
+    {
+        if (_switch.Checked == true)
+        {
+            _valuePresenter = ValuePresenter.Chip;
+        }
+        else
+        {
+            _valuePresenter = ValuePresenter.Text;
         }
     }
 }

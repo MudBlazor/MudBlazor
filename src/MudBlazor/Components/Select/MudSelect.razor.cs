@@ -197,6 +197,13 @@ namespace MudBlazor
         public string CloseIcon { get; set; } = Icons.Filled.ArrowDropUp;
 
         /// <summary>
+        /// The value presenter.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Appearance)]
+        public ValuePresenter ValuePresenter { get; set; } = ValuePresenter.Text;
+
+        /// <summary>
         /// If set to true and the MultiSelection option is set to true, a "select all" checkbox is added at the top of the list of items.
         /// </summary>
         [Parameter]
@@ -301,11 +308,13 @@ namespace MudBlazor
                 {
                     Value = value;
                 }
+                SetValueAsync(value, false).AndForget();
                 SelectedValueChanged.InvokeAsync(_selectedValue).AndForget();
             }
         }
 
         private MudListItem<T> _selectedListItem = new();
+        private HashSet<MudListItem<T>> _selectedListItems = new();
         private MudSelectItem<T> _selectedItem = new();
 
         internal MudListItem<T> SelectedListItem
@@ -314,7 +323,27 @@ namespace MudBlazor
 
             set
             {
+                if (_selectedListItem == value)
+                {
+                    return;
+                }
+                _selectedListItem = value;
+                //if (_selectedListItem == null)
+                //{
+                //    SelectedItem = null;
+                //    return;
+                //}
                 SelectedItem = Items.FirstOrDefault(x => Converter.Set(x.Value) == Converter.Set(_selectedListItem.Value));
+            }
+        }
+
+        internal IEnumerable<MudListItem<T>> SelectedListItems
+        {
+            get => _selectedListItems;
+
+            set
+            {
+                SelectedItems = Items.Where(x => Converter.Set(x.Value) == Converter.Set(_selectedListItem.Value));
             }
         }
 
@@ -479,11 +508,22 @@ namespace MudBlazor
 
         protected RenderFragment GetSelectedValuePresenter()
         {
-            if (Value == null)
-                return null;
-            if (!_shadowLookup.TryGetValue(Value, out var item))
-                return null; //<-- for now. we'll add a custom template to present values (set from outside) which are not on the list?
-            return item.ChildContent;
+            //if (Value == null)
+            //    return null;
+            //if (!_shadowLookup.TryGetValue(Value, out var item))
+            //    return null; //<-- for now. we'll add a custom template to present values (set from outside) which are not on the list?
+            //return item.ChildContent;
+            if (!MultiSelection)
+            {
+                if (SelectedItem != null)
+                {
+                    return SelectedItem.ChildContent;
+                }
+                
+            }
+            if (SelectedListItems.Any())
+                return SelectedItems.FirstOrDefault(x => Converter.Set(x.Value) == Converter.Set(SelectedValue)).ChildContent;
+            return null;
         }
 
         protected override Task UpdateValuePropertyAsync(bool updateText)
