@@ -1,0 +1,18 @@
+﻿@namespace MudBlazor
+@typeparam T
+@inherits MudBaseSelectItem
+
+@if (Nested == true)
+{
+    <MudListItem T="T" Text="@Text" InitiallyExpanded="@InitiallyExpanded">
+        <NestedList>
+            @ChildContent
+        </NestedList>
+    </MudListItem>
+
+}
+else
+{
+    <MudListSubheader T="T" Sticky="@Sticky">@Text</MudListSubheader>
+    @ChildContent
+}
