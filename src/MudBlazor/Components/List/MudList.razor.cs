@@ -34,6 +34,13 @@ namespace MudBlazor
           .AddClass(Class)
         .Build();
 
+        protected string Stylename =>
+        new StyleBuilder()
+            .AddStyle("max-height", $"{MaxItems * (Dense == false ? 48 : 36) + (DisablePadding == true ? 0 : 16)}px", MaxItems != null)
+            .AddStyle("overflow-y", "auto", MaxItems != null)
+            .AddStyle(Style)
+            .Build();
+
         [CascadingParameter] protected MudList<T> ParentList { get; set; }
 
         /// <summary>
@@ -49,6 +56,27 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.List.Behavior)]
         public RenderFragment ChildContent { get; set; }
+
+        /// <summary>
+        /// Predefined enumerable items. If its not null, creates list items automatically.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.List.Behavior)]
+        public ICollection<T> Items { get; set; } = null;
+
+        /// <summary>
+        /// Allows virtualization. Only work is Items parameter is not null.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.List.Behavior)]
+        public bool Virtualize { get; set; }
+
+        /// <summary>
+        /// Set max items to show in list. Other items can be scrolled. Works if list items populated with Items parameter.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.List.Behavior)]
+        public int? MaxItems { get; set; } = null;
 
         /// <summary>
         /// Allows multi selection and adds MultiSelectionComponent for each list item.
@@ -333,12 +361,12 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public EventCallback<List<MudListItem<T>>> SelectedItemsChanged { get; set; }
 
-        public List<MudListItem<T>> AllItems
+        public List<MudListItem<T>> GetAllItems
         {
             get => CollectAllMudListItems();
         }
 
-        public List<MudListItem<T>> Items
+        public List<MudListItem<T>> GetItems
         {
             get => CollectAllMudListItems(true);
         }

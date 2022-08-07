@@ -34,7 +34,7 @@
 
 				<MudPopover Open=@(_isOpen) MaxHeight="@MaxHeight" AnchorOrigin="@AnchorOrigin" TransformOrigin="@TransformOrigin" Class="@PopoverClass" RelativeWidth="true">
 					<CascadingValue Value="@((IMudSelect)this)" IsFixed="true">
-						<MudList @ref="@_list" T="T" Clickable="true" MultiSelection="@MultiSelection" Color="@Color" Dense="@Dense" SelectAll="@SelectAll" SelectAllText="@SelectAllText"
+						<MudList @ref="@_list" T="T" Clickable="true" MultiSelection="@MultiSelection" Color="@Color" Dense="@Dense" SelectAll="@SelectAll" SelectAllText="@SelectAllText" Items="@ItemCollection" Virtualize="@Virtualize"
                             @bind-SelectedValue="@SelectedValue" @bind-SelectedValues="@SelectedValues" @bind-SelectedItem="@SelectedListItem" @bind-bind-SelectedItems="@SelectedListItems">
                             @ChildContent
 						</MudList>

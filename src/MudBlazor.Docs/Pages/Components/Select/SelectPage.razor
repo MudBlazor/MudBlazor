@@ -72,6 +72,9 @@
                     If you set <CodeInline>MultiSelection="true"</CodeInline>, you can select multiple values. The selected options are returned as concatenated comma-delimited
                     string via <CodeInline>Value</CodeInline> and as a <CodeInline>HashSet&lt;string></CodeInline> via <CodeInline>SelectedValues</CodeInline>. The delimited string
                     can be modified with the <CodeInline>Delimiter</CodeInline> parameter.
+                    <br /><br />
+                    MultiSelects can be populated with ChildContent or Items parameter without any difference, the same as non multi select component.
+                    While ChildContent provides customizability benefits, Items parameter provides fast and simple coding and virtualization support.
                 </Description>
             </SectionHeader>
             <SectionContent ShowCode="false" Code="MultiSelectExample">
@@ -151,6 +154,17 @@
             </SectionHeader>
             <SectionContent Code="SelectAdvancedPopoverExample" ShowCode="false">
                 <SelectAdvancedPopoverExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Virtualization (Experimental)">
+                <Description>
+                    MudSelect support virtualization if items populated with <CodeInline>ItemCollection</CodeInline>.
+                </Description>
+            </SectionHeader>
+            <SectionContent ShowCode="false" Code="SelectVirtualizationExample">
+                <SelectVirtualizationExample />
             </SectionContent>
         </DocsPageSection>
 

@@ -239,6 +239,20 @@ namespace MudBlazor
         public Func<List<string>, string> MultiSelectionTextFunc { get; set; }
 
         /// <summary>
+        /// If not null, select items will automatically created regard to the collection.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Behavior)]
+        public ICollection<T> ItemCollection { get; set; }
+
+        /// <summary>
+        /// Allows virtualization. Only work is ItemCollection parameter is not null.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.List.Behavior)]
+        public bool Virtualize { get; set; }
+
+        /// <summary>
         /// Parameter to define the delimited string separator.
         /// </summary>
         [Parameter]

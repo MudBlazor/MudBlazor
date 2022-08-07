@@ -2,13 +2,23 @@
 @typeparam T
 @inherits MudComponentBase
 
-<div @attributes="UserAttributes" id="@_elementId" class="@Classname" style="@Style" tabindex="-1" @onkeydown="HandleKeyDown" @onfocusout="OnFocusOut">
+<div @attributes="UserAttributes" id="@_elementId" class="@Classname" style="@Stylename" tabindex="-1" @onkeydown="HandleKeyDown" @onfocusout="OnFocusOut">
     <CascadingValue Value="@this" IsFixed="true">
         @if (MultiSelection && SelectAll && ParentList == null)
         {
             <MudListItem T="T" Exceptional="true" Icon="@SelectAllCheckBoxIcon" IconColor="@Color" Text="@SelectAllText" OverrideMultiSelectionComponent="MultiSelectionComponent.None" OnClick="@(() => SelectAllItems(_allSelected))" OnClickHandlerPreventDefault="true" Dense="@Dense" Class="mb-2" />
             <MudDivider />
         }
-        @ChildContent
+        @if (Items != null)
+        {
+            <MudVirtualize IsEnabled="@Virtualize" Items="Items" Context="item">
+                <MudListItem Value="@item" Text="@item.ToString()" />
+            </MudVirtualize>
+        }
+        else
+        {
+            @ChildContent
+        }
+        
     </CascadingValue>
 </div>

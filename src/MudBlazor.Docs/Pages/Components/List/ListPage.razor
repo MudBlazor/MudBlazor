@@ -73,13 +73,26 @@
         </DocsPageSection>
         
         <DocsPageSection>
-            <SectionHeader Title="Selection">
+            <SectionHeader Title="Populate With Items Parameter">
                 <Description>
-                    If you set <CodeInline>Clickable="true"</CodeInline> and use <CodeInline>@@bind-SelectedItem</CodeInline>, MudList will manage an exclusive single-selection across all its nested lists for you. 
+                    By default, users can statically or dynamically (with for and foreach loops) place MudListItems. As an alternative, if <CodeInline>Items</CodeInline> set, MudList will automatically render items for you.
+                    This alternative is useful when you don't need item template and you want to construct list faster.
                 </Description>
             </SectionHeader>
-            <SectionContent DarkenBackground="true" ShowCode="false" Code="ListSelectionExample">
-                <ListSelectionExample/>
+            <SectionContent DarkenBackground="true" ShowCode="false" Code="ListItemsExample">
+                <ListItemsExample/>
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Virtualization">
+                <Description>
+                    MudList support virtualization, if populated with <CodeInline>Items</CodeInline> parameter.<br />
+                    Note that keyboard navigation doesn't properly work with virtualization.
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" ShowCode="false" Code="ListVirtualizationExample">
+                <ListVirtualizationExample/>
             </SectionContent>
         </DocsPageSection>
 
