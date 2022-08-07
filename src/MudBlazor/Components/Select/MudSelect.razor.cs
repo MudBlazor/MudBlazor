@@ -285,7 +285,7 @@ namespace MudBlazor
                         SetTextAsync(string.Join(Delimiter, SelectedValues.Select(x => Converter.Set(x))), updateValue: false).AndForget();
                     }
                 }
-                SelectedValuesChanged.InvokeAsync(new HashSet<T>(SelectedValues, _comparer));
+                SelectedValuesChanged.InvokeAsync(new HashSet<T>(SelectedValues, _comparer)).AndForget();
                 if (MultiSelection && typeof(T) == typeof(string))
                     SetValueAsync((T)(object)Text, updateText: false).AndForget();
             }
@@ -1004,7 +1004,7 @@ namespace MudBlazor
             if (Disabled || ReadOnly)
                 return;
 
-            if (_list != null)
+            if (_list != null && _isOpen == true)
             {
                 await _list.HandleKeyDown(obj);
             }
