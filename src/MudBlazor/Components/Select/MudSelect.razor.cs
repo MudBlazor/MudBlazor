@@ -23,7 +23,7 @@ namespace MudBlazor
         private IEqualityComparer<T> _comparer;
         private bool _dense;
         private string multiSelectionText;
-        private bool? _selectAllChecked;
+        //private bool? _selectAllChecked;
         private IKeyInterceptor _keyInterceptor;
 
         protected string Classname =>
@@ -258,6 +258,13 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
         public string Delimiter { get; set; } = ", ";
+
+        /// <summary>
+        /// If true popover width will be the same as the select component.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Behavior)]
+        public bool RelativeWidth { get; set; } = true;
 
         /// <summary>
         /// Set of selected values. If MultiSelection is false it will only ever contain a single value. This property is two-way bindable.
@@ -544,7 +551,7 @@ namespace MudBlazor
         {
             // For MultiSelection of non-string T's we don't update the Value!!!
             if (typeof(T) == typeof(string) || !MultiSelection)
-                base.UpdateValuePropertyAsync(updateText);
+                base.UpdateValuePropertyAsync(updateText).AndForget();
             return Task.CompletedTask;
         }
 
@@ -570,12 +577,24 @@ namespace MudBlazor
 
         internal event Action<ICollection<T>> SelectionChangedFromOutside;
 
+        private bool _multiSelection = false;
         /// <summary>
         /// If true, multiple values can be selected via checkboxes which are automatically shown in the dropdown
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.ListBehavior)]
-        public bool MultiSelection { get; set; }
+        public bool MultiSelection
+        {
+            get => _multiSelection;
+            set
+            {
+                if (value != _multiSelection)
+                {
+                    _multiSelection = value;
+                    UpdateTextPropertyAsync(false).AndForget();
+                }
+            }
+        }
 
         /// <summary>
         /// The collection of items within this select
@@ -605,7 +624,7 @@ namespace MudBlazor
                         result = true;
                 }
             }
-            UpdateSelectAllChecked();
+            //UpdateSelectAllChecked();
             if (result.HasValue == false)
             {
                 result = item.Value?.Equals(Value);
@@ -788,25 +807,25 @@ namespace MudBlazor
         //        HilightItemForValue(Value);
         //}
 
-        private void UpdateSelectAllChecked()
-        {
-            if (MultiSelection && SelectAll)
-            {
-                var oldState = _selectAllChecked;
-                if (_selectedValues.Count == 0)
-                {
-                    _selectAllChecked = false;
-                }
-                else if (_items.Count == _selectedValues.Count)
-                {
-                    _selectAllChecked = true;
-                }
-                else
-                {
-                    _selectAllChecked = null;
-                }
-            }
-        }
+        //private void UpdateSelectAllChecked()
+        //{
+        //    if (MultiSelection && SelectAll)
+        //    {
+        //        var oldState = _selectAllChecked;
+        //        if (_selectedValues.Count == 0)
+        //        {
+        //            _selectAllChecked = false;
+        //        }
+        //        else if (_items.Count == _selectedValues.Count)
+        //        {
+        //            _selectAllChecked = true;
+        //        }
+        //        else
+        //        {
+        //            _selectAllChecked = null;
+        //        }
+        //    }
+        //}
 
         public async Task ToggleMenu()
         {
@@ -986,32 +1005,32 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.ListAppearance)]
-        public string CheckedIcon { get; set; } = Icons.Material.Filled.CheckBox;
+        public string CheckedIcon { get; set; } = Icons.Filled.CheckBox;
 
         /// <summary>
         /// Custom unchecked icon.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.ListAppearance)]
-        public string UncheckedIcon { get; set; } = Icons.Material.Filled.CheckBoxOutlineBlank;
+        public string UncheckedIcon { get; set; } = Icons.Filled.CheckBoxOutlineBlank;
 
         /// <summary>
         /// Custom indeterminate icon.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.ListAppearance)]
-        public string IndeterminateIcon { get; set; } = Icons.Material.Filled.IndeterminateCheckBox;
+        public string IndeterminateIcon { get; set; } = Icons.Filled.IndeterminateCheckBox;
 
-        /// <summary>
-        /// The checkbox icon reflects the select all option's state
-        /// </summary>
-        protected string SelectAllCheckBoxIcon
-        {
-            get
-            {
-                return _selectAllChecked.HasValue ? _selectAllChecked.Value ? CheckedIcon : UncheckedIcon : IndeterminateIcon;
-            }
-        }
+        ///// <summary>
+        ///// The checkbox icon reflects the select all option's state
+        ///// </summary>
+        //protected string SelectAllCheckBoxIcon
+        //{
+        //    get
+        //    {
+        //        return _selectAllChecked.HasValue ? _selectAllChecked.Value ? CheckedIcon : UncheckedIcon : IndeterminateIcon;
+        //    }
+        //}
 
         internal async void HandleKeyDown(KeyboardEventArgs obj)
         {
@@ -1184,7 +1203,7 @@ namespace MudBlazor
                 // otherwise we can't receive key strokes any longer
                 _elementReference.FocusAsync().AndForget(TaskOption.Safe);
             }
-            base.OnBlur.InvokeAsync(obj);
+            base.OnBlur.InvokeAsync(obj).AndForget();
         }
 
         protected override void Dispose(bool disposing)

@@ -327,7 +327,15 @@ namespace MudBlazor
         public T Value
         {
             get => _value;
-            set => _value = value;
+            set
+            {
+                if (Converter.Set(_value) == Converter.Set(value))
+                {
+                    return;
+                }
+                _value = value;
+            }
+            
         }
 
         protected virtual async Task SetValueAsync(T value, bool updateText = true)

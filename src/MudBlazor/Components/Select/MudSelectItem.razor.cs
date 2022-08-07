@@ -142,7 +142,7 @@ namespace MudBlazor
             //if (MultiSelection)
             //    IsSelected = !IsSelected;
 
-            MudSelect?.SelectOption(Value);
+            MudSelect?.SelectOption(Value).AndForget();
             InvokeAsync(StateHasChanged);
         }
 

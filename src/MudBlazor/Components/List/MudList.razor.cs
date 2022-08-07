@@ -129,6 +129,13 @@ namespace MudBlazor
         public bool Clickable { get; set; }
 
         /// <summary>
+        /// If true the active (hilighted) item select on tab key.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.List.Selecting)]
+        public bool SelectValueOnTab { get; set; } = true;
+
+        /// <summary>
         /// If true, vertical padding will be removed from the list.
         /// </summary>
         [Parameter]
@@ -475,6 +482,12 @@ namespace MudBlazor
             }
             switch (obj.Key)
             {
+                case "Tab":
+                    if (!MultiSelection)
+                    {
+                        SetSelectedValue(_lastActivatedItem);
+                    }
+                    break;
                 case "ArrowUp":
                     await ActiveAdjacentItem(-1);
                     break;

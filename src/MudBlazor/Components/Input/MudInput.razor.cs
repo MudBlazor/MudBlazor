@@ -121,7 +121,18 @@ namespace MudBlazor
         /// <summary>
         /// Show clear button.
         /// </summary>
-        [Parameter] public bool Clearable { get; set; } = false;
+        [Parameter] public bool Clearable
+        {
+            get => _showClearable;
+            set
+            {
+                if (_showClearable == value)
+                {
+                    return;
+                }
+                _showClearable = value;
+            }
+        }
 
         /// <summary>
         /// Button click event for clear button. Called after text and value has been cleared.
