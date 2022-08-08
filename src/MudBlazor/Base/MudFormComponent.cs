@@ -531,12 +531,11 @@ namespace MudBlazor
 
         /// <summary>
         /// Specify an expression which returns the model's field for which validation messages should be displayed.
-        /// Currently only string fields are supported.
         /// </summary>
 #nullable enable
         [Parameter]
         [Category(CategoryTypes.FormComponent.Validation)]
-        public Expression<Func<T>>? For { get; set; }
+        public Expression<Func<object>>? For { get; set; }
 #nullable disable
 
         /// <summary>
@@ -566,7 +565,7 @@ namespace MudBlazor
         /// To find out whether or not For parameter has changed we keep a separate reference
         /// </summary>
 #nullable enable
-        private Expression<Func<T>>? _currentFor;
+        private Expression<Func<object>>? _currentFor;
 #nullable disable
 
         /// <summary>
