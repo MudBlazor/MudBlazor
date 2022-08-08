@@ -3,7 +3,7 @@
 @typeparam T
 
 <CascadingValue Name="Standalone" Value="false" IsFixed="true">
-    <div class="mud-select mud-autocomplete">
+    <div class="mud-select mud-autocomplete" id="@_elementId">
         <MudInputControl Label="@Label" Variant="@Variant" HelperText="@HelperText" HelperTextOnFocus="@HelperTextOnFocus" FullWidth="@FullWidth" Margin="@Margin" Class="@Classname" Style="@Style"
                          Error="@Error" ErrorText="@ErrorText" Disabled="@Disabled" @onclick="@ToggleMenu" Required="@Required" ForId="@FieldId">
             <InputContent>
@@ -17,21 +17,47 @@
                           Clearable="@Clearable" OnClearButtonClick="@OnClearButtonClick"
                           @attributes="UserAttributes"
                           TextChanged="OnTextChanged" OnBlur="OnInputBlurred"
-                          OnKeyDown="@this.OnInputKeyDown"
-                          OnKeyUp="@this.OnInputKeyUp" autocomplete=@("mud-disabled-"+Guid.NewGuid()) KeyUpPreventDefault="KeyUpPreventDefault"
+                          
+                          autocomplete=@("mud-disabled-"+Guid.NewGuid()) KeyUpPreventDefault="KeyUpPreventDefault"
                           Placeholder="@Placeholder" Immediate="true"
                           InputMode="@InputMode" Pattern="@Pattern"
                           T="string" />
                 <MudPopover Open="@IsOpen" MaxHeight="@MaxHeight" AnchorOrigin="@AnchorOrigin" TransformOrigin="@TransformOrigin" Class="@PopoverClass" RelativeWidth="true">
-                    @if (_items != null && _items.Length != 0)
+                    @if (ItemCollection != null && ItemCollection.Any())
                     {
-                        <MudList T="T" Clickable="true" Dense="@Dense">
-                            @for (var index = 0; index < _items.Length; index++)
+                        <MudList @ref="_list" T="T" Clickable="true" Dense="@Dense"
+                            @bind-SelectedValue="SelectedValue" @bind-SelectedItem="SelectedListItem" @bind-SelectedValues="SelectedValues">
+                            @foreach (var item in _items)
+                            {
+                                <MudListItem T="T" Value="item" OnClick="@(() => SelectOption(item))">
+                                    @if (ItemTemplate == null)
+                                    {
+                                        @GetItemString(item)
+                                    }
+@*                                    else if (is_disabled && ItemDisabledTemplate != null)
+                                    {
+                                        @ItemDisabledTemplate(item)
+                                    }
+                                    else if (is_selected)
+                                    {
+                                        @if (ItemSelectedTemplate == null)
+                                            @ItemTemplate(item)
+                                        else
+                                            @ItemSelectedTemplate(item)
+
+                                    }*@
+                                    else
+                                    {
+                                        @ItemTemplate(item)
+                                    }
+                                </MudListItem>
+                            }
+@*                            @for (var index = 0; index < _items.Length; index++)
                             {
                                 var item = _items[index];
                                 bool is_selected = index == _selectedListItemIndex;
                                 bool is_disabled = !_enabledItemIndices.Contains(index);
-                                <MudListItem T="T" @key="@item" id="@GetListItemId(index)" Disabled="@(is_disabled)" OnClick="@(() => SelectOption(item))" Class="@(is_selected ? "mud-selected-item" : "")">
+                                <MudListItem T="T" Value="item" id="@GetListItemId(index)" Disabled="@(is_disabled)" OnClick="@(() => SelectOption(item))">
 
                                     @if (ItemTemplate == null)
                                     {
@@ -54,7 +80,7 @@
                                         @ItemTemplate(item)
                                     }
                                 </MudListItem>
-                            }
+                            }*@
                             @if (MoreItemsTemplate != null && _itemsReturned > MaxItems)
                             {
                                 <div class="pa-1">
