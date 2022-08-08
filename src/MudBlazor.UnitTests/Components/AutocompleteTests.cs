@@ -19,6 +19,7 @@ using MudBlazor.UnitTests.TestComponents;
 using NUnit.Framework;
 using static MudBlazor.UnitTests.TestComponents.AutocompleteSetParametersInitialization;
 using static Bunit.ComponentParameterFactory;
+using Microsoft.AspNetCore.Components;
 
 namespace MudBlazor.UnitTests.Components
 {
@@ -859,7 +860,6 @@ namespace MudBlazor.UnitTests.Components
 
             var comp = Context.RenderComponent<MudAutocomplete<string>>();
 
-            comp.SetParam(p => p.ProgressIndicatorType, ProgressIndicatorType.Circular);
             comp.SetParam(p => p.ShowProgressIndicator, true);
             comp.SetParam(p => p.DebounceInterval, 0);
             comp.SetParam(p => p.SearchFunc, new Func<string, Task<IEnumerable<string>>>(async s =>
@@ -870,26 +870,6 @@ namespace MudBlazor.UnitTests.Components
             comp.SetParam(a => a.Text, "Foo");
 
             markup.Should().Contain("mud-progress-circular");
-        }
-
-        [Test]
-        public async Task Autocomplete_Should_ShowLinearProgressIndicator()
-        {
-            var markup = string.Empty;
-
-            var comp = Context.RenderComponent<MudAutocomplete<string>>();
-
-            comp.SetParam(p => p.ProgressIndicatorType, ProgressIndicatorType.Linear);
-            comp.SetParam(p => p.ShowProgressIndicator, true);
-            comp.SetParam(p => p.DebounceInterval, 0);
-            comp.SetParam(p => p.SearchFunc, new Func<string, Task<IEnumerable<string>>>(async s =>
-            {
-                markup = comp.Markup;
-                return new List<string> { "Foo", "Bar" };
-            }));
-            comp.SetParam(a => a.Text, "Foo");
-
-            markup.Should().Contain("mud-progress-linear");
         }
 
         [Test]
@@ -909,42 +889,6 @@ namespace MudBlazor.UnitTests.Components
             comp.SetParam(a => a.Text, "Foo");
 
             markup.Should().NotContain("mud-progress-circular");
-        }
-        
-        [Test]
-        public async Task Autocomplete_ShouldNot_ShowProgressInPopoverMessage()
-        {
-            var comp = Context.RenderComponent<AutocompleteTest1>();
-
-            var autocompletecomp = comp.FindComponent<MudAutocomplete<string>>();
-
-            autocompletecomp.SetParam(p => p.ShowProgressInPopover, false);
-            autocompletecomp.SetParam(p => p.ProgressInPopoverMessage, "Loading...");
-            autocompletecomp.SetParam(p => p.DebounceInterval, 0);
-
-            var autocomplete = autocompletecomp.Instance;
-
-            await comp.InvokeAsync(() => autocomplete.FocusAsync());
-
-            comp.Markup.Should().NotContain("Loading...");
-        }
-
-        [Test]
-        public async Task Autocomplete_Should_ShowProgressInPopoverMessage()
-        {
-            var comp = Context.RenderComponent<AutocompleteTest1>();
-
-            var autocompletecomp = comp.FindComponent<MudAutocomplete<string>>();
-
-            autocompletecomp.SetParam(p => p.ShowProgressInPopover, true);
-            autocompletecomp.SetParam(p => p.ProgressInPopoverMessage, "Loading...");
-            autocompletecomp.SetParam(p => p.DebounceInterval, 0);
-
-            var autocomplete = autocompletecomp.Instance;
-
-            await comp.InvokeAsync(() => autocomplete.FocusAsync());
-        
-            comp.Markup.Should().NotContain("Loading..."); 
         }
 
         [Test]
@@ -968,32 +912,6 @@ namespace MudBlazor.UnitTests.Components
 
             comp.SetParam(a => a.Text, "Foo");
             comp.SetParam(a => a.Text, "Bar");
-
-            cancelled.Should().BeTrue();
-        }
-
-        [Test]
-        public async Task Autocomplete_Should_Cancel_Search_On_Select()
-        {
-            var cancelled = false;
-
-            var comp = Context.RenderComponent<MudAutocomplete<string>>();
-
-            comp.SetParam(p => p.ShowProgressIndicator, true);
-            comp.SetParam(p => p.DebounceInterval, 0);
-            comp.SetParam(p => p.SearchFuncWithCancel, new Func<string, System.Threading.CancellationToken, Task<IEnumerable<string>>>(async (s, cancellationToken) =>
-            {
-                cancellationToken.Register(() =>
-                {
-                    cancelled = true;
-                });
-
-                return new List<string> { "Foo", "Bar" };
-            }));
-
-            comp.SetParam(a => a.Text, "Foo");
-
-            await comp.InvokeAsync(() => comp.Instance.SelectOption("Foo"));
 
             cancelled.Should().BeTrue();
         }

@@ -25,9 +25,9 @@
 
                 @if (ShowProgressIndicator && IsLoading)
                 {
-                    @if (ProgressIndicatorType == ProgressIndicatorType.Linear)
+                    @if (ProgressIndicatorTemplate != null)
                     {
-                        <MudProgressLinear Color="ProgressIndicatorColor" Indeterminate="true" Size="Size.Small" />
+                        @ProgressIndicatorTemplate
                     }
                     else
                     {
@@ -38,13 +38,9 @@
                 }
 
                 <MudPopover Open="@IsOpen" MaxHeight="@MaxHeight" AnchorOrigin="@AnchorOrigin" TransformOrigin="@TransformOrigin" Class="@PopoverClass" RelativeWidth="true">
-                    @if(ShowProgressInPopover && IsLoading)
+                    @if(ProgressIndicatorInPopoverTemplate != null && IsLoading)
                     {
-                        <MudList Clickable="false">
-                            <MudListItem>
-                                @ProgressInPopoverMessage
-                            </MudListItem>
-                        </MudList>
+                        @ProgressIndicatorInPopoverTemplate
                     } 
                     else if (_items != null && _items.Length != 0)
                     {

@@ -138,28 +138,7 @@ namespace MudBlazor
         public bool ShowProgressIndicator { get; set; } = false;
 
         /// <summary>
-        /// Whether to show the progress indicator inside the popover. 
-        /// </summary>
-        [Parameter]
-        [Category(CategoryTypes.FormComponent.Behavior)]
-        public bool ShowProgressInPopover { get; set; } = false;
-
-        /// <summary>
-        /// Optional message for when the search function is fetching data.
-        /// </summary>
-        [Parameter]
-        [Category(CategoryTypes.FormComponent.ListBehavior)]
-        public string ProgressInPopoverMessage { get; set; }
-
-        /// <summary>
-        /// The position of the progress indicator. 
-        /// </summary>
-        [Parameter]
-        [Category(CategoryTypes.FormComponent.Behavior)]
-        public ProgressIndicatorType ProgressIndicatorType { get; set; } = ProgressIndicatorType.Circular;
-
-        /// <summary>
-        /// The color of the loading indicator. 
+        /// The color of the progress indicator. 
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Appearance)]
@@ -257,6 +236,20 @@ namespace MudBlazor
         public RenderFragment NoItemsTemplate { get; set; }
 
         /// <summary>
+        /// Optional template for progress indicator
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.ListBehavior)]
+        public RenderFragment<T> ProgressIndicatorTemplate { get; set; }
+
+        /// <summary>
+        /// Optional template for showing progress indicator inside the popover
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.ListBehavior)]
+        public RenderFragment<T> ProgressIndicatorInPopoverTemplate { get; set; }
+
+        /// <summary>
         /// On drop-down close override Text with selected Value. This makes it clear to the user
         /// which list value is currently selected and disallows incomplete values in Text.
         /// </summary>
@@ -341,7 +334,6 @@ namespace MudBlazor
 
         public async Task SelectOption(T value)
         {
-            CancelToken();
             await SetValueAsync(value);
             if (_items != null)
                 _selectedListItemIndex = Array.IndexOf(_items, value);
@@ -454,16 +446,16 @@ namespace MudBlazor
             {
                 IsLoading = true;
 
-                if (ShowProgressInPopover)
+                if (ProgressIndicatorInPopoverTemplate != null)
                 {
                     IsOpen = true;
                 }
 
-                if (ShowProgressIndicator || ShowProgressInPopover)
+                if (ShowProgressIndicator || ProgressIndicatorInPopoverTemplate != null)
                 {
                     StateHasChanged();
                 }
-
+                
                 if (SearchFuncWithCancel != null)
                 {
                     searched_items = (await SearchFuncWithCancel(Text, CancellationTokenSrc.Token)) ?? Array.Empty<T>();
