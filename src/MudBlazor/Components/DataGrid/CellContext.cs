@@ -32,9 +32,10 @@ namespace MudBlazor
             Item = item;
             Actions = new CellContext<T>.CellActions
             {
-                SetSelectedItem = async (x) => await dataGrid.SetSelectedItemAsync(x, item),
-                StartEditingItem = async () => await dataGrid.SetEditingItemAsync(item),
+                SetSelectedItem = async (x) => await dataGrid.SetSelectedItemAsync(x, this.Item),
+                StartEditingItem = async () => await dataGrid.SetEditingItemAsync(this.Item),
                 CancelEditingItem = async () => await dataGrid.CancelEditingItemAsync(),
+                CommitItemChanges = async () => await dataGrid.CommitItemChangesAsync(this.Item),
             };
         }
 
@@ -43,6 +44,7 @@ namespace MudBlazor
             public Action<bool> SetSelectedItem { get; internal set; }
             public Action StartEditingItem { get; internal set; }
             public Action CancelEditingItem { get; internal set; }
+            public Action CommitItemChanges { get; internal set; }
         }
     }
 }
