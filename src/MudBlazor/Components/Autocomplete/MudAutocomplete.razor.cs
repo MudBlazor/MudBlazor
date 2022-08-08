@@ -35,11 +35,11 @@ namespace MudBlazor
         private IKeyInterceptor _keyInterceptor;
         private bool _dense;
         private Timer _timer;
-        private List<T> _items;
+        private T[] _items;
         private int _selectedListItemIndex = 0;
         private IList<int> _enabledItemIndices = new List<int>();
         private int _itemsReturned; //the number of items returned by the search function
-        int _elementKey = 0;
+        //int _elementKey = 0;
 
         private string CurrentIcon => !string.IsNullOrWhiteSpace(AdornmentIcon) ? AdornmentIcon : _isOpen ? CloseIcon : OpenIcon;
 
@@ -59,26 +59,6 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.FormComponent.ListAppearance)]
         public string PopoverClass { get; set; }
-
-        private List<T> _itemCollection = new();
-        /// <summary>
-        /// If not null, select items will automatically created regard to the collection.
-        /// </summary>
-        [Parameter]
-        [Category(CategoryTypes.FormComponent.Behavior)]
-        public ICollection<T> ItemCollection
-        {
-            get => _itemCollection;
-            set
-            {
-                if (_itemCollection == value)
-                {
-                    return;
-                }
-                _itemCollection = value.ToList();
-                _items = _itemCollection;
-            }
-        }
 
         /// <summary>
         /// Set the anchor origin point to determen where the popover will open from.
@@ -131,14 +111,14 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Appearance)]
-        public string OpenIcon { get; set; } = Icons.Material.Filled.ArrowDropDown;
+        public string OpenIcon { get; set; } = Icons.Filled.ArrowDropDown;
 
         /// <summary>
         /// The Close Autocomplete Icon
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Appearance)]
-        public string CloseIcon { get; set; } = Icons.Material.Filled.ArrowDropUp;
+        public string CloseIcon { get; set; } = Icons.Filled.ArrowDropUp;
 
         //internal event Action<HashSet<T>> SelectionChangedFromOutside;
 
@@ -384,10 +364,13 @@ namespace MudBlazor
 
         #region Values, Text & Coerce
 
+        private async Task ListValueChanged()
+        {
+            await SetValueAsync(_list.SelectedValue, false);
+        }
+
         private T _selectedValue;
-        [Parameter]
-        [Category(CategoryTypes.FormComponent.Data)]
-        public T SelectedValue
+        protected T SelectedValue
         {
             get => _selectedValue;
 
@@ -398,11 +381,7 @@ namespace MudBlazor
                     return;
                 }
                 _selectedValue = value;
-                //if (_firstRendered == false)
-                //{
-                //    Value = value;
-                //}
-                SelectedValueChanged.InvokeAsync(_selectedValue).AndForget();
+                SetValueAsync(value, false).AndForget();
             }
         }
 
@@ -465,11 +444,6 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Fires when SelectedValue changes.
-        /// </summary>
-        [Parameter] public EventCallback<T> SelectedValueChanged { get; set; }
-
-        /// <summary>
         /// Fires when SelectedValues changes.
         /// </summary>
         [Parameter] public EventCallback<IEnumerable<T>> SelectedValuesChanged { get; set; }
@@ -525,8 +499,14 @@ namespace MudBlazor
                 return Task.CompletedTask;
             _timer?.Dispose();
             var value = Converter.Get(Text);
-            SelectedValue = Converter.Get(Text);
+            Value = Converter.Get(Text);
             return SetValueAsync(value, updateText: false);
+        }
+
+        protected override async Task SetValueAsync(T value, bool updateText = true)
+        {
+            SelectedValue = value;
+            await base.SetValueAsync(value, updateText);
         }
 
         #endregion
@@ -537,8 +517,8 @@ namespace MudBlazor
         public async Task SelectOption(T value)
         {
             await SetValueAsync(value);
-            if (ItemCollection != null)
-                _selectedListItemIndex = ItemCollection.ToList().IndexOf(value);
+            if (_items != null)
+                _selectedListItemIndex = Array.IndexOf(_items, value);
             var optionText = GetItemString(value);
             if (!_isCleared)
                 await SetTextAsync(optionText, false);
@@ -564,28 +544,28 @@ namespace MudBlazor
                 return;
             }
 
-            IEnumerable<T> searched_items = Array.Empty<T>();
+            IEnumerable<T> searchedItems = Array.Empty<T>();
             try
             {
-                searched_items = (await SearchFunc(Text)) ?? Array.Empty<T>();
+                searchedItems = (await SearchFunc(Text)) ?? Array.Empty<T>();
             }
             catch (Exception e)
             {
                 Console.WriteLine("The search function failed to return results: " + e.ToString());
             }
-            _itemsReturned = searched_items.Count();
+            _itemsReturned = searchedItems.Count();
             if (MaxItems.HasValue)
             {
-                searched_items = searched_items.Take(MaxItems.Value);
+                searchedItems = searchedItems.Take(MaxItems.Value);
             }
-            _items = searched_items.ToList();
+            _items = searchedItems.ToArray();
 
             _enabledItemIndices = _items.Select((item, idx) => (item, idx)).Where(tuple => ItemDisabledFunc?.Invoke(tuple.item) != true).Select(tuple => tuple.idx).ToList();
             _selectedListItemIndex = _enabledItemIndices.Any() ? _enabledItemIndices.First() : -1;
 
             IsOpen = true;
 
-            if (_items?.Count == 0)
+            if (_items?.Length == 0)
             {
                 await CoerceValueToText();
                 StateHasChanged();
@@ -617,14 +597,22 @@ namespace MudBlazor
                 if (SelectOnClick)
                     await _elementReference.SelectAsync();
                 await OnSearchAsync();
-                _list.UpdateLastActivatedItem(SelectedValue);
-                if (_list._lastActivatedItem != null && !(MultiSelection && _list._allSelected == true))
+                await Task.Delay(1);
+                if (Value != null)
+                {
+                    _list.UpdateLastActivatedItem(Value);
+                }
+                if (_list != null && _list._lastActivatedItem != null && !(MultiSelection && _list._allSelected == true))
                 {
                     await _list.ScrollToMiddleAsync(_list._lastActivatedItem);
                 }
             }
             else
             {
+                if (ResetValueOnEmptyText && string.IsNullOrEmpty(Text))
+                {
+                    await SetValueAsync(default(T));
+                }
                 _timer?.Dispose();
                 //RestoreScrollPosition();
                 await CoerceTextToValue();
@@ -695,7 +683,7 @@ namespace MudBlazor
                     else
                     {
                         await ToggleMenu();
-                        await _elementReference.SetText(SelectedValue?.ToString());
+                        await _elementReference.SetText(Value?.ToString());
                     }
                     break;
 
@@ -748,10 +736,10 @@ namespace MudBlazor
         {
             if (IsOpen == false)
                 return Task.CompletedTask;
-            if (_items == null || _items.Count == 0)
+            if (_items == null || _items.Length == 0)
                 return Task.CompletedTask;
-            if (_selectedListItemIndex >= 0 && _selectedListItemIndex < _items.Count)
-                return SelectOption(SelectedValue);
+            if (_selectedListItemIndex >= 0 && _selectedListItemIndex < _items.Length)
+                return SelectOption(Value);
             return Task.CompletedTask;
         }
 
@@ -810,7 +798,7 @@ namespace MudBlazor
             return "null";
         }
 
-        private void OnTimerComplete(object stateInfo) => InvokeAsync(OnSearchAsync);
+        private void OnTimerComplete(object stateInfo) => InvokeAsync(OnSearchAsync).AndForget();
 
         //private ValueTask SelectNextItem(int increment)
         //{

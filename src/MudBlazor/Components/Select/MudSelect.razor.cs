@@ -364,6 +364,11 @@ namespace MudBlazor
 
             set
             {
+                if (_selectedListItem == value)
+                {
+                    return;
+                }
+                _selectedListItems = value.ToHashSet();
                 SelectedItems = Items.Where(x => Converter.Set(x.Value) == Converter.Set(_selectedListItem.Value));
             }
         }

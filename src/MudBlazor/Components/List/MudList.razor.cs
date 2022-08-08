@@ -22,7 +22,7 @@ namespace MudBlazor
         private List<MudListItem<T>> _items = new();
         private List<MudList<T>> _childLists = new();
         private MudListItem<T> _selectedItem = new();
-        private List<MudListItem<T>> _selectedItems = new();
+        private HashSet<MudListItem<T>> _selectedItems = new();
         private T _selectedValue;
         private HashSet<T> _selectedValues = new();
         internal MudListItem<T> _lastActivatedItem;
@@ -343,7 +343,7 @@ namespace MudBlazor
                 if (_selectedItems == value)
                     return;
 
-                _selectedItems = value == null ? null : value.ToList();
+                _selectedItems = value == null ? null : value.ToHashSet();
                 SelectedItemsChanged.InvokeAsync(_selectedItems).AndForget();
             }
         }
@@ -366,7 +366,7 @@ namespace MudBlazor
         /// <summary>
         /// Called whenever the selected items changed. Can also be called even MultiSelection is false.
         /// </summary>
-        [Parameter] public EventCallback<List<MudListItem<T>>> SelectedItemsChanged { get; set; }
+        [Parameter] public EventCallback<IEnumerable<MudListItem<T>>> SelectedItemsChanged { get; set; }
 
         public List<MudListItem<T>> GetAllItems
         {

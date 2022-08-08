@@ -335,7 +335,6 @@ namespace MudBlazor
                 }
                 _value = value;
             }
-            
         }
 
         protected virtual async Task SetValueAsync(T value, bool updateText = true)
