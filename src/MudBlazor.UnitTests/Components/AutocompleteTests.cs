@@ -873,6 +873,53 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task Autocomplete_Should_ShowOtherProgressIndicator()
+        {
+            var markup = string.Empty;
+
+            var comp = Context.RenderComponent<MudAutocomplete<string>>();
+
+            RenderFragment fragment = builder =>
+            {
+                builder.AddContent(0, "Loading...");
+            };
+
+            comp.SetParam(p => p.ProgressIndicatorTemplate, fragment);
+            comp.SetParam(p => p.ShowProgressIndicator, true);
+            comp.SetParam(p => p.DebounceInterval, 0);
+            comp.SetParam(p => p.SearchFunc, new Func<string, Task<IEnumerable<string>>>(async s =>
+            {
+                markup = comp.Markup;
+                return new List<string> { "Foo", "Bar" };
+            }));
+            comp.SetParam(a => a.Text, "Foo");
+
+            markup.Should().Contain("Loading...");
+        }
+
+        [Test]
+        public async Task Autocomplete_Should_ShowProgressIndicatorInPopover()
+        {
+            RenderFragment fragment = builder =>
+            {
+                builder.AddContent(0, "Loading...");
+            };
+
+            var comp = Context.RenderComponent<AutocompleteTest1>();
+
+            var autocompletecomp = comp.FindComponent<MudAutocomplete<string>>();
+
+            autocompletecomp.SetParam(p => p.ProgressIndicatorInPopoverTemplate, fragment);
+            autocompletecomp.SetParam(p => p.DebounceInterval, 0);
+
+            var autocomplete = autocompletecomp.Instance;
+
+            await comp.InvokeAsync(() => autocomplete.FocusAsync());
+
+            comp.Markup.Should().NotContain("Loading...");
+        }
+
+        [Test]
         public async Task Autocomplete_ShouldNot_ShowProgressIndicator()
         {
             var markup = string.Empty;
