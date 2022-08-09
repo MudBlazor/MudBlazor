@@ -900,6 +900,8 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task Autocomplete_Should_ShowProgressIndicatorInPopover()
         {
+            var markup = string.Empty;
+
             RenderFragment fragment = builder =>
             {
                 builder.AddContent(0, "Loading...");
@@ -911,12 +913,14 @@ namespace MudBlazor.UnitTests.Components
 
             autocompletecomp.SetParam(p => p.ProgressIndicatorInPopoverTemplate, fragment);
             autocompletecomp.SetParam(p => p.DebounceInterval, 0);
+            autocompletecomp.SetParam(p => p.SearchFunc, new Func<string, Task<IEnumerable<string>>>(async s =>
+            {
+                markup = comp.Markup;
+                return new List<string> { "Foo", "Bar" };
+            }));
+            autocompletecomp.SetParam(a => a.Text, "Foo");
 
-            var autocomplete = autocompletecomp.Instance;
-
-            await comp.InvokeAsync(() => autocomplete.FocusAsync());
-
-            comp.Markup.Should().NotContain("Loading...");
+            markup.Should().Contain("Loading...");
         }
 
         [Test]
