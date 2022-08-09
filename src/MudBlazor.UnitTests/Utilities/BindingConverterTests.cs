@@ -138,7 +138,15 @@ namespace MudBlazor.UnitTests.Utilities
             c9.Get(null).Should().Be(null);
         }
 
-        public enum YesNoMaybe { Maybe, Yes, No }
+        public enum YesNoMaybe
+        {
+            [System.ComponentModel.Description("may be")]
+            Maybe,
+            [System.ComponentModel.Description("yes")]
+            Yes,
+            [System.ComponentModel.Description("no")]
+            No
+        }
 
         [Test]
         public void DefaultConverterTest2()
@@ -457,6 +465,20 @@ namespace MudBlazor.UnitTests.Utilities
             conv.Get("nada").Should().Be(null);
             conv.Set(18).Should().Be("18");
             conv.Get("18").Should().Be(18);
+        }
+
+        [Test]
+        public void EnumConverterTest()
+        {
+            var conv = new EnumConverter<YesNoMaybe>();
+            conv.Set(YesNoMaybe.Yes).Should().Be("yes");            
+            conv.Set(YesNoMaybe.Maybe).Should().Be("may be");
+            conv.Set(YesNoMaybe.No).Should().Be("no");
+            conv.Get("No").Should().Be(YesNoMaybe.No);
+            conv.Get("no").Should().Be(YesNoMaybe.No);
+            conv.Get("may be").Should().Be(YesNoMaybe.Maybe);
+            conv.Get("Maybe").Should().Be(YesNoMaybe.Maybe);
+            conv.Get(null).Should().Be(YesNoMaybe.Maybe);
         }
 
         // a custom converter used only in test cases

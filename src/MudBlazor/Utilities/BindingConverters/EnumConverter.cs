@@ -2,7 +2,7 @@
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 
-namespace MudBlazor.Utilities.BindingConverters
+namespace MudBlazor
 {
     [ExcludeFromCodeCoverage]
     public class EnumConverter<T> : Converter<T, string> where T : Enum
@@ -21,7 +21,7 @@ namespace MudBlazor.Utilities.BindingConverters
                 {
                     if (Attribute.GetCustomAttribute(fieldInfo, typeof(DescriptionAttribute)) is DescriptionAttribute descAttr)
                     {
-                        if (descAttr.Description == value)
+                        if (descAttr.Description == value || fieldInfo.Name == value)
                         {
                             return (T)fieldInfo.GetValue(null);
                         }
@@ -48,8 +48,8 @@ namespace MudBlazor.Utilities.BindingConverters
         {
             try
             {
-                var fi = value.GetType().GetField(value.ToString());
-                if (Attribute.GetCustomAttribute(fi, typeof(DescriptionAttribute)) is DescriptionAttribute descAttr && !string.IsNullOrEmpty(descAttr.Description))
+                var fieldInfo = value.GetType().GetField(value.ToString());
+                if (Attribute.GetCustomAttribute(fieldInfo, typeof(DescriptionAttribute)) is DescriptionAttribute descAttr && !string.IsNullOrEmpty(descAttr.Description))
                 {
                     return descAttr.Description;
                 }
