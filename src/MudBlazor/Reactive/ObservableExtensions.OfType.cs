@@ -1,10 +1,12 @@
-﻿using System.Reactive.Subjects;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Reactive.Subjects;
 
 #nullable enable
 // ReSharper disable CheckNamespace
 namespace System.Reactive.Linq
 // ReSharper restore CheckNamespace
 {
+    [ExcludeFromCodeCoverage]
     internal static partial class ObservableExtensions
     {
         /// <summary>

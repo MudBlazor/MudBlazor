@@ -1,12 +1,11 @@
-﻿
-
-#nullable enable
-using System;
+﻿using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using System.Threading.Tasks;
 using Microsoft.JSInterop;
+
+#nullable enable
 namespace MudBlazor
 {
     public interface IScrollListener : IAsyncDisposable, IDisposable
