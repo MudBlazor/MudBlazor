@@ -726,32 +726,53 @@ namespace MudBlazor.UnitTests.Components
             comp.WaitForAssertion(() => comp.Instance.ValidationErrors.Should().HaveCount(0));
         }
         
-        /// <summary>
-        /// Setting OnlyValidateIfDirty to false must not validate on blur
-        /// </summary>
         [Test]
-        public async Task TextField_OnlyValidateIfDirty_Is_True_Should_Not_Validate_OnBlur()
+        public async Task TextField_OnlyValidateIfDirty_Is_True_Should_OnlyHaveInputErrorWhenValueChanged()
         {
             var comp = Context.RenderComponent<MudTextField<int?>>(
                 ComponentParameter.CreateParameter("Required", true),
                 ComponentParameter.CreateParameter("OnlyValidateIfDirty", true));
-            comp.Find("input").Blur();
+            comp.FindAll("div.mud-input-error").Count.Should().Be(0);
             
+            // user does not change input value but changes focus
+            comp.Find("input").Blur();
+            comp.FindAll("div.mud-input-error").Count.Should().Be(0);
+
+            // user puts in a invalid integer value
+            comp.Find("input").Change("invalid");
+            comp.Find("input").Blur();
+            comp.FindAll("div.mud-input-error").Count.Should().Be(1);
+            comp.Find("div.mud-input-error").TextContent.Trim().Should().Be("Not a valid number");
+            
+            // user corrects input
+            comp.Find("input").Change(55);
+            comp.Find("input").Blur();
             comp.FindAll("div.mud-input-error").Count.Should().Be(0);
         }
         
-        /// <summary>
-        /// Setting OnlyValidateIfDirty to true must validate on blur
-        /// </summary>
         [Test]
-        public async Task TextField_OnlyValidateIfDirty_Is_False_Should_Validate_OnBlur()
+        public async Task TextField_OnlyValidateIfDirty_Is_False_Should_HaveInputErrorWhenFocusChanged()
         {
             var comp = Context.RenderComponent<MudTextField<int?>>(
                 ComponentParameter.CreateParameter("Required", true),
                 ComponentParameter.CreateParameter("OnlyValidateIfDirty", false));
-            comp.Find("input").Blur();
+            comp.FindAll("div.mud-input-error").Count.Should().Be(0);
             
+            // user does not change input value but changes focus
+            comp.Find("input").Blur();
             comp.FindAll("div.mud-input-error").Count.Should().Be(2);
+            comp.Find("div.mud-input-error").TextContent.Trim().Should().Be("Required");
+            
+            // user puts in a invalid integer value
+            comp.Find("input").Change("invalid");
+            comp.Find("input").Blur();
+            comp.FindAll("div.mud-input-error").Count.Should().Be(2);
+            comp.Find("div.mud-input-error").TextContent.Trim().Should().Be("Not a valid number");
+            
+            // user corrects input
+            comp.Find("input").Change(55);
+            comp.Find("input").Blur();
+            comp.FindAll("div.mud-input-error").Count.Should().Be(0);
         }
     }
 }
