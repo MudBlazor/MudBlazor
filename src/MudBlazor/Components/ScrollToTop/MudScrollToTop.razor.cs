@@ -1,15 +1,15 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    public partial class MudScrollToTop : IDisposable
+    public partial class MudScrollToTop : IAsyncDisposable
     {
         private IScrollListener _scrollListener;
 
-        protected string Classname =>
-        new CssBuilder("mud-scroll-to-top")
+        protected string Classname => new CssBuilder("mud-scroll-to-top")
             .AddClass("visible", Visible && string.IsNullOrWhiteSpace(VisibleCssClass))
             .AddClass("hidden", !Visible && string.IsNullOrWhiteSpace(HiddenCssClass))
             .AddClass(VisibleCssClass, Visible && !string.IsNullOrWhiteSpace(VisibleCssClass))
@@ -17,9 +17,11 @@ namespace MudBlazor
             .AddClass(Class)
             .Build();
 
-        [Inject] IScrollListenerFactory ScrollListenerFactory { get; set; }
+        [Inject] 
+        IScrollListenerFactory ScrollListenerFactory { get; set; }
 
-        [Inject] IScrollManager ScrollManager { get; set; }
+        [Inject] 
+        IScrollManager ScrollManager { get; set; }
 
         [Parameter]
         [Category(CategoryTypes.ScrollToTop.Behavior)]
@@ -71,13 +73,13 @@ namespace MudBlazor
         /// <summary>
         /// Called when scroll event is fired
         /// </summary>
-        [Parameter] public EventCallback<ScrollEventArgs> OnScroll { get; set; }
+        [Parameter] 
+        public EventCallback<ScrollEventArgs> OnScroll { get; set; }
 
-        protected override void OnAfterRender(bool firstRender)
+        protected override async Task OnAfterRenderAsync(bool firstRender)
         {
             if (firstRender)
             {
-
                 var selector = !string.IsNullOrWhiteSpace(Selector)
                     ? Selector
                     : null;// null is defaulted to document element in JS function
@@ -85,16 +87,15 @@ namespace MudBlazor
                 _scrollListener = ScrollListenerFactory.Create(selector);
 
                 //subscribe to event
-                _scrollListener.OnScroll += ScrollListener_OnScroll;
+                await _scrollListener.SubscribeOnScrollAsync(ScrollListenerOnScroll);
             }
         }
 
         /// <summary>
-        /// event received when scroll in the selected element happens
+        /// Event received when scroll in the selected element happens
         /// </summary>
-        /// <param name="sender">ScrollListener instance</param>
         /// <param name="e">Information about the position of the scrolled element</param>
-        private async void ScrollListener_OnScroll(object sender, ScrollEventArgs e)
+        private async Task ScrollListenerOnScroll(ScrollEventArgs e)
         {
             await OnScroll.InvokeAsync(e);
 
@@ -102,16 +103,16 @@ namespace MudBlazor
                 ? e.FirstChildBoundingClientRect.Top * -1
                 : e.ScrollTop;
 
-            if (topOffset >= TopOffset && Visible != true)
+            if (topOffset >= TopOffset && !Visible)
             {
                 Visible = true;
-                await InvokeAsync(() => StateHasChanged());
+                await InvokeAsync(StateHasChanged);
             }
 
-            if (topOffset < TopOffset && Visible == true)
+            if (topOffset < TopOffset && Visible)
             {
                 Visible = false;
-                await InvokeAsync(() => StateHasChanged());
+                await InvokeAsync(StateHasChanged);
             }
         }
 
@@ -123,15 +124,18 @@ namespace MudBlazor
             ScrollManager.ScrollToTopAsync(_scrollListener.Selector, ScrollBehavior);
         }
 
-        /// <summary>
-        /// Remove the event
-        /// </summary>
-        public void Dispose()
+        public async ValueTask DisposeAsync()
         {
-            if(_scrollListener == null) { return; }
+            await DisposeAsyncCore().ConfigureAwait(false);
+            GC.SuppressFinalize(this);
+        }
 
-            _scrollListener.OnScroll -= ScrollListener_OnScroll;
-            _scrollListener.Dispose();
+        protected virtual async ValueTask DisposeAsyncCore()
+        {
+            if (_scrollListener is not null)
+            {
+                await _scrollListener.DisposeAsync();
+            }
         }
     }
 }

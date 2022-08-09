@@ -38,7 +38,6 @@ namespace MudBlazor
         public ScrollManager(IJSRuntime jSRuntime)
         {
             _jSRuntime = jSRuntime;
-
         }
 
         /// <summary>

@@ -2,8 +2,6 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.JSInterop;
 
 namespace MudBlazor
@@ -15,14 +13,13 @@ namespace MudBlazor
 
     public class ScrollListenerFactory : IScrollListenerFactory
     {
-        private readonly IServiceProvider _provider;
+        private readonly IJSRuntime _jsRuntime;
 
-        public ScrollListenerFactory(IServiceProvider provider)
+        public ScrollListenerFactory(IJSRuntime jsRuntime)
         {
-            _provider = provider;
+            _jsRuntime = jsRuntime;
         }
 
-        public IScrollListener Create(string selector) =>
-            new ScrollListener(selector, _provider.GetRequiredService<IJSRuntime>());
+        public IScrollListener Create(string selector) => new ScrollListener(selector, _jsRuntime);
     }
 }

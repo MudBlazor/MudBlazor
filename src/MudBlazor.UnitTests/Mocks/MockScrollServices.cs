@@ -1,11 +1,12 @@
 ﻿using System;
+using System.Reactive.Linq;
+using System.Reactive.Subjects;
 using System.Threading.Tasks;
 
 namespace MudBlazor.UnitTests.Mocks
 {
     public class MockScrollListenerFactory : IScrollListenerFactory
     {
-
         public IScrollListener Create(string selector) =>
             new MockScrollListener()
             {
@@ -18,18 +19,30 @@ namespace MudBlazor.UnitTests.Mocks
     /// </summary>
     public class MockScrollListener : IScrollListener
     {
+        private readonly Subject<ScrollEventArgs> _scrollEventSubject;
+
         public string Selector { get; set; }
 
-        public event EventHandler<ScrollEventArgs> OnScroll;
+        public ValueTask SubscribeOnScrollAsync(Func<ScrollEventArgs, Task> onNext)
+        {
+            _scrollEventSubject.Select(onNext).Subscribe();
+            return ValueTask.CompletedTask;
+        }
 
         public MockScrollListener()
         {
-            OnScroll?.Invoke(this, new ScrollEventArgs());
+            _scrollEventSubject = new Subject<ScrollEventArgs>();
         }
 
         public void Dispose()
         {
-           
+            _scrollEventSubject.Dispose();
+        }
+
+        public ValueTask DisposeAsync()
+        {
+            _scrollEventSubject.Dispose();
+            return ValueTask.CompletedTask;
         }
     }
 

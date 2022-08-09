@@ -1,73 +1,47 @@
-﻿using System;
-using System.Diagnostics.CodeAnalysis;
-using System.Threading.Tasks;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.JSInterop;
+﻿
 
+#nullable enable
+using System;
+using System.Diagnostics.CodeAnalysis;
+using System.Reactive.Linq;
+using System.Reactive.Subjects;
+using System.Threading.Tasks;
+using Microsoft.JSInterop;
 namespace MudBlazor
 {
-
-
-    public interface IScrollListener : IDisposable
+    public interface IScrollListener : IAsyncDisposable, IDisposable
     {
         /// <summary>
         /// The CSS selector to which the scroll event will be attached
         /// </summary>
-        string Selector { get; set; }
+        string? Selector { get; set; }
 
-        event EventHandler<ScrollEventArgs> OnScroll;
+        ValueTask SubscribeOnScrollAsync(Func<ScrollEventArgs, Task> onNext);
     }
 
-    internal class ScrollListener : IScrollListener, IDisposable
+    internal class ScrollListener : IScrollListener
     {
+        private readonly Subject<ScrollEventArgs> _scrollEventSubject;
         private readonly IJSRuntime _js;
-        private DotNetObjectReference<ScrollListener> _dotNetRef;
+        private DotNetObjectReference<ScrollListener>? _dotNetRef;
 
         /// <summary>
         /// The CSS selector to which the scroll event will be attached
         /// </summary>
-        public string Selector { get; set; } = null;
+        public string? Selector { get; set; }
 
         [DynamicDependency(nameof(RaiseOnScroll))]
         [DynamicDependency(DynamicallyAccessedMemberTypes.All, typeof(ScrollEventArgs))]
-        public ScrollListener(IJSRuntime js) : this(string.Empty, js)
+        public ScrollListener(IJSRuntime js)
+            : this(null, js)
         {
         }
 
-        public ScrollListener(string selector, IJSRuntime js)
+        public ScrollListener(string? selector, IJSRuntime js)
         {
             _js = js;
             Selector = selector;
-        }
-
-        private EventHandler<ScrollEventArgs> _onScroll;
-
-        /// <summary>
-        /// OnScroll event. Fired when a element is scrolled
-        /// </summary>
-        public event EventHandler<ScrollEventArgs> OnScroll
-        {
-            add => Subscribe(value);
-            remove => Unsubscribe(value);
-        }
-
-
-        private async void Subscribe(EventHandler<ScrollEventArgs> value)
-        {
-            if (_onScroll == null)
-            {
-                await Start();
-            }
-            _onScroll += value;
-        }
-
-        private void Unsubscribe(EventHandler<ScrollEventArgs> value)
-        {
-            _onScroll -= value;
-            if (_onScroll == null)
-            {
-                Cancel().ConfigureAwait(false);
-            }
+            _scrollEventSubject = new Subject<ScrollEventArgs>();
         }
 
         /// <summary>
@@ -77,37 +51,66 @@ namespace MudBlazor
         [JSInvokable]
         public void RaiseOnScroll(ScrollEventArgs e)
         {
-            _onScroll?.Invoke(this, e);
+            //In normal scenario RaiseOnScroll shouldn't be raised when Subject is disposed
+            //But let's add a protection in case for some reason cancelListener fails
+            if (!_scrollEventSubject.IsDisposed)
+            {
+                _scrollEventSubject.OnNext(e);
+            }
         }
 
         /// <summary>
         /// Subscribe to scroll event in JS
         /// </summary>        
-        private ValueTask Start()
+        public ValueTask SubscribeOnScrollAsync(Func<ScrollEventArgs, Task> onNext)
         {
             _dotNetRef = DotNetObjectReference.Create(this);
-            return _js.InvokeVoidAsync
-                ("mudScrollListener.listenForScroll",
-                           _dotNetRef,
-                           Selector);
+            _scrollEventSubject.Select(onNext).Subscribe();
+            return _js.InvokeVoidAsync("mudScrollListener.listenForScroll", _dotNetRef, Selector);
         }
 
         /// <summary>
         /// Unsubscribe to scroll event in 
         /// </summary>
-        private async ValueTask Cancel()
+        private async ValueTask UnsubscribeAsync()
         {
             try
             {
-                await _js.InvokeVoidAsync(
-                    "mudScrollListener.cancelListener",
-                               Selector);
+                await _js.InvokeVoidAsync("mudScrollListener.cancelListener", Selector);
             }
-            catch { /* ignore */ }
+            catch (Exception)
+            {
+                /* ignore */
+            }
         }
 
         public void Dispose()
         {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        public async ValueTask DisposeAsync()
+        {
+            await DisposeAsyncCore().ConfigureAwait(false);
+            Dispose(false);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                UnsubscribeAsync().AndForget();
+                _scrollEventSubject.Dispose();
+                _dotNetRef?.Dispose();
+            }
+        }
+
+        protected virtual async ValueTask DisposeAsyncCore()
+        {
+            await UnsubscribeAsync();
+            _scrollEventSubject.Dispose();
             _dotNetRef?.Dispose();
         }
     }
