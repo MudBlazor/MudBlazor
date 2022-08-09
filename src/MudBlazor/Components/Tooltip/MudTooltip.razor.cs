@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Extensions;
@@ -10,6 +11,7 @@ namespace MudBlazor
     {
         protected string ContainerClass => new CssBuilder("mud-tooltip-root")
             .AddClass("mud-tooltip-inline", Inline)
+            .AddClass(RootClass)
             .Build();
 
         protected string Classname => new CssBuilder("mud-tooltip")
@@ -71,6 +73,7 @@ namespace MudBlazor
         /// Changes the default transition delay in seconds.
         /// </summary>
         [Obsolete("Use Delay instead.", true)]
+        [ExcludeFromCodeCoverage]
         [Parameter]
         public double Delayed
         {
@@ -105,6 +108,18 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.Tooltip.Appearance)]
         public bool Inline { get; set; } = true;
+
+        /// <summary>
+        /// Styles applied directly to root component of the tooltip
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Tooltip.Appearance)]
+        public string RootStyle { get; set; }
+
+        /// Classes applied directly to root component of the tooltip
+        [Parameter]
+        [Category(CategoryTypes.Tooltip.Appearance)]
+        public string RootClass { get; set; }
 
         /// <summary>
         /// The visible state of the Tooltip.

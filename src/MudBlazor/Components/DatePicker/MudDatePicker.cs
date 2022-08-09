@@ -27,13 +27,6 @@ namespace MudBlazor
             set => SetDateAsync(value, true).AndForget();
         }
 
-        /// <summary>
-        /// If AutoClose is set to true and PickerActions are defined, selecting a day will close the MudDatePicker.
-        /// </summary>
-        [Parameter]
-        [Category(CategoryTypes.FormComponent.PickerBehavior)]
-        public bool AutoClose { get; set; }
-
         protected async Task SetDateAsync(DateTime? date, bool updateValue)
         {
             if (_value != date)
@@ -85,7 +78,7 @@ namespace MudBlazor
         protected override async void OnDayClicked(DateTime dateTime)
         {
             _selectedDate = dateTime;
-            if (PickerActions == null || AutoClose)
+            if (PickerActions == null || AutoClose || PickerVariant == PickerVariant.Static)
             {
                 Submit();
 
@@ -151,7 +144,7 @@ namespace MudBlazor
             base.OnOpened();
         }
 
-        protected override async void Submit()
+        protected internal override async void Submit()
         {
             if (ReadOnly)
                 return;
@@ -171,11 +164,15 @@ namespace MudBlazor
             _selectedDate = null;
         }
 
-        public override void Clear(bool close = true)
+        public override async void Clear(bool close = true)
         {
-            Date = null;
             _selectedDate = null;
-            base.Clear();
+            await SetDateAsync(null, true);
+
+            if (AutoClose == true)
+            {
+                Close(false);
+            }
         }
 
         protected override string GetTitleDateString()
@@ -286,6 +283,31 @@ namespace MudBlazor
         private void ReturnDateBackUp()
         {
             Close();
+        }
+
+        /// <summary>
+        /// Scrolls to the date.
+        /// </summary>
+        public void GoToDate()
+        {
+            if (Date.HasValue)
+            {
+                PickerMonth = new DateTime(Date.Value.Year, Date.Value.Month, 1);
+                ScrollToYear();
+            }
+        }
+
+        /// <summary>
+        /// Scrolls to the defined date.
+        /// </summary>
+        public async Task GoToDate(DateTime date, bool submitDate = true)
+        {
+            PickerMonth = new DateTime(date.Year, date.Month, 1);
+            if (submitDate)
+            {
+                await SetDateAsync(date, true);
+                ScrollToYear();
+            }
         }
     }
 }

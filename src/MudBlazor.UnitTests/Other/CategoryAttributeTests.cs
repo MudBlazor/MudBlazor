@@ -10,7 +10,6 @@ namespace MudBlazor.UnitTests.Other
     [TestFixture]
     public class CategoryAttributeTests
     {
-
         [Test]
         public void CategoryTypesClassConstantsAreCorrect()
         {
@@ -27,17 +26,21 @@ namespace MudBlazor.UnitTests.Other
         [Test]
         public void AllComponentPropertiesHaveCategories()
         {
-
             // Currently, these classes inheriting from MudComponentBase have uncategorized properties.
             // If you want you can categorize them, and then remove from this list.
             Type[] exceptions = {
                 typeof(MudDataGrid<>),  // TODO: remove it later
+                typeof(FilterHeaderCell<>),
                 typeof(Column<>),
                 typeof(Row),
                 typeof(HeaderCell<>),
                 typeof(FooterCell<>),
                 typeof(Cell<>),
+                typeof(HeaderContext<>),
+                typeof(FooterContext<>),
+                typeof(CellContext<>),
                 typeof(MudDataGridPager<>),
+                typeof(SelectColumn<>),
 
                 typeof(MudTHeadRow),
                 typeof(MudTFootRow),
@@ -79,7 +82,7 @@ namespace MudBlazor.UnitTests.Other
                         property.GetCustomAttribute<CategoryAttribute>() == null)     // property doesn't have a category
                     {
                         isTestOK = false;
-                        //Console.WriteLine($"{component}.{property.Name} property doesn't have a category");
+                        Console.WriteLine($"{component}.{property.Name} property doesn't have a category");
                     }
                 }
             }

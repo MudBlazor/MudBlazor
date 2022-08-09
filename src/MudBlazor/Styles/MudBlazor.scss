@@ -1,6 +1,6 @@
 /*!
  * MudBlazor (https://mudblazor.com/)
- * Copyright (c) 2020-2021 Jonny Larsson
+ * Copyright (c) 2021 MudBlazor
  * Licensed under MIT (https://github.com/MudBlazor/MudBlazor/blob/master/LICENSE)
  */
 
@@ -35,6 +35,7 @@
 @import 'components/_paper';
 @import 'components/_icons';
 @import 'components/_divider';
+@import 'components/_dropzone';
 @import 'components/_expansionpanel';
 @import 'components/_fab';
 @import 'components/_form';
@@ -67,31 +68,20 @@
 @import 'components/_input';
 @import 'components/_inputcontrol';
 @import 'components/_inputlabel';
+@import 'components/_image';
 @import 'components/_overlay';
 @import 'components/_treeview';
 @import 'components/_datagrid';
 
-@import 'utilities/_flex';
-@import 'utilities/_float';
-@import 'utilities/_align';
-@import 'utilities/_spacing';
-@import 'utilities/_borders';
-@import 'utilities/_dimensions';
-@import 'utilities/_display';
-@import 'utilities/_scroll';
-@import 'utilities/_position';
-@import 'utilities/_visibility';
-@import 'utilities/_rtl';
-@import 'utilities/_zindex';
-@import 'utilities/_cursor';
-@import 'utilities/_overflow';
-
+@import 'utilities';
 
 @import 'layout/_appbar';
 @import 'layout/_drawer';
 @import 'layout/_main';
 @import 'layout/_container';
+@import 'layout/_scroll';
 
 
 @import 'core/_colors';
 @import 'core/_ripple';
+@import 'core/_rtl';

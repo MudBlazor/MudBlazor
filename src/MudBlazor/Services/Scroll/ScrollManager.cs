@@ -23,7 +23,7 @@ namespace MudBlazor
         ValueTask ScrollToFragmentAsync(string id, ScrollBehavior behavior);
         ValueTask ScrollToTopAsync(string id, ScrollBehavior scrollBehavior = ScrollBehavior.Auto);
         ValueTask ScrollToYearAsync(string elementId);
-        ValueTask ScrollToListItemAsync(string elementId, int increment, bool onEdges);
+        ValueTask ScrollToListItemAsync(string elementId);
         ValueTask LockScrollAsync(string selector = "body", string cssClass = "scroll-locked");
         ValueTask UnlockScrollAsync(string selector = "body", string cssClass = "scroll-locked");
         ValueTask ScrollToBottomAsync(string elementId, ScrollBehavior scrollBehavior = ScrollBehavior.Auto);
@@ -97,8 +97,8 @@ namespace MudBlazor
         public ValueTask ScrollToYearAsync(string elementId) =>
             _jSRuntime.InvokeVoidAsync("mudScrollManager.scrollToYear", elementId);
 
-        public ValueTask ScrollToListItemAsync(string elementId, int increment, bool onEdges) =>
-            _jSRuntime.InvokeVoidAsync("mudScrollManager.scrollToListItem", elementId, increment, onEdges);
+        public ValueTask ScrollToListItemAsync(string elementId) =>
+            _jSRuntime.InvokeVoidAsync("mudScrollManager.scrollToListItem", elementId);
 
         public ValueTask LockScrollAsync(string selector = "body", string cssClass = "scroll-locked") =>
             _jSRuntime.InvokeVoidAsync("mudScrollManager.lockScroll", selector, cssClass);

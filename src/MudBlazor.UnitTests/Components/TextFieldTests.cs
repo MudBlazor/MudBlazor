@@ -14,6 +14,8 @@ using FluentValidation;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.UnitTests.TestComponents;
+using MudBlazor.UnitTests.TestComponents.Field;
+using MudBlazor.UnitTests.TestComponents.Form;
 using MudBlazor.UnitTests.TestComponents.TextField;
 using NUnit.Framework;
 using static Bunit.ComponentParameterFactory;
@@ -23,6 +25,31 @@ namespace MudBlazor.UnitTests.Components
     [TestFixture]
     public class TextFieldTests : BunitTest
     {
+        /// <summary>
+        /// Text Field id should propagate to label for attribute
+        /// </summary>
+        [Test]
+        public void TestFieldLabelFor()
+        {
+            var comp = Context.RenderComponent<FormIsValidTest3>();
+            var label = comp.FindAll(".mud-input-label");
+            label[0].Attributes.GetNamedItem("for")?.Value.Should().Be("textFieldLabelTest");
+            label[1].Attributes.GetNamedItem("for")?.Value.Should().StartWith("mudinput-");
+        }
+        
+        /// <summary>
+        /// Initial Text for double should be 0, with F1 format it should be 0.0
+        /// </summary>
+        [Test]
+        public async Task TextFieldLabelFor()
+        {
+            var comp = Context.RenderComponent<FieldTest>();
+            var label = comp.FindAll(".mud-input-label");
+            label[0].Attributes.GetNamedItem("for")?.Value.Should().StartWith("mudinput-");
+            label[1].Attributes.GetNamedItem("for")?.Value.Should().StartWith("mudinput-");
+            label[2].Attributes.GetNamedItem("for")?.Value.Should().Be("fieldLabelTest");
+        }
+        
         /// <summary>
         /// Initial Text for double should be 0, with F1 format it should be 0.0
         /// </summary>
@@ -91,7 +118,7 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("input").Change("seventeen");
             comp.Find("input").Blur();
             //Console.WriteLine(comp.Markup);
-            comp.FindAll("div.mud-input-error").Count.Should().Be(1);
+            comp.FindAll("div.mud-input-error").Count.Should().Be(2);
             comp.Find("div.mud-input-error").TextContent.Trim().Should().Be("Not a valid number");
         }
 
@@ -433,13 +460,13 @@ namespace MudBlazor.UnitTests.Components
             protected override ValidationResult IsValid(object value,
                 ValidationContext validationContext)
             {
-                return new ValidationResult("TEST ERROR");
+                return new ValidationResult(ErrorMessage);
             }
         }
         class TestFailingModel
         {
-            [CustomFailingValidation]
-            public string Foo { get; set; }
+            [CustomFailingValidation(ErrorMessage = "Foo")]
+            public virtual string Foo { get; set; }
         }
         [Test]
         public async Task TextField_Should_HaveCorrectMessageWithCustomAttr_Failing()
@@ -449,8 +476,31 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(() => comp.Instance.Validate());
             comp.Instance.Error.Should().BeTrue();
             comp.Instance.ValidationErrors.Should().HaveCount(1);
-            comp.Instance.ValidationErrors[0].Should().Be("TEST ERROR");
-            comp.Instance.GetErrorText().Should().Be("TEST ERROR");
+            comp.Instance.ValidationErrors[0].Should().Be("Foo");
+            comp.Instance.GetErrorText().Should().Be("Foo");
+        }
+
+        class TestFailingModel2 : TestFailingModel
+        {
+            [CustomFailingValidation(ErrorMessage = "Bar")]
+            public override string Foo { get; set; }
+        }
+        /// <summary>
+        /// This test checks specifically the case where validation is made on a child class, but linq expression returns the property of the parent.
+        /// </summary>
+        [Test]
+        public async Task TextField_Should_HaveCorrectMessageWithCustomAttr_Override_Failing()
+        {
+            TestFailingModel model = new TestFailingModel2();
+            var comp = Context.RenderComponent<MudTextField<string>>(
+                ComponentParameter.CreateParameter("For", (Expression<Func<string>>)(() => (model as TestFailingModel2).Foo))
+                //ComponentParameter.CreateParameter("ForModel", typeof(TestFailingModel2)) // Explicitly set the `For` class
+            );
+            await comp.InvokeAsync(() => comp.Instance.Validate());
+            comp.Instance.Error.Should().BeTrue();
+            comp.Instance.ValidationErrors.Should().HaveCount(1);
+            comp.Instance.ValidationErrors[0].Should().Be("Bar");
+            comp.Instance.GetErrorText().Should().Be("Bar");
         }
 
 
@@ -596,6 +646,86 @@ namespace MudBlazor.UnitTests.Components
             comp.WaitForAssertion(() => input.Instance.Text.Should().Be(""));
         }
         
+        [Test]
+        public async Task TextField_ElementReferenceId_ShouldNot_BeEmpty()
+        {
+            var comp = Context.RenderComponent<MudTextField<string>>();
+            var inputId = comp.Instance.InputReference.ElementReference.Id;
+
+            Assert.IsNotEmpty(inputId);
+        }    
+
+        class TestDataAnnotationModel
+        {
+            [Required(ErrorMessage = "The {0} field is required.")]
+            public string Foo1 { get; set; }
+
+            [Required(ErrorMessage = "The {0} field is required.")]
+            [Display(Name = FooTwoDisplayName)]
+            [Compare(nameof(Foo1), ErrorMessage = "'{0}' and '{1}' do not match.")]
+            public string Foo2 { get; set; }
+
+            public const string FooTwoDisplayName = "Foo two";
+        }
+
+        [Test]
+        public async Task TextField_Data_Annotation_Resolve_Name_Of_Field()
+        {
+            var model = new TestDataAnnotationModel();
+            var comp = Context.RenderComponent<MudTextField<string>>(ComponentParameter.CreateParameter("For", (Expression<Func<string>>)(() => model.Foo1)));
+            await comp.InvokeAsync(() => comp.Instance.Validate());
+            comp.Instance.Error.Should().BeTrue();
+            comp.Instance.ValidationErrors.Should().HaveCount(1);
+            comp.Instance.ValidationErrors[0].Should().Be($"The {nameof(TestDataAnnotationModel.Foo1)} field is required.");
+            comp.Instance.GetErrorText().Should().Be($"The {nameof(TestDataAnnotationModel.Foo1)} field is required.");
+            await comp.InvokeAsync(() =>
+            {
+                comp.Instance.Value = "Foo";
+                comp.Instance.Validate();
+            });
+            comp.Instance.Error.Should().BeFalse();
+            comp.Instance.ValidationErrors.Should().HaveCount(0);
+        }
+
+        [Test]
+        public async Task TextField_Data_Annotation_Resolve_Display_Name_Of_Field()
+        {
+            var model = new TestDataAnnotationModel();
+            var comp = Context.RenderComponent<MudTextField<string>>(ComponentParameter.CreateParameter("For", (Expression<Func<string>>)(() => model.Foo2)));
+            await comp.InvokeAsync(() => comp.Instance.Validate());
+            comp.Instance.Error.Should().BeTrue();
+            comp.Instance.ValidationErrors.Should().HaveCount(1);
+            comp.Instance.ValidationErrors[0].Should().Be($"The {TestDataAnnotationModel.FooTwoDisplayName} field is required.");
+            comp.Instance.GetErrorText().Should().Be($"The {TestDataAnnotationModel.FooTwoDisplayName} field is required.");
+        }
+
+        [Test]
+        public async Task TextField_Data_Annotation_Compare()
+        {
+            var model = new TestDataAnnotationModel();
+            var value = "Foo";
+            var comp = Context.RenderComponent<MudTextField<string>>(
+                ComponentParameter.CreateParameter("For", (Expression<Func<string>>)(() => model.Foo2)),
+                ComponentParameter.CreateParameter("Value", value));
+            await comp.InvokeAsync(() => comp.Instance.Validate());
+            comp.Instance.Error.Should().BeTrue();
+            comp.Instance.ValidationErrors.Should().HaveCount(1);
+            comp.Instance.ValidationErrors[0].Should().Be($"'{TestDataAnnotationModel.FooTwoDisplayName}' and '{nameof(TestDataAnnotationModel.Foo1)}' do not match.");
+            comp.Instance.GetErrorText().Should().Be($"'{TestDataAnnotationModel.FooTwoDisplayName}' and '{nameof(TestDataAnnotationModel.Foo1)}' do not match.");
+            model.Foo1 = value;
+            await comp.InvokeAsync(() =>
+            {
+                comp.Instance.Validate();
+            });
+            comp.Instance.Error.Should().BeFalse();
+            comp.Instance.ValidationErrors.Should().HaveCount(0);
+
+            comp.WaitForAssertion(() => comp.Instance.GetInputType().Should().Be(InputType.Text));
+            await comp.InvokeAsync(() => comp.Instance.SelectAsync());
+            await comp.InvokeAsync(() => comp.Instance.SelectRangeAsync(0, 1));
+            comp.WaitForAssertion(() => comp.Instance.ValidationErrors.Should().HaveCount(0));
+        }
+        
         /// <summary>
         /// Setting OnlyValidateIfDirty to false must not validate on blur
         /// </summary>
@@ -624,5 +754,4 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("div.mud-input-error").Count.Should().Be(2);
         }
     }
-
 }

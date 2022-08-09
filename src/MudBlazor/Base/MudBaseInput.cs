@@ -99,6 +99,13 @@ namespace MudBlazor
         public Color AdornmentColor { get; set; } = Color.Default;
 
         /// <summary>
+        /// The aria-label of the adornment.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Appearance)]
+        public string AdornmentAriaLabel { get; set; } = string.Empty;
+
+        /// <summary>
         /// The Icon Size.
         /// </summary>
         [Parameter]
@@ -203,7 +210,7 @@ namespace MudBlazor
         /// </summary>
         internal virtual InputType GetInputType() { return InputType.Text; }
 
-        protected async Task SetTextAsync(string text, bool updateValue = true)
+        protected virtual async Task SetTextAsync(string text, bool updateValue = true)
         {
             if (Text != text)
             {
@@ -230,6 +237,8 @@ namespace MudBlazor
         /// <returns>The ValueTask</returns>
         public virtual ValueTask FocusAsync() { return new ValueTask(); }
 
+        public virtual ValueTask BlurAsync() { return new ValueTask(); }
+
         public virtual ValueTask SelectAsync() { return new ValueTask(); }
 
         public virtual ValueTask SelectRangeAsync(int pos1, int pos2) { return new ValueTask(); }
@@ -252,7 +261,7 @@ namespace MudBlazor
 
         protected bool _isFocused;
 
-        protected virtual void OnBlurred(FocusEventArgs obj)
+        protected internal virtual void OnBlurred(FocusEventArgs obj)
         {
             _isFocused = false;
 
@@ -344,6 +353,7 @@ namespace MudBlazor
                     await UpdateTextPropertyAsync(false);
                 await ValueChanged.InvokeAsync(Value);
                 BeginValidate();
+                FieldChanged(Value);
             }
         }
 
@@ -459,12 +469,6 @@ namespace MudBlazor
             {
                 await FocusAsync();
             }
-        }
-
-        protected override void RegisterAsFormComponent()
-        {
-            if (Standalone)
-                base.RegisterAsFormComponent();
         }
 
         protected override void OnParametersSet()

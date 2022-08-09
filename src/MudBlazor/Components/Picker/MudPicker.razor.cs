@@ -11,11 +11,12 @@ namespace MudBlazor
 {
     public partial class MudPicker<T> : MudFormComponent<T, string>
     {
+        protected IKeyInterceptor _keyInterceptor;
 
         public MudPicker() : base(new Converter<T, string>()) { }
         protected MudPicker(Converter<T, string> converter) : base(converter) { }
 
-        [Inject] private IKeyInterceptor _keyInterceptor { get; set; }
+        [Inject] private IKeyInterceptorFactory _keyInterceptorFactory { get; set; }
 
         private string _elementId = "picker" + Guid.NewGuid().ToString().Substring(0, 8);
 
@@ -31,7 +32,7 @@ namespace MudBlazor
                 .AddClass($"mud-picker-input-text", Editable && PickerVariant != PickerVariant.Static)
                 .AddClass($"mud-disabled", Disabled && PickerVariant != PickerVariant.Static)
                 .AddClass(Class)
-            .Build();
+                .Build();
 
         protected string PickerPaperClass =>
             new CssBuilder("mud-picker")
@@ -40,25 +41,26 @@ namespace MudBlazor
                 .AddClass("mud-picker-open", IsOpen && PickerVariant == PickerVariant.Inline)
                 .AddClass("mud-picker-popover-paper", PickerVariant == PickerVariant.Inline)
                 .AddClass("mud-dialog", PickerVariant == PickerVariant.Dialog)
-            .Build();
+                .Build();
 
         protected string PickerInlineClass =>
             new CssBuilder("mud-picker-inline-paper")
-            .Build();
+                .Build();
 
         protected string PickerContainerClass =>
             new CssBuilder("mud-picker-container")
                 .AddClass("mud-paper-square", _pickerSquare)
-                .AddClass("mud-picker-container-landscape", Orientation == Orientation.Landscape && PickerVariant == PickerVariant.Static)
-            .Build();
+                .AddClass("mud-picker-container-landscape",
+                    Orientation == Orientation.Landscape && PickerVariant == PickerVariant.Static)
+                .Build();
 
         protected string PickerInputClass =>
             new CssBuilder("mud-input-input-control").AddClass(Class)
-            .Build();
+                .Build();
 
         protected string ActionClass => new CssBuilder("mud-picker-actions")
-          .AddClass(ClassActions)
-        .Build();
+            .AddClass(ClassActions)
+            .Build();
 
         /// <summary>
         /// Sets the icon of the input text field
@@ -87,6 +89,13 @@ namespace MudBlazor
         public string AdornmentIcon { get; set; } = Icons.Material.Filled.Event;
 
         /// <summary>
+        /// Sets the aria-label of the input text field icon
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Appearance)]
+        public string AdornmentAriaLabel { get; set; } = string.Empty;
+
+        /// <summary>
         /// The short hint displayed in the input before the user enters a value.
         /// </summary>
         [Parameter]
@@ -96,12 +105,14 @@ namespace MudBlazor
         /// <summary>
         /// Fired when the dropdown / dialog opens
         /// </summary>
-        [Parameter] public EventCallback PickerOpened { get; set; }
+        [Parameter]
+        public EventCallback PickerOpened { get; set; }
 
         /// <summary>
         /// Fired when the dropdown / dialog closes
         /// </summary>
-        [Parameter] public EventCallback PickerClosed { get; set; }
+        [Parameter]
+        public EventCallback PickerClosed { get; set; }
 
         /// <summary>
         /// The higher the number, the heavier the drop-shadow. 0 for no shadow set to 8 by default in inline mode and 0 in static mode.
@@ -151,6 +162,13 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
         public string Label { get; set; }
+
+        /// <summary>
+        /// Show clear button.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Behavior)]
+        public bool Clearable { get; set; } = false;
 
         /// <summary>
         /// If true, the picker will be disabled.
@@ -238,12 +256,14 @@ namespace MudBlazor
         /// Changes the cursor appearance.
         /// </summary>
         [Obsolete("This is enabled now by default when you use Editable=true. You can remove the parameter.", false)]
-        [Parameter] public bool AllowKeyboardInput { get; set; }
+        [Parameter]
+        public bool AllowKeyboardInput { get; set; }
 
         /// <summary>
         /// Fired when the text changes.
         /// </summary>
-        [Parameter] public EventCallback<string> TextChanged { get; set; }
+        [Parameter]
+        public EventCallback<string> TextChanged { get; set; }
 
         /// <summary>
         /// The currently selected string value (two-way bindable)
@@ -255,6 +275,7 @@ namespace MudBlazor
             get => _text;
             set => SetTextAsync(value, true).AndForget();
         }
+
         private string _text;
 
         /// <summary>
@@ -278,6 +299,33 @@ namespace MudBlazor
         [Category(CategoryTypes.FormComponent.Appearance)]
         public Margin Margin { get; set; } = Margin.None;
 
+        /// <summary>
+        /// A mask for structured input of the date (requires Editable to be true).
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Behavior)]
+        public IMask Mask
+        {
+            get => _mask;
+            set => _mask = value;
+        }
+
+        /// <summary>
+        /// Gets or sets the origin of the popover's anchor. Defaults to <see cref="Origin.TopLeft"/>
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Popover.Appearance)]
+        public Origin AnchorOrigin { get; set; } = Origin.TopLeft;
+
+        /// <summary>
+        /// Gets or sets the origin of the popover's transform. Defaults to <see cref="Origin.TopLeft"/>
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Popover.Appearance)]
+        public Origin TransformOrigin { get; set; } = Origin.TopLeft;
+
+        protected IMask _mask = null;
+
         protected async Task SetTextAsync(string value, bool callback)
         {
             if (_text != value)
@@ -286,6 +334,7 @@ namespace MudBlazor
                 if (callback)
                     await StringValueChanged(_text);
                 await TextChanged.InvokeAsync(_text);
+                FieldChanged(_text);
             }
         }
 
@@ -312,11 +361,12 @@ namespace MudBlazor
             IsOpen = false;
 
             if (submit)
+            {
                 Submit();
-
-            StateHasChanged();
+            }
 
             OnClosed();
+            StateHasChanged();
         }
 
         public void Open()
@@ -328,7 +378,7 @@ namespace MudBlazor
 
         private void CloseOverlay() => Close(PickerActions == null);
 
-        protected virtual void Submit() { }
+        protected internal virtual void Submit() { }
 
         public virtual void Clear(bool close = true)
         {
@@ -338,13 +388,22 @@ namespace MudBlazor
             }
         }
 
+        protected override void ResetValue()
+        {
+            _inputReference?.Reset();
+            base.ResetValue();
+        }
+
         protected internal MudTextField<string> _inputReference;
 
         public virtual ValueTask FocusAsync() => _inputReference?.FocusAsync() ?? ValueTask.CompletedTask;
 
+        public virtual ValueTask BlurAsync() => _inputReference?.BlurAsync() ?? ValueTask.CompletedTask;
+
         public virtual ValueTask SelectAsync() => _inputReference?.SelectAsync() ?? ValueTask.CompletedTask;
 
-        public virtual ValueTask SelectRangeAsync(int pos1, int pos2) => _inputReference?.SelectRangeAsync(pos1, pos2) ?? ValueTask.CompletedTask;
+        public virtual ValueTask SelectRangeAsync(int pos1, int pos2) =>
+            _inputReference?.SelectRangeAsync(pos1, pos2) ?? ValueTask.CompletedTask;
 
         private bool _pickerSquare;
         private int _pickerElevation;
@@ -363,6 +422,7 @@ namespace MudBlazor
                 {
                     _pickerElevation = Elevation;
                 }
+
                 if (!Rounded)
                 {
                     _pickerSquare = true;
@@ -375,25 +435,37 @@ namespace MudBlazor
             }
         }
 
-        protected override async Task OnAfterRenderAsync(bool firstRender)
+        private async Task EnsureKeyInterceptor()
         {
-            if (firstRender)
+            if (_keyInterceptor == null)
             {
+                _keyInterceptor = _keyInterceptorFactory.Create();
+
                 await _keyInterceptor.Connect(_elementId, new KeyInterceptorOptions()
                 {
                     //EnableLogging = true,
                     TargetClass = "mud-input-slot",
-                    Keys = {
-                        new KeyOptions { Key=" ", PreventDown = "key+none" },
-                        new KeyOptions { Key="ArrowUp", PreventDown = "key+none" },
-                        new KeyOptions { Key="ArrowDown", PreventDown = "key+none" },
-                        new KeyOptions { Key="Enter", PreventDown = "key+none" },
-                        new KeyOptions { Key="NumpadEnter", PreventDown = "key+none" },
-                        new KeyOptions { Key="/./", SubscribeDown = true, SubscribeUp = true }, // for our users
+                    Keys =
+                    {
+                        new KeyOptions { Key = " ", PreventDown = "key+none" },
+                        new KeyOptions { Key = "ArrowUp", PreventDown = "key+none" },
+                        new KeyOptions { Key = "ArrowDown", PreventDown = "key+none" },
+                        new KeyOptions { Key = "Enter", PreventDown = "key+none" },
+                        new KeyOptions { Key = "NumpadEnter", PreventDown = "key+none" },
+                        new KeyOptions { Key = "/./", SubscribeDown = true, SubscribeUp = true }, // for our users
                     },
                 });
                 _keyInterceptor.KeyDown += HandleKeyDown;
             }
+        }
+
+        protected override async Task OnAfterRenderAsync(bool firstRender)
+        {
+            if (firstRender == true)
+            {
+                await EnsureKeyInterceptor();
+            }
+
             await base.OnAfterRenderAsync(firstRender);
         }
 
@@ -423,14 +495,16 @@ namespace MudBlazor
                 await _pickerInlineRef.MudChangeCssAsync(PickerInlineClass);
             }
 
+            await EnsureKeyInterceptor();
             await _keyInterceptor.UpdateKey(new() { Key = "Escape", StopDown = "key+none" });
         }
 
-        protected virtual void OnClosed()
+        protected virtual async void OnClosed()
         {
             OnPickerClosed();
 
-            _keyInterceptor.UpdateKey(new() { Key = "Escape", StopDown = "none" });
+            await EnsureKeyInterceptor();
+            await _keyInterceptor.UpdateKey(new() { Key = "Escape", StopDown = "none" });
         }
 
         protected virtual void OnPickerOpened()
@@ -456,6 +530,7 @@ namespace MudBlazor
                         _value = default(T);
                         Reset();
                     }
+
                     break;
                 case "Escape":
                 case "Tab":
@@ -463,5 +538,21 @@ namespace MudBlazor
                     break;
             }
         }
+
+        protected override void Dispose(bool disposing)
+        {
+            base.Dispose(disposing);
+
+            if (disposing == true)
+            {
+                if (_keyInterceptor != null)
+                {
+                    _keyInterceptor.KeyDown -= HandleKeyDown;
+                    _keyInterceptor.Dispose();
+                }
+
+            }
+        }
+
     }
 }

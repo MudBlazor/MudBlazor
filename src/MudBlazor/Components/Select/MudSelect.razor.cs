@@ -22,14 +22,14 @@ namespace MudBlazor
         private bool _dense;
         private string multiSelectionText;
         private bool? _selectAllChecked;
+        private IKeyInterceptor _keyInterceptor;
 
         protected string Classname =>
             new CssBuilder("mud-select")
             .AddClass(Class)
             .Build();
 
-        [Inject] private IKeyInterceptor _keyInterceptor { get; set; }
-
+        [Inject] private IKeyInterceptorFactory KeyInterceptorFactory { get; set; }
         [Inject] IScrollManager ScrollManager { get; set; }
 
         private string _elementId = "select_" + Guid.NewGuid().ToString().Substring(0, 8);
@@ -74,15 +74,16 @@ namespace MudBlazor
                 }
             }
             await _elementReference.SetText(Text);
-            if (item != null)
-                await ScrollManager.ScrollToListItemAsync(item.ItemId, direction, true);
+            await ScrollToItemAsync(item);
         }
-
+        private ValueTask ScrollToItemAsync(MudSelectItem<T> item)
+            =>item != null? ScrollManager.ScrollToListItemAsync(item.ItemId): ValueTask.CompletedTask;
         private async Task SelectFirstItem(string startChar = null)
         {
             if (_items == null || _items.Count == 0)
                 return;
             var items = _items.Where(x => !x.Disabled);
+            var firstItem = items.FirstOrDefault();
             if (!string.IsNullOrWhiteSpace(startChar))
             {
                 // find first item that starts with the letter
@@ -110,7 +111,7 @@ namespace MudBlazor
                 HilightItem(item);
             }
             await _elementReference.SetText(Text);
-            await ScrollManager.ScrollToListItemAsync(item.ItemId, -1, true);
+            await ScrollToItemAsync(item);
         }
 
         private async Task SelectLastItem()
@@ -132,8 +133,20 @@ namespace MudBlazor
                 HilightItem(item);
             }
             await _elementReference.SetText(Text);
-            await ScrollManager.ScrollToListItemAsync(item.ItemId, 1, true);
+            await ScrollToItemAsync(item);
         }
+
+        /// <summary>
+        /// Fired when dropdown opens.
+        /// </summary>
+        [Category(CategoryTypes.FormComponent.Behavior)]
+        [Parameter] public EventCallback OnOpen { get; set; }
+
+        /// <summary>
+        /// Fired when dropdown closes.
+        /// </summary>
+        [Category(CategoryTypes.FormComponent.Behavior)]
+        [Parameter] public EventCallback OnClose { get; set; }
 
         /// <summary>
         /// Add the MudSelectItems here
@@ -561,8 +574,8 @@ namespace MudBlazor
             else
             {
                 // single selection
-                _isOpen = false;
-                UpdateIcon();
+                // CloseMenu(true) doesn't close popover in BSS
+                await CloseMenu(false);
 
                 if (EqualityComparer<T>.Default.Equals(Value, value))
                 {
@@ -574,13 +587,13 @@ namespace MudBlazor
                 _elementReference.SetText(Text).AndForget();
                 _selectedValues.Clear();
                 _selectedValues.Add(value);
-                HilightItemForValue(value);
             }
 
+            HilightItemForValue(value);
             await SelectedValuesChanged.InvokeAsync(SelectedValues);
             if (MultiSelection && typeof(T) == typeof(string))
                 await SetValueAsync((T)(object)Text, updateText: false);
-            StateHasChanged();
+            await InvokeAsync(StateHasChanged);
         }
 
         private async void HilightItemForValue(T value)
@@ -654,9 +667,20 @@ namespace MudBlazor
             UpdateIcon();
             StateHasChanged();
             await HilightSelectedValue();
-
+            //Scroll the active item on each opening
+            if (_activeItemId != null)
+            {
+                var index = _items.FindIndex(x => x.ItemId == (string)_activeItemId);
+                if (index > 0)
+                {
+                    var item = _items[index];
+                    await ScrollToItemAsync(item);
+                }
+            }
             //disable escape propagation: if selectmenu is open, only the select popover should close and underlying components should not handle escape key
             await _keyInterceptor.UpdateKey(new() { Key = "Escape", StopDown = "Key+none" });
+
+            await OnOpen.InvokeAsync();
         }
 
         public async Task CloseMenu(bool focusAgain = true)
@@ -673,6 +697,8 @@ namespace MudBlazor
 
             //enable escape propagation: the select popover was closed, now underlying components are allowed to handle escape key
             await _keyInterceptor.UpdateKey(new() { Key = "Escape", StopDown = "none" });
+
+            await OnClose.InvokeAsync();
         }
 
         private void UpdateIcon()
@@ -696,6 +722,8 @@ namespace MudBlazor
         {
             if (firstRender)
             {
+                _keyInterceptor = KeyInterceptorFactory.Create();
+
                 await _keyInterceptor.Connect(_elementId, new KeyInterceptorOptions()
                 {
                     //EnableLogging = true,
@@ -715,8 +743,9 @@ namespace MudBlazor
                     },
                 });
                 _keyInterceptor.KeyDown += HandleKeyDown;
-                _keyInterceptor.KeyUp += HandleKeyUp;
+                _keyInterceptor.KeyUp += HandleKeyUp;    
             }
+
             await base.OnAfterRenderAsync(firstRender);
         }
 
@@ -730,6 +759,11 @@ namespace MudBlazor
         public override ValueTask FocusAsync()
         {
             return _elementReference.FocusAsync();
+        }
+
+        public override ValueTask BlurAsync()
+        {
+            return _elementReference.BlurAsync();
         }
 
         public override ValueTask SelectAsync()
@@ -991,7 +1025,7 @@ namespace MudBlazor
             _shadowLookup.Remove(item.Value);
         }
 
-        private void OnLostFocus(FocusEventArgs obj)
+        internal void OnLostFocus(FocusEventArgs obj)
         {
             if (_isOpen)
             {
@@ -999,6 +1033,37 @@ namespace MudBlazor
                 // otherwise we can't receive key strokes any longer
                 _elementReference.FocusAsync().AndForget(TaskOption.Safe);
             }
+            base.OnBlur.InvokeAsync(obj);
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            base.Dispose(disposing);
+
+            if (disposing == true)
+            {
+                if (_keyInterceptor != null)
+                {
+                    _keyInterceptor.KeyDown -= HandleKeyDown;
+                    _keyInterceptor.KeyUp -= HandleKeyUp;
+
+                    _keyInterceptor.Dispose();
+                }
+            }
+        }
+
+        /// <summary>
+        /// Fixes issue #4328
+        /// Returns true when MultiSelection is true and it has selected values(Since Value property is not used when MultiSelection=true
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns>True when component has a value</returns>
+        protected override bool HasValue(T value)
+        {
+            if (MultiSelection)
+                return SelectedValues?.Count() > 0;
+            else
+                return base.HasValue(value);
         }
     }
 }

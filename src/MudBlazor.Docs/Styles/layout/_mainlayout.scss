@@ -31,8 +31,13 @@
   }
 }
 
+.docs-appbar {
+  z-index: calc(var(--mud-zindex-appbar) + 1);
+}
+
 .docs-appbar-filter{
   backdrop-filter: blur(12px);
+  z-index: calc(var(--mud-zindex-appbar) + 1);
 }
 
 .docs-appbar, .docs-menu-list{

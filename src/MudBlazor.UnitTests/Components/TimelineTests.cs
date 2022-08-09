@@ -4,6 +4,7 @@
 
 using System;
 using System.Threading.Tasks;
+using AngleSharp.Css.Dom;
 using AngleSharp.Html.Dom;
 using Bunit;
 using FluentAssertions;
@@ -137,6 +138,21 @@ namespace MudBlazor.UnitTests.Components
 
                 comp.Instance.SelectedIndex.Should().Be(i);
             }
+        }
+
+        [Test]
+        public void TimelineTest_DotStyles()
+        {
+            var comp = Context.RenderComponent<TimelineTest>();
+            var firstItem = comp.FindComponent<MudTimelineItem>();
+            comp.Find("div.mud-timeline-item-dot-inner").GetStyle()["background-color"].Should().Be("");
+            
+            firstItem.SetParametersAndRender(p =>
+            {
+                p.Add(t => t.DotStyle, "background-color: #ff0000");
+            });
+
+            comp.Find("div.mud-timeline-item-dot-inner").GetStyle()["background-color"].Should().Be("rgba(255, 0, 0, 1)");
         }
     }
 }

@@ -1,6 +1,6 @@
 ﻿<a href="@Website" target="@Target">
     <MudPaper Elevation="@(LandingPage? 0 : 25)" Class="@GetClassnames()" Height="100%">
-        <img alt="@Name" src="@($"_content/MudBlazor.Docs/images/sponsors/{Image}")">
+        <MudImage Src="@($"_content/MudBlazor.Docs/images/sponsors/{Image}")" Alt="@Name" ObjectFit="ObjectFit.Cover" ObjectPosition="ObjectPosition.Center" />
     </MudPaper>
 </a>
 

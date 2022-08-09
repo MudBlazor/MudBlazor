@@ -1,7 +1,10 @@
 ﻿
 using System;
+using System.Threading.Tasks;
 using Bunit;
 using FluentAssertions;
+using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.UnitTests.TestComponents;
 using NUnit.Framework;
 
@@ -107,6 +110,69 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("li.mud-treeview-item").Count.Should().Be(4);
             comp.FindAll("div.mud-treeview-item-content")[2].Click();
             comp.FindAll("li.mud-treeview-item").Count.Should().Be(8);
+        }
+
+        [Test]
+        public async Task TreeView_OtherTest()
+        {
+            var comp = Context.RenderComponent<TreeViewTest2>();
+            var item = comp.FindComponent<MudTreeViewItem<string>>();
+#pragma warning disable BL0005
+            await comp.InvokeAsync(() => item.Instance.Disabled = true);
+            comp.WaitForAssertion(() => item.Instance.Selected.Should().BeFalse());
+            await comp.InvokeAsync(() => item.Instance.Selected = true);
+            comp.WaitForAssertion(() => item.Instance.Selected.Should().BeTrue());
+            await comp.InvokeAsync(() => item.Instance.SelectItem(true));
+            comp.WaitForAssertion(() => item.Instance.Selected.Should().BeTrue());
+            comp.WaitForAssertion(() => item.Instance.ArrowExpanded.Should().BeFalse());
+            await comp.InvokeAsync(() => item.Instance.ArrowExpanded = true);
+            comp.WaitForAssertion(() => item.Instance.ArrowExpanded.Should().BeTrue());
+            await comp.InvokeAsync(() => item.Instance.ArrowExpanded = true);
+            comp.WaitForAssertion(() => item.Instance.ArrowExpanded.Should().BeTrue());
+
+            comp.WaitForAssertion(() => item.Instance.Expanded.Should().BeTrue());
+            await comp.InvokeAsync(() => item.Instance.OnItemExpanded(true));
+            comp.WaitForAssertion(() => item.Instance.Expanded.Should().BeTrue());
+
+            await comp.InvokeAsync(() => item.Instance.Select(false));
+        }
+
+        [Test]
+        public async Task TreeViewItem_DoubleClick_CheckExpanded()
+        {
+            var comp = Context.RenderComponent<TreeViewTest3>();
+            bool itemIsExpanded = false;
+
+            var item = comp.FindComponent<MudTreeViewItem<string>>();
+            await item.InvokeAsync(() =>
+                item.Instance.OnDoubleClick =
+                    new EventCallback<MouseEventArgs>(null, (Action)(() => itemIsExpanded = !itemIsExpanded)));
+            
+            comp.FindAll("li.mud-treeview-item").Count.Should().Be(10);
+
+            comp.Find("div.mud-treeview-item-content").DoubleClick();
+            comp.FindAll("li.mud-treeview-item .mud-collapse-container.mud-collapse-entering").Count.Should().Be(1);
+            itemIsExpanded.Should().BeTrue();
+            
+            comp.Find("div.mud-treeview-item-content").DoubleClick();
+            comp.FindAll("li.mud-treeview-item .mud-collapse-container.mud-collapse-entering").Count.Should().Be(0);
+            itemIsExpanded.Should().BeFalse();
+        }
+        
+        [Test]
+        public async Task TreeViewItem_DoubleClick_CheckSelected()
+        {
+            var comp = Context.RenderComponent<TreeViewTest3>();
+            string selectedItem = null;
+
+            var tree = comp.FindComponent<MudTreeView<string>>();
+
+            await tree.InvokeAsync(() =>
+                tree.Instance.SelectedValueChanged =
+                    new EventCallback<string>(null, (Action<string>)((s) => selectedItem = s)));
+
+            comp.Find("div.mud-treeview-item-content").DoubleClick();
+            selectedItem.Should().Be("content");
         }
     }
 }

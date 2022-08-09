@@ -262,12 +262,12 @@
 
         @media (max-width:$breakpoint-sm - 1px) and (orientation: landscape) {
             top: calc(var(--mud-appbar-height) - var(--mud-appbar-height) / 4);
-            height: calc(100% - var(--mud-appbar-height) + var(--mud-appbar-height) - var(--mud-appbar-height) / 4);
+            height: calc(100% - calc(var(--mud-appbar-height) - var(--mud-appbar-height)/4));
         }
 
         @media (max-width:$breakpoint-sm - 1px) and (orientation: portrait) {
             top: calc(var(--mud-appbar-height) - var(--mud-appbar-height) / 8);
-            height: calc(100% - var(--mud-appbar-height) + var(--mud-appbar-height) - var(--mud-appbar-height) / 8);
+            height: calc(100% - calc(var(--mud-appbar-height) - var(--mud-appbar-height)/8));
         }
     }
 

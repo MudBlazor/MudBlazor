@@ -10,7 +10,7 @@
             <SectionSubGroups>
                 <DocsPageSection>
                     <SectionHeader Title="Palette"/>
-                    <MudSimpleTable Class="docs-class-table" Dense="true" Elevation="0" FixedHeader="true">
+                    <MudSimpleTable Class="docs-class-table default-theme" Dense="true" Elevation="0" FixedHeader="true">
                         <thead>
                             <tr>
                                 <th>Name</th>
@@ -42,7 +42,7 @@
                 </DocsPageSection>
                 <DocsPageSection>
                     <SectionHeader Title="Shadows"/>
-                    <MudSimpleTable Class="docs-class-table" Dense="true" Elevation="0" FixedHeader="true">
+                    <MudSimpleTable Class="docs-class-table default-theme" Dense="true" Elevation="0" FixedHeader="true">
                         <thead>
                         <tr>
                             <th>Name</th>
@@ -68,7 +68,7 @@
                 </DocsPageSection>
                 <DocsPageSection>
                     <SectionHeader Title="LayoutProperties"/>
-                    <MudSimpleTable Class="docs-class-table" Dense="true" Elevation="0" FixedHeader="true">
+                    <MudSimpleTable Class="docs-class-table default-theme" Dense="true" Elevation="0" FixedHeader="true">
                         <thead>
                         <tr>
                             <th>Name</th>
@@ -94,7 +94,7 @@
                 </DocsPageSection>
                 <DocsPageSection>
                     <SectionHeader Title="Typography"/>
-                    <MudSimpleTable Class="docs-class-table" Dense="true" Elevation="0" FixedHeader="true">
+                    <MudSimpleTable Class="docs-class-table default-theme" Dense="true" Elevation="0" FixedHeader="true">
                         <thead>
                         <tr>
                             <th>Name</th>
@@ -153,7 +153,7 @@
                 </DocsPageSection>
                 <DocsPageSection>
                     <SectionHeader Title="ZIndex"/>
-                    <MudSimpleTable Class="docs-class-table" Dense="true" Elevation="0" FixedHeader="true">
+                    <MudSimpleTable Class="docs-class-table default-theme" Dense="true" Elevation="0" FixedHeader="true">
                         <thead>
                         <tr>
                             <th>Name</th>
@@ -294,31 +294,31 @@
     {
         if (value == "AppBar")
         {
-            return value.ToLower();
+            return value.ToLowerInvariant();
         }
         else if (value.Contains("ContrastText"))
         {
-            return value.Replace("ContrastText", "-Text").ToLower();
+            return value.Replace("ContrastText", "-Text").ToLowerInvariant();
         }
         else if (value.Contains("Font"))
         {
-            return value.Replace("Font", "-").ToLower();
+            return value.Replace("Font", "-").ToLowerInvariant();
         }
         else if (value.Contains("LineHeight"))
         {
-            return value.Replace("LineHeight", "-LineHeight").ToLower();
+            return value.Replace("LineHeight", "-LineHeight").ToLowerInvariant();
         }
         else if (value.Contains("LetterSpacing"))
         {
-            return value.Replace("LetterSpacing", "-LetterSpacing").ToLower();
+            return value.Replace("LetterSpacing", "-LetterSpacing").ToLowerInvariant();
         }
         else if (value.Contains("TextTransform"))
         {
-            return value.Replace("TextTransform", "-Text-Transform").ToLower();
+            return value.Replace("TextTransform", "-Text-Transform").ToLowerInvariant();
         }
         else
         {
-            return Regex.Replace(value, @"\B[A-Z]", "-$&").ToLower();
+            return Regex.Replace(value, @"\B[A-Z]", "-$&").ToLowerInvariant();
         }
     }
 

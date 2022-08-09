@@ -13,13 +13,14 @@
                 Text="@AdornmentText" 
                 Edge="@Edge.Start" 
                 AdornmentClick="@OnAdornmentClick" 
+                AriaLabel="@AdornmentAriaLabel"
         />
 	}
 
 	@if (Lines > 1)
 	{
 	    <textarea class="@InputClassname"
-                @ref="_elementReference" 
+                @ref="ElementReference" 
                 rows="@Lines" 
                 @attributes="UserAttributes"
                 type="@InputTypeString"                  
@@ -41,6 +42,8 @@
                 @onkeyup:preventDefault="@KeyUpPreventDefault"
                 @onmousewheel="@OnMouseWheel" 
                 @onwheel="@OnMouseWheel"
+                aria-invalid="@Error.ToString().ToLower()"
+                aria-describedby="@ErrorId"
         > 
             @Text
         </textarea>
@@ -50,7 +53,7 @@
 	else
 	{
 	    <input class="@InputClassname"
-                @ref="_elementReference" 
+                @ref="ElementReference" 
                 @attributes="UserAttributes" 
                 type="@InputTypeString"                  
                 value="@_internalText" 
@@ -71,6 +74,8 @@
                 @onkeyup:preventDefault="@KeyUpPreventDefault"
                 @onmousewheel="@OnMouseWheel" 
                 @onwheel="@OnMouseWheel"
+                aria-invalid="@Error.ToString().ToLower()"
+                aria-describedby="@ErrorId"
          />
 	     @*Note: double mouse wheel handlers needed for Firefox because it doesn't know onmousewheel*@
       
@@ -117,6 +122,7 @@
                 Text="@AdornmentText" 
                 Edge="@Edge.End" 
                 AdornmentClick="@OnAdornmentClick" 
+                AriaLabel="@AdornmentAriaLabel"
         />
 	}
 

@@ -6,17 +6,19 @@
         <Column T="Model" Field="@nameof(Model.Name)" />
         <Column T="Model" Field="@nameof(Model.Age)" />
         <Column T="Model" Field="@nameof(Model.Status)" />
+        <Column T="Model" Field="@nameof(Model.Hired)" />
+        <Column T="Model" Field="@nameof(Model.HiredOn)" />
     </Columns>
 </MudDataGrid>
 
 @code {
     private IEnumerable<Model> _items = new List<Model>()
     {
-        new Model("Sam", 56, Severity.Normal), 
-        new Model("Alicia", 54, Severity.Info), 
-        new Model("Ira", 27, Severity.Success),
-        new Model("John", 32, Severity.Warning)
+        new Model("Sam", 56, Severity.Normal, false, null), 
+        new Model("Alicia", 54, Severity.Info, null, null), 
+        new Model("Ira", 27, Severity.Success, true, new DateTime(2011, 1, 2)),
+        new Model("John", 32, Severity.Warning, false, null)
     };
 
-    public record Model (string Name, int Age, Severity Status);
+    public record Model (string Name, int? Age, Severity? Status, bool? Hired, DateTime? HiredOn);
 }

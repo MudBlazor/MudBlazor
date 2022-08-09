@@ -90,7 +90,7 @@ namespace MudBlazor
                 Context?.Table.SetEditingItem(Item);
             }
 
-            if (Context?.Table.MultiSelection == true && !IsHeader)
+            if (Context?.Table.MultiSelection == true && !IsHeader && !(Context?.Table.IsEditable == true))
             {
                 IsChecked = !IsChecked;
             }

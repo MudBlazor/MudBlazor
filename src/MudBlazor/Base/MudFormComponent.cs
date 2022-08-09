@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
 using System.Linq.Expressions;
@@ -60,6 +61,13 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.FormComponent.Validation)]
         public bool Error { get; set; }
+
+        /// <summary>
+        /// The ErrorId that will be used by aria-describedby if Error true
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Validation)]
+        public string ErrorId { get; set; }
 
         /// <summary>
         /// The generic converter of the component.
@@ -292,9 +300,11 @@ namespace MudBlazor
                 {
                     // this must be called in any case, because even if Validation is null the user might have set Error and ErrorText manually
                     // if Error and ErrorText are set by the user, setting them here will have no effect.
+                    // if Error, create an error id that can be used by aria-describedby on input control
                     ValidationErrors = errors;
                     Error = errors.Count > 0;
                     ErrorText = errors.FirstOrDefault();
+                    ErrorId = HasErrors ? Guid.NewGuid().ToString() : null;
                     Form?.Update(this);
                     StateHasChanged();
                 }
@@ -309,14 +319,17 @@ namespace MudBlazor
             return value != null;
         }
 
+        [UnconditionalSuppressMessage("Trimming", "IL2026:Members annotated with 'RequiresUnreferencedCodeAttribute' require dynamic access otherwise can break functionality when trimming application code", Justification = "In the context of EditContext.Model / FieldIdentifier.Model they won't get trimmed.")]
         protected virtual void ValidateWithAttribute(ValidationAttribute attr, T value, List<string> errors)
         {
             try
             {
-                // The validation context is applied either on the `EditContext.Model`, or `this` as a stub subject.
-                // Complex validation with fields references (like `CompareAttribute`) should use an EditContext.
-                var validationContextSubject = EditContext?.Model ?? this;
+                // The validation context is applied either on the `EditContext.Model`, '_fieldIdentifier.Model', or `this` as a stub subject.
+                // Complex validation with fields references (like `CompareAttribute`) should use an EditContext or For when not using EditContext.
+                var validationContextSubject = EditContext?.Model ?? _fieldIdentifier.Model ?? this;
                 var validationContext = new ValidationContext(validationContextSubject);
+                if (validationContext.MemberName is null && _fieldIdentifier.FieldName is not null)
+                    validationContext.MemberName = _fieldIdentifier.FieldName;
                 var validationResult = attr.GetValidationResult(value, validationContext);
                 if (validationResult != ValidationResult.Success)
                     errors.Add(validationResult.ErrorMessage);
@@ -373,21 +386,17 @@ namespace MudBlazor
         {
             try
             {
-                if (Form==null)
+                if (Form?.Model == null)
                 {
-                    errors.Add("Form is null, unable to validate with model!");
                     return;
                 }
-                if (Form.Model == null)
-                {
-                    errors.Add("Form.Model is null, unable to validate with model!");
-                    return;
-                }
+                
                 if (For == null)
                 {
                     errors.Add($"For is null, please set parameter For on the form input component of type {GetType().Name}");
                     return;
                 }
+
                 foreach (var error in func(Form.Model, For.GetFullPathOfMember()))
                     errors.Add(error);
             }
@@ -441,6 +450,17 @@ namespace MudBlazor
         {
             try
             {
+                if (Form?.Model == null)
+                {
+                    return;
+                }
+                
+                if (For == null)
+                {
+                    errors.Add($"For is null, please set parameter For on the form input component of type {GetType().Name}");
+                    return;
+                }
+                
                 foreach (var error in await func(Form.Model, For.GetFullPathOfMember()))
                     errors.Add(error);
             }
@@ -448,6 +468,15 @@ namespace MudBlazor
             {
                 errors.Add("Error in validation func: " + e.Message);
             }
+        }
+
+        /// <summary>
+        /// Notify the Form that a field has changed if Standalone is true
+        /// </summary>
+        protected void FieldChanged(object newValue)
+        {
+            if (Standalone)
+                Form?.FieldChanged(this, newValue);
         }
 
         /// <summary>
@@ -552,10 +581,11 @@ namespace MudBlazor
             if (For != null && For != _currentFor)
             {
                 // Extract validation attributes
-                // Sourced from https://stackoverflow.com/a/43076222/4839162
+                // Sourced from https://stackoverflow.com/a/43076222/4839162 
+                // and also https://stackoverflow.com/questions/59407225/getting-a-custom-attribute-from-a-property-using-an-expression
                 var expression = (MemberExpression)For.Body;
-                var propertyInfo = (PropertyInfo)expression.Member;
-                _validationAttrsFor = propertyInfo.GetCustomAttributes(typeof(ValidationAttribute), true).Cast<ValidationAttribute>();
+                var propertyInfo = (PropertyInfo)expression.Expression?.Type.GetProperty(expression.Member.Name);
+                _validationAttrsFor = propertyInfo?.GetCustomAttributes(typeof(ValidationAttribute), true).Cast<ValidationAttribute>();
 
                 _fieldIdentifier = FieldIdentifier.Create(For);
                 _currentFor = For;
@@ -586,7 +616,10 @@ namespace MudBlazor
 
         protected virtual void RegisterAsFormComponent()
         {
-            Form?.Add(this);
+            if (Standalone)
+            {
+                Form?.Add(this);
+            }
         }
 
         /// <summary>

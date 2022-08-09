@@ -13,7 +13,8 @@ namespace MudBlazor
            .AddClass(Class)
            .Build();
 
-        private MudInput<string> _elementReference;
+        public MudInput<string> InputReference { get; private set; }
+        private MudMask _maskReference;
 
         /// <summary>
         /// Type of the input element. It should be a valid HTML5 input type.
@@ -40,26 +41,55 @@ namespace MudBlazor
 
         public override ValueTask FocusAsync()
         {
-            return _elementReference.FocusAsync();
+            if (_mask == null)
+                return InputReference.FocusAsync();
+            else
+                return _maskReference.FocusAsync();
+        }
+
+        public override ValueTask BlurAsync()
+        {
+            if (_mask == null)
+                return InputReference.BlurAsync();
+            else
+                return _maskReference.BlurAsync();
         }
 
         public override ValueTask SelectAsync()
         {
-            return _elementReference.SelectAsync();
+            if (_mask == null)
+                return InputReference.SelectAsync();
+            else
+                return _maskReference.SelectAsync();
         }
 
         public override ValueTask SelectRangeAsync(int pos1, int pos2)
         {
-            return _elementReference.SelectRangeAsync(pos1, pos2);
+            if (_mask == null)
+                return InputReference.SelectRangeAsync(pos1, pos2);
+            else
+                return _maskReference.SelectRangeAsync(pos1, pos2);
+        }
+
+        protected override void ResetValue()
+        {
+            if (_mask == null)
+                InputReference.Reset();
+            else
+                _maskReference.Reset();
+            base.ResetValue();
         }
 
         /// <summary>
         /// Clear the text field, set Value to default(T) and Text to null
         /// </summary>
         /// <returns></returns>
-        public async Task Clear()
+        public Task Clear()
         {
-            await _elementReference.SetText(null);
+            if (_mask == null)
+                return InputReference.SetText(null);
+            else
+                return _maskReference.Clear();
         }
 
         /// <summary>
@@ -67,9 +97,61 @@ namespace MudBlazor
         /// </summary>
         /// <param name="text"></param>
         /// <returns></returns>
-        public Task SetText(string text)
+        public async Task SetText(string text)
         {
-            return _elementReference?.SetText(text);
+            if (_mask == null)
+            {
+                if (InputReference != null)
+                    await InputReference.SetText(text);
+                return;
+            }
+            await _maskReference.Clear();
+            _maskReference.OnPaste(text);
+        }
+
+
+        private IMask _mask = null;
+
+        /// <summary>
+        /// Provide a masking object. Built-in masks are PatternMask, MultiMask, RegexMask and BlockMask
+        /// Note: when Mask is set, TextField will ignore some properties such as Lines, Pattern or HideSpinButtons, OnKeyDown and OnKeyUp, etc.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.General.Data)]
+        public IMask Mask
+        {
+            get => _maskReference?.Mask ?? _mask; // this might look strange, but it is absolutely necessary due to how MudMask works.
+            set
+            {
+                _mask = value;
+            }
+        }
+
+        protected override Task SetValueAsync(T value, bool updateText = true)
+        {
+            if (_mask != null)
+            {
+                var textValue = Converter.Set(value);
+                _mask.SetText(textValue);
+                textValue=Mask.GetCleanText();
+                value = Converter.Get(textValue);
+            }
+            return base.SetValueAsync(value, updateText);
+        }
+
+        protected override Task SetTextAsync(string text, bool updateValue = true)
+        {
+            if (_mask != null)
+            {
+                _mask.SetText(text);
+                text = _mask.Text;
+            }
+            return base.SetTextAsync(text, updateValue);
+        }
+
+        private async Task OnMaskedValueChanged(string s)
+        {
+            await SetTextAsync(s);
         }
     }
 

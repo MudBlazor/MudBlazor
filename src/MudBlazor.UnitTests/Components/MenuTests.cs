@@ -12,13 +12,38 @@ namespace MudBlazor.UnitTests.Components
     public class MenuTests : BunitTest
     {
         [Test]
-        public void OpenMenu_ClickFirstItem_CheckClosed()
+        public async Task OpenMenu_ClickFirstItem_CheckClosed()
         {
             var comp = Context.RenderComponent<MenuTest1>();
+            var menu = comp.FindComponent<MudMenu>();
             comp.FindAll("button.mud-button-root")[0].Click();
             comp.FindAll("div.mud-list-item").Count.Should().Be(3);
             comp.FindAll("div.mud-list-item")[0].Click();
             comp.FindAll("div.mud-popover-open").Count.Should().Be(0);
+
+            comp.FindAll("button.mud-button-root")[0].Click();
+            comp.FindAll("div.mud-list-item").Count.Should().Be(3);
+            var menuItems = comp.FindComponents<MudMenuItem>();
+            await comp.InvokeAsync(() => menuItems[0].Instance.OnTouchHandler(new TouchEventArgs()));
+            comp.WaitForAssertion(() => comp.FindAll("div.mud-popover-open").Count.Should().Be(0));
+
+            comp.FindAll("button.mud-button-root")[0].Click();
+            menuItems = comp.FindComponents<MudMenuItem>();
+            await comp.InvokeAsync(() => menuItems[1].Instance.OnTouchHandler(new TouchEventArgs()));
+            comp.WaitForAssertion(() => comp.FindAll("div.mud-popover-open").Count.Should().Be(0));
+
+            //Disabled item's click ot touch should not close popover
+            comp.FindAll("button.mud-button-root")[0].Click();
+            menuItems = comp.FindComponents<MudMenuItem>();
+#pragma warning disable BL0005
+            await comp.InvokeAsync(() => menuItems[2].Instance.Disabled = true);
+            await comp.InvokeAsync(() => menuItems[2].Instance.OnTouchHandler(new TouchEventArgs()));
+            comp.WaitForAssertion(() => comp.FindAll("div.mud-popover-open").Count.Should().Be(1));
+
+            await comp.InvokeAsync(() => menu.Instance.ToggleMenuTouch(new TouchEventArgs()));
+            comp.WaitForAssertion(() => comp.FindAll("div.mud-popover-open").Count.Should().Be(0));
+            await comp.InvokeAsync(() => menu.Instance.ToggleMenuTouch(new TouchEventArgs()));
+            comp.WaitForAssertion(() => comp.FindAll("div.mud-popover-open").Count.Should().Be(1));
         }
 
         [Test]
@@ -70,6 +95,27 @@ namespace MudBlazor.UnitTests.Components
             await list.TriggerEventAsync("onmouseleave", new MouseEventArgs());
 
             comp.WaitForAssertion(() => pop.Instance.Open.Should().BeFalse());
+        }
+
+        [Test]
+        public async Task MenuMouseLeave_MenuMouseEnter_CheckOpen()
+        {
+            var comp = Context.RenderComponent<MenuTestMouseOver>();
+            var pop = comp.FindComponent<MudPopover>();
+
+            // Mouse over to menu to open popover
+            var menu = comp.Find(".mud-menu");
+            await menu.TriggerEventAsync("onmouseenter", new MouseEventArgs());
+
+            // Popover open, captures mouse
+            await menu.TriggerEventAsync("onmouseleave", new MouseEventArgs());
+            await comp.FindAll("div.mud-list")[0].TriggerEventAsync("onmouseenter", new MouseEventArgs());
+
+            // Mouse moves to menu, still need to open
+            await comp.FindAll("div.mud-list")[0].TriggerEventAsync("onmouseleave", new MouseEventArgs());
+            await menu.TriggerEventAsync("onmouseenter", new MouseEventArgs());
+
+            comp.WaitForAssertion(() => pop.Instance.Open.Should().BeTrue());
         }
 
         [Test]
@@ -133,6 +179,19 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("div.mud-popover-open").Count.Should().Be(0);
             comp.FindAll("button.mud-button-root")[5].Click();
             comp.FindAll("div.mud-popover-open").Count.Should().Be(0);
+        }
+
+        [Test]
+        public void MenuItem_Should_SupportIcons()
+        {
+            var comp = Context.RenderComponent<MenuItemIconTest>();
+            comp.FindAll("button.mud-button-root")[0].Click();
+            comp.FindAll("div.mud-list-item").Count.Should().Be(1);
+            var listItem = comp.Find("div.mud-list-item");
+            var icon = listItem.QuerySelector("div.mud-list-item-icon");
+            Assert.IsNotNull(icon);
+            var svg = icon!.QuerySelector("svg");
+            Assert.IsNotNull(svg);
         }
     }
 }

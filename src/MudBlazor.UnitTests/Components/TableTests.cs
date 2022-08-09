@@ -703,6 +703,54 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// Filtering and cancelling the filter should not change checking the header checkbox, which should select all items (all checkboxes on, all items in SelectedItems)
+        /// </summary>
+        [Test]
+        public void TableMultiSelectionTest7()
+        {
+            var comp = Context.RenderComponent<TableMultiSelectionTest7>();
+            // print the generated html
+            //Console.WriteLine(comp.Markup);
+            // select elements needed for the test
+            var table = comp.FindComponent<MudTable<int>>().Instance;
+            var checkboxes = comp.FindComponents<MudCheckBox<bool>>().Select(x => x.Instance).ToArray();
+            var tr = comp.FindAll("tr").ToArray();
+            tr.Length.Should().Be(4); // <-- one header, three rows
+            var th = comp.FindAll("th").ToArray();
+            th.Length.Should().Be(2); //  one for the checkbox, one for the header
+            var td = comp.FindAll("td").ToArray();
+            td.Length.Should().Be(6); // two td per row for multi selection
+            var inputs = comp.FindAll("input").ToArray();
+            inputs.Length.Should().Be(5); // one checkbox per row + one for the header
+            table.SelectedItems.Count.Should().Be(0); // selected items should be empty
+
+            inputs[4].Change("1"); // search for 1
+            checkboxes = comp.FindComponents<MudCheckBox<bool>>().Select(x => x.Instance).ToArray();
+
+            // click header checkbox and verify selection text
+            inputs[0].Change(true);
+            table.SelectedItems.Count.Should().Be(1);
+            comp.Find("p").TextContent.Should().Be("SelectedItems { 1 }"); // only "1" should be present
+            checkboxes.Sum(x => x.Checked ? 1 : 0).Should().Be(2);
+            inputs[0].Change(false);
+            table.SelectedItems.Count.Should().Be(0);
+            comp.Find("p").TextContent.Should().Be("SelectedItems {  }");
+
+            inputs[4].Change(""); // reset to default
+            checkboxes = comp.FindComponents<MudCheckBox<bool>>().Select(x => x.Instance).ToArray();
+
+            // click header checkbox and verify selection text
+            inputs[0].Change(true);
+            table.SelectedItems.Count.Should().Be(3);
+            comp.Find("p").TextContent.Should().Be("SelectedItems { 0, 1, 2 }"); // we reset search, so all three numbers should be searched
+            checkboxes.Sum(x => x.Checked ? 1 : 0).Should().Be(4);
+            inputs[0].Change(false);
+            table.SelectedItems.Count.Should().Be(0);
+            comp.Find("p").TextContent.Should().Be("SelectedItems {  }");
+            checkboxes.Sum(x => x.Checked ? 1 : 0).Should().Be(0);
+        }
+
+        /// <summary>
         /// Checkbox click must not bubble up.
         /// </summary>
         [Test]
@@ -713,8 +761,9 @@ namespace MudBlazor.UnitTests.Components
             var table = comp.FindComponent<MudTable<int>>().Instance;
             var inputs = comp.FindAll("input").ToArray();
             table.SelectedItems.Count.Should().Be(0); // selected items should be empty
-            inputs[1].Click(); // A single checkbox click adds 5 items through the callback method
-            table.SelectedItems.Count.Should().Be(6);
+            Action onclick = () => inputs[1].Click(); // OnRowClick is not called anymore, neither .GotClicked<>(), so selectedItems didn't add any element.
+            onclick.Should().Throw<Bunit.MissingEventHandlerException>().WithMessage("The element does not have an event handler for the event 'onclick'. It does however have an event handler for the 'onchange' event.");
+            table.SelectedItems.Count.Should().Be(0);
         }
 
         /// <summary>
@@ -959,13 +1008,12 @@ namespace MudBlazor.UnitTests.Components
             trs.Count.Should().Be(4); // three rows + header row
 
             trs[1].Click();
-            //every item will be add twice - see MudTextField.razor
-            validator.ControlCount.Should().Be(2);
+            validator.ControlCount.Should().Be(1);
             for (var i = 0; i < 10; ++i)
             {
                 trs[i % 3 + 1].Click();
             }
-            validator.ControlCount.Should().Be(2);
+            validator.ControlCount.Should().Be(1);
         }
 
         [Test]
@@ -1473,7 +1521,7 @@ namespace MudBlazor.UnitTests.Components
             // Make sure number of items has updated
             tableInstance.GetFilteredItemsCount().Should().Be(1);
         }
-        
+
         /// Issue #3033
         /// Tests changing RowsPerPage Parameter from code - Table should re-render new RowsPerPage parameter and parameter value should be set
         /// </summary>
@@ -1493,5 +1541,70 @@ namespace MudBlazor.UnitTests.Components
             testComponent.WaitForAssertion(() => table.RowsPerPage.Should().Be(35));
         }
 
+        /// <summary>
+        /// Tests whether record type table items are kept track of when edited
+        /// </summary>
+        /// <returns></returns>
+        [Test]
+        public async Task TableRecordEditingMultiSelectTest()
+        {
+            var comp = Context.RenderComponent<TableRecordComparerTest>();
+            var table = comp.FindComponent<MudTable<TableRecordComparerTest.Element>>().Instance;
+
+            var checkboxes = comp.FindComponents<MudCheckBox<bool>>().Select(x => x.Instance).ToArray();
+
+            var inputs = comp.FindAll("input").ToArray();
+            inputs.Length.Should().Be(4); // one checkbox per row + one for the header
+            table.SelectedItems.Count.Should().Be(0); // selected items should be empty
+            // click header checkbox
+            inputs[0].Change(true);
+            table.SelectedItems.Count.Should().Be(3);
+
+            checkboxes.Sum(x => x.Checked ? 1 : 0).Should().Be(4); //there should be 4 items
+            comp.Find("p").TextContent.Should().Be("Elements { A, B, C }");
+
+            // Click on the second row
+            var trs = comp.FindAll("tr");
+            trs[2].Click();
+
+            // Change row two data
+            var input = comp.Find(("#Id2"));
+            input.Change("Change");
+
+            table.SelectedItems.Count.Should().Be(3);
+
+            checkboxes.Sum(x => x.Checked ? 1 : 0).Should().Be(4); //there should be 4 items
+            comp.Find("p").TextContent.Should().Be("Elements { A, Change, C }");
+
+            // Uncheck and verify that all items are removed
+            inputs[0].Change(false);
+            table.SelectedItems.Count.Should().Be(0);
+            checkboxes.Sum(x => x.Checked ? 1 : 0).Should().Be(0); //there should be 4 items
+            comp.Find("p").TextContent.Should().Be("Elements {  }");
+        }
+
+        /// <summary>
+        /// Setting a comparer should be reflected in all layers of the table
+        /// </summary>
+        /// <returns></returns>
+        [Test]
+        public async Task TableComparerContextTest()
+        {
+            var comp = Context.RenderComponent<TableComparerContextTest>();
+            var table = comp.FindComponent<MudTable<TableComparerContextTest.Element>>().Instance;
+
+            // Comparer is null by default
+            var context = table.Context;
+            table.Comparer.Should().Be(null);
+            context.Comparer.Should().Be(null);
+
+            await comp.InvokeAsync(() => comp.Instance.SetComparer());
+
+            // All comparer values should match
+            table.Comparer.Should().Be(comp.Instance.Comparer);
+            context.Comparer.Should().Be(comp.Instance.Comparer);
+            context.Selection.Comparer.Should().Be(comp.Instance.Comparer); //check comparer is set in HashSet and Dictionary
+            context.Rows.Comparer.Should().Be(comp.Instance.Comparer);
+        }
     }
 }

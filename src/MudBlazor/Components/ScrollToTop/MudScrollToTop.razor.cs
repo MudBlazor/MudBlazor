@@ -6,6 +6,8 @@ namespace MudBlazor
 {
     public partial class MudScrollToTop : IDisposable
     {
+        private IScrollListener _scrollListener;
+
         protected string Classname =>
         new CssBuilder("mud-scroll-to-top")
             .AddClass("visible", Visible && string.IsNullOrWhiteSpace(VisibleCssClass))
@@ -15,7 +17,8 @@ namespace MudBlazor
             .AddClass(Class)
             .Build();
 
-        [Inject] IScrollListener ScrollListener { get; set; }
+        [Inject] IScrollListenerFactory ScrollListenerFactory { get; set; }
+
         [Inject] IScrollManager ScrollManager { get; set; }
 
         [Parameter]
@@ -74,13 +77,15 @@ namespace MudBlazor
         {
             if (firstRender)
             {
+
                 var selector = !string.IsNullOrWhiteSpace(Selector)
                     ? Selector
                     : null;// null is defaulted to document element in JS function
-                ScrollListener.Selector = selector;
+
+                _scrollListener = ScrollListenerFactory.Create(selector);
 
                 //subscribe to event
-                ScrollListener.OnScroll += ScrollListener_OnScroll;
+                _scrollListener.OnScroll += ScrollListener_OnScroll;
             }
         }
 
@@ -115,7 +120,7 @@ namespace MudBlazor
         /// </summary>
         private void OnClick()
         {
-            ScrollManager.ScrollToTopAsync(ScrollListener.Selector, ScrollBehavior);
+            ScrollManager.ScrollToTopAsync(_scrollListener.Selector, ScrollBehavior);
         }
 
         /// <summary>
@@ -123,7 +128,10 @@ namespace MudBlazor
         /// </summary>
         public void Dispose()
         {
-            ScrollListener.OnScroll -= ScrollListener_OnScroll;
+            if(_scrollListener == null) { return; }
+
+            _scrollListener.OnScroll -= ScrollListener_OnScroll;
+            _scrollListener.Dispose();
         }
     }
 }

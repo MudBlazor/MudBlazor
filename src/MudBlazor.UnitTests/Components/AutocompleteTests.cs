@@ -18,6 +18,7 @@ using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.UnitTests.TestComponents;
 using NUnit.Framework;
 using static MudBlazor.UnitTests.TestComponents.AutocompleteSetParametersInitialization;
+using static Bunit.ComponentParameterFactory;
 
 namespace MudBlazor.UnitTests.Components
 {
@@ -35,7 +36,7 @@ namespace MudBlazor.UnitTests.Components
             // select elements needed for the test
             var autocompletecomp = comp.FindComponent<MudAutocomplete<string>>();
             var autocomplete = autocompletecomp.Instance;
-
+            await comp.InvokeAsync(() => autocomplete.FocusAsync());
             //No popover-open, due it's closed
             comp.Markup.Should().NotContain("mud-popover-open");
 
@@ -102,6 +103,17 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// Autocomplete id should propagate to label for attribute
+        /// </summary>
+        [Test]
+        public void AutocompleteLabelFor()
+        {
+            var comp = Context.RenderComponent<AutocompleteTest1>();
+            var label = comp.FindAll(".mud-input-label");
+            label[0].Attributes.GetNamedItem("for")?.Value.Should().Be("autocompleteLabelTest");
+        }
+
+        /// <summary>
         /// Autocomplete should show 'Assam' (using state.ToString())
         /// </summary>
         [Test]
@@ -131,7 +143,6 @@ namespace MudBlazor.UnitTests.Components
             autocomplete.Text.Should().Be("Alabama");
             // set a value the search won't find
             autocompletecomp.SetParam(a => a.Text, "Austria"); // not part of the U.S.
-            await comp.InvokeAsync(() => autocomplete.ToggleMenu());
             // IsOpen must be true to properly simulate a user clicking outside of the component, which is what the next ToggleMenu call below does.
             autocomplete.IsOpen.Should().BeTrue();
             // now trigger the coercion by closing the menu
@@ -209,6 +220,38 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("div.mud-input-adornment")[0].Click();
             //Console.WriteLine(comp.Markup);
             comp.WaitForAssertion(() => comp.FindAll("div.mud-popover-open").Count.Should().Be(0));
+        }
+
+        /// <summary>
+        /// MoreItemsTemplate should render when there are more items than the MaxItems limit
+        /// </summary>
+        [Test]
+        public async Task AutocompleteTest6()
+        {
+            var comp = Context.RenderComponent<AutocompleteTest6>();
+
+            var inputControl = comp.Find("div.mud-input-control");
+            inputControl.Click();
+            comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open"));
+
+            var mudText = comp.FindAll("p.mud-typography");
+            mudText[mudText.Count - 1].InnerHtml.Should().Contain("Not all items are shown"); //ensure the text is shown
+        }
+
+        /// <summary>
+        /// NoItemsTemplate should render when there are no items
+        /// </summary>
+        [Test]
+        public async Task AutocompleteTest7()
+        {
+            var comp = Context.RenderComponent<AutocompleteTest7>();
+
+            var inputControl = comp.Find("div.mud-input-control");
+            inputControl.Click();
+            comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open"));
+
+            var mudText = comp.FindAll("p.mud-typography");
+            mudText[mudText.Count - 1].InnerHtml.Should().Contain("No items found, try another search"); //ensure the text is shown
         }
 
         /// <summary>
@@ -645,108 +688,168 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task Autocomplete_ChangeBoundValue()
         {
-            var comp = Context.RenderComponent<AutocompleteChangeBoundObjectTest>();
+            await ImproveChanceOfSuccess(async () =>
+            {
+                var comp = Context.RenderComponent<AutocompleteChangeBoundObjectTest>();
+                var autocompletecomp = comp.FindComponent<MudAutocomplete<string>>();
+                var autocomplete = autocompletecomp.Instance;
+                autocompletecomp.SetParametersAndRender(parameters => parameters.Add(p => p.DebounceInterval, 0));
+                autocompletecomp.SetParametersAndRender(parameters => parameters.Add(p => p.CoerceText, true));
+                // this needs to be false because in the unit test the autocomplete's input does not lose focus state on click of another button.
+                // TextUpdateSuppression is used to avoid binding to change the input text while typing.  
+                autocompletecomp.SetParametersAndRender(parameters => parameters.Add(p => p.TextUpdateSuppression, false));
+                // check initial state
+                comp.WaitForAssertion(() => autocompletecomp.Find("input").GetAttribute("value").Should().Be("Florida"));
+                autocomplete.Value.Should().Be("Florida");
+                autocomplete.Text.Should().Be("Florida");
+
+                //Get the button to toggle the value
+                comp.Find("button").Click();
+                comp.WaitForAssertion(() => autocompletecomp.Find("input").GetAttribute("value").Should().Be("Georgia"));
+                autocomplete.Value.Should().Be("Georgia");
+                autocomplete.Text.Should().Be("Georgia");
+
+                //Change the value of the current bound value component
+                //insert "Alabam"
+                autocompletecomp.Find("input").Input("Alabam");
+                await Task.Delay(100);
+
+                //press Enter key
+                await comp.InvokeAsync(async () => await autocomplete.OnInputKeyUp(new KeyboardEventArgs() { Key = "Enter" }));
+                //ensure autocomplete is closed and new value is committed/bound
+                comp.WaitForAssertion(() => autocomplete.IsOpen.Should().BeFalse());
+
+                await comp.InvokeAsync(async () => await autocomplete.OnInputKeyUp(new KeyboardEventArgs() { Key = "Enter" }));
+                comp.WaitForAssertion(() => autocomplete.IsOpen.Should().BeTrue());
+
+                await comp.InvokeAsync(async () => await autocomplete.OnInputKeyUp(new KeyboardEventArgs() { Key = "Escape" }));
+                comp.WaitForAssertion(() => autocomplete.IsOpen.Should().BeFalse());
+
+                await comp.InvokeAsync(async () => await autocomplete.OnInputKeyUp(new KeyboardEventArgs() { Key = "ArrowUp" }));
+                comp.WaitForAssertion(() => autocomplete.IsOpen.Should().BeTrue());
+
+                await comp.InvokeAsync(async () => await autocomplete.OnInputKeyUp(new KeyboardEventArgs() { Key = "ArrowUp", AltKey = true }));
+                comp.WaitForAssertion(() => autocomplete.IsOpen.Should().BeFalse());
+
+                await comp.InvokeAsync(async () => await autocomplete.OnInputKeyUp(new KeyboardEventArgs() { Key = "ArrowDown" }));
+                comp.WaitForAssertion(() => autocomplete.IsOpen.Should().BeTrue());
+
+                await comp.InvokeAsync(async () => await autocomplete.OnInputKeyUp(new KeyboardEventArgs() { Key = "Escape" }));
+                comp.WaitForAssertion(() => autocomplete.IsOpen.Should().BeFalse());
+
+                await comp.InvokeAsync(async () => await autocomplete.OnInputKeyUp(new KeyboardEventArgs() { Key = "NumpadEnter" }));
+                comp.WaitForAssertion(() => autocomplete.IsOpen.Should().BeTrue());
+
+                await comp.InvokeAsync(async () => await autocomplete.OnInputKeyUp(new KeyboardEventArgs() { Key = "ArrowDown" }));
+                comp.WaitForAssertion(() => autocomplete.IsOpen.Should().BeTrue());
+
+                await comp.InvokeAsync(async () => await autocomplete.OnInputKeyUp(new KeyboardEventArgs() { Key = "ArrowDown" }));
+
+                //The value of the input should be Alabama
+                comp.WaitForAssertion(() => autocompletecomp.Find("input").GetAttribute("value").Should().Be("Alabama"));
+                autocomplete.Value.Should().Be("Alabama");
+                autocomplete.Text.Should().Be("Alabama");
+
+                //Again Change the bound object
+                comp.Find("button").Click();
+
+                comp.WaitForAssertion(() => autocompletecomp.Find("input").GetAttribute("value").Should().Be("Florida"));
+                autocomplete.Value.Should().Be("Florida");
+                autocomplete.Text.Should().Be("Florida");
+
+                //Change the bound object back and check again.
+                comp.Find("button").Click();
+                comp.WaitForAssertion(() => autocompletecomp.Find("input").GetAttribute("value").Should().Be("Alabama"));
+                autocomplete.Value.Should().Be("Alabama");
+                autocomplete.Text.Should().Be("Alabama");
+
+                await comp.InvokeAsync(async () => await autocomplete.OnInputKeyUp(new KeyboardEventArgs() { Key = "ArrowUp" }));
+                comp.WaitForAssertion(() => autocomplete.IsOpen.Should().BeTrue());
+
+                await comp.InvokeAsync(async () => await autocomplete.OnInputKeyUp(new KeyboardEventArgs() { Key = "ArrowUp" }));
+                comp.WaitForAssertion(() => autocompletecomp.Find("input").GetAttribute("value").Should().Be("Alabama"));
+
+                await comp.InvokeAsync(async () => await autocomplete.OnInputKeyUp(new KeyboardEventArgs() { Key = "ArrowUp" }));
+                await comp.InvokeAsync(async () => await autocomplete.OnInputKeyDown(new KeyboardEventArgs() { Key = "Tab" }));
+                await comp.InvokeAsync(async () => await autocomplete.OnInputKeyUp(new KeyboardEventArgs() { Key = "Tab" }));
+                comp.WaitForAssertion(() => autocomplete.IsOpen.Should().BeFalse());
+
+                autocompletecomp.SetParam("SelectValueOnTab", true);
+                await comp.InvokeAsync(async () => await autocomplete.OnInputKeyUp(new KeyboardEventArgs() { Key = "ArrowUp" }));
+                await comp.InvokeAsync(async () => await autocomplete.OnInputKeyDown(new KeyboardEventArgs() { Key = "Tab" }));
+                comp.WaitForAssertion(() => autocompletecomp.Find("input").GetAttribute("value").Should().Be("Alabama"));
+
+                await comp.InvokeAsync(async () => await autocomplete.OnInputKeyUp(new KeyboardEventArgs() { Key = "Backspace", CtrlKey = true, ShiftKey = true }));
+                comp.WaitForAssertion(() => autocompletecomp.Instance.Value.Should().Be(null));
+
+                await comp.InvokeAsync(async () => await autocomplete.OnInputKeyDown(new KeyboardEventArgs() { Key = "Tab" }));
+                comp.WaitForAssertion(() => autocomplete.IsOpen.Should().BeFalse());
+                //Check popover is closed if coerce text is true (it fixed with a PR)
+                autocomplete.CoerceText = true;
+                await comp.InvokeAsync(() => autocomplete.OnInputKeyUp(new KeyboardEventArgs() { Key = "Enter" }));
+                comp.WaitForAssertion(() => autocomplete.IsOpen.Should().BeTrue());
+                await comp.InvokeAsync(() => autocomplete.OnEnterKey());
+                autocompletecomp.Find("input").Input("abc");
+                await comp.InvokeAsync(() => autocomplete.SelectAsync());
+                await comp.InvokeAsync(() => autocomplete.SelectRangeAsync(0, 1));
+                autocompletecomp.Find("input").Input("");
+                await comp.InvokeAsync(() => autocomplete.ToggleMenu());
+                comp.WaitForAssertion(() => autocomplete.IsOpen.Should().BeTrue());
+
+                await comp.InvokeAsync(() => autocomplete.OnEnterKey());
+                comp.WaitForAssertion(() => autocomplete.IsOpen.Should().BeFalse());
+            });
+        }
+
+        [Test]
+        public async Task Autocomplete_Should_Support_Sync_Search()
+        {
+            var root = Context.RenderComponent<AutocompleteSyncTest>();
+
+            var popoverProvider = root.FindComponent<MudPopoverProvider>();
+            var autocomplete = root.FindComponent<MudAutocomplete<string>>();
+            var popover = autocomplete.FindComponent<MudPopover>();
+
+            popover.Instance.Open.Should().BeFalse("Should start as closed");
+
+            await autocomplete
+                .Find($".{AutocompleteSyncTest.AutocompleteClass}")
+                .ClickAsync(new MouseEventArgs());
+
+            popoverProvider.WaitForAssertion(() =>
+            {
+                popover.Instance.Open.Should().BeTrue("Should be open once clicked");
+
+                popoverProvider
+                    .FindComponents<MudListItem>().Count
+                    .Should().Be(AutocompleteSyncTest.Items.Length, "Should show the expected items");
+            });
+        }
+
+        /// <summary>
+        /// The adornment icon should change live without having to re-open the autocomplete
+        /// This test a bugfix where changing the icon property would not cause the icon to visually change until the autocomplete was opened or closed
+        /// </summary>
+        [Test]
+        public async Task Autocomplete_Should_ChangeAdornmentIcon()
+        {
+            var icon = Parameter(nameof(AutocompleteAdornmentChange.Icon), Icons.Filled.Abc);
+            var comp = Context.RenderComponent<AutocompleteAdornmentChange>(icon);
+            var instance = comp.Instance;
+
             var autocompletecomp = comp.FindComponent<MudAutocomplete<string>>();
             var autocomplete = autocompletecomp.Instance;
-            autocompletecomp.SetParametersAndRender(parameters => parameters.Add(p => p.DebounceInterval, 0));
-            autocompletecomp.SetParametersAndRender(parameters => parameters.Add(p => p.CoerceText, true));
-            // this needs to be false because in the unit test the autocomplete's input does not lose focus state on click of another button.
-            // TextUpdateSuppression is used to avoid binding to change the input text while typing.  
-            autocompletecomp.SetParametersAndRender(parameters => parameters.Add(p => p.TextUpdateSuppression, false));
-            // check initial state
-            comp.WaitForAssertion(() => autocompletecomp.Find("input").GetAttribute("value").Should().Be("Florida"));
-            autocomplete.Value.Should().Be("Florida");
-            autocomplete.Text.Should().Be("Florida");
 
-            //Get the button to toggle the value
-            comp.Find("button").Click();
-            comp.WaitForAssertion(() => autocompletecomp.Find("input").GetAttribute("value").Should().Be("Georgia"));
-            autocomplete.Value.Should().Be("Georgia");
-            autocomplete.Text.Should().Be("Georgia");
+            var markupBefore = comp.Find("svg.mud-icon-root").Children.ToMarkup().Trim();
 
-            //Change the value of the current bound value component
-            //insert "Alabam"
-            autocompletecomp.Find("input").Input("Alabam");
-            await Task.Delay(100);
+            // change icon and render again
+            instance.Icon = Icons.Filled.Remove;
 
-            //press Enter key
-            await comp.InvokeAsync(async () => await autocomplete.OnInputKeyUp(new KeyboardEventArgs() { Key = "Enter" }));
-            //ensure autocomplete is closed and new value is committed/bound
-            comp.WaitForAssertion(() => autocomplete.IsOpen.Should().BeFalse());
+            comp.Render();
 
-            await comp.InvokeAsync(async () => await autocomplete.OnInputKeyUp(new KeyboardEventArgs() { Key = "Enter" }));
-            comp.WaitForAssertion(() => autocomplete.IsOpen.Should().BeTrue());
-
-            await comp.InvokeAsync(async () => await autocomplete.OnInputKeyUp(new KeyboardEventArgs() { Key = "Escape" }));
-            comp.WaitForAssertion(() => autocomplete.IsOpen.Should().BeFalse());
-
-            await comp.InvokeAsync(async () => await autocomplete.OnInputKeyUp(new KeyboardEventArgs() { Key = "ArrowUp" }));
-            comp.WaitForAssertion(() => autocomplete.IsOpen.Should().BeTrue());
-
-            await comp.InvokeAsync(async () => await autocomplete.OnInputKeyUp(new KeyboardEventArgs() { Key = "ArrowUp", AltKey = true }));
-            comp.WaitForAssertion(() => autocomplete.IsOpen.Should().BeFalse());
-
-            await comp.InvokeAsync(async () => await autocomplete.OnInputKeyUp(new KeyboardEventArgs() { Key = "ArrowDown" }));
-            comp.WaitForAssertion(() => autocomplete.IsOpen.Should().BeTrue());
-
-            await comp.InvokeAsync(async () => await autocomplete.OnInputKeyUp(new KeyboardEventArgs() { Key = "Escape" }));
-            comp.WaitForAssertion(() => autocomplete.IsOpen.Should().BeFalse());
-
-            await comp.InvokeAsync(async () => await autocomplete.OnInputKeyUp(new KeyboardEventArgs() { Key = "NumpadEnter" }));
-            comp.WaitForAssertion(() => autocomplete.IsOpen.Should().BeTrue());
-
-            await comp.InvokeAsync(async () => await autocomplete.OnInputKeyUp(new KeyboardEventArgs() { Key = "ArrowDown" }));
-            comp.WaitForAssertion(() => autocomplete.IsOpen.Should().BeTrue());
-
-            await comp.InvokeAsync(async () => await autocomplete.OnInputKeyUp(new KeyboardEventArgs() { Key = "ArrowDown" }));
-
-            //The value of the input should be Alabama
-            comp.WaitForAssertion(() => autocompletecomp.Find("input").GetAttribute("value").Should().Be("Alabama"));
-            autocomplete.Value.Should().Be("Alabama");
-            autocomplete.Text.Should().Be("Alabama");
-
-            //Again Change the bound object
-            comp.Find("button").Click();
-
-            comp.WaitForAssertion(() => autocompletecomp.Find("input").GetAttribute("value").Should().Be("Florida"));
-            autocomplete.Value.Should().Be("Florida");
-            autocomplete.Text.Should().Be("Florida");
-
-            //Change the bound object back and check again.
-            comp.Find("button").Click();
-            comp.WaitForAssertion(() => autocompletecomp.Find("input").GetAttribute("value").Should().Be("Alabama"));
-            autocomplete.Value.Should().Be("Alabama");
-            autocomplete.Text.Should().Be("Alabama");
-
-            await comp.InvokeAsync(async () => await autocomplete.OnInputKeyUp(new KeyboardEventArgs() { Key = "ArrowUp" }));
-            comp.WaitForAssertion(() => autocomplete.IsOpen.Should().BeTrue());
-
-            await comp.InvokeAsync(async () => await autocomplete.OnInputKeyUp(new KeyboardEventArgs() { Key = "ArrowUp" }));
-            comp.WaitForAssertion(() => autocompletecomp.Find("input").GetAttribute("value").Should().Be("Alabama"));
-
-            await comp.InvokeAsync(async () => await autocomplete.OnInputKeyUp(new KeyboardEventArgs() { Key = "ArrowUp" }));
-            await comp.InvokeAsync(async () => await autocomplete.OnInputKeyDown(new KeyboardEventArgs() { Key = "Tab" }));
-            await comp.InvokeAsync(async () => await autocomplete.OnInputKeyUp(new KeyboardEventArgs() { Key = "Tab" }));
-            comp.WaitForAssertion(() => autocomplete.IsOpen.Should().BeFalse());
-
-            autocompletecomp.SetParam("SelectValueOnTab", true);
-            await comp.InvokeAsync(async () => await autocomplete.OnInputKeyUp(new KeyboardEventArgs() { Key = "ArrowUp" }));
-            await comp.InvokeAsync(async () => await autocomplete.OnInputKeyDown(new KeyboardEventArgs() { Key = "Tab" }));
-            comp.WaitForAssertion(() => autocompletecomp.Find("input").GetAttribute("value").Should().Be("Alabama"));
-
-            await comp.InvokeAsync(async () => await autocomplete.OnInputKeyUp(new KeyboardEventArgs() { Key = "Backspace", CtrlKey = true, ShiftKey = true }));
-            comp.WaitForAssertion(() => autocompletecomp.Instance.Value.Should().Be(null));
-
-            await comp.InvokeAsync(async () => await autocomplete.OnInputKeyDown(new KeyboardEventArgs() { Key = "Tab" }));
-            comp.WaitForAssertion(() => autocomplete.IsOpen.Should().BeFalse());
-            //Check popover is closed if coerce text is true (it fixed with a PR)
-            autocomplete.CoerceText = true;
-            await comp.InvokeAsync(() => autocomplete.OnInputKeyUp(new KeyboardEventArgs() { Key = "Enter" }));
-            comp.WaitForAssertion(() => autocomplete.IsOpen.Should().BeTrue());
-            autocompletecomp.Find("input").Input("abc");
-            autocompletecomp.Find("input").Input("");
-            await comp.InvokeAsync(() => autocomplete.ToggleMenu());
-            comp.WaitForAssertion(() => autocomplete.IsOpen.Should().BeFalse());
+            // check the initial icon
+            var markupAfter = comp.Find("svg.mud-icon-root").Children.ToMarkup().Trim();
+            markupAfter.Should().NotBe(markupBefore);
         }
     }
 }

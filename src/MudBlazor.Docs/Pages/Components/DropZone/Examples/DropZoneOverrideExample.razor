@@ -1,0 +1,45 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudDropContainer T="DropItem" DraggingClass="mud-alert-text-warning" ItemDraggingClass="mud-alert-text-warning" Items="_items" ItemsSelector="@((item,dropzone) => item.Identifier == dropzone)" NoDropClass="mud-border-error" ItemDropped="ItemUpdated" Class="d-flex flex-wrap flex-grow-1">
+    <ChildContent>
+        <MudDropZone T="DropItem" Identifier="Enterprise" DraggingClass="mud-alert-text-info" ItemDraggingClass="mud-alert-text-info" Class="rounded-lg border-2 border-dashed mud-border-lines-default pa-6 ma-8" CanDrop="@((item) => item.Team == "BLUE")">
+            <MudText Typo="Typo.h6" Class="mb-4">USS Enterprise</MudText>
+         </MudDropZone>
+        <MudDropZone T="DropItem" Identifier="Air Zone 1" Class="rounded-lg border-2 border-dashed mud-border-lines-default pa-6 ma-8 flex-grow-1">
+            <MudText Typo="Typo.h6" Class="mb-4">Air Zone 1</MudText>
+        </MudDropZone>
+        <MudDropZone T="DropItem" Identifier="Air Zone 2" Class="rounded-lg border-2 border-dashed mud-border-lines-default pa-6 ma-8 flex-grow-1">
+            <MudText Typo="Typo.h6" Class="mb-4">Air Zone 2</MudText>
+        </MudDropZone>
+        <MudDropZone T="DropItem" Identifier="Danger Zone" DraggingClass="mud-alert-text-error" ItemDraggingClass="mud-alert-text-error" CanDrop="@((item) => item.Team == "RED")" Class="rounded-lg border-2 border-dashed mud-border-lines-default pa-6 ma-8">
+            <MudText Typo="Typo.h6" Class="mb-4">Danger Zone</MudText>
+        </MudDropZone>
+    </ChildContent>
+    <ItemRenderer>
+        <div class="mud-elevation-25 pa-4 my-4">@context.Name</div>
+    </ItemRenderer>
+</MudDropContainer>
+
+@code {
+    private void ItemUpdated(MudItemDropInfo<DropItem> dropItem)
+    {
+        dropItem.Item.Identifier = dropItem.DropzoneIdentifier;
+    }
+    
+    private List<DropItem> _items = new()
+    {
+        new DropItem(){ Name = "Grumman", Team = "BLUE", Identifier = "Enterprise" },
+        new DropItem(){ Name = "Tomcat", Team = "BLUE", Identifier = "Enterprise" },
+        new DropItem(){ Name = "McDonnell", Team = "BLUE", Identifier = "Enterprise" },
+        new DropItem(){ Name = "Frogfoot", Team = "RED", Identifier = "Danger Zone" },
+        new DropItem(){ Name = "Fulcrum", Team = "RED", Identifier = "Danger Zone" },
+        new DropItem(){ Name = "Fullback", Team = "RED", Identifier = "Danger Zone" },
+    };
+    
+    public class DropItem
+    {
+        public string Name { get; init; }
+        public string Team { get; init; }
+        public string Identifier { get; set; }
+    }
+}
