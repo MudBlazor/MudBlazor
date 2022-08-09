@@ -240,14 +240,14 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.ListBehavior)]
-        public RenderFragment<T> ProgressIndicatorTemplate { get; set; }
+        public RenderFragment ProgressIndicatorTemplate { get; set; }
 
         /// <summary>
         /// Optional template for showing progress indicator inside the popover
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.ListBehavior)]
-        public RenderFragment<T> ProgressIndicatorInPopoverTemplate { get; set; }
+        public RenderFragment ProgressIndicatorInPopoverTemplate { get; set; }
 
         /// <summary>
         /// On drop-down close override Text with selected Value. This makes it clear to the user
