@@ -1,4 +1,4 @@
-﻿
+﻿using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Bunit;
 using FluentAssertions;
@@ -186,12 +186,36 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<MenuItemIconTest>();
             comp.FindAll("button.mud-button-root")[0].Click();
-            comp.FindAll("div.mud-list-item").Count.Should().Be(1);
-            var listItem = comp.Find("div.mud-list-item");
-            var icon = listItem.QuerySelector("div.mud-list-item-icon");
-            Assert.IsNotNull(icon);
-            var svg = icon!.QuerySelector("svg");
-            Assert.IsNotNull(svg);
+            var listItems = comp.FindAll("div.mud-list-item");
+            listItems.Count.Should().Be(3);
+            listItems[0].QuerySelector("div.mud-list-item-icon").Should().NotBeNull();
+            listItems[0].QuerySelector("svg.mud-svg-icon").Should().NotBeNull();
+        }
+
+        [Test]
+        public void MenuItem_IconAppearance_Test()
+        {
+            var comp = Context.RenderComponent<MenuItemIconTest>();
+            comp.FindAll("button.mud-button-root")[0].Click();
+            comp.FindAll("div.mud-list-item").Count.Should().Be(3);
+            var listItems = comp.FindAll("div.mud-list-item");
+
+            // 1st MenuItem
+            var svg = listItems[0].QuerySelector("svg");
+            svg.ClassList.Should().Contain("mud-icon-size-small");
+            svg.ClassList.Should().Contain("mud-primary-text");
+
+            // 2nd MenuItem
+            svg = listItems[1].QuerySelector("svg");
+            svg.ClassList.Should().Contain("mud-icon-size-medium");
+            // Ensure no color classes are present, like "mud-primary-text", "mud-error-text", etc.
+            foreach (var className in svg.ClassList)
+                Regex.IsMatch(className, "^mud-[a-z]+-text$", RegexOptions.IgnoreCase).Should().BeFalse();
+
+            // 3rd MenuItem
+            svg = listItems[2].QuerySelector("svg");
+            svg.ClassList.Should().Contain("mud-icon-size-large");
+            svg.ClassList.Should().Contain("mud-secondary-text");
         }
     }
 }
