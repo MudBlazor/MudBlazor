@@ -303,12 +303,16 @@ namespace MudBlazor
             set
             {
                 var set = value ?? new HashSet<T>(_comparer);
-                if (_selectedValues == value)
+                if (value == null && _selectedValues == null)
                 {
                     return;
                 }
-                if (SelectedValues.Count() == set.Count() && _selectedValues.All(x => set.Contains(x)))
+                if (value != null && _selectedValues != null && _selectedValues.SetEquals(value))
+                {
                     return;
+                }
+                //if (SelectedValues.Count() == set.Count() && _selectedValues.All(x => set.Contains(x)))
+                //    return;
                 _selectedValues = new HashSet<T>(set, _comparer);
                 SelectionChangedFromOutside?.Invoke(_selectedValues);
                 if (!MultiSelection)
@@ -364,14 +368,19 @@ namespace MudBlazor
 
             set
             {
-                if (_selectedListItems == value)
+                if (value == null && _selectedListItems == null)
                 {
                     return;
                 }
-                _selectedListItems = value.ToHashSet();
+
+                if (value != null && _selectedListItems != null && _selectedListItems.SetEquals(value))
+                {
+                    return;
+                }
+                _selectedListItems = value == null ? null : value.ToHashSet();
                 //if (_selectedListItem != null)
                 //    SelectedItems = Items.Where(x => Converter.Set(x.Value) == Converter.Set(_selectedListItem.Value));
-                SelectedItems = Items.Where(x => _selectedListItems.Select(y => y.Value).Contains(x.Value));
+                SelectedItems = _selectedListItems == null ? null : Items.Where(x => _selectedListItems.Select(y => y.Value).Contains(x.Value));
             }
         }
 
@@ -402,11 +411,16 @@ namespace MudBlazor
 
             set
             {
-                if (_selectedItems == value)
+                if (value == null && _selectedItems == null)
                 {
                     return;
                 }
-                _selectedItems = value.ToHashSet();
+
+                if (value != null && _selectedItems != null && _selectedItems.SetEquals(value))
+                {
+                    return;
+                }
+                _selectedItems = value == null ? null : value.ToHashSet();
                 SelectedItemsChanged.InvokeAsync(_selectedItems).AndForget();
             }
         }

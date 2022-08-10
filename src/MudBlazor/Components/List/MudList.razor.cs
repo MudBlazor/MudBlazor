@@ -330,18 +330,23 @@ namespace MudBlazor
                     //Console.WriteLine("SelectedValues setter returned(1)");
                     return;
                 }
-                var set = value ?? new List<T>();
-                if ((_selectedValues != null && value != null && _selectedValues == value) || (_selectedValues == null && value == null))
+                //var set = value ?? new List<T>();
+                if (value == null && _selectedValues == null)
+                {
+                    return;
+                }
+
+                if (value != null && _selectedValues != null && _selectedValues.SetEquals(value))
                 {
                     //Console.WriteLine("SelectedValues setter returned(2)");
                     return;
                 }
 
-                if (SelectedValues.Count() == set.Count() && _selectedValues != null && _selectedValues.All(x => set.Contains(x)))
-                {
-                    //Console.WriteLine("SelectedValues setter returned(3)");
-                    return;
-                }
+                //if (SelectedValues.Count() == set.Count() && _selectedValues != null && _selectedValues.All(x => set.Contains(x)))
+                //{
+                //    //Console.WriteLine("SelectedValues setter returned(3)");
+                //    return;
+                //}
 
                 _selectedValues = value == null ? null : value.ToHashSet();
                 HandleCentralValueCommander("SelectedValues");
@@ -390,7 +395,13 @@ namespace MudBlazor
                 {
                     return;
                 }
-                if (_selectedItems == value)
+
+                if (value == null && _selectedItems == null)
+                {
+                    return;
+                }
+
+                if (value != null && _selectedItems != null && _selectedItems.SetEquals(value))
                     return;
 
                 _selectedItems = value == null ? null : value.ToHashSet();
