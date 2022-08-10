@@ -303,10 +303,6 @@ namespace MudBlazor
             set
             {
                 var set = value ?? new HashSet<T>(_comparer);
-                if (_list != null && _list._centralCommanderResultRendered == false)
-                {
-                    return;
-                }
                 if (_selectedValues == value)
                 {
                     return;
@@ -348,10 +344,6 @@ namespace MudBlazor
 
             set
             {
-                if (_list != null && _list._centralCommanderResultRendered == false)
-                {
-                    return;
-                }
                 if (_selectedListItem == value)
                 {
                     return;
@@ -372,11 +364,7 @@ namespace MudBlazor
 
             set
             {
-                if (_list != null && _list._centralCommanderResultRendered == false)
-                {
-                    return;
-                }
-                if (_selectedListItem == value)
+                if (_selectedListItems == value)
                 {
                     return;
                 }
