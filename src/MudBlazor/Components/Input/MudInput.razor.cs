@@ -118,6 +118,8 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public bool HideSpinButtons { get; set; } = true;
 
+        [Parameter] public RenderFragment DataVisualiser { get; set; }
+
         /// <summary>
         /// Show clear button.
         /// </summary>

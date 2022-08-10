@@ -10,12 +10,12 @@
         <MudAutocomplete T="string" Label="US States" @bind-Value="value2" SearchFunc="@Search2"
                          ResetValueOnEmptyText="@resetValueOnEmptyText"
                          CoerceText="@coerceText" CoerceValue="@coerceValue"
-                         AdornmentIcon="@Icons.Material.Filled.Search" AdornmentColor="Color.Primary" />
+                         AdornmentIcon="@Icons.Filled.Search" AdornmentColor="Color.Primary" />
     </MudItem>
     <MudItem xs="12" md="12">
         <MudText Class="mb-n3" Typo="Typo.body2">
             <MudChip>@(value1 ?? "Not selected")</MudChip><MudChip>@(value2 ?? "Not selected")</MudChip>
-            <MudText>@string.Join(", ", _selectedValues ?? new List<string>())</MudText>
+            <MudText>Selected Values: @string.Join(", ", _selectedValues ?? new List<string>())</MudText>
         </MudText>
     </MudItem>
     <MudItem xs="12" md="12" class="flex-column">

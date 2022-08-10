@@ -7,6 +7,7 @@
         <MudInputControl Label="@Label" Variant="@Variant" HelperText="@HelperText" HelperTextOnFocus="@HelperTextOnFocus" FullWidth="@FullWidth" Margin="@Margin" Class="@Classname" Style="@Style"
                          Error="@Error" ErrorText="@ErrorText" Disabled="@Disabled" @onclick="@ToggleMenu" Required="@Required" ForId="@FieldId">
             <InputContent>
+                    
                 <MudInput @ref="_elementReference" InputType="InputType.Text"
                           Class="mud-select-input" Margin="@Margin"
                           Variant="@Variant"
@@ -17,11 +18,22 @@
                           Clearable="@Clearable" OnClearButtonClick="@OnClearButtonClick"
                           @attributes="UserAttributes"
                           TextChanged="OnTextChanged" OnBlur="OnInputBlurred"
-
                           autocomplete=@("mud-disabled-"+Guid.NewGuid()) KeyUpPreventDefault="KeyUpPreventDefault"
                           Placeholder="@Placeholder" Immediate="true"
                           InputMode="@InputMode" Pattern="@Pattern"
-                          T="string" />
+                          T="string">
+                    <DataVisualiser>
+                        @if (MultiSelection && SelectedValues.Any())
+                        {
+                            <MudChipSet>
+                                @foreach (var val in SelectedValues)
+                                {
+                                    <MudChip Value="@val" OnClose="ChipClose">@val.ToString()</MudChip>
+                                }
+                            </MudChipSet>
+                        }
+                    </DataVisualiser>
+                </MudInput>
                 <MudPopover Open="@IsOpen" MaxHeight="@MaxHeight" AnchorOrigin="@AnchorOrigin" TransformOrigin="@TransformOrigin" Class="@PopoverClass" RelativeWidth="true">
                     @if (_items != null && _items.Any())
                     {

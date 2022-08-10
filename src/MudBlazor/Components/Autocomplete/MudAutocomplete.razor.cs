@@ -339,7 +339,6 @@ namespace MudBlazor
                     //EnableLogging = true,
                     TargetClass = "mud-input-control",
                     Keys = {
-                        new KeyOptions { Key=" ", PreventDown = "key+none" }, //prevent scrolling page, toggle open/close
                         new KeyOptions { Key="ArrowUp", PreventDown = "key+none" }, // prevent scrolling page, instead hilight previous item
                         new KeyOptions { Key="ArrowDown", PreventDown = "key+none" }, // prevent scrolling page, instead hilight next item
                         new KeyOptions { Key="Home", PreventDown = "key+none" },
@@ -847,6 +846,11 @@ namespace MudBlazor
 
         protected internal ValueTask ScrollToMiddleAsync(MudListItem<T> item)
             => ScrollManager.ScrollToMiddleAsync(_elementId, item.ItemId);
+
+        protected void ChipClose(MudChip chip)
+        {
+            SelectedValues = SelectedValues.Where(x => !x.Equals(chip.Value));
+        }
 
         protected override void Dispose(bool disposing)
         {

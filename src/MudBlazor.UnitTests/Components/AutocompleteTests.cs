@@ -442,11 +442,13 @@ namespace MudBlazor.UnitTests.Components
             comp.WaitForAssertion(() => autocomplete.IsOpen.Should().BeFalse());
 
             // Lets type something to cause it to open
+            autocompletecomp.Find("input").Click();
             autocompletecomp.Find("input").Input("Calif");
             comp.WaitForAssertion(() => autocomplete.IsOpen.Should().BeTrue());
 
             // Lets call blur on the input and confirm that it closed
-            autocompletecomp.Find("input").KeyDown(new KeyboardEventArgs() { Key = "Tab" });
+            //autocompletecomp.Find("input").KeyDown(new KeyboardEventArgs() { Key = "Tab" });
+            await comp.InvokeAsync(() => autocomplete.HandleKeyDown(new KeyboardEventArgs() { Key = "Tab", Type = "keydown" }));
             comp.WaitForAssertion(() => autocomplete.IsOpen.Should().BeFalse());
 
             // Tab closes the drop-down and selects the selected value (California)
@@ -542,7 +544,7 @@ namespace MudBlazor.UnitTests.Components
             var listItemQuerySelector = "div.mud-list-item";
 
             var selectedItemIndexPropertyInfo = typeof(MudAutocomplete<string>).GetField("_selectedListItemIndex", BindingFlags.NonPublic | BindingFlags.Instance) ?? throw new ArgumentException("Cannot find field named '_selectedListItemIndex' on type 'MudAutocomplete<T>'");
-            var onInputKeyUpMemberInfo = typeof(MudAutocomplete<string>).GetMethod("OnInputKeyUp", BindingFlags.Instance | BindingFlags.NonPublic) ?? throw new ArgumentException("Cannot find method named 'OnInputKeyUp' on type 'MudAutocomplete<T>'");
+            var onInputKeyUpMemberInfo = typeof(MudAutocomplete<string>).GetMethod("HandleKeyDown", BindingFlags.Instance | BindingFlags.NonPublic) ?? throw new ArgumentException("Cannot find method named 'OnInputKeyUp' on type 'MudAutocomplete<T>'");
 
             // create the component
             var component = Context.RenderComponent<AutocompleteDisabledItemsTest>();
@@ -624,7 +626,7 @@ namespace MudBlazor.UnitTests.Components
             var selectedItemClassName = "mud-selected-item";
 
             var selectedItemIndexPropertyInfo = typeof(MudAutocomplete<string>).GetField("_selectedListItemIndex", BindingFlags.NonPublic | BindingFlags.Instance) ?? throw new ArgumentException("Cannot find field named '_selectedListItemIndex' on type 'MudAutocomplete<T>'");
-            var onInputKeyUpMemberInfo = typeof(MudAutocomplete<string>).GetMethod("OnInputKeyUp", BindingFlags.Instance | BindingFlags.NonPublic) ?? throw new ArgumentException("Cannot find method named 'OnInputKeyUp' on type 'MudAutocomplete<T>'");
+            var onInputKeyUpMemberInfo = typeof(MudAutocomplete<string>).GetMethod("HandleKeyDown", BindingFlags.Instance | BindingFlags.NonPublic) ?? throw new ArgumentException("Cannot find method named 'OnInputKeyUp' on type 'MudAutocomplete<T>'");
 
             // create the component
             var component = Context.RenderComponent<AutocompleteDisabledItemsTest>();
@@ -665,7 +667,7 @@ namespace MudBlazor.UnitTests.Components
             component.WaitForAssertion(() => matchingStates.Single(s => s.Markup.Contains(alabamaString)).Find(listItemQuerySelector).ClassList.Should().Contain(selectedItemClassName, $"{alabamaString} should be selected/highlighted"));
 
             // define the event-args for arrow-down
-            var arrowDownKeyboardEventArgs = new KeyboardEventArgs { Key = Key.Down.Value, Type = "keyup" };
+            var arrowDownKeyboardEventArgs = new KeyboardEventArgs { Key = Key.Down.Value, Type = "keydown" };
 
             // invoke directly (but twice)
             onInputKeyUpMemberInfo.Invoke(autocompleteInstance, new[] { arrowDownKeyboardEventArgs });
@@ -675,7 +677,7 @@ namespace MudBlazor.UnitTests.Components
             component.WaitForAssertion(() => selectedItemIndexPropertyInfo.GetValue(autocompleteInstance).Should().Be(4));
 
             // select the highlighted value
-            component.Find(TagNames.Input).KeyUp(Key.Enter);
+            component.Find(TagNames.Input).KeyDown(Key.Enter);
 
             // Arkansas should be selected value
             autocompleteInstance.Value.Should().Be(arkansasString);
@@ -719,7 +721,7 @@ namespace MudBlazor.UnitTests.Components
                 //ensure autocomplete is closed and new value is committed/bound
                 comp.WaitForAssertion(() => autocomplete.IsOpen.Should().BeFalse());
 
-                await comp.InvokeAsync(() => autocomplete.HandleKeyDown(new KeyboardEventArgs() { Key = "Enter" }));
+                await comp.InvokeAsync(() => autocomplete.HandleKeyDown(new KeyboardEventArgs() { Key = "Enter", Type = "keydown" }));
                 comp.WaitForAssertion(() => autocomplete.IsOpen.Should().BeTrue());
 
                 await comp.InvokeAsync(() => autocomplete.HandleKeyDown(new KeyboardEventArgs() { Key = "Escape" }));

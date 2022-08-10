@@ -101,7 +101,11 @@ namespace MudBlazor
                 _multiSelection = value;
                 if (_multiSelection == false)
                 {
-                    HandleCentralValueCommander("MultiSelectionOff").AndForget();
+                    if (!_centralCommanderIsProcessing)
+                    {
+                        HandleCentralValueCommander("MultiSelectionOff");
+                    }
+                    
                     UpdateSelectedStyles();
                 }
             }
@@ -201,9 +205,20 @@ namespace MudBlazor
 
         #region Values & Items
 
-        internal async Task HandleCentralValueCommander(string changedValueType)
+        bool _centralCommanderIsProcessing = false;
+        bool _centralCommanderResultRendered = true;
+        // CentralCommander has the simple aim: Prevent racing conditions. It has two mechanism to do this:
+        // (1) When this method is running, it doesn't allow to run a second one. That guarantees to different value parameters can not call this method at the same time.
+        // (2) When this method runs once, prevents all value setters until OnAfterRender runs. That guarantees to have proper values.
+        protected void HandleCentralValueCommander(string changedValueType)
         {
-            await Task.Delay(1);
+            //Console.WriteLine("Central Value Started");
+            if (_centralCommanderIsProcessing == true)
+            {
+                return;
+            }
+            _centralCommanderIsProcessing = true;
+
             if (changedValueType == "SelectedValue")
             {
                 if (!MultiSelection)
@@ -227,6 +242,10 @@ namespace MudBlazor
                 //SelectedValues = new List<T>() { SelectedValue };
                 //SelectedItems = items.Where(x => SelectedValues.Contains(x.Value)).ToList();
             }
+
+            _centralCommanderResultRendered = false;
+            _centralCommanderIsProcessing = false;
+            //Console.WriteLine("Central Value ended");
         }
 
         private void UpdateSelectedValues(bool once = false)
@@ -260,17 +279,28 @@ namespace MudBlazor
             get => _selectedValue;
             set
             {
-                if (ParentList != null)
+                //Console.WriteLine("SelectedValue setter Started");
+                if (!_centralCommanderResultRendered)
                 {
                     return;
                 }
-                if ((_selectedValue != null && value != null && _selectedValue.ToString() == value.ToString()) || (_selectedValue == null && value == null))
+                if (ParentList != null)
+                {
+                    //Console.WriteLine("SelectedValue setter returned");
                     return;
+                }
+                if ((_selectedValue != null && value != null && _selectedValue.ToString() == value.ToString()) || (_selectedValue == null && value == null))
+                {
+                    //Console.WriteLine("SelectedValue setter returned");
+                    return;
+                }
                 _selectedValue = value;
-                HandleCentralValueCommander("SelectedValue").AndForget();
+
+                HandleCentralValueCommander("SelectedValue");
 
                 SelectedValueChanged.InvokeAsync(_selectedValue).AndForget();
                 UpdateSelectedStyles();
+                //Console.WriteLine("SelectedValue setter ended");
             }
         }
 
@@ -289,24 +319,36 @@ namespace MudBlazor
 
             set
             {
+                //Console.WriteLine("SelectedValues setter Started");
+                if (!_centralCommanderResultRendered)
+                {
+                    return;
+                }
                 if (ParentList != null)
                 {
+                    //Console.WriteLine("SelectedValues setter returned");
                     return;
                 }
                 var set = value ?? new List<T>();
                 if ((_selectedValues != null && value != null && _selectedValues == value) || (_selectedValues == null && value == null))
                 {
+                    //Console.WriteLine("SelectedValues setter returned");
                     return;
                 }
 
                 if (SelectedValues.Count() == set.Count() && _selectedValues != null && _selectedValues.All(x => set.Contains(x)))
+                {
+                    //Console.WriteLine("SelectedValues setter returned");
                     return;
+                }
 
                 _selectedValues = value == null ? null : value.ToHashSet();
-                HandleCentralValueCommander("SelectedValues").AndForget();
+
+                HandleCentralValueCommander("SelectedValues");
 
                 SelectedValuesChanged.InvokeAsync(_selectedValues).AndForget();
                 UpdateSelectedStyles();
+                //Console.WriteLine("SelectedValues setter ended");
             }
         }
 
@@ -321,6 +363,10 @@ namespace MudBlazor
             get => _selectedItem;
             set
             {
+                if (!_centralCommanderResultRendered)
+                {
+                    return;
+                }
                 if (_selectedItem == value)
                     return;
 
@@ -340,6 +386,10 @@ namespace MudBlazor
             get => _selectedItems;
             set
             {
+                if (!_centralCommanderResultRendered)
+                {
+                    return;
+                }
                 if (_selectedItems == value)
                     return;
 
@@ -408,6 +458,7 @@ namespace MudBlazor
             if (firstRender)
             {
                 await base.OnAfterRenderAsync(firstRender);
+
                 _keyInterceptor = KeyInterceptorFactory.Create();
 
                 await _keyInterceptor.Connect(_elementId, new KeyInterceptorOptions()
@@ -428,9 +479,9 @@ namespace MudBlazor
                         new KeyOptions { Key="/./", SubscribeDown = true, SubscribeUp = true }, // for our users
                     },
                 });
-                //GetSelectedItem();
             }
-
+            _centralCommanderResultRendered = true;
+            //Console.WriteLine("Rendered");
         }
 
         internal void Register(MudListItem<T> item)
@@ -569,6 +620,11 @@ namespace MudBlazor
 
         internal void SetSelectedValue(MudListItem<T> item, bool force = false)
         {
+            if (item == null)
+            {
+                return;
+            }
+
             if ((!Clickable && !MultiSelection) && !force)
                 return;
 

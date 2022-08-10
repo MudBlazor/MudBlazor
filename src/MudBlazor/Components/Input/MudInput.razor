@@ -52,30 +52,36 @@
 	}
 	else
 	{
-	    <input class="@InputClassname"
-                @ref="ElementReference" 
-                @attributes="UserAttributes" 
-                type="@InputTypeString"                  
-                value="@_internalText" 
-                @oninput="OnInput" 
-                @onchange="OnChange"
-                placeholder="@Placeholder" 
-                disabled=@Disabled 
-                readonly="@ReadOnly" 
-                @onblur="@OnBlurred" 
-                inputmode="@InputMode.ToString()" 
-                pattern="@Pattern"
-                @onkeydown="@InvokeKeyDown" 
-                @onkeypress="@InvokeKeyPress" 
-                @onkeyup="@InvokeKeyUp" 
-                maxlength="@MaxLength"
-                @onkeydown:preventDefault="KeyDownPreventDefault" 
-                @onkeypress:preventDefault="@KeyPressPreventDefault" 
-                @onkeyup:preventDefault="@KeyUpPreventDefault"
-                @onmousewheel="@OnMouseWheel" 
-                @onwheel="@OnMouseWheel"
-                aria-invalid="@Error.ToString().ToLower()"
-                aria-describedby="@ErrorId"
+
+        @if (DataVisualiser != null)
+        {
+            @DataVisualiser
+        }
+
+        <input class="@InputClassname"
+           @ref="ElementReference"
+           @attributes="UserAttributes"
+           type="@InputTypeString"
+           value="@_internalText"
+           @oninput="OnInput"
+           @onchange="OnChange"
+           placeholder="@Placeholder"
+           disabled=@Disabled
+           readonly="@ReadOnly"
+           @onblur="@OnBlurred"
+           inputmode="@InputMode.ToString()"
+           pattern="@Pattern"
+           @onkeydown="@InvokeKeyDown"
+           @onkeypress="@InvokeKeyPress"
+           @onkeyup="@InvokeKeyUp"
+           maxlength="@MaxLength"
+           @onkeydown:preventDefault="KeyDownPreventDefault"
+           @onkeypress:preventDefault="@KeyPressPreventDefault"
+           @onkeyup:preventDefault="@KeyUpPreventDefault"
+           @onmousewheel="@OnMouseWheel"
+           @onwheel="@OnMouseWheel"
+           aria-invalid="@Error.ToString().ToLower()"
+           aria-describedby="@ErrorId"
          />
 	     @*Note: double mouse wheel handlers needed for Firefox because it doesn't know onmousewheel*@
       
@@ -102,7 +108,7 @@
             </div>            
         }
     }
-
+    
 	@if (_showClearable && !Disabled)
     {
         <MudIconButton Class="@ClearButtonClassname"

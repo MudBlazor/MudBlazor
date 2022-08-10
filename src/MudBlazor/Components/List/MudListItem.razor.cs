@@ -338,24 +338,24 @@ namespace MudBlazor
                 else if (Href != null)
                 {
                     MudList?.SetSelectedValue(this);
-                    OnClick.InvokeAsync(ev);
+                    OnClick.InvokeAsync(ev).AndForget();
                     UriHelper.NavigateTo(Href, ForceLoad);
                 }
                 else if (MudList?.Clickable == true || MudList?.MultiSelection == true)
                 {
                     MudList?.SetSelectedValue(this);
-                    OnClick.InvokeAsync(ev);
+                    OnClick.InvokeAsync(ev).AndForget();
                 }
             }
             else
             {
-                OnClick.InvokeAsync(ev);
+                OnClick.InvokeAsync(ev).AndForget();
             }
         }
 
         protected void OnlyOnClick(MouseEventArgs ev)
         {
-            OnClick.InvokeAsync(ev);
+            OnClick.InvokeAsync(ev).AndForget();
         }
 
         private Typo _textTypo;
