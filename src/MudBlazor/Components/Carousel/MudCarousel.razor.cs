@@ -217,6 +217,13 @@ namespace MudBlazor
         [Parameter] public RenderFragment<bool> BulletTemplate { get; set; }
 
         /// <summary>
+        /// Gets or Sets if swipe gestures are allowed 
+        /// </summary>
+        [Category(CategoryTypes.Carousel.Behavior)]
+        [Parameter]
+        public bool DisableSwipeGesture { get; set; }
+
+        /// <summary>
         /// Gets or Sets the Template for Delimiters.
         /// Deprecated, use BulletsTemplate instead.
         /// </summary>
@@ -253,6 +260,11 @@ namespace MudBlazor
         /// </summary>
         private void OnSwipe(SwipeDirection direction)
         {
+            if (DisableSwipeGesture)
+            {
+                return;
+            }
+
             switch (direction)
             {
                 case SwipeDirection.LeftToRight:
