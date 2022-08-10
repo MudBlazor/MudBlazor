@@ -133,7 +133,7 @@ namespace MudBlazor
         public bool Clickable { get; set; }
 
         /// <summary>
-        /// If true the active (hilighted) item select on tab key.
+        /// If true the active (hilighted) item select on tab key. Designed for only single selection. Default is true.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.List.Selecting)]
@@ -206,7 +206,7 @@ namespace MudBlazor
         #region Values & Items
 
         bool _centralCommanderIsProcessing = false;
-        bool _centralCommanderResultRendered = true;
+        internal bool _centralCommanderResultRendered = false;
         // CentralCommander has the simple aim: Prevent racing conditions. It has two mechanism to do this:
         // (1) When this method is running, it doesn't allow to run a second one. That guarantees to different value parameters can not call this method at the same time.
         // (2) When this method runs once, prevents all value setters until OnAfterRender runs. That guarantees to have proper values.
@@ -280,7 +280,7 @@ namespace MudBlazor
             set
             {
                 //Console.WriteLine("SelectedValue setter Started");
-                if (!_centralCommanderResultRendered)
+                if (_centralCommanderResultRendered == false && _firstRendered == true)
                 {
                     return;
                 }
@@ -294,8 +294,8 @@ namespace MudBlazor
                     //Console.WriteLine("SelectedValue setter returned");
                     return;
                 }
-                _selectedValue = value;
 
+                _selectedValue = value;
                 HandleCentralValueCommander("SelectedValue");
 
                 SelectedValueChanged.InvokeAsync(_selectedValue).AndForget();
@@ -319,36 +319,36 @@ namespace MudBlazor
 
             set
             {
-                //Console.WriteLine("SelectedValues setter Started");
-                if (!_centralCommanderResultRendered)
+                Console.WriteLine("SelectedValues setter Started");
+                if (_centralCommanderResultRendered == false && _firstRendered == true)
                 {
+                    //Console.WriteLine("SelectedValues setter returned");
                     return;
                 }
                 if (ParentList != null)
                 {
-                    //Console.WriteLine("SelectedValues setter returned");
+                    //Console.WriteLine("SelectedValues setter returned(1)");
                     return;
                 }
                 var set = value ?? new List<T>();
                 if ((_selectedValues != null && value != null && _selectedValues == value) || (_selectedValues == null && value == null))
                 {
-                    //Console.WriteLine("SelectedValues setter returned");
+                    //Console.WriteLine("SelectedValues setter returned(2)");
                     return;
                 }
 
                 if (SelectedValues.Count() == set.Count() && _selectedValues != null && _selectedValues.All(x => set.Contains(x)))
                 {
-                    //Console.WriteLine("SelectedValues setter returned");
+                    //Console.WriteLine("SelectedValues setter returned(3)");
                     return;
                 }
 
                 _selectedValues = value == null ? null : value.ToHashSet();
-
                 HandleCentralValueCommander("SelectedValues");
-
                 SelectedValuesChanged.InvokeAsync(_selectedValues).AndForget();
+                
                 UpdateSelectedStyles();
-                //Console.WriteLine("SelectedValues setter ended");
+                Console.WriteLine("SelectedValues setter ended");
             }
         }
 
@@ -363,7 +363,7 @@ namespace MudBlazor
             get => _selectedItem;
             set
             {
-                if (!_centralCommanderResultRendered)
+                if (_centralCommanderResultRendered == false && _firstRendered == true)
                 {
                     return;
                 }
@@ -386,7 +386,7 @@ namespace MudBlazor
             get => _selectedItems;
             set
             {
-                if (!_centralCommanderResultRendered)
+                if (_centralCommanderResultRendered == false && _firstRendered == true)
                 {
                     return;
                 }
@@ -453,6 +453,7 @@ namespace MudBlazor
             ParametersChanged?.Invoke();
         }
 
+        bool _firstRendered = false;
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
             if (firstRender)
@@ -479,7 +480,17 @@ namespace MudBlazor
                         new KeyOptions { Key="/./", SubscribeDown = true, SubscribeUp = true }, // for our users
                     },
                 });
+                if (MultiSelection == false && SelectedValue != null)
+                {
+                    HandleCentralValueCommander("SelectedValue");
+                    //Console.WriteLine($"SelectedValues is now {SelectedValue}");
+                    //SelectedValues = new List<T>() { SelectedValue };
+                    //Console.WriteLine($"SelectedValues(1) is now {SelectedValue}");
+                    StateHasChanged();
+                }
+                _firstRendered = true;
             }
+            
             _centralCommanderResultRendered = true;
             //Console.WriteLine("Rendered");
         }
@@ -534,7 +545,7 @@ namespace MudBlazor
             switch (obj.Key)
             {
                 case "Tab":
-                    if (!MultiSelection)
+                    if (!MultiSelection && SelectValueOnTab)
                     {
                         SetSelectedValue(_lastActivatedItem);
                     }
@@ -731,7 +742,7 @@ namespace MudBlazor
             }
             else
             {
-                return items.Where(x => x.NestedList == null && x.Exceptional == false).ToList();
+                return items.Where(x => x.NestedList == null && x.IsFunctional == false).ToList();
             }
         }
 

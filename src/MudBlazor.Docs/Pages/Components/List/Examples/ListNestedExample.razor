@@ -3,7 +3,7 @@
 <MudGrid>
     <MudItem xs="12" sm="8" Class="d-flex align-center justify-center">
         <MudPaper Width="300px">
-            <MudList T="string" Clickable="true" SecondaryBackgroundForNestedItemHeader="_secondaryBackground">
+            <MudList T="string" Clickable="true" SecondaryBackgroundForNestedItemHeader="_secondaryBackground" Dense="_listDense">
                 <MudListSubheader T="string">Nested List Items</MudListSubheader>
                 
                 <MudListItem T="string" Icon="@Icons.Filled.Send">Sent mail</MudListItem>
@@ -11,8 +11,8 @@
                 
                 <MudListItem T="string" Icon="@Icons.Filled.Inbox" Text="Inbox" InitiallyExpanded="true">
                     <NestedList>
-                        <MudListItem T="string" Icon="@Icons.Filled.StarRate">Starred</MudListItem>
-                        <MudListItem T="string" Icon="@Icons.Filled.WatchLater">Snoozed</MudListItem>
+                        <MudListItem Dense="_nestedDense" T="string" Icon="@Icons.Filled.StarRate">Starred</MudListItem>
+                        <MudListItem Dense="_nestedDense" T="string" Icon="@Icons.Filled.WatchLater">Snoozed</MudListItem>
                     </NestedList>
                 </MudListItem>
             </MudList>
@@ -21,9 +21,13 @@
 
     <MudItem xs="12" sm="4">
         <MudCheckBox @bind-Checked="_secondaryBackground" Color="Color.Primary" Label="Secondary Background For Nested Item Header" />
+        <MudCheckBox @bind-Checked="_listDense" Color="Color.Primary" TriState="true" Label="List Dense" />
+        <MudCheckBox @bind-Checked="_nestedDense" Color="Color.Primary" TriState="true" Label="Nested List Dense" />
     </MudItem>
 </MudGrid>
 
 @code {
     bool _secondaryBackground;
+    bool _listDense;
+    bool? _nestedDense;
 }

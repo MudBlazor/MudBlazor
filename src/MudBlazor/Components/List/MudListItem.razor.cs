@@ -19,12 +19,12 @@ namespace MudBlazor
 
         protected string Classname =>
         new CssBuilder("mud-list-item")
-          .AddClass("mud-list-item-dense", Dense || MudList?.Dense == true)
+          .AddClass("mud-list-item-dense", Dense == true || MudList?.Dense == true)
           .AddClass("mud-list-item-gutters", !DisableGutters && !(MudList?.DisableGutters == true))
           .AddClass("mud-list-item-clickable", MudList?.Clickable)
           .AddClass("mud-ripple", MudList?.Clickable == true && !DisableRipple && !Disabled)
           .AddClass($"mud-selected-item mud-{MudList?.Color.ToDescriptionString()}-text mud-{MudList?.Color.ToDescriptionString()}-hover", _selected && !Disabled && NestedList == null && !MudList.DisableSelectedBackground)
-          .AddClass("mud-list-item-hilight", _active && !Disabled && NestedList == null && Exceptional == false)
+          .AddClass("mud-list-item-hilight", _active && !Disabled && NestedList == null && IsFunctional == false)
           .AddClass("mud-list-item-disabled", Disabled)
           .AddClass("mud-list-item-nested-background", MudList != null && MudList.SecondaryBackgroundForNestedItemHeader && NestedList != null)
           .AddClass(Class)
@@ -39,11 +39,11 @@ namespace MudBlazor
         internal string ItemId { get; } = "_" + Guid.NewGuid().ToString().Substring(0, 8);
 
         /// <summary>
-        /// Exceptional items can not count on Items list (they count on AllItems), cannot be subject of keyboard navigation and selection.
+        /// Functional items does not hold values. If a value set on Functional item, it ignores by the MudList. They can not count on Items list (they count on AllItems), cannot be subject of keyboard navigation and selection.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.List.Behavior)]
-        public bool Exceptional { get; set; }
+        public bool IsFunctional { get; set; }
 
         /// <summary>
         /// The text to display
@@ -167,12 +167,25 @@ namespace MudBlazor
         [Category(CategoryTypes.List.Appearance)]
         public bool Inset { get; set; }
 
+        private bool? _dense;
         /// <summary>
         /// If true, compact vertical padding will be used.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.List.Appearance)]
-        public bool Dense { get; set; }
+        public bool? Dense
+        {
+            get => _dense;
+            set
+            {
+                if (_dense == value)
+                {
+                    return;
+                }
+                _dense = value;
+                OnListParametersChanged();
+            }
+        }
 
         /// <summary>
         /// If true, the left and right padding is removed.
@@ -361,15 +374,15 @@ namespace MudBlazor
         private Typo _textTypo;
         private void OnListParametersChanged()
         {
-            if (Dense || MudList?.Dense == true)
+            if ((Dense ?? MudList?.Dense) ?? false)
             {
                 _textTypo = Typo.body2;
             }
-            else if (!Dense || !MudList?.Dense == true)
+            else
             {
                 _textTypo = Typo.body1;
             }
-            StateHasChanged();
+            //StateHasChanged();
         }
 
         public void Dispose()

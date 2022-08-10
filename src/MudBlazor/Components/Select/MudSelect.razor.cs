@@ -266,6 +266,27 @@ namespace MudBlazor
         [Category(CategoryTypes.FormComponent.Behavior)]
         public bool RelativeWidth { get; set; } = true;
 
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Data)]
+        public T SelectedValue
+        {
+            get => _selectedValue;
+
+            set
+            {
+                if (Converter.Set(_selectedValue) == Converter.Set(value))
+                {
+                    return;
+                }
+                _selectedValue = value;
+                if (_firstRendered == false)
+                {
+                    Value = value;
+                }
+                SelectedValueChanged.InvokeAsync(_selectedValue).AndForget();
+            }
+        }
+
         /// <summary>
         /// Set of selected values. If MultiSelection is false it will only ever contain a single value. This property is two-way bindable.
         /// </summary>
@@ -282,6 +303,10 @@ namespace MudBlazor
             set
             {
                 var set = value ?? new HashSet<T>(_comparer);
+                if (_list != null && _list._centralCommanderResultRendered == false)
+                {
+                    return;
+                }
                 if (_selectedValues == value)
                 {
                     return;
@@ -306,31 +331,10 @@ namespace MudBlazor
                         SetTextAsync(string.Join(Delimiter, SelectedValues.Select(x => Converter.Set(x))), updateValue: false).AndForget();
                     }
                 }
-                SelectedValuesChanged.InvokeAsync(new HashSet<T>(SelectedValues, _comparer)).AndForget();
+
+                SelectedValuesChanged.InvokeAsync(_selectedValues).AndForget();
                 if (MultiSelection && typeof(T) == typeof(string))
                     SetValueAsync((T)(object)Text, updateText: false).AndForget();
-            }
-        }
-
-        [Parameter]
-        [Category(CategoryTypes.FormComponent.Data)]
-        public T SelectedValue
-        {
-            get => _selectedValue;
-
-            set
-            {
-                if (Converter.Set(_selectedValue) == Converter.Set(value))
-                {
-                    return;
-                }
-                _selectedValue = value;
-                if (_firstRendered == false)
-                {
-                    Value = value;
-                }
-                //SetValueAsync(value, false).AndForget();
-                SelectedValueChanged.InvokeAsync(_selectedValue).AndForget();
             }
         }
 
@@ -344,6 +348,10 @@ namespace MudBlazor
 
             set
             {
+                if (_list != null && _list._centralCommanderResultRendered == false)
+                {
+                    return;
+                }
                 if (_selectedListItem == value)
                 {
                     return;
@@ -364,12 +372,18 @@ namespace MudBlazor
 
             set
             {
+                if (_list != null && _list._centralCommanderResultRendered == false)
+                {
+                    return;
+                }
                 if (_selectedListItem == value)
                 {
                     return;
                 }
                 _selectedListItems = value.ToHashSet();
-                SelectedItems = Items.Where(x => Converter.Set(x.Value) == Converter.Set(_selectedListItem.Value));
+                //if (_selectedListItem != null)
+                //    SelectedItems = Items.Where(x => Converter.Set(x.Value) == Converter.Set(_selectedListItem.Value));
+                SelectedItems = Items.Where(x => _selectedListItems.Select(y => y.Value).Contains(x.Value));
             }
         }
 
@@ -390,7 +404,7 @@ namespace MudBlazor
             }
         }
 
-        HashSet<MudSelectItem<T>> _selectedItems = new(); 
+        HashSet<MudSelectItem<T>> _selectedItems = new();
 
         [Parameter]
         [Category(CategoryTypes.FormComponent.Data)]
@@ -1085,9 +1099,11 @@ namespace MudBlazor
                         if (!_isOpen)
                         {
                             await OpenMenu();
-                            return;
                         }
-                        await CloseMenu();
+                        else
+                        {
+                            await CloseMenu();
+                        }
                         break;
                     }
                     else

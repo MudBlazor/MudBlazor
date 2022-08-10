@@ -98,6 +98,8 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<ListSelectionInitialValueTest>();
             //Console.WriteLine(comp.Markup);
             var list = comp.FindComponent<MudList<int?>>().Instance;
+            comp.WaitForAssertion(() => comp.FindComponents<MudListItem<int?>>()[0].Markup.Should().Contain("mud-selected-item"));
+            comp.WaitForAssertion(() => list.SelectedItem.Value.Should().Be(1));
             comp.WaitForAssertion(() => list.SelectedItem.Text.Should().Be("Sparkling Water"));
             // we have seven choices, 1 is active because of the initial value of SelectedValue
             comp.WaitForAssertion(() => comp.FindAll("div.mud-list-item").Count.Should().Be(9)); // 7 choices, 2 groups
@@ -142,7 +144,7 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(() => list.HandleKeyDown(new KeyboardEventArgs() { Key = "Enter" }));
             comp.WaitForAssertion(() => comp.FindComponents<MudListItem<int>>()[0].Instance.IsActive.Should().BeTrue());
             comp.WaitForAssertion(() => list.SelectedValues.Should().ContainSingle());
-            //Second item is exceptional, should skip.
+            //Second item is functional, should skip.
             await comp.InvokeAsync(() => list.HandleKeyDown(new KeyboardEventArgs() { Key = "ArrowDown" }));
             comp.WaitForAssertion(() => comp.FindComponents<MudListItem<int>>()[0].Instance.IsActive.Should().BeFalse());
             comp.WaitForAssertion(() => comp.FindComponents<MudListItem<int>>()[2].Instance.IsActive.Should().BeTrue());

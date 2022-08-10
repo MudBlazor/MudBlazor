@@ -1,6 +1,6 @@
 ﻿@namespace MudBlazor.UnitTests.TestComponents
 
-<MudList @ref="_list" T="int?" Clickable="true" @bind-SelectedItem="selectedItem" @bind-SelectedValue="selectedValue">
+<MudList @ref="_list" T="int?" Clickable="true" @bind-SelectedValue="selectedValue" @bind-SelectedItem="selectedItem">
     <MudListSubheader T="int?">
         Your drink:
         <MudChip Color="Color.Secondary">
@@ -29,16 +29,8 @@
     [Parameter] public Color Color { get; set; } = Color.Primary;
     MudList<int?> _list;
     public static string __description__ = "Sparkling Water should be selected initially.";
-    MudListItem<int?> selectedItem = new();
+    MudListItem<int?> selectedItem;
     int? selectedValue = 1;
-
-    protected override void OnAfterRender(bool firstRender)
-    {
-        if (firstRender)
-        {
-            selectedItem = _list.GetAllItems.FirstOrDefault(x => x.Value == selectedValue);
-        }
-    }
 
     public void SetSelectedValue(int? value)
     {
