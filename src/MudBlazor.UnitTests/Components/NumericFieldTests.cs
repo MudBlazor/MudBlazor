@@ -93,57 +93,12 @@ namespace MudBlazor.UnitTests.Components
         /// <summary>
         /// Setting the value to null should not cause a validation error
         /// </summary>
-        [Test]
-        public async Task IntNumericFieldWithNullableTypes()
+        [TestCaseSource(nameof(TypeCases))]
+        public async Task NumericField_WithNullableTypes_ShouldAllowNulls<T>(T value) where T : struct
         {
-            var comp = Context.RenderComponent<MudNumericField<int?>>(ComponentParameter.CreateParameter("Value", 17));
+            var comp = Context.RenderComponent<MudNumericField<T?>>(ComponentParameter.CreateParameter("Value", value));
             // print the generated html
             //Console.WriteLine(comp.Markup);
-            comp.SetParametersAndRender(ComponentParameter.CreateParameter("Value", null));
-            comp.Find("input").Blur();
-            comp.FindAll("div.mud-input-error").Count.Should().Be(0);
-            comp.Find("input").Change("");
-            comp.Find("input").Blur();
-            comp.FindAll("div.mud-input-error").Count.Should().Be(0);
-        }
-
-        /// <summary>
-        /// Setting the value to null should not cause a validation error
-        /// </summary>
-        [Test]
-        public async Task DecimalNumericFieldWithNullableTypes()
-        {
-            var comp = Context.RenderComponent<MudNumericField<decimal?>>(ComponentParameter.CreateParameter("Value", 17M));
-            comp.SetParametersAndRender(ComponentParameter.CreateParameter("Value", null));
-            comp.Find("input").Blur();
-            comp.FindAll("div.mud-input-error").Count.Should().Be(0);
-            comp.Find("input").Change("");
-            comp.Find("input").Blur();
-            comp.FindAll("div.mud-input-error").Count.Should().Be(0);
-        }
-
-        /// <summary>
-        /// Setting the value to null should not cause a validation error
-        /// </summary>
-        [Test]
-        public async Task Int64NumericFieldWithNullableTypes()
-        {
-            var comp = Context.RenderComponent<MudNumericField<long?>>(ComponentParameter.CreateParameter("Value", 17L));
-            comp.SetParametersAndRender(ComponentParameter.CreateParameter("Value", null));
-            comp.Find("input").Blur();
-            comp.FindAll("div.mud-input-error").Count.Should().Be(0);
-            comp.Find("input").Change("");
-            comp.Find("input").Blur();
-            comp.FindAll("div.mud-input-error").Count.Should().Be(0);
-        }
-
-        /// <summary>
-        /// Setting the value to null should not cause a validation error
-        /// </summary>
-        [Test]
-        public async Task UInt64NumericFieldWithNullableTypes()
-        {
-            var comp = Context.RenderComponent<MudNumericField<ulong?>>(ComponentParameter.CreateParameter("Value", 17UL));
             comp.SetParametersAndRender(ComponentParameter.CreateParameter("Value", null));
             comp.Find("input").Blur();
             comp.FindAll("div.mud-input-error").Count.Should().Be(0);

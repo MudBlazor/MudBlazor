@@ -182,14 +182,7 @@ namespace MudBlazor
             try
             {
                 var nextValue = GetNextValue(factor);
-                if (nextValue is IComparable<T> comparable)
-                {
-                    if (factor > 0 && comparable.CompareTo(Value) < 0)
-                        nextValue = Max;
-                    else if (factor < 0 && comparable.CompareTo(Value) > 0)
-                        nextValue = Min;
-                }
-                else if (typeof(T).IsValueType)
+                if (typeof(T).IsValueType)
                 {
                     if (factor > 0 && _comparer.Compare(nextValue, Value) < 0)
                         nextValue = Max;
@@ -235,23 +228,18 @@ namespace MudBlazor
         /// <returns>Returns a valid value and if it has been changed.</returns>
         protected (T value, bool changed) ConstrainBoundaries(T value)
         {
+            if (value == null)
+                return (default(T), true);
+
             // check if Max/Min has value, if not use MaxValue/MinValue for that data type
-            if (value is IComparable<T> comparable)
-            {
-                if (comparable.CompareTo(Max) > 0)
-                    return (Max, true);
-                else if (comparable.CompareTo(Min) < 0)
-                    return (Min, true);
-            }
-            else if (value is not null && typeof(T).IsValueType)
+            if (typeof(T).IsValueType)
             {
                 if (_comparer.Compare(value, Max) > 0)
                     return (Max, true);
-                else if (_comparer.Compare(value, Min) < 0)
+
+                if (_comparer.Compare(value, Min) < 0)
                     return (Min, true);
-            }
-            else if (value == null)
-                return (default(T), true);
+            };
 
             return (value, false);
         }
