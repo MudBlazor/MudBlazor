@@ -120,9 +120,15 @@
                     <MudText><CodeInline>Ctrl+A</CodeInline> key to toggle select all/clear all items (MultiSelect only)</MudText>
                     <br />
                     <br />
-                    Note 1: Keyboard navigation only works if list is Clickable or MultiSelection
-                    <br />
-                    Note 2: If you use arrow keys to navigate a collapsed item it will be automatically expanded.
+                    <MudAlert Severity="Severity.Info" NoIcon="true">
+                        <b>Note 1:</b> Keyboard navigation only works if list is Clickable or MultiSelection
+                    </MudAlert>
+                    <MudAlert Class="mt-2" Severity="Severity.Info" NoIcon="true">
+                        <b>Note 2:</b> If you use keys to navigate a collapsed item it will be automatically expanded.
+                    </MudAlert>
+                    <MudAlert Class="mt-2" Severity="Severity.Info" NoIcon="true">
+                        <b>Note 3:</b> If text and value are different, printable character search for the text.
+                    </MudAlert>
                 </Description>
             </SectionHeader>
             <SectionContent DarkenBackground="true" ShowCode="false" Code="ListKeyboardNavigationExample">

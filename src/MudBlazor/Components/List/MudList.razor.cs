@@ -55,6 +55,10 @@ namespace MudBlazor
         [Category(CategoryTypes.List.Behavior)]
         public RenderFragment ChildContent { get; set; }
 
+        [Parameter]
+        [Category(CategoryTypes.List.Behavior)]
+        public DefaultConverter<T> Converter { get; set; } = new DefaultConverter<T>();
+
         /// <summary>
         /// Predefined enumerable items. If its not null, creates list items automatically.
         /// </summary>
@@ -259,9 +263,8 @@ namespace MudBlazor
             {
                 SelectedValue = SelectedValues.FirstOrDefault();
                 var items = CollectAllMudListItems(true);
-                SelectedValues = new HashSet<T>() { SelectedValue };
+                SelectedValues = SelectedValue == null ? null : new HashSet<T>() { SelectedValue };
                 UpdateSelectedItem();
-                //SelectedItems = items.Where(x => SelectedValues.Contains(x.Value)).ToHashSet();
             }
 
             _centralCommanderResultRendered = false;
@@ -280,8 +283,8 @@ namespace MudBlazor
                 return;
             }
 
-            SelectedItem = items.FirstOrDefault(x => x.Value?.ToString() == SelectedValue?.ToString());
-            SelectedItems = items.Where(x => SelectedValues.Contains(x.Value));
+            SelectedItem = items.FirstOrDefault(x => Converter.Set(x.Value) == Converter.Set(SelectedValue));
+            SelectedItems = SelectedValues == null ? null : items.Where(x => SelectedValues.Contains(x.Value));
         }
 
         protected internal void UpdateSelectedValue()
@@ -319,7 +322,7 @@ namespace MudBlazor
                     //Console.WriteLine("SelectedValue setter returned");
                     return;
                 }
-                if ((_selectedValue != null && value != null && _selectedValue.ToString() == value.ToString()) || (_selectedValue == null && value == null))
+                if ((_selectedValue != null && value != null && Converter.Set(_selectedValue) == Converter.Set(value)) || (_selectedValue == null && value == null))
                 {
                     //Console.WriteLine("SelectedValue setter returned");
                     return;
@@ -346,7 +349,7 @@ namespace MudBlazor
             {
                 if (_selectedValues == null)
                 {
-                    return new List<T>();
+                    return new HashSet<T>();
                 }
                 return _selectedValues;
             }
@@ -749,7 +752,7 @@ namespace MudBlazor
 
             if (!MultiSelection)
             {
-                items.FirstOrDefault(x => SelectedValue?.ToString() == x.Value?.ToString())?.SetSelected(true);
+                items.FirstOrDefault(x => Converter.Set(SelectedValue) == Converter.Set(x.Value))?.SetSelected(true);
             }
             else
             {
@@ -901,7 +904,7 @@ namespace MudBlazor
             }
             else
             {
-                var a = items.FindIndex(x => x.Value?.ToString() == _lastActivatedItem.Value.ToString());
+                var a = items.FindIndex(x => Converter.Set(x.Value) == Converter.Set(_lastActivatedItem.Value));
                 return a;
             }
         }
@@ -927,7 +930,7 @@ namespace MudBlazor
                 return;
             }
             var items = CollectAllMudListItems(true);
-            _lastActivatedItem = items.FirstOrDefault(x => x.Value?.ToString() == value.ToString());
+            _lastActivatedItem = items.FirstOrDefault(x => Converter.Set(x.Value) == Converter.Set(value));
         }
 
         protected void DeactiveAllItems()
@@ -962,7 +965,7 @@ namespace MudBlazor
             }
 
             // find first item that starts with the letter
-            var possibleItems = items.Where(x => (bool)x.Value?.ToString().ToLowerInvariant().StartsWith(startChar)).ToList();
+            var possibleItems = items.Where(x => (x.Text ?? Converter.Set(x.Value) ?? "").StartsWith(startChar, StringComparison.CurrentCultureIgnoreCase)).ToList();
             if (possibleItems == null || !possibleItems.Any())
             {
                 _lastActivatedItem.SetActive(true);
