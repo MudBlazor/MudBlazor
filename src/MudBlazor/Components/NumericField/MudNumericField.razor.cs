@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using System;
+using System.Collections;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Text.RegularExpressions;
@@ -17,6 +18,7 @@ namespace MudBlazor
     public partial class MudNumericField<T> : MudDebouncedInput<T>
     {
         private IKeyInterceptor _keyInterceptor;
+        private Comparer _comparer = new(CultureInfo.InvariantCulture);
 
         public MudNumericField() : base()
         {
@@ -187,7 +189,14 @@ namespace MudBlazor
                     else if (factor < 0 && comparable.CompareTo(Value) > 0)
                         nextValue = Min;
                 }
-                
+                else if (typeof(T).IsValueType)
+                {
+                    if (factor > 0 && _comparer.Compare(nextValue, Value) < 0)
+                        nextValue = Max;
+                    else if (factor < 0 && (_comparer.Compare(nextValue, Value) > 0 || nextValue is null))
+                        nextValue = Min;
+                }
+
                 await SetValueAsync(ConstrainBoundaries(nextValue).value);
                 _elementReference.SetText(Text).AndForget();
             }
@@ -232,6 +241,13 @@ namespace MudBlazor
                 if (comparable.CompareTo(Max) > 0)
                     return (Max, true);
                 else if (comparable.CompareTo(Min) < 0)
+                    return (Min, true);
+            }
+            else if (value is not null && typeof(T).IsValueType)
+            {
+                if (_comparer.Compare(value, Max) > 0)
+                    return (Max, true);
+                else if (_comparer.Compare(value, Min) < 0)
                     return (Min, true);
             }
             else if (value == null)
@@ -419,7 +435,7 @@ namespace MudBlazor
             => Convert.ToInt64((long?)(object)v);
         private ulong FromUInt64(T v)
             => Convert.ToUInt64((ulong?)(object)v);
-    
+
         protected override void Dispose(bool disposing)
         {
             base.Dispose(disposing);
