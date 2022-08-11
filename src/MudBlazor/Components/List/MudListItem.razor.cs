@@ -15,7 +15,7 @@ namespace MudBlazor
         [Inject] protected NavigationManager UriHelper { get; set; }
 
         [CascadingParameter] protected MudList<T> MudList { get; set; }
-        [CascadingParameter] internal MudListItem<T> ParentListItem { get; set; }
+        [CascadingParameter] protected internal MudListItem<T> ParentListItem { get; set; }
 
         protected string Classname =>
         new CssBuilder("mud-list-item")
@@ -36,7 +36,7 @@ namespace MudBlazor
             .AddClass("mud-list-item-multiselect-checkbox", MudList?.MultiSelectionComponent == MultiSelectionComponent.CheckBox || OverrideMultiSelectionComponent == MultiSelectionComponent.CheckBox)
             .Build();
 
-        internal string ItemId { get; } = "_" + Guid.NewGuid().ToString().Substring(0, 8);
+        protected internal string ItemId { get; } = "_" + Guid.NewGuid().ToString().Substring(0, 8);
 
         /// <summary>
         /// Functional items does not hold values. If a value set on Functional item, it ignores by the MudList. They can not count on Items list (they count on AllItems), cannot be subject of keyboard navigation and selection.
@@ -71,6 +71,13 @@ namespace MudBlazor
         public string Avatar { get; set; }
 
         /// <summary>
+        /// Avatar CSS Class to apply if Avatar is set.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.List.Appearance)]
+        public string AvatarClass { get; set; }
+
+        /// <summary>
         /// Link to a URL when clicked.
         /// </summary>
         [Parameter]
@@ -83,20 +90,6 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.List.ClickAction)]
         public bool ForceLoad { get; set; }
-
-        /// <summary>
-        /// Overrided component for multiselection. Keep it null to have default one that MudList has.
-        /// </summary>
-        [Parameter]
-        [Category(CategoryTypes.List.ClickAction)]
-        public MultiSelectionComponent? OverrideMultiSelectionComponent { get; set; } = null;
-
-        /// <summary>
-        /// Avatar CSS Class to apply if Avatar is set.
-        /// </summary>
-        [Parameter]
-        [Category(CategoryTypes.List.Appearance)]
-        public string AvatarClass { get; set; }
 
         private bool _disabled;
         /// <summary>
@@ -112,11 +105,25 @@ namespace MudBlazor
         }
 
         /// <summary>
+        /// If true, the left and right padding is removed.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.List.Appearance)]
+        public bool DisableGutters { get; set; }
+
+        /// <summary>
         /// If true, disables ripple effect.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.List.Appearance)]
         public bool DisableRipple { get; set; }
+
+        /// <summary>
+        /// Overrided component for multiselection. Keep it null to have default one that MudList has.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.List.ClickAction)]
+        public MultiSelectionComponent? OverrideMultiSelectionComponent { get; set; } = null;
 
         /// <summary>
         /// Icon to use if set.
@@ -188,13 +195,6 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// If true, the left and right padding is removed.
-        /// </summary>
-        [Parameter]
-        [Category(CategoryTypes.List.Appearance)]
-        public bool DisableGutters { get; set; }
-
-        /// <summary>
         /// Command parameter.
         /// </summary>
         [Parameter]
@@ -209,18 +209,18 @@ namespace MudBlazor
         public ICommand Command { get; set; }
 
         /// <summary>
-        /// Display content of this list item. If set, overrides Text.
-        /// </summary>
-        [Parameter]
-        [Category(CategoryTypes.List.Behavior)]
-        public RenderFragment ChildContent { get; set; }
-
-        /// <summary>
         /// Prevent default behavior when click on MudSelectItem. Default behavior is selecting the item and style adjustments.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.List.Behavior)]
         public bool OnClickHandlerPreventDefault { get; set; }
+
+        /// <summary>
+        /// Display content of this list item. If set, overrides Text.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.List.Behavior)]
+        public RenderFragment ChildContent { get; set; }
 
         /// <summary>
         /// Add child list items here to create a nested list.
@@ -333,6 +333,8 @@ namespace MudBlazor
         #endregion
 
 
+        #region Other (ClickHandler etc.)
+
         public void ForceRender()
         {
             StateHasChanged();
@@ -342,26 +344,26 @@ namespace MudBlazor
         {
             if (Disabled)
                 return;
-            if (!OnClickHandlerPreventDefault)
+
+            if (OnClickHandlerPreventDefault == true)
             {
-                if (NestedList != null)
-                {
-                    Expanded = !Expanded;
-                }
-                else if (Href != null)
-                {
-                    MudList?.SetSelectedValue(this);
-                    OnClick.InvokeAsync(ev).AndForget();
-                    UriHelper.NavigateTo(Href, ForceLoad);
-                }
-                else if (MudList?.Clickable == true || MudList?.MultiSelection == true)
-                {
-                    MudList?.SetSelectedValue(this);
-                    OnClick.InvokeAsync(ev).AndForget();
-                }
+                OnClick.InvokeAsync(ev).AndForget();
+                return;
             }
-            else
+
+            if (NestedList != null)
             {
+                Expanded = !Expanded;
+            }
+            else if (Href != null)
+            {
+                MudList?.SetSelectedValue(this);
+                OnClick.InvokeAsync(ev).AndForget();
+                UriHelper.NavigateTo(Href, ForceLoad);
+            }
+            else if (MudList?.Clickable == true || MudList?.MultiSelection == true)
+            {
+                MudList?.SetSelectedValue(this);
                 OnClick.InvokeAsync(ev).AndForget();
             }
         }
@@ -372,7 +374,7 @@ namespace MudBlazor
         }
 
         private Typo _textTypo;
-        private void OnListParametersChanged()
+        protected void OnListParametersChanged()
         {
             if ((Dense ?? MudList?.Dense) ?? false)
             {
@@ -396,6 +398,8 @@ namespace MudBlazor
             }
             catch (Exception) { /*ignore*/ }
         }
+
+        #endregion
 
     }
 }

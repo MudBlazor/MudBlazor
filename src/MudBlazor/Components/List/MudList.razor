@@ -2,7 +2,7 @@
 @typeparam T
 @inherits MudComponentBase
 
-<div @attributes="UserAttributes" id="@_elementId" class="@Classname" style="@Stylename" tabindex="-1" @onkeydown="HandleKeyDown" @onfocusout="OnFocusOut">
+<div @attributes="UserAttributes" id="@_elementId" class="@Classname" style="@Stylename" tabindex="-1" @onkeydown="HandleKeyDown" @onfocusout="HandleOnFocusOut">
     <CascadingValue Value="@this" IsFixed="true">
         @if (MultiSelection && SelectAll && ParentList == null)
         {

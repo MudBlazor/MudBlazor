@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Services;
 using MudBlazor.Utilities;
+using static MudBlazor.CategoryTypes;
 
 namespace MudBlazor
 {
@@ -13,18 +14,14 @@ namespace MudBlazor
     {
         #region Parameters, Fields, Injected Services
 
-        [Inject] private IKeyInterceptorFactory KeyInterceptorFactory { get; set; }
+        [Inject] IKeyInterceptorFactory KeyInterceptorFactory { get; set; }
         [Inject] IScrollManager ScrollManager { get; set; }
 
-        private IKeyInterceptor _keyInterceptor;
+        // Fields used in more than one place (or protected and internal ones) are shown here.
+        // Others are next to the relevant parameters. (Like _selectedValue)
         private string _elementId = "list_" + Guid.NewGuid().ToString().Substring(0, 8);
-        private bool _multiSelection = false;
         private List<MudListItem<T>> _items = new();
         private List<MudList<T>> _childLists = new();
-        private MudListItem<T> _selectedItem = new();
-        private HashSet<MudListItem<T>> _selectedItems = new();
-        private T _selectedValue;
-        private HashSet<T> _selectedValues = new();
         internal MudListItem<T> _lastActivatedItem;
         internal bool? _allSelected = false;
 
@@ -78,6 +75,7 @@ namespace MudBlazor
         [Category(CategoryTypes.List.Behavior)]
         public int? MaxItems { get; set; } = null;
 
+        private bool _multiSelection = false;
         /// <summary>
         /// Allows multi selection and adds MultiSelectionComponent for each list item.
         /// </summary>
@@ -200,13 +198,18 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public EventCallback<KeyboardEventArgs> OnKeyDown { get; set; }
 
+        /// <summary>
+        /// Fired on the OnFocusOut event.
+        /// </summary>
+        [Parameter] public EventCallback<FocusEventArgs> OnFocusOut { get; set; }
+
         #endregion
 
 
-        #region Values & Items
+        #region Values & Items (Core: Be careful if you change something inside the region, it affects all logic and also Select and Autocomplete)
 
         bool _centralCommanderIsProcessing = false;
-        internal bool _centralCommanderResultRendered = false;
+        bool _centralCommanderResultRendered = false;
         // CentralCommander has the simple aim: Prevent racing conditions. It has two mechanism to do this:
         // (1) When this method is running, it doesn't allow to run a second one. That guarantees to different value parameters can not call this method at the same time.
         // (2) When this method runs once, prevents all value setters until OnAfterRender runs. That guarantees to have proper values.
@@ -248,12 +251,7 @@ namespace MudBlazor
             //Console.WriteLine("Central Value ended");
         }
 
-        private void UpdateSelectedValues(bool once = false)
-        {
-            SelectedValues = new List<T>() { SelectedValue };
-        }
-
-        internal void UpdateSelectedItem()
+        protected internal void UpdateSelectedItem()
         {
             var items = CollectAllMudListItems(true);
 
@@ -268,6 +266,7 @@ namespace MudBlazor
             SelectedItems = items.Where(x => SelectedValues.Contains(x.Value)).ToList();
         }
 
+        private T _selectedValue;
         /// <summary>
         /// The current selected value.
         /// Note: Make the list Clickable or set MultiSelection true for item selection to work.
@@ -304,6 +303,10 @@ namespace MudBlazor
             }
         }
 
+        private HashSet<T> _selectedValues;
+        /// <summary>
+        /// The current selected values. Holds single value (SelectedValue) if MultiSelection is false.
+        /// </summary>
         [Parameter]
         [Category(CategoryTypes.List.Selecting)]
         public IEnumerable<T> SelectedValues
@@ -351,12 +354,13 @@ namespace MudBlazor
                 _selectedValues = value == null ? null : value.ToHashSet();
                 HandleCentralValueCommander("SelectedValues");
                 SelectedValuesChanged.InvokeAsync(_selectedValues).AndForget();
-                
+
                 UpdateSelectedStyles();
                 Console.WriteLine("SelectedValues setter ended");
             }
         }
 
+        private MudListItem<T> _selectedItem = new();
         /// <summary>
         /// The current selected list item.
         /// Note: make the list Clickable or MultiSelection or both for item selection to work.
@@ -380,6 +384,7 @@ namespace MudBlazor
             }
         }
 
+        private HashSet<MudListItem<T>> _selectedItems = new();
         /// <summary>
         /// The current selected listitems.
         /// Note: make the list Clickable for item selection to work.
@@ -429,11 +434,17 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public EventCallback<IEnumerable<MudListItem<T>>> SelectedItemsChanged { get; set; }
 
+        /// <summary>
+        /// Get all MudListItems in the list.
+        /// </summary>
         public List<MudListItem<T>> GetAllItems
         {
             get => CollectAllMudListItems();
         }
 
+        /// <summary>
+        /// Get all items that holds value.
+        /// </summary>
         public List<MudListItem<T>> GetItems
         {
             get => CollectAllMudListItems(true);
@@ -464,7 +475,8 @@ namespace MudBlazor
             ParametersChanged?.Invoke();
         }
 
-        bool _firstRendered = false;
+        private IKeyInterceptor _keyInterceptor;
+        private bool _firstRendered = false;
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
             if (firstRender)
@@ -506,7 +518,7 @@ namespace MudBlazor
             //Console.WriteLine("Rendered");
         }
 
-        internal void Register(MudListItem<T> item)
+        protected internal void Register(MudListItem<T> item)
         {
             _items.Add(item);
             if (SelectedValue != null && object.Equals(item.Value, SelectedValue))
@@ -518,17 +530,17 @@ namespace MudBlazor
             }
         }
 
-        internal void Unregister(MudListItem<T> item)
+        protected internal void Unregister(MudListItem<T> item)
         {
             _items.Remove(item);
         }
 
-        internal void Register(MudList<T> child)
+        protected internal void Register(MudList<T> child)
         {
             _childLists.Add(child);
         }
 
-        internal void Unregister(MudList<T> child)
+        protected internal void Unregister(MudList<T> child)
         {
             _childLists.Remove(child);
         }
@@ -538,7 +550,7 @@ namespace MudBlazor
 
         #region Events (Key, Focus)
 
-        internal async Task HandleKeyDown(KeyboardEventArgs obj)
+        protected internal async Task HandleKeyDown(KeyboardEventArgs obj)
         {
             if (Disabled || (Clickable == false && MultiSelection == false))
                 return;
@@ -595,13 +607,14 @@ namespace MudBlazor
             await OnKeyDown.InvokeAsync(obj);
         }
 
-        private void OnFocusOut()
+        protected async Task HandleOnFocusOut()
         {
             //if (ParentList != null)
             //{
             //    DeactiveAllItems();
             //}
             DeactiveAllItems();
+            await OnFocusOut.InvokeAsync();
         }
 
         #endregion
@@ -609,7 +622,7 @@ namespace MudBlazor
 
         #region Select
 
-        internal void SetSelectedValue(T value, bool force = false)
+        protected internal void SetSelectedValue(T value, bool force = false)
         {
             if ((!Clickable && !MultiSelection) && !force)
                 return;
@@ -637,10 +650,9 @@ namespace MudBlazor
                 }
             }
             UpdateLastActivatedItem(value);
-            //_lastActivatedItem = item;
         }
 
-        internal void SetSelectedValue(MudListItem<T> item, bool force = false)
+        protected internal void SetSelectedValue(MudListItem<T> item, bool force = false)
         {
             if (item == null)
             {
@@ -692,7 +704,7 @@ namespace MudBlazor
 
         //internal bool CanSelect { get; private set; }
 
-        internal void UpdateSelectedStyles()
+        protected internal void UpdateSelectedStyles()
         {
             var items = CollectAllMudListItems(true);
             DeselectAllItems(items);
@@ -714,7 +726,7 @@ namespace MudBlazor
             StateHasChanged();
         }
 
-        private bool IsSelectable()
+        protected bool IsSelectable()
         {
             if (Clickable || MultiSelection)
             {
@@ -724,13 +736,13 @@ namespace MudBlazor
             return false;
         }
 
-        private void DeselectAllItems(List<MudListItem<T>> items)
+        protected void DeselectAllItems(List<MudListItem<T>> items)
         {
             foreach (var listItem in items)
                 listItem?.SetSelected(false);
         }
 
-        public List<MudListItem<T>> CollectAllMudListItems(bool exceptNestedAndExceptional = false)
+        protected List<MudListItem<T>> CollectAllMudListItems(bool exceptNestedAndExceptional = false)
         {
             var items = new List<MudListItem<T>>();
             
@@ -811,8 +823,6 @@ namespace MudBlazor
         [Category(CategoryTypes.FormComponent.ListAppearance)]
         public string IndeterminateIcon { get; set; } = Icons.Filled.IndeterminateCheckBox;
 
-
-
         protected void SelectAllItems(bool? deselect = false)
         {
             var items = CollectAllMudListItems(true);
@@ -848,7 +858,7 @@ namespace MudBlazor
 
         #region Active (Hilight)
 
-        public int GetActiveItemIndex()
+        protected int GetActiveItemIndex()
         {
             var items = CollectAllMudListItems(true);
             if (_lastActivatedItem == null)
@@ -863,7 +873,7 @@ namespace MudBlazor
             }
         }
 
-        public T GetActiveItemValue()
+        protected T GetActiveItemValue()
         {
             var items = CollectAllMudListItems(true);
             if (_lastActivatedItem == null)
@@ -876,7 +886,7 @@ namespace MudBlazor
             }
         }
 
-        internal void UpdateLastActivatedItem(T value)
+        protected internal void UpdateLastActivatedItem(T value)
         {
             if (value == null)
             {
@@ -887,7 +897,7 @@ namespace MudBlazor
             _lastActivatedItem = items.FirstOrDefault(x => x.Value?.ToString() == value.ToString());
         }
 
-        private void DeactiveAllItems()
+        protected void DeactiveAllItems()
         {
             var items = CollectAllMudListItems(true);
             foreach (var item in items)
@@ -1018,6 +1028,11 @@ namespace MudBlazor
         #endregion
 
 
+        #region Others (Clear, Scroll, Dispose)
+
+        /// <summary>
+        /// Clears value(s) and item(s) and deactive all items.
+        /// </summary>
         public void Clear()
         {
             var items = CollectAllMudListItems();
@@ -1029,7 +1044,6 @@ namespace MudBlazor
             {
                 SelectedValues = null;
             }
-
 
             //SelectedItem = null;
             //SelectedItems = null;
@@ -1043,6 +1057,9 @@ namespace MudBlazor
 
         protected internal ValueTask ScrollToMiddleAsync(MudListItem<T> item)
             => ScrollManager.ScrollToMiddleAsync(_elementId, item.ItemId);
+
+
+
 
         //private void GetSelectedItem()
         //{
@@ -1062,5 +1079,7 @@ namespace MudBlazor
             ParametersChanged = null;
             ParentList?.Unregister(this);
         }
+
+        #endregion
     }
 }
