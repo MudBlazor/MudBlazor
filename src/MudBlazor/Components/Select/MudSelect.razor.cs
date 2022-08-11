@@ -75,11 +75,32 @@ namespace MudBlazor
         public RenderFragment ChildContent { get; set; }
 
         /// <summary>
+        /// If true the active (hilighted) item select on tab key. Designed for only single selection. Default is true.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.List.Selecting)]
+        public bool SelectValueOnTab { get; set; } = true;
+
+        /// <summary>
         /// User class names for the popover, separated by space
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.ListAppearance)]
         public string PopoverClass { get; set; }
+
+        /// <summary>
+        /// User class names for the popover, separated by space
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.ListAppearance)]
+        public bool DisablePopoverPadding { get; set; }
+
+        /// <summary>
+        /// If true, selected items doesn't have a selected background color.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.List.Appearance)]
+        public bool DisableSelectedBackground { get; set; }
 
         /// <summary>
         /// If true, compact vertical padding will be applied to all Select items.

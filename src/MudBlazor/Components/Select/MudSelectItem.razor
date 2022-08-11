@@ -2,7 +2,7 @@
 @typeparam T
 @inherits MudBaseSelectItem
 
-<MudListItem @attributes="UserAttributes" T="T" Value="@Value" id="@ItemId" OnClick="@OnClicked" Disabled="@Disabled" Class="@GetCssClasses()" Style="@Style">
+<MudListItem @attributes="UserAttributes" T="T" Value="@Value" id="@ItemId" OnClick="@HandleOnClick" IsFunctional="@IsFunctional" Href="@Href" Disabled="@Disabled" Class="@GetCssClasses()" Style="@Style">
     @if (ChildContent != null)
     {
         @ChildContent

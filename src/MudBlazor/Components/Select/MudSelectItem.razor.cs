@@ -46,6 +46,13 @@ namespace MudBlazor
             }
         }
 
+        /// <summary>
+        /// Functional items does not hold values. If a value set on Functional item, it ignores by the MudSelect. They cannot be subject of keyboard navigation and selection.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.List.Behavior)]
+        public bool IsFunctional { get; set; }
+
         //private IMudShadowSelect  _shadowParent;
         private bool _isSelected;
 
@@ -137,13 +144,14 @@ namespace MudBlazor
             }
         }
 
-        private void OnClicked()
+        private void HandleOnClick()
         {
             //if (MultiSelection)
             //    IsSelected = !IsSelected;
 
             MudSelect?.SelectOption(Value).AndForget();
             InvokeAsync(StateHasChanged);
+            OnClick.InvokeAsync().AndForget();
         }
 
         public void Dispose()
