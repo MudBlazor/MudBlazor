@@ -280,6 +280,20 @@ namespace MudBlazor
         }
 
         /// <summary>
+        /// The MultiSelectionComponent's placement. Accepts Align.Start and Align.End
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.List.Behavior)]
+        public Align MultiSelectionAlign { get; set; } = Align.Start;
+
+        /// <summary>
+        /// The component which shows as a MultiSelection check.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.List.Behavior)]
+        public MultiSelectionComponent MultiSelectionComponent { get; set; } = MultiSelectionComponent.CheckBox;
+
+        /// <summary>
         /// The Comparer to use for comparing selected values internally.
         /// </summary>
         [Parameter]

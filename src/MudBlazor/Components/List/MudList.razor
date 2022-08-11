@@ -9,9 +9,9 @@
             <MudListItem T="T" IsFunctional="true" Icon="@SelectAllCheckBoxIcon" IconColor="@Color" Text="@SelectAllText" OverrideMultiSelectionComponent="MultiSelectionComponent.None" OnClick="@(() => SelectAllItems(_allSelected))" OnClickHandlerPreventDefault="true" Dense="@Dense" Class="mb-2" />
             <MudDivider />
         }
-        @if (Items != null)
+        @if (ItemCollection != null)
         {
-            <MudVirtualize IsEnabled="@Virtualize" Items="Items" Context="item">
+            <MudVirtualize IsEnabled="@Virtualize" Items="ItemCollection" Context="item">
                 <MudListItem Value="@item" Text="@item.ToString()" />
             </MudVirtualize>
         }

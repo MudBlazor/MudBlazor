@@ -5,13 +5,13 @@
     <MudItem xs="12" sm="8" Class="d-flex align-start justify-space-around">
         <MudPaper Width="300px">
             <MudText Class="ma-4">Array List</MudText>
-            <MudList Items="states" Clickable="true" MaxItems="_maxItems" />
+            <MudList ItemCollection="states" Clickable="true" MaxItems="_maxItems" />
         </MudPaper>
 
         <MudPaper Width="300px">
             <MudText Class="ma-4">Enum List</MudText>
             @*(ICollection<string>Enum.GetNames(typeof(Continent)) can also be used*@
-            <MudList Items="Enum.GetNames(typeof(Continent)).ToList()" Clickable="true" MaxItems="_maxItems" />
+            <MudList ItemCollection="Enum.GetNames(typeof(Continent)).ToList()" Clickable="true" MaxItems="_maxItems" />
         </MudPaper>
     </MudItem>
 

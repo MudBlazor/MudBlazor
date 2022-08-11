@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
@@ -59,7 +60,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.List.Behavior)]
-        public ICollection<T> Items { get; set; } = null;
+        public ICollection<T> ItemCollection { get; set; } = null;
 
         /// <summary>
         /// Allows virtualization. Only work is Items parameter is not null.
@@ -103,7 +104,7 @@ namespace MudBlazor
                     {
                         HandleCentralValueCommander("MultiSelectionOff");
                     }
-                    
+
                     UpdateSelectedStyles();
                 }
             }
@@ -224,7 +225,7 @@ namespace MudBlazor
 
             if (changedValueType == "SelectedValue")
             {
-                if (!MultiSelection)
+                if (MultiSelection == false)
                 {
                     SelectedValues = new List<T>() { SelectedValue };
                     UpdateSelectedItem();
@@ -232,18 +233,35 @@ namespace MudBlazor
             }
             else if (changedValueType == "SelectedValues")
             {
-                if (MultiSelection)
+                if (MultiSelection == true)
                 {
                     SelectedValue = SelectedValues == null ? default(T) : SelectedValues.LastOrDefault();
                     UpdateSelectedItem();
                 }
             }
+            else if (changedValueType == "SelectedItem")
+            {
+                if (MultiSelection == false)
+                {
+                    SelectedItems = new HashSet<MudListItem<T>>() { SelectedItem };
+                    UpdateSelectedValue();
+                }
+            }
+            else if (changedValueType == "SelectedItems")
+            {
+                if (MultiSelection == true)
+                {
+                    SelectedItem = SelectedItems == null ? null : SelectedItems.LastOrDefault();
+                    UpdateSelectedValue();
+                }
+            }
             else if (changedValueType == "MultiSelectionOff")
             {
                 SelectedValue = SelectedValues.FirstOrDefault();
-                //var items = CollectAllMudListItems(true);
-                //SelectedValues = new List<T>() { SelectedValue };
-                //SelectedItems = items.Where(x => SelectedValues.Contains(x.Value)).ToList();
+                var items = CollectAllMudListItems(true);
+                SelectedValues = new HashSet<T>() { SelectedValue };
+                UpdateSelectedItem();
+                //SelectedItems = items.Where(x => SelectedValues.Contains(x.Value)).ToHashSet();
             }
 
             _centralCommanderResultRendered = false;
@@ -263,7 +281,20 @@ namespace MudBlazor
             }
 
             SelectedItem = items.FirstOrDefault(x => x.Value?.ToString() == SelectedValue?.ToString());
-            SelectedItems = items.Where(x => SelectedValues.Contains(x.Value)).ToList();
+            SelectedItems = items.Where(x => SelectedValues.Contains(x.Value));
+        }
+
+        protected internal void UpdateSelectedValue()
+        {
+            if (MultiSelection == false && SelectedItem == null)
+            {
+                SelectedValue = default(T);
+                SelectedValues = null;
+                return;
+            }
+
+            SelectedValue = SelectedItem.Value;
+            SelectedValues = SelectedItems.Select(x => x.Value);
         }
 
         private T _selectedValue;
@@ -380,6 +411,7 @@ namespace MudBlazor
                     return;
 
                 _selectedItem = value;
+                HandleCentralValueCommander("SelectedItem");
                 SelectedItemChanged.InvokeAsync(_selectedItem).AndForget();
             }
         }
@@ -410,6 +442,7 @@ namespace MudBlazor
                     return;
 
                 _selectedItems = value == null ? null : value.ToHashSet();
+                HandleCentralValueCommander("SelectedItems");
                 SelectedItemsChanged.InvokeAsync(_selectedItems).AndForget();
             }
         }
@@ -906,6 +939,7 @@ namespace MudBlazor
             }
         }
 
+#pragma warning disable BL0005
         public async Task ActiveFirstItem(string startChar = null)
         {
             var items = CollectAllMudListItems(true);
@@ -919,6 +953,10 @@ namespace MudBlazor
             {
                 items[0].SetActive(true);
                 _lastActivatedItem = items[0];
+                if (items[0].ParentListItem != null && items[0].ParentListItem.Expanded == false)
+                {
+                    items[0].ParentListItem.Expanded = true;
+                }
                 await ScrollToMiddleAsync(items[0]);
                 return;
             }
@@ -928,6 +966,10 @@ namespace MudBlazor
             if (possibleItems == null || !possibleItems.Any())
             {
                 _lastActivatedItem.SetActive(true);
+                if (_lastActivatedItem.ParentListItem != null && _lastActivatedItem.ParentListItem.Expanded == false)
+                {
+                    _lastActivatedItem.ParentListItem.Expanded = true;
+                }
                 await ScrollToMiddleAsync(_lastActivatedItem);
                 return;
             }
@@ -937,6 +979,10 @@ namespace MudBlazor
             {
                 possibleItems[0].SetActive(true);
                 _lastActivatedItem = possibleItems[0];
+                if (_lastActivatedItem.ParentListItem != null && _lastActivatedItem.ParentListItem.Expanded == false)
+                {
+                    _lastActivatedItem.ParentListItem.Expanded = true;
+                }
                 await ScrollToMiddleAsync(possibleItems[0]);
                 return;
             }
@@ -945,6 +991,10 @@ namespace MudBlazor
             {
                 possibleItems[0].SetActive(true);
                 _lastActivatedItem = possibleItems[0];
+                if (_lastActivatedItem.ParentListItem != null && _lastActivatedItem.ParentListItem.Expanded == false)
+                {
+                    _lastActivatedItem.ParentListItem.Expanded = true;
+                }
                 await ScrollToMiddleAsync(possibleItems[0]);
             }
             else
@@ -952,6 +1002,10 @@ namespace MudBlazor
                 var item = possibleItems[possibleItems.IndexOf(theItem) + 1];
                 item.SetActive(true);
                 _lastActivatedItem = item;
+                if (_lastActivatedItem.ParentListItem != null && _lastActivatedItem.ParentListItem.Expanded == false)
+                {
+                    _lastActivatedItem.ParentListItem.Expanded = true;
+                }
                 await ScrollToMiddleAsync(item);
             }
         }
@@ -980,7 +1034,6 @@ namespace MudBlazor
 
             if (items[index + changeCount].ParentListItem != null && items[index + changeCount].ParentListItem.Expanded == false)
             {
-#pragma warning disable BL0005
                 items[index + changeCount].ParentListItem.Expanded = true;
             }
 
@@ -1022,8 +1075,14 @@ namespace MudBlazor
             items[items.Count - 1].SetActive(true);
             _lastActivatedItem = items[items.Count - 1];
 
+            if (items[items.Count - 1].ParentListItem != null && items[items.Count - 1].ParentListItem.Expanded == false)
+            {
+                items[items.Count - 1].ParentListItem.Expanded = true;
+            }
+
             await ScrollToMiddleAsync(items[items.Count - 1]);
         }
+#pragma warning restore BL0005
 
         #endregion
 

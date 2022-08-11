@@ -384,7 +384,7 @@ namespace MudBlazor
             {
                 _textTypo = Typo.body1;
             }
-            //StateHasChanged();
+            StateHasChanged();
         }
 
         public void Dispose()

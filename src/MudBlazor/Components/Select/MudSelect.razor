@@ -32,10 +32,11 @@
                     }
                 </MudInput>
 
-				<MudPopover Open=@(_isOpen) MaxHeight="@MaxHeight" AnchorOrigin="@AnchorOrigin" TransformOrigin="@TransformOrigin" Class="@PopoverClass" RelativeWidth="@RelativeWidth">
+				<MudPopover Open="@_isOpen" MaxHeight="@MaxHeight" AnchorOrigin="@AnchorOrigin" TransformOrigin="@TransformOrigin" Class="@PopoverClass" RelativeWidth="@RelativeWidth">
 					<CascadingValue Value="@((IMudSelect)this)" IsFixed="true">
-						<MudList @ref="@_list" T="T" Clickable="true" MultiSelection="@MultiSelection" Color="@Color" Dense="@Dense" SelectAll="@SelectAll" SelectAllText="@SelectAllText" Items="@ItemCollection" Virtualize="@Virtualize"
-                            @bind-SelectedValue="@SelectedValue" @bind-SelectedValues="@SelectedValues" @bind-SelectedItem="@SelectedListItem" @bind-SelectedItems="@SelectedListItems">
+						<MudList @ref="@_list" T="T" Clickable="true"  Color="@Color" Dense="@Dense" ItemCollection="@ItemCollection" Virtualize="@Virtualize"
+                                 MultiSelection="@MultiSelection" MultiSelectionComponent="@MultiSelectionComponent" MultiSelectionAlign="@MultiSelectionAlign" SelectAll="@SelectAll" SelectAllText="@SelectAllText"
+                                 @bind-SelectedValue="@SelectedValue" @bind-SelectedValues="@SelectedValues" @bind-SelectedItem="@SelectedListItem" @bind-SelectedItems="@SelectedListItems">
                             @ChildContent
 						</MudList>
 					</CascadingValue>
