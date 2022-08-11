@@ -3,6 +3,7 @@
 #pragma warning disable BL0005
 
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Bunit;
 using FluentAssertions;
@@ -128,6 +129,44 @@ namespace MudBlazor.UnitTests.Components
             //await comp.InvokeAsync(() => list.HandleCentralValueCommander("SelectedValue"));
             comp.WaitForAssertion(() => list.SelectedItem.Should().Be(null));
             comp.WaitForAssertion(() => comp.FindAll("div.mud-selected-item").Count.Should().Be(0));
+        }
+
+        [Test]
+        public async Task List_ProgrammaticallyChangeValueAndItemTest()
+        {
+            var comp = Context.RenderComponent<ListVariantTest>();
+            var list = comp.FindComponent<MudList<int?>>().Instance;
+
+            comp.WaitForAssertion(() => list.SelectedValue.Should().Be(1));
+            comp.WaitForAssertion(() => list.SelectedItem.Text.Should().Be("Sparkling Water (1)"));
+
+            comp.FindAll("button.mud-button-root")[1].Click();
+            comp.WaitForAssertion(() => list.SelectedValue.Should().Be(2));
+            comp.WaitForAssertion(() => list.SelectedItem.Text.Should().Be("Still Water (2)"));
+
+            comp.FindAll("button.mud-button-root")[3].Click();
+            comp.WaitForAssertion(() => list.SelectedValue.Should().Be(3));
+            comp.WaitForAssertion(() => list.SelectedItem.Text.Should().Be("Earl Grey (3)"));
+
+            // Changing multiselection should not affect value or item
+            await comp.InvokeAsync(() => list.MultiSelection = true);
+            comp.WaitForAssertion(() => list.SelectedValue.Should().Be(3));
+            comp.WaitForAssertion(() => list.SelectedItem.Text.Should().Be("Earl Grey (3)"));
+
+            comp.FindAll("button.mud-button-root")[2].Click();
+            comp.WaitForAssertion(() => list.SelectedValues.Should().ContainInOrder(new int?[] { 2, 4 }));
+            comp.WaitForAssertion(() => string.Join(", ", list.SelectedItems.Select(x => x.Text)).Should().Be("Still Water (2), Matcha (4)"));
+
+            comp.FindAll("button.mud-button-root")[4].Click();
+            comp.WaitForAssertion(() => list.SelectedValues.Should().ContainInOrder(new int?[] { 3, 5 }));
+            comp.WaitForAssertion(() => string.Join(", ", list.SelectedItems.Select(x => x.Text)).Should().Be("Earl Grey (3), Pu'er (5)"));
+
+            // Changing multiselection now should select only one value
+            await comp.InvokeAsync(() => list.MultiSelection = false);
+            comp.WaitForAssertion(() => list.SelectedValue.Should().Be(3));
+            comp.WaitForAssertion(() => list.SelectedItem.Text.Should().Be("Earl Grey (3)"));
+            comp.WaitForAssertion(() => list.SelectedValues.Should().ContainSingle());
+            comp.WaitForAssertion(() => string.Join(", ", list.SelectedItems.Select(x => x.Text)).Should().Be("Earl Grey (3)"));
         }
 
         [Test]
