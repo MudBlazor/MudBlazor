@@ -182,7 +182,9 @@ namespace MudBlazor
             try
             {
                 var nextValue = GetNextValue(factor);
-                if (typeof(T).IsValueType) // validate that the data type is a value type before we compare them
+
+                // validate that the data type is a value type before we compare them
+                if (typeof(T).IsValueType)
                 {
                     if (factor > 0 && _comparer.Compare(nextValue, Value) < 0)
                         nextValue = Max;
@@ -231,13 +233,14 @@ namespace MudBlazor
             if (value == null)
                 return (default(T), false);
 
-            // check if value goes above or under Max/Min has value
-            // if so take min or max value defined
-            if (typeof(T).IsValueType) // validate that the data type is a value type before we compare them
+            // validate that the data type is a value type before we compare them
+            if (typeof(T).IsValueType)
             {
+                // check if value is bigger than defined MAX, if so take the defined MAX value instead
                 if (_comparer.Compare(value, Max) > 0)
                     return (Max, true);
 
+                // check if value is lower than defined MIN, if so take the defined MIN value instead
                 if (_comparer.Compare(value, Min) < 0)
                     return (Min, true);
             };
