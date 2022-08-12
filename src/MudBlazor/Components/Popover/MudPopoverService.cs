@@ -194,6 +194,7 @@ namespace MudBlazor
                 await _jsRuntime.InvokeVoidAsync("mudPopover.dispose");
             }
             catch (JSDisconnectedException) { }
+            catch (JSException) { }
             catch (TaskCanceledException) { }
         }
     }
