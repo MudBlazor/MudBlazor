@@ -245,14 +245,14 @@ namespace MudBlazor.UnitTests.Components
             comp.WaitForAssertion(() => checkbox.Checked.Should().Be(true));
         }
         /// <summary>
-        /// Change state with several keys
+        /// Test if the keyboard-disabling switch works
         /// </summary>
         [Test]
         public void CheckBoxTest_KeyboardDisabled()
         {
             var comp = Context.RenderComponent<MudCheckBox<bool?>>();
             comp.SetParam(x => x.TriState, true);
-            comp.SetParam(x => x.DisableKeyboardControls, true);
+            comp.SetParam(x => x.KeyboardEnabled, false);
             // print the generated html
             //Console.WriteLine(comp.Markup);
             // select elements needed for the test

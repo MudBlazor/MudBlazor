@@ -57,7 +57,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
-        public bool DisableKeyboardControls { get; set; } = false;
+        public bool KeyboardEnabled { get; set; } = true;
 
         /// <summary>
         /// If true, disables ripple effect.
@@ -155,7 +155,7 @@ namespace MudBlazor
 
         protected void HandleKeyDown(KeyboardEventArgs obj)
         {
-            if (Disabled || ReadOnly || DisableKeyboardControls)
+            if (Disabled || ReadOnly || !KeyboardEnabled)
                 return;
             switch (obj.Key)
             {
