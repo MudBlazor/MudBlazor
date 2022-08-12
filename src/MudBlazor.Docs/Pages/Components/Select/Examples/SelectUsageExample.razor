@@ -8,7 +8,7 @@
     <MudSelectItem Value="@("Hotdog")">Hot Dog</MudSelectItem>
 </MudSelect>
 
-<MudSelect @bind-SelectedValue="enumValue" Label="Select drink" HelperText="Enum" OpenIcon="@Icons.Filled.LocalDrink" AdornmentColor="Color.Secondary">
+<MudSelect @bind-Value="enumValue" Label="Select drink" HelperText="Enum" OpenIcon="@Icons.Filled.LocalDrink" AdornmentColor="Color.Secondary">
     @foreach (Drink item in Enum.GetValues(typeof(Drink)))
     {
         <MudSelectItem Value="@item">@item</MudSelectItem>

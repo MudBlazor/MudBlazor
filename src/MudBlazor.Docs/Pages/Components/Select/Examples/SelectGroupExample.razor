@@ -2,7 +2,7 @@
 
 <MudGrid>
     <MudItem xs="12" sm="8" Class="d-flex align-start justify-center">
-        <MudSelect T="string" Label="Groups & Items" AnchorOrigin="Origin.BottomCenter" MultiSelection="_multiSelection" @bind-SelectedValue="_selectedValue" @bind-SelectedValues="_selectedValues">
+        <MudSelect T="string" Label="Groups & Items" AnchorOrigin="Origin.BottomCenter" MultiSelection="_multiSelection" @bind-Value="_selectedValue" @bind-SelectedValues="_selectedValues">
             <MudSelectItemGroup T="string" Text="Group 1" Sticky="_sticky" Nested="_nested" InitiallyExpanded="_initiallyExpanded">
                 <MudSelectItem Value="@("Item 1")" />
                 <MudSelectItem Value="@("Item 2")" />

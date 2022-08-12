@@ -30,8 +30,6 @@ namespace MudBlazor
         [Inject] IScrollManager ScrollManager { get; set; }
 
         private MudList<T> _list;
-        private T _selectedValue;
-        private HashSet<T> _selectedValues = new HashSet<T>();
         private IEqualityComparer<T> _comparer;
         private bool _dense;
         private string multiSelectionText;
@@ -167,7 +165,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
-        public ICollection<T> ItemCollection { get; set; }
+        public ICollection<T> ItemCollection { get; set; } = null;
 
         /// <summary>
         /// Allows virtualization. Only work is ItemCollection parameter is not null.
@@ -360,27 +358,29 @@ namespace MudBlazor
 
         #region Values, Texts & Items
 
-        [Parameter]
-        [Category(CategoryTypes.FormComponent.Data)]
-        public T SelectedValue
-        {
-            get => _selectedValue;
+        //private T _selectedValue;
+        //[Parameter]
+        //[Category(CategoryTypes.FormComponent.Data)]
+        //public T SelectedValue
+        //{
+        //    get => _selectedValue;
 
-            set
-            {
-                if (Converter.Set(_selectedValue) == Converter.Set(value))
-                {
-                    return;
-                }
-                _selectedValue = value;
-                if (_firstRendered == false)
-                {
-                    Value = value;
-                }
-                SelectedValueChanged.InvokeAsync(_selectedValue).AndForget();
-            }
-        }
+        //    set
+        //    {
+        //        if (Converter.Set(_selectedValue) == Converter.Set(value))
+        //        {
+        //            return;
+        //        }
+        //        _selectedValue = value;
+        //        //if (_firstRendered == false)
+        //        //{
+        //        //    Value = value;
+        //        //}
+        //        SelectedValueChanged.InvokeAsync(_selectedValue).AndForget();
+        //    }
+        //}
 
+        private HashSet<T> _selectedValues = new HashSet<T>();
         /// <summary>
         /// Set of selected values. If MultiSelection is false it will only ever contain a single value. This property is two-way bindable.
         /// </summary>
@@ -401,7 +401,7 @@ namespace MudBlazor
                 {
                     return;
                 }
-                if (value != null && _selectedValues != null && _selectedValues.SetEquals(value))
+                if (value != null && _selectedValues != null && _selectedValues.ToHashSet().SetEquals(value))
                 {
                     return;
                 }
@@ -410,7 +410,9 @@ namespace MudBlazor
                 _selectedValues = new HashSet<T>(set, _comparer);
                 SelectionChangedFromOutside?.Invoke(_selectedValues);
                 if (!MultiSelection)
+                {
                     SetValueAsync(_selectedValues.FirstOrDefault()).AndForget();
+                }
                 else
                 {
                     //Warning. Here the Converter was not set yet
@@ -597,7 +599,7 @@ namespace MudBlazor
             UpdateIcon();
         }
 
-        bool _firstRendered = false;
+        //bool _firstRendered = false;
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
             if (firstRender)
@@ -624,7 +626,7 @@ namespace MudBlazor
                 });
                 _keyInterceptor.KeyDown += HandleKeyDown;
                 _keyInterceptor.KeyUp += HandleKeyUp;
-                _firstRendered = true;
+                //_firstRendered = true;
             }
             await base.OnAfterRenderAsync(firstRender);
         }
@@ -667,6 +669,7 @@ namespace MudBlazor
             if (_list != null && _isOpen == true)
             {
                 await _list.HandleKeyDown(obj);
+                Console.WriteLine("List KeyDown");
             }
 
             switch (obj.Key)
@@ -807,17 +810,17 @@ namespace MudBlazor
             UpdateIcon();
             StateHasChanged();
             // TODO remove this delay but removed this makes _list null because code reach _list before popover render.
-            await Task.Delay(1);
-            if (MultiSelection)
-            {
-                _list.UpdateSelectAllState();
-                _list.UpdateSelectedStyles();
-            }
-            _list.UpdateLastActivatedItem(SelectedValue);
-            if (_list._lastActivatedItem != null && !(MultiSelection && _list._allSelected == true))
-            {
-                await _list.ScrollToMiddleAsync(_list._lastActivatedItem);
-            }
+            //await Task.Delay(1);
+            //if (MultiSelection)
+            //{
+            //    _list.UpdateSelectAllState();
+            //    _list.UpdateSelectedStyles();
+            //}
+            //_list.UpdateLastActivatedItem(Value);
+            //if (_list._lastActivatedItem != null && !(MultiSelection && _list._allSelected == true))
+            //{
+            //    await _list.ScrollToMiddleAsync(_list._lastActivatedItem);
+            //}
 
             //await HilightSelectedValue();
             ////Scroll the active item on each opening
@@ -1023,7 +1026,7 @@ namespace MudBlazor
                 
             }
             if (SelectedListItems.Any())
-                return SelectedItems.FirstOrDefault(x => Converter.Set(x.Value) == Converter.Set(SelectedValue)).ChildContent;
+                return SelectedItems.FirstOrDefault(x => Converter.Set(x.Value) == Converter.Set(Value)).ChildContent;
             return null;
         }
 
@@ -1115,8 +1118,8 @@ namespace MudBlazor
 
                 await SetValueAsync(value);
                 _elementReference.SetText(Text).AndForget();
-                _selectedValues.Clear();
-                _selectedValues.Add(value);
+                //_selectedValues.Clear();
+                //_selectedValues.Add(value);
             }
 
             //HilightItemForValue(value);
@@ -1198,7 +1201,7 @@ namespace MudBlazor
         {
             await SetValueAsync(default, false);
             await SetTextAsync(default, false);
-            _selectedValues.Clear();
+            //_selectedValues.Clear();
             BeginValidate();
             StateHasChanged();
             await SelectedValuesChanged.InvokeAsync(_selectedValues);
@@ -1227,7 +1230,7 @@ namespace MudBlazor
         {
             await SetValueAsync(default, false);
             await SetTextAsync(default, false);
-            _selectedValues.Clear();
+            //_selectedValues.Clear();
             BeginValidate();
             StateHasChanged();
             await SelectedValuesChanged.InvokeAsync(_selectedValues);

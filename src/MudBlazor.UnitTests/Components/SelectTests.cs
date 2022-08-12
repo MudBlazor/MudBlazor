@@ -988,7 +988,7 @@ namespace MudBlazor.UnitTests.Components
             comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open"));
 
             await comp.InvokeAsync(() => select.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = "a", CtrlKey = true, Type = "keydown", }));
-            comp.WaitForAssertion(() => select.Instance.Value.Should().Be("7 felines have been selected"));
+            comp.WaitForAssertion(() => select.Instance.Text.Should().Be("7 felines have been selected"));
 
             await comp.InvokeAsync(() => select.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = "A", CtrlKey = true, Type = "keydown", }));
             comp.WaitForAssertion(() => select.Instance.Value.Should().Be("0 feline has been selected"));

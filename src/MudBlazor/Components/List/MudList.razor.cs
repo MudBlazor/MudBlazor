@@ -39,6 +39,7 @@ namespace MudBlazor
             .AddStyle(Style)
             .Build();
 
+        [CascadingParameter] protected MudSelect<T> MudSelect { get; set; }
         [CascadingParameter] protected MudList<T> ParentList { get; set; }
 
         /// <summary>
@@ -296,7 +297,7 @@ namespace MudBlazor
                 return;
             }
 
-            SelectedValue = SelectedItem.Value;
+            SelectedValue = SelectedItem == null ? default(T) : SelectedItem.Value;
             SelectedValues = SelectedItems.Select(x => x.Value);
         }
 
@@ -312,6 +313,10 @@ namespace MudBlazor
             get => _selectedValue;
             set
             {
+                if (MudSelect != null && _firstRendered == false)
+                {
+                    return;
+                }
                 //Console.WriteLine("SelectedValue setter Started");
                 if (_centralCommanderResultRendered == false && _firstRendered == true)
                 {
@@ -356,6 +361,10 @@ namespace MudBlazor
 
             set
             {
+                if (MudSelect != null && _firstRendered == false)
+                {
+                    return;
+                }
                 Console.WriteLine("SelectedValues setter Started");
                 if (_centralCommanderResultRendered == false && _firstRendered == true)
                 {
@@ -517,8 +526,6 @@ namespace MudBlazor
         {
             if (firstRender)
             {
-                await base.OnAfterRenderAsync(firstRender);
-
                 _keyInterceptor = KeyInterceptorFactory.Create();
 
                 await _keyInterceptor.Connect(_elementId, new KeyInterceptorOptions()
@@ -542,16 +549,33 @@ namespace MudBlazor
                 if (MultiSelection == false && SelectedValue != null)
                 {
                     HandleCentralValueCommander("SelectedValue");
-                    //Console.WriteLine($"SelectedValues is now {SelectedValue}");
-                    //SelectedValues = new List<T>() { SelectedValue };
-                    //Console.WriteLine($"SelectedValues(1) is now {SelectedValue}");
-                    StateHasChanged();
+                }
+                else if (MultiSelection == true && SelectedValues != null)
+                {
+                    HandleCentralValueCommander("SelectedValues");
+                }
+
+                if (MudSelect != null)
+                {
+                    if (MultiSelection)
+                    {
+                        UpdateSelectAllState();
+                        UpdateSelectedStyles();
+                        SelectedValues = MudSelect.SelectedValues;
+                        HandleCentralValueCommander("SelectedValues");
+                    }
+                    UpdateLastActivatedItem(SelectedValue);
+                    if (_lastActivatedItem != null && !(MultiSelection && _allSelected == true))
+                    {
+                        await ScrollToMiddleAsync(_lastActivatedItem);
+                    }
                 }
                 _firstRendered = true;
             }
             
             _centralCommanderResultRendered = true;
             //Console.WriteLine("Rendered");
+            await base.OnAfterRenderAsync(firstRender);
         }
 
         protected internal void Register(MudListItem<T> item)
@@ -812,7 +836,7 @@ namespace MudBlazor
 
         protected internal void UpdateSelectAllState()
         {
-            if (MultiSelection && SelectAll)
+            if (MultiSelection)
             {
                 var oldState = _allSelected;
                 if (_selectedValues == null || !_selectedValues.Any())
@@ -868,7 +892,7 @@ namespace MudBlazor
                 {
                     if (item.IsSelected == true)
                     {
-                        item.SetSelected(false, false);
+                        item.SetSelected(false);
                     }
                 }
                 _allSelected = false;
@@ -879,7 +903,7 @@ namespace MudBlazor
                 {
                     if (item.IsSelected == false)
                     {
-                        item.SetSelected(true, false);
+                        item.SetSelected(true);
                     }
                 }
                 _allSelected = true;
