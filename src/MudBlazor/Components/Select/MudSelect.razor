@@ -17,20 +17,24 @@
                           AdornmentColor="@AdornmentColor" IconSize="@IconSize" AdornmentText="@AdornmentText"
                           Clearable="@Clearable" OnClearButtonClick="(async (e) => await SelectClearButtonClickHandlerAsync(e))"
                           @attributes="UserAttributes" OnBlur="@OnLostFocus">
-                    @if (ValuePresenter == ValuePresenter.Chip)
-                    {
+                    
+                    <ChildContent>
                         <div>
+                        @if (ValuePresenter == ValuePresenter.Chip)
+                        {
                             @foreach (var val in SelectedValues)
                             {
                                 <MudChip Class="mt-n1" Text="@val.ToString()" Color="@Color" Size="Size.Small" />
                             }
+                        }
+                        else if (ValuePresenter == ValuePresenter.None)
+                        {
+                            @GetSelectedValuePresenter()
+                        }
                         </div>
-                    }
-                    else if (ValuePresenter == ValuePresenter.None)
-                    {
-                        @GetSelectedValuePresenter()
-                    }
+                    </ChildContent>
                 </MudInput>
+                
 
 				<MudPopover Open="@_isOpen" MaxHeight="@MaxHeight" AnchorOrigin="@AnchorOrigin" TransformOrigin="@TransformOrigin" Class="@PopoverClass" RelativeWidth="@RelativeWidth">
 					<CascadingValue Value="@this" IsFixed="true">

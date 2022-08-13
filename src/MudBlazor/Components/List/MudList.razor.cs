@@ -103,6 +103,10 @@ namespace MudBlazor
                     return;
                 }
                 _multiSelection = value;
+                if (_setParametersDone == false)
+                {
+                    return;
+                }
                 if (_multiSelection == false)
                 {
                     if (!_centralCommanderIsProcessing)
@@ -222,13 +226,17 @@ namespace MudBlazor
         protected void HandleCentralValueCommander(string changedValueType)
         {
             //Console.WriteLine("Central Value Started");
+            if (_setParametersDone == false)
+            {
+                return;
+            }
             if (_centralCommanderIsProcessing == true)
             {
                 return;
             }
             _centralCommanderIsProcessing = true;
 
-            if (changedValueType == "SelectedValue")
+            if (changedValueType == nameof(SelectedValue))
             {
                 if (MultiSelection == false)
                 {
@@ -236,7 +244,7 @@ namespace MudBlazor
                     UpdateSelectedItem();
                 }
             }
-            else if (changedValueType == "SelectedValues")
+            else if (changedValueType == nameof(SelectedValues))
             {
                 if (MultiSelection == true)
                 {
@@ -244,7 +252,7 @@ namespace MudBlazor
                     UpdateSelectedItem();
                 }
             }
-            else if (changedValueType == "SelectedItem")
+            else if (changedValueType == nameof(SelectedItem))
             {
                 if (MultiSelection == false)
                 {
@@ -252,7 +260,7 @@ namespace MudBlazor
                     UpdateSelectedValue();
                 }
             }
-            else if (changedValueType == "SelectedItems")
+            else if (changedValueType == nameof(SelectedItems))
             {
                 if (MultiSelection == true)
                 {
@@ -313,7 +321,7 @@ namespace MudBlazor
             get => _selectedValue;
             set
             {
-                if (MudSelect != null && _firstRendered == false)
+                if (Converter.Set(_selectedValue) != Converter.Set(default(T)) && _firstRendered == false)
                 {
                     return;
                 }
@@ -334,7 +342,7 @@ namespace MudBlazor
                 }
 
                 _selectedValue = value;
-                HandleCentralValueCommander("SelectedValue");
+                HandleCentralValueCommander(nameof(SelectedValue));
 
                 SelectedValueChanged.InvokeAsync(_selectedValue).AndForget();
                 UpdateSelectedStyles();
@@ -395,7 +403,11 @@ namespace MudBlazor
                 //}
 
                 _selectedValues = value == null ? null : value.ToHashSet();
-                HandleCentralValueCommander("SelectedValues");
+                if (_setParametersDone == false)
+                {
+                    return;
+                }
+                HandleCentralValueCommander(nameof(SelectedValues));
                 SelectedValuesChanged.InvokeAsync(_selectedValues).AndForget();
 
                 UpdateSelectedStyles();
@@ -423,7 +435,11 @@ namespace MudBlazor
                     return;
 
                 _selectedItem = value;
-                HandleCentralValueCommander("SelectedItem");
+                if (_setParametersDone == false)
+                {
+                    return;
+                }
+                HandleCentralValueCommander(nameof(SelectedItem));
                 SelectedItemChanged.InvokeAsync(_selectedItem).AndForget();
             }
         }
@@ -454,7 +470,11 @@ namespace MudBlazor
                     return;
 
                 _selectedItems = value == null ? null : value.ToHashSet();
-                HandleCentralValueCommander("SelectedItems");
+                if (_setParametersDone == false)
+                {
+                    return;
+                }
+                HandleCentralValueCommander(nameof(SelectedItems));
                 SelectedItemsChanged.InvokeAsync(_selectedItems).AndForget();
             }
         }
@@ -499,6 +519,25 @@ namespace MudBlazor
 
 
         #region Lifecycle Methods & Register
+
+        bool _setParametersDone = false;
+        public override Task SetParametersAsync(ParameterView parameters)
+        {
+            //if (parameters.TryGetValue<T>(nameof(SelectedValue), out var value))
+            //{
+            //    if (value != null)
+            //    {
+            //        _selectedValue = value;
+            //    }
+            //}
+            base.SetParametersAsync(parameters);
+            //if (parameters.Contains<T>("SelectedValue"))
+            //{
+            //    _selectedValue = parameters.GetValueOrDefault("SelectedValue", default(T));
+            //}
+            _setParametersDone = true;
+            return Task.CompletedTask;
+        }
 
         protected override void OnInitialized()
         {

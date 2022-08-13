@@ -914,33 +914,33 @@ namespace MudBlazor.UnitTests.Components
             //If dropdown is closed, arrow key should not set a value.
             await comp.InvokeAsync(() => select.HandleKeyDown(new KeyboardEventArgs() { Key = "ArrowDown", Type = "keydown", }));
             comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open"));
-            comp.WaitForAssertion(() => select.SelectedValue.Should().Be(null));
+            comp.WaitForAssertion(() => select.Value.Should().Be(null));
             // If no item is hiligted, enter should only close popover, not select any item and value
             await comp.InvokeAsync(() => select.HandleKeyDown(new KeyboardEventArgs() { Key = "NumpadEnter", Type = "keydown", }));
             comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().NotContain("mud-popover-open"));
-            comp.WaitForAssertion(() => select.SelectedValue.Should().Be(null));
+            comp.WaitForAssertion(() => select.Value.Should().Be(null));
 
             await comp.InvokeAsync(() => select.HandleKeyDown(new KeyboardEventArgs() { Key = "ArrowUp", Type = "keydown", }));
             comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open"));
 
             await comp.InvokeAsync(() => select.HandleKeyDown(new KeyboardEventArgs() { Key = "ArrowDown", Type = "keydown", }));
-            comp.WaitForAssertion(() => select.SelectedValue.Should().BeNull());
+            comp.WaitForAssertion(() => select.Value.Should().BeNull());
 
             await comp.InvokeAsync(() => select.HandleKeyDown(new KeyboardEventArgs() { Key = "ArrowDown", Type = "keydown", }));
             await comp.InvokeAsync(() => select.HandleKeyDown(new KeyboardEventArgs() { Key = "Enter", Type = "keydown", }));
-            comp.WaitForAssertion(() => select.SelectedValue.Should().Be("2"));
+            comp.WaitForAssertion(() => select.Value.Should().Be("2"));
             //End key should not select the last disabled item
             await comp.InvokeAsync(() => select.HandleKeyDown(new KeyboardEventArgs() { Key = "Enter", Type = "keydown", }));
             await comp.InvokeAsync(() => select.HandleKeyDown(new KeyboardEventArgs() { Key = "End", Type = "keydown", }));
             await comp.InvokeAsync(() => select.HandleKeyDown(new KeyboardEventArgs() { Key = "Enter", Type = "keydown", }));
-            comp.WaitForAssertion(() => select.SelectedValue.Should().Be("2"));
+            comp.WaitForAssertion(() => select.Value.Should().Be("2"));
 
             await comp.InvokeAsync(() => select.HandleKeyDown(new KeyboardEventArgs() { Key = "Enter", Type = "keydown", }));
             comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open"));
             await comp.InvokeAsync(() => select.HandleKeyDown(new KeyboardEventArgs() { Key = "ArrowDown", Type = "keydown", }));
             await comp.InvokeAsync(() => select.HandleKeyDown(new KeyboardEventArgs() { Key = "Enter", Type = "keydown", }));
             comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().NotContain("mud-popover-open"));
-            comp.WaitForAssertion(() => select.SelectedValue.Should().Be("3"));
+            comp.WaitForAssertion(() => select.Value.Should().Be("3"));
 
             await comp.InvokeAsync(() => select.HandleKeyDown(new KeyboardEventArgs() { Key = "Enter", Type = "keydown", }));
             await comp.InvokeAsync(() => select.HandleKeyDown(new KeyboardEventArgs() { Key = "ArrowDown", Type = "keydown", }));
@@ -950,12 +950,12 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(() => select.HandleKeyDown(new KeyboardEventArgs() { Key = "Enter", Type = "keydown", }));
             await comp.InvokeAsync(() => select.HandleKeyDown(new KeyboardEventArgs() { Key = "Home", Type = "keydown", }));
             await comp.InvokeAsync(() => select.HandleKeyDown(new KeyboardEventArgs() { Key = "Enter", Type = "keydown", }));
-            comp.WaitForAssertion(() => select.SelectedValue.Should().Be("1"));
+            comp.WaitForAssertion(() => select.Value.Should().Be("1"));
             //Arrow up should select still the first item
             await comp.InvokeAsync(() => select.HandleKeyDown(new KeyboardEventArgs() { Key = "Enter", Type = "keydown", }));
             await comp.InvokeAsync(() => select.HandleKeyDown(new KeyboardEventArgs() { Key = "ArrowUp", Type = "keydown", }));
             await comp.InvokeAsync(() => select.HandleKeyDown(new KeyboardEventArgs() { Key = "Enter", Type = "keydown", }));
-            comp.WaitForAssertion(() => select.SelectedValue.Should().Be("1"));
+            comp.WaitForAssertion(() => select.Value.Should().Be("1"));
 
             await comp.InvokeAsync(() => select.HandleKeyDown(new KeyboardEventArgs() { Key = "Enter", Type = "keydown", }));
             await comp.InvokeAsync(() => select.HandleKeyDown(new KeyboardEventArgs() { Key = "End", Type = "keydown", }));
@@ -964,7 +964,7 @@ namespace MudBlazor.UnitTests.Components
             //comp.WaitForAssertion(() => select.SelectedValue.Should().Be("3"));
 
             await comp.InvokeAsync(() => select.HandleKeyDown(new KeyboardEventArgs() { Key = "2", Type = "keydown", }));
-            comp.WaitForAssertion(() => select.SelectedValue.Should().Be("2"));
+            comp.WaitForAssertion(() => select.Value.Should().Be("2"));
 
             await comp.InvokeAsync(() => select.HandleKeyDown(new KeyboardEventArgs() { Key = "2", Type = "keydown", }));
             comp.WaitForAssertion(() => select.Value.Should().Be("2"));

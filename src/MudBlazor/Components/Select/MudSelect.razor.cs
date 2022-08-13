@@ -358,6 +358,22 @@ namespace MudBlazor
 
         #region Values, Texts & Items
 
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Data)]
+        public override T Value
+        {
+            get => _value;
+            set
+            {
+                if (Converter.Set(_value) == Converter.Set(value))
+                {
+                    return;
+                }
+                _value = value;
+                ValueChanged.InvokeAsync().AndForget();
+            }
+        }
+
         //private T _selectedValue;
         //[Parameter]
         //[Category(CategoryTypes.FormComponent.Data)]

@@ -324,7 +324,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Data)]
-        public T Value
+        public virtual T Value
         {
             get => _value;
             set
