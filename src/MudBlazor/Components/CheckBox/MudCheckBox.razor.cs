@@ -53,7 +53,7 @@ namespace MudBlazor
         public string Label { get; set; }
 
         /// <summary>
-        /// If true the keyboard controls will be disabled.
+        /// If true, the checkbox can be controlled with the keyboard.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
