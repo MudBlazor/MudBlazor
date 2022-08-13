@@ -244,6 +244,57 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = " ", Type = "keydown", });
             comp.WaitForAssertion(() => checkbox.Checked.Should().Be(true));
         }
+        /// <summary>
+        /// Test if the keyboard-disabling switch works
+        /// </summary>
+        [Test]
+        public void CheckBoxTest_KeyboardDisabled()
+        {
+            var comp = Context.RenderComponent<MudCheckBox<bool?>>();
+            comp.SetParam(x => x.TriState, true);
+            comp.SetParam(x => x.KeyboardEnabled, false);
+            // print the generated html
+            //Console.WriteLine(comp.Markup);
+            // select elements needed for the test
+            var checkbox = comp.Instance;
+            checkbox.Checked.Should().Be(null);
+
+            comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = " ", Type = "keydown", });
+            comp.WaitForAssertion(() => checkbox.Checked.Should().Be(null));
+
+            comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = " ", Type = "keydown", });
+            comp.WaitForAssertion(() => checkbox.Checked.Should().Be(null));
+
+            comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = " ", Type = "keydown", });
+            comp.WaitForAssertion(() => checkbox.Checked.Should().Be(null));
+
+            comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = "Delete", Type = "keydown", });
+            comp.WaitForAssertion(() => checkbox.Checked.Should().Be(null));
+
+            comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = "Enter", Type = "keydown", });
+            comp.WaitForAssertion(() => checkbox.Checked.Should().Be(null));
+
+            comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = "Backspace", Type = "keydown", });
+            comp.WaitForAssertion(() => checkbox.Checked.Should().Be(null));
+
+            comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = "NumpadEnter", Type = "keydown", });
+            comp.WaitForAssertion(() => checkbox.Checked.Should().Be(null));
+
+            //Backspace should not change state on non-tristate checkbox
+            comp.SetParam(x => x.TriState, null);
+            comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = "Backspace", Type = "keydown", });
+            comp.WaitForAssertion(() => checkbox.Checked.Should().Be(null));
+            //Check tristate space key
+            comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = " ", Type = "keydown", });
+            comp.WaitForAssertion(() => checkbox.Checked.Should().Be(null));
+
+            comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = " ", Type = "keydown", });
+            comp.WaitForAssertion(() => checkbox.Checked.Should().Be(null));
+
+            comp.SetParam("Disabled", true);
+            comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = " ", Type = "keydown", });
+            comp.WaitForAssertion(() => checkbox.Checked.Should().Be(null));
+        }
 
         [Test]
         [TestCase(Color.Default, Color.Primary)]
