@@ -149,8 +149,12 @@ namespace MudBlazor
             //if (MultiSelection)
             //    IsSelected = !IsSelected;
 
-            MudSelect?.SelectOption(Value).AndForget();
-            InvokeAsync(StateHasChanged);
+            //MudSelect?.SelectOption(Value).AndForget();
+            //InvokeAsync(StateHasChanged);
+            if (MultiSelection == false)
+            {
+                MudSelect.CloseMenu().AndForget();
+            }
             OnClick.InvokeAsync().AndForget();
         }
 

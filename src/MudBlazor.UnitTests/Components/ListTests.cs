@@ -178,7 +178,7 @@ namespace MudBlazor.UnitTests.Components
 
             await comp.InvokeAsync(() => list.HandleKeyDown(new KeyboardEventArgs() { Key = "ArrowDown" }));
             comp.WaitForAssertion(() => comp.FindComponents<MudListItem<int>>()[0].Instance.IsActive.Should().BeTrue());
-            comp.WaitForAssertion(() => list.SelectedValues.Should().BeEmpty());
+            comp.WaitForAssertion(() => list.SelectedValues.Should().BeNullOrEmpty());
 
             await comp.InvokeAsync(() => list.HandleKeyDown(new KeyboardEventArgs() { Key = "Enter" }));
             comp.WaitForAssertion(() => comp.FindComponents<MudListItem<int>>()[0].Instance.IsActive.Should().BeTrue());

@@ -151,7 +151,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.ListAppearance)]
-        public string SelectAllText { get; set; } = "Select all";
+        public string SelectAllText { get; set; } = "Select All";
 
         /// <summary>
         /// Function to define a customized multiselection text.

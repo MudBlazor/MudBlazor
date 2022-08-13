@@ -194,7 +194,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.ListAppearance)]
-        public string SelectAllText { get; set; } = "Select all";
+        public string SelectAllText { get; set; } = "Select All";
 
         /// <summary>
         /// If true, change background color to secondary for all nested item headers.
@@ -360,20 +360,16 @@ namespace MudBlazor
         {
             get
             {
-                if (_selectedValues == null)
-                {
-                    return new HashSet<T>();
-                }
                 return _selectedValues;
             }
 
             set
             {
-                if (MudSelect != null && _firstRendered == false)
+                Console.WriteLine("SelectedValues setter Started");
+                if (value == null && _firstRendered == false)
                 {
                     return;
                 }
-                Console.WriteLine("SelectedValues setter Started");
                 if (_centralCommanderResultRendered == false && _firstRendered == true)
                 {
                     //Console.WriteLine("SelectedValues setter returned");
@@ -791,7 +787,14 @@ namespace MudBlazor
                 {
                     //item.SetSelected(true);
                     //SelectedItems = SelectedItems.Append(item);
-                    SelectedValues = SelectedValues.Append(item.Value);
+                    if (SelectedValues == null)
+                    {
+                        SelectedValues = new HashSet<T>() { item.Value };
+                    }
+                    else
+                    {
+                        SelectedValues = SelectedValues.Append(item.Value);
+                    }
                 }
             }
 
@@ -808,16 +811,16 @@ namespace MudBlazor
             var items = CollectAllMudListItems(true);
             DeselectAllItems(items);
 
-            if (!IsSelectable())
+            if (IsSelectable() == false)
             {
                 return;
             }
 
-            if (!MultiSelection)
+            if (MultiSelection == false)
             {
                 items.FirstOrDefault(x => Converter.Set(SelectedValue) == Converter.Set(x.Value))?.SetSelected(true);
             }
-            else
+            else if (SelectedValues != null)
             {
                 items.Where(x => SelectedValues.Contains(x.Value)).ToList().ForEach(x => x.SetSelected(true));
             }
