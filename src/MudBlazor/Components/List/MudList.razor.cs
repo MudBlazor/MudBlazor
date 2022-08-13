@@ -519,6 +519,11 @@ namespace MudBlazor
         bool _setParametersDone = false;
         public override Task SetParametersAsync(ParameterView parameters)
         {
+            if (_centralCommanderIsProcessing == true)
+            {
+                return Task.CompletedTask;
+            }
+
             //if (parameters.TryGetValue<T>(nameof(SelectedValue), out var value))
             //{
             //    if (value != null)
@@ -654,6 +659,7 @@ namespace MudBlazor
                 //await ParentList.HandleKeyDown(obj);
                 return;
             }
+
             var key = obj.Key.ToLowerInvariant();
             if (key.Length == 1 && key != " " && !(obj.CtrlKey || obj.ShiftKey || obj.AltKey || obj.MetaKey))
             {

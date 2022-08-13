@@ -370,7 +370,7 @@ namespace MudBlazor
                     return;
                 }
                 _value = value;
-                ValueChanged.InvokeAsync().AndForget();
+                //ValueChanged.InvokeAsync().AndForget();
             }
         }
 
@@ -451,8 +451,8 @@ namespace MudBlazor
         }
 
         private MudListItem<T> _selectedListItem = new();
-        private HashSet<MudListItem<T>> _selectedListItems = new();
-        private MudSelectItem<T> _selectedItem = new();
+        private HashSet<MudListItem<T>> _selectedListItems;
+        private MudSelectItem<T> _selectedItem;
 
         protected internal MudListItem<T> SelectedListItem
         {
@@ -513,7 +513,7 @@ namespace MudBlazor
             }
         }
 
-        HashSet<MudSelectItem<T>> _selectedItems = new();
+        HashSet<MudSelectItem<T>> _selectedItems;
 
         [Parameter]
         [Category(CategoryTypes.FormComponent.Data)]
@@ -685,7 +685,6 @@ namespace MudBlazor
             if (_list != null && _isOpen == true)
             {
                 await _list.HandleKeyDown(obj);
-                Console.WriteLine("List KeyDown");
             }
 
             switch (obj.Key)
@@ -721,7 +720,7 @@ namespace MudBlazor
                     break;
                 case "Enter":
                 case "NumpadEnter":
-                    if (!MultiSelection)
+                    if (MultiSelection == false)
                     {
                         if (!_isOpen)
                         {
@@ -778,7 +777,7 @@ namespace MudBlazor
             {
                 // when the menu is open we immediately get back the focus if we lose it (i.e. because of checkboxes in multi-select)
                 // otherwise we can't receive key strokes any longer
-                _elementReference.FocusAsync().AndForget(TaskOption.Safe);
+                //_elementReference.FocusAsync().AndForget(TaskOption.Safe);
             }
             base.OnBlur.InvokeAsync(obj).AndForget();
         }
@@ -1041,7 +1040,7 @@ namespace MudBlazor
                 }
                 
             }
-            if (SelectedListItems.Any())
+            if (SelectedListItems != null && SelectedListItems.Any())
                 return SelectedItems.FirstOrDefault(x => Converter.Set(x.Value) == Converter.Set(Value)).ChildContent;
             return null;
         }

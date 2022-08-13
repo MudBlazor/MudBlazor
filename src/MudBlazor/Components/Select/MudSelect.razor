@@ -3,7 +3,7 @@
 @inherits MudBaseInput<T>
 
 <CascadingValue Name="Standalone" Value="false" IsFixed="true">
-	<div class="mud-select" id="@_elementId">
+    <div class="mud-select" id="@_elementId">
 		<MudInputControl Label="@Label" Variant="@Variant" HelperText="@HelperText" HelperTextOnFocus="@HelperTextOnFocus" FullWidth="@FullWidth" Margin="@Margin" Class="@Classname" Style="@Style"
 						 Error="@Error" ErrorText="@ErrorText" ErrorId="@ErrorId" Disabled="@Disabled" @onclick="@ToggleMenu" Required="@Required" ForId="@FieldId">
 			<InputContent>
@@ -38,10 +38,11 @@
 
 				<MudPopover Open="@_isOpen" MaxHeight="@MaxHeight" AnchorOrigin="@AnchorOrigin" TransformOrigin="@TransformOrigin" Class="@PopoverClass" RelativeWidth="@RelativeWidth">
 					<CascadingValue Value="@this" IsFixed="true">
-						<MudList @ref="@_list" T="T" Clickable="true" Color="@Color" Dense="@Dense" ItemCollection="@ItemCollection" Virtualize="@Virtualize" DisablePadding="@DisablePopoverPadding" DisableSelectedBackground="@DisableSelectedBackground" 
+                        <MudList @ref="@_list" T="T" @bind-SelectedValue="@Value" @bind-SelectedValues="@SelectedValues" @bind-SelectedItem="@SelectedListItem" @bind-SelectedItems="@SelectedListItems"
+                                 Clickable="true" Color="@Color" Dense="@Dense" ItemCollection="@ItemCollection" Virtualize="@Virtualize" DisablePadding="@DisablePopoverPadding" DisableSelectedBackground="@DisableSelectedBackground"
                                  MultiSelection="@MultiSelection" MultiSelectionComponent="@MultiSelectionComponent" MultiSelectionAlign="@MultiSelectionAlign" SelectAll="@SelectAll" SelectAllText="@SelectAllText"
                                  CheckedIcon="@CheckedIcon" UncheckedIcon="@UncheckedIcon" IndeterminateIcon="@IndeterminateIcon" SelectValueOnTab="@SelectValueOnTab"
-                                 @bind-SelectedValue="@Value" @bind-SelectedValues="@SelectedValues" @bind-SelectedItem="@SelectedListItem" @bind-SelectedItems="@SelectedListItems">
+                                 >
                             @ChildContent
 						</MudList>
 					</CascadingValue>
