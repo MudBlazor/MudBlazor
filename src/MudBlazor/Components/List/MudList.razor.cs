@@ -531,7 +531,7 @@ namespace MudBlazor
             //        _selectedValue = value;
             //    }
             //}
-            base.SetParametersAsync(parameters);
+            base.SetParametersAsync(parameters).AndForget();
             //if (parameters.Contains<T>("SelectedValue"))
             //{
             //    _selectedValue = parameters.GetValueOrDefault("SelectedValue", default(T));
@@ -604,15 +604,14 @@ namespace MudBlazor
                         SelectedValues = MudSelect.SelectedValues;
                         HandleCentralValueCommander("SelectedValues");
                     }
-                    UpdateLastActivatedItem(SelectedValue);
-                    if (_lastActivatedItem != null && !(MultiSelection && _allSelected == true))
-                    {
-                        await ScrollToMiddleAsync(_lastActivatedItem);
-                    }
+                }
+                UpdateLastActivatedItem(SelectedValues.LastOrDefault());
+                if (_lastActivatedItem != null && !(MultiSelection && _allSelected == true))
+                {
+                    await ScrollToMiddleAsync(_lastActivatedItem);
                 }
                 _firstRendered = true;
             }
-            
             _centralCommanderResultRendered = true;
             //Console.WriteLine("Rendered");
             await base.OnAfterRenderAsync(firstRender);

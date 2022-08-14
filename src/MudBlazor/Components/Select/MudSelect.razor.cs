@@ -27,7 +27,7 @@ namespace MudBlazor
         }
 
         [Inject] private IKeyInterceptorFactory KeyInterceptorFactory { get; set; }
-        [Inject] IScrollManager ScrollManager { get; set; }
+        //[Inject] IScrollManager ScrollManager { get; set; }
 
         private MudList<T> _list;
         private IEqualityComparer<T> _comparer;
@@ -602,6 +602,16 @@ namespace MudBlazor
 
 
         #region Lifecycle Methods
+
+        //public override Task SetParametersAsync(ParameterView parameters)
+        //{
+        //    if (_list != null)
+        //    {
+        //        return Task.CompletedTask;
+        //    }
+        //    base.SetParametersAsync(parameters).AndForget();
+        //    return Task.CompletedTask;
+        //}
 
         protected override void OnInitialized()
         {
