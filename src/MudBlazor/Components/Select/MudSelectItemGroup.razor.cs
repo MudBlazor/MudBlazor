@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Utilities;
 
@@ -49,7 +50,6 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
         public bool Sticky { get; set; }
-
 
         ///// <summary>
         ///// The parent select component

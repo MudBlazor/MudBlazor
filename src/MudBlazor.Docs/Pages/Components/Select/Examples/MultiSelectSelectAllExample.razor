@@ -2,7 +2,7 @@
 @using System.Linq
 
 
-<MudSelect T="string" @bind-Value="value" @bind-SelectedValues="options" MultiSelection="true" SelectAll="true" SelectAllText="Select all felines" HelperText="@value" MultiSelectionTextFunc="@(new Func<List<string>, string>(GetMultiSelectionText))" Label="Felines" AdornmentIcon="@Icons.Material.Filled.Search">
+<MudSelect T="string" @bind-Value="value" @bind-SelectedValues="options" MultiSelection="true" SelectAll="true" SelectAllText="Select all felines" HelperText="@value" MultiSelectionTextFunc="@(new Func<List<string>, string>(GetMultiSelectionText))" Label="Felines" AdornmentIcon="@Icons.Filled.Search" AnchorOrigin="Origin.BottomCenter">
     @foreach (var feline in felines)
     {
         <MudSelectItem T="string" Value="@feline">@feline</MudSelectItem>

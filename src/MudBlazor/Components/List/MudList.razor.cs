@@ -279,6 +279,7 @@ namespace MudBlazor
             _centralCommanderResultRendered = false;
             _centralCommanderIsProcessing = false;
             //Console.WriteLine("Central Value ended");
+            UpdateSelectedStyles();
         }
 
         protected internal void UpdateSelectedItem()
@@ -344,8 +345,12 @@ namespace MudBlazor
                 _selectedValue = value;
                 HandleCentralValueCommander(nameof(SelectedValue));
 
-                SelectedValueChanged.InvokeAsync(_selectedValue).AndForget();
-                UpdateSelectedStyles();
+                if (_firstRendered == true)
+                {
+                    SelectedValueChanged.InvokeAsync(_selectedValue).AndForget();
+                }
+                
+                //UpdateSelectedStyles();
                 //Console.WriteLine("SelectedValue setter ended");
             }
         }
@@ -404,9 +409,13 @@ namespace MudBlazor
                     return;
                 }
                 HandleCentralValueCommander(nameof(SelectedValues));
-                SelectedValuesChanged.InvokeAsync(_selectedValues).AndForget();
+                if (_firstRendered == true)
+                {
+                    SelectedValuesChanged.InvokeAsync(_selectedValues).AndForget();
+                }
+                
 
-                UpdateSelectedStyles();
+                //UpdateSelectedStyles();
                 Console.WriteLine("SelectedValues setter ended");
             }
         }
@@ -436,7 +445,10 @@ namespace MudBlazor
                     return;
                 }
                 HandleCentralValueCommander(nameof(SelectedItem));
-                SelectedItemChanged.InvokeAsync(_selectedItem).AndForget();
+                if (_firstRendered == true)
+                {
+                    SelectedItemChanged.InvokeAsync(_selectedItem).AndForget();
+                }
             }
         }
 
@@ -471,7 +483,10 @@ namespace MudBlazor
                     return;
                 }
                 HandleCentralValueCommander(nameof(SelectedItems));
-                SelectedItemsChanged.InvokeAsync(_selectedItems).AndForget();
+                if (_firstRendered == true)
+                {
+                    SelectedItemsChanged.InvokeAsync(_selectedItems).AndForget();
+                }
             }
         }
 
@@ -605,7 +620,10 @@ namespace MudBlazor
                         HandleCentralValueCommander("SelectedValues");
                     }
                 }
-                UpdateLastActivatedItem(SelectedValues.LastOrDefault());
+                if (SelectedValues != null)
+                {
+                    UpdateLastActivatedItem(SelectedValues.LastOrDefault());
+                }
                 if (_lastActivatedItem != null && !(MultiSelection && _allSelected == true))
                 {
                     await ScrollToMiddleAsync(_lastActivatedItem);
@@ -700,6 +718,7 @@ namespace MudBlazor
                         if (MultiSelection)
                         {
                             SelectAllItems(_allSelected);
+                            Console.WriteLine("List Select All started");
                         }
                     }
                     break;
@@ -956,7 +975,7 @@ namespace MudBlazor
                 _allSelected = true;
             }
 
-            SelectedValues = items.Where(x => x.IsSelected == true).Select(y => y.Value).ToHashSet();
+            SelectedValues = items.Where(x => x.IsSelected == true).Select(y => y.Value);
             //StateHasChanged();
         }
 
@@ -1141,20 +1160,29 @@ namespace MudBlazor
         public async Task ActiveLastItem()
         {
             var items = CollectAllMudListItems(true);
-            if (items == null || items.Count == 0 || items[items.Count - 1].Disabled == true)
+            if (items == null || items.Count == 0)
             {
                 return;
             }
+            var properLastIndex = items.Count - 1;
             DeactiveAllItems();
-            items[items.Count - 1].SetActive(true);
-            _lastActivatedItem = items[items.Count - 1];
-
-            if (items[items.Count - 1].ParentListItem != null && items[items.Count - 1].ParentListItem.Expanded == false)
+            for (int i = 0; i < items.Count; i++)
             {
-                items[items.Count - 1].ParentListItem.Expanded = true;
+                if (items[properLastIndex - i].Disabled != true)
+                {
+                    properLastIndex -= i;
+                    break;
+                }
+            }
+            items[properLastIndex].SetActive(true);
+            _lastActivatedItem = items[properLastIndex];
+
+            if (items[properLastIndex].ParentListItem != null && items[properLastIndex].ParentListItem.Expanded == false)
+            {
+                items[properLastIndex].ParentListItem.Expanded = true;
             }
 
-            await ScrollToMiddleAsync(items[items.Count - 1]);
+            await ScrollToMiddleAsync(items[properLastIndex]);
         }
 #pragma warning restore BL0005
 

@@ -436,7 +436,7 @@ namespace MudBlazor
                     {
                         SetCustomizedTextAsync(string.Join(Delimiter, SelectedValues.Select(x => Converter.Set(x))),
                             selectedConvertedValues: SelectedValues.Select(x => Converter.Set(x)).ToList(),
-                            multiSelectionTextFunc: MultiSelectionTextFunc).AndForget();
+                            multiSelectionTextFunc: MultiSelectionTextFunc, updateValue: false).AndForget();
                     }
                     else
                     {
@@ -787,7 +787,7 @@ namespace MudBlazor
             {
                 // when the menu is open we immediately get back the focus if we lose it (i.e. because of checkboxes in multi-select)
                 // otherwise we can't receive key strokes any longer
-                //_elementReference.FocusAsync().AndForget(TaskOption.Safe);
+                _elementReference.FocusAsync().AndForget(TaskOption.Safe);
             }
             base.OnBlur.InvokeAsync(obj).AndForget();
         }
@@ -1042,16 +1042,20 @@ namespace MudBlazor
             //if (!_shadowLookup.TryGetValue(Value, out var item))
             //    return null; //<-- for now. we'll add a custom template to present values (set from outside) which are not on the list?
             //return item.ChildContent;
-            if (!MultiSelection)
+            if (MultiSelection == false)
             {
-                if (SelectedItem != null)
+                if (SelectedListItem != null)
                 {
-                    return SelectedItem.ChildContent;
+                    SelectedItem = Items.FirstOrDefault(x => Converter.Set(x.Value) == Converter.Set(_selectedListItem.Value));
+                    return SelectedListItem.ChildContent;
                 }
-                
             }
-            if (SelectedListItems != null && SelectedListItems.Any())
-                return SelectedItems.FirstOrDefault(x => Converter.Set(x.Value) == Converter.Set(Value)).ChildContent;
+            else
+            {
+                if (SelectedListItems != null && SelectedListItems.Any())
+                    return SelectedItems.FirstOrDefault(x => Converter.Set(x.Value) == Converter.Set(Value)).ChildContent;
+            }
+            
             return null;
         }
 
