@@ -217,7 +217,7 @@ namespace MudBlazor
         [Parameter] public RenderFragment<bool> BulletTemplate { get; set; }
 
         /// <summary>
-        /// Gets or Sets if swipe gestures are allowed 
+        /// Gets or Sets if swipe gestures are allowed for touch devices.
         /// </summary>
         [Category(CategoryTypes.Carousel.Behavior)]
         [Parameter]

@@ -208,35 +208,28 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// Testing when DisableSwipeGesture is True
+        /// Testing when DisableSwipeGesture
         /// </summary>
         [Test]
-        public async Task CarouselTest_DisableSwipeGesture_True()
+        public async Task CarouselTest_DisableSwipeGesture()
         {
             var comp = Context.RenderComponent<MudCarousel<object>>();
+
+            //Add some pages
             comp.Instance.Items.Add(new());
             comp.Instance.Items.Add(new());
             comp.Instance.Items.Add(new());
+
+            //Move the SelectedIndex from -1 to 0
             await comp.InvokeAsync(() => comp.Instance.MoveTo(0));
-            comp.Instance.DisableSwipeGesture = true;
+
             var mudSwipeArea = comp.FindComponent<MudSwipeArea>().Instance;
+
+            comp.Instance.DisableSwipeGesture = true;
             await comp.InvokeAsync(() => mudSwipeArea.OnSwipe(SwipeDirection.RightToLeft));
             comp.Instance.SelectedIndex.Should().Be(0);
-        }
 
-        /// <summary>
-        /// Testing when DisableSwipeGesture is False
-        /// </summary>
-        [Test]
-        public async Task CarouselTest_DisableSwipeGesture_False()
-        {
-            var comp = Context.RenderComponent<MudCarousel<object>>();
-            comp.Instance.Items.Add(new());
-            comp.Instance.Items.Add(new());
-            comp.Instance.Items.Add(new());
-            await comp.InvokeAsync(() => comp.Instance.MoveTo(0));
             comp.Instance.DisableSwipeGesture = false;
-            var mudSwipeArea = comp.FindComponent<MudSwipeArea>().Instance;
             await comp.InvokeAsync(() => mudSwipeArea.OnSwipe(SwipeDirection.RightToLeft));
             comp.Instance.SelectedIndex.Should().Be(1);
         }
