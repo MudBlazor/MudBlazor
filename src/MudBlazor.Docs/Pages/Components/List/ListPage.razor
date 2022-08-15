@@ -42,6 +42,12 @@
                     <b>(2)</b> Selectable list with <CodeInline>Clickable</CodeInline> parameter<br />
                     <b>(3)</b> Multi selectable list with both <CodeInline>MultiSelection</CodeInline> and <CodeInline>Clickable</CodeInline> parameters<br />
                     <b>(4)</b> Multi selectable, but not clickable list with only <CodeInline>MultiSelection</CodeInline> parameter. With this variant, selection can only be possible with clicking checkbox (or equivalent component), not the item itself.<br />
+                    <MudAlert Class="mt-2" Severity="Severity.Info" NoIcon="true">
+                        <b>Note:</b> If you want to change value or item programmatically, be sure to set proper parameter. If MultiSelection is false, you should change Value or SelectedItem, not SelectedValues or SelectedItems. And if MultiSelection is true, should change SelectedValues or SelectedItems. Otherwise you may encounter wrong results.
+                    </MudAlert>
+                    <MudAlert Class="mt-2" Severity="Severity.Info" NoIcon="true">
+                        <b>Note 2:</b> Setting value or item also arranges other parameters and fires all change events. So you don't need to change both of them, you should only change one parameter to prevent conflicts and have maximum performance.
+                    </MudAlert>
                 </Description>
             </SectionHeader>
             <SectionContent DarkenBackground="true" ShowCode="false" Code="ListVariantExample">

@@ -1,0 +1,41 @@
+﻿@namespace MudBlazor.UnitTests.TestComponents
+
+<MudPaper Width="300px">
+    <MudList T="int?" Clickable="true" SelectedValueChanged="ValueChanged" SelectedValuesChanged="ValuesChanged" SelectedItemChanged="ItemChanged" SelectedItemsChanged="ItemsChanged">
+        <MudListItem T="int?" Value="1" Text="Trash" />
+        <MudListItem T="int?" Value="2" Text="Spam" />
+        <MudDivider />
+        <MudListItem T="int?" Value="3" Text="Inbox" Icon="@Icons.Filled.Inbox" />
+        <MudListItem T="int?" Value="4" Text="Sent" Icon="@Icons.Filled.Send" />
+        <MudDivider />
+        <MudListItem T="int?" Value="5" Avatar="@Icons.Filled.Image" IconColor="Color.Primary">Photos</MudListItem>
+        <MudListItem T="int?" Value="6" Avatar="@Icons.Filled.Work" IconColor="Color.Secondary">Work</MudListItem>
+    </MudList>
+</MudPaper>
+
+@code {
+    public int ValueChangeCount { get; set; }
+    public int ValuesChangeCount { get; set; }
+    public int ItemChangeCount { get; set; }
+    public int ItemsChangeCount { get; set; }
+
+    private void ValueChanged()
+    {
+        ValueChangeCount++;
+    }
+
+    private void ValuesChanged()
+    {
+        ValuesChangeCount++;
+    }
+
+    private void ItemChanged()
+    {
+        ItemChangeCount++;
+    }
+
+    private void ItemsChanged()
+    {
+        ItemsChangeCount++;
+    }
+}

@@ -370,7 +370,7 @@ namespace MudBlazor
 
             set
             {
-                Console.WriteLine("SelectedValues setter Started");
+                //Console.WriteLine("SelectedValues setter Started");
                 if (value == null && _firstRendered == false)
                 {
                     return;
@@ -416,7 +416,7 @@ namespace MudBlazor
                 
 
                 //UpdateSelectedStyles();
-                Console.WriteLine("SelectedValues setter ended");
+                //Console.WriteLine("SelectedValues setter ended");
             }
         }
 
@@ -539,6 +539,11 @@ namespace MudBlazor
                 return Task.CompletedTask;
             }
 
+            if (MudSelect != null)
+            {
+                return Task.CompletedTask;
+            }
+
             //if (parameters.TryGetValue<T>(nameof(SelectedValue), out var value))
             //{
             //    if (value != null)
@@ -631,7 +636,7 @@ namespace MudBlazor
                 _firstRendered = true;
             }
             _centralCommanderResultRendered = true;
-            //Console.WriteLine("Rendered");
+            Console.WriteLine("List Rendered");
             await base.OnAfterRenderAsync(firstRender);
         }
 

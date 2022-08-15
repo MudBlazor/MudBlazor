@@ -3,6 +3,7 @@
 #pragma warning disable BL0005
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Bunit;
@@ -17,6 +18,92 @@ namespace MudBlazor.UnitTests.Components
     [TestFixture]
     public class ListTests : BunitTest
     {
+        [Test]
+        public async Task List_EventCountTest()
+        {
+            var comp = Context.RenderComponent<ListCountTest>();
+            var list = comp.FindComponent<MudList<int?>>().Instance;
+
+            comp.Instance.ValueChangeCount.Should().Be(0);
+            comp.Instance.ValuesChangeCount.Should().Be(0);
+            comp.Instance.ItemChangeCount.Should().Be(0);
+            comp.Instance.ItemsChangeCount.Should().Be(0);
+
+            await comp.InvokeAsync(() => list.SelectedValue = 1);
+            comp.WaitForAssertion(() => comp.Instance.ValueChangeCount.Should().Be(1));
+            comp.Instance.ValuesChangeCount.Should().Be(1);
+            comp.Instance.ItemChangeCount.Should().Be(1);
+            comp.Instance.ItemsChangeCount.Should().Be(1);
+            // Clicking the current item should not fire events
+            await comp.InvokeAsync(() => comp.FindAll("div.mud-list-item")[0].Click());
+            comp.WaitForAssertion(() => comp.Instance.ValueChangeCount.Should().Be(1));
+            comp.Instance.ValuesChangeCount.Should().Be(1);
+            comp.Instance.ItemChangeCount.Should().Be(1);
+            comp.Instance.ItemsChangeCount.Should().Be(1);
+
+            await comp.InvokeAsync(() => comp.FindAll("div.mud-list-item")[1].Click());
+            comp.WaitForAssertion(() => comp.Instance.ValueChangeCount.Should().Be(2));
+            comp.Instance.ValuesChangeCount.Should().Be(2);
+            comp.Instance.ItemChangeCount.Should().Be(2);
+            comp.Instance.ItemsChangeCount.Should().Be(2);
+
+            await comp.InvokeAsync(() => list.SelectedItem = list.GetItems[3]);
+            comp.WaitForAssertion(() => comp.Instance.ValueChangeCount.Should().Be(3));
+            comp.Instance.ValuesChangeCount.Should().Be(3);
+            comp.Instance.ItemChangeCount.Should().Be(3);
+            comp.Instance.ItemsChangeCount.Should().Be(3);
+            // Setting same item shold not fire events
+            await comp.InvokeAsync(() => list.SelectedItem = list.GetItems[3]);
+            comp.WaitForAssertion(() => comp.Instance.ValueChangeCount.Should().Be(3));
+            comp.Instance.ValuesChangeCount.Should().Be(3);
+            comp.Instance.ItemChangeCount.Should().Be(3);
+            comp.Instance.ItemsChangeCount.Should().Be(3);
+
+            await comp.InvokeAsync(() => list.MultiSelection = true);
+
+            await comp.InvokeAsync(() => list.SelectedValues = new HashSet<int?>() { 1, 6 });
+            comp.WaitForAssertion(() => comp.Instance.ValueChangeCount.Should().Be(4));
+            comp.Instance.ValuesChangeCount.Should().Be(4);
+            comp.Instance.ItemChangeCount.Should().Be(4);
+            comp.Instance.ItemsChangeCount.Should().Be(4);
+            // SelectedValue takes last value on SelectedValues, so if changed values have same last item, value and item should not change
+            await comp.InvokeAsync(() => list.SelectedValues = new HashSet<int?>() { 2, 6 });
+            comp.WaitForAssertion(() => comp.Instance.ValueChangeCount.Should().Be(4));
+            comp.Instance.ValuesChangeCount.Should().Be(5);
+            comp.Instance.ItemChangeCount.Should().Be(4);
+            comp.Instance.ItemsChangeCount.Should().Be(5);
+            // Last value changed, so expected to all events fire
+            await comp.InvokeAsync(() => list.SelectedValues = new HashSet<int?>() { 2, 5 });
+            comp.WaitForAssertion(() => comp.Instance.ValueChangeCount.Should().Be(5));
+            comp.Instance.ValuesChangeCount.Should().Be(6);
+            comp.Instance.ItemChangeCount.Should().Be(5);
+            comp.Instance.ItemsChangeCount.Should().Be(6);
+            // Changing to same value should not fire any events
+            await comp.InvokeAsync(() => list.SelectedValues = new HashSet<int?>() { 2, 5 });
+            comp.WaitForAssertion(() => comp.Instance.ValueChangeCount.Should().Be(5));
+            comp.Instance.ValuesChangeCount.Should().Be(6);
+            comp.Instance.ItemChangeCount.Should().Be(5);
+            comp.Instance.ItemsChangeCount.Should().Be(6);
+
+            await comp.InvokeAsync(() => list.SelectedItems = new HashSet<MudListItem<int?>>() { list.GetItems[0], list.GetItems[3] });
+            comp.WaitForAssertion(() => comp.Instance.ValueChangeCount.Should().Be(6));
+            comp.Instance.ValuesChangeCount.Should().Be(7);
+            comp.Instance.ItemChangeCount.Should().Be(6);
+            comp.Instance.ItemsChangeCount.Should().Be(7);
+            // Same for selected values, if last value doesn't change, value event should not fire
+            await comp.InvokeAsync(() => list.SelectedItems = new HashSet<MudListItem<int?>>() { list.GetItems[1], list.GetItems[3] });
+            comp.WaitForAssertion(() => comp.Instance.ValueChangeCount.Should().Be(6));
+            comp.Instance.ValuesChangeCount.Should().Be(8);
+            comp.Instance.ItemChangeCount.Should().Be(6);
+            comp.Instance.ItemsChangeCount.Should().Be(8);
+            // Changing to the same should not fire any events
+            await comp.InvokeAsync(() => list.SelectedItems = new HashSet<MudListItem<int?>>() { list.GetItems[1], list.GetItems[3] });
+            comp.WaitForAssertion(() => comp.Instance.ValueChangeCount.Should().Be(6));
+            comp.Instance.ValuesChangeCount.Should().Be(8);
+            comp.Instance.ItemChangeCount.Should().Be(6);
+            comp.Instance.ItemsChangeCount.Should().Be(8);
+        }
+
         /// <summary>
         /// Clicking the drinks selects them. The child lists are updated accordingly, meaning, only ever 1 list item can have the active class.
         /// 
@@ -207,7 +294,7 @@ namespace MudBlazor.UnitTests.Components
             comp.WaitForAssertion(() => list.SelectedValues.Should().Contain(3));
             //Last disabled item should not be active
             await comp.InvokeAsync(() => list.HandleKeyDown(new KeyboardEventArgs() { Key = "End" }));
-            comp.WaitForAssertion(() => comp.FindComponents<MudListItem<int>>()[5].Instance.IsActive.Should().BeTrue());
+            comp.WaitForAssertion(() => comp.FindComponents<MudListItem<int>>()[9].Instance.IsActive.Should().BeTrue());
 
             await comp.InvokeAsync(() => list.HandleKeyDown(new KeyboardEventArgs() { Key = "Home" }));
             await comp.InvokeAsync(() => list.HandleKeyDown(new KeyboardEventArgs() { Key = "Enter" }));
