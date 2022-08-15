@@ -1016,6 +1016,56 @@ namespace MudBlazor.UnitTests.Components
             validator.ControlCount.Should().Be(1);
         }
 
+        [Theory]
+        [TestCase(TableCommitButtonPosition.StartAndEnd)]
+        [TestCase(TableCommitButtonPosition.Start)]
+        [TestCase(TableCommitButtonPosition.End)]
+        public async Task TableInlineEdit_CommitButtonPosition(TableCommitButtonPosition position)
+        {
+            var comp = Context.RenderComponent<TableInlineEditTestCommitButtons>(
+                p => p.Add(x => x.CommitButtonPosition, position));
+
+            var trs = comp.FindAll("tr");
+
+            //header + 3 items + footer
+            trs.Should().HaveCount(5);
+
+            var header = trs[0];
+            var footer = trs[trs.Count - 1];
+            var expectedAmount = position switch
+            {
+                TableCommitButtonPosition.Start or TableCommitButtonPosition.End => 2,
+                TableCommitButtonPosition.StartAndEnd => 3,
+                _ => throw new NotImplementedException()
+            };
+
+            header.ChildElementCount.Should().Be(expectedAmount);
+            footer.ChildElementCount.Should().Be(expectedAmount);
+
+            trs[2].Click();
+
+            var trs2 = comp.FindAll("tr");
+            var relevantRow = trs2[2];
+            relevantRow.ChildElementCount.Should().Be(expectedAmount);
+
+            if (position == TableCommitButtonPosition.Start)
+            {
+                relevantRow.Children[0].FindDescendant<AngleSharp.Html.Dom.IHtmlButtonElement>().Should().NotBeNull();
+                relevantRow.Children[1].FindDescendant<AngleSharp.Html.Dom.IHtmlInputElement>().Should().NotBeNull();
+            }
+            else if (position == TableCommitButtonPosition.End)
+            {
+                relevantRow.Children[0].FindDescendant<AngleSharp.Html.Dom.IHtmlInputElement>().Should().NotBeNull();
+                relevantRow.Children[1].FindDescendant<AngleSharp.Html.Dom.IHtmlButtonElement>().Should().NotBeNull();
+            }
+            else if (position == TableCommitButtonPosition.StartAndEnd)
+            {
+                relevantRow.Children[0].FindDescendant<AngleSharp.Html.Dom.IHtmlButtonElement>().Should().NotBeNull();
+                relevantRow.Children[1].FindDescendant<AngleSharp.Html.Dom.IHtmlInputElement>().Should().NotBeNull();
+                relevantRow.Children[2].FindDescendant<AngleSharp.Html.Dom.IHtmlButtonElement>().Should().NotBeNull();
+            }
+        }
+
         [Test]
         public async Task TableInlineEdit_RowSwitching()
         {
@@ -1521,7 +1571,7 @@ namespace MudBlazor.UnitTests.Components
             // Make sure number of items has updated
             tableInstance.GetFilteredItemsCount().Should().Be(1);
         }
-        
+
         /// Issue #3033
         /// Tests changing RowsPerPage Parameter from code - Table should re-render new RowsPerPage parameter and parameter value should be set
         /// </summary>
