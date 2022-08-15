@@ -221,7 +221,7 @@ namespace MudBlazor
         /// </summary>
         [Category(CategoryTypes.Carousel.Behavior)]
         [Parameter]
-        public bool DisableSwipeGesture { get; set; }
+        public bool EnableSwipeGesture { get; set; } = true;
 
         /// <summary>
         /// Gets or Sets the Template for Delimiters.
@@ -260,7 +260,7 @@ namespace MudBlazor
         /// </summary>
         private void OnSwipe(SwipeDirection direction)
         {
-            if (DisableSwipeGesture)
+            if (!EnableSwipeGesture)
             {
                 return;
             }

@@ -225,11 +225,11 @@ namespace MudBlazor.UnitTests.Components
 
             var mudSwipeArea = comp.FindComponent<MudSwipeArea>().Instance;
 
-            comp.Instance.DisableSwipeGesture = true;
+            comp.Instance.EnableSwipeGesture = false;
             await comp.InvokeAsync(() => mudSwipeArea.OnSwipe(SwipeDirection.RightToLeft));
             comp.Instance.SelectedIndex.Should().Be(0);
 
-            comp.Instance.DisableSwipeGesture = false;
+            comp.Instance.EnableSwipeGesture = true;
             await comp.InvokeAsync(() => mudSwipeArea.OnSwipe(SwipeDirection.RightToLeft));
             comp.Instance.SelectedIndex.Should().Be(1);
         }
