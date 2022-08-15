@@ -708,6 +708,8 @@ namespace MudBlazor
         protected override void Dispose(bool disposing)
         {
             _timer?.Dispose();
+            CancellationTokenSrc.Cancel();
+            CancellationTokenSrc.Dispose();
             base.Dispose(disposing);
         }
 
