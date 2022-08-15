@@ -187,8 +187,10 @@ namespace MudBlazor.UnitTests.Components
             //Console.WriteLine(comp.Markup);
             var list = comp.FindComponent<MudList<int?>>().Instance;
             comp.WaitForAssertion(() => comp.FindComponents<MudListItem<int?>>()[0].Markup.Should().Contain("mud-selected-item"));
-            comp.WaitForAssertion(() => list.SelectedItem.Value.Should().Be(1));
+            comp.WaitForAssertion(() => list.SelectedValue.Should().Be(1));
+            comp.WaitForAssertion(() => list.SelectedValues.Should().Contain(1));
             comp.WaitForAssertion(() => list.SelectedItem.Text.Should().Be("Sparkling Water"));
+            comp.WaitForAssertion(() => list.SelectedItems.First().Text.Should().Be("Sparkling Water"));
             // we have seven choices, 1 is active because of the initial value of SelectedValue
             comp.WaitForAssertion(() => comp.FindAll("div.mud-list-item").Count.Should().Be(9)); // 7 choices, 2 groups
             comp.WaitForAssertion(() => comp.FindAll("div.mud-selected-item").Count.Should().Be(1));

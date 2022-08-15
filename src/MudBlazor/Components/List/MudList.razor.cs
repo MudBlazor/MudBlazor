@@ -345,11 +345,11 @@ namespace MudBlazor
                 _selectedValue = value;
                 HandleCentralValueCommander(nameof(SelectedValue));
 
-                if (_firstRendered == true)
-                {
-                    SelectedValueChanged.InvokeAsync(_selectedValue).AndForget();
-                }
-                
+                //if (_firstRendered == true)
+                //{
+                //    SelectedValueChanged.InvokeAsync(_selectedValue).AndForget();
+                //}
+                SelectedValueChanged.InvokeAsync(_selectedValue).AndForget();
                 //UpdateSelectedStyles();
                 //Console.WriteLine("SelectedValue setter ended");
             }
@@ -409,18 +409,18 @@ namespace MudBlazor
                     return;
                 }
                 HandleCentralValueCommander(nameof(SelectedValues));
-                if (_firstRendered == true)
-                {
-                    SelectedValuesChanged.InvokeAsync(_selectedValues).AndForget();
-                }
-                
+                //if (_firstRendered == true)
+                //{
+                //    SelectedValuesChanged.InvokeAsync(_selectedValues).AndForget();
+                //}
+                SelectedValuesChanged.InvokeAsync(_selectedValues).AndForget();
 
                 //UpdateSelectedStyles();
                 //Console.WriteLine("SelectedValues setter ended");
             }
         }
 
-        private MudListItem<T> _selectedItem = new();
+        private MudListItem<T> _selectedItem;
         /// <summary>
         /// The current selected list item.
         /// Note: make the list Clickable or MultiSelection or both for item selection to work.
@@ -445,14 +445,15 @@ namespace MudBlazor
                     return;
                 }
                 HandleCentralValueCommander(nameof(SelectedItem));
-                if (_firstRendered == true)
-                {
-                    SelectedItemChanged.InvokeAsync(_selectedItem).AndForget();
-                }
+                //if (_firstRendered == true)
+                //{
+                //    SelectedItemChanged.InvokeAsync(_selectedItem).AndForget();
+                //}
+                SelectedItemChanged.InvokeAsync(_selectedItem).AndForget();
             }
         }
 
-        private HashSet<MudListItem<T>> _selectedItems = new();
+        private HashSet<MudListItem<T>> _selectedItems;
         /// <summary>
         /// The current selected listitems.
         /// Note: make the list Clickable for item selection to work.
@@ -483,10 +484,11 @@ namespace MudBlazor
                     return;
                 }
                 HandleCentralValueCommander(nameof(SelectedItems));
-                if (_firstRendered == true)
-                {
-                    SelectedItemsChanged.InvokeAsync(_selectedItems).AndForget();
-                }
+                //if (_firstRendered == true)
+                //{
+                //    SelectedItemsChanged.InvokeAsync(_selectedItems).AndForget();
+                //}
+                SelectedItemsChanged.InvokeAsync(_selectedItems).AndForget();
             }
         }
 
@@ -606,13 +608,14 @@ namespace MudBlazor
                         new KeyOptions { Key="/./", SubscribeDown = true, SubscribeUp = true }, // for our users
                     },
                 });
+
                 if (MultiSelection == false && SelectedValue != null)
                 {
-                    HandleCentralValueCommander("SelectedValue");
+                    HandleCentralValueCommander(nameof(SelectedValue));
                 }
                 else if (MultiSelection == true && SelectedValues != null)
                 {
-                    HandleCentralValueCommander("SelectedValues");
+                    HandleCentralValueCommander(nameof(SelectedValues));
                 }
 
                 if (MudSelect != null)
