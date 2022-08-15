@@ -4,15 +4,17 @@
 <MudDateRangePicker Label="Basic range picker (editable)" Editable="true" @bind-DateRange="_dateRange" />
 <MudDateRangePicker Label="Range picker format" HelperText="For custom cultures" DateFormat="dd/MM/yyyy" TitleDateFormat="dddd, dd. MMMM" @bind-DateRange="_dateRange" />
 <MudDateRangePicker Label="Custom start month" StartMonth="@DateTime.Now.AddMonths(-1)" @bind-DateRange="_dateRange" />
-<MudDateRangePicker @ref="_picker" Label="With action buttons" @bind-DateRange="_dateRange">
+<MudDateRangePicker @ref="_picker" Label="With action buttons" @bind-DateRange="_dateRange" AutoClose="@_autoClose">
     <PickerActions>
         <MudButton Class="mr-auto align-self-start" OnClick="@(() => _picker.Clear())">Clear</MudButton>
         <MudButton OnClick="@(() => _picker.Close(false))">Cancel</MudButton>
         <MudButton Color="Color.Primary" OnClick="@(() => _picker.Close())">Ok</MudButton>
     </PickerActions>
 </MudDateRangePicker>
+<MudSwitch @bind-Checked="@_autoClose" Color="Color.Secondary">AutoClose</MudSwitch>
 
 @code { 
-    MudDateRangePicker _picker;
-    DateRange _dateRange = new DateRange(DateTime.Now.Date, DateTime.Now.AddDays(5).Date);
+    private MudDateRangePicker _picker;
+    private DateRange _dateRange = new DateRange(DateTime.Now.Date, DateTime.Now.AddDays(5).Date);
+    private bool _autoClose;
 }

@@ -393,3 +393,6 @@ src/MudBlazor.Docs/wwwroot/MudBlazorDocs.min.css.map
 tools/CssUtilitiesGenerator/css/
 
 tools/CssUtilitiesGenerator/output/
+
+src/MudBlazor/wwwroot/MudBlazor.min.css.gz
+src/MudBlazor/wwwroot/MudBlazor.min.js.gz
