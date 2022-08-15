@@ -19,7 +19,7 @@
     {
         var parameters = new DialogParameters { ["server"]=server };
 
-        var dialog = DialogService.Show<DialogPassingDataExample_Dialog>("Delete Server", parameters);
+        var dialog = await DialogService.ShowAsync<DialogPassingDataExample_Dialog>("Delete Server", parameters);
         var result = await dialog.Result;
 
         if (!result.Cancelled)

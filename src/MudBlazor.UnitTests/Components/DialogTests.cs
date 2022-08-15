@@ -466,6 +466,21 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("button").Click();
             comp.Find("div.mud-dialog").GetAttribute("class").Should().Be("mud-dialog mud-dialog-width-sm");
         }
+
+        [Test]
+        public async Task ShowAsyncRenderCompleteTest()
+        {
+            var comp = Context.RenderComponent<MudDialogProvider>();
+
+            var service = Context.Services.GetService<IDialogService>();
+
+            IDialogReference dialogReference = null;
+            await comp.InvokeAsync(async () => dialogReference = await service?.ShowAsync<DialogOkCancel>()!);
+
+            var result = await dialogReference.RenderCompleteTaskCompletionSource.Task;
+
+            result.Should().Be(true);
+        }
     }
 
     internal class CustomDialogService : DialogService
