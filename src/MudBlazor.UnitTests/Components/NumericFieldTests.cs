@@ -25,7 +25,7 @@ namespace MudBlazor.UnitTests.Components
     public class NumericFieldTests : BunitTest
     {
         // TestCaseSource does not know about "Nullable<T>" so having values as Nullable<T> does not make sense here
-        static object[] TypeCases = 
+        static object[] TypeCases =
         {
             new object[] { (byte)5 },
             new object[] { (sbyte)5 },
@@ -50,7 +50,7 @@ namespace MudBlazor.UnitTests.Components
             var label = comp.FindAll(".mud-input-label");
             label[0].Attributes.GetNamedItem("for")?.Value.Should().Be("numericFieldLabelTest");
         }
-        
+
         /// <summary>
         /// Initial Text for double should be 0, with F1 format it should be 0.0
         /// </summary>
@@ -93,57 +93,12 @@ namespace MudBlazor.UnitTests.Components
         /// <summary>
         /// Setting the value to null should not cause a validation error
         /// </summary>
-        [Test]
-        public async Task IntNumericFieldWithNullableTypes()
+        [TestCaseSource(nameof(TypeCases))]
+        public async Task NumericField_WithNullableTypes_ShouldAllowNulls<T>(T value) where T : struct
         {
-            var comp = Context.RenderComponent<MudNumericField<int?>>(ComponentParameter.CreateParameter("Value", 17));
+            var comp = Context.RenderComponent<MudNumericField<T?>>(ComponentParameter.CreateParameter("Value", value));
             // print the generated html
             //Console.WriteLine(comp.Markup);
-            comp.SetParametersAndRender(ComponentParameter.CreateParameter("Value", null));
-            comp.Find("input").Blur();
-            comp.FindAll("div.mud-input-error").Count.Should().Be(0);
-            comp.Find("input").Change("");
-            comp.Find("input").Blur();
-            comp.FindAll("div.mud-input-error").Count.Should().Be(0);
-        }
-        
-        /// <summary>
-        /// Setting the value to null should not cause a validation error
-        /// </summary>
-        [Test]
-        public async Task DecimalNumericFieldWithNullableTypes()
-        {
-            var comp = Context.RenderComponent<MudNumericField<decimal?>>(ComponentParameter.CreateParameter("Value", 17M));
-            comp.SetParametersAndRender(ComponentParameter.CreateParameter("Value", null));
-            comp.Find("input").Blur();
-            comp.FindAll("div.mud-input-error").Count.Should().Be(0);
-            comp.Find("input").Change("");
-            comp.Find("input").Blur();
-            comp.FindAll("div.mud-input-error").Count.Should().Be(0);
-        }
-
-        /// <summary>
-        /// Setting the value to null should not cause a validation error
-        /// </summary>
-        [Test]
-        public async Task Int64NumericFieldWithNullableTypes()
-        {
-            var comp = Context.RenderComponent<MudNumericField<long?>>(ComponentParameter.CreateParameter("Value", 17L));
-            comp.SetParametersAndRender(ComponentParameter.CreateParameter("Value", null));
-            comp.Find("input").Blur();
-            comp.FindAll("div.mud-input-error").Count.Should().Be(0);
-            comp.Find("input").Change("");
-            comp.Find("input").Blur();
-            comp.FindAll("div.mud-input-error").Count.Should().Be(0);
-        }
-
-        /// <summary>
-        /// Setting the value to null should not cause a validation error
-        /// </summary>
-        [Test]
-        public async Task UInt64NumericFieldWithNullableTypes()
-        {
-            var comp = Context.RenderComponent<MudNumericField<ulong?>>(ComponentParameter.CreateParameter("Value", 17UL));
             comp.SetParametersAndRender(ComponentParameter.CreateParameter("Value", null));
             comp.Find("input").Blur();
             comp.FindAll("div.mud-input-error").Count.Should().Be(0);
@@ -280,7 +235,7 @@ namespace MudBlazor.UnitTests.Components
             //Console.WriteLine("Error message: " + numericField.ErrorText);
             numericField.ErrorText.Should().BeNullOrEmpty();
         }
-        
+
         /// <summary>
         /// Validate handling of decimal support & precision kept
         /// </summary>
@@ -431,7 +386,7 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("input").KeyUp(new KeyboardEventArgs() { Key = "9", Type = "keyup", });
             comp.WaitForAssertion(() => numericField.Value.Should().Be(1234.56));
         }
-        
+
         /// <summary>
         /// Keydown disabled, should not do anything
         /// </summary>
@@ -450,7 +405,7 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("input").KeyUp(new KeyboardEventArgs() { Key = "9", Type = "keyup", });
             comp.WaitForAssertion(() => comp.Instance.Value.Should().Be(1234.56));
         }
-        
+
         /// <summary>
         /// Keydown readonly, should not do anything
         /// </summary>
@@ -677,9 +632,70 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [TestCaseSource(nameof(TypeCases))]
+        public async Task NumericFieldMinMax<T>(T value)
+        {
+            var min = (T)Convert.ChangeType(1, typeof(T));
+            var max = (T)Convert.ChangeType(10, typeof(T));
+            var comp = Context.RenderComponent<MudNumericField<T>>();
+            comp.SetParam(x => x.Min, min);
+            comp.SetParam(x => x.Max, max);
+
+            comp.Find("input").Change("15");
+            comp.Find("input").Blur();
+
+            comp.WaitForAssertion(() => comp.Instance.Value.Should().Be(max));
+
+            comp.Find("input").Change("0");
+            comp.Find("input").Blur();
+
+            comp.WaitForAssertion(() => comp.Instance.Value.Should().Be(min));
+        }
+
+        [TestCaseSource(nameof(TypeCases))]
+        public async Task NumericFieldMinMaxNullable<T>(T value) where T : struct
+        {
+            var min = (T)Convert.ChangeType(1, typeof(T));
+            var max = (T)Convert.ChangeType(10, typeof(T));
+            var comp = Context.RenderComponent<MudNumericField<T?>>();
+            comp.SetParam(x => x.Min, min);
+            comp.SetParam(x => x.Max, max);
+
+            comp.Find("input").Change("15");
+            comp.Find("input").Blur();
+
+            comp.WaitForAssertion(() => comp.Instance.Value.Should().Be(max));
+
+            comp.Find("input").Change("0");
+            comp.Find("input").Blur();
+
+            comp.WaitForAssertion(() => comp.Instance.Value.Should().Be(min));
+        }
+
+        [TestCaseSource(nameof(TypeCases))]
         public async Task NumericField_Increment_Decrement<T>(T value)
         {
             var comp = Context.RenderComponent<MudNumericField<T>>();
+            var max = Convert.ChangeType(10, typeof(T));
+            var min = Convert.ChangeType(0, typeof(T));
+            comp.SetParam(x => x.Max, max);
+            comp.SetParam(x => x.Min, min);
+            comp.SetParam(x => x.Step, value);
+            comp.SetParam(x => x.Value, value);
+            await comp.InvokeAsync(() => comp.Instance.Increment().Wait());
+            await comp.InvokeAsync(() => comp.Instance.Decrement().Wait());
+            comp.Instance.Value.Should().Be(value);
+            // setting min and max to value will cover the boundary checking code
+            comp.SetParam(x => x.Max, value);
+            comp.SetParam(x => x.Min, value);
+            await comp.InvokeAsync(() => comp.Instance.Increment().Wait());
+            await comp.InvokeAsync(() => comp.Instance.Decrement().Wait());
+            comp.Instance.Value.Should().Be(value);
+        }
+
+        [TestCaseSource(nameof(TypeCases))]
+        public async Task NumericFieldNullable_Increment_Decrement<T>(T value) where T : struct
+        {
+            var comp = Context.RenderComponent<MudNumericField<T?>>();
             var max = Convert.ChangeType(10, typeof(T));
             var min = Convert.ChangeType(0, typeof(T));
             comp.SetParam(x => x.Max, max);
@@ -712,6 +728,41 @@ namespace MudBlazor.UnitTests.Components
             comp.SetParam(x => x.Value, comp.Instance.Min);
             await comp.InvokeAsync(() => comp.Instance.Decrement().Wait());
             comp.Instance.Value.Should().Be(comp.Instance.Min);
+        }
+
+        [TestCaseSource(nameof(TypeCases))]
+        public async Task NumericFieldNullable_Increment_Decrement_OverflowHandled<T>(T value) where T : struct
+        {
+            var comp = Context.RenderComponent<MudNumericField<T?>>();
+            comp.SetParam(x => x.Step, value);
+
+            // test max overflow
+            comp.SetParam(x => x.Value, comp.Instance.Max);
+            await comp.InvokeAsync(() => comp.Instance.Increment().Wait());
+            comp.Instance.Value.Should().Be(comp.Instance.Max);
+
+            // test min overflow
+            comp.SetParam(x => x.Value, comp.Instance.Min);
+            await comp.InvokeAsync(() => comp.Instance.Decrement().Wait());
+            comp.Instance.Value.Should().Be(comp.Instance.Min);
+        }
+
+        /// <summary>
+        /// NumericField with min/max set and nullable int can be cleared
+        /// </summary>
+        [TestCase(10, 20, 15)]
+        [TestCase(-20, -10, -15)]
+        public async Task NumericFieldCanBeCleared(int min, int max, int value)
+        {
+            var comp = Context.RenderComponent<MudNumericField<int?>>();
+            comp.SetParam(x => x.Min, min);
+            comp.SetParam(x => x.Max, max);
+            comp.SetParam(x => x.Value, value);
+
+            comp.Find("input").Change("");
+            comp.Find("input").Blur();
+
+            comp.WaitForAssertion(() => comp.Instance.Value.Should().BeNull());
         }
 
         /// <summary>
