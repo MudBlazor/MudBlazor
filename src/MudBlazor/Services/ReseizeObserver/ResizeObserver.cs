@@ -71,7 +71,7 @@ namespace MudBlazor.Services
             var elementId = _cachedValueIds.FirstOrDefault(x => x.Value.Id == element.Id).Key;
             if (elementId == default) { return; }
 
-            //if the ubobserve happen during a component teardown, the try-catch is a safe guard to prevent a "pseudo" exception
+            //if the unobserve happens during a component teardown, the try-catch is a safe guard to prevent a "pseudo" exception
             try { await _jsRuntime.InvokeVoidAsync($"mudResizeObserver.disconnect", _id, elementId); } catch (Exception) { }
 
             _cachedValueIds.Remove(elementId);

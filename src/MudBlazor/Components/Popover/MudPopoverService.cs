@@ -58,7 +58,7 @@ namespace MudBlazor
             Tag = componentBase.Tag;
             UserAttributes = componentBase.UserAttributes;
             ShowContent = showContent;
-            if(showContent == true)
+            if (showContent == true)
             {
                 ActivationDate = DateTime.Now;
             }
@@ -91,8 +91,7 @@ namespace MudBlazor
                     return;
                 }
 
-                await _runtime.InvokeVoidAsync("mudPopover.connect", Id);
-                IsConnected = true;
+                IsConnected = await _runtime.InvokeVoidAsyncWithErrorHandling("mudPopover.connect", Id); ;
             }
             finally
             {
@@ -109,11 +108,9 @@ namespace MudBlazor
 
                 if (IsConnected)
                 {
-                    await _runtime.InvokeVoidAsync("mudPopover.disconnect", Id);
+                    await _runtime.InvokeVoidAsyncWithErrorHandling("mudPopover.disconnect", Id);
                 }
             }
-            catch (JSDisconnectedException) { }
-            catch (TaskCanceledException) { }
             finally
             {
                 IsConnected = false;
@@ -150,11 +147,9 @@ namespace MudBlazor
                 await _semaphoreSlim.WaitAsync();
                 if (_isInitialized == true) { return; }
 
-                await _jsRuntime.InvokeVoidAsync("mudPopover.initialize", _options.ContainerClass, _options.FlipMargin);
+                await _jsRuntime.InvokeVoidAsyncWithErrorHandling("mudPopover.initialize", _options.ContainerClass, _options.FlipMargin);
                 _isInitialized = true;
             }
-            catch (JSDisconnectedException) { }
-            catch (TaskCanceledException) { }
             finally
             {
                 _semaphoreSlim.Release();
@@ -189,12 +184,7 @@ namespace MudBlazor
         {
             if (_isInitialized == false) { return; }
 
-            try
-            {
-                await _jsRuntime.InvokeVoidAsync("mudPopover.dispose");
-            }
-            catch (JSDisconnectedException) { }
-            catch (TaskCanceledException) { }
+            await _jsRuntime.InvokeVoidAsyncWithErrorHandling("mudPopover.dispose");
         }
     }
 }
