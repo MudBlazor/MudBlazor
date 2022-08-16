@@ -73,6 +73,27 @@ namespace MudBlazor
         public RenderFragment ChildContent { get; set; }
 
         /// <summary>
+        /// Optional presentation template for items
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.ListBehavior)]
+        public RenderFragment<MudListItem<T>> ItemTemplate { get; set; }
+
+        /// <summary>
+        /// Optional presentation template for selected items
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.ListBehavior)]
+        public RenderFragment<MudListItem<T>> ItemSelectedTemplate { get; set; }
+
+        /// <summary>
+        /// Classname for item template or chips.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.ListBehavior)]
+        public string TemplateClass { get; set; }
+
+        /// <summary>
         /// If true the active (hilighted) item select on tab key. Designed for only single selection. Default is true.
         /// </summary>
         [Parameter]
@@ -98,7 +119,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.List.Appearance)]
-        public bool DisableSelectedBackground { get; set; }
+        public bool DisableSelectedItemStyle { get; set; }
 
         /// <summary>
         /// If true, compact vertical padding will be applied to all Select items.
@@ -450,7 +471,7 @@ namespace MudBlazor
             }
         }
 
-        private MudListItem<T> _selectedListItem = new();
+        private MudListItem<T> _selectedListItem;
         private HashSet<MudListItem<T>> _selectedListItems;
         private MudSelectItem<T> _selectedItem;
 

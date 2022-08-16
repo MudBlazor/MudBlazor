@@ -19,18 +19,26 @@
                           @attributes="UserAttributes" OnBlur="@OnLostFocus">
                     
                     <ChildContent>
-                        <div>
-                        @if (ValuePresenter == ValuePresenter.Chip)
-                        {
-                            @foreach (var val in SelectedValues)
+                        <div class="@TemplateClass">
+                            @if (ValuePresenter == ValuePresenter.Chip)
                             {
-                                <MudChip Class="mt-n1" Text="@val.ToString()" Color="@Color" Size="Size.Small" />
+                                @foreach (var val in SelectedValues)
+                                {
+                                    <MudChip Class="mt-n1" Text="@val.ToString()" Color="@Color" Size="Size.Small" />
+                                }
                             }
-                        }
-                        else if (ValuePresenter == ValuePresenter.None)
-                        {
-                            @GetSelectedValuePresenter()
-                        }
+                            else if (ValuePresenter == ValuePresenter.Template && ItemTemplate != null)
+                            {
+                                if (SelectedListItem != null)
+                                {
+                                    @ItemTemplate(SelectedListItem)
+                                }
+                                else if (!string.IsNullOrEmpty(Placeholder))
+                                {
+                                    <MudText Typo="Typo.body1" Class="mud-text-secondary">@Placeholder</MudText>
+                                }
+
+                            }
                         </div>
                     </ChildContent>
                 </MudInput>
@@ -39,9 +47,9 @@
 				<MudPopover Open="@_isOpen" MaxHeight="@MaxHeight" AnchorOrigin="@AnchorOrigin" TransformOrigin="@TransformOrigin" Class="@PopoverClass" RelativeWidth="@RelativeWidth">
 					<CascadingValue Value="@this" IsFixed="true">
                         <MudList @ref="@_list" T="T" @bind-SelectedValue="@Value" @bind-SelectedValues="@SelectedValues" @bind-SelectedItem="@SelectedListItem" @bind-SelectedItems="@SelectedListItems"
-                                 Clickable="true" Color="@Color" Dense="@Dense" ItemCollection="@ItemCollection" Virtualize="@Virtualize" DisablePadding="@DisablePopoverPadding" DisableSelectedBackground="@DisableSelectedBackground"
+                                 Clickable="true" Color="@Color" Dense="@Dense" ItemCollection="@ItemCollection" Virtualize="@Virtualize" DisablePadding="@DisablePopoverPadding" DisableSelectedItemStyle="@DisableSelectedItemStyle"
                                  MultiSelection="@MultiSelection" MultiSelectionComponent="@MultiSelectionComponent" MultiSelectionAlign="@MultiSelectionAlign" SelectAll="@SelectAll" SelectAllText="@SelectAllText"
-                                 CheckedIcon="@CheckedIcon" UncheckedIcon="@UncheckedIcon" IndeterminateIcon="@IndeterminateIcon" SelectValueOnTab="@SelectValueOnTab"
+                                 CheckedIcon="@CheckedIcon" UncheckedIcon="@UncheckedIcon" IndeterminateIcon="@IndeterminateIcon" SelectValueOnTab="@SelectValueOnTab" ItemTemplate="@ItemTemplate" ItemSelectedTemplate="@ItemSelectedTemplate"
                                  >
                             @ChildContent
 						</MudList>

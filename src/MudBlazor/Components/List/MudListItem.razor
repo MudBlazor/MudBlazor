@@ -4,70 +4,82 @@
 
 <div tabindex="0" @attributes="UserAttributes" id="@ItemId" class="@Classname" @onclick="@(((MudList?.Clickable == true || NestedList != null) && IsFunctional == false) ? OnClickHandler : OnlyOnClick)" @onclick:stopPropagation="true" style="@Style">
 
-
-    @if (MudList != null && NestedList == null && MudList.MultiSelection == true && MudList.MultiSelectionAlign != Align.End && IsFunctional == false &&
+    @if (MudList?.ItemSelectedTemplate != null && IsSelected == true)
+    {
+        @MudList.ItemSelectedTemplate(this)
+    }
+    else if (MudList?.ItemTemplate != null)
+    {
+        @MudList.ItemTemplate(this)
+    }
+    else
+    {
+        if (MudList != null && NestedList == null && MudList.MultiSelection == true && MudList.MultiSelectionAlign != Align.End && IsFunctional == false &&
         (OverrideMultiSelectionComponent != MultiSelectionComponent.None || (MudList.MultiSelectionComponent == MultiSelectionComponent.None && (OverrideMultiSelectionComponent != null || OverrideMultiSelectionComponent != MultiSelectionComponent.None))))
-    {
-        <div class="@MultiSelectClassName">
-            @if (OverrideMultiSelectionComponent == null ? MudList?.MultiSelectionComponent == MultiSelectionComponent.CheckBox : OverrideMultiSelectionComponent.Value == MultiSelectionComponent.CheckBox)
-            {
-                <MudCheckBox Color="@MudList.Color" Disabled="@Disabled" @bind-Checked="_selected" @onclick="OnClickHandler" Dense="true" />
-            }
-            else if (OverrideMultiSelectionComponent == null ? MudList?.MultiSelectionComponent == MultiSelectionComponent.Switch : OverrideMultiSelectionComponent.Value == MultiSelectionComponent.Switch)
-            {
-                <MudSwitch Color="@MudList.Color" Disabled="@Disabled" @bind-Checked="_selected" @onclick="OnClickHandler" OnClickStopPropagation="true" />
-            }
-            
-        </div>
-    }
+        {
+            <div class="@MultiSelectClassName">
+                @if (OverrideMultiSelectionComponent == null ? MudList?.MultiSelectionComponent == MultiSelectionComponent.CheckBox : OverrideMultiSelectionComponent.Value == MultiSelectionComponent.CheckBox)
+                {
+                    <MudCheckBox Color="@MudList.Color" Disabled="@Disabled" @bind-Checked="_selected" @onclick="OnClickHandler" Dense="true" />
+                }
+                else if (OverrideMultiSelectionComponent == null ? MudList?.MultiSelectionComponent == MultiSelectionComponent.Switch : OverrideMultiSelectionComponent.Value == MultiSelectionComponent.Switch)
+                {
+                    <MudSwitch Color="@MudList.Color" Disabled="@Disabled" @bind-Checked="_selected" @onclick="OnClickHandler" OnClickStopPropagation="true" />
+                }
 
-    @if (!string.IsNullOrWhiteSpace(Avatar))
-    {
-        <div class="mud-list-item-avatar">
-            <MudAvatar Class="@AvatarClass">
-                <MudIcon Icon="@Avatar" Color="@IconColor" Size="@IconSize" />
-            </MudAvatar>
-        </div>
-    }
-    else if (!string.IsNullOrWhiteSpace(Icon))
-    {
-        <div class="mud-list-item-icon">
-            <MudIcon Icon="@Icon" Color="@IconColor" Size="@IconSize" />
-        </div>
-    }
-    <div class="mud-list-item-text @(Inset? "mud-list-item-text-inset" : "")">
-        <MudText Typo="@_textTypo">
-            @if (ChildContent != null)
-            {
-                @ChildContent
-            }
-            else
-            {
-                @Text
-                <MudText Style="font-weight:500; color: var(--mud-palette-text-secondary)" Typo="Typo.subtitle2">@SecondaryText</MudText>
-            }
-        </MudText>
-    </div>
+            </div>
+        }
 
-    @if (MudList != null && NestedList == null && MudList.MultiSelection == true && MudList.MultiSelectionAlign == Align.End && IsFunctional == false &&
+        if (!string.IsNullOrWhiteSpace(Avatar))
+        {
+            <div class="mud-list-item-avatar">
+                <MudAvatar Class="@AvatarClass">
+                    <MudIcon Icon="@Avatar" Color="@IconColor" Size="@IconSize" />
+                </MudAvatar>
+            </div>
+        }
+        else if (!string.IsNullOrWhiteSpace(Icon))
+        {
+            <div class="mud-list-item-icon">
+                <MudIcon Icon="@Icon" Color="@IconColor" Size="@IconSize" />
+            </div>
+        }
+        <div class="mud-list-item-text @(Inset? "mud-list-item-text-inset" : "")">
+            <MudText Typo="@_textTypo">
+                @if (ChildContent != null)
+                {
+                    @ChildContent
+                }
+                else
+                {
+                    @Text
+                    <MudText Style="font-weight:500; color: var(--mud-palette-text-secondary)" Typo="Typo.subtitle2">@SecondaryText</MudText>
+                }
+            </MudText>
+        </div>
+
+        if (MudList != null && NestedList == null && MudList.MultiSelection == true && MudList.MultiSelectionAlign == Align.End && IsFunctional == false &&
         (OverrideMultiSelectionComponent != MultiSelectionComponent.None || (MudList.MultiSelectionComponent == MultiSelectionComponent.None && (OverrideMultiSelectionComponent != null || OverrideMultiSelectionComponent != MultiSelectionComponent.None))))
-    {
-        <div class="@MultiSelectClassName">
-            @if (OverrideMultiSelectionComponent == null ? MudList?.MultiSelectionComponent == MultiSelectionComponent.CheckBox : OverrideMultiSelectionComponent.Value == MultiSelectionComponent.CheckBox)
-            {
-                <MudCheckBox Color="@MudList.Color" Disabled="@Disabled" @bind-Checked="_selected" @onclick="OnClickHandler" Dense="true" />
-            }
-            else if (OverrideMultiSelectionComponent == null ? MudList?.MultiSelectionComponent == MultiSelectionComponent.Switch : OverrideMultiSelectionComponent.Value == MultiSelectionComponent.Switch)
-            {
-                <MudSwitch Color="@MudList.Color" Disabled="@Disabled" @bind-Checked="_selected" @onclick="OnClickHandler" OnClickStopPropagation="true" />
-            }
-        </div>
+        {
+            <div class="@MultiSelectClassName">
+                @if (OverrideMultiSelectionComponent == null ? MudList?.MultiSelectionComponent == MultiSelectionComponent.CheckBox : OverrideMultiSelectionComponent.Value == MultiSelectionComponent.CheckBox)
+                {
+                    <MudCheckBox Color="@MudList.Color" Disabled="@Disabled" @bind-Checked="_selected" @onclick="OnClickHandler" Dense="true" />
+                }
+                else if (OverrideMultiSelectionComponent == null ? MudList?.MultiSelectionComponent == MultiSelectionComponent.Switch : OverrideMultiSelectionComponent.Value == MultiSelectionComponent.Switch)
+                {
+                    <MudSwitch Color="@MudList.Color" Disabled="@Disabled" @bind-Checked="_selected" @onclick="OnClickHandler" OnClickStopPropagation="true" />
+                }
+            </div>
+        }
+
+        if (NestedList != null)
+        {
+            <MudIcon Icon="@($"{(_expanded ? ExpandLessIcon : ExpandMoreIcon)}")" Size="@IconSize" Color="@AdornmentColor" />
+        }
     }
-    
-    @if (NestedList != null)
-    {
-        <MudIcon Icon="@($"{(_expanded ? ExpandLessIcon : ExpandMoreIcon)}")" Size="@IconSize" Color="@AdornmentColor" />
-    }
+
+
 </div>
 
 @if (NestedList != null)

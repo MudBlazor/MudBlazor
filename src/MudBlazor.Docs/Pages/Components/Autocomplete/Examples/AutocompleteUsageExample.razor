@@ -3,8 +3,13 @@
 <MudGrid>
     <MudItem xs="12" sm="6" md="4">
         <MudAutocomplete T="string" Label="US States" @bind-Value="value1" @bind-SelectedValues="_selectedValues" SearchFunc="@Search1"
-                         ResetValueOnEmptyText="@resetValueOnEmptyText" MultiSelection="true"
-                         CoerceText="@coerceText" CoerceValue="@coerceValue" />
+                         ResetValueOnEmptyText="@resetValueOnEmptyText"
+                         CoerceText="@coerceText" CoerceValue="@coerceValue">
+                     <ItemTemplate>
+                         <MudIcon Icon="@Icons.Custom.Brands.MudBlazor" />
+                         <MudText>@context</MudText>
+                     </ItemTemplate>
+                     </MudAutocomplete>
     </MudItem>
     <MudItem xs="12" sm="6" md="4">
         <MudAutocomplete T="string" Label="US States" @bind-Value="value2" SearchFunc="@Search2"

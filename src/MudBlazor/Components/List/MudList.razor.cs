@@ -56,6 +56,20 @@ namespace MudBlazor
         [Category(CategoryTypes.List.Behavior)]
         public RenderFragment ChildContent { get; set; }
 
+        /// <summary>
+        /// Optional presentation template for items
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.ListBehavior)]
+        public RenderFragment<MudListItem<T>> ItemTemplate { get; set; }
+
+        /// <summary>
+        /// Optional presentation template for selected items
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.ListBehavior)]
+        public RenderFragment<MudListItem<T>> ItemSelectedTemplate { get; set; }
+
         [Parameter]
         [Category(CategoryTypes.List.Behavior)]
         public DefaultConverter<T> Converter { get; set; } = new DefaultConverter<T>();
@@ -159,7 +173,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.List.Appearance)]
-        public bool DisableSelectedBackground { get; set; }
+        public bool DisableSelectedItemStyle { get; set; }
 
         /// <summary>
         /// If true, compact vertical padding will be applied to all list items.
@@ -1066,6 +1080,10 @@ namespace MudBlazor
             var possibleItems = items.Where(x => (x.Text ?? Converter.Set(x.Value) ?? "").StartsWith(startChar, StringComparison.CurrentCultureIgnoreCase)).ToList();
             if (possibleItems == null || !possibleItems.Any())
             {
+                if (_lastActivatedItem == null)
+                {
+                    return;
+                }
                 _lastActivatedItem.SetActive(true);
                 if (_lastActivatedItem.ParentListItem != null && _lastActivatedItem.ParentListItem.Expanded == false)
                 {

@@ -12,7 +12,15 @@
         @if (ItemCollection != null)
         {
             <MudVirtualize IsEnabled="@Virtualize" Items="ItemCollection" Context="item">
-                <MudListItem Value="@item" Text="@item.ToString()" />
+                @if (MudSelect != null)
+                {
+                    <MudSelectItem Value="@item">@item.ToString()</MudSelectItem>
+                }
+                else
+                {
+                    <MudListItem Value="@item" Text="@item.ToString()" />
+                }
+                
             </MudVirtualize>
         }
         else

@@ -1,37 +1,71 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
-<MudSelect @bind-Value="@country" Label="With render fragments" Variant="Variant.Outlined" ValuePresenter="ValuePresenter.None">
-    <MudSelectItem Value="@("Austria")">
-        <img src="https://upload.wikimedia.org/wikipedia/commons/4/41/Flag_of_Austria.svg" height="14" class="mr-1" /> Austria
-    </MudSelectItem>
-    <MudSelectItem Value="@("Hungary")">
-        <img src="https://upload.wikimedia.org/wikipedia/commons/0/00/Flag_of_Hungary.png" height="14" class="mr-1" /> Hungary
-    </MudSelectItem>
-    <MudSelectItem Value="@("Sweden")">
-        <img src="https://upload.wikimedia.org/wikipedia/commons/4/4b/Flag_of_Sweden_fixed.svg" height="14" class="mr-1" /> Sweden
-    </MudSelectItem>
+<MudSelect Label="Select Player" ToStringFunc="@(new Func<Tuple<string, string, bool>, string>(StringFunc))" Placeholder="Standard" Variant="Variant.Outlined" AnchorOrigin="Origin.BottomCenter">
+    @foreach (var item in _players)
+    {
+        <MudSelectItem Value="item">@(item.Item1 + " - Total Score: " + item.Item2)</MudSelectItem>
+    }
 </MudSelect>
 
-<MudSelect @bind-Value="@country" Label="Without render fragments" Variant="Variant.Outlined">
-    <MudSelectItem Value="@("Austria")" />
-    <MudSelectItem Value="@("Hungary")" />
-    <MudSelectItem Value="@("Sweden")" />
+<MudSelect ItemCollection="_players" ValuePresenter="ValuePresenter.Template" TemplateClass="d-flex align-center" Placeholder="With Template" Label="Select Player" Variant="Variant.Outlined" AnchorOrigin="Origin.BottomCenter">
+    <ItemTemplate>
+        <MudStack Class="mud-width-full" Justify="Justify.SpaceBetween" >
+            <MudText><b>@context.Value.Item1</b></MudText>
+            <MudStack Row="true" Justify="Justify.SpaceBetween" AlignItems="AlignItems.Center">
+                    <MudStack Row="true">
+                        <MudIcon Icon="@Icons.Outlined.Person" />
+                        <MudText>@(context.Value.Item3 == true ? "Retired" : "Active")</MudText>
+                    </MudStack>
+                <MudChip Color="Color.Info" Variant="Variant.Outlined">Total Score: @context.Value.Item2</MudChip>
+            </MudStack>
+        </MudStack>
+    </ItemTemplate>
 </MudSelect>
 
-<MudSelect @bind-Value="@country" Label="Austria not representable" Variant="Variant.Outlined">
-    <MudSelectItem Value="@("Germany")">
-        <img src="https://upload.wikimedia.org/wikipedia/en/b/ba/Flag_of_Germany.svg" height="14" class="mr-1" /> Germany
-    </MudSelectItem>
-    <MudSelectItem Value="@("Hungary")">
-        <img src="https://upload.wikimedia.org/wikipedia/commons/0/00/Flag_of_Hungary.png" height="14" class="mr-1" /> Hungary
-    </MudSelectItem>
-    <MudSelectItem Value="@("Sweden")">
-        <img src="https://upload.wikimedia.org/wikipedia/commons/4/4b/Flag_of_Sweden_fixed.svg" height="14" class="mr-1" /> Sweden
-    </MudSelectItem>
-</MudSelect>
+<MudSelect ItemCollection="_players" DisableSelectedBackground="true" ValuePresenter="ValuePresenter.Template" TemplateClass="d-flex align-center" Placeholder="With Both Templates" Label="Select Player" Variant="Variant.Outlined" AnchorOrigin="Origin.BottomCenter">
+    <ItemTemplate>
+        <MudStack Class="mud-width-full" Justify="Justify.SpaceBetween" >
+            <MudText><b>@context.Value.Item1</b></MudText>
+            <MudStack Row="true" Justify="Justify.SpaceBetween" AlignItems="AlignItems.Center">
+                    <MudStack Row="true">
+                        <MudIcon Icon="@Icons.Outlined.Person" />
+                        <MudText>@(context.Value.Item3 == true ? "Retired" : "Active")</MudText>
+                    </MudStack>
+                <MudChip Color="Color.Info" Variant="Variant.Outlined">Total Score: @context.Value.Item2</MudChip>
+            </MudStack>
+        </MudStack>
+    </ItemTemplate>
 
-<MudButton OnClick="@StateHasChanged">Render Again</MudButton>
+    <ItemSelectedTemplate>
+            <MudStack Class="mud-width-full" Justify="Justify.SpaceBetween"AlignItems="AlignItems.Center">
+            <MudText><b>@context.Value.Item1</b></MudText>
+            <MudStack Row="true" Justify="Justify.SpaceBetween" AlignItems="AlignItems.Center">
+                    <MudStack Row="true">
+                        <MudIcon Icon="@Icons.Outlined.Person" />
+                        @*<MudText>@(context.Value.Item3 == true ? "Retired" : "Active")</MudText>*@
+                    </MudStack>
+                <MudChip Color="Color.Info" Variant="Variant.Outlined">Total Score: @context.Value.Item2</MudChip>
+            </MudStack>
+        </MudStack>
+    </ItemSelectedTemplate>
+</MudSelect>
 
 @code {
-    string country="Austria";
+    Tuple<string, string, bool>[] _players = new Tuple<string, string, bool>[]
+    {
+       new Tuple<string, string, bool>("Kareem Abdul-Jabbar", "38.387", true),
+       new Tuple<string, string, bool>("LeBron James", "37.062", false),
+       new Tuple<string, string, bool>("Karl Malone", "36.928", true),
+       new Tuple<string, string, bool>("Kobe Bryant", "33.643", true),
+       new Tuple<string, string, bool>("Michael Jordan", "32.292", true),
+    };
+
+    private string StringFunc(Tuple<string, string, bool> tuple)
+    {
+        if (tuple == null)
+        {
+            return null;
+        }
+        return tuple.Item1 + " - Total Score: " + tuple.Item2;
+    }
 }

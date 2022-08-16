@@ -53,6 +53,13 @@ namespace MudBlazor
         [Category(CategoryTypes.List.Behavior)]
         public bool IsFunctional { get; set; }
 
+        /// <summary>
+        /// The text to display
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.List.Behavior)]
+        public string Text { get; set; }
+
         //private IMudShadowSelect  _shadowParent;
         private bool _isSelected;
 
