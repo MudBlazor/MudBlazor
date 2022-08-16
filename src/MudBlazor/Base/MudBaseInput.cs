@@ -9,6 +9,8 @@ namespace MudBlazor
 {
     public abstract class MudBaseInput<T> : MudFormComponent<T, string>
     {
+        private bool _isDirty;
+        
         protected MudBaseInput() : base(new DefaultConverter<T>()) { }
 
         /// <summary>
@@ -81,6 +83,13 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
         public Adornment Adornment { get; set; } = Adornment.None;
+
+        /// <summary>
+        /// The validation is only triggered if the user has changed the input value at least once. By default, it is false
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Behavior)]
+        public bool OnlyValidateIfDirty { get; set; } = false;
 
         /// <summary>
         /// The color of the adornment if used. It supports the theme colors.
@@ -255,8 +264,12 @@ namespace MudBlazor
         protected internal virtual void OnBlurred(FocusEventArgs obj)
         {
             _isFocused = false;
-            Touched = true;
-            BeginValidateAfter(OnBlur.InvokeAsync(obj));
+
+            if (!OnlyValidateIfDirty || _isDirty)
+            {
+                Touched = true;
+                BeginValidateAfter(OnBlur.InvokeAsync(obj));
+            }
         }
 
         /// <summary>
@@ -334,6 +347,7 @@ namespace MudBlazor
         {
             if (!EqualityComparer<T>.Default.Equals(Value, value))
             {
+                _isDirty = true;
                 Value = value;
                 if (updateText)
                     await UpdateTextPropertyAsync(false);
@@ -466,6 +480,7 @@ namespace MudBlazor
         protected override void ResetValue()
         {
             SetTextAsync(null, updateValue: true).AndForget();
+            this._isDirty = false;
             base.ResetValue();
         }
     }
