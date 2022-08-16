@@ -20,6 +20,8 @@ namespace MudBlazor
     {
         MudPopoverHandler Register(RenderFragment fragment);
         Task<bool> Unregister(MudPopoverHandler hanlder);
+        ValueTask<int> CountProviders();
+        bool ThrowOnDuplicateProvider { get; }
         IEnumerable<MudPopoverHandler> Handlers { get; }
         Task InitializeIfNeeded();
         event EventHandler FragmentsChanged;
@@ -58,7 +60,7 @@ namespace MudBlazor
             Tag = componentBase.Tag;
             UserAttributes = componentBase.UserAttributes;
             ShowContent = showContent;
-            if(showContent == true)
+            if (showContent == true)
             {
                 ActivationDate = DateTime.Now;
             }
@@ -133,6 +135,7 @@ namespace MudBlazor
 
         public event EventHandler FragmentsChanged;
 
+        public bool ThrowOnDuplicateProvider => _options.ThrowOnDuplicateProvider;
         public IEnumerable<MudPopoverHandler> Handlers => _handlers.Values.AsEnumerable();
 
         public MudPopoverService(IJSRuntime jsInterop, IOptions<PopoverOptions> options = null)
@@ -181,6 +184,20 @@ namespace MudBlazor
             FragmentsChanged?.Invoke(this, EventArgs.Empty);
 
             return true;
+        }
+
+        public async ValueTask<int> CountProviders()
+        {
+            if (!_isInitialized) { return -1; }
+            var value = 0;
+
+            try
+            {
+                value = await _jsRuntime.InvokeAsync<int>("mudpopoverHelper.countProviders");
+            }
+            catch (JSDisconnectedException) { }
+            catch (TaskCanceledException) { }
+            return value;
         }
 
         //TO DO add js test
