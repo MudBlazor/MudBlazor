@@ -41,7 +41,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void MudBreadcrumbs_ShouldCollapseWhenMaxItemsIsReached()
         {
-            var comp = Context.RenderComponent<MudBreadcrumbs>(Parameter("MaxItems", (byte)5), Parameter("Items", new List<BreadcrumbItem>
+            var comp = Context.RenderComponent<MudBreadcrumbs>(Parameter("MaxItems", (byte)4), Parameter("Items", new List<BreadcrumbItem>
             {
                 new BreadcrumbItem("Link 1", "link1"),
                 new BreadcrumbItem("Link 2", "link2"),
@@ -58,7 +58,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task MudBreadcrumbs_Other()
         {
-            var comp = Context.RenderComponent<MudBreadcrumbs>(Parameter("MaxItems", (byte)5), Parameter("Items", new List<BreadcrumbItem>
+            var comp = Context.RenderComponent<MudBreadcrumbs>(Parameter("MaxItems", (byte)4), Parameter("Items", new List<BreadcrumbItem>
             {
                 new BreadcrumbItem("Link 1", "link1"),
                 new BreadcrumbItem("Link 2", "link2"),
