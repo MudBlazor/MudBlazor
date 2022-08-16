@@ -78,7 +78,7 @@ namespace MudBlazor.Services
         {
             if (_onResized == null || _onBreakpointChanged == null)
             {
-                await _jsRuntime.InvokeVoidAsync($"mudResizeListener.listenForResize", _dotNetRef, _options);
+                await _jsRuntime.InvokeVoidAsyncWithErrorHandling($"mudResizeListener.listenForResize", _dotNetRef, _options);
             }
         }
 
@@ -88,7 +88,7 @@ namespace MudBlazor.Services
             {
                 if (_onResized == null && _onBreakpointChanged == null)
                 {
-                    await _jsRuntime.InvokeVoidAsync($"mudResizeListener.cancelListener");
+                    await _jsRuntime.InvokeVoidAsyncWithErrorHandling($"mudResizeListener.cancelListener");
                 }
                 else if (_onResized == null && _onBreakpointChanged != null && !_options.NotifyOnBreakpointOnly)
                 {
