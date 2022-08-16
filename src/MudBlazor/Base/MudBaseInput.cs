@@ -480,6 +480,7 @@ namespace MudBlazor
         protected override void ResetValue()
         {
             SetTextAsync(null, updateValue: true).AndForget();
+            this._isDirty = false;
             base.ResetValue();
         }
     }
