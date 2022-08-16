@@ -3,7 +3,7 @@
 @inherits MudComponentBase
 
 <tr class="@Classname" @onclick="@OnRowClicked" style="@Style" @attributes="@UserAttributes">
-	@if (IsEditable && Context?.Table.CommitButtonPosition.DisplayCommitButtonAtStart() == true)
+	@if (IsEditable && Context?.Table.ApplyButtonPosition.DisplayApplyButtonAtStart() == true)
 	{
 		@* Add datalabel as a placeholder to avoid jumps on small viewports *@
 		<MudTd DataLabel="&nbsp;">
@@ -36,7 +36,7 @@
 		</MudElement>
 	}
 	@ChildContent
-	@if (IsEditable && Context?.Table.CommitButtonPosition.DisplayCommitButtonAtEnd() == true)
+	@if (IsEditable && Context?.Table.ApplyButtonPosition.DisplayApplyButtonAtEnd() == true)
 	{
 		@* Add datalabel as a placeholder to avoid jumps on small viewports *@
 		<MudTd DataLabel="&nbsp;">

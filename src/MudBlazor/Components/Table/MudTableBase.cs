@@ -357,7 +357,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Table.Editing)]
-        public TableCommitButtonPosition CommitButtonPosition { get; set; } = TableCommitButtonPosition.End;
+        public TableApplyButtonPosition ApplyButtonPosition { get; set; } = TableApplyButtonPosition.End;
 
 
         /// <summary>

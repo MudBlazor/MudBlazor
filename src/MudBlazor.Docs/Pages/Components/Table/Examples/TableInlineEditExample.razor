@@ -7,14 +7,14 @@
 <MudTable Items="@Elements" Dense="@dense" Hover="@hover" ReadOnly="@ronly" CanCancelEdit="@canCancelEdit" Filter="new Func<Element,bool>(FilterFunc)"
           @bind-SelectedItem="selectedItem1" SortLabel="Sort By" CommitEditTooltip="Commit Edit"
           OnCommitEditClick="@(() => Snackbar.Add("Commit Edit Handler Invoked"))" RowEditPreview="BackupItem" RowEditCancel="ResetItemToOriginalValues"
-          RowEditCommit="ItemHasBeenCommitted" IsEditRowSwitchingBlocked="@blockSwitch" CommitButtonPosition="@commitButtonPosition">
+          RowEditCommit="ItemHasBeenCommitted" IsEditRowSwitchingBlocked="@blockSwitch" ApplyButtonPosition="@applyButtonPosition">
     <ToolBarContent>
         <MudText Typo="Typo.h6">Periodic Elements</MudText>
         <MudSpacer />
         <MudTextField @bind-Value="searchString" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
     </ToolBarContent>
     <ColGroup>
-		@if(commitButtonPosition.DisplayCommitButtonAtStart())
+		@if(applyButtonPosition.DisplayApplyButtonAtStart())
 		{
 			<col style="width:50px;" />
 		}
@@ -23,7 +23,7 @@
         <col style="width:50%;" />
         <col />
         <col />
-		@if (commitButtonPosition.DisplayCommitButtonAtEnd())
+		@if (applyButtonPosition.DisplayApplyButtonAtEnd())
 		{
 			<col style="width:50px;" />
 		}
@@ -67,10 +67,10 @@
 <MudSwitch @bind-Checked="@ronly" Color="Color.Tertiary">Read Only</MudSwitch>
 <MudSwitch @bind-Checked="@canCancelEdit" Color="Color.Info">Can Cancel Edit</MudSwitch>
 <MudSwitch @bind-Checked="@blockSwitch" Color="Color.Success">Block Edit Row Switching</MudSwitch>
-<MudSelect Label="Commit Button Postion" T="TableCommitButtonPosition" @bind-Value="commitButtonPosition">
-	<MudSelectItem Value="TableCommitButtonPosition.Start">Start</MudSelectItem>
-	<MudSelectItem Value="TableCommitButtonPosition.End">End</MudSelectItem>
-	<MudSelectItem Value="TableCommitButtonPosition.StartAndEnd">Start and End</MudSelectItem>
+<MudSelect Label="Apply Button Postion" T="TableApplyButtonPosition" @bind-Value="applyButtonPosition">
+	<MudSelectItem Value="TableApplyButtonPosition.Start">Start</MudSelectItem>
+	<MudSelectItem Value="TableApplyButtonPosition.End">End</MudSelectItem>
+	<MudSelectItem Value="TableApplyButtonPosition.StartAndEnd">Start and End</MudSelectItem>
 </MudSelect>
 <MudText Inline="true">Selected1: @selectedItem1?.Name</MudText>
 
@@ -99,7 +99,7 @@
 	private Element selectedItem1 = null;
 	private Element elementBeforeEdit;
 	private HashSet<Element> selectedItems1 = new HashSet<Element>();
-	private TableCommitButtonPosition commitButtonPosition = TableCommitButtonPosition.End;
+	private TableApplyButtonPosition applyButtonPosition = TableApplyButtonPosition.End;
 	private IEnumerable<Element> Elements = new List<Element>();
 
     protected override async Task OnInitializedAsync()

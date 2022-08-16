@@ -1,6 +1,6 @@
 ﻿@namespace MudBlazor.UnitTests.TestComponents
 
-<MudTable @ref="Table" T="string" Items="items" @bind-SelectedItem="selectedItem" CommitButtonPosition="@CommitButtonPosition">
+<MudTable @ref="Table" T="string" Items="items" @bind-SelectedItem="selectedItem" ApplyButtonPosition="@ApplyButtonPosition">
 	<HeaderContent>
 		<MudTh>#</MudTh>
 	</HeaderContent>
@@ -24,6 +24,6 @@
 
 	public MudTable<string> Table { get; private set; }
 
-	[Parameter] public TableCommitButtonPosition CommitButtonPosition { get; set; } = TableCommitButtonPosition.End;
+	[Parameter] public TableApplyButtonPosition ApplyButtonPosition { get; set; } = TableApplyButtonPosition.End;
 
 }
