@@ -1,0 +1,21 @@
+﻿@namespace MudBlazor.UnitTests.TestComponents
+<MudPopoverProvider></MudPopoverProvider>
+
+<MudSelect T="string" @bind-Value="Selected" Label="Coffee" AnchorOrigin="Origin.BottomCenter" OnClose="onClose">
+    <MudSelectItem Value="@("Cappuccino")" />
+    <MudSelectItem Value="@("Cafe Latte")" />
+    <MudSelectItem Value="@("Espresso")" />
+</MudSelect>
+
+selected: @Selected
+
+selected When OnClose: @SelectedWhenOnClose
+@code {
+    public string Selected { get; set; } = "";
+    public string SelectedWhenOnClose { get; set; } = "";
+
+    public void onClose()
+    {
+        SelectedWhenOnClose = Selected;
+    }
+}

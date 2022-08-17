@@ -1062,6 +1062,28 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public void Select_OnCloseValueTest()
+        {
+            var comp = Context.RenderComponent<SelectOnCloseTest>();
+            var select = comp.FindComponent<MudSelect<string>>();
+
+            comp.Find("input").Click();
+            comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open");
+
+            var items = comp.FindAll("div.mud-list-item").ToArray();
+            items[1].Click();
+
+            comp.Instance.Selected.Should().Be("Cafe Latte");
+            comp.Instance.SelectedWhenOnClose.Should().Be("Cafe Latte");
+
+            comp.Find("input").Click();
+            items = comp.FindAll("div.mud-list-item").ToArray();
+            items[0].Click();
+            comp.Instance.Selected.Should().Be("Cappuccino");
+            comp.Instance.SelectedWhenOnClose.Should().Be("Cappuccino");
+        }
+
+        [Test]
         public void MultiSelectWithCustomComparerTest()
         {
             var comp = Context.RenderComponent<MultiSelectWithCustomComparerTest>();
