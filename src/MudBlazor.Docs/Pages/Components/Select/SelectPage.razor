@@ -133,7 +133,7 @@
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader Title="Custom converter">
+            <SectionHeader Title="Custom Converter">
                 <Description>
                     Select has a built-in <CodeInline>DefaultConverter</CodeInline> which converts the values from any primitive type to string for presentation of the selected value.
                     You can customize that converter as described under <MudLink Href="/features/converters">Converters</MudLink>. Here, we use <CodeInline>ToStringFunc</CodeInline> to
@@ -147,7 +147,7 @@
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader Title="Numeric collection">
+            <SectionHeader Title="Numeric Collection">
                 <Description>
                     When using the properties <CodeInline>Required=true</CodeInline> and <CodeInline>Clearable=true</CodeInline> in combination with a numeric collection,
                     it is required that the items of the collection are of a nullable numeric type such as <CodeInline>int?</CodeInline> or <CodeInline>double?</CodeInline> in order
@@ -160,7 +160,7 @@
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader Title="Placement">
+            <SectionHeader Title="Popover Placement">
                 <Description>
                     The component uses <MudLink Href="/components/popover">MudPopover</MudLink> to place it's list of items. It can be controlled with <CodeInline>AnchorOrigin</CodeInline> and <CodeInline>TransformOrigin</CodeInline>
                     To change where the popover should start from you only need to change the <CodeInline>AnchorOrigin</CodeInline>. <MudLink Color="Color.Secondary" Href="/components/popover">Read more on popover's page.</MudLink>
@@ -172,9 +172,13 @@
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader Title="Virtualization (Experimental)">
+            <SectionHeader Title="Virtualization">
                 <Description>
-                    MudSelect support virtualization if items populated with <CodeInline>ItemCollection</CodeInline>.
+                    MudSelect support virtualization if items populated with <CodeInline>ItemCollection</CodeInline>.<br />
+                    In this example you can see the MudSelect's performance with 100.000 items.
+                    <MudAlert Class="mt-2" Severity="Severity.Info">
+                        <b>Note:</b> Keyboard navigation doesn't work properly with virtualization.
+                    </MudAlert>
                 </Description>
             </SectionHeader>
             <SectionContent ShowCode="false" Code="SelectVirtualizationExample">

@@ -24,7 +24,7 @@
                             {
                                 @foreach (var val in SelectedValues)
                                 {
-                                    <MudChip Class="mt-n1" Text="@val.ToString()" Color="@Color" Size="Size.Small" />
+                                    <MudChip Class="mt-n1" Text="@Converter.Set(val)" Color="@Color" Size="Size.Small" />
                                 }
                             }
                             else if (ValuePresenter == ValuePresenter.Template && ItemTemplate != null)
@@ -42,7 +42,6 @@
                         </div>
                     </ChildContent>
                 </MudInput>
-                
 
 				<MudPopover Open="@_isOpen" MaxHeight="@MaxHeight" AnchorOrigin="@AnchorOrigin" TransformOrigin="@TransformOrigin" Class="@PopoverClass" RelativeWidth="@RelativeWidth">
 					<CascadingValue Value="@this" IsFixed="true">

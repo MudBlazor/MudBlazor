@@ -442,8 +442,8 @@ namespace MudBlazor.UnitTests.Components
             comp.WaitForAssertion(() => autocomplete.IsOpen.Should().BeFalse());
 
             // Lets type something to cause it to open
-            autocompletecomp.Find("input").Click();
-            autocompletecomp.Find("input").Input("Calif");
+            await comp.InvokeAsync(() => autocompletecomp.Find("input").Click());
+            await comp.InvokeAsync(() => autocompletecomp.Find("input").Input("Calif"));
             comp.WaitForAssertion(() => autocomplete.IsOpen.Should().BeTrue());
 
             // Lets call blur on the input and confirm that it closed
@@ -453,7 +453,7 @@ namespace MudBlazor.UnitTests.Components
 
             // Tab closes the drop-down and selects the selected value (California)
             // because SelectValueOnTab is true
-            autocomplete.Value.Should().Be("California");
+            comp.WaitForAssertion(() => autocomplete.Value.Should().Be("California"));
         }
 
         /// <summary>

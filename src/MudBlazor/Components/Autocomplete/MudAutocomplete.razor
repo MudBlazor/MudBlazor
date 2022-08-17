@@ -37,45 +37,48 @@
                 <MudPopover Open="@IsOpen" MaxHeight="@MaxHeight" AnchorOrigin="@AnchorOrigin" TransformOrigin="@TransformOrigin" Class="@PopoverClass" RelativeWidth="true">
                     @if (_items != null && _items.Any())
                     {
-                        <MudList @ref="_list" T="T" Clickable="true" MultiSelection="@MultiSelection" Dense="@Dense"
-                            @bind-SelectedValue="SelectedValue" @bind-SelectedItem="SelectedListItem" @bind-SelectedValues="SelectedValues">
+                        <CascadingValue Value="@this" IsFixed="true">
+                            <MudList @ref="_list" T="T" Clickable="true" MultiSelection="@MultiSelection" Dense="@Dense" SelectValueOnTab="@SelectValueOnTab"
+                                 @bind-SelectedValue="Value" @bind-SelectedValues="SelectedValues" @bind-SelectedItem="SelectedListItem">
 
-                            @for (var index = 0; index < _items.Length; index++)
-                            {
-                                var item = _items[index];
-                                bool is_selected = index == _selectedListItemIndex;
-                                bool is_disabled = !_enabledItemIndices.Contains(index);
-                                <MudListItem T="T" Value="item" Disabled="@(is_disabled)" OnClick="@(() => SelectOption(item))">
+                                @for (var index = 0; index < _items.Length; index++)
+                                {
+                                    var item = _items[index];
+                                    bool is_selected = index == _selectedListItemIndex;
+                                    bool is_disabled = !_enabledItemIndices.Contains(index);
+                                    <MudListItem T="T" Value="item" Disabled="@(is_disabled)" OnClick="@(() => SelectOption(item))">
 
-                                    @if (ItemTemplate == null)
-                                    {
-                                        @GetItemString(item)
-                                    }
-                                    else if (is_disabled && ItemDisabledTemplate != null)
-                                    {
-                                        @ItemDisabledTemplate(item)
-                                    }
-                                    else if (is_selected)
-                                    {
-                                        @if (ItemSelectedTemplate == null)
-                                            @ItemTemplate(item)
+                                        @if (ItemTemplate == null)
+                                        {
+                                            @GetItemString(item)
+                                        }
+                                        else if (is_disabled && ItemDisabledTemplate != null)
+                                        {
+                                            @ItemDisabledTemplate(item)
+                                        }
+                                        else if (is_selected)
+                                        {
+                                            @if (ItemSelectedTemplate == null)
+                                                @ItemTemplate(item)
+                                            else
+                                                @ItemSelectedTemplate(item)
+
+
+                                        }
                                         else
-                                            @ItemSelectedTemplate(item)
-
-                                    }
-                                    else
-                                    {
-                                        @ItemTemplate(item)
-                                    }
-                                </MudListItem>
-                            }
-                            @if (MoreItemsTemplate != null && _itemsReturned > MaxItems)
-                            {
-                                <div class="pa-1">
-                                    @MoreItemsTemplate
-                                </div>
-                            }
-                        </MudList>
+                                        {
+                                            @ItemTemplate(item)
+                                        }
+                                    </MudListItem>
+                                }
+                                @if (MoreItemsTemplate != null && _itemsReturned > MaxItems)
+                                {
+                                    <div class="pa-1">
+                                        @MoreItemsTemplate
+                                    </div>
+                                }
+                            </MudList>
+                        </CascadingValue>
                     }
                     else if (NoItemsTemplate != null)
                     {

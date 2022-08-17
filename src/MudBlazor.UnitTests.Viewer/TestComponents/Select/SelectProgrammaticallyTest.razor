@@ -1,0 +1,50 @@
+﻿@namespace MudBlazor.UnitTests.TestComponents
+
+<MudGrid>
+    <MudItem xs="12" sm="4">
+        <MudCheckBox @bind-Checked="_clickable" Color="Color.Primary" Label="Clickable" />
+        @*<MudCheckBox @bind-Checked="_multiSelection" Color="Color.Primary" Label="MultiSelection" />*@
+        <MudCheckBox @bind-Checked="_selectAll" Color="Color.Primary" Label="Select All" />
+        <MudDivider />
+        <MudTextField @bind-Value="_selectedValue" Clearable="true" />
+@*        <MudSelect T="int?" @bind-SelectedValues="_selectedValues" MultiSelection="true" Variant="Variant.Filled" Label="Selected Values">
+            @foreach (var item in _list.GetItems)
+            {
+                <MudSelectItem Value="item.Value">@item.Text</MudSelectItem>
+            }
+        </MudSelect>*@
+        <MudButton OnClick="@(() => _selectedValue = 2)">Select 2</MudButton>
+        <MudButton OnClick="@(() => _selectedValues = new HashSet<int?>() { 2, 4 })">Select 2 and 4</MudButton>
+        <MudButton OnClick="@(() => _selectedItem = _thirdItem)">Select 3rd Item</MudButton>
+        <MudButton OnClick="@(() => _selectedItems = new HashSet<MudSelectItem<int?>>() { _thirdItem, _fifthItem })">Select 3rd and 5th Items</MudButton>
+        <MudButton OnClick="@(() => _select.Clear())">Clear</MudButton>
+        <MudText Class="mt-2">Results:</MudText>
+        <MudText Class="ma-4">Selected Value: @_selectedValue</MudText>
+        <MudText Class="ma-4">Selected Values: @string.Join(", ", _selectedValues ?? new List<int?>())</MudText>
+        <MudText Class="ma-4">Selected Item Text: @_selectedItem?.Text</MudText>
+        <MudText Class="ma-4">Selected Items Texts: @string.Join(", ", _selectedItems == null ? new List<string>() : _selectedItems.Select(x => x.Text))</MudText>
+    </MudItem>
+
+    <MudItem xs="12" sm="8" Class="d-flex align-start justify-center">
+        <MudSelect @ref="_select" T="int?" MultiSelection="true" SelectAll="_selectAll" @bind-Value="_selectedValue" @bind-SelectedItem="_selectedItem" @bind-SelectedValues="_selectedValues" @bind-SelectedItems="_selectedItems">
+            <MudSelectItem T="int?" Text="Sparkling Water (1)" Value="1" />
+            <MudSelectItem T="int?" Text="Still Water (2)" Value="2" />
+            <MudSelectItem @ref="_thirdItem" T="int?" Text="Earl Grey (3)" Value="3" />
+            <MudSelectItem T="int?" Text="Matcha (4)" Value="4" />
+            <MudSelectItem @ref="_fifthItem" T="int?" Text="Pu'er (5)" Value="5" />
+        </MudSelect>
+    </MudItem>
+</MudGrid>
+
+@code {
+    bool _clickable = true;
+    bool _selectAll = false;
+
+    MudSelect<int?> _select;
+    int? _selectedValue = 1;
+    IEnumerable<int?> _selectedValues = new List<int?>();
+    MudSelectItem<int?> _selectedItem;
+    MudSelectItem<int?> _thirdItem;
+    MudSelectItem<int?> _fifthItem;
+    IEnumerable<MudSelectItem<int?>> _selectedItems = new List<MudSelectItem<int?>>();
+}

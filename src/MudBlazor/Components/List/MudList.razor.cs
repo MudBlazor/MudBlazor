@@ -40,6 +40,7 @@ namespace MudBlazor
             .Build();
 
         [CascadingParameter] protected MudSelect<T> MudSelect { get; set; }
+        [CascadingParameter] protected MudAutocomplete<T> MudAutocomplete { get; set; }
         [CascadingParameter] protected MudList<T> ParentList { get; set; }
 
         /// <summary>
@@ -623,22 +624,32 @@ namespace MudBlazor
                     },
                 });
 
-                if (MultiSelection == false && SelectedValue != null)
+                if (MudSelect == null && MudAutocomplete == null)
                 {
-                    HandleCentralValueCommander(nameof(SelectedValue));
-                }
-                else if (MultiSelection == true && SelectedValues != null)
-                {
-                    HandleCentralValueCommander(nameof(SelectedValues));
+                    if (MultiSelection == false && SelectedValue != null)
+                    {
+                        HandleCentralValueCommander(nameof(SelectedValue));
+                    }
+                    else if (MultiSelection == true && SelectedValues != null)
+                    {
+                        HandleCentralValueCommander(nameof(SelectedValues));
+                    }
                 }
 
-                if (MudSelect != null)
+                if (MudSelect != null || MudAutocomplete != null)
                 {
                     if (MultiSelection)
                     {
                         UpdateSelectAllState();
                         UpdateSelectedStyles();
-                        SelectedValues = MudSelect.SelectedValues;
+                        if (MudSelect != null)
+                        {
+                            SelectedValues = MudSelect.SelectedValues;
+                        }
+                        else if (MudAutocomplete != null)
+                        {
+                            SelectedValues = MudAutocomplete.SelectedValues;
+                        }
                         HandleCentralValueCommander("SelectedValues");
                     }
                 }
@@ -654,6 +665,10 @@ namespace MudBlazor
             }
             _centralCommanderResultRendered = true;
             Console.WriteLine("List Rendered");
+            //if (MudAutocomplete != null)
+            //{
+            //    UpdateSelectedStyles();
+            //}
             await base.OnAfterRenderAsync(firstRender);
         }
 

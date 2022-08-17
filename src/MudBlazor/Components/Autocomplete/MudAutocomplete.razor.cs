@@ -402,10 +402,14 @@ namespace MudBlazor
                 {
                     return;
                 }
-                if (SelectedValues.Count() == set.Count() && _selectedValues.All(x => set.Contains(x)))
+                if (_selectedValues != null && value != null && _selectedValues.SetEquals(value))
+                {
                     return;
-                _selectedValues = value.ToHashSet();
-                if (!MultiSelection)
+                }
+                //if (SelectedValues.Count() == set.Count() && _selectedValues.All(x => set.Contains(x)))
+                //    return;
+                _selectedValues = value == null ? null : value.ToHashSet();
+                if (MultiSelection == false && _selectedValues != null)
                     SetValueAsync(_selectedValues.FirstOrDefault()).AndForget();
                 //else
                 //{
@@ -516,16 +520,19 @@ namespace MudBlazor
         public async Task SelectOption(T value)
         {
             await SetValueAsync(value);
-            if (_items != null)
-                _selectedListItemIndex = Array.IndexOf(_items, value);
+            //if (_items != null)
+            //    _selectedListItemIndex = Array.IndexOf(_items, value);
             var optionText = GetItemString(value);
             if (!_isCleared)
                 await SetTextAsync(optionText, false);
             _timer?.Dispose();
-            IsOpen = false;
+            if (MultiSelection == false)
+            {
+                IsOpen = false;
+            }
             BeginValidate();
             if (!_isCleared)
-                _elementReference?.SetText(optionText);
+                await _elementReference?.SetText(optionText);
             _elementReference?.FocusAsync().AndForget();
             StateHasChanged();
         }
@@ -534,7 +541,7 @@ namespace MudBlazor
         /// This async method needs to return a task and be awaited in order for
         /// unit tests that trigger this method to work correctly.
         /// </remarks>
-        private async Task OnSearchAsync()
+        internal async Task OnSearchAsync()
         {
             if (MinCharacters > 0 && (string.IsNullOrWhiteSpace(Text) || Text.Length < MinCharacters))
             {
@@ -571,6 +578,12 @@ namespace MudBlazor
                 return;
             }
 
+            //if (_list != null)
+            //{
+            //    _list.UpdateLastActivatedItem(Value);
+            //    _list.UpdateSelectedStyles();
+            //}
+
             StateHasChanged();
         }
 
@@ -586,9 +599,43 @@ namespace MudBlazor
         {
             if ((Disabled || ReadOnly) && !IsOpen)
                 return;
-            await ChangeMenu(!IsOpen);
+            if (IsOpen)
+                await CloseMenu();
+            else
+                await OpenMenu();
         }
 
+        public async Task OpenMenu()
+        {
+            if (SelectOnClick)
+                await _elementReference.SelectAsync();
+            await OnSearchAsync();
+            await Task.Delay(1);
+
+            //disable escape propagation: if selectmenu is open, only the select popover should close and underlying components should not handle escape key
+            await _keyInterceptor.UpdateKey(new() { Key = "Escape", StopDown = "Key+none" });
+
+            //await OnOpen.InvokeAsync();
+        }
+
+        public async Task CloseMenu()
+        {
+            if (ResetValueOnEmptyText && string.IsNullOrEmpty(Text))
+            {
+                await SetValueAsync(default(T));
+            }
+            _timer?.Dispose();
+            await CoerceTextToValue();
+            IsOpen = false;
+            StateHasChanged();
+
+            //enable escape propagation: the select popover was closed, now underlying components are allowed to handle escape key
+            await _keyInterceptor.UpdateKey(new() { Key = "Escape", StopDown = "none" });
+
+            //await OnClose.InvokeAsync();
+        }
+
+        [Obsolete]
         private async Task ChangeMenu(bool open)
         {
             if (open)
@@ -596,15 +643,15 @@ namespace MudBlazor
                 if (SelectOnClick)
                     await _elementReference.SelectAsync();
                 await OnSearchAsync();
-                await Task.Delay(1);
-                if (Value != null)
-                {
-                    _list.UpdateLastActivatedItem(Value);
-                }
-                if (_list != null && _list._lastActivatedItem != null && !(MultiSelection && _list._allSelected == true))
-                {
-                    await _list.ScrollToMiddleAsync(_list._lastActivatedItem);
-                }
+                //await Task.Delay(1);
+                //if (Value != null)
+                //{
+                //    _list.UpdateLastActivatedItem(Value);
+                //}
+                //if (_list != null && _list._lastActivatedItem != null && !(MultiSelection && _list._allSelected == true))
+                //{
+                //    await _list.ScrollToMiddleAsync(_list._lastActivatedItem);
+                //}
             }
             else
             {
@@ -661,6 +708,7 @@ namespace MudBlazor
             if (_list != null && _isOpen == true && args.Key.Length != 1)
             {
                 await _list.HandleKeyDown(args);
+                //_list.UpdateSelectedStyles();
             }
 
             switch (args.Key)
@@ -668,8 +716,8 @@ namespace MudBlazor
                 case "Tab":
                     if (!IsOpen)
                         return;
-                    if (SelectValueOnTab)
-                        await OnEnterKey();
+                    //if (SelectValueOnTab)
+                    //    await OnEnterKey();
                     else
                         IsOpen = false;
                     break;
@@ -687,7 +735,7 @@ namespace MudBlazor
                     break;
 
                 case "Escape":
-                    await ChangeMenu(open: false);
+                    await CloseMenu();
                     break;
                 case "Backspace":
                     if (args.CtrlKey == true && args.ShiftKey == true)
@@ -709,7 +757,7 @@ namespace MudBlazor
                 case "ArrowUp":
                     if (args.AltKey == true)
                     {
-                        await ChangeMenu(open: false);
+                        await OpenMenu();
                     }
                     else if (!IsOpen)
                     {
@@ -742,10 +790,10 @@ namespace MudBlazor
             return Task.CompletedTask;
         }
 
-        private Task OnInputBlurred(FocusEventArgs args)
+        private async Task OnInputBlurred(FocusEventArgs args)
         {
-            OnBlur.InvokeAsync(args);
-            return Task.CompletedTask;
+            await OnBlur.InvokeAsync(args);
+            //return Task.CompletedTask;
             // we should not validate on blur in autocomplete, because the user needs to click out of the input to select a value,
             // resulting in a premature validation. thus, don't call base
             //base.OnBlurred(args);

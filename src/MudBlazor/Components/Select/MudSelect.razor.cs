@@ -417,7 +417,7 @@ namespace MudBlazor
         //    }
         //}
 
-        private HashSet<T> _selectedValues = new HashSet<T>();
+        private HashSet<T> _selectedValues;
         /// <summary>
         /// Set of selected values. If MultiSelection is false it will only ever contain a single value. This property is two-way bindable.
         /// </summary>
