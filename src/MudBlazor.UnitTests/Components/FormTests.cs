@@ -1092,20 +1092,23 @@ namespace MudBlazor.UnitTests.Components
             var form = comp.FindComponent<MudForm>().Instance;
             var datePickerComp = comp.FindComponent<MudDatePicker>();
             var datePicker = datePickerComp.Instance;
+            // create test value and it's localized string representation
+            var testDate = new DateTime(2020, 05, 24);
+            var testDateString = testDate.ToShortDateString();  // locale independent test, will work e.g. in germany too
 
             // input a date
-            datePickerComp.Find("input").Change("05/24/2020");
-            datePicker.Date.Should().Be(Convert.ToDateTime("05/24/2020"));
-            datePicker.Text.Should().Be("05/24/2020");
+            datePickerComp.Find("input").Change(testDateString);
+            datePicker.Date.Should().Be(testDate);
+            datePicker.Text.Should().Be(testDateString);
             // call reset directly
             await comp.InvokeAsync(() => form.Reset());
             datePicker.Date.Should().BeNull();
             datePicker.Text.Should().BeNullOrEmpty();
             
             // input a date
-            datePickerComp.Find("input").Change("05/24/2020");
-            datePicker.Date.Should().Be(Convert.ToDateTime("05/24/2020"));
-            datePicker.Text.Should().Be("05/24/2020");
+            datePickerComp.Find("input").Change(testDateString);
+            datePicker.Date.Should().Be(testDate);
+            datePicker.Text.Should().Be(testDateString);
             // hit reset button
             comp.Find("button.reset").Click();
             datePicker.Date.Should().BeNull();
@@ -1123,9 +1126,12 @@ namespace MudBlazor.UnitTests.Components
             var datePickerComp = comp.FindComponent<MudDatePicker>();
             var textFieldComp = comp.FindComponents<MudTextField<string>>()[1]; //the picker includes a MudTextField, so the MudTextField we want is the second in the DOM
             var numericFieldComp = comp.FindComponent<MudNumericField<int?>>();
+            // create test value and it's localized string representation
+            var testDate = new DateTime(2022, 07, 29);
+            var testDateString = testDate.ToShortDateString();  // locale independent test, will work e.g. in germany too
 
             form.IsValid.Should().Be(false);
-            datePickerComp.Find("input").Change("07/29/2022");
+            datePickerComp.Find("input").Change(testDateString);
             form.IsValid.Should().Be(false);
             textFieldComp.Find("input").Input("Some value");
             form.IsValid.Should().Be(false);
