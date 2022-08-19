@@ -403,7 +403,7 @@ namespace MudBlazor
         {
             if (firstRender == true)
             {
-                await JsRuntime.InvokeVoidAsync("mudDragAndDrop.initDropZone", _id.ToString());
+                await JsRuntime.InvokeVoidAsyncWithErrorHandling("mudDragAndDrop.initDropZone", _id.ToString());
             }
 
             await base.OnAfterRenderAsync(firstRender);

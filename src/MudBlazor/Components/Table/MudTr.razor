@@ -3,49 +3,59 @@
 @inherits MudComponentBase
 
 <tr class="@Classname" @onclick="@OnRowClicked" style="@Style" @attributes="@UserAttributes">
-    @if (IsExpandable || IsCheckable)
-    {
-        <MudElement HtmlTag="@(IsHeader ? "Th" : "Td")" Class="mud-table-cell">
-            <div class="d-flex" style="@ActionsStylename">
-                @if (IsCheckable)
-                {
-                    <MudCheckBox @bind-Checked="IsChecked" StopClickPropagation="true" Class="mud-table-cell-checkbox"></MudCheckBox>
-                }
-            </div>
-        </MudElement>
-    }
-    @ChildContent
-    @if (IsEditable)
-    {
-        if (IsHeader)
-        {
-            <MudTh/>
-        }
-        else if (IsFooter)
-        {
-            <MudTd/>
-        }
-        else
-        {
-            @* Add datalabel as a placeholder to avoid jumps on small viewports *@
-            <MudTd DataLabel="&nbsp;">
-                @if (object.ReferenceEquals(Context?.Table._editingItem, Item) && (!Context?.Table.ReadOnly ?? false))
-                {
-                    <div style="display: flex;">
-                        <MudTooltip Text="@Context.Table.CommitEditTooltip">
-                            <MudIconButton Class="pa-0" Icon="@Context.Table.CommitEditIcon" OnClick="FinishEdit" Size="@Size.Small" Disabled="@(!(Context?.Table.Validator?.IsValid ?? false))"/>
-                        </MudTooltip>
-                        @if (Context.Table.CanCancelEdit)
-                        {
-                            <MudTooltip Text="@Context.Table.CancelEditTooltip">
-                                <MudIconButton Class="pa-0 ml-4" Icon="@Context.Table.CancelEditIcon" OnClick="CancelEdit" Size="@Size.Small"/>
-                            </MudTooltip>
-                        }
-                    </div>
-                }
-            </MudTd>
-        }
-    }
+	@if (IsEditable && Context?.Table.ApplyButtonPosition.DisplayApplyButtonAtStart() == true)
+	{
+		@* Add datalabel as a placeholder to avoid jumps on small viewports *@
+		<MudTd DataLabel="&nbsp;">
+			@if (object.ReferenceEquals(Context?.Table._editingItem, Item) && (!Context?.Table.ReadOnly ?? false))
+			{
+				<div style="display: flex;">
+					<MudTooltip Text="@Context.Table.CommitEditTooltip">
+						<MudIconButton Class="pa-0" Icon="@Context.Table.CommitEditIcon" OnClick="FinishEdit" Size="@Size.Small" Disabled="@(!(Context?.Table.Validator?.IsValid ?? false))" />
+					</MudTooltip>
+					@if (Context.Table.CanCancelEdit)
+					{
+						<MudTooltip Text="@Context.Table.CancelEditTooltip">
+							<MudIconButton Class="pa-0 ml-4" Icon="@Context.Table.CancelEditIcon" OnClick="CancelEdit" Size="@Size.Small" />
+						</MudTooltip>
+					}
+				</div>
+			}
+		</MudTd>
+	}
+
+	@if (IsExpandable || IsCheckable)
+	{
+		<MudElement HtmlTag="@("Td")" Class="mud-table-cell">
+			<div class="d-flex" style="@ActionsStylename">
+				@if (IsCheckable)
+				{
+					<MudCheckBox @bind-Checked="IsChecked" StopClickPropagation="true" Class="mud-table-cell-checkbox"></MudCheckBox>
+				}
+			</div>
+		</MudElement>
+	}
+	@ChildContent
+	@if (IsEditable && Context?.Table.ApplyButtonPosition.DisplayApplyButtonAtEnd() == true)
+	{
+		@* Add datalabel as a placeholder to avoid jumps on small viewports *@
+		<MudTd DataLabel="&nbsp;">
+			@if (object.ReferenceEquals(Context?.Table._editingItem, Item) && (!Context?.Table.ReadOnly ?? false))
+			{
+				<div style="display: flex;">
+					<MudTooltip Text="@Context.Table.CommitEditTooltip">
+						<MudIconButton Class="pa-0" Icon="@Context.Table.CommitEditIcon" OnClick="FinishEdit" Size="@Size.Small" Disabled="@(!(Context?.Table.Validator?.IsValid ?? false))" />
+					</MudTooltip>
+					@if (Context.Table.CanCancelEdit)
+					{
+						<MudTooltip Text="@Context.Table.CancelEditTooltip">
+							<MudIconButton Class="pa-0 ml-4" Icon="@Context.Table.CancelEditIcon" OnClick="CancelEdit" Size="@Size.Small" />
+						</MudTooltip>
+					}
+				</div>
+			}
+		</MudTd>
+	}
 </tr>
 
 

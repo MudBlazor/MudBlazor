@@ -179,18 +179,23 @@ namespace MudBlazor
                         new KeyOptions { Key = "Delete", PreventDown = "key+none" },
                     },
                 });
-                _keyInterceptor.KeyDown += e => HandleKeyDown(e).AndForget();
+                _keyInterceptor.KeyDown += HandleKeyDownInternally;
             }
             if (_isFocused && Mask.Selection == null)
                 SetCaretPosition(Mask.CaretPos, _selection, render: false);
             await base.OnAfterRenderAsync(firstRender);
         }
 
+        private async void HandleKeyDownInternally(KeyboardEventArgs args)
+        {
+            await HandleKeyDown(args);
+        }
+
         protected internal async Task HandleKeyDown(KeyboardEventArgs e)
         {
             try
             {
-                if ((e.CtrlKey && e.Key != "Backspace") || e.AltKey)
+                if ((e.CtrlKey && e.Key != "Backspace") || e.AltKey || ReadOnly)
                         return;
                 // Console.WriteLine($"HandleKeyDown: '{e.Key}'");
                 switch (e.Key)
@@ -337,7 +342,7 @@ namespace MudBlazor
         internal async void OnPaste(string text)
         {
             //Console.WriteLine($"Paste: {text}");
-            if (text == null)
+            if (text == null || ReadOnly)
                 return;
             Mask.Insert(text);
             await Update();
@@ -419,6 +424,9 @@ namespace MudBlazor
 
         private async void OnCut(ClipboardEventArgs obj)
         {
+            if (ReadOnly)
+                return;
+            
             if (_selection!=null)
                 Mask.Delete();
             await Update();
@@ -432,6 +440,13 @@ namespace MudBlazor
             if (disposing == true)
             {
                 _jsEvent?.Dispose();
+
+                if (_keyInterceptor != null)
+                {
+                    _keyInterceptor.KeyDown -= HandleKeyDownInternally;
+                    _keyInterceptor.Dispose();
+                }
+
                 _keyInterceptor?.Dispose();
             }
         }

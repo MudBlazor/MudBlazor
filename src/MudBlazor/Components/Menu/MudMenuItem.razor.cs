@@ -29,7 +29,26 @@ namespace MudBlazor
         /// </summary>
         [Parameter] 
         [Category(CategoryTypes.Menu.ClickAction)] 
-        public string Href { get; set; }
+        public string Href { get; set; }        
+        
+        /// <summary>
+        /// Icon to be used for this menu entry
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.List.Behavior)]
+        public string Icon { get; set; }
+        /// <summary>
+        /// The color of the icon. It supports the theme colors.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.List.Appearance)]
+        public Color IconColor { get; set; } = Color.Inherit;
+        /// <summary>
+        /// The Icon Size.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.List.Appearance)]
+        public Size IconSize { get; set; } = Size.Medium;
 
         [Parameter] [Category(CategoryTypes.Menu.ClickAction)] public string Target { get; set; }
         [Parameter] [Category(CategoryTypes.Menu.ClickAction)] public bool ForceLoad { get; set; }

@@ -32,6 +32,6 @@ namespace MudBlazor
 
         void InjectDialog(object inst);
 
-        Task<T> GetReturnValueAsync<T>();
+        Task<T> GetReturnValueAsync<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] T>();
     }
 }

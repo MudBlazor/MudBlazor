@@ -31,8 +31,19 @@ namespace MudBlazor
     {
         private MudTr editedRow;
 
-        public HashSet<T> Selection { get; set; } = new HashSet<T>();
+        public IEqualityComparer<T> Comparer //when the comparer value is setup, update the collections with the new comparer
+        {
+            get => _comparer; 
+            set
+            {
+                _comparer = value;
+                Selection = new HashSet<T>(Selection, _comparer);
+                Rows = new Dictionary<T, MudTr>(Rows, _comparer);
+            }
+        }
+        private IEqualityComparer<T> _comparer;
 
+        public HashSet<T> Selection { get; set; } = new HashSet<T>();
         public Dictionary<T, MudTr> Rows { get; set; } = new Dictionary<T, MudTr>();
         public List<MudTableGroupRow<T>> GroupRows { get; set; } = new List<MudTableGroupRow<T>>();
 
@@ -98,7 +109,7 @@ namespace MudBlazor
             var t = item.As<T>();
             if (t is null)
                 return;
-            if (Rows[t] == row) // Verify the row we wish to remove is the row stored for the key
+            if (Rows[t] == row)
                 Rows.Remove(t);
         }
 

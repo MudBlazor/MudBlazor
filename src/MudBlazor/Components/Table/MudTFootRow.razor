@@ -3,7 +3,11 @@
 @inherits MudComponentBase
 
 <tr class="@Classname" @onclick="@OnRowClick" style="@Style" @attributes="@UserAttributes">
-    @if (IsExpandable || ((Context?.Table.MultiSelection ?? false) && !IgnoreCheckbox))
+	@if (Context.DisplayApplyButtonAtStart(IgnoreEditable))
+	{
+		<MudTh />
+	}
+	@if (IsExpandable || ((Context?.Table.MultiSelection ?? false) && !IgnoreCheckbox))
     {
         <MudTd>
             @if (IsExpandable)
@@ -17,10 +21,10 @@
         </MudTd>
     }
     @ChildContent
-    @if ((Context?.Table.IsEditable ?? false) && !IgnoreEditable)
-    {
-        <MudTd/>
-    }
+	@if (Context.DisplayApplyButtonAtEnd(IgnoreEditable))
+	{
+		<MudTh />
+	}
 </tr>
 
 

@@ -11,7 +11,7 @@ namespace MudBlazor
 {
     public partial class MudPicker<T> : MudFormComponent<T, string>
     {
-        private IKeyInterceptor _keyInterceptor;
+        protected IKeyInterceptor _keyInterceptor;
 
         public MudPicker() : base(new Converter<T, string>()) { }
         protected MudPicker(Converter<T, string> converter) : base(converter) { }
@@ -162,6 +162,13 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
         public string Label { get; set; }
+
+        /// <summary>
+        /// Show clear button.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Behavior)]
+        public bool Clearable { get; set; } = false;
 
         /// <summary>
         /// If true, the picker will be disabled.
@@ -381,9 +388,17 @@ namespace MudBlazor
             }
         }
 
+        protected override void ResetValue()
+        {
+            _inputReference?.Reset();
+            base.ResetValue();
+        }
+
         protected internal MudTextField<string> _inputReference;
 
         public virtual ValueTask FocusAsync() => _inputReference?.FocusAsync() ?? ValueTask.CompletedTask;
+
+        public virtual ValueTask BlurAsync() => _inputReference?.BlurAsync() ?? ValueTask.CompletedTask;
 
         public virtual ValueTask SelectAsync() => _inputReference?.SelectAsync() ?? ValueTask.CompletedTask;
 
@@ -420,9 +435,9 @@ namespace MudBlazor
             }
         }
 
-        protected override async Task OnAfterRenderAsync(bool firstRender)
+        private async Task EnsureKeyInterceptor()
         {
-            if (firstRender)
+            if (_keyInterceptor == null)
             {
                 _keyInterceptor = _keyInterceptorFactory.Create();
 
@@ -441,6 +456,14 @@ namespace MudBlazor
                     },
                 });
                 _keyInterceptor.KeyDown += HandleKeyDown;
+            }
+        }
+
+        protected override async Task OnAfterRenderAsync(bool firstRender)
+        {
+            if (firstRender == true)
+            {
+                await EnsureKeyInterceptor();
             }
 
             await base.OnAfterRenderAsync(firstRender);
@@ -472,14 +495,16 @@ namespace MudBlazor
                 await _pickerInlineRef.MudChangeCssAsync(PickerInlineClass);
             }
 
+            await EnsureKeyInterceptor();
             await _keyInterceptor.UpdateKey(new() { Key = "Escape", StopDown = "key+none" });
         }
 
-        protected virtual void OnClosed()
+        protected virtual async void OnClosed()
         {
             OnPickerClosed();
 
-            _keyInterceptor?.UpdateKey(new() { Key = "Escape", StopDown = "none" });
+            await EnsureKeyInterceptor();
+            await _keyInterceptor.UpdateKey(new() { Key = "Escape", StopDown = "none" });
         }
 
         protected virtual void OnPickerOpened()
@@ -520,7 +545,12 @@ namespace MudBlazor
 
             if (disposing == true)
             {
-                _keyInterceptor?.Dispose();
+                if (_keyInterceptor != null)
+                {
+                    _keyInterceptor.KeyDown -= HandleKeyDown;
+                    _keyInterceptor.Dispose();
+                }
+
             }
         }
 
