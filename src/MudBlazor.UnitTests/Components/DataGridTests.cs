@@ -2612,5 +2612,17 @@ namespace MudBlazor.UnitTests.Components
             cell.cellContext.Actions.SetSelectedItem(true);
             cell.cellContext.IsSelected.Should().Be(true);
         }
+
+        [Test]
+        public async Task DataGridAggregationTest()
+        {
+            var comp = Context.RenderComponent<DataGridAggregationTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridAggregationTest.Model>>();
+
+            //Console.WriteLine(dataGrid.Markup);
+
+            dataGrid.FindAll("td.footer-cell")[1].TrimmedText().Should().Be("Average age is 56");
+            dataGrid.FindAll("tfoot td.footer-cell")[1].TrimmedText().Should().Be("Average age is 43");
+        }
     }
 }
