@@ -24,7 +24,7 @@ namespace MudBlazor
         protected string AutocompleteClassname =>
             new CssBuilder("mud-select")
             .AddClass("autocomplete")
-            .AddClass("mud-autocomplete--with-progress", ShowProgressIndicator && IsLoading)
+            .AddClass("mud-autocomplete--with-progress", ShowProgressIndicator && _isLoading)
             .Build();
 
         protected string CircularProgressClassname =>
@@ -144,7 +144,7 @@ namespace MudBlazor
         [Category(CategoryTypes.FormComponent.Appearance)]
         public Color ProgressIndicatorColor { get; set; } = Color.Default;
 
-        private bool IsLoading { get; set; }
+        private bool _isLoading = false;
 
         /// <summary>
         /// Func that returns a list of items matching the typed text. Provides a cancellation token that
@@ -155,7 +155,7 @@ namespace MudBlazor
         [Category(CategoryTypes.FormComponent.ListBehavior)]
         public Func<string, CancellationToken, Task<IEnumerable<T>>> SearchFuncWithCancel { get; set; }
 
-        private CancellationTokenSource CancellationTokenSrc { get; set; }
+        private CancellationTokenSource _cancellationTokenSrc;
 
         /// <summary>
         /// The SearchFunc returns a list of items matching the typed text
@@ -329,7 +329,7 @@ namespace MudBlazor
         {
             Adornment = Adornment.End;
             IconSize = Size.Medium;
-            CancellationTokenSrc = new CancellationTokenSource();
+            _cancellationTokenSrc = new CancellationTokenSource();
         }
 
         public async Task SelectOption(T value)
@@ -420,8 +420,8 @@ namespace MudBlazor
 
         private void CancelToken()
         {
-            CancellationTokenSrc.Cancel();
-            CancellationTokenSrc = new CancellationTokenSource();
+            _cancellationTokenSrc.Cancel();
+            _cancellationTokenSrc = new CancellationTokenSource();
         }
 
         private int _itemsReturned; //the number of items returned by the search function
@@ -444,7 +444,7 @@ namespace MudBlazor
 
             try
             {
-                IsLoading = true;
+                _isLoading = true;
 
                 if (ProgressIndicatorInPopoverTemplate != null)
                 {
@@ -458,7 +458,7 @@ namespace MudBlazor
                 
                 if (SearchFuncWithCancel != null)
                 {
-                    searched_items = (await SearchFuncWithCancel(Text, CancellationTokenSrc.Token)) ?? Array.Empty<T>();
+                    searched_items = (await SearchFuncWithCancel(Text, _cancellationTokenSrc.Token)) ?? Array.Empty<T>();
                 }
                 else
                 {
@@ -471,7 +471,7 @@ namespace MudBlazor
             }
             finally
             {
-                IsLoading = false;
+                _isLoading = false;
             }
 
             _itemsReturned = searched_items.Count();
@@ -708,8 +708,8 @@ namespace MudBlazor
         protected override void Dispose(bool disposing)
         {
             _timer?.Dispose();
-            CancellationTokenSrc.Cancel();
-            CancellationTokenSrc.Dispose();
+            _cancellationTokenSrc.Cancel();
+            _cancellationTokenSrc.Dispose();
             base.Dispose(disposing);
         }
 
