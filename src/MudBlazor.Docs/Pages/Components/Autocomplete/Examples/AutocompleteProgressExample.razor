@@ -2,10 +2,10 @@
 
 <MudGrid>
     <MudItem xs="12" sm="6" md="4">
-        <MudAutocomplete T="string" Label="US States" @bind-Value="value1" SearchFunc="@Search1" Variant="Variant.Outlined" ShowProgressIndicator="true" ProgressIndicatorColor="Color.Primary" />
+        <MudAutocomplete T="string" Label="US States" @bind-Value="value1" SearchFunc="@Search1" Variant="Variant.Outlined" ShowProgressIndicator="true" ProgressIndicatorColor="SelectedColor" />
     </MudItem>
     <MudItem xs="12" sm="6" md="4">
-        <MudAutocomplete T="string" Label="US States" @bind-Value="value3" SearchFunc="@Search1" Variant="Variant.Outlined" ProgressIndicatorColor="Color.Primary">
+        <MudAutocomplete T="string" Label="US States" @bind-Value="value3" SearchFunc="@Search1" Variant="Variant.Outlined" ProgressIndicatorColor="SelectedColor">
             <ProgressIndicatorInPopoverTemplate>
                 <MudList Clickable="false">
                     <MudListItem>
@@ -18,13 +18,25 @@
     <MudItem xs="12" sm="6" md="4">
         <MudAutocomplete T="string" Label="US States" @bind-Value="value2" SearchFunc="@Search1" ShowProgressIndicator="true">
             <ProgressIndicatorTemplate>
-                <MudProgressLinear Size="Size.Small" Indeterminate="true" />
+                <MudProgressLinear Size="Size.Small" Indeterminate="true" Color="SelectedColor" />
             </ProgressIndicatorTemplate>
         </MudAutocomplete>
+    </MudItem>
+    <MudItem md="4">
+        <MudText Typo="Typo.h6" GutterBottom="true">Progress options</MudText>
+        <MudSelect T="Color" Label="Color" Margin="Margin.Dense" Dense="true" Value="@SelectedColor" ValueChanged="OnColorSelected">
+            <MudSelectItem T="Color" Value="@Color.Default">Default</MudSelectItem>
+            <MudSelectItem T="Color" Value="@Color.Info">Info</MudSelectItem>
+            <MudSelectItem T="Color" Value="@Color.Success">Success</MudSelectItem>
+            <MudSelectItem T="Color" Value="@Color.Warning">Warning</MudSelectItem>
+            <MudSelectItem T="Color" Value="@Color.Error">Error</MudSelectItem>
+        </MudSelect>
     </MudItem>
 </MudGrid>
 
 @code {
+
+    public Color SelectedColor { get; set; } = Color.Default;
 
     private string value1;
     private string value2;
@@ -57,5 +69,10 @@
         if (string.IsNullOrEmpty(value))
             return states;
         return states.Where(x => x.Contains(value, StringComparison.InvariantCultureIgnoreCase));
+    }
+
+    public void OnColorSelected(Color value)
+    {
+        SelectedColor = value;
     }
 }
