@@ -824,30 +824,19 @@ namespace MudBlazor
                 ParentList?.SetSelectedValue(item);
                 return;
             }
-            //create a list of all MudListItems to use for selecting the right item
-            //var items = CollectAllMudListItems(true);
-
-
-            //SelectedItem = item;
-
 
             if (!MultiSelection)
             {
-                //SelectedValues = new List<T>() { SelectedValue };
                 SelectedValue = item.Value;
             }
             else
             {
                 if (item.IsSelected)
                 {
-                    //item.SetSelected(false);
-                    //SelectedItems = SelectedItems?.Where(x => !x.Equals(item));
                     SelectedValues = SelectedValues?.Where(x => x == null ? false : !x.Equals(item.Value));
                 }
                 else
                 {
-                    //item.SetSelected(true);
-                    //SelectedItems = SelectedItems.Append(item);
                     if (SelectedValues == null)
                     {
                         SelectedValues = new HashSet<T>() { item.Value };
@@ -859,13 +848,9 @@ namespace MudBlazor
                 }
             }
 
-            //UpdateSelectedStyles();
-            //UpdateLastActivatedItem(SelectedValue);
             UpdateSelectAllState();
             _lastActivatedItem = item;
         }
-
-        //internal bool CanSelect { get; private set; }
 
         protected internal void UpdateSelectedStyles()
         {

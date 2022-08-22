@@ -270,7 +270,7 @@ namespace MudBlazor
         #endregion
 
 
-        #region Lifecycle Methods
+        #region Lifecycle Methods (& Dispose)
 
         protected override void OnInitialized()
         {
@@ -281,6 +281,18 @@ namespace MudBlazor
                 OnListParametersChanged();
                 MudList.ParametersChanged += OnListParametersChanged;
             }
+        }
+
+        public void Dispose()
+        {
+            try
+            {
+                if (MudList == null)
+                    return;
+                MudList.ParametersChanged -= OnListParametersChanged;
+                MudList.Unregister(this);
+            }
+            catch (Exception) { /*ignore*/ }
         }
 
         #endregion
@@ -385,18 +397,6 @@ namespace MudBlazor
                 _textTypo = Typo.body1;
             }
             StateHasChanged();
-        }
-
-        public void Dispose()
-        {
-            try
-            {
-                if (MudList == null)
-                    return;
-                MudList.ParametersChanged -= OnListParametersChanged;
-                MudList.Unregister(this);
-            }
-            catch (Exception) { /*ignore*/ }
         }
 
         #endregion

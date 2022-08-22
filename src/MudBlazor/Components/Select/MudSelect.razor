@@ -2,13 +2,12 @@
 @typeparam T
 @inherits MudBaseInput<T>
 
-
+@*To Be Discussed as Second ShadowItems: Needed to render directly into select to has initial values*@
 <div style="display: none">
     <CascadingValue Value="@this" IsFixed="true">
         @ChildContent
     </CascadingValue>
 </div>
-
 
 <CascadingValue Name="Standalone" Value="false" IsFixed="true">
     <div class="mud-select" id="@_elementId">
@@ -71,8 +70,8 @@
                         <MudList @ref="@_list" T="T" @bind-SelectedValue="@Value" @bind-SelectedValues="@SelectedValues" @bind-SelectedItem="@SelectedListItem" @bind-SelectedItems="@SelectedListItems"
                                  Clickable="true" Color="@Color" Dense="@Dense" ItemCollection="@ItemCollection" Virtualize="@Virtualize" DisablePadding="@DisablePopoverPadding" DisableSelectedItemStyle="@DisableSelectedItemStyle"
                                  MultiSelection="@MultiSelection" MultiSelectionComponent="@MultiSelectionComponent" MultiSelectionAlign="@MultiSelectionAlign" SelectAll="@SelectAll" SelectAllText="@SelectAllText"
-                                 CheckedIcon="@CheckedIcon" UncheckedIcon="@UncheckedIcon" IndeterminateIcon="@IndeterminateIcon" SelectValueOnTab="@SelectValueOnTab" ItemTemplate="@ItemTemplate" ItemSelectedTemplate="@ItemSelectedTemplate"
-                                 >
+                                 CheckedIcon="@CheckedIcon" UncheckedIcon="@UncheckedIcon" IndeterminateIcon="@IndeterminateIcon" SelectValueOnTab="@SelectValueOnTab"
+                                 ItemTemplate="@ItemTemplate" ItemSelectedTemplate="@ItemSelectedTemplate">
                             @ChildContent
 						</MudList>
 					</CascadingValue>
@@ -80,6 +79,7 @@
 			</InputContent>        
 		</MudInputControl>
 	</div>
+
     @*Shadow select items for IsValueInList and CanRenderValue*@
     <CascadingValue Value="@((IMudShadowSelect)this)" IsFixed="true">
         <CascadingValue Name="HideContent" Value="true">

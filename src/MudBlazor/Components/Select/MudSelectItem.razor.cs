@@ -16,6 +16,7 @@ namespace MudBlazor
             .Build();
 
         private IMudSelect _parent;
+        internal MudSelect<T> MudSelect => (MudSelect<T>)IMudSelect;
         internal string ItemId { get; } = "_"+Guid.NewGuid().ToString().Substring(0,8);
 
         /// <summary>
@@ -61,8 +62,6 @@ namespace MudBlazor
         public string Text { get; set; }
 
         private IMudShadowSelect _shadowParent;
-        private bool _isSelected;
-
         [CascadingParameter]
         internal IMudShadowSelect IMudShadowSelect
         {
@@ -80,8 +79,6 @@ namespace MudBlazor
         /// </summary>
         [CascadingParameter(Name = "HideContent")]
         internal bool HideContent { get; set; }
-
-        internal MudSelect<T> MudSelect => (MudSelect<T>)IMudSelect;
 
         private void OnUpdateSelectionStateFromOutside(IEnumerable<T> selection)
         {
@@ -113,9 +110,7 @@ namespace MudBlazor
             }
         }
 
-        /// <summary>
-        /// Selected state of the option. Only works if the parent is a mulit-select
-        /// </summary>
+        private bool _isSelected;
         internal bool IsSelected
         {
             get => _isSelected;
@@ -126,19 +121,6 @@ namespace MudBlazor
                 _isSelected = value;
             }
         }
-
-        /// <summary>
-        /// The checkbox icon reflects the multi-select option's state
-        /// </summary>
-        //protected string CheckBoxIcon
-        //{
-        //    get
-        //    {
-        //        if (!MultiSelection)
-        //            return null;
-        //        return IsSelected ? Icons.Material.Filled.CheckBox : Icons.Material.Filled.CheckBoxOutlineBlank;
-        //    }
-        //}
 
         protected string DisplayString
         {
@@ -153,9 +135,7 @@ namespace MudBlazor
 
         private void HandleOnClick()
         {
-            //if (MultiSelection)
-            //    IsSelected = !IsSelected;
-
+            // Selection works on list. We arrange only popover state and some minor arrangements on click.
             MudSelect?.SelectOption(Value).AndForget();
             InvokeAsync(StateHasChanged);
             if (MultiSelection == false)

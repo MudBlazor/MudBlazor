@@ -270,14 +270,13 @@ namespace MudBlazor.UnitTests.Components
             //insert "Calif"
             autocompletecomp.Find("input").Input("Calif");
             await Task.Delay(100);
-            var args = new KeyboardEventArgs();
-            args.Key = "Enter";
 
             //press Enter key
-            autocompletecomp.Find("input").KeyUp(args);
+            await comp.InvokeAsync(() => autocompletecomp.Find("input").KeyDown(new KeyboardEventArgs() { Key = "ArrowDown" }));
+            await comp.InvokeAsync(() => autocompletecomp.Find("input").KeyDown(new KeyboardEventArgs() { Key = "Enter" }));
 
             //The value of the input should be California
-            comp.WaitForAssertion(() => autocompletecomp.Find("input").GetAttribute("value").Should().Be("California"));
+            comp.WaitForAssertion(() => autocompletecomp.Instance.Value.Should().Be("California"));
 
             //and the autocomplete it's closed
             autocomplete.IsOpen.Should().BeFalse();
@@ -690,8 +689,8 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task Autocomplete_ChangeBoundValue()
         {
-            await ImproveChanceOfSuccess(async () =>
-            {
+            //await ImproveChanceOfSuccess(async () =>
+            //{
                 var comp = Context.RenderComponent<AutocompleteChangeBoundObjectTest>();
                 var autocompletecomp = comp.FindComponent<MudAutocomplete<string>>();
                 var autocomplete = autocompletecomp.Instance;
@@ -800,7 +799,7 @@ namespace MudBlazor.UnitTests.Components
 
                 await comp.InvokeAsync(() => autocomplete.OnEnterKey());
                 comp.WaitForAssertion(() => autocomplete.IsOpen.Should().BeFalse());
-            });
+            //});
         }
 
         [Test]

@@ -318,7 +318,7 @@ namespace MudBlazor
         #endregion
 
 
-        #region Lifecycle Methods
+        #region Lifecycle Methods (& Dispose)
 
         protected override void OnInitialized()
         {
@@ -356,6 +356,12 @@ namespace MudBlazor
             }
             _isCleared = false;
             await base.OnAfterRenderAsync(firstRender);
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            _timer?.Dispose();
+            base.Dispose(disposing);
         }
 
         #endregion
@@ -898,12 +904,6 @@ namespace MudBlazor
         protected void ChipClose(MudChip chip)
         {
             SelectedValues = SelectedValues.Where(x => !x.Equals(chip.Value));
-        }
-
-        protected override void Dispose(bool disposing)
-        {
-            _timer?.Dispose();
-            base.Dispose(disposing);
         }
 
         //private async Task ListItemOnClick(T item)
