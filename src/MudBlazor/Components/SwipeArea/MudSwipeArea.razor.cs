@@ -21,7 +21,12 @@ namespace MudBlazor
         [Category(CategoryTypes.SwipeArea.Behavior)]
         public Action<SwipeDirection> OnSwipe { get; set; }
 
+        /// <summary>
+        /// Prevents default behavior of the browser when swiping.
+        /// Usable espacially when swiping up/down - this will prevent the whole page from scrolling up/down.
+        /// </summary>
         [Parameter]
+        [Category(CategoryTypes.SwipeArea.Behavior)]
         public bool PreventDefault { get; set; }
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
