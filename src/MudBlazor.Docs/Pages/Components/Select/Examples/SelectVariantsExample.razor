@@ -1,20 +1,10 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
-<MudSelect T="string" @bind-Value="selected" Label="Coffee" AnchorOrigin="Origin.BottomCenter" OnClose="onClose">
-    <MudSelectItem Value="@("Cappuccino")" />
-    <MudSelectItem Value="@("Cafe Latte")" />
-    <MudSelectItem Value="@("Espresso")" />
+<MudSelect Label="Vælg åbne eller lukkede sager" @bind-Value="_onlyOpenCases">
+        <MudSelectItem Value="null as bool?" Text="Open and Closed"></MudSelectItem>
+        <MudSelectItem Value="true as bool?" Text="Open"></MudSelectItem>
+        <MudSelectItem Value="false as bool?" Text="Closed"></MudSelectItem>
 </MudSelect>
-
-selected: @selected
-
-selected When OnClose: @selectedWhenOnClose
 @code {
-    public string selected = "";
-    public string selectedWhenOnClose = "";
-
-    public void onClose()
-    {
-        selectedWhenOnClose = selected;
-    }
+    public bool? _onlyOpenCases { get; set; } = true;
 }

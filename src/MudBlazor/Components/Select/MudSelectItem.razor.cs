@@ -60,26 +60,26 @@ namespace MudBlazor
         [Category(CategoryTypes.List.Behavior)]
         public string Text { get; set; }
 
-        //private IMudShadowSelect  _shadowParent;
+        private IMudShadowSelect _shadowParent;
         private bool _isSelected;
 
-        //[CascadingParameter]
-        //internal IMudShadowSelect IMudShadowSelect
-        //{
-        //    get => _shadowParent;
-        //    set
-        //    {
-        //        _shadowParent = value;
-        //        ((MudSelect<T>)_shadowParent)?.RegisterShadowItem(this);
-        //    }
-        //}
+        [CascadingParameter]
+        internal IMudShadowSelect IMudShadowSelect
+        {
+            get => _shadowParent;
+            set
+            {
+                _shadowParent = value;
+                ((MudSelect<T>)_shadowParent)?.RegisterShadowItem(this);
+            }
+        }
 
         /// <summary>
         /// Select items with HideContent==true are only there to register their RenderFragment with the select but
         /// wont render and have no other purpose!
         /// </summary>
-        //[CascadingParameter(Name = "HideContent")]
-        //internal bool HideContent { get; set; }
+        [CascadingParameter(Name = "HideContent")]
+        internal bool HideContent { get; set; }
 
         internal MudSelect<T> MudSelect => (MudSelect<T>)IMudSelect;
 
@@ -146,8 +146,8 @@ namespace MudBlazor
             {
                 var converter = MudSelect?.Converter;
                 if (converter == null)
-                    return $"{Value}";
-                return converter.Set(Value);
+                    return $"{(string.IsNullOrEmpty(Text) ? Value : Text)}";
+                return string.IsNullOrEmpty(Text) == false ? Text : converter.Set(Value);
             }
         }
 
@@ -156,8 +156,8 @@ namespace MudBlazor
             //if (MultiSelection)
             //    IsSelected = !IsSelected;
 
-            //MudSelect?.SelectOption(Value).AndForget();
-            //InvokeAsync(StateHasChanged);
+            MudSelect?.SelectOption(Value).AndForget();
+            InvokeAsync(StateHasChanged);
             if (MultiSelection == false)
             {
                 MudSelect.CloseMenu().AndForget();
@@ -170,7 +170,7 @@ namespace MudBlazor
             try
             {
                 MudSelect?.Remove(this);
-                //((MudSelect<T>)_shadowParent)?.UnregisterShadowItem(this);
+                ((MudSelect<T>)_shadowParent)?.UnregisterShadowItem(this);
             }
             catch (Exception) { }
         }

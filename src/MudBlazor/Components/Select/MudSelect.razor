@@ -2,12 +2,20 @@
 @typeparam T
 @inherits MudBaseInput<T>
 
+
+<div style="display: none">
+    <CascadingValue Value="@this" IsFixed="true">
+        @ChildContent
+    </CascadingValue>
+</div>
+
+
 <CascadingValue Name="Standalone" Value="false" IsFixed="true">
     <div class="mud-select" id="@_elementId">
 		<MudInputControl Label="@Label" Variant="@Variant" HelperText="@HelperText" HelperTextOnFocus="@HelperTextOnFocus" FullWidth="@FullWidth" Margin="@Margin" Class="@Classname" Style="@Style"
 						 Error="@Error" ErrorText="@ErrorText" ErrorId="@ErrorId" Disabled="@Disabled" @onclick="@ToggleMenu" Required="@Required" ForId="@FieldId">
 			<InputContent>
-                <MudInput @ref="_elementReference" InputType="@((ValuePresenter != ValuePresenter.Text || (Strict && !IsValueInList)) ? InputType.Hidden : InputType.Text)"
+                <MudInput @ref="_elementReference" InputType="InputType.Hidden"
                           Class="mud-select-input" Margin="@Margin" Placeholder="@Placeholder"
                           Variant="@Variant"
                           TextUpdateSuppression="false"
@@ -20,7 +28,11 @@
                     
                     <ChildContent>
                         <div class="@TemplateClass">
-                            @if (ValuePresenter == ValuePresenter.Chip)
+                            @if (ValuePresenter == ValuePresenter.Text)
+                            {
+                                @GetSelectTextPresenter()
+                            }
+                            else if (ValuePresenter == ValuePresenter.Chip)
                             {
                                 @foreach (var val in SelectedValues)
                                 {
@@ -38,6 +50,17 @@
                                     <MudText Typo="Typo.body1" Class="mud-text-secondary">@Placeholder</MudText>
                                 }
 
+                            }
+                            else if (ValuePresenter == ValuePresenter.ItemContent && SelectedListItem != null)
+                            {
+                                if (SelectedListItem.ChildContent != null)
+                                {
+                                    <MudRender>@SelectedListItem.ChildContent</MudRender>
+                                }
+                                else
+                                {
+                                    @GetSelectTextPresenter()   
+                                }
                             }
                         </div>
                     </ChildContent>
@@ -58,11 +81,11 @@
 		</MudInputControl>
 	</div>
     @*Shadow select items for IsValueInList and CanRenderValue*@
-@*    <CascadingValue Value="@((IMudShadowSelect)this)" IsFixed="true">
+    <CascadingValue Value="@((IMudShadowSelect)this)" IsFixed="true">
         <CascadingValue Name="HideContent" Value="true">
 			@ChildContent
 		</CascadingValue>
-	</CascadingValue>*@
+	</CascadingValue>
 
 </CascadingValue>
 <!-- mousedown instead of click needed to close the menu before OnLostFocus runs -->

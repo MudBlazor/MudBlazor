@@ -1,0 +1,10 @@
+﻿@namespace MudBlazor.UnitTests.TestComponents
+
+<MudSelect @bind-Value="_boolValue">
+        <MudSelectItem T="bool?" Value="null" Text="Open and Closed" />
+        <MudSelectItem T="bool?" Value="true" Text="Open" />
+        <MudSelectItem T="bool?" Value="false" />
+</MudSelect>
+@code {
+    public bool? _boolValue { get; set; } = true;
+}

@@ -2,17 +2,21 @@
 @typeparam T
 @inherits MudBaseSelectItem
 
-@if (Nested == true)
+@if (HideContent == false)
 {
-    <MudListItem T="T" Text="@Text" InitiallyExpanded="@InitiallyExpanded" ExpandedChanged="HandleExpandedChanged">
-        <NestedList>
-            @ChildContent
-        </NestedList>
-    </MudListItem>
 
-}
-else
-{
-    <MudListSubheader T="T" Sticky="@Sticky">@Text</MudListSubheader>
-    @ChildContent
+    if (Nested == true)
+    {
+        <MudListItem T="T" Text="@Text" InitiallyExpanded="@InitiallyExpanded" ExpandedChanged="HandleExpandedChanged">
+            <NestedList>
+                @ChildContent
+            </NestedList>
+        </MudListItem>
+
+    }
+    else
+    {
+        <MudListSubheader T="T" Sticky="@Sticky">@Text</MudListSubheader>
+        @ChildContent
+    }
 }

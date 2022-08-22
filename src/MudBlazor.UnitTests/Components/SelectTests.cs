@@ -30,6 +30,180 @@ namespace MudBlazor.UnitTests.Components
             label[0].Attributes.GetNamedItem("for")?.Value.Should().Be("selectLabelTest");
         }
 
+        // Note: MudSelect doesn't guaranteed the consequences of changing Value if MultiSelection is true for now.
+        // When this feature will add, just uncomment the testcase to test it. No need to write new test.
+        [Test]
+        [TestCase(false)]
+        //[TestCase(true)]
+        public void Select_InitialValueTest(bool multiSelection)
+        {
+            var comp = Context.RenderComponent<SelectInitialValueTest>(x =>
+            {
+                x.Add(c => c.SelectedValue, "1");
+                x.Add(c => c.MultiSelection, multiSelection);
+            });
+            var select = comp.FindComponent<MudSelect<string>>();
+
+            select.Instance.Value.Should().Be("1");
+            select.Instance.SelectedValues.Should().BeEquivalentTo(new HashSet<string>() { "1" });
+            select.Instance.Text.Should().Be("1");
+            //select.Instance.SelectedItem.Value.Should().Be("1");
+        }
+
+        // Note: MudSelect doesn't guaranteed the consequences of changing SelectedValues if MultiSelection is false for now.
+        // When this feature will add, just uncomment the testcase to test it. No need to write new test.
+        [Test]
+        //[TestCase(false)]
+        [TestCase(true)]
+        public void Select_InitialValuesTest(bool multiSelection)
+        {
+            var comp = Context.RenderComponent<SelectInitialValueTest>(x =>
+            {
+                x.Add(c => c.SelectedValues, new HashSet<string>() { "1" });
+                x.Add(c => c.MultiSelection, multiSelection);
+            });
+            var select = comp.FindComponent<MudSelect<string>>();
+
+            select.Instance.Value.Should().Be("1");
+            select.Instance.SelectedValues.Should().BeEquivalentTo(new HashSet<string>() { "1" });
+            select.Instance.Text.Should().Be("1");
+            //select.Instance.SelectedItem.Value.Should().Be("1");
+        }
+
+        [Test]
+        public void Select_ValueBubblingTest()
+        {
+            var comp = Context.RenderComponent<SelectInitialValueTest>();
+            var select = comp.FindComponent<MudSelect<string>>();
+
+            select.Instance.Value.Should().BeNull();
+            select.Instance.Text.Should().BeNull();
+
+            comp.SetParam("SelectedValue", "1");
+            select.Instance.Value.Should().Be("1");
+            select.Instance.SelectedValues.Should().BeEquivalentTo(new HashSet<string>() { "1" });
+            select.Instance.Text.Should().Be("1");
+            //select.Instance.SelectedItem.Value.Should().Be("1");
+            //select.Instance.SelectedItems.Select(x => x.Value).Should().BeEquivalentTo(new HashSet<string>() { "1" });
+
+            comp.SetParam("SelectedValue", "2");
+            select.Instance.Value.Should().Be("2");
+            select.Instance.SelectedValues.Should().BeEquivalentTo(new HashSet<string>() { "2" });
+            select.Instance.Text.Should().Be("2");
+            //select.Instance.SelectedItem.Value.Should().Be("2");
+            //select.Instance.SelectedItems.Select(x => x.Value).Should().BeEquivalentTo(new HashSet<string>() { "2" });
+        }
+
+        [Test]
+        public void Select_ValueBubblingTest_MultiSelection()
+        {
+            var comp = Context.RenderComponent<SelectInitialValueTest>(x =>
+            {
+                x.Add(c => c.MultiSelection, true);
+            });
+            var select = comp.FindComponent<MudSelect<string>>();
+
+            select.Instance.Value.Should().BeNull();
+            select.Instance.Text.Should().BeNullOrEmpty();
+
+            comp.SetParam("SelectedValues", new HashSet<string>() { "1" });
+            select.Instance.Value.Should().Be("1");
+            select.Instance.SelectedValues.Should().BeEquivalentTo(new HashSet<string>() { "1" });
+            select.Instance.Text.Should().Be("1");
+            //select.Instance.SelectedItem.Value.Should().Be("1");
+            //select.Instance.SelectedItems.Select(x => x.Value).Should().BeEquivalentTo(new HashSet<string>() { "1" });
+
+            comp.SetParam("SelectedValues", new HashSet<string>() { "2", "1" });
+            select.Instance.Value.Should().Be("1");
+            select.Instance.SelectedValues.Should().BeEquivalentTo(new HashSet<string>() { "2", "1" });
+            select.Instance.Text.Should().Be("2, 1");
+            //select.Instance.SelectedItem.Value.Should().Be("1");
+            //select.Instance.SelectedItems.Select(x => x.Value).Should().BeEquivalentTo(new HashSet<string>() { "2", "1" });
+        }
+
+        [Test]
+        public async Task Select_ValueChangeEventCountTest()
+        {
+            var comp = Context.RenderComponent<SelectEventCountTest>(x =>
+            {
+                x.Add(c => c.MultiSelection, false);
+            });
+            var select = comp.FindComponent<MudSelect<string>>();
+            var input = comp.Find("div.mud-input-control");
+
+            comp.Instance.ValueChangeCount.Should().Be(0);
+            comp.Instance.ValuesChangeCount.Should().Be(0);
+            //comp.Instance.ItemChangeCount.Should().Be(0);
+            //comp.Instance.ItemsChangeCount.Should().Be(0);
+
+            await comp.InvokeAsync(() => select.SetParam("Value", "1"));
+            comp.WaitForAssertion(() => comp.Instance.ValueChangeCount.Should().Be(1));
+            comp.Instance.ValuesChangeCount.Should().Be(1);
+            //comp.Instance.ItemChangeCount.Should().Be(1);
+            //comp.Instance.ItemsChangeCount.Should().Be(1);
+            // Setting same value should not fire events
+            await comp.InvokeAsync(() => select.SetParam("Value", "1"));
+            comp.WaitForAssertion(() => comp.Instance.ValueChangeCount.Should().Be(1));
+            comp.Instance.ValuesChangeCount.Should().Be(1);
+            //comp.Instance.ItemChangeCount.Should().Be(1);
+            //comp.Instance.ItemsChangeCount.Should().Be(1);
+            //// Set selected item to second item
+            //await comp.InvokeAsync(() => comp.Instance.SetSelectedItem());
+            //comp.WaitForAssertion(() => comp.Instance.ValueChangeCount.Should().Be(2));
+            //comp.Instance.ValuesChangeCount.Should().Be(2);
+            //comp.Instance.ItemChangeCount.Should().Be(2);
+            //comp.Instance.ItemsChangeCount.Should().Be(2);
+            ////select.Instance.SelectedItem.Value.Should().Be("2");
+            //// Setting same item should not fire events
+            //await comp.InvokeAsync(() => comp.Instance.SetSelectedItem());
+            //comp.WaitForAssertion(() => comp.Instance.ValueChangeCount.Should().Be(2));
+            //comp.Instance.ValuesChangeCount.Should().Be(2);
+            //comp.Instance.ItemChangeCount.Should().Be(2);
+            //comp.Instance.ItemsChangeCount.Should().Be(2);
+        }
+
+        [Test]
+        public async Task Select_ValueChangeEventCountTest_MultiSelection()
+        {
+            var comp = Context.RenderComponent<SelectEventCountTest>(x =>
+            {
+                x.Add(c => c.MultiSelection, true);
+            });
+            var select = comp.FindComponent<MudSelect<string>>();
+
+            comp.Instance.ValueChangeCount.Should().Be(0);
+            comp.Instance.ValuesChangeCount.Should().Be(0);
+            comp.Instance.ItemChangeCount.Should().Be(0);
+            comp.Instance.ItemsChangeCount.Should().Be(0);
+
+            await comp.InvokeAsync(() => select.SetParam("SelectedValues", new HashSet<string>() { "1" }));
+            comp.WaitForAssertion(() => comp.Instance.ValueChangeCount.Should().Be(1));
+            comp.Instance.ValuesChangeCount.Should().Be(1);
+            //comp.Instance.ItemChangeCount.Should().Be(1);
+            //comp.Instance.ItemsChangeCount.Should().Be(1);
+            // Setting same value should not fire events
+            await comp.InvokeAsync(() => select.SetParam("SelectedValues", new HashSet<string>() { "1" }));
+            comp.WaitForAssertion(() => comp.Instance.ValueChangeCount.Should().Be(1));
+            comp.Instance.ValuesChangeCount.Should().Be(1);
+            //comp.Instance.ItemChangeCount.Should().Be(1);
+            //comp.Instance.ItemsChangeCount.Should().Be(1);
+
+            //// Set selected item to second item
+            //await comp.InvokeAsync(() => comp.Instance.SetSelectedItems());
+            //comp.WaitForAssertion(() => comp.Instance.ValueChangeCount.Should().Be(2));
+            //comp.Instance.ValuesChangeCount.Should().Be(2);
+            ////comp.Instance.ItemChangeCount.Should().Be(2);
+            ////comp.Instance.ItemsChangeCount.Should().Be(2);
+            ////select.Instance.SelectedItems.Select(x => x.Value).Should().BeEquivalentTo(new HashSet<string>() { "2", "3" });
+            //// Set third item first and check again
+            //await comp.InvokeAsync(() => comp.Instance.SetReverseSelectedItems());
+            //comp.WaitForAssertion(() => comp.Instance.ValueChangeCount.Should().Be(3));
+            //comp.Instance.ValuesChangeCount.Should().Be(3);
+            ////comp.Instance.ItemChangeCount.Should().Be(3);
+            ////comp.Instance.ItemsChangeCount.Should().Be(3);
+            ////select.Instance.SelectedItems.Select(x => x.Value).Should().BeEquivalentTo(new HashSet<string>() { "3", "1" });
+        }
+
         /// <summary>
         /// Click should open the Menu and selecting a value should update the bindable value.
         /// </summary>
@@ -184,7 +358,7 @@ namespace MudBlazor.UnitTests.Components
             items[1].TextContent.Should().Be("Two");
             items[1].Click();
             //Console.WriteLine(comp.Markup);
-            comp.WaitForAssertion(() => comp.Find("div.mud-input-slot").TextContent.Trim().Should().Be("Two"));
+            //comp.WaitForAssertion(() => comp.Find("div.mud-input-slot").TextContent.Trim().Should().Be("Two"));
             select.Instance.Value.Should().Be(2);
             select.Instance.Text.Should().Be("2");
         }
@@ -215,7 +389,7 @@ namespace MudBlazor.UnitTests.Components
             select.Instance.Text.Should().Be("2");
             //Console.WriteLine(comp.Markup);
             comp.FindComponent<MudInput<string>>().Instance.Value.Should().Be("2");
-            comp.FindComponent<MudInput<string>>().Instance.InputType.Should().Be(InputType.Text); // because list item has no render fragment, so we show it as text
+            comp.FindComponent<MudInput<string>>().Instance.InputType.Should().Be(InputType.Hidden); // because list item has no render fragment, so we show it as text
         }
 
         /// <summary>
@@ -224,26 +398,33 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void SelectWithoutItemPresentersTest()
         {
-            var comp = Context.RenderComponent<SelectWithoutItemPresentersTest>();
+            var comp = Context.RenderComponent<SelectTextValueTest>();
             //Console.WriteLine(comp.Markup);
             // select elements needed for the test
-            var select = comp.FindComponent<MudSelect<int>>();
+            var select = comp.FindComponent<MudSelect<bool?>>();
             var input = comp.Find("div.mud-input-control");
 
-            select.Instance.Value.Should().Be(1);
-            select.Instance.Text.Should().Be("1");
-            comp.Find("div.mud-input-slot").Attributes["style"].Value.Should().Contain("display:none");
-            comp.RenderCount.Should().Be(1);
-            //Console.WriteLine(comp.Markup);
+            select.Instance.Value.Should().BeTrue();
+            select.Instance.Text.Should().Be("Open");
+            //comp.Find("div.mud-input-slot").Attributes["style"].Value.Should().Contain("display:none");
+            //comp.RenderCount.Should().Be(1);
+            ////Console.WriteLine(comp.Markup);
 
+            //Last item doesn't have text, so it should show value as text.
             input.Click();
             comp.WaitForAssertion(() => comp.FindAll("div.mud-list-item").Count.Should().BeGreaterThan(0));
             var items = comp.FindAll("div.mud-list-item").ToArray();
-            items[1].Click();
-            comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().NotContain("mud-popover-open"));
-            comp.WaitForAssertion(() => comp.Find("div.mud-input-slot").Attributes["style"].Value.Should().Contain("display:none"));
-            select.Instance.Value.Should().Be(2);
-            select.Instance.Text.Should().Be("2");
+            items[2].Click();
+            //comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().NotContain("mud-popover-open"));
+            //comp.WaitForAssertion(() => comp.Find("div.mud-input-slot").Attributes["style"].Value.Should().Contain("display:none"));
+            select.Instance.Value.Should().BeFalse();
+            select.Instance.Text.Should().Be("False");
+
+            input.Click();
+            items = comp.FindAll("div.mud-list-item").ToArray();
+            items[0].Click();
+            select.Instance.Value.Should().BeNull();
+            select.Instance.Text.Should().Be("Open and Closed");
         }
 
         [Test]
@@ -669,7 +850,7 @@ namespace MudBlazor.UnitTests.Components
             input.Click();
             comp.WaitForAssertion(() => comp.FindAll("div.mud-list-item").Count.Should().BeGreaterThan(0));
             select.Instance.Value.Should().Be("Apple");
-            comp.Instance.ChangeCount.Should().Be(1);
+            comp.Instance.ChangeCount.Should().Be(0);
 
             // now click an item and see the value change
             var items = comp.FindAll("div.mud-list-item").ToArray();
@@ -678,7 +859,7 @@ namespace MudBlazor.UnitTests.Components
             // menu should be closed now
             comp.WaitForAssertion(() => menu.ClassList.Should().NotContain("mud-popover-open"));
             comp.WaitForAssertion(() => select.Instance.Value.Should().Be("Orange"));
-            comp.Instance.ChangeCount.Should().Be(2);
+            comp.Instance.ChangeCount.Should().Be(1);
 
             // now click an item and see the value change
             input.Click();
@@ -687,7 +868,7 @@ namespace MudBlazor.UnitTests.Components
             items[1].Click();
 
             comp.WaitForAssertion(() => select.Instance.Value.Should().Be("Orange"));
-            comp.Instance.ChangeCount.Should().Be(2);
+            comp.Instance.ChangeCount.Should().Be(1);
 
         }
 

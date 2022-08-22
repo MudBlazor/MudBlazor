@@ -2,13 +2,16 @@
 @typeparam T
 @inherits MudBaseSelectItem
 
-<MudListItem @attributes="UserAttributes" T="T" Value="@Value" Text="@Text" id="@ItemId" OnClick="@HandleOnClick" IsFunctional="@IsFunctional" Href="@Href" Disabled="@Disabled" Class="@GetCssClasses()" Style="@Style">
-    @if (ChildContent != null)
-    {
-        @ChildContent
-    }
-    else
-    {
-        @DisplayString
-    }
-</MudListItem>
+@if (HideContent == false)
+{
+    <MudListItem @attributes="UserAttributes" T="T" Value="@Value" Text="@Text" id="@ItemId" OnClick="@HandleOnClick" IsFunctional="@IsFunctional" Href="@Href" Disabled="@Disabled" Class="@GetCssClasses()" Style="@Style">
+        @if (ChildContent != null)
+        {
+            @ChildContent
+        }
+        else
+        {
+            @DisplayString
+        }
+        </MudListItem>
+}

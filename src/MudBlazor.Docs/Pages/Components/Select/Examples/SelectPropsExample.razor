@@ -1,7 +1,7 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
-<MudSelect HelperText="Helper text" T="string" Label="With Helper" Variant="Variant.Text">
-    <MudSelectItem Value="@("Tyrannosaur")" />
+<MudSelect HelperText="Helper text" T="string" Label="With Helper" Variant="Variant.Text" ValuePresenter="ValuePresenter.ItemContent" Clearable="true">
+    <MudSelectItem Value="@("Tyrannosaur")">Tyrannosaur</MudSelectItem>
     <MudSelectItem Value="@("Mike Rex")" />
 </MudSelect>
 <MudSelect Disabled="true" T="string" Label="Disabled" Variant="Variant.Outlined">

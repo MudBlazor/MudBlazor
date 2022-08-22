@@ -54,6 +54,13 @@ namespace MudBlazor
         [CascadingParameter]
         internal MudList<T> MudList { get; set; }
 
+        /// <summary>
+        /// Select items with HideContent==true are only there to register their RenderFragment with the select but
+        /// wont render and have no other purpose!
+        /// </summary>
+        [CascadingParameter(Name = "HideContent")]
+        internal bool HideContent { get; set; }
+
         private void HandleExpandedChanged(bool isExpanded)
         {
             if (isExpanded)

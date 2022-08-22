@@ -12,10 +12,11 @@ using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Services;
 using MudBlazor.Utilities;
 using MudBlazor.Utilities.Exceptions;
+using static MudBlazor.CategoryTypes;
 
 namespace MudBlazor
 {
-    public partial class MudSelect<T> : MudBaseInput<T>, IMudSelect
+    public partial class MudSelect<T> : MudBaseInput<T>, IMudSelect, IMudShadowSelect
     {
 
         #region Constructor, Injected Services, Parameters, Fields
@@ -379,41 +380,112 @@ namespace MudBlazor
 
         #region Values, Texts & Items
 
-        [Parameter]
-        [Category(CategoryTypes.FormComponent.Data)]
-        public override T Value
-        {
-            get => _value;
-            set
-            {
-                if (Converter.Set(_value) == Converter.Set(value))
-                {
-                    return;
-                }
-                _value = value;
-                //ValueChanged.InvokeAsync().AndForget();
-            }
-        }
+        //bool _centralCommanderIsProcessing = false;
+        ////bool _centralCommanderResultRendered = false;
+        ////bool _changedEventsFired = false;
+        //// CentralCommander has the simple aim: Prevent racing conditions. It has two mechanism to do this:
+        //// (1) When this method is running, it doesn't allow to run a second one. That guarantees to different value parameters can not call this method at the same time.
+        //// (2) When this method runs once, prevents all value setters until OnAfterRender runs. That guarantees to have proper values.
+        //protected void HandleCentralValueCommander(string changedValueType, bool fromSetParameters = false)
+        //{
+        //    //Console.WriteLine("Central Value Started");
 
-        //private T _selectedValue;
+        //    //if (_setParametersDone == false)
+        //    //{
+        //    //    return;
+        //    //}
+        //    if (_centralCommanderIsProcessing == true)
+        //    {
+        //        return;
+        //    }
+        //    _centralCommanderIsProcessing = true;
+
+        //    //if (_firstRendered == true && fromSetParameters == false && _changedEventsFired == false)
+        //    //{
+        //    //    ValueChanged.InvokeAsync(_value).AndForget();
+        //    //    SelectedValuesChanged.InvokeAsync(_selectedValues).AndForget();
+        //    //    SelectedItemChanged.InvokeAsync(_selectedItem).AndForget();
+        //    //    SelectedItemsChanged.InvokeAsync(_selectedItems).AndForget();
+        //    //    _changedEventsFired = true;
+        //    //}
+
+        //    if (changedValueType == nameof(Value))
+        //    {
+        //        if (MultiSelection == false)
+        //        {
+        //            SelectedValues = new HashSet<T>() { Value };
+        //            UpdateSelectedItem();
+        //        }
+        //    }
+        //    else if (changedValueType == nameof(SelectedValues))
+        //    {
+        //        if (MultiSelection == true)
+        //        {
+        //            //SetValueAsync(SelectedValues == null ? default(T) : SelectedValues.LastOrDefault()).AndForget();
+        //            Value = SelectedValues == null ? default(T) : SelectedValues.LastOrDefault();
+        //            UpdateSelectedItem();
+        //        }
+        //    }
+        //    else if (changedValueType == nameof(SelectedItem))
+        //    {
+        //        if (MultiSelection == false)
+        //        {
+        //            SelectedItems = new HashSet<MudSelectItem<T>>() { SelectedItem };
+        //            //UpdateSelectedValue();
+        //        }
+        //    }
+        //    else if (changedValueType == nameof(SelectedItems))
+        //    {
+        //        if (MultiSelection == true)
+        //        {
+        //            SelectedItem = SelectedItems == null ? null : SelectedItems.LastOrDefault();
+        //            //UpdateSelectedValue();
+        //        }
+        //    }
+        //    //else if (changedValueType == "MultiSelectionOff")
+        //    //{
+        //    //    SelectedValue = SelectedValues.FirstOrDefault();
+        //    //    var items = CollectAllMudListItems(true);
+        //    //    SelectedValues = SelectedValue == null ? null : new HashSet<T>() { SelectedValue };
+        //    //    UpdateSelectedItem();
+        //    //}
+
+        //    if (fromSetParameters == false)
+        //    {
+        //        //_centralCommanderResultRendered = false;
+        //    }
+        //    UpdateTextPropertyAsync(false);
+        //    //_centralCommanderIsProcessing = false;
+        //    StateHasChanged();
+        //    //Console.WriteLine("Central Value ended");
+        //}
+
+        //protected internal void UpdateSelectedItem()
+        //{
+        //    if (MultiSelection && (SelectedValues == null || SelectedValues.Count() == 0))
+        //    {
+        //        SelectedItem = null;
+        //        SelectedItems = null;
+        //        return;
+        //    }
+
+        //    SelectedItem = Items.FirstOrDefault(x => Converter.Set(x.Value) == Converter.Set(Value));
+        //    SelectedItems = SelectedValues == null ? null : Items.Where(x => SelectedValues.Contains(x.Value));
+        //}
+
         //[Parameter]
         //[Category(CategoryTypes.FormComponent.Data)]
-        //public T SelectedValue
+        //public override T Value
         //{
-        //    get => _selectedValue;
-
+        //    get => _value;
         //    set
         //    {
-        //        if (Converter.Set(_selectedValue) == Converter.Set(value))
+        //        if (Converter.Set(_value) == Converter.Set(value))
         //        {
         //            return;
         //        }
-        //        _selectedValue = value;
-        //        //if (_firstRendered == false)
-        //        //{
-        //        //    Value = value;
-        //        //}
-        //        SelectedValueChanged.InvokeAsync(_selectedValue).AndForget();
+        //        _value = value;
+        //        _selectedValues = new HashSet<T> { _value };
         //    }
         //}
 
@@ -433,47 +505,56 @@ namespace MudBlazor
             }
             set
             {
+                //if (_centralCommanderResultRendered == false && _firstRendered == true)
+                //{
+                //    return;
+                //}
                 var set = value ?? new HashSet<T>(_comparer);
                 if (value == null && _selectedValues == null)
                 {
                     return;
                 }
-                if (value != null && _selectedValues != null && _selectedValues.ToHashSet().SetEquals(value))
+                if (value != null && _selectedValues != null && _selectedValues.SetEquals(value))
                 {
                     return;
                 }
-                //if (SelectedValues.Count() == set.Count() && _selectedValues.All(x => set.Contains(x)))
-                //    return;
+                if (SelectedValues.Count() == set.Count() && _selectedValues.All(x => set.Contains(x)))
+                    return;
                 _selectedValues = new HashSet<T>(set, _comparer);
                 SelectionChangedFromOutside?.Invoke(_selectedValues);
-                if (!MultiSelection)
+                //HandleCentralValueCommander(nameof(SelectedValues));
+                if (MultiSelection == false)
                 {
                     SetValueAsync(_selectedValues.FirstOrDefault()).AndForget();
                 }
                 else
                 {
-                    //Warning. Here the Converter was not set yet
-                    if (MultiSelectionTextFunc != null)
-                    {
-                        SetCustomizedTextAsync(string.Join(Delimiter, SelectedValues.Select(x => Converter.Set(x))),
-                            selectedConvertedValues: SelectedValues.Select(x => Converter.Set(x)).ToList(),
-                            multiSelectionTextFunc: MultiSelectionTextFunc, updateValue: false).AndForget();
-                    }
-                    else
-                    {
-                        SetTextAsync(string.Join(Delimiter, SelectedValues.Select(x => Converter.Set(x))), updateValue: false).AndForget();
-                    }
+                    //Warning.Here the Converter was not set yet
+                    //if (MultiSelectionTextFunc != null)
+                    //{
+                    //    SetCustomizedTextAsync(string.Join(Delimiter, SelectedValues.Select(x => Converter.Set(x))),
+                    //        selectedConvertedValues: SelectedValues.Select(x => Converter.Set(x)).ToList(),
+                    //        multiSelectionTextFunc: MultiSelectionTextFunc, updateValue: false).AndForget();
+                    //}
+                    //else
+                    //{
+                    //    SetTextAsync(string.Join(Delimiter, SelectedValues.Select(x => Converter.Set(x))), updateValue: false).AndForget();
+                    //}
+                    SetValueAsync(_selectedValues.LastOrDefault()).AndForget();
+                    UpdateTextPropertyAsync(false).AndForget();
                 }
 
                 SelectedValuesChanged.InvokeAsync(_selectedValues).AndForget();
-                if (MultiSelection && typeof(T) == typeof(string))
-                    SetValueAsync((T)(object)Text, updateText: false).AndForget();
+                // Commenting it result the validate select tests to fail
+                //if (MultiSelection && typeof(T) == typeof(string))
+                //    SetValueAsync((T)(object)Text, updateText: false).AndForget();
+                //Console.WriteLine("SelectedValues setter ended");
             }
         }
 
         private MudListItem<T> _selectedListItem;
         private HashSet<MudListItem<T>> _selectedListItems;
-        private MudSelectItem<T> _selectedItem;
+        //private MudSelectItem<T> _selectedItem;
 
         protected internal MudListItem<T> SelectedListItem
         {
@@ -486,12 +567,12 @@ namespace MudBlazor
                     return;
                 }
                 _selectedListItem = value;
-                if (_selectedListItem == null)
-                {
-                    SelectedItem = null;
-                    return;
-                }
-                SelectedItem = Items.FirstOrDefault(x => Converter.Set(x.Value) == Converter.Set(_selectedListItem.Value));
+                //if (_selectedListItem == null)
+                //{
+                //    SelectedItem = null;
+                //    return;
+                //}
+                //SelectedItem = Items.FirstOrDefault(x => Converter.Set(x.Value) == Converter.Set(_selectedListItem.Value));
             }
         }
 
@@ -513,50 +594,60 @@ namespace MudBlazor
                 _selectedListItems = value == null ? null : value.ToHashSet();
                 //if (_selectedListItem != null)
                 //    SelectedItems = Items.Where(x => Converter.Set(x.Value) == Converter.Set(_selectedListItem.Value));
-                SelectedItems = _selectedListItems == null ? null : Items.Where(x => _selectedListItems.Select(y => y.Value).Contains(x.Value));
+                //SelectedItems = _selectedListItems == null ? null : Items.Where(x => _selectedListItems.Select(y => y.Value).Contains(x.Value));
             }
         }
 
-        [Parameter]
-        [Category(CategoryTypes.FormComponent.Data)]
-        public MudSelectItem<T> SelectedItem
-        {
-            get => _selectedItem;
+        //[Parameter]
+        //[Category(CategoryTypes.FormComponent.Data)]
+        //public MudSelectItem<T> SelectedItem
+        //{
+        //    get => _selectedItem;
 
-            set
-            {
-                if (_selectedItem == value)
-                {
-                    return;
-                }
-                _selectedItem = value;
-                SelectedItemChanged.InvokeAsync(_selectedItem).AndForget();
-            }
-        }
+        //    set
+        //    {
+        //        //if (_centralCommanderResultRendered == false && _firstRendered == true)
+        //        //{
+        //        //    return;
+        //        //}
+        //        if (_selectedItem == value)
+        //        {
+        //            return;
+        //        }
+        //        _selectedItem = value;
+        //        //HandleCentralValueCommander(nameof(SelectedItem));
+        //        SelectedItemChanged.InvokeAsync(_selectedItem).AndForget();
+        //    }
+        //}
 
-        HashSet<MudSelectItem<T>> _selectedItems;
+        //HashSet<MudSelectItem<T>> _selectedItems;
 
-        [Parameter]
-        [Category(CategoryTypes.FormComponent.Data)]
-        public IEnumerable<MudSelectItem<T>> SelectedItems
-        {
-            get => _selectedItems;
+        //[Parameter]
+        //[Category(CategoryTypes.FormComponent.Data)]
+        //public IEnumerable<MudSelectItem<T>> SelectedItems
+        //{
+        //    get => _selectedItems;
 
-            set
-            {
-                if (value == null && _selectedItems == null)
-                {
-                    return;
-                }
+        //    set
+        //    {
+        //        //if (_centralCommanderResultRendered == false && _firstRendered == true)
+        //        //{
+        //        //    return;
+        //        //}
+        //        if (value == null && _selectedItems == null)
+        //        {
+        //            return;
+        //        }
 
-                if (value != null && _selectedItems != null && _selectedItems.SetEquals(value))
-                {
-                    return;
-                }
-                _selectedItems = value == null ? null : value.ToHashSet();
-                SelectedItemsChanged.InvokeAsync(_selectedItems).AndForget();
-            }
-        }
+        //        if (value != null && _selectedItems != null && _selectedItems.SetEquals(value))
+        //        {
+        //            return;
+        //        }
+        //        _selectedItems = value == null ? null : value.ToHashSet();
+        //        //HandleCentralValueCommander(nameof(SelectedItems));
+        //        SelectedItemsChanged.InvokeAsync(_selectedItems).AndForget();
+        //    }
+        //}
 
         /// <summary>
         /// Fires when SelectedValue changes.
@@ -601,22 +692,81 @@ namespace MudBlazor
 
         protected override Task UpdateTextPropertyAsync(bool updateValue)
         {
+            List<string> textList = new List<string>();
+            if (Items != null && Items.Any())
+            {
+                //SelectedItems.ToList().ForEach(x => textList.Add(!string.IsNullOrEmpty(x.Text) ? x.Text : Converter.Set(x.Value)));
+                if (ItemCollection != null)
+                {
+                    foreach (var val in SelectedValues)
+                    {
+                        var collectionValue = ItemCollection.FirstOrDefault(x => x != null && Converter.Set(x) == Converter.Set(val));
+                        if (collectionValue != null)
+                        {
+                            textList.Add(Converter.Set(collectionValue));
+                        }
+                    }
+                }
+                else
+                {
+                    foreach (var val in SelectedValues)
+                    {
+                        var item = Items.FirstOrDefault(x => x != null && Converter.Set(x.Value) == Converter.Set(val));
+                        if (item != null)
+                        {
+                            textList.Add(!string.IsNullOrEmpty(item.Text) ? item.Text : Converter.Set(item.Value));
+                        }
+                    }
+                }
+                
+                //SelectedValues.ToList().ForEach(x => SelectedItems.FirstOrDefault(y => Converter.Set(y.Value) == Converter.Set(x)));
+            }
             // when multiselection is true, we return
             // a comma separated list of selected values
-            if (MultiSelectionTextFunc != null)
+
+            if (MultiSelection == true)
             {
-                return MultiSelection
-                    ? SetCustomizedTextAsync(string.Join(Delimiter, SelectedValues.Select(x => Converter.Set(x))),
+                if (MultiSelectionTextFunc != null)
+                {
+                    return SetCustomizedTextAsync(string.Join(Delimiter, textList),
                         selectedConvertedValues: SelectedValues.Select(x => Converter.Set(x)).ToList(),
-                        multiSelectionTextFunc: MultiSelectionTextFunc)
-                    : base.UpdateTextPropertyAsync(updateValue);
+                        multiSelectionTextFunc: MultiSelectionTextFunc, updateValue: updateValue);
+                }
+                else
+                {
+                    return SetTextAsync(string.Join(Delimiter, textList), updateValue: updateValue);
+                }
             }
             else
             {
-                return MultiSelection
-                    ? SetTextAsync(string.Join(Delimiter, SelectedValues.Select(x => Converter.Set(x))))
-                    : base.UpdateTextPropertyAsync(updateValue);
+                var item = Items.FirstOrDefault(x => Converter.Set(x.Value) == Converter.Set(Value));
+                if (item == null)
+                {
+                    return SetTextAsync(Converter.Set(Value), false);
+                }
+                return SetTextAsync((!string.IsNullOrEmpty(item.Text) ? item.Text : Converter.Set(item.Value)), updateValue: updateValue);
             }
+
+            //if (MultiSelectionTextFunc != null)
+            //{
+            //    return MultiSelection
+            //        ? SetCustomizedTextAsync(string.Join(Delimiter, SelectedValues.Select(x => Converter.Set(x))),
+            //            selectedConvertedValues: SelectedValues.Select(x => Converter.Set(x)).ToList(),
+            //            multiSelectionTextFunc: MultiSelectionTextFunc, updateValue: updateValue)
+            //        : base.UpdateTextPropertyAsync(updateValue);
+            //}
+            //else
+            //{
+            //    return MultiSelection
+            //        ? SetTextAsync(string.Join(Delimiter, SelectedValues.Select(x => Converter.Set(x))), updateValue: updateValue)
+            //        : base.UpdateTextPropertyAsync(updateValue);
+            //}
+        }
+
+        private string GetSelectTextPresenter()
+        {
+            //UpdateTextPropertyAsync(false);
+            return Text;
         }
 
         #endregion
@@ -624,13 +774,26 @@ namespace MudBlazor
 
         #region Lifecycle Methods
 
+        ////bool _setParametersDone = false;
         //public override Task SetParametersAsync(ParameterView parameters)
         //{
-        //    if (_list != null)
-        //    {
-        //        return Task.CompletedTask;
-        //    }
+        //    //if (_centralCommanderIsProcessing == true)
+        //    //{
+        //    //    return Task.CompletedTask;
+        //    //}
         //    base.SetParametersAsync(parameters).AndForget();
+        //    //if (SelectedValues != null && MultiSelection == true)
+        //    //{
+        //    //    HandleCentralValueCommander(nameof(SelectedValues), true);
+        //    //    //UpdateTextPropertyAsync(false).AndForget();
+        //    //    //_value = SelectedValues.LastOrDefault();
+        //    //}
+        //    //else if (Converter.Set(Value) != Converter.Set(default(T)) && MultiSelection == false)
+        //    //{
+        //    //    HandleCentralValueCommander(nameof(Value), true);
+        //    //    //UpdateTextPropertyAsync(false).AndForget();
+        //    //}
+        //    //_setParametersDone = true;
         //    return Task.CompletedTask;
         //}
 
@@ -638,6 +801,15 @@ namespace MudBlazor
         {
             base.OnInitialized();
             UpdateIcon();
+            if (MultiSelection == false && Value != null)
+            {
+                _selectedValues = new HashSet<T>() { Value };
+            }
+            else if (MultiSelection == true && SelectedValues != null)
+            {
+                //_value = SelectedValues.FirstOrDefault();
+                SetValueAsync(SelectedValues.FirstOrDefault()).AndForget();
+            }
         }
 
         protected override void OnParametersSet()
@@ -649,10 +821,12 @@ namespace MudBlazor
         //bool _firstRendered = false;
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
+
             if (firstRender)
             {
+                //HandleCentralValueCommander(MultiSelection == false ? nameof(Value) : nameof(SelectedValues));
+                //await UpdateTextPropertyAsync(false);
                 _keyInterceptor = KeyInterceptorFactory.Create();
-
                 await _keyInterceptor.Connect(_elementId, new KeyInterceptorOptions()
                 {
                     //EnableLogging = true,
@@ -673,8 +847,16 @@ namespace MudBlazor
                 });
                 _keyInterceptor.KeyDown += HandleKeyDown;
                 _keyInterceptor.KeyUp += HandleKeyUp;
+
                 //_firstRendered = true;
+                //_centralCommanderResultRendered = true;
+                await UpdateTextPropertyAsync(false);
+                StateHasChanged();
             }
+
+            //_centralCommanderResultRendered = true;
+            //_changedEventsFired = false;
+
             await base.OnAfterRenderAsync(firstRender);
         }
 
@@ -906,110 +1088,6 @@ namespace MudBlazor
 
         #endregion
 
-        //private Task SelectNextItem() => SelectAdjacentItem(+1);
-
-        //private Task SelectPreviousItem() => SelectAdjacentItem(-1);
-
-        //private async Task SelectAdjacentItem(int direction)
-        //{
-        //    if (_items == null || _items.Count == 0)
-        //        return;
-        //    var index = _items.FindIndex(x => x.ItemId == Converter.Set(_activeItemId));
-        //    if (direction < 0 && index < 0)
-        //        index = 0;
-        //    MudSelectItem<T> item = null;
-        //    // the loop allows us to jump over disabled items until we reach the next non-disabled one
-        //    for (int i = 0; i < _items.Count; i++)
-        //    {
-        //        index += direction;
-        //        if (index < 0)
-        //            index = 0;
-        //        if (index >= _items.Count)
-        //            index = _items.Count - 1;
-        //        if (_items[index].Disabled)
-        //            continue;
-        //        item = _items[index];
-        //        if (!MultiSelection)
-        //        {
-        //            _selectedValues.Clear();
-        //            _selectedValues.Add(item.Value);
-        //            await SetValueAsync(item.Value, updateText: true);
-        //            HilightItem(item);
-        //            break;
-        //        }
-        //        else
-        //        {
-        //            // in multiselect mode don't select anything, just hilight.
-        //            // selecting is done by Enter
-        //            HilightItem(item);
-        //            break;
-        //        }
-        //    }
-        //    await _elementReference.SetText(Text);
-        //    await ScrollToItemAsync(item);
-        //}
-
-        //private ValueTask ScrollToItemAsync(MudSelectItem<T> item)
-        //    =>item != null? ScrollManager.ScrollToListItemAsync(item.ItemId): ValueTask.CompletedTask;
-
-        //private async Task SelectFirstItem(string startChar = null)
-        //{
-        //    if (_items == null || _items.Count == 0)
-        //        return;
-        //    var items = _items.Where(x => !x.Disabled);
-        //    var firstItem = items.FirstOrDefault();
-        //    if (!string.IsNullOrWhiteSpace(startChar))
-        //    {
-        //        // find first item that starts with the letter
-        //        var currentItem = items.FirstOrDefault(x => x.ItemId == Converter.Set(_activeItemId));
-        //        if (currentItem != null &&
-        //            Converter.Set(currentItem.Value)?.ToLowerInvariant().StartsWith(startChar) == true)
-        //        {
-        //            // this will step through all items that start with the same letter if pressed multiple times
-        //            items = items.SkipWhile(x => x != currentItem).Skip(1);
-        //        }
-        //        items = items.Where(x => Converter.Set(x.Value)?.ToLowerInvariant().StartsWith(startChar) == true);
-        //    }
-        //    var item = items.FirstOrDefault();
-        //    if (item == null)
-        //        return;
-        //    if (!MultiSelection)
-        //    {
-        //        _selectedValues.Clear();
-        //        _selectedValues.Add(item.Value);
-        //        await SetValueAsync(item.Value, updateText: true);
-        //        HilightItem(item);
-        //    }
-        //    else
-        //    {
-        //        HilightItem(item);
-        //    }
-        //    await _elementReference.SetText(Text);
-        //    await ScrollToItemAsync(item);
-        //}
-
-        //private async Task SelectLastItem()
-        //{
-        //    if (_items == null || _items.Count == 0)
-        //        return;
-        //    var item = _items.LastOrDefault(x => !x.Disabled);
-        //    if (item == null)
-        //        return;
-        //    if (!MultiSelection)
-        //    {
-        //        _selectedValues.Clear();
-        //        _selectedValues.Add(item.Value);
-        //        await SetValueAsync(item.Value, updateText: true);
-        //        HilightItem(item);
-        //    }
-        //    else
-        //    {
-        //        HilightItem(item);
-        //    }
-        //    await _elementReference.SetText(Text);
-        //    await ScrollToItemAsync(item);
-        //}
-
         //private Task WaitForRender()
         //{
         //    Task t = null;
@@ -1056,29 +1134,29 @@ namespace MudBlazor
             }
         }
 
-        protected RenderFragment GetSelectedValuePresenter()
-        {
-            //if (Value == null)
-            //    return null;
-            //if (!_shadowLookup.TryGetValue(Value, out var item))
-            //    return null; //<-- for now. we'll add a custom template to present values (set from outside) which are not on the list?
-            //return item.ChildContent;
-            if (MultiSelection == false)
-            {
-                if (SelectedListItem != null)
-                {
-                    SelectedItem = Items.FirstOrDefault(x => Converter.Set(x.Value) == Converter.Set(_selectedListItem.Value));
-                    return SelectedListItem.ChildContent;
-                }
-            }
-            else
-            {
-                if (SelectedListItems != null && SelectedListItems.Any())
-                    return SelectedItems.FirstOrDefault(x => Converter.Set(x.Value) == Converter.Set(Value)).ChildContent;
-            }
+        //protected RenderFragment GetSelectedValuePresenter()
+        //{
+        //    //if (Value == null)
+        //    //    return null;
+        //    //if (!_shadowLookup.TryGetValue(Value, out var item))
+        //    //    return null; //<-- for now. we'll add a custom template to present values (set from outside) which are not on the list?
+        //    //return item.ChildContent;
+        //    if (MultiSelection == false)
+        //    {
+        //        if (SelectedListItem != null)
+        //        {
+        //            SelectedItem = Items.FirstOrDefault(x => Converter.Set(x.Value) == Converter.Set(_selectedListItem.Value));
+        //            return SelectedListItem.ChildContent;
+        //        }
+        //    }
+        //    else
+        //    {
+        //        if (SelectedListItems != null && SelectedListItems.Any())
+        //            return SelectedItems.FirstOrDefault(x => Converter.Set(x.Value) == Converter.Set(Value)).ChildContent;
+        //    }
             
-            return null;
-        }
+        //    return null;
+        //}
 
         internal event Action<ICollection<T>> SelectionChangedFromOutside;
 
@@ -1167,6 +1245,9 @@ namespace MudBlazor
                 }
 
                 await SetValueAsync(value);
+                //Value = value;
+                //HandleCentralValueCommander(nameof(Value));
+                //await UpdateTextPropertyAsync(false);
                 _elementReference.SetText(Text).AndForget();
                 //_selectedValues.Clear();
                 //_selectedValues.Add(value);
@@ -1175,62 +1256,9 @@ namespace MudBlazor
             //HilightItemForValue(value);
             //await SelectedValuesChanged.InvokeAsync(SelectedValues);
             if (MultiSelection && typeof(T) == typeof(string))
-                await SetValueAsync((T)(object)Text, updateText: false);
+                //await SetValueAsync((T)(object)Text, updateText: false);
             await InvokeAsync(StateHasChanged);
         }
-
-        //private async void HilightItemForValue(T value)
-        //{
-        //    if (value == null)
-        //    {
-        //        HilightItem(null);
-        //        return;
-        //    }
-        //    await WaitForRender();
-        //    _valueLookup.TryGetValue(value, out var item);
-        //    HilightItem(item);
-        //}
-
-        //private async void HilightItem(MudSelectItem<T> item)
-        //{
-        //    _activeItemId = Converter.Get(item?.ItemId);
-        //    // we need to make sure we are just after a render here or else there will be race conditions
-        //    await WaitForRender();
-        //    // Note: this is a hack but I found no other way to make the list hilight the currently hilighted item
-        //    // without the delay it always shows the previously hilighted item because the popup items don't exist yet
-        //    // they are only registered after they are rendered, so we need to render again!
-        //    await Task.Delay(1);
-        //    StateHasChanged();
-        //}
-
-        //private async Task HilightSelectedValue()
-        //{
-        //    await WaitForRender();
-        //    if (MultiSelection)
-        //        HilightItem(_items.FirstOrDefault(x => !x.Disabled));
-        //    else
-        //        HilightItemForValue(Value);
-        //}
-
-        //private void UpdateSelectAllChecked()
-        //{
-        //    if (MultiSelection && SelectAll)
-        //    {
-        //        var oldState = _selectAllChecked;
-        //        if (_selectedValues.Count == 0)
-        //        {
-        //            _selectAllChecked = false;
-        //        }
-        //        else if (_items.Count == _selectedValues.Count)
-        //        {
-        //            _selectAllChecked = true;
-        //        }
-        //        else
-        //        {
-        //            _selectAllChecked = null;
-        //        }
-        //    }
-        //}
 
         protected void UpdateIcon()
         {
@@ -1251,23 +1279,12 @@ namespace MudBlazor
         {
             await SetValueAsync(default, false);
             await SetTextAsync(default, false);
-            //_selectedValues.Clear();
+            _selectedValues.Clear();
             BeginValidate();
             StateHasChanged();
             await SelectedValuesChanged.InvokeAsync(_selectedValues);
             await OnClearButtonClick.InvokeAsync(e);
         }
-
-        ///// <summary>
-        ///// The checkbox icon reflects the select all option's state
-        ///// </summary>
-        //protected string SelectAllCheckBoxIcon
-        //{
-        //    get
-        //    {
-        //        return _selectAllChecked.HasValue ? _selectAllChecked.Value ? CheckedIcon : UncheckedIcon : IndeterminateIcon;
-        //    }
-        //}
 
         [ExcludeFromCodeCoverage]
         [Obsolete("Use Clear instead.", true)]
@@ -1280,67 +1297,27 @@ namespace MudBlazor
         {
             await SetValueAsync(default, false);
             await SetTextAsync(default, false);
-            //_selectedValues.Clear();
+            _selectedValues.Clear();
             BeginValidate();
             StateHasChanged();
             await SelectedValuesChanged.InvokeAsync(_selectedValues);
         }
 
-        //private async Task SelectAllClickAsync()
-        //{
-        //    // Manage the fake tri-state of a checkbox
-        //    if (!_selectAllChecked.HasValue)
-        //        _selectAllChecked = true;
-        //    else if (_selectAllChecked.Value)
-        //        _selectAllChecked = false;
-        //    else
-        //        _selectAllChecked = true;
-        //    // Define the items selection
-        //    if (_selectAllChecked.Value == true)
-        //        await SelectAllItems();
-        //    else
-        //        await Clear();
-        //}
+        public void RegisterShadowItem(MudSelectItem<T> item)
+        {
+            if (item == null || item.Value == null)
+                return;
+            _shadowLookup[item.Value] = item;
+        }
 
-        //private async Task SelectAllItems()
-        //{
-        //    if (!MultiSelection)
-        //        return;
-        //    var selectedValues = new HashSet<T>(_items.Where(x => !x.Disabled && x.Value != null).Select(x => x.Value), _comparer);
-        //    _selectedValues = new HashSet<T>(selectedValues, _comparer);
-        //    if (MultiSelectionTextFunc != null)
-        //    {
-        //        await SetCustomizedTextAsync(string.Join(Delimiter, SelectedValues.Select(x => Converter.Set(x))),
-        //            selectedConvertedValues: SelectedValues.Select(x => Converter.Set(x)).ToList(),
-        //            multiSelectionTextFunc: MultiSelectionTextFunc);
-        //    }
-        //    else
-        //    {
-        //        await SetTextAsync(string.Join(Delimiter, SelectedValues.Select(x => Converter.Set(x))), updateValue: false);
-        //    }
-        //    UpdateSelectAllChecked();
-        //    _selectedValues = selectedValues; // need to force selected values because Blazor overwrites it under certain circumstances due to changes of Text or Value
-        //    BeginValidate();
-        //    await SelectedValuesChanged.InvokeAsync(SelectedValues);
-        //    if (MultiSelection && typeof(T) == typeof(string))
-        //        SetValueAsync((T)(object)Text, updateText: false).AndForget();
-        //}
+        public void UnregisterShadowItem(MudSelectItem<T> item)
+        {
+            if (item == null || item.Value == null)
+                return;
+            _shadowLookup.Remove(item.Value);
+        }
 
-        //public void RegisterShadowItem(MudSelectItem<T> item)
-        //{
-        //    if (item == null || item.Value == null)
-        //        return;
-        //    _shadowLookup[item.Value] = item;
-        //}
 
-        //public void UnregisterShadowItem(MudSelectItem<T> item)
-        //{
-        //    if (item == null || item.Value == null)
-        //        return;
-        //    _shadowLookup.Remove(item.Value);
-        //}
-
-        
 
         protected override void Dispose(bool disposing)
         {
@@ -1348,6 +1325,11 @@ namespace MudBlazor
 
             if (disposing == true)
             {
+                if (_keyInterceptor != null)
+                {
+                    _keyInterceptor.KeyDown -= HandleKeyDown;
+                    _keyInterceptor.KeyUp -= HandleKeyUp;
+                }
                 _keyInterceptor?.Dispose();
             }
         }
