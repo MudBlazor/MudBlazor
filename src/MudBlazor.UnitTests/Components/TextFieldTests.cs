@@ -415,6 +415,18 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("button").Should().BeEmpty();
         }
 
+        [Test]
+        public async Task TextField_ClearButton_TabIndex_Test()
+        {
+            var comp = Context.RenderComponent<MudTextField<string>>(
+                Parameter(nameof(MudTextField<string>.Clearable), true),
+                Parameter(nameof(MudTextField<string>.Text), "Test")
+            );
+
+            // Button should have tabindex -1
+            comp.Find("button").GetAttribute("tabindex").Should().Be("-1");
+        }
+
         #region ValidationAttribute support
         [Test]
         public async Task TextField_Should_Validate_Data_Attribute_Fail()
