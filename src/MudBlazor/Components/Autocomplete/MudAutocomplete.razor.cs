@@ -329,7 +329,6 @@ namespace MudBlazor
         {
             Adornment = Adornment.End;
             IconSize = Size.Medium;
-            _cancellationTokenSrc = new CancellationTokenSource();
         }
 
         public async Task SelectOption(T value)
@@ -420,7 +419,7 @@ namespace MudBlazor
 
         private void CancelToken()
         {
-            _cancellationTokenSrc.Cancel();
+            _cancellationTokenSrc?.Cancel();
             _cancellationTokenSrc = new CancellationTokenSource();
         }
 
@@ -708,8 +707,16 @@ namespace MudBlazor
         protected override void Dispose(bool disposing)
         {
             _timer?.Dispose();
-            _cancellationTokenSrc.Cancel();
-            _cancellationTokenSrc.Dispose();
+            
+            if (_cancellationTokenSrc != null)
+            {
+                try
+                {
+                    _cancellationTokenSrc.Dispose();
+                }
+                catch { }
+            }
+
             base.Dispose(disposing);
         }
 
